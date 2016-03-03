@@ -37,7 +37,7 @@ static void _access_object_unregister(Evas_Object *obj);
 EOLIAN static void
 _elm_access_evas_object_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 }
 
@@ -1241,9 +1241,8 @@ _elm_access_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_access_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
 }

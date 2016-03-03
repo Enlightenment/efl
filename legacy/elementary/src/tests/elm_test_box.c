@@ -15,7 +15,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "box", ELM_WIN_BASIC);
 
    box = elm_box_add(win);
-   eo_do(box, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(box);
 
    ck_assert(role == ELM_ATSPI_ROLE_FILLER);
 

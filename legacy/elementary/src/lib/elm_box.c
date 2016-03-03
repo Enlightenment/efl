@@ -33,7 +33,7 @@ _child_added_cb_proxy(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
    Evas_Object_Box_Option *opt = event->event_info;
-   eo_do(box, eo_event_callback_call(ELM_BOX_EVENT_CHILD_ADDED, opt->obj));
+   eo_event_callback_call(box, ELM_BOX_EVENT_CHILD_ADDED, opt->obj);
 
    return EINA_TRUE;
 }
@@ -43,7 +43,7 @@ _child_removed_cb_proxy(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
    Evas_Object *child = event->event_info;
-   eo_do(box, eo_event_callback_call(ELM_BOX_EVENT_CHILD_REMOVED, child));
+   eo_event_callback_call(box, ELM_BOX_EVENT_CHILD_REMOVED, child);
 
    return EINA_TRUE;
 }
@@ -113,7 +113,7 @@ _elm_box_elm_widget_theme_apply(Eo *obj, Elm_Box_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -165,7 +165,7 @@ _elm_box_elm_widget_sub_object_del(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(child));
+   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), child);
    if (!int_ret) return EINA_FALSE;
 
    _sizing_eval(obj);
@@ -319,10 +319,10 @@ _transition_layout_animation_start(Evas_Object *obj,
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESIZE, _transition_layout_obj_resize_cb,
      layout_data);
-   eo_do(obj, eo_event_callback_add
-     (ELM_BOX_EVENT_CHILD_ADDED, _transition_layout_child_added, layout_data));
-   eo_do(obj, eo_event_callback_add
-     (ELM_BOX_EVENT_CHILD_REMOVED, _transition_layout_child_removed, layout_data));
+   eo_event_callback_add
+     (obj, ELM_BOX_EVENT_CHILD_ADDED, _transition_layout_child_added, layout_data);
+   eo_event_callback_add
+     (obj, ELM_BOX_EVENT_CHILD_REMOVED, _transition_layout_child_removed, layout_data);
 
    if (!layout_data->animator)
      layout_data->animator = ecore_animator_add(transition_animation_cb, obj);
@@ -392,13 +392,13 @@ _elm_box_evas_object_smart_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _on_size_hints_changed, obj);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   eo_do(wd->resize_obj, eo_event_callback_add
-      (ELM_BOX_EVENT_CHILD_ADDED, _child_added_cb_proxy, obj));
-   eo_do(wd->resize_obj, eo_event_callback_add
-     (ELM_BOX_EVENT_CHILD_REMOVED, _child_removed_cb_proxy, obj));
+   eo_event_callback_add
+      (wd->resize_obj, ELM_BOX_EVENT_CHILD_ADDED, _child_added_cb_proxy, obj);
+   eo_event_callback_add
+     (wd->resize_obj, ELM_BOX_EVENT_CHILD_REMOVED, _child_removed_cb_proxy, obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
@@ -429,7 +429,7 @@ _elm_box_evas_object_smart_del(Eo *obj, Elm_Box_Data *sd)
           }
      }
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -443,12 +443,11 @@ elm_box_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_box_eo_base_constructor(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
 {
-   eo_do(obj, elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_SKIPPED));
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_FILLER));
+   elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_SKIPPED);
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
    return obj;
 }
@@ -657,10 +656,8 @@ elm_box_transition_free(void *data)
 
    evas_object_event_callback_del
      (box_data->box, EVAS_CALLBACK_RESIZE, _transition_layout_obj_resize_cb);
-   eo_do(box_data->box, eo_event_callback_del(
-      ELM_BOX_EVENT_CHILD_ADDED, _transition_layout_child_added, box_data));
-   eo_do(box_data->box, eo_event_callback_del(
-      ELM_BOX_EVENT_CHILD_REMOVED, _transition_layout_child_removed, box_data));
+   eo_event_callback_del(box_data->box, ELM_BOX_EVENT_CHILD_ADDED, _transition_layout_child_added, box_data);
+   eo_event_callback_del(box_data->box, ELM_BOX_EVENT_CHILD_REMOVED, _transition_layout_child_removed, box_data);
    ecore_animator_del(box_data->animator);
 
    free(data);

@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "photo", ELM_WIN_BASIC);
 
    photo = elm_photo_add(win);
-   eo_do(photo, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(photo);
 
    ck_assert(role == ELM_ATSPI_ROLE_IMAGE);
 

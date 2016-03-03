@@ -53,7 +53,7 @@ _elm_photo_elm_widget_theme_apply(Eo *obj, Elm_Photo_Data *sd)
    Eina_Bool int_ret = EINA_FALSE;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    edje_object_mirrored_set
@@ -109,7 +109,7 @@ _drag_done_cb(void *unused EINA_UNUSED,
    ELM_PHOTO_DATA_GET(obj, sd);
 
    elm_object_scroll_freeze_pop(obj);
-   eo_do(obj, eo_event_callback_call(EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_END, NULL));
+   eo_event_callback_call(obj, EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_END, NULL);
    sd->drag_started = EINA_FALSE;
 }
 
@@ -171,8 +171,8 @@ _long_press_cb(void *obj)
                   _drag_done_cb, NULL))
           {
              elm_object_scroll_freeze_push(obj);
-             eo_do(obj, eo_event_callback_call
-               (EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START, NULL));
+             eo_event_callback_call
+               (obj, EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START, NULL);
              sd->drag_started = EINA_TRUE;
           }
      }
@@ -214,7 +214,7 @@ _mouse_up(void *data,
    ELM_SAFE_FREE(sd->long_press_timer, ecore_timer_del);
 
    if (!sd->drag_started)
-     eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+     eo_event_callback_call(data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
 }
 
 static void
@@ -245,7 +245,7 @@ _elm_photo_evas_object_smart_add(Eo *obj, Elm_Photo_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -265,8 +265,8 @@ _elm_photo_evas_object_smart_add(Eo *obj, Elm_Photo_Data *priv)
    evas_object_event_callback_add
      (priv->icon, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, obj);
 
-   eo_do(priv->icon, eo_event_callback_add
-     (ELM_ICON_EVENT_THUMB_DONE, _on_thumb_done, obj));
+   eo_event_callback_add
+     (priv->icon, ELM_ICON_EVENT_THUMB_DONE, _on_thumb_done, obj);
 
    _elm_photo_internal_image_follow(obj);
 
@@ -289,7 +289,7 @@ _elm_photo_evas_object_smart_del(Eo *obj, Elm_Photo_Data *sd)
 {
    ecore_timer_del(sd->long_press_timer);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -303,11 +303,10 @@ elm_photo_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_photo_eo_base_constructor(Eo *obj, Elm_Photo_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_IMAGE));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
 
    return obj;
 }
@@ -402,8 +401,7 @@ _elm_photo_class_constructor(Eo_Class *klass)
 EAPI Eina_Bool
 elm_photo_file_set(Eo *obj, const char *file)
 {
-   Eina_Bool ret;
-   return eo_do_ret((Eo *) obj, ret, efl_file_set(file, NULL));
+   return efl_file_set((Eo *) obj, file, NULL);
 }
 
 #include "elm_photo.eo.c"

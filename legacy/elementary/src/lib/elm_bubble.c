@@ -70,7 +70,7 @@ _on_mouse_up(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      return;
 
-   eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+   eo_event_callback_call(data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
 }
 
 /* overriding layout's focus_next() in order to just cycle through the
@@ -116,7 +116,7 @@ _elm_bubble_elm_layout_text_set(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, const
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_layout_text_set(part, label));
+   int_ret = elm_obj_layout_text_set(eo_super(obj, MY_CLASS), part, label);
    if (!int_ret) return EINA_FALSE;
 
    if (part && (!strcmp(part, "info") || !strcmp(part, "elm.info")))
@@ -177,7 +177,7 @@ _elm_bubble_evas_object_smart_add(Eo *obj, Elm_Bubble_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->pos = ELM_BUBBLE_POS_TOP_LEFT; //default
@@ -226,11 +226,10 @@ elm_bubble_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_bubble_eo_base_constructor(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_FILLER));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
    return obj;
 }
@@ -248,7 +247,7 @@ _elm_bubble_pos_set(Eo *obj, Elm_Bubble_Data *sd, Elm_Bubble_Pos pos)
    eina_stringshare_replace
      (&ld->group, corner_string[sd->pos]);
 
-   eo_do(obj, elm_obj_widget_theme_apply());
+   elm_obj_widget_theme_apply(obj);
 }
 
 EOLIAN static Elm_Bubble_Pos

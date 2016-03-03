@@ -13,7 +13,7 @@ _elm_interface_atspi_action_localized_name_get(Eo *obj, void *pd EINA_UNUSED, in
 {
    const char *ret = NULL;
 
-   eo_do(obj, ret = elm_interface_atspi_action_name_get(id));
+   ret = elm_interface_atspi_action_name_get(obj, id);
 #ifdef ENABLE_NLS
    ret = gettext(ret);
 #endif

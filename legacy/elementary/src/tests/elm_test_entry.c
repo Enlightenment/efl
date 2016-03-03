@@ -38,22 +38,22 @@ START_TEST (elm_entry_atspi_text_char_get)
 
    expected = eina_unicode_utf8_to_unicode(txt, NULL);
 
-   eo_do(entry, val = elm_interface_atspi_text_character_get(-1));
+   val = elm_interface_atspi_text_character_get(entry, -1);
    ck_assert(val == 0);
 
-   eo_do(entry, val = elm_interface_atspi_text_character_get(0));
+   val = elm_interface_atspi_text_character_get(entry, 0);
    ck_assert(val == expected[0]);
 
-   eo_do(entry, val = elm_interface_atspi_text_character_get(1));
+   val = elm_interface_atspi_text_character_get(entry, 1);
    ck_assert(val == expected[1]);
 
-   eo_do(entry, val = elm_interface_atspi_text_character_get(2));
+   val = elm_interface_atspi_text_character_get(entry, 2);
    ck_assert(val == expected[2]);
 
-   eo_do(entry, val = elm_interface_atspi_text_character_get(6));
+   val = elm_interface_atspi_text_character_get(entry, 6);
    ck_assert(val == expected[6]);
 
-   eo_do(entry, val = elm_interface_atspi_text_character_get(26));
+   val = elm_interface_atspi_text_character_get(entry, 26);
    ck_assert(val == 0);
 
    free(expected);
@@ -74,7 +74,7 @@ START_TEST (elm_entry_atspi_text_char_count)
    entry = elm_entry_add(win);
    elm_object_text_set(entry, mtxt);
 
-   eo_do(entry, val = elm_interface_atspi_text_character_count_get());
+   val = elm_interface_atspi_text_character_count_get(entry);
    ck_assert(val == 12);
 
    elm_shutdown();
@@ -96,28 +96,28 @@ START_TEST (elm_entry_atspi_text_string_get_char)
    elm_object_text_set(entry, txt);
 
    start = 1;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_CHAR, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_CHAR, &start, &end);
    ck_assert_str_eq(val, "o");
    ck_assert(start == 1);
    ck_assert(end == 2);
    if (val) free(val);
 
    start = 8;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_CHAR, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_CHAR, &start, &end);
    ck_assert_str_eq(val, "ś");
    ck_assert(start == 8);
    ck_assert(end == 9);
    if (val) free(val);
 
    start = 11;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_CHAR, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_CHAR, &start, &end);
    ck_assert_str_eq(val, " ");
    ck_assert(start == 11);
    ck_assert(end == 12);
    if (val) free(val);
 
    start = 111;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_CHAR, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_CHAR, &start, &end);
    ck_assert(start == -1);
    ck_assert(end == -1);
    ck_assert(val == NULL);
@@ -141,28 +141,28 @@ START_TEST (elm_entry_atspi_text_string_get_word)
    elm_object_text_set(entry, txt);
 
    start = 1;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_WORD, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_WORD, &start, &end);
    ck_assert_str_eq(val, "Lorem");
    ck_assert(start == 0);
    ck_assert(end == 5);
    if (val) free(val);
 
    start = 6;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_WORD, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_WORD, &start, &end);
    ck_assert_str_eq(val, "ipśum");
    ck_assert(start == 6);
    ck_assert(end == 11);
    if (val) free(val);
 
    start = 19;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_WORD, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_WORD, &start, &end);
    ck_assert_str_eq(val, "dolor");
    ck_assert(start == 14);
    ck_assert(end == 19);
    if (val) free(val);
 
    start = 111;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_WORD, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_WORD, &start, &end);
    ck_assert(start == -1);
    ck_assert(end == -1);
    ck_assert(val == NULL);
@@ -187,28 +187,28 @@ START_TEST (elm_entry_atspi_text_string_get_paragraph)
    elm_object_text_set(entry, txt);
 
    start = 1;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH, &start, &end);
    ck_assert_str_eq(val, "Lorem ipśum");
    ck_assert(start == 0);
    ck_assert(end == 11);
    if (val) free(val);
 
    start = 20;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH, &start, &end);
    ck_assert_str_eq(val, "   dolor sit");
    ck_assert(start == 12);
    ck_assert(end == 24);
    if (val) free(val);
 
    start = 25;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH, &start, &end);
    ck_assert_str_eq(val, " amęt");
    ck_assert(start == 25);
    ck_assert(end == 30);
    if (val) free(val);
 
    start = 111;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_WORD, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_WORD, &start, &end);
    ck_assert(start == -1);
    ck_assert(end == -1);
    ck_assert(val == NULL);
@@ -235,7 +235,7 @@ START_TEST (elm_entry_atspi_text_string_get_line)
    elm_object_text_set(entry, txt);
 
    start = 1;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_LINE, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_LINE, &start, &end);
 
    ck_assert_str_eq(val, "Lorem ipśum");
    ck_assert(start == 0);
@@ -243,7 +243,7 @@ START_TEST (elm_entry_atspi_text_string_get_line)
    if (val) free(val);
 
    start = 13;
-   eo_do(entry, val = elm_interface_atspi_text_string_get(ELM_ATSPI_TEXT_GRANULARITY_LINE, &start, &end));
+   val = elm_interface_atspi_text_string_get(entry, ELM_ATSPI_TEXT_GRANULARITY_LINE, &start, &end);
    ck_assert_str_eq(val, "   dolor sit amęt");
    ck_assert(start == 12);
    ck_assert(end == 29);
@@ -266,17 +266,17 @@ START_TEST (elm_entry_atspi_text_text_get)
    elm_object_text_set(entry, txt);
 
    // invalid ranges
-   eo_do(entry, val = elm_interface_atspi_text_get(6, 100));
+   val = elm_interface_atspi_text_get(entry, 6, 100);
    ck_assert(val == NULL);
-   eo_do(entry, val = elm_interface_atspi_text_get(-6, 10));
+   val = elm_interface_atspi_text_get(entry, -6, 10);
    ck_assert(val == NULL);
-   eo_do(entry, val = elm_interface_atspi_text_get(-6, -10));
+   val = elm_interface_atspi_text_get(entry, -6, -10);
    ck_assert(val == NULL);
-   eo_do(entry, val = elm_interface_atspi_text_get(60, 100));
+   val = elm_interface_atspi_text_get(entry, 60, 100);
    ck_assert(val == NULL);
 
    // proper range
-   eo_do(entry, val = elm_interface_atspi_text_get(6, 17));
+   val = elm_interface_atspi_text_get(entry, 6, 17);
    ck_assert_str_eq(val, "Xpśum dolor");
 
    if (val) free(val);
@@ -298,30 +298,30 @@ START_TEST (elm_entry_atspi_text_selections)
    entry = elm_entry_add(win);
    elm_object_text_set(entry, txt);
 
-   eo_do(entry, val = elm_interface_atspi_text_selections_count_get());
+   val = elm_interface_atspi_text_selections_count_get(entry);
    ck_assert(val == 0);
 
    elm_entry_select_region_set(entry, 2, 4);
-   eo_do(entry, val = elm_interface_atspi_text_selections_count_get());
+   val = elm_interface_atspi_text_selections_count_get(entry);
    ck_assert(val == 1);
-   eo_do(entry, elm_interface_atspi_text_selection_get(0, &start, &end));
+   elm_interface_atspi_text_selection_get(entry, 0, &start, &end);
    ck_assert(start == 2);
    ck_assert(end == 4);
 
    elm_entry_select_region_set(entry, 6, 10);
-   eo_do(entry, val = elm_interface_atspi_text_selections_count_get());
+   val = elm_interface_atspi_text_selections_count_get(entry);
    ck_assert(val == 1);
-   eo_do(entry, elm_interface_atspi_text_selection_get(0, &start, &end));
+   elm_interface_atspi_text_selection_get(entry, 0, &start, &end);
    ck_assert(start == 6);
    ck_assert(end == 10);
 
    elm_entry_select_none(entry);
-   eo_do(entry, ret = elm_interface_atspi_text_selection_add(2, 5));
+   ret = elm_interface_atspi_text_selection_add(entry, 2, 5);
    ck_assert(ret == EINA_TRUE);
    str = elm_entry_selection_get(entry);
    ck_assert_str_eq(str, "rem");
 
-   eo_do(entry, ret = elm_interface_atspi_text_selection_remove(0));
+   ret = elm_interface_atspi_text_selection_remove(entry, 0);
    ck_assert(ret == EINA_TRUE);
    str = elm_entry_selection_get(entry);
    ck_assert(str == NULL);
@@ -339,7 +339,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
-   eo_do(entry, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(entry);
 
    ck_assert(role == ELM_ATSPI_ROLE_ENTRY);
 

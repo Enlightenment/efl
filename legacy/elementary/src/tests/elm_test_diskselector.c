@@ -15,7 +15,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "diskselector", ELM_WIN_BASIC);
 
    diskselector = elm_diskselector_add(win);
-   eo_do(diskselector, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(diskselector);
 
    ck_assert(role == ELM_ATSPI_ROLE_LIST);
 

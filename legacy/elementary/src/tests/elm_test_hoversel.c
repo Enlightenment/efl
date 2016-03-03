@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "hoversel", ELM_WIN_BASIC);
 
    hoversel = elm_hoversel_add(win);
-   eo_do(hoversel, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(hoversel);
 
    ck_assert(role == ELM_ATSPI_ROLE_PUSH_BUTTON);
 

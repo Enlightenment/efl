@@ -47,7 +47,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
   static Eina_Bool                                                               \
   _##name##_fwd(void *data, const Eo_Event *ev EINA_UNUSED)                                          \
   {                                                                         \
-     eo_do(data, eo_event_callback_call(event, ev->event_info));          \
+     eo_event_callback_call(data, event, ev->event_info);          \
                                                                       \
      return EINA_TRUE;                                                \
   }
@@ -76,8 +76,8 @@ _FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
    s = elm_entry_utf8_to_markup(file);
    elm_object_text_set(sd->entry, s);
    free(s);
-   eo_do(data, eo_event_callback_call
-     (ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, event->event_info));
+   eo_event_callback_call
+     (data, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, event->event_info);
 
    return EINA_TRUE;
 }
@@ -91,8 +91,8 @@ _ACTIVATED_fwd(void *data, const Eo_Event *event)
 
    file = elm_object_text_get(sd->entry);
    elm_fileselector_path_set(sd->button, file);
-   eo_do(data, eo_event_callback_call
-     (ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event->event_info));
+   eo_event_callback_call
+     (data, ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event->event_info);
 
    return EINA_TRUE;
 }
@@ -166,7 +166,7 @@ _elm_fileselector_entry_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Entry_D
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    style = elm_widget_style_get(obj);
@@ -194,7 +194,7 @@ _elm_fileselector_entry_elm_widget_disable(Eo *obj, Elm_Fileselector_Entry_Data 
    Eina_Bool val;
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_disable());
+   int_ret = elm_obj_widget_disable(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    val = elm_widget_disabled_get(obj);
@@ -211,8 +211,7 @@ _elm_fileselector_entry_elm_layout_text_set(Eo *obj, Elm_Fileselector_Entry_Data
    if (part && strcmp(part, "default"))
      {
         Eina_Bool int_ret = EINA_FALSE;
-        eo_do_super(obj, MY_CLASS,
-                    int_ret = elm_obj_layout_text_set(part, label));
+        int_ret = elm_obj_layout_text_set(eo_super(obj, MY_CLASS), part, label);
         return int_ret;
      }
 
@@ -226,7 +225,7 @@ _elm_fileselector_entry_elm_layout_text_get(Eo *obj, Elm_Fileselector_Entry_Data
    if (part && strcmp(part, "default"))
      {
         const char *text = NULL;
-        eo_do_super(obj, MY_CLASS, text = elm_obj_layout_text_get(part));
+        text = elm_obj_layout_text_get(eo_super(obj, MY_CLASS), part);
         return text;
      }
 
@@ -239,7 +238,7 @@ _elm_fileselector_entry_elm_container_content_set(Eo *obj, Elm_Fileselector_Entr
    if (part && strcmp(part, "button icon"))
      {
         Eina_Bool int_ret = EINA_FALSE;
-        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
+        int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
         return int_ret;
      }
 
@@ -254,7 +253,7 @@ _elm_fileselector_entry_elm_container_content_get(Eo *obj, Elm_Fileselector_Entr
    if (part && strcmp(part, "button icon"))
      {
         Evas_Object *ret = NULL;
-        eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_get(part));
+        ret = elm_obj_container_content_get(eo_super(obj, MY_CLASS), part);
         return ret;
      }
 
@@ -267,7 +266,7 @@ _elm_fileselector_entry_elm_container_content_unset(Eo *obj, Elm_Fileselector_En
    if (part && strcmp(part, "button icon"))
      {
         Evas_Object *ret = NULL;
-        eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_unset(part));
+        ret = elm_obj_container_content_unset(eo_super(obj, MY_CLASS), part);
         return ret;
      }
 
@@ -277,7 +276,7 @@ _elm_fileselector_entry_elm_container_content_unset(Eo *obj, Elm_Fileselector_En
 EOLIAN static void
 _elm_fileselector_entry_evas_object_smart_add(Eo *obj, Elm_Fileselector_Entry_Data *priv)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->button = elm_fileselector_button_add(obj);
@@ -289,7 +288,7 @@ _elm_fileselector_entry_evas_object_smart_add(Eo *obj, Elm_Fileselector_Entry_Da
      (priv->button, _elm_config->fileselector_expand_enable);
 
 #define SIG_FWD(name, event) \
-  eo_do(priv->button, eo_event_callback_add(event, _##name##_fwd, obj))
+  eo_event_callback_add(priv->button, event, _##name##_fwd, obj)
    SIG_FWD(CLICKED, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED);
    SIG_FWD(UNPRESSED, EVAS_CLICKABLE_INTERFACE_EVENT_UNPRESSED);
    SIG_FWD(FILE_CHOSEN, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN);
@@ -303,7 +302,7 @@ _elm_fileselector_entry_evas_object_smart_add(Eo *obj, Elm_Fileselector_Entry_Da
    elm_entry_editable_set(priv->entry, EINA_TRUE);
 
 #define SIG_FWD(name, event) \
-  eo_do(priv->entry, eo_event_callback_add(event, _##name##_fwd, obj))
+  eo_event_callback_add(priv->entry, event, _##name##_fwd, obj)
    SIG_FWD(CHANGED, ELM_ENTRY_EVENT_CHANGED);
    SIG_FWD(ACTIVATED, ELM_ENTRY_EVENT_ACTIVATED);
    SIG_FWD(PRESS, ELM_ENTRY_EVENT_PRESS);
@@ -336,7 +335,7 @@ _elm_fileselector_entry_evas_object_smart_del(Eo *obj, Elm_Fileselector_Entry_Da
 {
    free(sd->path);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -350,11 +349,10 @@ elm_fileselector_entry_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_fileselector_entry_eo_base_constructor(Eo *obj, Elm_Fileselector_Entry_Data *sd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_GROUPING));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_GROUPING);
 
    return obj;
 }
@@ -364,7 +362,7 @@ elm_fileselector_entry_selected_set(Evas_Object *obj,
                                     const char *path)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   eo_do(obj, elm_interface_fileselector_selected_set(path));
+   elm_interface_fileselector_selected_set(obj, path);
 }
 
 EOLIAN static Eina_Bool
@@ -379,7 +377,7 @@ elm_fileselector_entry_selected_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
    const char *ret = NULL;
-   eo_do((Eo *) obj, ret = elm_interface_fileselector_selected_get());
+   ret = elm_interface_fileselector_selected_get((Eo *) obj);
    return ret;
 }
 
@@ -418,7 +416,7 @@ elm_fileselector_entry_path_set(Evas_Object *obj,
                                 const char *path)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   eo_do(obj, elm_interface_fileselector_path_set(path));
+   elm_interface_fileselector_path_set(obj, path);
 }
 
 EOLIAN static void
@@ -440,7 +438,7 @@ elm_fileselector_entry_path_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
    const char *ret = NULL;
-   eo_do((Eo *) obj, ret = elm_interface_fileselector_path_get());
+   ret = elm_interface_fileselector_path_get((Eo *) obj);
    return ret;
 }
 
@@ -457,7 +455,7 @@ elm_fileselector_entry_expandable_set(Evas_Object *obj,
                                       Eina_Bool value)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   eo_do(obj, elm_interface_fileselector_expandable_set(value));
+   elm_interface_fileselector_expandable_set(obj, value);
 }
 
 EOLIAN static void
@@ -471,7 +469,7 @@ elm_fileselector_entry_expandable_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, ret = elm_interface_fileselector_expandable_get());
+   ret = elm_interface_fileselector_expandable_get((Eo *) obj);
    return ret;
 }
 
@@ -486,7 +484,7 @@ elm_fileselector_entry_folder_only_set(Evas_Object *obj,
                                        Eina_Bool value)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   eo_do(obj, elm_interface_fileselector_folder_only_set(value));
+   elm_interface_fileselector_folder_only_set(obj, value);
 }
 
 EOLIAN static void
@@ -500,7 +498,7 @@ elm_fileselector_entry_folder_only_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, ret = elm_interface_fileselector_folder_only_get());
+   ret = elm_interface_fileselector_folder_only_get((Eo *) obj);
    return ret;
 }
 
@@ -515,7 +513,7 @@ elm_fileselector_entry_is_save_set(Evas_Object *obj,
                                    Eina_Bool value)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   eo_do(obj, elm_interface_fileselector_is_save_set(value));
+   elm_interface_fileselector_is_save_set(obj, value);
 }
 
 EOLIAN static void
@@ -529,7 +527,7 @@ elm_fileselector_entry_is_save_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, ret = elm_interface_fileselector_is_save_get());
+   ret = elm_interface_fileselector_is_save_get((Eo *) obj);
    return ret;
 }
 

@@ -73,7 +73,7 @@ _on_clock_val_up(void *data)
    sd->interval = sd->interval / 1.05;
    ecore_timer_interval_set(sd->spin, sd->interval);
    _time_update(data, EINA_FALSE);
-   eo_do(data, eo_event_callback_call(ELM_CLOCK_EVENT_CHANGED, NULL));
+   eo_event_callback_call(data, ELM_CLOCK_EVENT_CHANGED, NULL);
    return ECORE_CALLBACK_RENEW;
 
 clock_val_up_cancel:
@@ -128,7 +128,7 @@ _on_clock_val_down(void *data)
    sd->interval = sd->interval / 1.05;
    ecore_timer_interval_set(sd->spin, sd->interval);
    _time_update(data, EINA_FALSE);
-   eo_do(data, eo_event_callback_call(ELM_CLOCK_EVENT_CHANGED, NULL));
+   eo_event_callback_call(data, ELM_CLOCK_EVENT_CHANGED, NULL);
    return ECORE_CALLBACK_RENEW;
 
 clock_val_down_cancel:
@@ -565,7 +565,7 @@ _elm_clock_elm_widget_theme_apply(Eo *obj, Elm_Clock_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    _time_update(obj, EINA_TRUE);
@@ -654,7 +654,7 @@ _elm_clock_evas_object_smart_add(Eo *obj, Elm_Clock_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->cur.ampm = -1;
@@ -696,7 +696,7 @@ _elm_clock_evas_object_smart_del(Eo *obj, Elm_Clock_Data *sd)
 
    /* NB: digits are killed for being sub objects, automatically */
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_clock_smart_focus_next_enable = EINA_FALSE;
@@ -797,11 +797,10 @@ elm_clock_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_clock_eo_base_constructor(Eo *obj, Elm_Clock_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_TEXT));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_TEXT);
 
    return obj;
 }

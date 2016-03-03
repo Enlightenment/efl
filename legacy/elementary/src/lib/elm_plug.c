@@ -42,7 +42,7 @@ _elm_plug_disconnected(Ecore_Evas *ee)
 {
    Evas_Object *plug = ecore_evas_data_get(ee, PLUG_KEY);
    EINA_SAFETY_ON_NULL_RETURN(plug);
-   eo_do(plug, eo_event_callback_call(ELM_PLUG_EVENT_IMAGE_DELETED, NULL));
+   eo_event_callback_call(plug, ELM_PLUG_EVENT_IMAGE_DELETED, NULL);
    /* TODO: was a typo. Deprecated, remove in future releases: */
    evas_object_smart_callback_call(plug, "image.deleted", NULL);
 }
@@ -55,7 +55,7 @@ _elm_plug_resized(Ecore_Evas *ee)
    EINA_SAFETY_ON_NULL_RETURN(plug);
 
    ecore_evas_geometry_get(ee, NULL, NULL, &(size.w), &(size.h));
-   eo_do(plug, eo_event_callback_call(ELM_PLUG_EVENT_IMAGE_RESIZED, &size));
+   eo_event_callback_call(plug, ELM_PLUG_EVENT_IMAGE_RESIZED, &size);
 }
 
 EOLIAN static Eina_Bool
@@ -65,7 +65,7 @@ _elm_plug_elm_widget_on_focus(Eo *obj, void *sd EINA_UNUSED, Elm_Object_Item *it
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
+   int_ret = elm_obj_widget_on_focus(eo_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj))
@@ -84,7 +84,7 @@ EOLIAN static Eina_Bool
 _elm_plug_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    _sizing_eval(obj);
@@ -103,7 +103,7 @@ _on_mouse_up(void *data,
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+   eo_event_callback_call(data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
 }
 
 EOLIAN static void
@@ -113,7 +113,7 @@ _elm_plug_evas_object_smart_add(Eo *obj, void *sd EINA_UNUSED)
    Ecore_Evas *ee;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
@@ -143,11 +143,10 @@ elm_plug_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_plug_eo_base_constructor(Eo *obj, void *sd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_IMAGE));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
 
    return obj;
 }

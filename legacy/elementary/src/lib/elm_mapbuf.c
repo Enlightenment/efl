@@ -35,7 +35,7 @@ EOLIAN static Eina_Bool
 _elm_mapbuf_elm_widget_theme_apply(Eo *obj, Elm_Mapbuf_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    _sizing_eval(obj);
@@ -74,7 +74,7 @@ EOLIAN static Eina_Bool
 _elm_mapbuf_elm_widget_sub_object_del(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
+   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->content)
@@ -154,7 +154,7 @@ _mapbuf_auto_smooth(Evas_Object *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 EOLIAN static void
 _elm_mapbuf_evas_object_smart_move(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
+   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
 
    _mapbuf_auto_eval(obj, sd);
    _mapbuf_auto_smooth(obj, sd);
@@ -164,7 +164,7 @@ _elm_mapbuf_evas_object_smart_move(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord x, E
 EOLIAN static void
 _elm_mapbuf_evas_object_smart_resize(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
+   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
    if (sd->content) evas_object_resize(sd->content, w, h);
    _mapbuf_auto_eval(obj, sd);
@@ -174,7 +174,7 @@ _elm_mapbuf_evas_object_smart_resize(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord w,
 EOLIAN static void
 _elm_mapbuf_evas_object_smart_show(Eo *obj, Elm_Mapbuf_Data *sd)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
+   evas_obj_smart_show(eo_super(obj, MY_CLASS));
 
    _mapbuf_auto_eval(obj, sd);
    _configure(obj);
@@ -183,7 +183,7 @@ _elm_mapbuf_evas_object_smart_show(Eo *obj, Elm_Mapbuf_Data *sd)
 EOLIAN static void
 _elm_mapbuf_evas_object_smart_hide(Eo *obj, Elm_Mapbuf_Data *sd)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
+   evas_obj_smart_hide(eo_super(obj, MY_CLASS));
 
    _mapbuf_auto_eval(obj, sd);
    _configure(obj);
@@ -247,7 +247,7 @@ _elm_mapbuf_evas_object_smart_del(Eo *obj, Elm_Mapbuf_Data *priv)
    ELM_SAFE_FREE(priv->idler, ecore_idler_del);
    ELM_SAFE_FREE(priv->map, evas_map_free);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -258,7 +258,7 @@ _elm_mapbuf_evas_object_smart_add(Eo *obj, Elm_Mapbuf_Data *priv)
 
    elm_widget_resize_object_set(obj, rect, EINA_TRUE);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    evas_object_static_clip_set(rect, EINA_TRUE);
@@ -293,10 +293,9 @@ elm_mapbuf_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_mapbuf_eo_base_constructor(Eo *obj, Elm_Mapbuf_Data *sd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_IMAGE_MAP));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE_MAP);
 
    return obj;
 }

@@ -22,7 +22,7 @@ _elm_atspi_app_object_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Atspi_App_Obje
 {
    if (_pd->descr) eina_stringshare_del(_pd->descr);
 
-   eo_do_super(obj, ELM_ATSPI_APP_OBJECT_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, ELM_ATSPI_APP_OBJECT_CLASS));
 }
 
 EOLIAN static Eina_List*
@@ -36,7 +36,7 @@ _elm_atspi_app_object_elm_interface_atspi_accessible_children_get(Eo *obj EINA_U
         Elm_Atspi_Type type;
         if (!eo_isa(win, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
           continue;
-        eo_do(win, type = elm_interface_atspi_accessible_type_get());
+        type = elm_interface_atspi_accessible_type_get(win);
         if (type == ELM_ATSPI_TYPE_REGULAR)
           accs = eina_list_append(accs, win);
      }

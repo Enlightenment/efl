@@ -573,7 +573,7 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
-   eo_do(en, eo_event_callback_add(ELM_ENTRY_EVENT_CONTEXT_OPEN, _context_menu_show_cb, NULL));
+   eo_event_callback_add(en, ELM_ENTRY_EVENT_CONTEXT_OPEN, _context_menu_show_cb, NULL);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
@@ -2438,8 +2438,8 @@ _test_regex_bt_cb(void *data,
 
    if (test_data->re)
      {
-        eo_do(test_data->en_single, eo_event_callback_del(ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re));
-        eo_do(test_data->en_multi, eo_event_callback_del(ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re));
+        eo_event_callback_del(test_data->en_single, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re);
+        eo_event_callback_del(test_data->en_multi, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re);
         elm_validator_regexp_free(test_data->re);
      }
    test_data->re = elm_validator_regexp_new(elm_entry_entry_get(test_data->en_regex), NULL);
@@ -2463,8 +2463,8 @@ _test_regex_bt_cb(void *data,
      }
    if (!status)
      {
-        eo_do(test_data->en_single, eo_event_callback_add(ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re));
-        eo_do(test_data->en_multi, eo_event_callback_add(ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re));
+        eo_event_callback_add(test_data->en_single, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re);
+        eo_event_callback_add(test_data->en_multi, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re);
      }
 
    elm_object_text_set(test_data->lb_regex, eina_strbuf_string_get(tmp));
@@ -2563,8 +2563,8 @@ test_entry_regex(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    test_data->re = elm_validator_regexp_new(REGEX, NULL);
    elm_entry_entry_set(test_data->en_regex, REGEX);
-   eo_do(test_data->en_single, eo_event_callback_add(ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re));
-   eo_do(test_data->en_multi, eo_event_callback_add(ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re));
+   eo_event_callback_add(test_data->en_single, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re);
+   eo_event_callback_add(test_data->en_multi, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re);
 
    evas_object_resize(win, 400, 400);
    evas_object_show(win);

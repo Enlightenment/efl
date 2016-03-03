@@ -23,15 +23,15 @@ START_TEST (elm_list_atspi_selection_selected_children_count_get)
  list = elm_list_add(win);
  item = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
 
- eo_do(list, val = elm_interface_atspi_selection_selected_children_count_get());
+ val = elm_interface_atspi_selection_selected_children_count_get(list);
  ck_assert(val == 0);
 
  elm_list_item_selected_set(item, EINA_TRUE);
- eo_do(list, val = elm_interface_atspi_selection_selected_children_count_get());
+ val = elm_interface_atspi_selection_selected_children_count_get(list);
  ck_assert(val == 1);
 
  elm_list_item_selected_set(item, EINA_FALSE);
- eo_do(list, val = elm_interface_atspi_selection_selected_children_count_get());
+ val = elm_interface_atspi_selection_selected_children_count_get(list);
  ck_assert(val == 0);
 
  elm_shutdown();
@@ -50,7 +50,7 @@ START_TEST (elm_list_atspi_selection_child_select)
  list = elm_list_add(win);
  item = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
 
- eo_do(list, val = elm_interface_atspi_selection_child_select(0));
+ val = elm_interface_atspi_selection_child_select(list, 0);
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_TRUE == elm_list_item_selected_get(item));
 
@@ -73,7 +73,7 @@ START_TEST (elm_list_atspi_selection_selected_child_deselect)
  item = elm_list_item_append(list, "Second Element", NULL, NULL, NULL, NULL);
 
  elm_list_item_selected_set(item, EINA_TRUE);
- eo_do(list, val = elm_interface_atspi_selection_selected_child_deselect(0));
+ val = elm_interface_atspi_selection_selected_child_deselect(list, 0);
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item));
 
@@ -93,11 +93,11 @@ START_TEST (elm_list_atspi_selection_is_child_selected)
  list = elm_list_add(win);
  item = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
 
- eo_do(list, val = elm_interface_atspi_selection_is_child_selected(0));
+ val = elm_interface_atspi_selection_is_child_selected(list, 0);
  ck_assert(val == EINA_FALSE);
 
  elm_list_item_selected_set(item, EINA_TRUE);
- eo_do(list, val = elm_interface_atspi_selection_is_child_selected(0));
+ val = elm_interface_atspi_selection_is_child_selected(list, 0);
  ck_assert(val == EINA_TRUE);
 
  elm_shutdown();
@@ -118,11 +118,11 @@ START_TEST (elm_list_atspi_selection_all_children_select)
  item1 = elm_list_item_append(list, "First Element", NULL, NULL, NULL, NULL);
  item2 = elm_list_item_append(list, "Second Element", NULL, NULL, NULL, NULL);
 
- eo_do(list, val = elm_interface_atspi_selection_all_children_select());
+ val = elm_interface_atspi_selection_all_children_select(list);
  ck_assert(val == EINA_FALSE);
 
  elm_list_multi_select_set(list, EINA_TRUE);
- eo_do(list, val = elm_interface_atspi_selection_all_children_select());
+ val = elm_interface_atspi_selection_all_children_select(list);
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_TRUE == elm_list_item_selected_get(item1));
  ck_assert(EINA_TRUE == elm_list_item_selected_get(item2));
@@ -149,7 +149,7 @@ START_TEST (elm_list_atspi_selection_clear)
  elm_list_item_selected_set(item2, EINA_TRUE);
 
 
- eo_do(list, val = elm_interface_atspi_selection_clear());
+ val = elm_interface_atspi_selection_clear(list);
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item1));
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item2));
@@ -173,7 +173,7 @@ START_TEST (elm_list_atspi_selection_child_deselect)
  item = elm_list_item_append(list, "Second Element", NULL, NULL, NULL, NULL);
 
  elm_list_item_selected_set(item, EINA_TRUE);
- eo_do(list, val = elm_interface_atspi_selection_selected_child_deselect(1));
+ val = elm_interface_atspi_selection_selected_child_deselect(list, 1);
  ck_assert(val == EINA_TRUE);
  ck_assert(EINA_FALSE == elm_list_item_selected_get(item));
 
@@ -192,7 +192,7 @@ START_TEST (elm_atspi_role_get)
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
- eo_do(list, role = elm_interface_atspi_accessible_role_get());
+ role = elm_interface_atspi_accessible_role_get(list);
 
  ck_assert(role == ELM_ATSPI_ROLE_LIST);
 
@@ -220,10 +220,10 @@ START_TEST(elm_atspi_children_parent)
 
    evas_object_show(list);
 
-   eo_do(icon, parent = elm_interface_atspi_accessible_parent_get());
+   parent = elm_interface_atspi_accessible_parent_get(icon);
    ck_assert(list == parent);
 
-   eo_do(end, parent = elm_interface_atspi_accessible_parent_get());
+   parent = elm_interface_atspi_accessible_parent_get(end);
    ck_assert(list == parent);
 
    elm_shutdown();

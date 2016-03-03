@@ -1713,23 +1713,6 @@ elm_coords_finger_size_adjust(int times_w,
      *h = elm_config_finger_size_get() * times_h;
 }
 
-
-// Object item Eo migration defines, will be removed later
-#define IF_EO_DO(obj, func)                            \
-       if (eo_isa(obj, ELM_WIDGET_ITEM_CLASS))   \
-         {                                             \
-            eo_do (obj, func);                   \
-            return;                                    \
-         }
-
-#define IF_EO_RETURN(obj, type, func)                  \
-       if (eo_isa(obj, ELM_WIDGET_ITEM_CLASS))   \
-         {                                             \
-            type ret;                                  \
-            eo_do (obj, ret = func);             \
-            return ret;                                \
-         }
-
 EAPI void
 elm_object_access_info_set(Evas_Object *obj, const char *txt)
 {

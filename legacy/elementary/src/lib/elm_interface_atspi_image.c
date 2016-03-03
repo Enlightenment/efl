@@ -21,7 +21,7 @@ _elm_interface_atspi_image_description_get(Eo *obj, void *sd EINA_UNUSED)
 {
    const char *descr = NULL;
 
-   eo_do(obj, descr = eo_key_data_get("atspi_image_description"));
+   descr = eo_key_data_get(obj, "atspi_image_description");
    return descr;
 }
 
@@ -31,16 +31,16 @@ _elm_interface_atspi_image_description_set(Eo *obj, void *sd EINA_UNUSED, const 
    const char *key = "atspi_image_description";
    const char *descr = eina_stringshare_add(description);
    char *old_descr;
-   if (eo_do_ret(obj, old_descr, eo_key_data_get(key)))
+   if (eo_key_data_get(obj, key))
      {
         eina_stringshare_del(old_descr);
-        eo_do(obj, eo_event_callback_del(EO_BASE_EVENT_DEL, _free_desc_cb, old_descr));
+        eo_event_callback_del(obj, EO_BASE_EVENT_DEL, _free_desc_cb, old_descr);
      }
 
    if (descr)
      {
-        eo_do(obj, eo_key_data_set(key, descr),
-              eo_event_callback_add(EO_BASE_EVENT_DEL, _free_desc_cb, descr));
+        eo_key_data_set(obj, key, descr);
+        eo_event_callback_add(obj, EO_BASE_EVENT_DEL, _free_desc_cb, descr);
      }
 }
 

@@ -113,8 +113,8 @@ _on_recalc_done(void *data,
    ELM_FRAME_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
-   eo_do(wd->resize_obj, eo_event_callback_del
-     (EDJE_OBJECT_EVENT_RECALC, _recalc, data));
+   eo_event_callback_del
+     (wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, _recalc, data);
    sd->anim = EINA_FALSE;
 
    elm_layout_sizing_eval(data);
@@ -133,14 +133,13 @@ _on_frame_clicked(void *data,
 
    if (sd->collapsible)
      {
-        eo_do(wd->resize_obj, eo_event_callback_add(
-          EDJE_OBJECT_EVENT_RECALC, _recalc, data));
+        eo_event_callback_add(wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, _recalc, data);
         elm_layout_signal_emit(data, "elm,action,toggle", "elm");
         sd->collapsed++;
         sd->anim = EINA_TRUE;
      }
-   eo_do(data, eo_event_callback_call
-     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+   eo_event_callback_call
+     (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
 }
 
 /* using deferred sizing evaluation, just like the parent */
@@ -162,7 +161,7 @@ _elm_frame_evas_object_smart_add(Eo *obj, Elm_Frame_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    edje_object_signal_callback_add
@@ -203,11 +202,10 @@ elm_frame_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_frame_eo_base_constructor(Eo *obj, Elm_Frame_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_FRAME));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FRAME);
 
    return obj;
 }
@@ -250,8 +248,8 @@ _elm_frame_collapse_go(Eo *obj, Elm_Frame_Data *sd, Eina_Bool collapse)
    if (sd->collapsed == collapse) return;
 
    elm_layout_signal_emit(obj, "elm,action,toggle", "elm");
-   eo_do(wd->resize_obj, eo_event_callback_call
-     (EDJE_OBJECT_EVENT_RECALC, obj));
+   eo_event_callback_call
+     (wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, obj);
    sd->collapsed = collapse;
    sd->anim = EINA_TRUE;
 }

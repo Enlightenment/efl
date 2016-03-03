@@ -41,7 +41,7 @@ _view_append(Elm_App_Server_Data *data, Elm_App_Server_View *view)
 {
    Eina_Stringshare *view_id = NULL;
 
-   eo_do(view, view_id = elm_app_server_view_id_get());
+   view_id = elm_app_server_view_id_get(view);
 
    if (eina_hash_find(data->views, view_id))
      {
@@ -51,7 +51,7 @@ _view_append(Elm_App_Server_Data *data, Elm_App_Server_View *view)
      }
 
    eina_hash_add(data->views, view_id, view);
-   eo_do(view, eo_event_callback_add(EO_BASE_EVENT_DEL, _view_del_cb, data));
+   eo_event_callback_add(view, EO_BASE_EVENT_DEL, _view_del_cb, data);
    return EINA_TRUE;
 }
 
@@ -87,7 +87,7 @@ _method_create_view(const Eldbus_Service_Interface *iface, const Eldbus_Message 
                                          NULL);
         return reply;
      }
-   eo_do(view, view_path = elm_app_server_view_path_get());
+   view_path = elm_app_server_view_path_get(view);
 
    reply = eldbus_message_method_return_new(message);
    eldbus_message_arguments_append(reply, "o", view_path);
@@ -112,7 +112,7 @@ _close_all_views(Elm_App_Server_Data *data)
    eina_iterator_free(iter);
 
    EINA_LIST_FREE(view_list, view)
-     eo_do(view, elm_app_server_view_close());
+     elm_app_server_view_close(view);
 }
 
 static Eldbus_Message *
@@ -131,7 +131,7 @@ _method_terminate(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbu
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
 
-   eo_do(eo, eo_event_callback_call(ELM_APP_SERVER_EVENT_TERMINATE, NULL));
+   eo_event_callback_call(eo, ELM_APP_SERVER_EVENT_TERMINATE, NULL);
 
    return eldbus_message_method_return_new(message);
 }
@@ -255,17 +255,16 @@ _elm_app_server_constructor(Eo *obj, Elm_App_Server_Data *data, const char *pkg,
              new_events = elm_app_server_view_props_new_events_get(view_eet_props);
              progress = elm_app_server_view_props_progress_get(view_eet_props);
 
-             view = eo_add(ELM_APP_SERVER_VIEW_CLASS, obj,
-                                  elm_app_server_view_id_set(view_id));
+             view = eo_add(ELM_APP_SERVER_VIEW_CLASS, obj, elm_app_server_view_id_set(eoid, view_id));
              if (!view)
                continue;
 
-             eo_do(view, elm_app_server_view_title_set(title),
-                   elm_app_server_view_icon_set(icon_name),
-                   elm_app_server_view_progress_set(progress),
-                   elm_app_server_view_new_events_set(new_events),
-                   eo_event_callback_add(EO_BASE_EVENT_DEL, _view_del_cb, data),
-                   elm_app_server_view_shallow());
+             elm_app_server_view_title_set(view, title);
+             elm_app_server_view_icon_set(view, icon_name);
+             elm_app_server_view_progress_set(view, progress);
+             elm_app_server_view_new_events_set(view, new_events);
+             eo_event_callback_add(view, EO_BASE_EVENT_DEL, _view_del_cb, data);
+             elm_app_server_view_shallow(view);
 
              eina_hash_add(data->views, view_id, view);
           }
@@ -301,12 +300,12 @@ _elm_app_server_save(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
         int new_events = 0;
         short progress = 0;
 
-        eo_do(view, id = elm_app_server_view_id_get(),
-              title = elm_app_server_view_title_get(),
-              icon_name = elm_app_server_view_icon_get(),
-              new_events = elm_app_server_view_new_events_get(),
-              progress = elm_app_server_view_progress_get(),
-              eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_SAVE, NULL));
+        id = elm_app_server_view_id_get(view);
+        title = elm_app_server_view_title_get(view);
+        icon_name = elm_app_server_view_icon_get(view);
+        new_events = elm_app_server_view_new_events_get(view);
+        progress = elm_app_server_view_progress_get(view);
+        eo_event_callback_call(view, ELM_APP_SERVER_VIEW_EVENT_SAVE, NULL);
 
         view_props = elm_app_server_view_props_new(id, title, icon_name,
                                                    new_events, progress);
@@ -421,7 +420,7 @@ _elm_app_server_eo_base_finalize(Eo *obj, Elm_App_Server_Data *data)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(data->pkg, NULL);
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
+   return eo_finalize(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -434,7 +433,7 @@ _elm_app_server_eo_base_destructor(Eo *obj, Elm_App_Server_Data *data)
    EINA_ITERATOR_FOREACH(iter, view)
      {
         //do not modify hash when iterating
-        eo_do(view, eo_event_callback_del(EO_BASE_EVENT_DEL, _view_del_cb, data));
+        eo_event_callback_del(view, EO_BASE_EVENT_DEL, _view_del_cb, data);
         eo_del(view);
      }
    eina_iterator_free(iter);
@@ -448,7 +447,7 @@ _elm_app_server_eo_base_destructor(Eo *obj, Elm_App_Server_Data *data)
    eldbus_service_interface_unregister(data->iface);
    eldbus_connection_unref(data->conn);
    eldbus_shutdown();
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 #include "elm_app_server.eo.c"

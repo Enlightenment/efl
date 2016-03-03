@@ -115,7 +115,7 @@ _elm_actionslider_elm_widget_theme_apply(Eo *obj, Elm_Actionslider_Data *sd EINA
 
    mirrored = elm_object_mirrored_get(obj);
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (elm_object_mirrored_get(obj) != mirrored)
@@ -154,16 +154,14 @@ _drag_button_move_cb(void *data,
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.drag_button_base", &pos, NULL);
    if (pos == 0.0)
-     eo_do(obj, eo_event_callback_call
-       (ELM_ACTIONSLIDER_EVENT_POS_CHANGED,
-       !elm_widget_mirrored_get(obj) ? "left" : "right"));
+     eo_event_callback_call
+       (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, !elm_widget_mirrored_get(obj) ? "left" : "right");
    else if (pos == 1.0)
-     eo_do(obj, eo_event_callback_call
-       (ELM_ACTIONSLIDER_EVENT_POS_CHANGED,
-      !elm_widget_mirrored_get(obj) ? "right" : "left"));
+     eo_event_callback_call
+       (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, !elm_widget_mirrored_get(obj) ? "right" : "left");
    else if (pos >= 0.45 && pos <= 0.55)
-     eo_do(obj, eo_event_callback_call
-       (ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center"));
+     eo_event_callback_call
+       (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center");
 }
 
 static void
@@ -233,16 +231,16 @@ _button_animator(void *data)
 
         if ((!sd->final_position) &&
             (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
-          eo_do(obj, eo_event_callback_call
-            (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)left));
+          eo_event_callback_call
+            (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)left);
         else if ((sd->final_position == 0.5) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_CENTER))
-          eo_do(obj, eo_event_callback_call
-            (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)center));
+          eo_event_callback_call
+            (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)center);
         else if ((sd->final_position == 1) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
-          eo_do(obj, eo_event_callback_call
-            (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)right));
+          eo_event_callback_call
+            (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)right);
 
         sd->button_animator = NULL;
 
@@ -279,8 +277,8 @@ _drag_button_up_cb(void *data,
         (elm_widget_mirrored_get(obj) && position == 1.0)))
      {
         sd->final_position = 0;
-        eo_do(obj, eo_event_callback_call
-          (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)left));
+        eo_event_callback_call
+          (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)left);
 
         return;
      }
@@ -289,8 +287,8 @@ _drag_button_up_cb(void *data,
        (sd->enabled_position & ELM_ACTIONSLIDER_CENTER))
      {
         sd->final_position = 0.5;
-        eo_do(obj, eo_event_callback_call
-          (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)center));
+        eo_event_callback_call
+          (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)center);
 
         ecore_animator_del(sd->button_animator);
         sd->button_animator = ecore_animator_add(_button_animator, obj);
@@ -303,8 +301,8 @@ _drag_button_up_cb(void *data,
         (elm_widget_mirrored_get(obj) && position == 0.0)))
      {
         sd->final_position = 1;
-        eo_do(obj, eo_event_callback_call
-          (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)right));
+        eo_event_callback_call
+          (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)right);
         return;
      }
 
@@ -373,22 +371,22 @@ _track_move_cb(void *data,
           {
              if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
                {
-                  eo_do(obj, eo_event_callback_call
-                    (ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center"));
+                  eo_event_callback_call
+                    (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center");
                   sd->final_position = 0.5;
                }
              else if (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT)
                {
-                  eo_do(obj, eo_event_callback_call
-                    (ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "right"));
+                  eo_event_callback_call
+                    (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "right");
                   sd->final_position = 1.0;
                }
           }
         else if ((sd->final_position == 0.5) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
           {
-             eo_do(obj, eo_event_callback_call
-               (ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "right"));
+             eo_event_callback_call
+               (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "right");
              sd->final_position = 1.0;
           }
      }
@@ -396,8 +394,8 @@ _track_move_cb(void *data,
      {
         if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
           {
-             eo_do(obj, eo_event_callback_call
-               (ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center"));
+             eo_event_callback_call
+               (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center");
              sd->final_position = 0.5;
           }
      }
@@ -407,22 +405,22 @@ _track_move_cb(void *data,
           {
              if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
                {
-                  eo_do(obj, eo_event_callback_call
-                    (ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center"));
+                  eo_event_callback_call
+                    (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center");
                   sd->final_position = 0.5;
                }
              else if (sd->enabled_position & ELM_ACTIONSLIDER_LEFT)
                {
-                  eo_do(obj, eo_event_callback_call
-                    (ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "left"));
+                  eo_event_callback_call
+                    (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "left");
                   sd->final_position = 0.0;
                }
           }
         else if (sd->final_position == 0.5 &&
                 (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
           {
-             eo_do(obj, eo_event_callback_call
-               (ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "left"));
+             eo_event_callback_call
+               (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "left");
              sd->final_position = 0.0;
           }
      }
@@ -453,7 +451,7 @@ _elm_actionslider_elm_layout_text_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_U
    Eina_Bool int_ret = EINA_FALSE;
 
    _mirrored_part_fix(obj, &part);
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_layout_text_set(part, text));
+   int_ret = elm_obj_layout_text_set(eo_super(obj, MY_CLASS), part, text);
 
    return int_ret;
 }
@@ -465,7 +463,7 @@ _elm_actionslider_elm_layout_text_get(Eo *obj, Elm_Actionslider_Data *_pd EINA_U
 
    _mirrored_part_fix(obj, &part);
 
-   eo_do_super(obj, MY_CLASS, text = elm_obj_layout_text_get(part));
+   text = elm_obj_layout_text_get(eo_super(obj, MY_CLASS), part);
 
    return text;
 }
@@ -475,7 +473,7 @@ _elm_actionslider_evas_object_smart_add(Eo *obj, Elm_Actionslider_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->enabled_position = ELM_ACTIONSLIDER_ALL;
@@ -540,11 +538,10 @@ elm_actionslider_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_actionslider_eo_base_constructor(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_SLIDER));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SLIDER);
 
    return obj;
 }

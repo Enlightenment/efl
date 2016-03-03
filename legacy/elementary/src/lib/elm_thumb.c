@@ -62,9 +62,9 @@ _mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     eo_do(obj, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, NULL));
+     eo_event_callback_call(obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, NULL);
    else
-     eo_do(obj, eo_event_callback_call(ELM_THUMB_EVENT_PRESS, NULL));
+     eo_event_callback_call(obj, ELM_THUMB_EVENT_PRESS, NULL);
 }
 
 static void
@@ -81,7 +81,7 @@ _mouse_up_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (!sd->on_hold)
-     eo_do(obj, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+     eo_event_callback_call(obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
 
    sd->on_hold = EINA_FALSE;
 }
@@ -115,8 +115,8 @@ _thumb_ready_inform(Elm_Thumb_Data *sd,
    edje_object_signal_emit
      (wd->resize_obj, EDJE_SIGNAL_PULSE_STOP, "elm");
    edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
-   eo_do(sd->obj, eo_event_callback_call
-     (ELM_THUMB_EVENT_GENERATE_STOP, NULL));
+   eo_event_callback_call
+     (sd->obj, ELM_THUMB_EVENT_GENERATE_STOP, NULL);
 }
 
 static void
@@ -293,16 +293,16 @@ _thumb_finish(Elm_Thumb_Data *sd,
           wd = eo_data_scope_get(sd->obj, ELM_WIDGET_CLASS);
           edje_object_signal_emit
              (wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
-          eo_do(sd->obj, eo_event_callback_call
-            (ELM_THUMB_EVENT_LOAD_ERROR, NULL));
+          eo_event_callback_call
+            (sd->obj, ELM_THUMB_EVENT_LOAD_ERROR, NULL);
        }
 
    return;
 
 err:
    edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
-   eo_do(sd->obj, eo_event_callback_call
-     (ELM_THUMB_EVENT_LOAD_ERROR, NULL));
+   eo_event_callback_call
+     (sd->obj, ELM_THUMB_EVENT_LOAD_ERROR, NULL);
 }
 
 static void
@@ -349,8 +349,8 @@ _on_ethumb_thumb_error(Ethumb_Client *client EINA_UNUSED,
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_GENERATE_ERROR, "elm");
    edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_PULSE_STOP, "elm");
-   eo_do(sd->obj, eo_event_callback_call
-     (ELM_THUMB_EVENT_GENERATE_ERROR, NULL));
+   eo_event_callback_call
+     (sd->obj, ELM_THUMB_EVENT_GENERATE_ERROR, NULL);
 }
 
 static void
@@ -389,8 +389,8 @@ _thumb_start(Elm_Thumb_Data *sd)
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
    edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_PULSE_START, "elm");
    edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_GENERATE_START, "elm");
-   eo_do(sd->obj, eo_event_callback_call
-     (ELM_THUMB_EVENT_GENERATE_START, NULL));
+   eo_event_callback_call
+     (sd->obj, ELM_THUMB_EVENT_GENERATE_START, NULL);
 
    pending_request++;
    ethumb_client_file_set(_elm_ethumb_client, sd->file, sd->key);
@@ -463,7 +463,7 @@ _thumb_show(Elm_Thumb_Data *sd)
 EOLIAN static void
 _elm_thumb_evas_object_smart_show(Eo *obj, Elm_Thumb_Data *sd)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
+   evas_obj_smart_show(eo_super(obj, MY_CLASS));
 
    _thumb_show(sd);
 }
@@ -473,7 +473,7 @@ _elm_thumb_evas_object_smart_hide(Eo *obj, Elm_Thumb_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
+   evas_obj_smart_hide(eo_super(obj, MY_CLASS));
 
    if (sd->thumb.request)
      {
@@ -482,8 +482,8 @@ _elm_thumb_evas_object_smart_hide(Eo *obj, Elm_Thumb_Data *sd)
 
         edje_object_signal_emit
            (wd->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
-        eo_do(sd->obj, eo_event_callback_call
-          (ELM_THUMB_EVENT_GENERATE_STOP, NULL));
+        eo_event_callback_call
+          (sd->obj, ELM_THUMB_EVENT_GENERATE_STOP, NULL);
      }
 
    if (sd->thumb.retry)
@@ -538,7 +538,7 @@ _elm_thumb_evas_object_smart_add(Eo *obj, Elm_Thumb_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "thumb", "base", elm_widget_style_get(obj)))
@@ -579,7 +579,7 @@ _elm_thumb_evas_object_smart_del(Eo *obj, Elm_Thumb_Data *sd)
 
    ecore_event_handler_del(sd->eeh);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -593,11 +593,10 @@ elm_thumb_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_thumb_eo_base_constructor(Eo *obj, Elm_Thumb_Data *sd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set("Elm_Thumb"),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_IMAGE));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, "Elm_Thumb");
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
 
    sd->obj = obj;
 
@@ -853,13 +852,13 @@ _elm_thumb_class_constructor(Eo_Class *klass)
 EAPI void
 elm_thumb_file_set(Eo *obj, const char *file, const char *key)
 {
-   eo_do((Eo *) obj, efl_file_set(file, key));
+   efl_file_set((Eo *) obj, file, key);
 }
 
 EAPI void
 elm_thumb_file_get(const Eo *obj, const char **file, const char **key)
 {
-   eo_do((Eo *) obj, efl_file_get(file, key));
+   efl_file_get((Eo *) obj, file, key);
 }
 
 

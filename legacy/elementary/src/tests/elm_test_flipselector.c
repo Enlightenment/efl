@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "flipselector", ELM_WIN_BASIC);
 
    flipselector = elm_flipselector_add(win);
-   eo_do(flipselector, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(flipselector);
 
    ck_assert(role == ELM_ATSPI_ROLE_LIST);
 

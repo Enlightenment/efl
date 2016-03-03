@@ -59,7 +59,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);
-   eo_do(check, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(check);
 
    ck_assert(role == ELM_ATSPI_ROLE_CHECK_BOX);
 

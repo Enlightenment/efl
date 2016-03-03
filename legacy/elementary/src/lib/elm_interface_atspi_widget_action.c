@@ -19,7 +19,7 @@ _elm_interface_atspi_widget_action_elm_interface_atspi_action_action_do(Eo *obj,
    Eina_Bool (*func)(Eo *eo, const char *params) = NULL;
    int tmp = 0;
 
-   eo_do(obj, actions = elm_interface_atspi_widget_action_elm_actions_get());
+   actions = elm_interface_atspi_widget_action_elm_actions_get(obj);
    if (!actions) return EINA_FALSE;
 
    while (actions[tmp].name)
@@ -51,7 +51,7 @@ _elm_interface_atspi_widget_action_elm_interface_atspi_action_keybinding_get(Eo 
    if (!eo_isa(obj, ELM_WIDGET_CLASS))
       return NULL;
 
-   eo_do(obj, actions = elm_interface_atspi_widget_action_elm_actions_get());
+   actions = elm_interface_atspi_widget_action_elm_actions_get(obj);
    if (!actions) return NULL;
 
    while (actions[tmp].name)
@@ -98,7 +98,7 @@ _elm_interface_atspi_widget_action_elm_interface_atspi_action_name_get(Eo *obj, 
    const Elm_Atspi_Action *actions = NULL;
    int tmp = 0;
 
-   eo_do(obj, actions = elm_interface_atspi_widget_action_elm_actions_get());
+   actions = elm_interface_atspi_widget_action_elm_actions_get(obj);
    if (!actions) return NULL;
 
    while (actions[tmp].name)
@@ -128,7 +128,7 @@ _elm_interface_atspi_widget_action_elm_interface_atspi_action_actions_get(Eo *ob
    Eina_List *ret = NULL;
    int tmp = 0;
 
-   eo_do(obj, actions = elm_interface_atspi_widget_action_elm_actions_get());
+   actions = elm_interface_atspi_widget_action_elm_actions_get(obj);
    if (!actions) return NULL;
 
    while (actions[tmp].name)

@@ -91,7 +91,7 @@ EOLIAN static void
 _elm_bg_evas_object_smart_add(Eo *obj, Elm_Bg_Data *priv)
 {
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -120,10 +120,9 @@ elm_bg_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_bg_eo_base_constructor(Eo *obj, Elm_Bg_Data *_pd EINA_UNUSED)
 {
-   eo_do(obj, elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY));
+   elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_DISABLED);
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
 }
@@ -210,7 +209,7 @@ elm_bg_color_set(Evas_Object *obj,
                  int b)
 {
    ELM_BG_CHECK(obj);
-   eo_do(obj, elm_obj_bg_color_set(r, g, b, 255));
+   elm_obj_bg_color_set(obj, r, g, b, 255);
 }
 
 EOLIAN static void
@@ -245,7 +244,7 @@ elm_bg_color_get(const Evas_Object *obj,
                  int *b)
 {
    ELM_BG_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_bg_color_get(r, g, b, NULL));
+   elm_obj_bg_color_get((Eo *) obj, r, g, b, NULL);
 }
 
 EOLIAN static void
@@ -276,14 +275,13 @@ _elm_bg_class_constructor(Eo_Class *klass)
 EAPI Eina_Bool
 elm_bg_file_set(Eo *obj, const char *file, const char *group)
 {
-   Eina_Bool ret;
-   return eo_do_ret((Eo *) obj, ret, efl_file_set(file, group));
+   return efl_file_set((Eo *) obj, file, group);
 }
 
 EAPI void
 elm_bg_file_get(const Eo *obj, const char **file, const char **group)
 {
-   eo_do((Eo *) obj, efl_file_get(file, group));
+   efl_file_get((Eo *) obj, file, group);
 }
 
 #include "elm_bg.eo.c"

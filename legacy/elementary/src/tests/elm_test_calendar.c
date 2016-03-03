@@ -15,7 +15,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "calendar", ELM_WIN_BASIC);
 
    calendar = elm_calendar_add(win);
-   eo_do(calendar, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(calendar);
 
    ck_assert(role == ELM_ATSPI_ROLE_CALENDAR);
 

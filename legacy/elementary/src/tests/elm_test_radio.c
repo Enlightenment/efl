@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "radio", ELM_WIN_BASIC);
 
    radio = elm_radio_add(win);
-   eo_do(radio, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(radio);
 
    ck_assert(role == ELM_ATSPI_ROLE_RADIO_BUTTON);
 

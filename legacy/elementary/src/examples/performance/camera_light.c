@@ -104,7 +104,7 @@ init_panel_camera_light(Evas_Object *win, Eo *camera_node, Eo *light_node, doubl
    evas_object_show(spZ);
    evas_object_smart_callback_add(spZ, "changed", _camera_light_changeZ_cb, camera_node);
 
-   eo_do(camera_node, evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &px, &py, &pz));
+   evas_canvas3d_node_position_get(camera_node, EVAS_CANVAS3D_SPACE_PARENT, &px, &py, &pz);
    elm_spinner_value_set(spX, px);
    elm_spinner_value_set(spY, py);
    elm_spinner_value_set(spZ, pz);
@@ -176,7 +176,7 @@ init_panel_camera_light(Evas_Object *win, Eo *camera_node, Eo *light_node, doubl
    evas_object_show(splZ);
    evas_object_smart_callback_add(splZ, "changed", _camera_light_changeZ_cb, light_node);
 
-   eo_do(light_node, evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &px, &py, &pz));
+   evas_canvas3d_node_position_get(light_node, EVAS_CANVAS3D_SPACE_PARENT, &px, &py, &pz);
    elm_spinner_value_set(splX, px);
    elm_spinner_value_set(splY, py);
    elm_spinner_value_set(splZ, pz);
@@ -232,9 +232,9 @@ _camera_light_changeX_cb(void *data, Evas_Object *obj, void *event_info)
 
    if ((Eo*)data)
      {
-        eo_do((Eo*)data, evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, NULL, &y, &z));
+        evas_canvas3d_node_position_get((Eo*)data, EVAS_CANVAS3D_SPACE_PARENT, NULL, &y, &z);
         x = elm_spinner_value_get(obj);
-        eo_do((Eo*)data, evas_canvas3d_node_position_set(x, y, z));
+        evas_canvas3d_node_position_set((Eo*)data, x, y, z);
      }
 }
 static void
@@ -244,9 +244,9 @@ _camera_light_changeY_cb(void *data, Evas_Object *obj, void *event_info)
 
    if ((Eo*)data)
      {
-        eo_do((Eo*)data, evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x, NULL, &z));
+        evas_canvas3d_node_position_get((Eo*)data, EVAS_CANVAS3D_SPACE_PARENT, &x, NULL, &z);
         y = elm_spinner_value_get(obj);
-        eo_do((Eo*)data, evas_canvas3d_node_position_set(x, y, z));
+        evas_canvas3d_node_position_set((Eo*)data, x, y, z);
      }
 }
 static void
@@ -256,9 +256,9 @@ _camera_light_changeZ_cb(void *data, Evas_Object *obj, void *event_info)
 
    if ((Eo*)data)
      {
-        eo_do((Eo*)data, evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x, &y, NULL));
+        evas_canvas3d_node_position_get((Eo*)data, EVAS_CANVAS3D_SPACE_PARENT, &x, &y, NULL);
         z = elm_spinner_value_get(obj);
-        eo_do((Eo*)data, evas_canvas3d_node_position_set(x, y, z));
+        evas_canvas3d_node_position_set((Eo*)data, x, y, z);
      }
 }
 static void
@@ -270,7 +270,7 @@ _camera_light_angle_change_cb(void *data, Evas_Object *obj, void *event_info)
      {
        aw = elm_spinner_value_get(obj);
        aw = cos(aw * M_PI / 360.0);
-       eo_do(((Eo*)data), evas_canvas3d_node_orientation_set(key->x, key->y, key->z, aw));
+       evas_canvas3d_node_orientation_set(((Eo*)data), key->x, key->y, key->z, aw);
      }
 }
 static void

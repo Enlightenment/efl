@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "menu", ELM_WIN_BASIC);
 
    menu = elm_menu_add(win);
-   eo_do(menu, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(menu);
 
    ck_assert(role == ELM_ATSPI_ROLE_MENU);
 

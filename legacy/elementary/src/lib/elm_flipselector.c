@@ -230,8 +230,8 @@ _on_item_changed(Elm_Flipselector_Data *sd)
 
    if (item->func)
      item->func((void *)WIDGET_ITEM_DATA_GET(eo_item), WIDGET(item), eo_item);
-   eo_do(sd->obj, eo_event_callback_call
-     (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_item));
+   eo_event_callback_call
+     (sd->obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_item);
 }
 
 static void
@@ -290,13 +290,13 @@ _elm_flipselector_item_eo_base_destructor(Eo *eo_item, Elm_Flipselector_Item_Dat
    _sentinel_eval(sd);
    _update_view(sd->obj);
 
-   eo_do_super(eo_item, ELM_FLIPSELECTOR_ITEM_CLASS, eo_destructor());
+   eo_destructor(eo_super(eo_item, ELM_FLIPSELECTOR_ITEM_CLASS));
 }
 
 EOLIAN static Eo *
 _elm_flipselector_item_eo_base_constructor(Eo *obj, Elm_Flipselector_Item_Data *it)
 {
-   obj = eo_do_super_ret(obj, ELM_FLIPSELECTOR_ITEM_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, ELM_FLIPSELECTOR_ITEM_CLASS));
    it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    return obj;
@@ -338,7 +338,7 @@ _elm_flipselector_elm_widget_theme_apply(Eo *obj, Elm_Flipselector_Data *sd)
    Eina_Bool int_ret = EINA_FALSE;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    max_len = edje_object_data_get(wd->resize_obj, "max_len");
@@ -367,8 +367,8 @@ _flip_up(Elm_Flipselector_Data *sd)
    if (sd->current == sd->items)
      {
         sd->current = eina_list_last(sd->items);
-        eo_do(sd->obj, eo_event_callback_call
-          (ELM_FLIPSELECTOR_EVENT_UNDERFLOWED, NULL));
+        eo_event_callback_call
+          (sd->obj, ELM_FLIPSELECTOR_EVENT_UNDERFLOWED, NULL);
      }
    else
      sd->current = eina_list_prev(sd->current);
@@ -392,8 +392,8 @@ _flip_down(Elm_Flipselector_Data *sd)
    if (!sd->current)
      {
         sd->current = sd->items;
-        eo_do(sd->obj, eo_event_callback_call
-          (ELM_FLIPSELECTOR_EVENT_OVERFLOWED, NULL));
+        eo_event_callback_call
+          (sd->obj, ELM_FLIPSELECTOR_EVENT_OVERFLOWED, NULL);
      }
 
    eo_item = DATA_GET(sd->current);
@@ -520,7 +520,7 @@ _signal_val_change_stop(void *data,
 EOLIAN static void
 _elm_flipselector_evas_object_smart_add(Eo *obj, Elm_Flipselector_Data *priv)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -540,7 +540,7 @@ _elm_flipselector_evas_object_smart_add(Eo *obj, Elm_Flipselector_Data *priv)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   eo_do(obj, elm_obj_widget_theme_apply());
+   elm_obj_widget_theme_apply(obj);
 }
 
 EOLIAN static void
@@ -551,11 +551,11 @@ _elm_flipselector_evas_object_smart_del(Eo *obj, Elm_Flipselector_Data *sd)
    if (sd->walking) ERR("flipselector deleted while walking.\n");
 
    while (sd->items)
-     eo_do(DATA_GET(sd->items), elm_wdg_item_del());
+     elm_wdg_item_del(DATA_GET(sd->items));
 
    ecore_timer_del(sd->spin);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -569,12 +569,11 @@ elm_flipselector_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_flipselector_eo_base_constructor(Eo *obj, Elm_Flipselector_Data *sd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_LIST));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_LIST);
 
    return obj;
 }

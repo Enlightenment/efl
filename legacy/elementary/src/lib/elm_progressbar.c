@@ -141,7 +141,7 @@ EOLIAN static Eina_Bool
 _elm_progressbar_elm_widget_sub_object_del(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
+   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -156,7 +156,7 @@ EOLIAN static Eina_Bool
 _elm_progressbar_elm_container_content_set(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
+   int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -175,7 +175,7 @@ _elm_progressbar_elm_widget_theme_apply(Eo *obj, Elm_Progressbar_Data *sd)
      eina_stringshare_replace(&ld->group, "horizontal");
    else eina_stringshare_replace(&ld->group, "vertical");
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (sd->pulse)
@@ -256,7 +256,7 @@ _elm_progressbar_evas_object_smart_add(Eo *obj, Elm_Progressbar_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->horizontal = EINA_TRUE;
@@ -305,7 +305,7 @@ _elm_progressbar_evas_object_smart_del(Eo *obj, Elm_Progressbar_Data *sd)
            }
       }
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
@@ -331,11 +331,10 @@ elm_progressbar_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_progressbar_eo_base_constructor(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_PROGRESS_BAR));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PROGRESS_BAR);
 
    return obj;
 }
@@ -348,7 +347,7 @@ _elm_progressbar_pulse_set(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, Eina_B
 
    sd->pulse = pulse;
 
-   eo_do(obj, elm_obj_widget_theme_apply());
+   elm_obj_widget_theme_apply(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -403,8 +402,8 @@ _elm_progressbar_part_value_set(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, c
 
    _val_set(obj);
    _units_set(obj);
-   eo_do(obj, eo_event_callback_call
-     (ELM_PROGRESSBAR_EVENT_CHANGED, NULL));
+   eo_event_callback_call
+     (obj, ELM_PROGRESSBAR_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static double
@@ -504,7 +503,7 @@ _elm_progressbar_horizontal_set(Eo *obj, Elm_Progressbar_Data *sd, Eina_Bool hor
    if (sd->horizontal == horizontal) return;
 
    sd->horizontal = horizontal;
-   eo_do(obj, elm_obj_widget_theme_apply());
+   elm_obj_widget_theme_apply(obj);
 }
 
 EOLIAN static Eina_Bool

@@ -18,19 +18,19 @@ static void _apps_list_update(void);
 static void _btn_close_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_App_Client_View *view = data;
-   eo_do(view, elm_app_client_view_close(NULL, NULL));
+   elm_app_client_view_close(view, NULL, NULL);
 }
 
 static void _btn_pause_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_App_Client_View *view = data;
-   eo_do(view, elm_app_client_view_pause(NULL, NULL));
+   elm_app_client_view_pause(view, NULL, NULL);
 }
 
 static void _btn_resume_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_App_Client_View *view = data;
-   eo_do(view, elm_app_client_view_resume(NULL, NULL));
+   elm_app_client_view_resume(view, NULL, NULL);
 }
 
 static Eina_Bool
@@ -38,7 +38,7 @@ _app_view_prop_changed_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Elm_App_View_State state = ELM_APP_VIEW_STATE_UNKNOWN;
 
-   eo_do(event->obj, state = elm_app_client_view_state_get());
+   state = elm_app_client_view_state_get(event->obj);
 
    if (state == ELM_APP_VIEW_STATE_CLOSED)
      {
@@ -69,9 +69,7 @@ _app_view_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
         Elm_App_Client_View *old_view;
 
         old_view = evas_object_data_del(view_props, "view");
-        eo_do(old_view,
-              eo_event_callback_del(ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED,
-                                    _app_view_prop_changed_cb, table));
+        eo_event_callback_del(old_view, ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED, _app_view_prop_changed_cb, table);
         elm_list_clear(view_props);
      }
    else
@@ -85,13 +83,12 @@ _app_view_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
 
    evas_object_data_set(view_props, "view", view);
 
-   eo_do(view, title = elm_app_client_view_title_get(),
-         icon = elm_app_client_view_icon_get(),
-         progress = elm_app_client_view_progress_get(),
-         new_events = elm_app_client_view_new_events_get(),
-         window = elm_app_client_view_window_get(),
-         eo_event_callback_add(ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED,
-                               _app_view_prop_changed_cb, table));
+   title = elm_app_client_view_title_get(view);
+   icon = elm_app_client_view_icon_get(view);
+   progress = elm_app_client_view_progress_get(view);
+   new_events = elm_app_client_view_new_events_get(view);
+   window = elm_app_client_view_window_get(view);
+   eo_event_callback_add(view, ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED, _app_view_prop_changed_cb, table);
 
    snprintf(buffer, sizeof(buffer), "Title=%s", title);
    elm_list_item_append(view_props, buffer, NULL, NULL, NULL, NULL);
@@ -108,7 +105,7 @@ _app_view_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
    snprintf(buffer, sizeof(buffer), "WindowID=%d", window);
    elm_list_item_append(view_props, buffer, NULL, NULL, NULL, NULL);
 
-   eo_do(view, state = elm_app_client_view_state_get());
+   state = elm_app_client_view_state_get(view);
    if (state == ELM_APP_VIEW_STATE_LIVE)
      snprintf(buffer, sizeof(buffer), "State=alive");
    else if (state == ELM_APP_VIEW_STATE_PAUSED)
@@ -176,7 +173,7 @@ static void _popup_btn_open_view_cb(void *data, Evas_Object *obj EINA_UNUSED, vo
    Eina_Value *args = NULL;//TODO fill with args of popup
    Elm_App_Client *app = evas_object_data_get(popup, "app");
 
-   eo_do(app, elm_app_client_view_open(args, app_client_view_open_cb, NULL));
+   elm_app_client_view_open(app, args, app_client_view_open_cb, NULL);
 
    evas_object_del(popup);
 }
@@ -214,14 +211,14 @@ _app_view_open(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_U
 static void _app_close_all_views_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_App_Client *app = data;
-   eo_do(app, elm_app_client_view_all_close());
+   elm_app_client_view_all_close(app);
 }
 
 static void
 _app_terminate_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_App_Client *app = data;
-   eo_do(app, elm_app_client_terminate());
+   elm_app_client_terminate(app);
 }
 
 static void
@@ -250,12 +247,12 @@ _app_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
    evas_object_smart_callback_add(btn_open_view, "clicked", _app_view_open, app);
    elm_list_item_append(views, NULL, btn_open_view, NULL, NULL, NULL);
 
-   eo_do(app, views_iter = elm_app_client_views_get());
+   views_iter = elm_app_client_views_get(app);
    EINA_ITERATOR_FOREACH(views_iter, client_view)
      {
         const char *path = NULL;
 
-        eo_do(client_view, path = elm_app_client_view_path_get());
+        path = elm_app_client_view_path_get(client_view);
         elm_list_item_append(views, path, NULL, NULL, _app_view_clicked, client_view);
      }
    eina_iterator_free(views_iter);
@@ -299,22 +296,17 @@ _app_open(const char *package)
      {
         const char *app_package = NULL;
 
-        eo_do(app, app_package = elm_app_client_package_get());
+        app_package = elm_app_client_package_get(app);
         if (!app_package)
           return;
         if (!strcmp(package, app_package))
           return;
      }
 
-   app = eo_add(ELM_APP_CLIENT_CLASS, NULL,
-                       elm_app_client_constructor(package));
-   eo_do(app,
-         eo_event_callback_add(ELM_APP_CLIENT_EVENT_VIEW_LIST_LOADED,
-                               _view_list_update_cb, table),
-         eo_event_callback_add(ELM_APP_CLIENT_EVENT_VIEW_CREATED,
-                               _view_list_update_cb, table),
-         eo_event_callback_add(ELM_APP_CLIENT_EVENT_VIEW_DELETED,
-                               _view_list_update_cb, table));
+   app = eo_add(ELM_APP_CLIENT_CLASS, NULL, elm_app_client_constructor(eoid, package));
+   eo_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_LIST_LOADED, _view_list_update_cb, table);
+   eo_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_CREATED, _view_list_update_cb, table);
+   eo_event_callback_add(app, ELM_APP_CLIENT_EVENT_VIEW_DELETED, _view_list_update_cb, table);
    apps_list = eina_list_append(apps_list, app);
 }
 
@@ -351,7 +343,7 @@ _apps_list_update(void)
    EINA_LIST_FOREACH(apps_list, l, app)
      {
         const char *app_package = NULL;
-        eo_do(app, app_package = elm_app_client_package_get());
+        app_package = elm_app_client_package_get(app);
         elm_list_item_append(apps, app_package, NULL, NULL, _app_clicked, app);
      }
 

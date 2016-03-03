@@ -735,22 +735,22 @@ elm_color_class_editor_add(Evas_Object *obj)
    elm_scroller_policy_set(gl, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
    elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
    elm_object_part_content_set(ly, "elm.swallow.list", gl);
-   eo_do(gl, eo_event_callback_add
-     (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, _colorclass_activate, cc));
+   eo_event_callback_add
+     (gl, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, _colorclass_activate, cc);
 
    cc->reset = bt = elm_button_add(ly);
    elm_object_style_set(bt, "colorclass");
    /* FIXME: translate */
    elm_object_text_set(bt, "Reset");
    elm_object_part_content_set(ly, "elm.swallow.reset", bt);
-   eo_do(bt, eo_event_callback_add
-     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _colorclass_reset, cc));
+   eo_event_callback_add
+     (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _colorclass_reset, cc);
 
    cc->cs = cs = elm_colorselector_add(ly);
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_COMPONENTS);
    elm_object_part_content_set(ly, "elm.swallow.colors", cs);
-   eo_do(cs, eo_event_callback_add
-     (ELM_COLORSELECTOR_EVENT_CHANGED_USER, _colorclass_changed, cc));
+   eo_event_callback_add
+     (cs, ELM_COLORSELECTOR_EVENT_CHANGED_USER, _colorclass_changed, cc);
 
    EINA_LIST_FREE(ccs, ecc)
      elm_genlist_item_append(gl, &itc, ecc, NULL, 0, NULL, NULL);

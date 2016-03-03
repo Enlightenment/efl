@@ -26,7 +26,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
 
    image = elm_image_add(win);
-   eo_do(image, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(image);
 
    ck_assert(role == ELM_ATSPI_ROLE_IMAGE);
 
@@ -42,7 +42,7 @@ _async_error_cb(void *data, Eo *obj,
    Test_Data *td = data;
    char path[PATH_MAX];
    sprintf(path, pathfmt, td->image_id);
-   eo_do(obj, efl_file_set(path, NULL));
+   efl_file_set(obj, path, NULL);
    return EO_CALLBACK_CONTINUE;
 }
 
@@ -56,7 +56,7 @@ _async_opened_cb(void *data, Eo *obj,
    char path[PATH_MAX];
 
    sprintf(path, pathfmt, td->image_id);
-   eo_do(obj, efl_file_get(&ff, &kk));
+   efl_file_get(obj, &ff, &kk);
    r1 = strrchr(ff, '/');
    r2 = strrchr(path, '/');
    ck_assert(!strcmp(r1, r2));
@@ -66,7 +66,7 @@ _async_opened_cb(void *data, Eo *obj,
      {
         td->image_id++;
         sprintf(path, pathfmt, td->image_id);
-        eo_do(obj, efl_file_set(path, NULL));
+        efl_file_set(obj, path, NULL);
         return EO_CALLBACK_CONTINUE;
      }
    else if (td->image_id < MAX_IMAGE_ID)
@@ -75,7 +75,7 @@ _async_opened_cb(void *data, Eo *obj,
         for (; td->image_id < MAX_IMAGE_ID;)
           {
              sprintf(path, pathfmt, ++td->image_id);
-             eo_do(obj, efl_file_set(path, NULL));
+             efl_file_set(obj, path, NULL);
           }
         return EO_CALLBACK_CONTINUE;
      }
@@ -110,13 +110,12 @@ START_TEST (elm_image_async_path)
    td.image_id = 0;
 
    image = elm_image_add(win);
-   eo_do(image,
-         one = efl_file_async_get();
-         efl_file_async_set(1);
-         eo_event_callback_add(EFL_FILE_EVENT_ASYNC_ERROR, _async_error_cb, &td);
-         eo_event_callback_add(EFL_FILE_EVENT_ASYNC_OPENED, _async_opened_cb, &td);
-         ok = efl_file_set(invalid, NULL);
-         two = efl_file_async_get());
+   one = efl_file_async_get(image);
+   efl_file_async_set(image, 1);
+   eo_event_callback_add(image, EFL_FILE_EVENT_ASYNC_ERROR, _async_error_cb, &td);
+   eo_event_callback_add(image, EFL_FILE_EVENT_ASYNC_OPENED, _async_opened_cb, &td);
+   ok = efl_file_set(image, invalid, NULL);
+   two = efl_file_async_get(image);
    ck_assert(!one && two);
    ck_assert(ok);
 
@@ -148,12 +147,10 @@ START_TEST (elm_image_async_mmap)
    ck_assert(f);
 
    image = elm_image_add(win);
-   eo_do(image,
-         efl_file_async_set(1);
-         eo_event_callback_add(EFL_FILE_EVENT_ASYNC_ERROR, _async_error_cb, &td);
-         eo_event_callback_add(EFL_FILE_EVENT_ASYNC_OPENED, _async_opened_cb, &td);
-         ok = efl_file_mmap_set(f, NULL);
-         );
+   efl_file_async_set(image, 1);
+   eo_event_callback_add(image, EFL_FILE_EVENT_ASYNC_ERROR, _async_error_cb, &td);
+   eo_event_callback_add(image, EFL_FILE_EVENT_ASYNC_OPENED, _async_opened_cb, &td);
+   ok = efl_file_mmap_set(image, f, NULL);
    ck_assert(ok);
 
    ecore_timer_add(10.0, _timeout_cb, &td);

@@ -207,7 +207,7 @@ EOLIAN static Eina_Bool
 _elm_player_elm_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    _update_theme_button(obj, sd->forward, "forward");
@@ -331,7 +331,7 @@ _forward(void *data, const Eo_Event *event EINA_UNUSED)
    elm_video_play_position_set(sd->video, pos);
 
    elm_layout_signal_emit(data, "elm,button,forward", "elm");
-   eo_do(data, eo_event_callback_call(ELM_PLAYER_EVENT_FORWARD_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_PLAYER_EVENT_FORWARD_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -340,7 +340,7 @@ static Eina_Bool
 _info(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,info", "elm");
-   eo_do(data, eo_event_callback_call(ELM_PLAYER_EVENT_INFO_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_PLAYER_EVENT_INFO_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -349,7 +349,7 @@ static Eina_Bool
 _next(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,next", "elm");
-   eo_do(data, eo_event_callback_call(ELM_PLAYER_EVENT_NEXT_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_PLAYER_EVENT_NEXT_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -361,7 +361,7 @@ _pause(void *data, const Eo_Event *event EINA_UNUSED)
 
    elm_layout_signal_emit(data, "elm,player,pause", "elm");
    elm_video_pause(sd->video);
-   eo_do(data, eo_event_callback_call(ELM_PLAYER_EVENT_PAUSE_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_PLAYER_EVENT_PAUSE_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -373,7 +373,7 @@ _play(void *data, const Eo_Event *event EINA_UNUSED)
 
    elm_layout_signal_emit(data, "elm,player,play", "elm");
    elm_video_play(sd->video);
-   eo_do(data, eo_event_callback_call(ELM_PLAYER_EVENT_PLAY_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_PLAYER_EVENT_PLAY_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -381,7 +381,7 @@ _play(void *data, const Eo_Event *event EINA_UNUSED)
 static Eina_Bool
 _prev(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   eo_do(data, eo_event_callback_call(ELM_PLAYER_EVENT_PREV_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_PLAYER_EVENT_PREV_CLICKED, NULL);
    elm_layout_signal_emit(data, "elm,button,prev", "elm");
 
    return EINA_TRUE;
@@ -399,7 +399,7 @@ _rewind(void *data, const Eo_Event *event EINA_UNUSED)
    elm_video_play_position_set(sd->video, pos);
 
    elm_layout_signal_emit(data, "elm,button,rewind", "elm");
-   eo_do(data, eo_event_callback_call(ELM_PLAYER_EVENT_REWIND_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_PLAYER_EVENT_REWIND_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -408,7 +408,7 @@ static Eina_Bool
 _stop(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,stop", "elm");
-   eo_do(data, eo_event_callback_call(ELM_PLAYER_EVENT_QUALITY_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_PLAYER_EVENT_QUALITY_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -420,7 +420,7 @@ _eject(void *data, const Eo_Event *event EINA_UNUSED)
 
    elm_layout_signal_emit(data, "elm,button,eject", "elm");
    emotion_object_eject(elm_video_emotion_get(sd->video));
-   eo_do(data, eo_event_callback_call(ELM_PLAYER_EVENT_EJECT_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_PLAYER_EVENT_EJECT_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -447,7 +447,7 @@ _volume(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,volume", "elm");
    _mute_toggle(data);
-   eo_do(data, eo_event_callback_call(ELM_PLAYER_EVENT_VOLUME_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_PLAYER_EVENT_VOLUME_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -457,7 +457,7 @@ _mute(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,mute", "elm");
    _mute_toggle(data);
-   eo_do(data, eo_event_callback_call(ELM_PLAYER_EVENT_MUTE_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_PLAYER_EVENT_MUTE_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -531,8 +531,8 @@ _player_button_add(Evas_Object *obj,
    snprintf(buf, sizeof(buf), "media_player/%s/%s", name,
             elm_widget_style_get(obj));
    elm_object_style_set(bt, buf);
-   eo_do(bt, eo_event_callback_add
-            (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED,func, obj));
+   eo_event_callback_add
+            (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, func, obj);
    snprintf(buf, sizeof(buf), "elm.swallow.media_player.%s", name);
    if (!elm_layout_content_set(obj, buf, bt))
      {
@@ -585,13 +585,11 @@ _elm_player_elm_container_content_set(Eo *obj, Elm_Player_Data *sd, const char *
 
    if (part && strcmp(part, "video"))
      {
-        eo_do_super(obj, MY_CLASS,
-                    int_ret = elm_obj_container_content_set(part, content));
+        int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
         return int_ret;
      }
    if ((!part) || (!strcmp(part, "video"))) part = "elm.swallow.content";
-   eo_do_super(obj, MY_CLASS,
-               int_ret = elm_obj_container_content_set(part, content));
+   int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
 
    if (!_elm_video_check(content)) return EINA_FALSE;
    if (sd->video == content) goto end;
@@ -636,8 +634,7 @@ _elm_player_elm_container_content_set(Eo *obj, Elm_Player_Data *sd, const char *
      elm_layout_signal_emit(obj, "elm,player,play", "elm");
    else elm_layout_signal_emit(obj, "elm,player,pause", "elm");
 
-   eo_do(sd->emotion,
-         eo_event_callback_array_add(_emotion_cb(), obj));
+   eo_event_callback_array_add(sd->emotion, _emotion_cb(), obj);
 
    /* FIXME: track info from video */
 end:
@@ -649,7 +646,7 @@ _elm_player_evas_object_smart_add(Eo *obj, Elm_Player_Data *priv)
 {
    char buf[256];
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "player", "base", elm_widget_style_get(obj)))
@@ -684,8 +681,7 @@ _elm_player_evas_object_smart_add(Eo *obj, Elm_Player_Data *priv)
      (priv->slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_layout_content_set(obj, "elm.swallow.media_player.positionslider",
                           priv->slider);
-   eo_do(priv->slider,
-         eo_event_callback_array_add(_slider_cb(), obj));
+   eo_event_callback_array_add(priv->slider, _slider_cb(), obj);
 
    priv->vslider = elm_slider_add(obj);
    elm_slider_indicator_show_set(priv->vslider, EINA_FALSE);
@@ -701,8 +697,8 @@ _elm_player_evas_object_smart_add(Eo *obj, Elm_Player_Data *priv)
      (priv->vslider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_layout_content_set(obj, "elm.swallow.media_player.volumeslider",
                           priv->vslider);
-   eo_do(priv->vslider, eo_event_callback_add
-     (ELM_SLIDER_EVENT_CHANGED,_update_volume, obj));
+   eo_event_callback_add
+     (priv->vslider, ELM_SLIDER_EVENT_CHANGED, _update_volume, obj);
 
    elm_layout_sizing_eval(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
@@ -711,7 +707,7 @@ _elm_player_evas_object_smart_add(Eo *obj, Elm_Player_Data *priv)
 EOLIAN static void
 _elm_player_evas_object_smart_del(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -725,11 +721,10 @@ elm_player_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_player_eo_base_constructor(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_ANIMATION));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ANIMATION);
 
    return obj;
 }

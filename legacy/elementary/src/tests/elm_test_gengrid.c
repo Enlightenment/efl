@@ -17,7 +17,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
 
    gengrid = elm_gengrid_add(win);
-   eo_do(gengrid, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(gengrid);
 
    ck_assert(role == ELM_ATSPI_ROLE_TREE_TABLE);
 
@@ -66,7 +66,7 @@ START_TEST(elm_atspi_children_parent)
    elm_gengrid_item_fields_update(it, "*.", ELM_GENGRID_ITEM_FIELD_CONTENT);
 
    ck_assert(content != NULL);
-   eo_do(content, parent = elm_interface_atspi_accessible_parent_get());
+   parent = elm_interface_atspi_accessible_parent_get(content);
    ck_assert(it == parent);
 
    elm_shutdown();

@@ -78,7 +78,7 @@ _view_smart_window_close(Ewk_View_Smart_Data *sd)
 
    ELM_WEB_CHECK(obj);
 
-   eo_do(obj, eo_event_callback_call(ELM_WEB_EVENT_WINDOWS_CLOSE_REQUEST, NULL));
+   eo_event_callback_call(obj, ELM_WEB_EVENT_WINDOWS_CLOSE_REQUEST, NULL);
 }
 
 static void
@@ -196,8 +196,8 @@ _view_smart_popup_menu_show(Ewk_View_Smart_Data *sd,
 
    evas_object_data_set(sd->self, "_select_popup", notify);
 
-   eo_do(notify, eo_event_callback_add
-     (ELM_NOTIFY_EVENT_BLOCK_CLICKED, _popup_dismiss_cb, menu));
+   eo_event_callback_add
+     (notify, ELM_NOTIFY_EVENT_BLOCK_CLICKED, _popup_dismiss_cb, menu);
 
    return EINA_TRUE;
 }
@@ -260,14 +260,14 @@ _view_smart_fullscreen_enter(Ewk_View_Smart_Data *sd, Ewk_Security_Origin *origi
    btn = elm_button_add(popup);
    elm_object_text_set(btn, "Accept");
    elm_object_part_content_set(popup, "button1", btn);
-   eo_do(btn, eo_event_callback_add
-     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _fullscreen_accept, sd->self));
+   eo_event_callback_add
+     (btn, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _fullscreen_accept, sd->self);
 
    btn = elm_button_add(popup);
    elm_object_text_set(btn, "Deny");
    elm_object_part_content_set(popup, "button2", btn);
-   eo_do(btn, eo_event_callback_add
-     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _fullscreen_deny, sd->self));
+   eo_event_callback_add
+     (btn, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _fullscreen_deny, sd->self);
 
    evas_object_data_set(sd->self, "_fullscreen_permission_popup", popup);
    evas_object_show(popup);
@@ -322,8 +322,8 @@ _dialog_new(Evas_Object *web, Eina_Bool inwin_mode)
         Evas_Object *bg;
 
         d->dialog = elm_win_add(NULL, "elm-web-popup", ELM_WIN_DIALOG_BASIC);
-        eo_do(d->dialog, eo_event_callback_add
-          (ELM_WIN_EVENT_DELETE_REQUEST, _bt_close, d));
+        eo_event_callback_add
+          (d->dialog, ELM_WIN_EVENT_DELETE_REQUEST, _bt_close, d);
 
         bg = elm_bg_add(d->dialog);
         evas_object_size_hint_weight_set
@@ -372,8 +372,8 @@ _dialog_ok_cancel_buttons_add(Dialog_Data *dialog_data)
    elm_box_pack_end(bx, bt);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   eo_do(bt, eo_event_callback_add
-     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _bt_close, dialog_data));
+   eo_event_callback_add
+     (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _bt_close, dialog_data);
    evas_object_show(bt);
 
    dialog_data->bt_ok = bt = elm_button_add(bx);
@@ -381,8 +381,8 @@ _dialog_ok_cancel_buttons_add(Dialog_Data *dialog_data)
    elm_box_pack_end(bx, bt);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   eo_do(bt, eo_event_callback_add
-     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _bt_close, dialog_data));
+   eo_event_callback_add
+     (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _bt_close, dialog_data);
    evas_object_show(bt);
 }
 
@@ -430,8 +430,8 @@ _view_smart_run_javascript_alert(Ewk_View_Smart_Data *vsd, const char *message)
         elm_box_pack_end(dialog_data->box, dialog_data->bt_ok);
         evas_object_size_hint_align_set
           (dialog_data->bt_ok, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        eo_do(dialog_data->bt_ok, eo_event_callback_add
-          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _bt_close, dialog_data));
+        eo_event_callback_add
+          (dialog_data->bt_ok, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _bt_close, dialog_data);
         evas_object_show(dialog_data->bt_ok);
 
         evas_object_show(dialog);
@@ -586,8 +586,8 @@ static Eina_Bool
 _view_smart_url_changed_cb(void *data,
       Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   eo_do(data, eo_event_callback_call(ELM_WEB_EVENT_URI_CHANGED, event_info));
-   eo_do(data, eo_event_callback_call(ELM_WEB_EVENT_URL_CHANGED, event_info));
+   eo_event_callback_call(data, ELM_WEB_EVENT_URI_CHANGED, event_info);
+   eo_event_callback_call(data, ELM_WEB_EVENT_URL_CHANGED, event_info);
 
    return EINA_TRUE;
 }
@@ -595,8 +595,8 @@ _view_smart_url_changed_cb(void *data,
 static void
 _view_smart_callback_proxy(Evas_Object *view, Evas_Object *parent)
 {
-   eo_do(view, eo_event_callback_add
-     (ELM_WEB_EVENT_URL_CHANGED, _view_smart_url_changed_cb, parent));
+   eo_event_callback_add
+     (view, ELM_WEB_EVENT_URL_CHANGED, _view_smart_url_changed_cb, parent);
 }
 
 static Eina_Bool _elm_need_web = EINA_FALSE;
@@ -641,7 +641,7 @@ _elm_web_elm_widget_on_focus(Eo *obj, Elm_Web_Data *sd, Elm_Object_Item *item EI
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_TRUE);
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
+   int_ret = elm_obj_widget_on_focus(eo_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_TRUE;
 
    top = elm_widget_top_get(obj);
@@ -705,7 +705,7 @@ _elm_web_evas_object_smart_add(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
    resize_obj = _view_add(obj);
    elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    //TODO: need a way to change theme
@@ -718,7 +718,7 @@ _elm_web_evas_object_smart_add(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
    elm_object_text_set(resize_obj, "WebKit not supported!");
    elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 #endif
 }
@@ -726,7 +726,7 @@ _elm_web_evas_object_smart_add(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 EOLIAN static void
 _elm_web_evas_object_smart_del(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -740,12 +740,11 @@ elm_web_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_web_eo_base_constructor(Eo *obj, Elm_Web_Data *sd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_elm_web_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_HTML_CONTAINER));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _elm_web_smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_HTML_CONTAINER);
 
    return obj;
 }
@@ -874,7 +873,7 @@ elm_web_uri_set(Evas_Object *obj, const char *url)
 {
    ELM_WEB_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, ret = elm_obj_web_url_set(url));
+   ret = elm_obj_web_url_set(obj, url);
    return ret;
 }
 
@@ -882,7 +881,7 @@ EAPI const char *
 elm_web_uri_get(const Evas_Object *obj)
 {
    const char *ret = NULL;
-   eo_do((Eo *) obj, ret = elm_obj_web_url_get());
+   ret = elm_obj_web_url_get((Eo *) obj);
    return ret;
 }
 

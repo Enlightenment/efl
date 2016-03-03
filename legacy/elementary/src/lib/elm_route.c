@@ -90,7 +90,7 @@ EOLIAN static Eina_Bool
 _elm_route_elm_widget_theme_apply(Eo *obj, Elm_Route_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    //TODO
@@ -137,7 +137,7 @@ EOLIAN static void
 _elm_route_evas_object_smart_add(Eo *obj, Elm_Route_Data *priv)
 {
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -163,7 +163,7 @@ _elm_route_evas_object_smart_del(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
 {
    _clear_route(obj);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 /**
@@ -185,9 +185,8 @@ elm_route_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_route_eo_base_constructor(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
 }

@@ -53,9 +53,9 @@ _elm_ctxpopup_elm_widget_translate(Eo *obj, Elm_Ctxpopup_Data *sd)
    if (sd->auto_hide) evas_object_hide(obj);
 
    EINA_LIST_FOREACH(sd->items, l, it)
-     eo_do(it, elm_wdg_item_translate());
+     elm_wdg_item_translate(it);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
+   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
 
    return EINA_TRUE;
 }
@@ -622,7 +622,7 @@ _elm_ctxpopup_elm_widget_sub_object_add(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNU
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_add(sobj));
+   int_ret = elm_obj_widget_sub_object_add(eo_super(obj, MY_CLASS), sobj);
 
    return int_ret;
 }
@@ -675,7 +675,7 @@ _elm_ctxpopup_elm_layout_sizing_eval(Eo *obj, Elm_Ctxpopup_Data *sd)
 
    _show_signals_emit(obj, sd->dir);
 
-   eo_do(obj, eo_event_callback_call(ELM_CTXPOPUP_EVENT_GEOMETRY_UPDATE, &rect));
+   eo_event_callback_call(obj, ELM_CTXPOPUP_EVENT_GEOMETRY_UPDATE, &rect);
 }
 
 static void
@@ -713,7 +713,7 @@ _on_parent_resize(void *data,
         sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
         evas_object_hide(data);
-        eo_do(data, eo_event_callback_call(ELM_CTXPOPUP_EVENT_DISMISSED, NULL));
+        eo_event_callback_call(data, ELM_CTXPOPUP_EVENT_DISMISSED, NULL);
      }
    else
      {
@@ -755,7 +755,7 @@ _elm_ctxpopup_elm_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    elm_widget_theme_object_set
@@ -787,7 +787,7 @@ _elm_ctxpopup_elm_container_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const ch
 
    if ((part) && (strcmp(part, "default")))
      {
-        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
+        int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
         return int_ret;
      }
 
@@ -821,7 +821,7 @@ _elm_ctxpopup_elm_container_content_get(Eo *obj, Elm_Ctxpopup_Data *sd, const ch
    if ((part) && (strcmp(part, "default")))
      {
         Evas_Object *ret = NULL;
-        eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_get(part));
+        ret = elm_obj_container_content_get(eo_super(obj, MY_CLASS), part);
         return ret;
      }
 
@@ -835,7 +835,7 @@ _elm_ctxpopup_elm_container_content_unset(Eo *obj, Elm_Ctxpopup_Data *sd, const 
 
    if ((part) && (strcmp(part, "default")))
      {
-        eo_do_super(obj, MY_CLASS, content = elm_obj_container_content_unset(part));
+        content = elm_obj_container_content_unset(eo_super(obj, MY_CLASS), part);
         return content;
      }
 
@@ -918,9 +918,8 @@ EOLIAN static void
 _elm_ctxpopup_item_elm_widget_item_disable(Eo *eo_ctxpopup_it,
                                            Elm_Ctxpopup_Item_Data *ctxpopup_it)
 {
-   Eina_Bool tmp;
    elm_object_item_disabled_set
-     (ctxpopup_it->list_item, eo_do_ret(eo_ctxpopup_it, tmp, elm_wdg_item_disabled_get()));
+     (ctxpopup_it->list_item, elm_wdg_item_disabled_get(eo_ctxpopup_it));
 }
 
 EOLIAN static void
@@ -1027,7 +1026,7 @@ _hide_finished_cb(void *data,
                   const char *source EINA_UNUSED)
 {
    evas_object_hide(data);
-   eo_do(data, eo_event_callback_call(ELM_CTXPOPUP_EVENT_DISMISSED, NULL));
+   eo_event_callback_call(data, ELM_CTXPOPUP_EVENT_DISMISSED, NULL);
 }
 
 static void
@@ -1076,7 +1075,7 @@ _elm_ctxpopup_item_eo_base_destructor(Eo *eo_ctxpopup_it,
         if (sd->list_visible) elm_layout_sizing_eval(WIDGET(ctxpopup_it));
      }
 
-   eo_do_super(eo_ctxpopup_it, ELM_CTXPOPUP_ITEM_CLASS, eo_destructor());
+   eo_destructor(eo_super(eo_ctxpopup_it, ELM_CTXPOPUP_ITEM_CLASS));
 }
 
 EOLIAN static Eina_Bool
@@ -1084,7 +1083,7 @@ _elm_ctxpopup_elm_widget_disable(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_disable());
+   int_ret = elm_obj_widget_disable(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
    if (sd->list)
      elm_object_disabled_set(sd->list, elm_widget_disabled_get(obj));
@@ -1099,7 +1098,7 @@ _elm_ctxpopup_evas_object_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -1138,7 +1137,7 @@ _elm_ctxpopup_evas_object_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
      (priv->box, EVAS_CALLBACK_RESIZE, _on_content_resized, obj);
 
    /* box will be our content placeholder, thus the parent's version call */
-   eo_do_super(obj, MY_CLASS, elm_obj_container_content_set("elm.swallow.content", priv->box));
+   elm_obj_container_content_set(eo_super(obj, MY_CLASS), "elm.swallow.content", priv->box);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _on_show, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _on_hide, NULL);
@@ -1163,7 +1162,7 @@ _elm_ctxpopup_evas_object_smart_del(Eo *obj, Elm_Ctxpopup_Data *sd)
    EINA_LIST_FREE(sd->items, it)
      eo_del(it);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -1190,11 +1189,10 @@ elm_ctxpopup_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_ctxpopup_eo_base_constructor(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_POPUP_MENU));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_POPUP_MENU);
 
    return obj;
 }
@@ -1271,7 +1269,7 @@ _item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
 EOLIAN static Eo *
 _elm_ctxpopup_item_eo_base_constructor(Eo *obj, Elm_Ctxpopup_Item_Data *it)
 {
-   obj = eo_do_super_ret(obj, ELM_CTXPOPUP_ITEM_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, ELM_CTXPOPUP_ITEM_CLASS));
    it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    return obj;
@@ -1282,7 +1280,7 @@ _elm_ctxpopup_item_append(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Eva
 {
    Eo *eo_item;
 
-   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(func, data));
+   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eoid, func, data));
    if (!eo_item) return NULL;
 
    ELM_CTXPOPUP_ITEM_DATA_GET(eo_item, item);
@@ -1376,7 +1374,7 @@ _elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Ev
 {
    Eo *eo_item;
 
-   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(func, data));
+   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eoid, func, data));
    if (!eo_item) return NULL;
 
    ELM_CTXPOPUP_ITEM_DATA_GET(eo_item, item);
@@ -1428,7 +1426,7 @@ _elm_ctxpopup_item_init(Eo *eo_item,
           const void *data)
 {
    Eo *obj;
-   eo_do(eo_item, obj = eo_parent_get());
+   obj = eo_parent_get(eo_item);
    Elm_Ctxpopup_Data *sd = eo_data_scope_get(obj, ELM_CTXPOPUP_CLASS);
    if (!sd->list)
      {
@@ -1470,7 +1468,7 @@ EOLIAN static Elm_Atspi_State_Set
 _elm_ctxpopup_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Ctxpopup_Data *sd EINA_UNUSED)
 {
    Elm_Atspi_State_Set ret;
-   eo_do_super(obj, MY_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+   ret = elm_interface_atspi_accessible_state_set_get(eo_super(obj, MY_CLASS));
 
    STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MODAL);
 

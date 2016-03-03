@@ -32,7 +32,7 @@ _elm_glview_elm_widget_on_focus(Eo *obj, Elm_Glview_Data *_pd EINA_UNUSED, Elm_O
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
+   int_ret = elm_obj_widget_on_focus(eo_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj))
@@ -88,7 +88,7 @@ _glview_update_surface(Evas_Object *obj)
 EOLIAN static void
 _elm_glview_evas_object_smart_resize(Eo *obj, Elm_Glview_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
+   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
    sd->resized = EINA_TRUE;
 
@@ -210,7 +210,7 @@ _elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv EINA_UNUSED)
    elm_widget_resize_object_set(obj, img, EINA_TRUE);
    evas_object_image_size_set(img, 1, 1);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
 }
 
 static void
@@ -289,15 +289,14 @@ _elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
    if (sd->config) evas_gl_config_free(sd->config);
    if (sd->evasgl) evas_gl_free(sd->evasgl);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
 elm_glview_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent,
-                             elm_obj_glview_version_constructor(EVAS_GL_GLES_2_X));
+   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_glview_version_constructor(eoid, EVAS_GL_GLES_2_X));
    return obj;
 }
 
@@ -305,8 +304,7 @@ EAPI Evas_Object *
 elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent,
-                             elm_obj_glview_version_constructor(version));
+   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_glview_version_constructor(eoid, version));
    return obj;
 }
 
@@ -318,10 +316,9 @@ _elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
      ((version > 0) && (version <= 3)) ? version : EVAS_GL_GLES_2_X;
    _elm_glview_constructor(obj, sd);
 
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_ANIMATION));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ANIMATION);
 }
 
 EOLIAN static Eo *
@@ -333,7 +330,7 @@ _elm_glview_eo_base_finalize(Eo *obj, Elm_Glview_Data *sd)
         return NULL;
      }
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
+   return eo_finalize(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Evas_GL_API*

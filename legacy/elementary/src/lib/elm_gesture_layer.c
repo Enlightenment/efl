@@ -3736,7 +3736,7 @@ _elm_gesture_layer_elm_widget_disable(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_
 EOLIAN static void
 _elm_gesture_layer_evas_object_smart_add(Eo *obj, Elm_Gesture_Layer_Data *priv)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->line_min_length =
@@ -3810,7 +3810,7 @@ _elm_gesture_layer_evas_object_smart_del(Eo *obj, Elm_Gesture_Layer_Data *sd)
    if (!elm_widget_disabled_get(obj))
      _callbacks_unregister(obj);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -3824,8 +3824,8 @@ elm_gesture_layer_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_gesture_layer_eo_base_constructor(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
 }
@@ -3910,7 +3910,7 @@ _elm_gesture_layer_cb_set(Eo *obj, Elm_Gesture_Layer_Data *sd, Elm_Gesture_Type 
      _glayer_tests_array[idx].reset(sd->gesture[idx]);
 
    _cbs_clean(sd, idx, cb_type); // for ABI compat.
-   eo_do(obj, elm_obj_gesture_layer_cb_add(idx, cb_type, cb, data));
+   elm_obj_gesture_layer_cb_add(obj, idx, cb_type, cb, data);
 }
 
 EOLIAN static void

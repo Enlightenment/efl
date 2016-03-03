@@ -20,7 +20,7 @@ _ev_handler(void *data EINA_UNUSED,
 
    printf("systray ready event\n");
 
-   eo_do(item, ret = elm_obj_systray_register());
+   ret = elm_obj_systray_register(item);
 
    printf("Item Registration: ");
    if (ret)
@@ -36,8 +36,8 @@ _bt_clicked(void *data EINA_UNUSED,
             Evas_Object *obj EINA_UNUSED,
             void *event_info EINA_UNUSED)
 {
-   eo_do(item, elm_obj_systray_icon_name_set(elm_entry_entry_get(i)));
-   eo_do(item, elm_obj_systray_att_icon_name_set(elm_entry_entry_get(ai)));
+   elm_obj_systray_icon_name_set(item, elm_entry_entry_get(i));
+   elm_obj_systray_att_icon_name_set(item, elm_entry_entry_get(ai));
 }
 
 static void
@@ -45,7 +45,7 @@ static void
             Evas_Object *obj EINA_UNUSED,
             void *event_info EINA_UNUSED)
 {
-   eo_do(item, elm_obj_systray_status_set(elm_radio_value_get(r)));
+   elm_obj_systray_status_set(item, elm_radio_value_get(r));
 }
 
 static void
@@ -83,9 +83,9 @@ test_systray(void *data EINA_UNUSED,
 
    // Status Notifier Item Handler
    item = eo_add(ELM_SYSTRAY_CLASS, win);
-   eo_do(item, elm_obj_systray_icon_name_set("elementary"));
-   eo_do(item, elm_obj_systray_att_icon_name_set("elementary"));
-   eo_do(item, elm_obj_systray_menu_set(it));
+   elm_obj_systray_icon_name_set(item, "elementary");
+   elm_obj_systray_att_icon_name_set(item, "elementary");
+   elm_obj_systray_menu_set(item, it);
 
    it = elm_bg_add(win);
    elm_win_resize_object_add(win, it);

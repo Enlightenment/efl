@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "slideshow", ELM_WIN_BASIC);
 
    slideshow = elm_slideshow_add(win);
-   eo_do(slideshow, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(slideshow);
 
    ck_assert(role == ELM_ATSPI_ROLE_DOCUMENT_PRESENTATION);
 
