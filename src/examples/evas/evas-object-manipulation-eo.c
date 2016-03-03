@@ -59,7 +59,7 @@ _canvas_resize_cb(Ecore_Evas *ee)
    int w, h;
 
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-   eo_do(d.bg, efl_gfx_size_set(w, h));
+   efl_gfx_size_set(d.bg, w, h);
 }
 
 static void
@@ -80,7 +80,7 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         int alpha, r, g, b;
 
-        eo_do(d.clipper, efl_gfx_color_get(&r, &g, &b, &alpha));
+        efl_gfx_color_get(d.clipper, &r, &g, &b, &alpha);
         evas_color_argb_unpremul(alpha, &r, &g, &b);
 
         alpha -= 20;
@@ -88,7 +88,7 @@ _on_keydown(void        *data EINA_UNUSED,
           alpha = 255;
 
         evas_color_argb_premul(alpha, &r, &g, &b);
-        eo_do(d.clipper, efl_gfx_color_set(r, g, b, alpha));
+        efl_gfx_color_set(d.clipper, r, g, b, alpha);
 
         fprintf(stdout, "Changing clipper's opacity: %d%%\n",
                 (int)((alpha / 255.0) * 100));
@@ -102,7 +102,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         fprintf(stdout, "Changing clipper's color to");
 
-        eo_do(d.clipper, efl_gfx_color_get(&r, &g, &b, &alpha));
+        efl_gfx_color_get(d.clipper, &r, &g, &b, &alpha);
         evas_color_argb_unpremul(alpha, &r, &g, &b);
 
         if (g > 0)
@@ -117,7 +117,7 @@ _on_keydown(void        *data EINA_UNUSED,
           }
 
         evas_color_argb_premul(alpha, &r, &g, &b);
-        eo_do(d.clipper, efl_gfx_color_set(r, g, b, alpha));
+        efl_gfx_color_set(d.clipper, r, g, b, alpha);
         return;
      }
 
@@ -126,15 +126,15 @@ _on_keydown(void        *data EINA_UNUSED,
         fprintf(stdout, "Toggling clipping ");
 
         Evas_Object *clip = NULL;
-        eo_do(d.img, clip = evas_obj_clip_get());
+        clip = evas_obj_clip_get(d.img);
         if (clip == d.clipper)
           {
-             eo_do(d.img, evas_obj_clip_unset());
+             evas_obj_clip_unset(d.img);
              fprintf(stdout, "off\n");
           }
         else
           {
-             eo_do(d.img, evas_obj_clip_set(d.clipper));
+             evas_obj_clip_set(d.img, d.clipper);
              fprintf(stdout, "on\n");
           }
         return;
@@ -145,8 +145,8 @@ _on_keydown(void        *data EINA_UNUSED,
         Eina_Bool visibility;
         /* Don't use "get"-"set" expressions in one eo_do call,
          * if you pass parameter to "set" by value. */
-        eo_do(d.clipper, visibility = efl_gfx_visible_get());
-        eo_do(d.clipper, efl_gfx_visible_set(!visibility));
+        visibility = efl_gfx_visible_get(d.clipper);
+        efl_gfx_visible_set(d.clipper, !visibility);
         fprintf(stdout, "Clipper is now %s\n", visibility ? "hidden" : "visible");
         return;
      }
@@ -177,12 +177,15 @@ main(void)
    d.bg = eo_add(EVAS_RECTANGLE_CLASS, d.canvas);
 
    /* Eo-styled way to perform actions on an object*/
-   eo_do(d.bg, evas_obj_name_set("background rectangle"),
-               efl_gfx_color_set(255, 255, 255, 255), /* white bg */
-               efl_gfx_position_set(0, 0), /* at canvas' origin */
-               efl_gfx_size_set(WIDTH, HEIGHT), /* covers full canvas */
-               efl_gfx_visible_set(EINA_TRUE),
-               evas_obj_focus_set(EINA_TRUE));
+   evas_obj_name_set(d.bg, "background rectangle");
+   efl_gfx_color_set(d.bg, 255, 255, 255, 255);
+   /* white bg */
+               efl_gfx_position_set(d.bg, 0, 0);
+   /* at canvas' origin */
+               efl_gfx_size_set(d.bg, WIDTH, HEIGHT);
+   /* covers full canvas */
+               efl_gfx_visible_set(d.bg, EINA_TRUE);
+   evas_obj_focus_set(d.bg, EINA_TRUE);
 
    evas_object_event_callback_add(
      d.bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
@@ -194,9 +197,9 @@ main(void)
     * So it's possible to decrement refcount, and 'image' object
     * will be deleted automatically by parent.*/
 
-   eo_do(d.img, evas_obj_image_filled_set(EINA_TRUE),
-                efl_file_set(img_path, NULL),
-                err = evas_obj_image_load_error_get());
+   evas_obj_image_filled_set(d.img, EINA_TRUE);
+   efl_file_set(d.img, img_path, NULL);
+   err = evas_obj_image_load_error_get(d.img);
 
    if (err != EVAS_LOAD_ERROR_NONE)
      {
@@ -204,20 +207,20 @@ main(void)
      }
    else
      {
-        eo_do(d.img, efl_gfx_position_set(0, 0),
-                     efl_gfx_size_set(WIDTH, HEIGHT),
-                     efl_gfx_visible_set(EINA_TRUE));
+        efl_gfx_position_set(d.img, 0, 0);
+        efl_gfx_size_set(d.img, WIDTH, HEIGHT);
+        efl_gfx_visible_set(d.img, EINA_TRUE);
 
         const char *type = NULL;
-        eo_do(d.img, type = evas_obj_type_get());
+        type = evas_obj_type_get(d.img);
         fprintf(stdout, "Image object added, type is: %s\n", type);
      }
 
    /* border on the image's clipper, here just to emphasize its position */
    d.clipper_border = eo_add(EVAS_IMAGE_CLASS, d.canvas);
-   eo_do(d.clipper_border, evas_obj_image_filled_set(EINA_TRUE),
-                           efl_file_set(border_img_path, NULL),
-                           err = evas_obj_image_load_error_get());
+   evas_obj_image_filled_set(d.clipper_border, EINA_TRUE);
+   efl_file_set(d.clipper_border, border_img_path, NULL);
+   err = evas_obj_image_load_error_get(d.clipper_border);
 
    if (err != EVAS_LOAD_ERROR_NONE)
      {
@@ -225,24 +228,22 @@ main(void)
      }
    else
      {
-        eo_do(d.clipper_border,
-              evas_obj_image_border_set(3, 3, 3, 3),
-              evas_obj_image_border_center_fill_set(EVAS_BORDER_FILL_NONE),
-              efl_gfx_position_set((WIDTH / 4) -3, (HEIGHT / 4) - 3),
-              efl_gfx_size_set((WIDTH / 2) + 6, (HEIGHT / 2) + 6),
-              efl_gfx_visible_set(EINA_TRUE));
+        evas_obj_image_border_set(d.clipper_border, 3, 3, 3, 3);
+        evas_obj_image_border_center_fill_set(d.clipper_border, EVAS_BORDER_FILL_NONE);
+        efl_gfx_position_set(d.clipper_border, (WIDTH / 4) -3, (HEIGHT / 4) - 3);
+        efl_gfx_size_set(d.clipper_border, (WIDTH / 2) + 6, (HEIGHT / 2) + 6);
+        efl_gfx_visible_set(d.clipper_border, EINA_TRUE);
      }
    /* solid white clipper (note that it's the default color for a
     * rectangle) - it won't change clippees' colors, then (multiplying
     * by 255) */
    d.clipper = eo_add(EVAS_RECTANGLE_CLASS, d.canvas);
 
-   eo_do(d.clipper,
-         efl_gfx_position_set( WIDTH / 4, HEIGHT / 4),
-         efl_gfx_size_set(WIDTH / 2, HEIGHT / 2),
-         efl_gfx_visible_set(EINA_TRUE));
+   efl_gfx_position_set(d.clipper, WIDTH / 4, HEIGHT / 4);
+   efl_gfx_size_set(d.clipper, WIDTH / 2, HEIGHT / 2);
+   efl_gfx_visible_set(d.clipper, EINA_TRUE);
 
-   eo_do(d.img, evas_obj_clip_set(d.clipper));
+   evas_obj_clip_set(d.img, d.clipper);
 
    fprintf(stdout, "%s", commands);
 

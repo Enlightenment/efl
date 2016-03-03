@@ -63,7 +63,7 @@ _efl_vg_gradient_efl_vg_base_interpolate(Eo *obj,
    double from_map;
    Eina_Bool r;
 
-   eo_do_super(obj, EFL_VG_GRADIENT_CLASS, r = efl_vg_interpolate(from, to, pos_map));
+   r = efl_vg_interpolate(eo_super(obj, EFL_VG_GRADIENT_CLASS), from, to, pos_map);
 
    fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_CLASS);
    tod = eo_data_scope_get(to, EFL_VG_GRADIENT_CLASS);
@@ -101,39 +101,36 @@ _efl_vg_gradient_efl_vg_base_dup(Eo *obj,
 {
    Efl_VG_Gradient_Data *fromd;
 
-   eo_do_super(obj, EFL_VG_GRADIENT_CLASS, efl_vg_dup(from));
+   efl_vg_dup(eo_super(obj, EFL_VG_GRADIENT_CLASS), from);
 
    fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_CLASS);
 
-   eo_do(obj,
-         efl_gfx_gradient_stop_set(fromd->colors, fromd->colors_count),
-         efl_gfx_gradient_spread_set(fromd->s));
+   efl_gfx_gradient_stop_set(obj, fromd->colors, fromd->colors_count);
+   efl_gfx_gradient_spread_set(obj, fromd->s);
 }
 
 EAPI void
 evas_vg_gradient_stop_set(Eo *obj, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
 {
-   eo_do(obj, efl_gfx_gradient_stop_set(colors, length));
+   efl_gfx_gradient_stop_set(obj, colors, length);
 }
 
 EAPI void
 evas_vg_gradient_stop_get(Eo *obj, const Efl_Gfx_Gradient_Stop **colors, unsigned int *length)
 {
-   eo_do(obj, efl_gfx_gradient_stop_get(colors, length));
+   efl_gfx_gradient_stop_get(obj, colors, length);
 }
 
 EAPI void
 evas_vg_gradient_spread_set(Eo *obj, Efl_Gfx_Gradient_Spread s)
 {
-   eo_do(obj, efl_gfx_gradient_spread_set(s));
+   efl_gfx_gradient_spread_set(obj, s);
 }
 
 EAPI Efl_Gfx_Gradient_Spread
 evas_vg_gradient_spread_get(Eo *obj)
 {
-   Efl_Gfx_Gradient_Spread ret;
-
-   return eo_do_ret(obj, ret, efl_gfx_gradient_spread_get());
+   return efl_gfx_gradient_spread_get(obj);
 }
 
 #include "efl_vg_gradient.eo.c"

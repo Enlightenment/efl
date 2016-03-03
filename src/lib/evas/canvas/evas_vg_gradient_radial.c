@@ -89,20 +89,19 @@ _efl_vg_gradient_radial_render_pre(Eo *obj,
 
    if (!nd->renderer)
      {
-        eo_do(s, nd->renderer = ector_surface_renderer_factory_new(ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN));
+        nd->renderer = ector_surface_renderer_factory_new(s, ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN);
      }
 
-   eo_do(nd->renderer,
-         ector_renderer_transformation_set(current),
-         ector_renderer_origin_set(nd->x, nd->y),
-         ector_renderer_color_set(nd->r, nd->g, nd->b, nd->a),
-         ector_renderer_visibility_set(nd->visibility),
-         efl_gfx_gradient_stop_set(gd->colors, gd->colors_count),
-         efl_gfx_gradient_spread_set(gd->s),
-         efl_gfx_gradient_radial_center_set(pd->center.x, pd->center.y),
-         efl_gfx_gradient_radial_focal_set(pd->focal.x, pd->focal.y),
-         efl_gfx_gradient_radial_radius_set(pd->radius),
-         ector_renderer_prepare());
+   ector_renderer_transformation_set(nd->renderer, current);
+   ector_renderer_origin_set(nd->renderer, nd->x, nd->y);
+   ector_renderer_color_set(nd->renderer, nd->r, nd->g, nd->b, nd->a);
+   ector_renderer_visibility_set(nd->renderer, nd->visibility);
+   efl_gfx_gradient_stop_set(nd->renderer, gd->colors, gd->colors_count);
+   efl_gfx_gradient_spread_set(nd->renderer, gd->s);
+   efl_gfx_gradient_radial_center_set(nd->renderer, pd->center.x, pd->center.y);
+   efl_gfx_gradient_radial_focal_set(nd->renderer, pd->focal.x, pd->focal.y);
+   efl_gfx_gradient_radial_radius_set(nd->renderer, pd->radius);
+   ector_renderer_prepare(nd->renderer);
 }
 
 static Eo *
@@ -110,7 +109,7 @@ _efl_vg_gradient_radial_eo_base_constructor(Eo *obj, Efl_VG_Gradient_Radial_Data
 {
    Efl_VG_Base_Data *nd;
 
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
    nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
    nd->render_pre = _efl_vg_gradient_radial_render_pre;
@@ -123,7 +122,7 @@ static void
 _efl_vg_gradient_radial_eo_base_destructor(Eo *obj,
                                            Efl_VG_Gradient_Radial_Data *pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 static void
@@ -148,7 +147,7 @@ _efl_vg_gradient_radial_efl_vg_base_interpolate(Eo *obj,
    double from_map;
    Eina_Bool r;
 
-   eo_do_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS, r = efl_vg_interpolate(from, to, pos_map));
+   r = efl_vg_interpolate(eo_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS), from, to, pos_map);
 
    if (!r) return EINA_FALSE;
 
@@ -177,52 +176,49 @@ _efl_vg_gradient_radial_efl_vg_base_dup(Eo *obj,
 {
    Efl_VG_Gradient_Radial_Data *fromd;
 
-   eo_do_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS, efl_vg_dup(from));
+   efl_vg_dup(eo_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS), from);
 
    fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_RADIAL_CLASS);
 
-   eo_do(obj,
-         efl_gfx_gradient_radial_focal_set(fromd->focal.x, fromd->focal.y),
-         efl_gfx_gradient_radial_center_set(fromd->center.x, fromd->center.y),
-         efl_gfx_gradient_radial_radius_set(fromd->radius));
+   efl_gfx_gradient_radial_focal_set(obj, fromd->focal.x, fromd->focal.y);
+   efl_gfx_gradient_radial_center_set(obj, fromd->center.x, fromd->center.y);
+   efl_gfx_gradient_radial_radius_set(obj, fromd->radius);
 }
 
 EAPI void
 evas_vg_gradient_radial_center_set(Eo *obj, double x, double y)
 {
-   eo_do(obj, efl_gfx_gradient_radial_center_set(x, y));
+   efl_gfx_gradient_radial_center_set(obj, x, y);
 }
 
 EAPI void
 evas_vg_gradient_radial_center_get(Eo *obj, double *x, double *y)
 {
-   eo_do(obj, efl_gfx_gradient_radial_center_get(x, y));
+   efl_gfx_gradient_radial_center_get(obj, x, y);
 }
 
 EAPI void
 evas_vg_gradient_radial_radius_set(Eo *obj, double r)
 {
-   eo_do(obj, efl_gfx_gradient_radial_radius_set(r));
+   efl_gfx_gradient_radial_radius_set(obj, r);
 }
 
 EAPI double
 evas_vg_gradient_radial_radius_get(Eo *obj)
 {
-   double ret;
-
-   return eo_do_ret(obj, ret, efl_gfx_gradient_radial_radius_get());
+   return efl_gfx_gradient_radial_radius_get(obj);
 }
 
 EAPI void
 evas_vg_gradient_radial_focal_set(Eo *obj, double x, double y)
 {
-   eo_do(obj, efl_gfx_gradient_radial_focal_set(x, y));
+   efl_gfx_gradient_radial_focal_set(obj, x, y);
 }
 
 EAPI void
 evas_vg_gradient_radial_focal_get(Eo *obj, double *x, double *y)
 {
-   eo_do(obj, efl_gfx_gradient_radial_focal_get(x, y));
+   efl_gfx_gradient_radial_focal_get(obj, x, y);
 }
 
 #include "efl_vg_gradient_radial.eo.c"

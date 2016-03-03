@@ -158,7 +158,7 @@ evas_new(void)
 EOLIAN static Eo *
 _evas_canvas_eo_base_constructor(Eo *eo_obj, Evas_Public_Data *e)
 {
-   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
+   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
 
    e->evas = eo_obj;
    e->output.render_method = RENDER_METHOD_INVALID;
@@ -320,7 +320,7 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
    eina_spinlock_free(&(e->render.lock));
 
    e->magic = 0;
-   eo_do_super(eo_e, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(eo_e, MY_CLASS));
 }
 
 EOLIAN static void

@@ -70,7 +70,7 @@ _evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event
           {
              pd = eo_data_scope_get(n, EVAS_CANVAS3D_NODE_CLASS);
              if (box_intersection_box(&pd_target->aabb, &pd->aabb))
-               eo_do(target_node, ret = eo_event_callback_call(eo_desc, n));
+               ret = eo_event_callback_call(target_node, eo_desc, n);
           }
         return ret;
      }
@@ -81,7 +81,7 @@ _evas_canvas3d_node_private_callback_clicked(void *data EINA_UNUSED, const Eo_Ev
 {
    Eina_Bool ret = EINA_FALSE;
    const Eo_Event_Description *eo_desc = eo_base_legacy_only_event_description_get("clicked");
-   eo_do((Eo *)event->event_info, ret = eo_event_callback_call(eo_desc, event->event_info));
+   ret = eo_event_callback_call((Eo *)event->event_info, eo_desc, event->event_info);
 
    return ret;
 }
@@ -121,7 +121,7 @@ _node_scene_root_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *ke
                                void *data EINA_UNUSED, void *fdata)
 {
    Evas_Canvas3D_Scene *s = *(Evas_Canvas3D_Scene **)key;
-   eo_do(s, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_ROOT_NODE, (Evas_Canvas3D_Object *)fdata));
+   evas_canvas3d_object_change(s, EVAS_CANVAS3D_STATE_SCENE_ROOT_NODE, (Evas_Canvas3D_Object *)fdata);
    return EINA_TRUE;
 }
 
@@ -130,7 +130,7 @@ _node_scene_camera_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *
                                  void *data EINA_UNUSED, void *fdata)
 {
    Evas_Canvas3D_Scene *s = *(Evas_Canvas3D_Scene **)key;
-   eo_do(s, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_CAMERA_NODE, (Evas_Canvas3D_Object *)fdata));
+   evas_canvas3d_object_change(s, EVAS_CANVAS3D_STATE_SCENE_CAMERA_NODE, (Evas_Canvas3D_Object *)fdata);
    return EINA_TRUE;
 }
 
@@ -158,7 +158,7 @@ _evas_canvas3d_node_evas_canvas3d_object_change_notify(Eo *obj, Evas_Canvas3D_No
    /* Notify parent that a member has changed. */
    if (pd->parent && !parent_change)
     {
-       eo_do(pd->parent, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_MEMBER, obj));
+       evas_canvas3d_object_change(pd->parent, EVAS_CANVAS3D_STATE_NODE_MEMBER, obj);
     }
 
    orientation = (state == EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION)
@@ -172,7 +172,7 @@ _evas_canvas3d_node_evas_canvas3d_object_change_notify(Eo *obj, Evas_Canvas3D_No
    if (scale)
      EINA_LIST_FOREACH(pd->members, l, n)
        {
-          eo_do(n, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE, obj));
+          evas_canvas3d_object_change(n, EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE, obj);
        }
    if (orientation && !(pd->billboard_target))
      EINA_LIST_FOREACH(pd->members, l, n)
@@ -181,12 +181,12 @@ _evas_canvas3d_node_evas_canvas3d_object_change_notify(Eo *obj, Evas_Canvas3D_No
           Evas_Canvas3D_Node_Data *pdm = eo_data_scope_get(n, EVAS_CANVAS3D_NODE_CLASS);
           if (pdm->billboard_target)
             continue;
-          eo_do(n, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION, obj));
+          evas_canvas3d_object_change(n, EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION, obj);
        }
    if (position)
      EINA_LIST_FOREACH(pd->members, l, n)
        {
-          eo_do(n, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION, obj));
+          evas_canvas3d_object_change(n, EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION, obj);
        }
 }
 
@@ -199,8 +199,7 @@ _evas_canvas3d_node_evas_canvas3d_object_callback_register(Eo *obj, Evas_Canvas3
    GET_CALLBACK_TYPE(tcb, event)
 
    if (tcb != PRIVATE_CALLBACK_NONE)
-     eo_do(obj, eo_event_callback_add(&evas_canvas3d_node_private_event_desc[tcb],
-                                      evas_canvas3d_node_private_callback_functions[tcb], data));
+     eo_event_callback_add(obj, &evas_canvas3d_node_private_event_desc[tcb], evas_canvas3d_node_private_callback_functions[tcb], data);
 
 }
 
@@ -213,8 +212,7 @@ _evas_canvas3d_node_evas_canvas3d_object_callback_unregister(Eo *obj, Evas_Canva
    GET_CALLBACK_TYPE(tcb, event)
 
    if (tcb != PRIVATE_CALLBACK_NONE)
-     eo_do(obj, eo_event_callback_del(&evas_canvas3d_node_private_event_desc[tcb],
-                                      evas_canvas3d_node_private_callback_functions[tcb], NULL));
+     eo_event_callback_del(obj, &evas_canvas3d_node_private_event_desc[tcb], evas_canvas3d_node_private_callback_functions[tcb], NULL);
 }
 
 static Eina_Bool
@@ -223,13 +221,12 @@ _node_transform_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
    Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, MY_CLASS);
    Eina_Bool transform_dirty = EINA_FALSE, parent_dirty = EINA_FALSE;
 
-   eo_do(node,
-         transform_dirty = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION),
-         transform_dirty|= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_POSITION),
-         transform_dirty|= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_SCALE),
-         parent_dirty = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION),
-         parent_dirty |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION),
-         parent_dirty |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE));
+   transform_dirty = evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION);
+   transform_dirty|= evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_POSITION);
+   transform_dirty|= evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_SCALE);
+   parent_dirty = evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION);
+   parent_dirty |= evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION);
+   parent_dirty |= evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE);
 
    if (transform_dirty || parent_dirty)
      {
@@ -355,14 +352,14 @@ _node_item_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
      {
         if (pd->data.camera.camera)
           {
-             eo_do(pd->data.camera.camera, evas_canvas3d_object_update());
+             evas_canvas3d_object_update(pd->data.camera.camera);
           }
      }
    else if (pd->type == EVAS_CANVAS3D_NODE_TYPE_LIGHT)
      {
         if (pd->data.light.light)
           {
-             eo_do(pd->data.light.light, evas_canvas3d_object_update());
+             evas_canvas3d_object_update(pd->data.light.light);
           }
      }
    else if (pd->type == EVAS_CANVAS3D_NODE_TYPE_MESH)
@@ -371,7 +368,7 @@ _node_item_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
         Evas_Canvas3D_Mesh *m;
         EINA_LIST_FOREACH(pd->data.mesh.meshes, l, m)
           {
-             eo_do(m, evas_canvas3d_object_update());
+             evas_canvas3d_object_update(m);
           }
      }
 
@@ -390,10 +387,10 @@ _pack_meshes_vertex_data(Evas_Canvas3D_Node *node, Eina_Vector3 **vertices, int 
     Evas_Real               pos_weight;
 
     *count = 0;
-    eo_do(node, m = (Eina_List *)evas_canvas3d_node_mesh_list_get());
+    m = (Eina_List *)evas_canvas3d_node_mesh_list_get(node);
     EINA_LIST_FOREACH(m, l, mesh)
       {
-         eo_do(node, frame = evas_canvas3d_node_mesh_frame_get(mesh));
+         frame = evas_canvas3d_node_mesh_frame_get(node, mesh);
          evas_canvas3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
                                                     &pos0, &pos1, &pos_weight);
          if(!pos0.data) continue;
@@ -416,7 +413,7 @@ _pack_meshes_vertex_data(Evas_Canvas3D_Node *node, Eina_Vector3 **vertices, int 
 
     EINA_LIST_FOREACH(m, l, mesh)
       {
-         eo_do(node, frame = evas_canvas3d_node_mesh_frame_get(mesh));
+         frame = evas_canvas3d_node_mesh_frame_get(node, mesh);
          evas_canvas3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
                                                     &pos0, &pos1, &pos_weight);
          if(!pos0.data) continue;
@@ -461,15 +458,14 @@ _update_node_shapes(Evas_Canvas3D_Node *node)
         return;
      }
 
-   eo_do(node,
-         transform_orientation_dirty = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION),
-         transform_orientation_dirty |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION),
-         transform_position_dirty = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_POSITION),
-         transform_position_dirty |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION),
-         transform_scale_dirty = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_SCALE),
-         transform_scale_dirty |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE),
-         mesh_geom_dirty = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_MESH_GEOMETRY),
-         mesh_geom_dirty |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_MESH_FRAME));
+   transform_orientation_dirty = evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION);
+   transform_orientation_dirty |= evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION);
+   transform_position_dirty = evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_POSITION);
+   transform_position_dirty |= evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION);
+   transform_scale_dirty = evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_SCALE);
+   transform_scale_dirty |= evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE);
+   mesh_geom_dirty = evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_MESH_GEOMETRY);
+   mesh_geom_dirty |= evas_canvas3d_object_dirty_get(node, EVAS_CANVAS3D_STATE_NODE_MESH_FRAME);
 
 
         _pack_meshes_vertex_data(node, &vertices, &count);
@@ -510,7 +506,7 @@ node_aabb_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 
    evas_build_sphere(&pd->aabb, &pd->bsphere);
    eo_desc = eo_base_legacy_only_event_description_get("collision,private");
-   eo_do(node, eo_event_callback_call(eo_desc, (void *)node));
+   eo_event_callback_call(node, eo_desc, (void *)node);
 
    return EINA_TRUE;
 }
@@ -569,7 +565,7 @@ _node_free(Evas_Canvas3D_Object *obj)
 
    if (pd->parent)
      {
-        eo_do(pd->parent, evas_canvas3d_node_member_del(obj));
+        evas_canvas3d_node_member_del(pd->parent, obj);
      }
 
    if (pd->type == EVAS_CANVAS3D_NODE_TYPE_MESH && pd->data.mesh.meshes)
@@ -898,7 +894,7 @@ evas_canvas3d_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
         scene_data->mesh_nodes = eina_list_append(scene_data->mesh_nodes, node);
 
         /* calculation of tangent space for all meshes */
-        eo_do (node, list_meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get());
+        list_meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get(node);
         EINA_LIST_FOREACH(list_meshes, l, mesh)
           {
              mesh_pd = eo_data_scope_get(mesh, MY_CLASS);
@@ -937,7 +933,7 @@ evas_canvas3d_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
                   evas_tangent_space_get(vertex_data, tex_data, normal_data, index, mesh_pd->vertex_count,
                                          mesh_pd->index_count, stride, tex_stride, normal_stride, &tangent_data);
 
-                  eo_do(mesh, evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT, 3 * sizeof(float), tangent_data));
+                  evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT, 3 * sizeof(float), tangent_data);
                   free(tangent_data);
                }
           }
@@ -967,16 +963,13 @@ evas_canvas3d_node_color_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
    Eina_Array *arr;
    if (pd->type == EVAS_CANVAS3D_NODE_TYPE_MESH)
      {
-        eo_do(camera,
-              visible = evas_canvas3d_camera_node_visible_get(scene_data->camera_node,
-                                                        node, EVAS_CANVAS3D_FRUSTUM_MODE_BSPHERE));
+        visible = evas_canvas3d_camera_node_visible_get(camera, scene_data->camera_node, node, EVAS_CANVAS3D_FRUSTUM_MODE_BSPHERE);
         if (visible)
           {
-             eo_do (node, list_meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get());
+             list_meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get(node);
              EINA_LIST_FOREACH(list_meshes, l, mesh)
                {
-                 Eina_Bool tmp;
-                 if (eo_do_ret(mesh, tmp, evas_canvas3d_mesh_color_pick_enable_get()))
+                 if (evas_canvas3d_mesh_color_pick_enable_get(mesh))
                    {
                       color = calloc(1, sizeof(Evas_Color));
 
@@ -1019,14 +1012,14 @@ evas_canvas3d_node_add(Evas *e, Evas_Canvas3D_Node_Type type)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e, evas_canvas3d_node_constructor(type));
+   Evas_Object *eo_obj = eo_add(MY_CLASS, e, evas_canvas3d_node_constructor(eoid, type));
    return eo_obj;
 }
 
 EOLIAN static void
 _evas_canvas3d_node_constructor(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Node_Type type)
 {
-   eo_do(obj, evas_canvas3d_object_type_set(EVAS_CANVAS3D_OBJECT_TYPE_NODE));
+   evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_NODE);
 
    eina_vector3_set(&pd->position, 0.0, 0.0, 0.0);
    eina_quaternion_set(&pd->orientation, 0.0, 0.0, 0.0, 1.0);
@@ -1062,7 +1055,7 @@ _evas_canvas3d_node_eo_base_destructor(Eo *obj, Evas_Canvas3D_Node_Data *pd EINA
 {
    _node_free(obj);
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Evas_Canvas3D_Node_Type
@@ -1090,7 +1083,7 @@ _evas_canvas3d_node_member_add(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas
         pdmemberparent->members = eina_list_remove(pdmemberparent->members, member);
 
         /* Mark changed. */
-        eo_do(pdmember->parent, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_MEMBER, NULL));
+        evas_canvas3d_object_change(pdmember->parent, EVAS_CANVAS3D_STATE_NODE_MEMBER, NULL);
      }
    else
      {
@@ -1103,10 +1096,10 @@ _evas_canvas3d_node_member_add(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas
    pdmember->parent = obj;
 
    /* Mark changed. */
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_MEMBER, NULL));
-   eo_do(member, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION, NULL));
-   eo_do(member, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION, NULL));
-   eo_do(member, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_MEMBER, NULL);
+   evas_canvas3d_object_change(member, EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION, NULL);
+   evas_canvas3d_object_change(member, EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION, NULL);
+   evas_canvas3d_object_change(member, EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE, NULL);
 }
 
 EOLIAN static void
@@ -1124,10 +1117,10 @@ _evas_canvas3d_node_member_del(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas
    pdmember->parent = NULL;
 
    /* Mark modified object as changed. */
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_MEMBER, NULL));
-   eo_do(member, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION, NULL));
-   eo_do(member, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION, NULL));
-   eo_do(member, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_MEMBER, NULL);
+   evas_canvas3d_object_change(member, EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION, NULL);
+   evas_canvas3d_object_change(member, EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION, NULL);
+   evas_canvas3d_object_change(member, EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE, NULL);
 
    /* Decrease reference count. */
    eo_unref(member);
@@ -1152,7 +1145,7 @@ _evas_canvas3d_node_position_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Real
    pd->position.y = y;
    pd->position.z = z;
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_POSITION, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_POSITION, NULL);
 }
 
 EOLIAN static void
@@ -1163,7 +1156,7 @@ _evas_canvas3d_node_orientation_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_R
    pd->orientation.z = z;
    pd->orientation.w = w;
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION, NULL);
 }
 
 EOLIAN static void
@@ -1182,7 +1175,7 @@ _evas_canvas3d_node_orientation_angle_axis_set(Eo *obj, Evas_Canvas3D_Node_Data 
    pd->orientation.y = s * axis.y;
    pd->orientation.z = s * axis.z;
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION, NULL);
 }
 
 EOLIAN static void
@@ -1192,7 +1185,7 @@ _evas_canvas3d_node_scale_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Real x,
    pd->scale.y = y;
    pd->scale.z = z;
 
-  eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_SCALE, NULL));
+  evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_SCALE, NULL);
 }
 
 EOLIAN static void
@@ -1213,7 +1206,7 @@ _evas_canvas3d_node_position_get(const Eo *obj, Evas_Canvas3D_Node_Data *pd, Eva
      }
    else if (space == EVAS_CANVAS3D_SPACE_WORLD)
      {
-        eo_do(obj, evas_canvas3d_object_update());
+        evas_canvas3d_object_update((Eo *) obj);
 
         if (x) *x = pd->position_world.x;
         if (y) *y = pd->position_world.y;
@@ -1241,7 +1234,7 @@ _evas_canvas3d_node_orientation_get(const Eo *obj, Evas_Canvas3D_Node_Data *pd, 
      }
    else if (space == EVAS_CANVAS3D_SPACE_WORLD)
      {
-        eo_do(obj, evas_canvas3d_object_update());
+        evas_canvas3d_object_update((Eo *) obj);
 
         if (x) *x = pd->orientation_world.x;
         if (y) *y = pd->orientation_world.y;
@@ -1269,7 +1262,7 @@ _evas_canvas3d_node_scale_get(const Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_C
      }
    else if (space == EVAS_CANVAS3D_SPACE_WORLD)
      {
-        eo_do(obj, evas_canvas3d_object_update());
+        evas_canvas3d_object_update((Eo *) obj);
 
         if (x) *x = pd->scale_world.x;
         if (y) *y = pd->scale_world.y;
@@ -1281,21 +1274,21 @@ EOLIAN static void
 _evas_canvas3d_node_position_inherit_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Eina_Bool inherit)
 {
    pd->position_inherit = inherit;
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_POSITION, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_POSITION, NULL);
 }
 
 EOLIAN static void
 _evas_canvas3d_node_orientation_inherit_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Eina_Bool inherit)
 {
    pd->orientation_inherit = inherit;
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION, NULL);
 }
 
 EOLIAN static void
 _evas_canvas3d_node_scale_inherit_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Eina_Bool inherit)
 {
    pd->scale_inherit = inherit;
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_SCALE, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_SCALE, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -1430,7 +1423,7 @@ _evas_canvas3d_node_look_at_set(Eo *obj, Evas_Canvas3D_Node_Data *pd,
 
    _look_at_set(pd, &target, &up);
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION, NULL);
 }
 
 EOLIAN static void
@@ -1459,7 +1452,7 @@ _evas_canvas3d_node_camera_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas
    evas_canvas3d_camera_node_add(camera, obj);
 
    /* Mark changed. */
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_CAMERA, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_CAMERA, NULL);
 }
 
 EOLIAN static Evas_Canvas3D_Camera *
@@ -1494,7 +1487,7 @@ _evas_canvas3d_node_light_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3
    evas_canvas3d_light_node_add(light, obj);
 
    /* Mark changed. */
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_LIGHT, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_LIGHT, NULL);
 }
 
 EOLIAN static Evas_Canvas3D_Light *
@@ -1541,8 +1534,8 @@ _evas_canvas3d_node_mesh_add(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D
    evas_canvas3d_mesh_node_add(mesh, obj);
 
    /* Mark changed. */
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_MESH_GEOMETRY, NULL));
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_MESH_MATERIAL, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_MESH_GEOMETRY, NULL);
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_MESH_MATERIAL, NULL);
 }
 
 EOLIAN static void
@@ -1564,8 +1557,8 @@ _evas_canvas3d_node_mesh_del(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D
    evas_canvas3d_mesh_node_del(mesh, obj);
    eo_unref(mesh);
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_MESH_GEOMETRY, NULL));
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_MESH_MATERIAL, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_MESH_GEOMETRY, NULL);
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_MESH_MATERIAL, NULL);
 }
 
 EOLIAN static const Eina_List *
@@ -1592,7 +1585,7 @@ _evas_canvas3d_node_mesh_frame_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Ca
      }
 
    nm->frame = frame;
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_MESH_FRAME, NULL));
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_MESH_FRAME, NULL);
 }
 
 EOLIAN static int
@@ -1618,7 +1611,7 @@ _evas_canvas3d_node_mesh_frame_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data 
 EOLIAN static void
 _evas_canvas3d_node_bounding_box_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd, Evas_Real *x, Evas_Real *y, Evas_Real *z, Evas_Real *x2, Evas_Real *y2, Evas_Real *z2)
 {
-   eo_do(obj, evas_canvas3d_object_update());
+   evas_canvas3d_object_update(obj);
    evas_canvas3d_node_tree_traverse(obj, EVAS_CANVAS3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_FALSE,
                                  node_aabb_update, NULL);
 
@@ -1633,7 +1626,7 @@ _evas_canvas3d_node_bounding_box_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Dat
 EOLIAN static void
 _evas_canvas3d_node_bounding_sphere_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd, Evas_Real *x, Evas_Real *y, Evas_Real *z, Evas_Real *r)
 {
-   eo_do(obj, evas_canvas3d_object_update());
+   evas_canvas3d_object_update(obj);
    evas_canvas3d_node_tree_traverse(obj, EVAS_CANVAS3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_FALSE,
                                  node_aabb_update, NULL);
 
@@ -1650,7 +1643,7 @@ _evas_canvas3d_node_billboard_target_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node
    if (pd->billboard_target != target)
      {
         pd->billboard_target = target;
-        eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_PARENT_BILLBOARD, NULL));
+        evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_PARENT_BILLBOARD, NULL);
      }
 }
 

@@ -61,7 +61,6 @@ extern int _eo_log_dom;
 
 typedef uintptr_t Eo_Id;
 typedef struct _Eo_Class _Eo_Class;
-typedef struct _Eo_Object _Eo_Object;
 typedef struct _Eo_Header Eo_Header;
 
 /* Retrieves the pointer to the object from the id */
@@ -214,11 +213,11 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
 
    const _Eo_Class *klass = obj->klass;
 
-   eo_do(_eo_id_get(obj), eo_event_callback_call(EO_BASE_EVENT_DEL, NULL));
+   eo_event_callback_call(_eo_id_get(obj), EO_BASE_EVENT_DEL, NULL);
 
    _eo_condtor_reset(obj);
 
-   eo_do(_eo_id_get(obj), eo_destructor());
+   eo_destructor(_eo_id_get(obj));
 
    if (!obj->condtor_done)
      {
@@ -232,7 +231,7 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
         Eo *emb_obj;
         EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
           {
-             eo_do(_eo_id_get(obj), eo_composite_detach(emb_obj));
+             eo_composite_detach(_eo_id_get(obj), emb_obj);
           }
      }
 

@@ -225,12 +225,9 @@ EAPI Ecore_Con_Url *
 ecore_con_url_new(const char *url)
 {
    Ecore_Con_Url *url_obj;
-   url_obj = eo_add(EFL_NETWORK_URL_CLASS, NULL,
-         efl_network_url_set(url));
+   url_obj = eo_add(EFL_NETWORK_URL_CLASS, NULL, efl_network_url_set(eoid, url));
 
-   eo_do(url_obj,
-         eo_event_callback_array_add(efl_network_url_event_table_callbacks(),
-                                     NULL));
+   eo_event_callback_array_add(url_obj, efl_network_url_event_table_callbacks(), NULL);
 
    return url_obj;
 }
@@ -238,7 +235,7 @@ ecore_con_url_new(const char *url)
 EOLIAN static Eo *
 _efl_network_url_eo_base_constructor(Efl_Network_Url *url_obj, Efl_Network_Url_Data *url_con EINA_UNUSED)
 {
-   url_obj = eo_do_super_ret(url_obj, MY_CLASS, url_obj, eo_constructor());
+   url_obj = eo_constructor(eo_super(url_obj, MY_CLASS));
 
    if (!_init_count || !_c_init())
      {
@@ -338,7 +335,7 @@ _efl_network_url_eo_base_finalize(Efl_Network_Url *url_obj, Efl_Network_Url_Data
     */
    _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_CONNECTTIMEOUT, 30);
    _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_FOLLOWLOCATION, 1);
-   return eo_do_super_ret(url_obj, MY_CLASS, url_obj, eo_finalize());
+   return eo_finalize(eo_super(url_obj, MY_CLASS));
 }
 
 EAPI Ecore_Con_Url *
@@ -375,9 +372,7 @@ ecore_con_url_free(Ecore_Con_Url *url_obj)
    if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
 
-   eo_do(url_obj,
-         eo_event_callback_array_del(efl_network_url_event_table_callbacks(),
-                                     NULL));
+   eo_event_callback_array_del(url_obj, efl_network_url_event_table_callbacks(), NULL);
 
    eo_del(url_obj);
 }
@@ -400,7 +395,7 @@ _ecore_con_url_free_internal(Ecore_Con_Url *url_obj)
 EOLIAN static void
 _efl_network_url_eo_base_destructor(Efl_Network_Url *url_obj, Efl_Network_Url_Data *url_con)
 {
-   eo_do_super(url_obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(url_obj, MY_CLASS));
 
    if (!_c) return;
    if (url_con->curl_easy)
@@ -1145,7 +1140,7 @@ _ecore_con_url_event_url_complete(Ecore_Con_Url *url_obj, CURLMsg *curlmsg)
    e.status = status;
    e.url_con = url_obj;
    url_con->event_count++;
-   eo_do(url_obj, eo_event_callback_call(EFL_NETWORK_URL_EVENT_COMPLETE, &e));
+   eo_event_callback_call(url_obj, EFL_NETWORK_URL_EVENT_COMPLETE, &e);
 }
 
 static void
@@ -1206,7 +1201,7 @@ _ecore_con_url_data_cb(void *buffer, size_t size, size_t nitems, void *userp)
         e.size = real_size;
         e.data = buffer;
         url_con->event_count++;
-        eo_do(url_obj, eo_event_callback_call(EFL_NETWORK_URL_EVENT_DATA, &e));
+        eo_event_callback_call(url_obj, EFL_NETWORK_URL_EVENT_DATA, &e);
      }
    else
      {
@@ -1265,7 +1260,7 @@ _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double u
    e.up.total = ultotal;
    e.up.now = ulnow;
    url_con->event_count++;
-   eo_do(url_obj, eo_event_callback_call(EFL_NETWORK_URL_EVENT_PROGRESS, &e));
+   eo_event_callback_call(url_obj, EFL_NETWORK_URL_EVENT_PROGRESS, &e);
 
    return 0;
 }

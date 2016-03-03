@@ -20,13 +20,17 @@ main(int argc, char *argv[])
 
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
 
-   eo_do(obj, simple_a_set(1), simple_b_set(2));
+   simple_a_set(obj, 1);
+   simple_b_set(obj, 2);
 
    int a = 0, b = 0, sum = 0;
-   eo_do(obj, a = simple_a_get(), b = simple_b_get(), sum = mixin_ab_sum_get());
+   a = simple_a_get(obj);
+   b = simple_b_get(obj);
+   sum = mixin_ab_sum_get(obj);
    fail_if(sum != a + b + 2); /* 2 for the two mixins... */
 
-   eo_do(obj, sum = mixin_ab_sum_get(), sum = mixin_ab_sum_get());
+   sum = mixin_ab_sum_get(obj);
+   sum = mixin_ab_sum_get(obj);
 
    Mixin2_Public_Data *pd2 = eo_data_scope_get(obj, MIXIN2_CLASS);
    fail_if(pd2->count != 6);
@@ -37,7 +41,8 @@ main(int argc, char *argv[])
    eo_unref(obj);
 
    obj = eo_add(INHERIT_CLASS, NULL);
-   eo_do(obj, simple_a_set(5), a = simple_a_get());
+   simple_a_set(obj, 5);
+   a = simple_a_get(obj);
    printf("%d\n", a);
    fail_if(a != 5);
 

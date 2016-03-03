@@ -21,7 +21,7 @@ START_TEST(eo_pure_virtual_fct_call)
    fail_if(!obj);
 
    TEST_EO_ERROR("_eo_call_resolve", "in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.");
-   eo_do(obj, simple_pure_virtual());
+   simple_pure_virtual(obj);
    fail_unless(ctx.did);
 
    eo_unref(obj);
@@ -39,7 +39,7 @@ START_TEST(eo_api_not_implemented_call)
    fail_if(!obj);
 
    TEST_EO_ERROR("_eo_api_op_id_get", "Unable to resolve op for api func %p");
-   eo_do(obj, simple_no_implementation());
+   simple_no_implementation(obj);
    fail_unless(ctx.did);
 
    eo_unref(obj);
@@ -57,7 +57,7 @@ START_TEST(eo_op_not_found_in_super)
    fail_if(!obj);
 
    TEST_EO_ERROR("_eo_call_resolve", "in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.");
-   eo_do_super(obj, SIMPLE_CLASS, simple_a_set(10));
+   simple_a_set(eo_super(obj, SIMPLE_CLASS), 10);
    fail_unless(ctx.did);
 
    eo_unref(obj);

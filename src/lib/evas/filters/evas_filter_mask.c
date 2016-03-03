@@ -146,9 +146,9 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
    ret = EINA_TRUE;
 
 end:
-   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, src_len));
-   eo_do(msk_fb->buffer, ector_buffer_unmap(msk_map, msk_len));
-   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dst_len));
+   ector_buffer_unmap(cmd->input->buffer, src_map, src_len);
+   ector_buffer_unmap(msk_fb->buffer, msk_map, msk_len);
+   ector_buffer_unmap(cmd->output->buffer, dst_map, dst_len);
    return ret;
 }
 
@@ -261,9 +261,9 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
    ret = EINA_TRUE;
 
 end:
-   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, src_len));
-   eo_do(msk_fb->buffer, ector_buffer_unmap(msk_map, msk_len));
-   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dst_len));
+   ector_buffer_unmap(cmd->input->buffer, src_map, src_len);
+   ector_buffer_unmap(msk_fb->buffer, msk_map, msk_len);
+   ector_buffer_unmap(cmd->output->buffer, dst_map, dst_len);
    return ret;
 }
 
@@ -351,9 +351,9 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
    ret = EINA_TRUE;
 
 end:
-   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, src_len));
-   eo_do(msk_fb->buffer, ector_buffer_unmap(msk_map, msk_len));
-   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dst_len));
+   ector_buffer_unmap(cmd->input->buffer, src_map, src_len);
+   ector_buffer_unmap(msk_fb->buffer, msk_map, msk_len);
+   ector_buffer_unmap(cmd->output->buffer, dst_map, dst_len);
    return ret;
 }
 
@@ -429,8 +429,8 @@ _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
    ret = EINA_TRUE;
 
 end:
-   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, src_len));
-   eo_do(msk_fb->buffer, ector_buffer_unmap(msk_map, msk_len));
-   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dst_len));
+   ector_buffer_unmap(cmd->input->buffer, src_map, src_len);
+   ector_buffer_unmap(msk_fb->buffer, msk_map, msk_len);
+   ector_buffer_unmap(cmd->output->buffer, dst_map, dst_len);
    return ret;
 }

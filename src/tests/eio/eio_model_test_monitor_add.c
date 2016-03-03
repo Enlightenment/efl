@@ -29,7 +29,7 @@ _load_monitor_status_cb(void *data, const Eo_Event *event)
   if (!(st->status & EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES))
     return EINA_TRUE;
 
-  eo_do(event->obj, efl_model_property_get("path", &value_prop));
+  efl_model_property_get(event->obj, "path", &value_prop);
   fail_if(!value_prop, "ERROR: Cannot get property!\n");
 
   str = eina_value_to_string(value_prop);
@@ -38,9 +38,9 @@ _load_monitor_status_cb(void *data, const Eo_Event *event)
   if(temp_filename && strcmp(str, temp_filename) == 0)
     {
       fprintf(stderr, "is child that we want\n");
-      eo_do(event->obj, eo_event_callback_del(EFL_MODEL_BASE_EVENT_LOAD_STATUS, _load_monitor_status_cb, data));
+      eo_event_callback_del(event->obj, EFL_MODEL_BASE_EVENT_LOAD_STATUS, _load_monitor_status_cb, data);
       children_added = EINA_TRUE;
-      eo_do(parent, efl_model_child_del(event->obj));
+      efl_model_child_del(parent, event->obj);
     }
 
     return EINA_FALSE;
@@ -54,13 +54,13 @@ _children_removed_cb(void *data EINA_UNUSED, const Eo_Event *event)
        Efl_Model_Children_Event* evt = event->event_info;
 
        Eina_Bool b;
-       eo_do(evt->child, b = efl_model_load_status_get() & EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES);
+       b = efl_model_load_status_get(evt->child);
        if(b)
          {
             const Eina_Value* value_prop = NULL;
             const char* str = NULL;
 
-            eo_do(evt->child, efl_model_property_get("path", &value_prop));
+            efl_model_property_get(evt->child, "path", &value_prop);
             fail_if(!value_prop, "ERROR: Cannot get property!\n");
 
             str = eina_value_to_string(value_prop);
@@ -79,8 +79,8 @@ _children_added_cb(void *data EINA_UNUSED, const Eo_Event *event)
   if (evt == NULL)
     return EINA_TRUE;
 
-  eo_do(evt->child, eo_event_callback_add(EFL_MODEL_BASE_EVENT_LOAD_STATUS, _load_monitor_status_cb, event->obj));
-  eo_do(evt->child, efl_model_load());
+  eo_event_callback_add(evt->child, EFL_MODEL_BASE_EVENT_LOAD_STATUS, _load_monitor_status_cb, event->obj);
+  efl_model_load(evt->child);
 
   return EINA_TRUE;
 }
@@ -98,7 +98,7 @@ _children_count_cb(void *data EINA_UNUSED, const Eo_Event *event)
    fprintf(stderr, "Children count number=%d\n", *len);
 
    /**< get full list */
-   eo_do(event->obj, status = efl_model_children_slice_get(0 ,0 ,(Eina_Accessor **)&accessor));
+   status = efl_model_children_slice_get(event->obj, 0, 0, (Eina_Accessor **)&accessor);
    if(accessor != NULL)
      {
         EINA_ACCESSOR_FOREACH(accessor, i, child) {}
@@ -125,14 +125,14 @@ START_TEST(eio_model_test_test_monitor_add)
 
    tmpdir = eina_environment_tmp_get();
 
-   filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(tmpdir));
+   filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eoid, tmpdir));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
 
-   eo_do(filemodel, eo_event_callback_add(EFL_MODEL_BASE_EVENT_CHILD_ADDED, _children_added_cb, NULL));
-   eo_do(filemodel, eo_event_callback_add(EFL_MODEL_BASE_EVENT_CHILD_REMOVED, _children_removed_cb, NULL));
-   eo_do(filemodel, eo_event_callback_add(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, _children_count_cb, NULL));
+   eo_event_callback_add(filemodel, EFL_MODEL_BASE_EVENT_CHILD_ADDED, _children_added_cb, NULL);
+   eo_event_callback_add(filemodel, EFL_MODEL_BASE_EVENT_CHILD_REMOVED, _children_removed_cb, NULL);
+   eo_event_callback_add(filemodel, EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, _children_count_cb, NULL);
 
-   eo_do(filemodel, efl_model_load());
+   efl_model_load(filemodel);
 
    ecore_main_loop_begin();
 

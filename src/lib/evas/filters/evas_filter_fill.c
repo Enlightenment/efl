@@ -53,7 +53,7 @@ _fill_cpu(Evas_Filter_Command *cmd)
           }
      }
 
-   eo_do(fb->buffer, ector_buffer_unmap(ptr, len));
+   ector_buffer_unmap(fb->buffer, ptr, len);
    return EINA_TRUE;
 }
 

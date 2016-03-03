@@ -18,8 +18,7 @@ _ector_cairo_symbol_get(Eo *ector_surface, const char *name)
 {
    void *sym;
 
-   eo_do(ector_surface,
-         sym = ector_cairo_surface_symbol_get(name));
+   sym = ector_cairo_surface_symbol_get(ector_surface, name);
    return sym;
 }
 
@@ -74,9 +73,7 @@ _ector_cairo_software_surface_ector_generic_buffer_pixels_set(Eo *obj, Ector_Cai
      cairo_surface_destroy(pd->surface);
    pd->surface = NULL;
 
-   eo_do_super(obj, MY_CLASS,
-               ok = ector_buffer_pixels_set(pixels, width, height, stride,
-                                            cspace, writable, l, r, t, b));
+   ok = ector_buffer_pixels_set(eo_super(obj, MY_CLASS), pixels, width, height, stride, cspace, writable, l, r, t, b);
 
    if (ok && pixels)
      {
@@ -90,7 +87,7 @@ _ector_cairo_software_surface_ector_generic_buffer_pixels_set(Eo *obj, Ector_Cai
 
  end:
    /* evas_common_cpu_end_opt(); // do we need this? */
-   eo_do(obj, ector_cairo_surface_context_set(ctx));
+   ector_cairo_surface_context_set(obj, ctx);
    return ok;
 }
 
@@ -105,7 +102,7 @@ _ector_cairo_software_surface_surface_get(Eo *obj EINA_UNUSED, Ector_Cairo_Softw
 static Eo_Base *
 _ector_cairo_software_surface_eo_base_constructor(Eo *obj, Ector_Cairo_Software_Surface_Data *pd)
 {
-   eo_do_super(obj, MY_CLASS, obj = eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
    if (!obj) return NULL;
    pd->base = eo_data_ref(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
@@ -118,7 +115,7 @@ EOLIAN static void
 _ector_cairo_software_surface_eo_base_destructor(Eo *obj, Ector_Cairo_Software_Surface_Data *pd)
 {
    eo_data_unref(obj, pd->base);
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 #include "ector_cairo_software_surface.eo.c"

@@ -69,7 +69,7 @@ _ector_software_buffer_base_pixels_clear(Eo *obj, Ector_Software_Buffer_Base_Dat
         return;
      }
 
-   eo_do(obj, eo_event_callback_call(ECTOR_GENERIC_BUFFER_EVENT_DETACHED, pd->pixels.u8));
+   eo_event_callback_call(obj, ECTOR_GENERIC_BUFFER_EVENT_DETACHED, pd->pixels.u8);
    if (!pd->nofree)
      {
         free(pd->pixels.u8);
@@ -336,7 +336,7 @@ EOLIAN static Eo_Base *
 _ector_software_buffer_eo_base_constructor(Eo *obj, void *data EINA_UNUSED)
 {
    Ector_Software_Buffer_Base_Data *pd;
-   eo_do_super(obj, MY_CLASS, obj = eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
    pd = eo_data_scope_get(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
    pd->generic = eo_data_ref(obj, ECTOR_GENERIC_BUFFER_MIXIN);
    pd->generic->eo = obj;
@@ -349,7 +349,7 @@ _ector_software_buffer_eo_base_destructor(Eo *obj, void *data EINA_UNUSED)
    Ector_Software_Buffer_Base_Data *pd = eo_data_scope_get(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
    _ector_software_buffer_base_pixels_clear(obj, pd);
    eo_data_unref(obj, pd->generic);
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
    if (pd->internal.maps)
      {
         ERR("Pixel data is still mapped during destroy! Check your code!");

@@ -249,288 +249,69 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
 
 /************************************ EO ************************************/
 
-// 1024 entries == 16k or 32k (32 or 64bit) for eo call stack. that's 1023
-// imbricated/recursive calls it can handle before barfing. i'd say that's ok
-#define EO_CALL_STACK_DEPTH_MIN 1024
-#define EO_CALL_STACK_SHRINK_DROP (EO_CALL_STACK_DEPTH_MIN >> 1)
+static const Eo_Class *_super_class = NULL;
+static Eina_Spinlock _super_class_lock;
 
-typedef struct _Eo_Stack_Frame
+EAPI Eo *
+eo_super(const Eo *obj, const Eo_Class *cur_klass)
 {
-   union {
-        _Eo_Object        *obj;
-        const _Eo_Class   *kls;
-   } o;
-   const _Eo_Class   *cur_klass;
-   Eina_Bool is_obj : 1;
-} Eo_Stack_Frame;
+   /* FIXME: Switch to atomic operations intead of lock. */
+   eina_spinlock_take(&_super_class_lock);
+   _super_class = cur_klass;
 
-#define EO_CALL_STACK_SIZE (EO_CALL_STACK_DEPTH_MIN * sizeof(Eo_Stack_Frame))
-
-static Eina_TLS _eo_call_stack_key = 0;
-
-typedef struct _Eo_Call_Stack {
-   Eo_Stack_Frame *frames;
-   Eo_Stack_Frame *frame_ptr;
-   Eo_Stack_Frame *last_frame;
-   Eo_Stack_Frame *shrink_frame;
-} Eo_Call_Stack;
-
-#define MEM_PAGE_SIZE 4096
-
-static void *
-_eo_call_stack_mem_alloc(size_t size)
-{
-#ifdef HAVE_MMAP
-   // allocate eo call stack via mmped anon segment if on linux - more
-   // secure and safe. also gives page aligned memory allowing madvise
-   void *ptr;
-   size_t newsize;
-   newsize = MEM_PAGE_SIZE * ((size + MEM_PAGE_SIZE - 1) /
-                              MEM_PAGE_SIZE);
-   ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
-              MAP_PRIVATE | MAP_ANON, -1, 0);
-   if (ptr == MAP_FAILED)
-     {
-        ERR("eo call stack mmap failed.");
-        return NULL;
-     }
-   return ptr;
-#else
-   //in regular cases just use malloc
-   return calloc(1, size);
-#endif
+   return (Eo *) ((Eo_Id) obj | MASK_SUPER_TAG);
 }
 
-#ifdef HAVE_MMAP
-static void
-_eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t size)
+EAPI Eina_Bool
+_eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *cache, const char *file, int line)
 {
-   if (newsize > size)
+   const _Eo_Class *klass, *inputklass, *main_klass;
+   const _Eo_Class *cur_klass = NULL;
+   _Eo_Object *obj = NULL;
+   const op_type_funcs *func;
+   Eina_Bool is_obj;
+
+   if (((Eo_Id) eo_id) & MASK_SUPER_TAG)
      {
-        CRI("eo call stack overflow, abort.");
-        abort();
-     }
-   return; // Do nothing, code for actual implementation in history. See commit message for details.
-#else
-static void
-_eo_call_stack_mem_resize(void **ptr, size_t newsize, size_t size EINA_UNUSED)
-{
-   *ptr = realloc(*ptr, newsize);
-   if (!*ptr)
-     {
-        CRI("eo call stack resize failed, abort.");
-        abort();
-     }
-#endif
-}
+        const Eo_Class *tmp = _super_class;
+        _super_class = NULL;
+        eina_spinlock_release(&_super_class_lock);
 
-#ifdef HAVE_MMAP
-static void
-_eo_call_stack_mem_free(void *ptr, size_t size)
-{
-   // free mmaped memory
-   munmap(ptr, size);
-#else
-static void
-_eo_call_stack_mem_free(void *ptr, size_t size EINA_UNUSED)
-{
-   // free regular memory
-   free(ptr);
-#endif
-}
+        eo_id = (Eo *) ((Eo_Id) eo_id & ~MASK_SUPER_TAG);
 
-static Eo_Call_Stack *
-_eo_call_stack_create()
-{
-   Eo_Call_Stack *stack;
-
-   stack = calloc(1, sizeof(Eo_Call_Stack));
-   if (!stack)
-     return NULL;
-
-   stack->frames = _eo_call_stack_mem_alloc(EO_CALL_STACK_SIZE);
-   if (!stack->frames)
-     {
-        free(stack);
-        return NULL;
+        cur_klass = _eo_class_pointer_get(tmp);
+        if (!cur_klass)
+          {
+             ERR("Invalid super class found. Aborting.");
+             return EINA_FALSE;
+          }
      }
 
-   // first frame is never used
-   stack->frame_ptr = stack->frames;
-   stack->last_frame = &stack->frames[EO_CALL_STACK_DEPTH_MIN - 1];
-   stack->shrink_frame = stack->frames;
+   if (EINA_UNLIKELY(!eo_id))
+      return EINA_FALSE;
 
-   return stack;
-}
+   call->eo_id = eo_id;
 
-static void
-_eo_call_stack_free(void *ptr)
-{
-   Eo_Call_Stack *stack = (Eo_Call_Stack *) ptr;
+   is_obj = _eo_is_a_obj(eo_id);
 
-   if (!stack) return;
-
-   if (stack->frames)
-     _eo_call_stack_mem_free(stack->frames, EO_CALL_STACK_SIZE);
-
-   free(stack);
-}
-
-#ifdef HAVE_THREAD_SPECIFIER
-static __thread Eo_Call_Stack *_eo_thread_stack = NULL;
-
-#define _EO_CALL_STACK_GET() ((_eo_thread_stack) ? _eo_thread_stack : (_eo_thread_stack = _eo_call_stack_create()))
-
-#else
-
-static Eo_Call_Stack *main_loop_stack = NULL;
-
-#define _EO_CALL_STACK_GET() ((EINA_LIKELY(eina_main_loop_is())) ? main_loop_stack : _eo_call_stack_get_thread())
-
-static inline Eo_Call_Stack *
-_eo_call_stack_get_thread(void)
-{
-   Eo_Call_Stack *stack = eina_tls_get(_eo_call_stack_key);
-
-   if (stack) return stack;
-
-   stack = _eo_call_stack_create();
-   eina_tls_set(_eo_call_stack_key, stack);
-
-   return stack;
-}
-#endif
-
-EAPI EINA_CONST void *
-_eo_stack_get(void)
-{
-   return _EO_CALL_STACK_GET();
-}
-
-static inline void
-_eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
-{
-   size_t sz, next_sz;
-   int frame_offset;
-
-   sz = stack->last_frame - stack->frames + 1;
-   if (grow)
-     next_sz = sz * 2;
-   else
-     next_sz = sz / 2;
-   frame_offset = stack->frame_ptr - stack->frames;
-
-   _eo_call_stack_mem_resize((void **)&(stack->frames),
-                             next_sz * sizeof(Eo_Stack_Frame),
-                             sz * sizeof(Eo_Stack_Frame));
-
-   stack->frame_ptr = &stack->frames[frame_offset];
-   stack->last_frame = &stack->frames[next_sz - 1];
-
-   if (next_sz == EO_CALL_STACK_DEPTH_MIN)
-     frame_offset = 0;
-   else
-     {
-        if (grow)
-          frame_offset = sz - EO_CALL_STACK_SHRINK_DROP;
-        else
-          frame_offset = (next_sz / 2) - EO_CALL_STACK_SHRINK_DROP;
-     }
-   stack->shrink_frame = &stack->frames[frame_offset];
-}
-
-static inline Eina_Bool
-_eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
-                Eina_Bool is_super, Eo_Stack_Frame *fptr)
-{
-   fptr->is_obj = _eo_is_a_obj(eo_id);
-
-   /* If we are already in the same object context, we inherit info from it. */
-   if (fptr->is_obj)
+   if (is_obj)
      {
         EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
-        fptr->o.obj = _obj;
+        obj = _obj;
+        klass = _obj->klass;
+        call->obj = obj;
         _eo_ref(_obj);
      }
    else
      {
         EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
-        fptr->o.kls = _klass;
+        klass = _klass;
+        call->obj = NULL;
+        call->data = NULL;
      }
 
-   if (is_super)
-     {
-        EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
-        fptr->cur_klass = cur_klass;
-     }
-   else
-     {
-        fptr->cur_klass = NULL;
-     }
+   inputklass = main_klass =  klass;
 
-   return EINA_TRUE;
-}
-
-EAPI Eina_Bool
-_eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, void *eo_stack)
-{
-   Eina_Bool ret = EINA_TRUE;
-   Eo_Stack_Frame *fptr;
-   Eo_Call_Stack *stack = eo_stack;
-
-   if (stack->frame_ptr == stack->last_frame)
-     _eo_call_stack_resize(stack, EINA_TRUE);
-
-   fptr = stack->frame_ptr;
-
-   fptr++;
-
-   if (!_eo_do_internal(eo_id, cur_klass_id, is_super, fptr))
-     {
-        fptr->o.obj = NULL;
-        fptr->cur_klass = NULL;
-
-        ret = EINA_FALSE;
-     }
-
-   stack->frame_ptr++;
-
-   return ret;
-}
-
-EAPI void
-_eo_do_end(void *eo_stack)
-{
-   Eo_Stack_Frame *fptr;
-   Eo_Call_Stack *stack = eo_stack;
-
-   fptr = stack->frame_ptr;
-
-   if (fptr->is_obj && fptr->o.obj)
-     _eo_unref(fptr->o.obj);
-
-   stack->frame_ptr--;
-
-   if (fptr == stack->shrink_frame)
-     _eo_call_stack_resize(stack, EINA_FALSE);
-}
-
-EAPI Eina_Bool
-_eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *cache, const char *file, int line)
-{
-   Eo_Stack_Frame *fptr;
-   const _Eo_Class *klass, *inputklass;
-   const op_type_funcs *func;
-   Eina_Bool is_obj;
-
-   fptr = _EO_CALL_STACK_GET()->frame_ptr;
-
-   if (EINA_UNLIKELY(!fptr->o.obj))
-      return EINA_FALSE;
-
-   is_obj = fptr->is_obj;
-
-   inputklass = klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
 
    if (!cache->op)
      {
@@ -542,9 +323,9 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
      }
 
    /* If we have a current class, we need to itr to the next. */
-   if (fptr->cur_klass)
+   if (cur_klass)
      {
-        func = _eo_kls_itr_next(klass, fptr->cur_klass, cache->op);
+        func = _eo_kls_itr_next(klass, cur_klass, cache->op);
 
         if (!func)
           goto end;
@@ -568,13 +349,7 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
                   call->func = func->func;
                   if (is_obj)
                     {
-                       call->obj = (Eo *) fptr->o.obj->header.id;
-                       call->data = (char *)fptr->o.obj + cache->off[i].off;
-                    }
-                  else
-                    {
-                       call->obj = _eo_class_id_get(inputklass);
-                       call->data = NULL;
+                       call->data = (char *) obj + cache->off[i].off;
                     }
                   return EINA_TRUE;
                }
@@ -593,17 +368,11 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
 
         if (is_obj)
           {
-             call->obj = (Eo *) fptr->o.obj->header.id;
-             call->data = _eo_data_scope_get(fptr->o.obj, func->src);
-          }
-        else
-          {
-             call->obj = _eo_class_id_get(klass);
-             call->data = NULL;
+             call->data = _eo_data_scope_get(obj, func->src);
           }
 
 # if EO_CALL_CACHE_SIZE > 0
-        if (!fptr->cur_klass)
+        if (!cur_klass)
           {
 # if EO_CALL_CACHE_SIZE > 1
              const int slot = cache->next_slot;
@@ -612,7 +381,7 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
 # endif
              cache->index[slot].klass = (const void *)inputklass;
              cache->entry[slot].func = (const void *)func;
-             cache->off[slot].off = (int)((long)((char *)call->data - (char *)fptr->o.obj));
+             cache->off[slot].off = (int)((long)((char *)call->data - (char *)obj));
 # if EO_CALL_CACHE_SIZE > 1
              cache->next_slot = (slot + 1) % EO_CALL_CACHE_SIZE;
 # endif
@@ -636,7 +405,7 @@ end:
      {
         Eina_List *itr;
         Eo *emb_obj_id;
-        EINA_LIST_FOREACH(((_Eo_Object *) fptr->o.obj)->composite_objects, itr, emb_obj_id)
+        EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj_id)
           {
              _Eo_Object *emb_obj = _eo_obj_pointer_get((Eo_Id)emb_obj_id);
 
@@ -649,7 +418,8 @@ end:
 
              if (EINA_LIKELY(func->func && func->src))
                {
-                  call->obj = _eo_id_get(emb_obj);
+                  call->eo_id = _eo_id_get(emb_obj);
+                  call->obj = obj; /* FIXME-eo4: Hack, we retain the previous object so we unref it... */
                   call->func = func->func;
                   call->data = _eo_data_scope_get(emb_obj, func->src);
 
@@ -659,15 +429,12 @@ end:
      }
 
      {
-        const _Eo_Class *main_klass;
-        main_klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
-
         /* If it's a do_super call. */
-        if (fptr->cur_klass)
+        if (cur_klass)
           {
              ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.",
                  file, line, func_name, cache->op, main_klass->desc->name,
-                 fptr->cur_klass->desc->name);
+                 cur_klass->desc->name);
           }
         else
           {
@@ -677,6 +444,15 @@ end:
           }
      }
    return EINA_FALSE;
+}
+
+EAPI void
+_eo_call_end(Eo_Op_Call_Data *call)
+{
+   if (EINA_LIKELY(!!call->obj))
+     {
+        _eo_unref(call->obj);
+     }
 }
 
 static inline Eina_Bool
@@ -882,20 +658,19 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 
    _eo_ref(obj);
 
-   eo_do(eo_id, eo_parent_set(parent_id));
+   eo_parent_set(eo_id, parent_id);
 
    /* If there's a parent. Ref. Eo_add should return an object with either a
     * parent ref, or with the lack of, just a ref. */
      {
-        Eo *parent_tmp;
-        if (ref && eo_do_ret(eo_id, parent_tmp, eo_parent_get()))
+        if (ref && eo_parent_get(eo_id))
           {
              _eo_ref(obj);
           }
      }
 
    /* eo_id can change here. Freeing is done on the resolved object. */
-   eo_do(eo_id, eo_id = eo_constructor());
+   eo_id = eo_constructor(eo_id);
    if (!eo_id)
      {
         ERR("Object of class '%s' - Error while constructing object",
@@ -909,28 +684,20 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 }
 
 static Eo *
-_eo_add_internal_end(Eo *eo_id, Eo_Call_Stack *stack)
+_eo_add_internal_end(Eo *eo_id, Eo *finalized_id)
 {
-   Eo_Stack_Frame *fptr;
+   EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
 
-   fptr = stack->frame_ptr;
-
-   if (EINA_UNLIKELY(!fptr->o.obj))
+   if (!obj->condtor_done)
      {
-        ERR("Corrupt call stack, shouldn't happen, please report!");
-        return NULL;
-     }
-
-   if (!fptr->o.obj->condtor_done)
-     {
-        const _Eo_Class *klass = fptr->o.obj->klass;
+        const _Eo_Class *klass = obj->klass;
 
         ERR("Object of class '%s' - Not all of the object constructors have been executed.",
               klass->desc->name);
         goto cleanup;
      }
 
-   if (!eo_id)
+   if (!finalized_id)
      {
         // XXX: Given EFL usage of objects, construction is a perfectly valid thing
         // to do. we shouldn't complain about it as handling a NULL obj creation is
@@ -946,24 +713,24 @@ _eo_add_internal_end(Eo *eo_id, Eo_Call_Stack *stack)
         goto cleanup;
      }
 
-   fptr->o.obj->finalized = EINA_TRUE;
+   obj->finalized = EINA_TRUE;
 
-   _eo_unref(fptr->o.obj);
+   _eo_unref(obj);
 
    return (Eo *)eo_id;
 
 cleanup:
-   _eo_unref(fptr->o.obj);
-   eo_del((Eo *) fptr->o.obj->header.id);
+   _eo_unref(obj);
+   eo_del((Eo *) obj->header.id);
    return NULL;
 }
 
 EAPI Eo *
-_eo_add_end(void *eo_stack)
+_eo_add_end(Eo *eo_id)
 {
-   Eo *ret = eo_finalize();
-   ret = _eo_add_internal_end(ret, eo_stack);
-   _eo_do_end(eo_stack);
+   Eo *ret = eo_finalize(eo_id);
+   ret = _eo_add_internal_end(eo_id, ret);
+
    return ret;
 }
 
@@ -1552,10 +1319,9 @@ eo_unref(const Eo *obj_id)
 EAPI void
 eo_del(const Eo *obj)
 {
-   Eo *parent_tmp;
-   if (eo_do_ret(obj, parent_tmp, eo_parent_get()))
+   if (eo_parent_get((Eo *) obj))
      {
-        eo_do(obj, eo_parent_set(NULL));
+        eo_parent_set((Eo *) obj, NULL);
      }
    else
      {
@@ -1800,6 +1566,12 @@ eo_init(void)
         return EINA_FALSE;
      }
 
+   if (!eina_spinlock_new(&_super_class_lock))
+     {
+        EINA_LOG_ERR("Could not init lock.");
+        return EINA_FALSE;
+     }
+
    eina_magic_string_static_set(EO_EINA_MAGIC, EO_EINA_MAGIC_STR);
    eina_magic_string_static_set(EO_FREED_EINA_MAGIC,
                                 EO_FREED_EINA_MAGIC_STR);
@@ -1824,27 +1596,6 @@ eo_init(void)
 
    /* bootstrap EO_CLASS_CLASS */
    (void) EO_ABSTRACT_CLASS_CLASS;
-
-   if (_eo_call_stack_key != 0)
-     WRN("_eo_call_stack_key already set, this should not happen.");
-   else
-     {
-        if (!eina_tls_cb_new(&_eo_call_stack_key, _eo_call_stack_free))
-          {
-             EINA_LOG_ERR("Could not create TLS key for call stack.");
-             return EINA_FALSE;
-
-          }
-     }
-
-#ifndef HAVE_THREAD_SPECIFIER
-   main_loop_stack = _eo_call_stack_create();
-   if (!main_loop_stack)
-     {
-        EINA_LOG_ERR("Could not alloc eo call stack.");
-        return EINA_FALSE;
-     }
-#endif
 
    return EINA_TRUE;
 }
@@ -1873,14 +1624,9 @@ eo_shutdown(void)
 
    eina_hash_free(_ops_storage);
 
+   eina_spinlock_free(&_super_class_lock);
    eina_spinlock_free(&_ops_storage_lock);
    eina_spinlock_free(&_eo_class_creation_lock);
-
-   if (_eo_call_stack_key != 0)
-     {
-        eina_tls_free(_eo_call_stack_key);
-        _eo_call_stack_key = 0;
-     }
 
    _eo_free_ids_tables();
 

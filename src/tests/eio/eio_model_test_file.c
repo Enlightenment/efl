@@ -84,26 +84,26 @@ _load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
         char *str;
 
         printf("Model is Loaded\n");
-        eo_do(event->obj, status = efl_model_property_get("filename", &value_prop));
+        status = efl_model_property_get(event->obj, "filename", &value_prop);
         str = eina_value_to_string(value_prop);
         printf("efl_model_loaded filename %s, status=%d\n", str, status);
         free(str);
 
-        eo_do(event->obj, status = efl_model_property_get("size", &value_prop));
+        status = efl_model_property_get(event->obj, "size", &value_prop);
         str = eina_value_to_string(value_prop);
         printf("efl_model_loaded size %s, status=%d\n", str, status);
         free(str);
 
-        eo_do(event->obj, status = efl_model_property_get("mtime", &value_prop));
+        status = efl_model_property_get(event->obj, "mtime", &value_prop);
         str = eina_value_to_string(value_prop);
         printf("efl_model_loaded mtime %s, status=%d\n", str, status);
         free(str);
 
-        eo_do(event->obj, efl_model_children_count_get(&total));
+        efl_model_children_count_get(event->obj, &total);
         printf("efl_model_test count %d\n", (int)total);
 
         /**< get full list */
-        eo_do(event->obj, status = efl_model_children_slice_get(0 ,0 ,(Eina_Accessor **)&accessor));
+        status = efl_model_children_slice_get(event->obj, 0, 0, (Eina_Accessor **)&accessor);
         eina_accessor_free(accessor);
         ecore_main_loop_quit();
      }
@@ -143,7 +143,7 @@ _children_count_cb(void *data EINA_UNUSED, const Eo_Event *event)
    fprintf(stdout, "Children count number=%d\n", *len);
    reqs.children = *len;
 
-   eo_do(event->obj, efl_model_children_count_get(&total));
+   efl_model_children_count_get(event->obj, &total);
    fprintf(stdout, "New total children count number=%d\n", *len);
 
    return EINA_TRUE;
@@ -165,27 +165,27 @@ START_TEST(eio_model_test_test_file)
    fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
    fail_if(!eio_init(), "ERROR: Cannot init EIO!\n");
 
-   filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(EFL_MODEL_TEST_FILENAME_PATH));
+   filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eoid, EFL_MODEL_TEST_FILENAME_PATH));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
 
-   eo_do(filemodel, eo_event_callback_add(EFL_MODEL_BASE_EVENT_LOAD_STATUS, _load_status_cb, NULL));
-   eo_do(filemodel, eo_event_callback_add(EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, _properties_change_cb, NULL));
-   eo_do(filemodel, eo_event_callback_add(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, _children_count_cb, NULL));
+   eo_event_callback_add(filemodel, EFL_MODEL_BASE_EVENT_LOAD_STATUS, _load_status_cb, NULL);
+   eo_event_callback_add(filemodel, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, _properties_change_cb, NULL);
+   eo_event_callback_add(filemodel, EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, _children_count_cb, NULL);
 
-   eo_do(filemodel, efl_model_load());
+   efl_model_load(filemodel);
 
    handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, exit_func, NULL);
 
    ecore_main_loop_begin();
 
-   eo_do(filemodel, status = efl_model_property_get("filename", &value_prop));
+   status = efl_model_property_get(filemodel, "filename", &value_prop);
    str = eina_value_to_string(value_prop);
    printf("efl_model_test filename %s, load status %d\n", str, status);
 
    free(str);
 
    i = 0;
-   eo_do(filemodel, efl_model_properties_get(&properties_list));
+   efl_model_properties_get(filemodel, &properties_list);
    EINA_ARRAY_ITER_NEXT(properties_list, i, str, iterator)
      {
         fprintf(stdout, "Returned property list %d: %s\n", i, str);

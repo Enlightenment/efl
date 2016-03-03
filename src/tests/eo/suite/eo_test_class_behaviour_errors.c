@@ -16,7 +16,7 @@ const Eo_Class *klass;
 
 static void _destructor_unref(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, klass, eo_destructor());
+   eo_destructor(eo_super(obj, klass));
 
    /* this triggers an eo stack overflow if not correctly protected */
    eo_unref(obj);

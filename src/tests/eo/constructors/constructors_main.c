@@ -28,10 +28,13 @@ main(int argc, char *argv[])
 
    fail_if(my_init_count != 2);
 
-   eo_do(obj, simple_a_set(1), simple_b_set(2));
+   simple_a_set(obj, 1);
+   simple_b_set(obj, 2);
 
    int a = 0, b = 0;
-   eo_do(obj, a = simple_a_get(), b = simple_b_get(), mixin_add_and_print(5));
+   a = simple_a_get(obj);
+   b = simple_b_get(obj);
+   mixin_add_and_print(obj, 5);
    fail_if(a != 1);
    fail_if(b != 2);
 
@@ -69,19 +72,18 @@ main(int argc, char *argv[])
    obj = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj);
    fail_if(my_init_count != 2);
-   eo_do(obj, a = simple_a_get());
+   a = simple_a_get(obj);
    fail_if(a != 0);
 
    my_init_count = 0;
-   obj = eo_add(SIMPLE_CLASS, NULL, simple_a_set(7));
+   obj = eo_add(SIMPLE_CLASS, NULL, simple_a_set(eoid, 7));
    fail_if(!obj);
    fail_if(my_init_count != 2);
-   eo_do(obj, a = simple_a_get(););
+   a = simple_a_get(obj);
    fail_if(a != 7);
 
    my_init_count = 0;
-   obj = eo_add(SIMPLE_CLASS, NULL, simple_b_set(6), simple_a_set(-1),
-                b = simple_b_get());
+   obj = eo_add(SIMPLE_CLASS, NULL, simple_b_set(eoid, 6), simple_a_set(eoid, -1), b = simple_b_get(eoid));
    fail_if(obj);
    fail_if(b != 6);
    fail_if(my_init_count != 0);

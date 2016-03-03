@@ -37,9 +37,9 @@ EAPI const Eo_Class *struct_class_get(void);
  *
  * @ingroup Struct
  */
-EOAPI char *struct_foo(int idx);
+EOAPI char *struct_foo(Eo *obj, int idx);
 
-EOAPI Named *struct_bar(void);
+EOAPI Named *struct_bar(Eo *obj);
 
 
 #endif

@@ -45,14 +45,11 @@ _ector_gl_surface_ector_generic_surface_renderer_factory_new(Eo *obj,
                                                              const Eo_Class *type)
 {
    if (type == ECTOR_RENDERER_GENERIC_SHAPE_MIXIN)
-     return eo_add(ECTOR_RENDERER_GL_SHAPE_CLASS, NULL,
-                   ector_renderer_surface_set(obj));
+     return eo_add(ECTOR_RENDERER_GL_SHAPE_CLASS, NULL, ector_renderer_surface_set(eoid, obj));
    else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN)
-     return eo_add(ECTOR_RENDERER_GL_GRADIENT_LINEAR_CLASS, NULL,
-                   ector_renderer_surface_set(obj));
+     return eo_add(ECTOR_RENDERER_GL_GRADIENT_LINEAR_CLASS, NULL, ector_renderer_surface_set(eoid, obj));
    else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN)
-     return eo_add(ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS, NULL,
-                   ector_renderer_surface_set(obj));
+     return eo_add(ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS, NULL, ector_renderer_surface_set(eoid, obj));
 
    ERR("Couldn't find class for type: %s\n", eo_class_name_get(type));
    return NULL;
@@ -77,7 +74,7 @@ _ector_gl_surface_push(Eo *obj,
 {
    unsigned int prog;
 
-   eo_do(obj, prog = ector_gl_surface_shader_get(flags));
+   prog = ector_gl_surface_shader_get(obj, flags);
 
    // FIXME: Not using mapp/unmap buffer yet, nor any pipe
    // FIXME: Move some of the state change to surface drawing start ?
@@ -328,7 +325,7 @@ _ector_gl_surface_shader_get(Eo *obj EINA_UNUSED, Ector_GL_Surface_Data *pd EINA
 static void
 _ector_gl_surface_eo_base_destructor(Eo *obj, Ector_GL_Surface_Data *pd EINA_UNUSED)
 {
-   eo_do_super(obj, ECTOR_GL_SURFACE_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, ECTOR_GL_SURFACE_CLASS));
 
    eina_hash_free(shader_cache);
    shader_cache = NULL;
@@ -341,7 +338,7 @@ _ector_gl_surface_eo_base_constructor(Eo *obj, Ector_GL_Surface_Data *pd EINA_UN
 {
    Eina_Strbuf *file_path = NULL;
 
-   eo_do_super(obj, ECTOR_GL_SURFACE_CLASS, obj = eo_constructor());
+   obj = eo_constructor(eo_super(obj, ECTOR_GL_SURFACE_CLASS));
    if (!obj) return NULL;
 
    if (shader_cache) return obj;

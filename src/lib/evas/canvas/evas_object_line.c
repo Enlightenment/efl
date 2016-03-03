@@ -220,7 +220,7 @@ _evas_line_eo_base_constructor(Eo *eo_obj, Evas_Line_Data *class_data EINA_UNUSE
 {
    Evas_Line_Data *o;
 
-   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
+   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
 
    evas_object_line_init(eo_obj);
 

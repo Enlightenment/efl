@@ -13,7 +13,7 @@ bench_eo_do_simple(int request)
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    for (i = 0 ; i < request ; i++)
      {
-        eo_do(obj, simple_a_set(i));
+        simple_a_set(obj, i);
      }
 
    eo_unref(obj);
@@ -27,8 +27,8 @@ bench_eo_do_two_objs(int request)
    Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
    for (i = 0 ; i < request ; i++)
      {
-        eo_do(obj, simple_a_set(i));
-        eo_do(obj2, simple_a_set(i));
+        simple_a_set(obj, i);
+        simple_a_set(obj2, i);
      }
 
    eo_unref(obj);
@@ -43,7 +43,7 @@ bench_eo_do_two_objs_growing_stack(int request)
    Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
    for (i = 0 ; i < request ; i++)
      {
-        eo_do(obj, simple_other_call(obj2, 20));
+        simple_other_call(obj, obj2, 20);
      }
 
    eo_unref(obj);
@@ -55,7 +55,7 @@ static const Eo_Class *cur_klass;
 static void
 _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
 {
-   eo_do_super(obj, cur_klass, simple_a_set(a));
+   simple_a_set(eo_super(obj, cur_klass), a);
 }
 
 static Eo_Op_Description op_desc[] = {
@@ -81,7 +81,7 @@ bench_eo_do_super(int request)
    Eo *obj = eo_add(cur_klass, NULL);
    for (i = 0 ; i < request ; i++)
      {
-        eo_do(obj, simple_a_set(i));
+        simple_a_set(obj, i);
      }
 
    eo_unref(obj);

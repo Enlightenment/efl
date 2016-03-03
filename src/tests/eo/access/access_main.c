@@ -15,7 +15,8 @@ main(int argc, char *argv[])
 
    Eo *obj = eo_add(INHERIT_CLASS, NULL);
 
-   eo_do(obj, simple_a_set(1), inherit_prot_print());
+   simple_a_set(obj, 1);
+   inherit_prot_print(obj);
 
    Simple_Public_Data *pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    printf("Pub: %d\n", pd->public_x2);

@@ -18,7 +18,7 @@ static void _eldbus_model_signal_callback_del(Eldbus_Model_Signal_Data *);
 static Eo_Base*
 _eldbus_model_signal_eo_base_constructor(Eo *obj, Eldbus_Model_Signal_Data *pd)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo_constructor(eo_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->handler = NULL;
@@ -35,7 +35,7 @@ _eldbus_model_signal_constructor(Eo *obj EINA_UNUSED,
    EINA_SAFETY_ON_NULL_RETURN(proxy);
    EINA_SAFETY_ON_NULL_RETURN(signal);
 
-   eo_do_super(obj, MY_CLASS, eldbus_model_arguments_constructor(proxy, signal->name, signal->arguments));
+   eldbus_model_arguments_constructor(eo_super(obj, MY_CLASS), proxy, signal->name, signal->arguments);
 
    pd->signal = signal;
 }
@@ -45,7 +45,7 @@ _eldbus_model_signal_eo_base_destructor(Eo *obj, Eldbus_Model_Signal_Data *pd)
 {
    _eldbus_model_signal_callback_del(pd);
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 static void
@@ -59,14 +59,14 @@ _eldbus_model_signal_efl_model_base_properties_load(Eo *obj, Eldbus_Model_Signal
 
    _eldbus_model_signal_callback_add(pd);
 
-   eo_do_super(obj, MY_CLASS, efl_model_properties_load());
+   efl_model_properties_load(eo_super(obj, MY_CLASS));
 }
 
 static void
 _eldbus_model_signal_efl_model_base_unload(Eo *obj EINA_UNUSED, Eldbus_Model_Signal_Data *pd)
 {
    _eldbus_model_signal_callback_del(pd);
-   eo_do_super(obj, MY_CLASS, efl_model_unload());
+   efl_model_unload(eo_super(obj, MY_CLASS));
 }
 
 static void

@@ -23,11 +23,11 @@ _a_set(Eo *obj, void *class_data, int a)
    pd->a = a;
    printf("%s %d\n", __func__, pd->a);
 
-   eo_do(obj, eo_event_callback_call(EV_A_CHANGED, &pd->a));
+   eo_event_callback_call(obj, EV_A_CHANGED, &pd->a);
 }
 
 Eina_Bool
-_cb_added(void *data, const Eo_Event *event)
+_cb_added(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Simple_Public_Data *pd = eo_data_scope_get(event->obj, MY_CLASS);
    const Eo_Callback_Array_Item *callback_array = event->event_info;
@@ -42,7 +42,7 @@ _cb_added(void *data, const Eo_Event *event)
 }
 
 Eina_Bool
-_cb_deled(void *data, const Eo_Event *event)
+_cb_deled(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Simple_Public_Data *pd = eo_data_scope_get(event->obj, MY_CLASS);
    const Eo_Callback_Array_Item *callback_array = event->event_info;
@@ -59,12 +59,12 @@ _cb_deled(void *data, const Eo_Event *event)
 static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
-   eo_do(obj, eo_event_callback_add(EO_BASE_EVENT_CALLBACK_ADD, _cb_added, NULL));
-   eo_do(obj, eo_event_callback_add(EO_BASE_EVENT_CALLBACK_DEL, _cb_deled, NULL));
+   eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_ADD, _cb_added, NULL);
+   eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_DEL, _cb_deled, NULL);
 
-   eo_do(obj, eo_key_data_set("cb_count", NULL));
+   eo_key_data_set(obj, "cb_count", NULL);
 
    return obj;
 }

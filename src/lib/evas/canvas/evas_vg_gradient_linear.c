@@ -73,19 +73,18 @@ _efl_vg_gradient_linear_render_pre(Eo *obj,
 
    if (!nd->renderer)
      {
-        eo_do(s, nd->renderer = ector_surface_renderer_factory_new(ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN));
+        nd->renderer = ector_surface_renderer_factory_new(s, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN);
      }
 
-   eo_do(nd->renderer,
-         ector_renderer_transformation_set(current),
-         ector_renderer_origin_set(nd->x, nd->y),
-         ector_renderer_color_set(nd->r, nd->g, nd->b, nd->a),
-         ector_renderer_visibility_set(nd->visibility),
-         efl_gfx_gradient_stop_set(gd->colors, gd->colors_count),
-         efl_gfx_gradient_spread_set(gd->s),
-         efl_gfx_gradient_linear_start_set(pd->start.x, pd->start.y),
-         efl_gfx_gradient_linear_end_set(pd->end.x, pd->end.y),
-         ector_renderer_prepare());
+   ector_renderer_transformation_set(nd->renderer, current);
+   ector_renderer_origin_set(nd->renderer, nd->x, nd->y);
+   ector_renderer_color_set(nd->renderer, nd->r, nd->g, nd->b, nd->a);
+   ector_renderer_visibility_set(nd->renderer, nd->visibility);
+   efl_gfx_gradient_stop_set(nd->renderer, gd->colors, gd->colors_count);
+   efl_gfx_gradient_spread_set(nd->renderer, gd->s);
+   efl_gfx_gradient_linear_start_set(nd->renderer, pd->start.x, pd->start.y);
+   efl_gfx_gradient_linear_end_set(nd->renderer, pd->end.x, pd->end.y);
+   ector_renderer_prepare(nd->renderer);
 }
 
 static Eo *
@@ -94,7 +93,7 @@ _efl_vg_gradient_linear_eo_base_constructor(Eo *obj,
 {
    Efl_VG_Base_Data *nd;
 
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
    nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
    nd->render_pre = _efl_vg_gradient_linear_render_pre;
@@ -106,7 +105,7 @@ _efl_vg_gradient_linear_eo_base_constructor(Eo *obj,
 static void
 _efl_vg_gradient_linear_eo_base_destructor(Eo *obj, Efl_VG_Gradient_Linear_Data *pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 static void
@@ -130,7 +129,7 @@ _efl_vg_gradient_linear_efl_vg_base_interpolate(Eo *obj,
    double from_map;
    Eina_Bool r;
 
-   eo_do_super(obj, EFL_VG_GRADIENT_LINEAR_CLASS, r = efl_vg_interpolate(from, to, pos_map));
+   r = efl_vg_interpolate(eo_super(obj, EFL_VG_GRADIENT_LINEAR_CLASS), from, to, pos_map);
 
    if (!r) return EINA_FALSE;
 
@@ -158,37 +157,36 @@ _efl_vg_gradient_linear_efl_vg_base_dup(Eo *obj,
 {
    Efl_VG_Gradient_Linear_Data *fromd;
 
-   eo_do_super(obj, EFL_VG_GRADIENT_LINEAR_CLASS, efl_vg_dup(from));
+   efl_vg_dup(eo_super(obj, EFL_VG_GRADIENT_LINEAR_CLASS), from);
 
    fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_LINEAR_CLASS);
 
-   eo_do(obj,
-         efl_gfx_gradient_linear_start_set(fromd->start.x, fromd->start.y),
-         efl_gfx_gradient_linear_end_set(fromd->end.x, fromd->end.y));
+   efl_gfx_gradient_linear_start_set(obj, fromd->start.x, fromd->start.y);
+   efl_gfx_gradient_linear_end_set(obj, fromd->end.x, fromd->end.y);
 }
 
 EAPI void
 evas_vg_gradient_linear_start_set(Eo *obj, double x, double y)
 {
-   eo_do(obj, efl_gfx_gradient_linear_start_set(x, y));
+   efl_gfx_gradient_linear_start_set(obj, x, y);
 }
 
 EAPI void
 evas_vg_gradient_linear_start_get(Eo *obj, double *x, double *y)
 {
-   eo_do(obj, efl_gfx_gradient_linear_start_get(x, y));
+   efl_gfx_gradient_linear_start_get(obj, x, y);
 }
 
 EAPI void
 evas_vg_gradient_linear_end_set(Eo *obj, double x, double y)
 {
-   eo_do(obj, efl_gfx_gradient_linear_end_set(x, y));
+   efl_gfx_gradient_linear_end_set(obj, x, y);
 }
 
 EAPI void
 evas_vg_gradient_linear_end_get(Eo *obj, double *x, double *y)
 {
-   eo_do(obj, efl_gfx_gradient_linear_end_get(x, y));
+   efl_gfx_gradient_linear_end_get(obj, x, y);
 }
 
 #include "efl_vg_gradient_linear.eo.c"

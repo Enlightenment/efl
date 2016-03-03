@@ -11,10 +11,9 @@ void _set_vertex_data_from_array(Evas_Canvas3D_Mesh *mesh,
 {
    float *address, *out;
    int stride, i, j;
-   eo_do(mesh,
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(frame, attr, 0, NULL),
-         address = (float *)evas_canvas3d_mesh_frame_vertex_data_map(frame, attr),
-         stride = evas_canvas3d_mesh_frame_vertex_stride_get(frame, attr));
+   evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, frame, attr, 0, NULL);
+   address = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, frame, attr);
+   stride = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, frame, attr);
    if (stride == 0) stride = sizeof(float) * attr_count;
    for (i = 0; i < vcount; i++)
      {
@@ -22,8 +21,7 @@ void _set_vertex_data_from_array(Evas_Canvas3D_Mesh *mesh,
         for (j = 0; j < attr_count; j++)
            out[j] = data[start + (line * i) + j];
      }
-   eo_do(mesh,
-         evas_canvas3d_mesh_frame_vertex_data_unmap(frame, attr));
+   evas_canvas3d_mesh_frame_vertex_data_unmap(mesh, frame, attr);
 }
 
 void
@@ -35,10 +33,9 @@ _set_vec3_vertex_data(Evas_Canvas3D_Mesh *mesh,
 {
    float *address, *out;
    int stride, i;
-   eo_do(mesh,
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(frame, attr, 0, NULL),
-         address = (float *)evas_canvas3d_mesh_frame_vertex_data_map(frame, attr),
-         stride = evas_canvas3d_mesh_frame_vertex_stride_get(frame, attr));
+   evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, frame, attr, 0, NULL);
+   address = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, frame, attr);
+   stride = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, frame, attr);
    if (stride == 0) stride = sizeof(float) * 3;
    for (i = 0; i < vcount; i++)
      {
@@ -48,8 +45,7 @@ _set_vec3_vertex_data(Evas_Canvas3D_Mesh *mesh,
         out[2] = data[i].z;
      }
    free(data);
-   eo_do(mesh,
-         evas_canvas3d_mesh_frame_vertex_data_unmap(frame, attr));
+   evas_canvas3d_mesh_frame_vertex_data_unmap(mesh, frame, attr);
 }
 
 void
@@ -61,10 +57,9 @@ _set_vec2_vertex_data(Evas_Canvas3D_Mesh *mesh,
 {
    float *address, *out;
    int stride, i;
-   eo_do(mesh,
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(frame, attr, 0, NULL),
-         address = (float *)evas_canvas3d_mesh_frame_vertex_data_map(frame, attr),
-         stride = evas_canvas3d_mesh_frame_vertex_stride_get(frame, attr));
+   evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, frame, attr, 0, NULL);
+   address = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, frame, attr);
+   stride = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, frame, attr);
    if (stride == 0) stride = sizeof(float) * 2;
    for (i = 0; i < vcount; i++)
      {
@@ -73,8 +68,7 @@ _set_vec2_vertex_data(Evas_Canvas3D_Mesh *mesh,
         out[1] = data[i].y;
      }
    free(data);
-   eo_do(mesh,
-         evas_canvas3d_mesh_frame_vertex_data_unmap(frame, attr));
+   evas_canvas3d_mesh_frame_vertex_data_unmap(mesh, frame, attr);
 }
 
 void

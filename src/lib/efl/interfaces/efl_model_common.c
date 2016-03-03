@@ -43,7 +43,7 @@ efl_model_load_set(Efl_Model_Base *model, Efl_Model_Load *load, Efl_Model_Load_S
    if (load->status != new_load.status)
      {
         load->status = new_load.status;
-        eo_do(model, eo_event_callback_call(EFL_MODEL_BASE_EVENT_LOAD_STATUS, load));
+        eo_event_callback_call(model, EFL_MODEL_BASE_EVENT_LOAD_STATUS, load);
      }
 }
 
@@ -77,7 +77,7 @@ EAPI void
 efl_model_error_notify(Efl_Model_Base *model)
 {
    Efl_Model_Load load = {.status = EFL_MODEL_LOAD_STATUS_ERROR};
-   eo_do(model, eo_event_callback_call(EFL_MODEL_BASE_EVENT_LOAD_STATUS, &load));
+   eo_event_callback_call(model, EFL_MODEL_BASE_EVENT_LOAD_STATUS, &load);
 }
 
 EAPI void
@@ -90,7 +90,7 @@ efl_model_property_changed_notify(Efl_Model_Base *model, const char *property)
    EINA_SAFETY_ON_FALSE_GOTO(ret, on_error);
 
    Efl_Model_Property_Event evt = {.changed_properties = changed_properties};
-   eo_do(model, eo_event_callback_call(EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt));
+   eo_event_callback_call(model, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt);
 
 on_error:
    eina_array_free(changed_properties);
@@ -106,7 +106,7 @@ efl_model_property_invalidated_notify(Efl_Model_Base *model, const char *propert
    EINA_SAFETY_ON_FALSE_GOTO(ret, on_error);
 
    Efl_Model_Property_Event evt = {.invalidated_properties = invalidated_properties};
-   eo_do(model, eo_event_callback_call(EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt));
+   eo_event_callback_call(model, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt);
 
 on_error:
    eina_array_free(invalidated_properties);

@@ -41,7 +41,7 @@ typedef enum
 
 EAPI const Eo_Class *typedef_class_get(void);
 
-EOAPI char *typedef_foo(int idx);
+EOAPI char *typedef_foo(Eo *obj, int idx);
 
 
 #endif

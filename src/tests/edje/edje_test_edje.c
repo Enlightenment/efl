@@ -178,7 +178,6 @@ START_TEST(edje_test_masking)
    Evas *evas = EDJE_TEST_INIT_EVAS();
    const Evas_Object *sub, *clip2, *clip;
    Evas_Object *obj;
-   Eina_Bool b;
 
    obj = edje_object_add(evas);
    fail_unless(edje_object_file_set(obj, test_layout_get("test_masking.edj"), "test_group"));
@@ -192,15 +191,15 @@ START_TEST(edje_test_masking)
 
    /* check value of no_render flag as seen from evas land */
    sub = edje_object_part_object_get(obj, "mask");
-   fail_if(!eo_do_ret(sub, b, evas_obj_no_render_get()));
+   fail_if(!evas_obj_no_render_get(sub));
 
    /* check that text has a clip (based on description.clip_to) */
    sub = edje_object_part_object_get(obj, "text");
-   fail_if(!eo_do_ret(sub, clip2, evas_obj_clip_get()));
+   fail_if(!evas_obj_clip_get(sub));
 
    /* test description.clip_to override */
    sub = edje_object_part_object_get(obj, "noclip");
-   clip2 = eo_do_ret(sub, clip2, evas_obj_clip_get());
+   clip2 = evas_obj_clip_get(sub);
    fail_if(clip != clip2);
 
    EDJE_TEST_FREE_EVAS();
@@ -213,7 +212,6 @@ START_TEST(edje_test_filters)
    const Evas_Object *text, *sub;
    Evas_Object *obj, *src = NULL;
    const char *prg, *name;
-   Eina_Bool b;
 
    setenv("EVAS_DATA_DIR", EVAS_DATA_DIR, 1);
 
@@ -224,23 +222,23 @@ START_TEST(edje_test_filters)
 
    /* check value of no_render flag as seen from evas land */
    sub = edje_object_part_object_get(obj, "mask");
-   fail_if(!eo_do_ret(sub, b, evas_obj_no_render_get()));
+   fail_if(!evas_obj_no_render_get(sub));
 
    /* check no_render inheritance */
    sub = edje_object_part_object_get(obj, "mask2");
-   fail_if(eo_do_ret(sub, b, evas_obj_no_render_get()));
+   fail_if(evas_obj_no_render_get(sub));
    sub = edje_object_part_object_get(obj, "mask3");
-   fail_if(!eo_do_ret(sub, b, evas_obj_no_render_get()));
+   fail_if(!evas_obj_no_render_get(sub));
 
    /* text part: check filter status */
    text = edje_object_part_object_get(obj, "text");
    fail_if(!text);
 
-   eo_do(text, efl_gfx_filter_program_get(&prg, &name));
+   efl_gfx_filter_program_get(text, &prg, &name);
    fail_if(!prg);
    fail_if(!name || strcmp(name, "filterfile"));
 
-   eo_do(text, src = efl_gfx_filter_source_get("mask"));
+   src = efl_gfx_filter_source_get(text, "mask");
    fail_if(!src);
 
    // TODO: Verify properly that the filter runs well
@@ -254,7 +252,6 @@ START_TEST(edje_test_snapshot)
    Evas *evas = EDJE_TEST_INIT_EVAS();
    const Evas_Object *sub;
    Evas_Object *obj;
-   Eina_Bool b;
 
    setenv("EVAS_DATA_DIR", EVAS_DATA_DIR, 1);
 
@@ -265,7 +262,7 @@ START_TEST(edje_test_snapshot)
 
    /* check value of no_render flag as seen from evas land */
    sub = edje_object_part_object_get(obj, "snap");
-   fail_if(!eo_do_ret(sub, b, evas_obj_image_snapshot_get()));
+   fail_if(!evas_obj_image_snapshot_get(sub));
 
    // TODO: Verify that evas snapshot actually works (and has a filter)
 

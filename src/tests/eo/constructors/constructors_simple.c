@@ -44,7 +44,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
    my_init_count++;
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 static Eo*
@@ -53,7 +53,7 @@ _finalize(Eo *obj, void *class_data EINA_UNUSED)
    Eo *ret;
    Private_Data *pd = class_data;
 
-   eo_do_super(obj, MY_CLASS, ret = eo_finalize());
+   ret = eo_finalize(eo_super(obj, MY_CLASS));
 
    if (pd->a < 0)
      {
@@ -66,7 +66,7 @@ _finalize(Eo *obj, void *class_data EINA_UNUSED)
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 
    my_init_count--;
 }

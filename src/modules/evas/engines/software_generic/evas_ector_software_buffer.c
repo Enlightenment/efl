@@ -25,10 +25,9 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
                                                                Evas *evas, void *image)
 {
    RGBA_Image *im = image;
-   Eina_Bool b;
 
    EINA_SAFETY_ON_NULL_RETURN(image);
-   if (eo_do_ret(obj, b, eo_finalized_get()))
+   if (eo_finalized_get(obj))
      {
         CRI("engine_image must be set at construction time only");
         return;
@@ -45,10 +44,7 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
    pd->image = im;
    if (!pd->image) return;
 
-   eo_do(obj, ector_buffer_pixels_set(im->image.data,
-                                      im->cache_entry.w, im->cache_entry.h, 0,
-                                      (Efl_Gfx_Colorspace) im->cache_entry.space,
-                                      EINA_TRUE, 0, 0, 0, 0));
+   ector_buffer_pixels_set(obj, im->image.data, im->cache_entry.w, im->cache_entry.h, 0, (Efl_Gfx_Colorspace) im->cache_entry.space, EINA_TRUE, 0, 0, 0, 0);
 }
 
 EOLIAN static void
@@ -72,7 +68,7 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_get(Eo *obj EINA_UNUS
 EOLIAN static Eo *
 _evas_ector_software_buffer_eo_base_constructor(Eo *obj, Evas_Ector_Software_Buffer_Data *pd)
 {
-   eo_do_super(obj, MY_CLASS, obj = eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
    pd->base = eo_data_xref(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN, obj);
    return obj;
 }
@@ -83,7 +79,7 @@ _evas_ector_software_buffer_eo_base_finalize(Eo *obj, Evas_Ector_Software_Buffer
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->base, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->image, NULL);
    pd->base->generic->immutable = EINA_TRUE;
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
+   return eo_finalize(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -92,7 +88,7 @@ _evas_ector_software_buffer_eo_base_destructor(Eo *obj, Evas_Ector_Software_Buff
    eo_data_xunref(obj, pd->base, obj);
    evas_cache_image_drop(&pd->image->cache_entry);
    eo_xunref(pd->evas, obj);
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 #include "evas_ector_buffer.eo.c"

@@ -34,10 +34,10 @@ _class_print(Eo_Class *klass, void *class_data EINA_UNUSED)
 {
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
    Eina_Bool called = EINA_FALSE;
-   eo_do_super(klass, MY_CLASS, called = simple_class_print());
+   called = simple_class_print(eo_super(klass, MY_CLASS));
    fail_if(called);
 
-   eo_do_super(klass, MY_CLASS, called = simple_class_print2());
+   called = simple_class_print2(eo_super(klass, MY_CLASS));
    fail_if(called);
 
    return EINA_TRUE;
@@ -53,8 +53,8 @@ _class_print2(Eo_Class *klass, void *class_data EINA_UNUSED)
 
 EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
 EAPI EO_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
-EAPI EO_FUNC_BODY(simple_class_print, Eina_Bool, EINA_FALSE);
-EAPI EO_FUNC_BODY(simple_class_print2, Eina_Bool, EINA_FALSE);
+EAPI EO_FUNC_BODY_CONST(simple_class_print, Eina_Bool, EINA_FALSE);
+EAPI EO_FUNC_BODY_CONST(simple_class_print2, Eina_Bool, EINA_FALSE);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_a_set, _a_set),

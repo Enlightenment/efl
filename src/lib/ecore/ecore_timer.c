@@ -93,7 +93,7 @@ ecore_timer_add(double        in,
    Ecore_Timer *timer = NULL;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   timer = eo_add(MY_CLASS, _ecore_parent, ecore_obj_timer_constructor(in, func, data));
+   timer = eo_add(MY_CLASS, _ecore_parent, ecore_obj_timer_constructor(eoid, in, func, data));
    return timer;
 }
 
@@ -232,7 +232,7 @@ EAPI void
 ecore_timer_freeze(Ecore_Timer *timer)
 {
    ECORE_TIMER_CHECK(timer);
-   eo_do(timer, eo_event_freeze());
+   eo_event_freeze(timer);
 }
 
 EOLIAN static void
@@ -261,7 +261,7 @@ ecore_timer_freeze_get(Ecore_Timer *timer)
 {
    int r = 0;
 
-   eo_do(timer, r = eo_event_freeze_count_get());
+   r = eo_event_freeze_count_get(timer);
    return !!r;
 }
 
@@ -277,7 +277,7 @@ EAPI void
 ecore_timer_thaw(Ecore_Timer *timer)
 {
    ECORE_TIMER_CHECK(timer);
-   eo_do(timer, eo_event_thaw());
+   eo_event_thaw(timer);
 }
 
 EOLIAN static void
@@ -357,7 +357,7 @@ _ecore_timer_loop_add(double        in,
                       const void   *data)
 {
    Ecore_Timer *timer = NULL;
-   timer = eo_add(MY_CLASS, _ecore_parent, ecore_obj_timer_loop_constructor(in, func, data));
+   timer = eo_add(MY_CLASS, _ecore_parent, ecore_obj_timer_loop_constructor(eoid, in, func, data));
 
    return timer;
 }
@@ -397,7 +397,7 @@ _ecore_timer_del(Ecore_Timer *obj)
         if (timer->delete_me)
           timers_delete_me--;
 
-        eo_do(obj, eo_parent_set(NULL));
+        eo_parent_set(obj, NULL);
 
         if (eo_destructed_is(obj))
           eo_manual_free(obj);
@@ -421,7 +421,7 @@ _ecore_timer_eo_base_destructor(Eo *obj, Ecore_Timer_Data *pd)
      timers_delete_me++;
    }
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eo *
@@ -432,7 +432,7 @@ _ecore_timer_eo_base_finalize(Eo *obj, Ecore_Timer_Data *pd)
       return NULL;
    }
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
+   return eo_finalize(eo_super(obj, MY_CLASS));
 }
 
 void
@@ -445,7 +445,7 @@ _ecore_timer_shutdown(void)
         timers = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timers));
 
         eo_data_unref(timer->obj, timer);
-        eo_do(timer->obj, eo_parent_set(NULL));
+        eo_parent_set(timer->obj, NULL);
         if (eo_destructed_is(timer->obj))
           eo_manual_free(timer->obj);
         else
@@ -457,7 +457,7 @@ _ecore_timer_shutdown(void)
         suspended = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(suspended));
 
         eo_data_unref(timer->obj, timer);
-        eo_do(timer->obj, eo_parent_set(NULL));
+        eo_parent_set(timer->obj, NULL);
         if (eo_destructed_is(timer->obj))
           eo_manual_free(timer->obj);
         else
@@ -489,7 +489,7 @@ _ecore_timer_cleanup(void)
              timers = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 
              eo_data_unref(timer->obj, timer);
-             eo_do(timer->obj, eo_parent_set(NULL));
+             eo_parent_set(timer->obj, NULL);
              if (eo_destructed_is(timer->obj))
                eo_manual_free(timer->obj);
              else
@@ -514,7 +514,7 @@ _ecore_timer_cleanup(void)
              suspended = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 
              eo_data_unref(timer->obj, timer);
-             eo_do(timer->obj, eo_parent_set(NULL));
+             eo_parent_set(timer->obj, NULL);
              if (eo_destructed_is(timer->obj))
                 eo_manual_free(timer->obj);
              else

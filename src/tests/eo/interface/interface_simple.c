@@ -40,7 +40,8 @@ static int
 _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
 {
    int a = 0, b = 0;
-   eo_do(obj, a = simple_a_get(), b = simple_b_get());
+   a = simple_a_get(obj);
+   b = simple_b_get(obj);
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
    return a + b;
 }
@@ -49,7 +50,8 @@ static int
 _ab_sum_get2(Eo *obj, void *class_data EINA_UNUSED)
 {
    int a = 0, b = 0;
-   eo_do(obj, a = simple_a_get(), b = simple_b_get());
+   a = simple_a_get(obj);
+   b = simple_b_get(obj);
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
    return a + b + 1;
 }

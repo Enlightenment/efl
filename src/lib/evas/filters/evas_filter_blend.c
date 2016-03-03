@@ -185,11 +185,11 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd, draw_func image_draw)
 
    sx = 0;
    sy = 0;
-   eo_do(cmd->input->buffer, ector_buffer_size_get(&sw, &sh));
+   ector_buffer_size_get(cmd->input->buffer, &sw, &sh);
 
    dx = cmd->draw.ox;
    dy = cmd->draw.oy;
-   eo_do(cmd->output->buffer, ector_buffer_size_get(&dw, &dh));
+   ector_buffer_size_get(cmd->output->buffer, &dw, &dh);
 
    if ((dw <= 0) || (dh <= 0) || (sw <= 0) || (sh <= 0))
      return EINA_TRUE;
@@ -229,8 +229,8 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd, draw_func image_draw)
                         sx, sy, sw, sh, dx, dy, dw, dh, image_draw);
 
 end:
-   if (src) eo_do(src_fb->buffer, ector_buffer_unmap(src, src_len));
-   if (dst) eo_do(cmd->output->buffer, ector_buffer_unmap(dst, dst_len));
+   if (src) ector_buffer_unmap(src_fb->buffer, src, src_len);
+   if (dst) ector_buffer_unmap(cmd->output->buffer, dst, dst_len);
    return ret;
 }
 

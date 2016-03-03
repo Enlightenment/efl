@@ -297,7 +297,7 @@ START_TEST(evas_filter_text_padding_test)
         // Don't test proxy cases here.
         if (tc->source) continue;
 
-        eo_do(to, efl_gfx_filter_program_set(tc->code, "evas_test_filter"));
+        efl_gfx_filter_program_set(to, tc->code, "evas_test_filter");
         evas_object_text_style_pad_get(to, &l, &r, &t, &b);
         evas_object_geometry_get(to, NULL, NULL, &W, &H);
         //fprintf(stderr, "Case %d: %dx%d for padding %d,%d,%d,%d\n", k, W, H, l, r, t, b);
@@ -383,18 +383,16 @@ START_TEST(evas_filter_text_render_test)
              evas_object_move(o, -999, -9999);
              evas_object_resize(o, 10, 10);
              evas_object_show(o);
-             eo_do(to,
-                   efl_gfx_color_set(255, 255, 255, 255),
-                   efl_gfx_filter_source_set(tc->source, o),
-                   efl_gfx_filter_program_set(tc->code, "evas_test_filter"));
-             eo_do(to, o2 = efl_gfx_filter_source_get(tc->source));
+             efl_gfx_color_set(to, 255, 255, 255, 255);
+             efl_gfx_filter_source_set(to, tc->source, o);
+             efl_gfx_filter_program_set(to, tc->code, "evas_test_filter");
+             o2 = efl_gfx_filter_source_get(to, tc->source);
              fail_if(o != o2);
           }
         else
           {
-             eo_do(to,
-                   efl_gfx_color_set(255, 255, 255, 255),
-                   efl_gfx_filter_program_set(tc->code, "evas_test_filter"));
+             efl_gfx_color_set(to, 255, 255, 255, 255);
+             efl_gfx_filter_program_set(to, tc->code, "evas_test_filter");
           }
 
         evas_object_geometry_get(to, NULL, NULL, &w, &h);
@@ -440,8 +438,8 @@ START_TEST(evas_filter_state_test)
    ecore_evas_transparent_set(ee, EINA_TRUE);
 
    evas_object_color_set(to, 255, 0, 0, 255);
-   eo_do(to, efl_gfx_filter_program_set(code, "merf"));
-   eo_do(to, efl_gfx_filter_state_set("state1", 0.0, "state2", 1.0, 0.5));
+   efl_gfx_filter_program_set(to, code, "merf");
+   efl_gfx_filter_state_set(to, "state1", 0.0, "state2", 1.0, 0.5);
 
    /* check pixels */
    ecore_evas_manual_render(ee);
@@ -449,12 +447,12 @@ START_TEST(evas_filter_state_test)
    fail_if(!pixels || (*pixels != 0xFFFF0000),
            "state render test failed: %p (%#x)", pixels, pixels ? *pixels : 0);
 
-   eo_do(to, efl_gfx_filter_state_get(&s1, &v1, &s2, &v2, &p));
+   efl_gfx_filter_state_get(to, &s1, &v1, &s2, &v2, &p);
    fail_unless(strequal(s1, "state1") && strequal(s2, "state2") && (v1 == 0.0) && (v2 == 1.0) && (p == 0.5),
                "got: %s %f %s %f %f", s1, v1, s2, v2, p);
 
    /* data test */
-   eo_do(to, efl_gfx_filter_data_set("data", "{r=0, g=255, b=0, a=255}", 1));
+   efl_gfx_filter_data_set(to, "data", "{r=0, g=255, b=0, a=255}", 1);
    ecore_evas_manual_render(ee);
    pixels = ecore_evas_buffer_pixels_get(ee);
    fail_if(!pixels || (*pixels != 0xFF00FF00),

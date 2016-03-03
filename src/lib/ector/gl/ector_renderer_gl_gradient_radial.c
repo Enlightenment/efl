@@ -30,8 +30,7 @@ _ector_renderer_gl_gradient_radial_ector_renderer_generic_base_prepare(Eo *obj, 
 static Eina_Bool
 _ector_renderer_gl_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd, Efl_Gfx_Render_Op op, Eina_Array *clips, unsigned int mul_col)
 {
-   eo_do_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS,
-               ector_renderer_draw(op, clips, mul_col));
+   ector_renderer_draw(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS), op, clips, mul_col);
 
    // FIXME: draw something !
    (void) pd;
@@ -70,8 +69,7 @@ _ector_renderer_gl_gradient_radial_ector_renderer_generic_base_crc_get(Eo *obj, 
 {
    unsigned int crc;
 
-   eo_do_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS,
-               crc = ector_renderer_crc_get());
+   crc = ector_renderer_crc_get(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS));
 
    crc = eina_crc((void*) pd->gradient->s, sizeof (Efl_Gfx_Gradient_Spread), crc, EINA_FALSE);
    if (pd->gradient->colors_count)
@@ -84,7 +82,7 @@ _ector_renderer_gl_gradient_radial_ector_renderer_generic_base_crc_get(Eo *obj, 
 static Eo_Base *
 _ector_renderer_gl_gradient_radial_eo_base_constructor(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd)
 {
-   eo_do_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS, obj = eo_constructor());
+   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS));
 
    if (!obj) return NULL;
 
@@ -106,8 +104,7 @@ _ector_renderer_gl_gradient_radial_eo_base_destructor(Eo *obj, Ector_Renderer_GL
 static void
 _ector_renderer_gl_gradient_radial_efl_gfx_gradient_base_stop_set(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd EINA_UNUSED, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
 {
-   eo_do_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS,
-               efl_gfx_gradient_stop_set(colors, length));
+   efl_gfx_gradient_stop_set(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_RADIAL_CLASS), colors, length);
 }
 
 #include "ector_renderer_gl_gradient_radial.eo.c"

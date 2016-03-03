@@ -319,7 +319,7 @@ _do_tick(void)
                     eina_inlist_remove(EINA_INLIST_GET(animators),
                                        EINA_INLIST_GET(animator));
 
-                  eo_do(animator->obj, eo_parent_set(NULL));
+                  eo_parent_set(animator->obj, NULL);
                   if (eo_destructed_is(animator->obj))
                      eo_manual_free(animator->obj);
                   else
@@ -372,8 +372,7 @@ ecore_animator_add(Ecore_Task_Cb func,
 {
    Ecore_Animator *animator = NULL;
 
-   animator = eo_add(MY_CLASS, _ecore_parent,
-                            ecore_animator_constructor(func, data));
+   animator = eo_add(MY_CLASS, _ecore_parent, ecore_animator_constructor(eoid, func, data));
    return animator;
 }
 
@@ -389,8 +388,7 @@ ecore_animator_timeline_add(double            runtime,
                             const void       *data)
 {
    Ecore_Animator *animator;
-   animator = eo_add(MY_CLASS, _ecore_parent,
-                            ecore_animator_timeline_constructor(runtime, func, data));
+   animator = eo_add(MY_CLASS, _ecore_parent, ecore_animator_timeline_constructor(eoid, runtime, func, data));
    return animator;
 }
 
@@ -682,7 +680,7 @@ _ecore_animator_eo_base_destructor(Eo *obj, Ecore_Animator_Data *pd)
    pd->delete_me = EINA_TRUE;
    animators_delete_me++;
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eo *
@@ -693,7 +691,7 @@ _ecore_animator_eo_base_finalize(Eo *obj, Ecore_Animator_Data *pd)
         return NULL;
      }
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
+   return eo_finalize(eo_super(obj, MY_CLASS));
 }
 
 EAPI void
@@ -718,7 +716,7 @@ EAPI void
 ecore_animator_freeze(Ecore_Animator *animator)
 {
    ECORE_ANIMATOR_CHECK(animator);
-   eo_do(animator, eo_event_freeze());
+   eo_event_freeze(animator);
 }
 
 EOLIAN static void
@@ -738,7 +736,7 @@ EAPI void
 ecore_animator_thaw(Ecore_Animator *animator)
 {
    ECORE_ANIMATOR_CHECK(animator);
-   eo_do(animator, eo_event_thaw());
+   eo_event_thaw(animator);
 }
 
 EOLIAN static void
@@ -813,7 +811,7 @@ _ecore_animator_shutdown(void)
         if (animator->suspended) animators_suspended--;
         animators = (Ecore_Animator_Data *)eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animators));
 
-        eo_do(animator->obj, eo_parent_set(NULL));
+        eo_parent_set(animator->obj, NULL);
         if (eo_destructed_is(animator->obj))
            eo_manual_free(animator->obj);
         else
