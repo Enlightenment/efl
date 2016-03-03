@@ -1,15 +1,15 @@
 group { name: "elm/clock/flipdigit/default";
-   images.image: "digit_na.png" COMP;
-   images.image: "digit_0.png" COMP;
-   images.image: "digit_1.png" COMP;
-   images.image: "digit_2.png" COMP;
-   images.image: "digit_3.png" COMP;
-   images.image: "digit_4.png" COMP;
-   images.image: "digit_5.png" COMP;
-   images.image: "digit_6.png" COMP;
-   images.image: "digit_7.png" COMP;
-   images.image: "digit_8.png" COMP;
-   images.image: "digit_9.png" COMP;
+   images.image: "O/digit_na.png" COMP;
+   images.image: "O/digit_0.png" COMP;
+   images.image: "O/digit_1.png" COMP;
+   images.image: "O/digit_2.png" COMP;
+   images.image: "O/digit_3.png" COMP;
+   images.image: "O/digit_4.png" COMP;
+   images.image: "O/digit_5.png" COMP;
+   images.image: "O/digit_6.png" COMP;
+   images.image: "O/digit_7.png" COMP;
+   images.image: "O/digit_8.png" COMP;
+   images.image: "O/digit_9.png" COMP;
    images.image: "icon_arrow_up.png" COMP;
    images.image: "icon_arrow_down.png" COMP;
    script {
@@ -36,18 +36,18 @@ group { name: "elm/clock/flipdigit/default";
             set_int(v0_cur, value);
             set_int(v0_lock, 1);
             snprintf(buf, 10, "%i", get_int(v0_cur));
-            set_state(PART:"digit", buf, 0.0);
+            set_state(PART:"O/digit", buf, 0.0);
             anim(1.0, "animator1", 1);
          }
       }
    }
    parts {
-      part { name: "digit_bg";
+      part { name: "O/digit_bg";
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "digit";
-            rel2.to: "digit";
-            image.normal: "digit_na.png";
+            rel1.to: "O/digit";
+            rel2.to: "O/digit";
+            image.normal: "O/digit_na.png";
             color: 255 255 255 128;
          }
       }
@@ -79,7 +79,7 @@ group { name: "elm/clock/flipdigit/default";
             visible: 1;
          }
       }
-      part { name: "digit";
+      part { name: "O/digit";
          mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
@@ -88,12 +88,12 @@ group { name: "elm/clock/flipdigit/default";
             rel2.to_y: "abot";
             rel2.relative: 1.0 0.0;
             aspect: (52/72) (52/72); aspect_preference: BOTH;
-            image.normal: "digit_0.png";
+            image.normal: "O/digit_0.png";
          }
 #define DIGIT_DESC(_DIGIT) \
    description { state: _DIGIT 0.0; \
       inherit: "default" 0.0; \
-      image.normal: "digit_"_DIGIT".png"; \
+      image.normal: "O/digit_"_DIGIT".png"; \
    }
          DIGIT_DESC("0")
          DIGIT_DESC("1")
@@ -254,30 +254,30 @@ group { name: "elm/clock/flipdigit/default";
 
 group { name: "elm/clock/flipampm/default";
    inherit: "elm/clock/flipdigit/default";
-   images.image: "digit_nm.png" COMP;
-   images.image: "digit_am.png" COMP;
-   images.image: "digit_pm.png" COMP;
+   images.image: "O/digit_nm.png" COMP;
+   images.image: "O/digit_am.png" COMP;
+   images.image: "O/digit_pm.png" COMP;
    parts {
-      part { name: "digit_bg";
+      part { name: "O/digit_bg";
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "digit";
-            rel2.to: "digit";
-            image.normal: "digit_nm.png";
+            rel1.to: "O/digit";
+            rel2.to: "O/digit";
+            image.normal: "O/digit_nm.png";
             color: 255 255 255 128;
          }
       }
-      part { name: "digit";
+      part { name: "O/digit";
          mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;	
             aspect: (48/31) (48/31); aspect_preference: BOTH;
-            image.normal: "digit_am.png";
+            image.normal: "O/digit_am.png";
          }
 #define DIGIT_DESC(_DIGIT, _AMPM) \
    description { state: _DIGIT 0.0; \
       inherit: "default" 0.0; \
-      image.normal: "digit_"_AMPM".png"; \
+      image.normal: "O/digit_"_AMPM".png"; \
    }
          DIGIT_DESC("0", "am")
          DIGIT_DESC("1", "pm")
