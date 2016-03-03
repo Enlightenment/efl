@@ -143,6 +143,7 @@ collections {
 #include "edc/bluez4.edc"
 #include "edc/packagekit.edc"
 #include "edc/wireless.edc"
+#include "edc/time.edc"
 
 // icons
 #include "edc/icons.edc"
