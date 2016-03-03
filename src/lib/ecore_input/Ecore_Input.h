@@ -147,7 +147,7 @@ extern "C" {
         Ecore_Window     event_window; /**< The child window where event happened */
         
         unsigned int     timestamp; /**< Time when the event occurred */
-        unsigned int     modifiers; /**< The combination of modifiers key (SHIT,CTRL,ALT,..)*/
+        unsigned int     modifiers; /**< The combination of modifiers key (SHIFT,CTRL,ALT,..)*/
         
         int              same_screen; /**< same screen flag */
 
@@ -167,7 +167,7 @@ extern "C" {
         Ecore_Window     event_window; /**< The child window where event happened */
 
         unsigned int     timestamp; /**< Time when the event occurred */
-        unsigned int     modifiers; /**< The combination of modifiers key (SHIT,CTRL,ALT,..)*/
+        unsigned int     modifiers; /**< The combination of modifiers key (SHIFT,CTRL,ALT,..)*/
         unsigned int     buttons; /**< The button that was used */
         unsigned int     double_click; /**< Double click event */
         unsigned int     triple_click; /**< Triple click event */
@@ -203,7 +203,7 @@ extern "C" {
         Ecore_Window     event_window; /**< The child window where event happened */
         
         unsigned int     timestamp; /**< Time when the event occurred */
-        unsigned int     modifiers; /**< The combination of modifiers key (SHIT,CTRL,ALT,..)*/
+        unsigned int     modifiers; /**< The combination of modifiers key (SHIFT,CTRL,ALT,..)*/
         
         int              same_screen; /**< Same screen flag */
         int              direction; /**< Orientation of the wheel (horizontal/vertical) */
@@ -228,7 +228,7 @@ extern "C" {
         Ecore_Window     event_window; /**< The child window where event happened */
         
         unsigned int     timestamp; /**< Time when the event occurred */
-        unsigned int     modifiers; /**< The combination of modifiers key (SHIT,CTRL,ALT,..)*/
+        unsigned int     modifiers; /**< The combination of modifiers key (SHIFT,CTRL,ALT,..)*/
         
         int              same_screen; /**< Same screen flag */
         
@@ -297,7 +297,7 @@ extern "C" {
         Ecore_Window     event_window; /**< The child window where event happened */
         
         unsigned int     timestamp; /**< Time when the event occurred */
-        unsigned int     modifiers; /**< The combination of modifiers key (SHIT,CTRL,ALT,..)*/
+        unsigned int     modifiers; /**< The combination of modifiers key (SHIFT,CTRL,ALT,..)*/
         
         int              x; /**< x coordinate relative to window where event happened */
         int              y; /**< y coordinate relative to window where event happened */
