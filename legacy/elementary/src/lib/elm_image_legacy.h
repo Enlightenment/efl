@@ -113,6 +113,43 @@ EAPI int              elm_image_prescale_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_image_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group);
 
 /**
+ * @brief Control the smooth effect for an image.
+ *
+ * Set the scaling algorithm to be used when scaling the image. Smooth scaling
+ * provides a better resulting image, but is slower.
+ *
+ * The smooth scaling should be disabled when making animations that change the
+ * image size, since it will be faster. Animations that don't require resizing
+ * of the image can keep the smooth scaling enabled (even if the image is
+ * already scaled, since the scaled image will be cached).
+ *
+ * @param[in] smooth @c true if smooth scaling should be used, @c false
+ * otherwise. Default is @c true.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth);
+
+/**
+ * @brief Get the smooth effect for an image.
+ *
+ * Get the scaling algorithm to be used when scaling the image. Smooth scaling
+ * provides a better resulting image, but is slower.
+ *
+ * The smooth scaling should be disabled when making animations that change the
+ * image size, since it will be faster. Animations that don't require resizing
+ * of the image can keep the smooth scaling enabled (even if the image is
+ * already scaled, since the scaled image will be cached).
+ *
+ * @return @c true if smooth scaling should be used, @c false otherwise.
+ * Default is @c true.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI Eina_Bool elm_image_smooth_get(const Evas_Object *obj);
+
+
+/**
  * Start or stop an image object's animation.
  *
  * To actually start playing any image object's animation, if it

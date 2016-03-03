@@ -41,8 +41,8 @@ struct Elm.Image.Error
    open_error: Eina.Bool;
 }
 
-class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
-                 Edje.Object,
+class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
+                 Edje.Object, Efl.Image,
                  Elm.Interface_Atspi_Image, Elm.Interface_Atspi_Widget_Action,
                  Efl.Player)
 {
@@ -87,24 +87,6 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
          }
          values {
             resize_up: bool; [[whether resizing up is allowed]]
-         }
-      }
-      @property smooth {
-         [[Control the smooth effect for an image.
-
-           Set the scaling algorithm to be used when scaling the image. Smooth
-           scaling provides a better resulting image, but is slower.
-
-           The smooth scaling should be disabled when making animations that change
-           the image size, since it will be faster. Animations that don't require
-           resizing of the image can keep the smooth scaling enabled (even if the
-           image is already scaled, since the scaled image will be cached).]]
-         set {
-         }
-         get {
-         }
-         values {
-            smooth: bool; [[$true if smooth scaling should be used, $false otherwise. Default is $true.]]
          }
       }
       @property no_scale {
@@ -317,8 +299,8 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
       Efl.File.async.set;
       Efl.File.async.get;
       Efl.File.async_wait;
-      Efl.Image.load_size.set;
-      Efl.Image.load_size.get;
+      Efl.Image_Load.load_size.set;
+      Efl.Image_Load.load_size.get;
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
       Efl.Player.playable.get;

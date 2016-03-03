@@ -1225,20 +1225,6 @@ _elm_image_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, const char
    efl_file_get(sd->img, file, key);
 }
 
-EOLIAN static void
-_elm_image_smooth_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool smooth)
-{
-   sd->smooth = smooth;
-
-   elm_obj_image_sizing_eval(obj);
-}
-
-EOLIAN static Eina_Bool
-_elm_image_smooth_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
-{
-   return sd->smooth;
-}
-
 static Eina_Bool
 _elm_image_efl_file_async_wait(const Eo *obj EINA_UNUSED, Elm_Image_Data *pd)
 {
@@ -1370,7 +1356,7 @@ elm_image_prescale_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_image_efl_image_load_size_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int w, int h)
+_elm_image_efl_image_load_load_size_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int w, int h)
 {
    if (w > h)
       sd->load_size = w;
@@ -1389,7 +1375,7 @@ elm_image_prescale_get(const Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_image_efl_image_load_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int *h)
+_elm_image_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int *h)
 {
    if (w) *w = sd->load_size;
    if (h) *h = sd->load_size;
@@ -1647,6 +1633,18 @@ _elm_image_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
    return &atspi_actions[0];
 }
 
+EAPI void
+elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
+{
+   efl_image_smooth_scale_set(obj, smooth);
+   elm_obj_image_sizing_eval(obj);
+}
+
+EAPI Eina_Bool
+elm_image_smooth_get(const Evas_Object *obj)
+{
+   return efl_image_smooth_scale_get(obj);
+}
 
 // A11Y - END
 
