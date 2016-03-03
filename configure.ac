@@ -5060,7 +5060,6 @@ src/benchmarks/evas/Makefile
 src/examples/eina/Makefile
 src/examples/eina_cxx/Makefile
 src/examples/eet/Makefile
-src/examples/eo/Makefile
 src/examples/evas/Makefile
 src/examples/ecore/Makefile
 src/examples/ecore_avahi/Makefile
