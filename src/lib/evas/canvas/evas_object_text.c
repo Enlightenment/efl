@@ -2340,13 +2340,13 @@ _evas_text_efl_gfx_filter_filter_program_set(Eo *obj, Evas_Text_Data *pd EINA_UN
 EAPI void
 evas_object_text_filter_program_set(Evas_Object *obj, const char *code, const char *name)
 {
-   eo_do(obj, efl_gfx_filter_program_set(code, name));
+   efl_gfx_filter_program_set(obj, code, name);
 }
 
 EAPI void
 evas_object_text_filter_source_set(Evas_Object *obj, const char *name, Evas_Object *source)
 {
-   eo_do(obj, efl_gfx_filter_source_set(name, source));
+   efl_gfx_filter_source_set(obj, name, source);
 }
 
 EOLIAN static void

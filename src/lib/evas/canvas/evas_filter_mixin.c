@@ -702,7 +702,7 @@ _evas_filter_efl_gfx_filter_filter_data_set(Eo *eo_obj, Evas_Filter_Data *pd,
    FCOW_END(fcow, pd);
 
    // update object
-   eo_do(eo_obj, evas_filter_dirty());
+   evas_filter_dirty(eo_obj);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
