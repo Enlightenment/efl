@@ -76,7 +76,6 @@ test_scaling2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(bx);
 
    fr = elm_frame_add(win);
-   elm_object_scale_set(fr, 0.5);
    elm_object_text_set(fr, "Scale: 0.5");
    lb = elm_label_add(win);
    elm_object_text_set(lb,
@@ -84,6 +83,7 @@ test_scaling2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                        "is 0.5. Child should<br/>"
                        "inherit it.");
    elm_object_content_set(fr, lb);
+   elm_object_scale_set(fr, 0.5);
    evas_object_show(lb);
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
