@@ -36,6 +36,8 @@ main(int argc, char *argv[])
    CHECK_ITER_DATA(iter, chld, child3);
    fail_if(eina_iterator_next(iter, &chld));
 
+   fail_if(eina_iterator_container_get(iter) != parent);
+
    eina_iterator_free(iter);
 
    eo_del(child2);
