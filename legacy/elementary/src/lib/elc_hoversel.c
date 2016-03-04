@@ -440,7 +440,7 @@ _activate(Evas_Object *obj)
 }
 
 static Eina_Bool
-_on_clicked(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_on_clicked(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _activate(data);
 
