@@ -3360,6 +3360,74 @@ EAPI Evas_Colorspace evas_object_image_colorspace_get(const Evas_Object *obj);
 EAPI int evas_object_image_stride_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Replaces the raw image data of the given image object.
+ *
+ * This function lets the application replace an image object's internal pixel
+ * buffer with an user-allocated one. For best results, you should generally
+ * first call @ref evas_object_image_size_set with the width and height for the
+ * new buffer.
+ *
+ * This call is best suited for when you will be using image data with
+ * different dimensions than the existing image data, if any. If you only need
+ * to modify the existing image in some fashion, then using
+ * @ref evas_object_image_data_get is probably what you are after.
+ *
+ * Note that the caller is responsible for freeing the buffer when finished
+ * with it, as user-set image data will not be automatically freed when the
+ * image object is deleted.
+ *
+ * @param[in] data The raw data to replace.
+ *
+ * @ingroup Evas_Image
+ */
+EAPI void evas_object_image_data_copy_set(Evas_Object *obj, void *data);
+
+/**
+ * @brief Sets the raw image data of the given image object.
+ *
+ * Note that the raw data must be of the same size (see @ref
+ * evas_object_image_size_set, which has to be called before this one) and
+ * colorspace (see @Evas.Image.colorspace.set) of the image. If data is
+ * @c null, the current image data will be freed. Naturally, if one does not
+ * set an image object's data manually, it will still have one, allocated by
+ * Evas.
+ *
+ * @param[in] data The raw data, or @c null.
+ *
+ * @ingroup Evas_Image
+ */
+EAPI void evas_object_image_data_set(Evas_Object *obj, void *data);
+
+/**
+ * @brief Get a pointer to the raw image data of the given image object.
+ *
+ * This function returns a pointer to an image object's internal pixel buffer,
+ * for reading only or read/write. If you request it for writing, the image
+ * will be marked dirty so that it gets redrawn at the next update.
+ *
+ * Each time you call this function on an image object, its data buffer will
+ * have an internal reference counter incremented. Decrement it back by using
+ * @ref evas_object_image_data_set.
+ *
+ * This is best suited for when you want to modify an existing image, without
+ * changing its dimensions.
+ *
+ * @note The contents' format returned by it depend on the color space of the
+ * given image object.
+ *
+ * @note You may want to use @Evas.Image.data_update_add to inform data
+ * changes, if you did any.
+ *
+ * @param[in] for_writing Whether the data being retrieved will be modified
+ * ($true) or not ($false).
+ *
+ * @return The raw image data.
+ *
+ * @ingroup Evas_Image
+ */
+EAPI void *evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writing) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Mark a sub-region of the given image object to be redrawn.
  *
  * This function schedules a particular rectangular region of an image object

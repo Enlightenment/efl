@@ -47,7 +47,7 @@ interface Efl.Gfx.Buffer ()
          }
       }
 
-      @property buffer_stride {
+      @property stride {
          [[Length in bytes of one row of pixels in memory.
 
            Usually this will be equal to width * 4, with a plain BGRA image.
@@ -62,7 +62,7 @@ interface Efl.Gfx.Buffer ()
          }
       }
 
-      buffer_update_region_add {
+      buffer_update_add {
          [[Mark a sub-region of the given image object to be redrawn.
 
            This function schedules a particular rectangular region of an
@@ -131,34 +131,116 @@ interface Efl.Gfx.Buffer ()
             @in length: uint; [[Must be the same as returned by map.]]
          }
       }
+      /* note: not a property because the refcount needs to be explicit
+       * between set and get */
+      /* FIXME: not bindable to JS, potentially tricky to bind to Lua */
       buffer_set {
          [[Set the pixels for this buffer, or allocate a new memory region.
 
-           EFL will copy the $pixels to an internal buffer, and update the
-           GPU-side texture if required. This will mark the image as dirty.
+           EFL will use $pixels directly, and update the GPU-side texture
+           if required. This will mark the image as dirty.
 
            If $pixels is $null, then a new empty buffer will be allocated.
-
            If the buffer already had pixel data, the previous image data will
-           be dropped and the internal buffer may be resized to fit the new
-           pixel data.
+           be dropped. This is the same as @.buffer_copy_set.
 
-           Note: Use @Efl.Gfx.Buffer.buffer_size.set and @.buffer_map to
-           request EFL to allocate the buffer itself, instead of using this
-           function.
+           If $pixels is the return value of @.buffer_get then EFL will
+           decrement its internal reference count on the buffer data. Call
+           @.buffer_update_add to flush updates and indicate changes in
+           the pixel data.
+
+           The memory buffer $pixels must be large enough to hold
+           $width x $height pixels encoded in the colorspace $cspace.
+           Alternatively $pixels must be larger than $height x $stride
+           in bytes.
+
+           See also @.buffer_copy_set if you want EFL to copy the input buffer
+           internally.
          ]]
          params {
-            @in pixels: ubyte*; [[If $null, allocates an empty buffer]]
+            @in pixels: void* @nullable; [[If $null, allocates an empty buffer]]
             @in width: int;
             @in height: int;
-            @in stride: int @optional; [[If 0, automatically guessed from the width.]]
+            @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
-            @in l: uint @optional; [[Left border pixels, usually 0 or 1]]
-            @in r: uint @optional; [[Right border pixels, usually 0 or 1]]
-            @in t: uint @optional; [[Top border pixels, usually 0 or 1]]
-            @in b: uint @optional; [[Bottom border pixels, usually 0 or 1]]
+            @in alpha: bool; [[$true if the alpha channel is used.]]
+            @in l: uint @optional; [[Left border pixels, usually 0 or 1. Not supported yet!]]
+            @in r: uint @optional; [[Right border pixels, usually 0 or 1. Not supported yet!]]
+            @in t: uint @optional; [[Top border pixels, usually 0 or 1. Not supported yet!]]
+            @in b: uint @optional; [[Bottom border pixels, usually 0 or 1. Not supported yet!]]
+            /* FIXME: do we need writable flag? */
          }
-         return: bool;
+         return: bool @warn_unused; [[This function returns $false in case of failure.]]
+      }
+      buffer_copy_set {
+         [[Set the pixels for this buffer by copying them, or allocate
+           a new memory region.
+
+           This will allocate a new buffer in memory and copy the input
+           $pixels to it. The internal colorspace is not guaranteed to
+           be preserved, and colorspace conversion may happen internally.
+
+           If $pixels is $null, then a new empty buffer will be allocated.
+           If the buffer already had pixel data, the previous image data will
+           be dropped. This is the same as @.buffer_set.
+
+           The memory buffer $pixels must be large enough to hold
+           $width x $height pixels encoded in the colorspace $cspace.
+           Alternatively $pixels must be larger than $height x $stride
+           in bytes.
+
+           $pixels should not be the return value of @.buffer_get.
+
+           There is no copy equivalent to this function, as you can easily
+           call @.buffer_get and allocate the proper buffer on your side,
+           followed by a memory copy and @.buffer_set.
+         ]]
+         params {
+            @in pixels: const(void)* @nullable; [[If $null, allocates an empty buffer]]
+            @in width: int;
+            @in height: int;
+            @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
+            @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
+            @in alpha: bool; [[$true if the alpha channel is used.]]
+            @in l: uint @optional; [[Left border pixels, usually 0 or 1. Not supported yet!]]
+            @in r: uint @optional; [[Right border pixels, usually 0 or 1. Not supported yet!]]
+            @in t: uint @optional; [[Top border pixels, usually 0 or 1. Not supported yet!]]
+            @in b: uint @optional; [[Bottom border pixels, usually 0 or 1. Not supported yet!]]
+         }
+         return: bool @warn_unused; [[This function returns $false in case of failure.]]
+      }
+      buffer_get {
+         [[Get a direct pointer to the internal pixel data.
+
+           This will increment an internal reference counter on the internal
+           buffer.
+
+           If $to_write is $true, this may trigger a copy of the internal
+           pixel data, and return a writable memory block.
+
+           Call @.buffer_size.get and @.buffer_borders.get to determine the
+           value of width, height and l, r, t, b.
+
+           Warning: @.buffer_set MUST be called as soon as possible after
+           calling @.buffer_get. @.buffer_update_add should be called after
+           @.buffer_set if $to_write was $true and the pixel data has been
+           modified. Once @.buffer_set is called, the pointer return from
+           @.buffer_get is not valid anymore.
+         ]]
+         params {
+            @in to_write: bool; [[If $true, requests write access]]
+            @out length: uint @optional; [[Size of the buffer in bytes.]]
+            @out width: int @optional;
+            @out height: int @optional;
+            @out stride: int @optional; [[Returns the length of one row of pixels in bytes.]]
+            @out cspace: Efl.Gfx.Colorspace @optional; [[Pixel encoding of the returned buffer.]]
+            @out alpha: bool; [[$true if the alpha channel is used.]]
+            @out l: uint @optional; [[Left border pixels, usually 0 or 1. Not supported yet!]]
+            @out r: uint @optional; [[Right border pixels, usually 0 or 1. Not supported yet!]]
+            @out t: uint @optional; [[Top border pixels, usually 0 or 1. Not supported yet!]]
+            @out b: uint @optional; [[Bottom border pixels, usually 0 or 1. Not supported yet!]]
+         }
+         return: void* @warn_unused;
       }
       /* Note: border, span and buffer flags not imported from ector buffer */
    }
