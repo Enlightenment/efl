@@ -124,6 +124,9 @@ START_TEST(eo_signals)
    simple_a_set(obj, 1);
    ck_assert_int_eq(_eo_signals_cb_flag, 0x0);
 
+   r = eo_event_callback_array_add(obj, NULL, NULL);
+   fail_if(r);
+
    eo_unref(obj);
 
    obj = eo_add(SIMPLE_CLASS, NULL);
