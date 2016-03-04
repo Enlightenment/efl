@@ -21,7 +21,10 @@ static const char *built_modules[] = {
   "ibus",
 #endif
 #ifdef BUILD_ECORE_IMF_SCIM
-  "scim",
+/* The scim module needs some configuration on the host or it might just block
+ * the whole test suite when it tries to load the module. Disabling it as we
+ * do not have control over the host.
+  "scim", */
 #endif
   NULL
 };
