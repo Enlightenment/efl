@@ -330,6 +330,7 @@ _evas_cache_image_async_heavy(void *data)
    current = data;
 
    SLKL(current->lock);
+   current->flags.load_worked = 0;
    pchannel = current->channel;
    current->channel++;
    cache = current->cache;
@@ -373,6 +374,7 @@ _evas_cache_image_async_heavy(void *data)
         current->flags.preload_done = 0;
      }
    SLKU(current->lock_cancel);
+   current->flags.load_worked = 1;
    SLKU(current->lock);
 }
 
@@ -1160,7 +1162,7 @@ evas_cache_image_load_data(Image_Entry *im)
         evas_async_events_process();
         
         LKL(wakeup);
-        while (im->preload)
+        while (!im->flags.load_worked)
           {
              eina_condition_wait(&cond_wakeup);
              LKU(wakeup);

@@ -568,6 +568,7 @@ struct _Image_Entry_Flags
    Eina_Bool updated_data  : 1;
    Eina_Bool flipped       : 1;
    Eina_Bool textured      : 1;
+   Eina_Bool load_worked   : 1;
 };
 
 struct _Image_Entry_Frame
