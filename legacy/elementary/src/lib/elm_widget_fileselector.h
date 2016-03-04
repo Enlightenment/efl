@@ -49,6 +49,7 @@ struct _Elm_Fileselector_Data
    Eina_List               *paths;
 
    const char              *path;
+   const char              *prev_path;
    const char              *selection;
    Ecore_Idler             *populate_idler;
    Ecore_Idler             *path_entry_idler;

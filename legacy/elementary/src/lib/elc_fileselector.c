@@ -47,21 +47,26 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_backspace(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
    {"select", _key_action_select},
    {"escape", _key_action_escape},
+   {"backspace", _key_action_backspace},
    {NULL, NULL}
 };
 
 static Eina_Bool _ok(void *data, const Eo_Event *event);
 static Eina_Bool _canc(void *data, const Eo_Event *event);
+static Eina_Bool _on_dir_up(void *data, const Eo_Event *event);
+static void _populate(Evas_Object *obj, const char *path, Elm_Object_Item *parent_it, const char *selected);
 
 /* final routine on deletion */
 static void
 _elm_fileselector_smart_del_do(Elm_Fileselector_Data *sd)
 {
    eina_stringshare_del(sd->path);
+   eina_stringshare_del(sd->prev_path);
    eina_stringshare_del(sd->selection);
    free(ecore_idler_del(sd->populate_idler));
    ecore_idler_del(sd->path_entry_idler);
@@ -164,6 +169,21 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    Eo_Event event = {0};
    _canc(obj, &event);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_backspace(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_FILESELECTOR_DATA_GET(obj, sd);
+   if (sd->prev_path)
+     _populate(obj, sd->prev_path, NULL, NULL);
+   else
+     _on_dir_up(obj, NULL);
+
+   eina_stringshare_del(sd->prev_path);
+   sd->prev_path = NULL;
+
    return EINA_TRUE;
 }
 
@@ -1076,6 +1096,8 @@ _on_text_activated(void *data, const Eo_Event *event)
 
    if (ecore_file_is_dir(path))
      {
+        // keep previous path for backspace key action
+        eina_stringshare_replace(&sd->prev_path, sd->path);
         // keep a ref to path 'couse it will be destroyed by _populate
         p = eina_stringshare_add(path);
         _populate(fs, p, NULL, NULL);
@@ -2501,6 +2523,7 @@ _elm_fileselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA
    static Elm_Atspi_Action atspi_actions[] = {
           { "select", "select", NULL, _key_action_select },
           { "escape", "escape", NULL, _key_action_escape},
+          { "backspace", "backspace", NULL, _key_action_backspace},
           { NULL, NULL, NULL, NULL}
    };
    return &atspi_actions[0];
