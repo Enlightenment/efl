@@ -320,7 +320,7 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    Evas_Object *entry;
    char buf[128];
 
-   eo_constructor(eo_super(obj, MY_CLASS));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
    sd->first_filter = EINA_TRUE;
 
