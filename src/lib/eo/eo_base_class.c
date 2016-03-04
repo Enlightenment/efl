@@ -77,7 +77,7 @@ _eo_base_key_data_set(Eo *obj, Eo_Base_Data *pd,
 }
 
 EOLIAN static void *
-_eo_base_key_data_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
+_eo_base_key_data_get(const Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
 {
    /* We don't really change it... */
    Eo_Generic_Data_Node *node;

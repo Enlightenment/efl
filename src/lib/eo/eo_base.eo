@@ -140,7 +140,7 @@ abstract Eo.Base ()
             @in data: const(void)*; [[the data to set]]
          }
       }
-      key_data_get {
+      key_data_get @const {
          [[Get generic data from object.]]
          params {
             @in key: const(char)*; [[the key associated with the data]]
