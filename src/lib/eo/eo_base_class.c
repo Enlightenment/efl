@@ -404,10 +404,7 @@ static Eina_Hash *_legacy_events_hash = NULL;
 EAPI const Eo_Event_Description *
 eo_base_legacy_only_event_description_get(const char *_event_name)
 {
-   char buf[1024];
-   strncpy(buf, _event_name, sizeof(buf) - 1);
-   buf[sizeof(buf) - 1] = '\0';
-   Eina_Stringshare *event_name = eina_stringshare_add(buf);
+   Eina_Stringshare *event_name = eina_stringshare_add(_event_name);
    Eo_Event_Description *event_desc = eina_hash_find(_legacy_events_hash, event_name);
    if (!event_desc)
      {
