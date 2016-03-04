@@ -652,15 +652,6 @@ EAPI Eo * _eo_add_internal_start(const char *file, int line, const Eo_Class *kla
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.
- * @param obj the object to work on.
- * @param klass the klass associated with the data.
- * @return a pointer to the data.
- * @deprecated use eo_data_scope_get or eo_data_ref instead.
- */
-EAPI void *eo_data_get(const Eo *obj, const Eo_Class *klass) EINA_DEPRECATED;
-
-/**
- * @brief Get a pointer to the data of an object for a specific class.
  * The data reference count is not incremented. The pointer must be used only
  * in the scope of the function and its callees.
  * @param obj the object to work on.

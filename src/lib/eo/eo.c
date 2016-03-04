@@ -1454,12 +1454,6 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
 }
 
 EAPI void *
-eo_data_get(const Eo *obj_id, const Eo_Class *klass_id)
-{
-   return eo_data_scope_get(obj_id, klass_id);
-}
-
-EAPI void *
 eo_data_scope_get(const Eo *obj_id, const Eo_Class *klass_id)
 {
    void *ret;
