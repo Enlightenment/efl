@@ -64,7 +64,7 @@
 # define BITS_ENTRY_ID           12
 # define BITS_GENERATION_COUNTER  8
 # define REF_TAG_SHIFT           30
-# define SUPER_TAG_SHIF          31
+# define SUPER_TAG_SHIFT         31
 # define DROPPED_TABLES           0
 # define DROPPED_ENTRIES          4
 typedef int16_t Table_Index;
