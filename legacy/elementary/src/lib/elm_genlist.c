@@ -1900,6 +1900,8 @@ _item_realize(Elm_Gen_Item *it,
                   GL_IT(it)->w = GL_IT(it)->minw = size->minw;
                   GL_IT(it)->h = GL_IT(it)->minh = size->minh;
                   it->item->mincalcd = EINA_TRUE;
+                  if (GL_IT(it)->block->realized)
+                    GL_IT(it)->w = GL_IT(it)->block->w;
                }
              else
                {
