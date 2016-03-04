@@ -110,7 +110,6 @@ typedef struct _Eo_Opaque Eo;
 /**
  * @typedef Eo_Class
  * The basic class type - should be removed, just for compat.
- * @deprecated
  */
 typedef Eo Eo_Class;
 
