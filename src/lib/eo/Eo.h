@@ -999,14 +999,6 @@ EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const
  * @}
  */
 
-/* XXX: Deprecated, here for compat, DO NOT USE */
-EINA_DEPRECATED static inline const Eo_Event_Description* _EO_EV_CALLBACK_ADD(void) { return EO_BASE_EVENT_CALLBACK_ADD; }
-EINA_DEPRECATED static inline const Eo_Event_Description* _EO_EV_CALLBACK_DEL(void) { return EO_BASE_EVENT_CALLBACK_DEL; }
-EINA_DEPRECATED static inline const Eo_Event_Description* _EO_EV_DEL(void) { return EO_BASE_EVENT_DEL; }
-#define EO_EV_CALLBACK_ADD _EO_EV_CALLBACK_ADD()
-#define EO_EV_CALLBACK_DEL _EO_EV_CALLBACK_DEL()
-#define EO_EV_DEL _EO_EV_DEL()
-
 /**
  * @}
  */
