@@ -195,7 +195,9 @@ START_TEST(eo_data_fetch)
 
    obj = eo_add(klass, NULL);
    fail_if(!obj);
+   fail_if(eo_data_get(obj, klass));
    fail_if(eo_data_scope_get(obj, klass));
+   fail_if(!eo_data_scope_get(obj, EO_BASE_CLASS));
    eo_unref(obj);
 
    eo_shutdown();
