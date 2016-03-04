@@ -134,6 +134,11 @@ START_TEST(eo_signals)
         ck_assert_str_eq(a_desc->name, "a,changed");
         fail_if(a_desc == EV_A_CHANGED);
 
+        /* Check that when calling again we still get the same event. */
+        const Eo_Event_Description *a_desc2 = eo_base_legacy_only_event_description_get("a,changed");
+        fail_if(!a_desc2);
+        fail_if(a_desc2 != a_desc);
+
         const Eo_Event_Description *bad_desc = eo_base_legacy_only_event_description_get("bad");
         fail_if(!bad_desc);
         ck_assert_str_eq(bad_desc->name, "bad");
