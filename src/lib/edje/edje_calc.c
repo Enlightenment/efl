@@ -721,7 +721,9 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 
    epd1 = _edje_part_description_find(ed, ep, d1, v1, EINA_TRUE);
    if (!epd1)
-     epd1 = ep->part->default_desc;  /* never NULL */
+     epd1 = _edje_get_description_by_orientation(ed, ep->part->default_desc,
+                                                 &ep->part->default_desc_rtl,
+                                                ep->type); /* never NULL */
 
    if (d2)
      epd2 = _edje_part_description_find(ed, ep, d2, v2, EINA_TRUE);
