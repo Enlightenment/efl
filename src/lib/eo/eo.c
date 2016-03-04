@@ -747,9 +747,7 @@ eo_class_get(const Eo *eo_id)
 
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
 
-   if (obj->klass)
-      return _eo_class_id_get(obj->klass);
-   return NULL;
+   return _eo_class_id_get(obj->klass);
 }
 
 EAPI const char *
@@ -908,9 +906,6 @@ _eo_class_mro_init(const Eo_Class_Description *desc, const _Eo_Class *parent, Ei
 static void
 _eo_class_constructor(_Eo_Class *klass)
 {
-   if (klass->constructed)
-     return;
-
    klass->constructed = EINA_TRUE;
 
    if (klass->desc->class_constructor)
