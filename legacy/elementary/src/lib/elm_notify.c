@@ -66,20 +66,18 @@ _notify_theme_apply(Evas_Object *obj)
  *
  * @param obj notification object.
  *
- * @param orient notification orientation.
+ * @param x, y, w, h geometry of object.
  *
  * @internal
  **/
 static void
-_notify_move_to_orientation(Evas_Object *obj)
+_notify_move_to_orientation(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord minw = -1, minh = -1;
-   Evas_Coord x, y, w, h;
    double ax, ay;
 
    ELM_NOTIFY_DATA_GET(obj, sd);
 
-   evas_object_geometry_get(obj, &x, &y, &w, &h);
    edje_object_size_min_get(sd->notify, &minw, &minh);
    edje_object_size_min_restricted_calc(sd->notify, &minw, &minh, minw, minh);
 
@@ -94,6 +92,7 @@ _notify_move_to_orientation(Evas_Object *obj)
    y = y + ((h - minh) * ay);
 
    evas_object_move(sd->notify, x, y);
+   evas_object_resize(sd->notify, minw, minh);
 }
 
 static void
@@ -111,9 +110,12 @@ _block_events_theme_apply(Evas_Object *obj)
 static void
 _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
+   Evas_Coord x, y, w, h;
+
    ELM_NOTIFY_DATA_GET(obj, sd);
    edje_object_mirrored_set(sd->notify, rtl);
-   _notify_move_to_orientation(obj);
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   _notify_move_to_orientation(obj, x, y, w, h);
 }
 
 static void
@@ -169,7 +171,6 @@ _elm_notify_elm_widget_part_text_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, c
 static void
 _calc(Evas_Object *obj)
 {
-   Evas_Coord minw = -1, minh = -1;
    Evas_Coord x, y, w, h;
 
    ELM_NOTIFY_DATA_GET(obj, sd);
@@ -178,16 +179,9 @@ _calc(Evas_Object *obj)
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
 
-   edje_object_size_min_get(sd->notify, &minw, &minh);
-   edje_object_size_min_restricted_calc(sd->notify, &minw, &minh, minw, minh);
-
-   if (sd->horizontal_align == ELM_NOTIFY_ALIGN_FILL) minw = w;
-   if (sd->vertical_align == ELM_NOTIFY_ALIGN_FILL) minh = h;
-
    if (sd->content)
      {
-        _notify_move_to_orientation(obj);
-        evas_object_resize(sd->notify, minw, minh);
+        _notify_move_to_orientation(obj, x, y, w, h);
      }
 }
 
@@ -228,19 +222,31 @@ _block_area_clicked_cb(void *data,
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_resize(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_elm_notify_evas_object_smart_resize(Eo *obj, Elm_Notify_Data *sd, Evas_Coord w, Evas_Coord h)
 {
+   Evas_Coord x, y;
+
    evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
-   _calc(obj);
+   if (!sd->parent && sd->content)
+     {
+        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        _notify_move_to_orientation(obj, x, y, w, h);
+     }
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_move(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+_elm_notify_evas_object_smart_move(Eo *obj, Elm_Notify_Data *sd, Evas_Coord x, Evas_Coord y)
 {
+   Evas_Coord w, h;
+
    evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
 
-   _calc(obj);
+   if (!sd->parent && sd->content)
+     {
+        evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+        _notify_move_to_orientation(obj, x, y, w, h);
+     }
 }
 
 static Eina_Bool
