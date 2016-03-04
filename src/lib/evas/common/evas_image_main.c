@@ -110,7 +110,7 @@ static const Evas_Cache2_Image_Func      _evas_common_image_func2 =
 };
 #endif
 
-static inline int
+int
 _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
                                      Evas_Colorspace cspace,
                                      /* inout */ int *l, int *r, int *t, int *b)
