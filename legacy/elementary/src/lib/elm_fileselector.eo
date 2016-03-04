@@ -40,7 +40,6 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface_Fileselector,
       Elm.Widget.event;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
-      Elm.Layout.sizing_eval;
       Elm.Layout.text.set;
       Elm.Interface_Fileselector.selected_paths.get;
       Elm.Interface_Fileselector.custom_filter_append;

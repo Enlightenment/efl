@@ -74,19 +74,6 @@ _elm_fileselector_smart_del_do(Elm_Fileselector_Data *sd)
    evas_obj_smart_del(eo_super(sd->obj, MY_CLASS));
 }
 
-EOLIAN static void
-_elm_fileselector_elm_layout_sizing_eval(Eo *obj, Elm_Fileselector_Data *sd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-}
-
 static void
 _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
@@ -105,15 +92,15 @@ _elm_fileselector_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
    const char *style;
    const char *data;
    char buf[1024];
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-
    Eina_Bool int_ret = EINA_FALSE;
+
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    style = elm_widget_style_get(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    data = edje_object_data_get
        (wd->resize_obj, "path_separator");
@@ -122,36 +109,24 @@ _elm_fileselector_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
 
    snprintf(buf, sizeof(buf), "fileselector/%s", style);
 
-#define SWALLOW(part_name, object_ptn)                          \
-  if (object_ptn)                                               \
-    {                                                           \
-       elm_widget_style_set(object_ptn, buf);                   \
-       if (!elm_layout_content_set(obj, part_name, object_ptn)) \
-         evas_object_hide(object_ptn);                          \
-    }
+   elm_widget_style_set(sd->up_button, buf);
+   elm_widget_style_set(sd->home_button, buf);
+   elm_widget_style_set(sd->spinner, "wheel");
 
-   SWALLOW("elm.swallow.up", sd->up_button);
-   SWALLOW("elm.swallow.home", sd->home_button);
-   SWALLOW("elm.swallow.spinner", sd->spinner);
-   elm_object_style_set(sd->spinner, "wheel");
-
-   if (!elm_layout_content_set(obj, "elm.swallow.files", sd->files_view))
-     evas_object_hide(sd->files_view);
-
-   SWALLOW("elm.swallow.path", sd->path_entry);
-   SWALLOW("elm.swallow.filename", sd->name_entry);
-   SWALLOW("elm.swallow.search", sd->search_entry);
+   elm_widget_style_set(sd->path_entry, buf);
+   elm_widget_style_set(sd->name_entry, buf);
+   elm_widget_style_set(sd->search_entry, buf);
 
    snprintf(buf, sizeof(buf), "fileselector/actions/%s", style);
-   SWALLOW("elm.swallow.filters", sd->filter_hoversel);
-   SWALLOW("elm.swallow.cancel", sd->cancel_button);
-   SWALLOW("elm.swallow.ok", sd->ok_button);
 
-#undef SWALLOW
+   if (sd->filter_hoversel)
+     elm_widget_style_set(sd->filter_hoversel, buf);
 
-   edje_object_message_signal_process(wd->resize_obj);
-
-   elm_layout_sizing_eval(obj);
+   if (sd->ok_button)
+     {
+        elm_widget_style_set(sd->cancel_button, buf);
+        elm_widget_style_set(sd->ok_button, buf);
+     }
 
    return EINA_TRUE;
 }
@@ -1266,9 +1241,6 @@ _files_list_add(Evas_Object *obj)
    li = elm_genlist_add(obj);
    evas_object_data_set(li, "parent", obj);
    elm_widget_mirrored_automatic_set(li, EINA_FALSE);
-   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_min_set(li, 100, 100);
 
    eo_event_callback_add
      (li, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, _on_item_selected, obj);
@@ -1286,8 +1258,6 @@ _files_list_add(Evas_Object *obj)
      (li, ELM_GENLIST_EVENT_CONTRACTED, _on_list_contracted, obj);
    eo_event_callback_add
      (li, EVAS_OBJECT_EVENT_KEY_DOWN, _files_key_down, obj);
-
-   elm_widget_sub_object_add(obj, li);
 
    return li;
 }
@@ -1317,8 +1287,6 @@ _files_grid_add(Evas_Object *obj)
      (grid, ELM_GENGRID_EVENT_ACTIVATED, _on_item_activated, obj);
    eo_event_callback_add
      (grid, EVAS_OBJECT_EVENT_KEY_DOWN, _files_key_down, obj);
-
-   elm_widget_sub_object_add(obj, grid);
 
    return grid;
 }
@@ -1471,8 +1439,8 @@ EOLIAN static void
 _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
 {
    Evas_Object *ic, *bt, *en, *pb;
-
-   EINA_REFCOUNT_INIT(priv);
+   const char *data;
+   char buf[1024];
 
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -1485,86 +1453,44 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
        (obj, "fileselector", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   data = edje_object_data_get
+       (wd->resize_obj, "path_separator");
+   if (data) priv->path_separator = data;
+   else priv->path_separator = "/";
+
+   snprintf(buf, sizeof(buf), "fileselector/%s", elm_widget_style_get(obj));
+
    // up btn
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "arrow_up");
-   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(obj);
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Up"));
-   evas_object_size_hint_align_set(bt, 0.0, 0.0);
    eo_event_callback_add
      (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_dir_up, obj);
 
-   elm_widget_sub_object_add(obj, bt);
-
    priv->up_button = bt;
+   elm_object_style_set(priv->up_button, buf);
+   elm_object_part_content_set(obj, "elm.swallow.up", priv->up_button);
 
    // home btn
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "home");
-   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(obj);
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Home"));
-   evas_object_size_hint_align_set(bt, 0.0, 0.0);
    eo_event_callback_add
      (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _home, obj);
 
    priv->home_button = bt;
+   elm_object_style_set(priv->home_button, buf);
+   elm_object_part_content_set(obj, "elm.swallow.home", priv->home_button);
 
-   // spinner
-   pb = elm_progressbar_add(obj);
-   elm_widget_sub_object_add(obj, pb);
-   priv->spinner = pb;
-
-   // XXX: will fail for dynamic finger size changing
-   priv->thumbnail_size.w = elm_config_finger_size_get() * 2 - GENGRID_PADDING;
-   priv->thumbnail_size.h = priv->thumbnail_size.w;
-
-   priv->sort_type = ELM_FILESELECTOR_SORT_BY_FILENAME_ASC;
-   priv->sort_method = strcoll;
-
-   // files_view
-   priv->files_view = _files_list_add(obj);
-
-   // path entry
-   en = elm_entry_add(obj);
-   elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
-   elm_entry_single_line_set(en, EINA_TRUE);
-   elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   eo_event_callback_add
-     (en, ELM_ENTRY_EVENT_ANCHOR_CLICKED, _anchor_clicked, obj);
-   eo_event_callback_add
-     (en, ELM_WIDGET_EVENT_FOCUSED, _on_text_focused, obj);
-   eo_event_callback_add
-     (en, ELM_WIDGET_EVENT_UNFOCUSED, _on_text_unfocused, obj);
-   eo_event_callback_add
-     (en, ELM_ENTRY_EVENT_ACTIVATED, _on_text_activated, obj);
-
-   elm_widget_sub_object_add(obj, en);
-   priv->path_entry = en;
-
-   // name entry
-   en = elm_entry_add(obj);
-   elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
-   elm_entry_editable_set(en, EINA_TRUE);
-   elm_entry_single_line_set(en, EINA_TRUE);
-   elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   elm_widget_sub_object_add(obj, en);
-   priv->name_entry = en;
-
-   //search entry
+   // search entry
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "search");
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
@@ -1578,17 +1504,66 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
                                                 PACKAGE, N_("Search"));
    elm_object_part_content_set(en, "icon", ic);
    elm_entry_icon_visible_set(en, EINA_TRUE);
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    eo_event_callback_add
      (en, ELM_ENTRY_EVENT_CHANGED, _preedit_cb, obj);
    evas_object_data_set(obj, "search", en);
 
-   elm_widget_sub_object_add(obj, en);
    priv->search_entry = en;
+   elm_object_style_set(priv->search_entry, buf);
+   elm_object_part_content_set(obj, "elm.swallow.search", priv->search_entry);
 
+   // spinner
+   pb = elm_progressbar_add(obj);
+   priv->spinner = pb;
+   elm_object_style_set(priv->spinner, "wheel");
+   elm_object_part_content_set(obj, "elm.swallow.spinner", priv->spinner);
+
+   // XXX: will fail for dynamic finger size changing
+   priv->thumbnail_size.w = elm_config_finger_size_get() * 2 - GENGRID_PADDING;
+   priv->thumbnail_size.h = priv->thumbnail_size.w;
+
+   priv->sort_type = ELM_FILESELECTOR_SORT_BY_FILENAME_ASC;
+   priv->sort_method = strcoll;
+
+   // path entry
+   en = elm_entry_add(obj);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
+
+   eo_event_callback_add
+     (en, ELM_ENTRY_EVENT_ANCHOR_CLICKED, _anchor_clicked, obj);
+   eo_event_callback_add
+     (en, ELM_WIDGET_EVENT_FOCUSED, _on_text_focused, obj);
+   eo_event_callback_add
+     (en, ELM_WIDGET_EVENT_UNFOCUSED, _on_text_unfocused, obj);
+   eo_event_callback_add
+     (en, ELM_ENTRY_EVENT_ACTIVATED, _on_text_activated, obj);
+
+   priv->path_entry = en;
+   elm_object_style_set(priv->path_entry, buf);
+   elm_object_part_content_set(obj, "elm.swallow.path", priv->path_entry);
+
+   // name entry
+   en = elm_entry_add(obj);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
+   elm_entry_editable_set(en, EINA_TRUE);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
+
+   priv->name_entry = en;
+   elm_object_style_set(priv->name_entry, buf);
+   elm_object_part_content_set(obj, "elm.swallow.filename", priv->name_entry);
+
+   // ok cancel button
    elm_fileselector_buttons_ok_cancel_set(obj, EINA_TRUE);
    elm_fileselector_is_save_set(obj, EINA_FALSE);
+
+   // files_view
+   priv->files_view = _files_list_add(obj);
+   elm_object_part_content_set(obj, "elm.swallow.files", priv->files_view);
 
 #define HANDLER_ADD(e, fn) \
    priv->handlers = eina_list_append(priv->handlers, \
@@ -1601,7 +1576,7 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    HANDLER_ADD(EIO_MONITOR_DIRECTORY_DELETED, _resource_deleted);
 #undef HANDLER_ADD
 
-   elm_obj_widget_theme_apply(obj);
+   elm_obj_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -1737,8 +1712,14 @@ EOLIAN static void
 _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina_Bool visible)
 {
    Evas_Object *bt;
+   Eina_Bool bt_exists = EINA_FALSE;
 
-   if (visible && (!sd->ok_button))
+   visible = !!visible;
+   bt_exists = !!sd->ok_button;
+
+   if (!(visible ^ bt_exists)) return;
+
+   if (visible)
      {
         // cancel btn
         bt = elm_button_add(obj);
@@ -1749,6 +1730,7 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
           (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _canc, obj);
 
         sd->cancel_button = bt;
+        elm_object_part_content_set(obj, "elm.swallow.cancel", sd->cancel_button);
 
         // ok btn
         bt = elm_button_add(obj);
@@ -1759,10 +1741,9 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
           (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _ok, obj);
 
         sd->ok_button = bt;
-
-        elm_obj_widget_theme_apply(obj);
+        elm_object_part_content_set(obj, "elm.swallow.ok", sd->ok_button);
      }
-   else if (!visible)
+   else
      {
         ELM_SAFE_FREE(sd->cancel_button, evas_object_del);
         ELM_SAFE_FREE(sd->ok_button, evas_object_del);
@@ -2117,7 +2098,7 @@ EOLIAN static Eina_Bool
 _elm_fileselector_elm_interface_fileselector_mime_types_filter_append(Eo *obj, Elm_Fileselector_Data *sd, const char *mime_types, const char *filter_name)
 {
    Elm_Fileselector_Filter *ff;
-   Eina_Bool need_theme = EINA_FALSE;
+   char buf[1024];
 
    if (!mime_types) return EINA_FALSE;
 
@@ -2133,7 +2114,9 @@ _elm_fileselector_elm_interface_fileselector_mime_types_filter_append(Eo *obj, E
         sd->current_filter = ff;
         sd->filter_hoversel = elm_hoversel_add(obj);
         elm_object_text_set(sd->filter_hoversel, ff->filter_name);
-        need_theme = EINA_TRUE;
+        snprintf(buf, sizeof(buf), "fileselector/actions/%s", elm_widget_style_get(obj));
+        elm_widget_style_set(sd->filter_hoversel, buf);
+        elm_object_part_content_set(obj, "elm.swallow.filters", sd->filter_hoversel);
      }
    elm_hoversel_item_add(sd->filter_hoversel, ff->filter_name, NULL, ELM_ICON_NONE, _current_filter_changed, ff);
 
@@ -2144,9 +2127,6 @@ _elm_fileselector_elm_interface_fileselector_mime_types_filter_append(Eo *obj, E
         eina_stringshare_ref(sd->path);
         _schedule_populate(obj, sd, sd->path, NULL);
      }
-
-   if (need_theme)
-     elm_obj_widget_theme_apply(obj);
 
    return EINA_TRUE;
 }
@@ -2165,7 +2145,7 @@ _elm_fileselector_elm_interface_fileselector_custom_filter_append(Eo *obj, Elm_F
 {
    Elm_Fileselector_Filter *ff;
    Elm_Fileselector_Custom_Filter *custom_filter;
-   Eina_Bool need_theme = EINA_FALSE;
+   char buf[1024];
 
    if (!func) return EINA_FALSE;
 
@@ -2189,7 +2169,9 @@ _elm_fileselector_elm_interface_fileselector_custom_filter_append(Eo *obj, Elm_F
         sd->current_filter = ff;
         sd->filter_hoversel = elm_hoversel_add(obj);
         elm_object_text_set(sd->filter_hoversel, ff->filter_name);
-        need_theme = EINA_TRUE;
+        snprintf(buf, sizeof(buf), "fileselector/actions/%s", elm_widget_style_get(obj));
+        elm_widget_style_set(sd->filter_hoversel, buf);
+        elm_object_part_content_set(obj, "elm.swallow.filters", sd->filter_hoversel);
      }
    elm_hoversel_item_add(sd->filter_hoversel, ff->filter_name, NULL, ELM_ICON_NONE, _current_filter_changed, ff);
 
@@ -2200,9 +2182,6 @@ _elm_fileselector_elm_interface_fileselector_custom_filter_append(Eo *obj, Elm_F
         eina_stringshare_ref(sd->path);
         _schedule_populate(obj, sd, sd->path, NULL);
      }
-
-   if (need_theme)
-     elm_obj_widget_theme_apply(obj);
 
    return EINA_TRUE;
 }
@@ -2410,8 +2389,9 @@ _elm_fileselector_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Fileselector_Da
    if (sd->files_view) items = eina_list_append(items, sd->files_view);
    if (sd->path_entry) items = eina_list_append(items, sd->path_entry);
    if (sd->name_entry) items = eina_list_append(items, sd->name_entry);
+   if (sd->filter_hoversel) items = eina_list_append(items, sd->filter_hoversel);
    if (sd->cancel_button) items = eina_list_append(items, sd->cancel_button);
-   if (sd->ok_button) items = eina_list_append(items, sd->ok_button);  
+   if (sd->ok_button) items = eina_list_append(items, sd->ok_button);
 
    if (_elm_config->access_mode)
      return elm_widget_focus_list_next_get(obj, items, eina_list_data_get, dir, next, next_item);
@@ -2440,6 +2420,7 @@ _elm_fileselector_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Fileselect
    if (sd->files_view) items = eina_list_append(items, sd->files_view);
    if (sd->path_entry) items = eina_list_append(items, sd->path_entry);
    if (sd->name_entry) items = eina_list_append(items, sd->name_entry);
+   if (sd->filter_hoversel) items = eina_list_append(items, sd->filter_hoversel);
    if (sd->cancel_button) items = eina_list_append(items, sd->cancel_button);
    if (sd->ok_button) items = eina_list_append(items, sd->ok_button);
 
