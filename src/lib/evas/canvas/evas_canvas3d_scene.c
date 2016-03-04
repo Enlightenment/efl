@@ -119,14 +119,12 @@ _evas_canvas3d_scene_camera_node_set(Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas
    if (pd->camera_node)
      {
         evas_canvas3d_node_scene_camera_del(pd->camera_node, obj);
-        eo_unref(pd->camera_node);
      }
 
    pd->camera_node = node;
 
    if (node)
      {
-        eo_unref(node);
         evas_canvas3d_node_scene_camera_add(node, obj);
      }
 
