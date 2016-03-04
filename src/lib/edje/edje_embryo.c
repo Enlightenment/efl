@@ -169,6 +169,11 @@
  * map_persp_on[on]
  * persp_zplane[z]
  * persp_focal[z]
+ * box[layout]
+ * box[fallback_layout]
+ * box[Float:align_x, Float:align_y]
+ * box[padding_x, padding_y]
+ * box[min_x, min_y]
  *
  * ** part_id and program_id need to be able to be "found" from strings
  *
@@ -2714,6 +2719,65 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
          GETINT(proxy->proxy.source_visible, params[3]);
 
          break;
+      }
+
+      case EDJE_STATE_PARAM_BOX_LAYOUT:
+      {
+         Edje_Part_Description_Box *box;
+         if ((rp->part->type != EDJE_PART_TYPE_BOX)) return 0;
+         CHKPARAM(3);
+
+         GETSTR(s, params[3]);
+         s = strdup(s);
+
+         box = (Edje_Part_Description_Box *)rp->custom->description;
+         box->box.layout = s;
+      }
+
+      case EDJE_STATE_PARAM_BOX_FALLBACK_LAYOUT:
+      {
+         Edje_Part_Description_Box *box;
+         if ((rp->part->type != EDJE_PART_TYPE_BOX)) return 0;
+         CHKPARAM(3);
+
+         GETSTR(s, params[3]);
+         s = strdup(s);
+
+         box = (Edje_Part_Description_Box *)rp->custom->description;
+         box->box.alt_layout = s;
+      }
+
+      case EDJE_STATE_PARAM_BOX_ALIGN:
+      {
+         Edje_Part_Description_Box *box;
+         if ((rp->part->type != EDJE_PART_TYPE_BOX)) return 0;
+         CHKPARAM(4);
+
+         box = (Edje_Part_Description_Box *)rp->custom->description;
+         GETFLOAT_T(box->box.align.x, params[3]);
+         GETFLOAT_T(box->box.align.y, params[4]);
+      }
+
+      case EDJE_STATE_PARAM_BOX_PADDING:
+      {
+         Edje_Part_Description_Box *box;
+         if ((rp->part->type != EDJE_PART_TYPE_BOX)) return 0;
+         CHKPARAM(4);
+
+         box = (Edje_Part_Description_Box *)rp->custom->description;
+         GETINT(box->box.padding.x, params[3]);
+         GETINT(box->box.padding.y, params[4]);
+      }
+
+      case EDJE_STATE_PARAM_BOX_MIN:
+      {
+         Edje_Part_Description_Box *box;
+         if ((rp->part->type != EDJE_PART_TYPE_BOX)) return 0;
+         CHKPARAM(4);
+
+         box = (Edje_Part_Description_Box *)rp->custom->description;
+         GETINT(box->box.min.h, params[3]);
+         GETINT(box->box.min.v, params[4]);
       }
 
 #ifdef HAVE_EPHYSICS
