@@ -597,7 +597,7 @@ _elm_image_resize_down_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool resize_down)
 EOLIAN static Eina_Bool
 _elm_image_resize_down_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
-   return sd->resize_up;
+   return sd->resize_down;
 }
 
 static Eina_Bool
