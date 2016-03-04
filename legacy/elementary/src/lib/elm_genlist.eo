@@ -423,6 +423,16 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
          ]]
          return: free(own(iterator<Elm_Gen_Item *> *), eina_iterator_free); [[Iterator on genlist]]
       }
+      filtered_items_count @const {
+         [[Return how many items have passed the filter currently.
+         
+           This behaviour is O(1) and may or may not return the 
+           filtered count for complete genlist based on the timing
+           of the call. To get complete count, call after "filter,done"
+           callback
+         ]]
+         return: uint;
+      }
       items_count @const {
          [[Return how many items are currently in a list.
 

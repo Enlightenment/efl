@@ -5025,11 +5025,11 @@ gl_filter_get(void *data, Evas_Object *obj EINA_UNUSED, void *key)
 }
 
 static void
-_gl_filter_finished_cb(void *data EINA_UNUSED,
+_gl_filter_finished_cb(void *data,
                        Evas_Object *obj EINA_UNUSED,
                        void *event_info EINA_UNUSED)
 {
-   printf("Filter finished\n");
+   printf("Filter finished, filtered items count is %d\n", elm_genlist_filtered_items_count((Evas_Object *)data));
 }
 
 void
@@ -5117,7 +5117,7 @@ test_genlist_filter(void *data EINA_UNUSED,
    evas_object_smart_callback_add(gl, "activated", _gl_focus_item_cb, "activated");
    evas_object_smart_callback_add(gl, "highlighted", _gl_focus_item_cb, "highlighted");
    evas_object_smart_callback_add(gl, "unhighlighted", _gl_focus_item_cb, "unhighlighted");
-   evas_object_smart_callback_add(gl, "filter,done", _gl_filter_finished_cb, NULL);
+   evas_object_smart_callback_add(gl, "filter,done", _gl_filter_finished_cb, gl);
    evas_object_event_callback_add(gl, EVAS_CALLBACK_KEY_DOWN, _gl_focus_key_down_cb, NULL);
 
    itc = elm_genlist_item_class_new();

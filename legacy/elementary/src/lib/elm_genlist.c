@@ -7652,6 +7652,12 @@ _elm_genlist_filter_iterator_new(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
    return &iter->iterator;
 }
 
+EOLIAN static unsigned int
+_elm_genlist_filtered_items_count(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
+{
+   return sd->filtered_count;
+}
+
 EOLIAN static void
 _elm_genlist_longpress_timeout_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, double timeout)
 {
