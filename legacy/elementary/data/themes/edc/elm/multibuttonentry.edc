@@ -10,6 +10,14 @@ group { name: "elm/multibuttonentry/base/default";
             color_class: "multibuttonentry_bg";
          }
       }
+      part { name: "elm.swallow.background";
+         type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+         }
+      }
       part { name: "box.swallow"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.to: "bg";
