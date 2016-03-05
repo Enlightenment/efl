@@ -30,8 +30,8 @@ _elm_interface_atspi_image_description_set(Eo *obj, void *sd EINA_UNUSED, const 
 {
    const char *key = "atspi_image_description";
    const char *descr = eina_stringshare_add(description);
-   char *old_descr;
-   if (eo_key_data_get(obj, key))
+   char *old_descr = eo_key_data_get(obj, key);
+   if (old_descr)
      {
         eina_stringshare_del(old_descr);
         eo_event_callback_del(obj, EO_BASE_EVENT_DEL, _free_desc_cb, old_descr);
