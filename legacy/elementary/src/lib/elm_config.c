@@ -1827,12 +1827,22 @@ _config_load(void)
 static void
 _config_flush_get(void)
 {
+   Eina_Bool is_mirrored;
+   Eina_Bool translate;
+   is_mirrored = _elm_config->is_mirrored;
+   translate = _elm_config->translate;
+
    _elm_config_font_overlays_cancel();
    _color_overlays_cancel();
    _config_free(_elm_config);
    _elm_config = NULL;
    _config_load();
    _env_get();
+
+   /* restore prev value which is not part of the EET file */
+   _elm_config->is_mirrored = is_mirrored;
+   _elm_config->translate = translate;
+
    _config_apply();
    _config_sub_apply();
    evas_font_reinit();
@@ -3673,7 +3683,7 @@ elm_config_all_flush(void)
 }
 
 static void
-_translation_init()
+_translation_init(void)
 {
 #ifdef ENABLE_NLS
    const char *cur_dom = textdomain(NULL);
@@ -3929,9 +3939,19 @@ end:
 void
 _elm_config_reload(void)
 {
+   Eina_Bool is_mirrored;
+   Eina_Bool translate;
+   is_mirrored = _elm_config->is_mirrored;
+   translate = _elm_config->translate;
+
    _config_free(_elm_config);
    _elm_config = NULL;
    _config_load();
+
+   /* restore prev value which is not part of the EET file */
+   _elm_config->is_mirrored = is_mirrored;
+   _elm_config->translate = translate;
+
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
@@ -4100,6 +4120,11 @@ elm_config_transition_duration_factor_get(void)
 void
 _elm_config_profile_set(const char *profile)
 {
+   Eina_Bool is_mirrored;
+   Eina_Bool translate;
+   is_mirrored = _elm_config->is_mirrored;
+   translate = _elm_config->translate;
+
    if (!profile) return;
 
    if (_elm_profile)
@@ -4116,6 +4141,11 @@ _elm_config_profile_set(const char *profile)
    _config_free(_elm_config);
    _elm_config = NULL;
    _config_load();
+
+   /* restore prev value which is not part of the EET file */
+   _elm_config->is_mirrored = is_mirrored;
+   _elm_config->translate = translate;
+
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
