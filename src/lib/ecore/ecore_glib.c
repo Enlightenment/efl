@@ -275,6 +275,9 @@ ecore_main_loop_glib_integrate(void)
    _ecore_glib_select_original = func;
    ecore_main_loop_select_func_set(_ecore_glib_select);
    _ecore_glib_active = EINA_TRUE;
+
+   /* Init only when requested */
+   _ecore_glib_init();
    return EINA_TRUE;
 #else
    ERR("No glib support");

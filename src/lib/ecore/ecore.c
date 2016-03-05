@@ -248,7 +248,6 @@ ecore_init(void)
    _ecore_exe_init();
 #endif
    _ecore_thread_init();
-   _ecore_glib_init();
    _ecore_job_init();
    _ecore_time_init();
 
