@@ -173,8 +173,8 @@ static inline Eina_F32p32  eina_f32p32_sqrt(Eina_F32p32 a);
  * @brief Get the absolute value of the integer part of and Eina_F32p32 floating
  * point number
  *
- * @param a The floating point number
- * @return The positive integer part of the number @p a
+ * @param v The floating point number
+ * @return The positive integer part of the number @p v
  */
 static inline unsigned int eina_f32p32_fracc_get(Eina_F32p32 v);
 
@@ -329,8 +329,8 @@ static inline Eina_F16p16  eina_f16p16_sqrt(Eina_F16p16 a);
  * @brief Get the absolute value of the integer part of and Eina_F16p16 floating
  * point number
  *
- * @param a The floating point number
- * @return The positive integer part of the number @p a
+ * @param v The floating point number
+ * @return The positive integer part of the number @p v
  */
 static inline unsigned int eina_f16p16_fracc_get(Eina_F16p16 v);
 
@@ -427,8 +427,8 @@ static inline Eina_F8p24   eina_f8p24_sqrt(Eina_F8p24 a);
  * @brief Get the absolute value of the integer part of and Eina_F8p24 floating
  * point number
  *
- * @param a The floating point number
- * @return The positive integer part of the number @p a
+ * @param v The floating point number
+ * @return The positive integer part of the number @p v
  */
 static inline unsigned int eina_f8p24_fracc_get(Eina_F8p24 v);
 

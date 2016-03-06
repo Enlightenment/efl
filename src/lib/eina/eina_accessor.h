@@ -271,7 +271,7 @@ EAPI void  eina_accessor_over(Eina_Accessor *accessor,
  *       is returned, otherwise #EINA_TRUE is returned. If the container is not
  *       lockable, it returns #EINA_TRUE.
  *
- * @warnning None of the existing eina data structures are lockable.
+ * @warning None of the existing eina data structures are lockable.
  */
 EAPI Eina_Bool eina_accessor_lock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1);
 
