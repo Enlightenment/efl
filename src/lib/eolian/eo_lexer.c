@@ -75,7 +75,8 @@ static const char * const ctypes[] =
    "Eina_Accessor", "Eina_Array", "Eina_Iterator", "Eina_Hash", "Eina_List",
    "Eina_Value",
 
-   "Eo_Event_Cb"
+   "Eo_Event_Cb",
+   "Ecore_Promise"
 };
 
 #undef KW

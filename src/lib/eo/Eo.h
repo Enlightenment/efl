@@ -511,61 +511,96 @@ typedef struct _Eo_Call_Cache
                            __FILE__, __LINE__)) return DefRet;          \
      _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \
 
+#define _EO_FUNC_PROMISE_CREATE0
+#define _EO_FUNC_PROMISE_FREE0
+#define _EO_FUNC_PROMISE_CREATE1                                        \
+     Ecore_Promise*(*ecore_promise_add)(int size) = dlsym(dlopen(NULL, RTLD_NOW), "ecore_promise_add"); \
+     Ecore_Promise* __eo_promise = ecore_promise_add(sizeof(PromiseValue));
+#define _EO_FUNC_PROMISE_FREE1                                          \
+     if(Promise)                                                        \
+       *Promise = __eo_promise;                                         \
+     else                                                               \
+       {                                                                \
+          void(*ecore_promise_unref)(Ecore_Promise* p) = dlsym(dlopen(NULL, RTLD_NOW), "ecore_promise_unref"); \
+          ecore_promise_unref(__eo_promise);                             \
+       }
+#define _EO_EXPANSION_AUX(X) X
+#define _EO_FUNC_PROMISE_CREATE(p) _EO_EXPANSION_AUX(_EO_FUNC_PROMISE_CREATE ## p)
+#define _EO_FUNC_PROMISE_FREE(p) _EO_EXPANSION_AUX(_EO_FUNC_PROMISE_FREE ## p)
+
 // to define an EAPI function
-#define _EO_FUNC_BODY(Name, ObjType, Ret, DefRet)                                 \
+#define _EO_FUNC_BODY(Name, ObjType, Promise, Ret, DefRet)              \
   Ret                                                                   \
   Name(ObjType obj)                                                            \
   {                                                                     \
      typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data);            \
      Ret _r;                                                            \
      EO_FUNC_COMMON_OP(obj, Name, DefRet);                                   \
+     _EO_FUNC_PROMISE_CREATE(Promise)                                   \
      _r = _func_(___call.eo_id, ___call.data);                            \
      _eo_call_end(&___call); \
+     _EO_FUNC_PROMISE_FREE(Promise)                                     \
      return _r;                                                         \
   }
 
-#define _EO_VOID_FUNC_BODY(Name, ObjType)					\
+#define _EO_VOID_FUNC_BODY(Name, ObjType, Promise)                              \
   void									\
   Name(ObjType obj)                                                            \
   {                                                                     \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data);           \
      EO_FUNC_COMMON_OP(obj, Name, );                                         \
+     _EO_FUNC_PROMISE_CREATE(Promise)                                   \
      _func_(___call.eo_id, ___call.data);                                 \
      _eo_call_end(&___call); \
+     _EO_FUNC_PROMISE_FREE(Promise)                                     \
   }
 
-#define _EO_FUNC_BODYV(Name, ObjType, Ret, DefRet, Arguments, ...)                \
+#define _EO_FUNC_BODYV(Name, ObjType, Promise, Ret, DefRet, Arguments, ...)     \
   Ret                                                                   \
   Name(ObjType obj, __VA_ARGS__)                                                     \
   {                                                                     \
      typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      Ret _r;                                                            \
      EO_FUNC_COMMON_OP(obj, Name, DefRet);                                   \
+     _EO_FUNC_PROMISE_CREATE(Promise)                                   \
      _r = _func_(___call.eo_id, ___call.data, Arguments);                 \
      _eo_call_end(&___call); \
+     _EO_FUNC_PROMISE_FREE(Promise)                                     \
      return _r;                                                         \
   }
 
-#define _EO_VOID_FUNC_BODYV(Name, ObjType, Arguments, ...)                        \
+#define _EO_VOID_FUNC_BODYV(Name, ObjType, Promise, Arguments, ...)             \
   void                                                                  \
   Name(ObjType obj, __VA_ARGS__)                                                     \
   {                                                                     \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      EO_FUNC_COMMON_OP(obj, Name, );                                         \
+     _EO_FUNC_PROMISE_CREATE(Promise)                                   \
      _func_(___call.eo_id, ___call.data, Arguments);                      \
      _eo_call_end(&___call); \
+     _EO_FUNC_PROMISE_FREE(Promise)                                   \
   }
 
-#define EO_FUNC_BODY(Name, Ret, DefRet) _EO_FUNC_BODY(Name, Eo *, Ret, DefRet)
-#define EO_VOID_FUNC_BODY(Name) _EO_VOID_FUNC_BODY(Name, Eo *)
-#define EO_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...) _EO_FUNC_BODYV(Name, Eo *, Ret, DefRet, EO_FUNC_CALL(Arguments), __VA_ARGS__)
-#define EO_VOID_FUNC_BODYV(Name, Arguments, ...) _EO_VOID_FUNC_BODYV(Name, Eo *, EO_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EO_FUNC_BODY(Name, Ret, DefRet) _EO_FUNC_BODY(Name, Eo *, 0, Ret, DefRet)
+#define EO_VOID_FUNC_BODY(Name) _EO_VOID_FUNC_BODY(Name, Eo *, 0)
+#define EO_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...) _EO_FUNC_BODYV(Name, Eo *, 0, Ret, DefRet, EO_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EO_VOID_FUNC_BODYV(Name, Arguments, ...) _EO_VOID_FUNC_BODYV(Name, Eo *, 0, EO_FUNC_CALL(Arguments), __VA_ARGS__)
 
-#define EO_FUNC_BODY_CONST(Name, Ret, DefRet) _EO_FUNC_BODY(Name, const Eo *, Ret, DefRet)
-#define EO_VOID_FUNC_BODY_CONST(Name) _EO_VOID_FUNC_BODY(Name, const Eo *)
-#define EO_FUNC_BODYV_CONST(Name, Ret, DefRet, Arguments, ...) _EO_FUNC_BODYV(Name, const Eo *, Ret, DefRet, EO_FUNC_CALL(Arguments), __VA_ARGS__)
-#define EO_VOID_FUNC_BODYV_CONST(Name, Arguments, ...) _EO_VOID_FUNC_BODYV(Name, const Eo *, EO_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EO_FUNC_BODY_CONST(Name, Ret, DefRet) _EO_FUNC_BODY(Name, const Eo *, 0, Ret, DefRet)
+#define EO_VOID_FUNC_BODY_CONST(Name) _EO_VOID_FUNC_BODY(Name, const Eo *, 0)
+#define EO_FUNC_BODYV_CONST(Name, Ret, DefRet, Arguments, ...) _EO_FUNC_BODYV(Name, const Eo *, 0, Ret, DefRet, EO_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EO_VOID_FUNC_BODYV_CONST(Name, Arguments, ...) _EO_VOID_FUNC_BODYV(Name, const Eo *, 0, EO_FUNC_CALL(Arguments), __VA_ARGS__)
 
+#define EO_FUNC_PROMISE_BODY(Name, Ret, DefRet) _EO_FUNC_BODY(Name, Eo *, 1, Ret, DefRet)
+#define EO_VOID_FUNC_PROMISE_BODY(Name) _EO_VOID_FUNC_BODY(Name, Eo *, 1)
+#define EO_FUNC_PROMISE_BODYV(Name, Ret, DefRet, Arguments, ...) _EO_FUNC_BODYV(Name, Eo *, 1, Ret, DefRet, EO_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EO_VOID_FUNC_PROMISE_BODYV(Name, Arguments, ...) _EO_VOID_FUNC_BODYV(Name, Eo *, 1, EO_FUNC_CALL(Arguments), __VA_ARGS__)
+
+#define EO_FUNC_PROMISE_BODY_CONST(Name, Ret, DefRet) _EO_FUNC_BODY(Name, const Eo *, 1, Ret, DefRet)
+#define EO_VOID_FUNC_PROMISE_BODY_CONST(Name) _EO_VOID_FUNC_BODY(Name, const Eo *, 1)
+#define EO_FUNC_PROMISE_BODYV_CONST(Name, Ret, DefRet, Arguments, ...) _EO_FUNC_BODYV(Name, const Eo *, 1, Ret, DefRet, EO_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EO_VOID_FUNC_PROMISE_BODYV_CONST(Name, Arguments, ...) _EO_VOID_FUNC_BODYV(Name, const Eo *, 1, EO_FUNC_CALL(Arguments), __VA_ARGS__)
+  
 #ifndef _WIN32
 # define _EO_OP_API_ENTRY(a) (void*)a
 #else

@@ -356,6 +356,7 @@ extern "C" {
 #endif
 #ifdef EFL_EO_API_SUPPORT
 #include "Ecore_Eo.h"
+#include "ecore_promise.h"
 #endif
 
 #ifdef __cplusplus
