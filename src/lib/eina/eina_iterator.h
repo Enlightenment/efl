@@ -285,6 +285,21 @@ EAPI Eina_Bool eina_iterator_lock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
 
 /**
+ * @brief Creates an Eina_Iterator that iterates through a
+ * NUL-terminated C array.
+ *
+ * @param array The NUL-terminated array
+ *
+ * You can create it like this:
+ * int array[] = {1, 2, 3, 4};
+ * int* array2[] = {&array[0], &array[1], &array[2], &array[3], NULL};
+ *
+ * Eina_Iterator* iterator = eina_carray_iterator_new((void**)array);
+ *
+ */
+EAPI Eina_Iterator* eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @def EINA_ITERATOR_FOREACH
  * @brief Macro to iterate over all elements easily.
  *

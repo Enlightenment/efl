@@ -174,3 +174,57 @@ eina_iterator_unlock(Eina_Iterator *iterator)
      return iterator->unlock(iterator);
    return EINA_TRUE;
 }
+
+typedef struct _Eina_Iterator_CArray Eina_Iterator_CArray;
+
+struct _Eina_Iterator_CArray
+{
+  Eina_Iterator iterator;
+
+  void** array;
+  void** current;
+};
+
+static Eina_Bool
+eina_carray_iterator_next(Eina_Iterator_CArray *it, void **data)
+{
+   if (!it->current || !*it->current)
+     return EINA_FALSE;
+
+   *data = *it->current++;
+
+   return EINA_TRUE;
+}
+
+static void**
+eina_carray_iterator_get_container(Eina_Iterator_CArray *it)
+{
+   return it->array;
+}
+
+static void
+eina_carray_iterator_free(Eina_Iterator_CArray *it)
+{
+  free(it);
+}
+
+EAPI Eina_Iterator*
+eina_carray_iterator_new(void** array)
+{
+   Eina_Iterator_CArray *it;
+
+   it = calloc(1, sizeof (Eina_Iterator_CArray));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->array = it->current = array;
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(eina_carray_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+      eina_carray_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(eina_carray_iterator_free);
+
+   return &it->iterator;
+}
