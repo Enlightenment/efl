@@ -116,6 +116,11 @@ START_TEST(eolian_types_generation)
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/typedef_ref.c", output_filepath));
    fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/struct.eo", "--gh", output_filepath));
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/struct_ref.c", output_filepath));
+
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/typedef.eo", "--gs", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/typedef_ref_stub.c", output_filepath));
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/struct.eo", "--gs", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/struct_ref_stub.c", output_filepath));
 }
 END_TEST
 

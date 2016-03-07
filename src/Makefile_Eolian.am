@@ -132,7 +132,9 @@ EXTRA_DIST += \
 tests/eolian/data/object_impl_ref.c \
 tests/eolian/data/object_impl_add_ref.c \
 tests/eolian/data/typedef_ref.c \
+tests/eolian/data/typedef_ref_stub.c \
 tests/eolian/data/struct_ref.c \
+tests/eolian/data/struct_ref_stub.c \
 tests/eolian/data/class_simple_ref.c \
 tests/eolian/data/override_ref.c \
 tests/eolian/data/class_simple_ref_eo.h \
