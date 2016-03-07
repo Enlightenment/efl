@@ -9,8 +9,6 @@ dist_installed_einamainheaders_DATA = \
 lib/eina/Eina.h \
 lib/eina/eina_config.h
 
-installed_einaheadersdir = $(includedir)/eina-@VMAJ@/eina
-dist_installed_einaheaders_DATA = $(EINA_H)
 lib_eina_libeina_la_SOURCES = $(EINA_S)
 
 EINA_MODULE_COMMON_CFLAGS = \
