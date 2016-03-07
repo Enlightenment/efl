@@ -314,7 +314,7 @@ main(int argc, char **argv)
 
    if (help)
      {
-        printf("Usage: %s [-h/--help] [-I/--include input_dir] [--legacy] [--gh|--gc|--gi] [--output/-o outfile] file.eo ... \n", argv[0]);
+        printf("Usage: %s [-h/--help] [-I/--include input_dir] [--legacy] [--gh|--gs|--gc|--gi] [--output/-o outfile] file.eo ... \n", argv[0]);
         printf("       --help/-h Print that help\n");
         printf("       --include/-I Include 'input_dir' as directory to search .eo files into\n");
         printf("       --output/-o Force output filename to 'outfile'\n");
