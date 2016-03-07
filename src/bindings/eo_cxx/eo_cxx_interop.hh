@@ -438,7 +438,7 @@ C get_callback()
 }
 
 template <typename F>
-Eina_Bool free_callback_callback(void* data, ::Eo_Event2 const*)
+Eina_Bool free_callback_callback(void* data, ::Eo_Event const*)
 {
    delete static_cast<F*>(data);
    return EO_CALLBACK_CONTINUE;
