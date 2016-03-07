@@ -334,7 +334,7 @@ if test "${want_coverage}" = "yes" ; then
       if test "x${prefer_assert}" = "xno"; then
          EFLALL_COV_CFLAGS="${EFLALL_COV_CFLAGS} -DNDEBUG"
       else
-         EFLALL_COV_CFLAGS="${EFLALL_COV_CFLAGS} -g -O0 -DDEBUG"
+         EFLALL_COV_CFLAGS="${EFLALL_COV_CFLAGS} -g -O0"
       fi
    else
       AC_MSG_ERROR([lcov is not found])
