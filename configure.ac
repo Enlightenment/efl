@@ -327,7 +327,7 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 if test "${want_coverage}" = "yes" ; then
    AC_CHECK_PROG([have_lcov], [lcov], [yes], [no])
    if test "x${have_lcov}" = "xyes" ; then
-      AC_SEARCH_LIBS([gcov], [_gcov_init])
+      AC_SEARCH_LIBS([__gcov_init], [gcov])
       EFL_CHECK_COMPILER_FLAGS([EFLALL], [-fprofile-arcs -ftest-coverage])
       EFL_CHECK_COMPILER_FLAGS([EFLALL], [-fprofile-instr-generate -fcoverage-mapping])
       EFL_CHECK_LINKER_FLAGS([EFLALL], [-fprofile-instr-generate -fcoverage-mapping])
