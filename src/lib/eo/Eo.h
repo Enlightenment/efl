@@ -154,7 +154,7 @@ enum _Eo_Op_Type
 typedef enum _Eo_Op_Type Eo_Op_Type;
 
 /** XXX: Hack until fixed in Eolian */
-typedef struct _Eo_Event Eo_Event2;
+typedef struct _Eo_Event Eo_Event;
 /**
  * @typedef Eo_Event_Cb
  *
@@ -166,7 +166,7 @@ typedef struct _Eo_Event Eo_Event2;
  * @param event_info additional data passed with the event.
  * @return #EO_CALLBACK_STOP to stop calling additional callbacks for the event, #EO_CALLBACK_CONTINUE to continue.
  */
-typedef Eina_Bool (*Eo_Event_Cb)(void *data, const Eo_Event2 *event);
+typedef Eina_Bool (*Eo_Event_Cb)(void *data, const Eo_Event *event);
 
 #include "eo_base.eo.h"
 #define EO_CLASS EO_BASE_CLASS
