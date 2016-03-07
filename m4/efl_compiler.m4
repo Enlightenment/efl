@@ -78,7 +78,7 @@ m4_popdef([UPEFL])dnl
 ])
 
 dnl EFL_CHECK_LINKER_FLAGS(EFL, FLAGS)
-dnl Checks if FLAGS are supported and add to EFL_CLFAGS.
+dnl Checks if FLAGS are supported and add to EFL_LDLFAGS.
 dnl
 dnl It will first try every flag at once, if one fails will try them one by one.
 AC_DEFUN([EFL_CHECK_LINKER_FLAGS],
