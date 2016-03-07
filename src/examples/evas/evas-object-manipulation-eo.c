@@ -197,9 +197,9 @@ main(void)
     * So it's possible to decrement refcount, and 'image' object
     * will be deleted automatically by parent.*/
 
-   evas_obj_image_filled_set(d.img, EINA_TRUE);
+   efl_gfx_fill_filled_set(d.img, EINA_TRUE);
    efl_file_set(d.img, img_path, NULL);
-   err = evas_obj_image_load_error_get(d.img);
+   err = efl_image_load_error_get(d.img);
 
    if (err != EVAS_LOAD_ERROR_NONE)
      {
@@ -218,9 +218,9 @@ main(void)
 
    /* border on the image's clipper, here just to emphasize its position */
    d.clipper_border = eo_add(EVAS_IMAGE_CLASS, d.canvas);
-   evas_obj_image_filled_set(d.clipper_border, EINA_TRUE);
+   efl_gfx_fill_filled_set(d.clipper_border, EINA_TRUE);
    efl_file_set(d.clipper_border, border_img_path, NULL);
-   err = evas_obj_image_load_error_get(d.clipper_border);
+   err = efl_image_load_error_get(d.clipper_border);
 
    if (err != EVAS_LOAD_ERROR_NONE)
      {
@@ -228,8 +228,8 @@ main(void)
      }
    else
      {
-        evas_obj_image_border_set(d.clipper_border, 3, 3, 3, 3);
-        evas_obj_image_border_center_fill_set(d.clipper_border, EVAS_BORDER_FILL_NONE);
+        efl_image_border_set(d.clipper_border, 3, 3, 3, 3);
+        efl_image_border_center_fill_set(d.clipper_border, EVAS_BORDER_FILL_NONE);
         efl_gfx_position_set(d.clipper_border, (WIDTH / 4) -3, (HEIGHT / 4) - 3);
         efl_gfx_size_set(d.clipper_border, (WIDTH / 2) + 6, (HEIGHT / 2) + 6);
         efl_gfx_visible_set(d.clipper_border, EINA_TRUE);
