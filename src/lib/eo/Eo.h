@@ -161,9 +161,7 @@ typedef struct _Eo_Event Eo_Event;
  * An event callback prototype.
  *
  * @param data The user data registered with the callback.
- * @param obj The object which initiated the event.
- * @param desc The event's description.
- * @param event_info additional data passed with the event.
+ * @param event the object's event structure and information. @see Eo_Event
  * @return #EO_CALLBACK_STOP to stop calling additional callbacks for the event, #EO_CALLBACK_CONTINUE to continue.
  */
 typedef Eina_Bool (*Eo_Event_Cb)(void *data, const Eo_Event *event);
