@@ -153,7 +153,7 @@ enum _Eo_Op_Type
  */
 typedef enum _Eo_Op_Type Eo_Op_Type;
 
-/** XXX: Hack until fixed in Eolian */
+/** This has to be duplicated here because Eolian doesn't support event callbacks. */
 typedef struct _Eo_Event Eo_Event;
 /**
  * @typedef Eo_Event_Cb
