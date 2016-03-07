@@ -1643,6 +1643,30 @@ parse_events(Eo_Lexer *ls)
 }
 
 static void
+_validate_pfx(Eo_Lexer *ls)
+{
+   char ebuf[PATH_MAX];
+   check(ls, TOK_VALUE);
+   const char *str = ls->t.value.s;
+   if ((*str != '_') && ((*str < 'a') || (*str > 'z')))
+     goto error;
+   for (++str; *str; ++str)
+     {
+        if (*str == '_')
+          continue;
+        if ((*str >= 'a') && (*str <= 'z'))
+          continue;
+        if ((*str >= '0') && (*str <= '9'))
+          continue;
+        goto error;
+     }
+   return;
+error:
+   snprintf(ebuf, sizeof(ebuf), "invalid prefix '%s'", ls->t.value.s);
+   eo_lexer_syntax_error(ls, ebuf);
+}
+
+static void
 parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 {
    Eina_Bool has_legacy_prefix = EINA_FALSE,
@@ -1663,7 +1687,7 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
         CASE_LOCK(ls, legacy_prefix, "legacy prefix definition")
         eo_lexer_get(ls);
         check_next(ls, ':');
-        check(ls, TOK_VALUE);
+        _validate_pfx(ls);
         ls->tmp.kls->legacy_prefix = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ';');
@@ -1672,7 +1696,7 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
         CASE_LOCK(ls, eo_prefix, "eo prefix definition")
         eo_lexer_get(ls);
         check_next(ls, ':');
-        check(ls, TOK_VALUE);
+        _validate_pfx(ls);
         ls->tmp.kls->eo_prefix = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ';');
