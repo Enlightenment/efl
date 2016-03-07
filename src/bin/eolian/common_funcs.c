@@ -129,29 +129,3 @@ _template_fill(Eina_Strbuf *buf, const char *templ, const Eolian_Class *class, c
         eina_strbuf_replace_all(buf, "@#CLASS", tmp_env.upper_classname);
      }
 }
-
-char*
-_nextline(char *str, unsigned int lines)
-{
-   if (!str) return NULL;
-
-   char *ret = str;
-   while (lines--)
-     {
-        ret= strchr(ret, '\n');
-        if (ret) ret++;
-        else return NULL;
-     }
-   return ret;
-}
-
-char*
-_startline(char *str, char *pos)
-{
-   if (!str || !pos) return NULL;
-
-   char *ret =  pos;
-   while ((ret > str) && (*(ret-1)!='\n')) ret--;
-
-   return ret;
-}
