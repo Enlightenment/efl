@@ -1,6 +1,5 @@
-### Library
 
-include lib/eina/Makefile_File.am
+### Library
 
 lib_LTLIBRARIES += lib/eina/libeina.la
 
@@ -9,13 +8,179 @@ dist_installed_einamainheaders_DATA = \
 lib/eina/Eina.h \
 lib/eina/eina_config.h
 
-lib_eina_libeina_la_SOURCES = $(EINA_S)
+installed_einaheadersdir = $(includedir)/eina-@VMAJ@/eina
+dist_installed_einaheaders_DATA = \
+lib/eina/eina_safety_checks.h \
+lib/eina/eina_error.h \
+lib/eina/eina_log.h \
+lib/eina/eina_inline_log.x \
+lib/eina/eina_fp.h \
+lib/eina/eina_inline_f32p32.x \
+lib/eina/eina_inline_f16p16.x \
+lib/eina/eina_inline_f8p24.x \
+lib/eina/eina_inline_fp.x \
+lib/eina/eina_hash.h \
+lib/eina/eina_inline_hash.x \
+lib/eina/eina_lalloc.h \
+lib/eina/eina_clist.h \
+lib/eina/eina_inline_clist.x \
+lib/eina/eina_inarray.h \
+lib/eina/eina_inlist.h \
+lib/eina/eina_inline_inlist.x \
+lib/eina/eina_list.h \
+lib/eina/eina_file.h \
+lib/eina/eina_inline_file.x \
+lib/eina/eina_mempool.h \
+lib/eina/eina_module.h \
+lib/eina/eina_rectangle.h \
+lib/eina/eina_types.h \
+lib/eina/eina_array.h \
+lib/eina/eina_counter.h \
+lib/eina/eina_inline_array.x \
+lib/eina/eina_magic.h \
+lib/eina/eina_stringshare.h \
+lib/eina/eina_binshare.h \
+lib/eina/eina_binbuf.h \
+lib/eina/eina_ustringshare.h \
+lib/eina/eina_inline_stringshare.x \
+lib/eina/eina_inline_ustringshare.x \
+lib/eina/eina_inline_list.x \
+lib/eina/eina_accessor.h \
+lib/eina/eina_convert.h \
+lib/eina/eina_rbtree.h \
+lib/eina/eina_benchmark.h \
+lib/eina/eina_inline_rbtree.x \
+lib/eina/eina_inline_mempool.x \
+lib/eina/eina_inline_rectangle.x \
+lib/eina/eina_inline_trash.x \
+lib/eina/eina_thread.h \
+lib/eina/eina_trash.h \
+lib/eina/eina_iterator.h \
+lib/eina/eina_main.h \
+lib/eina/eina_cpu.h \
+lib/eina/eina_inline_cpu.x \
+lib/eina/eina_sched.h \
+lib/eina/eina_tiler.h \
+lib/eina/eina_hamster.h \
+lib/eina/eina_matrixsparse.h \
+lib/eina/eina_inline_tiler.x \
+lib/eina/eina_str.h \
+lib/eina/eina_inline_str.x \
+lib/eina/eina_strbuf.h \
+lib/eina/eina_ustrbuf.h \
+lib/eina/eina_unicode.h \
+lib/eina/eina_quadtree.h \
+lib/eina/eina_simple_xml_parser.h \
+lib/eina/eina_lock.h \
+lib/eina/eina_prefix.h \
+lib/eina/eina_refcount.h \
+lib/eina/eina_mmap.h \
+lib/eina/eina_xattr.h \
+lib/eina/eina_value.h \
+lib/eina/eina_inline_value.x \
+lib/eina/eina_value_util.h \
+lib/eina/eina_inline_value_util.x \
+lib/eina/eina_inline_lock_barrier.x \
+lib/eina/eina_inline_lock_posix.x \
+lib/eina/eina_tmpstr.h \
+lib/eina/eina_alloca.h \
+lib/eina/eina_cow.h \
+lib/eina/eina_inline_unicode.x \
+lib/eina/eina_thread_queue.h \
+lib/eina/eina_matrix.h \
+lib/eina/eina_quad.h \
+lib/eina/eina_crc.h \
+lib/eina/eina_inline_crc.x \
+lib/eina/eina_evlog.h \
+lib/eina/eina_util.h \
+lib/eina/eina_quaternion.h \
+lib/eina/eina_vector.h \
+lib/eina/eina_inline_vector.x \
+lib/eina/eina_bezier.h
+
+lib_eina_libeina_la_SOURCES = \
+lib/eina/eina_abi.c \
+lib/eina/eina_accessor.c \
+lib/eina/eina_array.c \
+lib/eina/eina_benchmark.c \
+lib/eina/eina_binbuf.c \
+lib/eina/eina_binshare.c \
+lib/eina/eina_convert.c \
+lib/eina/eina_counter.c \
+lib/eina/eina_cow.c \
+lib/eina/eina_cpu.c \
+lib/eina/eina_crc.c \
+lib/eina/eina_debug.c \
+lib/eina/eina_debug_bt.c \
+lib/eina/eina_debug_bt_file.c \
+lib/eina/eina_debug_chunk.c \
+lib/eina/eina_debug_monitor.c \
+lib/eina/eina_debug_proto.c \
+lib/eina/eina_debug_thread.c \
+lib/eina/eina_error.c \
+lib/eina/eina_evlog.c \
+lib/eina/eina_file_common.h \
+lib/eina/eina_file_common.c \
+lib/eina/eina_fp.c \
+lib/eina/eina_hamster.c \
+lib/eina/eina_hash.c \
+lib/eina/eina_inarray.c \
+lib/eina/eina_inlist.c \
+lib/eina/eina_iterator.c \
+lib/eina/eina_lalloc.c \
+lib/eina/eina_list.c \
+lib/eina/eina_log.c \
+lib/eina/eina_magic.c \
+lib/eina/eina_main.c \
+lib/eina/eina_matrix.c \
+lib/eina/eina_matrixsparse.c \
+lib/eina/eina_mempool.c \
+lib/eina/eina_mmap.c \
+lib/eina/eina_module.c \
+lib/eina/eina_prefix.c \
+lib/eina/eina_quad.c \
+lib/eina/eina_quadtree.c \
+lib/eina/eina_rbtree.c \
+lib/eina/eina_rectangle.c \
+lib/eina/eina_safety_checks.c \
+lib/eina/eina_sched.c \
+lib/eina/eina_share_common.c \
+lib/eina/eina_simple_xml_parser.c \
+lib/eina/eina_str.c \
+lib/eina/eina_strbuf.c \
+lib/eina/eina_strbuf_common.c \
+lib/eina/eina_stringshare.c \
+lib/eina/eina_thread.c \
+lib/eina/eina_thread_queue.c \
+lib/eina/eina_tiler.c \
+lib/eina/eina_tmpstr.c \
+lib/eina/eina_unicode.c \
+lib/eina/eina_ustrbuf.c \
+lib/eina/eina_ustringshare.c \
+lib/eina/eina_util.c \
+lib/eina/eina_value.c \
+lib/eina/eina_value_util.c \
+lib/eina/eina_xattr.c \
+lib/eina/eina_debug.h \
+lib/eina/eina_private.h \
+lib/eina/eina_share_common.h \
+lib/eina/eina_strbuf_common.h \
+lib/eina/eina_quaternion.c \
+lib/eina/eina_bezier.c
+
+if HAVE_WIN32
+lib_eina_libeina_la_SOURCES += lib/eina/eina_file_win32.c
+else
+lib_eina_libeina_la_SOURCES += lib/eina/eina_file.c
+endif
 
 EINA_MODULE_COMMON_CFLAGS = \
 @EINA_CFLAGS@ \
 @VALGRIND_CFLAGS@
 
-if !EINA_STATIC_BUILD_CHAINED_POOL
+if EINA_STATIC_BUILD_CHAINED_POOL
+lib_eina_libeina_la_SOURCES += modules/eina/mp/chained_pool/eina_chained_mempool.c
+else
 einampchainedpooldir = $(libdir)/eina/modules/mp/chained_pool/$(MODULE_ARCH)
 einampchainedpool_LTLIBRARIES = modules/eina/mp/chained_pool/chained_pool_module.la
 
@@ -32,7 +197,9 @@ modules_eina_mp_chained_pool_chained_pool_module_la_LIBTOOLFLAGS = --tag=disable
 modules_eina_mp_chained_pool_chained_pool_module_la_SOURCES = modules/eina/mp/chained_pool/eina_chained_mempool.c
 endif
 
-if !EINA_STATIC_BUILD_ONE_BIG
+if EINA_STATIC_BUILD_ONE_BIG
+lib_eina_libeina_la_SOURCES += modules/eina/mp/one_big/eina_one_big.c
+else
 einamponebigdir = $(libdir)/eina/modules/mp/one_big/$(MODULE_ARCH)
 einamponebig_LTLIBRARIES = modules/eina/mp/one_big/one_big_module.la
 
@@ -49,7 +216,9 @@ modules_eina_mp_one_big_one_big_module_la_LIBTOOLFLAGS = --tag=disable-static
 modules_eina_mp_one_big_one_big_module_la_SOURCES = modules/eina/mp/one_big/eina_one_big.c
 endif
 
-if !EINA_STATIC_BUILD_PASS_THROUGH
+if EINA_STATIC_BUILD_PASS_THROUGH
+lib_eina_libeina_la_SOURCES += modules/eina/mp/pass_through/eina_pass_through.c
+else
 einamppassthroughdir = $(libdir)/eina/modules/mp/pass_through/$(MODULE_ARCH)
 einamppassthrough_LTLIBRARIES = modules/eina/mp/pass_through/pass_through_module.la
 
@@ -66,7 +235,14 @@ modules_eina_mp_pass_through_pass_through_module_la_LIBTOOLFLAGS = --tag=disable
 modules_eina_mp_pass_through_pass_through_module_la_SOURCES = modules/eina/mp/pass_through/eina_pass_through.c
 endif
 
-lib_eina_libeina_la_CPPFLAGS = $(EINA_FLAGS)
+lib_eina_libeina_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+@EINA_CFLAGS@ \
+@UNWIND_CFLAGS@ \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/eina\" \
+@VALGRIND_CFLAGS@
+
 lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @UNWIND_LIBS@
 lib_eina_libeina_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@
 lib_eina_libeina_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
