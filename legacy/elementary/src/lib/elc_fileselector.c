@@ -1712,12 +1712,10 @@ EOLIAN static void
 _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina_Bool visible)
 {
    Evas_Object *bt;
-   Eina_Bool bt_exists = EINA_FALSE;
 
    visible = !!visible;
-   bt_exists = !!sd->ok_button;
 
-   if (!(visible ^ bt_exists)) return;
+   if (!visible == !sd->ok_button) return;
 
    if (visible)
      {
