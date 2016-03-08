@@ -88,39 +88,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_An
          }
       }
 
-      /* Video */
-      @property video_surface {
-         set {
-            [[Set the video surface linked to a given image of the canvas.
-
-              @since 1.1
-            ]]
-            values {
-               surf: Evas.Video_Surface*; [[The new video surface.]]
-            }
-         }
-         get {
-            [[Get the video surface linekd to a given image of the canvas.
-
-              @since 1.1
-            ]]
-            values {
-               surf: const(Evas.Video_Surface)*; [[The new video surface.]]
-            }
-         }
-      }
-      @property video_surface_caps {
-         set {
-            [[Set the video surface capabilities to a given image of the canvas.]]
-         }
-         get {
-            [[Get the video surface capabilities to a given image of the canvas.]]
-         }
-         values {
-            caps: uint;
-         }
-      }
-
       /* native surface */
       @property native_surface {
          set {

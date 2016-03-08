@@ -1503,10 +1503,13 @@ _evas_image_efl_gfx_buffer_colorspace_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Dat
    return (Efl_Gfx_Colorspace) o->cur->cspace;
 }
 
-EOLIAN static void
-_evas_image_video_surface_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Video_Surface *surf)
+EAPI void
+evas_object_image_video_surface_set(Evas_Object *eo_obj, Evas_Video_Surface *surf)
 {
+   EVAS_OBJECT_LEGACY_API(eo_obj);
+
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
    evas_object_async_block(obj);
 
    _evas_image_cleanup(eo_obj, obj, o);
@@ -1561,31 +1564,40 @@ _evas_image_video_surface_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Video_Surface
      }
 }
 
-EOLIAN static const Evas_Video_Surface*
-_evas_image_video_surface_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+EAPI const Evas_Video_Surface*
+evas_object_image_video_surface_get(const Evas_Object *eo_obj)
 {
+   EVAS_OBJECT_LEGACY_API(eo_obj, NULL);
+
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
    return (!o->video_surface ? NULL : &o->pixels->video);
 }
 
-EOLIAN static void
-_evas_image_video_surface_caps_set(Eo *eo_obj, Evas_Image_Data *o, unsigned int caps)
+EAPI void
+evas_object_image_video_surface_caps_set(Evas_Object *eo_obj, unsigned int caps)
 {
+   EVAS_OBJECT_LEGACY_API(eo_obj);
+
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
    evas_object_async_block(obj);
 
    _evas_image_cleanup(eo_obj, obj, o);
 
    if (caps == o->pixels->video_caps)
-      return;
+     return;
 
    EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
      pixi_write->video_caps = caps;
    EINA_COW_PIXEL_WRITE_END(o, pixi_write)
 }
 
-EOLIAN static unsigned int
-_evas_image_video_surface_caps_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+EAPI unsigned int
+evas_object_image_video_surface_caps_get(const Evas_Object *eo_obj)
 {
+   EVAS_OBJECT_LEGACY_API(eo_obj, 0);
+
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
    return (!o->video_surface ? 0 : o->pixels->video_caps);
 }
 
@@ -4868,6 +4880,7 @@ evas_object_image_source_visible_get(const Evas_Object *eo)
 EAPI Eina_Bool
 evas_object_image_source_unset(Evas_Object *eo_obj)
 {
+   EVAS_OBJECT_LEGACY_API(eo_obj, EINA_FALSE);
    return efl_canvas_proxy_source_set(eo_obj, NULL);
 }
 

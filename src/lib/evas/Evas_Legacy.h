@@ -3572,6 +3572,85 @@ EAPI void evas_object_image_source_visible_set(Evas_Object *obj, Eina_Bool visib
  */
 EAPI Eina_Bool evas_object_image_source_visible_get(const Evas_Object *obj);
 
+/**
+ * @typedef Evas_Video_Surface
+ *
+ * A generic datatype for video specific surface information
+ * @see evas_object_image_video_surface_set
+ * @see evas_object_image_video_surface_get
+ * @since 1.1
+ */
+typedef struct _Evas_Video_Surface Evas_Video_Surface;
+
+/**
+ * @def EVAS_VIDEO_SURFACE_VERSION
+ * Magic version number to know what the video surf struct looks like
+ * @since 1.1
+ */
+#define EVAS_VIDEO_SURFACE_VERSION 1
+
+typedef void (*Evas_Video_Cb)(void *data, Evas_Object *obj, const Evas_Video_Surface *surface);  /**< Evas video callback function signature */
+typedef void (*Evas_Video_Coord_Cb)(void *data, Evas_Object *obj, const Evas_Video_Surface *surface, Evas_Coord a, Evas_Coord b);  /**< Evas video coordinates callback function signature */
+
+struct _Evas_Video_Surface
+{
+   int                 version; /**< The Evas Video surface version in use @see EVAS_VIDEO_SURFACE_VERSION*/
+
+   Evas_Video_Coord_Cb move; /**< Move the video surface to this position */
+   Evas_Video_Coord_Cb resize; /**< Resize the video surface to that size */
+   Evas_Video_Cb       show; /**< Show the video overlay surface */
+   Evas_Video_Cb       hide; /**< Hide the video overlay surface */
+   Evas_Video_Cb       update_pixels; /**< Please update the Evas_Object_Image pixels when called */
+
+   Evas_Object        *parent; /**< The parent object */
+   void               *data;
+};
+
+/**
+ * Enum values for the Video surface capabilities
+ * @see evas_object_image_video_surface_caps_get()
+ * @see evas_object_image_video_surface_caps_set()
+ */
+
+typedef enum _Evas_Video_Surface_Caps
+{
+   EVAS_VIDEO_SURFACE_MOVE = 1,   /**< Move capability */
+   EVAS_VIDEO_SURFACE_RESIZE = 2,   /**< Resize capability */
+   EVAS_VIDEO_SURFACE_CLIP = 4,   /**< Clip capability */
+   EVAS_VIDEO_SURFACE_BELOW = 8,   /**< Below capability */
+   EVAS_VIDEO_SURFACE_STACKING_CHECK = 16,   /**< Stacking capability */
+   EVAS_VIDEO_SURFACE_IGNORE_WINDOW = 32,   /**< Ignore window capability */
+} Evas_Video_Surface_Caps;
+
+/**
+ * @brief Set the video surface linked to a given image of the canvas.
+ *
+ * @param[in] surf The new video surface.
+ *
+ * @since 1.1
+ */
+EAPI void evas_object_image_video_surface_set(Evas_Object *obj, Evas_Video_Surface *surf);
+
+/**
+ * @brief Get the video surface linekd to a given image of the canvas.
+ *
+ * @return The new video surface.
+ *
+ * @since 1.1
+ */
+EAPI const Evas_Video_Surface *evas_object_image_video_surface_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the video surface capabilities to a given image of the canvas.
+ *
+ * @param[in] caps
+ */
+EAPI void evas_object_image_video_surface_caps_set(Evas_Object *obj, unsigned int caps);
+
+/** Get the video surface capabilities to a given image of the canvas.
+ */
+EAPI unsigned int evas_object_image_video_surface_caps_get(const Evas_Object *obj);
+
 
 /*
  * Converts the raw image data of the given image object to the

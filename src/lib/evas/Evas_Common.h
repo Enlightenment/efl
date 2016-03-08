@@ -172,17 +172,6 @@ typedef Eo      Efl_VG;
 
 typedef void                        Evas_Performance; /**< An Evas Performance handle */
 typedef struct _Evas_Smart          Evas_Smart; /**< An Evas Smart Object handle */
-
-/**
- * @typedef Evas_Video_Surface
- *
- * A generic datatype for video specific surface information
- * @see evas_object_image_video_surface_set
- * @see evas_object_image_video_surface_get
- * @since 1.1
- */
-typedef struct _Evas_Video_Surface Evas_Video_Surface;
-
 typedef int                        Evas_Angle; /**< A type for angle */
 
 struct _Evas_Coord_Rectangle /** A rectangle in Evas_Coord */
@@ -381,47 +370,6 @@ struct _Evas_Native_Surface
       } evasgl; /**< Set this struct fields if surface data is Evas GL based. @since 1.14 */
    } data; /**< Choose one union data according to your surface. */
 };
-
-/**
- * @def EVAS_VIDEO_SURFACE_VERSION
- * Magic version number to know what the video surf struct looks like
- * @since 1.1
- */
-#define EVAS_VIDEO_SURFACE_VERSION 1
-
-
-typedef void (*Evas_Video_Cb)(void *data, Evas_Object *obj, const Evas_Video_Surface *surface);  /**< Evas video callback function signature */
-typedef void (*Evas_Video_Coord_Cb)(void *data, Evas_Object *obj, const Evas_Video_Surface *surface, Evas_Coord a, Evas_Coord b);  /**< Evas video coordinates callback function signature */
-
-struct _Evas_Video_Surface
-{
-   int                 version; /**< The Evas Video surface version in use @see EVAS_VIDEO_SURFACE_VERSION*/
-
-   Evas_Video_Coord_Cb move; /**< Move the video surface to this position */
-   Evas_Video_Coord_Cb resize; /**< Resize the video surface to that size */
-   Evas_Video_Cb       show; /**< Show the video overlay surface */
-   Evas_Video_Cb       hide; /**< Hide the video overlay surface */
-   Evas_Video_Cb       update_pixels; /**< Please update the Evas_Object_Image pixels when called */
-
-   Evas_Object        *parent; /**< The parent object */
-   void               *data;
-};
-
-/**
- * Enum values for the Video surface capabilities
- * @see evas_object_image_video_surface_caps_get()
- * @see evas_object_image_video_surface_caps_set()
- */
-
-typedef enum _Evas_Video_Surface_Caps
-{
-   EVAS_VIDEO_SURFACE_MOVE = 1,   /**< Move capability */
-   EVAS_VIDEO_SURFACE_RESIZE = 2,   /**< Resize capability */
-   EVAS_VIDEO_SURFACE_CLIP = 4,   /**< Clip capability */
-   EVAS_VIDEO_SURFACE_BELOW = 8,   /**< Below capability */
-   EVAS_VIDEO_SURFACE_STACKING_CHECK = 16,   /**< Stacking capability */
-   EVAS_VIDEO_SURFACE_IGNORE_WINDOW = 32,   /**< Ignore window capability */
-} Evas_Video_Surface_Caps;
 
 #define EVAS_LAYER_MIN                   -32768 /**< bottom-most layer number */
 #define EVAS_LAYER_MAX                   32767 /**< top-most layer number */
