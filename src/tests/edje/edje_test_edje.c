@@ -262,7 +262,8 @@ START_TEST(edje_test_snapshot)
 
    /* check value of no_render flag as seen from evas land */
    sub = edje_object_part_object_get(obj, "snap");
-   fail_if(!eo_isa(sub, EFL_CANVAS_SNAPSHOT_CLASS));
+   fail_if(!eo_isa(sub, EFL_CANVAS_SNAPSHOT_CLASS) &&
+           !evas_object_image_snapshot_get(sub));
 
    // TODO: Verify that evas snapshot actually works (and has a filter)
 
