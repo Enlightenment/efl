@@ -166,6 +166,16 @@ typedef struct _Eo_Event Eo_Event;
  */
 typedef Eina_Bool (*Eo_Event_Cb)(void *data, const Eo_Event *event);
 
+/**
+ * @typedef Eo_Del_Intercept
+ *
+ * A function to be called on object deletion/destruction instead of normal
+ * destruction taking place.
+ *
+ * @param obj_id The object needing destruction
+ */
+typedef void (*Eo_Del_Intercept) (Eo *obj_id);
+
 #include "eo_base.eo.h"
 #define EO_CLASS EO_BASE_CLASS
 
@@ -785,6 +795,54 @@ EAPI void eo_unref(const Eo *obj);
  * @see eo_unref()
  */
 EAPI int eo_ref_get(const Eo *obj);
+
+/**
+ * @brief Set a deletion interceptor function
+ * @param obj The object to set the interceptor on
+ * @param del_intercept_func The interceptor function to call
+ *
+ * This sets the function @p del_intercept_func to be called when an object
+ * is about to go from a reference count of 1 to 0, thus triggering actual
+ * destruction of the object. Instead of going to a reference count of 0 and
+ * being destroyed, the object will stay alive with a reference count of 1
+ * and this intercept function will be called instead. It is the job of
+ * this interceptor function to handle any further deletion of of the object
+ * from here.
+ *
+ * Note that by default objects have no interceptor function set, and thus
+ * will be destroyed as normal. To return an object to this state, simply
+ * set the @p del_intercept_func to NULL which is the default.
+ *
+ * A good use for this feature is to ensure an object is destroyed by its
+ * owning main loop and not in a foreign loop. This makes it possible to
+ * safely unrefor delete objects from any loop as an interceptor can be set
+ * on an object that will abort destruction and instead queue the object
+ * on its owning loop to be destroyed at some time in the future and now
+ * set the intercept function to NULL so it is not called again on the next
+ * "real deletion".
+ * 
+ * @see eo_del_intercept_get()
+ * @see eo_unref()
+ * @see eo_del()
+ */
+EAPI void eo_del_intercept_set(Eo *obj, Eo_Del_Intercept del_intercept_func);
+
+/**
+ * @brief Get the deletion interceptor function
+ * @param obj The object to get the interceptor of
+ * @return The intercept function or NULL if none is set.
+ *
+ * This returns the interceptor function set by eo_del_intercept_set(). Note
+ * that objects by default have no interceptor (NULL) set, but certain
+ * classes may set one up in a constructor, so it is important to be able
+ * to get the interceptor function to know if this has happend and
+ * if you want to override this interceptor, be sure to call it after your
+ * own interceptor function has finished. It would generally be a bad idea
+ * though to override these functions.
+ * 
+ * @see eo_del_intercept_set()
+ */
+EAPI Eo_Del_Intercept eo_del_intercept_get(const Eo *obj);
 
 /**
  * @brief Unrefs the object and reparents it to NULL.

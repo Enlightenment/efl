@@ -950,6 +950,60 @@ START_TEST(eo_add_failures)
 }
 END_TEST
 
+static Eina_Bool intercepted = EINA_FALSE;
+
+static void
+_del_intercept(Eo *obj)
+{
+   intercepted = EINA_TRUE;
+   eo_del_intercept_set(obj, NULL);
+   eo_unref(obj);
+}
+
+START_TEST(eo_del_intercept)
+{
+#ifdef HAVE_EO_ID
+   eo_init();
+
+   static const Eo_Class_Description class_desc = {
+        EO_VERSION,
+        "Simple",
+        EO_CLASS_TYPE_REGULAR,
+        EO_CLASS_DESCRIPTION_NOOPS(),
+        NULL,
+        0,
+        NULL,
+        NULL
+   };
+
+   const Eo_Class *klass = eo_class_new(&class_desc, EO_CLASS, NULL);
+   fail_if(!klass);
+
+   /* Check unref interception */
+   intercepted = EINA_FALSE;
+   Eo *obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   fail_if(!eo_isa(obj, klass));
+   eo_del_intercept_set(obj, _del_intercept);
+   eo_unref(obj);
+   fail_if(!intercepted);
+   fail_if(eo_isa(obj, klass));
+
+   /* Check del interception */
+   intercepted = EINA_FALSE;
+   obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   fail_if(!eo_isa(obj, klass));
+   eo_del_intercept_set(obj, _del_intercept);
+   eo_del(obj);
+   fail_if(!intercepted);
+   fail_if(eo_isa(obj, klass));
+
+   eo_shutdown();
+#endif
+}
+END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
@@ -967,4 +1021,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_add_do_and_custom);
    tcase_add_test(tc, eo_pointers_indirection);
    tcase_add_test(tc, eo_add_failures);
+   tcase_add_test(tc, eo_del_intercept);
 }

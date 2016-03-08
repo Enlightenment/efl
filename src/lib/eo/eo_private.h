@@ -95,6 +95,7 @@ struct _Eo_Object
 #endif
 
      Eina_List *composite_objects;
+     Eo_Del_Intercept del_intercept;
 
      int refcount;
      int datarefcount;
@@ -295,6 +296,14 @@ _eo_unref(_Eo_Object *obj)
              ERR("Object %p deletion already triggered. You wrongly call eo_unref() within a destructor.", _eo_id_get(obj));
              return;
           }
+
+        if (obj->del_intercept)
+          {
+             (obj->refcount)++;
+             obj->del_intercept(_eo_id_get(obj));
+             return;
+          }
+
         obj->del_triggered = EINA_TRUE;
 
         _eo_del_internal(__FILE__, __LINE__, obj);

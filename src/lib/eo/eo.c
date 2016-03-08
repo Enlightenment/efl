@@ -1332,6 +1332,22 @@ eo_ref_get(const Eo *obj_id)
    return obj->refcount;
 }
 
+EAPI void
+eo_del_intercept_set(Eo *obj_id, Eo_Del_Intercept del_intercept_func)
+{
+   EO_OBJ_POINTER_RETURN(obj_id, obj);
+
+   obj->del_intercept = del_intercept_func;
+}
+
+EAPI Eo_Del_Intercept
+eo_del_intercept_get(const Eo *obj_id)
+{
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
+
+   return obj->del_intercept;
+}
+
 void
 _eo_condtor_done(Eo *obj_id)
 {
