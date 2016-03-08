@@ -289,7 +289,6 @@ _mesh_setup(Scene_Data *data)
    Eina_Inarray *vert, *ind;
    float *vertex;
    unsigned short int *index;
-   int i = 0;
    Eo *primitive = NULL;
    /* Setup material. */
 
@@ -413,7 +412,6 @@ main(void)
 
    //Unless Evas 3D supports Software renderer, we set gl backened forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
-   int stride_pos;
 
    if (!ecore_evas_init()) return 0;
 
