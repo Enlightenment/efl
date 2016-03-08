@@ -476,6 +476,7 @@ void call_ctors(Eo* _obj_eoid, Fs&&... fs)
 {
    std::initializer_list<int const> const v {(fs(_obj_eoid), 0)...};
    (void) v;
+   (void) _obj_eoid;
 }
 
 } } // namespace efl { namespace eolian {
