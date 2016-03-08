@@ -66,7 +66,9 @@ BUILT_SOURCES = \
 
 elmcodeeolianfilesdir = $(datadir)/eolian/include/elm_code-@VMAJ@
 elmcodeeolianfiles_DATA = $(elm_code_eolian_files)
-EXTRA_DIST = ${elmcodeeolianfiles_DATA}
+EXTRA_DIST = ${elmcodeeolianfiles_DATA} \
+        widget/elm_code_widget_text.c \
+        widget/elm_code_widget_undo.c
 
 CLEANFILES += $(elm_code_eolian_h) $(elm_code_eolian_legacy_h)
 
