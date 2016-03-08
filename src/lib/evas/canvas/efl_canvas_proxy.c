@@ -46,13 +46,13 @@ _efl_canvas_proxy_source_set(Eo *eo_obj, void *pd EINA_UNUSED, Evas_Object *eo_s
      }
    if (o->cur->source == eo_src) return EINA_TRUE;
    evas_object_async_block(obj);
-   _evas_object_image_cleanup(eo_obj, obj, o);
+   _evas_image_cleanup(eo_obj, obj, o);
    /* Kill the image if any */
    if (o->cur->u.file || o->cur->key)
      evas_object_image_file_set(eo_obj, NULL, NULL);
 
-   if (eo_src) _proxy_set(eo_obj, eo_src);
-   else _proxy_unset(eo_obj, obj, o);
+   if (eo_src) _evas_image_proxy_set(eo_obj, eo_src);
+   else _evas_image_proxy_unset(eo_obj, obj, o);
 
    return EINA_TRUE;
 }

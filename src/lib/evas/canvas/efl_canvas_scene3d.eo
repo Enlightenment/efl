@@ -1,0 +1,19 @@
+class Efl.Canvas.Scene3d (Evas.Image, Efl.Gfx.Base, Efl.Image, Efl.Gfx.Buffer, Efl.Gfx.Fill, Efl.Gfx.View, Efl.Gfx.Filter)
+{
+   [[A UI view for EFL Canvas 3D.]]
+   legacy_prefix: null;
+   data: null;
+   methods {
+      @property scene3d {
+         [[The 3d scene to display in this view.
+
+           @since 1.10
+         ]]
+         set {}
+         get {}
+         values {
+            scene: Evas.Canvas3D.Scene *; [[3D scene.]]
+         }
+      }
+   }
+}

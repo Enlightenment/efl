@@ -141,31 +141,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_An
             surf: Evas.Native_Surface* @nonull; [[The native surface.]]
          }
       }
-
-      /* 3d */
-      @property scene {
-         set {
-            [[Set the 3D scene of a given image of the canvas.
-
-              This function sets a 3d scene of a given canvas image.
-
-              @since 1.10
-            ]]
-            legacy: null;
-         }
-         get {
-            [[Get the 3D scene of a given image of the canvas.
-
-              This function returns the 3d scene of a given canvas image.
-
-              @since 1.10
-            ]]
-            legacy: null;
-         }
-         values {
-            scene: Evas.Canvas3D.Scene *; [[3D scene on an image object.]]
-         }
-      }
    }
    implements {
       Eo.Base.constructor;

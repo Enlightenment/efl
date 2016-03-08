@@ -220,11 +220,11 @@ main(void)
    efl_gfx_size_set(background, WIDTH, HEIGHT);
    efl_gfx_visible_set(background, EINA_TRUE);
 
-   image = evas_object_image_filled_add(evas);
+   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
    efl_gfx_size_set(image, WIDTH, HEIGHT);
    efl_gfx_visible_set(image, EINA_TRUE);
    evas_object_focus_set(image, EINA_TRUE);
-   evas_obj_image_scene_set(image, scene);
+   efl_canvas_scene3d_set(image, scene);
 
    evas_object_event_callback_add(image, EVAS_CALLBACK_KEY_DOWN, _on_key_down, mesh_node);
 

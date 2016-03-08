@@ -239,12 +239,12 @@ main(void)
    efl_gfx_visible_set(background, EINA_TRUE);
 
    /* Add an image object for 3D scene rendering. */
-   image = evas_object_image_filled_add(evas);
+   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
    efl_gfx_size_set(image, WIDTH, HEIGHT);
    efl_gfx_visible_set(image, EINA_TRUE);
 
    /* Set the image object as render target for 3D scene. */
-   evas_obj_image_scene_set(image, scene);
+   efl_canvas_scene3d_set(image, scene);
 
    /* Enter main loop. */
    ecore_main_loop_begin();

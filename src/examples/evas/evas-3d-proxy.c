@@ -75,8 +75,9 @@ _animate_scene(void *data)
    /* Rotate */
    if (angle > 360.0) angle -= 360.0f;
 
-   pixels = evas_obj_image_data_get(source, EINA_TRUE);
-   stride = evas_obj_image_stride_get(source);
+   //pixels = efl_gfx_buffer_get(source, EINA_TRUE, NULL, NULL, NULL, &stride, NULL, NULL, NULL, NULL, NULL, NULL);
+   pixels = evas_object_image_data_get(source, EINA_TRUE);
+   stride = evas_object_image_stride_get(source);
 
    for (i = 0; i < IMG_HEIGHT; i++)
      {
@@ -88,8 +89,10 @@ _animate_scene(void *data)
           }
      }
 
-   evas_obj_image_data_set(source, pixels);
-   evas_obj_image_data_update_add(source, 0, 0, IMG_WIDTH, IMG_HEIGHT);
+   //efl_gfx_buffer_set(source, pixels, 0, 0, stride, 0, 0, 0, 0, 0, 0);
+   //evas_obj_image_data_update_add(source, 0, 0, IMG_WIDTH, IMG_HEIGHT);
+   evas_object_image_data_set(source, pixels);
+   evas_object_image_data_update_add(source, 0, 0, IMG_WIDTH, IMG_HEIGHT);
 
    return EINA_TRUE;
 }
@@ -212,7 +215,7 @@ main(void)
    efl_gfx_visible_set(source, EINA_TRUE);
 
    /* Add an image object for 3D scene rendering. */
-   image = evas_object_image_filled_add(evas);
+   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
    efl_gfx_size_set(image, (WIDTH / 2), (HEIGHT / 2));
    efl_gfx_visible_set(image, EINA_TRUE);
 
@@ -220,7 +223,7 @@ main(void)
    _scene_setup(&data);
 
    /* Set the image object as render target for 3D scene. */
-   evas_obj_image_scene_set(image, data.scene);
+   efl_canvas_scene3d_set(image, data.scene);
 
    /* Add animation timer callback. */
    ecore_timer_add(0.016, _animate_scene, &data);

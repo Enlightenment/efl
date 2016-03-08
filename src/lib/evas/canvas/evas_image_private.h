@@ -137,9 +137,24 @@ struct _Evas_Image_Data
 };
 
 /* shared functions between legacy and new eo classes */
-void _evas_object_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
-void _proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
-void _proxy_set(Evas_Object *proxy, Evas_Object *src);
-void _proxy_error(Evas_Object *proxy, void *context, void *output, void *surface, int x, int y, Eina_Bool do_async);
+void _evas_image_init_set(const Eina_File *f, const char *file, const char *key, Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Image_Load_Opts *lo);
+void _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
+void _evas_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
+void _evas_image_proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
+void _evas_image_proxy_set(Evas_Object *proxy, Evas_Object *src);
+void _evas_image_proxy_error(Evas_Object *proxy, void *context, void *output, void *surface, int x, int y, Eina_Bool do_async);
+void _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Canvas3D_Scene *scene);
+void _evas_image_3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene);
+void _evas_image_3d_unset(Evas_Object *eo_obj, Evas_Object_Protected_Data *image, Evas_Image_Data *o);
+
+/* save typing */
+#define ENFN obj->layer->evas->engine.func
+#define ENDT obj->layer->evas->engine.data.output
+
+# define EINA_COW_IMAGE_STATE_WRITE_BEGIN(Obj, Write) \
+  EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, Obj->cur, Evas_Object_Image_State, Write)
+
+# define EINA_COW_IMAGE_STATE_WRITE_END(Obj, Write) \
+  EINA_COW_WRITE_END(evas_object_image_state_cow, Obj->cur, Write)
 
 #endif // EVAS_IMAGE_PRIVATE_H

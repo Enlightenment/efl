@@ -381,12 +381,12 @@ int main(int argc, char **argv)
    globalscene.precision = precision;
    globalscene.scene_init(texture);
 
-   image = evas_object_image_filled_add(evas);
+   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
 
    efl_gfx_size_set(image, WIDTH, HEIGHT);
    efl_gfx_visible_set(image, EINA_TRUE);
    evas_object_focus_set(image, EINA_TRUE);
-   evas_obj_image_scene_set(image, globalscene.scene);
+   efl_canvas_scene3d_set(image, globalscene.scene);
 
    r = evas_object_key_grab(image, "Down", 0, 0, EINA_TRUE);
    r = evas_object_key_grab(image, "Up", 0, 0, EINA_TRUE);

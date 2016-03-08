@@ -344,6 +344,7 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 
 #include "canvas/efl_canvas_snapshot.eo.h"
 #include "canvas/efl_canvas_proxy.eo.h"
+#include "canvas/efl_canvas_scene3d.eo.h"
 
 /**
  * @ingroup Evas_Object_VG

@@ -425,13 +425,13 @@ main(void)
    evas_object_resize(background, WIDTH, HEIGHT);
    evas_object_show(background);
 
-   image = evas_object_image_filled_add(evas);
+   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
    evas_object_move(image, 0, 0);
    evas_object_resize(image, WIDTH, HEIGHT);
    evas_object_show(image);
 
    evas_object_focus_set(image, EINA_TRUE);
-   evas_obj_image_scene_set(image, data.scene);
+   efl_canvas_scene3d_set(image, data.scene);
 
    _redraw_bounding_object(&data);
    _show_help();
