@@ -93,7 +93,7 @@ ecore_drm_init(void)
      }
 
    /* set logging level */
-   eina_log_level_set(EINA_LOG_LEVEL_DBG);
+   /* eina_log_level_set(EINA_LOG_LEVEL_DBG); */
 
    /* try to create logging domain */
    _ecore_drm_log_dom = 
