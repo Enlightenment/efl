@@ -428,13 +428,19 @@ lcov-reset:
 	@find $(top_builddir) -name "*.gcda" -delete
 	@lcov --zerocounters --directory $(top_builddir)
 
-lcov-report:
+lcov-baseline:
 	$(MKDIR_P) $(top_builddir)/coverage
-	lcov --capture --compat-libtool --no-external --output-file $(top_builddir)/coverage/coverage.info --directory $(top_builddir) --config-file .lcov-config --rc lcov_branch_coverage=1
-	lcov --remove $(top_builddir)/coverage/coverage.info '*.h' --output-file $(top_builddir)/coverage/coverage.cleaned.info --config-file .lcov-config --rc lcov_branch_coverage=1
-	lcov --remove $(top_builddir)/coverage/coverage.cleaned.info '*/tests/*' --output-file $(top_builddir)/coverage/coverage.cleaned2.info --config-file .lcov-config --rc lcov_branch_coverage=1
-	lcov --remove $(top_builddir)/coverage/coverage.cleaned2.info '*NONE*' --output-file $(top_builddir)/coverage/coverage.cleaned3.info --config-file .lcov-config --rc lcov_branch_coverage=1
-	genhtml --config-file .lcov-config --legend -t "$(PACKAGE_STRING)" -o $(top_builddir)/coverage/html $(top_builddir)/coverage/coverage.cleaned3.info
+	lcov --capture --initial --compat-libtool --no-external --output-file $(top_builddir)/coverage/coverage-baseline.info --directory $(top_builddir) --config-file .lcov-config --rc lcov_branch_coverage=1
+
+lcov-report:
+	lcov --capture --compat-libtool --no-external --output-file $(top_builddir)/coverage/coverage-check.info --directory $(top_builddir) --config-file .lcov-config --rc lcov_branch_coverage=1
+	lcov --no-external --compat-libtool --add-tracefile $(top_builddir)/coverage/coverage-baseline.info --add-tracefile $(top_builddir)/coverage/coverage-check.info --output-file $(top_builddir)/coverage/coverage.info --config-file .lcov-config --rc lcov_branch_coverage=1
+	lcov --no-external --compat-libtool --remove $(top_builddir)/coverage/coverage.info '*.h' --output-file $(top_builddir)/coverage/coverage.cleaned.info --config-file .lcov-config --rc lcov_branch_coverage=1
+	lcov --no-external --compat-libtool --remove $(top_builddir)/coverage/coverage.cleaned.info '*/tests/*' --output-file $(top_builddir)/coverage/coverage.cleaned2.info --config-file .lcov-config --rc lcov_branch_coverage=1
+	lcov --no-external --compat-libtool --remove $(top_builddir)/coverage/coverage.cleaned2.info '*NONE*' --output-file $(top_builddir)/coverage/coverage.cleaned3.info --config-file .lcov-config --rc lcov_branch_coverage=1
+	lcov --no-external --compat-libtool --remove $(top_builddir)/coverage/coverage.cleaned3.info '*/doc/*' --output-file $(top_builddir)/coverage/coverage.cleaned4.info --config-file .lcov-config --rc lcov_branch_coverage=1
+	lcov --no-external --compat-libtool --remove $(top_builddir)/coverage/coverage.cleaned4.info '*usr/include*' --output-file $(top_builddir)/coverage/coverage.cleaned5.info --config-file .lcov-config --rc lcov_branch_coverage=1
+	genhtml --config-file .lcov-config --legend -t "$(PACKAGE_STRING)" -o $(top_builddir)/coverage/html $(top_builddir)/coverage/coverage.cleaned5.info
 	@echo "Coverage Report at $(top_builddir)/coverage/html"
 
 endif
@@ -444,6 +450,7 @@ if EFL_ENABLE_TESTS
 lcov-check:
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-reset
+	@$(MAKE) $(AM_MAKEFLAGS) lcov-baseline
 endif
 	@$(MAKE) $(AM_MAKEFLAGS) check
 if EFL_ENABLE_COVERAGE
