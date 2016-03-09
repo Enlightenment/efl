@@ -27,14 +27,20 @@ ref(Eo *obj)
    return ::eo_ref(obj);
 }
 
+inline const Eo*
+ref(const Eo *obj)
+{
+   return ::eo_ref(obj);
+}
+
 inline void
-unref(Eo *obj)
+unref(const Eo *obj)
 {
    ::eo_unref(obj);
 }
 
 inline int
-ref_get(Eo *obj)
+ref_get(const Eo *obj)
 {
    return ::eo_ref_get(obj);
 }
@@ -46,13 +52,13 @@ del(Eo *obj)
 }
 
 inline Eina_Bool
-isa(Eo *obj, Eo_Class *klass)
+isa(const Eo *obj, const Eo_Class *klass)
 {
    return eo_isa(obj, klass);
 }
 
 inline Eo*
-add(Eo_Class *klass, Eo *parent = NULL)
+add(const Eo_Class *klass, Eo *parent = NULL)
 {
    Eo *eo = nullptr;
    eo_add_ref(&eo, klass, parent);
@@ -72,7 +78,7 @@ base_data_set(Eo *obj, const char *key, const void *data)
 }
 
 inline void*
-base_data_get(Eo *obj, const char *key)
+base_data_get(const Eo *obj, const char *key)
 {
    void *data;
    data = eo_key_data_get(obj, key);
@@ -92,7 +98,7 @@ parent_set(Eo *obj, Eo *parent)
 }
 
 inline Eo*
-parent_get(Eo *obj)
+parent_get(const Eo *obj)
 {
    Eo *parent;
    parent = eo_parent_get(obj);
@@ -112,7 +118,7 @@ event_thaw(Eo *obj)
 }
 
 inline int
-event_freeze_get(Eo *obj)
+event_freeze_get(const Eo *obj)
 {
    int count = -1;
    count = eo_event_freeze_count_get(obj);
