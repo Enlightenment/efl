@@ -115,37 +115,37 @@ main(void)
    evas = ecore_evas_get(ecore_evas);
 
    /* Add a scene object .*/
-   scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
+   eo_add(&scene, EVAS_CANVAS3D_SCENE_CLASS, evas);
 
    /* Add the root node for the scene. */
-   root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_NODE));
+   eo_add(&root_node, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(root_node, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    /* Add the camera. */
-   camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
+   eo_add(&camera, EVAS_CANVAS3D_CAMERA_CLASS, evas);
    evas_canvas3d_camera_projection_perspective_set(camera, 60.0, 1.0, 1.0, 500.0);
 
-   camera_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+   eo_add(&camera_node, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(camera_node, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
    evas_canvas3d_node_camera_set(camera_node, camera);
    evas_canvas3d_node_member_add(root_node, camera_node);
    evas_canvas3d_node_position_set(camera_node, 200.0, 0.0, 40.0);
    evas_canvas3d_node_look_at_set(camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 20.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 1.0);
    /* Add the light. */
-   light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, evas);
+   eo_add(&light, EVAS_CANVAS3D_LIGHT_CLASS, evas);
    evas_canvas3d_light_ambient_set(light, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_light_diffuse_set(light, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_light_specular_set(light, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_light_directional_set(light, EINA_TRUE);
 
-   light_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+   eo_add(&light_node, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(light_node, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
    evas_canvas3d_node_light_set(light_node, light);
    evas_canvas3d_node_position_set(light_node, 1000.0, 0.0, 1000.0);
    evas_canvas3d_node_look_at_set(light_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
    evas_canvas3d_node_member_add(root_node, light_node);
 
    /* Add the meshes. */
-   mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
-   mesh2 = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
-   material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
+   eo_add(&mesh, EVAS_CANVAS3D_MESH_CLASS, evas);
+   eo_add(&mesh2, EVAS_CANVAS3D_MESH_CLASS, evas);
+   eo_add(&material, EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    efl_file_set(mesh, input_model_path, NULL);
    evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
@@ -169,13 +169,13 @@ main(void)
    efl_file_set(mesh2, output_model_path, NULL);
    evas_canvas3d_mesh_shade_mode_set(mesh2, EVAS_CANVAS3D_SHADE_MODE_PHONG);
 
-   mesh_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
+   eo_add(&mesh_node, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(mesh_node, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
    evas_canvas3d_node_member_add(root_node, mesh_node);
    evas_canvas3d_node_mesh_add(mesh_node, mesh);
    evas_canvas3d_node_position_set(mesh_node, 0.0, -40.0, 0.0);
 
-   mesh_node2 = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
+   eo_add(&mesh_node2, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(mesh_node2, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_member_add(root_node, mesh_node2);
    evas_canvas3d_node_mesh_add(mesh_node2, mesh2);
    evas_canvas3d_node_position_set(mesh_node2, 0.0, 40.0, 0.0);
@@ -186,7 +186,7 @@ main(void)
    evas_canvas3d_scene_size_set(scene, WIDTH, HEIGHT);
 
    /* Add a background rectangle objects. */
-   background = eo_add(EVAS_RECTANGLE_CLASS, evas);
+   eo_add(&background, EVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 0, 0, 0, 255);
    efl_gfx_size_set(background, WIDTH, HEIGHT);
    efl_gfx_visible_set(background, EINA_TRUE);

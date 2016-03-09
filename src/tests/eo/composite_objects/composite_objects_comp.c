@@ -26,7 +26,8 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
 
-   Eo *simple = eo_add(SIMPLE_CLASS, obj);
+   Eo *simple = NULL;
+   eo_add(&simple, SIMPLE_CLASS, obj);
    eo_composite_attach(obj, simple);
    eo_event_callback_forwarder_add(simple, EV_A_CHANGED, obj);
 

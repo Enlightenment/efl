@@ -49,7 +49,8 @@ EAPI Ecore_Job *
 ecore_job_add(Ecore_Cb    func,
               const void *data)
 {
-   Ecore_Job *job = eo_add(MY_CLASS, _ecore_parent, ecore_job_constructor(eoid, func, data));
+   Ecore_Job *job = NULL;
+   eo_add(&job, MY_CLASS, _ecore_parent, ecore_job_constructor(job, func, data));
    return job;
 }
 

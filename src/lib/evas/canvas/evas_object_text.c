@@ -372,7 +372,8 @@ evas_object_text_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_TEXT_CLASS, e);
+   Evas_Object *eo_obj = NULL;
+   eo_add(&eo_obj, EVAS_TEXT_CLASS, e);
    return eo_obj;
 }
 

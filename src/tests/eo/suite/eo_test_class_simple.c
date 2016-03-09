@@ -54,7 +54,8 @@ static Eo *
 _part_get(Eo *obj, void *class_data EINA_UNUSED, const char *name EINA_UNUSED)
 {
    /* A normal part get will do something saner, we just create objects. */
-   return eo_add(SIMPLE_CLASS, obj);
+   Eo *ret = NULL;
+   return eo_add(&ret, SIMPLE_CLASS, obj);
 }
 
 EO_VOID_FUNC_BODYV(simple_recursive, EO_FUNC_CALL(n), int n);

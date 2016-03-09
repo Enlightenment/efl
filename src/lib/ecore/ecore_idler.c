@@ -35,7 +35,8 @@ EAPI Ecore_Idler *
 ecore_idler_add(Ecore_Task_Cb func,
                 const void   *data)
 {
-   return eo_add(MY_CLASS, _ecore_parent, ecore_idler_constructor(eoid, func, data));
+   Eo *ret = NULL;
+   return eo_add(&ret, MY_CLASS, _ecore_parent, ecore_idler_constructor(ret, func, data));
 }
 
 EOLIAN static void

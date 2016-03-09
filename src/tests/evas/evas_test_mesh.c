@@ -44,8 +44,8 @@
   EINA_ITERATOR_FOREACH(it, file)                                       \
     {                                                                   \
        int set_ok, save_ok;                                             \
-       mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, e);                      \
-       mesh2 = eo_add(EVAS_CANVAS3D_MESH_CLASS, e);                     \
+       eo_add(&mesh, EVAS_CANVAS3D_MESH_CLASS, e);                      \
+       eo_add(&mesh2, EVAS_CANVAS3D_MESH_CLASS, e);                     \
        fail_if(mesh == NULL);                                           \
        fail_if(mesh2 == NULL);                                          \
        snprintf(buffer, PATH_MAX, "%s%s", tmp, ext);                    \

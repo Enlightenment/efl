@@ -155,14 +155,16 @@ _efl_vg_container_efl_vg_base_dup(Eo *obj,
      {
         // By setting parent, we automatically reference
         // this new object as a child of obj. Magic at work !
-        (void) eo_add_ref(eo_class_get(child), obj, efl_vg_dup(eoid, child));
+        Eo *tmp = NULL;
+        eo_add_ref(&tmp, eo_class_get(child), obj, efl_vg_dup(tmp, child));
      }
 }
 
 EAPI Efl_VG*
 evas_vg_container_add(Efl_VG *parent)
 {
-   return eo_add(EFL_VG_CONTAINER_CLASS, parent);
+   Eo *ret = NULL;
+   return eo_add(&ret, EFL_VG_CONTAINER_CLASS, parent);
 }
 
 #include "efl_vg_container.eo.c"

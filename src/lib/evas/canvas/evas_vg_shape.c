@@ -232,17 +232,17 @@ _efl_vg_shape_efl_vg_base_dup(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED, const 
 
    if (fromd->fill)
      {
-        fill = eo_add(eo_class_get(fromd->fill), parent, efl_vg_dup(eoid, fromd->fill));
+        eo_add(&fill, eo_class_get(fromd->fill), parent, efl_vg_dup(fill, fromd->fill));
      }
 
    if (fromd->stroke.fill)
      {
-        stroke_fill = eo_add(eo_class_get(fromd->stroke.fill), parent, efl_vg_dup(eoid, fromd->stroke.fill));
+        eo_add(&stroke_fill, eo_class_get(fromd->stroke.fill), parent, efl_vg_dup(stroke_fill, fromd->stroke.fill));
      }
 
    if (fromd->stroke.marker)
      {
-        stroke_marker = eo_add(eo_class_get(fromd->stroke.marker), parent, efl_vg_dup(eoid, fromd->stroke.marker));
+        eo_add(&stroke_marker, eo_class_get(fromd->stroke.marker), parent, efl_vg_dup(stroke_marker, fromd->stroke.marker));
      }
 
    efl_vg_shape_fill_set(obj, fill);
@@ -458,7 +458,8 @@ evas_vg_shape_shape_equal_commands(Eo *obj, const Eo *with)
 EAPI Efl_VG*
 evas_vg_shape_add(Efl_VG *parent)
 {
-   return eo_add(EFL_VG_SHAPE_CLASS, parent);
+   Eo *ret = NULL;
+   return eo_add(&ret, EFL_VG_SHAPE_CLASS, parent);
 }
 
 #include "efl_vg_shape.eo.c"

@@ -165,7 +165,7 @@ START_TEST(eio_model_test_test_file)
    fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
    fail_if(!eio_init(), "ERROR: Cannot init EIO!\n");
 
-   filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eoid, EFL_MODEL_TEST_FILENAME_PATH));
+   eo_add(&filemodel, EIO_MODEL_CLASS, NULL, eio_model_path_set(filemodel, EFL_MODEL_TEST_FILENAME_PATH));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
 
    eo_event_callback_add(filemodel, EFL_MODEL_BASE_EVENT_LOAD_STATUS, _load_status_cb, NULL);

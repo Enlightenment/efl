@@ -18,7 +18,8 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
-   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj = NULL;
+   eo_add(&obj, SIMPLE_CLASS, NULL);
 
    simple_a_set(obj, 1);
    simple_b_set(obj, 2);
@@ -40,7 +41,7 @@ main(int argc, char *argv[])
 
    eo_unref(obj);
 
-   obj = eo_add(INHERIT_CLASS, NULL);
+   eo_add(&obj, INHERIT_CLASS, NULL);
    simple_a_set(obj, 5);
    a = simple_a_get(obj);
    printf("%d\n", a);

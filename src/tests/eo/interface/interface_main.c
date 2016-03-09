@@ -16,7 +16,8 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
-   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj = NULL;
+   eo_add(&obj, SIMPLE_CLASS, NULL);
 
    simple_a_set(obj, 1);
    simple_b_set(obj, 2);

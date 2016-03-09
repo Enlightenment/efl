@@ -24,7 +24,8 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
-   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj = NULL;
+   eo_add(&obj, SIMPLE_CLASS, NULL);
 
    fail_if(my_init_count != 2);
 
@@ -42,14 +43,14 @@ main(int argc, char *argv[])
 
    fail_if(my_init_count != 0);
 
-   obj = eo_add(SIMPLE2_CLASS, NULL);
+   eo_add(&obj, SIMPLE2_CLASS, NULL);
    fail_if(obj);
 
-   obj = eo_add(SIMPLE3_CLASS, NULL);
+   eo_add(&obj, SIMPLE3_CLASS, NULL);
    fail_if(obj);
 
    my_init_count = 0;
-   obj = eo_add(SIMPLE4_CLASS, NULL);
+   eo_add(&obj, SIMPLE4_CLASS, NULL);
 
    fail_if(my_init_count != 2);
 
@@ -57,33 +58,33 @@ main(int argc, char *argv[])
 
    fail_if(my_init_count != 0);
 
-   obj = eo_add(SIMPLE5_CLASS, NULL);
+   eo_add(&obj, SIMPLE5_CLASS, NULL);
    fail_if(!obj);
    eo_unref(obj);
 
-   obj = eo_add(SIMPLE6_CLASS, NULL);
+   eo_add(&obj, SIMPLE6_CLASS, NULL);
    fail_if(!obj);
    eo_unref(obj);
 
-   obj = eo_add(SIMPLE7_CLASS, NULL);
+   eo_add(&obj, SIMPLE7_CLASS, NULL);
    fail_if(obj);
 
    my_init_count = 0;
-   obj = eo_add(SIMPLE_CLASS, NULL);
+   eo_add(&obj, SIMPLE_CLASS, NULL);
    fail_if(!obj);
    fail_if(my_init_count != 2);
    a = simple_a_get(obj);
    fail_if(a != 0);
 
    my_init_count = 0;
-   obj = eo_add(SIMPLE_CLASS, NULL, simple_a_set(eoid, 7));
+   eo_add(&obj, SIMPLE_CLASS, NULL, simple_a_set(obj, 7));
    fail_if(!obj);
    fail_if(my_init_count != 2);
    a = simple_a_get(obj);
    fail_if(a != 7);
 
    my_init_count = 0;
-   obj = eo_add(SIMPLE_CLASS, NULL, simple_b_set(eoid, 6), simple_a_set(eoid, -1), b = simple_b_get(eoid));
+   eo_add(&obj, SIMPLE_CLASS, NULL, simple_b_set(obj, 6), simple_a_set(obj, -1), b = simple_b_get(obj));
    fail_if(obj);
    fail_if(b != 6);
    fail_if(my_init_count != 0);

@@ -94,7 +94,7 @@ _thread_job(void *data, Eina_Thread t EINA_UNUSED)
      fail_if(EINA_LOCK_SUCCEED != eina_spinlock_take(&locks[0]));
    }
 
-   obj = eo_add(THREAD_TEST_CLASS, NULL, thread_test_constructor(eoid, v));
+   eo_add(&obj, THREAD_TEST_CLASS, NULL, thread_test_constructor(obj, v));
 
    thread_test_try_swap_stack(obj);
    v = thread_test_v_get(obj);

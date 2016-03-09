@@ -236,7 +236,7 @@ EAPI Evas_Object *
 emotion_object_add(Evas *evas)
 {
    Evas_Object *e;
-   e = eo_add(MY_CLASS, evas);
+   eo_add(&e, MY_CLASS, evas);
    return e;
 }
 

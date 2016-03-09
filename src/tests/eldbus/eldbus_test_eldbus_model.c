@@ -123,7 +123,8 @@ check_property(Eo *object, const char *property_name, const char *expected_value
 Eo *
 create_connection(void)
 {
-   Eo *connection = eo_add_ref(ELDBUS_MODEL_CONNECTION_CLASS, NULL, eldbus_model_connection_constructor(eoid, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE));
+   Eo *connection = NULL;
+   eo_add_ref(&connection, ELDBUS_MODEL_CONNECTION_CLASS, NULL, eldbus_model_connection_constructor(connection, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE));
    ck_assert_ptr_ne(NULL, connection);
    return connection;
 }
@@ -139,7 +140,8 @@ create_and_load_connection(void)
 Eo *
 create_object(void)
 {
-   Eo *object = eo_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eoid, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, ELDBUS_FDO_BUS, ELDBUS_FDO_PATH));
+   Eo *object = NULL;
+   eo_add_ref(&object, ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(object, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, ELDBUS_FDO_BUS, ELDBUS_FDO_PATH));
    ck_assert_ptr_ne(NULL, object);
    return object;
 }

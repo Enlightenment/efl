@@ -95,7 +95,8 @@ evas_object_rectangle_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_RECTANGLE_CLASS, e);
+   Evas_Object *eo_obj = NULL;
+   eo_add(&eo_obj, EVAS_RECTANGLE_CLASS, e);
    return eo_obj;
 }
 

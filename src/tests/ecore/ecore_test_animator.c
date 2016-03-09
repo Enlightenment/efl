@@ -30,7 +30,7 @@ START_TEST(ecore_test_animators)
    fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
 
    ecore_animator_frametime_set(interval1);
-   animator = eo_add(ECORE_ANIMATOR_CLASS, NULL, ecore_animator_timeline_constructor(eoid, 1, _anim_cb, &interval1));
+   eo_add(&animator, ECORE_ANIMATOR_CLASS, NULL, ecore_animator_timeline_constructor(animator, 1, _anim_cb, &interval1));
 
    fail_if(!animator);
 
@@ -38,7 +38,7 @@ START_TEST(ecore_test_animators)
 
    ecore_animator_frametime_set(interval2);
    prev = 0;
-   animator = eo_add(ECORE_ANIMATOR_CLASS, NULL, ecore_animator_timeline_constructor(eoid, 1, _anim_cb, &interval2));
+   eo_add(&animator, ECORE_ANIMATOR_CLASS, NULL, ecore_animator_timeline_constructor(animator, 1, _anim_cb, &interval2));
    fail_if(!animator);
 
    ecore_main_loop_begin();

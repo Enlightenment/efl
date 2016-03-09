@@ -61,7 +61,7 @@ ecore_idle_enterer_add(Ecore_Task_Cb func,
                        const void   *data)
 {
    Ecore_Idle_Enterer *ie = NULL;
-   ie = eo_add(MY_CLASS, _ecore_parent, ecore_idle_enterer_after_constructor(eoid, func, data));
+   eo_add(&ie, MY_CLASS, _ecore_parent, ecore_idle_enterer_after_constructor(ie, func, data));
    return ie;
 }
 
@@ -78,7 +78,7 @@ ecore_idle_enterer_before_add(Ecore_Task_Cb func,
                               const void   *data)
 {
    Ecore_Idle_Enterer *ie = NULL;
-   ie = eo_add(MY_CLASS, _ecore_parent, ecore_idle_enterer_before_constructor(eoid, func, data));
+   eo_add(&ie, MY_CLASS, _ecore_parent, ecore_idle_enterer_before_constructor(ie, func, data));
    return ie;
 }
 

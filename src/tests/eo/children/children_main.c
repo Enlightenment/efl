@@ -22,11 +22,15 @@ main(int argc, char *argv[])
 
    eo_init();
 
-   Eo *parent = eo_add(SIMPLE_CLASS, NULL);
+   Eo *parent = NULL;
+   eo_add(&parent, SIMPLE_CLASS, NULL);
 
-   Eo *child1 = eo_add(SIMPLE_CLASS, parent);
-   Eo *child2 = eo_add(SIMPLE_CLASS, parent);
-   Eo *child3 = eo_add(SIMPLE_CLASS, parent);
+   Eo *child1 = NULL;
+   eo_add(&child1, SIMPLE_CLASS, parent);
+   Eo *child2 = NULL;
+   eo_add(&child2, SIMPLE_CLASS, parent);
+   Eo *child3 = NULL;
+   eo_add(&child3, SIMPLE_CLASS, parent);
 
    iter = eo_children_iterator_new(parent);
    fail_if(!iter);

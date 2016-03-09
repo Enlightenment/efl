@@ -265,7 +265,7 @@ ecore_init(void)
 #if defined(GLIB_INTEGRATION_ALWAYS)
    if (_ecore_glib_always_integrate) ecore_main_loop_glib_integrate();
 #endif
-   _ecore_parent = eo_add(ECORE_PARENT_CLASS, NULL);
+   eo_add(&_ecore_parent, ECORE_PARENT_CLASS, NULL);
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
    if (getenv("ECORE_MEM_STAT"))

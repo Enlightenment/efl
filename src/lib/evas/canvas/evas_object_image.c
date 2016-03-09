@@ -383,7 +383,8 @@ evas_object_image_add(Evas *eo_e)
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(e->engine.func, NULL);
-   Evas_Object *eo_obj = eo_add(EVAS_IMAGE_CLASS, eo_e);
+   Evas_Object *eo_obj = NULL;
+   eo_add(&eo_obj, EVAS_IMAGE_CLASS, eo_e);
    return eo_obj;
 }
 

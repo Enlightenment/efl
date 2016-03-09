@@ -570,7 +570,7 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   eo_obj = eo_add(EVAS_OBJECT_SMART_CLASS, eo_e);
+   eo_add(&eo_obj, EVAS_OBJECT_SMART_CLASS, eo_e);
    evas_obj_smart_attach(eo_obj, s);
    return eo_obj;
 }

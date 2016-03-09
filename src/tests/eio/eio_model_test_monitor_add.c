@@ -125,7 +125,7 @@ START_TEST(eio_model_test_test_monitor_add)
 
    tmpdir = eina_environment_tmp_get();
 
-   filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eoid, tmpdir));
+   eo_add(&filemodel, EIO_MODEL_CLASS, NULL, eio_model_path_set(filemodel, tmpdir));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
 
    eo_event_callback_add(filemodel, EFL_MODEL_BASE_EVENT_CHILD_ADDED, _children_added_cb, NULL);
