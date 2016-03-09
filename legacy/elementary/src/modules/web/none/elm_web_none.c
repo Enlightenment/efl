@@ -1,0 +1,341 @@
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
+
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+
+#include <Elementary.h>
+
+#include "elm_priv.h"
+#include "elm_widget_web.h"
+#include "elm_web_none.eo.h"
+
+#define MY_CLASS ELM_WEB_CLASS
+
+#define MY_CLASS_NAME "Elm_Web_None"
+
+typedef struct _Elm_Web_None_Data Elm_Web_None_Data;
+struct _Elm_Web_None_Data
+{
+};
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_tab_propagate_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *sd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_tab_propagate_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *sd EINA_UNUSED, Eina_Bool propagate EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_elm_web_none_evas_object_smart_add(Eo *obj, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   Evas_Object *resize_obj;
+
+   resize_obj = elm_label_add(obj);
+   elm_object_text_set(resize_obj, "WebKit not supported!");
+   elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
+
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   elm_widget_sub_object_parent_add(obj);
+}
+
+EOLIAN static Evas_Object*
+_elm_web_none_elm_web_webkit_view_get(Eo *obj, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   (void)obj;
+   ERR("Elementary not compiled with EWebKit support.");
+   return NULL;
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_window_create_hook_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *sd EINA_UNUSED, Elm_Web_Window_Open func EINA_UNUSED, void *data EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_dialog_alert_hook_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *sd EINA_UNUSED, Elm_Web_Dialog_Alert func EINA_UNUSED, void *data EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_dialog_confirm_hook_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *sd EINA_UNUSED, Elm_Web_Dialog_Confirm func EINA_UNUSED, void *data EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_dialog_prompt_hook_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *sd EINA_UNUSED, Elm_Web_Dialog_Prompt func EINA_UNUSED, void *data EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_dialog_file_selector_hook_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, Elm_Web_Dialog_File_Selector func EINA_UNUSED, void *data EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_console_message_hook_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, Elm_Web_Console_Message func EINA_UNUSED, void *data EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_useragent_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, const char *user_agent EINA_UNUSED)
+{
+}
+
+EOLIAN static const char*
+_elm_web_none_elm_web_useragent_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return NULL;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_url_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, const char *url EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static const char*
+_elm_web_none_elm_web_url_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return NULL;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_html_string_load(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, const char *html EINA_UNUSED, const char *base_url EINA_UNUSED, const char *unreachable_url EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static const char*
+_elm_web_none_elm_web_title_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return NULL;
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_bg_color_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, int r EINA_UNUSED, int g EINA_UNUSED, int b EINA_UNUSED, int a EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_bg_color_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, int *r, int *g, int *b, int *a)
+{
+   if (r) *r = 0;
+   if (g) *g = 0;
+   if (b) *b = 0;
+   if (a) *a = 0;
+}
+
+EOLIAN static const char*
+_elm_web_none_elm_web_selection_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return NULL;
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_popup_selected_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, int idx EINA_UNUSED)
+{
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_popup_destroy(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_text_search(const Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, const char *string EINA_UNUSED, Eina_Bool case_sensitive EINA_UNUSED, Eina_Bool forward EINA_UNUSED, Eina_Bool wrap EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static unsigned int
+_elm_web_none_elm_web_text_matches_mark(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, const char *string EINA_UNUSED, Eina_Bool case_sensitive EINA_UNUSED, Eina_Bool highlight EINA_UNUSED, unsigned int limit EINA_UNUSED)
+{
+   return 0;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_text_matches_unmark_all(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_text_matches_highlight_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, Eina_Bool highlight EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_text_matches_highlight_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static double
+_elm_web_none_elm_web_load_progress_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return -1.0;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_stop(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_reload(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_reload_full(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_back(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_forward(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_navigate(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, int steps EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_back_possible_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_forward_possible_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_navigate_possible_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, int steps EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_history_enabled_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_history_enabled_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, Eina_Bool enable EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_zoom_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, double zoom EINA_UNUSED)
+{
+}
+
+EOLIAN static double
+_elm_web_none_elm_web_zoom_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return -1;
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_zoom_mode_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, Elm_Web_Zoom_Mode mode EINA_UNUSED)
+{
+}
+
+EOLIAN static Elm_Web_Zoom_Mode
+_elm_web_none_elm_web_zoom_mode_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
+{
+   return ELM_WEB_ZOOM_MODE_LAST;
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_region_show(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_region_bring_in(Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_elm_web_none_elm_web_inwin_mode_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *sd EINA_UNUSED, Eina_Bool value EINA_UNUSED)
+{
+}
+
+EOLIAN static Eina_Bool
+_elm_web_none_elm_web_inwin_mode_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *sd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EAPI void
+ewm_window_features_ref(Elm_Web_Window_Features *wf EINA_UNUSED)
+{
+}
+
+EAPI void
+ewm_window_features_unref(Elm_Web_Window_Features *wf EINA_UNUSED)
+{
+}
+
+EAPI Eina_Bool
+ewm_window_features_property_get(const Elm_Web_Window_Features *wf EINA_UNUSED,
+                                 Elm_Web_Window_Feature_Flag flag EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EAPI void
+ewm_window_features_region_get(const Elm_Web_Window_Features *wf EINA_UNUSED,
+                               Evas_Coord *x,
+                               Evas_Coord *y,
+                               Evas_Coord *w,
+                               Evas_Coord *h)
+{
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
+}
+
+EAPI void
+ewm_unneed_web(void)
+{
+}
+
+EAPI Eina_Bool
+ewm_need_web(void)
+{
+   return EINA_TRUE;
+}
+
+EAPI const Eo_Class *
+ewm_class_get(void)
+{
+   return elm_web_none_class_get();
+}
+
+#include "elm_web_none.eo.c"

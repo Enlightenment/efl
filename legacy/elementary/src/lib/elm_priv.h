@@ -194,6 +194,7 @@ struct _Elm_Config
    int           config_version;
    const char   *engine;
    const char   *accel;
+   const char   *web_backend;
    unsigned char accel_override;
    unsigned char vsync;
    unsigned char thumbscroll_enable;
@@ -358,6 +359,8 @@ struct _Elm_Module
    int          (*shutdown_func)(Elm_Module *m);
    int          references;
 };
+
+Eina_Bool            _elm_web_init(const char *engine);
 
 Eo                   *_elm_atspi_bridge_get(void);
 void                 _elm_atspi_bridge_init(void);

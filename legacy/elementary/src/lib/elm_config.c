@@ -380,6 +380,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, config_version, T_INT);
    ELM_CONFIG_VAL(D, T, engine, T_STRING);
    ELM_CONFIG_VAL(D, T, accel, T_STRING);
+   ELM_CONFIG_VAL(D, T, web_backend, T_STRING);
    ELM_CONFIG_VAL(D, T, accel_override, T_UCHAR);
    ELM_CONFIG_VAL(D, T, vsync, T_UCHAR);
    ELM_CONFIG_VAL(D, T, thumbscroll_enable, T_UCHAR);

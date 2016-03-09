@@ -320,6 +320,10 @@ elm_init(int argc, char **argv)
 
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
      _elm_atspi_bridge_init();
+   if (!_elm_config->web_backend)
+     _elm_config->web_backend = "none";
+   if (!_elm_web_init(_elm_config->web_backend))
+     _elm_config->web_backend = "none";
 
    return _elm_init_count;
 }

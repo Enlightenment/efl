@@ -25,6 +25,58 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT([win32-dll disable-static pic-only])
 EFL_INIT
 
+### Checks for programs
+
+# compilers
+AC_PROG_CC
+AC_PROG_CC_STDC
+AC_PROG_CXX
+
+EFL_CXX_COMPILE_STDCXX_11([ext])
+
+# pkg-config
+PKG_PROG_PKG_CONFIG
+
+# gettext
+m4_ifdef([AM_GNU_GETTEXT_VERSION], [
+AM_GNU_GETTEXT_VERSION([0.18])
+])
+
+m4_ifdef([AM_GNU_GETTEXT], [
+AM_GNU_GETTEXT([external])
+po_makefile_in=po/Makefile.in
+have_po="yes"
+],[
+have_po="no"
+])
+AC_SUBST([LTLIBINTL])
+
+if test "x${POSUB}" = "x" ; then
+   have_po="no"
+fi
+
+AM_CONDITIONAL([HAVE_PO], [test "x${have_po}" = "xyes"])
+
+# doxygen
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+# EFL binaries
+EFL_WITH_BIN([eet], [eet-eet], [eet])
+EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
+EFL_WITH_BIN([elementary], [elementary-codegen], [elementary_codegen])
+EFL_WITH_BIN([elementary], [elm-prefs-cc], [elm_prefs_cc])
+EFL_WITH_BIN([eolian], [eolian-gen], [eolian_gen])
+EFL_WITH_BIN([eolian-cxx], [eolian-cxx], [eolian_cxx])
+EFL_WITH_BIN([eldbus], [eldbus_codegen], [eldbus-codegen])
+# Force the helper to try external eolian generators
+AM_CONDITIONAL([HAVE_EOLIAN_GEN], [true])
+AM_CONDITIONAL([HAVE_EOLIAN_CXX], [true])
+AM_CONDITIONAL([HAVE_EOLIAN_JS], [true])
+
+EFL_ENABLE_BIN([elementary-test])
+EFL_ENABLE_BIN([elementary-codegen])
+EFL_ENABLE_BIN([elm-prefs-cc])
+EFL_ENABLE_BIN([elementary-config])
 
 ### Additional options to configure
 
@@ -113,6 +165,43 @@ AC_ARG_ENABLE([quick-launch],
    [want_quicklaunch=$enableval],
    [want_quicklaunch="auto"])
 
+# Webkit support
+AC_ARG_WITH([elementary-web-backend],
+   [AS_HELP_STRING([--with-elementary-web-backend=@<:@ewebkit2/detect/none@:>@],
+		   [Select the WebKit backend for Elementary to support web @<:@default=detect@:>@])],
+   [elementary_web_backend=${withval}],
+   [elementary_web_backend="detect"])
+
+elementary_webkit2="no"
+elementary_web="none"
+
+case "${elementary_web_backend}" in
+     ewebkit2|detect)
+# For now only ewebkit2 exist so detect is similar to it
+      	PKG_CHECK_MODULES([EWEBKIT2], [ewebkit2],
+	   [elementary_webkit2="yes"],
+	   [elementary_webkit2="no"])
+        ;;
+     none)
+	;;
+     *)
+	AC_MSG_ERROR([Invalid web backend: must be ewebkit2, detect or none instead of '${elementary_web_backend}'])
+	;;
+esac
+
+if test "x${elementary_webkit2}" = "xyes"; then
+    AC_DEFINE([HAVE_ELEMENTARY_WEB], [1], [Web support for Elementary])
+    webkit_datadir=$(${PKG_CONFIG} ewebkit2 --variable=datadir)
+    AC_DEFINE_UNQUOTED([WEBKIT_DATADIR],
+                       ["${webkit_datadir}"],
+		       ["WebKit's data dir"])
+    ELM_WEB2_DEF="#define"
+    elementary_web="ewebkit2"
+fi
+AM_CONDITIONAL([HAVE_EWEBKIT2], [test "x${elementary_web}" = "xewebkit2"])
+
+AC_MSG_CHECKING([whether to build web option])
+AC_MSG_RESULT([${elementary_web}])
 
 ### Default options with respect to host and default values
 
@@ -155,60 +244,6 @@ AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
 AC_SUBST([ELM_UNIX_DEF])
 AC_SUBST([ELM_WIN32_DEF])
-
-### Checks for programs
-
-# compilers
-AC_PROG_CC
-AC_PROG_CC_STDC
-AC_PROG_CXX
-
-EFL_CXX_COMPILE_STDCXX_11([ext])
-
-# pkg-config
-PKG_PROG_PKG_CONFIG
-
-# gettext
-m4_ifdef([AM_GNU_GETTEXT_VERSION], [
-AM_GNU_GETTEXT_VERSION([0.18])
-])
-
-m4_ifdef([AM_GNU_GETTEXT], [
-AM_GNU_GETTEXT([external])
-po_makefile_in=po/Makefile.in
-have_po="yes"
-],[
-have_po="no"
-])
-AC_SUBST([LTLIBINTL])
-
-if test "x${POSUB}" = "x" ; then
-   have_po="no"
-fi
-
-AM_CONDITIONAL([HAVE_PO], [test "x${have_po}" = "xyes"])
-
-# doxygen
-EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
-
-# EFL binaries
-EFL_WITH_BIN([eet], [eet-eet], [eet])
-EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
-EFL_WITH_BIN([elementary], [elementary-codegen], [elementary_codegen])
-EFL_WITH_BIN([elementary], [elm-prefs-cc], [elm_prefs_cc])
-EFL_WITH_BIN([eolian], [eolian-gen], [eolian_gen])
-EFL_WITH_BIN([eolian-cxx], [eolian-cxx], [eolian_cxx])
-EFL_WITH_BIN([eldbus], [eldbus_codegen], [eldbus-codegen])
-# Force the helper to try external eolian generators
-AM_CONDITIONAL([HAVE_EOLIAN_GEN], [true])
-AM_CONDITIONAL([HAVE_EOLIAN_CXX], [true])
-AM_CONDITIONAL([HAVE_EOLIAN_JS], [true])
-
-EFL_ENABLE_BIN([elementary-test])
-EFL_ENABLE_BIN([elementary-codegen])
-EFL_ENABLE_BIN([elm-prefs-cc])
-EFL_ENABLE_BIN([elementary-config])
-
 
 ### Checks for libraries
 
@@ -263,7 +298,6 @@ ELM_CHECK_OPTION([elocation], [0.1.0])
 ELM_CHECK_OPTION([eweather], [0.2.0])
 # emap is in svn : trunk/PROTO
 ELM_CHECK_OPTION([emap], [0.1.0])
-ELM_CHECK_OPTION([eweb])
 
 if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
    PKG_CHECK_MODULES([ELEMENTARY_CXX],
@@ -564,6 +598,9 @@ src/modules/access_output/Makefile
 src/modules/datetime_input_ctxpopup/Makefile
 src/modules/test_entry/Makefile
 src/modules/test_map/Makefile
+src/modules/web/Makefile
+src/modules/web/none/Makefile
+src/modules/web/webkit2/Makefile
 src/edje_externals/Makefile
 src/examples/Makefile
 src/examples/sphere_hunter/Makefile
@@ -616,7 +653,7 @@ echo
 echo "  Features:"
 echo "    EWeather...............: ${have_elementary_eweather}"
 echo "    EMap...................: ${have_elementary_emap}"
-echo "    Web (WebKit)...........: ${elementary_web}"
+echo "    Web....................: ${elementary_web}"
 echo "    Quick Launch...........: ${ac_cv_func_fork}"
 echo "    Elocation..............: ${have_elementary_elocation}"
 echo
