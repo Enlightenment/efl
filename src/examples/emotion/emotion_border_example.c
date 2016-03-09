@@ -18,8 +18,7 @@ static Eina_List *filenames = NULL;
 static Eina_List *curfile = NULL;
 
 static Eina_Bool
-_playback_started_cb(void *data EINA_UNUSED,
-            Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_playback_started_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
     printf("Emotion object started playback.\n");
 
@@ -109,8 +108,7 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *
 }
 
 static Eina_Bool
-_frame_decode_cb(void *data EINA_UNUSED,
-            Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_frame_decode_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    // fprintf(stderr, "smartcb: frame_decode\n");
 
@@ -118,40 +116,36 @@ _frame_decode_cb(void *data EINA_UNUSED,
 }
 
 static Eina_Bool
-_length_change_cb(void *data EINA_UNUSED,
-            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_length_change_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   fprintf(stderr, "smartcb: length_change: %0.3f\n", emotion_object_play_length_get(o));
+   fprintf(stderr, "smartcb: length_change: %0.3f\n", emotion_object_play_length_get(event->obj));
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_position_update_cb(void *data EINA_UNUSED,
-            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_position_update_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   fprintf(stderr, "smartcb: position_update: %0.3f\n", emotion_object_position_get(o));
+   fprintf(stderr, "smartcb: position_update: %0.3f\n", emotion_object_position_get(event->obj));
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_progress_change_cb(void *data EINA_UNUSED,
-            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_progress_change_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    fprintf(stderr, "smartcb: progress_change: %0.3f, %s\n",
-	   emotion_object_progress_status_get(o),
-	   emotion_object_progress_info_get(o));
+	   emotion_object_progress_status_get(event->obj),
+	   emotion_object_progress_info_get(event->obj));
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_frame_resize_cb(void *data EINA_UNUSED,
-            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_frame_resize_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    int w, h;
-   emotion_object_size_get(o, &w, &h);
+   emotion_object_size_get(event->obj, &w, &h);
    fprintf(stderr, "smartcb: frame_resize: %dx%d\n", w, h);
 
    return EINA_TRUE;
