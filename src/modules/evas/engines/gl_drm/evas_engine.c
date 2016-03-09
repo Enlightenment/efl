@@ -1012,6 +1012,34 @@ eng_output_dump(void *data)
    _re_winfree(re);
 }
 
+static int
+eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+      case EVAS_NATIVE_SURFACE_OPENGL:
+      case EVAS_NATIVE_SURFACE_WL:
+        return 1;
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return 0;
+     }
+}
+
+static void
+eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+      case EVAS_NATIVE_SURFACE_OPENGL:
+      case EVAS_NATIVE_SURFACE_WL:
+        return;
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return;
+     }
+}
+
 static void *
 eng_image_native_set(void *data, void *image, void *native)
 {
@@ -1270,6 +1298,8 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(output_free, &func, eng_);
    EVAS_API_OVERRIDE(output_dump, &func, eng_);
    EVAS_API_OVERRIDE(image_native_set, &func, eng_);
+   EVAS_API_OVERRIDE(image_native_init, &func, eng_);
+   EVAS_API_OVERRIDE(image_native_shutdown, &func, eng_);
 
    /* Mesa's EGL driver loads wayland egl by default. (called by eglGetProcaddr() )
     * implicit env set (EGL_PLATFORM=drm) prevent that. */

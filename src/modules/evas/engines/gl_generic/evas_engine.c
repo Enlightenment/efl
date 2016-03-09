@@ -373,6 +373,32 @@ _native_free_cb(void *data, void *image)
   free(n);
 }
 
+static int
+eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+      case EVAS_NATIVE_SURFACE_OPENGL:
+        return 1;
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return 0;
+     }
+}
+
+static void
+eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+      case EVAS_NATIVE_SURFACE_OPENGL:
+        return;
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return;
+     }
+}
+
 static void *
 eng_image_native_set(void *data, void *image, void *native)
 {
@@ -2816,6 +2842,8 @@ module_open(Evas_Module *em)
    ORD(image_colorspace_get);
    ORD(image_file_colorspace_get);
    ORD(image_can_region_get);
+   ORD(image_native_init);
+   ORD(image_native_shutdown);
    ORD(image_native_set);
    ORD(image_native_get);
 

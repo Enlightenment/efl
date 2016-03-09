@@ -67,13 +67,13 @@ typedef struct _tbm_surface_info
 static int (*sym_tbm_surface_map) (tbm_surface_h surface, int opt, tbm_surface_info_s *info) = NULL;
 static int (*sym_tbm_surface_unmap) (tbm_surface_h surface) = NULL;
 
-static Eina_Bool
-tbm_init(void)
+EAPI int
+_evas_native_tbm_init(void)
 {
    if (tbm_lib)
      {
         tbm_ref++;
-        return EINA_TRUE;
+        return tbm_ref;
      }
 
    const char *tbm_libs[] =
@@ -108,14 +108,14 @@ tbm_init(void)
              else break;
           }
      }
-   if (!tbm_lib) return EINA_FALSE;
+   if (!tbm_lib) return 0;
 
    tbm_ref++;
-   return EINA_TRUE;
+   return tbm_ref;
 }
 
-static void
-tbm_shutdown(void)
+EAPI void
+_evas_native_tbm_shutdown(void)
 {
    if (tbm_ref > 0)
      {
@@ -254,11 +254,11 @@ _native_free_cb(void *data EINA_UNUSED, void *image)
 
    free(n);
 
-   tbm_shutdown();
+   _evas_native_tbm_shutdown();
 }
 
 EAPI void *
-evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *native)
+_evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *native)
 {
    Evas_Native_Surface *ns = native;
    RGBA_Image *im = image;
@@ -279,7 +279,7 @@ evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *nat
 
         tbm_surf = ns->data.tbm.buffer;
 
-        if (!tbm_init())
+        if (!_evas_native_tbm_init())
           {
              ERR("Could not initialize TBM!");
              return NULL;

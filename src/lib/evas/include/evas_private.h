@@ -1348,6 +1348,9 @@ struct _Evas_Func
    Evas_Colorspace (*image_colorspace_get) (void *data, void *image);
    Evas_Colorspace (*image_file_colorspace_get)(void *data, void *image);
    Eina_Bool (*image_can_region_get)       (void *data, void *image);
+
+   int (*image_native_init)                (void *data, Evas_Native_Surface_Type type);
+   void (*image_native_shutdown)           (void *data, Evas_Native_Surface_Type type);
    void *(*image_native_set)               (void *data, void *image, void *native);
    void *(*image_native_get)               (void *data, void *image);
 

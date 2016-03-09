@@ -992,6 +992,45 @@ _native_cb_yinvert(void *data EINA_UNUSED, void *image)
    return yinvert;
 }
 
+static int
+eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+#ifdef GL_GLES
+      case EVAS_NATIVE_SURFACE_TBM:
+        return _evas_native_tbm_init();
+#endif
+      case EVAS_NATIVE_SURFACE_EVASGL:
+      case EVAS_NATIVE_SURFACE_OPENGL:
+      case EVAS_NATIVE_SURFACE_WL:
+        return 1;
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return 0;
+     }
+}
+
+static void
+eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+#ifdef GL_GLES
+      case EVAS_NATIVE_SURFACE_TBM:
+        _evas_native_tbm_shutdown();
+        return;
+#endif
+      case EVAS_NATIVE_SURFACE_EVASGL:
+      case EVAS_NATIVE_SURFACE_OPENGL:
+      case EVAS_NATIVE_SURFACE_WL:
+        return;
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return;
+     }
+}
+
 static void *
 eng_image_native_set(void *data, void *image, void *native)
 {

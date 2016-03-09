@@ -75,7 +75,9 @@ struct _Native
    } ns_data; /**< Choose one union data according to your surface in Evas Engine. */
 };
 
-EAPI void * evas_native_tbm_surface_image_set(void *data, void *image, void *native);
+EAPI void *_evas_native_tbm_surface_image_set(void *data, void *image, void *native);
+EAPI int _evas_native_tbm_init(void);
+EAPI void _evas_native_tbm_shutdown(void);
 
 typedef void *(*Evas_Native_Tbm_Surface_Image_Set_Call)(void *data, void *image, void *native);
 

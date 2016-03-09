@@ -671,6 +671,43 @@ _native_evasgl_free(void *data EINA_UNUSED, void *image)
    free(n);
 }
 
+static int
+eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+#ifdef GL_GLES
+      case EVAS_NATIVE_SURFACE_TBM:
+        return _evas_native_tbm_init();
+#endif
+      case EVAS_NATIVE_SURFACE_X11:
+      case EVAS_NATIVE_SURFACE_EVASGL:
+        return 1;
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return 0;
+     }
+}
+
+static void
+eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+#ifdef GL_GLES
+      case EVAS_NATIVE_SURFACE_TBM:
+        _evas_native_tbm_shutdown();
+        return;
+#endif
+      case EVAS_NATIVE_SURFACE_X11:
+      case EVAS_NATIVE_SURFACE_OPENGL:
+        return;
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return;
+     }
+}
+
 static void *
 eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 {
@@ -817,6 +854,8 @@ module_open(Evas_Module *em)
    ORD(setup);
    ORD(canvas_alpha_get);
    ORD(output_free);
+   ORD(image_native_init);
+   ORD(image_native_shutdown);
    ORD(image_native_set);
    ORD(image_native_get);
 

@@ -26,6 +26,7 @@
 #endif
 
 #include "Evas_Engine_Software_Generic.h"
+#include "evas_native_common.h"
 
 #ifdef EVAS_GL
 //----------------------------------//
@@ -1111,6 +1112,25 @@ eng_image_colorspace_set(void *data EINA_UNUSED, void *image, Evas_Colorspace cs
    if (!image) return;
    im = image;
    evas_cache_image_colorspace(im, cspace);
+}
+
+static int
+eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   if (type == EVAS_NATIVE_SURFACE_TBM)
+     return _evas_native_tbm_init();
+
+   ERR("Native surface type %d not supported!", type);
+   return 0;
+}
+
+static void
+eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   if (type == EVAS_NATIVE_SURFACE_TBM)
+     _evas_native_tbm_shutdown();
+   else
+     ERR("Native surface type %d not supported!", type);
 }
 
 static void *
@@ -4124,6 +4144,8 @@ static Evas_Func func =
      eng_image_colorspace_get,
      eng_image_file_colorspace_get,
      eng_image_can_region_get,
+     eng_image_native_init,
+     eng_image_native_shutdown,
      eng_image_native_set,
      eng_image_native_get,
      /* image cache funcs */

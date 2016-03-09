@@ -265,6 +265,33 @@ eng_output_resize(void *data, int w, int h)
    re->generic.h = h;
 }
 
+static int
+eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+      case EVAS_NATIVE_SURFACE_TBM:
+        return _evas_native_tbm_init();
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return 0;
+     }
+}
+
+static void
+eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+      case EVAS_NATIVE_SURFACE_TBM:
+        _evas_native_tbm_shutdown();
+        return;
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return;
+     }
+}
+
 static void *
 eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 {
@@ -287,6 +314,8 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
           }
       }
 
+   /* FIXME: WTF is this? OPENGL supported here? uh? and x11.visual used???
+    * It looks like this code needs to fail and return NULL. */
    if ((ns->type == EVAS_NATIVE_SURFACE_OPENGL) &&
        (ns->version == EVAS_NATIVE_SURFACE_VERSION))
      im2 = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),

@@ -2309,6 +2309,52 @@ _native_yinvert_cb(void *data, void *image)
    return yinvert;
 }
 
+static int
+eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+#ifdef GL_GLES
+      case EVAS_NATIVE_SURFACE_TBM:
+        return _evas_native_tbm_init();
+#endif
+      case EVAS_NATIVE_SURFACE_X11:
+      case EVAS_NATIVE_SURFACE_OPENGL:
+      case EVAS_NATIVE_SURFACE_EVASGL:
+        return 1;
+#if defined(GL_GLES) && defined(HAVE_WAYLAND)
+      case EVAS_NATIVE_SURFACE_WL:
+        return (glsym_eglQueryWaylandBufferWL != NULL) ? 1 : 0;
+#endif
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return 0;
+     }
+}
+
+static void
+eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+{
+   switch (type)
+     {
+#ifdef GL_GLES
+      case EVAS_NATIVE_SURFACE_TBM:
+        _evas_native_tbm_shutdown();
+        return;
+#endif
+      case EVAS_NATIVE_SURFACE_X11:
+      case EVAS_NATIVE_SURFACE_OPENGL:
+      case EVAS_NATIVE_SURFACE_EVASGL:
+#if defined(GL_GLES) && defined(HAVE_WAYLAND)
+      case EVAS_NATIVE_SURFACE_WL:
+#endif
+        return;
+      default:
+        ERR("Native surface type %d not supported!", type);
+        return;
+     }
+}
+
 static void *
 eng_image_native_set(void *data, void *image, void *native)
 {
@@ -3015,6 +3061,8 @@ module_open(Evas_Module *em)
    ORD(output_free);
    ORD(output_dump);
 
+   ORD(image_native_init);
+   ORD(image_native_shutdown);
    ORD(image_native_set);
 
    ORD(gl_error_get);
