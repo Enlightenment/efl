@@ -54,7 +54,8 @@ isa(Eo *obj, Eo_Class *klass)
 inline Eo*
 add(Eo_Class *klass, Eo *parent = NULL)
 {
-   Eo *eo = eo_add_ref(klass, parent);
+   Eo *eo = nullptr;
+   eo_add_ref(&eo, klass, parent);
    return eo;
 }
 

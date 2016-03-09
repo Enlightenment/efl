@@ -577,13 +577,14 @@ operator<<(std::ostream& out, function_call_constructor_methods const& x)
 
    out << ")" << endl
        << tab(1) << "{" << endl
-       << tab(2) << "Eo* _ret_eo = eo_add_ref(" << x._cls.eo_name << ", _p._eo_raw";
+       << tab(2) << "Eo* _ret_eo = nullptr;" << endl
+       << tab(2) << "eo_add_ref(&_ret_eo, " << x._cls.eo_name << ", _p._eo_raw";
    for (it = first; it != last; ++it)
      {
-        out << ", _c" << (it-first) << "(eoid)";
+        out << ", _c" << (it-first) << "(_ret_eo)";
      }
    if (!x._cls.optional_constructors.empty())
-     out << ", ::efl::eolian::call_ctors(eoid, _opts...)";
+     out << ", ::efl::eolian::call_ctors(_ret_eo, _opts...)";
    out << ");" << endl << endl;
 
    for (it = first; it != last; ++it)
