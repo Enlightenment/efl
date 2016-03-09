@@ -104,10 +104,6 @@ ecore_drm_init(void)
         goto log_err;
      }
 
-   /* set default logging level for this domain */
-   if (!eina_log_domain_level_check(_ecore_drm_log_dom, EINA_LOG_LEVEL_DBG))
-     eina_log_domain_level_set("ecore_drm", EINA_LOG_LEVEL_DBG);
-
    /* try to init eeze */
    if (!eeze_init()) goto eeze_err;
 
