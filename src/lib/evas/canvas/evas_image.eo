@@ -87,27 +87,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_An
             data: void *; [[The data pointer to be passed to $func.]]
          }
       }
-
-      /* native surface */
-      @property native_surface {
-         set {
-            [[Set the native surface of a given image of the canvas
-
-              This function sets a native surface of a given canvas image.
-            ]]
-            legacy: null;
-         }
-         get {
-            [[Get the native surface of a given image of the canvas
-
-              This function returns the native surface of a given canvas
-              image.
-            ]]
-         }
-         values {
-            surf: Evas.Native_Surface* @nonull; [[The native surface.]]
-         }
-      }
    }
    implements {
       Eo.Base.constructor;

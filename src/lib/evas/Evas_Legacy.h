@@ -2524,6 +2524,90 @@ EAPI Evas_Object                  *evas_object_image_filled_add(Evas *e) EINA_WA
 EAPI void                          evas_object_image_memfile_set(Evas_Object *obj, void *data, int size, char *format, char *key) EINA_ARG_NONNULL(1, 2);
 
 /**
+ * @def EVAS_NATIVE_SURFACE_VERSION
+ * Magic version number to know what the native surface struct looks like
+ */
+
+#define EVAS_NATIVE_SURFACE_VERSION 3
+
+/**
+ * Native surface types that image object supports
+ *
+ * @see Evas_Native_Surface
+ * @see evas_object_image_native_surface_set()
+ */
+typedef enum _Evas_Native_Surface_Type
+{
+   EVAS_NATIVE_SURFACE_NONE, /**< No surface type */
+   EVAS_NATIVE_SURFACE_X11,  /**< X Window system based type. pixmap id or visual of the pixmap */
+   EVAS_NATIVE_SURFACE_OPENGL, /**< OpenGL system based type. texture or framebuffer id*/
+   EVAS_NATIVE_SURFACE_WL, /**< Wayland system based type. buffer of surface */
+   EVAS_NATIVE_SURFACE_TBM, /**< Tizen system based type. tbm surface @since 1.14  */
+   EVAS_NATIVE_SURFACE_EVASGL, /**< Evas GL based type. evas gl surface @since 1.14 */
+} Evas_Native_Surface_Type;
+
+/**
+ * @brief A generic datatype for engine specific native surface information.
+ *
+ * Please fill up Evas_Native_Surface fields that regarded with current surface
+ * type. If you want to set the native surface type to
+ * EVAS_NATIVE_SURFACE_X11, you need to set union data with x11.visual or
+ * x11.pixmap. If you need to set the native surface as
+ * EVAS_NATIVE_SURFACE_OPENGL, on the other hand, you need to set union data
+ * with opengl.texture_id or opengl.framebuffer_id and so on.
+ * If you need to set the native surface as EVAS_NATIVE_SURFACE_WL,
+ * you need to set union data with wl.legacy_buffer.
+ * If you need to set the native surface as EVAS_NATIVE_SURFACE_TBM,
+ * you need to set union data with tbm surface. The version field
+ * should be set with EVAS_NATIVE_SURFACE_VERSION in order to check abi
+ * break in your application on the different efl library versions.
+ *
+ * @warning Native surface types totally depend on the system. Please
+ *          be aware that the types are supported on your system before using
+ *          them.
+ *
+ * @note The information stored in an @c Evas_Native_Surface returned by
+ *       @ref evas_gl_native_surface_get() is not meant to be used by
+ *       applications except for passing it to
+ *       @ref evas_object_image_native_surface_set().
+ *
+ * @see evas_object_image_native_surface_set()
+ */
+struct _Evas_Native_Surface
+{
+   int                      version; /**< Current Native Surface Version. Use EVAS_NATIVE_SURFACE_VERSION */
+   Evas_Native_Surface_Type type; /**< Surface type. @see Evas_Native_Surface_Type */
+   union {
+      struct
+      {
+         void         *visual; /**< visual of the pixmap to use (Visual) */
+         unsigned long pixmap; /**< pixmap id to use (Pixmap) */
+      } x11; /**< Set this struct fields if surface data is X11 based. */
+
+      struct
+      {
+         unsigned int texture_id; /**< opengl texture id to use from glGenTextures() */
+         unsigned int framebuffer_id; /**< 0 if not a FBO, FBO id otherwise from glGenFramebuffers() */
+         unsigned int internal_format; /**< same as 'internalFormat' for glTexImage2D() */
+         unsigned int format; /**< same as 'format' for glTexImage2D() */
+         unsigned int x, y, w, h; /**< region inside the texture to use (image size is assumed as texture size, with 0, 0 being the top-left and co-ordinates working down to the right and bottom being positive) */
+      } opengl; /**< Set this struct fields if surface data is OpenGL based. */
+      struct
+      {
+         void *legacy_buffer; /**< wayland client buffer to use */
+      } wl; /**< Set this struct fields if surface data is Wayland based. */
+      struct
+      {
+         void *buffer; /**< tbm surface buffer to use @since 1.14 */
+      } tbm; /**< Set this struct fields if surface data is Tizen based. @since 1.14 */
+      struct
+      {
+         void *surface; /**< evas gl surface to use @since 1.14 */
+      } evasgl; /**< Set this struct fields if surface data is Evas GL based. @since 1.14 */
+   } data; /**< Choose one union data according to your surface. */
+};
+
+/**
  * Set the native surface of a given image of the canvas
  *
  * @param obj The given canvas pointer.
@@ -2533,6 +2617,15 @@ EAPI void                          evas_object_image_memfile_set(Evas_Object *ob
  *
  */
 EAPI void                          evas_object_image_native_surface_set(Evas_Object *obj, Evas_Native_Surface *surf) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @brief Get the native surface of a given image of the canvas
+ *
+ * This function returns the native surface of a given canvas image.
+ *
+ * @return The native surface.
+ */
+EAPI Evas_Native_Surface          *evas_object_image_native_surface_get(const Evas_Object *obj);
 
 /**
  * Preload an image object's image data in the background

@@ -44,6 +44,10 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_snapshot.eo \
 	lib/evas/canvas/efl_canvas_proxy.eo \
 	lib/evas/canvas/efl_canvas_scene3d.eo \
+	lib/evas/canvas/efl_canvas_surface.eo \
+	lib/evas/canvas/efl_canvas_surface_tbm.eo \
+	lib/evas/canvas/efl_canvas_surface_x11.eo \
+	lib/evas/canvas/efl_canvas_surface_wayland.eo \
 	lib/evas/canvas/evas_filter.eo \
 	$(NULL)
 
@@ -106,6 +110,8 @@ lib/evas/include/evas_common_private.h \
 lib/evas/include/evas_blend_ops.h \
 lib/evas/include/evas_filter.h \
 lib/evas/canvas/evas_vg_private.h \
+lib/evas/canvas/evas_image_private.h \
+lib/evas/canvas/efl_canvas_surface.h \
 lib/evas/common3d/primitives/primitive_common.h
 
 # Linebreak
@@ -179,6 +185,10 @@ lib/evas/canvas/evas_out.c \
 lib/evas/canvas/efl_canvas_proxy.c \
 lib/evas/canvas/efl_canvas_snapshot.c \
 lib/evas/canvas/efl_canvas_scene3d.c \
+lib/evas/canvas/efl_canvas_surface.c \
+lib/evas/canvas/efl_canvas_surface_tbm.c \
+lib/evas/canvas/efl_canvas_surface_x11.c \
+lib/evas/canvas/efl_canvas_surface_wayland.c \
 $(NULL)
 
 EXTRA_DIST += \

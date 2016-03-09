@@ -1,0 +1,10 @@
+class Efl.Canvas.Surface_Tbm (Efl.Canvas.Surface)
+{
+   legacy_prefix: null;
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Efl.Canvas.Surface.native_buffer.set;
+      Efl.Canvas.Surface.native_buffer.get;
+   }
+}

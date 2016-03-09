@@ -1607,12 +1607,10 @@ _on_image_native_surface_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_O
    evas_object_image_native_surface_set(obj, NULL);
 }
 
-EAPI void
-evas_object_image_native_surface_set(Evas_Object *eo_obj, Evas_Native_Surface *surf)
+Eina_Bool
+_evas_image_native_surface_set(Eo *eo_obj, Evas_Native_Surface *surf)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    evas_object_event_callback_del_full
@@ -1620,34 +1618,42 @@ evas_object_image_native_surface_set(Evas_Object *eo_obj, Evas_Native_Surface *s
    if (surf) // We need to unset native surf on del to remove shared hash refs
      evas_object_event_callback_add
      (eo_obj, EVAS_CALLBACK_DEL, _on_image_native_surface_del, NULL);
-   evas_obj_image_native_surface_set(eo_obj, surf);
-}
 
-EOLIAN static void
-_evas_image_native_surface_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Native_Surface *surf)
-{
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   evas_object_async_block(obj);
    evas_render_rendering_wait(obj->layer->evas);
-
    _evas_image_cleanup(eo_obj, obj, o);
-   if (!ENFN->image_native_set) return;
+   if (!ENFN->image_native_set) return EINA_FALSE;
    if ((surf) &&
        ((surf->version < 2) ||
-        (surf->version > EVAS_NATIVE_SURFACE_VERSION))) return;
+        (surf->version > EVAS_NATIVE_SURFACE_VERSION))) return EINA_FALSE;
    o->engine_data = ENFN->image_native_set(ENDT, o->engine_data, surf);
+   return (o->engine_data != NULL);
 }
 
-EOLIAN static Evas_Native_Surface*
-_evas_image_native_surface_get(Eo *eo_obj, Evas_Image_Data *o)
+EAPI void
+evas_object_image_native_surface_set(Evas_Object *eo_obj, Evas_Native_Surface *surf)
 {
-   Evas_Native_Surface *surf = NULL;
+   EVAS_OBJECT_LEGACY_API(eo_obj);
+   _evas_image_native_surface_set(eo_obj, surf);
+}
+
+Evas_Native_Surface *
+_evas_image_native_surface_get(const Evas_Object *eo_obj)
+{
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   Evas_Native_Surface *surf = NULL;
 
    if (ENFN->image_native_get)
      surf = ENFN->image_native_get(ENDT, o->engine_data);
 
    return surf;
+}
+
+EAPI Evas_Native_Surface *
+evas_object_image_native_surface_get(const Evas_Object *eo_obj)
+{
+   EVAS_OBJECT_LEGACY_API(eo_obj, NULL);
+   return _evas_image_native_surface_get(eo_obj);
 }
 
 EOLIAN static void

@@ -146,6 +146,8 @@ void _evas_image_proxy_error(Evas_Object *proxy, void *context, void *output, vo
 void _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Canvas3D_Scene *scene);
 void _evas_image_3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene);
 void _evas_image_3d_unset(Evas_Object *eo_obj, Evas_Object_Protected_Data *image, Evas_Image_Data *o);
+Eina_Bool _evas_image_native_surface_set(Eo *eo_obj, Evas_Native_Surface *surf);
+Evas_Native_Surface *_evas_image_native_surface_get(const Evas_Object *eo_obj);
 
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
