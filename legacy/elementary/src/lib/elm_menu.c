@@ -781,7 +781,8 @@ EAPI Evas_Object *
 elm_menu_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = NULL;
+   eo_add(&obj, MY_CLASS, parent);
    return obj;
 }
 
@@ -1020,7 +1021,7 @@ _elm_menu_item_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *parent, const ch
    elm_interface_atspi_accessible_type_set(icon_obj, ELM_ATSPI_TYPE_DISABLED);
    if (!icon_obj) return NULL;
 
-   eo_item = eo_add(ELM_MENU_ITEM_CLASS, obj);
+   eo_add(&eo_item, ELM_MENU_ITEM_CLASS, obj);
    if (!eo_item)
      {
         evas_object_del(icon_obj);
@@ -1108,7 +1109,7 @@ _elm_menu_item_separator_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *eo_p_i
    ELM_MENU_ITEM_DATA_GET(eo_subitem, subitem);
    if (subitem->separator) return NULL;
 
-   eo_subitem = eo_add(ELM_MENU_ITEM_CLASS, obj);
+   eo_add(&eo_subitem, ELM_MENU_ITEM_CLASS, obj);
    if (!eo_subitem) return NULL;
 
    subitem = eo_data_scope_get(eo_subitem, ELM_MENU_ITEM_CLASS);

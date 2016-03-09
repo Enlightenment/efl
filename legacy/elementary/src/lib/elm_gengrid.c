@@ -4164,7 +4164,8 @@ _elm_gengrid_item_new(Elm_Gengrid_Data *sd,
 {
    if (!itc) return NULL;
 
-   Eo *eo_it = eo_add(ELM_GENGRID_ITEM_CLASS, sd->obj);
+   Eo *eo_it = NULL;
+   eo_add(&eo_it, ELM_GENGRID_ITEM_CLASS, sd->obj);
    if (!eo_it) return NULL;
    ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
 
@@ -4254,7 +4255,7 @@ _elm_gengrid_evas_object_smart_add(Eo *obj, Elm_Gengrid_Data *priv)
    priv->highlight = EINA_TRUE;
    priv->item_cache_max = CACHE_MAX;
 
-   priv->pan_obj = eo_add(MY_PAN_CLASS, evas_object_evas_get(obj));
+   eo_add(&priv->pan_obj, MY_PAN_CLASS, evas_object_evas_get(obj));
    pan_data = eo_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
    eo_data_ref(obj, NULL);
    pan_data->wobj = obj;
@@ -4331,7 +4332,8 @@ EAPI Evas_Object *
 elm_gengrid_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = NULL;
+   eo_add(&obj, MY_CLASS, parent);
    return obj;
 }
 

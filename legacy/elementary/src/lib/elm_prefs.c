@@ -508,7 +508,8 @@ elm_prefs_add(Evas_Object *parent)
         return NULL;
      }
 
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = NULL;
+   eo_add(&obj, MY_CLASS, parent);
    return obj;
 }
 

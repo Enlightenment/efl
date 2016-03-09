@@ -4443,7 +4443,7 @@ _elm_atspi_bridge_init(void)
 {
    if (!_init_count)
      {
-        _instance = eo_add(ELM_ATSPI_BRIDGE_CLASS, NULL);
+        eo_add(&_instance, ELM_ATSPI_BRIDGE_CLASS, NULL);
         _init_count = 1;
      }
 }

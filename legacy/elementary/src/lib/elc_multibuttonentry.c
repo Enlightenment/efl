@@ -746,7 +746,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
           return NULL;
      }
 
-   eo_item = eo_add(ELM_MULTIBUTTONENTRY_ITEM_CLASS, obj);
+   eo_add(&eo_item, ELM_MULTIBUTTONENTRY_ITEM_CLASS, obj);
    if (!eo_item)
      return NULL;
    WIDGET_ITEM_DATA_SET(eo_item, data);
@@ -1706,7 +1706,8 @@ EAPI Evas_Object *
 elm_multibuttonentry_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = NULL;
+   eo_add(&obj, MY_CLASS, parent);
    return obj;
 }
 

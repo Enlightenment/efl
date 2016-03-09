@@ -249,7 +249,8 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
      }
    else
      {
-        Eo *eo_it = eo_add(ELM_DAYSELECTOR_ITEM_CLASS, obj);
+        Eo *eo_it = NULL;
+        eo_add(&eo_it, ELM_DAYSELECTOR_ITEM_CLASS, obj);
         it = eo_data_scope_get(eo_it, ELM_DAYSELECTOR_ITEM_CLASS);
         it->day = day;
 
@@ -452,7 +453,8 @@ EAPI Evas_Object *
 elm_dayselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = NULL;
+   eo_add(&obj, MY_CLASS, parent);
    return obj;
 }
 

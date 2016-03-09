@@ -2374,7 +2374,8 @@ _item_new(Evas_Object *obj,
 
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
-   Eo *eo_it = eo_add(ELM_TOOLBAR_ITEM_CLASS, obj);
+   Eo *eo_it = NULL;
+   eo_add(&eo_it, ELM_TOOLBAR_ITEM_CLASS, obj);
 
    if (!eo_it) return NULL;
 
@@ -2989,7 +2990,8 @@ EAPI Evas_Object *
 elm_toolbar_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = NULL;
+   eo_add(&obj, MY_CLASS, parent);
    return obj;
 }
 

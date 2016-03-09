@@ -573,7 +573,7 @@ EOLIAN Eo*
 _elm_interface_atspi_accessible_root_get(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
 {
    if (!root)
-      root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+      eo_add(&root, ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    return root;
 }
