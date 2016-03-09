@@ -26,10 +26,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 #include "ecore_drm_private.h"
 
 EAPI int ECORE_DRM_EVENT_SEAT_ADD = -1;
