@@ -49,18 +49,6 @@ static const char *exts[] = {
 #endif
 };
 
-#if 0
-static const char *
-_test_image_get(const char *name)
-{
-   static char filename[PATH_MAX];
-
-   snprintf(filename, PATH_MAX, TESTS_IMG_DIR"/%s", name);
-
-   return filename;
-}
-#endif
-
 START_TEST(evas_object_image_loader)
 {
    Evas *e = _setup_evas();
