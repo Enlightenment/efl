@@ -127,7 +127,7 @@ typedef struct _vec2
 
 
 #define ADD_MESH(Object, Name, a, d, s)                                                   \
-   data->material_##Object = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);                        \
+   eo_add(&data->material_##Object, EVAS_CANVAS3D_MATERIAL_CLASS, evas);                        \
                                                                                           \
    evas_canvas3d_material_enable_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE); \
    evas_canvas3d_material_enable_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE); \
@@ -138,7 +138,7 @@ typedef struct _vec2
    evas_canvas3d_material_color_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, s, s, s, 1.0); \
    evas_canvas3d_material_shininess_set(data->material_##Object, 50.0);                                           \
                                                                                           \
-   data->mesh_##Name = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+   eo_add(&data->mesh_##Name, EVAS_CANVAS3D_MESH_CLASS, evas);
 
 #define SETUP_DEFAULT_MESH(Object, Name, Shade_Mode)                                      \
    evas_canvas3d_mesh_shade_mode_set(data->mesh_##Name, EVAS_CANVAS3D_SHADE_MODE_##Shade_Mode); \
@@ -147,7 +147,7 @@ typedef struct _vec2
 
 
 #define SETUP_MESH_NODE(Name)                                                             \
-   data->mesh_node_##Name = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));     \
+   eo_add(&data->mesh_node_##Name, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(data->mesh_node_##Name, EVAS_CANVAS3D_NODE_TYPE_MESH));     \
                                                                                           \
    evas_canvas3d_node_mesh_add(data->mesh_node_##Name, data->mesh_##Name);
 
@@ -156,7 +156,7 @@ typedef struct _vec2
    efl_file_set(data->mesh_##Name, file, NULL);                                                       \
                                                                                           \
    SETUP_DEFAULT_MESH(Object, Name, PHONG)                                                \
-   data->texture_diffuse_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                  \
+   eo_add(&data->texture_diffuse_##Object, EVAS_CANVAS3D_TEXTURE_CLASS, evas);                  \
                                                                                           \
    evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_##Object, EINA_FALSE); \
    evas_canvas3d_texture_file_set(data->texture_diffuse_##Object, image, NULL); \
@@ -175,7 +175,7 @@ typedef struct _vec2
    evas_canvas3d_mesh_frame_vertex_data_set(data->mesh_##Name, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, \
                                             2 * sizeof(float), vertex);                        \
    SETUP_DEFAULT_MESH(Object, Name, NORMAL_MAP)                                                 \
-   data->texture_diffuse_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                        \
+   eo_add(&data->texture_diffuse_##Object, EVAS_CANVAS3D_TEXTURE_CLASS, evas);                        \
                                                                                                 \
    evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_##Object, EINA_FALSE); \
    evas_canvas3d_texture_file_set(data->texture_diffuse_##Object, image, NULL); \
@@ -190,7 +190,7 @@ typedef struct _vec2
 
 
 #define NORMAL_SET(Object, Name, normal)                                                  \
-   data->texture_normal_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                   \
+   eo_add(&data->texture_normal_##Object, EVAS_CANVAS3D_TEXTURE_CLASS, evas);                   \
                                                                                           \
    evas_canvas3d_texture_atlas_enable_set(data->texture_normal_##Object, EINA_FALSE); \
    evas_canvas3d_texture_file_set(data->texture_normal_##Object, normal, NULL); \

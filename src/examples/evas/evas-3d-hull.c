@@ -84,7 +84,7 @@ typedef struct _Scene_Data
 int rr;
 
 #define MODEL_MESH_INIT(name, model, shade)                                              \
-   data->mesh_##name = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);                          \
+   eo_add(&data->mesh_##name, EVAS_CANVAS3D_MESH_CLASS, evas);                          \
    efl_file_set(data->mesh_##name, model, NULL); \
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_##name, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES); \
    evas_canvas3d_mesh_shade_mode_set(data->mesh_##name, EVAS_CANVAS3D_SHADE_MODE_##shade); \
@@ -96,7 +96,7 @@ int rr;
    evas_canvas3d_mesh_convex_hull_data_get(data->mesh_##name, 0, vert, ind);  \
    vertex = (float*) vert->members;\
    index = ind->members;\
-   data->mesh_##name##_ch = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);                                    \
+   eo_add(&data->mesh_##name##_ch, EVAS_CANVAS3D_MESH_CLASS, evas);                                    \
    evas_canvas3d_mesh_vertex_count_set(data->mesh_##name##_ch, (vert->len / 10)); \
    evas_canvas3d_mesh_frame_add(data->mesh_##name##_ch, 0); \
    evas_canvas3d_mesh_frame_vertex_data_copy_set(data->mesh_##name##_ch, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, \

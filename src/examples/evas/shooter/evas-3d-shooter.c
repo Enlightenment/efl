@@ -876,7 +876,7 @@ _mesh_setup_column(Scene_Data *data, int index)
    evas_canvas3d_material_color_set(data->material_column, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_material_shininess_set(data->material_column, 50.0);
 
-   data->mesh_column[index] = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+   eo_add(&data->mesh_column[index], EVAS_CANVAS3D_MESH_CLASS, evas);
 
    SETUP_MESH_NODE(column[index])
 
