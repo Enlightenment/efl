@@ -22,11 +22,8 @@ static const char *exts[] = {
 #ifdef BUILD_LOADER_WBMP
   ,"wbmp"
 #endif
-  // FIXME: Seems like XPM support is currently broken
-#if 0
 #ifdef BUILD_LOADER_XPM
   ,"xpm"
-#endif
 #endif
 #ifdef BUILD_LOADER_BMP
   ,"bmp"
