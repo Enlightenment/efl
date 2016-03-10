@@ -4111,11 +4111,23 @@ elm_config_transition_duration_factor_set(double factor)
     edje_transition_duration_factor_set(_elm_config->transition_duration_factor);
 }
 
-
 EAPI double
 elm_config_transition_duration_factor_get(void)
 {
     return _elm_config->transition_duration_factor;
+}
+
+EAPI void
+elm_config_web_backend_set(const char *backend)
+{
+   if (_elm_web_init(backend))
+     _elm_config->web_backend = backend;
+}
+
+EAPI const char *
+elm_config_web_backend_get(void)
+{
+   return _elm_config->web_backend;
 }
 
 void

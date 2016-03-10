@@ -2079,6 +2079,31 @@ EAPI void elm_config_transition_duration_factor_set(double factor);
 EAPI double elm_config_transition_duration_factor_get(void);
 
 /**
+ * Set the backend engine used by Elm_Web widget
+ *
+ * This function set the name of the external module used by
+ * elm_web to render web page.
+ *
+ * @param backend The new backend to use.
+ *
+ * @since 1.18
+ * @see elm_config_web_backend_get()
+ */
+EAPI void elm_config_web_backend_set(const char *backend);
+
+/**
+ * Get the currently set backend engine used by Elm_Web widget
+ *
+ * This function get the name of the external module used by
+ * elm_web to render web page.
+ *
+ * @return The new backend to use.
+ *
+ * @since 1.18
+ * @see elm_config_web_backend_set()
+ */
+EAPI const char *elm_config_web_backend_get(void);
+
+/**
  * @}
  */
-
