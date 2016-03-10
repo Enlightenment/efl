@@ -42,7 +42,7 @@ Eina_Unicode status_icons[] = {
 #define EO_CONSTRUCTOR_CHECK_RETURN(obj) do { \
    Eina_Bool finalized; \
    \
-   eo_do(obj, finalized = eo_finalized_get()); \
+   finalized = eo_finalized_get(obj); \
    if (finalized) \
      { \
         ERR("This function is only allowed during construction."); \
@@ -54,15 +54,15 @@ EAPI Evas_Object *
 elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent,
-                             elm_obj_code_widget_code_set(code));
+   Evas_Object *obj = NULL;
+   eo_add(&obj, MY_CLASS, parent, elm_obj_code_widget_code_set(obj, code));
    return obj;
 }
 
 EOLIAN static Eo *
 _elm_code_widget_eo_base_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   obj = eo_do_super_ret(obj, ELM_CODE_WIDGET_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, ELM_CODE_WIDGET_CLASS));
 
    pd->cursor_line = 1;
    pd->cursor_col = 1;
@@ -75,7 +75,7 @@ _elm_code_widget_eo_base_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
 EOLIAN static Eo *
 _elm_code_widget_eo_base_finalize(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   obj = eo_do_super_ret(obj, ELM_CODE_WIDGET_CLASS, obj, eo_finalize());
+   obj = eo_finalize(eo_super(obj, ELM_CODE_WIDGET_CLASS));
 
    if (pd->code)
      return obj;
@@ -115,7 +115,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   eo_do(widget, gutter = elm_obj_code_widget_text_left_gutter_width_get());
+   gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
 
    if (!pd->code)
      return;
@@ -187,7 +187,7 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
    unsigned int start, end, length, offset;
    unsigned int token_start_col, token_end_col;
 
-   eo_do(widget, offset = elm_obj_code_widget_text_left_gutter_width_get());
+   offset = elm_obj_code_widget_text_left_gutter_width_get(widget);
    start = offset;
    length = elm_code_widget_line_text_column_width_get(widget, line) + offset;
 
@@ -342,7 +342,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   eo_do(widget, gutter = elm_obj_code_widget_text_left_gutter_width_get());
+   gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
 
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
    cells = evas_object_textgrid_cellrow_get(pd->grid, line->number - 1);
@@ -395,7 +395,7 @@ _elm_code_widget_empty_line(Elm_Code_Widget *widget, unsigned int number)
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   eo_do(widget, gutter = elm_obj_code_widget_text_left_gutter_width_get());
+   gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
 
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
    cells = evas_object_textgrid_cellrow_get(pd->grid, number - 1);
@@ -483,7 +483,7 @@ _elm_code_widget_line_cb(void *data, const Eo_Event *event)
    line = (Elm_Code_Line *)event->event_info;
    widget = (Elm_Code_Widget *)data;
 
-   eo_do(widget, visible = elm_obj_code_widget_line_visible_get(line));
+   visible = elm_obj_code_widget_line_visible_get(widget, line);
    if (!visible)
      return EO_CALLBACK_CONTINUE;
 
@@ -602,7 +602,7 @@ _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
    elm_scroller_region_get(pd->scroller, &viewx, &viewy, &vieww, &viewh);
    evas_object_textgrid_cell_size_get(pd->grid, &cellw, &cellh);
 
-   eo_do(widget, gutter = elm_obj_code_widget_text_left_gutter_width_get());
+   gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
    curx = (pd->cursor_col + gutter - 1) * cellw;
    cury = (pd->cursor_line - 1) * cellh;
 
@@ -626,7 +626,7 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
    if (!was_key)
      _elm_code_widget_update_focus_directions(widget);
 
-   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CURSOR_CHANGED, widget));
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_CURSOR_CHANGED, widget);
    _elm_code_widget_cursor_ensure_visible(widget);
 
    if (oldrow != pd->cursor_line)
@@ -656,7 +656,7 @@ _elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *widget, Elm_Code_W
    y = y + sy - oy;
 
    evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
-   eo_do(widget, gutter = elm_obj_code_widget_text_left_gutter_width_get());
+   gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
    number = ((double) y / ch) + 1;
    if (col)
      *col = ((double) x / cw) - gutter + 1;
@@ -679,7 +679,7 @@ _elm_code_widget_clicked_gutter_cb(Elm_Code_Widget *widget, unsigned int row)
    if (!line)
      return;
 
-   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_LINE_GUTTER_CLICKED, line));
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_LINE_GUTTER_CLICKED, line);
 }
 
 static void
@@ -715,7 +715,7 @@ _elm_code_widget_clicked_readonly_cb(Elm_Code_Widget *widget, unsigned int row)
    if (!line)
      return;
 
-   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_LINE_CLICKED, line));
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_LINE_CLICKED, line);
 }
 
 static void
@@ -951,7 +951,7 @@ _elm_code_widget_cursor_move_page_height_get(Elm_Code_Widget *widget)
 {
    unsigned int lines;
 
-   eo_do(widget, lines = elm_obj_code_widget_lines_visible_get());
+   lines = elm_obj_code_widget_lines_visible_get(widget);
    return lines * 0.85;
 }
 
@@ -1068,9 +1068,8 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
    unsigned int row, col, position, col_width;
 
    _elm_code_widget_delete_selection(widget);
-   eo_do(widget,
-         code = elm_obj_code_widget_code_get(),
-         elm_obj_code_widget_cursor_position_get(&col, &row));
+   code = elm_obj_code_widget_code_get(widget);
+   elm_obj_code_widget_cursor_position_get(widget, &col, &row);
    line = elm_code_file_line_get(code->file, row);
    if (line == NULL)
      {
@@ -1084,9 +1083,8 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
    col_width = elm_code_widget_line_text_column_width_to_position(widget, line, position + length) -
                elm_code_widget_line_text_column_width_to_position(widget, line, position);
 
-   eo_do(widget,
-         elm_obj_code_widget_cursor_position_set(col + col_width, row),
-         eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
+   elm_obj_code_widget_cursor_position_set(widget, col + col_width, row);
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    change = _elm_code_widget_change_create(col, row, col + col_width - 1, row, text, length, EINA_TRUE);
    _elm_code_widget_undo_change_add(widget, change);
@@ -1106,8 +1104,7 @@ _elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
         return;
      }
 
-   eo_do(widget,
-         elm_obj_code_widget_cursor_position_get(&col, &row));
+   elm_obj_code_widget_cursor_position_get(widget, &col, &row);
    rem = (col - 1) % pd->tabstop;
 
    while (rem < pd->tabstop)
@@ -1127,9 +1124,8 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    char *oldtext;
 
    _elm_code_widget_delete_selection(widget);
-   eo_do(widget,
-         code = elm_obj_code_widget_code_get(),
-         elm_obj_code_widget_cursor_position_get(&col, &row));
+   code = elm_obj_code_widget_code_get(widget);
+   elm_obj_code_widget_cursor_position_get(widget, &col, &row);
    line = elm_code_file_line_get(code->file, row);
    if (line == NULL)
      {
@@ -1150,10 +1146,9 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    elm_code_line_text_insert(line, 0, oldtext, leading);
    free(oldtext);
 
-   indent = elm_obj_code_widget_line_text_column_width_to_position(line, leading);
-   eo_do(widget,
-         elm_obj_code_widget_cursor_position_set(indent, row + 1),
-         eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
+   indent = elm_obj_code_widget_line_text_column_width_to_position(widget, line, leading);
+   elm_obj_code_widget_cursor_position_set(widget, indent, row + 1);
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    change = _elm_code_widget_change_create(width + 1, row, indent - 1, row + 1, "\n", 1, EINA_TRUE);
    _elm_code_widget_undo_change_add(widget, change);
@@ -1167,9 +1162,8 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
    Elm_Code_Line *line, *oldline;
    unsigned int row, col, oldlength, position;
 
-   eo_do(widget,
-         code = elm_obj_code_widget_code_get(),
-         elm_obj_code_widget_cursor_position_get(&col, &row));
+   code = elm_obj_code_widget_code_get(widget);
+   elm_obj_code_widget_cursor_position_get(widget, &col, &row);
    line = elm_code_file_line_get(code->file, row);
 
    if (nextline)
@@ -1184,11 +1178,10 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 
         position = elm_code_widget_line_text_column_width_to_position(widget, oldline, oldlength);
 
-        eo_do(widget,
-              elm_obj_code_widget_cursor_position_set(position, row - 1));
+        elm_obj_code_widget_cursor_position_set(widget, position, row - 1);
      }
 // TODO construct and pass a change object
-   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
 void
@@ -1203,9 +1196,8 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
    if (_elm_code_widget_delete_selection(widget))
      return; // TODO fire the change and log it
 
-   eo_do(widget,
-         code = elm_obj_code_widget_code_get(),
-         elm_obj_code_widget_cursor_position_get(&col, &row));
+   code = elm_obj_code_widget_code_get(widget);
+   elm_obj_code_widget_cursor_position_get(widget, &col, &row);
 
    if (col <= 1)
      {
@@ -1225,10 +1217,9 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
 
    text = elm_code_widget_text_between_positions_get(widget, start_col, row, start_col, row);
    elm_code_line_text_remove(line, position - char_width, char_width);
-   eo_do(widget,
-         elm_obj_code_widget_cursor_position_set(start_col, row));
+   elm_obj_code_widget_cursor_position_set(widget, start_col, row);
 
-   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    change = _elm_code_widget_change_create(start_col, row, col, row, text, char_width, EINA_FALSE);
    _elm_code_widget_undo_change_add(widget, change);
@@ -1247,9 +1238,8 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
    if (_elm_code_widget_delete_selection(widget))
      return; // TODO fire the change and log it
 
-   eo_do(widget,
-         code = elm_obj_code_widget_code_get(),
-         elm_obj_code_widget_cursor_position_get(&col, &row));
+   code = elm_obj_code_widget_code_get(widget);
+   elm_obj_code_widget_cursor_position_get(widget, &col, &row);
    line = elm_code_file_line_get(code->file, row);
    if (col > elm_code_widget_line_text_column_width_get(widget, line))
      {
@@ -1266,9 +1256,8 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
 
    text = elm_code_widget_text_between_positions_get(widget, start_col, row, start_col, row);
    elm_code_line_text_remove(line, position, char_width?char_width:1);
-   eo_do(widget,
-         elm_obj_code_widget_cursor_position_set(start_col, row),
-         eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
+   elm_obj_code_widget_cursor_position_set(widget, start_col, row);
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    change = _elm_code_widget_change_create(start_col, row, col, row, text, char_width, EINA_FALSE);
    _elm_code_widget_undo_change_add(widget, change);
@@ -1294,9 +1283,8 @@ _elm_code_widget_control_key_down_cb(Elm_Code_Widget *widget, const char *key)
    else if (!strcmp("z", key))
      elm_code_widget_undo(widget);
 
-   eo_do(widget,
-// TODO construct and pass a change object for cut and paste
-         eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
+   // TODO construct and pass a change object for cut and paste
+         eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
 static void
@@ -1692,7 +1680,7 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Evas_Object *grid, *scroller;
 
-   eo_do_super(obj, ELM_CODE_WIDGET_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
 
    elm_layout_file_set(obj, PACKAGE_DATA_DIR "/themes/elm_code.edj", "elm_code/layout/default");
@@ -1723,11 +1711,10 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_smart_callback_add(obj, "focused", _elm_code_widget_focused_event_cb, obj);
    evas_object_smart_callback_add(obj, "unfocused", _elm_code_widget_unfocused_event_cb, obj);
 
-   eo_do(obj,
-         eo_event_callback_add(&ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_widget_line_cb, obj),
-         eo_event_callback_add(&ELM_CODE_EVENT_FILE_LOAD_DONE, _elm_code_widget_file_cb, obj),
-         eo_event_callback_add(ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, _elm_code_widget_selection_cb, obj),
-         eo_event_callback_add(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, _elm_code_widget_selection_clear_cb, obj));
+   eo_event_callback_add(obj, &ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_widget_line_cb, obj);
+   eo_event_callback_add(obj, &ELM_CODE_EVENT_FILE_LOAD_DONE, _elm_code_widget_file_cb, obj);
+   eo_event_callback_add(obj, ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, _elm_code_widget_selection_cb, obj);
+   eo_event_callback_add(obj, ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, _elm_code_widget_selection_clear_cb, obj);
 
    _elm_code_widget_font_set(obj, pd, NULL, 10);
 }

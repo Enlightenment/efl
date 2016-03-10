@@ -66,12 +66,10 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    Elm_Code_Widget *widget;
 
    code = elm_code_create();
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, parent,
-                   elm_obj_code_widget_code_set(code));
-   eo_do(widget,
-         elm_obj_code_widget_font_set(NULL, 12),
-         eo_event_callback_add(&ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_test_line_done_cb, NULL);
-         eo_event_callback_add(ELM_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code));
+   eo_add(&widget, ELM_CODE_WIDGET_CLASS, parent, elm_obj_code_widget_code_set(widget, code));
+   elm_obj_code_widget_font_set(widget, NULL, 12);
+   eo_event_callback_add(widget, &ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_test_line_done_cb, NULL);
+   eo_event_callback_add(widget, ELM_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code);
 
    _append_line(code->file, "❤ Hello World, Elm Code! ❤");
    _append_line(code->file, "");
@@ -96,13 +94,11 @@ _elm_code_test_editor_setup(Evas_Object *parent)
    Elm_Code_Widget *widget;
 
    code = elm_code_create();
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, parent,
-                   elm_obj_code_widget_code_set(code));
-   eo_do(widget,
-         elm_obj_code_widget_font_set(NULL, 14),
-         elm_obj_code_widget_editable_set(EINA_TRUE),
-         elm_obj_code_widget_show_whitespace_set(EINA_TRUE),
-         elm_obj_code_widget_line_numbers_set(EINA_TRUE));
+   eo_add(&widget, ELM_CODE_WIDGET_CLASS, parent, elm_obj_code_widget_code_set(widget, code));
+   elm_obj_code_widget_font_set(widget, NULL, 14);
+   elm_obj_code_widget_editable_set(widget, EINA_TRUE);
+   elm_obj_code_widget_show_whitespace_set(widget, EINA_TRUE);
+   elm_obj_code_widget_line_numbers_set(widget, EINA_TRUE);
 
    _append_line(code->file, "Edit me :)");
    _append_line(code->file, "");
@@ -125,11 +121,9 @@ _elm_code_test_mirror_setup(Elm_Code *code, char *font_name, Evas_Object *parent
 {
    Elm_Code_Widget *widget;
 
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, parent,
-                   elm_obj_code_widget_code_set(code));
-   eo_do(widget,
-         elm_obj_code_widget_font_set(font_name, 11),
-         elm_obj_code_widget_line_numbers_set(EINA_TRUE));
+   eo_add(&widget, ELM_CODE_WIDGET_CLASS, parent, elm_obj_code_widget_code_set(widget, code));
+   elm_obj_code_widget_font_set(widget, font_name, 11);
+   elm_obj_code_widget_line_numbers_set(widget, EINA_TRUE);
 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -150,8 +144,7 @@ _elm_code_test_diff_inline_setup(Evas_Object *parent)
    code = elm_code_create();
    elm_code_file_open(code, path);
 
-   diff = eo_add(ELM_CODE_WIDGET_CLASS, parent,
-                 elm_obj_code_widget_code_set(code));
+   eo_add(&diff, ELM_CODE_WIDGET_CLASS, parent, elm_obj_code_widget_code_set(diff, code));
 
    evas_object_size_hint_weight_set(diff, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(diff, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -206,8 +199,7 @@ _elm_code_test_welcome_mirror_cb(void *data, Evas_Object *obj EINA_UNUSED, void 
    evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    widget = _elm_code_test_editor_setup(screen);
-   eo_do(widget,
-         code = elm_obj_code_widget_code_get());
+   code = elm_obj_code_widget_code_get(widget);
    elm_box_pack_end(screen, widget);
 
    elm_box_pack_end(screen, _elm_code_test_mirror_setup(code, "Mono:style=Oblique", screen));

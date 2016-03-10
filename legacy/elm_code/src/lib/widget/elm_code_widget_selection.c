@@ -62,9 +62,8 @@ elm_code_widget_selection_start(Evas_Object *widget,
 
    pd->selection->start_line = line;
    pd->selection->start_col = col;
-   eo_do(widget,
-         eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget),
-         elm_obj_code_widget_cursor_position_set(col, line));
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
+   elm_obj_code_widget_cursor_position_set(widget, col, line);
 }
 
 EAPI void
@@ -89,7 +88,7 @@ elm_code_widget_selection_end(Evas_Object *widget,
 
    pd->selection->end_line = line;
    pd->selection->end_col = col;
-   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget));
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
 }
 
 EAPI Elm_Code_Widget_Selection_Data *
@@ -145,7 +144,7 @@ elm_code_widget_selection_clear(Evas_Object *widget)
 
    free(pd->selection);
    pd->selection = NULL;
-   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget));
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
 }
 
 static void
@@ -247,7 +246,7 @@ elm_code_widget_selection_delete(Evas_Object *widget)
 
    free(pd->selection);
    pd->selection = NULL;
-   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget));
+   eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
 }
 
 EAPI void
@@ -386,8 +385,7 @@ _selection_paste_single(Elm_Code_Widget *widget, Elm_Code *code,
    elm_code_line_text_insert(line, position, text, len);
 
    newcol = elm_code_widget_line_text_column_width_to_position(widget, line, position + len);
-   eo_do(widget,
-         elm_obj_code_widget_cursor_position_set(newcol, row));
+   elm_obj_code_widget_cursor_position_set(widget, newcol, row);
 }
 
 static void
@@ -436,9 +434,8 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
    if (ev->len <= 0)
      return EINA_TRUE;
 
-   eo_do(widget,
-         code = elm_obj_code_widget_code_get(),
-         elm_obj_code_widget_cursor_position_get(&col, &row));
+   code = elm_obj_code_widget_code_get(widget);
+   elm_obj_code_widget_cursor_position_get(widget, &col, &row);
 
    if (elm_code_text_newlinenpos(ev->data, ev->len, NULL) == ELM_CODE_TEXT_NOT_FOUND)
      _selection_paste_single(widget, code, col, row, ev->data, ev->len - 1);
