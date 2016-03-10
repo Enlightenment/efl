@@ -1927,6 +1927,7 @@ void _evas_device_unref(Evas_Device *dev);
 Eina_Bool evas_vg_loader_svg(Evas_Object *vg, const Eina_File *f, const char *key EINA_UNUSED);
 
 void *_evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj);
+Eina_Bool _evas_image_proxy_source_clip_get(const Eo *eo_obj);
 
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;

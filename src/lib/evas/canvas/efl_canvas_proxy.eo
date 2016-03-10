@@ -67,7 +67,7 @@ class Efl.Canvas.Proxy (Evas.Image, Efl.Gfx.Base, Efl.Image, Efl.Gfx.Buffer, Efl
          set {}
          get {}
          values {
-            source: bool; [[Whether this object should pass events ($true) or not
+            repeat: bool; [[Whether this object should pass events ($true) or not
                             ($false) to its source.]]
          }
       }

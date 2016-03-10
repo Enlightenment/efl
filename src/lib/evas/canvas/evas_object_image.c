@@ -1944,120 +1944,6 @@ _evas_canvas_image_max_size_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int *
    return EINA_TRUE;
 }
 
-void
-_evas_image_proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *cur_proxy, Evas_Image_Data *o)
-{
-   Evas_Object_Protected_Data *cur_source;
-
-   if (!o->cur->source) return;
-
-   cur_source = eo_data_scope_get(o->cur->source, EVAS_OBJECT_CLASS);
-
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, cur_source->proxy, Evas_Object_Proxy_Data, proxy_source_write)
-     {
-       proxy_source_write->proxies = eina_list_remove(proxy_source_write->proxies,
-						      proxy);
-
-       if (eina_list_count(proxy_source_write->proxies) == 0)
-          {
-             if (proxy_source_write->surface)
-               cur_proxy->layer->evas->engine.func->image_free(cur_proxy->layer->evas->engine.data.output,
-                                                               proxy_source_write->surface);
-             proxy_source_write->surface = NULL;
-             proxy_source_write->redraw = EINA_FALSE;
-          }
-
-       if (proxy_source_write->src_invisible)
-	 {
-	   proxy_source_write->src_invisible = EINA_FALSE;
-	   cur_source->changed_src_visible = EINA_TRUE;
-	   evas_object_change(o->cur->source, cur_source);
-	   evas_object_smart_member_cache_invalidate(o->cur->source, EINA_FALSE,
-						     EINA_FALSE, EINA_TRUE);
-	 }
-     }
-   EINA_COW_WRITE_END(evas_object_proxy_cow, cur_source->proxy, proxy_source_write);
-
-   if (o->cur->source)
-     {
-        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-          state_write->source = NULL;
-        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
-     }
-
-   if (o->cur->defmap)
-     {
-        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-          {
-             evas_map_free(state_write->defmap);
-             state_write->defmap = NULL;
-          }
-        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
-     }
-
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, cur_source->proxy, Evas_Object_Proxy_Data, proxy_write)
-     proxy_write->is_proxy = EINA_FALSE;
-   EINA_COW_WRITE_END(evas_object_proxy_cow, cur_proxy->proxy, proxy_write);
-}
-
-void
-_evas_image_proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
-{
-   Evas_Object_Protected_Data *src = eo_data_scope_get(eo_src, EVAS_OBJECT_CLASS);
-   Evas_Object_Protected_Data *proxy = eo_data_scope_get(eo_proxy, EVAS_OBJECT_CLASS);
-   Evas_Image_Data *o = eo_data_scope_get(eo_proxy, MY_CLASS);
-
-   evas_object_image_file_set(eo_proxy, NULL, NULL);
-
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy, Evas_Object_Proxy_Data, proxy_write)
-     proxy_write->is_proxy = EINA_TRUE;
-   EINA_COW_WRITE_END(evas_object_proxy_cow, proxy->proxy, proxy_write);
-
-   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-     state_write->source = eo_src;
-   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
-   o->load_error = EVAS_LOAD_ERROR_NONE;
-   o->proxyerror = 0;
-
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_src_write)
-     {
-        if (!eina_list_data_find(proxy_src_write->proxies, eo_proxy))
-          proxy_src_write->proxies = eina_list_append(proxy_src_write->proxies,
-                                                      eo_proxy);
-        proxy_src_write->redraw = EINA_TRUE;
-     }
-   EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_src_write);
-}
-
-/* Some moron just set a proxy on a proxy.
- * Give them some pixels.  A random color
- */
-void
-_evas_image_proxy_error(Evas_Object *eo_proxy, void *context, void *output, void *surface,
-             int x, int y, Eina_Bool do_async)
-{
-   Evas_Image_Data *o = eo_data_scope_get(eo_proxy, MY_CLASS);
-   Evas_Object_Protected_Data *proxy;
-   Evas_Func *func;
-
-   if (!o->proxyerror)
-     {
-        ERR("Using recursive proxies! Don't set a proxy's source as another proxy!");
-        o->proxyerror = 1;
-     }
-
-   proxy = eo_data_scope_get(eo_proxy, EVAS_OBJECT_CLASS);
-   func = proxy->layer->evas->engine.func;
-   func->context_color_set(output, context, 0, 0, 0, 255);
-   func->context_multiplier_unset(output, context);
-   func->context_render_op_set(output, context, proxy->cur->render_op);
-   func->rectangle_draw(output, context, surface, proxy->cur->geometry.x + x,
-                        proxy->cur->geometry.y + y,
-                        proxy->cur->geometry.w,
-                        proxy->cur->geometry.h,
-                        do_async);
-}
-
 static void
 evas_object_image_unload(Evas_Object *eo_obj, Eina_Bool dirty)
 {
@@ -4021,13 +3907,6 @@ evas_object_image_filled_resize_listener(void *data EINA_UNUSED, Evas *e EINA_UN
    evas_object_image_fill_set(obj, 0, 0, w, h);
 }
 
-Evas_Object *
-_evas_object_image_source_get(Evas_Object *eo_obj)
-{
-   Evas_Image_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
-   return o->cur->source;
-}
-
 Eina_Bool
 _evas_object_image_preloading_get(const Evas_Object *eo_obj)
 {
@@ -4789,42 +4668,49 @@ EAPI Eina_Bool
 evas_object_image_source_set(Evas_Object *eo, Evas_Object *src)
 {
    EVAS_OBJECT_LEGACY_API(eo, EINA_FALSE);
-   return efl_canvas_proxy_source_set(eo, src);
+   return _evas_image_proxy_source_set(eo, src);
 }
 
 EAPI Evas_Object *
 evas_object_image_source_get(const Evas_Object *eo)
 {
    EVAS_OBJECT_LEGACY_API(eo, NULL);
-   return efl_canvas_proxy_source_get(eo);
+   return _evas_image_proxy_source_get(eo);
+}
+
+EAPI Eina_Bool
+evas_object_image_source_unset(Evas_Object *eo_obj)
+{
+   EVAS_OBJECT_LEGACY_API(eo_obj, EINA_FALSE);
+   return _evas_image_proxy_source_set(eo_obj, NULL);
 }
 
 EAPI void
 evas_object_image_source_clip_set(Evas_Object *eo, Eina_Bool source_clip)
 {
    EVAS_OBJECT_LEGACY_API(eo);
-   efl_canvas_proxy_source_clip_set(eo, source_clip);
+   _evas_image_proxy_source_clip_set(eo, source_clip);
 }
 
 EAPI Eina_Bool
 evas_object_image_source_clip_get(const Evas_Object *eo)
 {
    EVAS_OBJECT_LEGACY_API(eo, EINA_FALSE);
-   return efl_canvas_proxy_source_clip_get(eo);
+   return _evas_image_proxy_source_clip_get(eo);
 }
 
 EAPI void
 evas_object_image_source_events_set(Evas_Object *eo, Eina_Bool repeat)
 {
    EVAS_OBJECT_LEGACY_API(eo);
-   efl_canvas_proxy_source_events_set(eo, repeat);
+   _evas_image_proxy_source_events_set(eo, repeat);
 }
 
 EAPI Eina_Bool
 evas_object_image_source_events_get(const Evas_Object *eo)
 {
    EVAS_OBJECT_LEGACY_API(eo, EINA_FALSE);
-   return efl_canvas_proxy_source_events_get(eo);
+   return _evas_image_proxy_source_events_get(eo);
 }
 
 EAPI void
@@ -4881,13 +4767,6 @@ evas_object_image_source_visible_get(const Evas_Object *eo)
    else visible = EINA_FALSE;
 
    return visible;
-}
-
-EAPI Eina_Bool
-evas_object_image_source_unset(Evas_Object *eo_obj)
-{
-   EVAS_OBJECT_LEGACY_API(eo_obj, EINA_FALSE);
-   return efl_canvas_proxy_source_set(eo_obj, NULL);
 }
 
 #include "canvas/evas_image.eo.c"
