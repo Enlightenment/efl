@@ -101,7 +101,9 @@ static int interactive = 1;
 static const char *theme_set = NULL;
 static const char *finger_size_set = NULL;
 static const char *scale_set = NULL;
+static const char *web_backend = NULL;
 static Fonts_Data fndata = {NULL, NULL, NULL, NULL, NULL, NULL, 0.0};
+static Evas_Object *web_backend_entry = NULL;
 
 static void
 _font_styles_list_sel(void *data   EINA_UNUSED,
@@ -1820,7 +1822,7 @@ static void
 _status_config_etc(Evas_Object *win,
                    Evas_Object *naviframe)
 {
-   Evas_Object *bx, *ck, *sl, *fr, *bx2;
+   Evas_Object *bx, *ck, *sl, *fr, *bx2, *fr2, *bx3, *en;
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
@@ -1867,6 +1869,29 @@ _status_config_etc(Evas_Object *win,
    evas_object_show(sl);
    evas_object_smart_callback_add(sl, "changed", sc_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", transition_duration_change, NULL);
+
+   // Web backend
+   fr2 = elm_frame_add(bx);
+   elm_object_text_set(fr2, "Elm_Web backend");
+   evas_object_size_hint_weight_set(fr2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr2, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, fr2);
+   evas_object_show(fr2);
+
+   bx3 = elm_box_add(fr2);
+   elm_object_content_set(fr2, bx3);
+   evas_object_show(bx3);
+
+   en = elm_entry_add(win);
+   elm_entry_editable_set(en, EINA_TRUE);
+   elm_entry_scrollable_set(en, EINA_FALSE);
+   elm_object_text_set(en, elm_config_web_backend_get());
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(en);
+   elm_box_pack_end(bx3, en);
+
+   web_backend_entry = en;
 
    evas_object_data_set(win, "etc", bx);
 
@@ -4012,6 +4037,7 @@ elm_main(int    argc,
                     "  -t THEME          Set theme to THEME (ELM_THEME spec)\n"
                     "  -f SIZE           Set finger size to SIZE pixels\n"
                     "  -s SCALE          Set scale factor to SCALE\n"
+                    "  -w WEB_BACKEND    Set the web backend to be used\n"
                     );
           }
         else if (!strcmp(argv[i], "-q"))
@@ -4037,6 +4063,12 @@ elm_main(int    argc,
              scale_set = argv[i];
              interactive = 0;
           }
+        else if ((!strcmp(argv[i], "-w")) && (i < argc - 1))
+          {
+             i++;
+             web_backend = argv[i];
+             interactive = 0;
+          }
      }
    /* put here any init code specific to this app like parsing args, etc. */
    if (!quiet)
@@ -4052,7 +4084,8 @@ elm_main(int    argc,
      {
         if (theme_set) elm_theme_set(NULL, theme_set);
         if (finger_size_set) elm_config_finger_size_set(atoi(finger_size_set));
-        if (scale_set)  elm_config_scale_set(atof(scale_set));
+        if (scale_set) elm_config_scale_set(atof(scale_set));
+        if (web_backend) elm_config_web_backend_set(web_backend);
 
         elm_config_all_flush();
 
@@ -4061,6 +4094,21 @@ elm_main(int    argc,
    elm_run(); /* and run the program now and handle all events, etc. */
    /* if the mainloop that elm_run() runs exists, we exit the app */
    /* exit code */
+
+   if (interactive)
+     {
+        const char *web_backend_set = elm_config_web_backend_get();
+
+        web_backend = elm_object_text_get(web_backend_entry);
+        fprintf(stderr, "[%s] vs [%s]\n", web_backend, web_backend_set);
+        if (strcmp(web_backend, web_backend_set))
+          {
+             elm_config_web_backend_set(web_backend);
+             fprintf(stderr, "web backend set to : [%s]\n", elm_config_web_backend_get());
+             elm_config_all_flush();
+          }
+     }
+
    return 0;
 }
 /* All elementary apps should use this. Put it right after elm_main() */
