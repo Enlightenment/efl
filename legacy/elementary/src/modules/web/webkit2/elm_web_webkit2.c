@@ -127,6 +127,11 @@ static Ewk_View_Smart_Class _ewk_view_parent_sc =
 
 static int _webkit2_log_dom = -1;
 
+#undef CRI
+#undef ERR
+#undef WRN
+#undef INF
+#undef DBG
 #define CRI(...)      EINA_LOG_DOM_CRIT(_webkit2_log_dom, __VA_ARGS__)
 #define ERR(...)      EINA_LOG_DOM_ERR(_webkit2_log_dom, __VA_ARGS__)
 #define WRN(...)      EINA_LOG_DOM_WARN(_webkit2_log_dom, __VA_ARGS__)
