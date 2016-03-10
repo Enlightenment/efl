@@ -235,7 +235,7 @@ _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_READ))
      {
         ret = wl_display_dispatch(ewd->wl.display);
-        if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
+        if ((ret < 0) && (errno != EAGAIN))
           {
              ERR("Received Fatal Error on Wayland Display");
 
@@ -252,7 +252,7 @@ _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
         if (ret == 0)
           ecore_main_fd_handler_active_set(hdl, ECORE_FD_READ);
 
-        if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
+        if ((ret < 0) && (errno != EAGAIN))
           {
              ERR("Received Fatal Error on Wayland Display");
 
@@ -303,7 +303,7 @@ _cb_connect_idle(void *data)
    return ECORE_CALLBACK_RENEW;
 
 err:
-   if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
+   if ((ret < 0) && (errno != EAGAIN))
      {
         ERR("Wayland Socket Error: %s", strerror(errno));
 
