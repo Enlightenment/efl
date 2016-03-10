@@ -4217,9 +4217,9 @@ process_color_tree(char *s, const char *f_in, int ln)
    Eina_List *l;
    char *name;
 
-   array = eina_array_new(4);
-
    if (!s) return;
+
+   array = eina_array_new(4);
 
    do
      {
