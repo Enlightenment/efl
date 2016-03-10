@@ -3076,7 +3076,7 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
 {
    Ecore_Evas *subee;
    Eina_List *l;
-   Efl_Core_Event_Animator_Tick a = { { 0, 0, 0, 0 } };
+   Efl_Event_Animator_Tick a = { { 0, 0, 0, 0 } };
 
    if (!viewport)
      {
@@ -3087,7 +3087,7 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
         a.update_area = *viewport;
      }
 
-   eo_event_callback_call(ee->evas, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, &a);
+   eo_event_callback_call(ee->evas, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, &a);
 
    // FIXME: We do not support partial animator in the subcanvas
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, subee)
@@ -3147,7 +3147,7 @@ _check_animator_event_catcher_add(void *data, const Eo_Event *event)
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (array[i].desc == EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK)
+        if (array[i].desc == EFL_ANIMATOR_EVENT_ANIMATOR_TICK)
           {
              if (ee->anim_count++ > 0) return EO_CALLBACK_CONTINUE;
              INF("Setting up animator for %p from '%s' with title '%s'.", ee->evas, ee->driver, ee->prop.title);
@@ -3183,7 +3183,7 @@ _check_animator_event_catcher_del(void *data, const Eo_Event *event)
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (array[i].desc == EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK)
+        if (array[i].desc == EFL_ANIMATOR_EVENT_ANIMATOR_TICK)
           {
              if ((--ee->anim_count) > 0) return EO_CALLBACK_CONTINUE;
 

@@ -87,7 +87,7 @@ _animator_repeater(void *data, const Eo_Event *event)
 {
    Evas_Object_Protected_Data *obj = data;
 
-   eo_event_callback_call(obj->object, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, event->event_info);
+   eo_event_callback_call(obj->object, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, event->event_info);
    DBG("Emitting animator tick on %p.", obj->object);
 
    return EO_CALLBACK_CONTINUE;
@@ -102,11 +102,11 @@ _check_event_catcher_add(void *data, const Eo_Event *event)
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (array[i].desc == EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK)
+        if (array[i].desc == EFL_ANIMATOR_EVENT_ANIMATOR_TICK)
           {
              if (obj->animator_ref++ > 0) break;
 
-             eo_event_callback_add(obj->layer->evas->evas, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             eo_event_callback_add(obj->layer->evas->evas, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
              INF("Registering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }
@@ -128,11 +128,11 @@ _check_event_catcher_del(void *data, const Eo_Event *event)
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (array[i].desc == EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK)
+        if (array[i].desc == EFL_ANIMATOR_EVENT_ANIMATOR_TICK)
           {
              if ((--obj->animator_ref) > 0) break;
 
-             eo_event_callback_del(obj->layer->evas->evas, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             eo_event_callback_del(obj->layer->evas->evas, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
              INF("Unregistering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }
