@@ -143,7 +143,7 @@ _internal_resource_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context 
           {
              // Do Nothing
           }
-        else if (ctx->pixmap_image_supported) // Pixmap surface
+        else if ((ctx) && (ctx->pixmap_image_supported)) // Pixmap surface
           {
              if (!sfc->indirect_sfc)
                {
