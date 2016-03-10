@@ -456,7 +456,7 @@ ecore_wl2_display_create(const char *name)
 
    ewd->fd_hdl =
      ecore_main_fd_handler_add(wl_event_loop_get_fd(loop),
-                               ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR,
+                               ECORE_FD_READ | ECORE_FD_ERROR,
                                _cb_create_data, ewd, NULL, NULL);
 
    ecore_main_fd_handler_prepare_callback_set(ewd->fd_hdl,
@@ -567,7 +567,7 @@ ecore_wl2_display_connect(const char *name)
 
    ewd->fd_hdl =
      ecore_main_fd_handler_add(wl_display_get_fd(ewd->wl.display),
-                               ECORE_FD_READ | ECORE_FD_ERROR,
+                               ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR,
                                _cb_connect_data, ewd, NULL, NULL);
 
    ewd->idle_enterer = ecore_idle_enterer_add(_cb_connect_idle, ewd);
