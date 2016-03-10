@@ -7,7 +7,7 @@ EDJE_CC_FLAGS += -id $(top_srcdir)/data/objects -fd $(top_srcdir)/data/objects
 
 filesdir = $(datadir)/elementary/objects
 
-files_DATA = test.edj test_external.edj multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj test_prefs.edj test_prefs.epb test_focus_style.edj
+files_DATA = test.edj test_external.edj multip.edj cursors.edj combobox_multiple.edj font_preview.edj postit_ent.edj multibuttonentry.edj test_prefs.edj test_prefs.epb test_focus_style.edj
 
 EXTRA_DIST = \
 test.edc \
@@ -16,6 +16,7 @@ test_prefs.edc \
 test_prefs.epc \
 multip.edc \
 cursors.edc \
+combobox_multiple.edc \
 font_preview.edc \
 postit_ent.edc \
 multibuttonentry.edc \
@@ -56,6 +57,11 @@ cursors.edj: Makefile $(EXTRA_DIST)
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) \
 	$(top_srcdir)/data/objects/cursors.edc \
 	$(top_builddir)/data/objects/cursors.edj
+
+combobox_multiple.edj: Makefile combobox_multiple.edc
+	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) \
+	$(top_srcdir)/data/objects/combobox_multiple.edc \
+	$(top_builddir)/data/objects/combobox_multiple.edj
 
 font_preview.edj: Makefile $(EXTRA_DIST)
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) \

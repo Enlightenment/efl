@@ -1,6 +1,6 @@
 class Elm.Combobox (Elm.Button, Evas.Selectable_Interface,
                     Elm.Interface_Atspi_Widget_Action,
-                    Elm.Entry, Elm.Genlist, Elm.Hover)
+                    Elm.Entry, Elm.Genlist, Elm.Hover, Elm.Multibuttonentry)
 {
    eo_prefix: elm_obj_combobox;
    methods {
@@ -14,6 +14,25 @@ class Elm.Combobox (Elm.Button, Evas.Selectable_Interface,
               @since 1.17
             ]]
             return: bool;
+         }
+      }
+      @property multiple_selection {
+         get {
+            [[Returns whether the combobox allows multiple selection.
+              @since 1.18
+            ]]
+         }
+         set {
+            [[Enables or disables multiple selection in combobox.
+
+              Warning: This API should be set before any other API on
+              combobox, if you wish to avoid complications.
+              @since 1.18
+            ]]
+         }
+         values {
+            enabled: bool; [[$true if multiple selection is enabled,
+            $false otherwise.]]
          }
       }
       hover_begin {

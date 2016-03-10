@@ -33,6 +33,7 @@ struct _Elm_Combobox_Data
    Evas_Object          *entry;
    Evas_Object          *tbl;
    Evas_Object          *spacer;
+   Evas_Object          *mbe;
    Elm_Object_Item      *item;
    const char           *style;
    const char           *best_location;
@@ -40,6 +41,7 @@ struct _Elm_Combobox_Data
    int                   item_height;
    Eina_Bool             expanded:1;
    Eina_Bool             first_filter:1;
+   Eina_Bool             multiple_selection:1;
 };
 
 /**
