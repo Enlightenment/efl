@@ -31,6 +31,7 @@ _ector_cairo_surface_symbol_get(Eo *obj EINA_UNUSED,
                }                                \
           }
 #if defined(_WIN32) || defined(__CYGWIN__)
+        LOAD("libcairo-2.dll");
         LOAD("libcairo.dll");
 #elif defined(__APPLE__) && defined(__MACH__)
         LOAD("libcairo.dylib");
