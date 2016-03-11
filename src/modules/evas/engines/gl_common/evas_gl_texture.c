@@ -1446,7 +1446,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 }
 
 void
-evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force EINA_UNUSED)
+evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force)
 {
    if (!tex) return;
    if (force)
