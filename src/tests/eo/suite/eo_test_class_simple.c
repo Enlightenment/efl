@@ -48,7 +48,7 @@ _class_hi_print(Eo_Class *klass, void *data EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EO_FUNC_BODYV(simple_part_get, Eo *, NULL, EO_FUNC_CALL(name), const char *name);
+EO_FUNC_BODYV(simple_part_get, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, Eo *, NULL, EO_FUNC_CALL(name), const char *name);
 
 static Eo *
 _part_get(Eo *obj, void *class_data EINA_UNUSED, const char *name EINA_UNUSED)
@@ -57,7 +57,7 @@ _part_get(Eo *obj, void *class_data EINA_UNUSED, const char *name EINA_UNUSED)
    return eo_add(SIMPLE_CLASS, obj);
 }
 
-EO_VOID_FUNC_BODYV(simple_recursive, EO_FUNC_CALL(n), int n);
+EO_VOID_FUNC_BODYV(simple_recursive, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, EO_FUNC_CALL(n), int n);
 
 static void
 _recursive(Eo *obj, void *class_data EINA_UNUSED, int n)
@@ -81,12 +81,12 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, Eo_Dbg_Info *root)
    EO_DBG_INFO_APPEND(group, "Test", EINA_VALUE_TYPE_INT, 8);
 }
 
-EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
-EO_FUNC_BODY(simple_a_get, int, 0);
-EO_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
-EO_FUNC_BODY_CONST(simple_class_hi_print, Eina_Bool, EINA_FALSE);
-EO_VOID_FUNC_BODY(simple_pure_virtual);
-EO_VOID_FUNC_BODY(simple_no_implementation);
+EO_VOID_FUNC_BODYV(simple_a_set, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, EO_FUNC_CALL(a), int a);
+EO_FUNC_BODY(simple_a_get, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, int, 0);
+EO_FUNC_BODY(simple_a_print, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, Eina_Bool, EINA_FALSE);
+EO_FUNC_BODY_CONST(simple_class_hi_print, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, Eina_Bool, EINA_FALSE);
+EO_VOID_FUNC_BODY(simple_pure_virtual, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK);
+EO_VOID_FUNC_BODY(simple_no_implementation, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(eo_dbg_info_get, _dbg_info_get),

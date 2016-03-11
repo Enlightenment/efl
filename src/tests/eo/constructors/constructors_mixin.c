@@ -35,7 +35,7 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED)
    my_init_count--;
 }
 
-EAPI EO_VOID_FUNC_BODYV(mixin_add_and_print, EO_FUNC_CALL(x), int x);
+EAPI EO_VOID_FUNC_BODYV(mixin_add_and_print, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, EO_FUNC_CALL(x), int x);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(mixin_add_and_print, _add_and_print_set),

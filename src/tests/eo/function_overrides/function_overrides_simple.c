@@ -51,10 +51,10 @@ _class_print2(Eo_Class *klass, void *class_data EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
-EAPI EO_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
-EAPI EO_FUNC_BODY_CONST(simple_class_print, Eina_Bool, EINA_FALSE);
-EAPI EO_FUNC_BODY_CONST(simple_class_print2, Eina_Bool, EINA_FALSE);
+EAPI EO_VOID_FUNC_BODYV(simple_a_set, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, EO_FUNC_CALL(a), int a);
+EAPI EO_FUNC_BODY(simple_a_print, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, Eina_Bool, EINA_FALSE);
+EAPI EO_FUNC_BODY_CONST(simple_class_print, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, Eina_Bool, EINA_FALSE);
+EAPI EO_FUNC_BODY_CONST(simple_class_print2, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, Eina_Bool, EINA_FALSE);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_a_set, _a_set),

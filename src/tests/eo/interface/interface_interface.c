@@ -8,7 +8,7 @@
 
 #define MY_CLASS INTERFACE_CLASS
 
-EO_FUNC_BODY(interface_ab_sum_get, int, 0);
+EO_FUNC_BODY(interface_ab_sum_get, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, int, 0);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(interface_ab_sum_get, NULL),

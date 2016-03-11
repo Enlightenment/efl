@@ -31,8 +31,8 @@ _##name##_set(Eo *obj EINA_UNUSED, void *class_data, int name) \
    pd->name = name; \
    printf("%s %d\n", __func__, pd->name); \
 } \
-EO_VOID_FUNC_BODYV(simple_##name##_set, EO_FUNC_CALL(name), int name); \
-EO_FUNC_BODY(simple_##name##_get, int, 0);
+EO_VOID_FUNC_BODYV(simple_##name##_set, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, EO_FUNC_CALL(name), int name); \
+EO_FUNC_BODY(simple_##name##_get, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, int, 0);
 
 _GET_SET_FUNC(a)
 _GET_SET_FUNC(b)
@@ -83,7 +83,7 @@ _class_destructor(Eo_Class *klass EINA_UNUSED)
    free(class_var);
 }
 
-EO_VOID_FUNC_BODYV(simple_constructor, EO_FUNC_CALL(a), int a);
+EO_VOID_FUNC_BODYV(simple_constructor, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, EO_FUNC_CALL(a), int a);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),

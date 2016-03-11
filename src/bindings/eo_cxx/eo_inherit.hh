@@ -30,7 +30,7 @@ Eo_Class const* create_class(eina::index_sequence<S...>);
 /// @param this_ The <em>user data</em> to be passed to the resolved function.
 /// @param args An heterogeneous sequence of arguments.
 ///
-inline EOAPI EO_VOID_FUNC_BODYV(inherit_constructor, EO_FUNC_CALL(this_), void* this_);
+inline EOAPI EO_VOID_FUNC_BODYV(inherit_constructor, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, EO_FUNC_CALL(this_), void* this_);
 
 }
 

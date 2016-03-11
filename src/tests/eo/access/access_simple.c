@@ -30,7 +30,7 @@ _a_set(Eo *obj, void *class_data, int a)
    eo_event_callback_call(obj, EV_A_CHANGED, &pd->a);
 }
 
-EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
+EAPI EO_VOID_FUNC_BODYV(simple_a_set, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, EO_FUNC_CALL(a), int a);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_a_set, _a_set),
