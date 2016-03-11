@@ -122,11 +122,6 @@ class Elm.Glview (Elm.Widget)
             policy: Elm.GLView.Resize.Policy; [[The scaling policy.]]
          }
       }
-      @property draw_request {
-         set {
-            [[Notifies that there has been changes in the GLView.]]
-         }
-      }
       @property resize_func {
          set {
             [[Set the resize function that gets called when resize happens.
@@ -208,7 +203,7 @@ class Elm.Glview (Elm.Widget)
 
               The render function gets called in the main loop but whether
               it runs depends on the rendering policy and whether
-              @.draw_request.set gets called.
+              @.draw_request called.
             ]]
          }
          values {
@@ -248,6 +243,9 @@ class Elm.Glview (Elm.Widget)
             ]]
             return: int; [[A window rotation in degrees (0, 90, 180 or 270).]]
          }
+      }
+      draw_request {
+         [[Notifies that there has been changes in the GLView.]]
       }
    }
    implements {
