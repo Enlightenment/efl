@@ -7333,7 +7333,7 @@ elm_genlist_item_cursor_engine_only_get(const Elm_Object_Item *eo_it)
 EOLIAN static int
 _elm_genlist_item_index_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
-   int cnt = 0;
+   int cnt = 1;
    Elm_Gen_Item *tmp;
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it, -1);
 

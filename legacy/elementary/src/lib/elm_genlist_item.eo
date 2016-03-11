@@ -170,7 +170,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                 get {
                      [[Get the index of the item. It is only valid once displayed.
 
-                       The index start from 0.
+                       The index start from 1.
                      ]]
                 }
                 values {
