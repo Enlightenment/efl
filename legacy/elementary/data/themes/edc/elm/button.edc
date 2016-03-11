@@ -91,13 +91,11 @@ group { name: "elm/button/base/default";
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
-               set_state(PART:"elm.text", "icononly", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
-               set_state(PART:"elm.text", "icononly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
@@ -470,14 +468,12 @@ group { name: "elm/button/base/anchor";
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
-               set_state(PART:"elm.text", "icononly", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"bar", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
-               set_state(PART:"elm.text", "icononly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"bar", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -1089,13 +1085,11 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
-               set_state(PART:"elm.text", "icononly", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
-               set_state(PART:"elm.text", "icononly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
