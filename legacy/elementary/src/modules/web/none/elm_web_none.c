@@ -19,6 +19,19 @@ struct _Elm_Web_None_Data
 {
 };
 
+static int _none_log_dom = -1;
+
+#undef CRI
+#undef ERR
+#undef WRN
+#undef INF
+#undef DBG
+#define CRI(...)      EINA_LOG_DOM_CRIT(_none_log_dom, __VA_ARGS__)
+#define ERR(...)      EINA_LOG_DOM_ERR(_none_log_dom, __VA_ARGS__)
+#define WRN(...)      EINA_LOG_DOM_WARN(_none_log_dom, __VA_ARGS__)
+#define INF(...)      EINA_LOG_DOM_INFO(_none_log_dom, __VA_ARGS__)
+#define DBG(...)      EINA_LOG_DOM_DBG(_none_log_dom, __VA_ARGS__)
+
 EOLIAN static Eina_Bool
 _elm_web_none_elm_web_tab_propagate_get(Eo *obj EINA_UNUSED, Elm_Web_None_Data *sd EINA_UNUSED)
 {
@@ -329,6 +342,8 @@ ewm_unneed_web(void)
 EAPI Eina_Bool
 ewm_need_web(void)
 {
+   if (_none_log_dom == -1)
+     _none_log_dom =  eina_log_domain_register("elm_none", EINA_COLOR_LIGHTBLUE);
    return EINA_TRUE;
 }
 

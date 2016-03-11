@@ -2,9 +2,6 @@ class Elm.Web.None (Elm.Web)
 {
    implements {
       Evas.Object_Smart.add;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus;
-      Elm.Widget.event;
       Elm.Web.tab_propagate.get;
       Elm.Web.tab_propagate.set;
       Elm.Web.webkit_view.get;
