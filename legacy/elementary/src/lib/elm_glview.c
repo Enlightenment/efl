@@ -308,14 +308,6 @@ elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version)
    return obj;
 }
 
-EAPI void
-elm_glview_changed_set(Evas_Object *obj)
-{
-   ELM_GLVIEW_CHECK(obj);
-
-   elm_glview_draw_request(obj);
-}
-
 EOLIAN static void
 _elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
                                 Evas_GL_Context_Version version)
@@ -470,7 +462,7 @@ _elm_glview_render_policy_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Render_Po
 }
 
 EOLIAN static void
-_elm_glview_size_set(Eo *obj, Elm_Glview_Data *sd, int w, int h)
+_elm_glview_efl_gfx_view_view_size_set(Eo *obj, Elm_Glview_Data *sd, int w, int h)
 {
    if ((w == sd->w) && (h == sd->h)) return;
 
@@ -482,7 +474,7 @@ _elm_glview_size_set(Eo *obj, Elm_Glview_Data *sd, int w, int h)
 }
 
 EOLIAN static void
-_elm_glview_size_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd, int *w, int *h)
+_elm_glview_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd, int *w, int *h)
 {
    if (w) *w = sd->w;
    if (h) *h = sd->h;
@@ -545,4 +537,25 @@ _elm_glview_class_constructor(Eo_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+/* Legacy wrappers */
+
+EAPI void
+elm_glview_changed_set(Evas_Object *obj)
+{
+   ELM_GLVIEW_CHECK(obj);
+
+   elm_glview_draw_request(obj);
+}
+
+EAPI void
+elm_glview_size_get(const Elm_Glview *obj, int *w, int *h)
+{
+   efl_gfx_view_size_get(obj, w, h);
+}
+
+EAPI void
+elm_glview_size_set(Elm_Glview *obj, int w, int h)
+{
+   efl_gfx_view_size_set(obj, w, h);
+}
 #include "elm_glview.eo.c"

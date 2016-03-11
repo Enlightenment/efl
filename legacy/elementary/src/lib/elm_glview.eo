@@ -76,7 +76,7 @@ enum Elm.GLView.Render.Policy
    always    = 2  [[Render always even when it is not visible]]
 }
 
-class Elm.Glview (Elm.Widget)
+class Elm.Glview (Elm.Widget, Efl.Gfx.View)
 {
    eo_prefix: elm_obj_glview;
    methods {
@@ -85,24 +85,6 @@ class Elm.Glview (Elm.Widget)
          legacy: null;
          params {
             @in version: Evas_GL_Context_Version;
-         }
-      }
-      @property size {
-         set {
-            [[Sets the size of the glview.]]
-         }
-         get {
-            [[Get the size of the glview.
-
-              Note: This function returns the actual image size of the
-              glview. This means that when the scale policy is set to
-              #ELM_GLVIEW_RESIZE_POLICY_SCALE, it'll return the non-scaled
-              size.
-            ]]
-         }
-         values {
-            w: int; [[Width of the glview object.]]
-            h: int; [[Height of the glview object.]]
          }
       }
       @property resize_policy {
@@ -255,6 +237,8 @@ class Elm.Glview (Elm.Widget)
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
       Elm.Widget.on_focus;
+      Efl.Gfx.View.view_size.get;
+      Efl.Gfx.View.view_size.set;
    }
    events {
    }
