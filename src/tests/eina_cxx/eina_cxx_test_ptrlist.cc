@@ -28,10 +28,9 @@ START_TEST(eina_cxx_ptrlist_push_back)
   int result[] = {5, 10, 15};
   int rresult[] = {15, 10, 5};
 
-  Eo* eoptr = nullptr;
-  wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-  wrapper const w2(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-  wrapper const w3(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+  wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
 
   {
     efl::eina::ptr_list<int> list;
@@ -78,10 +77,9 @@ START_TEST(eina_cxx_ptrlist_pop_back)
   int result[] = {5, 10};
   int rresult[] = {10, 5};
 
-  Eo* eoptr = nullptr;
-  wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-  wrapper const w2(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-  wrapper const w3(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+  wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
 
   {
     efl::eina::ptr_list<int> list;
@@ -145,10 +143,9 @@ START_TEST(eina_cxx_ptrlist_push_front)
     ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
   }
   {
-    Eo* eoptr = nullptr;
-    wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w2(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w3(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+    wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
 
     efl::eina::list<wrapper> list;
 
@@ -174,10 +171,9 @@ START_TEST(eina_cxx_ptrlist_pop_front)
   int result[] = {10, 5};
   int rresult[] = {5, 10};
 
-  Eo* eoptr = nullptr;
-  wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-  wrapper const w2(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-  wrapper const w3(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+  wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
 
   {
     efl::eina::ptr_list<int> list;
@@ -277,12 +273,11 @@ START_TEST(eina_cxx_ptrlist_insert)
     ck_assert(std::equal(list.begin(), list.end(), list4.begin()));
   }
   {
-    Eo* eoptr = nullptr;
-    wrapper const w0(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w2(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w3(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w4(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+    wrapper const w0(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w4(eo_add(SIMPLE_CLASS, NULL));
 
     efl::eina::list<wrapper> list;
 
@@ -371,12 +366,11 @@ START_TEST(eina_cxx_ptrlist_constructors)
     ck_assert(list2 == list4);
   }
   {
-    Eo* eoptr = nullptr;
-    wrapper const w0(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w2(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w3(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w4(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+    wrapper const w0(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w4(eo_add(SIMPLE_CLASS, NULL));
 
     efl::eina::list<wrapper> list1;
     ck_assert(list1.empty());

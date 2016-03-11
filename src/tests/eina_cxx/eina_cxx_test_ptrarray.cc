@@ -26,10 +26,9 @@ START_TEST(eina_cxx_ptrarray_push_back)
   int result[] = {5, 10, 15};
   int rresult[] = {15, 10, 5};
 
-  Eo* eoptr = nullptr;
-  wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-  wrapper const w2(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-  wrapper const w3(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+  wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
 
   {
     efl::eina::ptr_array<int> array;
@@ -103,10 +102,9 @@ START_TEST(eina_cxx_ptrarray_pop_back)
     ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
   }
   {
-    Eo* eoptr = nullptr;
-    wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w2(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w3(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+    wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
 
     efl::eina::array<wrapper> array;
 
@@ -199,12 +197,11 @@ START_TEST(eina_cxx_ptrarray_insert)
     ck_assert(std::equal(array.begin(), array.end(), array4.begin()));
   }
   {
-    Eo* eoptr = nullptr;
-    wrapper const w0(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w2(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w3(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w4(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+    wrapper const w0(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w4(eo_add(SIMPLE_CLASS, NULL));
 
     efl::eina::array<wrapper> array;
     ck_assert(std::distance(array.begin(), array.end()) == 0u);
@@ -280,8 +277,7 @@ START_TEST(eina_cxx_ptrarray_constructors)
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
 
-  Eo* eoptr = nullptr;
-  wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+  wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
 
   {
     efl::eina::ptr_array<int> array1;
@@ -360,13 +356,12 @@ START_TEST(eina_cxx_ptrarray_erase)
     ck_assert(array1.back() == 25);
   }
   {
-    Eo* eoptr = nullptr;
-    wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w2(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w3(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w4(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w5(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w6(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+    wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w4(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w5(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w6(eo_add(SIMPLE_CLASS, NULL));
 
     efl::eina::array<wrapper> array1;
 
@@ -442,13 +437,12 @@ START_TEST(eina_cxx_ptrarray_range)
   }
 
   {
-    Eo* eoptr = nullptr;
-    wrapper const w1(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w2(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w3(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w4(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w5(eo_add(&eoptr, SIMPLE_CLASS, NULL));
-    wrapper const w6(eo_add(&eoptr, SIMPLE_CLASS, NULL));
+    wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w4(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w5(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w6(eo_add(SIMPLE_CLASS, NULL));
 
     efl::eina::array<wrapper> array;
     array.push_back(w1);

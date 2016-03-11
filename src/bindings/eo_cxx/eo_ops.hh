@@ -60,8 +60,7 @@ isa(const Eo *obj, const Eo_Class *klass)
 inline Eo*
 add(const Eo_Class *klass, Eo *parent = NULL)
 {
-   Eo *eo = nullptr;
-   eo_add_ref(&eo, klass, parent);
+   Eo *eo = eo_add_ref(klass, parent);
    return eo;
 }
 

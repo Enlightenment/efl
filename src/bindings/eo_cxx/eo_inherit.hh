@@ -83,10 +83,9 @@ struct inherit
    ///
    template<typename... Args>
    inherit(efl::eo::parent_type _p, Args&& ... args)
-     : _eo_cls(nullptr), _eo_raw(nullptr)
    {
       _eo_cls = detail::create_class<D, E...> (eina::make_index_sequence<sizeof...(E)>());
-      eo_add_ref(&_eo_raw, _eo_cls, _p._eo_raw, detail::inherit_constructor(_eo_raw, this), ::efl::eolian::call_ctors(_eo_raw, args...));
+      _eo_raw = eo_add_ref(_eo_cls, _p._eo_raw, detail::inherit_constructor(eoid, this), ::efl::eolian::call_ctors(eoid, args...));
       ::efl::eolian::register_ev_del_free_callback(_eo_raw, args...);
   }
 
