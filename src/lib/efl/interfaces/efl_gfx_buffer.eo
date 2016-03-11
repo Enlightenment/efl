@@ -94,6 +94,8 @@ interface Efl.Gfx.Buffer ()
          }
       }
 
+      /* FIXME: not bindable to JS, potentially tricky to bind to Lua */
+
       /* FIXME: split into read-only and writeable methods? */
       /* FIXME: This was copy pasta from ector generic buffer. changed a bit. */
       buffer_map {
@@ -133,7 +135,7 @@ interface Efl.Gfx.Buffer ()
       }
       /* note: not a property because the refcount needs to be explicit
        * between set and get */
-      /* FIXME: not bindable to JS, potentially tricky to bind to Lua */
+      /* FIXME: do we need writable flag? */
       buffer_set {
          [[Set the pixels for this buffer, or allocate a new memory region.
 
@@ -163,12 +165,6 @@ interface Efl.Gfx.Buffer ()
             @in height: int;
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
-            @in alpha: bool; [[$true if the alpha channel is used.]]
-            @in l: uint @optional; [[Left border pixels, usually 0 or 1. Not supported yet!]]
-            @in r: uint @optional; [[Right border pixels, usually 0 or 1. Not supported yet!]]
-            @in t: uint @optional; [[Top border pixels, usually 0 or 1. Not supported yet!]]
-            @in b: uint @optional; [[Bottom border pixels, usually 0 or 1. Not supported yet!]]
-            /* FIXME: do we need writable flag? */
          }
          return: bool @warn_unused; [[This function returns $false in case of failure.]]
       }
@@ -201,11 +197,6 @@ interface Efl.Gfx.Buffer ()
             @in height: int;
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
-            @in alpha: bool; [[$true if the alpha channel is used.]]
-            @in l: uint @optional; [[Left border pixels, usually 0 or 1. Not supported yet!]]
-            @in r: uint @optional; [[Right border pixels, usually 0 or 1. Not supported yet!]]
-            @in t: uint @optional; [[Top border pixels, usually 0 or 1. Not supported yet!]]
-            @in b: uint @optional; [[Bottom border pixels, usually 0 or 1. Not supported yet!]]
          }
          return: bool @warn_unused; [[This function returns $false in case of failure.]]
       }
@@ -213,32 +204,24 @@ interface Efl.Gfx.Buffer ()
          [[Get a direct pointer to the internal pixel data.
 
            This will increment an internal reference counter on the internal
-           buffer.
+           buffer. If $to_write is $true, this may trigger a copy of the
+           internal pixel data, and return a writable memory block.
 
-           If $to_write is $true, this may trigger a copy of the internal
-           pixel data, and return a writable memory block.
-
-           Call @.buffer_size.get and @.buffer_borders.get to determine the
-           value of width, height and l, r, t, b.
+           Call @.buffer_size.get to know the value of $width and $height.
+           The memory buffer length in bytes is defined as $height x $stride.
 
            Warning: @.buffer_set MUST be called as soon as possible after
            calling @.buffer_get. @.buffer_update_add should be called after
            @.buffer_set if $to_write was $true and the pixel data has been
-           modified. Once @.buffer_set is called, the pointer return from
+           modified. Once @.buffer_set is called, the pointer returned by
            @.buffer_get is not valid anymore.
          ]]
          params {
             @in to_write: bool; [[If $true, requests write access]]
-            @out length: uint @optional; [[Size of the buffer in bytes.]]
             @out width: int @optional;
             @out height: int @optional;
-            @out stride: int @optional; [[Returns the length of one row of pixels in bytes.]]
+            @out stride: int @optional; [[Returns the length of one row of pixels in bytes, so that length = $height x $stride.]]
             @out cspace: Efl.Gfx.Colorspace @optional; [[Pixel encoding of the returned buffer.]]
-            @out alpha: bool; [[$true if the alpha channel is used.]]
-            @out l: uint @optional; [[Left border pixels, usually 0 or 1. Not supported yet!]]
-            @out r: uint @optional; [[Right border pixels, usually 0 or 1. Not supported yet!]]
-            @out t: uint @optional; [[Top border pixels, usually 0 or 1. Not supported yet!]]
-            @out b: uint @optional; [[Bottom border pixels, usually 0 or 1. Not supported yet!]]
          }
          return: void* @warn_unused;
       }

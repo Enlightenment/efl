@@ -4036,13 +4036,12 @@ _evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj)
 
 EOLIAN static void *
 _evas_image_efl_gfx_buffer_buffer_get(Eo *eo_obj, Evas_Image_Data *o,
-                                      Eina_Bool to_write, unsigned int *length_out,
+                                      Eina_Bool to_write,
                                       int *width, int *height, int *stride_out,
-                                      Efl_Gfx_Colorspace *cspace, Eina_Bool *alpha,
-                                      unsigned int *l, unsigned int *r, unsigned int *t, unsigned int *b)
+                                      Efl_Gfx_Colorspace *cspace)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   int stride = 0, length = 0;
+   int stride = 0;
    void *data;
 
    // use the old api - same behaviour with more return info
@@ -4052,25 +4051,13 @@ _evas_image_efl_gfx_buffer_buffer_get(Eo *eo_obj, Evas_Image_Data *o,
    // FIXME: length needs to be properly checked with the engine
    // as we just ignore l,r,t,b here
    ENFN->image_stride_get(ENDT, o->engine_data, &stride);
-   if (stride)
-     length = stride * o->cur->image.h;
-   else
-     {
-        length = _evas_common_rgba_image_surface_size(o->cur->image.w, o->cur->image.h, o->cur->cspace, NULL, NULL, NULL, NULL);
-        stride = _evas_common_rgba_image_surface_size(o->cur->image.w, 1, o->cur->cspace, NULL, NULL, NULL, NULL);
-     }
+   if (!stride)
+     stride = _evas_common_rgba_image_surface_size(o->cur->image.w, 1, o->cur->cspace, NULL, NULL, NULL, NULL);
 
 end:
-   // TODO: support duplicated borders
-   if (l) *l = 0;
-   if (r) *r = 0;
-   if (t) *t = 0;
-   if (b) *b = 0;
-   if (alpha) *alpha = o->cur->has_alpha;
    if (width) *width = o->cur->image.w;
    if (height) *height = o->cur->image.h;
    if (cspace) *cspace = (Efl_Gfx_Colorspace) o->cur->cspace;
-   if (length_out) *length_out = length;
    if (stride_out) *stride_out = stride;
    return data;
 }
@@ -4078,19 +4065,10 @@ end:
 static Eina_Bool
 _evas_image_buffer_set_common(Eo *obj, Evas_Image_Data *o, void *pixels,
                               int width, int height, int stride,
-                              Efl_Gfx_Colorspace cspace, Eina_Bool alpha,
-                              unsigned int l, unsigned int r, unsigned int t, unsigned int b,
-                              Eina_Bool copy)
+                              Efl_Gfx_Colorspace cspace, Eina_Bool copy)
 {
    Evas_Colorspace cs = (Evas_Colorspace) cspace;
    int stride_min;
-
-   if (l || r || t || b)
-     {
-        // TODO
-        ERR("Buffer borders are not supported yet!");
-        return EINA_FALSE;
-     }
 
    stride_min = _evas_common_rgba_image_surface_size(width, 1, cs, NULL, NULL, NULL, NULL);
    if (!stride) stride = stride_min;
@@ -4111,10 +4089,6 @@ _evas_image_buffer_set_common(Eo *obj, Evas_Image_Data *o, void *pixels,
    if ((width != o->cur->image.w) || (height != o->cur->image.h))
      evas_object_image_size_set(obj, width, height);
 
-   alpha = !!alpha;
-   if (alpha != o->cur->has_alpha)
-     evas_object_image_alpha_set(obj, alpha);
-
    if (!pixels)
      evas_object_image_data_set(obj, NULL);
    else if (!copy)
@@ -4128,19 +4102,17 @@ _evas_image_buffer_set_common(Eo *obj, Evas_Image_Data *o, void *pixels,
 EOLIAN static Eina_Bool
 _evas_image_efl_gfx_buffer_buffer_set(Eo *obj, Evas_Image_Data *o, void *pixels,
                                       int width, int height, int stride,
-                                      Efl_Gfx_Colorspace cspace, Eina_Bool alpha,
-                                      unsigned int l, unsigned int r, unsigned int t, unsigned int b)
+                                      Efl_Gfx_Colorspace cspace)
 {
-   return _evas_image_buffer_set_common(obj, o, pixels, width, height, stride, cspace, alpha, l, r, t, b, EINA_FALSE);
+   return _evas_image_buffer_set_common(obj, o, pixels, width, height, stride, cspace, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
 _evas_image_efl_gfx_buffer_buffer_copy_set(Eo *obj, Evas_Image_Data *o, const void *pixels,
                                            int width, int height, int stride,
-                                           Efl_Gfx_Colorspace cspace, Eina_Bool alpha,
-                                           unsigned int l, unsigned int r, unsigned int t, unsigned int b)
+                                           Efl_Gfx_Colorspace cspace)
 {
-   return _evas_image_buffer_set_common(obj, o, (void *) pixels, width, height, stride, cspace, alpha, l, r, t, b, EINA_TRUE);
+   return _evas_image_buffer_set_common(obj, o, (void *) pixels, width, height, stride, cspace, EINA_TRUE);
 }
 
 /* Legacy deprecated functions */
