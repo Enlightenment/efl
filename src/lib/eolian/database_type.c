@@ -217,27 +217,19 @@ _atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 void
 database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf, const char *name)
 {
-   if (tp->type == EOLIAN_TYPEDECL_ALIAS)
+   switch (tp->type)
      {
+      case EOLIAN_TYPEDECL_ALIAS:
         _atype_to_str(tp, buf);
-        return;
-     }
-   else if (tp->type == EOLIAN_TYPEDECL_STRUCT
-         || tp->type == EOLIAN_TYPEDECL_STRUCT_OPAQUE)
-     {
-        _stype_to_str(tp, buf, name);
-        return;
-     }
-   else if (tp->type == EOLIAN_TYPEDECL_ENUM)
-     {
+        break;
+      case EOLIAN_TYPEDECL_ENUM:
         _etype_to_str(tp, buf, name);
-        return;
-     }
-   else
-     return;
-   if (name)
-     {
-        eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append(buf, name);
+        break;
+      case EOLIAN_TYPEDECL_STRUCT:
+      case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
+        _stype_to_str(tp, buf, name);
+        break;
+      default:
+        break;
      }
 }
