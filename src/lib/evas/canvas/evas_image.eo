@@ -53,8 +53,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_An
       Efl.File.save;
       Efl.Image.orientation.get;
       Efl.Image.orientation.set;
-      Efl.Image.alpha.get;
-      Efl.Image.alpha.set;
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
       Efl.Image.ratio.get;
@@ -89,6 +87,8 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_An
       Efl.Image_Load.load_region.get;
       Efl.Image_Load.load_region.set;
       Efl.Image_Load.load_region_support.get;
+      Efl.Gfx.Buffer.alpha.get;
+      Efl.Gfx.Buffer.alpha.set;
       Efl.Gfx.Buffer.buffer_update_add;
       Efl.Gfx.Buffer.stride.get;
       Efl.Gfx.Buffer.colorspace.get;

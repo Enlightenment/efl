@@ -46,6 +46,30 @@ interface Efl.Gfx.Buffer ()
             cspace: Efl.Gfx.Colorspace;
          }
       }
+      @property alpha {
+         [[Indicates whether the alpha channel should be used.
+
+           This does not indicate whether the image source file contains
+           an alpha channel, only whether to respect it or discard it.
+         ]]
+         set {
+            [[Change alpha channel usage for this object.
+
+              This function sets a flag on an image object indicating
+              whether or not to use alpha channel data. A value of $true
+              makes it use alpha channel data, and $false makes it ignore
+              that data. Note that this has nothing to do with an object's
+              color as manipulated by @Efl.Gfx.Base.color.set.
+            ]]
+         }
+         get {
+            [[Retrieve whether alpha channel data is used on this object.]]
+         }
+         values {
+            alpha: bool; [[Whether to use alpha channel ($true) data
+                           or not ($false).]]
+         }
+      }
 
       @property stride {
          [[Length in bytes of one row of pixels in memory.

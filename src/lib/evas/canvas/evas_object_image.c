@@ -936,7 +936,7 @@ _evas_image_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Image_Data *o, int
 }
 
 EOLIAN static void
-_evas_image_efl_image_alpha_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool has_alpha)
+_evas_image_efl_gfx_buffer_alpha_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool has_alpha)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -982,7 +982,7 @@ _evas_image_efl_image_alpha_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool has_al
 }
 
 EOLIAN static Eina_Bool
-_evas_image_efl_image_alpha_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_evas_image_efl_gfx_buffer_alpha_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->cur->has_alpha;
 }
@@ -4368,13 +4368,15 @@ evas_object_image_fill_spread_get(const Evas_Image *obj EINA_UNUSED)
 EAPI void
 evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 {
-   efl_image_alpha_set(obj, alpha);
+   EVAS_OBJECT_LEGACY_API(obj);
+   efl_gfx_buffer_alpha_set(obj, alpha);
 }
 
 EAPI Eina_Bool
 evas_object_image_alpha_get(const Evas_Object *obj)
 {
-   return efl_image_alpha_get(obj);
+   EVAS_OBJECT_LEGACY_API(obj, EINA_FALSE);
+   return efl_gfx_buffer_alpha_get(obj);
 }
 
 EAPI void
