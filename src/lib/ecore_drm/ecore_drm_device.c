@@ -36,6 +36,8 @@
 static Eina_List *drm_devices;
 static int ticking = 0;
 
+static void _ecore_drm_tick_source_set(Ecore_Drm_Device *dev);
+
 static void
 _ecore_drm_tick_schedule(Ecore_Drm_Device *dev)
 {
@@ -46,7 +48,11 @@ _ecore_drm_tick_schedule(Ecore_Drm_Device *dev)
    vbl.request.type = (DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT);
    vbl.request.sequence = 1;
    vbl.request.signal = (unsigned long)dev;
-   drmWaitVBlank(dev->drm.fd, &vbl);
+   if (drmWaitVBlank(dev->drm.fd, &vbl) < 0)
+     {
+        WRN("Vblank failed, disabling custom ticks");
+        _ecore_drm_tick_source_set(NULL);
+     }
 }
 
 static void
@@ -65,6 +71,13 @@ _ecore_drm_tick_end(void *data EINA_UNUSED)
 static void
 _ecore_drm_tick_source_set(Ecore_Drm_Device *dev)
 {
+   if (!dev)
+     {
+        ecore_animator_custom_source_tick_begin_callback_set(NULL, NULL);
+        ecore_animator_custom_source_tick_end_callback_set(NULL, NULL);
+        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
+        return;
+     }
    ecore_animator_custom_source_tick_begin_callback_set
      (_ecore_drm_tick_begin, dev);
    ecore_animator_custom_source_tick_end_callback_set
