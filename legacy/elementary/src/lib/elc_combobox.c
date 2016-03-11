@@ -319,37 +319,29 @@ _elm_combobox_multiple_selection_get(Eo *obj EINA_UNUSED, Elm_Combobox_Data *pd)
 }
 
 static Eina_Bool
-_mbe_clicked_cb(void *data EINA_UNUSED, Eo *obj,
-                const Eo_Event_Description *desc EINA_UNUSED,
-                void *event_info EINA_UNUSED)
+_mbe_clicked_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    //Unset the multibuttonentry to contracted mode of single line
-   elm_multibuttonentry_expanded_set(obj, EINA_TRUE);
+   elm_multibuttonentry_expanded_set(event->obj, EINA_TRUE);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_mbe_focused_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
-                  const Eo_Event_Description *desc EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+_mbe_focused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_mbe_unfocused_cb(void *data EINA_UNUSED, Eo *obj,
-                  const Eo_Event_Description *desc EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+_mbe_unfocused_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    //Set the multibuttonentry to contracted mode of single line
-   elm_multibuttonentry_expanded_set(obj, EINA_FALSE);
+   elm_multibuttonentry_expanded_set(event->obj, EINA_FALSE);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_mbe_item_added(void *data, Eo *obj EINA_UNUSED,
-                  const Eo_Event_Description *desc EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+_mbe_item_added(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_COMBOBOX_DATA_GET(data, sd);
    elm_genlist_filter_set(sd->genlist, NULL);
