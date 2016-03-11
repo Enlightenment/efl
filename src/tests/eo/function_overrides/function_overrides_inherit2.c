@@ -56,8 +56,8 @@ _class_print(Eo_Class *klass, void *data EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EAPI EO_FUNC_BODY(inherit2_print, Eina_Bool, EINA_FALSE);
-EAPI EO_FUNC_BODY(inherit2_print2, Eina_Bool, EINA_FALSE);
+EAPI EO_FUNC_BODY(inherit2_print, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, Eina_Bool, EINA_FALSE);
+EAPI EO_FUNC_BODY(inherit2_print2, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, Eina_Bool, EINA_FALSE);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(inherit2_print, _print),

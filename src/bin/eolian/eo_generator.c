@@ -511,7 +511,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         Eina_Bool ret_is_void = (!rettype || !strcmp(rettype, "void"));
         _class_func_env_create(class, eolian_function_name_get(funcid), ftype, &func_env);
         eina_strbuf_append_printf(eo_func_decl,
-              "EOAPI EO_%sFUNC_BODY%s%s(%s",
+              "EOAPI EO_%sFUNC_BODY%s%s(%s, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK",
               ret_is_void?"VOID_":"", has_params?"V":"",
               (ftype == EOLIAN_PROP_GET ||
                eolian_function_object_is_const(funcid) ||

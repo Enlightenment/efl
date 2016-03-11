@@ -20,9 +20,9 @@ typedef struct
 #define THREAD_TEST_CLASS thread_test_class_get()
 const Eo_Class *thread_test_class_get(void);
 
-EO_FUNC_BODY(thread_test_v_get, int, 0);
-EO_VOID_FUNC_BODY(thread_test_try_swap_stack);
-EO_VOID_FUNC_BODYV(thread_test_constructor, EO_FUNC_CALL(v), int v);
+EO_FUNC_BODY(thread_test_v_get, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, int, 0);
+EO_VOID_FUNC_BODY(thread_test_try_swap_stack, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK);
+EO_VOID_FUNC_BODYV(thread_test_constructor, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, EO_FUNC_CALL(v), int v);
 
 static int
 _v_get(Eo *obj EINA_UNUSED, void *class_data)

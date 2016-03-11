@@ -30,7 +30,7 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED)
    eo_destructor(eo_super(obj, MY_CLASS));
 }
 
-EAPI EO_FUNC_BODY(mixin_ab_sum_get, int, 0);
+EAPI EO_FUNC_BODY(mixin_ab_sum_get, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, int, 0);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),
