@@ -47,7 +47,8 @@ lib/ecore/Ecore.h \
 lib/ecore/Ecore_Common.h \
 lib/ecore/Ecore_Legacy.h \
 lib/ecore/Ecore_Eo.h \
-lib/ecore/Ecore_Getopt.h
+lib/ecore/Ecore_Getopt.h \
+lib/ecore/ecore_promise.h
 
 nodist_installed_ecoremainheaders_DATA = \
                                          $(ecore_eolian_h)
@@ -72,6 +73,7 @@ lib/ecore/ecore_timer.c \
 lib/ecore/ecore_thread.c \
 lib/ecore/ecore_throttle.c \
 lib/ecore/ecore_exe.c \
+lib/ecore/ecore_promise.c \
 lib/ecore/ecore_exe_private.h \
 lib/ecore/ecore_private.h
 

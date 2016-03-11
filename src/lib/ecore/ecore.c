@@ -42,6 +42,9 @@
 static Ecore_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Ecore_Version *ecore_version = &_version;
 
+void _ecore_promise_init();
+void _ecore_promise_shutdown();
+
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
 #define KEEP_MAX(Global, Local) \
   if (Global < (Local))         \
@@ -303,6 +306,8 @@ ecore_init(void)
 
    _ecore_init_count_threshold = _ecore_init_count;
 
+   _ecore_promise_init();
+   
    eina_log_timing(_ecore_log_dom,
                    EINA_LOG_STATE_STOP,
                    EINA_LOG_STATE_INIT);
@@ -338,6 +343,8 @@ ecore_shutdown(void)
        goto end;
 
      ecore_system_modules_unload();
+
+     _ecore_promise_shutdown();
 
      eina_log_timing(_ecore_log_dom,
                      EINA_LOG_STATE_START,

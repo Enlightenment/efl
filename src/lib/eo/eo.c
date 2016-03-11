@@ -20,6 +20,7 @@
 /* Used inside the class_get functions of classes, see #EO_DEFINE_CLASS */
 EAPI Eina_Spinlock _eo_class_creation_lock;
 EAPI unsigned int _eo_init_generation = 1;
+EAPI void* _eo_ecore_promise_add;
 int _eo_log_dom = -1;
 
 static _Eo_Class **_eo_classes;

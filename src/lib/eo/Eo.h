@@ -134,6 +134,13 @@ EAPI extern Eina_Spinlock _eo_class_creation_lock;
 EAPI extern unsigned int _eo_init_generation;
 
 /**
+ * @var _eo_ecore_promise_add
+ * This variable stores ecore_promise_add function pointer.
+ * @internal
+ */
+EAPI extern void* _eo_ecore_promise_add;
+
+/**
  * @internal
  * An enum representing the possible types of an Op.
  */
