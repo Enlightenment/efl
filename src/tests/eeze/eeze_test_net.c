@@ -71,7 +71,7 @@ START_TEST(eeze_test_net_attr)
 }
 END_TEST
 
-/*
+
 #ifdef HAVE_IPV6
 START_TEST(eeze_test_net_attr_ipv6)
 {
@@ -85,8 +85,14 @@ START_TEST(eeze_test_net_attr_ipv6)
    net = eeze_net_new("lo");
    fail_if(net == NULL);
 
+   eeze_net_scan(net);
+
    tmp = eeze_net_addr_get(net, EEZE_NET_ADDR_TYPE_IP6);
-   fail_if(tmp == NULL);
+   if (tmp == NULL)
+     {
+        printf("Problems to use IPv6 setup on loopback device. Eeze_net IPv6 test skipped.\n");
+        goto cleanup;
+     }
    tmp = NULL;
 
    tmp = eeze_net_addr_get(net, EEZE_NET_ADDR_TYPE_BROADCAST6);
@@ -96,6 +102,7 @@ START_TEST(eeze_test_net_attr_ipv6)
    tmp = eeze_net_addr_get(net, EEZE_NET_ADDR_TYPE_NETMASK6);
    fail_if(tmp == NULL);
 
+cleanup:
    eeze_net_free(net);
 
    ret = eeze_shutdown();
@@ -103,14 +110,13 @@ START_TEST(eeze_test_net_attr_ipv6)
 }
 END_TEST
 #endif
-*/
+
 
 void eeze_test_net(TCase *tc)
 {
    tcase_add_test(tc, eeze_test_net_list);
    tcase_add_test(tc, eeze_test_net_attr);
 #ifdef HAVE_IPV6
-   //FIXME Figure out why we fail for the ipv6 tests here (code or test)
-   //tcase_add_test(tc, eeze_test_net_attr_ipv6);
+   tcase_add_test(tc, eeze_test_net_attr_ipv6);
 #endif
 }
