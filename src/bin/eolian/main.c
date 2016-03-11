@@ -105,20 +105,22 @@ _write_file(const char *filename, const Eina_Strbuf *buffer, Eina_Bool append)
         return EINA_FALSE;
      }
 
+   Eina_Bool ret = EINA_TRUE;
    size_t blen = eina_strbuf_length_get(buffer);
+
    if (!blen)
-     return EINA_TRUE;
+     goto end;
 
    if (fwrite(eina_strbuf_string_get(buffer), 1, blen, fd) != blen)
      {
         fprintf(stderr, "eolian: could not write '%s' (%s)\n",
                 filename, strerror(errno));
-        fclose(fd);
-        return EINA_FALSE;
+        ret = EINA_FALSE;
      }
 
+end:
    fclose(fd);
-   return EINA_TRUE;
+   return ret;
 }
 
 static Eina_Bool
