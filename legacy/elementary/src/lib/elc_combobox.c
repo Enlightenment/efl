@@ -369,7 +369,7 @@ _elm_combobox_multiple_selection_set(Eo *obj, Elm_Combobox_Data *pd,
    if (enabled)
      {
         // This is multibuttonentry object that will take over the MBE call
-        eo_add(&pd->mbe,ELM_MULTIBUTTONENTRY_CLASS, obj);
+        pd->mbe = eo_add(ELM_MULTIBUTTONENTRY_CLASS, obj);
         evas_object_size_hint_weight_set(pd->mbe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(pd->mbe, EVAS_HINT_FILL, EVAS_HINT_FILL);
         eo_event_callback_array_add(elm_multibuttonentry_entry_get(pd->mbe), entry_callbacks(), obj);
