@@ -712,6 +712,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
      {
         if (_evas_gl_image_cache_add(im)) return;
      }
+   if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
    if (im->im)
      {
 #ifdef EVAS_CSERVE2
@@ -721,7 +722,6 @@ evas_gl_common_image_free(Evas_GL_Image *im)
 #endif
           evas_cache_image_drop(&im->im->cache_entry);
      }
-   if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
 
    free(im);
 }
