@@ -4062,7 +4062,7 @@ _elm_map_evas_object_smart_add(Eo *obj, Elm_Map_Data *priv)
    elm_interface_scrollable_animate_stop_cb_set(obj, _scroll_animate_stop_cb);
    elm_interface_scrollable_scroll_cb_set(obj, _scroll_cb);
 
-   eo_add(&priv->pan_obj, MY_PAN_CLASS, evas_object_evas_get(obj));
+   priv->pan_obj = eo_add(MY_PAN_CLASS, evas_object_evas_get(obj));
    pan_data = eo_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
    eo_data_ref(obj, NULL);
    pan_data->wobj = obj;
@@ -4213,8 +4213,7 @@ EAPI Evas_Object *
 elm_map_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
    return obj;
 }
 

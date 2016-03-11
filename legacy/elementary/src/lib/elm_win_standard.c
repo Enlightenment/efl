@@ -19,8 +19,7 @@ _elm_win_standard_eo_base_finalize(Eo *obj, void *pd EINA_UNUSED)
    if (!obj)
      return NULL;
 
-   Evas_Object *bg = NULL;
-   eo_add(&bg, ELM_BG_CLASS, obj);
+   Evas_Object *bg = eo_add(ELM_BG_CLASS, obj);
    if (!bg)
      {
         ERR("Cannot create background.");

@@ -586,8 +586,7 @@ EAPI Evas_Object *
 elm_thumb_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
    return obj;
 }
 

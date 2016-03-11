@@ -1176,8 +1176,7 @@ EAPI Evas_Object *
 elm_ctxpopup_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
 
    /* access: parent could be any object such as elm_list which does
       not know elc_ctxpopup as its child object in the focus_next(); */
@@ -1281,7 +1280,7 @@ _elm_ctxpopup_item_append(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Eva
 {
    Eo *eo_item;
 
-   eo_add(&eo_item, ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eo_item, func, data));
+   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eoid, func, data));
    if (!eo_item) return NULL;
 
    ELM_CTXPOPUP_ITEM_DATA_GET(eo_item, item);
@@ -1375,7 +1374,7 @@ _elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Ev
 {
    Eo *eo_item;
 
-   eo_add(&eo_item, ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eo_item, func, data));
+   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eoid, func, data));
    if (!eo_item) return NULL;
 
    ELM_CTXPOPUP_ITEM_DATA_GET(eo_item, item);

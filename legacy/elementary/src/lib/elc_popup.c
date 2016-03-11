@@ -1574,8 +1574,7 @@ EAPI Evas_Object *
 elm_popup_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    wd->highlight_root = EINA_TRUE;
@@ -1753,7 +1752,7 @@ _elm_popup_item_append(Eo *obj, Elm_Popup_Data *sd, const char *label, Evas_Obje
    Evas_Object *prev_content;
    Eo *eo_it;
 
-   eo_add(&eo_it, ELM_POPUP_ITEM_CLASS, obj);
+   eo_it = eo_add(ELM_POPUP_ITEM_CLASS, obj);
    if (!eo_it) return NULL;
    ELM_POPUP_ITEM_DATA_GET(eo_it, it);
    if (sd->content || sd->text_content_obj)

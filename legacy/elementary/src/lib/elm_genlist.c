@@ -5569,7 +5569,7 @@ _elm_genlist_evas_object_smart_add(Eo *obj, Elm_Genlist_Data *priv)
    priv->longpress_timeout = _elm_config->longpress_timeout;
    priv->highlight = EINA_TRUE;
 
-   eo_add(&priv->pan_obj, MY_PAN_CLASS, evas_object_evas_get(obj));
+   priv->pan_obj = eo_add(MY_PAN_CLASS, evas_object_evas_get(obj));
    pan_data = eo_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
    eo_data_ref(obj, NULL);
    pan_data->wobj = obj;
@@ -5688,8 +5688,7 @@ EAPI Evas_Object *
 elm_genlist_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -6033,8 +6032,7 @@ _elm_genlist_item_new(Elm_Genlist_Data *sd,
 
    if (!itc) return NULL;
 
-   Eo *eo_it = NULL;
-   eo_add(&eo_it, ELM_GENLIST_ITEM_CLASS, sd->obj);
+   Eo *eo_it = eo_add(ELM_GENLIST_ITEM_CLASS, sd->obj);
    if (!eo_it) return NULL;
    ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
 

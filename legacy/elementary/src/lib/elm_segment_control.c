@@ -557,7 +557,7 @@ _item_new(Evas_Object *obj,
 {
    Eo *eo_item;
 
-   eo_add(&eo_item, ELM_SEGMENT_CONTROL_ITEM_CLASS, obj);
+   eo_item = eo_add(ELM_SEGMENT_CONTROL_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_SEGMENT_ITEM_DATA_GET(eo_item, it);
@@ -697,8 +697,7 @@ EAPI Evas_Object *
 elm_segment_control_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
    return obj;
 }
 

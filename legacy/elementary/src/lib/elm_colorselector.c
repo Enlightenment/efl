@@ -1781,7 +1781,7 @@ _palette_colors_load(Evas_Object *obj)
 
    EINA_LIST_FOREACH(color_list, elist, color)
      {
-        eo_add(&eo_item, ELM_COLOR_ITEM_CLASS, obj);
+        eo_item = eo_add(ELM_COLOR_ITEM_CLASS, obj);
         if (!eo_item) return;
 
         ELM_COLOR_ITEM_DATA_GET(eo_item, item);
@@ -2217,8 +2217,7 @@ EAPI Evas_Object *
 elm_colorselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -2397,7 +2396,7 @@ _elm_colorselector_palette_color_add(Eo *obj, Elm_Colorselector_Data *sd, int r,
         _items_del(sd);
         sd->config_load = EINA_FALSE;
      }
-   eo_add(&eo_item, ELM_COLOR_ITEM_CLASS, obj);
+   eo_item = eo_add(ELM_COLOR_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_COLOR_ITEM_DATA_GET(eo_item, item);

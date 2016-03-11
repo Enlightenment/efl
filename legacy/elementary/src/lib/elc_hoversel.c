@@ -611,8 +611,7 @@ EAPI Evas_Object *
 elm_hoversel_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -749,8 +748,7 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
    Evas_Object *bt, *ic;
    char buf[4096];
 
-   Eo *eo_item = NULL;
-   eo_add(&eo_item, ELM_HOVERSEL_ITEM_CLASS, obj);
+   Eo *eo_item = eo_add(ELM_HOVERSEL_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);

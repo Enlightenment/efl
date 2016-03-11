@@ -169,7 +169,7 @@ _elm_sys_notify_servers_set(Eo                     *obj  EINA_UNUSED,
                        return EINA_FALSE;
                     }
 
-                  eo_add(&sd->servers[i], class_get(), NULL);
+                  sd->servers[i] = eo_add(class_get(), NULL);
                   if (EINA_UNLIKELY(!(sd->servers[i])))
                     {
                        CRI("Failed to create notification server");
@@ -201,7 +201,7 @@ _elm_sys_notify_singleton_get(Eo   *obj EINA_UNUSED,
                               void *sd  EINA_UNUSED)
 {
    if (!_singleton)
-     eo_add(&_singleton, MY_CLASS, NULL);
+     _singleton = eo_add(MY_CLASS, NULL);
    return _singleton;
 }
 

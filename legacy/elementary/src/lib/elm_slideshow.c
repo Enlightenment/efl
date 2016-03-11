@@ -381,8 +381,7 @@ EAPI Evas_Object *
 elm_slideshow_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
    return obj;
 }
 
@@ -411,7 +410,7 @@ _elm_slideshow_item_add(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Slideshow_Ite
 {
    Eo *eo_item;
 
-   eo_add(&eo_item, ELM_SLIDESHOW_ITEM_CLASS, obj);
+   eo_item = eo_add(ELM_SLIDESHOW_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_SLIDESHOW_ITEM_DATA_GET(eo_item, item);
@@ -432,7 +431,7 @@ _elm_slideshow_item_sorted_insert(Eo *obj, Elm_Slideshow_Data *sd, const Elm_Sli
 {
    Eo *eo_item;
 
-   eo_add(&eo_item, ELM_SLIDESHOW_ITEM_CLASS, obj);
+   eo_item = eo_add(ELM_SLIDESHOW_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_SLIDESHOW_ITEM_DATA_GET(eo_item, item);

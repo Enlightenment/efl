@@ -546,7 +546,7 @@ _item_new(Evas_Object *obj,
 
    ELM_INDEX_DATA_GET(obj, sd);
 
-   eo_add(&eo_item, ELM_INDEX_ITEM_CLASS, obj);
+   eo_item = eo_add(ELM_INDEX_ITEM_CLASS, obj);
    if (!eo_item) return NULL;
 
    ELM_INDEX_ITEM_DATA_GET(eo_item, it);
@@ -1221,8 +1221,7 @@ EAPI Evas_Object *
 elm_index_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
    return obj;
 }
 

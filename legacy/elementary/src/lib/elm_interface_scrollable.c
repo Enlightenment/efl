@@ -226,8 +226,7 @@ _elm_pan_gravity_get(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, double *x, do
 static Evas_Object *
 _elm_pan_add(Evas *evas)
 {
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_PAN_CLASS, evas);
+   Evas_Object *obj = eo_add(MY_PAN_CLASS, evas);
    return obj;
 }
 

@@ -1414,7 +1414,7 @@ _elm_photocam_evas_object_smart_add(Eo *obj, Elm_Photocam_Data *priv)
 
    elm_interface_scrollable_bounce_allow_set(obj, bounce, bounce);
 
-   eo_add(&priv->pan_obj, MY_PAN_CLASS, evas_object_evas_get(obj));
+   priv->pan_obj = eo_add(MY_PAN_CLASS, evas_object_evas_get(obj));
    pan_data = eo_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
    eo_data_ref(obj, NULL);
    pan_data->wobj = obj;
@@ -1506,8 +1506,7 @@ EAPI Evas_Object *
 elm_photocam_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = NULL;
-   eo_add(&obj, MY_CLASS, parent);
+   Evas_Object *obj = eo_add(MY_CLASS, parent);
    return obj;
 }
 

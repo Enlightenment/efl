@@ -29,8 +29,7 @@ START_TEST (elm_atspi_app_obj_name_get)
 {
    elm_init(0, NULL);
 
-   Eo* root = NULL;
-   eo_add(&root, ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    ck_assert(root != NULL);
 
@@ -109,8 +108,7 @@ START_TEST (elm_atspi_role_get)
 {
    elm_init(0, NULL);
 
-   Eo* root = NULL;
-   eo_add(&root, ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    Elm_Atspi_Role role;
 
@@ -151,8 +149,7 @@ START_TEST (elm_atspi_role_name_get)
 {
    elm_init(0, NULL);
 
-   Eo* root = NULL;
-   eo_add(&root, ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    const char *ret = NULL;
 
@@ -169,8 +166,7 @@ START_TEST (elm_atspi_localized_role_name_get)
 {
    elm_init(0, NULL);
 
-   Eo* root = NULL;
-   eo_add(&root, ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    const char *ret = NULL;
 
@@ -187,8 +183,7 @@ START_TEST (elm_atspi_description_set)
 {
    elm_init(0, NULL);
 
-   Eo* root = NULL;
-   eo_add(&root, ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    const char *ret = NULL;
 
@@ -234,8 +229,7 @@ START_TEST (elm_atspi_children_and_parent)
    elm_init(0, NULL);
 
    generate_app();
-   Eo* root = NULL;
-   eo_add(&root, ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    Eina_List *child_list = NULL;
 
@@ -262,8 +256,7 @@ START_TEST (elm_atspi_children_and_parent2)
    elm_init(0, NULL);
 
    generate_app();
-   Eo* root = NULL;
-   eo_add(&root, ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+   Eo* root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    Eo *win = NULL;
 
