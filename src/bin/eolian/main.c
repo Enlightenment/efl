@@ -105,8 +105,18 @@ _write_file(const char *filename, const Eina_Strbuf *buffer, Eina_Bool append)
         return EINA_FALSE;
      }
 
-   if (eina_strbuf_length_get(buffer))
-     fwrite(eina_strbuf_string_get(buffer), 1, eina_strbuf_length_get(buffer), fd);
+   size_t blen = eina_strbuf_length_get(buffer);
+   if (!blen)
+     return EINA_TRUE;
+
+   if (fwrite(eina_strbuf_string_get(buffer), 1, blen, fd) != blen)
+     {
+        fprintf(stderr, "eolian: could not write '%s' (%s)\n",
+                filename, strerror(errno));
+        fclose(fd);
+        return EINA_FALSE;
+     }
+
    fclose(fd);
    return EINA_TRUE;
 }
