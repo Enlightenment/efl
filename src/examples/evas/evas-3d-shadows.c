@@ -355,15 +355,15 @@ _model_setup(Body_3D *model)
 static void
 _billboard_setup(Scene_Data *data)
 {
-   eo_add(&data->billboard.texture, EVAS_CANVAS3D_TEXTURE_CLASS, evas);
+   data->billboard.texture = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
    evas_canvas3d_texture_file_set(data->billboard.texture, b_image_path, NULL);
    evas_canvas3d_texture_filter_set(data->billboard.texture, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(data->billboard.texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
 
-   eo_add(&data->billboard.primitive, EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
+   data->billboard.primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
    evas_canvas3d_primitive_form_set(data->billboard.primitive, EVAS_CANVAS3D_MESH_PRIMITIVE_SQUARE);
 
-   eo_add(&data->billboard.mesh, EVAS_CANVAS3D_MESH_CLASS, evas);
+   data->billboard.mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
    evas_canvas3d_mesh_from_primitive_set(data->billboard.mesh, 0, data->billboard.primitive);
 
    _body_material_set(&(data->billboard), 1.0, 1.0, 1.0);
@@ -377,7 +377,7 @@ _billboard_setup(Scene_Data *data)
    evas_canvas3d_mesh_blending_enable_set(data->billboard.mesh, EINA_TRUE);
    evas_canvas3d_mesh_blending_func_set(data->billboard.mesh, EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA, EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA);
 
-   eo_add(&data->billboard.node, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(data->billboard.node, EVAS_CANVAS3D_NODE_TYPE_MESH));
+   data->billboard.node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_mesh_add(data->billboard.node, data->billboard.mesh);
    evas_canvas3d_node_position_set(data->billboard.node, 0.0, 2.0, 0.0);
    evas_canvas3d_node_scale_set(data->billboard.node, 2.2, 4.6, 4.0);

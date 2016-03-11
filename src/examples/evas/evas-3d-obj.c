@@ -44,12 +44,12 @@
 #define NUMBER_OF_MESHES 8
 
 #define ADD_OBJ_MESH(path, Y, Z, num, shade_mode, name_of_material)               \
-   eo_add(&mesh[num], EVAS_CANVAS3D_MESH_CLASS, evas);                                  \
+   mesh[num] = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);                                  \
    snprintf(full_file_path, PATH_MAX, "%s%s", path, ".obj");                      \
    efl_file_set(mesh[num], full_file_path, NULL); \
    evas_canvas3d_mesh_frame_material_set(mesh[num], 0, name_of_material); \
    evas_canvas3d_mesh_shade_mode_set(mesh[num], shade_mode);                                \
-   eo_add(&mesh_node[num], EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(mesh_node[num], EVAS_CANVAS3D_NODE_TYPE_MESH));   \
+   mesh_node[num] = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));   \
    evas_canvas3d_node_member_add(root_node, mesh_node[num]);                                \
    evas_canvas3d_node_mesh_add(mesh_node[num], mesh[num]); \
    evas_canvas3d_node_position_set(mesh_node[num], 0, Y, Z);                                     \

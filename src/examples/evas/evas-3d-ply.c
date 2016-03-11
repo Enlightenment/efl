@@ -179,7 +179,7 @@ main(void)
    /* Add the meshes. */
    for (i = 0; i < NUMBER_OF_MESHES; i++)
      {
-        eo_add(&mesh[i], EVAS_CANVAS3D_MESH_CLASS, evas);
+        mesh[i] = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
 
         snprintf(buffer, PATH_MAX, "%s%s", input_template, file_name[i % 8]);
         efl_file_set(mesh[i], buffer, NULL);
@@ -196,7 +196,7 @@ main(void)
              evas_canvas3d_mesh_shade_mode_set(mesh[i], draw_mode[(i % 8)]);
           }
 
-        eo_add(&mesh_node[i], EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(mesh_node[i], EVAS_CANVAS3D_NODE_TYPE_MESH));
+        mesh_node[i] = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
         evas_canvas3d_node_member_add(root_node, mesh_node[i]);
         evas_canvas3d_node_mesh_add(mesh_node[i], mesh[i]);
         evas_canvas3d_node_position_set(mesh_node[i], 0, ((i % 4) * 4) + ((i / 16) * 1) - 6.5, (((i % 16) / 4) * 4) - 6);

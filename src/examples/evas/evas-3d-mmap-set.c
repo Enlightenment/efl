@@ -32,11 +32,11 @@
 #define LOAD_AND_ADD_MESH(extention, number)                                          \
    snprintf(buffer, PATH_MAX, "%s%s", template_path, #extention);                     \
    extention##_file = eina_file_open(buffer , 0);                                     \
-   eo_add(&mesh_##extention, EVAS_CANVAS3D_MESH_CLASS, evas);                               \
+   mesh_##extention = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);                               \
    efl_file_mmap_set(mesh_##extention, extention##_file, NULL); \
    evas_canvas3d_mesh_frame_material_set(mesh_##extention, 0, material); \
    evas_canvas3d_mesh_shade_mode_set(mesh_##extention, EVAS_CANVAS3D_SHADE_MODE_PHONG);                      \
-   eo_add(&node_##extention, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(node_##extention, EVAS_CANVAS3D_NODE_TYPE_MESH));          \
+   node_##extention = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));          \
    evas_canvas3d_node_member_add(root_node, node_##extention);                       \
    evas_canvas3d_node_mesh_add(node_##extention, mesh_##extention); \
    evas_canvas3d_node_position_set(node_##extention, initial_node_data[number * 10], \
