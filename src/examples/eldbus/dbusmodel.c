@@ -14,9 +14,11 @@
 static unsigned int children_count = 0;
 
 static Eina_Bool
-_event_interface_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_event_interface_load_status_cb(void *data EINA_UNUSED, Eo *model,
+                           const Eo_Event_Description *desc EINA_UNUSED,
+                           void *event_info)
 {
-   Efl_Model_Load *actual_load = (Efl_Model_Load*)event->event_info;
+   Efl_Model_Load *actual_load = (Efl_Model_Load*)event_info;
    Eina_Array *properties_list;
    Eina_Array_Iterator iterator;
    Eina_Value const* property_value;
@@ -27,8 +29,8 @@ _event_interface_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
    if (EFL_MODEL_LOAD_STATUS_LOADED != actual_load->status)
      return EINA_TRUE;
 
-   name = eldbus_model_proxy_name_get(event->obj);
-   efl_model_properties_get(event->obj, &properties_list);
+   name = eldbus_model_proxy_name_get(model);
+   efl_model_properties_get(model, &properties_list);
 
    printf(" -> %s\n", name);
    if (eina_array_count(properties_list))
@@ -36,7 +38,7 @@ _event_interface_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
 
    EINA_ARRAY_ITER_NEXT(properties_list, i, property, iterator)
      {
-        efl_model_property_get(event->obj, property, &property_value);
+        efl_model_property_get(model, property, &property_value);
         if (property_value)
           {
              prop_str = eina_value_to_string(property_value);
@@ -55,9 +57,11 @@ _event_interface_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static Eina_Bool
-_event_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_event_load_status_cb(void *data EINA_UNUSED, Eo *model,
+                           const Eo_Event_Description *desc EINA_UNUSED,
+                           void *event_info)
 {
-   Efl_Model_Load *actual_load = (Efl_Model_Load*)event->event_info;
+   Efl_Model_Load *actual_load = (Efl_Model_Load*)event_info;
    Eina_Accessor *accessor;
    Eo *child = NULL;
    unsigned int i;
@@ -65,7 +69,7 @@ _event_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
    if (EFL_MODEL_LOAD_STATUS_LOADED != actual_load->status)
      return EINA_TRUE;
 
-   efl_model_children_count_get(event->obj, &children_count);
+   efl_model_children_count_get(model, &children_count);
    if (children_count == 0)
      {
         printf("Don't find Interfaces\n");
@@ -73,7 +77,7 @@ _event_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
         return EINA_FALSE;
      }
 
-   efl_model_children_slice_get(event->obj, 0, 0, &accessor);
+   efl_model_children_slice_get(model, 0, 0, &accessor);
    printf("\nInterfaces:\n");
    EINA_ACCESSOR_FOREACH(accessor, i, child)
      {

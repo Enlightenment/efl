@@ -15,7 +15,8 @@
 #define HEIGHT (240)
 
 static Eina_Bool
-_playback_started_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+_playback_started_cb(void *data EINA_UNUSED,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
     printf("Emotion object started playback.\n");
 
