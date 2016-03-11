@@ -2666,20 +2666,6 @@ EAPI void                          evas_object_image_preload(Evas_Object *obj, E
 EAPI Eina_Bool                     evas_object_image_source_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
- * Enable an image to be used as an alpha mask.
- *
- * This will set any flags, and discard any excess image data not used as an
- * alpha mask.
- *
- * Note there is little point in using a image as alpha mask unless it has an
- * alpha channel.
- *
- * @param obj Object to use as an alpha mask.
- * @param ismask Use image as alphamask, must be true.
- */
-EAPI void                          evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask) EINA_ARG_NONNULL(1);
-
-/**
  *
  * Set the source file from where an image object must fetch the real
  * image data (it may be an Eet file, besides pure image ones).
@@ -3781,6 +3767,13 @@ EAPI Eina_Bool evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Impo
  */
 /** @deprecated evas_object_image_reload */
 EAPI void evas_object_image_reload(Evas_Object *obj) EINA_DEPRECATED;
+
+/**
+ * @deprecated This function has never been implemented. Please use
+ *             evas_object_clip_set() with an alpha or RGBA image instead
+ *             of setting this flag.
+ */
+EAPI void evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask) EINA_ARG_NONNULL(1) EINA_DEPRECATED;
 
 #include "canvas/evas_image.eo.legacy.h"
 

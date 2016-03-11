@@ -1716,21 +1716,6 @@ _evas_image_content_hint_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Content_
      }
 }
 
-EAPI void
-evas_object_image_alpha_mask_set(Evas_Object *eo_obj, Eina_Bool ismask)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   evas_object_async_block(obj);
-   if (!ismask) return;
-   /* Convert to A8 if not already */
-
-   /* done */
-
-}
-
 #define FRAME_MAX 1024
 EOLIAN static Evas_Image_Content_Hint
 _evas_image_content_hint_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
@@ -4767,6 +4752,12 @@ evas_object_image_source_visible_get(const Evas_Object *eo)
    else visible = EINA_FALSE;
 
    return visible;
+}
+
+EAPI void
+evas_object_image_alpha_mask_set(Evas_Object *eo_obj EINA_UNUSED, Eina_Bool ismask EINA_UNUSED)
+{
+   DBG("This function is not implemented, has never been and never will be.");
 }
 
 #include "canvas/evas_image.eo.c"
