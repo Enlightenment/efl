@@ -5,53 +5,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_An
    legacy_prefix: evas_object_image;
    eo_prefix: evas_obj_image;
    methods {
-      /* weird stuff - hints */
-      @property content_hint {
-         set {
-            [[Set the content hint setting of a given image object of the
-              canvas.
-
-              This function sets the content hint value of the given image
-              of the canvas. For example, if you're on the GL engine and
-              your driver implementation supports it, setting this hint to
-              #EVAS_IMAGE_CONTENT_HINT_DYNAMIC will make it need zero copies
-              at texture upload time, which is an "expensive" operation.
-            ]]
-         }
-         get {
-            [[Get the content hint setting of a given image object of the
-              canvas.
-
-              This returns #EVAS_IMAGE_CONTENT_HINT_NONE on error.
-            ]]
-         }
-         values {
-            hint: Evas.Image_Content_Hint; [[The content hint value, one of
-                                             the @Evas.Image_Content_Hint ones.]]
-         }
-      }
-      @property scale_hint {
-         set {
-            [[Set the scale hint of a given image of the canvas.
-
-              This function sets the scale hint value of the given image
-              object in the canvas, which will affect how Evas is to cache
-              scaled versions of its original source image.
-            ]]
-         }
-         get {
-            [[Get the scale hint of a given image of the canvas.
-
-              This function returns the scale hint value of the given image
-              object of the canvas.
-            ]]
-         }
-         values {
-            hint: Evas.Image_Scale_Hint; [[The scale hint, a value in
-                                           @Evas.Image_Scale_Hint.]]
-         }
-      }
-
       /* GL View */
       @property pixels_dirty {
          set {
@@ -111,6 +64,10 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_An
       Efl.Image.border_scale.set;
       Efl.Image.border_center_fill.get;
       Efl.Image.border_center_fill.set;
+      Efl.Image.scale_hint.get;
+      Efl.Image.scale_hint.set;
+      Efl.Image.content_hint.get;
+      Efl.Image.content_hint.set;
       Efl.Image_Animated.animated.get;
       Efl.Image_Animated.animated_frame.get;
       Efl.Image_Animated.animated_frame.set;

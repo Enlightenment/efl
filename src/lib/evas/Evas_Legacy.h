@@ -3379,6 +3379,55 @@ EAPI void evas_object_image_orient_set(Evas_Object *obj, Evas_Image_Orient orien
 EAPI Evas_Image_Orient evas_object_image_orient_get(const Evas_Object *obj);
 
 /**
+ * @brief Set the content hint setting of a given image object of the canvas.
+ *
+ * This function sets the content hint value of the given image of the canvas.
+ * For example, if you're on the GL engine and your driver implementation
+ * supports it, setting this hint to #EVAS_IMAGE_CONTENT_HINT_DYNAMIC will make
+ * it need zero copies at texture upload time, which is an "expensive"
+ * operation.
+ *
+ * @param[in] hint The content hint value, one of the
+ * @ref Evas_Image_Content_Hint ones.
+ */
+EAPI void evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hint);
+
+/**
+ * @brief Get the content hint setting of a given image object of the canvas.
+ *
+ * This returns #EVAS_IMAGE_CONTENT_HINT_NONE on error.
+ *
+ * @return The content hint value, one of the @ref Evas_Image_Content_Hint
+ * ones.
+ */
+EAPI Evas_Image_Content_Hint evas_object_image_content_hint_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the scale hint of a given image of the canvas.
+ *
+ * This function sets the scale hint value of the given image object in the
+ * canvas, which will affect how Evas is to cache scaled versions of its
+ * original source image.
+ *
+ * @param[in] hint The scale hint, a value in @ref Evas_Image_Scale_Hint.
+ *
+ * @ingroup Evas_Image
+ */
+EAPI void evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint);
+
+/**
+ * @brief Get the scale hint of a given image of the canvas.
+ *
+ * This function returns the scale hint value of the given image object of the
+ * canvas.
+ *
+ * @return The scale hint, a value in @ref Evas_Image_Scale_Hint.
+ *
+ * @ingroup Evas_Image
+ */
+EAPI Evas_Image_Scale_Hint evas_object_image_scale_hint_get(const Evas_Object *obj);
+
+/**
  *
  * Sets the size of the given image object.
  *

@@ -109,8 +109,8 @@ struct _Evas_Image_Data
    int               pixels_checked_out;
    int               load_error;
 
-   Evas_Image_Scale_Hint   scale_hint;
-   Evas_Image_Content_Hint content_hint;
+   Efl_Image_Scale_Hint   scale_hint;
+   Efl_Image_Content_Hint content_hint;
 
    Eina_Bool         changed : 1;
    Eina_Bool         dirty_pixels : 1;
@@ -164,5 +164,7 @@ Evas_Native_Surface *_evas_image_native_surface_get(const Evas_Object *eo_obj);
 
 # define EINA_COW_IMAGE_STATE_WRITE_END(Obj, Write) \
   EINA_COW_WRITE_END(evas_object_image_state_cow, Obj->cur, Write)
+
+#define FRAME_MAX 1024
 
 #endif // EVAS_IMAGE_PRIVATE_H

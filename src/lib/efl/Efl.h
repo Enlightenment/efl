@@ -103,6 +103,7 @@ static inline void efl_gfx_color16_type_set(Efl_Gfx_Color *color,
 #include "interfaces/efl_gfx_types.eot.h"
 #include "interfaces/efl_gfx_fill.eo.legacy.h"
 #include "interfaces/efl_gfx_base.eo.legacy.h"
+#include "interfaces/efl_image.eo.legacy.h"
 #include "interfaces/efl_image_animated.eo.legacy.h"
 #endif
 

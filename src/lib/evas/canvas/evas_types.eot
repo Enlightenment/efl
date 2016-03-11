@@ -1,5 +1,4 @@
 type @extern Evas.Load_Error: int; /* FIXME: Need to migrate emile. */
-type @extern Evas.Image_Scale_Hint: int; /* FIXME: Need to migrate emile. */
 struct @extern Evas.Video_Surface; /* FIXME: The structure is full of the unsupported func pointers. */
 
 /* FIXME: Unsupported annonymous structures inside */
@@ -229,14 +228,6 @@ enum Evas.Callback_Type
 
                              @since 1.15]]
    last [[kept as last element/sentinel -- not really an event]]
-}
-
-enum Evas.Image_Content_Hint
-{
-   [[How an image's data is to be treated by Evas, for optimization]]
-   none = 0, [[No hint at all]]
-   dynamic = 1, [[The contents will change over time]]
-   static = 2 [[The contents won't change over time]]
 }
 
 enum Evas.Image_Orient

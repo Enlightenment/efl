@@ -913,7 +913,7 @@ evas_cache2_image_scale_load(Image_Entry *im,
    lo.scale_load.dst_w = dst_w;
    lo.scale_load.dst_h = dst_h;
    lo.scale_load.smooth = smooth;
-   lo.scale_load.scale_hint = im->scale_hint;
+   lo.scale_load.scale_hint = (Emile_Image_Scale_Hint) im->scale_hint;
 
    evas_cache2_image_cache_key_create(hkey, im->file, pathlen,
                                       im->key, keylen, &lo);

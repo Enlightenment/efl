@@ -246,6 +246,11 @@ typedef struct _Evas_Event_Hold          Evas_Event_Hold; /**< Event structure f
 typedef struct _Evas_Event_Render_Post   Evas_Event_Render_Post; /**< Event structure that may come with #EVAS_CALLBACK_RENDER_POST event callbacks @since 1.8 */
 typedef struct _Evas_Event_Axis_Update   Evas_Event_Axis_Update; /**< Event structure for #EVAS_CALLBACK_AXIS_UPDATE event callbacks @since 1.13 */
 
+typedef Efl_Image_Content_Hint           Evas_Image_Content_Hint;
+#define EVAS_IMAGE_CONTENT_HINT_NONE     EFL_IMAGE_CONTENT_HINT_NONE
+#define EVAS_IMAGE_CONTENT_HINT_DYNAMIC  EFL_IMAGE_CONTENT_HINT_DYNAMIC
+#define EVAS_IMAGE_CONTENT_HINT_STATIC   EFL_IMAGE_CONTENT_HINT_STATIC
+
 typedef enum _Evas_Alloc_Error
 {
    EVAS_ALLOC_ERROR_NONE = 0, /**< No allocation error */

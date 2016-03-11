@@ -1,3 +1,20 @@
+enum Efl.Image.Content_Hint
+{
+   [[How an image's data is to be treated by EFL, for optimization.]]
+   none = 0,    [[No hint on the content (default).]]
+   dynamic = 1, [[The content will change over time.]]
+   static = 2   [[The content won't change over time.]]
+}
+
+enum Efl.Image.Scale_Hint
+{
+  /* FIXME: Legacy is in Emile, where it does not belong. */
+  [[How an image's data is to be treated by EFL, with regard to scaling cache.]]
+  none = 0,    [[No hint on the scaling (default).]]
+  dynamic = 1, [[Image will be re-scaled over time, thus turning scaling cache OFF for its data.]]
+  static = 2   [[Image will not be re-scaled over time, thus turning scaling cache ON for its data.]]
+}
+
 interface Efl.Image ()
 {
    [[Common APIs for all 2D images that can be rendered on the canvas.]]
@@ -130,6 +147,53 @@ interface Efl.Image ()
          get {}
          values {
             fill: Efl.Gfx.Border_Fill_Mode; [[Fill mode of the center region.]]
+         }
+      }
+
+      /* Note: those are obscure features of evas image. Expose in Efl.Image? */
+      @property content_hint {
+         set {
+            [[Set the content hint setting of a given image object of the
+              canvas.
+
+              This function sets the content hint value of the given image
+              of the canvas. For example, if you're on the GL engine and
+              your driver implementation supports it, setting this hint to
+              #EVAS_IMAGE_CONTENT_HINT_DYNAMIC will make it need zero copies
+              at texture upload time, which is an "expensive" operation.
+            ]]
+         }
+         get {
+            [[Get the content hint setting of a given image object of the
+              canvas.
+
+              This returns #EVAS_IMAGE_CONTENT_HINT_NONE on error.
+            ]]
+         }
+         values {
+            hint: Efl.Image.Content_Hint; [[Dynamic or static content hint,
+                                            see @Efl.Image.Content_Hint]]
+         }
+      }
+      @property scale_hint {
+         set {
+            [[Set the scale hint of a given image of the canvas.
+
+              This function sets the scale hint value of the given image
+              object in the canvas, which will affect how Evas is to cache
+              scaled versions of its original source image.
+            ]]
+         }
+         get {
+            [[Get the scale hint of a given image of the canvas.
+
+              This function returns the scale hint value of the given image
+              object of the canvas.
+            ]]
+         }
+         values {
+            hint: Efl.Image.Scale_Hint; [[Scalable or static size hint,
+                                          see @Efl.Image.Scale_Hint]]
          }
       }
    }

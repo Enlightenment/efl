@@ -1657,7 +1657,7 @@ evas_object_image_native_surface_get(const Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_image_scale_hint_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Scale_Hint hint)
+_evas_image_efl_image_scale_hint_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Image_Scale_Hint hint)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -1683,14 +1683,14 @@ _evas_image_scale_hint_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Scale_Hint
      }
 }
 
-EOLIAN static Evas_Image_Scale_Hint
-_evas_image_scale_hint_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+EOLIAN static Efl_Image_Scale_Hint
+_evas_image_efl_image_scale_hint_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
-   return o->scale_hint;;
+   return o->scale_hint;
 }
 
 EOLIAN static void
-_evas_image_content_hint_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Content_Hint hint)
+_evas_image_efl_image_content_hint_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Image_Content_Hint hint)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -1716,9 +1716,8 @@ _evas_image_content_hint_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Content_
      }
 }
 
-#define FRAME_MAX 1024
-EOLIAN static Evas_Image_Content_Hint
-_evas_image_content_hint_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+EOLIAN static Efl_Image_Content_Hint
+_evas_image_efl_image_content_hint_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->content_hint;
 }
@@ -4696,6 +4695,30 @@ evas_object_image_source_events_get(const Evas_Object *eo)
 {
    EVAS_OBJECT_LEGACY_API(eo, EINA_FALSE);
    return _evas_image_proxy_source_events_get(eo);
+}
+
+EAPI void
+evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hint)
+{
+   return efl_image_content_hint_set(obj, hint);
+}
+
+EAPI Evas_Image_Content_Hint
+evas_object_image_content_hint_get(const Evas_Object *obj)
+{
+   return efl_image_content_hint_get(obj);
+}
+
+EAPI void
+evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
+{
+   return efl_image_scale_hint_set(obj, (Efl_Image_Scale_Hint) hint);
+}
+
+EAPI Evas_Image_Scale_Hint
+evas_object_image_scale_hint_get(const Evas_Object *obj)
+{
+   return (Evas_Image_Scale_Hint) efl_image_scale_hint_get(obj);
 }
 
 EAPI void
