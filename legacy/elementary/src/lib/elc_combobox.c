@@ -458,8 +458,7 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    elm_table_pack(sd->tbl, sd->spacer, 0, 0, 1, 1);
 
    // This is the genlist object that will take over the genlist call
-   eo_add(&gl, ELM_GENLIST_CLASS, obj);
-   sd->genlist = gl;
+   sd->genlist = gl = eo_add(&gl, ELM_GENLIST_CLASS, obj);
    elm_genlist_filter_set(gl, NULL);
    elm_widget_mirrored_automatic_set(gl, EINA_FALSE);
    elm_widget_mirrored_set(gl, elm_widget_mirrored_get(obj));
@@ -473,8 +472,7 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    elm_table_pack(sd->tbl, gl, 0, 0, 1, 1);
 
    // This is the entry object that will take over the entry call
-   eo_add(&entry, ELM_ENTRY_CLASS, obj);
-   sd->entry = entry;
+   sd->entry = entry = eo_add(&entry, ELM_ENTRY_CLASS, obj);
    elm_widget_mirrored_automatic_set(entry, EINA_FALSE);
    elm_widget_mirrored_set(entry, elm_widget_mirrored_get(obj));
    elm_scroller_policy_set(entry, ELM_SCROLLER_POLICY_OFF,
