@@ -83,6 +83,8 @@ _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSE
         ecore_drm_output_free(output);
         return;
      }
+
+   output->dev->current = output->current;
    /* We were unable to queue a page on the last flip attempt, so we'll
     * try again now. */
    next = output->next;
