@@ -326,7 +326,7 @@ eeze_net_list(void)
         net = eeze_net_new(i->if_name);
         if (net) ret = eina_list_append(ret, net);
      }
-   
+
    if_freenameindex(ifs);
    return ret;
 }
