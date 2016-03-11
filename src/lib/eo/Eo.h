@@ -610,12 +610,12 @@ EAPI Eo *eo_super(const Eo *obj, const Eo_Class *cur_klass);
  */
 EAPI const Eo_Class *eo_class_get(const Eo *obj);
 
-#define _eo_add_common(objp, klass, parent, is_ref, ...) \
-   ((Eo *) ( \
-     *objp = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref), \
-     ##__VA_ARGS__, \
-     *objp = _eo_add_end(*objp) \
-   ))
+#define _eo_add_common(klass, parent, is_ref, ...) \
+   ({ \
+     Eo * const eoid = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref); \
+     __VA_ARGS__; \
+     (Eo *) _eo_add_end(eoid); \
+    })
 
 /**
  * @def eo_add
@@ -631,13 +631,12 @@ EAPI const Eo_Class *eo_class_get(const Eo *obj);
  *
  * If you want a more "consistent" behaviour, take a look at #eo_add_ref.
  *
- * @param objp a pointer to the object id (Eo **)
  * @param klass the class of the object to create.
  * @param parent the parent to set to the object.
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
  */
-#define eo_add(objp, klass, parent, ...) _eo_add_common(objp, klass, parent, EINA_FALSE, ##__VA_ARGS__)
+#define eo_add(klass, parent, ...) _eo_add_common(klass, parent, EINA_FALSE, ##__VA_ARGS__)
 
 /**
  * @def eo_add_ref
@@ -649,13 +648,12 @@ EAPI const Eo_Class *eo_class_get(const Eo *obj);
  * when the parent object is deleted until you manually remove the ref
  * by calling eo_unref().
  *
- * @param objp a pointer to the object id (Eo **)
  * @param klass the class of the object to create.
  * @param parent the parent to set to the object.
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
  */
-#define eo_add_ref(objp, klass, parent, ...) _eo_add_common(objp, klass, parent, EINA_TRUE, ##__VA_ARGS__)
+#define eo_add_ref(klass, parent, ...) _eo_add_common(klass, parent, EINA_TRUE, ##__VA_ARGS__)
 
 EAPI Eo * _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent, Eina_Bool ref);
 
