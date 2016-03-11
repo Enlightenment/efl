@@ -372,7 +372,7 @@ ecore_animator_add(Ecore_Task_Cb func,
 {
    Ecore_Animator *animator = NULL;
 
-   eo_add(&animator, MY_CLASS, _ecore_parent, ecore_animator_constructor(animator, func, data));
+   animator = eo_add(MY_CLASS, _ecore_parent, ecore_animator_constructor(eoid, func, data));
    return animator;
 }
 
@@ -388,7 +388,7 @@ ecore_animator_timeline_add(double            runtime,
                             const void       *data)
 {
    Ecore_Animator *animator;
-   eo_add(&animator, MY_CLASS, _ecore_parent, ecore_animator_timeline_constructor(animator, runtime, func, data));
+   animator = eo_add(MY_CLASS, _ecore_parent, ecore_animator_timeline_constructor(eoid, runtime, func, data));
    return animator;
 }
 

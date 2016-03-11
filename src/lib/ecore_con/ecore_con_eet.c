@@ -722,7 +722,7 @@ ecore_con_eet_server_new(Ecore_Con_Server *server)
 
    if (!server) return NULL;
 
-   eo_add(&ece_obj, ECORE_CON_EET_SERVER_OBJ_CLASS, NULL, ecore_con_eet_base_server_set(ece_obj, server));
+   ece_obj = eo_add(ECORE_CON_EET_SERVER_OBJ_CLASS, NULL, ecore_con_eet_base_server_set(eoid, server));
 
    return ece_obj;
 }
@@ -734,7 +734,7 @@ ecore_con_eet_client_new(Ecore_Con_Server *server)
 
    if (!server) return NULL;
 
-   eo_add(&ece_obj, ECORE_CON_EET_CLIENT_OBJ_CLASS, NULL, ecore_con_eet_base_server_set(ece_obj, server));
+   ece_obj = eo_add(ECORE_CON_EET_CLIENT_OBJ_CLASS, NULL, ecore_con_eet_base_server_set(eoid, server));
 
    return ece_obj;
 }

@@ -4748,7 +4748,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                           case EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE:
                             {
                                Eo *primitive = NULL;
-                               eo_add(&primitive, EVAS_CANVAS3D_PRIMITIVE_CLASS, ed->base->evas);
+                               primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, ed->base->evas);
                                evas_canvas3d_primitive_form_set(primitive, pd_mesh_node->mesh_node.mesh.primitive);
 
                                frame_exist = evas_canvas3d_mesh_frame_exist(mesh, pf->type.node.frame);

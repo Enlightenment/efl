@@ -81,8 +81,7 @@ evas_object_vg_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = NULL;
-   eo_add(&eo_obj, MY_CLASS, e);
+   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
 
    // Ask backend to return the main Ector_Surface
 
@@ -138,7 +137,7 @@ _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
    obj->type = o_type;
 
    /* root node */
-   eo_add(&pd->root, EFL_VG_ROOT_NODE_CLASS, eo_obj);
+   pd->root = eo_add(EFL_VG_ROOT_NODE_CLASS, eo_obj);
    eo_ref(pd->root);
 
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);

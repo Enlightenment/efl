@@ -67,8 +67,7 @@ ecore_exe_pipe_run(const char     *exe_cmd,
                    Ecore_Exe_Flags flags,
                    const void     *data)
 {
-   Ecore_Exe *ret = NULL;
-   eo_add(&ret, MY_CLASS, NULL, ecore_obj_exe_command_set(ret, exe_cmd, flags));
+   Ecore_Exe *ret = eo_add(MY_CLASS, NULL, ecore_obj_exe_command_set(eoid, exe_cmd, flags));
    if (ret)
      {
         Ecore_Exe_Data *pd = eo_data_scope_get(ret, MY_CLASS);

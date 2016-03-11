@@ -17,8 +17,7 @@ START_TEST(eo_value)
    Eina_Value val2, eo_val;
    void *tmpp = NULL;
    Eo_Dbg_Info *eo_dbg_info;
-   Eo *obj = NULL;
-   eo_add(&obj, SIMPLE_CLASS, NULL);
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
 
    eo_dbg_info = EO_DBG_INFO_LIST_APPEND(NULL, "Root");
    eo_dbg_info_get(obj, eo_dbg_info);

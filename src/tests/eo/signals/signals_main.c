@@ -37,8 +37,7 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
-   Eo *obj = NULL;
-   eo_add(&obj, SIMPLE_CLASS, NULL);
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    Simple_Public_Data *pd = eo_data_scope_get(obj, SIMPLE_CLASS);
 
    /* The order of these two is undetermined. */

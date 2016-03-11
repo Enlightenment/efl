@@ -2447,16 +2447,16 @@ eng_ector_create(void *data EINA_UNUSED)
    ector_backend = getenv("ECTOR_BACKEND");
    if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
-        eo_add(&ector, ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = eo_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
      }
    else if (ector_backend && !strcasecmp(ector_backend, "experimental"))
      {
-        eo_add(&ector, ECTOR_GL_SURFACE_CLASS, NULL);
+        ector = eo_add(ECTOR_GL_SURFACE_CLASS, NULL);
         use_gl = EINA_TRUE;
      }
    else
      {
-        eo_add(&ector, ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = eo_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_TRUE;
      }
    return ector;
@@ -2477,13 +2477,13 @@ eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *evas, void *engine_image, Ei
      {
         RGBA_Image *im = engine_image;
 
-        eo_add(&buf, EVAS_ECTOR_GL_RGBAIMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(buf, evas, im));
+        buf = eo_add(EVAS_ECTOR_GL_RGBAIMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(eoid, evas, im));
      }
    else
      {
         Evas_GL_Image *im = engine_image;
 
-        eo_add(&buf, EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(buf, evas, im));
+        buf = eo_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(eoid, evas, im));
      }
    return buf;
 }
@@ -2544,7 +2544,7 @@ eng_ector_buffer_new(void *data, Evas *evas, void *pixels,
 
         gc = re->window_gl_context_get(re->software.ob);
         im = evas_gl_common_image_surface_new(gc, iw, ih, EINA_TRUE);
-        eo_add(&buf, EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(buf, evas, im));
+        buf = eo_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(eoid, evas, im));
         im->references--;
      }
    return buf;

@@ -18,8 +18,7 @@ main(int argc, char *argv[])
    eo_init();
 
    Eina_Bool called = EINA_FALSE;
-   Eo *obj = NULL;
-   eo_add(&obj, INHERIT2_CLASS, NULL);
+   Eo *obj = eo_add(INHERIT2_CLASS, NULL);
 
    simple_a_set(obj, 1);
    Simple_Public_Data *pd = eo_data_scope_get(obj, SIMPLE_CLASS);
@@ -27,7 +26,7 @@ main(int argc, char *argv[])
 
    eo_unref(obj);
 
-   eo_add(&obj, INHERIT3_CLASS, NULL);
+   obj = eo_add(INHERIT3_CLASS, NULL);
 
    simple_a_set(obj, 1);
    pd = eo_data_scope_get(obj, SIMPLE_CLASS);
@@ -35,7 +34,7 @@ main(int argc, char *argv[])
 
    eo_unref(obj);
 
-   eo_add(&obj, INHERIT2_CLASS, NULL);
+   obj = eo_add(INHERIT2_CLASS, NULL);
    called = inherit2_print(obj);
    fail_if(!called);
    called = inherit2_print(obj);
@@ -43,7 +42,7 @@ main(int argc, char *argv[])
    fail_if(!called);
    eo_unref(obj);
 
-   eo_add(&obj, SIMPLE_CLASS, NULL);
+   obj = eo_add(SIMPLE_CLASS, NULL);
    called = inherit2_print(obj);
    fail_if(called);
 

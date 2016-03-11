@@ -142,38 +142,40 @@ main(void)
 
    evas = ecore_evas_get(ecore_evas);
 
-   eo_add(&scene, EVAS_CANVAS3D_SCENE_CLASS, evas);
+   scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
 
-   eo_add(&root_node, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(root_node, EVAS_CANVAS3D_NODE_TYPE_NODE));
+   root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
-   eo_add(&camera, EVAS_CANVAS3D_CAMERA_CLASS, evas);
+   camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
    evas_canvas3d_camera_projection_perspective_set(camera, 60.0, 1.0, 1.0, 500.0);
 
-   eo_add(&camera_node, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(camera_node, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+   camera_node =
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
    evas_canvas3d_node_camera_set(camera_node, camera);
    evas_canvas3d_node_member_add(root_node, camera_node);
    evas_canvas3d_node_position_set(camera_node, 100.0, 50.0, 20.0);
    evas_canvas3d_node_look_at_set(camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 20.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 1.0);
-   eo_add(&light, EVAS_CANVAS3D_LIGHT_CLASS, evas);
+   light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, evas);
    evas_canvas3d_light_ambient_set(light, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_light_diffuse_set(light, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_light_specular_set(light, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_light_directional_set(light, EINA_TRUE);
 
-   eo_add(&light_node, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(light_node, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+   light_node =
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
    evas_canvas3d_node_light_set(light_node, light);
    evas_canvas3d_node_position_set(light_node, 1000.0, 0.0, 1000.0);
    evas_canvas3d_node_look_at_set(light_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
    evas_canvas3d_node_member_add(root_node, light_node);
 
-   eo_add(&mesh, EVAS_CANVAS3D_MESH_CLASS, evas);
-   eo_add(&material, EVAS_CANVAS3D_MATERIAL_CLASS, evas);
+   mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+   material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    efl_file_set(mesh, model_path, NULL);
    evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
    evas_canvas3d_mesh_shade_mode_set(mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
 
-   eo_add(&texture, EVAS_CANVAS3D_TEXTURE_CLASS, evas);
+   texture = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
    evas_canvas3d_texture_file_set(texture, image_path, NULL);
    evas_canvas3d_texture_filter_set(texture, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
@@ -187,16 +189,16 @@ main(void)
    evas_canvas3d_material_color_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_material_shininess_set(material, 50.0);
 
-   eo_add(&mesh_node, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(mesh_node, EVAS_CANVAS3D_NODE_TYPE_MESH));
-   eo_add(&mesh_box_node, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(mesh_box_node, EVAS_CANVAS3D_NODE_TYPE_MESH));
+   mesh_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
+   mesh_box_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
-   eo_add(&material_box, EVAS_CANVAS3D_MATERIAL_CLASS, evas);
+   material_box = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
    evas_canvas3d_material_enable_set(material_box, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE);
 
-   eo_add(&cube, EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
+   cube = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
    evas_canvas3d_primitive_form_set(cube, EVAS_CANVAS3D_MESH_PRIMITIVE_CUBE);
 
-   eo_add(&mesh_box, EVAS_CANVAS3D_MESH_CLASS, evas);
+   mesh_box = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
    evas_canvas3d_mesh_from_primitive_set(mesh_box, 0, cube);
    evas_canvas3d_mesh_vertex_assembly_set(mesh_box, EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES);
    evas_canvas3d_mesh_shade_mode_set(mesh_box, EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR);
@@ -213,7 +215,7 @@ main(void)
    evas_canvas3d_scene_camera_node_set(scene, camera_node);
    evas_canvas3d_scene_size_set(scene, WIDTH, HEIGHT);
 
-   eo_add(&background, EVAS_RECTANGLE_CLASS, evas);
+   background = eo_add(EVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 0, 0, 0, 255);
    efl_gfx_size_set(background, WIDTH, HEIGHT);
    efl_gfx_visible_set(background, EINA_TRUE);

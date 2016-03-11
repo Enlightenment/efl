@@ -252,7 +252,7 @@ main(int argc, const char *argv[])
      {
        if (!strncmp(argv[i], "tone:", 5))
          {
-            eo_add(&in, ECORE_AUDIO_OBJ_IN_TONE_CLASS, NULL);
+            in = eo_add(ECORE_AUDIO_OBJ_IN_TONE_CLASS, NULL);
             if (!in)
               {
                  printf("error when creating ecore audio source.\n");
@@ -276,7 +276,7 @@ main(int argc, const char *argv[])
          }
        else
          {
-            eo_add(&in, ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
+            in = eo_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
             if (!in)
               {
                  printf("error when creating ecore audio source.\n");
@@ -307,7 +307,7 @@ main(int argc, const char *argv[])
 
    printf("Start: %s (%0.2fs)\n", name, length);
 
-   eo_add(&out, ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+   out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
    ret = ecore_audio_obj_out_input_attach(out, in);
    if (!ret)
      printf("Could not attach input %s\n", name);

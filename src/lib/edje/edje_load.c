@@ -793,9 +793,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                           Evas_Canvas3D_Material *material = NULL;
                           Edje_Part_Description_Mesh_Node *pd_mesh_node;
 
-                          eo_add(&rp->node, EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(rp->node, EVAS_CANVAS3D_NODE_TYPE_MESH));
+                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
-                          eo_add(&mesh, EVAS_CANVAS3D_MESH_CLASS, ed->base->evas);
+                          mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, ed->base->evas);
                           evas_canvas3d_node_mesh_add(rp->node, mesh);
 
                           pd_mesh_node = (Edje_Part_Description_Mesh_Node*) rp->chosen_description;
@@ -809,13 +809,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                                evas_canvas3d_mesh_frame_add(mesh, 0);
                             }
 
-                          eo_add(&material, EVAS_CANVAS3D_MATERIAL_CLASS, ed->base->evas);
+                          material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, ed->base->evas);
                           evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
                           if (pd_mesh_node->mesh_node.texture.need_texture && pd_mesh_node->mesh_node.texture.textured)
                             {
                                Evas_Canvas3D_Texture *texture = NULL;
 
-                               eo_add(&texture, EVAS_CANVAS3D_TEXTURE_CLASS, ed->base->evas);
+                               texture = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, ed->base->evas);
                                evas_canvas3d_material_texture_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture);
                             }
                           rp->object = NULL;
@@ -826,8 +826,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        {
                           Evas_Canvas3D_Light *light = NULL;
 
-                          eo_add(&rp->node, EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(rp->node, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
-                          eo_add(&light, EVAS_CANVAS3D_LIGHT_CLASS, ed->base->evas);
+                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+                          light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, ed->base->evas);
                           evas_canvas3d_node_light_set(rp->node, light);
 
                           rp->object = NULL;
@@ -838,8 +838,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        {
                           Evas_Canvas3D_Camera *camera = NULL;
 
-                          eo_add(&rp->node, EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(rp->node, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
-                          eo_add(&camera, EVAS_CANVAS3D_CAMERA_CLASS, ed->base->evas);
+                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+                          camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, ed->base->evas);
                           evas_canvas3d_node_camera_set(rp->node, camera);
 
                           rp->object = evas_object_image_filled_add(ed->base->evas);

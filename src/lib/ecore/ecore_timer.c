@@ -93,7 +93,7 @@ ecore_timer_add(double        in,
    Ecore_Timer *timer = NULL;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   eo_add(&timer, MY_CLASS, _ecore_parent, ecore_obj_timer_constructor(timer, in, func, data));
+   timer = eo_add(MY_CLASS, _ecore_parent, ecore_obj_timer_constructor(eoid, in, func, data));
    return timer;
 }
 
@@ -357,7 +357,7 @@ _ecore_timer_loop_add(double        in,
                       const void   *data)
 {
    Ecore_Timer *timer = NULL;
-   eo_add(&timer, MY_CLASS, _ecore_parent, ecore_obj_timer_loop_constructor(timer, in, func, data));
+   timer = eo_add(MY_CLASS, _ecore_parent, ecore_obj_timer_loop_constructor(eoid, in, func, data));
 
    return timer;
 }

@@ -65,7 +65,7 @@ _set_material_to_mesh_from_eet_file(Evas_Canvas3D_Mesh *mesh,
 {
    Evas_Canvas3D_Object_Data *pd = eo_data_scope_get(mesh, EVAS_CANVAS3D_OBJECT_CLASS);
    Eo *material = NULL;
-   eo_add(&material, EVAS_CANVAS3D_MATERIAL_CLASS, pd->evas);
+   material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, pd->evas);
 
    evas_canvas3d_material_enable_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, !!(eet_mesh->materials->colors[0].a > 0));
    evas_canvas3d_material_enable_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, !!(eet_mesh->materials->colors[1].a > 0));

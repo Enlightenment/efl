@@ -237,9 +237,9 @@ Eina_Bool
 _init_sphere(void *this, const char *texture)
 {
    Test_object *sphere  = (Test_object *)this;
-   eo_add(&sphere->primitive, EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
-   eo_add(&sphere->mesh, EVAS_CANVAS3D_MESH_CLASS, evas);
-   eo_add(&sphere->material, EVAS_CANVAS3D_MATERIAL_CLASS, evas);
+   sphere->primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
+   sphere->mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+   sphere->material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
    evas_canvas3d_primitive_form_set(sphere->primitive, EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE);
    evas_canvas3d_primitive_precision_set(sphere->primitive, 50);
    evas_canvas3d_mesh_from_primitive_set(sphere->mesh, 0, sphere->primitive);
@@ -248,7 +248,7 @@ _init_sphere(void *this, const char *texture)
 
    evas_canvas3d_mesh_color_pick_enable_set(sphere->mesh, EINA_TRUE);
 
-   eo_add(&sphere->texture, EVAS_CANVAS3D_TEXTURE_CLASS, evas);
+   sphere->texture = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
    evas_canvas3d_texture_file_set(sphere->texture, texture, NULL);
    evas_canvas3d_texture_filter_set(sphere->texture, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(sphere->texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
@@ -313,7 +313,7 @@ _init_scene(const char *texture)
              m->material = spheretmp->material;
              m->texture = spheretmp->texture;
           }
-        eo_add(&m->node, EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(m->node, EVAS_CANVAS3D_NODE_TYPE_MESH));
+        m->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
         m->speed = tmp;
         m->sphere_animate = _animate_sphere;
         m->animate = ecore_timer_add(m->speed, m->sphere_animate, m);

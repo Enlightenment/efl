@@ -147,7 +147,7 @@ _efl_model_evt_added_ecore_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void
    Efl_Model_Children_Event cevt;
    Eina_Value path;
 
-   eo_add_ref(&cevt.child, EIO_MODEL_CLASS, priv->obj, eio_model_path_set(cevt.child, evt->filename));
+   cevt.child = eo_add_ref(EIO_MODEL_CLASS, priv->obj, eio_model_path_set(eoid, evt->filename));
    priv->children_list = eina_list_append(priv->children_list, cevt.child);
    cevt.index = eina_list_count(priv->children_list);
 
@@ -407,7 +407,7 @@ _eio_main_children_load_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina
    Eio_Model_Data *priv = data;
    EINA_SAFETY_ON_NULL_RETURN(priv);
 
-   eo_add(&child, MY_CLASS, NULL, eio_model_path_set(child, info->path));
+   child = eo_add(MY_CLASS, NULL, eio_model_path_set(eoid, info->path));
    eina_spinlock_take(&priv->filter_lock);
    if (priv->filter_cb)
      eio_model_children_filter_set(child, priv->filter_cb, priv->filter_userdata);
@@ -523,8 +523,7 @@ _eio_model_children_filter_set(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eio_Fi
 static Eo *
 _eio_model_efl_model_base_child_add(Eo *obj EINA_UNUSED, Eio_Model_Data *priv EINA_UNUSED)
 {
-   Eo *ret = NULL;
-   return eo_add(&ret, EIO_MODEL_CLASS, obj);
+   return eo_add(EIO_MODEL_CLASS, obj);
 }
 
 static void

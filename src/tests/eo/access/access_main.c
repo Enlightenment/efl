@@ -13,8 +13,7 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
-   Eo *obj = NULL;
-   eo_add(&obj, INHERIT_CLASS, NULL);
+   Eo *obj = eo_add(INHERIT_CLASS, NULL);
 
    simple_a_set(obj, 1);
    inherit_prot_print(obj);

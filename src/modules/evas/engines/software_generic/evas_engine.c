@@ -3740,12 +3740,12 @@ eng_ector_create(void *data EINA_UNUSED)
    ector_backend = getenv("ECTOR_BACKEND");
    if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
-        eo_add(&ector, ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = eo_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_FALSE;
      }
    else
      {
-        eo_add(&ector, ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = eo_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_TRUE;
      }
    return ector;
@@ -3765,7 +3765,7 @@ eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *e, void *engine_image, Eina_
 
    if (!ie) return NULL;
 
-   eo_add(&buf, EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, e, evas_ector_buffer_engine_image_set(buf, e, ie));
+   buf = eo_add(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, e, evas_ector_buffer_engine_image_set(eoid, e, ie));
 
    return buf;
 }
@@ -3784,7 +3784,7 @@ eng_ector_buffer_new(void *data EINA_UNUSED, Evas *evas, void *pixels,
 
    if ((flags & (ECTOR_BUFFER_FLAG_RENDERABLE | ECTOR_BUFFER_FLAG_DRAWABLE)) == 0)
      {
-        eo_add(&buf, ECTOR_SOFTWARE_BUFFER_CLASS, evas, ector_buffer_pixels_set(buf, pixels, width, height, stride, cspace, writeable, l, r, t, b));
+        buf = eo_add(ECTOR_SOFTWARE_BUFFER_CLASS, evas, ector_buffer_pixels_set(eoid, pixels, width, height, stride, cspace, writeable, l, r, t, b));
      }
    else
      {

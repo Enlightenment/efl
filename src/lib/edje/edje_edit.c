@@ -231,7 +231,7 @@ EAPI Evas_Object *
 edje_edit_object_add(Evas *evas)
 {
    Evas_Object *e;
-   eo_add(&e, MY_CLASS, evas);
+   e = eo_add(MY_CLASS, evas);
    return e;
 }
 
