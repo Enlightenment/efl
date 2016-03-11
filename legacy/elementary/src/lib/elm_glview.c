@@ -79,7 +79,7 @@ _glview_update_surface(Evas_Object *obj)
    sd->config->options_bits = opt;
    evas_gl_native_surface_get(sd->evasgl, sd->surface, &ns);
    evas_object_image_native_surface_set(wd->resize_obj, &ns);
-   elm_glview_changed_set(obj);
+   elm_glview_draw_request_set(obj);
 
    // fake a resize event so that clients can reconfigure their viewport
    sd->resized = EINA_TRUE;
@@ -308,6 +308,14 @@ elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version)
    return obj;
 }
 
+EAPI void
+elm_glview_changed_set(Evas_Object *obj)
+{
+   ELM_GLVIEW_CHECK(obj);
+
+   elm_glview_draw_request_set(obj);
+}
+
 EOLIAN static void
 _elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
                                 Evas_GL_Context_Version version)
@@ -431,7 +439,7 @@ _elm_glview_resize_policy_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Resize_Po
       case ELM_GLVIEW_RESIZE_POLICY_SCALE:
         sd->scale_policy = policy;
         _glview_update_surface(obj);
-        elm_glview_changed_set(obj);
+        elm_glview_draw_request_set(obj);
         return EINA_TRUE;
 
       default:
@@ -470,7 +478,7 @@ _elm_glview_size_set(Eo *obj, Elm_Glview_Data *sd, int w, int h)
    sd->h = h;
 
    _glview_update_surface(obj);
-   elm_glview_changed_set(obj);
+   elm_glview_draw_request_set(obj);
 }
 
 EOLIAN static void
@@ -507,7 +515,7 @@ _elm_glview_render_func_set(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd, Elm_GLView
 }
 
 EOLIAN static void
-_elm_glview_changed_set(Eo *obj, Elm_Glview_Data *sd)
+_elm_glview_draw_request_set(Eo *obj, Elm_Glview_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

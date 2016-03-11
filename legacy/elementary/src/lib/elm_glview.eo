@@ -122,7 +122,7 @@ class Elm.Glview (Elm.Widget)
             policy: Elm.GLView.Resize.Policy; [[The scaling policy.]]
          }
       }
-      @property changed {
+      @property draw_request {
          set {
             [[Notifies that there has been changes in the GLView.]]
          }
@@ -208,7 +208,7 @@ class Elm.Glview (Elm.Widget)
 
               The render function gets called in the main loop but whether
               it runs depends on the rendering policy and whether
-              @.changed.set gets called.
+              @.draw_request.set gets called.
             ]]
          }
          values {

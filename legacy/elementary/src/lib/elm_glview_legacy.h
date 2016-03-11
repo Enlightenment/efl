@@ -19,4 +19,14 @@ EAPI Evas_Object *elm_glview_add(Evas_Object *parent);
  */
 EAPI Evas_Object *elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version);
 
+
+/**
+ * Notifies that there has been changes in the GLView.
+ *
+ * @param obj The GLView object
+ *
+ * @ingroup GLView
+ */
+EAPI void elm_glview_changed_set(Evas_Object *obj);
+
 #include "elm_glview.eo.legacy.h"
