@@ -195,7 +195,7 @@ _dladdr_comp(const void *p1, const void *p2)
 }
 
 int
-dladdr (const void *addr EVIL_UNUSED, Dl_info *info)
+dladdr (const void *addr, Dl_info *info)
 {
    TCHAR tpath[PATH_MAX];
    MEMORY_BASIC_INFORMATION mbi;
