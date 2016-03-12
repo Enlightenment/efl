@@ -941,11 +941,8 @@ eina_log_domain_free(Eina_Log_Domain *d)
 {
    EINA_SAFETY_ON_NULL_RETURN(d);
 
-   if (d->domain_str)
-      free((char *)d->domain_str);
-
-   if (d->name)
-      free((char *)d->name);
+   free((char *)d->domain_str);
+   free((char *)d->name);
 }
 
 /*
