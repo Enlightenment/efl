@@ -892,9 +892,9 @@ eina_log_domain_str_get(const char *name, const char *color)
         if (!d)
            return NULL;
 
-               memcpy((char *)d,                          color, color_len);
-               memcpy((char *)(d + color_len),            name,  name_len);
-               memcpy((char *)(d + color_len + name_len), EINA_COLOR_RESET,
+        memcpy((char *)d,                          color, color_len);
+        memcpy((char *)(d + color_len),            name,  name_len);
+        memcpy((char *)(d + color_len + name_len), EINA_COLOR_RESET,
                strlen(EINA_COLOR_RESET));
         ((char *)d)[color_len + name_len + strlen(EINA_COLOR_RESET)] = '\0';
      }
