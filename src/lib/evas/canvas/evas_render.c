@@ -1872,7 +1872,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         ENFN->context_free(ENDT, ctx);
 
         if (eo_isa(eo_proxy, EVAS_IMAGE_CLASS))
-          source_clip = evas_obj_image_source_clip_get(eo_proxy);
+          source_clip = efl_canvas_proxy_source_clip_get(eo_proxy);
 
         Evas_Proxy_Render_Data proxy_render_data = {
              .eo_proxy = eo_proxy,

@@ -5,6 +5,9 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
    eo_prefix: evas_obj;
    data: Evas_Object_Protected_Data;
    methods {
+      legacy_ctor @protected {
+          [[Internal function. Do not use.]]
+      }
       @property size_hint_max {
          set {
             [[Sets the hints for an object's maximum size.

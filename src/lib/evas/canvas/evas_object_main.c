@@ -2098,5 +2098,12 @@ _evas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protect
    return EVAS_BIDI_DIRECTION_NEUTRAL;
 }
 
+EOLIAN static void
+_evas_object_legacy_ctor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(!eo_finalized_get(eo_obj));
+   obj->legacy = EINA_TRUE;
+}
+
 #include "canvas/evas_object.eo.c"
 

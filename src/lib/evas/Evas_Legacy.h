@@ -3439,6 +3439,140 @@ EAPI void *evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writ
  */
 EAPI void evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h);
 
+/**
+ * @brief The content below the Evas_Object_Image will be rendered inside it
+ * and you can reuse it as a source for any kind of effect.
+ *
+ * @param[in] s Wether to put the content of the canvas below inside the
+ * Evas_Object_Image.
+ *
+ * @since 1.15
+ */
+EAPI void evas_object_image_snapshot_set(Evas_Object *obj, Eina_Bool s);
+
+/**
+ * @brief Determine wether the Evas_Object_Image replicate the content of the
+ * canvas below.
+ *
+ * @return Wether to put the content of the canvas below inside the
+ * Evas_Object_Image.
+ *
+ * @since 1.15
+ */
+EAPI Eina_Bool evas_object_image_snapshot_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the source object on an image object to used as a proxy.
+ *
+ * If an image object is set to behave as a proxy, it will mirror the rendering
+ * contents of a given source object in its drawing region, without affecting
+ * that source in any way. The source must be another valid Evas object. Other
+ * effects may be applied to the proxy, such as a map (see @ref
+ * evas_object_map_set) to create a reflection of the original object (for
+ * example).
+ *
+ * Any existing source object on @c obj will be removed after this call.
+ * Setting @c src to @c null clears the proxy object (not in "proxy state"
+ * anymore).
+ *
+ * @warning You cannot set a proxy as another proxy's source.
+ *
+ * @param[in] src Source object to use for the proxy.
+ */
+EAPI Eina_Bool evas_object_image_source_set(Evas_Object *obj, Evas_Object *src);
+
+/**
+ * @brief Get the current source object of an image object.
+ *
+ * @return Source object to use for the proxy.
+ */
+EAPI Evas_Object *evas_object_image_source_get(const Evas_Object *obj);
+
+/**
+ * @brief Clip the proxy object with the source object's clipper.
+ *
+ * @param[in] source_clip Whether @c obj is clipped by the source clipper
+ * ($true) or not ($false).
+ *
+ * @since 1.8
+ */
+EAPI void evas_object_image_source_clip_set(Evas_Object *obj, Eina_Bool source_clip);
+
+/**
+ * @brief Determine whether an object is clipped by source object's clipper.
+ *
+ * @return Whether @c obj is clipped by the source clipper ($true) or not
+ * ($false).
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool evas_object_image_source_clip_get(const Evas_Object *obj);
+
+/**
+ * @brief Set whether an Evas object is to source events.
+ *
+ * Set whether an Evas object is to repeat events to source.
+ *
+ * If @c repeat is @c true, it will make events on @c obj to also be repeated
+ * for the source object (see @ref evas_object_image_source_set). Even the
+ * @c obj and source geometries are different, the event position will be
+ * transformed to the source object's space.
+ *
+ * If @c repeat is @c false, events occurring on @c obj will be processed only
+ * on it.
+ *
+ * @param[in] source Whether @c obj is to pass events ($true) or not ($false).
+ *
+ * @since 1.8
+ */
+EAPI void evas_object_image_source_events_set(Evas_Object *obj, Eina_Bool repeat);
+
+/**
+ * @brief Determine whether an object is set to source events.
+ *
+ * @return Whether @c obj is to pass events ($true) or not ($false).
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool evas_object_image_source_events_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the source object to be visible or not.
+ *
+ * If @c visible is set to @c false, the source object of the proxy ($obj) will
+ * be invisible.
+ *
+ * This API works differently to @ref evas_object_show and @ref
+ * evas_object_hide. Once source object is hidden, the proxy object will be
+ * hidden as well. Actually in this case both objects are excluded from the
+ * Evas internal update circle.
+ *
+ * By this API, instead, one can toggle the visibility of a proxy's source
+ *  object remaining the proxy visibility untouched.
+ *
+ * @warning If the all of proxies are deleted, then the source visibility of
+ * the source object will be cancelled.
+ *
+ * @param[in] visible @c true is source object to be shown, @c false otherwise.
+ *
+ * @deprecated Please use evas_object_norender_get() on the source instead.
+ *
+ * @since 1.8
+ */
+EAPI void evas_object_image_source_visible_set(Evas_Object *obj, Eina_Bool visible);
+
+/**
+ * @brief Get the state of the source object visibility.
+ *
+ * @return @c true is source object to be shown, @c false otherwise.
+ *
+ * @deprecated Please use evas_object_norender_get() on the source instead.
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool evas_object_image_source_visible_get(const Evas_Object *obj);
+
+
 /*
  * Converts the raw image data of the given image object to the
  * specified colorspace.

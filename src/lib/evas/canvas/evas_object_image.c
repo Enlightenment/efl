@@ -1,30 +1,7 @@
-#define EVAS_FILTER_PROTECTED
-
-#include "evas_common_private.h"
-
-#include <sys/types.h>
-#include <unistd.h>
-#ifdef HAVE_SYS_MMAN_H
-# include <sys/mman.h>
-#endif
-#include <math.h>
-
-#include "evas_private.h"
-#ifdef EVAS_CSERVE2
-#include "../cserve2/evas_cs2_private.h"
-#endif
-#include "../common/evas_convert_color.h"
-#include "../common/evas_convert_colorspace.h"
-#include "../common/evas_convert_yuv.h"
-
-#include "evas_filter.eo.h"
-#include "evas_filter.h"
+#include "evas_image_private.h"
 
 #define MY_CLASS EVAS_IMAGE_CLASS
-
 #define MY_CLASS_NAME "Evas_Image"
-
-#define VERBOSE_PROXY_ERROR 1
 
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
@@ -34,114 +11,6 @@
 static const char o_type[] = "image";
 
 const char *o_image_type = o_type;
-
-/* private struct for rectangle object internal data */
-typedef struct _Evas_Object_Image Evas_Image_Data;
-typedef struct _Evas_Object_Image_Load_Opts Evas_Object_Image_Load_Opts;
-typedef struct _Evas_Object_Image_Pixels Evas_Object_Image_Pixels;
-typedef struct _Evas_Object_Image_State Evas_Object_Image_State;
-
-struct _Evas_Object_Image_Load_Opts
-{
-   unsigned char  scale_down_by;
-   double         dpi;
-   short          w, h;
-   struct {
-      short       x, y, w, h;
-   } region;
-   struct {
-      int src_x, src_y, src_w, src_h;
-      int dst_w, dst_h;
-      int smooth;
-      int scale_hint;
-   } scale_load;
-   Eina_Bool  orientation : 1;
-};
-
-struct _Evas_Object_Image_Pixels
-{
-   Eina_List        *pixel_updates;
-   struct {
-      Evas_Object_Image_Pixels_Get_Cb  get_pixels;
-      void                            *get_pixels_data;
-   } func;
-
-   Evas_Video_Surface video;
-   unsigned int video_caps;
-};
-
-struct _Evas_Object_Image_State
-{
-   Evas_Coord_Rectangle fill;
-   struct {
-      short         w, h, stride;
-   } image;
-   struct {
-      double        scale;
-      short         l, r, t, b;
-      unsigned char fill;
-   } border;
-
-   Evas_Object   *source;
-   Evas_Map      *defmap;
-   Evas_Canvas3D_Scene *scene;
-
-   union {
-      const char    *file;
-      Eina_File     *f;
-   } u;
-   const char    *key;
-   int            frame;
-
-   Evas_Colorspace    cspace;
-   Evas_Image_Orient  orient;
-
-   Eina_Bool      smooth_scale : 1;
-   Eina_Bool      has_alpha :1;
-   Eina_Bool      opaque_valid : 1;
-   Eina_Bool      opaque : 1;
-   Eina_Bool      mmaped_source : 1;
-};
-
-struct _Evas_Object_Image
-{
-   const Evas_Object_Image_State *cur;
-   const Evas_Object_Image_State *prev;
-
-   // This pointer is an Eina_Cow pointer
-   const Evas_Object_Image_Load_Opts *load_opts;
-   const Evas_Object_Image_Pixels *pixels;
-
-   void             *engine_data;
-
-   int               pixels_checked_out;
-   int               load_error;
-
-   Evas_Image_Scale_Hint   scale_hint;
-   Evas_Image_Content_Hint content_hint;
-
-   Eina_Bool         changed : 1;
-   Eina_Bool         dirty_pixels : 1;
-   Eina_Bool         filled : 1;
-   Eina_Bool         filled_set : 1;
-   Eina_Bool         proxyrendering : 1;
-   Eina_Bool         preloading : 1;
-   Eina_Bool         video_surface : 1;
-   Eina_Bool         video_visible : 1;
-   Eina_Bool         created : 1;
-   Eina_Bool         proxyerror : 1;
-   Eina_Bool         proxy_src_clip : 1;
-   Eina_Bool         written : 1;
-   Eina_Bool         direct_render : 1;
-   Eina_Bool         has_filter : 1;
-   struct
-   {
-      Eina_Bool      video_move : 1;
-      Eina_Bool      video_resize : 1;
-      Eina_Bool      video_show : 1;
-      Eina_Bool      video_hide : 1;
-   } delayed;
-};
 
 /* private methods for image objects */
 static void evas_object_image_unload(Evas_Object *eo_obj, Eina_Bool dirty);
@@ -191,10 +60,6 @@ static int evas_object_image_can_map(Evas_Object *eo_obj);
 
 static void *evas_object_image_data_convert_internal(Evas_Image_Data *o, void *data, Evas_Colorspace to_cspace);
 static void evas_object_image_filled_resize_listener(void *data, Evas *eo_e, Evas_Object *eo_obj, void *einfo);
-
-static void _proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
-static void _proxy_set(Evas_Object *proxy, Evas_Object *src);
-static void _proxy_error(Evas_Object *proxy, void *context, void *output, void *surface, int x, int y, Eina_Bool do_async);
 
 static void _3d_render(Evas *eo_e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Canvas3D_Scene *scene);
 static void _3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene);
@@ -263,7 +128,6 @@ Eina_Cow *evas_object_image_state_cow = NULL;
 # define EINA_COW_PIXEL_WRITE_END(Obj, Write) \
   EINA_COW_WRITE_END(evas_object_image_pixels_cow, Obj->pixels, Write)
 
-
 # define EINA_COW_LOAD_OPTS_WRITE_BEGIN(Obj, Write) \
   EINA_COW_WRITE_BEGIN(evas_object_image_load_opts_cow, Obj->load_opts, Evas_Object_Image_Load_Opts, Write)
 
@@ -288,7 +152,7 @@ Eina_Cow *evas_object_image_state_cow = NULL;
        EINA_COW_IMAGE_STATE_WRITE_END(Obj, cur_write);                  \
     }
 
-static void
+void
 _evas_object_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
 {
    /* Eina_Cow doesn't know if the resulting memory has changed, better check
@@ -601,65 +465,6 @@ _evas_image_efl_file_file_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, const 
    if (key) *key = o->cur->key;
 }
 
-EOLIAN static Eina_Bool
-_evas_image_source_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Object *eo_src)
-{
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-
-   if (obj->delete_me && eo_src)
-     {
-        WRN("Setting deleted object %p as image source %p", eo_src, eo_obj);
-        return EINA_FALSE;
-     }
-   if (eo_src)
-     {
-        Evas_Object_Protected_Data *src = eo_data_scope_get(eo_src, EVAS_OBJECT_CLASS);
-        if (src->delete_me)
-          {
-             WRN("Setting object %p to deleted image source %p", eo_src, eo_obj);
-             return EINA_FALSE;
-          }
-        if (!src->layer)
-          {
-             CRI("No evas surface associated with source object (%p)", eo_src);
-             return EINA_FALSE;
-          }
-        if (!obj->layer)
-          {
-             CRI("No evas surface associated with destination object (%p)", eo_obj);
-             return EINA_FALSE;
-          }
-        if ((obj->layer && src->layer) &&
-            (obj->layer->evas != src->layer->evas))
-          {
-             CRI("Setting object %p from Evas (%p) from another Evas (%p)", eo_src, src->layer->evas, obj->layer->evas);
-             return EINA_FALSE;
-          }
-        if (eo_src == eo_obj)
-          {
-             CRI("Setting object %p as a source for itself", obj);
-             return EINA_FALSE;
-          }
-     }
-   if (o->cur->source == eo_src) return EINA_TRUE;
-   evas_object_async_block(obj);
-   _evas_object_image_cleanup(eo_obj, obj, o);
-   /* Kill the image if any */
-   if (o->cur->u.file || o->cur->key)
-      evas_object_image_file_set(eo_obj, NULL, NULL);
-
-   if (eo_src) _proxy_set(eo_obj, eo_src);
-   else _proxy_unset(eo_obj, obj, o);
-
-   return EINA_TRUE;
-}
-
-EOLIAN static Evas_Object*
-_evas_image_source_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
-{
-   return o->cur->source;
-}
-
 EOLIAN static void
 _evas_image_efl_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Gfx_Orientation _orient)
 {
@@ -716,60 +521,6 @@ _evas_image_efl_image_orientation_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o
    return (Efl_Gfx_Orientation) o->cur->orient;
 }
 
-EAPI Eina_Bool
-evas_object_image_source_unset(Evas_Object *eo_obj)
-{
-   Eina_Bool result = EINA_FALSE;
-   result = evas_obj_image_source_set(eo_obj, NULL);
-   return result;
-}
-
-EOLIAN static void
-_evas_image_source_clip_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Eina_Bool source_clip)
-{
-   Evas_Object_Protected_Data *src_obj;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-
-   source_clip = !!source_clip;
-   if (o->proxy_src_clip == source_clip) return;
-   evas_object_async_block(obj);
-   o->proxy_src_clip = source_clip;
-
-   if (!o->cur->source) return;
-
-   src_obj = eo_data_scope_get(o->cur->source, EVAS_OBJECT_CLASS);
-   evas_object_change(o->cur->source, src_obj);
-}
-
-EOLIAN static Eina_Bool
-_evas_image_source_clip_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
-{
-   return o->proxy_src_clip;
-}
-
-EOLIAN static void
-_evas_image_source_events_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Eina_Bool source_events)
-{
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-
-   source_events = !!source_events;
-   if (obj->proxy->src_events == source_events) return;
-
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
-     proxy_write->src_events = source_events;
-   EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
-
-   if (!o->cur->source) return;
-   if ((obj->proxy->src_invisible) || (!source_events)) return;
-   //FIXME: Feed mouse events here.
-}
-
-EOLIAN static Eina_Bool
-_evas_image_source_events_get(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED)
-{
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   return obj->proxy->src_events;
-}
 
 EOLIAN static void
 _evas_image_eo_base_dbg_info_get(Eo *eo_obj, Evas_Image_Data *o, Eo_Dbg_Info *root)
@@ -797,46 +548,6 @@ _evas_image_eo_base_dbg_info_get(Eo *eo_obj, Evas_Image_Data *o, Eo_Dbg_Info *ro
                                 evas_load_error_str(error));
      }
 }
-
-EOLIAN static void
-_evas_image_source_visible_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Eina_Bool visible)
-{
-   Evas_Object_Protected_Data *src_obj;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-
-   if (!o->cur->source) return;
-
-   visible = !!visible;
-   src_obj = eo_data_scope_get(o->cur->source, EVAS_OBJECT_CLASS);
-   if (src_obj->proxy->src_invisible == !visible) return;
-
-   evas_object_async_block(obj);
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src_obj->proxy, Evas_Object_Proxy_Data, proxy_write)
-     proxy_write->src_invisible = !visible;
-   EINA_COW_WRITE_END(evas_object_proxy_cow, src_obj->proxy, proxy_write);
-
-   src_obj->changed_src_visible = EINA_TRUE;
-   evas_object_smart_member_cache_invalidate(o->cur->source, EINA_FALSE,
-                                             EINA_FALSE, EINA_TRUE);
-   evas_object_change(o->cur->source, src_obj);
-   if ((!visible) || (!src_obj->proxy->src_events)) return;
-   //FIXME: Feed mouse events here.
-}
-
-EOLIAN static Eina_Bool
-_evas_image_source_visible_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
-{
-   Evas_Object_Protected_Data *src_obj;
-   Eina_Bool visible;
-
-   if (!o->cur->source) visible = EINA_FALSE;
-   src_obj = eo_data_scope_get(o->cur->source, EVAS_OBJECT_CLASS);
-   if (src_obj) visible = !src_obj->proxy->src_invisible;
-   else visible = EINA_FALSE;
-
-   return visible;
-}
-
 
 EOLIAN static void
 _evas_image_scene_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Canvas3D_Scene *scene)
@@ -2252,8 +1963,7 @@ _evas_canvas_image_max_size_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int *
    return EINA_TRUE;
 }
 
-/* all nice and private */
-static void
+void
 _proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *cur_proxy, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *cur_source;
@@ -2309,7 +2019,7 @@ _proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *cur_proxy, Evas_Ima
    EINA_COW_WRITE_END(evas_object_proxy_cow, cur_proxy->proxy, proxy_write);
 }
 
-static void
+void
 _proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
 {
    Evas_Object_Protected_Data *src = eo_data_scope_get(eo_src, EVAS_OBJECT_CLASS);
@@ -2341,17 +2051,21 @@ _proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
 /* Some moron just set a proxy on a proxy.
  * Give them some pixels.  A random color
  */
-static void
+void
 _proxy_error(Evas_Object *eo_proxy, void *context, void *output, void *surface,
              int x, int y, Eina_Bool do_async)
 {
-   Evas_Func *func;
    Evas_Image_Data *o = eo_data_scope_get(eo_proxy, MY_CLASS);
+   Evas_Object_Protected_Data *proxy;
+   Evas_Func *func;
 
-   if (!o->proxyerror) printf("Err: Argh! Recursive proxies.\n");
-   o->proxyerror = 1;
+   if (!o->proxyerror)
+     {
+        ERR("Using recursive proxies! Don't set a proxy's source as another proxy!");
+        o->proxyerror = 1;
+     }
 
-   Evas_Object_Protected_Data *proxy = eo_data_scope_get(eo_proxy, EVAS_OBJECT_CLASS);
+   proxy = eo_data_scope_get(eo_proxy, EVAS_OBJECT_CLASS);
    func = proxy->layer->evas->engine.func;
    func->context_color_set(output, context, 0, 0, 0, 255);
    func->context_multiplier_unset(output, context);
@@ -2361,7 +2075,6 @@ _proxy_error(Evas_Object *eo_proxy, void *context, void *output, void *surface,
                         proxy->cur->geometry.w,
                         proxy->cur->geometry.h,
                         do_async);
-   return;
 }
 
 static void
@@ -4622,26 +4335,6 @@ _evas_object_image_video_overlay_do(Evas_Object *eo_obj)
    o->delayed.video_hide = EINA_FALSE;
 }
 
-static void
-_evas_image_snapshot_set(Eo *eo, Evas_Image_Data *pd EINA_UNUSED, Eina_Bool s)
-{
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
-
-   if (obj->cur->snapshot == s) return ;
-
-   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-     state_write->snapshot = !!s;
-   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
-}
-
-static Eina_Bool
-_evas_image_snapshot_get(Eo *eo, Evas_Image_Data *pd EINA_UNUSED)
-{
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
-
-   return obj->cur->snapshot;
-}
-
 void *
 _evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj)
 {
@@ -4966,14 +4659,16 @@ evas_object_image_add(Evas *eo_e)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eo_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
    return eo_add(EVAS_IMAGE_CLASS, eo_e,
-                 efl_gfx_fill_filled_set(eoid, EINA_FALSE));
+                 efl_gfx_fill_filled_set(eoid, EINA_FALSE),
+                 evas_obj_legacy_ctor(eoid));
 }
 
 EAPI Evas_Object *
 evas_object_image_filled_add(Evas *eo_e)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eo_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   return eo_add(EVAS_IMAGE_CLASS, eo_e);
+   return eo_add(EVAS_IMAGE_CLASS, eo_e,
+                 evas_obj_legacy_ctor(eoid));
 }
 
 EAPI void
@@ -5259,6 +4954,131 @@ EAPI Evas_Image_Orient
 evas_object_image_orient_get(const Evas_Image *obj)
 {
    return (Evas_Image_Orient) efl_image_orientation_get(obj);
+}
+
+EAPI void
+evas_object_image_snapshot_set(Evas_Object *eo, Eina_Bool s)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
+
+   EVAS_OBJECT_LEGACY_API(eo);
+   if (obj->cur->snapshot == s) return;
+
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     state_write->snapshot = !!s;
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+}
+
+EAPI Eina_Bool
+evas_object_image_snapshot_get(const Evas_Object *eo)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
+   EVAS_OBJECT_LEGACY_API(eo, EINA_FALSE);
+   return obj->cur->snapshot;
+}
+
+EAPI Eina_Bool
+evas_object_image_source_set(Evas_Object *eo, Evas_Object *src)
+{
+   EVAS_OBJECT_LEGACY_API(eo, EINA_FALSE);
+   return efl_canvas_proxy_source_set(eo, src);
+}
+
+EAPI Evas_Object *
+evas_object_image_source_get(const Evas_Object *eo)
+{
+   EVAS_OBJECT_LEGACY_API(eo, NULL);
+   return efl_canvas_proxy_source_get(eo);
+}
+
+EAPI void
+evas_object_image_source_clip_set(Evas_Object *eo, Eina_Bool source_clip)
+{
+   EVAS_OBJECT_LEGACY_API(eo);
+   efl_canvas_proxy_source_clip_set(eo, source_clip);
+}
+
+EAPI Eina_Bool
+evas_object_image_source_clip_get(const Evas_Object *eo)
+{
+   EVAS_OBJECT_LEGACY_API(eo, EINA_FALSE);
+   return efl_canvas_proxy_source_clip_get(eo);
+}
+
+EAPI void
+evas_object_image_source_events_set(Evas_Object *eo, Eina_Bool repeat)
+{
+   EVAS_OBJECT_LEGACY_API(eo);
+   efl_canvas_proxy_source_events_set(eo, repeat);
+}
+
+EAPI Eina_Bool
+evas_object_image_source_events_get(const Evas_Object *eo)
+{
+   EVAS_OBJECT_LEGACY_API(eo, EINA_FALSE);
+   return efl_canvas_proxy_source_events_get(eo);
+}
+
+EAPI void
+evas_object_image_source_visible_set(Evas_Object *eo, Eina_Bool visible)
+{
+   /* FIXME: I'd love to remove this feature and replace by no_render.
+    * But they are not 100% equivalent: if all proxies are removed, then the
+    * source becomes visible again. This has some advantages for some apps but
+    * it's complete hell to handle in evas render side.
+    * -- jpeg, 2016/03/07
+    */
+
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *src_obj;
+   Evas_Image_Data *o;
+
+   EVAS_OBJECT_LEGACY_API(eo);
+
+   o = eo_data_scope_get(eo, MY_CLASS);
+   if (!o->cur->source) return;
+
+   visible = !!visible;
+   src_obj = eo_data_scope_get(o->cur->source, EVAS_OBJECT_CLASS);
+   if (src_obj->proxy->src_invisible == !visible) return;
+
+   evas_object_async_block(obj);
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src_obj->proxy, Evas_Object_Proxy_Data, proxy_write)
+     proxy_write->src_invisible = !visible;
+   EINA_COW_WRITE_END(evas_object_proxy_cow, src_obj->proxy, proxy_write);
+
+   src_obj->changed_src_visible = EINA_TRUE;
+   evas_object_smart_member_cache_invalidate(o->cur->source, EINA_FALSE,
+                                             EINA_FALSE, EINA_TRUE);
+   evas_object_change(o->cur->source, src_obj);
+   if ((!visible) || (!src_obj->proxy->src_events)) return;
+   //FIXME: Feed mouse events here.
+}
+
+EAPI Eina_Bool
+evas_object_image_source_visible_get(const Evas_Object *eo)
+{
+   /* FIXME: see evas_object_image_source_visible_set */
+
+   Evas_Object_Protected_Data *src_obj;
+   Evas_Image_Data *o;
+   Eina_Bool visible;
+
+   EVAS_OBJECT_LEGACY_API(eo, EINA_FALSE);
+
+   o = eo_data_scope_get(eo, MY_CLASS);
+   if (!o->cur->source) visible = EINA_FALSE;
+   src_obj = eo_data_scope_get(o->cur->source, EVAS_OBJECT_CLASS);
+   if (src_obj) visible = !src_obj->proxy->src_invisible;
+   else visible = EINA_FALSE;
+
+   return visible;
+}
+
+EAPI Eina_Bool
+evas_object_image_source_unset(Evas_Object *eo_obj)
+{
+   return efl_canvas_proxy_source_set(eo_obj, NULL);
 }
 
 #include "canvas/evas_image.eo.c"
