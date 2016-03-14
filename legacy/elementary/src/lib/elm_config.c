@@ -1727,8 +1727,8 @@ _config_load(void)
    _elm_config->thumbscroll_border_friction = 0.5;
    _elm_config->thumbscroll_sensitivity_friction = 0.25; // magic number! just trial and error shows this makes it behave "nicer" and not run off at high speed all the time
    _elm_config->scroll_smooth_start_enable = EINA_TRUE;
-   _elm_config->scroll_smooth_start_enable = EINA_FALSE;
-   _elm_config->scroll_smooth_amount = 7.0;
+   _elm_config->scroll_animation_disable = EINA_FALSE;
+   _elm_config->scroll_accel_factor = 7.0;
 //   _elm_config->scroll_smooth_time_interval = 0.008; // not used anymore
    _elm_config->scroll_smooth_amount = 1.0;
 //   _elm_config->scroll_smooth_history_weight = 0.3; // not used anymore
