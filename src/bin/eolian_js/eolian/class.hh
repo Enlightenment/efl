@@ -38,28 +38,37 @@ inline std::string type_class_name(Eolian_Type const* tp)
    if (tp)
      {
         Eolian_Type_Type tpt = ::eolian_type_type_get(tp);
-        if (tpt == EOLIAN_TYPE_POINTER || tpt == EOLIAN_TYPE_ALIAS || tpt == EOLIAN_TYPE_REGULAR)
+        if (tpt == EOLIAN_TYPE_POINTER)
           {
              return type_class_name(::eolian_type_base_type_get(tp));
           }
-        else if(tpt == EOLIAN_TYPE_CLASS)
+        else
           {
-             Eolian_Class const* klass = ::eolian_type_class_get(tp);
-             if (klass)
+             tp = ::eolian_type_aliased_base_get(tp);
+             tpt = ::eolian_type_type_get(tp);
+             if (tpt == EOLIAN_TYPE_CLASS)
                {
-                  Eina_Stringshare* klass_name = ::eolian_class_full_name_get(klass);
-                  if (!klass_name)
-                    throw std::runtime_error("Could not get Eo class name");
+                  Eolian_Class const* klass = ::eolian_type_class_get(tp);
+                  if (klass)
+                    {
+                       Eina_Stringshare* klass_name = ::eolian_class_full_name_get(klass);
+                       if (!klass_name)
+                         throw std::runtime_error("Could not get Eo class name");
 
-                  return klass_name;
-               } // TODO: else should throw std::runtime_error("Could not get Eo class");
-          }
-        else if(tpt == EOLIAN_TYPE_STRUCT)
-          {
-             auto struct_type_full_name = ::eolian_type_full_name_get(tp);
-             if (!struct_type_full_name)
-               throw std::runtime_error("Could not get struct name");
-             return struct_type_full_name;
+                       return klass_name;
+                    } // TODO: else should throw std::runtime_error("Could not get Eo class");
+               }
+             else if (tpt == EOLIAN_TYPE_REGULAR)
+               {
+                  auto tpd = eolian_type_typedecl_get(tp);
+                  if (tpd && eolian_typedecl_type_get(tpd) == EOLIAN_TYPEDECL_STRUCT)
+                    {
+                       auto struct_type_full_name = ::eolian_type_full_name_get(tp);
+                       if (!struct_type_full_name)
+                         throw std::runtime_error("Could not get struct name");
+                       return struct_type_full_name;
+                    }
+               }
           }
      }
    return "";

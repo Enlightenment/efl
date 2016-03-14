@@ -51,15 +51,13 @@ EAPI void register_job(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_parent(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_poller(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_timer(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-namespace con {
-EAPI void register_base(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_client(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_server(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-}
 }
 
 namespace efl { namespace network {
+EAPI void register_base(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_server(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_connector(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_client(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_url(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }}
 
@@ -97,7 +95,6 @@ EAPI void register_line(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_object(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_object_smart(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_out(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_polygon(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_rectangle(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_scrollable_interface(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_selectable_interface(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -119,6 +116,10 @@ EAPI void register_object(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_scene(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_texture(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 } }
+
+namespace efl { namespace canvas {
+EAPI void register_polygon(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+}}
 
 namespace edje {
 EAPI void register_edit(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -165,10 +166,10 @@ EAPI void init(v8::Handle<v8::Object> exports)
         ecore::register_parent(exports, v8::Isolate::GetCurrent());
         ecore::register_poller(exports, v8::Isolate::GetCurrent());
         ecore::register_timer(exports, v8::Isolate::GetCurrent());
-        ecore::con::register_base(exports, v8::Isolate::GetCurrent());
-        ecore::con::register_client(exports, v8::Isolate::GetCurrent());
+        efl::network::register_base(exports, v8::Isolate::GetCurrent());
+        efl::network::register_client(exports, v8::Isolate::GetCurrent());
         efl::network::register_connector(exports, v8::Isolate::GetCurrent());
-        ecore::con::register_server(exports, v8::Isolate::GetCurrent());
+        efl::network::register_server(exports, v8::Isolate::GetCurrent());
         efl::network::register_url(exports, v8::Isolate::GetCurrent());
 #if 1
         register_ecore_audio(exports, v8::Isolate::GetCurrent());
@@ -199,7 +200,6 @@ EAPI void init(v8::Handle<v8::Object> exports)
         evas::register_object(exports, v8::Isolate::GetCurrent());
         evas::register_object_smart(exports, v8::Isolate::GetCurrent());
         evas::register_out(exports, v8::Isolate::GetCurrent());
-        evas::register_polygon(exports, v8::Isolate::GetCurrent());
         evas::register_rectangle(exports, v8::Isolate::GetCurrent());
         evas::register_scrollable_interface(exports, v8::Isolate::GetCurrent());
         evas::register_selectable_interface(exports, v8::Isolate::GetCurrent());
@@ -218,6 +218,7 @@ EAPI void init(v8::Handle<v8::Object> exports)
         evas::canvas3d::register_object(exports, v8::Isolate::GetCurrent());
         evas::canvas3d::register_scene(exports, v8::Isolate::GetCurrent());
         evas::canvas3d::register_texture(exports, v8::Isolate::GetCurrent());
+        efl::canvas::register_polygon(exports, v8::Isolate::GetCurrent());
 #endif
 #if 1
         edje::register_edit(exports, v8::Isolate::GetCurrent());

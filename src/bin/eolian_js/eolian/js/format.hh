@@ -152,7 +152,21 @@ std::string format_method(std::string const& in)
 
 std::string format_field(std::string const& in)
 {
-  return format_method(in);
+  std::string r;
+  bool up = false;
+  for (char c : in)
+    {
+       if (c == '_')
+         up = true;
+       else if (!up)
+         r += c;
+       else
+         {
+            r += std::toupper(c);
+            up = false;
+         }
+    }
+  return r;
 }
 
 std::string format_class(std::string const& in)

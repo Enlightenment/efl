@@ -829,12 +829,11 @@ struct _v8_get_current_context<T, true> : T
   }
 };
 
-template <typename T>
 inline v8::Local<v8::Value>
-new_v8_external_instance(v8::Handle<v8::Function>& ctor, T v, v8::Isolate* isolate)
+new_v8_external_instance(v8::Handle<v8::Function>& ctor, void const* v, v8::Isolate* isolate)
 {
   // TODO: ensure v8::External ownership ??? (memory leak in case NewInstance throws)
-  v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(isolate, v)};
+  v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(isolate, const_cast<void*>(v))};
   return ctor->NewInstance(1, a);
 }
 
@@ -842,10 +841,10 @@ inline
 compatibility_return_type cast_function(compatibility_callback_info_type args);
 
 inline v8::Local<v8::Value>
-new_v8_external_instance(v8::Handle<v8::Function>& ctor, Eo* v, v8::Isolate* isolate)
+new_v8_external_instance(v8::Handle<v8::Function>& ctor, Eo const* v, v8::Isolate* isolate)
 {
   // TODO: ensure v8::External ownership ??? (memory leak in case NewInstance throws)
-  v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(isolate, v)};
+  v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(isolate, const_cast<Eo*>(v))};
   auto obj = ctor->NewInstance(1, a);
   obj->Set(compatibility_new<v8::String>(isolate, "cast"),
            compatibility_new<v8::FunctionTemplate>(isolate, &cast_function)->GetFunction());

@@ -38,7 +38,7 @@ struct arg_index<In, 0> : std::integral_constant<std::size_t, 0>
 template <typename In, typename Out, typename Ownership, typename F, typename Return, typename Parameters>
 struct method_caller
 {
-  typedef typename eina::_mpl::function_params<F>::type parameters_t;
+  typedef typename eo::js::eo_function_params<F>::type parameters_t;
 
   template <std::size_t I>
   struct is_out : eina::_mpl::tuple_contains<std::integral_constant<std::size_t, I>, Out>
@@ -190,7 +190,7 @@ struct method_caller
 
   template <typename OutParameters, std::size_t... I>
   eina::js::compatibility_return_type
-  aux(eina::js::compatibility_callback_info_type args, eina::index_sequence<I...>
+  aux(Eo* eo, eina::js::compatibility_callback_info_type args, eina::index_sequence<I...>
       , std::true_type) const
   {
     typename eina::_mpl::tuple_transform<Out, out_transform<parameters_t> >::type outs {};
@@ -200,13 +200,13 @@ struct method_caller
       {(init_inout<I>(args, outs, args.GetIsolate(), class_names[I], typename is_inout<I>::type()), 0)...};
     static_cast<void>(l);
 
-    function(get_value<I>(args, outs, args.GetIsolate(), class_names[I], typename is_out<I>::type())...);
+    function(eo, get_value<I>(args, outs, args.GetIsolate(), class_names[I], typename is_out<I>::type())...);
     return create_return_value<OutParameters>(args, outs);
   }
 
   template <typename OutParameters, std::size_t... I>
   eina::js::compatibility_return_type
-  aux(eina::js::compatibility_callback_info_type args, eina::index_sequence<I...>
+  aux(Eo* eo, eina::js::compatibility_callback_info_type args, eina::index_sequence<I...>
       , std::false_type) const
   {
     typename eina::_mpl::tuple_transform<Out, out_transform<parameters_t> >::type outs {};
@@ -217,7 +217,7 @@ struct method_caller
     static_cast<void>(l);
 
     typename eina::_mpl::function_return<F>::type r =
-      function(get_value<I>(args, outs, args.GetIsolate(), class_names[I], typename is_out<I>::type())...);
+      function(eo, get_value<I>(args, outs, args.GetIsolate(), class_names[I], typename is_out<I>::type())...);
     return create_return_value<OutParameters>(args, r, outs);
   }
 
@@ -243,13 +243,9 @@ struct method_caller
         Eo* eo = static_cast<Eo*>(v8::External::Cast(*external)->Value());
         try
           {
-            eo_do
-              (eo,
-                 aux<OutParameters>(
-                 args,
-                 eina::make_index_sequence<std::tuple_size<parameters_t>::value>(),
-                 std::is_same<void, Return>())
-              );
+             aux<OutParameters>(eo, args,
+               eina::make_index_sequence<std::tuple_size<parameters_t>::value>(),
+               std::is_same<void, Return>());
           }
         catch(std::logic_error const&)
           {

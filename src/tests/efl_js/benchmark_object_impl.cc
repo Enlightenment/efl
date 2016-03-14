@@ -42,9 +42,9 @@ using efl::eina::js::compatibility_return;
 using efl::eina::js::compatibility_new;
 
 #define JS_BENCHMARK_ARGS0(v)
-#define JS_BENCHMARK_ARGS1(v) v
-#define JS_BENCHMARK_ARGS2(v) v,v
-#define JS_BENCHMARK_ARGS10(v) v,v,v,v,v,v,v,v,v,v
+#define JS_BENCHMARK_ARGS1(v) ,v
+#define JS_BENCHMARK_ARGS2(v) ,v,v
+#define JS_BENCHMARK_ARGS10(v) ,v,v,v,v,v,v,v,v,v,v
 #define JS_BENCHMARK_FUNC(name, number, v)                              \
   compatibility_return_type js_benchmark_object_##name##arg(compatibility_callback_info_type) \
   {                                                                     \
@@ -55,13 +55,13 @@ using efl::eina::js::compatibility_new;
     /* Warm */                                                          \
     for(int i = 0; i != 10; i++)                                        \
       {                                                                 \
-        eo_do(object, benchmark_object_##name##arg(JS_BENCHMARK_ARGS##number(v))); \
+        benchmark_object_##name##arg(object JS_BENCHMARK_ARGS##number(v)); \
       }                                                                 \
     /* Real loop */                                                     \
     eina_counter_start(counter);                                        \
     for(int i = 0; i != 20000; i++)                                     \
       {                                                                 \
-        eo_do(object, benchmark_object_##name##arg(JS_BENCHMARK_ARGS##number(v))); \
+        benchmark_object_##name##arg(object JS_BENCHMARK_ARGS##number(v)); \
       }                                                                 \
     eina_counter_stop(counter, 20000);                                  \
     fprintf(stderr, "%s", eina_counter_dump(counter));                  \

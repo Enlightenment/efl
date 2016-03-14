@@ -221,17 +221,17 @@ get_value_from_c(efl::eina::js::complex_tag<const Eina_Iterator *, T, K>, v8::Is
   std::abort();
 }
 
-template <typename T, typename U, typename K>
+template <typename T, typename KT, typename U, typename KU>
 inline v8::Local<v8::Value>
-get_value_from_c(efl::eina::js::complex_tag<Eina_Hash *, T, U, K>, v8::Isolate*, const char*)
+get_value_from_c(efl::eina::js::complex_tag<Eina_Hash *, T, KT, U, KU>, v8::Isolate*, const char*)
 {
   std::cerr << "get_value_from_c for Eina_Hash not implemented. Aborting..." << std::endl;
   std::abort();
 }
 
-template <typename T, typename U, typename K>
+template <typename T, typename KT, typename U, typename KU>
 inline v8::Local<v8::Value>
-get_value_from_c(efl::eina::js::complex_tag<const Eina_Hash *, T, U, K>, v8::Isolate*, const char*)
+get_value_from_c(efl::eina::js::complex_tag<const Eina_Hash *, T, KT, U, KU>, v8::Isolate*, const char*)
 {
   std::cerr << "get_value_from_c for Eina_Hash not implemented. Aborting..." << std::endl;
   std::abort();

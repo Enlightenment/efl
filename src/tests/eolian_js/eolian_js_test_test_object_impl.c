@@ -27,6 +27,7 @@ EOLIAN static Eo_Base *
 _test_object_eo_base_constructor(Eo* obj, Test_Object_Data *pd)
 {
   fprintf(stdout, "_test_object_eo_base_constructor\n");
+  fflush(stdout);
 
   pd->a = 0;
   return eo_constructor(eo_super(obj, MY_CLASS));
@@ -36,6 +37,7 @@ EOLIAN static Eo *
 _test_object_eo_base_finalize(Eo *obj, Test_Object_Data *pd EINA_UNUSED)
 {
   fprintf(stdout, "_test_object_eo_base_finalize\n");
+  fflush(stdout);
 
   return eo_finalize(eo_super(obj, MY_CLASS));
 }
@@ -44,54 +46,60 @@ EOLIAN static void
 _test_object_eo_base_destructor(Eo* obj, Test_Object_Data *pd EINA_UNUSED)
 {
   fprintf(stdout, "_test_object_eo_base_destructor\n");
+  fflush(stdout);
   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 
 EOLIAN static void
-_test_object_method_integral_in_a(Eo* obj EINA_UNUSED,
-                                    Test_Object_Data *pd,
-                                    int a)
+_test_object_method_integral_in_a_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd,
+  int a)
 {
-  fprintf(stdout, "_test_object_method_integral_in_a(%d)\n", a);
+  fprintf(stdout, "_test_object_method_integral_in_a_check(%d)\n", a);
+  fflush(stdout);
   pd->a = a;
 }
 
 EOLIAN static void
-_test_object_method_integral_out_a(Eo* obj EINA_UNUSED,
-                                     Test_Object_Data *pd,
-                                     int *a)
+_test_object_method_integral_out_a_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd,
+  int *a)
 {
-  fprintf(stdout, "_test_object_method_integral_out_a(%p)\n", a);
+  fprintf(stdout, "_test_object_method_integral_out_a_check(%p)\n", a);
+  fflush(stdout);
   *a = pd->a;
 }
 
 EOLIAN static void
-_test_object_method_integral_inout(Eo* obj EINA_UNUSED,
-                                     Test_Object_Data *pd EINA_UNUSED,
-                                     int *a)
+_test_object_method_integral_inout_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  int *a)
 {
-  fprintf(stdout, "_test_object_method_integral_inout(%d [%p])\n", *a, a);
+  fprintf(stdout, "_test_object_method_integral_inout_check(%d [%p])\n", *a, a);
+  fflush(stdout);
   *a = -(*a);
 }
 
 EOLIAN static int
-_test_object_method_integral_return_a(Eo* obj EINA_UNUSED,
-                                        Test_Object_Data *pd)
+_test_object_method_integral_return_a_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd)
 {
-  fprintf(stdout, "_test_object_method_integral_return_a()\n");
+  fprintf(stdout, "_test_object_method_integral_return_a_check()\n");
+  fflush(stdout);
   return pd->a;
 }
 
 EOLIAN static Eina_Bool
-_test_object_method_div_mod(Eo* obj EINA_UNUSED,
-                              Test_Object_Data *pd EINA_UNUSED,
-                              int a,
-                              int b,
-                              int *quotient,
-                              int *remainder)
+_test_object_method_div_mod_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  int a,
+  int b,
+  int *quotient,
+  int *remainder)
 {
-  fprintf(stdout, "_test_object_method_div_mod(%d, %d, %p, %p)\n", a, b, quotient, remainder);
+  fprintf(stdout, "_test_object_method_div_mod_check(%d, %d, %p, %p)\n", a, b, quotient, remainder);
+  fflush(stdout);
   if (0 == b) return EINA_FALSE;
   *quotient = a / b;
   *remainder = a % b;
@@ -99,31 +107,34 @@ _test_object_method_div_mod(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_test_object_method_and(Eo* obj EINA_UNUSED,
-                          Test_Object_Data *pd EINA_UNUSED,
-                          Eina_Bool a,
-                          Eina_Bool b)
+_test_object_method_and_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Bool a,
+  Eina_Bool b)
 {
-  fprintf(stdout, "_test_object_method_and(%d, %d)\n", a, b);
+  fprintf(stdout, "_test_object_method_and_check(%d, %d)\n", a, b);
+  fflush(stdout);
   return a && b;
 }
 
 EOLIAN static double
-_test_object_method_modf(Eo* obj EINA_UNUSED,
-                           Test_Object_Data *pd EINA_UNUSED,
-                           double x,
-                           double *int_part)
+_test_object_method_modf_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  double x,
+  double *int_part)
 {
-  fprintf(stdout, "_test_object_method_modf(%f, %p)\n", x, int_part);
+  fprintf(stdout, "_test_object_method_modf_check(%f, %p)\n", x, int_part);
+  fflush(stdout);
   return modf(x, int_part);
 }
 
 EOLIAN static void
-_test_object_method_uppercase(Eo* obj EINA_UNUSED,
-                                Test_Object_Data *pd EINA_UNUSED,
-                                char **str)
+_test_object_method_uppercase_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  char **str)
 {
-  fprintf(stdout, "_test_object_method_uppercase('%s')\n", *str);
+  fprintf(stdout, "_test_object_method_uppercase_check('%s')\n", *str);
+  fflush(stdout);
   if (!*str) return;
 
   char *p = *str;
@@ -135,45 +146,50 @@ _test_object_method_uppercase(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_test_object_method_in_null(Eo* obj EINA_UNUSED,
-                              Test_Object_Data *pd EINA_UNUSED,
-                              char *a)
+_test_object_method_in_null_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  char *a)
 {
-  fprintf(stdout, "_test_object_method_in_null(%p)\n", a);
+  fprintf(stdout, "_test_object_method_in_null_check(%p)\n", a);
+  fflush(stdout);
   return NULL == a;
 }
 
 EOLIAN static Eina_Bool
-_test_object_method_out_null(Eo* obj EINA_UNUSED,
-                               Test_Object_Data *pd EINA_UNUSED,
-                               char **a)
+_test_object_method_out_null_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  char **a)
 {
-  fprintf(stdout, "_test_object_method_out_null(%p)\n", a);
+  fprintf(stdout, "_test_object_method_out_null_check(%p)\n", a);
+  fflush(stdout);
   *a = NULL;
   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_test_object_method_inout_null(Eo* obj EINA_UNUSED,
-                                 Test_Object_Data *pd EINA_UNUSED,
-                                 char **a)
+_test_object_method_inout_null_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  char **a)
 {
-  fprintf(stdout, "_test_object_method_inout_null(%p)\n", a);
+  fprintf(stdout, "_test_object_method_inout_null_check(%p)\n", a);
+  fflush(stdout);
   return NULL == *a;
 }
 
 EOLIAN static char *
-_test_object_method_return_null(Eo* obj EINA_UNUSED,
-                                  Test_Object_Data *pd EINA_UNUSED)
+_test_object_method_return_null_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED)
 {
-  fprintf(stdout, "_test_object_method_return_null()\n");
+  fprintf(stdout, "_test_object_method_return_null_check()\n");
+  fflush(stdout);
   return NULL;
 }
 
 EOLIAN static void
-_test_object_call_event(Eo* obj, Test_Object_Data *pd EINA_UNUSED)
+_test_object_event_emit(Eo* obj, Test_Object_Data *pd EINA_UNUSED)
 {
-   fprintf(stderr, "_test_object_event_call()\n"); fflush(stderr);
+   fprintf(stdout, "_test_object_event_emit()\n");
+   fflush(stdout);
    static Test_Struct_Ex s = {42, TEST_ENUM_EX_THIRD};
    eo_event_callback_call(obj, TEST_OBJECT_EVENT_TEST, NULL);
    eo_event_callback_call(obj, TEST_OBJECT_EVENT_TEST_STRUCTARG, &s);
@@ -181,13 +197,14 @@ _test_object_call_event(Eo* obj, Test_Object_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static char *
-_test_object_method_null(Eo* obj EINA_UNUSED,
-                           Test_Object_Data *pd EINA_UNUSED,
-                           char *in,
-                           char **out,
-                           char **inout)
+_test_object_method_null_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  char *in,
+  char **out,
+  char **inout)
 {
-  fprintf(stdout, "_test_object_method_null(%p, %p, %p)\n", in, out, inout);
+  fprintf(stdout, "_test_object_method_null_check(%p, %p, %p)\n", in, out, inout);
+  fflush(stdout);
   assert(!in);
   *out = NULL;
   *inout = NULL;
@@ -197,20 +214,22 @@ _test_object_method_null(Eo* obj EINA_UNUSED,
 // Arrays //
 
 EOLIAN static int
-_test_object_method_array_at(Eo* obj EINA_UNUSED,
-                               Test_Object_Data *pd EINA_UNUSED,
-                               Eina_Array *array,
-                               int index)
+_test_object_method_array_at_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Array *array,
+  int index)
 {
-  fprintf(stdout, "_test_object_method_array_at(%p, %d)\n", array, index);
+  fprintf(stdout, "_test_object_method_array_at_check(%p, %d)\n", array, index);
+  fflush(stdout);
   return *((int*)eina_array_data_get(array, index));
 }
 
 EOLIAN static Eina_Array *
-_test_object_method_array_with_42(Eo* obj EINA_UNUSED,
-                                    Test_Object_Data *pd EINA_UNUSED)
+_test_object_method_array_with_42_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED)
 {
-  fprintf(stdout, "_test_object_method_array_with_42()\n");
+  fprintf(stdout, "_test_object_method_array_with_42_check()\n");
+  fflush(stdout);
   Eina_Array *arr = eina_array_new(2);
   int* n = malloc(sizeof(int));
   *n = 42;
@@ -219,21 +238,23 @@ _test_object_method_array_with_42(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_test_object_method_array_in_array_out(Eo* obj EINA_UNUSED,
-                                         Test_Object_Data *pd EINA_UNUSED,
-                                         Eina_Array *a_in,
-                                         Eina_Array **a_out)
+_test_object_method_array_in_array_out_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Array *a_in,
+  Eina_Array **a_out)
 {
-  fprintf(stdout, "_test_object_method_array_in_array_out(%p, %p)\n", a_in, a_out);
+  fprintf(stdout, "_test_object_method_array_in_array_out_check(%p, %p)\n", a_in, a_out);
+  fflush(stdout);
   *a_out = a_in;
 }
 
 EOLIAN static Eina_Array *
-_test_object_method_array_of_objects(Eo* obj,
-                                       Test_Object_Data *pd EINA_UNUSED,
-                                       Eina_Array *a_in)
+_test_object_method_array_of_objects_check(Eo* obj,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Array *a_in)
 {
-  fprintf(stdout, "_test_object_method_array_of_objects(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_array_of_objects_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   Eina_Array *arr = eina_array_new(2);
   eina_array_push(arr, obj);
@@ -242,11 +263,12 @@ _test_object_method_array_of_objects(Eo* obj,
 
 
 EOLIAN static Eina_Array *
-_test_object_method_array_of_strings(Eo* obj EINA_UNUSED,
-                                       Test_Object_Data *pd EINA_UNUSED,
-                                       Eina_Array *a_in)
+_test_object_method_array_of_strings_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Array *a_in)
 {
-  fprintf(stdout, "_test_object_method_array_of_strings(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_array_of_strings_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   Eina_Array *arr = eina_array_new(2);
   const char* v = "foo";
@@ -256,11 +278,12 @@ _test_object_method_array_of_strings(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Array *
-_test_object_method_array_of_ints(Eo* obj EINA_UNUSED,
-                                    Test_Object_Data *pd EINA_UNUSED,
-                                    Eina_Array *a_in)
+_test_object_method_array_of_ints_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Array *a_in)
 {
-  fprintf(stdout, "_test_object_method_array_of_ints(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_array_of_ints_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   int *v = malloc(sizeof(int));
   *v = 42;
@@ -270,11 +293,12 @@ _test_object_method_array_of_ints(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Array *
-_test_object_method_array_of_bools(Eo* obj EINA_UNUSED,
-                                     Test_Object_Data *pd EINA_UNUSED,
-                                     Eina_Array *a_in)
+_test_object_method_array_of_bools_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Array *a_in)
 {
-  fprintf(stdout, "_test_object_method_array_of_bools(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_array_of_bools_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   Eina_Bool *v = malloc(sizeof(Eina_Bool));
   *v = EINA_TRUE;
@@ -284,11 +308,12 @@ _test_object_method_array_of_bools(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Array *
-_test_object_method_array_of_doubles(Eo* obj EINA_UNUSED,
-                                       Test_Object_Data *pd EINA_UNUSED,
-                                       Eina_Array *a_in)
+_test_object_method_array_of_doubles_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Array *a_in)
 {
-  fprintf(stdout, "_test_object_method_array_of_doubles(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_array_of_doubles_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   double *v = malloc(sizeof(double));
   *v = 42;
@@ -298,11 +323,12 @@ _test_object_method_array_of_doubles(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Array *
-_test_object_method_array_of_enums(Eo* obj EINA_UNUSED,
-                                     Test_Object_Data *pd EINA_UNUSED,
-                                     Eina_Array *a_in)
+_test_object_method_array_of_enums_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Array *a_in)
 {
-  fprintf(stdout, "_test_object_method_array_of_enums(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_array_of_enums_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   Test_Enum_Ex *v = malloc(sizeof(Test_Enum_Ex));
   *v = TEST_ENUM_EX_THIRD;
@@ -312,11 +338,12 @@ _test_object_method_array_of_enums(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Array *
-_test_object_method_array_of_structs(Eo* obj EINA_UNUSED,
-                                       Test_Object_Data *pd EINA_UNUSED,
-                                       Eina_Array *a_in)
+_test_object_method_array_of_structs_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Array *a_in)
 {
-  fprintf(stdout, "_test_object_method_array_of_structs(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_array_of_structs_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   Test_Struct_Ex *v = malloc(sizeof(Test_Struct_Ex));
   v->value_int = 42;
@@ -327,11 +354,12 @@ _test_object_method_array_of_structs(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Array *
-_test_object_method_array_of_arrays_of_ints(Eo* obj EINA_UNUSED,
-                                              Test_Object_Data *pd EINA_UNUSED,
-                                              Eina_Array *a_in)
+_test_object_method_array_of_arrays_of_ints_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Array *a_in)
 {
-  fprintf(stdout, "_test_object_method_array_of_arrays_of_ints(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_array_of_arrays_of_ints_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   int *v = malloc(sizeof(int));
   *v = 42;
@@ -345,52 +373,57 @@ _test_object_method_array_of_arrays_of_ints(Eo* obj EINA_UNUSED,
 // Lists //
 
 EOLIAN static Eina_List *
-_test_object_method_list_with_42(Eo* obj EINA_UNUSED,
-                                   Test_Object_Data *pd EINA_UNUSED)
+_test_object_method_list_with_42_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED)
 {
-  fprintf(stdout, "_test_object_method_list_with_42()\n");
+  fprintf(stdout, "_test_object_method_list_with_42_check()\n");
+  fflush(stdout);
   int* n = malloc(sizeof(int));
   *n = 42;
   return eina_list_append(NULL, n);
 }
 
 EOLIAN static void
-_test_object_method_list_in_list_out(Eo* obj EINA_UNUSED,
-                                       Test_Object_Data *pd EINA_UNUSED,
-                                       Eina_List *l_in,
-                                       Eina_List **l_out)
+_test_object_method_list_in_list_out_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_List *l_in,
+  Eina_List **l_out)
 {
-  fprintf(stdout, "_test_object_method_list_in_list_out(%p , %p)\n", l_in, l_out);
+  fprintf(stdout, "_test_object_method_list_in_list_out_check(%p , %p)\n", l_in, l_out);
+  fflush(stdout);
   *l_out = l_in;
 }
 
 EOLIAN static Eina_List *
-_test_object_method_list_of_objects(Eo* obj,
-                                      Test_Object_Data *pd EINA_UNUSED,
-                                      Eina_List *l_in)
+_test_object_method_list_of_objects_check(Eo* obj,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_List *l_in)
 {
-  fprintf(stdout, "_test_object_method_list_of_objects(%p)\n", l_in);
+  fprintf(stdout, "_test_object_method_list_of_objects_check(%p)\n", l_in);
+  fflush(stdout);
   if (l_in) return l_in;
   return eina_list_append(NULL, obj);
 }
 
 
 EOLIAN static Eina_List *
-_test_object_method_list_of_strings(Eo* obj EINA_UNUSED,
-                                      Test_Object_Data *pd EINA_UNUSED,
-                                      Eina_List *l_in)
+_test_object_method_list_of_strings_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_List *l_in)
 {
-  fprintf(stdout, "_test_object_method_list_of_strings(%p)\n", l_in);
+  fprintf(stdout, "_test_object_method_list_of_strings_check(%p)\n", l_in);
+  fflush(stdout);
   if (l_in) return l_in;
   return eina_list_append(NULL, "foo");
 }
 
 EOLIAN static Eina_List *
-_test_object_method_list_of_ints(Eo* obj EINA_UNUSED,
-                                   Test_Object_Data *pd EINA_UNUSED,
-                                   Eina_List *l_in)
+_test_object_method_list_of_ints_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_List *l_in)
 {
-  fprintf(stdout, "_test_object_method_list_of_ints(%p)\n", l_in);
+  fprintf(stdout, "_test_object_method_list_of_ints_check(%p)\n", l_in);
+  fflush(stdout);
   if (l_in) return l_in;
   int *v = malloc(sizeof(int));
   *v = 42;
@@ -398,11 +431,12 @@ _test_object_method_list_of_ints(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_List *
-_test_object_method_list_of_bools(Eo* obj EINA_UNUSED,
-                                    Test_Object_Data *pd EINA_UNUSED,
-                                    Eina_List *l_in)
+_test_object_method_list_of_bools_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_List *l_in)
 {
-  fprintf(stdout, "_test_object_method_list_of_bools(%p)\n", l_in);
+  fprintf(stdout, "_test_object_method_list_of_bools_check(%p)\n", l_in);
+  fflush(stdout);
   if (l_in) return l_in;
   Eina_Bool *v = malloc(sizeof(Eina_Bool));
   *v = EINA_TRUE;
@@ -410,11 +444,12 @@ _test_object_method_list_of_bools(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_List *
-_test_object_method_list_of_doubles(Eo* obj EINA_UNUSED,
-                                      Test_Object_Data *pd EINA_UNUSED,
-                                      Eina_List *l_in)
+_test_object_method_list_of_doubles_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_List *l_in)
 {
-  fprintf(stdout, "_test_object_method_list_of_doubles(%p)\n", l_in);
+  fprintf(stdout, "_test_object_method_list_of_doubles_check(%p)\n", l_in);
+  fflush(stdout);
   if (l_in) return l_in;
   double *v = malloc(sizeof(double));
   *v = 42;
@@ -422,11 +457,12 @@ _test_object_method_list_of_doubles(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_List *
-_test_object_method_list_of_enums(Eo* obj EINA_UNUSED,
-                                    Test_Object_Data *pd EINA_UNUSED,
-                                    Eina_List *l_in)
+_test_object_method_list_of_enums_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_List *l_in)
 {
-  fprintf(stdout, "_test_object_method_list_of_enums(%p)\n", l_in);
+  fprintf(stdout, "_test_object_method_list_of_enums_check(%p)\n", l_in);
+  fflush(stdout);
   if (l_in) return l_in;
   Test_Enum_Ex *v = malloc(sizeof(Test_Enum_Ex));
   *v = TEST_ENUM_EX_THIRD;
@@ -434,11 +470,12 @@ _test_object_method_list_of_enums(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_List *
-_test_object_method_list_of_structs(Eo* obj EINA_UNUSED,
-                                      Test_Object_Data *pd EINA_UNUSED,
-                                      Eina_List *l_in)
+_test_object_method_list_of_structs_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_List *l_in)
 {
-  fprintf(stdout, "_test_object_method_list_of_structs(%p)\n", l_in);
+  fprintf(stdout, "_test_object_method_list_of_structs_check(%p)\n", l_in);
+  fflush(stdout);
   if (l_in) return l_in;
   Test_Struct_Ex *v = malloc(sizeof(Test_Struct_Ex));
   v->value_int = 42;
@@ -449,11 +486,12 @@ _test_object_method_list_of_structs(Eo* obj EINA_UNUSED,
 // Accessors //
 
 EOLIAN static Eina_Accessor *
-_test_object_method_accessor_of_objects(Eo* obj,
-                                          Test_Object_Data *pd EINA_UNUSED,
-                                          Eina_Accessor *a_in)
+_test_object_method_accessor_of_objects_check(Eo* obj,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Accessor *a_in)
 {
-  fprintf(stdout, "_test_object_method_accessor_of_objects(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_accessor_of_objects_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   Eina_Array *arr = eina_array_new(2);
   eina_array_push(arr, obj);
@@ -461,11 +499,12 @@ _test_object_method_accessor_of_objects(Eo* obj,
 }
 
 EOLIAN static Eina_Accessor *
-_test_object_method_accessor_of_strings(Eo* obj EINA_UNUSED,
-                                          Test_Object_Data *pd EINA_UNUSED,
-                                          Eina_Accessor *a_in)
+_test_object_method_accessor_of_strings_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Accessor *a_in)
 {
-  fprintf(stdout, "_test_object_method_accessor_of_strings(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_accessor_of_strings_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   Eina_Array *arr = eina_array_new(2);
   eina_array_push(arr, "foo");
@@ -473,11 +512,12 @@ _test_object_method_accessor_of_strings(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Accessor *
-_test_object_method_accessor_of_ints(Eo* obj EINA_UNUSED,
-                                       Test_Object_Data *pd EINA_UNUSED,
-                                       Eina_Accessor *a_in)
+_test_object_method_accessor_of_ints_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Accessor *a_in)
 {
-  fprintf(stdout, "_test_object_method_accessor_of_ints(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_accessor_of_ints_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   int *v = malloc(sizeof(int));
   *v = 42;
@@ -487,11 +527,12 @@ _test_object_method_accessor_of_ints(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Accessor *
-_test_object_method_accessor_of_bools(Eo* obj EINA_UNUSED,
-                                        Test_Object_Data *pd EINA_UNUSED,
-                                        Eina_Accessor *a_in)
+_test_object_method_accessor_of_bools_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Accessor *a_in)
 {
-  fprintf(stdout, "_test_object_method_accessor_of_bools(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_accessor_of_bools_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   Eina_Bool *v = malloc(sizeof(Eina_Bool));
   *v = EINA_TRUE;
@@ -501,11 +542,12 @@ _test_object_method_accessor_of_bools(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Accessor *
-_test_object_method_accessor_of_doubles(Eo* obj EINA_UNUSED,
-                                          Test_Object_Data *pd EINA_UNUSED,
-                                          Eina_Accessor *a_in)
+_test_object_method_accessor_of_doubles_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Accessor *a_in)
 {
-  fprintf(stdout, "_test_object_method_accessor_of_doubles(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_accessor_of_doubles_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   double *v = malloc(sizeof(double));
   *v = 42.0;
@@ -515,11 +557,12 @@ _test_object_method_accessor_of_doubles(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Accessor *
-_test_object_method_accessor_of_enums(Eo* obj EINA_UNUSED,
-                                        Test_Object_Data *pd EINA_UNUSED,
-                                        Eina_Accessor *a_in)
+_test_object_method_accessor_of_enums_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Accessor *a_in)
 {
-  fprintf(stdout, "_test_object_method_accessor_of_enums(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_accessor_of_enums_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   Test_Enum_Ex *v = malloc(sizeof(Test_Enum_Ex));
   *v = TEST_ENUM_EX_THIRD;
@@ -529,11 +572,12 @@ _test_object_method_accessor_of_enums(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Accessor *
-_test_object_method_accessor_of_structs(Eo* obj EINA_UNUSED,
-                                          Test_Object_Data *pd EINA_UNUSED,
-                                          Eina_Accessor *a_in)
+_test_object_method_accessor_of_structs_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Accessor *a_in)
 {
-  fprintf(stdout, "_test_object_method_accessor_of_structs(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_accessor_of_structs_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   Test_Struct_Ex *v = malloc(sizeof(Test_Struct_Ex));
   v->value_int = 42;
@@ -546,11 +590,12 @@ _test_object_method_accessor_of_structs(Eo* obj EINA_UNUSED,
 // Combinations of complex types
 
 EOLIAN static Eina_List *
-_test_object_method_list_of_lists_of_ints(Eo* obj EINA_UNUSED,
-                                            Test_Object_Data *pd EINA_UNUSED,
-                                            Eina_List *l_in)
+_test_object_method_list_of_lists_of_ints_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_List *l_in)
 {
-  fprintf(stdout, "_test_object_method_list_of_lists_of_ints(%p)\n", l_in);
+  fprintf(stdout, "_test_object_method_list_of_lists_of_ints_check(%p)\n", l_in);
+  fflush(stdout);
   if (l_in) return l_in;
   int *v = malloc(sizeof(int));
   *v = 42;
@@ -558,11 +603,12 @@ _test_object_method_list_of_lists_of_ints(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Array *
-_test_object_method_array_of_lists_of_ints(Eo* obj EINA_UNUSED,
-                                             Test_Object_Data *pd EINA_UNUSED,
-                                             Eina_Array *a_in)
+_test_object_method_array_of_lists_of_ints_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Array *a_in)
 {
-  fprintf(stdout, "_test_object_method_array_of_lists_of_ints(%p)\n", a_in);
+  fprintf(stdout, "_test_object_method_array_of_lists_of_ints_check(%p)\n", a_in);
+  fflush(stdout);
   if (a_in) return a_in;
   int *v = malloc(sizeof(int));
   *v = 42;
@@ -572,11 +618,12 @@ _test_object_method_array_of_lists_of_ints(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_List *
-_test_object_method_list_of_arrays_of_ints(Eo* obj EINA_UNUSED,
-                                             Test_Object_Data *pd EINA_UNUSED,
-                                             Eina_List *l_in)
+_test_object_method_list_of_arrays_of_ints_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_List *l_in)
 {
-  fprintf(stdout, "_test_object_method_list_of_arrays_of_ints(%p)\n", l_in);
+  fprintf(stdout, "_test_object_method_list_of_arrays_of_ints_check(%p)\n", l_in);
+  fflush(stdout);
   if (l_in) return l_in;
   int *v = malloc(sizeof(int));
   *v = 42;
@@ -586,35 +633,40 @@ _test_object_method_list_of_arrays_of_ints(Eo* obj EINA_UNUSED,
 }
 
 EOLIAN static const Eina_List *
-_test_object_method_list_with_opaque_elements(Eo* obj EINA_UNUSED,
-                                                Test_Object_Data *pd EINA_UNUSED)
+_test_object_method_list_with_opaque_elements_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED)
 {
-  fprintf(stdout, "_test_object_method_list_with_opaque_elements()\n");
+  fprintf(stdout, "_test_object_method_list_with_opaque_elements_check()\n");
+  fflush(stdout);
   return NULL;
 }
 
 EOLIAN static Test_Enum_Ex
-_test_object_method_in_enum_return_enum(Eo* obj EINA_UNUSED,
-                                          Test_Object_Data *pd EINA_UNUSED,
-                                          Test_Enum_Ex e)
+_test_object_method_in_enum_return_enum_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Test_Enum_Ex e)
 {
-  fprintf(stdout, "_test_object_method_in_enum_return_enum(%d)\n", e);
+  fprintf(stdout, "_test_object_method_in_enum_return_enum_check(%d)\n", e);
+  fflush(stdout);
   return e;
 }
 
 EOLIAN static Test_Struct_Ex *
-_test_object_method_in_struct_return_struct(Eo* obj EINA_UNUSED,
-                                     Test_Object_Data *pd EINA_UNUSED,
-                                     Test_Struct_Ex *s)
+_test_object_method_in_struct_return_struct_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Test_Struct_Ex *s)
 {
-  fprintf(stdout, "_test_object_method_in_struct_return_struct()\n");
+  fprintf(stdout, "_test_object_method_in_struct_return_struct_check(%p)\n", s);
+  fflush(stdout);
   return s;
 }
 
 EOLIAN static void
 _test_object_event_repeated_event_name(Eo* obj EINA_UNUSED,
-                                         Test_Object_Data *pd EINA_UNUSED)
+  Test_Object_Data *pd EINA_UNUSED)
 {
+  fprintf(stdout, "_test_object_event_repeated_event_name()\n");
+  fflush(stdout);
 }
 
 #include <test_object.eo.c>

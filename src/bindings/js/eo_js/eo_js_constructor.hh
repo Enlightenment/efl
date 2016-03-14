@@ -15,6 +15,21 @@
 
 namespace efl { namespace eo { namespace js {
 
+template <typename T>
+struct eo_function_params;
+
+template <typename R, typename... P>
+struct eo_function_params<R(*)(Eo*, P...)>
+{
+  typedef std::tuple<P...> type;
+};
+
+template <typename R, typename... P>
+struct eo_function_params<R(*)(Eo const*, P...)>
+{
+  typedef std::tuple<P...> type;
+};
+
 inline eina::js::compatibility_return_type constructor(eina::js::compatibility_callback_info_type args)
 {
   if(args.IsConstructCall())
@@ -45,7 +60,7 @@ struct constructor_caller
     void operator()(T function) const
     {
       int const parameters
-        = std::tuple_size<typename eina::_mpl::function_params<T>::type>::value;
+        = std::tuple_size<typename eo::js::eo_function_params<T>::type>::value;
       if(*current + parameters <= args->Length())
         {
           aux(function, eina::make_index_sequence<parameters>());
@@ -62,24 +77,25 @@ struct constructor_caller
 
     template <typename U, std::size_t I>
     static
-    typename std::tuple_element<I, typename eina::_mpl::function_params<U>::type>::type
+    typename std::tuple_element<I, typename eo::js::eo_function_params<U>::type>::type
     get_value(v8::Local<v8::Value> v, v8::Isolate* isolate)
     {
-      typename std::tuple_element<I, typename eina::_mpl::function_params<U>::type>::type
+      typename std::tuple_element<I, typename eo::js::eo_function_params<U>::type>::type
         tmp = 
         eina::js::get_value_from_javascript
         (v, isolate, ""
          , eina::js::value_tag<typename std::tuple_element
-         <I, typename eina::_mpl::function_params<U>::type>::type>());
+         <I, typename eo::js::eo_function_params<U>::type>::type>());
       return tmp;
     }
     
     template <typename T, std::size_t... I>
     void aux(T function, eina::index_sequence<I...>) const
     {
-      function(get_value<T, I>((*args)[I + *current], args->GetIsolate())...);
+      function(obj_eo_self, get_value<T, I>((*args)[I + *current], args->GetIsolate())...);
     }
 
+    Eo* obj_eo_self;
     int* current;
     eina::js::compatibility_callback_info_pointer args;
   };
@@ -96,7 +112,7 @@ struct constructor_caller
             Eo* eo = eo_add
               (klass
                , parent
-               , eina::_mpl::for_each(constructors, call{&current_index, &args})
+               , eina::_mpl::for_each(constructors, call{eo_self, &current_index, &args})
                );
             assert(eo != 0);
             v8::Local<v8::Object> self = args.This();

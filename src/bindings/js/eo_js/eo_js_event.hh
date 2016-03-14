@@ -54,18 +54,17 @@ inline v8::Local<v8::Value> get_event_info<void>(void*, v8::Isolate* isolate, co
 }
 
 template <typename T>
-inline Eina_Bool event_callback(void* data, Eo* obj, Eo_Event_Description const*
-                                , void* event_info)
+inline Eina_Bool event_callback(void* data, Eo_Event const* eo_event)
 {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope handle_scope(isolate);
   event_callback_information* event = static_cast<event_callback_information*>(data);
-  v8::Handle<v8::Value> a[] = {eina::js::compatibility_new<v8::External>(isolate, obj)};
+  v8::Handle<v8::Value> a[] = {eina::js::compatibility_new<v8::External>(isolate, eo_event->obj)};
   v8::Local<v8::Object> self = (event->event_info->constructor->handle())->NewInstance(1, a);
 
   v8::Local<v8::Value> call_args[] = {
     self,
-    get_event_info<T>(event_info, isolate, event->event_info->class_name)
+    get_event_info<T>(eo_event->event_info, isolate, event->event_info->class_name)
   };
   event->function.handle()->Call(eina::js::compatibility_global(), 2, call_args);
   
@@ -100,8 +99,7 @@ inline eina::js::compatibility_return_type on_event(eina::js::compatibility_call
 
           event_callback_information* i = new event_callback_information
             {event, {isolate, eina::js::compatibility_cast<v8::Function>(f)}};
-          eo_do(eo, eo_event_callback_priority_add
-                (event->event, EO_CALLBACK_PRIORITY_DEFAULT, event->event_callback, i));
+          eo_event_callback_add(eo, event->event, event->event_callback, i);
         }
       else
         {

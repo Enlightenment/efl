@@ -31,7 +31,7 @@ if(typeof process !== 'undefined')
 }
 else
 {
-    assert = function(test, message) { if (test !== true) throw message; };
+    assert = function(test, message) { if (!test) throw message; };
     print('running from libv8')
     //FIXME Add levels to v8 tests
     printError = print
@@ -99,9 +99,9 @@ startTest("integral_in_and_out_parameters", function() {
   var obj = new TestObject(null);
 
   var expectedValue = 1234;
-  obj.methodIntegralInA(expectedValue);
+  obj.checkMethodIntegralInA(expectedValue);
 
-  var actualValue = obj.methodIntegralOutA();
+  var actualValue = obj.checkMethodIntegralOutA();
   assert(actualValue == expectedValue, actualValue + " == " + expectedValue);
 });
 
@@ -109,11 +109,11 @@ startTest("integral_inout_parameter", function() {
   var obj = new TestObject(null);
 
   var expectedValue = 1234;
-  var actualValue = obj.methodIntegralInout(-expectedValue);
+  var actualValue = obj.checkMethodIntegralInout(-expectedValue);
   assert(actualValue == expectedValue, actualValue + " == " + expectedValue);
 
   var expectedValue = -4321;
-  var actualValue = obj.methodIntegralInout(-expectedValue);
+  var actualValue = obj.checkMethodIntegralInout(-expectedValue);
   assert(actualValue == expectedValue, actualValue + " == " + expectedValue);
 });
 
@@ -121,38 +121,38 @@ startTest("integral_return_value", function() {
   var obj = new TestObject(null);
 
   var expectedValue = 1234;
-  obj.methodIntegralInA(expectedValue);
+  obj.checkMethodIntegralInA(expectedValue);
 
-  var actualValue = obj.methodIntegralReturnA();
+  var actualValue = obj.checkMethodIntegralReturnA();
   assert(actualValue == expectedValue, actualValue + " == " + expectedValue);
 });
 
 startTest("more_parameters_than_expected_is_ok", function() {
   var obj = new TestObject(null);
   var expectedValue = 1234;
-  obj.methodIntegralInA(expectedValue, 4321);
+  obj.checkMethodIntegralInA(expectedValue, 4321);
 
-  var actualValue = obj.methodIntegralOutA();
+  var actualValue = obj.checkMethodIntegralOutA();
   assert(actualValue == expectedValue, actualValue + " == " + expectedValue);
 });
 
 startTest("less_parameters_that_expected_fails", function() {
   var obj = new TestObject(null);
   expectException(function() {
-    obj.methodIntegralInA();
+    obj.checkMethodIntegralInA();
   });
 });
 
 startTest("wrong_parameter_type_fails", function() {
   var obj = new TestObject(null);
   expectException(function() {
-    obj.methodIntegralInA('string');
+    obj.checkMethodIntegralInA('string');
   });
 });
 
 startTest("mixed_in_out_and_result", function() {
   var obj = new TestObject(null);
-  var ret = obj.methodDivMod(7, 3);
+  var ret = obj.checkMethodDivMod(7, 3);
   var success = ret[0];
   var quotient = ret[1];
   var remainder = ret[2];
@@ -160,46 +160,46 @@ startTest("mixed_in_out_and_result", function() {
   assert(2 == quotient);
   assert(1 == remainder);
 
-  ret = obj.methodDivMod(42, 0);
+  ret = obj.checkMethodDivMod(42, 0);
   success = ret[0];
   assert(!success);
 });
 
 startTest("boolean", function() {
   var obj = new TestObject(null);
-  var ret = obj.methodAnd(false, false);
+  var ret = obj.checkMethodAnd(false, false);
   assert(ret == false);
-  ret = obj.methodAnd(false, true);
+  ret = obj.checkMethodAnd(false, true);
   assert(ret == false);
-  ret = obj.methodAnd(true, false);
+  ret = obj.checkMethodAnd(true, false);
   assert(ret == false);
-  ret = obj.methodAnd(true, true);
+  ret = obj.checkMethodAnd(true, true);
   assert(ret);
 });
 
 startTest("floating_point", function() {
   var obj = new TestObject(null);
-  var ret = obj.methodModf(3.14159);
+  var ret = obj.checkMethodModf(3.14159);
   assert(Math.abs(ret[0] - 0.14159) < 0.00001, "Math.abs(ret[0] - 0.14159) < 0.00001 (" + Math.abs(ret[0] - 0.14159) + " < 0.00001)");
   assert(ret[1] == 3, "ret[1] == 3 (" + ret[1] + " == 3)");
 });
 
 startTest("string_inout", function() {
   var obj = new TestObject(null);
-  var ret = obj.methodUppercase('hello world');
+  var ret = obj.checkMethodUppercase('hello world');
   assert(ret == "HELLO WORLD", "ret == " + ret);
 });
 
 startTest("in_null_string", function() {
   var obj = new TestObject(null);
-  var success = obj.methodInNull(null);
+  var success = obj.checkMethodInNull(null);
   assert(success, "success == " + success);
 });
 
 
 startTest("out_null_string", function() {
   var obj = new TestObject(null);
-  var ret = obj.methodOutNull();
+  var ret = obj.checkMethodOutNull();
   assert(ret[0], "success == " + ret[0]);
   assert(ret[1] === null, "output == " + ret[1]);
 });
@@ -207,7 +207,7 @@ startTest("out_null_string", function() {
 
 startTest("inout_null_string", function() {
   var obj = new TestObject(null);
-  var ret = obj.methodInoutNull(null);
+  var ret = obj.checkMethodInoutNull(null);
   assert(ret[0], "success == " + ret[0]);
   assert(ret[1] === null, "output == " + ret[1]);
 });
@@ -215,14 +215,14 @@ startTest("inout_null_string", function() {
 
 startTest("return_null_string", function() {
   var obj = new TestObject(null);
-  var ret = obj.methodReturnNull();
+  var ret = obj.checkMethodReturnNull();
   assert(ret === null, "ret == " + ret);
 });
 
 
 startTest("null_values", function() {
   var obj = new TestObject(null);
-  var ret = obj.methodNull(null, null);
+  var ret = obj.checkMethodNull(null, null);
   assert(ret[0] === null, "ret == " + ret[0]);
   assert(ret[1] === null, "ret == " + ret[1]);
   assert(ret[2] === null, "ret == " + ret[2]);
@@ -230,11 +230,11 @@ startTest("null_values", function() {
 
 startTest("enum_values", function() {
   var obj = new TestObject(null);
-  var ret = obj.methodInEnumReturnEnum(suite.Test.EnumEx.SECOND);
+  var ret = obj.checkMethodInEnumReturnEnum(suite.Test.EnumEx.SECOND);
   assert(ret === suite.Test.EnumEx.SECOND);
   var value = suite.Test.EnumEx.THIRD;
   assert(value === 2);
-  ret = obj.methodInEnumReturnEnum(value);
+  ret = obj.checkMethodInEnumReturnEnum(value);
   assert(ret === value);
 });
 
@@ -247,7 +247,7 @@ startTest("struct_values", function() {
   assert(ret === 42);
   ret = newStruct.valueEnum;
   assert(ret === suite.Test.EnumEx.FOURTH);
-  ret = obj.methodInStructReturnStruct(newStruct);
+  ret = obj.checkMethodInStructReturnStruct(newStruct);
   assert(ret.valueInt === 42);
   assert(ret.valueEnum === suite.Test.EnumEx.FOURTH);
 });
@@ -264,7 +264,7 @@ startTest("event_simple", function() {
      }
     );
    printInfo('going to call event');
-   obj.callEvent();
+   obj.emitEvent();
    printInfo('is event called?');
    assert(v);
 });
@@ -280,14 +280,14 @@ startTest("event_object_call", function() {
          var o = arguments[0];
          assert(o != null);
          var expectedValue = 1234;
-         o.methodIntegralInA(expectedValue);
-         var actualValue = o.methodIntegralOutA();
+         o.checkMethodIntegralInA(expectedValue);
+         var actualValue = o.checkMethodIntegralOutA();
          assert(actualValue == expectedValue, actualValue + " == " + expectedValue);
          v = true;
      }
     );
    printInfo('going to call event');
-   obj.callEvent();
+   obj.emitEvent();
    printInfo('is event called?');
    assert(v);
 });
@@ -296,7 +296,7 @@ startTest("event_structarg", function() {
   var v = false;
   var obj = new TestObject(null);
     var ret = obj.on
-    ("test_structarg",
+    ("test,structarg",
      function()
      {
          printInfo('Event called');
@@ -308,7 +308,7 @@ startTest("event_structarg", function() {
      }
     );
    printInfo('going to call event');
-   obj.callEvent();
+   obj.emitEvent();
    printInfo('is event called?');
    assert(v);
 });
@@ -317,7 +317,7 @@ startTest("event_stringarg", function() {
   var v = false;
   var obj = new TestObject(null);
     var ret = obj.on
-    ("test_stringarg",
+    ("test,stringarg",
      function()
      {
          printInfo('Event called');
@@ -327,7 +327,7 @@ startTest("event_stringarg", function() {
      }
     );
    printInfo('going to call event');
-   obj.callEvent();
+   obj.emitEvent();
    printInfo('is event called?');
    assert(v);
 });
@@ -335,15 +335,15 @@ startTest("event_stringarg", function() {
 // // TODO: disabled. Not implemented yet
 // startTest("integral_array", function() {
 //   var obj = new TestObject(null);
-//   var ret = obj.methodArrayAt([1, 2, 3, 4, 5], 1);
+//   var ret = obj.checkMethodArrayAt([1, 2, 3, 4, 5], 1);
 //   assert(ret == 2, "ret == " + ret);
 // });
 
 startTest("array_in_array_out", function() {
   var obj = new TestObject(null);
-  var newArray = obj.methodArrayWith42();
+  var newArray = obj.checkMethodArrayWith42();
   assert(newArray != null);
-  var arr = obj.methodArrayInArrayOut(newArray);
+  var arr = obj.checkMethodArrayInArrayOut(newArray);
   assert(arr != null);
   assert(arr[0] === 42);
   assert(newArray[0] === arr[0]);
@@ -351,80 +351,80 @@ startTest("array_in_array_out", function() {
 
 startTest("method_array_of_objects", function() {
   var obj = new TestObject(null);
-  var arr = obj.methodArrayOfObjects(null);
+  var arr = obj.checkMethodArrayOfObjects(null);
   assert(arr != null);
   assert(arr[0] != null);
-  arr = obj.methodArrayOfObjects(arr);
+  arr = obj.checkMethodArrayOfObjects(arr);
   assert(arr != null);
   var v = arr[0];
   assert(v != null);
   // assert(v == obj); // TODO: check if same Eo object pointer?
   var expectedValue = 1234;
-  v.methodIntegralInA(expectedValue);
-  var actualValue = v.methodIntegralOutA();
+  v.checkMethodIntegralInA(expectedValue);
+  var actualValue = v.checkMethodIntegralOutA();
   assert(actualValue == expectedValue, actualValue + " == " + expectedValue);
 });
 
 // FIXME
 // startTest("method_array_of_strings", function() {
 //   var obj = new TestObject(null);
-//   var arr = obj.methodArrayOfStrings(null);
+//   var arr = obj.checkMethodArrayOfStrings(null);
 //   assert(arr != null);
 //   assert(arr[0] === "foo");
-//   arr = obj.methodArrayOfStrings(arr);
+//   arr = obj.checkMethodArrayOfStrings(arr);
 //   assert(arr != null);
 //   assert(arr[0] === "foo");
 // });
 
 startTest("method_array_of_ints", function() {
   var obj = new TestObject(null);
-  var arr = obj.methodArrayOfInts(null);
+  var arr = obj.checkMethodArrayOfInts(null);
   assert(arr != null);
   assert(arr[0] === 42);
-  arr = obj.methodArrayOfInts(arr);
+  arr = obj.checkMethodArrayOfInts(arr);
   assert(arr != null);
   assert(arr[0] === 42);
 });
 
 startTest("method_array_of_bools", function() {
   var obj = new TestObject(null);
-  var arr = obj.methodArrayOfBools(null);
+  var arr = obj.checkMethodArrayOfBools(null);
   assert(arr != null);
   assert(arr[0] === true);
-  arr = obj.methodArrayOfBools(arr);
+  arr = obj.checkMethodArrayOfBools(arr);
   assert(arr != null);
   assert(arr[0] === true);
 });
 
 startTest("method_array_of_doubles", function() {
   var obj = new TestObject(null);
-  var arr = obj.methodArrayOfDoubles(null);
+  var arr = obj.checkMethodArrayOfDoubles(null);
   assert(arr != null);
   assert(arr[0] === 42.0);
-  arr = obj.methodArrayOfDoubles(arr);
+  arr = obj.checkMethodArrayOfDoubles(arr);
   assert(arr != null);
   assert(arr[0] === 42.0);
 });
 
 startTest("method_array_of_enums", function() {
   var obj = new TestObject(null);
-  var arr = obj.methodArrayOfEnums(null);
+  var arr = obj.checkMethodArrayOfEnums(null);
   assert(arr != null);
   assert(arr[0] === suite.Test.EnumEx.THIRD);
-  arr = obj.methodArrayOfEnums(arr);
+  arr = obj.checkMethodArrayOfEnums(arr);
   assert(arr != null);
   assert(arr[0] === suite.Test.EnumEx.THIRD);
 });
 
 startTest("method_array_of_structs", function() {
   var obj = new TestObject(null);
-  var arr = obj.methodArrayOfStructs(null);
+  var arr = obj.checkMethodArrayOfStructs(null);
   assert(arr != null);
   var s = arr[0];
   assert(s != null);
   assert(s.valueInt === 42);
   assert(s.valueEnum === suite.Test.EnumEx.THIRD);
-  arr = obj.methodArrayOfStructs(arr);
+  arr = obj.checkMethodArrayOfStructs(arr);
   s = arr[0];
   assert(s != null);
   assert(s.valueInt === 42);
@@ -433,9 +433,9 @@ startTest("method_array_of_structs", function() {
 
 startTest("list_in_list_out", function() {
   var obj = new TestObject(null);
-  var newList = obj.methodListWith42();
+  var newList = obj.checkMethodListWith42();
   assert(newList != null);
-  var lis = obj.methodListInListOut(newList);
+  var lis = obj.checkMethodListInListOut(newList);
   assert(lis != null);
   // assert(lis == newList); // TODO: check same list pointer?
   assert(lis[0] === 42);
@@ -444,80 +444,80 @@ startTest("list_in_list_out", function() {
 
 startTest("method_list_of_objects", function() {
   var obj = new TestObject(null);
-  var lis = obj.methodListOfObjects(null);
+  var lis = obj.checkMethodListOfObjects(null);
   assert(lis != null);
   assert(lis[0] != null);
-  lis = obj.methodListOfObjects(lis);
+  lis = obj.checkMethodListOfObjects(lis);
   assert(lis != null);
   var v = lis[0];
   assert(v != null);
   // assert(v == obj); // TODO: check if same Eo object pointer?
   var expectedValue = 1234;
-  v.methodIntegralInA(expectedValue);
-  var actualValue = v.methodIntegralOutA();
+  v.checkMethodIntegralInA(expectedValue);
+  var actualValue = v.checkMethodIntegralOutA();
   assert(actualValue == expectedValue, actualValue + " == " + expectedValue);
 });
 
 // FIXME
 // startTest("method_list_of_strings", function() {
 //   var obj = new TestObject(null);
-//   var lis = obj.methodListOfStrings(null);
+//   var lis = obj.checkMethodListOfStrings(null);
 //   assert(lis != null);
 //   assert(lis[0] === "foo");
-//   lis = obj.methodListOfStrings(lis);
+//   lis = obj.checkMethodListOfStrings(lis);
 //   assert(lis != null);
 //   assert(lis[0] === "foo");
 // });
 
 startTest("method_list_of_ints", function() {
   var obj = new TestObject(null);
-  var lis = obj.methodListOfInts(null);
+  var lis = obj.checkMethodListOfInts(null);
   assert(lis != null);
   assert(lis[0] === 42);
-  lis = obj.methodListOfInts(lis);
+  lis = obj.checkMethodListOfInts(lis);
   assert(lis != null);
   assert(lis[0] === 42);
 });
 
 startTest("method_list_of_bools", function() {
   var obj = new TestObject(null);
-  var lis = obj.methodListOfBools(null);
+  var lis = obj.checkMethodListOfBools(null);
   assert(lis != null);
   assert(lis[0] === true);
-  lis = obj.methodListOfBools(lis);
+  lis = obj.checkMethodListOfBools(lis);
   assert(lis != null);
   assert(lis[0] === true);
 });
 
 startTest("method_list_of_doubles", function() {
   var obj = new TestObject(null);
-  var lis = obj.methodListOfDoubles(null);
+  var lis = obj.checkMethodListOfDoubles(null);
   assert(lis != null);
   assert(lis[0] === 42.0);
-  lis = obj.methodListOfDoubles(lis);
+  lis = obj.checkMethodListOfDoubles(lis);
   assert(lis != null);
   assert(lis[0] === 42.0);
 });
 
 startTest("method_list_of_enums", function() {
   var obj = new TestObject(null);
-  var lis = obj.methodListOfEnums(null);
+  var lis = obj.checkMethodListOfEnums(null);
   assert(lis != null);
   assert(lis[0] === suite.Test.EnumEx.THIRD);
-  lis = obj.methodListOfEnums(lis);
+  lis = obj.checkMethodListOfEnums(lis);
   assert(lis != null);
   assert(lis[0] === suite.Test.EnumEx.THIRD);
 });
 
 startTest("method_list_of_structs", function() {
   var obj = new TestObject(null);
-  var lis = obj.methodListOfStructs(null);
+  var lis = obj.checkMethodListOfStructs(null);
   assert(lis != null);
   var s = lis[0];
   assert(s != null);
   assert(s.valueInt === 42);
   assert(s.valueEnum === suite.Test.EnumEx.THIRD);
-  lis = obj.methodListOfStructs(lis);
+  lis = obj.checkMethodListOfStructs(lis);
   s = lis[0];
   assert(s != null);
   assert(s.valueInt === 42);
@@ -526,79 +526,79 @@ startTest("method_list_of_structs", function() {
 
 startTest("method_accessor_of_objects", function() {
   var obj = new TestObject(null);
-  var acc = obj.methodAccessorOfObjects(null);
+  var acc = obj.checkMethodAccessorOfObjects(null);
   assert(acc != null);
   assert(acc.get(0) != null);
-  acc = obj.methodAccessorOfObjects(acc);
+  acc = obj.checkMethodAccessorOfObjects(acc);
   assert(acc != null);
   var v = acc.get(0);
   assert(v != null);
   var expectedValue = 1234;
-  v.methodIntegralInA(expectedValue);
-  var actualValue = v.methodIntegralOutA();
+  v.checkMethodIntegralInA(expectedValue);
+  var actualValue = v.checkMethodIntegralOutA();
   assert(actualValue == expectedValue, actualValue + " == " + expectedValue);
 });
 
 // FIXME
 // startTest("method_accessor_of_strings", function() {
 //   var obj = new TestObject(null);
-//   var acc = obj.methodAccessorOfStrings(null);
+//   var acc = obj.checkMethodAccessorOfStrings(null);
 //   assert(acc != null);
 //   assert(acc.get(0) === "foo");
-//   acc = obj.methodAccessorOfStrings(acc);
+//   acc = obj.checkMethodAccessorOfStrings(acc);
 //   assert(acc != null);
 //   assert(acc.get(0) === "foo");
 // });
 
 startTest("method_accessor_of_ints", function() {
   var obj = new TestObject(null);
-  var acc = obj.methodAccessorOfInts(null);
+  var acc = obj.checkMethodAccessorOfInts(null);
   assert(acc != null);
   assert(acc.get(0) === 42);
-  acc = obj.methodAccessorOfInts(acc);
+  acc = obj.checkMethodAccessorOfInts(acc);
   assert(acc != null);
   assert(acc.get(0) === 42);
 });
 
 startTest("method_accessor_of_bools", function() {
   var obj = new TestObject(null);
-  var acc = obj.methodAccessorOfBools(null);
+  var acc = obj.checkMethodAccessorOfBools(null);
   assert(acc != null);
   assert(acc.get(0) === true);
-  acc = obj.methodAccessorOfBools(acc);
+  acc = obj.checkMethodAccessorOfBools(acc);
   assert(acc != null);
   assert(acc.get(0) === true);
 });
 
 startTest("method_accessor_of_doubles", function() {
   var obj = new TestObject(null);
-  var acc = obj.methodAccessorOfDoubles(null);
+  var acc = obj.checkMethodAccessorOfDoubles(null);
   assert(acc != null);
   assert(acc.get(0) === 42.0);
-  acc = obj.methodAccessorOfDoubles(acc);
+  acc = obj.checkMethodAccessorOfDoubles(acc);
   assert(acc != null);
   assert(acc.get(0) === 42.0);
 });
 
 startTest("method_accessor_of_enums", function() {
   var obj = new TestObject(null);
-  var acc = obj.methodAccessorOfEnums(null);
+  var acc = obj.checkMethodAccessorOfEnums(null);
   assert(acc != null);
   assert(acc.get(0) === suite.Test.EnumEx.THIRD);
-  acc = obj.methodAccessorOfEnums(acc);
+  acc = obj.checkMethodAccessorOfEnums(acc);
   assert(acc != null);
   assert(acc.get(0) === suite.Test.EnumEx.THIRD);
 });
 
 startTest("method_accessor_of_structs", function() {
   var obj = new TestObject(null);
-  var acc = obj.methodAccessorOfStructs(null);
+  var acc = obj.checkMethodAccessorOfStructs(null);
   assert(acc != null);
   var s = acc.get(0);
   assert(s != null);
   assert(s.valueInt === 42);
   assert(s.valueEnum === suite.Test.EnumEx.THIRD);
-  acc = obj.methodAccessorOfStructs(acc);
+  acc = obj.checkMethodAccessorOfStructs(acc);
   assert(acc != null);
   s = acc.get(0);
   assert(s != null);
@@ -611,12 +611,12 @@ startTest("method_accessor_of_structs", function() {
 // FIXME
 // startTest("method_array_of_arrays_of_ints", function() {
 //   var obj = new TestObject(null);
-//   var arr = obj.methodArrayOfArraysOfInts(null);
+//   var arr = obj.checkMethodArrayOfArraysOfInts(null);
 //   assert(arr != null);
 //   var a = arr[0];
 //   assert(a != null);
 //   assert(a[0] === 42);
-//   arr = obj.methodArrayOfArraysOfInts(arr);
+//   arr = obj.checkMethodArrayOfArraysOfInts(arr);
 //   assert(arr != null);
 //   a = arr[0];
 //   assert(a != null);
@@ -626,12 +626,12 @@ startTest("method_accessor_of_structs", function() {
 // FIXME
 // startTest("method_list_of_lists_of_ints", function() {
 //   var obj = new TestObject(null);
-//   var lis = obj.methodListOfListsOfInts(null);
+//   var lis = obj.checkMethodListOfListsOfInts(null);
 //   assert(lis != null);
 //   var l = lis[0];
 //   assert(l != null);
 //   assert(l[0] === 42);
-//   lis = obj.methodListOfListsOfInts(lis);
+//   lis = obj.checkMethodListOfListsOfInts(lis);
 //   assert(lis != null);
 //   l = lis[0];
 //   assert(l != null);
@@ -641,12 +641,12 @@ startTest("method_accessor_of_structs", function() {
 // FIXME
 // startTest("method_array_of_lists_of_ints", function() {
 //   var obj = new TestObject(null);
-//   var arr = obj.methodArrayOfListsOfInts(null);
+//   var arr = obj.checkMethodArrayOfListsOfInts(null);
 //   assert(arr != null);
 //   var l = arr[0];
 //   assert(l != null);
 //   assert(l[0] === 42);
-//   arr = obj.methodArrayOfListsOfInts(arr);
+//   arr = obj.checkMethodArrayOfListsOfInts(arr);
 //   assert(arr != null);
 //   l = arr[0];
 //   assert(l != null);
@@ -656,12 +656,12 @@ startTest("method_accessor_of_structs", function() {
 // FIXME
 // startTest("method_list_of_arrays_of_ints", function() {
 //   var obj = new TestObject(null);
-//   var lis = obj.methodListOfArraysOfInts(null);
+//   var lis = obj.checkMethodListOfArraysOfInts(null);
 //   assert(lis != null);
 //   var a = lis[0];
 //   assert(a != null);
 //   assert(a[0] === 42);
-//   lis = obj.methodListOfArraysOfInts(lis);
+//   lis = obj.checkMethodListOfArraysOfInts(lis);
 //   assert(lis != null);
 //   a = lis[0];
 //   assert(a != null);

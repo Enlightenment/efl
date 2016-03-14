@@ -66,13 +66,19 @@ _final_type_and_type_type_get(Eolian_Type const* tp_in, Eolian_Type const*& tp_o
 {
   tp_out = tp_in;
   tpt_out = eolian_type_type_get(tp_in);
-  while ((tpt_out == EOLIAN_TYPE_REGULAR || tpt_out == EOLIAN_TYPE_ALIAS) && !eolian_type_is_extern(tp_out))
+  if (tpt_out == EOLIAN_TYPE_REGULAR)
     {
-       auto t = eolian_type_base_type_get(tp_out);
-       // TODO: shouldn't __undefined_type be flagged as external???
-       if (!t || !eolian_type_full_name_get(t) || strcmp(eolian_type_full_name_get(t), "__undefined_type") == 0) break;
-       tp_out = t;
-       tpt_out = eolian_type_type_get(t);
+       auto tpd = eolian_type_typedecl_get(tp_out);
+       if (tpd && eolian_typedecl_type_get(tpd) == EOLIAN_TYPEDECL_ALIAS &&
+           !eolian_typedecl_is_extern(tpd))
+         {
+            auto btp = eolian_typedecl_aliased_base_get(tpd);
+            if (btp && eolian_type_full_name_get(btp) &&
+                strcmp(eolian_type_full_name_get(btp), "__undefined_type") != 0)
+              {
+                 _final_type_and_type_type_get(btp, tp_out, tpt_out);
+              }
+         }
     }
 }
 
@@ -84,7 +90,7 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
   Eolian_Type_Type tpt = EOLIAN_TYPE_UNKNOWN_TYPE;
   _final_type_and_type_type_get(tp, tp, tpt);
 
-  if (tpt == EOLIAN_TYPE_UNKNOWN_TYPE)
+  if (tpt == EOLIAN_TYPE_UNKNOWN_TYPE || tpt == EOLIAN_TYPE_UNDEFINED)
     return "error";
 
   std::string result;
@@ -92,10 +98,6 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
    if ((tpt == EOLIAN_TYPE_VOID
      || tpt == EOLIAN_TYPE_REGULAR
      || tpt == EOLIAN_TYPE_COMPLEX
-     || tpt == EOLIAN_TYPE_STRUCT
-     || tpt == EOLIAN_TYPE_STRUCT_OPAQUE
-     || tpt == EOLIAN_TYPE_ENUM
-     || tpt == EOLIAN_TYPE_ALIAS
      || tpt == EOLIAN_TYPE_CLASS)
      && is_const)
      {
@@ -105,10 +107,6 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
 
    if (tpt == EOLIAN_TYPE_REGULAR
     || tpt == EOLIAN_TYPE_COMPLEX
-    || tpt == EOLIAN_TYPE_STRUCT
-    || tpt == EOLIAN_TYPE_STRUCT_OPAQUE
-    || tpt == EOLIAN_TYPE_ENUM
-    || tpt == EOLIAN_TYPE_ALIAS
     || tpt == EOLIAN_TYPE_CLASS)
      {
         for (efl::eina::iterator<const char> first(::eolian_type_namespaces_get(tp)), last; first != last; ++first)
@@ -164,14 +162,15 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
           type_name = it->second;
         result += type_name;
 
-        if (tpt == EOLIAN_TYPE_STRUCT)
+        auto tpd = eolian_type_typedecl_get(tp);
+        if (tpd && eolian_typedecl_type_get(tpd) == EOLIAN_TYPEDECL_STRUCT)
           {
              result = "efl::eina::js::make_struct_tag<" + result + ">";
           }
      }
    else if (tpt == EOLIAN_TYPE_VOID)
      result += "void";
-   else // tpt == EOLIAN_TYPE_POINTER
+   else if (tpt == EOLIAN_TYPE_POINTER)
      {
         auto btp = eolian_type_base_type_get(tp);
         result += _eolian_type_cpp_type_named_get(btp, caller_class_prefix, need_name_getter);
@@ -180,8 +179,9 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
 
         Eolian_Type_Type btpt = EOLIAN_TYPE_UNKNOWN_TYPE;
         _final_type_and_type_type_get(btp, btp, btpt);
+        auto btpd = eolian_type_typedecl_get(btp);
 
-        if (btpt == EOLIAN_TYPE_STRUCT)
+        if (btpd && eolian_typedecl_type_get(btpd) == EOLIAN_TYPEDECL_STRUCT)
           {
              std::string f = "::make_struct_tag";
              auto p = result.find(f);
@@ -229,6 +229,10 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
 
              result += ">";
           }
+     }
+   else
+     {
+        throw std::runtime_error("unhandled Eolian_Type_Type value");
      }
 
    /*if (!name.empty())
@@ -303,6 +307,10 @@ void separate_functions(Eolian_Class const* klass, Eolian_Function_Type t, bool 
                 strcmp("constructor", ::eolian_function_name_get(function)) != 0 && // TODO: remove this
                 strcmp("render_updates", ::eolian_function_name_get(function)) != 0 && // TODO: remove this
                 strcmp("render2_updates", ::eolian_function_name_get(function)) != 0 && // TODO: remove this
+                strcmp("efl_canvas_surface_x11_pixmap_set", ::eolian_function_full_c_name_get(function, t, EINA_FALSE)) != 0 && // TODO: remove this
+                strcmp("efl_canvas_surface_x11_pixmap_get", ::eolian_function_full_c_name_get(function, t, EINA_FALSE)) != 0 && // TODO: remove this
+                strcmp("efl_canvas_surface_native_buffer_set", ::eolian_function_full_c_name_get(function, t, EINA_FALSE)) != 0 && // TODO: remove this
+                strcmp("efl_canvas_surface_native_buffer_get", ::eolian_function_full_c_name_get(function, t, EINA_FALSE)) != 0 && // TODO: remove this
                 strcmp("event_callback_priority_add", ::eolian_function_name_get(function)) != 0 && // TODO: remove this
                 strcmp("event_callback_array_priority_add", ::eolian_function_name_get(function)) != 0 && // TODO: remove this
                 strcmp("event_callback_array_del", ::eolian_function_name_get(function)) != 0 && // TODO: remove this
@@ -591,16 +599,16 @@ int main(int argc, char** argv)
 
    // generate all structs parsed in this file
    std::stringstream structs_ss;
-   for (efl::eina::iterator<Eolian_Type> first(::eolian_type_structs_get_by_file(file_basename.c_str()))
+   for (efl::eina::iterator<Eolian_Typedecl> first(::eolian_typedecl_structs_get_by_file(file_basename.c_str()))
         , last; first != last; ++first)
      {
         std::stringstream ss;
-        auto tp = &*first;
-        if (::eolian_type_type_get(tp) == EOLIAN_TYPE_STRUCT_OPAQUE)
+        auto tpd = &*first;
+        if (!tpd || ::eolian_typedecl_type_get(tpd) == EOLIAN_TYPEDECL_STRUCT_OPAQUE)
           continue;
 
-        auto struct_name = ::eolian_type_name_get(tp);
-        auto struct_type_full_name = ::eolian_type_full_name_get(tp);
+        auto struct_name = ::eolian_typedecl_name_get(tpd);
+        auto struct_type_full_name = ::eolian_typedecl_full_name_get(tpd);
         if (!struct_name || !struct_type_full_name)
           {
              EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Could not get struct type name";
@@ -613,11 +621,11 @@ int main(int argc, char** argv)
         ss << "  {\n";
         ss << "    auto fields_func = [](v8::Isolate* isolate_, v8::Local<v8::ObjectTemplate> prototype_)\n";
         ss << "    {\n";
-        for (efl::eina::iterator<Eolian_Struct_Type_Field> sf(::eolian_type_struct_fields_get(tp))
+        for (efl::eina::iterator<Eolian_Struct_Type_Field> sf(::eolian_typedecl_struct_fields_get(tpd))
              , sf_end; sf != sf_end; ++sf)
           {
-             auto field_type = ::eolian_type_struct_field_type_get(&*sf);
-             auto field_name = ::eolian_type_struct_field_name_get(&*sf);
+             auto field_type = ::eolian_typedecl_struct_field_type_get(&*sf);
+             auto field_name = ::eolian_typedecl_struct_field_name_get(&*sf);
              if (!field_name)
                {
                   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Could not get struct field name";
@@ -654,7 +662,7 @@ int main(int argc, char** argv)
         ss << "    };\n";
         ss << "    auto to_export = ::efl::eo::js::get_namespace({";
         bool comma = false;
-        for (efl::eina::iterator<const char> ns_it(::eolian_type_namespaces_get(tp)), ns_end; ns_it != ns_end; ++ns_it)
+        for (efl::eina::iterator<const char> ns_it(::eolian_typedecl_namespaces_get(tpd)), ns_end; ns_it != ns_end; ++ns_it)
           {
             if (comma)
               ss << ", ";
@@ -1042,17 +1050,17 @@ int main(int argc, char** argv)
    os << structs_ss.str();
 
    // generate enumerations
-   for (efl::eina::iterator<Eolian_Type> first(::eolian_type_enums_get_by_file(file_basename.c_str()))
+   for (efl::eina::iterator<Eolian_Typedecl> first(::eolian_typedecl_enums_get_by_file(file_basename.c_str()))
         , last; first != last; ++first)
      {
-        auto tp = &*first;
-        if (::eolian_type_is_extern(tp))
+        auto tpd = &*first;
+        if (::eolian_typedecl_is_extern(tpd))
           continue;
-        std::string enum_name = ::eolian_type_name_get(tp);
+        std::string enum_name = ::eolian_typedecl_name_get(tpd);
         os << "  {\n";
         os << "    auto to_export = ::efl::eo::js::get_namespace({";
         bool comma = false;
-        for (efl::eina::iterator<const char> ns_it(::eolian_type_namespaces_get(tp)), ns_end; ns_it != ns_end; ++ns_it)
+        for (efl::eina::iterator<const char> ns_it(::eolian_typedecl_namespaces_get(tpd)), ns_end; ns_it != ns_end; ++ns_it)
           {
             if (comma)
               os << ", ";
@@ -1063,11 +1071,11 @@ int main(int argc, char** argv)
         os << "    v8::Handle<v8::Object> enum_obj = efl::eina::js::compatibility_new<v8::Object>(isolate);\n";
         os << "    to_export->Set(efl::eina::js::compatibility_new<v8::String>(isolate, \""
            << format::format_enum(enum_name) << "\"), enum_obj);\n";
-        for (efl::eina::iterator<Eolian_Enum_Type_Field> ef(::eolian_type_enum_fields_get(tp))
+        for (efl::eina::iterator<Eolian_Enum_Type_Field> ef(::eolian_typedecl_enum_fields_get(tpd))
              , ef_end; ef != ef_end; ++ef)
           {
-             auto field_name = ::eolian_type_enum_field_name_get(&*ef);
-             auto field_c_name = ::eolian_type_enum_field_c_name_get(&*ef);
+             auto field_name = ::eolian_typedecl_enum_field_name_get(&*ef);
+             auto field_c_name = ::eolian_typedecl_enum_field_c_name_get(&*ef);
              if (!field_name || !field_c_name)
                {
                   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Could not get enum field name";
