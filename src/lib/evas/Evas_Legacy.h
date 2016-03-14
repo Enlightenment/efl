@@ -3275,7 +3275,21 @@ EAPI Evas_Object *evas_object_line_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG
  */
 EAPI Evas_Object *evas_object_polygon_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-#include "canvas/evas_polygon.eo.legacy.h"
+/**
+ * @brief Adds the given point to the given evas polygon object.
+ *
+ * @param[in] y The Y coordinate of the given point.
+ *
+ * @ingroup Evas_Polygon
+ */
+EAPI void evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+
+/** Removes all of the points from the given evas polygon object.
+ *
+ * @ingroup Evas_Polygon
+ */
+EAPI void evas_object_polygon_points_clear(Evas_Object *obj);
+
 /**
  * @}
  */

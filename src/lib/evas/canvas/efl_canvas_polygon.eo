@@ -1,7 +1,6 @@
-class Evas.Polygon (Evas.Object)
+class Efl.Canvas.Polygon (Evas.Object)
 {
-   legacy_prefix: evas_object_polygon;
-   eo_prefix: evas_obj_polygon;
+   legacy_prefix: null;
    methods {
       point_add {
          [[Adds the given point to the given evas polygon object.]]

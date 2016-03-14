@@ -74,7 +74,7 @@
  *
  * @{
  */
-#include "canvas/evas_polygon.eo.h"
+#include "canvas/efl_canvas_polygon.eo.h"
 /**
  * @}
  */

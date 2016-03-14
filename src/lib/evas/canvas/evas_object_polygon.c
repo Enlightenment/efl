@@ -1,16 +1,16 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define MY_CLASS EVAS_POLYGON_CLASS
+#define MY_CLASS EFL_CANVAS_POLYGON_CLASS
 
 /* private magic number for polygon objects */
 static const char o_type[] = "polygon";
 
 /* private struct for line object internal data */
-typedef struct _Evas_Polygon_Data      Evas_Polygon_Data;
-typedef struct _Evas_Polygon_Point       Evas_Polygon_Point;
+typedef struct _Efl_Canvas_Polygon_Data      Efl_Canvas_Polygon_Data;
+typedef struct _Efl_Canvas_Polygon_Point       Efl_Canvas_Polygon_Point;
 
-struct _Evas_Polygon_Data
+struct _Efl_Canvas_Polygon_Data
 {
    Eina_List           *points;
    void                *engine_data;
@@ -21,7 +21,7 @@ struct _Evas_Polygon_Data
    Eina_Bool            changed : 1;
 };
 
-struct _Evas_Polygon_Point
+struct _Efl_Canvas_Polygon_Point
 {
    Evas_Coord x, y;
 };
@@ -95,15 +95,11 @@ static const Evas_Object_Func object_func =
 EAPI Evas_Object *
 evas_object_polygon_add(Evas *e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_POLYGON_CLASS, e);
-   return eo_obj;
+   return eo_add(MY_CLASS, e);
 }
 
 EOLIAN static Eo *
-_evas_polygon_eo_base_constructor(Eo *eo_obj, Evas_Polygon_Data *class_data EINA_UNUSED)
+_efl_canvas_polygon_eo_base_constructor(Eo *eo_obj, Efl_Canvas_Polygon_Data *class_data EINA_UNUSED)
 {
    eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
 
@@ -113,11 +109,11 @@ _evas_polygon_eo_base_constructor(Eo *eo_obj, Evas_Polygon_Data *class_data EINA
 }
 
 EOLIAN static void
-_evas_polygon_point_add(Eo *eo_obj, Evas_Polygon_Data *_pd, Evas_Coord x, Evas_Coord y)
+_efl_canvas_polygon_point_add(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   Evas_Polygon_Data *o = _pd;
-   Evas_Polygon_Point *p;
+   Efl_Canvas_Polygon_Data *o = _pd;
+   Efl_Canvas_Polygon_Point *p;
    Evas_Coord min_x, max_x, min_y, max_y;
    int is, was = 0;
 
@@ -149,7 +145,7 @@ _evas_polygon_point_add(Eo *eo_obj, Evas_Polygon_Data *_pd, Evas_Coord x, Evas_C
           }
      }
 
-   p = malloc(sizeof(Evas_Polygon_Point));
+   p = malloc(sizeof(Efl_Canvas_Polygon_Point));
    if (!p) return;
    p->x = x + o->offset.x;
    p->y = y + o->offset.y;
@@ -220,10 +216,10 @@ _evas_polygon_point_add(Eo *eo_obj, Evas_Polygon_Data *_pd, Evas_Coord x, Evas_C
 }
 
 EOLIAN static void
-_evas_polygon_points_clear(Eo *eo_obj, Evas_Polygon_Data *_pd)
+_efl_canvas_polygon_points_clear(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   Evas_Polygon_Data *o = _pd;
+   Efl_Canvas_Polygon_Data *o = _pd;
    void *list_data;
    int is, was;
 
@@ -275,7 +271,7 @@ evas_object_polygon_init(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_polygon_eo_base_destructor(Eo *eo_obj, Evas_Polygon_Data *_pd EINA_UNUSED)
+_efl_canvas_polygon_eo_base_destructor(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -288,7 +284,7 @@ evas_object_polygon_free(Evas_Object *eo_obj EINA_UNUSED,
                          Evas_Object_Protected_Data *obj,
                          void *type_private_data)
 {
-   Evas_Polygon_Data *o = type_private_data;
+   Efl_Canvas_Polygon_Data *o = type_private_data;
    void *list_data;
    /* free obj */
    EINA_LIST_FREE(o->points, list_data)
@@ -306,9 +302,9 @@ evas_object_polygon_render(Evas_Object *eo_obj EINA_UNUSED,
 			   void *type_private_data,
 			   void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
-   Evas_Polygon_Data *o = type_private_data;
+   Efl_Canvas_Polygon_Data *o = type_private_data;
    Eina_List *l;
-   Evas_Polygon_Point *p;
+   Efl_Canvas_Polygon_Point *p;
 
    /* render object to surface with context, and offxet by x,y */
    obj->layer->evas->engine.func->context_color_set(output,
@@ -351,7 +347,7 @@ evas_object_polygon_render_pre(Evas_Object *eo_obj,
 			       Evas_Object_Protected_Data *obj,
 			       void *type_private_data)
 {
-   Evas_Polygon_Data *o = type_private_data;
+   Efl_Canvas_Polygon_Data *o = type_private_data;
    int is_v, was_v;
 
    /* dont pre-render the obj twice! */
@@ -456,21 +452,21 @@ evas_object_polygon_render_post(Evas_Object *eo_obj,
 
 static unsigned int evas_object_polygon_id_get(Evas_Object *eo_obj)
 {
-   Evas_Polygon_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Efl_Canvas_Polygon_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_POLYGON;
 }
 
 static unsigned int evas_object_polygon_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_Polygon_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Efl_Canvas_Polygon_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
 
 static void *evas_object_polygon_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_Polygon_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Efl_Canvas_Polygon_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    return o->engine_data;
 }
 
@@ -503,10 +499,10 @@ evas_object_polygon_is_inside(Evas_Object *eo_obj EINA_UNUSED,
 			      void *type_private_data,
 			      Evas_Coord x, Evas_Coord y)
 {
-   Evas_Polygon_Data *o = type_private_data;
+   Efl_Canvas_Polygon_Data *o = type_private_data;
    int num_edges = 0; /* Number of edges we crossed */
    Eina_List *itr;
-   Evas_Polygon_Point *p;
+   Efl_Canvas_Polygon_Point *p;
 
    if (!o->points) return 0;
 
@@ -524,7 +520,7 @@ evas_object_polygon_is_inside(Evas_Object *eo_obj EINA_UNUSED,
      {
         Evas_Coord line_y;
         Eina_List *next = eina_list_next(itr);
-        Evas_Polygon_Point *p_next;
+        Efl_Canvas_Polygon_Point *p_next;
         /* Get the next, or if there's no next, take the first */
         if (next)
           {
@@ -565,4 +561,16 @@ evas_object_polygon_was_inside(Evas_Object *eo_obj EINA_UNUSED,
    return 1;
 }
 
-#include "canvas/evas_polygon.eo.c"
+EAPI void
+evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+{
+   efl_canvas_polygon_point_add(obj, x, y);
+}
+
+EAPI void
+evas_object_polygon_points_clear(Evas_Object *obj)
+{
+   efl_canvas_polygon_points_clear(obj);
+}
+
+#include "canvas/efl_canvas_polygon.eo.c"
