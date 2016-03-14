@@ -874,7 +874,7 @@ _elm_genlist_elm_layout_sizing_eval(Eo *obj, Elm_Genlist_Data *sd)
 
    edje_object_size_min_calc(wd->resize_obj, &vmw, &vmh);
 
-   if ((sd->mode == ELM_LIST_SCROLL) || (sd->mode == ELM_LIST_COMPRESS))
+   if (sd->mode == ELM_LIST_COMPRESS)
      {
         Evas_Coord vw = 0, vh = 0;
 
