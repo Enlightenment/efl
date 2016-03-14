@@ -1151,4 +1151,7 @@ ewm_class_get(void)
    return elm_web_webkit2_class_get();
 }
 
+#undef ELM_WEB_CLASS
+#define ELM_WEB_CLASS elm_web_class_get()
+
 #include "elm_web_webkit2.eo.c"

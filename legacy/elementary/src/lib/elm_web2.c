@@ -9,7 +9,7 @@
 #include "elm_priv.h"
 #include "elm_widget_web.h"
 
-#define MY_CLASS ELM_WEB_CLASS
+#define MY_CLASS elm_web_class_get()
 
 #define MY_CLASS_NAME "Elm_Web"
 #define MY_CLASS_NAME_LEGACY "elm_web"
@@ -79,6 +79,14 @@ elm_web_add(Evas_Object *parent)
    if (!parent || !ewm.class_get) return NULL;
 
    return eo_add(ewm.class_get(), parent);
+}
+
+EAPI const Eo_Class *
+elm_web_real_class_get(void)
+{
+   if (!ewm.class_get) return NULL;
+
+   return ewm.class_get();
 }
 
 EOLIAN static Eo *
@@ -212,5 +220,8 @@ _elm_web_init(const char *engine)
    if (!ewm.class_get) return EINA_FALSE;
    return EINA_TRUE;
 }
+
+#undef ELM_WEB_CLASS
+#define ELM_WEB_CLASS elm_web_class_get()
 
 #include "elm_web.eo.c"
