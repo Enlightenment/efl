@@ -569,6 +569,24 @@ MAGIC_CHECK_FAILED(o, t, m)
 #define MERR_FATAL() _evas_alloc_error = EVAS_ALLOC_ERROR_FATAL
 #define MERR_BAD() _evas_alloc_error = EVAS_ALLOC_ERROR_RECOVERED
 
+/* DEBUG mode: fail, but normally just ERR(). This also returns if NULL. */
+#ifdef DEBUG
+#define EVAS_OBJECT_LEGACY_API(_eo, ...) \
+   do { Evas_Object_Protected_Data *_o = eo_data_scope_get(_eo, EVAS_OBJECT_CLASS); \
+      if (EINA_UNLIKELY(!_o)) return __VA_ARGS__; \
+      if (EINA_UNLIKELY(!_o->legacy)) { \
+         ERR("Calling legacy function '%s' on EO object '%s' is not permitted!", __FUNCTION__, eo_class_name_get(_o->object)); \
+         return __VA_ARGS__; \
+   } } while (0)
+#else
+#define EVAS_OBJECT_LEGACY_API(_eo, ...) \
+   do { Evas_Object_Protected_Data *_o = eo_data_scope_get(_eo, EVAS_OBJECT_CLASS); \
+      if (EINA_UNLIKELY(!_o)) return __VA_ARGS__; \
+      if (EINA_UNLIKELY(!_o->legacy)) { \
+         ERR("Calling legacy function '%s' on EO object '%s' is not permitted!", __FUNCTION__, eo_class_name_get(_o->object)); \
+   } } while (0)
+#endif
+
 #define EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(cur, prev)                  \
   if (cur->u.file && !cur->mmaped_source)				\
     {                                                                   \
@@ -1115,6 +1133,7 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   eo_del_called : 1;
    Eina_Bool                   is_smart : 1;
    Eina_Bool                   no_render : 1; // since 1.15
+   Eina_Bool                   legacy : 1; // used legacy constructor
 };
 
 struct _Evas_Data_Node
