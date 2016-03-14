@@ -8,6 +8,8 @@ type @extern Evas.Pants: float; /* not generated */
 
 type Undef: __undefined_type; /* not generated */
 
+type Event: __builtin_event_cb; /* specially generated */
+
 enum Enum.Bar
 {
    legacy: bar;

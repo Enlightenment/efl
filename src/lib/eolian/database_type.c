@@ -195,21 +195,35 @@ _etype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf, const char *name)
 }
 
 static void
-_atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
+_append_name(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
-   Eina_Strbuf *fulln = eina_strbuf_new();
    Eina_List *l;
    const char *sp;
 
-   eina_strbuf_append(buf, "typedef ");
-
    EINA_LIST_FOREACH(tp->namespaces, l, sp)
      {
-        eina_strbuf_append(fulln, sp);
-        eina_strbuf_append_char(fulln, '_');
+        eina_strbuf_append(buf, sp);
+        eina_strbuf_append_char(buf, '_');
      }
-   eina_strbuf_append(fulln, tp->name);
+   eina_strbuf_append(buf, tp->name);
+}
 
+static void
+_atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
+{
+   eina_strbuf_append(buf, "typedef ");
+
+   if (tp->base_type->type == EOLIAN_TYPE_REGULAR &&
+       !strcmp(tp->base_type->name, "__builtin_event_cb"))
+     {
+        eina_strbuf_append(buf, "Eina_Bool (*");
+        _append_name(tp, buf);
+        eina_strbuf_append(buf, ")(void *data, const Eo_Event *event)");
+        return;
+     }
+
+   Eina_Strbuf *fulln = eina_strbuf_new();
+   _append_name(tp, fulln);
    database_type_to_str(tp->base_type, buf, eina_strbuf_string_get(fulln));
    eina_strbuf_free(fulln);
 }
