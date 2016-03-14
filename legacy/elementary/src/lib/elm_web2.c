@@ -76,12 +76,9 @@ elm_need_web(void)
 EAPI Evas_Object *
 elm_web_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
-
    if (!parent || !ewm.class_get) return NULL;
 
-   eo_add(&obj, ewm.class_get(), parent);
-   return obj;
+   return eo_add(ewm.class_get(), parent);
 }
 
 EOLIAN static Eo *
