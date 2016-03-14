@@ -153,19 +153,6 @@ enum _Eo_Op_Type
  */
 typedef enum _Eo_Op_Type Eo_Op_Type;
 
-/** This has to be duplicated here because Eolian doesn't support event callbacks. */
-typedef struct _Eo_Event Eo_Event;
-/**
- * @typedef Eo_Event_Cb
- *
- * An event callback prototype.
- *
- * @param data The user data registered with the callback.
- * @param event the object's event structure and information. @see Eo_Event
- * @return #EO_CALLBACK_STOP to stop calling additional callbacks for the event, #EO_CALLBACK_CONTINUE to continue.
- */
-typedef Eina_Bool (*Eo_Event_Cb)(void *data, const Eo_Event *event);
-
 /**
  * @typedef Eo_Del_Intercept
  *
