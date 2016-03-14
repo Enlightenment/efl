@@ -289,10 +289,10 @@ _ecore_evas_cocoa_init(void)
 
    ecore_evas_event_handlers[0] =
       ecore_event_handler_add(ECORE_COCOA_EVENT_WINDOW_UNFOCUSED,
-                              _ecore_evas_cocoa_event_got_focus, NULL);
+                              _ecore_evas_cocoa_event_lost_focus, NULL);
    ecore_evas_event_handlers[1] =
       ecore_event_handler_add(ECORE_COCOA_EVENT_WINDOW_FOCUSED,
-                              _ecore_evas_cocoa_event_lost_focus, NULL);
+                              _ecore_evas_cocoa_event_got_focus, NULL);
    ecore_evas_event_handlers[2] =
       ecore_event_handler_add(ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST,
                               _ecore_evas_cocoa_event_window_resize, NULL);
