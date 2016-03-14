@@ -49,12 +49,9 @@ _type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool use_legacy)
      {
       case EOLIAN_TYPEDECL_ALIAS:
            {
-              char *name = _concat_name(tp);
-              Eina_Stringshare *c_type = eolian_type_c_type_named_get(
-                  eolian_typedecl_base_type_get(tp), name);
-              eina_strbuf_append_printf(buf, "typedef %s", c_type);
-              eina_stringshare_del(c_type);
-              free(name);
+              Eina_Stringshare *tn = eolian_typedecl_c_type_get(tp);
+              eina_strbuf_append(buf, tn);
+              eina_stringshare_del(tn);
               break;
            }
       case EOLIAN_TYPEDECL_STRUCT:
