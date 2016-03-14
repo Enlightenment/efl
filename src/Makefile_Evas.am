@@ -41,6 +41,8 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_vg_gradient.eo \
 	lib/evas/canvas/efl_vg_gradient_radial.eo \
 	lib/evas/canvas/efl_vg_gradient_linear.eo \
+	lib/evas/canvas/efl_canvas_snapshot.eo \
+	lib/evas/canvas/efl_canvas_proxy.eo \
 	lib/evas/canvas/evas_filter.eo \
 	$(NULL)
 
@@ -172,7 +174,9 @@ lib/evas/canvas/evas_stats.c \
 lib/evas/canvas/evas_touch_point.c \
 lib/evas/canvas/evas_map.c \
 lib/evas/canvas/evas_gl.c \
-lib/evas/canvas/evas_out.c
+lib/evas/canvas/evas_out.c \
+lib/evas/canvas/efl_canvas_proxy.c \
+lib/evas/canvas/efl_canvas_snapshot.c
 
 EXTRA_DIST += \
 lib/evas/canvas/render2/evas_render2_th_main.c \

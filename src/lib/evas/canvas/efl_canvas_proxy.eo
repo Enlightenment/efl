@@ -1,0 +1,77 @@
+class Efl.Canvas.Proxy (Evas.Image, Efl.Gfx.Base, Efl.Image, Efl.Gfx.Buffer, Efl.Gfx.Fill, Efl.Gfx.View, Efl.Gfx.Filter)
+{
+   [[Low-level proxy image object.
+
+     A proxy is a special kind of image containing the pixels from a source
+     object attached to it. It can be used to apply some sort of image
+     transformation to any object (eg. filters, map or zoom).
+   ]]
+   legacy_prefix: null;
+   data: null;
+   methods {
+      @property source {
+         [[The source object for this proxy.
+
+           The proxy object will mirror the rendering contents of a given
+           source object in its drawing region, without affecting that
+           source in any way. The source must be another valid @Evas.Object.
+           Other effects may be applied to the proxy, such as a map (see
+           @Evas.Object.map) to create a reflection of the original object
+           (for example).
+
+           Any existing source object will be removed after this call.
+
+           Note: This property should be set as soon as creating a proxy
+           object, otherwise the proxy will do nothing.
+
+           Warning: You cannot set a proxy as another proxy's source.
+         ]]
+         set {
+            return: bool; [[Returns $true in case of success.]]
+         }
+         get {}
+         values {
+            src: Evas.Object * @nonull; [[Source object to use for the proxy.]]
+         }
+      }
+      @property source_clip {
+         [[Clip this proxy object with the source object's clipper.
+
+           Use this if you want to overlay an existing object with its proxy,
+           and apply some sort of transformation on it.
+
+           $true means both objects will share the same clip.
+
+           @since 1.8
+         ]]
+         set {}
+         get {}
+         values {
+            source_clip: bool; [[Whether $obj is clipped by the source
+                                clipper ($true) or not ($false).]]
+         }
+      }
+      @property source_events {
+         [[Defines whether the events on this object are repeated to the source.
+
+           If $source is $true, it will make events on $obj to also be
+           repeated for the source object (see @.source.set). Even the
+           $obj and source geometries are different, the event position
+           will be transformed to the source object's space.
+
+           If $source is $false, events occurring on $obj will be
+           processed only on it.
+
+           @since 1.8
+         ]]
+         set {}
+         get {}
+         values {
+            source: bool; [[Whether this object should pass events ($true) or not
+                            ($false) to its source.]]
+         }
+      }
+   }
+   implements {
+   }
+}

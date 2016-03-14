@@ -1,0 +1,14 @@
+class Efl.Canvas.Snapshot (Evas.Image, Efl.Gfx.Base, Efl.Image, Efl.Gfx.Buffer, Efl.Gfx.Fill, Efl.Gfx.View, Efl.Gfx.Filter)
+{
+   [[Low-level snapshot image object.
+
+     A snapshot is a special kind of image containing the pixels from
+     all the objects below it. This allows applications to save screenshots
+     of all or part of their UI, or apply filters to parts of the UI.
+   ]]
+   legacy_prefix: null;
+   data: null;
+   implements {
+      Eo.Base.constructor;
+   }
+}
