@@ -153,6 +153,7 @@ lib/evas/canvas/evas_key_grab.c \
 lib/evas/canvas/evas_layer.c \
 lib/evas/canvas/evas_main.c \
 lib/evas/canvas/evas_name.c \
+lib/evas/canvas/evas_image_legacy.c \
 lib/evas/canvas/evas_object_image.c \
 lib/evas/canvas/evas_object_main.c \
 lib/evas/canvas/evas_object_inform.c \

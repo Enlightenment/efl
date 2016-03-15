@@ -155,6 +155,11 @@ Eina_Bool _evas_image_proxy_source_events_get(const Eo *eo_obj);
 Eina_Bool _evas_image_native_surface_set(Eo *eo_obj, Evas_Native_Surface *surf);
 Evas_Native_Surface *_evas_image_native_surface_get(const Evas_Object *eo_obj);
 
+/* deprecated but in use */
+void *_evas_image_data_convert_internal(Evas_Image_Data *o, void *data, Evas_Colorspace to_cspace);
+void _evas_image_unload(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool dirty);
+void _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
+
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
 #define ENDT obj->layer->evas->engine.data.output
@@ -164,6 +169,12 @@ Evas_Native_Surface *_evas_image_native_surface_get(const Evas_Object *eo_obj);
 
 # define EINA_COW_IMAGE_STATE_WRITE_END(Obj, Write) \
   EINA_COW_WRITE_END(evas_object_image_state_cow, Obj->cur, Write)
+
+# define EINA_COW_PIXEL_WRITE_BEGIN(Obj, Write) \
+  EINA_COW_WRITE_BEGIN(evas_object_image_pixels_cow, Obj->pixels, Evas_Object_Image_Pixels, Write)
+
+# define EINA_COW_PIXEL_WRITE_END(Obj, Write) \
+  EINA_COW_WRITE_END(evas_object_image_pixels_cow, Obj->pixels, Write)
 
 #define FRAME_MAX 1024
 
