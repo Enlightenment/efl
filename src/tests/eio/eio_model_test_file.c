@@ -4,15 +4,14 @@
 # include <config.h>
 #endif
 
-#include <stdio.h>
-
 #include <Eo.h>
+#include <Eio.h>
 #include <Ecore.h>
 #include <Efl.h>
-#include <Eio.h>
 #include <eio_model.h>
+#include <stdio.h>
 
-#include "eio_suite.h"
+#include <check.h>
 
 #define EFL_MODEL_TEST_FILENAME_PATH "/tmp"
 #define EFL_MODEL_MAX_TEST_CHILDS 16
@@ -58,68 +57,65 @@ static Eina_Bool
     return ECORE_CALLBACK_CANCEL;
  }
 
-static Eina_Bool
-_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
+struct eina_iterator
 {
-   Efl_Model_Load *st = event->event_info;
-   printf("Load CHANGE\n");
+  Eina_Iterator* success_iterator;
+  Eina_Iterator* failure_iterator;
+};
 
-   if (st->status & EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN)
-     printf("Children is Loaded\n");
+static void
+promise_then(Eo* obj EINA_UNUSED, struct eina_iterator* it_struct)
+{
+  Eina_Accessor **accessor;
+  unsigned int* total;
+  char *str;
+  Eina_Iterator* iterator = it_struct->success_iterator;
+  Eina_Value *name, *size, *mtime;
+  
+  eina_iterator_next(iterator, &name);
+  eina_iterator_next(iterator, &size);
+  eina_iterator_next(iterator, &mtime);
+  eina_iterator_next(iterator, &accessor);
+  eina_iterator_next(iterator, &total);
+  
+  str = eina_value_to_string(name);
+  printf("efl_model_loaded filename %s\n", str);
+  free(str);
 
-   if (st->status & EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES)
-     {
-        fprintf(stderr, "Properties are Loaded\n"); fflush(stderr);
-        if(!reqs.properties_loaded)
-          ecore_main_loop_quit();
-        reqs.properties_loaded = 1;
-     }
+  str = eina_value_to_string(size);
+  printf("efl_model_loaded size %s\n", str);
+  free(str);
 
-   if ((st->status & EFL_MODEL_LOAD_STATUS_LOADED) == EFL_MODEL_LOAD_STATUS_LOADED)
-     {
-        Eina_Accessor *accessor;
-        const Eina_Value *value_prop;
-        Efl_Model_Load_Status status;
-        unsigned int total;
-        char *str;
+  str = eina_value_to_string(mtime);
+  printf("efl_model_loaded mtime %s\n", str);
+  free(str);
 
-        printf("Model is Loaded\n");
-        status = efl_model_property_get(event->obj, "filename", &value_prop);
-        str = eina_value_to_string(value_prop);
-        printf("efl_model_loaded filename %s, status=%d\n", str, status);
-        free(str);
+  printf("efl_model_loaded count %d\n", (int)*total); fflush(stdout);
 
-        status = efl_model_property_get(event->obj, "size", &value_prop);
-        str = eina_value_to_string(value_prop);
-        printf("efl_model_loaded size %s, status=%d\n", str, status);
-        free(str);
+  printf("efl_model_loaded accessor %p\n", *accessor); fflush(stdout);
 
-        status = efl_model_property_get(event->obj, "mtime", &value_prop);
-        str = eina_value_to_string(value_prop);
-        printf("efl_model_loaded mtime %s, status=%d\n", str, status);
-        free(str);
-
-        efl_model_children_count_get(event->obj, &total);
-        printf("efl_model_test count %d\n", (int)total);
-
-        /**< get full list */
-        status = efl_model_children_slice_get(event->obj, 0, 0, (Eina_Accessor **)&accessor);
-        eina_accessor_free(accessor);
-        ecore_main_loop_quit();
-     }
-   return EINA_TRUE;
+  Eo* child;
+  int i = 0;
+  EINA_ACCESSOR_FOREACH(*accessor, i, child)
+    {
+      printf("efl_model_loaded child: %d pointer %p\n", i, child);
+    }
+  
+  ecore_main_loop_quit();
 }
 
 static Eina_Bool
-_properties_change_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_properties_change_cb(void *data EINA_UNUSED, const Eo_Event* event)
 {
-   const Efl_Model_Property_Event *evt = (Efl_Model_Property_Event *)event->event_info;
+   const Efl_Model_Property_Event *evt = event->event_info;
    const char *prop;
    Eina_Array_Iterator it;
    unsigned int i;
 
+   fprintf(stdout, "%s:%d %s\n", __FILE__, __LINE__, __func__); fflush(stdout);
    EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
      {
+   fprintf(stdout, "%s:%d %s\n", __FILE__, __LINE__, __func__); fflush(stdout);
         if (!strcmp(prop, "is_dir"))
           reqs.changed_is_dir = 1;
         else if (!strcmp(prop, "is_lnk"))
@@ -128,23 +124,27 @@ _properties_change_cb(void *data EINA_UNUSED, const Eo_Event *event)
           reqs.changed_size = 1;
         else if (!strcmp(prop, "mtime"))
           reqs.changed_mtime = 1;
+   fprintf(stdout, "%s:%d %s\n", __FILE__, __LINE__, __func__); fflush(stdout);
      }
 
+   fprintf(stdout, "%s:%d %s\n", __FILE__, __LINE__, __func__); fflush(stdout);
    reqs.properties = 1;
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_children_count_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_children_count_cb(void *data EINA_UNUSED, const Eo_Event* event)
 {
-   unsigned int *len = (unsigned int *)event->event_info;
+   unsigned int *len = event->event_info;
    unsigned int total;
 
+   fprintf(stdout, "%s:%d %s\n", __FILE__, __LINE__, __func__); fflush(stdout);
    fprintf(stdout, "Children count number=%d\n", *len);
    reqs.children = *len;
 
    efl_model_children_count_get(event->obj, &total);
    fprintf(stdout, "New total children count number=%d\n", *len);
+   fprintf(stdout, "%s:%d %s\n", __FILE__, __LINE__, __func__); fflush(stdout);
 
    return EINA_TRUE;
 }
@@ -152,63 +152,44 @@ _children_count_cb(void *data EINA_UNUSED, const Eo_Event *event)
 START_TEST(eio_model_test_test_file)
 {
    Eo *filemodel = NULL;
-   const Eina_Value *value_prop;
-   Efl_Model_Load_Status status;
    Eina_Array *properties_list = NULL;
-   Eina_Array_Iterator iterator;
-   char *str;
    unsigned int i;
 
    memset(&reqs, 0, sizeof(struct reqs_t));
 
    fail_if(!eina_init(), "ERROR: Cannot init Eina!\n");
    fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
+   fail_if(!eo_init(), "ERROR: Cannot init EO!\n");
    fail_if(!eio_init(), "ERROR: Cannot init EIO!\n");
 
    filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eoid, EFL_MODEL_TEST_FILENAME_PATH));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
 
-   eo_event_callback_add(filemodel, EFL_MODEL_BASE_EVENT_LOAD_STATUS, _load_status_cb, NULL);
-   eo_event_callback_add(filemodel, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, _properties_change_cb, NULL);
-   eo_event_callback_add(filemodel, EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, _children_count_cb, NULL);
-
-   efl_model_load(filemodel);
-
    handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, exit_func, NULL);
 
-   ecore_main_loop_begin();
+   Ecore_Promise *promises[] = { NULL, NULL, NULL, NULL, NULL, NULL };
+   efl_model_property_get(filemodel, "filename", &promises[0]);
+   efl_model_property_get(filemodel, "size", &promises[1]);
+   efl_model_property_get(filemodel, "mtime", &promises[2]);
+   efl_model_children_slice_get(filemodel, 0, 0, &promises[3]);
+   efl_model_children_count_get(filemodel, &promises[4]);
 
-   status = efl_model_property_get(filemodel, "filename", &value_prop);
-   str = eina_value_to_string(value_prop);
-   printf("efl_model_test filename %s, load status %d\n", str, status);
+   fprintf(stderr, "%s:%d %s\n", __FILE__, __LINE__, __func__); fflush(stderr);
+   
+   ecore_promise_then(ecore_promise_all(eina_carray_iterator_new(&promises[0])),
+                      &promise_then, filemodel);
 
-   free(str);
-
-   i = 0;
-   efl_model_properties_get(filemodel, &properties_list);
-   EINA_ARRAY_ITER_NEXT(properties_list, i, str, iterator)
-     {
-        fprintf(stdout, "Returned property list %d: %s\n", i, str);
-        if(!strcmp(str, "filename"))
-          reqs.proplist_filename = 1;
-        else if(!strcmp(str, "path"))
-          reqs.proplist_path = 1;
-        else if(!strcmp(str, "mtime"))
-          reqs.proplist_mtime = 1;
-        else if(!strcmp(str, "is_dir"))
-          reqs.proplist_is_dir = 1;
-        else if(!strcmp(str, "is_lnk"))
-          reqs.proplist_is_lnk = 1;
-        else if(!strcmp(str, "size"))
-          reqs.proplist_size = 1;
-     }
+   fprintf(stderr, "%s:%d %s\n", __FILE__, __LINE__, __func__); fflush(stderr);
 
    ecore_main_loop_begin();
 
+   fprintf(stderr, "%s:%d %s\n", __FILE__, __LINE__, __func__); fflush(stderr);
+   
    eo_unref(filemodel);
+
+   eio_shutdown();
    ecore_shutdown();
    eina_shutdown();
-   eio_shutdown();
 }
 END_TEST
 
@@ -217,3 +198,4 @@ eio_model_test_file(TCase *tc)
 {
     tcase_add_test(tc, eio_model_test_test_file);
 }
+

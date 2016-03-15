@@ -23,7 +23,7 @@ _eldbus_model_connection_eo_base_constructor(Eo *obj, Eldbus_Model_Connection_Da
    obj = eo_constructor(eo_super(obj, MY_CLASS));
 
    pd->obj = obj;
-   pd->load.status = EFL_MODEL_LOAD_STATUS_UNLOADED;
+   /* pd->load.status = EFL_MODEL_LOAD_STATUS_UNLOADED; */
    pd->connection = NULL;
    pd->properties_array = NULL;
    pd->children_list = NULL;

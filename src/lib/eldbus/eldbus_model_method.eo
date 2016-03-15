@@ -21,7 +21,6 @@ class Eldbus.Model_Method (Eldbus.Model_Arguments) {
               the event EMODEL_EVENT_LOAD_STATUS with the status set to EMODEL_LOAD_STATUS_ERROR is raised.
 
               @since 1.16]]
-            return: Efl.Model.Load_Status; [[#Emodel_Load_Status on success, #EMODEL_LOAD_STATUS_ERROR otherwise.]]
         }
     }
     implements {

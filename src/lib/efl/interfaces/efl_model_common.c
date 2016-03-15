@@ -4,49 +4,6 @@
 
 #include "Efl.h"
 
-EAPI void
-efl_model_load_set(Efl_Model_Base *model, Efl_Model_Load *load, Efl_Model_Load_Status status)
-{
-   Efl_Model_Load new_load = {.status = status};
-
-   if ((load->status & (EFL_MODEL_LOAD_STATUS_LOADED | EFL_MODEL_LOAD_STATUS_LOADING)) &&
-       (new_load.status & (EFL_MODEL_LOAD_STATUS_LOADED | EFL_MODEL_LOAD_STATUS_LOADING)))
-     {
-        // Merge status
-        new_load.status = load->status | new_load.status;
-
-        // Removes incompatible statuses (LOADING vs LOADED)
-        switch (status)
-          {
-           case EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADING_PROPERTIES;
-             break;
-           case EFL_MODEL_LOAD_STATUS_LOADING_PROPERTIES:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES;
-             break;
-           case EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADING_CHILDREN;
-             break;
-           case EFL_MODEL_LOAD_STATUS_LOADING_CHILDREN:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN;
-             break;
-           case EFL_MODEL_LOAD_STATUS_LOADED:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADING;
-             break;
-           case EFL_MODEL_LOAD_STATUS_LOADING:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADED;
-             break;
-           default: break;
-          }
-     }
-
-   if (load->status != new_load.status)
-     {
-        load->status = new_load.status;
-        eo_event_callback_call(model, EFL_MODEL_BASE_EVENT_LOAD_STATUS, load);
-     }
-}
-
 EAPI Eina_Accessor *
 efl_model_list_slice(Eina_List *list, unsigned start, unsigned count)
 {
@@ -71,13 +28,6 @@ efl_model_list_slice(Eina_List *list, unsigned start, unsigned count)
      }
 
    return eina_list_accessor_new(result);
-}
-
-EAPI void
-efl_model_error_notify(Efl_Model_Base *model)
-{
-   Efl_Model_Load load = {.status = EFL_MODEL_LOAD_STATUS_ERROR};
-   eo_event_callback_call(model, EFL_MODEL_BASE_EVENT_LOAD_STATUS, &load);
 }
 
 EAPI void

@@ -1,5 +1,6 @@
 
-#include <dlfcn.h>
+#ifndef EFL_ECORE_PROMISE_H
+#define EFL_ECORE_PROMISE_H
 
 #ifdef EFL_BETA_API_SUPPORT
 
@@ -145,3 +146,4 @@ EAPI void ecore_promise_unref(Ecore_Promise* promise);
 
 #endif
 
+#endif

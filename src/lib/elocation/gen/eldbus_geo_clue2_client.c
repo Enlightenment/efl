@@ -1,5 +1,9 @@
 #define EFL_BETA_API_SUPPORT
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "eldbus_geo_clue2_client.h"
 
 static int _log_main = -1;

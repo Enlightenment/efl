@@ -13,7 +13,7 @@ typedef struct _Eldbus_Model_Connection_Data Eldbus_Model_Connection_Data;
 struct _Eldbus_Model_Connection_Data
 {
    Eo *obj;
-   Efl_Model_Load load;
+   // Efl_Model_Load load;
    Eldbus_Connection *connection;
    Eina_Array *properties_array;
    Eina_List *children_list;

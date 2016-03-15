@@ -1,6 +1,8 @@
 #ifndef EFL_MODEL_COMMON_H__
 # define EFL_MODEL_COMMON_H__
 
+#include <ecore_promise.h>
+
 /**
  * @struct _Efl_Model_Children_Event
  * Every time a child id added the event
@@ -28,17 +30,6 @@ struct _Efl_Model_Children_Event
 typedef struct _Efl_Model_Children_Event Efl_Model_Children_Event;
 
 #include "interfaces/efl_model_base.eo.h"
-
- /**
-  * @brief Sets the new load status signaling an event if changed
-  *
-  * @param model The model to call the event @c EFL_MODEL_EVENT_LOAD_STATUS
-  * @param load The load status to be changed
-  * @param status The new status
-  *
-  * @since 1.17
-  */
-EAPI void efl_model_load_set(Efl_Model_Base *model, Efl_Model_Load *load, Efl_Model_Load_Status status) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Slices a list
