@@ -55,8 +55,8 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(genlist);
 
-   priv.filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eoid, dirname));
-   priv.fileview = eo_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(eoid, genlist, ELM_GENLIST_ITEM_TREE, "double_label"));
+   priv.filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, dirname));
+   priv.fileview = eo_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(eo_self, genlist, ELM_GENLIST_ITEM_TREE, "double_label"));
    elm_view_list_model_set(priv.fileview, priv.filemodel);
    efl_model_load(priv.filemodel);
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, &priv);

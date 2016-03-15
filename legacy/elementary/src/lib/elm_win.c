@@ -3231,14 +3231,14 @@ elm_win_add(Evas_Object *parent,
             const char *name,
             Elm_Win_Type type)
 {
-   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_win_name_set(eoid, name), elm_obj_win_type_set(eoid, type));
+   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_win_name_set(eo_self, name), elm_obj_win_type_set(eo_self, type));
    return obj;
 }
 
 EAPI Evas_Object *
 elm_win_fake_add(Ecore_Evas *ee)
 {
-   return eo_add(MY_CLASS, NULL, elm_obj_win_fake_canvas_set(eoid, ee), elm_obj_win_name_set(eoid, NULL), elm_obj_win_type_set(eoid, ELM_WIN_FAKE));
+   return eo_add(MY_CLASS, NULL, elm_obj_win_fake_canvas_set(eo_self, ee), elm_obj_win_name_set(eo_self, NULL), elm_obj_win_type_set(eo_self, ELM_WIN_FAKE));
 }
 
 static void

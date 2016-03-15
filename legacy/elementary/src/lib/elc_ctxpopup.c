@@ -1280,7 +1280,7 @@ _elm_ctxpopup_item_append(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Eva
 {
    Eo *eo_item;
 
-   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eoid, func, data));
+   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eo_self, func, data));
    if (!eo_item) return NULL;
 
    ELM_CTXPOPUP_ITEM_DATA_GET(eo_item, item);
@@ -1374,7 +1374,7 @@ _elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Ev
 {
    Eo *eo_item;
 
-   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eoid, func, data));
+   eo_item = eo_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(eo_self, func, data));
    if (!eo_item) return NULL;
 
    ELM_CTXPOPUP_ITEM_DATA_GET(eo_item, item);

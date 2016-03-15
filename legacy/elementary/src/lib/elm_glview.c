@@ -296,7 +296,7 @@ EAPI Evas_Object *
 elm_glview_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_glview_version_constructor(eoid, EVAS_GL_GLES_2_X));
+   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_glview_version_constructor(eo_self, EVAS_GL_GLES_2_X));
    return obj;
 }
 
@@ -304,7 +304,7 @@ EAPI Evas_Object *
 elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_glview_version_constructor(eoid, version));
+   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_glview_version_constructor(eo_self, version));
    return obj;
 }
 
