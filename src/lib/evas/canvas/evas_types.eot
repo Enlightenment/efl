@@ -346,7 +346,8 @@ enum Evas.Canvas3D.State
    node_parent_orientation,
    node_parent_scale,
    node_member,
-   node_parent_billboard [[@since 1.14]]
+   node_parent_billboard, [[@since 1.14]]
+   node_lod [[@since 1.18]]
 }
 
 enum Evas.Canvas3D.Space

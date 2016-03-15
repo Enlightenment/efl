@@ -289,6 +289,7 @@ struct _Evas_Canvas3D_Node
    Eina_Bool         position_inherit : 1;
    Eina_Bool         orientation_inherit : 1;
    Eina_Bool         scale_inherit : 1;
+   Eina_Bool         lod : 1;
 };
 
 struct _Evas_Canvas3D_Camera
@@ -387,6 +388,8 @@ struct _Evas_Canvas3D_Mesh
    int                     shadows_edges_filtering_level;
    Evas_Real               shadows_edges_size;
    Evas_Real               shadows_constant_bias;
+   Evas_Real               near_lod_boundary;
+   Evas_Real               far_lod_boundary;
 };
 
 struct _Evas_Canvas3D_Texture
@@ -437,7 +440,6 @@ struct _Evas_Canvas3D_Scene_Public_Data
    Eina_List        *mesh_nodes;
    Eina_Bool        shadows_enabled :1;
    Eina_Bool        color_pick_enabled :1;
-
    Eina_Hash        *node_mesh_colors;
    Eina_Hash        *colors_node_mesh;
 
@@ -445,6 +447,8 @@ struct _Evas_Canvas3D_Scene_Public_Data
    Evas_Real depth_offset;
    Evas_Real depth_constant;
    Eina_Bool render_to_texture;
+
+   unsigned int     lod_distance;
 };
 
 struct _Evas_Canvas3D_Pick_Data

@@ -405,6 +405,20 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
            bias: Evas.Real; [[Offset.]]
         }
       }
+      @property lod_boundary {
+         set {
+            [[Set LOD boundary distances.]]
+         }
+         get {
+            [[Get LOD boundary distances.
+
+              See also @Evas.Canvas3D.Mesh.lod_boundary.set.]]
+         }
+         values {
+            near: Evas.Real; [[up boundary]]
+            far: Evas.Real; [[down boundary]]
+         }
+      }
    }
    implements {
       Eo.Base.constructor;

@@ -1,6 +1,16 @@
 #include "evas_gl_private.h"
 #include "evas_gl_3d_private.h"
 
+#define CHECK_LOD_DISTANCE \
+   if (pd_mesh_node->lod) \
+     { \
+        if (pdmesh->near_lod_boundary > data->lod_distance) \
+          continue; \
+        else if ((pdmesh->near_lod_boundary < data->lod_distance) && \
+                 (pdmesh->far_lod_boundary < data->lod_distance)) \
+         continue; \
+     }
+
 #define RENDER_MESH_NODE_ITERATE_BEGIN(param)                                                      \
    Eina_Matrix4          matrix_mv;                                                                   \
    Eina_Matrix4          matrix_mvp;                                                                  \
@@ -11,8 +21,9 @@
    it = eina_hash_iterator_data_new(pd_mesh_node->data.mesh.node_meshes);                          \
    while (eina_iterator_next(it, &ptr))                                                            \
      {                                                                                             \
-        Evas_Canvas3D_Node_Mesh *nm = (Evas_Canvas3D_Node_Mesh *)ptr;                                          \
-        Evas_Canvas3D_Mesh_Data *pdmesh = eo_data_scope_get(nm->mesh, EVAS_CANVAS3D_MESH_CLASS);
+        Evas_Canvas3D_Node_Mesh *nm = (Evas_Canvas3D_Node_Mesh *)ptr;                              \
+        Evas_Canvas3D_Mesh_Data *pdmesh = eo_data_scope_get(nm->mesh, EVAS_CANVAS3D_MESH_CLASS);   \
+        CHECK_LOD_DISTANCE
 
 #define RENDER_MESH_NODE_ITERATE_END \
    }                                 \
@@ -1282,6 +1293,10 @@ _scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_Canvas3D_Scen
                {
                   Evas_Canvas3D_Node_Mesh *nm = (Evas_Canvas3D_Node_Mesh *)ptr;
                   Evas_Canvas3D_Mesh_Data *pdmesh = eo_data_scope_get(nm->mesh, EVAS_CANVAS3D_MESH_CLASS);
+                  /*In case LOD enable pass in render only LOD meshes in dependences of the
+                  distance to the camera node:
+                  near_boundary <= distance <= far_boundary*/
+                  CHECK_LOD_DISTANCE
                   if (data->shadows_enabled)
                     {
                        pdmesh->shadowed = EINA_TRUE;
@@ -1399,6 +1414,6 @@ e3d_drawable_texture_pixel_color_get(GLuint tex EINA_UNUSED, int x, int y,
 
    glBindFramebuffer(GL_FRAMEBUFFER, d->fbo);
 }
-
+#undef CHECK_LOD_DISTANCE
 #undef RENDER_MESH_NODE_ITERATE_BEGIN
 #undef RENDER_MESH_NODE_ITERATE_END

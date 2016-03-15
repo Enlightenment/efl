@@ -892,7 +892,12 @@ evas_canvas3d_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
    if (pd->type == EVAS_CANVAS3D_NODE_TYPE_MESH)
      {
         scene_data->mesh_nodes = eina_list_append(scene_data->mesh_nodes, node);
-
+        /*In case LOD calculate distance to the camera node*/
+        if (pd->lod)
+          {
+              Evas_Canvas3D_Node_Data *pd_camera = eo_data_scope_get(scene_data->camera_node, MY_CLASS);
+              scene_data->lod_distance = eina_vector3_distance_get(&pd_camera->position, &pd->position_world);
+          }
         /* calculation of tangent space for all meshes */
         list_meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get(node);
         EINA_LIST_FOREACH(list_meshes, l, mesh)
@@ -1034,6 +1039,7 @@ _evas_canvas3d_node_constructor(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canva
    pd->scale_inherit = EINA_TRUE;
    pd->data.mesh.node_meshes = 0;
    pd->billboard_target = NULL;
+   pd->lod = EINA_FALSE;
 
    evas_box3_set(&pd->aabb, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
@@ -1651,5 +1657,19 @@ EOLIAN static Evas_Canvas3D_Node *
 _evas_canvas3d_node_billboard_target_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->billboard_target;
+}
+
+EOLIAN static void
+_evas_canvas3d_node_lod_enable_set(Eo *obj, Evas_Canvas3D_Node_Data *pd,
+                                   Eina_Bool enable)
+{
+   pd->lod = enable;
+   evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_NODE_LOD, NULL);
+}
+
+EOLIAN static Eina_Bool
+_evas_canvas3d_node_lod_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+{
+   return pd->lod;
 }
 #include "canvas/evas_canvas3d_node.eo.c"

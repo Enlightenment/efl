@@ -133,6 +133,8 @@ _mesh_init(Evas_Canvas3D_Mesh_Data *pd)
    pd->shadows_edges_filtering_level = 4;
    pd->shadows_edges_size = 300.0;
    pd->shadows_constant_bias = 0.00015;
+   pd->near_lod_boundary = 0.0;
+   pd->far_lod_boundary = 0.0;
 }
 
 static inline void
@@ -1151,4 +1153,19 @@ _evas_canvas3d_mesh_convex_hull_data_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh
    return;
 }
 
+EOLIAN static void
+_evas_canvas3d_mesh_lod_boundary_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
+                                     Evas_Real near, Evas_Real far)
+{
+   pd->near_lod_boundary = near;
+   pd->far_lod_boundary = far;
+}
+
+EOLIAN static void
+_evas_canvas3d_mesh_lod_boundary_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
+                                     Evas_Real *near, Evas_Real *far)
+{
+   *near = pd->near_lod_boundary;
+   *far = pd->far_lod_boundary;
+}
 #include "canvas/evas_canvas3d_mesh.eo.c"

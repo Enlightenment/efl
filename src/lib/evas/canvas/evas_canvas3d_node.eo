@@ -368,6 +368,19 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
                                             or $null if there're none.]]
          }
       }
+      @property lod_enable {
+         set {
+            [[Enable behavior of node like LOD object.]]
+         }
+         get {
+            [[Get(check) status of node does node is LOD object.
+
+              See also @Evas.Canvas3D.Node.lod_enable.set.]]
+         }
+         values {
+            enable: bool; [[status property (true/false)]]
+         }
+      }
    }
    implements {
       Eo.Base.destructor;
