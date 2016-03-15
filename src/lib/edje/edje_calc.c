@@ -629,7 +629,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_Set **set
           }
         if (image_id < 0)
           {
-             ERR("¨Part \"%s\" description, "
+             ERR("Part \"%s\" description, "
                  "\"%s\" %3.3f with image %i index has a missing image id in a set of %i !!!",
                  ep->part->name,
                  ep->param1.description->state.name,
