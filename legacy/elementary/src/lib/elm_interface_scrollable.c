@@ -801,6 +801,7 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
                    minx = 0, miny = 0;
         double vx, vy, size;
 
+        edje_object_calc_force(sid->edje_obj);
         edje_object_part_geometry_get
           (sid->edje_obj, "elm.swallow.content", NULL, NULL, &vw, &vh);
         w = sid->content_info.w;
