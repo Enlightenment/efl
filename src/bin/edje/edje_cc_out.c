@@ -1357,7 +1357,7 @@ data_check_models(Eet_File *ef EINA_UNUSED, int *model_num EINA_UNUSED)
           }
         if (!file_exist)
           {
-             ERR("Unablegstsh to load model \"%s\". Check if path to file is correct (both directory and file name).",
+             ERR("Unable to load model \"%s\". Check if path to file is correct (both directory and file name).",
                  model->entry);
              exit(-1);
           }
