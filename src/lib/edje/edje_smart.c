@@ -338,7 +338,7 @@ _edje_object_evas_object_smart_calculate(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN static Eina_Bool
-_edje_object_efl_file_file_set(Eo *obj, Edje *_pd EINA_UNUSED, const char *file, const char *group)
+_edje_object_efl_file_file_set(Eo *obj, Edje *ed, const char *file, const char *group)
 {
    Eina_Bool ret;
    Eina_File *f = NULL;
@@ -351,9 +351,6 @@ _edje_object_efl_file_file_set(Eo *obj, Edje *_pd EINA_UNUSED, const char *file,
         f = eina_file_open(file, EINA_FALSE);
         if (!f)
           {
-             Edje *ed;
-
-             ed = _edje_fetch(obj);
              ed->load_error = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
              return ret;
           }
