@@ -597,11 +597,13 @@ EAPI Eo *eo_super(const Eo *obj, const Eo_Class *cur_klass);
  */
 EAPI const Eo_Class *eo_class_get(const Eo *obj);
 
+#define eo_self __eo_self
+
 #define _eo_add_common(klass, parent, is_ref, ...) \
    ({ \
-     Eo * const eoid = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref); \
+     Eo * const __eo_self = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref); \
      __VA_ARGS__; \
-     (Eo *) _eo_add_end(eoid); \
+     (Eo *) _eo_add_end(eo_self); \
     })
 
 /**
