@@ -232,17 +232,17 @@ _efl_vg_shape_efl_vg_base_dup(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED, const 
 
    if (fromd->fill)
      {
-        fill = eo_add(eo_class_get(fromd->fill), parent, efl_vg_dup(eoid, fromd->fill));
+        fill = eo_add(eo_class_get(fromd->fill), parent, efl_vg_dup(eo_self, fromd->fill));
      }
 
    if (fromd->stroke.fill)
      {
-        stroke_fill = eo_add(eo_class_get(fromd->stroke.fill), parent, efl_vg_dup(eoid, fromd->stroke.fill));
+        stroke_fill = eo_add(eo_class_get(fromd->stroke.fill), parent, efl_vg_dup(eo_self, fromd->stroke.fill));
      }
 
    if (fromd->stroke.marker)
      {
-        stroke_marker = eo_add(eo_class_get(fromd->stroke.marker), parent, efl_vg_dup(eoid, fromd->stroke.marker));
+        stroke_marker = eo_add(eo_class_get(fromd->stroke.marker), parent, efl_vg_dup(eo_self, fromd->stroke.marker));
      }
 
    efl_vg_shape_fill_set(obj, fill);

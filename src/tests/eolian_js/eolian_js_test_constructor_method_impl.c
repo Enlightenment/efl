@@ -132,7 +132,7 @@ _constructor_method_class_classoutmethod1(Eo* obj EINA_UNUSED, Constructor_Metho
 {
   fprintf(stderr, "classoutmethod1\n");
   fflush(stderr);
-  return eo_add(MY_CLASS, NULL, constructor_method_class_constructor1(eoid, one), constructor_method_class_constructor2(eoid, two));
+  return eo_add(MY_CLASS, NULL, constructor_method_class_constructor1(eo_self, one), constructor_method_class_constructor2(eo_self, two));
 }
 
 EOLIAN static void
@@ -140,7 +140,7 @@ _constructor_method_class_classoutmethod2(Eo* obj EINA_UNUSED, Constructor_Metho
 {
   fprintf(stderr, "classoutmethod2\n");
   fflush(stderr);
-  *out_class = eo_add(MY_CLASS, NULL, constructor_method_class_constructor1(eoid, one), constructor_method_class_constructor2(eoid, two));
+  *out_class = eo_add(MY_CLASS, NULL, constructor_method_class_constructor1(eo_self, one), constructor_method_class_constructor2(eo_self, two));
 }
 
 

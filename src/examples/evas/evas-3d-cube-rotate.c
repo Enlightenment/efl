@@ -151,7 +151,7 @@ _camera_setup(Scene_Data *data)
    data->camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
    evas_canvas3d_camera_projection_perspective_set(data->camera, 20.0, 1.0, 2.0, 50.0);
 
-   data->camera_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+   data->camera_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
    evas_canvas3d_node_camera_set(data->camera_node, data->camera);
    evas_canvas3d_node_position_set(data->camera_node, 3.0, 3.0, 10.0);
    evas_canvas3d_node_look_at_set(data->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
@@ -168,7 +168,7 @@ _light_setup(Scene_Data *data)
    evas_canvas3d_light_diffuse_set(data->light, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_light_specular_set(data->light, 1.0, 1.0, 1.0, 1.0);
 
-   data->light_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+   data->light_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
 
    evas_canvas3d_node_light_set(data->light_node, data->light);
    evas_canvas3d_node_position_set(data->light_node, 5.0, 5.0, 10.0);
@@ -201,7 +201,7 @@ _mesh_setup(Scene_Data *data)
    evas_canvas3d_mesh_shade_mode_set(data->mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(data->mesh, 0, data->material);
 
-   data->mesh_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
+   data->mesh_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_member_add(data->root_node, data->mesh_node);
    evas_canvas3d_node_mesh_add(data->mesh_node, data->mesh);
 }
@@ -210,7 +210,7 @@ static void
 _scene_setup(Scene_Data *data)
 {
    scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
-   data->root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_NODE));
+   data->root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    evas_canvas3d_scene_size_set(scene, WIDTH, HEIGHT);
    evas_canvas3d_scene_background_color_set(scene, 0.0, 0.0, 0.0, 0.0);

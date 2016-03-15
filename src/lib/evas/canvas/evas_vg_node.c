@@ -778,7 +778,7 @@ _efl_vg_base_dup(Eo *obj, Efl_VG_Base_Data *pd, const Efl_VG_Base *from)
    _efl_vg_clean_object(&pd->mask);
    if (fromd->mask)
      {
-        pd->mask = eo_add(eo_class_get(fromd->mask), obj, efl_vg_dup(eoid, pd->mask));
+        pd->mask = eo_add(eo_class_get(fromd->mask), obj, efl_vg_dup(eo_self, pd->mask));
      }
 
    pd->x = fromd->x;

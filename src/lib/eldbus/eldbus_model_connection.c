@@ -345,7 +345,7 @@ _eldbus_model_connection_names_list_cb(void *data,
      {
         DBG("(%p): bus = %s", pd->obj, bus);
 
-        Eo *child = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_connection_constructor(eoid, pd->connection, bus, "/"));
+        Eo *child = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_connection_constructor(eo_self, pd->connection, bus, "/"));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }

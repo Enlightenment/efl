@@ -1012,7 +1012,7 @@ evas_canvas3d_node_add(Evas *e, Evas_Canvas3D_Node_Type type)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e, evas_canvas3d_node_constructor(eoid, type));
+   Evas_Object *eo_obj = eo_add(MY_CLASS, e, evas_canvas3d_node_constructor(eo_self, type));
    return eo_obj;
 }
 

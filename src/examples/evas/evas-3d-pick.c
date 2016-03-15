@@ -135,14 +135,14 @@ main(void)
    scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
 
    /* Add the root node for the scene. */
-   root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_NODE));
+   root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    /* Add the camera. */
    camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
    evas_canvas3d_camera_projection_perspective_set(camera, 30.0, 1.0, 1.0, 100.0);
 
    camera_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
    evas_canvas3d_node_camera_set(camera_node, camera);
    evas_canvas3d_node_position_set(camera_node, 0.0, 0.0, 2.5);
    evas_canvas3d_node_look_at_set(camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
@@ -169,7 +169,7 @@ main(void)
    evas_canvas3d_material_color_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_material_shininess_set(material, 50.0);
 
-   mesh_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
+   mesh_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
    evas_canvas3d_node_member_add(root_node, mesh_node);
    evas_canvas3d_node_mesh_add(mesh_node, mesh);

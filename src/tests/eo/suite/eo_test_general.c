@@ -798,24 +798,24 @@ START_TEST(eo_add_do_and_custom)
    Eo *obj = NULL;
    eo_init();
 
-   obj = eo_add(SIMPLE_CLASS, NULL, eo_constructor(eoid));
+   obj = eo_add(SIMPLE_CLASS, NULL, eo_constructor(eo_self));
    fail_if(!obj);
    eo_unref(obj);
 
-   obj = eo_add(SIMPLE_CLASS, NULL, simple_a_set(eoid, 7));
+   obj = eo_add(SIMPLE_CLASS, NULL, simple_a_set(eo_self, 7));
    fail_if(!obj);
    pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 7);
    eo_unref(obj);
 
-   obj = eo_add(SIMPLE_CLASS, NULL, eo_constructor(eoid), simple_a_set(eoid, 7));
+   obj = eo_add(SIMPLE_CLASS, NULL, eo_constructor(eo_self), simple_a_set(eo_self, 7));
    fail_if(!obj);
    pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 7);
    eo_unref(obj);
 
    Eina_Bool finalized;
-   obj = eo_add(SIMPLE_CLASS, NULL, finalized = eo_finalized_get(eoid));
+   obj = eo_add(SIMPLE_CLASS, NULL, finalized = eo_finalized_get(eo_self));
    fail_if(finalized);
 
    finalized = eo_finalized_get(obj);

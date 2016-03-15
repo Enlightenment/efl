@@ -4301,17 +4301,14 @@ EAPI Evas_Object *
 evas_object_image_add(Evas *eo_e)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eo_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   return eo_add(EVAS_IMAGE_CLASS, eo_e,
-                 efl_gfx_fill_filled_set(eoid, EINA_FALSE),
-                 evas_obj_legacy_ctor(eoid));
+   return eo_add(EVAS_IMAGE_CLASS, eo_e, efl_gfx_fill_filled_set(eo_self, EINA_FALSE), evas_obj_legacy_ctor(eo_self));
 }
 
 EAPI Evas_Object *
 evas_object_image_filled_add(Evas *eo_e)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eo_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   return eo_add(EVAS_IMAGE_CLASS, eo_e,
-                 evas_obj_legacy_ctor(eoid));
+   return eo_add(EVAS_IMAGE_CLASS, eo_e, evas_obj_legacy_ctor(eo_self));
 }
 
 EAPI void

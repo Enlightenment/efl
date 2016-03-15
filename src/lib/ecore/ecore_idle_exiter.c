@@ -37,7 +37,7 @@ ecore_idle_exiter_add(Ecore_Task_Cb func,
                       const void   *data)
 {
    Ecore_Idle_Exiter *ie = NULL;
-   ie = eo_add(MY_CLASS, _ecore_parent, ecore_idle_exiter_constructor(eoid, func, data));
+   ie = eo_add(MY_CLASS, _ecore_parent, ecore_idle_exiter_constructor(eo_self, func, data));
    return ie;
 }
 

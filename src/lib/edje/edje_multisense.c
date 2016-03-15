@@ -202,13 +202,13 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
              eet_data->vio.tell = eet_snd_file_tell;
              eet_data->offset = 0;
 
-             in = eo_add(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL, ecore_audio_obj_name_set(eoid, snd_id_str), ecore_audio_obj_in_speed_set(eoid, speed), ecore_audio_obj_vio_set(eoid, &eet_data->vio, eet_data, _free), eo_event_callback_add(eoid, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL));
+             in = eo_add(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL, ecore_audio_obj_name_set(eo_self, snd_id_str), ecore_audio_obj_in_speed_set(eo_self, speed), ecore_audio_obj_vio_set(eo_self, &eet_data->vio, eet_data, _free), eo_event_callback_add(eo_self, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL));
              if (!out)
                {
 #if HAVE_COREAUDIO
                   out = eo_add(ECORE_AUDIO_OUT_CORE_AUDIO_CLASS, NULL);
 #elif HAVE_PULSE
-                  out = eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, eo_event_callback_add(eoid, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
+                  out = eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, eo_event_callback_add(eo_self, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
 #endif
                   if (out) outs++;
                }
@@ -280,7 +280,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
 #if HAVE_COREAUDIO
                   out = eo_add(ECORE_AUDIO_OUT_CORE_AUDIO_CLASS, NULL);
 #elif HAVE_PULSE
-                  out = eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, eo_event_callback_add(eoid, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
+                  out = eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, eo_event_callback_add(eo_self, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
 #endif
                   if (out) outs++;
                }

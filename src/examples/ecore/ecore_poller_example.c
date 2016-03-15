@@ -48,9 +48,9 @@ main(void)
    poller2 = ecore_poller_add(ECORE_POLLER_CORE, 8, _poller_print_cb, str2);
    poller3 = ecore_poller_add(ECORE_POLLER_CORE, 30, _poller_quit_cb, str3);
 
-//   poller1 = eo_add(ECORE_POLLER_CLASS, NULL, //         ecore_poller_constructor(eoid, ECORE_POLLER_CORE, 4, _poller_print_cb, str1));
-//   poller2 = eo_add(ECORE_POLLER_CLASS, NULL, //         ecore_poller_constructor(eoid, ECORE_POLLER_CORE, 8, _poller_print_cb, str2));
-//   poller3 = eo_add(ECORE_POLLER_CLASS, NULL, //         ecore_poller_constructor(eoid, ECORE_POLLER_CORE, 20, _poller_quit_cb, str3));
+//   poller1 = eo_add(ECORE_POLLER_CLASS, NULL, //         ecore_poller_constructor(eo_self, ECORE_POLLER_CORE, 4, _poller_print_cb, str1));
+//   poller2 = eo_add(ECORE_POLLER_CLASS, NULL, //         ecore_poller_constructor(eo_self, ECORE_POLLER_CORE, 8, _poller_print_cb, str2));
+//   poller3 = eo_add(ECORE_POLLER_CLASS, NULL, //         ecore_poller_constructor(eo_self, ECORE_POLLER_CORE, 20, _poller_quit_cb, str3));
 
 
    ecore_main_loop_begin();

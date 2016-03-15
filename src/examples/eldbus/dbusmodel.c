@@ -102,7 +102,7 @@ main(int argc, char **argv EINA_UNUSED)
    if (argc > 1) bus = argv[1];
    if (argc > 2) path = argv[2];
 
-   root = eo_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eoid, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, bus, path));
+   root = eo_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eo_self, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, bus, path));
 
    eo_event_callback_add(root, EFL_MODEL_BASE_EVENT_LOAD_STATUS, _event_load_status_cb, NULL);
    efl_model_load(root);

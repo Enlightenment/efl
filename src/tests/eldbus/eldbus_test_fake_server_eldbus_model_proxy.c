@@ -33,7 +33,7 @@ _setup(void)
    };
    fake_server = fake_server_start(&fake_server_data);
 
-   fake_server_object = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eoid, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, FAKE_SERVER_BUS, FAKE_SERVER_PATH));
+   fake_server_object = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eo_self, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, FAKE_SERVER_BUS, FAKE_SERVER_PATH));
    ck_assert_ptr_ne(NULL, fake_server_object);
 
    efl_model_load_and_wait_for_load_status(fake_server_object, EFL_MODEL_LOAD_STATUS_LOADED);
