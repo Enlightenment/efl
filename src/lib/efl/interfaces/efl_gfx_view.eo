@@ -5,21 +5,30 @@ interface Efl.Gfx.View {
       @property view_size {
          [[The dimensions of this object's viewport.
 
-           FIXME
-           WRONG DOC!!!
-           USELESS API for image files
+           This property represents the size of an image (file on disk,
+           vector graphics, GL or 3D scene, ...) view: this is the logical
+           size of a view, not the number of pixels in the buffer, nor its
+           visible size on the window.
 
-           This property will scale down or crop the image so that it is
-           treated as if it were of the given size. If the given size is
-           smaller than the image, it will be cropped. If it's larger, then
-           the image will be treated as if it were in the upper left corner
-           of a larger image that is otherwise transparent.
+           For scalable scenes (vector graphics, 3D or GL), this means scaling
+           the contents of the scene and drawing more pixels as a result; For
+           pixmaps this means zooming and stretching up or down the backing
+           buffer to fit this view.
+
+           In most cases the view should have the same dimensions as the
+           object on the canvas, for best quality.
+
+           @.view_size.set may not be implemented. If it is, it might trigger
+           a complete recalculation of the scene, or reload of the pixel data.
+
+           Refer to each implementing class specific documentation for more
+           details.
          ]]
          set {}
          get {}
          values {
-            w: int; [[The new width of the image.]]
-            h: int; [[The new height of the image.]]
+            w: int; [[Width of the view.]]
+            h: int; [[Height of the view.]]
          }
       }
    }
