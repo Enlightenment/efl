@@ -4123,32 +4123,6 @@ using_file(const char *filename, const char type)
      }
 }
 
-Eina_Bool
-needed_part_exists(Edje_Part_Collection *pc, const char *name)
-{
-   Eina_Bool found;
-   unsigned int i;
-
-   found = EINA_FALSE;
-
-   for (i = 0; i < pc->parts_count; i++)
-     {
-        if (!strcmp(pc->parts[i]->name, name))
-          {
-             found = EINA_TRUE;
-             break;
-          }
-     }
-
-   if (!found)
-     {
-        ERR("Unable to find part name \"%s\" needed in group \"%s\".",
-            name, pc->part);
-        exit(-1);
-     }
-   return found;
-}
-
 void
 color_tree_root_free(void)
 {
