@@ -216,17 +216,15 @@ void register_ecore_timer(v8::Isolate *isolate,v8::Handle<v8::Object> exports)
 {
    register_timer_precision_get(isolate, exports,
                                 compatibility_new<v8::String>(isolate,
-                                                          "ecore_timer_precision"
-                                                          "_get"));
+                                                          "getPrecision"));
    register_timer_precision_set(isolate, exports,
                                 compatibility_new<v8::String>(isolate,
-                                                          "ecore_timer_precision"
-                                                          "_set"));
+                                                          "setPrecision"));
    register_timer_add(isolate, exports,
-                      compatibility_new<v8::String>(isolate, "ecore_timer_add"));
+                      compatibility_new<v8::String>(isolate, "add"));
    register_timer_loop_add(isolate, exports,
                            compatibility_new<v8::String>(isolate,
-                                                     "ecore_timer_loop_add"));
+                                                     "addLoop"));
 }
 
 } } } // namespace efl { namespace ecore { namespace js {

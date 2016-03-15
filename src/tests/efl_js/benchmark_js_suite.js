@@ -26,7 +26,7 @@ if(typeof process !== 'undefined')
         if (process.argv.indexOf("--verbose") != -1)
             console.info.apply(null, arguments);
     };
-    exit = efl.ecore_mainloop_quit;
+    exit = efl.Ecore.Mainloop.quit;
 }
 else
 {

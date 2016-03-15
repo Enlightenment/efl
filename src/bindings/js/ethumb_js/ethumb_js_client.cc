@@ -417,32 +417,32 @@ v8::Local<v8::Object> wrap_ethumb_client(Ethumb_Client *client,
     ret->Set(compatibility_new<String>(isolate, "disconnect"),
              compatibility_new<FunctionTemplate>(isolate, disconnect)
              ->GetFunction());
-    ret->Set(compatibility_new<String>(isolate, "on_server_die_callback_set"),
+    ret->Set(compatibility_new<String>(isolate, "setOnServerDieCallback"),
              compatibility_new<FunctionTemplate>(isolate,
                                                  on_server_die_callback_set)
              ->GetFunction());
-    ret->Set(compatibility_new<String>(isolate, "file_set"),
+    ret->Set(compatibility_new<String>(isolate, "setFile"),
              compatibility_new<FunctionTemplate>(isolate, file_set)
              ->GetFunction());
-    ret->Set(compatibility_new<String>(isolate, "file_get"),
+    ret->Set(compatibility_new<String>(isolate, "getFile"),
              compatibility_new<FunctionTemplate>(isolate, file_get)
              ->GetFunction());
-    ret->Set(compatibility_new<String>(isolate, "file_free"),
+    ret->Set(compatibility_new<String>(isolate, "freeFile"),
              compatibility_new<FunctionTemplate>(isolate, file_free)
              ->GetFunction());
-    ret->Set(compatibility_new<String>(isolate, "thumb_exists"),
+    ret->Set(compatibility_new<String>(isolate, "existsThumb"),
              compatibility_new<FunctionTemplate>(isolate, thumb_exists)
              ->GetFunction());
     ret->Set(compatibility_new<String>(isolate, "generate"),
              compatibility_new<FunctionTemplate>(isolate, generate)
              ->GetFunction());
-    ret->Set(compatibility_new<String>(isolate, "generate_cancel"),
+    ret->Set(compatibility_new<String>(isolate, "cancelGenerate"),
              compatibility_new<FunctionTemplate>(isolate, generate_cancel)
              ->GetFunction());
-    ret->Set(compatibility_new<String>(isolate, "generate_cancel_all"),
+    ret->Set(compatibility_new<String>(isolate, "cancelAllGenerate"),
              compatibility_new<FunctionTemplate>(isolate, generate_cancel_all)
              ->GetFunction());
-    ret->Set(compatibility_new<String>(isolate, "thumb_async_get"),
+    ret->Set(compatibility_new<String>(isolate, "getThumbAsync"),
              compatibility_new<FunctionTemplate>(isolate, thumb_async_get)
              ->GetFunction());
 
@@ -557,15 +557,16 @@ EAPI
 void register_ethumb(v8::Isolate *isolate, v8::Handle<v8::Object> exports)
 {
    using v8::String;
-   register_client_init(isolate, exports,
+   auto ethumbNamespace = efl::eo::js::get_namespace({"Ethumb"}, isolate, exports);
+   register_client_init(isolate, ethumbNamespace,
                         compatibility_new<String>(isolate,
-                                                  "ethumb_client_init"));
-   register_client_shutdown(isolate, exports,
+                                                  "initClient"));
+   register_client_shutdown(isolate, ethumbNamespace,
                             compatibility_new<String>(isolate,
-                                                      "ethumb_client_shutdown"));
-   register_client_connect(isolate, exports,
+                                                      "shutdownClient"));
+   register_client_connect(isolate, ethumbNamespace,
                            compatibility_new<String>(isolate,
-                                                     "ethumb_client_connect"));
+                                                     "connectClient"));
 }
       
 } } } // namespace efl { namespace ethumb { namespace js {

@@ -13,7 +13,6 @@ bindings/js/ecore_js/ecore_js_job.hh \
 bindings/js/ecore_js/ecore_js_idle.hh \
 bindings/js/ecore_js/ecore_js_animator.hh \
 bindings/js/ecore_js/ecore_js_poller.hh \
-bindings/js/ecore_js/ecore_js_throttle.hh \
-bindings/js/ecore_js/ecore_js_file.hh
+bindings/js/ecore_js/ecore_js_throttle.hh
 endif
 

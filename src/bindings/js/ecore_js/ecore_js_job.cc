@@ -77,7 +77,7 @@ EAPI
 void register_ecore_job(v8::Isolate *isolate,v8::Handle<v8::Object> exports)
 {
    register_job_add(isolate, exports,
-                    compatibility_new<v8::String>(isolate, "ecore_job_add"));
+                    compatibility_new<v8::String>(isolate, "add"));
 }
       
 } } } // namespace efl { namespace js {

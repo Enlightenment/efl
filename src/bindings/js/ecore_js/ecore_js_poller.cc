@@ -172,19 +172,15 @@ EAPI
 void register_ecore_poller(v8::Isolate *isolate,v8::Handle<v8::Object> exports)
 {
    register_poller_core(isolate, exports,
-                        compatibility_new<v8::String>(isolate, "ECORE_POLLER_CORE"));
+                        compatibility_new<v8::String>(isolate, "CORE"));
    register_poller_poll_interval_set(isolate, exports,
                                      compatibility_new<v8::String>(isolate,
-                                                               "ecore_poller"
-                                                               "_poll_interval"
-                                                               "_set"));
+                                                               "setPollInterval"));
    register_poller_poll_interval_get(isolate, exports,
                                      compatibility_new<v8::String>(isolate,
-                                                               "ecore_poller"
-                                                               "_poll_interval"
-                                                               "_get"));
+                                                               "getPollInterval"));
    register_poller_add(isolate, exports,
-                       compatibility_new<v8::String>(isolate, "ecore_poller_add"));
+                       compatibility_new<v8::String>(isolate, "add"));
 }
   
 } } } // namespace efl { namespace js {

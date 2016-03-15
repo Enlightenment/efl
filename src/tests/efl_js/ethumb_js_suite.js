@@ -27,7 +27,7 @@ if(typeof process !== 'undefined')
         if (process.argv.indexOf("--verbose") != -1)
             console.info.apply(null, arguments);
     };
-    exit = efl.ecore_mainloop_quit;
+    exit = efl.Ecore.Mainloop.quit;
 }
 else
 {
@@ -47,7 +47,7 @@ suite_fail = []; // Will store the name of the failures
 
 // Basic test function //
 function start_test(test_name, test_func) {
-  print("[ RUN         ]  ethumb_js_suite: " + test_name);
+  print("[ RUN         ]  Ethumb.js_suite: " + test_name);
   var test_result = true;
   try {
     test_func();
@@ -56,7 +56,7 @@ function start_test(test_name, test_func) {
     test_result = false;
     print_error("Error: ", e, e.stack);
   }
-  print("[        " + (test_result ? "PASS" : "FAIL") + " ]  ethumb_js_suite: " + test_name);
+  print("[        " + (test_result ? "PASS" : "FAIL") + " ]  Ethumb.js_suite: " + test_name);
   if (test_result)
     suite_ok += 1;
   else
@@ -64,7 +64,7 @@ function start_test(test_name, test_func) {
 }
 // end Preamble
 
-efl.ethumb_client_init();
+efl.Ethumb.initClient();
 
 // Ethumb tests
 
@@ -72,7 +72,7 @@ start_test('dummy test', function () {
     assert(true);
 });
 
-efl.ethumb_client_shutdown();
+efl.Ethumb.shutdownClient();
 
 // footer
 

@@ -5,7 +5,7 @@
 #include <Ecore.h>
 
 #include <Eina.hh>
-
+#include <Eo_Js.hh>
 #include <Eina_Js.hh>
 
 #ifdef EAPI

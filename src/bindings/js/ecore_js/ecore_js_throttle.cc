@@ -54,10 +54,10 @@ void register_ecore_throttle(v8::Isolate *isolate,v8::Handle<v8::Object> exports
 {
    register_throttle_adjust(isolate, exports,
                             compatibility_new<v8::String>(isolate,
-                                                      "ecore_throttle_adjust"));
+                                                      "adjust"));
    register_throttle_get(isolate, exports,
                          compatibility_new<v8::String>(isolate,
-                                                   "ecore_throttle_get"));
+                                                   "get"));
 }
       
 } } } // namespace efl { namespace js {

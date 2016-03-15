@@ -167,7 +167,7 @@ static v8::Local<v8::Object> wrap_monitor(Eio_Monitor *monitor,
 
     ret->Set(compatibility_new<String>(isolate, "del"),
              compatibility_new<FunctionTemplate>(isolate, del)->GetFunction());
-    ret->Set(compatibility_new<String>(isolate, "path_get"),
+    ret->Set(compatibility_new<String>(isolate, "getPath"),
              compatibility_new<FunctionTemplate>(isolate, path_get)
              ->GetFunction());
 
@@ -226,11 +226,11 @@ v8::Local<v8::Object> wrap_eina_file_direct_info(const Eina_File_Direct_Info*
 
     auto wrapped_info = compatibility_new<Object>(isolate);
 
-    wrapped_info->Set(compatibility_new<String>(isolate, "path_length"),
+    wrapped_info->Set(compatibility_new<String>(isolate, "pathLength"),
                       compatibility_new<Integer>(isolate, info->path_length));
-    wrapped_info->Set(compatibility_new<String>(isolate, "mame_length"),
+    wrapped_info->Set(compatibility_new<String>(isolate, "nameLength"),
                       compatibility_new<Integer>(isolate, info->name_length));
-    wrapped_info->Set(compatibility_new<String>(isolate, "name_start"),
+    wrapped_info->Set(compatibility_new<String>(isolate, "nameStart"),
                       compatibility_new<Integer>(isolate, info->name_start));
     wrapped_info->Set(compatibility_new<String>(isolate, "type"),
                       compatibility_new<Integer>(isolate, info->type));
@@ -1623,134 +1623,135 @@ EAPI
 void register_eio(v8::Isolate* isolate, v8::Handle<v8::Object> exports)
 {
    using v8::String;
-   register_init(isolate, exports,
-                 compatibility_new<String>(isolate, "eio_init"));
-   register_shutdown(isolate, exports,
-                     compatibility_new<String>(isolate, "eio_shutdown"));
-   register_op_file_copy(isolate, exports,
-                         compatibility_new<String>(isolate, "EIO_FILE_COPY"));
-   register_op_file_move(isolate, exports,
-                         compatibility_new<String>(isolate, "EIO_FILE_MOVE"));
-   register_op_dir_copy(isolate, exports,
-                        compatibility_new<String>(isolate, "EIO_DIR_COPY"));
-   register_op_dir_move(isolate, exports,
-                        compatibility_new<String>(isolate, "EIO_DIR_MOVE"));
-   register_op_unlink(isolate, exports,
-                      compatibility_new<String>(isolate, "EIO_LINK"));
-   register_op_file_getpwnam(isolate, exports,
+   auto eioNamespace = efl::eo::js::get_namespace({"Eio"}, isolate, exports);
+   register_init(isolate, eioNamespace,
+                 compatibility_new<String>(isolate, "init"));
+   register_shutdown(isolate, eioNamespace,
+                     compatibility_new<String>(isolate, "shutdown"));
+   register_op_file_copy(isolate, eioNamespace,
+                         compatibility_new<String>(isolate, "FILE_COPY"));
+   register_op_file_move(isolate, eioNamespace,
+                         compatibility_new<String>(isolate, "FILE_MOVE"));
+   register_op_dir_copy(isolate, eioNamespace,
+                        compatibility_new<String>(isolate, "DIR_COPY"));
+   register_op_dir_move(isolate, eioNamespace,
+                        compatibility_new<String>(isolate, "DIR_MOVE"));
+   register_op_unlink(isolate, eioNamespace,
+                      compatibility_new<String>(isolate, "UNLINK"));
+   register_op_file_getpwnam(isolate, eioNamespace,
                              compatibility_new<String>(isolate,
-                                                       "EIO_FILE_GETPWNAM"));
-   register_op_file_getgrnam(isolate, exports,
+                                                       "FILE_GETPWNAM"));
+   register_op_file_getgrnam(isolate, eioNamespace,
                              compatibility_new<String>(isolate,
-                                                       "EIO_FILE_GETGRNAM"));
-   register_file_open(isolate, exports,
-                      compatibility_new<String>(isolate, "eio_file_open"));
-   register_monitor_file_created(isolate, exports,
+                                                       "FILE_GETGRNAM"));
+   register_file_open(isolate, eioNamespace,
+                      compatibility_new<String>(isolate, "openFile"));
+   register_monitor_file_created(isolate, eioNamespace,
                                  compatibility_new<String>(isolate,
-                                                           "EIO_MONITOR_FILE"
+                                                           "MONITOR_FILE"
                                                            "_CREATED"));
-   register_monitor_file_deleted(isolate, exports,
+   register_monitor_file_deleted(isolate, eioNamespace,
                                  compatibility_new<String>(isolate,
-                                                           "EIO_MONITOR_FILE"
+                                                           "MONITOR_FILE"
                                                            "_DELETED"));
-   register_monitor_file_modified(isolate, exports,
+   register_monitor_file_modified(isolate, eioNamespace,
                                   compatibility_new<String>(isolate,
-                                                            "EIO_MONITOR_FILE"
+                                                            "MONITOR_FILE"
                                                             "_MODIFIED"));
-   register_monitor_file_closed(isolate, exports,
+   register_monitor_file_closed(isolate, eioNamespace,
                                 compatibility_new<String>(isolate,
-                                                          "EIO_MONITOR_FILE"
+                                                          "MONITOR_FILE"
                                                           "_CLOSED"));
-   register_monitor_directory_created(isolate, exports,
+   register_monitor_directory_created(isolate, eioNamespace,
                                       compatibility_new<String>
                                       (isolate,
-                                       "EIO_MONITOR_DIRECTORY_CREATED"));
-   register_monitor_directory_deleted(isolate, exports,
+                                       "MONITOR_DIRECTORY_CREATED"));
+   register_monitor_directory_deleted(isolate, eioNamespace,
                                       compatibility_new<String>
                                       (isolate,
-                                       "EIO_MONITOR_DIRECTORY_DELETED"));
-   register_monitor_directory_modified(isolate, exports,
+                                       "MONITOR_DIRECTORY_DELETED"));
+   register_monitor_directory_modified(isolate, eioNamespace,
                                        compatibility_new<String>
                                        (isolate,
-                                        "EIO_MONITOR_DIRECTORY_MODIFIED"));
-   register_monitor_directory_closed(isolate, exports,
+                                        "MONITOR_DIRECTORY_MODIFIED"));
+   register_monitor_directory_closed(isolate, eioNamespace,
                                      compatibility_new<String>
-                                     (isolate, "EIO_MONITOR_DIRECTORY_CLOSED"));
-   register_monitor_self_rename(isolate, exports,
+                                     (isolate, "MONITOR_DIRECTORY_CLOSED"));
+   register_monitor_self_rename(isolate, eioNamespace,
                                 compatibility_new<String>
-                                (isolate, "EIO_MONITOR_SELF_RENAME"));
-   register_monitor_self_deleted(isolate, exports,
+                                (isolate, "MONITOR_SELF_RENAME"));
+   register_monitor_self_deleted(isolate, eioNamespace,
                                  compatibility_new<String>
-                                 (isolate, "EIO_MONITOR_SELF_DELETED"));
-   register_monitor_error(isolate, exports,
+                                 (isolate, "MONITOR_SELF_DELETED"));
+   register_monitor_error(isolate, eioNamespace,
                           compatibility_new<String>(isolate,
-                                                    "EIO_MONITOR_ERROR"));
-   register_monitor_add(isolate, exports,
-                        compatibility_new<String>(isolate, "eio_monitor_add"));
+                                                    "MONITOR_ERROR"));
+   register_monitor_add(isolate, eioNamespace,
+                        compatibility_new<String>(isolate, "addMonitor"));
    register_event_monitor_file_created_handler_add
-     (isolate, exports,
+     (isolate, eioNamespace,
       compatibility_new<String>(isolate,
-                                "eio_event_monitor_file_created_handler_add"));
+                                "addEventMonitorFileCreatedHandler"));
    register_event_monitor_file_deleted_handler_add
-     (isolate, exports,
+     (isolate, eioNamespace,
       compatibility_new<String>(isolate,
-                                "eio_event_monitor_file_deleted_handler_add"));
+                                "addEventMonitorFileDeletedHandler"));
    register_event_monitor_file_modified_handler_add
-     (isolate, exports,
+     (isolate, eioNamespace,
       compatibility_new<String>
-      (isolate, "eio_event_monitor_file_modified_handler_add"));
+      (isolate, "addEventMonitorFileModifiedHandler"));
    register_event_monitor_file_closed_handler_add
-     (isolate, exports,
+     (isolate, eioNamespace,
       compatibility_new<String>(isolate,
-                                "eio_event_monitor_file_closed_handler_add"));
+                                "addEventMonitorFileClosedHandler"));
    register_event_monitor_directory_created_handler_add
-     (isolate, exports,
+     (isolate, eioNamespace,
       compatibility_new<String>
-      (isolate, "eio_event_monitor_directory_created_handler_add"));
+      (isolate, "addEventMonitorDirectoryCreatedHandler"));
    register_event_monitor_directory_deleted_handler_add
-     (isolate, exports,
+     (isolate, eioNamespace,
       compatibility_new<String>
-      (isolate, "eio_event_monitor_directory_deleted_handler_add"));
+      (isolate, "addEventMonitorDirectoryDeletedHandler"));
    register_event_monitor_directory_modified_handler_add
-     (isolate, exports,
+     (isolate, eioNamespace,
       compatibility_new<String>
-      (isolate, "eio_event_monitor_directory_modified_handler_add"));
+      (isolate, "addEventMonitorDirectoryModifiedHandler"));
    register_event_monitor_directory_closed_handler_add
-     (isolate, exports,
+     (isolate, eioNamespace,
       compatibility_new<String>
-      (isolate, "eio_event_monitor_directory_closed_handler_add"));
+      (isolate, "addEventMonitorDirectoryClosedHandler"));
    register_event_monitor_self_rename_handler_add
-     (isolate, exports,
+     (isolate, eioNamespace,
       compatibility_new<String>(isolate,
-                                "eio_event_monitor_self_rename_handler_add"));
+                                "addEventMonitorSelfRenameHandler"));
    register_event_monitor_self_deleted_handler_add
-     (isolate, exports,
+     (isolate, eioNamespace,
       compatibility_new<String>(isolate,
-                                "eio_event_monitor_self_deleted_handler_add"));
+                                "addEventMonitorSelfDeletedHandler"));
    register_event_monitor_error_handler_add
-     (isolate, exports,
+     (isolate, eioNamespace,
       compatibility_new<String>(isolate,
-                                "eio_event_monitor_error_handler_add"));
-   register_file_ls(isolate, exports,
-                    compatibility_new<String>(isolate, "eio_file_ls"));
-   register_file_chmod(isolate, exports,
-                       compatibility_new<String>(isolate, "eio_file_chmod"));
-   register_file_chown(isolate, exports,
-                       compatibility_new<String>(isolate, "eio_file_chown"));
-   register_file_unlink(isolate, exports,
-                        compatibility_new<String>(isolate, "eio_file_unlink"));
-   register_file_mkdir(isolate, exports,
-                       compatibility_new<String>(isolate, "eio_file_mkdir"));
-   register_file_move(isolate, exports,
-                      compatibility_new<String>(isolate, "eio_file_move"));
-   register_file_copy(isolate, exports,
-                      compatibility_new<String>(isolate, "eio_file_copy"));
-   register_dir_move(isolate, exports,
-                     compatibility_new<String>(isolate, "eio_dir_move"));
-   register_dir_copy(isolate, exports,
-                     compatibility_new<String>(isolate, "eio_dir_copy"));
-   register_dir_unlink(isolate, exports,
-                       compatibility_new<String>(isolate, "eio_dir_unlink"));
+                                "addEventMonitorErrorHandler"));
+   register_file_ls(isolate, eioNamespace,
+                    compatibility_new<String>(isolate, "lsFile"));
+   register_file_chmod(isolate, eioNamespace,
+                       compatibility_new<String>(isolate, "chmodFile"));
+   register_file_chown(isolate, eioNamespace,
+                       compatibility_new<String>(isolate, "chownFile"));
+   register_file_unlink(isolate, eioNamespace,
+                        compatibility_new<String>(isolate, "unlinkFile"));
+   register_file_mkdir(isolate, eioNamespace,
+                       compatibility_new<String>(isolate, "mkdirFile"));
+   register_file_move(isolate, eioNamespace,
+                      compatibility_new<String>(isolate, "moveFile"));
+   register_file_copy(isolate, eioNamespace,
+                      compatibility_new<String>(isolate, "copyFile"));
+   register_dir_move(isolate, eioNamespace,
+                     compatibility_new<String>(isolate, "moveDir"));
+   register_dir_copy(isolate, eioNamespace,
+                     compatibility_new<String>(isolate, "copyDir"));
+   register_dir_unlink(isolate, eioNamespace,
+                       compatibility_new<String>(isolate, "unlinkDir"));
 }
       
 } } } // namespace efl { namespace eio { namespace js {

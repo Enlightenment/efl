@@ -5,6 +5,7 @@
 #include <Ecore.hh>
 #include <Ecore_File.h>
 #include <Eina_Js.hh>
+#include <Eo_Js.hh>
 
 #ifdef EAPI
 # undef EAPI
@@ -43,7 +44,6 @@ using ::efl::eina::js::compatibility_set_pointer_internal_field;
 
 EAPI void register_ecore_animator(v8::Isolate *isolate,v8::Handle<v8::Object> exports);
 EAPI void register_ecore_event(v8::Isolate* isolate, v8::Handle<v8::Object> exports);
-EAPI void register_ecore_file(v8::Isolate* isolate, v8::Handle<v8::Object> exports);
 EAPI void register_ecore_idle(v8::Isolate *isolate,v8::Handle<v8::Object> exports);
 EAPI void register_ecore_job(v8::Isolate *isolate,v8::Handle<v8::Object> exports);
 EAPI void register_ecore_mainloop(v8::Isolate *isolate,v8::Handle<v8::Object> exports);

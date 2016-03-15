@@ -526,83 +526,75 @@ void register_ecore_animator(v8::Isolate* isolate, v8::Handle<v8::Object> export
 {
    register_pos_map_linear(isolate, exports,
                            compatibility_new<v8::String>(isolate,
-                                                     "ECORE_POS_MAP_LINEAR"));
+                                                     "POS_MAP_LINEAR"));
    register_pos_map_accelerate(isolate, exports,
                                compatibility_new<v8::String>(isolate,
-                                                         "ECORE_POS_MAP"
+                                                         "POS_MAP"
                                                          "_ACCELERATE"));
    register_pos_map_decelerate(isolate, exports,
                                compatibility_new<v8::String>(isolate,
-                                                         "ECORE_POS_MAP"
+                                                         "POS_MAP"
                                                          "_DECELERATE"));
    register_pos_map_sinusoidal(isolate, exports,
                                compatibility_new<v8::String>(isolate,
-                                                         "ECORE_POS_MAP"
+                                                         "POS_MAP"
                                                          "_SINUSOIDAL"));
    register_pos_map_accelerate_factor(isolate, exports,
                                       compatibility_new<v8::String>(isolate,
-                                                                "ECORE_POS_MAP"
+                                                                "POS_MAP"
                                                                 "_ACCELERATE"
                                                                 "_FACTOR"));
    register_pos_map_decelerate_factor(isolate, exports,
                                       compatibility_new<v8::String>(isolate,
-                                                                "ECORE_POS_MAP"
+                                                                "POS_MAP"
                                                                 "_DECELERATE"
                                                                 "_FACTOR"));
    register_pos_map_sinusoidal_factor(isolate, exports,
                                       compatibility_new<v8::String>(isolate,
-                                                                "ECORE_POS_MAP"
+                                                                "POS_MAP"
                                                                 "_SINUSOIDAL"
                                                                 "_FACTOR"));
    register_pos_map_divisor_interp(isolate, exports,
                                    compatibility_new<v8::String>(isolate,
-                                                             "ECORE_POS_MAP"
+                                                             "POS_MAP"
                                                              "_DIVISOR_INTERP"));
    register_pos_map_bounce(isolate, exports,
                            compatibility_new<v8::String>(isolate,
-                                                     "ECORE_POS_MAP_BOUNCE"));
+                                                     "POS_MAP_BOUNCE"));
    register_pos_map_spring(isolate, exports,
                            compatibility_new<v8::String>(isolate,
-                                                     "ECORE_POS_MAP_SPRING"));
+                                                     "POS_MAP_SPRING"));
    register_pos_map_cubic_bezier(isolate, exports,
                                  compatibility_new<v8::String>(isolate,
-                                                           "ECORE_POS_MAP_CUBIC"
+                                                           "POS_MAP_CUBIC"
                                                            "_BEZIER"));
    register_animator_source_timer(isolate, exports,
                                   compatibility_new<v8::String>(isolate,
-                                                            "ECORE_ANIMATOR"
-                                                            "_SOURCE_TIMER"));
+                                                            "SOURCE_TIMER"));
    register_animator_frametime_set(isolate, exports,
                                    compatibility_new<v8::String>(isolate,
-                                                             "ecore_animator"
-                                                             "_frametime_set"));
+                                                             "setFrametime"));
    register_animator_frametime_get(isolate, exports,
                                    compatibility_new<v8::String>(isolate,
-                                                             "ecore_animator"
-                                                             "_frametime_get"));
+                                                             "getFrametime"));
    register_animator_pos_map(isolate, exports,
                              compatibility_new<v8::String>(isolate,
-                                                       "ecore_animator_pos"
-                                                       "_map"));
+                                                       "posMap"));
    register_animator_pos_map_n(isolate, exports,
                                compatibility_new<v8::String>(isolate,
-                                                         "ecore_animator_pos_map"
-                                                         "_n"));
+                                                         "posMapN"));
    register_animator_source_set(isolate, exports,
                                 compatibility_new<v8::String>(isolate,
-                                                          "ecore_animator_source"
-                                                          "_set"));
+                                                          "setSource"));
    register_animator_source_get(isolate, exports,
                                 compatibility_new<v8::String>(isolate,
-                                                          "ecore_animator_source"
-                                                          "_get"));
+                                                          "getSource"));
    register_animator_add(isolate, exports,
                          compatibility_new<v8::String>(isolate,
-                                                   "ecore_animator_add"));
+                                                   "add"));
    register_animator_timeline_add(isolate, exports,
                                   compatibility_new<v8::String>(isolate,
-                                                            "ecore_animator"
-                                                            "_timeline_add"));
+                                                            "addTimeline"));
 }   
       
 } } } // namespace efl { namespace js {

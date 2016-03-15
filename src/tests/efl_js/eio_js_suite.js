@@ -27,7 +27,7 @@ if(typeof process !== 'undefined')
         if (process.argv.indexOf("--verbose") != -1)
             console.info.apply(null, arguments);
     };
-    exit = efl.ecore_mainloop_quit;
+    exit = efl.Ecore.Mainloop.quit;
 }
 else
 {
@@ -66,7 +66,7 @@ function start_test(test_name, test_func) {
 
 // Eio tests
 start_test('test constants', function () {
-    assert(typeof(efl.EIO_FILE_COPY) === 'number');
+    assert(typeof(efl.Eio.FILE_COPY) === 'number');
 });
 // TODO: more tests
 

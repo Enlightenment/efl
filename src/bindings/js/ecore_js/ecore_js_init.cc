@@ -63,14 +63,14 @@ void register_ecore(v8::Isolate *isolate,v8::Handle<v8::Object> exports)
    efl::ecore::js::register_shutdown(isolate, exports,
                                      efl::eina::js::compatibility_new<v8::String>
                                      (isolate, "ecore_shutdown"));
-   register_ecore_animator(isolate, exports);
-   register_ecore_event(isolate, exports);
-   register_ecore_idle(isolate, exports);
-   register_ecore_job(isolate, exports);
-   register_ecore_mainloop(isolate, exports);
-   register_ecore_poller(isolate, exports);
-   register_ecore_throttle(isolate, exports);
-   register_ecore_timer(isolate, exports);
+   register_ecore_animator(isolate, efl::eo::js::get_namespace({"Ecore", "Animator"}, isolate, exports));
+   register_ecore_event(isolate, efl::eo::js::get_namespace({"Ecore", "Event"}, isolate, exports));
+   register_ecore_idle(isolate, efl::eo::js::get_namespace({"Ecore", "Idle"}, isolate, exports));
+   register_ecore_job(isolate, efl::eo::js::get_namespace({"Ecore", "Job"}, isolate, exports));
+   register_ecore_mainloop(isolate, efl::eo::js::get_namespace({"Ecore", "Mainloop"}, isolate, exports));
+   register_ecore_poller(isolate, efl::eo::js::get_namespace({"Ecore", "Poller"}, isolate, exports));
+   register_ecore_throttle(isolate, efl::eo::js::get_namespace({"Ecore", "Throttle"}, isolate, exports));
+   register_ecore_timer(isolate, efl::eo::js::get_namespace({"Ecore", "Timer"}, isolate, exports));
 }
       
 } } } // namespace efl { namespace js {

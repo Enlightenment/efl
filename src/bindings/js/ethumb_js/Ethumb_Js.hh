@@ -5,6 +5,7 @@
 
 #include <Eina_Js.hh>
 #include <Ethumb_Client.h>
+#include <Eo_Js.hh>
 
 #ifdef EAPI
 # undef EAPI

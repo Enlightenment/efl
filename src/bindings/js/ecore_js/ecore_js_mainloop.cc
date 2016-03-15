@@ -172,36 +172,36 @@ void register_ecore_mainloop(v8::Isolate *isolate,v8::Handle<v8::Object> exports
 {
    register_callback_cancel(isolate, exports,
                             compatibility_new<v8::String>
-                            (isolate, "ECORE_CALLBACK_CANCEL"));
+                            (isolate, "CALLBACK_CANCEL"));
    register_callback_renew(isolate, exports,
                            compatibility_new<v8::String>
-                           (isolate, "ECORE_CALLBACK_RENEW"));
+                           (isolate, "CALLBACK_RENEW"));
    register_callback_pass_on(isolate, exports,
                              compatibility_new<v8::String>
-                             (isolate, "ECORE_CALLBACK_PASS_ON"));
+                             (isolate, "CALLBACK_PASS_ON"));
    register_callback_done(isolate, exports,
                           compatibility_new<v8::String>
-                          (isolate, "ECORE_CALLBACK_DONE"));
+                          (isolate, "CALLBACK_DONE"));
    register_mainloop_iterate(isolate, exports,
                              compatibility_new<v8::String>
-                             (isolate, "ecore_mainloop_iterate"));
+                             (isolate, "iterate"));
    register_mainloop_iterate_may_block(isolate, exports,
                                        compatibility_new<v8::String>
                                        (isolate,
-                                        "ecore_mainloop_iterate_may_block"));
+                                        "iterateMayBlock"));
    register_mainloop_begin(isolate, exports,
                            compatibility_new<v8::String>
-                           (isolate, "ecore_mainloop_begin"));
+                           (isolate, "begin"));
    register_mainloop_quit(isolate, exports,
                           compatibility_new<v8::String>
-                          (isolate, "ecore_mainloop_quit"));
+                          (isolate, "quit"));
    register_mainloop_animator_ticked_get(isolate, exports,
                                          compatibility_new<v8::String>
                                          (isolate,
-                                          "ecore_mainlop_animator_ticked_get"));
+                                          "getAnimatorTicked"));
    register_mainloop_nested_get(isolate, exports,
                                 compatibility_new<v8::String>
-                                (isolate, "ecore_mainloop_nested_get"));
+                                (isolate, "getNested"));
 }
   
 } } } // namespace efl { namespace js {

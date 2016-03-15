@@ -12,7 +12,6 @@ if(typeof process !== 'undefined')
 {
     console.log('running from nodejs');
     console.log('path', process.env.NODE_PATH);
-    console.log("teste1");
 
     efl = require('efl');
     assert(efl != null, "could not load efl node module");
@@ -27,7 +26,7 @@ if(typeof process !== 'undefined')
         if (process.argv.indexOf("--verbose") != -1)
             console.info.apply(null, arguments);
     };
-    exit = efl.ecore_mainloop_quit;
+    exit = efl.Ecore.Mainloop.quit;
 }
 else
 {
@@ -73,51 +72,50 @@ function abs(n) {
 var TOLERANCE = 0.0001;
 // end ecore preamble
 
-start_test("timers", function () {
+start_test("ecore timers", function () {
     var p = 2.5;
-    efl.ecore_timer_precision_set(p);
-    assert(abs(efl.ecore_timer_precision_get() - p) < TOLERANCE);
+    efl.Ecore.Timer.setPrecision(p);
+    assert(abs(efl.Ecore.Timer.getPrecision() - p) < TOLERANCE);
     
     p = 0.5;
-    efl.ecore_timer_precision_set(p);
-    assert(abs(efl.ecore_timer_precision_get() - p) < TOLERANCE);
+    efl.Ecore.Timer.setPrecision(p);
+    assert(abs(efl.Ecore.Timer.getPrecision() - p) < TOLERANCE);
     
     var ncalls = 0;
 
     captured = false;
-    efl.ecore_timer_add(1, function() {
-        print_info('ecore_timer_add handler');
+    efl.Ecore.Timer.add(1, function() {
         ++ncalls;
         if (ncalls != 4)
             return true;
         
         captured = true;
-        efl.ecore_job_add(efl.ecore_mainloop_quit);
+        efl.Ecore.Job.add(efl.Ecore.Mainloop.quit);
         return false;
     });
 
-    efl.ecore_mainloop_begin();
+    efl.Ecore.Mainloop.begin();
     assert(captured);
 
     ncalls = 0;
     captured = false;
 
-    efl.ecore_timer_loop_add(1, function() {
+    efl.Ecore.Timer.addLoop(1, function() {
         ++ncalls;
         if (ncalls != 4)
             return true;
 
         captured = true;
-        efl.ecore_job_add(efl.ecore_mainloop_quit);
+        efl.Ecore.Job.add(efl.Ecore.Mainloop.quit);
         return false;
     });
 
-    efl.ecore_mainloop_begin();
+    efl.Ecore.Mainloop.begin();
     assert(captured);
 
     captured = false;
 
-    var timer = efl.ecore_timer_add(1, function() {
+    var timer = efl.Ecore.Timer.add(1, function() {
         captured = true;
         return false;
     });
@@ -134,65 +132,79 @@ start_test("timers", function () {
 
     timer.del();
 
-    efl.ecore_timer_add(2, function() {
-        efl.ecore_job_add(efl.ecore_mainloop_quit);
+    efl.Ecore.Timer.add(2, function() {
+        efl.Ecore.Job.add(efl.Ecore.Mainloop.quit);
         return false;
     });
 
-    efl.ecore_mainloop_begin();
+    efl.Ecore.Mainloop.begin();
     assert(captured === false);
 });
 
 // Ecore event
 start_test("ecore event", function () {
-    var myevent = efl.ecore_event_type_new();
+    var myevent = efl.Ecore.Event.newType();
 
     captured = [0, 0, 0]
 
-    var handler1 = efl.ecore_event_handler_add(myevent, function(event) {
-        assert(efl.ecore_event_current_type_get() === myevent);
+    var handler1 = efl.Ecore.Event.addHandler(myevent, function(event) {
+        print_info("CALLBACK_PASS_ON pre assert");
+        assert(efl.Ecore.Event.getCurrentType() === myevent);
         assert(event === myevent);
         captured[0] += 1;
-        return efl.ECORE_CALLBACK_PASS_ON;
+        print_info("CALLBACK_PASS_ON post assert");
+        return efl.Ecore.Mainloop.CALLBACK_PASS_ON;
     });
 
-    var handler2 = efl.ecore_event_handler_add(myevent, function(event) {
-        assert(efl.ecore_event_current_type_get() === myevent);
+    var handler2 = efl.Ecore.Event.addHandler(myevent, function(event) {
+        print_info("CALLBACK_DONE #1 pre assert");
+        assert(efl.Ecore.Event.getCurrentType() === myevent);
         assert(event === myevent);
         captured[1] += 1;
-        return efl.ECORE_CALLBACK_DONE;
+        print_info("CALLBACK_DONE #1 post assert");
+        return efl.Ecore.Mainloop.CALLBACK_DONE;
     });
 
-    var handler3 = efl.ecore_event_handler_add(myevent, function(event) {
-        assert(efl.ecore_event_current_type_get() === myevent);
+    var handler3 = efl.Ecore.Event.addHandler(myevent, function(event) {
+        print_info("CALLBACK_DONE #2 pre assert");
+        assert(efl.Ecore.Event.getCurrentType() === myevent);
         assert(event === myevent);
         captured[2] += 1;
-        return efl.ECORE_CALLBACK_DONE;
+        print_info("CALLBACK_DONE #2 post assert");
+        return efl.Ecore.Mainloop.CALLBACK_DONE;
     });
 
-    efl.ecore_timer_add(1, function() {
-        efl.ecore_event_add(myevent);
+    efl.Ecore.Timer.add(1, function() {
+        efl.Ecore.Event.add(myevent);
+        print_info("Timer.add(1, callback) before assert");
         assert(captured[0] === 0 && captured[1] === 0 && captured[2] === 0);
-        efl.ecore_timer_add(1, function() {
+        print_info("Timer.add(1, callback) after assert");
+        efl.Ecore.Timer.add(1, function() {
+            print_info("inner Timer.add(1, callback) before assert");
             assert(captured[0] === 1 && captured[1] === 1 && captured[2] === 0);
+            print_info("inner Timer.add(1, callback) after assert");
             handler1.del();
-            efl.ecore_event_add(myevent);
-            efl.ecore_event_add(myevent);
-            efl.ecore_event_add(myevent).del();
-            efl.ecore_timer_add(1, function() {
+            efl.Ecore.Event.add(myevent);
+            efl.Ecore.Event.add(myevent);
+            efl.Ecore.Event.add(myevent).del();
+            efl.Ecore.Timer.add(1, function() {
+                print_info("twice inner Timer.add(1, callback) before assert");
                 assert(captured[0] === 1 && captured[1] === 3 && captured[2] === 0);
-                efl.ecore_mainloop_quit();
+                print_info("twice inner Timer.add(1, callback) after assert");
+                efl.Ecore.Mainloop.quit();
             });
         });
     });
 
-    efl.ecore_mainloop_begin();
+    efl.Ecore.Mainloop.begin();
 
-    efl.ecore_event_add(myevent);
-    efl.ecore_event_add(myevent);
-    efl.ecore_event_add(myevent);
+    efl.Ecore.Event.add(myevent);
+    efl.Ecore.Event.add(myevent);
+    efl.Ecore.Event.add(myevent);
 
-    var filter = efl.ecore_event_filter_add(function() {
+    print_info("will add filter");
+
+    var filter = efl.Ecore.Event.addFilter(function() {
         return {count: 0};
     }, function(loop_data, event) {
         assert(event === myevent);
@@ -201,17 +213,17 @@ start_test("ecore event", function () {
         return c != 0;
     }, function(loop_data) {});
     
-    efl.ecore_timer_add(1, efl.ecore_mainloop_quit);
-    efl.ecore_mainloop_begin();
+    efl.Ecore.Timer.add(1, efl.Ecore.Mainloop.quit);
+    efl.Ecore.Mainloop.begin();
     assert(captured[1] === 5);
     filter.del();
 
-    efl.ecore_event_add(myevent);
-    efl.ecore_event_add(myevent);
-    efl.ecore_event_add(myevent);
+    efl.Ecore.Event.add(myevent);
+    efl.Ecore.Event.add(myevent);
+    efl.Ecore.Event.add(myevent);
     
-    efl.ecore_timer_add(1, efl.ecore_mainloop_quit);
-    efl.ecore_mainloop_begin();
+    efl.Ecore.Timer.add(1, efl.Ecore.Mainloop.quit);
+    efl.Ecore.Mainloop.begin();
     assert(captured[1] === 8);
 
     handler2.del();
@@ -222,22 +234,22 @@ start_test("ecore event", function () {
 start_test("ecore jobs", function () {
     captured = false;
 
-    efl.ecore_job_add(function() {
+    efl.Ecore.Job.add(function() {
         captured = true;
-        efl.ecore_mainloop_quit();
+        efl.Ecore.Mainloop.quit();
     });
 
     assert(captured === false);
-    efl.ecore_mainloop_begin();
+    efl.Ecore.Mainloop.begin();
     assert(captured === true);
 
     captured = false;
-    var job = efl.ecore_job_add(function() {
+    var job = efl.Ecore.Job.add(function() {
         captured = true;
     });
-    efl.ecore_job_add(efl.ecore_mainloop_quit);
+    efl.Ecore.Job.add(efl.Ecore.Mainloop.quit);
     job.del();
-    efl.ecore_mainloop_begin();
+    efl.Ecore.Mainloop.begin();
     assert(captured === false);
 });
 
@@ -246,92 +258,76 @@ start_test("ecore idle", function () {
     var counter = 1;
     captured = [0, 0, 0, 0, 0];
 
-    efl.ecore_idler_add(function() {
-        print_info('ecore idle handler 1');
+    efl.Ecore.Idle.add(function() {
         captured[0] = counter;
         counter += 1;
-        efl.ecore_job_add(function() { print_info('ecore job handler 1'); });
-        return efl.ECORE_CALLBACK_DONE;
+        efl.Ecore.Job.add(function() { print_info('ecore job handler 1'); });
+        return efl.Ecore.Mainloop.CALLBACK_DONE;
     });
 
-    print_info('ecore idle 1');
-
-    efl.ecore_idle_enterer_add(function() {
-        print_info('ecore idle handler 2');
+    efl.Ecore.Idle.addEnterer(function() {
         captured[1] = counter;
         counter += 1;
-        return efl.ECORE_CALLBACK_DONE;
+        return efl.Ecore.Mainloop.CALLBACK_DONE;
     });
 
-    print_info('ecore idle 2');
-
-    efl.ecore_idle_enterer_add(function() {
-        print_info('ecore idle handler 3');
+    efl.Ecore.Idle.addEnterer(function() {
         captured[2] = counter;
         counter += 1;
-        return efl.ECORE_CALLBACK_DONE;
+        return efl.Ecore.Mainloop.CALLBACK_DONE;
     });
 
-    print_info('ecore idle 3');
-
-    efl.ecore_idle_enterer_before_add(function() {
-        print_info('ecore idle handler 4');
+    efl.Ecore.Idle.addEntererBefore(function() {
         captured[3] = counter;
         counter += 1;
-        return efl.ECORE_CALLBACK_DONE;
+        return efl.Ecore.Mainloop.CALLBACK_DONE;
     });
 
-    print_info('ecore idle 4');
-
-    efl.ecore_idle_exiter_add(function() {
-        print_info('ecore idle handler 5');
+    efl.Ecore.Idle.addExiter(function() {
         captured[4] = counter;
         counter += 1;
-        efl.ecore_mainloop_quit();
-        return efl.ECORE_CALLBACK_DONE;
+        efl.Ecore.Mainloop.quit();
+        return efl.Ecore.Mainloop.CALLBACK_DONE;
     });
 
-    print_info('ecore idle 5');
+    efl.Ecore.Mainloop.begin();
 
-    efl.ecore_mainloop_begin();
-
-    print_info('ecore idle 6');
-
-    assert(captured[0] === 4, "ecore_idler_add test");
-    assert(captured[1] === 2, "ecore_idle_enterer_add test");
-    assert(captured[2] === 3, "ecore_idle_enterer_add test two");
-    assert(captured[3] === 1, "ecore_idle_enterer_before_add test");
-    assert(captured[4] === 5, "ecore_idle_exiter_add test");
+    assert(captured[0] === 4, "Ecore.Idle.add test");
+    assert(captured[1] === 2, "Ecore.Idle.addEnterer test");
+    assert(captured[2] === 3, "Ecore.Idle.addEnterer test two");
+    assert(captured[3] === 1, "Ecore.Idle.addEntererBefore test");
+    assert(captured[4] === 5, "Ecore.Idle.addExiter test");
 });
 
 // Ecore animator
 start_test("ecore animator", function () {
-    efl.ecore_animator_frametime_set(1);
-    assert(efl.ecore_animator_frametime_get() === 1);
-    efl.ecore_animator_frametime_set(1 / 50);
-    assert(efl.ecore_animator_frametime_get() === (1 / 50));
+    efl.Ecore.Animator.setFrametime(1);
+    assert(efl.Ecore.Animator.getFrametime() === 1);
+    efl.Ecore.Animator.setFrametime(1 / 50);
+    assert(efl.Ecore.Animator.getFrametime() === (1 / 50));
 
-    assert(efl.ecore_animator_pos_map(0.5, efl.ECORE_POS_MAP_LINEAR, 0, 0)
+    assert(efl.Ecore.Animator.posMap(0.5, efl.Ecore.Animator.POS_MAP_LINEAR, 0, 0)
            === 0.5);
 
-    efl.ecore_animator_source_set(efl.ECORE_ANIMATOR_SOURCE_CUSTOM);
+    efl.Ecore.Animator.setSource(efl.Ecore.Animator.SOURCE_TIMER);
+    assert(efl.Ecore.Animator.getSource() === efl.Ecore.Animator.SOURCE_TIMER);
 });
 
 // Ecore poller
 start_test("ecore poller", function () {
-    efl.ecore_poller_poll_interval_set(efl.ECORE_POLLER_CORE, 42);
-    assert(efl.ecore_poller_poll_interval_get(efl.ECORE_POLLER_CORE) === 42);
-    efl.ecore_poller_poll_interval_set(efl.ECORE_POLLER_CORE, 2);
-    assert(efl.ecore_poller_poll_interval_get(efl.ECORE_POLLER_CORE) === 2);
+    efl.Ecore.Poller.setPollInterval(efl.Ecore.Poller.CORE, 42);
+    assert(efl.Ecore.Poller.getPollInterval(efl.Ecore.Poller.CORE) === 42);
+    efl.Ecore.Poller.setPollInterval(efl.Ecore.Poller.CORE, 2);
+    assert(efl.Ecore.Poller.getPollInterval(efl.Ecore.Poller.CORE) === 2);
 });
 
 start_test("ecore throttle", function () {
     // Ecore throttle
 
-    efl.ecore_throttle_adjust(3);
-    assert(efl.ecore_throttle_get() === 3);
-    efl.ecore_throttle_adjust(-3);
-    assert(efl.ecore_throttle_get() === 0);
+    efl.Ecore.Throttle.adjust(3);
+    assert(efl.Ecore.Throttle.get() === 3);
+    efl.Ecore.Throttle.adjust(-3);
+    assert(efl.Ecore.Throttle.get() === 0);
 });
 
 // footer

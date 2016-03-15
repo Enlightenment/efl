@@ -40,6 +40,7 @@ EAPI void eina_value_register(v8::Handle<v8::Object>, v8::Isolate* isolate);
 EAPI void register_ecore_mainloop(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 
 namespace ecore {
+EAPI void register_animator(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_exe(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_idler(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_ecore(v8::Isolate* isolate, v8::Handle<v8::Object> exports);
@@ -154,10 +155,10 @@ EAPI void init(v8::Handle<v8::Object> exports)
         eina_log_register(exports, v8::Isolate::GetCurrent());
         eina_value_register(exports, v8::Isolate::GetCurrent());
         register_ecore_mainloop(exports, v8::Isolate::GetCurrent());
-        efl::ecore::js::register_ecore(v8::Isolate::GetCurrent(), exports);
         efl::eio::js::register_eio(v8::Isolate::GetCurrent(), exports);
         efl::eldbus::js::register_eldbus(v8::Isolate::GetCurrent(), exports);
         efl::ethumb::js::register_ethumb(v8::Isolate::GetCurrent(), exports);
+        ecore::register_animator(exports, v8::Isolate::GetCurrent());
         ecore::register_exe(exports, v8::Isolate::GetCurrent());
         ecore::register_idler(exports, v8::Isolate::GetCurrent());
         ecore::idle::register_enterer(exports, v8::Isolate::GetCurrent());
@@ -180,6 +181,9 @@ EAPI void init(v8::Handle<v8::Object> exports)
         register_ecore_audio_out_pulse(exports, v8::Isolate::GetCurrent());
         register_ecore_audio_out_sndfile(exports, v8::Isolate::GetCurrent());
 #endif
+        // Manual ecore binding initialized last to allow extension of namespace
+        // created by eolian.
+        efl::ecore::js::register_ecore(v8::Isolate::GetCurrent(), exports);
         efl::register_control(exports, v8::Isolate::GetCurrent());
         efl::register_file(exports, v8::Isolate::GetCurrent());
         efl::register_image(exports, v8::Isolate::GetCurrent());

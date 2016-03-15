@@ -276,19 +276,17 @@ EAPI
 void register_ecore_idle(v8::Isolate *isolate,v8::Handle<v8::Object> exports)
 {
    register_idler_add(isolate, exports,
-                      compatibility_new<v8::String>(isolate, "ecore_idler_add"));
+                      compatibility_new<v8::String>(isolate, "add"));
    register_idle_enterer_add(isolate, exports,
                              compatibility_new<v8::String>(isolate,
-                                                       "ecore_idle_enterer"
-                                                       "_add"));
+                                                       "addEnterer"));
    register_idle_enterer_before_add(isolate, exports,
                                     compatibility_new<v8::String>(isolate,
-                                                              "ecore_idle"
-                                                              "_enterer_before"
-                                                              "_add"));
+                                                              "addEnterer"
+                                                              "Before"));
    register_idle_exiter_add(isolate, exports,
                             compatibility_new<v8::String>(isolate,
-                                                      "ecore_idle_exiter_add"));
+                                                      "addExiter"));
 }
 
 } } } // namespace efl { namespace js {

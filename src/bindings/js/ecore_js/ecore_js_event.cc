@@ -690,83 +690,80 @@ void register_ecore_event(v8::Isolate* isolate, v8::Handle<v8::Object> exports)
 {
    register_event_none(isolate, exports,
                        compatibility_new<v8::String>(isolate,
-                                                 "ECORE_EVENT_NONE"));
+                                                 "NONE"));
    register_event_signal_user(isolate, exports,
                               compatibility_new<v8::String>
-                              (isolate, "ECORE_EVENT_SIGNAL_USER"));
+                              (isolate, "SIGNAL_USER"));
    register_event_signal_hup(isolate, exports,
                              compatibility_new<v8::String>
-                             (isolate, "ECORE_EVENT_SIGNAL_HUP"));
+                             (isolate, "SIGNAL_HUP"));
    register_event_signal_exit(isolate, exports,
                               compatibility_new<v8::String>
-                              (isolate, "ECORE_EVENT_SIGNAL_EXIT"));
+                              (isolate, "SIGNAL_EXIT"));
    register_event_signal_power(isolate, exports,
                                compatibility_new<v8::String>
-                               (isolate, "ECORE_EVENT_SIGNAL_POWER"));
+                               (isolate, "SIGNAL_POWER"));
    register_event_signal_realtime(isolate, exports,
                                   compatibility_new<v8::String>
-                                  (isolate, "ECORE_EVENT_SIGNAL_REALTIME"));
+                                  (isolate, "SIGNAL_REALTIME"));
    register_event_memory_state(isolate, exports,
                                compatibility_new<v8::String>
-                               (isolate, "ECORE_EVENT_MEMORY_STATE"));
+                               (isolate, "MEMORY_STATE"));
    register_event_power_state(isolate, exports,
                               compatibility_new<v8::String>
-                              (isolate, "ECORE_EVENT_POWER_STATE"));
+                              (isolate, "POWER_STATE"));
    register_event_locale_changed(isolate, exports,
                                  compatibility_new<v8::String>
-                                 (isolate, "ECORE_EVENT_LOCALE_CHANGED"));
+                                 (isolate, "LOCALE_CHANGED"));
    register_event_hostname_changed(isolate, exports,
                                    compatibility_new<v8::String>
-                                   (isolate, "ECORE_EVENT_HOSTNAME_CHANGED"));
+                                   (isolate, "HOSTNAME_CHANGED"));
    register_event_system_timedate_changed(isolate, exports,
                                           compatibility_new<v8::String>
                                           (isolate,
-                                           "ECORE_EVENT_SYSTEM_TIMEDATE"
+                                           "SYSTEM_TIMEDATE"
                                            "_CHANGED"));
    register_event_type_new(isolate, exports,
                            compatibility_new<v8::String>(isolate,
-                                                     "ecore_event_type_new"));
+                                                     "newType"));
    register_event_add(isolate, exports,
-                      compatibility_new<v8::String>(isolate, "ecore_event_add"));
+                      compatibility_new<v8::String>(isolate, "add"));
    register_event_handler_add(isolate, exports,
                               compatibility_new<v8::String>
-                              (isolate, "ecore_event_handler_add"));
+                              (isolate, "addHandler"));
    register_event_filter_add(isolate, exports,
                              compatibility_new<v8::String>
-                             (isolate, "ecore_event_filter_add"));
+                             (isolate, "addFilter"));
    register_event_current_type_get(isolate, exports,
                                    compatibility_new<v8::String>
-                                   (isolate, "ecore_event_current_type_get"));
+                                   (isolate, "getCurrentType"));
    register_memory_state_normal(isolate, exports,
                                 compatibility_new<v8::String>
-                                (isolate, "ECORE_MEMORY_STATE_NORMAL"));
+                                (isolate, "MEMORY_STATE_NORMAL"));
    register_memory_state_low(isolate, exports,
                              compatibility_new<v8::String>
-                             (isolate, "ECORE_MEMORY_STATE_LOW"));
+                             (isolate, "MEMORY_STATE_LOW"));
    register_power_state_mains(isolate, exports,
                               compatibility_new<v8::String>
-                              (isolate, "ECORE_POWER_STATE_MAINS"));
+                              (isolate, "POWER_STATE_MAINS"));
    register_power_state_battery(isolate, exports,
                                 compatibility_new<v8::String>
-                                (isolate, "ECORE_POWER_STATE_BATTERY"));
+                                (isolate, "POWER_STATE_BATTERY"));
    register_power_state_low(isolate, exports,
                             compatibility_new<v8::String>(isolate,
-                                                      "ECORE_POWER_STATE_LOW"));
+                                                      "POWER_STATE_LOW"));
    register_event_signal_user_handler_add(isolate, exports,
                                           compatibility_new<v8::String>
                                           (isolate,
-                                           "ecore_event_signal_user_handler"
-                                           "_add"));
+                                           "addSignalUserHandler"));
    register_event_signal_exit_handler_add(isolate, exports,
                                           compatibility_new<v8::String>
                                           (isolate,
-                                           "ecore_event_signal_exit_handler"
-                                           "_add"));
+                                           "addSignalExitHandler"));
    register_event_signal_realtime_handler_add(isolate, exports,
                                               compatibility_new<v8::String>
                                               (isolate,
-                                               "ecore_event_signal_realtime"
-                                               "_handler_add"));
+                                               "addSignalRealtimeHandler"));
 }
       
 } } } // namespace efl { namespace js {
