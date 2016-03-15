@@ -89,15 +89,23 @@ START_TEST(eina_test_vector2_operations)
    eina_vector2_transform(&v3, &m2, &v1);
    fail_if((v3.x != 6) || (v3.y != 6));
 
+   eina_vector2_transform(&v3, &m2, &v3);
+   fail_if((v3.x != 24) || (v3.y != 24));
+
    eina_matrix3_values_set(&m3,
                           2, 2, 2,
                           2, 2, 2,
                           2, 2, 2);
+
    eina_vector2_homogeneous_position_transform(&v3, &m3, &v1);
    fail_if((v3.x != 1) || (v3.y != 1));
 
+
    eina_vector2_homogeneous_direction_transform(&v3, &m3, &v1);
    fail_if((v3.x != 6) || (v3.y != 6));
+
+   eina_vector2_homogeneous_direction_transform(&v3, &m3, &v3);
+   fail_if((v3.x != 24) || (v3.y != 24));
 
    eina_shutdown();
 }
@@ -151,6 +159,10 @@ START_TEST(eina_test_vector3_operations)
    eina_vector3_cross_product(&v3, &v1, &v2);
    fail_if((v3.x != -5) || (v3.y != 10) || (v3.z != -5));
 
+   eina_vector3_cross_product(&v3, &v1, &v3);
+   fail_if((v3.x != -40) || (v3.y != -10) || (v3.z != 20));
+
+
    res = eina_vector3_length_get(&v2);
    fail_if((res - sqrt(75)) > DBL_EPSILON);
 
@@ -177,6 +189,9 @@ START_TEST(eina_test_vector3_operations)
                           2, 2, 2);
    eina_vector3_transform(&v3, &m3, &v1);
    fail_if((v3.x != 12) || (v3.y != 12) || (v3.z != 12));
+
+   eina_vector3_transform(&v3, &m3, &v3);
+   fail_if((v3.x != 72) || (v3.y != 72) || (v3.z != 72));
 
    eina_matrix4_values_set(&m4,
                           2, 2, 2, 2,
@@ -219,6 +234,9 @@ START_TEST(eina_test_vector3_operations)
 
    eina_vector3_homogeneous_direction_transform(&v3, &m4, &v1);
    fail_if((v3.x != 12) || (v3.y != 12) || (v3.z != 12));
+
+   eina_vector3_homogeneous_direction_transform(&v3, &m4, &v3);
+   fail_if((v3.x != 72) || (v3.y != 72) || (v3.z != 72));
 
    eina_shutdown();
 }

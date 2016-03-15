@@ -117,8 +117,12 @@ static inline void
 eina_vector2_transform(Eina_Vector2 *out, const Eina_Matrix2 *m,
                        const Eina_Vector2 *v)
 {
-   out->x = (m->xx * v->x) + (m->yx * v->y);
-   out->y = (m->xy * v->x) + (m->yy * v->y);
+   Eina_Vector2 tmp;
+
+   tmp.x = (m->xx * v->x) + (m->yx * v->y);
+   tmp.y = (m->xy * v->x) + (m->yy * v->y);
+
+   eina_vector2_copy(out, &tmp);
 }
 
 static inline void
@@ -139,8 +143,12 @@ eina_vector2_homogeneous_direction_transform(Eina_Vector2 *out,
                                              const Eina_Matrix3 *m,
                                              const Eina_Vector2 *v)
 {
-   out->x = (m->xx * v->x) + (m->yx * v->y);
-   out->y = (m->xy * v->x) + (m->yy * v->y);
+   Eina_Vector2 tmp;
+
+   tmp.x = (m->xx * v->x) + (m->yx * v->y);
+   tmp.y = (m->xy * v->x) + (m->yy * v->y);
+
+   eina_vector2_copy(out, &tmp);
 }
 
 static inline void
@@ -216,9 +224,13 @@ eina_vector3_dot_product(const Eina_Vector3 *a, const Eina_Vector3 *b)
 static inline void
 eina_vector3_cross_product(Eina_Vector3 *out, const Eina_Vector3 *a, const Eina_Vector3 *b)
 {
-   out->x = a->y * b->z - a->z * b->y;
-   out->y = a->z * b->x - a->x * b->z;
-   out->z = a->x * b->y - a->y * b->x;
+   Eina_Vector3 tmp;
+
+   tmp.x = a->y * b->z - a->z * b->y;
+   tmp.y = a->z * b->x - a->x * b->z;
+   tmp.z = a->x * b->y - a->y * b->x;
+
+   eina_vector3_copy(out, &tmp);
 }
 
 static inline double
@@ -271,29 +283,37 @@ eina_vector3_normalize(Eina_Vector3 *out, const Eina_Vector3 *v)
 static inline void
 eina_vector3_transform(Eina_Vector3 *out, const Eina_Matrix3 *m,  const Eina_Vector3 *v)
 {
+   Eina_Vector3 tmp;
+
    if (eina_matrix3_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
      {
         eina_vector3_copy(out, v);
         return;
      }
 
-   out->x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z);
-   out->y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z);
-   out->z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z);
+   tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z);
+   tmp.y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z);
+   tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z);
+
+   eina_vector3_copy(out, &tmp);
 }
 
 static inline void
 eina_vector3_homogeneous_direction_transform(Eina_Vector3 *out, const Eina_Matrix4 *m,  const Eina_Vector3 *v)
 {
+   Eina_Vector3 tmp;
+
    if (eina_matrix4_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
      {
         eina_vector3_copy(out, v);
         return;
      }
 
-   out->x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z);
-   out->y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z);
-   out->z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z);
+   tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z);
+   tmp.y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z);
+   tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z);
+
+   eina_vector3_copy(out, &tmp);
 }
 
 static inline void
