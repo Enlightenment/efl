@@ -330,7 +330,6 @@ _evas_cache_image_async_heavy(void *data)
    current = data;
 
    SLKL(current->lock);
-   current->flags.load_worked = 0;
    pchannel = current->channel;
    current->channel++;
    cache = current->cache;
@@ -374,8 +373,11 @@ _evas_cache_image_async_heavy(void *data)
         current->flags.preload_done = 0;
      }
    SLKU(current->lock_cancel);
-   current->flags.load_worked = 1;
    SLKU(current->lock);
+
+   LKL(wakeup);
+   current->flags.preload_pending = 0;
+   LKU(wakeup);
 }
 
 static void
@@ -390,6 +392,11 @@ _evas_cache_image_async_end(void *data)
    ie->preload = NULL;
    ie->flags.preload_done = ie->flags.loaded;
    ie->flags.updated_data = 1;
+
+   LKL(wakeup);
+   ie->flags.preload_pending = 0;
+   LKU(wakeup);
+
    while ((tmp = ie->targets))
      {
         evas_object_inform_call_image_preloaded((Evas_Object*) tmp->target);
@@ -411,6 +418,11 @@ _evas_cache_image_async_cancel(void *data)
 
    ie->preload = NULL;
    ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
+
+   LKL(wakeup);
+   ie->flags.preload_pending = 0;
+   LKU(wakeup);
+
    if ((ie->flags.delete_me) || (ie->flags.dirty))
      {
         ie->flags.delete_me = 0;
@@ -468,6 +480,9 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target,
      {
         ie->cache->preload = eina_list_append(ie->cache->preload, ie);
         ie->flags.pending = 0;
+        LKL(wakeup);
+        ie->flags.preload_pending = 1;
+        LKU(wakeup);
         ie->preload = evas_preload_thread_run(_evas_cache_image_async_heavy,
                                               _evas_cache_image_async_end,
                                               _evas_cache_image_async_cancel,
@@ -1162,7 +1177,7 @@ evas_cache_image_load_data(Image_Entry *im)
         evas_async_events_process();
         
         LKL(wakeup);
-        while (!im->flags.load_worked)
+        while (im->flags.preload_pending)
           {
              eina_condition_wait(&cond_wakeup);
              LKU(wakeup);
