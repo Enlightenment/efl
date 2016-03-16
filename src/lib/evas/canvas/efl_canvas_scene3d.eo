@@ -1,4 +1,4 @@
-class Efl.Canvas.Scene3d (Evas.Image, Efl.Gfx.Base, Efl.Image, Efl.Gfx.Buffer, Efl.Gfx.Fill, Efl.Gfx.View, Efl.Gfx.Filter)
+class Efl.Canvas.Scene3d (Evas.Image)
 {
    [[A UI view for EFL Canvas 3D.]]
    legacy_prefix: null;

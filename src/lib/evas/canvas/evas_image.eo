@@ -1,8 +1,7 @@
 type @extern Evas_Object_Image_Pixels_Get_Cb: __undefined_type; /* FIXME: func pointers are not supported. */
 
-class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load,
-                  Efl.Image_Animated, Efl.Gfx.Buffer, Efl.Gfx.Fill,
-                  Efl.Gfx.View, Evas.Filter)
+class Evas.Image (Evas.Object, Evas.Filter,
+                  Efl.Image, Efl.Gfx.Buffer, Efl.Gfx.Fill, Efl.Gfx.View, Efl.File)
 {
    /* Legacy is implement inside Efl.Canvas.Image */
    legacy_prefix: evas_object_image;

@@ -1,4 +1,4 @@
-class Efl.Canvas.Proxy (Evas.Image, Efl.Gfx.Base, Efl.Image, Efl.Gfx.Buffer, Efl.Gfx.Fill, Efl.Gfx.View, Efl.Gfx.Filter)
+class Efl.Canvas.Proxy (Evas.Image)
 {
    [[Low-level proxy image object.
 
