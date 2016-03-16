@@ -472,11 +472,11 @@ F* alloc_static_callback(F&& f)
 
 template <typename... Fs>
 inline
-void call_ctors(Eo* _obj_eoid, Fs&&... fs)
+void call_ctors(Eo* _obj_eo_self, Fs&&... fs)
 {
-   std::initializer_list<int const> const v {(fs(_obj_eoid), 0)...};
+   std::initializer_list<int const> const v {(fs(_obj_eo_self), 0)...};
    (void) v;
-   (void) _obj_eoid;
+   (void) _obj_eo_self;
 }
 
 } } // namespace efl { namespace eolian {
