@@ -128,12 +128,16 @@ _render_cb(void *obj)
    // Call the init function if it hasn't been called already
    if (!sd->initialized)
      {
+        //TODO:will be optimized
+        eo_event_callback_call(obj, ELM_GLVIEW_EVENT_CREATED, NULL);
         if (sd->init_func) sd->init_func(obj);
         sd->initialized = EINA_TRUE;
      }
 
    if (sd->resized)
      {
+        //TODO:will be optimized
+        eo_event_callback_call(obj, ELM_GLVIEW_EVENT_RESIZED, NULL);
         if (sd->resize_func) sd->resize_func(obj);
         sd->resized = EINA_FALSE;
      }
@@ -142,6 +146,8 @@ _render_cb(void *obj)
      evas_sync(evas_object_evas_get(obj));
    // Call the render function
    if (sd->render_func) sd->render_func(obj);
+   //TODO:will be optimized
+   eo_event_callback_call(obj, ELM_GLVIEW_EVENT_RENDER, NULL);
 
    // Depending on the policy return true or false
    if (sd->render_policy == ELM_GLVIEW_RENDER_POLICY_ON_DEMAND)
@@ -276,6 +282,8 @@ _elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
         evas_gl_make_current(sd->evasgl, sd->surface, sd->context);
         sd->del_func(obj);
      }
+   //TODO:will be optimised
+   eo_event_callback_call(obj, ELM_GLVIEW_EVENT_DESTROYED, NULL);
 
    ecore_idle_enterer_del(sd->render_idle_enterer);
    evas_gl_make_current(sd->evasgl, NULL, NULL);
@@ -290,6 +298,25 @@ _elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
    if (sd->evasgl) evas_gl_free(sd->evasgl);
 
    evas_obj_smart_del(eo_super(obj, MY_CLASS));
+}
+
+static Eina_Bool
+_cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
+{
+   const Eo_Callback_Array_Item *event = ev->event_info;
+
+   ELM_GLVIEW_DATA_GET(ev->obj, sd);
+
+   if (event->desc == ELM_GLVIEW_EVENT_CREATED)
+     {
+        sd->initialized = EINA_FALSE;
+     }
+   else if (event->desc == ELM_GLVIEW_EVENT_RENDER)
+     {
+        _set_render_policy_callback(ev->obj);
+     }
+
+   return EO_CALLBACK_CONTINUE;
 }
 
 EAPI Evas_Object *
@@ -319,6 +346,7 @@ _elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
    evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ANIMATION);
+   eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_ADD, _cb_added, NULL);
 }
 
 EOLIAN static Eo *
@@ -481,32 +509,6 @@ _elm_glview_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd,
 }
 
 EOLIAN static void
-_elm_glview_init_func_set(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd, Elm_GLView_Func_Cb func)
-{
-   sd->initialized = EINA_FALSE;
-   sd->init_func = func;
-}
-
-EOLIAN static void
-_elm_glview_del_func_set(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd, Elm_GLView_Func_Cb func)
-{
-   sd->del_func = func;
-}
-
-EOLIAN static void
-_elm_glview_resize_func_set(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd, Elm_GLView_Func_Cb func)
-{
-   sd->resize_func = func;
-}
-
-EOLIAN static void
-_elm_glview_render_func_set(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd, Elm_GLView_Func_Cb func)
-{
-   sd->render_func = func;
-   _set_render_policy_callback(obj);
-}
-
-EOLIAN static void
 _elm_glview_draw_request(Eo *obj, Elm_Glview_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -537,8 +539,7 @@ _elm_glview_class_constructor(Eo_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-/* Legacy wrappers */
-
+/* Legacy deprecated functions */
 EAPI void
 elm_glview_changed_set(Evas_Object *obj)
 {
@@ -557,5 +558,43 @@ EAPI void
 elm_glview_size_set(Elm_Glview *obj, int w, int h)
 {
    efl_gfx_view_size_set(obj, w, h);
+}
+
+EAPI void
+elm_glview_init_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
+{
+   ELM_GLVIEW_CHECK(obj);
+   ELM_GLVIEW_DATA_GET(obj, sd);
+
+   sd->initialized = EINA_FALSE;
+   sd->init_func = func;
+}
+
+EAPI void
+elm_glview_del_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
+{
+   ELM_GLVIEW_CHECK(obj);
+   ELM_GLVIEW_DATA_GET(obj, sd);
+
+   sd->del_func = func;
+}
+
+EAPI void
+elm_glview_resize_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
+{
+   ELM_GLVIEW_CHECK(obj);
+   ELM_GLVIEW_DATA_GET(obj, sd);
+
+   sd->resize_func = func;
+}
+
+EAPI void
+elm_glview_render_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
+{
+   ELM_GLVIEW_CHECK(obj);
+   ELM_GLVIEW_DATA_GET(obj, sd);
+
+   sd->render_func = func;
+   _set_render_policy_callback(obj);
 }
 #include "elm_glview.eo.c"
