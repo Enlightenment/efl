@@ -76,6 +76,6 @@ EAPI void elm_color_class_list_cb_set(Elm_Color_Class_List_Cb cb);
  * @since 1.14
  **/
 EAPI Eina_List *elm_color_class_util_edje_file_list(Eina_File *f);
-/** }@ */
+/** @} */
 
 #endif
