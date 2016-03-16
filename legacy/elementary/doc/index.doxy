@@ -254,49 +254,49 @@
  * it provides a number of containers. It's important to note that as containers
  * widgets don't have their own visual identity, so here we show one use for
  * them and a diagram showing their component parts:
- * @li @ref Gengrid
+ * @li @ref Elm_Gengrid
  *
  * @image html img/widget/gengrid/preview-00.png
  * @image latex img/widget/gengrid/preview-00.eps
- * @li @ref Genlist
+ * @li @ref Elm_Genlist
  *
  * @image html img/widget/genlist/preview-00.png
  * @image latex img/widget/genlist/preview-00.eps
  * @image html img/genlist.png
  * @image latex img/genlist.eps
- * @li @ref Box
+ * @li @ref Elm_Box
  *
  * @image html img/widget/box/preview-00.png
  * @image latex img/widget/box/preview-00.eps
  * @image html img/box.png
  * @image latex img/box.eps
- * @li @ref Conformant
+ * @li @ref Elm_Conformant
  *
  * @image html img/widget/conformant/preview-00.png
  * @image latex img/widget/conformant/preview-00.eps
  * @image html img/conformant.png
  * @image latex img/conformant.eps
- * @li @ref Grid
- * @li @ref Layout
+ * @li @ref Elm_Grid
+ * @li @ref Elm_Layout
  *
  * @image html img/widget/layout/preview-00.png
  * @image latex img/widget/layout/preview-00.eps
  * @image html img/layout-predefined.png
  * @image latex img/layout-predefined.eps
  *
- * @li @ref Naviframe
+ * @li @ref Elm_Naviframe
  *
- * @li @ref Panes
+ * @li @ref Elm_Panes
  *
  * @image html img/widget/panes/preview-00.png
  * @image latex img/widget/panes/preview-00.eps
  * @image html img/panes.png
  * @image latex img/panes.eps
- * @li @ref Scroller
+ * @li @ref Elm_Scroller
  *
  * @image html img/widget/scroller/preview-00.png
  * @image latex img/widget/scroller/preview-00.eps
- * @li @ref Table
+ * @li @ref Elm_Table
  *
  * @image html img/widget/table/preview-00.png
  * @image latex img/widget/table/preview-00.eps

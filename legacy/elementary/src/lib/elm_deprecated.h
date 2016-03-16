@@ -548,7 +548,7 @@ EINA_DEPRECATED EAPI const char *elm_object_translatable_text_part_get(const Eva
  * @see also elm_naviframe_item_title_visible_get()
  * @see also elm_naviframe_item_title_enabled_get()
  *
- * @ingroup Naviframe
+ * @ingroup Elm_Naviframe
  */
 EINA_DEPRECATED EAPI void      elm_naviframe_item_title_visible_set(Elm_Object_Item *it, Eina_Bool visible);
 
@@ -562,7 +562,7 @@ EINA_DEPRECATED EAPI void      elm_naviframe_item_title_visible_set(Elm_Object_I
  *
  * @see also elm_naviframe_item_title_visible_set()
  *
- * @ingroup Naviframe
+ * @ingroup Elm_Naviframe
  */
 EINA_DEPRECATED EAPI Eina_Bool elm_naviframe_item_title_visible_get(const Elm_Object_Item *it);
 
@@ -583,7 +583,7 @@ EINA_DEPRECATED EAPI Eina_Bool elm_naviframe_item_title_visible_get(const Elm_Ob
  * @see elm_scroller_bounce_set()
  * @see elm_genlist_bounce_get()
  *
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI void          elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
@@ -601,7 +601,7 @@ EINA_DEPRECATED EAPI void          elm_genlist_bounce_set(Evas_Object *obj, Eina
  * @see elm_scroller_bounce_get()
  * @see elm_genlist_bounce_set()
  *
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI void          elm_genlist_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
@@ -623,7 +623,7 @@ EINA_DEPRECATED EAPI void          elm_genlist_bounce_get(const Evas_Object *obj
  *
  * @see elm_scroller_policy_set()
  *
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI void          elm_genlist_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
@@ -638,7 +638,7 @@ EINA_DEPRECATED EAPI void          elm_genlist_scroller_policy_set(Evas_Object *
  *
  * @see elm_scroller_policy_get()
  *
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI void          elm_genlist_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
@@ -803,7 +803,7 @@ EINA_DEPRECATED EAPI void         elm_list_scroller_policy_get(const Evas_Object
  *
  * @deprecated Use elm_layout_theme_set() instead.
  *
- * @ingroup Scroller
+ * @ingroup Elm_Scroller
  */
 EINA_DEPRECATED EAPI void         elm_scroller_custom_widget_base_theme_set(Evas_Object *obj, const char *widget, const char *base);
 

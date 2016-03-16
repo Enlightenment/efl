@@ -1,5 +1,5 @@
 /**
- * @ingroup Layout
+ * @ingroup Elm_Layout
  *
  * @{
  */

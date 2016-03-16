@@ -1,5 +1,5 @@
 /**
- * @ingroup Naviframe
+ * @ingroup Elm_Naviframe
  *
  * @{
  */

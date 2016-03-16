@@ -7,7 +7,7 @@
  *
  * This function inserts a new conformant widget on the canvas.
  *
- * @ingroup Conformant
+ * @ingroup Elm_Conformant
  */
 EAPI Evas_Object                 *elm_conformant_add(Evas_Object *parent);
 

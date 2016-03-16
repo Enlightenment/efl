@@ -1,5 +1,5 @@
 /**
- * @defgroup Panes Panes
+ * @defgroup Elm_Panes Panes
  * @ingroup Elementary
  *
  * @image html panes_inheritance_tree.png
@@ -50,7 +50,7 @@
 
 
 /**
- * @addtogroup Panes
+ * @addtogroup Elm_Panes
  * @{
  */
 

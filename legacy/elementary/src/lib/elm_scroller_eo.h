@@ -1,5 +1,5 @@
 /**
- * @ingroup Scroller
+ * @ingroup Elm_Scroller
  *
  * @{
  */

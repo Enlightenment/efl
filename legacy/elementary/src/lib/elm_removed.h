@@ -1494,7 +1494,7 @@ EINA_DEPRECATED EAPI void         elm_check_states_labels_get(const Evas_Object 
  *
  * @deprecated use elm_object_content_set() instead
  *
- * @ingroup Conformant
+ * @ingroup Elm_Conformant
  */
 EINA_DEPRECATED EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content);
 
@@ -1513,7 +1513,7 @@ EINA_DEPRECATED EAPI void         elm_conformant_content_set(Evas_Object *obj, E
  *
  * @deprecated use elm_object_content_get() instead
  *
- * @ingroup Conformant
+ * @ingroup Elm_Conformant
  */
 EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_get(const Evas_Object *obj);
 
@@ -1529,7 +1529,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_get(const Evas_Object *
  *
  * @deprecated use elm_object_content_unset() instead
  *
- * @ingroup Conformant
+ * @ingroup Elm_Conformant
  */
 EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_unset(Evas_Object *obj);
 
@@ -2130,7 +2130,7 @@ EINA_DEPRECATED EAPI void          elm_genlist_item_icons_orphan(Elm_Object_Item
  * @see elm_genlist_horizontal_get()
  *
  * @deprecated use elm_genlist_mode_set()
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_horizontal_set(Evas_Object *obj, Elm_List_Mode mode);
 
@@ -2144,7 +2144,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_horizontal_set(Ev
  * @see elm_genlist_horizontal_set()
  *
  * @deprecated use elm_genlist_mode_get()
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI Elm_List_Mode                 elm_genlist_horizontal_get(const Evas_Object *obj);
 
@@ -2161,7 +2161,7 @@ EINA_DEPRECATED EAPI Elm_List_Mode                 elm_genlist_horizontal_get(co
  * @see elm_genlist_item_data_set()
  *
  * @deprecated Use elm_object_item_data_get() instead
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI void                         *elm_genlist_item_data_get(const Elm_Object_Item *it);
 
@@ -2180,7 +2180,7 @@ EINA_DEPRECATED EAPI void                         *elm_genlist_item_data_get(con
  * @see elm_genlist_item_data_get()
  *
  * @deprecated Use elm_object_item_data_set() instead
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_item_data_set(Elm_Object_Item *it, const void *data);
 
@@ -2197,7 +2197,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_data_set(Elm
  * @see elm_genlist_item_disabled_get()
  * @deprecated Use elm_object_item_disabled_set() instead
  *
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
 
@@ -2211,7 +2211,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_disabled_set
  * @see elm_genlist_item_disabled_set() for more details
  * @deprecated Use elm_object_item_disabled_get() instead
  *
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_item_disabled_get(const Elm_Object_Item *it);
 
@@ -2225,7 +2225,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_item_disabled_get
  * once.
  *
  * @deprecated Use elm_object_item_del() instead
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_item_del(Elm_Object_Item *it);
 
@@ -2239,7 +2239,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_del(Elm_Obje
  * This returns the genlist object itself that an item belongs to.
  * @deprecated Use elm_object_item_widget_get() instead
  *
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI Evas_Object                  *elm_genlist_item_genlist_get(const Elm_Object_Item *it);
 
@@ -2253,7 +2253,7 @@ EINA_DEPRECATED EAPI Evas_Object                  *elm_genlist_item_genlist_get(
  * @c NULL if you don't plan to use Genlist mode. See
  * elm_genlist_item_mode_set() for more info.
  *
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_item_style_get(const Evas_Object *obj);
 
@@ -2267,7 +2267,7 @@ EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_item_style_g
  * @c NULL if you don't plan to use Genlist mode. See
  * elm_genlist_item_mode_set() for more info.
  *
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style);
 
@@ -2281,7 +2281,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_mode_item_style_s
  * If it failed, return value is ELM_GENLIST_ITEM_MAX
  *
  * @deprecated Use elm_genlist_item_type_get() instead
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EINA_DEPRECATED EAPI Elm_Genlist_Item_Type        elm_genlist_item_flags_get(const Elm_Object_Item *it);
 

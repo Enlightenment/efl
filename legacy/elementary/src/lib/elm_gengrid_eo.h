@@ -1,5 +1,5 @@
 /**
- * @ingroup Gengrid
+ * @ingroup Elm_Gengrid
  *
  * @{
  */

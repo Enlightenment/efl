@@ -14,7 +14,7 @@
  * @see elm_object_item_del()
  * @see elm_gengrid_clear()
  *
- * @ingroup Gengrid
+ * @ingroup Elm_Gengrid
  */
 EAPI Evas_Object                  *elm_gengrid_add(Evas_Object *parent);
 
@@ -80,7 +80,7 @@ EINA_DEPRECATED EAPI void                          elm_gengrid_page_show(const E
  *
  * @see elm_gengrid_scroller_policy_get()
  *
- * @ingroup Gengrid
+ * @ingroup Elm_Gengrid
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
@@ -97,7 +97,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_set(Evas_Object *
  *
  * @see elm_gengrid_scroller_policy_set()
  *
- * @ingroup Gengrid
+ * @ingroup Elm_Gengrid
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
@@ -121,7 +121,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_get(const Evas_Ob
  *
  * @see elm_scroller_bounce_set()
  *
- * @ingroup Gengrid
+ * @ingroup Elm_Gengrid
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
@@ -139,7 +139,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_bounce_set(Evas_Object *obj, Eina
  *
  * @see elm_scroller_bounce_get()
  *
- * @ingroup Gengrid
+ * @ingroup Elm_Gengrid
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 

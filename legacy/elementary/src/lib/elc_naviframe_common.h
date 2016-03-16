@@ -17,7 +17,7 @@ typedef Eina_Bool (*Elm_Naviframe_Item_Pop_Cb)(void *data, Elm_Object_Item *it);
  * @param parent Parent object
  * @return New object or @c NULL, if it cannot be created
  *
- * @ingroup Naviframe
+ * @ingroup Elm_Naviframe
  */
 EAPI Evas_Object     *elm_naviframe_add(Evas_Object *parent);
 

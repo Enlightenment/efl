@@ -7,7 +7,7 @@
  * @see elm_layout_file_set()
  * @see elm_layout_theme_set()
  *
- * @ingroup Layout
+ * @ingroup Elm_Layout
  */
 EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent);
 
@@ -20,7 +20,7 @@ EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent);
  *
  * @since 1.9
  *
- * @ingroup Layout
+ * @ingroup Elm_Layout
  */
 EAPI Eina_List                   *elm_layout_content_swallow_list_get(const Evas_Object *obj);
 
@@ -47,7 +47,7 @@ EAPI Eina_List                   *elm_layout_content_swallow_list_get(const Evas
  *
  * @see @ref secBox
  *
- * @ingroup Layout
+ * @ingroup Elm_Layout
  */
 EAPI Eina_Bool                    elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
 
@@ -59,7 +59,7 @@ EAPI Eina_Bool                    elm_layout_content_set(Evas_Object *obj, const
  *
  * @return The swallowed object or NULL if none or an error occurred
  *
- * @ingroup Layout
+ * @ingroup Elm_Layout
  */
 EAPI Evas_Object                 *elm_layout_content_get(const Evas_Object *obj, const char *swallow);
 
@@ -72,7 +72,7 @@ EAPI Evas_Object                 *elm_layout_content_get(const Evas_Object *obj,
  *
  * Unparent and return the content object which was set for this part.
  *
- * @ingroup Layout
+ * @ingroup Elm_Layout
  */
 EAPI Evas_Object                 *elm_layout_content_unset(Evas_Object *obj, const char *swallow);
 
@@ -81,7 +81,7 @@ EAPI Evas_Object                 *elm_layout_content_unset(Evas_Object *obj, con
  *
  * @return (1 = success, 0 = error)
  *
- * @ingroup Layout
+ * @ingroup Elm_Layout
  *
  * @param[in] file The path to file (edj) that will be used as layout
  * @param[in] group The group that the layout belongs in edje file
@@ -92,7 +92,7 @@ EAPI Eina_Bool elm_layout_file_set(Eo *obj, const char *file, const char *group)
  * Get the loaded file
  *
  *
- * @ingroup Layout
+ * @ingroup Elm_Layout
  *
  * @param file The path to file (edj) used as layout
  * @param group The group that the layout belongs in edje file

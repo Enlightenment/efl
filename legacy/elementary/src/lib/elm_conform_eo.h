@@ -1,5 +1,5 @@
 /**
- * @ingroup Conformant
+ * @ingroup Elm_Conformant
  *
  * @{
  */

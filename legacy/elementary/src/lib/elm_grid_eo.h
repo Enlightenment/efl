@@ -1,5 +1,5 @@
 /**
- * @ingroup Grid
+ * @ingroup Elm_Grid
  *
  * @{
  */

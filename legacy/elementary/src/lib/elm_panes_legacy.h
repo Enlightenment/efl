@@ -7,7 +7,7 @@
  *
  * This function inserts a new panes widget on the canvas.
  *
- * @ingroup Panes
+ * @ingroup Elm_Panes
  */
 EAPI Evas_Object                 *elm_panes_add(Evas_Object *parent);
 

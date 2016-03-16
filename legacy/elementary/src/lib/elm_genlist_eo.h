@@ -1,5 +1,5 @@
 /**
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  *
  * @{
  */

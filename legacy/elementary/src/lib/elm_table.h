@@ -1,5 +1,5 @@
 /**
- * @defgroup Table Table
+ * @defgroup Elm_Table Table
  * @ingroup Elementary
  *
  * @image html table_inheritance_tree.png

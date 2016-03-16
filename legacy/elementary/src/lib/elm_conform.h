@@ -1,5 +1,5 @@
 /**
- * @defgroup Conformant Conformant
+ * @defgroup Elm_Conformant Conformant
  * @ingroup Elementary
  *
  * @image html conformant_inheritance_tree.png
@@ -46,7 +46,7 @@
  */
 
 /**
- * @addtogroup Conformant
+ * @addtogroup Elm_Conformant
  * @{
  */
 

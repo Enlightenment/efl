@@ -1,5 +1,5 @@
 /**
- * @defgroup Layout Layout
+ * @defgroup Elm_Layout Layout
  * @ingroup Elementary
  *
  * @image html layout_inheritance_tree.png

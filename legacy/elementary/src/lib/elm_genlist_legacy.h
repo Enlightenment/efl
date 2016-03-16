@@ -11,7 +11,7 @@
  * @see elm_object_item_del()
  * @see elm_genlist_clear()
  *
- * @ingroup Genlist
+ * @ingroup Elm_Genlist
  */
 EAPI Evas_Object                  *elm_genlist_add(Evas_Object *parent);
 
