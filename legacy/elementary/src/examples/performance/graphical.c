@@ -609,7 +609,7 @@ init_graphical_window(Evas_Object *img)
    _init_graphical();
    globalGraphical.evas = evas_object_evas_get(img);
    _init_scene(img);
-   evas_obj_image_scene_set(img, globalGraphical.scene);
+   efl_canvas_scene3d_set(img, globalGraphical.scene);
 
    return img;
 }

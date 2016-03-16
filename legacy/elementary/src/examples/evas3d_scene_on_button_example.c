@@ -250,11 +250,11 @@ elm_main(int argc, char **argv)
 
    _scene_setup(&data);
 
-   image = evas_object_image_filled_add(evas);
+   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
    efl_gfx_visible_set(image, EINA_TRUE);
 
    /* Set the image object as render target for 3D scene. */
-   evas_obj_image_scene_set(image, data.scene);
+   efl_canvas_scene3d_set(image, data.scene);
 
    /* Setup scene to the widget button. */
    btn = elm_button_add(win);

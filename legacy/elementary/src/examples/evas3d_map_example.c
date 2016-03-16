@@ -1156,7 +1156,7 @@ elm_main(int argc, char **argv)
    evas_object_show(bg);
 
    /* Add an image which shows a scene. */
-   image = evas_object_image_filled_add(evas);
+   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
    evas_object_resize(image, WIDTH, HEIGHT);
    evas_object_show(image);
 
@@ -1181,7 +1181,7 @@ elm_main(int argc, char **argv)
    evas_canvas3d_scene_root_node_set(scene, root_node);
    evas_canvas3d_scene_camera_node_set(scene, camera_node);
    evas_canvas3d_scene_size_set(scene, WIDTH, HEIGHT);
-   evas_obj_image_scene_set(image, scene);
+   efl_canvas_scene3d_set(image, scene);
 
    /* Add a layout for controlers. */
    control_layout = elm_layout_add(win);

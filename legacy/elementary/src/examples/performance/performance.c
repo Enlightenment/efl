@@ -622,7 +622,7 @@ EAPI_MAIN
    evas_object_show(startexitbox);
 
    evas = evas_object_evas_get(win);
-   image = evas_object_image_add(evas);
+   image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
 
    btnstart = elm_button_add(win);
    elm_object_text_set(btnstart, "Apply");
@@ -906,7 +906,6 @@ EAPI_MAIN
    evas_object_show(fs_bt);
    evas_object_smart_callback_add(fs_bt, "file,chosen", _load_mesh, NULL);
 
-   evas_object_image_filled_set(image, EINA_TRUE);
    elm_object_part_content_set(layout, "swallow.content", image);
    evas_object_size_hint_weight_set(image, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(image, EVAS_HINT_FILL, EVAS_HINT_FILL);
