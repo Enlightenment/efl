@@ -30,7 +30,9 @@ _efl_canvas_surface_tbm_eo_base_constructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data 
 EOLIAN static void
 _efl_canvas_surface_tbm_eo_base_destructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data *pd)
 {
-   Evas_Object_Protected_Data *obj = obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj;
+
+   obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
 
    ENFN->image_native_shutdown(ENDT, EVAS_NATIVE_SURFACE_TBM);
    eo_data_unref(eo, pd->base);
