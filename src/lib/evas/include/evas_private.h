@@ -579,7 +579,8 @@ MAGIC_CHECK_FAILED(o, t, m)
    do { Evas_Object_Protected_Data *_o = eo_data_scope_get(_eo, EVAS_OBJECT_CLASS); \
       if (EINA_UNLIKELY(!_o)) return __VA_ARGS__; \
       if (EINA_UNLIKELY(!_o->legacy)) { \
-         ERR("Calling legacy function '%s' on EO object '%s' is not permitted!", __FUNCTION__, eo_class_name_get(_o->object)); \
+         char buf[1024]; snprintf(buf, sizeof(buf), "Calling legacy API on EO object '%s' is not permitted!", eo_class_name_get(_o->object)); \
+         EINA_SAFETY_ERROR(buf); \
          return __VA_ARGS__; \
    } } while (0)
 #else
@@ -587,7 +588,8 @@ MAGIC_CHECK_FAILED(o, t, m)
    do { Evas_Object_Protected_Data *_o = eo_data_scope_get(_eo, EVAS_OBJECT_CLASS); \
       if (EINA_UNLIKELY(!_o)) return __VA_ARGS__; \
       if (EINA_UNLIKELY(!_o->legacy)) { \
-         ERR("Calling legacy function '%s' on EO object '%s' is not permitted!", __FUNCTION__, eo_class_name_get(_o->object)); \
+         char buf[1024]; snprintf(buf, sizeof(buf), "Calling legacy API on EO object '%s' is not permitted!", eo_class_name_get(_o->object)); \
+         EINA_SAFETY_ERROR(buf); \
    } } while (0)
 #endif
 
