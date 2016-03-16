@@ -219,7 +219,7 @@ _evas_image_proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
    Evas_Object_Protected_Data *proxy = eo_data_scope_get(eo_proxy, EVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_proxy, EVAS_IMAGE_CLASS);
 
-   evas_object_image_file_set(eo_proxy, NULL, NULL);
+   _evas_image_file_set(eo_proxy, NULL, NULL);
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy, Evas_Object_Proxy_Data, proxy_write)
      proxy_write->is_proxy = EINA_TRUE;

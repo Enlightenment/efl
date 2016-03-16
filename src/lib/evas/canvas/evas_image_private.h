@@ -25,6 +25,7 @@
 #include "../common/evas_convert_colorspace.h"
 #include "../common/evas_convert_yuv.h"
 
+#include "canvas/evas_image.eo.h"
 #include "evas_filter.eo.h"
 #include "evas_filter.h"
 
@@ -140,18 +141,55 @@ struct _Evas_Image_Data
 void _evas_image_init_set(const Eina_File *f, const char *file, const char *key, Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Image_Load_Opts *lo);
 void _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
 void _evas_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
+
+/* Efl.File */
+Eina_Bool _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key);
+void _evas_image_mmap_get(const Eo *eo_obj, const Eina_File **f, const char **key);
+Eina_Bool _evas_image_file_set(Eo *eo_obj, const char *file, const char *key);
+void _evas_image_file_get(const Eo *eo_obj, const char **file, const char **key);
+
+/* Efl.Image.Load */
+Efl_Image_Load_Error _evas_image_load_error_get(const Eo *eo_obj);
+void _evas_image_load_async_start(Eo *eo_obj);
+void _evas_image_load_async_cancel(Eo *eo_obj);
+void _evas_image_load_dpi_set(Eo *eo_obj, double dpi);
+double _evas_image_load_dpi_get(const Eo *eo_obj);
+void _evas_image_load_size_set(Eo *eo_obj, int w, int h);
+void _evas_image_load_size_get(const Eo *eo_obj, int *w, int *h);
+void _evas_image_load_scale_down_set(Eo *eo_obj, int scale_down);
+int _evas_image_load_scale_down_get(const Eo *eo_obj);
+void _evas_image_load_region_set(Eo *eo_obj, int x, int y, int w, int h);
+void _evas_image_load_region_get(const Eo *eo_obj, int *x, int *y, int *w, int *h);
+void _evas_image_load_orientation_set(Eo *eo_obj, Eina_Bool enable);
+Eina_Bool _evas_image_load_orientation_get(const Eo *eo_obj);
+Eina_Bool _evas_image_load_region_support_get(const Eo *eo_obj);
+
+/* Efl.Image.Animated */
+Eina_Bool _evas_image_animated_get(const Eo *eo_obj);
+int _evas_image_animated_frame_count_get(const Eo *eo_obj);
+Efl_Image_Animated_Loop_Hint _evas_image_animated_loop_type_get(const Eo *eo_obj);
+int _evas_image_animated_loop_count_get(const Eo *eo_obj);
+double _evas_image_animated_frame_duration_get(const Eo *eo_obj, int start_frame, int frame_num);
+Eina_Bool _evas_image_animated_frame_set(Eo *eo_obj, int frame_index);
+int _evas_image_animated_frame_get(const Eo *eo_obj);
+
+/* Efl.Canvas.Proxy */
 void _evas_image_proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
 void _evas_image_proxy_set(Evas_Object *proxy, Evas_Object *src);
 void _evas_image_proxy_error(Evas_Object *proxy, void *context, void *output, void *surface, int x, int y, Eina_Bool do_async);
-void _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Canvas3D_Scene *scene);
-void _evas_image_3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene);
-void _evas_image_3d_unset(Evas_Object *eo_obj, Evas_Object_Protected_Data *image, Evas_Image_Data *o);
 Eina_Bool _evas_image_proxy_source_set(Eo *eo_obj, Evas_Object *eo_src);
 Evas_Object *_evas_image_proxy_source_get(const Eo *eo_obj);
 void _evas_image_proxy_source_clip_set(Eo *eo_obj, Eina_Bool source_clip);
 Eina_Bool _evas_image_proxy_source_clip_get(const Eo *eo_obj);
 void _evas_image_proxy_source_events_set(Eo *eo_obj, Eina_Bool source_events);
 Eina_Bool _evas_image_proxy_source_events_get(const Eo *eo_obj);
+
+/* Efl.Canvas.Scene3d */
+void _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Canvas3D_Scene *scene);
+void _evas_image_3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene);
+void _evas_image_3d_unset(Evas_Object *eo_obj, Evas_Object_Protected_Data *image, Evas_Image_Data *o);
+
+/* Efl.Canvas.Surface */
 Eina_Bool _evas_image_native_surface_set(Eo *eo_obj, Evas_Native_Surface *surf);
 Evas_Native_Surface *_evas_image_native_surface_get(const Evas_Object *eo_obj);
 
@@ -175,6 +213,12 @@ void _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas
 
 # define EINA_COW_PIXEL_WRITE_END(Obj, Write) \
   EINA_COW_WRITE_END(evas_object_image_pixels_cow, Obj->pixels, Write)
+
+# define EINA_COW_LOAD_OPTS_WRITE_BEGIN(Obj, Write) \
+  EINA_COW_WRITE_BEGIN(evas_object_image_load_opts_cow, Obj->load_opts, Evas_Object_Image_Load_Opts, Write)
+
+# define EINA_COW_LOAD_OPTS_WRITE_END(Obj, Write) \
+  EINA_COW_WRITE_END(evas_object_image_load_opts_cow, Obj->load_opts, Write)
 
 #define FRAME_MAX 1024
 

@@ -1,9 +1,12 @@
 type @extern Evas_Object_Image_Pixels_Get_Cb: __undefined_type; /* FIXME: func pointers are not supported. */
 
-class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_Animated, Efl.Gfx.Buffer, Efl.Gfx.Fill, Efl.Gfx.View, Evas.Filter)
+class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load,
+                  Efl.Image_Animated, Efl.Gfx.Buffer, Efl.Gfx.Fill,
+                  Efl.Gfx.View, Evas.Filter)
 {
+   /* Legacy is implement inside Efl.Canvas.Image */
    legacy_prefix: evas_object_image;
-   eo_prefix: evas_obj_image;
+   eo_prefix: null;
    methods {
       /* GL View */
       @property pixels_dirty {
@@ -46,10 +49,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_An
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
       Eo.Base.finalize;
-      Efl.File.file.set;
-      Efl.File.file.get;
-      Efl.File.mmap.set;
-      Efl.File.mmap.get;
       Efl.File.save;
       Efl.Image.orientation.get;
       Efl.Image.orientation.set;
@@ -66,27 +65,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_An
       Efl.Image.scale_hint.set;
       Efl.Image.content_hint.get;
       Efl.Image.content_hint.set;
-      Efl.Image_Animated.animated.get;
-      Efl.Image_Animated.animated_frame.get;
-      Efl.Image_Animated.animated_frame.set;
-      Efl.Image_Animated.animated_frame_count.get;
-      Efl.Image_Animated.animated_loop_type.get;
-      Efl.Image_Animated.animated_loop_count.get;
-      Efl.Image_Animated.animated_frame_duration.get;
-      Efl.Image_Load.load_error.get;
-      Efl.Image_Load.load_async_start;
-      Efl.Image_Load.load_async_cancel;
-      Efl.Image_Load.load_dpi.get;
-      Efl.Image_Load.load_dpi.set;
-      Efl.Image_Load.load_size.set;
-      Efl.Image_Load.load_size.get;
-      Efl.Image_Load.load_orientation.get;
-      Efl.Image_Load.load_orientation.set;
-      Efl.Image_Load.load_scale_down.get;
-      Efl.Image_Load.load_scale_down.set;
-      Efl.Image_Load.load_region.get;
-      Efl.Image_Load.load_region.set;
-      Efl.Image_Load.load_region_support.get;
       Efl.Gfx.Buffer.alpha.get;
       Efl.Gfx.Buffer.alpha.set;
       Efl.Gfx.Buffer.buffer_update_add;
@@ -104,5 +82,11 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_An
       Evas.Filter.filter_input_alpha;
       Evas.Filter.filter_input_render;
       Evas.Filter.filter_dirty;
+
+      /* FIXME: Efl.File does not belong here */
+      Efl.File.file.set;
+      Efl.File.file.get;
+      Efl.File.mmap.set;
+      Efl.File.mmap.get;
    }
 }

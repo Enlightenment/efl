@@ -788,11 +788,13 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
              evas_object_clip_unset(tmp->object);
           }
      }
+
+   /* FIXME: Proxies should listen to source death */
    EINA_LIST_FOREACH_SAFE(obj->proxy->proxies, l, l2, proxy)
      {
         if (eo_isa(proxy, EVAS_IMAGE_CLASS))
           evas_object_image_source_unset(proxy);
-        else if (eo_isa(proxy, EVAS_TEXT_CLASS))
+        if (eo_isa(proxy, EFL_GFX_FILTER_INTERFACE))
           efl_gfx_filter_source_set(proxy, NULL, eo_obj);
      }
 

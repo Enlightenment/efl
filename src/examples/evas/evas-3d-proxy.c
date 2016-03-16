@@ -90,7 +90,7 @@ _animate_scene(void *data)
      }
 
    //efl_gfx_buffer_set(source, pixels, 0, 0, stride, 0, 0, 0, 0, 0, 0);
-   //evas_obj_image_data_update_add(source, 0, 0, IMG_WIDTH, IMG_HEIGHT);
+   //evas_object_image_data_update_add(source, 0, 0, IMG_WIDTH, IMG_HEIGHT);
    evas_object_image_data_set(source, pixels);
    evas_object_image_data_update_add(source, 0, 0, IMG_WIDTH, IMG_HEIGHT);
 

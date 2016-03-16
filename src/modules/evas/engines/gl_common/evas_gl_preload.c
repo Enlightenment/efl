@@ -105,7 +105,7 @@ _evas_gl_preload_main_loop_wakeup(void)
         if (async->tex)
           {
              EINA_LIST_FREE(async->tex->targets, target)
-               evas_obj_image_pixels_dirty_set(target, EINA_TRUE);
+               evas_object_image_pixels_dirty_set(target, EINA_TRUE);
           }
         async->im->cache_entry.flags.preload_done = 0;
         if (async->tex)
