@@ -32,6 +32,40 @@ group { name: "elm/label/base/default";
    }
 }
 
+group { name: "elm/label/base/default/left";
+   inherit: "elm/label/base/default";
+   styles {
+      style { name: "label_style_left";
+         base: "font="FN" font_size=10 text_class=tb_plain align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         tag: "br" "\n";
+         tag: "b" "+ font="FNBD" text_class=tb_light";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
+   parts {
+      textblock { "elm.text";
+         desc { "default"; text.style: "label_style_left"; }
+      }
+   }
+}
+
+group { name: "elm/label/base/default/right";
+   inherit: "elm/label/base/default";
+   styles {
+      style { name: "label_style_right";
+         base: "font="FN" font_size=10 text_class=tb_plain align=right color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         tag: "br" "\n";
+         tag: "b" "+ font="FNBD" text_class=tb_light";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
+   parts {
+      textblock { "elm.text";
+         desc { "default"; text.style: "label_style_right"; }
+      }
+   }
+}
+
 group { name: "elm/label/base/marker";
    inherit: "elm/label/base/default";
    styles {
@@ -47,6 +81,52 @@ group { name: "elm/label/base/marker";
          scale: 1;
          description { state: "default" 0.0;
             text { style: "label_style2";
+               min: 1 1;
+               ellipsis: -1;
+            }
+         }
+      }
+   }
+}
+
+group { "elm/label/base/marker/left";
+   inherit: "elm/label/base/default";
+   styles {
+      style { name: "label_style3";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         tag: "br" "\n";
+         tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
+         tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";
+      }
+   }
+   parts {
+      part { name: "elm.text"; type: TEXTBLOCK;
+         scale: 1;
+         description { state: "default" 0.0;
+            text { style: "label_style3";
+               min: 1 1;
+               ellipsis: -1;
+            }
+         }
+      }
+   }
+}
+
+group { "elm/label/base/marker/right";
+   inherit: "elm/label/base/default";
+   styles {
+      style { name: "label_style4";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=right color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         tag: "br" "\n";
+         tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
+         tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";
+      }
+   }
+   parts {
+      part { name: "elm.text"; type: TEXTBLOCK;
+         scale: 1;
+         description { state: "default" 0.0;
+            text { style: "label_style4";
                min: 1 1;
                ellipsis: -1;
             }
