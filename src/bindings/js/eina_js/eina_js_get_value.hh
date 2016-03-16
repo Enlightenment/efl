@@ -333,18 +333,24 @@ inline const Eina_Array* get_value_from_javascript(
   return get_value_from_javascript(v, isolate, class_name, value_tag<complex_tag<Eina_Array *, I...>>{}, throw_js_exception);
 }
 
-template <typename...I>
+template <typename T, typename K>
 inline Eina_Iterator* get_value_from_javascript(
-  v8::Local<v8::Value>,
+  v8::Local<v8::Value> v,
   v8::Isolate* isolate,
   const char*,
-  value_tag<complex_tag<Eina_Iterator *, I...>> tag,
+  value_tag<complex_tag<Eina_Iterator *, T, K>> /*tag*/,
   bool throw_js_exception = true)
 {
+  if(v->IsNull())
+    return nullptr;
+  else if(v->IsObject())
+    {
+       return import_iterator(v->ToObject());
+    }
   if (throw_js_exception)
     eina::js::compatibility_throw
       (isolate, v8::Exception::TypeError
-       (eina::js::compatibility_new<v8::String>(isolate, "Not implemented yet")));
+       (eina::js::compatibility_new<v8::String>(isolate, "Type expected is different. Expected Eolian accessor type")));
   throw std::logic_error("");
 }
 

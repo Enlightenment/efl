@@ -23,6 +23,7 @@ void register_destroy_iterator(v8::Isolate *isolate,
 
         deleter_t deleter = compatibility_get_pointer_internal_field<deleter_t>(o, 1);
         deleter(compatibility_get_pointer_internal_field<>(o, 0));
+        compatibility_set_pointer_internal_field(o, 0, static_cast<void*>(0));
         return compatibility_return();
       };
 

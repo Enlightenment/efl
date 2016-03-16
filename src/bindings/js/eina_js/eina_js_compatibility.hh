@@ -134,6 +134,22 @@ struct container_wrapper
 };
 
 template <typename T>
+inline T get_c_container_data(void* ptr, typename std::enable_if<
+  std::is_pointer<T>::value
+>::type* = 0)
+{
+  return static_cast<T>(ptr);
+}
+
+template <typename T>
+inline T get_c_container_data(void* ptr, typename std::enable_if<
+  !std::is_pointer<T>::value
+>::type* = 0)
+{
+  return *static_cast<T*>(ptr);
+}
+
+template <typename T>
 T container_wrap(T&& v)
 {
   return std::forward<T>(v);
@@ -258,6 +274,12 @@ v8::Local<v8::Object> export_accessor(::efl::eina::accessor<W>&, v8::Isolate*, c
 
 template <typename T>
 ::efl::eina::accessor<T>& import_accessor(v8::Handle<v8::Object>);
+
+// Iterator
+template <typename T>
+inline v8::Local<v8::Object> export_iterator(Eina_Iterator*, v8::Isolate*, const char*);
+
+inline Eina_Iterator* import_iterator(v8::Handle<v8::Object>);
 
 // Wrap value functions
 template <typename R, typename T>

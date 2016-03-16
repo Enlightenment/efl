@@ -207,18 +207,22 @@ get_value_from_c(efl::eina::js::complex_tag<const Eina_Array *, T, K> v, v8::Iso
 
 template <typename T, typename K>
 inline v8::Local<v8::Value>
-get_value_from_c(efl::eina::js::complex_tag<Eina_Iterator *, T, K>, v8::Isolate*, const char*)
+get_value_from_c(efl::eina::js::complex_tag<Eina_Iterator *, T, K> v, v8::Isolate* isolate, const char*)
 {
-  std::cerr << "get_value_from_c for Eina_Iterator not implemented. Aborting..." << std::endl;
-  std::abort();
+  bool own = false; // TODO: handle ownership
+  auto ptr = v.value;
+  auto obj = export_iterator<T>(ptr , isolate, K::class_name());
+  if (own && ptr)
+    efl::eina::js::make_weak(isolate, obj, [ptr]{ ::eina_iterator_free(ptr); });
+  return obj;
 }
 
 template <typename T, typename K>
 inline v8::Local<v8::Value>
-get_value_from_c(efl::eina::js::complex_tag<const Eina_Iterator *, T, K>, v8::Isolate*, const char*)
+get_value_from_c(efl::eina::js::complex_tag<const Eina_Iterator *, T, K> v, v8::Isolate* isolate, const char* class_name)
 {
-  std::cerr << "get_value_from_c for Eina_Iterator not implemented. Aborting..." << std::endl;
-  std::abort();
+  // TODO: implement const iterators?
+  return get_value_from_c(efl::eina::js::complex_tag<Eina_Iterator *, T, K>{const_cast<Eina_Iterator*>(v.value)}, isolate, class_name);
 }
 
 template <typename T, typename KT, typename U, typename KU>

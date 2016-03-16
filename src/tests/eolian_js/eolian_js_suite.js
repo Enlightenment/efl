@@ -252,6 +252,8 @@ startTest("struct_values", function() {
   assert(ret.valueEnum === suite.Test.EnumEx.FOURTH);
 });
 
+// Events //
+
 startTest("event_simple", function() {
   var v = false;
   var obj = new TestObject(null);
@@ -331,6 +333,8 @@ startTest("event_stringarg", function() {
    printInfo('is event called?');
    assert(v);
 });
+
+// Array //
 
 // // TODO: disabled. Not implemented yet
 // startTest("integral_array", function() {
@@ -431,6 +435,8 @@ startTest("method_array_of_structs", function() {
   assert(s.valueEnum === suite.Test.EnumEx.THIRD);
 });
 
+// List //
+
 startTest("list_in_list_out", function() {
   var obj = new TestObject(null);
   var newList = obj.checkMethodListWith42();
@@ -524,6 +530,8 @@ startTest("method_list_of_structs", function() {
   assert(s.valueEnum === suite.Test.EnumEx.THIRD);
 });
 
+// Accessor //
+
 startTest("method_accessor_of_objects", function() {
   var obj = new TestObject(null);
   var acc = obj.checkMethodAccessorOfObjects(null);
@@ -604,6 +612,125 @@ startTest("method_accessor_of_structs", function() {
   assert(s != null);
   assert(s.valueInt === 42);
   assert(s.valueEnum === suite.Test.EnumEx.THIRD);
+});
+
+// Iterator //
+
+startTest("method_iterator_of_objects", function() {
+  var obj = new TestObject(null);
+  var it = obj.checkMethodIteratorOfObjects(null);
+  assert(it != null);
+  it = obj.checkMethodIteratorOfObjects(it);
+  assert(it != null);
+  var idx = 0;
+  for (var n = it.next(); !n.done; n = it.next()) {
+    var v = n.value;
+    assert(v != null);
+    var expectedValue = 1234;
+    v.checkMethodIntegralInA(expectedValue);
+    var actualValue = v.checkMethodIntegralOutA();
+    assert(actualValue == expectedValue, actualValue + " == " + expectedValue);
+    idx++;
+  }
+  assert(idx == 2, idx + " == 2");
+});
+
+startTest("method_iterator_of_strings", function() {
+  var obj = new TestObject(null);
+  var it = obj.checkMethodIteratorOfStrings(null);
+  assert(it != null);
+  it = obj.checkMethodIteratorOfStrings(it);
+  assert(it != null);
+  var cmp = ["foo", "bar"];
+  var idx = 0;
+  for (var n = it.next(); !n.done; n = it.next()) {
+    var v = n.value;
+    assert(v === cmp[idx], idx+": "+v+" === "+cmp[idx]);
+    idx++;
+  }
+  assert(idx == 2, idx + " == 2");
+});
+
+startTest("method_iterator_of_ints", function() {
+  var obj = new TestObject(null);
+  var it = obj.checkMethodIteratorOfInts(null);
+  assert(it != null);
+  it = obj.checkMethodIteratorOfInts(it);
+  assert(it != null);
+  var cmp = [42, 24];
+  var idx = 0;
+  for (var n = it.next(); !n.done; n = it.next()) {
+    var v = n.value;
+    assert(v === cmp[idx], idx+": "+v+" === "+cmp[idx]);
+    idx++;
+  }
+  assert(idx == 2, idx + " == 2");
+});
+
+startTest("method_iterator_of_bools", function() {
+  var obj = new TestObject(null);
+  var it = obj.checkMethodIteratorOfBools(null);
+  assert(it != null);
+  it = obj.checkMethodIteratorOfBools(it);
+  assert(it != null);
+  var cmp = [true, false];
+  var idx = 0;
+  for (var n = it.next(); !n.done; n = it.next()) {
+    var v = n.value;
+    assert(v === cmp[idx], idx+": "+v+" === "+cmp[idx]);
+    idx++;
+  }
+  assert(idx == 2, idx + " == 2");
+});
+
+startTest("method_iterator_of_doubles", function() {
+  var obj = new TestObject(null);
+  var it = obj.checkMethodIteratorOfDoubles(null);
+  assert(it != null);
+  it = obj.checkMethodIteratorOfDoubles(it);
+  assert(it != null);
+  var cmp = [42.0, 24.0];
+  var idx = 0;
+  for (var n = it.next(); !n.done; n = it.next()) {
+    var v = n.value;
+    assert(v === cmp[idx], idx+": "+v+" === "+cmp[idx]);
+    idx++;
+  }
+  assert(idx == 2, idx + " == 2");
+});
+
+startTest("method_iterator_of_enums", function() {
+  var obj = new TestObject(null);
+  var it = obj.checkMethodIteratorOfEnums(null);
+  assert(it != null);
+  it = obj.checkMethodIteratorOfEnums(it);
+  assert(it != null);
+  var cmp = [suite.Test.EnumEx.THIRD, suite.Test.EnumEx.FIRST];
+  var idx = 0;
+  for (var n = it.next(); !n.done; n = it.next()) {
+    var v = n.value;
+    assert(v === cmp[idx], idx+": "+v+" === "+cmp[idx]);
+    idx++;
+  }
+  assert(idx == 2, idx + " == 2");
+});
+
+startTest("method_iterator_of_structs", function() {
+  var obj = new TestObject(null);
+  var it = obj.checkMethodIteratorOfStructs(null);
+  assert(it != null);
+  it = obj.checkMethodIteratorOfStructs(it);
+  assert(it != null);
+  var cmp = [[42, suite.Test.EnumEx.THIRD], [24, suite.Test.EnumEx.FIRST]];
+  var idx = 0;
+  for (var n = it.next(); !n.done; n = it.next()) {
+    var v = n.value;
+    assert(v != null);
+    assert(v.valueInt === cmp[idx][0], idx+": "+v.valueInt+" === "+cmp[idx][0]);
+    assert(v.valueEnum === cmp[idx][1], idx+": "+v.valueEnum+" === "+cmp[idx][1]);
+    idx++;
+  }
+  assert(idx == 2, idx + " == 2");
 });
 
 // Combinations of complex types //

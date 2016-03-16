@@ -18,12 +18,12 @@ namespace efl { namespace eina { namespace js {
    The iterator will have the `next` function, but the returned object won't
    have a `done` attribute, because the eina_iterator itself doesn't expose this
    information.*/
-template<class T>
-v8::Local<v8::Object> export_iterator(::efl::eina::iterator<T> *i,
-                                      v8::Isolate *isolate)
+template <typename T>
+inline v8::Local<v8::Object> export_iterator(Eina_Iterator *i,
+                                             v8::Isolate *isolate,
+                                             const char *class_name)
 {
-    typedef ::efl::eina::iterator<T> value_type;
-    typedef value_type *ptr_type;
+    using no_tag_type = typename remove_tag<T>::type;
     typedef void (*deleter_t)(void*);
 
     auto obj_tpl = compatibility_new<v8::ObjectTemplate>(isolate);
@@ -37,20 +37,33 @@ v8::Local<v8::Object> export_iterator(::efl::eina::iterator<T> *i,
           return compatibility_return();
 
         void *ptr = compatibility_get_pointer_internal_field(info.This(), 0);
-        auto &value = *static_cast<ptr_type>(ptr);
+        auto it = static_cast<Eina_Iterator*>(ptr);
+        void *value = nullptr;
+        auto done = !::eina_iterator_next(it, &value);
         v8::Local<v8::Object> o = compatibility_new<v8::Object>(info.GetIsolate());
-        o->Set(compatibility_new<v8::String>(info.GetIsolate(), "value"),
-               value_cast<v8::Local<v8::Value>>(*value, info.GetIsolate()));
-        ++value;
+        o->Set(compatibility_new<v8::String>(info.GetIsolate(), "done"),
+               compatibility_new<v8::Boolean>(info.GetIsolate(), done));
+        if (!done)
+          {
+             std::string obj_class_name;
+             if (info.Data()->IsString())
+               {
+                  v8::String::Utf8Value str(info.Data());
+                  obj_class_name = *str;
+               }
+             o->Set(compatibility_new<v8::String>(info.GetIsolate(), "value"),
+                    get_value_from_c(js::wrap_value<T>(get_c_container_data<no_tag_type>(value), js::value_tag<T>{}),
+                                     info.GetIsolate(), obj_class_name.c_str()));
+          }
         return compatibility_return(o, info);
       };
 
     ret->Set(compatibility_new<v8::String>(isolate, "next"),
-             compatibility_new<v8::FunctionTemplate>(isolate, next)->GetFunction());
+             compatibility_new<v8::FunctionTemplate>(isolate, next, js::compatibility_new<v8::String>(isolate, class_name))->GetFunction());
 
     {
         deleter_t deleter = [](void *i) {
-            delete static_cast<ptr_type>(i);
+            ::eina_iterator_free(static_cast<Eina_Iterator*>(i));
         };
         compatibility_set_pointer_internal_field(ret, 0, i);
         compatibility_set_pointer_internal_field
@@ -62,15 +75,12 @@ v8::Local<v8::Object> export_iterator(::efl::eina::iterator<T> *i,
 
 /* Extracts and returns a copy from the internal iterator object from the JS
    object. */
-template<class T>
-::efl::eina::iterator<T> *import_iterator(v8::Handle<v8::Object> o)
-  ;
-// {
-//     typedef ::efl::eina::iterator<T> value_type;
-//     typedef value_type *ptr_type;
-
-//     return reinterpret_cast<ptr_type>(o->GetAlignedPointerFromInternalField(0));
-// }
+inline
+Eina_Iterator* import_iterator(v8::Handle<v8::Object> o)
+{
+    void* ptr = compatibility_get_pointer_internal_field(o, 0);
+    return static_cast<Eina_Iterator*>(ptr);
+}
 
 void register_destroy_iterator(v8::Isolate *isolate,
                                v8::Handle<v8::Object> global,

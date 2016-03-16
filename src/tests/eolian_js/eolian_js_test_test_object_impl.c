@@ -587,6 +587,128 @@ _test_object_method_accessor_of_structs_check(Eo* obj EINA_UNUSED,
   return eina_array_accessor_new(arr);
 }
 
+// Iterator //
+
+EOLIAN static Eina_Iterator *
+_test_object_method_iterator_of_objects_check(Eo* obj,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Iterator *i_in)
+{
+  fprintf(stdout, "_test_object_method_iterator_of_objects_check(%p)\n", i_in);
+  fflush(stdout);
+  if (i_in) return i_in;
+  Eina_Array *arr = eina_array_new(2);
+  eina_array_push(arr, obj);
+  eina_array_push(arr, obj);
+  return eina_array_iterator_new(arr);
+}
+
+EOLIAN static Eina_Iterator *
+_test_object_method_iterator_of_strings_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Iterator *i_in)
+{
+  fprintf(stdout, "_test_object_method_iterator_of_strings_check(%p)\n", i_in);
+  fflush(stdout);
+  if (i_in) return i_in;
+  Eina_Array *arr = eina_array_new(2);
+  eina_array_push(arr, "foo");
+  eina_array_push(arr, "bar");
+  return eina_array_iterator_new(arr);
+}
+
+EOLIAN static Eina_Iterator *
+_test_object_method_iterator_of_ints_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Iterator *i_in)
+{
+  fprintf(stdout, "_test_object_method_iterator_of_ints_check(%p)\n", i_in);
+  fflush(stdout);
+  if (i_in) return i_in;
+  Eina_Array *arr = eina_array_new(2);
+  int *v = malloc(sizeof(int));
+  *v = 42;
+  eina_array_push(arr, v);
+  v = malloc(sizeof(int));
+  *v = 24;
+  eina_array_push(arr, v);
+  return eina_array_iterator_new(arr);
+}
+
+EOLIAN static Eina_Iterator *
+_test_object_method_iterator_of_bools_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Iterator *i_in)
+{
+  fprintf(stdout, "_test_object_method_iterator_of_bools_check(%p)\n", i_in);
+  fflush(stdout);
+  if (i_in) return i_in;
+  Eina_Array *arr = eina_array_new(2);
+  Eina_Bool *v = malloc(sizeof(Eina_Bool));
+  *v = EINA_TRUE;
+  eina_array_push(arr, v);
+  v = malloc(sizeof(Eina_Bool));
+  *v = EINA_FALSE;
+  eina_array_push(arr, v);
+  return eina_array_iterator_new(arr);
+}
+
+EOLIAN static Eina_Iterator *
+_test_object_method_iterator_of_doubles_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Iterator *i_in)
+{
+  fprintf(stdout, "_test_object_method_iterator_of_doubles_check(%p)\n", i_in);
+  fflush(stdout);
+  if (i_in) return i_in;
+  Eina_Array *arr = eina_array_new(2);
+  double *v = malloc(sizeof(double));
+  *v = 42.0;
+  eina_array_push(arr, v);
+  v = malloc(sizeof(double));
+  *v = 24.0;
+  eina_array_push(arr, v);
+  return eina_array_iterator_new(arr);
+}
+
+EOLIAN static Eina_Iterator *
+_test_object_method_iterator_of_enums_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Iterator *i_in)
+{
+  fprintf(stdout, "_test_object_method_iterator_of_enums_check(%p)\n", i_in);
+  fflush(stdout);
+  if (i_in) return i_in;
+  Eina_Array *arr = eina_array_new(2);
+  Test_Enum_Ex *v = malloc(sizeof(Test_Enum_Ex));
+  *v = TEST_ENUM_EX_THIRD;
+  eina_array_push(arr, v);
+  v = malloc(sizeof(Test_Enum_Ex));
+  *v = TEST_ENUM_EX_FIRST;
+  eina_array_push(arr, v);
+  return eina_array_iterator_new(arr);
+}
+
+EOLIAN static Eina_Iterator *
+_test_object_method_iterator_of_structs_check(Eo* obj EINA_UNUSED,
+  Test_Object_Data *pd EINA_UNUSED,
+  Eina_Iterator *i_in)
+{
+  fprintf(stdout, "_test_object_method_iterator_of_structs_check(%p)\n", i_in);
+  fflush(stdout);
+  if (i_in) return i_in;
+  Eina_Array *arr = eina_array_new(2);
+  Test_Struct_Ex *v = malloc(sizeof(Test_Struct_Ex));
+  v->value_int = 42;
+  v->value_enum = TEST_ENUM_EX_THIRD;
+  eina_array_push(arr, v);
+  v = malloc(sizeof(Test_Struct_Ex));
+  v->value_int = 24;
+  v->value_enum = TEST_ENUM_EX_FIRST;
+  eina_array_push(arr, v);
+  return eina_array_iterator_new(arr);
+}
+
 // Combinations of complex types
 
 EOLIAN static Eina_List *
