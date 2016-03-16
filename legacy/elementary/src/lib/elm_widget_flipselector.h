@@ -86,4 +86,8 @@ struct _Elm_Flipselector_Item_Data
   if (EINA_UNLIKELY(!eo_isa((it->base->eo_obj), ELM_FLIPSELECTOR_ITEM_CLASS))) \
     return __VA_ARGS__;
 
+/**
+ * @}
+ */
+
 #endif

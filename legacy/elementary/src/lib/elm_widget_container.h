@@ -38,4 +38,8 @@
 
 #include "elm_container.eo.h"
 
+/**
+ * @}
+ */
+
 #endif
