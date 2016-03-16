@@ -273,6 +273,11 @@ struct eina_container_common : eina_container_type_specific<C, typename C::value
        (eina::js::compatibility_new<v8::String>(isolate, "Indexed attribution was not implemented.")));
     return v8::Undefined(isolate);
   }
+
+  typename C::native_handle_type release_native_handle()
+  {
+    return _container.release_native_handle();
+  }
   C _container;
   typedef C container_type;
 };

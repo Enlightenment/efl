@@ -54,11 +54,14 @@ v8::Local<v8::Value> concat(eina_container_base& lhs, v8::Isolate* isolate, v8::
             , &typeinfo_rhs = typeid(rhs);
           if(!typeinfo_lhs.before(typeinfo_rhs) && !typeinfo_rhs.before(typeinfo_lhs))
             {
+              auto ptr = rhs.concat(lhs);
               v8::Handle<v8::Value> a[] =
-                {efl::eina::js::compatibility_new<v8::External>(isolate, rhs.concat(lhs))};
+                {efl::eina::js::compatibility_new<v8::External>(isolate, ptr)};
               assert(!!*instance_templates[lhs.get_container_type()].handle());
               v8::Local<v8::Object> result =
                 instance_templates[lhs.get_container_type()].handle()->NewInstance(1, a);
+              if (ptr)
+                efl::eina::js::make_weak(isolate, result, [ptr]{ delete ptr; });
               return result;
             }
           else
@@ -95,9 +98,12 @@ v8::Local<v8::Value> slice(eina_container_base& self, v8::Isolate* isolate, v8::
   else
     return v8::Undefined(isolate);
 
-  v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(isolate, self.slice(i, j))};
+  auto ptr = self.slice(i, j);
+  v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(isolate, ptr)};
   v8::Local<v8::Object> result = instance_templates[self.get_container_type()].handle()
     ->NewInstance(1, a);
+  if (ptr)
+    efl::eina::js::make_weak(isolate, result, [ptr]{ delete ptr; });
   return result;
 }
 
@@ -154,6 +160,7 @@ compatibility_return_type new_eina_list_internal(compatibility_callback_info_typ
           eina_container_base* p = new eina_list<int>;
           compatibility_set_pointer_internal_field
             (args.This(), 0, dynamic_cast<void*>(p));
+          efl::eina::js::make_weak(args.GetIsolate(), args.This(), [p]{ delete p; });
         }
       else
         {
@@ -182,6 +189,7 @@ compatibility_return_type new_eina_list(compatibility_callback_info_type args)
           eina_container_base* p = new eina_list<int>;
           compatibility_set_pointer_internal_field
             (args.This(), 0, dynamic_cast<void*>(p));
+          efl::eina::js::make_weak(args.GetIsolate(), args.This(), [p]{ delete p; });
           return compatibility_return();
         }
         else if (args.Length() == 1 && args[0]->IsString())
@@ -195,6 +203,7 @@ compatibility_return_type new_eina_list(compatibility_callback_info_type args)
           }
           compatibility_set_pointer_internal_field
             (args.This(), 0, dynamic_cast<void*>(p));
+          efl::eina::js::make_weak(args.GetIsolate(), args.This(), [p]{ delete p; });
           return compatibility_return();
         }
     }
@@ -212,6 +221,7 @@ compatibility_return_type new_eina_array_internal(compatibility_callback_info_ty
           eina_container_base* p = new eina_array<int>;
           compatibility_set_pointer_internal_field
             (args.This(), 0, dynamic_cast<void*>(p));
+          efl::eina::js::make_weak(args.GetIsolate(), args.This(), [p]{ delete p; });
         }
       else
         {
@@ -240,6 +250,7 @@ compatibility_return_type new_eina_array(compatibility_callback_info_type args)
           eina_container_base* p = new eina_array<int>;
           compatibility_set_pointer_internal_field
             (args.This(), 0, dynamic_cast<void*>(p));
+          efl::eina::js::make_weak(args.GetIsolate(), args.This(), [p]{ delete p; });
           return compatibility_return();
         }
         else if (args.Length() == 1 && args[0]->IsString())
@@ -253,6 +264,7 @@ compatibility_return_type new_eina_array(compatibility_callback_info_type args)
           }
           compatibility_set_pointer_internal_field
             (args.This(), 0, dynamic_cast<void*>(p));
+          efl::eina::js::make_weak(args.GetIsolate(), args.This(), [p]{ delete p; });
           return compatibility_return();
         }
     }

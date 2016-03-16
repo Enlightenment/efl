@@ -54,6 +54,9 @@ compatibility_return_type eina_value_constructor(compatibility_callback_info_typ
     std::unique_ptr<value>
       ptr(new value(value_cast<value>(args[0])));
     compatibility_set_pointer_internal_field(args.This(), 0, ptr.get());
+    auto v = ptr.get();
+    if (v)
+      efl::eina::js::make_weak(isolate, args.This(), [v]{ delete v; });
     ptr.release();
   } catch(const std::bad_cast &e) {
     v8::Local<v8::Object> je = compatibility_new<v8::Object>(isolate);

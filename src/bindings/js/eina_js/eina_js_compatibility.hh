@@ -927,8 +927,9 @@ compatibility_return_type cast_function(compatibility_callback_info_type args)
       char* class_name = *str;
 
       auto ctor = ::efl::eina::js::get_class_constructor(class_name);
-      return compatibility_return
-        (new_v8_external_instance(ctor, ::eo_ref(eo), isolate), args);
+      auto obj = new_v8_external_instance(ctor, ::eo_ref(eo), isolate);
+      efl::eina::js::make_weak(isolate, obj, [eo]{ ::eo_unref(eo); });
+      return compatibility_return(obj, args);
     }
   else
     {

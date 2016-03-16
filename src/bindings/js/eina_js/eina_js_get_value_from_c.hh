@@ -143,7 +143,9 @@ inline v8::Local<v8::Value>
 get_value_from_c(Eo* v, v8::Isolate* isolate, const char* class_name)
 {
   auto ctor = ::efl::eina::js::get_class_constructor(class_name);
-  return new_v8_external_instance(ctor, v, isolate);
+  auto obj = new_v8_external_instance(ctor, ::eo_ref(v), isolate);
+  efl::eina::js::make_weak(isolate, obj, [v]{ ::eo_unref(v); });
+  return obj;
 }
 
 inline v8::Local<v8::Value>
@@ -151,23 +153,32 @@ get_value_from_c(const Eo* v, v8::Isolate* isolate, const char* class_name)
 {
   // TODO: implement const objects?
   auto ctor = ::efl::eina::js::get_class_constructor(class_name);
-  return new_v8_external_instance(ctor, const_cast<Eo*>(v), isolate);
+  auto obj = new_v8_external_instance(ctor, ::eo_ref(v), isolate);
+  efl::eina::js::make_weak(isolate, obj, [v]{ ::eo_unref(v); });
+  return obj;
 }
 
 template <typename T>
 inline v8::Local<v8::Value>
-get_value_from_c(struct_ptr_tag<T> v, v8::Isolate* isolate, const char* class_name)
+get_value_from_c(struct_ptr_tag<T*> v, v8::Isolate* isolate, const char* class_name)
 {
-  // TODO: implement const structs?
+  using nonconst_type = typename std::remove_const<T>::type;
+  bool own = false; // TODO: handle ownership
+  auto ptr = const_cast<nonconst_type*>(v.value);
   auto ctor = ::efl::eina::js::get_class_constructor(class_name);
-  return new_v8_external_instance(ctor, const_cast<typename std::remove_const<T>::type>(v.value), isolate);
+  auto obj = new_v8_external_instance(ctor, ptr, isolate);
+  if (own)
+    efl::eina::js::make_weak(isolate, obj, [ptr]{ free(ptr); });
+  return obj;
 }
 
 template <typename T>
 inline v8::Local<v8::Value>
 get_value_from_c(struct_tag<T> v, v8::Isolate* isolate, const char* class_name)
 {
-  return get_value_from_c(struct_ptr_tag<T*>{new T(v.value)}, isolate, class_name);
+  T* s = static_cast<T*>(malloc(sizeof(T)));
+  *s = v.value;
+  return get_value_from_c(struct_ptr_tag<T*>{s}, isolate, class_name);
 }
 
 template <typename T, typename K>
@@ -175,8 +186,16 @@ inline v8::Local<v8::Value>
 get_value_from_c(efl::eina::js::complex_tag<Eina_Accessor *, T, K> v, v8::Isolate* isolate, const char*)
 {
   using wrapped_type = typename container_wrapper<T>::type;
+  bool own = false; // TODO: handle ownership
   auto a = new ::efl::eina::accessor<wrapped_type>{v.value};
-  return export_accessor<T>(*a , isolate, K::class_name());
+  auto obj = export_accessor<T>(*a , isolate, K::class_name());
+  efl::eina::js::make_weak(isolate, obj, [a, own]
+    {
+       if (!own)
+         a->release_native_handle();
+       delete a;
+    });
+  return obj;
 }
 
 template <typename T, typename K>
@@ -191,18 +210,34 @@ template <typename T, typename K>
 inline v8::Local<v8::Value>
 get_value_from_c(efl::eina::js::complex_tag<Eina_Array *, T, K> v, v8::Isolate* isolate, const char*)
 {
-  // TODO: use unique_ptr for eina_array to avoid leak ?
-  auto o = new ::efl::eina::js::range_eina_array<T, K>(v.value);
+  bool own = false; // TODO: handle ownership
+  auto o = new ::efl::eina::js::eina_array<T, K>(v.value);
   auto ctor = get_array_instance_template();
-  return new_v8_external_instance(ctor, o, isolate);
+  auto obj = new_v8_external_instance(ctor, o, isolate);
+  efl::eina::js::make_weak(isolate, obj, [o, own]
+    {
+       if (!own)
+         o->release_native_handle();
+       delete o;
+    });
+  return obj;
 }
 
 template <typename T, typename K>
 inline v8::Local<v8::Value>
-get_value_from_c(efl::eina::js::complex_tag<const Eina_Array *, T, K> v, v8::Isolate* isolate, const char* class_name)
+get_value_from_c(efl::eina::js::complex_tag<const Eina_Array *, T, K> v, v8::Isolate* isolate, const char*)
 {
-  // TODO: implement const array?
-  return get_value_from_c(efl::eina::js::complex_tag<Eina_Array *, T, K>{const_cast<Eina_Array*>(v.value)}, isolate, class_name);
+  bool own = false; // TODO: handle ownership
+  auto o = new ::efl::eina::js::range_eina_array<T, K>(const_cast<Eina_Array*>(v.value));
+  auto ctor = get_array_instance_template();
+  auto obj = new_v8_external_instance(ctor, o, isolate);
+  efl::eina::js::make_weak(isolate, obj, [o, own]
+    {
+       if (!own)
+         o->release_native_handle();
+       delete o;
+    });
+  return obj;
 }
 
 template <typename T, typename K>
@@ -245,18 +280,34 @@ template <typename T, typename K>
 inline v8::Local<v8::Value>
 get_value_from_c(efl::eina::js::complex_tag<Eina_List *, T, K> v, v8::Isolate* isolate, const char*)
 {
-  // TODO: ensure eina_list ownership ???
-  auto o = new ::efl::eina::js::range_eina_list<T, K>(v.value);
+  bool own = false; // TODO: handle ownership
+  auto o = new ::efl::eina::js::eina_list<T, K>(v.value);
   auto ctor = get_list_instance_template();
-  return new_v8_external_instance(ctor, o, isolate);
+  auto obj = new_v8_external_instance(ctor, o, isolate);
+  efl::eina::js::make_weak(isolate, obj, [o, own]
+    {
+       if (!own)
+         o->release_native_handle();
+       delete o;
+    });
+  return obj;
 }
 
 template <typename T, typename K>
 inline v8::Local<v8::Value>
-get_value_from_c(efl::eina::js::complex_tag<const Eina_List *, T, K> v, v8::Isolate* isolate, const char* class_name)
+get_value_from_c(efl::eina::js::complex_tag<const Eina_List *, T, K> v, v8::Isolate* isolate, const char*)
 {
-  // TODO: implement const list?
-  return get_value_from_c(efl::eina::js::complex_tag<Eina_List *, T, K>{const_cast<Eina_List*>(v.value)}, isolate, class_name);
+  bool own = false; // TODO: handle ownership
+  auto o = new ::efl::eina::js::range_eina_list<T, K>(const_cast<Eina_List*>(v.value));
+  auto ctor = get_list_instance_template();
+  auto obj = new_v8_external_instance(ctor, o, isolate);
+  efl::eina::js::make_weak(isolate, obj, [o, own]
+    {
+       if (!own)
+         o->release_native_handle();
+       delete o;
+    });
+  return obj;
 }
 
 

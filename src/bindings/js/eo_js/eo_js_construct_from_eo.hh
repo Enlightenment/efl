@@ -20,6 +20,7 @@ inline eina::js::compatibility_return_type construct_from_eo(eina::js::compatibi
     {
       Eo* eo = static_cast<Eo*>(v8::External::Cast(*args[0])->Value());
       args.This()->SetInternalField(0, args[0]);
+      ::eo_ref(eo);
       efl::eina::js::make_weak(args.GetIsolate(), args.This(), [eo] { eo_unref(eo); });
       return eina::js::compatibility_return();
     }

@@ -795,6 +795,22 @@ startTest("method_iterator_of_structs", function() {
 //   assert(a[0] === 42);
 // });
 
+// Garbage Collection //
+startTest("gc_object", function() {
+  var freed = false;
+  (function() {
+    var obj = new TestObject(null);
+    obj.on("del", function() {
+           printInfo('Object destructed')
+           freed = true;
+    });
+  }());
+  printInfo('going to garbage collect');
+  global.gc();
+  printInfo('is object destructed?');
+  assert(freed);
+});
+
 startTest("new Constructor_Method_Class", function() {
   var obj = new ConstructorMethodClass(null, 5, 10.0);
   assert(obj);

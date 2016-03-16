@@ -25,11 +25,11 @@ include Makefile_Eolian_Js_Helper.am
 if EFL_ENABLE_TESTS
 if HAVE_NODEJS
 
-TESTS += tests/eolian_js/eolian_js_suite.js
+TESTS += tests/eolian_js/eolian_js_suite.sh
 
 check_LTLIBRARIES += tests/eolian_js/libeolian_js_suite.la
 
-tests/eolian_js/eolian_js_suite.js: tests/eolian_js/eolian_js_suite_mod.node
+tests/eolian_js/eolian_js_suite.sh: tests/eolian_js/eolian_js_suite_mod.node
 tests/eolian_js/eolian_js_suite_mod.node: tests/eolian_js/libeolian_js_suite.la
 	$(AM_V_CP)$(CP) $(top_builddir)/src/tests/eolian_js/.libs/libeolian_js_suite.so $(top_builddir)/src/tests/eolian_js/eolian_js_suite_mod.node
 

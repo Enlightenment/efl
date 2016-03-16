@@ -42,8 +42,10 @@ eina::js::compatibility_return_type new_struct(eina::js::compatibility_callback_
 
   if(args.Length() == 0)
     {
-      S* p = new S{};
-      eina::js::compatibility_set_pointer_internal_field(args.This(), 0, static_cast<void*>(p));
+      void* p = std::malloc(sizeof(S));
+      std::memset(p, 0, sizeof(S));
+      eina::js::compatibility_set_pointer_internal_field(args.This(), 0, p);
+      efl::eina::js::make_weak(args.GetIsolate(), args.This(), [p]{ free(p); });
     }
   else
     {
