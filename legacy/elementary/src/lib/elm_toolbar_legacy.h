@@ -7,7 +7,7 @@
  *
  * This function inserts a new toolbar widget on the canvas.
  *
- * @ingroup Toolbar
+ * @ingroup Elm_Toolbar
  */
 EAPI Evas_Object                 *elm_toolbar_add(Evas_Object *parent);
 
@@ -18,7 +18,7 @@ EAPI Evas_Object                 *elm_toolbar_add(Evas_Object *parent);
  * @param reorder_mode The reorder mode
  * (@c EINA_TRUE = on, @c EINA_FALSE = off)
  *
- * @ingroup Toolbar
+ * @ingroup Elm_Toolbar
  */
 EAPI void                          elm_toolbar_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode);
 
@@ -29,7 +29,7 @@ EAPI void                          elm_toolbar_reorder_mode_set(Evas_Object *obj
  * @return The reorder mode
  * (@c EINA_TRUE = on, @c EINA_FALSE = off)
  *
- * @ingroup Toolbar
+ * @ingroup Elm_Toolbar
  */
 EAPI Eina_Bool                     elm_toolbar_reorder_mode_get(const Evas_Object *obj);
 
@@ -43,7 +43,7 @@ EAPI Eina_Bool                     elm_toolbar_reorder_mode_get(const Evas_Objec
  * This will expand the transverse length of the item according the transverse length of the toolbar.
  * The default is what the transverse length of the item is set according its min value.
  *
- * @ingroup Toolbar
+ * @ingroup Elm_Toolbar
  */
 EAPI void                         elm_toolbar_transverse_expanded_set(Evas_Object *obj, Eina_Bool transverse_expanded);
 
@@ -56,7 +56,7 @@ EAPI void                         elm_toolbar_transverse_expanded_set(Evas_Objec
  *
  * @see elm_toolbar_transverse_expand_set() for details.
  *
- * @ingroup Toolbar
+ * @ingroup Elm_Toolbar
  */
 EAPI Eina_Bool                    elm_toolbar_transverse_expanded_get(const Evas_Object *obj);
 

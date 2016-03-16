@@ -1,5 +1,5 @@
 /**
- * @defgroup Button Button
+ * @defgroup Elm_Button Button
  * @ingroup Elementary
  *
  * @image html button_inheritance_tree.png
@@ -63,7 +63,7 @@
  */
 
 /**
- * @addtogroup Button
+ * @addtogroup Elm_Button
  * @{
  */
 

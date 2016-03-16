@@ -1,5 +1,5 @@
 /**
- * @defgroup Radio Radio
+ * @defgroup Elm_Radio Radio
  * @ingroup Elementary
  *
  * @image html radio_inheritance_tree.png

@@ -4,7 +4,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Photocam
+ * @ingroup Elm_Photocam
  */
 EAPI Evas_Object           *elm_photocam_add(Evas_Object *parent);
 
@@ -19,7 +19,7 @@ EAPI Evas_Object           *elm_photocam_add(Evas_Object *parent);
  *
  * This shows the region of the image using animation.
  *
- * @ingroup Photocam
+ * @ingroup Elm_Photocam
  */
 EAPI void                   elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
 
@@ -36,7 +36,7 @@ EAPI void                   elm_photocam_image_region_bring_in(Evas_Object *obj,
  * photo that at some time in the future will be displayed at the full
  * quality needed.
  *
- * @ingroup Photocam
+ * @ingroup Elm_Photocam
  *
  * @param[in] file The photo file
  */
@@ -50,7 +50,7 @@ EAPI Evas_Load_Error elm_photocam_file_set(Evas_Object *obj, const char *file);
  *
  * @see elm_photocam_file_set()
  *
- * @ingroup Photocam
+ * @ingroup Elm_Photocam
  *
  */
 EAPI const char *elm_photocam_file_get(const Evas_Object *obj);

@@ -1,5 +1,5 @@
 /**
- * @ingroup Image
+ * @ingroup Elm_Image
  *
  * @{
  */

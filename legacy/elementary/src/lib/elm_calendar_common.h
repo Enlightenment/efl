@@ -1,5 +1,5 @@
 /**
- * @addtogroup Calendar
+ * @addtogroup Elm_Calendar
  *
  * @{
  */

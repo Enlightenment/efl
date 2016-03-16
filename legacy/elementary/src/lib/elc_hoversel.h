@@ -1,5 +1,5 @@
 /**
- * @defgroup Hoversel Hoversel
+ * @defgroup Elm_Hoversel Hoversel
  * @ingroup Elementary
  *
  * @image html hoversel_inheritance_tree.png

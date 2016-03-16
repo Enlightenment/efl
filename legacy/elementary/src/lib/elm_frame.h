@@ -1,5 +1,5 @@
 /**
- * @defgroup Frame Frame
+ * @defgroup Elm_Frame Frame
  * @ingroup Elementary
  *
  * @image html frame_inheritance_tree.png

@@ -1,5 +1,5 @@
 /**
- * @defgroup SegmentControl SegmentControl
+ * @defgroup Elm_SegmentControl SegmentControl
  * @ingroup Elementary
  *
  * @image html segment_control_inheritance_tree.png
@@ -57,7 +57,7 @@
  */
 
 /**
- * @addtogroup SegmentControl
+ * @addtogroup Elm_SegmentControl
  * @{
  */
 

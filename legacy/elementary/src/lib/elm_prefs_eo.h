@@ -1,5 +1,5 @@
 /**
- * @ingroup Prefs
+ * @ingroup Elm_Prefs
  *
  * @{
  */

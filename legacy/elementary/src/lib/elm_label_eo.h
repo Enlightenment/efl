@@ -1,5 +1,5 @@
 /**
- * @ingroup Label
+ * @ingroup Elm_Label
  *
  * @{
  */

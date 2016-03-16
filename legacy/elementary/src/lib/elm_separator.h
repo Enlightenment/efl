@@ -1,5 +1,5 @@
 /**
- * @defgroup Separator Separator
+ * @defgroup Elm_Separator Separator
  * @ingroup Elementary
  *
  * @image html separator_inheritance_tree.png

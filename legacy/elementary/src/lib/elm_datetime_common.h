@@ -1,5 +1,5 @@
 /**
- * @addtogroup Datetime
+ * @addtogroup Elm_Datetime
  *
  * @{
  */

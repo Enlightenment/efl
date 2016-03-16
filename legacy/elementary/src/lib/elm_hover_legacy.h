@@ -4,7 +4,7 @@
  * @param parent The parent object
  * @return The hover object or NULL if one could not be created
  *
- * @ingroup Hover
+ * @ingroup Elm_Hover
  */
 EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
 
@@ -17,7 +17,7 @@ EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
  * This function will cause the hover to take up the entire space that the
  * parent object fills.
  *
- * @ingroup Hover
+ * @ingroup Elm_Hover
  */
 EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
 
@@ -29,7 +29,7 @@ EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
  *
  * @see elm_hover_parent_set()
  *
- * @ingroup Hover
+ * @ingroup Elm_Hover
  */
 EAPI Evas_Object *elm_hover_parent_get(const Evas_Object *obj);
 

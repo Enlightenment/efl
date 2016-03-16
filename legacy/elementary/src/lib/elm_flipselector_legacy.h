@@ -7,7 +7,7 @@
  *
  * This function inserts a new flip selector widget on the canvas.
  *
- * @ingroup Flipselector
+ * @ingroup Elm_Flipselector
  */
 EAPI Evas_Object                *elm_flipselector_add(Evas_Object *parent);
 

@@ -1,5 +1,5 @@
 /**
- * @ingroup Notify
+ * @ingroup Elm_Notify
  *
  * @{
  */

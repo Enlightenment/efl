@@ -7,7 +7,7 @@
  *
  * This function inserts a new spinner widget on the canvas.
  *
- * @ingroup Spinner
+ * @ingroup Elm_Spinner
  *
  */
 EAPI Evas_Object *elm_spinner_add(Evas_Object *parent);
@@ -23,7 +23,7 @@ EAPI Evas_Object *elm_spinner_add(Evas_Object *parent);
  *
  * @see elm_spinner_special_value_add() for more details.
  *
- * @ingroup Spinner
+ * @ingroup Elm_Spinner
  * @since 1.8
  */
 EAPI void elm_spinner_special_value_del(Evas_Object *obj, double value);
@@ -37,7 +37,7 @@ EAPI void elm_spinner_special_value_del(Evas_Object *obj, double value);
  *
  * @see elm_spinner_special_value_add() for more details.
  *
- * @ingroup Spinner
+ * @ingroup Elm_Spinner
  * @since 1.8
  */
 EAPI const char *elm_spinner_special_value_get(Evas_Object *obj, double value);

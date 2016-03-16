@@ -1,5 +1,5 @@
 /**
- * @defgroup Datetime Datetime
+ * @defgroup Elm_Datetime Datetime
  * @ingroup Elementary
  *
  * @image html datetime_inheritance_tree.png
@@ -192,7 +192,7 @@
  */
 
 /**
- * @addtogroup Datetime
+ * @addtogroup Elm_Datetime
  * @{
  */
 

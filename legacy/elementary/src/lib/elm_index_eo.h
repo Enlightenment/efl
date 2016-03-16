@@ -1,5 +1,5 @@
 /**
- * @ingroup Index
+ * @ingroup Elm_Index
  *
  * @{
  */

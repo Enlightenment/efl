@@ -1,5 +1,5 @@
 /**
- * @defgroup Web Web
+ * @defgroup Elm_Web Web
  * @ingroup Elementary
  *
  * @image html web_inheritance_tree.png
@@ -88,7 +88,7 @@
  */
 
 /**
- * @addtogroup Web
+ * @addtogroup Elm_Web
  * @{
  */
 

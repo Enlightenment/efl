@@ -7,7 +7,7 @@
  *
  * This function inserts a new slider widget on the canvas.
  *
- * @ingroup Slider
+ * @ingroup Elm_Slider
  */
 EAPI Evas_Object                 *elm_slider_add(Evas_Object *parent);
 

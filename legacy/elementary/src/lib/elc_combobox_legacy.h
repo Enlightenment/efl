@@ -4,7 +4,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Combobox
+ * @ingroup Elm_Combobox
  */
 EAPI Evas_Object                 *elm_combobox_add(Evas_Object *parent);
 

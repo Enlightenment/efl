@@ -1,5 +1,5 @@
 /**
- * @defgroup Flip Flip
+ * @defgroup Elm_Flip Flip
  * @ingroup Elementary
  *
  * @image html flip_inheritance_tree.png

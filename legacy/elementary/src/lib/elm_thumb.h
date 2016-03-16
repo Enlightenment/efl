@@ -1,5 +1,5 @@
 /**
- * @defgroup Thumb Thumbnail
+ * @defgroup Elm_Thumb Thumbnail
  * @ingroup Elementary
  *
  * @image html thumb_inheritance_tree.png
@@ -51,7 +51,7 @@
  */
 
 /**
- * @addtogroup Thumb
+ * @addtogroup Elm_Thumb
  * @{
  */
 

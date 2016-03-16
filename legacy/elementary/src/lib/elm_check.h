@@ -1,5 +1,5 @@
 /**
- * @defgroup Check Check
+ * @defgroup Elm_Check Check
  * @ingroup Elementary
  *
  * @image html check_inheritance_tree.png

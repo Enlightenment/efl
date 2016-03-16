@@ -1,5 +1,5 @@
 /**
- * @addtogroup Thumb
+ * @addtogroup Elm_Thumb
  *
  * @{
  */

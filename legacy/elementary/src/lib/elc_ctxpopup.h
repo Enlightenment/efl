@@ -1,5 +1,5 @@
 /**
- * @defgroup Ctxpopup Ctxpopup
+ * @defgroup Elm_Ctxpopup Ctxpopup
  * @ingroup Elementary
  *
  * @image html ctxpopup_inheritance_tree.png

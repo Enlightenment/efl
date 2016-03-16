@@ -1,5 +1,5 @@
 /**
- * @addtogroup Map
+ * @addtogroup Elm_Map
  *
  * @{
  */

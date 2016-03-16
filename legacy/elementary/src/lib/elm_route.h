@@ -1,5 +1,5 @@
 /**
- * @defgroup Route Route
+ * @defgroup Elm_Route Route
  * @ingroup Elementary
  *
  * @image html route_inheritance_tree.png

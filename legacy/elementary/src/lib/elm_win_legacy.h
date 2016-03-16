@@ -14,7 +14,7 @@
  *
  * @return The created object, or @c NULL on failure
  *
- * @ingroup Win
+ * @ingroup Elm_Win
  */
 EAPI Evas_Object          *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
 
@@ -31,7 +31,7 @@ EAPI Evas_Object          *elm_win_add(Evas_Object *parent, const char *name, El
  *
  * @return The created object, or @c NULL on failure
  *
- * @ingroup Win
+ * @ingroup Elm_Win
  *
  * @since 1.13
  */
@@ -52,7 +52,7 @@ EAPI Evas_Object          *elm_win_fake_add(Ecore_Evas *ee);
  *
  * @see elm_win_add()
  *
- * @ingroup Win
+ * @ingroup Elm_Win
  */
 EAPI Evas_Object          *elm_win_util_standard_add(const char *name, const char *title);
 
@@ -73,7 +73,7 @@ EAPI Evas_Object          *elm_win_util_standard_add(const char *name, const cha
  *
  * @see elm_win_add()
  *
- * @ingroup Win
+ * @ingroup Elm_Win
  * @since 1.13
  */
 EAPI Evas_Object          *elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title);
@@ -90,7 +90,7 @@ EAPI Evas_Object          *elm_win_util_dialog_add(Evas_Object *parent, const ch
  * a multi window concept in a mobile phone. The way of handling floating mode
  * window is decided by enlightenment window manager.
  *
- * @ingroup Win
+ * @ingroup Elm_Win
  * @see elm_win_floating_mode_get()
  * @since 1.8
  */
@@ -102,7 +102,7 @@ EAPI void                  elm_win_floating_mode_set(Evas_Object *obj, Eina_Bool
  * @param obj The window object
  * @return If true, the window is floating mode
  *
- * @ingroup Win
+ * @ingroup Elm_Win
  * @see elm_win_floating_mode_set()
  * @since 1.8
  */
@@ -129,7 +129,7 @@ EAPI Eina_Bool             elm_win_floating_mode_get(const Evas_Object *obj);
  * @see elm_win_norender_pop()
  * @see elm_win_norender_get()
  * @see elm_win_render()
- * @ingroup Win
+ * @ingroup Elm_Win
  * @since 1.7
  */
 EAPI void                  elm_win_norender_push(Evas_Object *obj);
@@ -145,7 +145,7 @@ EAPI void                  elm_win_norender_push(Evas_Object *obj);
  * @see elm_win_norender_push()
  * @see elm_win_norender_get()
  * @see elm_win_render()
- * @ingroup Win
+ * @ingroup Elm_Win
  * @since 1.7
  */
 EAPI void                  elm_win_norender_pop(Evas_Object *obj);
@@ -158,7 +158,7 @@ EAPI void                  elm_win_norender_pop(Evas_Object *obj);
  * @see elm_win_norender_push()
  * @see elm_win_norender_pop()
  * @see elm_win_render()
- * @ingroup Win
+ * @ingroup Elm_Win
  * @since 1.7
  */
 EAPI int                   elm_win_norender_get(const Evas_Object *obj);
@@ -177,7 +177,7 @@ EAPI int                   elm_win_norender_get(const Evas_Object *obj);
  * @see elm_win_norender_push()
  * @see elm_win_norender_pop()
  * @see elm_win_norender_get()
- * @ingroup Win
+ * @ingroup Elm_Win
  * @since 1.7
  */
 EAPI void                  elm_win_render(Evas_Object *obj);
@@ -193,7 +193,7 @@ EAPI void                  elm_win_render(Evas_Object *obj);
  *
  * @return The Ecore_Wl_Window of @p obj
  *
- * @ingroup Win
+ * @ingroup Elm_Win
  */
 EAPI Ecore_Wl2_Window *elm_win_wl_window_get(const Evas_Object *obj);
 
@@ -208,7 +208,7 @@ EAPI Ecore_Wl2_Window *elm_win_wl_window_get(const Evas_Object *obj);
  *
  * @return The Ecore_Win32_Window of @p obj
  *
- * @ingroup Win
+ * @ingroup Elm_Win
  *
  * @since 1.16
  */
@@ -225,7 +225,7 @@ EAPI Ecore_Win32_Window *elm_win_win32_window_get(const Evas_Object *obj);
  *
  * @see elm_win_wm_rotation_preferred_rotation_get()
  *
- * ingroup Win
+ * ingroup Elm_Win
  * @since 1.9
  */
 EAPI void                  elm_win_wm_rotation_preferred_rotation_set(const Evas_Object *obj, int rotation);
@@ -238,7 +238,7 @@ EAPI void                  elm_win_wm_rotation_preferred_rotation_set(const Evas
  * @param obj The window object
  * @return The Ecore_Window of an Evas_Object
  *
- * @ingroup Win
+ * @ingroup Elm_Win
  * @since 1.8
  * @note Unless you are getting the window id for the purpose of communicating between client<->compositor over dbus,
  * this is definitely not the function you are looking for.

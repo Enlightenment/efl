@@ -1,5 +1,5 @@
 /**
- * @defgroup GLView GLView
+ * @defgroup Elm_GLView GLView
  * @ingroup Elementary
  *
  * @image html glview_inheritance_tree.png
@@ -23,7 +23,7 @@
  */
 
 /**
- * @ingroup GLView
+ * @ingroup Elm_GLView
  */
 
 #include "elm_glview_common.h"

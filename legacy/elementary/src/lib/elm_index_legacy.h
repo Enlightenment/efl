@@ -7,7 +7,7 @@
  *
  * This function inserts a new index widget on the canvas.
  *
- * @ingroup Index
+ * @ingroup Elm_Index
  */
 EAPI Evas_Object          *elm_index_add(Evas_Object *parent);
 

@@ -1,5 +1,5 @@
 /**
- * @defgroup Bg Background
+ * @defgroup Elm_Bg Background
  * @ingroup Elementary
  *
  * @image html bg_inheritance_tree.png

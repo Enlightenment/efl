@@ -7,7 +7,7 @@
  *
  * This function inserts a new segment control widget on the canvas.
  *
- * @ingroup SegmentControl
+ * @ingroup Elm_SegmentControl
  */
 EAPI Evas_Object      *elm_segment_control_add(Evas_Object *parent);
 

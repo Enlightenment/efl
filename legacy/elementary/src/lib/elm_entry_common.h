@@ -1,5 +1,5 @@
 /**
- * @addtogroup Entry
+ * @addtogroup Elm_Entry
  *
  * @{
  */

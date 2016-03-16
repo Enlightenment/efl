@@ -1,5 +1,5 @@
 /**
- * @defgroup Slideshow Slideshow
+ * @defgroup Elm_Slideshow Slideshow
  * @ingroup Elementary
  *
  * @image html slideshow_inheritance_tree.png
@@ -69,7 +69,7 @@
  */
 
 /**
- * @addtogroup Slideshow
+ * @addtogroup Elm_Slideshow
  * @{
  */
 

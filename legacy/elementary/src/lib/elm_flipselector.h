@@ -1,5 +1,5 @@
 /**
- * @defgroup Flipselector Flip Selector
+ * @defgroup Elm_Flipselector Flip Selector
  * @ingroup Elementary
  *
  * @image html flipselector_inheritance_tree.png
@@ -55,7 +55,7 @@
  */
 
 /**
- * @addtogroup Flipselector
+ * @addtogroup Elm_Flipselector
  * @{
  */
 

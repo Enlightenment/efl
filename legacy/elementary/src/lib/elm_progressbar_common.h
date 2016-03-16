@@ -1,5 +1,5 @@
 /**
- * @addtogroup Progressbar
+ * @addtogroup Elm_Progressbar
  *
  * @{
  */

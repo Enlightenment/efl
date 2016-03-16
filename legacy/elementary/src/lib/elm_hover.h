@@ -1,5 +1,5 @@
 /**
- * @defgroup Hover Hover
+ * @defgroup Elm_Hover Hover
  * @ingroup Elementary
  *
  * @image html hover_inheritance_tree.png

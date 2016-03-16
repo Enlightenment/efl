@@ -1,5 +1,5 @@
 /**
- * @ingroup Win
+ * @ingroup Elm_Win
  *
  * @{
  */

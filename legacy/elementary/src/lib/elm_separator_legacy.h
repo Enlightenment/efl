@@ -5,7 +5,7 @@
  *
  * @return The separator object, or NULL upon failure
  *
- * @ingroup Separator
+ * @ingroup Elm_Separator
  */
 EAPI Evas_Object *elm_separator_add(Evas_Object *parent);
 

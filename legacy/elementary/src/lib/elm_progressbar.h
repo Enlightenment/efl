@@ -1,5 +1,5 @@
 /**
- * @defgroup Progressbar Progress bar
+ * @defgroup Elm_Progressbar Progress bar
  * @ingroup Elementary
  *
  * @image html progressbar_inheritance_tree.png

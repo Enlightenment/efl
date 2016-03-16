@@ -172,7 +172,7 @@ _elm_route_evas_object_smart_del(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Route
+ * @ingroup Elm_Route
  */
 EAPI Evas_Object *
 elm_route_add(Evas_Object *parent)

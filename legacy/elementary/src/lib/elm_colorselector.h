@@ -1,5 +1,5 @@
 /**
- * @defgroup Colorselector Colorselector
+ * @defgroup Elm_Colorselector Colorselector
  * @ingroup Elementary
  *
  * @image html colorselector_inheritance_tree.png

@@ -4,7 +4,7 @@
  * @param parent The parent object
  * @return The new object or @c NULL if it cannot be created
  *
- * @ingroup Bg
+ * @ingroup Elm_Bg
  */
 EAPI Evas_Object                 *elm_bg_add(Evas_Object *parent);
 
@@ -27,7 +27,7 @@ EAPI Evas_Object                 *elm_bg_add(Evas_Object *parent);
  *
  * @see elm_bg_color_get()
  *
- * @ingroup Bg
+ * @ingroup Elm_Bg
  */
 EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int g, int b);
 
@@ -44,7 +44,7 @@ EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int 
  *
  * @see elm_bg_color_get() for more details
  *
- * @ingroup Bg
+ * @ingroup Elm_Bg
  */
 EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b);
 
@@ -70,7 +70,7 @@ EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *
  * achieve the @c Layout's file setting behavior, you'll have to call
  * that method on this object.
  *
- * @ingroup Bg
+ * @ingroup Elm_Bg
  *
  * @param[in] file The file path
  * @param[in] group Optional key (group in Edje) within the file
@@ -84,7 +84,7 @@ EAPI Eina_Bool elm_bg_file_set(Eo *obj, const char *file, const char *group);
  * @note Use @c NULL pointers on the file components you're not
  * interested in: they'll be ignored by the function.
  *
- * @ingroup Bg
+ * @ingroup Elm_Bg
  *
  * @param[out] file The file path
  * @param[out] group Optional key (group in Edje) within the file

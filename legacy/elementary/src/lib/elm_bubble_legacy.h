@@ -6,7 +6,7 @@
  *
  * This function adds a text bubble to the given parent evas object.
  *
- * @ingroup Bubble
+ * @ingroup Elm_Bubble
  */
 EAPI Evas_Object                 *elm_bubble_add(Evas_Object *parent);
 

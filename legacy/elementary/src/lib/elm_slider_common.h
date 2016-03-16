@@ -1,5 +1,5 @@
 /**
- * @addtogroup Slider
+ * @addtogroup Elm_Slider
  *
  * @{
  */

@@ -7,7 +7,7 @@
  *
  * This function inserts a new slideshow widget on the canvas.
  *
- * @ingroup Slideshow
+ * @ingroup Elm_Slideshow
  */
 EAPI Evas_Object          *elm_slideshow_add(Evas_Object *parent);
 

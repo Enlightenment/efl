@@ -1,5 +1,5 @@
 /**
- * @addtogroup Colorselector
+ * @addtogroup Elm_Colorselector
  *
  * @{
  */

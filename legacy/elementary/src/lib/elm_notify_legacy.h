@@ -4,7 +4,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Notify
+ * @ingroup Elm_Notify
  */
 EAPI Evas_Object                 *elm_notify_add(Evas_Object *parent);
 
@@ -17,7 +17,7 @@ EAPI Evas_Object                 *elm_notify_add(Evas_Object *parent);
  * Once the parent object is set, a previously set one will be disconnected
  * and replaced.
  *
- * @ingroup Notify
+ * @ingroup Elm_Notify
  */
 EAPI void                         elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
 
@@ -29,7 +29,7 @@ EAPI void                         elm_notify_parent_set(Evas_Object *obj, Evas_O
  *
  * @see elm_notify_parent_set()
  *
- * @ingroup Notify
+ * @ingroup Elm_Notify
  */
 EAPI Evas_Object                 *elm_notify_parent_get(const Evas_Object *obj);
 

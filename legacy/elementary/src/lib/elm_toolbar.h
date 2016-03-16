@@ -1,5 +1,5 @@
 /**
- * @defgroup Toolbar Toolbar
+ * @defgroup Elm_Toolbar Toolbar
  * @ingroup Elementary
  *
  * @image html toolbar_inheritance_tree.png
@@ -64,7 +64,7 @@
  */
 
 /**
- * @addtogroup Toolbar
+ * @addtogroup Elm_Toolbar
  * @{
  */
 

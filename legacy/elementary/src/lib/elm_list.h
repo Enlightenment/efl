@@ -1,5 +1,5 @@
 /**
- * @defgroup List List
+ * @defgroup Elm_List List
  * @ingroup Elementary
  *
  * @image html list_inheritance_tree.png
@@ -92,7 +92,7 @@
  */
 
 /**
- * @addtogroup List
+ * @addtogroup Elm_List
  * @{
  */
 

@@ -4,7 +4,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Photo
+ * @ingroup Elm_Photo
  */
 EAPI Evas_Object *elm_photo_add(Evas_Object *parent);
 
@@ -17,7 +17,7 @@ EAPI Evas_Object *elm_photo_add(Evas_Object *parent);
  * @note Use @c NULL on @a file to set the photo widget back to it's
  * initial state, which indicates "no photo".
  *
- * @ingroup Photo
+ * @ingroup Elm_Photo
  *
  * @param[in] file The path to file that will be used as @a obj's image.
  */

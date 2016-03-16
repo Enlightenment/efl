@@ -1,5 +1,5 @@
 /**
- * @defgroup Menu Menu
+ * @defgroup Elm_Menu Menu
  * @ingroup Elementary
  *
  * @image html menu_inheritance_tree.png

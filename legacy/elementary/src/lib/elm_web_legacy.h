@@ -7,7 +7,7 @@
  * @see elm_web_url_set()
  * @see elm_web_webkit_view_get()
  *
- * @ingroup Web
+ * @ingroup Elm_Web
  */
 EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
 
@@ -25,7 +25,7 @@ EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
  *
  * @see elm_web_url_set()
  *
- * @ingroup Web
+ * @ingroup Elm_Web
  */
 EINA_DEPRECATED EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const char *uri);
 
@@ -43,7 +43,7 @@ EINA_DEPRECATED EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const c
  *
  * @see elm_web_url_get()
  *
- * @ingroup Web
+ * @ingroup Elm_Web
  */
 EINA_DEPRECATED EAPI const char       *elm_web_uri_get(const Evas_Object *obj);
 

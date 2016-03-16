@@ -40,205 +40,205 @@
  *
  * Here is a list of the widgets and some images to give you an idea of what
  * they are:
- * @li @ref Actionslider
+ * @li @ref Elm_Actionslider
  *
  * @image html img/widget/actionslider/preview-00.png
  * @image latex img/widget/actionslider/preview-00.eps
- * @li @ref Bg
+ * @li @ref Elm_Bg
  *
  * @image html img/widget/bg/preview-00.png
  * @image latex img/widget/bg/preview-00.eps
- * @li @ref Bubble
+ * @li @ref Elm_Bubble
  *
  * @image html img/widget/bubble/preview-00.png
  * @image latex img/widget/bubble/preview-00.eps
- * @li @ref Button
+ * @li @ref Elm_Button
  *
  * @image html img/widget/button/preview-00.png
  * @image latex img/widget/button/preview-00.eps
- * @li @ref Calendar
+ * @li @ref Elm_Calendar
  *
  * @image html img/widget/calendar/preview-00.png
  * @image latex img/widget/calendar/preview-00.eps
- * @li @ref Check
+ * @li @ref Elm_Check
  *
  * @image html img/widget/check/preview-00.png
  * @image latex img/widget/check/preview-00.eps
- * @li @ref Clock
+ * @li @ref Elm_Clock
  *
  * @image html img/widget/clock/preview-00.png
  * @image latex img/widget/clock/preview-00.eps
  *
- * @li @ref Colorselector
+ * @li @ref Elm_Colorselector
  *
  * @image html img/widget/colorselector/preview-00.png
  * @image latex img/widget/colorselector/preview-00.eps
- * @li @ref Ctxpopup
+ * @li @ref Elm_Ctxpopup
  *
  * @image html img/widget/ctxpopup/preview-00.png
  * @image latex img/widget/ctxpopup/preview-00.eps
- * @li @ref Combobox
+ * @li @ref Elm_Combobox
  *
  * @image html img/widget/combobox/preview-00.png
  * @image latex img/widget/combobox/preview-00.eps
- * @li @ref Datetime
+ * @li @ref Elm_Datetime
  *
  * @image html img/widget/datetime/preview-00.png
  * @image latex img/widget/datetime/preview-00.eps
- * @li @ref Dayselector
+ * @li @ref Elm_Dayselector
  *
  * @image html img/widget/dayselector/preview-00.png
  * @image latex img/widget/dayselector/preview-00.eps
- * @li @ref Diskselector
+ * @li @ref Elm_Diskselector
  *
  * @image html img/widget/diskselector/preview-00.png
  * @image latex img/widget/diskselector/preview-00.eps
- * @li @ref Entry
+ * @li @ref Elm_Entry
  *
  * @image html img/widget/entry/preview-02.png
  * @image latex img/widget/entry/preview-02.eps
- * @li @ref File_Selector_Button
+ * @li @ref Elm_File_Selector_Button
  *
  * @image html img/widget/fileselector_button/preview-00.png
  * @image latex img/widget/fileselector_button/preview-00.eps
- * @li @ref File_Selector_Entry
+ * @li @ref Elm_File_Selector_Entry
  *
  * @image html img/widget/fileselector_entry/preview-00.png
  * @image latex img/widget/fileselector_entry/preview-00.eps
- * @li @ref Fileselector
+ * @li @ref Elm_Fileselector
  *
  * @image html img/widget/fileselector/preview-00.png
  * @image latex img/widget/fileselector/preview-00.eps
- * @li @ref Flip
+ * @li @ref Elm_Flip
  *
  * @image html img/widget/flip/preview-00.png
  * @image latex img/widget/flip/preview-00.eps
- * @li @ref Flipselector
+ * @li @ref Elm_Flipselector
  *
  * @image html img/widget/flipselector/preview-00.png
  * @image latex img/widget/flipselector/preview-00.eps
- * @li @ref Frame
+ * @li @ref Elm_Frame
  *
  * @image html img/widget/frame/preview-00.png
  * @image latex img/widget/frame/preview-00.eps
  *
- * @li @ref GLView
- * @li @ref Hover
+ * @li @ref Elm_GLView
+ * @li @ref Elm_Hover
  *
  * @image html img/widget/hover/preview-00.png
  * @image latex img/widget/hover/preview-00.eps
- * @li @ref Hoversel
+ * @li @ref Elm_Hoversel
  *
  * @image html img/widget/hoversel/preview-00.png
  * @image latex img/widget/hoversel/preview-00.eps
- * @li @ref Icon
+ * @li @ref Elm_Icon
  *
  * @image html img/widget/icon/preview-00.png
  * @image latex img/widget/icon/preview-00.eps
- * @li @ref Image
+ * @li @ref Elm_Image
  *
  * @image html img/widget/image/preview-00.png
  * @image latex img/widget/image/preview-00.eps
- * @li @ref Index
+ * @li @ref Elm_Index
  *
  * @image html img/widget/index/preview-00.png
  * @image latex img/widget/index/preview-00.eps
- * @li @ref Inwin
+ * @li @ref Elm_Inwin
  *
  * @image html img/widget/inwin/preview-00.png
  * @image latex img/widget/inwin/preview-00.eps
- * @li @ref List
+ * @li @ref Elm_List
  *
  * @image html img/widget/list/preview-00.png
  * @image latex img/widget/list/preview-00.eps
  * @image html img/list.png
  * @image latex img/list.eps
- * @li @ref Label
+ * @li @ref Elm_Label
  *
  * @image html img/widget/label/preview-00.png
  * @image latex img/widget/label/preview-00.eps
- * @li @ref Map
+ * @li @ref Elm_Map
  *
  * @image html img/widget/map/preview-00.png
  * @image latex img/widget/map/preview-00.eps
- * @li @ref Mapbuf
+ * @li @ref Elm_Mapbuf
  *
  * @image html img/widget/mapbuf/preview-00.png
  * @image latex img/widget/mapbuf/preview-00.eps
- * @li @ref Menu
+ * @li @ref Elm_Menu
  *
  * @image html img/widget/menu/preview-00.png
  * @image latex img/widget/menu/preview-00.eps
- * @li @ref Notify
+ * @li @ref Elm_Notify
  *
  * @image html img/widget/notify/preview-00.png
  * @image latex img/widget/notify/preview-00.eps
- * @li @ref Panel
+ * @li @ref Elm_Panel
  *
  * @image html img/widget/panel/preview-00.png
  * @image latex img/widget/panel/preview-00.eps
- * @li @ref Photo
- * @li @ref Photocam
+ * @li @ref Elm_Photo
+ * @li @ref Elm_Photocam
  *
  * @image html img/widget/photocam/preview-00.png
  * @image latex img/widget/photocam/preview-00.eps
- * @li @ref Popup
+ * @li @ref Elm_Popup
  *
- * @li @ref Prefs
+ * @li @ref Elm_Prefs
  *
  * @image html img/widget/prefs/preview-00.png
  * @image latex img/widget/prefs/preview-00.eps
  * @image html img/prefs.png
  * @image latex img/prefs.eps
  *
- * @li @ref Progressbar
+ * @li @ref Elm_Progressbar
  *
  * @image html img/widget/progressbar/preview-00.png
  * @image latex img/widget/progressbar/preview-00.eps
- * @li @ref Radio
+ * @li @ref Elm_Radio
  *
  * @image html img/widget/radio/preview-00.png
  * @image latex img/widget/radio/preview-00.eps
- * @li @ref Route
- * @li @ref SegmentControl
+ * @li @ref Elm_Route
+ * @li @ref Elm_SegmentControl
  *
  * @image html img/widget/segment_control/preview-00.png
  * @image latex img/widget/segment_control/preview-00.eps
  * @image html img/segment_control.png
  * @image latex img/segment_control.eps
- * @li @ref Separator
+ * @li @ref Elm_Separator
  *
  * @image html img/widget/separator/preview-00.png
  * @image latex img/widget/separator/preview-00.eps
- * @li @ref Slider
+ * @li @ref Elm_Slider
  *
  * @image html img/widget/slider/preview-00.png
  * @image latex img/widget/slider/preview-00.eps
- * @li @ref Slideshow
+ * @li @ref Elm_Slideshow
  *
  * @image html img/widget/slideshow/preview-00.png
  * @image latex img/widget/slideshow/preview-00.eps
- * @li @ref Spinner
+ * @li @ref Elm_Spinner
  *
  * @image html img/widget/spinner/preview-00.png
  * @image latex img/widget/spinner/preview-00.eps
- * @li @ref Thumb
+ * @li @ref Elm_Thumb
 
  * @image html img/widget/thumb/preview-00.png
  * @image latex img/widget/thumb/preview-00.eps
- * @li @ref Toolbar
+ * @li @ref Elm_Toolbar
  *
  * @image html img/widget/toolbar/preview-00.png
  * @image latex img/widget/toolbar/preview-00.eps
  * @image html img/toolbar.png
  * @image latex img/toolbar.eps
- * @li @ref Tooltips
- * @li @ref Video
- * @li @ref Web
+ * @li @ref Elm_Tooltips
+ * @li @ref Elm_Video
+ * @li @ref Elm_Web
  *
  * @image html img/widget/web/preview-00.png
  * @image latex img/widget/web/preview-00.eps
- * @li @ref Win
+ * @li @ref Elm_Win
  *
  * @image html img/widget/win/preview-00.png
  * @image latex img/widget/win/preview-00.eps

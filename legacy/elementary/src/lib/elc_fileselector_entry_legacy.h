@@ -7,7 +7,7 @@
  * @return a new file selector entry widget handle or @c NULL, on
  * errors
  *
- * @ingroup File_Selector_Entry
+ * @ingroup Elm_File_Selector_Entry
  */
 EAPI Evas_Object                *elm_fileselector_entry_add(Evas_Object *parent);
 

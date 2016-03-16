@@ -7,7 +7,7 @@
  *
  * This function inserts a new progress bar widget on the canvas.
  *
- * @ingroup Progressbar
+ * @ingroup Elm_Progressbar
  */
 EAPI Evas_Object                 *elm_progressbar_add(Evas_Object *parent);
 

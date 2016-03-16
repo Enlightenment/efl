@@ -1,5 +1,5 @@
 /**
- * @defgroup Bubble Bubble
+ * @defgroup Elm_Bubble Bubble
  * @ingroup Elementary
  *
  * @image html bubble_inheritance_tree.png

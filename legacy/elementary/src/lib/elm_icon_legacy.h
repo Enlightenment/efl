@@ -6,7 +6,7 @@
  *
  * @see elm_image_file_set()
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EAPI Evas_Object          *elm_icon_add(Evas_Object *parent);
 

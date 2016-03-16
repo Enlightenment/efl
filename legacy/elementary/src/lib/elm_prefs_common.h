@@ -1,5 +1,5 @@
 /**
- * @addtogroup Prefs
+ * @addtogroup Elm_Prefs
  *
  * @{
  */

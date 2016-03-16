@@ -1,5 +1,5 @@
 /**
- * @defgroup Slider Slider
+ * @defgroup Elm_Slider Slider
  * @ingroup Elementary
  *
  * @image html slider_inheritance_tree.png
@@ -70,7 +70,7 @@
  */
 
 /**
- * @addtogroup Slider
+ * @addtogroup Elm_Slider
  * @{
  */
 

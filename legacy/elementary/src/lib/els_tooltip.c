@@ -902,7 +902,7 @@ elm_tooltip_theme(Elm_Tooltip *tt)
  *        given @a data, and @c event_info is NULL.
  *
  * @internal
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  */
 void
 elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)

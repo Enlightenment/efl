@@ -1,5 +1,5 @@
 /**
- * @defgroup Image Image
+ * @defgroup Elm_Image Image
  * @ingroup Elementary
  *
  * @image html image_inheritance_tree.png
@@ -37,7 +37,7 @@
 
 
 /**
- * @addtogroup Image
+ * @addtogroup Elm_Image
  * @{
  */
 

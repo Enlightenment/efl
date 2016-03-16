@@ -1,5 +1,5 @@
 /**
- * @defgroup Dayselector Dayselector
+ * @defgroup Elm_Dayselector Dayselector
  * @ingroup Elementary
  *
  * @image html dayselector_inheritance_tree.png
@@ -71,7 +71,7 @@
  */
 
 /**
- * @addtogroup Dayselector
+ * @addtogroup Elm_Dayselector
  * @{
  */
 

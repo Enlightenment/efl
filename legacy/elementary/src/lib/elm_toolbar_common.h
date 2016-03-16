@@ -1,5 +1,5 @@
 /**
- * @addtogroup Toolbar
+ * @addtogroup Elm_Toolbar
  *
  * @{
  */

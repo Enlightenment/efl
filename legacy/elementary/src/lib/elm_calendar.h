@@ -1,5 +1,5 @@
 /**
- * @defgroup Calendar Calendar
+ * @defgroup Elm_Calendar Calendar
  * @ingroup Elementary
  *
  * @image html calendar_inheritance_tree.png
@@ -44,7 +44,7 @@
  */
 
 /**
- * @addtogroup Calendar
+ * @addtogroup Elm_Calendar
  * @{
  */
 

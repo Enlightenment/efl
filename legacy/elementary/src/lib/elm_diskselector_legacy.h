@@ -7,7 +7,7 @@
  *
  * This function inserts a new diskselector widget on the canvas.
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EAPI Evas_Object           *elm_diskselector_add(Evas_Object *parent);
 

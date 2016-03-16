@@ -1,5 +1,5 @@
 /**
- * @defgroup Photo Photo
+ * @defgroup Elm_Photo Photo
  * @ingroup Elementary
  *
  * @image html photo_inheritance_tree.png

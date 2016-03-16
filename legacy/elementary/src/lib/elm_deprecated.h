@@ -470,7 +470,7 @@ EINA_DEPRECATED EAPI Elm_Notify_Orient            elm_notify_orient_get(const Ev
  *
  * @deprecated see elm_label_slide_mode_set() instead.
  *
- * @ingroup Label
+ * @ingroup Elm_Label
  */
 EINA_DEPRECATED EAPI void                        elm_label_slide_set(Evas_Object *obj, Eina_Bool slide);
 
@@ -484,7 +484,7 @@ EINA_DEPRECATED EAPI void                        elm_label_slide_set(Evas_Object
  *
  * @deprecated see elm_label_slide_mode_get() instead.
  *
- * @ingroup Label
+ * @ingroup Elm_Label
  */
 EINA_DEPRECATED EAPI Eina_Bool                   elm_label_slide_get(const Evas_Object *obj);
 
@@ -656,7 +656,7 @@ EINA_DEPRECATED EAPI void          elm_genlist_scroller_policy_get(const Evas_Ob
  *
  * @deprecated Use elm_scroller_policy_set() instead.
  *
- * @ingroup Entry
+ * @ingroup Elm_Entry
  */
 EINA_DEPRECATED EAPI void elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
 
@@ -672,7 +672,7 @@ EINA_DEPRECATED EAPI void elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_S
  *
  * @deprecated Use elm_scroller_bounce_set() instead.
  *
- * @ingroup Entry
+ * @ingroup Elm_Entry
  */
 EINA_DEPRECATED EAPI void elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
@@ -685,7 +685,7 @@ EINA_DEPRECATED EAPI void elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bou
  *
  * @deprecated Use elm_scroller_bounce_get() instead.
  *
- * @ingroup Entry
+ * @ingroup Elm_Entry
  */
 EINA_DEPRECATED EAPI void elm_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
@@ -698,7 +698,7 @@ EINA_DEPRECATED EAPI void elm_entry_bounce_get(const Evas_Object *obj, Eina_Bool
  *
  * @deprecated Use elm_scroller_bounce_set() instead.
  *
- * @ingroup Photocam
+ * @ingroup Elm_Photocam
  */
 EINA_DEPRECATED EAPI void   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
@@ -713,7 +713,7 @@ EINA_DEPRECATED EAPI void   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool 
  *
  * @deprecated Use elm_scroller_bounce_get() instead.
  *
- * @ingroup Photocam
+ * @ingroup Elm_Photocam
  */
 EINA_DEPRECATED EAPI void   elm_photocam_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
@@ -731,7 +731,7 @@ EINA_DEPRECATED EAPI void   elm_photocam_bounce_get(const Evas_Object *obj, Eina
  *
  * @see elm_scroller_bounce_set()
  *
- * @ingroup List
+ * @ingroup Elm_List
  */
 EINA_DEPRECATED EAPI void         elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
@@ -752,7 +752,7 @@ EINA_DEPRECATED EAPI void         elm_list_bounce_set(Evas_Object *obj, Eina_Boo
  * @see elm_scroller_bounce_get()
  * @see elm_list_bounce_set()
  *
- * @ingroup List
+ * @ingroup Elm_List
  */
 EINA_DEPRECATED EAPI void         elm_list_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
@@ -775,7 +775,7 @@ EINA_DEPRECATED EAPI void         elm_list_bounce_get(const Evas_Object *obj, Ei
  *
  * @deprecated Use elm_scroller_policy_set() instead.
  *
- * @ingroup List
+ * @ingroup Elm_List
  */
 EINA_DEPRECATED EAPI void         elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
@@ -790,7 +790,7 @@ EINA_DEPRECATED EAPI void         elm_list_scroller_policy_set(Evas_Object *obj,
  *
  * @deprecated Use elm_scroller_policy_get() instead.
  *
- * @ingroup List
+ * @ingroup Elm_List
  */
 EINA_DEPRECATED EAPI void         elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
@@ -821,7 +821,7 @@ EINA_DEPRECATED EAPI void         elm_scroller_custom_widget_base_theme_set(Evas
  *
  * @see elm_scroller_bounce_set()
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void elm_diskselector_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
@@ -842,7 +842,7 @@ EINA_DEPRECATED EAPI void elm_diskselector_bounce_set(Evas_Object *obj, Eina_Boo
  * @see elm_scroller_bounce_get()
  * @see elm_diskselector_bounce_set()
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void elm_diskselector_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
@@ -859,7 +859,7 @@ EINA_DEPRECATED EAPI void elm_diskselector_bounce_get(const Evas_Object *obj, Ei
  *
  * @see elm_scroller_policy_get()
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void elm_diskselector_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
@@ -882,7 +882,7 @@ EINA_DEPRECATED EAPI void elm_diskselector_scroller_policy_get(const Evas_Object
  *
  * @see elm_scroller_policy_set()
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void elm_diskselector_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
@@ -902,7 +902,7 @@ EINA_DEPRECATED EAPI void elm_diskselector_scroller_policy_set(Evas_Object *obj,
  *
  * @deprecated Use elm_image_file_set() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI Eina_Bool             elm_icon_file_set(Evas_Object *obj, const char *file, const char *group);
 
@@ -927,7 +927,7 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_icon_file_set(Evas_Object *obj, c
  *
  * @deprecated Use elm_image_memfile_set() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI Eina_Bool             elm_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key);
 
@@ -942,7 +942,7 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_icon_memfile_set(Evas_Object *obj
  *
  * @deprecated Use elm_image_file_get() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI void                  elm_icon_file_get(const Evas_Object *obj, const char **file, const char **group);
 
@@ -965,7 +965,7 @@ EINA_DEPRECATED EAPI void                  elm_icon_file_get(const Evas_Object *
  *
  * @deprecated Use elm_image_smooth_set() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI void                  elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth);
 
@@ -979,7 +979,7 @@ EINA_DEPRECATED EAPI void                  elm_icon_smooth_set(Evas_Object *obj,
  *
  * @deprecated Use elm_image_smooth_get() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI Eina_Bool             elm_icon_smooth_get(const Evas_Object *obj);
 
@@ -1001,7 +1001,7 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_icon_smooth_get(const Evas_Object
  *
  * @deprecated Use elm_image_no_scale_set() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI void                  elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
 
@@ -1015,7 +1015,7 @@ EINA_DEPRECATED EAPI void                  elm_icon_no_scale_set(Evas_Object *ob
  *
  * @deprecated Use elm_image_no_scale_get() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj);
 
@@ -1036,7 +1036,7 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Obje
  *
  * @deprecated Use elm_image_resizable_set() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI void                  elm_icon_resizable_set(Evas_Object *obj, Eina_Bool size_up, Eina_Bool size_down);
 
@@ -1051,7 +1051,7 @@ EINA_DEPRECATED EAPI void                  elm_icon_resizable_set(Evas_Object *o
  *
  * @deprecated Use elm_image_resizable_get() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI void                  elm_icon_resizable_get(const Evas_Object *obj, Eina_Bool *size_up, Eina_Bool *size_down);
 
@@ -1064,7 +1064,7 @@ EINA_DEPRECATED EAPI void                  elm_icon_resizable_get(const Evas_Obj
  *
  * @deprecated Use elm_image_object_size_get() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI void                  elm_icon_size_get(const Evas_Object *obj, int *w, int *h);
 
@@ -1091,7 +1091,7 @@ EINA_DEPRECATED EAPI void                  elm_icon_size_get(const Evas_Object *
  *
  * @deprecated Use elm_image_fill_outside_set() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI void                  elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
 
@@ -1106,7 +1106,7 @@ EINA_DEPRECATED EAPI void                  elm_icon_fill_outside_set(Evas_Object
  *
  * @deprecated Use elm_image_fill_outside_get() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI Eina_Bool             elm_icon_fill_outside_get(const Evas_Object *obj);
 
@@ -1132,7 +1132,7 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_icon_fill_outside_get(const Evas_
  *
  * @deprecated Use elm_image_prescale_set() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI void                  elm_icon_prescale_set(Evas_Object *obj, int size);
 
@@ -1146,7 +1146,7 @@ EINA_DEPRECATED EAPI void                  elm_icon_prescale_set(Evas_Object *ob
  *
  * @deprecated Use elm_image_prescale_get() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI int                   elm_icon_prescale_get(const Evas_Object *obj);
 
@@ -1158,7 +1158,7 @@ EINA_DEPRECATED EAPI int                   elm_icon_prescale_get(const Evas_Obje
  *
  * @deprecated Use elm_image_object_get() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI Evas_Object          *elm_icon_object_get(Evas_Object *obj);
 
@@ -1167,7 +1167,7 @@ EINA_DEPRECATED EAPI Evas_Object          *elm_icon_object_get(Evas_Object *obj)
  *
  * @param obj The icon object
  * @param disabled If EINA_TRUE, preloading will be disabled
- * @ingroup Icon
+ * @ingroup Elm_Icon
  *
  * @deprecated Use elm_image_preload_disabled_set() instead.
  *
@@ -1184,7 +1184,7 @@ EINA_DEPRECATED EAPI void  elm_icon_preload_disabled_set(Evas_Object *obj, Eina_
  * Return if this elm icon's image can be animated. Currently Evas only
  * supports gif animation. If the return value is EINA_FALSE, other
  * elm_icon_animated_xxx APIs won't work.
- * @ingroup Icon
+ * @ingroup Elm_Icon
  *
  * @deprecated Use elm_image_animated_available_get() instead.
  *
@@ -1203,7 +1203,7 @@ EINA_DEPRECATED EAPI Eina_Bool elm_icon_animated_available_get(const Evas_Object
  * can animate, and this is supported if you enable animated support
  * on the icon.
  * Set it to EINA_TRUE when the icon needs to be animated.
- * @ingroup Icon
+ * @ingroup Elm_Icon
  *
  * @deprecated Use elm_image_animated_set() instead.
  *
@@ -1216,7 +1216,7 @@ EINA_DEPRECATED EAPI void  elm_icon_animated_set(Evas_Object *obj, Eina_Bool ani
  * @param obj The icon object
  * @return The animation mode of the icon object
  * @see elm_icon_animated_set
- * @ingroup Icon
+ * @ingroup Elm_Icon
  *
  * @deprecated Use elm_image_animated_get() instead.
  *
@@ -1241,7 +1241,7 @@ EINA_DEPRECATED EAPI Eina_Bool elm_icon_animated_get(const Evas_Object *obj);
  * 2. Check play flag using elm_icon_animated_play_get
  * 3. If elm icon was playing, set play to EINA_FALSE.
  *    Then animation will be stopped and vice versa
- * @ingroup Icon
+ * @ingroup Elm_Icon
  *
  * @deprecated Use elm_image_animated_play_set() instead.
  *
@@ -1255,7 +1255,7 @@ EINA_DEPRECATED EAPI void  elm_icon_animated_play_set(Evas_Object *obj, Eina_Boo
  * @return The play mode of the icon object
  *
  * @see elm_icon_animated_play_get
- * @ingroup Icon
+ * @ingroup Elm_Icon
  *
  * @deprecated Use elm_image_animated_play_get() instead.
  *
@@ -1277,7 +1277,7 @@ EINA_DEPRECATED EAPI Eina_Bool elm_icon_animated_play_get(const Evas_Object *obj
  * @see elm_icon_aspect_fixed_get()
  * @see elm_icon_fill_outside_set()
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  *
  * @deprecated Use elm_image_aspect_fixed_set() instead.
  *
@@ -1293,7 +1293,7 @@ EINA_DEPRECATED EAPI void  elm_icon_aspect_fixed_set(Evas_Object *obj, Eina_Bool
  *
  * @deprecated Use elm_image_aspect_fixed_get() instead.
  *
- * @ingroup Icon
+ * @ingroup Elm_Icon
  */
 EINA_DEPRECATED EAPI Eina_Bool elm_icon_aspect_fixed_get(const Evas_Object *obj);
 
@@ -1313,7 +1313,7 @@ EINA_DEPRECATED EAPI Eina_Bool elm_icon_aspect_fixed_get(const Evas_Object *obj)
  *
  * @deprecated Use elm_fileselector_path_set() instead.
  *
- * @ingroup File_Selector_Button
+ * @ingroup Elm_File_Selector_Button
  */
 EINA_DEPRECATED EAPI void        elm_fileselector_button_path_set(Evas_Object *obj, const char *path);
 
@@ -1328,7 +1328,7 @@ EINA_DEPRECATED EAPI void        elm_fileselector_button_path_set(Evas_Object *o
  *
  * @deprecated Use elm_fileselector_path_get() instead.
  *
- * @ingroup File_Selector_Button
+ * @ingroup Elm_File_Selector_Button
  */
 EINA_DEPRECATED EAPI const char *elm_fileselector_button_path_get(const Evas_Object *obj);
 
@@ -1352,7 +1352,7 @@ EINA_DEPRECATED EAPI const char *elm_fileselector_button_path_get(const Evas_Obj
  *
  * @deprecated Use elm_fileselector_expandable_set() instead.
  *
- * @ingroup File_Selector_Button
+ * @ingroup Elm_File_Selector_Button
  */
 EINA_DEPRECATED EAPI void        elm_fileselector_button_expandable_set(Evas_Object *obj, Eina_Bool value);
 
@@ -1368,7 +1368,7 @@ EINA_DEPRECATED EAPI void        elm_fileselector_button_expandable_set(Evas_Obj
  *
  * @deprecated Use elm_fileselector_expandable_get() instead.
  *
- * @ingroup File_Selector_Button
+ * @ingroup Elm_File_Selector_Button
  */
 EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_button_expandable_get(const Evas_Object *obj);
 
@@ -1390,7 +1390,7 @@ EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_button_expandable_get(const Ev
  *
  * @deprecated Use elm_fileselector_folder_only_set() instead.
  *
- * @ingroup File_Selector_Button
+ * @ingroup Elm_File_Selector_Button
  */
 EINA_DEPRECATED EAPI void        elm_fileselector_button_folder_only_set(Evas_Object *obj, Eina_Bool value);
 
@@ -1408,7 +1408,7 @@ EINA_DEPRECATED EAPI void        elm_fileselector_button_folder_only_set(Evas_Ob
  *
  * @deprecated Use elm_fileselector_folder_only_get() instead.
  *
- * @ingroup File_Selector_Button
+ * @ingroup Elm_File_Selector_Button
  */
 EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_button_folder_only_get(const Evas_Object *obj);
 
@@ -1429,7 +1429,7 @@ EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_button_folder_only_get(const E
  *
  * @deprecated Use elm_fileselector_is_save_set() instead.
  *
- * @ingroup File_Selector_Button
+ * @ingroup Elm_File_Selector_Button
  */
 EINA_DEPRECATED EAPI void        elm_fileselector_button_is_save_set(Evas_Object *obj, Eina_Bool value);
 
@@ -1446,7 +1446,7 @@ EINA_DEPRECATED EAPI void        elm_fileselector_button_is_save_set(Evas_Object
  *
  * @deprecated Use elm_fileselector_is_save_get() instead.
  *
- * @ingroup File_Selector_Button
+ * @ingroup Elm_File_Selector_Button
  */
 EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_button_is_save_get(const Evas_Object *obj);
 
@@ -1466,7 +1466,7 @@ EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_button_is_save_get(const Evas_
  *
  * @deprecated Use elm_fileselector_path_set() instead.
  *
- * @ingroup File_Selector_Entry
+ * @ingroup Elm_File_Selector_Entry
  */
 EINA_DEPRECATED EAPI void        elm_fileselector_entry_path_set(Evas_Object *obj, const char *path);
 
@@ -1480,7 +1480,7 @@ EINA_DEPRECATED EAPI void        elm_fileselector_entry_path_set(Evas_Object *ob
  * @see elm_fileselector_path_set() for more details
  *
  * @deprecated Use elm_fileselector_path_get() instead.
- * @ingroup File_Selector_Entry
+ * @ingroup Elm_File_Selector_Entry
  */
 EINA_DEPRECATED EAPI const char *elm_fileselector_entry_path_get(const Evas_Object *obj);
 
@@ -1503,7 +1503,7 @@ EINA_DEPRECATED EAPI const char *elm_fileselector_entry_path_get(const Evas_Obje
  *
  * @deprecated Use elm_fileselector_expandable_set() instead.
  *
- * @ingroup File_Selector_Entry
+ * @ingroup Elm_File_Selector_Entry
  */
 EINA_DEPRECATED EAPI void        elm_fileselector_entry_expandable_set(Evas_Object *obj, Eina_Bool value);
 
@@ -1519,7 +1519,7 @@ EINA_DEPRECATED EAPI void        elm_fileselector_entry_expandable_set(Evas_Obje
  *
  * @deprecated Use elm_fileselector_expandable_get() instead.
  *
- * @ingroup File_Selector_Entry
+ * @ingroup Elm_File_Selector_Entry
  */
 EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_expandable_get(const Evas_Object *obj);
 
@@ -1541,7 +1541,7 @@ EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_expandable_get(const Eva
  *
  * @deprecated Use elm_fileselector_folder_only_set() instead.
  *
- * @ingroup File_Selector_Entry
+ * @ingroup Elm_File_Selector_Entry
  */
 EINA_DEPRECATED EAPI void        elm_fileselector_entry_folder_only_set(Evas_Object *obj, Eina_Bool value);
 
@@ -1559,7 +1559,7 @@ EINA_DEPRECATED EAPI void        elm_fileselector_entry_folder_only_set(Evas_Obj
  *
  * @deprecated Use elm_fileselector_folder_only_get() instead.
  *
- * @ingroup File_Selector_Entry
+ * @ingroup Elm_File_Selector_Entry
  */
 EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_folder_only_get(const Evas_Object *obj);
 
@@ -1580,7 +1580,7 @@ EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_folder_only_get(const Ev
  *
  * @deprecated Use elm_fileselector_is_save_set() instead.
  *
- * @ingroup File_Selector_Entry
+ * @ingroup Elm_File_Selector_Entry
  */
 EINA_DEPRECATED EAPI void        elm_fileselector_entry_is_save_set(Evas_Object *obj, Eina_Bool value);
 
@@ -1597,7 +1597,7 @@ EINA_DEPRECATED EAPI void        elm_fileselector_entry_is_save_set(Evas_Object 
  *
  * @deprecated Use elm_fileselector_is_save_get() instead.
  *
- * @ingroup File_Selector_Entry
+ * @ingroup Elm_File_Selector_Entry
  */
 EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_is_save_get(const Evas_Object *obj);
 
@@ -1617,7 +1617,7 @@ EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_is_save_get(const Evas_O
  *
  * @deprecated Use elm_fileselector_selected_set() instead.
  *
- * @ingroup File_Selector_Entry
+ * @ingroup Elm_File_Selector_Entry
  */
 EINA_DEPRECATED EAPI void        elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path);
 
@@ -1633,7 +1633,7 @@ EINA_DEPRECATED EAPI void        elm_fileselector_entry_selected_set(Evas_Object
  *
  * @deprecated Use elm_fileselector_selected_get() instead.
  *
- * @ingroup File_Selector_Entry
+ * @ingroup Elm_File_Selector_Entry
  */
 EINA_DEPRECATED EAPI const char *elm_fileselector_entry_selected_get(const Evas_Object *obj);
 

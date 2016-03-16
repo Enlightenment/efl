@@ -1,5 +1,5 @@
 /**
- * @defgroup Index Index
+ * @defgroup Elm_Index Index
  * @ingroup Elementary
  *
  * @image html index_inheritance_tree.png
@@ -58,7 +58,7 @@
  */
 
 /**
- * @addtogroup Index
+ * @addtogroup Elm_Index
  * @{
  */
 

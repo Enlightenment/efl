@@ -6,7 +6,7 @@
  *
  * @see elm_image_file_set()
  *
- * @ingroup Image
+ * @ingroup Elm_Image
  */
 EAPI Evas_Object     *elm_image_add(Evas_Object *parent);
 
@@ -32,7 +32,7 @@ EAPI Evas_Object     *elm_image_add(Evas_Object *parent);
  * Or image objects will share one evas image cache entry and you will get
  * unwanted frames.
  *
- * @ingroup Image
+ * @ingroup Elm_Image
  */
 EAPI Eina_Bool        elm_image_file_set(Evas_Object *obj, const char *file, const char *group);
 
@@ -41,7 +41,7 @@ EAPI Eina_Bool        elm_image_file_set(Evas_Object *obj, const char *file, con
  *
  * @see elm_image_file_set()
  *
- * @ingroup Image
+ * @ingroup Elm_Image
  *
  * @param[out] file The path to file that will be used as image source
  * @param[out] group The group that the image belongs to, in case it's an
@@ -70,7 +70,7 @@ EAPI void elm_image_file_get(const Eo *obj, const char **file, const char **grou
  * @see elm_image_prescale_get()
  * @see elm_bg_load_size_set()
  *
- * @ingroup Image
+ * @ingroup Elm_Image
  */
 EAPI void             elm_image_prescale_set(Evas_Object *obj, int size);
 
@@ -82,7 +82,7 @@ EAPI void             elm_image_prescale_set(Evas_Object *obj, int size);
  *
  * @see elm_image_prescale_set()
  *
- * @ingroup Image
+ * @ingroup Elm_Image
  */
 EAPI int              elm_image_prescale_get(const Evas_Object *obj);
 
@@ -108,7 +108,7 @@ EAPI int              elm_image_prescale_get(const Evas_Object *obj);
  * Or image objects will share one evas image cache entry and you will get
  * unwanted frames.
  *
- * @ingroup Image
+ * @ingroup Elm_Image
  */
 EAPI Eina_Bool        elm_image_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group);
 
@@ -171,7 +171,7 @@ EAPI Eina_Bool elm_image_smooth_get(const Evas_Object *obj);
  * @see elm_image_animated_set()
  * @see elm_image_animated_play_get()
  *
- * @ingroup Image
+ * @ingroup Elm_Image
  * @since 1.7
  *
  * @param[in] play @c EINA_TRUE to start the animation, @c EINA_FALSE
@@ -187,7 +187,7 @@ EAPI void             elm_image_animated_play_set(Evas_Object *obj, Eina_Bool pl
  *
  * @see elm_image_animated_play_get()
  *
- * @ingroup Image
+ * @ingroup Elm_Image
  * @since 1.7
  */
 EAPI Eina_Bool        elm_image_animated_play_get(const Evas_Object *obj);
@@ -206,7 +206,7 @@ EAPI Eina_Bool        elm_image_animated_play_get(const Evas_Object *obj);
  * @see elm_image_animated_available_get()
  * @see elm_image_animated_play_set()
  *
- * @ingroup Image
+ * @ingroup Elm_Image
  * @since 1.7
  *
  * @param[in] anim @c EINA_TRUE if the object is to animate itself,
@@ -223,7 +223,7 @@ EAPI void             elm_image_animated_set(Evas_Object *obj, Eina_Bool anim);
  *
  * @see elm_image_animated_set()
  *
- * @ingroup Image
+ * @ingroup Elm_Image
  * @since 1.7
  *
  */
@@ -243,7 +243,7 @@ EAPI Eina_Bool        elm_image_animated_get(const Evas_Object *obj);
  *
  * @see elm_image_animated_set()
  *
- * @ingroup Image
+ * @ingroup Elm_Image
  * @since 1.7
  *
  */

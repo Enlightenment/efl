@@ -1,5 +1,5 @@
 /**
- * @defgroup Diskselector Diskselector
+ * @defgroup Elm_Diskselector Diskselector
  * @ingroup Elementary
  *
  * @image html diskselector_inheritance_tree.png
@@ -62,7 +62,7 @@
  */
 
 /**
- * @addtogroup Diskselector
+ * @addtogroup Elm_Diskselector
  * @{
  */
 

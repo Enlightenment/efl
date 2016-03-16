@@ -1,5 +1,5 @@
 /**
- * @defgroup Combobox Combobox
+ * @defgroup Elm_Combobox Combobox
  * @ingroup Elementary
  *
  * @image html combobox_inheritance_tree.png

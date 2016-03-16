@@ -1,5 +1,5 @@
 /**
- * @addtogroup Slideshow
+ * @addtogroup Elm_Slideshow
  *
  * @{
  */

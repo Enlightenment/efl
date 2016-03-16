@@ -1,5 +1,5 @@
 /**
- * @defgroup Photocam Photocam
+ * @defgroup Elm_Photocam Photocam
  * @ingroup Elementary
  *
  * @image html photocam_inheritance_tree.png

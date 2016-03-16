@@ -4,7 +4,7 @@
  * @param parent Parent object
  * @return New object or @c NULL, if it cannot be created
  *
- * @ingroup Ctxpopup
+ * @ingroup Elm_Ctxpopup
  */
 EAPI Evas_Object                 *elm_ctxpopup_add(Evas_Object *parent);
 

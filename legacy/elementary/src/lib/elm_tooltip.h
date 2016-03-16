@@ -1,5 +1,5 @@
 /**
- * @defgroup Tooltips Tooltips
+ * @defgroup Elm_Tooltips Tooltips
  * @ingroup Elementary
  *
  * The Tooltip is an (internal, for now) smart object used to show a
@@ -15,7 +15,7 @@
  * These values should be used in conjunction to elm_object_tooltip_orient_set() to
  * set the position around which the tooltip should appear(relative to its parent)
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  */
 typedef enum
 {
@@ -38,7 +38,7 @@ typedef enum
  *
  * @param obj The tooltip's anchor object
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  * @see elm_object_tooltip_move_freeze_pop()
  * @see elm_object_tooltip_move_freeze_get()
  * @since 1.9
@@ -50,7 +50,7 @@ EAPI void elm_object_tooltip_move_freeze_push(Evas_Object *obj);
  *
  * @param obj The tooltip's anchor object
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  * @see elm_object_tooltip_move_freeze_push()
  * @since 1.9
  */
@@ -64,7 +64,7 @@ EAPI void elm_object_tooltip_move_freeze_pop(Evas_Object *obj);
  * @param obj The tooltip's anchor object
  * @return The movement freeze count
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  * @see elm_object_tooltip_move_freeze_push()
  * @since 1.9
  */
@@ -79,7 +79,7 @@ EAPI int elm_object_tooltip_move_freeze_get(const Evas_Object *obj);
  * @param obj The owner widget.
  * @param orient The orientation of the tooltip.
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  * @see Elm_Tooltip_Orient for possible values.
  * @since 1.9
  */
@@ -91,7 +91,7 @@ EAPI void elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient ori
  * @param obj The owner object
  * @return The orientation of the tooltip
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  * @see elm_object_tooltip_orient_set()
  * @ref Elm_Tooltip_Orient for possible values.
  */
@@ -125,7 +125,7 @@ typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb)(void *data, Evas_Object *obj
  * showed again with new content.
  * This can force show more than one tooltip at a time.
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  */
 EAPI void        elm_object_tooltip_show(Evas_Object *obj);
 
@@ -136,7 +136,7 @@ EAPI void        elm_object_tooltip_show(Evas_Object *obj);
  *
  * Force hide the tooltip and (re)enable future mouse interations.
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  */
 EAPI void        elm_object_tooltip_hide(Evas_Object *obj);
 
@@ -146,7 +146,7 @@ EAPI void        elm_object_tooltip_hide(Evas_Object *obj);
  * @param obj The tooltip object.
  * @param text The text to be displayed.
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  */
 EAPI void        elm_object_tooltip_text_set(Evas_Object *obj, const char *text);
 EAPI void        elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *domain, const char *text);
@@ -170,7 +170,7 @@ EAPI void        elm_object_tooltip_domain_translatable_text_set(Evas_Object *ob
  * return a valid Evas_Object. This object is then managed fully by
  * tooltip system and is deleted when the tooltip is gone.
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  */
 EAPI void        elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
@@ -185,7 +185,7 @@ EAPI void        elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip
  *
  * @see elm_object_tooltip_content_cb_set()
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  */
 EAPI void        elm_object_tooltip_unset(Evas_Object *obj);
 
@@ -199,7 +199,7 @@ EAPI void        elm_object_tooltip_unset(Evas_Object *obj);
  * @param obj an object with tooltip already set.
  * @param style the theme style to use (default, transparent, ...)
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  */
 EAPI void        elm_object_tooltip_style_set(Evas_Object *obj, const char *style);
 
@@ -210,7 +210,7 @@ EAPI void        elm_object_tooltip_style_set(Evas_Object *obj, const char *styl
  * @return style the theme style in use, defaults to "default". If the
  *         object does not have a tooltip set, then NULL is returned.
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  */
 EAPI const char *elm_object_tooltip_style_get(const Evas_Object *obj);
 
@@ -224,7 +224,7 @@ EAPI const char *elm_object_tooltip_style_get(const Evas_Object *obj);
  * This function allows a tooltip to expand beyond its parent window's canvas.
  * It will instead be limited only by the size of the display.
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  */
 EAPI Eina_Bool   elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool disable);
 
@@ -238,7 +238,7 @@ EAPI Eina_Bool   elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool 
  * its parent window's canvas.
  * It will instead be limited only by the size of the display.
  *
- * @ingroup Tooltips
+ * @ingroup Elm_Tooltips
  */
 EAPI Eina_Bool   elm_object_tooltip_window_mode_get(const Evas_Object *obj);
 

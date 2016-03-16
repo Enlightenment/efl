@@ -7,7 +7,7 @@
  * @see elm_thumb_file_set()
  * @see elm_thumb_ethumb_client_get()
  *
- * @ingroup Thumb
+ * @ingroup Elm_Thumb
  */
 EAPI Evas_Object                *elm_thumb_add(Evas_Object *parent);
 
@@ -23,7 +23,7 @@ EAPI Evas_Object                *elm_thumb_add(Evas_Object *parent);
  * @see elm_thumb_reload()
  * @see elm_thumb_animate()
  *
- * @ingroup Thumb
+ * @ingroup Elm_Thumb
  *
  * @param[in] file The path to file that will be used as thumbnail source.
  * @param[in] key The key used in case of an EET file.
@@ -37,7 +37,7 @@ EAPI void elm_thumb_file_set(Eo *obj, const char *file, const char *key);
  * @see elm_thumb_file_set()
  * @see elm_thumb_path_get()
  *
- * @ingroup Thumb
+ * @ingroup Elm_Thumb
  *
  * @param[out] file The path to file that will be used as thumbnail source.
  * @param[out] key The key used in case of an EET file.

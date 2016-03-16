@@ -2,7 +2,7 @@
 #define ELM_PREFS_H
 
 /**
- * @addtogroup Prefs
+ * @addtogroup Elm_Prefs
  * @{
  *
  * @section elm-prefs-widget Prefs

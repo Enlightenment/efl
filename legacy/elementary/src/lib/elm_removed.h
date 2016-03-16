@@ -558,7 +558,7 @@ EINA_DEPRECATED EAPI const char *elm_anchorview_text_get(const Evas_Object *obj)
  * @see elm_ctxpopup_item_disabled_set()
  * @deprecated use elm_object_item_disabled_get() instead
  *
- * @ingroup Ctxpopup
+ * @ingroup Elm_Ctxpopup
  */
 EINA_DEPRECATED EAPI Eina_Bool                    elm_ctxpopup_item_disabled_get(const Elm_Object_Item *it);
 
@@ -571,7 +571,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_ctxpopup_item_disabled_get
  * When disabled the item is greyed out to indicate it's state.
  * @deprecated use elm_object_item_disabled_set() instead
  *
- * @ingroup Ctxpopup
+ * @ingroup Elm_Ctxpopup
  */
 EINA_DEPRECATED EAPI void         elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
 
@@ -587,7 +587,7 @@ EINA_DEPRECATED EAPI void         elm_ctxpopup_item_disabled_set(Elm_Object_Item
  *
  * @deprecated use elm_object_item_part_content_get() instead
  *
- * @ingroup Ctxpopup
+ * @ingroup Elm_Ctxpopup
  */
 EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_item_icon_get(const Elm_Object_Item *it);
 
@@ -605,7 +605,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_item_icon_get(const Elm_Object_It
  *
  * @deprecated use elm_object_item_part_content_set() instead
  *
- * @ingroup Ctxpopup
+ * @ingroup Elm_Ctxpopup
  */
 EINA_DEPRECATED EAPI void         elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
 
@@ -621,7 +621,7 @@ EINA_DEPRECATED EAPI void         elm_ctxpopup_item_icon_set(Elm_Object_Item *it
  *
  * @deprecated use elm_object_item_text_get() instead
  *
- * @ingroup Ctxpopup
+ * @ingroup Elm_Ctxpopup
  */
 EINA_DEPRECATED EAPI const char  *elm_ctxpopup_item_label_get(const Elm_Object_Item *it);
 
@@ -633,7 +633,7 @@ EINA_DEPRECATED EAPI const char  *elm_ctxpopup_item_label_get(const Elm_Object_I
  *
  * @deprecated use elm_object_item_text_set() instead
  *
- * @ingroup Ctxpopup
+ * @ingroup Elm_Ctxpopup
  */
 EINA_DEPRECATED EAPI void         elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label);
 
@@ -652,7 +652,7 @@ EINA_DEPRECATED EAPI void         elm_ctxpopup_item_label_set(Elm_Object_Item *i
  *
  * @deprecated use elm_object_content_set() instead
  *
- * @ingroup Ctxpopup
+ * @ingroup Elm_Ctxpopup
  */
 EINA_DEPRECATED EAPI void         elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content);
 
@@ -670,7 +670,7 @@ EINA_DEPRECATED EAPI void         elm_ctxpopup_content_set(Evas_Object *obj, Eva
  *
  * @deprecated use elm_object_content_unset() instead
  *
- * @ingroup Ctxpopup
+ * @ingroup Elm_Ctxpopup
  */
 EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_content_unset(Evas_Object *obj);
 
@@ -682,7 +682,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_content_unset(Evas_Object *obj);
  * @deprecated Use elm_object_item_del() instead
  * @see elm_ctxpopup_item_append()
  *
- * @ingroup Ctxpopup
+ * @ingroup Elm_Ctxpopup
  */
 EINA_DEPRECATED EAPI void                         elm_ctxpopup_item_del(Elm_Object_Item *it);
 
@@ -1048,7 +1048,7 @@ EINA_DEPRECATED EAPI const char *elm_actionslider_indicator_label_get(Evas_Objec
  *
  * @deprecated use elm_object_part_content_set() instead
  *
- * @ingroup Bg
+ * @ingroup Elm_Bg
  */
 
 EINA_DEPRECATED EAPI void         elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay);
@@ -1063,7 +1063,7 @@ EINA_DEPRECATED EAPI void         elm_bg_overlay_set(Evas_Object *obj, Evas_Obje
  *
  * @deprecated use elm_object_part_content_get() instead
  *
- * @ingroup Bg
+ * @ingroup Elm_Bg
  */
 EINA_DEPRECATED EAPI Evas_Object *elm_bg_overlay_get(const Evas_Object *obj);
 
@@ -1077,7 +1077,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_bg_overlay_get(const Evas_Object *obj);
  *
  * @deprecated use elm_object_part_content_unset() instead
  *
- * @ingroup Bg
+ * @ingroup Elm_Bg
  */
 EINA_DEPRECATED EAPI Evas_Object *elm_bg_overlay_unset(Evas_Object *obj);
 
@@ -1298,7 +1298,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_unset(Evas_Object *obj);
  *
  * @see elm_calendar_mark_add()
  *
- * @ingroup Calendar
+ * @ingroup Elm_Calendar
  */
 EINA_DEPRECATED EAPI void elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos);
 
@@ -1318,7 +1318,7 @@ EINA_DEPRECATED EAPI void elm_calendar_text_saturday_color_set(Evas_Object *obj,
  *
  * @see elm_calendar_mark_add()
  *
- * @ingroup Calendar
+ * @ingroup Elm_Calendar
  */
 EINA_DEPRECATED EAPI void elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos);
 
@@ -1347,7 +1347,7 @@ EINA_DEPRECATED EAPI void elm_calendar_text_sunday_color_set(Evas_Object *obj, i
  *
  * @see elm_calendar_mark_add()
  *
- * @ingroup Calendar
+ * @ingroup Elm_Calendar
  */
 EINA_DEPRECATED EAPI void elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos);
 
@@ -1542,7 +1542,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_unset(Evas_Object *obj)
  * @return The max length defined for side labels, or 0 if not a valid
  * diskselector.
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI int    elm_diskselector_side_label_lenght_get(const Evas_Object *obj);
 
@@ -1554,7 +1554,7 @@ EINA_DEPRECATED EAPI int    elm_diskselector_side_label_lenght_get(const Evas_Ob
  * @param obj The diskselector object.
  * @param len The max length defined for side labels.
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void   elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len);
 
@@ -1571,7 +1571,7 @@ EINA_DEPRECATED EAPI void   elm_diskselector_side_label_lenght_set(Evas_Object *
  * @see elm_diskselector_item_append()
  * @deprecated Use elm_object_item_data_get()
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                  *elm_diskselector_item_data_get(const Elm_Object_Item *it);
 
@@ -1597,7 +1597,7 @@ EINA_DEPRECATED EAPI void                  *elm_diskselector_item_data_get(const
  * @see elm_diskselector_item_icon_get()
  *
  * @deprecated Use elm_object_item_part_content_set() instead
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
 
@@ -1616,7 +1616,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_icon_set(Elm_O
  * @see elm_diskselector_item_icon_set()
  *
  * @deprecated Use elm_object_item_part_content_set() instead
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item *it);
 
@@ -1652,7 +1652,7 @@ EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item
  * @see elm_diskselector_item_append()
  *
  * @deprecated Use elm_object_item_text_set() instead
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_label_set(Elm_Object_Item *it, const char *label);
 
@@ -1671,7 +1671,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_label_set(Elm_
  * @see elm_diskselector_item_append()
  * @deprecated Use elm_object_item_text_get() instead
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI const char            *elm_diskselector_item_label_get(const Elm_Object_Item *it);
 
@@ -1691,7 +1691,7 @@ EINA_DEPRECATED EAPI const char            *elm_diskselector_item_label_get(cons
  * freed.
  * @deprecated Use elm_object_item_del_cb_set() instead
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
@@ -1707,7 +1707,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_del_cb_set(Elm
  * @see elm_diskselector_clear()
  * @see elm_diskselector_item_append()
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_del(Elm_Object_Item *it);
 
@@ -1723,7 +1723,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_del(Elm_Object
  * @deprecated Use elm_object_item_tooltip_text_set() instead
  * @see elm_object_tooltip_text_set() for more details.
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
 
@@ -1748,7 +1748,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_text_s
  * @deprecated Use elm_object_item_tooltip_content_cb_set() instead
  * @see elm_object_tooltip_content_cb_set() for more details.
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
@@ -1765,7 +1765,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_conten
  * @see elm_object_tooltip_unset() for more details.
  * @see elm_diskselector_item_tooltip_content_cb_set()
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_unset(Elm_Object_Item *it);
 
@@ -1782,7 +1782,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_unset(
  * @deprecated Use elm_object_item_tooltip_style_set() instead
  * @see elm_object_tooltip_style_set() for more details.
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
 
@@ -1797,7 +1797,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_style_
  * @see elm_object_tooltip_style_get() for more details.
  * @see elm_diskselector_item_tooltip_style_set()
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI const char            *elm_diskselector_item_tooltip_style_get(const Elm_Object_Item *it);
 
@@ -1810,7 +1810,7 @@ EINA_DEPRECATED EAPI const char            *elm_diskselector_item_tooltip_style_
  * @see elm_object_cursor_set() for more details.
  * @deprecated Use elm_object_item_cursor_set() instead
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_set(Elm_Object_Item *it, const char *cursor);
 
@@ -1824,7 +1824,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_set(Elm
  * @see elm_diskselector_item_cursor_set()
  * @deprecated Use elm_object_item_cursor_get() instead
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_get(const Elm_Object_Item *it);
 
@@ -1837,7 +1837,7 @@ EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_get(con
  * @see elm_diskselector_item_cursor_set()
  * @deprecated use elm_object_item_cursor_unset() instead
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_unset(Elm_Object_Item *it);
 
@@ -1853,7 +1853,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_unset(E
  * @see elm_object_cursor_style_set() for more details.
  * @deprecated Use elm_object_item_cursor_style_set() instead
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_style_set(Elm_Object_Item *it, const char *style);
 
@@ -1868,7 +1868,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_style_s
  * @see elm_diskselector_item_cursor_style_set()
  * @deprecated Use elm_object_item_cursor_style_get() instead
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_style_get(const Elm_Object_Item *it);
 
@@ -1888,7 +1888,7 @@ EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_style_g
  *
  * @deprecated Use elm_object_item_cursor_engine_only_set() instead
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only);
 
@@ -1903,7 +1903,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_engine_
  * @see elm_diskselector_item_cursor_engine_only_set()
  * @deprecated Use elm_object_item_cursor_engine_only_get() instead
  *
- * @ingroup Diskselector
+ * @ingroup Elm_Diskselector
  */
 EINA_DEPRECATED EAPI Eina_Bool              elm_diskselector_item_cursor_engine_only_get(const Elm_Object_Item *it);
 
@@ -1919,7 +1919,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj
  * @see elm_object_item_text_set()
  *
  * @deprecated see elm_object_item_text_get() instead
- * @ingroup Flipselector
+ * @ingroup Elm_Flipselector
  */
 EINA_DEPRECATED EAPI const char *elm_flipselector_item_label_get(const Elm_Object_Item *it);
 
@@ -1932,7 +1932,7 @@ EINA_DEPRECATED EAPI const char *elm_flipselector_item_label_get(const Elm_Objec
  * @see elm_object_item_text_get()
  *
  * @deprecated see elm_object_item_text_set() instead
- * @ingroup Flipselector
+ * @ingroup Elm_Flipselector
  */
 EINA_DEPRECATED EAPI void        elm_flipselector_item_label_set(Elm_Object_Item *it, const char *label);
 
@@ -1942,7 +1942,7 @@ EINA_DEPRECATED EAPI void        elm_flipselector_item_label_set(Elm_Object_Item
  * @param it The item to delete
  *
  * @deprecated Use elm_object_item_del() instead
- * @ingroup Flipselector
+ * @ingroup Elm_Flipselector
  */
 EINA_DEPRECATED EAPI void       elm_flipselector_item_del(Elm_Object_Item *it);
 
@@ -1971,7 +1971,7 @@ EINA_DEPRECATED EAPI void       elm_flipselector_item_del(Elm_Object_Item *it);
  * @see elm_flipselector_interval_get()
  * @deprecated Use elm_flipselector_first_interval_set()
  *
- * @ingroup Flipselector
+ * @ingroup Elm_Flipselector
  */
 EINA_DEPRECATED EAPI void                        elm_flipselector_interval_set(Evas_Object *obj, double interval);
 
@@ -1985,7 +1985,7 @@ EINA_DEPRECATED EAPI void                        elm_flipselector_interval_set(E
  * @see elm_flipselector_interval_set() for more details
  * @deprecated Use elm_flipselector_first_interval_get()
  *
- * @ingroup Flipselector
+ * @ingroup Elm_Flipselector
  */
 EINA_DEPRECATED EAPI double                      elm_flipselector_interval_get(const Evas_Object *obj);
 
@@ -5910,7 +5910,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_side_label_length_s
  *
  * @see elm_toolbar_always_select_mode_get().
  *
- * @ingroup Toolbar
+ * @ingroup Elm_Toolbar
  */
 EINA_DEPRECATED EAPI void                         elm_toolbar_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
 
@@ -5923,7 +5923,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_always_select_mode
  *
  * @see elm_toolbar_always_select_mode_set() for details.
  *
- * @ingroup Toolbar
+ * @ingroup Elm_Toolbar
  */
 EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_always_select_mode_get(const Evas_Object *obj);
 
@@ -5942,7 +5942,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_always_select_mode
  *
  * @see elm_toolbar_no_select_mode_get().
  *
- * @ingroup Toolbar
+ * @ingroup Elm_Toolbar
  */
 EINA_DEPRECATED EAPI void                         elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
 
@@ -5955,7 +5955,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_no_select_mode_set
  *
  * @see elm_toolbar_no_select_mode_set() for details.
  *
- * @ingroup Toolbar
+ * @ingroup Elm_Toolbar
  */
 EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Object *obj);
 

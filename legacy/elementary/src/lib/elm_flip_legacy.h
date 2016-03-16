@@ -4,7 +4,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Flip
+ * @ingroup Elm_Flip
  */
 EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
 
@@ -18,7 +18,7 @@ EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
  *
  * @warning This function currently does nothing.
  *
- * @ingroup Flip
+ * @ingroup Elm_Flip
  */
 EAPI void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y);
 

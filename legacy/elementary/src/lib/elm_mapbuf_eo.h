@@ -1,5 +1,5 @@
 /**
- * @ingroup Mapbuf
+ * @ingroup Elm_Mapbuf
  *
  * @{
  */

@@ -7,7 +7,7 @@
  *
  * This function inserts a new clock widget on the canvas.
  *
- * @ingroup Clock
+ * @ingroup Elm_Clock
  */
 EAPI Evas_Object      *elm_clock_add(Evas_Object *parent);
 

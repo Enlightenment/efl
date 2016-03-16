@@ -1,5 +1,5 @@
 /**
- * @defgroup Icon Icon
+ * @defgroup Elm_Icon Icon
  * @ingroup Elementary
  *
  * @image html icon_inheritance_tree.png

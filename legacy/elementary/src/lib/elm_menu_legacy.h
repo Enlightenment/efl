@@ -4,7 +4,7 @@
  * @param parent The parent object.
  * @return The new object or NULL if it cannot be created.
  *
- * @ingroup Menu
+ * @ingroup Elm_Menu
  */
 EAPI Evas_Object                 *elm_menu_add(Evas_Object *parent);
 
@@ -14,7 +14,7 @@ EAPI Evas_Object                 *elm_menu_add(Evas_Object *parent);
  * @param obj The menu object.
  * @param parent The new parent.
  *
- * @ingroup Menu
+ * @ingroup Elm_Menu
  */
 EAPI void                         elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
 
@@ -26,7 +26,7 @@ EAPI void                         elm_menu_parent_set(Evas_Object *obj, Evas_Obj
  *
  * @see elm_menu_parent_set()
  *
- * @ingroup Menu
+ * @ingroup Elm_Menu
  */
 EAPI Evas_Object                 *elm_menu_parent_get(const Evas_Object *obj);
 

@@ -4,7 +4,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Colorselector
+ * @ingroup Elm_Colorselector
  */
 EAPI Evas_Object *elm_colorselector_add(Evas_Object *parent);
 

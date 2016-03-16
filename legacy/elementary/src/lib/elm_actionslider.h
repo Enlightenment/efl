@@ -1,5 +1,5 @@
 /**
- * @addtogroup Actionslider Actionslider
+ * @addtogroup Elm_Actionslider Actionslider
  * @ingroup Elementary
  *
  * @image html actionslider_inheritance_tree.png

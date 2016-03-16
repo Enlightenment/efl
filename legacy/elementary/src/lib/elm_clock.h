@@ -1,5 +1,5 @@
 /**
- * @defgroup Clock Clock
+ * @defgroup Elm_Clock Clock
  * @ingroup Elementary
  *
  * @image html clock_inheritance_tree.png
@@ -53,7 +53,7 @@
  */
 
 /**
- * @addtogroup Clock
+ * @addtogroup Elm_Clock
  * @{
  */
 

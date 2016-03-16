@@ -1,5 +1,5 @@
 /**
- * @addtogroup GLView
+ * @addtogroup Elm_GLView
  *
  * @{
  */

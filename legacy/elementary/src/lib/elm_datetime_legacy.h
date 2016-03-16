@@ -8,7 +8,7 @@
  *
  * This function inserts a new datetime widget on the canvas.
  *
- * @ingroup Datetime
+ * @ingroup Elm_Datetime
  */
 EAPI Evas_Object *elm_datetime_add(Evas_Object *parent);
 

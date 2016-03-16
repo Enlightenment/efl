@@ -1,5 +1,5 @@
 /**
- * @addtogroup Web
+ * @addtogroup Elm_Web
  *
  * @{
  */

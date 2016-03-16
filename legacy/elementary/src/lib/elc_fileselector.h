@@ -1,5 +1,5 @@
 /**
- * @defgroup Fileselector File Selector
+ * @defgroup Elm_Fileselector File Selector
  * @ingroup Elementary
  *
  * @image html fileselector_inheritance_tree.png
@@ -64,7 +64,7 @@
  */
 
 /**
- * @addtogroup Fileselector
+ * @addtogroup Elm_Fileselector
  * @{
  */
 

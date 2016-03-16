@@ -12,7 +12,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Entry
+ * @ingroup Elm_Entry
  */
 EAPI Evas_Object       *elm_entry_add(Evas_Object *parent);
 
@@ -24,7 +24,7 @@ EAPI Evas_Object       *elm_entry_add(Evas_Object *parent);
  *
  * @note Using this function bypasses text filters
  *
- * @ingroup Entry
+ * @ingroup Elm_Entry
  */
 EAPI void               elm_entry_entry_set(Evas_Object *obj, const char *entry);
 
@@ -35,7 +35,7 @@ EAPI void               elm_entry_entry_set(Evas_Object *obj, const char *entry)
  * @param obj The entry object
  * @return The currently displayed text or NULL on failure
  *
- * @ingroup Entry
+ * @ingroup Elm_Entry
  */
 EAPI const char        *elm_entry_entry_get(const Evas_Object *obj);
 
@@ -51,7 +51,7 @@ EAPI const char        *elm_entry_entry_get(const Evas_Object *obj);
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
- * @ingroup Entry
+ * @ingroup Elm_Entry
  *
  * @param[in] file The path to the file to load and save
  * @param[in] format The file format
@@ -65,7 +65,7 @@ EAPI Eina_Bool          elm_entry_file_set(Evas_Object *obj, const char *file, E
  * This function can be used to retrieve any file set on the entry for
  * edition, along with the format used to load and save it.
  *
- * @ingroup Entry
+ * @ingroup Elm_Entry
  *
  * @param[out] file The path to the file to load and save
  * @param[out] format The file format

@@ -93,7 +93,7 @@ EAPI Eina_Bool elm_need_elocation(void);
  * This must be called before any other function that deals with
  * elm_thumb objects or ethumb_client instances.
  *
- * @ingroup Thumb
+ * @ingroup Elm_Thumb
  */
 EAPI Eina_Bool elm_need_ethumb(void);
 
@@ -105,6 +105,6 @@ EAPI Eina_Bool elm_need_ethumb(void);
  * This must be called before any other function that deals with
  * elm_web objects or ewk_view instances.
  *
- * @ingroup Web
+ * @ingroup Elm_Web
  */
 EAPI Eina_Bool elm_need_web(void);

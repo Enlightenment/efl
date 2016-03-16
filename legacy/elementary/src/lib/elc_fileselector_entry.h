@@ -1,5 +1,5 @@
 /**
- * @defgroup File_Selector_Entry File Selector Entry
+ * @defgroup Elm_File_Selector_Entry File Selector Entry
  * @ingroup Elementary
  *
  * @image html fileselector_entry_inheritance_tree.png

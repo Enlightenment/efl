@@ -6,7 +6,7 @@
  * @return a new file selector button widget handle or @c NULL, on
  * errors
  *
- * @ingroup File_Selector_Button
+ * @ingroup Elm_File_Selector_Button
  */
 EAPI Evas_Object                *elm_fileselector_button_add(Evas_Object *parent);
 

@@ -1,8 +1,8 @@
 /**
- * @defgroup Video Video
+ * @defgroup Elm_Video Video
  * @ingroup Elementary
  *
- * @addtogroup Video
+ * @addtogroup Elm_Video
  * @{
  *
  * @image html video_inheritance_tree.png

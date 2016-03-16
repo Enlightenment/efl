@@ -1,5 +1,5 @@
 /**
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  *
  * @{
  */

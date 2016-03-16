@@ -1,5 +1,5 @@
 /**
- * @ingroup Popup
+ * @ingroup Elm_Popup
  *
  * @{
  */

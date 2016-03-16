@@ -301,7 +301,7 @@ EAPI void         elm_config_scroll_page_scroll_friction_set(double friction);
  * Get enable status of context menu disabled.
  *
  * @see elm_config_context_menu_disabled_set()
- * @ingroup Entry
+ * @ingroup Elm_Entry
  * @since 1.17
  */
 EAPI Eina_Bool elm_config_context_menu_disabled_get(void);
@@ -312,7 +312,7 @@ EAPI Eina_Bool elm_config_context_menu_disabled_get(void);
  * @param disabled disable context menu if @c EINA_TRUE, enable otherwise
  *
  * @see elm_config_context_menu_disabled_get()
- * @ingroup Entry
+ * @ingroup Elm_Entry
  * @since 1.17
  */
 EAPI void elm_config_context_menu_disabled_set(Eina_Bool disabled);
@@ -843,7 +843,7 @@ EAPI void         elm_config_focus_autoscroll_mode_set(Elm_Focus_Autoscroll_Mode
  * @param mode Elm_Slider_Indicator_Visible_Mode.
  * viewport.
  *
- * @ingroup Slider
+ * @ingroup Elm_Slider
  * @since 1.13
  */
 EAPI void elm_config_slider_indicator_visible_mode_set(Elm_Slider_Indicator_Visible_Mode mode);
@@ -856,7 +856,7 @@ EAPI void elm_config_slider_indicator_visible_mode_set(Elm_Slider_Indicator_Visi
  * @c ELM_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS, ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS,
  *    ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE if any of the above is set by user.
  *
- * @ingroup Slider
+ * @ingroup Elm_Slider
  * @since 1.13
  */
 EAPI Elm_Slider_Indicator_Visible_Mode elm_config_slider_indicator_visible_mode_get(void);

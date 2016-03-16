@@ -8,7 +8,7 @@
  *
  * This function inserts a new file selector widget on the canvas.
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI Evas_Object          *elm_fileselector_add(Evas_Object *parent);
 
@@ -27,7 +27,7 @@ EAPI Evas_Object          *elm_fileselector_add(Evas_Object *parent);
  *
  * @see elm_fileselector_is_save_get()
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI void                  elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save);
 
@@ -40,7 +40,7 @@ EAPI void                  elm_fileselector_is_save_set(Evas_Object *obj, Eina_B
  *
  * @see elm_fileselector_is_save_set() for more details
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI Eina_Bool             elm_fileselector_is_save_get(const Evas_Object *obj);
 
@@ -57,7 +57,7 @@ EAPI Eina_Bool             elm_fileselector_is_save_get(const Evas_Object *obj);
  *
  * @see elm_fileselector_folder_only_get()
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI void                  elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only);
 
@@ -72,7 +72,7 @@ EAPI void                  elm_fileselector_folder_only_set(Evas_Object *obj, Ei
  *
  * @see elm_fileselector_folder_only_get()
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI Eina_Bool             elm_fileselector_folder_only_get(const Evas_Object *obj);
 
@@ -92,7 +92,7 @@ EAPI Eina_Bool             elm_fileselector_folder_only_get(const Evas_Object *o
  *
  * @see elm_fileselector_expandable_get()
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI void                  elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand);
 
@@ -106,7 +106,7 @@ EAPI void                  elm_fileselector_expandable_set(Evas_Object *obj, Ein
  *
  * @see elm_fileselector_expandable_set() for more details
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI Eina_Bool             elm_fileselector_expandable_get(const Evas_Object *obj);
 
@@ -123,7 +123,7 @@ EAPI Eina_Bool             elm_fileselector_expandable_get(const Evas_Object *ob
  *
  * @see elm_fileselector_path_get()
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI void                  elm_fileselector_path_set(Evas_Object *obj, const char *path);
 
@@ -137,7 +137,7 @@ EAPI void                  elm_fileselector_path_set(Evas_Object *obj, const cha
  *
  * @see elm_fileselector_path_set()
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI const char           *elm_fileselector_path_get(const Evas_Object *obj);
 
@@ -163,7 +163,7 @@ EAPI const char           *elm_fileselector_path_get(const Evas_Object *obj);
  * @see elm_fileselector_expandable_set().
  * @see elm_fileselector_mode_get().
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI void                  elm_fileselector_mode_set(Evas_Object *obj, Elm_Fileselector_Mode mode);
 
@@ -176,7 +176,7 @@ EAPI void                  elm_fileselector_mode_set(Evas_Object *obj, Elm_Files
  *
  * @see elm_fileselector_mode_set() for more details
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI Elm_Fileselector_Mode elm_fileselector_mode_get(const Evas_Object *obj);
 
@@ -195,7 +195,7 @@ EAPI Elm_Fileselector_Mode elm_fileselector_mode_get(const Evas_Object *obj);
  * @see elm_fileselector_multi_select_get()
  *
  * @since 1.8
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI void                  elm_fileselector_multi_select_set(Evas_Object *obj, Eina_Bool multi);
 
@@ -209,7 +209,7 @@ EAPI void                  elm_fileselector_multi_select_set(Evas_Object *obj, E
  * @see elm_fileselector_multi_select_set()
  *
  * @since 1.8
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI Eina_Bool             elm_fileselector_multi_select_get(const Evas_Object *obj);
 
@@ -225,7 +225,7 @@ EAPI Eina_Bool             elm_fileselector_multi_select_get(const Evas_Object *
  *
  * @see elm_fileselector_selected_get()
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const char *path);
 
@@ -242,7 +242,7 @@ EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const
  *
  * @see elm_fileselector_selected_set() for more details
  *
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj);
 
@@ -268,7 +268,7 @@ EAPI const char           *elm_fileselector_current_name_get(const Evas_Object *
  * @see elm_fileselector_selected_get()
  *
  * @since 1.8
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI const Eina_List      *elm_fileselector_selected_paths_get(const Evas_Object *obj);
 
@@ -288,7 +288,7 @@ EAPI const Eina_List      *elm_fileselector_selected_paths_get(const Evas_Object
  * @see elm_fileselector_filters_clear()
  *
  * @since 1.8
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI Eina_Bool             elm_fileselector_mime_types_filter_append(Evas_Object *obj, const char *mime_types, const char *filter_name);
 
@@ -304,7 +304,7 @@ EAPI Eina_Bool             elm_fileselector_mime_types_filter_append(Evas_Object
  * @note first added filter will be the default filter at the moment.
  *
  * @since 1.9
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI Eina_Bool             elm_fileselector_custom_filter_append(Evas_Object *obj, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name);
 
@@ -319,7 +319,7 @@ EAPI Eina_Bool             elm_fileselector_custom_filter_append(Evas_Object *ob
  * @see elm_fileselector_mime_type_filter_append()
  *
  * @since 1.8
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI void                  elm_fileselector_filters_clear(Evas_Object *obj);
 
@@ -334,7 +334,7 @@ EAPI void                  elm_fileselector_filters_clear(Evas_Object *obj);
  * files/directories in the list/grid of the file selector widget.
  *
  * @since 1.8
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI void                  elm_fileselector_hidden_visible_set(Evas_Object *obj, Eina_Bool visible);
 
@@ -348,7 +348,7 @@ EAPI void                  elm_fileselector_hidden_visible_set(Evas_Object *obj,
  * @see elm_fileselector_hidden_visible_set()
  *
  * @since 1.8
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI Eina_Bool             elm_fileselector_hidden_visible_get(const Evas_Object *obj);
 
@@ -364,7 +364,7 @@ EAPI Eina_Bool             elm_fileselector_hidden_visible_get(const Evas_Object
  * @see elm_fileselector_thumbnail_size_get()
  *
  * @since 1.9
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI void                  elm_fileselector_thumbnail_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
@@ -381,7 +381,7 @@ EAPI void                  elm_fileselector_thumbnail_size_set(Evas_Object *obj,
  * @see elm_fileselector_thumbnail_size_set()
  *
  * @since 1.9
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI void                  elm_fileselector_thumbnail_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
@@ -394,7 +394,7 @@ EAPI void                  elm_fileselector_thumbnail_size_get(const Evas_Object
  * @see elm_fileselector_sort_method_set()
  *
  * @since 1.9
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI Elm_Fileselector_Sort elm_fileselector_sort_method_get(const Evas_Object *obj);
 
@@ -407,7 +407,7 @@ EAPI Elm_Fileselector_Sort elm_fileselector_sort_method_get(const Evas_Object *o
  * @see elm_fileselector_sort_method_get()
  *
  * @since 1.9
- * @ingroup Fileselector
+ * @ingroup Elm_Fileselector
  */
 EAPI void                  elm_fileselector_sort_method_set(Evas_Object *obj, Elm_Fileselector_Sort sort);
 

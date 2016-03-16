@@ -6,7 +6,7 @@
  *
  * This function inserts a new map widget on the canvas.
  *
- * @ingroup Map
+ * @ingroup Elm_Map
  */
 EAPI Evas_Object          *elm_map_add(Evas_Object *parent);
 
