@@ -1,5 +1,5 @@
 /**
- * @defgroup Focus Focus
+ * @defgroup Elm_Focus Focus
  * @ingroup Elementary
  *
  * An Elementary application has, at all times, one (and only one)
@@ -42,7 +42,7 @@
  *
  * @see elm_object_focus_set()
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj);
 
@@ -64,7 +64,7 @@ EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj);
  *
  * @see elm_object_focus_get(), elm_object_focus_custom_chain_get()
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI void                 elm_object_focus_set(Evas_Object *obj, Eina_Bool focus);
 
@@ -82,7 +82,7 @@ EAPI void                 elm_object_focus_set(Evas_Object *obj, Eina_Bool focus
  * will get the event, but not take away the focus from where it
  * was previously.
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI void                 elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool enable);
 
@@ -97,7 +97,7 @@ EAPI void                 elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool
  * events are created able to be focused, by default. All the
  * others are not.
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI Eina_Bool            elm_object_focus_allow_get(const Evas_Object *obj);
 
@@ -112,7 +112,7 @@ EAPI Eina_Bool            elm_object_focus_allow_get(const Evas_Object *obj);
  *
  * @param obj The container object
  * @param objs Chain of objects to pass focus
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI void                 elm_object_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs);
 
@@ -124,7 +124,7 @@ EAPI void                 elm_object_focus_custom_chain_set(Evas_Object *obj, Ei
  * Any focus chain previously set on @p obj (for its child objects)
  * is removed entirely after this call.
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI void                 elm_object_focus_custom_chain_unset(Evas_Object *obj);
 
@@ -132,7 +132,7 @@ EAPI void                 elm_object_focus_custom_chain_unset(Evas_Object *obj);
  * Get custom focus chain
  *
  * @param obj The container object
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI const Eina_List     *elm_object_focus_custom_chain_get(const Evas_Object *obj);
 
@@ -147,7 +147,7 @@ EAPI const Eina_List     *elm_object_focus_custom_chain_get(const Evas_Object *o
  * @param obj The container object
  * @param child The child to be added in custom chain
  * @param relative_child The relative object to position the child
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI void                 elm_object_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
 
@@ -162,7 +162,7 @@ EAPI void                 elm_object_focus_custom_chain_append(Evas_Object *obj,
  * @param obj The container object
  * @param child The child to be added in custom chain
  * @param relative_child The relative object to position the child
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI void                 elm_object_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
 
@@ -178,7 +178,7 @@ EAPI void                 elm_object_focus_custom_chain_prepend(Evas_Object *obj
  *
  * @see elm_object_focus_next_object_get(), elm_object_focus_next_object_set()
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI void                 elm_object_focus_next(Evas_Object *obj, Elm_Focus_Direction dir);
 
@@ -196,7 +196,7 @@ EAPI void                 elm_object_focus_next(Evas_Object *obj, Elm_Focus_Dire
  *
  * @since 1.8
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI Evas_Object *        elm_object_focus_next_object_get(const Evas_Object *obj, Elm_Focus_Direction dir);
 
@@ -216,7 +216,7 @@ EAPI Evas_Object *        elm_object_focus_next_object_get(const Evas_Object *ob
  *
  * @since 1.8
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI void                 elm_object_focus_next_object_set(Evas_Object *obj, Evas_Object *next, Elm_Focus_Direction dir);
 
@@ -230,7 +230,7 @@ EAPI void                 elm_object_focus_next_object_set(Evas_Object *obj, Eva
  *
  * @since 1.8
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI Evas_Object         *elm_object_focused_object_get(const Evas_Object *obj);
 
@@ -252,7 +252,7 @@ EAPI Evas_Object         *elm_object_focused_object_get(const Evas_Object *obj);
  *
  * @see elm_object_tree_focus_allow_get()
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  *
  */
 EAPI void                 elm_object_tree_focus_allow_set(Evas_Object *obj, Eina_Bool focusable);
@@ -266,7 +266,7 @@ EAPI void                 elm_object_tree_focus_allow_set(Evas_Object *obj, Eina
  *
  * @see elm_object_tree_focus_allow_set()
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI Eina_Bool            elm_object_tree_focus_allow_get(const Evas_Object *obj);
 
@@ -284,7 +284,7 @@ EAPI Eina_Bool            elm_object_tree_focus_allow_get(const Evas_Object *obj
  *
  * @since 1.9
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI Eina_Bool    elm_object_focus_highlight_style_set(Evas_Object *obj, const char *style);
 
@@ -298,7 +298,7 @@ EAPI Eina_Bool    elm_object_focus_highlight_style_set(Evas_Object *obj, const c
  *
  * @since 1.9
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI const char  *elm_object_focus_highlight_style_get(const Evas_Object *obj);
 
@@ -312,7 +312,7 @@ EAPI const char  *elm_object_focus_highlight_style_get(const Evas_Object *obj);
  *
  * @since 1.15
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI void                 elm_object_focus_move_policy_set(Evas_Object *obj, Elm_Focus_Move_Policy policy);
 
@@ -334,7 +334,7 @@ EAPI void                 elm_object_focus_move_policy_set(Evas_Object *obj, Elm
  *
  * @since 1.15
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI Elm_Focus_Move_Policy  elm_object_focus_move_policy_get(const Evas_Object *obj);
 
@@ -353,7 +353,7 @@ EAPI Elm_Focus_Move_Policy  elm_object_focus_move_policy_get(const Evas_Object *
  *
  * @since 1.16
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI void                       elm_object_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
 
@@ -367,6 +367,6 @@ EAPI void                       elm_object_focus_region_show_mode_set(Evas_Objec
  *
  * @since 1.16
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI Elm_Focus_Region_Show_Mode elm_object_focus_region_show_mode_get(const Evas_Object *obj);

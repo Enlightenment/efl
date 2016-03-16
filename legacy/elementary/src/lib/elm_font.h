@@ -1,5 +1,5 @@
 /**
- * @defgroup Fonts Elementary Fonts
+ * @defgroup Elm_Fonts Elementary Fonts
  * @ingroup Elementary
  *
  * These are functions dealing with font rendering, selection and the
@@ -23,7 +23,7 @@ typedef struct _Elm_Font_Properties
  * @param font The font name and styles string
  * @return the font properties struct
  *
- * @ingroup Fonts
+ * @ingroup Elm_Fonts
  *
  * @note The reverse translation can be achieved with
  * elm_font_fontconfig_name_get(), for one style only (single font
@@ -36,7 +36,7 @@ EAPI Elm_Font_Properties *elm_font_properties_get(const char *font);
  *
  * @param efp the font properties struct
  *
- * @ingroup Fonts
+ * @ingroup Elm_Fonts
  */
 EAPI void             elm_font_properties_free(Elm_Font_Properties *efp);
 
@@ -49,7 +49,7 @@ EAPI void             elm_font_properties_free(Elm_Font_Properties *efp);
  *
  * @return the font name and style string
  *
- * @ingroup Fonts
+ * @ingroup Elm_Fonts
  *
  * @note The reverse translation can be achieved with
  * elm_font_properties_get(), for one style only (single font
@@ -62,7 +62,7 @@ EAPI char      *elm_font_fontconfig_name_get(const char *name, const char *style
  *
  * @param name the font properties struct
  *
- * @ingroup Fonts
+ * @ingroup Elm_Fonts
  */
 EAPI void             elm_font_fontconfig_name_free(char *name);
 
@@ -77,7 +77,7 @@ EAPI void             elm_font_fontconfig_name_free(char *name);
  * evas_font_available_list().
  * @return the font hash.
  *
- * @ingroup Fonts
+ * @ingroup Elm_Fonts
  *
  * @note The user is supposed to get it populated at least with 3
  * default font families (Sans, Serif, Monospace), which should be
@@ -90,7 +90,7 @@ EAPI Eina_Hash       *elm_font_available_hash_add(Eina_List *list);
  *
  * @param hash the hash to be freed.
  *
- * @ingroup Fonts
+ * @ingroup Elm_Fonts
  */
 EAPI void             elm_font_available_hash_del(Eina_Hash *hash);
 

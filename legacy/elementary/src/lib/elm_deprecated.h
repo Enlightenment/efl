@@ -511,7 +511,7 @@ EINA_DEPRECATED EAPI Eina_Bool                   elm_label_slide_get(const Evas_
  *
  * @deprecated Use elm_object_domain_translatable_part_text_set() instead.
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EINA_DEPRECATED EAPI void      elm_object_domain_translatable_text_part_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
 
@@ -529,7 +529,7 @@ EINA_DEPRECATED EAPI void      elm_object_domain_translatable_text_part_set(Evas
  *
  * @deprecated Use elm_object_translatable_part_text_get() instead.
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EINA_DEPRECATED EAPI const char *elm_object_translatable_text_part_get(const Evas_Object *obj, const char *part);
 

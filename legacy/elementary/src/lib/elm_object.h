@@ -7,7 +7,7 @@
  *
  * @note Elementary objects may have many text parts (e.g. Action Slider)
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void                         elm_object_part_text_set(Evas_Object *obj, const char *part, const char *text);
 
@@ -22,7 +22,7 @@ EAPI void                         elm_object_part_text_set(Evas_Object *obj, con
  *
  * @note Elementary objects may have many text parts (e.g. Action Slider)
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI const char                  *elm_object_part_text_get(const Evas_Object *obj, const char *part);
 
@@ -51,7 +51,7 @@ EAPI const char                  *elm_object_part_text_get(const Evas_Object *ob
  *
  * @since 1.8
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void      elm_object_domain_translatable_part_text_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
 
@@ -77,7 +77,7 @@ EAPI void      elm_object_domain_translatable_part_text_set(Evas_Object *obj, co
  *
  * @since 1.8
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI const char *elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part);
 
@@ -104,7 +104,7 @@ EAPI const char *elm_object_translatable_part_text_get(const Evas_Object *obj, c
  *
  * @since 1.8
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void elm_object_domain_part_text_translatable_set(Evas_Object *obj, const char *part, const char *domain, Eina_Bool translatable);
 
@@ -130,7 +130,7 @@ EAPI void elm_object_domain_part_text_translatable_set(Evas_Object *obj, const c
  *
  * @see elm_object_part_content_get()
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void                         elm_object_part_content_set(Evas_Object *obj, const char *part, Evas_Object *content);
 
@@ -147,7 +147,7 @@ EAPI void                         elm_object_part_content_set(Evas_Object *obj, 
  *
  * @see elm_object_part_content_set() for more details
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI Evas_Object                 *elm_object_part_content_get(const Evas_Object *obj, const char *part);
 
@@ -164,7 +164,7 @@ EAPI Evas_Object                 *elm_object_part_content_get(const Evas_Object 
  *
  * @see elm_object_part_content_set() for more details
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI Evas_Object                 *elm_object_part_content_unset(Evas_Object *obj, const char *part);
 
@@ -176,7 +176,7 @@ EAPI Evas_Object                 *elm_object_part_content_unset(Evas_Object *obj
  * @param obj The object which is to be described
  * @param txt The text that describes the widget to people with poor or no vision
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void                         elm_object_access_info_set(Evas_Object *obj, const char *txt);
 
@@ -186,7 +186,7 @@ EAPI void                         elm_object_access_info_set(Evas_Object *obj, c
  * @param obj The object which is to be described
  * @return The text that describes the widget to people with poor or no vision
  *
- * @ingroup General
+ * @ingroup Elm_General
  *
  * @since 1.14
  */
@@ -210,12 +210,12 @@ EAPI const char *elm_object_access_info_get(Evas_Object *obj);
  * is unique amongst children. If recurse is set to -1 it will recurse
  * without limit.
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI Evas_Object                 *elm_object_name_find(const Evas_Object *obj, const char *name, int recurse);
 
 /**
- * @defgroup Styles Styles
+ * @defgroup Elm_Styles Styles
  *
  * Widgets can have different styles of look. These generic API's
  * set styles of widgets, if they support them (and if the theme(s)
@@ -241,7 +241,7 @@ EAPI Evas_Object                 *elm_object_name_find(const Evas_Object *obj, c
  * @see elm_theme_overlay_add()
  * @see elm_theme_overlay_del()
  *
- * @ingroup Styles
+ * @ingroup Elm_Styles
  */
 EAPI Eina_Bool    elm_object_style_set(Evas_Object *obj, const char *style);
 
@@ -257,7 +257,7 @@ EAPI Eina_Bool    elm_object_style_set(Evas_Object *obj, const char *style);
  *
  * @see elm_object_style_set()
  *
- * @ingroup Styles
+ * @ingroup Elm_Styles
  */
 EAPI const char  *elm_object_style_get(const Evas_Object *obj);
 
@@ -277,7 +277,7 @@ EAPI const char  *elm_object_style_get(const Evas_Object *obj);
  * This sets the state for the widget, either disabling it or
  * enabling it back.
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
@@ -290,12 +290,12 @@ EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled);
  *
  * This gets the state of the widget, which might be enabled or disabled.
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj);
 
 /**
- * @defgroup WidgetNavigation Widget Tree Navigation
+ * @defgroup Elm_WidgetNavigation Widget Tree Navigation
  *
  * These functions provide checks for if a Evas_Object is an Elementary widget,
  * the possibility of getting a widget's parent, top level parent and getting a
@@ -308,7 +308,7 @@ EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj);
  * @param obj the object to query.
  * @return @c EINA_TRUE if it is an elementary widget variant,
  *         @c EINA_FALSE otherwise
- * @ingroup WidgetNavigation
+ * @ingroup Elm_WidgetNavigation
  */
 EAPI Eina_Bool    elm_object_widget_check(const Evas_Object *obj);
 
@@ -328,7 +328,7 @@ EAPI Eina_Bool    elm_object_widget_check(const Evas_Object *obj);
  * application's window, which is the root of that tree, all other
  * objects would have valid Elementary widget parents.
  *
- * @ingroup WidgetNavigation
+ * @ingroup Elm_WidgetNavigation
  */
 EAPI Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj);
 
@@ -338,7 +338,7 @@ EAPI Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj);
  * @param obj The object to query.
  * @return The top level Elementary widget, or @c NULL if parent cannot be
  * found.
- * @ingroup WidgetNavigation
+ * @ingroup Elm_WidgetNavigation
  */
 EAPI Evas_Object *elm_object_top_widget_get(const Evas_Object *obj);
 
@@ -347,7 +347,7 @@ EAPI Evas_Object *elm_object_top_widget_get(const Evas_Object *obj);
  *
  * @param obj the object to query.
  * @return Elementary widget name, or @c NULL if not a valid widget.
- * @ingroup WidgetNavigation
+ * @ingroup Elm_WidgetNavigation
  */
 EAPI const char  *elm_object_widget_type_get(const Evas_Object *obj);
 
@@ -361,7 +361,7 @@ EAPI const char  *elm_object_widget_type_get(const Evas_Object *obj);
  * @param obj The object
  * @param emission The signal's name.
  * @param source The signal's source.
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void         elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source);
 
@@ -378,7 +378,7 @@ EAPI void         elm_object_signal_emit(Evas_Object *obj, const char *emission,
  * @param func The callback function to be executed when the signal is
  * emitted.
  * @param data A pointer to data to pass to the callback function.
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
@@ -400,7 +400,7 @@ EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *e
  * elm_object_signal_callback_add(). The data pointer that was passed
  * to this call will be returned.
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void        *elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
 
@@ -452,7 +452,7 @@ EAPI void        *elm_object_signal_callback_del(Evas_Object *obj, const char *e
  *
  * @see elm_object_event_callback_del()
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void         elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data);
 
@@ -470,7 +470,7 @@ EAPI void         elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb f
  * emitted.
  * @param data Data to pass in to the callback function.
  * @return The data pointer
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void        *elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data);
 
@@ -490,7 +490,7 @@ EAPI void        *elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb f
  *
  * @since 1.8
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void        elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
@@ -504,7 +504,7 @@ EAPI void        elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina
  *
  * @since 1.8
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI Eina_Bool   elm_object_orientation_mode_disabled_get(const Evas_Object *obj);
 

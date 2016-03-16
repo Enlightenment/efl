@@ -1,5 +1,5 @@
 /**
- * @defgroup App App
+ * @defgroup Elm_App App
  * @ingroup Elementary
  * Provide information in order to make Elementary determine the @b
  * run time location of the software in question, so other data files
@@ -8,7 +8,7 @@
  */
 
 /**
- * @addtogroup App
+ * @addtogroup Elm_App
  * @{
  */
 
@@ -82,7 +82,7 @@
  * @see elm_app_data_dir_get()
  * @see elm_app_locale_dir_get()
  *
- * @ingroup App
+ * @ingroup Elm_App
  */
 EAPI void        elm_app_info_set(void *mainfunc, const char *dom, const char *checkfile);
 
@@ -91,7 +91,7 @@ EAPI void        elm_app_info_set(void *mainfunc, const char *dom, const char *c
  *
  * @param name Application name.
  *
- * @ingroup App
+ * @ingroup Elm_App
  * @since 1.8
  */
 EAPI void        elm_app_name_set(const char *name);
@@ -105,7 +105,7 @@ EAPI void        elm_app_name_set(const char *name);
  * @warning Since this path is very environment dependent,
  * this will hold whatever value is passed to it.
  *
- * @ingroup App
+ * @ingroup Elm_App
  * @since 1.8
  */
 EAPI void        elm_app_desktop_entry_set(const char *path);
@@ -126,7 +126,7 @@ EAPI void        elm_app_desktop_entry_set(const char *path);
  * @warning You should call this function @b before
  * elm_app_info_set().
  *
- * @ingroup App
+ * @ingroup Elm_App
  */
 EAPI void        elm_app_compile_bin_dir_set(const char *dir);
 
@@ -146,7 +146,7 @@ EAPI void        elm_app_compile_bin_dir_set(const char *dir);
  * @warning You should call this function @b before
  * elm_app_info_set().
  *
- * @ingroup App
+ * @ingroup Elm_App
  */
 EAPI void        elm_app_compile_lib_dir_set(const char *dir);
 
@@ -166,7 +166,7 @@ EAPI void        elm_app_compile_lib_dir_set(const char *dir);
  * @warning You should call this function @b before
  * elm_app_info_set().
  *
- * @ingroup App
+ * @ingroup Elm_App
  */
 EAPI void        elm_app_compile_data_dir_set(const char *dir);
 
@@ -181,7 +181,7 @@ EAPI void        elm_app_compile_data_dir_set(const char *dir);
  * @warning You should call this function @b before
  * elm_app_info_set().
  *
- * @ingroup App
+ * @ingroup Elm_App
  */
 EAPI void        elm_app_compile_locale_set(const char *dir);
 
@@ -190,7 +190,7 @@ EAPI void        elm_app_compile_locale_set(const char *dir);
  *
  * @return The application formal name.
  *
- * @ingroup App
+ * @ingroup Elm_App
  * @since 1.8
  */
 EAPI const char *elm_app_name_get(void);
@@ -201,7 +201,7 @@ EAPI const char *elm_app_name_get(void);
  *
  * @return The '.desktop' file path.
  *
- * @ingroup App
+ * @ingroup Elm_App
  * @since 1.8
  */
 EAPI const char *elm_app_desktop_entry_get(void);
@@ -213,7 +213,7 @@ EAPI const char *elm_app_desktop_entry_get(void);
  *
  * @return The directory prefix the application is actually using.
  *
- * @ingroup App
+ * @ingroup Elm_App
  */
 EAPI const char *elm_app_prefix_dir_get(void);
 
@@ -225,7 +225,7 @@ EAPI const char *elm_app_prefix_dir_get(void);
  * @return The binaries directory prefix the application is actually
  * using.
  *
- * @ingroup App
+ * @ingroup Elm_App
  */
 EAPI const char *elm_app_bin_dir_get(void);
 
@@ -237,7 +237,7 @@ EAPI const char *elm_app_bin_dir_get(void);
  * @return The libraries directory prefix the application is actually
  * using.
  *
- * @ingroup App
+ * @ingroup Elm_App
  */
 EAPI const char *elm_app_lib_dir_get(void);
 
@@ -249,7 +249,7 @@ EAPI const char *elm_app_lib_dir_get(void);
  * @return The data directory prefix the application is actually
  * using.
  *
- * @ingroup App
+ * @ingroup Elm_App
  */
 EAPI const char *elm_app_data_dir_get(void);
 
@@ -261,7 +261,7 @@ EAPI const char *elm_app_data_dir_get(void);
  * @return The locale directory prefix the application is actually
  * using.
  *
- * @ingroup App
+ * @ingroup Elm_App
  */
 EAPI const char *elm_app_locale_dir_get(void);
 
@@ -277,7 +277,7 @@ EAPI const char *elm_app_locale_dir_get(void);
  *
  * @note You should call this function @b before using ELM_SCALE_SIZE macro.
  *
- * @ingroup App
+ * @ingroup Elm_App
  * @since 1.12
  */
 EAPI void elm_app_base_scale_set(double base_scale);
@@ -287,7 +287,7 @@ EAPI void elm_app_base_scale_set(double base_scale);
  *
  * @return The base scale which the application sets.
  *
- * @ingroup App
+ * @ingroup Elm_App
  * @since 1.12
  */
 EAPI double elm_app_base_scale_get(void);

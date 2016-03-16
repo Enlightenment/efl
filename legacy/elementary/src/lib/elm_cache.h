@@ -1,5 +1,5 @@
 /**
- * @defgroup Caches Caches
+ * @defgroup Elm_Caches Caches
  * @ingroup Elementary
  *
  * These are functions which let one fine-tune some cache values for
@@ -22,7 +22,7 @@
  * @li evas_render_dump()
  * @note Evas caches are flushed for every canvas associated with a window.
  *
- * @ingroup Caches
+ * @ingroup Elm_Caches
  */
 EAPI void      elm_cache_all_flush(void);
 

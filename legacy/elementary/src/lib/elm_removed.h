@@ -190,7 +190,7 @@ EINA_DEPRECATED EAPI const char *elm_engine_current_get(void);
  * applications on the display
  *
  * @param size The finger size
- * @ingroup Fingers
+ * @ingroup Elm_Fingers
  * @deprecated Use elm_config_finger_size_set() and elm_config_all_flush()
  */
 EINA_DEPRECATED EAPI void       elm_finger_size_all_set(Evas_Coord size);
@@ -201,7 +201,7 @@ EINA_DEPRECATED EAPI void       elm_finger_size_all_set(Evas_Coord size);
  * This sets the globally configured scaling factor that is applied to all
  * objects for all applications.
  * @param scale The scaling factor to set
- * @ingroup Scaling
+ * @ingroup Elm_Scaling
  * @deprecated use elm_scale_set() and elm_config_all_flush()
  */
 EINA_DEPRECATED EAPI void   elm_scale_all_set(double scale);
@@ -210,7 +210,7 @@ EINA_DEPRECATED EAPI void   elm_scale_all_set(double scale);
  * Apply the changes made with elm_font_overlay_set() and
  * elm_font_overlay_unset() on all Elementary application windows.
  *
- * @ingroup Fonts
+ * @ingroup Elm_Fonts
  *
  * This applies all font overlays set to all objects in the UI.
  * @deprecated Use elm_font_overlay_apply and elm_config_all_flush()
@@ -226,7 +226,7 @@ EINA_DEPRECATED EAPI void             elm_font_overlay_all_apply(void);
  *
  * @param size The cache flush interval time
  * @deprecated Use elm_cache_flush_interval_set() and elm_config_all_flush()
- * @ingroup Caches
+ * @ingroup Elm_Caches
  */
 EINA_DEPRECATED EAPI void      elm_cache_flush_interval_all_set(int size);
 
@@ -239,7 +239,7 @@ EINA_DEPRECATED EAPI void      elm_cache_flush_interval_all_set(int size);
  *
  * @param enabled The cache flush enabled state
  * @deprecated Use elm_cache_flush_enabled_set adnd elm_config_all_flush()
- * @ingroup Caches
+ * @ingroup Elm_Caches
  */
 EINA_DEPRECATED EAPI void      elm_cache_flush_enabled_all_set(Eina_Bool enabled);
 
@@ -252,7 +252,7 @@ EINA_DEPRECATED EAPI void      elm_cache_flush_enabled_all_set(Eina_Bool enabled
  *
  * @param size The font cache size
  * @deprecated Use elm_font_cache_set() and elm_config_all_flush()
- * @ingroup Caches
+ * @ingroup Elm_Caches
  */
 EINA_DEPRECATED EAPI void      elm_font_cache_all_set(int size);
 
@@ -265,7 +265,7 @@ EINA_DEPRECATED EAPI void      elm_font_cache_all_set(int size);
  *
  * @param size The image cache size
  * @deprecated Use elm_image_cache_set() and elm_config_all_flush()
- * @ingroup Caches
+ * @ingroup Elm_Caches
  */
 EINA_DEPRECATED EAPI void      elm_image_cache_all_set(int size);
 
@@ -278,7 +278,7 @@ EINA_DEPRECATED EAPI void      elm_image_cache_all_set(int size);
  *
  * @param size The edje file cache size
  * @deprecated Use elm_edje_file_cache_set() and elm_config_all_flush()
- * @ingroup Caches
+ * @ingroup Elm_Caches
  */
 EINA_DEPRECATED EAPI void      elm_edje_file_cache_all_set(int size);
 
@@ -291,7 +291,7 @@ EINA_DEPRECATED EAPI void      elm_edje_file_cache_all_set(int size);
  *
  * @param size The edje collections cache size
  * @deprecated Use elm_edje_collection_cache_set() and elm_config_all_flush()
- * @ingroup Caches
+ * @ingroup Elm_Caches
  */
 EINA_DEPRECATED EAPI void      elm_edje_collection_cache_all_set(int size);
 
@@ -303,7 +303,7 @@ EINA_DEPRECATED EAPI void      elm_edje_collection_cache_all_set(int size);
  *
  * @param profile The profile's name
  * @deprecated Use elm_profile_set() and elm_config_all_flush()
- * @ingroup Profile
+ * @ingroup Elm_Profile
  *
  */
 EINA_DEPRECATED EAPI void        elm_profile_all_set(const char *profile);
@@ -317,7 +317,7 @@ EINA_DEPRECATED EAPI void        elm_profile_all_set(const char *profile);
  *
  * @see elm_thumbscroll_bounce_enabled_get()
  * @deprecated Use elm_scroll_bounce_enabled_set() and elm_config_all_flush()
- * @ingroup Scrolling
+ * @ingroup Elm_Scrolling
  */
 EINA_DEPRECATED EAPI void         elm_scroll_bounce_enabled_all_set(Eina_Bool enabled);
 
@@ -329,7 +329,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_bounce_enabled_all_set(Eina_Bool en
  *
  * @see elm_thumbscroll_bounce_friction_get()
  * @deprecated Use elm_scroll_bounce_friction_set() and elm_config_all_flush()
- * @ingroup Scrolling
+ * @ingroup Elm_Scrolling
  */
 EINA_DEPRECATED EAPI void         elm_scroll_bounce_friction_all_set(double friction);
 
@@ -342,7 +342,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_bounce_friction_all_set(double fric
  * @see elm_thumbscroll_page_scroll_friction_get()
  * @deprecated Use elm_scroll_page_scroll_friction_set() and
  * elm_config_all_flush()
- * @ingroup Scrolling
+ * @ingroup Elm_Scrolling
  */
 EINA_DEPRECATED EAPI void         elm_scroll_page_scroll_friction_all_set(double friction);
 
@@ -355,7 +355,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_page_scroll_friction_all_set(double
  * @see elm_thumbscroll_bring_in_scroll_friction_get()
  * @deprecated Use elm_scroll_bring_in_scroll_friction_set() and
  * elm_config_all_flush()
- * @ingroup Scrolling
+ * @ingroup Elm_Scrolling
  */
 EINA_DEPRECATED EAPI void         elm_scroll_bring_in_scroll_friction_all_set(double friction);
 
@@ -368,7 +368,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_bring_in_scroll_friction_all_set(do
  *
  * @see elm_thumbscroll_zoom_friction_get()
  * @deprecated Use elm_scroll_zoom_friction_set() and elm_config_all_flush()
- * @ingroup Scrolling
+ * @ingroup Elm_Scrolling
  */
 EINA_DEPRECATED EAPI void         elm_scroll_zoom_friction_all_set(double friction);
 
@@ -382,7 +382,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_zoom_friction_all_set(double fricti
  * @deprecated Use elm_scroll_thumbscroll_enabled_set()
  * and elm_config_all_flush()
  *
- * @ingroup Scrolling
+ * @ingroup Elm_Scrolling
  */
 EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_enabled_all_set(Eina_Bool enabled);
 
@@ -398,7 +398,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_enabled_all_set(Eina_Bo
  * @deprecated Use elm_scroll_thumbscroll_threshold_set()
  * and elm_config_all_flush()
  *
- * @ingroup Scrolling
+ * @ingroup Elm_Scrolling
  */
 EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_threshold_all_set(unsigned int threshold);
 
@@ -413,7 +413,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_threshold_all_set(unsig
  * @deprecated Use elm_scroll_thumbscroll_momentum_threshold_set()
  * and elm_config_all_flush()
  *
- * @ingroup Scrolling
+ * @ingroup Elm_Scrolling
  */
 EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_momentum_threshold_all_set(double threshold);
 
@@ -427,7 +427,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_momentum_threshold_all_
  * @deprecated Use elm_scroll_thumbscroll_friction_set()
  * and elm_config_all_flush()
  *
- * @ingroup Scrolling
+ * @ingroup Elm_Scrolling
  */
 EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_friction_all_set(double friction);
 
@@ -445,7 +445,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_friction_all_set(double
  * @deprecated Use elm_scroll_thumbscroll_border_friction_set()
  * and elm_config_all_flush()
  *
- * @ingroup Scrolling
+ * @ingroup Elm_Scrolling
  */
 EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_border_friction_all_set(double friction);
 
@@ -462,7 +462,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_border_friction_all_set
  * @deprecated Use elm_scroll_thumbscroll_sensitivity_friction_set()
  * and elm_config_all_flush()
  *
- * @ingroup Scrolling
+ * @ingroup Elm_Scrolling
  */
 EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_sensitivity_friction_all_set(double friction);
 
@@ -2001,7 +2001,7 @@ EINA_DEPRECATED EAPI double                      elm_flipselector_interval_get(c
  * @see elm_object_focus_get()
  * @deprecated use elm_object_focus_set() instead.
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EINA_DEPRECATED EAPI void elm_object_focus(Evas_Object *obj);
 
@@ -2017,7 +2017,7 @@ EINA_DEPRECATED EAPI void elm_object_focus(Evas_Object *obj);
  *
  * @deprecated Use elm_object_focus_next() instead
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EINA_DEPRECATED EAPI void                 elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
 
@@ -2032,7 +2032,7 @@ EINA_DEPRECATED EAPI void                 elm_object_focus_cycle(Evas_Object *ob
  * @see elm_object_focus() and elm_object_focus_custom_chain_get()
  * @deprecated use elm_object_focus_set() instead.
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EINA_DEPRECATED EAPI void elm_object_unfocus(Evas_Object *obj);
 
@@ -2047,7 +2047,7 @@ EINA_DEPRECATED EAPI void elm_object_unfocus(Evas_Object *obj);
  * @param y Vertical component of direction to focus
  *
  * @deprecated Support it later.
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EINA_DEPRECATED EAPI void                 elm_object_focus_direction_go(Evas_Object *obj, int x, int y);
 

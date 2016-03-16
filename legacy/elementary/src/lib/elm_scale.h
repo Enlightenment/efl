@@ -1,5 +1,5 @@
 /**
- * @defgroup Scaling Widget Scaling
+ * @defgroup Elm_Scaling Widget Scaling
  * @ingroup Elementary
  *
  * Different widgets can be scaled independently. These functions
@@ -21,7 +21,7 @@
  * @param scale Scale factor (from @c 0.0 up, with @c 1.0 meaning
  * no scaling)
  *
- * @ingroup Scaling
+ * @ingroup Elm_Scaling
  */
 EAPI void   elm_object_scale_set(Evas_Object *obj, double scale);
 
@@ -31,6 +31,6 @@ EAPI void   elm_object_scale_set(Evas_Object *obj, double scale);
  * @param obj The object
  * @return The scaling factor set by elm_object_scale_set()
  *
- * @ingroup Scaling
+ * @ingroup Elm_Scaling
  */
 EAPI double elm_object_scale_get(const Evas_Object *obj);

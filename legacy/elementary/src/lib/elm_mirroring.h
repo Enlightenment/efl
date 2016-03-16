@@ -1,5 +1,5 @@
 /**
- * @defgroup Mirroring Mirroring
+ * @defgroup Elm_Mirroring Mirroring
  * @ingroup Elementary
  *
  * These functions allow you to set ui-mirroring on specific
@@ -19,7 +19,7 @@
  * @param obj The widget.
  * @return @c EINA_TRUE if mirrored is set, @c EINA_FALSE otherwise
  *
- * @ingroup Mirroring
+ * @ingroup Elm_Mirroring
  */
 EAPI Eina_Bool elm_object_mirrored_get(const Evas_Object *obj);
 
@@ -29,7 +29,7 @@ EAPI Eina_Bool elm_object_mirrored_get(const Evas_Object *obj);
  * @param obj The widget.
  * @param mirrored @c EINA_TRUE to set mirrored mode, @c EINA_FALSE to unset it.
  *
- * @ingroup Mirroring
+ * @ingroup Elm_Mirroring
  */
 EAPI void      elm_object_mirrored_set(Evas_Object *obj, Eina_Bool mirrored);
 
@@ -39,7 +39,7 @@ EAPI void      elm_object_mirrored_set(Evas_Object *obj, Eina_Bool mirrored);
  * @param obj The widget.
  * @return mirrored mode setting of the object.
  *
- * @ingroup Mirroring
+ * @ingroup Elm_Mirroring
  */
 EAPI Eina_Bool elm_object_mirrored_automatic_get(const Evas_Object *obj);
 
@@ -51,7 +51,7 @@ EAPI Eina_Bool elm_object_mirrored_automatic_get(const Evas_Object *obj);
  * @param automatic @c EINA_TRUE for auto mirrored mode. @c EINA_FALSE for
  * manual.
  *
- * @ingroup Mirroring
+ * @ingroup Elm_Mirroring
  */
 EAPI void      elm_object_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic);
 

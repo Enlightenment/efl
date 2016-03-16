@@ -1,5 +1,5 @@
 /**
- * @defgroup Debug Debug
+ * @defgroup Elm_Debug Debug
  * @ingroup Elementary
  * Don't use it unless you are sure.
  *
@@ -10,7 +10,7 @@
  * Print Tree object hierarchy in stdout
  *
  * @param top The root object
- * @ingroup Debug
+ * @ingroup Elm_Debug
  */
 EAPI void elm_object_tree_dump(const Evas_Object *top);
 
@@ -19,7 +19,7 @@ EAPI void elm_object_tree_dump(const Evas_Object *top);
  *
  * @param top The root object
  * @param file The path of output file
- * @ingroup Debug
+ * @ingroup Elm_Debug
  */
 EAPI void elm_object_tree_dot_dump(const Evas_Object *top, const char *file);
 

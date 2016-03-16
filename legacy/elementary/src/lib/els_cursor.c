@@ -537,7 +537,7 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
  * @param cursor the cursor name to be used.
  *
  * @internal
- * @ingroup Cursors
+ * @ingroup Elm_Cursors
  */
 void
 elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char *cursor)

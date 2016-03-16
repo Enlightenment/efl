@@ -1,5 +1,5 @@
 /**
- * @defgroup Fingers Fingers
+ * @defgroup Elm_Fingers Fingers
  * @ingroup Elementary
  *
  * Elementary is designed to be finger-friendly for touchscreens,
@@ -36,7 +36,7 @@
  * on size evaluation times for widgets. An external user wouldn't
  * be calling, most of the time.
  *
- * @ingroup Fingers
+ * @ingroup Elm_Fingers
  */
 EAPI void       elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h);
 

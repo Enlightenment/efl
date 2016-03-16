@@ -4,29 +4,29 @@
  * Elementary is mostly composed of widgets, but it also contains some
  * infrastructure modules that facilitate the use of widgets. These are the
  * infrastructure modules:
- * @li @ref App
- * @li @ref Caches
- * @li @ref Cursors
- * @li @ref Debug
- * @li @ref Config
- * @li @ref Engine
- * @li @ref Fonts
- * @li @ref Profile
- * @li @ref Fingers
- * @li @ref Focus
- * @li @ref General
+ * @li @ref Elm_App
+ * @li @ref Elm_Caches
+ * @li @ref Elm_Cursors
+ * @li @ref Elm_Debug
+ * @li @ref Elm_Config
+ * @li @ref Elm_Engine
+ * @li @ref Elm_Fonts
+ * @li @ref Elm_Profile
+ * @li @ref Elm_Fingers
+ * @li @ref Elm_Focus
+ * @li @ref Elm_General
  * @li @ref Elm_Gesture_Layer
- * @li @ref Password_last_show
+ * @li @ref Elm_Password_last_show
  * @li @ref elm-prefs-data
- * @li @ref Start
- * @li @ref Scrolling
- * @li @ref Scrollhints
- * @li @ref Mirroring
- * @li @ref Scaling
- * @li @ref Styles
- * @li @ref Theme
- * @li @ref Transit
- * @li @ref WidgetNavigation
+ * @li @ref Elm_Start
+ * @li @ref Elm_Scrolling
+ * @li @ref Elm_Scrollhints
+ * @li @ref Elm_Mirroring
+ * @li @ref Elm_Scaling
+ * @li @ref Elm_Styles
+ * @li @ref Elm_Theme
+ * @li @ref Elm_Transit
+ * @li @ref Elm_WidgetNavigation
  *
  * The other two main groups in Elementary are:
  * @li @ref widgetslist - These are the widgets you'll compose your UI out of.

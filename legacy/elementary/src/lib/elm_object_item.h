@@ -1,7 +1,7 @@
 /**
  * @typedef Elm_Object_Item
  * An Elementary Object item handle.
- * @ingroup General
+ * @ingroup Elm_General
  */
 typedef Eo Elm_Object_Item;
 
@@ -17,7 +17,7 @@ typedef Eo Elm_Object_Item;
  * @see elm_object_item_signal_callback_add()
  * @since 1.8
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 typedef void                  (*Elm_Object_Item_Signal_Cb)(void *data, Elm_Object_Item *it, const char *emission, const char *source);
 
@@ -38,7 +38,7 @@ typedef void                  (*Elm_Object_Item_Signal_Cb)(void *data, Elm_Objec
  *
  * @note Elementary object items may have many labels.
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 #define elm_object_item_text_set(it, label) elm_object_item_part_text_set((it), NULL, (label))
 
@@ -64,7 +64,7 @@ typedef void                  (*Elm_Object_Item_Signal_Cb)(void *data, Elm_Objec
  * @return The data associated with @p it
  *
  * @note Every elm_object_item supports this API
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void *elm_object_item_data_get(const Elm_Object_Item *it);
 
@@ -74,6 +74,6 @@ EAPI void *elm_object_item_data_get(const Elm_Object_Item *it);
  * @param data The data to be associated with @p it
  *
  * @note Every elm_object_item supports this API
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_data_set(Elm_Object_Item *it, void *data);

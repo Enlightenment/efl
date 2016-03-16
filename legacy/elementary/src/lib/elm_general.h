@@ -1,5 +1,5 @@
 /**
- * @defgroup General General
+ * @defgroup Elm_General General
  * @ingroup Elementary
  *
  * @brief General Elementary API. Functions that don't relate to
@@ -14,7 +14,7 @@
  */
 
 /**
- * @addtogroup General
+ * @addtogroup Elm_General
  * @{
  */
 
@@ -108,7 +108,7 @@ extern EAPI double _elm_startup_time;
  * See the full @ref bg_example_01_c "example".
  *
  * @see elm_shutdown().
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI int       elm_init(int argc, char **argv);
 
@@ -128,7 +128,7 @@ EAPI int       elm_init(int argc, char **argv);
  * There is a possibility to call your ecore callbacks(timer, animator, event,
  * job, and etc.) in elm_shutdown()
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI int       elm_shutdown(void);
 
@@ -146,7 +146,7 @@ EAPI int       elm_shutdown(void);
  *
  * @see elm_init() for an example
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void      elm_run(void);
 
@@ -165,7 +165,7 @@ EAPI void      elm_run(void);
  * @note By using the appropriate #ELM_POLICY_QUIT on your Elementary
  * applications, you'll be able to get this function called automatically for you.
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void      elm_exit(void);
 
@@ -247,7 +247,7 @@ EAPI char     *elm_quicklaunch_exe_path_get(const char *exe, const char *cwd);
  * @note Currently, we have only one policy identifier/group
  * (#ELM_POLICY_QUIT), which has two possible values.
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI Eina_Bool elm_policy_set(unsigned int policy, int value);
 
@@ -258,7 +258,7 @@ EAPI Eina_Bool elm_policy_set(unsigned int policy, int value);
  * @return The currently set policy value, for that
  * identifier. Will be @c 0 if @p policy passed is invalid.
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI int       elm_policy_get(unsigned int policy);
 
@@ -279,7 +279,7 @@ EAPI int       elm_policy_get(unsigned int policy);
  *
  * @param lang Language to set, must be the full name of the locale
  *
- * @ingroup General
+ * @ingroup Elm_General
  */
 EAPI void      elm_language_set(const char *lang);
 
@@ -299,7 +299,7 @@ typedef enum _Elm_Process_State
  * background application is not user-visible or otherwise important and
  * likely should release resources and not wake up often or process much.
  *
- * @ingroup General
+ * @ingroup Elm_General
  * @since 1.12
  */
 EAPI Elm_Process_State  elm_process_state_get(void);

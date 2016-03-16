@@ -1,5 +1,5 @@
 /**
- * @defgroup Scrollhints Scrollhints
+ * @defgroup Elm_Scrollhints Scrollhints
  * @ingroup Elementary
  *
  * Objects when inside a scroller can scroll, but this may not always be
@@ -26,7 +26,7 @@
  * take effect on the parents of the indicated object.
  *
  * @param obj The object
- * @ingroup Scrollhints
+ * @ingroup Elm_Scrollhints
  */
 EAPI void      elm_object_scroll_hold_push(Evas_Object *obj);
 
@@ -37,7 +37,7 @@ EAPI void      elm_object_scroll_hold_push(Evas_Object *obj);
  * take effect on the parents of the indicated object.
  *
  * @param obj The object
- * @ingroup Scrollhints
+ * @ingroup Elm_Scrollhints
  */
 EAPI void      elm_object_scroll_hold_pop(Evas_Object *obj);
 
@@ -49,7 +49,7 @@ EAPI void      elm_object_scroll_hold_pop(Evas_Object *obj);
  * @param obj The object
  * @return The scroll hold count
  * @since 1.7
- * @ingroup Scrollhints
+ * @ingroup Elm_Scrollhints
  */
 EAPI int       elm_object_scroll_hold_get(const Evas_Object *obj);
 
@@ -61,7 +61,7 @@ EAPI int       elm_object_scroll_hold_get(const Evas_Object *obj);
  * object.
  *
  * @param obj The object
- * @ingroup Scrollhints
+ * @ingroup Elm_Scrollhints
  */
 EAPI void      elm_object_scroll_freeze_push(Evas_Object *obj);
 
@@ -73,7 +73,7 @@ EAPI void      elm_object_scroll_freeze_push(Evas_Object *obj);
  * object.
  *
  * @param obj The object
- * @ingroup Scrollhints
+ * @ingroup Elm_Scrollhints
  */
 EAPI void      elm_object_scroll_freeze_pop(Evas_Object *obj);
 
@@ -85,7 +85,7 @@ EAPI void      elm_object_scroll_freeze_pop(Evas_Object *obj);
  * @param obj The object
  * @return The scroll freeze count
  * @since 1.7
- * @ingroup Scrollhints
+ * @ingroup Elm_Scrollhints
  */
 EAPI int       elm_object_scroll_freeze_get(const Evas_Object *obj);
 
@@ -97,7 +97,7 @@ EAPI int       elm_object_scroll_freeze_get(const Evas_Object *obj);
  *
  * @param obj The object
  * @param lock The lock state (1 == locked, 0 == unlocked)
- * @ingroup Scrollhints
+ * @ingroup Elm_Scrollhints
  */
 EAPI void      elm_object_scroll_lock_x_set(Evas_Object *obj, Eina_Bool lock);
 
@@ -109,7 +109,7 @@ EAPI void      elm_object_scroll_lock_x_set(Evas_Object *obj, Eina_Bool lock);
  *
  * @param obj The object
  * @param lock The lock state (1 == locked, 0 == unlocked)
- * @ingroup Scrollhints
+ * @ingroup Elm_Scrollhints
  */
 EAPI void      elm_object_scroll_lock_y_set(Evas_Object *obj, Eina_Bool lock);
 
@@ -119,7 +119,7 @@ EAPI void      elm_object_scroll_lock_y_set(Evas_Object *obj, Eina_Bool lock);
  * This gets the lock for X axis scrolling.
  *
  * @param obj The object
- * @ingroup Scrollhints
+ * @ingroup Elm_Scrollhints
  */
 EAPI Eina_Bool elm_object_scroll_lock_x_get(const Evas_Object *obj);
 
@@ -129,7 +129,7 @@ EAPI Eina_Bool elm_object_scroll_lock_x_get(const Evas_Object *obj);
  * This gets the lock for Y axis scrolling.
  *
  * @param obj The object
- * @ingroup Scrollhints
+ * @ingroup Elm_Scrollhints
  */
 EAPI Eina_Bool elm_object_scroll_lock_y_get(const Evas_Object *obj);
 

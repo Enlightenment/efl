@@ -12,7 +12,7 @@
  * see @elm_object_item_focus_set()
  * see @elm_object_item_focus_get()
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  * @since 1.10
  */
 EAPI Elm_Object_Item             *elm_object_focused_item_get(const Evas_Object *obj);
@@ -32,7 +32,7 @@ EAPI Elm_Object_Item             *elm_object_focused_item_get(const Evas_Object 
  *
  * @since 1.16
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI Elm_Object_Item *    elm_object_focus_next_item_get(const Evas_Object *obj, Elm_Focus_Direction dir);
 
@@ -54,7 +54,7 @@ EAPI Elm_Object_Item *    elm_object_focus_next_item_get(const Evas_Object *obj,
  *
  * @since 1.16
  *
- * @ingroup Focus
+ * @ingroup Elm_Focus
  */
 EAPI void                 elm_object_focus_next_item_set(Evas_Object *obj, Elm_Object_Item *next_item, Elm_Focus_Direction dir);
 

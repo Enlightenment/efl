@@ -1,5 +1,5 @@
 /**
- * @defgroup Cursors Cursors
+ * @defgroup Elm_Cursors Cursors
  * @ingroup Elementary
  *
  * The Elementary cursor is an internal smart object used to
@@ -37,7 +37,7 @@
  * @param obj the object being set a cursor.
  * @param cursor the cursor name to be used.
  *
- * @ingroup Cursors
+ * @ingroup Elm_Cursors
  */
 EAPI void        elm_object_cursor_set(Evas_Object *obj, const char *cursor);
 
@@ -47,7 +47,7 @@ EAPI void        elm_object_cursor_set(Evas_Object *obj, const char *cursor);
  * @param obj an object with cursor already set.
  * @return the cursor name.
  *
- * @ingroup Cursors
+ * @ingroup Elm_Cursors
  */
 EAPI const char *elm_object_cursor_get(const Evas_Object *obj);
 
@@ -60,7 +60,7 @@ EAPI const char *elm_object_cursor_get(const Evas_Object *obj);
  * @param obj Target object
  * @see elm_object_cursor_set()
  *
- * @ingroup Cursors
+ * @ingroup Elm_Cursors
  */
 EAPI void        elm_object_cursor_unset(Evas_Object *obj);
 
@@ -73,7 +73,7 @@ EAPI void        elm_object_cursor_unset(Evas_Object *obj);
  * @param obj an object with cursor already set.
  * @param style the theme style to use (default, transparent, ...)
  *
- * @ingroup Cursors
+ * @ingroup Elm_Cursors
  */
 EAPI void        elm_object_cursor_style_set(Evas_Object *obj, const char *style);
 
@@ -84,7 +84,7 @@ EAPI void        elm_object_cursor_style_set(Evas_Object *obj, const char *style
  * @return style the theme style in use, defaults to "default". If the
  *         object does not have a cursor set, then NULL is returned.
  *
- * @ingroup Cursors
+ * @ingroup Elm_Cursors
  */
 EAPI const char *elm_object_cursor_style_get(const Evas_Object *obj);
 
@@ -100,7 +100,7 @@ EAPI const char *elm_object_cursor_style_get(const Evas_Object *obj);
  * @param theme_search boolean to define if cursors should be searched
  * on widget's theme.
  *
- * @ingroup Cursors
+ * @ingroup Elm_Cursors
  */
 EAPI void elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_search);
 
@@ -111,7 +111,7 @@ EAPI void elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool
  * @return @c EINA_TRUE if the cursor set should be searched on widget's theme,
  * @c EINA_FALSE otherwise.
  *
- * @ingroup Cursors
+ * @ingroup Elm_Cursors
  */
 EAPI Eina_Bool elm_object_cursor_theme_search_enabled_get(const Evas_Object *obj);
 
