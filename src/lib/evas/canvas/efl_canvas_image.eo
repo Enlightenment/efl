@@ -1,0 +1,37 @@
+class Efl.Canvas.Image (Evas.Image, Efl.Image_Load, Efl.Image_Animated)
+{
+   [[Low-level Image object.
+
+     This replaces the legacy Evas Object Image, with only image-related
+     interfaces: file and data images only. This object does not implement
+     any special features such as proxy, snapshot or GL.
+   ]]
+   data: null;
+   implements {
+      Efl.File.file.set;
+      Efl.File.file.get;
+      Efl.File.mmap.set;
+      Efl.File.mmap.get;
+      Efl.Image_Animated.animated.get;
+      Efl.Image_Animated.animated_frame.get;
+      Efl.Image_Animated.animated_frame.set;
+      Efl.Image_Animated.animated_frame_count.get;
+      Efl.Image_Animated.animated_loop_type.get;
+      Efl.Image_Animated.animated_loop_count.get;
+      Efl.Image_Animated.animated_frame_duration.get;
+      Efl.Image_Load.load_error.get;
+      Efl.Image_Load.load_async_start;
+      Efl.Image_Load.load_async_cancel;
+      Efl.Image_Load.load_dpi.get;
+      Efl.Image_Load.load_dpi.set;
+      Efl.Image_Load.load_size.set;
+      Efl.Image_Load.load_size.get;
+      Efl.Image_Load.load_orientation.get;
+      Efl.Image_Load.load_orientation.set;
+      Efl.Image_Load.load_scale_down.get;
+      Efl.Image_Load.load_scale_down.set;
+      Efl.Image_Load.load_region.get;
+      Efl.Image_Load.load_region.set;
+      Efl.Image_Load.load_region_support.get;
+   }
+}
