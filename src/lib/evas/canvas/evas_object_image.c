@@ -3271,7 +3271,8 @@ _evas_image_efl_gfx_buffer_buffer_get(Eo *eo_obj, Evas_Image_Data *o,
 
    // FIXME: length needs to be properly checked with the engine
    // as we just ignore l,r,t,b here
-   ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+   if (ENFN->image_stride_get)
+     ENFN->image_stride_get(ENDT, o->engine_data, &stride);
    if (!stride)
      stride = _evas_common_rgba_image_surface_size(o->cur->image.w, 1, o->cur->cspace, NULL, NULL, NULL, NULL);
 
