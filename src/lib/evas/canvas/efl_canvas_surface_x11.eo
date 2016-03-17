@@ -22,7 +22,6 @@ class Efl.Canvas.Surface_X11 (Efl.Canvas.Surface)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Efl.Canvas.Surface.native_buffer.get;
       Efl.Canvas.Surface.native_buffer.set;
    }
 }

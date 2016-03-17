@@ -29,5 +29,6 @@ mixin Efl.Canvas.Surface (Evas.Image)
    }
    implements {
       Eo.Base.constructor;
+      @virtual .native_buffer.set;
    }
 }
