@@ -2152,8 +2152,6 @@ _entry_selection_start_signal_cb(void *data,
 {
    const Eina_List *l;
    Evas_Object *entry;
-   const char *txt = elm_entry_selection_get(data);
-   Evas_Object *top;
 
    EINA_LIST_FOREACH(entries, l, entry)
      {
@@ -2162,13 +2160,6 @@ _entry_selection_start_signal_cb(void *data,
    eo_event_callback_call
      (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_START, NULL);
 
-   top = elm_widget_top_get(data);
-   if (txt && top && (elm_win_window_id_get(top)))
-     {
-        elm_cnp_selection_set(data, ELM_SEL_TYPE_PRIMARY,
-              ELM_SEL_FORMAT_MARKUP, txt, strlen(txt));
-        elm_cnp_selection_loss_callback_set(data, ELM_SEL_TYPE_PRIMARY, _selection_clear, data);
-     }
    elm_object_focus_set(data, EINA_TRUE);
 }
 
