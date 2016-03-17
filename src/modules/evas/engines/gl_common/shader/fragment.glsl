@@ -13,9 +13,11 @@ varying vec4 col;
 #ifdef SHD_EXTERNAL
 uniform SAMPLER_EXTERNAL_OES tex;
 varying vec2 tex_c;
+#define ADD_NOISE 1
 #elif defined(SHD_TEX)
 uniform sampler2D tex;
 varying vec2 tex_c;
+#define ADD_NOISE 1
 #endif
 
 #if defined(SHD_NV12) || defined(SHD_YUY2)
@@ -74,6 +76,15 @@ varying vec2 masktex_s[4];
 # endif
 #endif
 
+#ifdef ADD_NOISE
+float rand(vec2 co)
+{
+   /* Magic 'random' number in range [0..1]. 'co' should be random coordinate.
+    * Distribution is not great. Falls apart with lowp float. */
+   return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
+}
+#endif
+
 void main()
 {
    vec4 c;
@@ -126,9 +137,14 @@ void main()
 
 #elif defined(SHD_TEX) || defined(SHD_EXTERNAL)
    c = texture2D(tex, tex_c).SWZ;
-
 #else
    c = vec4(1, 1, 1, 1);
+#endif
+
+#ifdef ADD_NOISE
+   vec4 noise = vec4(rand(tex_c) / 256.0, rand(tex_c + vec2(1, 1)) / 256.0, rand(tex_c + vec2(2, 2)) / 256.0, 0);
+   noise.a = max(noise.r, noise.g);
+   noise.a = max(noise.a, noise.b);
 #endif
 
 #ifdef SHD_MASK
@@ -162,6 +178,9 @@ void main()
 #endif
 #ifdef SHD_TEXA
      * texture2D(texa, tex_a).r
+#endif
+#ifdef ADD_NOISE
+     + noise
 #endif
    ;
 }
