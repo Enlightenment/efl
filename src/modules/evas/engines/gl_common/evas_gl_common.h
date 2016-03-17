@@ -440,6 +440,8 @@ struct _Evas_GL_Image
       int           target;
       int           mipmap;
       unsigned char loose : 1;
+      void         *disp;
+      Evas_GL_Shared  *shared;
    } native;
 
    struct {
