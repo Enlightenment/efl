@@ -3023,7 +3023,7 @@ _edje_entry_select_all(Edje_Real_Part *rp)
 
    _sel_clear(en->ed, en->cursor, rp->object, en);
    _curs_start(en->cursor, rp->object, en);
-   _sel_enable(en->ed, en->cursor, rp->object, en);
+   _edje_entry_imf_context_reset(en->rp);
    _sel_start(en->cursor, rp->object, en);
    _curs_end(en->cursor, rp->object, en);
    _sel_extend(en->ed, en->cursor, rp->object, en);
