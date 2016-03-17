@@ -2725,6 +2725,7 @@ _edje_part_recalc_single(Edje *ed,
    Edje_Color_Class *cc = NULL;
    Edje_Internal_Aspect apref;
    int minw = 0, minh = 0, maxw = 0, maxh = 0;
+   Eina_Bool fixedw = EINA_FALSE, fixedh = EINA_FALSE;
    FLOAT_T sc;
 
    sc = DIV(ed->scale, ed->file->base_scale);
@@ -2741,6 +2742,26 @@ _edje_part_recalc_single(Edje *ed,
 
    /* size step */
    _edje_part_recalc_single_step(desc, params);
+
+   /* check whether this part has fixed value or not*/
+   if ((rel1_to_x == rel2_to_x) &&
+       (desc->rel1.relative_x == desc->rel2.relative_x) &&
+       (!chosen_desc->fixed.w))
+     {
+        chosen_desc->fixed.w = 1;
+        fixedw = EINA_TRUE;
+     }
+
+   if ((rel1_to_y == rel2_to_y) &&
+       (desc->rel1.relative_y == desc->rel2.relative_y) &&
+       (!chosen_desc->fixed.h))
+     {
+        chosen_desc->fixed.h = 1;
+        fixedh = EINA_TRUE;
+     }
+   if (fixedw || fixedh)
+     ERR("file %s, group %s has a non-fixed part '%s'. You should add 'fixed: %d %d'. But in order to optimize the edje calc, we add it automatically.",ed->path, ed->group, ep->part->name, fixedw, fixedh);
+
 
    /* colors */
    if (ep->part->type != EDJE_PART_TYPE_SPACER)
