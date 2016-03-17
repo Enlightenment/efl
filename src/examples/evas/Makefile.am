@@ -294,6 +294,11 @@ evas_canvas3d_parallax_occlusion_SOURCES = evas-3d-parallax-occlusion.c
 evas_canvas3d_parallax_occlusion_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_canvas3d_parallax_occlusion_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_canvas3d_static_lod
+evas_canvas3d_static_lod_SOURCES = evas-3d-static-lod.c
+evas_canvas3d_static_lod_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
+evas_canvas3d_static_lod_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_gl
 evas_gl_SOURCES = evas-gl.c
 evas_gl_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
@@ -388,6 +393,9 @@ resources/models/sweet_home.obj \
 resources/models/sweet_home_only_vertex_coords.obj \
 resources/models/sweet_home_without_normals.obj \
 resources/models/sweet_home_without_tex_coords.obj \
+resources/models/lod/iso_sphere0.obj \
+resources/models/lod/iso_sphere1.obj \
+resources/models/lod/iso_sphere2.obj \
 resources/models/convex_hull/column_blender_ch.ply \
 resources/models/convex_hull/column.ply \
 resources/models/convex_hull/cube_blender_ch.ply \
