@@ -34,7 +34,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
-static void _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, const Eina_File *f, const char *key, Eina_Bool *ret);
+static Eina_Bool _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, const Eina_File *f, const char *key);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
@@ -375,23 +375,12 @@ _elm_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
    else
      file = f ? eina_file_filename_get(f) : NULL;
 
-   if (sd->edje)
+   if (ok)
      {
-        if (ok) ok = edje_object_mmap_set(sd->img, f, key);
-        if (!ok)
-          {
-             ERR("failed to open edje file '%s', group '%s': %s", file, key,
-                 edje_load_error_str(edje_object_load_error_get(sd->img)));
-          }
-     }
-   else
-     {
-        if (ok) _elm_image_smart_internal_file_set(obj, sd, file, f, key, &ok);
-        if (!ok)
-          {
-             ERR("failed to open image file '%s', key '%s': %s", file, key,
-                  evas_load_error_str(evas_object_image_load_error_get(sd->img)));
-          }
+        if (sd->edje)
+          ok = edje_object_mmap_set(sd->img, f, key);
+        else
+          ok = _elm_image_smart_internal_file_set(obj, sd, file, f, key);
      }
 
    if (ok)
@@ -899,6 +888,8 @@ _elm_image_file_set_do(Evas_Object *obj)
 EOLIAN static Eina_Bool
 _elm_image_memfile_set(Eo *obj, Elm_Image_Data *sd, const void *img, size_t size, const char *format, const char *key)
 {
+   Evas_Load_Error err;
+
    _elm_image_file_set_do(obj);
 
    evas_object_image_memfile_set
@@ -907,11 +898,12 @@ _elm_image_memfile_set(Eo *obj, Elm_Image_Data *sd, const void *img, size_t size
    sd->preload_status = ELM_IMAGE_PRELOADING;
    evas_object_image_preload(sd->img, EINA_FALSE);
 
-   if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
+   err = evas_object_image_load_error_get(sd->img);
+   if (err != EVAS_LOAD_ERROR_NONE)
      {
         if (img)
-          ERR("Things are going bad for some random " FMT_SIZE_T
-              " byte chunk of memory (%p)", size, sd->img);
+          ERR("Failed to load image from memory block (" FMT_SIZE_T
+              " bytes): %s (%p)", size, evas_load_error_str(err), sd->img);
         else
           ERR("NULL image data passed (%p)", sd->img);
         return EINA_FALSE;
@@ -998,16 +990,14 @@ _elm_image_efl_file_mmap_set(Eo *obj, Elm_Image_Data *pd EINA_UNUSED,
    return ret;
 }
 
-static void
+static Eina_Bool
 _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Data *sd,
-                                   const char *file, const Eina_File *f, const char *key, Eina_Bool *ret)
+                                   const char *file, const Eina_File *f, const char *key)
 {
+   Evas_Load_Error err;
+
    if (eina_str_has_extension(file, ".edj"))
-     {
-        Eina_Bool int_ret = _elm_image_edje_file_set(obj, file, f, key);
-        if (ret) *ret = int_ret;
-        return;
-     }
+     return _elm_image_edje_file_set(obj, file, f, key);
 
    _elm_image_file_set_do(obj);
 
@@ -1016,14 +1006,25 @@ _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Data *sd,
    else
      evas_object_image_file_set(sd->img, file, key);
 
-   if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
+   err = evas_object_image_load_error_get(sd->img);
+   if (err != EVAS_LOAD_ERROR_NONE)
      {
-        if (file)
-          ERR("Things are going bad for '%s' (%p)", file, sd->img);
+        if (file || f)
+          {
+             if (key)
+               ERR("Failed to load image '%s' '%s': %s. (%p)",
+                   file ? file : eina_file_filename_get(f), key,
+                   evas_load_error_str(err), obj);
+             else
+                ERR("Failed to load image '%s': %s. (%p)",
+                    file ? file : eina_file_filename_get(f),
+                    evas_load_error_str(err), obj);
+          }
         else
-          ERR("NULL image file passed (%p)", sd->img);
-        if (ret) *ret = EINA_FALSE;
-        return;
+          {
+             ERR("NULL image file passed! (%p)", obj);
+          }
+        return EINA_FALSE;
      }
 
    if (sd->preload_status != ELM_IMAGE_PRELOAD_DISABLED)
@@ -1035,11 +1036,11 @@ _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Data *sd,
 
    _elm_image_internal_sizing_eval(obj, sd);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
-_elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf *download)
+_elm_image_smart_download_done(void *data, Elm_Url *url, Eina_Binbuf *download)
 {
    Eo *obj = data;
    Elm_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
@@ -1053,7 +1054,7 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
    f = eina_file_virtualize(_elm_url_get(url),
                             sd->remote_data, length,
                             EINA_FALSE);
-   _elm_image_smart_internal_file_set(obj, sd, _elm_url_get(url), f, sd->key, &ret);
+   ret = _elm_image_smart_internal_file_set(obj, sd, _elm_url_get(url), f, sd->key);
    eina_file_close(f);
 
    sd->remote = NULL;
@@ -1144,7 +1145,7 @@ _elm_image_efl_file_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, cons
        }
 
    if (!sd->async_enable)
-     _elm_image_smart_internal_file_set(obj, sd, file, NULL, key, &ret);
+     ret = _elm_image_smart_internal_file_set(obj, sd, file, NULL, key);
    else
      ret = _elm_image_async_file_set(obj, sd, file, NULL, key);
 
@@ -1201,11 +1202,7 @@ _elm_image_mmap_set(Eo *obj, Elm_Image_Data *sd, const Eina_File *f, const char 
   sd->remote = NULL;
 
   if (!sd->async_enable)
-    {
-       _elm_image_smart_internal_file_set(obj, sd,
-                                          eina_file_filename_get(f), f,
-                                          key, &ret);
-    }
+    ret = _elm_image_smart_internal_file_set(obj, sd, eina_file_filename_get(f), f, key);
   else
     ret = _elm_image_async_file_set(obj, sd, eina_file_filename_get(f), f, key);
 
@@ -1387,7 +1384,7 @@ _elm_image_orient_set(Eo *obj, Elm_Image_Data *sd, Elm_Image_Orient orient)
    if (sd->edje) return;
    if (sd->orient == orient) return;
 
-   evas_object_image_orient_set(sd->img, orient);
+   evas_object_image_orient_set(sd->img, (Evas_Image_Orient) orient);
    sd->orient = orient;
    _elm_image_internal_sizing_eval(obj, sd);
 }
