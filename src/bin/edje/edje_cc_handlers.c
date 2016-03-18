@@ -4438,10 +4438,6 @@ st_collections_group_inherit(void)
    cd2 = eina_list_nth(codes, de->id);
    cd = eina_list_data_get(eina_list_last(codes));
 
-   cd->is_lua = cd2->is_lua;
-   cd->shared = STRDUP(cd2->shared);
-   cd->original = STRDUP(cd2->original);
-
    EINA_LIST_FOREACH(cd2->programs, l, cp2)
      {
         cp = mem_alloc(SZ(Code_Program));
@@ -4450,6 +4446,9 @@ st_collections_group_inherit(void)
         cp->l2 = cp2->l2;
         cp->script = STRDUP(cp2->script);
         cp->original = STRDUP(cp2->original);
+        cd->is_lua = cd2->is_lua;
+        cd->shared = STRDUP(cd2->shared);
+        cd->original = STRDUP(cd2->original);
         cd->programs = eina_list_append(cd->programs, cp);
         data_queue_copied_anonymous_lookup(pc, &(cp2->id), &(cp->id));
      }
