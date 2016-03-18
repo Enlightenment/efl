@@ -1003,8 +1003,11 @@ eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 #endif
       case EVAS_NATIVE_SURFACE_EVASGL:
       case EVAS_NATIVE_SURFACE_OPENGL:
-      case EVAS_NATIVE_SURFACE_WL:
         return 1;
+#if defined(GL_GLES) && defined(HAVE_WAYLAND)
+      case EVAS_NATIVE_SURFACE_WL:
+        return (glsym_eglQueryWaylandBufferWL != NULL) ? 1 : 0;
+#endif
       default:
         ERR("Native surface type %d not supported!", type);
         return 0;
@@ -1023,7 +1026,9 @@ eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 #endif
       case EVAS_NATIVE_SURFACE_EVASGL:
       case EVAS_NATIVE_SURFACE_OPENGL:
+#if defined(GL_GLES) && defined(HAVE_WAYLAND)
       case EVAS_NATIVE_SURFACE_WL:
+#endif
         return;
       default:
         ERR("Native surface type %d not supported!", type);
@@ -1423,6 +1428,8 @@ module_open(Evas_Module *em)
    ORD(output_dump);
 
    ORD(image_native_set);
+   ORD(image_native_init);
+   ORD(image_native_shutdown);
 
    gl_symbols();
 
