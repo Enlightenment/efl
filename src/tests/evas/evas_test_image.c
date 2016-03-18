@@ -647,7 +647,7 @@ START_TEST(evas_object_image_defaults)
 
    /* test eo defaults */
    o = eo_add(EVAS_IMAGE_CLASS, e);
-   fail_if(!efl_gfx_fill_filled_get(o));
+   fail_if(!efl_gfx_fill_auto_get(o));
    eo_del(o);
 
    evas_free(e);

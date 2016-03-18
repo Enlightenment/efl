@@ -3325,7 +3325,7 @@ EAPI double evas_object_image_border_scale_get(const Evas_Object *obj);
  * By center we mean the complementary part of that defined by
  * @ref evas_object_image_border_set. This one is very useful for making frames
  * and decorations. You would most probably also be using a filled image (as in
- * @ref Efl.Gfx.Fill.filled) to use as a frame.
+ * @ref Efl.Gfx.Fill.fill_auto) to use as a frame.
  *
  * The default value is
  *
@@ -3343,7 +3343,7 @@ EAPI void evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border
  * By center we mean the complementary part of that defined by
  * @ref evas_object_image_border_set. This one is very useful for making frames
  * and decorations. You would most probably also be using a filled image (as in
- * @ref Efl.Gfx.Fill.filled) to use as a frame.
+ * @ref Efl.Gfx.Fill.fill_auto) to use as a frame.
  *
  * The default value is
  *

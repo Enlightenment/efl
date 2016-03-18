@@ -197,7 +197,6 @@ main(void)
     * So it's possible to decrement refcount, and 'image' object
     * will be deleted automatically by parent.*/
 
-   efl_gfx_fill_filled_set(d.img, EINA_TRUE);
    efl_file_set(d.img, img_path, NULL);
    err = efl_image_load_error_get(d.img);
 
@@ -218,7 +217,6 @@ main(void)
 
    /* border on the image's clipper, here just to emphasize its position */
    d.clipper_border = eo_add(EVAS_IMAGE_CLASS, d.canvas);
-   efl_gfx_fill_filled_set(d.clipper_border, EINA_TRUE);
    efl_file_set(d.clipper_border, border_img_path, NULL);
    err = efl_image_load_error_get(d.clipper_border);
 

@@ -11,7 +11,6 @@ _efl_canvas_snapshot_eo_base_constructor(Eo *eo_obj, void *pd EINA_UNUSED)
    eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
    if (!eo_obj) return NULL;
 
-   efl_gfx_fill_filled_set(eo_obj, EINA_TRUE);
    evas_obj_pass_events_set(eo_obj, EINA_TRUE);
 
    obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);

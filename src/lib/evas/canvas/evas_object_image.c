@@ -214,7 +214,7 @@ EOLIAN static Eo *
 _evas_image_eo_base_finalize(Eo *eo_obj, Evas_Image_Data *o)
 {
    if (!o->filled_set)
-     efl_gfx_fill_filled_set(eo_obj, EINA_TRUE);
+     efl_gfx_fill_auto_set(eo_obj, EINA_TRUE);
    return eo_finalize(eo_super(eo_obj, MY_CLASS));
 }
 
@@ -490,7 +490,7 @@ _evas_image_efl_image_border_center_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_
 }
 
 EOLIAN static void
-_evas_image_efl_gfx_fill_filled_set(Eo *eo_obj, Evas_Image_Data* o, Eina_Bool setting)
+_evas_image_efl_gfx_fill_fill_auto_set(Eo *eo_obj, Evas_Image_Data* o, Eina_Bool setting)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    setting = !!setting;
@@ -516,7 +516,7 @@ _evas_image_efl_gfx_fill_filled_set(Eo *eo_obj, Evas_Image_Data* o, Eina_Bool se
 }
 
 EOLIAN static Eina_Bool
-_evas_image_efl_gfx_fill_filled_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_evas_image_efl_gfx_fill_fill_auto_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->filled;
 }

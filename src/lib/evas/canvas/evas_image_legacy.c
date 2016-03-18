@@ -16,7 +16,7 @@ evas_object_image_add(Evas *eo_e)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eo_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
    return eo_add(EVAS_IMAGE_CLASS, eo_e,
-                 efl_gfx_fill_filled_set(eo_self, EINA_FALSE),
+                 efl_gfx_fill_auto_set(eo_self, EINA_FALSE),
                  evas_obj_legacy_ctor(eo_self));
 }
 
@@ -64,14 +64,14 @@ EAPI Eina_Bool
 evas_object_image_filled_get(const Evas_Object *eo_obj)
 {
    EVAS_IMAGE_API(eo_obj, EINA_FALSE);
-   return efl_gfx_fill_filled_get(eo_obj);
+   return efl_gfx_fill_auto_get(eo_obj);
 }
 
 EAPI void
 evas_object_image_filled_set(Evas_Object *eo_obj, Eina_Bool value)
 {
    EVAS_IMAGE_API(eo_obj);
-   efl_gfx_fill_filled_set(eo_obj, value);
+   efl_gfx_fill_auto_set(eo_obj, value);
 }
 
 EAPI void

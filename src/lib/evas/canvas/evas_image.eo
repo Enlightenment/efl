@@ -74,8 +74,8 @@ class Evas.Image (Evas.Object, Evas.Filter,
       Efl.Gfx.Buffer.buffer_copy_set;
       Efl.Gfx.Fill.fill.set;
       Efl.Gfx.Fill.fill.get;
-      Efl.Gfx.Fill.filled.get;
-      Efl.Gfx.Fill.filled.set;
+      Efl.Gfx.Fill.fill_auto.get;
+      Efl.Gfx.Fill.fill_auto.set;
       Efl.Gfx.Filter.filter_program.set;
       Efl.Gfx.View.view_size.get;
       Evas.Filter.filter_input_alpha;

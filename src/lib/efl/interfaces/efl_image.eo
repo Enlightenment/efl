@@ -116,7 +116,7 @@ interface Efl.Image ()
            in @Efl.Gfx.Border_Fill_Mode. By center we mean the complementary
            part of that defined by @.border.set. This is very useful for
            making frames and decorations. You would most probably also be
-           using a filled image (as in @Efl.Gfx.Fill.filled) to use as a frame.
+           using a filled image (as in @Efl.Gfx.Fill.fill_auto) to use as a frame.
 
            The default value is @Efl.Gfx.Border_Fill_Mode.default, ie. render
            and scale the center area, respecting its transparency.
