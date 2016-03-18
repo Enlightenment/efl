@@ -542,9 +542,8 @@ _evas_image_efl_image_border_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *
    return o->cur->border.scale;
 }
 
-EOLIAN static void
-_evas_image_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o,
-                                  int x, int y, int w, int h)
+void
+_evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -571,6 +570,16 @@ _evas_image_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o,
 
    o->changed = EINA_TRUE;
    evas_object_change(eo_obj, obj);
+}
+
+EOLIAN static void
+_evas_image_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o,
+                                  int x, int y, int w, int h)
+{
+   // Should (0,0,0,0) reset the filled flag to true?
+   o->filled = EINA_FALSE;
+   o->filled_set = EINA_TRUE;
+   _evas_image_fill_set(eo_obj, o, x, y, w, h);
 }
 
 EOLIAN static void

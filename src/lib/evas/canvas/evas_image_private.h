@@ -142,6 +142,9 @@ void _evas_image_init_set(const Eina_File *f, const char *file, const char *key,
 void _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
 void _evas_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
 
+/* Efl.Gfx.Fill */
+void _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h);
+
 /* Efl.File */
 Eina_Bool _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key);
 void _evas_image_mmap_get(const Eo *eo_obj, const Eina_File **f, const char **key);

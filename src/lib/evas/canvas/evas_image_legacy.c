@@ -47,7 +47,7 @@ evas_object_image_fill_set(Evas_Object *obj,
                            Evas_Coord w, Evas_Coord h)
 {
    EVAS_IMAGE_API(obj);
-   efl_gfx_fill_set(obj, x, y, w, h);
+   _evas_image_fill_set(obj, eo_data_scope_get(obj, EVAS_IMAGE_CLASS), x, y, w, h);
 }
 
 EAPI void
