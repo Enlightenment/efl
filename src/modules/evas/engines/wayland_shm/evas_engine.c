@@ -392,6 +392,8 @@ module_open(Evas_Module *em)
    ORD(output_resize);
    ORD(image_native_set);
    ORD(image_native_get);
+   ORD(image_native_init);
+   ORD(image_native_shutdown);
 
    _symbols();
    /* advertise our own engine functions */
