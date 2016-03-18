@@ -10,7 +10,7 @@
 #include "eolian_cxx_suite.h"
 
 struct bar
-: efl::eo::inherit<bar, simple>
+: efl::eo::inherit<bar, nonamespace::Simple>
 {
   bar()
     : inherit_base(efl::eo::parent = nullptr)
@@ -23,7 +23,7 @@ struct bar
   }
 };
 
-void foo(simple is)
+void foo(nonamespace::Simple is)
 {
    fail_if(is.simple_get());
 }

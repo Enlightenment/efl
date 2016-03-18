@@ -27,14 +27,30 @@ extern const lookup_table_type type_lookup_table;
 inline std::string
 class_format_cxx(std::string const& fullname)
 {
-   std::string s = fullname;
-   auto found = s.find(".");
-   while (found != std::string::npos)
-     {
-        s.replace(found, 1, "::");
-        found = s.find(".");
-     }
-   return s;
+   auto current = fullname.begin(), last = fullname.end();
+   auto found = std::find(current, last, '.');
+   std::string new_string;
+   if(found == last)
+     new_string = "nonamespace::" + fullname;
+   else
+     while (current != last)
+       {
+          if(found == last)
+            {
+               new_string.insert(new_string.end(), current, found);
+               current = found;
+            }
+          else
+            {
+               new_string += std::tolower(*current);
+               new_string.insert(new_string.end(), std::next(current), found);
+               new_string = safe_lower(new_string);
+               new_string += "::";
+               current = std::next(found);
+               found = std::find(current, last, '.');
+            }
+       }
+   return new_string;
 }
 
 inline bool
@@ -60,7 +76,16 @@ type_from_eolian(Eolian_Type const& type)
                   x.category = efl::eolian::eolian_type::simple_;
                   x.is_class = true;
                   x.binding_requires_optional = false;
-                  x.binding = "::" + class_format_cxx(safe_lower(safe_str(::eolian_class_full_name_get(klass))));
+                  x.binding = "::" + class_format_cxx(safe_str(::eolian_class_full_name_get(klass)));
+                  x.native = "::";
+                  x.native += safe_str( ::eolian_class_full_name_get(klass));
+                  std::replace(x.native.begin(), x.native.end(), '.', '_');
+
+                  if( ::eolian_type_is_const(base_type))
+                    x.native += " const";
+                  
+                  x.native += '*';
+                  
 
                   Eina_Stringshare* klass_file = ::eolian_class_file_get(klass);
                   if (klass_file)
@@ -69,7 +94,8 @@ type_from_eolian(Eolian_Type const& type)
           }
      }
 
-   x.native = normalize_spaces(safe_str(::eolian_type_c_type_get(&type)));
+   if(x.native.empty())
+     x.native = normalize_spaces(safe_str(::eolian_type_c_type_get(&type)));
    x.is_own = ::eolian_type_is_own(&type);
    x.is_const = ::eolian_type_is_const(&type);
    return x;

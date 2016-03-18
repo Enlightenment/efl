@@ -59,7 +59,7 @@ class_base_file(Eolian_Class const& klass)
 inline std::string
 class_name(Eolian_Class const& klass)
 {
-   return safe_lower(::eolian_class_name_get(&klass));
+  return ::eolian_class_name_get(&klass);
 }
 
 inline std::string
@@ -347,7 +347,7 @@ event_create(Eolian_Class const& klass, const Eolian_Event *event_)
         event.is_beta = (::eolian_event_is_beta(event_) != EINA_FALSE);
         event.name = normalize_spaces(name_);
         event.eo_name = safe_upper
-          (find_replace(class_full_name(klass), ".", "_") + "_EVENT_" + event.name);
+          (find_replace(safe_lower(class_full_name(klass)), ".", "_") + "_EVENT_" + event.name);
         /* FIXME: use doc api */
         event.comment = safe_str("");
      }

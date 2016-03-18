@@ -9,7 +9,7 @@
 #include "eo_ops.hh"
 
 namespace eo { 
-struct base;
+struct Base;
 }
 
 namespace efl { namespace eo { namespace detail {
@@ -89,7 +89,7 @@ Eo_Class const* do_eo_class_new(Eo_Class_Description& class_desc)
 }
 
 template <typename T> struct operation_description_class_size;
-template <> struct operation_description_class_size< ::eo::base> : std::integral_constant<std::size_t, 0u> {};
+template <> struct operation_description_class_size< ::eo::Base> : std::integral_constant<std::size_t, 0u> {};
 
 /// @internal
 ///
@@ -136,7 +136,7 @@ namespace detail {
 template <typename T> struct operations;
 
 template <>
-struct operations< ::eo::base> { template <typename T> struct type {}; };
+struct operations< ::eo::Base> { template <typename T> struct type {}; };
   
 /// @internal
 ///
@@ -165,7 +165,7 @@ struct Inherit_Private_Data
 
 namespace efl { namespace eo { namespace detail {
 template <typename T>
-int initialize_operation_description(efl::eo::detail::tag< ::eo::base>
+int initialize_operation_description(efl::eo::detail::tag< ::eo::Base>
                                  , Eo_Op_Description* ops)
 {
    (void)ops;

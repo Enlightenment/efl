@@ -20,7 +20,7 @@ START_TEST(eolian_cxx_test_callback_method)
 {
   efl::eo::eo_init i;
 
-  callback c;
+  nonamespace::Callback c;
 
   bool called1 = false, called2 = false;
 
@@ -36,7 +36,7 @@ START_TEST(eolian_cxx_test_callback_event_add)
 {
   efl::eo::eo_init i;
 
-  callback c;
+  nonamespace::Callback c;
 
   bool called1 = false, called2 = false;
 
@@ -53,7 +53,7 @@ START_TEST(eolian_cxx_test_callback_event_del)
 {
   efl::eo::eo_init i;
 
-  callback c;
+  nonamespace::Callback c;
 
   int called1 = 0, called2 = 0, called3 = 0, called4 = 0;
 
@@ -119,7 +119,7 @@ START_TEST(eolian_cxx_test_global_callback)
 
   bool called = false;
 
-  callback::test_global_callbacks(std::bind([&called] { called = true; }));
+  nonamespace::Callback::test_global_callbacks(std::bind([&called] { called = true; }));
 
   fail_if(!called);
 }
@@ -128,7 +128,7 @@ END_TEST
 START_TEST(eolian_cxx_test_disconnect_inside_callback)
 {
   efl::eo::eo_init i;
-  callback c;
+  nonamespace::Callback c;
 
   std::vector<long> capture_me;
   int times_called = 0;

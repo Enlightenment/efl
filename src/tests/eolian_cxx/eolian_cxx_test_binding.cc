@@ -12,7 +12,7 @@ START_TEST(eolian_cxx_test_binding_constructor_only_required)
 
   bool called1 = false;
 
-  generic g(
+  nonamespace::Generic g(
     g.required_ctor_a(1),
     g.required_ctor_b(std::bind([&called1] { called1 = true; }))
   );
@@ -32,7 +32,7 @@ START_TEST(eolian_cxx_test_binding_constructor_all_optionals)
   bool called1 = false;
   bool called2 = false;
 
-  generic g(
+  nonamespace::Generic g(
     g.required_ctor_a(2),
     g.required_ctor_b(std::bind([&called1] { called1 = true; })),
     g.optional_ctor_a(3),

@@ -38,7 +38,7 @@ add_ancestor_recursive(const char* klass_name, std::set<std::string>& ancestor)
         return;
      }
 
-   ancestor.insert(class_format_cxx(safe_lower(klass_name)));
+   ancestor.insert(class_format_cxx(safe_str(klass_name)));
 
    Eina_Iterator* inheritances = ::eolian_class_inherits_get(klass);
    void* curr = 0;
@@ -236,7 +236,7 @@ convert_eolian_inheritances(efl::eolian::eo_class& cls, Eolian_Class const& klas
    EINA_ITERATOR_FOREACH(inheritances, curr)
      {
         const char* klass_name = static_cast<const char*>(curr);
-        cls.parents.push_back(class_format_cxx(safe_lower(klass_name)));
+        cls.parents.push_back(class_format_cxx(safe_str(klass_name)));
         add_ancestor_recursive(klass_name, ancestors);
      }
    eina_iterator_free(inheritances);
@@ -275,6 +275,8 @@ convert_eolian_class_new(Eolian_Class const& klass)
    cls.type = class_type(klass);
    cls.name = class_name(klass);
    cls.name_space = class_namespace_full(klass);
+   if(cls.name_space.empty())
+     cls.name_space = "nonamespace";
    cls.eo_name = class_eo_name(klass);
    cls.comment = convert_comments_class(klass);
    return cls;

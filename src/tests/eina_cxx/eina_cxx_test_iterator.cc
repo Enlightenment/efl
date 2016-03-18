@@ -37,22 +37,22 @@ START_TEST(eina_cxx_eo_iterator_equal)
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
 
-  efl::eina::list<simple> list;
+  efl::eina::list<nonamespace::Simple> list;
 
-  simple const w1;
-  simple const w2;
-  simple const w3;
-  simple const w4;
+  nonamespace::Simple const w1;
+  nonamespace::Simple const w2;
+  nonamespace::Simple const w3;
+  nonamespace::Simple const w4;
 
   list.push_back(w1);
   list.push_back(w2);
   list.push_back(w3);
   list.push_back(w4);
 
-  efl::eina::iterator<simple> iterator = list.ibegin()
+  efl::eina::iterator<nonamespace::Simple> iterator = list.ibegin()
     , last_iterator = list.iend();
 
-  simple const result[] = {w1, w2, w3, w4};
+  nonamespace::Simple const result[] = {w1, w2, w3, w4};
 
   ck_assert(std::equal(iterator, last_iterator, result));
 }

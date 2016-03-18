@@ -3,6 +3,7 @@
 #endif
 
 #include <Ecore_Audio.h>
+#include <ecore_audio.eo.h>
 #include <Ecore_Audio.hh>
 
 #include <iostream>

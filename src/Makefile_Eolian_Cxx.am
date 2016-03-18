@@ -72,6 +72,8 @@ tests/eolian_cxx/eolian_cxx_test_callback.cc \
 tests/eolian_cxx/eolian_cxx_test_address_of.cc \
 tests/eolian_cxx/eolian_cxx_test_wrapper.cc \
 tests/eolian_cxx/simple.c \
+tests/eolian_cxx/name_name.c \
+tests/eolian_cxx/name_name_cxx.cc \
 tests/eolian_cxx/generic.c \
 tests/eolian_cxx/eolian_cxx_test_inheritance.cc \
 tests/eolian_cxx/eolian_cxx_test_generate.cc \
@@ -90,6 +92,9 @@ tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-a.$(OBJEXT): tests/eolian_cxx
 tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-b.$(OBJEXT): tests/eolian_cxx/b.eo.c tests/eolian_cxx/b.eo.h
 tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-c.$(OBJEXT): tests/eolian_cxx/c.eo.c tests/eolian_cxx/c.eo.h
 tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-d.$(OBJEXT): tests/eolian_cxx/d.eo.c tests/eolian_cxx/d.eo.h
+
+tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-name_name.$(OBJEXT): tests/eolian_cxx/name_name.eo.c tests/eolian_cxx/name_name.eo.h
+tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-name_name_cxx.$(OBJEXT): tests/eolian_cxx/name_name.eo.h tests/eolian_cxx/name_name.eo.hh
 
 CLEANFILES += \
 tests/eolian_cxx/callback.eo.hh \
