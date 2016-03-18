@@ -14,7 +14,10 @@ lib/ecore_fb/ecore_fb_li.c \
 lib/ecore_fb/ecore_fb_ts.c \
 lib/ecore_fb/ecore_fb_vt.c \
 lib/ecore_fb/ecore_fb_keytable.h \
-lib/ecore_fb/ecore_fb_private.h
+lib/ecore_fb/ecore_fb_private.h \
+lib/ecore_fb/ecore_fb_inputs.c \
+lib/ecore_fb/ecore_fb_evdev.c \
+lib/ecore_fb/ecore_fb_device.c
 
 lib_ecore_fb_libecore_fb_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_FB_CFLAGS@
 lib_ecore_fb_libecore_fb_la_LIBADD = @ECORE_FB_LIBS@
