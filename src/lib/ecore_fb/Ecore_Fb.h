@@ -66,6 +66,23 @@ enum _Ecore_Fb_Input_Device_Cap
  */
 typedef enum   _Ecore_Fb_Input_Device_Cap Ecore_Fb_Input_Device_Cap;
 
+
+/* opaque structure to represent a fb input */
+typedef struct _Ecore_Fb_Input Ecore_Fb_Input;
+
+/* opaque structure to represent a fb evdev input */
+typedef struct _Ecore_Fb_Evdev Ecore_Fb_Evdev;
+
+/* opaque structure to represent a fb seat */
+typedef struct _Ecore_Fb_Seat Ecore_Fb_Seat;
+
+/* opaque structure to represent a fb device */
+typedef struct _Ecore_Fb_Device Ecore_Fb_Device;
+
+/* opaque structure to represent a fb output */
+typedef struct _Ecore_Fb_Output Ecore_Fb_Output;
+
+
 /* ecore_fb_vt.c */
 EAPI void                      ecore_fb_callback_gain_set(void (*func) (void *data), void *data);
 EAPI void                      ecore_fb_callback_lose_set(void (*func) (void *data), void *data);
@@ -89,6 +106,18 @@ EAPI void                      ecore_fb_size_get(int *w, int *h);
 
 EAPI void                      ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap);
 EAPI void                      ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap);
+
+/* ecore_fb_inputs.c */
+EAPI Eina_Bool ecore_fb_inputs_create(Ecore_Fb_Device *dev);
+EAPI void ecore_fb_inputs_destroy(Ecore_Fb_Device *dev);
+EAPI Eina_Bool ecore_fb_inputs_enable(Ecore_Fb_Input *input);
+EAPI void ecore_fb_inputs_disable(Ecore_Fb_Input *input);
+EAPI void ecore_fb_inputs_device_axis_size_set(Ecore_Fb_Evdev *dev, int w, int h);
+
+/* ecore_fb_devices */
+EAPI Ecore_Fb_Device *ecore_fb_device_find(const char *name);
+EAPI void ecore_fb_device_window_set(Ecore_Fb_Device *dev, unsigned int window);
+
 
 /**
  * @}

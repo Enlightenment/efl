@@ -5,6 +5,9 @@
 #include "Ecore_Fb.h"
 #include "ecore_fb_private.h"
 
+/* external variables */
+int _ecore_fb_log_dom = -1;
+
 static void _ecore_fb_size_get(int *w, int *h);
 
 static int _ecore_fb_init_count = 0;
@@ -43,6 +46,43 @@ ecore_fb_init(const char *name EINA_UNUSED)
    if (++_ecore_fb_init_count != 1)
       return _ecore_fb_init_count;
 
+   /* try to init eina */
+   if (!eina_init()) return --_ecore_fb_init_count;
+
+   /* try to init ecore */
+   if (!ecore_init())
+     {
+        eina_shutdown();
+        return --_ecore_fb_init_count;
+     }
+
+   /* try to init ecore_event */
+   if (!ecore_event_init())
+     {
+        ecore_shutdown();
+        eina_shutdown();
+        return --_ecore_fb_init_count;
+     }
+
+   /* set logging level */
+   eina_log_level_set(EINA_LOG_LEVEL_DBG);
+
+   /* try to create logging domain */
+   _ecore_fb_log_dom =
+     eina_log_domain_register("ecore_fb", ECORE_FB_DEFAULT_LOG_COLOR);
+   if (!_ecore_fb_log_dom)
+     {
+        EINA_LOG_ERR("Could not create log domain for Ecore_Fb");
+        goto log_err;
+     }
+
+   /* set default logging level for this domain */
+   if (!eina_log_domain_level_check(_ecore_fb_log_dom, EINA_LOG_LEVEL_DBG))
+     eina_log_domain_level_set("ecore_fb", EINA_LOG_LEVEL_DBG);
+
+   /* try to init eeze */
+   if (!eeze_init()) goto eeze_err;
+
    if (!ecore_fb_vt_init())
       return --_ecore_fb_init_count;
 
@@ -50,10 +90,21 @@ ecore_fb_init(const char *name EINA_UNUSED)
      {
         oldhand = signal(SIGINT, nosigint);
      }
-   
+
    _ecore_fb_size_get(&_ecore_fb_console_w, &_ecore_fb_console_h);
 
+
+
    return _ecore_fb_init_count;
+
+eeze_err:
+   eina_log_domain_unregister(_ecore_fb_log_dom);
+   _ecore_fb_log_dom = -1;
+log_err:
+   ecore_event_shutdown();
+   ecore_shutdown();
+   eina_shutdown();
+   return --_ecore_fb_init_count;
 }
 
 /**
@@ -76,7 +127,7 @@ ecore_fb_shutdown(void)
         signal(SIGINT, oldhand);
         oldhand = NULL;
      }
-   
+
    ecore_fb_vt_shutdown();
 
    return _ecore_fb_init_count;
