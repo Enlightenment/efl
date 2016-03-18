@@ -4381,6 +4381,7 @@ want_ecore_evas_gl_cocoa="${have_evas_engine_gl_cocoa}"
 want_ecore_evas_wayland_egl="${have_evas_engine_wayland_egl}"
 want_ecore_evas_extn="yes"
 want_ecore_evas_drm="${have_evas_engine_drm}"
+want_ecore_evas_eglfs="${have_evas_engine_eglfs}"
 
 if test "x${have_ecore_ipc}" = "xno" || \
    test "x${efl_func_shm_open}" = "xno" || \
@@ -4413,6 +4414,7 @@ ECORE_EVAS_MODULE([drm], [${want_drm}],
 ECORE_EVAS_MODULE([gl-drm], [${want_gl_drm}],
   [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_gl_drm}], [ecore-drm2])])
 ECORE_EVAS_MODULE([psl1ght], [${have_ps3}])
+ECORE_EVAS_MODULE([eglfs], [${want_eglfs}])
 
 ECORE_EVAS_MODULE([opengl-cocoa], [${want_ecore_evas_gl_cocoa}])
 

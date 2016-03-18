@@ -41,6 +41,7 @@
 #endif /* ! _WIN32 */
 
 static int _ecore_evas_init_count = 0;
+static Ecore_Fb_Device *dev = NULL;
 
 static char *ecore_evas_default_display = "0";
 static Eina_List *ecore_evas_input_devices = NULL;
@@ -212,7 +213,17 @@ _ecore_evas_fb_init(Ecore_Evas *ee, int w, int h)
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
 
+   if (!(dev = ecore_fb_device_find("fb0")))
+     {
+       ERR("Could not find framebuffer device with name: %s.", "/dev/fb0");
+     }
+
+   ecore_fb_device_window_set(dev, ee);
    ecore_event_evas_init();
+
+   ecore_fb_inputs_create(dev);
+
+   return _ecore_evas_init_count;
 
    /* register all input devices */
    ls = eina_file_direct_ls("/dev/input/");
@@ -748,3 +759,111 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return ee;
 }
+
+#ifdef BUILD_ECORE_EVAS_EGLFS
+EAPI Ecore_Evas *
+ecore_evas_eglfs_new_internal(const char *disp_name, int rotation, int w, int h)
+{
+   Evas_Engine_Info_FB *einfo;
+   Ecore_Evas_Engine_FB_Data *idata;
+   Ecore_Evas *ee;
+
+   int rmethod;
+
+   if (!disp_name)
+   disp_name = ecore_evas_default_display;
+
+   rmethod = evas_render_method_lookup("eglfs");
+   if (!rmethod) return NULL;
+
+   if (!ecore_fb_init(disp_name)) return NULL;
+   ee = calloc(1, sizeof(Ecore_Evas));
+   if (!ee) return NULL;
+   idata = calloc(1, sizeof(Ecore_Evas_Engine_FB_Data));
+
+   ee->engine.data = idata;
+
+   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
+
+   _ecore_evas_fb_init(ee, w, h);
+
+   ecore_fb_callback_gain_set(_ecore_evas_fb_gain, ee);
+   ecore_fb_callback_lose_set(_ecore_evas_fb_lose, ee);
+
+   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_fb_engine_func;
+
+   ee->driver = "eglfs";
+   if (disp_name) ee->name = strdup(disp_name);
+
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+   ee->rotation = rotation;
+   ee->visible = 1;
+   ee->w = w;
+   ee->h = h;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
+
+   ee->prop.max.w = 0;
+   ee->prop.max.h = 0;
+   ee->prop.layer = 0;
+   ee->prop.focused = EINA_FALSE;
+   ee->prop.borderless = EINA_TRUE;
+   ee->prop.override = EINA_TRUE;
+   ee->prop.maximized = EINA_TRUE;
+   ee->prop.fullscreen = EINA_FALSE;
+   ee->prop.withdrawn = EINA_TRUE;
+   ee->prop.sticky = EINA_FALSE;
+
+   /* init evas here */
+   ee->evas = evas_new();
+   evas_data_attach_set(ee->evas, ee);
+   evas_output_method_set(ee->evas, rmethod);
+
+   if (ECORE_EVAS_PORTRAIT(ee))
+     {
+       evas_output_size_set(ee->evas, w, h);
+       evas_output_viewport_set(ee->evas, 0, 0, w, h);
+     }
+   else
+     {
+       evas_output_size_set(ee->evas, h, w);
+       evas_output_viewport_set(ee->evas, 0, 0, h, w);
+     }
+
+   einfo = (Evas_Engine_Info_FB *)evas_engine_info_get(ee->evas);
+   if (einfo && disp_name)
+     {
+        einfo->info.virtual_terminal = 0;
+        einfo->info.device_number = strtol(disp_name, NULL, 10);
+        einfo->info.refresh = 0;
+        einfo->info.rotation = ee->rotation;
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             ecore_evas_free(ee);
+             return NULL;
+          }
+     }
+   else
+     {
+        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        ecore_evas_free(ee);
+        return NULL;
+     }
+
+   ecore_evas_input_event_register(ee);
+
+   ee->engine.func->fn_render = _ecore_evas_fb_render;
+   _ecore_evas_register(ee);
+   ecore_evas_input_event_register(ee);
+
+   ecore_event_window_register(1, ee, ee->evas,
+			       (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
+			       (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
+			       (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
+			       (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+   return ee;
+}
+#endif

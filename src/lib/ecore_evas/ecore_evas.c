@@ -286,6 +286,12 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
         return EINA_FALSE;
 #endif
+      case ECORE_EVAS_ENGINE_EGLFS:
+#ifdef BUILD_ECORE_EVAS_EGLFS
+        return EINA_TRUE;
+#else
+        return EINA_FALSE;
+#endif
 
       case ECORE_EVAS_ENGINE_SOFTWARE_8_X11:
         return EINA_FALSE;
@@ -653,6 +659,22 @@ _ecore_evas_constructor_fb(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, c
 }
 
 static Ecore_Evas *
+_ecore_evas_constructor_eglfs(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
+{
+   Ecore_Evas *ee;
+   char *disp_name = NULL;
+   unsigned int rotation = 0;
+
+   _ecore_evas_parse_extra_options_str(extra_options, "display=", &disp_name);
+   _ecore_evas_parse_extra_options_uint(extra_options, "rotation=", &rotation);
+
+   ee = ecore_evas_eglfs_new(disp_name, rotation, w, h);
+   free(disp_name);
+
+   return ee;
+}
+
+static Ecore_Evas *
 _ecore_evas_constructor_psl1ght(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
 {
    Ecore_Evas *ee;
@@ -776,6 +798,7 @@ static const struct ecore_evas_engine _engines[] = {
   {"software_x11", _ecore_evas_constructor_software_x11},
   {"opengl_x11", _ecore_evas_constructor_opengl_x11},
   {"fb", _ecore_evas_constructor_fb},
+  {"eglfs", _ecore_evas_constructor_eglfs},
   {"software_gdi", _ecore_evas_constructor_software_gdi},
   {"software_ddraw", _ecore_evas_constructor_software_ddraw},
   {"direct3d", _ecore_evas_constructor_direct3d},
@@ -3662,6 +3685,19 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
 
    new = eina_module_symbol_get(m, "ecore_evas_fb_new_internal");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
+
+   return new(disp_name, rotation, w, h);
+}
+
+EAPI Ecore_Evas *
+ecore_evas_eglfs_new(const char *disp_name, int rotation, int w, int h)
+{
+   Ecore_Evas *(*new)(const char *, int, int, int);
+   Eina_Module *m = _ecore_evas_engine_load("fb");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
+
+   new = eina_module_symbol_get(m, "ecore_evas_eglfs_new_internal");
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
    return new(disp_name, rotation, w, h);
