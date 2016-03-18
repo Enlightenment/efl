@@ -121,3 +121,17 @@ out_done_callback_set(void (*func) (void *data), const void *data)
    cb_func = func;
    cb_data = (void *)data;
 }
+
+static Eina_Bool
+_module_init(void)
+{
+   return EINA_TRUE;
+}
+
+static void
+_module_shutdown(void)
+{
+}
+
+EINA_MODULE_INIT(_module_init);
+EINA_MODULE_SHUTDOWN(_module_shutdown);

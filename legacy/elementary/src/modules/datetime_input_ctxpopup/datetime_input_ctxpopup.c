@@ -382,3 +382,17 @@ elm_modapi_shutdown(void *m EINA_UNUSED)
 {
    return 1; // succeed always
 }
+
+static Eina_Bool
+_module_init(void)
+{
+   return EINA_TRUE;
+}
+
+static void
+_module_shutdown(void)
+{
+}
+
+EINA_MODULE_INIT(_module_init);
+EINA_MODULE_SHUTDOWN(_module_shutdown);

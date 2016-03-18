@@ -35,3 +35,17 @@ obj_longpress(Evas_Object *obj)
 {
    printf("longpress: %p\n", obj);
 }
+
+static Eina_Bool
+_module_init(void)
+{
+   return EINA_TRUE;
+}
+
+static void
+_module_shutdown(void)
+{
+}
+
+EINA_MODULE_INIT(_module_init);
+EINA_MODULE_SHUTDOWN(_module_shutdown);
