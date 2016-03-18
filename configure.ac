@@ -1624,6 +1624,19 @@ AC_ARG_ENABLE([fb],
    ],
    [want_fb="no"])
 
+# Eglfs
+AC_ARG_ENABLE([eglfs],
+   [AS_HELP_STRING([--enable-eglfs],[enable hardware accelerated framebuffer access. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_eglfs="yes"
+       want_fb="yes"
+    else
+       want_eglfs="no"
+    fi
+   ],
+   [want_eglfs="no"])
+
 # SDL
 AC_ARG_ENABLE([sdl],
    [AS_HELP_STRING([--enable-sdl],[enable SDL support. @<:@default=disabled@:>@])],
@@ -2080,6 +2093,7 @@ EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayla
 EVAS_CHECK_ENGINE([wayland-shm], [${want_wayland}], [no], [Wayland Shm])
 EVAS_CHECK_ENGINE([drm], [${want_drm}], [no], [Drm])
 EVAS_CHECK_ENGINE([gl-drm], [${want_gl_drm}], [no], [OpenGL Drm])
+EVAS_CHECK_ENGINE([eglfs], [${want_eglfs}], [no], [OpenGL Fb])
 
 
 # Software XCB
@@ -2236,6 +2250,7 @@ if test "x$have_evas_engine_gl_xlib" = "xyes" || \
    test "x$have_evas_engine_gl_sdl" = "xyes" || \
    test "x$have_evas_engine_gl_cocoa" = "xyes" || \
    test "x$have_evas_engine_gl_drm" = "xyes" || \
+   test "x$have_evas_engine_eglfs" = "xyes" || \
    test "x$have_evas_engine_wayland_egl" = "xyes"; then
    have_evas_engine_gl_common="yes"
 fi
@@ -2244,6 +2259,7 @@ if test "x$have_evas_engine_gl_xlib" = "xstatic" || \
    test "x$have_evas_engine_gl_sdl" = "xstatic" || \
    test "x$have_evas_engine_gl_cocoa" = "xstatic" || \
    test "x$have_evas_engine_gl_drm" = "xstatic" || \
+   test "x$have_evas_engine_eglfs" = "xstatic" || \
    test "x$have_evas_engine_wayland_egl" = "xstatic"; then
    have_evas_engine_gl_common="yes"
    have_static_evas_engine_gl_common="yes"
@@ -5095,6 +5111,7 @@ pc/eo-js.pc
 pc/efl.pc
 pc/efl-cxx.pc
 pc/evas-fb.pc
+pc/evas-eglfs.pc
 pc/evas-opengl-x11.pc
 pc/evas-opengl-sdl.pc
 pc/evas-opengl-cocoa.pc
