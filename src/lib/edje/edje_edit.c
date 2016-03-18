@@ -9360,8 +9360,6 @@ edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *sou
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
-   if (!source) return EINA_FALSE;
-
    /* Remove from program array */
    _edje_program_remove(ed->collection, epr);
 
@@ -9533,8 +9531,6 @@ edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *sig
 {
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
-
-   if (!sig) return EINA_FALSE;
 
    /* Remove from program array */
    _edje_program_remove(ed->collection, epr);
