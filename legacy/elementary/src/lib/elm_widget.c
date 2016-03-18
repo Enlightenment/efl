@@ -792,6 +792,27 @@ _elm_widget_focus_highlight_style_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data
 }
 
 static void
+_child_focus_order_update(Evas_Object* parent, Evas_Object* obj)
+{
+   const Eina_List *l;
+   Evas_Object *child;
+   ELM_WIDGET_DATA_GET(parent, sdp);
+   EINA_LIST_FOREACH(sdp->subobjs, l, child)
+     {
+        if (!_elm_widget_is(child) || (child == obj)) continue;
+	ELM_WIDGET_DATA_GET(child,sdc);
+   
+        if(sdc->can_focus || (sdc->child_can_focus))
+	  {
+             focus_order++;
+	     sdc->focus_order = focus_order;
+          }
+	_child_focus_order_update(child, NULL);
+     }
+	
+}
+
+static void
 _parent_focus(Evas_Object *obj, Elm_Object_Item *item)
 {
    API_ENTRY return;
@@ -820,6 +841,8 @@ _parent_focus(Evas_Object *obj, Elm_Object_Item *item)
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      _elm_access_highlight_set(obj);
+
+   if (o) _child_focus_order_update(o, obj);
 }
 
 static void
