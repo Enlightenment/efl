@@ -163,7 +163,7 @@ static Edje_Part_Description_Common *parent_desc = NULL;
 static Edje_Program *current_program = NULL;
 static Eina_List *current_program_lookups = NULL;
 Eina_Bool current_group_inherit = EINA_FALSE;
-Eina_Bool script_override = EINA_TRUE;
+Eina_Bool script_override = EINA_FALSE;
 static Edje_Program *sequencing = NULL;
 static Eina_List *sequencing_lookups = NULL;
 
