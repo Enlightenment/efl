@@ -81,35 +81,20 @@ _on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
                void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
-   Evas_Coord x, y, w, h;
-   Evas_Coord obj_x, obj_y;
-   int scene_w, scene_h;
-   Evas_Real scene_x, scene_y;
    Evas_Real s, t;
    Evas_Canvas3D_Node *n;
    Evas_Canvas3D_Mesh *m;
    Eina_Bool pick;
 
-   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   pick = evas_canvas3d_scene_pick(scene, ev->canvas.x, ev->canvas.y, &n, &m, &s, &t);
 
-   obj_x = ev->canvas.x - x;
-   obj_y = ev->canvas.y - y;
-
-   evas_canvas3d_scene_size_get(scene, &scene_w, &scene_h);
-
-   scene_x = obj_x * scene_w / (Evas_Real)w;
-   scene_y = obj_y * scene_h / (Evas_Real)h;
-
-   pick = evas_canvas3d_scene_pick(scene, scene_x, scene_y, &n, &m, &s, &t);
    if (pick) printf("Picked     : ");
    else printf("Not picked : ");
 
-   printf("output(%d, %d) canvas(%d, %d) object(%d, %d) scene(%f, %f) texcoord(%f, %f) "
+   printf("output(%d, %d) canvas(%d, %d) texcoord(%f, %f) "
           "node(%p) mesh(%p)\n",
           ev->output.x, ev->output.y,
           ev->canvas.x, ev->canvas.y,
-          obj_x, obj_y,
-          scene_x, scene_y,
           s, t, n, m);
 }
 
