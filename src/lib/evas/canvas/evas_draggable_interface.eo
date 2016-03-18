@@ -1,5 +1,25 @@
 interface Evas.Draggable_Interface (Evas.Signal_Interface)
 {
+   legacy_prefix: null;
+   methods {
+        @property drag_target {
+             [[Contrtol whether the object's content is changed by drag and drop.
+
+               If $drag_target is true, the object can be target of dragging object and 
+               the content of this object can be changed into dragging content.
+               For example, If object deals with image and $drag_target is true, user can drag
+               new image and drop it into this object. 
+               And then this object's image can be changed into new image.]]
+             set {
+             }
+             get {
+             }
+             values {
+                  set: bool; [[Turn on or off drop_target. Default is $false.]]
+             }
+        }
+   }
+   
    events {
       drag;
       drag,start;
