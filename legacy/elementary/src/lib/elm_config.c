@@ -3103,6 +3103,7 @@ EAPI void
 elm_config_focus_move_policy_set(Elm_Focus_Move_Policy policy)
 {
    _elm_config->focus_move_policy = policy;
+   _elm_win_focus_reconfigure();
 }
 
 EAPI Eina_Bool

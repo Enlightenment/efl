@@ -1523,6 +1523,20 @@ elm_object_focus_move_policy_get(const Evas_Object *obj)
    return elm_widget_focus_move_policy_get(obj);
 }
 
+EAPI Eina_Bool
+elm_object_focus_move_policy_automatic_get(const Evas_Object *obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   return elm_widget_focus_move_policy_automatic_get(obj);
+}
+
+EAPI void
+elm_object_focus_move_policy_automatic_set(Evas_Object *obj, Eina_Bool automatic)
+{
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   elm_widget_focus_move_policy_automatic_set(obj, automatic);
+}
+
 EAPI void
 elm_object_scroll_hold_push(Evas_Object *obj)
 {

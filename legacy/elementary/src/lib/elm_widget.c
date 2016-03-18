@@ -342,6 +342,7 @@ _elm_widget_evas_object_smart_add(Eo *obj, Elm_Widget_Smart_Data *priv)
    priv->obj = obj;
    priv->mirrored_auto_mode = EINA_TRUE; /* will follow system locale
                                           * settings */
+   priv->focus_move_policy_auto_mode = EINA_TRUE;
    priv->focus_region_show_mode = ELM_FOCUS_REGION_SHOW_WIDGET;
    elm_widget_can_focus_set(obj, EINA_TRUE);
    priv->is_mirrored = elm_config_mirrored_get();
@@ -3576,6 +3577,46 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSE
    return EINA_TRUE;
 }
 
+/**
+ * @internal
+ *
+ * Resets the focus_move_policy mode from the system one
+ * for widgets that are in automatic mode.
+ *
+ * @param obj The widget.
+ *
+ */
+static void
+_elm_widget_focus_move_policy_reload(Evas_Object *obj)
+{
+   API_ENTRY return;
+   Elm_Focus_Move_Policy focus_move_policy = elm_config_focus_move_policy_get();
+
+   if (elm_widget_focus_move_policy_automatic_get(obj) &&
+       (sd->focus_move_policy != focus_move_policy))
+     {
+        sd->focus_move_policy = focus_move_policy;
+     }
+}
+
+EOLIAN static void
+_elm_widget_focus_reconfigure(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+{
+   const Eina_List *l;
+   Evas_Object *child;
+   API_ENTRY return;
+
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
+     {
+        if (elm_widget_is(child))
+          elm_widget_focus_reconfigure(child);
+     }
+
+   if (sd->hover_obj) elm_widget_focus_reconfigure(sd->hover_obj);
+
+   _elm_widget_focus_move_policy_reload(obj);
+}
+
 EAPI void
 elm_widget_content_part_set(Evas_Object *obj,
                             const char *part,
@@ -4244,6 +4285,43 @@ _elm_widget_focus_move_policy_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd
    if (sd->focus_move_policy == policy) return;
    sd->focus_move_policy = policy;
 }
+
+/**
+ * Returns the widget's focus_move_policy mode setting.
+ *
+ * @param obj The widget.
+ * @return focus_move_policy mode setting of the object.
+ *
+ **/
+EOLIAN static Eina_Bool
+_elm_widget_focus_move_policy_automatic_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+{
+   return sd->focus_move_policy_auto_mode;
+}
+
+/**
+ * @internal
+ *
+ * Sets the widget's focus_move_policy mode setting.
+ * When widget in automatic mode, it follows the system focus_move_policy mode set by
+ * elm_config_focus_move_policy_set().
+ * @param obj The widget.
+ * @param automatic EINA_TRUE for auto focus_move_policy mode. EINA_FALSE for manual.
+ */
+EOLIAN static void
+_elm_widget_focus_move_policy_automatic_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool automatic)
+{
+   if (sd->focus_move_policy_auto_mode != automatic)
+     {
+        sd->focus_move_policy_auto_mode = automatic;
+
+        if (automatic)
+          {
+             elm_widget_focus_move_policy_set(obj, elm_config_focus_move_policy_get());
+          }
+     }
+}
+
 static void
 _track_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 

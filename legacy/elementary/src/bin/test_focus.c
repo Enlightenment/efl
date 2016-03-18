@@ -77,10 +77,23 @@ _focus_anim_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
      elm_win_focus_highlight_animate_set(data, EINA_FALSE);
 }
 
+static void
+_rd_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int value = elm_radio_state_value_get(obj);
+
+   if (value == 0)
+     elm_config_focus_move_policy_set(ELM_FOCUS_MOVE_POLICY_CLICK);
+   else if (value == 1)
+     elm_config_focus_move_policy_set(ELM_FOCUS_MOVE_POLICY_IN);
+   else
+     elm_config_focus_move_policy_set(ELM_FOCUS_MOVE_POLICY_KEY_ONLY);
+}
+
 void
 test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *tbx, *tbar, *menu;
+   Evas_Object *win, *tbx, *tbar, *mainbx, *menu, *ttb;
    Elm_Object_Item *tb_it;
    Elm_Object_Item *menu_it;
    unsigned int i, j;
@@ -121,8 +134,8 @@ test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_toolbar_item_menu_set(tb_it, EINA_TRUE);
    elm_toolbar_item_priority_set(tb_it, -9999);
    elm_toolbar_menu_parent_set(tbar, win);
-   menu = elm_toolbar_item_menu_get(tb_it);
 
+   menu = elm_toolbar_item_menu_get(tb_it);
    elm_menu_item_add(menu, NULL, "edit-cut", "Shrink", _tb_sel, NULL);
    menu_it = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", _tb_sel, NULL);
    elm_menu_item_add(menu, menu_it, "edit-paste", "is set to", _tb_sel, NULL);
@@ -131,7 +144,7 @@ test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(tbx, tbar);
    evas_object_show(tbar);
 
-   Evas_Object *mainbx = elm_box_add(win);
+   mainbx = elm_box_add(win);
    elm_box_horizontal_set(mainbx, EINA_TRUE);
    evas_object_size_hint_weight_set(mainbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(tbx, mainbx);
@@ -304,8 +317,7 @@ test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
         Evas_Object *ly = elm_layout_add(win);
         snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
         elm_layout_file_set(ly, buf, "twolines");
-        evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND,
-                                         EVAS_HINT_EXPAND);
+        evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, 0.0);
         elm_box_pack_end(mainbx, ly);
         my_show(ly);
 
@@ -362,6 +374,30 @@ test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
                   evas_object_smart_callback_add(bt2, "clicked", my_enable, bt);
                   my_show(bt2);
                   elm_object_focus_custom_chain_append(bx2, bt2, NULL);
+
+                  Evas_Object *bt3;
+                  bt3 = elm_button_add(win);
+                  elm_object_text_set(bt3, "KeyOnly with Auto");
+                  elm_object_focus_move_policy_set(bt3, ELM_FOCUS_MOVE_POLICY_KEY_ONLY);
+                  elm_object_focus_move_policy_automatic_set(bt, EINA_TRUE); // EINA_TURE is default
+                  evas_object_size_hint_align_set(bt3, EVAS_HINT_FILL,
+                                                  EVAS_HINT_FILL);
+                  evas_object_size_hint_weight_set(bt3, 0.0, 0.0);
+                  elm_box_pack_end(bx2, bt3);
+                  my_show(bt3);
+                  elm_object_focus_custom_chain_append(bx2, bt3, NULL);
+
+                  Evas_Object *bt4;
+                  bt4 = elm_button_add(win);
+                  elm_object_text_set(bt4, "KeyOnly without Auto");
+                  elm_object_focus_move_policy_set(bt4, ELM_FOCUS_MOVE_POLICY_KEY_ONLY);
+                  elm_object_focus_move_policy_automatic_set(bt4, EINA_FALSE);
+                  evas_object_size_hint_align_set(bt4, EVAS_HINT_FILL,
+                                                  EVAS_HINT_FILL);
+                  evas_object_size_hint_weight_set(bt4, 0.0, 0.0);
+                  elm_box_pack_end(bx2, bt4);
+                  my_show(bt4);
+                  elm_object_focus_custom_chain_append(bx2, bt4, NULL);
                }
 
           }
@@ -430,32 +466,64 @@ test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
           }
      }
 
-   Evas_Object *bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
-   elm_box_pack_end(tbx, bx);
-   my_show(bx);
+   ttb = elm_table_add(win);
+   evas_object_size_hint_weight_set(ttb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(tbx, ttb);
+   my_show(ttb);
 
      {
         Evas_Object *ck;
 
-        ck = elm_check_add(bx);
+        ck = elm_check_add(ttb);
         elm_object_text_set(ck, "Focus Highlight Enable");
         elm_check_state_set(ck, elm_win_focus_highlight_enabled_get(win));
-        elm_box_pack_end(bx, ck);
+        evas_object_size_hint_align_set(ck, 0.0, EVAS_HINT_FILL);
+        elm_table_pack(ttb, ck, 0, 0, 1, 1);
         my_show(ck);
         evas_object_smart_callback_add(ck, "changed",
                                        _focus_highlight_changed,
                                        win);
 
-        ck = elm_check_add(bx);
+        ck = elm_check_add(ttb);
         elm_object_text_set(ck, "Focus Highlight Animation Enable");
         elm_check_state_set(ck, elm_win_focus_highlight_animate_get(win));
-        elm_box_pack_end(bx, ck);
+        evas_object_size_hint_align_set(ck, 0.0, EVAS_HINT_FILL);
+        elm_table_pack(ttb, ck, 0, 1, 1, 1);
         my_show(ck);
         evas_object_smart_callback_add(ck, "changed",
                                        _focus_anim_changed,
                                        win);
+     }
+
+     {
+        Evas_Object *rd, *rdg;
+
+        for (i = 0; i < 3; i++)
+          {
+             rd = elm_radio_add(ttb);
+             elm_radio_state_value_set(rd, i);
+             evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+             evas_object_size_hint_align_set(rd, 0.0, EVAS_HINT_FILL);
+             elm_table_pack(ttb, rd, 1, i, 1, 1);
+             evas_object_show(rd);
+             evas_object_smart_callback_add(rd, "changed", _rd_changed_cb, NULL);
+
+             if (i == 0)
+               {
+                  rdg = rd;
+                  elm_object_text_set(rd, "Move Policy: Key+Click(Default)");
+               }
+             else if (i == 1)
+               {
+                  elm_radio_group_add(rd, rdg);
+                  elm_object_text_set(rd, "Move Policy: Key+Click+In");
+               }
+             else
+               {
+                  elm_radio_group_add(rd, rdg);
+                  elm_object_text_set(rd, "Move Policy: Key Only");
+               }
+          }
      }
 }
 

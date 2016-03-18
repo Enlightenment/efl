@@ -2547,6 +2547,16 @@ _elm_win_translate(void)
      elm_widget_translate(obj);
 }
 
+void
+_elm_win_focus_reconfigure(void)
+{
+   const Eina_List *l;
+   Evas_Object *obj;
+
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
+     elm_widget_focus_reconfigure(obj);
+}
+
 #ifdef HAVE_ELEMENTARY_X
 static Eina_Bool
 _elm_win_client_message(void *data,

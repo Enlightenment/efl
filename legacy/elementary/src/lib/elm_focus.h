@@ -370,3 +370,33 @@ EAPI void                       elm_object_focus_region_show_mode_set(Evas_Objec
  * @ingroup Elm_Focus
  */
 EAPI Elm_Focus_Region_Show_Mode elm_object_focus_region_show_mode_get(const Evas_Object *obj);
+
+/**
+ * Returns the widget's focus movement policy mode setting.
+ *
+ * @param obj The widget.
+ * @return focus movement policy mode setting of the object.
+ *
+ * @see elm_object_focus_move_policy_automatic_set
+ *
+ * @since 1.18
+ *
+ * @ingroup Focus
+ */
+EAPI Eina_Bool elm_object_focus_move_policy_automatic_get(const Evas_Object *obj);
+
+/**
+ * Sets the widget's focus movement policy mode setting.
+ * When widget in automatic mode, it follows the system focus movement policy mode
+ * set by elm_config_focus_move_policy_set().
+ * @param obj The widget.
+ * @param automatic @c EINA_TRUE for auto focus_move_policy mode. @c EINA_FALSE for
+ * manual.
+ *
+ * @see elm_object_focus_move_policy_automatic_get
+ *
+ * @since 1.18
+ *
+ * @ingroup Focus
+ */
+EAPI void      elm_object_focus_move_policy_automatic_set(Evas_Object *obj, Eina_Bool automatic);

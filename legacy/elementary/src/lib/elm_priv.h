@@ -386,6 +386,7 @@ void                 _elm_win_rescale(Elm_Theme *th,
                                       Eina_Bool use_theme);
 void                 _elm_win_access(Eina_Bool is_access);
 void                 _elm_win_translate(void);
+void                 _elm_win_focus_reconfigure(void);
 
 Ecore_X_Window       _elm_ee_xwin_get(const Ecore_Evas *ee);
 
