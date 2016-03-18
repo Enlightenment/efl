@@ -631,8 +631,7 @@ START_TEST(evas_object_image_defaults)
 {
    Evas *e = _setup_evas();
    Evas_Object *o;
-   int x, y, w, h, iw, ih;
-   Eina_Bool b;
+   int x, y, w, h;
 
    /* test legacy defaults */
    o = evas_object_image_add(e);
