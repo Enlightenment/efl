@@ -470,6 +470,184 @@ evas_object_image_native_surface_get(const Evas_Object *eo_obj)
    return _evas_image_native_surface_get(eo_obj);
 }
 
+EAPI void
+evas_object_image_data_set(Eo *eo_obj, void *data)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   void *p_data;
+   Eina_Bool resize_call = EINA_FALSE;
+
+
+   evas_object_async_block(obj);
+   evas_render_rendering_wait(obj->layer->evas);
+
+   _evas_image_cleanup(eo_obj, obj, o);
+   p_data = o->engine_data;
+   if (data)
+     {
+        if (o->engine_data)
+          {
+             o->engine_data = ENFN->image_data_put(ENDT, o->engine_data, data);
+          }
+        else
+          {
+             o->engine_data = ENFN->image_new_from_data(ENDT,
+                                                        o->cur->image.w,
+                                                        o->cur->image.h,
+                                                        data,
+                                                        o->cur->has_alpha,
+                                                        o->cur->cspace);
+          }
+        if (o->engine_data)
+          {
+             int stride = 0;
+
+             if (ENFN->image_scale_hint_set)
+               ENFN->image_scale_hint_set(ENDT, o->engine_data, o->scale_hint);
+
+             if (ENFN->image_content_hint_set)
+               ENFN->image_content_hint_set(ENDT, o->engine_data, o->content_hint);
+
+             if (ENFN->image_stride_get)
+               ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+             else
+               stride = o->cur->image.w * 4;
+
+             if (o->cur->image.stride != stride)
+               {
+                  EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+                    state_write->image.stride = stride;
+                  EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+               }
+         }
+       o->written = EINA_TRUE;
+     }
+   else
+     {
+        if (o->engine_data)
+          ENFN->image_free(ENDT, o->engine_data);
+        o->load_error = EVAS_LOAD_ERROR_NONE;
+        if ((o->cur->image.w != 0) || (o->cur->image.h != 0))
+          resize_call = EINA_TRUE;
+
+        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+          {
+             state_write->image.w = 0;
+             state_write->image.h = 0;
+             state_write->image.stride = 0;
+          }
+        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+
+        o->engine_data = NULL;
+     }
+/* FIXME - in engine call above
+   if (o->engine_data)
+     o->engine_data = ENFN->image_alpha_set(ENDT, o->engine_data, o->cur->has_alpha);
+*/
+   if (o->pixels_checked_out > 0) o->pixels_checked_out--;
+   if (p_data != o->engine_data)
+     {
+        EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
+        o->pixels_checked_out = 0;
+     }
+   if (resize_call) evas_object_inform_call_image_resize(eo_obj);
+}
+
+EAPI void*
+evas_object_image_data_get(const Eo *eo_obj, Eina_Bool for_writing)
+{
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   int stride = 0;
+   void *pixels;
+   DATA32 *data;
+
+   if (!o->engine_data) return NULL;
+
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+
+   if (for_writing) evas_object_async_block(obj);
+   if (for_writing) evas_render_rendering_wait(obj->layer->evas);
+
+   data = NULL;
+   if (ENFN->image_scale_hint_set)
+     ENFN->image_scale_hint_set(ENDT, o->engine_data, o->scale_hint);
+   if (ENFN->image_content_hint_set)
+     ENFN->image_content_hint_set(ENDT, o->engine_data, o->content_hint);
+   pixels = ENFN->image_data_get(ENDT, o->engine_data, for_writing, &data, &o->load_error, NULL);
+
+   /* if we fail to get engine_data, we have to return NULL */
+   if (!pixels) return NULL;
+
+   o->engine_data = pixels;
+   if (ENFN->image_stride_get)
+     ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+   else
+     stride = o->cur->image.w * 4;
+
+   if (o->cur->image.stride != stride)
+     {
+        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+          state_write->image.stride = stride;
+        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+     }
+
+   o->pixels_checked_out++;
+   if (for_writing)
+     {
+        o->written = EINA_TRUE;
+        EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
+     }
+
+   return data;
+}
+
+EAPI void
+evas_object_image_data_copy_set(Eo *eo_obj, void *data)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+
+   if (!data) return;
+   evas_object_async_block(obj);
+   _evas_image_cleanup(eo_obj, obj, o);
+   if ((o->cur->image.w <= 0) ||
+       (o->cur->image.h <= 0)) return;
+   if (o->engine_data)
+     ENFN->image_free(ENDT, o->engine_data);
+   o->engine_data = ENFN->image_new_from_copied_data(ENDT,
+                                                     o->cur->image.w,
+                                                     o->cur->image.h,
+                                                     data,
+                                                     o->cur->has_alpha,
+                                                     o->cur->cspace);
+   if (o->engine_data)
+     {
+        int stride = 0;
+
+        o->engine_data =
+          ENFN->image_alpha_set(ENDT, o->engine_data, o->cur->has_alpha);
+        if (ENFN->image_scale_hint_set)
+          ENFN->image_scale_hint_set(ENDT, o->engine_data, o->scale_hint);
+        if (ENFN->image_content_hint_set)
+          ENFN->image_content_hint_set(ENDT, o->engine_data, o->content_hint);
+        if (ENFN->image_stride_get)
+          ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+        else
+          stride = o->cur->image.w * 4;
+
+        if (o->cur->image.stride != stride)
+          {
+             EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+               state_write->image.stride = stride;
+             EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+          }
+        o->written = EINA_TRUE;
+     }
+   o->pixels_checked_out = 0;
+   EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
+}
+
 /* Evas_Object equivalent: pixels_set(null, w, h, cspace) to (re)allocate an image */
 EAPI void
 evas_object_image_size_set(Evas_Object *eo_obj, int w, int h)

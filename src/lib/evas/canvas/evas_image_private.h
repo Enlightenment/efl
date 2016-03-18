@@ -31,6 +31,7 @@
 
 /* private struct for rectangle object internal data */
 typedef struct _Evas_Image_Data Evas_Image_Data;
+typedef struct _Evas_Image_Map Evas_Image_Map;
 typedef struct _Evas_Object_Image_Load_Opts Evas_Object_Image_Load_Opts;
 typedef struct _Evas_Object_Image_Pixels Evas_Object_Image_Pixels;
 typedef struct _Evas_Object_Image_State Evas_Object_Image_State;
@@ -222,6 +223,18 @@ void _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas
 
 # define EINA_COW_LOAD_OPTS_WRITE_END(Obj, Write) \
   EINA_COW_WRITE_END(evas_object_image_load_opts_cow, Obj->load_opts, Write)
+
+# define EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(Obj)                 \
+  if ((!Obj->cur->mmaped_source && Obj->cur->u.file) || Obj->cur->key) \
+    {                                                                   \
+       EINA_COW_IMAGE_STATE_WRITE_BEGIN(Obj, cur_write)                 \
+         {                                                              \
+            EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, Obj->prev, Evas_Object_Image_State, prev_write) \
+              EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(cur_write, prev_write); \
+            EINA_COW_WRITE_END(evas_object_image_state_cow, Obj->prev, prev_write); \
+         }                                                              \
+       EINA_COW_IMAGE_STATE_WRITE_END(Obj, cur_write);                  \
+    }
 
 #define FRAME_MAX 1024
 
