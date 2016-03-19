@@ -8,7 +8,8 @@ enum Elm.Thumb.Animation_Setting
    last
 }
 
-class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
+class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface,
+                 Evas.Draggable_Interface)
 {
    eo_prefix: elm_obj_thumb;
    methods {
@@ -96,26 +97,6 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
          }
          values {
             orient: Ethumb_Thumb_Orientation; [[The orientation setting.]]
-         }
-      }
-      @property editable {
-         set {
-            [[Make the thumbnail 'editable'.
-
-              This means the thumbnail is a valid drag target for drag and
-              drop, and can be cut or pasted too.
-            ]]
-            return: bool;
-         }
-         get {
-            [[Get whether the thumbnail is editable.
-
-              This means the thumbnail is a valid drag target for drag and
-              drop, and can be cut or pasted too.
-            ]]
-         }
-         values {
-            edit: bool; [[The editable state, default is $false.]]
          }
       }
       @property aspect {
@@ -226,6 +207,8 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.show;
+      Evas.Draggable_Interface.drag_target.set;
+      Evas.Draggable_Interface.drag_target.get;
    }
    events {
       generate,error;

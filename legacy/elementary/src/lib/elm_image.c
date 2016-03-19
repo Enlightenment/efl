@@ -1399,7 +1399,7 @@ _elm_image_orient_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
  * Turns on editing through drag and drop and copy and paste.
  */
 EOLIAN static void
-_elm_image_editable_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool edit)
+_elm_image_evas_draggable_interface_drag_target_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool edit)
 {
    if (sd->edje)
      {
@@ -1430,7 +1430,7 @@ _elm_image_editable_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool edit)
 }
 
 EOLIAN static Eina_Bool
-_elm_image_editable_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+_elm_image_evas_draggable_interface_drag_target_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
    return sd->edit;
 }
@@ -1644,5 +1644,18 @@ elm_image_smooth_get(const Evas_Object *obj)
 }
 
 // A11Y - END
+
+/* Legacy deprecated functions */
+EAPI void
+elm_image_editable_set(Evas_Object *obj, Eina_Bool edit)
+{
+   evas_draggable_interface_drag_target_set(obj, edit);
+}
+
+EAPI Eina_Bool
+elm_image_editable_get(const Evas_Object *obj)
+{
+   return evas_draggable_interface_drag_target_get(obj);
+}
 
 #include "elm_image.eo.c"

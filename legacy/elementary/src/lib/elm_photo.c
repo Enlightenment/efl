@@ -360,13 +360,13 @@ _elm_photo_fill_inside_get(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd)
 }
 
 EOLIAN static void
-_elm_photo_editable_set(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, Eina_Bool set)
+_elm_photo_evas_draggable_interface_drag_target_set(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, Eina_Bool set)
 {
    elm_image_editable_set(sd->icon, set);
 }
 
 EOLIAN static Eina_Bool
-_elm_photo_editable_get(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd)
+_elm_photo_evas_draggable_interface_drag_target_get(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd)
 {
    return elm_image_editable_get(sd->icon);
 }
@@ -402,6 +402,19 @@ EAPI Eina_Bool
 elm_photo_file_set(Eo *obj, const char *file)
 {
    return efl_file_set((Eo *) obj, file, NULL);
+}
+
+/* Legacy deprecated functions */
+EAPI void
+elm_photo_editable_set(Evas_Object *obj, Eina_Bool edit)
+{
+   evas_draggable_interface_drag_target_set(obj, edit);
+}
+
+EAPI Eina_Bool
+elm_photo_editable_get(const Evas_Object *obj)
+{
+   return evas_draggable_interface_drag_target_get(obj);
 }
 
 #include "elm_photo.eo.c"

@@ -44,4 +44,27 @@ EAPI void elm_thumb_file_set(Eo *obj, const char *file, const char *key);
  */
 EAPI void elm_thumb_file_get(const Eo *obj, const char **file, const char **key);
 
+/**
+ * @brief Make the thumbnail 'editable'.
+ *
+ * This means the thumbnail is a valid drag target for drag and drop, and can
+ * be cut or pasted too.
+ *
+ * @param[in] edit The editable state, default is @c false.
+ *
+ * @ingroup Elm_Thumb
+ */
+EAPI Eina_Bool elm_thumb_editable_set(Evas_Object *obj, Eina_Bool edit);
+
+/**
+ * @brief Get whether the thumbnail is editable.
+ *
+ * This means the thumbnail is a valid drag target for drag and drop, and can
+ * be cut or pasted too.
+ *
+ * @return The editable state, default is @c false.
+ *
+ * @ingroup Elm_Thumb
+ */
+EAPI Eina_Bool elm_thumb_editable_get(const Evas_Object *obj);
 #include "elm_thumb.eo.legacy.h"

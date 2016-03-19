@@ -42,25 +42,12 @@ struct Elm.Image.Error
 }
 
 class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
-                 Edje.Object, Efl.Image,
+                 Edje.Object, Efl.Image, Evas.Draggable_Interface,
                  Elm.Interface_Atspi_Image, Elm.Interface_Atspi_Widget_Action,
                  Efl.Player)
 {
    eo_prefix: elm_obj_image;
    methods {
-      @property editable {
-         [[Contrtol if thhe image is 'editable'.
-
-           This means the image is a valid drag target for drag and drop, and can be
-           cut or pasted too.]]
-         set {
-         }
-         get {
-         }
-         values {
-            set: bool; [[Turn on or off editability. Default is $false.]]
-         }
-      }
       @property resize_down {
          [[Control whether the object's image can be resized to a size smaller than the original one.
 
@@ -321,6 +308,8 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
       Evas.Object_Smart.del;
       Evas.Object_Smart.member_add;
       Evas.Object_Smart.resize;
+      Evas.Draggable_Interface.drag_target.set;
+      Evas.Draggable_Interface.drag_target.get;
       Elm.Widget.theme_apply;
       Elm.Widget.event;
       Elm.Interface_Atspi_Image.extents.get;

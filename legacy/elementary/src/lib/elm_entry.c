@@ -4107,7 +4107,7 @@ _elm_entry_line_wrap_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
+_elm_entry_evas_draggable_interface_drag_target_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
 {
    if (sd->editable == editable) return;
    sd->editable = editable;
@@ -4130,7 +4130,7 @@ _elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_editable_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_evas_draggable_interface_drag_target_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->editable;
 }
@@ -5853,6 +5853,19 @@ _elm_entry_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Entry_Data *sd)
    if (name && strncmp("", name, 1)) return name;
    const char *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
    return ret ? strdup(ret) : NULL;
+}
+
+/* Legacy deprecated functions */
+EAPI void
+elm_entry_editable_set(Evas_Object *obj, Eina_Bool edit)
+{
+   evas_draggable_interface_drag_target_set(obj, edit);
+}
+
+EAPI Eina_Bool
+elm_entry_editable_get(const Evas_Object *obj)
+{
+   return evas_draggable_interface_drag_target_get(obj);
 }
 
 #include "elm_entry.eo.c"

@@ -814,11 +814,11 @@ elm_thumb_ethumb_client_connected_get(void)
    return _elm_ethumb_connected;
 }
 
-EOLIAN static Eina_Bool
-_elm_thumb_editable_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bool edit)
+EOLIAN static void
+_elm_thumb_evas_draggable_interface_drag_target_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bool edit)
 {
    edit = !!edit;
-   if (sd->edit == edit) return EINA_TRUE;
+   if (sd->edit == edit) return;
 
    sd->edit = edit;
    if (sd->edit)
@@ -834,11 +834,11 @@ _elm_thumb_editable_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bool edit)
                          NULL, NULL,
                          _elm_thumb_dnd_cb, obj);
 
-   return EINA_TRUE;
+   return;
 }
 
 EOLIAN static Eina_Bool
-_elm_thumb_editable_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
+_elm_thumb_evas_draggable_interface_drag_target_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
 {
    return sd->edit;
 }
@@ -861,5 +861,18 @@ elm_thumb_file_get(const Eo *obj, const char **file, const char **key)
    efl_file_get((Eo *) obj, file, key);
 }
 
+/* Legacy deprecated functions */
+EAPI Eina_Bool
+elm_thumb_editable_set(Evas_Object *obj, Eina_Bool edit)
+{
+   evas_draggable_interface_drag_target_set(obj, edit);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+elm_thumb_editable_get(const Evas_Object *obj)
+{
+   return evas_draggable_interface_drag_target_get(obj);
+}
 
 #include "elm_thumb.eo.c"

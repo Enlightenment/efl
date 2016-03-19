@@ -249,4 +249,27 @@ EAPI Eina_Bool        elm_image_animated_get(const Evas_Object *obj);
  */
 EAPI Eina_Bool        elm_image_animated_available_get(const Evas_Object *obj);
 
+/**
+ * @brief Contrtol if the image is 'editable'.
+ *
+ * This means the image is a valid drag target for drag and drop, and can be
+ * cut or pasted too.
+ *
+ * @param[in] set Turn on or off editability. Default is @c false.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_editable_set(Evas_Object *obj, Eina_Bool set);
+
+/**
+ * @brief Contrtol if the image is 'editable'.
+ *
+ * This means the image is a valid drag target for drag and drop, and can be
+ * cut or pasted too.
+ *
+ * @return Turn on or off editability. Default is @c false.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI Eina_Bool elm_image_editable_get(const Evas_Object *obj);
 #include "elm_image.eo.legacy.h"

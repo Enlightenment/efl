@@ -2,22 +2,6 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
 {
    eo_prefix: elm_obj_photo;
    methods {
-      @property editable {
-         set {
-            [[Set editability of the photo.
-
-              An editable photo can be dragged to or from, and can be cut or
-              pasted too. Note that pasting an image or dropping an item on
-              the image will delete the existing content.
-            ]]
-         }
-         get {
-            [[Get editability of the photo.]]
-         }
-         values {
-            set: bool; [[To set of clear editability.]]
-         }
-      }
       @property fill_inside {
          set {
             [[Set if the photo should be completely visible or not.]]
@@ -77,6 +61,8 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
       Efl.File.file.set;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
+      Evas.Draggable_Interface.drag_target.set;
+      Evas.Draggable_Interface.drag_target.get;
       Elm.Widget.theme_apply;
    }
 
