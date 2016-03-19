@@ -709,6 +709,25 @@ EAPI Eina_Iterator *eina_file_map_lines(Eina_File *file);
  */
 EAPI Eina_Bool eina_file_map_faulted(Eina_File *file, void *map);
 
+/**
+ * @brief Join two paths of known length.
+ *
+ * @param dst The buffer to store the result.
+ * @param size Size (in byte) of the buffer.
+ * @param a First path to use.
+ * @param a_len length of @p a.
+ * @param b Second path to use.
+ * @param b_len length of @p b.
+ * @return The number of characters printed.
+ *
+ * This function is similar to eina_str_join_len(), but the separator
+ * is '\' on Windows and '/' otherwise.
+ *
+ * @see eina_str_join_len()
+ * @see eina_file_path_join()
+ *
+ * @since 1.16
+ */
 static inline size_t eina_file_path_join_len(char *dst,
                                              size_t size,
                                              const char *a,
@@ -716,6 +735,23 @@ static inline size_t eina_file_path_join_len(char *dst,
                                              const char *b,
                                              size_t b_len);
 
+/**
+ * @brief Join two paths of known length.
+ *
+ * @param dst The buffer to store the result.
+ * @param size Size (in byte) of the buffer.
+ * @param a First string to use.
+ * @param b Second string to use.
+ * @return The number of characters printed.
+ *
+ * This function is similar to eina_file_path_join_len(), but will compute
+ * the length of @p a and @p b using strlen(). The path separator is
+ * '\' on Windows and '/' otherwise.
+ *
+ * @see eina_file_path_join_len()
+ *
+ * @since 1.16
+ */
 static inline size_t eina_file_path_join(char *dst,
                                          size_t size,
                                          const char *a,

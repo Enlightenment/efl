@@ -19,31 +19,6 @@
 #ifndef EINA_FILE_INLINE_H_
 #define EINA_FILE_INLINE_H_
 
-/**
- * @addtogroup Eina_File_Group File
- *
- * @{
- */
-
-/**
- * @brief Join two paths of known length.
- *
- * @param dst The buffer to store the result.
- * @param size Size (in byte) of the buffer.
- * @param a First path to use.
- * @param a_len length of @p a.
- * @param b Second path to use.
- * @param b_len length of @p b.
- * @return The number of characters printed.
- *
- * This function is similar to eina_str_join_len(), but the separator
- * is '\' on Windows and '/' otherwise.
- *
- * @see eina_str_join_len()
- * @see eina_file_path_join()
- *
- * @since 1.16
- */
 static inline size_t
 eina_file_path_join_len(char *dst,
                         size_t size,
@@ -55,23 +30,6 @@ eina_file_path_join_len(char *dst,
    return eina_str_join_len(dst, size, EINA_PATH_SEP_C, a, a_len, b, b_len);
 }
 
-/**
- * @brief Join two paths of known length.
- *
- * @param dst The buffer to store the result.
- * @param size Size (in byte) of the buffer.
- * @param a First string to use.
- * @param b Second string to use.
- * @return The number of characters printed.
- *
- * This function is similar to eina_file_path_join_len(), but will compute
- * the length of @p a and @p b using strlen(). The path separator is
- * '\' on Windows and '/' otherwise.
- *
- * @see eina_file_path_join_len()
- *
- * @since 1.16
- */
 static inline size_t
 eina_file_path_join(char *dst, size_t size, const char *a, const char *b)
 {
