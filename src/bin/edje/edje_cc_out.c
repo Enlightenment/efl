@@ -1254,6 +1254,7 @@ data_write_images(Eet_File *ef, int *image_num)
         Eina_List *ll;
         char *s;
         int load_err = EVAS_LOAD_ERROR_NONE;
+        int relevant_load_error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
         Image_Write *iw;
 
         img = &edje_file->image_dir->entries[i];
@@ -1304,6 +1305,8 @@ data_write_images(Eet_File *ef, int *image_num)
                     data_image_preload_done(iw, evas, im, NULL);
                   break;
                }
+             else if (load_err != EVAS_LOAD_ERROR_DOES_NOT_EXIST)
+               relevant_load_error = load_err;
           }
         if (load_err != EVAS_LOAD_ERROR_NONE)
           {
@@ -1323,7 +1326,11 @@ data_write_images(Eet_File *ef, int *image_num)
              else
                {
                   free(iw);
-                  error_and_abort_image_load_error(ef, img->entry, load_err);
+                  error_and_abort_image_load_error(
+                     ef, img->entry,
+                     (relevant_load_error != EVAS_LOAD_ERROR_DOES_NOT_EXIST)
+                     ? relevant_load_error
+                     : load_err);
                   exit(1); // ensure static analysis tools know we exit
                }
           }
