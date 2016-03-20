@@ -280,6 +280,7 @@ _photocam_move_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void
 void
 test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   char buf[PATH_MAX];
    Evas_Object *win, *ph, *tb2, *bt, *box, *rd, *rdg = NULL;
    int i;
    Evas_Object *rect = NULL;
@@ -288,6 +289,8 @@ test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    ph = elm_photocam_add(win);
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", elm_app_data_dir_get());
+   elm_photocam_file_set(ph, buf);
    elm_win_resize_object_add(win, ph);
 
    // this rectangle hooks the event prior to scroller
