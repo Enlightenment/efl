@@ -68,9 +68,6 @@ class Evas.Image (Evas.Object, Evas.Filter,
       Efl.Gfx.Buffer.alpha.set;
       Efl.Gfx.Buffer.buffer_update_add;
       Efl.Gfx.Buffer.colorspace.get;
-      Efl.Gfx.Buffer.buffer_get;
-      Efl.Gfx.Buffer.buffer_set;
-      Efl.Gfx.Buffer.buffer_copy_set;
       Efl.Gfx.Fill.fill.set;
       Efl.Gfx.Fill.fill.get;
       Efl.Gfx.Fill.fill_auto.get;
