@@ -157,7 +157,8 @@ EAPI int
 evas_object_image_stride_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 0);
-   return efl_gfx_buffer_stride_get(obj);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   return o->cur->image.stride;
 }
 
 EAPI void

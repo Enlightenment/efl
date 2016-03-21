@@ -67,7 +67,6 @@ class Evas.Image (Evas.Object, Evas.Filter,
       Efl.Gfx.Buffer.alpha.get;
       Efl.Gfx.Buffer.alpha.set;
       Efl.Gfx.Buffer.buffer_update_add;
-      Efl.Gfx.Buffer.stride.get;
       Efl.Gfx.Buffer.colorspace.get;
       Efl.Gfx.Buffer.buffer_get;
       Efl.Gfx.Buffer.buffer_set;

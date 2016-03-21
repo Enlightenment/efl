@@ -622,12 +622,6 @@ _evas_image_efl_gfx_view_view_size_get(Eo *eo_obj, Evas_Image_Data *o, int *w, i
    if (h) *h = uvh;
 }
 
-EOLIAN static int
-_evas_image_efl_gfx_buffer_stride_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
-{
-   return o->cur->image.stride;
-}
-
 EOLIAN static void
 _evas_image_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
 {
