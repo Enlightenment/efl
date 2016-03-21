@@ -506,6 +506,9 @@ text_input_preedit_styling(void                 *data,
       case WL_TEXT_INPUT_PREEDIT_STYLE_SELECTION:
          attr->preedit_type = ECORE_IMF_PREEDIT_TYPE_SUB2;
          break;
+      default:
+         attr->preedit_type = ECORE_IMF_PREEDIT_TYPE_SUB1;
+         break;
      }
 
    attr->start_index = index;
