@@ -3,27 +3,19 @@
 
 evas_eolian_pub_files = \
 	lib/evas/canvas/evas_object.eo \
-	lib/evas/canvas/evas_line.eo \
 	lib/evas/canvas/efl_canvas_polygon.eo \
 	lib/evas/canvas/evas_rectangle.eo \
-	lib/evas/canvas/evas_text.eo \
 	lib/evas/canvas/evas_textblock.eo \
-	lib/evas/canvas/evas_textgrid.eo \
 	lib/evas/canvas/evas_signal_interface.eo \
 	lib/evas/canvas/evas_object_smart.eo \
-	lib/evas/canvas/evas_smart_clipped.eo \
-	lib/evas/canvas/evas_table.eo \
 	lib/evas/canvas/evas_common_interface.eo \
 	lib/evas/canvas/evas_canvas.eo \
-	lib/evas/canvas/evas_grid.eo \
 	lib/evas/canvas/evas_image.eo \
-	lib/evas/canvas/evas_out.eo \
 	lib/evas/canvas/evas_draggable_interface.eo \
 	lib/evas/canvas/evas_clickable_interface.eo \
 	lib/evas/canvas/evas_scrollable_interface.eo \
 	lib/evas/canvas/evas_selectable_interface.eo \
 	lib/evas/canvas/evas_zoomable_interface.eo \
-	lib/evas/canvas/evas_box.eo\
 	lib/evas/canvas/evas_canvas3d_camera.eo\
 	lib/evas/canvas/evas_canvas3d_texture.eo\
 	lib/evas/canvas/evas_canvas3d_material.eo\
@@ -54,6 +46,14 @@ evas_eolian_pub_files = \
 
 evas_eolian_priv_files = \
 	lib/evas/include/evas_ector_buffer.eo \
+	lib/evas/canvas/evas_line.eo \
+	lib/evas/canvas/evas_table.eo \
+	lib/evas/canvas/evas_grid.eo \
+	lib/evas/canvas/evas_box.eo\
+	lib/evas/canvas/evas_smart_clipped.eo \
+	lib/evas/canvas/evas_out.eo \
+	lib/evas/canvas/evas_text.eo \
+	lib/evas/canvas/evas_textgrid.eo \
 	$(NULL)
 
 evas_eolian_type_files = \
