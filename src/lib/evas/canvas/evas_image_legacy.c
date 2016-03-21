@@ -157,7 +157,7 @@ EAPI int
 evas_object_image_stride_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 0);
-   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(obj, EVAS_IMAGE_CLASS);
    return o->cur->image.stride;
 }
 

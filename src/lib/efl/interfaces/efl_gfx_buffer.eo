@@ -157,10 +157,9 @@ interface Efl.Gfx.Buffer ()
             @in length: uint; [[Must be the same as returned by map.]]
          }
       }
-      /* note: not a property because the refcount needs to be explicit
-       * between set and get */
-      /* FIXME: do we need writable flag? */
-      buffer_set {
+
+      /* FIXME: naming: buffer_set, buffer_attach, external_data_set, ...? */
+      buffer_data_set {
          [[Set the pixels for this buffer, or allocate a new memory region.
 
            EFL will use $pixels directly, and update the GPU-side texture
@@ -170,15 +169,8 @@ interface Efl.Gfx.Buffer ()
            If the buffer already had pixel data, the previous image data will
            be dropped. This is the same as @.buffer_copy_set.
 
-           If $pixels is the return value of @.buffer_get then EFL will
-           decrement its internal reference count on the buffer data. Call
-           @.buffer_update_add to flush updates and indicate changes in
-           the pixel data.
-
            The memory buffer $pixels must be large enough to hold
            $width x $height pixels encoded in the colorspace $cspace.
-           Alternatively $pixels must be larger than $height x $stride
-           in bytes.
 
            See also @.buffer_copy_set if you want EFL to copy the input buffer
            internally.
@@ -202,18 +194,12 @@ interface Efl.Gfx.Buffer ()
 
            If $pixels is $null, then a new empty buffer will be allocated.
            If the buffer already had pixel data, the previous image data will
-           be dropped. This is the same as @.buffer_set.
+           be dropped. This is the same as @.buffer_data_set.
 
            The memory buffer $pixels must be large enough to hold
            $width x $height pixels encoded in the colorspace $cspace.
-           Alternatively $pixels must be larger than $height x $stride
-           in bytes.
 
-           $pixels should not be the return value of @.buffer_get.
-
-           There is no copy equivalent to this function, as you can easily
-           call @.buffer_get and allocate the proper buffer on your side,
-           followed by a memory copy and @.buffer_set.
+           $pixels should not be the return value of @.buffer_data_get.
          ]]
          params {
             @in pixels: const(void)* @nullable; [[If $null, allocates an empty buffer]]
@@ -224,29 +210,15 @@ interface Efl.Gfx.Buffer ()
          }
          return: bool @warn_unused; [[This function returns $false in case of failure.]]
       }
-      buffer_get {
-         [[Get a direct pointer to the internal pixel data.
+      buffer_data_get {
+         [[Get a direct pointer to the internal pixel data, if available.
 
-           This will increment an internal reference counter on the internal
-           buffer. If $to_write is $true, this may trigger a copy of the
-           internal pixel data, and return a writable memory block.
+           This will return $null unless @.buffer_data_set was used to pass in an
+           external data pointer.
 
-           Call @.buffer_size.get to know the value of $width and $height.
-           The memory buffer length in bytes is defined as $height x $stride.
-
-           Warning: @.buffer_set MUST be called as soon as possible after
-           calling @.buffer_get. @.buffer_update_add should be called after
-           @.buffer_set if $to_write was $true and the pixel data has been
-           modified. Once @.buffer_set is called, the pointer returned by
-           @.buffer_get is not valid anymore.
+           Note: This is different from the legacy API data, which is now
+           replaced by map/unmap.
          ]]
-         params {
-            @in to_write: bool; [[If $true, requests write access]]
-            @out width: int @optional;
-            @out height: int @optional;
-            @out stride: int @optional; [[Returns the length of one row of pixels in bytes, so that length = $height x $stride.]]
-            @out cspace: Efl.Gfx.Colorspace @optional; [[Pixel encoding of the returned buffer.]]
-         }
          return: void* @warn_unused;
       }
       /* Note: border, span and buffer flags not imported from ector buffer */
