@@ -3759,6 +3759,12 @@ _multi_select_frame_create(Evas_Object *bx, Genlist_Multi_Data *gd)
                                   _multi_select_changed_cb, gd);
 }
 
+static void
+_multi_data_free_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   free(data);
+}
+
 void
 test_genlist_multi_select(void *data EINA_UNUSED,
                           Evas_Object *obj EINA_UNUSED,
@@ -3771,7 +3777,7 @@ test_genlist_multi_select(void *data EINA_UNUSED,
 
    win = elm_win_util_standard_add("genlist-multi-select", "Genlist Multi Select");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, gd);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _multi_data_free_cb, gd);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
