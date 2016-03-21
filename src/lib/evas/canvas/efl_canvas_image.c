@@ -709,18 +709,11 @@ _efl_canvas_image_efl_gfx_buffer_buffer_data_get(Eo *eo_obj, void *_pd EINA_UNUS
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
-   DATA32 *data = NULL;
 
-   if (!o->buffer_data_set || !o->engine_data || !ENFN->image_data_has)
+   if (!o->buffer_data_set || !o->engine_data || !ENFN->image_data_direct)
      return NULL;
 
-   if (ENFN->image_data_has(ENDT, o->engine_data, NULL))
-     {
-        // FIXME: this is horrible code - need to store ptr somewhere safe
-        o->engine_data = ENFN->image_data_get(ENDT, o->engine_data, 0, &data, &o->load_error, NULL);
-     }
-
-   return data;
+   return ENFN->image_data_direct(ENDT, o->engine_data, NULL);
 }
 
 static void

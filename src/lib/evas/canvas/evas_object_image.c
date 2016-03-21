@@ -850,11 +850,11 @@ _evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file
           }
      }
 
-   if (!ENFN->image_data_has)
+   if (!ENFN->image_data_direct)
      pixels = ENFN->image_data_get(ENDT, pixels, 0, &data, &o->load_error, &tofree);
    else
      {
-        if (ENFN->image_data_has(ENDT, pixels, &cspace))
+        if (ENFN->image_data_direct(ENDT, pixels, &cspace))
           {
              if ((want_cspace != (int) cspace) && (want_cspace != -1))
                cspace = EVAS_COLORSPACE_ARGB8888;

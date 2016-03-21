@@ -477,18 +477,14 @@ eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
    return im->im->cache_entry.space;
 }
 
-static Eina_Bool
-eng_image_data_has(void *data EINA_UNUSED, void *image, Evas_Colorspace *cspace)
+static void *
+eng_image_data_direct(void *data EINA_UNUSED, void *image, Evas_Colorspace *cspace)
 {
    Evas_GL_Image *im = image;
 
-   if (!im || !im->im) return EINA_FALSE;
-   if (im->im->image.data)
-     {
-        if (cspace) *cspace = im->im->cache_entry.space;
-        return EINA_TRUE;
-     }
-   return EINA_FALSE;
+   if (!im || !im->im) return NULL;
+   if (cspace) *cspace = im->im->cache_entry.space;
+   return im->im->image.data;
 }
 
 static void
@@ -1381,7 +1377,7 @@ module_open(Evas_Module *em)
    ORD(image_dirty_region);
    ORD(image_data_get);
    ORD(image_data_put);
-   ORD(image_data_has);
+   ORD(image_data_direct);
    ORD(image_data_preload_request);
    ORD(image_data_preload_cancel);
    ORD(image_alpha_set);
