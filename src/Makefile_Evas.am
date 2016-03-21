@@ -44,8 +44,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/evas_filter.eo \
 	$(NULL)
 
-evas_eolian_priv_files = \
-	lib/evas/include/evas_ector_buffer.eo \
+evas_eolian_legacy_files = \
 	lib/evas/canvas/evas_line.eo \
 	lib/evas/canvas/evas_table.eo \
 	lib/evas/canvas/evas_grid.eo \
@@ -55,6 +54,9 @@ evas_eolian_priv_files = \
 	lib/evas/canvas/evas_text.eo \
 	lib/evas/canvas/evas_textgrid.eo \
 	$(NULL)
+
+evas_eolian_priv_files = \
+	lib/evas/include/evas_ector_buffer.eo
 
 evas_eolian_type_files = \
     lib/evas/canvas/evas_types.eot
@@ -67,9 +69,13 @@ evas_eolian_pub_h = $(evas_eolian_pub_files:%.eo=%.eo.h) \
                     $(evas_eolian_pub_files:%.eo=%.eo.legacy.h) \
                     $(evas_eolian_type_files:%.eot=%.eot.h)
 
-evas_eolian_files = $(evas_eolian_pub_files) $(evas_eolian_priv_files) $(evas_eolian_type_files)
-evas_eolian_c = $(evas_eolian_pub_c) $(evas_eolian_priv_c)
-evas_eolian_h = $(evas_eolian_pub_h) $(evas_eolian_priv_h)
+evas_eolian_legacy_c = $(evas_eolian_legacy_files:%.eo=%.eo.c)
+evas_eolian_legacy_h = $(evas_eolian_legacy_files:%.eo=%.eo.legacy.h)
+
+evas_eolian_files = $(evas_eolian_pub_files) $(evas_eolian_type_files)
+evas_eolian_internal_files = $(evas_eolian_priv_files)  $(evas_eolian_legacy_files)
+evas_eolian_c = $(evas_eolian_pub_c) $(evas_eolian_priv_c) $(evas_eolian_legacy_c)
+evas_eolian_h = $(evas_eolian_pub_h) $(evas_eolian_priv_h) $(evas_eolian_legacy_h)
 
 BUILT_SOURCES += \
                  $(evas_eolian_c) \
@@ -83,7 +89,8 @@ evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
 evaseolianfiles_DATA = $(evas_eolian_files)
 
 EXTRA_DIST += \
-              ${evaseolianfiles_DATA}
+        $(evaseolianfiles_DATA) \
+	$(evas_eolian_internal_files)
 
 lib_LTLIBRARIES += lib/evas/libevas.la
 noinst_LTLIBRARIES =
@@ -98,7 +105,7 @@ lib/evas/Evas_GL.h \
 lib/evas/Evas_Loader.h
 
 installed_evascanvasheadersdir = $(includedir)/evas-@VMAJ@/canvas
-nodist_installed_evascanvasheaders_DATA = $(evas_eolian_pub_h)
+nodist_installed_evascanvasheaders_DATA = $(evas_eolian_pub_h) $(evas_eolian_legacy_h)
 noinst_DATA = $(evas_eolian_priv_h)
 
 noinst_HEADERS = \
