@@ -7802,7 +7802,6 @@ _elm_genlist_decorate_mode_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Bool decorate
 {
    Elm_Object_Item *eo_it;
    Eina_List *list;
-   Elm_Object_Item *deco_it;
 
    decorated = !!decorated;
    if (sd->decorate_all_mode == decorated) return;
@@ -7828,12 +7827,13 @@ _elm_genlist_decorate_mode_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Bool decorate
    else
      {
         // unset decorated item
-        deco_it = elm_genlist_decorated_item_get(obj);
+        Elm_Object_Item *deco_eo_it = elm_genlist_decorated_item_get(obj);
+        ELM_GENLIST_ITEM_DATA_GET(deco_eo_it, deco_it);
         if (deco_it)
           {
              elm_genlist_item_decorate_mode_set
-               (deco_it, elm_genlist_item_decorate_mode_get
-                 (deco_it), EINA_FALSE);
+               (deco_eo_it, elm_genlist_item_decorate_mode_get
+                 (deco_eo_it), EINA_FALSE);
              _decorate_item_finished_signal_cb(deco_it, obj, NULL, NULL);
           }
 
