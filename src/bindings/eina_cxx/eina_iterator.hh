@@ -169,6 +169,7 @@ public:
    */
   explicit iterator(Eina_Iterator* iterator_ = 0)
     : base_type(iterator_)
+    , _value(nullptr)
   {
     if(this->_iterator)
       ++*this;
@@ -246,6 +247,7 @@ public:
    */
   explicit iterator(Eina_Iterator* iterator_ = 0)
     : base_type(iterator_)
+    , _value(nullptr)
   {
     if(this->_iterator)
       ++*this;
