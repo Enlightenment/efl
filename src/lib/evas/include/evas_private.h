@@ -42,6 +42,14 @@
 # endif
 #endif /* ! _WIN32 */
 
+#include "canvas/evas_text.eo.h"
+#include "canvas/evas_textgrid.eo.h"
+#include "canvas/evas_line.eo.h"
+#include "canvas/evas_box.eo.h"
+#include "canvas/evas_table.eo.h"
+#include "canvas/evas_grid.eo.h"
+#include "canvas/evas_out.eo.h"
+
 #define RENDER_METHOD_INVALID            0x00000000
 
 typedef struct _Evas_Layer                  Evas_Layer;

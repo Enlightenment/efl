@@ -1,5 +1,7 @@
 #include "edje_private.h"
 
+#include "../evas/canvas/evas_box.eo.h"
+
 #include <Eo.h>
 
 typedef struct _Edje_Transition_Animation_Data Edje_Transition_Animation_Data;

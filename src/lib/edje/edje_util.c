@@ -1,5 +1,9 @@
 #include "edje_private.h"
 
+#include "../evas/canvas/evas_box.eo.h"
+#include "../evas/canvas/evas_line.eo.h"
+#include "../evas/canvas/evas_text.eo.h"
+
 typedef struct _Edje_Box_Layout Edje_Box_Layout;
 struct _Edje_Box_Layout
 {

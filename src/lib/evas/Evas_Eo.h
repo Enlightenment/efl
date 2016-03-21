@@ -30,41 +30,11 @@
  */
 
 /**
- * @ingroup Evas_Object_Text
- *
- * @{
- */
-#include "canvas/evas_text.eo.h"
-/**
- * @}
- */
-
-/**
  * @ingroup Evas_Object_Textblock
  *
  * @{
  */
 #include "canvas/evas_textblock.eo.h"
-/**
- * @}
- */
-
-/**
- * @ingroup Evas_Object_Textgrid
- *
- * @{
- */
-#include "canvas/evas_textgrid.eo.h"
-/**
- * @}
- */
-
-/**
- * @ingroup Evas_Object_Line
- *
- * @{
- */
-#include "canvas/evas_line.eo.h"
 /**
  * @}
  */
@@ -99,42 +69,9 @@
  * @}
  */
 
-/**
- * @ingroup Evas_Object_Box
- *
- * @{
- */
-#include "canvas/evas_box.eo.h"
-/**
- * @}
- */
-
-/**
- * @ingroup Evas_Object_Table
- *
- * @{
- */
-#include "canvas/evas_table.eo.h"
-/**
- * @}
- */
-
-/**
- * @ingroup Evas_Object_Grid
- *
- * @{
- */
-#include "canvas/evas_grid.eo.h"
-/**
- * @}
- */
-
 #include "canvas/evas_common_interface.eo.h"
 
 #include "canvas/evas_object.eo.h"
-
-#include "canvas/evas_out.eo.h"
-
 
  /**
  * @defgroup Evas_3D Evas 3D Extensions

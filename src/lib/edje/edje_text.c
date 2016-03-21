@@ -1,6 +1,8 @@
 #include "edje_private.h"
 #define _ELLIP_STR "\xE2\x80\xA6"
 
+#include "../evas/canvas/evas_text.eo.h"
+
 /* returns with and height for this part.
  *
  * depending on the value of the use_alternate_font_metrics flag, it will
