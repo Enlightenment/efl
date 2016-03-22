@@ -1699,6 +1699,7 @@ group { "elm/genlist/tree/tree_effect/default"; nomouse;
       rect { "point"; mouse;
          scale;
          desc { "default";
+            fixed: 1 1;
             color: 0 0 0 0;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 0.0;

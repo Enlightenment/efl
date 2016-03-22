@@ -73,6 +73,7 @@ group { name: "elm/focus_highlight/top/default";
    parts {
       part { name: "base"; type: SPACER;
          description { state: "default" 0.0;
+            fixed: 1 1;
          }
       }
       part { name: "clip"; type: RECT;
