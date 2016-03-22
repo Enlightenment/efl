@@ -918,8 +918,16 @@ evas_object_image_data_convert(Evas_Object *eo_obj, Evas_Colorspace to_cspace)
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Data *o;
+   void *engine_data;
    DATA32 *data;
    void* result = NULL;
+
+   static int warned = 0;
+   if (!warned)
+     {
+        ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
+        warned = 1;
+     }
 
    evas_object_async_block(obj);
    o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
@@ -933,12 +941,10 @@ evas_object_image_data_convert(Evas_Object *eo_obj, Evas_Colorspace to_cspace)
      o->pixels->video.update_pixels(o->pixels->video.data, eo_obj, &o->pixels->video);
    if (o->cur->cspace == to_cspace) return NULL;
    data = NULL;
-   o->engine_data = ENFN->image_data_get(ENDT, o->engine_data, 0, &data, &o->load_error, NULL);
+   engine_data = ENFN->image_data_get(ENDT, o->engine_data, 0, &data, &o->load_error, NULL);
    result = _evas_image_data_convert_internal(o, data, to_cspace);
-   if (o->engine_data)
-     {
-        o->engine_data = ENFN->image_data_put(ENDT, o->engine_data, data);
-     }
+   if (engine_data)
+     o->engine_data = ENFN->image_data_put(ENDT, engine_data, data);
 
    return result;
 }
@@ -987,6 +993,13 @@ evas_object_image_pixels_import(Evas_Object *eo_obj, Evas_Pixel_Import_Source *p
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Data *o;
+
+   static int warned = 0;
+   if (!warned)
+     {
+        ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
+        warned = 1;
+     }
 
    evas_object_async_block(obj);
    o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
