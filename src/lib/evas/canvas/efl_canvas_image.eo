@@ -6,12 +6,15 @@ class Efl.Canvas.Image (Evas.Image, Efl.Image_Load, Efl.Image_Animated)
      interfaces: file and data images only. This object does not implement
      any special features such as proxy, snapshot or GL.
    ]]
-   data: null;
    implements {
+      class.constructor;
+      class.destructor;
       Efl.Gfx.Buffer.buffer_data_get;
       Efl.Gfx.Buffer.buffer_data_set;
       Efl.Gfx.Buffer.buffer_copy_set;
       Efl.Gfx.Buffer.buffer_size.get;
+      Efl.Gfx.Buffer.buffer_map;
+      Efl.Gfx.Buffer.buffer_unmap;
       Efl.File.file.set;
       Efl.File.file.get;
       Efl.File.mmap.set;

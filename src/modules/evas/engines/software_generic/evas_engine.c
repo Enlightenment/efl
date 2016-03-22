@@ -4159,6 +4159,8 @@ static Evas_Func func =
      eng_image_colorspace_get,
      eng_image_file_colorspace_get,
      eng_image_can_region_get,
+     NULL, // image_data_map
+     NULL, // image_data_unmap
      eng_image_native_init,
      eng_image_native_shutdown,
      eng_image_native_set,
