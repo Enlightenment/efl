@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/elm_code/src/lib/ \
 -I$(top_builddir)/elm_code/src/lib/ \
 -DLOCALEDIR=\"$(datadir)/locale\" \
+-DDATA_DIR=\"$(abspath $(srcdir))/../tests/\" \
 -DEFL_BETA_API_SUPPORT \
 @EFL_CFLAGS@
 
