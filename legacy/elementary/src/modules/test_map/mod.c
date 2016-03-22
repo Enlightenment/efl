@@ -3,6 +3,7 @@
 #endif
 
 #include "Elementary.h"
+#include "elm_widget_map.h"
 #include <Eina.h>
 
 EAPI Eina_Stringshare *
@@ -38,6 +39,12 @@ map_module_route_source_get(void)
    return NULL;
 }
 
+EAPI void
+map_module_route_source_parse(Elm_Map_Route *r EINA_UNUSED)
+{
+   return;
+}
+
 EAPI char *
 map_module_route_url_get(Evas_Object *obj EINA_UNUSED, const char *type_name EINA_UNUSED, int method EINA_UNUSED, double flon EINA_UNUSED, double flat EINA_UNUSED, double tlon EINA_UNUSED, double tlat EINA_UNUSED)
 {
@@ -48,6 +55,18 @@ EAPI char *
 map_module_name_url_get(Evas_Object *obj EINA_UNUSED, int method EINA_UNUSED, const char *name EINA_UNUSED, double lon EINA_UNUSED, double lat EINA_UNUSED)
 {
    return strdup("");
+}
+
+EAPI void
+map_module_name_source_parse(Elm_Map_Name *n EINA_UNUSED)
+{
+   return;
+}
+
+EAPI void
+map_module_name_list_source_parse(Elm_Map_Name_List *nl EINA_UNUSED)
+{
+   return;
 }
 
 EAPI Eina_Bool

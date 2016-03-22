@@ -58,11 +58,14 @@ typedef char *(*Elm_Map_Module_Route_Url_Func)(const Evas_Object *,
                                                double,
                                                double,
                                                double);
+typedef void (*Elm_Map_Module_Route_Parse_Func)(Elm_Map_Route *);
 typedef char *(*Elm_Map_Module_Name_Url_Func)(const Evas_Object *,
                                               int,
                                               const char *,
                                               double,
                                               double);
+typedef void (*Elm_Map_Module_Name_Parse_Func)(Elm_Map_Name *n);
+typedef void (*Elm_Map_Module_Name_List_Parse_Func)(Elm_Map_Name_List *nl);
 
 typedef struct _Source_Tile            Source_Tile;
 // FIXME: Currently tile size must be 256*256
@@ -83,6 +86,7 @@ struct _Source_Route
 {
    Eina_Stringshare             *name;
    Elm_Map_Module_Route_Url_Func url_cb;
+   Elm_Map_Module_Route_Parse_Func route_parse_cb;
 };
 
 typedef struct _Source_Name            Source_Name;
@@ -90,6 +94,8 @@ struct _Source_Name
 {
    Eina_Stringshare            *name;
    Elm_Map_Module_Name_Url_Func url_cb;
+   Elm_Map_Module_Name_Parse_Func name_parse_cb;
+   Elm_Map_Module_Name_List_Parse_Func name_list_parse_cb;
 };
 
 typedef struct _Path                   Path;

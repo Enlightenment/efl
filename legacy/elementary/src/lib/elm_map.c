@@ -274,12 +274,13 @@ static const Source_Tile src_tiles[] =
     _scale_cb}
 };
 
+static void _kml_parse(Elm_Map_Route *r);
 // FIXME: Fix more open sources
 static const Source_Route src_routes[] =
 {
-   {"Yours", _yours_url_cb}    // http://www.yournavigation.org/
-   //{"Monav", _monav_url_cb},
-   //{"ORS", _ors_url_cb},     // http://www.openrouteservice.org
+   {"Yours", _yours_url_cb, _kml_parse}    // http://www.yournavigation.org/
+   //{"Monav", _monav_url_cb, _kml_parse},
+   //{"ORS", _ors_url_cb, _kml_parse)},     // http://www.openrouteservice.org
 };
 
 // Scale in meters
@@ -289,10 +290,12 @@ static const double _scale_tb[] =
    20000, 10000, 5000, 2000, 1000, 500, 500, 200, 100, 50, 20, 10, 5, 2, 1
 };
 
+static void _name_parse(Elm_Map_Name *n);
+static void _name_list_parse(Elm_Map_Name_List *nl);
 // FIXME: Add more open sources
 static const Source_Name src_names[] =
 {
-   {"Nominatim", _nominatim_url_cb}
+   {"Nominatim", _nominatim_url_cb, _name_parse, _name_list_parse}
 };
 
 static int id_num = 1;
@@ -3068,7 +3071,7 @@ _route_cb(void *data,
    route->job = NULL;
    if (status == 200)
      {
-        _kml_parse(route);
+        sd->src_route->route_parse_cb(route);
         INF("Route request success from (%lf, %lf) to (%lf, %lf)",
             route->flon, route->flat, route->tlon, route->tlat);
         if (route->cb) route->cb(route->data, sd->obj, route);
@@ -3105,7 +3108,7 @@ _name_cb(void *data,
    name->job = NULL;
    if (status == 200)
      {
-        _name_parse(name);
+        sd->src_name->name_parse_cb(name);
         INF("Name request success address:%s, lon:%lf, lat:%lf",
             name->address, name->lon, name->lat);
         if (name->cb) name->cb(name->data, sd->obj, name);
@@ -3141,7 +3144,7 @@ _name_list_cb(void *data,
    name_list->job = NULL;
    if (status == 200)
      {
-        _name_list_parse(name_list);
+        sd->src_name->name_list_parse_cb(name_list);
         INF("Name List request success address");
         if (name_list->cb)
           name_list->cb(name_list->data, wd->obj,
@@ -3476,6 +3479,8 @@ _source_mod_cb(Eina_Module *m,
    Elm_Map_Module_Tile_Geo_to_Coord_Func geo_to_coord;
    Elm_Map_Module_Tile_Coord_to_Geo_Func coord_to_geo;
    Elm_Map_Module_Route_Url_Func route_url_cb;
+   Elm_Map_Module_Name_Parse_Func name_parse_cb;
+   Elm_Map_Module_Name_List_Parse_Func name_list_parse_cb;
    Elm_Map_Module_Name_Url_Func name_url_cb;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
@@ -3539,6 +3544,9 @@ _source_mod_cb(Eina_Module *m,
         s = ELM_NEW(Source_Route);
         s->name = name_cb();
         s->url_cb = route_url_cb;
+        s->route_parse_cb = eina_module_symbol_get(m, "map_module_route_source_parse");
+        if (!s->route_parse_cb)
+          s->route_parse_cb = _kml_parse;
         sd->src_routes = eina_list_append(sd->src_routes, s);
      }
 
@@ -3551,6 +3559,12 @@ _source_mod_cb(Eina_Module *m,
         s = ELM_NEW(Source_Name);
         s->name = name_cb();
         s->url_cb = name_url_cb;
+        s->name_parse_cb = eina_module_symbol_get(m, "map_module_name_source_parse");
+        if (!s->name_parse_cb)
+          s->name_parse_cb = _name_parse;
+        s->name_list_parse_cb = eina_module_symbol_get(m, "map_module_name_list_source_parse");
+        if (!s->name_list_parse_cb)
+          s->name_list_parse_cb = _name_list_parse;
         sd->src_names = eina_list_append(sd->src_names, s);
      }
    return EINA_TRUE;
@@ -3622,6 +3636,7 @@ _source_all_load(Elm_Map_Data *sd)
         src_route = ELM_NEW(Source_Route);
         src_route->name = eina_stringshare_add(src_routes[idx].name);
         src_route->url_cb = src_routes[idx].url_cb;
+        src_route->route_parse_cb = src_routes[idx].route_parse_cb;
         sd->src_routes = eina_list_append(sd->src_routes, src_route);
      }
    // Load from hard coded NAME source
@@ -3630,6 +3645,8 @@ _source_all_load(Elm_Map_Data *sd)
         src_name = ELM_NEW(Source_Name);
         src_name->name = eina_stringshare_add(src_names[idx].name);
         src_name->url_cb = src_names[idx].url_cb;
+        src_name->name_parse_cb = src_names[idx].name_parse_cb;
+        src_name->name_list_parse_cb = src_names[idx].name_list_parse_cb;
         sd->src_names = eina_list_append(sd->src_names, src_name);
      }
 
