@@ -1138,22 +1138,6 @@ _elm_image_edje_object_size_min_calc(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, in
      evas_object_size_hint_min_get(sd->img, w, h);
 }
 
-EOLIAN static Eina_Bool
-_elm_image_mmap_set(Eo *obj, Elm_Image_Data *sd, const Eina_File *f, const char *key)
-{
-  Eina_Bool ret;
-
-  if (sd->remote) _elm_url_cancel(sd->remote);
-  sd->remote = NULL;
-
-  if (!sd->async_enable)
-    ret = _elm_image_smart_internal_file_set(obj, sd, eina_file_filename_get(f), f, key);
-  else
-    ret = _elm_image_async_file_set(obj, sd, eina_file_filename_get(f), f, key);
-
-   return ret;
-}
-
 EOLIAN static void
 _elm_image_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, const char **file, const char **key)
 {
