@@ -336,6 +336,7 @@ _elm_label_elm_layout_text_set(Eo *obj, Elm_Label_Data *sd, const char *part, co
      {
         sd->lastw = -1;
         elm_obj_layout_sizing_eval(obj);
+        _label_slide_change(obj);
      }
    return int_ret;
 }
