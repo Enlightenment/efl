@@ -231,17 +231,6 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
    return evas_gl_common_image_alpha_set(im, has_alpha ? 1 : 0);
 }
 
-static void *
-eng_image_border_set(void *data EINA_UNUSED, void *image, int l EINA_UNUSED, int r EINA_UNUSED, int t EINA_UNUSED, int b EINA_UNUSED)
-{
-   return image;
-}
-
-static void
-eng_image_border_get(void *data EINA_UNUSED, void *image EINA_UNUSED, int *l EINA_UNUSED, int *r EINA_UNUSED, int *t EINA_UNUSED, int *b EINA_UNUSED)
-{
-}
-
 static Evas_Colorspace
 eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
 {
@@ -2818,8 +2807,6 @@ module_open(Evas_Module *em)
    ORD(image_alpha_get);
    ORD(image_orient_set);
    ORD(image_orient_get);
-   ORD(image_border_set);
-   ORD(image_border_get);
    ORD(image_draw);
    ORD(image_colorspace_set);
    ORD(image_colorspace_get);

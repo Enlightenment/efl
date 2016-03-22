@@ -1823,12 +1823,6 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
              int offx, offy;
 
              ENFN->image_scale_hint_set(output, pixels, o->scale_hint);
-             /* This is technically a bug here: If the value is recreated
-              * (which is returned)it may be a new object, however exactly 0
-              * of all the evas engines do this. */
-             ENFN->image_border_set(output, pixels,
-                                    o->cur->border.l, o->cur->border.r,
-                                    o->cur->border.t, o->cur->border.b);
              idx = evas_object_image_figure_x_fill(eo_obj, obj, o->cur->fill.x, o->cur->fill.w, &idw);
              idy = evas_object_image_figure_y_fill(eo_obj, obj, o->cur->fill.y, o->cur->fill.h, &idh);
              if (idw < 1) idw = 1;

@@ -1355,8 +1355,6 @@ struct _Evas_Func
    int  (*image_alpha_get)                 (void *data, void *image);
    void *(*image_orient_set)               (void *data, void *image, Evas_Image_Orient orient);
    Evas_Image_Orient (*image_orient_get)   (void *data, void *image);
-   void *(*image_border_set)               (void *data, void *image, int l, int r, int t, int b);
-   void  (*image_border_get)               (void *data, void *image, int *l, int *r, int *t, int *b);
    Eina_Bool (*image_draw)                 (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
    void (*image_colorspace_set)            (void *data, void *image, Evas_Colorspace cspace);
    Evas_Colorspace (*image_colorspace_get) (void *data, void *image);

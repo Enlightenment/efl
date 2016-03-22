@@ -1055,20 +1055,6 @@ eng_image_alpha_set(void *data EINA_UNUSED, void *image, int has_alpha)
    return im;
 }
 
-static void *
-eng_image_border_set(void *data EINA_UNUSED, void *image, int l EINA_UNUSED, int r EINA_UNUSED, int t EINA_UNUSED, int b EINA_UNUSED)
-{
-   RGBA_Image *im;
-
-   im = image;
-   return im;
-}
-
-static void
-eng_image_border_get(void *data EINA_UNUSED, void *image EINA_UNUSED, int *l EINA_UNUSED, int *r EINA_UNUSED, int *t EINA_UNUSED, int *b EINA_UNUSED)
-{
-}
-
 static Evas_Colorspace
 eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
 {
@@ -1122,7 +1108,6 @@ eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 static void *
 eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 {
-   //return image;
    Evas_Native_Surface *ns = native;
    Image_Entry *im = image, *im2 = NULL;
 
@@ -4141,8 +4126,6 @@ static Evas_Func func =
      eng_image_alpha_get,
      eng_image_orient_set,
      eng_image_orient_get,
-     eng_image_border_set,
-     eng_image_border_get,
      eng_image_draw,
      eng_image_colorspace_set,
      eng_image_colorspace_get,
