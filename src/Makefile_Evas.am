@@ -298,6 +298,7 @@ lib/evas/canvas/evas_vg_shape.c
 # Static draw lib
 lib_evas_libevas_la_SOURCES += \
 static_libs/draw/draw_alpha_main.c \
+static_libs/draw/draw_convert.c \
 static_libs/draw/draw_main_neon.c \
 static_libs/draw/draw_main.c
 

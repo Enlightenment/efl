@@ -5,6 +5,8 @@
 #include <Ector.h>
 #include "draw_private.h"
 
+int _draw_log_dom = -1;
+
 /*
   s = source pixel
   d = destination pixel
@@ -281,6 +283,7 @@ efl_draw_init()
    static int i = 0;
    if (!(i++))
      {
+        _draw_log_dom = eina_log_domain_register("efl_draw", EINA_COLOR_ORANGE);
         efl_draw_sse2_init();
         efl_draw_neon_init();
      }
