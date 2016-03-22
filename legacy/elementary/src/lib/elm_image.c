@@ -804,8 +804,6 @@ _elm_image_sizing_eval(Eo *obj, Elm_Image_Data *sd)
    int w = 0, h = 0;
    double ts;
 
-   _elm_image_internal_sizing_eval(obj, sd);
-
    efl_image_smooth_scale_set(obj, sd->smooth);
 
    if (sd->no_scale)
