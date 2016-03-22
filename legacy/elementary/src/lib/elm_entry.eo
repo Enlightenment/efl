@@ -112,8 +112,7 @@ enum Elm.Cnp_Mode
 
 class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
                  Elm.Interface_Atspi_Text, Elm.Interface_Atspi_Editable_Text, Efl.File,
-                 Evas.Selectable_Interface, Evas.Scrollable_Interface,
-                 Evas.Draggable_Interface)
+                 Evas.Selectable_Interface, Evas.Scrollable_Interface)
 {
    eo_prefix: elm_obj_entry;
    methods {
@@ -260,6 +259,28 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
          }
          values {
             autocapital_type: Elm.Autocapital.Type; [[The type of autocapitalization.]]
+         }
+      }
+      @property editable {
+         set {
+            [[Sets if the entry is to be editable or not.
+
+              By default, entries are editable and when focused, any text input by the
+              user will be inserted at the current cursor position. But calling this
+              function with $editable as $false will prevent the user from
+              inputting text into the entry.
+
+              The only way to change the text of a non-editable entry is to use
+              \@ref elm_object_text_set, \@ref elm_entry_entry_insert and other related
+              functions.
+            ]]
+         }
+         get {
+            [[Get whether the entry is editable or not.]]
+         }
+         values {
+            editable: bool; [[If $true, user input will be inserted in the entry,
+            if not, the entry is read-only and no user input is allowed.]]
          }
       }
       @property anchor_hover_style {
@@ -904,8 +925,6 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
       Evas.Object_Smart.del;
       Evas.Object_Smart.show;
       Evas.Object_Smart.hide;
-      Evas.Draggable_Interface.drag_target.set;
-      Evas.Draggable_Interface.drag_target.get;
       Elm.Widget.activate;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;

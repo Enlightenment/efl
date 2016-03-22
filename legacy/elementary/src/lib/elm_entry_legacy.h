@@ -71,32 +71,3 @@ EAPI Eina_Bool          elm_entry_file_set(Evas_Object *obj, const char *file, E
  * @param[out] format The file format
  */
 EAPI void               elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format);
-
-/**
- * @brief Sets if the entry is to be editable or not.
- *
- * By default, entries are editable and when focused, any text input by the
- * user will be inserted at the current cursor position. But calling this
- * function with @c editable as @c false will prevent the user from inputting
- * text into the entry.
- *
- * The only way to change the text of a non-editable entry is to use @ref
- * elm_object_text_set, @ref elm_entry_entry_insert and other related
- * functions.
- *
- * @param[in] editable If @c true, user input will be inserted in the entry, if
- * not, the entry is read-only and no user input is allowed.
- *
- * @ingroup Elm_Entry
- */
-EAPI void elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable);
-
-/**
- * @brief Get whether the entry is editable or not.
- *
- * @return If @c true, user input will be inserted in the entry, if not, the
- * entry is read-only and no user input is allowed.
- *
- * @ingroup Elm_Entry
- */
-EAPI Eina_Bool elm_entry_editable_get(const Evas_Object *obj);
