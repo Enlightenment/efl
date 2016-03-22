@@ -1069,16 +1069,6 @@ eng_image_border_get(void *data EINA_UNUSED, void *image EINA_UNUSED, int *l EIN
 {
 }
 
-static char *
-eng_image_comment_get(void *data EINA_UNUSED, void *image, char *key EINA_UNUSED)
-{
-   RGBA_Image *im;
-
-   if (!image) return NULL;
-   im = image;
-   return im->info.comment;
-}
-
 static Evas_Colorspace
 eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
 {
@@ -4154,7 +4144,6 @@ static Evas_Func func =
      eng_image_border_set,
      eng_image_border_get,
      eng_image_draw,
-     eng_image_comment_get,
      eng_image_colorspace_set,
      eng_image_colorspace_get,
      eng_image_file_colorspace_get,

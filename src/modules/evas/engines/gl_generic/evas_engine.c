@@ -242,18 +242,6 @@ eng_image_border_get(void *data EINA_UNUSED, void *image EINA_UNUSED, int *l EIN
 {
 }
 
-
-static char *
-eng_image_comment_get(void *data EINA_UNUSED, void *image, char *key EINA_UNUSED)
-{
-   Evas_GL_Image *im;
-
-   if (!image) return NULL;
-   im = image;
-   if (!im->im) return NULL;
-   return im->im->info.comment;
-}
-
 static Evas_Colorspace
 eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
 {
@@ -2833,7 +2821,6 @@ module_open(Evas_Module *em)
    ORD(image_border_set);
    ORD(image_border_get);
    ORD(image_draw);
-   ORD(image_comment_get);
    ORD(image_colorspace_set);
    ORD(image_colorspace_get);
    ORD(image_file_colorspace_get);

@@ -1358,7 +1358,6 @@ struct _Evas_Func
    void *(*image_border_set)               (void *data, void *image, int l, int r, int t, int b);
    void  (*image_border_get)               (void *data, void *image, int *l, int *r, int *t, int *b);
    Eina_Bool (*image_draw)                 (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
-   char *(*image_comment_get)              (void *data, void *image, char *key);
    void (*image_colorspace_set)            (void *data, void *image, Evas_Colorspace cspace);
    Evas_Colorspace (*image_colorspace_get) (void *data, void *image);
    Evas_Colorspace (*image_file_colorspace_get)(void *data, void *image);

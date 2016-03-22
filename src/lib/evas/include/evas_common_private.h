@@ -835,20 +835,8 @@ struct _RGBA_Pipe_Thread_Info
 struct _RGBA_Image
 {
    Image_Entry          cache_entry;
-
    RGBA_Image_Flags     flags;
-   struct
-     {
-/*	void           *module; */
-/*	void           *loader; */
-/*	char           *real_file; */
-	char           *comment;
-//	int             format;
-     } info;
-
    void                *extended_info;
-
-/*    unsigned char        scale; */
 
    /* Colorspace stuff. */
    struct {
