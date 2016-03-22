@@ -135,15 +135,10 @@ _elm_code_test_mirror_setup(Elm_Code *code, char *font_name, Evas_Object *parent
 static Evas_Object *
 _elm_code_test_diff_inline_setup(Evas_Object *parent)
 {
-   char path[PATH_MAX];
    Evas_Object *diff;
    Elm_Code *code;
 
-   snprintf(path, sizeof(path), "%s/../edi/data/testdiff.diff", elm_app_data_dir_get());
-
    code = elm_code_create();
-   elm_code_file_open(code, path);
-
    diff = eo_add(ELM_CODE_WIDGET_CLASS, parent, elm_obj_code_widget_code_set(eo_self, code));
 
    evas_object_size_hint_weight_set(diff, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -151,7 +146,7 @@ _elm_code_test_diff_inline_setup(Evas_Object *parent)
    evas_object_show(diff);
 
    elm_code_parser_standard_add(code, ELM_CODE_PARSER_STANDARD_DIFF);
-   elm_code_file_open(code, path);
+   elm_code_file_open(code, DATA_DIR "testdiff.diff");
 
    return diff;
 }
@@ -159,14 +154,11 @@ _elm_code_test_diff_inline_setup(Evas_Object *parent)
 static Evas_Object *
 _elm_code_test_diff_setup(Evas_Object *parent)
 {
-   char path[PATH_MAX];
    Evas_Object *diff;
    Elm_Code *code;
 
-   snprintf(path, sizeof(path), "%s/../edi/data/testdiff.diff", elm_app_data_dir_get());
-
    code = elm_code_create();
-   elm_code_file_open(code, path);
+   elm_code_file_open(code, DATA_DIR "testdiff.diff");
 
    diff = elm_code_diff_widget_add(parent, code);
    return diff;
