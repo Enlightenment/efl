@@ -234,6 +234,7 @@
                 uint32x2x2_t vp0, vp1;
                 uint16x8_t vax;
                 uint16x8_t vax1;
+                DATA32 pa[2][4];
 #else
 		DATA32  p0, p1, p2, p3;
 #endif
@@ -242,30 +243,34 @@
 		ax = 1 + ((sxx - (sx << 16)) >> 8);
 		p = psrc + sx;  q = p + src_w;
 #ifdef SCALE_USING_NEON
-                vax = vdupq_n_u16(ax);
-                vp0.val[0] = vld1_u32(p);
-                vp0.val[1] = vld1_u32(q);
-                if ((sx + 1) >= srw)
+                pa[0][0] = pa[0][1] = pa[0][2] = pa[0][3] = *p;
+                if ((sx + 1) < srw)
+                  pa[0][1] = *(p + 1);
+                if ((sy + 1) < srh)
                   {
-                    vp0.val[0] = vdup_lane_u32(vp0.val[0], 0); // p0, p1
-                    vp0.val[1] = vdup_lane_u32(vp0.val[1], 0); // p2, p3
+                    pa[0][2] = *q;  pa[0][3] = pa[0][2];
+                    if ((sx + 1) < srw)
+                      pa[0][3] = *(q + 1);
                   }
-                if ((sy + 1) >= srh)
-                  vp0.val[1] = vdup_lane_u32(vp0.val[0], 0);
+                vax = vdupq_n_u16(ax);
+                vp0.val[0] = vld1_u32(&pa[0][0]);
+                vp0.val[1] = vld1_u32(&pa[0][2]);
                 sxx += dsxx;
                 sx = sxx >> 16;
                 ax1 = 1 + ((sxx - (sx << 16)) >> 8);
-                vax1 = vdupq_n_u16(ax1);
                 p1 = psrc + sx; q1 = p1 + src_w;
-                vp1.val[0] = vld1_u32(p1);
-                vp1.val[1] = vld1_u32(q1);
-                if ((sx + 1) >= srw)
+                pa[1][0] = pa[1][1] = pa[1][2] = pa[1][3] = *p1;
+                if ((sx + 1) < srw)
+                  pa[1][1] = *(p1 + 1);
+                if ((sy + 1) < srh)
                   {
-                    vp1.val[0] = vdup_lane_u32(vp1.val[0], 0); // p4, p5
-                    vp1.val[1] = vdup_lane_u32(vp1.val[1], 0); // p6, p7
+                    pa[1][2] = *q1;  pa[1][3] = pa[1][2];
+                    if ((sx + 1) < srw)
+                      pa[1][3] = *(q1 + 1);
                   }
-                if ((sy + 1) >= srh)
-                  vp1.val[1] = vdup_lane_u32(vp1.val[0], 0);
+                vax1 = vdupq_n_u16(ax1);
+                vp1.val[0] = vld1_u32(&pa[1][0]);
+                vp1.val[1] = vld1_u32(&pa[1][2]);
 #else
 		p0 = p1 = p2 = p3 = *p;
 		if ((sx + 1) < srw)
