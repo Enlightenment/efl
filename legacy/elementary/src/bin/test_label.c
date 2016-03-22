@@ -150,10 +150,23 @@ _label_resize_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
    elm_slider_value_set(speed_slider, elm_label_slide_speed_get(obj));
 }
 
+static void
+_label_slide_stop_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eina_List *lbs = data, *itr;
+   Evas_Object *lb;
+   EINA_LIST_FOREACH(lbs, itr, lb)
+     {
+        elm_label_slide_speed_set(lb, 0.01);
+        elm_label_slide_go(lb);
+     }
+}
+
 void
 test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *gd, *rect, *lb, *lb1, *lb2, *rd, *rdg, *sl;
+   Evas_Object *win, *gd, *rect, *lb, *lb1, *lb2, *rd, *rdg, *sl, *bt;
+   Eina_List *lbs = NULL;
 
    win = elm_win_util_standard_add("label-slide", "Label Slide");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -189,6 +202,7 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_label_slide_go(lb);
    elm_grid_pack(gd, lb, 5, 10, 90, 10);
    evas_object_show(lb);
+   lbs = eina_list_append(lbs, lb);
 
    /* The speed or the duration of the slide animation will change when the
     * label change size, so we need to update the sliders on resize. */
@@ -245,6 +259,11 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_grid_pack(gd, sl, 5, 40, 90, 10);
    evas_object_show(sl);
 
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Stop sliding");
+   elm_grid_pack(gd, bt, 40, 50, 20, 10);
+   evas_object_show(bt);
+
    /* Test 2 label at the same speed */
    lb = elm_label_add(win);
    elm_object_text_set(lb, "<b>Test 2 label with the same speed:</b>");
@@ -257,7 +276,7 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_show(rect);
 
    lb1 = elm_label_add(win);
-   elm_object_style_set(lb1, "slide_long");
+   elm_object_style_set(lb1, "slide_short");
    elm_object_text_set(lb1, "This is a label set to slide with a fixed speed,"
                             " should match the speed with the below label."
                             " This label has few extra char for testing.");
@@ -266,6 +285,7 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_label_slide_go(lb1);
    elm_grid_pack(gd, lb1, 5, 70, 90, 10);
    evas_object_show(lb1);
+   lbs = eina_list_append(lbs, lb1);
 
    lb2 = elm_label_add(win);
    elm_object_style_set(lb2, "slide_long");
@@ -276,6 +296,9 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_label_slide_go(lb2);
    elm_grid_pack(gd, lb2, 5, 80, 90, 10);
    evas_object_show(lb2);
+   lbs = eina_list_append(lbs, lb2);
+
+   evas_object_smart_callback_add(bt, "clicked", _label_slide_stop_cb, lbs);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
