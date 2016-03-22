@@ -57,6 +57,8 @@ test_panes(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    panes = elm_panes_add(win);
    evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_panes_content_left_min_size_set(panes, 100);
+   elm_panes_content_left_size_set(panes, 0.7);
    elm_win_resize_object_add(win, panes);
    evas_object_show(panes);
 
@@ -68,13 +70,15 @@ test_panes(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    // add left button
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "Left");
+   elm_object_text_set(bt, "Left - min size 100 - size 70%");
    evas_object_show(bt);
    elm_object_part_content_set(panes, "left", bt);
 
    // add panes
    panes_h = elm_panes_add(win);
    elm_panes_horizontal_set(panes_h, EINA_TRUE);
+   elm_panes_content_right_min_size_set(panes_h, 100);
+   elm_panes_content_right_size_set(panes_h, 0.3);
    evas_object_show(panes_h);
 
    evas_object_smart_callback_add(panes_h, "clicked", _clicked, panes_h);
@@ -92,7 +96,7 @@ test_panes(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    // add down button
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "Down");
+   elm_object_text_set(bt, "Down - min size 100 size 30%");
    evas_object_show(bt);
    elm_object_part_content_set(panes_h, "bottom", bt);
 
