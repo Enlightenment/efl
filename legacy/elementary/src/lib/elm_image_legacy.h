@@ -272,4 +272,30 @@ EAPI void elm_image_editable_set(Evas_Object *obj, Eina_Bool set);
  * @ingroup Elm_Image
  */
 EAPI Eina_Bool elm_image_editable_get(const Evas_Object *obj);
+
+/**
+ * @brief Set a location in memory to be used as an image object's source
+ * bitmap.
+ *
+ * This function is handy when the contents of an image file are mapped in
+ * memory, for example.
+ *
+ * The @c format string should be something like $"png", $"jpg", $"tga",
+ * $"tiff", $"bmp" etc, when provided ($NULL, on the contrary). This improves
+ * the loader performance as it tries the "correct" loader first, before trying
+ * a range of other possible loaders until one succeeds.
+ *
+ * @param[in] img The binary data that will be used as image source
+ * @param[in] size The size of binary data blob @c img
+ * @param[in] format (Optional) expected format of @c img bytes
+ * @param[in] key Optional indexing key of @c img to be passed to the image
+ * loader (eg. if @c img is a memory-mapped EET file)
+ *
+ * @return @c true = success, @c false = error
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Image
+ */
+EAPI Eina_Bool elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key);
 #include "elm_image.eo.legacy.h"

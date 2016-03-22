@@ -393,21 +393,6 @@ _elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const 
 }
 
 EOLIAN static Eina_Bool
-_elm_icon_elm_image_memfile_set(Eo *obj, Elm_Icon_Data *sd, const void *img, size_t size, const char *format, const char *key)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(img, EINA_FALSE);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, EINA_FALSE);
-   ELM_SAFE_FREE(sd->stdicon, eina_stringshare_del);
-
-   _edje_signals_free(sd);
-
-   int_ret = elm_obj_image_memfile_set(eo_super(obj, MY_CLASS), img, size, format, key);
-   return int_ret;
-}
-
-EOLIAN static Eina_Bool
 _elm_icon_elm_widget_theme_apply(Eo *obj, Elm_Icon_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
@@ -683,11 +668,19 @@ elm_icon_memfile_set(Evas_Object *obj,
                      const char *format,
                      const char *key)
 {
+   Eina_Bool int_ret = EINA_FALSE;
    ELM_ICON_CHECK(obj) EINA_FALSE;
 
-   Eina_Bool ret = EINA_FALSE;
-   ret = elm_obj_image_memfile_set(obj, img, size, format, key);
-   return ret;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(img, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!size, EINA_FALSE);
+
+   ELM_ICON_DATA_GET(obj, sd);
+   ELM_SAFE_FREE(sd->stdicon, eina_stringshare_del);
+
+   _edje_signals_free(sd);
+
+   int_ret = elm_image_memfile_set(eo_super(obj, MY_CLASS), img, size, format, key);
+   return int_ret;
 }
 
 EAPI Eina_Bool

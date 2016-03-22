@@ -198,53 +198,6 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
             disabled: bool; [[If true, preloading will be disabled]]
          }
       }
-      @property mmap {
-         set {
-            [[Set the file that will be used as the image's source.
-
-              See: elm_image_file_set()
-
-              Note: This function will trigger the Edje file case based on the
-              extension of the $file string use to create the Eina_File (expects
-              $".edj", for this case).
-
-              Note: If you use animated gif image and create multiple image objects with
-              one gif image file, you should set the $group differently for each object.
-              Or image objects will share one evas image cache entry and you will get
-              unwanted frames.]]
-
-            return: bool; [[$true = success, $false = error]]
-            legacy: null;
-         }
-         values {
-            file: const(Eina.File)*; [[The handler to an Eina_File that will be used as image source]]
-            group: const(char)* @optional; [[The group that the image belongs to, in case it's an EET (including Edje case) file. This can be used as a key inside evas image cache if this is a normal image file not eet file.]]
-         }
-      }
-      @property memfile {
-         set {
-            [[Set a location in memory to be used as an image object's source bitmap.
-
-              This function is handy when the contents of an image file are
-              mapped in memory, for example.
-
-              The $format string should be something like $"png", $"jpg",
-              $"tga", $"tiff", $"bmp" etc, when provided ($NULL, on the
-              contrary). This improves the loader performance as it tries the
-              "correct" loader first, before trying a range of other possible
-              loaders until one succeeds.
-
-              @since 1.7]]
-
-            return: bool; [[$true = success, $false = error]]
-         }
-         values {
-            img: const(void)*; [[The binary data that will be used as image source]]
-            size: size; [[The size of binary data blob $img]]
-            format: const(char)* @optional; [[(Optional) expected format of $img bytes]]
-            key: const(char)* @optional; [[Optional indexing key of $img to be passed to the image loader (eg. if $img is a memory-mapped EET file)]]
-         }
-      }
       @property object {
          get {
             [[Get the inlined image object of the image widget.

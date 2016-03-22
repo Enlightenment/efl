@@ -885,35 +885,6 @@ _elm_image_file_set_do(Evas_Object *obj)
      }
 }
 
-EOLIAN static Eina_Bool
-_elm_image_memfile_set(Eo *obj, Elm_Image_Data *sd, const void *img, size_t size, const char *format, const char *key)
-{
-   Evas_Load_Error err;
-
-   _elm_image_file_set_do(obj);
-
-   evas_object_image_memfile_set
-     (sd->img, (void *)img, size, (char *)format, (char *)key);
-
-   sd->preload_status = ELM_IMAGE_PRELOADING;
-   evas_object_image_preload(sd->img, EINA_FALSE);
-
-   err = evas_object_image_load_error_get(sd->img);
-   if (err != EVAS_LOAD_ERROR_NONE)
-     {
-        if (img)
-          ERR("Failed to load image from memory block (" FMT_SIZE_T
-              " bytes): %s (%p)", size, evas_load_error_str(err), sd->img);
-        else
-          ERR("NULL image data passed (%p)", sd->img);
-        return EINA_FALSE;
-     }
-
-   _elm_image_internal_sizing_eval(obj, sd);
-
-   return EINA_TRUE;
-}
-
 EOLIAN static void
 _elm_image_scale_set(Eo *obj, Elm_Image_Data *sd, double scale)
 {
@@ -947,45 +918,19 @@ _elm_image_eo_base_constructor(Eo *obj, Elm_Image_Data *_pd EINA_UNUSED)
    return obj;
 }
 
-EAPI Eina_Bool
-elm_image_file_set(Evas_Object *obj,
-                   const char *file,
-                   const char *group)
-{
-   Eina_Bool ret = EINA_FALSE;
-
-   ELM_IMAGE_CHECK(obj) EINA_FALSE;
-   ret = efl_file_set(obj, file, group);
-   elm_obj_image_sizing_eval(obj);
-   return ret;
-}
-
-EAPI void
-elm_image_file_get(const Eo *obj, const char **file, const char **group)
-{
-   efl_file_get((Eo *) obj, file, group);
-}
-
-EAPI Eina_Bool
-elm_image_mmap_set(Evas_Object *obj,
-		   const Eina_File *file,
-		   const char *group)
-{
-   Eina_Bool ret = EINA_FALSE;
-
-   ELM_IMAGE_CHECK(obj) EINA_FALSE;
-   ret = efl_file_mmap_set(obj, file, group);
-   return ret;
-}
-
 EOLIAN Eina_Bool
-_elm_image_efl_file_mmap_set(Eo *obj, Elm_Image_Data *pd EINA_UNUSED,
+_elm_image_efl_file_mmap_set(Eo *obj, Elm_Image_Data *sd,
                              const Eina_File *file, const char *key)
 {
    Eina_Bool ret = EINA_FALSE;
 
-   ret = elm_obj_image_mmap_set(obj, file, key);
-   elm_obj_image_sizing_eval(obj);
+   if (sd->remote) _elm_url_cancel(sd->remote);
+   sd->remote = NULL;
+
+   if (!sd->async_enable)
+     ret = _elm_image_smart_internal_file_set(obj, sd, eina_file_filename_get(file), file, key);
+   else
+     ret = _elm_image_async_file_set(obj, sd, eina_file_filename_get(file), file, key);
 
    return ret;
 }
@@ -1656,6 +1601,65 @@ EAPI Eina_Bool
 elm_image_editable_get(const Evas_Object *obj)
 {
    return evas_draggable_interface_drag_target_get(obj);
+}
+
+EAPI Eina_Bool
+elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ret = efl_file_set(obj, file, group);
+   elm_obj_image_sizing_eval(obj);
+   return ret;
+}
+
+EAPI void
+elm_image_file_get(const Eo *obj, const char **file, const char **group)
+{
+   efl_file_get((Eo *) obj, file, group);
+}
+
+EAPI Eina_Bool
+elm_image_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ret = efl_file_mmap_set(obj, file, group);
+   return ret;
+}
+
+EAPI Eina_Bool
+elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key)
+{
+   Evas_Load_Error err;
+
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   _elm_image_file_set_do(obj);
+
+   evas_object_image_memfile_set
+     (sd->img, (void *)img, size, (char *)format, (char *)key);
+
+   sd->preload_status = ELM_IMAGE_PRELOADING;
+   evas_object_image_preload(sd->img, EINA_FALSE);
+
+   err = evas_object_image_load_error_get(sd->img);
+   if (err != EVAS_LOAD_ERROR_NONE)
+     {
+        if (img)
+          ERR("Failed to load image from memory block (" FMT_SIZE_T
+              " bytes): %s (%p)", size, evas_load_error_str(err), sd->img);
+        else
+          ERR("NULL image data passed (%p)", sd->img);
+        return EINA_FALSE;
+     }
+
+   _elm_image_internal_sizing_eval(obj, sd);
+
+   return EINA_TRUE;
 }
 
 #include "elm_image.eo.c"
