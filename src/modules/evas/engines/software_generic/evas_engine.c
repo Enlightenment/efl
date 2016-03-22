@@ -1358,6 +1358,8 @@ eng_image_data_get(void *data EINA_UNUSED, void *image, int to_write, DATA32 **i
    switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
+      case EVAS_COLORSPACE_AGRY88:
+      case EVAS_COLORSPACE_GRY8:
 	if (to_write)
           im = (RGBA_Image *)evas_cache_image_alone(&im->cache_entry);
 	*image_data = im->image.data;
@@ -1367,23 +1369,32 @@ eng_image_data_get(void *data EINA_UNUSED, void *image, int to_write, DATA32 **i
       case EVAS_COLORSPACE_YCBCR422601_PL:
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-	*image_data = im->cs.data;
+        *image_data = im->cs.data;
         break;
+      // unlikely formats, not supported for render by the sw engine
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
       case EVAS_COLORSPACE_RGB_S3TC_DXT1:
       case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
         if (to_write)
           {
-             // abort() ?
-             error = EVAS_LOAD_ERROR_GENERIC;
+             ERR("can not get ETC or S3TC data to write");
+             *image_data = NULL;
              return NULL;
           }
         *image_data = im->image.data;
         break;
       default:
-	abort();
-	break;
+        CRI("unsupported format %d", im->cache_entry.space);
+        if (err) *err = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        *image_data = NULL;
+        return NULL;
      }
    if (err) *err = error;
    return im;
@@ -1399,10 +1410,18 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
+      case EVAS_COLORSPACE_AGRY88:
+      case EVAS_COLORSPACE_GRY8:
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
       case EVAS_COLORSPACE_RGB_S3TC_DXT1:
       case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
 	if (image_data != im->image.data)
 	  {
 	     int w, h;
@@ -1440,8 +1459,8 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
         evas_common_image_colorspace_dirty(im);
         break;
       default:
-	abort();
-	break;
+        CRI("unsupported format %d", im->cache_entry.space);
+        return NULL;
      }
    return im;
 }
