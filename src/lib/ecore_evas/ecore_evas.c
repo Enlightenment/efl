@@ -48,9 +48,8 @@ static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 static Ecore_Evas *ecore_evases = NULL;
 static int _ecore_evas_fps_debug = 0;
 
-#define RENDER_SYNC 1
-
-#ifdef RENDER_SYNC
+//RENDER_SYNC
+static int _ecore_evas_render_sync = 0;
 static Ecore_Animator *ecore_evas_animator = NULL;
 static Eina_Bool ecore_evas_animator_ticked = EINA_FALSE;
 static Eina_Bool ecore_evas_first = EINA_TRUE;
@@ -93,7 +92,6 @@ _ecore_evas_changes_check(void)
      }
    return EINA_FALSE;
 }
-#endif
 
 static Eina_Bool
 _ecore_evas_idle_enter(void *data EINA_UNUSED)
@@ -108,26 +106,27 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
 
    if (!ecore_evases) return ECORE_CALLBACK_RENEW;
 
-#ifdef RENDER_SYNC
-   if (!ecore_evas_first)
+   if (_ecore_evas_render_sync)
      {
-        if ((!ecore_evas_animator_ticked) &&
-            (!ecore_main_loop_animator_ticked_get()))
+        if (!ecore_evas_first)
           {
-             if (_ecore_evas_changes_check())
+             if ((!ecore_evas_animator_ticked) &&
+                 (!ecore_main_loop_animator_ticked_get()))
                {
-                  if (!ecore_evas_animator)
+                  if (_ecore_evas_changes_check())
                     {
-                       overtick = 1;
-                       ecore_evas_animator = ecore_animator_add(_ecore_evas_animator, NULL);
+                       if (!ecore_evas_animator)
+                         {
+                            overtick = 1;
+                            ecore_evas_animator = ecore_animator_add(_ecore_evas_animator, NULL);
+                         }
                     }
+                  return ECORE_CALLBACK_RENEW;
                }
-             return ECORE_CALLBACK_RENEW;
+             ecore_evas_animator_ticked = EINA_FALSE;
           }
-        ecore_evas_animator_ticked = EINA_FALSE;
+        ecore_evas_first = EINA_FALSE;
      }
-   ecore_evas_first = EINA_FALSE;
-#endif
 
    if (_ecore_evas_fps_debug)
      {
@@ -392,6 +391,7 @@ ecore_evas_init(void)
    ecore_evas_idle_enterer =
      ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
    if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
+   if (getenv("ECORE_EVAS_RENDER_SYNC")) _ecore_evas_render_sync = 1;
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
 
 #ifdef BUILD_ECORE_EVAS_EWS
@@ -435,10 +435,12 @@ ecore_evas_shutdown(void)
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
    ecore_idle_enterer_del(ecore_evas_idle_enterer);
    ecore_evas_idle_enterer = NULL;
-#ifdef RENDER_SYNC
-   if (ecore_evas_animator) ecore_animator_del(ecore_evas_animator);
-   ecore_evas_animator = NULL;
-#endif
+
+   if (_ecore_evas_render_sync)
+     {
+        if (ecore_evas_animator) ecore_animator_del(ecore_evas_animator);
+        ecore_evas_animator = NULL;
+     }
 
    _ecore_evas_extn_shutdown();
 
@@ -3221,9 +3223,7 @@ _ecore_evas_register(Ecore_Evas *ee)
 
    eo_event_callback_array_add(ee->evas, animator_watch(), ee);
 
-#ifdef RENDER_SYNC
-   ecore_evas_first = EINA_TRUE;
-#endif
+   if (_ecore_evas_render_sync) ecore_evas_first = EINA_TRUE;
 }
 
 EAPI void
