@@ -38,6 +38,21 @@ _efl_canvas_image_class_destructor(Eo_Class *eo_class EINA_UNUSED)
    _map_data_cow = NULL;
 }
 
+EOLIAN static Eo_Base *
+_efl_canvas_image_eo_base_constructor(Eo *obj, Efl_Canvas_Image_Data *pd)
+{
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   pd->map_data = eina_cow_alloc(_map_data_cow);
+   return obj;
+}
+
+EOLIAN static void
+_efl_canvas_image_eo_base_destructor(Eo *obj, Efl_Canvas_Image_Data *pd)
+{
+   eina_cow_free(_map_data_cow, (const Eina_Cow_Data **) &pd->map_data);
+   eo_destructor(eo_super(obj, MY_CLASS));
+}
+
 Eina_Bool
 _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key)
 {
@@ -805,7 +820,11 @@ _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, Efl_Canvas_Image_Data *p
      goto end; // not implemented
 
    if (!o->engine_data)
-     goto end;
+     {
+        if (o->cur->u.file)
+          ERR("image is not loaded yet");
+        goto end;
+     }
 
    if ((x < 0) || (y < 0) || ((x + (int) w) > (int) o->cur->image.w) || ((y + (int) h) > (int) o->cur->image.h))
      {
@@ -839,7 +858,7 @@ _efl_canvas_image_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, Efl_Canvas_Image_Data 
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
    Map_Data *map;
 
-   if (!ENFN->image_data_map)
+   if (!ENFN->image_data_unmap)
      goto fail; // not implemented
 
    if (!o->engine_data)
@@ -854,6 +873,8 @@ _efl_canvas_image_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, Efl_Canvas_Image_Data 
           o->engine_data = ENFN->image_data_unmap(ENDT, o->engine_data, data, length);
           free(map);
        }
+
+   return;
 
 fail:
    ERR("unmap failed");

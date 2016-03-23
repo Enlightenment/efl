@@ -76,7 +76,8 @@ EAPI int evas_common_load_rgba_image_data_from_file   (Image_Entry *im);
 EAPI double evas_common_load_rgba_image_frame_duration_from_file(Image_Entry *im, int start_frame, int frame_num);
 
 void _evas_common_rgba_image_post_surface(Image_Entry *ie);
-int _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colorspace cspace, /* inout */ int *l, int *r, int *t, int *b);
+EAPI int _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colorspace cspace, /* inout */ int *l, int *r, int *t, int *b);
+EAPI int _evas_common_rgba_image_data_offset(int rx, int ry, int rw, int rh, int plane, const RGBA_Image *im);
 
 EAPI Eina_Bool evas_common_extension_can_load_get(const char *file);
 

@@ -431,11 +431,11 @@ efl_draw_convert_func_get(Efl_Gfx_Colorspace srccs, Efl_Gfx_Colorspace dstcs,
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(srccs != dstcs, NULL);
 
-   if (dstcs != EFL_GFX_COLORSPACE_ARGB8888)
-     to_argb = efl_draw_convert_func_get(srccs, EFL_GFX_COLORSPACE_ARGB8888, &reg1);
-
-   if (srccs != EFL_GFX_COLORSPACE_ARGB8888)
-     from_argb = efl_draw_convert_func_get(EFL_GFX_COLORSPACE_ARGB8888, dstcs, &reg2);
+   if ((dstcs != EFL_GFX_COLORSPACE_ARGB8888) && (srccs != EFL_GFX_COLORSPACE_ARGB8888))
+     {
+        to_argb = efl_draw_convert_func_get(srccs, EFL_GFX_COLORSPACE_ARGB8888, &reg1);
+        from_argb = efl_draw_convert_func_get(EFL_GFX_COLORSPACE_ARGB8888, dstcs, &reg2);
+     }
 
    if (region_can) *region_can = EINA_TRUE;
 
@@ -523,5 +523,6 @@ efl_draw_convert_func_get(Efl_Gfx_Colorspace srccs, Efl_Gfx_Colorspace dstcs,
      }
 
    ERR("unsupported colorspace conversion from %d to %d", srccs, dstcs);
+   if (region_can) *region_can = EINA_FALSE;
    return NULL;
 }

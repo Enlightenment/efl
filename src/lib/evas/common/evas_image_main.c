@@ -110,7 +110,7 @@ static const Evas_Cache2_Image_Func      _evas_common_image_func2 =
 };
 #endif
 
-int
+EAPI int
 _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
                                      Evas_Colorspace cspace,
                                      /* inout */ int *l, int *r, int *t, int *b)
@@ -177,6 +177,93 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
    return ALIGN_TO_PAGE(siz);
 
 #undef ALIGN_TO_PAGE
+}
+
+EAPI int
+_evas_common_rgba_image_data_offset(int rx, int ry, int rw, int rh, int plane, const RGBA_Image *im)
+{
+   // note: no stride support
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(im, -1);
+
+   const Image_Entry *ie = &im->cache_entry;
+
+   if ((rx < 0) || (ry < 0) || (rw < 0) || (rh < 0))
+     return -1;
+
+   if (((rx + rw) > (int) ie->w) || ((ry + rh) > (int) ie->h))
+     return -1;
+
+   switch (ie->space)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+        return (ry * ie->w + rx) * 4;
+      case EVAS_COLORSPACE_AGRY88:
+        return (ry * ie->w + rx) * 2;
+      case EVAS_COLORSPACE_GRY8:
+        return ry * ie->w + rx;
+      case EVAS_COLORSPACE_RGB565_A5P:
+        if (plane == 0)
+          return (ry * ie->w + rx) * 2;
+        else if (plane == 1)
+          return ry * ie->w + rx + (ie->w * ie->h) * 2;
+        else return -1;
+
+        // YUV
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
+        if ((rx & 1) || (rw & 1))
+          return -1;
+        if (plane == 0)
+          return ry * ie->w + rx;
+        else if (plane == 1)
+          return (ry * ie->w) / 2 + rx + ie->w * ie->h;
+        else return -1;
+
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
+        if ((rx & 1) || (ry & 1) || (rw & 1) || (rh & 1))
+          return -1;
+        if (plane == 0)
+          return ry * ie->w + rx;
+        else if (plane == 1)
+          return (ry * ie->w + rx) / 2 + ie->w * ie->h;
+        else return -1;
+
+        // ETC1/2 RGB, S3TC RGB
+      case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGB_S3TC_DXT1:
+        if ((rx & 3) || (ry & 3) || (rw & 3) || (rh & 3))
+          return -1;
+        return (ry * ie->w + rx) * 8 / 16;
+
+        // ETC2 ARGB, S3TC ARGB
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
+        if ((rx & 3) || (ry & 3) || (rw & 3) || (rh & 3))
+          return -1;
+        return (ry * ie->w + rx) * 16 / 16;
+
+        // ETC1+Alpha
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+        if ((rx & 3) || (ry & 3) || (rw & 3) || (rh & 3))
+          return -1;
+        if (plane == 0)
+          return (ry * ie->w + rx) * 8 / 16;
+        else if (plane == 1)
+          return (ry * ie->w + rx) * 8 / 16 + (ie->w * ie->h) * 8 / 16;
+        else return -1;
+
+      default:
+        CRI("unknown colorspace %d", ie->space);
+        return EINA_FALSE;
+     }
 }
 
 static void *

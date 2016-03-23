@@ -428,6 +428,7 @@ typedef struct _RGBA_Font_Source      RGBA_Font_Source;
 typedef struct _RGBA_Font_Glyph       RGBA_Font_Glyph;
 typedef struct _RGBA_Font_Glyph_Out   RGBA_Font_Glyph_Out;
 typedef struct _RGBA_Gfx_Compositor   RGBA_Gfx_Compositor;
+typedef struct _RGBA_Image_Data_Map   RGBA_Image_Data_Map;
 
 typedef struct _Cutout_Rect             Cutout_Rect;
 typedef struct _Cutout_Rects            Cutout_Rects;
@@ -832,6 +833,18 @@ struct _RGBA_Pipe_Thread_Info
 };
 #endif
 
+struct _RGBA_Image_Data_Map {
+   EINA_INLIST;
+   unsigned char  *ptr;
+   unsigned int    size, stride; // in bytes
+   int             rx, ry, rw, rh; // actual map region
+   unsigned char  *baseptr;
+   unsigned char   plane;
+   Evas_Colorspace cspace;
+   Eina_Bool       allocated; // ptr is malloc() for cow or cspace conv
+   Efl_Gfx_Buffer_Access_Mode mode;
+};
+
 struct _RGBA_Image
 {
    Image_Entry          cache_entry;
@@ -879,6 +892,9 @@ struct _RGBA_Image
         void *data;
       } func;
    } native;
+
+   /* data map/unmap */
+   RGBA_Image_Data_Map *maps;
 };
 
 struct _RGBA_Polygon_Point
