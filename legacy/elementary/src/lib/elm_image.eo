@@ -91,20 +91,6 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
             no_scale: bool; [[$true if the object is not scalable, $false otherwise. Default is $false.]]
          }
       }
-      @property scale {
-         [[Control the scale of the object's image.
-
-           @since 1.7]]
-         set {
-            legacy: null;
-         }
-         get {
-            legacy: null;
-         }
-         values {
-            scale: double; [[Object's image scale.]]
-         }
-      }
       @property fill_inside {
          [[Control the resize method for the object's internal image when maintaining a given aspect ratio.
 

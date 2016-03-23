@@ -797,6 +797,15 @@ _elm_image_elm_widget_event(Eo *obj, Elm_Image_Data *_pd EINA_UNUSED, Evas_Objec
    return EINA_TRUE;
 }
 
+// TODO: remove this function after using the widget's scale value instead of image's scale value, 
+
+static void
+_elm_image_internal_scale_set(Evas_Object *obj, Elm_Image_Data *sd, double scale)
+{
+   sd->scale = scale;
+   _elm_image_internal_sizing_eval(obj, sd);
+}
+
 EOLIAN static void
 _elm_image_sizing_eval(Eo *obj, Elm_Image_Data *sd)
 {
@@ -807,9 +816,9 @@ _elm_image_sizing_eval(Eo *obj, Elm_Image_Data *sd)
    efl_image_smooth_scale_set(obj, sd->smooth);
 
    if (sd->no_scale)
-     elm_obj_image_scale_set(obj, 1.0);
+     _elm_image_internal_scale_set(obj, sd, 1.0);
    else
-     elm_obj_image_scale_set(obj, elm_widget_scale_get(obj) * elm_config_scale_get());
+     _elm_image_internal_scale_set(obj, sd, elm_widget_scale_get(obj) * elm_config_scale_get());
 
    ts = sd->scale;
    sd->scale = 1.0;
@@ -881,20 +890,6 @@ _elm_image_file_set_do(Evas_Object *obj)
         elm_obj_image_object_size_get((Eo *) obj, &w, &h);
         evas_object_image_load_size_set(sd->img, w, h);
      }
-}
-
-EOLIAN static void
-_elm_image_scale_set(Eo *obj, Elm_Image_Data *sd, double scale)
-{
-   sd->scale = scale;
-
-   _elm_image_internal_sizing_eval(obj, sd);
-}
-
-EOLIAN static double
-_elm_image_scale_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
-{
-   return sd->scale;
 }
 
 EAPI Evas_Object *
@@ -1642,6 +1637,29 @@ elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char
    _elm_image_internal_sizing_eval(obj, sd);
 
    return EINA_TRUE;
+}
+
+// TODO: use the widget's scale value instead of image's scale value.
+
+EAPI void
+elm_image_scale_set(Evas_Object *obj,
+                     double       scale)
+{	
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   sd->scale = scale;
+	
+   _elm_image_internal_sizing_eval(obj, sd);
+}
+
+EAPI double
+elm_image_scale_get(const Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj) -1;
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   return sd->scale;
 }
 
 #include "elm_image.eo.c"

@@ -298,4 +298,26 @@ EAPI Eina_Bool elm_image_editable_get(const Evas_Object *obj);
  * @ingroup Elm_Image
  */
 EAPI Eina_Bool elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key);
+
+/**
+ * @brief Control the scale of the object's image.
+ *
+ * @param[in] scale Object's image scale.
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_scale_set(Evas_Object *obj, double scale);
+
+/**
+ * @brief Control the scale of the object's image.
+ *
+ * @return Object's image scale.
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Image
+ */
+EAPI double elm_image_scale_get(const Evas_Object *obj);
 #include "elm_image.eo.legacy.h"
