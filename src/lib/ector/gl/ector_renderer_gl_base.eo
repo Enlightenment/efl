@@ -1,4 +1,4 @@
-type @extern GLshort: short; /* FIXME: We should not expose this in the API but probably redefine it. */
+import ector_types;
 
 abstract Ector.Renderer.GL.Base (Ector.Renderer.Generic.Base)
 {

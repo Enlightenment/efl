@@ -1,0 +1,2 @@
+type @extern GLshort: short; /* FIXME: We should not expose this in the API but probably redefine it. */
+

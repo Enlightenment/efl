@@ -1,4 +1,4 @@
-type @extern GLshort: short; /* FIXME: We should not expose this in the API but probably redefine it. */
+import ector_types;
 
 class Ector.GL.Surface (Ector.GL.Buffer, Ector.Generic.Surface)
 {
