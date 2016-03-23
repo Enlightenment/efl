@@ -94,6 +94,8 @@ _visuals_set(Evas_Object *obj)
      elm_layout_signal_emit(sd->main_layout, "elm,state,action_area,visible", "elm");
    else
      elm_layout_signal_emit(sd->main_layout, "elm,state,action_area,hidden", "elm");
+
+   edje_object_message_signal_process(elm_layout_edje_get(sd->main_layout));
 }
 
 static Eina_Bool
