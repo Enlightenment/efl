@@ -25,7 +25,7 @@ extern "C" {
 }
 
 #ifdef EFL_BETA_API_SUPPORT
-@ELM_ELOCATION_DEF@ ELM_ELOCATION
+#define ELM_ELOCATION
 #include <elm_widget_item.eo.hh>
 #include <elm_access.eo.hh>
 #include <elm_actionslider.eo.hh>
