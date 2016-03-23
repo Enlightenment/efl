@@ -133,19 +133,19 @@ interface Efl.Gfx.Buffer ()
            be negative.
          ]]
          params {
-            @out length: uint @nonull; [[Accessible buffer size in bytes, should not be $null.]]
+            @out length: int @nonull; [[Accessible buffer size in bytes, should not be $null.]]
             @in mode: Efl.Gfx.Buffer.Access_Mode; [[Specifies whether to map for read-only,
                                                     write-only or read-write access (OR combinaison of flags).]]
             @in x: int @optional;  [[X position of the top-left pixel to map, defaults to 0.]]
             @in y: int @optional;  [[Y position of the top-left pixel to map, defaults to 0.]]
-            @in w: uint @optional; [[If 0, defaults to the buffer width.]]
-            @in h: uint @optional; [[If 0, defaults to the buffer height.]]
+            @in w: int @optional; [[If 0, defaults to the buffer width.]]
+            @in h: int @optional; [[If 0, defaults to the buffer height.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[Requested colorspace. If differen from the internal cspace,
                                                         map should try to convert the data into a new buffer.
                                                         argb8888 by default.]]
-            @out stride: uint @optional; [[Returns the length in bytes of a mapped line]]
+            @out stride: int @optional; [[Returns the length in bytes of a mapped line]]
          }
-         return: ubyte* @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
+         return: void* @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
       }
       buffer_unmap {
          [[Unmap a region of this buffer, and update the internal data if needed.
@@ -153,8 +153,8 @@ interface Efl.Gfx.Buffer ()
            EFL will update the internal image if the map had write access.
          ]]
          params {
-            @in data: ubyte*; [[Data pointer returned by a previous call to map]]
-            @in length: uint; [[Must be the same as returned by map.]]
+            @in data: void*; [[Data pointer returned by a previous call to map]]
+            @in length: int; [[Must be the same as returned by map.]]
          }
       }
 

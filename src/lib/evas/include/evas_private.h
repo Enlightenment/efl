@@ -1361,8 +1361,8 @@ struct _Evas_Func
    Evas_Colorspace (*image_file_colorspace_get)(void *data, void *image);
    Eina_Bool (*image_can_region_get)       (void *data, void *image);
 
-   void *(*image_data_map)                 (void *data, void **image, unsigned int *length, unsigned int *stride, int x, int y, int w, int h, Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode);
-   void *(*image_data_unmap)               (void *data, void *image, void *map, unsigned int length);
+   void *(*image_data_map)                 (void *data, void **image, int *length, int *stride, int x, int y, int w, int h, Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode);
+   void *(*image_data_unmap)               (void *data, void *image, void *map, int length);
 
    int (*image_native_init)                (void *data, Evas_Native_Surface_Type type);
    void (*image_native_shutdown)           (void *data, Evas_Native_Surface_Type type);

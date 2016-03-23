@@ -7,7 +7,7 @@
 typedef struct {
    EINA_INLIST;
    unsigned char *ptr;
-   unsigned int   size; // in bytes
+   int size; // in bytes
 } Map_Data;
 
 typedef struct {
@@ -803,16 +803,16 @@ _efl_canvas_image_efl_gfx_buffer_buffer_data_get(Eo *eo_obj, Efl_Canvas_Image_Da
    return ENFN->image_data_direct(ENDT, o->engine_data, NULL);
 }
 
-EOLIAN static unsigned char *
+EOLIAN static void *
 _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, Efl_Canvas_Image_Data *pd,
-                                            unsigned int *length,
+                                            int *length,
                                             Efl_Gfx_Buffer_Access_Mode mode,
-                                            int x, int y, unsigned int w, unsigned int h,
-                                            Efl_Gfx_Colorspace cspace, unsigned int *stride)
+                                            int x, int y, int w, int h,
+                                            Efl_Gfx_Colorspace cspace, int *stride)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
-   unsigned int len = 0, str = 0;
+   int len = 0, str = 0;
    Map_Data *map = NULL;
    void *data;
 
@@ -852,7 +852,7 @@ end:
 
 EOLIAN static void
 _efl_canvas_image_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, Efl_Canvas_Image_Data *pd,
-                                              unsigned char *data, unsigned int length)
+                                              void *data, int length)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);

@@ -835,11 +835,10 @@ struct _RGBA_Pipe_Thread_Info
 
 struct _RGBA_Image_Data_Map {
    EINA_INLIST;
-   unsigned char  *ptr;
-   unsigned int    size, stride; // in bytes
+   unsigned char  *ptr, *baseptr;
+   int             size, stride; // in bytes
    int             rx, ry, rw, rh; // actual map region
-   unsigned char  *baseptr;
-   unsigned char   plane;
+   int             plane;
    Evas_Colorspace cspace;
    Eina_Bool       allocated; // ptr is malloc() for cow or cspace conv
    Efl_Gfx_Buffer_Access_Mode mode;

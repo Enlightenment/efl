@@ -1439,7 +1439,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 
 static void *
 eng_image_data_map(void *engdata EINA_UNUSED, void **image,
-                   unsigned int *length, unsigned int *stride,
+                   int *length, int *stride,
                    int x, int y, int w, int h,
                    Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode)
 {
@@ -1666,7 +1666,7 @@ _image_data_commit(RGBA_Image *im, RGBA_Image_Data_Map *map)
 }
 
 static void *
-eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, unsigned int length)
+eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int length)
 {
    RGBA_Image_Data_Map *map;
    RGBA_Image *im = image;
