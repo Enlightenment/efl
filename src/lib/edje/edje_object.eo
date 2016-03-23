@@ -552,7 +552,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          [[Remove a signal-triggered callback from an object.
 
            This function removes a callback, previously attached to the
-           emittion of a signal, from the object  obj. The parameters
+           emission of a signal, from the object  obj. The parameters
            emission,  source and  func must match exactly those passed to
            a previous call to edje_object_signal_callback_add(). The data
            pointer that was passed to this call will be returned.

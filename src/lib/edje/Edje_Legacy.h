@@ -61,7 +61,7 @@ EAPI Evas_Object *edje_object_add                 (Evas *evas);
  * @return The data pointer
  *
  * This function removes a callback, previously attached to the
- * emittion of a signal, from the object @a obj. The parameters @a
+ * emission of a signal, from the object @a obj. The parameters @a
  * emission, @a source and @a func must match exactly those passed to
  * a previous call to edje_object_signal_callback_add(). The data
  * pointer that was passed to this call will be returned.
@@ -86,7 +86,7 @@ EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char 
  * had this value)
  *
  * This function removes a callback, previously attached to the
- * emittion of a signal, from the object @a obj. The parameters
+ * emission of a signal, from the object @a obj. The parameters
  * @a emission, @a source, @a func and @a data must match exactly those
  * passed to a previous call to edje_object_signal_callback_add(). The
  * data pointer that was passed to this call will be returned.
