@@ -1,0 +1,71 @@
+class Elm.View_List (Eo.Base)
+{
+    legacy_prefix: null;
+    methods {
+        genlist_set {
+             [[Constructor wrapper
+
+               @since 1.11
+             ]]
+             params {
+                 @in genlist: Evas.Object*; [[Genlist object]]
+                 @in item_type: Elm.Genlist.Item.Type; [[Item type]]
+                 @in item_style: const(char)*; [[The current item style name. $null would be default.]]
+             }
+        }
+        evas_object_get {
+             [[Return evas object
+
+               @since 1.11
+             ]]
+             params {
+                 @out widget: Evas.Object*; [[Returned widget]]
+             }
+        }
+        property_connect {
+             [[Connect property
+
+               @since 1.11
+             ]]
+             params {
+                 @in property: const(char)*; [[Property name]]
+                 @in part: const(char)*; [[Edje's theme part]]
+             }
+        }
+        model_set {
+             [[Set model
+
+               @since 1.11
+             ]]
+             params {
+                 @in model: Efl.Model.Base *; [[New Emodel to set]]
+             }
+        }
+        model_unset {
+             [[Unset model
+
+               @since 1.11
+             ]]
+        }
+        model_get {
+             [[Get model
+
+               @since 1.11
+             ]]
+             params {
+                 @out model: Efl.Model.Base *; [[Returned Emodel]]
+             }
+        }
+    }
+    /* For some reason the following comment after the event doesn't work: Event dispatch when a model is selected */
+    events {
+        model,selected;
+    }
+
+    implements {
+        Eo.Base.destructor;
+    }
+    constructors {
+        .genlist_set;
+    }
+}

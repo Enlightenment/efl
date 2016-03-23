@@ -1,0 +1,43 @@
+group { name: "elm/video/base/default";
+   parts {
+      part { name: "clipper"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "darker" 0.0;
+            color: 128 128 128 255;
+         }
+      }
+      part { name: "elm.swallow.video"; type: SWALLOW;  mouse_events: 1;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "elm,video,load"; source: "elm";
+         action: STATE_SET "darker" 0.0;
+         target: "clipper";
+      }
+      program {
+         signal: "elm,video,play"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.2 CURRENT;
+         target: "clipper";
+      }
+      program {
+         signal: "elm,video,end"; source: "elm";
+         action: STATE_SET "darker" 0.0;
+         transition: SINUSOIDAL 0.5 CURRENT;
+         target: "clipper";
+      }
+      program {
+         signal: "elm,video,pause"; source: "elm";
+         action: STATE_SET "darker" 0.0;
+         transition: SINUSOIDAL 0.7 CURRENT;
+         target: "clipper";
+      }
+   }
+}

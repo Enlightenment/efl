@@ -1,0 +1,136 @@
+enum Elm.Scroller.Policy
+{
+   [[Type that controls when scrollbars should appear.
+
+     See also @Elm.Interface_Scrollable.policy.set.
+   ]]
+   auto = 0, [[Show scrollbars as needed]]
+   on, [[Always show scrollbars]]
+   off, [[Never show scrollbars]]
+   last
+}
+
+enum Elm.Scroller.Single_Direction
+{
+   [[Type that controls how the content is scrolled.
+
+     See also @Elm.Interface_Scrollable.single_direction.set.
+   ]]
+   none = 0, [[Scroll every direction]]
+   soft, [[Scroll single direction if the direction is certain]]
+   hard, [[Scroll only single direction]]
+   last
+}
+
+enum Elm.Scroller.Movement_Block
+{
+   [[Type that blocks the scroll movement in one or more direction.
+
+     @since 1.8
+   ]]
+   legacy: elm_scroller_movement;
+   no_block = 1 << 0, [[Do not block movements]]
+   block_vertical = 1 << 1, [[Block vertical movements]]
+   block_horizontal = 1 << 2 [[Block horizontal movements]]
+}
+
+class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
+                    Elm.Interface_Atspi_Widget_Action,
+                    Evas.Scrollable_Interface)
+{
+   eo_prefix: elm_obj_scroller;
+   methods {
+      @property propagate_events {
+         set {
+            [[Set event propagation on a scroller
+
+              This enables or disables event propagation from the scroller
+              content to the scroller and its parent. By default event
+              propagation is enabled.
+            ]]
+         }
+         get {
+            [[Get event propagation for a scroller
+
+              This gets the event propagation for a scroller.
+            ]]
+         }
+         values {
+            propagation: bool; [[The propagation state]]
+         }
+      }
+      @property custom_widget_base_theme {
+         set {
+            [[Set custom theme elements for the scroller]]
+         }
+         values {
+            klass: const(char)*;
+            group: const(char)*;
+         }
+      }
+      page_scroll_limit_set @const {
+         [[Set the maximum of the movable page at a flicking.
+
+           The value of maximum movable page should be more than 1.
+
+           @since 1.8
+         ]]
+         params {
+            @in page_limit_h: int; [[The maximum of the movable horizontal page]]
+            @in page_limit_v: int; [[The maximum of the movable vertical page]]
+         }
+      }
+      page_scroll_limit_get @const {
+         [[Get the maximum of the movable page at a flicking.
+
+           @since 1.8
+         ]]
+         params {
+            @in page_limit_h: int *; [[The maximum of the movable horizontal page]]
+            @in page_limit_v: int *; [[The maximum of the movable vertical page]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.move;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.member_add;
+      Evas.Object_Smart.resize;
+      Elm.Widget.theme_apply;
+      Elm.Widget.activate;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.focus_direction;
+      Elm.Widget.sub_object_del;
+      Elm.Widget.event;
+      Elm.Container.content_get;
+      Elm.Container.content_set;
+      Elm.Container.content_unset;
+      Elm.Layout.sizing_eval;
+      Elm.Interface_Scrollable.page_size.set;
+      Elm.Interface_Scrollable.policy.set;
+      Elm.Interface_Scrollable.single_direction;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+   events {
+      scroll,page,changed;
+      hbar,unpress;
+      hbar,press;
+      hbar,drag;
+      vbar,unpress;
+      vbar,press;
+      vbar,drag;
+      scroll,left;
+      scroll,right;
+      scroll,up;
+      scroll,down;
+      edge,left;
+      edge,right;
+      edge,top;
+      edge,bottom;
+   }
+
+}

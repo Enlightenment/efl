@@ -1,0 +1,265 @@
+import evas_image;
+
+enum Elm.Image_Orient
+{
+   [[
+     Using Evas_Image_Orient enums.
+     @since 1.14
+   ]]
+   legacy: elm_image;
+   orient_none     =  Evas.Image_Orient.orient_none,
+   orient_0        =  Evas.Image_Orient.orient_0,
+   rotate_90       =  Evas.Image_Orient.orient_90,
+   orient_90       =  Evas.Image_Orient.orient_90,
+   rotate_180      =  Evas.Image_Orient.orient_180,
+   orient_180      =  Evas.Image_Orient.orient_180,
+   rotate_270      =  Evas.Image_Orient.orient_270,
+   orient_270      =  Evas.Image_Orient.orient_270,
+   flip_horizontal =  Evas.Image_Orient.flip_horizontal,
+   flip_vertical   =  Evas.Image_Orient.flip_vertical,
+   flip_transpose  =  Evas.Image_Orient.flip_transpose,
+   flip_transverse =  Evas.Image_Orient.flip_transverse
+}
+
+struct Elm.Image_Progress
+{
+   [[
+     Structure associated with smart callback 'download,progress'.
+     @since 1.8
+   ]]
+   now:   double;
+   total: double;
+}
+
+struct Elm.Image.Error
+{
+   [[
+     Structure associated with smart callback 'download,progress'.
+     @since 1.8
+   ]]
+   status:     int;
+   open_error: Eina.Bool;
+}
+
+class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
+                 Edje.Object, Efl.Image, Evas.Draggable_Interface,
+                 Elm.Interface_Atspi_Image, Elm.Interface_Atspi_Widget_Action,
+                 Efl.Player)
+{
+   eo_prefix: elm_obj_image;
+   methods {
+      @property resize_down {
+         [[Control whether the object's image can be resized to a size smaller than the original one.
+
+           @since 1.7]]
+         set {
+            legacy: null;
+         }
+         get {
+            legacy: null;
+         }
+         values {
+            resize_down: bool; [[whether resizing down is allowed]]
+         }
+      }
+      @property resize_up {
+         [[Control whether the object's image can be resized to a size larget than the original one.
+
+           @since 1.7]]
+         set {
+            legacy: null;
+         }
+         get {
+            legacy: null;
+         }
+         values {
+            resize_up: bool; [[whether resizing up is allowed]]
+         }
+      }
+      @property no_scale {
+         [[Control scaling behaviour of this object.
+
+           This function disables scaling of the elm_image widget through the
+           function elm_object_scale_set(). However, this does not affect the widget
+           size/resize in any way. For that effect, take a look at
+           @.resizable and @Elm.Widget.scale]]
+         set {
+         }
+         get {
+         }
+         values {
+            no_scale: bool; [[$true if the object is not scalable, $false otherwise. Default is $false.]]
+         }
+      }
+      @property fill_inside {
+         [[Control the resize method for the object's internal image when maintaining a given aspect ratio.
+
+           If $fill_inside is true, image does not overflow the widget and
+           blank spaces are added to fill the space that is still free. If it
+           is false, the image overflows the image will fill all space and
+           overflow in its larger dimension.
+
+           You can think of it as "fill: inside" or "fill: outside" and not as
+           "fill the inside".
+
+           @since 1.7]]
+         set {
+            legacy: null;
+         }
+         get {
+            legacy: null;
+         }
+         values {
+            fill_inside: bool; [[Resize method for the object's internal image.]]
+         }
+      }
+      @property aspect_fixed {
+         set {
+            [[Control whether the original aspect ratio of the image should be kept on resize.
+
+              The original aspect ratio (width / height) of the image is usually
+              distorted to match the object's size. Enabling this option will retain
+              this original aspect, and the way that the image is fit into the object's
+              area depends on the option set by @.fill_outside.]]
+         }
+         get {
+         }
+         values {
+            fixed: bool; [[$true if the image should retain the aspect, $false otherwise.]]
+         }
+      }
+      @property orient {
+         [[Contrtol the image orientation.
+
+           This function allows to rotate or flip the given image.]]
+         set {
+         }
+         get {
+         }
+         values {
+            orient: Elm.Image_Orient; [[The image orientation Elm.Image.Orient Default is #ELM_IMAGE_ORIENT_NONE.]]
+         }
+      }
+      @property fill_outside {
+         [[Control if the image fills the entire object area, when keeping the aspect ratio.
+
+           When the image should keep its aspect ratio even if resized to another
+           aspect ratio, there are two possibilities to resize it: keep the entire
+           image inside the limits of height and width of the object ($fill_outside
+           is $false) or let the extra width or height go outside of the object,
+           and the image will fill the entire object ($fill_outside is $true).
+
+           Note: This option will have no effect if @.aspect_fixed
+           is set to $false.
+
+           See also @.fill_inside.]]
+         set {
+         }
+         get {
+         }
+         values {
+            fill_outside: bool; [[$true if the object is filled outside, $false otherwise. Default is $false.]]
+         }
+      }
+      @property resizable {
+         [[Control if the object is (up/down) resizable.
+
+           This function limits the image resize ability. If $size_up is set to
+           $false, the object can't have its height or width resized to a value
+           higher than the original image size. Same is valid for $size_down.]]
+         set {
+         }
+         get {
+         }
+         values {
+            up: bool; [[A bool to set if the object is resizable up. Default is $true.]]
+            down: bool; [[A bool to set if the object is resizable down. Default is $true.]]
+         }
+      }
+      @property preload_disabled {
+         set {
+            [[Enable or disable preloading of the image]]
+         }
+         values {
+            disabled: bool; [[If true, preloading will be disabled]]
+         }
+      }
+      @property object {
+         get {
+            [[Get the inlined image object of the image widget.
+
+              This function allows one to get the underlying $Evas_Object of type
+              Image from this elementary widget. It can be useful to do things like get
+              the pixel data, save the image to a file, etc.
+
+              Note: Be careful to not manipulate it, as it is under control of
+              elementary.]]
+
+            return: Evas.Object *; [[The inlined image object, or NULL if none exists]]
+         }
+      }
+      @property object_size {
+         get {
+            [[Get the current size of the image.
+
+              This is the real size of the image, not the size of the object.]]
+         }
+         values {
+            w: int; [[Pointer to store width, or NULL.]]
+            h: int; [[Pointer to store height, or NULL.]]
+         }
+      }
+      sizing_eval {
+         [[Re-evaluate the object's final geometry.
+
+           @since 1.7]]
+         legacy: null;
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Efl.File.file.set;
+      Efl.File.file.get;
+      Efl.File.mmap.set;
+      Efl.File.async.set;
+      Efl.File.async.get;
+      Efl.File.async_wait;
+      Efl.Image_Load.load_size.set;
+      Efl.Image_Load.load_size.get;
+      Efl.Image.smooth_scale.set;
+      Efl.Image.smooth_scale.get;
+      Efl.Player.playable.get;
+      Efl.Player.play.set;
+      Efl.Player.play.get;
+      Edje.Object.signal_emit;
+      Edje.Object.size_min.get;
+      Edje.Object.size_max.get;
+      Edje.Object.size_min_calc;
+      Edje.Object.calc_force;
+      Evas.Object_Smart.hide;
+      Evas.Object_Smart.clip.set;
+      Evas.Object_Smart.clip_unset;
+      Evas.Object_Smart.show;
+      Evas.Object_Smart.color.set;
+      Evas.Object_Smart.move;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.member_add;
+      Evas.Object_Smart.resize;
+      Evas.Draggable_Interface.drag_target.set;
+      Evas.Draggable_Interface.drag_target.get;
+      Elm.Widget.theme_apply;
+      Elm.Widget.event;
+      Elm.Interface_Atspi_Image.extents.get;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+   events {
+      drop;
+      download,start;
+      download,progress;
+      download,done;
+      download,error;
+   }
+
+}

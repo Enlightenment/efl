@@ -1,0 +1,91 @@
+group { name: "elm/photo/base/default";
+   images.image: "win_shadow.png" COMP;
+   parts {
+      part { name: "shadow"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "win_shadow.png";
+            image.border: 14 14 14 14;
+            image.middle: 0;
+            rel1.to: "base";
+            rel1.offset: -7  -3;
+            rel2.to: "base";
+            rel2.offset: 6 11;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "base"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.offset: 7 7;
+            rel2.offset: -8 -8;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state:    "default" 0.0;
+            rel1.to: "base";
+            rel1.offset: 4 4;
+            rel2.to: "base";
+            rel2.offset: -5 -5;
+         }
+      }
+      part { name: "bg"; type: RECT;
+         description { state:    "default" 0.0;
+            rel1.to: "clip";
+            rel2.to: "clip";
+            color: DARK_GREY_BG_COLOR;
+         }
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            rel1.to: "clip";
+            rel2.to: "clip";
+         }
+      }
+   }
+}
+
+group { name: "elm/photo/base/shadow";
+   inherit: "elm/photo/base/default";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            new w, h;
+            w = getarg(2); h = getarg(3);
+            if ((w > 0) && (h > 0)) {
+               custom_state(PART:"size", "default", 0.0);
+               set_state_val(PART:"size", STATE_MIN, w, h);
+               set_state_val(PART:"size", STATE_REL1, 0.5, 0.5);
+               set_state_val(PART:"size", STATE_REL2, 0.5, 0.5);
+               set_state_val(PART:"size", STATE_REL1_OFFSET, 0, 0);
+               set_state_val(PART:"size", STATE_REL2_OFFSET, -1, -1);
+               set_state(PART:"size", "custom", 0.0);
+            } else {
+               set_state(PART:"size", "default", 0.0);
+            }
+         }
+      }
+   }
+   parts {
+      part { name: "size"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.offset: 7 7;
+            rel2.offset: -8 -8;
+         }
+      }
+      part { name: "base"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "size";
+            rel1.offset: 0 0;
+            rel2.to: "size";
+            rel2.offset: -1 -1;
+         }
+      }
+      part { name: "clip";
+         description { state: "default" 0.0;
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+         }
+      }
+   }
+}

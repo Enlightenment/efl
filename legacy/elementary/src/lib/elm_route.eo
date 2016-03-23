@@ -1,0 +1,48 @@
+class Elm.Route (Elm.Widget)
+{
+   eo_prefix: elm_obj_route;
+   methods {
+      @property emap {
+         set {
+            [[No description supplied by the EAPI.]]
+         }
+         values {
+            emap: void *;
+         }
+      }
+      @property longitude_min_max {
+         get {
+            [[Get the minimum and maximum values along the longitude.
+
+              Note: If only one value is needed, the other pointer can be
+              passed as null.
+            ]]
+         }
+         values {
+            min: double; [[Pointer to store the minimum value.]]
+            max: double; [[Pointer to store the maximum value.]]
+         }
+      }
+      @property latitude_min_max {
+         get {
+            [[Get the minimum and maximum values along the latitude.
+
+              Note: If only one value is needed, the other pointer can be
+              passed as null.
+            ]]
+         }
+         values {
+            min: double; [[Pointer to store the minimum value.]]
+            max: double; [[Pointer to store the maximum value.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.theme_apply;
+   }
+
+}

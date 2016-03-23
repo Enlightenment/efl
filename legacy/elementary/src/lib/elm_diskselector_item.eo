@@ -1,0 +1,90 @@
+class Elm.Diskselector_Item(Elm.Widget_Item)
+{
+      eo_prefix: elm_obj_diskselector_item;
+      methods {
+           @property prev {
+                get {
+                     [[Get the item before $item in diskselector.
+
+                       The list of items follows append order. So it will return item appended
+                       just before $item and that wasn't deleted.
+
+                       If it is the first item, $null will be returned.
+                       First item can be get by \@ref elm_diskselector_first_item_get.
+
+                       See also \@ref elm_diskselector_item_append,
+                       \@ref elm_diskselector_items_get.
+                    ]]
+                }
+                values {
+                     item: Elm.Widget_Item *; [[The item before $item, or $null if none or on failure.]]
+                }
+           }
+           @property next {
+                get {
+                     [[Get the item after $item in diskselector.
+
+                       The list of items follows append order. So it will return item appended
+                       just after $item and that wasn't deleted.
+
+                       If it is the last item, $null will be returned.
+                       Last item can be get by \@ref elm_diskselector_last_item_get.
+
+                       See also \@ref elm_diskselector_item_append,
+                       \@ref elm_diskselector_items_get.
+                     ]]
+                }
+                values {
+                     item: Elm.Widget_Item *; [[The item after $item, or $null if none or on failure.]]
+                }
+           }
+           @property selected {
+                get {
+                     [[Get whether the $item is selected or not.
+
+                       See also \@ref elm_diskselector_selected_item_set for details,
+                       \@ref elm_diskselector_item_selected_get.
+                     ]]
+                }
+                set {
+                     [[Set the selected state of an item.
+
+                      This sets the selected state of the given $item as $true,
+                      for selected and $false for not selected.
+
+                      If a new item is selected the previously selected will be unselected.
+                      Previously selected item can be get with function
+                      \@ref elm_diskselector_selected_item_get.
+
+                      If the $item is unselected, the first item of diskselector will
+                      be selected.
+
+                      Selected items will be visible on center position of diskselector.
+                      So if it was on another position before selected, or was invisible,
+                      diskselector will animate items until the selected item reaches center
+                      position.
+
+                      See also \@ref elm_diskselector_item_selected_get,
+                      \@ref elm_diskselector_selected_item_get.
+                    ]]
+                }
+                values {
+                     selected: bool; [[The selected state]]
+                }
+           }
+           /*      init { FIXME
+                   params {
+                   Evas_Smart_Cb func;
+                   const(void)* data;
+                   }
+                   }*/
+      }
+      implements {
+           Eo.Base.constructor;
+           Eo.Base.destructor;
+           Elm.Widget_Item.part_text.get;
+           Elm.Widget_Item.part_text.set;
+           Elm.Widget_Item.part_content.get;
+           Elm.Widget_Item.part_content.set;
+      }
+}

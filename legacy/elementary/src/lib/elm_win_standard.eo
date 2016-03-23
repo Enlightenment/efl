@@ -1,0 +1,7 @@
+class Elm.Win_Standard (Elm.Win)
+{
+   data: null;
+   implements {
+      Eo.Base.finalize;
+   }
+}

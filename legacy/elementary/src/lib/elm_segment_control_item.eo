@@ -1,0 +1,45 @@
+class Elm.Segment_Control_Item(Elm.Widget_Item)
+{
+   eo_prefix: elm_obj_segment_control_item;
+   methods {
+      index_get @const {
+             [[Get the index of an item.
+
+               Index is the position of an item in segment control widget. Its
+               range is from 0 to (count - 1).
+               Count is the number of items, that can be get with elm_segment_control_item_count_get()]]
+
+             return: int(-1); [[The position of item in segment control widget.]]
+        }
+      object_get @const {
+             [[Get the real Evas(Edje) object created to implement the view of a given segment_control item.
+
+               Base object is the @Evas.Object that represents that item.]]
+             return: Evas.Object*; [[The base Edje object associated with $it]]
+        }
+      selected_set {
+             [[Set the selected state of an item.
+
+               This sets the selected state of the given item $it.
+               $true for selected, $false for not selected.
+
+               If a new item is selected the previously selected will be unselected.
+               Selected item can be got with function elm_segment_control_item_selected_get().
+
+               The selected item always will be highlighted on segment control.]]
+
+             params {
+                  selected: bool; [[The selected state.]]
+             }
+        }
+   }
+   implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+        Elm.Widget_Item.access_register;
+        Elm.Widget_Item.part_text.get;
+        Elm.Widget_Item.part_text.set;
+        Elm.Widget_Item.part_content.get;
+        Elm.Widget_Item.part_content.set;
+   }
+}

@@ -1,0 +1,88 @@
+enum Elm.Panel.Orient
+{
+   [[Panel orientation mode]]
+
+   top, [[Panel (dis)appears from the top]]
+   bottom, [[Panel (dis)appears from the bottom]]
+   left, [[Panel (dis)appears from the left]]
+   right [[Panel (dis)appears from the right]]
+}
+
+class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
+                 Elm.Interface_Atspi_Widget_Action)
+{
+   eo_prefix: elm_obj_panel;
+   methods {
+      @property orient {
+         set {
+            [[Set the orientation of the panel
+
+              Set from where the panel will (dis)appear.
+            ]]
+         }
+         get {
+            [[Get the orientation of the panel.]]
+         }
+         values {
+            orient: Elm.Panel.Orient(Elm.Panel.Orient.left); [[The panel orientation.]]
+         }
+      }
+      @property hidden {
+         set {
+            [[Set the state of the panel.]]
+         }
+         get {
+            [[Get the state of the panel.]]
+         }
+         values {
+            hidden: bool; [[If true, the panel will run the animation to disappear.]]
+         }
+      }
+      @property scrollable {
+         set {
+            [[Set the scrollability of the panel.]]
+         }
+         get {
+            [[Get the state of the scrollability.
+
+              @since 1.12
+            ]]
+         }
+         values {
+            scrollable: bool; [[The scrollable state.]]
+         }
+      }
+      @property scrollable_content_size {
+         set {
+            [[Set the size of the scrollable panel.]]
+         }
+         values {
+            ratio: double;
+         }
+      }
+      toggle {
+         [[Toggle the hidden state of the panel from code]]
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.member_add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.resize;
+      Evas.Object_Smart.move;
+      Elm.Widget.theme_apply;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.disable;
+      Elm.Widget.access;
+      Elm.Widget.event;
+      Elm.Widget.on_focus_region;
+      Elm.Container.content_get;
+      Elm.Container.content_unset;
+      Elm.Container.content_set;
+      Elm.Layout.sizing_eval;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+}

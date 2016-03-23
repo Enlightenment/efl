@@ -1,0 +1,15 @@
+collections {
+   group {
+      name: "elm_prefs_swallow";
+
+      parts {
+         part {
+            name: "content";
+            type: SWALLOW;
+
+            description {
+            }
+         }
+      }
+   }
+}

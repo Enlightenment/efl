@@ -1,0 +1,159 @@
+group { name: "e/modules/music-control/icon";
+   alias: "modules/music-control/icon";
+   max: 24 24;
+   images.image: "music_control_icon.png" COMP;
+   parts {
+      part { name: "image"; mouse_events: 0;
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "music_control_icon.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/music-control/main";
+   alias: "modules/music-control/main";
+   images.image: "music_control_icon.png" COMP;
+   parts {
+      part { name: "icon";
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "music_control_icon.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/music-control/popup";
+   alias: "modules/music-control/popup";
+   min: 150 50;
+   images.image: "icon_prev.png" COMP;
+   images.image: "icon_next.png" COMP;
+   images.image: "icon_pause.png" COMP;
+   images.image: "icon_play.png" COMP;
+   styles {
+      style { name: "music_control_metadata_style";
+         base: "font="FN" font_size=10 align=left text_class=tb_plain color=#ffff style=shadow,bottom shadow_color=#00000080";
+         tag: "title" "+ font_size=12 font="FNBD" text_class=tb_big";
+         tag: "tag" "+ font_size=8 color=#888f";
+         tag: "br" "\n";
+      }
+   }
+   script {
+      public message(Msg_Type:type, id, ...) {
+         new txt[128];
+         getsarg(2, txt, 128);
+         set_text(PART:"player_name", txt);
+      }
+   }
+   parts {
+      part { name: "cover_bg";
+         description { state: "default" 0;
+            min: 90 90;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.35 1.0;
+            image.normal: "music_control_icon.png";
+         }
+      }
+      part { name: "cover_swallow"; type: SWALLOW;
+         description { state: "default" 0;
+            rel1.to: "cover_bg";
+            rel2.to: "cover_bg";
+         }
+      }
+      part { name: "player_name"; type: TEXT;
+         effect: GLOW;
+         description { state: "default" 0;
+            color: FN_COL_HIGHLIGHT;
+            text.size: 12;
+            text.text: "Music player";
+            text.font: FNBD;
+            rel1.to: "cover_bg";
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: 0 12;
+         }
+      }
+      part { name: "metadata"; type: TEXTBLOCK;
+         description { state: "default" 0;
+            text {
+               style: "music_control_metadata_style";
+               text: "Song Title";
+               align: 0.0 0.0;
+            }
+            rel1.to: "player_name";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 3 0;
+         }
+      }
+      part { name: "previous_btn";
+         description { state: "default" 0;
+            max: 32 32;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            align: 0.1 1.0;
+            rel1.relative: 0.35 0.0;
+            image.normal: "icon_prev.png";
+         }
+      }
+      part { name: "play_btn";
+         description { state: "default" 0;
+            max: 32 32;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            align: 0.5 1.0;
+            rel1.relative: 0.35 0.0;
+            image.normal: "icon_pause.png";
+         }
+         description { state: "play" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "icon_play.png";
+         }
+      }
+      part { name: "next_btn";
+         description { state: "default" 0;
+            max: 32 32;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            align: 0.9 1.0;
+            rel1.relative: 0.35 0.0;
+            rel1.to: "player_name";
+            image.normal: "icon_next.png";
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "mouse,clicked,*"; source: "previous_btn";
+         action: SIGNAL_EMIT "btn,clicked" "previous";
+      }
+      program {
+         signal: "mouse,clicked,*"; source: "play_btn";
+         action: SIGNAL_EMIT "btn,clicked" "play";
+      }
+      program {
+         signal: "mouse,clicked,*"; source: "next_btn";
+         action: SIGNAL_EMIT "btn,clicked" "next";
+      }
+      program {
+         signal: "btn,state,image,play"; source: "play";
+         action: STATE_SET "play" 0.0;
+         transition: LINEAR 0.1;
+         target: "play_btn";
+      }
+      program {
+         signal: "btn,state,image,play,no_delay"; source: "play";
+         action: STATE_SET "play" 0.0;
+         transition: LINEAR 0.0;
+         target: "play_btn";
+      }
+      program {
+         signal: "btn,state,image,pause"; source: "play";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.1;
+         target: "play_btn";
+      }
+      program {
+         signal: "mouse,clicked,*"; source: "player_name";
+         action: SIGNAL_EMIT "label,clicked" "player_name";
+      }
+   }
+}

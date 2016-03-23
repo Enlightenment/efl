@@ -1,0 +1,69 @@
+class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_Interface)
+{
+   eo_prefix: elm_obj_photo;
+   methods {
+      @property fill_inside {
+         set {
+            [[Set if the photo should be completely visible or not.]]
+         }
+         get {
+            [[Get if the photo should be completely visible or not.]]
+         }
+         values {
+            fill: bool; [[Photo visibility.]]
+         }
+      }
+      @property aspect_fixed {
+         set {
+            [[Set whether the original aspect ratio of the photo should be kept
+              on resize.
+
+              The original aspect ratio (width / height) of the photo is
+              usually distorted to match the object's size. Enabling this
+              option will fix this original aspect, and the way that the
+              photo is fit into the object's area.
+
+              See also @.aspect_fixed.get.
+            ]]
+         }
+         get {
+            [[Get if the object keeps the original aspect ratio.]]
+         }
+         values {
+            fixed: bool; [[$true if the photo should fix the aspect,
+                           $false otherwise.]]
+         }
+      }
+      @property size {
+         set {
+            [[Set the size that will be used on the photo]]
+         }
+         get {
+            [[Get the size that will be used on the photo]]
+         }
+         values {
+            size: int; [[The size of the photo]]
+         }
+      }
+      thumb_set @const {
+         [[Set the file that will be used as thumbnail in the photo.]]
+         params {
+            @in file: const(char)* @nullable; [[The path to file that will be
+                                                used as thumbnail.]]
+            @in group: const(char)* @optional; [[The key used in case of an EET
+                                                 file.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Efl.File.file.set;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Draggable_Interface.drag_target.set;
+      Evas.Draggable_Interface.drag_target.get;
+      Elm.Widget.theme_apply;
+   }
+
+}

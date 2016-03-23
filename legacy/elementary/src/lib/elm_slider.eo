@@ -1,0 +1,295 @@
+class Elm.Slider (Elm.Layout, Elm.Interface_Atspi_Value,
+                  Elm.Interface_Atspi_Widget_Action)
+{
+   eo_prefix: elm_obj_slider;
+   methods {
+      @property horizontal {
+         set {
+            [[Set the orientation of a given slider widget.
+
+              Use this function to change how your slider is to be
+              disposed: vertically or horizontally.
+
+              By default it's displayed horizontally.
+            ]]
+         }
+         get {
+            [[Get the orientation of a given slider widget.]]
+         }
+         values {
+            horizontal: bool;
+         }
+      }
+      @property value {
+         set {
+            [[Set the value the slider displays.
+
+              Value will be presented on the unit label following format
+              specified with @.unit_format.set and on indicator with
+              @.indicator_format.set.
+
+              Note: The value must to be between min and max values. This values
+              are set by @.min_max.set.
+            ]]
+         }
+         get {
+            [[Get the value displayed by the slider.]]
+         }
+         values {
+            val: double; [[The value to be displayed.]]
+         }
+      }
+      @property indicator_format {
+         set {
+            [[Set the format string for the indicator label.
+
+              The slider may display its value somewhere else then unit label,
+              for example, above the slider knob that is dragged around. This
+              function sets the format string used for this.
+
+              If $null, indicator label won't be visible. If not it sets the
+              format string for the label text. To the label text is provided
+              a floating point value, so the label text can display up to 1
+              floating point value. Note that this is optional.
+
+              Use a format string such as "%1.2f meters" for example, and it
+              will display values like: "3.14 meters" for a value equal to
+              3.14159.
+
+              Default is indicator label disabled.
+            ]]
+         }
+         get {
+            [[Get the indicator label format of the slider.
+
+              The slider may display its value somewhere else then unit label,
+              for example, above the slider knob that is dragged around. This
+              function gets the format string used for this.
+            ]]
+         }
+         values {
+            indicator: const(char)* @nullable; [[The format string for the indicator display.]]
+         }
+      }
+      @property inverted {
+         set {
+            [[Invert a given slider widget's displaying values order
+
+              A slider may be inverted, in which state it gets its values
+              inverted, with high vales being on the left or top and low
+              values on the right or bottom, as opposed to normally have
+              the low values on the former and high values on the latter,
+              respectively, for horizontal and vertical modes.
+            ]]
+         }
+         get {
+            [[Get whether a given slider widget's displaying values are
+              inverted or not.
+            ]]
+         }
+         values {
+            inverted: bool; [[Use $true to make $obj inverted, $false to bring
+                              it back to default, non-inverted values.]]
+         }
+      }
+      @property indicator_show {
+         set {
+            [[Set whether to enlarge slider indicator (augmented knob) or not.
+
+              By default, indicator will be bigger while dragged by the user.
+
+              Warning: It won't display values set with @.indicator_format.set
+              if you disable indicator.
+            ]]
+         }
+         get {
+            [[Get whether a given slider widget's enlarging indicator or not.]]
+         }
+         values {
+            show: bool; [[$true will make it enlarge, $false will
+                          let the knob always at default size.]]
+         }
+      }
+      @property min_max {
+         set {
+            [[Set the minimum and maximum values for the slider.
+
+              Define the allowed range of values to be selected by the user.
+
+              If actual value is less than $min, it will be updated to $min.
+              If it is bigger then $max, will be updated to $max. Actual value
+              can be get with @.value,get.
+
+              By default, min is equal to 0.0, and max is equal to 1.0.
+
+              Warning: maximum must be greater than minimum, otherwise behavior
+              is undefined.
+            ]]
+         }
+         get {
+            [[Get the minimum and maximum values of the slider.
+
+              Note: If only one value is needed, the other pointer can be passed
+              as $null.
+            ]]
+         }
+         values {
+            min: double; [[The minimum value.]]
+            max: double; [[The maximum value.]]
+         }
+      }
+      @property unit_format {
+         set {
+            [[Set the format string for the unit label.
+
+              Unit label is displayed all the time, if set, after slider's bar.
+              In horizontal mode, at right and in vertical mode, at bottom.
+
+              If $null, unit label won't be visible. If not it sets the format
+              string for the label text. To the label text is provided a
+              floating point value, so the label text can display up to 1
+              floating point value. Note that this is optional.
+
+              Use a format string such as "%1.2f meters" for example, and it
+              will display values like: "3.14 meters" for a value equal to
+              3.14159.
+
+              Default is unit label disabled.
+            ]]
+         }
+         get {
+            [[Get the unit label format of the slider.
+
+              Unit label is displayed all the time, if set, after slider's bar.
+              In horizontal mode, at right and in vertical mode, at bottom.
+            ]]
+         }
+         values {
+            units: const(char)* @nullable; [[The format string for the unit display.]]
+         }
+      }
+      @property indicator_show_on_focus {
+         set {
+            [[Show the indicator of slider on focus.]]
+         }
+         get {
+            [[Get whether the indicator of the slider is set or not.]]
+         }
+         values {
+            flag: bool;
+         }
+      }
+      @property span_size {
+         set {
+            [[Set the (exact) length of the bar region of a given slider widget.
+
+              This sets the minimum width (when in horizontal mode) or height
+              (when in vertical mode) of the actual bar area of the slider
+              $obj. This in turn affects the object's minimum size. Use
+              this when you're not setting other size hints expanding on the
+              given direction (like weight and alignment hints) and you would
+              like it to have a specific size.
+
+              Note: Icon, end, label, indicator and unit text around $obj
+              will require their own space, which will make $obj to require
+              more the $size, actually.
+            ]]
+         }
+         get {
+            [[Get the length set for the bar region of a given slider widget
+
+              If that size was not set previously, with @.span_size.set, this
+              call will return $0.
+            ]]
+         }
+         values {
+            size: Evas.Coord; [[The length of the slider's bar region.]]
+         }
+      }
+      @property step {
+         set {
+            [[Set the step by which slider indicator will move.
+
+              This value is used when draggable object is moved automatically
+              i.e., in case of key event when up/down/left/right key is pressed
+              or in case when accessibility is set and flick event is used to
+              inc/dec slider values. By default step value is equal to 0.05.
+
+              @since 1.8
+            ]]
+         }
+         get {
+            [[Get the step by which slider indicator moves.
+
+              @since 1.8
+            ]]
+         }
+         values {
+            step: double; [[The step value.]]
+         }
+      }
+      @property indicator_visible_mode {
+         set {
+            [[Set the visible mode of indicator.]]
+         }
+         get {
+            [[Get the visible mode of indicator.]]
+         }
+         values {
+            indicator_visible_mode: Elm.Slider.Indicator_Visible_Mode; [[The indicator visible mode.]]
+         }
+      }
+      @property indicator_format_function {
+         set {
+            [[Set the format function pointer for the indicator label
+
+              Set the callback function to format the indicator string.
+            ]]
+         }
+         values {
+            func: slider_func_type @nullable; [[The indicator format function.]]
+            free_func: slider_freefunc_type @nullable; [[The freeing function for the format string.]]
+         }
+      }
+      @property units_format_function {
+         set {
+            [[Set the format function pointer for the units label
+
+              Set the callback function to format the units string.
+            ]]
+         }
+         values {
+            func: slider_func_type @nullable; [[The units format function.]]
+            free_func: slider_freefunc_type @nullable; [[The freeing function for the format string.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.calculate;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.theme_apply;
+      Elm.Widget.activate;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.on_focus;
+      Elm.Widget.event;
+      Elm.Layout.text_aliases.get;
+      Elm.Layout.content_aliases.get;
+      Elm.Layout.sizing_eval;
+      Elm.Interface_Atspi_Value.value_and_text.get;
+      Elm.Interface_Atspi_Value.value_and_text.set;
+      Elm.Interface_Atspi_Value.range.get;
+      Elm.Interface_Atspi_Value.increment.get;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+   events {
+      changed;
+      delay,changed;
+      slider,drag,start;
+      slider,drag,stop;
+   }
+
+}

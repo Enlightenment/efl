@@ -1,0 +1,454 @@
+//  c1 - c4
+//  |base|
+//  |    |
+//  c3 - c2
+#define OUTER_BASE_PARTS(w, h)               \
+   part { name: "base"; type: SPACER;        \
+      description {                          \
+         state: "default" 0.0; } }           \
+   part { name: "c1"; type: SPACER;          \
+      description { state: "default" 0.0;    \
+         rel1.to: "base";                    \
+         rel2.to: "base";                    \
+         rel2.relative: 0 0;                 \
+         align: 1 1;                         \
+         min: w h;                           \
+         max: w h; } }                       \
+   part { name: "c3"; type: SPACER;          \
+      description { state: "default" 0.0;    \
+         rel1.to: "base";                    \
+         rel2.to: "base";                    \
+         rel1.relative: 0 1;                 \
+         rel2.relative: 0 1;                 \
+         align: 1 0;                         \
+         min: w h;                           \
+         max: w h; } }                       \
+   part { name: "c4"; type: SPACER;          \
+      description { state: "default" 0.0;    \
+         rel1.to: "base";                    \
+         rel2.to: "base";                    \
+         rel1.relative: 1 0;                 \
+         rel2.relative: 1 0;                 \
+         min: w h;                           \
+         max: w h; } }                       \
+   part { name: "c2"; type: SPACER;          \
+      mouse_events: 0;                       \
+      description { state: "default" 0.0;    \
+         rel1.to: "base";                    \
+         rel1.relative: 1 1;                 \
+         rel2.to: "base";                    \
+         rel2.relative: 1 1;                 \
+         align: 0 0;                         \
+         min: w h;                           \
+         max: w h; } }
+
+collections {
+   group { name: "elm/focus_highlight/top/glow";
+      images {
+         image: "border6.png" COMP;
+      }
+      data.item: "animate" "on";
+
+      script {
+         public src_x, src_y, src_w, src_h;
+         public diffx, diffy, diffw, diffh;
+         public anim_highlight(val, Float:pos) {
+            new x, y, w, h, dx, dy, dw, dh;
+
+            dx = round(float_mul(float(get_int(diffx)), pos));
+            x = get_int(src_x) + dx;
+            dy = round(float_mul(float(get_int(diffy)), pos));
+            y = get_int(src_y) + dy;
+            dw = round(float_mul(float(get_int(diffw)), pos));
+            w = get_int(src_w) + dw;
+            dh = round(float_mul(float(get_int(diffh)), pos));
+            h = get_int(src_h) + dh;
+
+            update_offset(x, y, w, h);
+
+            if(pos >= 1.0) {
+               emit("elm,action,focus,anim,end", "");
+               set_state(PART:"highlight", "default", 0.0);
+            }
+         }
+         public update_offset(x, y, w, h) {
+            set_state_val(PART:"base", STATE_REL1_OFFSET, x, y);
+            set_state_val(PART:"base", STATE_REL2_OFFSET, x + w, y + h);
+         }
+         public message(Msg_Type:type, id, ...) {
+            if((type == MSG_INT_SET) && (id == 1)) {
+               new x1, y1, w1, h1, x2, y2, w2, h2;
+
+               x1 = getarg(2);
+               y1 = getarg(3);
+               w1 = getarg(4);
+               h1 = getarg(5);
+               x2 = getarg(6);
+               y2 = getarg(7);
+               w2 = getarg(8);
+               h2 = getarg(9);
+
+               set_int(src_x, x1);
+               set_int(src_y, y1);
+               set_int(src_w, w1);
+               set_int(src_h, h1);
+               set_int(diffx, x2 - x1);
+               set_int(diffy, y2 - y1);
+               set_int(diffw, w2 - w1);
+               set_int(diffh, h2 - h1);
+
+               custom_state(PART:"base", "default", 0.0);
+               set_state_val(PART:"base", STATE_REL1, 0.0, 0.0);
+               set_state_val(PART:"base", STATE_REL2, 0.0, 0.0);
+               update_offset(x1, y1, w1, h1);
+               set_state(PART:"base", "custom", 0.0);
+               anim(0.2, "anim_highlight", 0);
+            }
+         }
+      } //script ends
+      parts {
+         OUTER_BASE_PARTS(12, 12);
+         part { name: "highlight"; type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "border6.png";
+               image.border: 20 20 20 20;
+               rel1.to: "c1";
+               rel2.to: "c2";
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+              }
+            description { state: "invisible" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+      } //parts ends
+      programs {
+         program { name: "show";
+            signal: "elm,action,focus,show";
+            source: "elm";
+            action: ACTION_STOP;
+            target: "hide";
+            target: "hide_start";
+            target: "hide_end";
+            after: "show_start";
+         }
+         program { name: "show_start";
+            action: STATE_SET "visible" 0.0;
+            transition: SIN 0.2;
+            target: "highlight";
+            after: "show_end";
+         }
+         program { name: "show_end";
+            action: SIGNAL_EMIT "elm,action,focus,show,end" "";
+         }
+         program { name: "hide";
+            signal: "elm,action,focus,hide";
+            source: "elm";
+            action: ACTION_STOP;
+            target: "show";
+            target: "show_start";
+            target: "show_end";
+            after: "hide_start";
+         }
+         program { name: "hide_start";
+            action: STATE_SET "invisible" 0.0;
+            transition: SIN 0.2;
+            target: "highlight";
+            after: "hide_end";
+         }
+         program { name: "hide_end";
+            action: SIGNAL_EMIT "elm,action,focus,hide,end" "";
+         }
+      } //programs ends
+   } //group ends
+
+   group { name: "elm/focus_highlight/top/glow_effect";
+      inherit: "elm/focus_highlight/top/glow";
+      images {
+         image: "border.png" COMP;
+         image: "border2.png" COMP;
+         image: "border3.png" COMP;
+         image: "border4.png" COMP;
+         image: "border5.png" COMP;
+         image: "border6.png" COMP;
+      }
+      data.item: "animate" "on";
+
+      script {
+         public src_x, src_y, src_w, src_h;
+         public diffx, diffy, diffw, diffh;
+         public anim_highlight(val, Float:pos) {
+            new x, y, w, h, dx, dy, dw, dh, Float:p;
+            p = 1.0 - ((1.0 - pos) * (1.0 - pos) * (1.0 - pos));
+
+            dx = round(float_mul(float(get_int(diffx)), p));
+            x = get_int(src_x) + dx;
+            dy = round(float_mul(float(get_int(diffy)), p));
+            y = get_int(src_y) + dy;
+            dw = round(float_mul(float(get_int(diffw)), p));
+            w = get_int(src_w) + dw;
+            dh = round(float_mul(float(get_int(diffh)), p));
+            h = get_int(src_h) + dh;
+
+            update_offset(x, y, w, h);
+
+            if(pos >= 1.0) {
+               emit("elm,action,focus,anim,end", "");
+               set_state(PART:"highlight", "default", 0.0);
+               emit("dim", "");
+            }
+         }
+         public update_offset(x, y, w, h) {
+            set_state_val(PART:"base", STATE_REL1_OFFSET, x, y);
+            set_state_val(PART:"base", STATE_REL2_OFFSET, x + w, y + h);
+         }
+         public message(Msg_Type:type, id, ...) {
+            if((type == MSG_INT_SET) && (id == 1)) {
+               new x1, y1, w1, h1, x2, y2, w2, h2;
+
+               x1 = getarg(2);
+               y1 = getarg(3);
+               w1 = getarg(4);
+               h1 = getarg(5);
+               x2 = getarg(6);
+               y2 = getarg(7);
+               w2 = getarg(8);
+               h2 = getarg(9);
+
+               set_int(src_x, x1);
+               set_int(src_y, y1);
+               set_int(src_w, w1);
+               set_int(src_h, h1);
+               set_int(diffx, x2 - x1);
+               set_int(diffy, y2 - y1);
+               set_int(diffw, w2 - w1);
+               set_int(diffh, h2 - h1);
+
+               custom_state(PART:"base", "default", 0.0);
+               set_state_val(PART:"base", STATE_REL1, 0.0, 0.0);
+               set_state_val(PART:"base", STATE_REL2, 0.0, 0.0);
+               update_offset(x1, y1, w1, h1);
+               set_state(PART:"base", "custom", 0.0);
+               anim(0.2, "anim_highlight", 0);
+            }
+         }
+      } //script ends
+      parts {
+         part { name: "highlight"; type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "border6.png";
+               image.border: 16 16 16 16;
+               rel1.to: "c1";
+               rel2.to: "c2";
+               visible: 1;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "visible" 0.1;
+               inherit: "visible" 0.0;
+               image.normal: "border2.png";
+               image.border: 18 18 18 18;
+            }
+            description { state: "visible" 0.2;
+               inherit: "visible" 0.0;
+               image.normal: "border3.png";
+               image.border: 19 19 19 19;
+            }
+            description { state: "visible" 0.3;
+               inherit: "visible" 0.0;
+               image.normal: "border4.png";
+               image.border: 20 20 20 20;
+            }
+            description { state: "visible" 0.4;
+               inherit: "visible" 0.0;
+               image.normal: "border5.png";
+               image.border: 21 21 21 21;
+            }
+            description { state: "visible" 0.5;
+               inherit: "visible" 0.0;
+               image.normal: "border6.png";
+               image.border: 25 25 25 25;
+            }
+            description { state: "invisible" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+      }//parts ends
+      programs {
+         program { name: "show";
+            signal: "elm,action,focus,show";
+            source: "elm";
+            action: ACTION_STOP;
+            target: "hide";
+            target: "hide_start";
+            target: "hide_end";
+            after: "show_start";
+         }
+         program { name: "show_start";
+            action: SIGNAL_EMIT "dim" "";
+            after: "show_end";
+         }
+         program { name: "dim_start";
+            signal: "dim";
+            in: 2 0.4;
+            source: "";
+            action: STATE_SET "visible" 0.4;
+            transition: SINUSOIDAL 0.2;
+            target: "highlight";
+            after: "dim1";
+         }
+         program { name: "dim1";
+            action: STATE_SET "visible" 0.3;
+            transition: SINUSOIDAL 0.2;
+            target: "highlight";
+            after: "dim2";
+         }
+         program { name: "dim2";
+            action: STATE_SET "visible" 0.2;
+            transition: SINUSOIDAL 0.2;
+            target: "highlight";
+            after: "dim3";
+         }
+         program { name: "dim3";
+            action: STATE_SET "visible" 0.1;
+            transition: SINUSOIDAL 0.2;
+            target: "highlight";
+            after: "dim_end";
+         }
+         program { name: "dim_end";
+            action: SIGNAL_EMIT "glow" "";
+         }
+         program { name: "glow_start";
+            signal: "glow";
+            source: "";
+            in: 1 0.4;
+            action: STATE_SET "visible" 0.0;
+            transition: SINUSOIDAL 0.2;
+            target: "highlight";
+            after: "glow1";
+         }
+         program { name: "glow1";
+            action: STATE_SET "visible" 0.1;
+            transition: SINUSOIDAL 0.2;
+            target: "highlight";
+            after: "glow2";
+         }
+         program { name: "glow2";
+            action: STATE_SET "visible" 0.2;
+            transition: SINUSOIDAL 0.2;
+            target: "highlight";
+            after: "glow3";
+         }
+         program { name: "glow3";
+            action: STATE_SET "visible" 0.3;
+            transition: SINUSOIDAL 0.2;
+            target: "highlight";
+            after: "glow4";
+         }
+         program { name: "glow4";
+            action: STATE_SET "visible" 0.4;
+            transition: SINUSOIDAL 0.2;
+            target: "highlight";
+            after: "glow5";
+         }
+         program { name: "glow5";
+            action: STATE_SET "visible" 0.5;
+            transition: SINUSOIDAL 0.2;
+            target: "highlight";
+            after: "glow1";
+         }
+         program { name: "show_end";
+            action: SIGNAL_EMIT "elm,action,focus,show,end" "";
+         }
+         program { name: "hide";
+            signal: "elm,action,focus,hide";
+            source: "elm";
+            action: ACTION_STOP;
+            target: "show";
+            target: "show_start";
+            target: "show_end";
+            after: "hide_start";
+         }
+         program { name: "hide_start";
+            action: STATE_SET "invisible" 0.0;
+            transition: LIN 0.2;
+            target: "highlight";
+            after: "hide_end";
+         }
+         program { name: "hide_end";
+            action: SIGNAL_EMIT "elm,action,focus,hide,end" "";
+         }
+      } //programs ends
+   } //group ends
+
+   group { name: "elm/layout/focus/example";
+      data.item: "focus_part" "focus_area";
+      parts {
+         part { name: "bg"; type: RECT;
+            scale: 1;
+            description { state: "default" 0.0;
+               color: 255 255 0 255;
+               min: 150 40;
+               max: 150 40;
+            }
+         }
+         part { name: "elm.text"; type: TEXT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "bg";
+               rel2.to: "bg";
+               text.text: "layout";
+               text.size: 9;
+               color: 0 0 0 255;
+            }
+         }
+         part { name: "focus_area"; type: RECT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "bg";
+               rel2.to: "bg";
+               rel2.relative: 0 0;
+               align: 0 0;
+               min: 60 30;
+               max: 60 30;
+               fixed: 1 1;
+               color: 125 125 125 125;
+            }
+         }
+         part { name: "elm.text1"; type: TEXT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "focus_area";
+               rel2.to: "focus_area";
+               text.text: "focus_part";
+               text.size: 9;
+               color: 255 0 255 255;
+            }
+         }
+      }
+   } //group ends
+
+#include "../../data/themes/macros.edc"
+#include "../../data/themes/fonts.edc"
+#include "../../data/themes/colorclasses.edc"
+
+// to customize check default style
+#include "../../data/themes/edc/elm/check.edc"
+   group { name: "elm/check/base/focus_text";
+      data.item: "focus_part" "elm.text";
+      inherit: "elm/check/base/default";
+   }
+
+// to customize button default style
+#include "../../data/themes/edc/elm/button.edc"
+   group { name: "elm/button/base/focus_icon";
+      data.item: "focus_part" "elm.swallow.content";
+      inherit: "elm/button/base/default";
+   }
+}

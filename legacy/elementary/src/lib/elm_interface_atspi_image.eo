@@ -1,0 +1,43 @@
+mixin Elm.Interface_Atspi_Image ()
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_image;
+   data: null;
+   methods {
+      @property extents @protected {
+         get {
+            [[Gets an image extents.]]
+         }
+         keys {
+            screen_coords: bool;
+         }
+         values {
+            x: int;
+            y: int;
+            width: int;
+            height: int;
+         }
+      }
+      @property description @protected {
+         get {
+            [[Gets textual description of image]]
+         }
+         set {
+         }
+         values {
+            description: const(char)*;
+         }
+      }
+      @property locale @protected {
+         get {
+            [[Gets locale of the image description.]]
+         }
+         values {
+            locale: const(char)*;
+         }
+      }
+   }
+   implements {
+      @virtual .extents.get;
+   }
+}

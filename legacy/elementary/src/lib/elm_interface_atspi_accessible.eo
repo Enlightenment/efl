@@ -1,0 +1,436 @@
+enum Elm.Atspi.Type
+{
+   [[Type of accessibility object]]
+   regular, [[default accessibile object]]
+   disabled, [[skip object and its children in accessibility hierarchy]]
+   skipped [[skip object in accessibility hierarchy]]
+}
+
+enum Elm.Atspi.Role
+{
+   [[Describes the role of an object visible to AT-SPI Clients.]]
+   invalid,
+   accelerator_label,
+   alert,
+   animation,
+   arrow,
+   calendar,
+   canvas,
+   check_box,
+   check_menu_item,
+   color_chooser,
+   column_header,
+   combo_box,
+   date_editor,
+   desktop_icon,
+   desktop_frame,
+   dial,
+   dialog,
+   directory_pane,
+   drawing_area,
+   file_chooser,
+   filler,
+   focus_traversable,
+   font_chooser,
+   frame,
+   glass_pane,
+   html_container,
+   icon,
+   image,
+   internal_frame,
+   label,
+   layered_pane,
+   list,
+   list_item,
+   menu,
+   menu_bar,
+   menu_item,
+   option_pane,
+   page_tab,
+   page_tab_list,
+   panel,
+   password_text,
+   popup_menu,
+   progress_bar,
+   push_button,
+   radio_button,
+   radio_menu_item,
+   root_pane,
+   row_header,
+   scroll_bar,
+   scroll_pane,
+   separator,
+   slider,
+   spin_button,
+   split_pane,
+   status_bar,
+   table,
+   table_cell,
+   table_column_header,
+   table_row_header,
+   tearoff_menu_item,
+   terminal,
+   text,
+   toggle_button,
+   tool_bar,
+   tool_tip,
+   tree,
+   tree_table,
+   unknown,
+   viewport,
+   window,
+   extended,
+   header,
+   footer,
+   paragraph,
+   ruler,
+   application,
+   autocomplete,
+   editbar,
+   embedded,
+   entry,
+   chart,
+   caption,
+   document_frame,
+   heading,
+   page,
+   section,
+   redundant_object,
+   form,
+   link,
+   input_method_window,
+   table_row,
+   tree_item,
+   document_spreadsheet,
+   document_presentation,
+   document_text,
+   document_web,
+   document_email,
+   comment,
+   list_box,
+   grouping,
+   image_map,
+   notification,
+   info_bar,
+   last_defined,
+}
+
+enum Elm.Atspi.State_Type
+{
+   [[Describes a possible states of an object visible to AT-SPI clients.]]
+   legacy: elm_atspi_state;
+   invalid,
+   active,
+   armed,
+   busy,
+   checked,
+   collapsed,
+   defunct,
+   editable,
+   enabled,
+   expandable,
+   expanded,
+   focusable,
+   focused,
+   has_tooltip,
+   horizontal,
+   iconified,
+   modal,
+   multi_line,
+   multiselectable,
+   opaque,
+   pressed,
+   resizable,
+   selectable,
+   selected,
+   sensitive,
+   showing,
+   single_line,
+   stale,
+   transient,
+   vertical,
+   visible,
+   manages_descendants,
+   indeterminate,
+   required,
+   truncated,
+   animated,
+   invalid_entry,
+   supports_autocompletion,
+   selectable_text,
+   is_default,
+   visited,
+   last_defined,
+}
+
+enum Elm.Atspi.Relation_Type
+{
+   [[Describes relation between two objects.]]
+   legacy: elm_atspi_relation;
+   null,
+   label_for,
+   labelled_by,
+   controller_for,
+   controlled_by,
+   member_of,
+   tooltip_for,
+   node_child_of,
+   node_parent_of,
+   extended,
+   flows_to,
+   flows_from,
+   subwindow_of,
+   embeds,
+   embedded_by,
+   popup_for,
+   parent_window_of,
+   description_for,
+   described_by,
+   last_defined,
+}
+
+type Elm.Atspi.State_Set: uint64; [[ATSPI object state set.]]
+
+struct Elm.Atspi.Event.Handler; [[ATSPI event listener]]
+
+struct Elm.Atspi.Event.State_Changed.Data
+{
+   type: Elm.Atspi.State_Type;
+   new_value: bool;
+}
+
+struct Elm.Atspi.Event.Children_Changed.Data
+{
+   is_added: bool;
+   child: Eo.Base *;
+}
+
+struct Elm.Atspi.Attribute
+{
+   key: const(char) *;
+   value: const(char) *;
+}
+
+struct Elm.Atspi.Relation
+{
+   type: Elm.Atspi.Relation_Type;
+   objects: list<Eo.Base *> *;
+}
+
+type Elm.Atspi.Relation_Set: list<Elm.Atspi.Relation *> *;
+
+mixin Elm.Interface_Atspi_Accessible ()
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_accessible;
+   data: Elm_Interface_Atspi_Accessible_Data;
+   methods {
+      @property localized_role_name @protected {
+         get {
+            [[Gets an localized string describing ATSPI widget role name.]]
+         }
+         values {
+            localized_name: const(char)*;
+         }
+      }
+      @property name {
+         get {
+            [[Gets an string describing ATSPI widget role name.  Should be free by a user.]]
+         }
+         set {
+         }
+         values {
+            name: char*; [[obj name]]
+         }
+      }
+      @property relation_set @protected {
+         get {
+            [[Gets an string describing ATSPI widget role name. Lists and elements Should be free by a user.]]
+         }
+         values {
+            relations: Elm.Atspi.Relation_Set;
+         }
+      }
+      @property role {
+         get {
+            [[Gets the role of the widget in ATSPI Accessibility domain.]]
+         }
+         set {
+         }
+         values {
+            role: Elm.Atspi.Role;
+         }
+      }
+      @property children @protected {
+         get {
+            [[Gets widget's accessible children.]]
+         }
+         values {
+            children: free(own(list<Elm.Interface_Atspi_Accessible *> *), eina_list_free);
+         }
+      }
+      @property role_name @protected {
+         get {
+            [[Gets human-readable string indentifying widget accessibility role.]]
+         }
+         values {
+            role_name: const(char)*;
+         }
+      }
+      @property attributes @protected {
+         get {
+            [[Gets key-value pairs indentifying widget extra attributes. Must be free by a user.]]
+         }
+         values {
+            attributes: free(own(list<own(Elm.Atspi.Attribute *)> *), elm_atspi_attributes_list_free);
+         }
+      }
+      @property index_in_parent @protected {
+         get {
+            [[Gets index of the child in parent's children list.]]
+         }
+         values {
+            idx: int;
+         }
+      }
+      @property description {
+         get {
+            [[Gets widget contextual information.]]
+         }
+         set {
+            [[Sets contextual information about widget.]]
+         }
+         values {
+            description: const(char)*;
+         }
+      }
+      @property parent {
+         get {
+            [[Gets widget accessible parent.]]
+         }
+         set {
+            [[Sets widget accessible parent.]]
+         }
+         values {
+            parent: Elm.Interface_Atspi_Accessible *;
+         }
+      }
+      @property state_set @protected {
+         get {
+            [[Gets set describing widget accessible states.]]
+         }
+         values {
+            states: Elm.Atspi.State_Set;
+         }
+      }
+      event_handler_add @class @protected {
+         [[Register accessibility event listener]]
+         params {
+              @in cb: Eo_Event_Cb; [[callback]]
+              @in data: void*; [[data]]
+         }
+         return: Elm.Atspi.Event.Handler*; [[Event handler]]
+      }
+      event_handler_del @class @protected {
+         [[Deregister accessibility event listener]]
+         params {
+              @in handler: Elm.Atspi.Event.Handler *; [[Event handler]]
+         }
+      }
+      event_emit @class @protected {
+         params {
+            @in accessible: Elm.Interface_Atspi_Accessible *; [[Accessibility object.]]
+            @in event: const(Eo.Event_Description)*; [[Accessibility event type.]]
+            @in event_info: void*; [[Accessibility event details.]]
+         }
+      }
+      @property translation_domain {
+         get {
+            [[Gets the translation domain of "name" and "description"
+              properties.]]
+         }
+         set {
+            [[Sets the translation domain of "name" and "description"
+              properties.
+
+              Translation domain should be set if application wants to support i18n
+              for accessibily "name" and "description" properties.
+
+              When translation domain is set values of "name" and "description"
+              properties will be translated with dgettext function using
+              current translation domain as "domainname" parameter.
+
+              It is application developer responsibility to ensure that
+              translation files are loaded and binded to translation domain
+              when accessibility is enabled.]]
+         }
+         values {
+            domain: const(char)*; [[ translation domain ]]
+         }
+      }
+      @property type {
+           get {
+                [[Get type of accessibility object]]
+           }
+           set {
+                [[Set type of accessibility object]]
+           }
+           values {
+               type: Elm.Atspi.Type;
+           }
+      }
+      relationship_append {
+         [[Defines the relationship between two accessible objects.
+
+           Adds unique relation between source object and relation_object of a
+           given type.
+
+           Relationships can be queried by Assistive Technology clients to
+           provide customized feedback, improving overall user experience.
+
+           Relationship_append API is asymmetric, which means that
+           appending, for example, relation ELM_ATSPI_RELATION_FLOWS_TO from object A to B,
+           do NOT append relation ELM_ATSPI_RELATION_FLOWS_FROM from object B to
+           object A.
+
+           return: EINA_TRUE is relationship was successfully appended, EINA_FALSE
+           otherwise]]
+         return: bool;
+         params {
+            @in type: Elm.Atspi.Relation_Type;
+            @in relation_object: const(Elm.Interface_Atspi_Accessible)*;
+         }
+      }
+      relationship_remove {
+         [[Removes the relationship between two accessible objects.
+
+          If relation_object is NULL function removes all relations
+          of given type.
+         ]]
+         params {
+            @in type: Elm.Atspi.Relation_Type;
+            @in relation_object: const(Elm.Interface_Atspi_Accessible)*;
+         }
+      }
+      relationships_clear {
+         [[Removes all relationships in accessible object.]]
+      }
+      @property root @class {
+         get {
+            [[Get root object of accessible object hierarchy]]
+            values {
+               ret: Eo.Base*;
+            }
+         }
+      }
+   }
+   events {
+      property,changed: const(char)*;
+      children,changed: Elm.Atspi.Event.Children_Changed.Data;
+      state,changed: Elm.Atspi.Event.State_Changed.Data;
+      visible,data,changed;
+      active,descendant,changed;
+      added;
+      removed;
+   }
+}

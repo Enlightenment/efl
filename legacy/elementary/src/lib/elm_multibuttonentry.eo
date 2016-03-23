@@ -1,0 +1,201 @@
+class Elm.Multibuttonentry (Elm.Layout)
+{
+   eo_prefix: elm_obj_multibuttonentry;
+   methods {
+      @property editable {
+         [[Control if the multibuttonentry is to be editable or not.
+
+           @since 1.7]]
+         set {
+         }
+         get {
+         }
+         values {
+            editable: bool; [[If $true, user can add/delete item in multibuttonentry, if not, the multibuttonentry is non-editable.]]
+         }
+      }
+      @property expanded {
+         [[Control the multibuttonentry to expanded state.
+
+           In expanded state, the complete entry will be displayed.
+           Otherwise, only single line of the entry will be displayed.]]
+         set {
+         }
+         get {
+         }
+         values {
+            expanded: bool; [[the value of expanded state.  Set this to $true for expanded state.  Set this to false for single line state.]]
+         }
+      }
+      @property format_function {
+         set {
+            [[Set a function to format the string that will be used to display the hidden items counter.
+
+              If $format_function is $NULL, the default format will be used,
+              which is $"... + %d".
+
+              @since 1.9]]
+         }
+         values {
+            format_function: Elm_Multibuttonentry_Format_Cb @nullable; [[format_function The actual format function]]
+            data: const(void)* @optional; [[data User data to passed to $format_function]]
+         }
+      }
+      @property items {
+         get {
+            [[Get a list of items in the multibuttonentry]]
+
+            return: const(list<Elm.Widget_Item *>)*; [[The list of items, or NULL if none]]
+         }
+      }
+      @property first_item {
+         get {
+            [[Get the first item in the multibuttonentry]]
+
+            return: Elm.Widget_Item *; [[The first item, or NULL if none]]
+         }
+      }
+      @property last_item {
+         get {
+            [[Get the last item in the multibuttonentry]]
+
+            return: Elm.Widget_Item *; [[The last item, or NULL if none]]
+         }
+      }
+      @property entry {
+         get {
+            [[Get the entry of the multibuttonentry object]]
+
+            return: Evas.Object *; [[The entry object, or NULL if none]]
+         }
+      }
+      @property selected_item {
+         get {
+            [[Get the selected item in the multibuttonentry]]
+
+            return: Elm.Widget_Item *; [[The selected item, or NULL if none]]
+         }
+      }
+      item_prepend {
+         [[Prepend a new item to the multibuttonentry
+
+           See @Elm.Widget_Item.del to delete the item.]]
+
+         return: Elm.Widget_Item *; [[A handle to the item added or NULL if not possible]]
+         params {
+            @in label: const(char)*; [[The label of new item]]
+            @in func: Evas_Smart_Cb @optional; [[The callback function to be invoked when this item is pressed.]]
+            @in data: void * @optional; [[The pointer to the data to be attached]]
+         }
+      }
+      clear {
+         [[Remove all items in the multibuttonentry.]]
+
+      }
+      item_filter_remove {
+         [[Remove a filter from the list
+
+         Removes the given callback from the filter list. See elm_multibuttonentry_item_filter_append()
+         for more information.]]
+
+         params {
+            @in func: Elm_Multibuttonentry_Item_Filter_Cb; [[The filter function to remove]]
+            @in data: void *; [[The user data passed when adding the function]]
+         }
+      }
+      item_insert_before {
+         [[Add a new item to the multibuttonentry before the indicated object reference.
+
+           See @Elm.Widget_Item.del to delete the item.]]
+
+         return: Elm.Widget_Item *; [[A handle to the item added or NULL if not possible]]
+         params {
+            @in before: Elm.Widget_Item *; [[The item before which to add it]]
+            @in label: const(char)*; [[The label of new item]]
+            @in func: Evas_Smart_Cb @optional; [[The callback function to be invoked when this item is pressed.]]
+            @in data: void * @optional; [[The pointer to the data to be attached]]
+         }
+      }
+      item_append {
+         [[Append a new item to the multibuttonentry
+
+           See @Elm.Widget_Item.del to delete the item.]]
+
+         return: Elm.Widget_Item *; [[A handle to the item added or NULL if not possible]]
+         params {
+            @in label: const(char)*; [[The label of new item]]
+            @in func: Evas_Smart_Cb @optional; [[The callback function to be invoked when this item is pressed.]]
+            @in data: void * @optional; [[The pointer to the data to be attached]]
+         }
+      }
+      item_filter_prepend {
+         [[Prepend a filter function for text inserted in the Multibuttonentry
+
+           Prepend the given callback to the list. See elm_multibuttonentry_item_filter_append()
+           for more information]]
+         params {
+            @in func: Elm_Multibuttonentry_Item_Filter_Cb; [[The function to use as text filter]]
+            @in data: void *; [[User data to pass to $func]]
+         }
+      }
+      item_filter_append {
+         [[Append an item filter function for text inserted in the Multibuttonentry
+
+           Append the given callback to the list. This functions will be called
+           whenever any text is inserted into the Multibuttonentry, with the text to be inserted
+           as a parameter. The callback function is free to alter the text in any way
+           it wants, but it must remember to free the given pointer and update it.
+           If the new text is to be discarded, the function can free it and set it text
+           parameter to NULL. This will also prevent any following filters from being
+           called.]]
+
+         params {
+            @in func: Elm_Multibuttonentry_Item_Filter_Cb; [[The function to use as item filter]]
+            @in data: void *; [[User data to pass to $func]]
+         }
+      }
+      item_insert_after {
+         [[Add a new item to the multibuttonentry after the indicated object
+
+           See @Elm.Widget_Item.del to delete the item.]]
+
+         return: Elm.Widget_Item *; [[A handle to the item added or NULL if not possible]]
+         params {
+            @in after: Elm.Widget_Item *; [[The item after which to add it]]
+            @in label: const(char)*; [[The label of new item]]
+            @in func: Evas_Smart_Cb @optional; [[The callback function to be invoked when this item is pressed.]]
+            @in data: void * @optional; [[The pointer to the data to be attached]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.theme_apply;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.access;
+      Elm.Widget.focus_next;
+      Elm.Widget.on_focus;
+      Elm.Widget.translate;
+      Elm.Widget.event;
+      Elm.Layout.text.set;
+      Elm.Layout.text.get;
+      Elm.Layout.sizing_eval;
+      Elm.Interface_Atspi_Accessible.children.get;
+   }
+   events {
+      item,selected;
+      item,added;
+      item,deleted;
+      item,clicked;
+      item,longpressed;
+      expanded;
+      contracted;
+      expand,state,changed;
+      changed;
+   }
+
+}

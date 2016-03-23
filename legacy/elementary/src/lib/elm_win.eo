@@ -1,0 +1,1316 @@
+enum Elm.Win.Type
+{
+   [[Defines the types of window that can be created
+
+     These are hints set on the window so that a running Window Manager knows
+     how the window should be handled and/or what kind of decorations it
+     should have.
+
+     Currently, only the X11 backed engines use them.
+   ]]
+
+   legacy: elm_win;
+
+   unknown = -1,
+   basic, [[A normal window. Indicates a normal, top-level window. Almost every
+            window will be created with this type.]]
+   dialog_basic, [[Used for simple dialog windows.]]
+   desktop, [[For special desktop windows, like a background window holding
+              desktop icons.]]
+   dock, [[The window is used as a dock or panel. Usually would be kept on top
+           of any other window by the Window Manager.]]
+   toolbar, [[The window is used to hold a floating toolbar, or similar.]]
+   menu, [[Similar to #ELM_WIN_TOOLBAR.]]
+   utility, [[A persistent utility window, like a toolbox or palette.]]
+   splash, [[Splash window for a starting up application.]]
+   dropdown_menu, [[The window is a dropdown menu, as when an  entry in a
+                    menubar is clicked. Typically used with @Elm.Win.override.set.
+                    This hint exists for completion only, as the EFL way of
+                    implementing a menu would not normally use a separate
+                    window for its contents.]]
+   popup_menu, [[Like #ELM_WIN_DROPDOWN_MENU, but for the menu triggered by
+                 right-clicking an object.]]
+   tooltip, [[The window is a tooltip. A short piece of explanatory text that
+              typically appear after the mouse cursor hovers over an object
+              for a while. Typically used with @Elm.Win.override.set and also
+              not very commonly used in the EFL.]]
+   notification, [[A notification window, like a warning about battery life or
+                   a new E-Mail received.]]
+   combo, [[A window holding the contents of a combo box. Not usually used in
+            the EFL.]]
+   dnd, [[Used to indicate the window is a representation of an object being
+          dragged across different windows, or even applications. Typically
+          used with elm_win_override_set().]]
+   inlined_image, [[The window is rendered onto an image buffer. No actual
+                    window is created for this type, instead the window and
+                    all of its contents will be rendered to an image buffer.
+                    This allows to have children window inside a parent one
+                    just like any other object would be, and do other things
+                    like applying \@ref Evas_Map effects to it. This is the only
+                    type of window that requires the parent parameter of
+                    \@ref elm_win_add to be a valid @Evas.Object.]]
+   socket_image, [[The window is rendered onto an image buffer and can be shown
+                   other process's plug image object. No actual window is
+                   created for this type, instead the window and all of its
+                   contents will be rendered to an image buffer and can be
+                   shown other process's plug image object.
+                 ]]
+   fake [[This window was created using a pre-existing canvas. The window
+          widget can be deleted, but the canvas must be managed externally.
+
+          @since 1.13
+        ]]
+}
+
+enum Elm.Win.Keyboard_Mode
+{
+   [[The different layouts that can be requested for the virtual keyboard.
+
+     When the application window is being managed by Illume, it may request
+     any of the following layouts for the virtual keyboard.
+   ]]
+
+   legacy: elm_win_keyboard;
+
+   unknown, [[Unknown keyboard state]]
+   off, [[Request to deactivate the keyboard]]
+   on, [[Enable keyboard with default layout]]
+   alpha, [[Alpha (a-z) keyboard layout]]
+   numeric, [[Numeric keyboard layout]]
+   pin, [[PIN keyboard layout]]
+   phone_number, [[Phone keyboard layout]]
+   hex, [[Hexadecimal numeric keyboard layout]]
+   terminal, [[Full (QWERTY) keyboard layout]]
+   password, [[Password keyboard layout]]
+   ip, [[IP keyboard layout]]
+   host, [[Host keyboard layout]]
+   file, [[File keyboard layout]]
+   url, [[URL keyboard layout]]
+   keypad, [[Keypad layout]]
+   j2me [[J2ME keyboard layout]]
+}
+
+enum Elm.Win.Indicator_Mode
+{
+   [[In some environments, like phones, you may have an indicator that
+     shows battery status, reception, time etc. This is the indicator.
+
+     Sometimes you don't want it because you provide the same functionality
+     inside your app, so this will request that the indicator is hidden in
+     this circumstance if you use ELM_ILLUME_INDICATOR_HIDE. The default
+     is to have the indicator shown.
+   ]]
+
+   legacy: elm_win_indicator;
+
+   unknown, [[Unknown indicator state]]
+   hide, [[Hides the indicator]]
+   show [[Shows the indicator]]
+}
+
+enum Elm.Win.Indicator_Opacity_Mode
+{
+   [[Defines the opacity modes of indicator that can be shown]]
+   legacy: elm_win_indicator;
+
+   opacity_unknown, [[Unknown indicator opacity mode]]
+   opaque, [[Opacifies the indicator]]
+   translucent, [[Be translucent the indicator]]
+   transparent [[Transparentizes the indicator]]
+}
+
+/**
+ */
+enum Elm.Win.Keygrab_Mode
+{
+   [[Define the keygrab modes of window. A window may send commands to the
+     Keyrouter according this mode, and perform different actions.]]
+   legacy: elm_win_keygrab;
+
+   unknown = 0, [[Unknown keygrab mode]]
+   shared = (1 << 8), [[Getting the grabbed-key together with the other client
+                        windows]]
+   topmost = (1 << 9), [[Getting the grabbed-key only when window is top of the
+                         stack]]
+   exclusive = (1 << 10), [[Getting the grabbed-key exclusively regardless of
+                            window's position]]
+   override_exclusive = (1 << 11) [[Getting the grabbed-key exclusively
+                                    regardless of window's position. Being
+                                    overrided the grab by the other client
+                                    window]]
+}
+
+enum Elm.Illume_Command
+{
+   [[Available commands that can be sent to the Illume manager.
+
+     When running under an Illume session, a window may send commands to the
+     Illume manager to perform different actions.
+   ]]
+
+   focus_back, [[Reverts focus to the previous window]]
+   focus_forward, [[Sends focus to the next window in the list]]
+   focus_home, [[Hides all windows to show the Home screen]]
+   close [[Closes the currently active window]]
+}
+
+class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
+               Elm.Interface_Atspi_Widget_Action)
+{
+   eo_prefix: elm_obj_win;
+   methods {
+      @property keyboard_win {
+         set {
+            [[Sets whether the window is a keyboard.]]
+         }
+         get {
+            [[Get whether the window is a keyboard.]]
+         }
+         values {
+            is_keyboard: bool; [[If true, the window is a virtual keyboard.]]
+         }
+      }
+      @property autodel {
+         set {
+            [[Set the window's autodel state.
+
+              When closing the window in any way outside of the program
+              control, like pressing the X button in the titlebar or using
+              a command from the Window Manager, a "delete,request" signal
+              is emitted to indicate that this event occurred and the
+              developer can take any action, which may include, or not,
+              destroying the window object.
+
+              When the $autodel parameter is set, the window will be
+              automatically destroyed when this event occurs, after the
+              signal is emitted. If $autodel is $false, then the window
+              will not be destroyed and is up to the program to do so
+              when it's required.
+            ]]
+         }
+         get {
+            [[Get the window's autodel state.]]
+         }
+         values {
+            autodel: bool; [[If true, the window will automatically delete
+                             itself when closed.]]
+         }
+      }
+      @property autohide {
+         [[Window's autohide state.
+
+           This property works similarly to @.autodel, automatically handling
+           "delete,request" signals when set to $trze, with the difference
+           that it will hide the window, instead of destroying it.
+
+           It is specially designed to work together with $ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN
+           which allows exiting Elementary's main loop when all the windows
+           are hidden.
+
+           Note: @.autodel and $autohide are not mutually exclusive. The window
+           will be deleted if both are set to $true.
+         ]]
+
+         set {
+         }
+         get {
+         }
+         values {
+            autohide: bool; [[If true, the window will automatically hide
+                              itself when closed.]]
+         }
+      }
+      @property override {
+         set {
+            [[Set the override state of a window.
+
+              A window with $override set to true will not be managed by the
+              Window Manager. This means that no decorations of any kind
+              will be shown for it, moving and resizing must be handled
+              by the application, as well as the window visibility.
+
+              This should not be used for normal windows, and even for not
+              so normal ones, it should only be used when there's a good
+              reason and with a lot of care. Mishandling override windows
+              may result situations that disrupt the normal workflow of
+              the end user.
+            ]]
+         }
+         get {
+            [[Get the override state of a window.]]
+         }
+         values {
+            override: bool; [[If true, the window is overridden.]]
+         }
+      }
+      @property iconified {
+         set {
+            [[Set the iconified state of a window.]]
+         }
+         get {
+            [[Get the iconified state of a window.]]
+         }
+         values {
+            iconified: bool; [[If true, the window is iconified.]]
+         }
+      }
+      @property wm_available_rotations {
+         set {
+            [[Set the array of available window rotations.
+
+              This function is used to set the available rotations to give
+              the hints to WM. WM will refer this hints and set the
+              orientation window properly.
+
+              @since 1.9
+            ]]
+            legacy: elm_win_wm_rotation_available_rotations_set;
+            values {
+               rotations: const(int)*; [[The array of rotation value.]]
+               count: uint; [[The size of the rotations array.]]
+            }
+         }
+         get {
+            [[Get the array of available window rotations.
+
+              This function is used to get the available rotations.
+
+              @since 1.9
+            ]]
+            legacy: elm_win_wm_rotation_available_rotations_get;
+            values {
+               rotations: int*; [[The array of rotation value.]]
+               count: uint; [[The size of the rotations array.]]
+            }
+            return: bool;
+         }
+      }
+      @property quickpanel_zone {
+         set {
+            [[Set which zone this quickpanel should appear in.]]
+         }
+         get {
+            [[Get which zone this quickpanel should appear in.]]
+         }
+         values {
+            zone: int; [[The requested zone for this quickpanel.]]
+         }
+      }
+      @property maximized {
+         set {
+            [[Set the maximized state of a window.]]
+         }
+         get {
+            [[Get the maximized state of a window.]]
+         }
+         values {
+            maximized: bool; [[If true, the window is maximized.]]
+         }
+      }
+      @property modal {
+         set {
+            [[Set the modal state of a window.]]
+         }
+         get {
+            [[Get the modal state of a window.]]
+         }
+         values {
+            modal: bool; [[If true, the window is modal.]]
+         }
+      }
+      @property icon_name {
+         set {
+            [[Set the icon name of the window.]]
+         }
+         get {
+            [[Get the icon name of the window.
+
+              The returned string is an internal one and should not be
+              freed or modified. It will also be invalid if a new icon
+              name is set or if the window is destroyed.
+            ]]
+         }
+         values {
+            icon_name: const(char)*; [[The icon name to set.]]
+         }
+      }
+      @property withdrawn {
+         set {
+            [[Set the withdrawn state of a window.]]
+         }
+         get {
+            [[Get the withdrawn state of a window.]]
+         }
+         values {
+            withdrawn: bool; [[If true, the window is withdrawn.]]
+         }
+      }
+      @property role {
+         set {
+            [[Set the role of the window.]]
+         }
+         get {
+            [[Get the role of the window.
+
+              The returned string is an internal one and should not be
+              freed or modified. It will also be invalid if a new role
+              is set or if the window is destroyed.
+            ]]
+         }
+         values {
+            role: const(char)*; [[The role to set.]]
+         }
+      }
+      @property size_step {
+         set {
+            [[Set the window stepping used with sizing calculation.
+
+              Base size + stepping is what is calculated for window sizing
+              restrictions.
+
+              @since 1.7
+            ]]
+         }
+         get {
+            [[Get the stepping of a window.
+
+              @since 1.7
+            ]]
+         }
+         values {
+            w: int; [[The stepping width (0 disables).]]
+            h: int; [[The stepping height (0 disables).]]
+         }
+      }
+      @property focus_highlight_style {
+         set {
+            [[Set the style for the focus highlight on this window.
+
+              Sets the style to use for theming the highlight of focused
+              objects on the given window. If $style is NULL, the default
+              will be used.
+            ]]
+         }
+         get {
+            [[Get the style set for the focus highlight object.]]
+         }
+         values {
+            style: const(char)* @nullable; [[The style or $null if none.]]
+         }
+      }
+      @property borderless {
+         set {
+            [[Set the borderless state of a window.
+
+              This function requests the Window Manager to not draw any
+              decoration around the window.
+            ]]
+         }
+         get {
+            [[Get the borderless state of a window.]]
+         }
+         values {
+            borderless: bool; [[If true, the window is borderless.]]
+         }
+      }
+      @property screen_constrain {
+         set {
+            [[Constrain the maximum width and height of a window to the
+              width and height of its screen.
+
+              When $constrain is $true, $obj will never resize larger than
+              the screen.
+            ]]
+         }
+         get {
+            [[Get the constraints on the maximum width and height of a
+              window relative to the width and height of its screen.
+
+              When this function returns $true, $obj will never resize
+              larger than the screen.
+            ]]
+         }
+         values {
+            constrain: bool; [[$true to restrict the window's maximum size.]]
+         }
+      }
+      @property available_profiles {
+         set {
+            [[Set the array of available profiles to a window.
+
+              @since 1.8
+            ]]
+            values {
+               profiles: const(char)**; [[The string array of available profiles.]]
+               count: uint; [[The number of members in profiles.]]
+            }
+         }
+         get {
+            [[Get the array of available profiles of a window.
+
+              @since 1.8
+            ]]
+            values {
+               profiles: char**; [[The string array of available profiles.]]
+               count: uint; [[The number of members in profiles.]]
+            }
+            return: bool;
+         }
+      }
+      @property focus_highlight_enabled {
+         set {
+            [[Set the enabled status for the focus highlight in a window.
+
+              This function will enable or disable the focus highlight only
+              for the given window, regardless of the global setting for it.
+            ]]
+         }
+         get {
+            [[Get the enabled value of the focus highlight for this window.]]
+         }
+         values {
+            enabled: bool; [[The enabled value for the highlight.]]
+         }
+      }
+      @property title {
+         set {
+            [[Set the title of the window.]]
+         }
+         get {
+            [[Get the title of the window.
+
+              The returned string is an internal one and should not be
+              freed or modified. It will also be invalid if a new title
+              is set or if the window is destroyed.
+            ]]
+         }
+         values {
+            title: const(char)*; [[The title.]]
+         }
+      }
+      @property alpha {
+         set {
+            [[Set the alpha channel state of a window.
+
+              If $alpha is true, the alpha channel of the canvas will be
+              enabled possibly making parts of the window completely or
+              partially transparent. This is also subject to the underlying
+              system supporting it, like for example, running under a
+              compositing manager. If no compositing is available, enabling
+              this option will instead fallback to using shaped windows,
+              with @.shaped.set.
+
+              Note: Alpha window can be enabled automatically by window
+              theme style's property. If "alpha" data.item is "1" or
+              "true" in window style(eg. elm/win/base/default), the window
+              is switched to alpha automatically without the explicit api
+              call.
+            ]]
+         }
+         get {
+            [[Get the alpha channel state of a window.]]
+         }
+         values {
+            alpha: bool; [[$true if the window alpha channel is enabled,
+                           $false otherwise.]]
+         }
+      }
+      @property urgent {
+         set {
+            [[Set the urgent state of a window.]]
+         }
+         get {
+            [[Get the urgent state of a window.]]
+         }
+         values {
+            urgent: bool; [[If true, the window is urgent.]]
+         }
+      }
+      @property rotation {
+         set {
+            [[Set the rotation of the window.
+
+              Most engines only work with multiples of 90.
+
+              This function is used to set the orientation of the window
+              $obj to match that of the screen. The window itself will be
+              resized to adjust to the new geometry of its contents. If
+              you want to keep the window size,
+              see @.rotation_with_resize.set.
+            ]]
+         }
+         get {
+            [[Get the rotation of the window.]]
+         }
+         values {
+            rotation: int; [[The rotation of the window, in degrees (0-360),
+                             counter-clockwise.]]
+         }
+      }
+      @property icon_object {
+         set {
+            [[Set a window object's icon.
+
+              This sets an image to be used as the icon for the given
+              window, in the window manager decoration part. The exact
+              pixel dimensions of the object (not object size) will be
+              used, and the image pixels will be used as-is when this
+              function is called. If the image object has been updated,
+              then call this function again to source the image pixels
+              and put them on the window's icon. Note that only Evas
+              image objects are allowed.
+            ]]
+            /* FIXME-doc
+            Example of usage:
+            @code
+            icon = evas_object_image_add(evas_object_evas_get(elm_window));
+            evas_object_image_file_set(icon, "/path/to/the/icon", NULL);
+            elm_win_icon_object_set(elm_window, icon);
+            evas_object_show(icon);
+            @endcode
+            */
+            values {
+               icon: Evas.Object* @nullable; [[The Evas image object to use for an icon.]]
+            }
+         }
+         get {
+            [[Get the icon object used for the window.
+
+              The object returns is the one marked by @.icon_object.set as
+              the object to use for the window icon.
+            ]]
+            values {
+               icon: const(Evas.Object)* @nullable; [[The Evas image object to use for an icon.]]
+            }
+         }
+      }
+      @property quickpanel_priority_minor {
+         set {
+            [[Set the minor priority of a quickpanel window.]]
+         }
+         get {
+            [[Get the minor priority of a quickpanel window.]]
+         }
+         values {
+            priority: int(-1); [[The minor priority for this quickpanel.]]
+         }
+      }
+      @property sticky {
+         set {
+            [[Set the sticky state of the window.
+
+              Hints the Window Manager that the window in $obj should be
+              left fixed at its position even when the virtual desktop
+              it's on moves or changes.
+            ]]
+         }
+         get {
+            [[Get the sticky state of the window.]]
+         }
+         values {
+            sticky: bool; [[If true, the window's sticky state is enabled.]]
+         }
+      }
+      @property keyboard_mode {
+         set {
+            [[Sets the keyboard mode of the window.]]
+         }
+         get {
+            [[Get the keyboard mode of the window.]]
+         }
+         values {
+            mode: Elm.Win.Keyboard_Mode; [[The mode, one of #Elm_Win_Keyboard_Mode.]]
+         }
+      }
+      @property focus_highlight_animate {
+         set {
+            [[Set the animate status for the focus highlight for this window.
+
+              This function will enable or disable the animation of focus
+              highlight only for the given window, regardless of the
+              global setting for it.
+            ]]
+         }
+         get {
+            [[Get the animate value of the focus highlight for this window.]]
+         }
+         values {
+            animate: bool; [[The enabled value for the highlight animation.]]
+         }
+      }
+      @property aspect {
+         set {
+            [[Set the aspect ratio of a window.]]
+         }
+         get {
+            [[Get the aspect ratio of a window.]]
+         }
+         values {
+            aspect: double; [[If 0, the window has no aspect limits,
+                              otherwise it is width divided by height.]]
+         }
+      }
+      @property quickpanel_priority_major {
+         set {
+            [[Set the major priority of a quickpanel window.]]
+         }
+         get {
+            [[Get the major priority of a quickpanel window.]]
+         }
+         values {
+            priority: int(-1); [[The major priority for this quickpanel or -1.]]
+         }
+      }
+      @property indicator_opacity {
+         set {
+            [[Sets the indicator opacity mode of the window.]]
+         }
+         get {
+            [[Get the indicator opacity mode of the window.]]
+         }
+         values {
+            mode: Elm.Win.Indicator_Opacity_Mode; [[The mode, one of #Elm_Win_Indicator_Opacity_Mode.]]
+         }
+      }
+      @property demand_attention {
+         set {
+            [[Set the demand_attention state of a window.]]
+         }
+         get {
+            [[Get the demand_attention state of a window.]]
+         }
+         values {
+            demand_attention: bool; [[If true, the window is demand_attention.]]
+         }
+      }
+      @property wm_preferred_rotation {
+         set {
+            [[Set the preferred rotation value.
+
+              This function is used to set the orientation of window
+              $obj to spicific angle fixed.
+
+              @since 1.9
+            ]]
+            legacy: null;
+         }
+         get {
+            [[Get the preferred rotation value.
+
+              This function is used to get the preferred rotoation value.
+
+              @since 1.9
+            ]]
+            legacy: elm_win_wm_rotation_preferred_rotation_get;
+         }
+         values {
+            rotation: int; [[The preferred rotation of the window in degrees
+                             (0-360), counter-clockwise.]]
+         }
+      }
+      @property layer {
+         set {
+            [[Set the layer of the window.
+
+              What this means exactly will depend on the underlying engine
+              used.
+
+              In the case of X11 backed engines, the value in $layer has the
+              following meanings - less than 3 means that the window will
+              be placed below all others, more than 5 means that the
+              window will be placed above all others, and anything else
+              means that the window will be placed in the default layer.
+            ]]
+         }
+         get {
+            [[Get the layer of the window.]]
+         }
+         values {
+            layer: int; [[The layer of the window.]]
+         }
+      }
+      @property profile {
+         set {
+            [[Set the profile of a window.
+
+              @since 1.8
+            ]]
+         }
+         get {
+            [[Get the profile of a window.
+
+              @since 1.8
+            ]]
+         }
+         values {
+            profile: const(char)*; [[The string value of a window profile.]]
+         }
+      }
+      @property shaped {
+         set {
+            [[Set the shaped state of a window.
+
+              Shaped windows, when supported, will render the parts of the
+              window that has no content, transparent.
+
+              If $shaped is false, then it is strongly advised to have some
+              background object or cover the entire window in any other way,
+              or the parts of the canvas that have no data will show
+              framebuffer artifacts.
+            ]]
+         }
+         get {
+            [[Get the shaped state of a window.]]
+         }
+         values {
+            shaped: bool; [[If $true, the window is shaped.]]
+         }
+      }
+      @property fullscreen {
+         set {
+            [[Set the fullscreen state of a window.]]
+         }
+         get {
+            [[Get the fullscreen state of a window.]]
+         }
+         values {
+            fullscreen: bool; [[If $true, the window is fullscreen.]]
+         }
+      }
+      @property wm_manual_rotation_done {
+         set {
+            [[Set the manual rotation done mode.
+
+              This function is used to set or reset the manual rotation
+              done mode. the message of rotation done is sent to WM after
+              rendering its canvas in Ecore_Evas. but if set the manual
+              rotation done mode, it's disabled and user should call
+              this explicitly to sends the message.
+
+              @since 1.9
+            ]]
+            legacy: elm_win_wm_rotation_manual_rotation_done_set;
+         }
+         get {
+            [[Get the state of manual rotation done mode.
+
+              This function is used to get the state of manual rotation
+              done mode.
+
+              @since 1.9
+            ]]
+            legacy: elm_win_wm_rotation_manual_rotation_done_get;
+         }
+         values {
+            set: bool; [[$true to set manual rotation done mode, $false otherwise.]]
+         }
+      }
+      @property indicator_mode {
+         set {
+            [[Sets the indicator mode of the window.]]
+         }
+         get {
+            [[Get the indicator mode of the window.]]
+         }
+         values {
+            mode: Elm.Win.Indicator_Mode; [[The mode, one of #Elm_Win_Indicator_Mode.]]
+         }
+      }
+      @property conformant {
+         set {
+            [[Set if this window is an illume conformant window.]]
+         }
+         get {
+            [[Get if this window is an illume conformant window.]]
+         }
+         values {
+            conformant: bool; [[The conformant flag.]]
+         }
+      }
+      @property size_base {
+         set {
+            [[Set the base window size used with stepping calculation
+
+              Base size + stepping is what is calculated for window sizing
+              restrictions.
+
+              @since 1.7
+            ]]
+         }
+         get {
+            [[Get the base size of a window.
+
+              @since 1.7
+            ]]
+         }
+         values {
+            w: int; [[The base width.]]
+            h: int; [[The base height.]]
+         }
+      }
+      @property quickpanel {
+         set {
+            [[Set a window to be an illume quickpanel window.
+
+              By default window objects are not quickpanel windows.
+            ]]
+         }
+         get {
+            [[Get if this window is a quickpanel or not.]]
+         }
+         values {
+            quickpanel: bool; [[The quickpanel flag.]]
+         }
+      }
+      @property rotation_with_resize {
+         set {
+            [[Rotates the window and resizes it.
+
+              Like @.rotation.set, but it also resizes the window's
+              contents so that they fit inside the current window geometry.
+            ]]
+         }
+         values {
+            rotation: int; [[The rotation of the window in degrees (0-360),
+                             counter-clockwise.]]
+         }
+      }
+      @property prop_focus_skip {
+         set {
+            [[Set the window to be skipped by keyboard focus.
+
+              This sets the window to be skipped by normal keyboard input.
+              This means a window manager will be asked to not focus this
+              window as well as omit it from things like the taskbar, pager,
+              "alt-tab" list etc. etc.
+
+              Call this and enable it on a window BEFORE you show it for
+              the first time, otherwise it may have no effect.
+
+              Use this for windows that have only output information or
+              might only be interacted with by the mouse or fingers, and
+              never for typing input. Be careful that this may have
+              side-effects like making the window non-accessible in
+              some cases unless the window is specially handled. Use
+              this with care.
+            ]]
+         }
+         values {
+            skip: bool; [[The skip flag state ($true if it is to be skipped).]]
+         }
+      }
+      @property screen_position {
+         get {
+            [[Get the screen position of a window.]]
+         }
+         values {
+            x: int; [[The int to store the x coordinate to.]]
+            y: int; [[The int to store the y coordinate to.]]
+         }
+      }
+      @property wm_rotation_supported {
+         get {
+            [[Query whether window manager supports window rotation or not.
+
+              The window manager rotation allows the WM to controls the
+              rotation of application windows. It is designed to support
+              synchronized rotation for the multiple application windows
+              at same time.
+
+              See also @.wm_preferred_rotation, @.wm_available_rotations,
+              @.wm_manual_rotation_done.
+
+              @since 1.9
+            ]]
+            return: bool;
+         }
+      }
+      @property xwindow {
+         get {
+            [[Get the Ecore_X_Window of an Evas_Object.]]
+            return: Ecore_X_Window;
+         }
+      }
+      @property focus {
+         get {
+            [[Get whether a window has focus.]]
+            return: bool;
+         }
+      }
+      @property screen_size {
+         get {
+            [[Get screen geometry details for the screen that a window is on.]]
+         }
+         values {
+            x: int; [[Where to return the horizontal offset value. May be $null.]]
+            y: int; [[Where to return the vertical offset value. May be $null.]]
+            w: int; [[Where to return the width value. May be $null.]]
+            h: int; [[Where to return the height value. May be $null.]]
+         }
+      }
+      @property main_menu {
+         get {
+            [[Get the Main Menu of a window.]]
+            return: Evas.Object *; [[The Main Menu of the window ($null on error).]]
+         }
+      }
+      @property wl_window {
+         get {
+            [[Get the Ecore_Wl2_Window of an Evas_Object.]]
+            return: Ecore_Wl2_Window *; [[The Ecore_Wl2_Window of $obj.]]
+            legacy: null;
+         }
+      }
+      @property cocoa_window {
+         get {
+            [[Get the Ecore_Cocoa_Window of an Evas.Object.
+
+              @since 1.17
+            ]]
+            return: Ecore_Cocoa_Window *; [[The Ecore_Cocoa_Window of $obj.]]
+	 }
+      }
+      @property win32_window {
+         get {
+            [[Get the Ecore_Win32_Window of an Evas_Object
+
+              @since 1.17
+            ]]
+            return: Ecore_Win32_Window *; [[The Ecore_Win32_Window of $obj.]]
+            legacy: null;
+         }
+      }
+      @property window_id {
+         get {
+            [[Get the Ecore_Window of an Evas_Object
+
+              When Elementary is using a Wayland engine, this function
+              will return the surface id of the elm window's surface.
+
+              @since 1.8
+            ]]
+            return: Ecore_Window; [[The Ecore_Window of an Evas_Object.]]
+            legacy: null;
+         }
+      }
+      @property screen_dpi {
+         get {
+            [[Get screen dpi for the screen that a window is on.
+
+              @since 1.7
+            ]]
+         }
+         values {
+            xdpi: int; [[Pointer to value to store return horizontal dpi. May be $null.]]
+            ydpi: int; [[Pointer to value to store return vertical dpi. May be $null.]]
+         }
+      }
+      @property inlined_image_object {
+         get {
+            [[Get the inlined image object handle
+
+              When you create a window with elm_win_add() of type
+              #ELM_WIN_INLINED_IMAGE, then the window is in fact an evas
+              image object inlined in the parent canvas. You can get this
+              object (be careful to not manipulate it as it is under
+              control of elementary), and use it to do things like get
+              pixel data, save the image to a file, etc.
+            ]]
+            return: Evas.Object *; [[The inlined image object or $null if none exists.]]
+         }
+      }
+      @property name {
+         [[The window name.
+
+           The meaning of name depends on the underlying windowing system.
+
+           The window name is a constructing property that need to be set at
+           creation within \@ref eo_add.
+
+           Note: Once set, it can NOT be modified afterward.
+         ]]
+         /* FIXME-doc
+         Example:
+         @code
+         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_name_set(ELM_WIN_BASIC));
+         @endcode
+         */
+         set {
+            [[Can only be used at creation time, within \@ref eo_add.]]
+         }
+         values {
+            name: const(char)* @nullable;
+         }
+      }
+      @property type {
+         [[The type of the window.
+
+           It is a hint of how the Window Manager should handle it.
+
+           The window type is a constructing property that need to be set at
+           creation within \@ref eo_add.
+
+           Note: Once set, it can NOT be modified afterward.
+         ]]
+         /* FIXME-doc
+         Example:
+         @code
+         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_type_set(ELM_WIN_BASIC));
+         @endcode
+         */
+         set {
+            [[Can only be used at creation time, within \@ref eo_add.]]
+         }
+         get {
+            [[If the object is not window object, return #ELM_WIN_UNKNOWN.]]
+         }
+         values {
+            type: Elm.Win.Type(Elm.Win.Type.unknown);
+         }
+      }
+      @property noblank {
+         set {
+            [[Set the noblank property of a window.
+
+              The "noblank" property is a way to request the display on
+              which the windowis shown does not blank, screensave or
+              otherwise hide or obscure the window. It is intended for
+              uses such as media playback on a television where a user
+              may not want to be interrupted by an idle screen. The
+              noblank property may have no effect if the window is
+              iconified/minimized or hidden.
+
+              @since 1.11
+            ]]
+         }
+         get {
+            [[Get the noblank property of a window.
+
+              @since 1.11
+            ]]
+         }
+         values {
+            noblank: bool; [[If true, the window is set to noblank.]]
+         }
+      }
+      @property trap_data {
+         get {
+            [[Get the trap data associated with a window.
+
+              @since 1.12
+            ]]
+         }
+         values {
+            trap_data: void *; [[The trap data of the window.]]
+         }
+      }
+      @property fake_canvas @protected {
+           set {
+                [[Internal. Used to completent the fake window type.]]
+           }
+           values {
+                oee: Ecore_Evas *;
+           }
+      }
+      wm_manual_rotation_done_manual {
+         [[To notify the rotation done to WM manually.
+
+           This function is used to notify the rotation done to WM manually.
+
+           @since 1.9
+         ]]
+         legacy: elm_win_wm_rotation_manual_rotation_done;
+      }
+      socket_listen {
+         [[Create a socket to provide the service for Plug widget.]]
+         return: bool;
+         params {
+            @in svcname: const(char)*; [[The name of the service to be advertised.
+                                         Eensure that it is unique (when combined with
+                                         $svcnum) otherwise creation may fail.]]
+            @in svcnum: int; [[A number (any value, 0 being the common default) to
+                               differentiate multiple instances of services with
+                               the same name.]]
+            @in svcsys: bool; [[A boolean that if true, specifies to create a
+                                system-wide service all users can connect to,
+                                otherwise the service is private to the user
+                                id that created the service.]]
+         }
+      }
+      illume_command_send {
+         [[Send a command to the windowing environment
+
+           This is intended to work in touchscreen or small screen device
+           environments where there is a more simplistic window management
+           policy in place. This uses the window object indicated to select
+           which part of the environment to control (the part that this
+           window lives in), and provides a command and an optional
+           parameter structure (use NULL for this if not needed).
+         ]]
+         params {
+            @in command: Elm.Illume_Command; [[The command to send.]]
+            @in params: void * @optional; [[Optional parameters for the command.]]
+         }
+      }
+      activate {
+         [[Activate a window object.
+
+           This function sends a request to the Window Manager to activate
+           the window pointed by $obj. If honored by the WM, the window
+           will receive the keyboard focus.
+
+           Note: This is just a request that a Window Manager may ignore,
+           so calling this function does not ensure in any way that the
+           window will be the active one after it.
+         ]]
+      }
+      resize_object_add {
+         [[Add $subobj as a resize object of window $obj.
+
+           Setting an object as a resize object of the window means that
+           the $subobj child's size and position will be controlled by the
+           window directly. That is, the object will be resized to match
+           the window size and should never be moved or resized manually
+           by the developer.
+
+           In addition, resize objects of the window control what the
+           minimum size of it will be, as well as whether it can or not
+           be resized by the user.
+
+           For the end user to be able to resize a window by dragging the
+           handles or borders provided by the Window Manager, or using any
+           other similar mechanism, all of the resize objects in the window
+           should have their \@ref evas_object_size_hint_weight_set set to
+           EVAS_HINT_EXPAND.
+
+           Also notice that the window can get resized to the current size
+           of the object if the EVAS_HINT_EXPAND is set after the call to
+           this. So if the object should get resized to the size of the
+           window, set this hint before adding it as a resize object (this
+           happens because the size of the window and the object are
+           evaluated as soon as the object is added to the window).
+         ]]
+         params {
+            @in subobj: Evas.Object *; [[The resize object to add.]]
+         }
+      }
+      raise {
+         [[Raise a window object.
+
+           Places the window pointed by $obj at the top of the stack, so
+           that it's not covered by any other window.
+
+           If @.override.set is not set, the Window Manager may ignore this
+           request.
+         ]]
+      }
+      lower {
+         [[Lower a window object.
+
+           Places the window pointed by $obj at the bottom of the stack,
+           so that no other window is covered by it.
+
+           If @.override.set is not set, the Window Manager may ignore this
+           request.
+         ]]
+      }
+      resize_object_del {
+         [[Delete $subobj as a resize object of window $obj.
+
+           This function removes the object $subobj from the resize objects
+           of the window $obj. It will not delete the object itself, which
+           will be left unmanaged and should be deleted by the developer,
+           manually handled or set as child of some other container.
+         ]]
+         params {
+            @in subobj: Evas.Object *; [[The resize object to add.]]
+         }
+      }
+      center {
+         [[Center a window on its screen
+
+           This function centers window $obj horizontally and/or vertically
+           based on the values of $h and $v.
+         ]]
+
+         params {
+            @in h: bool; [[If true, center horizontally. If false, do not change horizontal location.]]
+            @in v: bool; [[If true, center vertically. If false, do not change vertical location.]]
+         }
+      }
+      keygrab_set {
+         [[Set keygrab value of the window
+
+           This function grabs the $key of window using $grab_mode.
+         ]]
+
+         return: bool;
+         params {
+            @in key: const(char)*; [[This string is the keyname to grab.]]
+            @in modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
+            @in not_modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
+            @in proirity: int; [[This is for the priority of keygrab. Currently this feature is not supported.]]
+            @in grab_mode: Elm.Win.Keygrab_Mode; [[According to the grabmode, it can grab key differently.]]
+         }
+      }
+      keygrab_unset {
+         [[Unset keygrab value of the window
+
+           This function unset keygrab value. Ungrab $key of window.
+         ]]
+         return: bool;
+         params {
+            @in key: const(char)*; [[This string is the keyname to grab.]]
+            @in modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
+            @in not_modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Eo.Base.finalize;
+      Evas.Object_Smart.hide;
+      Evas.Object_Smart.show;
+      Evas.Object_Smart.move;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.resize;
+      Elm.Widget.focus_direction;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.theme_apply;
+      Elm.Widget.on_focus;
+      Elm.Widget.event;
+      Elm.Interface_Atspi_Accessible.parent.get;
+      Elm.Interface_Atspi_Accessible.state_set.get;
+      Elm.Interface_Atspi_Accessible.name.get;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+   constructors {
+      .name;
+      .type;
+   }
+   events {
+      delete,request;
+      moved;
+      withdrawn;
+      iconified;
+      normal;
+      stick;
+      unstick;
+      fullscreen;
+      unfullscreen;
+      maximized;
+      unmaximized;
+      ioerr;
+      indicator,prop,changed;
+      rotation,changed;
+      profile,changed;
+      wm,rotation,changed;
+      theme,changed;
+      elm,action,block_menu;
+   }
+
+}

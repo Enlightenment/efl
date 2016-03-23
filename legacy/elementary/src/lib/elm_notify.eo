@@ -1,0 +1,105 @@
+class Elm.Notify (Elm.Container)
+{
+   eo_prefix: elm_obj_notify;
+   methods {
+      @property align {
+         set {
+            [[Set the alignment of the notify object
+
+              Sets the alignment in which the notify will appear in its parent.
+
+              Note: To fill the notify box in the parent area, please pass the
+              ELM_NOTIFY_ALIGN_FILL to horizontal and vertical.
+
+              @since 1.8
+            ]]
+         }
+         get {
+            [[Get the alignment of the notify object
+
+              @since 1.8
+            ]]
+         }
+         values {
+            horizontal: double; [[The horizontal alignment of the notification]]
+            vertical: double; [[The vertical alignment of the notification]]
+         }
+      }
+      @property allow_events {
+         set {
+            [[Sets whether events should be passed to by a click outside
+              its area.
+
+              When true if the user clicks outside the window the events will
+              be caught by the others widgets, else the events are blocked.
+
+              Note: The default value is true.
+            ]]
+         }
+         get {
+            [[Return true if events are allowed below the notify object.]]
+         }
+         values {
+            allow: bool; [[true if events are allowed, otherwise false]]
+         }
+      }
+      @property timeout {
+         set {
+            [[Set the time interval after which the notify window is going to
+              be hidden.
+
+              This function sets a timeout and starts the timer controlling
+              when the notify is hidden. Since calling evas_object_show() on
+              a notify restarts the timer controlling when the notify is
+              hidden, setting this before the notify is shown will in effect
+              mean starting the timer when the notify is shown.
+
+              Note: Set a value <= 0.0 to disable a running timer.
+
+              Note: If the value > 0.0 and the notify is previously visible,
+              the timer will be started with this value, canceling any running
+              timer.
+            ]]
+         }
+         get {
+            [[Return the timeout value (in seconds)]]
+         }
+         values {
+            timeout: double; [[The timeout in seconds]]
+         }
+      }
+      dismiss {
+         [[Dismiss a notify object.
+           @since 1.17
+         ]]
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.hide;
+      Evas.Object_Smart.show;
+      Evas.Object_Smart.move;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.resize;
+      Elm.Widget.focus_direction;
+      Elm.Widget.parent;
+      Elm.Widget.theme_apply;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.sub_object_del;
+      Elm.Widget.part_text.set;
+      Elm.Widget.part_text.get;
+      Elm.Container.content_get;
+      Elm.Container.content_set;
+      Elm.Container.content_unset;
+   }
+   events {
+      block,clicked;
+      timeout;
+      dismissed;
+   }
+
+}

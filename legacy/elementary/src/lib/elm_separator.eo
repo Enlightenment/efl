@@ -1,0 +1,27 @@
+class Elm.Separator (Elm.Layout)
+{
+   eo_prefix: elm_obj_separator;
+   methods {
+      @property horizontal {
+         set {
+            [[Set the horizontal mode of a separator object]]
+         }
+         get {
+            [[Get the horizontal mode of a separator object]]
+         }
+         values {
+            horizontal: bool; [[If true, the separator is horizontal]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.theme_apply;
+      Elm.Layout.sizing_eval;
+   }
+
+}

@@ -1,0 +1,89 @@
+class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm.Interface_Atspi_Selection)
+{
+   eo_prefix: elm_obj_menu;
+   methods {
+      @property selected_item {
+         get {
+            [[Get the selected item in the menu.]]
+            return: Elm.Widget_Item *; [[The selected item or $null.]]
+         }
+      }
+      @property items {
+         get {
+            [[Returns a list of the item's items.]]
+            return: const(list<Elm.Widget_Item *>)*;
+         }
+      }
+      @property first_item {
+         get {
+            [[Get the first item in the menu.]]
+            return: Elm.Widget_Item *;
+         }
+      }
+      @property last_item {
+         get {
+            [[Get the last item in the menu.]]
+            return: Elm.Widget_Item *;
+         }
+      }
+      move {
+         [[Move the menu to a new position
+
+           Sets the top-left position of the menu to ($x, $y).
+
+           Note: $x and $y coordinates are relative to parent.
+         ]]
+         params {
+            @in x: Evas.Coord; [[The new position.]]
+            @in y: Evas.Coord; [[The new position.]]
+         }
+      }
+      item_add {
+         [[Add an item at the end of the given menu widget.
+
+           Note: This function does not accept relative icon path.
+         ]]
+         return: Elm.Widget_Item *; [[The new menu item.]]
+         params {
+            @in parent: Elm.Widget_Item * @optional; [[The parent menu item (optional).]]
+            @in icon: const(char)* @optional; [[An icon display on the item. The icon will be destroyed by the menu.]]
+            @in label: const(char)*; [[The label of the item.]]
+            @in func: Evas_Smart_Cb @optional; [[Function called when the user select the item.]]
+            @in data: const(void)* @optional; [[Data sent by the callback.]]
+         }
+      }
+      close {
+         [[Close a opened menu
+
+           Hides the menu and all it's sub-menus.
+         ]]
+      }
+      item_separator_add {
+         [[Add a separator item to menu $obj under $parent.]]
+         return: Elm.Widget_Item *; [[The created item or $null.]]
+         params {
+            @in parent: Elm.Widget_Item *; [[The item to add the separator under.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Evas.Object_Smart.show;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.parent;
+      Elm.Widget.theme_apply;
+      Elm.Widget.translate;
+      Elm.Interface_Atspi_Accessible.children.get;
+      Elm.Interface_Atspi_Selection.selected_children_count.get;
+      Elm.Interface_Atspi_Selection.selected_child.get;
+   }
+   events {
+      dismissed;
+      elm,action,block_menu;
+      elm,action,unblock_menu;
+   }
+
+}

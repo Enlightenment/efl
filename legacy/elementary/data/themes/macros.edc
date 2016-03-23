@@ -1,0 +1,11 @@
+#define ASPECT_FILL(_ASPECT) \
+   aspect: _ASPECT _ASPECT; aspect_preference: NONE;
+#define TILED_PATTERN(_WIDTH, _HEIGHT) \
+   fill { size { relative: 0.0 0.0; offset: _WIDTH _HEIGHT; } }
+#define TILED_HORIZ(_WIDTH) \
+   fill { size { relative: 0.0 1.0; offset: _WIDTH 0; } }
+#define FIXED_SIZE(_WIDTH, _HEIGHT) \
+   min: _WIDTH _HEIGHT; max: _WIDTH _HEIGHT; fixed: 1 1;
+
+#define DARK_GREY_BG_COLOR 48 48 48 255
+#define DARK_GREY_BG_DISABLED_COLOR 64 64 64 255

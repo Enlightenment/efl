@@ -1,0 +1,29 @@
+class Elm.Player (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
+{
+   eo_prefix: elm_obj_player;
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.theme_apply;
+      Elm.Widget.event;
+      Elm.Container.content_set;
+      Elm.Layout.sizing_eval;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+   events {
+      forward,clicked;
+      info,clicked;
+      next,clicked;
+      pause,clicked;
+      play,clicked;
+      prev,clicked;
+      rewind,clicked;
+      quality,clicked;
+      eject,clicked;
+      volume,clicked;
+      mute,clicked;
+   }
+
+}

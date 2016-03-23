@@ -1,0 +1,871 @@
+import elm_general;
+
+enum Elm.Activate
+{
+   [[ Used in 'Virtual' function @Elm.Widget.activate. ]]
+   default = 0,
+   up,
+   down,
+   right,
+   left,
+   back,
+}
+
+struct Elm.Tooltip;
+struct Elm.Cursor;
+struct @extern Elm.Theme;
+
+abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Interface_Atspi_Component)
+{
+   eo_prefix: elm_obj_widget;
+   data: Elm_Widget_Smart_Data;
+   methods {
+      @property focus {
+         [[Whether an Elementary object has the focus or not.
+
+           Note that when you set focus to this object, if it can handle focus,
+           it will take the focus away from the one who had it previously and will,
+           for now on, be the one receiving input events. Unsetting focus will remove
+           the focus from this object, passing it back to the previous element in the
+           focus chain list.
+
+           Warning: Only visible object can get a focus. Call @Evas.Object_Smart.show
+           before calling this API, if you want to give a focus to the evas object.]]
+         set {
+           [[$true set the focus to the object,
+             $false unset the focus to the object.]]
+         }
+         get {
+            [[Return $true if the object is focused,
+              and $false if not (and on errors).]]
+         }
+         values {
+            focus: bool;
+         }
+      }
+      @property drag_lock_y {
+         set {
+         }
+         get {
+         }
+         values {
+            lock: bool;
+         }
+      }
+      @property focus_highlight_style {
+         [[Control the widget focus highlight style.]]
+         set {
+            return: bool; [[$true on success, $false otherwise.]]
+         }
+         get {
+         }
+         values {
+            style: const(char)*; [[The name of the focus highlight style.]]
+         }
+      }
+      @property tree_unfocusable {
+         [[Make the elementary object and its children to be unfocusable (or focusable).
+           If the tree is set as unfocusable, newest focused object which is not in
+           this tree will get focus.
+           This API can be helpful for an object to be deleted.
+           When an object will be deleted soon, it and its children may not want to
+           get focus (by focus reverting or by other focus controls).
+           Then, just use this API before deleting.]]
+         set {
+         }
+         get {
+           [[Return $true, if the tree is unfocusable,
+             $false otherwise (and on errors).]]
+         }
+         values {
+            tree_unfocusable: bool; [[$true for unfocusable, $false for focusable.]]
+         }
+      }
+      @property mirrored {
+         [[Control the widget's mirrored mode.]]
+         set {
+         }
+         get {
+         }
+         values {
+            mirrored: bool;
+         }
+      }
+      @property theme {
+         set {
+         }
+         get {
+         }
+         values {
+            th: Elm.Theme * @nullable;
+         }
+      }
+      @property disabled {
+         set {
+         }
+         get {
+         }
+         values {
+            disabled: bool;
+         }
+      }
+      @property highlight_ignore {
+         set {
+         }
+         get {
+         }
+         values {
+            ignore: bool;
+         }
+      }
+      @property mirrored_automatic {
+         [[Control the widget's mirrored mode setting.]]
+         set {
+         }
+         get {
+         }
+         values {
+            automatic: bool;
+         }
+      }
+      @property orientation_mode_disabled {
+         set {
+         }
+         get {
+         }
+         values {
+            disabled: bool;
+         }
+      }
+      @property style {
+         set {
+            return: bool;
+         }
+         get {
+         }
+         values {
+            style: const(char)*;
+         }
+      }
+      @property scale {
+         set {
+         }
+         get {
+         }
+         values {
+            scale: double;
+         }
+      }
+      @property focus_custom_chain {
+         [[A custom chain of objects to pass focus.
+
+           Note: On focus cycle, only will be evaluated children of this container.]]
+         set {
+            [[This function overwrites any previous custom focus chain within
+              the list of objects. The previous list will be deleted and this list
+              will be managed by elementary. After it is set, don't modify it.]]
+            values {
+               objs: list<Evas.Object*>*; [[Chain of objects to pass focus]]
+            }
+         }
+         get {
+            values {
+               objs: const(list<Evas.Object*>)*; [[Chain of objects]]
+            }
+         }
+      }
+      @property can_focus {
+         [[The ability for an Elementary object to be focused.
+
+           Unfocusable objects do nothing when programmatically
+           focused, being the nearest focusable parent object the one
+           really getting focus. Also, when they receive mouse input, they
+           will get the event, but not take away the focus from where it
+           was previously.
+
+           Note: Objects which are meant to be interacted with by input
+           events are created able to be focused, by default. All the
+           others are not.]]
+         set {
+         }
+         get {
+            [[Return $true if the object is allowed to be focused,
+              $false if not (and on errors).]]
+         }
+         values {
+            can_focus: bool; [[$true if the object can be focused,
+                               $false if not.]]
+         }
+      }
+      @property highlight_in_theme {
+         set {
+         }
+         get {
+         }
+         values {
+            highlight: bool;
+         }
+      }
+      @property parent {
+         set {
+         }
+         get {
+         }
+         values {
+            parent: Evas.Object * @nullable;
+         }
+      }
+      @property access_info {
+         set {
+         }
+         get {
+         }
+         values {
+            txt: const(char)* @nullable;
+         }
+      }
+      @property drag_lock_x {
+         set {
+         }
+         get {
+         }
+         values {
+            lock: bool;
+         }
+      }
+      @property access_highlight_in_theme {
+         set {
+         }
+         get {
+         }
+         values {
+            highlight: bool; [[highlight]]
+         }
+      }
+      @property focus_region_show_mode {
+         [[Control the focus_region_show mode.]]
+         set {
+         }
+         get {
+         }
+         values {
+            mode: Elm.Focus.Region.Show_Mode;
+         }
+      }
+      @property parent_highlight {
+         set {
+         }
+         values {
+            highlighted: bool;
+         }
+      }
+      @property theme_object {
+         set {
+            return: bool;
+         }
+         values {
+            edj: Evas.Object *;
+            wname: const(char)*;
+            welement: const(char)*;
+            wstyle: const(char)*;
+         }
+      }
+      @property hover_object {
+         set {
+         }
+         values {
+            sobj: Evas.Object * @nullable;
+         }
+      }
+      @property display_mode {
+         set {
+         }
+         values {
+            dispmode: Evas.Display_Mode;
+         }
+      }
+      @property on_show_region_hook {
+         set {
+         }
+         values {
+            func: region_hook_func_type @nullable;
+            data: void * @optional;
+         }
+      }
+      @property domain_part_text_translatable {
+         set {
+         }
+         values {
+            part: const(char)*;
+            domain: const(char)*;
+            translatable: bool;
+         }
+      }
+      @property orientation {
+         set {
+         }
+         values {
+            rotation: int;
+         }
+      }
+      @property resize_object {
+         set {
+         }
+         values {
+            sobj: Evas.Object * @nullable;
+            sub_obj: bool;
+         }
+      }
+      @property domain_translatable_part_text {
+         set {
+         }
+         values {
+            part: const(char)*;
+            domain: const(char)*;
+            label: const(char)*;
+         }
+      }
+      @property scrollable_children {
+         get {
+            [[Function to operate on a given widget's scrollabe children when necessary.
+
+              Warning: free the returned list with eina_list_free().]]
+            return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
+         }
+      }
+      @property scroll_hold {
+         get {
+            return: int;
+         }
+      }
+      @property drag_child_locked_y {
+         get {
+            return: int;
+         }
+      }
+      @property item_loop_enabled {
+         [[Control item loop feature.]]
+         set {
+         }
+         get {
+         }
+         values {
+            enable: bool;
+         }
+      }
+      @property child_can_focus {
+         get {
+            return: bool;
+         }
+      }
+      @property scroll_freeze {
+         get {
+            return: int;
+         }
+      }
+      @property focus_region {
+         get {
+            return: bool;
+         }
+         values {
+            x: Evas.Coord;
+            y: Evas.Coord;
+            w: Evas.Coord;
+            h: Evas.Coord;
+         }
+      }
+      @property top {
+         get {
+            return: Evas.Object *;
+         }
+      }
+      @property focus_order {
+         get {
+            return: uint;
+         }
+      }
+      @property drag_child_locked_x {
+         get {
+            return: int;
+         }
+      }
+      @property can_focus_child_list {
+         get {
+            return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
+         }
+      }
+      @property focused_item {
+         get {
+            [[Get the focused widget item.]]
+            return: Elm.Widget_Item *;
+         }
+      }
+      @property parents_bounce {
+         get {
+         }
+         values {
+            horiz: bool;
+            vert: bool;
+         }
+      }
+      @property parent_widget {
+         get {
+            return: Evas.Object *;
+            legacy: null;
+         }
+      }
+      @property highlight {
+         get {
+            return: bool;
+         }
+      }
+      @property focused_object {
+         [[Current focused object in object tree.]]
+         get {
+            return: Evas.Object *; [[Current focused or $null, if there is no focused object.]]
+         }
+      }
+      @property parent2 {
+         set {
+         }
+         get {
+         }
+         values {
+            parent: Evas.Object * @nullable;
+         }
+      }
+      @property part_text {
+         set {
+         }
+         get {
+         }
+         keys {
+            part: const(char)*;
+         }
+         values {
+            label: const(char)*;
+         }
+      }
+      newest_focus_order_get @const {
+         return: Evas.Object *;
+         params {
+            @out newest_focus_order: uint;
+            @in can_focus_only: bool;
+         }
+      }
+      scroll_hold_push {
+      }
+      cursor_add {
+         params {
+            @in cur: Elm.Cursor *;
+         }
+      }
+      focus_next_object_set {
+         [[Set the next object with specific focus direction.
+
+           @since 1.8]]
+         params {
+            @in next: Evas.Object * @nullable; [[Focus next object]]
+            @in dir: Elm.Focus_Direction; [[Focus direction]]
+         }
+      }
+      focus_next_object_get @const {
+         [[Get the next object with specific focus direction.
+
+           @since 1.8]]
+         return: Evas.Object *; [[Focus next object]]
+         params {
+            @in dir: Elm.Focus_Direction; [[Focus direction]]
+         }
+      }
+      focus_next_item_set {
+         [[Set the next object item with specific focus direction.
+
+           @since 1.16]]
+         params {
+            @in next_item: Elm.Widget_Item * @nullable; [[Focus next object item]]
+            @in dir: Elm.Focus_Direction; [[Focus direction]]
+         }
+      }
+      focus_next_item_get @const {
+         [[Get the next object item with specific focus direction.
+
+           @since 1.16]]
+         return: Elm.Widget_Item *; [[Focus next object item]]
+         params {
+            @in dir: Elm.Focus_Direction; [[Focus direction]]
+         }
+      }
+      focus_tree_unfocusable_handle {
+      }
+      focus_custom_chain_prepend {
+         [[Prepend object to custom focus chain.
+
+           Note: If @"relative_child" equal to $null or not in custom chain,
+           the object will be added in begin.
+
+           Note: On focus cycle, only will be evaluated children of this container.]]
+         params {
+            @in child: Evas.Object *; [[The child to be added in custom chain.]]
+            @in relative_child: Evas.Object * @optional; [[The relative object to position the child.]]
+         }
+      }
+      part_text_translate {
+         return: const(char)*;
+         params {
+            @in part: const(char)*;
+            @in text: const(char)*;
+         }
+      }
+      focus_highlight_geometry_get @const {
+         [[Get the focus highlight geometry of widget.]]
+         params {
+            @in x: Evas.Coord *;
+            @in y: Evas.Coord *;
+            @in w: Evas.Coord *;
+            @in h: Evas.Coord *;
+         }
+      }
+      activate {
+         [['Virtual' function to activate widget.]]
+         params {
+            @in act: Elm.Activate;
+         }
+         return: bool;
+         legacy: null; /* the legacy API has not the same number of parameter to we don't generate it. */
+      }
+      sub_object_add {
+         [['Virtual' function handling sub objects being added.]]
+         return: bool;
+         params {
+            @in sobj: Evas.Object *;
+         }
+      }
+      focus_direction_manager_is {
+         [['Virtual' function which checks if handling of passing focus to sub-objects in given direction is supported by widget.]]
+         return: bool;
+         legacy: null;
+      }
+      event {
+         [['Virtual' function handling input events on the widget.]]
+         params {
+            @in source: Evas.Object *;
+            @in type: Evas.Callback_Type;
+            @in event_info: void *;
+         }
+         return: bool;
+      }
+      event_callback_add {
+         params {
+            @in func: Elm_Event_Cb;
+            @in data: const(void)* @optional;
+         }
+      }
+      access {
+         [['Virtual' function on the widget being set access.]]
+         params {
+            @in acs: bool;
+         }
+         legacy: null;
+      }
+      cursor_del {
+         params {
+            @in cur: Elm.Cursor *;
+         }
+      }
+      event_callback_del {
+         return: void *;
+         params {
+            @in func: Elm_Event_Cb;
+            @in data: const(void)* @nullable;
+         }
+      }
+      on_focus {
+         [['Virtual' function handling focus in/out events on the widget.  return true if this widget can handle focus, false otherwise]]
+         params {
+            @in item: Elm.Widget_Item * @nullable;
+         }
+         return: bool;
+      }
+      on_focus_region {
+         [['Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise.]]
+         params {
+            @out x: Evas.Coord;
+            @out y: Evas.Coord;
+            @out w: Evas.Coord;
+            @out h: Evas.Coord;
+         }
+         return: bool;
+      }
+      focus_cycle {
+         [[Give focus to next object with specific focus direction in
+           object tree.]]
+         params {
+            @in dir: Elm.Focus_Direction; [[Direction to move the focus.]]
+         }
+      }
+      focus_direction {
+         [['Virtual' function handling passing focus to sub-objects given a direction, in degrees.]]
+         params {
+            @in base: const(Evas.Object)*;
+            @in degree: double;
+            @out direction: Evas.Object *;
+            @out direction_item: Elm.Widget_Item *;
+            @out weight: double;
+         }
+         return: bool;
+      }
+      event_propagate {
+         return: bool;
+         params {
+            @in type: Evas.Callback_Type;
+            @in event_info: void *;
+            @in event_flags: Evas.Event_Flags *;
+         }
+      }
+      signal_callback_add {
+         params {
+            @in emission: const(char)*;
+            @in source: const(char)*;
+            @in func: Edje.Signal_Cb;
+            @in data: void *;
+         }
+      }
+      focus_next_manager_is {
+         [['Virtual' function which checks if handling of passing focus to sub-objects is supported by widget.]]
+         return: bool;
+      }
+      name_find @const {
+         return: Evas.Object *;
+         params {
+            @in name: const(char)*;
+            @in recurse: int;
+         }
+      }
+      focus_list_direction_get @const {
+         return: bool;
+         params {
+            @in base: const(Evas.Object)*;
+            @in items: const(list<Eo.Base*>)*;
+            @in list_data_get: list_data_get_func_type;
+            @in degree: double;
+            @out direction: Evas.Object *;
+            @out direction_item: Elm.Widget_Item *;
+            @out weight: double;
+         }
+      }
+      focused_object_clear {
+      }
+      focus_direction_go {
+         return: bool;
+         params {
+            @in degree: double;
+         }
+      }
+      show_region_set {
+         params {
+            @in x: Evas.Coord;
+            @in y: Evas.Coord;
+            @in w: Evas.Coord;
+            @in h: Evas.Coord;
+            @in forceshow: bool;
+         }
+      }
+      show_region_get @const {
+         params {
+            @out x: Evas.Coord @optional;
+            @out y: Evas.Coord @optional;
+            @out w: Evas.Coord @optional;
+            @out h: Evas.Coord @optional;
+         }
+      }
+      scroll_freeze_pop {
+      }
+      tooltip_del {
+         params {
+            @in tt: Elm.Tooltip *;
+         }
+      }
+      focus_next_get @const {
+         return: bool;
+         params {
+            @in dir: Elm.Focus_Direction;
+            @out next: Evas.Object *;
+            @out next_item: Elm.Widget_Item *;
+         }
+      }
+      translatable_part_text_get @const {
+         return: const(char)*;
+         params {
+            @in part: const(char)*;
+         }
+      }
+      focus_restore {
+         [[Restore the focus state of the sub-tree.
+
+         This API will restore the focus state of the sub-tree to the latest
+         state. If a sub-tree is unfocused and wants to get back to the latest
+         focus state, this API will be helpful.]]
+      }
+      scroll_hold_pop {
+      }
+      translate {
+         [['Virtual' function handling language changes on Elementary.]]
+         return: bool;
+         legacy: null;
+      }
+      scroll_freeze_push {
+      }
+      focus_custom_chain_unset {
+         [[Unset a custom focus chain on a given Elementary widget.
+
+           Any focus chain previously set is removed entirely after this call.]]
+      }
+      focus_steal {
+         params {
+            @in item: Elm.Widget_Item * @nullable;
+         }
+      }
+      focus_hide_handle {
+      }
+      focus_next {
+         [['Virtual' function handling passing focus to sub-objects.]]
+         params {
+            @in dir: Elm.Focus_Direction;
+            @out next: Evas.Object *;
+            @out next_item: Elm.Widget_Item *;
+         }
+         return: bool;
+      }
+      focus_list_next_get @const {
+         return: bool;
+         params {
+            @in items: const(list<Eo.Base*>)*;
+            @in list_data_get: list_data_get_func_type;
+            @in dir: Elm.Focus_Direction;
+            @out next: Evas.Object *;
+            @out next_item: Elm.Widget_Item *;
+         }
+      }
+      focus_mouse_up_handle {
+         legacy: null;
+      }
+      theme_apply {
+         [['Virtual' function on the widget being re-themed.]]
+         return: bool;
+      }
+      focus_direction_get @const {
+         return: bool;
+         params {
+            @in base: const(Evas.Object)*;
+            @in degree: double;
+            @out direction: Evas.Object *;
+            @out direction_item: Elm.Widget_Item *;
+            @out weight: double;
+         }
+      }
+      signal_callback_del {
+         return: void *;
+         params {
+            @in emission: const(char)*;
+            @in source: const(char)*;
+            @in func: Edje.Signal_Cb;
+         }
+      }
+      signal_emit {
+         params {
+            @in emission: const(char)*;
+            @in source: const(char)*;
+         }
+      }
+      disable {
+         [['Virtual' function on the widget being disabled.]]
+         return: bool;
+      }
+      sub_object_del {
+         [['Virtual' function handling sub objects being removed.]]
+         return: bool;
+         params {
+            @in sobj: Evas.Object *;
+         }
+      }
+      tooltip_add {
+         params {
+            @in tt: Elm.Tooltip *;
+         }
+      }
+      focus_region_show @const {
+      }
+      focus_disabled_handle {
+      }
+      focus_custom_chain_append {
+         [[Append object to custom focus chain.
+
+           Note: If @"relative_child" equal to $null or not in custom chain,
+           the object will be added in end.
+
+           Note: On focus cycle, only will be evaluated children of this container.]]
+         params {
+            @in child: Evas.Object *; [[The child to be added in custom chain.]]
+            @in relative_child: Evas.Object * @optional; [[The relative object to position the child.]]
+         }
+      }
+      @property focus_move_policy {
+         set {
+            [[Sets the widget's focus move policy.]]
+         }
+         get {
+            [[Returns the widget's focus move policy.]]
+         }
+         values {
+            policy: Elm.Focus.Move_Policy; [[Object's focus move policy.]]
+         }
+      }
+	  @property focus_move_policy_automatic {
+         [[Control the widget's focus_move_policy mode setting.]]
+         set {
+         }
+         get {
+         }
+         values {
+            automatic: bool; [[$true to follow system focus move policy change, $false otherwise]]
+         }
+      }
+	  focus_reconfigure {
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Eo.Base.dbg_info_get;
+      Evas.Object_Smart.hide;
+      Evas.Object_Smart.calculate;
+      Evas.Object_Smart.clip_unset;
+      Evas.Object_Smart.show;
+      Evas.Object_Smart.color.set;
+      Evas.Object_Smart.move;
+      Evas.Object_Smart.member_del;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.clip.set;
+      Evas.Object_Smart.member_add;
+      Evas.Object_Smart.resize;
+      @virtual .focus_direction;
+      @virtual .focus_next;
+      @virtual .parent_widget.get;
+      Elm.Interface_Atspi_Accessible.name.get;
+      Elm.Interface_Atspi_Accessible.state_set.get;
+      Elm.Interface_Atspi_Accessible.children.get;
+      Elm.Interface_Atspi_Accessible.parent.get;
+      Elm.Interface_Atspi_Accessible.attributes.get;
+      Elm.Interface_Atspi_Component.focus_grab;
+   }
+   events {
+      moved;
+      focused;
+      unfocused;
+      language,changed;
+      access,changed;
+   }
+}

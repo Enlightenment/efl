@@ -1,0 +1,92 @@
+class Elm.Menu_Item(Elm.Widget_Item, Elm.Interface_Atspi_Selection)
+{
+   eo_prefix: elm_obj_menu_item;
+   methods {
+        @property icon_name {
+             get {
+                [[Get the string representation from the icon of a menu item
+
+                  Once this icon is set, any previously set icon will be deleted.
+                  To hide icon set it to "".
+                ]]
+             }
+             set {
+                [[Set the icon of a menu item to the standard icon with the
+                  given name.
+
+                  Once this icon is set, any previously set icon will be deleted.
+                  To hide icon set it to "".
+                ]]
+             }
+             values {
+                 icon: const (char)*; [[The name of icon object.]]
+             }
+        }
+        @property selected {
+             get {
+                [[Get the selected state of $item.]]
+             }
+             set {
+                [[Set the selected state of $item.]]
+             }
+             values {
+                 selected: bool; [[The selection state.]]
+             }
+        }
+      prev_get @const {
+            [[Get the previous item in the menu.]]
+            return: Elm.Widget_Item*;
+        }
+      next_get @const {
+             [[Get the next item in the menu.]]
+             return: Elm.Widget_Item*;
+        }
+      index_get @const {
+             [[Get the next item in the menu.]]
+             return: uint;
+        }
+     subitems_clear {
+             [[Remove all sub-items (children) of the given item
+
+               This removes all items that are children (and their descendants)
+               of the given item $it.
+
+               @since 1.8
+             ]]
+        }
+     subitems_get @const {
+             [[Returns a list of $item's subitems.]]
+             return: const (list<Elm.Widget_Item *>) *; [[a list of $item's subitems]]
+        }
+     is_separator @const {
+             [[Returns whether $item is a separator.]]
+             return: bool; [[$true if the item is a separator.]]
+        }
+     object_get @const {
+             [[Get the real Evas(Edje) object created to implement the view of
+               a given menu item.
+
+               Warning: Don't manipulate this object!
+             ]]
+             return: Evas.Object*; [[The base Edje object containing the
+                                     swallowed content associated with the item.]]
+        }
+   }
+   implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+        Elm.Widget_Item.disable;
+        Elm.Widget_Item.signal_emit;
+        Elm.Widget_Item.part_text.get;
+        Elm.Widget_Item.part_text.set;
+        Elm.Widget_Item.part_content.get;
+        Elm.Widget_Item.part_content.set;
+        Elm.Interface_Atspi_Accessible.children.get;
+        Elm.Interface_Atspi_Accessible.parent.get;
+        Elm.Interface_Atspi_Accessible.role.get;
+        Elm.Interface_Atspi_Accessible.name.get;
+        Elm.Interface_Atspi_Accessible.state_set.get;
+        Elm.Interface_Atspi_Selection.selected_children_count.get;
+        Elm.Interface_Atspi_Selection.selected_child.get;
+   }
+}
