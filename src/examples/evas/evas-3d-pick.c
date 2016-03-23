@@ -77,7 +77,7 @@ _on_canvas_resize(Ecore_Evas *ee)
 }
 
 static void
-_on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
+_on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
