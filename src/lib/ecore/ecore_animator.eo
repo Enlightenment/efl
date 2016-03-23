@@ -1,5 +1,4 @@
-type @extern Ecore_Timeline_Cb: __undefined_type;
-type @extern Ecore_Task_Cb: __undefined_type;
+import ecore_types;
 
 class Ecore.Animator (Eo.Base)
 {

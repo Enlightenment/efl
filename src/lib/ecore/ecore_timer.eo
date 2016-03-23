@@ -1,4 +1,4 @@
-type @extern Ecore_Task_Cb: __undefined_type;
+import ecore_types;
 
 class Ecore.Timer (Eo.Base)
 {
