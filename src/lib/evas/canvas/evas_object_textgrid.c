@@ -987,7 +987,8 @@ static int
 _alternate_font_weight_slant(Evas_Object_Protected_Data *obj,
                              Evas_Textgrid_Data *o,
                              Evas_Font_Set **fontp,
-                             Evas_Font_Description *fdesc)
+                             Evas_Font_Description *fdesc,
+                             const char *kind)
 {
    int ret = -1;
    Evas_Font_Set *font;
@@ -1018,6 +1019,12 @@ _alternate_font_weight_slant(Evas_Object_Protected_Data *obj,
         advance = ENFN->font_h_advance_get(ENDT, font, &text_props);
         vadvance = ENFN->font_v_advance_get(ENDT, font, &text_props);
         ascent = ENFN->font_ascent_get(ENDT, font);
+        DBG("on font '%s', with alternate weight/slant %s, "
+            "width: %d vs %d, height: %d vs %d, ascent: %d vs %d",
+             fdesc->name, kind,
+             o->cur.char_width, advance,
+             o->cur.char_height, vadvance,
+             o->ascent, ascent);
         if ((o->cur.char_width != advance) ||
             (o->cur.char_height != vadvance) ||
             (o->ascent != ascent))
@@ -1030,6 +1037,11 @@ _alternate_font_weight_slant(Evas_Object_Protected_Data *obj,
              ret = 0;
           }
         evas_common_text_props_content_unref(&text_props);
+     }
+   else
+     {
+         DBG("can not load font '%s' with alternate weight/slant %s",
+             fdesc->name, kind);
      }
    return ret;
 }
@@ -1131,17 +1143,22 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
         o->ascent = 0;
      }
 
+   DBG("font: '%s' weigth: %d, slant: %d",
+       fdesc->name, fdesc->weight, fdesc->slant);
+
    /* Bold */
    if (o->font_bold)
      {
         evas_font_free(obj->layer->evas->evas, o->font_bold);
         o->font_bold = NULL;
      }
-   if (fdesc->weight == EVAS_FONT_WEIGHT_NORMAL)
+   if ((fdesc->weight == EVAS_FONT_WEIGHT_NORMAL) ||
+       (fdesc->weight == EVAS_FONT_WEIGHT_BOOK))
      {
         Evas_Font_Description *bold_desc = evas_font_desc_dup(fdesc);
         bold_desc->weight = EVAS_FONT_WEIGHT_BOLD;
-        _alternate_font_weight_slant(obj, o, &o->font_bold, bold_desc);
+        _alternate_font_weight_slant(obj, o, &o->font_bold, bold_desc,
+                                     "bold");
         evas_font_desc_unref(bold_desc);
      }
 
@@ -1158,12 +1175,13 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
 
         italic_desc->slant = EVAS_FONT_SLANT_ITALIC;
         ret = _alternate_font_weight_slant(obj, o, &o->font_italic,
-                                           italic_desc);
+                                           italic_desc, "italic");
         if (ret != 0)
           {
              italic_desc->slant = EVAS_FONT_SLANT_OBLIQUE;
              _alternate_font_weight_slant(obj, o, &o->font_italic,
-                                          italic_desc);
+                                          italic_desc,
+                                          "oblique");
           }
         evas_font_desc_unref(italic_desc);
      }
@@ -1183,12 +1201,14 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
         bolditalic_desc->slant = EVAS_FONT_SLANT_ITALIC;
         bolditalic_desc->weight = EVAS_FONT_WEIGHT_BOLD;
         ret = _alternate_font_weight_slant(obj, o, &o->font_bolditalic,
-                                           bolditalic_desc);
+                                           bolditalic_desc,
+                                           "bolditalic");
         if (ret != 0)
           {
              bolditalic_desc->slant = EVAS_FONT_SLANT_OBLIQUE;
              _alternate_font_weight_slant(obj, o, &o->font_bolditalic,
-                                          bolditalic_desc);
+                                          bolditalic_desc,
+                                          "boldoblique");
           }
         evas_font_desc_unref(bolditalic_desc);
      }
