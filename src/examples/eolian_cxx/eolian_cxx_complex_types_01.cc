@@ -22,6 +22,8 @@
 #include <canvas/evas_rectangle.eo.hh>
 #include <canvas/evas_zoomable_interface.eo.hh>
 
+#include "../../lib/evas/canvas/evas_grid.eo.hh"
+
 namespace efl { namespace evas { // XXX only while we don't have namespaces in EFL
 using ::evas::canvas;
 using ::evas::object;

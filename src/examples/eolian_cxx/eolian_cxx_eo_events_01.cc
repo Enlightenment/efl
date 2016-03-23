@@ -18,10 +18,10 @@
 #include <Evas.hh>
 
 #include <canvas/evas_canvas.eo.hh>
-#include <canvas/evas_text.eo.hh>
 #include <canvas/evas_image.eo.hh>
-#include <canvas/evas_box.eo.hh>
 
+#include "../../lib/evas/canvas/evas_text.eo.hh"
+#include "../../lib/evas/canvas/evas_grid.eo.hh"
 
 namespace efl { namespace evas {
 using ::evas::canvas;
