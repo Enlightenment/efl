@@ -823,7 +823,7 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text
                   if ((x >= pen_x) &&
                         (((i == 0) && (x <= full_adv)) ||
                          (x < (full_adv - (gli[-1].pen_after - start_pen)) ||
-                         (x <= (pen_x + gli->width)))) &&
+                         (x < (pen_x + gli->x_bear + gli->width)))) &&
                         (y >= -asc) && (y <= desc))
                     {
 #ifdef OT_SUPPORT
@@ -850,8 +850,9 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text
 
              if ((x >= EVAS_FONT_WALK_PEN_X) &&
                    ((x < (EVAS_FONT_WALK_PEN_X_AFTER)) ||
-                   (x <= (EVAS_FONT_WALK_PEN_X + _glyph_itr->width))) &&
-                 (y >= -asc) && (y <= desc))
+                    (x < (EVAS_FONT_WALK_PEN_X +
+                          _glyph_itr->x_bear + _glyph_itr->width))) &&
+                   (y >= -asc) && (y <= desc))
                {
                   ret = EVAS_FONT_WALK_POS;
                   goto end;

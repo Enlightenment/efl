@@ -2210,6 +2210,20 @@ START_TEST(evas_textblock_wrapping)
    evas_object_textblock_size_formatted_get(tb, NULL, &h);
    ck_assert_int_ge(h, bh);
 
+   /* Check char-wrapping for small items */
+   evas_object_textblock_text_markup_set(tb, "x");
+   evas_object_textblock_size_native_get(tb, &bw, NULL);
+   evas_object_textblock_text_markup_set(tb, "AxAx");
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=char");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw - bw, nh);
+   evas_object_textblock_size_formatted_get(tb, &bw, NULL);
+
+   evas_object_textblock_text_markup_set(tb, "A<color=#f00>x</color>Ax");
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=char");
+   evas_object_textblock_size_formatted_get(tb, &w, NULL);
+   ck_assert_int_eq(bw, w);
+
    END_TB_TEST();
 }
 END_TEST
