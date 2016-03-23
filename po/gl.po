@@ -236,3 +236,315 @@ msgstr "Imaxes"
 #: src/lib/efreet/efreet_base.c:182
 msgid "Videos"
 msgstr "Vídeos"
+
+#: src/lib/elementary/elc_fileselector.c:1505
+msgid "Up"
+msgstr "Arriba"
+
+#: src/lib/elementary/elc_fileselector.c:1521
+msgid "Home"
+msgstr "Cartafol persoal"
+
+#: src/lib/elementary/elc_fileselector.c:1588
+msgid "Search"
+msgstr ""
+
+#: src/lib/elementary/elc_fileselector.c:1757 src/lib/elementary/elm_entry.c:1588
+#: src/lib/elementary/elm_entry.c:1613
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/lib/elementary/elc_fileselector.c:1767
+msgid "OK"
+msgstr "Aceptar"
+
+#: src/lib/elementary/elc_multibuttonentry.c:670
+msgid "multi button entry label"
+msgstr "etiqueta de entrada de botón múltiplo"
+
+#: src/lib/elementary/elc_multibuttonentry.c:692
+msgid "multi button entry item"
+msgstr "elemento de entrada de botón múltiplo"
+
+#: src/lib/elementary/elc_multibuttonentry.c:1565
+msgid "multi button entry"
+msgstr "entrada de botón múltiplo"
+
+#: src/lib/elementary/elc_naviframe.c:432
+msgid "Title"
+msgstr "Título"
+
+#: src/lib/elementary/elc_naviframe.c:978 src/lib/elementary/elc_naviframe.c:1183
+msgid "Back"
+msgstr "Atrás"
+
+#: src/lib/elementary/elc_naviframe.c:1279
+msgid "Next"
+msgstr "Seguinte"
+
+#: src/lib/elementary/elc_popup.c:275 src/lib/elementary/elc_popup.c:941
+msgid "Popup Title"
+msgstr "Título da emerxente"
+
+#: src/lib/elementary/elc_popup.c:285 src/lib/elementary/elc_popup.c:1017
+msgid "Popup Body Text"
+msgstr "Corpo de texto emerxente"
+
+#: src/lib/elementary/elm_bubble.c:194
+msgid "Bubble"
+msgstr "Burbulla"
+
+#: src/lib/elementary/elm_button.c:66
+msgid "Clicked"
+msgstr "Premido"
+
+#: src/lib/elementary/elm_button.c:275 src/lib/elementary/elm_check.c:244 src/lib/elementary/elm_gengrid.c:1257
+#: src/lib/elementary/elm_genlist.c:1659 src/lib/elementary/elm_list.c:2193 src/lib/elementary/elm_radio.c:268
+#: src/lib/elementary/elm_segment_control.c:524 src/lib/elementary/elm_spinner.c:902
+#: src/lib/elementary/elm_toolbar.c:2250
+msgid "State: Disabled"
+msgstr "Estado: Desactivado"
+
+#: src/lib/elementary/elm_button.c:300
+msgid "Button"
+msgstr "Botón"
+
+#: src/lib/elementary/elm_calendar.c:219
+msgid "%B %Y"
+msgstr "%B %Y"
+
+#: src/lib/elementary/elm_calendar.c:225
+msgid "%B"
+msgstr "%B"
+
+#: src/lib/elementary/elm_calendar.c:231
+msgid "%Y"
+msgstr "%Y"
+
+#: src/lib/elementary/elm_calendar.c:345
+msgid "calendar item"
+msgstr "calendario"
+
+#: src/lib/elementary/elm_calendar.c:371
+msgid "calendar decrement month button"
+msgstr "Botón de diminución de mes do calendario"
+
+#: src/lib/elementary/elm_calendar.c:376
+msgid "calendar decrement year button"
+msgstr "Botón de diminución de ano do calendario"
+
+#: src/lib/elementary/elm_calendar.c:381
+msgid "calendar increment month button"
+msgstr "Botón de aumento de mes do calendario"
+
+#: src/lib/elementary/elm_calendar.c:386
+msgid "calendar increment year button"
+msgstr "Botón de aumento de ano do calendario"
+
+#: src/lib/elementary/elm_calendar.c:391
+msgid "calendar month"
+msgstr "mes do calendario"
+
+#: src/lib/elementary/elm_calendar.c:396
+msgid "calendar year"
+msgstr "ano do calendario"
+
+#: src/lib/elementary/elm_check.c:67 src/lib/elementary/elm_check.c:257 src/lib/elementary/elm_radio.c:125
+#: src/lib/elementary/elm_radio.c:269
+msgid "State: On"
+msgstr "Estado: Conectado"
+
+#: src/lib/elementary/elm_check.c:78 src/lib/elementary/elm_check.c:269 src/lib/elementary/elm_radio.c:271
+msgid "State: Off"
+msgstr "Estado: Desconectado"
+
+#: src/lib/elementary/elm_check.c:253 src/lib/elementary/elm_check.c:266
+msgid "State"
+msgstr "Estado"
+
+#: src/lib/elementary/elm_check.c:344
+msgid "Check"
+msgstr "Comprobar"
+
+#: src/lib/elementary/elm_clock.c:303
+msgid "clock increment button for am,pm"
+msgstr "Botón de aumento do reloxo para am,pm"
+
+#: src/lib/elementary/elm_clock.c:311
+msgid "clock decrement button for am,pm"
+msgstr "Botón de diminución do reloxo para am,pm"
+
+#: src/lib/elementary/elm_clock.c:647
+msgid "State: Editable"
+msgstr "Estado: Editable"
+
+#: src/lib/elementary/elm_clock.c:682
+msgid "Clock"
+msgstr "Reloxo"
+
+#: src/lib/elementary/elm_colorselector.c:731
+msgid "Pick a color"
+msgstr ""
+
+#: src/lib/elementary/elm_colorselector.c:769
+msgid "R:"
+msgstr ""
+
+#: src/lib/elementary/elm_colorselector.c:771
+msgid "G:"
+msgstr ""
+
+#: src/lib/elementary/elm_colorselector.c:773
+msgid "B:"
+msgstr ""
+
+#: src/lib/elementary/elm_colorselector.c:775
+msgid "A:"
+msgstr ""
+
+#: src/lib/elementary/elm_colorselector.c:1498
+msgid "color selector palette item"
+msgstr "Paleta de selección de cor"
+
+#: src/lib/elementary/elm_config.c:3287
+msgid "default:LTR"
+msgstr "Predeterminado: LTR"
+
+#: src/lib/elementary/elm_dayselector.c:409
+msgid "day selector item"
+msgstr "selector de día"
+
+#: src/lib/elementary/elm_diskselector.c:700
+msgid "diskselector item"
+msgstr "Selector de disco"
+
+#: src/lib/elementary/elm_entry.c:1575
+msgid "Copy"
+msgstr "Copiar"
+
+#: src/lib/elementary/elm_entry.c:1580
+msgid "Cut"
+msgstr "Cortar"
+
+#: src/lib/elementary/elm_entry.c:1584 src/lib/elementary/elm_entry.c:1607
+msgid "Paste"
+msgstr "Pegar"
+
+#: src/lib/elementary/elm_entry.c:1600
+msgid "Select"
+msgstr "Seleccionar"
+
+#: src/lib/elementary/elm_entry.c:3539
+msgid "Entry"
+msgstr "Entrada"
+
+#: src/lib/elementary/elm_gengrid.c:1287
+msgid "Gengrid Item"
+msgstr "Grella xenérica"
+
+#: src/lib/elementary/elm_index.c:93
+msgid "Index"
+msgstr "Índice"
+
+#: src/lib/elementary/elm_index.c:121
+msgid "Index Item"
+msgstr "Elemento do índice"
+
+#: src/lib/elementary/elm_label.c:392
+msgid "Label"
+msgstr "Etiqueta"
+
+#: src/lib/elementary/elm_panel.c:71
+msgid "state: opened"
+msgstr "Estado: aberto"
+
+#: src/lib/elementary/elm_panel.c:72
+msgid "state: closed"
+msgstr "Estado: pechado"
+
+#: src/lib/elementary/elm_panel.c:112
+msgid "A panel is open"
+msgstr ""
+
+#: src/lib/elementary/elm_panel.c:114
+msgid "Double tap to close panel menu"
+msgstr ""
+
+#: src/lib/elementary/elm_panel.c:166
+msgid "panel button"
+msgstr "botón do panel"
+
+#: src/lib/elementary/elm_progressbar.c:286
+msgid "progressbar"
+msgstr "barra de progreso"
+
+#: src/lib/elementary/elm_radio.c:297
+msgid "Radio"
+msgstr "Radio"
+
+#: src/lib/elementary/elm_segment_control.c:527 src/lib/elementary/elm_toolbar.c:2252
+msgid "State: Selected"
+msgstr "Estado: Seleccionado"
+
+#: src/lib/elementary/elm_segment_control.c:529
+msgid "State: Unselected"
+msgstr "Estado: Sen seleccionar"
+
+#: src/lib/elementary/elm_segment_control.c:543
+msgid "Segment Control Item"
+msgstr "Segmento de control"
+
+#: src/lib/elementary/elm_slider.c:893
+msgid "slider"
+msgstr "Barra de desprazamento"
+
+#: src/lib/elementary/elm_spinner.c:932
+msgid "incremented"
+msgstr ""
+
+#: src/lib/elementary/elm_spinner.c:938
+msgid "decremented"
+msgstr ""
+
+#: src/lib/elementary/elm_spinner.c:971 src/lib/elementary/elm_spinner.c:1038
+msgid "spinner"
+msgstr "botón de spinner"
+
+#: src/lib/elementary/elm_spinner.c:980 src/lib/elementary/elm_spinner.c:1021
+msgid "spinner increment button"
+msgstr "botón de aumento"
+
+#: src/lib/elementary/elm_spinner.c:983 src/lib/elementary/elm_spinner.c:1030
+msgid "spinner decrement button"
+msgstr "botón de disminución"
+
+#: src/lib/elementary/elm_spinner.c:985
+#, fuzzy
+msgid "spinner text"
+msgstr "botón de spinner"
+
+#: src/lib/elementary/elm_toolbar.c:1710 src/lib/elementary/elm_toolbar.c:2309
+msgid "Selected"
+msgstr "Seleccionado"
+
+#: src/lib/elementary/elm_toolbar.c:2248
+msgid "Separator"
+msgstr "Separador"
+
+#: src/lib/elementary/elm_toolbar.c:2254
+msgid "Has menu"
+msgstr "Ten menú"
+
+#: src/lib/elementary/elm_toolbar.c:2304
+msgid "Unselected"
+msgstr "Non seleccionado"
+
+#: src/lib/elementary/elm_toolbar.c:2321
+msgid "Toolbar Item"
+msgstr "Elemento da barra de ferramentas"
+
+#~ msgid "sub title"
+#~ msgstr "subtítulo"
+
+#~ msgid "popup label"
+#~ msgstr "etiqueta emerxente"
