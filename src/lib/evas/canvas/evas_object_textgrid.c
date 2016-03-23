@@ -1193,7 +1193,8 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
         o->font_bolditalic = NULL;
      }
    if (fdesc->slant == EVAS_FONT_SLANT_NORMAL &&
-       fdesc->weight == EVAS_FONT_WEIGHT_NORMAL)
+       ((fdesc->weight == EVAS_FONT_WEIGHT_NORMAL) ||
+        (fdesc->weight == EVAS_FONT_WEIGHT_BOOK)))
      {
         Evas_Font_Description *bolditalic_desc = evas_font_desc_dup(fdesc);
         int ret;
