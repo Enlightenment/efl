@@ -113,6 +113,7 @@ struct _Elm_Win_Data
    struct
    {
       Ecore_Wl2_Window *win;
+      Ecore_Event_Handler *configure_handler;
       Eina_Bool opaque_dirty : 1;
    } wl;
 #endif
@@ -1966,6 +1967,9 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
    ecore_event_handler_del(sd->x.client_message_handler);
    ecore_event_handler_del(sd->x.property_handler);
 #endif
+#ifdef HAVE_ELEMENTARY_WL2
+   ecore_event_handler_del(sd->wl.configure_handler);
+#endif
 
    if (sd->img_obj)
      {
@@ -3010,6 +3014,17 @@ _elm_win_frame_cb_close(void *data,
 }
 
 #ifdef HAVE_ELEMENTARY_WL2
+static Eina_Bool
+_elm_win_wl_configure(void *data, int t EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Window_Configure *ev = event;
+   ELM_WIN_DATA_GET(data, sd);
+   if (ecore_wl2_window_id_get(sd->wl.win) != (int)ev->win) return ECORE_CALLBACK_RENEW;
+
+   if (sd->resizing && (!ev->edges)) sd->resizing = EINA_FALSE;
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _elm_win_frame_pre_render(void *data, Evas *e EINA_UNUSED, void *ev EINA_UNUSED)
 {
@@ -3754,6 +3769,10 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 
 #ifdef HAVE_ELEMENTARY_WL2
    _elm_win_wlwindow_get(sd);
+   if (eina_streq(engine, ELM_WAYLAND_SHM) || eina_streq(engine, ELM_WAYLAND_EGL))
+     sd->wl.configure_handler =
+       ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE,
+         _elm_win_wl_configure, obj);
 #endif
 
 #ifdef HAVE_ELEMENTARY_COCOA
