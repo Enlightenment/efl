@@ -498,6 +498,7 @@ includesubdir = $(includedir)/elementary-@VMAJ@/
 
 lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_priv.h \
+	static_libs/atspi/atspi-constants.h \
 	lib/elementary/elementary_config.h \
 	lib/elementary/els_box.h \
 	lib/elementary/elc_ctxpopup.c \
