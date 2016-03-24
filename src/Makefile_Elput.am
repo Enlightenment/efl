@@ -25,4 +25,31 @@ endif
 lib_elput_libelput_la_DEPENDENCIES = @ELPUT_INTERNAL_LIBS@
 lib_elput_libelput_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/elput/elput_suite
+TESTS += tests/elput/elput_suite
+
+tests_elput_elput_suite_SOURCES = \
+tests/elput/elput_suite.c \
+tests/elput/elput_test_elput.c \
+tests/elput/elput_suite.h
+
+tests_elput_elput_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/elput\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elput\" \
+@CHECK_CFLAGS@ \
+@ELPUT_CFLAGS@
+
+tests_elput_elput_suite_LDADD = \
+@CHECK_LIBS@ \
+@USE_ELPUT_LIBS@
+
+tests_elput_elput_suite_DEPENDENCIES = \
+@USE_ELPUT_INTERNAL_LIBS@
+
+endif
+
 endif
