@@ -279,7 +279,8 @@ e3d_texture_filter_get(const E3D_Texture *texture,
      *mag = _to_e3d_texture_filter(texture->filter_mag);
 }
 
-void _gen_texture_2d(GLuint *texture, GLenum wrap_type, GLfloat filter_type)
+static void
+_gen_texture_2d(GLuint *texture, GLenum wrap_type, GLfloat filter_type)
 {
    glGenTextures(1, texture);
    glBindTexture(GL_TEXTURE_2D, *texture);
@@ -289,8 +290,9 @@ void _gen_texture_2d(GLuint *texture, GLenum wrap_type, GLfloat filter_type)
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter_type);
 }
 
-void _gen_depth_stensil_buffer(GLuint *buffer, GLenum format, GLenum attach,
-                               int size_w, int size_h)
+static void
+_gen_depth_stencil_buffer(GLuint *buffer, GLenum format, GLenum attach,
+                          int size_w, int size_h)
 {
    glGenRenderbuffers(1, buffer);
    glBindRenderbuffer(GL_RENDERBUFFER, *buffer);
@@ -342,17 +344,17 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
 #else
    if (depth_format == GL_DEPTH24_STENCIL8)
      {
-        _gen_depth_stensil_buffer(&depth_stencil_buf, GL_DEPTH24_STENCIL8,
+        _gen_depth_stencil_buffer(&depth_stencil_buf, GL_DEPTH24_STENCIL8,
                                   GL_DEPTH_STENCIL_ATTACHMENT, w, h);
         depth_stencil = EINA_TRUE;
      }
 #endif
 
    if ((!depth_stencil) && (depth_format))
-     _gen_depth_stensil_buffer(&depth_buf, depth_format, GL_DEPTH_ATTACHMENT, w, h);
+     _gen_depth_stencil_buffer(&depth_buf, depth_format, GL_DEPTH_ATTACHMENT, w, h);
 
    if ((!depth_stencil) && (stencil_format))
-     _gen_depth_stensil_buffer(&stencil_buf, stencil_format, GL_STENCIL_ATTACHMENT, w, h);
+     _gen_depth_stencil_buffer(&stencil_buf, stencil_format, GL_STENCIL_ATTACHMENT, w, h);
 
    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
      goto error;
