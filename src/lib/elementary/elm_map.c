@@ -3479,8 +3479,6 @@ _source_mod_cb(Eina_Module *m,
    Elm_Map_Module_Tile_Geo_to_Coord_Func geo_to_coord;
    Elm_Map_Module_Tile_Coord_to_Geo_Func coord_to_geo;
    Elm_Map_Module_Route_Url_Func route_url_cb;
-   Elm_Map_Module_Name_Parse_Func name_parse_cb;
-   Elm_Map_Module_Name_List_Parse_Func name_list_parse_cb;
    Elm_Map_Module_Name_Url_Func name_url_cb;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
