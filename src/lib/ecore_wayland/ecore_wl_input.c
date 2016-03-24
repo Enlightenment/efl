@@ -248,6 +248,16 @@ ecore_wl_input_cursor_theme_name_set(Ecore_Wl_Input *input, const char *cursor_t
                           input->display->wl.shm);
 }
 
+EAPI struct xkb_keymap *
+ecore_wl_input_keymap_get(Ecore_Wl_Input *input)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
+
+   return input->xkb.keymap;
+}
+
 static Eina_Bool
 _ecore_wl_input_cursor_update(void *data)
 {

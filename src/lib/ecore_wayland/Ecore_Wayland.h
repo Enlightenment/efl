@@ -443,6 +443,13 @@ EAPI void ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size);
 EAPI void ecore_wl_input_cursor_theme_name_set(Ecore_Wl_Input *input, const char *cursor_theme_name);
 
 /**
+ * @ingroup Ecore_Wl_Input_Group
+ * @since 1.17
+ */
+EAPI struct xkb_keymap *ecore_wl_input_keymap_get(Ecore_Wl_Input *input);
+
+
+/**
  * Retrieves the Wayland Globals Interface list used for the current Wayland connection.
  *
  * This call, if done after the ECORE_WL_EVENT_INTERFACES_BOUND event was
