@@ -215,6 +215,68 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
      }
 }
 
+static void
+_www_surface_end_drag(void *data, struct www_surface *www_surface EINA_UNUSED)
+{
+   Ecore_Wl2_Window *window = data;
+   Ecore_Wl2_Event_Window_WWW_Drag *ev;
+
+   ev = malloc(sizeof(Ecore_Wl2_Event_Window_WWW_Drag));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+   ev->window = window->id;
+   ev->dragging = 0;
+
+   ecore_event_add(_ecore_wl2_event_window_www_drag, ev, NULL, NULL);
+}
+
+static void
+_www_surface_start_drag(void *data, struct www_surface *www_surface EINA_UNUSED)
+{
+   Ecore_Wl2_Window *window = data;
+   Ecore_Wl2_Event_Window_WWW_Drag *ev;
+
+   ev = malloc(sizeof(Ecore_Wl2_Event_Window_WWW_Drag));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+   ev->window = window->id;
+   ev->dragging = 1;
+
+   ecore_event_add(_ecore_wl2_event_window_www_drag, ev, NULL, NULL);
+}
+
+static void
+_www_surface_status(void *data, struct www_surface *www_surface EINA_UNUSED, int32_t x_rel, int32_t y_rel, uint32_t timestamp)
+{
+   Ecore_Wl2_Window *window = data;
+   Ecore_Wl2_Event_Window_WWW *ev;
+
+   ev = malloc(sizeof(Ecore_Wl2_Event_Window_WWW));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+   ev->window = window->id;
+   ev->x_rel = x_rel;
+   ev->y_rel = y_rel;
+   ev->timestamp = timestamp;
+
+   ecore_event_add(_ecore_wl2_event_window_www, ev, NULL, NULL);
+}
+
+static struct www_surface_listener _www_surface_listener =
+{
+   .status = _www_surface_status,
+   .start_drag = _www_surface_start_drag,
+   .end_drag = _www_surface_end_drag,
+};
+
+void
+_ecore_wl2_window_www_surface_init(Ecore_Wl2_Window *window)
+{
+   if (!window->surface) return;
+   if (!window->display->wl.www) return;
+   if (window->www_surface) return;
+   window->www_surface = www_create(window->display->wl.www, window->surface);
+   www_surface_set_user_data(window->www_surface, window);
+   www_surface_add_listener(window->www_surface, &_www_surface_listener, window);
+}
+
 void
 _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 {
@@ -346,7 +408,10 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
 
    if ((window->type != ECORE_WL2_WINDOW_TYPE_DND) &&
        (window->type != ECORE_WL2_WINDOW_TYPE_NONE))
-     _ecore_wl2_window_shell_surface_init(window);
+     {
+        _ecore_wl2_window_shell_surface_init(window);
+        _ecore_wl2_window_www_surface_init(window);
+     }
 }
 
 EAPI void
@@ -363,6 +428,10 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
    if (window->wl_shell_surface)
      wl_shell_surface_destroy(window->wl_shell_surface);
    window->wl_shell_surface = NULL;
+
+   if (window->www_surface)
+     www_surface_destroy(window->www_surface);
+   window->www_surface = NULL;
 
    if (window->surface) wl_surface_destroy(window->surface);
    window->surface = NULL;

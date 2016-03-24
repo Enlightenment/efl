@@ -27,6 +27,9 @@ EAPI int ECORE_WL2_EVENT_SELECTION_DATA_READY = 0;
 EAPI int ECORE_WL2_EVENT_WINDOW_CONFIGURE = 0;
 EAPI int ECORE_WL2_EVENT_SYNC_DONE = 0;
 
+EAPI int _ecore_wl2_event_window_www = -1;
+EAPI int _ecore_wl2_event_window_www_drag = -1;
+
 /* public API functions */
 EAPI int
 ecore_wl2_init(void)
@@ -77,6 +80,8 @@ ecore_wl2_init(void)
         ECORE_WL2_EVENT_SELECTION_DATA_READY = ecore_event_type_new();
         ECORE_WL2_EVENT_WINDOW_CONFIGURE = ecore_event_type_new();
         ECORE_WL2_EVENT_SYNC_DONE = ecore_event_type_new();
+        _ecore_wl2_event_window_www = ecore_event_type_new();
+        _ecore_wl2_event_window_www_drag = ecore_event_type_new();
      }
 
    return _ecore_wl2_init_count;

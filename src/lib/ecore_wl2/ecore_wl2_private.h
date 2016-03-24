@@ -4,6 +4,7 @@
 # include <unistd.h>
 # include "Ecore_Wl2.h"
 # include "Ecore_Input.h"
+# include "www-protocol.h"
 
 /* NB: Test if subsurface protocol is part of wayland code, if not then
  * include our own copy */
@@ -15,6 +16,20 @@
 # define XDG_VERSION 5
 
 extern int _ecore_wl2_log_dom;
+
+# ifdef EAPI
+#  undef EAPI
+# endif
+
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
 
 # ifdef ECORE_WL2_DEFAULT_LOG_COLOR
 #  undef ECORE_WL2_DEFAULT_LOG_COLOR
@@ -62,6 +77,7 @@ struct _Ecore_Wl2_Display
         struct wl_shm *shm;
         struct wl_shell *wl_shell;
         struct xdg_shell *xdg_shell;
+        struct www *www;
         int compositor_version;
      } wl;
 
@@ -117,6 +133,7 @@ struct _Ecore_Wl2_Window
    struct wl_shell_surface *wl_shell_surface;
    struct xdg_surface *xdg_surface;
    struct xdg_popup *xdg_popup;
+   struct www_surface *www_surface;
 
    uint32_t configure_serial;
    void (*configure_ack)(struct xdg_surface *surface, uint32_t serial);
@@ -405,4 +422,21 @@ void _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source);
 void _ecore_wl2_subsurf_free(Ecore_Wl2_Subsurface *subsurf);
 
 void _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window);
+void _ecore_wl2_window_www_surface_init(Ecore_Wl2_Window *window);
+
+typedef struct Ecore_Wl2_Event_Window_WWW
+{
+   unsigned int window;
+   int x_rel;
+   int y_rel;
+   uint32_t timestamp;
+} Ecore_Wl2_Event_Window_WWW;
+
+typedef struct Ecore_Wl2_Event_Window_WWW_Drag
+{
+   unsigned int window;
+   Eina_Bool dragging;
+} Ecore_Wl2_Event_Window_WWW_Drag;
+EAPI extern int _ecore_wl2_event_window_www;
+EAPI extern int _ecore_wl2_event_window_www_drag;
 #endif
