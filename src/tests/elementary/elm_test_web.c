@@ -26,5 +26,5 @@ END_TEST
 
 void elm_test_web(TCase *tc)
 {
- tcase_add_test(tc, elm_atspi_role_get);
+ /* tcase_add_test(tc, elm_atspi_role_get); */
 }
