@@ -458,13 +458,16 @@ text_input_delete_surrounding_text(void                 *data,
                                    uint32_t              length)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)data;
-
+   Ecore_IMF_Event_Delete_Surrounding ev;
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom,
                      "delete surrounding text (index: %d, length: %u)",
                      index, length);
 
-   imcontext->pending_commit.delete_index = index;
-   imcontext->pending_commit.delete_length = length;
+   imcontext->pending_commit.delete_index = ev.offset = index;
+   imcontext->pending_commit.delete_length = ev.n_chars = length;
+
+   ecore_imf_context_delete_surrounding_event_add(imcontext->ctx, ev.offset, ev.n_chars);
+   ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, &ev);
 }
 
 static void
