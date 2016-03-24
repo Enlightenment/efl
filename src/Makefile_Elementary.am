@@ -647,6 +647,234 @@ EXTRA_DIST += \
 	lib/elementary/elm_factory.c \
 	$(top_srcdir)/elm_intro.h.in
 
+### Binary
+
+bin_PROGRAMS += \
+bin/elementary/elementary_test \
+bin/elementary/elementary_config \
+bin/elementary/elementary_codegen \
+bin/elementary/elm_prefs_cc
+
+if BUILD_QUICKLAUNCH
+bin_PROGRAMS += \
+bin/elementary/elementary_quicklaunch
+if BUILD_RUN
+bin_PROGRAMS += \
+bin/elementary/elementary_run
+endif
+endif
+
+bin_elementary_elementary_test_SOURCES = \
+bin/elementary/test.c \
+bin/elementary/test_explode.c \
+bin/elementary/test_explode.h \
+bin/elementary/test_3d.c \
+bin/elementary/test_access.c \
+bin/elementary/test_actionslider.c \
+bin/elementary/test_anim.c \
+bin/elementary/test_application_server.c \
+bin/elementary/test_bg.c \
+bin/elementary/test_box.c \
+bin/elementary/test_bubble.c \
+bin/elementary/test_button.c \
+bin/elementary/test_calendar.c \
+bin/elementary/test_check.c \
+bin/elementary/test_clock.c \
+bin/elementary/test_cnp.c \
+bin/elementary/test_colorselector.c \
+bin/elementary/test_colorclass.c \
+bin/elementary/test_combobox.c \
+bin/elementary/test_config.c \
+bin/elementary/test_conform.c \
+bin/elementary/test_conform_indicator.c \
+bin/elementary/test_ctxpopup.c \
+bin/elementary/test_cursor.c \
+bin/elementary/test_datetime.c \
+bin/elementary/test_dayselector.c \
+bin/elementary/test_disable.c \
+bin/elementary/test_diskselector.c \
+bin/elementary/test_dnd.c \
+bin/elementary/test_eio.c \
+bin/elementary/test_entry.c \
+bin/elementary/test_entry_anchor.c \
+bin/elementary/test_entry_anchor2.c \
+bin/elementary/test_external.c \
+bin/elementary/test_fileselector_button.c \
+bin/elementary/test_fileselector.c \
+bin/elementary/test_fileselector_entry.c \
+bin/elementary/test_flip.c \
+bin/elementary/test_flip_page.c \
+bin/elementary/test_flipselector.c \
+bin/elementary/test_floating.c \
+bin/elementary/test_focus.c \
+bin/elementary/test_focus_custom_chain.c \
+bin/elementary/test_focus_policy.c \
+bin/elementary/test_focus_style.c \
+bin/elementary/test_gengrid.c \
+bin/elementary/test_genlist.c \
+bin/elementary/test_gesture_layer.c \
+bin/elementary/test_gesture_layer2.c \
+bin/elementary/test_gesture_layer3.c \
+bin/elementary/test_glview_simple.c \
+bin/elementary/test_glview.c \
+bin/elementary/test_glview_manygears.c \
+bin/elementary/test_grid.c \
+bin/elementary/test_hover.c \
+bin/elementary/test_hoversel.c \
+bin/elementary/test_icon.c \
+bin/elementary/test_icon_desktops.c \
+bin/elementary/test_icon_animated.c \
+bin/elementary/test_image.c \
+bin/elementary/test_index.c \
+bin/elementary/test_inwin.c \
+bin/elementary/test_label.c \
+bin/elementary/test_launcher.c \
+bin/elementary/test_layout.c \
+bin/elementary/test_list.c \
+bin/elementary/test_map.c \
+bin/elementary/test_main_menu.c \
+bin/elementary/test_menu.c \
+bin/elementary/test_multi.c \
+bin/elementary/test_multibuttonentry.c \
+bin/elementary/test_naviframe.c \
+bin/elementary/test_naviframe_complex.c \
+bin/elementary/test_notify.c \
+bin/elementary/test_panel.c \
+bin/elementary/test_panes.c \
+bin/elementary/test_photo.c \
+bin/elementary/test_photocam.c \
+bin/elementary/test_popup.c \
+bin/elementary/test_prefs.c \
+bin/elementary/test_progressbar.c \
+bin/elementary/test_radio.c \
+bin/elementary/test_scaling.c \
+bin/elementary/test_scroller.c \
+bin/elementary/test_segment_control.c \
+bin/elementary/test_separator.c \
+bin/elementary/test_slider.c \
+bin/elementary/test_slideshow.c \
+bin/elementary/test_spinner.c \
+bin/elementary/test_store.c \
+bin/elementary/test_sys_notify.c \
+bin/elementary/test_systray.c \
+bin/elementary/test_task_switcher.c \
+bin/elementary/test_table.c \
+bin/elementary/test_thumb.c \
+bin/elementary/test_toolbar.c \
+bin/elementary/test_tooltip.c \
+bin/elementary/test_transit.c \
+bin/elementary/test_transit_bezier.c \
+bin/elementary/test_video.c \
+bin/elementary/test_weather.c \
+bin/elementary/test_web.c \
+bin/elementary/test_win_inline.c \
+bin/elementary/test_win_keygrab.c \
+bin/elementary/test_win_socket.c \
+bin/elementary/test_win_plug.c \
+bin/elementary/test_win_state.c \
+bin/elementary/test_win_wm_rotation.c \
+bin/elementary/test_win_dialog.c \
+bin/elementary/test.h
+
+bin_elementary_elementary_test_LDADD = @USE_ELEMENTARY_LIBS@
+bin_elementary_elementary_test_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+bin_elementary_elementary_test_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+bin_elementary_elementary_test_CPPFLAGS = \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-I$(top_srcdir)/src/bin/elementary \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+@ELEMENTARY_CFLAGS@
+
+
+bin_elementary_elementary_config_SOURCES = bin/elementary/config.c
+bin_elementary_elementary_config_LDADD = @USE_ELEMENTARY_LIBS@
+bin_elementary_elementary_config_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+bin_elementary_elementary_config_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+bin_elementary_elementary_config_CPPFLAGS = \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-I$(top_srcdir)/src/bin/elementary \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+@ELEMENTARY_CFLAGS@
+
+bin_elementary_elementary_codegen_SOURCES = bin/elementary/elementary_codegen.c
+bin_elementary_elementary_codegen_LDADD = @USE_ELEMENTARY_LIBS@
+bin_elementary_elementary_codegen_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+bin_elementary_elementary_codegen_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+bin_elementary_elementary_codegen_CPPFLAGS = \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-I$(top_srcdir)/src/bin/elementary \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+@ELEMENTARY_CFLAGS@
+
+noinst_HEADERS += \
+bin/elementary/elm_prefs_cc.h
+
+bin_elementary_elm_prefs_cc_SOURCES = \
+bin/elementary/elm_prefs_cc.c \
+bin/elementary/elm_prefs_cc_mem.c \
+bin/elementary/elm_prefs_cc_out.c \
+bin/elementary/elm_prefs_cc_parse.c \
+bin/elementary/elm_prefs_cc_handlers.c
+
+bin_elementary_elm_prefs_cc_LDADD = @USE_ELEMENTARY_LIBS@
+bin_elementary_elm_prefs_cc_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+bin_elementary_elm_prefs_cc_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+bin_elementary_elm_prefs_cc_CPPFLAGS = \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-I$(top_srcdir)/src/bin/elementary \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+@ELEMENTARY_CFLAGS@
+
+if BUILD_QUICKLAUNCH
+bin_elementary_elementary_quicklaunch_SOURCES = bin/elementary/quicklaunch.c
+bin_elementary_elementary_quicklaunch_LDADD = @USE_ELEMENTARY_LIBS@
+bin_elementary_elementary_quicklaunch_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+bin_elementary_elementary_quicklaunch_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+bin_elementary_elementary_quicklaunch_CPPFLAGS = \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-I$(top_srcdir)/src/bin/elementary \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+@ELEMENTARY_CFLAGS@
+
+if BUILD_RUN
+bin_elementary_elementary_run_CPPFLAGS = -I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary/ \
+-I$(top_builddir)/src/lib/elementary/ \
+-I$(top_srcdir)/src/bin/elementary/ \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\"
+
+bin_elementary_elementary_run_SOURCES = bin/elementary/run.c
+bin_elementary_elementary_run_LDADD =
+bin_elementary_elementary_run_LDFLAGS =
+endif
+endif
+
+EXTRA_DIST += \
+bin/elementary/test_factory.c
+
+
 # if HAVE_ELUA
 
 # elementary_eolian_lua = $(elm_eolian_files:%.eo=%.eo.lua)
