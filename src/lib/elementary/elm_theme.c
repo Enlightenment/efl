@@ -93,6 +93,15 @@ _elm_theme_file_item_add(Elm_Theme_Files *files, const char *item, Eina_Bool pre
         _elm_theme_item_finalize(files, item, f, prepend, istheme);
 
         eina_strbuf_reset(buf);
+
+        eina_strbuf_append_printf(buf,
+                                  "%s/themes/%s.edj",
+                                  getenv("ELM_DATA_DIR"), item);
+        f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
+        _elm_theme_item_finalize(files, item, f, prepend, istheme);
+
+        eina_strbuf_reset(buf);
+
         eina_strbuf_append_printf(buf,
                                   "%s/themes/%s.edj",
                                   _elm_data_dir, item);
@@ -302,7 +311,7 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
              if (edje_object_mmap_set(o, file, buf2)) return EINA_TRUE;
              else
                {
-                  DBG("could not set theme group '%s' from file '%s': %s",
+                  INF("could not set theme group '%s' from file '%s': %s",
                       buf2,
                       eina_file_filename_get(file),
                       edje_load_error_str(edje_object_load_error_get(o)));
@@ -321,13 +330,13 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
           {
              if (edje_object_mmap_set(o, file, buf2))
                {
-                  DBG("could not set theme style '%s', fallback to default",
+                  INF("could not set theme style '%s', fallback to default",
                       style);
                   return EINA_TRUE;
                }
              else
                {
-                  DBG("could not set theme group '%s' from file '%s': %s",
+                  INF("could not set theme group '%s' from file '%s': %s",
                       buf2,
                       eina_file_filename_get(file),
                       edje_load_error_str(edje_object_load_error_get(o)));
