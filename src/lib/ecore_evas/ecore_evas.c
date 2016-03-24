@@ -49,7 +49,7 @@ static Ecore_Evas *ecore_evases = NULL;
 static int _ecore_evas_fps_debug = 0;
 
 //RENDER_SYNC
-static int _ecore_evas_render_sync = 0;
+static int _ecore_evas_render_sync = 1;
 static Ecore_Animator *ecore_evas_animator = NULL;
 static Eina_Bool ecore_evas_animator_ticked = EINA_FALSE;
 static Eina_Bool ecore_evas_first = EINA_TRUE;
@@ -391,7 +391,7 @@ ecore_evas_init(void)
    ecore_evas_idle_enterer =
      ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
    if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
-   if (getenv("ECORE_EVAS_RENDER_SYNC")) _ecore_evas_render_sync = 1;
+   if (getenv("ECORE_EVAS_RENDER_NOSYNC")) _ecore_evas_render_sync = 0;
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
 
 #ifdef BUILD_ECORE_EVAS_EWS
