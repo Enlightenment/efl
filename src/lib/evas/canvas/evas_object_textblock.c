@@ -757,13 +757,16 @@ _style_match_tag(const Evas_Textblock_Style *ts, const char *s, size_t tag_len, 
    Evas_Object_Style_Tag *tag;
 
    /* Try the style tags */
-   EINA_INLIST_FOREACH(ts->tags, tag)
+   if (ts)
      {
-        if (tag->tag.tag_len != tag_len) continue;
-        if (!strncmp(tag->tag.tag, s, tag_len))
+        EINA_INLIST_FOREACH(ts->tags, tag)
           {
-             *replace_len = tag->tag.replace_len;
-             return tag->tag.replace;
+             if (tag->tag.tag_len != tag_len) continue;
+             if (!strncmp(tag->tag.tag, s, tag_len))
+               {
+                  *replace_len = tag->tag.replace_len;
+                  return tag->tag.replace;
+               }
           }
      }
 

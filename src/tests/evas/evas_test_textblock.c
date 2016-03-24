@@ -68,6 +68,14 @@ START_TEST(evas_textblock_simple)
    const char *buf = "Th<i>i</i>s is a <br/> te<b>s</b>t.";
    evas_object_textblock_text_markup_set(tb, buf);
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
+
+   /* Set markup text(includes tag) without setting style */
+   Evas_Object *tb2 = evas_object_textblock_add(evas);
+   fail_if(!tb2);
+   evas_object_textblock_text_markup_set(tb2, buf);
+   ck_assert("Crash Not occurred");
+   evas_object_del(tb2);
+
    END_TB_TEST();
 }
 END_TEST
