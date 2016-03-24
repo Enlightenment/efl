@@ -5461,6 +5461,7 @@ pc/ethumb.pc
 pc/ethumb_client.pc
 pc/elocation.pc
 pc/elua.pc
+pc/elementary.pc
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/ethumb.service
 $po_makefile_in
@@ -5511,6 +5512,8 @@ cmakeconfig/EluaConfig.cmake
 cmakeconfig/EluaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EmileConfig.cmake
 cmakeconfig/EmileConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/ElementaryConfigVersion.cmake
+cmakeconfig/ElementaryConfig.cmake
 ])
 
 AC_OUTPUT
