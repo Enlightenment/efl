@@ -107,7 +107,7 @@ _embryo_time_tzdate(Embryo_Program *ep, Embryo_Cell *params)
    tzenv = getenv("TZ");
    if (tzenv)
      strncpy(prevtz, tzenv, sizeof(prevtz) - 1);
-   if (tz)
+   if (tz && tz[0])
      {
         setenv("TZ", tz, 1);
         tzset();
@@ -115,11 +115,14 @@ _embryo_time_tzdate(Embryo_Program *ep, Embryo_Cell *params)
    gettimeofday(&timev, NULL);
    tt = (time_t)(timev.tv_sec);
    tm = localtime(&tt);
-   if (prevtz[0])
-     setenv("TZ", prevtz, 1);
-   else
-     unsetenv("TZ");
-   tzset();
+   if (tz && tz[0])
+     {
+        if (prevtz[0])
+          setenv("TZ", prevtz, 1);
+        else
+          unsetenv("TZ");
+        tzset();
+     }
    if (tm)
      {
         Embryo_Cell *cptr;
