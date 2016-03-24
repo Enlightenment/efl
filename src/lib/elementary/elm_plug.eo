@@ -1,0 +1,42 @@
+class Elm.Plug (Elm.Widget, Evas.Clickable_Interface)
+{
+   eo_prefix: elm_obj_plug;
+   data: null;
+   methods {
+      @property image_object {
+         get {
+            [[Get the basic Evas_Image object from this object (widget).
+
+              This function allows one to get the underlying Evas object of type
+              Image from this elementary widget. It can be useful to do things
+              like get the pixel data, save the image to a file, etc.
+
+              Note: Be careful to not manipulate it, as it is under control of
+              elementary.
+            ]]
+            return: Evas.Object *; [[The inlined image object or $null.]]
+         }
+      }
+      connect {
+         [[Connect a plug widget to service provided by socket image.]]
+         return: bool; [[$true on success, $false on error.]]
+         params {
+            @in svcname: const(char)*; [[The service name to connect to set up by the socket.]]
+            @in svcnum: int; [[The service number to connect to (set up by socket).]]
+            @in svcsys: bool; [[Boolean to set if the service is a system one or not (set up by socket).]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Elm.Widget.theme_apply;
+      Elm.Widget.on_focus;
+   }
+   events {
+      image,deleted;
+      image,resized; [[ii]]
+   }
+
+}

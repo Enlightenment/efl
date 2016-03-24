@@ -7,6 +7,8 @@ EOLIAN_FLAGS = -I$(srcdir)
 DIST_SUBDIRS =
 SUBDIRS =
 
+AM_TESTS_ENVIRONMENT =
+
 lib_LTLIBRARIES =
 bin_PROGRAMS =
 bin_SCRIPTS =
@@ -14,6 +16,10 @@ noinst_PROGRAMS =
 check_PROGRAMS =
 TESTS =
 EXTRA_DIST =
+
+noinst_LTLIBRARIES =
+noinst_DATA =
+noinst_HEADERS =
 
 GENERATED_JS_BINDINGS =
 
@@ -62,6 +68,7 @@ include Makefile_Edje.am
 include Makefile_Emotion.am
 include Makefile_Ethumb.am
 include Makefile_Ethumb_Client.am
+include Makefile_Elementary.am
 
 include Makefile_Eina_Cxx.am
 include Makefile_Ecore_Cxx.am
@@ -84,7 +91,7 @@ am__v_CP_0 = @echo "  CP  " $@;
 CP = cp
 if EFL_ENABLE_TESTS
 if HAVE_NODEJS
-AM_TESTS_ENVIRONMENT = NODE_PATH='$(abs_builddir)/lib/efl_js:$(abs_builddir)/tests/eolian_js:$(abs_builddir)/tests/efl_js'; export NODE_PATH;
+AM_TESTS_ENVIRONMENT += NODE_PATH='$(abs_builddir)/lib/efl_js:$(abs_builddir)/tests/eolian_js:$(abs_builddir)/tests/efl_js'; export NODE_PATH;
 endif
 endif
 endif

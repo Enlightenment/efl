@@ -1,0 +1,404 @@
+group { "bryce_editor_text"; inherit_only: 1;
+   parts {
+      text { "e.text"; scale; nomouse;
+         effect: SHADOW BOTTOM;
+         desc {
+            color: 255 255 255 255;
+            text { font: "Sans:style=Bold"; size: 18;
+               min: 1 1;
+               ellipsis: -1;
+            }
+         }
+      }
+   }
+}
+
+group { "e/bryce/editor/side";
+   parts {
+      rect { "base"; desc { color: 0 0 0 192; } }
+      program { signal: "mouse,down,*"; source: "base";
+         action: SIGNAL_EMIT "e,action,dismiss" "e";
+      }
+      rect { "bottom"; scale;
+         desc {
+            min: 33 32;
+            align: 0 1;
+            rel1.relative: 0.3 1;
+            rel2.relative: 0.7 1;
+            color: 52 153 255 90;
+            link.base: "mouse,out" "bottom";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "active"; inherit;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "bottom";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "hid"; hid;
+            link.base: "e,bryce,exists,bottom" "e";
+         }
+      }
+      program { signal: "mouse,down,1"; source: "bottom";
+         action: SIGNAL_EMIT "e,bryce,add,bottom" "e";
+      }
+      rect { "top"; scale;
+         desc {
+            min: 33 32;
+            align: 0 0;
+            rel1.relative: 0.3 0;
+            rel2.relative: 0.7 0;
+            color: 52 153 255 90;
+            link.base: "mouse,out" "top";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "active"; inherit;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "top";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "hid"; hid;
+            link.base: "e,bryce,exists,top" "e";
+         }
+      }
+      program { signal: "mouse,down,1"; source: "top";
+         action: SIGNAL_EMIT "e,bryce,add,top" "e";
+      }
+      rect { "left"; scale;
+         desc {
+            min: 32 33;
+            align: 0 0;
+            rel1.relative: 0 0.3;
+            rel2.relative: 0 0.7;
+            color: 52 153 255 90;
+            link.base: "mouse,out" "left";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "active"; inherit;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "left";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "hid"; hid;
+            link.base: "e,bryce,exists,left" "e";
+         }
+      }
+      program { signal: "mouse,down,1"; source: "left";
+         action: SIGNAL_EMIT "e,bryce,add,left" "e";
+      }
+      rect { "right"; scale;
+         desc {
+            min: 32 33;
+            align: 1 0;
+            rel1.relative: 1 0.3;
+            rel2.relative: 1 0.7;
+            color: 52 153 255 90;
+            link.base: "mouse,out" "right";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "active"; inherit;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "right";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "hid"; hid;
+            link.base: "e,bryce,exists,right" "e";
+         }
+      }
+      program { signal: "mouse,down,1"; source: "right";
+         action: SIGNAL_EMIT "e,bryce,add,right" "e";
+      }
+   }
+   inherit: "bryce_editor_text";
+}
+
+group { "e/bryce/editor/side/horizontal";
+   parts {
+      rect { "base"; desc { color: 0 0 0 192; } }
+      program { signal: "mouse,down,*"; source: "base";
+         action: SIGNAL_EMIT "e,action,dismiss" "e";
+      }
+      spacer { "pos";
+         desc { align: 0 0;
+            min: 0 32;
+            rel2.relative: 1 0;
+         }
+         desc { "bottom";
+            align: 0 1;
+            min: 0 32;
+            rel1.relative: 0 1;
+            link.base: "e,state,bottom" "e";
+         }
+      }
+      rect { "center"; scale;
+         desc {
+            min: 33 32;
+            align: 0 0;
+            rel.to_y: "pos";
+            rel1.relative: 0.4 0;
+            rel2.relative: 0.6 1;
+            color: 52 153 255 90;
+            link.base: "mouse,out" "center";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "active"; inherit;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "center";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "hid"; hid;
+            link.base: "e,bryce,exists,center" "e";
+         }
+      }
+      program { signal: "mouse,down,1"; source: "center";
+         action: SIGNAL_EMIT "e,bryce,add,center" "e";
+      }
+      rect { "left"; scale;
+         desc {
+            min: 33 32;
+            align: 0 0;
+            rel.to_y: "pos";
+            rel1.relative: 0 0;
+            rel2.relative: 0.2 1;
+            color: 52 153 255 90;
+            link.base: "mouse,out" "left";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "active"; inherit;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "left";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "hid"; hid;
+            link.base: "e,bryce,exists,left" "e";
+         }
+      }
+      program { signal: "mouse,down,1"; source: "left";
+         action: SIGNAL_EMIT "e,bryce,add,left" "e";
+      }
+      rect { "right"; scale;
+         desc {
+            min: 33 32;
+            align: 1 0;
+            rel.to_y: "pos";
+            rel1.relative: 0.8 0;
+            rel2.relative: 1 1;
+            color: 52 153 255 90;
+            link.base: "mouse,out" "right";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "active"; inherit;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "right";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "hid"; hid;
+            link.base: "e,bryce,exists,right" "e";
+         }
+      }
+      program { signal: "mouse,down,1"; source: "right";
+         action: SIGNAL_EMIT "e,bryce,add,right" "e";
+      }
+   }
+   inherit: "bryce_editor_text";
+}
+
+group { "e/bryce/editor/side/vertical";
+   parts {
+      rect { "base"; desc { color: 0 0 0 192; } }
+      program { signal: "mouse,down,*"; source: "base";
+         action: SIGNAL_EMIT "e,action,dismiss" "e";
+      }
+      spacer { "pos";
+         desc { align: 0 0;
+            min: 32 0;
+            rel2.relative: 0 1;
+         }
+         desc { "right";
+            align: 1 0;
+            min: 32 0;
+            rel1.relative: 1 0;
+            link.base: "e,state,right" "e";
+         }
+      }
+      rect { "center"; scale;
+         desc {
+            min: 32 33;
+            align: 0 0;
+            rel.to_x: "pos";
+            rel1.relative: 0 0.4;
+            rel2.relative: 1 0.6;
+            color: 52 153 255 90;
+            link.base: "mouse,out" "center";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "active"; inherit;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "center";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "hid"; hid;
+            link.base: "e,bryce,exists,center" "e";
+         }
+      }
+      program { signal: "mouse,down,1"; source: "center";
+         action: SIGNAL_EMIT "e,bryce,add,center" "e";
+      }
+      rect { "top"; scale;
+         desc {
+            min: 32 33;
+            align: 0 0;
+            rel.to_x: "pos";
+            rel1.relative: 0 0;
+            rel2.relative: 1 0.2;
+            color: 52 153 255 90;
+            link.base: "mouse,out" "top";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "active"; inherit;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "top";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "hid"; hid;
+            link.base: "e,bryce,exists,top" "e";
+         }
+      }
+      program { signal: "mouse,down,1"; source: "top";
+         action: SIGNAL_EMIT "e,bryce,add,top" "e";
+      }
+      rect { "bottom"; scale;
+         desc {
+            min: 32 33;
+            align: 0 1;
+            rel.to_x: "pos";
+            rel1.relative: 0 0.8;
+            rel2.relative: 1 1;
+            color: 52 153 255 90;
+            link.base: "mouse,out" "bottom";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "active"; inherit;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "bottom";
+            link.transition: LINEAR 0.2;
+         }
+         desc { "hid"; hid;
+            link.base: "e,bryce,exists,bottom" "e";
+         }
+      }
+      program { signal: "mouse,down,1"; source: "bottom";
+         action: SIGNAL_EMIT "e,bryce,add,bottom" "e";
+      }
+   }
+   inherit: "bryce_editor_text";
+}
+
+group { "e/bryce/editor/style/item"; nomouse;
+   parts {
+      rect { "highlight_t"; scale;
+         desc {
+            align: 0.5 0;
+            max: -1 1;
+            color: 255 255 255 150;
+            link.base: "mouse,out" "events";
+         }
+         desc { "active"; max: -1 1;
+            align: 0.5 0;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "events";
+         }
+      }
+      rect { "highlight_l"; scale;
+         desc { align: 0 0.5;
+            max: 1 -1;
+            color: 255 255 255 150;
+            link.base: "mouse,out" "events";
+         }
+         desc { "active"; max: 1 -1;
+            align: 0 0.5;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "events";
+         }
+      }
+      rect { "highlight_r"; scale;
+         desc {
+            align: 1 0.5;
+            max: 1 -1;
+            color: 255 255 255 150;
+            link.base: "mouse,out" "events";
+         }
+         desc { "active"; align: 1 0.5;
+            max: 1 -1;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "events";
+         }
+      }
+      rect { "highlight_b"; scale;
+         desc {
+            align: 0.5 1;
+            max: -1 1;
+            color: 255 255 255 150;
+            link.base: "mouse,out" "events";
+         }
+         desc { "active"; align: 0.5 1;
+            max: -1 1;
+            color: 52 153 255 230;
+            link.base: "mouse,in" "events";
+         }
+      }
+      swallow { "e.swallow.content";
+         desc {
+            rel1.offset: 1 1;
+            rel2.offset: -2 -2;
+         }
+      }
+      text { "e.text"; scale;
+         effect: SHADOW BOTTOM;
+         desc {
+            color: 255 255 255 255;
+            text { font: "Sans:style=Bold"; size: 14;
+               min: 1 1;
+               ellipsis: -1;
+            }
+         }
+      }
+      rect { "events"; mouse;
+         desc { color: 0 0 0 0; }
+      }
+   }
+}
+
+group { "e/bryce/editor/style";
+   parts {
+      rect { "base"; desc { color: 0 0 0 192; } }
+      program { signal: "mouse,down,*"; source: "base";
+         action: SIGNAL_EMIT "e,action,dismiss" "e";
+      }
+      swallow { "e.swallow.content";
+         desc { align: 0.5 0;
+            rel1.to_y: "e.text";
+            rel1.relative: 0 1;
+         }
+      }
+   }
+   inherit: "bryce_editor_text";
+   parts {
+      text { "e.text";
+         desc { "default";
+           align: 0.5 0;
+           rel2.relative: 1 0;
+         }
+      }
+   }
+}
+
+group { "e/bryce/editor/finish"; inherit: "e/bryce/editor/style";
+   parts {
+      swallow { "e.swallow.content";
+         desc { "default";
+            rel1.relative: 1 1;
+            rel2.relative: 0 1;
+         }
+      }
+   }
+}

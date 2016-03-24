@@ -1,0 +1,70 @@
+group { name: "elm/win/base/default";
+   parts {
+      part { name: "menu_bg"; type: RECT;
+         description { state: "default" 0.0;
+            color: 64 64 64 255;
+            align: 0.5 0;
+            rel2.to: "elm.swallow.menu";
+         }
+      }
+      part { name: "elm.swallow.menu"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel2.relative: 1.0 0.0;
+            visible: 0;
+            align: 0.5 0;
+            fixed: 1 1;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            fixed: 0 1;
+         }
+      }
+      part { name: "elm.swallow.contents"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1 {
+               to_y: "elm.swallow.menu";
+               relative: 0.0 1.0;
+            }
+         }
+      }
+      part { name: "blocker"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.relative : 0.0 0.0;
+            rel2.relative : 1.0 1.0;
+            color: 64 64 64 150;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program { name: "show_menu";
+         signal: "elm,action,show_menu";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "elm.swallow.menu";
+      }
+      program { name: "hide_menu";
+         signal: "elm,action,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.menu";
+      }
+      program { name: "hide_blocker";
+         signal: "elm,action,hide_blocker";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "blocker";
+      }
+      program { name: "show_blocker";
+         signal: "elm,action,show_blocker";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "blocker";
+      }
+   }
+}

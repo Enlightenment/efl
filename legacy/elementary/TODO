@@ -1,0 +1,18 @@
+Bugs:
+  toolbar sizing is broken in some cases (WEIGHT(0,0) in horizontal box with
+    entry WEIGHT(EXPAND,EXPAND))
+
+Things That Just Need To Be Rewritten (tm):
+  toolbar icon api is broken, should take an actual elm_icon. requires new
+    elm_toolbar_item_update api as well panel edc
+
+callbacks add/del
+  panes
+
+api:
+  elm_win_type_get()
+
+improvement:
+  add a smart move object and autodetect group of moving object in genlist.
+  reduce memory used by all this callback we setup around.
+  integrate with EO and Clouseau.

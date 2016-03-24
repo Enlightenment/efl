@@ -1,0 +1,64 @@
+class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
+{
+   eo_prefix: elm_obj_frame;
+   methods {
+      @property collapse {
+         set {
+            [[Manually collapse a frame without animations
+              Use this to toggle the collapsed state of a frame, bypassing animations.
+            ]]
+         }
+         get {
+            [[Determine the collapse state of a frame
+              Use this to determine the collapse state of a frame.
+            ]]
+         }
+         values {
+            collapse: bool; [[$true to collapse, $false to expand.]]
+         }
+      }
+      @property autocollapse {
+         set {
+            [[Toggle autocollapsing of a frame
+              When $enable is $true, clicking a frame's label will collapse the frame
+              vertically, shrinking it to the height of the label.
+              By default, this is DISABLED.
+            ]]
+         }
+         get {
+            [[Determine autocollapsing of a frame
+
+              When this returns $true, clicking a frame's label will collapse the frame
+              vertically, shrinking it to the height of the label.
+              By default, this is DISABLED.
+            ]]
+         }
+         values {
+            autocollapse: bool; [[Whether to enable autocollapse.]]
+         }
+      }
+      collapse_go {
+         [[Manually collapse a frame with animations
+           Use this to toggle the collapsed state of a frame, triggering animations.
+         ]]
+         params {
+            @in collapse: bool; [[$true to collapse, $false to expand.]]
+         }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      class.constructor;
+      Evas.Object_Smart.calculate;
+      Evas.Object_Smart.add;
+      Elm.Widget.focus_direction;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Layout.text_aliases.get;
+      Elm.Layout.content_aliases.get;
+   }
+   events {
+   }
+
+}

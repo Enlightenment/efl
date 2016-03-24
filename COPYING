@@ -33,6 +33,7 @@ emotion:         licenses/COPYING.BSD
 ethumb:          licenses/COPYING.LGPL
 eolian:          licenses/COPYING.BSD
 elua:            licenses/COPYING.BSD
+elementary:      licenses/COPYING.LGPL
 
 NOTE: If linked together, the result will be effectively be LGPL (or
 GPL if escape is used) due to license characteristics.

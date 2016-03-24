@@ -1,0 +1,208 @@
+group { name: "elm/map/base/default";
+   inherit: "elm/photocam/base/default";
+}
+
+group { name: "elm/map/marker/radio/default";
+   data.item: "size_w" 35;
+   data.item: "size_h" 35;
+   data.item: "size_max_w" 35;
+   data.item: "size_max_h" 35;
+   images.image: "map_marker.png" COMP;
+   parts {
+      part { name: "mark";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.relative: 0.5 0.5;
+            rel1.offset: 0 3;
+            rel2.relative: 0.5 0.5;
+            rel2.offset: 0 3;
+            align: 0.5 1.0;
+            min: 65 35;
+            max: 65 35;
+            image.normal: "map_marker.png";
+         }
+      }
+      part { name: "elm.icon"; type: SWALLOW; mouse_events:  0;
+         description { state: "default" 0.0;
+            rel1.to: "mark";
+            rel1.relative: (25/65) (5/35);
+            rel2.to: "mark";
+            rel2.relative: (40/65) (20/35);
+            rel2.offset: 0 0;
+         }
+      }
+      part { name: "elm.text"; type: TEXT;
+         effect: SHADOW BOTTOM;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.icon";
+            rel2.to: "elm.icon";
+            color_class: "map_radio";
+            color: FN_COL_DISABLE_SHADOW;
+            text { font: FNBD; size: 10;
+               text_class: "map_radio";
+               min: 1 1;
+               ellipsis: -1;
+            }
+         }
+      }
+   }
+}
+
+group { name: "elm/map/marker/empty/default";
+   data.item: "size_w" 16;
+   data.item: "size_h" 16;
+   data.item: "size_max_w" 24;
+   data.item: "size_max_h" 24;
+   parts {
+      part { name: "knob"; type: SPACER;
+         description { state: "default" 0.0;
+            min: 16 16;
+            max: 24 24;
+         }
+      }
+      part { name: "elm.icon"; type: SWALLOW; mouse_events:  0;
+         description { state: "default" 0.0;
+            rel1.to: "knob";
+            rel2.to: "knob";
+         }
+      }
+      part { name: "elm.text"; type: TEXT;
+         effect: SHADOW BOTTOM;
+         description { state: "default" 0.0;
+            rel1.to: "knob";
+            rel2.to: "knob";
+            color_class: "map_empty";
+            color: FN_COL_DEFAULT;
+            text { font: FNBD; size: 10;
+               text_class: "map_empty";
+               min: 1 1;
+               ellipsis: -1;
+            }
+         }
+      }
+   }
+}
+
+group { name: "elm/map/circle/base/default";
+   images.image: "map_circle.png" COMP;
+   parts {
+      part { name: "base";
+         ignore_flags: ON_HOLD;
+         description { state: "default" 0.0;
+            image.normal: "map_circle.png";
+         }
+      }
+   }
+}
+
+group { name: "elm/map/scale/base/default";
+   data.item: "size_w" 100;
+   data.item: "size_h" 22;
+   images.image: "map_scale.png" COMP;
+   parts {
+      part { name: "scale";
+         description { state: "default" 0.0;
+            min: 16 16;
+            image.border: 6 6 5 5;
+            image.normal: "map_scale.png";
+         }
+      }
+      part { name: "elm.text"; type: TEXT;
+         effect: SHADOW BOTTOM;
+         description { state: "default" 0.0;
+            rel1.offset: 6 5;
+            rel2.offset: -7 -5;
+            color_class: "map_scale";
+            color: FN_COL_DEFAULT;
+            text { font: FNBD; size: 10;
+               text_class: "map_scale";
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.0;
+            }
+         }
+      }
+   }
+}
+
+group { name: "elm/map/marker_bubble/default";
+   data.item: "size_w" 320;
+   data.item: "size_h" 160;
+   images.image: "bub_base_b0.png" COMP;
+   images.image: "bub_base_b1.png" COMP;
+   images.image: "bub_base_b2.png" COMP;
+   images.image: "bub_over_bot.png" COMP;
+   images.image: "shine.png" COMP;
+   parts {
+      part { name: "base0";
+         description { state: "default" 0.0;
+            image.normal: "bub_base_b0.png";
+            image.border: 12 0 8 13;
+            image.middle: SOLID;
+            fill.smooth: 0;
+            rel2.relative: 0.0 1.0;
+            rel2.to: "base1";
+         }
+      }
+      part { name: "base1";
+         description { state: "default" 0.0;
+            image.normal: "bub_base_b1.png";
+            image.border: 0 0 8 13;
+            image.middle: SOLID;
+            fill.smooth: 0;
+            max: 17 99999;
+            min: 17 22;
+         }
+      }
+      part { name: "base2";
+         description { state: "default" 0.0;
+            image.normal: "bub_base_b2.png";
+            image.border: 0 12 8 13;
+            image.middle: SOLID;
+            fill.smooth: 0;
+            rel1.relative: 1.0 0.0;
+            rel1.to: "base1";
+         }
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "base0";
+            rel1.offset: 5 4;
+            rel2.to: "base2";
+            rel2.offset: -6 -12;
+         }
+      }
+      part { name: "over"; mouse_events:  0;
+         description { state: "default" 0.0;
+            rel1.to: "base0";
+            rel1.offset: 2 1;
+            rel2.to: "base2";
+            rel2.offset: -3 1;
+            rel2.relative: 1.0 0.4;
+            image.normal: "bub_over_bot.png";
+            fill.smooth: 0;
+         }
+      }
+      part { name: "shine_clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "over";
+            rel1.offset: 0 -10;
+            rel2.to: "over";
+         }
+      }
+      part { name: "shine"; mouse_events: 0;
+         clip_to: "shine_clip";
+         description { state: "default" 0.0;
+            image.normal: "shine.png";
+            rel1.offset: 0 -2;
+            rel1.to: "over";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 2;
+            rel2.to: "over";
+            FIXED_SIZE(69, 5)
+         }
+      }
+   }
+}
+

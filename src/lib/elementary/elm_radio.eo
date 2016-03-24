@@ -1,0 +1,92 @@
+class Elm.Radio (Elm.Check, Elm.Interface_Atspi_Widget_Action)
+{
+   eo_prefix: elm_obj_radio;
+   methods {
+      @property state_value {
+         set {
+            [[Set the integer value that this radio object represents
+
+              This sets the value of the radio.
+            ]]
+         }
+         get {
+            [[Get the integer value that this radio object represents
+
+              This gets the value of the radio.
+            ]]
+         }
+         values {
+            value: int; [[The value to use if this radio object is selected]]
+         }
+      }
+      @property value {
+         set {
+            [[Set the value of the radio group.
+
+              This sets the value of the radio group and will also set the
+              value if pointed to, to the value supplied, but will not call
+              any callbacks.
+            ]]
+         }
+         get {
+            [[Get the value of the radio group]]
+         }
+         values {
+            value: int; [[The value to use for the group]]
+         }
+      }
+      @property value_pointer {
+         set {
+            [[Set a convenience pointer to a integer to change when radio group
+              value changes.
+
+              This sets a pointer to a integer, that, in addition to the radio
+              objects state will also be modified directly. To stop setting the
+              object pointed to simply use NULL as the valuep argument. If
+              valuep is not NULL, then when this is called, the radio objects
+              state will also be modified to reflect the value of the integer
+              valuep points to, just like calling elm_radio_value_set().
+            ]]
+         }
+         values {
+            valuep: int * @nullable; [[Pointer to the integer to modify]]
+         }
+      }
+      @property selected_object {
+         get {
+            [[Get the selected radio object.]]
+            return: Evas.Object *; [[The selected radio object]]
+         }
+      }
+      group_add {
+         [[Add this radio to a group of other radio objects
+
+           Radio objects work in groups. Each member should have a different
+           integer value assigned. In order to have them work as a group, they
+           need to know about each other. This adds the given radio object to
+           the group of which the group object indicated is a member.
+         ]]
+
+         params {
+            @in group: Elm.Radio *; [[Any radio object whose group the obj is
+                                      to join.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.theme_apply;
+      Elm.Widget.activate;
+      Elm.Widget.event;
+      Elm.Layout.text_aliases.get;
+      Elm.Interface_Atspi_Accessible.state_set.get;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+   events {
+      changed;
+   }
+
+}

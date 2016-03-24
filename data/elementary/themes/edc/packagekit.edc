@@ -1,0 +1,232 @@
+group { name: "e/modules/packagekit/icon/bugfix";
+   images.image: "icon_spanner.png" COMP;
+   parts {
+      part { name: "image";  mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "icon_spanner.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/icon/enhancement";
+   images.image: "icon_arrow_up.png" COMP;
+   parts {
+      part { name: "image"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "icon_arrow_up.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/icon/important";
+   images.image: "icon_warning.png" COMP;
+   parts {
+      part { name: "image"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "icon_warning.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/icon/low";
+   images.image: "icon_splat_half.png" COMP;
+   parts {
+      part { name: "image"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "icon_splat_half.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/icon/normal";
+   images.image: "icon_splat.png" COMP;
+   parts {
+      part { name: "image"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "icon_splat.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/icon/security";
+   images.image: "icon_system-lock-screen.png" COMP;
+   parts {
+      part { name: "image"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "icon_system-lock-screen.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/main";
+   max: 160 160;
+   images.image: "packagekit_base.png" COMP;
+   images.image: "icon_border_remember.png" COMP;
+   images.image: "glow_exclam.png" COMP;
+   images.image: "glow_round_corners_small.png" COMP;
+   images.image: "knob_round_small_busy.png" COMP;
+   parts {
+      part { name: "base"; 
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "packagekit_base.png";
+         }
+      }
+      part { name: "status"; 
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            visible: 0;
+            rel1.relative: (36/160) (60/160);
+            rel2.relative: ((36+88)/160) ((60+88)/160);
+         }
+         description { state: "running" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "updates" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "updated" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image.normal: "icon_border_remember.png";
+            max: 16 16;
+         }
+         description { state: "error" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image.normal: "glow_exclam.png";
+            max: 16 16;
+         }
+      }
+      part { name: "num_updates"; type: TEXT;
+         scale: 1;
+         effect: SHADOW BOTTOM;
+         description { state: "default" 0.0;
+            rel1.relative: (36/160) (60/160);
+            rel2.relative: ((36+88)/160) ((60+88)/160);
+            color: FN_COL_DISABLE;
+            text { font: FN; size: 10;
+            }
+         }
+      }
+      part { name: "busy_clip"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+            visible: 0;
+         }
+         description { state: "busy" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+            visible: 1;
+         }
+      }
+      part { name: "knob"; mouse_events: 0;
+         clip_to: "busy_clip";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            image.normal: "knob_round_small_busy.png";
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            max: 20 20;
+            rel1.relative: (36/160) (60/160);
+            rel2.relative: ((36+88)/160) ((60+88)/160);
+         }
+      }
+      part { name: "knob_spinner"; mouse_events: 0;
+         clip_to: "busy_clip";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "knob";
+            rel2.to: "knob";
+            image.normal: "glow_round_corners_small.png";
+            map.on: 1;
+            map.smooth: 1;
+            map.rotation.center: "knob";
+         }
+         description { state: "spin" 0.0;
+            inherit: "default" 0.0;
+            map.rotation.z: 360;
+         }
+      }
+      
+   }
+   programs {
+      program { name: "spin";
+         signal: "e,state,hung"; source: "e";
+         action: STATE_SET "spin" 0.0;
+         transition: LINEAR 1.0;
+         target: "knob_spinner";
+         after: "spin2";
+      }
+      program { name: "spin2";
+         action: STATE_SET "default" 0.0;
+         target: "knob_spinner";
+         after: "spin";
+      }
+      program { name: "busy-on";
+         signal: "e,state,hung"; source: "e";
+         action: STATE_SET "busy" 0.0;
+         transition: SINUSOIDAL 0.25;
+         target: "busy_clip";
+      }
+      program { name: "busy-off";
+         signal: "e,state,unhung"; source: "e";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 1.0;
+         target: "busy_clip";
+         after: "spin3";
+      }
+      program { name: "spin3";
+         action: ACTION_STOP;
+         target: "spin";
+         target: "spin2";
+         after: "spin4";
+      }
+      program { name: "spin4";
+         action: STATE_SET "default" 0.0;
+         target: "knob_spinner";
+      }
+      
+      program {
+         signal: "packagekit,state,none"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "status";
+         after: "busy-off";
+      }
+      program {
+         signal: "packagekit,state,working"; source: "e";
+         action: STATE_SET "running" 0.0;
+         target: "status";
+         after: "spin";
+      }
+      program {
+         signal: "packagekit,state,working"; source: "e";
+         action: STATE_SET "running" 0.0;
+         target: "status";
+         after: "busy-on";
+      }
+      program {
+         signal: "packagekit,state,updates"; source: "e";
+         action: STATE_SET "updates" 0.0;
+         target: "status";
+         after: "busy-off";
+      }
+      program {
+         signal: "packagekit,state,updated"; source: "e";
+         action: STATE_SET "updated" 0.0;
+         target: "status";
+         after: "busy-off";
+      }
+      program {
+         signal: "packagekit,state,error"; source: "e";
+         action: STATE_SET "error" 0.0;
+         target: "status";
+         after: "busy-off";
+      }
+   }
+}

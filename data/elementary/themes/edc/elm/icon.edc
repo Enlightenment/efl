@@ -1,0 +1,159 @@
+
+
+/*
+ * Standard FreeDesktop icons:
+ * 
+ * WARNING: When you add new icons you MUST ensure to use standard names as per:
+ * http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
+ * If you can't find the name in the spec then you MUST search in the Tango
+ * and/or the Oxigen theme to find a suitable name. IF you really cannot find
+ * anything try at least to be consistent with other existing names.
+ * NOTE: icons marked with an empty comment are names that I cannot
+ *       find anywhere else, so they are not really standard.
+ */
+#define IC(Name, File, Min, Max) \
+   group { name: "elm/icon/"##Name##"/default"; min: Min Min; max: Max Max; \
+   images.image: File COMP; parts { part { name: "base"; \
+   description { aspect: 1.0 1.0; aspect_preference: BOTH; \
+   image.normal: File; } } } }
+IC("folder",               "icon_folder.png",           16, 0);
+IC("user-home",            "icon_home.png",             16, 0);
+IC("user-trash",           "icon_delete.png",           16, 0);
+
+IC("view-close",           "icon_close.png",            16, 0);
+IC("view-refresh",         "icon_refresh.png",          16, 0);
+
+IC("window-close",         "icon_close.png",            16, 0);
+
+IC("document-close",       "icon_close.png",            16, 0);
+IC("document-edit",        "icon_edit.png",             16, 0);
+
+IC("dialog-info",          "icon_info.png",             16, 0);
+IC("dialog-close",         "icon_close.png",            16, 0);
+
+IC("arrow-up",             "icon_arrow_up.png",         16, 0);
+IC("arrow-down",           "icon_arrow_down.png",       16, 0);
+IC("arrow-left",           "icon_arrow_left.png",       16, 0);
+IC("arrow-right",          "icon_arrow_right.png",      16, 0);
+IC("arrow-up-left",        "icon_arrow_up_left.png",    16, 0); /* */
+IC("arrow-up-right",       "icon_arrow_up_right.png",   16, 0); /* */
+IC("arrow-down-left",      "icon_arrow_down_left.png",  16, 0); /* */
+IC("arrow-down-right",     "icon_arrow_down_right.png", 16, 0); /* */
+
+IC("edit-delete",          "icon_delete.png",           16, 0);
+IC("edit-find",            "icon_search.png",           16, 0);
+
+IC("application-chat",     "icon_chat.png",             16, 0); /* */
+IC("application-clock",    "icon_clock.png",            16, 0); /* */
+
+IC("media-seek-forward",   "icon_forward.png",          16, 0);
+IC("media-seek-backward",  "icon_rewind.png",           16, 0);
+IC("media-skip-forward",   "icon_next.png",             16, 0);
+IC("media-skip-backward",  "icon_prev.png",             16, 0);
+IC("media-playback-pause", "icon_pause.png",            16, 0);
+IC("media-playback-start", "icon_play.png",             16, 0);
+IC("media-playback-stop",  "icon_stop.png",             16, 0);
+IC("media-eject",          "icon_eject.png",            16, 0);
+
+IC("audio-volume",         "icon_volume.png",           16, 0); /* */
+IC("audio-volume-muted",   "icon_mute.png",             16, 0);
+
+/// TODO emoticons, file, no_photo
+#undef IC
+
+
+/*
+ * All the icons below this point are not standard and are to be considered
+ * deprecated or at least just for internal usage only.
+ */
+
+#define IC(Name, Alias, File, Min, Max) \
+   group { name: "elm/icon/"##Name##"/default"; min: Min Min; max: Max Max; \
+   alias: "elm/icon/"##Alias##"/default"; \
+   images.image: File COMP; parts { part { name: "base"; \
+   description { aspect: 1.0 1.0; aspect_preference: BOTH; \
+   image.normal: File; } } } }
+IC("home",        "toolbar/home",        "icon_home.png",        16, 0);
+IC("close",       "toolbar/close",       "icon_close.png",       16, 0);
+IC("apps",        "toolbar/apps",        "icon_apps.png",        16, 0);
+IC("arrow_up",    "toolbar/arrow_up",    "icon_arrow_up.png",    16, 0);
+IC("arrow_down",  "toolbar/arrow_down",  "icon_arrow_down.png",  16, 0);
+IC("arrow_left",  "toolbar/arrow_left",  "icon_arrow_left.png",  16, 0);
+IC("arrow_right", "toolbar/arrow_right", "icon_arrow_right.png", 16, 0);
+IC("chat",        "toolbar/chat",        "icon_chat.png",        16, 0);
+IC("clock",       "toolbar/clock",       "icon_clock.png",       16, 0);
+IC("delete",      "toolbar/delete",      "icon_delete.png",      16, 0);
+IC("edit",        "toolbar/edit",        "icon_edit.png",        16, 0);
+IC("refresh",     "toolbar/refresh",     "icon_refresh.png",     16, 0);
+IC("file",        "toolbar/file",        "icon_file.png",        16, 0);
+IC("no_photo",    "photo/no_photo",      "icon_head.png",        16, 0);
+IC("search",      "toolbar/search",      "icon_search.png",      16, 0);
+#undef IC
+
+#define IC(Name, File, Min, Max) \
+   group { name: "elm/icon/"##Name##"/default"; min: Min Min; max: Max Max; \
+   images.image: File COMP; parts { part { name: "base"; \
+   description { aspect: 1.0 1.0; aspect_preference: BOTH; \
+   image.normal: File; } } } }
+
+IC("toolbar/more_menu",    "icon_arrow_down.png", 16, 0);
+IC("toolbar/folder",       "icon_folder.png",     16, 0);
+
+IC("arrow_up_left",        "icon_arrow_up_left.png",    16, 0);
+IC("arrow_up_right",       "icon_arrow_up_right.png",   16, 0);
+IC("arrow_down_left",      "icon_arrow_down_left.png",  16, 0);
+IC("arrow_down_right",     "icon_arrow_down_right.png", 16, 0);
+
+IC("menu/home",            "icon_home.png",        16, 0);
+IC("menu/close",           "icon_close.png",       16, 0);
+IC("menu/apps",            "icon_apps.png",        16, 0);
+IC("menu/arrow_up",        "icon_arrow_up.png",    16, 0);
+IC("menu/arrow_down",      "icon_arrow_down.png",  16, 0);
+IC("menu/arrow_left",      "icon_arrow_left.png",  16, 0);
+IC("menu/arrow_right",     "icon_arrow_right.png", 16, 0);
+IC("menu/chat",            "icon_chat.png",        16, 0);
+IC("menu/clock",           "icon_clock.png",       16, 0);
+IC("menu/delete",          "icon_delete.png",      16, 0);
+IC("menu/edit",            "icon_edit.png",        16, 0);
+IC("menu/refresh",         "icon_refresh.png",     16, 0);
+IC("menu/folder",          "icon_folder.png",      16, 0);
+IC("menu/file",            "icon_file.png",        16, 0);
+
+IC("media_player/forward", "icon_forward.png", 16, 0);
+IC("media_player/info",    "icon_info.png",    16, 0);
+IC("media_player/next",    "icon_next.png",    16, 0);
+IC("media_player/pause",   "icon_pause.png",   16, 0);
+IC("media_player/play",    "icon_play.png",    16, 0);
+IC("media_player/prev",    "icon_prev.png",    16, 0);
+IC("media_player/rewind",  "icon_rewind.png",  16, 0);
+IC("media_player/stop",    "icon_stop.png",    16, 0);
+IC("media_player/eject",   "icon_eject.png",   16, 0);
+IC("media_player/volume",  "icon_volume.png",  16, 0);
+IC("media_player/mute",    "icon_mute.png",    16, 0);
+#undef IC
+
+#define IC(Name, File, Min, Max) \
+   group { name: "elm/icon/"##Name##"/default/default"; min: Min Min; max: Max Max; \
+   alias: "elm/icon/"##Name##"/default/flush"; \
+   images.image: File COMP; parts { \
+   part { name: "hi"; \
+   description { \
+   rel1.to: "base"; rel1.offset: 0 1; rel2.to: "base"; rel2.offset: -1 0; \
+   image.normal: File; color: 255 255 255 25;} } \
+   part { name: "base"; \
+   description { aspect: 1.0 1.0; aspect_preference: BOTH; \
+   image.normal: File; color: 21 21 21 255;} } \
+   } }
+IC("media_player/forward", "icon_forward_mono.png", 16, 0);
+IC("media_player/info",    "icon_info_mono.png",    16, 0);
+IC("media_player/next",    "icon_next_mono.png",    16, 0);
+IC("media_player/pause",   "icon_pause_mono.png",   16, 0);
+IC("media_player/play",    "icon_play_mono.png",    16, 0);
+IC("media_player/prev",    "icon_prev_mono.png",    16, 0);
+IC("media_player/rewind",  "icon_rewind_mono.png",  16, 0);
+IC("media_player/stop",    "icon_stop_mono.png",    16, 0);
+IC("media_player/eject",   "icon_eject_mono.png",   16, 0);
+IC("media_player/volume",  "icon_volume_mono.png",  16, 0);
+IC("media_player/mute",    "icon_mute_mono.png",    16, 0);
+#undef IC
+

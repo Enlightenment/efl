@@ -1,0 +1,54 @@
+class Elm.Flipselector_Item(Elm.Widget_Item)
+{
+   eo_prefix: elm_obj_flipselector_item;
+   methods {
+        @property selected {
+             get {
+                [[Get whether a given flip selector widget's item is the currently
+                  selected one.
+
+                  See also @.selected.set.
+                ]]
+             }
+             set {
+                [[Set whether a given flip selector widget's item should be the
+                  currently selected one.
+
+                  This sets whether $item is or not the selected (thus, under
+                  display) one. If $item is different than the one under display,
+                  the latter will be unselected. If the $item is set to be
+                  unselected, on the other hand, the first item in the widget's
+                  internal members list will be the new selected one.
+
+                  See also @.selected.get.
+                ]]
+             }
+             values {
+                 selected: bool; [[$true if selected, $false otherwise.]]
+             }
+        }
+      prev_get @const {
+            [[Get the item before $item in a flip selector widget's internal list of
+              items.
+
+              See also @.next_get.
+            ]]
+            return: Elm.Widget_Item *; [[The item before the $item, in its parent's list. If there is no previous item for $item or there's an error, $null is returned.]]
+        }
+      next_get @const {
+            [[Get the item after $item in a flip selector widget's
+              internal list of items.
+
+              See also @.prev_get.
+            ]]
+             return: Elm.Widget_Item *; [[The item after the $item, in its parent's list. If there is no next item for $item or there's an error, $null is returned.]]
+        }
+   }
+   implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+        Elm.Widget_Item.signal_emit;
+        Elm.Widget_Item.part_text.get;
+        Elm.Widget_Item.part_text.set;
+   }
+}

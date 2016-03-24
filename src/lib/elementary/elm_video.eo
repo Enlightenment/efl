@@ -1,0 +1,122 @@
+class Elm.Video (Elm.Layout, Efl.File, Elm.Interface_Atspi_Widget_Action)
+{
+   eo_prefix: elm_obj_video;
+   methods {
+      @property audio_level {
+         set {
+            [[Set the audio level of an Elm_Video object.]]
+         }
+         get {
+            [[Get the audio level of the current video.]]
+         }
+         values {
+            volume: double; [[The audio level.]]
+         }
+      }
+      @property remember_position {
+         set {
+            [[Set whether the object can remember the last played position.
+
+              Note: This API only serves as indication. System support is
+              required.
+            ]]
+         }
+         get {
+            [[Set whether the object can remember the last played position.
+
+              Note: This API only serves as indication. System support is
+              required.
+            ]]
+         }
+         values {
+            remember: bool; [[The value.]]
+         }
+      }
+      @property play_position {
+         set {
+            [[Set the current position (in seconds) to be played in the
+              Elm_Video object.]]
+         }
+         get {
+            [[Get the current position (in seconds) being played in the
+              Elm_Video object.]]
+         }
+         values {
+            position: double; [[The time (in seconds) since the beginning of
+                                the media file.]]
+         }
+      }
+      @property audio_mute {
+         set {
+            [[Change the mute state of the Elm_Video object.]]
+         }
+         get {
+            [[Get whether audio is muted.]]
+         }
+         values {
+            mute: bool; [[The mute state.]]
+         }
+      }
+      @property is_playing {
+         get {
+            [[Is the video actually playing.
+
+              You should consider watching event on the object instead of
+              polling the object state.
+            ]]
+            return: bool;
+         }
+      }
+      @property play_length {
+         get {
+            [[Get the total playing time (in seconds) of the Elm_Video object.]]
+            return: double; [[The total duration (in seconds) of the media file.]]
+         }
+      }
+      @property emotion {
+         get {
+            [[Get the underlying Emotion object.]]
+            return: Evas.Object *; [[the underlying Emotion object.]]
+         }
+      }
+      @property is_seekable {
+         get {
+            [[Is it possible to seek inside the video.]]
+            return: bool; [[true if is possible to seek inside the video.]]
+         }
+      }
+      @property title {
+         get {
+            [[Get the title (for instance DVD title) from this emotion object.
+
+              This function is only useful when playing a DVD.
+
+              Note: Don't change or free the string returned by this function.
+            ]]
+            return: const(char)*; [[A string containing the title.]]
+         }
+      }
+      play {
+         [[Start playing a video.]]
+      }
+      pause {
+         [[Pause a video.]]
+      }
+      stop {
+         [[Stop a video.]]
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Efl.File.file.set;
+      Efl.File.file.get;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.event;
+      Elm.Layout.sizing_eval;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+}

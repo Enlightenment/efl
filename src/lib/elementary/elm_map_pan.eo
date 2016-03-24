@@ -1,0 +1,30 @@
+class Elm.Map_Pan (Elm.Pan)
+{
+   eo_prefix: elm_obj_map_pan;
+   implements {
+      class.constructor;
+      Eo.Base.destructor;
+      Evas.Object_Smart.calculate;
+      Evas.Object_Smart.move;
+      Evas.Object_Smart.resize;
+      Elm.Pan.content_size.get;
+      Elm.Pan.pos;
+      Elm.Pan.pos_min.get;
+      Elm.Pan.pos_max.get;
+   }
+   events {
+      loaded;
+      tile,load;
+      tile,loaded;
+      tile,loaded,fail;
+      route,load;
+      route,loaded;
+      route,loaded,fail;
+      name,load;
+      name,loaded;
+      name,loaded,fail;
+      overlay,clicked;
+      overlay,del;
+   }
+
+}

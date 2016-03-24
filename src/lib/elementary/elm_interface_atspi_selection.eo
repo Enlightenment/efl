@@ -1,0 +1,61 @@
+interface Elm.Interface_Atspi_Selection ()
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_selection;
+   methods {
+      @property selected_children_count @protected {
+         get {
+            [[Gets the number of currently selected children]]
+            return: int;
+         }
+      }
+      @property selected_child @protected {
+         [[Gets child for given child index]]
+         get {
+            return: Eo.Base *;
+         }
+         keys {
+            selected_child_index: int; [[index of selected child]]
+         }
+      }
+      child_select @protected {
+         [[Adds selection for given child index]]
+         params {
+            @in child_index: int;
+         }
+         return: bool;
+      }
+      selected_child_deselect @protected {
+         [[Removes selection for given child index]]
+         params {
+            @in child_index: int;
+         }
+         return: bool;
+      }
+      is_child_selected @protected {
+         [[Determines if child specified by index is selected]]
+         params {
+            @in child_index: int;
+         }
+         return: bool;
+      }
+      all_children_select @protected {
+         [[Adds selection for all children]]
+         return: bool;
+      }
+      clear @protected {
+         [[Clears the current selection]]
+         return: bool;
+      }
+      child_deselect @protected {
+         [[Removes selection for given child index]]
+         params {
+            @in child_index: int;
+         }
+         return: bool;
+      }
+   }
+   events {
+      selection,changed; [[Called when selection has been changed.]]
+   }
+}

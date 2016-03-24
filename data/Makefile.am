@@ -116,3 +116,131 @@ EXTRA_DIST += $(ethumb_clientfiles_DATA)
 eluafilesdir = $(datadir)/elua
 eluafiles_DATA = elua/checkme
 EXTRA_DIST += $(eluafiles_DATA)
+
+#######################################################################
+# Elementary
+
+# themes
+
+elementaryfilesdir = $(datadir)/elementary/themes
+elementaryfiles_DATA = elementary/themes/default.edj
+CLEANFILES += elementary/themes/default.edj
+
+include elementary/themes/Makefile.am
+
+elementary/themes/default.edj: elementary/themes/default.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/themes/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $(EDJE_CC_ELM_FLAGS) $< $@
+
+# desktop files
+
+elementarydesktopdir = $(datadir)/elementary/applications
+elementarydesktop_DATA = elementary/desktop/elementary_test.desktop elementary/desktop/elementary_config.desktop
+
+elementaryicondir = $(datadir)/elementary/icons
+elementaryicon_DATA = elementary/desktop/elementary.png
+
+EXTRA_DIST += $(elementarydesktop_DATA) $(elementaryicon_DATA)
+
+# edje_externals
+
+elementaryedje_externalsdir = $(datadir)/elementary/edje_externals
+elementaryedje_externals_DATA = elementary/edje_externals/icons.edj
+CLEANFILES += $(elementaryedje_externals_DATA)
+
+include elementary/edje_externals/Makefile.am
+
+elementary/edje_externals/icons.edj: elementary/edje_externals/icons.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/edje_externals/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
+
+# images
+
+include elementary/images/Makefile.am
+
+elementaryimagesdir = $(datadir)/elementary/images
+elementaryimages_DATA = $(elementary_images_files)
+
+elementaryimages_glayerdir = $(datadir)/elementary/images
+elementaryimages_glayer_DATA = $(elementary_images_glayer_files)
+
+EXTRA_DIST += $(elementary_images_files) $(elementary_images_glayer_files)
+
+# objects
+
+include ../Makefile_Elm_Helpers.am
+
+elementaryobjectsdir = $(datadir)/elementary/object
+elementaryobjects_DATA = \
+elementary/objects/test.edj \
+elementary/objects/test_external.edj \
+elementary/objects/multip.edj \
+elementary/objects/cursors.edj \
+elementary/objects/combobox_multiple.edj \
+elementary/objects/font_preview.edj \
+elementary/objects/postit_ent.edj \
+elementary/objects/multibuttonentry.edj \
+elementary/objects/test_prefs.edj \
+elementary/objects/test_prefs.epb \
+elementary/objects/test_focus_style.edj
+CLEANFILES += $(elementaryobjects_DATA)
+
+include elementary/objects/Makefile.am
+
+elementary/objects/test.edj: elementary/objects/test.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
+
+elementary/objects/test_external.edj: elementary/objects/test_external.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
+
+elementary/objects/multip.edj: elementary/objects/test_external.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
+
+elementary/objects/cursors.edj: elementary/objects/cursors.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
+
+elementary/objects/combobox_multiple.edj: elementary/objects/combobox_multiple.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
+
+elementary/objects/font_preview.edj: elementary/objects/font_preview.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
+
+elementary/objects/postit_ent.edj: elementary/objects/postit_ent.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
+
+elementary/objects/multibuttonentry.edj: elementary/objects/multibuttonentry.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
+
+elementary/objects/test_prefs.edj: elementary/objects/test_prefs.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
+
+elementary/objects/test_focus_style.edj: elementary/objects/test_focus_style.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(top_srcdir)/data/elementary/themes/img $< $@
+
+elementary/objects/test_prefs.epb: elementary/objects/test_prefs.epc
+	$(AM_V_EPB) \
+	$(MKDIR_P) elementary/objects/; \
+	$(ELM_PREFS_CC) $(ELM_PREFS_FLAGS) $< $@
+

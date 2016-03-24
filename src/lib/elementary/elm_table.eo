@@ -1,0 +1,132 @@
+class Elm.Table (Elm.Widget)
+{
+   eo_prefix: elm_obj_table;
+   data: null;
+   methods {
+      @property homogeneous {
+         [[Control the homogenous state in a table.]]
+         set {}
+         get {}
+         values {
+            homogeneous: bool; [[A boolean to set if the layout is
+                                 homogeneous in the table.]]
+         }
+      }
+      @property padding {
+         set {
+            [[Set padding between cells. Default value is 0.]]
+         }
+         get {
+            [[Get padding between cells.]]
+         }
+         values {
+            horizontal: Evas.Coord; [[The horizontal padding.]]
+            vertical: Evas.Coord; [[The vertical padding.]]
+         }
+      }
+      @property align {
+         set {
+            [[Set alignment of table. Default value is 0.5.
+
+              @since 1.13
+            ]]
+         }
+         get {
+            [[Get alignment of table.
+
+              @since 1.13
+            ]]
+         }
+         values {
+            horizontal: double; [[The horizontal alignment.]]
+            vertical: double; [[The vertical alignment.]]
+         }
+      }
+      clear {
+         [[Faster way to remove all child objects from a table object.]]
+         params {
+            @in clear: bool; [[If true, will delete children, else just remove from table.]]
+         }
+      }
+      child_get @const {
+         [[Get child object of table at given coordinates.]]
+         return: Evas.Object *; [[Child of object if find if not return $null.]]
+         params {
+            @in col: int; [[Column number of child object.]]
+            @in row: int; [[Row number of child object.]]
+         }
+      }
+      pack_set {
+         [[Set the packing location of an existing child of the table
+
+           Modifies the position of an object already in the table.
+
+           Note: All positioning inside the table is relative to rows and
+           columns, so a value of 0 for col and row, means the top left
+           cell of the table, and a value of 1 for colspan and rowspan
+           means only takes that 1 cell.
+         ]]
+         params {
+            @in subobj: Evas.Object *; [[The subobject to be modified in the table.]]
+            @in column: int; [[Column number.]]
+            @in row: int; [[Row number.]]
+            @in colspan: int;
+            @in rowspan: int;
+         }
+         legacy: null;
+      }
+      pack_get {
+         [[Get the packing location of an existing child of the table.]]
+         params {
+            @in subobj: Evas.Object *; [[The subobject to be modified in the table.]]
+            @out column: int; [[Column number.]]
+            @out row: int; [[Row number.]]
+            @out colspan: int;
+            @out rowspan: int;
+         }
+         legacy: null;
+      }
+      unpack {
+         [[Remove child from table.]]
+         params {
+            @in subobj: Evas.Object *; [[The subobject.]]
+         }
+      }
+      pack {
+         [[Add a subobject on the table with the coordinates passed.
+
+           Note: All positioning inside the table is relative to rows and
+           columns, so a value of 0 for x and y, means the top left cell of
+           the table, and a value of 1 for w and h means $subobj only takes
+           that 1 cell.
+
+           Note: Columns and rows only guarantee 16bit unsigned values
+           at best. That means that col + colspan AND row + rowspan must fit
+           inside 16bit unsigned values cleanly. You will be warned once
+           values exceed 15bit storage, and attempting to use values not
+           able to fit in 16bits will result in failure.
+         ]]
+         params {
+            @in subobj: Evas.Object *; [[The subobject to be added to the table.]]
+            @in column: int; [[Column number.]]
+            @in row: int; [[Row number.]]
+            @in colspan: int;
+            @in rowspan: int;
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.calculate;
+      Elm.Widget.focus_direction;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.theme_apply;
+      Elm.Widget.sub_object_del;
+   }
+
+}

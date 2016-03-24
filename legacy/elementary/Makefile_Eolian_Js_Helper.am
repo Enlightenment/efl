@@ -1,0 +1,15 @@
+
+if HAVE_JS
+EOLIAN_JS = @eolian_js@
+_EOLIAN_JS_DEP = @eolian_js@
+endif
+
+AM_V_EOLJS = $(am__v_EOLJS_@AM_V@)
+am__v_EOLJS_ = $(am__v_EOLJS_@AM_DEFAULT_V@)
+am__v_EOLJS_0 = @echo "  EOLJS  " $@;
+
+SUFFIXES += .eo.js.cc
+
+%.eo.js.cc: %.eo $(_EOLIAN_JS_DEP)
+	$(AM_V_EOLJS)$(EOLIAN_JS) $(EOLIAN_FLAGS) -o $@ $<
+

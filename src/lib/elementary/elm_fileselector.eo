@@ -1,0 +1,68 @@
+class Elm.Fileselector (Elm.Layout, Elm.Interface_Fileselector,
+                        Elm.Interface_Atspi_Widget_Action,
+                        Evas.Clickable_Interface, Evas.Selectable_Interface)
+{
+   eo_prefix: elm_obj_fileselector;
+   methods {
+      @property buttons_ok_cancel {
+         set {
+            [[Enable/disable the "ok" and "cancel" buttons on a given file
+              selector widget
+
+              Note: A file selector without those buttons will never emit the
+              "done" smart event, and is only usable if one is just hooking
+              to the other two events.
+
+              See also @.buttons_ok_cancel.get.
+            ]]
+         }
+         get {
+            [[Get whether the "ok" and "cancel" buttons on a given file
+              selector widget are being shown.
+
+              See also @.buttons_ok_cancel.set for more details.
+            ]]
+         }
+         values {
+            visible: bool; [[true to show buttons, false to hide.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      class.destructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.focus_next;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.focus_direction;      
+      Elm.Widget.event;
+      Elm.Widget.theme_apply;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Layout.text.set;
+      Elm.Interface_Fileselector.selected_paths.get;
+      Elm.Interface_Fileselector.custom_filter_append;
+      Elm.Interface_Fileselector.expandable;
+      Elm.Interface_Fileselector.thumbnail_size;
+      Elm.Interface_Fileselector.selected;
+      Elm.Interface_Fileselector.mime_types_filter_append;
+      Elm.Interface_Fileselector.hidden_visible;
+      Elm.Interface_Fileselector.filters_clear;
+      Elm.Interface_Fileselector.is_save;
+      Elm.Interface_Fileselector.path;
+      Elm.Interface_Fileselector.sort_method;
+      Elm.Interface_Fileselector.multi_select;
+      Elm.Interface_Fileselector.folder_only;
+      Elm.Interface_Fileselector.mode;
+      Elm.Interface_Fileselector.current_name;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+   events {
+      done;
+      activated;
+      selected,invalid;
+      directory,open;
+   }
+
+}

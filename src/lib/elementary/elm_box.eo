@@ -1,0 +1,298 @@
+class Elm.Box (Elm.Widget)
+{
+   eo_prefix: elm_obj_box;
+   methods {
+      @property homogeneous {
+         set {
+            [[Set the box to arrange its children homogeneously
+
+              If enabled, homogeneous layout makes all items the same size, according
+              to the size of the largest of its children.
+
+              Note: This flag is ignored if a custom layout function is set.
+
+            ]]
+         }
+         get {
+            [[Get whether the box is using homogeneous mode or not ($true if
+              it's homogeneous, $false otherwise)]]
+         }
+         values {
+            homogeneous: bool; [[The homogeneous flag]]
+         }
+      }
+      @property align {
+         set {
+            [[Set the alignment of the whole bounding box of contents.
+
+              Sets how the bounding box containing all the elements of the box, after
+              their sizes and position has been calculated, will be aligned within
+              the space given for the whole box widget.
+
+            ]]
+         }
+         get {
+            [[Get the alignment of the whole bounding box of contents.
+
+              See also @.align.set.
+
+            ]]
+         }
+         values {
+            horizontal: double; [[The horizontal alignment of elements]]
+            vertical: double; [[The vertical alignment of elements]]
+         }
+      }
+      @property horizontal {
+         set {
+            [[Set the horizontal orientation
+
+              By default, box object arranges their contents vertically from top to
+              bottom.
+              By calling this function with $horizontal as $true, the box will
+              become horizontal, arranging contents from left to right.
+
+              Note: This flag is ignored if a custom layout function is set.
+
+            ]]
+         }
+         get {
+            [[Get the horizontal orientation ($true if the box is set to
+              horizontal mode, $false otherwise)]]
+         }
+         values {
+            horizontal: bool; [[The horizontal flag]]
+         }
+      }
+      @property padding {
+         set {
+            [[Set the space (padding) between the box's elements.
+
+              Extra space in pixels that will be added between a box child and its
+              neighbors after its containing cell has been calculated. This padding
+              is set for all elements in the box, besides any possible padding that
+              individual elements may have through their size hints.
+
+            ]]
+         }
+         get {
+            [[Get the space (padding) between the box's elements.
+
+              See also @.padding.set.
+
+            ]]
+         }
+         values {
+            horizontal: Evas.Coord; [[The horizontal space between elements]]
+            vertical: Evas.Coord; [[The vertical space between elements]]
+         }
+      }
+      @property layout {
+         set {
+            [[Set the layout defining function to be used by the box
+
+              Whenever anything changes that requires the box in $obj to recalculate
+              the size and position of its elements, the function $cb will be called
+              to determine what the layout of the children will be.
+
+              Once a custom function is set, everything about the children layout
+              is defined by it. The flags set by @.horizontal.set and
+              @.homogeneous.set no longer have any meaning, and the values
+              given by @.padding.set and @.align.set are up to this
+              layout function to decide if they are used and how. These last two
+              will be found in the $priv parameter, of type $Evas_Object_Box_Data,
+              passed to $cb. The $Evas_Object the function receives is not the
+              Elementary widget, but the internal Evas Box it uses, so none of the
+              functions described here can be used on it.
+
+              Any of the layout functions in $Evas can be used here, as well as the
+              special \@ref elm_box_layout_transition.
+
+              The final $data argument received by $cb is the same $data passed
+              here, and the $free_data function will be called to free it
+              whenever the box is destroyed or another layout function is set.
+
+              Setting $cb to $null will revert back to the default layout function.
+
+              See also \@ref elm_box_layout_transition.
+
+            ]]
+         }
+         values {
+            cb: Evas_Object_Box_Layout @nullable; [[The callback function used for layout]]
+            data: const(void)* @optional; [[Data that will be passed to layout function]]
+            free_data: Ecore_Cb @optional; [[Function called to free $data]]
+         }
+      }
+      @property children {
+         get {
+            [[Get a list of the objects packed into the box
+
+              Returns a new $list with a pointer to $Evas_Object in its nodes.
+              The order of the list corresponds to the packing order the box uses.
+
+              You must free this list with eina_list_free() once you are done with it.
+
+            ]]
+            return: free(own(list<Evas.Object*>*), eina_list_free) @warn_unused;
+         }
+      }
+      pack_end {
+         [[Add an object at the end of the pack list
+
+           Pack $subobj into the box $obj, placing it last in the list of
+           children objects. The actual position the object will get on screen
+           depends on the layout used. If no custom layout is set, it will be at
+           the bottom or right, depending if the box is vertical or horizontal,
+           respectively.
+
+           See also @.pack_start,
+           @.pack_before,
+           @.pack_after,
+           @.unpack,
+           @.unpack_all,
+           @.clear.
+         ]]
+
+         params {
+            @in subobj: Evas.Object *; [[The object to add to the box]]
+         }
+      }
+      unpack_all {
+         [[Remove all items from the box, without deleting them
+
+           Clear the box from all children, but don't delete the respective objects.
+           If no other references of the box children exist, the objects will never
+           be deleted, and thus the application will leak the memory. Make sure
+           when using this function that you hold a reference to all the objects
+           in the box $obj.
+
+           See also @.clear,
+           @.unpack.
+         ]]
+      }
+      unpack {
+         [[Unpack a box item
+
+           Remove the object given by $subobj from the box $obj without
+           deleting it.
+
+           See also @.unpack_all,
+           @.clear.
+
+         ]]
+
+         params {
+            @in subobj: Evas.Object *; [[The object to unpack]]
+         }
+      }
+      pack_after {
+         [[Adds an object to the box after the indicated object
+
+           This will add the $subobj to the box indicated after the object
+           indicated with $after. If $after is not already in the box, results
+           are undefined. After means either to the right of the indicated object or
+           below it depending on orientation.
+
+           See also @.pack_start,
+           @.pack_end,
+           @.pack_before,
+           @.unpack,
+           @.unpack_all,
+           @.clear.
+
+         ]]
+
+         params {
+            @in subobj: Evas.Object *; [[The object to add to the box]]
+            @in after: Evas.Object *; [[The object after which to add it]]
+         }
+      }
+      pack_start {
+         [[Add an object to the beginning of the pack list
+
+           Pack $subobj into the box $obj, placing it first in the list of
+           children objects. The actual position the object will get on screen
+           depends on the layout used. If no custom layout is set, it will be at
+           the top or left, depending if the box is vertical or horizontal,
+           respectively.
+
+           See also @.pack_end,
+           @.pack_before,
+           @.pack_after,
+           @.unpack,
+           @.unpack_all,
+           @.clear.
+
+         ]]
+
+         params {
+            @in subobj: Evas.Object *; [[The object to add to the box]]
+         }
+      }
+      recalculate {
+         [[Force the box to recalculate its children packing.
+
+           If any children was added or removed, box will not calculate the
+           values immediately rather leaving it to the next main loop
+           iteration. While this is great as it would save lots of
+           recalculation, whenever you need to get the position of a just
+           added item you must force recalculate before doing so.
+
+         ]]
+
+      }
+      pack_before {
+         [[Adds an object to the box before the indicated object
+
+           This will add the $subobj to the box indicated before the object
+           indicated with $before. If $before is not already in the box, results
+           are undefined. Before means either to the left of the indicated object or
+           above it depending on orientation.
+
+           See also @.pack_start,
+           @.pack_end,
+           @.pack_after,
+           @.unpack,
+           @.unpack_all,
+           @.clear.
+
+         ]]
+
+         params {
+            @in subobj: Evas.Object *; [[The object to add to the box]]
+            @in before: Evas.Object *; [[The object before which to add it]]
+         }
+      }
+      clear {
+         [[Clear the box of all children
+
+           Remove all the elements contained by the box, deleting the respective
+           objects.
+
+           See also @.unpack,
+           @.unpack_all.
+
+         ]]
+
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.calculate;
+      Elm.Widget.focus_direction;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.theme_apply;
+      Elm.Widget.sub_object_del;
+   }
+   events {
+      child,added;
+      child,removed;
+   }
+
+}

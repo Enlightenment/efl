@@ -1,0 +1,127 @@
+enum Elm.Colorselector.Mode
+{
+   [[Different modes supported by Colorselector
+
+      See also @Elm.Colorselector.mode.set, @Elm.Colorselector.mode.get.
+   ]]
+   legacy: elm_colorselector;
+   palette = 0, [[Only color palette is displayed.]]
+   components, [[Only color selector is displayed.]]
+   both, [[Both Palette and selector is displayed, default.]]
+   picker, [[Only color picker is displayed.]]
+   all [[All possible color selector is displayed.]]
+}
+
+class Elm.Colorselector (Elm.Layout, Elm.Interface_Atspi_Widget_Action,
+                         Evas.Clickable_Interface)
+{
+   eo_prefix: elm_obj_colorselector;
+   methods {
+      @property color {
+         set {
+            [[Set color to colorselector.]]
+
+         }
+         get {
+            [[Get current color from colorselector.]]
+         }
+         values {
+            r: int; [[r-value of color]]
+            g: int; [[g-value of color]]
+            b: int; [[b-value of color]]
+            a: int; [[a-value of color]]
+         }
+      }
+      @property palette_name {
+         set {
+            [[Set current palette's name
+
+              When colorpalette name is set, colors will be loaded from and saved to config
+              using the set name. If no name is set then colors will be loaded from or
+              saved to "default" config.
+            ]]
+         }
+         get {
+            [[Get current palette's name
+
+              Returns the currently set palette name using which colors will be
+              saved/loaded in to config.
+            ]]
+         }
+         values {
+            palette_name: const(char)*; [[Name of palette]]
+         }
+      }
+      @property mode {
+         set {
+            [[Set Colorselector's mode.
+
+              Colorselector supports three modes palette only, selector only and both.
+            ]]
+         }
+         get {
+            [[Get Colorselector's mode.]]
+         }
+         values {
+            mode: Elm.Colorselector.Mode; [[Elm_Colorselector_Mode]]
+         }
+      }
+      @property palette_items {
+         get {
+            [[Get list of palette items.
+
+              Note That palette item list is internally managed by colorselector widget and
+              it should not be freed/modified by application.
+
+              @since 1.9
+            ]]
+            return: const(list<Elm.Widget_Item*>)*;[[The list of color palette items.]]
+         }
+      }
+      @property palette_selected_item {
+         get {
+            [[Get the selected item in colorselector palette.
+
+              @since 1.9]]
+
+            return: Elm.Widget_Item *;[[The selected item, or $null if none
+selected.]]
+         }
+      }
+      palette_color_add {
+         [[Add a new color item to palette.]]
+
+         return: Elm.Widget_Item *;[[A new color palette Item.]]
+         params {
+            @in r: int; [[r-value of color]]
+            @in g: int; [[g-value of color]]
+            @in b: int; [[b-value of color]]
+            @in a: int; [[a-value of color]]
+         }
+      }
+      palette_clear {
+         [[Clear the palette items.]]
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.theme_apply;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.access;
+      Elm.Widget.event;
+      Elm.Layout.sizing_eval;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+   events {
+      color,item,selected;
+      color,item,longpressed;
+      changed;
+      changed,user;
+   }
+
+}

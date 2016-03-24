@@ -1,0 +1,103 @@
+class Elm.App_Server (Eo.Base)
+{
+   legacy_prefix: null;
+   eo_prefix: elm_app_server;
+   methods {
+      @property icon {
+         set {
+         }
+         get {
+         }
+         values {
+            icon: Eina_Stringshare *; [[title of icon]]
+         }
+      }
+      @property views {
+         get {
+            [[Return a iterator with all views of application]]
+         }
+         values {
+            ret: free(own(iterator<Elm.App_Server_View *> *), eina_iterator_free); [[Iterator with all views of application, you must free iterator after use]]
+         }
+      }
+      @property path {
+         get {
+         }
+         values {
+            ret: const(char)*;
+         }
+      }
+      @property package {
+         get {
+         }
+         values {
+            ret: Eina_Stringshare *;
+         }
+      }
+      @property pixels {
+         get {
+            [[Get application raw icon.]]
+         }
+         set {
+            [[Set icon to application, using the raw pixels of image.]]
+         }
+         values {
+            w: uint;
+            h: uint;
+            has_alpha: bool;
+            pixels: const(ubyte)*;
+         }
+      }
+      constructor {
+         [[Class constructor of elm_app_server]]
+         legacy: null;
+         params {
+            @in packageid: const(char)*; [[package of application]]
+            @in create_view_cb: Elm_App_Server_Create_View_Cb; [[callback to be called when user wants to open some application view]]
+         }
+      }
+      close_all {
+         [[Close all views of application]]
+      }
+      view_check {
+         [[If view id is available and unique, return the full DBus object path of view]]
+         params {
+            @in id: const(char)*; [[view identifier]]
+         }
+         return: bool; [[true if id is valid or false if not]]
+      }
+      view_add {
+         [[Add a view to elm_app_server. This should only be
+           used if the application open a view that was not
+           requested by create_view_cb.
+         ]]
+         params {
+            @in view: Elm.App_Server_View *; [[elm_app_server_view]]
+         }
+      }
+      title_set {
+         [[Set a title to application.]]
+         params {
+            @in title: const(char)* @nullable; [[title of application]]
+         }
+      }
+      title_get {
+         [[Get title of application]]
+         return: Eina_Stringshare *; [[title of application]]
+      }
+      save {
+         [[Save the state of all views]]
+      }
+   }
+   implements {
+      Eo.Base.destructor;
+      Eo.Base.finalize;
+   }
+   constructors {
+      .constructor;
+   }
+   events {
+      terminate; [[Called when application must be terminated.]]
+   }
+
+}

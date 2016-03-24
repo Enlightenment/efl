@@ -1,0 +1,82 @@
+enum Elm.Actionslider.Pos
+{
+  [[A position for indicators, magnets, and enabled items.]]
+   legacy: elm_actionslider;
+
+   none = 0, [[No position is set.]]
+   left = 1 << 0, [[Left position.]]
+   center = 1 << 1, [[Center position.]]
+   right = 1 << 2, [[Right position.]]
+   all = (1 << 3) - 1 [[All positions for left/center/right.]]
+}
+
+class Elm.Actionslider (Elm.Layout, Evas.Selectable_Interface)
+{
+   eo_prefix: elm_obj_actionslider;
+   methods {
+      @property indicator_pos {
+         set {
+            [[Set actionslider indicator position.]]
+         }
+         get {
+            [[Get actionslider indicator position.]]
+         }
+         values {
+            pos: Elm.Actionslider.Pos; [[The position of the indicator.]]
+         }
+      }
+      @property magnet_pos {
+         set {
+            [[Set actionslider magnet position.
+
+              To make multiple positions magnets OR them together (e.g.
+              ELM_ACTIONSLIDER_LEFT | #ELM_ACTIONSLIDER_RIGHT)
+            ]]
+         }
+         get {
+            [[Get actionslider magnet position.]]
+         }
+         values {
+            pos: Elm.Actionslider.Pos; [[Bit mask indicating the magnet positions.]]
+         }
+      }
+      @property enabled_pos {
+         set {
+            [[Set actionslider enabled position. To set multiple positions as
+              enabled OR them together(e.g.
+              #ELM_ACTIONSLIDER_LEFT | #ELM_ACTIONSLIDER_RIGHT).
+
+              Note: All the positions are enabled by default.
+            ]]
+         }
+         get {
+            [[Get actionslider enabled position.]]
+         }
+         values {
+            pos: Elm.Actionslider.Pos; [[Bit mask indicating the enabled positions.]]
+         }
+      }
+      @property selected_label {
+         get {
+            [[Get actionslider selected label.]]
+            return: const(char)*;
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.theme_apply;
+      Elm.Layout.text.set;
+      Elm.Layout.text.get;
+      Elm.Layout.text_aliases.get;
+      Elm.Layout.sizing_eval;
+   }
+   events {
+      pos_changed;
+   }
+
+}

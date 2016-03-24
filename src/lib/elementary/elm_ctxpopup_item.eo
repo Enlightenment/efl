@@ -1,0 +1,52 @@
+class Elm.Ctxpopup_Item(Elm.Widget_Item)
+{
+   eo_prefix: elm_obj_ctxpopup_item;
+   methods {
+      @property prev {
+         get {
+            [[Get the item before $ it in a ctxpopup widget's internal list of
+              items.
+
+              See also \@ref elm_ctxpopup_item_next_get.
+
+              @since 1.11
+            ]]
+         }
+         values {
+              item: Elm.Widget_Item *; [[The item before the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
+         }
+      }
+      @property next {
+         get {
+            [[Get the item after $ it in a ctxpopup widget's
+              internal list of items.
+
+              See also \@ref elm_ctxpopup_item_prev_get.
+
+              @since 1.11
+            ]]
+         }
+         values {
+              item: Elm.Widget_Item *; [[The item after the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
+         }
+      }
+      init {
+         params {
+            func: Evas_Smart_Cb @nullable;
+            data: const(void) * @optional;
+         }
+      }
+   }
+   implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+        Elm.Widget_Item.disable;
+        Elm.Widget_Item.signal_emit;
+        Elm.Widget_Item.part_text.get;
+        Elm.Widget_Item.part_text.set;
+        Elm.Widget_Item.part_content.get;
+        Elm.Widget_Item.part_content.set;
+        Elm.Widget_Item.focus.set;
+        Elm.Widget_Item.focus.get;
+   }
+}

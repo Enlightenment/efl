@@ -1,0 +1,13 @@
+class Elm.Access (Elm.Widget)
+{
+eo_prefix: elm_obj_access;
+   data: null;
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Elm.Widget.activate;
+      Elm.Widget.on_focus;
+   }
+
+}

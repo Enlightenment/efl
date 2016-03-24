@@ -1,0 +1,20 @@
+class Elm.Conformant (Elm.Layout)
+{
+   eo_prefix: elm_obj_conformant;
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.parent.set;
+      Elm.Widget.theme_apply;
+      Elm.Layout.content_aliases.get;
+   }
+   events {
+      virtualkeypad,state,on;
+      virtualkeypad,state,off;
+      clipboard,state,on;
+      clipboard,state,off;
+   }
+
+}

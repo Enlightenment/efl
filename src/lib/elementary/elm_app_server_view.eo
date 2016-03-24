@@ -1,0 +1,107 @@
+class Elm.App_Server_View (Eo.Base)
+{
+   legacy_prefix: null;
+   eo_prefix: elm_app_server_view;
+   methods {
+      @property progress {
+         set {
+         }
+         get {
+         }
+         values {
+            progress: short;
+         }
+      }
+      @property new_events {
+         set {
+         }
+         get {
+         }
+         values {
+            events: int;
+         }
+      }
+      @property icon {
+         set {
+         }
+         get {
+         }
+         values {
+            icon: const(char)*;
+         }
+      }
+      @property title {
+         set {
+         }
+         get {
+         }
+         values {
+            title: const(char)* @nullable;
+         }
+      }
+      @property window {
+         set {
+         }
+         values {
+            win: Evas.Object *;
+         }
+      }
+      @property id {
+         set {
+         }
+         get {
+         }
+         values {
+            ret: const(char) *;
+         }
+      }
+      @property state {
+         get {
+         }
+         values {
+            ret: Elm.App.View_State;
+         }
+      }
+      @property path {
+         get {
+         }
+         values {
+            ret: const(char)*;
+         }
+      }
+      @property pixels {
+         get {
+            [[Get application raw icon.]]
+         }
+         set {
+            [[Set icon to application, using the raw pixels of image.]]
+         }
+         values {
+            w: uint;
+            h: uint;
+            has_alpha: bool;
+            pixels: const(ubyte)*;
+         }
+      }
+      pause {
+      }
+      resume {
+      }
+      shallow {
+      }
+      close {
+      }
+   }
+   implements {
+      Eo.Base.destructor;
+      Eo.Base.finalize;
+   }
+   events {
+      resumed; [[Called when view must be resumed]]
+      paused; [[Called when view must be paused]]
+      closed; [[Called when view must be closed]]
+      shallow; [[Called when view state is set to shallow]]
+      save; [[Called when view state should be saved]]
+   }
+
+}

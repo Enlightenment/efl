@@ -1,0 +1,255 @@
+class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface)
+{
+   eo_prefix: elm_obj_index;
+   methods {
+      @property autohide_disabled {
+         [[Enable or disable auto hiding feature for a given index widget.]]
+         set {
+         }
+         get {
+         }
+         values {
+            disabled: bool; [[$true to disable auto hiding, $false to enable]]
+         }
+      }
+      @property omit_enabled {
+         [[Enable or disable omit feature for a given index widget.
+
+           @since 1.8]]
+         set {
+         }
+         get {
+         }
+         values {
+            enabled: bool; [[$true to enable omit feature, $false to disable]]
+         }
+      }
+      @property standard_priority {
+         [[Control standard_priority group of index. Priority group will be shown as many items as it can, and other group will be shown one character only.
+
+           @since 1.16]]
+         set {
+         }
+         get {
+         }
+         values {
+            priority: int; [[$priority target priority value in index]]
+         }
+      }
+
+      @property horizontal {
+          [[Enable or disable horizontal mode on the index object
+
+            Note: Vertical mode is set by default.
+
+            On horizontal mode items are displayed on index from left to right,
+            instead of from top to bottom. Also, the index will scroll horizontally.]]
+         set {
+         }
+         get {
+         }
+         values {
+            horizontal: bool; [[$true to enable horizontal or $false to
+            disable it, i.e., to enable vertical mode. it's an area one Fingers
+            "finger" wide on the bottom side of the index widget's container.]]
+         }
+      }
+      @property delay_change_time {
+         [[Set a delay change time for index object.
+
+           Note: delay time is 0.2 sec by default.]]
+         set {
+         }
+         get {
+         }
+         values {
+            dtime: double; [[The delay change time to set.]]
+         }
+      }
+      @property indicator_disabled {
+         [[Control the indicator as to be disabled.
+
+           In Index widget, Indicator notes popup text, which shows a letter has been selecting.]]
+         set {
+         }
+         get {
+         }
+         values {
+            disabled: bool; [[$true to disable it, $false to enable it]]
+         }
+      }
+      @property item_level {
+         [[Set the items level for a given index widget.
+
+           See: elm_index_item_level_get()]]
+         set {
+         }
+         get {
+         }
+         values {
+            level: int; [[$0 or $1, the currently implemented levels.]]
+         }
+      }
+      level_go {
+         [[Flush the changes made to the index items so they work correctly
+
+           This flushes any changes made to items indicating the object is ready to
+           go. You should call this before any changes you expect to work. This
+           is similar to elm_list_go().
+
+           Warning: If not called, it won't display the index properly.]]
+         params {
+            @in level: int; [[The index level (one of $0 or $1) where changes were made]]
+         }
+      }
+      item_prepend {
+         [[Prepend a new item on a given index widget.
+
+
+           Despite the most common usage of the $letter argument is for
+           single char strings, one could use arbitrary strings as index
+           entries.
+
+           $item will be the pointer returned back on $"changed",
+           "delay,changed" and $"selected" smart events.]]
+
+         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
+         params {
+            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is selected.]]
+            @in data: const(void)* @optional; [[The item data to set for the index's item]]
+         }
+      }
+      item_clear {
+         [[Removes all items from a given index widget.
+
+           If deletion callbacks are set, via elm_object_item_del_cb_set(),
+           that callback function will be called for each item in $obj.]]
+      }
+      item_insert_after {
+         [[Insert a new item into the index object after item $after.
+
+           Despite the most common usage of the $letter argument is for
+           single char strings, one could use arbitrary strings as index
+           entries.
+
+           $item will be the pointer returned back on $"changed",
+           "delay,changed" and $"selected" smart events.
+
+           Note: If $relative is $NULL this function will behave as
+           elm_index_item_append().]]
+
+         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
+         params {
+            @in after: Elm.Widget_Item *; [[The index item to insert after.]]
+            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
+            @in data: const(void)* @optional; [[The item data to set for the index's item]]
+         }
+      }
+      item_find {
+         [[Find a given index widget's item, using item data.]]
+
+         return: Elm.Widget_Item *; [[The index item handle, if found, or $NULL otherwise]]
+         params {
+            @in data: const(void)*; [[The item data pointed to by the desired index item]]
+         }
+      }
+      item_insert_before {
+         [[Insert a new item into the index object before item $before.
+
+           Despite the most common usage of the $letter argument is for
+           single char strings, one could use arbitrary strings as index
+           entries.
+
+           $item will be the pointer returned back on $"changed",
+           "delay,changed" and $"selected" smart events.
+
+           Note: If $relative is $NULL this function will behave as
+           elm_index_item_prepend().]]
+
+         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
+         params {
+            @in before: Elm.Widget_Item *; [[The index item to insert after.]]
+            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
+            @in data: const(void)* @optional; [[The item data to set for the index's item]]
+         }
+      }
+      item_append {
+         [[Append a new item on a given index widget.
+
+           Despite the most common usage of the $letter argument is for
+           single char strings, one could use arbitrary strings as index
+           entries.
+
+           $item will be the pointer returned back on $"changed",
+           "delay,changed" and $"selected" smart events.]]
+
+         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
+         params {
+            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is selected.]]
+            @in data: const(void)* @optional; [[The item data to set for the index's item]]
+         }
+      }
+      selected_item_get @const {
+         [[Returns the last selected item, for a given index widget.]]
+
+         return: Elm.Widget_Item *; [[The last item selected on $obj (or $NULL, on errors).]]
+         params {
+            @in level: int; [[$0 or $1, the currently implemented levels.]]
+         }
+      }
+      item_sorted_insert {
+         [[Insert a new item into the given index widget, using $cmp_func function to sort items (by item handles).
+
+           Despite the most common usage of the $letter argument is for
+           single char strings, one could use arbitrary strings as index
+           entries.
+
+           $item will be the pointer returned back on $"changed",
+           "delay,changed" and $"selected" smart events.]]
+
+         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
+         params {
+            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
+            @in data: const(void)* @optional; [[The item data to set for the index's item]]
+            @in cmp_func: Eina_Compare_Cb; [[The comparing function to be used to sort index items by index item handles]]
+            @in cmp_data_func: Eina_Compare_Cb @optional; [[A fallback function to be called for the
+                                                            sorting of index items by item data). It will be used
+                                                            when $cmp_func returns $0 (equality), which means an index
+                                                            item with provided item data already exists. To decide which
+                                                            data item should be pointed to by the index item in question,
+                                                            $cmp_data_func will be used. If $cmp_data_func returns a
+                                                            non-negative value, the previous index item data will be
+                                                            replaced by the given $item pointer. If the previous data need
+                                                            to be freed, it should be done by the $cmp_data_func function,
+                                                            because all references to it will be lost. If this function is
+                                                            not provided ($NULL is given), index items will be
+                                                            duplicated, if $cmp_func returns $0.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.theme_apply;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.access;
+      Elm.Widget.focus_next;
+      Elm.Layout.sizing_eval;
+      Elm.Interface_Atspi_Accessible.children.get;
+   }
+   events {
+      changed;
+      delay,changed;
+      level,up;
+      level,down;
+   }
+
+}

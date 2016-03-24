@@ -154,10 +154,15 @@ AC_ARG_WITH([dbus-services],
 AC_SUBST(dbusservicedir)
 
 efl_deprecated_option="no"
+EFL_WITH_BIN([eet], [eet-eet], [eet])
 EFL_WITH_BIN([edje], [edje-cc])
 EFL_WITH_BIN([eolian], [eolian-gen])
 EFL_WITH_BIN([eolian_cxx], [eolian-cxx])
+EFL_WITH_BIN([eolian-js], [eolian-js], [eolian_js])
 EFL_WITH_BIN_SUFFIX([elua], [elua], [_bin])
+EFL_WITH_BIN([eldbus], [eldbus_codegen], [eldbus-codegen])
+EFL_WITH_BIN([elementary], [elementary-codegen], [elementary_codegen])
+EFL_WITH_BIN([elementary], [elm-prefs-cc], [elm_prefs_cc])
 
 #### Default values
 
@@ -199,6 +204,9 @@ EFL_VERSION_MINOR="v_min"
 AC_SUBST(EFL_VERSION_MAJOR)
 AC_SUBST(EFL_VERSION_MINOR)
 
+ELM_UNIX_DEF="#undef"
+ELM_WIN32_DEF="#undef"
+
 have_systemd_pkg="no"
 have_win32="no"
 have_windows="no"
@@ -211,18 +219,25 @@ case "$host_os" in
       # TODO: check cygwin* here
       have_win32="yes"
       have_windows="yes"
+      ELM_WIN32_DEF="#define"
       EFLALL_CFLAGS="${EFLALL_CFLAGS} -D__USE_MINGW_ANSI_STDIO"
    ;;
    freebsd*)
       have_freebsd="yes"
+      ELM_UNIX_DEF="#define"
    ;;
    darwin*)
       have_darwin="yes"
+      ELM_UNIX_DEF="#define"
    ;;
    linux*)
       have_linux="yes"
       have_systemd_pkg="auto"
+      ELM_UNIX_DEF="#define"
    ;;
+   *)
+      ELM_UNIX_DEF="#define"
+      ;;
 esac
 
 case "$host_vendor" in
@@ -245,6 +260,9 @@ AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
 AM_CONDITIONAL([HAVE_OSX], [test "x${have_darwin}" = "xyes"])
 AM_CONDITIONAL([HAVE_X86_64], [test "x${host_cpu}" = "xx86_64"])
 
+AC_SUBST([ELM_UNIX_DEF])
+AC_SUBST([ELM_WIN32_DEF])
+
 #### Checks for programs
 
 ### libtool
@@ -255,6 +273,9 @@ fi
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT([win32-dll disable-static pic-only])
 EFL_INIT
+
+CXXFLAGS="${CXXFLAGS} -fPIC -DPIC"
+LDFLAGS="${LDFLAGS} -fPIC -DPIC"
 
 ### gettext
 
@@ -5063,6 +5084,277 @@ AM_CONDITIONAL([BUILD_ECORE_BUFFER_X11_DRI3], [test "${build_ecore_buffer_x11_dr
 
 #### End of Ecore_Buffer
 
+
+#### Elementary
+
+EFL_LIB_START([Elementary])
+
+### Default values
+
+### Additional options to configure
+
+## Elementary base dir
+
+AC_ARG_WITH([elementary-base-dir],
+   [AS_HELP_STRING([--with-elementary-base-dir=PATH], [specify the subdirectory for all elementary data @<:@default=${elementary_base_dir}@:>@])],
+   [elementary_base_dir=${withval}],
+   [elementary_base_dir=".elementary"])
+
+AC_MSG_NOTICE([ELEMENTARY_BASE_DIR set to ${elementary_base_dir}])
+AC_DEFINE_UNQUOTED([ELEMENTARY_BASE_DIR], ["${elementary_base_dir}"], ["subdirectory for all elementary data"])
+
+## Debug mode
+
+AC_ARG_ENABLE([debug],
+   [AS_HELP_STRING([--enable-debug], [enable elementary debug support. @<:@default=disabled@:>@])],
+   [want_elementary_debug=$enableval],
+   [want_elementary_debug="no"])
+
+ELM_DEBUG_DEF="#undef"
+if test "x$want_elementary_debug" = "xyes"; then
+   AC_DEFINE([HAVE_ELEMENTARY_DEBUG], [1], [Elementary debug.])
+   ELM_DEBUG_DEF="#define"
+fi
+AC_SUBST([ELM_DEBUG_DEF])
+
+## quicklaunch support
+
+AC_ARG_ENABLE([quick-launch],
+   [AS_HELP_STRING([--disable-quick-launch], [disable quick-launch support, @<:@default=detect@:>@])],
+   [want_quicklaunch=$enableval],
+   [want_quicklaunch="auto"])
+
+### Checks for programs
+
+### Checks for libraries
+
+## Compatibility layers
+
+EFL_PLATFORM_DEPEND([ELEMENTARY], [evil])
+
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [eina])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [emile])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [eet])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [eo])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [efl])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [evas])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_x11_any}], [ecore_x])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_drm}], [ecore_drm])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-evas])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-file])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [edje])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ethumb])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ethumb_client])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [emotion])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-imf])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-con])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [eio])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [eldbus])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [efreet])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [efreet-mime])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [efreet-trash])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [elocation])
+
+EFL_ADD_LIBS([ELEMENTARY], [-lm])
+
+ELM_CHECK_BACKEND([X], [${want_x11_any}])
+ELM_CHECK_BACKEND([FB], [${want_fb}])
+ELM_CHECK_BACKEND([PSL1GHT], [${have_ps3}])
+ELM_CHECK_BACKEND([SDL], [${want_sdl}])
+ELM_CHECK_BACKEND([Cocoa], [${want_ecore_evas_gl_cocoa}])
+ELM_CHECK_BACKEND([Win32], [${build_ecore_evas_win32}])
+ELM_CHECK_BACKEND([Wl2], [${build_ecore_evas_wayland}])
+ELM_CHECK_BACKEND([DRM], [${want_drm}])
+
+EFL_EVAL_PKGS([ELEMENTARY])
+
+### Checks for header files
+
+ELM_ALLOCA_H_DEF="#undef"
+AC_CHECK_HEADER([alloca.h], [ELM_ALLOCA_H_DEF="#define"])
+AC_SUBST([ELM_ALLOCA_H_DEF])
+
+ELM_LIBINTL_H_DEF="#undef"
+AC_CHECK_HEADER([libintl.h], [ELM_LIBINTL_H_DEF="#define"])
+AC_SUBST([ELM_LIBINTL_H_DEF])
+
+ELM_DIRENT_H_DEF="#undef"
+AC_CHECK_HEADER([dirent.h], [ELM_DIRENT_H_DEF="#define"])
+AC_SUBST([ELM_DIRENT_H_DEF])
+
+AC_CHECK_HEADER([sys/mman.h], [have_mman="yes"], [have_mman="no"])
+if test "x${have_mman}" = "xyes"; then
+   AC_DEFINE([HAVE_MMAN_H], [1], [Have sys/mman.h header file])
+fi
+
+AC_CHECK_HEADERS([locale.h langinfo.h sys/times.h])
+
+case "$host_os" in
+   darwin*)
+      AC_CHECK_HEADERS([crt_externs.h])
+      ;;
+esac
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+# sockets
+
+case "$host_os" in
+   mingw*)
+      have_socket="no"
+      ;;
+   *solaris*)
+      AC_CHECK_LIB([socket], [connect],
+         [
+          have_socket="yes"
+          requirement_elm_libs="-lsocket ${requirement_elm_libs}"
+         ],
+         [have_socket="no"])
+      ;;
+   darwin*)
+      have_socket="yes"
+      ;;
+   *)
+      have_socket="yes"
+      ;;
+esac
+
+AM_CONDITIONAL([BUILD_RUN], [test "x$have_socket" = "xyes"])
+
+# Check if we can build binary with quicklaunch support
+ELM_QUICKLAUNCH
+
+### Checks for library functions
+
+EFL_CHECK_FUNCS([ELEMENTARY], [dlopen])
+
+AC_FUNC_ALLOCA
+
+AC_CHECK_FUNCS([geteuid getuid getpwent])
+
+if test "x${want_quicklaunch}" != "xno"; then
+   AC_CHECK_FUNCS([fork clearenv])
+fi
+
+build_quicklaunch="no"
+if test "x${ac_cv_func_fork}" = "xyes" -a "x${efl_func_dlopen}" = "xyes"; then
+   build_quicklaunch="yes"
+fi
+echo ${build_quicklaunch}
+
+AM_CONDITIONAL([BUILD_QUICKLAUNCH], [test "x${build_quicklaunch}" = "xyes"])
+EFL_ADD_FEATURE([ELEMENTARY], [quicklaunch], [${build_quicklaunch}])
+
+# environ variable
+
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+      [[
+# define _GNU_SOURCE 1
+#include <unistd.h>
+      ]],
+      [[
+extern char **environ;
+      ]])
+   ],
+   [AC_DEFINE([HAVE_ENVIRON], [1], [extern environ exists])])
+
+case "$host_os" in
+   darwin*)
+      AC_DEFINE([environ], [(*_NSGetEnviron())], ["apple doesn't follow POSIX in this case."])
+      ;;
+esac
+
+### Check availability
+
+EFL_LIB_END([Elementary])
+
+#### End of Elementary
+
+
+#### Elementary CXX
+EFL_LIB_START([Elementary_Cxx])
+
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_CXX], [Eina_Cxx])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_CXX], [Eet_Cxx])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_CXX], [Ecore_Cxx])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_CXX], [Ecore])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_CXX], [Eina])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_CXX], [Eo])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_CXX], [Efl])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_CXX], [Elementary])
+
+EFL_EVAL_PKGS([ELEMENTARY_CXX])
+
+EFL_LIB_END([Elementary_Cxx])
+#### End of Ecore CXX
+
+
+#### Elementary_Js
+EFL_LIB_START_OPTIONAL([Elementary_Js], [test "x${have_js}" = "xyes"])
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Eina])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Eo])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Ecore])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Eet])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Ecore_Evas])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Ecore_Con])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Ecore_Audio])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Efl])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Evas])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Edje])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Emotion])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Eldbus])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Emile])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Ethumb_Client])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Eio])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Elementary])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY_JS], [Efl_Js])
+
+AM_COND_IF([HAVE_NODEJS], [], [ EFL_ADD_LIBS([ELEMENTARY_JS], [-lv8]) ])
+
+EFL_EVAL_PKGS([ELEMENTARY_JS])
+
+AM_COND_IF([HAVE_NODEJS], [ELEMENTARYJS_CXXFLAGS="$ELEMENTARYJS_CXXFLAGS -DHAVE_NODEJS"], [])
+AM_COND_IF([HAVE_LIBUV], [ELEMENTARYJS_CXXFLAGS="$ELEMENTARYJS_CXXFLAGS -DHAVE_LIBUV"], [])
+AM_COND_IF([HAVE_JS], [ELEMENTARYJS_CXXFLAGS="$ELEMENTARYJS_CXXFLAGS -DHAVE_JS"], [])
+
+AM_COND_IF([HAVE_V8_CREATE_PARAMS], [ELEMENTARYJS_CXXFLAGS="$ELEMENTARYJS_CXXFLAGS -DHAVE_V8_CREATE_PARAMS"], [])
+AM_COND_IF([HAVE_V8_GLOBAL], [ELEMENTARYJS_CXXFLAGS="$ELEMENTARYJS_CXXFLAGS -DHAVE_V8_GLOBAL"], [])
+AC_SUBST([ELEMENTARYJS_CXXFLAGS])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END_OPTIONAL([ELEMENTARY_JS])
+#### End of Efl_Js
+
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
@@ -5092,6 +5384,8 @@ src/examples/elocation/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 src/lib/efl/Efl_Config.h
+src/lib/elementary/Elementary.h
+elm_intro.h
 spec/efl.spec
 pc/evil.pc
 pc/escape.pc
@@ -5340,6 +5634,11 @@ echo "Emotion.........: yes (${features_emotion})"
 echo "Ethumb..........: yes"
 echo "Ethumb_Client...: yes"
 echo "Elua............: $have_elua"
+echo "Elementary......: yes (${features_elementary})"
+echo 
+
+echo
+
 if test "${build_tests}" = "none"; then
 echo "Tests...........: no"
 elif test "${build_tests}" = "auto"; then

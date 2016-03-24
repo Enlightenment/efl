@@ -1,0 +1,213 @@
+enum Elm.Photocam.Zoom_Mode
+{
+   [[Types of zoom available.]]
+   manual = 0, [[Zoom controlled normally by elm_photocam_zoom_set]]
+   auto_fit, [[Zoom until photo fits in photocam]]
+   auto_fill, [[Zoom until photo fills photocam]]
+   auto_fit_in, [[Zoom in until photo fits in photocam]]
+   last
+}
+
+class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
+                    Elm.Interface_Atspi_Widget_Action, Efl.File,
+                    Evas.Clickable_Interface, Evas.Scrollable_Interface,
+                    Evas.Zoomable_Interface)
+{
+   eo_prefix: elm_obj_photocam;
+   methods {
+      @property paused {
+         set {
+            [[Set the paused state for photocam
+
+              This sets the paused state to on or off for photocam. The
+              default is off. This will stop zooming using animation on
+              zoom level changes and change instantly. This will stop any
+              existing animations that are running.
+            ]]
+         }
+         get {
+            [[Get the paused state for photocam
+
+              This gets the current paused state for the photocam object.
+            ]]
+         }
+         values {
+            paused: bool; [[The pause state.]]
+         }
+      }
+      @property gesture_enabled {
+         set {
+            [[Set the gesture state for photocam.
+
+              This sets the gesture state to on or off for photocam. The
+              default is off. This will start multi touch zooming.
+            ]]
+         }
+         get {
+            [[Get the gesture state for photocam.
+
+              This gets the current gesture state for the photocam object.
+            ]]
+         }
+         values {
+            gesture: bool; [[The gesture state.]]
+         }
+      }
+      @property zoom {
+         set {
+            [[Set the zoom level of the photo
+
+              This sets the zoom level. If $zoom is 1, it means no zoom. If
+              it's smaller than 1, it means zoom in. If it's bigger than 1,
+              it means zoom out. For  example, $zoom 1 will be 1:1 pixel for
+              pixel. $zoom 2 will be 2:1 (that is 2x2 photo pixels will
+              display as 1 on-screen pixel) which is a zoom out. 4:1 will
+              be 4x4 photo pixels as 1 screen pixel, and so on. The $zoom
+              parameter must be greater than 0. It is suggested to stick
+              to powers of 2. (1, 2, 4, 8, 16, 32, etc.).
+            ]]
+         }
+         get {
+            [[Get the zoom level of the photo
+
+              This returns the current zoom level of the photocam object.
+              Note that if you set the fill mode to other than
+              #ELM_PHOTOCAM_ZOOM_MODE_MANUAL (which is the default), the
+              zoom level may be changed at any time by the  photocam object
+              itself to account for photo size and photocam viewport size.
+            ]]
+         }
+         values {
+            zoom: double; [[The zoom level to set]]
+         }
+      }
+      @property zoom_mode {
+         set {
+            [[Set the zoom mode
+
+              This sets the zoom mode to manual or one of several automatic
+              levels. Manual (ELM_PHOTOCAM_ZOOM_MODE_MANUAL) means that zoom
+              is set manually by @.zoom.set and will stay at that level until
+              changed by code or until zoom mode is changed. This is the
+              default mode. The Automatic modes will allow the photocam object
+              to automatically adjust zoom mode based on properties.
+
+              #ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT) will adjust zoom so the photo
+              fits EXACTLY inside the scroll frame with no pixels outside this
+              region. #ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL will be similar but
+              ensure no pixels within the frame are left unfilled.
+            ]]
+         }
+         get {
+            [[Get the zoom mode
+
+              This gets the current zoom mode of the photocam object.
+            ]]
+         }
+         values {
+            mode: Elm.Photocam.Zoom_Mode; [[The zoom mode.]]
+         }
+      }
+      @property image_region {
+         get {
+            [[Get the region of the image that is currently shown
+
+              See also @.image_region_show.
+            ]]
+         }
+         values {
+            x: int; [[A pointer to the X-coordinate of region]]
+            y: int; [[A pointer to the Y-coordinate of region]]
+            w: int; [[A pointer to the width]]
+            h: int; [[A pointer to the height]]
+         }
+      }
+      @property internal_image {
+         get {
+            [[Get the internal low-res image used for photocam
+
+              This gets the internal image object inside photocam. Do not
+              modify it. It is for inspection only, and hooking callbacks
+              to. Nothing else. It may be deleted at any time as well.
+            ]]
+            return: Evas.Object *; [[The internal image object handle or $null]]
+         }
+      }
+      @property image_size {
+         get {
+            [[Get the current image pixel width and height
+
+              This gets the current photo pixel width and height (for the
+              original). The size will be returned in the integers $w and $h
+              that are pointed to.
+            ]]
+         }
+         values {
+            w: int; [[A pointer to the width return]]
+            h: int; [[A pointer to the height return]]
+         }
+      }
+      @property image_orient {
+         set {
+            [[Set the photocam image orientation.
+
+              This function allows to rotate or flip the photocam image.
+
+              @since 1.14
+            ]]
+         }
+         get {
+            [[Get the photocam image orientation.
+
+              @since 1.14
+            ]]
+         }
+         values {
+            orient: Evas.Image.Orient; [[The photocam image orientation
+                                         \@ref Evas_Image_Orient. Default is
+                                         #EVAS_IMAGE_ORIENT_NONE.
+                                       ]]
+         }
+      }
+      image_region_show {
+         [[Set the viewed region of the image
+
+           This shows the region of the image without using animation.
+         ]]
+         params {
+            @in x: int; [[X-coordinate of region in image original pixels]]
+            @in y: int; [[Y-coordinate of region in image original pixels]]
+            @in w: int; [[Width of region in image original pixels]]
+            @in h: int; [[Height of region in image original pixels]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.move;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.member_add;
+      Evas.Object_Smart.resize;
+      Elm.Widget.theme_apply;
+      Elm.Widget.on_focus;
+      Elm.Widget.event;
+      Elm.Interface_Scrollable.region_bring_in;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Efl.File.file.set;
+      Efl.File.file.get;
+   }
+   events {
+      press;
+      load;
+      loaded;
+      load,detail;
+      loaded,detail;
+      download,start;
+      download,progress;
+      download,done;
+      download,error;
+   }
+
+}

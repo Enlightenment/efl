@@ -1,0 +1,5332 @@
+/**
+ * @page Examples-cxx Examples with C++ Bindings.
+ *
+ * Here is a list of Elementary C++ Examples.
+ *
+ * @ref bg_cxx_example_01
+ *
+ * @ref bg_cxx_example_02
+ *
+ * @ref bubble_cxx_example_01
+ *
+ * @ref button_cxx_example_00
+ * 
+ * @ref button_cxx_example_01
+ *
+ * @ref calendar_cxx_example_01
+ *
+ * @ref calendar_cxx_example_02
+ *
+ * @ref calendar_cxx_example_03
+ *
+ * @ref calendar_cxx_example_04
+ *
+ * @ref calendar_cxx_example_05
+ *
+ * @ref clock_cxx_example
+ *
+ * @ref datetime_cxx_example
+ *
+ * @ref glview_cxx_example_01
+ *
+ * @ref hoversel_cxx_example_01
+ *
+ * @ref icon_cxx_example_01
+ *
+ * @ref location_cxx_example_01
+ *
+ * @ref menu_cxx_example_01
+ *
+ * @ref popup_cxx_example_01
+ *
+ * @ref radio_cxx_example_01
+ *
+ * @ref separator_cxx_example_01
+ *
+ * @ref slider_cxx_example
+ *
+ * @ref spinner_cxx_example
+ *
+ * @ref table_cxx_example_01
+ *
+ * @ref table_cxx_example_02
+ *
+ * @ref thumb_cxx_example_01
+ * 
+ */
+
+/**
+ * @page lambda Lambda Functions with Elementary - C++11
+ 
+ * With this tutorial we'll give you a better view of how the lambda
+ * function can and will be constantly use in the C++ bindings. For a
+ * more broad aproach you should do a little web research.
+ 
+ * The syntax adopted for these examples:
+ 
+ * @c [capture] @c (parameters) @c {body}
+ 
+ * @a capture: Determinate how and if the capture occurs. Possible
+ * indicators, two or more should be intercalated by commas:
+
+ * @li [ ] - Capture nothing
+
+ * @li [&] - Capture variables by reference
+
+ * @li [=] - Capture variables by copy
+
+ * @li [&a, b] - Capture <b> only @a a </b> by reference and <b> only
+ * @a b </b> by copy
+
+ * @li [&, a] - Capture variables by reference and <b> only @a a </b>
+ * by copy
+
+ * @li [this] - Capture @c this pointer by copy
+
+ * @a parameters: List of parameters necessary for each specific
+ * lambda function.
+ 
+ * @a body: Function body
+
+ * Let's start with a more simple lambda and later a more complex one,
+ * all extracted from elementary examples:
+
+ * <b>First Example</b> - @ref button_cxx_example_00 : 
+ 
+ * @image html screenshots/button_cxx_example_00.png
+ * @image latex screenshots/button_cxx_example_00.eps width=\textwidth
+
+ * @dontinclude button_cxx_example_00.cc
+ * @skipline btn
+ * @skip auto
+ * @until clicked_add
+
+ * In this example we use a @a lambda function for elm::button
+ * btn that will be called when that button is clicked in
+ * callback_clicked_add( on_click ). This lambda will then ask to exit
+ * Elementary's main loop with @a elm_exit(). If this call is issued,
+ * it will flag the main loop to cease processing and return back to
+ * its parent function, usually your elm_main() function.
+
+ * Now let's analize the sintax used for this lambda:
+
+ * With @a [] we are signaling that we don't want to capture any
+ * variables and with @a () we are indicating that this lambda doesn't
+ * need parameters to work as it should. Now the important part of this
+ * function it's the @a body represented by @a {} where we are applying
+ * elm_exit() everytime this lambda is called.
+
+ * In this case we are using @a std::bind to bind the parameters of
+ * our lambda function to return as @a std::function object to
+ * on_click which was declare as auto.
+
+ * For this example with std::bind we simplified our work simply
+ * because we didn't have to search in the code or documentation of
+ * Elementary to look for the parameters and/or values that the
+ * callback_clicked_add requires of the function we are adding.
+
+ * <b>Second Example</b> - @ref hoversel_cxx_example_01 : 
+ 
+ * @image html screenshots/hoversel_cxx_example_01.png
+ * @image latex screenshots/hoverse_cxx_example_01.eps width=\textwidth
+
+ * @dontinclude hoversel_cxx_example_01.cc
+ * @skip add_item
+ * @until clicked_add
+
+ * In this example we use a @a lambda function for @a hoversel that
+ * will be called when that hoversel is clicked in
+ * callback_clicked_add( add_item ). This lambda will then add an item
+ * to heversel, note that since we allocate memory for the item we
+ * need to know when the item dies so we can free that memory.
+
+ * Now let's analize the sintax used for this lambda:
+
+ * @li @a [] : signaling that we don't want to capture any
+ * variables
+
+ * @li @a (::elm::hoversel obj ) : indicating that this lambda needs
+ * the parameter @p obj to work as it should. Bbecause we are only
+ * adding the parameter we need instead of all the parameters this
+ * callback requires we need to use placeholders in std::bind,
+ * indicating the place that @obj should occupy in our
+ * callback_clicked_add.
+
+ * When the function object returned by bind is called, an argument
+ * with placeholder _1 is replaced by the first argument in the call,
+ * _2 is replaced by the second argument in the call, and so on.
+
+ * @li @a body represented by @a {} where we are adding ervery
+ * function and local variables that will be needed.
+
+ * In this case we are using @a std::bind to bind the parameters of
+ * our lambda function to return as @a std::function object to
+ * add_item which was declare as auto.
+
+ * @see Consult all examples from elementary with C++ Bindings @ref
+ * Examples-cxx "here"
+ */
+
+/**
+ * @page bg_cxx_example_01 elm::bg - Plain color background with C++ binding
+ * @dontinclude bg_cxx_example_01.cc
+ 
+ * This example just sets a default background with a plain color.
+
+ * The first part consists of including the headers. In this case we
+ * are only working with the Elementary C++ binding and thus we need
+ * only to include him.
+  
+ * @skipline Elementary.hh
+ 
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively. In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+ 
+ * Next step is creating an Elementary window, where win calls a
+ * constructor and sets the type of the win to ELM_WIN_BASIC
+ * (Elm_Win_Type), which is the indicated type for most of our
+ * examples. Here we also set the title that will appear at the top of
+ * our window and then the autohide state for it.
+ 
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+  
+ * Now we construct the elm background and for this we use the C++
+ * method below, setting it's parent.
+
+ * @skipline ::elm::bg
+
+ * To better understand, the function @c size_hint_weight_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_weight_set, that is EFL Evas type function.
+ * With this function we set the hints for an object's weight.  The
+ * parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate. This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the background as a resize_object to win informing that
+ * when the size of the win changes so should the background's
+ * size. And finally we make it visible.
+ 
+ * @skip win
+ * @until visibility_set 
+ 
+ * @remarks  If a color it's not setted the default color will be used.
+  
+ * Now we set the size for the window, making it visible in the end.
+ 
+ * @skip size_set
+ * @until visibility_set
+ 
+ * Finally we just have to start the elm mainloop, starting to handle
+ * events and drawing operations.
+ 
+ * @skip elm_run
+ * @until ELM_MAIN
+ 
+ * The full code for this example can be found at @ref
+ * bg_cxx_example_01.cc .
+
+ * @example bg_cxx_example_01.cc
+*/
+
+/**
+ * @page bg_cxx_example_02 elm::bg - Image background using C++ binding
+ * @dontinclude bg_cxx_example_02.cc
+
+ * This is the second background example and shows how to use the
+ * Elementary background object to set an image as background of your
+ * application.
+
+ * The first part consists of including the headers. In this case we
+ * are only working with the Elementary C++ binding and thus we need
+ * only to include him.
+ 
+ * @skipline Elementary.hh
+
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively.  In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+
+ * @see For more details consult elm_policy_set
+ 
+ * Next step is creating an Elementary window, where win calls a
+ * constructor and sets the type of the win to ELM_WIN_BASIC
+ * (Elm_Win_Type), which is the indicated type for most of our
+ * examples. Here we also set the title that will appear at the top of
+ * our window and then the autohide state for it.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Our background will have an image, that will be displayed over the
+ * background color.
+
+ * To do so, first we set the directory and archive for the image. And
+ * create the background that will display it.
+
+ * @skip elm_app_info_set
+ * @until ::elm::bg
+  
+ * Before loading this image, we set the load size of the image. The
+ * load size is a hint about the size that we want the image displayed
+ * in the screen. It's not the exact size that the image will have,
+ * but usually a bit bigger. The background object can still be scaled
+ * to a size bigger than the one set here. Setting the image load size
+ * to something smaller than its real size will reduce the memory used
+ * to keep the pixmap representation of the image, and the time to
+ * load it. Here we set the load size to 20x20 pixels, but the image
+ * is loaded with a size bigger than that (since it's just a hint):
+ 
+ * @skipline load_size_set
+ 
+ * And set our background image to be centered, instead of stretched
+ * or scaled, so the effect of the load_size_set() can be easily
+ * understood:
+ 
+ * @skipline option_set
+ 
+ * We need a filename to set, so we get one from the previous
+ * installed images in the @c PACKAGE_DATA_DIR, and write its full
+ * path to a std::stringstream. Then we use this stringstream to set
+ * the file name in the background object:
+ 
+ * @skip std::stringstream
+ * @until file_set
+ 
+ * Notice that the second argument of the file_set() function is @c
+ * nullptr, since we are setting an image to this background. This
+ * function also supports setting an Eet file as background, in which
+ * case the @c key parameter wouldn't be @c nullptr, but be the name
+ * of the Eet key instead.
+ 
+ * To better understand, the function @c size_hint_weight_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_weight_set, that is EFL Evas type function.
+ * With this function we set the hints for an object's weight.  The
+ * parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * This is a hint on how a container object should resize a given
+ * child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the background as a resize_object to win informing that
+ * when the size of the win changes so should the background's
+ * size. And finally we make background.
+
+ * @skip win
+ * @until visibility
+
+ * Now we only have to set the size for our window and make it
+ * visible.
+ 
+ * @skip size_set
+ * @until visibility_set
+
+ * Finally we just have to start the elm mainloop, starting to handle
+ * events and drawing operations.
+ 
+ * @skip elm_run
+ * @until ELM_MAIN
+
+ * The full code for this example can be found at @ref
+ * bg_cxx_example_02.cc .
+
+ * This example will look like this:
+
+ * @image html screenshots/bg_cxx_example_02.png
+ * @image latex screenshots/bg_cxx_example_02.eps width=\textwidth
+ * @example bg_cxx_example_02.cc
+ */
+
+/**
+ * @page bubble_cxx_example_01 elm::bubble - Simple use with C++ binding
+ * @dontinclude bubble_cxx_example_01.cc
+
+ * This example shows a bubble with all fields set - label, info,
+ * content and icon - and the selected corner changing when the bubble
+ * is clicked.
+  
+ * The first part consists of including the headers. In this case we
+ * are working with the Elementary and Evas C++ bindings and thus we
+ * need only to include them.
+  
+ * @skip Elementary
+ * @untilt Evas
+ 
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively.  In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an Elementary window, where win calls a
+ * constructor and sets the type of the win to ELM_WIN_BASIC
+ * (Elm_Win_Type), which is the indicated type for most of our
+ * examples. Here we also set the title that will appear at the top of
+ * our window and then the autohide state for it.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+ 
+ * Now we construct the elm background using the C++ method below,
+ * setting it's parent.
+
+ * @skipline elm::bg
+ 
+ * To better understand, the function @c size_hint_weight_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_weight_set, that is EFL Evas type function.
+ * With this function we set the hints for an object's weight.
+
+ * The parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * This is a hint on how a container object should resize a given
+ * child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the background as a resize_object to win informing that
+ * when the size of the win changes so should the background's
+ * size. And finally we make it visible. 
+
+ * @skip resize
+ * @until visibility_set 
+
+ * @note If a color it's not setted the standard color will be used.
+ 
+ * Here we are creating an elm::label that is going to be used as the
+ * content for our bubble:
+
+ * @skip elm::label
+ * @until visibility_set
+ 
+ * Despite it's name the bubble's icon in this case it's actually
+ * evas::rectangle, that we set it's color to blue and at the end make
+ * it visible.
+
+ * @skip evas::rectangle
+ * @until visibility_set
+  
+ * And finally we have the actual bubble creation and the setting of
+ * it's label, info and content:
+
+ * @skip elm::bubble
+ * @until visibility_set
+
+ * @remark Because we didn't set a corner, the default "top_left" will be used.
+
+ * To have the selected corner change in a clockwise motion we are going to
+ * use the following callback using lambda:
+
+ * @skip auto
+ * @until });
+ 
+ * @see To learn more about consult @ref lambda.
+
+ * Now that we have our bubble and callback all that is left is adding our
+ * lambda as a clicked callback:
+
+ * @line callback_clicked_add
+
+ * This last bubble we created was very complete, so it's pertinent to show
+ * that most of that stuff is optional a bubble can be created with nothing
+ * but content:
+
+ * @skip label2
+ * @until bubble2.visibility_set
+
+ * Now we only have to set the size for our window and make it
+ * visible.
+ 
+ * @skip size_set
+ * @until visibility_set
+
+ * And finally, start the elm mainloop, starting to handle events and
+ * drawing operations.
+
+ * @skip elm_run
+ * @until ELM_MAIN
+
+ * Our example will look like this:
+
+ * @image html screenshots/bubble_cxx_example_01.png
+ * @image latex screenshots/bubble_cxx_example_01.eps width=\textwidth
+
+ * @see Full source code @ref bubble_cxx_example_01.cc .
+
+ * @example bubble_cxx_example_01.cc
+ */
+
+/**
+ * @page button_cxx_example_00 Button - Hello, Button!
+ * @dontinclude button_cxx_example_00.cc
+ 
+ * Keeping the tradition, this is a simple "Hello, World" button
+ * example. We will show how to create a button and associate an
+ * action to be performed when you click on it. 
+ 
+ * The first part consists of including the headers. In this case we
+ * are only working with the Elementary C++ binding and thus we need
+ * only to include him.
+ 
+ * @skipline Elementary.hh
+
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively.  In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+ 
+ * Next step is creating an Elementary window, where win calls a
+ * constructor and sets the type of the win to ELM_WIN_BASIC
+ * (Elm_Win_Type), which is the indicated type for most of our
+ * examples. Here we also set the title that will appear at the top of
+ * our window and then the autohide state for it.
+ 
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+  
+ * Now we construct the elm background and for this we use the C++
+ * method below, setting it's parent.
+
+ * @skipline ::elm::bg
+
+ * The function @c size_hint_weight_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_weight_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's weight. The parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.  This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the background as a resize_object to win informing that
+ * when the size of the win changes so should the background's
+ * size. And finally we make it visible.
+ 
+ * @skip win
+ * @until visibility_set 
+ 
+ * @remarks  If a color it's not setted the default color will be used.
+  
+ * There is only one button on this interface. We need to create this
+ * button with the C++ method, set the text to be displayed, the size,
+ * position and the size hint for weight.
+
+ * @skip btn
+ * @until weight
+
+ * For alignment we'll use the function @c size_hint_align_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_align_set, that is EFL Evas type
+ * function. With this function we set the hints for an object's
+ * alignment. The parameters are:
+ 
+ * @li x - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as horizontal alignment hint.
+
+ * @li y - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as vertical alignment hint.
+
+ * These are hints on how to align an object inside the boundaries of
+ * a container/manager. Accepted values are in the 0.0 to 1.0 range,
+ * with the special value EVAS_HINT_FILL used to specify "justify" or
+ * "fill" by some users. In this case, maximum size hints should be
+ * enforced with higher priority, if they are set. Also, any padding
+ * hint set on objects should add up to the alignment space on the
+ * final scene composition.
+
+ * For the horizontal component, 0.0 means to the left, 1.0 means to
+ * the right. Analogously, for the vertical component, 0.0 to the top,
+ * 1.0 means to the bottom.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * @skipline align
+
+ * @note Default alignment hint values are 0.5, for both axis.
+
+ * Continuing with our button we make it visible.
+
+ * @skipline visibility
+
+ * This button performs a basic action: close the application. This
+ * behavior is described by on_click() which is a lambda function,
+ * that interrupt the program invoking elm_exit(). The lambda function
+ * on_click is the added as a clicked callback to btn.
+
+ * @skip on_click
+ * @until callback
+
+ * @see For more details consult @ref lambda 
+ 
+ * Now we set the size for the window, making it visible in the end:
+ 
+ * @skip size_set
+ * @until visibility_set
+ 
+ * Finally we just have to start the elm mainloop, starting to handle
+ * events and drawing operations.
+
+ * @skip elm_run
+ * @until ELM_MAIN
+
+ * The full code for this example can be found at @ref
+ * button_cxx_example_00.cc .
+
+ * This example will look like this:
+ * @image html screenshots/button_cxx_example_00.png
+ * @image latex screenshots/button_cxx_example_00.eps width=\textwidth
+ * @example button_cxx_example_00.cc
+ */
+
+/**
+ * @page button_cxx_example_01 Button - Complete example
+ * @dontinclude button_cxx_example_01.cc
+
+ * A button is simple, you click on it and something happens. That said,
+ * we'll go through an example to show in detail the button API less
+ * commonly used.
+ 
+ * The first part consists of including the headers. In this case we
+ * are only working with the Elementary C++ binding and thus we need
+ * only to include him.
+ 
+ * @skipline Elementary.hh
+
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively.  In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an Elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+ 
+ * In this example we'll have several buttons that will be arranged in
+ * two boxes that will be inserted in a bigger box. One of the smaller
+ * boxes will contain a set of buttons that will set different times
+ * for the autorepeat timeouts of the buttons that will be contained in
+ * the other smaller box.
+
+ * For all this to work, we will construct the three smaller boxes and
+ * all the button that will be needed. The smaller boxes will be then
+ * packed in the bigger one.
+
+ * In this part we'll create our directional buttons, that we'll be
+ * added in the third smaller box, this is necessary for our callback
+ * to work properly.
+
+ * @skip icon
+ * @until right
+
+ * Now let's create our bigger box using the C++ method and setting
+ * it's parent as win.
+
+ * @skipline box
+
+ * The function @c size_hint_weight_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_weight_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's weight. The parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.  This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+ 
+ * Now we add the box as a resize_object to win informing that when
+ * the size of the win changes so should the box's size. And finally
+ * we make it visible.
+ 
+ * @skip win
+ * @until visibility_set 
+
+ * Creating our initial box, again using the C++ method, in this case
+ * we want the arrangement of the objects, that this box will contain,
+ * to be displayed horizontally and fot this we will set horizontal to
+ * @p true, vertical by default.
+ 
+ * @skip box
+ * @until horizontal
+
+ * Again we'll set the size hint for weight, but in this box we will
+ * set the packing method to include this box inside the bigger one.
+
+ * When using the elm box the packing method of the subobj - box in
+ * this case - should be defined. There are four possible methods:
+
+ * @li @c pack_start(subobj_) - Add an object to the beginning of the
+ * pack list. Pack @c subobj_ into the box obj, placing it first in
+ * the list of children objects. The actual position the object will
+ * get on screen depends on the layout used. If no custom layout is
+ * set, it will be at the top or left, depending if the box is
+ * vertical or horizontal, respectively.
+
+ * @li @c pack_end(subobj_) - Add an object at the end of the pack
+ * list. Pack @c subobj_ into the box obj, placing it last in the list
+ * of children objects. The actual position the object will get on
+ * screen depends on the layout used. If no custom layout is set, it
+ * will be at the bottom or right, depending if the box is vertical or
+ * horizontal, respectively.
+
+ * @li @c pack_before(subobj_, before_) - Adds an object to the box
+ * before the indicated object. This will add the @c subobj_ to the
+ * box indicated before the object indicated with @c before_. If
+ * before is not already in the box, results are undefined. Before
+ * means either to the left of the indicated object or above it
+ * depending on orientation.
+ 
+ * @li @c pack_after(subobj_, after_) - Adds an object to the box
+ * after the indicated object. This will add the @c subobj_ to the box
+ * indicated after the object indicated with @c after_. If after is
+ * not already in the box, results are undefined. After means either
+ * to the right of the indicated object or below it depending on
+ * orientation.
+
+ * In this and most examples we use pack_end by choice and
+ * practicality. In this part of the code we also make calendar
+ * visible.
+
+ * @skip pack_end
+ * @until visibility
+
+ * Now let's start creating the buttons that will be included in this
+ * first small box, this will contain the initial timeout button.
+
+ * We'll use again the C++ method to create this button, set a text,
+ * packing method for btn and finally make it visible.
+
+ * @skip btn
+ * @until visibility
+
+ * In this part we'll use Lambda type function that will be added in
+ * the clicked callback for all buttons in the first smaller box,
+ * that'll identify the current initial and gap to be use in the
+ * autorepeat timeout that will move the central button.
+
+ * @skip auto
+ * @until callback
+
+ * @note To learn more about Lambda Function and its use in Elementary
+ * consult @ref lambda.
+
+ * The second and third button will also set the initial timeout but
+ * with different values.
+
+ * @skip btn2
+ * @until btn3.callback
+
+ * Now for our gap timeout buttons will create our second smaller box,
+ * the same way with the initial box, we'll use the C++ method, set to
+ * be horizontal, set the size hint weight, choose the packing method
+ * and set the visibility to true.
+
+ * @skip box_gap
+ * @until visibility
+ 
+ * For our gap buttons we'll again, use the C++ method, set the texts
+ * with the different values for gap, choose the packing method, set
+ * the visibility and the clicked callback.
+
+ * @skip btn4
+ * @until btn6.callback
+
+ * Now we'll give our directional buttons more options so that it will
+ * visible and also have all the caracteristics that is require.
+
+ * For the up button, we'll set to @p true the autorepeat,
+ * autorepeat_initial_timeout, autoreapet_gap_timeout, the size hints
+ * for weight and alignement, choose our packing method and making out
+ * up button visible.
+
+ * @skip up
+ * @until visibility
+
+ * For this directional buttons we'll have a diferent repeated
+ * callback that will insure the timeouts of our middle button in the
+ * gap and initial timeout that is current setted.
+
+ * @skip auto
+ * @until 
+
+ * For our second callback, we'll detail the release of our
+ * directional buttons.
+
+ * @skip auto
+ * @until callback
+
+ * Finishing our up button, we'll create an icon, that'll will be the
+ * standard "arrow_up".
+
+ * @skip icon
+ * @until content
+
+ * This last box, will content all the directional buttons and the
+ * middle button. As before, we use the C++ method, horizontal set,
+ * weight and align hints, chose the packing method and make it
+ * visible.
+
+ * @skip box
+ * @until visibility
+
+ * Now we'll create all the directional and middle buttons, the same as we did with the up button,
+ * changing only the icon.
+
+ * @skip left
+ * @until down.content
+
+ * Now we set the size for the window, making it visible in the end:
+ 
+ * @skip size_set
+ * @until visibility_set
+ 
+ * Finally we just have to start the elm mainloop, starting to handle
+ * events and drawing operations.
+
+ * @skip elm_run
+ * @until ELM_MAIN
+
+ * The full code for this example can be found at @ref
+ * button_cxx_example_01.cc .
+ 
+ * This example will look like this:
+ * @image html screenshots/button_cxx_example_01.png
+ * @image latex screenshots/button_cxx_example_01.eps width=\textwidth
+ * @example button_cxx_example_01.cc
+ */
+
+/**
+ * @page calendar_cxx_example_01 Calendar - Simple creation with C++ binding
+ * @dontinclude calendar_cxx_example_01.cc
+
+ * As a first example, let's just display a calendar in our window,
+ * explaining all steps required to do so.
+ 
+ * The first part consists of including the headers. In this case we
+ * are only working with the Elementary C++ binding and thus we need
+ * only to include him.
+ 
+ * @skipline Elementary.hh
+
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively.  In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an Elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+ 
+ * Now, the exciting part, let's create the calendar with the C++
+ * binding method, passing our window object as parent.
+
+ * @skipline elm::calendar
+
+ * The function @c size_hint_weight_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_weight_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's weight. The parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.  This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the calendar as a resize-object to win informing that
+ * when the size of the win changes so should the calendar's
+ * size. And finally we make it visible.
+
+ * @skip win
+ * @until visibility
+
+ * Finally we just have to start the elm mainloop, starting to handle
+ * events and drawing operations.
+ 
+ * @skip elm_run
+ * @until ELM_MAIN
+
+ * Our example will look like this:
+
+ * @image html screenshots/calendar_cxx_example_01.png
+
+ * @image latex screenshots/calendar_cxx_example_01.eps width=\textwidth
+
+ * See the full source code @ref calendar_cxx_example_01.cc here.
+
+ * @example calendar_cxx_example_01.cc
+ */
+
+/**
+ * @page calendar_cxx_example_02 Calendar - Layout strings formatting with C++ binding
+ * @dontinclude calendar_cxx_example_02.cc
+ 
+ * In this simple example, we'll explain how to format the labels
+ * displaying month and year, and also set weekday names.
+
+ * The first part consists of including the headers. In this case we
+ * are only working with the Elementary C++ binding and thus we need
+ * only to include him.
+ 
+ * @skipline Elementary.hh
+
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we will jump to the actual code and later explain the function
+ * to make this tutorial more didactical.
+
+ * We must set the elm_policy, which defines for a given policy
+ * group/identifier a new policy's value, respectively.  In this
+ * example the only policy we need to set a value for is @c
+ * ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an Elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+ 
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Now let's create the calendar with the C++ binding method, passing
+ * our window object as parent.
+
+ * @skipline elm::calendar
+
+ * The function @c size_hint_weight_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_weight_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's weight. The parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.  This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the calendar as a resize-object to win informing that
+ * when the size of the win changes so should the calendar's
+ * size.
+
+ * @skipline win
+
+ * To format month and year labels, we need to create a callback
+ * function to create a string given the selected time, declared under
+ * a <tt> struct tm </tt>.
+
+ * <tt> struct tm </tt>, declared on @c time.h, is a structure
+ * composed by nine integers:
+ 
+ * @li <tt> tm_sec   seconds [0,59] </tt>
+ * @li <tt> tm_min   minutes [0,59] </tt>
+ * @li <tt> tm_hour  hour [0,23] </tt>
+ * @li <tt> tm_mday  day of month [1,31] </tt>
+ * @li <tt> tm_mon   month of year [0,11] </tt>
+ * @li <tt> tm_year  years since 1900 </tt>
+ * @li <tt> tm_wday  day of week [0,6] (Sunday = 0) </tt>
+ * @li <tt> tm_yday  day of year [0,365] </tt>
+ * @li <tt> tm_isdst daylight savings flag </tt>
+
+ * @note Glib version has 2 additional fields.
+
+ * For our function @p _format_month_year , only stuff that matters
+ * are <tt>tm_mon</tt> and <tt>tm_year</tt>. But we don't need to
+ * access it directly, since there are nice functions to format date
+ * and time, as @c strftime.
+
+ * We will get abbreviated month (%b) and year (%y) (check strftime
+ * manpage for more) in our example:
+
+ * @dontinclude calendar_cxx_example_02.cc
+ * @skip static char
+ * @until }
+
+ * We need to alloc the string to be returned, and calendar widget
+ * will free it when it's not needed, what is done by @c strdup.
+
+ * So let's register our callback to calendar object:
+
+ * @skipline format_function_set
+ 
+ * To set weekday names, we should declare them as an array of
+ * strings:
+
+ * @dontinclude calendar_cxx_example_02.cc
+ * @skip weekdays[]
+ * @until }
+
+ * And then set them to calendar:
+ * @skipline weekdays_names_set
+
+ * Finally we just have to make the calendar and window visible and
+ * then start the elm mainloop, starting to handle events and drawing
+ * operations.
+ 
+ * @skip visibility
+ * @until ELM_MAIN
+
+ * Our example will look like this:
+
+ * @image html screenshots/calendar_cxx_example_02.png
+ * @image latex screenshots/calendar_cxx_example_02.eps width=\textwidth
+ 
+ * See the full source code @ref calendar_cxx_example_02.cc here.
+ * @example calendar_cxx_example_02.cc
+ */
+
+/**
+ * @page calendar_cxx_example_03 Calendar - Years restrictions with C++ binding
+ * @dontinclude calendar_cxx_example_03.cc
+
+ * This example explains how to set max and min year to be displayed
+ * by a calendar object. This means that user won't be able to see or
+ * select a date before and after selected years.  By default, limits
+ * are 1902 and maximum value will depends on platform architecture
+ * (year 2037 for 32 bits); You can read more about time functions on
+ * @c ctime manpage.
+
+ * The first part consists of including the headers. In this case we
+ * are only working with the Elementary C++ binding and thus we need
+ * only to include him.
+ 
+ * @skipline Elementary.hh
+
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively. In this example the only policy we need to set
+ * a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+ * function to make this tutorial more didactical.
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+ 
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Now let's create the calendar with the C++ binding method, passing
+ * our window object as parent.
+
+ * @skipline elm::calendar
+
+ * The function @c size_hint_weight_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_weight_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's weight. The parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.  This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the calendar as a resize-object to win informing that
+ * when the size of the win changes so should the calendar's
+ * size.
+
+ * @skipline win
+
+ * Straigh to the point, to set it is enough to call
+ * min_max_year_set(). First value is minimum year, second is
+ * maximum. If first value is negative, it won't apply limit for min
+ * year, if the second one is negative, won't apply for max year.
+ * Setting both to negative value will clear limits (default state):
+
+ * @skipline min_max_year_set 
+
+ * Finally we just have to make the calendar and window visible and
+ * then start the elm mainloop, starting to handle events and drawing
+ * operations.
+ 
+ * @skip visibility
+ * @until ELM_MAIN
+
+ * Our example will look like this:
+
+ * @image html screenshots/calendar_cxx_example_03.png
+ * @image latex screenshots/calendar_cxx_example_03.eps width=\textwidth
+
+ * See the full source code @ref calendar_cxx_example_03.cc here.
+
+ * @example calendar_cxx_example_03.cc
+ */
+
+/**
+ * @page calendar_cxx_example_04 Calendar - Days selection with C++ binding.
+ * @dontinclude calendar_cxx_example_04.cc
+ 
+ * It's possible to disable date selection and to select a date
+ * from your program, and that's what we'll see on this example.
+
+ * The first part consists of including the headers. In this case we
+ * are only working with the Elementary C++ binding and thus we need
+ * only to include him.
+ 
+ * @skipline Elementary.hh
+
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively. In this example the only policy we need to set
+ * a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * In this example we'll need to use a elm::box to layout the two
+ * calendars that'll be created. A box arranges objects in a linear
+ * fashion, governed by a layout function that defines the details of
+ * this arrangement. The box will use an internal function
+ * to set the layout to a single row, vertical by default.
+
+ * Now let's create the box with the C++ binding method, passing
+ * our window object as parent.
+
+ * @skipline elm::box
+
+ * The function @c size_hint_weight_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_weight_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's weight. The parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.  This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the box as a resize-object to win informing that when
+ * the size of the win changes so should the box's size. Remember
+ * always to set the box visibility to true.
+
+ * @skip win  
+ * @until visibility
+
+ * Now let's create the calendar with the C++ binding method, passing
+ * our window object as parent. The function size_hint_weight_set
+ * works with calendar the same way as with box, for more, search
+ * above.
+
+ * @skip elm::calendar
+ * @until weight_set
+ 
+ * The function @c size_hint_align_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_align_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's alignment. The parameters are:
+ 
+ * @li x - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as horizontal alignment hint.
+
+ * @li y - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as vertical alignment hint.
+
+ * These are hints on how to align an object inside the boundaries of
+ * a container/manager. Accepted values are in the 0.0 to 1.0 range,
+ * with the special value EVAS_HINT_FILL used to specify "justify" or
+ * "fill" by some users. In this case, maximum size hints should be
+ * enforced with higher priority, if they are set. Also, any padding
+ * hint set on objects should add up to the alignment space on the
+ * final scene composition.
+
+ * For the horizontal component, 0.0 means to the left, 1.0 means to
+ * the right. Analogously, for the vertical component, 0.0 to the top,
+ * 1.0 means to the bottom.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * @note Default alignment hint values are 0.5, for both axis.
+
+ * @skipline align_set
+
+ * If isn't required that users could select a day on calendar, only
+ * interacting going through months, disabling days selection could be
+ * a good idea to avoid confusion. For that:
+
+ * @skipline select_mode_set
+
+ * When using the elm box the packing method of the subobj - calendar
+ * in this case - should be defined. There are four possible methods:
+
+ * @li @c pack_start(subobj_) - Add an object to the beginning of the
+ * pack list. Pack @c subobj_ into the box obj, placing it first in
+ * the list of children objects. The actual position the object will
+ * get on screen depends on the layout used. If no custom layout is
+ * set, it will be at the top or left, depending if the box is
+ * vertical or horizontal, respectively.
+
+ * @li @c pack_end(subobj_) - Add an object at the end of the pack
+ * list. Pack @c subobj_ into the box obj, placing it last in the list
+ * of children objects. The actual position the object will get on
+ * screen depends on the layout used. If no custom layout is set, it
+ * will be at the bottom or right, depending if the box is vertical or
+ * horizontal, respectively.
+
+ * @li @c pack_before(subobj_, before_) - Adds an object to the box
+ * before the indicated object. This will add the @c subobj_ to the
+ * box indicated before the object indicated with @c before_. If
+ * before is not already in the box, results are undefined. Before
+ * means either to the left of the indicated object or above it
+ * depending on orientation.
+ 
+ * @li @c pack_after(subobj_, after_) - Adds an object to the box
+ * after the indicated object. This will add the @c subobj_ to the box
+ * indicated after the object indicated with @c after_. If after is
+ * not already in the box, results are undefined. After means either
+ * to the right of the indicated object or below it depending on
+ * orientation.
+
+ * In this and most examples we use pack_end by choice and
+ * practicality. In this part of the code we also make calendar
+ * visible.
+
+ * @skip visibility
+ * @until pack_end
+
+ * Also, regarding days selection, you could be interested to set a
+ * date to be highlighted on calendar from your code, maybe when a
+ * specific event happens or after calendar creation. As @c time
+ * output is in seconds, we define the number of seconds contained
+ * within a day as a constant:
+
+ * @dontinclude calendar_cxx_example_04.cc
+ * @skipline SECS_DAY
+
+ * As with the first calendar, we'll also construct cal2, set it's
+ * hint_weight and hint_align, make cal2 visible and choose the
+ * packing method.
+ 
+ * @skip cal2
+ * @until weight
+ * @skip visibility
+ * @until pack
+
+ * Now let's select two days from current day:
+
+ * @dontinclude calendar_cxx_example_04.cc
+ * @skip time(NULL)
+ * @until selected_time_set
+
+ * Finally we just have to make window visible and then start the elm
+ * mainloop, starting to handle events and drawing operations.
+ 
+ * @skip visibility
+ * @until ELM_MAIN
+
+ * Our example will look like this:
+
+ * @image html screenshots/calendar_cxx_example_04.png
+ * @image latex screenshots/calendar_cxx_example_04.eps width=\textwidth
+
+ * See the full source code @ref calendar_cxx_example_04.cc here.
+ * @example calendar_cxx_example_04.cc
+ */
+
+/**
+ * @page calendar_cxx_example_05 Calendar - Signal callback and getters with C++ binding.
+ * @dontinclude calendar_cxx_example_05.cc
+
+ * Most of setters explained on previous examples have associated
+ * getters. That's the subject of this example. We'll add a callback
+ * to display all calendar information every time user interacts with
+ * the calendar. To be more didatical we'll start with the basics.
+
+ * The first part consists of including the headers. In this case we
+ * are only working with the Elementary C++ binding and thus we need
+ * only to include him.
+ 
+ * @skipline Elementary.hh
+
+ * @attention If necessary the C and/or the C++ headers should be
+ * included here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively. In this example the only policy we need to set
+ * a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+ * function to make this tutorial more didactical.
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+ 
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Now let's create the calendar with the C++ binding method, passing
+ * our window object as parent.
+
+ * @skipline elm::calendar
+
+ * The function @c size_hint_weight_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_weight_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's weight. The parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.  This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the calendar as a resize-object to win informing that
+ * when the size of the win changes so should the calendar's
+ * size.
+
+ * Let's check our callback function, type lambda:
+ * @skip print_cal_info
+ * @until double interval;
+ 
+ * To learn more about consult @ref lambda.
+ 
+ * To get selected day, we need to call selected_time_get(), but to
+ * assure nothing wrong happened, we must check for function return.
+ * It'll return @c EINA_FALSE if fail. Otherwise we can use time set
+ * to our structure @p stime.
+
+ * @skip selected_time_get
+ * @until return
+ 
+ * Next we'll get information from calendar and place on declared
+ * vars:
+
+ * @skip interval
+ * @until weekdays_names_get
+
+ * The only tricky part is that last line gets an array of strings
+ * (char arrays), one for each weekday.
+
+ * Then we can simple print that with std::cout and finish the lambda
+ * function:
+
+ * @skip std::cout
+ * @until std::placeholders::_1
+
+ * <tt> struct tm </tt> is declared on @c time.h. You can check @c
+ * ctime manpage to read about it.
+ 
+ * To register this callback, that will be called every time user
+ * selects a day or goes to next or previous month, just add a
+ * callback for signal @b changed.
+
+ * @skipline callback_changed_add
+
+ * Finally we just have to make calendar and window visibles and then
+ * start the elm mainloop, starting to handle events and drawing
+ * operations.
+ 
+ * @skip visibility
+ * @until ELM_MAIN
+
+ * Our example will look like this:
+
+ * @image html screenshots/calendar_cxx_example_05.png
+ * @image latex screenshots/calendar_cxx_example_05.eps width=\textwidth
+
+ * See the full source code @ref calendar_cxx_example_05.cc here.
+ * @example calendar_cxx_example_05.cc
+ */
+
+/**
+ * @page clock_cxx_example Clock widget example wit C++ binding.
+ * @dontinclude clock_cxx_example.cc
+ 
+ * This code places five Elementary clock widgets on a window, each of
+ * them exemplifying a part of the widget's API. Before explaining
+ * each clock to be more didatical let's start with the basics.
+
+ * The first part consists of including the headers. In this
+ * case we are only working with the Elementary C++ binding and thus
+ * we need only to include him.
+  
+ * @skipline Elementary.hh
+ 
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively.  In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+ 
+ * Next step is creating an Elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * And we also set the autohide state for win, autohide works
+ * similarly to @p autodel, automatically handling "delete,request"
+ * signals when set to @p true, with the difference that it will hide
+ * the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+  
+ * @see For more details consult elm::win::autohide_set().
+
+ * A box arranges objects in a linear fashion, governed by a layout
+ * function that defines the details of this arrangement. The box will
+ * use an internal function to set the layout to a single row,
+ * vertical by default.
+
+ * Now let's create the box with the C++ binding method, passing our
+ * window object as parent.
+
+ * @skipline elm::box
+
+ * To better understand, the function @c size_hint_weight_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_weight_set, that is EFL Evas type function.
+ * With this function we set the hints for an object's weight.  The
+ * parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate. This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Then we add the box as a resize-object to win informing that when
+ * the size of the win changes so should the box's size. Remember
+ * always to set the box visibility to true.
+
+ * @skip win  
+ * @until visibility
+
+ * We create each clock with the C++ binding method, passing our
+ * window object as parent. The first of them is the pristine clock,
+ * using the defaults for a clock, which are military time with no
+ * seconds shown.
+ 
+ * @skipline clock
+
+ * When using the elm::box the packing method of the subobj - clock
+ * in this case - should be defined. There are four possible methods:
+
+ * @li @c pack_start(subobj_) - Add an object to the beginning of the
+ * pack list. Pack @c subobj_ into the box obj, placing it first in
+ * the list of children objects. The actual position the object will
+ * get on screen depends on the layout used. If no custom layout is
+ * set, it will be at the top or left, depending if the box is
+ * vertical or horizontal, respectively.
+
+ * @li @c pack_end(subobj_) - Add an object at the end of the pack
+ * list. Pack @c subobj_ into the box obj, placing it last in the list
+ * of children objects. The actual position the object will get on
+ * screen depends on the layout used. If no custom layout is set, it
+ * will be at the bottom or right, depending if the box is vertical or
+ * horizontal, respectively.
+
+ * @li @c pack_before(subobj_, before_) - Adds an object to the box
+ * before the indicated object. This will add the @c subobj_ to the
+ * box indicated before the object indicated with @c before_. If
+ * before is not already in the box, results are undefined. Before
+ * means either to the left of the indicated object or above it
+ * depending on orientation.
+ 
+ * @li @c pack_after(subobj_, after_) - Adds an object to the box
+ * after the indicated object. This will add the @c subobj_ to the box
+ * indicated after the object indicated with @c after_. If after is
+ * not already in the box, results are undefined. After means either
+ * to the right of the indicated object or below it depending on
+ * orientation.
+
+ * In this and most examples we use pack_end by choice and
+ * practicality. In this part of the code we also make clock
+ * visible.
+
+ * @skip pack_end
+ * @until visibility
+
+ * The second clock shows ther am/pm time, that we also create with
+ * the C++ binding method, passing our window object as
+ * parent. Setting show_am_pm to true and again choosing the packing
+ * method and making clock visible.
+
+ * @skip clock
+ * @until visibility
+
+ * The third one will show the seconds digits, which will flip in
+ * synchrony with system time. Note, besides, that the time itself is
+ * @b different from the system's -- it was customly set with
+ * time_set():
+
+ * @skip ck3
+ * @until visibility
+
+ * In both fourth and fifth ones, we turn on the <b>edition
+ * mode</b>. See how you can change each of the sheets on it, and be
+ * sure to try holding the mouse pressed over one of the sheet
+ * arrows. The forth one also starts with a custom time set:
+
+ * @skip ck4
+ * @until visibility
+
+ * The fifth, besides editable, has only the time @b units editable,
+ * for hours, minutes and seconds. This exemplifies edit_mode_set():
+
+ * @skip ck5
+ * @until visibility
+
+ * Finally we just have to make our window visible and then run the
+ * elm mainloop, starting to handle events and drawing operations.
+ 
+ * @skip visibility
+ * @until ELM_MAIN
+
+ * See the full @ref clock_cxx_example.cc, whose window should look
+ * like this picture:
+
+ * @image html screenshots/clock_cxx_example.png
+ * @image latex screenshots/clock_cxx_example.eps width=\textwidth
+ * @example clock_cxx_example.cc
+ */
+
+ /**
+ * @page datetime_cxx_example Datetime Example with C++ binding
+ * @dontinclude datetime_cxx_example.cc
+
+ * This example places three Elementary Datetime widgets on a window,
+ * each of them exemplifying the widget's different usage.
+
+ * The first part consists of including the headers. In this
+ * case we are only working with the Elementary C++ binding and thus
+ * we need only to include him.
+  
+ * @skipline Elementary.hh
+ 
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively.  In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+ 
+ * Next step is creating an Elementary window, where win calls a
+ * constructor and sets the type of the win to ELM_WIN_BASIC
+ * (Elm_Win_Type), which is the indicated type for most of our
+ * examples. Here we also set the title that will appear at the top of
+ * our window and then the autohide state for win.
+ 
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+  
+ * Now we construct the elm background and for this we use the C++
+ * method below, setting it's parent.
+
+ * @skipline ::elm::bg
+
+ * To better understand, the function @c size_hint_weight_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_weight_set, that is EFL Evas type function.
+ * With this function we set the hints for an object's weight.  The
+ * parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate. This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the background as a resize_object to win informing that
+ * when the size of the win changes so should the background's
+ * size. And finally we make it visible.
+ 
+ * @skip win
+ * @until visibility_set 
+ 
+ * @remarks  If a color it's not setted the default color will be used.
+
+ * A box arranges objects in a linear fashion, governed by a layout
+ * function that defines the details of this arrangement. The box will
+ * use an internal function to set the layout to a single row,
+ * vertical by default.
+
+ * Now let's create the box with the C++ binding method, passing our
+ * window object as parent. Using Evas weight_set function again to
+ * hint on how a container object should resize a given child within
+ * its area. 
+
+ * @skipline elm::box
+ * @until weight_set
+
+ * Then we add the box as a resize-object to win informing that when
+ * the size of the win changes so should the box's size. Remember
+ * always to set the box visibility to true.
+
+ * @skip win  
+ * @until visibility
+
+ * The first of them is <b>"only Date display"</b>. We will create it
+ * using the C++ method below. The weight hint works with datetime the
+ * same as it did with background and box.
+
+ * @skip datetime
+ * @until weight
+
+ * Now we have to The function @c size_hint_align_set for C++ bindings
+ * originated from C bindings function
+ * evas_object_size_hint_align_set, that is EFL Evas type
+ * function. With this function we set the hints for an object's
+ * alignment. The parameters are:
+ 
+ * @li x - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as horizontal alignment hint.
+
+ * @li y - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as vertical alignment hint.
+
+ * These are hints on how to align an object inside the boundaries of
+ * a container/manager. Accepted values are in the 0.0 to 1.0 range,
+ * with the special value EVAS_HINT_FILL used to specify "justify" or
+ * "fill" by some users. In this case, maximum size hints should be
+ * enforced with higher priority, if they are set. Also, any padding
+ * hint set on objects should add up to the alignment space on the
+ * final scene composition.
+
+ * For the horizontal component, 0.0 means to the left, 1.0 means to
+ * the right. Analogously, for the vertical component, 0.0 to the top,
+ * 1.0 means to the bottom.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * @skipline align
+
+ * @note Default alignment hint values are 0.5, for both axis.
+
+ * An important feature for the datetime is the setting of what we
+ * want it to display. We can achieve that by using:
+
+ * @p field_visible_set ( Elm_Datetime_Field_Type fieldtype_, bool
+ *		         visible_)
+ 
+ * Parameters are:
+
+ * @li @p fieldtype_: type of the field, supports 6 fields: 
+      
+ * @p ELM_DATETIME_YEAR: Indicates Year field.
+
+ * @p ELM_DATETIME_MONTH: Indicates Month field.
+
+ * @p ELM_DATETIME_DATE: Indicates Date field.
+
+ * @p ELM_DATETIME_HOUR: Indicates Hour field,
+ 
+ * @p ELM_DATETIME_MINUTE: Indicates Minute field.
+
+ * @p ELM_DATETIME_AMPM: Indicates AM/PM field.
+
+ * @li @p visible_: @p true field can be visible, @p false otherwise.
+
+ * @attention Setting this API True does not ensure that the field is
+ * visible, apart from this, the field's format must be present in
+ * Datetime overall format. If a field's visibility is set to False
+ * then it won't appear even though its format is present in overall
+ * format. So if and only if this API is set true and the
+ * corresponding field's format is present in Datetime format, the
+ * field is visible.
+
+ * @note By default the field visibility is set to @p true.
+
+ * For this first datetime we are setting the HOUR, MINUTE and AM/PM
+ * to not be visible, doing this we'll display in our datetime the
+ * year, month and date.
+
+ * @note Hour format 12hr(1-12) or 24hr(0-23) display can be selected
+ * by setting the corresponding user format. The corresponding Month
+ * and AM/PM strings are displayed according to the system’s language
+ * settings.
+
+ * @skip HOUR
+ * @until AMPM
+ 
+ * When using the elm box the packing method of the subobj - datetime
+ * in this case - should be defined. There are four possible methods:
+
+ * @li @c pack_start(subobj_) - Add an object to the beginning of the
+ * pack list. Pack @c subobj_ into the box obj, placing it first in
+ * the list of children objects. The actual position the object will
+ * get on screen depends on the layout used. If no custom layout is
+ * set, it will be at the top or left, depending if the box is
+ * vertical or horizontal, respectively.
+
+ * @li @c pack_end(subobj_) - Add an object at the end of the pack
+ * list. Pack @c subobj_ into the box obj, placing it last in the list
+ * of children objects. The actual position the object will get on
+ * screen depends on the layout used. If no custom layout is set, it
+ * will be at the bottom or right, depending if the box is vertical or
+ * horizontal, respectively.
+
+ * @li @c pack_before(subobj_, before_) - Adds an object to the box
+ * before the indicated object. This will add the @c subobj_ to the
+ * box indicated before the object indicated with @c before_. If
+ * before is not already in the box, results are undefined. Before
+ * means either to the left of the indicated object or above it
+ * depending on orientation.
+ 
+ * @li @c pack_after(subobj_, after_) - Adds an object to the box
+ * after the indicated object. This will add the @c subobj_ to the box
+ * indicated after the object indicated with @c after_. If after is
+ * not already in the box, results are undefined. After means either
+ * to the right of the indicated object or below it depending on
+ * orientation.
+
+ * In this and most examples we use pack_end by choice and
+ * practicality. In this part of the code we also make datetime
+ * visible.
+
+ * @skip pack_end
+ * @until visibility
+
+ * For our second datetime, we'll also set the size hints weight and
+ * align, but in this case, the filds YEAR, MONTH and DATE will be not
+ * visible, and thus displaying in our datetime the hour, minute and
+ * AM/PM. Finally we choose it's packing method and set the visibility
+ * of datetime to @p true.
+
+ * @skip datetime2
+ * @until visibility
+
+ * For our third and last datetime, we setted the weight and align as
+ * before, chose our packing method and made it visible. Note that in
+ * this case we didn't exclude any type of field leaving all visible.
+ 
+ * @skip datetime3
+ * @until visibility
+
+ * And finally, we set our win's visibility and start the elm
+ * mainloop, starting to handle events and drawing operations.
+
+ * @skip win
+ * @until ELM_MAIN
+
+ * See the full @ref datetime_cxx_example.cc .
+
+ * This example should look like:
+
+ * @image html screenshots/datetime_cxx_example.png
+ * @image latex screenshots/datetime_cxx_example.eps width=\textwidth
+
+ * @example datetime_cxx_example.cc
+ */
+
+/**
+ * @page glview_cxx_example_01 Glview example with C++ Binding
+ * @dontinclude glview_cxx_example_01.cc
+ 
+ * In this example we'll illustrate how to use Glview and it's
+ * features.
+
+ * The first part consists of including the headers. In this case we
+ * need to include @p Elementary.hh, @p Evas_GL.h and @p stdio.h.
+
+ *@li @p Elementary.hh: library for Elementary with support for C++
+ * language;
+
+ *@li @p Evas_GL.h: has functions that are used to do OpenGL rendering
+ * on Evas, Evas allows us to use OpenGL to render to specially set up
+ * image objects, which act as render target surfaces. 
+
+ *@li @p stdio.h is a C library with functions tha perform
+ * Input/Output operations.
+
+ * @skip Elementary.hh
+ * @until stdio
+ 
+ * Continuing with the code, at this point we create a GL related
+ * struct:
+
+ *@li @p Evas_GL_API that is the structure type of the Evas GL API object
+ * that contains the GL APIs to be used in Evas GL.
+
+ *@li @p GLuint one of the pre-defined types of OpenGL which is a unsigned binary integer.
+
+ *@li @p int AKA @p int.
+
+ * @skip typedef
+ * @until };
+
+ * Here we're simply initializing a type float, that we named red.
+ 
+ * @skipline red
+
+ * In this example we'll need a type C helper function to load shaders
+ * from a shader source.
+
+ * @skip static
+ * @until GLint
+
+ * Inside this function we create the shader objectand load/compile
+ * shader source.
+
+ * @skip shader
+ * @until return shader;
+
+ * Completing our load shader function.
+ 
+ * @skipline }
+
+ * This example will also need a function to initialize the shader and
+ * program object.
+
+ * @skip static
+ * @until linked
+
+ * In this function we load the vertex/fragment shaders, create the
+ * program object and finish our funtion.
+
+ * @skip gld
+ * @until return 1;
+ * @skiline }
+
+ * We need the following callbacks:
+
+ * @li initialize callback: that get called once for
+ * initialization;
+
+ * @skip void
+ * @until BufferData
+ * @skipline }
+
+ * @li delete callback: gets called when glview is deleted;
+
+ * @skip void
+ * @until free
+ * @skipline }
+
+ * @li resize callback: gets called every time object is resized;
+
+ * @skip void
+ * @skipline }
+
+ * @li draw callback: is where all the main GL rendering happens.
+
+ * @skip void
+ * @until COLOR_BUFFER
+
+ * Inside this callback, we'll draw a triangle.
+ 
+ * @skip gl
+ * @until DrawArrays
+
+ * Still inside as an option we are going to flush the GL pipeline and
+ * end our callback.
+
+ * @skip Finish
+ * @until }
+
+ * We create @p _anim to notify that glview has changed so it can
+ * render.
+
+ * @skip static
+ * @until }
+
+ * Now that we finished with the GL preparations, we'll start the main
+ * code and initialize our GLData pointer object to NULL and run a
+ * check just in case.
+
+ * @skip EAPI_MAIN
+ * @until if
+
+ * Let's set the elm_policy, which defines for a given policy
+ * group/identifier a new policy's value, respectively. In this
+ * example the only policy we need to set a value for is @c
+ * ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skipline elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Now let's create a box with the C++ binding method, passing our
+ * window object as parent, we'll use this box to contain our glview
+ * object.
+
+ * @skipline bx
+
+ * To better understand, the function @c size_hint_weight_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_weight_set, that is EFL Evas type function.
+ * With this function we set the hints for an object's weight.  The
+ * parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate. This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Then we add the box as a resize-object to win informing that when
+ * the size of the win changes so should the box's size. Remember
+ * always to set the box visibility to true.
+
+ * @skip win
+ * @until visibility
+
+ * In this part we'll create a new elm glview, using the C++ method,
+ * in this case it requires that we set @p Evas_GL_Context_Version
+ * with the version_constructor. @p Evas_GL_Context_Version is a
+ * enumeration that defines the available OpenGL ES version numbers,
+ * it can be used to create OpenGL-ES 1.1 contexts.
+
+ * @skip glview
+ * @until glapi
+
+ * The function size_hint_weight_set works with glview the same way as
+ * with box, for more, search above.
+
+ * The function @c size_hint_align_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_align_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's alignment. The parameters are:
+ 
+ * @li x - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as horizontal alignment hint.
+
+ * @li y - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as vertical alignment hint.
+
+ * These are hints on how to align an object inside the boundaries of
+ * a container/manager. Accepted values are in the 0.0 to 1.0 range,
+ * with the special value EVAS_HINT_FILL used to specify "justify" or
+ * "fill" by some users. In this case, maximum size hints should be
+ * enforced with higher priority, if they are set. Also, any padding
+ * hint set on objects should add up to the alignment space on the
+ * final scene composition.
+
+ * For the horizontal component, 0.0 means to the left, 1.0 means to
+ * the right. Analogously, for the vertical component, 0.0 to the top,
+ * 1.0 means to the bottom.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * @note Default alignment hint values are 0.5, for both axis.
+
+ * @skipline align_set
+
+ * Mode is simply for supporting alpha, depth buffering and stencil
+ * buffering.
+
+ * @skip mode
+ * @until mode_set
+
+ * Resize policy tells glview what to do with the surface when it
+ * resizes. ELM_VIEW_RESIZE_POLICY_RECREATE will tell it to destroy
+ * the current surface and recreate it to the new size.
+
+ * @skipline resize
+
+ * Render policy tells glview how it would like glview to render gl
+ * code. ELM_GLVIEW_RENDER_POLICY_ON_DEMAND will have the gl calls
+ * called in the pixel_get callback, which only gets called if the
+ * object is visible, hence ON_DEMAND. ALWAYS mode renders it despite
+ * the visibility of the object.
+
+ * @skipline render
+
+ * Now we'll register our callbacks.
+
+ * @skip init
+ * @until draw
+
+ * When using the elm box the packing method of the subobj - glview in
+ * this case - should be defined. There are four possible methods:
+
+ * @li @c pack_start(subobj_) - Add an object to the beginning of the
+ * pack list. Pack @c subobj_ into the box obj, placing it first in
+ * the list of children objects. The actual position the object will
+ * get on screen depends on the layout used. If no custom layout is
+ * set, it will be at the top or left, depending if the box is
+ * vertical or horizontal, respectively.
+
+ * @li @c pack_end(subobj_) - Add an object at the end of the pack
+ * list. Pack @c subobj_ into the box obj, placing it last in the list
+ * of children objects. The actual position the object will get on
+ * screen depends on the layout used. If no custom layout is set, it
+ * will be at the bottom or right, depending if the box is vertical or
+ * horizontal, respectively.
+
+ * @li @c pack_before(subobj_, before_) - Adds an object to the box
+ * before the indicated object. This will add the @c subobj_ to the
+ * box indicated before the object indicated with @c before_. If
+ * before is not already in the box, results are undefined. Before
+ * means either to the left of the indicated object or above it
+ * depending on orientation.
+ 
+ * @li @c pack_after(subobj_, after_) - Adds an object to the box
+ * after the indicated object. This will add the @c subobj_ to the box
+ * indicated after the object indicated with @c after_. If after is
+ * not already in the box, results are undefined. After means either
+ * to the right of the indicated object or below it depending on
+ * orientation.
+
+ * In this and most examples we use pack_end by choice and
+ * practicality, in this part of the code we also make glview visible
+ * and set to focus.
+
+ * @skip pack_end
+ * @until focus
+
+ * For a simple demonstration of the animation we'll have to use
+ * ecore::animator. As long as tou trigger an update on the image via
+ * @p changed_set() it will be updated.
+ 
+ * @skip ani
+ * @until "gld"
+
+ * If you delete gl, this animator will keep running trying to access
+ * gl so it's better to delete this animator with
+ * ecore_animator_del(), as seen inside the lambda function.
+ 
+ * @skipline callback_del
+
+ * @note To learn more about Lambda Function and its use in Elementary
+ * consult @ref lambda.
+
+ * We're going to add a "OK" button to end the program. First step is
+ * to create it using the C++ method, setting it's parent.
+
+ * @skipline button
+ 
+ * Second, set the text, alignment and weight hints, the hints work
+ * the same as with box and glview.
+ 
+ * @skip text
+ * @until weight
+
+ * Pack our button in the same box as glview and set the visibility for
+ * it.
+ 
+ * @skip pack
+ * @until visibility
+
+ * As a final step for our button, we are going to add a clicked
+ * callback, using again Lambda Type Function.
+
+ * @skipline clicked
+
+ * @note To learn more about Lambda Function and its use in Elementary
+ * consult @ref lambda.
+
+ * Now we only have to set the size for our window and make it
+ * visible.
+ 
+ * @skip size_set
+ * @until visibility_set
+
+ * And finally, start the elm mainloop, starting to handle events and
+ * drawing operations.
+
+ * @skip elm_run
+ * @until ELM_MAIN
+
+ * See full code for this example @ref glview_cxx_example_01.cc "here" .
+
+ * @example glview_cxx_example_01.cc
+ */
+
+/**
+ * @page hoversel_cxx_example_01 Hoversel example with C++ Binding
+ * @dontinclude hoversel_cxx_example_01.cc
+ 
+ * In this example we'll create a hoversel with 3 items, one with a
+ * label but no icon and two with both a label and an icon. Every item
+ * that is clicked will be deleted, but everytime the hoversel is
+ * activated we will also add an item. In addition our first item will
+ * print all items when clicked and our third item will clear all
+ * items in the hoversel.
+ 
+ * The first part consists of including the headers. We'll include @p
+ * Elementary.hh, @p Eina.hh and @p Evas.hh, that are C++ bindings
+ * that are needed in this example.
+
+ * @skip Elementary
+ * @until Evas
+
+ * Before our main code we'll need the following callbacks:
+
+ *@li @p _print_items: callback for our first item which prints all
+ * items in the hoversel.
+
+ * @until print
+
+ *@li @p _free: callback that frees the allocated memory.
+ 
+ * @until free
+
+ * Starting the main code and initializing Eina C++ Lybrary, always
+ * initiate Eina when included.
+
+ * @skip EAPI
+ * @until eina
+
+ * Now let's set the elm_policy, which defines for a given policy
+ * group/identifier a new policy's value, respectively. In this
+ * example the only policy we need to set a value for is @c
+ * ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skipline elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Next we'll create a red evas::rectangle to use as the icon of our
+ * hoversel, for thus using the C++ method, setting the color and
+ * making it visible.
+
+ * @skip evas
+ * @until visibility
+
+ * And now we create our hoversel and set some of it's properties. We
+ * set @p win as its parent, set it to be vertical and give it a label
+ * and content, that will work as icon:
+
+ * @skip hoversel
+ * @until content
+ 
+ * Next we will add callbacks to be called for the first and third:
+
+ * @skip item
+ * @until "Option 2"
+ 
+ * We also set a pair of callbacks to be called whenever any item is
+ * selected or when the hoversel is activated, for this we'll use
+ * Lambda type function, @p add_item is called when the hoversel is
+ * activated and adds an item to the hoversel. Note that since we
+ * allocate memory for the item we need to know when the item dies so
+ * we can free that memory.
+
+ * @skip add
+ * @until clicked
+
+ * @see For more on Lambda check @ref lambda "here"
+ 
+ * Finishing with hoversel we set its size, position and make it
+ * visible.
+
+ * @skip size
+ * @until visibility
+ 
+ * In our second hoversel we'll add a button and for this we need
+ * create it using C++ method, set a text, add a callback for when
+ * button is clicked. This callback is type Lambda, it will clear
+ * hoversel when clicked.
+
+ * @skip button
+ * @until callback
+
+ * Concluding our button options, we will set the size, position and
+ * visibility.
+
+ * @skip size
+ * @until visibility
+
+ * Now we set the size for the window, making it visible in the end:
+ 
+ * @skip size_set
+ * @until visibility_set
+ 
+ * Finally we just have to start the elm mainloop, starting to handle
+ * events and drawing operations.
+
+ * @skip elm_run
+ * @until ELM_MAIN
+
+ * Our example will look like this:
+ 
+ * @image html screenshots/hoversel_cxx_example_01.png
+ * @image latex screenshots/hoversel_cxx_example_01.eps width=\textwidth
+ 
+ * @example hoversel_cxx_example_01.cc
+ */
+
+/**
+ * @page icon_cxx_example_01 Icon Example with C++ binding
+ * @dontinclude icon_cxx_example_01.cc
+
+ * This example is as simple as possible. An icon object will be added
+ * to the window over a blank background, and set to be resizable
+ * together with the window. All the options set through the example
+ * will affect the behavior of this icon.
+ 
+ * The first part consists of including the headers. In this case we
+ * are only working with the Elementary C++ binding and thus we need
+ * only to include him.
+ 
+ * @skipline Elementary.hh
+
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively. In this example the only policy we need to set
+ * a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Now we construct the elm icon and for this we use the C++ method
+ * below, setting it's parent. An icon object is used to display
+ * standard icon images ("delete", "edit", "arrows", etc.) or images
+ * coming from a custom file (PNG, JPG, EDJE, etc.), on icon contexts.
+
+ * @skipline ::elm::icon
+
+ * The icon image requested can be in the Elementary theme in use, or
+ * in the freedesktop.org theme paths. It's possible to set the order
+ * of preference from where an image will be fetched and for that
+ * we'll use the function @ order_lookup_set(order_) that will be use
+ * by standard_set. Possibles values for @p order_ are:
+
+ * @li @p ELM_ICON_LOOKUP_FDO_THEME: icon look up order is freedesktop
+ * then theme;
+
+ * @li @p ELM_ICON_LOOKUP_THEME_FDO: icon look up order is theme then
+ * freedesktop;
+
+ * @li @p ELM_ICON_LOOKUP_FDO: icon look up order is only freedesktop;
+
+ * @li @p ELM_ICON_LOOKUP_THEME: icon look up order is only theme;
+ 
+ * @skipline order
+ 
+ * Now that we setted the order value we can set the standard "home"
+ * icon, chosen for this example.
+  
+ * @skipline standard
+
+ * An interesting thing is that after setting this, it's possible to
+ * check where in the filesystem is the theme used by this icon, and
+ * the name of the group used, using file_get.
+ 
+ * @skip file
+ * @until std::cout
+
+ * We can also get the name of the standard icon that we setted
+ * before.
+
+ * @skip name
+ * @until std::cout
+
+ * We can now go setting our options.
+ 
+ * no_scale_set() is used just to set this value to true as we don't
+ * actually want to scale our icon, just resize it.
+ 
+ * resizable_set() is used to allow the icon to be resized to a size
+ * smaller than the original one, but not to a size bigger than it.
+ 
+ * smooth_set() will disable the smooth scaling, so the scale
+ * algorithm used to scale the icon to the new object size is going to
+ * be faster, but with a lower quality.
+ 
+ * fill_outside_set() is used to ensure that the icon will fill the
+ * entire area available to it, even if keeping the aspect ratio. The
+ * icon will overflow its width or height (any of them that is
+ * necessary) to the object area, instead of resizing the icon down
+ * until it can fit entirely in this area.
+ 
+ * This is the code for setting these options:
+ 
+ * @until fill_outside
+ 
+ * However, if you try this example you may notice that this image is
+ * not being affected by all of these options. This happens because
+ * the used icon will be from elementary theme, and thus it has its
+ * own set of options like smooth scaling and fill_outside
+ * options. You can change the "home" icon to use some image (from
+ * your system) and see that then those options will be respected.
+ 
+ * To better understand, the function @c size_hint_weight_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_weight_set, that is EFL Evas type function.
+ * With this function we set the hints for an object's weight.  The
+ * parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * This is a hint on how a container object should resize a given
+ * child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the icon as a resize_object to win informing that
+ * when the size of the win changes so should the icon's
+ * size. And finally we make icon visible. 
+
+ * Now we set the size for the window, making it visible in the end:
+ 
+ * @skip size_set
+ * @until visibility_set
+ 
+ * Finally we just have to start the elm mainloop, starting to handle
+ * events and drawing operations.
+
+ * @skip elm_run
+ * @until ELM_MAIN
+ 
+ * The full code for this example can be found at @ref icon_cxx_example_01.cc
+ 
+ * This example will look like this:
+ 
+ * @image html screenshots/icon_cxx_example_01.png
+ * @image latex screenshots/icon_cxx_example_01.eps width=\textwidth
+ 
+ * @example icon_cxx_example_01.cc
+ */
+
+/**
+ * @page location_cxx_example_01 Location example with C++ Binding
+ * @dontinclude location_cxx_example_01.cc
+ 
+ * This example shows how to integrate the Elocation.h library with
+ * elementary.
+
+ * The first part consists of including the headers. In this case we
+ * need to include both Elementary C++ binding and Elocation,
+  
+ * @skip Elementary.hh
+ * @until endif
+ 
+ * @attention All necessary libraries from Elementary, Elightenment, C
+ * and/or C++ headers should be include here.
+
+ * Before our main code, we need a set of callbacks to react on
+ * incoming elocation events. They are standard ecore events and we
+ * register callbacks on these events in the main function.
+
+ * @skip void
+ * @until ECORE_CALLBACK_DONE
+ * @until }
+
+ * Now we need to actually start the code and initializing pointers
+ * for address, addr_geocode, position and pos_geocode and an integer
+ * status. We also run a check for elm_need_elocation.
+
+ * @skip EAPI_MAIN
+ * @until -1
+ 
+ * Now let's set the elm_policy, which defines for a given policy
+ * group/identifier a new policy's value, respectively. In this
+ * example the only policy we need to set a value for is @c
+ * ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skipline elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * For this example we're using a label that will display the text
+ * "Getting location ...". First we'll create our label, setting it's
+ * parent, then setting the following label's options:
+ 
+ * @li @p line_wrap_set: Set the wrapping behavior of the label, by
+ * default no wrapping is done. Possible values for wrap are:
+ * @p ELM_WRAP_NONE - No wrapping;
+ * @p ELM_WRAP_CHAR - wrap between characters;
+ * @p ELM_WRAP_WORD - wrap between words;
+ * @p ELM_WRAP_MIXED - Word wrap, and if that fails, char wrap.
+
+ * @ skipline wrap
+
+ * @li @p text_set: Set the text that label will display.
+
+ * @skipline text
+
+ * @li @p slide_mode_set: Set the slide mode of the label widget. By
+ * default, slide mode is none. Possible values for mode are:
+ 
+ * ELM_LABEL_SLIDE_MODE_NONE - no slide effect
+
+ * ELM_LABEL_SLIDE_MODE_AUTO - slide only if the label area is bigger
+ * than the text width length
+
+ * ELM_LABEL_SLIDE_MODE_ALWAYS -slide always
+
+ * @attention ELM_LABEL_SLIDE_MODE_AUTO, ELM_LABEL_SLIDE_MODE_ALWAYS
+ * only work with the themes "slide_short", "slide_long" and
+ * "slide_bounce". ELM_LABEL_SLIDE_MODE_AUTO,
+ * ELM_LABEL_SLIDE_MODE_ALWAYS don't work if the line
+ * wrap(elm_label_line_wrap_set()) or
+ * ellipsis(elm_label_ellipsis_set()) is set.
+
+ * @skipline slide
+
+ * To better understand, the function @c size_hint_weight_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_weight_set, that is EFL Evas type function.
+ * With this function we set the hints for an object's weight.  The
+ * parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate. This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @dontinclude location_cxx_example_01.cc
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * The function @c size_hint_align_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_align_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's alignment. The parameters are:
+ 
+ * @li x - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as horizontal alignment hint.
+
+ * @li y - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as vertical alignment hint.
+
+ * These are hints on how to align an object inside the boundaries of
+ * a container/manager. Accepted values are in the 0.0 to 1.0 range,
+ * with the special value EVAS_HINT_FILL used to specify "justify" or
+ * "fill" by some users. In this case, maximum size hints should be
+ * enforced with higher priority, if they are set. Also, any padding
+ * hint set on objects should add up to the alignment space on the
+ * final scene composition.
+
+ * For the horizontal component, 0.0 means to the left, 1.0 means to
+ * the right. Analogously, for the vertical component, 0.0 to the top,
+ * 1.0 means to the bottom.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * @note Default alignment hint values are 0.5, for both axis.
+
+ * @skipline align_set
+
+ * Setting the size for label and make it visible.
+
+ * @skip size
+ * @until visibility
+
+ * Going back to our elocation, first we'll create an address
+ * and position object that we'll use for all our operations. 
+
+ * @skip address
+ * @until position
+ 
+ * We also have to register our callback so we get updates later on.
+
+ * @skipline ecore
+
+ * Now we need to get the elocation position and print it, using our
+ * label. This fills in the object with the data from GeoClue.
+
+ * @skip elocation
+ * @until print
+
+ * Now we only have to set the size for our window and make it
+ * visible.
+ 
+ * @skip size_set
+ * @until visibility_set
+
+ * And finally, start the elm mainloop, starting to handle events and
+ * drawing operations.
+
+ * @skip elm_run
+ * @until ELM_MAIN
+
+ * The full code for this example can be found at @ref location_cxx_example_01.cc
+
+ * @example location_cxx_example_01.cc
+ */
+
+
+/**
+ * @page menu_cxx_example_01 Menu Example with C++ Binding
+ * @dontinclude menu_cxx_example_01.cc
+ 
+ * This example shows how to create a menu with regular items, object
+ * items, submenus and how to delete items from a menu.
+ 
+ * The first part consists of including the headers. We'll include @p
+ * Elementary.hh, @p Eina.hh and @p Evas.hh, that are C++ bindings
+ * that are needed in this example.
+
+ * @skip Elementary
+ * @until Evas
+
+ * Starting the main code and initializing Eina C++ Lybrary, always
+ * initiate Eina when included. We'll also initialize a couple of
+ * pointers.
+
+ * @skip EAPI
+ * @until menu_it
+
+ * Now let's set the elm_policy, which defines for a given policy
+ * group/identifier a new policy's value, respectively. In this
+ * example the only policy we need to set a value for is @c
+ * ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skipline elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Next we'll create a evas::rectangle to use as the icon of our menu
+ * for thus using the C++ method, adding our rect as a resize-object
+ * to win informing that when the size of the win changes so should
+ * the box's size. 
+ 
+ * @skip evas
+ * @until resize
+
+ * We'll also set, for rect, the hint for it's minimum size, it's
+ * color and making it visible.
+
+ * @skip size
+ * @until visibility
+
+ * Creating the menu using the C++ method, setting it's parent and
+ * adding an item to this menu. We are going to add more items, but
+ * these icons are going to have a parent, which will put them in a
+ * sub-menu.
+
+ * @skip menu
+ * @until "menu 1"
+
+ * We'll add a button to a menu_item, where this button will delete
+ * the first item of our sub-menu when clicked, we'll do this
+ * using @p elm_object_item_content_set().
+ 
+ * @skip button
+ * @until content_set
+
+ * Now, for the callback that will be used in this button we're use
+ * lambda type function and then add as clicked callback to button.
+
+ * @skip del_it
+ * @until clicked
+
+ * @see To learn more about consult @ref lambda.
+
+ * We now add a separator and three more regular items:
+
+ * @until item_add
+ * @until item_add
+ * @until item_add
+ 
+ * We now add another item, however this time it won't go the sub-menu
+ * and it'll be disabled:
+
+ * @until disabled_set
+ 
+ * To make sure that our menu is shown whenever the window is
+ * clicked, we use the following callback, also lambda:
+
+ * @skip show
+ * @until ( show );
+
+ * Finally. we just make menu visible, set a size for our window
+ * making it visible and then start the elm mainloop, starting to
+ * handle events and drawing operations.
+
+ * @skip visibility
+ * @until ELM_MAIN
+ 
+ * Our example will look like this:
+ 
+ * @image html screenshots/menu_cxx_example_01.png
+ * @image latex screenshots/menu_cxx_example_01.eps width=\textwidth
+ 
+ * @example menu_cxx_example_01.cc
+ */
+
+/**
+ * @page popup_cxx_example_01 Popup example with C++ Binding
+ * @dontinclude popup_cxx_example_01.cc
+
+ * The first part consists of including the headers. In this
+ * case we are only working with the Elementary C++ binding and thus
+ * we need only to include him.
+  
+ * @skipline Elementary.hh
+ 
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively.  In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an Elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Now let's create the label with the C++ binding method, passing our
+ * window object as parent. We'll also set to this label the text that
+ * we'll use later on the popup.
+
+ * @skip elm::label
+ * @until text
+
+ * Using the same method we'll create our popup passing our window
+ * object as parent. We'll also set the timeout to 3.0 seconds, label
+ * as content, the title and visibility true for our popup.
+
+ * @skip elm::popup
+ * @until visibility
+
+ * Our popup will hide every time the lambda type function is called.
+ * The lambda function get the popup object by reference and set it's
+ * visibility to false, making it invisible. In this example we are
+ * using @a std::bind to bind the parameters of our lambda function to
+ * return as @a std::function object to popup_hide which was declare
+ * as auto.
+
+ * @skip popup_hide
+ * @until });
+
+ * To learn more consult @ref lambda.
+
+ * In this example we'll add the popup_hide in the timeout callback
+ * and the block_clicked callback. This results in hiding the popup in
+ * maximum of 3.0 seconds or when the popup block is clicked.
+
+ * @skip timeout
+ * @until block 
+
+ * Finally we just have to make our window visible and set it's size,
+ * then run the elm mainloop, starting to handle events and drawing
+ * operations.
+ 
+ * @skip visibility
+ * @until ELM_MAIN
+
+ * This example will initially look like this:
+
+ * @image html screenshots/popup_cxx_example_01.png
+ * @image latex screenshots/popup_cxx_example_01.eps width=\textwidth
+
+ * Once the popup is hidden after timeout:
+
+ * @image html screenshots/popup_cxx_example_01_a.png
+ * @image latex screenshots/popup_cxx_example_01_a.eps width=\textwidth
+ 
+ * @example popup_cxx_example_01.cc
+ */
+
+/**
+ * @page radio_cxx_example_01 Radio example with C++ Binding
+ * @dontinclude radio_cxx_example_01.cc
+ 
+ * In this example we will create 4 radios, and add them to the same
+ * group. We will also have the radios in the group change the value
+ * of a variable directly and have then print it when the value
+ * changes.
+ 
+ * The first part consists of including the headers. In this
+ * case we are only working with the Elementary C++ binding and thus
+ * we need only to include him.
+  
+ * @skipline Elementary.hh
+ 
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively. In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * And move right to declaring a static variable, the one whose value
+ * the radios will change:
+ 
+ * @skipline static
+
+ * Next step is creating an Elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure. 
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it. 
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * A box arranges objects in a linear fashion, governed by a layout
+ * function that defines the details of this arrangement. The box will
+ * use an internal function to set the layout to a single row,
+ * vertical by default.
+
+ * Now let's create the box with the C++ binding method, passing our
+ * window object as parent and then setting box's layout as
+ * horizontal.
+
+ * @skipline elm::box
+ * @until horizontal
+
+ * To better understand, the function @c size_hint_weight_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_weight_set, that is EFL Evas type function.
+ * With this function we set the hints for an object's weight.  The
+ * parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate. This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the box as a resize_object to win informing that when
+ * the size of the win changes so should the box's size. And finally
+ * we make it visible.
+ 
+ * @skip win
+ * @until visibility_set 
+
+ * Radio is a widget that allows for one or more options to be
+ * displayed and have the user choose only one of them. It contains an
+ * indicator, an optional label and an optional icon object. While
+ * it's possible to have a group of only one radio they, are normally
+ * used in groups of 2 or more.
+
+ * We will create the box with the C++ binding method, passing our
+ * window object as parent and then setting box's layout as
+ * horizontal.
+
+ * And now we create a radio with the C++ binding method, passing our
+ * window object as parent. Since this is the first radio in our group
+ * we set the group to be the radio, so we can set the other radios in
+ * the same group.
+
+ * @skip radio
+ * @until radio;
+
+ * We also set the text, then state value of this radio to 1 and
+ * the value pointer to @p val, since val is @p 1 this has the
+ * additional effect of setting the radio value to @p 1.
+ 
+ * @skip text
+ * @until pointer
+
+ * For this radio we choose the standard home icon, the icon will be
+ * created with the same method and setting the icon as content of
+ * radio.
+
+ * @skip icon
+ * @until content
+
+ * When using the elm::box the packing method of the subobj - radio
+ * in this case - should be defined. There are four possible methods:
+
+ * @li @c pack_start(subobj_) - Add an object to the beginning of the
+ * pack list. Pack @c subobj_ into the box obj, placing it first in
+ * the list of children objects. The actual position the object will
+ * get on screen depends on the layout used. If no custom layout is
+ * set, it will be at the top or left, depending if the box is
+ * vertical or horizontal, respectively.
+
+ * @li @c pack_end(subobj_) - Add an object at the end of the pack
+ * list. Pack @c subobj_ into the box obj, placing it last in the list
+ * of children objects. The actual position the object will get on
+ * screen depends on the layout used. If no custom layout is set, it
+ * will be at the bottom or right, depending if the box is vertical or
+ * horizontal, respectively.
+
+ * @li @c pack_before(subobj_, before_) - Adds an object to the box
+ * before the indicated object. This will add the @c subobj_ to the
+ * box indicated before the object indicated with @c before_. If
+ * before is not already in the box, results are undefined. Before
+ * means either to the left of the indicated object or above it
+ * depending on orientation.
+ 
+ * @li @c pack_after(subobj_, after_) - Adds an object to the box
+ * after the indicated object. This will add the @c subobj_ to the box
+ * indicated after the object indicated with @c after_. If after is
+ * not already in the box, results are undefined. After means either
+ * to the right of the indicated object or below it depending on
+ * orientation.
+
+ * In this and most examples we use pack_end by choice and
+ * practicality.
+
+ * @skipline pack_end
+ 
+ * The function size_hint_weight_set works with radio the same way
+ * as with box, as above.
+
+ * @skipline weight_set
+ 
+ * The function @c size_hint_align_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_align_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's alignment. The parameters are:
+ 
+ * @li x - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as horizontal alignment hint.
+
+ * @li y - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as vertical alignment hint.
+
+ * These are hints on how to align an object inside the boundaries of
+ * a container/manager. Accepted values are in the 0.0 to 1.0 range,
+ * with the special value EVAS_HINT_FILL used to specify "justify" or
+ * "fill" by some users. In this case, maximum size hints should be
+ * enforced with higher priority, if they are set. Also, any padding
+ * hint set on objects should add up to the alignment space on the
+ * final scene composition.
+
+ * For the horizontal component, 0.0 means to the left, 1.0 means to
+ * the right. Analogously, for the vertical component, 0.0 to the top,
+ * 1.0 means to the bottom.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * @skipline align_set
+
+ * @note Default alignment hint values are 0.5, for both axis.
+
+ * To end the settings of radio we'll make it visible and with our
+ * lambda type function we output the current value of @p val. In this
+ * example we are using @a std::bind to bind the parameters of our
+ * lambda function to return as @a std::function object to @p cb_val
+ * which was declare as @p auto. Now we just have to add @p cb_val as
+ * changed radio callback of our radio.
+
+ * @skip visibility
+ * @until changed
+
+ * @see To learn more consult @ref lambda.
+
+ * The creation of our second radio is almost identical, using the
+ * same method we create radio2 passing win as parent. We also set the
+ * text, then state value of this radio to 2 and the value pointer to
+ * @p val. This radio will be added in the same group as the first
+ * radio.
+ 
+ * @skip text
+ * @until group
+
+ * Then we set the standard file icon, the icon will be created with
+ * the same method and then set the icon as content of radio.
+
+ * @skip ic2
+ * @until content
+
+ * As before, we set packing method of radio2 in the box, the weight,
+ * alignment and visibility of radio2. Then add cb_val as callback
+ * when the radio changes.
+
+ * @skip pack
+ * @until changed
+
+ * For our third and fourth radios we'll omit the icon and set the
+ * value to 3 and 4, respectively, we'll also add them to the group of
+ * the first radio:
+
+ * @skip radio3
+ * @until radio4.callback
+
+ * Finally we just have to make our window visible and set it's size,
+ * then run the elm mainloop, starting to handle events and drawing
+ * operations.
+ 
+ * @skip visibility
+ * @until ELM_MAIN
+
+ * The full code for this example can be found at @ref radio_cxx_example_01.cc
+
+ * The example will look like this:
+
+ * @image html screenshots/radio_cxx_example_01.png
+ * @image latex screenshots/radio_cxx_example_01.eps width=\textwidth
+
+ * @example radio_cxx_example_01.cc
+ */
+
+/**
+ * @page separator_cxx_example_01  Separator with C++ Binding
+ * @dontinclude separator_cxx_example_01.cc
+
+ * Separator is a very thin object used to separate other objects,
+ * wich can be vertical or horizontal.
+
+ * This example shows how to create a window and separate in two
+ * parts, each one will be filled with a background color to show the
+ * division. The @a separator is used to visually mark the division
+ * between two parts.
+
+ * The first part consists of including the headers. In this case we
+ * are only working with the Elementary and Evas C++ bindings.
+  
+ * @skip Elementary.hh
+ * @until Evas
+ 
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively. In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+   
+ * @n @skip EAPI_MAIN int
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events at ELM_MAIN() because of this. ??
+  
+ * @see  elm_policy_set()
+ 
+ * Next step is creating an Elementary window, where win calls a
+ * constructor and sets the type of the win to ELM_WIN_BASIC
+ * (Elm_Win_Type), which is the indicated type for most of our
+ * examples. Here we also set the title that will appear at the top of
+ * our window and then the autohide state for it.
+ 
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Now let's create the background with the C++ binding method, passing
+ * our window as parent.
+
+ * @skipline elm::bg
+
+ * The function @c size_hint_weight_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_weight_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's weight. The parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.  This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the background as a resize-object to win informing that
+ * when the size of the win changes so should the background's size
+ * and setting it's visibility. You can change the background's color
+ * using color_set, if not, the default color will be used.
+ 
+ * @skip win
+ * @until visibility_set 
+ 
+ * To put a box in the window we also need to set it's parent. By
+ * default, box object arranges their contents vertically from top to
+ * bottom. By calling this function with horizontal as @a true, the
+ * box will become horizontal, arranging contents from left to right.
+
+ * @skip ::elm::box
+ * @until horizontal
+
+ * The value that we set EFL Evas function size_hint_weight_set
+ * expands the box to cover all win's area and adding it as a
+ * resize_object to win informing that when the size of the win
+ * changes so should the box's size. In the end we make the box
+ * visible.
+ 
+ * @skip weight
+ * @until visibility
+  
+ * Now we create a retangle, like before, we just need to setting it's
+ * parent. After created, we set the color to show the difference
+ * between the next rectangle and define the minimun size of each side
+ * by using size_hint_min_set(minimum width, minimum height).
+
+ * @skip rect
+ * @until min_set
+
+ * As in the background, the value we set EFL Evas function
+ * size_hint_weight_set expands the background to cover all area
+ * defined in size_hint_min_set. We also need to expand the rectangle
+ * to fill the area if the win's size change, if not, win can change
+ * it's size and the rectangle will only fill it's own previous area.
+
+ * @until weight
+ 
+ * The function @c size_hint_align_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_align_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's alignment. The parameters are:
+ 
+ * @li x - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as horizontal alignment hint.
+
+ * @li y - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as vertical alignment hint.
+
+ * These are hints on how to align an object inside the boundaries of
+ * a container/manager. Accepted values are in the 0.0 to 1.0 range,
+ * with the special value EVAS_HINT_FILL used to specify "justify" or
+ * "fill" by some users. In this case, maximum size hints should be
+ * enforced with higher priority, if they are set. Also, any padding
+ * hint set on objects should add up to the alignment space on the
+ * final scene composition.
+
+ * For the horizontal component, 0.0 means to the left, 1.0 means to
+ * the right. Analogously, for the vertical component, 0.0 to the top,
+ * 1.0 means to the bottom.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * @skipline align_set
+
+ * @note Default alignment hint values are 0.5, for both axis.
+
+ * Now we only need to set the visibility of the rectangle and add our
+ * retangle to box with the packing method of the subobj - rectangle
+ * in this case. There are four possible methods:
+
+ * @li @c pack_start(subobj_) - Add an object to the beginning of the
+ * pack list. Pack @c subobj_ into the box obj, placing it first in
+ * the list of children objects. The actual position the object will
+ * get on screen depends on the layout used. If no custom layout is
+ * set, it will be at the top or left, depending if the box is
+ * vertical or horizontal, respectively.
+
+ * @li @c pack_end(subobj_) - Add an object at the end of the pack
+ * list. Pack @c subobj_ into the box obj, placing it last in the list
+ * of children objects. The actual position the object will get on
+ * screen depends on the layout used. If no custom layout is set, it
+ * will be at the bottom or right, depending if the box is vertical or
+ * horizontal, respectively.
+
+ * @li @c pack_before(subobj_, before_) - Adds an object to the box
+ * before the indicated object. This will add the @c subobj_ to the
+ * box indicated before the object indicated with @c before_. If
+ * before is not already in the box, results are undefined. Before
+ * means either to the left of the indicated object or above it
+ * depending on orientation.
+ 
+ * @li @c pack_after(subobj_, after_) - Adds an object to the box
+ * after the indicated object. This will add the @c subobj_ to the box
+ * indicated after the object indicated with @c after_. If after is
+ * not already in the box, results are undefined. After means either
+ * to the right of the indicated object or below it depending on
+ * orientation.
+
+ * In this and most examples we use pack_end by choice and
+ * practicality. In this part of the code we also make rectangle
+ * visible.
+ 
+ * @skip visibility
+ * @until pack
+ 
+ * Once we have our first rectangle in the box we create and add our
+ * separator. Using the same approach, we setting it's parent. Since
+ * our box is in horizontal mode it's a good idea to set the separator
+ * to be horizontal too. Finishing with the visibility and packing
+ * method.
+
+ * @skip elm::separator
+ * @until pack
+
+ * After all this, we just need to create another rectangle, setting
+ * the color, size hints, make rect2 visible and packing in the
+ * box. Don't forget to set the win's visibility as true.
+
+ * @skip rect2
+ * @until win.visibility
+
+ * Finally we just have to start the elm mainloop, starting to handle
+ * events and drawing operations.
+
+ * @skip elm_run
+ * @until ELM_MAIN()
+ 
+ * The full code for this example can be found at @ref separator_cxx_example_01.cc .
+
+ * This example will look like:
+
+ * @image html screenshots/separator_cxx_example_01.png
+ * @image latex screenshots/separator_cxx_example_01.eps width=\textwidth
+
+ * @example separator_cxx_example_01.cc
+ */
+
+/**
+ * @page slider_cxx_example Slider widget example with C++ Binding
+ * @dontinclude slider_cxx_example.cc 
+
+ * This code places seven Elementary slider widgets on a window, each of
+ * them exemplifying a part of the widget's API.
+ 
+ * The first part consists of including the headers. In this
+ * case we are only working with the Elementary C++ binding and thus
+ * we need only to include him.
+  
+ * @skipline Elementary.hh
+ 
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively.  In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an Elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Now let's create a box with the C++ binding method, passing our
+ * window object as parent, we'll use this box to contain our slider
+ * object.
+
+ * @skipline bx
+
+ * To better understand, the function @c size_hint_weight_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_weight_set, that is EFL Evas type function.
+ * With this function we set the hints for an object's weight.  The
+ * parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate. This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Then we add the box as a resize-object to win informing that when
+ * the size of the win changes so should the box's size. Remember
+ * always to set the box visibility to true.
+
+ * @skip win
+ * @until visibility
+
+ * Now we'll create our slider, using the C++ binding method and set
+ * it's size hint that works with slider the same way as with box, for
+ * more, look above. This is the default slider.
+
+ * @skip slider
+ * @until weight
+
+ * The function @c size_hint_align_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_align_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's alignment. The parameters are:
+ 
+ * @li x - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as horizontal alignment hint.
+
+ * @li y - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as vertical alignment hint.
+
+ * These are hints on how to align an object inside the boundaries of
+ * a container/manager. Accepted values are in the 0.0 to 1.0 range,
+ * with the special value EVAS_HINT_FILL used to specify "justify" or
+ * "fill" by some users. In this case, maximum size hints should be
+ * enforced with higher priority, if they are set. Also, any padding
+ * hint set on objects should add up to the alignment space on the
+ * final scene composition.
+
+ * For the horizontal component, 0.0 means to the left, 1.0 means to
+ * the right. Analogously, for the vertical component, 0.0 to the top,
+ * 1.0 means to the bottom.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * @skipline align
+
+ * @note Default alignment hint values are 0.5, for both axis.
+
+ * When using the elm box the packing method of the subobj - slider
+ * in this case - should be defined. There are four possible methods:
+
+ * @li @c pack_start(subobj_) - Add an object to the beginning of the
+ * pack list. Pack @c subobj_ into the box obj, placing it first in
+ * the list of children objects. The actual position the object will
+ * get on screen depends on the layout used. If no custom layout is
+ * set, it will be at the top or left, depending if the box is
+ * vertical or horizontal, respectively.
+
+ * @li @c pack_end(subobj_) - Add an object at the end of the pack
+ * list. Pack @c subobj_ into the box obj, placing it last in the list
+ * of children objects. The actual position the object will get on
+ * screen depends on the layout used. If no custom layout is set, it
+ * will be at the bottom or right, depending if the box is vertical or
+ * horizontal, respectively.
+
+ * @li @c pack_before(subobj_, before_) - Adds an object to the box
+ * before the indicated object. This will add the @c subobj_ to the
+ * box indicated before the object indicated with @c before_. If
+ * before is not already in the box, results are undefined. Before
+ * means either to the left of the indicated object or above it
+ * depending on orientation.
+ 
+ * @li @c pack_after(subobj_, after_) - Adds an object to the box
+ * after the indicated object. This will add the @c subobj_ to the box
+ * indicated after the object indicated with @c after_. If after is
+ * not already in the box, results are undefined. After means either
+ * to the right of the indicated object or below it depending on
+ * orientation.
+
+ * In this and most examples we use pack_end by choice and
+ * practicality, in this part of the code we also make slider visible.
+
+ * @skip pack
+ * @until visibility
+
+ * As you see, the defaults for a slider are:
+ * @li horizontal
+ * @li no label
+ * @li no values on indicator or unit labels
+
+ * Actually it's pretty useless this way. So let's learn how to
+ * improve it.
+
+ * Creating the second slider, the difference being that we set a text
+ * and two icons.
+
+ * @skip slider
+ * @until text
+
+ * Creating the first icon as standard "home" and not resizable and
+ * finally add icon as content for the second slider.
+
+ * @skip icon
+ * @until content
+
+ * Our second icon is the standard "folder", also not resizable and
+ * with add it also to the second slider.
+
+ * @skip ic2
+ * @until content
+
+ * The same as before, the size hints weight, align will be setted and
+ * the packing method for the second slider. Also making it visible.
+
+ * @skip align
+ * @until visibility
+
+ * If the bar size need to be changed, it can be done with span set function,
+ * that doesn't accounts other widget's parts size. Also the bar can starts
+ * with a not default value (0.0), as we done on third slider:
+
+ * @skip slider
+ * @until visibility
+
+ * So far, users won't be able to see the slider value. If it's required,
+ * it can be displayed in two different areas, units label or above
+ * the indicator.
+
+ * Let's place a units label on our widget, and also let's set minimum and
+ * maximum value, by default it uses 0.0 and 1.0:
+
+ * @skip slider
+ * @until visibility
+
+ * If above the indicator is the place to display the value, just set
+ * it. Also, is possible to invert a bar, as you can see:
+
+ * @skip slider
+ * @until visibility
+
+ * But if you require to use a function a bit more customized to show
+ * the value, is possible to registry a callback function that will be
+ * called to display unit or indicator label. For this we suggest you
+ * use a lambda type function.
+ 
+ * @skip slider
+ * @until };
+
+ * In this case, a function to free this will be required, also a
+ * Lambda.
+ 
+ * @skipline auto
+
+ * @see To learn more consult @ref lambda.
+
+ * Now we add our two labdas as indicators for our sixth slider and
+ * set the hints, packing method and visibility for our slider.
+
+ * @skip indicator
+ * @until visibility
+
+ * For our seventh slider we'll show that slider can also be displayed
+ * vertically:
+ 
+ * @skip slider
+ * @until visibility
+
+ * Finally the last slider will exemplify how to listen to slider's
+ * signals, <tt> changed </tt> and <tt> delay,changed </tt>. First we
+ * need to implement callback functions that will simply print
+ * slider's value, using lambda again:
+
+ * @skip changed
+ * @until }
+ * @until }
+ 
+ * The first callback function should be called everytime value changes,
+ * the second one only after user stops to increment or decrement. Try
+ * to keep arrows pressed and check the difference.
+
+ * @skip callback
+ * @until callback_delay
+
+ * Finally we just have to make our window visible. Then run the elm
+ * mainloop, starting to handle events and drawing operations.
+ 
+ * @skip visibility
+ * @until ELM_MAIN
+ 
+ * See the full @ref slider_cxx_example.cc "example", whose window should
+ * look like this picture:
+ 
+ * @image html screenshots/slider_cxx_example.png
+ * @image latex screenshots/slider_cxx_example.eps width=\textwidth
+ 
+ * @example slider_cxx_example.cc
+ */
+
+/**
+ * @page spinner_cxx_example Spinner widget example with C++ Binding
+ * @dontinclude spinner_cxx_example.cc
+
+ * This code places seven Elementary spinner widgets on a window, each of
+ * them exemplifying a part of the widget's API.
+ 
+ * The first part consists of including the headers. In this
+ * case we are only working with the Elementary C++ binding and thus
+ * we need only to include him.
+  
+ * @skipline Elementary.hh
+ 
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively. In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an Elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure. 
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it. 
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * A box arranges objects in a linear fashion, governed by a layout
+ * function that defines the details of this arrangement. The box will
+ * use an internal function to set the layout to a single row,
+ * vertical by default.
+
+ * Now let's create the box with the C++ binding method, passing our
+ * window object as parent.
+
+ * @skipline elm::box
+
+ * To better understand, the function @c size_hint_weight_set for C++
+ * bindings originated from C bindings function
+ * evas_object_size_hint_weight_set, that is EFL Evas type function.
+ * With this function we set the hints for an object's weight.  The
+ * parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate. This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Now we add the box as a resize_object to win informing that
+ * when the size of the win changes so should the box's
+ * size. And finally we make it visible.
+ 
+ * @skip win
+ * @until visibility_set 
+
+ * Now we create our spinner with the C++ method, this first one will
+ * the default spinner.
+
+ * @skipline spinner
+
+ * As you see, the defaults for a spinner are:
+
+ * @li no wrap
+
+ * @li min value set to 0
+
+ * @li max value set to 100
+
+ * @li step value set to 1
+
+ * @li label format set to "%0.f"
+
+ * The function size_hint_weight_set works with spinner the same way
+ * as with box, as seem above.
+
+ * @skipline weight_set
+ 
+ * The function @c size_hint_align_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_align_set, that is
+ * EFL Evas type function. With this function we set the hints for an
+ * object's alignment. The parameters are:
+ 
+ * @li x - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as horizontal alignment hint.
+
+ * @li y - Double, ranging from 0.0 to 1.0 or with the special value
+ * EVAS_HINT_FILL, to use as vertical alignment hint.
+
+ * These are hints on how to align an object inside the boundaries of
+ * a container/manager. Accepted values are in the 0.0 to 1.0 range,
+ * with the special value EVAS_HINT_FILL used to specify "justify" or
+ * "fill" by some users. In this case, maximum size hints should be
+ * enforced with higher priority, if they are set. Also, any padding
+ * hint set on objects should add up to the alignment space on the
+ * final scene composition.
+
+ * For the horizontal component, 0.0 means to the left, 1.0 means to
+ * the right. Analogously, for the vertical component, 0.0 to the top,
+ * 1.0 means to the bottom.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate.
+
+ * @skipline align_set
+
+ * @note Default alignment hint values are 0.5, for both axis.
+
+ * When using the elm::box the packing method of the subobj - spinner
+ * in this case - should be defined. There are four possible methods:
+
+ * @li @c pack_start(subobj_) - Add an object to the beginning of the
+ * pack list. Pack @c subobj_ into the box obj, placing it first in
+ * the list of children objects. The actual position the object will
+ * get on screen depends on the layout used. If no custom layout is
+ * set, it will be at the top or left, depending if the box is
+ * vertical or horizontal, respectively.
+
+ * @li @c pack_end(subobj_) - Add an object at the end of the pack
+ * list. Pack @c subobj_ into the box obj, placing it last in the list
+ * of children objects. The actual position the object will get on
+ * screen depends on the layout used. If no custom layout is set, it
+ * will be at the bottom or right, depending if the box is vertical or
+ * horizontal, respectively.
+
+ * @li @c pack_before(subobj_, before_) - Adds an object to the box
+ * before the indicated object. This will add the @c subobj_ to the
+ * box indicated before the object indicated with @c before_. If
+ * before is not already in the box, results are undefined. Before
+ * means either to the left of the indicated object or above it
+ * depending on orientation.
+ 
+ * @li @c pack_after(subobj_, after_) - Adds an object to the box
+ * after the indicated object. This will add the @c subobj_ to the box
+ * indicated after the object indicated with @c after_. If after is
+ * not already in the box, results are undefined. After means either
+ * to the right of the indicated object or below it depending on
+ * orientation.
+
+ * In this and most examples we use pack_end by choice and
+ * practicality. In this part of the code we also make spinner
+ * visible.
+
+ * @skip pack_end
+ * @until visibility
+
+ * In our second spinner we are altering the format. It will put a
+ * text before and after the value, and also format value to display
+ * two decimals. As with the first spinner, we create the second with
+ * the same C++ method, set the alignment and the weight, choose the
+ * packing method and make it visible.
+ 
+ * @skip spinner
+ * @until visibility
+ 
+ * The third one will use a customized step, define new minimum and maximum
+ * values and enable wrap, so when value reaches minimum it jumps to maximum,
+ * or jumps to minimum after maximum value is reached. Format is set to display
+ * a decimal:
+
+ * @skip spinner
+ * @until visibility
+ 
+ * The fourth uses @c vertical style, so instead of left and right arrows,
+ * top and bottom are displayed. Also the change interval is reduced, so
+ * user can change value faster.
+
+ * @skip spinner
+ * @until visibility
+ 
+ * In the fifth the user won't be allowed to set value directly, i.e., will
+ * be obligate change value only using arrows:
+
+ * @skip spinner
+ * @until visibility
+ 
+ * The sixth widget will receive a lot of special values, so
+ * instead of reading numeric values, user will see labels for each one.
+ * Also direct edition is disabled, otherwise users would see the numeric
+ * value on edition mode. User will be able to select a month in this widget:
+
+ * @skip spinner
+ * @until visibility
+ 
+ * Finally the last widget will exemplify how to listen to widget's
+ * signals, <tt> changed </tt> and <tt> delay_changed </tt>.
+
+ * We start the same way as previously, creating spinner, setting
+ * alignment and weight, choosing the packing method, making it
+ * visible and editable.
+
+ * @skip spinner
+ * @until editable
+
+ * Our spinner will output it's value or delay value every time the
+ * std::function object is called. In this example we are using @a
+ * std::bind to bind the parameters of each lambda function, that
+ * captures sp7 by reference and then get it's value or delay value to
+ * finally output it.
+
+ * The first function changed, that was declare as auto, will output
+ * the new value. For this we need to add it to the
+ * @p callback_changed
+
+ * @skip changed
+ * @until callback
+
+ * The second function changed, that was also declare as auto, will
+ * output the new delay value. For this we need to add it to the @p
+ * callback_delay_changed.
+
+ * @skip delay
+ * @until callback
+
+ * To learn more consult @ref lambda.
+
+ * The first callback function should be called everytime value
+ * changes, the second one only after user stops to increment or
+ * decrement. Try to keep arrows pressed and check the difference.
+
+ * Finally we just have to make our window visible. Then run the elm
+ * mainloop, starting to handle events and drawing operations.
+ 
+ * @skip visibility
+ * @until ELM_MAIN
+
+ * See the full code for this example at @ref spinner_cxx_example.cc .
+
+ * This example will look like this:
+
+ * @image html screenshots/spinner_cxx_example.png
+ * @image latex screenshots/spinner_cxx_example.eps width=\textwidth
+ * @example spinner_cxx_example.cc
+ */
+
+/**
+ * @page table_cxx_example_01 Table Example with C++ binding - Homogeneous
+ * @dontinclude table_cxx_example_01.cc
+
+ * In this example we add four labels to a homogeneous table that has a padding
+ * of 5px between cells.
+ 
+ * The first part consists of including the headers. In this
+ * case we are only working with the Elementary C++ binding and thus
+ * we need only to include him.
+  
+ * @skipline Elementary.hh
+ 
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively.  In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+ 
+ * Next step is creating an Elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * And we also set the autohide state for win, autohide works
+ * similarly to @p autodel, automatically handling "delete,request"
+ * signals when set to @p true, with the difference that it will hide
+ * the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+    
+ * Now we construct the elm table and for this we use the C++ method
+ * below, setting it's parent.
+
+ * @skipline ::elm::table
+
+ * We then add table as a resize_object to win informing that when the
+ * size of the win changes so should the box's size and make it
+ * visible.
+
+ * @skip resize
+ * @until visibility
+
+ * Next step is to set the padding, in this case 5px and as we chosen
+ * for this example homogeneous_set to true.
+
+ * @skip padding
+ * @until homogeneous
+
+ * We'll create for each cell on this table a simple elm_lable, using
+ * the C++ method below, setting it's parent. Set the text for the
+ * labels and make each visible. The parameters for packing the labels
+ * in our table will be better explain below.
+
+ * @skip elm::label
+ * @until (label3,
+
+ * When using pack in our table we are adding a child to a packing
+ * location of the table. The parameters are:
+
+ * pack (evas::object @a subobj,
+ *       int @a column,
+ *       int @a row,
+ *       int @a colspan,
+ *       int @a rowspan)
+  
+ * @li subobj - The subobject to be added to the table 
+
+ * @li column - Column number 
+
+ * @li row - Row number
+
+ * @li colspan - Number of columns that the subobj will occuppy
+
+ * @li rowspan - Number of rows that the subobj will occuppy
+ 
+ * @note All positioning inside the table is relative to rows and
+ * columns, so a value of 0 for @a column and @a row, means the top
+ * left cell of the table. And for example, value of 2 for @a colspan and @a
+ * rowspan indicates that the subobj will occuppy two column and two rows,
+ * thus occuppying 4 cells in total.
+
+ * Finally we just have to make our window visible. Then run the elm
+ * mainloop, starting to handle events and drawing operations.
+ 
+ * @skip visibility
+ * @until ELM_MAIN
+
+ * @See Full code for this example: @ref table_cxx_example_01.cc .
+ 
+ * Our example will look like this:
+ 
+ * @image html screenshots/table_cxx_example_01.png
+ * @image latex screenshots/table_cxx_example_01.eps width=\textwidth
+ * @example table_cxx_example_01.cc
+ */
+
+/**
+ * @page table_cxx_example_02 Table Example with C++ binding - Heterogeneous
+ * @dontinclude table_cxx_example_02.cc
+
+ * For our second example we'll create a table with 4 rectangles in
+ * it. Since our rectangles are of different sizes our table won't be
+ * homogeneous.
+
+ * The first part consists of including the headers. In this
+ * case we are only working with the Elementary C++ binding and thus
+ * we need only to include him.
+  
+ * @skipline Elementary.hh
+ 
+ * @attention If necessary the C and/or the C++ headers should be
+ * include here as well.
+
+ * Now we need to actually start the code and set the elm_policy,
+ * which defines for a given policy group/identifier a new policy's
+ * value, respectively.  In this example the only policy we need to
+ * set a value for is @c ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skip EAPI_MAIN
+ * @until elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+ 
+ * Next step is creating an Elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * And we also set the autohide state for win, autohide works
+ * similarly to @p autodel, automatically handling "delete,request"
+ * signals when set to @p true, with the difference that it will hide
+ * the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+  
+ * Now we construct the elm table and for this we use the C++ method
+ * below, passing windows as it's parent.
+
+ * @skipline ::elm::table
+
+ * We then add table as a resize_object to win informing that when the
+ * size of the win changes so should the table's size and make it
+ * visible. The last configuration for table is to set homogeneous as
+ * false.
+
+ * @skip resize
+ * @until homogeneous
+
+ * For each cell of this table we are going to create a unique @p
+ * evas::rectangle, each with diferent colors and sizes.
+
+ * Let's see a snip of the code on how we constructed our rectangles
+ * and setted the colors.
+
+ * @skip evas
+ * @until color
+
+ * @skip evas
+ * @until color
+
+ * @skip evas
+ * @until color
+
+ * @skip evas
+ * @until color
+
+ * For each rectangle we also setted the size_hint_min that hints for
+ * an object's minimum size. This is not a size enforcement in any
+ * way, it's just a hint that should be used whenever appropriate.
+
+ * @dontinclude table_cxx_example_02.cc
+ * @skipline size_hint
+
+ * @skipline size_hint
+
+ * @skipline size_hint
+
+ * @skipline size_hint
+ 
+ * When using pack in our table we are adding a child to a packing
+ * location of the table. The parameters are:
+
+ * pack (evas::object @a subobj,
+ *       int @a column,
+ *       int @a row,
+ *       int @a colspan,
+ *       int @a rowspan)
+  
+ * @li subobj - The subobject to be added to the table 
+
+ * @li column - Column number 
+
+ * @li row - Row number
+
+ * @li colspan - Number of columns that the subobj will occuppy
+
+ * @li rowspan - Number of rows that the subobj will occuppy
+ 
+ * @note All positioning inside the table is relative to rows and
+ * columns, so a value of 0 for @a column and @a row, means the top
+ * left cell of the table. And for example, value of 2 for @a colspan
+ * and @a rowspan indicates that the subobj will occuppy two column
+ * and two rows, thus occuppying 4 cells in total.
+
+ * So for each rectangle we are setting a specific location and how
+ * many cells it's occupying, better seem below:
+
+ * @dontinclude table_cxx_example_02.cc
+ * @skipline pack
+
+ * @skipline pack
+
+ * @skipline pack
+
+ * @skipline pack 
+
+ * Finally we just have to make our window visible. Then run the elm
+ * mainloop, starting to handle events and drawing operations.
+ 
+ * @skip visibility
+ * @until ELM_MAIN
+
+ * @See Full code for this example: @ref table_cxx_example_02.cc .
+ 
+ * Our example will look like this:
+ 
+ * @image html screenshots/table_cxx_example_02.png
+ * @image latex screenshots/table_cxx_example_02.eps width=\textwidth
+ 
+ * @example table_cxx_example_02.cc
+ */
+
+/**
+ * @page thumb_cxx_example_01 Thumb - Generating thumbnails with C++ Binding
+ * @dontinclude thumb_cxx_example_01.cc 
+
+ * This example shows how to create a simple thumbnail object with
+ * Elementary C++ Binding.
+ 
+ * The first part consists of including the headers. In this case we
+ * need Elementary C++ binding, iostream and sstream libraries.
+  
+ * @skip Elementary.hh
+ * @until sstream
+ 
+ * @attention All necessary Enlightenment, Elementary, C and/or C++
+ * headers should be include here as well.
+
+ * Starting the main code and telling elementary that we need Ethumb
+ * to generate the thumbnails:
+ 
+ * @skip EAPI
+ * @until elm_need_ethumb
+ 
+ * Then, we use app_info_set to access the image that we are using for
+ * this example.
+ 
+ * @skipline app
+  
+ * Now let's set the elm_policy, which defines for a given policy
+ * group/identifier a new policy's value, respectively. In this
+ * example the only policy we need to set a value for is @c
+ * ELM_POLICY_QUIT, possibles values for it are:
+
+ * @li @p ELM_POLICY_QUIT_NONE: Never quit the application
+ * automatically;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_CLOSED: quit when the
+ * application's last window is closed;
+ 
+ * @li @p ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN : quit when the
+ * application's last window is hidden;
+ 
+ * @skipline elm_policy_set
+ 
+ * As you can see, the policy we chose was to quit when the last win
+ * is hidden as opose to examples with the C bindings where we
+ * perpetually set it to quit when last win was closed. This changed
+ * was necessary because in C++ binding as the elm mainloop stop
+ * running all object are destroyed, references are unreferenced and
+ * events are stopped at ELM_MAIN().
+  
+ * @see For more details consult elm_policy_set
+
+ * Next step is creating an elementary window, in this example we use
+ * the C++ binding method with the elm_win_util_standard_add that is a
+ * elm_win_legacy function, better explained below. And then we set
+ * the autohide state for it.
+ 
+ * @p elm_win_util_standard_add (const char *name, const char *tittle)
+ * Adds a window object with standard setup.
+ * Parameters:
+ 
+ * @li @p name - The name of the window;
+
+ * @li @p title - The title for the window.
+
+ * This creates a window but also puts in a standard background with
+ * @p elm_bg_add(), as well as setting the window title to @p
+ * title. The window type created is of type @c ELM_WIN_BASIC, with
+ * the @c NULL as the parent widget. Returns the created object or @c
+ * NULL on failure.
+
+ * The autohide works similarly to @p autodel, automatically handling
+ * "delete,request" signals when set to @p true, with the difference
+ * that it will hide the window, instead of destroying it.
+
+ * It is specially designed to work together with @p
+ * ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting
+ * Elementary's main loop when all the windows are hidden.
+ 
+ * @skip ::elm::win
+ * @until autohide_set
+
+ * @note @p autodel and @a autohide are not mutually exclusive. The
+ * window will be destructed if both autodel and autohide is set to @p
+ * EINA_TRUE or @p true.
+
+ * Creating our thumb and setting it's parent, using C++ method.
+
+ * @skipline thumb
+
+ * For our callbacks we are using lambda type functions to create
+ * then, note that all three only show a message, for when our thumb
+ * generation is starting, stoping and it's return error.
+
+ * @skip auto
+ * @until generate_error
+
+ * @note To learn more about Lambda Function and its use in Elementary
+ * consult @ref lambda.
+
+ * Continuing with our thumb, we'll set a size, set it to not be
+ * editable, set the file and after that, we can start creating
+ * thumbnail objects. They are very similar to image or icon objects:
+  
+ * @skip size
+ * @until reload
+ 
+ * As you can see, the main different function here is reload(), which
+ * will check if the options of the Ethumb client have changed. If so,
+ * it will re-generate the thumbnail, and show the new one.
+ 
+ * Notice in this example that the thumbnail object is displayed on
+ * the size of the window (320x320 pixels), but the thumbnail
+ * generated and stored has size 160x160 pixels. That's why the
+ * picture seems upscaled.
+
+ * Ideally, you will be generating thumbnails with the size that you
+ * will be using them.
+ 
+ * Finishing with thumb we set the weight hint. To better understand,
+ * the function @c size_hint_weight_set for C++ bindings originated
+ * from C bindings function evas_object_size_hint_weight_set, that is
+ * EFL Evas type function.  With this function we set the hints for an
+ * object's weight.
+ * The parameters are:
+
+ * @li x - Nonnegative double value to use as horizontal weight hint.
+
+ * @li y - Nonnegative double value to use as vertical weight hint.
+
+ * This is not a size enforcement in any way, it's just a hint that
+ * should be used whenever appropriate. This is a hint on how a
+ * container object should resize a given child within its area.
+
+ * Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the EVAS_HINT_EXPAND
+ * helper weight macro in the EFL Evas Documentation) or the complete
+ * one of taking each child's weight hint as real weights to how much
+ * of its size to allocate for them in each axis. A container is
+ * supposed to, after normalizing the weights of its children (with
+ * weight hints), distribute the space it has to layout them by those
+ * factors – most weighted children get larger in this process than
+ * the least ones.
+
+ * @skipline weight_set
+
+ * @note Default weight hint values are 0.0, for both axis.
+
+ * Then we add the thumb as a resize-object to win informing that when
+ * the size of the win changes so should the thumb's size. Remember
+ * always to set the thumb visibility to true.
+
+ * @skip win
+ * @until visibility
+
+ * Now we only have to set the size for our window and make it
+ * visible.
+ 
+ * @skip size_set
+ * @until visibility_set
+
+ * And finally, start the elm mainloop, starting to handle events and
+ * drawing operations.
+
+ * @skip elm_run
+ * @until ELM_MAIN
+
+ * The full source code can be found at @ref thumb_cxx_example_01.cc
+
+ * @image latex screenshots/thumb_cxx_example_01.eps width=\textwidth
+ * @example thumb_cxx_example_01.cc
+ */

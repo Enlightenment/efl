@@ -1,0 +1,17 @@
+collections {
+   group { name: "point";
+      images {
+	 image: "cross.png" COMP;
+      }
+      parts {
+	 part { name: "sky";
+            mouse_events: 0;
+	    description { state: "default" 0.0;
+               min: 301 301;
+	       image.normal: "cross.png";
+	    }
+	 }
+      }
+   }
+}
+	 

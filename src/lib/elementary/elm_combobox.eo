@@ -1,0 +1,78 @@
+class Elm.Combobox (Elm.Button, Evas.Selectable_Interface,
+                    Elm.Interface_Atspi_Widget_Action,
+                    Elm.Entry, Elm.Genlist, Elm.Hover, Elm.Multibuttonentry)
+{
+   eo_prefix: elm_obj_combobox;
+   methods {
+      @property expanded {
+         get {
+            [[Returns whether the combobox is expanded.
+
+            This will return EINA_TRUE if the combobox is expanded or
+            EINA_FALSE if it is not expanded.
+
+              @since 1.17
+            ]]
+            return: bool;
+         }
+      }
+      @property multiple_selection {
+         get {
+            [[Returns whether the combobox allows multiple selection.
+              @since 1.18
+            ]]
+         }
+         set {
+            [[Enables or disables multiple selection in combobox.
+
+              Warning: This API should be set before any other API on
+              combobox, if you wish to avoid complications.
+              @since 1.18
+            ]]
+         }
+         values {
+            enabled: bool; [[$true if multiple selection is enabled,
+            $false otherwise.]]
+         }
+      }
+      hover_begin {
+         [[This triggers the combobox popup from code, the same as if the user
+         had clicked the button.
+
+           @since 1.17
+         ]]
+      }
+      hover_end {
+         [[This dismisses the combobox popup as if the user had clicked
+         outside the hover.
+
+           @since 1.17
+         ]]
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.hide;
+      Evas.Object_Smart.show;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.resize;
+      Elm.Widget.part_text.set;
+      Elm.Widget.part_text.get;
+      Elm.Widget.theme_apply;
+      Elm.Widget.translate;
+      Elm.Widget.event;
+      Elm.Button.admits_autorepeat.get;
+      Elm.Genlist.filter.set;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+   events {
+      dismissed;
+      expanded;
+      clicked;
+      item,selected;
+      item,pressed;
+      filter,done;
+   }
+}

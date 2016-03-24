@@ -1,0 +1,225 @@
+enum Elm.Atspi_Text.Granularity
+{
+   char,
+   word,
+   sentence,
+   line,
+   paragraph
+}
+
+enum Elm.Atspi_Text.Clip_Type
+{
+   legacy: elm_atspi_text_clip;
+   none,
+   min,
+   max,
+   both
+}
+
+struct Elm.Atspi_Text.Attribute
+{
+   name:  const(char)*;
+   value: const(char)*;
+}
+
+struct Elm.Atspi_Text.Range
+{
+   start_offset: int;
+   end_offset : int;
+   content: char *;
+}
+
+struct Elm.Atspi_Text.Change_Info
+{
+   content: const(char)*;
+   inserted: Eina.Bool;
+   pos: size_t;
+   len: size_t;
+}
+
+interface Elm.Interface_Atspi_Text ()
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_text;
+   methods {
+      @property character @protected {
+         get {
+            [[Gets single character present in accessible widget's text at given offset.]]
+         }
+         keys {
+            offset: int; [[Position in text.]]
+         }
+         values {
+            character: Eina_Unicode; [[Character at offset. 0 when out-of bounds offset has been given.  Codepoints between DC80 and DCFF indicates that string includes invalid UTF8 chars.]]
+         }
+      }
+      @property string @protected {
+         get {
+            [[Gets string, start and end offset in text according to given initial offset and granulatity.]]
+         }
+         keys {
+            granularity: Elm.Atspi_Text.Granularity;
+            start_offset: int * @nonull; [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
+            end_offset: int *; [[Offset indicating end of string according to given granularity. -1 in case of error.]]
+         }
+         values {
+            string: own(char *); [[Newly allocated UTF-8 encoded string.  Must be free by a user.]]
+         }
+      }
+      @property text @protected {
+         get {
+            [[Gets text of accessible widget.]]
+         }
+         keys {
+            start_offset: int; [[Position in text.]]
+            end_offset: int; [[End offset of text.]]
+         }
+         values {
+            text: own(char *); [[UTF-8 encoded text.]]
+         }
+      }
+      @property caret_offset @protected {
+         get {
+            [[Gets offset position of caret (cursor)]]
+         }
+         set {
+            return: bool; [[$true if caret was successfully moved, $falseotherwise.]]
+         }
+         values {
+            offset: int;
+         }
+      }
+      @property attribute @protected {
+         get {
+            [[Indicate if a text attribute with a given name is set]]
+            return: bool;
+         }
+         keys {
+            name: const(char)* @nonull; [[text attribute name]]
+            start_offset: int * @nonull; [[Position in text from which given attribute is set.]]
+            end_offset: int *; [[Position in text to which given attribute is set.]]
+         }
+         values {
+            value: own(char *); [[Value of text attribute. Should be free()]]
+         }
+      }
+      @property attributes @protected {
+         get {
+            [[Gets list of all text attributes.]]
+         }
+         keys {
+            start_offset: int * @nonull;
+            end_offset: int *;
+         }
+         values {
+            attributes: own(list<own(Elm.Atspi_Text.Attribute *)> *);
+         }
+      }
+      @property default_attributes @protected {
+         get {
+         }
+         values {
+            attributes: own(list<own(Elm.Atspi_Text.Attribute *)>*);
+         }
+      }
+      @property character_extents @protected {
+         get {
+            return: bool;
+         }
+         keys {
+            offset: int;
+            screen_coords: bool;
+         }
+         values {
+            rect: Eina_Rectangle;
+         }
+      }
+      @property character_count @protected {
+         get {
+         }
+         values {
+            count: int;
+         }
+      }
+      @property offset_at_point @protected {
+         get {
+         }
+         keys {
+            screen_coords: bool;
+            x: int;
+            y: int;
+         }
+         values {
+            offset: int;
+         }
+      }
+      @property bounded_ranges @protected {
+         get {
+         }
+         keys {
+            screen_coords: bool;
+            rect: Eina_Rectangle;
+            xclip: Elm.Atspi_Text.Clip_Type;
+            yclip: Elm.Atspi_Text.Clip_Type;
+         }
+         values {
+            ranges: own(list<own(Elm.Atspi_Text.Range *)> *);
+         }
+      }
+      @property range_extents @protected {
+         get {
+            return: bool;
+         }
+         keys {
+            screen_coords: bool; [[If true x and y values will be relative to screen origin, otherwise relative to canvas]]
+            start_offset: int;
+            end_offset: int;
+         }
+         values {
+            rect: Eina_Rectangle;
+         }
+      }
+      @property selections_count @protected {
+         get {
+         }
+         values {
+            count: int;
+         }
+      }
+      @property selection @protected {
+         get {
+         }
+         set {
+            return: bool;
+         }
+         keys {
+            selection_number: int;
+         }
+         values {
+            start_offset: int;
+            end_offset: int;
+         }
+      }
+      selection_add @protected {
+         params {
+            @in start_offset: int;
+            @in end_offset: int;
+         }
+         return: bool;
+      }
+      selection_remove @protected {
+         params {
+            @in selection_number: int;
+         }
+         return: bool;
+      }
+   }
+   events {
+      access,text,bounds,changed;
+      access,text,attributes,changed;
+      access,text,caret,moved;
+      access,text,inserted;
+      access,text,removed;
+      access,text,selection,changed;
+   }
+}

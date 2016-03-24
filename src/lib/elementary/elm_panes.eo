@@ -1,0 +1,147 @@
+class Elm.Panes (Elm.Layout, Evas.Clickable_Interface)
+{
+   eo_prefix: elm_obj_panes;
+   methods {
+      @property content_left_size {
+         [[Set the size proportion of panes widget's left side.
+
+           By default it's homogeneous, i.e., both sides have the same size.
+
+           If something different is required, it can be set with this function.
+           For example, if the left content should be displayed over
+           75% of the panes size, $size should be passed as 0.75.
+           This way, right content will be resized to 25% of panes size.
+
+           If displayed vertically, left content is displayed at top, and
+           right content at bottom.
+
+           Note: This proportion will change when user drags the panes bar.]]
+         set {
+         }
+         get {
+         }
+         values {
+            size: double; [[Value between 0.0 and 1.0 representing size proportion of left side.]]
+         }
+      }
+      @property horizontal {
+         [[Set how to split and dispose each content.
+
+           Use this function to change how your panes is to be disposed:
+           vertically or horizontally.
+           Horizontal panes have "top" and "bottom" contents, vertical panes have
+           "left" and "right" contents.
+
+           By default panes is in a vertical mode.]]
+         set {
+         }
+         get {
+         }
+         values {
+            horizontal: bool; [[Use $true to make $obj to split panes
+            horizontally ("top" and "bottom" contents). $false to make it
+            vertically ("left" and "right" contents).]]
+         }
+      }
+      @property fixed {
+         [[Set whether the left and right panes can be resized by user interaction.
+
+           By default panes' contents are resizable by user interaction.]]
+         set {
+         }
+         get {
+         }
+         values {
+            fixed: bool; [[Use $true to fix the left and right panes sizes and make
+            them not to be resized by user interaction. Use $false to make them
+            resizable.]]
+         }
+      }
+      @property content_right_size {
+         [[Set the size proportion of panes widget's right side.
+
+           By default it's homogeneous, i.e., both sides have the same size.
+
+           If something different is required, it can be set with this function.
+           For example, if the right content should be displayed over
+           75% of the panes size, $size should be passed as 0.75.
+           This way, left content will be resized to 25% of panes size.
+
+           If displayed vertically, left content is displayed at top, and
+           right content at bottom.
+
+           Note: This proportion will change when user drags the panes bar.]]
+         set {
+         }
+         get {
+         }
+         values {
+            size: double; [[Value between 0.0 and 1.0 representing size proportion of right side.]]
+         }
+      }
+      @property content_left_min_relative_size {
+         [[Controls the relative minimum size of panes widget's left side.
+
+           proportion of minimum size of left side.
+
+           Note: If displayed vertically, left content is displayed at top.]]
+         set {
+         }
+         get {
+         }
+         values {
+            size: double; [[value between 0.0 and 1.0 representing size proportion of minimum size of left side.]]
+         }
+      }
+      @property content_right_min_relative_size {
+         [[Set the relative minimum size of panes widget's right side.
+
+           Note: If displayed vertically, right content is displayed at bottom.]]
+         set {
+         }
+         get {
+         }
+         values {
+            size: double; [[value between 0.0 and 1.0 representing size proportion of minimum size of right side.]]
+         }
+      }
+      @property content_left_min_size {
+         [[Set the absolute minimum size of panes widget's left side.
+
+           Note: If displayed vertically, left content is displayed at top.]]
+         set {
+         }
+         get {
+         }
+         values {
+            size: Evas.Coord; [[value representing minimum size of left side in pixels.]]
+         }
+      }
+      @property content_right_min_size {
+         [[Control the absolute minimum size of panes widget's right side.
+
+           Note: If displayed vertically, right content is displayed at bottom.]]
+         set {
+         }
+         get {
+         }
+         values {
+            size: Evas.Coord; [[value representing minimum size of right side in pixels.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.theme_apply;
+      Elm.Layout.content_aliases.get;
+   }
+   events {
+      press;
+      unpress;
+   }
+
+}
