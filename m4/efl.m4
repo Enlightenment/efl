@@ -150,6 +150,12 @@ case "m4_defn([DOWNOTHER])" in
    ethumb_client)
       depname="ethumb_client"
       ;;
+   efreet_mime)
+      libdirname="efreet"
+      ;;
+   efreet_trash)
+      libdirname="efreet"
+      ;;
 esac
 requirements_pc_[]m4_defn([DOWNEFL])="${depname} >= ${PACKAGE_VERSION} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
 requirements_cflags_[]m4_defn([DOWNEFL])="-I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"

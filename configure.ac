@@ -204,6 +204,9 @@ EFL_VERSION_MINOR="v_min"
 AC_SUBST(EFL_VERSION_MAJOR)
 AC_SUBST(EFL_VERSION_MINOR)
 
+ELM_UNIX_DEF="#undef"
+ELM_WIN32_DEF="#undef"
+
 have_systemd_pkg="no"
 have_win32="no"
 have_windows="no"
@@ -216,18 +219,25 @@ case "$host_os" in
       # TODO: check cygwin* here
       have_win32="yes"
       have_windows="yes"
+      ELM_WIN32_DEF="#define"
       EFLALL_CFLAGS="${EFLALL_CFLAGS} -D__USE_MINGW_ANSI_STDIO"
    ;;
    freebsd*)
       have_freebsd="yes"
+      ELM_UNIX_DEF="#define"
    ;;
    darwin*)
       have_darwin="yes"
+      ELM_UNIX_DEF="#define"
    ;;
    linux*)
       have_linux="yes"
       have_systemd_pkg="auto"
+      ELM_UNIX_DEF="#define"
    ;;
+   *)
+      ELM_UNIX_DEF="#define"
+      ;;
 esac
 
 case "$host_vendor" in
@@ -250,6 +260,9 @@ AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
 AM_CONDITIONAL([HAVE_OSX], [test "x${have_darwin}" = "xyes"])
 AM_CONDITIONAL([HAVE_X86_64], [test "x${host_cpu}" = "xx86_64"])
 
+AC_SUBST([ELM_UNIX_DEF])
+AC_SUBST([ELM_WIN32_DEF])
+
 #### Checks for programs
 
 ### libtool
@@ -260,6 +273,9 @@ fi
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT([win32-dll disable-static pic-only])
 EFL_INIT
+
+CXXFLAGS="${CXXFLAGS} -fPIC -DPIC"
+LDFLAGS="${LDFLAGS} -fPIC -DPIC"
 
 ### gettext
 
@@ -5117,15 +5133,19 @@ AC_ARG_ENABLE([quick-launch],
 EFL_PLATFORM_DEPEND([ELEMENTARY], [evil])
 
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [eina])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [emile])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [eet])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [eo])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [efl])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [evas])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_x11_any}], [ecore_x])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_drm}], [ecore_drm])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-evas])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-file])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-input])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [edje])
+EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ethumb])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ethumb_client])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [emotion])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-imf])
@@ -5364,6 +5384,8 @@ src/examples/elocation/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 src/lib/efl/Efl_Config.h
+src/lib/elementary/Elementary.h
+elm_intro.h
 spec/efl.spec
 pc/evil.pc
 pc/escape.pc
