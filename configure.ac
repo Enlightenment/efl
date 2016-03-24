@@ -1984,6 +1984,17 @@ AC_ARG_ENABLE([ecore-buffer],
    ],
    [want_ecore_buffer="no"])
 
+AC_ARG_ENABLE([elput],
+   [AS_HELP_STRING([--enable-elput],[enable elput library. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_elput="yes"
+    else
+       want_elput="no"
+    fi
+   ],
+   [want_elput="no"])
+
 # Image Loaders
 
 ARG_ENABLE_EVAS_IMAGE_LOADER(BMP, static)
@@ -3563,6 +3574,64 @@ EFL_EVAL_PKGS([ECORE_DRM])
 ### Checks for library functions
 
 EFL_LIB_END_OPTIONAL([Ecore_Drm])
+#### End of Ecore_Drm
+
+
+#### Elput
+have_libinput_new="no"
+EFL_LIB_START_OPTIONAL([Elput], [test "${want_elput}" = "yes"])
+
+### Additional options to configure
+SUID_CFLAGS=-fPIE
+SUID_LDFLAGS=-pie
+AC_SUBST([SUID_CFLAGS])
+AC_SUBST([SUID_LDFLAGS])
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ELPUT], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ELPUT], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ELPUT], [eldbus])
+EFL_INTERNAL_DEPEND_PKG([ELPUT], [eeze])
+EFL_INTERNAL_DEPEND_PKG([ELPUT], [eo])
+EFL_INTERNAL_DEPEND_PKG([ELPUT], [eina])
+
+EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 0.6.0 xkbcommon >= 0.3.0])
+
+EFL_ADD_LIBS([ELPUT], [-lm])
+
+# API change from 0.7 to 0.8. So we define this to support both for now.
+PKG_CHECK_EXISTS([libinput >= 0.8.0],
+                 [have_libinput_new="yes"],
+                 [have_libinput_new="no"])
+AC_MSG_CHECKING([Use new libinput API (newer than 0.8.0)])
+AC_MSG_RESULT([${have_libinput_new}])
+if test "x${have_libinput_new}" = "xyes";then
+  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [1], [libinput version >= 0.8])
+fi
+if test "x${have_libinput_new}" = "xno";then
+  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [0], [libinput version >= 0.8])
+fi
+
+
+EFL_EVAL_PKGS([ELPUT])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END_OPTIONAL([Elput])
 #### End of Ecore_Drm
 
 
@@ -5512,6 +5581,7 @@ pc/elocation.pc
 pc/elua.pc
 pc/elementary.pc
 pc/elementary-cxx.pc
+pc/elput.pc
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/ethumb.service
 $po_makefile_in
@@ -5680,6 +5750,7 @@ fi
 echo "Ecore_Audio.....: ${efl_lib_optional_ecore_audio} (${features_ecore_audio})"
 echo "Ecore_Avahi.....: yes (${features_ecore_avahi})"
 echo "Ecore_Evas......: yes (${features_ecore_evas})"
+echo "Elput...........: $want_elput"
 echo "Ector...........: yes"
 echo "Eeze............: ${efl_lib_optional_eeze} (${features_eeze})"
 echo "EPhysics........: ${efl_lib_optional_ephysics}"

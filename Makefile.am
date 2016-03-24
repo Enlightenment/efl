@@ -286,6 +286,10 @@ if HAVE_ECORE_BUFFER
 pkgconfig_DATA += pc/ecore-buffer.pc
 endif
 
+if HAVE_ELPUT
+pkgconfig_DATA += pc/elput.pc
+endif
+
 # Cmake configs:
 efl_cmakeconfigdir = $(libdir)/cmake/Efl/
 efl_cmakeconfig_DATA = \

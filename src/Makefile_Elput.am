@@ -1,0 +1,28 @@
+if HAVE_ELPUT
+
+### Library
+
+lib_LTLIBRARIES += lib/elput/libelput.la
+
+installed_elputmainheadersdir = $(includedir)/elput-@VMAJ@
+dist_installed_elputmainheaders_DATA = \
+  lib/elput/Elput.h
+
+lib_elput_libelput_la_SOURCES = \
+lib/elput/elput.c \
+lib/elput/elput_private.h
+
+lib_elput_libelput_la_CPPFLAGS = \
+  -I$(top_builddir)/src/lib/efl \
+  @ELPUT_CFLAGS@ @EFL_CFLAGS@ \
+  -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+  -DMODULE_ARCH=\"$(MODULE_ARCH)\"
+
+lib_elput_libelput_la_LIBADD = @ELPUT_LIBS@
+if HAVE_SYSTEMD
+lib_elput_libelput_la_LIBADD += @SYSTEMD_LIBS@
+endif
+lib_elput_libelput_la_DEPENDENCIES = @ELPUT_INTERNAL_LIBS@
+lib_elput_libelput_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+endif
