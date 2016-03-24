@@ -116,3 +116,17 @@ EXTRA_DIST += $(ethumb_clientfiles_DATA)
 eluafilesdir = $(datadir)/elua
 eluafiles_DATA = elua/checkme
 EXTRA_DIST += $(eluafiles_DATA)
+
+#######################################################################
+# Elementary
+elementaryfilesdir = $(datadir)/themes
+elementaryfiles_DATA = elementary/themes/default.edj
+CLEANFILES += elementary/themes/default.edj
+
+include elementary/themes/Makefile.am
+
+elementary/themes/default.edj: elementary/themes/default.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/themes/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $(EDJE_CC_ELM_FLAGS) $< $@
+
