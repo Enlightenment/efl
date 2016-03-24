@@ -34,7 +34,7 @@ EVAS_SMART_SUBCLASS_NEW(_smart_frame_type, _ecore_evas_wl_frame,
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
-static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[5];
+static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[7];
 
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 
@@ -382,6 +382,43 @@ _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
    _rotation_do(ee, rotation, resize);
 }
 
+static Eina_Bool
+_ecore_evas_wl_common_cb_www_drag(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Window_WWW_Drag *ev = event;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+   Ecore_Evas *ee;
+
+   ee = ecore_event_window_match(ev->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+
+   wdata = ee->engine.data;
+   wdata->dragging = !!ev->dragging;
+   if (!ev->dragging)
+     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_ecore_evas_wl_common_cb_www(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Window_WWW *ev = event;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+   Ecore_Evas *ee;
+
+   ee = ecore_event_window_match(ev->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+
+   wdata = ee->engine.data;
+   wdata->x_rel += ev->x_rel;
+   wdata->y_rel += ev->y_rel;
+   wdata->timestamp = ev->timestamp;
+   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+   return ECORE_CALLBACK_RENEW;
+}
+
 int
 _ecore_evas_wl_common_init(void)
 {
@@ -405,7 +442,12 @@ _ecore_evas_wl_common_init(void)
    _ecore_evas_wl_event_hdls[4] =
      ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE,
                              _ecore_evas_wl_common_cb_window_configure, NULL);
-
+   _ecore_evas_wl_event_hdls[5] =
+     ecore_event_handler_add(_ecore_wl2_event_window_www,
+                             _ecore_evas_wl_common_cb_www, NULL);
+   _ecore_evas_wl_event_hdls[6] =
+     ecore_event_handler_add(_ecore_wl2_event_window_www_drag,
+                             _ecore_evas_wl_common_cb_www_drag, NULL);
    ecore_event_evas_init();
 
    return _ecore_evas_wl_init_count;
@@ -421,7 +463,7 @@ _ecore_evas_wl_common_shutdown(void)
    if (--_ecore_evas_wl_init_count != 0)
      return _ecore_evas_wl_init_count;
 
-   for (i = 0; i < sizeof(_ecore_evas_wl_event_hdls) / sizeof(Ecore_Event_Handler *); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(_ecore_evas_wl_event_hdls); i++)
      {
         if (_ecore_evas_wl_event_hdls[i])
           ecore_event_handler_del(_ecore_evas_wl_event_hdls[i]);

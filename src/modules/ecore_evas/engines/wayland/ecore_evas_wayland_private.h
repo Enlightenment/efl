@@ -39,6 +39,10 @@ struct _Ecore_Evas_Engine_Wl_Data
    struct wl_egl_window *egl_win;
 #endif
    struct wl_callback *anim_callback;
+   int x_rel;
+   int y_rel;
+   uint32_t timestamp;
+   Eina_Bool dragging : 1;
 
    Eina_Bool sync_done : 1;
    Eina_Bool defer_show : 1;
