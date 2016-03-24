@@ -434,19 +434,19 @@ collections {
       }
    } //group ends
 
-#include "../../data/themes/macros.edc"
-#include "../../data/themes/fonts.edc"
-#include "../../data/themes/colorclasses.edc"
+#include "../../../data/elementary/themes/macros.edc"
+#include "../../../data/elementary/themes/fonts.edc"
+#include "../../../data/elementary/themes/colorclasses.edc"
 
 // to customize check default style
-#include "../../data/themes/edc/elm/check.edc"
+#include "../../../data/elementary/themes/edc/elm/check.edc"
    group { name: "elm/check/base/focus_text";
       data.item: "focus_part" "elm.text";
       inherit: "elm/check/base/default";
    }
 
 // to customize button default style
-#include "../../data/themes/edc/elm/button.edc"
+#include "../../../data/elementary/themes/edc/elm/button.edc"
    group { name: "elm/button/base/focus_icon";
       data.item: "focus_part" "elm.swallow.content";
       inherit: "elm/button/base/default";
