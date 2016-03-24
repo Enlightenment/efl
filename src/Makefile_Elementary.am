@@ -874,6 +874,100 @@ endif
 EXTRA_DIST += \
 bin/elementary/test_factory.c
 
+if EFL_ENABLE_TESTS
+
+AM_TESTS_ENVIRONMENT += \
+        ELM_DATA_DIR=${top_builddir}/data/elementary \
+        ELM_RUN_IN_TREE=1 \
+	EFL_RUN_IN_TREE=1
+
+check_PROGRAMS += tests/elementary/elm_suite
+TESTS += tests/elementary/elm_suite
+
+tests_elementary_elm_suite_SOURCES = \
+	tests/elementary/elm_suite.c \
+	tests/elementary/elm_test_helper.c \
+	tests/elementary/elm_test_atspi.c \
+	tests/elementary/elm_test_check.c \
+	tests/elementary/elm_test_colorselector.c \
+	tests/elementary/elm_test_entry.c \
+	tests/elementary/elm_test_init.c \
+	tests/elementary/elm_test_list.c \
+	tests/elementary/elm_test_button.c \
+	tests/elementary/elm_test_image.c \
+	tests/elementary/elm_test_photo.c \
+	tests/elementary/elm_test_actionslider.c \
+	tests/elementary/elm_test_box.c \
+	tests/elementary/elm_test_table.c \
+	tests/elementary/elm_test_thumb.c \
+	tests/elementary/elm_test_menu.c \
+	tests/elementary/elm_test_photocam.c \
+	tests/elementary/elm_test_win.c \
+	tests/elementary/elm_test_icon.c \
+	tests/elementary/elm_test_prefs.c \
+	tests/elementary/elm_test_map.c \
+	tests/elementary/elm_test_glview.c \
+	tests/elementary/elm_test_web.c \
+	tests/elementary/elm_test_toolbar.c \
+	tests/elementary/elm_test_grid.c \
+	tests/elementary/elm_test_diskselector.c \
+	tests/elementary/elm_test_notify.c \
+	tests/elementary/elm_test_mapbuf.c \
+	tests/elementary/elm_test_flip.c \
+	tests/elementary/elm_test_layout.c \
+	tests/elementary/elm_test_slider.c \
+	tests/elementary/elm_test_ctxpopup.c \
+	tests/elementary/elm_test_separator.c \
+	tests/elementary/elm_test_calendar.c \
+	tests/elementary/elm_test_inwin.c \
+	tests/elementary/elm_test_gengrid.c \
+	tests/elementary/elm_test_radio.c \
+	tests/elementary/elm_test_scroller.c \
+	tests/elementary/elm_test_frame.c \
+	tests/elementary/elm_test_datetime.c \
+	tests/elementary/elm_test_player.c \
+	tests/elementary/elm_test_bg.c \
+	tests/elementary/elm_test_video.c \
+	tests/elementary/elm_test_segmentcontrol.c \
+	tests/elementary/elm_test_progressbar.c \
+	tests/elementary/elm_test_fileselector.c \
+	tests/elementary/elm_test_fileselector_button.c \
+	tests/elementary/elm_test_fileselector_entry.c \
+	tests/elementary/elm_test_hoversel.c \
+	tests/elementary/elm_test_multibuttonentry.c \
+	tests/elementary/elm_test_naviframe.c \
+	tests/elementary/elm_test_popup.c \
+	tests/elementary/elm_test_bubble.c \
+	tests/elementary/elm_test_clock.c \
+	tests/elementary/elm_test_conformant.c \
+	tests/elementary/elm_test_dayselector.c \
+	tests/elementary/elm_test_flipselector.c \
+	tests/elementary/elm_test_genlist.c \
+	tests/elementary/elm_test_hover.c \
+	tests/elementary/elm_test_index.c \
+	tests/elementary/elm_test_label.c \
+	tests/elementary/elm_test_panel.c \
+	tests/elementary/elm_test_panes.c \
+	tests/elementary/elm_test_slideshow.c \
+	tests/elementary/elm_test_spinner.c \
+	tests/elementary/elm_test_plug.c
+
+tests_elementary_elm_suite_CPPFLAGS = \
+	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
+	-DELM_IMAGE_DATA_DIR=\"${top_srcdir}/data/elementary\" \
+	-I$(top_srcdir)/src/lib/elementary \
+	-I$(top_builddir)/src/lib/elementary \
+	@CHECK_CFLAGS@ \
+	@ELEMENTARY_CFLAGS@
+
+tests_elementary_elm_suite_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
+tests_elementary_elm_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+endif
+
+EXTRA_DIST += \
+	tests/elementary/elm_suite.h \
+	tests/elementary/elm_test_helper.h
+
 
 # if HAVE_ELUA
 
