@@ -44,6 +44,19 @@ struct _Evas_Engine_Info_Wayland_Egl
    Eina_Bool vsync : 1;
    Eina_Bool indirect : 1;
    unsigned char swap_mode : 4;
+
+   Eina_Bool wobbling : 1;
+   Eina_Bool www_avail : 1;
+   Eina_Bool just_mapped : 1;
+   Eina_Rectangle window;
+   int x_rel, y_rel;
+   int x_cursor, y_cursor;
+   int resizing;
+   uint32_t timestamp;
+   Eina_Bool dragging : 1;
+   Eina_Bool drag_start : 1;
+   Eina_Bool drag_stop : 1;
+   Eina_Bool drag_ack : 1;
 };
 
 #endif

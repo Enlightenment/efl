@@ -173,6 +173,8 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
                        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
                        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
                     }
+                  einfo->www_avail = !!wdata->win->www_surface;
+                  einfo->just_mapped = EINA_TRUE;
                }
           }
 
@@ -195,6 +197,62 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
      }
 
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static void
+_ecore_evas_wl_egl_render_flush_pre(void *data, Evas *e, void *event_info EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+   Evas_Engine_Info_Wayland_Egl *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+   int fx, fy;
+
+   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(e);
+   wdata = ee->engine.data;
+   einfo->window.x = wdata->win->geometry.x;
+   einfo->window.y = wdata->win->geometry.y;
+   einfo->window.w = wdata->win->geometry.w;
+   einfo->window.h = wdata->win->geometry.h;
+   if (einfo->resizing)
+     {
+        einfo->x_rel = 0;
+        einfo->y_rel = 0;
+     }
+   else
+     {
+        einfo->x_rel = wdata->x_rel;
+        einfo->y_rel = wdata->y_rel;
+     }
+   einfo->timestamp = wdata->timestamp;
+   evas_canvas_pointer_canvas_xy_get(e, &einfo->x_cursor, &einfo->y_cursor);
+   evas_output_framespace_get(e, &fx, &fy, NULL, NULL);
+   einfo->x_cursor -= fx;
+   einfo->y_cursor -= fy;
+   wdata->x_rel = wdata->y_rel = 0;
+   einfo->resizing = wdata->win->resizing;
+   einfo->dragging = wdata->dragging;
+   einfo->drag_start = EINA_FALSE;
+   einfo->drag_stop = EINA_FALSE;
+   if (einfo->drag_ack && !einfo->dragging) einfo->drag_stop = EINA_TRUE;
+   if (einfo->dragging && !einfo->drag_ack) einfo->drag_start = EINA_TRUE;
+   einfo->drag_ack = wdata->dragging;
+}
+
+static void
+_ecore_evas_wl_egl_render_post(void *data, Evas *e, void *event_info EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+   Evas_Engine_Info_Wayland_Egl *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+   int fw, fh;
+
+   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(e);
+   wdata = ee->engine.data;
+   if (!einfo->wobbling) return;
+   evas_output_framespace_get(e, NULL, NULL, &fw, &fh);
+   evas_damage_rectangle_add(e, 0, 0, ee->w + fw, ee->h + fh);
+   ecore_wl2_window_opaque_region_set(wdata->win,
+     wdata->win->opaque.x, wdata->win->opaque.y, wdata->win->opaque.w, wdata->win->opaque.h);
 }
 
 /* external functions */
@@ -319,6 +377,10 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
 
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
                            _ecore_evas_wl_common_render_flush_pre, ee);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
+                           _ecore_evas_wl_egl_render_flush_pre, ee);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
+                           _ecore_evas_wl_egl_render_post, ee);
 
    /* FIXME: This needs to be set based on theme & scale */
    if (ee->prop.draw_frame)
@@ -452,6 +514,8 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
                   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
                   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
                }
+             einfo->www_avail = !!wdata->win->www_surface;
+             einfo->just_mapped = EINA_TRUE;
           }
      }
 
