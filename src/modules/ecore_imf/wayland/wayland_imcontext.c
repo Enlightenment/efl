@@ -912,12 +912,9 @@ wayland_im_context_show(Ecore_IMF_Context *ctx)
 EAPI void
 wayland_im_context_hide(Ecore_IMF_Context *ctx)
 {
-   WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
-
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "context_hide");
 
-   if (imcontext->text_input)
-     wl_text_input_hide_input_panel(imcontext->text_input);
+   _input_panel_hide(ctx, EINA_FALSE);
 }
 
 EAPI Eina_Bool
