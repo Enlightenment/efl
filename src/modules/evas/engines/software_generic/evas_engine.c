@@ -1665,14 +1665,17 @@ _image_data_commit(RGBA_Image *im, RGBA_Image_Data_Map *map)
      }
 }
 
-static void *
-eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int length)
+static Eina_Bool
+eng_image_data_unmap(void *engdata EINA_UNUSED, void **image, void *memory, int length)
 {
    RGBA_Image_Data_Map *map;
-   RGBA_Image *im = image;
+   RGBA_Image *im;
    Eina_Bool found = EINA_FALSE;
 
-   if (!im || !memory) return im;
+   if (!image || !*image || !memory)
+     return EINA_FALSE;
+
+   im = *image;
 
    EINA_INLIST_FOREACH(EINA_INLIST_GET(im->maps), map)
      {
@@ -1695,7 +1698,29 @@ eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int l
    if (!found)
      ERR("failed to unmap region %p (%u bytes)", memory, length);
 
-   return im;
+   return found;
+}
+
+static int
+eng_image_data_maps_get(void *engdata EINA_UNUSED, void *image, void **maps, int *lenghts)
+{
+   RGBA_Image_Data_Map *map;
+   RGBA_Image *im = image;
+   int k = 0;
+
+   if (!im) return -1;
+
+   if (!maps || !lenghts)
+     return eina_inlist_count(EINA_INLIST_GET(im->maps));
+
+   EINA_INLIST_FOREACH(EINA_INLIST_GET(im->maps), map)
+     {
+        maps[k] = map->ptr;
+        lenghts[k] = map->size;
+        k++;
+     }
+
+   return k;
 }
 
 static void
@@ -4395,6 +4420,7 @@ static Evas_Func func =
      eng_image_can_region_get,
      eng_image_data_map,
      eng_image_data_unmap,
+     eng_image_data_maps_get,
      eng_image_native_init,
      eng_image_native_shutdown,
      eng_image_native_set,

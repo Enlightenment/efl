@@ -118,10 +118,7 @@ interface Efl.Gfx.Buffer ()
          }
       }
 
-      /* FIXME: not bindable to JS, potentially tricky to bind to Lua */
-
-      /* FIXME: split into read-only and writeable methods? */
-      /* FIXME: This was copy pasta from ector generic buffer. changed a bit. */
+      /* Note: Not for bindings, only C/C++ */
       buffer_map {
          [[Map a region of this buffer for read or write access by the CPU.
 
@@ -156,6 +153,8 @@ interface Efl.Gfx.Buffer ()
             @in data: void*; [[Data pointer returned by a previous call to map]]
             @in length: int; [[Must be the same as returned by map.]]
          }
+         return: bool; [[This will return $false in case of failure (invalid
+                         parameters or state of the object).]]
       }
 
       /* FIXME: naming: buffer_set, buffer_attach, external_data_set, ...? */
