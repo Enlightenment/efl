@@ -69,6 +69,7 @@ struct _Emotion_LibVLC
    /* options */
    int                            video_mute;
    int                            audio_mute;
+   int                            spu_mute;
    int                            audio_vol;
    Emotion_Vis                    vis;
 
@@ -701,7 +702,6 @@ em_add(const Emotion_Engine *api EINA_UNUSED,
    eina_lock_new(&ev->lock);
    eina_condition_new(&ev->wait, &ev->lock);
    ev->ref_count = 1;
-   ev->audio_mute = -1;
    ev->audio_vol = -1;
 
    return ev;
@@ -752,11 +752,14 @@ em_file_open(void *video,
    ev->m = libvlc_media_new_path(libvlc, file);
    EINA_SAFETY_ON_NULL_GOTO(ev->m, error);
 
-   if (ev->opt.no_audio)
+   if (ev->opt.no_audio || ev->audio_mute)
      libvlc_media_add_option(ev->m, ":no-audio");
 
-   if (ev->opt.no_video)
+   if (ev->opt.no_video || ev->video_mute)
      libvlc_media_add_option(ev->m, ":no-video");
+
+   if (ev->spu_mute)
+     libvlc_media_add_option(ev->m, ":no-spu");
 
    /* Create libvlc_media_player */
    ev->mp = libvlc_media_player_new_from_media(ev->m);
@@ -770,16 +773,11 @@ em_file_open(void *video,
                                                libvlc_position_disable, 0);
 
    /* Set sink callbacks */
-   if (!ev->opt.no_video)
-     {
-        libvlc_video_set_format_callbacks(ev->mp, libvlc_video_on_format, NULL);
-        libvlc_video_set_callbacks(ev->mp, libvlc_video_on_lock,
-                                   libvlc_video_on_unlock,
-                                   libvlc_video_on_display, ev);
-     }
+   libvlc_video_set_format_callbacks(ev->mp, libvlc_video_on_format, NULL);
+   libvlc_video_set_callbacks(ev->mp, libvlc_video_on_lock,
+                              libvlc_video_on_unlock,
+                              libvlc_video_on_display, ev);
 
-   if (ev->audio_mute != -1)
-     libvlc_audio_set_mute(ev->mp, 1);
    if (ev->audio_vol != -1)
      libvlc_audio_set_volume(ev->mp, ev->audio_vol);
 
@@ -1268,6 +1266,9 @@ em_video_channel_mute_set(void *video,
    Emotion_LibVLC *ev = video;
 
    ev->video_mute = mute;
+
+   if (libvlc_mp_is_ready(ev))
+     em_video_channel_set(video, mute ? -1 : 0);
 }
 
 static int
@@ -1351,9 +1352,8 @@ em_audio_channel_mute_set(void *video,
 
    ev->audio_mute = mute;
 
-   if (!libvlc_mp_is_ready(ev)) return;
-
-   libvlc_audio_set_mute(ev->mp, mute);
+   if (libvlc_mp_is_ready(ev))
+     em_audio_channel_set(video, mute ? -1 : 0);
 }
 
 static int
@@ -1361,10 +1361,7 @@ em_audio_channel_mute_get(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev))
-     return ev->audio_mute;
-
-   return libvlc_audio_get_mute(ev->mp);
+   return ev->audio_mute;
 }
 
 static void
@@ -1454,14 +1451,22 @@ em_spu_channel_name_get(void *video,
 }
 
 static void
-em_spu_channel_mute_set(void *video EINA_UNUSED, int mute EINA_UNUSED)
+em_spu_channel_mute_set(void *video, int mute)
 {
+   Emotion_LibVLC *ev = video;
+
+   ev->spu_mute = mute;
+
+   if (libvlc_mp_is_ready(ev))
+     em_spu_channel_set(video, mute ? -1 : 0);
 }
 
 static int
-em_spu_channel_mute_get(void *video EINA_UNUSED)
+em_spu_channel_mute_get(void *video)
 {
-   return 0;
+   Emotion_LibVLC *ev = video;
+
+   return ev->spu_mute;
 }
 
 static int
