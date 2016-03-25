@@ -3,15 +3,18 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 datarootdir=@datarootdir@
-datadir=@datadir@
-pkgdatadir=@pkgdatadir@
+datadir=@datadir@/elementary
+pkgdatadir=@datadir@/elementary
+vmaj=@VMAJ@
+vmin=@VMIN@
+vmic=@VMIC@
 themes=${pkgdatadir}/themes
 eoincludedir=${datadir}/eolian/include
 eolian_flags=-I${eoincludedir}/elementary-@VMAJ@
 
 Name: elementary
-Description: Mobile device touchscreen widget library
-Requires.private: @requirement_elm_pc@
+Description: Enlightenment Widgets library
+Requires.private: @requirements_pc_elementary@
 Version: @VERSION@
-Libs: -L${libdir} -lelementary @ELEMENTARY_PC_LIBS@
+Libs: -L${libdir} -lelementary -lefl -leina -lpthread -leet -levas -lecore -lecore_evas -lecore_file -lecore_input -ledje -leo -lethumb_client -lemotion -lecore_imf -lecore_con -leldbus -lefreet -lefreet_mime -lefreet_trash -leio @requirements_public_libs_elementary@ @requirements_public_libs_eina@ @requirements_libs_eina@
 Cflags: -I${includedir}/elementary-@VMAJ@
