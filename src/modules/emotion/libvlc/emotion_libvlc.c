@@ -443,6 +443,11 @@ em_file_open(void *video,
 
    /* Create libvlc_media */
    ev->m = libvlc_media_new_path(libvlc, file);
+   if (strstr(file, "://") == NULL)
+     ev->m = libvlc_media_new_path(libvlc, file);
+   else
+     ev->m = libvlc_media_new_location(libvlc, file);
+
    EINA_SAFETY_ON_NULL_GOTO(ev->m, error);
 
    if (ev->opt.no_audio || ev->audio_mute)
