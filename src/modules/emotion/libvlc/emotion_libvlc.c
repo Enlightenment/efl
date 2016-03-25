@@ -1696,6 +1696,67 @@ libvlc_log(void *data EINA_UNUSED, int level,
                    __FILE__, __FUNCTION__, __LINE__, fmt, args);
 }
 
+static libvlc_instance_t *
+libvlc_new_env_args(void)
+{
+   unsigned int argc = 0, i = 0;
+   const char **argv = NULL;
+   char *args_env, *args_dup = NULL, *str = NULL, *token, *saveptr;
+   libvlc_instance_t *instance = NULL;
+
+   args_env = getenv("EMOTION_LIBVLC_ARGS");
+   if (!args_env)
+     goto fallback;
+
+   /* dup since strtok modify the str */
+   args_dup = strdup(args_env);
+   if (!args_dup)
+     goto fallback;
+
+   /* call strtok to count the numbers of arguments */
+   str = strdup(args_dup);
+   if (!str)
+     goto fallback;
+
+   token = strtok_r(str, " ", &saveptr);
+   while (token)
+     {
+        argc++;
+        token = strtok_r(NULL, " ", &saveptr);
+     }
+   if (!argc)
+     goto fallback;
+
+   /* alloc argv */
+   argv = malloc(argc * sizeof(char *));
+   if (!argv)
+     goto fallback;
+
+   /* call strtok to fill argv */
+   free(str);
+   str = strdup(args_dup);
+   if (!str)
+     goto fallback;
+
+   token = strtok_r(str, " ", &saveptr);
+   while (token && i < argc)
+     {
+        argv[i++] = token;
+        token = strtok_r(NULL, " ", &saveptr);
+     }
+
+   for (i = 0; i < argc; ++i)
+     INF("libvlc_argv[%d]: %s", i, argv[i]);
+
+   instance = libvlc_new(argc, argv);
+
+fallback:
+   free(args_dup);
+   free(str);
+   free(argv);
+   return instance ? instance : libvlc_new(0, NULL);
+}
+
 Eina_Bool
 libvlc_module_init(void)
 {
@@ -1716,7 +1777,7 @@ libvlc_module_init(void)
         return EINA_FALSE;
      }
 
-   libvlc = libvlc_new(0, NULL);
+   libvlc = libvlc_new_env_args();
    if (!libvlc)
      {
         CRI("could not create libvlc instance");
