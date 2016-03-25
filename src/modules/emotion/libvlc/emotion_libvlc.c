@@ -283,17 +283,6 @@ evas_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    eo_event_callback_call(ev->obj, EMOTION_OBJECT_EVENT_FRAME_DECODE, NULL);
 }
 
-/* Returns true if libvlc mediaplayer is ready to process commands. */
-static Eina_Bool
-libvlc_mp_is_ready(Emotion_LibVLC *ev)
-{
-   libvlc_state_t state;
-
-   if (!ev->mp) return EINA_FALSE;
-   state = libvlc_media_player_get_state(ev->mp);
-   return state == libvlc_Playing || state == libvlc_Paused;
-}
-
 /* Fetch all libvlc tracks. */
 static int
 libvlc_fetch_tracks(Emotion_LibVLC *ev)
@@ -619,7 +608,7 @@ em_size_get(void *video,
    *width = 0;
    *height = 0;
 
-   if (!libvlc_mp_is_ready(ev)) return;
+   if (!ev->started) return;
 
    track = libvlc_get_current_video_track(ev);
    if (track)
@@ -634,7 +623,7 @@ em_pos_get(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return 0.0;
+   if (!ev->started) return 0.0;
 
    return ev->pos;
 }
@@ -645,7 +634,7 @@ em_pos_set(void *video,
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev))
+   if (!ev->started)
      {
         _emotion_seek_done(ev->obj);
         return;
@@ -661,7 +650,7 @@ em_len_get(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return 0.0;
+   if (!ev->started) return 0.0;
 
    return ev->len;
 }
@@ -671,7 +660,7 @@ em_buffer_size_get(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return 0.0;
+   if (!ev->started) return 0.0;
 
    return ev->buffer_cache;
 }
@@ -681,7 +670,7 @@ em_fps_num_den_get(Emotion_LibVLC *ev, int *num, int *den)
 {
    libvlc_media_track_t *track;
 
-   if (!libvlc_mp_is_ready(ev)) return;
+   if (!ev->started) return;
 
    track = libvlc_get_current_video_track(ev);
    if (track)
@@ -753,7 +742,7 @@ em_ratio_get(void *video)
    Emotion_LibVLC *ev = video;
    libvlc_media_track_t *track;
 
-   if (!libvlc_mp_is_ready(ev)) return 0.0;
+   if (!ev->started) return 0.0;
 
    track = libvlc_get_current_video_track(ev);
    if (track)
@@ -771,7 +760,7 @@ em_video_handled(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return 0.0;
+   if (!ev->started) return 0.0;
 
    return libvlc_video_get_track_count(ev->mp) > 0;
 }
@@ -781,7 +770,7 @@ em_audio_handled(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return 0.0;
+   if (!ev->started) return 0.0;
 
    return libvlc_audio_get_track_count(ev->mp) > 0;
 }
@@ -791,7 +780,7 @@ em_seekable(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return 0;
+   if (!ev->started) return 0;
 
    return libvlc_media_player_is_seekable(ev->mp);
 }
@@ -835,7 +824,7 @@ em_event_feed(void *video, int event)
    Emotion_LibVLC *ev = video;
    unsigned int navigate;
 
-   if (!libvlc_mp_is_ready(ev)) return;
+   if (!ev->started) return;
 
    switch (event)
      {
@@ -906,7 +895,7 @@ em_video_channel_count(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return -1;
+   if (!ev->started) return -1;
 
    return libvlc_video_get_track_count(ev->mp);
 }
@@ -917,7 +906,7 @@ em_video_channel_set(void *video,
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return;
+   if (!ev->started) return;
 
    if (channel < 0)
      libvlc_video_set_track(ev->mp, -1);
@@ -936,7 +925,7 @@ em_video_channel_get(void *video)
    Emotion_LibVLC *ev = video;
    int id;
 
-   if (!libvlc_mp_is_ready(ev)) return -1;
+   if (!ev->started) return -1;
 
    id = libvlc_video_get_track(ev->mp);
 
@@ -949,7 +938,7 @@ em_video_subtitle_file_set(void *video,
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return;
+   if (!ev->started) return;
 
    free(ev->subtitle_file);
    ev->subtitle_file = filepath ? strdup(filepath) : NULL;
@@ -971,7 +960,7 @@ em_video_channel_name_get(void *video,
    Emotion_LibVLC *ev = video;
    libvlc_media_track_t *track;
 
-   if (!libvlc_mp_is_ready(ev)) return NULL;
+   if (!ev->started) return NULL;
 
    track = libvlc_get_track_at_pos(ev, channel, libvlc_track_video);
    if (track)
@@ -990,7 +979,7 @@ em_video_channel_mute_set(void *video,
      return;
    ev->video_mute = mute;
 
-   if (libvlc_mp_is_ready(ev))
+   if (ev->started)
      em_video_channel_set(video, mute ? -1 : 0);
 }
 
@@ -1014,7 +1003,7 @@ em_audio_channel_count(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return -1;
+   if (!ev->started) return -1;
 
    return em_channel_count(libvlc_audio_get_track_count(ev->mp));
 }
@@ -1025,7 +1014,7 @@ em_audio_channel_set(void *video,
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return;
+   if (!ev->started) return;
 
    if (channel < 0)
      libvlc_audio_set_track(ev->mp, -1);
@@ -1044,7 +1033,7 @@ em_audio_channel_get(void *video)
    Emotion_LibVLC *ev = video;
    int id;
 
-   if (!libvlc_mp_is_ready(ev)) return -1;
+   if (!ev->started) return -1;
 
    id = libvlc_audio_get_track(ev->mp);
 
@@ -1058,7 +1047,7 @@ em_audio_channel_name_get(void *video,
    Emotion_LibVLC *ev = video;
    libvlc_media_track_t *track;
 
-   if (!libvlc_mp_is_ready(ev)) return NULL;
+   if (!ev->started) return NULL;
 
    track = libvlc_get_track_at_pos(ev, channel, libvlc_track_audio);
    if (track)
@@ -1075,7 +1064,7 @@ em_audio_channel_mute_set(void *video,
 
    ev->audio_mute = mute;
 
-   if (libvlc_mp_is_ready(ev))
+   if (ev->started)
      em_audio_channel_set(video, mute ? -1 : 0);
 }
 
@@ -1099,7 +1088,7 @@ em_audio_channel_volume_set(void *video,
      vol = 1.0;
    ev->audio_vol = vol * 100;
 
-   if (!libvlc_mp_is_ready(ev)) return;
+   if (!ev->started) return;
 
    libvlc_audio_set_volume(ev->mp, ev->audio_vol);
 }
@@ -1109,7 +1098,7 @@ em_audio_channel_volume_get(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev))
+   if (!ev->started)
      return ev->audio_vol / 100.0;
 
    return libvlc_audio_get_volume(ev->mp) / 100.0;
@@ -1120,7 +1109,7 @@ em_spu_channel_count(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return -1;
+   if (!ev->started) return -1;
 
    return em_channel_count(libvlc_video_get_spu_count(ev->mp));
 }
@@ -1131,7 +1120,7 @@ em_spu_channel_set(void *video,
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return;
+   if (!ev->started) return;
 
    if (channel < 0)
      libvlc_video_set_spu(ev->mp, -1);
@@ -1150,7 +1139,7 @@ em_spu_channel_get(void *video)
    Emotion_LibVLC *ev = video;
    int id;
 
-   if (!libvlc_mp_is_ready(ev)) return -1;
+   if (!ev->started) return -1;
 
    id = libvlc_video_get_spu(ev->mp);
 
@@ -1164,7 +1153,7 @@ em_spu_channel_name_get(void *video,
    Emotion_LibVLC *ev = video;
    libvlc_media_track_t *track;
 
-   if (!libvlc_mp_is_ready(ev)) return NULL;
+   if (!ev->started) return NULL;
 
    track = libvlc_get_track_at_pos(ev, channel, libvlc_track_text);
    if (track)
@@ -1180,7 +1169,7 @@ em_spu_channel_mute_set(void *video, int mute)
 
    ev->spu_mute = mute;
 
-   if (libvlc_mp_is_ready(ev))
+   if (ev->started)
      em_spu_channel_set(video, mute ? -1 : 0);
 }
 
@@ -1197,7 +1186,7 @@ em_chapter_count(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return 0;
+   if (!ev->started) return 0;
 
    return libvlc_media_player_get_chapter_count(ev->mp);
 }
@@ -1207,7 +1196,7 @@ em_chapter_set(void *video, int chapter)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return;
+   if (!ev->started) return;
 
    libvlc_media_player_set_chapter(ev->mp, chapter);
 }
@@ -1217,7 +1206,7 @@ em_chapter_get(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return 0;
+   if (!ev->started) return 0;
 
    return libvlc_media_player_get_chapter(ev->mp);
 }
@@ -1227,7 +1216,7 @@ em_chapter_name_get(void *video, int chapter)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return NULL;
+   if (!ev->started) return NULL;
 
    if (ev->nb_chapters == 0)
      {
@@ -1246,7 +1235,7 @@ em_speed_set(void *video, double speed)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return;
+   if (!ev->started) return;
 
    libvlc_media_player_set_rate(ev->mp, speed);
 }
@@ -1256,7 +1245,7 @@ em_speed_get(void *video)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return 1.0;
+   if (!ev->started) return 1.0;
 
    return libvlc_media_player_get_rate(ev->mp);
 }
@@ -1272,7 +1261,7 @@ em_meta_get(void *video, int meta)
 {
    Emotion_LibVLC *ev = video;
 
-   if (!libvlc_mp_is_ready(ev)) return NULL;
+   if (!ev->started) return NULL;
 
    if (meta <= 0 || meta >= META_TRACK_COUNT)
      return NULL;
