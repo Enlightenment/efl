@@ -7,8 +7,6 @@ group { name: "elm/scroller/base/default";
    alias: "elm/scroller/base/popup/default";
    alias: "elm/scroller/base/popup/transparent";
 
-   images.image: "inset_shadow.png" COMP;
-   images.image: "bevel_in.png" COMP;
    images.image: "bevel_out.png" COMP;
    images.image: "runner_horiz.png" COMP;
    images.image: "runner_vert.png" COMP;
@@ -45,13 +43,10 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"y_vbar_up", x,y,w, h);
          get_geometry(PART:"y_vbar_up_mapper", x1,y1,w1, h1);
 
-         if(((y1 <= y) && (y <= (y1 + h1))) && (0 == get_int(loop_y)))
-         {
+         if (((y1 <= y) && (y <= (y1 + h1))) && (0 == get_int(loop_y))) {
             set_state(PART:"arrow1_vbar", "hidden", 0.0);
             set_state(PART:"sb_vbar_a1", "hidden", 0.0);
-         }
-         else
-         {
+         } else {
             set_state(PART:"arrow1_vbar", "default", 0.0);
             set_state(PART:"sb_vbar_a1", "default", 0.0);
          }
@@ -59,18 +54,15 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"y_vbar_down", x,y,w, h);
          get_geometry(PART:"y_vbar_down_mapper", x1,y1,w1, h1);
 
-         if(((y1 <= (y + h)) && ((y+ h) <= (y1 + h1))) && (0 == get_int(loop_y)))
-         {
+         if (((y1 <= (y + h)) && ((y+ h) <= (y1 + h1))) && (0 == get_int(loop_y))) {
             set_state(PART:"arrow2_vbar", "hidden", 0.0);
             set_state(PART:"sb_vbar_a2", "hidden", 0.0);
-         }
-         else
-         {
+         } else {
             set_state(PART:"arrow2_vbar", "default", 0.0);
             set_state(PART:"sb_vbar_a2", "default", 0.0);
          }
 
-         if(val < 10)
+         if (val < 10)
             timer(0.1,"action_on_pos_vbar", val+1);
       }
 
@@ -80,13 +72,10 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"x_hbar_left", x,y,w, h);
          get_geometry(PART:"x_hbar_left_mapper", x1,y1,w1, h1);
 
-         if(((x1 <= x) && (x <= (x1 + w1))) && (0 == get_int(loop_x)))
-         {
+         if (((x1 <= x) && (x <= (x1 + w1))) && (0 == get_int(loop_x))) {
             set_state(PART:"arrow1_hbar", "hidden", 0.0);
             set_state(PART:"sb_hbar_a1", "hidden", 0.0);
-         }
-         else
-         {
+         } else {
             set_state(PART:"arrow1_hbar", "default", 0.0);
             set_state(PART:"sb_hbar_a1", "default", 0.0);
          }
@@ -94,18 +83,15 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"x_hbar_right", x,y,w, h);
          get_geometry(PART:"x_hbar_right_mapper", x1,y1,w1, h1);
 
-         if(((x1 <= (x + w)) && ((x + w) <= (x1 + w1))) && (0 == get_int(loop_x)))
-         {
+         if (((x1 <= (x + w)) && ((x + w) <= (x1 + w1))) && (0 == get_int(loop_x))) {
             set_state(PART:"arrow2_hbar", "hidden", 0.0);
             set_state(PART:"sb_hbar_a2", "hidden", 0.0);
-         }
-         else
-         {
+         } else {
             set_state(PART:"arrow2_hbar", "default", 0.0);
             set_state(PART:"sb_hbar_a2", "default", 0.0);
          }
 
-         if(val < 10)
+         if (val < 10)
             timer(0.1,"action_on_pos_hbar", val+1);
       }
    }
@@ -712,44 +698,17 @@ group { name: "elm/scroller/base/default";
       part { name: "elm.swallow.background"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.offset: 1 1;
-            rel2.relative: 0.0 0.0;
-            rel2.offset: -2 -2;
             rel2.to_x: "sb_vbar";
             rel2.to_y: "sb_hbar";
+            rel2.relative: 0.0 0.0;
          }
       }
       part { name: "elm.swallow.content"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.offset: 1 1;
-            rel2.relative: 0.0 0.0;
-            rel2.offset: -2 -2;
             rel2.to_x: "sb_vbar";
             rel2.to_y: "sb_hbar";
-         }
-      }
-      part { name: "inset"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "bevel_in.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel1.to: "bg";
-            rel1.offset: -1 -1;
-            rel2.to: "bg";
-            rel2.offset: 0 0;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "shadow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "inset_shadow.png";
-            image.border: 5 5 7 3;
-            image.middle: 0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            fill.smooth: 0;
-            color: 255 255 255 128;
+            rel2.relative: 0.0 0.0;
          }
       }
       part { name: "elm.swallow.overlay"; type: SWALLOW;
@@ -1281,11 +1240,6 @@ group { name: "elm/scroller/base/noclip";
             visible: 0;
          }
       }
-      part { name: "shadow";
-         description { state: "default" 0.0;
-            visible: 0;
-         }
-      }
    }
 }
 
@@ -1353,11 +1307,6 @@ group { name: "elm/scroller/base/popup/no_inset_shadow";
          }
       }
       part { name: "inset";
-         description { state: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "shadow";
          description { state: "default" 0.0;
             visible: 0;
          }

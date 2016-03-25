@@ -95,7 +95,7 @@ group { name: "elm/scroller/entry/default";
          target: "elm.swallow.end";
       }
       part { name: "glow";
-         insert_after: "shadow";
+         insert_after: "elm.swallow.content";
          mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to: "bg";

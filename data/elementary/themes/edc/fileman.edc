@@ -434,90 +434,24 @@ group { name: "e/fileman/desktop/list/fixed";
 
 group { name: "e/fileman/default/icon/fixed";
    alias: "e/fileman/default/icon/variable";
-   images.image: "vgrad_med_dark.png" COMP;
-   images.image: "bevel_out.png" COMP;
-   images.image: "shine.png" COMP;
-   images.image: "glow_small.png" COMP;
-   images.image: "shadow_square_tiny.png" COMP;
    images.image: "sym_icon_op_ask.png" COMP;
    images.image: "sym_icon_op_copy.png" COMP;
    images.image: "sym_icon_op_move.png" COMP;
    styles {
       style { name: "fileman_icon_name";
-         base: "font="FN" font_size=10 text_class=fileman_icon align=center color=#ffffffff wrap=mixed style=shadow,bottom shadow_color=#00000080 align=center ellipsis=1.0";
+         base: "font="FN" font_size=10 text_class=fileman_icon align=center color=#a0a0a0ff wrap=mixed ellipsis=1.0";
       }
       style { name: "fileman_icon_name_selected";
-         base: "font="FN" font_size=10 text_class=fileman_icon align=center color=#3399ffff wrap=mixed style=glow glow_color=#3399ff18 align=center glow2_color=#3399ff12 ellipsis=1.0";
+         base: "font="FN" font_size=10 text_class=fileman_icon align=center color=#ffffffff wrap=mixed ellipsis=1.0";
       }
    }
    script {
       public longpressed;
    }
    parts {
-      part { name: "shadow"; mouse_events: 0;
+      part { name: "base"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "shadow_square_tiny.png";
-            image.border: 6 6 6 6;
-            fill.smooth: 0;
-            rel1.offset: -3 -2;
-            rel1.to: "sel_base";
-            rel2.offset: 2 3;
-            rel2.to: "sel_base";
-            fill.smooth: 0;
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "sel_glow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "sel_base";
-            rel2.to: "sel_base";
-            image.normal: "glow_small.png";
-            image.border: 7 7 7 7;
-            fill.smooth: 0;
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel2.offset: 3 3;
-            color: 255 255 255 128;
-            visible: 1;
-         }
-         description { state: "hilighted" 0.0;
-            inherit: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel2.offset: 3 3;
-            color: 255 255 255 255;
-            visible: 1;
-         }
-      }
-      part { name: "sel_base"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.offset: 2 2;
-            rel2.offset: -3 -3;
-            image.normal: "vgrad_med_dark.png";
-            fill.smooth: 0;
-            TILED_HORIZ(120)
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "sel_bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "sel_base";
-            rel2.to: "sel_base";
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
+            color: 51 153 255 255;
             visible: 0;
          }
          description { state: "selected" 0.0;
@@ -528,14 +462,12 @@ group { name: "e/fileman/default/icon/fixed";
 //////////////////////////////      
       part { name: "label0"; type: SPACER;
          scale: 1;
-         clip_to: "textmaster";
          description { state: "default" 0.0;
             align: 0.5 1.0;
             rel1.offset: 4 -5;
-            rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
-            min: 0 20;
-            max: 99999 26;
+            min: 0 10;
+            max: 99999 28;
             fixed: 0 1;
          }
       }
@@ -546,8 +478,6 @@ group { name: "e/fileman/default/icon/fixed";
             align: 0.5 0.0;
             rel1.to: "label0";
             rel2.to: "label0";
-            rel2.offset: -1 6;
-            color_class: "fileman_icon";
             text {
                style: "fileman_icon_name";
                align: 0.5 0.0;
@@ -557,35 +487,11 @@ group { name: "e/fileman/default/icon/fixed";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "label2"; type: TEXTBLOCK; mouse_events: 0;
-         scale: 1;
-         clip_to: "textmaster";
-         description { state: "default" 0.0;
-            align: 0.5 0.0;
-            rel1.to: "e.text.label";
-            rel2.to: "e.text.label";
-            color_class: "fileman_icon_selected";
-            text {
-               text_source: "e.text.label";
-               style: "fileman_icon_name_selected";
-               align: 0.5 0.0;
-               text_class: "fileman_icon_selected";
-            }
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
+            text.style: "fileman_icon_name_selected";
          }
       }
       part { name: "textmaster"; type: RECT;
          description { state: "default" 0.0;
-            rel1.offset: -20 -20;
-            rel2.offset: 19 19;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -700,23 +606,6 @@ group { name: "e/fileman/default/icon/fixed";
          }
       }
 //////////////////////////////      
-      part { name: "sel_shine"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -2;
-            rel1.to: "sel_base";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to: "sel_base";
-            FIXED_SIZE(69, 5)
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-//////////////////////////////      
       part { name: "event"; type: RECT;
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
@@ -760,34 +649,13 @@ group { name: "e/fileman/default/icon/fixed";
          signal: "e,state,selected"; source: "e";
          action: STATE_SET "selected" 0.0;
          target: "e.text.label";
-         target: "label2";
-         target: "shadow";
-         target: "sel_base";
-         target: "sel_bevel";
-         target: "sel_shine";
-      }
-      program {
-         signal: "e,state,selected"; source: "e";
-         action: STATE_SET "hilighted" 0.0;
-         transition: DECELERATE 0.2;
-         target: "sel_glow";
-         after: "sel2";
-      }
-      program { name: "sel2";
-         action: STATE_SET "visible" 0.0;
-         transition: SINUSOIDAL 0.3;
-         target: "sel_glow";
+         target: "base";
       }
       program {
          signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.text.label";
-         target: "label2";
-         target: "shadow";
-         target: "sel_base";
-         target: "sel_bevel";
-         target: "sel_shine";
-         target: "sel_glow";
+         target: "base";
       }
       program {
          signal: "mouse,down,1"; source: "label_event";
@@ -868,59 +736,48 @@ group { name: "e/fileman/default/icon/fixed";
 group { name: "e/fileman/desktop/icon/fixed";
    inherit: "e/fileman/default/icon/fixed";
    alias: "e/fileman/desktop/icon/variable";
-   images.image: "darken_square.png" COMP;
-   styles {
-      style { name: "fileman_icon_full";
-         base: "font="FN" font_size=10 text_class=fileman_icon align=center color=#ff00ffff wrap=mixed style=shadow,bottom shadow_color=#00000080 align=center";
-      }
-   }
    parts {
-      part { name: "label1"; type: TEXTBLOCK; mouse_events: 0;
-         insert_after: "e.text.label";
-         scale: 1;
-         description { state: "default" 0.0;
-            align: 0.5 0.0;
-            rel1.to: "e.text.label";
-            rel2.to: "e.text.label";
-            color_class: "fileman_icon";
-            text {
-               text: "xxxxx";
-               text_source: "e.text.label";
-               style: "fileman_icon_full";
-               align: 0.5 0.0;
-               text_class: "fileman_icon";
-               max: 0 1;
-            }
-            fixed: 1 1;
+      part { name: "base"; type: RECT; mouse_events: 0;
+         description { state: "selected" 0.0;
             visible: 0;
          }
       }
-      part { name: "label_min"; type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            align: 0.5 0.0;
-            rel1.to: "label1";
-            rel2.to: "label1";
-            max: 99999 26;
-            fixed: 1 1;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
+      part { name: "back"; type: RECT; mouse_events: 0;
          insert_before: "e.text.label";
          clip_to: "textmaster";
          description { state: "default" 0.0;
-            rel1.offset: -8 -7;
-            rel1.to: "e.text.label";
-            rel2.offset: 7 7;
-            rel2.to: "label_min";
-            image.normal: "darken_square.png";
-            image.border: 6 6 6 6;
-            fill.smooth: 0;
+            rel1.offset: -3 -3;
+            rel1.to: "labelmin";
+            rel2.offset: 2 2;
+            rel2.to: "labelmin";
+            color: 0 0 0 128;
             fixed: 1 1;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            color: 0 0 0 192;
+         }
+      }
+      part { name: "labelmin"; type: TEXTBLOCK; mouse_events: 0;
+         insert_after: "event";
+         scale: 1;
+         description { state: "default" 0.0;
+            align: 0.5 0.0;
+            rel1.to: "label0";
+            rel2.to: "label0";
+            text {
+               style: "fileman_icon_name";
+               align: 0.5 0.0;
+               text_class: "fileman_icon";
+               text_source: "e.text.label";
+               max: 0 1;
+            }
+            fixed: 1 1;
+            visible: 1;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            text.style: "fileman_icon_name_selected";
          }
       }
    }
@@ -928,12 +785,14 @@ group { name: "e/fileman/desktop/icon/fixed";
       program {
          signal: "e,state,selected"; source: "e";
          action: STATE_SET "selected" 0.0;
-         target: "bevel";
+         target: "back";
+         target: "labelmin";
       }
       program {
          signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
-         target: "bevel";
+         target: "back";
+         target: "labelmin";
       }
    }
 }
@@ -962,7 +821,7 @@ group { name: "e/fileman/default/scrollframe";
          }
       }
       part { name: "e.box.operations"; type: BOX;
-         insert_after: "inset";
+         insert_after: "e.swallow.overlay";
          description { state: "default" 0.0;
             rel1.offset: 3 3;
             rel1.to: "bg";
@@ -980,11 +839,9 @@ group { name: "e/fileman/default/scrollframe";
 }
 
 group { name: "e/fileman/default/window/main";
-   images.image: "bevel_dark_out.png" COMP;
    parts {
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color_class: "fwin_base";
             color: 64 64 64 255;
          }
       }
@@ -992,31 +849,23 @@ group { name: "e/fileman/default/window/main";
          description { state: "default" 0.0;
          }
       }
-      part { name: "bevel";
-         description { state: "default" 0.0;
-            image.normal: "bevel_dark_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
-         }
-      }
       part { name: "e.swallow.favorites"; type: SWALLOW;
          description { state: "default" 0.0;
             align: 0.0 1.0;
-            rel1.offset: 4 4;
-            rel1.to: "region"; 
-            rel2.offset: 4 -5;
+            rel1.offset: 0 0;
+            rel1.to: "region";
+            rel2.offset: -1 -1;
             rel2.relative: 0.0 1.0;
-            rel2.to: "region"; 
+            rel2.to: "region";
             fixed: 1 0;
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.offset: 4 4;
-            rel1.to: "region"; 
-            rel2.offset: -5 -5;
-            rel2.to: "region"; 
+            rel1.offset: 0 0;
+            rel1.to: "region";
+            rel2.offset: -1 -1;
+            rel2.to: "region";
             align: 1.0 1.0;
          }
          description { state: "fav" 0.0;
@@ -1030,18 +879,18 @@ group { name: "e/fileman/default/window/main";
          }
          description { state: "tb_top" 0.0;
             align: 0.5 0.0;
-            rel1.offset: 4 4;
-            // XXX: this is a bug workaround. should be -4 4;
-            rel2.offset: -9 4;
+            rel1.offset: 0 0;
+            // XXX: this is a bug workaround. should be -1 0;
+            rel2.offset: -1 0;
             rel2.relative: 1.0 0.0;
             fixed: 0 1;
          }
          description { state: "tb_bottom" 0.0;
             align: 0.5 1.0;
-            rel1.offset: 4 -5;
+            rel1.offset: 0 -1;
+            // XXX: this is a bug workaround. should be -1 -1;
+            rel2.offset: -1 -1;
             rel1.relative: 0.0 1.0;
-            // XXX: this is a bug workaround. should be -4 -5;
-            rel2.offset: -9 -5;
             fixed: 0 1;
          }
       }
@@ -1051,22 +900,22 @@ group { name: "e/fileman/default/window/main";
          description { state: "tb_top" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0.0 1.0;
-            rel1.to_y: "e.swallow.toolbar"; 
+            rel1.to_y: "e.swallow.toolbar";
          }
          description { state: "tb_bottom" 0.0;
             inherit: "default" 0.0;
             rel2.relative: 1.0 0.0;
-            rel2.to_y: "e.swallow.toolbar"; 
+            rel2.to_y: "e.swallow.toolbar";
          }
          description { state: "tb_left" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 1.0 0.0;
-            rel1.to_x: "e.swallow.toolbar"; 
+            rel1.to_x: "e.swallow.toolbar";
          }
          description { state: "tb_right" 0.0;
             inherit: "default" 0.0;
             rel2.relative: 0.0 1.0;
-            rel2.to_x: "e.swallow.toolbar"; 
+            rel2.to_x: "e.swallow.toolbar";
          }
       }
    }
@@ -1115,27 +964,10 @@ group { name: "e/fileman/default/window/main";
 }
 
 group { name: "e/fileman/toolbar/default/base";
-   images.image: "vgrad_med_lighter.png" COMP;
-   images.image: "bevel_out.png" COMP;
-   images.image: "shine.png" COMP;
-   images.image: "shadow_square_tiny.png" COMP;
    parts {
-      part { name: "shadow"; mouse_events: 0;
+      part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            rel1.offset: -1 0;
-            rel2.offset: 0 1;
-            image.normal: "shadow_square_tiny.png";
-            image.border: 6 6 6 6;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "base";
-         description { state: "default" 0.0;
-            image.normal: "vgrad_med_lighter.png";
-            rel1.offset: 2 2;
-            rel2.offset: -3 -3;
-            fill.smooth: 0;
-            TILED_HORIZ(120)
+            color: 64 64 64 255;
          }
       }
       part { name: "e.swallow.event"; type: SWALLOW;
@@ -1146,29 +978,8 @@ group { name: "e/fileman/toolbar/default/base";
       }
       part { name: "e.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.offset: 2 2;
-            rel2.offset: -3 -3;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "shine"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -2;
-            rel1.to: "base";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to: "base";
-            FIXED_SIZE(69, 5)
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
          }
       }
    }
@@ -1189,26 +1000,15 @@ group { name: "e/fileman/toolbar/default/base";
 }
 
 group { name: "e/fileman/popup/default";
-   images.image: "vgrad_med_lighter.png" COMP;
-   images.image: "bevel_out.png" COMP;
-   images.image: "shine.png" COMP;
-   parts {   
+   parts {
       part { name: "base"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             color: 64 64 64 255;
          }
       }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
-         }
-      }
       part { name: "e.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.offset: 4 0;
+            rel1.offset: 4 4;
             rel1.relative: 0.0 1.0;
             rel1.to_y: "e.text.title";
             rel2.offset: -5 -5;
@@ -1216,32 +1016,19 @@ group { name: "e/fileman/popup/default";
       }
       part { name: "e.text.title"; type: TEXT; mouse_events: 0;
          scale: 1;
-         effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
-            color_class: "fileman_popup_title";
             rel1.relative: 0.0 0.0;
-            rel1.offset: 1 3;
+            rel1.offset: 4 4;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -2 3;
+            rel2.offset: -5 4;
             align: 0.5 0.0;
-            color: FN_COL_DEFAULT;
+            color: 160 160 160 255;
             text { font: FNBD; size: 10;
                text_class: "fileman_popup_title";
                align: 0.5 0.0;
                min: 0 1;
             }
             fixed: 0 1;
-         }
-      }
-      part { name: "shine"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -2;
-            rel1.to: "base";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to: "base";
-            FIXED_SIZE(69, 5)
          }
       }
    }
@@ -1259,16 +1046,6 @@ group { name: "e/fileman/desktop/scrollframe";
          description { state: "default" 0.0;
             rel1.offset: 0 0;
             rel2.offset: -1 -1;
-         }
-      }
-      part { name: "shadow";
-         description { state: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "inset";
-         description { state: "default" 0.0;
-            visible: 0;
          }
       }
    }
@@ -2215,16 +1992,13 @@ group { name: "modules/efm_navigation/main";
 }
 
 group { name: "modules/efm_navigation/pathbar_button";
-   images.image: "horizontal_separated_bar_small_glow.png" COMP;
    parts {
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 6 6;
-            rel2.offset: -7 -6;
-            color: FN_COL_DEFAULT;
-            color_class: "button_text";
+            rel2.offset: -7 -7;
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -2234,39 +2008,15 @@ group { name: "modules/efm_navigation/pathbar_button";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            color: 255 255 255 255;
          }
       }
-      part { name: "sel_label"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
-         scale: 1;
+      part { name: "bar"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.offset: -3 -3;
-            rel1.to: "e.text.label";
-            rel2.offset: 3 1;
-            rel2.to: "e.text.label";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "button_selected";
-            text { font: FN; size: 10;
-              text_source: "e.text.label";
-              align: 0.5 0.5;
-              text_class: "button_text";
-            }
-            visible: 0;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "bar"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "horizontal_separated_bar_small_glow.png";
-            image.border: 4 4 4 4;
-            fill.smooth: 0;
+            align: 0.5 1.0;
+            min: 1 5;
             rel1.relative: 0.0 1.0;
-            rel1.offset: -3 -6;
-            rel2.offset: 2 3;
+            color: 51 153 255 255;
             visible: 0;
          }
          description { state: "selected" 0.0;
@@ -2289,14 +2039,12 @@ group { name: "modules/efm_navigation/pathbar_button";
          signal: "e,state,selected"; source: "e";
          action: STATE_SET "selected" 0.0;
          target: "e.text.label";
-         target: "sel_label";
          target: "bar";
       }
       program {
          signal: "e,state,default"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.text.label";
-         target: "sel_label";
          target: "bar";
       }
    }
@@ -2307,7 +2055,6 @@ group { name: "modules/efm_navigation/pathbar_scrollframe";
    images.image: "sym_right_light_normal.png" COMP;
    images.image: "sym_left_glow_normal.png" COMP;
    images.image: "sym_right_glow_normal.png" COMP;
-   images.image: "horiz_bar_inset.png" COMP;
    parts {
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
@@ -2324,18 +2071,6 @@ group { name: "modules/efm_navigation/pathbar_scrollframe";
             rel1.to_x: "arrow1_ev";
             rel2.relative: 0.0 1.0;
             rel2.to_x: "arrow2_ev";
-         }
-      }
-      part { name: "inset"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.offset: -1 -4;
-            rel1.to_x: "clipper";
-            rel2.offset: 0 2;
-            rel2.to_x: "clipper";
-            image.normal: "horiz_bar_inset.png";
-            image.border: 7 7 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
          }
       }
       part { name: "e.dragable.hbar"; mouse_events: 0;

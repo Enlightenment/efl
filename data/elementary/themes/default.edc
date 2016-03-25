@@ -90,7 +90,6 @@ collections {
 #include "edc/gadman.edc"
 #include "edc/syscon.edc"
 #include "edc/pointer.edc"
-#include "edc/sys.edc"
 #include "edc/winlist.edc"
 #include "edc/desklock.edc"
 #include "edc/deskmirror.edc"
