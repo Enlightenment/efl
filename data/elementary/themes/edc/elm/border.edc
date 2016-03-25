@@ -44,14 +44,9 @@ group { name: "elm/ews/decoration/default";
    parts {
       part { name: "shadow"; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "win_shadow.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
-            rel1.offset: -7  -3;
             rel1.to: "top";
-            rel2.offset: 6 11;
             rel2.to: "bottom";
-            fill.smooth: 0;
+            WIN_SHADOW;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -665,12 +660,7 @@ group { name: "elm/ews/decoration/borderless";
    parts {
       part { name: "shadow"; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "win_shadow.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
-            rel1.offset: -7  -3;
-            rel2.offset: 6 11;
-            fill.smooth: 0;
+            WIN_SHADOW;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -819,8 +809,7 @@ group { name: "elm/border/base/default";
       }
       part { name: "shadow_spacer"; type: SPACER;
          description { state: "default";
-            rel1.offset: 7 5;
-            rel2.offset: -8 -12;
+            WIN_SHADOW_SPACER;
          }
          description { state: "max";
             rel1.offset: 0 0;
@@ -829,14 +818,9 @@ group { name: "elm/border/base/default";
       }
       part { name: "shadow"; mouse_events: 0; clip_to: "shadow_clip";
          description { state: "default" 0.0;
-            image.normal: "win_shadow.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
             rel1.to: "shadow_spacer";
-            rel1.offset: -7 -3;
             rel2.to: "shadow_spacer";
-            rel2.offset: 6 11;
-            fill.smooth: 0;
+            WIN_SHADOW;
          }
          description { state: "shaded";
             inherit: "default";

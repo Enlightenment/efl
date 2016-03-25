@@ -770,14 +770,9 @@ group { name: "elm/hover/base/menu/default";
       part { name: "shadow";
          clip_to: "bottomclip";
          description { state: "default" 0.0;
-            image.normal: "win_shadow.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
             rel1.to: "bottom";
-            rel1.offset: -7  -3;
             rel2.to: "bottom";
-            rel2.offset: 6 11;
-            fill.smooth: 0;
+            WIN_SHADOW;
          }
       }
       part { name: "top";
@@ -1030,14 +1025,9 @@ group { name: "elm/hover/base/main_menu_submenu/default";
       part { name: "shadow";
          clip_to: "bottomclip";
          description { state: "default" 0.0;
-            image.normal: "win_shadow.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
             rel1.to: "bottom";
-            rel1.offset: -7  -3;
             rel2.to: "bottom";
-            rel2.offset: 6 11;
-            fill.smooth: 0;
+            WIN_SHADOW;
          }
       }
       part { name: "top";

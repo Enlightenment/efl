@@ -270,13 +270,8 @@ group { name: "e/comp/frame/default";
       part { name: "shadow"; mouse_events: 0;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            image.normal: "win_shadow.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
             rel.to: "e.swallow.content";
-            rel1.offset: -7  -3;
-            rel2.offset: 6 11;
-            fill.smooth: 0;
+            WIN_SHADOW;
          }
          description { state: "hidden" 0.0;
             inherit;
@@ -613,7 +608,13 @@ group { name: "e/comp/frame/still/fast";
 
 group { name: "e/comp/frame/menu";
    inherit: "e/comp/frame/popup";
+   images.image: "win_menu_shadow.png" COMP;
    parts {
+      part { name: "shadow";
+         description { state: "default" 0.0;
+            WIN_MENU_SHADOW;
+         }
+      }
       part { name: "shower";
          description { state: "default" 0.0;
             rel1.relative: 0.05 0.0;

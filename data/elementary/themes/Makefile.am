@@ -669,6 +669,7 @@ elementary/themes/img/wifi_sig_2.png \
 elementary/themes/img/wifi_sig_3.png \
 elementary/themes/img/win_glow.png \
 elementary/themes/img/win_shadow.png \
+elementary/themes/img/win_menu_shadow.png \
 \
 elementary/themes/img/O/about_bot.png \
 elementary/themes/img/O/about_mid.png \
