@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/bin \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/elementary\" \
 @ELEMENTARY_CFLAGS@
 
 bin_PROGRAMS = \
