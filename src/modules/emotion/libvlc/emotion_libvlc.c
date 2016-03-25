@@ -39,8 +39,6 @@
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_emotion_libvlc_log_domain, __VA_ARGS__)
 
-#define SINK_MAX_PLANES 3
-
 static int _emotion_libvlc_log_domain = -1;
 static Eina_Bool debug_fps = EINA_FALSE;
 static libvlc_instance_t *libvlc = NULL;
@@ -68,6 +66,7 @@ struct _Emotion_LibVLC
 
    /* options */
    int                            video_mute;
+   int                            video_mute_force;
    int                            audio_mute;
    int                            spu_mute;
    int                            audio_vol;
@@ -90,24 +89,12 @@ struct _Emotion_LibVLC
    Eina_Bool                      seeking;
    Eina_Bool                      started;
    Eina_Bool                      invalidate_tracks;
+};
 
-   /* sink, must be locked by ev->lock */
-   struct
-   {
-      int             width;
-      int             height;
-      Evas_Colorspace colorspace;
-      void           *data;
-      Eina_Bool       waiting;
-      Eina_Bool       is_yuv;
-
-      unsigned int    nb_planes;
-      unsigned int    lines[SINK_MAX_PLANES];
-      unsigned int    pitches[SINK_MAX_PLANES];
-      unsigned int    yuv_height[SINK_MAX_PLANES];
-      unsigned char  *yuv_data[SINK_MAX_PLANES];
-      unsigned int    yuv_planes_order[SINK_MAX_PLANES];
-   } sink;
+struct close_data
+{
+   libvlc_media_player_t *mp;
+   Evas_Object           *evas_obj;
 };
 
 static const libvlc_event_type_t mp_events[] = {
@@ -176,119 +163,6 @@ emotion_mainloop_call_locked(Emotion_LibVLC *ev, Ecore_Cb callback)
    ++ev->ref_count;
    _emotion_pending_ecore_begin();
    ecore_main_loop_thread_safe_call_async(callback, ev);
-}
-
-/* Take the ev->lock from a sink mainloop callback.
- * Returns false if the ev object is destroyed or is there is no evas object. */
-static Eina_Bool
-emotion_mainloop_sink_lock(Emotion_LibVLC *ev)
-{
-   if (emotion_mainloop_lock(ev))
-     {
-        if (!ev->evas_obj)
-          {
-             eina_lock_release(&ev->lock);
-             return EINA_FALSE;
-          }
-        else
-          return EINA_TRUE;
-     }
-   else
-     return EINA_FALSE;
-}
-
-/* Release the ev->lock from a sink mainloop callback and signal that the
- * callback is processed. */
-static void
-emotion_mainloop_sink_signal_unlock(Emotion_LibVLC *ev)
-{
-   ev->sink.waiting = EINA_FALSE;
-   eina_condition_signal(&ev->wait);
-   eina_lock_release(&ev->lock);
-}
-
-/* Send a sink mainloop callback and wait. */
-static void
-emotion_mainloop_sink_call_wait_locked(Emotion_LibVLC *ev, Ecore_Cb callback)
-{
-   ev->sink.waiting = EINA_TRUE;
-
-   emotion_mainloop_call_locked(ev, callback);
-
-   while (ev->evas_obj && ev->sink.waiting)
-     eina_condition_wait(&ev->wait);
-}
-
-/* Sink mainloop callback, sent by libvlc_video_on_lock. */
-static void
-emotion_mainloop_sink_pic_lock(void *data)
-{
-   Emotion_LibVLC *ev = data;
-   if (!emotion_mainloop_sink_lock(ev)) return;
-
-   ev->sink.data = evas_object_image_data_get(ev->evas_obj, 1);
-
-   emotion_mainloop_sink_signal_unlock(ev);
-}
-
-/* Sink mainloop callback, sent by libvlc_video_on_unlock. */
-static void
-emotion_mainloop_sink_pic_unlock(void *data)
-{
-   Emotion_LibVLC *ev = data;
-
-   if (!emotion_mainloop_sink_lock(ev)) return;
-
-   if (!ev->sink.data)
-     goto end;
-
-   if (ev->sink.is_yuv)
-     {
-        unsigned int i, j;
-        const unsigned char **rows = (const unsigned char **)ev->sink.data;
-
-        for (i = 0; i < ev->sink.nb_planes; ++i)
-          for (j = 0; j < ev->sink.yuv_height[i]; ++j)
-            *(rows++) = &ev->sink.yuv_data[i][j * ev->sink.pitches[i]];
-     }
-   evas_object_image_data_set(ev->evas_obj, ev->sink.data);
-   ev->sink.data = NULL;
-
-end:
-   emotion_mainloop_sink_signal_unlock(ev);
-}
-
-/* Sink mainloop callback, sent by libvlc_video_on_display. */
-static void
-emotion_mainloop_sink_display(void *data)
-{
-   Emotion_LibVLC *ev = data;
-
-   if (!emotion_mainloop_sink_lock(ev)) return;
-
-   evas_object_image_data_update_add(ev->evas_obj, 0, 0, ev->sink.width,
-                                     ev->sink.height);
-   _emotion_frame_new(ev->obj);
-
-   emotion_mainloop_sink_signal_unlock(ev);
-}
-
-/* Sink mainloop callback, sent by libvlc_video_on_format. */
-static void
-emotion_mainloop_sink_format(void *data)
-{
-   Emotion_LibVLC *ev = data;
-
-   if (!emotion_mainloop_sink_lock(ev)) return;
-
-   evas_object_image_pixels_get_callback_set(ev->evas_obj, NULL, NULL);
-   evas_object_image_alpha_set(ev->evas_obj, 0);
-   evas_object_image_colorspace_set(ev->evas_obj, ev->sink.colorspace);
-   evas_object_image_size_set(ev->evas_obj, ev->sink.width, ev->sink.height);
-   _emotion_frame_resize(ev->obj, ev->sink.width, ev->sink.height,
-                         ev->sink.width / (double)ev->sink.height);
-
-   emotion_mainloop_sink_signal_unlock(ev);
 }
 
 /* Process one libvlc event from the mainloop. */
@@ -369,190 +243,6 @@ emotion_mainloop_event_list(void *data)
      }
 }
 
-/* Libvlc callback, see libvlc_video_set_callbacks and libvlc_video_lock_cb. */
-static void *
-libvlc_video_on_lock(void *opaque, void **pixels)
-{
-   Emotion_LibVLC *ev = opaque;
-
-   eina_lock_take(&ev->lock);
-   if (!ev->evas_obj) goto end;
-
-   emotion_mainloop_sink_call_wait_locked(ev, emotion_mainloop_sink_pic_lock);
-end:
-   if (ev->sink.data)
-     {
-        if (ev->sink.is_yuv)
-          {
-             unsigned int i;
-
-             for (i = 0; i < ev->sink.nb_planes; ++i)
-               pixels[i] = ev->sink.yuv_data[ev->sink.yuv_planes_order[i]];
-          }
-        else
-          pixels[0] = ev->sink.data;
-     }
-   eina_lock_release(&ev->lock);
-
-   return NULL;
-}
-
-/* Libvlc callback, see libvlc_video_set_callbacks and libvlc_video_unlock_cb.
- * */
-static void
-libvlc_video_on_unlock(void *opaque, void *picture EINA_UNUSED,
-                       void *const *pixels EINA_UNUSED)
-{
-   Emotion_LibVLC *ev = opaque;
-
-   eina_lock_take(&ev->lock);
-   if (!ev->evas_obj) goto end;
-
-   emotion_mainloop_sink_call_wait_locked(ev, emotion_mainloop_sink_pic_unlock);
-end:
-   eina_lock_release(&ev->lock);
-}
-
-/* Libvlc callback, see libvlc_video_set_callbacks and libvlc_video_display_cb.
- * */
-static void
-libvlc_video_on_display(void *opaque, void *picture EINA_UNUSED)
-{
-   Emotion_LibVLC *ev = opaque;
-
-   eina_lock_take(&ev->lock);
-   if (!ev->evas_obj) goto end;
-
-   emotion_mainloop_sink_call_wait_locked(ev, emotion_mainloop_sink_display);
-end:
-   eina_lock_release(&ev->lock);
-}
-
-#define ALIGN32(x) (((x) + 31) & ~(31))
-
-/* Libvlc callback, see libvlc_video_set_format_callbacks and
- * libvlc_video_format_cb. */
-static unsigned int
-libvlc_video_on_format(void **opaque, char *chroma,
-                       unsigned int *width, unsigned int *height,
-                       unsigned int *pitches,
-                       unsigned int *lines)
-{
-   Emotion_LibVLC *ev = *opaque;
-
-   eina_lock_take(&ev->lock);
-   if (!ev->evas_obj) goto end;
-
-   INF("request video format: %s, size: %dx%d", chroma, *width, *height);
-
-   ev->sink.width = *width;
-   ev->sink.height = *height;
-
-   if (!strcmp(chroma, "RV32"))
-     {
-        ev->sink.colorspace = EVAS_COLORSPACE_ARGB8888;
-        ev->sink.nb_planes = 1;
-        ev->sink.lines[0] = ev->sink.height;
-        ev->sink.pitches[0] = ev->sink.width * 4;
-     }
-   /* Not implemented yet */
-#if 0
-   else if (!strcmp(chroma, "RV16"))
-     {
-        ev->sink.colorspace = EVAS_COLORSPACE_RGB565_A5P;
-        ev->sink.nb_planes = 1;
-        ev->sink.lines[0] = ev->sink.height;
-        ev->sink.pitches[0] = ev->sink.width * 2;
-     }
-#endif
-   else
-     {
-        /* YUV */
-
-        unsigned int i;
-
-        /* default planes order */
-        for (i = 0; i < ev->sink.nb_planes; ++i)
-          ev->sink.yuv_planes_order[i] = i;
-
-        if (!strcmp(chroma, "YUY2"))
-          {
-             ev->sink.colorspace = EVAS_COLORSPACE_YCBCR422601_PL;
-             ev->sink.nb_planes = 1;
-             ev->sink.yuv_height[0] = ev->sink.height;
-             ev->sink.pitches[0] = ev->sink.width * 2;
-          }
-        /* FIXME: SIGSEGV in evas_gl_common_texture_nv12_update */
-#if 0
-        else if (!strcmp(chroma, "NV12"))
-          {
-             ev->sink.colorspace = EVAS_COLORSPACE_YCBCR420NV12601_PL;
-             ev->sink.nb_planes = 2;
-             ev->sink.yuv_height[0] = ev->sink.height;
-             ev->sink.pitches[0] = ev->sink.width;
-             ev->sink.yuv_height[1] = ev->sink.height / 2;
-             ev->sink.pitches[1] = ev->sink.width;
-          }
-#endif
-        else
-          {
-             /* YV12 or I420 */
-             if (strcmp(chroma, "YV12") && strcmp(chroma, "I420"))
-               {
-                  strcpy(chroma, "I420");
-                  INF("native format not available, using: %s", chroma);
-               }
-             ev->sink.colorspace = EVAS_COLORSPACE_YCBCR422P601_PL;
-             ev->sink.nb_planes = 3;
-             ev->sink.yuv_height[0] = ev->sink.height;
-             ev->sink.pitches[0] = ev->sink.width;
-             ev->sink.yuv_height[1] = ev->sink.yuv_height[2] = ev->sink.height / 2;
-             ev->sink.pitches[1] = ev->sink.pitches[2] = ev->sink.width / 2;
-
-             if (!strcmp(chroma, "YV12"))
-               {
-                  /* Cb and Cr inverted for YV12 */
-                  ev->sink.yuv_planes_order[0] = 0;
-                  ev->sink.yuv_planes_order[1] = 2;
-                  ev->sink.yuv_planes_order[2] = 1;
-               }
-          }
-
-        assert(ev->sink.nb_planes <= SINK_MAX_PLANES);
-
-        /* Align pitches/lines and alloc planes */
-        for (i = 0; i < ev->sink.nb_planes; ++i)
-          {
-             ev->sink.lines[i] = ALIGN32(ev->sink.yuv_height[i]);
-             ev->sink.pitches[i] = ALIGN32(ev->sink.pitches[i]);
-             ev->sink.yuv_data[i] = malloc(ev->sink.lines[i]
-                                           * ev->sink.pitches[i]);
-             if (!ev->sink.yuv_data[i])
-               {
-                  for (i = 0; i < ev->sink.nb_planes; ++i)
-                    {
-                       free(ev->sink.yuv_data[i]);
-                       ev->sink.lines[i] = 0;
-                       ev->sink.pitches[i] = 0;
-                    }
-                  ev->sink.nb_planes = 0;
-                  goto end;
-               }
-          }
-        ev->sink.is_yuv = EINA_TRUE;
-     }
-
-   assert(ev->sink.nb_planes > 0);
-
-   memcpy(lines, ev->sink.lines, ev->sink.nb_planes * sizeof(unsigned int));
-   memcpy(pitches, ev->sink.pitches, ev->sink.nb_planes * sizeof(unsigned int));
-
-   emotion_mainloop_sink_call_wait_locked(ev, emotion_mainloop_sink_format);
-end:
-   eina_lock_release(&ev->lock);
-   return ev->sink.nb_planes;
-}
-
 /* Libvlc callback, see libvlc_event_manager_t. */
 static void
 libvlc_on_mp_event(const libvlc_event_t *event, void *opaque)
@@ -579,6 +269,18 @@ libvlc_on_mp_event(const libvlc_event_t *event, void *opaque)
         ev->event_list = eina_list_append(ev->event_list, data);
         eina_lock_release(&ev->lock);
      }
+}
+
+static void
+evas_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+               void *event EINA_UNUSED)
+{
+   Emotion_LibVLC *ev = data;
+   int w, h;
+
+   evas_object_image_size_get(ev->evas_obj, &w, &h);
+   _emotion_frame_resize(ev->obj, w, h, w / (double) h);
+   eo_event_callback_call(ev->obj, EMOTION_OBJECT_EVENT_FRAME_DECODE, NULL);
 }
 
 /* Returns true if libvlc mediaplayer is ready to process commands. */
@@ -746,6 +448,8 @@ em_file_open(void *video,
         ev->opt.no_video = EINA_TRUE;
      }
 
+   evas_object_image_pixels_get_callback_set(ev->evas_obj, NULL, NULL);
+
    ev->invalidate_tracks = true;
 
    /* Create libvlc_media */
@@ -772,11 +476,16 @@ em_file_open(void *video,
    libvlc_media_player_set_video_title_display(ev->mp,
                                                libvlc_position_disable, 0);
 
-   /* Set sink callbacks */
-   libvlc_video_set_format_callbacks(ev->mp, libvlc_video_on_format, NULL);
-   libvlc_video_set_callbacks(ev->mp, libvlc_video_on_lock,
-                              libvlc_video_on_unlock,
-                              libvlc_video_on_display, ev);
+   evas_object_ref(ev->evas_obj);
+   if (libvlc_media_player_set_evas_object(ev->mp, ev->evas_obj) == -1)
+     {
+        CRI("libvlc_media_player_set_evas_object failed");
+        libvlc_media_add_option(ev->m, ":no-video");
+        ev->video_mute = ev->video_mute_force = 1;
+     }
+
+   evas_object_event_callback_add(ev->evas_obj, EVAS_CALLBACK_IMAGE_RESIZE,
+                                  evas_resize_cb, ev);
 
    if (ev->audio_vol != -1)
      libvlc_audio_set_volume(ev->mp, ev->audio_vol);
@@ -791,6 +500,25 @@ error:
 }
 
 static void
+emotion_close_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   struct close_data *close_data = data;
+
+   libvlc_media_player_release(close_data->mp);
+}
+
+static void
+emotion_close_mainloop_cb(void *data,
+                                     Ecore_Thread *thread EINA_UNUSED)
+{
+   struct close_data *close_data = data;
+
+   evas_object_unref(close_data->evas_obj);
+   free(close_data);
+   _emotion_pending_ecore_end();
+}
+
+static void
 em_file_close(void *video)
 {
    Emotion_LibVLC *ev = video;
@@ -798,42 +526,36 @@ em_file_close(void *video)
 
    if (ev->mp)
      {
+        struct close_data *close_data;
         libvlc_event_manager_t *event_m;
+
+        evas_object_event_callback_del(ev->evas_obj, EVAS_CALLBACK_IMAGE_RESIZE,
+                                       evas_resize_cb);
 
         event_m = libvlc_media_player_event_manager(ev->mp);
         for (i = 0; mp_events[i] != -1; ++i)
           libvlc_event_detach(event_m, mp_events[i], libvlc_on_mp_event, ev);
 
-        /* Abort libvlc callbacks */
-        eina_lock_take(&ev->lock);
-        ev->evas_obj = NULL;
-        eina_condition_signal(&ev->wait);
-        eina_lock_release(&ev->lock);
+        libvlc_media_player_set_evas_object(ev->mp, NULL);
 
-        libvlc_media_player_release(ev->mp);
+        close_data = malloc(sizeof(struct close_data));
+        if (close_data)
+          {
+             close_data->evas_obj = ev->evas_obj;
+             close_data->mp = ev->mp;
+             _emotion_pending_ecore_begin();
+             ecore_thread_run(emotion_close_cb,
+                              emotion_close_mainloop_cb,
+                              NULL, close_data);
+          }
+
+        ev->evas_obj = NULL;
         ev->mp = NULL;
 
         if (ev->seeking)
           {
              ev->seeking = EINA_FALSE;
              _emotion_seek_done(ev->obj);
-          }
-        if (ev->sink.data)
-          {
-             /* unlock already locked buffer */
-             evas_object_image_data_set(ev->evas_obj, ev->sink.data);
-             ev->sink.data = NULL;
-          }
-
-        /* free image data */
-        evas_object_image_size_set(ev->evas_obj, 1, 1);
-        evas_object_image_data_set(ev->evas_obj, NULL);
-
-        /* free yuv data */
-        if (ev->sink.is_yuv)
-          {
-             for (i = 0; i < ev->sink.nb_planes; ++i)
-               free(ev->sink.yuv_data[i]);
           }
      }
    if (ev->m)
@@ -866,7 +588,6 @@ em_file_close(void *video)
    ev->vis = EMOTION_VIS_NONE;
    ev->started = ev->seeking = ev->invalidate_tracks = EINA_FALSE;
    ev->pos = ev->len = ev->buffer_cache = 0.0;
-   memset(&ev->sink, 0, sizeof(ev->sink));
 }
 
 static void
@@ -1171,13 +892,13 @@ em_event_feed(void *video, int event)
 static void
 em_event_mouse_button_feed(void *video EINA_UNUSED, int button EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED)
 {
-   /* FIXME */
+   /* Handled directly by VLC evas vout module */
 }
 
 static void
 em_event_mouse_move_feed(void *video EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED)
 {
-   /* FIXME */
+   /* Handled directly by VLC evas vout module */
 }
 
 static int
@@ -1265,6 +986,8 @@ em_video_channel_mute_set(void *video,
 {
    Emotion_LibVLC *ev = video;
 
+   if (ev->video_mute_force)
+     return;
    ev->video_mute = mute;
 
    if (libvlc_mp_is_ready(ev))
