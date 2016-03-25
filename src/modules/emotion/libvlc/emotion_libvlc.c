@@ -1673,6 +1673,10 @@ libvlc_log(void *data EINA_UNUSED, int level,
            const char *fmt, va_list args)
 {
    Eina_Log_Level eina_log_level;
+   const char *name, *header;
+   uintptr_t id;
+
+   libvlc_log_get_object(ctx, &name, &header, &id);
    switch (level)
      {
       case LIBVLC_DEBUG:
@@ -1693,7 +1697,7 @@ libvlc_log(void *data EINA_UNUSED, int level,
         break;
      }
    eina_log_vprint(_emotion_libvlc_log_domain, eina_log_level,
-                   __FILE__, __FUNCTION__, __LINE__, fmt, args);
+                   "", name, id, fmt, args);
 }
 
 static libvlc_instance_t *
