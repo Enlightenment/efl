@@ -16,7 +16,7 @@ group { name: "e/modules/start/main";
             color: 255 255 255 64;
          }
       }
-      part { name: "arrow"; clip: "arrow_base";
+      part { name: "arrow"; clip_to: "arrow_base";
          description { state: "default" 0.0;
             image.normal: "big_arrow_up.png";
             aspect: (17/14) (17/14);
