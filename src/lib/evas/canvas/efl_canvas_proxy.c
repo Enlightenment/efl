@@ -57,7 +57,7 @@ _evas_image_proxy_source_set(Eo *eo_obj, Evas_Object *eo_src)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_proxy_source_set(Eo *eo_obj, void *pd EINA_UNUSED, Evas_Object *eo_src)
+_efl_canvas_proxy_source_set(Eo *eo_obj, void *_pd EINA_UNUSED, Evas_Object *eo_src)
 {
    return _evas_image_proxy_source_set(eo_obj, eo_src);
 }
@@ -70,7 +70,7 @@ _evas_image_proxy_source_get(const Eo *eo_obj)
 }
 
 EOLIAN static Evas_Object *
-_efl_canvas_proxy_source_get(Eo *eo_obj, void *pd EINA_UNUSED)
+_efl_canvas_proxy_source_get(Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    return _evas_image_proxy_source_get(eo_obj);
 }
@@ -94,7 +94,7 @@ _evas_image_proxy_source_clip_set(Eo *eo_obj, Eina_Bool source_clip)
 }
 
 EOLIAN static void
-_efl_canvas_proxy_source_clip_set(Eo *eo_obj, void *pd EINA_UNUSED, Eina_Bool source_clip)
+_efl_canvas_proxy_source_clip_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool source_clip)
 {
    return _evas_image_proxy_source_clip_set(eo_obj, source_clip);
 }
@@ -107,7 +107,7 @@ _evas_image_proxy_source_clip_get(const Eo *eo_obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_proxy_source_clip_get(Eo *eo_obj, void *pd EINA_UNUSED)
+_efl_canvas_proxy_source_clip_get(Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    return _evas_image_proxy_source_clip_get(eo_obj);
 }
@@ -131,7 +131,7 @@ _evas_image_proxy_source_events_set(Eo *eo_obj, Eina_Bool source_events)
 }
 
 EOLIAN static void
-_efl_canvas_proxy_source_events_set(Eo *eo_obj, void *pd EINA_UNUSED, Eina_Bool repeat)
+_efl_canvas_proxy_source_events_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool repeat)
 {
    return _evas_image_proxy_source_events_set(eo_obj, repeat);
 }
@@ -144,7 +144,7 @@ _evas_image_proxy_source_events_get(const Eo *eo_obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_proxy_source_events_get(Eo *eo_obj, void *pd EINA_UNUSED)
+_efl_canvas_proxy_source_events_get(Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    return _evas_image_proxy_source_events_get(eo_obj);
 }
@@ -239,6 +239,92 @@ _evas_image_proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
         proxy_src_write->redraw = EINA_TRUE;
      }
    EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_src_write);
+}
+
+static inline void *
+_proxy_image_get(Evas_Image_Data *o)
+{
+   Evas_Object_Protected_Data *source = eo_data_scope_get(o->cur->source, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *source_img = NULL;
+
+   if (!source)
+     return NULL;
+
+   if (eo_isa(o->cur->source, EVAS_IMAGE_CLASS))
+     source_img = eo_data_scope_get(o->cur->source, EVAS_IMAGE_CLASS);
+
+   if (source_img)
+     return source_img->engine_data;
+   else
+     return source->proxy->surface;
+}
+
+EOLIAN static void *
+_efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
+                                            int *length,
+                                            Efl_Gfx_Buffer_Access_Mode mode,
+                                            int x, int y, int w, int h,
+                                            Efl_Gfx_Colorspace cspace, int *stride)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   int len = 0, s = 0, width = 0, height = 0;
+   void *image, *data = NULL;
+
+   if (!ENFN->image_data_map)
+     goto end; // not implemented
+
+   if (mode & EFL_GFX_BUFFER_ACCESS_MODE_WRITE)
+     {
+        ERR("invalid map mode for Proxy object");
+        goto end;
+     }
+
+   image = _proxy_image_get(o);
+   if (image)
+     ENFN->image_size_get(ENDT, image, &width, &height);
+
+   if (!image || !width || !height)
+     {
+        // TODO: Create a map_surface and draw there. Maybe. This could
+        // depend on the flags (eg. add a "force render" flag).
+        WRN("This proxy image has no data available");
+        goto end;
+     }
+
+   if (!w) w = width;
+   if (!h) h = height;
+
+   if ((x < 0) || (y < 0) || ((x + w) > width) || ((y + h) > height))
+     {
+        ERR("Invalid map dimensions: %dx%d +%d,%d. Image is %dx%d.",
+            w, h, x, y, width, height);
+        goto end;
+     }
+
+   data = ENFN->image_data_map(ENDT, &image, &len, &s, x, y, w, h, cspace, mode);
+   DBG("map(%p, %d,%d %dx%d) -> %p (%d bytes)", eo_obj, x, y, w, h, data, len);
+
+end:
+   if (length) *length = len;
+   if (stride) *stride = s;
+   return data;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_proxy_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, void *_pd EINA_UNUSED,
+                                              void *data, int length)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+
+   if (!ENFN->image_data_unmap || !o->engine_data)
+     return EINA_FALSE;
+
+   if (!ENFN->image_data_unmap(ENDT, o->engine_data, data, length))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
 }
 
 /* Some moron just set a proxy on a proxy.

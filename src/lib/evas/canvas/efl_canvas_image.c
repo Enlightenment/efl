@@ -762,34 +762,39 @@ _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
-   int len = 0, str = 0;
+   int len = 0, s = 0, width = 0, height = 0;
    void *data = NULL;
 
    if (!ENFN->image_data_map)
      goto end; // not implemented
 
-   if (!o->engine_data)
+   if (o->engine_data)
+     ENFN->image_size_get(ENDT, o->engine_data, &width, &height);
+
+   if (!o->engine_data || !width || !height)
      {
-        if (o->cur->u.file)
-          ERR("image is not loaded yet");
+        // TODO: Create a map_surface and draw there. Maybe. This could
+        // depend on the flags (eg. add a "force render" flag).
+        WRN("This image image has no data available");
         goto end;
      }
 
-   if (!w) w = o->cur->image.w;
-   if (!h) h = o->cur->image.h;
+   if (!w) w = width;
+   if (!h) h = height;
 
-   if ((x < 0) || (y < 0) || ((x + (int) w) > (int) o->cur->image.w) || ((y + (int) h) > (int) o->cur->image.h))
+   if ((x < 0) || (y < 0) || ((x + w) > width) || ((y + h) > height))
      {
         ERR("Invalid map dimensions: %dx%d +%d,%d. Image is %dx%d.",
-            w, h, x, y, o->cur->image.w, o->cur->image.h);
+            w, h, x, y, width, height);
         goto end;
      }
 
-   data = ENFN->image_data_map(ENDT, &o->engine_data, &len, &str, x, y, w, h, cspace, mode);
+   data = ENFN->image_data_map(ENDT, &o->engine_data, &len, &s, x, y, w, h, cspace, mode);
+   DBG("map(%p, %d,%d %dx%d) -> %p (%d bytes)", eo_obj, x, y, w, h, data, len);
 
 end:
    if (length) *length = len;
-   if (stride) *stride = str;
+   if (stride) *stride = s;
    return data;
 }
 
@@ -803,7 +808,7 @@ _efl_canvas_image_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, void *_pd EINA_UNUSED,
    if (!ENFN->image_data_unmap || !o->engine_data)
      return EINA_FALSE;
 
-   if (!ENFN->image_data_unmap(ENDT, &o->engine_data, data, length))
+   if (!ENFN->image_data_unmap(ENDT, o->engine_data, data, length))
      return EINA_FALSE;
 
    return EINA_TRUE;

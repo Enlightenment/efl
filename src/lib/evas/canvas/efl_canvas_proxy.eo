@@ -1,4 +1,4 @@
-class Efl.Canvas.Proxy (Evas.Image)
+class Efl.Canvas.Proxy (Evas.Image, Efl.Gfx.Buffer)
 {
    [[Low-level proxy image object.
 
@@ -73,5 +73,7 @@ class Efl.Canvas.Proxy (Evas.Image)
       }
    }
    implements {
+      Efl.Gfx.Buffer.buffer_map;
+      Efl.Gfx.Buffer.buffer_unmap;
    }
 }

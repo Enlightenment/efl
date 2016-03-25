@@ -1666,16 +1666,14 @@ _image_data_commit(RGBA_Image *im, RGBA_Image_Data_Map *map)
 }
 
 static Eina_Bool
-eng_image_data_unmap(void *engdata EINA_UNUSED, void **image, void *memory, int length)
+eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int length)
 {
    RGBA_Image_Data_Map *map;
-   RGBA_Image *im;
+   RGBA_Image *im = image;
    Eina_Bool found = EINA_FALSE;
 
-   if (!image || !*image || !memory)
+   if (!im || !memory)
      return EINA_FALSE;
-
-   im = *image;
 
    EINA_INLIST_FOREACH(EINA_INLIST_GET(im->maps), map)
      {
@@ -1702,10 +1700,10 @@ eng_image_data_unmap(void *engdata EINA_UNUSED, void **image, void *memory, int 
 }
 
 static int
-eng_image_data_maps_get(void *engdata EINA_UNUSED, void *image, void **maps, int *lenghts)
+eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, void **maps, int *lenghts)
 {
    RGBA_Image_Data_Map *map;
-   RGBA_Image *im = image;
+   const RGBA_Image *im = image;
    int k = 0;
 
    if (!im) return -1;

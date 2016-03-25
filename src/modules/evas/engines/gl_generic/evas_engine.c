@@ -2770,6 +2770,11 @@ module_open(Evas_Module *em)
         return 0;
      }
 
+   /* disable map/unmap for now as it's not implemented */
+   pfunc.image_data_map = NULL;
+   pfunc.image_data_unmap = NULL;
+   pfunc.image_data_maps_get = NULL;
+
    ector_init();
    ector_glsym_set(dlsym, RTLD_DEFAULT);
 
