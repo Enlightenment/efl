@@ -17,7 +17,7 @@ group { name: "e/modules/start/main";
          }
       }
       part { name: "arrow";
-         clip_to:  "arrow_base";
+         clip_to: "arrow_base";
          description { state: "default" 0.0;
             image.normal: "big_arrow_up.png";
             aspect: (17/14) (17/14);
