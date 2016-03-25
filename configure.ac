@@ -5139,9 +5139,6 @@ EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [eo])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [efl])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [evas])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore])
-EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${build_ecore_evas_x11}], [ecore_x])
-EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_drm}], [ecore_drm])
-EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${build_ecore_evas_wayland}], [ecore_wl2])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-evas])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-file])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [ecore-input])
@@ -5157,6 +5154,21 @@ EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [efreet])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [efreet-mime])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [efreet-trash])
 EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [elocation])
+
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_x11_any}], [ecore_x])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_fb}], [ecore_fb])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${have_ps3}], [ecore_psl1ght])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_sdl}], [ecore_sdl])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_ecore_evas_gl_cocoa}], [ecore_cocoa])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${build_ecore_evas_win32}], [ecore_win32])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_drm}], [ecore_drm])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${build_ecore_evas_wayland}], [ecore_wl2])
+
+dnl Special case deps for ecore_drm
+if test "${want_drm}" = "yes"; then
+  EFL_DEPEND_PKG([ELEMENTARY], [DRM], [libdrm])
+  EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [eeze])
+fi
 
 EFL_ADD_LIBS([ELEMENTARY], [-lm])
 
