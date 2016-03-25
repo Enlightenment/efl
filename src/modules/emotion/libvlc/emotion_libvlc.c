@@ -733,7 +733,7 @@ static Eina_Bool
 em_file_open(void *video,
              const char *file)
 {
-   int ret;
+   int ret, i;
    Emotion_LibVLC *ev = video;
    libvlc_event_manager_t *event_m;
 
@@ -766,7 +766,7 @@ em_file_open(void *video,
    EINA_SAFETY_ON_NULL_GOTO(ev->mp, error);
 
    event_m = libvlc_media_player_event_manager(ev->mp);
-   for (int i = 0; mp_events[i] != -1; ++i)
+   for (i = 0; mp_events[i] != -1; ++i)
      libvlc_event_attach(event_m, mp_events[i], libvlc_on_mp_event, ev);
 
    libvlc_media_player_set_video_title_display(ev->mp,
@@ -801,7 +801,7 @@ em_file_close(void *video)
         libvlc_event_manager_t *event_m;
 
         event_m = libvlc_media_player_event_manager(ev->mp);
-        for (int i = 0; mp_events[i] != -1; ++i)
+        for (i = 0; mp_events[i] != -1; ++i)
           libvlc_event_detach(event_m, mp_events[i], libvlc_on_mp_event, ev);
 
         /* Abort libvlc callbacks */
