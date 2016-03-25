@@ -1662,7 +1662,7 @@ static const Emotion_Engine em_engine =
    NULL /* priority_get */
 };
 
-void
+static void
 libvlc_log(void *data EINA_UNUSED, int level,
            const libvlc_log_t *ctx EINA_UNUSED,
            const char *fmt, va_list args)
