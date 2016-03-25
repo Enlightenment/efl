@@ -212,6 +212,7 @@ struct _Elm_Win_Data
    int          size_step_w, size_step_h;
    int          norender;
    int          modal_count;
+   int          response;
    Eina_Bool    urgent : 1;
    Eina_Bool    modal : 1;
    Eina_Bool    demand_attention : 1;
@@ -807,7 +808,9 @@ _elm_win_move(Ecore_Evas *ee)
    sd->screen.y = y;
    eo_event_callback_call(sd->obj, ELM_WIN_EVENT_MOVED, NULL);
    evas_nochange_push(evas_object_evas_get(sd->obj));
+   sd->response++;
    evas_object_move(sd->obj, x, y);
+   sd->response--;
    evas_nochange_pop(evas_object_evas_get(sd->obj));
 }
 
@@ -835,9 +838,10 @@ _elm_win_resize_job(void *data)
         evas_object_move(sd->frame_obj, -fx, -fy);
         evas_object_resize(sd->frame_obj, w + fw, h + fh);
      }
-
+   sd->response++;
    evas_object_resize(sd->obj, w, h);
    evas_object_resize(sd->edje, w, h);
+   sd->response--;
 }
 
 static void
@@ -2065,7 +2069,7 @@ _elm_win_evas_object_smart_move(Eo *obj, Elm_Win_Data *sd, Evas_Coord x, Evas_Co
      }
    else
      {
-        TRAP(sd, move, x, y);
+        if (!sd->response) TRAP(sd, move, x, y);
         if (!ecore_evas_override_get(sd->ee))  return;
      }
 
@@ -2113,7 +2117,7 @@ _elm_win_evas_object_smart_resize(Eo *obj, Elm_Win_Data *sd, Evas_Coord w, Evas_
         evas_object_image_size_set(sd->img_obj, w, h);
      }
 
-   TRAP(sd, resize, w, h);
+   if (!sd->response) TRAP(sd, resize, w, h);
 }
 
 static void
@@ -2456,7 +2460,10 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    if (w > maxw) w = maxw;
    if (h > maxh) h = maxh;
    if (sd->img_obj) evas_object_resize(obj, w, h);
-   else TRAP(sd, resize, w, h);
+   else
+     {
+        if (!sd->response) TRAP(sd, resize, w, h);
+     }
 }
 
 static void
