@@ -745,7 +745,7 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
                         int smooth, int level,
                         Evas_Common_Map_RGBA_Cb cb)
 {
-   static Cutout_Rects *rects = NULL;
+   static __thread Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;
@@ -791,7 +791,7 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
 EAPI Eina_Bool
 evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset, Evas_Common_Map_Thread_RGBA_Cb cb)
 {
-   static Cutout_Rects *rects = NULL;
+   static __thread Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;

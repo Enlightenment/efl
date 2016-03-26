@@ -12,7 +12,7 @@ evas_common_rectangle_init(void)
 EAPI void
 evas_common_rectangle_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, Evas_Common_Rectangle_Draw_Cb cb)
 {
-   static Cutout_Rects *rects = NULL;
+   static __thread Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;

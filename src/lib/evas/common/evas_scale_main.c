@@ -40,7 +40,7 @@ evas_common_scale_rgba_in_to_out_clip_cb(RGBA_Image *src, RGBA_Image *dst,
                                          int dst_region_w, int dst_region_h,
                                          Evas_Common_Scale_In_To_Out_Clip_Cb cb)
 {
-   static Cutout_Rects *rects = NULL;
+   static __thread Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;
