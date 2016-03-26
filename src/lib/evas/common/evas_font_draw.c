@@ -348,7 +348,7 @@ error:
 EAPI Eina_Bool
 evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs, Evas_Common_Font_Draw_Cb cb)
 {
-   static Cutout_Rects *rects = NULL;
+   static __thread Cutout_Rects *rects = NULL;
    int ext_x, ext_y, ext_w, ext_h;
    int im_w, im_h;
    RGBA_Gfx_Func func;
