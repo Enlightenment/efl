@@ -387,6 +387,11 @@ ethumbclient_cmakeconfig_DATA = \
 cmakeconfig/EthumbClientConfig.cmake \
 cmakeconfig/EthumbClientConfigVersion.cmake
 
+cmakeconfigdir = $(libdir)/cmake/Elementary
+cmakeconfig_DATA = \
+cmakeconfig/ElementaryConfig.cmake \
+cmakeconfig/ElementaryConfigVersion.cmake
+
 emotion_cmakeconfigdir =  $(libdir)/cmake/Emotion/
 emotion_cmakeconfig_DATA = \
 cmakeconfig/EmotionConfig.cmake \
