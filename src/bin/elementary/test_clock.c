@@ -215,6 +215,16 @@ _hmode_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_clock_show_am_pm_set(ck, EINA_FALSE);
 }
 
+static Eina_Bool
+_pause_cb(void *data)
+{
+   Evas_Object *ck = data;
+   Evas_Object *bt = evas_object_data_get(ck, "_button");
+   elm_clock_pause_set(ck, EINA_TRUE);
+   elm_object_text_set(bt, "Resume");
+   return EINA_FALSE;
+}
+
 static void
 _pause_resume_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
@@ -228,6 +238,7 @@ _pause_resume_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNU
      }
    elm_object_text_set(obj, "Pause");
    elm_clock_pause_set(ck, EINA_FALSE);
+   ecore_timer_add(2, _pause_cb, ck);
 }
 
 void
@@ -358,6 +369,9 @@ test_clock_pause(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_smart_callback_add(bt, "clicked", _pause_resume_bt_clicked, ck);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
+
+   evas_object_data_set(ck, "_button", bt);
+   ecore_timer_add(2, _pause_cb, ck);
 
    evas_object_show(win);
 }
