@@ -289,6 +289,7 @@ test_clock_edit(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    evas_object_smart_callback_add(bt, "clicked", _edit_bt_clicked, ck);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);
+   _edit_bt_clicked(ck, bt, NULL);
 
    bt = elm_button_add(hbx);
    elm_object_text_set(bt, "24h");
