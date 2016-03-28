@@ -17,9 +17,6 @@
    rel1.offset: -21 -14; \
    rel2.offset: 20 27; \
    fill.smooth: 0
-#define WIN_SHADOW_SPACER \
-   rel1.offset: 21 14; \
-   rel2.offset: -21 -28
 #define WIN_MENU_SHADOW \
    image.normal: "win_menu_shadow.png"; \
    image.border: 44 44 16 29; \
