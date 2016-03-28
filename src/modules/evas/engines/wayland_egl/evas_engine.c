@@ -62,6 +62,11 @@ Evas_GL_Common_Context_Call glsym_evas_gl_common_context_newframe = NULL;
 Evas_GL_Common_Context_Call glsym_evas_gl_common_context_done = NULL;
 Evas_GL_Common_Context_Resize_Call glsym_evas_gl_common_context_resize = NULL;
 Evas_GL_Common_Buffer_Dump_Call glsym_evas_gl_common_buffer_dump = NULL;
+Evas_GL_Common_Context_Call glsym_evas_gl_common_context_unredirect = NULL;
+Evas_GL_Common_Context_Call glsym_evas_gl_common_context_redirect = NULL;
+Evas_GL_Common_Context_Call glsym_evas_gl_common_context_redirect_bind = NULL;
+Evas_GL_Common_Context_Call glsym_evas_gl_common_context_redirect_unbind = NULL;
+Evas_GL_Common_Context_Call_GLuint_Return glsym_evas_gl_common_context_redirect_texture_get = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
@@ -73,6 +78,17 @@ void (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 unsigned int (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
 unsigned int (*glsym_eglSetDamageRegionKHR) (EGLDisplay a, EGLSurface b, EGLint *c, EGLint d) = NULL;
 unsigned int (*glsym_eglQueryWaylandBufferWL)(EGLDisplay a, struct wl_resource *b, EGLint c, EGLint *d) = NULL;
+GLuint       (*glsym_glCreateShader) (GLenum a) = NULL;
+void         (*glsym_glShaderSource) (GLuint a, GLsizei b, const GLchar **c, const GLint *d) = NULL;
+void         (*glsym_glCompileShader) (GLuint a) = NULL;
+void         (*glsym_glGetShaderiv) (GLuint a, GLenum b, GLint *c) = NULL;
+void         (*glsym_glGetShaderInfoLog) (GLuint a, GLsizei b, GLsizei *c, GLchar *d) = NULL;
+GLuint       (*glsym_glCreateProgram) (void) = NULL;
+void         (*glsym_glAttachShader) (GLuint a, GLuint b) = NULL;
+void         (*glsym_glBindAttribLocation) (GLuint a, GLuint b, const GLchar *c) = NULL;
+void         (*glsym_glLinkProgram) (GLuint a) = NULL;
+void         (*glsym_glGetProgramiv) (GLuint a, GLenum b, GLint *c) = NULL;
+void         (*glsym_glGetProgramInfoLog) (GLuint a, GLsizei b, GLsizei *c, GLchar *d) = NULL;
 
 /* local variables */
 static Eina_Bool initted = EINA_FALSE;
@@ -124,6 +140,11 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_common_context_newframe);
    LINK2GENERIC(evas_gl_common_context_done);
    LINK2GENERIC(evas_gl_common_context_resize);
+   LINK2GENERIC(evas_gl_common_context_unredirect);
+   LINK2GENERIC(evas_gl_common_context_redirect);
+   LINK2GENERIC(evas_gl_common_context_redirect_bind);
+   LINK2GENERIC(evas_gl_common_context_redirect_unbind);
+   LINK2GENERIC(evas_gl_common_context_redirect_texture_get);
    LINK2GENERIC(evas_gl_common_buffer_dump);
    LINK2GENERIC(evas_gl_preload_render_lock);
    LINK2GENERIC(evas_gl_preload_render_unlock);
@@ -173,6 +194,28 @@ gl_symbols(void)
 
    FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
            glsym_func_uint);
+
+   FINDSYM(glsym_glCreateShader, "glCreateShader", glsym_func_uint);
+
+   FINDSYM(glsym_glShaderSource, "glShaderSource", glsym_func_void);
+
+   FINDSYM(glsym_glCompileShader, "glCompileShader", glsym_func_void);
+
+   FINDSYM(glsym_glGetShaderiv, "glGetShaderiv", glsym_func_void);
+
+   FINDSYM(glsym_glGetShaderInfoLog, "glGetShaderInfoLog", glsym_func_void);
+
+   FINDSYM(glsym_glCreateProgram, "glCreateProgram", glsym_func_uint);
+
+   FINDSYM(glsym_glAttachShader, "glAttachShader", glsym_func_void);
+
+   FINDSYM(glsym_glBindAttribLocation, "glBindAttribLocation", glsym_func_void);
+
+   FINDSYM(glsym_glLinkProgram, "glLinkProgram", glsym_func_void);
+
+   FINDSYM(glsym_glGetProgramiv, "glGetProgramiv", glsym_func_void);
+
+   FINDSYM(glsym_glGetProgramInfoLog, "glGetProgramInfoLog", glsym_func_void);
 
    done = EINA_TRUE;
 }

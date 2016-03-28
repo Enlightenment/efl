@@ -217,7 +217,8 @@ eng_window_free(Outbuf *gw)
         eglReleaseThread();
         context = EGL_NO_CONTEXT;
      }
-
+   free(gw->model);
+   gw->model = NULL;
    free(gw);
 }
 
@@ -314,6 +315,11 @@ eng_window_resurf(Outbuf *gw)
 void 
 eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EINA_UNUSED)
 {
+   if (!ob->model) ob->model = wobbly_create(0, 0, w, h);
+   wobbly_resize(ob->model, w, h);
+   glsym_evas_gl_common_context_unredirect(ob->gl_context);
+   ob->redirected = EINA_FALSE;
+
    ob->w = w;
    ob->h = h;
    ob->rot = rot;
@@ -361,6 +367,11 @@ eng_outbuf_rotation_get(Outbuf *ob)
 Render_Engine_Swap_Mode 
 eng_outbuf_swap_mode_get(Outbuf *ob)
 {
+   if (ob->redirected)
+     {
+        ob->prev_age = 0;
+        return MODE_FULL;
+     }
    if ((ob->swap_mode == MODE_AUTO) && (extn_have_buffer_age))
      {
         Render_Engine_Swap_Mode swap_mode;
@@ -488,6 +499,8 @@ eng_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update EINA_UNUSED, int x 
 void 
 eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
 {
+   Eina_Bool effect_continues = EINA_FALSE;
+
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) goto end;
 
    if (!_re_wincheck(ob)) goto end;
@@ -507,7 +520,33 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
    if (ob->info->callback.pre_swap)
      ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
 
-   if ((glsym_eglSwapBuffersWithDamage) && (rects) &&
+   if (ob->model) effect_continues = wobbly_process(ob->model, ob->info,
+                                                    ob->w, ob->h,
+                                                    ob->redirected);
+
+   if (ob->redirected)
+     {
+        float tlx, tly, brx, bry;
+        int w, h;
+
+        wobbly_bounds(ob->model, &tlx, &tly, &brx, &bry);
+        w = brx - tlx;
+        h = bry - tly;
+
+        wl_egl_window_resize(ob->win, w, h,
+                             tlx - ob->offset_x,
+                             tly - ob->offset_y);
+        ob->offset_x = tlx;
+        ob->offset_y = tly;
+        glsym_evas_gl_common_context_redirect_unbind(ob->gl_context);
+        glViewport(0, 0, w, h);
+        wobbly_draw(ob->gl_context, ob->model);
+        wl_surface_set_opaque_region(ob->info->info.surface, NULL);
+        eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
+        glsym_evas_gl_common_context_redirect_bind(ob->gl_context);
+        glViewport(0, 0, ob->w, ob->h);
+     }
+   else if ((glsym_eglSwapBuffersWithDamage) && (rects) &&
        (ob->swap_mode != MODE_FULL))
      {
         EGLint num = 0, *result = NULL, i = 0;
@@ -530,6 +569,21 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
    else
       eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
 
+   if (ob->redirected && !effect_continues) ob->info->wobbling = EINA_TRUE;
+   else ob->info->wobbling = effect_continues;
+
+   if (effect_continues)
+     {
+        glsym_evas_gl_common_context_redirect(ob->gl_context);
+        ob->redirected = EINA_TRUE;
+     }
+   else
+     {
+        ob->offset_x = 0;
+        ob->offset_y = 0;
+        glsym_evas_gl_common_context_unredirect(ob->gl_context);
+        ob->redirected = EINA_FALSE;
+     }
    if (ob->info->callback.post_swap)
      ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
 

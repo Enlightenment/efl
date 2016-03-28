@@ -7,6 +7,8 @@
 # include "Evas.h"
 # include "Evas_Engine_Wayland_Egl.h"
 
+# include "www.h"
+
 /* NB: This already includes wayland-client.h */
 # include <wayland-egl.h>
 
@@ -81,6 +83,11 @@ struct _Outbuf
 
    Eina_Bool lost_back : 1;
    Eina_Bool surf : 1;
+
+   Model *model;
+   Eina_Bool redirected : 1;
+
+   float offset_x, offset_y;
 };
 
 struct _Context_3D
@@ -100,12 +107,30 @@ extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_use;
 extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_newframe;
 extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_done;
 extern Evas_GL_Common_Context_Resize_Call glsym_evas_gl_common_context_resize;
+extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_unredirect;
+extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_redirect;
+extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_redirect_bind;
+extern Evas_GL_Common_Context_Call glsym_evas_gl_common_context_redirect_unbind;
+extern Evas_GL_Common_Context_Call_GLuint_Return glsym_evas_gl_common_context_redirect_texture_get;
 extern Evas_GL_Common_Buffer_Dump_Call glsym_evas_gl_common_buffer_dump;
 extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock;
 extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 
 extern unsigned int (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c);
 extern unsigned int (*glsym_eglSetDamageRegionKHR) (EGLDisplay a, EGLSurface b, EGLint *c, EGLint d);
+
+extern GLuint       (*glsym_glCreateShader) (GLenum a);
+extern void         (*glsym_glShaderSource) (GLuint a, GLsizei b, const GLchar **c, const GLint *d);
+extern void         (*glsym_glCompileShader) (GLuint a);
+extern void         (*glsym_glGetShaderiv) (GLuint a, GLenum b, GLint *c);
+extern void         (*glsym_glGetShaderInfoLog) (GLuint a, GLsizei b, GLsizei *c, GLchar *d);
+extern GLuint       (*glsym_glCreateProgram) (void);
+extern void         (*glsym_glAttachShader) (GLuint a, GLuint b);
+extern void         (*glsym_glBindAttribLocation) (GLuint a, GLuint b, const GLchar *c);
+extern void         (*glsym_glLinkProgram) (GLuint a);
+extern void         (*glsym_glGetProgramiv) (GLuint a, GLenum b, GLint *c);
+extern void         (*glsym_glGetProgramInfoLog) (GLuint a, GLsizei b, GLsizei *c, GLchar *d);
+
 
 Outbuf *eng_window_new(Evas *evas, Evas_Engine_Info_Wayland_Egl *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode);
 void eng_window_free(Outbuf *gw);
