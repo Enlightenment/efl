@@ -851,6 +851,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       Evas.Object_Smart.clip.set;
       Evas.Object_Smart.member_add;
       Evas.Object_Smart.resize;
+      Evas.Object_Smart.smart_no_render.set;
       @virtual .focus_direction;
       @virtual .focus_next;
       @virtual .parent_widget.get;

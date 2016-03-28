@@ -679,6 +679,15 @@ _evas_object_smart_clip_unset(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 EOLIAN static void
+_evas_object_smart_smart_no_render_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Eina_Bool hide)
+{
+   Evas_Object_Protected_Data *obj2;
+
+   EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj2)
+     evas_obj_no_render_set(obj2->object, hide);
+}
+
+EOLIAN static void
 _evas_object_smart_attach(Eo *eo_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Smart *s)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);

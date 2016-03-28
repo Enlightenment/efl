@@ -556,6 +556,21 @@ _elm_widget_evas_object_smart_color_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA
 }
 
 EOLIAN static void
+_elm_widget_evas_object_smart_smart_no_render_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Eina_Bool hide)
+{
+   Eina_Iterator *it;
+   Evas_Object *o;
+
+   it = evas_object_smart_iterator_new(obj);
+   EINA_ITERATOR_FOREACH(it, o)
+     {
+       if (evas_object_data_get(o, "_elm_leaveme")) continue;
+       evas_obj_no_render_set(o, hide);
+     }
+   eina_iterator_free(it);
+}
+
+EOLIAN static void
 _elm_widget_evas_object_smart_clip_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *clip)
 {
    Eina_Iterator *it;
@@ -602,6 +617,7 @@ _elm_widget_evas_object_smart_member_add(Eo *obj, Elm_Widget_Smart_Data *_pd EIN
    evas_object_color_get(obj, &r, &g, &b, &a);
    evas_object_color_set(child, r, g, b, a);
 
+   evas_obj_no_render_set(child, evas_obj_no_render_get(obj));
    evas_object_clip_set(child, evas_object_clip_get(obj));
 
    if (evas_object_visible_get(obj))

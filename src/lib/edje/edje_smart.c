@@ -332,6 +332,19 @@ _edje_object_evas_object_smart_hide(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
+_edje_object_evas_object_smart_smart_no_render_set(Eo *obj, Edje *ed, Eina_Bool hide)
+{
+   Eina_List *l;
+   Edje *edg;
+
+   evas_obj_smart_no_render_set(eo_super(obj, MY_CLASS), hide);
+   if (evas_obj_no_render_get(obj) == hide) return;
+
+   EINA_LIST_FOREACH(ed->groups, l, edg)
+     if (edg != ed) evas_obj_smart_no_render_set(edg->obj, hide);
+}
+
+EOLIAN static void
 _edje_object_evas_object_smart_calculate(Eo *obj EINA_UNUSED, Edje *ed)
 {
    _edje_recalc_do(ed);

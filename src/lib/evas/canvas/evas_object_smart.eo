@@ -113,6 +113,11 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             @in y: Evas.Coord;
          }
       }
+      @property smart_no_render {
+         [[Propagates the value of no-render to the smart children.]]
+         set { legacy: null; }
+         values { hide: bool; }
+      }
       callbacks_descriptions_set {
          [[Set an smart object instance's smart callbacks descriptions.
 

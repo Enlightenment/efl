@@ -137,8 +137,8 @@ evas_object_is_source_invisible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 
 static inline int
 evas_object_is_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
-{                        /* post 1.0 -> enable? */
-   if ((obj->cur->visible)/* && (obj->cur->color.a > 0)*/ &&
+{
+   if ((obj->cur->visible) && (!obj->no_render) &&
        ((obj->cur->cache.clip.visible) || (obj->is_smart)) &&
        ((obj->cur->cache.clip.a > 0 && obj->cur->render_op == EVAS_RENDER_BLEND)
        || obj->cur->render_op != EVAS_RENDER_BLEND))

@@ -534,12 +534,12 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
    obj->is_active = is_active;
 
 #ifdef REND_DBG
-   RD(level, "[--- PROCESS [%p (eo: %p)", obj, obj->object);
+   RD(level, "[--- PROCESS [%p", obj->object);
    IFRD(obj->name, 0, " '%s'", obj->name);
    RD(0, "] '%s' active = %i, del = %i | %i %i %ix%i\n", obj->type, is_active, obj->delete_me, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
 #endif
 
-   if ((!mapped_parent) && ((is_active) || (obj->delete_me != 0)))
+   if ((!mapped_parent) && ((is_active) || (obj->delete_me != 0)) && !obj->no_render)
       OBJ_ARRAY_PUSH(active_objects, obj);
    if (is_active && obj->cur->snapshot && !obj->delete_me &&
        evas_object_is_visible(eo_obj, obj))
@@ -2292,7 +2292,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
         if (obj == top) break;
 
         /* if it's in our outpout rect and it doesn't clip anything */
-        RD(level, "    OBJ: [%p", obj);
+        RD(level, "    OBJ: [%p", eo_obj);
         IFRD(obj->name, 0, " '%s'", obj->name);
         RD(level, "] '%s' %i %i %ix%i\n", obj->type, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
         if ((evas_object_is_in_output_rect(eo_obj, obj, ux - fx, uy - fy, uw, uh) ||
