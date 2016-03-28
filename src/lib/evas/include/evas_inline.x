@@ -108,7 +108,7 @@ evas_event_freezes_through(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protecte
 static inline int
 evas_event_passes_through(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   if (obj->pass_events) return 1;
+   if (obj->pass_events || obj->no_render) return 1;
    if (obj->parent_cache.pass_events_valid)
      return obj->parent_cache.pass_events;
    if (!obj->smart.parent) return 0;
