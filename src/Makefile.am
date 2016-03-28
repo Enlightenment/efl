@@ -81,6 +81,7 @@ include Makefile_Efl_Cxx.am
 include Makefile_Edje_Cxx.am
 include Makefile_Evas_Cxx.am
 include Makefile_Eio_Cxx.am
+include Makefile_Elementary_Cxx.am
 
 include Makefile_Elua.am
 
