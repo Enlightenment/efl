@@ -1030,7 +1030,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            Adds child to the box indicated by part, in the position given by
            pos.
 
-           See also @.part_box_append(), @.part_box_prepend() and @.part_box_insert_before()]]
+           See also @.part_box_append(), @.part_box_prepend(),
+           @.part_box_insert_before() and @.part_box_insert_after()]]
 
          return: bool; [[$true: Successfully added.
                          $false: An error occurred.]]
@@ -1097,7 +1098,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
            Prepends child to the box indicated by part.
 
-           See also @.part_box_append(), @.part_box_insert_before() and @.part_box_insert_at()]]
+           See also @.part_box_append(), @.part_box_insert_before(),
+           @.part_box_insert_after and @.part_box_insert_at()]]
 
          return: bool; [[$true: Successfully added.
                          $false: An error occurred.]]
@@ -1594,7 +1596,25 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            Inserts child in the box given by part, in the position marked by
            reference.
 
-           See also @.part_box_append(), @.part_box_prepend() and @.part_box_insert_at()]]
+           See also @.part_box_append(), @.part_box_prepend(),
+           @.part_box_insert_after() and @.part_box_insert_at()]]
+
+         return: bool; [[$true: Successfully added.
+                         $false: An error occurred.]]
+         params {
+            @in part: const(char)*; [[The part name]]
+            @in child: Evas.Object *; [[The object to insert]]
+            @in reference: const(Evas.Object)*; [[The object to be used as reference]]
+         }
+      }
+      part_box_insert_after {
+         [[Adds an object to the box.
+
+           Inserts child in the box given by part, in the position marked by
+           reference.
+
+           See also @.part_box_append(), @.part_box_prepend(),
+           @.part_box_insert_before() and @.part_box_insert_at()]]
 
          return: bool; [[$true: Successfully added.
                          $false: An error occurred.]]
@@ -1680,8 +1700,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
            Appends child to the box indicated by part.
 
-           See also @.part_box_prepend(), @.part_box_insert_before()
-           and @.part_box_insert_at()]]
+           See also @.part_box_prepend(), @.part_box_insert_before(),
+           @.part_box_insert_after() and @.part_box_insert_at()]]
 
          return: bool; [[$true: Successfully added.
                          $false: An error occurred.]]

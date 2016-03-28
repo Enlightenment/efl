@@ -2428,6 +2428,7 @@ Edje_Part_Description_Text *_edje_real_part_text_text_source_description_get(Edj
 Eina_Bool         _edje_real_part_box_append(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj);
 Eina_Bool         _edje_real_part_box_prepend(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj);
 Eina_Bool         _edje_real_part_box_insert_before(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref);
+Eina_Bool         _edje_real_part_box_insert_after(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref);
 Eina_Bool         _edje_real_part_box_insert_at(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj, unsigned int pos);
 Evas_Object      *_edje_real_part_box_remove(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj);
 Evas_Object      *_edje_real_part_box_remove_at(Edje *ed, Edje_Real_Part *rp, unsigned int pos);

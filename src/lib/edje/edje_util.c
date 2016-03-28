@@ -4758,6 +4758,34 @@ _edje_object_part_box_insert_before(Eo *obj EINA_UNUSED, Edje *ed, const char *p
 }
 
 EOLIAN Eina_Bool
+_edje_object_part_box_insert_after(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *child, const Evas_Object *reference)
+{
+   Eina_Bool ret;
+   Edje_Real_Part *rp;
+   ret = EINA_FALSE;
+
+   if ((!ed) || (!part)) return ret;
+
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return ret;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return ret;
+
+   if (_edje_real_part_box_insert_after(ed, rp, child, reference))
+     {
+        Edje_User_Defined *eud;
+
+        eud = _edje_user_definition_new(EDJE_USER_BOX_PACK, part, ed);
+        if (!eud) return ret;
+        eud->u.box.child = child;
+
+        evas_object_event_callback_add(child, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
+        ret = EINA_TRUE;
+     }
+
+   return ret;
+}
+
+EOLIAN Eina_Bool
 _edje_object_part_box_insert_at(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *child, unsigned int pos)
 {
    Eina_Bool ret;
@@ -5003,6 +5031,25 @@ _edje_real_part_box_insert_before(Edje *ed, Edje_Real_Part *rp, Evas_Object *chi
    Evas_Object_Box_Option *opt;
 
    opt = evas_object_box_insert_before(rp->object, child_obj, ref);
+   if (!opt) return EINA_FALSE;
+
+   if (!_edje_box_layout_add_child(rp, child_obj))
+     {
+        evas_object_box_remove(rp->object, child_obj);
+        return EINA_FALSE;
+     }
+
+   _edje_child_add(ed, rp, child_obj);
+
+   return EINA_TRUE;
+}
+
+Eina_Bool
+_edje_real_part_box_insert_after(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref)
+{
+   Evas_Object_Box_Option *opt;
+
+   opt = evas_object_box_insert_after(rp->object, child_obj, ref);
    if (!opt) return EINA_FALSE;
 
    if (!_edje_box_layout_add_child(rp, child_obj))
