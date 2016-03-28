@@ -51,8 +51,7 @@ ector_eolian_files = \
                      $(ector_eolian_files_generic) \
                      $(ector_eolian_files_cairo) \
                      $(ector_eolian_files_software) \
-                     $(ector_eolian_files_gl) \
-                     $(ector_eolian_type_files)
+                     $(ector_eolian_files_gl)
 
 ector_eolian_c = $(ector_eolian_files:%.eo=%.eo.c)
 ector_eolian_h = $(ector_eolian_files:%.eo=%.eo.h) \
@@ -67,7 +66,7 @@ CLEANFILES += \
 	$(ector_eolian_h)
 
 ectoreolianfilesdir = $(datadir)/eolian/include/ector-@VMAJ@
-ectoreolianfiles_DATA = $(ector_eolian_files)
+ectoreolianfiles_DATA = $(ector_eolian_files) $(ector_eolian_type_files)
 
 EXTRA_DIST += $(ectoreolianfiles_DATA) \
 lib/ector/Ector.h \
