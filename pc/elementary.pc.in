@@ -9,8 +9,8 @@ vmaj=@VMAJ@
 vmin=@VMIN@
 vmic=@VMIC@
 themes=${pkgdatadir}/themes
-eoincludedir=${datadir}/eolian/include
-eolian_flags=-I${eoincludedir}/elementary-@VMAJ@
+eoincludedir=@datadir@/eolian/include
+eolian_flags=-I${pc_sysrootdir}${eoincludedir}/elementary-@VMAJ@
 
 Name: elementary
 Description: Enlightenment Widgets library
