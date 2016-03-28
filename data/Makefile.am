@@ -172,7 +172,7 @@ EXTRA_DIST += $(elementary_images_files) $(elementary_images_glayer_files)
 
 include ../Makefile_Elm_Helpers.am
 
-elementaryobjectsdir = $(datadir)/elementary/object
+elementaryobjectsdir = $(datadir)/elementary/objects
 elementaryobjects_DATA = \
 elementary/objects/test.edj \
 elementary/objects/test_external.edj \
