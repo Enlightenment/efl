@@ -4262,3 +4262,102 @@ process_color_tree(char *s, const char *f_in, int ln)
    eina_array_clean(array);
    eina_array_free(array);
 }
+
+char
+validate_hex_digit(char c)
+{
+   if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'))
+    return c;
+
+   ERR("%s:%i. invalid character '%c' is used in color code.",
+       file_in, line - 1, c);
+   exit(-1);
+}
+
+void
+convert_color_code(char *str, int *r, int *g, int *b, int *a)
+{
+   char buf[3];
+   int len;
+
+   len = strlen(str);
+
+   if ((str[0] != '#') || (len != 4 && len != 5 && len != 7 && len != 9))
+     {
+        ERR("%s:%i color code should start with '#' and have 4 or 8 digit hex number. (3 or 6 digits are allowed to omit alpha value of 255)",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   buf[2] = '\0';
+
+   if (r)
+     {
+        if ((len == 4) || (len == 5))
+          {
+             buf[0] = validate_hex_digit(str[1]);
+             buf[1] = validate_hex_digit(str[1]);
+          }
+        else
+          {
+             buf[0] = validate_hex_digit(str[1]);
+             buf[1] = validate_hex_digit(str[2]);
+          }
+
+        *r = (int)strtol(buf, NULL, 16);
+     }
+   if (g)
+     {
+        if ((len == 4) || (len == 5))
+          {
+             buf[0] = validate_hex_digit(str[2]);
+             buf[1] = validate_hex_digit(str[2]);
+          }
+        else
+          {
+             buf[0] = validate_hex_digit(str[3]);
+             buf[1] = validate_hex_digit(str[4]);
+          }
+
+        *g = (int)strtol(buf, NULL, 16);
+     }
+   if (b)
+     {
+        if ((len == 4) || (len == 5))
+          {
+             buf[0] = validate_hex_digit(str[3]);
+             buf[1] = validate_hex_digit(str[3]);
+          }
+        else
+          {
+             buf[0] = validate_hex_digit(str[5]);
+             buf[1] = validate_hex_digit(str[6]);
+          }
+
+        *b = (int)strtol(buf, NULL, 16);
+     }
+   if (a)
+     {
+        if ((len == 5) || (len == 9))
+          {
+             if (len == 5)
+               {
+                  buf[0] = validate_hex_digit(str[4]);
+                  buf[1] = validate_hex_digit(str[4]);
+               }
+             else
+               {
+                  buf[0] = validate_hex_digit(str[7]);
+                  buf[1] = validate_hex_digit(str[8]);
+               }
+
+             *a = (int)strtol(buf, NULL, 16);
+          }
+        else
+          {
+             *a = 255;
+          }
+     }
+
+   free(str);
+}

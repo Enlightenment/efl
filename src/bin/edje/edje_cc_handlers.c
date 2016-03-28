@@ -2803,14 +2803,34 @@ static void
 st_color_class_color(void)
 {
    Edje_Color_Class *cc;
-
-   check_arg_count(4);
+   int nargs = get_arg_count();
 
    cc = eina_list_data_get(eina_list_last(edje_file->color_classes));
-   cc->r = parse_int_range(0, 0, 255);
-   cc->g = parse_int_range(1, 0, 255);
-   cc->b = parse_int_range(2, 0, 255);
-   cc->a = parse_int_range(3, 0, 255);
+
+   if (nargs == 1)
+     {
+        int r, g, b, a;
+        char *str = parse_str(0);
+
+        convert_color_code(str, &r, &g, &b, &a);
+        cc->r = r;
+        cc->g = g;
+        cc->b = b;
+        cc->a = a;
+     }
+   else if (nargs == 4)
+     {
+        cc->r = parse_int_range(0, 0, 255);
+        cc->g = parse_int_range(1, 0, 255);
+        cc->b = parse_int_range(2, 0, 255);
+        cc->a = parse_int_range(3, 0, 255);
+     }
+   else
+     {
+        ERR("%s:%i. color code should be a string or a set of 4 integers.",
+            file_in, line - 1);
+        exit(-1);
+     }
 }
 
 /**
@@ -2827,14 +2847,34 @@ static void
 st_color_class_color2(void)
 {
    Edje_Color_Class *cc;
-
-   check_arg_count(4);
+   int nargs = get_arg_count();
 
    cc = eina_list_data_get(eina_list_last(edje_file->color_classes));
-   cc->r2 = parse_int_range(0, 0, 255);
-   cc->g2 = parse_int_range(1, 0, 255);
-   cc->b2 = parse_int_range(2, 0, 255);
-   cc->a2 = parse_int_range(3, 0, 255);
+
+   if (nargs == 1)
+     {
+        int r, g, b, a;
+        char *str = parse_str(0);
+
+        convert_color_code(str, &r, &g, &b, &a);
+        cc->r2 = r;
+        cc->g2 = g;
+        cc->b2 = b;
+        cc->a2 = a;
+     }
+   else if (nargs == 4)
+     {
+        cc->r2 = parse_int_range(0, 0, 255);
+        cc->g2 = parse_int_range(1, 0, 255);
+        cc->b2 = parse_int_range(2, 0, 255);
+        cc->a2 = parse_int_range(3, 0, 255);
+     }
+   else
+     {
+        ERR("%s:%i. color code should be a string or a set of 4 integers.",
+            file_in, line - 1);
+        exit(-1);
+     }
 }
 
 /**
@@ -2851,14 +2891,34 @@ static void
 st_color_class_color3(void)
 {
    Edje_Color_Class *cc;
-
-   check_arg_count(4);
+   int nargs = get_arg_count();
 
    cc = eina_list_data_get(eina_list_last(edje_file->color_classes));
-   cc->r3 = parse_int_range(0, 0, 255);
-   cc->g3 = parse_int_range(1, 0, 255);
-   cc->b3 = parse_int_range(2, 0, 255);
-   cc->a3 = parse_int_range(3, 0, 255);
+
+   if (nargs == 1)
+     {
+        int r, g, b, a;
+        char *str = parse_str(0);
+
+        convert_color_code(str, &r, &g, &b, &a);
+        cc->r3 = r;
+        cc->g3 = g;
+        cc->b3 = b;
+        cc->a3 = a;
+     }
+   else if (nargs == 4)
+     {
+        cc->r3 = parse_int_range(0, 0, 255);
+        cc->g3 = parse_int_range(1, 0, 255);
+        cc->b3 = parse_int_range(2, 0, 255);
+        cc->a3 = parse_int_range(3, 0, 255);
+     }
+   else
+     {
+        ERR("%s:%i. color code should be a string or a set of 4 integers.",
+            file_in, line - 1);
+        exit(-1);
+     }
 }
 
 /**
@@ -8394,19 +8454,39 @@ st_collections_group_parts_part_description_color_class(void)
 static void
 st_collections_group_parts_part_description_color(void)
 {
-   check_arg_count(4);
+   int nargs = get_arg_count();
 
    if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
        ERR("parse error %s:%i. SPACER part can't have a color defined",
-	   file_in, line - 1);
+           file_in, line - 1);
        exit(-1);
      }
 
-   current_desc->color.r = parse_int_range(0, 0, 255);
-   current_desc->color.g = parse_int_range(1, 0, 255);
-   current_desc->color.b = parse_int_range(2, 0, 255);
-   current_desc->color.a = parse_int_range(3, 0, 255);
+   if (nargs == 1)
+     {
+        int r, g, b, a;
+        char *str = parse_str(0);
+
+        convert_color_code(str, &r, &g, &b, &a);
+        current_desc->color.r = r;
+        current_desc->color.g = g;
+        current_desc->color.b = b;
+        current_desc->color.a = a;
+     }
+   else if (nargs == 4)
+     {
+        current_desc->color.r = parse_int_range(0, 0, 255);
+        current_desc->color.g = parse_int_range(1, 0, 255);
+        current_desc->color.b = parse_int_range(2, 0, 255);
+        current_desc->color.a = parse_int_range(3, 0, 255);
+     }
+   else
+     {
+        ERR("%s:%i. color code should be a string or a set of 4 integers.",
+            file_in, line - 1);
+        exit(-1);
+     }
 }
 
 /**
@@ -8422,19 +8502,39 @@ st_collections_group_parts_part_description_color(void)
 static void
 st_collections_group_parts_part_description_color2(void)
 {
-   check_arg_count(4);
+   int nargs = get_arg_count();
 
    if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
        ERR("parse error %s:%i. SPACER part can't have a color defined",
-	   file_in, line - 1);
+           file_in, line - 1);
        exit(-1);
      }
 
-   current_desc->color2.r = parse_int_range(0, 0, 255);
-   current_desc->color2.g = parse_int_range(1, 0, 255);
-   current_desc->color2.b = parse_int_range(2, 0, 255);
-   current_desc->color2.a = parse_int_range(3, 0, 255);
+   if (nargs == 1)
+     {
+        int r, g, b, a;
+        char *str = parse_str(0);
+
+        convert_color_code(str, &r, &g, &b, &a);
+        current_desc->color2.r = r;
+        current_desc->color2.g = g;
+        current_desc->color2.b = b;
+        current_desc->color2.a = a;
+     }
+   else if (nargs == 4)
+     {
+        current_desc->color2.r = parse_int_range(0, 0, 255);
+        current_desc->color2.g = parse_int_range(1, 0, 255);
+        current_desc->color2.b = parse_int_range(2, 0, 255);
+        current_desc->color2.a = parse_int_range(3, 0, 255);
+     }
+   else
+     {
+        ERR("%s:%i. color code should be a string or a set of 4 integers.",
+            file_in, line - 1);
+        exit(-1);
+     }
 }
 
 /**
@@ -8452,8 +8552,7 @@ st_collections_group_parts_part_description_color3(void)
 {
    Edje_Part_Collection *pc;
    Edje_Part_Description_Text *ed;
-
-   check_arg_count(4);
+   int nargs = get_arg_count();
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
 
@@ -8467,10 +8566,30 @@ st_collections_group_parts_part_description_color3(void)
 
    ed = (Edje_Part_Description_Text*)current_desc;
 
-   ed->text.color3.r = parse_int_range(0, 0, 255);
-   ed->text.color3.g = parse_int_range(1, 0, 255);
-   ed->text.color3.b = parse_int_range(2, 0, 255);
-   ed->text.color3.a = parse_int_range(3, 0, 255);
+   if (nargs == 1)
+     {
+        int r, g, b, a;
+        char *str = parse_str(0);
+
+        convert_color_code(str, &r, &g, &b, &a);
+        ed->text.color3.r = r;
+        ed->text.color3.g = g;
+        ed->text.color3.b = b;
+        ed->text.color3.a = a;
+     }
+   else if (nargs == 4)
+     {
+        ed->text.color3.r = parse_int_range(0, 0, 255);
+        ed->text.color3.g = parse_int_range(1, 0, 255);
+        ed->text.color3.b = parse_int_range(2, 0, 255);
+        ed->text.color3.a = parse_int_range(3, 0, 255);
+     }
+   else
+     {
+        ERR("%s:%i. color code should be a string or a set of 4 integers.",
+            file_in, line - 1);
+        exit(-1);
+     }
 }
 
 /**

@@ -253,6 +253,7 @@ void edje_cc_handlers_pop_notify(const char *token);
 int get_param_index(char *str);
 
 void color_tree_root_free(void);
+void convert_color_code(char *str, int *r, int *g, int *b, int *a);
 
 /* global vars */
 extern Eina_List             *ext_dirs;
