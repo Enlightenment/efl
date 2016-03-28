@@ -6,11 +6,11 @@ include ../../Makefile_Elm_Helpers.am
 
 AM_CPPFLAGS = \
 -I$(top_srcdir) \
--I$(top_srcdir)/src/lib \
--I$(top_builddir)/src/lib \
--I$(top_srcdir)/src/bin \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-I$(top_srcdir)/src/bin/elementary \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/elementary\" \
 -DDOCW_DIR=\"$(abs_top_builddir)/doc/widgets\" \
 @ELEMENTARY_CFLAGS@
 
@@ -97,8 +97,17 @@ widget_preview_toolbar \
 widget_preview_web \
 widget_preview_win
 
-LDADD = $(top_builddir)/src/lib/libelementary.la \
-@ELEMENTARY_LIBS@
+LDADD = \
+$(top_builddir)/src/lib/eina/libeina.la \
+$(top_builddir)/src/lib/eo/libeo.la \
+$(top_builddir)/src/lib/efl/libefl.la \
+$(top_builddir)/src/lib/eet/libeet.la \
+$(top_builddir)/src/lib/evas/libevas.la \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
+$(top_builddir)/src/lib/edje/libedje.la \
+$(top_builddir)/src/lib/elementary/libelementary.la \
+@ECORE_EVAS_LDFLAGS@
 
 endif
 

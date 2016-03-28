@@ -5378,6 +5378,7 @@ data/Makefile
 doc/Makefile
 doc/Doxyfile
 doc/previews/Makefile
+doc/widgets/Makefile
 src/Makefile
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
