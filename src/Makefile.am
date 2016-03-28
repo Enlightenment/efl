@@ -68,6 +68,7 @@ include Makefile_Edje.am
 include Makefile_Emotion.am
 include Makefile_Ethumb.am
 include Makefile_Ethumb_Client.am
+include Makefile_Elocation.am
 include Makefile_Elementary.am
 
 include Makefile_Eina_Cxx.am
@@ -82,7 +83,6 @@ include Makefile_Evas_Cxx.am
 include Makefile_Eio_Cxx.am
 
 include Makefile_Elua.am
-include Makefile_Elocation.am
 
 if HAVE_JS
 AM_V_CP = $(am__v_CP_@AM_V@)
