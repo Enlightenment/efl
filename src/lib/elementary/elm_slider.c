@@ -76,6 +76,7 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
 {
    Eina_Bool rtl;
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
+   double posx2 = 0.0, posy2 = 0.0, pos2 = 0.0, val2;
 
    ELM_SLIDER_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -85,16 +86,37 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
    if (sd->horizontal) pos = posx;
    else pos = posy;
 
+   edje_object_part_drag_value_get
+     (wd->resize_obj, "elm.dragable2.slider", &posx2, &posy2);
+   if (sd->horizontal) pos2 = posx2;
+   else pos2 = posy2;
+
    rtl = elm_widget_mirrored_get(obj);
    if ((!rtl && sd->inverted) ||
        (rtl && ((!sd->horizontal && sd->inverted) ||
                 (sd->horizontal && !sd->inverted))))
-     pos = 1.0 - pos;
+     {
+        pos = 1.0 - pos;
+        pos2 = 1.0 - pos2;
+     }
 
    val = (pos * (sd->val_max - sd->val_min)) + sd->val_min;
+   val2 = (pos2 * (sd->val_max - sd->val_min)) + sd->val_min;
+
    if (fabs(val - sd->val) > DBL_EPSILON)
      {
         sd->val = val;
+        sd->range_from = val;
+        if (user_event)
+          {
+             eo_event_callback_call(obj, ELM_SLIDER_EVENT_CHANGED, NULL);
+             ecore_timer_del(sd->delay);
+             sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
+          }
+     }
+   if (fabs(val2 - sd->range_to) > DBL_EPSILON)
+     {
+        sd->range_to = val2;
         if (user_event)
           {
              eo_event_callback_call(obj, ELM_SLIDER_EVENT_CHANGED, NULL);
@@ -108,27 +130,44 @@ static void
 _val_set(Evas_Object *obj)
 {
    Eina_Bool rtl;
-   double pos;
+   double pos, pos2;
 
    ELM_SLIDER_DATA_GET(obj, sd);
 
    if (sd->val_max > sd->val_min)
-     pos = (sd->val - sd->val_min) / (sd->val_max - sd->val_min);
-   else pos = 0.0;
+     {
+        pos = (sd->val - sd->val_min) / (sd->val_max - sd->val_min);
+        pos2 = (sd->range_to - sd->val_min) / (sd->val_max - sd->val_min);
+     }
+   else
+     {
+        pos = 0.0;
+        pos2 = 0.0;
+     }
 
    if (pos < 0.0) pos = 0.0;
    else if (pos > 1.0)
      pos = 1.0;
+   if (pos2 < 0.0) pos2 = 0.0;
+   else if (pos2 > 1.0)
+     pos2 = 1.0;
 
    rtl = elm_widget_mirrored_get(obj);
    if ((!rtl && sd->inverted) ||
        (rtl && ((!sd->horizontal && sd->inverted) ||
                 (sd->horizontal && !sd->inverted))))
-     pos = 1.0 - pos;
+     {
+        pos = 1.0 - pos;
+        pos2 = 1.0 - pos2;
+     }
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", pos, pos);
+
+   if (sd->range_enable)
+     edje_object_part_drag_value_set
+        (wd->resize_obj, "elm.dragable2.slider", pos2, pos2);
 
    // emit accessiblity event also if value was chagend by API
    if (_elm_config->atspi_mode)
@@ -169,7 +208,16 @@ _units_set(Evas_Object *obj)
      {
         char buf[1024];
 
-        snprintf(buf, sizeof(buf), sd->units, sd->val);
+        if (!sd->range_enable)
+          snprintf(buf, sizeof(buf), sd->units, sd->val);
+        else
+          {
+             double v1, v2;
+
+             elm_slider_range_get(obj, &v1, &v2);
+             snprintf(buf, sizeof(buf), sd->units, v2 - v1);
+          }
+
         elm_layout_text_set(obj, "elm.units", buf);
         if (!sd->units_show)
           {
@@ -202,6 +250,13 @@ _indicator_set(Evas_Object *obj)
         elm_layout_text_set(obj, "elm.dragable.slider:elm.indicator", buf);
         if (sd->popup)
           edje_object_part_text_set(sd->popup, "elm.indicator", buf);
+        if (sd->popup2)
+          {
+             if (sd->indicator_format_free) sd->indicator_format_free(buf);
+             buf = sd->indicator_format_func(sd->range_to);
+             elm_layout_text_set(obj, "elm.dragable2.slider:elm.indicator", buf);
+             edje_object_part_text_set(sd->popup2, "elm.indicator", buf);
+          }
 
         if (sd->indicator_format_free) sd->indicator_format_free(buf);
      }
@@ -214,6 +269,13 @@ _indicator_set(Evas_Object *obj)
         elm_layout_text_set(obj, "elm.dragable.slider:elm.indicator", buf);
         if (sd->popup)
           edje_object_part_text_set(sd->popup, "elm.indicator", buf);
+        if (sd->popup2)
+          {
+             memset(buf, 0, 1024);
+             snprintf(buf, sizeof(buf), sd->indicator, sd->range_to);
+             elm_layout_text_set(obj, "elm.dragable2.slider:elm.indicator", buf);
+             edje_object_part_text_set(sd->popup2, "elm.indicator", buf);
+          }
      }
    else
      {
@@ -221,6 +283,11 @@ _indicator_set(Evas_Object *obj)
         elm_layout_text_set(obj, "elm.dragable.slider:elm.indicator", NULL);
         if (sd->popup)
           edje_object_part_text_set(sd->popup, "elm.indicator", NULL);
+        if (sd->popup2)
+          {
+             elm_layout_text_set(obj, "elm.dragable2.slider:elm.indicator", NULL);
+             edje_object_part_text_set(sd->popup2, "elm.indicator", NULL);
+          }
      }
 }
 
@@ -325,6 +392,14 @@ _popup_show(void *data,
         edje_object_signal_emit(sd->popup, "popup,show", "elm"); // XXX: for compat
         edje_object_signal_emit(sd->popup, "elm,popup,show", "elm");
      }
+   if (sd->popup2 &&
+       (sd->indicator_visible_mode != ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE))
+     {
+        evas_object_raise(sd->popup2);
+        evas_object_show(sd->popup2);
+        edje_object_signal_emit(sd->popup2, "popup,show", "elm"); // XXX: for compat
+        edje_object_signal_emit(sd->popup2, "elm,popup,show", "elm");
+     }
    ELM_SAFE_FREE(sd->wheel_indicator_timer, ecore_timer_del);
 }
 
@@ -345,6 +420,12 @@ _popup_hide(void *data,
 
    edje_object_signal_emit(sd->popup, "popup,hide", "elm"); // XXX: for compat
    edje_object_signal_emit(sd->popup, "elm,popup,hide", "elm");
+
+   if (sd->popup2)
+     {
+        edje_object_signal_emit(sd->popup2, "popup,hide", "elm"); // XXX: for compat
+        edje_object_signal_emit(sd->popup2, "elm,popup,hide", "elm");
+     }
 }
 
 static void
@@ -363,6 +444,14 @@ _popup_hide_done(void *data,
              sd->popup_visible = EINA_FALSE;
           }
      }
+   if (sd->popup2)
+     {
+        if (!((elm_widget_focus_get(data)) &&
+              (sd->indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS)))
+          {
+             evas_object_hide(sd->popup2);
+          }
+     }
 }
 
 static void
@@ -375,6 +464,10 @@ _popup_emit(void *data,
    if (sd->popup)
      {
         edje_object_signal_emit(sd->popup, emission, source);
+     }
+   if (sd->popup2)
+     {
+        edje_object_signal_emit(sd->popup2, emission, source);
      }
 }
 
@@ -510,6 +603,19 @@ _track_move_cb(void *data,
 }
 
 static void
+_track2_move_cb(void *data,
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj,
+               void *event_info EINA_UNUSED)
+{
+   Evas_Coord x, y;
+
+   ELM_SLIDER_DATA_GET(data, sd);
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+   evas_object_move(sd->popup2, x, y);
+}
+
+static void
 _track_resize_cb(void *data,
                  Evas *e EINA_UNUSED,
                  Evas_Object *obj,
@@ -523,35 +629,64 @@ _track_resize_cb(void *data,
 }
 
 static void
-_popup_add(Elm_Slider_Data *sd, Eo *obj)
+_track2_resize_cb(void *data,
+                 Evas *e EINA_UNUSED,
+                 Evas_Object *obj,
+                 void *event_info EINA_UNUSED)
+{
+   Evas_Coord w, h;
+
+   ELM_SLIDER_DATA_GET(data, sd);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_resize(sd->popup2, w, h);
+}
+
+static void
+_popup_add(Elm_Slider_Data *sd, Eo *obj, Evas_Object **popup,
+           Evas_Object **track, Eina_Bool is_range)
 {
    /* if theme has an overlayed slider mode, then lets support it */
-   if (!edje_object_part_exists(elm_layout_edje_get(obj), "elm.track.slider")) return;
+   if (!is_range
+       && !edje_object_part_exists(elm_layout_edje_get(obj), "elm.track.slider"))
+     return;
+   else if (is_range
+            && !edje_object_part_exists(elm_layout_edje_get(obj), "elm.track2.slider"))
+     return;
 
    // XXX popup needs to adapt to theme etc.
-   sd->popup = edje_object_add(evas_object_evas_get(obj));
-   evas_object_smart_member_add(sd->popup, obj);
+   *popup = edje_object_add(evas_object_evas_get(obj));
+   evas_object_smart_member_add(*popup, obj);
    if (sd->horizontal)
-     _elm_theme_set(elm_widget_theme_get(obj), sd->popup, "slider", "horizontal/popup", elm_widget_style_get(obj));
+     _elm_theme_set(elm_widget_theme_get(obj), *popup, "slider", "horizontal/popup", elm_widget_style_get(obj));
    else
-     _elm_theme_set(elm_widget_theme_get(obj), sd->popup, "slider", "vertical/popup", elm_widget_style_get(obj));
-   edje_object_scale_set(sd->popup, elm_widget_scale_get(obj) *
+     _elm_theme_set(elm_widget_theme_get(obj), *popup, "slider", "vertical/popup", elm_widget_style_get(obj));
+   edje_object_scale_set(*popup, elm_widget_scale_get(obj) *
                          elm_config_scale_get());
-   edje_object_signal_callback_add(sd->popup, "popup,hide,done", "elm", // XXX: for compat
+   edje_object_signal_callback_add(*popup, "popup,hide,done", "elm", // XXX: for compat
                                    _popup_hide_done, obj);
-   edje_object_signal_callback_add(sd->popup, "elm,popup,hide,done", "elm",
+   edje_object_signal_callback_add(*popup, "elm,popup,hide,done", "elm",
                                    _popup_hide_done, obj);
 
    /* create a rectangle to track position+size of the dragable */
-   sd->track = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_event_callback_add
-     (sd->track, EVAS_CALLBACK_MOVE, _track_move_cb, obj);
-   evas_object_event_callback_add
-     (sd->track, EVAS_CALLBACK_RESIZE, _track_resize_cb, obj);
-
-   evas_object_color_set(sd->track, 0, 0, 0, 0);
-   evas_object_pass_events_set(sd->track, EINA_TRUE);
-   elm_layout_content_set(obj, "elm.track.slider", sd->track);
+   *track = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_color_set(*track, 0, 0, 0, 0);
+   evas_object_pass_events_set(*track, EINA_TRUE);
+   if (!is_range)
+     {
+        evas_object_event_callback_add
+           (*track, EVAS_CALLBACK_MOVE, _track_move_cb, obj);
+        evas_object_event_callback_add
+           (*track, EVAS_CALLBACK_RESIZE, _track_resize_cb, obj);
+        elm_layout_content_set(obj, "elm.track.slider", *track);
+     }
+   else
+     {
+        evas_object_event_callback_add
+           (*track, EVAS_CALLBACK_MOVE, _track2_move_cb, obj);
+        evas_object_event_callback_add
+           (*track, EVAS_CALLBACK_RESIZE, _track2_resize_cb, obj);
+        elm_layout_content_set(obj, "elm.track2.slider", *track);
+     }
 }
 
 EOLIAN static Eina_Bool
@@ -568,6 +703,10 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
           _elm_theme_set(elm_widget_theme_get(obj), sd->popup,
                          "slider", "horizontal/popup",
                          elm_widget_style_get(obj));
+        if (sd->popup2)
+          _elm_theme_set(elm_widget_theme_get(obj), sd->popup2,
+                         "slider", "horizontal/popup",
+                         elm_widget_style_get(obj));
      }
    else
      {
@@ -576,16 +715,31 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
           _elm_theme_set(elm_widget_theme_get(obj), sd->popup,
                          "slider", "vertical/popup",
                          elm_widget_style_get(obj));
+        if (sd->popup2)
+          _elm_theme_set(elm_widget_theme_get(obj), sd->popup2,
+                         "slider", "vertical/popup",
+                         elm_widget_style_get(obj));
      }
 
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (sd->popup)
-     edje_object_scale_set(sd->popup, elm_widget_scale_get(obj) *
-                           elm_config_scale_get());
+     {
+        edje_object_scale_set(sd->popup, elm_widget_scale_get(obj) *
+                              elm_config_scale_get());
+        if (sd->range_enable && sd->popup2)
+          edje_object_scale_set(sd->popup2, elm_widget_scale_get(obj) *
+                                elm_config_scale_get());
+        else if (sd->range_enable && !sd->popup2)
+          _popup_add(sd, obj, &sd->popup2, &sd->track2, EINA_TRUE);
+     }
    else
-     _popup_add(sd, obj);
+     {
+        _popup_add(sd, obj, &sd->popup, &sd->track, EINA_FALSE);
+        if (sd->range_enable && !sd->popup2)
+          _popup_add(sd, obj, &sd->popup2, &sd->track2, EINA_TRUE);
+     }
 
    if (sd->horizontal)
      evas_object_size_hint_min_set
@@ -596,18 +750,28 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
        (sd->spacer, 1, (double)sd->size * elm_widget_scale_get(obj) *
        elm_config_scale_get());
 
+   if (sd->range_enable)
+     elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
+   else
+     elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
+
    if (sd->inverted)
      {
         elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,inverted,on", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,inverted,on", "elm");
      }
    if (sd->indicator_show)
      {
         elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
      }
+
    _min_max_set(obj);
    _units_set(obj);
    _indicator_set(obj);
@@ -616,6 +780,8 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
    edje_object_message_signal_process(wd->resize_obj);
    if (sd->popup)
      edje_object_message_signal_process(sd->popup);
+   if (sd->popup2)
+     edje_object_message_signal_process(sd->popup2);
 
    evas_object_smart_changed(obj);
 
@@ -633,6 +799,54 @@ _elm_slider_elm_layout_sizing_eval(Eo *obj, Elm_Slider_Data *_pd EINA_UNUSED)
      (wd->resize_obj, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
+}
+
+static void
+_move_knob_on_mouse(Evas_Object *obj, double button_x, double button_y)
+{
+   ELM_SLIDER_DATA_GET(obj, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (!sd->range_enable)
+     {
+        edje_object_part_drag_value_set
+           (wd->resize_obj, "elm.dragable.slider",
+            button_x, button_y);
+     }
+   else
+     {
+        double posx = 0.0, posy = 0.0, posx2 = 0.0, posy2 = 0.0, diff1, diff2;
+
+        edje_object_part_drag_value_get
+           (wd->resize_obj, "elm.dragable.slider", &posx, &posy);
+        edje_object_part_drag_value_get
+           (wd->resize_obj, "elm.dragable2.slider", &posx2, &posy2);
+
+        if (sd->horizontal)
+          {
+             diff1 = fabs(button_x - posx);
+             diff2 = fabs(button_x - posx2);
+          }
+        else
+          {
+             diff1 = fabs(button_y - posy);
+             diff2 = fabs(button_y - posy2);
+          }
+
+        if (diff1 < diff2)
+          {
+             edje_object_part_drag_value_set
+                (wd->resize_obj, "elm.dragable.slider",
+                 button_x, button_y);
+          }
+        else
+          {
+             edje_object_part_drag_value_set
+                (wd->resize_obj, "elm.dragable2.slider",
+                 button_x, button_y);
+          }
+     }
+
 }
 
 static void
@@ -665,10 +879,8 @@ _spacer_down_cb(void *data,
         if (button_y < 0) button_y = 0;
      }
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
-   edje_object_part_drag_value_set
-     (wd->resize_obj, "elm.dragable.slider",
-     button_x, button_y);
+   _move_knob_on_mouse(data, button_x, button_y);
+
    if (!elm_widget_focus_get(data))
      elm_object_focus_set(data, EINA_TRUE);
    _slider_update(data, EINA_TRUE);
@@ -733,10 +945,7 @@ _spacer_move_cb(void *data,
              if (button_y < 0) button_y = 0;
           }
 
-        ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
-        edje_object_part_drag_value_set
-          (wd->resize_obj, "elm.dragable.slider",
-          button_x, button_y);
+        _move_knob_on_mouse(data, button_x, button_y);
         _slider_update(data, EINA_TRUE);
      }
 }
@@ -900,7 +1109,10 @@ _elm_slider_evas_object_smart_add(Eo *obj, Elm_Slider_Data *priv)
    evas_object_pass_events_set(priv->spacer, EINA_TRUE);
    elm_layout_content_set(obj, "elm.swallow.bar", priv->spacer);
 
-   _popup_add(priv, obj);
+   if (!priv->range_enable)
+     _popup_add(priv, obj, &priv->popup, &priv->track, priv->range_enable);
+   else
+     _popup_add(priv, obj, &priv->popup2, &priv->track2, priv->range_enable);
 
    evas_object_event_callback_add
      (priv->spacer, EVAS_CALLBACK_MOUSE_DOWN, _spacer_down_cb, obj);
@@ -932,6 +1144,7 @@ _elm_slider_evas_object_smart_del(Eo *obj, Elm_Slider_Data *sd)
    ecore_timer_del(sd->delay);
    ecore_timer_del(sd->wheel_indicator_timer);
    evas_object_del(sd->popup);
+   evas_object_del(sd->popup2);
 
    evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
@@ -946,6 +1159,53 @@ EOLIAN static const Elm_Layout_Part_Alias_Description*
 _elm_slider_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *_pd EINA_UNUSED)
 {
    return _content_aliases;
+}
+
+EOLIAN static Eina_Bool
+_elm_slider_range_enabled_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd)
+{
+   return pd->range_enable;
+}
+
+EOLIAN static void
+_elm_slider_range_enabled_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool enable)
+{
+   if (sd->range_enable == enable) return;
+
+   sd->range_enable = enable;
+   if (sd->range_enable)
+     {
+        _popup_add(sd, obj, &sd->popup2, &sd->track2, sd->range_enable);
+        elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
+        if (sd->indicator_show)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
+     }
+   else
+     {
+        elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
+        ELM_SAFE_FREE(sd->popup2, evas_object_del);
+     }
+}
+
+EOLIAN static void
+_elm_slider_range_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd, double *from, double *to)
+{
+   if (from) *from = fmin(pd->range_from, pd->range_to);
+   if (to) *to = fmax(pd->range_from, pd->range_to);
+}
+
+EOLIAN static void
+_elm_slider_range_set(Eo *obj, Elm_Slider_Data *pd, double from, double to)
+{
+   pd->range_from = from;
+   //TODO: remove val later
+   pd->val = from;
+   pd->range_to = to;
+
+   if (pd->range_from < pd->val_min) pd->range_from = pd->val_min;
+   if (pd->range_to > pd->val_max) pd->range_to = pd->val_max;
+
+   _visuals_refresh(obj);
 }
 
 EAPI Evas_Object *
@@ -978,12 +1238,16 @@ _elm_slider_span_size_set(Eo *obj, Elm_Slider_Data *sd, Evas_Coord size)
         elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
      }
    else
      {
         elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
      }
 
    evas_object_smart_changed(obj);
@@ -1007,6 +1271,8 @@ _elm_slider_unit_format_set(Eo *obj, Elm_Slider_Data *sd, const char *units)
         edje_object_message_signal_process(wd->resize_obj);
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,units,visible", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,units,visible", "elm");
      }
    else
      {
@@ -1014,6 +1280,8 @@ _elm_slider_unit_format_set(Eo *obj, Elm_Slider_Data *sd, const char *units)
         edje_object_message_signal_process(wd->resize_obj);
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,units,hidden", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,units,hidden", "elm");
      }
    evas_object_smart_changed(obj);
 }
@@ -1077,6 +1345,7 @@ _elm_slider_value_set(Eo *obj, Elm_Slider_Data *sd, double val)
 {
    if (sd->val == val) return;
    sd->val = val;
+   sd->range_from = val;
 
    if (sd->val < sd->val_min) sd->val = sd->val_min;
    if (sd->val > sd->val_max) sd->val = sd->val_max;
@@ -1149,6 +1418,8 @@ _elm_slider_indicator_show_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool show)
         elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
      }
    else
      {
@@ -1156,6 +1427,8 @@ _elm_slider_indicator_show_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool show)
         elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
      }
 
    evas_object_smart_changed(obj);

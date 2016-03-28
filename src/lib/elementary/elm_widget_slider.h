@@ -26,7 +26,7 @@
 typedef struct _Elm_Slider_Data Elm_Slider_Data;
 struct _Elm_Slider_Data
 {
-   Evas_Object          *spacer, *popup, *track;
+   Evas_Object          *spacer, *popup, *popup2, *track, *track2;
    Ecore_Timer          *delay;
 
    const char           *units;
@@ -48,6 +48,8 @@ struct _Elm_Slider_Data
    Evas_Coord            size;
    Evas_Coord            downx, downy;
 
+   double                range_from, range_to;
+
    Eina_Bool             horizontal : 1;
    Eina_Bool             inverted : 1;
    Eina_Bool             indicator_show : 1;
@@ -55,6 +57,7 @@ struct _Elm_Slider_Data
    Eina_Bool             frozen : 1;
    Eina_Bool             units_show : 1;
    Eina_Bool             popup_visible : 1;
+   Eina_Bool             range_enable : 1;
 };
 
 /**
