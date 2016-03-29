@@ -1434,19 +1434,19 @@ M.Declaration = ffi.metatype("Eolian_Declaration", {
 M.Documentation = ffi.metatype("Eolian_Documentation", {
     __index = {
         summary_get = function(self)
-            local v = eolian.eolian_declaration_summary_get(self)
+            local v = eolian.eolian_documentation_summary_get(self)
             if v == nil then return nil end
             return ffi.string(v)
         end,
 
         description_get = function(self)
-            local v = eolian.eolian_declaration_description_get(self)
+            local v = eolian.eolian_documentation_description_get(self)
             if v == nil then return nil end
             return ffi.string(v)
         end,
 
         since_get = function(self)
-            local v = eolian.eolian_declaration_since_get(self)
+            local v = eolian.eolian_documentation_since_get(self)
             if v == nil then return nil end
             return ffi.string(v)
         end
