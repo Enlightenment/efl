@@ -871,6 +871,209 @@ endif
 EXTRA_DIST += \
 bin/elementary/test_factory.c
 
+### Modules
+
+## access_output
+
+moduleaccess_outputpkgdir = $(libdir)/elementary/modules/access_output/$(MODULE_ARCH)
+moduleaccess_outputpkg_LTLIBRARIES = modules/elementary/access_output/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_moduleaccess_outputpkgLTLIBRARIES = install-moduleaccess_outputpkgLTLIBRARIES
+$(install-moduleaccess_outputpkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_elementary_access_output_module_la_SOURCES = modules/elementary/access_output/mod.c
+modules_elementary_access_output_module_la_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
+-I. \
+-I$(top_builddir) \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DELEMENTARY_BUILD \
+@ELEMENTARY_CFLAGS@
+modules_elementary_access_output_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
+modules_elementary_access_output_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+modules_elementary_access_output_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_elementary_access_output_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+## datetime_input_ctxpopup
+
+moduledatetime_input_ctxpopuppkgdir = $(libdir)/elementary/modules/datetime_input_ctxpopup/$(MODULE_ARCH)
+moduledatetime_input_ctxpopuppkg_LTLIBRARIES = modules/elementary/datetime_input_ctxpopup/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_moduledatetime_input_ctxpopuppkgLTLIBRARIES = install-moduledatetime_input_ctxpopuppkgLTLIBRARIES
+$(install-moduledatetime_input_ctxpopuppkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_elementary_datetime_input_ctxpopup_module_la_SOURCES = \
+modules/elementary/datetime_input_ctxpopup/datetime_input_ctxpopup.c
+modules_elementary_datetime_input_ctxpopup_module_la_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
+-I. \
+-I$(top_builddir) \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DELEMENTARY_BUILD \
+@ELEMENTARY_CFLAGS@
+modules_elementary_datetime_input_ctxpopup_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
+modules_elementary_datetime_input_ctxpopup_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+modules_elementary_datetime_input_ctxpopup_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_elementary_datetime_input_ctxpopup_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+## prefs
+
+moduleprefspkgdir = $(libdir)/elementary/modules/prefs/$(MODULE_ARCH)
+moduleprefspkg_LTLIBRARIES = modules/elementary/prefs/module.la
+
+EXTRA_DIST += modules/elementary/prefs/elm_prefs_swallow.edc
+
+prefs_filesdir = $(libdir)/modules/prefs/$(MODULE_ARCH)
+prefs_files_DATA = modules/elementary/prefs/elm_prefs_swallow.edj
+CLEANFILES += $(prefs_files_DATA)
+
+modules/elementary/prefs/elm_prefs_swallow.edj: modules/elementary/prefs/elm_prefs_swallow.edc bin/edje/edje_cc${EXEEXT}
+	$(AM_V_EDJ) \
+	$(MKDIR_P) modules/elementary/prefs/ ; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(top_srcdir)/src/modules/elementary/prefs/ $< $@
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_moduleprefspkgLTLIBRARIES = install-moduleprefspkgLTLIBRARIES
+$(install-moduleprefspkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_elementary_prefs_module_la_SOURCES = \
+modules/elementary/prefs/private.h \
+modules/elementary/prefs/item_widgets.inc \
+modules/elementary/prefs/page_widgets.inc \
+modules/elementary/prefs/prefs_iface.c \
+modules/elementary/prefs/elm_button.c \
+modules/elementary/prefs/elm_check.c \
+modules/elementary/prefs/elm_datetime.c \
+modules/elementary/prefs/elm_entry.c \
+modules/elementary/prefs/elm_label.c \
+modules/elementary/prefs/elm_separator.c \
+modules/elementary/prefs/elm_slider.c \
+modules/elementary/prefs/elm_spinner.c \
+modules/elementary/prefs/elm_swallow.c \
+modules/elementary/prefs/elm_vertical_box.c \
+modules/elementary/prefs/elm_horizontal_box.c \
+modules/elementary/prefs/elm_vertical_frame.c \
+modules/elementary/prefs/elm_horizontal_frame.c
+
+modules_elementary_prefs_module_la_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
+-I. \
+-I$(top_builddir) \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DELEMENTARY_BUILD \
+@ELEMENTARY_CFLAGS@
+modules_elementary_prefs_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
+modules_elementary_prefs_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+modules_elementary_prefs_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_elementary_prefs_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+## test_entry
+
+moduletest_entrypkgdir = $(libdir)/elementary/modules/test_entry/$(MODULE_ARCH)
+moduletest_entrypkg_LTLIBRARIES = modules/elementary/test_entry/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_moduletest_entrypkgLTLIBRARIES = install-moduletest_entrypkgLTLIBRARIES
+$(install-moduletest_entrypkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_elementary_test_entry_module_la_SOURCES = modules/elementary/test_entry/mod.c
+modules_elementary_test_entry_module_la_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
+-I. \
+-I$(top_builddir) \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DELEMENTARY_BUILD \
+@ELEMENTARY_CFLAGS@
+modules_elementary_test_entry_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
+modules_elementary_test_entry_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+modules_elementary_test_entry_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_elementary_test_entry_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+## test_map
+
+moduletest_mappkgdir = $(libdir)/elementary/modules/test_map/$(MODULE_ARCH)
+moduletest_mappkg_LTLIBRARIES = modules/elementary/test_map/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_moduletest_mappkgLTLIBRARIES = install-moduletest_mappkgLTLIBRARIES
+$(install-moduletest_mappkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_elementary_test_map_module_la_SOURCES = modules/elementary/test_map/mod.c
+modules_elementary_test_map_module_la_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
+-I. \
+-I$(top_builddir) \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DELEMENTARY_BUILD \
+@ELEMENTARY_CFLAGS@
+modules_elementary_test_map_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
+modules_elementary_test_map_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+modules_elementary_test_map_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_elementary_test_map_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+## web_none
+
+moduleweb_nonepkgdir = $(libdir)/elementary/modules/web/none/$(MODULE_ARCH)
+moduleweb_nonepkg_LTLIBRARIES = modules/elementary/web/none/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_moduleweb_nonepkgLTLIBRARIES = install-moduleweb_nonepkgLTLIBRARIES
+$(install-moduleweb_nonepkgLTLIBRARIES): install-libLTLIBRARIES
+
+BUILT_SOURCES += \
+	modules/elementary/web/none/elm_web_none.eo.h \
+	modules/elementary/web/none/elm_web_none.eo.c
+
+modules_elementary_web_none_module_la_SOURCES = \
+modules/elementary/web/none/elm_web_none.c \
+modules/elementary/web/none/elm_web_none.eo.h
+modules_elementary_web_none_module_la_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
+-DMODULES_PATH=\"$(libdir)/elementary/modules\" \
+-I. \
+-I$(top_builddir) \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DELEMENTARY_BUILD \
+@ELEMENTARY_CFLAGS@
+modules_elementary_web_none_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
+modules_elementary_web_none_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+modules_elementary_web_none_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_elementary_web_none_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+### Tests
+
 if EFL_ENABLE_TESTS
 
 AM_TESTS_ENVIRONMENT += \
