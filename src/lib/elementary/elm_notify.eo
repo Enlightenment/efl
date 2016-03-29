@@ -92,8 +92,8 @@ class Elm.Notify (Elm.Container)
       Elm.Widget.sub_object_del;
       Elm.Widget.part_text.set;
       Elm.Widget.part_text.get;
-      Elm.Container.content_get;
-      Elm.Container.content_set;
+      Elm.Container.content.get;
+      Elm.Container.content.set;
       Elm.Container.content_unset;
    }
    events {

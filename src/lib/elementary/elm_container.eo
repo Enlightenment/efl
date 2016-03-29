@@ -12,20 +12,18 @@ class Elm.Container (Elm.Widget)
             ret: free(own(list<Evas.Object *> *), eina_list_free); [[list]]
          }
       }
-      content_set {
-         [[Swallow the given object into the given part of the container.]]
-         params {
-            @in name: const(char)*; [[the part in which to swallow the object]]
-            @in content: Evas.Object *; [[the object to swallow.]]
+      @property content {
+         [[Swallowed sub-object contained in this object.]]
+         set {
+            return: bool;
          }
-         return: bool;
-      }
-      content_get {
-         [[Get the object swallowed in the given part of the container.]]
-         params {
-            @in name: const(char)* @nullable; [[the part in which the object is swallowed.]]
+         get {}
+         keys {
+            name: const(char)*; [[the part in which to swallow the object]]
          }
-         return: Evas.Object *;
+         values {
+            content: Evas.Object*; [[the object to swallow.]]
+         }
       }
       content_unset {
          [[Unswallow the object in the given part of the container and return it.]]
@@ -36,9 +34,9 @@ class Elm.Container (Elm.Widget)
       }
    }
    implements {
-      @virtual .content_set;
       @virtual .content_unset;
-      @virtual .content_get;
+      @virtual .content.get;
+      @virtual .content.set;
       @virtual .content_swallow_list.get;
    }
 

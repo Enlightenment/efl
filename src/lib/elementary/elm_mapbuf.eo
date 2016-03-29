@@ -136,8 +136,8 @@ class Elm.Mapbuf (Elm.Container)
       Evas.Object_Smart.resize;
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
-      Elm.Container.content_get;
-      Elm.Container.content_set;
+      Elm.Container.content.get;
+      Elm.Container.content.set;
       Elm.Container.content_unset;
    }
 

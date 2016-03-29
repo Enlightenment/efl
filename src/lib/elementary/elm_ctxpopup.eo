@@ -227,8 +227,8 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
       Elm.Widget.translate;
       Elm.Widget.theme_apply;
       Elm.Widget.event;
-      Elm.Container.content_get;
-      Elm.Container.content_set;
+      Elm.Container.content.get;
+      Elm.Container.content.set;
       Elm.Container.content_unset;
       Elm.Layout.sub_object_add_enable;
       Elm.Layout.sizing_eval;
