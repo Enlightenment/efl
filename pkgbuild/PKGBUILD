@@ -1,7 +1,7 @@
 # Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>
 pkgname=('efl' 'efl_doc')
 [[ -d ../.git ]] && pkgname=('efl-git' 'efl_doc-git')
-pkgver=1.9.99.24678.807f944
+pkgver=1.17.99.46477.95808a2
 pkgrel=1
 pkgdesc="Enlightenment Foundation Libraries - GIT development snapshot"
 arch=('i686' 'x86_64' 'arm')
