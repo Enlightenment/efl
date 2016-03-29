@@ -1,5 +1,7 @@
 #include "elua_private.h"
 
+#include <Ecore_File.h>
+
 static Eina_Prefix *_elua_pfx = NULL;
 
 static int _elua_init_counter = 0;
@@ -12,6 +14,8 @@ elua_init(void)
    if (_elua_init_counter > 0) return ++_elua_init_counter;
 
    eina_init();
+   ecore_file_init();
+
    _elua_log_dom = eina_log_domain_register(dom, EINA_COLOR_LIGHTBLUE);
    if (_elua_log_dom < 0)
      {
@@ -57,6 +61,7 @@ elua_shutdown(void)
    eina_log_domain_unregister(_elua_log_dom);
    _elua_log_dom = -1;
 
+   ecore_file_shutdown();
    eina_shutdown();
    return _elua_init_counter;
 }
@@ -388,10 +393,34 @@ _elua_state_i18n_setup(const Elua_State *es)
 int _elua_module_init(lua_State *L);
 int _elua_module_system_init(lua_State *L);
 
+static int
+_elua_file_is_dir(lua_State *L)
+{
+   lua_pushboolean(L, ecore_file_is_dir(luaL_checkstring(L, 1)));
+   return 1;
+}
+
+static int
+_elua_file_exists(lua_State *L)
+{
+   lua_pushboolean(L, ecore_file_exists(luaL_checkstring(L, 1)));
+   return 1;
+}
+
+static int
+_elua_file_mkdir(lua_State *L)
+{
+   lua_pushboolean(L, ecore_file_mkdir(luaL_checkstring(L, 1)));
+   return 1;
+}
+
 const luaL_reg _elua_cutillib[] =
 {
    { "init_module", _elua_module_init },
    { "popenv"     , _elua_io_popen    },
+   { "file_is_dir", _elua_file_is_dir },
+   { "file_exists", _elua_file_exists },
+   { "file_mkdir" , _elua_file_mkdir  },
    { NULL         , NULL              }
 };
 
