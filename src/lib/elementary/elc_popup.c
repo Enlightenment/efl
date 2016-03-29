@@ -1366,7 +1366,7 @@ _elm_popup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, Elm_Fo
 {
    Evas_Object *ao;
    Eina_List *items = NULL;
-   Eina_List *base_items = NULL;
+   Eina_Iterator *base_it;
 
    /* access */
    if (_elm_config->access_mode)
@@ -1381,9 +1381,10 @@ _elm_popup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, Elm_Fo
         if (ao) items = eina_list_append(items, ao);
      }
 
-   base_items = elm_obj_container_content_swallow_list_get(sd->main_layout);
-
-   items = eina_list_merge(items, base_items);
+   base_it = elm_obj_container_content_objects_iterate(sd->main_layout);
+   EINA_ITERATOR_FOREACH(base_it, ao)
+     if (ao) items = eina_list_append(items, ao);
+   eina_iterator_free(base_it);
 
    if (!elm_widget_focus_list_next_get(sd->main_layout, items, eina_list_data_get, dir, next, next_item))
      *next = sd->main_layout;
@@ -1403,7 +1404,7 @@ _elm_popup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, c
 {
    Evas_Object *ao;
    Eina_List *items = NULL;
-   Eina_List *base_items = NULL;
+   Eina_Iterator *base_it;
 
    /* access */
    if (_elm_config->access_mode)
@@ -1418,9 +1419,10 @@ _elm_popup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, c
         if (ao) items = eina_list_append(items, ao);
      }
 
-   base_items = elm_obj_container_content_swallow_list_get(sd->main_layout);
-
-   items = eina_list_merge(items, base_items);
+   base_it = elm_obj_container_content_objects_iterate(sd->main_layout);
+   EINA_ITERATOR_FOREACH(base_it, ao)
+     if (ao) items = eina_list_append(items, ao);
+   eina_iterator_free(base_it);
 
    elm_widget_focus_list_direction_get
      (sd->main_layout, base, items, eina_list_data_get, degree, direction, direction_item, weight);

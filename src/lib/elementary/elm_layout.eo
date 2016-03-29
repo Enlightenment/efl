@@ -490,7 +490,8 @@ class Elm.Layout (Elm.Container, Efl.File)
       Elm.Container.content.get;
       Elm.Container.content.set;
       Elm.Container.content_unset;
-      Elm.Container.content_swallow_list.get;
+      Elm.Container.content_names_iterate;
+      Elm.Container.content_objects_iterate;
    }
    events {
       theme,changed;

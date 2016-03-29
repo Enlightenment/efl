@@ -4,14 +4,6 @@ class Elm.Container (Elm.Widget)
    eo_prefix: elm_obj_container;
    data: null;
    methods {
-      @property content_swallow_list {
-         get {
-            [[Get the list of swallow parts in the object.]]
-         }
-         values {
-            ret: free(own(list<Evas.Object *> *), eina_list_free); [[list]]
-         }
-      }
       @property content {
          [[Swallowed sub-object contained in this object.]]
          set {
@@ -32,12 +24,22 @@ class Elm.Container (Elm.Widget)
          }
          return: Evas.Object *;
       }
+      content_names_iterate {
+         [[Returns an iterator on all parts in this container that currently
+           hold a sub-object.]]
+         return: free(own(iterator<const(char)*> *), eina_iterator_free);
+      }
+      content_objects_iterate {
+         [[Returns an iterator on all swallowed objects in this container.]]
+         return: free(own(iterator<Evas.Object*> *), eina_iterator_free);
+      }
    }
    implements {
       @virtual .content_unset;
       @virtual .content.get;
       @virtual .content.set;
-      @virtual .content_swallow_list.get;
+      @virtual .content_names_iterate;
+      @virtual .content_objects_iterate;
    }
 
 }

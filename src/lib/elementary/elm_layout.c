@@ -51,6 +51,14 @@ static const char *_elm_layout_swallow_parts[] = {
  * should not be messed up by inhering classes */
 typedef struct _Elm_Layout_Sub_Object_Data   Elm_Layout_Sub_Object_Data;
 typedef struct _Elm_Layout_Sub_Object_Cursor Elm_Layout_Sub_Object_Cursor;
+typedef struct _Elm_Layout_Sub_Iterator      Elm_Layout_Sub_Iterator;
+
+struct _Elm_Layout_Sub_Iterator
+{
+   Eina_Iterator  iterator;
+   Eina_Iterator *real_iterator;
+   Elm_Layout    *object;
+};
 
 struct _Elm_Layout_Sub_Object_Data
 {
@@ -1115,21 +1123,14 @@ _elm_layout_elm_container_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, cons
    return NULL;
 }
 
+/* legacy only - eo is iterator */
 EAPI Eina_List *
 elm_layout_content_swallow_list_get(const Evas_Object *obj)
 {
    ELM_LAYOUT_CHECK(obj) NULL;
    Eina_List *ret = NULL;
-   ret = elm_obj_container_content_swallow_list_get(obj);
-   return ret;
-}
-
-EOLIAN static Eina_List*
-_elm_layout_elm_container_content_swallow_list_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
-{
-   Eina_List *ret = NULL;
-
    Elm_Layout_Sub_Object_Data *sub_d = NULL;
+   Elm_Layout_Smart_Data *sd = eo_data_scope_get(obj, MY_CLASS);
    Eina_List *l = NULL;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
@@ -1139,6 +1140,78 @@ _elm_layout_elm_container_content_swallow_list_get(Eo *obj EINA_UNUSED, Elm_Layo
      }
 
    return ret;
+}
+
+static Eina_Bool
+_names_iterator_next(Elm_Layout_Sub_Iterator *it, void **data)
+{
+   Elm_Layout_Sub_Object_Data *sub;
+
+   if (!eina_iterator_next(it->real_iterator, (void **)&sub))
+     return EINA_FALSE;
+
+   if (data) *data = (void*) sub->part;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_objects_iterator_next(Elm_Layout_Sub_Iterator *it, void **data)
+{
+   Elm_Layout_Sub_Object_Data *sub;
+
+   if (!eina_iterator_next(it->real_iterator, (void **)&sub))
+     return EINA_FALSE;
+
+   if (data) *data = sub->obj;
+   return EINA_TRUE;
+}
+
+static Elm_Layout *
+_sub_iterator_get_container(Elm_Layout_Sub_Iterator *it)
+{
+   return it->object;
+}
+
+static void
+_sub_iterator_free(Elm_Layout_Sub_Iterator *it)
+{
+   eina_iterator_free(it->real_iterator);
+   free(it);
+}
+
+static Eina_Iterator *
+_sub_iterator_create(Elm_Layout_Smart_Data *sd, Eina_Bool objects)
+{
+   Elm_Layout_Sub_Iterator *it;
+
+   it = calloc(1, sizeof(*it));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->real_iterator = eina_list_iterator_new(sd->subs);
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_sub_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_sub_iterator_free);
+
+   if (objects)
+     it->iterator.next = FUNC_ITERATOR_NEXT(_objects_iterator_next);
+   else
+     it->iterator.next = FUNC_ITERATOR_NEXT(_names_iterator_next);
+
+   return &it->iterator;
+}
+
+EOLIAN static Eina_Iterator *
+_elm_layout_elm_container_content_names_iterate(Eo *eo_obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
+{
+   return _sub_iterator_create(sd, EINA_FALSE);
+}
+
+EOLIAN static Eina_Iterator *
+_elm_layout_elm_container_content_objects_iterate(Eo *eo_obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
+{
+   return _sub_iterator_create(sd, EINA_TRUE);
 }
 
 EOLIAN static Eina_Bool
