@@ -589,10 +589,13 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
 
    // FIXME: buffer border support is not implemented
 
-   if (ENFN->image_data_maps_get(ENDT, o->engine_data, NULL, NULL) > 0)
+   if (ENFN->image_data_maps_get)
      {
-        ERR("can not set pixels when there are open memory maps");
-        return EINA_FALSE;
+        if (ENFN->image_data_maps_get(ENDT, o->engine_data, NULL, NULL) > 0)
+          {
+             ERR("can not set pixels when there are open memory maps");
+             return EINA_FALSE;
+          }
      }
 
    if (o->pixels_checked_out)
