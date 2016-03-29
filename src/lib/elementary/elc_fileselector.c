@@ -1517,6 +1517,7 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    // spinner
    pb = elm_progressbar_add(obj);
    priv->spinner = pb;
+   elm_progressbar_pulse_set(priv->spinner, EINA_TRUE);
    elm_object_style_set(priv->spinner, "wheel");
    elm_object_part_content_set(obj, "elm.swallow.spinner", priv->spinner);
 
