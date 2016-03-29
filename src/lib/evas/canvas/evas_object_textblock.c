@@ -898,6 +898,7 @@ static const char escape_strings[] =
 /* most common escaped stuff */
 "&quot;\0"     "\x22\0"
 "&amp;\0"      "\x26\0"
+"&apos;\0"     "\x27\0"
 "&lt;\0"       "\x3c\0"
 "&gt;\0"       "\x3e\0"
 /* all the rest */
