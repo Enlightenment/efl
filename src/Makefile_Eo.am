@@ -31,6 +31,8 @@ lib/eo/eo_ptr_indirection.c \
 lib/eo/eo_ptr_indirection.h \
 lib/eo/eo_base_class.c \
 lib/eo/eo_class_class.c \
+lib/eo/eo_add_fallback.c \
+lib/eo/eo_add_fallback.h \
 lib/eo/eo_private.h
 
 lib_eo_libeo_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
@@ -58,6 +60,7 @@ tests/eo/test_interface \
 tests/eo/test_mixin \
 tests/eo/test_signals \
 tests/eo/test_children \
+tests/eo/eo_suite_add_fallback \
 tests/eo/eo_suite
 
 tests_eo_test_children_SOURCES = \
@@ -129,14 +132,24 @@ tests/eo/suite/eo_test_general.c \
 tests/eo/suite/eo_test_value.c \
 tests/eo/suite/eo_test_threaded_calls.c \
 tests/eo/suite/eo_test_init.c
+
 tests_eo_eo_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eo\" \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
-TESTS += tests/eo/eo_suite
 
 tests_eo_eo_suite_LDADD = @CHECK_LIBS@ @USE_EO_LIBS@
 tests_eo_eo_suite_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
+
+TESTS += tests/eo/eo_suite
+
+tests_eo_eo_suite_add_fallback_SOURCES = $(tests_eo_eo_suite_SOURCES)
+tests_eo_eo_suite_add_fallback_CPPFLAGS = $(tests_eo_eo_suite_CPPFLAGS) \
+                                          -D_EO_ADD_FALLBACK_FORCE=1
+tests_eo_eo_suite_add_fallback_LDADD = $(tests_eo_eo_suite_LDADD)
+tests_eo_eo_suite_add_fallback_DEPENDENCIES = $(tests_eo_eo_suite_DEPENDENCIES)
+
+TESTS += tests/eo/eo_suite_add_fallback
 
 tests_eo_test_function_overrides_SOURCES = \
 tests/eo/function_overrides/function_overrides_inherit.c \

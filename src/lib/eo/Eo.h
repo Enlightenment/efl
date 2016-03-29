@@ -582,7 +582,7 @@ EAPI Eina_Bool _eo_call_resolve(Eo *obj, const char *func_name, Eo_Op_Call_Data 
 EAPI void _eo_call_end(Eo_Op_Call_Data *call);
 
 // end of the eo_add. Calls finalize among others
-EAPI Eo * _eo_add_end(Eo *obj);
+EAPI Eo * _eo_add_end(Eo *obj, Eina_Bool is_fallback);
 
 EAPI Eo *eo_super(const Eo *obj, const Eo_Class *cur_klass);
 
@@ -597,14 +597,32 @@ EAPI Eo *eo_super(const Eo *obj, const Eo_Class *cur_klass);
  */
 EAPI const Eo_Class *eo_class_get(const Eo *obj);
 
-#define eo_self __eo_self
+EAPI Eo *_eo_self_get(void);
 
-#define _eo_add_common(klass, parent, is_ref, ...) \
+/* Check if GCC compatible (both GCC and clang define this) */
+#if defined(__GNUC__) && !defined(_EO_ADD_FALLBACK_FORCE)
+
+# define eo_self __eo_self
+
+# define _eo_add_common(klass, parent, is_ref, ...) \
    ({ \
-     Eo * const __eo_self = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref); \
+     Eo * const __eo_self = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref, EINA_FALSE); \
      __VA_ARGS__; \
-     (Eo *) _eo_add_end(eo_self); \
+     (Eo *) _eo_add_end(eo_self, EINA_FALSE); \
     })
+
+#else
+
+# define eo_self _eo_self_get()
+
+# define _eo_add_common(klass, parent, is_ref, ...) \
+   ( \
+     _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref, EINA_TRUE), \
+     ##__VA_ARGS__, \
+     (Eo *) _eo_add_end(eo_self, EINA_TRUE) \
+   )
+
+#endif
 
 /**
  * @def eo_add
@@ -644,7 +662,7 @@ EAPI const Eo_Class *eo_class_get(const Eo *obj);
  */
 #define eo_add_ref(klass, parent, ...) _eo_add_common(klass, parent, EINA_TRUE, ##__VA_ARGS__)
 
-EAPI Eo * _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent, Eina_Bool ref);
+EAPI Eo * _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent, Eina_Bool ref, Eina_Bool is_fallback);
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.

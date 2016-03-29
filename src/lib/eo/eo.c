@@ -13,6 +13,7 @@
 #include "Eo.h"
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
+#include "eo_add_fallback.h"
 
 #define EO_CLASS_IDS_FIRST 1
 #define EO_OP_IDS_FIRST 1
@@ -615,9 +616,15 @@ _eo_class_funcs_set(_Eo_Class *klass)
 }
 
 EAPI Eo *
-_eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id, Eina_Bool ref)
+_eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback)
 {
    _Eo_Object *obj;
+   Eo_Stack_Frame *fptr = NULL;
+
+   if (is_fallback)
+     {
+        fptr = _eo_add_fallback_stack_push(NULL);
+     }
 
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
 
@@ -680,6 +687,11 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
         return NULL;
      }
 
+   if (is_fallback)
+     {
+        fptr->obj = eo_id;
+     }
+
    return eo_id;
 }
 
@@ -726,10 +738,15 @@ cleanup:
 }
 
 EAPI Eo *
-_eo_add_end(Eo *eo_id)
+_eo_add_end(Eo *eo_id, Eina_Bool is_fallback)
 {
    Eo *ret = eo_finalize(eo_id);
    ret = _eo_add_internal_end(eo_id, ret);
+
+   if (is_fallback)
+     {
+        _eo_add_fallback_stack_pop();
+     }
 
    return ret;
 }
@@ -1595,6 +1612,8 @@ eo_init(void)
    _eo_class_isa_func(NULL, NULL, NULL);
 #endif
 
+   _eo_add_fallback_init();
+
    eina_log_timing(_eo_log_dom,
                    EINA_LOG_STATE_STOP,
                    EINA_LOG_STATE_INIT);
@@ -1617,6 +1636,8 @@ eo_shutdown(void)
    eina_log_timing(_eo_log_dom,
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
+
+   _eo_add_fallback_shutdown();
 
    for (i = 0 ; i < _eo_classes_last_id ; i++, cls_itr++)
      {
