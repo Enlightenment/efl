@@ -73,6 +73,7 @@ EAPI int ELM_EVENT_PROCESS_FOREGROUND = 0;
 static int _elm_init_count = 0;
 static int _elm_sub_init_count = 0;
 static int _elm_ql_init_count = 0;
+static Eina_Bool _elm_prefs_initted = EINA_FALSE;
 static int _elm_policies[ELM_POLICY_LAST];
 static Ecore_Event_Handler *_elm_exit_handler = NULL;
 static Eina_Bool quicklaunch_on = 0;
@@ -703,7 +704,7 @@ elm_quicklaunch_sub_init(int    argc,
         ecore_imf_init();
         ecore_con_init();
         ecore_con_url_init();
-        _elm_prefs_init();
+        _elm_prefs_initted = _elm_prefs_init();
         _elm_ews_wm_init();
         elm_color_class_init();
      }
@@ -725,7 +726,8 @@ elm_quicklaunch_sub_shutdown(void)
      {
         _elm_win_shutdown();
         _elm_module_shutdown();
-        _elm_prefs_shutdown();
+        if (_elm_prefs_initted)
+          _elm_prefs_shutdown();
         _elm_ews_wm_shutdown();
         ecore_con_url_shutdown();
         ecore_con_shutdown();

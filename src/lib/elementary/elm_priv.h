@@ -366,7 +366,7 @@ Eo                   *_elm_atspi_bridge_get(void);
 void                 _elm_atspi_bridge_init(void);
 void                 _elm_atspi_bridge_shutdown(void);
 
-void                 _elm_prefs_init(void);
+Eina_Bool            _elm_prefs_init(void);
 void                 _elm_prefs_shutdown(void);
 
 /* these already issued by the two above, respectively */

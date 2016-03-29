@@ -1819,13 +1819,13 @@ elm_prefs_page_widget_common_add(Evas_Object *prefs EINA_UNUSED,
    return EINA_TRUE;
 }
 
-void
+Eina_Bool
 _elm_prefs_init(void)
 {
    Elm_Module *m;
 
    if (++_elm_prefs_init_count != 1)
-     return;
+     return EINA_TRUE;
 
    _elm_prefs_descriptors_init();
    _elm_prefs_data_init();
@@ -1838,7 +1838,7 @@ _elm_prefs_init(void)
         --_elm_prefs_init_count;
         _elm_prefs_descriptors_shutdown();
         _elm_prefs_data_shutdown();
-        return;
+        return EINA_FALSE;
      }
 
    _elm_prefs_page_widgets_map = eina_hash_string_superfast_new(NULL);
@@ -1846,6 +1846,8 @@ _elm_prefs_init(void)
    _elm_prefs_item_type_widgets_map = eina_hash_int32_new(NULL);
 
    m->init_func(m);
+
+   return EINA_TRUE;
 }
 
 void
