@@ -185,14 +185,17 @@ static void
 new_object(void)
 {
    const char *id;
-   New_Object_Handler *oh;
+   New_Object_Handler *oh = NULL;
    New_Statement_Handler *sh;
 
    fill_object_statement_hashes();
    id = stack_id();
-   oh = eina_hash_find(_new_object_hash, id);
-   if (!oh)
-     oh = eina_hash_find(_new_object_short_hash, id);
+   if (!had_quote)
+     {
+        oh = eina_hash_find(_new_object_hash, id);
+        if (!oh)
+          oh = eina_hash_find(_new_object_short_hash, id);
+     }
    if (oh)
      {
         if (oh->func) oh->func();
