@@ -55,6 +55,9 @@ local num_others = {
 }
 
 local is_num = function(x)
+    if not x then
+        return false
+    end
     if num_others [x       ] then return true end
     if int_builtin[x       ] then return true end
     if int_builtin["u" .. x] then return true end
