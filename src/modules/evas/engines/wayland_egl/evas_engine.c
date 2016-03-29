@@ -1164,7 +1164,7 @@ eng_image_native_set(void *data, void *image, void *native)
      }
    else if (ns->type == EVAS_NATIVE_SURFACE_EVASGL)
      {
-         img2 = eina_hash_find(eng_get_ob(re)->gl_context->shared->native_evasgl_hash, &buffer);
+         img2 = eina_hash_find(ob->gl_context->shared->native_evasgl_hash, &buffer);
         if (img2 == img) return img;
         if (img2)
           {
@@ -1310,7 +1310,7 @@ eng_image_native_set(void *data, void *image, void *native)
              {
                memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
 
-               eina_hash_add(eng_get_ob(re)->gl_context->shared->native_evasgl_hash, &buffer, img);
+               eina_hash_add(ob->gl_context->shared->native_evasgl_hash, &buffer, img);
 
                n->ns_data.evasgl.surface = ns->data.evasgl.surface;
                img->native.yinvert     = 0;
@@ -1335,13 +1335,13 @@ eng_image_native_set(void *data, void *image, void *native)
            n = calloc(1, sizeof(Native));
            if (n)
              {
-               eina_hash_add(eng_get_ob(re)->gl_context->shared->native_tbm_hash, &buffer, img);
+               eina_hash_add(ob->gl_context->shared->native_tbm_hash, &buffer, img);
 
                memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
                n->ns_data.tbm.buffer = buffer;
 
                if (glsym_eglCreateImage)
-                 n->ns_data.tbm.surface = glsym_eglCreateImage(eng_get_ob(re)->egl_disp,
+                 n->ns_data.tbm.surface = glsym_eglCreateImage(ob->egl_disp,
                                                                EGL_NO_CONTEXT,
                                                                EGL_NATIVE_SURFACE_TIZEN,
                                                                (void *)buffer,
