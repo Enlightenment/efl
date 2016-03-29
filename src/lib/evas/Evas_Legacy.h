@@ -3701,6 +3701,38 @@ EAPI void evas_object_image_source_visible_set(Evas_Object *obj, Eina_Bool visib
 EAPI Eina_Bool evas_object_image_source_visible_get(const Evas_Object *obj);
 
 /**
+ * @brief Mark whether the given image object is dirty and needs to request its
+ * pixels.
+ *
+ * This function will only properly work if a pixels get callback has been set.
+ *
+ * @warning Use this function if you really know what you are doing.
+ *
+ * @param[in] dirty Whether the image is dirty.
+ */
+EAPI void evas_object_image_pixels_dirty_set(Evas_Object *obj, Eina_Bool dirty);
+
+/**
+ * @brief Retrieves whether the given image object is dirty (needs to be
+ * redrawn).
+ *
+ * @return Whether the image is dirty.
+ */
+EAPI Eina_Bool evas_object_image_pixels_dirty_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the callback function to get pixels from a canvas' image.
+ *
+ * This functions sets a function to be the callback function that get pixels
+ * from a image of the canvas.
+ *
+ * @param[in] func The callback function.
+ * @param[in] data The data pointer to be passed to @c func.
+ */
+EAPI void evas_object_image_pixels_get_callback_set(Evas_Object *obj, Evas_Object_Image_Pixels_Get_Cb func, void *data) EINA_ARG_NONNULL(2);
+
+
+/**
  * @typedef Evas_Video_Surface
  *
  * A generic datatype for video specific surface information

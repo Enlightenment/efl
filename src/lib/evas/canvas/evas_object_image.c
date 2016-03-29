@@ -931,36 +931,6 @@ _evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file
    return ok;
 }
 
-EOLIAN static void
-_evas_image_pixels_get_callback_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Evas_Object_Image_Pixels_Get_Cb func, void *data)
-{
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   evas_object_async_block(obj);
-   EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
-     {
-        pixi_write->func.get_pixels = func;
-        pixi_write->func.get_pixels_data = data;
-     }
-   EINA_COW_PIXEL_WRITE_END(o, pixi_write);
-}
-
-EOLIAN static void
-_evas_image_pixels_dirty_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool dirty)
-{
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   evas_object_async_block(obj);
-   if (dirty) o->dirty_pixels = EINA_TRUE;
-   else o->dirty_pixels = EINA_FALSE;
-   o->changed = EINA_TRUE;
-   evas_object_change(eo_obj, obj);
-}
-
-EOLIAN static Eina_Bool
-_evas_image_pixels_dirty_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
-{
-   return (o->dirty_pixels ? 1 : 0);
-}
-
 EOLIAN static Efl_Gfx_Colorspace
 _evas_image_efl_gfx_buffer_colorspace_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {

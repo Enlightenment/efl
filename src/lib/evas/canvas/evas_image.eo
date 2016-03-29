@@ -6,43 +6,6 @@ class Evas.Image (Evas.Object, Evas.Filter,
    /* Legacy is implement inside Efl.Canvas.Image */
    legacy_prefix: evas_object_image;
    eo_prefix: null;
-   methods {
-      /* GL View */
-      @property pixels_dirty {
-         set {
-            [[Mark whether the given image object is dirty and needs to
-              request its pixels.
-
-              This function will only properly work if a pixels get
-              callback has been set.
-
-              Warning: Use this function if you really know what you are
-              doing.
-            ]]
-         }
-         get {
-            [[Retrieves whether the given image object is dirty (needs to
-              be redrawn).
-            ]]
-         }
-         values {
-            dirty: bool; [[Whether the image is dirty.]]
-         }
-      }
-      @property pixels_get_callback {
-         set {
-            [[Set the callback function to get pixels from a canvas' image.
-
-              This functions sets a function to be the callback function
-              that get pixels from a image of the canvas.
-            ]]
-         }
-         values {
-            func: Evas_Object_Image_Pixels_Get_Cb @nonull; [[The callback function.]]
-            data: void *; [[The data pointer to be passed to $func.]]
-         }
-      }
-   }
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;

@@ -472,6 +472,42 @@ evas_object_image_native_surface_get(const Evas_Object *eo_obj)
 }
 
 EAPI void
+evas_object_image_pixels_get_callback_set(Eo *eo_obj, Evas_Object_Image_Pixels_Get_Cb func, void *data)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+
+   evas_object_async_block(obj);
+   EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+     {
+        pixi_write->func.get_pixels = func;
+        pixi_write->func.get_pixels_data = data;
+     }
+   EINA_COW_PIXEL_WRITE_END(o, pixi_write);
+}
+
+EAPI void
+evas_object_image_pixels_dirty_set(Eo *eo_obj, Eina_Bool dirty)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+
+   evas_object_async_block(obj);
+   if (dirty) o->dirty_pixels = EINA_TRUE;
+   else o->dirty_pixels = EINA_FALSE;
+   o->changed = EINA_TRUE;
+   evas_object_change(eo_obj, obj);
+}
+
+EAPI Eina_Bool
+evas_object_image_pixels_dirty_get(const Eo *eo_obj)
+{
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+
+   return (o->dirty_pixels ? 1 : 0);
+}
+
+EAPI void
 evas_object_image_data_set(Eo *eo_obj, void *data)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
