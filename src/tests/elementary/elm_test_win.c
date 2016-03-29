@@ -8,8 +8,8 @@
 #include <Ecore_X.h>
 #include "elm_suite.h"
 
-static const double _timeout1 = 0.01;
-static const double _timeout2 = 0.02;
+static const double _timeout1 = 0.1;
+static const double _timeout2 = 0.2;
 static const double _timeout_fail = 2.0;
 
 static void
@@ -132,7 +132,6 @@ START_TEST (elm_win_autohide)
 
    Eina_Bool visible;
    visible = efl_gfx_visible_get(win);
-
    ck_assert(visible == EINA_FALSE);
 
    elm_shutdown();
