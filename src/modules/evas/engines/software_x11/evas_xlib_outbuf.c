@@ -26,6 +26,7 @@ struct _Outbuf_Region
    int              h;
 };
 
+static Eina_Bool shmpool_initted = EINA_FALSE;
 static Eina_List *shmpool = NULL;
 static int shmsize = 0;
 static int shmmemlimit = 20 * 1024 * 1024;
@@ -150,7 +151,11 @@ _clear_xob(int psync)
 void
 evas_software_xlib_outbuf_init(void)
 {
-   eina_spinlock_new(&shmpool_lock);
+   if (!shmpool_initted)
+     {
+        shmpool_initted = EINA_TRUE;
+        eina_spinlock_new(&shmpool_lock);
+     }
 }
 
 void
@@ -192,7 +197,6 @@ evas_software_xlib_outbuf_free(Outbuf *buf)
    eina_array_flush(&buf->priv.onebuf_regions);
    free(buf);
    _clear_xob(0);
-   eina_spinlock_free(&shmpool_lock);
 }
 
 Outbuf *
