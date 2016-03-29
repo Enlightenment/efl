@@ -1214,6 +1214,7 @@ _files_key_down(void *data, const Eo_Event *event)
        {
 
           elm_entry_entry_append(searchbar, ev->string);
+          ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
        }
      else if (ev->string &&
               *(ev->string) &&
@@ -1227,6 +1228,7 @@ _files_key_down(void *data, const Eo_Event *event)
                memmove(buf, en, strlen(en) -1);
                buf[strlen(en) -1] = '\0';
                elm_entry_entry_set(searchbar, buf);
+               ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
             }
        }
 
