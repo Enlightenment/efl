@@ -47,6 +47,18 @@ eolian_variable_constants_get_by_file(const char *fname)
    return eina_list_iterator_new(l);
 }
 
+EAPI Eina_Iterator *
+eolian_variable_all_constants_get(void)
+{
+   return (_constants ? eina_hash_iterator_data_new(_constants) : NULL);
+}
+
+EAPI Eina_Iterator *
+eolian_variable_all_globals_get(void)
+{
+   return (_globals ? eina_hash_iterator_data_new(_globals) : NULL);
+}
+
 EAPI Eolian_Variable_Type
 eolian_variable_type_get(const Eolian_Variable *var)
 {

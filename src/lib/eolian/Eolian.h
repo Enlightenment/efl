@@ -1330,6 +1330,39 @@ EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const char *fname);
 EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const char *fname);
 
 /*
+ * @brief Get an iterator to all aliases in the Eolian database.
+ *
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_typedecl_all_aliases_get(void);
+
+/*
+ * @brief Get an iterator to all structs in the Eolian database.
+ *
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_typedecl_all_structs_get(void);
+
+/*
+ * @brief Get an iterator to all enums in the Eolian database.
+ *
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_typedecl_all_enums_get(void);
+
+/*
  * @brief Get the type of a type declaration.
  *
  * @param[in] tp the type declaration.
@@ -1975,6 +2008,28 @@ EAPI Eina_Iterator *eolian_variable_globals_get_by_file(const char *fname);
 EAPI Eina_Iterator *eolian_variable_constants_get_by_file(const char *fname);
 
 /*
+ * @brief Get an iterator to all constant variables in the Eolian database.
+ *
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_variable_all_constants_get(void);
+
+/*
+ * @brief Get an iterator to all global variables in the Eolian database.
+ *
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_variable_all_globals_get(void);
+
+/*
  * @brief Get the type of a variable (global, constant)
  *
  * @param[in] var the variable.
@@ -2088,6 +2143,17 @@ EAPI const Eolian_Declaration *eolian_declaration_get_by_name(const char *name);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_declarations_get_by_file(const char *fname);
+
+/*
+ * @brief Get an iterator to all declarations in the Eolian database.
+ *
+ * @return the iterator or NULL.
+ *
+ * Thanks to internal caching this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_all_declarations_get(void);
 
 /*
  * @brief Get the type of a declaration

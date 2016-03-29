@@ -72,6 +72,24 @@ eolian_typedecl_enums_get_by_file(const char *fname)
    return eina_list_iterator_new(l);
 }
 
+EAPI Eina_Iterator *
+eolian_typedecl_all_aliases_get(void)
+{
+   return (_aliases ? eina_hash_iterator_data_new(_aliases) : NULL);
+}
+
+EAPI Eina_Iterator *
+eolian_typedecl_all_structs_get(void)
+{
+   return (_structs ? eina_hash_iterator_data_new(_structs) : NULL);
+}
+
+EAPI Eina_Iterator *
+eolian_typedecl_all_enums_get(void)
+{
+   return (_enums ? eina_hash_iterator_data_new(_enums) : NULL);
+}
+
 EAPI Eolian_Type_Type
 eolian_type_type_get(const Eolian_Type *tp)
 {

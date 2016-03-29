@@ -134,6 +134,12 @@ eolian_declarations_get_by_file(const char *fname)
    return eina_list_iterator_new(l);
 }
 
+EAPI Eina_Iterator *
+eolian_all_declarations_get(void)
+{
+   return (_decls ? eina_hash_iterator_data_new(_decls) : NULL);
+}
+
 EAPI Eolian_Declaration_Type
 eolian_declaration_type_get(const Eolian_Declaration *decl)
 {
