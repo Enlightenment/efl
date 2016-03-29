@@ -200,14 +200,21 @@ widget-tree-figures: doc
 
 doc: all previews-build previews-data widget-preview
 	$(efl_doxygen)
-	cp $(srcdir)/img/* html/
+	@echo "$(efl_doxygen) done !"
+	@echo "copying $(srcdir)/img/*.png to html/"
+	cp $(srcdir)/img/*.png html/
+	@echo "copying $(srcdir)/img/*.eps to latex/"
 	cp $(srcdir)/img/*.eps latex/
+	@echo "Removing older tarball $(PACKAGE_DOCNAME).tar*"
 	rm -rf $(PACKAGE_DOCNAME).tar*
+	@echo "Generating new tarball"
 	$(MKDIR_P) $(PACKAGE_DOCNAME)/doc
 	cp -R html/ latex/ man/ $(PACKAGE_DOCNAME)/doc
 	tar cf $(PACKAGE_DOCNAME).tar $(PACKAGE_DOCNAME)/
 	bzip2 -9 $(PACKAGE_DOCNAME).tar
+	@echo "Removing temporary directory"
 	rm -rf $(PACKAGE_DOCNAME)/
+	@echo "Moving tarball $(PACKAGE_DOCNAME).tar.bz2 to $(top_builddir)"
 	mv $(PACKAGE_DOCNAME).tar.bz2 $(top_builddir)
 	@echo "Documentation Package: doc/$(PACKAGE_DOCNAME).tar.bz2"
 	@echo "Documentation HTML: doc/html"
