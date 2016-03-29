@@ -370,6 +370,7 @@ elementary/themes/img/home_inset.png \
 elementary/themes/img/horiz_bar_inset.png \
 elementary/themes/img/horiz_glow_run_big.png \
 elementary/themes/img/horiz_glow_run.png \
+elementary/themes/img/horiz_glow_range.png \
 elementary/themes/img/horiz_glow_run_rev.png \
 elementary/themes/img/horizontal_separated_bar_glow.png \
 elementary/themes/img/horizontal_separated_bar_small_glow.png \
@@ -649,6 +650,7 @@ elementary/themes/img/tooltip-edge-right-tip.png \
 elementary/themes/img/tooltip-edge-top-tip.png \
 elementary/themes/img/vert_bar_inset.png \
 elementary/themes/img/vert_glow_run.png \
+elementary/themes/img/vert_glow_range.png \
 elementary/themes/img/vert_glow_run_rev.png \
 elementary/themes/img/vertical_separated_bar_glow.png \
 elementary/themes/img/vertical_separated_bar_disabled.png \
