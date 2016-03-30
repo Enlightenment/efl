@@ -935,7 +935,7 @@ moduleprefspkg_LTLIBRARIES = modules/elementary/prefs/module.la
 
 EXTRA_DIST += modules/elementary/prefs/elm_prefs_swallow.edc
 
-prefs_filesdir = $(libdir)/modules/prefs/$(MODULE_ARCH)
+prefs_filesdir = $(libdir)/elementary/modules/prefs/$(MODULE_ARCH)
 prefs_files_DATA = modules/elementary/prefs/elm_prefs_swallow.edj
 CLEANFILES += $(prefs_files_DATA)
 
