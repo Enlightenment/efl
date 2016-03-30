@@ -809,9 +809,7 @@ group { name: "elm/border/base/default";
       }
       part { name: "shadow_spacer"; type: SPACER;
          description { state: "default";
-            //NOT RELATED TO SHADOW SIZE
-            rel1.offset: 7 5;
-            rel2.offset: -8 -12;
+            WIN_SHADOW_SPACER;
          }
          description { state: "max";
             rel1.offset: 0 0;
