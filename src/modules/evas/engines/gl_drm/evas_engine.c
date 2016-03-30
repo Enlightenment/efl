@@ -656,29 +656,26 @@ _native_cb_unbind(void *data EINA_UNUSED, void *image)
 }
 
 static void
-_native_cb_free(void *data, void *image)
+_native_cb_free(void *data EINA_UNUSED, void *image)
 {
-   Render_Engine *re;
-   Outbuf *ob;
    Evas_GL_Image *img;
    Native *n;
    uint32_t texid;
    void *wlid;
 
-   if (!(re = (Render_Engine *)data)) return;
    if (!(img = image)) return;
    if (!(n = img->native.data)) return;
-   if (!(ob = eng_get_ob(re))) return;
+   if (!(img->native.shared)) return;
 
    if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
      {
         wlid = (void*)n->ns_data.wl_surface.wl_buf;
-        eina_hash_del(ob->gl_context->shared->native_wl_hash, &wlid, img);
+        eina_hash_del(img->native.shared->native_wl_hash, &wlid, img);
         if (n->ns_data.wl_surface.surface)
           {
              if (glsym_eglDestroyImage)
                {
-                  glsym_eglDestroyImage(ob->egl.disp, n->ns_data.wl_surface.surface);
+                  glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface.surface);
                   if (eglGetError() != EGL_SUCCESS)
                     ERR("eglDestroyImage() failed.");
                }
@@ -689,7 +686,7 @@ _native_cb_free(void *data, void *image)
    else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
      {
         texid = n->ns.data.opengl.texture_id;
-        eina_hash_del(ob->gl_context->shared->native_tex_hash, &texid, img);
+        eina_hash_del(img->native.shared->native_tex_hash, &texid, img);
      }
 
    img->native.data = NULL;
@@ -1219,6 +1216,8 @@ eng_image_native_set(void *data, void *image, void *native)
                   //img->native.yinvert = yinvert;
                   img->native.yinvert = 1;
                   img->native.loose = 0;
+                  img->native.disp = ob->egl.disp;
+                  img->native.shared = ob->gl_context->shared;
                   img->native.data = n;
                   img->native.func.data = re;
                   img->native.func.bind = _native_cb_bind;
@@ -1245,6 +1244,8 @@ eng_image_native_set(void *data, void *image, void *native)
 
                   img->native.yinvert = 0;
                   img->native.loose = 0;
+                  img->native.disp = ob->egl.disp;
+                  img->native.shared = ob->gl_context->shared;
                   img->native.data = n;
                   img->native.func.data = re;
                   img->native.func.bind = _native_cb_bind;

@@ -323,20 +323,16 @@ _native_unbind_cb(void *data EINA_UNUSED, void *image)
 }
 
 static void
-_native_free_cb(void *data, void *image)
+_native_free_cb(void *data EINA_UNUSED, void *image)
 {
-  Evas_Engine_GL_Context *gl_context;
-  Render_Engine_GL_Generic *re = data;
   Evas_GL_Image *im = image;
   Evas_Native_Surface *n = im->native.data;
   uint32_t texid;
 
   if (n->type == EVAS_NATIVE_SURFACE_OPENGL)
     {
-       gl_context = re->window_gl_context_get(re->software.ob);
-
        texid = n->data.opengl.texture_id;
-       eina_hash_del(gl_context->shared->native_tex_hash, &texid, im);
+       eina_hash_del(im->native.shared->native_tex_hash, &texid, im);
     }
   im->native.data        = NULL;
   im->native.func.data   = NULL;
@@ -464,6 +460,7 @@ eng_image_native_set(void *data, void *image, void *native)
 
               im->native.yinvert     = 0;
               im->native.loose       = 0;
+              im->native.shared      = gl_context->shared;
               im->native.data        = n;
               im->native.func.data   = re;
               im->native.func.bind   = _native_bind_cb;
