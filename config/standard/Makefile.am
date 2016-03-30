@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-EET_EET = @eet_eet@
+include ../../src/Makefile_Eet_Helper.am
 
 EXTRA_DIST = \
         profile.desktop \
@@ -14,9 +14,9 @@ files_DATA = \
         base.cfg
 
 %.cfg: %.src
-	$(EET_EET) -e \
-	$(top_builddir)/config/standard/$@ config \
-	$< 1
+	$(AM_V_EET) \
+	$(MKDIR_P) $(top_builddir)/config/standard/; \
+	$(EET) -e $(top_builddir)/config/standard/$@ config $< 1
 
 clean-local:
 	rm -rf *.cfg *~

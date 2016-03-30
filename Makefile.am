@@ -3,7 +3,7 @@ AM_MAKEFLAGS = --no-print-directory
 AM_DISTCHECK_CONFIGURE_FLAGS = \
 --with-tests=regular
 
-SUBDIRS = src data doc
+SUBDIRS = src data config doc
 
 if HAVE_PO
 

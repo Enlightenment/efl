@@ -5376,6 +5376,13 @@ EFL_LIB_END_OPTIONAL([ELEMENTARY_JS])
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
+config/Makefile
+config/default/Makefile
+config/default/base.src
+config/mobile/Makefile
+config/mobile/base.src
+config/standard/Makefile
+config/standard/base.src
 doc/Makefile
 doc/Doxyfile
 doc/previews/Makefile
