@@ -50,6 +50,8 @@ Eina_Unicode status_icons[] = {
      } \
 } while (0)
 
+static void _elm_code_widget_resize(Elm_Code_Widget *widget);
+
 EAPI Evas_Object *
 elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 {
@@ -90,6 +92,24 @@ _elm_code_widget_class_constructor(Eo_Class *klass EINA_UNUSED)
 
 }
 
+void
+_elm_code_widget_cell_size_get(Elm_Code_Widget *widget, Evas_Coord *width, Evas_Coord *height)
+{
+   Elm_Code_Widget_Data *pd;
+   Evas_Object *grid;
+   Evas_Coord w, h;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   grid = eina_list_nth(pd->grids, 0);
+   evas_object_textgrid_cell_size_get(grid, &w, &h);
+   if (w == 0) w = 5;
+   if (h == 0) h = 10;
+
+   if (width) *width = w;
+   if (height) *height = h;
+}
+
 static void
 _elm_code_widget_scroll_by(Elm_Code_Widget *widget, int by_x, int by_y)
 {
@@ -102,50 +122,6 @@ _elm_code_widget_scroll_by(Elm_Code_Widget *widget, int by_x, int by_y)
    x += by_x;
    y += by_y;
    elm_scroller_region_show(pd->scroller, x, y, w, h);
-}
-
-static void
-_elm_code_widget_resize(Elm_Code_Widget *widget)
-{
-   Elm_Code_Line *line;
-   Eina_List *item;
-   Evas_Coord ww, wh, old_width, old_height;
-   int w, h, cw, ch, gutter;
-   unsigned int line_width;
-   Elm_Code_Widget_Data *pd;
-
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
-
-   if (!pd->code)
-     return;
-
-   evas_object_geometry_get(widget, NULL, NULL, &ww, &wh);
-   evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
-   old_width = ww;
-   old_height = wh;
-
-   w = 0;
-   h = elm_code_file_lines_get(pd->code->file);
-   EINA_LIST_FOREACH(pd->code->file->lines, item, line)
-     {
-        line_width = elm_code_widget_line_text_column_width_get(widget, line);
-        if ((int) line_width + gutter + 1 > w)
-          w = (int) line_width + gutter + 1;
-     }
-
-   if (w*cw > ww)
-     ww = w*cw;
-   if (h*ch > wh)
-     wh = h*ch;
-
-   evas_object_textgrid_size_set(pd->grid, ww/cw+1, wh/ch+1);
-   evas_object_size_hint_min_set(pd->grid, w*cw, h*ch);
-
-   if (pd->gravity_x == 1.0 || pd->gravity_y == 1.0)
-     _elm_code_widget_scroll_by(widget,
-        (pd->gravity_x == 1.0 && ww > old_width) ? ww - old_width : 0,
-        (pd->gravity_y == 1.0 && wh > old_height) ? wh - old_height : 0);
 }
 
 static void
@@ -216,7 +192,7 @@ _elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
                              int width, Elm_Code_Status_Type status, int line)
 {
    char *number = NULL;
-   int w, gutter, g;
+   int gutter, g;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
@@ -224,7 +200,6 @@ _elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
 
    if (width < gutter)
      return;
-   evas_object_textgrid_size_get(pd->grid, &w, NULL);
 
    cells[gutter-1].codepoint = status_icons[status];
    cells[gutter-1].bold = 1;
@@ -336,16 +311,20 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 {
    char *chr;
    Eina_Unicode unichr;
-   unsigned int length, x, charwidth, i;
-   int w, chrpos, gutter;
+   unsigned int length, x, charwidth, i, w;
+   int chrpos, gutter;
+   Evas_Object *grid;
    Evas_Textgrid_Cell *cells;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
+   if (eina_list_count(pd->grids) < line->number)
+     return;
 
-   evas_object_textgrid_size_get(pd->grid, &w, NULL);
-   cells = evas_object_textgrid_cellrow_get(pd->grid, line->number - 1);
+   w = elm_code_widget_columns_get(widget);
+   grid = eina_list_nth(pd->grids, line->number - 1);
+   cells = evas_object_textgrid_cellrow_get(grid, 0);
 
    _elm_code_widget_fill_gutter(widget, cells, w, line->status, line->number);
    _elm_code_widget_fill_line_tokens(widget, cells, w, line);
@@ -383,61 +362,24 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    if (line->number < elm_code_file_lines_get(line->file))
      _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
-   evas_object_textgrid_update_add(pd->grid, 0, line->number - 1, w, 1);
-}
-
-static void
-_elm_code_widget_empty_line(Elm_Code_Widget *widget, unsigned int number)
-{
-   unsigned int x;
-   int w, gutter;
-   Evas_Textgrid_Cell *cells;
-   Elm_Code_Widget_Data *pd;
-
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
-
-   evas_object_textgrid_size_get(pd->grid, &w, NULL);
-   cells = evas_object_textgrid_cellrow_get(pd->grid, number - 1);
-   _elm_code_widget_fill_gutter(widget, cells, w, ELM_CODE_STATUS_TYPE_DEFAULT, 0);
-
-   for (x = gutter; x < (unsigned int) w; x++)
-     {
-        cells[x].codepoint = 0;
-        if (pd->editable && pd->focussed && pd->cursor_line == number)
-          cells[x].bg = ELM_CODE_STATUS_TYPE_CURRENT;
-        else if (pd->line_width_marker == x - gutter + 1)
-          cells[x].bg = ELM_CODE_WIDGET_COLOR_GUTTER_BG;
-        else
-          cells[x].bg = ELM_CODE_STATUS_TYPE_DEFAULT;
-     }
-
-   _elm_code_widget_fill_cursor(widget, number, cells, gutter, w);
-   evas_object_textgrid_update_add(pd->grid, 0, number - 1, w, 1);
+   evas_object_textgrid_update_add(grid, 0, 0, w, 1);
 }
 
 static void
 _elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, unsigned int last_row)
 {
    Elm_Code_Line *line;
-   int h;
    unsigned int y;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-
    _elm_code_widget_resize(widget);
-   h = elm_code_widget_lines_visible_get(widget);
 
    for (y = first_row; y <= last_row; y++)
      {
         line = elm_code_file_line_get(pd->code->file, y);
 
         _elm_code_widget_fill_line(widget, line);
-     }
-   for (; y <= (unsigned int) h; y++)
-     {
-        _elm_code_widget_empty_line(widget, y);
      }
 }
 
@@ -451,7 +393,7 @@ _elm_code_widget_refresh(Elm_Code_Widget *widget)
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   evas_object_textgrid_cell_size_get(pd->grid, NULL, &ch);
+   _elm_code_widget_cell_size_get(widget, NULL, &ch);
    elm_scroller_region_get(pd->scroller, NULL, &scroll_y, NULL, &scroll_h);
 
    first_row = scroll_y / ch + 1;
@@ -600,7 +542,7 @@ _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    elm_scroller_region_get(pd->scroller, &viewx, &viewy, &vieww, &viewh);
-   evas_object_textgrid_cell_size_get(pd->grid, &cellw, &cellh);
+   _elm_code_widget_cell_size_get(widget, &cellw, &cellh);
 
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
    curx = (pd->cursor_col + gutter - 1) * cellw;
@@ -634,8 +576,6 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
         code = pd->code;
         if (oldrow <= elm_code_file_lines_get(code->file))
           _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, oldrow));
-        else
-          _elm_code_widget_empty_line(widget, oldrow);
      }
    _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, pd->cursor_line));
 }
@@ -645,19 +585,37 @@ _elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *widget, Elm_Code_W
                                              Evas_Coord x, Evas_Coord y,
                                              unsigned int *row, int *col)
 {
+   Eina_List *item;
    Elm_Code_Line *line;
-   Evas_Coord ox, oy, sx, sy;
+   Evas_Coord ox, oy, sx, sy, rowy;
+   Evas_Object *grid;
    int cw, ch, gutter;
-   unsigned int number;
+   unsigned int guess, number;
 
    evas_object_geometry_get(widget, &ox, &oy, NULL, NULL);
    elm_scroller_region_get(pd->scroller, &sx, &sy, NULL, NULL);
    x = x + sx - ox;
    y = y + sy - oy;
 
-   evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
+   _elm_code_widget_cell_size_get(widget, &cw, &ch);
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
-   number = ((double) y / ch) + 1;
+
+   guess = ((double) y / ch) + 1;
+   number = guess;
+
+   // unfortunately EINA_LIST_REVERSE_FOREACH skips to the end of the list...
+   for (item = eina_list_nth_list(pd->grids, guess - 1), grid = eina_list_data_get(item);
+        item;
+        item = eina_list_prev(item), grid = eina_list_data_get(item))
+     {
+        evas_object_geometry_get(grid, NULL, &rowy, NULL, NULL);
+
+        if (rowy - oy < y)
+          break;
+
+        number--;
+     }
+
    if (col)
      *col = ((double) x / cw) - gutter + 1;
    if (row)
@@ -1406,6 +1364,182 @@ _elm_code_widget_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED,
    return EINA_TRUE;
 }
 
+static void
+_elm_code_widget_setup_palette(Evas_Object *o)
+{
+   double feint = 0.5;
+
+   // setup status colors
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_DEFAULT,
+                                    36, 36, 36, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_CURRENT,
+                                    12, 12, 12, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_IGNORED,
+                                    36, 36, 36, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_NOTE,
+                                    255, 153, 0, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_WARNING,
+                                    255, 153, 0, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_ERROR,
+                                    205, 54, 54, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_FATAL,
+                                    205, 54, 54, 255);
+
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_ADDED,
+                                    36, 96, 36, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_REMOVED,
+                                    96, 36, 36, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_CHANGED,
+                                    36, 36, 96, 255);
+
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_PASSED,
+                                    54, 96, 54, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_FAILED,
+                                    96, 54, 54, 255);
+
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_TODO,
+                                    54, 54, 96, 255);
+
+   // setup token colors
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_DEFAULT,
+                                    205, 205, 205, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_COMMENT,
+                                    51, 153, 255, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_STRING,
+                                    255, 90, 53, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_NUMBER,
+                                    212, 212, 42, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_BRACE,
+                                    101, 101, 101, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_TYPE,
+                                    51, 153, 255, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_CLASS,
+                                    114, 170, 212, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_FUNCTION,
+                                    114, 170, 212, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_PARAM,
+                                    255, 255, 255, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_KEYWORD,
+                                    255, 153, 0, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_PREPROCESSOR,
+                                    0, 176, 0, 255);
+
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_ADDED,
+                                    54, 255, 54, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_REMOVED,
+                                    255, 54, 54, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_CHANGED,
+                                    54, 54, 255, 255);
+
+   // other styles that the widget uses
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_CURSOR,
+                                    205, 205, 54, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_SELECTION,
+                                    51, 153, 255, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_BG,
+                                    75, 75, 75, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_FG,
+                                    139, 139, 139, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_WHITESPACE,
+                                    101 * feint, 101 * feint, 101 * feint, 255 * feint);
+}
+
+static void
+_elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
+{
+   Evas_Object *grid;
+   int existing, i;
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   existing = eina_list_count(pd->grids);
+
+   // trim unneeded rows in our rendering
+   if (rows < existing)
+     {
+        for (i = existing - rows; i > 0; i--)
+          {
+             grid = eina_list_data_get(eina_list_last(pd->grids));
+             evas_object_hide(grid);
+             elm_box_unpack(pd->gridbox, grid);
+             pd->grids = eina_list_remove_list(pd->grids, eina_list_last(pd->grids));
+          }
+        rows = existing;
+     }
+
+   if (rows == existing)
+     return;
+
+   for (int i = existing; i < rows; i++)
+     {
+        grid = evas_object_textgrid_add(pd->gridbox);
+        evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, 0.0);
+        evas_object_show(grid);
+        _elm_code_widget_setup_palette(grid);
+
+        elm_box_pack_end(pd->gridbox, grid);
+        pd->grids = eina_list_append(pd->grids, grid);
+
+        evas_object_event_callback_add(grid, EVAS_CALLBACK_MOUSE_DOWN, _elm_code_widget_mouse_down_cb, widget);
+        evas_object_event_callback_add(grid, EVAS_CALLBACK_MOUSE_MOVE, _elm_code_widget_mouse_move_cb, widget);
+        evas_object_event_callback_add(grid, EVAS_CALLBACK_MOUSE_UP, _elm_code_widget_mouse_up_cb, widget);
+
+        evas_object_textgrid_font_set(grid, pd->font_name, pd->font_size * elm_config_scale_get());
+     }
+}
+
+static void
+_elm_code_widget_resize(Elm_Code_Widget *widget)
+{
+   Elm_Code_Line *line;
+   Eina_List *item;
+   Evas_Object *grid;
+   Evas_Coord ww, wh, old_width, old_height;
+   int w, h, cw, ch, gutter;
+   unsigned int line_width;
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
+
+   if (!pd->code)
+     return;
+
+   evas_object_geometry_get(widget, NULL, NULL, &ww, &wh);
+
+   old_width = ww;
+   old_height = wh;
+
+   w = 0;
+   h = elm_code_file_lines_get(pd->code->file);
+   EINA_LIST_FOREACH(pd->code->file->lines, item, line)
+     {
+        line_width = elm_code_widget_line_text_column_width_get(widget, line);
+        if ((int) line_width + gutter + 1 > w)
+          w = (int) line_width + gutter + 1;
+     }
+
+   _elm_code_widget_ensure_n_grid_rows(widget, h);
+   _elm_code_widget_cell_size_get(widget, &cw, &ch);
+   if (w*cw > ww)
+     ww = w*cw;
+   if (h*ch > wh)
+     wh = h*ch;
+   pd->col_count = ww/cw + 1;
+
+   EINA_LIST_FOREACH(pd->grids, item, grid)
+     {
+        evas_object_textgrid_size_set(grid, pd->col_count, 1);
+        evas_object_size_hint_min_set(grid, w*cw, ch);
+     }
+
+   if (pd->gravity_x == 1.0 || pd->gravity_y == 1.0)
+     _elm_code_widget_scroll_by(widget,
+        (pd->gravity_x == 1.0 && ww > old_width) ? ww - old_width : 0,
+        (pd->gravity_y == 1.0 && wh > old_height) ? wh - old_height : 0);
+}
+
 EOAPI void
 _elm_code_widget_line_refresh(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED, Elm_Code_Line *line)
 {
@@ -1413,12 +1547,12 @@ _elm_code_widget_line_refresh(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED, Elm
 }
 
 EOAPI Eina_Bool
-_elm_code_widget_line_visible_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_Code_Line *line)
+_elm_code_widget_line_visible_get(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code_Line *line)
 {
    Evas_Coord cellh, viewy, viewh;
 
    elm_scroller_region_get(pd->scroller, NULL, &viewy, NULL, &viewh);
-   evas_object_textgrid_cell_size_get(pd->grid, NULL, &cellh);
+   _elm_code_widget_cell_size_get(obj, NULL, &cellh);
 
    if (((int)line->number - 1) * cellh > viewy + viewh || (int)line->number * cellh < viewy)
      return EINA_FALSE;
@@ -1427,25 +1561,31 @@ _elm_code_widget_line_visible_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
 }
 
 EOAPI unsigned int
-_elm_code_widget_lines_visible_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_lines_visible_get(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Evas_Coord cellh, viewh;
 
    elm_scroller_region_get(pd->scroller, NULL, NULL, NULL, &viewh);
-   evas_object_textgrid_cell_size_get(pd->grid, NULL, &cellh);
+   _elm_code_widget_cell_size_get(obj, NULL, &cellh);
 
-   return viewh / cellh;
+   return viewh / cellh + 1;
 }
 
 EOLIAN static void
 _elm_code_widget_font_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
                           const char *name, Evas_Font_Size size)
 {
+   Eina_List *item;
+   Evas_Object *grid;
+
    const char *face = name;
    if (!face)
      face = "Mono";
 
-   evas_object_textgrid_font_set(pd->grid, face, size * elm_config_scale_get());
+   EINA_LIST_FOREACH(pd->grids, item, grid)
+     {
+        evas_object_textgrid_font_set(grid, face, size * elm_config_scale_get());
+     }
    if (pd->font_name)
      eina_stringshare_del((char *)pd->font_name);
    pd->font_name = eina_stringshare_add(face);
@@ -1460,6 +1600,12 @@ _elm_code_widget_font_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
      *name = strdup((const char *)pd->font_name);
    if (size)
      *size = pd->font_size;
+}
+
+EOLIAN static unsigned int
+_elm_code_widget_columns_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+{
+   return pd->col_count;
 }
 
 EOLIAN static void
@@ -1594,91 +1740,10 @@ _elm_code_widget_cursor_position_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *
    *line = pd->cursor_line;
 }
 
-static void
-_elm_code_widget_setup_palette(Evas_Object *o)
-{
-   double feint = 0.5;
-
-   // setup status colors
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_DEFAULT,
-                                    36, 36, 36, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_CURRENT,
-                                    12, 12, 12, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_IGNORED,
-                                    36, 36, 36, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_NOTE,
-                                    255, 153, 0, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_WARNING,
-                                    255, 153, 0, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_ERROR,
-                                    205, 54, 54, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_FATAL,
-                                    205, 54, 54, 255);
-
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_ADDED,
-                                    36, 96, 36, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_REMOVED,
-                                    96, 36, 36, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_CHANGED,
-                                    36, 36, 96, 255);
-
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_PASSED,
-                                    54, 96, 54, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_FAILED,
-                                    96, 54, 54, 255);
-
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_TODO,
-                                    54, 54, 96, 255);
-
-   // setup token colors
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_DEFAULT,
-                                    205, 205, 205, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_COMMENT,
-                                    51, 153, 255, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_STRING,
-                                    255, 90, 53, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_NUMBER,
-                                    212, 212, 42, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_BRACE,
-                                    101, 101, 101, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_TYPE,
-                                    51, 153, 255, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_CLASS,
-                                    114, 170, 212, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_FUNCTION,
-                                    114, 170, 212, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_PARAM,
-                                    255, 255, 255, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_KEYWORD,
-                                    255, 153, 0, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_PREPROCESSOR,
-                                    0, 176, 0, 255);
-
-
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_ADDED,
-                                    54, 255, 54, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_REMOVED,
-                                    255, 54, 54, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_CHANGED,
-                                    54, 54, 255, 255);
-
-   // other styles that the widget uses
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_CURSOR,
-                                    205, 205, 54, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_SELECTION,
-                                    51, 153, 255, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_BG,
-                                    75, 75, 75, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_FG,
-                                    139, 139, 139, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_WHITESPACE,
-                                    101 * feint, 101 * feint, 101 * feint, 255 * feint);
-}
-
 EOLIAN static void
 _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   Evas_Object *grid, *scroller;
+   Evas_Object *background, *gridrows, *scroller;
 
    evas_obj_smart_add(eo_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
@@ -1693,19 +1758,22 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    elm_object_focus_allow_set(scroller, EINA_FALSE);
    pd->scroller = scroller;
 
-   grid = evas_object_textgrid_add(obj);
-   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(grid);
+   background = elm_bg_add(scroller);
+   evas_object_color_set(background, 145, 145, 145, 255);
+   evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(background);
+   elm_object_part_content_set(scroller, "elm.swallow.background", background);
+
+   gridrows = elm_box_add(scroller);
+   evas_object_size_hint_weight_set(gridrows, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(gridrows, EVAS_HINT_FILL, 0.0);
+   elm_object_content_set(scroller, gridrows);
+   pd->gridbox = gridrows;
+
    _elm_code_widget_tooltip_add(obj);
-   elm_object_content_set(scroller, grid);
-   pd->grid = grid;
-   _elm_code_widget_setup_palette(grid);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, obj);
-   evas_object_event_callback_add(grid, EVAS_CALLBACK_MOUSE_DOWN, _elm_code_widget_mouse_down_cb, obj);
-   evas_object_event_callback_add(grid, EVAS_CALLBACK_MOUSE_MOVE, _elm_code_widget_mouse_move_cb, obj);
-   evas_object_event_callback_add(grid, EVAS_CALLBACK_MOUSE_UP, _elm_code_widget_mouse_up_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _elm_code_widget_key_down_cb, obj);
 
    evas_object_smart_callback_add(obj, "focused", _elm_code_widget_focused_event_cb, obj);
@@ -1715,8 +1783,6 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    eo_event_callback_add(obj, &ELM_CODE_EVENT_FILE_LOAD_DONE, _elm_code_widget_file_cb, obj);
    eo_event_callback_add(obj, ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, _elm_code_widget_selection_cb, obj);
    eo_event_callback_add(obj, ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, _elm_code_widget_selection_clear_cb, obj);
-
-   _elm_code_widget_font_set(obj, pd, NULL, 10);
 }
 
 #include "elm_code_widget_text.c"
