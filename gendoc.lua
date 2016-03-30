@@ -1,0 +1,397 @@
+local eolian = require("eolian")
+local getopt = require("getopt")
+local cutil = require("cutil")
+local util = require("util")
+
+local doc_root
+local root_nspace
+
+-- utils
+
+local make_page = function(path)
+    return doc_root .. "/" .. path .. ".txt"
+end
+
+local mkdir_r = function(dirn)
+    local fullp = dirn and (doc_root .. "/" .. dirn) or doc_root
+    local prev
+    for x in fullp:gmatch("[^/]+") do
+        local p
+        if prev then
+            p = prev .. "/" .. x
+        else
+            p = x
+        end
+        prev = p
+        if cutil.file_exists(p) then
+            assert(cutil.file_is_dir(p))
+        else
+            assert(cutil.file_mkdir(p))
+        end
+    end
+end
+
+local mkdir_p = function(path)
+    mkdir_r(path:match("(.+)/([^/]+)"))
+end
+
+local Writer = util.Object:clone {
+    __ctor = function(self, path)
+        local subs = path:gsub(":", "/"):lower()
+        mkdir_p(subs)
+        self.file = assert(io.open(make_page(subs), "w"))
+    end,
+
+    write_raw = function(self, ...)
+        self.file:write(...)
+    end,
+
+    write_nl = function(self, n)
+        self:write_raw(("\n"):rep(n or 1))
+    end,
+
+    write_h = function(self, heading, level, nonl)
+        local s = ("="):rep(7 - level)
+        self:write_raw(s, " ", heading, " ", s, "\n")
+        if not nonl then
+            self:write_nl()
+        end
+    end,
+
+    write_fmt = function(self, fmt1, fmt2, ...)
+        self:write_raw(fmt1, ...)
+        self:write_raw(fmt2)
+    end,
+
+    write_b = function(self, ...)
+        self:write_fmt("**", "**", ...)
+    end,
+
+    write_i = function(self, ...)
+        self:write_fmt("//", "//", ...)
+    end,
+
+    write_u = function(self, ...)
+        self:write_fmt("__", "__", ...)
+    end,
+
+    write_s = function(self, ...)
+        self:write_fmt("<del>", "</del>", ...)
+    end,
+
+    write_m = function(self, ...)
+        self:write_fmt("''", "''", ...)
+    end,
+
+    write_sub = function(self, ...)
+        self:write_fmt("<sub>", "</sub>", ...)
+    end,
+
+    write_sup = function(self, ...)
+        self:write_fmt("<sup>", "</sup>", ...)
+    end,
+
+    write_br = function(self, nl)
+        self:write_raw("\\\\", nl and "\n" or " ")
+    end,
+
+    write_pre_inline = function(self, ...)
+        self:write_fmt("%%", "%%", ...)
+    end,
+
+    write_pre = function(self, ...)
+        self:write_fmt("<nowiki>\n", "\n</nowiki>", ...)
+    end,
+
+    write_link = function(self, target, title)
+        if not title then
+            self:write_raw("[[", target:lower(), "|", target, "]]")
+            return
+        end
+        target = target:lower()
+        if type(title) == "string" then
+            self:write_raw("[[", target, "|", title, "]]")
+            return
+        end
+        self:write_raw("[[", target, "|")
+        title(self)
+        self:write_raw("]]")
+    end,
+
+    write_table = function(self, titles, tbl)
+        self:write_raw("^ ", table.concat(titles, " ^ "), " ^\n")
+        for i, v in ipairs(tbl) do
+            self:write_raw("| ", table.concat(v,  " | "), " |\n")
+        end
+    end,
+
+    write_list = function(self, tbl, ord)
+        local prec = ord and "-" or "*"
+        for i, v in ipairs(tbl) do
+            local lvl, str = 1, v
+            if type(v) == "table" then
+                lvl, str = v[1] + 1, v[2]
+            end
+            self:write_raw(("  "):rep(lvl), prec, " ", str, "\n")
+        end
+    end,
+
+    finish = function(self)
+        self.file:close()
+    end
+}
+
+local Buffer = Writer:clone {
+    __ctor = function(self)
+        self.buf = {}
+    end,
+
+    write_raw = function(self, ...)
+        for i, v in ipairs({ ... }) do
+            self.buf[#self.buf + 1] = v
+        end
+    end,
+
+    finish = function(self)
+        self.result = table.concat(self.buf)
+        self.buf = {}
+        return self.result
+    end
+}
+
+-- eolian to various doc elements conversions
+
+local get_brief_doc = function(doc)
+    if not doc then
+        return "No description supplied."
+    end
+    return doc:summary_get()
+end
+
+local get_full_doc = function(doc)
+    if not doc then
+        return "No description supplied."
+    end
+    local sum = doc:summary_get()
+    local desc = doc:description_get()
+    if not desc then
+        return sum
+    end
+    return sum .. "\n\n" .. desc
+end
+
+local gen_namespaces = function(v, subnspace, root)
+    local nspaces = v:namespaces_get():to_array()
+    for i = 1, #nspaces do
+        nspaces[i] = nspaces[i]:lower()
+    end
+    nspaces[#nspaces + 1] = v:name_get()
+    if subnspace then
+        table.insert(nspaces, 1, subnspace)
+    end
+    if root then
+        table.insert(nspaces, 1, ":" .. root_nspace)
+    end
+    return table.concat(nspaces, ":")
+end
+
+local funct_to_str = {
+    [eolian.function_type.PROPERTY] = "property",
+    [eolian.function_type.PROP_GET] = "property",
+    [eolian.function_type.PROP_SET] = "property",
+    [eolian.function_type.METHOD] = "method"
+}
+
+local gen_func_link = function(base, f)
+    local ft = funct_to_str[f:type_get()]
+    return base .. ":" .. ft .. ":" .. f:name_get():lower()
+end
+
+-- builders
+
+local classt_to_str = {
+    [eolian.class_type.REGULAR] = "class",
+    [eolian.class_type.ABSTRACT] = "class",
+    [eolian.class_type.MIXIN] = "mixin",
+    [eolian.class_type.INTERFACE] = "interface"
+}
+
+local build_reftable = function(f, title, ctitle, ctype, t)
+    if not t or #t == 0 then
+        return
+    end
+    f:write_h(title, 2)
+    local nt = {}
+    for i, v in ipairs(t) do
+        local lbuf = Buffer()
+        lbuf:write_link(gen_namespaces(v, ctype, true), v:full_name_get())
+        nt[#nt + 1] = {
+            lbuf:finish(), get_brief_doc(v:documentation_get())
+        }
+    end
+    table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
+    f:write_table({ ctitle, "Brief description" }, nt)
+    f:write_nl()
+end
+
+local build_functable = function(f, title, ctitle, cl, tp)
+    local t = cl:functions_get(tp):to_array()
+    if #t == 0 then
+        return
+    end
+    local cns = gen_namespaces(cl, classt_to_str[cl:type_get()], true)
+    f:write_h(title, 2)
+    local nt = {}
+    for i, v in ipairs(t) do
+        local lbuf = Buffer()
+        local ftype = funct_to_str[v:type_get()]
+        lbuf:write_link(gen_func_link(cns, v), v:name_get())
+        nt[#nt + 1] = {
+            lbuf:finish(), get_brief_doc(v:documentation_get(eolian.function_type.METHOD))
+        }
+    end
+    table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
+    f:write_table({ ctitle, "Brief description" }, nt)
+    f:write_nl()
+end
+
+local build_ref = function()
+    local f = Writer("reference")
+    f:write_h("EFL Reference", 2)
+
+    local classes = {}
+    local ifaces = {}
+    local mixins = {}
+
+    local clt = eolian.class_type
+
+    for cl in eolian.all_classes_get() do
+        local tp = cl:type_get()
+        if tp == clt.REGULAR or tp == clt.ABSTRACT then
+            classes[#classes + 1] = cl
+        elseif tp == clt.MIXIN then
+            mixins[#mixins + 1] = cl
+        elseif tp == clt.INTERFACE then
+            ifaces[#ifaces + 1] = cl
+        else
+            error("unknown class: " .. cl:full_name_get())
+        end
+    end
+
+    build_reftable(f, "Classes", "Class name", "class", classes)
+    build_reftable(f, "Interfaces", "Interface name", "interface", ifaces)
+    build_reftable(f, "Mixins", "Mixin name", "mixin", mixins)
+
+    build_reftable(f, "Aliases", "Alias name", "alias",
+        eolian.typedecl_all_aliases_get():to_array())
+
+    build_reftable(f, "Structures", "Struct name", "struct",
+        eolian.typedecl_all_structs_get():to_array())
+
+    build_reftable(f, "Enums", "Enum name", "enum",
+        eolian.typedecl_all_enums_get():to_array())
+
+    build_reftable(f, "Constants", "Constant name", "constant",
+        eolian.variable_all_constants_get():to_array())
+
+    build_reftable(f, "Globals", "Global name", "global",
+        eolian.variable_all_globals_get():to_array())
+
+    f:finish()
+end
+
+local write_full_doc = function(f, doc)
+    f:write_raw(get_full_doc(doc))
+    f:write_nl(2)
+    local since = doc and doc:since_get() or nil
+    if since then
+        f:write_i(since)
+        f:write_nl(2)
+    end
+end
+
+local build_class = function(cl)
+    local f = Writer(gen_namespaces(cl, classt_to_str[cl:type_get()], false))
+
+    f:write_h(cl:full_name_get(), 2)
+
+    f:write_h("Description", 3)
+    write_full_doc(f, cl:documentation_get())
+
+    f:write_h("Methods", 3)
+    build_functable(f, "Methods", "Method name", cl, eolian.function_type.METHOD)
+
+    f:write_h("Properties", 3)
+    build_functable(f, "Properties", "Property name",
+        cl, eolian.function_type.PROPERTY)
+
+    f:write_h("Events", 3)
+    local evs = cl:events_get():to_array()
+    if #evs == 0 then
+        f:write_raw("This class does not define any events.\n")
+    else
+        for i, ev in ipairs(evs) do
+            f:write_h(ev:name_get(), 4)
+            write_full_doc(f, ev:documentation_get())
+        end
+    end
+
+    f:finish()
+end
+
+local build_classes = function()
+    for cl in eolian.all_classes_get() do
+        local ct = cl:type_get()
+        if not classt_to_str[ct] then
+            error("unknown class: " .. cl:full_name_get())
+        end
+        build_class(cl)
+    end
+end
+
+getopt.parse {
+    args = arg,
+    descs = {
+        { category = "General" },
+        { "h", "help", nil, help = "Show this message.", metavar = "CATEGORY",
+            callback = getopt.help_cb(io.stdout)
+        },
+        -- TODO: implement verbose mode
+        { "v", "verbose", false, help = "Be verbose." },
+
+        { category = "Generator" },
+        { "r", "root", true, help = "Root path of the docs." },
+        { "n", "namespace", true, help = "Root namespace of the docs." }
+    },
+    error_cb = function(parser, msg)
+        io.stderr:write(msg, "\n")
+        getopt.help(parser, io.stderr)
+    end,
+    done_cb = function(parser, opts, args)
+        root_nspace = opts["n"] or "efl"
+        if not opts["r"] then
+            error("no documentation root supplied")
+        end
+        doc_root = opts["r"] .. "/" .. root_nspace:gsub(":", "/")
+        if not args[1] then
+            if not eolian.system_directory_scan() then
+                error("failed scanning system directory")
+            end
+        else
+            if not eolian.directory_scan(args[1]) then
+                error("failed scanning directory: " .. args[1])
+            end
+        end
+        if not eolian.all_eot_files_parse() then
+            error("failed parsing eo type files")
+        end
+        if not eolian.all_eo_files_parse() then
+            error("failed parsing eo files")
+        end
+        mkdir_r(nil)
+        build_ref()
+        build_classes()
+    end
+}
+
+return true
