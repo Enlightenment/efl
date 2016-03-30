@@ -196,6 +196,13 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
      _ecore_evas_wl_common_state_update(ee);
 
    if ((!nw) && (!nh)) return ECORE_CALLBACK_RENEW;
+   /* NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    * THIS IS A BUG!
+    * NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    * https://phab.enlightenment.org/T3396
+    * NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+    * ALSO THE COMMENT BELOW THIS IS WRONG!
+    */
    /* NB: We receive window configure sizes based on xdg surface
     * window geometry, so we need to subtract framespace here */
    evas_output_framespace_get(ee->evas, NULL, &fy, NULL, NULL);
