@@ -255,10 +255,8 @@ void test_external_video(void *data, Evas_Object *obj, void *event_info);
 void test_config(void *data, Evas_Object *obj, void *event_info);
 void test_video(void *data, Evas_Object *obj, void *event_info);
 void test_eio(void *data, Evas_Object *obj, void *event_info);
-#ifdef HAVE_ELEMENTARY_WEB
 void test_web(void *data, Evas_Object *obj, void *event_info);
 void test_web_ui(void *data, Evas_Object *obj, void *event_info);
-#endif
 void test_dnd_genlist_default_anim(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_genlist_user_anim(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_genlist_gengrid(void *data, Evas_Object *obj, void *event_info);
@@ -723,10 +721,8 @@ add_tests:
    ADD_TEST(NULL, "3D", "GLView Many Gears", test_glview_manygears);
 
    //------------------------------//
-#ifdef HAVE_ELEMENTARY_WEB
    ADD_TEST(NULL, "Web", "Web", test_web);
    ADD_TEST(NULL, "Web", "Web UI", test_web_ui);
-#endif
 
    //------------------------------//
    ADD_TEST(NULL, "Input", "Gesture Layer", test_gesture_layer);
