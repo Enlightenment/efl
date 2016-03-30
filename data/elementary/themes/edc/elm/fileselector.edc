@@ -17,6 +17,7 @@ group { name: "elm/fileselector/base/default";
       swallow { "elm.swallow.up";
          desc { "default";
             align: 0.0 0.0;
+            fixed: 1 1;
             rel1.offset: 3 3;
             rel2.relative: 0.0 0.0;
             rel2.offset: 3 3;
@@ -25,6 +26,7 @@ group { name: "elm/fileselector/base/default";
       swallow { "elm.swallow.home";
          desc { "default";
             align: 0.0 0.5;
+            fixed: 1 0;
             rel1 {
                to: "elm.swallow.up";
                relative: 1.0 0.0;
@@ -55,6 +57,7 @@ group { name: "elm/fileselector/base/default";
       swallow { "elm.swallow.ok";
          description { state: "default" 0.0;
             align: 1.0 1.0;
+            fixed: 1 1;
             rel1.relative: 1.0 1.0;
             rel1.offset: -4 -4;
             rel2.relative: 1.0 1.0;
@@ -64,6 +67,7 @@ group { name: "elm/fileselector/base/default";
       swallow { "elm.swallow.cancel";
          desc { "default";
             align: 1.0 0.5;
+            fixed: 1 0;
             rel1 {
                to: "elm.swallow.ok";
                relative: 0.0 0.0;
@@ -79,6 +83,7 @@ group { name: "elm/fileselector/base/default";
       swallow { "elm.swallow.filters";
          desc { "default";
             align: 1.0 1.0;
+            fixed: 1 1;
             rel1 {
                to_y: "elm.swallow.ok";
                relative: 1.0 0.0;
@@ -94,6 +99,7 @@ group { name: "elm/fileselector/base/default";
       swallow { "elm.swallow.filename";
          desc { "default";
             align: 0.5 1.0;
+            fixed: 0 1;
             rel1 {
                to_y: "elm.swallow.filters";
                relative: 0.0 0.0;
@@ -109,6 +115,7 @@ group { name: "elm/fileselector/base/default";
       swallow { "elm.swallow.path";
          desc { "default";
             align: 0.5 1.0;
+            fixed: 0 1;
             rel1 {
                to_y: "elm.swallow.filename";
                relative: 0.0 0.0;

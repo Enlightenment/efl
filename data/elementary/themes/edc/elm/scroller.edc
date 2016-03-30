@@ -197,6 +197,9 @@ group { name: "elm/scroller/base/default";
             inherit: "default" 0.0;
             min: 0 0;
          }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+         }
       }
       part { name: "y_vbar_up_mapper"; type: SPACER;
          scale: 1;
@@ -480,6 +483,9 @@ group { name: "elm/scroller/base/default";
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
             min: 0 0;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
          }
       }
       part { name: "x_hbar_left_mapper"; type: SPACER;

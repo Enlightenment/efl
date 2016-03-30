@@ -90,6 +90,7 @@ group { name: "elm/cursor/hand1/default";
       part { name: "elm.content.hotspot"; type: SWALLOW;
          description { state: "default" 0.0;
             visible: 0;
+            fixed: 1 1;
             rel1.relative: (26/32) (9/32);
             rel1.to: "base";
             rel2.to: "base";

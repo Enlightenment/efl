@@ -100,6 +100,7 @@ group { name: "elm/player/base/default";
       part { name: "barbevclip"; type: RECT;
          clip_to: "clipper";
          description { state: "default" 0.0;
+            fixed: 0 1;
             rel1.to: "bar";
             rel2.to: "bar";
             rel2.relative: 1.0 0.0;

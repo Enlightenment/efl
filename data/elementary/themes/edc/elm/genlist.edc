@@ -225,6 +225,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
             image.normal: "horizontal_separated_bar_small_glow.png";
             image.border: 4 4 4 4;
             fill.smooth: 0;
+            fixed: 0 1;
             rel1.relative: 0.0 1.0;
             rel1.offset: -3 -6;
             rel2.offset: 2 3;
@@ -4847,6 +4848,7 @@ group { "elm/genlist/item/mode/default"; nomouse;
       }
       spacer { "pers";
          desc { "default";
+            fixed: 0 1;
             rel1.relative: 0.0 1.0;
          }
       }

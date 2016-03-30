@@ -94,6 +94,7 @@ group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
          desc { hid;
             color: 64 64 64 255;
             color_class: "dialog_base";
+            fixed: 1 1;
             rel1.relative: 0.5 0.5;
             rel2.relative: 0.5 0.5;
          }

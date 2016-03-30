@@ -404,6 +404,7 @@ group { name: "elm/naviframe/item/basic/default";
       part { name: "elm.swallow.icon"; type: SWALLOW;
          clip_to: "elements_clip";
          description { state: "default" 0.0;
+            fixed: 1 0;
             rel1.to_x: "elm.swallow.prev_btn";
             rel1.to_y: "top";
             rel1.relative: 1.0 0.0;
