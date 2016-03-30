@@ -28,6 +28,7 @@ struct _api_data
 {
    unsigned int state;  /* What state we are testing       */
    Evas_Object *box;           /* Use this to get box content     */
+   Evas_Object *bt;           /* Use this to get button content     */
    Evas_Object *grid;
    Evas_Object *grid2;
    Elm_Gengrid_Item_Field_Type field_type;
@@ -403,13 +404,17 @@ create_gengrid(Evas_Object *obj, int items)
    return grid;
 }
 
+
+
 static void
 restore_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    api_data *api = data;
-   elm_box_clear(api->box);
+   elm_box_unpack(api->box, api->grid);
+   evas_object_del(api->grid);
+
    api->grid = create_gengrid(obj, (12 * 12));
-   elm_box_pack_end(api->box, api->grid);
+   elm_box_pack_after(api->box, api->grid, api->bt);
    evas_object_show(api->grid);
 }
 
@@ -546,7 +551,7 @@ test_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_win_resize_object_add(win, bxx);
    evas_object_show(bxx);
 
-   bt = elm_button_add(win);
+   api->bt = bt = elm_button_add(win);
    elm_object_text_set(bt, "Next API function");
    evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *)api);
    elm_box_pack_end(bxx, bt);
