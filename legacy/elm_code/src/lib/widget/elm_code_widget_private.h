@@ -28,7 +28,6 @@ typedef struct
    Eina_Bool show_whitespace, tab_inserts_spaces;
 
    Elm_Code_Widget_Selection_Data *selection;
-   Evas_Object *tooltip;
 
    /* Undo stack */
    Eina_List *undo_stack;

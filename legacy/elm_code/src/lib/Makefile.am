@@ -41,7 +41,6 @@ elm_code_line.c \
 elm_code_text.c \
 elm_code_file.c \
 elm_code_parse.c \
-widget/elm_code_widget_tooltip.c \
 widget/elm_code_widget_selection.c \
 widget/elm_code_widget.c \
 elm_code_diff_widget.c \

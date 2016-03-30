@@ -313,7 +313,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    Eina_Unicode unichr;
    unsigned int length, x, charwidth, i, w;
    int chrpos, gutter;
-   Evas_Object *grid;
+   Evas_Object *grid, *status;
    Evas_Textgrid_Cell *cells;
    Elm_Code_Widget_Data *pd;
 
@@ -363,6 +363,29 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
      _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
    evas_object_textgrid_update_add(grid, 0, 0, w, 1);
+
+   // add a status below the line if needed (and remove those no longer needed)
+   status = evas_object_data_get(grid, "status");
+   if (line->status_text)
+     {
+        if (!status)
+          {
+             status = elm_label_add(pd->gridbox);
+             evas_object_size_hint_weight_set(status, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+             evas_object_size_hint_align_set(status, 0.05, EVAS_HINT_FILL);
+             evas_object_show(status);
+
+             elm_box_pack_after(pd->gridbox, status, grid);
+             evas_object_data_set(grid, "status", status);
+          }
+        elm_object_text_set(status, line->status_text);
+     }
+   else if (status)
+     {
+        elm_box_unpack(pd->gridbox, status);
+        evas_object_hide(status);
+        evas_object_data_set(grid, "status", NULL);
+     }
 }
 
 static void
@@ -713,24 +736,15 @@ _elm_code_widget_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
 {
    Elm_Code_Widget *widget;
    Elm_Code_Widget_Data *pd;
-   Elm_Code_Line *line;
    Evas_Event_Mouse_Move *event;
    unsigned int row;
    int col;
-   Eina_Bool hasline;
 
    widget = (Elm_Code_Widget *)data;
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    event = (Evas_Event_Mouse_Move *)event_info;
 
-   hasline = _elm_code_widget_position_at_coordinates_get(widget, pd, event->cur.canvas.x, event->cur.canvas.y, &row, &col);
-   if (!hasline)
-     _elm_code_widget_tooltip_text_set(widget, NULL);
-   else
-     {
-        line = elm_code_file_line_get(pd->code->file, row);
-        _elm_code_widget_tooltip_text_set(widget, line->status_text);
-     }
+   _elm_code_widget_position_at_coordinates_get(widget, pd, event->cur.canvas.x, event->cur.canvas.y, &row, &col);
 
    if (!pd->editable || !event->buttons)
      return;
@@ -1770,8 +1784,6 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_size_hint_align_set(gridrows, EVAS_HINT_FILL, 0.0);
    elm_object_content_set(scroller, gridrows);
    pd->gridbox = gridrows;
-
-   _elm_code_widget_tooltip_add(obj);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _elm_code_widget_key_down_cb, obj);
