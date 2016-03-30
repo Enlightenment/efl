@@ -28,9 +28,9 @@ struct _api_data
 {
    unsigned int state;  /* What state we are testing       */
    Evas_Object *box;           /* Use this to get box content     */
-   Evas_Object *bt;           /* Use this to get button content     */
    Evas_Object *grid;
    Evas_Object *grid2;
+   Evas_Object *bt;           /* Use this to get button content     */
    Elm_Gengrid_Item_Field_Type field_type;
 };
 typedef struct _api_data api_data;
@@ -422,19 +422,29 @@ static void
 filled_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *box = (Evas_Object *)data;
-   Evas_Object *grid;
+   Evas_Object *grid, *tg;
+
+   Eina_Bool state = elm_check_state_get(obj);
 
    elm_box_clear(box);
+
    grid = create_gengrid(box, 1);
-   elm_gengrid_filled_set(grid, elm_check_state_get(obj));
+   elm_gengrid_filled_set(grid, state);//elm_check_state_get(obj));
    elm_box_pack_end(box, grid);
    evas_object_show(grid);
+
+   tg = elm_check_add(box);
+   elm_object_text_set(tg, "Filled");
+   elm_check_state_set(tg, state);
+   evas_object_smart_callback_add(tg, "changed", filled_cb, box);
+   elm_box_pack_end(box, tg);
+   evas_object_show(tg);
 }
 
 static void
 filled_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *box, *content_box, *grid, *tg;
+   Evas_Object *win, *box, *grid, *tg;
 
    win = elm_win_util_standard_add("test filled", "Test Filled");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -444,19 +454,13 @@ filled_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
-   content_box = elm_box_add(win);
-   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, content_box);
-   elm_box_pack_end(box, content_box);
-   evas_object_show(content_box);
-
    grid = create_gengrid(win, 1);
-   elm_box_pack_end(content_box, grid);
+   elm_box_pack_end(box, grid);
    evas_object_show(grid);
 
    tg = elm_check_add(win);
    elm_object_text_set(tg, "Filled");
-   evas_object_smart_callback_add(tg, "changed", filled_cb, content_box);
+   evas_object_smart_callback_add(tg, "changed", filled_cb, box);
    elm_box_pack_end(box, tg);
    evas_object_show(tg);
 
@@ -521,8 +525,10 @@ cursor_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 static void
 _btn_bring_in_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   if (!data) return;
-   Elm_Object_Item *it = elm_gengrid_selected_item_get(data);
+   api_data *api = data;
+   if (!api && !api->grid) return;
+
+   Elm_Object_Item *it = elm_gengrid_selected_item_get(api->grid);
    if (!it) return;
    elm_gengrid_item_bring_in(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
 }
@@ -530,8 +536,10 @@ _btn_bring_in_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
 static void
 _btn_show_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   if (!data) return;
-   Elm_Object_Item *it = elm_gengrid_selected_item_get(data);
+   api_data *api = data;
+   if (!api && !api->grid) return;
+
+   Elm_Object_Item *it = elm_gengrid_selected_item_get(api->grid);
    if (!it) return;
    elm_gengrid_item_show(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
 }
@@ -642,13 +650,13 @@ test_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Bring in");
-   evas_object_smart_callback_add(bt, "clicked", _btn_bring_in_clicked_cb, api->grid);
+   evas_object_smart_callback_add(bt, "clicked", _btn_bring_in_clicked_cb, api);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Show");
-   evas_object_smart_callback_add(bt, "clicked", _btn_show_clicked_cb, api->grid);
+   evas_object_smart_callback_add(bt, "clicked", _btn_show_clicked_cb, api);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
