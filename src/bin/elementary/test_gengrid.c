@@ -484,8 +484,7 @@ cursor_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 static void
 cursor_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *box, *content_box, *hbox, *grid, *tg;
-
+   Evas_Object *win, *box, *hbox, *grid, *tg;
    win = elm_win_util_standard_add("test cursor", "Test Cursor");
    elm_win_autodel_set(win, EINA_TRUE);
 
@@ -494,14 +493,8 @@ cursor_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
-   content_box = elm_box_add(win);
-   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, content_box);
-   elm_box_pack_end(box, content_box);
-   evas_object_show(content_box);
-
    grid = create_gengrid(win, 4);
-   elm_box_pack_end(content_box, grid);
+   elm_box_pack_end(box, grid);
    evas_object_show(grid);
 
    hbox = elm_box_add(win);
