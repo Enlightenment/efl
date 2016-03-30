@@ -881,7 +881,7 @@ moduleaccess_outputpkg_LTLIBRARIES = modules/elementary/access_output/module.la
 # Workaround for broken parallel install support in automake (relink issue)
 # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
 install_moduleaccess_outputpkgLTLIBRARIES = install-moduleaccess_outputpkgLTLIBRARIES
-$(install-moduleaccess_outputpkgLTLIBRARIES): install-libLTLIBRARIES
+$(install_moduleaccess_outputpkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_elementary_access_output_module_la_SOURCES = modules/elementary/access_output/mod.c
 modules_elementary_access_output_module_la_CPPFLAGS = \
@@ -908,7 +908,7 @@ moduledatetime_input_ctxpopuppkg_LTLIBRARIES = modules/elementary/datetime_input
 # Workaround for broken parallel install support in automake (relink issue)
 # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
 install_moduledatetime_input_ctxpopuppkgLTLIBRARIES = install-moduledatetime_input_ctxpopuppkgLTLIBRARIES
-$(install-moduledatetime_input_ctxpopuppkgLTLIBRARIES): install-libLTLIBRARIES
+$(install_moduledatetime_input_ctxpopuppkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_elementary_datetime_input_ctxpopup_module_la_SOURCES = \
 modules/elementary/datetime_input_ctxpopup/datetime_input_ctxpopup.c
@@ -947,7 +947,7 @@ modules/elementary/prefs/elm_prefs_swallow.edj: modules/elementary/prefs/elm_pre
 # Workaround for broken parallel install support in automake (relink issue)
 # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
 install_moduleprefspkgLTLIBRARIES = install-moduleprefspkgLTLIBRARIES
-$(install-moduleprefspkgLTLIBRARIES): install-libLTLIBRARIES
+$(install_moduleprefspkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_elementary_prefs_module_la_SOURCES = \
 modules/elementary/prefs/private.h \
@@ -992,7 +992,7 @@ moduletest_entrypkg_LTLIBRARIES = modules/elementary/test_entry/module.la
 # Workaround for broken parallel install support in automake (relink issue)
 # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
 install_moduletest_entrypkgLTLIBRARIES = install-moduletest_entrypkgLTLIBRARIES
-$(install-moduletest_entrypkgLTLIBRARIES): install-libLTLIBRARIES
+$(install_moduletest_entrypkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_elementary_test_entry_module_la_SOURCES = modules/elementary/test_entry/mod.c
 modules_elementary_test_entry_module_la_CPPFLAGS = \
@@ -1019,7 +1019,7 @@ moduletest_mappkg_LTLIBRARIES = modules/elementary/test_map/module.la
 # Workaround for broken parallel install support in automake (relink issue)
 # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
 install_moduletest_mappkgLTLIBRARIES = install-moduletest_mappkgLTLIBRARIES
-$(install-moduletest_mappkgLTLIBRARIES): install-libLTLIBRARIES
+$(install_moduletest_mappkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_elementary_test_map_module_la_SOURCES = modules/elementary/test_map/mod.c
 modules_elementary_test_map_module_la_CPPFLAGS = \
@@ -1046,7 +1046,7 @@ moduleweb_nonepkg_LTLIBRARIES = modules/elementary/web/none/module.la
 # Workaround for broken parallel install support in automake (relink issue)
 # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
 install_moduleweb_nonepkgLTLIBRARIES = install-moduleweb_nonepkgLTLIBRARIES
-$(install-moduleweb_nonepkgLTLIBRARIES): install-libLTLIBRARIES
+$(install_moduleweb_nonepkgLTLIBRARIES): install-libLTLIBRARIES
 
 elm_web_none_eolian_files = modules/elementary/web/none/elm_web_none.eo
 
