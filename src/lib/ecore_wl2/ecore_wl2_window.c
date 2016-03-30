@@ -113,9 +113,10 @@ _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSE
      }
 
    win->configure_serial = serial;
+   if ((win->geometry.w == w) && (win->geometry.h == h))
+     w = h = 0;
 
-   if ((w > 0) && (h > 0))
-     _ecore_wl2_window_configure_send(win, w, h, 0);
+   _ecore_wl2_window_configure_send(win, w, h, 0);
 }
 
 static void
