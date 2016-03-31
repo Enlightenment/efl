@@ -30,6 +30,16 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface_Atspi_Text)
             size: Evas_Font_Size; [[The font size for the widget]]
          }
       }
+      @property columns {
+         get {
+            [[Get the number of columns in the widget currently.
+            This will be the max of the number of columns to represent the longest line and
+            the minimum required to fill the visible widget width.]]
+         }
+         values {
+            columns: uint; [[The number of columns required to render the widget]]
+         }
+      }
       @property gravity {
          set {
             [[Set how this widget's scroller should respond to new lines being added.

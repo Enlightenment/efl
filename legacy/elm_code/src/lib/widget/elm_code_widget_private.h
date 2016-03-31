@@ -13,7 +13,9 @@ typedef struct
 typedef struct
 {
    Elm_Code *code;
-   Evas_Object *grid, *scroller;
+   Eina_List *grids;
+   unsigned int col_count;
+   Evas_Object *scroller, *gridbox;
 
    const char *font_name;
    Evas_Font_Size font_size;
@@ -26,7 +28,6 @@ typedef struct
    Eina_Bool show_whitespace, tab_inserts_spaces;
 
    Elm_Code_Widget_Selection_Data *selection;
-   Evas_Object *tooltip;
 
    /* Undo stack */
    Eina_List *undo_stack;
@@ -43,6 +44,8 @@ typedef struct
 } Elm_Code_Widget_Change_Info;
 
 /* Private widget methods */
+
+void _elm_code_widget_cell_size_get(Elm_Code_Widget *widget, Evas_Coord *width, Evas_Coord *height);
 
 void _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text, int length);
 
