@@ -657,13 +657,12 @@ eng_canvas_alpha_get(void *data, void *context EINA_UNUSED)
 }
 
 static void
-_native_evasgl_free(void *data EINA_UNUSED, void *image)
+_native_evasgl_free(void *image)
 {
    RGBA_Image *im = image;
    Native *n = im->native.data;
 
    im->native.data        = NULL;
-   im->native.func.data   = NULL;
    im->native.func.bind   = NULL;
    im->native.func.unbind = NULL;
    im->native.func.free   = NULL;
@@ -720,7 +719,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
    if (!ns)
      {
         if (im->native.data && im->native.func.free)
-          im->native.func.free(im->native.func.data, im);
+          im->native.func.free(im);
         return NULL;
      }
 
@@ -764,7 +763,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
    if (im->native.data)
      {
         if (im->native.func.free)
-          im->native.func.free(im->native.func.data, im);
+          im->native.func.free(im);
      }
 
 #ifdef EVAS_CSERVE2
@@ -805,7 +804,6 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
              n->ns.data.evasgl.surface = ns->data.evasgl.surface;
              im->native.data = n;
              im->native.func.free = _native_evasgl_free;
-             im->native.func.data = NULL;
              im->native.func.bind = NULL;
              im->native.func.unbind = NULL;
           }

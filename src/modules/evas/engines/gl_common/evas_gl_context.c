@@ -2134,7 +2134,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    if ((tex->im) && (tex->im->native.data))
      {
         if (tex->im->native.func.yinvert)
-          yinvert = tex->im->native.func.yinvert(tex->im->native.func.data, tex->im);
+          yinvert = tex->im->native.func.yinvert(tex->im);
         else
           yinvert = tex->im->native.yinvert;
      }
@@ -2862,7 +2862,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    if ((tex->im) && (tex->im->native.data))
      {
         if (tex->im->native.func.yinvert)
-          yinvert = tex->im->native.func.yinvert(tex->im->native.func.data, tex->im);
+          yinvert = tex->im->native.func.yinvert(tex->im);
         else
           yinvert = tex->im->native.yinvert;
      }
@@ -3065,8 +3065,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   if (!gc->pipe[i].array.im->native.loose)
                     {
                        if (gc->pipe[i].array.im->native.func.bind)
-                         gc->pipe[i].array.im->native.func.bind(gc->pipe[i].array.im->native.func.data,
-                                                                gc->pipe[i].array.im);
+                         gc->pipe[i].array.im->native.func.bind(gc->pipe[i].array.im);
                     }
                }
           }
@@ -3610,8 +3609,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              if (!gc->pipe[i].array.im->native.loose)
                {
                   if (gc->pipe[i].array.im->native.func.unbind)
-                    gc->pipe[i].array.im->native.func.unbind(gc->pipe[i].array.im->native.func.data,
-                                                             gc->pipe[i].array.im);
+                    gc->pipe[i].array.im->native.func.unbind(gc->pipe[i].array.im);
                }
              gc->pipe[i].array.im = NULL;
           }

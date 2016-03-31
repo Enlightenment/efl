@@ -331,7 +331,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
    if (im->native.data)
       {
          if (im->native.func.free)
-            im->native.func.free(im->native.func.data, im);
+            im->native.func.free(im);
       }
 
 #ifdef EVAS_CSERVE2

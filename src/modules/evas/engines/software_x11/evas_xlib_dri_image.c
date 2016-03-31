@@ -540,7 +540,6 @@ _native_free_cb(void *data EINA_UNUSED, void *image)
    n->ns_data.x11.display = NULL;
 
    im->native.data        = NULL;
-   im->native.func.data   = NULL;
    im->native.func.bind   = NULL;
    im->native.func.free   = NULL;
    im->image.data         = NULL;
@@ -600,7 +599,6 @@ evas_xlib_image_dri_native_set(void *data, void *image, void *native)
    n->ns_data.x11.display = d;
    n->ns_data.x11.exim = exim;
    im->native.data = n;
-   im->native.func.data = NULL;
    im->native.func.bind = _native_bind_cb;
    im->native.func.free = _native_free_cb;
 

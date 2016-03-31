@@ -430,11 +430,10 @@ struct _Evas_GL_Image
    struct {
       void         *data;
       struct {
-         void     (*bind)    (void *data, void *image);
-         void     (*unbind)  (void *data, void *image);
-         void     (*free)    (void *data, void *image);
-         int      (*yinvert) (void *data, void *image);
-         void      *data;
+         void     (*bind)    (void *image);
+         void     (*unbind)  (void *image);
+         void     (*free)    (void *image);
+         int      (*yinvert) (void *image);
       } func;
       int           yinvert;
       int           target;

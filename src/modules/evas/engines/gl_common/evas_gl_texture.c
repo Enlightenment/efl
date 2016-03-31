@@ -706,7 +706,7 @@ _pool_tex_native_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    if (im->native.loose)
      {
         if (im->native.func.bind)
-          im->native.func.bind(im->native.func.data, im);
+          im->native.func.bind(im);
      }
 #endif
 

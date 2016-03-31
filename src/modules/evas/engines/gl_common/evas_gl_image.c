@@ -702,7 +702,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
      }
 
    if (im->native.func.free)
-     im->native.func.free(im->native.func.data, im);
+     im->native.func.free(im);
 
    if (im->cs.data)
      {

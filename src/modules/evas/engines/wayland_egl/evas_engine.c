@@ -796,7 +796,7 @@ eng_output_dump(void *data)
 }
 
 static void
-_native_cb_bind(void *data EINA_UNUSED, void *image)
+_native_cb_bind(void *image)
 {
    Evas_GL_Image *img;
    Native *n;
@@ -867,7 +867,7 @@ _native_cb_bind(void *data EINA_UNUSED, void *image)
 }
 
 static void
-_native_cb_unbind(void *data EINA_UNUSED, void *image)
+_native_cb_unbind(void *image)
 {
    Evas_GL_Image *img;
    Native *n;
@@ -894,7 +894,7 @@ _native_cb_unbind(void *data EINA_UNUSED, void *image)
 }
 
 static void
-_native_cb_free(void *data EINA_UNUSED, void *image)
+_native_cb_free(void *image)
 {
    Evas_GL_Image *img;
    Native *n;
@@ -952,7 +952,6 @@ _native_cb_free(void *data EINA_UNUSED, void *image)
 #endif
     }
    img->native.data = NULL;
-   img->native.func.data = NULL;
    img->native.func.bind = NULL;
    img->native.func.unbind = NULL;
    img->native.func.free = NULL;
@@ -961,7 +960,7 @@ _native_cb_free(void *data EINA_UNUSED, void *image)
 }
 
 static int
-_native_cb_yinvert(void *data EINA_UNUSED, void *image)
+_native_cb_yinvert(void *image)
 {
    Evas_GL_Image *im = image;
    Native *n = im->native.data;
@@ -1123,7 +1122,7 @@ eng_image_native_set(void *data, void *image, void *native)
    if (img->native.data)
      {
         if (img->native.func.free)
-          img->native.func.free(img->native.func.data, img);
+          img->native.func.free(img);
         glsym_evas_gl_common_image_native_disable(img);
      }
 
@@ -1263,7 +1262,6 @@ eng_image_native_set(void *data, void *image, void *native)
                   img->native.disp = ob->egl_disp;
                   img->native.shared = ob->gl_context->shared;
                   img->native.data = n;
-                  img->native.func.data = re;
                   img->native.func.bind = _native_cb_bind;
                   img->native.func.unbind = _native_cb_unbind;
                   img->native.func.free = _native_cb_free;
@@ -1290,7 +1288,6 @@ eng_image_native_set(void *data, void *image, void *native)
                   img->native.disp = ob->egl_disp;
                   img->native.shared = ob->gl_context->shared;
                   img->native.data = n;
-                  img->native.func.data = re;
                   img->native.func.bind = _native_cb_bind;
                   img->native.func.unbind = _native_cb_unbind;
                   img->native.func.free = _native_cb_free;
@@ -1319,7 +1316,6 @@ eng_image_native_set(void *data, void *image, void *native)
                img->native.disp        = ob->egl_disp;
                img->native.shared      = ob->gl_context->shared;
                img->native.data        = n;
-               img->native.func.data   = re;
                img->native.func.bind   = _native_cb_bind;
                img->native.func.unbind = _native_cb_unbind;
                img->native.func.free   = _native_cb_free;
@@ -1358,7 +1354,6 @@ eng_image_native_set(void *data, void *image, void *native)
                img->native.disp        = ob->egl_disp;
                img->native.shared      = ob->gl_context->shared;
                img->native.data        = n;
-               img->native.func.data   = re;
                img->native.func.bind   = _native_cb_bind;
                img->native.func.unbind = _native_cb_unbind;
                img->native.func.free   = _native_cb_free;
