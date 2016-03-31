@@ -162,15 +162,18 @@ local Buffer = Writer:clone {
 
 -- eolian to various doc elements conversions
 
-local get_fallback_ftype = function(f, ftype)
+local get_fallback_fdoc = function(f, ftype)
     if not ftype then
-        local ft = f:get_type()
+        local ft = f:type_get()
         local ftt = eolian.function_type
         if ft == ftt.PROP_GET or ft == ftt.PROP_SET then
-            return ftt
+            ftype = ft
         end
     end
-    return ftype
+    if ftype then
+        return f:documentation_get(ftype)
+    end
+    return nil
 end
 
 local get_brief_doc = function(doc1, doc2)
@@ -185,7 +188,7 @@ end
 
 local get_brief_fdoc = function(f, ftype)
     return get_brief_doc(f:documentation_get(eolian.function_type.METHOD),
-                         f:documentation_get(get_fallback_ftype(ftype)))
+                         get_fallback_fdoc(f, ftype))
 end
 
 local get_full_doc = function(doc1, doc2)
@@ -215,7 +218,7 @@ end
 
 local get_full_fdoc = function(f, ftype)
     return get_full_doc(f:documentation_get(eolian.function_type.METHOD),
-                        f:documentation_get(get_fallback_ftype(ftype)))
+                        get_fallback_fdoc(f, ftype))
 end
 
 local gen_namespaces = function(v, subnspace, root)
@@ -285,7 +288,7 @@ local build_functable = function(f, title, ctitle, cl, tp)
         local ftype = funct_to_str[v:type_get()]
         lbuf:write_link(gen_func_link(cns, v), v:name_get())
         nt[#nt + 1] = {
-            lbuf:finish(), get_brief_doc(v:documentation_get(eolian.function_type.METHOD))
+            lbuf:finish(), get_brief_fdoc(v)
         }
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
@@ -356,7 +359,7 @@ end
 
 local write_full_fdoc = function(f, fn, ftype)
     write_full_doc(f, fn:documentation_get(eolian.function_type.METHOD),
-                   fn:documentation_get(get_fallback_ftype(ftype)))
+                   get_fallback_fdoc(fn, ftype))
 end
 
 local build_inherits
