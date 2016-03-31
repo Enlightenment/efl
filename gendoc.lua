@@ -5,6 +5,7 @@ local util = require("util")
 
 local doc_root
 local root_nspace
+local verbose = false
 
 -- utils
 
@@ -310,10 +311,33 @@ local write_full_doc = function(f, doc)
     end
 end
 
+local build_inherits
+build_inherits = function(cl, t, lvl)
+    t = t or {}
+    lvl = lvl or 0
+    local lbuf = Buffer()
+    local cltp = classt_to_str[cl:type_get()]
+    lbuf:write_link(gen_namespaces(cl, cltp, true), cl:full_name_get())
+    lbuf:write_raw(" ")
+    lbuf:write_i("(" .. cltp .. ")")
+    t[#t + 1] = { lvl, lbuf:finish() }
+    for cln in cl:inherits_get() do
+        local acl = eolian.class_get_by_name(cln)
+        if not acl then
+            error("error retrieving inherited class " .. cln)
+        end
+        build_inherits(acl, t, lvl + 1)
+    end
+    return t
+end
+
 local build_class = function(cl)
     local f = Writer(gen_namespaces(cl, classt_to_str[cl:type_get()], false))
 
     f:write_h(cl:full_name_get(), 2)
+
+    f:write_h("Inheritance hierarchy", 3)
+    f:write_list(build_inherits(cl))
 
     f:write_h("Description", 3)
     write_full_doc(f, cl:documentation_get())
@@ -368,6 +392,9 @@ getopt.parse {
         getopt.help(parser, io.stderr)
     end,
     done_cb = function(parser, opts, args)
+        if opts["v"] then
+            verbose = true
+        end
         root_nspace = opts["n"] or "efl"
         if not opts["r"] then
             error("no documentation root supplied")
