@@ -11,10 +11,14 @@ class Efl.Vpath_File (Eo.Base)
          }
       }
       @property result {
+         set {}
          get {}
          values {
              path: const(char)*; [[ The resulting destination file ]]
          }
+      }
+      do {
+        [[ Actually begin the resolving here - emit event now or do later ]]
       }
    }
    events {

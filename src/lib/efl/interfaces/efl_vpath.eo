@@ -1,4 +1,4 @@
-class Efl.Vpath (Eo.Base)
+interface Efl.Vpath (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: efl_vpath;
@@ -9,7 +9,5 @@ class Efl.Vpath (Eo.Base)
          }
          return: own(Efl.Vpath_File *); [[ An object representing the file ]]
       }
-     }
-   events {
    }
 }

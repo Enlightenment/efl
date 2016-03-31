@@ -52,6 +52,7 @@ typedef struct tm Efl_Time;
 
 #include "interfaces/efl_vpath_file.eo.h"
 #include "interfaces/efl_vpath.eo.h"
+#include "interfaces/efl_vpath_core.eo.h"
 #include "interfaces/efl_vpath_manager.eo.h"
 
 /* Data types */

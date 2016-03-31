@@ -1,0 +1,27 @@
+class Efl.Vpath.Core (Efl.Vpath)
+{
+   legacy_prefix: null;
+   eo_prefix: efl_vpath_core;
+   methods {
+      get @class {
+         return: Efl.Vpath.Core *; [[ Get the singleton core vpath ]]
+      }
+      meta_set {
+         params {
+            key: const(char)*; [[ The magic path key being looked up ]]
+            path: const(char)*; [[ The real path the key maps to ]]
+         }
+      }
+      meta_get {
+         params {
+            key: const(char)*; [[ The magic path key being looked up ]]
+         }
+         return: const(char)*;
+      }
+   }
+   implements {
+      Eo.Base.destructor;
+      Eo.Base.constructor;
+      Efl.Vpath.fetch;
+   }
+}
