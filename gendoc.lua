@@ -162,23 +162,39 @@ local Buffer = Writer:clone {
 
 -- eolian to various doc elements conversions
 
-local get_brief_doc = function(doc)
-    if not doc then
+local get_brief_doc = function(doc1, doc2)
+    if not doc1 and not doc2 then
         return "No description supplied."
     end
-    return doc:summary_get()
+    if not doc1 then
+        doc1, doc2 = doc2, doc1
+    end
+    return doc1:summary_get()
 end
 
-local get_full_doc = function(doc)
-    if not doc then
+local get_full_doc = function(doc1, doc2)
+    if not doc1 and not doc2 then
         return "No description supplied."
     end
-    local sum = doc:summary_get()
-    local desc = doc:description_get()
-    if not desc then
-        return sum
+    if not doc1 then
+        doc1, doc2 = doc2, doc1
     end
-    return sum .. "\n\n" .. desc
+    local sum1 = doc1:summary_get()
+    local desc1 = doc1:description_get()
+    local edoc = ""
+    if doc2 then
+        local sum2 = doc2:summary_get()
+        local desc2 = doc2:description_get()
+        if not desc2 then
+            if sum2 then edoc = "\n\n" .. sum2 end
+        else
+            edoc = "\n\n" .. sum2 .. "\n\n" .. desc2
+        end
+    end
+    if not desc1 then
+        return sum1 .. edoc
+    end
+    return sum1 .. "\n\n" .. desc1 .. edoc
 end
 
 local gen_namespaces = function(v, subnspace, root)
@@ -301,10 +317,16 @@ local build_ref = function()
     f:finish()
 end
 
-local write_full_doc = function(f, doc)
-    f:write_raw(get_full_doc(doc))
+local write_full_doc = function(f, doc1, doc2)
+    f:write_raw(get_full_doc(doc1, doc2))
     f:write_nl(2)
-    local since = doc and doc:since_get() or nil
+    local since
+    if doc2 then
+        since = doc2:since_get()
+    end
+    if not since and doc then
+        since = doc:since_get()
+    end
     if since then
         f:write_i(since)
         f:write_nl(2)
