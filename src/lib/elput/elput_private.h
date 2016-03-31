@@ -12,6 +12,7 @@
 # include "Eldbus.h"
 # include <Elput.h>
 
+# include <unistd.h>
 # include <linux/vt.h>
 # include <linux/kd.h>
 # include <linux/major.h>
@@ -53,5 +54,36 @@ extern int _elput_log_dom;
 #  undef CRIT
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_elput_log_dom, __VA_ARGS__)
+
+typedef struct _Elput_Interface
+{
+   Eina_Bool (*connect)(Elput_Manager **manager, const char *seat, unsigned int tty, Eina_Bool sync);
+   void (*disconnect)(Elput_Manager *manager);
+   int (*open)(Elput_Manager *manager, const char *path, int flags);
+   void (*close)(Elput_Manager *manager, int fd);
+   int (*activate)(Elput_Manager *manager, int vt);
+   void (*restore)(Elput_Manager *manager);
+} Elput_Interface;
+
+struct _Elput_Manager
+{
+   Elput_Interface *interface;
+
+   int fd;
+   char *sid;
+   const char *seat;
+   unsigned int vt_num;
+
+   struct
+     {
+        char *path;
+        Eldbus_Object *obj;
+        Eldbus_Connection *conn;
+     } dbus;
+
+   Eina_Bool sync : 1;
+};
+
+extern Elput_Interface _logind_interface;
 
 #endif
