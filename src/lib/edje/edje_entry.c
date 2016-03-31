@@ -4388,6 +4388,12 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx E
    _edje_emit(ed, "entry,changed", en->rp->part->name);
    _edje_emit_full(ed, "entry,changed,user", en->rp->part->name, info,
                    _free_entry_change_info);
+   _edje_emit(ed, "cursor,changed", en->rp->part->name);
+   _edje_emit(ed, "cursor,changed,manual", en->rp->part->name);
+
+   _edje_entry_imf_cursor_info_set(en);
+   _edje_entry_real_part_configure(ed, rp);
+
 end:
    evas_textblock_cursor_free(del_start);
    evas_textblock_cursor_free(del_end);
