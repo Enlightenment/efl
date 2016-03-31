@@ -1,0 +1,24 @@
+class Efl.Vpath_File (Eo.Base)
+{
+   legacy_prefix: null;
+   eo_prefix: efl_vpath_file;
+   methods {
+      @property path {
+         set {}
+         get {}
+         values {
+             path: const(char)*; [[ The input virtual path to a file ]]
+         }
+      }
+      @property result {
+         get {}
+         values {
+             path: const(char)*; [[ The resulting destination file ]]
+         }
+      }
+   }
+   events {
+      fetched; [[ File successfully mapped/fetched ]]
+      failed; [[ File fetch or mapping failed ]]
+   }
+}
