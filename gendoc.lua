@@ -241,7 +241,7 @@ local build_functable = function(f, title, ctitle, cl, tp)
         return
     end
     local cns = gen_namespaces(cl, classt_to_str[cl:type_get()], true)
-    f:write_h(title, 2)
+    f:write_h(title, 3)
     local nt = {}
     for i, v in ipairs(t) do
         local lbuf = Buffer()
@@ -345,10 +345,7 @@ local build_class = function(cl)
     f:write_h("Description", 3)
     write_full_doc(f, cl:documentation_get())
 
-    f:write_h("Methods", 3)
     build_functable(f, "Methods", "Method name", cl, eolian.function_type.METHOD)
-
-    f:write_h("Properties", 3)
     build_functable(f, "Properties", "Property name",
         cl, eolian.function_type.PROPERTY)
 
