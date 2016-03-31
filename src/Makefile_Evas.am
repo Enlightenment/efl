@@ -82,10 +82,6 @@ BUILT_SOURCES += \
                  $(evas_eolian_c) \
                  $(evas_eolian_h)
 
-CLEANFILES += \
-              $(evas_eolian_c) \
-              $(evas_eolian_h)
-
 evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
 evaseolianfiles_DATA = $(evas_eolian_files)
 

@@ -17,10 +17,6 @@ BUILT_SOURCES += \
                  $(edje_eolian_c) \
                  $(edje_eolian_h)
 
-CLEANFILES += \
-              $(edje_eolian_c) \
-              $(edje_eolian_h)
-
 edjeeolianfilesdir = $(datadir)/eolian/include/edje-@VMAJ@
 edjeeolianfiles_DATA = \
                        $(edje_eolian_files) \

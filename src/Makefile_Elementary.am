@@ -131,10 +131,6 @@ BUILT_SOURCES += \
 	$(elm_eolian_c) \
 	$(elm_eolian_h)
 
-CLEANFILES += \
-	$(elm_eolian_c) \
-	$(elm_eolian_h)
-
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = $(elm_eolian_files) $(elm_eolian_type_files)
 

@@ -19,10 +19,6 @@ BUILT_SOURCES += \
                  $(ecore_con_eolian_c) \
                  $(ecore_con_eolian_h)
 
-CLEANFILES += \
-              $(ecore_con_eolian_c) \
-              $(ecore_con_eolian_h)
-
 ecoreconeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreconeolianfiles_DATA = \
                            $(ecore_con_eolian_files)

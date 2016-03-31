@@ -21,5 +21,3 @@ SUFFIXES += .lua
 
 %.eo.lua: %.eo ${_ELUA_GEN_DEP}
 	$(AM_V_ELUA)$(ELUA_GEN) $(EOLIAN_FLAGS) -o $@ $<
-
-CLEANFILES += $(BUILT_SOURCES)

@@ -41,11 +41,6 @@ BUILT_SOURCES += \
                  $(efl_eolian_files_h) \
                  $(efl_eolian_legacy_files_h)
 
-CLEANFILES += \
-              $(efl_eolian_files_c) \
-              $(efl_eolian_files_h) \
-              $(efl_eolian_legacy_files_h)
-
 EXTRA_DIST += \
       lib/efl/Efl_Config.h \
       lib/efl/Efl.h \

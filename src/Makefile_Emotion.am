@@ -11,10 +11,6 @@ BUILT_SOURCES += \
                  $(emotion_eolian_c) \
                  $(emotion_eolian_h)
 
-CLEANFILES += \
-              $(emotion_eolian_c) \
-              $(emotion_eolian_h)
-
 emotioneolianfilesdir = $(datadir)/eolian/include/emotion-@VMAJ@
 emotioneolianfiles_DATA = \
                           $(emotion_eolian_files)

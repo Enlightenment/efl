@@ -100,6 +100,9 @@ endif
 include Makefile_Eolian_Js.am
 include Makefile_Efl_Js.am
 
+# Make sure all generated files getting cleaned up
+CLEANFILES += $(BUILT_SOURCES)
+
 .PHONY: benchmark examples
 
 BENCHMARK_SUBDIRS = \

@@ -31,5 +31,3 @@ SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h .eot .eot.h
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_GEN) --legacy $(EOLIAN_FLAGS) --gh -o $@ $<
-
-CLEANFILES += $(BUILT_SOURCES)
