@@ -320,6 +320,9 @@ build_inherits = function(cl, t, lvl)
     lbuf:write_link(gen_namespaces(cl, cltp, true), cl:full_name_get())
     lbuf:write_raw(" ")
     lbuf:write_i("(" .. cltp .. ")")
+    if lvl == 0 then
+        lbuf:write_b(lbuf:finish())
+    end
     t[#t + 1] = { lvl, lbuf:finish() }
     for cln in cl:inherits_get() do
         local acl = eolian.class_get_by_name(cln)
