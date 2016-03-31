@@ -162,6 +162,17 @@ local Buffer = Writer:clone {
 
 -- eolian to various doc elements conversions
 
+local get_fallback_ftype = function(f, ftype)
+    if not ftype then
+        local ft = f:get_type()
+        local ftt = eolian.function_type
+        if ft == ftt.PROP_GET or ft == ftt.PROP_SET then
+            return ftt
+        end
+    end
+    return ftype
+end
+
 local get_brief_doc = function(doc1, doc2)
     if not doc1 and not doc2 then
         return "No description supplied."
@@ -170,6 +181,11 @@ local get_brief_doc = function(doc1, doc2)
         doc1, doc2 = doc2, doc1
     end
     return doc1:summary_get()
+end
+
+local get_brief_fdoc = function(f, ftype)
+    return get_brief_doc(f:documentation_get(eolian.function_type.METHOD),
+                         f:documentation_get(get_fallback_ftype(ftype)))
 end
 
 local get_full_doc = function(doc1, doc2)
@@ -195,6 +211,11 @@ local get_full_doc = function(doc1, doc2)
         return sum1 .. edoc
     end
     return sum1 .. "\n\n" .. desc1 .. edoc
+end
+
+local get_full_fdoc = function(f, ftype)
+    return get_full_doc(f:documentation_get(eolian.function_type.METHOD),
+                        f:documentation_get(get_fallback_ftype(ftype)))
 end
 
 local gen_namespaces = function(v, subnspace, root)
@@ -331,6 +352,11 @@ local write_full_doc = function(f, doc1, doc2)
         f:write_i(since)
         f:write_nl(2)
     end
+end
+
+local write_full_fdoc = function(f, fn, ftype)
+    write_full_doc(f, fn:documentation_get(eolian.function_type.METHOD),
+                   fn:documentation_get(get_fallback_ftype(ftype)))
 end
 
 local build_inherits
