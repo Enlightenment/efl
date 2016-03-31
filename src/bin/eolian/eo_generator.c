@@ -53,7 +53,7 @@ static const char
 tmpl_eo_obj_header[] = "\
 #define @#CLASS_@#CLASSTYPE @#klasstype_get()\n\
 \n\
-EAPI const Eo_Class *@#klasstype_get(void);\n\
+EWAPI const Eo_Class *@#klasstype_get(void);\n\
 \n\
 ";
 
