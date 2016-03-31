@@ -1389,6 +1389,8 @@ _ecore_main_fd_handler_add(int                    fd,
    if (buf_func)
      fd_handlers_with_buffer = eina_list_append(fd_handlers_with_buffer, fdh);
    fdh->buf_data = (void *)buf_data;
+   if (is_file)
+     file_fd_handlers = eina_list_append(file_fd_handlers, fdh);
    fd_handlers = (Ecore_Fd_Handler *)
      eina_inlist_append(EINA_INLIST_GET(fd_handlers),
                         EINA_INLIST_GET(fdh));
