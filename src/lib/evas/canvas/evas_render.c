@@ -2745,7 +2745,7 @@ evas_render_updates_internal(Evas *eo_e,
                }
 
              /* phase 6.2 render all the object on the target surface */
-             if (do_async)
+             if ((do_async) || (make_updates))
                {
                   ru = malloc(sizeof(*ru));
                   ru->surface = surface;
@@ -2753,17 +2753,6 @@ evas_render_updates_internal(Evas *eo_e,
                   eina_spinlock_take(&(e->render.lock));
                   e->render.updates = eina_list_append(e->render.updates, ru);
                   evas_cache_image_ref(surface);
-                  eina_spinlock_release(&(e->render.lock));
-               }
-             else if (make_updates)
-               {
-                  Eina_Rectangle *rect;
-
-                  NEW_RECT(rect, ux, uy, uw, uh);
-                  eina_spinlock_take(&(e->render.lock));
-                  if (rect)
-                    e->render.updates = eina_list_append(e->render.updates,
-                                                         rect);
                   eina_spinlock_release(&(e->render.lock));
                }
 
@@ -2934,11 +2923,18 @@ evas_render_updates_internal(Evas *eo_e,
    if (!do_async)
      {
         Evas_Event_Render_Post post;
+        Eina_List *l;
+        Render_Updates *ru;
 
+        post.updated_area = NULL;
+        EINA_LIST_FOREACH(e->render.updates, l, ru)
+          {
+             post.updated_area = eina_list_append(post.updated_area, ru->area);
+          }
         eina_spinlock_take(&(e->render.lock));
-        post.updated_area = e->render.updates;
-        _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, e->render.updates ? &post : NULL);
+        _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, post.updated_area ? &post : NULL);
         eina_spinlock_release(&(e->render.lock));
+        if (post.updated_area) eina_list_free(post.updated_area);
      }
 
    RD(0, "---]\n");
@@ -3135,7 +3131,8 @@ evas_render_updates_internal_wait(Evas *eo_e,
 EOLIAN Eina_List*
 _evas_canvas_render_updates(Eo *eo_e, Evas_Public_Data *e)
 {
-   Eina_List *ret;
+   Eina_List *ret, *updates = NULL;
+   Render_Updates *ru;
    if (!e->changed) return NULL;
    eina_evlog("+render_block", eo_e, 0.0, NULL);
    evas_canvas_async_block(e);
@@ -3143,19 +3140,31 @@ _evas_canvas_render_updates(Eo *eo_e, Evas_Public_Data *e)
    eina_evlog("+render", eo_e, 0.0, NULL);
    ret = evas_render_updates_internal_wait(eo_e, 1, 1);
    eina_evlog("-render", eo_e, 0.0, NULL);
-   return ret;
+   EINA_LIST_FREE(ret, ru)
+     {
+        updates = eina_list_append(updates, ru->area);
+        free(ru);
+     }
+   return updates;
 }
 
 EOLIAN void
 _evas_canvas_render(Eo *eo_e, Evas_Public_Data *e)
 {
+   Eina_List *ret;
+   Render_Updates *ru;
    if (!e->changed) return;
    eina_evlog("+render_block", eo_e, 0.0, NULL);
    evas_canvas_async_block(e);
    eina_evlog("-render_block", eo_e, 0.0, NULL);
    eina_evlog("+render", eo_e, 0.0, NULL);
-   evas_render_updates_internal_wait(eo_e, 0, 1);
+   ret = evas_render_updates_internal_wait(eo_e, 0, 1);
    eina_evlog("-render", eo_e, 0.0, NULL);
+   EINA_LIST_FREE(ret, ru)
+     {
+        eina_rectangle_free(ru->area);
+        free(ru);
+     }
 }
 
 EOLIAN void
@@ -3164,9 +3173,17 @@ _evas_canvas_norender(Eo *eo_e, Evas_Public_Data *e)
    if (e->render2) _evas_norender2(eo_e, e);
    else
      {
+        Eina_List *ret;
+        Render_Updates *ru;
+
         evas_canvas_async_block(e);
         //   if (!e->changed) return;
-        evas_render_updates_internal_wait(eo_e, 0, 0);
+        ret = evas_render_updates_internal_wait(eo_e, 0, 1);
+        EINA_LIST_FREE(ret, ru)
+          {
+             eina_rectangle_free(ru->area);
+             free(ru);
+          }
      }
 }
 
