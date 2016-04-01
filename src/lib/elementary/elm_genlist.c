@@ -410,7 +410,6 @@ _item_content_realize(Elm_Gen_Item *it,
                        evas_object_size_hint_min_set(content, minw, minh);
                     }
 
-                  *contents = eina_list_append(*contents, content);
                   if (!edje_object_part_swallow(target, key, content))
                     {
                        ERR("%s (%p) can not be swallowed into %s",
@@ -420,6 +419,7 @@ _item_content_realize(Elm_Gen_Item *it,
                     }
                   elm_widget_sub_object_add(WIDGET(it), content);
                }
+             *contents = eina_list_append(*contents, content);
 
              if (elm_wdg_item_disabled_get(EO_OBJ(it)))
                elm_widget_disabled_set(content, EINA_TRUE);
