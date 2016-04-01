@@ -135,10 +135,10 @@ elementary/themes/default.edj: elementary/themes/default.edc $(elementary_themes
 
 # desktop files
 
-elementarydesktopdir = $(datadir)/elementary/applications
+elementarydesktopdir = $(datadir)/applications
 elementarydesktop_DATA = elementary/desktop/elementary_test.desktop elementary/desktop/elementary_config.desktop
 
-elementaryicondir = $(datadir)/elementary/icons
+elementaryicondir = $(datadir)/icons
 elementaryicon_DATA = elementary/desktop/elementary.png
 
 EXTRA_DIST += $(elementarydesktop_DATA) $(elementaryicon_DATA)
