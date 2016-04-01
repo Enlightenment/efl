@@ -420,4 +420,31 @@ EAPI void elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient);
  */
 EAPI Elm_Image_Orient elm_image_orient_get(const Evas_Object *obj);
 
+/**
+ * @brief Get the inlined image object of the image widget.
+ *
+ * This function allows one to get the underlying @c Evas_Object of type Image
+ * from this elementary widget. It can be useful to do things like get the
+ * pixel data, save the image to a file, etc.
+ *
+ * @note Be careful to not manipulate it, as it is under control of elementary.
+ *
+ * @return The inlined image object, or NULL if none exists
+ *
+ * @ingroup Elm_Image
+ */
+EAPI Evas_Object *elm_image_object_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the current size of the image.
+ *
+ * This is the real size of the image, not the size of the object.
+ *
+ * @param[out] w Pointer to store width, or NULL.
+ * @param[out] h Pointer to store height, or NULL.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_object_size_get(const Evas_Object *obj, int *w, int *h);
+
 #include "elm_image.eo.legacy.h"

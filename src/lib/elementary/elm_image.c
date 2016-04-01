@@ -822,7 +822,7 @@ _elm_image_sizing_eval(Eo *obj, Elm_Image_Data *sd)
 
    ts = sd->scale;
    sd->scale = 1.0;
-   elm_obj_image_object_size_get(obj, &w, &h);
+   efl_gfx_view_size_get(obj, &w, &h);
 
    sd->scale = ts;
    evas_object_size_hint_min_get(obj, &minw, &minh);
@@ -887,7 +887,7 @@ _elm_image_file_set_do(Evas_Object *obj)
      evas_object_image_load_size_set(sd->img, sd->load_size, sd->load_size);
    else
      {
-        elm_obj_image_object_size_get((Eo *) obj, &w, &h);
+        efl_gfx_view_size_get((Eo *) obj, &w, &h);
         evas_object_image_load_size_set(sd->img, w, h);
      }
 }
@@ -1170,13 +1170,13 @@ _elm_image_efl_file_async_set(Eo *obj, Elm_Image_Data *pd, Eina_Bool async)
 }
 
 EOLIAN static Eina_Bool
-_elm_image_efl_file_async_get(Eo *obj EINA_UNUSED, Elm_Image_Data *pd)
+_elm_image_efl_file_async_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
-   return pd->async_enable;
+   return sd->async_enable;
 }
 
 EOLIAN static void
-_elm_image_object_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int *h)
+_elm_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int *h)
 {
    int tw, th;
    int cw = 0, ch = 0;
@@ -1319,12 +1319,6 @@ EOLIAN static Eina_Bool
 _elm_image_evas_draggable_interface_drag_target_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
    return sd->edit;
-}
-
-EOLIAN static Evas_Object*
-_elm_image_object_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
-{
-   return sd->img;
 }
 
 EOLIAN static void
@@ -1608,12 +1602,12 @@ elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char
 EAPI void
 elm_image_scale_set(Evas_Object *obj,
                      double       scale)
-{	
+{
    ELM_IMAGE_CHECK(obj);
    ELM_IMAGE_DATA_GET(obj, sd);
 
    sd->scale = scale;
-	
+
    _elm_image_internal_sizing_eval(obj, sd);
 }
 
@@ -1684,6 +1678,18 @@ elm_image_orient_get(const Evas_Object *obj)
    return (Elm_Image_Orient) efl_image_orientation_get(obj);
 }
 
+EAPI Evas_Object*
+elm_image_object_get(const Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj) NULL;
+   ELM_IMAGE_DATA_GET(obj, sd);
+   return sd->img;
+}
 
+EAPI void
+elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
+{
+   efl_gfx_view_size_get(obj, w, h);
+}
 
 #include "elm_image.eo.c"

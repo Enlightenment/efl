@@ -20,10 +20,10 @@ struct Elm.Image.Error
    open_error: Eina.Bool;
 }
 
-class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
-                 Edje.Object, Efl.Image, Evas.Draggable_Interface,
+class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
+                 Efl.File, Efl.Image, Efl.Image_Load, Efl.Player, Efl.Gfx.View, Efl.Player,
                  Elm.Interface_Atspi_Image, Elm.Interface_Atspi_Widget_Action,
-                 Efl.Player)
+                 Edje.Object)
 {
    eo_prefix: elm_obj_image;
    methods {
@@ -122,31 +122,6 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
             down: bool; [[A bool to set if the object is resizable down. Default is $true.]]
          }
       }
-      @property object {
-         get {
-            [[Get the inlined image object of the image widget.
-
-              This function allows one to get the underlying $Evas_Object of type
-              Image from this elementary widget. It can be useful to do things like get
-              the pixel data, save the image to a file, etc.
-
-              Note: Be careful to not manipulate it, as it is under control of
-              elementary.]]
-
-            return: Evas.Object *; [[The inlined image object, or NULL if none exists]]
-         }
-      }
-      @property object_size {
-         get {
-            [[Get the current size of the image.
-
-              This is the real size of the image, not the size of the object.]]
-         }
-         values {
-            w: int; [[Pointer to store width, or NULL.]]
-            h: int; [[Pointer to store height, or NULL.]]
-         }
-      }
       sizing_eval {
          [[Re-evaluate the object's final geometry.
 
@@ -163,6 +138,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
       Efl.File.async.set;
       Efl.File.async.get;
       Efl.File.async_wait;
+      Efl.Gfx.View.view_size.get;
       Efl.Image_Load.load_size.set;
       Efl.Image_Load.load_size.get;
       Efl.Image.smooth_scale.set;
