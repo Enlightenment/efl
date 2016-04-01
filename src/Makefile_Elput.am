@@ -9,6 +9,7 @@ dist_installed_elputmainheaders_DATA = \
   lib/elput/Elput.h
 
 lib_elput_libelput_la_SOURCES = \
+lib/elput/elput_input.c \
 lib/elput/elput_logind.c \
 lib/elput/elput_manager.c \
 lib/elput/elput.c \

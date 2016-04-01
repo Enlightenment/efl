@@ -39,6 +39,7 @@ typedef struct _Elput_Manager Elput_Manager;
  *
  * @li @ref Elput_Init_Group
  * @li @ref Elput_Manager_Group
+ * @li @ref Elput_Input_Group
  *
  */
 
@@ -75,7 +76,6 @@ EAPI int elput_shutdown(void);
  *
  * Functions that deal with connecting, disconnecting, opening, closing
  * of input devices.
- *
  */
 
 /**
@@ -126,6 +126,35 @@ EAPI int elput_manager_open(Elput_Manager *manager, const char *path, int flags)
  * @since 1.18
  */
 EAPI void elput_manager_close(Elput_Manager *manager, int fd);
+
+/**
+ * @defgroup Elput_Input_Group Elput input functions
+ *
+ * Functions that deal with setup of inputs
+ */
+
+/**
+ * Initialize input
+ *
+ * @param manager
+ * @param seat
+ *
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool elput_input_init(Elput_Manager *manager, const char *seat);
+
+/**
+ * Shutdown input
+ *
+ * @param manager
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.18
+ */
+EAPI void elput_input_shutdown(Elput_Manager *manager);
 
 # endif
 

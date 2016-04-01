@@ -64,6 +64,17 @@ typedef struct _Elput_Interface
    void (*close)(Elput_Manager *manager, int fd);
 } Elput_Interface;
 
+typedef struct _Elput_Input
+{
+   struct libinput *lib;
+
+   Ecore_Fd_Handler *hdlr;
+
+   Eina_List *seats;
+
+   Eina_Bool suspended : 1;
+} Elput_Input;
+
 struct _Elput_Manager
 {
    Elput_Interface *interface;
@@ -79,6 +90,8 @@ struct _Elput_Manager
         Eldbus_Object *obj;
         Eldbus_Connection *conn;
      } dbus;
+
+   Elput_Input input;
 
    Eina_Bool sync : 1;
 };
