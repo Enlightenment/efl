@@ -5487,6 +5487,7 @@ pc/ethumb_client.pc
 pc/elocation.pc
 pc/elua.pc
 pc/elementary.pc
+pc/elementary-cxx.pc
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/ethumb.service
 $po_makefile_in
