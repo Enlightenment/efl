@@ -16,12 +16,9 @@ class Ecore.Timer (Eo.Base)
       @property interval {
          [[Interval the timer ticks on.]]
          set {
-            [[Change the interval the timer ticks off. If set during
-              a timer call, this will affect the next interval.
-            ]]
+            [[If set during a timer call, this will affect the next interval.]]
          }
          get {
-            [[Get the interval the timer ticks on.]]
          }
          values {
             in: double(-1); [[The new interval in seconds]]
@@ -30,7 +27,6 @@ class Ecore.Timer (Eo.Base)
       @property pending {
          [[Pending time regarding a timer.]]
          get {
-            [[Get the pending time regarding a timer.]]
             return: double;
          }
       }
