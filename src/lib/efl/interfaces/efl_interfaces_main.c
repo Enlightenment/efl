@@ -25,8 +25,6 @@
 
 #include "interfaces/efl_gfx_filter.eo.c"
 
-#include "interfaces/efl_vpath.eo.c"
-
 EAPI const Eo_Event_Description _EFL_GFX_CHANGED =
   EO_EVENT_DESCRIPTION("Graphics changed");
 
