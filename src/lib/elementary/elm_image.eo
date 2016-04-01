@@ -155,14 +155,6 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
             down: bool; [[A bool to set if the object is resizable down. Default is $true.]]
          }
       }
-      @property preload_disabled {
-         set {
-            [[Enable or disable preloading of the image]]
-         }
-         values {
-            disabled: bool; [[If true, preloading will be disabled]]
-         }
-      }
       @property object {
          get {
             [[Get the inlined image object of the image widget.

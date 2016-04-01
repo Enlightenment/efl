@@ -365,4 +365,13 @@ EAPI void elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
  */
 EAPI Eina_Bool elm_image_fill_outside_get(const Evas_Object *obj);
 
+/**
+ * @brief Enable or disable preloading of the image
+ *
+ * @param[in] disabled If true, preloading will be disabled
+ *
+ * @ingroup Elm_Image
+ */
+
+EAPI void elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 #include "elm_image.eo.legacy.h"

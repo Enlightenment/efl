@@ -1230,28 +1230,6 @@ _elm_image_resizable_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool *siz
    if (size_down) *size_down = sd->resize_down;
 }
 
-EOLIAN static void
-_elm_image_preload_disabled_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool disable)
-{
-   if (sd->edje || !sd->img) return;
-
-   if (disable)
-     {
-        if (sd->preload_status == ELM_IMAGE_PRELOADING)
-          {
-             evas_object_image_preload(sd->img, disable);
-             if (sd->show) evas_object_show(sd->img);
-             ELM_SAFE_FREE(sd->prev_img, evas_object_del);
-          }
-        sd->preload_status = ELM_IMAGE_PRELOAD_DISABLED;
-     }
-   else if (sd->preload_status == ELM_IMAGE_PRELOAD_DISABLED)
-    {
-       sd->preload_status = ELM_IMAGE_PRELOADING;
-       evas_object_image_preload(sd->img, disable);
-    }
-}
-
 EAPI void
 elm_image_prescale_set(Evas_Object *obj,
                        int size)
@@ -1666,6 +1644,32 @@ elm_image_fill_outside_get(const Evas_Object *obj)
    ELM_IMAGE_DATA_GET(obj, sd);
 
    return !sd->fill_inside;
+}
+
+// TODO: merge preload and async code
+EAPI void
+elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disable)
+{
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   if (sd->edje || !sd->img) return;
+
+   if (disable)
+     {
+        if (sd->preload_status == ELM_IMAGE_PRELOADING)
+          {
+             evas_object_image_preload(sd->img, disable);
+             if (sd->show) evas_object_show(sd->img);
+             ELM_SAFE_FREE(sd->prev_img, evas_object_del);
+          }
+        sd->preload_status = ELM_IMAGE_PRELOAD_DISABLED;
+     }
+   else if (sd->preload_status == ELM_IMAGE_PRELOAD_DISABLED)
+    {
+       sd->preload_status = ELM_IMAGE_PRELOADING;
+       evas_object_image_preload(sd->img, disable);
+    }
 }
 
 #include "elm_image.eo.c"
