@@ -102,6 +102,31 @@ EAPI Elput_Manager *elput_manager_connect(const char *seat, unsigned int tty, Ei
  */
 EAPI void elput_manager_disconnect(Elput_Manager *manager);
 
+/**
+ * Request input manager to open a file
+ *
+ * @param manager
+ * @param path
+ * @param flags
+ *
+ * @return Filedescriptor of opened file or -1 on failure
+ *
+ * @ingroup Elput_Manager_Group
+ * @since 1.18
+ */
+EAPI int elput_manager_open(Elput_Manager *manager, const char *path, int flags);
+
+/**
+ * Request input manager to close a file
+ *
+ * @param manager
+ * @param fd
+ *
+ * @ingroup Elput_Manager_Group
+ * @since 1.18
+ */
+EAPI void elput_manager_close(Elput_Manager *manager, int fd);
+
 # endif
 
 # undef EAPI

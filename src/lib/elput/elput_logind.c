@@ -302,6 +302,78 @@ end:
    eldbus_proxy_unref(proxy);
 }
 
+static int
+_logind_device_take(Elput_Manager *em, uint32_t major, uint32_t minor)
+{
+   Eldbus_Proxy *proxy;
+   Eldbus_Message *msg, *reply;
+   Eina_Bool p = EINA_FALSE;
+   const char *errname, *errmsg;
+   int fd = -1;
+
+   proxy =
+     eldbus_proxy_get(em->dbus.obj, "org.freedesktop.login1.Session");
+   if (!proxy)
+     {
+        ERR("Could not get dbus proxy");
+        return -1;
+     }
+
+   msg = eldbus_proxy_method_call_new(proxy, "TakeDevice");
+   if (!msg)
+     {
+        ERR("Could not create method call for proxy");
+        goto err;
+     }
+
+   eldbus_message_arguments_append(msg, "uu", major, minor);
+
+   reply = eldbus_proxy_send_and_block(proxy, msg, -1);
+   if (eldbus_message_error_get(reply, &errname, &errmsg))
+     {
+        ERR("Eldbus Message Error: %s %s", errname, errmsg);
+        goto err;
+     }
+
+   if (!eldbus_message_arguments_get(reply, "hb", &fd, &p))
+     ERR("Could not get UNIX_FD from dbus message");
+
+   eldbus_message_unref(reply);
+
+err:
+   eldbus_proxy_unref(proxy);
+   return fd;
+}
+
+static void
+_logind_device_release(Elput_Manager *em, uint32_t major, uint32_t minor)
+{
+   Eldbus_Proxy *proxy;
+   Eldbus_Message *msg;
+
+   proxy =
+     eldbus_proxy_get(em->dbus.obj, "org.freedesktop.login1.Session");
+   if (!proxy)
+     {
+        ERR("Could not get proxy for session");
+        return;
+     }
+
+   msg = eldbus_proxy_method_call_new(proxy, "ReleaseDevice");
+   if (!msg)
+     {
+        ERR("Could not create method call for proxy");
+        goto end;
+     }
+
+   eldbus_message_arguments_append(msg, "uu", major, minor);
+
+   eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
+
+end:
+   eldbus_proxy_unref(proxy);
+}
+
 static Eina_Bool
 _logind_activate(Elput_Manager *em)
 {
@@ -437,12 +509,58 @@ _logind_disconnect(Elput_Manager *em)
    free(em);
 }
 
+static int
+_logind_open(Elput_Manager *em, const char *path, int flags)
+{
+   struct stat st;
+   int ret, fd = -1;
+   int fl;
+
+   ret = stat(path, &st);
+   if (ret < 0) return -1;
+
+   if (!S_ISCHR(st.st_mode)) return -1;
+
+   fd = _logind_device_take(em, major(st.st_rdev), minor(st.st_rdev));
+   if (fd < 0) return fd;
+
+   fl = fcntl(fd, F_GETFL);
+   if (fl < 0) goto err;
+
+   if (flags & O_NONBLOCK)
+     fl |= O_NONBLOCK;
+
+   ret = fcntl(fd, F_SETFL, fl);
+   if (ret < 0) goto err;
+
+   return fd;
+
+err:
+   close(fd);
+   _logind_device_release(em, major(st.st_rdev), minor(st.st_rdev));
+   return -1;
+}
+
+static void
+_logind_close(Elput_Manager *em, int fd)
+{
+   struct stat st;
+   int ret;
+
+   ret = fstat(fd, &st);
+   if (ret < 0) return;
+
+   if (!S_ISCHR(st.st_mode)) return;
+
+   _logind_device_release(em, major(st.st_rdev), minor(st.st_rdev));
+}
+
 Elput_Interface _logind_interface =
 {
    _logind_connect,
    _logind_disconnect,
-   NULL,
-   NULL,
+   _logind_open,
+   _logind_close,
    NULL,
    NULL,
 };

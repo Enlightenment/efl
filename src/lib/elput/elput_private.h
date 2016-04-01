@@ -12,6 +12,7 @@
 # include "Eldbus.h"
 # include <Elput.h>
 
+# include <fcntl.h>
 # include <unistd.h>
 # include <linux/vt.h>
 # include <linux/kd.h>

@@ -37,3 +37,28 @@ elput_manager_disconnect(Elput_Manager *manager)
    if (manager->interface->disconnect)
      manager->interface->disconnect(manager);
 }
+
+EAPI int
+elput_manager_open(Elput_Manager *manager, const char *path, int flags)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(manager, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(manager->interface, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, -1);
+
+   if (flags < 0) flags = O_RDWR;
+
+   if (manager->interface->open)
+     return manager->interface->open(manager, path, flags);
+
+   return -1;
+}
+
+EAPI void
+elput_manager_close(Elput_Manager *manager, int fd)
+{
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+   EINA_SAFETY_ON_NULL_RETURN(manager->interface);
+
+   if (manager->interface->close)
+     manager->interface->close(manager, fd);
+}
