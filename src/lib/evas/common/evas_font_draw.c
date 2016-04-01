@@ -421,11 +421,12 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, E
              rects_used++;
              if (rects_used >= 4096)
                {
-                  evas_common_draw_context_cutouts_free(rects);
+                  evas_common_draw_context_cutouts_real_free(rects);
                   rects = NULL;
+                  rects_used = 0;
                }
 #else
-             evas_common_draw_context_cutouts_free(rects);
+             evas_common_draw_context_cutouts_real_free(rects);
 #endif
           }
         dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;

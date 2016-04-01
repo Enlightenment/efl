@@ -36,6 +36,14 @@ evas_common_draw_context_cutouts_free(Cutout_Rects* rects)
 }
 
 EAPI void
+evas_common_draw_context_cutouts_real_free(Cutout_Rects* rects)
+{
+   if (!rects) return;
+   free(rects->rects);
+   free(rects);
+}
+
+EAPI void
 evas_common_draw_context_cutouts_del(Cutout_Rects* rects, int idx)
 {
    if ((idx >= 0) && (idx < rects->active))

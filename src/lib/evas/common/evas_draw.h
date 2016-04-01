@@ -23,6 +23,7 @@ EAPI void               evas_common_draw_context_set_multiplier          (RGBA_D
 EAPI void               evas_common_draw_context_unset_multiplier        (RGBA_Draw_Context *dc);
 EAPI Cutout_Rects      *evas_common_draw_context_cutouts_new             (void);
 EAPI void               evas_common_draw_context_cutouts_free            (Cutout_Rects* rects);
+EAPI void               evas_common_draw_context_cutouts_real_free       (Cutout_Rects* rects);
 EAPI void               evas_common_draw_context_cutouts_del             (Cutout_Rects* rects, int idx);
 EAPI void               evas_common_draw_context_add_cutout              (RGBA_Draw_Context *dc, int x, int y, int w, int h);
 EAPI void               evas_common_draw_context_clear_cutouts           (RGBA_Draw_Context *dc);

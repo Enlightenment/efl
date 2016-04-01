@@ -89,11 +89,12 @@ evas_common_scale_rgba_in_to_out_clip_cb(RGBA_Image *src, RGBA_Image *dst,
    rects_used++;
    if (rects_used >= 4096)
      {
-        evas_common_draw_context_cutouts_free(rects);
+        evas_common_draw_context_cutouts_real_free(rects);
         rects = NULL;
+        rects_used = 0;
      }
 #else
-   evas_common_draw_context_cutouts_free(rects);
+   evas_common_draw_context_cutouts_real_free(rects);
 #endif
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;

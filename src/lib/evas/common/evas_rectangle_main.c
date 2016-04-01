@@ -51,11 +51,12 @@ evas_common_rectangle_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int
              rects_used++;
              if (rects_used >= 4096)
                {
-                  evas_common_draw_context_cutouts_free(rects);
+                  evas_common_draw_context_cutouts_real_free(rects);
                   rects = NULL;
+                  rects_used = 0;
                }
 #else
-             evas_common_draw_context_cutouts_free(rects);
+             evas_common_draw_context_cutouts_real_free(rects);
 #endif
           }
      }
