@@ -1099,10 +1099,11 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
         if (input->cursor.surface) wl_surface_destroy(input->cursor.surface);
         input->cursor.surface = NULL;
 
-        /* FIXME: Enable these when new wayland git is released */
-        /* if (input->seat_version >= WL_POINTER_RELEASE_SINCE_VERSION) */
-        /*   wl_pointer_release(input->wl.pointer); */
-        /* else */
+#ifdef WL_POINTER_RELEASE_SINCE_VERSION
+        if (input->seat_version >= WL_POINTER_RELEASE_SINCE_VERSION)
+          wl_pointer_release(input->wl.pointer);
+        else
+#endif
           wl_pointer_destroy(input->wl.pointer);
         input->wl.pointer = NULL;
      }
@@ -1115,10 +1116,11 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
      }
    else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && (input->wl.keyboard))
      {
-        /* FIXME: Enable these when new wayland git is released */
-        /* if (input->seat_version >= WL_KEYBOARD_RELEASE_SINCE_VERSION) */
-        /*   wl_keyboard_release(input->wl.keyboard); */
-        /* else */
+#ifdef WL_KEYBOARD_RELEASE_SINCE_VERSION
+        if (input->seat_version >= WL_KEYBOARD_RELEASE_SINCE_VERSION)
+          wl_keyboard_release(input->wl.keyboard);
+        else
+#endif
           wl_keyboard_destroy(input->wl.keyboard);
         input->wl.keyboard = NULL;
      }
@@ -1131,10 +1133,11 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
      }
    else if (!(caps & WL_SEAT_CAPABILITY_TOUCH) && (input->wl.touch))
      {
-        /* FIXME: Enable these when new wayland git is released */
-        /* if (input->seat_version >= WL_TOUCH_RELEASE_SINCE_VERSION) */
-        /*   wl_touch_release(input->wl.touch); */
-        /* else */
+#ifdef WL_TOUCH_RELEASE_SINCE_VERSION
+        if (input->seat_version >= WL_TOUCH_RELEASE_SINCE_VERSION)
+          wl_touch_release(input->wl.touch);
+        else
+#endif
           wl_touch_destroy(input->wl.touch);
         input->wl.touch = NULL;
      }
