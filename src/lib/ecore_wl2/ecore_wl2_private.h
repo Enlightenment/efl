@@ -397,6 +397,20 @@ struct _Ecore_Wl2_Input
    unsigned int seat_version;
 };
 
+typedef struct Ecore_Wl2_Event_Window_WWW
+{
+   unsigned int window;
+   int x_rel;
+   int y_rel;
+   uint32_t timestamp;
+} Ecore_Wl2_Event_Window_WWW;
+
+typedef struct Ecore_Wl2_Event_Window_WWW_Drag
+{
+   unsigned int window;
+   Eina_Bool dragging;
+} Ecore_Wl2_Event_Window_WWW_Drag;
+
 Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);
 
 void _ecore_wl2_output_add(Ecore_Wl2_Display *display, unsigned int id);
@@ -424,19 +438,7 @@ void _ecore_wl2_subsurf_free(Ecore_Wl2_Subsurface *subsurf);
 void _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window);
 void _ecore_wl2_window_www_surface_init(Ecore_Wl2_Window *window);
 
-typedef struct Ecore_Wl2_Event_Window_WWW
-{
-   unsigned int window;
-   int x_rel;
-   int y_rel;
-   uint32_t timestamp;
-} Ecore_Wl2_Event_Window_WWW;
-
-typedef struct Ecore_Wl2_Event_Window_WWW_Drag
-{
-   unsigned int window;
-   Eina_Bool dragging;
-} Ecore_Wl2_Event_Window_WWW_Drag;
 EAPI extern int _ecore_wl2_event_window_www;
 EAPI extern int _ecore_wl2_event_window_www_drag;
+
 #endif
