@@ -94,10 +94,13 @@ ecore_drm_sprites_destroy(Ecore_Drm_Device *dev)
 
    EINA_LIST_FREE(dev->sprites, sprite)
      {
-        ecore_drm_sprites_fb_set(sprite, 0, 0);
+        if (sprite->output)
+          {
+             ecore_drm_sprites_fb_set(sprite, 0, 0);
 
-        _ecore_drm_output_fb_release(sprite->output, sprite->current_fb);
-        _ecore_drm_output_fb_release(sprite->output, sprite->next_fb);
+             _ecore_drm_output_fb_release(sprite->output, sprite->current_fb);
+             _ecore_drm_output_fb_release(sprite->output, sprite->next_fb);
+          }
 
         free(sprite);
      }
