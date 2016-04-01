@@ -561,8 +561,6 @@ Elput_Interface _logind_interface =
    _logind_disconnect,
    _logind_open,
    _logind_close,
-   NULL,
-   NULL,
 };
 
 #endif

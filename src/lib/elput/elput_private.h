@@ -62,8 +62,6 @@ typedef struct _Elput_Interface
    void (*disconnect)(Elput_Manager *manager);
    int (*open)(Elput_Manager *manager, const char *path, int flags);
    void (*close)(Elput_Manager *manager, int fd);
-   int (*activate)(Elput_Manager *manager, int vt);
-   void (*restore)(Elput_Manager *manager);
 } Elput_Interface;
 
 struct _Elput_Manager
