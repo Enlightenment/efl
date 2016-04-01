@@ -348,7 +348,12 @@ error:
 EAPI Eina_Bool
 evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs, Evas_Common_Font_Draw_Cb cb)
 {
+#ifdef HAVE_THREAD_SPECIFIER
+   static __thread int rects_used = 0;
    static __thread Cutout_Rects *rects = NULL;
+#else
+   Cutout_Rects *rects = NULL;
+#endif
    int ext_x, ext_y, ext_w, ext_h;
    int im_w, im_h;
    RGBA_Gfx_Func func;
@@ -412,6 +417,16 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, E
                             func, r->x, r->y, r->w, r->h,
                             im_w, im_h);
                }
+#ifdef HAVE_THREAD_SPECIFIER
+             rects_used++;
+             if (rects_used >= 4096)
+               {
+                  evas_common_draw_context_cutouts_free(rects);
+                  rects = NULL;
+               }
+#else
+             evas_common_draw_context_cutouts_free(rects);
+#endif
           }
         dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 
