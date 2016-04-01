@@ -372,6 +372,52 @@ EAPI Eina_Bool elm_image_fill_outside_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Image
  */
-
 EAPI void elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+/** Using Evas_Image_Orient enums.
+ *
+ * @since 1.14
+ *
+ * @ingroup Elm_Image
+ */
+typedef enum _Elm_Image_Orient_Type
+{
+  ELM_IMAGE_ORIENT_NONE = 0 /* Evas.Image_Orient.orient_none */,
+  ELM_IMAGE_ORIENT_0 = 0 /* Evas.Image_Orient.orient_0 */,
+  ELM_IMAGE_ROTATE_90 = 1 /* Evas.Image_Orient.orient_90 */,
+  ELM_IMAGE_ORIENT_90 = 1 /* Evas.Image_Orient.orient_90 */,
+  ELM_IMAGE_ROTATE_180 = 2 /* Evas.Image_Orient.orient_180 */,
+  ELM_IMAGE_ORIENT_180 = 2 /* Evas.Image_Orient.orient_180 */,
+  ELM_IMAGE_ROTATE_270 = 3 /* Evas.Image_Orient.orient_270 */,
+  ELM_IMAGE_ORIENT_270 = 3 /* Evas.Image_Orient.orient_270 */,
+  ELM_IMAGE_FLIP_HORIZONTAL = 4 /* Evas.Image_Orient.flip_horizontal */,
+  ELM_IMAGE_FLIP_VERTICAL = 5 /* Evas.Image_Orient.flip_vertical */,
+  ELM_IMAGE_FLIP_TRANSPOSE = 6 /* Evas.Image_Orient.flip_transpose */,
+  ELM_IMAGE_FLIP_TRANSVERSE = 7 /* Evas.Image_Orient.flip_transverse */
+} Elm_Image_Orient;
+
+/**
+ * @brief Contrtol the image orientation.
+ *
+ * This function allows to rotate or flip the given image.
+ *
+ * @param[in] orient The image orientation Elm.Image.Orient Default is
+ * #ELM_IMAGE_ORIENT_NONE.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient);
+
+/**
+ * @brief Contrtol the image orientation.
+ *
+ * This function allows to rotate or flip the given image.
+ *
+ * @return The image orientation Elm.Image.Orient Default is
+ * #ELM_IMAGE_ORIENT_NONE.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI Elm_Image_Orient elm_image_orient_get(const Evas_Object *obj);
+
 #include "elm_image.eo.legacy.h"

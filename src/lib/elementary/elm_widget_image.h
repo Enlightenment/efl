@@ -61,7 +61,7 @@ struct _Elm_Image_Data
    int                   frame_count;
    int                   cur_frame;
 
-   Elm_Image_Orient      orient;
+   Efl_Gfx_Orientation   orient;
 
    struct {
       Ecore_Thread      *th;

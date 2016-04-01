@@ -1265,7 +1265,7 @@ _elm_image_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd,
 }
 
 EOLIAN static void
-_elm_image_orient_set(Eo *obj, Elm_Image_Data *sd, Elm_Image_Orient orient)
+_elm_image_efl_image_orientation_set(Eo *obj, Elm_Image_Data *sd, Efl_Gfx_Orientation orient)
 {
    if (sd->edje) return;
    if (sd->orient == orient) return;
@@ -1275,8 +1275,8 @@ _elm_image_orient_set(Eo *obj, Elm_Image_Data *sd, Elm_Image_Orient orient)
    _elm_image_internal_sizing_eval(obj, sd);
 }
 
-EOLIAN static Elm_Image_Orient
-_elm_image_orient_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+EOLIAN static Efl_Gfx_Orientation
+_elm_image_efl_image_orientation_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
    return sd->orient;
 }
@@ -1671,5 +1671,19 @@ elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disable)
        evas_object_image_preload(sd->img, disable);
     }
 }
+
+EAPI void
+elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
+{
+   efl_image_orientation_set(obj, (Efl_Gfx_Orientation) orient);
+}
+
+EAPI Elm_Image_Orient
+elm_image_orient_get(const Evas_Object *obj)
+{
+   return (Elm_Image_Orient) efl_image_orientation_get(obj);
+}
+
+
 
 #include "elm_image.eo.c"
