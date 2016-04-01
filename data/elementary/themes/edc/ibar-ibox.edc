@@ -170,6 +170,7 @@ group { name: "e/modules/ibar/menu";
       part { name: "sizer"; type: SPACER;
          description { state: "default"; }
          description { state: "hidden";
+            fixed: 1 1;
             rel1.relative: 0.5 1.0;
             rel2.relative: 0.5 1.0;
             minmul: 0 0;
@@ -406,7 +407,6 @@ group { name: "e/modules/ibar/menu/item";
       program {
          signal: "mouse,in"; source: "event";
          action: STATE_SET "focus" 0.0;
-         target: "e.swallow.icon";
          target: "e.text.title";
          target: "title2";
          target: "icon_clip";
@@ -416,7 +416,6 @@ group { name: "e/modules/ibar/menu/item";
       program {
          signal: "mouse,out"; source: "event";
          action: STATE_SET "default" 0.0;
-         target: "e.swallow.icon";
          target: "e.text.title";
          target: "title2";
          target: "icon_clip";
@@ -544,6 +543,7 @@ group { name: "e/modules/ibox/icon_overlay";
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
+            fixed: 0 1;
             rel1.to_x: "spacer";
             rel2.to_x: "spacer";
             rel1.relative: 0 1;

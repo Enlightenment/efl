@@ -23,6 +23,7 @@ group { name: "e/pointer/enlightenment/default/color";
       }
       part { name: "e.swallow.hotspot"; type: SWALLOW;
          description { state: "default" 0.0;
+            fixed: 1 1;
             visible: 0;
             rel1.relative: (5/32) (5/32);
             rel1.to: "base";
@@ -84,6 +85,7 @@ group { name: "e/pointer/enlightenment/default/mono";
       }
       part { name: "e.swallow.hotspot"; type: SWALLOW;
          description { state: "default" 0.0;
+            fixed: 1 1;
             visible: 0;
             rel1.offset: 6 8;
             rel1.to: "base";
@@ -433,6 +435,7 @@ group { name: "e/pointer/enlightenment/entry/color";
       }
       part { name: "e.swallow.hotspot"; type: SWALLOW;
          description { state: "default" 0.0;
+            fixed: 1 1;
             visible: 0;
             rel1.relative: 0.5 0.5;
             rel1.to: "base";
