@@ -35,6 +35,7 @@ enum _api_state
    SCROLLER_POLICY_SET,
    TOOLTIP_TEXT_SET,
    ITEM_CURSOR_SET,
+   ITEM_STYLE_SET,
    API_STATE_LAST
 };
 typedef enum _api_state api_state;
@@ -92,6 +93,9 @@ set_api_state(api_data *api)
          elm_genlist_item_cursor_set(elm_genlist_first_item_get(gl), ELM_CURSOR_HAND2);
          break;
 
+      case ITEM_STYLE_SET: /* 8 */
+		 elm_object_item_style_set(elm_genlist_first_item_get(gl), "double_label");
+         break;
       default:
          return;
      }

@@ -5958,6 +5958,39 @@ _elm_genlist_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Gen_Ite
 }
 
 EOLIAN static void
+_elm_genlist_item_elm_widget_item_style_set(Eo *eo_it,
+                                            Elm_Gen_Item *it,
+                                            const char *style)
+{
+   if (it->itc && !strcmp(it->itc->item_style, style)) return;
+
+   Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
+
+   itc->item_style = style;
+   if (it->itc)
+     {
+        itc->func.text_get = it->itc->func.text_get;
+        itc->func.content_get = it->itc->func.content_get;
+        itc->func.state_get = it->itc->func.state_get;
+        itc->func.filter_get = it->itc->func.filter_get;
+        itc->func.reusable_content_get = it->itc->func.reusable_content_get;
+        itc->decorate_item_style = it->itc->decorate_item_style;
+        itc->decorate_all_item_style = it->itc->decorate_all_item_style;
+     }
+
+   elm_genlist_item_item_class_update(eo_it, itc);
+   elm_genlist_item_class_free(itc);
+}
+
+EOLIAN static const char *
+_elm_genlist_item_elm_widget_item_style_get(Eo *eo_it EINA_UNUSED,
+                                            Elm_Gen_Item *it)
+{
+   if (it->itc) return it->itc->item_style;
+   else return NULL;
+}
+
+EOLIAN static void
 _elm_genlist_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bool focused)
 {
    Evas_Object *obj = WIDGET(it);

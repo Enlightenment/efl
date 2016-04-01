@@ -422,6 +422,8 @@ class Elm.Genlist_Item(Elm.Widget_Item)
            Elm.Widget_Item.del_pre;
            Elm.Widget_Item.disable;
            Elm.Widget_Item.signal_emit;
+           Elm.Widget_Item.style.get;
+           Elm.Widget_Item.style.set;
            Elm.Widget_Item.focus.set;
            Elm.Widget_Item.focus.get;
            Elm.Widget_Item.part_text.get;
