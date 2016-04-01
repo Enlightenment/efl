@@ -16,11 +16,13 @@ if test "x$want_module" = "xyes" || test "x$want_module" = "xstatic"; then
    AC_DEFINE([BUILD_ECORE_EVAS_]m4_defn([UP]), [1], [Support for $1 Engine in Ecore_Evas])
    have_ecore_evas_[]m4_defn([DOWN])="yes"
 
-   if test "x$1" = "xgl-drm"; then
-      PKG_CHECK_MODULES([GBM], [gbm])
-      ecore_evas_engines_[]m4_defn([DOWN])[]_cflags="${GBM_CFLAGS}"
-      ecore_evas_engines_[]m4_defn([DOWN])[]_libs="${GBM_LIBS}"
-   fi
+   case "$1" in
+      xgl-drm)
+         PKG_CHECK_MODULES([GBM], [gbm])
+         ecore_evas_engines_[]m4_defn([DOWN])[]_cflags="${GBM_CFLAGS}"
+         ecore_evas_engines_[]m4_defn([DOWN])[]_libs="${GBM_LIBS}"
+	 ;;
+   esac
 fi
 
 AC_SUBST([ecore_evas_engines_]m4_defn([DOWN])[_cflags])
