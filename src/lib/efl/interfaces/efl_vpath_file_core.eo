@@ -1,0 +1,12 @@
+class Efl.Vpath_File.Core (Efl.Vpath_File)
+{
+   [[ Core EFL implementation of a Vpath File ]]
+   legacy_prefix: null;
+   eo_prefix: efl_vpath_file_core;
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Efl.Vpath_File.do;
+      Efl.Vpath_File.wait;
+   }
+}

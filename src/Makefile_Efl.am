@@ -23,6 +23,11 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_filter.eo \
       lib/efl/interfaces/efl_model_base.eo \
       lib/efl/interfaces/efl_animator.eo \
+      lib/efl/interfaces/efl_vpath.eo \
+      lib/efl/interfaces/efl_vpath_manager.eo \
+      lib/efl/interfaces/efl_vpath_file.eo \
+      lib/efl/interfaces/efl_vpath_core.eo \
+      lib/efl/interfaces/efl_vpath_file_core.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
 
@@ -55,7 +60,11 @@ lib_LTLIBRARIES += lib/efl/libefl.la
 lib_efl_libefl_la_SOURCES = \
 lib/efl/interfaces/efl_interfaces_main.c \
 lib/efl/interfaces/efl_model_common.c \
-lib/efl/interfaces/efl_gfx_shape.c
+lib/efl/interfaces/efl_gfx_shape.c \
+lib/efl/interfaces/efl_vpath_file.c \
+lib/efl/interfaces/efl_vpath_manager.c \
+lib/efl/interfaces/efl_vpath_core.c \
+lib/efl/interfaces/efl_vpath_file_core.c
 
 lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA
 lib_efl_libefl_la_LIBADD = @EFL_LIBS@

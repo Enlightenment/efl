@@ -50,6 +50,12 @@ typedef struct tm Efl_Time;
 
 #include <Efl_Model_Common.h>
 
+#include "interfaces/efl_vpath_file.eo.h"
+#include "interfaces/efl_vpath.eo.h"
+#include "interfaces/efl_vpath_core.eo.h"
+#include "interfaces/efl_vpath_manager.eo.h"
+#include "interfaces/efl_vpath_file_core.eo.h"
+
 /* Data types */
 #include "interfaces/efl_gfx_types.eot.h"
 typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;

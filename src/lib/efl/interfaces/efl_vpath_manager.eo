@@ -1,0 +1,28 @@
+class Efl.Vpath_Manager (Eo.Base)
+{
+   [[ Vpath Manager manages multiple VPath objects that remap/download ]]
+   legacy_prefix: null;
+   eo_prefix: efl_vpath_manager;
+   methods {
+      fetch @class {
+         [[ This class function fetches a Vpath File given an input path ]]
+         params {
+            path: const(char)*; [[ The input virtual file path to fetch ]]
+         }
+         return: own(Efl.Vpath_File *); [[ An object representing the file ]]
+      }
+      register @class {
+         [[ ]]
+         params {
+            priority: int; [[ Search order - higher values tired first ]]
+            vpath: Efl.Vpath * @nonull; [[ A Vpath implementation object ]]
+         }
+      }
+      unregister @class {
+         [[ ]]
+         params {
+            vpath: Efl.Vpath * @nonull; [[ A Vpath implementation object ]]
+         }
+      }
+   }
+}
