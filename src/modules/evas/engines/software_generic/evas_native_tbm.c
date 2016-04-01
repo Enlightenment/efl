@@ -205,7 +205,7 @@ _evas_video_nv12(unsigned char *evas_data, const unsigned char *source_data, uns
 }
 
 static void
-_native_bind_cb(void *data EINA_UNUSED, void *image, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
+_native_bind_cb(void *image, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    RGBA_Image *im = image;
    Native *n = im->native.data;
@@ -224,7 +224,7 @@ _native_bind_cb(void *data EINA_UNUSED, void *image, int x EINA_UNUSED, int y EI
 }
 
 static void
-_native_unbind_cb(void *data EINA_UNUSED, void *image)
+_native_unbind_cb(void *image)
 {
    RGBA_Image *im = image;
    Native *n = im->native.data;
@@ -239,7 +239,7 @@ _native_unbind_cb(void *data EINA_UNUSED, void *image)
 }
 
 static void
-_native_free_cb(void *data EINA_UNUSED, void *image)
+_native_free_cb(void *image)
 {
    RGBA_Image *im = image;
    Native *n = im->native.data;
