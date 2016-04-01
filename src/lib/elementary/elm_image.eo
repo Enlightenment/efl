@@ -120,7 +120,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
               The original aspect ratio (width / height) of the image is usually
               distorted to match the object's size. Enabling this option will retain
               this original aspect, and the way that the image is fit into the object's
-              area depends on the option set by @.fill_outside.]]
+              area depends on the option set by @.fill_inside.]]
          }
          get {
          }
@@ -138,27 +138,6 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image_Load, Evas.Clickable_Interface,
          }
          values {
             orient: Elm.Image_Orient; [[The image orientation Elm.Image.Orient Default is #ELM_IMAGE_ORIENT_NONE.]]
-         }
-      }
-      @property fill_outside {
-         [[Control if the image fills the entire object area, when keeping the aspect ratio.
-
-           When the image should keep its aspect ratio even if resized to another
-           aspect ratio, there are two possibilities to resize it: keep the entire
-           image inside the limits of height and width of the object ($fill_outside
-           is $false) or let the extra width or height go outside of the object,
-           and the image will fill the entire object ($fill_outside is $true).
-
-           Note: This option will have no effect if @.aspect_fixed
-           is set to $false.
-
-           See also @.fill_inside.]]
-         set {
-         }
-         get {
-         }
-         values {
-            fill_outside: bool; [[$true if the object is filled outside, $false otherwise. Default is $false.]]
          }
       }
       @property resizable {

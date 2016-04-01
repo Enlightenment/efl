@@ -320,4 +320,49 @@ EAPI void elm_image_scale_set(Evas_Object *obj, double scale);
  * @ingroup Elm_Image
  */
 EAPI double elm_image_scale_get(const Evas_Object *obj);
+
+/**
+ * @brief Control if the image fills the entire object area, when keeping the
+ * aspect ratio.
+ *
+ * When the image should keep its aspect ratio even if resized to another
+ * aspect ratio, there are two possibilities to resize it: keep the entire
+ * image inside the limits of height and width of the object ($fill_outside is
+ * @c false) or let the extra width or height go outside of the object, and the
+ * image will fill the entire object ($fill_outside is @c true).
+ *
+ * @note This option will have no effect if @ref elm_image_aspect_fixed_get is
+ * set to @c false.
+ *
+ * See also @ref Elm.Image.fill_inside.
+ *
+ * @param[in] fill_outside @c true if the object is filled outside, @c false
+ * otherwise. Default is @c false.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
+
+/**
+ * @brief Control if the image fills the entire object area, when keeping the
+ * aspect ratio.
+ *
+ * When the image should keep its aspect ratio even if resized to another
+ * aspect ratio, there are two possibilities to resize it: keep the entire
+ * image inside the limits of height and width of the object ($fill_outside is
+ * @c false) or let the extra width or height go outside of the object, and the
+ * image will fill the entire object ($fill_outside is @c true).
+ *
+ * @note This option will have no effect if @ref elm_image_aspect_fixed_get is
+ * set to @c false.
+ *
+ * See also @ref Elm.Image.fill_inside.
+ *
+ * @return @c true if the object is filled outside, @c false otherwise. Default
+ * is @c false.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI Eina_Bool elm_image_fill_outside_get(const Evas_Object *obj);
+
 #include "elm_image.eo.legacy.h"

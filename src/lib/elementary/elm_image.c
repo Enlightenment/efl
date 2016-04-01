@@ -1231,20 +1231,6 @@ _elm_image_resizable_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool *siz
 }
 
 EOLIAN static void
-_elm_image_fill_outside_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool fill_outside)
-{
-   sd->fill_inside = !fill_outside;
-
-   elm_obj_image_sizing_eval(obj);
-}
-
-EOLIAN static Eina_Bool
-_elm_image_fill_outside_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
-{
-   return !sd->fill_inside;
-}
-
-EOLIAN static void
 _elm_image_preload_disabled_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool disable)
 {
    if (sd->edje || !sd->img) return;
@@ -1660,6 +1646,26 @@ elm_image_scale_get(const Evas_Object *obj)
    ELM_IMAGE_DATA_GET(obj, sd);
 
    return sd->scale;
+}
+
+EAPI void
+elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
+{
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   sd->fill_inside = !fill_outside;
+
+   elm_obj_image_sizing_eval(obj);
+}
+
+EAPI Eina_Bool
+elm_image_fill_outside_get(const Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   return !sd->fill_inside;
 }
 
 #include "elm_image.eo.c"
