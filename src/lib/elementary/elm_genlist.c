@@ -7070,7 +7070,15 @@ _elm_genlist_item_item_class_update(Eo *eo_it, Elm_Gen_Item *it,
 {
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
    EINA_SAFETY_ON_NULL_RETURN(itc);
-   it->itc = itc;
+
+   /* Decrease the orignal item class refcount to prevent memory leak */
+   if (it->itc != itc)
+     {
+        elm_genlist_item_class_unref((Elm_Genlist_Item_Class *)it->itc);
+        it->itc = itc;
+        elm_genlist_item_class_ref((Elm_Genlist_Item_Class *)it->itc);
+     }
+
    if (!it->item->block) return;
    it->item->nocache_once = EINA_TRUE;
 
