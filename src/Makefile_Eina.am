@@ -96,6 +96,7 @@ lib/eina/eina_util.h \
 lib/eina/eina_quaternion.h \
 lib/eina/eina_vector.h \
 lib/eina/eina_inline_vector.x \
+lib/eina/eina_promise.h \
 lib/eina/eina_bezier.h
 
 lib_eina_libeina_la_SOURCES = \
@@ -166,6 +167,7 @@ lib/eina/eina_private.h \
 lib/eina/eina_share_common.h \
 lib/eina/eina_strbuf_common.h \
 lib/eina/eina_quaternion.c \
+lib/eina/eina_promise.c \
 lib/eina/eina_bezier.c
 
 if HAVE_WIN32
