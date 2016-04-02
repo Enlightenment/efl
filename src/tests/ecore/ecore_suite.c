@@ -26,6 +26,7 @@ static const Efl_Test_Case etc[] = {
 #endif
   { "Ecore_Input", ecore_test_ecore_input },
   { "Ecore_File", ecore_test_ecore_file },
+  { "Ecore_Promise", ecore_test_ecore_promise },
   { NULL, NULL }
 };
 
