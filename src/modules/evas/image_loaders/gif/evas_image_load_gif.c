@@ -213,6 +213,7 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
    int intjump[] = { 8, 8, 4, 2 };
    int i, xx, yy, pix;
    GifRowType *rows;
+   GifPixelType *pixels;
    Eina_Bool ret = EINA_FALSE;
    ColorMapObject *cmap;
    DATA32 *p;
@@ -270,10 +271,12 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
           {
              for (yy = 0; yy < h; yy++)
                {
+                  pixels = &(PIX(0, yy));
                   p = data + ((y + yy) * rowpix) + x;
                   for (xx = 0; xx < w; xx++)
                     {
-                       pix = PIX(xx, yy);
+                       pix = *pixels;
+                       pixels++;
                        if (pix != transparent) *p = PIXLK(pix);
                        else *p = 0;
                        p++;
@@ -285,10 +288,12 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
           {
              for (yy = 0; yy < h; yy++)
                {
+                  pixels = &(PIX(0, yy));
                   p = data + ((y + yy) * rowpix) + x;
                   for (xx = 0; xx < w; xx++)
                     {
-                       pix = PIX(xx, yy);
+                       pix = *pixels;
+                       pixels++;
                        if (pix != transparent) *p = PIXLK(pix);
                        p++;
                     }
@@ -300,10 +305,12 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
         // walk pixels without worring about transparency at all
         for (yy = 0; yy < h; yy++)
           {
+             pixels = &(PIX(0, yy));
              p = data + ((y + yy) * rowpix) + x;
              for (xx = 0; xx < w; xx++)
                {
-                  pix = PIX(xx, yy);
+                  pix = *pixels;
+                  pixels++;
                   *p = PIXLK(pix);
                   p++;
                }
