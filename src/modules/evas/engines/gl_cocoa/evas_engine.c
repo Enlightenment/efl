@@ -1119,6 +1119,11 @@ evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const
 
 #endif 
 
+static void
+eng_output_idle_flush(void *data EINA_UNUSED)
+{
+}
+
 static void *
 eng_gl_api_get(void *data, int version EINA_UNUSED)
 {
@@ -1337,7 +1342,7 @@ module_open(Evas_Module *em)
    ORD(context_cutout_add);
    ORD(context_cutout_clear);
    ORD(output_flush);
-   //   ORD(output_idle_flush);
+   ORD(output_idle_flush);
    //   ORD(output_dump);
    ORD(rectangle_draw);
    ORD(line_draw);
