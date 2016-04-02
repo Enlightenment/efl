@@ -6031,6 +6031,20 @@ if test "x$prefix" != "x/usr"; then
     echo ""
     echo "#-------------------------------------------------------------------#"
   fi
+
+elif test "x${have_darwin}" = "xyes"; then
+    echo ""
+    echo "#-------------------------------------------------------------------#"
+    echo "##==--                          ALERT                          --==##"
+    echo "#-------------------------------------------------------------------#"
+    echo ""
+    echo "  If you are running Mac OS X >= 10.11 (starting from El Capitan)"
+    echo "  you will have TROUBLE with the prefix you have chosen (/usr)..."
+    echo "  Don't make it double and consider to use the default prefix"
+    echo "  (/usr/local). This is because of Apple's SIP that provides MAC"
+    echo "  and prevents ANYONE modifying the system."
+    echo ""
+    echo "#-------------------------------------------------------------------#"
 fi
 
 if test "x${efl_deprecated_option}" = "xyes"; then
