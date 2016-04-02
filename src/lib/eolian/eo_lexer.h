@@ -50,9 +50,12 @@ enum Tokens
     \
     KW(void), \
     \
-    KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), KW(generic_value), \
+    KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), \
+    KW(promise), \
+    KW(generic_value), \
     \
-    KW(__builtin_event_cb), KW(__undefined_type), \
+    KW(__builtin_event_cb), \
+    KW(__undefined_type), \
     \
     KW(true), KW(false), KW(null)
 

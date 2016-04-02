@@ -1,0 +1,42 @@
+class Generated_Promise (Eo.Base)
+{
+   legacy_prefix: null;
+   methods {
+      method1 {
+         params {
+            @inout promise1: promise<int>*;
+         }
+      }
+      method2 {
+         params {
+            @out promise1: promise<int>*;
+         }
+      }
+      method3 {
+         params {
+            @in promise1: promise<int>*;
+         }
+      }
+      @property prop1 {
+         get {}
+         values {
+            promise1: promise<int>*;
+         }
+      }
+      @property prop2 {
+         get {}
+         values {
+            i: int;
+            promise1: promise<int>*;
+         }
+      }
+      @property prop3 {
+         set {}
+         values {
+            promise1: promise<int>*;
+         }
+      }
+   }
+}
+
+

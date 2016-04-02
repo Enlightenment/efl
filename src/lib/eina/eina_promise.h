@@ -438,4 +438,24 @@ EAPI void eina_promise_owner_default_manual_then_set(Eina_Promise_Owner* promise
  */
 EAPI void eina_promise_owner_default_call_then(Eina_Promise_Owner* promise);
 
+
+/*
+ * @internal
+ */
+#define _EINA_PROMISE_BEFORE_HOOK(PromiseValue, Ret, ...)               \
+  Eina_Promise_Owner* __eo_promise = eina_promise_default_add(sizeof(PromiseValue)); \
+  typedef Ret (*_Eo__Promise_func_)(Eo*, void *obj_data, ##__VA_ARGS__);  \
+  _Eo__Promise_func_ const _promise_func = (_Eo__Promise_func_)_func_;  \
+  {                                                                     \
+    _Eo__Promise_func_ const _func_ = _promise_func;
+
+
+/*
+ * @internal
+ */
+#define _EINA_PROMISE_AFTER_HOOK(Promise)                               \
+  }                                                                     \
+     if(Promise)                                                        \
+       *Promise = eina_promise_owner_promise_get(__eo_promise);
+
 #endif

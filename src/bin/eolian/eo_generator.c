@@ -311,6 +311,9 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    if (ftype != EOLIAN_PROP_GET && ftype != EOLIAN_PROP_SET) ftype = eolian_function_type_get(funcid);
    Eina_Bool is_prop = (ftype == EOLIAN_PROP_GET || ftype == EOLIAN_PROP_SET);
 
+   Eina_Bool has_promise = EINA_FALSE;
+   const char* promise_param_name = NULL;
+   const char* promise_value_type = NULL;
    Eina_Bool need_implementation = EINA_TRUE;
    if (!impl_env && eolian_function_is_virtual_pure(funcid, ftype)) need_implementation = EINA_FALSE;
 
@@ -318,6 +321,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    Eina_Strbuf *va_args = eina_strbuf_new();
    Eina_Strbuf *params = eina_strbuf_new(); /* only variables names */
    Eina_Strbuf *full_params = eina_strbuf_new(); /* variables types + names */
+   Eina_Strbuf *impl_full_params = eina_strbuf_new(); /* variables types + names */
    Eina_Strbuf *params_init = eina_strbuf_new(); /* init of variables to default */
 
    rettypet = eolian_function_return_type_get(funcid, ftype);
@@ -360,6 +364,8 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         eina_strbuf_append_printf(params, "%s", pname);
         eina_strbuf_append_printf(full_params, ", %s %s%s",
               ptype, pname, is_empty || is_auto?" EINA_UNUSED":"");
+        eina_strbuf_append_printf(impl_full_params, ", %s %s%s",
+              ptype, pname, is_empty || is_auto?" EINA_UNUSED":"");
         eina_stringshare_del(ptype);
      }
    eina_iterator_free(itr);
@@ -375,9 +381,33 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
              const char *ptype = eolian_type_c_type_get(ptypet);
              Eolian_Parameter_Dir pdir = eolian_parameter_direction_get(param);
              Eina_Bool had_star = !!strchr(ptype, '*');
+
              if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM || pdir == EOLIAN_INOUT_PARAM);
+
+             if(!has_promise && !strcmp(ptype, "Eina_Promise *") &&
+                (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) && pdir == EOLIAN_INOUT_PARAM)
+               {
+                  Eina_Iterator* promise_values;
+                  has_promise = EINA_TRUE;
+                  promise_param_name = eina_stringshare_add(pname);
+                  promise_values = eolian_type_subtypes_get(eolian_type_base_type_get(ptypet));
+                  Eolian_Type* subtype;
+                  if(eina_iterator_next(promise_values, (void**)&subtype))
+                      promise_value_type = eolian_type_c_type_get(subtype);
+                  eina_strbuf_append_printf(impl_full_params, ", Eina_Promise_Owner *%s%s",
+                         pname, is_empty && !dflt_value ?" EINA_UNUSED":"");
+               }
+             else
+               {
+                  eina_strbuf_append_printf(impl_full_params, ", %s%s%s%s%s",
+                        ptype, had_star?"":" ", add_star?"*":"", pname, is_empty && !dflt_value ?" EINA_UNUSED":"");
+               }
+
              if (eina_strbuf_length_get(params)) eina_strbuf_append(params, ", ");
-             eina_strbuf_append_printf(params, "%s", pname);
+             if(has_promise)
+               eina_strbuf_append_printf(params, "%s", "__eo_promise");
+             else
+               eina_strbuf_append_printf(params, "%s", pname);
              eina_strbuf_append_printf(full_params, ", %s%s%s%s%s",
                    ptype, had_star?"":" ", add_star?"*":"", pname, is_empty && !dflt_value ?" EINA_UNUSED":"");
              if (is_auto)
@@ -439,7 +469,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
                    impl_env?impl_env->lower_classname:"",
                    eolian_function_name_get(funcid), suffix,
                    eolian_function_object_is_const(funcid)?"const ":"",
-                   eina_strbuf_string_get(full_params));
+                   eina_strbuf_string_get(impl_full_params));
           }
 
         if (is_empty || is_auto || eina_strbuf_length_get(params_init))
@@ -457,7 +487,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
                    eolian_function_object_is_const(funcid)?"const ":"",
                    is_empty || is_auto?" EINA_UNUSED":"",
                    is_empty || (is_auto && !eina_strbuf_length_get(params_init))?" EINA_UNUSED":"",
-                   eina_strbuf_string_get(full_params));
+                   eina_strbuf_string_get(impl_full_params));
           }
         if (eina_strbuf_length_get(params_init))
           {
@@ -511,11 +541,21 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         Eina_Bool ret_is_void = (!rettype || !strcmp(rettype, "void"));
         _class_func_env_create(class, eolian_function_name_get(funcid), ftype, &func_env);
         eina_strbuf_append_printf(eo_func_decl,
-              "EOAPI EO_%sFUNC_BODY%s%s(%s, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK",
+              "EOAPI EO_%sFUNC_BODY%s%s(%s",
               ret_is_void?"VOID_":"", has_params?"V":"",
               (ftype == EOLIAN_PROP_GET ||
                eolian_function_object_is_const(funcid) ||
                eolian_function_is_class(funcid))?"_CONST":"", func_env.lower_eo_func);
+        if(has_promise)
+          {
+             eina_strbuf_append_printf(eo_func_decl,
+                   ", _EINA_PROMISE_BEFORE_HOOK(%s, %s%s) _EO_EMPTY_HOOK, _EINA_PROMISE_AFTER_HOOK(%s) _EO_EMPTY_HOOK",
+                   promise_value_type, !rettype ? "void" : rettype,
+                   eina_strbuf_string_get(impl_full_params),
+                   promise_param_name);
+          }
+        else
+          eina_strbuf_append_printf(eo_func_decl, ", _EO_EMPTY_HOOK, _EO_EMPTY_HOOK");
         if (!ret_is_void)
           {
              const char *val_str = NULL;
