@@ -1999,10 +1999,19 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
    evas_object_del(sd->icon);
    evas_object_del(sd->main_menu);
 
+   sd->focus_highlight.style = NULL;
+   sd->title = NULL;
+   sd->icon_name = NULL;
+   sd->role = NULL;
+   sd->name = NULL;
+   sd->icon = NULL;
+   sd->main_menu = NULL;
+
    _elm_win_profile_del(sd);
    _elm_win_available_profiles_del(sd);
 
    free(sd->wm_rot.rots);
+   sd->wm_rot.rots = NULL;
 
    /* Don't let callback in the air that point to sd */
    ecore_evas_callback_delete_request_set(sd->ee, NULL);
