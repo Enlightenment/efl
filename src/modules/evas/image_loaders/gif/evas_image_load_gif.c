@@ -46,7 +46,7 @@ do { \
    goto on_error; \
 } while (0)
 #define PIX(_x, _y) rows[yin + _y][xin + _x]
-#define CMAP(_v) cmap->Colors[_v]
+#define CMAP(_v) colors[_v]
 #define PIXLK(_p) ARGB_JOIN(0xff, CMAP(_p).Red, CMAP(_p).Green, CMAP(_p).Blue)
 
 // utility funcs...
@@ -120,11 +120,19 @@ _fill_frame(DATA32 *data, int rowpix, GifFileType *gif, Frame_Info *finfo,
      {
         ColorMapObject *cmap;
         int bg;
-        
+        GifColorType colors[256];
+        int cnum;
+
         // work out color to use from cmap
         if (gif->Image.ColorMap) cmap = gif->Image.ColorMap;
         else cmap = gif->SColorMap;
         bg = gif->SBackGroundColor;
+
+        // fill in local color table of guaranteed 256 entires with cmap & pad
+        for (cnum = 0; cnum < cmap->ColorCount; cnum++)
+          colors[cnum] = cmap->Colors[cnum];
+        for (cnum = cmap->ColorCount; cnum < 256; cnum++)
+          colors[cnum] = cmap->Colors[0];
         // and do the fill
         _fill_image
           (data, rowpix,
@@ -208,6 +216,8 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
    Eina_Bool ret = EINA_FALSE;
    ColorMapObject *cmap;
    DATA32 *p;
+   GifColorType colors[256];
+   int cnum;
 
    // build a blob of memory to have pointers to rows of pixels
    // AND store the decoded gif pixels (1 byte per pixel) as welll
@@ -247,6 +257,11 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
    if (gif->Image.ColorMap) cmap = gif->Image.ColorMap;
    else cmap = gif->SColorMap;
 
+   // fill in local color table of guaranteed 256 entires with cmap & pad
+   for (cnum = 0; cnum < cmap->ColorCount; cnum++)
+     colors[cnum] = cmap->Colors[cnum];
+   for (cnum = cmap->ColorCount; cnum < 256; cnum++)
+     colors[cnum] = cmap->Colors[0];
    // if we need to deal with transparent pixels at all...
    if (transparent >= 0)
      {
