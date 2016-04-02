@@ -22,7 +22,7 @@ in the data/ directory. Licensing details are listed in COPYING and
 the licenses/ directory. The pc/ directory holds all the Package
 Config files installed to help developers build against EFL.
 
-For more doumentation please see:
+For more documentation please see:
 
 http://www.enlightenment.org/p.php?p=docs
 
@@ -320,7 +320,7 @@ asynchronous.
 This is a small C-like language compiler and byte-code interpreter
 library. This is used for scripting in Edje. The code is based on
 original source from the Pawn/Small Language but has been made
-portable (endianess issues fixed) and 64bit issues fixed, with the
+portable (endianness issues fixed) and 64bit issues fixed, with the
 runtime library being refactored to be extremely small.
 
 
