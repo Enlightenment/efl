@@ -2233,3 +2233,34 @@ ecore_x_e_window_rotation_change_done_send(Ecore_X_Window root,
                   (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT |
                    XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY), (const char *)&ev);
 }
+
+EAPI void
+ecore_x_e_keyrouter_set(Ecore_X_Window win EINA_UNUSED, Eina_Bool on)
+{
+   Ecore_X_Window root;
+   unsigned int val;
+
+   CHECK_XCB_CONN;
+
+   root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   val = (on) ? 1 : 0;
+   ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_E_KEYROUTER_SUPPORTED,
+                                  &val, 1);
+}
+
+EAPI Eina_Bool
+ecore_x_e_keyrouter_get(Ecore_X_Window win EINA_UNUSED)
+{
+   Ecore_X_Window root;
+   int ret;
+   unsigned int val;
+
+   CHECK_XCB_CONN;
+
+   root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   ret =
+     ecore_x_window_prop_card32_get(root, ECORE_X_ATOM_E_KEYROUTER_SUPPORTED,
+                                    &val, 1);
+   if (ret != 1) return EINA_FALSE;
+   return (val == 1) ? EINA_TRUE : EINA_FALSE;
+}

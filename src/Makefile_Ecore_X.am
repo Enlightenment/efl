@@ -58,6 +58,7 @@ lib/ecore_x/xcb/ecore_xcb_selection.c \
 lib/ecore_x/xcb/ecore_xcb_textlist.c \
 lib/ecore_x/xcb/ecore_xcb_events.c \
 lib/ecore_x/xcb/ecore_xcb_keymap.c \
+lib/ecore_x/xcb/ecore_xcb_keygrab.c \
 lib/ecore_x/xcb/ecore_xcb_netwm.c \
 lib/ecore_x/xcb/ecore_xcb_icccm.c \
 lib/ecore_x/xcb/ecore_xcb_window.c \
