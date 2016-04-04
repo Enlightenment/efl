@@ -1303,6 +1303,9 @@ _elm_win_frame_obj_update(Elm_Win_Data *sd)
    if (sd->fullscreen)
      {
         evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
+#ifdef HAVE_ELEMENTARY_WL2
+        _elm_win_opaque_update(sd);
+#endif
         return;
      }
 
