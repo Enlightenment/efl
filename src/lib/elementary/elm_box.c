@@ -539,21 +539,19 @@ _elm_box_unpack(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *subobj)
 }
 
 EOLIAN static void
-_elm_box_unpack_all(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
+_elm_box_unpack_all(Eo *obj, Elm_Box_Data *pd)
 {
    Evas_Object_Box_Data *bd;
    Evas_Object_Box_Option *opt;
    Eina_List *l;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   ELM_BOX_CHECK(obj);
-   ELM_BOX_DATA_GET(obj, sd);
    /* set this to block _sizing_eval() calls */
-   sd->delete_me = EINA_TRUE;
+   pd->delete_me = EINA_TRUE;
    bd = evas_object_smart_data_get(wd->resize_obj);
    EINA_LIST_FOREACH (bd->children, l, opt)
      elm_widget_sub_object_del(obj, opt->obj);
-   sd->delete_me = EINA_FALSE;
+   pd->delete_me = EINA_FALSE;
 
    /* EINA_FALSE means do not delete objects */
    evas_object_box_remove_all(wd->resize_obj, EINA_FALSE);
