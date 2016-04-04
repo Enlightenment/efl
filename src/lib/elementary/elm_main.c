@@ -144,6 +144,7 @@ _prefix_check(void)
    const char *dirs[4] = { NULL, NULL, NULL, NULL };
    char *caps = NULL, *p1, *p2;
    char buf[PATH_MAX];
+   Efl_Vpath_Core *vpath;
 
    if (app_pfx) return;
    if (!app_domain) return;
@@ -174,6 +175,22 @@ _prefix_check(void)
      }
    app_pfx = eina_prefix_new(argv[0], app_mainfunc, caps, app_domain,
                              app_checkfile, dirs[0], dirs[1], dirs[2], dirs[3]);
+
+   vpath = efl_vpath_core_get(EFL_VPATH_CORE_CLASS);
+   efl_vpath_core_meta_set(vpath, "app.dir", eina_prefix_get(app_pfx));
+   efl_vpath_core_meta_set(vpath, "app.bin", eina_prefix_bin_get(app_pfx));
+   efl_vpath_core_meta_set(vpath, "app.lib", eina_prefix_lib_get(app_pfx));
+   efl_vpath_core_meta_set(vpath, "app.data", eina_prefix_data_get(app_pfx));
+   efl_vpath_core_meta_set(vpath, "app.locale", eina_prefix_locale_get(app_pfx));
+   snprintf(buf, sizeof(buf), "%s/%s",
+            efl_vpath_core_meta_get(vpath, "config"), app_domain);
+   efl_vpath_core_meta_set(vpath, "app.config", buf);
+   snprintf(buf, sizeof(buf), "%s/%s",
+            efl_vpath_core_meta_get(vpath, "cache"), app_domain);
+   efl_vpath_core_meta_set(vpath, "app.cache", buf);
+   snprintf(buf, sizeof(buf), "%s/%s",
+            efl_vpath_core_meta_get(vpath, "data"), app_domain);
+   efl_vpath_core_meta_set(vpath, "app.local", buf);
 }
 
 static void
