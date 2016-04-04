@@ -553,42 +553,6 @@ _elm_image_fill_inside_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
    return sd->fill_inside;
 }
 
-EOLIAN static void
-_elm_image_resize_up_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool resize_up)
-{
-   resize_up = !!resize_up;
-
-   if (sd->resize_up == resize_up) return;
-
-   sd->resize_up = resize_up;
-
-   _elm_image_internal_sizing_eval(obj, sd);
-}
-
-EOLIAN static Eina_Bool
-_elm_image_resize_up_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
-{
-   return sd->resize_up;
-}
-
-EOLIAN static void
-_elm_image_resize_down_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool resize_down)
-{
-   resize_down = !!resize_down;
-
-   if (sd->resize_down == resize_down) return;
-
-   sd->resize_down = resize_down;
-
-   _elm_image_internal_sizing_eval(obj, sd);
-}
-
-EOLIAN static Eina_Bool
-_elm_image_resize_down_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
-{
-   return sd->resize_down;
-}
-
 static Eina_Bool
 _elm_image_drag_n_drop_cb(void *elm_obj,
       Evas_Object *obj,
@@ -1690,6 +1654,52 @@ EAPI void
 elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
 {
    efl_gfx_view_size_get(obj, w, h);
+}
+
+EAPI void
+elm_image_resize_down_set(Evas_Object *obj, Eina_Bool resize_down)
+{
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   resize_down = !!resize_down;
+
+   if (sd->resize_down == resize_down) return;
+
+   sd->resize_down = resize_down;
+
+   _elm_image_internal_sizing_eval(obj, sd);
+}
+
+EAPI Eina_Bool
+elm_image_resize_down_get(const Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ELM_IMAGE_DATA_GET(obj, sd);
+   return sd->resize_down;
+}
+
+EAPI void
+elm_image_resize_up_set(Evas_Object *obj, Eina_Bool resize_up)
+{
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   resize_up = !!resize_up;
+
+   if (sd->resize_up == resize_up) return;
+
+   sd->resize_up = resize_up;
+
+   _elm_image_internal_sizing_eval(obj, sd);
+}
+
+EAPI Eina_Bool
+elm_image_resize_up_get(const Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ELM_IMAGE_DATA_GET(obj, sd);
+   return sd->resize_up;
 }
 
 #include "elm_image.eo.c"

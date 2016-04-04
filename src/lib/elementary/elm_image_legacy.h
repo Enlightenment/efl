@@ -447,4 +447,53 @@ EAPI Evas_Object *elm_image_object_get(const Evas_Object *obj);
  */
 EAPI void elm_image_object_size_get(const Evas_Object *obj, int *w, int *h);
 
+/**
+ * @brief Control whether the object's image can be resized to a size smaller
+ * than the original one.
+ *
+ * @param[in] resize_down whether resizing down is allowed
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_resize_down_set(Evas_Object *obj, Eina_Bool resize_down);
+
+/**
+ * @brief Control whether the object's image can be resized to a size smaller
+ * than the original one.
+ *
+ * @return whether resizing down is allowed
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Image
+ */
+EAPI Eina_Bool elm_image_resize_down_get(const Evas_Object *obj);
+
+/**
+ * @brief Control whether the object's image can be resized to a size larget
+ * than the original one.
+ *
+ * @param[in] resize_up whether resizing up is allowed
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_resize_up_set(Evas_Object *obj, Eina_Bool resize_up);
+
+/**
+ * @brief Control whether the object's image can be resized to a size larget
+ * than the original one.
+ *
+ * @return whether resizing up is allowed
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Image
+ */
+EAPI Eina_Bool elm_image_resize_up_get(const Evas_Object *obj);
+
+
 #include "elm_image.eo.legacy.h"

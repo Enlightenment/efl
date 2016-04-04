@@ -27,34 +27,6 @@ class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
 {
    eo_prefix: elm_obj_image;
    methods {
-      @property resize_down {
-         [[Control whether the object's image can be resized to a size smaller than the original one.
-
-           @since 1.7]]
-         set {
-            legacy: null;
-         }
-         get {
-            legacy: null;
-         }
-         values {
-            resize_down: bool; [[whether resizing down is allowed]]
-         }
-      }
-      @property resize_up {
-         [[Control whether the object's image can be resized to a size larget than the original one.
-
-           @since 1.7]]
-         set {
-            legacy: null;
-         }
-         get {
-            legacy: null;
-         }
-         values {
-            resize_up: bool; [[whether resizing up is allowed]]
-         }
-      }
       @property no_scale {
          [[Control scaling behaviour of this object.
 
