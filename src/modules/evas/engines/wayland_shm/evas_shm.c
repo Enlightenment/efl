@@ -5,6 +5,7 @@
 
 static Eina_Bool _shm_leaf_create(Shm_Surface *surface, Shm_Leaf *leaf, int w, int h);
 static void _shm_leaf_release(Shm_Leaf *leaf);
+static void _shm_leaf_destroy(Shm_Leaf *leaf);
 
 static struct wl_shm_pool *
 _shm_pool_make(struct wl_shm *shm, int size, void **data)
@@ -301,11 +302,25 @@ static void
 _shm_leaf_release(Shm_Leaf *leaf)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   Shm_Pool *resize_pool;
 
+   /* if we delete resize_pool here we blow away the clever optimization
+    * it provides (and end up doing two allocations per resize when we
+    * might have done none at all).
+    */
+   resize_pool = leaf->resize_pool;
    if (leaf->data) _shm_data_destroy(leaf->data);
-   if (leaf->resize_pool) _shm_pool_destroy(leaf->resize_pool);
    memset(leaf, 0, sizeof(*leaf));
    leaf->valid = EINA_FALSE;
+   leaf->resize_pool = resize_pool;
+}
+
+static void
+_shm_leaf_destroy(Shm_Leaf *leaf)
+{
+   _shm_leaf_release(leaf);
+   if (leaf->resize_pool) _shm_pool_destroy(leaf->resize_pool);
+   leaf->resize_pool = NULL;
 }
 
 Shm_Surface *
@@ -355,7 +370,7 @@ _evas_shm_surface_destroy(Shm_Surface *surface)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    for (; i < surface->num_buff; i++)
-     _shm_leaf_release(&surface->leaf[i]);
+     _shm_leaf_destroy(&surface->leaf[i]);
 
    free(surface);
 }
