@@ -30,6 +30,7 @@
 
 #include "Ecore.h"
 #include "ecore_private.h"
+#include "Efl.h"
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
 #include <malloc.h>
@@ -115,6 +116,8 @@ static Ecore_Memory_State _ecore_memory_state = ECORE_MEMORY_STATE_NORMAL;
 #ifdef HAVE_SYSTEMD
 static Ecore_Timer *_systemd_watchdog = NULL;
 #endif
+
+static Efl_Vpath *vpath = NULL;
 
 Eina_Lock _ecore_main_loop_lock;
 int _ecore_main_lock_count;
@@ -243,6 +246,10 @@ ecore_init(void)
    if (_ecore_fps_debug) _ecore_fps_debug_init();
    if (!ecore_mempool_init()) goto shutdown_mempool;
    _ecore_main_loop_init();
+
+   vpath = eo_add(EFL_VPATH_CORE_CLASS, NULL);
+   if (vpath) efl_vpath_manager_register(EFL_VPATH_MANAGER_CLASS, 0, vpath);
+
    _ecore_signal_init();
 #ifndef HAVE_EXOTIC
    _ecore_exe_init();
@@ -394,6 +401,13 @@ ecore_shutdown(void)
      _ecore_event_shutdown();
      _ecore_main_shutdown();
      _ecore_signal_shutdown();
+
+   if (vpath)
+     {
+        eo_del(vpath);
+        vpath = NULL;
+     }
+
      _ecore_main_loop_shutdown();
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)

@@ -296,6 +296,7 @@
 #define _ECORE_H
 
 #include <Efl_Config.h>
+#include <Efl.h>
 
 #ifdef _MSC_VER
 # include <Evil.h>
