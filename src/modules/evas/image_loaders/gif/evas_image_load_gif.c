@@ -128,11 +128,16 @@ _fill_frame(DATA32 *data, int rowpix, GifFileType *gif, Frame_Info *finfo,
         else cmap = gif->SColorMap;
         bg = gif->SBackGroundColor;
 
-        // fill in local color table of guaranteed 256 entires with cmap & pad
-        for (cnum = 0; cnum < cmap->ColorCount; cnum++)
-          colors[cnum] = cmap->Colors[cnum];
-        for (cnum = cmap->ColorCount; cnum < 256; cnum++)
-          colors[cnum] = cmap->Colors[0];
+        if (cmap)
+          {
+             // fill in local color table of guaranteed 256 with cmap & pad
+             for (cnum = 0; cnum < cmap->ColorCount; cnum++)
+               colors[cnum] = cmap->Colors[cnum];
+             for (cnum = cmap->ColorCount; cnum < 256; cnum++)
+               colors[cnum] = cmap->Colors[0];
+          }
+        else
+          memset(colors, 0, sizeof(colors));
         // and do the fill
         _fill_image
           (data, rowpix,
@@ -258,11 +263,16 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
    if (gif->Image.ColorMap) cmap = gif->Image.ColorMap;
    else cmap = gif->SColorMap;
 
-   // fill in local color table of guaranteed 256 entires with cmap & pad
-   for (cnum = 0; cnum < cmap->ColorCount; cnum++)
-     colors[cnum] = cmap->Colors[cnum];
-   for (cnum = cmap->ColorCount; cnum < 256; cnum++)
-     colors[cnum] = cmap->Colors[0];
+   if (cmap)
+     {
+        // fill in local color table of guaranteed 256 entires with cmap & pad
+        for (cnum = 0; cnum < cmap->ColorCount; cnum++)
+          colors[cnum] = cmap->Colors[cnum];
+        for (cnum = cmap->ColorCount; cnum < 256; cnum++)
+          colors[cnum] = cmap->Colors[0];
+     }
+   else
+     memset(colors, 0, sizeof(colors));
    // if we need to deal with transparent pixels at all...
    if (transparent >= 0)
      {
