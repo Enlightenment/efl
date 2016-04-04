@@ -1180,7 +1180,7 @@ _sub_iterator_free(Elm_Layout_Sub_Iterator *it)
 }
 
 static Eina_Iterator *
-_sub_iterator_create(Elm_Layout_Smart_Data *sd, Eina_Bool objects)
+_sub_iterator_create(Eo *eo_obj, Elm_Layout_Smart_Data *sd, Eina_Bool objects)
 {
    Elm_Layout_Sub_Iterator *it;
 
@@ -1198,20 +1198,21 @@ _sub_iterator_create(Elm_Layout_Smart_Data *sd, Eina_Bool objects)
      it->iterator.next = FUNC_ITERATOR_NEXT(_objects_iterator_next);
    else
      it->iterator.next = FUNC_ITERATOR_NEXT(_names_iterator_next);
+   it->object = eo_obj;
 
    return &it->iterator;
 }
 
 EOLIAN static Eina_Iterator *
-_elm_layout_elm_container_content_names_iterate(Eo *eo_obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
+_elm_layout_elm_container_content_names_iterate(Eo *eo_obj, Elm_Layout_Smart_Data *sd)
 {
-   return _sub_iterator_create(sd, EINA_FALSE);
+   return _sub_iterator_create(eo_obj, sd, EINA_FALSE);
 }
 
 EOLIAN static Eina_Iterator *
-_elm_layout_elm_container_content_objects_iterate(Eo *eo_obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
+_elm_layout_elm_container_content_objects_iterate(Eo *eo_obj, Elm_Layout_Smart_Data *sd)
 {
-   return _sub_iterator_create(sd, EINA_TRUE);
+   return _sub_iterator_create(eo_obj, sd, EINA_TRUE);
 }
 
 EOLIAN static Eina_Bool
