@@ -3149,6 +3149,10 @@ _elm_win_frame_add(Elm_Win_Data *sd,
         edje_object_part_text_escaped_set
           (sd->frame_obj, "elm.text.title", sd->title);
      }
+   if (ecore_evas_focus_get(sd->ee))
+     edje_object_signal_emit(sd->frame_obj, "elm,action,focus", "elm");
+   if (ecore_evas_maximized_get(sd->ee))
+     edje_object_signal_emit(sd->frame_obj, "elm,state,maximize", "elm");
 
    ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
    ecore_evas_resize(sd->ee, w, h);
