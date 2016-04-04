@@ -317,17 +317,22 @@ eng_window_resurf(Outbuf *gw)
 void 
 eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EINA_UNUSED)
 {
+   Eina_Bool redirected;
+
    if (!ob->model) ob->model = wobbly_create(0, 0, w, h);
    wobbly_resize(ob->model, w, h);
+
+   redirected = !!ob->redirect;
    if (ob->redirect)
      glsym_evas_gl_common_context_unredirect(ob->redirect);
+   ob->redirect = NULL;
 
    ob->w = w;
    ob->h = h;
    ob->rot = rot;
    eng_window_use(ob);
    glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
-   if (ob->redirect)
+   if (redirected)
      ob->redirect = glsym_evas_gl_common_context_redirect(ob->gl_context);
 
    if (ob->win)
