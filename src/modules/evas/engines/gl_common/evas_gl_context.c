@@ -1164,7 +1164,6 @@ EAPI void
 evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot)
 {
    if ((gc->w == w) && (gc->h == h) && (gc->rot == rot)) return;
-   if (gc->redirect.active) evas_gl_common_context_redirect(gc);
    evas_gl_common_context_flush(gc);
    gc->change.size = 1;
    gc->rot = rot;
@@ -1174,23 +1173,27 @@ evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot)
 }
 
 EAPI void
-evas_gl_common_context_unredirect(Evas_Engine_GL_Context *gc)
+evas_gl_common_context_unredirect(Evas_GL_Redirect *re)
 {
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-   glDeleteTextures(1, &gc->redirect.texture);
-   glDeleteRenderbuffers(1, &gc->redirect.depth_buffer);
-   glDeleteFramebuffers(1, &gc->redirect.fb);
-   gc->redirect.active = EINA_FALSE;
+   glDeleteTextures(1, &re->texture);
+   glDeleteRenderbuffers(1, &re->depth_buffer);
+   glDeleteFramebuffers(1, &re->fb);
+   re->gc->current_fb = 0;
+   re->active = EINA_FALSE;
+   free(re);
 }
 
-EAPI void
+EAPI Evas_GL_Redirect *
 evas_gl_common_context_redirect(Evas_Engine_GL_Context *gc)
 {
-   if (gc->redirect.active) evas_gl_common_context_unredirect(gc);
+   Evas_GL_Redirect *out;
+
+   out = calloc(1, sizeof(Evas_GL_Redirect));
 
    /* Create a framebuffer object for RTT */
-   glGenTextures(1, &gc->redirect.texture);
-   glBindTexture(GL_TEXTURE_2D, gc->redirect.texture);
+   glGenTextures(1, &out->texture);
+   glBindTexture(GL_TEXTURE_2D, out->texture);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -1199,40 +1202,49 @@ evas_gl_common_context_redirect(Evas_Engine_GL_Context *gc)
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gc->w, gc->h,
                 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
-   glGenFramebuffers(1, &gc->redirect.fb);
-   glBindFramebuffer(GL_FRAMEBUFFER, gc->redirect.fb);
+   glGenFramebuffers(1, &out->fb);
+   glBindFramebuffer(GL_FRAMEBUFFER, out->fb);
 
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                          GL_TEXTURE_2D, gc->redirect.texture, 0);
+                          GL_TEXTURE_2D, out->texture, 0);
 
-   glGenRenderbuffers(1, &gc->redirect.depth_buffer);
-   glBindRenderbuffer(GL_RENDERBUFFER, gc->redirect.depth_buffer);
+   glGenRenderbuffers(1, &out->depth_buffer);
+   glBindRenderbuffer(GL_RENDERBUFFER, out->depth_buffer);
    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, gc->w, gc->h);
    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                             GL_RENDERBUFFER, gc->redirect.depth_buffer);
+                             GL_RENDERBUFFER, out->depth_buffer);
 
-   glBindFramebuffer(GL_FRAMEBUFFER, gc->redirect.fb);
-   gc->redirect.active = EINA_TRUE;
+   glBindFramebuffer(GL_FRAMEBUFFER, out->fb);
+   out->gc = gc;
+   gc->current_fb = out->fb;
+   out->active = EINA_TRUE;
+   return out;
 }
 
 EAPI GLuint
-evas_gl_common_context_redirect_texture_get(Evas_Engine_GL_Context *gc)
+evas_gl_common_context_redirect_texture_get(Evas_GL_Redirect *re)
 {
-   if (!gc->redirect.active) return 0;
-   return gc->redirect.texture;
+   return re->texture;
 }
 
 EAPI void
-evas_gl_common_context_redirect_bind(Evas_Engine_GL_Context *gc)
+evas_gl_common_context_redirect_bind(Evas_GL_Redirect *re)
 {
-   if (!gc->redirect.active) return;
-   glBindFramebuffer(GL_FRAMEBUFFER, gc->redirect.fb);
+   if (re->active) return;
+
+   glBindFramebuffer(GL_FRAMEBUFFER, re->fb);
+   re->gc->current_fb = re->fb;
+   re->active = EINA_TRUE;
 }
 
 EAPI void
-evas_gl_common_context_redirect_unbind(Evas_Engine_GL_Context *gc EINA_UNUSED)
+evas_gl_common_context_redirect_unbind(Evas_GL_Redirect *re EINA_UNUSED)
 {
+   if (!re->active) return;
+
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+   re->active = EINA_FALSE;
+   re->gc->current_fb = 0;
 }
 
 void
@@ -1325,10 +1337,7 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 # endif
 #endif
    if (gc->pipe[0].shader.surface == gc->def_surface)
-     {
-        if (gc->redirect.active) glBindFramebuffer(GL_FRAMEBUFFER, gc->redirect.fb);
-        else glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
-     }
+      glsym_glBindFramebuffer(GL_FRAMEBUFFER, gc->current_fb);
    else
       glsym_glBindFramebuffer(GL_FRAMEBUFFER, surface->tex->pt->fb);
    _evas_gl_common_viewport_set(gc);

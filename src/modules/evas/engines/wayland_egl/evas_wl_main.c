@@ -241,6 +241,7 @@ eng_window_use(Outbuf *gw)
           {
              glsym_evas_gl_common_context_use(_evas_gl_wl_window->gl_context);
              glsym_evas_gl_common_context_flush(_evas_gl_wl_window->gl_context);
+             if (_evas_gl_wl_window->redirect) glsym_evas_gl_common_context_redirect_unbind(_evas_gl_wl_window->redirect);
           }
 
         _evas_gl_wl_window = gw;
@@ -261,6 +262,7 @@ eng_window_use(Outbuf *gw)
      {
         glsym_evas_gl_common_context_use(gw->gl_context);
         glsym_evas_gl_common_context_resize(gw->gl_context, gw->w, gw->h, gw->rot);
+        if (gw->redirect) glsym_evas_gl_common_context_redirect_bind(gw->redirect);
      }
 }
 
@@ -317,14 +319,16 @@ eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EIN
 {
    if (!ob->model) ob->model = wobbly_create(0, 0, w, h);
    wobbly_resize(ob->model, w, h);
-   glsym_evas_gl_common_context_unredirect(ob->gl_context);
-   ob->redirected = EINA_FALSE;
+   if (ob->redirect)
+     glsym_evas_gl_common_context_unredirect(ob->redirect);
 
    ob->w = w;
    ob->h = h;
    ob->rot = rot;
    eng_window_use(ob);
    glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
+   if (ob->redirect)
+     ob->redirect = glsym_evas_gl_common_context_redirect(ob->gl_context);
 
    if (ob->win)
      {
@@ -367,7 +371,7 @@ eng_outbuf_rotation_get(Outbuf *ob)
 Render_Engine_Swap_Mode 
 eng_outbuf_swap_mode_get(Outbuf *ob)
 {
-   if (ob->redirected)
+   if (ob->redirect)
      {
         ob->prev_age = 0;
         return MODE_FULL;
@@ -522,9 +526,9 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
 
    if (ob->model) effect_continues = wobbly_process(ob->model, ob->info,
                                                     ob->w, ob->h,
-                                                    ob->redirected);
+                                                    !!ob->redirect);
 
-   if (ob->redirected)
+   if (ob->redirect)
      {
         float tlx, tly, brx, bry;
         int w, h;
@@ -538,12 +542,12 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
                              tly - ob->offset_y);
         ob->offset_x = tlx;
         ob->offset_y = tly;
-        glsym_evas_gl_common_context_redirect_unbind(ob->gl_context);
+        glsym_evas_gl_common_context_redirect_unbind(ob->redirect);
         glViewport(0, 0, w, h);
-        wobbly_draw(ob->gl_context, ob->model);
+        wobbly_draw(ob->redirect, ob->model);
         wl_surface_set_opaque_region(ob->info->info.surface, NULL);
         eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
-        glsym_evas_gl_common_context_redirect_bind(ob->gl_context);
+        glsym_evas_gl_common_context_redirect_bind(ob->redirect);
         glViewport(0, 0, ob->w, ob->h);
      }
    else if ((glsym_eglSwapBuffersWithDamage) && (rects) &&
@@ -569,20 +573,22 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
    else
       eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
 
-   if (ob->redirected && !effect_continues) ob->info->wobbling = EINA_TRUE;
+   if (ob->redirect && !effect_continues) ob->info->wobbling = EINA_TRUE;
    else ob->info->wobbling = effect_continues;
 
    if (effect_continues)
      {
-        glsym_evas_gl_common_context_redirect(ob->gl_context);
-        ob->redirected = EINA_TRUE;
+        if (ob->redirect)
+          glsym_evas_gl_common_context_unredirect(ob->redirect);
+        ob->redirect = glsym_evas_gl_common_context_redirect(ob->gl_context);
      }
    else
      {
         ob->offset_x = 0;
         ob->offset_y = 0;
-        glsym_evas_gl_common_context_unredirect(ob->gl_context);
-        ob->redirected = EINA_FALSE;
+        if (ob->redirect)
+          glsym_evas_gl_common_context_unredirect(ob->redirect);
+        ob->redirect = NULL;
      }
    if (ob->info->callback.post_swap)
      ob->info->callback.post_swap(ob->info->callback.data, ob->evas);

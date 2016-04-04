@@ -812,14 +812,14 @@ wobbly_resize(Model *m, int dwidth, int dheight)
 }
 
 void
-wobbly_draw(Evas_Engine_GL_Context *gl_context, Model *m)
+wobbly_draw(Evas_GL_Redirect *re, Model *m)
 {
    GLuint tex;
 
    glClearColor(0.0, 0.0, 0.0, 0.0);
    glClear(GL_COLOR_BUFFER_BIT);
    glUseProgram(m->prog);
-   tex = glsym_evas_gl_common_context_redirect_texture_get(gl_context);
+   tex = glsym_evas_gl_common_context_redirect_texture_get(re);
    glBindTexture(GL_TEXTURE_2D, tex);
    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), m->vertices);
    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), m->vertices + 2);

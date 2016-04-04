@@ -41,7 +41,7 @@ void
 wobbly_resize(Model *m, int dw, int dh);
 
 void
-wobbly_draw(Evas_Engine_GL_Context *gl_context, Model *m);
+wobbly_draw(Evas_GL_Redirect *re, Model *m);
 
 Eina_Bool
 wobbly_process(Model *m, Evas_Engine_Info_Wayland_Egl *info, int w, int h, Eina_Bool redirected);
