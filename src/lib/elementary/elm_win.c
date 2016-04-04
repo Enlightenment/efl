@@ -1269,18 +1269,24 @@ static void
 _elm_win_opaque_update(Elm_Win_Data *sd)
 {
    int ox, oy, ow, oh;
+   Eina_Bool alpha;
 
+   alpha = ecore_evas_alpha_get(sd->ee);
+   if (alpha)
+     ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, 0, 0);
    if (sd->fullscreen)
      {
         ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
-        ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
+        if (!alpha)
+          ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
         ecore_wl2_window_geometry_set(sd->wl.win, 0, 0, ow, oh);
         return;
      }
 
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
                                  &ox, &oy, &ow, &oh);
-   ecore_wl2_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);
+   if (!alpha)
+     ecore_wl2_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);
    ecore_wl2_window_geometry_set(sd->wl.win, ox, oy, ow, oh);
 }
 #endif
