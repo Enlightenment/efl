@@ -337,7 +337,7 @@ ecore_x_window_override_argb_new(Ecore_X_Window parent, int x, int y, int w, int
 EAPI Ecore_X_Window
 ecore_x_window_permanent_new(Ecore_X_Window parent, Ecore_X_Atom unique_atom)
 {
-   Ecore_X_Window win, win2, realwin = NULL;
+   Ecore_X_Window win, win2, realwin = 0;
    uint32_t mask, mask_list[9];
    xcb_get_property_reply_t *reply;
    xcb_get_property_cookie_t cookie;
