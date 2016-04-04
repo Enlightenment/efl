@@ -57,6 +57,7 @@ _evas_image_file_set(Eo *eo_obj, const char *file, const char *key)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
    Evas_Image_Load_Opts lo;
+   const char *file2;
 
    if ((o->cur->u.file) && (file) && (!strcmp(o->cur->u.file, file)))
      {
@@ -68,7 +69,16 @@ _evas_image_file_set(Eo *eo_obj, const char *file, const char *key)
 
    evas_object_async_block(obj);
    _evas_image_init_set(NULL, file, key, eo_obj, obj, o, &lo);
-   o->engine_data = ENFN->image_load(ENDT, o->cur->u.file, o->cur->key, &o->load_error, &lo);
+   file2 = o->cur->u.file;
+   if (file2)
+     {
+        o->file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file2);
+        efl_vpath_file_do(o->file_obj);
+        // XXX:FIXME: allow this to be async
+        efl_vpath_file_wait(o->file_obj);
+        file2 = efl_vpath_file_result_get(o->file_obj);
+     }
+   o->engine_data = ENFN->image_load(ENDT, file2, o->cur->key, &o->load_error, &lo);
    o->buffer_data_set = EINA_FALSE;
    _evas_image_done_set(eo_obj, obj, o);
 
@@ -610,6 +620,11 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
      {
         ENFN->image_free(ENDT, o->engine_data);
         o->engine_data = NULL;
+     }
+   if (o->file_obj)
+     {
+        eo_del(o->file_obj);
+        o->file_obj = NULL;
      }
 
    switch (cspace)

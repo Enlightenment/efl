@@ -577,6 +577,11 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
         o->engine_data = NULL;
+        if (o->file_obj)
+          {
+             eo_del(o->file_obj);
+             o->file_obj = NULL;
+          }
      }
 /* FIXME - in engine call above
    if (o->engine_data)
@@ -652,6 +657,11 @@ evas_object_image_data_copy_set(Eo *eo_obj, void *data)
        (o->cur->image.h <= 0)) return;
    if (o->engine_data)
      ENFN->image_free(ENDT, o->engine_data);
+   if (o->file_obj)
+     {
+        eo_del(o->file_obj);
+        o->file_obj = NULL;
+     }
    o->engine_data = ENFN->image_new_from_copied_data(ENDT,
                                                      o->cur->image.w,
                                                      o->cur->image.h,

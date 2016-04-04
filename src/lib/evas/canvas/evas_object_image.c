@@ -260,6 +260,11 @@ _evas_image_init_set(const Eina_File *f, const char *file, const char *key,
           }
         ENFN->image_free(ENDT, o->engine_data);
      }
+   if (o->file_obj)
+     {
+        eo_del(o->file_obj);
+        o->file_obj = NULL;
+     }
    o->load_error = EVAS_LOAD_ERROR_NONE;
    lo->scale_down_by = o->load_opts->scale_down_by;
    lo->dpi = o->load_opts->dpi;
@@ -1191,7 +1196,19 @@ _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Imag
    if (o->cur->mmaped_source)
      o->engine_data = ENFN->image_mmap(ENDT, o->cur->u.f, o->cur->key, &o->load_error, &lo);
    else
-     o->engine_data = ENFN->image_load(ENDT, o->cur->u.file, o->cur->key, &o->load_error, &lo);
+     {
+        const char *file2 = o->cur->u.file;
+
+        if (file2)
+          {
+             o->file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file2);
+             efl_vpath_file_do(o->file_obj);
+             // XXX:FIXME: allow this to be async
+             efl_vpath_file_wait(o->file_obj);
+             file2 = efl_vpath_file_result_get(o->file_obj);
+          }
+        o->engine_data = ENFN->image_load(ENDT, file2, o->cur->key, &o->load_error, &lo);
+     }
 
    if (o->engine_data)
      {
@@ -1341,6 +1358,11 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 	 }
      }
    o->engine_data = NULL;
+   if (o->file_obj)
+     {
+        eo_del(o->file_obj);
+        o->file_obj = NULL;
+     }
    if (o->pixels->pixel_updates)
      {
        EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
