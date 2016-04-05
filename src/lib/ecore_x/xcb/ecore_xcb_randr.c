@@ -1,8 +1,5 @@
 /* TODO: List of missing functions
  *
- * ecore_x_randr_edid_display_ascii_get
- * ecore_x_randr_edid_display_serial_get
- * ecore_x_randr_edid_dpms_standby_available_get
  * ecore_x_randr_edid_dpms_suspend_available_get
  * ecore_x_randr_edid_dpms_off_available_get
  * ecore_x_randr_edid_display_aspect_ratio_preferred_get
@@ -2996,6 +2993,38 @@ ecore_x_randr_edid_display_ascii_get(unsigned char *edid, unsigned long edid_len
                if ((*p < ' ') || (*p > '~')) *p = 0;
 
              return ascii;
+          }
+     }
+#endif
+   return NULL;
+}
+
+EAPI char *
+ecore_x_randr_edid_display_serial_get(unsigned char *edid, unsigned long edid_length) 
+{
+#ifdef ECORE_XCB_RANDR
+   unsigned char *block = NULL;
+   int version = 0;
+
+   version = ecore_x_randr_edid_version_get(edid, edid_length);
+   if (version < ECORE_X_RANDR_EDID_VERSION_13) return NULL;
+
+   _ECORE_X_RANDR_EDID_FOR_EACH_NON_PIXEL_DESCRIPTOR_BLOCK(edid, block)
+     {
+        if (block[_ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_TYPE] == 0xff)
+          {
+             char *serial = NULL, *p = NULL;
+             const char *edid_serial;
+
+             edid_serial = (const char *)block + 5;
+
+             if (!(serial = malloc(14))) return NULL;
+             strncpy(serial, edid_serial, 13);
+             serial[13] = 0;
+             for (p = serial; *p; p++)
+               if ((*p < ' ') || (*p > '~')) *p = 0;
+
+             return serial;
           }
      }
 #endif
