@@ -2,8 +2,6 @@
  *
  * ecore_x_randr_edid_display_ascii_get
  * ecore_x_randr_edid_display_serial_get
- * ecore_x_randr_edid_manufacturer_serial_number_get
- * ecore_x_randr_edid_dpms_available_get
  * ecore_x_randr_edid_dpms_standby_available_get
  * ecore_x_randr_edid_dpms_suspend_available_get
  * ecore_x_randr_edid_dpms_off_available_get
@@ -3084,6 +3082,26 @@ ecore_x_randr_edid_manufacturer_serial_number_get(unsigned char *edid, unsigned 
 #endif
    return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 }
+
+EAPI Eina_Bool 
+ecore_x_randr_edid_dpms_available_get(unsigned char *edid, unsigned long edid_length)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   int version = 0;
+
+   version = ecore_x_randr_edid_version_get(edid, edid_length);
+   if (version < RANDR_EDID_VERSION_13) return EINA_FALSE;
+
+   return !!(edid[0x18] & 0xE0);
+#else
+   return EINA_FALSE;
+#endif
+}
+
+
 
 /* local functions */
 static Eina_Bool
