@@ -2997,7 +2997,7 @@ ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid, unsigned long ed
    if (edid_length < 128) return EINA_FALSE;
 
    version = ecore_x_randr_edid_version_get(edid, edid_length);
-   if (version < RANDR_EDID_VERSION_13) return EINA_FALSE;
+   if (version < ECORE_X_RANDR_EDID_VERSION_13) return EINA_FALSE;
 
    for (i = 0; i < 128; i++)
      sum += edid[i];
@@ -3059,7 +3059,7 @@ ecore_x_randr_edid_manufacturer_model_get(unsigned char *edid, unsigned long edi
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
      return (int)(edid[0x0a] + (edid[0x0b] << 8));
 #endif
-   return ECORE_X_RANDR_EDID_UKNOWN_VALUE;
+   return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 }
 
 EAPI int
@@ -3093,7 +3093,7 @@ ecore_x_randr_edid_dpms_available_get(unsigned char *edid, unsigned long edid_le
    int version = 0;
 
    version = ecore_x_randr_edid_version_get(edid, edid_length);
-   if (version < RANDR_EDID_VERSION_13) return EINA_FALSE;
+   if (version < ECORE_X_RANDR_EDID_VERSION_13) return EINA_FALSE;
 
    return !!(edid[0x18] & 0xE0);
 #else
@@ -3101,7 +3101,22 @@ ecore_x_randr_edid_dpms_available_get(unsigned char *edid, unsigned long edid_le
 #endif
 }
 
+EAPI Eina_Bool 
+ecore_x_randr_edid_dpms_standby_available_get(unsigned char *edid, unsigned long edid_length)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
 
+#ifdef ECORE_XCB_RANDR
+   int version = 0;
+
+   version = ecore_x_randr_edid_version_get(edid, edid_length);
+   if (version < ECORE_X_RANDR_EDID_VERSION_13) return EINA_FALSE;
+
+   if (edid[0x18] & 0xE0) return !!(edid[0x18] & 0x80);
+#endif
+   return EINA_FALSE;
+}
 
 /* local functions */
 static Eina_Bool
