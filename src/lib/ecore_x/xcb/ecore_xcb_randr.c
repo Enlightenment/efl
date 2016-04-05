@@ -32,10 +32,12 @@
 #define RANDR_1_1           ((1 << 16) | 1)
 #define RANDR_1_2           ((1 << 16) | 2)
 #define RANDR_1_3           ((1 << 16) | 3)
+#define RANDR_1_4           ((1 << 16) | 4)
 
 #define RANDR_CHECK_1_1_RET(ret) if (_randr_version < RANDR_1_1) return ret
 #define RANDR_CHECK_1_2_RET(ret) if (_randr_version < RANDR_1_2) return ret
 #define RANDR_CHECK_1_3_RET(ret) if (_randr_version < RANDR_1_3) return ret
+#define RANDR_CHECK_1_4_RET(ret) if (_randr_version < RANDR_1_4) return ret
 
 #define ECORE_X_RANDR_EDID_VERSION_13 ((1 << 8) | 3)
 #define _ECORE_X_RANDR_EDID_OFFSET_VERSION_MAJOR 0x12
@@ -2003,6 +2005,58 @@ ecore_x_randr_crtc_pos_set(Ecore_X_Window     root,
 #endif
 
    return ret;
+}
+
+EAPI Eina_Bool
+ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Crtc crtc, const int x, const int y, const int w, const int h)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_4_RET(EINA_FALSE);
+
+   Eina_Bool ret = EINA_FALSE;
+   xcb_randr_get_panning_cookie_t get_cookie;
+   xcb_randr_get_panning_reply_t *get_reply;
+
+   get_cookie = xcb_randr_get_panning_unchecked(_ecore_xcb_conn, crtc);
+   get_reply = xcb_randr_get_panning_reply(_ecore_xcb_conn, get_cookie, NULL);
+   if (get_reply)
+     {
+        xcb_randr_set_panning_cookie_t set_cookie;
+        xcb_randr_set_panning_reply_t *set_reply;
+
+        set_cookie =
+          xcb_randr_set_panning_unchecked(_ecore_xcb_conn, crtc,
+                                          XCB_CURRENT_TIME,
+                                          x, y, w, h,
+                                          get_reply->track_left,
+                                          get_reply->track_top,
+                                          get_reply->track_width,
+                                          get_reply->track_height,
+                                          get_reply->border_left,
+                                          get_reply->border_top,
+                                          get_reply->border_right,
+                                          get_reply->border_bottom);
+        set_reply =
+          xcb_randr_set_panning_reply(_ecore_xcb_conn, set_cookie, NULL);
+        if (!set_reply)
+          ret = EINA_FALSE;
+        else
+          {
+             if (set_reply->status == XCB_RANDR_SET_CONFIG_SUCCESS)
+               ret = EINA_TRUE;
+
+             free(set_reply);
+          }
+
+        free(get_reply);
+     }
+
+   return ret;
+#endif
+   return EINA_FALSE;
 }
 
 EAPI void
