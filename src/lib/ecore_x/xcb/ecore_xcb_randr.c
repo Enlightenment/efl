@@ -1,7 +1,5 @@
 /* TODO: List of missing functions
  *
- * ecore_x_randr_crtc_clone_set
- * ecore_x_randr_output_crtc_set
  * ecore_x_randr_edid_version_get
  * ecore_x_randr_edid_info_has_valid_checksum
  * ecore_x_randr_edid_manufacturer_name_get
@@ -1186,6 +1184,13 @@ ecore_x_randr_output_crtc_get(Ecore_X_Window       root,
 #endif
 
    return Ecore_X_Randr_None;
+}
+
+EAPI Eina_Bool
+ecore_x_randr_output_crtc_set(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output EINA_UNUSED, const Ecore_X_Randr_Crtc crtc EINA_UNUSED)
+{
+   /* TODO */
+   return EINA_FALSE;
 }
 
 EAPI void 
