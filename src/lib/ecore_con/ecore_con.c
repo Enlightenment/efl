@@ -1407,8 +1407,11 @@ _efl_network_client_eo_base_destructor(Eo *obj, Efl_Network_Client_Data *cl)
      }
    Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 
-   host_server->clients = eina_list_remove(host_server->clients, obj);
-   --host_server->client_count;
+   if (host_server)
+     {
+        host_server->clients = eina_list_remove(host_server->clients, obj);
+        --host_server->client_count;
+     }
 
 #ifdef _WIN32
    ecore_con_local_win32_client_del(obj);
@@ -1418,7 +1421,7 @@ _efl_network_client_eo_base_destructor(Eo *obj, Efl_Network_Client_Data *cl)
 
    if (cl->buf) eina_binbuf_free(cl->buf);
 
-   if (host_server->type & ECORE_CON_SSL)
+   if (host_server && (host_server->type & ECORE_CON_SSL))
      ecore_con_ssl_client_shutdown(obj);
 
    if (cl->fd_handler)
@@ -1517,7 +1520,7 @@ _ecore_con_cl_timer_update(Ecore_Con_Client *obj)
      {
         Efl_Network_Server_Data *host_server = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 
-        if (host_server->client_disconnect_time > 0)
+        if (host_server && host_server->client_disconnect_time > 0)
           {
              if (cl->until_deletion)
                {
