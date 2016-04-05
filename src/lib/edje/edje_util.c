@@ -357,6 +357,7 @@ _edje_object_language_set(Eo *obj, Edje *ed, const char *locale)
    char *signal;
    size_t length;
 
+   if (!locale) return;
    lookup = strstr(locale, ".");
    length = lookup ? (size_t)(lookup - locale) : strlen(locale);
 
