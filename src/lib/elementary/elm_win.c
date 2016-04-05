@@ -1101,17 +1101,9 @@ _elm_win_focus_in(Ecore_Evas *ee)
              unsigned int newest_focus_order = 0;
 
              newest = elm_widget_newest_focus_order_get
-               (obj, &newest_focus_order, EINA_TRUE);
-             if ((newest) &&
-                 _elm_widget_onscreen_is(newest))
-               {
-                  if (_elm_win_focus_highlight_object_get(obj))
-                    elm_widget_focus_restore(obj);
-                  else if (!elm_object_focus_get(newest))
-                    elm_widget_focus_restore(obj);
-                  else
-                    evas_object_focus_set(obj, EINA_TRUE);
-               }
+                (obj, &newest_focus_order, EINA_TRUE);
+             if (newest && _elm_widget_onscreen_is(newest))
+               elm_widget_focus_restore(obj);
              else
                evas_object_focus_set(obj, EINA_TRUE);
           }
