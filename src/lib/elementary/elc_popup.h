@@ -111,6 +111,14 @@
  * @li @ref elm_object_item_del
  * @li @ref elm_object_item_signal_emit
  *
+ * supported elm_object common APIs.
+ * @li @ref elm_object_part_text_set
+ * @li @ref elm_object_part_text_get
+ * @li @ref elm_object_part_content_set
+ * @li @ref elm_object_part_content_get
+ * @li @ref elm_object_part_content_unset
+ * @li @ref elm_object_signal_emit
+ *
  * Here are some sample code to illustrate Popup usage:
  * @li @ref popup_example_01_c
  * @li @ref popup_example_02_c

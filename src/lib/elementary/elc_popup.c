@@ -484,6 +484,12 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
+EOLIAN static void
+_elm_popup_elm_layout_signal_emit(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, const char *emission, const char *source)
+{
+   elm_layout_signal_emit(sd->main_layout, emission, source);
+}
+
 EOLIAN static Eina_Bool
 _elm_popup_elm_widget_sub_object_del(Eo *obj, Elm_Popup_Data *sd, Evas_Object *sobj)
 {
