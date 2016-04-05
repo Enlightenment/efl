@@ -5,7 +5,6 @@
  * ecore_x_randr_edid_display_colorscheme_get
  * ecore_x_randr_edid_display_type_digital_get
  * ecore_x_randr_edid_display_interface_type_get
- * ecore_x_randr_screen_backlight_level_set
  * ecore_x_randr_output_subpixel_order_get
  * ecore_x_randr_output_wired_clones_get
  * ecore_x_randr_output_compatibility_list_get
@@ -2513,6 +2512,24 @@ ecore_x_randr_screen_size_range_get(Ecore_X_Window root,
         if (maxh) *maxh = reply->max_height;
         free(reply);
      }
+#endif
+}
+
+EAPI void
+ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root, double level)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   Ecore_X_Randr_Output *outputs;
+   int i = 0, ret = 0;
+
+   RANDR_CHECK_1_3_RET();
+
+   outputs = _ecore_xcb_randr_13_outputs_get(root, &ret);
+   for (i = 0; i < ret; i++)
+     ecore_x_randr_output_backlight_level_set(root, outputs[i], level);
 #endif
 }
 
