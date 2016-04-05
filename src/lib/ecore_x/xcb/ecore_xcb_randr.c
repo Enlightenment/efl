@@ -3052,6 +3052,20 @@ ecore_x_randr_edid_manufacturer_name_get(unsigned char *edid, unsigned long edid
    return NULL;
 }
 
+EAPI int
+ecore_x_randr_edid_manufacturer_model_get(unsigned char *edid, unsigned long edid_length)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   if ((edid_length > _ECORE_X_RANDR_EDID_MANUFACTURER + 1) &&
+       (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
+     return (int)(edid[0x0a] + (edid[0x0b] << 8));
+#endif
+   return ECORE_X_RANDR_EDID_UKNOWN_VALUE;
+}
+
 /* local functions */
 static Eina_Bool
 _ecore_xcb_randr_output_validate(Ecore_X_Window       root,
