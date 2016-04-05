@@ -2,9 +2,7 @@
  *
  * ecore_x_randr_edid_display_ascii_get
  * ecore_x_randr_edid_display_serial_get
- * ecore_x_randr_edid_model_get
  * ecore_x_randr_edid_manufacturer_serial_number_get
- * ecore_x_randr_edid_manufacturer_model_get
  * ecore_x_randr_edid_dpms_available_get
  * ecore_x_randr_edid_dpms_standby_available_get
  * ecore_x_randr_edid_dpms_suspend_available_get
@@ -3070,6 +3068,21 @@ EAPI int
 ecore_x_randr_edid_model_get(unsigned char *edid, unsigned long edid_length)
 {
    return ecore_x_randr_edid_manufacturer_model_get(edid, edid_length);
+}
+
+EAPI int 
+ecore_x_randr_edid_manufacturer_serial_number_get(unsigned char *edid, unsigned long edid_length)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   if ((edid_length > _ECORE_X_RANDR_EDID_MANUFACTURER + 1) &&
+       (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
+     return (int)(edid[0x0c] + (edid[0x0d] << 8) + 
+                  (edid[0x0e] << 16) + (edid[0x0f] << 24));
+#endif
+   return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 }
 
 /* local functions */
