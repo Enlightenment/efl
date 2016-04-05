@@ -2970,6 +2970,38 @@ ecore_x_randr_edid_display_name_get(unsigned char *edid, unsigned long edid_leng
    return NULL;
 }
 
+EAPI char *
+ecore_x_randr_edid_display_ascii_get(unsigned char *edid, unsigned long edid_length) 
+{
+#ifdef ECORE_XCB_RANDR
+   unsigned char *block = NULL;
+   int version = 0;
+
+   version = ecore_x_randr_edid_version_get(edid, edid_length);
+   if (version < ECORE_X_RANDR_EDID_VERSION_13) return NULL;
+
+   _ECORE_X_RANDR_EDID_FOR_EACH_NON_PIXEL_DESCRIPTOR_BLOCK(edid, block)
+     {
+        if (block[_ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_TYPE] == 0xfe)
+          {
+             char *ascii = NULL, *p = NULL;
+             const char *edid_ascii;
+
+             edid_ascii = (const char *)block + 5;
+
+             if (!(ascii = malloc(14))) return NULL;
+             strncpy(ascii, edid_ascii, 13);
+             ascii[13] = 0;
+             for (p = ascii; *p; p++)
+               if ((*p < ' ') || (*p > '~')) *p = 0;
+
+             return ascii;
+          }
+     }
+#endif
+   return NULL;
+}
+
 EAPI Eina_Bool
 ecore_x_randr_edid_has_valid_header(unsigned char *edid, unsigned long edid_length)
 {
