@@ -3046,6 +3046,27 @@ ecore_x_randr_edid_display_serial_get(unsigned char *edid, unsigned long edid_le
    return NULL;
 }
 
+EAPI Ecore_X_Randr_Edid_Display_Interface_Type
+ecore_x_randr_edid_display_interface_type_get(unsigned char *edid, unsigned long edid_length)
+{
+#ifdef ECORE_XCB_RANDR
+   Ecore_X_Randr_Edid_Display_Interface_Type type;
+   int version = 0;
+
+   type = ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
+
+   version = ecore_x_randr_edid_version_get(edid, edid_length);
+   if (version < ECORE_X_RANDR_EDID_VERSION_13) return type;
+
+   type = (edid[0x14] & 0x0f);
+   if (type > ECORE_X_RANDR_EDID_DISPLAY_INTERFACE_DISPLAY_PORT)
+     type = ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
+
+   return type;
+#endif
+   return 0;
+}
+
 EAPI Eina_Bool
 ecore_x_randr_edid_has_valid_header(unsigned char *edid, unsigned long edid_length)
 {
