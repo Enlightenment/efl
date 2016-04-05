@@ -801,8 +801,11 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
    if (tex)
      {
         flags |= SHADER_FLAG_TEX;
-        if (!tex->alpha)
-          flags |= SHADER_FLAG_AFILL;
+        if (!tex->alpha && tex_only)
+          {
+             if ((flags & SHADER_FLAG_EXTERNAL) || tex->pt->dyn.img)
+               flags |= SHADER_FLAG_AFILL;
+          }
      }
 
    if (mtex)
