@@ -687,7 +687,7 @@ _list_add(Evas_Object *obj)
 {
    ELM_POPUP_DATA_GET(obj, sd);
 
-   if (!sd->scroll)
+   if (!sd->scr)
      _create_scroller(obj);
    //Box
    sd->box = elm_box_add(sd->scr);
