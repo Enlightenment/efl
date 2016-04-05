@@ -1,6 +1,5 @@
 /* TODO: List of missing functions
  *
- * ecore_x_randr_edid_dpms_off_available_get
  * ecore_x_randr_edid_display_aspect_ratio_preferred_get
  * ecore_x_randr_edid_display_aspect_ratios_get
  * ecore_x_randr_edid_display_colorscheme_get
@@ -3191,6 +3190,23 @@ ecore_x_randr_edid_dpms_suspend_available_get(unsigned char *edid, unsigned long
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return EINA_FALSE;
 
    if (edid[0x18] & 0xE0) return !!(edid[0x18] & 0x40);
+#endif
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool 
+ecore_x_randr_edid_dpms_off_available_get(unsigned char *edid, unsigned long edid_length)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   int version = 0;
+
+   version = ecore_x_randr_edid_version_get(edid, edid_length);
+   if (version < ECORE_X_RANDR_EDID_VERSION_13) return EINA_FALSE;
+
+   if (edid[0x18] & 0xE0) return !!(edid[0x18] & 0x20);
 #endif
    return EINA_FALSE;
 }
