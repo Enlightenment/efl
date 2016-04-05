@@ -1,7 +1,5 @@
 /* TODO: List of missing functions
  *
- * ecore_x_randr_edid_info_has_valid_checksum
- * ecore_x_randr_edid_manufacturer_name_get
  * ecore_x_randr_edid_display_ascii_get
  * ecore_x_randr_edid_display_serial_get
  * ecore_x_randr_edid_model_get
@@ -56,6 +54,7 @@
 #define _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_TYPE 3
 #define _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_CONTENT 5
 #define _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX 13
+#define _ECORE_X_RANDR_EDID_MANUFACTURER 0x08
 
 #define _ECORE_X_RANDR_EDID_FOR_EACH_DESCRIPTOR_BLOCK(edid, block) \
   for (block = edid + _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK; block <= (edid + _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK + (3 * 18)); block += 18)
@@ -3023,6 +3022,34 @@ ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid, unsigned long ed
 #else
    return EINA_FALSE;
 #endif
+}
+
+EAPI char *
+ecore_x_randr_edid_manufacturer_name_get(unsigned char *edid, unsigned long edid_length)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   if ((edid_length > _ECORE_X_RANDR_EDID_MANUFACTURER + 1) &&
+       (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
+     {
+        unsigned char *x;
+        char *name;
+
+        name = malloc(sizeof(char) * 4);
+        if (!name) return NULL;
+
+        x = (edid + _ECORE_X_RANDR_EDID_MANUFACTURER);
+        name[0] = ((x[0] & 0x7c) >> 2) + '@';
+        name[1] = ((x[0] & 0x03) << 3) + ((x[1] & 0xe0) >> 5) + '@';
+        name[2] = (x[1] & 0x1f) + '@';
+        name[3] = 0;
+
+        return name;
+     }
+#endif
+   return NULL;
 }
 
 /* local functions */
