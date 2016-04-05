@@ -477,12 +477,14 @@ _ecore_x_init2(void)
 #ifdef ECORE_XKB
      {
         int dummy;
-        
+
         if (XkbQueryExtension(_ecore_x_disp, &dummy, &xkb_base,
                               &dummy, &dummy, &dummy))
           _ecore_x_event_xkb_id = xkb_base;
         XkbSelectEventDetails(_ecore_x_disp, XkbUseCoreKbd, XkbStateNotify,
                               XkbAllStateComponentsMask, XkbGroupStateMask);
+        XkbSelectEventDetails(_ecore_x_disp, XkbUseCoreKbd, XkbNewKeyboardNotify,
+                              XkbNewKeyboardNotifyMask, XkbNewKeyboardNotifyMask);
      }
    ECORE_X_EVENT_HANDLERS_GROW(xkb_base, XkbNumberEvents);
 #endif

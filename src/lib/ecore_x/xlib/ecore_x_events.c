@@ -40,6 +40,10 @@ static int _ecore_x_last_event_mouse_move = 0;
 static Ecore_Event *_ecore_x_last_event_mouse_move_event = NULL;
 static Eina_Inlist *_ecore_x_mouse_down_info_list = NULL;
 
+#ifdef ECORE_XKB
+static Eina_Hash *emitted_events = NULL;
+#endif
+
 static void
 _ecore_x_mouse_down_info_clear(void)
 {
@@ -58,12 +62,18 @@ void
 _ecore_x_events_init(void)
 {
    //Actually, Nothing to do.
+#ifdef ECORE_XKB
+   emitted_events = eina_hash_int64_new(NULL);
+#endif
 }
 
 void
 _ecore_x_events_shutdown(void)
 {
    _ecore_x_mouse_down_info_clear();
+#ifdef ECORE_XKB
+   eina_hash_free(emitted_events);
+#endif
 }
 
 static Ecore_X_Mouse_Down_Info *
@@ -2608,22 +2618,40 @@ _ecore_x_event_handle_gesture_notify_group(XEvent *xevent)
 
 #endif /* ifdef ECORE_XGESTURE */
 #ifdef ECORE_XKB
+
+void
+free_hash(void *userdata EINA_UNUSED, void *funcdata EINA_UNUSED)
+{
+   eina_hash_del_by_data(emitted_events, (void*) 1);
+}
+
 void
 _ecore_x_event_handle_xkb(XEvent *xevent)
 {
    XkbEvent *xkbev;
-   Ecore_X_Event_Xkb *e;
-   
+
    xkbev = (XkbEvent *) xevent;
-   e = calloc(1, sizeof(Ecore_X_Event_Xkb));
-   if (!e)
-     return;
-   e->group = xkbev->state.group;
+
+
    if (xkbev->any.xkb_type == XkbStateNotify)
-     ecore_event_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, e, NULL, NULL);
+     {
+        Ecore_X_Event_Xkb *e;
+
+        if (eina_hash_find(emitted_events, &xkbev->state.serial)) return;
+
+        e = calloc(1, sizeof(Ecore_X_Event_Xkb));
+        if (!e)
+          return;
+
+        e->group = xkbev->state.group;
+        ecore_event_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, e, free_hash, NULL);
+        eina_hash_add(emitted_events, &xkbev->state.serial, (void*) 1);
+     }
    else if ((xkbev->any.xkb_type == XkbNewKeyboardNotify) ||
             (xkbev->any.xkb_type == XkbMapNotify))
      {
+        if (eina_hash_find(emitted_events, &xkbev->state.serial)) return;
+
         if (xkbev->any.xkb_type == XkbMapNotify)
           {
              XkbMapNotifyEvent *xkbmapping;
@@ -2631,7 +2659,8 @@ _ecore_x_event_handle_xkb(XEvent *xevent)
              xkbmapping = (XkbMapNotifyEvent *)xkbev;
              XkbRefreshKeyboardMapping(xkbmapping);
           }
-        ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, e, NULL, NULL);
+        ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, NULL, free_hash, NULL);
+        eina_hash_add(emitted_events, &xkbev->new_kbd.serial, (void*) 1);
      }
 }
 #endif /* ifdef ECORE_XKB */
