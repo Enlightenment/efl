@@ -1,6 +1,5 @@
 /* TODO: List of missing functions
  *
- * ecore_x_randr_edid_version_get
  * ecore_x_randr_edid_info_has_valid_checksum
  * ecore_x_randr_edid_manufacturer_name_get
  * ecore_x_randr_edid_display_ascii_get
@@ -2987,6 +2986,43 @@ ecore_x_randr_edid_has_valid_header(unsigned char *edid, unsigned long edid_leng
    if ((!edid) || (edid_length < 8)) return EINA_FALSE;
    if (!memcmp(edid, header, 8)) return EINA_TRUE;
    return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid, unsigned long edid_length)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   unsigned char *iter = NULL;
+   char sum = 0;
+   int i = 0, version = 0;
+
+   if (edid_length < 128) return EINA_FALSE;
+
+   version = ecore_x_randr_edid_version_get(edid, edid_length);
+   if (version < RANDR_EDID_VERSION_13) return EINA_FALSE;
+
+   for (i = 0; i < 128; i++)
+     sum += edid[i];
+
+   if (sum) return EINA_FALSE;
+
+   for (iter = edid; iter < (edid + edid_length); iter += 128)
+     {
+        if (iter[0] == 0x02)
+          {
+             for (i = 0, sum = 0; i < 128; i++)
+               sum += iter[i];
+          }
+     }
+
+   if (sum) return EINA_FALSE;
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
 }
 
 /* local functions */
