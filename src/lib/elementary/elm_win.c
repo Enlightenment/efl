@@ -1266,7 +1266,7 @@ _elm_win_opaque_update(Elm_Win_Data *sd)
    alpha = ecore_evas_alpha_get(sd->ee);
    if (alpha)
      ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, 0, 0);
-   if (sd->fullscreen)
+   if (sd->fullscreen || (!sd->frame_obj))
      {
         ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
         if (!alpha)
@@ -3101,9 +3101,6 @@ _elm_win_frame_add(Elm_Win_Data *sd,
      (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
-#ifdef HAVE_ELEMENTARY_WL2
-   evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _elm_win_frame_pre_render, sd);
-#endif
 
    /* NB: Do NOT remove these calls !! Needed to calculate proper
     * framespace on initial show of the window */
@@ -3163,9 +3160,6 @@ _elm_win_frame_del(Elm_Win_Data *sd)
           (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
         evas_object_event_callback_del_full
           (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
-#ifdef HAVE_ELEMENTARY_WL2
-        evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _elm_win_frame_pre_render, sd);
-#endif
 
         edje_object_signal_callback_del
           (sd->frame_obj, "elm,action,move,start", "elm",
@@ -3888,6 +3882,10 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   if (eina_streq(engine, ELM_WAYLAND_SHM) || eina_streq(engine, ELM_WAYLAND_EGL))
+     evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _elm_win_frame_pre_render, sd);
 #endif
 
    /* do not append to list; all windows render as black rects */
