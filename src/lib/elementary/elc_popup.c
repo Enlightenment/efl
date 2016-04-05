@@ -1607,7 +1607,7 @@ EOLIAN static void
 _elm_popup_content_text_wrap_type_set(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, Elm_Wrap_Type wrap)
 {
    //Need to wrap the content text, so not allowing ELM_WRAP_NONE
-   if (sd->content_text_wrap_type == ELM_WRAP_NONE) return;
+   if (wrap == ELM_WRAP_NONE) return;
 
    sd->content_text_wrap_type = wrap;
    if (sd->text_content_obj)
