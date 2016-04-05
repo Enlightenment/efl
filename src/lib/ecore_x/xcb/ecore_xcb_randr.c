@@ -3066,6 +3066,12 @@ ecore_x_randr_edid_manufacturer_model_get(unsigned char *edid, unsigned long edi
    return ECORE_X_RANDR_EDID_UKNOWN_VALUE;
 }
 
+EAPI int
+ecore_x_randr_edid_model_get(unsigned char *edid, unsigned long edid_length)
+{
+   return ecore_x_randr_edid_manufacturer_model_get(edid, edid_length);
+}
+
 /* local functions */
 static Eina_Bool
 _ecore_xcb_randr_output_validate(Ecore_X_Window       root,
