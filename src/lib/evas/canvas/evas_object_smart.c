@@ -682,9 +682,20 @@ EOLIAN static void
 _evas_object_smart_smart_no_render_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Eina_Bool hide)
 {
    Evas_Object_Protected_Data *obj2;
+   Evas_Object_Smart_Clipped_Data *cso;
+   Evas_Object *cso_clipper;
+
+   if (eo_isa(eo_obj, EVAS_SMART_CLIPPED_CLASS))
+     cso = eo_data_scope_get(eo_obj, EVAS_SMART_CLIPPED_CLASS);
+   else
+     cso = evas_object_smart_data_get(eo_obj);
+   cso_clipper = cso ? cso->clipper : NULL;
 
    EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj2)
-     evas_obj_no_render_set(obj2->object, hide);
+     {
+        if (cso_clipper != obj2->object)
+          evas_obj_no_render_set(obj2->object, hide);
+     }
 }
 
 EOLIAN static void
