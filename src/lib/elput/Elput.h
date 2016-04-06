@@ -58,8 +58,26 @@ typedef struct _Elput_Event_Seat_Frame
    Elput_Seat *seat;
 } Elput_Event_Seat_Frame;
 
+/* structure to represent event for seat keymap changes */
+typedef struct _Elput_Event_Keymap_Send
+{
+   int fd, format;
+   size_t size;
+} Elput_Event_Keymap_Send;
+
+/* structure to represent event for seat modifiers changes */
+typedef struct _Elput_Event_Modifiers_Send
+{
+   unsigned int depressed;
+   unsigned int latched;
+   unsigned int locked;
+   unsigned int group;
+} Elput_Event_Modifiers_Send;
+
 EAPI extern int ELPUT_EVENT_SEAT_CAPS;
 EAPI extern int ELPUT_EVENT_SEAT_FRAME;
+EAPI extern int ELPUT_EVENT_KEYMAP_SEND;
+EAPI extern int ELPUT_EVENT_MODIFIERS_SEND;
 
 /**
  * @file
