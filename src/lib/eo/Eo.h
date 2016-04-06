@@ -488,6 +488,7 @@ typedef struct _Eo_Call_Cache
 # endif
 #endif
    Eo_Op               op;
+   unsigned int        generation;
 } Eo_Call_Cache;
 
 // to pass the internal function call to EO_FUNC_BODY (as Func parameter)
@@ -503,10 +504,12 @@ typedef struct _Eo_Call_Cache
 #define EO_FUNC_COMMON_OP(Obj, Name, DefRet)                                 \
      static Eo_Call_Cache ___cache; /* static 0 by default */           \
      Eo_Op_Call_Data ___call;                                           \
-     if (EINA_UNLIKELY(___cache.op == EO_NOOP))                         \
+     if (EINA_UNLIKELY((___cache.op == EO_NOOP) ||                      \
+                       (___cache.generation != _eo_init_generation)))   \
        {                                                                \
           ___cache.op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name)); \
           if (___cache.op == EO_NOOP) return DefRet;                    \
+          ___cache.generation = _eo_init_generation;                    \
        }                                                                \
      if (!_eo_call_resolve((Eo *) Obj, #Name, &___call, &___cache,                  \
                            __FILE__, __LINE__)) return DefRet;          \
