@@ -45,10 +45,12 @@ local Writer = util.Object:clone {
 
     write_raw = function(self, ...)
         self.file:write(...)
+        return self
     end,
 
     write_nl = function(self, n)
         self:write_raw(("\n"):rep(n or 1))
+        return self
     end,
 
     write_h = function(self, heading, level, nonl)
@@ -57,51 +59,63 @@ local Writer = util.Object:clone {
         if not nonl then
             self:write_nl()
         end
+        return self
     end,
 
     write_fmt = function(self, fmt1, fmt2, ...)
         self:write_raw(fmt1, ...)
         self:write_raw(fmt2)
+        return self
     end,
 
     write_b = function(self, ...)
         self:write_fmt("**", "**", ...)
+        return self
     end,
 
     write_i = function(self, ...)
         self:write_fmt("//", "//", ...)
+        return self
     end,
 
     write_u = function(self, ...)
         self:write_fmt("__", "__", ...)
+        return self
     end,
 
     write_s = function(self, ...)
         self:write_fmt("<del>", "</del>", ...)
+        return self
     end,
 
     write_m = function(self, ...)
         self:write_fmt("''", "''", ...)
+        return self
     end,
 
     write_sub = function(self, ...)
         self:write_fmt("<sub>", "</sub>", ...)
+        return self
     end,
 
     write_sup = function(self, ...)
         self:write_fmt("<sup>", "</sup>", ...)
+        return self
     end,
 
     write_br = function(self, nl)
         self:write_raw("\\\\", nl and "\n" or " ")
+        return self
     end,
 
     write_pre_inline = function(self, ...)
         self:write_fmt("%%", "%%", ...)
+        return self
     end,
 
     write_pre = function(self, ...)
         self:write_fmt("<nowiki>\n", "\n</nowiki>", ...)
+        return self
     end,
 
     write_link = function(self, target, title)
@@ -112,11 +126,12 @@ local Writer = util.Object:clone {
         target = target:lower()
         if type(title) == "string" then
             self:write_raw("[[", target, "|", title, "]]")
-            return
+            return self
         end
         self:write_raw("[[", target, "|")
         title(self)
         self:write_raw("]]")
+        return self
     end,
 
     write_table = function(self, titles, tbl)
@@ -124,6 +139,7 @@ local Writer = util.Object:clone {
         for i, v in ipairs(tbl) do
             self:write_raw("| ", table.concat(v,  " | "), " |\n")
         end
+        return self
     end,
 
     write_list = function(self, tbl, ord)
@@ -135,6 +151,7 @@ local Writer = util.Object:clone {
             end
             self:write_raw(("  "):rep(lvl), prec, " ", str, "\n")
         end
+        return self
     end,
 
     finish = function(self)
@@ -151,6 +168,7 @@ local Buffer = Writer:clone {
         for i, v in ipairs({ ... }) do
             self.buf[#self.buf + 1] = v
         end
+        return self
     end,
 
     finish = function(self)
@@ -272,10 +290,10 @@ local build_reftable = function(f, title, ctitle, ctype, t)
     f:write_h(title, 2)
     local nt = {}
     for i, v in ipairs(t) do
-        local lbuf = Buffer()
-        lbuf:write_link(gen_namespaces(v, ctype, true), v:full_name_get())
         nt[#nt + 1] = {
-            lbuf:finish(), get_brief_doc(v:documentation_get())
+            Buffer():write_link(gen_namespaces(v, ctype, true),
+                                v:full_name_get()):finish(),
+            get_brief_doc(v:documentation_get())
         }
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
