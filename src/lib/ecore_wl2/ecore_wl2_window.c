@@ -141,28 +141,6 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
 {
    switch (win->type)
      {
-      case ECORE_WL2_WINDOW_TYPE_FULLSCREEN:
-        if (win->xdg_surface)
-          xdg_surface_set_fullscreen(win->xdg_surface, NULL);
-        else if (win->wl_shell_surface)
-          wl_shell_surface_set_fullscreen(win->wl_shell_surface,
-                                          WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT,
-                                          0, NULL);
-        break;
-      case ECORE_WL2_WINDOW_TYPE_MAXIMIZED:
-        if (win->xdg_surface)
-          xdg_surface_set_maximized(win->xdg_surface);
-        else if (win->wl_shell_surface)
-          wl_shell_surface_set_maximized(win->wl_shell_surface, NULL);
-        break;
-      case ECORE_WL2_WINDOW_TYPE_TRANSIENT:
-        if (win->xdg_surface)
-          xdg_surface_set_parent(win->xdg_surface, win->parent->xdg_surface);
-        else if (win->wl_shell_surface)
-          wl_shell_surface_set_transient(win->wl_shell_surface,
-                                         win->parent->surface,
-                                         win->geometry.x, win->geometry.y, 0);
-        break;
       case ECORE_WL2_WINDOW_TYPE_MENU:
           {
              Ecore_Wl2_Input *input;
@@ -700,8 +678,6 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
           xdg_surface_set_maximized(window->xdg_surface);
         else if (window->wl_shell_surface)
           wl_shell_surface_set_maximized(window->wl_shell_surface, NULL);
-
-        window->type = ECORE_WL2_WINDOW_TYPE_MAXIMIZED;
      }
    else
      {
@@ -709,8 +685,6 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
           xdg_surface_unset_maximized(window->xdg_surface);
         else if (window->wl_shell_surface)
           wl_shell_surface_set_toplevel(window->wl_shell_surface);
-
-        window->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
 
         _ecore_wl2_window_configure_send(window, window->saved.w,
                                          window->saved.h, 0);
@@ -748,8 +722,6 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
           wl_shell_surface_set_fullscreen(window->wl_shell_surface,
                                           WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT,
                                           0, NULL);
-
-        window->type = ECORE_WL2_WINDOW_TYPE_FULLSCREEN;
      }
    else
      {
@@ -757,8 +729,6 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
           xdg_surface_unset_fullscreen(window->xdg_surface);
         else if (window->wl_shell_surface)
           wl_shell_surface_set_toplevel(window->wl_shell_surface);
-
-        window->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
 
         _ecore_wl2_window_configure_send(window, window->saved.w,
                                          window->saved.h, 0);
@@ -879,8 +849,6 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
                                        &states, 0);
              wl_array_release(&states);
           }
-
-        window->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
      }
 }
 
