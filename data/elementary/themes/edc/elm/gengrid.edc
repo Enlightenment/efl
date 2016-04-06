@@ -802,14 +802,12 @@ group { name: "elm/gengrid/item/thumb/default";
          signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected" 0.0;
          target: "base";
-         target: "icon_area";
          target: "glow";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
-         target: "icon_area";
          target: "glow";
       }
       program {
