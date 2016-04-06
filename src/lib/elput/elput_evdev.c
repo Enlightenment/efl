@@ -16,6 +16,18 @@ _seat_caps_update(Elput_Seat *seat)
    ecore_event_add(ELPUT_EVENT_SEAT_CAPS, ev, NULL, NULL);
 }
 
+static void
+_seat_frame_send(Elput_Seat *seat)
+{
+   Elput_Event_Seat_Frame *ev;
+
+   ev = calloc(1, sizeof(Elput_Event_Seat_Frame));
+   if (!ev) return;
+
+   ev->seat = seat;
+   ecore_event_add(ELPUT_EVENT_SEAT_FRAME, ev, NULL, NULL);
+}
+
 static int
 _keyboard_fd_get(off_t size)
 {
@@ -373,10 +385,7 @@ _evdev_event_process(struct libinput_event *event)
         Elput_Device *edev;
 
         edev = libinput_device_get_user_data(idev);
-        if (edev)
-          {
-             /* TODO: send seat frame event ?? */
-          }
+        if (edev) _seat_frame_send(edev->seat);
      }
 
    return ret;

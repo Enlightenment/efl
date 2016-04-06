@@ -52,7 +52,14 @@ typedef struct _Elput_Event_Seat_Caps
    Elput_Seat *seat;
 } Elput_Event_Seat_Caps;
 
+/* structure to represent event for seat frame */
+typedef struct _Elput_Event_Seat_Frame
+{
+   Elput_Seat *seat;
+} Elput_Event_Seat_Frame;
+
 EAPI extern int ELPUT_EVENT_SEAT_CAPS;
+EAPI extern int ELPUT_EVENT_SEAT_FRAME;
 
 /**
  * @file

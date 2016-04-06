@@ -7,6 +7,7 @@ static int _elput_init_count = 0;
 int _elput_log_dom = -1;
 
 EAPI int ELPUT_EVENT_SEAT_CAPS = -1;
+EAPI int ELPUT_EVENT_SEAT_FRAME = -1;
 
 EAPI int
 elput_init(void)
@@ -26,6 +27,7 @@ elput_init(void)
      }
 
    ELPUT_EVENT_SEAT_CAPS = ecore_event_type_new();
+   ELPUT_EVENT_SEAT_FRAME = ecore_event_type_new();
 
    return _elput_init_count;
 
@@ -48,6 +50,7 @@ elput_shutdown(void)
    if (--_elput_init_count != 0) return _elput_init_count;
 
    ELPUT_EVENT_SEAT_CAPS = -1;
+   ELPUT_EVENT_SEAT_FRAME = -1;
 
    eina_log_domain_unregister(_elput_log_dom);
    _elput_log_dom = -1;
