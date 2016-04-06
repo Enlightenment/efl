@@ -301,6 +301,8 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
 static void
 _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj);
 static Eina_Bool _elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd);
+static void _elm_win_frame_add(Elm_Win_Data *sd, const char *style);
+static void _elm_win_frame_del(Elm_Win_Data *sd);
 
 #ifdef HAVE_ELEMENTARY_X
 static void _elm_win_xwin_update(Elm_Win_Data *sd);
@@ -1411,24 +1413,44 @@ _elm_win_state_change(Ecore_Evas *ee)
      }
    if (ch_fullscreen)
      {
-        _elm_win_frame_obj_update(sd);
+        const char *engine_name = ecore_evas_engine_name_get(sd->ee);
+        Eina_Bool need_frame = eina_streq(engine_name, ELM_WAYLAND_SHM) ||
+                               eina_streq(engine_name, ELM_WAYLAND_EGL);
+        if (need_frame)
+          {
+             if ((!sd->fullscreen) && (!sd->frame_obj))
+               {
+                  _elm_win_frame_add(sd, "default");
+                  evas_object_show(sd->frame_obj);
+               }
+             else if (sd->fullscreen && sd->frame_obj)
+               _elm_win_frame_del(sd);
+          }
+
         if (sd->fullscreen)
           {
              int w, h;
-
+#ifdef HAVE_ELEMENTARY_WL2
+             if (need_frame)
+               {
+                  _elm_win_opaque_update(sd);
+                  sd->wl.opaque_dirty = 1;
+               }
+#endif
              eo_event_callback_call
                (obj, ELM_WIN_EVENT_FULLSCREEN, NULL);
-             if (sd->frame_obj)
-               evas_object_hide(sd->frame_obj);
-             ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
-             ecore_evas_resize(sd->ee, w, h);
           }
         else
           {
+#ifdef HAVE_ELEMENTARY_WL2
+             if (need_frame)
+               {
+                  _elm_win_opaque_update(sd);
+                  _elm_win_frame_obj_update(sd);
+               }
+#endif
              eo_event_callback_call
                (obj, ELM_WIN_EVENT_UNFULLSCREEN, NULL);
-             if (sd->frame_obj)
-               evas_object_show(sd->frame_obj);
           }
      }
    if (ch_maximized)
@@ -3054,13 +3076,13 @@ _elm_win_frame_pre_render(void *data, Evas *e EINA_UNUSED, void *ev EINA_UNUSED)
 #endif
 
 static void
-_elm_win_frame_add(Elm_Win_Data *sd,
-                   const char *style)
+_elm_win_frame_add(Elm_Win_Data *sd, const char *style)
 {
    Evas_Object *obj = sd->obj;
    int w, h, mw, mh;
    short layer;
 
+   if (sd->frame_obj) return;
    sd->frame_obj = edje_object_add(sd->evas);
    layer = evas_object_layer_get(obj);
    evas_object_layer_set(sd->frame_obj, layer + 1);
@@ -4370,28 +4392,8 @@ _elm_win_fullscreen_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool fullscr
    else
      {
 //        sd->fullscreen = fullscreen;
-        Eina_Bool need_frame = engine_name &&
-                               ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
-                                (!strcmp(engine_name, ELM_WAYLAND_EGL)));
-
-        if (need_frame)
-          need_frame = !ecore_evas_borderless_get(sd->ee);
-
         TRAP(sd, fullscreen_set, fullscreen);
 
-        if (fullscreen)
-          {
-             if (need_frame)
-               _elm_win_frame_del(sd);
-          }
-        else
-          {
-             if (need_frame)
-               _elm_win_frame_add(sd, "default");
-
-             if (sd->frame_obj)
-               evas_object_show(sd->frame_obj);
-          }
 #ifdef HAVE_ELEMENTARY_X
         _elm_win_xwin_update(sd);
 #endif
