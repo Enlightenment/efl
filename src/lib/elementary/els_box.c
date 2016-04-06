@@ -265,7 +265,7 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
                   aspect = EVAS_ASPECT_CONTROL_NONE;
                   ERR("Invalid aspect specified!");
                }
-             if (paspect < 100) //value starts overflowed as UINT_MAX
+             if ((unsigned) paspect < 100) //value starts overflowed as UINT_MAX
                {
                   /* this condition can cause some items to not be the same size,
                    * resulting in a non-homogeneous homogeneous layout
