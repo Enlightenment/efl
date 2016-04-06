@@ -89,7 +89,6 @@ EO_VOID_FUNC_BODY(simple_pure_virtual);
 EO_VOID_FUNC_BODY(simple_no_implementation);
 
 static Eo_Op_Description op_descs[] = {
-     EO_OP_FUNC_OVERRIDE(eo_dbg_info_get, _dbg_info_get),
      EO_OP_FUNC(simple_a_set, _a_set),
      EO_OP_FUNC(simple_a_get, _a_get),
      EO_OP_FUNC(simple_a_print, _a_print),
@@ -97,6 +96,7 @@ static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_recursive, _recursive),
      EO_OP_FUNC(simple_part_get, _part_get),
      EO_OP_FUNC(simple_pure_virtual, NULL),
+     EO_OP_FUNC_OVERRIDE(eo_dbg_info_get, _dbg_info_get),
 };
 
 static const Eo_Class_Description class_desc = {
@@ -112,3 +112,28 @@ static const Eo_Class_Description class_desc = {
 
 EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL)
 
+
+static int
+_beef_get(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
+{
+   return 0xBEEF;
+}
+
+EO_FUNC_BODY_CONST(simple2_class_beef_get, int, 0);
+
+static Eo_Op_Description op_descs2[] = {
+     EO_OP_CLASS_FUNC(simple2_class_beef_get, _beef_get),
+};
+
+static const Eo_Class_Description class_desc2 = {
+     EO_VERSION,
+     "Simple2",
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(op_descs2),
+     NULL,
+     0,
+     NULL,
+     NULL
+};
+
+EO_DEFINE_CLASS(simple2_class_get, &class_desc2, EO_CLASS, NULL)
