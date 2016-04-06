@@ -1706,7 +1706,7 @@ elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
 EAPI Elm_Image_Orient
 elm_image_orient_get(const Evas_Object *obj)
 {
-   ELM_IMAGE_CHECK(obj) EVAS_IMAGE_ORIENT_NONE;
+   ELM_IMAGE_CHECK(obj) ELM_IMAGE_ORIENT_NONE;
    ELM_IMAGE_DATA_GET(obj, sd);
 
    return sd->image_orient;
