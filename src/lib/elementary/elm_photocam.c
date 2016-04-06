@@ -1952,7 +1952,7 @@ done:
    if (an)
      {
         // FIXME: If one day we do support partial animator in photocam, this would require change
-        Eo_Event event = {0};
+        Eo_Event event = {};
         event.obj = evas_object_evas_get(obj);
         if (!_zoom_anim_cb(obj, &event))
           {

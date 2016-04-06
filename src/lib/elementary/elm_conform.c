@@ -994,7 +994,7 @@ _elm_conformant_eo_base_constructor(Eo *obj, Elm_Conformant_Data *sd)
    evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
-   Eo_Event event = {0};
+   Eo_Event event = {};
    event.obj = sd->win;
    sd->win = elm_widget_top_get(obj);
    _on_indicator_mode_changed(obj, &event);

@@ -134,7 +134,7 @@ _elm_fileselector_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
 static Eina_Bool
 _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   Eo_Event event = {0};
+   Eo_Event event = {};
    _ok(obj, &event);
    return EINA_TRUE;
 }
@@ -142,7 +142,7 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 static Eina_Bool
 _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   Eo_Event event = {0};
+   Eo_Event event = {};
    _canc(obj, &event);
    return EINA_TRUE;
 }

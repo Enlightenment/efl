@@ -2006,7 +2006,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           }
         else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           {
-             Eo_Event event = {0};
+             Eo_Event event = {};
              event.obj = sd->cb_data[sd->sel_color_type]->lbt;
              _button_clicked_cb(sd->cb_data[sd->sel_color_type], &event);
           }
@@ -2020,7 +2020,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           }
         else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           {
-             Eo_Event event = {0};
+             Eo_Event event = {};
              event.obj = sd->cb_data[sd->sel_color_type]->rbt;
              _button_clicked_cb(sd->cb_data[sd->sel_color_type], &event);
           }
