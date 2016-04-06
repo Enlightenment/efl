@@ -143,7 +143,7 @@ struct _Elput_Pointer
    unsigned int timestamp;
 
    int minx, miny;
-   int maxx, maxy;
+   int maxw, maxh;
    int hotx, hoty;
 
    struct
@@ -190,6 +190,8 @@ struct _Elput_Seat
         int kbd, ptr, touch;
      } count;
 
+   unsigned int modifiers;
+
    Elput_Keyboard *kbd;
    Elput_Pointer *ptr;
    Elput_Touch *touch;
@@ -200,6 +202,10 @@ struct _Elput_Seat
 struct _Elput_Device
 {
    Elput_Seat *seat;
+
+   /* TODO: we will need an API to set this */
+   uint32_t window;
+   uint32_t ow, oh;
 
    const char *path;
    const char *output_name;
@@ -235,6 +241,10 @@ void _evdev_device_destroy(Elput_Device *edev);
 void _evdev_keyboard_destroy(Elput_Keyboard *kbd);
 void _evdev_pointer_destroy(Elput_Pointer *ptr);
 void _evdev_touch_destroy(Elput_Touch *touch);
+
+Elput_Pointer *_evdev_pointer_get(Elput_Seat *seat);
+Elput_Keyboard *_evdev_keyboard_get(Elput_Seat *seat);
+Elput_Touch *_evdev_touch_get(Elput_Seat *seat);
 
 extern Elput_Interface _logind_interface;
 
