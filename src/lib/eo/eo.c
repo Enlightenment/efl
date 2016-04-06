@@ -347,12 +347,15 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
              if ((const void *)inputklass == cache->index[i].klass)
                {
                   func = (const op_type_funcs *)cache->entry[i].func;
-                  call->func = func->func;
-                  if (is_obj)
+                  if (EINA_LIKELY(func->func && func->src))
                     {
-                       call->data = (char *) obj + cache->off[i].off;
+                       call->func = func->func;
+                       if (is_obj)
+                         {
+                            call->data = (char *) obj + cache->off[i].off;
+                         }
+                       return EINA_TRUE;
                     }
-                  return EINA_TRUE;
                }
           }
 #endif
