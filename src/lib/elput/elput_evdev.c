@@ -3,7 +3,17 @@
 static void
 _seat_caps_update(Elput_Seat *seat)
 {
-   /* TODO: raise event for seat caps */
+   Elput_Event_Seat_Caps *ev;
+
+   ev = calloc(1, sizeof(Elput_Event_Seat_Caps));
+   if (!ev) return;
+
+   ev->pointer_count = seat->count.ptr;
+   ev->keyboard_count = seat->count.kbd;
+   ev->touch_count = seat->count.touch;
+   ev->seat = seat;
+
+   ecore_event_add(ELPUT_EVENT_SEAT_CAPS, ev, NULL, NULL);
 }
 
 static int
@@ -360,7 +370,13 @@ _evdev_event_process(struct libinput_event *event)
 
    if (frame)
      {
+        Elput_Device *edev;
 
+        edev = libinput_device_get_user_data(idev);
+        if (edev)
+          {
+             /* TODO: send seat frame event ?? */
+          }
      }
 
    return ret;

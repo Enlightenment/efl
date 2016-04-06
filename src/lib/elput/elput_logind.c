@@ -78,9 +78,10 @@ _cb_device_paused(void *data, const Eldbus_Message *msg)
         if (!strcmp(type, "pause"))
           _logind_device_pause_complete(em, maj, min);
 
-        /* TODO */
-        /* if ((em->sync) && (maj == DRM_MAJOR)) */
-        /*   _ecore_drm2_launcher_activate_send(em, EINA_FALSE); */
+        if ((em->sync) && (maj == 226)) // DRM_MAJOR
+          {
+             /* TODO: _ecore_drm2_launcher_activate_send(em, EINA_FALSE); */
+          }
      }
 }
 
@@ -102,9 +103,10 @@ _cb_device_resumed(void *data, const Eldbus_Message *msg)
 
    if (eldbus_message_arguments_get(msg, "uuh", &maj, &min, &fd))
      {
-        /* TODO */
-        /* if ((em->sync) && (maj == DRM_MAJOR)) */
-        /*   _ecore_drm2_launcher_activate_send(em, EINA_TRUE); */
+        if ((em->sync) && (maj == 226)) // DRM_MAJOR
+          {
+             /* TODO: _ecore_drm2_launcher_activate_send(em, EINA_TRUE); */
+          }
      }
 }
 
@@ -123,9 +125,10 @@ _cb_property_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
    if (!strcmp(ev->name, "Active"))
      {
         eina_value_get(ev->value, &active);
-        /* TODO */
-        /* if ((!em->sync) || (!active)) */
-        /*   _ecore_drm2_launcher_activate_send(em, active); */
+        if ((!em->sync) || (!active))
+          {
+             /* TODO: _ecore_drm2_launcher_activate_send(em, active); */
+          }
      }
 }
 

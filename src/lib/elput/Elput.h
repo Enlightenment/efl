@@ -43,6 +43,17 @@ typedef struct _Elput_Pointer Elput_Pointer;
 /* opaque structure to represent a touch device */
 typedef struct _Elput_Touch Elput_Touch;
 
+/* structure to represent event for seat capability changes */
+typedef struct _Elput_Event_Seat_Caps
+{
+   int pointer_count;
+   int keyboard_count;
+   int touch_count;
+   Elput_Seat *seat;
+} Elput_Event_Seat_Caps;
+
+EAPI extern int ELPUT_EVENT_SEAT_CAPS;
+
 /**
  * @file
  * @brief Ecore functions for dealing with libinput
