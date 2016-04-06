@@ -24,7 +24,7 @@ my_im_ch(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    Evas_Object *win = data;
    Evas_Object *im = evas_object_data_get(win, "im");
    Evas_Object *rdg = evas_object_data_get(win, "rdg");
-   Evas_Image_Orient v = elm_radio_value_get(rdg);
+   Elm_Image_Orient v = elm_radio_value_get(rdg);
 
    elm_image_orient_set(im, v);
    fprintf(stderr, "Set %i and got %i\n",
