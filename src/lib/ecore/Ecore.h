@@ -296,7 +296,6 @@
 #define _ECORE_H
 
 #include <Efl_Config.h>
-#include <Efl.h>
 
 #ifdef _MSC_VER
 # include <Evil.h>
@@ -304,6 +303,7 @@
 
 #include <Eina.h>
 #include <Eo.h>
+#include <Efl.h>
 
 #ifdef EAPI
 # undef EAPI
