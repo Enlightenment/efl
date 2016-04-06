@@ -48,21 +48,6 @@ interface Efl.Image ()
             ratio: double; [[The image's ratio.]]
          }
       }
-      @property orientation {
-         [[The image orientation allows rotating and flipping the image
-           at render time.
-
-           Default is @Efl.Gfx.Orientation.orient_none
-
-           @since 1.14
-         ]]
-         set {}
-         get {}
-         values {
-            orient: Efl.Gfx.Orientation;
-         }
-      }
-
       @property border {
          [[Dimensions of this image's border, a region that does not scale
            with the center area.

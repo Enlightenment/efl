@@ -1,0 +1,41 @@
+enum Efl.Orient
+{
+   [[Orientation
+
+     See also @Efl.Orientation
+   ]]
+   legacy: efl;
+   orient_none = 0,
+   orient_0 = 0, [[no orientation change]]
+   orient_90 = 90, [[orient 90 degrees clockwise]]
+   orient_180 = 180, [[orient 180 degrees clockwise]]
+   orient_270 = 270, [[rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise)]]
+   orient_up = 0, [[orient up]]
+   orient_right = 90, [[orient right]]
+   orient_down = 180, [[orient down]]
+   orient_left = 270, [[orient left]]
+   orient_vertical = 0, [[orient vertical]]
+   orient_horizontal = 90 [[orient horizontal]]
+
+}
+
+interface Efl.Orientation
+{
+   legacy_prefix: null;
+   methods {
+       @property orientation{
+         [[Control the orientation of a given widget
+
+           Use this function to change how your widget is to be
+           disposed: vertically or horizontally or inverted vertically
+           or inverted horizontally]]
+         set {
+         }
+         get {
+         }
+         values {
+            dir: Efl.Orient; [[Direction]]
+         }
+      }
+   }
+}

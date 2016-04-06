@@ -1229,20 +1229,40 @@ _elm_image_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd,
 }
 
 EOLIAN static void
-_elm_image_efl_image_orientation_set(Eo *obj, Elm_Image_Data *sd, Efl_Gfx_Orientation orient)
+_elm_image_efl_orientation_orientation_set(Eo *obj, Elm_Image_Data *sd, Efl_Orient orient)
 {
    if (sd->edje) return;
    if (sd->orient == orient) return;
 
-   evas_object_image_orient_set(sd->img, (Evas_Image_Orient) orient);
+   efl_orientation_set(sd->img, orient);
+
    sd->orient = orient;
    _elm_image_internal_sizing_eval(obj, sd);
 }
 
-EOLIAN static Efl_Gfx_Orientation
-_elm_image_efl_image_orientation_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+EOLIAN static Efl_Orient
+_elm_image_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
    return sd->orient;
+}
+
+
+EOLIAN static void
+_elm_image_efl_flip_flip_set(Eo *obj, Elm_Image_Data *sd, Efl_Flip_Value flip)
+{
+   if (sd->edje) return;
+   if (sd->flip == flip) return;
+
+   efl_flip_set(sd->img, flip);
+
+   sd->flip = flip;
+   _elm_image_internal_sizing_eval(obj, sd);
+}
+
+EOLIAN static Efl_Flip_Value
+_elm_image_efl_flip_flip_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+{
+   return sd->flip;
 }
 
 /**
@@ -1633,13 +1653,63 @@ elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disable)
 EAPI void
 elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
 {
-   efl_image_orientation_set(obj, (Efl_Gfx_Orientation) orient);
+   Efl_Orient dir;
+   Efl_Flip_Value flip;
+
+   ELM_IMAGE_DATA_GET(obj, sd);
+   sd->image_orient = orient;
+
+   switch (orient)
+     {
+      case EVAS_IMAGE_ORIENT_0:
+         dir = EFL_ORIENT_0;
+         flip = EFL_FLIP_NONE;
+         break;
+      case EVAS_IMAGE_ORIENT_90:
+         dir = EFL_ORIENT_90;
+         flip = EFL_FLIP_NONE;
+         break;
+      case EVAS_IMAGE_ORIENT_180:
+         dir = EFL_ORIENT_180;
+         flip = EFL_FLIP_NONE;
+         break;
+      case EVAS_IMAGE_ORIENT_270:
+         dir = EFL_ORIENT_270;
+         flip = EFL_FLIP_NONE;
+         break;
+      case EVAS_IMAGE_FLIP_HORIZONTAL:
+         dir = EFL_ORIENT_0;
+         flip = EFL_FLIP_HORIZONTAL;
+         break;
+      case EVAS_IMAGE_FLIP_VERTICAL:
+         dir = EFL_ORIENT_0;
+         flip = EFL_FLIP_VERTICAL;
+         break;
+      case EVAS_IMAGE_FLIP_TRANSVERSE:
+         dir = EFL_ORIENT_270;
+         flip = EFL_FLIP_HORIZONTAL;
+         break;
+      case EVAS_IMAGE_FLIP_TRANSPOSE:
+         dir = EFL_ORIENT_270;
+         flip = EFL_FLIP_VERTICAL;
+         break;
+      default:
+         dir = EFL_ORIENT_0;
+         flip = EFL_FLIP_NONE;
+         break;
+     }
+
+   efl_orientation_set(obj, dir);
+   efl_flip_set(obj, flip);
 }
 
 EAPI Elm_Image_Orient
 elm_image_orient_get(const Evas_Object *obj)
 {
-   return (Elm_Image_Orient) efl_image_orientation_get(obj);
+   ELM_IMAGE_CHECK(obj) EVAS_IMAGE_ORIENT_NONE;
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   return sd->image_orient;
 }
 
 EAPI Evas_Object*

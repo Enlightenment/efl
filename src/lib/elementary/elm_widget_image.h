@@ -61,7 +61,9 @@ struct _Elm_Image_Data
    int                   frame_count;
    int                   cur_frame;
 
-   Efl_Gfx_Orientation   orient;
+   Elm_Image_Orient      image_orient; // to support EAPI
+   Efl_Orient            orient;
+   Efl_Flip_Value        flip;
 
    struct {
       Ecore_Thread      *th;

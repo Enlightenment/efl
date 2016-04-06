@@ -341,11 +341,10 @@ _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Dat
    evas_object_change(eo_obj, obj);
 }
 
-EOLIAN static void
-_evas_image_efl_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Gfx_Orientation _orient)
+void
+_evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient orient)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   Evas_Image_Orient orient = (Evas_Image_Orient) _orient;
    int iw, ih;
 
    if (o->cur->orient == orient) return;
@@ -391,10 +390,76 @@ _evas_image_efl_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Gfx_Or
    evas_object_change(eo_obj, obj);
 }
 
-EOLIAN static Efl_Gfx_Orientation
-_evas_image_efl_image_orientation_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+static Evas_Image_Orient
+_get_image_orient_from_orient_flip(Efl_Orient orient, Efl_Flip_Value flip)
 {
-   return (Efl_Gfx_Orientation) o->cur->orient;
+   switch (orient)
+     {
+      case EFL_ORIENT_0:
+         if (flip == EFL_FLIP_HORIZONTAL)
+           return EVAS_IMAGE_FLIP_HORIZONTAL;
+         else if (flip == EFL_FLIP_VERTICAL)
+           return EVAS_IMAGE_FLIP_VERTICAL;
+         else
+           return EVAS_IMAGE_ORIENT_0;
+      case EFL_ORIENT_90:
+         if (flip == EFL_FLIP_HORIZONTAL)
+           return EVAS_IMAGE_FLIP_TRANSPOSE;
+         else if (flip == EFL_FLIP_VERTICAL)
+           return EVAS_IMAGE_FLIP_TRANSVERSE;
+         else
+           return EVAS_IMAGE_ORIENT_90;
+      case EFL_ORIENT_180:
+         if (flip == EFL_FLIP_HORIZONTAL)
+           return EVAS_IMAGE_FLIP_VERTICAL;
+         else if (flip == EFL_FLIP_VERTICAL)
+           return EVAS_IMAGE_FLIP_HORIZONTAL;
+         else
+           return EVAS_IMAGE_ORIENT_180;
+      case EFL_ORIENT_270:
+         if (flip == EFL_FLIP_HORIZONTAL)
+           return EVAS_IMAGE_FLIP_TRANSVERSE;
+         else if (flip == EFL_FLIP_VERTICAL)
+           return EVAS_IMAGE_FLIP_TRANSPOSE;
+         else
+           return EVAS_IMAGE_ORIENT_270;
+      default:
+         return EVAS_IMAGE_ORIENT_NONE;
+     }
+}
+
+EOLIAN static void
+_evas_image_efl_orientation_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Orient dir)
+{
+   Evas_Image_Orient orient;
+
+   o->orient_value = dir;
+   orient = _get_image_orient_from_orient_flip(dir, o->flip_value);
+
+   _evas_image_orientation_set(obj, o, orient);
+}
+
+EOLIAN static Efl_Orient
+_evas_image_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o)
+{
+   return o->orient_value;
+}
+
+EOLIAN static void
+_evas_image_efl_flip_flip_set(Eo *obj, Evas_Image_Data *o, Efl_Flip_Value flip)
+{
+   Evas_Image_Orient orient;
+
+   o->flip_value = flip;
+   orient = _get_image_orient_from_orient_flip(o->orient_value, flip);
+
+   _evas_image_orientation_set(obj, o, orient);
+}
+
+EOLIAN static Efl_Flip_Value
+_evas_image_efl_flip_flip_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o)
+{
+   return o->flip_value;
 }
 
 EOLIAN static void

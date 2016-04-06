@@ -1,0 +1,32 @@
+enum Efl.Flip_Value
+{
+   [[Flip
+
+     See also @Efl.Flip
+   ]]
+   legacy: efl;
+   flip_none = 0, [[no flip]]
+   flip_horizontal = 1, [[flip image horizontally]]
+   flip_vertical = 2 [[flip image vertically]]
+}
+
+interface Efl.Flip
+{
+   legacy_prefix: null;
+   methods {
+       @property flip{
+         [[Control the flip of the given image
+
+           Use this function to change how your image is to be
+           flipped: vertically or horizontally or transpose
+           or traverse]]
+         set {
+         }
+         get {
+         }
+         values {
+            flip: Efl.Flip_Value; [[Flip]]
+         }
+      }
+   }
+}

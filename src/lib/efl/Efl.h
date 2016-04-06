@@ -69,6 +69,8 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_player.eo.h"
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_properties.eo.h"
+#include "interfaces/efl_orientation.eo.h"
+#include "interfaces/efl_flip.eo.h"
 
 /* Core interface */
 #include "interfaces/efl_animator.eo.h"

@@ -347,14 +347,19 @@ EAPI void
 evas_object_image_orient_set(Evas_Object *obj, Evas_Image_Orient orient)
 {
    EVAS_IMAGE_API(obj);
-   efl_image_orientation_set(obj, (Efl_Gfx_Orientation) orient);
+
+   Evas_Image_Data *o = eo_data_scope_get(obj, EVAS_IMAGE_CLASS);
+   _evas_image_orientation_set(obj, o, orient);
 }
 
 EAPI Evas_Image_Orient
 evas_object_image_orient_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_IMAGE_ORIENT_NONE);
-   return (Evas_Image_Orient) efl_image_orientation_get(obj);
+
+   Evas_Image_Data *o = eo_data_scope_get(obj, EVAS_IMAGE_CLASS);
+
+   return o->cur->orient;
 }
 
 EAPI void

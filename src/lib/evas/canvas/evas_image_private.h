@@ -114,6 +114,8 @@ struct _Evas_Image_Data
 
    Efl_Image_Scale_Hint   scale_hint;
    Efl_Image_Content_Hint content_hint;
+   Efl_Flip_Value         flip_value;
+   Efl_Orient             orient_value;
 
    Eina_Bool         changed : 1;
    Eina_Bool         dirty_pixels : 1;
@@ -169,6 +171,7 @@ void _evas_image_load_region_get(const Eo *eo_obj, int *x, int *y, int *w, int *
 void _evas_image_load_orientation_set(Eo *eo_obj, Eina_Bool enable);
 Eina_Bool _evas_image_load_orientation_get(const Eo *eo_obj);
 Eina_Bool _evas_image_load_region_support_get(const Eo *eo_obj);
+void _evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient orient);
 
 /* Efl.Image.Animated */
 Eina_Bool _evas_image_animated_get(const Eo *eo_obj);

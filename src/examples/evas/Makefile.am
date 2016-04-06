@@ -154,6 +154,11 @@ evas_images4_SOURCES = evas-images4.c
 evas_images4_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_images4_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_images5
+evas_images5_SOURCES = evas-images5.c
+evas_images5_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_images5_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_text
 evas_text_SOURCES = evas-text.c
 evas_text_LDADD = $(ECORE_EVAS_COMMON_LDADD)
@@ -347,6 +352,7 @@ evas-images.c \
 evas-images2.c \
 evas-images3.c \
 evas-images4.c \
+evas-images5.c \
 evas-init-shutdown.c \
 evas-map-utils.c \
 evas-map-aa.c \
