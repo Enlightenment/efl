@@ -243,6 +243,12 @@ local funct_to_str = {
     [eolian.function_type.METHOD] = "method"
 }
 
+local propt_to_type = {
+    [eolian.function_type.PROPERTY] = "(get, set)",
+    [eolian.function_type.PROP_GET] = "(get)",
+    [eolian.function_type.PROP_SET] = "(set)",
+}
+
 local gen_func_link = function(base, f)
     local ft = funct_to_str[f:type_get()]
     return base .. ":" .. ft .. ":" .. f:name_get():lower()
@@ -256,6 +262,8 @@ local classt_to_str = {
     [eolian.class_type.MIXIN] = "mixin",
     [eolian.class_type.INTERFACE] = "interface"
 }
+
+local build_method, build_property
 
 local build_reftable = function(f, title, ctitle, ctype, t)
     if not t or #t == 0 then
@@ -285,11 +293,20 @@ local build_functable = function(f, title, ctitle, cl, tp)
     local nt = {}
     for i, v in ipairs(t) do
         local lbuf = Buffer()
-        local ftype = funct_to_str[v:type_get()]
         lbuf:write_link(gen_func_link(cns, v), v:name_get())
+        local pt = propt_to_type[v:type_get()]
+        if pt then
+            lbuf:write_raw(" ")
+            lbuf:write_i(pt)
+        end
         nt[#nt + 1] = {
             lbuf:finish(), get_brief_fdoc(v)
         }
+        if funct_to_str[v:type_get()] == "property" then
+            build_property(v, cl, linkt)
+        else
+            build_method(v, cl, linkt)
+        end
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
     f:write_table({ ctitle, "Brief description" }, nt)
@@ -422,6 +439,63 @@ local build_classes = function()
         end
         build_class(cl)
     end
+end
+
+build_method = function(fn, cl)
+    local cns = gen_namespaces(cl, classt_to_str[cl:type_get()], false):lower()
+        .. ":method:" .. fn:name_get():lower()
+    local f = Writer(cns)
+
+    f:write_h(fn:name_get(), 2)
+
+    f:write_h("Description", 3)
+    write_full_doc(f, fn:documentation_get(eolian.function_type.METHOD))
+
+    f:finish()
+end
+
+build_property = function(fn, cl)
+    local cns = gen_namespaces(cl, classt_to_str[cl:type_get()], false):lower()
+        .. ":property:" .. fn:name_get():lower()
+    local f = Writer(cns)
+
+    local fts = eolian.function_type
+    local ft = fn:type_get()
+    local isget = (ft == fts.PROP_GET or ft == fts.PROPERTY)
+    local isset = (ft == fts.PROP_SET or ft == fts.PROPERTY)
+
+    local doc = fn:documentation_get(fts.PROPERTY)
+    local gdoc = fn:documentation_get(fts.PROP_GET)
+    local sdoc = fn:documentation_get(fts.PROP_SET)
+
+    f:write_h(fn:name_get(), 2)
+
+    if isget and isset then
+        f:write_h("Description", 3)
+        if doc or (not gdoc and not sdoc) then
+            write_full_doc(f, doc)
+        end
+    end
+
+    if isget and gdoc then
+        if isset then
+            f:write_h("Getter", 4)
+        else
+            f:write_h("Description", 3)
+        end
+        write_full_doc(f, gdoc)
+    end
+
+    if isset and sdoc then
+        if isget then
+            f:write_h("Setter", 4)
+        else
+            f:write_h("Description", 3)
+        end
+        write_full_doc(f, sdoc)
+    end
+
+    f:finish()
 end
 
 getopt.parse {
