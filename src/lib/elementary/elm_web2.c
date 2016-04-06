@@ -44,6 +44,8 @@ static Elm_Web_Module ewm = {
   NULL,
   NULL,
 
+  NULL,
+
   NULL
 };
 
