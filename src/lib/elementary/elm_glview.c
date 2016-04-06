@@ -46,7 +46,7 @@ _elm_glview_elm_widget_on_focus(Eo *obj, Elm_Glview_Data *_pd EINA_UNUSED, Elm_O
 static void
 _glview_update_surface(Evas_Object *obj)
 {
-   Evas_Native_Surface ns = { 0 };
+   Evas_Native_Surface ns = {};
    Evas_GL_Options_Bits opt;
 
    ELM_GLVIEW_DATA_GET(obj, sd);
