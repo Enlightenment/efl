@@ -24,6 +24,95 @@ const struct libinput_interface _input_interface =
    _cb_close_restricted,
 };
 
+static Elput_Seat *
+_udev_seat_create(Elput_Manager *em, const char *name)
+{
+   Elput_Seat *eseat;
+
+   eseat = calloc(1, sizeof(Elput_Seat));
+   if (!eseat) return NULL;
+
+   eseat->name = eina_stringshare_add(name);
+   em->input.seats = eina_list_append(em->input.seats, eseat);
+
+   return eseat;
+}
+
+static void
+_udev_seat_destroy(Elput_Seat *eseat)
+{
+   Elput_Device *edev;
+
+   EINA_LIST_FREE(eseat->devices, edev)
+     _evdev_device_destroy(edev);
+
+   if (eseat->kbd) _evdev_keyboard_destroy(eseat->kbd);
+   if (eseat->ptr) _evdev_pointer_destroy(eseat->ptr);
+   if (eseat->touch) _evdev_touch_destroy(eseat->touch);
+
+   eina_stringshare_del(eseat->name);
+   free(eseat);
+}
+
+static Elput_Seat *
+_udev_seat_named_get(Elput_Manager *em, const char *name)
+{
+   Elput_Seat *eseat;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(em->input.seats, l, eseat)
+     if (!strcmp(eseat->name, name)) return eseat;
+
+   return _udev_seat_create(em, name);
+}
+
+static Elput_Seat *
+_udev_seat_get(Elput_Manager *em, struct libinput_device *device)
+{
+   struct libinput_seat *lseat;
+   const char *name;
+
+   lseat = libinput_device_get_seat(device);
+   name = libinput_seat_get_logical_name(lseat);
+
+   return _udev_seat_named_get(em, name);
+}
+
+static void
+_device_add(Elput_Manager *em, struct libinput_device *dev)
+{
+   Elput_Seat *eseat;
+   Elput_Device *edev;
+   const char *oname;
+
+   eseat = _udev_seat_get(em, dev);
+   if (!eseat) return;
+
+   edev = _evdev_device_create(eseat, dev);
+   if (!edev) return;
+
+   oname = libinput_device_get_output_name(dev);
+   eina_stringshare_replace(&edev->output_name, oname);
+
+   eseat->devices = eina_list_append(eseat->devices, edev);
+}
+
+static void
+_device_remove(Elput_Manager *em, struct libinput_device *device)
+{
+   Elput_Seat *eseat;
+   Elput_Device *edev;
+
+   edev = libinput_device_get_user_data(device);
+   if (!edev) return;
+
+   eseat = _udev_seat_get(em, device);
+   if (eseat)
+     eseat->devices = eina_list_remove(eseat->devices, edev);
+
+   _evdev_device_destroy(edev);
+}
+
 static int
 _udev_process_event(struct libinput_event *event)
 {
@@ -40,11 +129,11 @@ _udev_process_event(struct libinput_event *event)
      {
       case LIBINPUT_EVENT_DEVICE_ADDED:
         DBG("Input Device Added: %s", libinput_device_get_name(dev));
-        /* TODO: add device */
+        _device_add(em, dev);
         break;
       case LIBINPUT_EVENT_DEVICE_REMOVED:
         DBG("Input Device Removed: %s", libinput_device_get_name(dev));
-        /* TODO: remove device */
+        _device_remove(em, dev);
         break;
       default:
         ret = 0;
@@ -58,7 +147,7 @@ static void
 _process_event(struct libinput_event *event)
 {
    if (_udev_process_event(event)) return;
-   /* TODO: evdev processing */
+   if (_evdev_event_process(event)) return;
 }
 
 static void
@@ -136,12 +225,15 @@ udev_err:
 EAPI void
 elput_input_shutdown(Elput_Manager *manager)
 {
+   Elput_Seat *seat;
+
    EINA_SAFETY_ON_NULL_RETURN(manager);
    EINA_SAFETY_ON_NULL_RETURN(&manager->input);
 
    if (manager->input.hdlr) ecore_main_fd_handler_del(manager->input.hdlr);
 
-   /* TODO */
+   EINA_LIST_FREE(manager->input.seats, seat)
+     _udev_seat_destroy(seat);
 
    libinput_unref(manager->input.lib);
 }

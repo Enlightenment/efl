@@ -28,6 +28,21 @@
 /* opaque structure to represent an input manager */
 typedef struct _Elput_Manager Elput_Manager;
 
+/* opaque structure to represent an input seat */
+typedef struct _Elput_Seat Elput_Seat;
+
+/* opaque structure to represent an input device */
+typedef struct _Elput_Device Elput_Device;
+
+/* opaque structure to represent a keyboard */
+typedef struct _Elput_Keyboard Elput_Keyboard;
+
+/* opaque structure to represent a mouse */
+typedef struct _Elput_Pointer Elput_Pointer;
+
+/* opaque structure to represent a touch device */
+typedef struct _Elput_Touch Elput_Touch;
+
 /**
  * @file
  * @brief Ecore functions for dealing with libinput
