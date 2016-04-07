@@ -177,6 +177,16 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface_Atspi_Text)
       lines_visible_get {
          return: uint; [[the number of lines currently visible in the widget.]]
       }
+      position_at_coordinates_get {
+         [[get the row, col position for a given coordinate on the widget.]]
+         params {
+            x: Evas_Coord; [[the x coordinate in the widget]]
+            y: Evas_Coord; [[the y coordinate in the widget]]
+            row: uint *; [[the row for the coordinates]]
+            col: int *; [[the column for the coordinates]]
+         }
+         return: bool; [[true if a line exists at these coordinates]]
+      }
 
       //text functions
       text_left_gutter_width_get {

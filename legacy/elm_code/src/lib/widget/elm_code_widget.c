@@ -603,11 +603,12 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
    _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, pd->cursor_line));
 }
 
-static Eina_Bool
-_elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd,
+EOLIAN static Eina_Bool
+_elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
                                              Evas_Coord x, Evas_Coord y,
                                              unsigned int *row, int *col)
 {
+   Elm_Code_Widget *widget;
    Eina_List *item;
    Elm_Code_Line *line;
    Evas_Coord ox, oy, sx, sy, rowy;
@@ -615,6 +616,7 @@ _elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *widget, Elm_Code_W
    int cw, ch, gutter;
    unsigned int guess, number;
 
+   widget = (Elm_Code_Widget *)obj;
    evas_object_geometry_get(widget, &ox, &oy, NULL, NULL);
    elm_scroller_region_get(pd->scroller, &sx, &sy, NULL, NULL);
    x = x + sx - ox;
