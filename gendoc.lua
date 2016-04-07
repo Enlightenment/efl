@@ -272,6 +272,86 @@ local gen_func_link = function(base, f)
     return base .. ":" .. ft .. ":" .. f:name_get():lower()
 end
 
+local gen_func_sig = function(f, ftype)
+    ftype = ftype or eolian.function_type.METHOD
+end
+
+local gen_cparam = function(par, out)
+    local part = par:type_get()
+    local tstr
+    out = out or (par:direction_get() == eolian.parameter_dir.OUT)
+    if part:type_get() == eolian.type_type.POINTER then
+        tstr = part:c_type_get()
+        if out then
+            tstr = tstr .. "*"
+        end
+    elseif out then
+        tstr = part:c_type_get() .. " *"
+    else
+        tstr = part:c_type_get() .. " "
+    end
+    return tstr .. par:name_get()
+end
+
+local gen_func_csig = function(f, ftype)
+    ftype = ftype or eolian.function_type.METHOD
+    assert(ftype ~= eolian.function_type.PROPERTY)
+
+    local cn = f:full_c_name_get(ftype)
+    local rtype = f:return_type_get(ftype)
+
+    if f:type_get() == eolian.function_type.METHOD then
+        local pars = f:parameters_get():to_array()
+        local cnrt = rtype and rtype:c_type_named_get(cn) or ("void " .. cn)
+        for i = 1, #pars do
+            pars[i] = gen_cparam(pars[i])
+        end
+        if #pars == 0 then
+            pars = { "void" }
+        end
+        return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
+    end
+
+    local keys = f:property_keys_get(ftype):to_array()
+    local vals = f:property_values_get(ftype):to_array()
+
+    if ftype == eolian.function_type.PROP_SET then
+        local cnrt = rtype and rtype:c_type_named_get(cn) or ("void " .. cn)
+        local pars = {}
+        for i, par in ipairs(keys) do
+            pars[#pars + 1] = gen_cparam(par)
+        end
+        for i, par in ipairs(vals) do
+            pars[#pars + 1] = gen_cparam(par)
+        end
+        return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
+    end
+
+    -- getters
+    local cnrt
+    if not rtype then
+        if #vals == 1 then
+            cnrt = vals[1]:type_get():c_type_named_get(cn)
+            table.remove(vals, 1)
+        else
+            cnrt = "void " .. cn
+        end
+    else
+        cnrt = rtype:c_type_named_get(cn)
+    end
+    local pars = {}
+    for i, par in ipairs(keys) do
+        pars[#pars + 1] = gen_cparam(par)
+    end
+    for i, par in ipairs(vals) do
+        pars[#pars + 1] = gen_cparam(par, true)
+    end
+    if #pars == 0 then
+        pars = { "void" }
+    end
+    return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
+end
+
 -- builders
 
 local classt_to_str = {
@@ -466,6 +546,9 @@ build_method = function(fn, cl)
 
     f:write_h(fn:name_get(), 2)
 
+    f:write_h("C signature", 3)
+    f:write_raw("<code c>\n", gen_func_csig(fn), "\n</code>\n")
+
     f:write_h("Description", 3)
     write_full_doc(f, fn:documentation_get(eolian.function_type.METHOD))
 
@@ -487,6 +570,16 @@ build_property = function(fn, cl)
     local sdoc = fn:documentation_get(fts.PROP_SET)
 
     f:write_h(fn:name_get(), 2)
+
+    f:write_h("C signature", 3)
+    f:write_raw("<code c>\n")
+    if isget then
+        f:write_raw(gen_func_csig(fn, fts.PROP_GET), "\n")
+    end
+    if isset then
+        f:write_raw(gen_func_csig(fn, fts.PROP_SET), "\n")
+    end
+    f:write_raw("</code>\n")
 
     if isget and isset then
         f:write_h("Description", 3)
