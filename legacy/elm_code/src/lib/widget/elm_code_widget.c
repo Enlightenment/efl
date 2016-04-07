@@ -633,7 +633,7 @@ _elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *widget, Elm_Code_W
      {
         evas_object_geometry_get(grid, NULL, &rowy, NULL, NULL);
 
-        if (rowy - oy < y)
+        if (rowy + sy - oy < y)
           break;
 
         number--;
