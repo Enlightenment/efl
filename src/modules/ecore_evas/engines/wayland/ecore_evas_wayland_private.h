@@ -5,6 +5,7 @@
 # include "config.h"
 #endif
 
+#ifndef ELEMENTARY_H
 //#define LOGFNS 1
 #ifdef LOGFNS
 # include <stdio.h>
@@ -16,7 +17,6 @@
 
 #include <Eina.h>
 #include <Ecore.h>
-#include "ecore_private.h"
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
 #include <Ecore_Wayland.h>
@@ -24,6 +24,8 @@
 #include "ecore_wl2_private.h"
 
 #include <Ecore_Evas.h>
+#endif
+#include "ecore_private.h"
 #include "ecore_evas_private.h"
 #include "ecore_evas_wayland.h"
 
@@ -38,6 +40,7 @@ struct _Ecore_Evas_Engine_Wl_Data
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
    struct wl_egl_window *egl_win;
 #endif
+   Eina_Rectangle content;
    struct wl_callback *anim_callback;
    int x_rel;
    int y_rel;

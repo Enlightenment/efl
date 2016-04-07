@@ -634,6 +634,7 @@ lib_elementary_libelementary_la_CPPFLAGS = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/static_libs/ \
 -I$(top_srcdir)/src/lib/elementary \
+-I$(top_srcdir)/src/modules/ecore_evas/engines/wayland \
 -I$(top_builddir)/src/lib/elementary \
 -DPACKAGE_DATA_DIR=\"$(datadir)/elementary\" \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \

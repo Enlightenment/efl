@@ -11,6 +11,9 @@
 
 #include "elm_priv.h"
 #include "elm_widget_menu.h"
+#ifdef HAVE_ELEMENTARY_WL2
+# include "ecore_evas_wayland_private.h"
+#endif
 
 #define MY_CLASS ELM_WIN_CLASS
 
@@ -1264,7 +1267,9 @@ _elm_win_opaque_update(Elm_Win_Data *sd)
 {
    int ox, oy, ow, oh;
    Eina_Bool alpha;
+   Ecore_Evas_Engine_Wl_Data *wdata;
 
+   wdata = sd->ee->engine.data;
    alpha = ecore_evas_alpha_get(sd->ee);
    if (alpha)
      ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, 0, 0);
@@ -1273,12 +1278,18 @@ _elm_win_opaque_update(Elm_Win_Data *sd)
         ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
         if (!alpha)
           ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
+        wdata->content.x = wdata->content.y = 0;
+        wdata->content.w = ow;
+        wdata->content.h = oh;
         ecore_wl2_window_geometry_set(sd->wl.win, 0, 0, ow, oh);
         return;
      }
 
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
                                  &ox, &oy, &ow, &oh);
+   edje_object_part_geometry_get(sd->frame_obj, "elm.swallow.client",
+                                 &wdata->content.x, &wdata->content.y,
+                                 &wdata->content.w, &wdata->content.h);
    if (!alpha)
      ecore_wl2_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);
    ecore_wl2_window_geometry_set(sd->wl.win, ox, oy, ow, oh);
@@ -1294,12 +1305,13 @@ _elm_win_frame_obj_update(Elm_Win_Data *sd)
 #ifdef HAVE_ELEMENTARY_WL2
    sd->wl.opaque_dirty = 1;
 #endif
+
    if (sd->fullscreen)
      {
-        evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
 #ifdef HAVE_ELEMENTARY_WL2
         _elm_win_opaque_update(sd);
 #endif
+        evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
         return;
      }
 
