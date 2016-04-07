@@ -122,10 +122,18 @@ typedef struct _Ecore_Wl2_Event_Selection_Data_Ready
    Eina_Bool done;
 } Ecore_Wl2_Event_Selection_Data_Ready;
 
+typedef enum
+{
+   ECORE_WL2_WINDOW_STATE_NONE = 0,
+   ECORE_WL2_WINDOW_STATE_FULLSCREEN = (1 << 0),
+   ECORE_WL2_WINDOW_STATE_MAXIMIZED = (1 << 1),
+} Ecore_Wl2_Window_States;
+
 typedef struct _Ecore_Wl2_Event_Window_Configure
 {
    unsigned int win, event_win, edges;
-   int x, y, w, h;
+   unsigned int w, h;
+   unsigned int states;
 } Ecore_Wl2_Event_Window_Configure;
 
 typedef struct _Ecore_Wl2_Event_Sync_Done

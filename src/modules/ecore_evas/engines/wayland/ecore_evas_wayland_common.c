@@ -182,8 +182,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
    prev_max = ee->prop.maximized;
    prev_full = ee->prop.fullscreen;
-   ee->prop.maximized = ecore_wl2_window_maximized_get(wdata->win);
-   ee->prop.fullscreen = ecore_wl2_window_fullscreen_get(wdata->win);
+   ee->prop.maximized = (ev->states & ECORE_WL2_WINDOW_STATE_MAXIMIZED) == ECORE_WL2_WINDOW_STATE_MAXIMIZED;
+   ee->prop.fullscreen = (ev->states & ECORE_WL2_WINDOW_STATE_FULLSCREEN) == ECORE_WL2_WINDOW_STATE_FULLSCREEN;
 
    nw = ev->w;
    nh = ev->h;

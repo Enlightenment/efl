@@ -5,7 +5,7 @@
 #include "ecore_wl2_private.h"
 
 static void
-_ecore_wl2_window_configure_send(Ecore_Wl2_Window *window, int w, int h, unsigned int edges)
+_ecore_wl2_window_configure_send(Ecore_Wl2_Window *window, int w, int h, unsigned int edges, Eina_Bool fs, Eina_Bool max)
 {
    Ecore_Wl2_Event_Window_Configure *ev;
 
@@ -14,11 +14,13 @@ _ecore_wl2_window_configure_send(Ecore_Wl2_Window *window, int w, int h, unsigne
 
    ev->win = window->id;
    ev->event_win = window->id;
-   ev->x = window->geometry.x;
-   ev->y = window->geometry.y;
    ev->w = w;
    ev->h = h;
    ev->edges = edges;
+   if (fs)
+     ev->states |= ECORE_WL2_WINDOW_STATE_FULLSCREEN;
+   if (max)
+     ev->states |= ECORE_WL2_WINDOW_STATE_MAXIMIZED;
 
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE, ev, NULL, NULL);
 }
@@ -32,14 +34,9 @@ _wl_shell_surface_cb_ping(void *data EINA_UNUSED, struct wl_shell_surface *shell
 static void
 _wl_shell_surface_cb_configure(void *data, struct wl_shell_surface *shell_surface EINA_UNUSED, unsigned int edges, int w, int h)
 {
-   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Window *win = data;
 
-   win = data;
-   if (!win) return;
-
-   if ((w <= 0) || (h <= 0)) return;
-   if ((w > 0) && (h > 0))
-     _ecore_wl2_window_configure_send(win, w, h, edges);
+   _ecore_wl2_window_configure_send(win, w, h, edges, win->fullscreen, win->maximized);
 }
 
 static void
@@ -79,11 +76,15 @@ static const struct xdg_popup_listener _xdg_popup_listener =
 static void
 _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSED, int32_t w, int32_t h, struct wl_array *states, uint32_t serial)
 {
-   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Window *win = data;
    uint32_t *s;
+   Eina_Bool fs, max;
 
-   win = data;
-   if (!win) return;
+   if ((!win->maximized) && (!win->fullscreen))
+     win->saved = win->geometry;
+
+   fs = win->fullscreen;
+   max = win->maximized;
 
    win->minimized = EINA_FALSE;
    win->maximized = EINA_FALSE;
@@ -115,8 +116,11 @@ _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSE
    win->configure_serial = serial;
    if ((win->geometry.w == w) && (win->geometry.h == h))
      w = h = 0;
+   else if ((!w) && (!h) &&
+     (!win->fullscreen) && (!win->maximized) && ((win->fullscreen != fs) || (win->maximized != max)))
+     w = win->saved.w, h = win->saved.h;
 
-   _ecore_wl2_window_configure_send(win, w, h, 0);
+   _ecore_wl2_window_configure_send(win, w, h, !!win->resizing, win->fullscreen, win->maximized);
 }
 
 static void
@@ -668,7 +672,8 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
    maximized = !!maximized;
    if (prev == maximized) return;
 
-   window->maximized = maximized;
+   if (window->wl_shell_surface)
+     window->maximized = maximized;
 
    if (maximized)
      {
@@ -684,10 +689,12 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
         if (window->xdg_surface)
           xdg_surface_unset_maximized(window->xdg_surface);
         else if (window->wl_shell_surface)
-          wl_shell_surface_set_toplevel(window->wl_shell_surface);
+          {
+             wl_shell_surface_set_toplevel(window->wl_shell_surface);
 
-        _ecore_wl2_window_configure_send(window, window->saved.w,
-                                         window->saved.h, 0);
+             _ecore_wl2_window_configure_send(window, window->saved.w,
+                                              window->saved.h, 0, window->fullscreen, window->maximized);
+          }
      }
 }
 
@@ -710,7 +717,8 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
    fullscreen = !!fullscreen;
    if (prev == fullscreen) return;
 
-   window->fullscreen = fullscreen;
+   if (window->wl_shell_surface)
+     window->fullscreen = fullscreen;
 
    if (fullscreen)
      {
@@ -728,10 +736,12 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
         if (window->xdg_surface)
           xdg_surface_unset_fullscreen(window->xdg_surface);
         else if (window->wl_shell_surface)
-          wl_shell_surface_set_toplevel(window->wl_shell_surface);
+          {
+             wl_shell_surface_set_toplevel(window->wl_shell_surface);
 
-        _ecore_wl2_window_configure_send(window, window->saved.w,
-                                         window->saved.h, 0);
+             _ecore_wl2_window_configure_send(window, window->saved.w,
+                                              window->saved.h, 0, window->fullscreen, window->maximized);
+          }
      }
 }
 
