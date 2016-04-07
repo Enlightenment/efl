@@ -79,6 +79,41 @@ _udev_seat_get(Elput_Manager *em, struct libinput_device *device)
 }
 
 static void
+_device_event_cb_free(void *data EINA_UNUSED, void *event)
+{
+   Elput_Event_Device_Change *ev;
+
+   ev = event;
+
+   if (ev->type == ELPUT_DEVICE_REMOVED)
+     {
+        Elput_Seat *seat;
+
+        seat = ev->device->seat;
+        if (seat)
+          seat->devices = eina_list_remove(seat->devices, ev->device);
+
+        _evdev_device_destroy(ev->device);
+     }
+
+   free(ev);
+}
+
+static void
+_device_event_send(Elput_Device *edev, Elput_Device_Change_Type type)
+{
+   Elput_Event_Device_Change *ev;
+
+   ev = calloc(1, sizeof(Elput_Event_Device_Change));
+   if (!ev) return;
+
+   ev->device = edev;
+   ev->type = type;
+
+   ecore_event_add(ELPUT_EVENT_DEVICE_CHANGE, ev, _device_event_cb_free, NULL);
+}
+
+static void
 _device_add(Elput_Manager *em, struct libinput_device *dev)
 {
    Elput_Seat *eseat;
@@ -95,22 +130,25 @@ _device_add(Elput_Manager *em, struct libinput_device *dev)
    eina_stringshare_replace(&edev->output_name, oname);
 
    eseat->devices = eina_list_append(eseat->devices, edev);
+
+   _device_event_send(edev, ELPUT_DEVICE_ADDED);
 }
 
 static void
-_device_remove(Elput_Manager *em, struct libinput_device *device)
+_device_remove(Elput_Manager *em EINA_UNUSED, struct libinput_device *device)
 {
-   Elput_Seat *eseat;
+   /* Elput_Seat *eseat; */
    Elput_Device *edev;
 
    edev = libinput_device_get_user_data(device);
    if (!edev) return;
 
-   eseat = _udev_seat_get(em, device);
-   if (eseat)
-     eseat->devices = eina_list_remove(eseat->devices, edev);
+   /* eseat = _udev_seat_get(em, device); */
+   /* if (eseat) */
+   /*   eseat->devices = eina_list_remove(eseat->devices, edev); */
 
-   _evdev_device_destroy(edev);
+   _device_event_send(edev, ELPUT_DEVICE_REMOVED);
+   /* _evdev_device_destroy(edev); */
 }
 
 static int

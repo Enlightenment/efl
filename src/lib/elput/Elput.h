@@ -74,10 +74,24 @@ typedef struct _Elput_Event_Modifiers_Send
    unsigned int group;
 } Elput_Event_Modifiers_Send;
 
+typedef enum _Elput_Device_Change_Type
+{
+   ELPUT_DEVICE_ADDED,
+   ELPUT_DEVICE_REMOVED,
+} Elput_Device_Change_Type;
+
+/* structure to represent event for device being added or removed */
+typedef struct _Elput_Event_Device_Change
+{
+   Elput_Device *device;
+   Elput_Device_Change_Type type;
+} Elput_Event_Device_Change;
+
 EAPI extern int ELPUT_EVENT_SEAT_CAPS;
 EAPI extern int ELPUT_EVENT_SEAT_FRAME;
 EAPI extern int ELPUT_EVENT_KEYMAP_SEND;
 EAPI extern int ELPUT_EVENT_MODIFIERS_SEND;
+EAPI extern int ELPUT_EVENT_DEVICE_CHANGE;
 
 /**
  * @file
