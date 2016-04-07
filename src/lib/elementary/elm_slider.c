@@ -1483,7 +1483,7 @@ _elm_slider_min_max_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, double *min, d
 }
 
 EOLIAN static void
-_elm_slider_efl_ui_progress_value_set(Eo *obj, Elm_Slider_Data *sd, double val)
+_elm_slider_efl_ui_progress_progress_value_set(Eo *obj, Elm_Slider_Data *sd, double val)
 {
    if (sd->val == val) return;
    sd->val = val;
@@ -1496,7 +1496,7 @@ _elm_slider_efl_ui_progress_value_set(Eo *obj, Elm_Slider_Data *sd, double val)
 }
 
 EOLIAN static double
-_elm_slider_efl_ui_progress_value_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_elm_slider_efl_ui_progress_progress_value_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
 {
    return sd->val;
 }

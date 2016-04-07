@@ -63,7 +63,7 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
 
               If actual value is less than $min, it will be updated to $min.
               If it is bigger then $max, will be updated to $max. Actual value
-              can be get with @Efl.Ui.Progress.value.get
+              can be get with @Efl.Ui.Progress.progress_value.get
 
               By default, min is equal to 0.0, and max is equal to 1.0.
 
@@ -179,7 +179,7 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
       Elm.Layout.content_aliases.get;
       Elm.Layout.sizing_eval;
       Efl.Ui.Progress.span_size;
-      Efl.Ui.Progress.value;
+      Efl.Ui.Progress.progress_value;
       Efl.Ui.Progress.unit_format;
       Efl.Orientation.orientation;
       Elm.Interface_Atspi_Value.value_and_text.get;

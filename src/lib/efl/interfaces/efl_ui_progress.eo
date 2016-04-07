@@ -22,7 +22,7 @@ interface Efl.Ui.Progress {
             size: int; [[The length of the progress's bar region]]
          }
       }
-      @property value {
+      @property progress_value {
          [[Control the progress value (in percentage) on a given progress widget
 
            Use this call to set progress levels.

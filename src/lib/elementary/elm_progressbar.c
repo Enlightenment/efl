@@ -419,7 +419,7 @@ _elm_progressbar_efl_ui_progress_span_size_get(Eo *obj EINA_UNUSED, Elm_Progress
 }
 
 EOLIAN static void
-_elm_progressbar_efl_ui_progress_value_set(Eo *obj, Elm_Progressbar_Data *sd, double val)
+_elm_progressbar_efl_ui_progress_progress_value_set(Eo *obj, Elm_Progressbar_Data *sd, double val)
 {
    if (sd->val == val) return;
 
@@ -427,7 +427,7 @@ _elm_progressbar_efl_ui_progress_value_set(Eo *obj, Elm_Progressbar_Data *sd, do
 }
 
 EOLIAN static double
-_elm_progressbar_efl_ui_progress_value_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd)
+_elm_progressbar_efl_ui_progress_progress_value_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd)
 {
    return sd->val;
 }
