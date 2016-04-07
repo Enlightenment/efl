@@ -118,6 +118,11 @@ local Writer = util.Object:clone {
         return self
     end,
 
+    write_code = function(self, str, lang)
+        lang = lang and (" " .. lang) or ""
+        self:write_raw("<code" .. lang .. ">\n", str, "\n</code>")
+    end,
+
     write_link = function(self, target, title)
         if not title then
             self:write_raw("[[", target:lower(), "|", target, "]]")
@@ -547,7 +552,7 @@ build_method = function(fn, cl)
     f:write_h(fn:name_get(), 2)
 
     f:write_h("C signature", 3)
-    f:write_raw("<code c>\n", gen_func_csig(fn), "\n</code>\n")
+    f:write_code(gen_func_csig(fn), "c")
 
     f:write_h("Description", 3)
     write_full_doc(f, fn:documentation_get(eolian.function_type.METHOD))
@@ -572,14 +577,14 @@ build_property = function(fn, cl)
     f:write_h(fn:name_get(), 2)
 
     f:write_h("C signature", 3)
-    f:write_raw("<code c>\n")
+    local codes = {}
     if isget then
-        f:write_raw(gen_func_csig(fn, fts.PROP_GET), "\n")
+        codes[#codes + 1] = gen_func_csig(fn, fts.PROP_GET)
     end
     if isset then
-        f:write_raw(gen_func_csig(fn, fts.PROP_SET), "\n")
+        codes[#codes + 1] = gen_func_csig(fn, fts.PROP_SET)
     end
-    f:write_raw("</code>\n")
+    f:write_code(table.concat(codes, "\n"), "c")
 
     if isget and isset then
         f:write_h("Description", 3)
