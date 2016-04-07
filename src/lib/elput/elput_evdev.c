@@ -1306,3 +1306,11 @@ _evdev_touch_get(Elput_Seat *seat)
    if (seat->count.touch) return seat->touch;
    return NULL;
 }
+
+EAPI void
+elput_device_window_set(Elput_Device *device, unsigned int window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   device->window = window;
+}

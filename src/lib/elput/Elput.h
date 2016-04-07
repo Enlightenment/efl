@@ -105,6 +105,7 @@ EAPI extern int ELPUT_EVENT_DEVICE_CHANGE;
  * @li @ref Elput_Init_Group
  * @li @ref Elput_Manager_Group
  * @li @ref Elput_Input_Group
+ * @li @ref Elput_Device_Group
  *
  */
 
@@ -220,6 +221,29 @@ EAPI Eina_Bool elput_input_init(Elput_Manager *manager, const char *seat);
  * @since 1.18
  */
 EAPI void elput_input_shutdown(Elput_Manager *manager);
+
+/**
+ * @defgroup Elput_Device_Group
+ *
+ * Functions that deal with input devices.
+ */
+
+/**
+ * Set which window to use for this input device
+ *
+ * @brief This function should be used to specify which window to set on the
+ *        input device. Setting a window on the input device is done so that
+ *        when we raise events (mouse movement, keyboard key, etc) then
+ *        this window is passed to the event structure as the window which
+ *        the event occured on.
+ *
+ * @param device
+ * @param window
+ *
+ * @ingroup Elput_Device_Group
+ * @since 1.18
+ */
+EAPI void elput_device_window_set(Elput_Device *device, unsigned int window);
 
 # endif
 
