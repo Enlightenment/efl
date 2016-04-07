@@ -11,33 +11,32 @@
 #define EOLIAN
 
 /* When used, it indicates that the function is an Eo API. */
-#define EOAPI EWAPI
+#define EOAPI EAPI EAPI_WEAK
+#define EWAPI EAPI EAPI_WEAK
 
 #ifdef _WIN32
 # ifdef EFL_EO_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
-#   define EWAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#   define EWAPI
 #  endif /* ! DLL_EXPORT */
 # else
 #  define EAPI __declspec(dllimport)
-#  define EWAPI __declspec(dllimport)
 # endif /* ! EFL_EO_BUILD */
+# define EAPI_WEAK
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define EAPI __attribute__ ((visibility("default")))
-#   define EWAPI __attribute__ ((visibility("default"))) __attribute__ ((weak))
+#   define EAPI_WEAK __attribute__ ((weak))
 #  else
 #   define EAPI
-#   define EWAPI
+#   define EAPI_WEAK
 #  endif
 # else
 #  define EAPI
-#  define EWAPI
+#  define EAPI_WEAK
 # endif
 #endif /* ! _WIN32 */
 
