@@ -3102,17 +3102,25 @@ _elm_win_frame_add(Elm_Win_Data *sd, const char *style)
 
    evas_object_is_frame_object_set(sd->frame_obj, EINA_TRUE);
 
-   if (!sd->icon)
+   if (sd->icon)
+     evas_object_show(sd->icon);
+   else
      {
-        Efreet_Desktop *d;
+        Eina_Bool set = EINA_FALSE;
 
         sd->icon = elm_icon_add(sd->obj);
 
-        d = efreet_util_desktop_exec_find(_elm_appname);
-        if (d)
+        if (sd->icon_name)
+          set = elm_icon_standard_set(sd->icon, sd->icon_name);
+        if ((!sd->icon_name) || (!set))
           {
-             elm_icon_standard_set(sd->icon, d->icon);
-             efreet_desktop_free(d);
+             Efreet_Desktop *d;
+             d = efreet_util_desktop_exec_find(_elm_appname);
+             if (d)
+               {
+                  elm_icon_standard_set(sd->icon, d->icon);
+                  efreet_desktop_free(d);
+               }
           }
      }
 
@@ -3210,6 +3218,7 @@ _elm_win_frame_del(Elm_Win_Data *sd)
 
         ELM_SAFE_FREE(sd->frame_obj, evas_object_del);
      }
+   if (sd->icon) evas_object_hide(sd->icon);
 
    evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
    ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
@@ -4205,12 +4214,17 @@ EOLIAN static void
 _elm_win_icon_object_set(Eo *obj, Elm_Win_Data *sd, Evas_Object *icon)
 {
    if (sd->icon)
-     evas_object_event_callback_del_full
-       (sd->icon, EVAS_CALLBACK_DEL, _elm_win_on_icon_del, obj);
+     evas_object_event_callback_del_full(sd->icon, EVAS_CALLBACK_DEL,
+       _elm_win_on_icon_del, obj);
+   evas_object_del(sd->icon);
    sd->icon = icon;
    if (sd->icon)
-     evas_object_event_callback_add
-       (sd->icon, EVAS_CALLBACK_DEL, _elm_win_on_icon_del, obj);
+     {
+        evas_object_event_callback_add(sd->icon, EVAS_CALLBACK_DEL,
+          _elm_win_on_icon_del, obj);
+        if (sd->frame_obj)
+          edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon", sd->icon);
+     }
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
