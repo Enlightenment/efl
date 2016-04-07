@@ -63,7 +63,7 @@ struct _Elm_Image_Data
 
    Elm_Image_Orient      image_orient; // to support EAPI
    Efl_Orient            orient;
-   Efl_Flip_Value        flip;
+   Efl_Flip              flip;
 
    struct {
       Ecore_Thread      *th;

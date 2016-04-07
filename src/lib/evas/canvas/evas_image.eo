@@ -2,7 +2,7 @@ type @extern Evas_Object_Image_Pixels_Get_Cb: __undefined_type; /* FIXME: func p
 
 class Evas.Image (Evas.Object, Evas.Filter,
                   Efl.Image, Efl.Gfx.Buffer, Efl.Gfx.Fill, Efl.Gfx.View, Efl.File,
-                  Efl.Orientation, Efl.Flip)
+                  Efl.Orientation, Efl.Flipable)
 {
    /* Legacy is implement inside Efl.Canvas.Image */
    legacy_prefix: evas_object_image;
@@ -15,8 +15,8 @@ class Evas.Image (Evas.Object, Evas.Filter,
       Efl.File.save;
       Efl.Orientation.orientation.get;
       Efl.Orientation.orientation.set;
-      Efl.Flip.flip.set;
-      Efl.Flip.flip.get;
+      Efl.Flipable.flip.set;
+      Efl.Flipable.flip.get;
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
       Efl.Image.ratio.get;

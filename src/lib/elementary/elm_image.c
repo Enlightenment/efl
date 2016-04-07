@@ -1248,7 +1248,7 @@ _elm_image_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Elm_Image_Data *
 
 
 EOLIAN static void
-_elm_image_efl_flip_flip_set(Eo *obj, Elm_Image_Data *sd, Efl_Flip_Value flip)
+_elm_image_efl_flipable_flip_set(Eo *obj, Elm_Image_Data *sd, Efl_Flip flip)
 {
    if (sd->edje) return;
    if (sd->flip == flip) return;
@@ -1259,8 +1259,8 @@ _elm_image_efl_flip_flip_set(Eo *obj, Elm_Image_Data *sd, Efl_Flip_Value flip)
    _elm_image_internal_sizing_eval(obj, sd);
 }
 
-EOLIAN static Efl_Flip_Value
-_elm_image_efl_flip_flip_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+EOLIAN static Efl_Flip
+_elm_image_efl_flipable_flip_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
    return sd->flip;
 }
@@ -1654,7 +1654,7 @@ EAPI void
 elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
 {
    Efl_Orient dir;
-   Efl_Flip_Value flip;
+   Efl_Flip flip;
 
    ELM_IMAGE_DATA_GET(obj, sd);
    sd->image_orient = orient;

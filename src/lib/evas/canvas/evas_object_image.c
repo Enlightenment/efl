@@ -391,7 +391,7 @@ _evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient or
 }
 
 static Evas_Image_Orient
-_get_image_orient_from_orient_flip(Efl_Orient orient, Efl_Flip_Value flip)
+_get_image_orient_from_orient_flip(Efl_Orient orient, Efl_Flip flip)
 {
    switch (orient)
      {
@@ -446,7 +446,7 @@ _evas_image_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Evas_Image_Data
 }
 
 EOLIAN static void
-_evas_image_efl_flip_flip_set(Eo *obj, Evas_Image_Data *o, Efl_Flip_Value flip)
+_evas_image_efl_flipable_flip_set(Eo *obj, Evas_Image_Data *o, Efl_Flip flip)
 {
    Evas_Image_Orient orient;
 
@@ -456,8 +456,8 @@ _evas_image_efl_flip_flip_set(Eo *obj, Evas_Image_Data *o, Efl_Flip_Value flip)
    _evas_image_orientation_set(obj, o, orient);
 }
 
-EOLIAN static Efl_Flip_Value
-_evas_image_efl_flip_flip_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o)
+EOLIAN static Efl_Flip
+_evas_image_efl_flipable_flip_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->flip_value;
 }

@@ -1,20 +1,20 @@
-enum Efl.Flip_Value
+enum Efl.Flip
 {
    [[Flip
 
-     See also @Efl.Flip
+     See also @Efl.Flipable
    ]]
-   legacy: efl;
-   flip_none = 0, [[no flip]]
-   flip_horizontal = 1, [[flip image horizontally]]
-   flip_vertical = 2 [[flip image vertically]]
+   none = 0, [[no flip]]
+   horizontal = 1, [[flip image horizontally]]
+   vertical = 2 [[flip image vertically]]
 }
 
-interface Efl.Flip
+interface Efl.Flipable
 {
    legacy_prefix: null;
+   eo_prefix: efl_flip;
    methods {
-       @property flip{
+       @property flip {
          [[Control the flip of the given image
 
            Use this function to change how your image is to be
@@ -25,7 +25,7 @@ interface Efl.Flip
          get {
          }
          values {
-            flip: Efl.Flip_Value; [[Flip]]
+            flip: Efl.Flip; [[Flip]]
          }
       }
    }

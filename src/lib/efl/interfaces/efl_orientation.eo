@@ -4,18 +4,13 @@ enum Efl.Orient
 
      See also @Efl.Orientation
    ]]
-   legacy: efl;
-   orient_none = 0,
-   orient_0 = 0, [[no orientation change]]
-   orient_90 = 90, [[orient 90 degrees clockwise]]
-   orient_180 = 180, [[orient 180 degrees clockwise]]
-   orient_270 = 270, [[rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise)]]
-   orient_up = 0, [[orient up]]
-   orient_right = 90, [[orient right]]
-   orient_down = 180, [[orient down]]
-   orient_left = 270, [[orient left]]
-   orient_vertical = 0, [[orient vertical]]
-   orient_horizontal = 90 [[orient horizontal]]
+   none = 0,
+   up = 0, [[orient up]]
+   right = 90, [[orient right]]
+   down = 180, [[orient down]]
+   left = 270, [[orient left]]
+   vertical = 0, [[orient vertical]]
+   horizontal = 90 [[orient horizontal]]
 
 }
 

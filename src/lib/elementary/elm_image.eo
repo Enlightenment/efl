@@ -23,7 +23,7 @@ struct Elm.Image.Error
 class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
                  Efl.File, Efl.Image, Efl.Image_Load, Efl.Player, Efl.Gfx.View, Efl.Player,
                  Elm.Interface_Atspi_Image, Elm.Interface_Atspi_Widget_Action,
-                 Edje.Object, Efl.Orientation, Efl.Flip)
+                 Edje.Object, Efl.Orientation, Efl.Flipable)
 {
    eo_prefix: elm_obj_image;
    methods {
@@ -117,8 +117,8 @@ class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
       Efl.Image.smooth_scale.get;
       Efl.Orientation.orientation.set;
       Efl.Orientation.orientation.get;
-      Efl.Flip.flip.set;
-      Efl.Flip.flip.get;
+      Efl.Flipable.flip.set;
+      Efl.Flipable.flip.get;
       Efl.Player.playable.get;
       Efl.Player.play.set;
       Efl.Player.play.get;

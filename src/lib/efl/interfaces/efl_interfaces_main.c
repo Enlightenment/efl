@@ -36,7 +36,7 @@ EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
 #include "interfaces/efl_model_base.eo.c"
 #include "interfaces/efl_animator.eo.c"
 #include "interfaces/efl_orientation.eo.c"
-#include "interfaces/efl_flip.eo.c"
+#include "interfaces/efl_flipable.eo.c"
 #include "interfaces/efl_ui_progress.eo.c"
 
 EAPI void
