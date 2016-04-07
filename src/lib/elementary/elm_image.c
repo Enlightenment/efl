@@ -35,6 +35,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static Eina_Bool _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, const Eina_File *f, const char *key);
+static void _elm_image_sizing_eval(Eo *obj);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
@@ -604,7 +605,7 @@ _elm_image_evas_object_smart_add(Eo *obj, Elm_Image_Data *priv)
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   elm_obj_image_sizing_eval(obj);
+   _elm_image_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -733,7 +734,7 @@ _elm_image_elm_widget_theme_apply(Eo *obj, Elm_Image_Data *sd EINA_UNUSED)
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   elm_obj_image_sizing_eval(obj);
+   _elm_image_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -770,12 +771,14 @@ _elm_image_internal_scale_set(Evas_Object *obj, Elm_Image_Data *sd, double scale
    _elm_image_internal_sizing_eval(obj, sd);
 }
 
-EOLIAN static void
-_elm_image_sizing_eval(Eo *obj, Elm_Image_Data *sd)
+static void
+_elm_image_sizing_eval(Eo *obj)
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    int w = 0, h = 0;
    double ts;
+
+   ELM_IMAGE_DATA_GET(obj, sd);
 
    efl_image_smooth_scale_set(obj, sd->smooth);
 
@@ -1169,7 +1172,7 @@ _elm_image_no_scale_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool no_scale)
 {
    sd->no_scale = no_scale;
 
-   elm_obj_image_sizing_eval(obj);
+   _elm_image_sizing_eval(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -1184,7 +1187,7 @@ _elm_image_resizable_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool up, Eina_Bool do
    sd->resize_up = !!up;
    sd->resize_down = !!down;
 
-   elm_obj_image_sizing_eval(obj);
+   _elm_image_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -1498,7 +1501,7 @@ EAPI void
 elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
    efl_image_smooth_scale_set(obj, smooth);
-   elm_obj_image_sizing_eval(obj);
+   _elm_image_sizing_eval(obj);
 }
 
 EAPI Eina_Bool
@@ -1529,7 +1532,7 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 
    ELM_IMAGE_CHECK(obj) EINA_FALSE;
    ret = efl_file_set(obj, file, group);
-   elm_obj_image_sizing_eval(obj);
+   _elm_image_sizing_eval(obj);
    return ret;
 }
 
@@ -1612,7 +1615,7 @@ elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 
    sd->fill_inside = !fill_outside;
 
-   elm_obj_image_sizing_eval(obj);
+   _elm_image_sizing_eval(obj);
 }
 
 EAPI Eina_Bool
@@ -1770,6 +1773,13 @@ elm_image_resize_up_get(const Evas_Object *obj)
    ELM_IMAGE_CHECK(obj) EINA_FALSE;
    ELM_IMAGE_DATA_GET(obj, sd);
    return sd->resize_up;
+}
+
+EAPI void
+elm_image_sizing_eval(Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj);
+   _elm_image_sizing_eval(obj);
 }
 
 #include "elm_image.eo.c"

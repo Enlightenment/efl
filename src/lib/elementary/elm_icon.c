@@ -480,7 +480,7 @@ _internal_elm_icon_standard_set(Evas_Object *obj,
    if (ret)
      {
         eina_stringshare_replace(&sd->stdicon, name);
-        elm_obj_image_sizing_eval(obj);
+        elm_image_sizing_eval(obj);
         return EINA_TRUE;
      }
 

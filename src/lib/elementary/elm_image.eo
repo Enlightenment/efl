@@ -94,12 +94,6 @@ class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
             down: bool; [[A bool to set if the object is resizable down. Default is $true.]]
          }
       }
-      sizing_eval {
-         [[Re-evaluate the object's final geometry.
-
-           @since 1.7]]
-         legacy: null;
-      }
    }
    implements {
       class.constructor;
