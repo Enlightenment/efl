@@ -119,6 +119,9 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 
 #endif
 
+/* work-around bug in gcc --as-needed link optimization */
+EAPI void __efl_internal_init(void);
+
 #if defined ( __cplusplus )
 }
 #endif

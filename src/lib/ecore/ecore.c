@@ -210,6 +210,9 @@ ecore_init(void)
    if (++_ecore_init_count != 1)
      return _ecore_init_count;
 
+   /* make sure libecore is linked to libefl - workaround gcc bug */
+   __efl_internal_init();
+
    setlocale(LC_CTYPE, "");
    /*
       if (strcmp(nl_langinfo(CODESET), "UTF-8"))

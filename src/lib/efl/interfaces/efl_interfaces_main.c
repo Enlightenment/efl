@@ -37,3 +37,9 @@ EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
 #include "interfaces/efl_animator.eo.c"
 #include "interfaces/efl_orientation.eo.c"
 #include "interfaces/efl_flip.eo.c"
+
+EAPI void
+__efl_internal_init(void)
+{
+   /* nothing to do, the symbol only is required for link to work */
+}
