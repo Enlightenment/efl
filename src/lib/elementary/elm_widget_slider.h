@@ -47,11 +47,10 @@ struct _Elm_Slider_Data
 
    Evas_Coord            size;
    Evas_Coord            downx, downy;
+   Efl_Orient            orientation;
 
    double                range_from, range_to;
 
-   Eina_Bool             horizontal : 1;
-   Eina_Bool             inverted : 1;
    Eina_Bool             indicator_show : 1;
    Eina_Bool             spacer_down : 1;
    Eina_Bool             frozen : 1;

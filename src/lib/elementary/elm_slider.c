@@ -71,6 +71,45 @@ _delay_change(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
+static inline Eina_Bool
+_is_horizontal(Efl_Orient orientation)
+{
+   if (orientation == EFL_ORIENT_LEFT ||
+       orientation == EFL_ORIENT_RIGHT)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+_is_inverted(Efl_Orient orientation)
+{
+   if (orientation == EFL_ORIENT_LEFT ||
+       orientation == EFL_ORIENT_UP)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+static Efl_Orient
+_orientation_get(Eina_Bool horizontal, Eina_Bool inverted)
+{
+   if (horizontal)
+     {
+        if (inverted)
+          return EFL_ORIENT_LEFT;
+        else
+          return EFL_ORIENT_RIGHT;
+     }
+   else
+     {
+        if (inverted)
+          return EFL_ORIENT_UP;
+        else
+          return EFL_ORIENT_DOWN;
+     }
+}
+
 static void
 _val_fetch(Evas_Object *obj, Eina_Bool user_event)
 {
@@ -83,18 +122,18 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
 
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.dragable.slider", &posx, &posy);
-   if (sd->horizontal) pos = posx;
+   if (_is_horizontal(sd->orientation)) pos = posx;
    else pos = posy;
 
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.dragable2.slider", &posx2, &posy2);
-   if (sd->horizontal) pos2 = posx2;
+   if (_is_horizontal(sd->orientation)) pos2 = posx2;
    else pos2 = posy2;
 
    rtl = elm_widget_mirrored_get(obj);
-   if ((!rtl && sd->inverted) ||
-       (rtl && ((!sd->horizontal && sd->inverted) ||
-                (sd->horizontal && !sd->inverted))))
+   if ((!rtl && _is_inverted(sd->orientation)) ||
+       (rtl && ((sd->orientation == EFL_ORIENT_UP) ||
+                (sd->orientation == EFL_ORIENT_RIGHT))))
      {
         pos = 1.0 - pos;
         pos2 = 1.0 - pos2;
@@ -153,9 +192,9 @@ _val_set(Evas_Object *obj)
      pos2 = 1.0;
 
    rtl = elm_widget_mirrored_get(obj);
-   if ((!rtl && sd->inverted) ||
-       (rtl && ((!sd->horizontal && sd->inverted) ||
-                (sd->horizontal && !sd->inverted))))
+   if ((!rtl && _is_inverted(sd->orientation)) ||
+       (rtl && ((sd->orientation == EFL_ORIENT_UP) ||
+                (sd->orientation == EFL_ORIENT_RIGHT))))
      {
         pos = 1.0 - pos;
         pos2 = 1.0 - pos2;
@@ -351,7 +390,7 @@ _drag_up(void *data,
    ELM_SLIDER_DATA_GET(data, sd);
    step = sd->step;
 
-   if (sd->inverted) step *= -1.0;
+   if (_is_inverted(sd->orientation)) step *= -1.0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    edje_object_part_drag_step
@@ -369,7 +408,7 @@ _drag_down(void *data,
    ELM_SLIDER_DATA_GET(data, sd);
    step = -sd->step;
 
-   if (sd->inverted) step *= -1.0;
+   if (_is_inverted(sd->orientation)) step *= -1.0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    edje_object_part_drag_step
@@ -479,26 +518,34 @@ _key_action_drag(Evas_Object *obj, const char *params)
 
    if (!strcmp(dir, "left"))
      {
-        if (!sd->horizontal) return EINA_FALSE;
-        if (!sd->inverted) _drag_down(obj, NULL, NULL, NULL);
+        if (!_is_horizontal(sd->orientation))
+          return EINA_FALSE;
+        if (!_is_inverted(sd->orientation))
+          _drag_down(obj, NULL, NULL, NULL);
         else _drag_up(obj, NULL, NULL, NULL);
      }
    else if (!strcmp(dir, "right"))
      {
-        if (!sd->horizontal) return EINA_FALSE;
-        if (!sd->inverted) _drag_up(obj, NULL, NULL, NULL);
+        if (!_is_horizontal(sd->orientation))
+          return EINA_FALSE;
+        if (!_is_inverted(sd->orientation))
+          _drag_up(obj, NULL, NULL, NULL);
         else _drag_down(obj, NULL, NULL, NULL);
      }
    else if (!strcmp(dir, "up"))
      {
-        if (sd->horizontal) return EINA_FALSE;
-        if (sd->inverted) _drag_up(obj, NULL, NULL, NULL);
+        if (_is_horizontal(sd->orientation))
+          return EINA_FALSE;
+        if (_is_inverted(sd->orientation))
+          _drag_up(obj, NULL, NULL, NULL);
         else _drag_down(obj, NULL, NULL, NULL);
      }
    else if (!strcmp(dir, "down"))
      {
-        if (sd->horizontal) return EINA_FALSE;
-        if (sd->inverted) _drag_down(obj, NULL, NULL, NULL);
+        if (_is_horizontal(sd->orientation))
+          return EINA_FALSE;
+        if (_is_inverted(sd->orientation))
+          _drag_down(obj, NULL, NULL, NULL);
         else _drag_up(obj, NULL, NULL, NULL);
      }
    else return EINA_FALSE;
@@ -567,13 +614,15 @@ _elm_slider_elm_widget_activate(Eo *obj, Elm_Slider_Data *sd, Elm_Activate act)
    if ((act == ELM_ACTIVATE_UP) ||
        (act == ELM_ACTIVATE_RIGHT))
      {
-        if (!sd->inverted) _drag_up(obj, NULL, NULL, NULL);
+        if (!_is_inverted(sd->orientation))
+          _drag_up(obj, NULL, NULL, NULL);
         else _drag_down(obj, NULL, NULL, NULL);
      }
    else if ((act == ELM_ACTIVATE_DOWN) ||
             (act == ELM_ACTIVATE_LEFT))
      {
-        if (!sd->inverted) _drag_down(obj, NULL, NULL, NULL);
+        if (!_is_inverted(sd->orientation))
+          _drag_down(obj, NULL, NULL, NULL);
         else _drag_up(obj, NULL, NULL, NULL);
      }
 
@@ -656,7 +705,7 @@ _popup_add(Elm_Slider_Data *sd, Eo *obj, Evas_Object **popup,
    // XXX popup needs to adapt to theme etc.
    *popup = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(*popup, obj);
-   if (sd->horizontal)
+   if (_is_horizontal(sd->orientation))
      _elm_theme_set(elm_widget_theme_get(obj), *popup, "slider", "horizontal/popup", elm_widget_style_get(obj));
    else
      _elm_theme_set(elm_widget_theme_get(obj), *popup, "slider", "vertical/popup", elm_widget_style_get(obj));
@@ -696,7 +745,7 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
    ELM_LAYOUT_DATA_GET(obj, ld);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   if (sd->horizontal)
+   if (_is_horizontal(sd->orientation))
      {
         eina_stringshare_replace(&ld->group, "horizontal");
         if (sd->popup)
@@ -741,7 +790,7 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
           _popup_add(sd, obj, &sd->popup2, &sd->track2, EINA_TRUE);
      }
 
-   if (sd->horizontal)
+   if (_is_horizontal(sd->orientation))
      evas_object_size_hint_min_set
        (sd->spacer, (double)sd->size * elm_widget_scale_get(obj) *
        elm_config_scale_get(), 1);
@@ -755,7 +804,7 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
    else
      elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
 
-   if (sd->inverted)
+   if (_is_inverted(sd->orientation))
      {
         elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
         if (sd->popup)
@@ -763,6 +812,13 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
         if (sd->popup2)
           edje_object_signal_emit(sd->popup2, "elm,state,inverted,on", "elm");
      }
+   else
+     {
+        elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,inverted,off", "elm");
+     }
+
    if (sd->indicator_show)
      {
         elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
@@ -822,7 +878,7 @@ _move_knob_on_mouse(Evas_Object *obj, double button_x, double button_y)
         edje_object_part_drag_value_get
            (wd->resize_obj, "elm.dragable2.slider", &posx2, &posy2);
 
-        if (sd->horizontal)
+        if (_is_horizontal(sd->orientation))
           {
              diff1 = fabs(button_x - posx);
              diff2 = fabs(button_x - posx2);
@@ -866,7 +922,7 @@ _spacer_down_cb(void *data,
    evas_object_geometry_get(sd->spacer, &x, &y, &w, &h);
    sd->downx = ev->canvas.x - x;
    sd->downy = ev->canvas.y - y;
-   if (sd->horizontal)
+   if (_is_horizontal(sd->orientation))
      {
         button_x = ((double)ev->canvas.x - (double)x) / (double)w;
         if (button_x > 1) button_x = 1;
@@ -905,7 +961,8 @@ _spacer_move_cb(void *data,
         Evas_Coord d = 0;
 
         evas_object_geometry_get(sd->spacer, &x, &y, &w, &h);
-        if (sd->horizontal) d = abs(ev->cur.canvas.x - x - sd->downx);
+        if (_is_horizontal(sd->orientation))
+          d = abs(ev->cur.canvas.x - x - sd->downx);
         else d = abs(ev->cur.canvas.y - y - sd->downy);
         if (d > (_elm_config->thumbscroll_threshold - 1))
           {
@@ -932,7 +989,7 @@ _spacer_move_cb(void *data,
              elm_slider_value_set(data, sd->val2);
              return;
           }
-        if (sd->horizontal)
+        if (_is_horizontal(sd->orientation))
           {
              button_x = ((double)ev->cur.canvas.x - (double)x) / (double)w;
              if (button_x > 1) button_x = 1;
@@ -1011,7 +1068,7 @@ _elm_slider_evas_object_smart_calculate(Eo *obj, Elm_Slider_Data *sd)
 {
    elm_layout_freeze(obj);
 
-   if (sd->horizontal)
+   if (_is_horizontal(sd->orientation))
      evas_object_size_hint_min_set
        (sd->spacer, (double)sd->size * elm_widget_scale_get(obj) *
        elm_config_scale_get(), 1);
@@ -1079,7 +1136,7 @@ _elm_slider_evas_object_smart_add(Eo *obj, Elm_Slider_Data *priv)
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   priv->horizontal = EINA_TRUE;
+   priv->orientation = EFL_ORIENT_RIGHT;
    priv->indicator_show = EINA_TRUE;
    priv->indicator_visible_mode = elm_config_slider_indicator_visible_mode_get();
    priv->val_max = 1.0;
@@ -1227,8 +1284,109 @@ _elm_slider_eo_base_constructor(Eo *obj, Elm_Slider_Data *_pd EINA_UNUSED)
    return obj;
 }
 
+EAPI void
+elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
+{
+   efl_ui_progress_span_size_set(obj, size);
+}
+
+EAPI Evas_Coord
+elm_slider_span_size_get(const Evas_Object *obj)
+{
+   return efl_ui_progress_span_size_get(obj);
+}
+
+EAPI void
+elm_slider_unit_format_set(Evas_Object *obj, const char *units)
+{
+   efl_ui_progress_unit_format_set(obj, units);
+}
+
+EAPI const char *
+elm_slider_unit_format_get(const Evas_Object *obj)
+{
+   return efl_ui_progress_unit_format_get(obj);
+}
+
+EAPI void
+elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   Efl_Orient dir;
+   ELM_SLIDER_DATA_GET(obj, sd);
+
+   dir = _orientation_get(horizontal, _is_inverted(sd->orientation));
+
+   efl_orientation_set(obj, dir);
+}
+
+EAPI Eina_Bool
+elm_slider_horizontal_get(const Evas_Object *obj)
+{
+   Efl_Orient dir;
+   dir = efl_orientation_get(obj);
+
+   return _is_horizontal(dir);
+}
+
+EAPI void
+elm_slider_value_set(Evas_Object *obj, double val)
+{
+   efl_ui_progress_value_set(obj, val);
+}
+
+EAPI double
+elm_slider_value_get(const Evas_Object *obj)
+{
+   return efl_ui_progress_value_get(obj);
+}
+
+EAPI void
+elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
+{
+   Efl_Orient dir;
+   ELM_SLIDER_DATA_GET(obj, sd);
+
+   dir = _orientation_get(_is_horizontal(sd->orientation), inverted);
+
+   efl_orientation_set(obj, dir);
+}
+
+EAPI Eina_Bool
+elm_slider_inverted_get(const Evas_Object *obj)
+{
+   Efl_Orient dir;
+   dir = efl_orientation_get(obj);
+
+   return _is_inverted(dir);
+}
+
+EAPI void
+elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func)
+{
+   ELM_SLIDER_DATA_GET(obj, sd);
+
+   sd->units_format_func = func;
+   sd->units_format_free = free_func;
+
+   evas_object_smart_changed(obj);
+}
+
 EOLIAN static void
-_elm_slider_span_size_set(Eo *obj, Elm_Slider_Data *sd, Evas_Coord size)
+_elm_slider_efl_orientation_orientation_set(Eo *obj, Elm_Slider_Data *sd, Efl_Orient dir)
+{
+   sd->orientation = dir;
+
+   elm_obj_widget_theme_apply(obj);
+}
+
+EOLIAN static Efl_Orient
+_elm_slider_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+{
+   return sd->orientation;
+}
+
+EOLIAN static void
+_elm_slider_efl_ui_progress_span_size_set(Eo *obj, Elm_Slider_Data *sd, Evas_Coord size)
 {
    if (sd->size == size) return;
    sd->size = size;
@@ -1254,13 +1412,13 @@ _elm_slider_span_size_set(Eo *obj, Elm_Slider_Data *sd, Evas_Coord size)
 }
 
 EOLIAN static Evas_Coord
-_elm_slider_span_size_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_elm_slider_efl_ui_progress_span_size_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
 {
    return sd->size;
 }
 
 EOLIAN static void
-_elm_slider_unit_format_set(Eo *obj, Elm_Slider_Data *sd, const char *units)
+_elm_slider_efl_ui_progress_unit_format_set(Eo *obj, Elm_Slider_Data *sd, const char *units)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1286,8 +1444,8 @@ _elm_slider_unit_format_set(Eo *obj, Elm_Slider_Data *sd, const char *units)
    evas_object_smart_changed(obj);
 }
 
-EOLIAN static const char*
-_elm_slider_unit_format_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+EOLIAN static const char *
+_elm_slider_efl_ui_progress_unit_format_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
 {
    return sd->units;
 }
@@ -1303,22 +1461,6 @@ EOLIAN static const char*
 _elm_slider_indicator_format_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
 {
    return sd->indicator;
-}
-
-EOLIAN static void
-_elm_slider_horizontal_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool horizontal)
-{
-   horizontal = !!horizontal;
-   if (sd->horizontal == horizontal) return;
-   sd->horizontal = horizontal;
-
-   elm_obj_widget_theme_apply(obj);
-}
-
-EOLIAN static Eina_Bool
-_elm_slider_horizontal_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
-{
-   return sd->horizontal;
 }
 
 EOLIAN static void
@@ -1341,7 +1483,7 @@ _elm_slider_min_max_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, double *min, d
 }
 
 EOLIAN static void
-_elm_slider_value_set(Eo *obj, Elm_Slider_Data *sd, double val)
+_elm_slider_efl_ui_progress_value_set(Eo *obj, Elm_Slider_Data *sd, double val)
 {
    if (sd->val == val) return;
    sd->val = val;
@@ -1354,42 +1496,9 @@ _elm_slider_value_set(Eo *obj, Elm_Slider_Data *sd, double val)
 }
 
 EOLIAN static double
-_elm_slider_value_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_elm_slider_efl_ui_progress_value_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
 {
    return sd->val;
-}
-
-EOLIAN static void
-_elm_slider_inverted_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool inverted)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   inverted = !!inverted;
-   if (sd->inverted == inverted) return;
-   sd->inverted = inverted;
-
-   if (sd->inverted)
-     {
-        elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,inverted,on", "elm");
-     }
-   else
-     {
-        elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,inverted,off", "elm");
-     }
-
-   edje_object_message_signal_process(wd->resize_obj);
-
-   _visuals_refresh(obj);
-}
-
-EOLIAN static Eina_Bool
-_elm_slider_inverted_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
-{
-   return sd->inverted;
 }
 
 EOLIAN static void
@@ -1397,15 +1506,6 @@ _elm_slider_indicator_format_function_set(Eo *obj, Elm_Slider_Data *sd, slider_f
 {
    sd->indicator_format_func = func;
    sd->indicator_format_free = free_func;
-   evas_object_smart_changed(obj);
-}
-
-EOLIAN static void
-_elm_slider_units_format_function_set(Eo *obj, Elm_Slider_Data *sd, slider_func_type func, slider_freefunc_type free_func)
-{
-   sd->units_format_func = func;
-   sd->units_format_free = free_func;
-
    evas_object_smart_changed(obj);
 }
 

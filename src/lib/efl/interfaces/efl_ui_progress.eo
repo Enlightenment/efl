@@ -1,0 +1,63 @@
+interface Efl.Ui.Progress {
+   legacy_prefix: null;
+   methods {
+      @property span_size {
+         [[Control the (exact) length of the bar region of a given progress widget
+
+           This sets the minimum width (when in horizontal mode) or height
+           (when in vertical mode) of the actual bar area of the progress
+           bar $obj. This in turn affects the object's minimum size. Use
+           this when you're not setting other size hints expanding on the
+           given direction (like weight and alignment hints) and you would
+           like it to have a specific size.
+
+           Note: Icon, label and unit text around $obj will require their
+           own space, which will make $obj to require more the $size,
+           actually.]]
+         set {
+         }
+         get {
+         }
+         values {
+            size: int; [[The length of the progress's bar region]]
+         }
+      }
+      @property value {
+         [[Control the progress value (in percentage) on a given progress widget
+
+           Use this call to set progress levels.
+
+           Note: If you passes a value out of the specified range for
+           $val, it will be interpreted as the closest of the boundary
+           values in the range.]]
+         set {
+         }
+         get {
+         }
+         values {
+            val: double; [[The progress value (must be between $0.0 and 1.0)]]
+         }
+      }
+      @property unit_format {
+         [[Control the format string for a given progress widget's units label
+
+           If $NULL is passed on $format, it will make $obj's units
+           area to be hidden completely. If not, it'll set the <b>format
+           string</b> for the units label's text. The units label is
+           provided a floating point value, so the units text is up display
+           at most one floating point value. Note that the units label is
+           optional. Use a format string such as "%1.2f meters" for
+           example.
+
+           Note: The default format string for a progress is an integer
+           percentage, as in $"%.0f %%".]]
+         set {
+         }
+         get {
+         }
+         values {
+            units: const(char)* @nullable; [[The format string for $obj's units label]]
+         }
+      }
+   }
+}

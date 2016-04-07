@@ -1,28 +1,8 @@
-class Elm.Progressbar (Elm.Layout)
+class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
+                       Efl.Orientation)
 {
    eo_prefix: elm_obj_progressbar;
    methods {
-      @property span_size {
-         [[Control the (exact) length of the bar region of a given progress bar widget
-
-           This sets the minimum width (when in horizontal mode) or height
-           (when in vertical mode) of the actual bar area of the progress
-           bar $obj. This in turn affects the object's minimum size. Use
-           this when you're not setting other size hints expanding on the
-           given direction (like weight and alignment hints) and you would
-           like it to have a specific size.
-
-           Note: Icon, label and unit text around $obj will require their
-           own space, which will make $obj to require more the $size,
-           actually.]]
-         set {
-         }
-         get {
-         }
-         values {
-            size: Evas.Coord; [[The length of the progress bar's bar region]]
-         }
-      }
       @property pulse {
          [[Control whether a given progress bar widget is at "pulsing mode" or not.
 
@@ -41,87 +21,6 @@ class Elm.Progressbar (Elm.Layout)
          }
          values {
             pulse: bool; [[$true to put $obj in pulsing mode, $false to put it back to its default one]]
-         }
-      }
-      @property value {
-         [[Control the progress value (in percentage) on a given progress bar widget
-
-           Use this call to set progress bar levels.
-
-           Note: If you passes a value out of the specified range for
-           $val, it will be interpreted as the closest of the boundary
-           values in the range.]]
-         set {
-         }
-         get {
-         }
-         values {
-            val: double; [[The progress value (must be between $0.0 and 1.0)]]
-         }
-      }
-      @property inverted {
-         [[Invert a given progress bar widget's displaying values order
-
-           A progress bar may be inverted, in which state it gets its
-           values inverted, with high values being on the left or top and
-           low values on the right or bottom, as opposed to normally have
-           the low values on the former and high values on the latter,
-           respectively, for horizontal and vertical modes.]]
-         set {
-         }
-         get {
-         }
-         values {
-            inverted: bool; [[Use $true to make $obj inverted, $false to bring it back to default, non-inverted values.]]
-         }
-      }
-      @property horizontal {
-         [[Control the orientation of a given progress bar widget
-
-           Use this function to change how your progress bar is to be
-           disposed: vertically or horizontally.]]
-         set {
-         }
-         get {
-         }
-         values {
-            horizontal: bool; [[Use $true to make $obj to be horizontal, $false to make it vertical]]
-         }
-      }
-      @property unit_format {
-         [[Control the format string for a given progress bar widget's units label
-
-           If $NULL is passed on $format, it will make $obj's units
-           area to be hidden completely. If not, it'll set the <b>format
-           string</b> for the units label's text. The units label is
-           provided a floating point value, so the units text is up display
-           at most one floating point value. Note that the units label is
-           optional. Use a format string such as "%1.2f meters" for
-           example.
-
-           Note: The default format string for a progress bar is an integer
-           percentage, as in $"%.0f %%".]]
-         set {
-         }
-         get {
-         }
-         values {
-            units: const(char)* @nullable; [[The format string for $obj's units label]]
-         }
-      }
-      @property unit_format_function {
-         set {
-            [[Set the format function pointer for the units label
-
-              Set the callback function to format the unit string.
-
-              See: @.unit_format.set for more info on how this works.
-
-              @since 1.7]]
-         }
-         values {
-            func: progressbar_func_type @nullable; [[The unit format function]]
-            free_func: progressbar_freefunc_type @optional; [[The freeing function for the format string.]]
          }
       }
       part_value_set {
@@ -166,6 +65,10 @@ class Elm.Progressbar (Elm.Layout)
       Elm.Layout.text_aliases.get;
       Elm.Layout.content_aliases.get;
       Elm.Layout.sizing_eval;
+      Efl.Ui.Progress.span_size;
+      Efl.Ui.Progress.value;
+      Efl.Ui.Progress.unit_format;
+      Efl.Orientation.orientation;
    }
    events {
       changed;
