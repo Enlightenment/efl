@@ -26,7 +26,6 @@
 typedef struct _Elm_Check_Data Elm_Check_Data;
 struct _Elm_Check_Data
 {
-   Eina_Bool             state;
    Eina_Bool            *statep;
 };
 

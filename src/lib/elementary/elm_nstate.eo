@@ -1,0 +1,47 @@
+class Elm.Nstate(Elm.Button)
+{
+   eo_prefix: efl_ui_nstate;
+   legacy_prefix: null;
+   data: Elm_Nstate_Data;
+   methods {
+      activate @protected {
+      }
+      @property count {
+         set {
+            [[Set the maximum number of states.
+            ]]
+         }
+         get {
+             [[Get the max number of states.
+             ]]
+         }
+         values {
+            nstate: int; [[The number of states.]]
+         }
+      }
+      @property value {
+         set {
+            [[Set the particular state given in (0...nstate}.
+            ]]
+         }
+         get {
+            [[Get the state value.
+            ]]
+         }
+         values {
+            state: int; [[The state.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Elm.Widget.theme_apply;
+      Elm.Widget.event;
+   }
+   events {
+      state,changed;
+   }
+}

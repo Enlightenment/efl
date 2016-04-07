@@ -176,6 +176,7 @@ EXTRA_DIST = \
 	widget_preview_progressbar.c \
 	widget_preview_box.c \
 	widget_preview_notify.c \
+	widget_preview_nstate.c \
 	widget_preview_slideshow.c \
 	widget_preview_photocam.c \
 	widget_preview_inwin1.c \

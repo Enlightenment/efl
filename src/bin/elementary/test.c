@@ -49,6 +49,7 @@ void test_combobox(void *data, Evas_Object *obj, void *event_info);
 void test_combobox2(void *data, Evas_Object *obj, void *event_info);
 void test_check(void *data, Evas_Object *obj, void *event_info);
 void test_check_toggle(void *data, Evas_Object *obj, void *event_info);
+void test_nstate(void *data, Evas_Object *obj, void *event_info);
 void test_radio(void *data, Evas_Object *obj, void *event_info);
 void test_layout(void *data, Evas_Object *obj, void *event_info);
 void test_layout2(void *data, Evas_Object *obj, void *event_info);
@@ -780,6 +781,9 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Booleans", "Check", test_check);
    ADD_TEST(NULL, "Booleans", "Check Toggle", test_check_toggle);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Range Values", "Nstate", test_nstate);
 
    //------------------------------//
    ADD_TEST(NULL, "Popups", "Ctxpopup", test_ctxpopup);

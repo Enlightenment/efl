@@ -236,6 +236,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_mirroring.h>
 #include <elm_need.h>
 #include <elm_notify.h>
+#include <elm_nstate.h>
 #include <elm_object.h>
 
 #include <elm_panel.h>

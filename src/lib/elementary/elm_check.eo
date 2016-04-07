@@ -1,38 +1,16 @@
-class Elm.Check (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
+class Elm.Check (Elm.Nstate, Elm.Interface_Atspi_Widget_Action)
 {
-   eo_prefix: elm_obj_check;
+   eo_prefix: efl_ui_check;
    methods {
-      @property state {
+      @property selected {
          set {
-            [[Set the on/off state of the check object
-
-              This sets the state of the check. If set with
-              @.state_pointer.set, the state of that variable is also
-              changed. Calling this doesn't cause the "changed" signal to
-              be emitted.
-            ]]
+            [[Set the on/off state of the check object.]]
          }
          get {
-            [[Get the state of the check object]]
+            [[Get the state of the check object.]]
          }
          values {
-            state: bool; [[The state to use (1 == on, 0 == off)]]
-         }
-      }
-      @property state_pointer {
-         set {
-            [[Set a convenience pointer to a boolean to change
-
-              This sets a pointer to a boolean, that, in addition to the check
-              objects state will also be modified directly. To stop setting the
-              object pointed to simply use null as the "statep" parameter.
-              If "statep" is not null, then when this is called, the check
-              objects state will also be modified to reflect the value of the
-              boolean "statep" points to, just like calling @.state.set.
-            ]]
-         }
-         values {
-            statep: bool * @nullable; [[Pointer to the boolean to modify]]
+            value: Eina_Bool;
          }
       }
    }
@@ -41,15 +19,12 @@ class Elm.Check (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Elm.Widget.activate;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
       Elm.Widget.event;
-      Elm.Container.content.set;
       Elm.Layout.text_aliases.get;
-      Elm.Layout.content_aliases.get;
-      Elm.Layout.sizing_eval;
+      Elm.Nstate.count.set;
+      Elm.Nstate.value.set;
       Elm.Interface_Atspi_Accessible.state_set.get;
       Elm.Interface_Atspi_Widget_Action.elm_actions.get;
    }

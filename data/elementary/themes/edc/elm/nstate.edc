@@ -1,0 +1,10 @@
+group { name: "elm/nstate/base/default";
+   inherit: "elm/button/base/default";
+   programs {
+      program {
+         signal: "mouse,clicked,1"; source: "event";
+         action: SIGNAL_EMIT "elm,action,state,changed" "elm";
+      }
+   }
+}
+

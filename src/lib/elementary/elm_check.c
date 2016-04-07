@@ -5,21 +5,16 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
+#define ELM_NSTATE_PROTECTED
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_check.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_nstate.h"
 
 #define MY_CLASS ELM_CHECK_CLASS
 
 #define MY_CLASS_NAME "Elm_Check"
 #define MY_CLASS_NAME_LEGACY "elm_check"
-
-static const Elm_Layout_Part_Alias_Description _content_aliases[] =
-{
-   {"icon", "elm.swallow.content"},
-   {NULL, NULL}
-};
 
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 {
@@ -53,9 +48,10 @@ _activate(Evas_Object *obj)
 {
    ELM_CHECK_DATA_GET(obj, sd);
 
-   sd->state = !sd->state;
-   if (sd->statep) *sd->statep = sd->state;
-   if (sd->state)
+   efl_ui_nstate_activate(obj);
+   if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
+
+   if (efl_ui_nstate_value_get(obj) == 1)
      {
         // FIXME: to do animation during state change , we need different signal
         // so that we can distinguish between state change by user or state change
@@ -66,7 +62,7 @@ _activate(Evas_Object *obj)
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
              _elm_access_say(E_("State: On"));
      }
-   else
+   else if (efl_ui_nstate_value_get(obj) == 0)
      {
         // FIXME: to do animation during state change , we need different signal
         // so that we can distinguish between state change by user or state change
@@ -83,7 +79,7 @@ _activate(Evas_Object *obj)
    if (_elm_config->atspi_mode)
        elm_interface_atspi_accessible_state_changed_signal_emit(obj,
                                                                 ELM_ATSPI_STATE_CHECKED,
-                                                                sd->state);
+                                                                efl_ui_nstate_value_get(obj));
 }
 
 /* FIXME: replicated from elm_layout just because check's icon spot
@@ -144,37 +140,6 @@ _elm_check_elm_widget_activate(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNU
    return EINA_TRUE;
 }
 
-/* FIXME: replicated from elm_layout just because check's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
-EOLIAN static Eina_Bool
-_elm_check_elm_container_content_set(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-
-   int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
-   if (!int_ret) return EINA_FALSE;
-
-   _icon_signal_emit(obj);
-
-   elm_obj_layout_sizing_eval(obj);
-
-   return EINA_TRUE;
-}
-
-EOLIAN static void
-_elm_check_elm_layout_sizing_eval(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 static Eina_Bool
 _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
@@ -199,17 +164,20 @@ _elm_check_elm_widget_event(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, Evas_Objec
 }
 
 EOLIAN static Eina_Bool
-_elm_check_elm_widget_theme_apply(Eo *obj, Elm_Check_Data *sd)
+_elm_check_elm_widget_theme_apply(Eo *obj, Elm_Check_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
+
    if (!int_ret) return EINA_FALSE;
 
-   if (!sd->state) elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-   else elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+   if (efl_ui_nstate_value_get(obj) == 0)
+     elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+   else if (efl_ui_nstate_value_get(obj) == 1)
+     elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
 
    edje_object_message_signal_process(wd->resize_obj);
 
@@ -237,12 +205,11 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 static char *
 _access_state_cb(void *data, Evas_Object *obj)
 {
-   Elm_Check_Data *sd = eo_data_scope_get(data, MY_CLASS);
    const char *on_text, *off_text;
 
    if (elm_widget_disabled_get(obj))
      return strdup(E_("State: Disabled"));
-   if (sd->state)
+   if (efl_ui_nstate_value_get(obj))
      {
         on_text = elm_layout_text_get(data, "on");
 
@@ -279,8 +246,8 @@ _on_check_off(void *data,
 
    ELM_CHECK_DATA_GET(obj, sd);
 
-   sd->state = EINA_FALSE;
-   if (sd->statep) *sd->statep = sd->state;
+   efl_ui_nstate_value_set(obj, 0);
+   if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
 
    elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
    eo_event_callback_call(obj, ELM_CHECK_EVENT_CHANGED, NULL);
@@ -288,7 +255,7 @@ _on_check_off(void *data,
    if (_elm_config->atspi_mode)
        elm_interface_atspi_accessible_state_changed_signal_emit(data,
                                                                 ELM_ATSPI_STATE_CHECKED,
-                                                                sd->state);
+                                                                efl_ui_nstate_value_get(obj));
 }
 
 static void
@@ -301,15 +268,15 @@ _on_check_on(void *data,
 
    ELM_CHECK_DATA_GET(obj, sd);
 
-   sd->state = EINA_TRUE;
-   if (sd->statep) *sd->statep = sd->state;
+   efl_ui_nstate_value_set(obj, 1);
+   if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
    elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
    eo_event_callback_call(obj, ELM_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
-       elm_interface_atspi_accessible_state_changed_signal_emit(data,
-                                                                ELM_ATSPI_STATE_CHECKED,
-                                                                sd->state);
+     elm_interface_atspi_accessible_state_changed_signal_emit(data,
+                                                              ELM_ATSPI_STATE_CHECKED,
+                                                              efl_ui_nstate_value_get(obj));
 }
 
 static void
@@ -328,6 +295,9 @@ _elm_check_evas_object_smart_add(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
+
+   if (!elm_layout_theme_set(obj, "check", "base", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
 
    edje_object_signal_callback_add
      (wd->resize_obj, "elm,action,check,on", "*",
@@ -348,23 +318,40 @@ _elm_check_evas_object_smart_add(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
      (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
-
-   if (!elm_layout_theme_set(obj, "check", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
-
    elm_layout_sizing_eval(obj);
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_check_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED)
-{
-   return _content_aliases;
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
 _elm_check_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED)
 {
    return _text_aliases;
+}
+
+EOLIAN static Eina_Bool
+_elm_check_selected_get(Eo *obj, Elm_Check_Data *pd EINA_UNUSED)
+{
+   return !!efl_ui_nstate_value_get(obj);
+}
+
+EOLIAN static void
+_elm_check_selected_set(Eo *obj, Elm_Check_Data *pd EINA_UNUSED, Eina_Bool value)
+{
+   efl_ui_nstate_value_set(obj, value);
+}
+
+EOLIAN static void
+_elm_check_elm_nstate_count_set(Eo *obj EINA_UNUSED, Elm_Check_Data *pd EINA_UNUSED, int nstate EINA_UNUSED)
+{
+   //NOP;
+}
+
+EOLIAN static void
+_elm_check_elm_nstate_value_set(Eo *obj, Elm_Check_Data *pd EINA_UNUSED, int state)
+{
+   Eina_Bool _state = !!state;
+   if (_state == efl_ui_nstate_value_get(obj)) return;
+
+   efl_ui_nstate_value_set(eo_super(obj, MY_CLASS), _state);
 }
 
 EAPI Evas_Object *
@@ -386,59 +373,49 @@ _elm_check_eo_base_constructor(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
    return obj;
 }
 
-EOLIAN static void
-_elm_check_state_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool state)
+EAPI void
+elm_check_state_set(Evas_Object *obj, Eina_Bool state)
 {
+   ELM_CHECK_DATA_GET_OR_RETURN(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (state != sd->state)
-     {
-        sd->state = state;
-        if (sd->statep) *sd->statep = sd->state;
-        if (sd->state)
-          elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-        else
-          elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-     }
+   if (state == efl_ui_nstate_value_get(obj)) return;
+
+   efl_ui_nstate_value_set(obj, state);
+   if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
+   if (efl_ui_nstate_value_get(obj) == 1)
+     elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+   else if (efl_ui_nstate_value_get(obj) == 0)
+     elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
 
    edje_object_message_signal_process(wd->resize_obj);
 }
 
-EOLIAN static Eina_Bool
-_elm_check_state_get(Eo *obj EINA_UNUSED, Elm_Check_Data *sd)
+EAPI Eina_Bool
+elm_check_state_get(const Evas_Object *obj)
 {
-   return sd->state;
+   return !!efl_ui_nstate_value_get(obj);
 }
 
-EOLIAN static void
-_elm_check_state_pointer_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool *statep)
+EAPI void
+elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
 {
-   if (statep)
+   ELM_CHECK_DATA_GET_OR_RETURN(obj, sd);
+   if (!statep)
      {
-        sd->statep = statep;
-        if (*sd->statep != sd->state)
-          {
-             sd->state = *sd->statep;
-             if (sd->state)
-               elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-             else
-               elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-          }
+        sd->statep = NULL;
+        return;
      }
-   else
-     sd->statep = NULL;
-}
 
-EOLIAN static Eina_Bool
-_elm_check_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_check_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
+   sd->statep = statep;
+   if (*sd->statep != efl_ui_nstate_value_get(obj))
+     {
+        efl_ui_nstate_value_set(obj, *sd->statep);
+        if (efl_ui_nstate_value_get(obj) == 1)
+          elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+        else if (efl_ui_nstate_value_get(obj) == 0)
+          elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+     }
 }
 
 EOLIAN const Elm_Atspi_Action *
