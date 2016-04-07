@@ -27,10 +27,10 @@
 # include <Evil.h>
 #endif
 #include <Eina.h>
+#include <Efl.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"
-#include "Efl.h"
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
 #include <malloc.h>
