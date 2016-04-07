@@ -315,6 +315,7 @@ _edje_real_part_free(Edje *ed, Edje_Real_Part *rp)
    if ((rp->type == EDJE_RP_TYPE_SWALLOW) && (rp->typedata.swallow)
        && (rp->typedata.swallow->swallowed_object))
      {
+        eo_parent_set(rp->typedata.swallow->swallowed_object, evas_common_evas_get(ed->obj));
         evas_object_smart_member_del(rp->typedata.swallow->swallowed_object);
         evas_object_event_callback_del(rp->typedata.swallow->swallowed_object,
                                        EVAS_CALLBACK_FREE, _edje_object_part_swallow_free_cb);
@@ -3147,7 +3148,11 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
         evas_object_show(rp->object);
         evas_object_smart_member_add(rp->object, ed->obj);
         evas_object_layer_set(rp->object, evas_object_layer_get(ed->obj));
-        if (ep->type != EDJE_PART_TYPE_SWALLOW && ep->type != EDJE_PART_TYPE_GROUP)
+        if (ep->type == EDJE_PART_TYPE_SWALLOW)
+          {
+             eo_parent_set(rp->object, ed->obj);
+          }
+        else if (ep->type != EDJE_PART_TYPE_GROUP)
           {
              if (ep->mouse_events)
                {
