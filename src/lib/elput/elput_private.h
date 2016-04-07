@@ -203,7 +203,6 @@ struct _Elput_Device
 {
    Elput_Seat *seat;
 
-   /* TODO: we will need an API to set this */
    uint32_t window;
    uint32_t ow, oh;
 

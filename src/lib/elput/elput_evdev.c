@@ -1131,6 +1131,49 @@ _touch_motion(struct libinput_device *idevice, struct libinput_event_touch *even
    _touch_motion_send(dev, event);
 }
 
+static void
+_evdev_device_calibrate(Elput_Device *dev)
+{
+   float cal[6];
+   const char *vals;
+   const char *sysname;
+   const char *device;
+   Eina_List *devices;
+   int w = 0, h = 0;
+   enum libinput_config_status status;
+
+   w = dev->ow;
+   h = dev->oh;
+   if ((w == 0) || (h == 0)) return;
+
+   if ((!libinput_device_config_calibration_has_matrix(dev->device)) ||
+       (libinput_device_config_calibration_get_default_matrix(dev->device, cal)))
+     return;
+
+   sysname = libinput_device_get_sysname(dev->device);
+
+   devices = eeze_udev_find_by_subsystem_sysname("input", sysname);
+   EINA_LIST_FREE(devices, device)
+     {
+        vals = eeze_udev_syspath_get_property(device, "WL_CALIBRATION");
+        if ((!vals) ||
+            (sscanf(vals, "%f %f %f %f %f %f",
+                    &cal[0], &cal[1], &cal[2], &cal[3], &cal[4], &cal[5]) != 6))
+          goto cont;
+
+        cal[2] /= w;
+        cal[5] /= h;
+
+        status =
+          libinput_device_config_calibration_set_matrix(dev->device, cal);
+        if (status != LIBINPUT_CONFIG_STATUS_SUCCESS)
+          WRN("Failed to apply device calibration");
+
+cont:
+        eina_stringshare_del(device);
+     }
+}
+
 int
 _evdev_event_process(struct libinput_event *event)
 {
@@ -1313,4 +1356,28 @@ elput_device_window_set(Elput_Device *device, unsigned int window)
    EINA_SAFETY_ON_NULL_RETURN(device);
 
    device->window = window;
+}
+
+EAPI void
+elput_device_output_size_set(Elput_Device *device, int w, int h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   device->ow = w;
+   device->oh = h;
+
+   if (libinput_device_has_capability(device->device,
+                                      LIBINPUT_DEVICE_CAP_POINTER))
+     {
+        Elput_Pointer *ptr;
+
+        ptr = _evdev_pointer_get(device->seat);
+        if (ptr)
+          {
+             ptr->x = device->ow / 2;
+             ptr->y = device->oh / 2;
+          }
+     }
+
+   _evdev_device_calibrate(device);
 }

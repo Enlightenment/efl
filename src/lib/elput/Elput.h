@@ -245,6 +245,18 @@ EAPI void elput_input_shutdown(Elput_Manager *manager);
  */
 EAPI void elput_device_window_set(Elput_Device *device, unsigned int window);
 
+/**
+ * Set size of output for input device calibration
+ *
+ * @param device
+ * @param w
+ * @param h
+ *
+ * @ingroup Elput_Device_Group
+ * @since 1.18
+ */
+EAPI void elput_device_output_size_set(Elput_Device *device, int w, int h);
+
 # endif
 
 # undef EAPI
