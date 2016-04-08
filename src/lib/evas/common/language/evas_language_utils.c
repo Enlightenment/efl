@@ -145,8 +145,9 @@ evas_common_language_from_locale_get(void)
    if (locale && *locale)
      {
         char *itr;
-        strncpy(lang, locale, 5);
-        lang[5] = '\0';
+        const size_t size = sizeof(lang);
+        strncpy(lang, locale, size - 1);
+        lang[size - 1] = '\0';
         itr = lang;
         while (*itr)
           {
@@ -171,6 +172,7 @@ evas_common_language_from_locale_full_get(void)
    locale = setlocale(LC_MESSAGES, NULL);
    if (locale && *locale)
      {
+        const size_t size = sizeof(lang_full);
         size_t i;
         for (i = 0 ; locale[i] ; i++)
           {
@@ -178,6 +180,12 @@ evas_common_language_from_locale_full_get(void)
              if ((c == '.') || (c == '@') || (c == ' ')) /* Looks like en_US.UTF8 or de_DE@euro or aa_ER UTF-8*/
                 break;
           }
+
+        if (i >= size)
+          {
+             i = size - 1;
+          }
+
         strncpy(lang_full, locale, i);
         lang_full[i] = '\0';
         return lang_full;
