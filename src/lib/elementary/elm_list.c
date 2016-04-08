@@ -3097,30 +3097,27 @@ _elm_list_item_coordinates_adjust(Elm_List_Item_Data *it,
                                   Evas_Coord *w,
                                   Evas_Coord *h)
 {
-   ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
-
    Evas_Coord ix, iy, iw, ih, vx, vy, vw, vh;
 
-   evas_object_geometry_get(sd->hit_rect, &vx, &vy, &vw, &vh);
+   elm_interface_scrollable_content_viewport_geometry_get(WIDGET(it), &vx, &vy, &vw, &vh);
    evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
+
+   if (iy < vy)
+     iy = vy;
+
+   if ((iy + ih) > (vy + vh))
+     ih = (vy + vh - iy);
+
+   if (ix < vx)
+     ix = vx;
+
+   if ((ix + iw) > (vx + vw))
+     iw = (vx + vw - ix);
+
    *x = ix;
    *y = iy;
    *w = iw;
    *h = ih;
-   if (!sd->h_mode)
-     {
-        if (ELM_RECTS_X_AXIS_OUT(ix, iy, iw, ih, vx, vy, vw, vh))
-          *y = iy - ih;
-        else if (iy < vy)
-          *y = iy + ih;
-     }
-   else
-     {
-        if (ELM_RECTS_Y_AXIS_OUT(ix, iy, iw, ih, vx, vy, vw, vh))
-          *x = ix - iw;
-        else if (ix < vx)
-          *x = ix + iw;
-     }
 }
 
 EOLIAN static void
