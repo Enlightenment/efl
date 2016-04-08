@@ -1,8 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = sphere_hunter performance
-
-include ../../Makefile_Elm_Helpers.am
+include ../../../Makefile_Elm_Helpers.am
+include ../../Makefile_Edje_Helper.am
 
 .PHONY: screenshots
 
@@ -13,9 +12,29 @@ files_DATA =
 AM_CPPFLAGS = \
 -Wno-unused-parameter \
 -I. \
--I$(top_srcdir)/src/lib \
--I$(top_builddir)/src/lib \
--DPACKAGE_DATA_DIR="\"$(pkgdatadir)\"" \
+-I$(top_builddir)/src/bindings \
+-I$(top_srcdir)/src/bindings \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl/interfaces \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_srcdir)/src/bindings/eina_cxx \
+-I$(top_builddir)/src/bindings/eina_cxx \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_srcdir)/src/bindings/eo_cxx \
+-I$(top_builddir)/src/bindings/eo_cxx \
+-I$(top_srcdir)/src/bindings/eldbus_cxx \
+-I$(top_builddir)/src/bindings/eldbus_cxx \
+-I$(top_srcdir)/src/lib/ector \
+-I$(top_builddir)/src/lib/ector \
+-I$(top_srcdir)/src/lib/evas \
+-I$(top_builddir)/src/lib/evas \
+-I$(top_srcdir)/src/lib/evas/canvas \
+-I$(top_builddir)/src/lib/evas/canvas \
+-I$(top_srcdir)/src/lib/elementary \
+-I$(top_builddir)/src/lib/elementary \
+-DPACKAGE_DATA_DIR="\"$(datadir)/elementary\"" \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 @ELEMENTARY_CFLAGS@
@@ -25,11 +44,20 @@ AM_CXXFLAGS = \
 @ELEMENTARY_CXX_CFLAGS@
 
 LDADD = \
-@ELEMENTARY_LIBS@ \
-$(top_builddir)/src/lib/libelementary.la
-
-ELEMENTARY_CODEGEN = $(top_builddir)/src/bin/@ELEMENTARY_CODEGEN_PRG@
-ELEMENTARY_CODEGEN_FLAGS = --prefix=codegen_example
+@ELEMENTARY_LDFLAGS@ \
+$(top_builddir)/src/lib/eina/libeina.la \
+$(top_builddir)/src/lib/eo/libeo.la \
+$(top_builddir)/src/lib/eet/libeet.la \
+$(top_builddir)/src/lib/evas/libevas.la \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
+$(top_builddir)/src/lib/ecore_file/libecore_file.la \
+$(top_builddir)/src/lib/ecore_input/libecore_input.la \
+$(top_builddir)/src/lib/ecore_imf/libecore_imf.la \
+$(top_builddir)/src/lib/ecore_imf_evas/libecore_imf_evas.la \
+$(top_builddir)/src/lib/embryo/libembryo.la \
+$(top_builddir)/src/lib/edje/libedje.la \
+$(top_builddir)/src/lib/elementary/libelementary.la
 
 SRCS = \
 actionslider_example_01.c \
@@ -149,35 +177,35 @@ evas3d_map_example.c \
 track_example_01.c \
 twitter_example_01.edc
 
-if HAVE_CXX11
-SRCS += \
-thumb_cxx_example_01.cc \
-table_cxx_example_02.cc \
-table_cxx_example_01.cc \
-spinner_cxx_example.cc \
-slider_cxx_example.cc \
-separator_cxx_example_01.cc \
-radio_cxx_example_01.cc \
-popup_cxx_example_01.cc \
-menu_cxx_example_01.cc \
-location_cxx_example_01.cc \
-icon_cxx_example_01.cc \
-hoversel_cxx_example_01.cc \
-glview_cxx_example_01.cc \
-datetime_cxx_example.cc \
-clock_cxx_example.cc \
-calendar_cxx_example_05.cc \
-calendar_cxx_example_04.cc \
-calendar_cxx_example_03.cc \
-calendar_cxx_example_02.cc \
-calendar_cxx_example_01.cc \
-button_cxx_example_01.cc \
-button_cxx_example_00.cc \
-bubble_cxx_example_01.cc \
-box_cxx_example_02.cc \
-bg_cxx_example_02.cc \
-bg_cxx_example_01.cc
-endif
+# if HAVE_CXX11
+# SRCS += \
+# thumb_cxx_example_01.cc \
+# table_cxx_example_02.cc \
+# table_cxx_example_01.cc \
+# spinner_cxx_example.cc \
+# slider_cxx_example.cc \
+# separator_cxx_example_01.cc \
+# radio_cxx_example_01.cc \
+# popup_cxx_example_01.cc \
+# menu_cxx_example_01.cc \
+# location_cxx_example_01.cc \
+# icon_cxx_example_01.cc \
+# hoversel_cxx_example_01.cc \
+# glview_cxx_example_01.cc \
+# datetime_cxx_example.cc \
+# clock_cxx_example.cc \
+# calendar_cxx_example_05.cc \
+# calendar_cxx_example_04.cc \
+# calendar_cxx_example_03.cc \
+# calendar_cxx_example_02.cc \
+# calendar_cxx_example_01.cc \
+# button_cxx_example_01.cc \
+# button_cxx_example_00.cc \
+# bubble_cxx_example_01.cc \
+# box_cxx_example_02.cc \
+# bg_cxx_example_02.cc \
+# bg_cxx_example_01.cc
+# endif
 
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
@@ -185,12 +213,9 @@ endif
 .epc.epb:
 	$(AM_V_EPB)$(ELM_PREFS_CC) $< $@
 
-if EFL_INSTALL_EXAMPLES
 files_DATA += $(SRCS) \
 	dict.txt
-endif
 
-if EFL_BUILD_EXAMPLES
 files_DATA += \
 	prefs_example_01.epb \
 	prefs_example_02.epb \
@@ -205,9 +230,10 @@ files_DATA += \
 clean-local:
 	rm -f *.edj *.epb *.cfg *.cfg.bkp
 
+ELEMENTARY_CODEGEN_FLAGS = --prefix=codegen_example
+
 codegen_example_generated.c codegen_example_generated.h: codegen_example.edj
-	$(ELEMENTARY_CODEGEN) $(ELEMENTARY_CODEGEN_FLAGS) codegen_example.edj \
-	elm/example/mylayout/default codegen_example_generated.c codegen_example_generated.h
+	$(AM_V_CODEGEN)$(ELEMENTARY_CODEGEN) $(ELEMENTARY_CODEGEN_FLAGS) codegen_example.edj elm/example/mylayout/default codegen_example_generated.c codegen_example_generated.h
 
 BUILT_SOURCES = codegen_example_generated.c codegen_example_generated.h
 
@@ -325,39 +351,61 @@ win_example \
 evas3d_scene_on_button_example \
 evas3d_object_on_button_example \
 evas3d_map_example \
-track_example_01
+track_example_01 \
+benchmark3d \
+sphere-hunter
 
-if HAVE_CXX11
-examples_PROGRAMS += \
-thumb_cxx_example_01 \
-table_cxx_example_02 \
-table_cxx_example_01 \
-spinner_cxx_example \
-slider_cxx_example \
-separator_cxx_example_01 \
-radio_cxx_example_01 \
-popup_cxx_example_01 \
-menu_cxx_example_01 \
-location_cxx_example_01 \
-icon_cxx_example_01 \
-hoversel_cxx_example_01 \
-glview_cxx_example_01 \
-datetime_cxx_example \
-clock_cxx_example \
-calendar_cxx_example_05 \
-calendar_cxx_example_04 \
-calendar_cxx_example_03 \
-calendar_cxx_example_02 \
-calendar_cxx_example_01 \
-button_cxx_example_01 \
-button_cxx_example_00 \
-bubble_cxx_example_01 \
-box_cxx_example_02 \
-bg_cxx_example_02 \
-bg_cxx_example_01
-endif
+benchmark3d_SOURCES = \
+	performance/performance.c \
+	performance/camera_light.c \
+	performance/graphical.c
 
-if ELEMENTARY_WINDOWS_BUILD
+sphere_hunter_SOURCES = \
+	sphere_hunter/evas_3d_sphere_hunter.c
+
+files_DATA += performance/layout.edj sphere_hunter/sphere_hunter.edj
+
+performance/layout.edj: performance/layout.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) performance/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -id performance/ $< $@
+
+sphere_hunter/sphere_hunter.edj: sphere_hunter/sphere_hunter.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) sphere_hunter/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -id sphere_hunter/ -id $(top_srcdir)/data/elementary/themes $< $@
+
+# if HAVE_CXX11
+# examples_PROGRAMS += \
+# thumb_cxx_example_01 \
+# table_cxx_example_02 \
+# table_cxx_example_01 \
+# spinner_cxx_example \
+# slider_cxx_example \
+# separator_cxx_example_01 \
+# radio_cxx_example_01 \
+# popup_cxx_example_01 \
+# menu_cxx_example_01 \
+# location_cxx_example_01 \
+# icon_cxx_example_01 \
+# hoversel_cxx_example_01 \
+# glview_cxx_example_01 \
+# datetime_cxx_example \
+# clock_cxx_example \
+# calendar_cxx_example_05 \
+# calendar_cxx_example_04 \
+# calendar_cxx_example_03 \
+# calendar_cxx_example_02 \
+# calendar_cxx_example_01 \
+# button_cxx_example_01 \
+# button_cxx_example_00 \
+# bubble_cxx_example_01 \
+# box_cxx_example_02 \
+# bg_cxx_example_02 \
+# bg_cxx_example_01
+# endif
+
+if HAVE_WINDOWS
 efl_thread_1_SOURCES = efl_thread_win32_1.c
 efl_thread_2_SOURCES = efl_thread_win32_2.c
 efl_thread_3_SOURCES = efl_thread_win32_3.c
@@ -369,34 +417,34 @@ efl_thread_3_SOURCES = efl_thread_3.c
 efl_thread_4_SOURCES = efl_thread_4.c
 endif
 
-if HAVE_CXX11
-thumb_cxx_example_01_SOURCES = thumb_cxx_example_01.cc
-table_cxx_example_02_SOURCES = table_cxx_example_02.cc
-table_cxx_example_01_SOURCES = table_cxx_example_01.cc
-spinner_cxx_example_SOURCES = spinner_cxx_example.cc
-slider_cxx_example_SOURCES = slider_cxx_example.cc
-separator_cxx_example_01_SOURCES = separator_cxx_example_01.cc
-radio_cxx_example_01_SOURCES = radio_cxx_example_01.cc
-popup_cxx_example_01_SOURCES = popup_cxx_example_01.cc
-menu_cxx_example_01_SOURCES = menu_cxx_example_01.cc
-location_cxx_example_01_SOURCES = location_cxx_example_01.cc
-icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
-hoversel_cxx_example_01_SOURCES = hoversel_cxx_example_01.cc
-glview_cxx_example_01_SOURCES = glview_cxx_example_01.cc
-datetime_cxx_example_SOURCES = datetime_cxx_example.cc
-clock_cxx_example_SOURCES = clock_cxx_example.cc
-calendar_cxx_example_05_SOURCES = calendar_cxx_example_05.cc
-calendar_cxx_example_04_SOURCES = calendar_cxx_example_04.cc
-calendar_cxx_example_03_SOURCES = calendar_cxx_example_03.cc
-calendar_cxx_example_02_SOURCES = calendar_cxx_example_02.cc
-calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
-button_cxx_example_01_SOURCES = button_cxx_example_01.cc
-button_cxx_example_00_SOURCES = button_cxx_example_00.cc
-bubble_cxx_example_01_SOURCES = bubble_cxx_example_01.cc
-box_cxx_example_02_SOURCES = box_cxx_example_02.cc
-bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
-bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
-endif
+# if HAVE_CXX11
+# thumb_cxx_example_01_SOURCES = thumb_cxx_example_01.cc
+# table_cxx_example_02_SOURCES = table_cxx_example_02.cc
+# table_cxx_example_01_SOURCES = table_cxx_example_01.cc
+# spinner_cxx_example_SOURCES = spinner_cxx_example.cc
+# slider_cxx_example_SOURCES = slider_cxx_example.cc
+# separator_cxx_example_01_SOURCES = separator_cxx_example_01.cc
+# radio_cxx_example_01_SOURCES = radio_cxx_example_01.cc
+# popup_cxx_example_01_SOURCES = popup_cxx_example_01.cc
+# menu_cxx_example_01_SOURCES = menu_cxx_example_01.cc
+# location_cxx_example_01_SOURCES = location_cxx_example_01.cc
+# icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
+# hoversel_cxx_example_01_SOURCES = hoversel_cxx_example_01.cc
+# glview_cxx_example_01_SOURCES = glview_cxx_example_01.cc
+# datetime_cxx_example_SOURCES = datetime_cxx_example.cc
+# clock_cxx_example_SOURCES = clock_cxx_example.cc
+# calendar_cxx_example_05_SOURCES = calendar_cxx_example_05.cc
+# calendar_cxx_example_04_SOURCES = calendar_cxx_example_04.cc
+# calendar_cxx_example_03_SOURCES = calendar_cxx_example_03.cc
+# calendar_cxx_example_02_SOURCES = calendar_cxx_example_02.cc
+# calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
+# button_cxx_example_01_SOURCES = button_cxx_example_01.cc
+# button_cxx_example_00_SOURCES = button_cxx_example_00.cc
+# bubble_cxx_example_01_SOURCES = bubble_cxx_example_01.cc
+# box_cxx_example_02_SOURCES = box_cxx_example_02.cc
+# bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
+# bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
+# endif
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
@@ -484,37 +532,37 @@ table_example_01:table_example_01.png:0.0 \
 table_example_02:table_example_02.png:0.0 \
 menu_example_01:menu_example_01.png:0.5
 
-if HAVE_CXX11
-SCREENSHOTS += \
-bg_cxx_example_02:bg_cxx_example_02.png:0.0 \
-box_cxx_example_02:box_cxx_example_02.png:1.3 \
-bubble_cxx_example_01:bubble_cxx_example_01.png:0.0 \
-button_cxx_example_00:button_cxx_example_00.png:0.0 \
-button_cxx_example_01:button_cxx_example_01.png:0.0 \
-calendar_cxx_example_01:calendar_cxx_example_01.png:0.0 \
-calendar_cxx_example_02:calendar_cxx_example_02.png:0.0 \
-calendar_cxx_example_03:calendar_cxx_example_03.png:0.0 \
-calendar_cxx_example_04:calendar_cxx_example_04.png:0.0 \
-calendar_cxx_example_05:calendar_cxx_example_05.png:0.0 \
-clock_cxx_example:clock_cxx_example.png:0.5 \
-datetime_cxx_example:datetime_cxx_example.png:0.0 \
-hoversel_cxx_example_01:hoversel_cxx_example_01.png:0.0 \
-icon_cxx_example_01:icon_cxx_example_01.png:0.0 \
-menu_cxx_example_01:menu_cxx_example_01.png:0.5 \
-popup_cxx_example_01:popup_cxx_example_01.png:1.0 \
-popup_cxx_example_01:popup_cxx_example_01_a.png:6.0 \
-radio_cxx_example_01:radio_cxx_example_01.png:0.0 \
-separator_cxx_example_01:separator_cxx_example_01.png:0.0 \
-slider_cxx_example:slider_cxx_example.png:0.0 \
-spinner_cxx_example:spinner_cxx_example.png:0.0 \
-table_cxx_example_01:table_cxx_example_01.png:0.0 \
-table_cxx_example_02:table_cxx_example_02.png:0.0 \
-thumb_cxx_example_01:thumb_cxx_example_01.png:0.5
-endif
+# if HAVE_CXX11
+# SCREENSHOTS += \
+# bg_cxx_example_02:bg_cxx_example_02.png:0.0 \
+# box_cxx_example_02:box_cxx_example_02.png:1.3 \
+# bubble_cxx_example_01:bubble_cxx_example_01.png:0.0 \
+# button_cxx_example_00:button_cxx_example_00.png:0.0 \
+# button_cxx_example_01:button_cxx_example_01.png:0.0 \
+# calendar_cxx_example_01:calendar_cxx_example_01.png:0.0 \
+# calendar_cxx_example_02:calendar_cxx_example_02.png:0.0 \
+# calendar_cxx_example_03:calendar_cxx_example_03.png:0.0 \
+# calendar_cxx_example_04:calendar_cxx_example_04.png:0.0 \
+# calendar_cxx_example_05:calendar_cxx_example_05.png:0.0 \
+# clock_cxx_example:clock_cxx_example.png:0.5 \
+# datetime_cxx_example:datetime_cxx_example.png:0.0 \
+# hoversel_cxx_example_01:hoversel_cxx_example_01.png:0.0 \
+# icon_cxx_example_01:icon_cxx_example_01.png:0.0 \
+# menu_cxx_example_01:menu_cxx_example_01.png:0.5 \
+# popup_cxx_example_01:popup_cxx_example_01.png:1.0 \
+# popup_cxx_example_01:popup_cxx_example_01_a.png:6.0 \
+# radio_cxx_example_01:radio_cxx_example_01.png:0.0 \
+# separator_cxx_example_01:separator_cxx_example_01.png:0.0 \
+# slider_cxx_example:slider_cxx_example.png:0.0 \
+# spinner_cxx_example:spinner_cxx_example.png:0.0 \
+# table_cxx_example_01:table_cxx_example_01.png:0.0 \
+# table_cxx_example_02:table_cxx_example_02.png:0.0 \
+# thumb_cxx_example_01:thumb_cxx_example_01.png:0.5
+# endif
 
 HTML_SS_DIR=$(top_builddir)/doc/html/screenshots
 LATEX_SS_DIR=$(top_builddir)/doc/latex/screenshots
-screenshots: all
+screenshots: examples
 	@mkdir -p $(HTML_SS_DIR)
 	@mkdir -p $(LATEX_SS_DIR)
 	@for ss in $(SCREENSHOTS); do \
@@ -526,11 +574,10 @@ screenshots: all
 		convert $(HTML_SS_DIR)/$${SS_FILE} $(LATEX_SS_DIR)/$${SS_FILE/.png/.eps} ; \
 	done
 
-else
+EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc evas3d_map_example.edc twitter_example_01.edc performance/layout.edc performance/background.png performance/target_texture.png sphere_hunter/sphere_hunter.edc sphere_hunter/score.jpg sphere_hunter/EFL_victory.png sphere_hunter/EFL_defeat.png
 
-screenshots:
-	@echo "Examples are not built. Run \"./configure --enable-build-examples\" first."
+examples: $(examples_PROGRAMS)
 
-endif
-
-EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc evas3d_map_example.edc twitter_example_01.edc
+install-examples:
+	$(MKDIR_P) $(datadir)/elementary/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(datadir)/elementary/examples

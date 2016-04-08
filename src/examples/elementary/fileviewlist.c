@@ -2,7 +2,7 @@
 // gcc -o fileviewlist fileviewlist.c `pkg-config --cflags --libs elementary`
 
 #ifdef HAVE_CONFIG_H
-# include "../../elementary_config.h"
+# include "config.h"
 #else
 # define EFL_BETA_API_SUPPORT 1
 # define EFL_EO_API_SUPPORT 1

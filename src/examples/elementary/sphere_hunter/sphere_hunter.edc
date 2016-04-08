@@ -4,11 +4,11 @@ collections {
       min: 704 800;
       images {
          image: "score.jpg" COMP;
-         image: "../../../data/themes/img/bg_glow_in.png" COMP;
-         image: "../../../data/themes/img/vgrad_med.png" COMP;
+         image: "img/bg_glow_in.png" COMP;
+         image: "img/vgrad_med.png" COMP;
          image: "EFL_victory.png" COMP;
          image: "EFL_defeat.png" COMP;
-         image: "../../../data/themes/img/screen_circular_shadow.png" COMP;
+         image: "img/screen_circular_shadow.png" COMP;
       }
       parts {
          part {
@@ -115,7 +115,7 @@ collections {
                align: 0.5 0.0;
                min: 150 75;
                max: 150 75;
-               image.normal: "../../../data/themes/img/bg_glow_in.png";
+               image.normal: "img/bg_glow_in.png";
                rel1.to: "score_bg";
                rel2.to: "score_bg";
             }
@@ -151,7 +151,7 @@ collections {
                state: "default" 0.0;
                min: 150 125;
                max: 150 125;
-               image.normal: "../../../data/themes/img/bg_glow_in.png";
+               image.normal: "img/bg_glow_in.png";
                rel1.to: "score";
                rel2.to: "score";
             }
@@ -164,7 +164,7 @@ collections {
                min: 150 5;
                max: 150 5;
                align: 1.0 1.0;
-               image.normal: "../../../data/themes/img/vgrad_med.png";
+               image.normal: "img/vgrad_med.png";
                rel1.to: "score_img";
                rel2.to: "score_img";
             }
@@ -177,7 +177,7 @@ collections {
                min: 700 700;
                max: 700 700;
                visible: 0;
-               image.normal: "../../../data/themes/img/screen_circular_shadow.png";
+               image.normal: "img/screen_circular_shadow.png";
                rel1.to: "scene_bg";
                rel2.to: "scene_bg";
             }

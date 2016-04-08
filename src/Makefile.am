@@ -130,7 +130,8 @@ examples/edje \
 examples/emotion \
 examples/emile \
 examples/elocation \
-examples/ethumb_client
+examples/ethumb_client \
+examples/elementary
 
 if HAVE_ELUA
 EXAMPLES_SUBDIRS += examples/elua
