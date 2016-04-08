@@ -96,7 +96,7 @@ _efl_vpath_core_eo_base_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
         snprintf(buf, sizeof(buf), "%s/.run", home);
         mkdir(buf,  S_IRUSR | S_IWUSR | S_IXUSR);
         // if mkdir worked - use, otherwse use /tmp
-        if (stat(bufhome, &st) == 0) s = buf;
+        if (stat(buf, &st) == 0) s = buf;
         else
           {
              uid_t uid;
@@ -107,7 +107,7 @@ _efl_vpath_core_eo_base_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
              snprintf(buf, sizeof(buf), "%s/.run-%i", s, (int)uid);
              mkdir(buf,  S_IRUSR | S_IWUSR | S_IXUSR);
              // if ok - use it or fall back to /tmp
-             if (stat(bufhome, &st) == 0) s = buf;
+             if (stat(buf, &st) == 0) s = buf;
              else s = (char *)efl_vpath_core_meta_get(obj, "tmp");
           }
      }
