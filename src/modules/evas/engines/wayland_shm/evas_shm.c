@@ -468,7 +468,7 @@ _evas_shm_surface_wait(Shm_Surface *surface)
    return NULL;
 }
 
-Eina_Bool
+int
 _evas_shm_surface_assign(Shm_Surface *surface)
 {
    int i;
@@ -487,7 +487,7 @@ _evas_shm_surface_assign(Shm_Surface *surface)
                   surface->leaf[i].age = 0;
                }
           }
-        return EINA_FALSE;
+        return 0;
      }
 
    /* Increment ages of all valid buffers */
@@ -504,7 +504,7 @@ _evas_shm_surface_assign(Shm_Surface *surface)
           }
      }
 
-   return EINA_TRUE;
+   return surface->current->age;
 }
 
 void *

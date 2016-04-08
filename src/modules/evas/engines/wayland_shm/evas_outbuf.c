@@ -269,9 +269,7 @@ _evas_outbuf_swap_mode_get(Outbuf *ob)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!_evas_shm_surface_assign(ob->surface)) return MODE_FULL;
-
-   age = ob->surface->current->age;
+   age = _evas_shm_surface_assign(ob->surface);
    if (age > ob->surface->num_buff) return MODE_FULL;
    else if (age == 1) return MODE_COPY;
    else if (age == 2) return MODE_DOUBLE;

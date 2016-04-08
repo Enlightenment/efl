@@ -150,7 +150,7 @@ Shm_Surface *_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *sh
 void _evas_shm_surface_destroy(Shm_Surface *surface);
 void _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h, int num_buff, uint32_t flags);
 void *_evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h);
-Eina_Bool _evas_shm_surface_assign(Shm_Surface *surface);
+int _evas_shm_surface_assign(Shm_Surface *surface);
 void _evas_shm_surface_post(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count);
 
 Outbuf *_evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface, struct wl_display *disp, int compositor_version);
