@@ -71,49 +71,7 @@ extern int _evas_engine_way_shm_log_dom;
 
 # define MAX_BUFFERS 4
 
-typedef struct _Shm_Pool Shm_Pool;
-struct _Shm_Pool
-{
-   struct wl_shm_pool *pool;
-   size_t size, used;
-   void *data;
-};
-
-typedef struct _Shm_Data Shm_Data;
-struct _Shm_Data
-{
-   struct wl_buffer *buffer;
-   Shm_Pool *pool;
-   void *map;
-};
-
-typedef struct _Shm_Leaf Shm_Leaf;
-struct _Shm_Leaf
-{
-   int w, h, busy, age;
-   Shm_Data *data;
-   Shm_Pool *resize_pool;
-   Eina_Bool valid : 1;
-   Eina_Bool reconfigure : 1;
-   Eina_Bool drawn : 1;
-};
-
 typedef struct _Shm_Surface Shm_Surface;
-struct _Shm_Surface
-{
-   struct wl_display *disp;
-   struct wl_shm *shm;
-   struct wl_surface *surface;
-   int w, h;
-   int dx, dy;
-   int num_buff;
-   int compositor_version;
-
-   Shm_Leaf leaf[MAX_BUFFERS];
-   Shm_Leaf *current;
-
-   Eina_Bool alpha : 1;
-};
 
 struct _Outbuf
 {
