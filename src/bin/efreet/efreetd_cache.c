@@ -122,7 +122,8 @@ subdir_cache_init(void)
    EET_DATA_DESCRIPTOR_ADD_HASH(subdir_edd, Subdir_Cache, "dirs", dirs, subdir_dir_edd);
 
    // load subdirs from the cache file
-   snprintf(buf, sizeof(buf), "%s/efreet/subdirs_%s.eet", efreet_cache_home_get(), efreet_hostname_get());
+   snprintf(buf, sizeof(buf), "%s/efreet/subdirs_%s.eet",
+            efreet_cache_home_get(), efreet_hostname_get());
    ef = eet_open(buf, EET_FILE_MODE_READ);
    if (ef)
      {
@@ -172,15 +173,15 @@ subdir_cache_save(void)
    if (!subdir_cache->dirs) return;
 
    // save to tmp file first
-   snprintf(buf2, sizeof(buf2), "%s/efreet/subdirs_%s.eet.XXXXXX.cache", efreet_cache_home_get(), efreet_hostname_get());
+   snprintf(buf2, sizeof(buf2), "%s/efreet/subdirs_%s.eet.XXXXXX.cache",
+            efreet_cache_home_get(), efreet_hostname_get());
    tmpfd = eina_file_mkstemp(buf2, &tmpstr);
    if (tmpfd < 0) return;
 
    // write out eet file to tmp file
-   ef = eet_open(buf2, EET_FILE_MODE_WRITE);
+   ef = eet_open(tmpstr, EET_FILE_MODE_WRITE);
    eet_data_write(ef, subdir_edd, "subdirs", subdir_cache, EET_COMPRESSION_SUPERFAST);
    eet_close(ef);
-   eina_tmpstr_del(tmpstr);
 
    /*
     * On Windows, buf2 has one remaining ref, hence it can not be renamed below.
@@ -192,10 +193,16 @@ subdir_cache_save(void)
 #endif
 
    // atomically rename subdirs file on top from tmp file
-   snprintf(buf, sizeof(buf), "%s/efreet/subdirs_%s.eet", efreet_cache_home_get(), efreet_hostname_get());
-   if (rename(buf2, buf) < 0) ERR("Can't save subdir cache %s", buf);
+   snprintf(buf, sizeof(buf), "%s/efreet/subdirs_%s.eet",
+            efreet_cache_home_get(), efreet_hostname_get());
+   if (rename(tmpstr, buf) < 0)
+     {
+        unlink(tmpstr);
+        ERR("Can't save subdir cache %s", buf);
+     }
    // we dont need saving anymore - we just did
    subdir_need_save = EINA_FALSE;
+   eina_tmpstr_del(tmpstr);
 }
 
 static const Subdir_Cache_Dir *

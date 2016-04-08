@@ -3,6 +3,8 @@
 #endif
 
 #include <stdlib.h>
+#include <netdb.h>
+#include <unistd.h>
 #ifdef HAVE_SYS_RESOURCE_H
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -26,9 +28,12 @@ quit(void)
 int
 main(int argc, char *argv[])
 {
-   char path[PATH_MAX];
+   char path[PATH_MAX], buf[PATH_MAX];
    FILE *log;
    int fd;
+   const char *s;
+   const char *log_file_dir = NULL;
+   const char *hostname_str = NULL;
 
 #ifdef HAVE_SYS_RESOURCE_H
    setpriority(PRIO_PROCESS, 0, 19);
@@ -38,30 +43,36 @@ main(int argc, char *argv[])
 
    if (!eina_init()) return 1;
 
-   snprintf(path, sizeof(path), "efreetd_XXXXXX.cache");
-   fd = eina_file_mkstemp(path, NULL);
-   if (fd < 0)
-     {
-        perror("mkstemp");
-        goto ecore_error;
-     }
-   log = fdopen(fd, "wb");
-   if (!log)
-     goto ecore_error;
-
-   eina_log_print_cb_set(eina_log_print_cb_file, log);
-   efreetd_log_dom = eina_log_domain_register("efreetd", EFREETD_DEFAULT_LOG_COLOR);
-   if (efreetd_log_dom < 0)
-     {
-        EINA_LOG_ERR("Efreet: Could not create a log domain for efreetd.");
-        goto ecore_error;
-     }
-
    if (!ecore_init()) goto ecore_error;
    ecore_app_args_set(argc, (const char **)argv);
    if (!ecore_file_init()) goto ecore_file_error;
    if (!ipc_init()) goto ipc_error;
    if (!cache_init()) goto cache_error;
+
+   s = getenv("XDG_RUNTIME_DIR");
+   if (s) log_file_dir = s;
+   else log_file_dir = "/tmp";
+    if (gethostname(buf, sizeof(buf)) < 0)
+     hostname_str = "";
+   else
+     hostname_str = buf;
+   snprintf(path, sizeof(path), "%s/efreetd_%s_XXXXXX.log",
+            log_file_dir, hostname_str);
+   fd = eina_file_mkstemp(path, NULL);
+   if (fd < 0)
+     {
+        ERR("Can't create log file '%s'\b", path);;
+        goto tmp_error;
+     }
+   log = fdopen(fd, "wb");
+   if (!log) goto tmp_error;
+   eina_log_print_cb_set(eina_log_print_cb_file, log);
+   efreetd_log_dom = eina_log_domain_register("efreetd", EFREETD_DEFAULT_LOG_COLOR);
+   if (efreetd_log_dom < 0)
+     {
+        EINA_LOG_ERR("Efreet: Could not create a log domain for efreetd.");
+        goto tmp_error;
+     }
 
    ecore_main_loop_begin();
 
@@ -74,6 +85,8 @@ main(int argc, char *argv[])
    eina_shutdown();
    return 0;
 
+tmp_error:
+   cache_shutdown();
 cache_error:
    ipc_shutdown();
 ipc_error:
