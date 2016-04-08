@@ -9,6 +9,7 @@
 
 START_TEST (elm_atspi_role_get)
 {
+#if 0
    Evas_Object *win, *prefs;
    Elm_Atspi_Role role;
 
@@ -21,10 +22,11 @@ START_TEST (elm_atspi_role_get)
    ck_assert(role == ELM_ATSPI_ROLE_REDUNDANT_OBJECT);
 
    elm_shutdown();
+#endif
 }
 END_TEST
 
 void elm_test_prefs(TCase *tc)
 {
- /* tcase_add_test(tc, elm_atspi_role_get); */
+   tcase_add_test(tc, elm_atspi_role_get);
 }
