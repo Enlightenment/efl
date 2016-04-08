@@ -78,7 +78,7 @@ widget_preview_map \
 widget_preview_mapbuf \
 widget_preview_menu \
 widget_preview_notify \
-widget_preview_nstate.c \
+widget_preview_nstate \
 widget_preview_panel \
 widget_preview_panes \
 widget_preview_photocam \
