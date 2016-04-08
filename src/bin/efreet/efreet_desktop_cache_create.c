@@ -277,7 +277,8 @@ _open_temp_eet(Eina_Tmpstr **path, const char *rel)
       char *tmp;
 
       tmp = strdup(rel);
-      snprintf(buffer, sizeof(buffer), "%s.XXXXXX.cache", basename(tmp));
+      snprintf(buffer, sizeof(buffer), "%s/efreet/%s.XXXXXX.cache",
+               efreet_cache_home_get(), basename(tmp));
       free(tmp);
    }
 
