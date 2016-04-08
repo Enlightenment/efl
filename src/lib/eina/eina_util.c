@@ -91,7 +91,9 @@ eina_environment_tmp_get(void)
 # endif
      {
         tmp = getenv("TMPDIR");
-        if (!tmp) tmp = getenv("XDG_RUNTIME_DIR");
+        if (!tmp) tmp = getenv("TMP");
+        if (!tmp) tmp = getenv("TEMPDIR");
+        if (!tmp) tmp = getenv("TEMP");
      }
    if (!tmp) tmp = "/tmp";
 
