@@ -51,8 +51,8 @@ main(int argc, char *argv[])
 
    s = getenv("XDG_RUNTIME_DIR");
    if (s) log_file_dir = s;
-   else log_file_dir = "/tmp";
-    if (gethostname(buf, sizeof(buf)) < 0)
+   else log_file_dir = eina_environment_tmp_get();
+   if (gethostname(buf, sizeof(buf)) < 0)
      hostname_str = "";
    else
      hostname_str = buf;
