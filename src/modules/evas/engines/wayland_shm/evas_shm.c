@@ -370,7 +370,6 @@ _evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_
    surf->surface = surface;
    surf->num_buff = num_buff;
    surf->alpha = alpha;
-   surf->flags = 0;
    surf->compositor_version = compositor_version;
 
    /* create surface buffers */
@@ -410,7 +409,7 @@ _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   resize = !!(flags & SURFACE_HINT_RESIZING);
+   resize = !!flags;
 
    for (; i < surface->num_buff; i++)
      {
@@ -429,7 +428,6 @@ _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h
    surface->h = h;
    surface->dx = dx;
    surface->dy = dy;
-   surface->flags = flags;
    surface->num_buff = num_buff;
 
    for (i = 0; i < surface->num_buff; i++)

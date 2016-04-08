@@ -70,7 +70,6 @@ extern int _evas_engine_way_shm_log_dom;
 # include "Evas_Engine_Wayland_Shm.h"
 
 # define MAX_BUFFERS 4
-# define SURFACE_HINT_RESIZING 0x10
 
 typedef struct _Shm_Pool Shm_Pool;
 struct _Shm_Pool
@@ -105,7 +104,6 @@ struct _Shm_Surface
    struct wl_display *disp;
    struct wl_shm *shm;
    struct wl_surface *surface;
-   uint32_t flags;
    int w, h;
    int dx, dy;
    int num_buff;

@@ -306,20 +306,15 @@ _evas_outbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, int rot, Outbuf
    ob->depth = depth;
    ob->priv.destination_alpha = alpha;
 
-   if (resize)
-     ob->surface->flags = SURFACE_HINT_RESIZING;
-   else
-     ob->surface->flags = 0;
-
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
         _evas_shm_surface_reconfigure(ob->surface, x, y, w, h,
-                                      ob->num_buff, ob->surface->flags);
+                                      ob->num_buff, resize);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
         _evas_shm_surface_reconfigure(ob->surface, x, y, h, w,
-                                      ob->num_buff, ob->surface->flags);
+                                      ob->num_buff, resize);
      }
 
    _evas_outbuf_idle_flush(ob);
