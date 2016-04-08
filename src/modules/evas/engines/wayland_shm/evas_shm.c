@@ -395,15 +395,19 @@ _shm_leaf_destroy(Shm_Leaf *leaf)
    leaf->resize_pool = NULL;
 }
 
-Shm_Surface *
+Surface *
 _evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha, int compositor_version)
 {
+   Surface *s;
    Shm_Surface *surf;
    int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(surf = calloc(1, sizeof(Shm_Surface)))) return NULL;
+   if (!(s = calloc(1, sizeof(Surface)))) return NULL;
+   if (!(s->surf.shm = calloc(1, sizeof(Shm_Surface)))) goto err;
+   s->type = SURFACE_SHM;
+   surf = s->surf.shm;
 
    surf->dx = 0;
    surf->dy = 0;
@@ -426,33 +430,38 @@ _evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_
           }
      }
 
-   return surf;
+   return s;
 
 err:
-   _evas_shm_surface_destroy(surf);
+   _evas_shm_surface_destroy(s);
    return NULL;
 }
 
 void 
-_evas_shm_surface_destroy(Shm_Surface *surface)
+_evas_shm_surface_destroy(Surface *surface)
 {
    int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   for (; i < surface->num_buff; i++)
-     _shm_leaf_destroy(&surface->leaf[i]);
+   if (!surface) return;
 
+   for (; i < surface->surf.shm->num_buff; i++)
+     _shm_leaf_destroy(&surface->surf.shm->leaf[i]);
+
+   free(surface->surf.shm);
    free(surface);
 }
 
 void 
-_evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h, int num_buff, uint32_t flags)
+_evas_shm_surface_reconfigure(Surface *s, int dx, int dy, int w, int h, int num_buff, uint32_t flags)
 {
+   Shm_Surface *surface;
    int i = 0, resize = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   surface = s->surf.shm;
    resize = !!flags;
 
    for (; i < surface->num_buff; i++)
@@ -511,10 +520,12 @@ _evas_shm_surface_wait(Shm_Surface *surface)
 }
 
 int
-_evas_shm_surface_assign(Shm_Surface *surface)
+_evas_shm_surface_assign(Surface *s)
 {
    int i;
+   Shm_Surface *surface;
 
+   surface = s->surf.shm;
    surface->current = _evas_shm_surface_wait(surface);
 
    /* If we ran out of buffers we're in trouble, reset all ages */
@@ -550,10 +561,12 @@ _evas_shm_surface_assign(Shm_Surface *surface)
 }
 
 void *
-_evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
+_evas_shm_surface_data_get(Surface *s, int *w, int *h)
 {
+   Shm_Surface *surface;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   surface = s->surf.shm;
    if (w) *w = 0;
    if (h) *h = 0;
 
@@ -572,13 +585,15 @@ _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
 }
 
 void
-_evas_shm_surface_post(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count)
+_evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 {
    /* struct wl_callback *frame_cb; */
+   Shm_Surface *surface;
    Shm_Leaf *leaf;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   surface = s->surf.shm;
    leaf = surface->current;
    if (!leaf) return;
 

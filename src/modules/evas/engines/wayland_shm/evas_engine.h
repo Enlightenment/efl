@@ -73,6 +73,20 @@ extern int _evas_engine_way_shm_log_dom;
 
 typedef struct _Shm_Surface Shm_Surface;
 
+typedef enum _Surface_Type Surface_Type;
+enum _Surface_Type {
+   SURFACE_SHM
+};
+
+typedef struct _Surface Surface;
+struct _Surface
+{
+   Surface_Type type;
+   union {
+      Shm_Surface *shm;
+   } surf;
+};
+
 struct _Outbuf
 {
    int w, h;
@@ -83,7 +97,7 @@ struct _Outbuf
 
    Evas_Engine_Info_Wayland_Shm *info;
 
-   Shm_Surface *surface;
+   Surface *surface;
 
    struct 
      {
@@ -102,12 +116,12 @@ struct _Outbuf
      } priv;
 };
 
-Shm_Surface *_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha, int compositor_version);
-void _evas_shm_surface_destroy(Shm_Surface *surface);
-void _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h, int num_buff, uint32_t flags);
-void *_evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h);
-int _evas_shm_surface_assign(Shm_Surface *surface);
-void _evas_shm_surface_post(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count);
+Surface *_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha, int compositor_version);
+void _evas_shm_surface_destroy(Surface *surface);
+void _evas_shm_surface_reconfigure(Surface *surface, int dx, int dy, int w, int h, int num_buff, uint32_t flags);
+void *_evas_shm_surface_data_get(Surface *surface, int *w, int *h);
+int _evas_shm_surface_assign(Surface *surface);
+void _evas_shm_surface_post(Surface *surface, Eina_Rectangle *rects, unsigned int count);
 
 Outbuf *_evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface, struct wl_display *disp, int compositor_version);
 void _evas_outbuf_free(Outbuf *ob);
