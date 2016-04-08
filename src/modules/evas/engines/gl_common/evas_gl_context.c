@@ -322,7 +322,7 @@ static void
 matrix_ortho(GLfloat *m,
              GLfloat l, GLfloat r,
              GLfloat t, GLfloat b,
-             GLfloat near, GLfloat far,
+             GLfloat near_, GLfloat far_,
              int rot, int vw, int vh,
              int foc, GLfloat orth)
 {
@@ -366,12 +366,12 @@ matrix_ortho(GLfloat *m,
 
    m[8] = 0.0;
    m[9] = 0.0;
-   m[10] = -(2.0 / (far - near));
+   m[10] = -(2.0 / (far_ - near_));
    m[11] = 1.0 / (GLfloat)foc;
 
    m[12] = (m[0] * tx) + (m[4] * ty) - ((r + l) / (r - l));
    m[13] = (m[1] * tx) + (m[5] * ty) - ((t + b) / (t - b));
-   m[14] = (m[2] * tx) + (m[6] * ty) - ((near + far) / (far - near));
+   m[14] = (m[2] * tx) + (m[6] * ty) - ((near_ + far_) / (far_ - near_));
    m[15] = (m[3] * tx) + (m[7] * ty) + orth;
 }
 

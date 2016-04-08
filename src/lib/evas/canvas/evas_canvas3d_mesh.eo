@@ -415,8 +415,8 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
               See also @Evas.Canvas3D.Mesh.lod_boundary.set.]]
          }
          values {
-            near: Evas.Real; [[up boundary]]
-            far: Evas.Real; [[down boundary]]
+            near_lod: Evas.Real; [[up boundary]]
+            far_lod: Evas.Real; [[down boundary]]
          }
       }
    }
