@@ -9,8 +9,8 @@ examples: ;
 
 clean-local: ;
 
-#install-examples:
-#	$(MKDIR_P) $(datadir)/elua/examples
+install-examples:
+	$(MKDIR_P) $(datadir)/elua/examples
 #	cd $(srcdir) && $(install_sh_DATA) -c $(DATA_FILES) $(datadir)/elua/examples
 
 #uninstall-local:
