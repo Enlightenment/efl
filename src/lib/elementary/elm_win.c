@@ -1335,6 +1335,9 @@ _elm_win_frame_maximized_state_update(Elm_Win_Data *sd, Eina_Bool maximized)
    edje_object_message_signal_process(sd->frame_obj);
    evas_object_smart_calculate(sd->frame_obj);
 
+#ifdef HAVE_ELEMENTARY_WL2
+   _elm_win_opaque_update(sd);
+#endif
    _elm_win_frame_obj_update(sd);
 }
 
@@ -1478,7 +1481,8 @@ _elm_win_state_change(Ecore_Evas *ee)
              if (_elm_config->atspi_mode)
                elm_interface_atspi_window_restored_signal_emit(obj);
           }
-        _elm_win_frame_maximized_state_update(sd, sd->maximized);
+        if (sd->frame_obj)
+          _elm_win_frame_maximized_state_update(sd, sd->maximized);
      }
    if (ch_profile)
      {
