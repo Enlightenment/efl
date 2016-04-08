@@ -75,6 +75,7 @@ struct _Ecore_Wl2_Display
         struct wl_subcompositor *subcompositor;
         struct wl_data_device_manager *data_device_manager;
         struct wl_shm *shm;
+        struct zwp_linux_dmabuf_v1 *dmabuf;
         struct wl_shell *wl_shell;
         struct xdg_shell *xdg_shell;
         struct www *www;

@@ -6,6 +6,7 @@
 
 /* for MIN() */
 #include <sys/param.h>
+#include "linux-dmabuf-unstable-v1-client-protocol.h"
 
 static Eina_Bool _fatal_error = EINA_FALSE;
 static Eina_Hash *_server_displays = NULL;
@@ -32,6 +33,16 @@ _xdg_shell_cb_ping(void *data EINA_UNUSED, struct xdg_shell *shell, uint32_t ser
 static const struct xdg_shell_listener _xdg_shell_listener =
 {
    _xdg_shell_cb_ping
+};
+
+static void
+_dmabuf_cb_format(void *data EINA_UNUSED, struct zwp_linux_dmabuf_v1 *dmabuf EINA_UNUSED, uint32_t format EINA_UNUSED)
+{
+   /* It would be awfully nice if this actually happened */
+};
+
+static const struct zwp_linux_dmabuf_v1_listener _dmabuf_listener = {
+        _dmabuf_cb_format
 };
 
 static void
@@ -95,6 +106,12 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
      {
         ewd->wl.shm =
           wl_registry_bind(registry, id, &wl_shm_interface, 1);
+     }
+   else if (!strcmp(interface, "zwp_linux_dmabuf_v1"))
+     {
+        ewd->wl.dmabuf =
+          wl_registry_bind(registry, id, &zwp_linux_dmabuf_v1_interface, 1);
+        zwp_linux_dmabuf_v1_add_listener(ewd->wl.dmabuf, &_dmabuf_listener, ewd);
      }
    else if (!strcmp(interface, "wl_data_device_manager"))
      {
