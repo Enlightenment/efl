@@ -1441,7 +1441,6 @@ _elm_win_state_change(Ecore_Evas *ee)
 
         if (sd->fullscreen)
           {
-             int w, h;
 #ifdef HAVE_ELEMENTARY_WL2
              if (need_frame)
                {
