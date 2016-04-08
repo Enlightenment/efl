@@ -1180,6 +1180,7 @@ EAPI void
 elm_language_set(const char *lang)
 {
    setlocale(LC_ALL, lang);
+   evas_language_reinit();
    _elm_win_translate();
    edje_language_set(lang);
 }

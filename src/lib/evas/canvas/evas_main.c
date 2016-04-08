@@ -705,4 +705,10 @@ evas_ector_get(Evas_Public_Data *e)
    return e->engine.ector;
 }
 
+EAPI void
+evas_language_reinit(void)
+{
+   evas_common_language_reinit();
+}
+
 #include "canvas/evas_canvas.eo.c"

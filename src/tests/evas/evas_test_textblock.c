@@ -3911,11 +3911,31 @@ _hyphenation_width_stress(Evas_Object *tb, Evas_Textblock_Cursor *cur)
 START_TEST(evas_textblock_hyphenation)
 {
    START_TB_TEST();
+   Evas_Coord w, fw;
+
+   const char *buf = "Automati-";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_object_textblock_size_formatted_get(tb, &w, NULL);
+   evas_object_resize(tb, w, 100);
+
+   setlocale(LC_MESSAGES, "en_US.UTF-8");
+   /* Language should be reinitialized after calling setlocale(). */
+   evas_language_reinit();
+
+   buf = "Automatically";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_format_prepend(cur, "<wrap=hyphenation>");
+   evas_object_textblock_size_formatted_get(tb, &fw, NULL);
+   ck_assert_int_eq(w, fw);
+
+   /* Restore locale */
+   setlocale(LC_MESSAGES, "C");
+   evas_language_reinit();
 
    /* SHY-HYPHEN (&shy;) */
    /* Note: placing &shy; in a ligature is errornuos, so for the sake
     * of this test, it was removed from the "officia" word */
-   const char *buf =
+   buf =
       "Lorem ipsum dolor sit amet, cons&shy;ectetur adipisicing elit,"
       " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       " Ut enim ad minim veniam, quis nostrud exer&shy;citation ullamco"
@@ -3928,7 +3948,8 @@ START_TEST(evas_textblock_hyphenation)
    evas_object_textblock_text_markup_set(tb, buf);
 
    /* Dictionary + locale fallback (en_US) */
-   setlocale(LC_MESSAGES, "en_US.UTF8");
+   setlocale(LC_MESSAGES, "en_US.UTF-8");
+   evas_language_reinit();
 
    /* Mixture of Dictionary with SHY-HYPHEN */
    _hyphenation_width_stress(tb, cur);

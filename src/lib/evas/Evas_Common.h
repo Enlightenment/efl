@@ -5116,6 +5116,16 @@ EAPI int  evas_string_char_prev_get(const char *str, int pos, int *decoded) EINA
 EAPI int  evas_string_char_len_get(const char *str) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
+ * Reinitialize language from the environment.
+ *
+ * The locale can change while a process is running. This call tells evas to
+ * reload the locale from the environment like it does on start.
+ * @ingroup Evas_Utils
+ * @since 1.18
+ */
+EAPI void                    evas_language_reinit(void);
+
+/**
  * @defgroup Evas_Keys Key Input Functions
  *
  * Functions which feed key events to the canvas.
