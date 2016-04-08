@@ -3,7 +3,6 @@
 #endif
 
 #include <stdlib.h>
-#include <netdb.h>
 #include <unistd.h>
 #ifdef HAVE_SYS_RESOURCE_H
 #include <sys/time.h>
