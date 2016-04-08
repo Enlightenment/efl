@@ -27,8 +27,8 @@ static Efl_Vpath_Core *vpath_core = NULL;
 EOLIAN static Eo_Base *
 _efl_vpath_core_eo_base_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
 {
-   char buf[PATH_MAX], bufhome[PATH_MAX], *s;
-   const char *home;
+   char buf[PATH_MAX], bufhome[PATH_MAX];
+   const char *home, *s;
 
    if (vpath_core) return NULL;
    obj = eo_constructor(eo_super(obj, MY_CLASS));
@@ -42,6 +42,8 @@ _efl_vpath_core_eo_base_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
    home = eina_environment_home_get();
    if (!home)
      {
+        /* Windows does not have getuid(), but home can't be NULL */
+#ifdef HAVE_GETUID
         uid_t uid = getuid();
         struct stat st;
 
@@ -53,14 +55,13 @@ _efl_vpath_core_eo_base_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
              if (stat("/tmp", &st) == 0) home = "/tmp";
              else home = "/";
           }
+#else
+        home = "/";
+#endif
      }
    efl_vpath_core_meta_set(obj, "home", home);
    // tmp dir - system wide
-   s = getenv("TMPDIR");
-   if (!s) s = getenv("TMP");
-   if (!s) s = getenv("TEMPDIR");
-   if (!s) s = getenv("TEMP");
-   if (!s) s = "/tmp";
+   s = eina_environment_tmp_get();
    efl_vpath_core_meta_set(obj, "tmp", s);
 
 #define ENV_HOME_SET(_env, _dir, _meta) \
@@ -90,6 +91,7 @@ _efl_vpath_core_eo_base_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
    //   be 0700.
    if (!(s = getenv("XDG_RUNTIME_DIR")))
      {
+#ifdef HAVE_GETUID
         struct stat st;
 
         // fallback - make ~/.run
@@ -110,6 +112,9 @@ _efl_vpath_core_eo_base_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
              if (stat(buf, &st) == 0) s = buf;
              else s = (char *)efl_vpath_core_meta_get(obj, "tmp");
           }
+#else
+	s = (char *)efl_vpath_core_meta_get(obj, "tmp");
+#endif
      }
    efl_vpath_core_meta_set(obj, "run", s);
    // https://www.freedesktop.org/wiki/Software/xdg-user-dirs/
@@ -248,6 +253,7 @@ _efl_vpath_core_efl_vpath_fetch(Eo *obj, Efl_Vpath_Core_Data *pd EINA_UNUSED, co
    // begins a fetch and on finish calls the event cb or when wait is called
    if (path)
      {
+        /* FIXME: not working for WIndows */
         // /* <- full path
         if (path[0] == '/')
           {
