@@ -114,6 +114,7 @@ elementary/themes/edc/elm/menu.edc \
 elementary/themes/edc/elm/multibuttonentry.edc \
 elementary/themes/edc/elm/naviframe.edc \
 elementary/themes/edc/elm/notify.edc \
+elementary/themes/edc/elm/nstate.edc \
 elementary/themes/edc/elm/panel.edc \
 elementary/themes/edc/elm/panes.edc \
 elementary/themes/edc/elm/photocam.edc \
