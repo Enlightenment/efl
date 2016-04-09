@@ -1486,7 +1486,7 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
    if (rows == existing)
      return;
 
-   for (int i = existing; i < rows; i++)
+   for (i = existing; i < rows; i++)
      {
         grid = evas_object_textgrid_add(pd->gridbox);
         evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, 0.0);
