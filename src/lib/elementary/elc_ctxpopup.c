@@ -1330,7 +1330,6 @@ _elm_ctxpopup_dismiss(Eo *obj, Elm_Ctxpopup_Data *sd)
 EOLIAN static void
 _elm_ctxpopup_auto_hide_disabled_set(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd, Eina_Bool disabled)
 {
-   disabled = !!disabled;
    if (sd->auto_hide == !disabled) return;
    sd->auto_hide = !disabled;
 }
@@ -1338,7 +1337,7 @@ _elm_ctxpopup_auto_hide_disabled_set(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd,
 EOLIAN static Eina_Bool
 _elm_ctxpopup_auto_hide_disabled_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
 {
-   return sd->auto_hide;
+   return !sd->auto_hide;
 }
 
 EOLIAN static void
