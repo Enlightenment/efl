@@ -188,6 +188,20 @@ _size_hints_changed_cb(void *data,
 }
 
 static void
+_notify_resize_cb(void *data,
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
+{
+   Evas_Object *popup = data;
+
+   ELM_POPUP_CHECK(popup);
+
+   _scroller_size_calc(popup);
+   elm_layout_sizing_eval(popup);
+}
+
+static void
 _list_del(Elm_Popup_Data *sd)
 {
    if (!sd->scr) return;
@@ -221,6 +235,7 @@ _elm_popup_evas_object_smart_del(Eo *obj, Elm_Popup_Data *sd)
 
    evas_object_event_callback_del_full(sd->parent, EVAS_CALLBACK_RESIZE, _parent_geom_cb, obj);
    evas_object_event_callback_del_full(sd->parent, EVAS_CALLBACK_MOVE, _parent_geom_cb, obj);
+   evas_object_event_callback_del_full(sd->notify, EVAS_CALLBACK_RESIZE, _notify_resize_cb, obj);
 
    eo_event_callback_array_del(sd->notify, _notify_cb(), obj);
    evas_object_event_callback_del
@@ -1500,6 +1515,8 @@ _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
    evas_object_size_hint_align_set
      (priv->notify, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_member_add(priv->notify, obj);
+
+   evas_object_event_callback_add(priv->notify, EVAS_CALLBACK_RESIZE, _notify_resize_cb, obj);
 
    priv->main_layout = elm_layout_add(obj);
    if (!elm_layout_theme_set(priv->main_layout, "popup", "base",
