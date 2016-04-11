@@ -472,7 +472,7 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
         edje_object_message_signal_process(elm_layout_edje_get(sd->content_area));
 
         elm_popup_align_get(obj, &horizontal, &vertical);
-        evas_object_geometry_get(elm_widget_parent_get(obj), NULL, NULL, &w, &h);
+        evas_object_geometry_get(sd->parent, NULL, NULL, &w, &h);
 
         if (horizontal == ELM_NOTIFY_ALIGN_FILL)
           minw = w;
