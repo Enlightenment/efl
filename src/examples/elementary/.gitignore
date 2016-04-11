@@ -98,8 +98,6 @@
 /win_example
 /dayselector_example
 /codegen_example
-/codegen_example_generated.c
-/codegen_example_generated.h
 /glview_example_01
 /location_example_01
 /prefs_example_01
