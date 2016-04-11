@@ -5,8 +5,8 @@ interface Efl.Vpath
        "~/file.jpg"
        "~username/file.png"
      And also other extended paths like:
-       "(:cache/file.png"
-       "(:videos/file.mp4"
+       "(:cache:)/file.png"
+       "(:videos:)/file.mp4"
        ...
      And in future:
        "file:///blah.jpg"

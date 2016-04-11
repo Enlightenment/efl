@@ -122,8 +122,8 @@ _efl_vpath_core_eo_base_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
    // ^^^^ we don't handle:
    //   /etc/xdg/user-dirs.conf
    //   /etc/xdg/user-dirs.defaults
-   //   (:config/user-dirs.conf
-   //   (:config/user-dirs.defaults
+   //   (:config:)/user-dirs.conf
+   //   (:config:)/user-dirs.defaults
 
    // $XDG_DESKTOP_DIR="$HOME/Desktop"
    ENV_HOME_SET("XDG_DESKTOP_DIR", "Desktop", "desktop");
@@ -324,22 +324,30 @@ _efl_vpath_core_efl_vpath_fetch(Eo *obj, Efl_Vpath_Core_Data *pd EINA_UNUSED, co
           {
              const char *p, *meta;
              char *name, buf[PATH_MAX];
+             Eina_Bool found = EINA_FALSE;
 
              for (p = path + 2; *p; p++)
                {
-                  if (*p =='/') break;
+                  if ((p[0] ==':') && (p[1] == ')') && (p[2] == '/'))
+                    {
+                       found = EINA_TRUE;
+                       break;
+                    }
                }
-             name = alloca(p - path);
-             strncpy(name, path + 2, p - path - 2);
-             name[p - path - 2] = 0;
-             eina_spinlock_take(&(pd->lock));
-             meta = eina_hash_find(pd->meta, name);
-             eina_spinlock_release(&(pd->lock));
-             if (meta)
+             if (found)
                {
-                  snprintf(buf, sizeof(buf), "%s%s", meta, p);
-                  efl_vpath_file_result_set(file, buf);
-                  return file;
+                  name = alloca(p - path);
+                  strncpy(name, path + 2, p - path - 2);
+                  name[p - path - 2] = 0;
+                  eina_spinlock_take(&(pd->lock));
+                  meta = eina_hash_find(pd->meta, name);
+                  eina_spinlock_release(&(pd->lock));
+                  if (meta)
+                    {
+                       snprintf(buf, sizeof(buf), "%s%s", meta, p + 2);
+                       efl_vpath_file_result_set(file, buf);
+                       return file;
+                    }
                }
           }
         // file:/// <- local file path uri
