@@ -987,7 +987,7 @@ struct _Ecore_Exe_Event_Del
    Ecore_Exe *exe; /**< The handle to the exited process, or @c NULL if not found */
    int        exit_signal; /**< The signal that caused the process to exit */
    Eina_Bool  exited    : 1; /**< Set to 1 if the process exited of its own accord */
-   Eina_Bool  signalled : 1; /**< Set to 1 id the process exited due to uncaught signal */
+   Eina_Bool  signalled : 1; /**< Set to 1 if the process exited due to uncaught signal */
    void      *ext_data; /**< Extension data - not used */
 #if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
    siginfo_t  data; /**< Signal info */
