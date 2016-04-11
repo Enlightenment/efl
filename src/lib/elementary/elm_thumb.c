@@ -603,16 +603,6 @@ _elm_thumb_eo_base_constructor(Eo *obj, Elm_Thumb_Data *sd)
    return obj;
 }
 
-EOLIAN static void
-_elm_thumb_reload(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
-{
-   eina_stringshare_replace(&(sd->thumb.file), NULL);
-   eina_stringshare_replace(&(sd->thumb.key), NULL);
-
-   if (evas_object_visible_get(obj))
-     _thumb_show(sd);
-}
-
 EOLIAN static Eina_Bool
 _elm_thumb_efl_file_file_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char *file, const char *key)
 {
@@ -661,145 +651,6 @@ _elm_thumb_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char
      *file = sd->file;
    if (key)
      *key = sd->key;
-}
-
-EOLIAN static void
-_elm_thumb_path_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char **file, const char **key)
-{
-   if (file)
-     *file = sd->thumb.file;
-   if (key)
-     *key = sd->thumb.key;
-}
-
-EOLIAN static void
-_elm_thumb_aspect_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, Ethumb_Thumb_Aspect aspect)
-{
-   sd->thumb.aspect = aspect;
-}
-
-EOLIAN static Ethumb_Thumb_Aspect
-_elm_thumb_aspect_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
-{
-   return sd->thumb.aspect;
-}
-
-EOLIAN static void
-_elm_thumb_fdo_size_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, Ethumb_Thumb_FDO_Size size)
-{
-   sd->thumb.size = size;
-}
-
-EOLIAN static Ethumb_Thumb_FDO_Size
-_elm_thumb_fdo_size_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
-{
-   return sd->thumb.size;
-}
-
-EOLIAN static void
-_elm_thumb_format_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, Ethumb_Thumb_Format format)
-{
-   sd->thumb.format = format;
-}
-
-EOLIAN static Ethumb_Thumb_Format
-_elm_thumb_format_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
-{
-   return sd->thumb.format;
-}
-
-EOLIAN static void
-_elm_thumb_orientation_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, Ethumb_Thumb_Orientation orient)
-{
-   sd->thumb.orient = orient;
-}
-
-EOLIAN static Ethumb_Thumb_Orientation
-_elm_thumb_orientation_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
-{
-   return sd->thumb.orient;
-}
-
-EOLIAN static void
-_elm_thumb_size_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, int tw, int th)
-{
-   sd->thumb.tw = tw;
-   sd->thumb.th = th;
-}
-
-EOLIAN static void
-_elm_thumb_size_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, int *tw, int *th)
-{
-   if (tw)
-     *tw = sd->thumb.tw;
-   if (th)
-     *th = sd->thumb.th;
-}
-
-EOLIAN static void
-_elm_thumb_crop_align_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, double cropx, double cropy)
-{
-   sd->thumb.cropx = cropx;
-   sd->thumb.cropy = cropy;
-}
-
-EOLIAN static void
-_elm_thumb_crop_align_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, double *cropx, double *cropy)
-{
-   if (cropx)
-     *cropx = sd->thumb.cropx;
-   if (cropy)
-     *cropy = sd->thumb.cropy;
-}
-
-EOLIAN static void
-_elm_thumb_compress_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, int compress)
-{
-   sd->thumb.compress = compress;
-}
-
-EOLIAN static void
-_elm_thumb_compress_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, int *compress)
-{
-   if (compress)
-      *compress = sd->thumb.compress;
-}
-
-EOLIAN static void
-_elm_thumb_quality_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, int quality)
-{
-   sd->thumb.quality = quality;
-}
-
-EOLIAN static void
-_elm_thumb_quality_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, int *quality)
-{
-   if (quality)
-      *quality = sd->thumb.quality;
-}
-
-EOLIAN static void
-_elm_thumb_animate_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, Elm_Thumb_Animation_Setting setting)
-{
-   EINA_SAFETY_ON_TRUE_RETURN(setting >= ELM_THUMB_ANIMATION_LAST);
-
-   sd->anim_setting = setting;
-
-   if ((sd->is_video) && (sd->thumb.format == ETHUMB_THUMB_EET))
-     {
-        if (setting == ELM_THUMB_ANIMATION_LOOP)
-          edje_object_signal_emit(sd->view, "elm,action,animate_loop", "elm");
-        else if (setting == ELM_THUMB_ANIMATION_START)
-          edje_object_signal_emit(sd->view, "elm,action,animate", "elm");
-        else if (setting == ELM_THUMB_ANIMATION_STOP)
-          edje_object_signal_emit(sd->view, "elm,action,animate_stop", "elm");
-     }
-}
-
-EOLIAN static Elm_Thumb_Animation_Setting
-_elm_thumb_animate_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
-{
-   return sd->anim_setting;
 }
 
 EAPI void *
@@ -873,6 +724,195 @@ EAPI Eina_Bool
 elm_thumb_editable_get(const Evas_Object *obj)
 {
    return evas_draggable_interface_drag_target_get(obj);
+}
+
+EAPI void
+elm_thumb_aspect_set(Evas_Object *obj, Ethumb_Thumb_Aspect aspect)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   sd->thumb.aspect = aspect;
+}
+
+EAPI Ethumb_Thumb_Aspect
+elm_thumb_aspect_get(const Evas_Object *obj)
+{
+   ELM_THUMB_CHECK(obj) ETHUMB_THUMB_KEEP_ASPECT;
+   ELM_THUMB_DATA_GET(obj, sd);
+   return sd->thumb.aspect;
+}
+
+EAPI void
+elm_thumb_fdo_size_set(Evas_Object *obj, Ethumb_Thumb_FDO_Size size)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   sd->thumb.size = size;
+}
+
+EAPI Ethumb_Thumb_FDO_Size
+elm_thumb_fdo_size_get(const Evas_Object *obj)
+{
+   ELM_THUMB_CHECK(obj) ETHUMB_THUMB_NORMAL;
+   ELM_THUMB_DATA_GET(obj, sd);
+   return sd->thumb.size;
+}
+
+EAPI void
+elm_thumb_format_set(Evas_Object *obj, Ethumb_Thumb_Format format)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   sd->thumb.format = format;
+}
+
+EAPI Ethumb_Thumb_Format
+elm_thumb_format_get(const Evas_Object *obj)
+{
+   ELM_THUMB_CHECK(obj) ETHUMB_THUMB_FDO;
+   ELM_THUMB_DATA_GET(obj, sd);
+   return sd->thumb.format;
+}
+
+EAPI void
+elm_thumb_orientation_set(Evas_Object *obj, Ethumb_Thumb_Orientation orient)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   sd->thumb.orient = orient;
+}
+
+EAPI Ethumb_Thumb_Orientation
+elm_thumb_orientation_get(const Evas_Object *obj)
+{
+   ELM_THUMB_CHECK(obj) ETHUMB_THUMB_ORIENT_NONE;
+   ELM_THUMB_DATA_GET(obj, sd);
+   return sd->thumb.orient;
+}
+
+EAPI void
+elm_thumb_size_set(Evas_Object *obj, int tw, int th)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   sd->thumb.tw = tw;
+   sd->thumb.th = th;
+}
+
+EAPI void
+elm_thumb_size_get(const Evas_Object *obj, int *tw, int *th)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   if (tw)
+     *tw = sd->thumb.tw;
+   if (th)
+     *th = sd->thumb.th;
+}
+
+EAPI void
+elm_thumb_crop_align_set(Evas_Object *obj, double cropx, double cropy)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   sd->thumb.cropx = cropx;
+   sd->thumb.cropy = cropy;
+}
+
+EAPI void
+elm_thumb_crop_align_get(const Evas_Object *obj, double *cropx, double *cropy)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   if (cropx)
+     *cropx = sd->thumb.cropx;
+   if (cropy)
+     *cropy = sd->thumb.cropy;
+}
+
+EAPI void
+elm_thumb_compress_set(Evas_Object *obj, int compress)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   sd->thumb.compress = compress;
+}
+
+EAPI void
+elm_thumb_compress_get(const Evas_Object *obj, int *compress)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   if (compress)
+      *compress = sd->thumb.compress;
+}
+
+EAPI void
+elm_thumb_quality_set(Evas_Object *obj, int quality)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   sd->thumb.quality = quality;
+}
+
+EAPI void
+elm_thumb_quality_get(const Evas_Object *obj, int *quality)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   if (quality)
+      *quality = sd->thumb.quality;
+}
+
+EAPI void
+elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting setting)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   EINA_SAFETY_ON_TRUE_RETURN(setting >= ELM_THUMB_ANIMATION_LAST);
+
+   sd->anim_setting = setting;
+
+   if ((sd->is_video) && (sd->thumb.format == ETHUMB_THUMB_EET))
+     {
+        if (setting == ELM_THUMB_ANIMATION_LOOP)
+          edje_object_signal_emit(sd->view, "elm,action,animate_loop", "elm");
+        else if (setting == ELM_THUMB_ANIMATION_START)
+          edje_object_signal_emit(sd->view, "elm,action,animate", "elm");
+        else if (setting == ELM_THUMB_ANIMATION_STOP)
+          edje_object_signal_emit(sd->view, "elm,action,animate_stop", "elm");
+     }
+}
+
+EAPI Elm_Thumb_Animation_Setting
+elm_thumb_animate_get(const Evas_Object *obj)
+{
+   ELM_THUMB_CHECK(obj) 0;
+   ELM_THUMB_DATA_GET(obj, sd);
+   return sd->anim_setting;
+}
+
+EAPI void
+elm_thumb_path_get(const Evas_Object *obj, const char **file, const char **key)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   if (file)
+     *file = sd->thumb.file;
+   if (key)
+     *key = sd->thumb.key;
+}
+
+EAPI void
+elm_thumb_reload(Evas_Object *obj)
+{
+   ELM_THUMB_CHECK(obj);
+   ELM_THUMB_DATA_GET(obj, sd);
+   eina_stringshare_replace(&(sd->thumb.file), NULL);
+   eina_stringshare_replace(&(sd->thumb.key), NULL);
+
+   if (evas_object_visible_get(obj))
+     _thumb_show(sd);
 }
 
 #include "elm_thumb.eo.c"
