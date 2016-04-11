@@ -2112,6 +2112,94 @@ static const char parallax_occlusion_frag_glsl[] =
    "#endif //FOG_ENABLED\n"
    "}\n";
 
+static const char post_processing_fxaa_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
+   "uniform mat4  uMatrixMvp;\n"
+   "#ifdef VERTEX_POSITION\n"
+   "attribute   vec4  aPosition0;\n"
+   "#endif //VERTEX_POSITION\n"
+   "#ifdef VERTEX_POSITION_BLEND\n"
+   "attribute   vec4  aPosition1;\n"
+   "uniform     float uPositionWeight;\n"
+   "#endif //VERTEX_POSITION_BLEND\n"
+   "varying vec2 tc0;\n"
+   "void main()\n"
+   "{\n"
+   "   #ifdef VERTEX_POSITION_BLEND\n"
+   "   vec4 position = mix(aPosition1, aPosition0, uPositionWeight);\n"
+   "   position = vec4(position.xyz, 1.0);\n"
+   "#else\n"
+   "#ifdef VERTEX_POSITION\n"
+   "   vec4 position = vec4(aPosition0.xyz, 1.0);\n"
+   "#endif // VERTEX_POSITION\n"
+   "#endif //VERTEX_POSITION_BLEND\n"
+   "   gl_Position = uMatrixMvp * position;\n"
+   "   tc0 = position.xy * 0.5 + 0.5;\n"
+   "}\n";
+
+static const char post_processing_fxaa_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
+   "//FXAA fragment shader by Timothy Lottes\n"
+   "//http://developer.download.nvidia.com/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf\n"
+   "//modified and adapted to www.enlightenment.org by Oleksander Shcherbina\n"
+   "uniform sampler2D uColorTexture;\n"
+   "uniform float uFrameSizeH;\n"
+   "uniform float uFrameSizeW;\n"
+   "varying vec2 tc0;\n"
+   "vec4 fxaa()\n"
+   "{\n"
+   "   float _SPAN_MAX_ = 8.0;\n"
+   "   float _REDUCE_MUL_ = (1.0/8.0);\n"
+   "   float _REDUCE_MIN_ = (1.0/128.0);\n"
+   "   vec4 l = vec4(0.299, 0.587, 0.114, 0.0);\n"
+   "   vec2 frameBufSize = vec2(uFrameSizeW, uFrameSizeH);\n"
+   "   vec2 direction;\n"
+   "   vec4 colorNW = texture2D(uColorTexture, tc0 + (vec2(-1.0, -1.0)/frameBufSize));\n"
+   "   vec4 colorNE = texture2D(uColorTexture, tc0 + (vec2(1.0, -1.0)/frameBufSize));\n"
+   "   vec4 colorSW = texture2D(uColorTexture, tc0 + (vec2(-1.0, 1.0)/frameBufSize));\n"
+   "   vec4 colorSE = texture2D(uColorTexture, tc0 + (vec2(1.0, 1.0)/frameBufSize));\n"
+   "   vec4 colorM = texture2D(uColorTexture,tc0);\n"
+   "   float lNW = dot(colorNW, l);\n"
+   "   float lNE = dot(colorNE, l);\n"
+   "   float lSW = dot(colorSW, l);\n"
+   "   float lSE = dot(colorSE, l);\n"
+   "   float lM  = dot(colorM,  l);\n"
+   "   float lMin = min(lM, min(min(lNW, lNE), min(lSW, lSE)));\n"
+   "   float lMax = max(lM, max(max(lNW, lNE), max(lSW, lSE)));\n"
+   "   direction.x = -((lNW + lNE) - (lSW + lSE));\n"
+   "   direction.y = ((lNW + lSW) - (lNE + lSE));\n"
+   "   float directionReduce = max(\n"
+   "          (lNW + lNE + lSW + lSE) * (0.25 * _REDUCE_MUL_),\n"
+   "          _REDUCE_MIN_);\n"
+   "   float rcpDirMin = 1.0/(min(abs(direction.x), abs(direction.y)) + directionReduce);\n"
+   "   direction = min(vec2(_SPAN_MAX_,  _SPAN_MAX_),\n"
+   "             max(vec2(-_SPAN_MAX_, -_SPAN_MAX_),\n"
+   "             direction * rcpDirMin)) / frameBufSize;\n"
+   "   vec4 colorA = 0.5 * (\n"
+   "          texture2D(uColorTexture, tc0.xy + direction * (1.0/3.0 - 0.5)) +\n"
+   "          texture2D(uColorTexture, tc0.xy + direction * (2.0/3.0 - 0.5)));\n"
+   "   vec4 colorB = colorA * 0.5 + 0.25 * (\n"
+   "          texture2D(uColorTexture, tc0.xy + direction * (- 0.5)) +\n"
+   "          texture2D(uColorTexture, tc0.xy + direction * 0.5));\n"
+   "   float lB = dot(colorB, l);\n"
+   "   if((lB < lMin) || (lB > lMax))\n"
+   "     return colorA;\n"
+   "   else\n"
+   "     return colorB;\n"
+   "}\n"
+   "void main()\n"
+   "{\n"
+   "   gl_FragColor = fxaa();\n"
+   "}\n";
+
 static const char *vertex_shaders[] =
 {
     vertex_color_vert_glsl,
@@ -2122,6 +2210,7 @@ static const char *vertex_shaders[] =
     shadow_map_vert_glsl,
     color_pick_vert_glsl,
     parallax_occlusion_vert_glsl,
+    post_processing_fxaa_vert_glsl,
 };
 
 static const char *fragment_shaders[] =
@@ -2134,4 +2223,5 @@ static const char *fragment_shaders[] =
     shadow_map_frag_glsl,
     color_pick_frag_glsl,
     parallax_occlusion_frag_glsl,
+    post_processing_fxaa_frag_glsl,
 };

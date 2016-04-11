@@ -13,6 +13,8 @@ evas_canvas3d_scene_data_init(Evas_Canvas3D_Scene_Public_Data *data)
    data->colors_node_mesh = NULL;
    data->render_to_texture = EINA_FALSE;
    data->lod_distance = 0;
+   data->post_processing = EINA_FALSE;
+   data->post_processing_type = EVAS_CANVAS3D_SHADE_MODE_POST_PROCESSING_FXAA;
 }
 
 void
@@ -78,7 +80,6 @@ _evas_canvas3d_scene_eo_base_constructor(Eo *obj, Evas_Canvas3D_Scene_Data *pd)
    pd->colors_node_mesh = NULL;
    pd->depth_offset = 4.0;
    pd->depth_constant = 100.0;
-
    return obj;
 }
 
@@ -635,6 +636,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
         scene_data.camera_node = pd->camera_node;
         scene_data.color_pick_enabled = pd->color_pick_enabled;
         update_scene = evas_canvas3d_object_dirty_get(obj, EVAS_CANVAS3D_STATE_SCENE_UPDATED);
+        scene_data.post_processing = EINA_FALSE;
         if (update_scene)
           {
              if (pd->node_mesh_colors)

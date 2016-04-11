@@ -114,6 +114,9 @@ struct _E3D_Draw_Data
    Evas_Real               constant_bias;
 
    Eina_Bool               render_to_texture;
+
+   Evas_Real frame_size_h;
+   Evas_Real frame_size_w;
 };
 
 struct _E3D_Texture
@@ -175,4 +178,6 @@ void                 e3d_renderer_draw(E3D_Renderer *renderer, E3D_Draw_Data *da
 void                 e3d_renderer_flush(E3D_Renderer *renderer);
 void                 e3d_renderer_color_pick_target_set(E3D_Renderer *renderer, E3D_Drawable *drawable);
 Eina_Bool            e3d_renderer_rendering_to_texture_get(E3D_Renderer *renderer);
+GLint                e3d_renderer_sampler_colortexture_get(E3D_Renderer *renderer);
+GLint                e3d_renderer_sampler_shadowmap_get(E3D_Renderer *renderer);
 #endif /* EVAS_GL_3D_PRIVATE_H */

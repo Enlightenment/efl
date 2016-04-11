@@ -29,7 +29,7 @@ _efl_canvas_scene3d_scene3d_get(Eo *eo_obj, void *pd EINA_UNUSED)
 }
 
 void
-_evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
+_evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj,
                       Evas_Object_Protected_Data *obj, Evas_Image_Data *o EINA_UNUSED,
                       Evas_Canvas3D_Scene *scene)
 {
@@ -107,7 +107,14 @@ _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
    scene_data.camera_node = pd_scene->camera_node;
    scene_data.depth_offset = pd_scene->depth_offset;
    scene_data.depth_constant = pd_scene->depth_constant;
-
+   if (evas_object_anti_alias_get(eo_obj))
+     {
+        /*Use post processing render*/
+        scene_data.post_processing = EINA_TRUE;
+        scene_data.color_pick_enabled = EINA_FALSE;
+        scene_data.render_to_texture = EINA_TRUE;
+        scene_data.post_processing_type = EVAS_CANVAS3D_SHADE_MODE_POST_PROCESSING_FXAA;
+     }
    /* Phase 1 - Update scene graph tree. */
    evas_canvas3d_object_update(scene);
 

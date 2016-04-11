@@ -414,3 +414,15 @@ e3d_renderer_flush(E3D_Renderer *renderer EINA_UNUSED)
 {
    glFlush();
 }
+
+GLint
+e3d_renderer_sampler_colortexture_get(E3D_Renderer *renderer)
+{
+   return renderer->colortex_sampler;
+}
+
+GLint
+e3d_renderer_sampler_shadowmap_get(E3D_Renderer *renderer)
+{
+   return renderer->smap_sampler;
+}

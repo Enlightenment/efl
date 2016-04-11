@@ -458,6 +458,9 @@ struct _Evas_Canvas3D_Scene_Public_Data
    Eina_Bool render_to_texture;
 
    unsigned int     lod_distance;
+
+   Eina_Bool post_processing :1;
+   Evas_Canvas3D_Shade_Mode post_processing_type;
 };
 
 struct _Evas_Canvas3D_Pick_Data

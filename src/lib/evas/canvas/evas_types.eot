@@ -297,6 +297,7 @@ enum Evas.Canvas3D.State
    scene_shadows_enabled,
    scene_updated, [[@since 1.14]]
    scene_shadows_depth,
+   scene_render_to_texture,
 
    texture_data = 1,
    texture_wrap,
@@ -487,14 +488,15 @@ enum Evas.Canvas3D.Shade_Mode
    [[Shader shade modes
 
     @since 1.10]]
-   vertex_color = 0,  [[Shaded using vertex color attribute]]
-   diffuse,           [[Shaded using material diffuse term]]
-   flat,              [[Per-vertex flat lighting]]
-   phong,             [[Per-pixel phong shading]]
-   normal_map,        [[Per-pixel normal map shading]]
-   shadow_map_render, [[Fragment color is defined by its z-coord]]
-   color_pick,        [[Rendering to additional frame bufer]]
-   parallax_occlusion [[Per-pixel parallax occlusion map shading]]
+   vertex_color = 0,    [[Shaded using vertex color attribute]]
+   diffuse,             [[Shaded using material diffuse term]]
+   flat,                [[Per-vertex flat lighting]]
+   phong,               [[Per-pixel phong shading]]
+   normal_map,          [[Per-pixel normal map shading]]
+   shadow_map_render,   [[Fragment color is defined by its z-coord]]
+   color_pick,          [[Rendering to additional frame bufer]]
+   parallax_occlusion,  [[Per-pixel parallax occlusion map shading]]
+   post_processing_FXAA [[Render full screen quard]]
 }
 
 enum Evas.Canvas3D.Vertex_Attrib

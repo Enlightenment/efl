@@ -1167,7 +1167,6 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer,
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                           drawable->texDepth, 0);
 
-   e3d_renderer_target_set(renderer, drawable);
    e3d_renderer_clear(renderer, &c);
 
    Evas_Canvas3D_Node_Data *pd_light_node = eo_data_scope_get(light, EVAS_CANVAS3D_NODE_CLASS);
@@ -1199,19 +1198,20 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer,
           }
      }
 
-     glDisable(GL_POLYGON_OFFSET_FILL);
+   glDisable(GL_POLYGON_OFFSET_FILL);
 
-     if (data->render_to_texture)
-       {
-          data->render_to_texture = EINA_FALSE;
-          e3d_renderer_color_pick_target_set(renderer, drawable);
-       }
-     else
-       {
-          glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                                 drawable->tex, 0);
-          e3d_renderer_clear(renderer, &data->bg_color);
-       }
+   if (data->render_to_texture)
+     {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                               drawable->texcolorpick, 0);
+        e3d_renderer_clear(renderer, &data->bg_color);
+     }
+   else
+     {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                               drawable->tex, 0);
+        e3d_renderer_clear(renderer, &data->bg_color);
+     }
 }
 
 void
@@ -1301,8 +1301,49 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_C
    e3d_renderer_target_set(renderer, drawable);
    e3d_renderer_clear(renderer, &data->bg_color);
 
-   /*Render scene data*/
-   _scene_render(drawable, renderer, data);
+   if (data->post_processing)
+     e3d_drawable_scene_render_to_texture(drawable, renderer, data);//Render to additional texture
+   else
+     _scene_render(drawable, renderer, data);//Common main render
+}
+
+void
+_scene_post_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_Canvas3D_Scene_Public_Data *data)
+{
+   E3D_Draw_Data   drawable_data;
+   float vertices_of_square[] = {-1.0, 1.0, 0.0, 1.0, 1.0, 0.0,
+                                 -1.0, -1.0, 0.0, 1.0, -1.0, 0.0};
+   unsigned short indices_of_square[] = {0, 1, 2, 2, 1, 3};
+
+   memset(&drawable_data, 0x00, sizeof(E3D_Draw_Data));
+
+   drawable_data.flags |= E3D_SHADER_FLAG_VERTEX_POSITION;
+   drawable_data.mode = data->post_processing_type;
+   drawable_data.assembly = EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES;
+   drawable_data.indices = indices_of_square;
+   drawable_data.vertex_count = 4;
+   drawable_data.index_count = 6;
+   drawable_data.index_format = EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT;
+   eina_matrix4_identity(&drawable_data.matrix_mv);
+   eina_matrix4_identity(&drawable_data.matrix_mvp);
+   drawable_data.frame_size_h = (Evas_Real)drawable->h;
+   drawable_data.frame_size_w = (Evas_Real)drawable->w;
+   /*Initialize Evas_Canvas3D_Vertex_Buffer for full screen quard*/
+   drawable_data.vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].vertex0.data = (void *)vertices_of_square;
+   drawable_data.vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].vertex0.element_count = 3;
+   drawable_data.vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].vertex0.stride = 3 * sizeof(float);
+   drawable_data.vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].vertex0.owns_data = EINA_FALSE;
+   drawable_data.vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].vertex0.size = 0;
+
+   e3d_renderer_clear(renderer, &data->bg_color);
+
+   /*Initialize texture units*/
+   drawable_data.smap_sampler = e3d_renderer_sampler_shadowmap_get(renderer);
+   drawable_data.colortex_sampler = e3d_renderer_sampler_colortexture_get(renderer);
+
+   /*Render full screen quard with color pick texture unit*/
+   e3d_renderer_draw(renderer, &drawable_data);
+   e3d_renderer_flush(renderer);
 }
 
 Eina_Bool
@@ -1315,10 +1356,10 @@ e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *rende
    Eina_Iterator *itmn;
    void *ptrmn;
    Eina_List *repeat_node = NULL;
-   Evas_Color c = {0.0, 0.0, 0.0, 0.0}, *unic_color = NULL;
+   Evas_Color *unic_color = NULL;
 
    e3d_renderer_color_pick_target_set(renderer, drawable);
-   e3d_renderer_clear(renderer, &c);
+   e3d_renderer_clear(renderer, &data->bg_color);
 
    if (data->color_pick_enabled) //Use rendering to texture in color pick mechanism
      {
@@ -1374,9 +1415,11 @@ e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *rende
    else
      {
         _scene_render(drawable, renderer, data); //Just render scene in texture
+        glBindFramebuffer(GL_FRAMEBUFFER, drawable->fbo);
+        /*Render full screen quard*/
+        if (data->post_processing)
+          _scene_post_render(drawable, renderer, data);
      }
-
-   glBindFramebuffer(GL_FRAMEBUFFER, drawable->fbo);
 
    return EINA_TRUE;
 }

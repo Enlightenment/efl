@@ -69,7 +69,8 @@ typedef enum _E3D_Uniform
    E3D_UNIFORM_ALPHATEST_COMPARISON,
    E3D_UNIFORM_ALPHATEST_REFVALUE,
    E3D_UNIFORM_RENDER_TO_TEXTURE,
-
+   E3D_UNIFORM_FRAME_SIZE_H,
+   E3D_UNIFORM_FRAME_SIZE_W,
    E3D_UNIFORM_COUNT,
 } E3D_Uniform;
 
@@ -363,6 +364,8 @@ static const char *uniform_names[] =
    "uAlphaTestComparison",
    "uAlphaTestRefValue",
    "uColorTexture",
+   "uFrameSizeH",
+   "uFrameSizeW"
 };
 
 static inline void
@@ -634,6 +637,12 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
          break;
       case E3D_UNIFORM_RENDER_TO_TEXTURE:
          glUniform1i(loc, data->colortex_sampler);
+         break;
+      case E3D_UNIFORM_FRAME_SIZE_H:
+         glUniform1f(loc, data->frame_size_h);
+         break;
+      case E3D_UNIFORM_FRAME_SIZE_W:
+         glUniform1f(loc, data->frame_size_w);
          break;
       default:
          ERR("Invalid uniform ID.");
