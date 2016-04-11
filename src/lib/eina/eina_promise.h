@@ -443,19 +443,22 @@ EAPI void eina_promise_owner_default_call_then(Eina_Promise_Owner* promise);
  * @internal
  */
 #define _EINA_PROMISE_BEFORE_HOOK(PromiseValue, Ret, ...)               \
-  Eina_Promise_Owner* __eo_promise = eina_promise_default_add(sizeof(PromiseValue)); \
-  typedef Ret (*_Eo__Promise_func_)(Eo*, void *obj_data, ##__VA_ARGS__);  \
-  _Eo__Promise_func_ const _promise_func = (_Eo__Promise_func_)_func_;  \
-  {                                                                     \
-    _Eo__Promise_func_ const _func_ = _promise_func;
+  Eina_Promise_Owner* const __eo_promise = eina_promise_default_add(sizeof(PromiseValue)); \
+  typedef Ret (*_Eo_Promise_func_t_)(Eo*, void *obj_data, ##__VA_ARGS__); \
+  _Eo_Promise_func_t_ const _eo_promise_func_ = (_Eo_Promise_func_t_)_func_;
+
+/*
+ * @internal
+ */
+#define _EINA_PROMISE_CALL_HOOK(Arguments)                      \
+  _eo_promise_func_(___call.eo_id, ___call.data, Arguments);
 
 
 /*
  * @internal
  */
 #define _EINA_PROMISE_AFTER_HOOK(Promise)                               \
-  }                                                                     \
-     if(Promise)                                                        \
-       *Promise = eina_promise_owner_promise_get(__eo_promise);
+  if(Promise)                                                           \
+    *Promise = eina_promise_owner_promise_get(__eo_promise);
 
 #endif

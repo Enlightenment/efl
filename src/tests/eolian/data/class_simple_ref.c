@@ -1,15 +1,15 @@
 
 Eina_Bool _class_simple_a_set(Eo *obj, Evas_Simple_Data *pd, int value);
 
-EOAPI EO_FUNC_BODYV(evas_obj_simple_a_set, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, Eina_Bool, EINA_TRUE, EO_FUNC_CALL(value), int value);
+EOAPI EO_FUNC_BODYV(evas_obj_simple_a_set, Eina_Bool, EINA_TRUE, EO_FUNC_CALL(value), int value);
 
 int _class_simple_a_get(Eo *obj, Evas_Simple_Data *pd);
 
-EOAPI EO_FUNC_BODY_CONST(evas_obj_simple_a_get, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, int, 100);
+EOAPI EO_FUNC_BODY_CONST(evas_obj_simple_a_get, int, 100);
 
 void _class_simple_b_set(Eo *obj, Evas_Simple_Data *pd);
 
-EOAPI EO_VOID_FUNC_BODY(evas_obj_simple_b_set, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK);
+EOAPI EO_VOID_FUNC_BODY(evas_obj_simple_b_set);
 
 char * _class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, char *b, double *c);
 
@@ -19,11 +19,11 @@ static char * __eolian_class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, ch
    return _class_simple_foo(obj, pd, a, b, c);
 }
 
-EOAPI EO_FUNC_BODYV(evas_obj_simple_foo, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, char *, NULL, EO_FUNC_CALL(a, b, c), int a, char *b, double *c);
+EOAPI EO_FUNC_BODYV(evas_obj_simple_foo, char *, NULL, EO_FUNC_CALL(a, b, c), int a, char *b, double *c);
 
 int _class_simple_bar(Eo *obj, Evas_Simple_Data *pd, int x);
 
-EOAPI EO_FUNC_BODYV(evas_obj_simple_bar, _EO_EMPTY_HOOK, _EO_EMPTY_HOOK, int, 0, EO_FUNC_CALL(x), int x);
+EOAPI EO_FUNC_BODYV(evas_obj_simple_bar, int, 0, EO_FUNC_CALL(x), int x);
 
 static const Eo_Op_Description _class_simple_op_desc[] = {
      EO_OP_FUNC(evas_obj_simple_a_set, _class_simple_a_set),

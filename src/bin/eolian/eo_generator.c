@@ -546,16 +546,6 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
               (ftype == EOLIAN_PROP_GET ||
                eolian_function_object_is_const(funcid) ||
                eolian_function_is_class(funcid))?"_CONST":"", func_env.lower_eo_func);
-        if(has_promise)
-          {
-             eina_strbuf_append_printf(eo_func_decl,
-                   ", _EINA_PROMISE_BEFORE_HOOK(%s, %s%s) _EO_EMPTY_HOOK, _EINA_PROMISE_AFTER_HOOK(%s) _EO_EMPTY_HOOK",
-                   promise_value_type, !rettype ? "void" : rettype,
-                   eina_strbuf_string_get(impl_full_params),
-                   promise_param_name);
-          }
-        else
-          eina_strbuf_append_printf(eo_func_decl, ", _EO_EMPTY_HOOK, _EO_EMPTY_HOOK");
         if (!ret_is_void)
           {
              const char *val_str = NULL;
@@ -583,7 +573,29 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
                    eina_strbuf_string_get(full_params));
           }
         eina_strbuf_append_printf(eo_func_decl, ");");
+
+        if(has_promise)
+          {
+             eina_strbuf_append_printf(fbody,
+                                       "#undef _EO_API_BEFORE_HOOK\n#undef _EO_API_AFTER_HOOK\n#undef _EO_API_CALL_HOOK\n"
+                                       "#define _EO_API_BEFORE_HOOK _EINA_PROMISE_BEFORE_HOOK(%s, %s%s)\n"
+                                       "#define _EO_API_AFTER_HOOK _EINA_PROMISE_AFTER_HOOK(%s)\n"
+                                       "#define _EO_API_CALL_HOOK(x) _EINA_PROMISE_CALL_HOOK(EO_FUNC_CALL(%s))\n\n",
+                                       promise_value_type, !rettype ? "void" : rettype,
+                                       eina_strbuf_string_get(impl_full_params),
+                                       promise_param_name,
+                                       eina_strbuf_string_get(params));
+          }
+
         eina_strbuf_append_printf(fbody, "%s\n", eina_strbuf_string_get(eo_func_decl));
+
+        if(has_promise)
+          {
+             eina_strbuf_append_printf(fbody, "\n#undef _EO_API_BEFORE_HOOK\n#undef _EO_API_AFTER_HOOK\n#undef _EO_API_CALL_HOOK\n"
+                                       "#define _EO_API_BEFORE_HOOK\n#define _EO_API_AFTER_HOOK\n"
+                                       "#define _EO_API_CALL_HOOK(x) x\n");
+          }
+
         eina_strbuf_free(eo_func_decl);
      }
 
