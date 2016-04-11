@@ -606,23 +606,19 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
         unsigned int k = 0;
 
         for (; k < count; k++)
-#ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
           if (surface->compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
             wl_surface_damage_buffer(surface->surface,
                                       rects[k].x, rects[k].y,
                                       rects[k].w, rects[k].h);
           else
-#endif
             wl_surface_damage(surface->surface,
                                rects[k].x, rects[k].y,
                                rects[k].w, rects[k].h);
      }
    else
-#ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
      if (surface->compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
        wl_surface_damage_buffer(surface->surface, 0, 0, leaf->w, leaf->h);
      else
-#endif
        wl_surface_damage(surface->surface, 0, 0, leaf->w, leaf->h);
 
    /* frame_cb = wl_surface_frame(surface->surface); */
