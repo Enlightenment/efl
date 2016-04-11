@@ -928,7 +928,7 @@ EAPI void
 elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group)
 {
    ELM_ICON_CHECK(obj);
-   ELM_ICON_DATA_GET(obj, sd)
+   ELM_ICON_DATA_GET(obj, sd);
 
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, obj);
