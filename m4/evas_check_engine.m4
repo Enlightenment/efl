@@ -1,3 +1,4 @@
+AC_DEFUN([REQUIRED_WAYLAND_VERSION], [1.10.0])
 
 dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_XLIB(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
@@ -519,7 +520,7 @@ have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
-PKG_CHECK_EXISTS([wayland-client >= 1.3.0],
+PKG_CHECK_EXISTS([wayland-client >= REQUIRED_WAYLAND_VERSION],
    [
     have_dep="yes"
     requirement="wayland-client"
@@ -560,7 +561,7 @@ else
     gl_library="gl"
 fi
 
-PKG_CHECK_EXISTS([egl ${gl_library} wayland-client >= 1.3.0 wayland-egl],
+PKG_CHECK_EXISTS([egl ${gl_library} wayland-client >= REQUIRED_WAYLAND_VERSION wayland-egl],
    [
     have_dep="yes"
     requirement="egl ${gl_library} wayland-client wayland-egl"
@@ -635,10 +636,10 @@ else
    AC_MSG_ERROR([We currently do not support GL DRM without OpenGL ES. Please consider OpenGL ES if you want to use it.])
 fi
 
-PKG_CHECK_EXISTS([egl ${gl_library} gbm wayland-client >= 1.3.0],
+PKG_CHECK_EXISTS([egl ${gl_library} gbm wayland-client >= REQUIRED_WAYLAND_VERSION],
    [
     have_dep="yes"
-    requirement="egl ${gl_library} gbm wayland-client >= 1.3.0"
+    requirement="egl ${gl_library} gbm wayland-client >= REQUIRED_WAYLAND_VERSION"
    ],
    [have_dep="no"])
 

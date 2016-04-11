@@ -3331,7 +3331,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_WL2], [efl])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WL2], [eina])
 
 EFL_DEPEND_PKG([ECORE_WL2], [WAYLAND],
-   [wayland-server >= 1.8.0 wayland-client >= 1.8.0 wayland-cursor >= 1.8.0 xkbcommon >= 0.5.0])
+   [wayland-server >= 1.10.0 wayland-client >= 1.10.0 wayland-cursor >= 1.10.0 xkbcommon >= 0.5.0])
 
 EFL_EVAL_PKGS([ECORE_WL2])
 
@@ -5094,7 +5094,7 @@ EFL_LIB_END_OPTIONAL([Efl_Js])
 
 ### Add Wayland server library if test is enabled
 if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
-   EFL_DEPEND_PKG([ECORE_WAYLAND_SRV], [WAYLAND], [wayland-server >= 1.8.0])
+   EFL_DEPEND_PKG([ECORE_WAYLAND_SRV], [WAYLAND], [wayland-server >= 1.10.0])
    EFL_EVAL_PKGS([ECORE_WAYLAND_SRV])
 fi
 
@@ -5133,7 +5133,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_BUFFER], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_BUFFER], [efl])
 EFL_INTERNAL_DEPEND_PKG([ECORE_BUFFER], [ecore])
 EFL_DEPEND_PKG([ECORE_BUFFER], [WAYLAND],
-               [wayland-server >= 1.5.0 wayland-client >= 1.5.0])
+               [wayland-server >= 1.10.0 wayland-client >= 1.10.0])
 
 PKG_CHECK_MODULES([X11_DRI_COMMON],
    [
