@@ -706,33 +706,6 @@ elm_icon_file_get(const Evas_Object *obj,
    elm_image_file_get(obj, file, group);
 }
 
-EOLIAN static void
-_elm_icon_thumb_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const char *group)
-{
-   evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, obj);
-   evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_thumb_resize_cb, obj);
-
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_thumb_resize_cb, obj);
-
-   eina_stringshare_replace(&sd->thumb.file.path, file);
-   eina_stringshare_replace(&sd->thumb.file.key, group);
-
-   if (elm_thumb_ethumb_client_connected_get())
-     {
-        _icon_thumb_apply(sd);
-        return;
-     }
-
-   if (!sd->thumb.eeh)
-     {
-        sd->thumb.eeh = ecore_event_handler_add
-            (ELM_ECORE_EVENT_ETHUMB_CONNECT, _icon_thumb_apply_cb, obj);
-     }
-}
-
 EAPI Eina_Bool
 elm_icon_animated_available_get(const Evas_Object *obj)
 {
@@ -949,6 +922,36 @@ static void
 _elm_icon_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EAPI void
+elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group)
+{
+   ELM_ICON_CHECK(obj);
+   ELM_ICON_DATA_GET(obj, sd)
+
+   evas_object_event_callback_del_full
+     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, obj);
+   evas_object_event_callback_del_full
+     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_thumb_resize_cb, obj);
+
+   evas_object_event_callback_add
+     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_thumb_resize_cb, obj);
+
+   eina_stringshare_replace(&sd->thumb.file.path, file);
+   eina_stringshare_replace(&sd->thumb.file.key, group);
+
+   if (elm_thumb_ethumb_client_connected_get())
+     {
+        _icon_thumb_apply(sd);
+        return;
+     }
+
+   if (!sd->thumb.eeh)
+     {
+        sd->thumb.eeh = ecore_event_handler_add
+            (ELM_ECORE_EVENT_ETHUMB_CONNECT, _icon_thumb_apply_cb, obj);
+     }
 }
 
 #include "elm_icon.eo.c"
