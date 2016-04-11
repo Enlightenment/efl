@@ -2,23 +2,29 @@ import ecore_types;
 
 class Ecore.Animator (Eo.Base)
 {
+   [[Helper to simplify creating animations.
+
+   Creating an animation is as simple as saying for how long it
+   should be run and having a callback that does the animation.
+   ]]
+
    eo_prefix: ecore_animator;
    methods {
       timeline_constructor {
-         [[Constructor.]]
+         [[Timeline constructor.]]
          legacy: null;
          params {
-            @in runtime: double;
-            @in func: Ecore_Timeline_Cb;
-            @in data: const(void)*;
+            @in runtime: double; [[Animation runtime in seconds.]]
+            @in func: Ecore_Timeline_Cb; [[Animation callback function.]]
+            @in data: const(void)*; [[Private data passed to callback functions.]]
          }
       }
       constructor {
          [[Constructor.]]
          legacy: null;
          params {
-            @in func: Ecore_Task_Cb;
-            @in data: const(void)*;
+            @in func: Ecore_Task_Cb; [[Animation callback function.]]
+            @in data: const(void)*; [[Private data passed to callback functions.]]
          }
       }
    }
