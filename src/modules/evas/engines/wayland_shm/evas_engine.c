@@ -24,8 +24,6 @@ typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine
 {
    Render_Engine_Software_Generic generic;
-
-   void (*outbuf_reconfigure)(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize);
 };
 
 /* LOCAL FUNCTIONS */
@@ -59,8 +57,6 @@ _render_engine_swapbuf_setup(int w, int h, unsigned int rotation, unsigned int d
                                                  _evas_outbuf_free,
                                                  w, h))
      goto err;
-
-   re->outbuf_reconfigure = _evas_outbuf_reconfigure;
 
    s = getenv("EVAS_WAYLAND_PARTIAL_MERGE");
    if (s)
@@ -236,9 +232,9 @@ eng_output_resize(void *data, int w, int h)
 
    if (einfo->info.edges) resize = EINA_TRUE;
 
-   re->outbuf_reconfigure(re->generic.ob, w, h,
-                          einfo->info.rotation, einfo->info.depth, 
-                          einfo->info.destination_alpha, resize);
+   _evas_outbuf_reconfigure(re->generic.ob, w, h,
+                            einfo->info.rotation, einfo->info.depth,
+                            einfo->info.destination_alpha, resize);
 
    evas_common_tilebuf_free(re->generic.tb);
    if ((re->generic.tb = evas_common_tilebuf_new(w, h)))
