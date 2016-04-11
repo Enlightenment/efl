@@ -96,7 +96,7 @@ _evas_outbuf_free(Outbuf *ob)
    _evas_outbuf_flush(ob, NULL, EVAS_RENDER_MODE_UNDEF);
    _evas_outbuf_idle_flush(ob);
 
-   if (ob->surface) _evas_shm_surface_destroy(ob->surface);
+   if (ob->surface) ob->surface->funcs.destroy(ob->surface);
 
    eina_array_flush(&ob->priv.onebuf_regions);
 
@@ -176,7 +176,7 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
              eina_rectangle_free(rect);
           }
 
-        _evas_shm_surface_post(ob->surface, result, n);
+        ob->surface->funcs.post(ob->surface, result, n);
 
         /* clean array */
         eina_array_clean(&ob->priv.onebuf_regions);
@@ -258,7 +258,7 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
              i++;
           }
 
-        _evas_shm_surface_post(ob->surface, result, n);
+        ob->surface->funcs.post(ob->surface, result, n);
      }
 }
 
@@ -269,7 +269,7 @@ _evas_outbuf_swap_mode_get(Outbuf *ob)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   age = _evas_shm_surface_assign(ob->surface);
+   age = ob->surface->funcs.assign(ob->surface);
    if (age == 1) return MODE_COPY;
    else if (age == 2) return MODE_DOUBLE;
    else if (age == 3) return MODE_TRIPLE;
@@ -308,13 +308,13 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
-        _evas_shm_surface_reconfigure(ob->surface, w, h,
-                                      ob->num_buff, resize);
+        ob->surface->funcs.reconfigure(ob->surface, w, h,
+                                       ob->num_buff, resize);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
-        _evas_shm_surface_reconfigure(ob->surface, h, w,
-                                      ob->num_buff, resize);
+        ob->surface->funcs.reconfigure(ob->surface, h, w,
+                                       ob->num_buff, resize);
      }
 
    _evas_outbuf_idle_flush(ob);
@@ -338,7 +338,7 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
              int bw = 0, bh = 0;
              void *data;
 
-             if (!(data = _evas_shm_surface_data_get(ob->surface, &bw, &bh)))
+             if (!(data = ob->surface->funcs.data_get(ob->surface, &bw, &bh)))
                {
                   /* ERR("Could not get surface data"); */
                   return NULL;
@@ -515,7 +515,7 @@ _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
    if (bpp <= 0) return;
 
    /* check for valid desination data */
-   if (!(dst = _evas_shm_surface_data_get(ob->surface, &ww, &hh)))
+   if (!(dst = ob->surface->funcs.data_get(ob->surface, &ww, &hh)))
      {
         /* ERR("Could not get surface data"); */
         return;

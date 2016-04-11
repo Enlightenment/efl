@@ -394,46 +394,6 @@ _shm_leaf_destroy(Shm_Leaf *leaf)
    leaf->resize_pool = NULL;
 }
 
-Surface *
-_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha, int compositor_version)
-{
-   Surface *s;
-   Shm_Surface *surf;
-   int i = 0;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!(s = calloc(1, sizeof(Surface)))) return NULL;
-   if (!(s->surf.shm = calloc(1, sizeof(Shm_Surface)))) goto err;
-   s->type = SURFACE_SHM;
-   surf = s->surf.shm;
-
-   surf->w = w;
-   surf->h = h;
-   surf->disp = disp;
-   surf->shm = shm;
-   surf->surface = surface;
-   surf->num_buff = num_buff;
-   surf->alpha = alpha;
-   surf->compositor_version = compositor_version;
-
-   /* create surface buffers */
-   for (; i < surf->num_buff; i++)
-     {
-        if (!_shm_leaf_create(surf, &(surf->leaf[i]), w, h))
-          {
-             ERR("Could not create surface leaf");
-             goto err;
-          }
-     }
-
-   return s;
-
-err:
-   _evas_shm_surface_destroy(s);
-   return NULL;
-}
-
 void 
 _evas_shm_surface_destroy(Surface *surface)
 {
@@ -625,4 +585,50 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
    leaf->drawn = EINA_TRUE;
    leaf->age = 0;
    surface->current = NULL;
+}
+
+Surface *
+_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha, int compositor_version)
+{
+   Surface *s;
+   Shm_Surface *surf;
+   int i = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(s = calloc(1, sizeof(Surface)))) return NULL;
+   if (!(s->surf.shm = calloc(1, sizeof(Shm_Surface)))) goto err;
+   s->type = SURFACE_SHM;
+   surf = s->surf.shm;
+
+   surf->w = w;
+   surf->h = h;
+   surf->disp = disp;
+   surf->shm = shm;
+   surf->surface = surface;
+   surf->num_buff = num_buff;
+   surf->alpha = alpha;
+   surf->compositor_version = compositor_version;
+
+   /* create surface buffers */
+   for (; i < surf->num_buff; i++)
+     {
+        if (!_shm_leaf_create(surf, &(surf->leaf[i]), w, h))
+          {
+             ERR("Could not create surface leaf");
+             goto err;
+          }
+     }
+
+   s->funcs.destroy = _evas_shm_surface_destroy;
+   s->funcs.reconfigure = _evas_shm_surface_reconfigure;
+   s->funcs.data_get = _evas_shm_surface_data_get;
+   s->funcs.assign = _evas_shm_surface_assign;
+   s->funcs.post = _evas_shm_surface_post;
+
+   return s;
+
+err:
+   _evas_shm_surface_destroy(s);
+   return NULL;
 }
