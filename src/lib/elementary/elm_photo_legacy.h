@@ -44,4 +44,76 @@ EAPI void elm_photo_editable_set(Evas_Object *obj, Eina_Bool set);
  * @ingroup Elm_Photo
  */
 EAPI Eina_Bool elm_photo_editable_get(const Evas_Object *obj);
+
+/**
+ * @brief Set if the photo should be completely visible or not.
+ *
+ * @param[in] fill Photo visibility.
+ *
+ * @ingroup Elm_Photo
+ */
+EAPI void elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill);
+
+/**
+ * @brief Get if the photo should be completely visible or not.
+ *
+ * @return Photo visibility.
+ *
+ * @ingroup Elm_Photo
+ */
+EAPI Eina_Bool elm_photo_fill_inside_get(const Evas_Object *obj);
+
+/**
+ * @brief Set whether the original aspect ratio of the photo should be kept on
+ * resize.
+ *
+ * The original aspect ratio (width / height) of the photo is usually distorted
+ * to match the object's size. Enabling this option will fix this original
+ * aspect, and the way that the photo is fit into the object's area.
+ *
+ * See also @ref elm_photo_aspect_fixed_get.
+ *
+ * @param[in] fixed @c true if the photo should fix the aspect, @c false
+ * otherwise.
+ *
+ * @ingroup Elm_Photo
+ */
+EAPI void elm_photo_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
+
+/**
+ * @brief Get if the object keeps the original aspect ratio.
+ *
+ * @return @c true if the photo should fix the aspect, @c false otherwise.
+ *
+ * @ingroup Elm_Photo
+ */
+EAPI Eina_Bool elm_photo_aspect_fixed_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the size that will be used on the photo
+ *
+ * @param[in] size The size of the photo
+ *
+ * @ingroup Elm_Photo
+ */
+EAPI void elm_photo_size_set(Evas_Object *obj, int size);
+
+/**
+ * @brief Get the size that will be used on the photo
+ *
+ * @return The size of the photo
+ *
+ * @ingroup Elm_Photo
+ */
+EAPI int elm_photo_size_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the file that will be used as thumbnail in the photo.
+ *
+ * @param[in] group The key used in case of an EET file.
+ *
+ * @ingroup Elm_Photo
+ */
+EAPI void elm_photo_thumb_set(Evas_Object *obj, const char *file, const char *group);
+
 #include "elm_photo.eo.legacy.h"

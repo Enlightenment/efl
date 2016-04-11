@@ -328,70 +328,6 @@ _elm_photo_efl_file_file_set(Eo *obj, Elm_Photo_Data *sd, const char *file, cons
    return EINA_TRUE;
 }
 
-EOLIAN static void
-_elm_photo_size_set(Eo *obj, Elm_Photo_Data *sd, int size)
-{
-   sd->size = (size > 0) ? size : 0;
-
-   elm_image_prescale_set(sd->icon, sd->size);
-
-   _sizing_eval(obj);
-}
-
-EOLIAN static int
-_elm_photo_size_get(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd)
-{
-   return sd->size;
-}
-
-EOLIAN static void
-_elm_photo_fill_inside_set(Eo *obj, Elm_Photo_Data *sd, Eina_Bool fill)
-{
-   elm_image_fill_outside_set(sd->icon, !fill);
-   sd->fill_inside = !!fill;
-
-   _sizing_eval(obj);
-}
-
-EOLIAN static Eina_Bool
-_elm_photo_fill_inside_get(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd)
-{
-   return sd->fill_inside;
-}
-
-EOLIAN static void
-_elm_photo_evas_draggable_interface_drag_target_set(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, Eina_Bool set)
-{
-   elm_image_editable_set(sd->icon, set);
-}
-
-EOLIAN static Eina_Bool
-_elm_photo_evas_draggable_interface_drag_target_get(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd)
-{
-   return elm_image_editable_get(sd->icon);
-}
-
-EOLIAN static void
-_elm_photo_thumb_set(const Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, const char *file, const char *group)
-{
-   eina_stringshare_replace(&sd->thumb.file.path, file);
-   eina_stringshare_replace(&sd->thumb.file.key, group);
-
-   elm_icon_thumb_set(sd->icon, file, group);
-}
-
-EOLIAN static void
-_elm_photo_aspect_fixed_set(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, Eina_Bool fixed)
-{
-   elm_image_aspect_fixed_set(sd->icon, fixed);
-}
-
-EOLIAN static Eina_Bool
-_elm_photo_aspect_fixed_get(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd)
-{
-   return elm_image_aspect_fixed_get(sd->icon);
-}
-
 static void
 _elm_photo_class_constructor(Eo_Class *klass)
 {
@@ -408,13 +344,83 @@ elm_photo_file_set(Eo *obj, const char *file)
 EAPI void
 elm_photo_editable_set(Evas_Object *obj, Eina_Bool edit)
 {
-   evas_draggable_interface_drag_target_set(obj, edit);
+   ELM_PHOTO_CHECK(obj);
+   ELM_PHOTO_DATA_GET(obj, sd);
+   elm_image_editable_set(sd->icon, edit);
 }
 
 EAPI Eina_Bool
 elm_photo_editable_get(const Evas_Object *obj)
 {
-   return evas_draggable_interface_drag_target_get(obj);
+   ELM_PHOTO_CHECK(obj) EINA_FALSE;
+   ELM_PHOTO_DATA_GET(obj, sd);
+   return elm_image_editable_get(sd->icon);
+}
+
+EAPI void
+elm_photo_size_set(Evas_Object *obj, int size)
+{
+   ELM_PHOTO_CHECK(obj);
+   ELM_PHOTO_DATA_GET(obj, sd);
+   sd->size = (size > 0) ? size : 0;
+
+   elm_image_prescale_set(sd->icon, sd->size);
+
+   _sizing_eval(obj);
+}
+
+EAPI int
+elm_photo_size_get(const Evas_Object *obj)
+{
+   ELM_PHOTO_CHECK(obj) 0;
+   ELM_PHOTO_DATA_GET(obj, sd);
+   return sd->size;
+}
+
+EAPI void
+elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill)
+{
+   ELM_PHOTO_CHECK(obj);
+   ELM_PHOTO_DATA_GET(obj, sd);
+   elm_image_fill_outside_set(sd->icon, !fill);
+   sd->fill_inside = !!fill;
+
+   _sizing_eval(obj);
+}
+
+EAPI Eina_Bool
+elm_photo_fill_inside_get(const Evas_Object *obj)
+{
+   ELM_PHOTO_CHECK(obj) EINA_FALSE;
+   ELM_PHOTO_DATA_GET(obj, sd);
+   return sd->fill_inside;
+}
+
+EAPI void
+elm_photo_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
+{
+   ELM_PHOTO_CHECK(obj);
+   ELM_PHOTO_DATA_GET(obj, sd);
+   elm_image_aspect_fixed_set(sd->icon, fixed);
+}
+
+EAPI Eina_Bool
+elm_photo_aspect_fixed_get(const Evas_Object *obj)
+{
+   ELM_PHOTO_CHECK(obj) EINA_FALSE;
+   ELM_PHOTO_DATA_GET(obj, sd);
+   return elm_image_aspect_fixed_get(sd->icon);
+}
+
+EAPI void
+elm_photo_thumb_set(Evas_Object *obj, const char *file, const char *group)
+{
+   ELM_PHOTO_CHECK(obj);
+   ELM_PHOTO_DATA_GET(obj, sd);
+   eina_stringshare_replace(&sd->thumb.file.path, file);
+   eina_stringshare_replace(&sd->thumb.file.key, group);
+
+   elm_icon_thumb_set(sd->icon, file, group);
 }
 
 #include "elm_photo.eo.c"
