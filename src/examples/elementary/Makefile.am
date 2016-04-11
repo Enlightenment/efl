@@ -229,6 +229,7 @@ files_DATA += \
 
 clean-local:
 	rm -f *.edj *.epb *.cfg *.cfg.bkp
+	rm -f codegen_example_generated.c codegen_example_generated.h
 
 ELEMENTARY_CODEGEN_FLAGS = --prefix=codegen_example
 
