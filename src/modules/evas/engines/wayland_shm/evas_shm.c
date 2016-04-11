@@ -65,7 +65,6 @@ struct _Shm_Surface
    struct wl_shm *shm;
    struct wl_surface *surface;
    int w, h;
-   int dx, dy;
    int num_buff;
    int compositor_version;
 
@@ -409,8 +408,6 @@ _evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_
    s->type = SURFACE_SHM;
    surf = s->surf.shm;
 
-   surf->dx = 0;
-   surf->dy = 0;
    surf->w = w;
    surf->h = h;
    surf->disp = disp;
@@ -454,7 +451,7 @@ _evas_shm_surface_destroy(Surface *surface)
 }
 
 void 
-_evas_shm_surface_reconfigure(Surface *s, int dx, int dy, int w, int h, int num_buff, uint32_t flags)
+_evas_shm_surface_reconfigure(Surface *s, int w, int h, int num_buff, uint32_t flags)
 {
    Shm_Surface *surface;
    int i = 0, resize = 0;
@@ -479,8 +476,6 @@ _evas_shm_surface_reconfigure(Surface *s, int dx, int dy, int w, int h, int num_
 
    surface->w = w;
    surface->h = h;
-   surface->dx = dx;
-   surface->dy = dy;
    surface->num_buff = num_buff;
 
    for (i = 0; i < surface->num_buff; i++)

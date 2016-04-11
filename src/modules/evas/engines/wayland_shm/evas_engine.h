@@ -118,7 +118,7 @@ struct _Outbuf
 
 Surface *_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha, int compositor_version);
 void _evas_shm_surface_destroy(Surface *surface);
-void _evas_shm_surface_reconfigure(Surface *surface, int dx, int dy, int w, int h, int num_buff, uint32_t flags);
+void _evas_shm_surface_reconfigure(Surface *surface, int w, int h, int num_buff, uint32_t flags);
 void *_evas_shm_surface_data_get(Surface *surface, int *w, int *h);
 int _evas_shm_surface_assign(Surface *surface);
 void _evas_shm_surface_post(Surface *surface, Eina_Rectangle *rects, unsigned int count);
@@ -130,7 +130,7 @@ void _evas_outbuf_idle_flush(Outbuf *ob);
 
 Render_Engine_Swap_Mode _evas_outbuf_swap_mode_get(Outbuf *ob);
 int _evas_outbuf_rotation_get(Outbuf *ob);
-void _evas_outbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize);
+void _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize);
 void *_evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void _evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);

@@ -287,7 +287,7 @@ _evas_outbuf_rotation_get(Outbuf *ob)
 }
 
 void 
-_evas_outbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize)
+_evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -308,12 +308,12 @@ _evas_outbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, int rot, Outbuf
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
-        _evas_shm_surface_reconfigure(ob->surface, x, y, w, h,
+        _evas_shm_surface_reconfigure(ob->surface, w, h,
                                       ob->num_buff, resize);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
-        _evas_shm_surface_reconfigure(ob->surface, x, y, h, w,
+        _evas_shm_surface_reconfigure(ob->surface, h, w,
                                       ob->num_buff, resize);
      }
 

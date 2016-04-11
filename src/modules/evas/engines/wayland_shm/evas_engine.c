@@ -25,7 +25,7 @@ struct _Render_Engine
 {
    Render_Engine_Software_Generic generic;
 
-   void (*outbuf_reconfigure)(Outbuf *ob, int x, int y, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize);
+   void (*outbuf_reconfigure)(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize);
 };
 
 /* LOCAL FUNCTIONS */
@@ -227,7 +227,6 @@ eng_output_resize(void *data, int w, int h)
 {
    Render_Engine *re;
    Evas_Engine_Info_Wayland_Shm *einfo;
-   int dx = 0, dy = 0;
    Eina_Bool resize = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -235,25 +234,9 @@ eng_output_resize(void *data, int w, int h)
    if (!(re = (Render_Engine *)data)) return;
    if (!(einfo = re->generic.ob->info)) return;
 
-   if (einfo->info.edges & 4) // resize from left
-     {
-        if ((einfo->info.rotation == 90) || (einfo->info.rotation == 270))
-          dx = re->generic.ob->h - h;
-        else
-          dx = re->generic.ob->w - w;
-     }
-
-   if (einfo->info.edges & 1) // resize from top
-     {
-        if ((einfo->info.rotation == 90) || (einfo->info.rotation == 270))
-          dy = re->generic.ob->w - w;
-        else
-          dy = re->generic.ob->h - h;
-     }
-
    if (einfo->info.edges) resize = EINA_TRUE;
 
-   re->outbuf_reconfigure(re->generic.ob, dx, dy, w, h, 
+   re->outbuf_reconfigure(re->generic.ob, w, h,
                           einfo->info.rotation, einfo->info.depth, 
                           einfo->info.destination_alpha, resize);
 
