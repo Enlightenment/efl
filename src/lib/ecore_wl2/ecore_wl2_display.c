@@ -703,6 +703,13 @@ ecore_wl2_display_shm_get(Ecore_Wl2_Display *display)
    return display->wl.shm;
 }
 
+EAPI void *
+ecore_wl2_display_dmabuf_get(Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+   return display->wl.dmabuf;
+}
+
 EAPI Eina_Iterator *
 ecore_wl2_display_globals_get(Ecore_Wl2_Display *display)
 {

@@ -326,6 +326,28 @@ EAPI struct wl_display *ecore_wl2_display_get(Ecore_Wl2_Display *display);
 EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
 
 /**
+ * Retrieve the wl_dmabuf from a given Ecore_Wl2_Display
+ *
+ *
+ * @param display The Ecore_Wl2_Display for which to retrieve the existing
+ *                Wayland dmabuf interface from
+ *
+ *
+ * @return The wl_dmabuf which this Ecore_Wl2_Display is using
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ *
+ * @note This is intended for client use only and should be used only
+ *       after ecore_wl2_display_connect().  Also, the return type is
+ *       void * instead of zpw_linux_dmabuf_v1 * since we don't want
+ *       to change our public API every time the version changes in
+ *       wayland-protocols.
+ *
+ * @since 1.18
+ */
+EAPI void * ecore_wl2_display_dmabuf_get(Ecore_Wl2_Display *display);
+
+/**
  * Return an Eina_Iterator that can be used to iterate through globals
  *
  * @param display The Ecore_Wl2_Display for which to return a global iterator
