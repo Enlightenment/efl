@@ -3053,10 +3053,14 @@ _key_action_move(Evas_Object *obj, const char *params)
    else return EINA_FALSE;
 
    elm_obj_pan_pos_max_get(sd->pan_obj, &pan_max_x, &pan_max_y);
-   if (x < 0) x = 0;
-   if (x > pan_max_x) x = pan_max_x;
-   if (y < 0) y = 0;
-   if (y > pan_max_y) y = pan_max_y;
+   if (x < 0)
+     x = 0;
+   else if (x > pan_max_x)
+     x = pan_max_x;
+   if (y < 0)
+     y = 0;
+   else if (y > pan_max_y)
+     y = pan_max_y;
 
    elm_interface_scrollable_content_pos_set(obj, x, y, EINA_TRUE);
 
