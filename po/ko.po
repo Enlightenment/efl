@@ -5,11 +5,12 @@
 # Daniel Juyung Seo <seojuyung2@gmail.com>, 2011-2013
 # Seong-ho Cho <darkcircle.0426@gmail.com>, 2012-2013
 #
+#: src/lib/elementary/elm_config.c:3692
 msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-01-11 12:37+0100\n"
+"POT-Creation-Date: 2016-04-11 23:34+0900\n"
 "PO-Revision-Date: 2014-11-10 01:01+0900\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung2@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -240,3 +241,27 @@ msgstr "사진"
 #: src/lib/efreet/efreet_base.c:182
 msgid "Videos"
 msgstr "영상"
+
+#: src/lib/elementary/elc_fileselector.c:1473
+msgid "Up"
+msgstr ""
+
+#: src/lib/elementary/elc_fileselector.c:1487
+msgid "Home"
+msgstr ""
+
+#: src/lib/elementary/elc_fileselector.c:1506
+msgid "Search"
+msgstr ""
+
+#: src/lib/elementary/elc_fileselector.c:1728
+msgid "Cancel"
+msgstr ""
+
+#: src/lib/elementary/elc_fileselector.c:1739
+msgid "OK"
+msgstr ""
+
+#: src/lib/elementary/elc_naviframe.c:982
+msgid "Back"
+msgstr ""

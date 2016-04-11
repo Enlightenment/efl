@@ -3,11 +3,12 @@
 # This file is put in the public domain.
 # r1to <renato.rener@gmail.com>, 2011.
 #
+#: src/lib/elementary/elm_config.c:3692
 msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-01-11 12:37+0100\n"
+"POT-Creation-Date: 2016-04-11 23:34+0900\n"
 "PO-Revision-Date: 2012-06-24 17:10+0900\n"
 "Last-Translator: Jerome Pinot <ngc891@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -236,4 +237,28 @@ msgstr ""
 
 #: src/lib/efreet/efreet_base.c:182
 msgid "Videos"
+msgstr ""
+
+#: src/lib/elementary/elc_fileselector.c:1473
+msgid "Up"
+msgstr ""
+
+#: src/lib/elementary/elc_fileselector.c:1487
+msgid "Home"
+msgstr ""
+
+#: src/lib/elementary/elc_fileselector.c:1506
+msgid "Search"
+msgstr ""
+
+#: src/lib/elementary/elc_fileselector.c:1728
+msgid "Cancel"
+msgstr ""
+
+#: src/lib/elementary/elc_fileselector.c:1739
+msgid "OK"
+msgstr ""
+
+#: src/lib/elementary/elc_naviframe.c:982
+msgid "Back"
 msgstr ""
