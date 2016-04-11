@@ -503,4 +503,66 @@ EAPI Eina_Bool elm_image_resize_up_get(const Evas_Object *obj);
  */
 EAPI void elm_image_sizing_eval(Evas_Object *obj);
 
+/**
+ * @brief Control if the object is (up/down) resizable.
+ *
+ * This function limits the image resize ability. If @c size_up is set to
+ * @c false, the object can't have its height or width resized to a value
+ * higher than the original image size. Same is valid for @c size_down.
+ *
+ * @param[in] up A bool to set if the object is resizable up. Default is
+ * @c true.
+ * @param[in] down A bool to set if the object is resizable down. Default is
+ * @c true.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_resizable_set(Evas_Object *obj, Eina_Bool up, Eina_Bool down);
+
+/**
+ * @brief Control if the object is (up/down) resizable.
+ *
+ * This function limits the image resize ability. If @c size_up is set to
+ * @c false, the object can't have its height or width resized to a value
+ * higher than the original image size. Same is valid for @c size_down.
+ *
+ * @param[out] up A bool to set if the object is resizable up. Default is
+ * @c true.
+ * @param[out] down A bool to set if the object is resizable down. Default is
+ * @c true.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_resizable_get(const Evas_Object *obj, Eina_Bool *up, Eina_Bool *down);
+
+/**
+ * @brief Control scaling behaviour of this object.
+ *
+ * This function disables scaling of the elm_image widget through the function
+ * elm_object_scale_set(). However, this does not affect the widget size/resize
+ * in any way. For that effect, take a look at @ref elm_image_resizable_get and
+ * @ref elm_widget_scale_get
+ *
+ * @param[in] no_scale @c true if the object is not scalable, @c false
+ * otherwise. Default is @c false.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
+
+/**
+ * @brief Control scaling behaviour of this object.
+ *
+ * This function disables scaling of the elm_image widget through the function
+ * elm_object_scale_set(). However, this does not affect the widget size/resize
+ * in any way. For that effect, take a look at @ref elm_image_resizable_get and
+ * @ref elm_widget_scale_get
+ *
+ * @return @c true if the object is not scalable, @c false otherwise. Default
+ * is @c false.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI Eina_Bool elm_image_no_scale_get(const Evas_Object *obj);
+
 #include "elm_image.eo.legacy.h"

@@ -1167,35 +1167,6 @@ _elm_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, i
    if (h) *h = th;
 }
 
-EOLIAN static void
-_elm_image_no_scale_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool no_scale)
-{
-   sd->no_scale = no_scale;
-
-   _elm_image_sizing_eval(obj);
-}
-
-EOLIAN static Eina_Bool
-_elm_image_no_scale_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
-{
-   return sd->no_scale;
-}
-
-EOLIAN static void
-_elm_image_resizable_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool up, Eina_Bool down)
-{
-   sd->resize_up = !!up;
-   sd->resize_down = !!down;
-
-   _elm_image_sizing_eval(obj);
-}
-
-EOLIAN static void
-_elm_image_resizable_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool *size_up, Eina_Bool *size_down)
-{
-   if (size_up) *size_up = sd->resize_up;
-   if (size_down) *size_down = sd->resize_down;
-}
 
 EAPI void
 elm_image_prescale_set(Evas_Object *obj,
@@ -1780,6 +1751,44 @@ elm_image_sizing_eval(Evas_Object *obj)
 {
    ELM_IMAGE_CHECK(obj);
    _elm_image_sizing_eval(obj);
+}
+
+EAPI void
+elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
+{
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+   sd->no_scale = no_scale;
+
+   _elm_image_sizing_eval(obj);
+}
+
+EAPI Eina_Bool
+elm_image_no_scale_get(const Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ELM_IMAGE_DATA_GET(obj, sd);
+   return sd->no_scale;
+}
+
+EAPI void
+elm_image_resizable_set(Evas_Object *obj, Eina_Bool up, Eina_Bool down)
+{
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+   sd->resize_up = !!up;
+   sd->resize_down = !!down;
+
+   _elm_image_sizing_eval(obj);
+}
+
+EAPI void
+elm_image_resizable_get(const Evas_Object *obj, Eina_Bool *size_up, Eina_Bool *size_down)
+{
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+   if (size_up) *size_up = sd->resize_up;
+   if (size_down) *size_down = sd->resize_down;
 }
 
 #include "elm_image.eo.c"

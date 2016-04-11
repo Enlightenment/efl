@@ -27,21 +27,6 @@ class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
 {
    eo_prefix: elm_obj_image;
    methods {
-      @property no_scale {
-         [[Control scaling behaviour of this object.
-
-           This function disables scaling of the elm_image widget through the
-           function elm_object_scale_set(). However, this does not affect the widget
-           size/resize in any way. For that effect, take a look at
-           @.resizable and @Elm.Widget.scale]]
-         set {
-         }
-         get {
-         }
-         values {
-            no_scale: bool; [[$true if the object is not scalable, $false otherwise. Default is $false.]]
-         }
-      }
       @property fill_inside {
          [[Control the resize method for the object's internal image when maintaining a given aspect ratio.
 
@@ -77,21 +62,6 @@ class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
          }
          values {
             fixed: bool; [[$true if the image should retain the aspect, $false otherwise.]]
-         }
-      }
-      @property resizable {
-         [[Control if the object is (up/down) resizable.
-
-           This function limits the image resize ability. If $size_up is set to
-           $false, the object can't have its height or width resized to a value
-           higher than the original image size. Same is valid for $size_down.]]
-         set {
-         }
-         get {
-         }
-         values {
-            up: bool; [[A bool to set if the object is resizable up. Default is $true.]]
-            down: bool; [[A bool to set if the object is resizable down. Default is $true.]]
          }
       }
    }
