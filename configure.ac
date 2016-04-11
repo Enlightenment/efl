@@ -1864,7 +1864,7 @@ EFL_LIB_START([Evas])
 AC_ARG_WITH([x11],
    [AS_HELP_STRING([--with-x11=xlib|xcb|none],[X11 method to use: xlib, xcb or none])])
 
-if test "x${have_windows}" = "xyes" || test "x${have_ps3}" = "xyes"; then
+if test "x${have_windows}" = "xyes" || test "x${have_ps3}" = "xyes" || test "x${have_darwin}" = "xyes"; then
    with_x11="none"
 elif test "x${with_x11}" = "x"; then
    with_x11="xlib"
@@ -2000,7 +2000,7 @@ fi
 
 # Cocoa
 AC_ARG_ENABLE([cocoa],
-    [AS_HELP_STRING([--enable-cocoa],[enable MacOS X Cocoa . @<:@default=disabled@:>@])],
+    [AS_HELP_STRING([--enable-cocoa],[enable Cocoa backend on Mac OS X. @<:@default=enabled@:>@])],
     [
      if test "x${enableval}" = "xyes" ; then
         want_cocoa="yes"
@@ -2008,7 +2008,7 @@ AC_ARG_ENABLE([cocoa],
         want_cocoa="no"
      fi
     ],
-    [want_cocoa="no"])
+    [want_cocoa="yes"])
 
 if test "${want_cocoa}" = "yes"; then
    #test cocoa requirements (objc and Cocoa/Cocoa.h)
