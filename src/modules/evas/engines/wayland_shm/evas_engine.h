@@ -66,6 +66,7 @@ extern int _evas_engine_way_shm_log_dom;
 # define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_way_shm_log_dom, __VA_ARGS__)
 
 # include <wayland-client.h>
+# include "linux-dmabuf-unstable-v1-client-protocol.h"
 # include "../software_generic/Evas_Engine_Software_Generic.h"
 # include "Evas_Engine_Wayland_Shm.h"
 

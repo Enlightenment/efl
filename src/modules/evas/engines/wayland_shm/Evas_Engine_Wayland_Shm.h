@@ -14,6 +14,7 @@ struct _Evas_Engine_Info_Wayland_Shm
      {
         /* the wayland shm object used to create new shm pool */
         struct wl_shm *wl_shm;
+        struct zwp_linux_dmabuf_v1 *wl_dmabuf;
         struct wl_surface *wl_surface;
 
         unsigned int rotation, depth;
