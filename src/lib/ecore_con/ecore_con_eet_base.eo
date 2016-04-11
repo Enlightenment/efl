@@ -7,6 +7,10 @@ struct @extern Eet_Data_Descriptor;
 struct Ecore.Con.Reply;
 
 class Ecore.Con.Eet.Base (Eo.Base) {
+   [[Ecore Connection Eet Base class.
+   
+   This class provides Eet data serialization features to Ecore Connection objects.]]
+
    legacy_prefix: null;
    methods {
       @property server {
