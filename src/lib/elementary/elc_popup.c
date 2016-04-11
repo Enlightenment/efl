@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 
 #include <Elementary.h>
@@ -1572,7 +1573,7 @@ _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_i
 }
 
 EOLIAN static void
-_elm_popup_elm_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object *parent)
+_elm_popup_elm_widget_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object *parent)
 {
    Evas_Coord x, y, w, h;
    evas_object_geometry_get(parent, &x, &y, &w, &h);

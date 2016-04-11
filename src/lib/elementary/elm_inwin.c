@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_WIDGET_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 
 #include <Elementary.h>
@@ -79,7 +80,7 @@ _elm_inwin_evas_object_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_inwin_elm_widget_parent_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *parent)
+_elm_inwin_elm_widget_widget_parent_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *parent)
 {
    elm_win_resize_object_add(parent, obj);
 

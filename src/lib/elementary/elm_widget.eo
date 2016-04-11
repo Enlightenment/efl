@@ -206,10 +206,13 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
             highlight: bool;
          }
       }
-      @property parent {
+      @property widget_parent @protected {
+         [[The internal widget parent]]
          set {
+            legacy: elm_widget_parent_set; /* Needed because we don't do duplication removal for legacy names. */
          }
          get {
+            legacy: elm_widget_parent_get; /* Needed because we don't do duplication removal for legacy names. */
          }
          values {
             parent: Evas.Object * @nullable;

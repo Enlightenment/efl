@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_WIDGET_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 
 #include <Elementary.h>
@@ -487,7 +488,7 @@ elm_notify_parent_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_notify_elm_widget_parent_set(Eo *obj, Elm_Notify_Data *sd, Evas_Object *parent)
+_elm_notify_elm_widget_widget_parent_set(Eo *obj, Elm_Notify_Data *sd, Evas_Object *parent)
 {
    if (sd->parent)
      {
@@ -534,7 +535,7 @@ elm_notify_parent_get(const Evas_Object *obj)
 }
 
 EOLIAN static Evas_Object*
-_elm_notify_elm_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
+_elm_notify_elm_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 {
    return sd->parent;
 }

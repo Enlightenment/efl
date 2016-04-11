@@ -73,7 +73,7 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm.Interface_Atspi_Select
       Evas.Object_Smart.show;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm.Widget.parent;
+      Elm.Widget.widget_parent;
       Elm.Widget.theme_apply;
       Elm.Widget.translate;
       Elm.Interface_Atspi_Accessible.children.get;

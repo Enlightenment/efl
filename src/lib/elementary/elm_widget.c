@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
+#define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #include <Elementary.h>
 
@@ -855,7 +856,7 @@ _elm_object_focus_chain_del_cb(void *data,
 }
 
 EOLIAN static void
-_elm_widget_parent_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *parent EINA_UNUSED)
+_elm_widget_widget_parent_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *parent EINA_UNUSED)
 {
 }
 
@@ -2913,7 +2914,7 @@ _elm_widget_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool focus)
 }
 
 EOLIAN static Evas_Object*
-_elm_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_elm_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    return sd->parent_obj;
 }

@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
+#define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -596,7 +597,7 @@ _elm_hoversel_evas_object_smart_hide(Eo *obj, Elm_Hoversel_Data *sd)
 }
 
 EOLIAN static void
-_elm_hoversel_elm_widget_parent_set(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, Evas_Object *parent)
+_elm_hoversel_elm_widget_widget_parent_set(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, Evas_Object *parent)
 {
    elm_hoversel_hover_parent_set(obj, parent);
 }
