@@ -197,7 +197,6 @@ _notify_resize_cb(void *data,
 
    ELM_POPUP_CHECK(popup);
 
-   _scroller_size_calc(popup);
    elm_layout_sizing_eval(popup);
 }
 
@@ -419,7 +418,6 @@ _elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
      elm_layout_signal_emit(sd->content_area, "elm,scroll,enable", "elm");
 
    _visuals_set(obj);
-   _scroller_size_calc(obj);
    elm_layout_sizing_eval(obj);
 
    /* access */
@@ -447,6 +445,8 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
    Elm_Popup_Item_Data *it;
    Evas_Coord h_box = 0, minh_box = 0;
    Evas_Coord minw = -1, minh = -1;
+
+   _scroller_size_calc(obj);
 
    if (sd->items)
      {
@@ -1064,7 +1064,6 @@ _elm_popup_elm_layout_text_set(Eo *obj, Elm_Popup_Data *_pd, const char *part, c
    else
      int_ret = elm_layout_text_set(_pd->main_layout, part, label);
 
-   _scroller_size_calc(obj);
    elm_layout_sizing_eval(obj);
 
    return int_ret;
@@ -1246,7 +1245,6 @@ _elm_popup_elm_container_content_set(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, c
    else
      ret = elm_obj_container_content_set(_pd->main_layout, part, content);
 
-   _scroller_size_calc(obj);
    elm_layout_sizing_eval(obj);
 
    return ret;
@@ -1804,7 +1802,6 @@ _elm_popup_item_append(Eo *obj, Elm_Popup_Data *sd, const char *label, Evas_Obje
    elm_box_pack_end(sd->box, VIEW(it));
    sd->items = eina_list_append(sd->items, it);
 
-   _scroller_size_calc(obj);
    elm_layout_sizing_eval(obj);
 
    return eo_it;
@@ -1840,7 +1837,6 @@ _elm_popup_scrollable_set(Eo *obj, Elm_Popup_Data *pd, Eina_Bool scroll)
           elm_layout_signal_emit(pd->content_area, "elm,scroll,enable", "elm");
      }
 
-   _scroller_size_calc(obj);
    elm_layout_sizing_eval(obj);
 }
 
