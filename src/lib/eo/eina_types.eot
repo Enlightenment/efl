@@ -27,3 +27,11 @@ struct @extern Eina.Inarray;
 type @extern Eina.Unicode: uint32;
 
 struct @extern Eina.Value;
+
+struct @extern Eina.File.Direct.Info;
+
+enum Eina.Xattr.Flags {
+  insert, [[This is the default behaviour, it will either create or replace the extended attribute]]
+  replace, [[This will only succeed if the extended attribute previously existed]]
+  created [[This will only succeed if the extended attribute wasn't previously set]]
+}

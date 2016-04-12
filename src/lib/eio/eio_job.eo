@@ -1,0 +1,152 @@
+import eina_types;
+
+struct Eio.Data
+{
+  [[A structure to handle arbitrary data to be sent over Promises.]]
+  data: void *;
+  size: uint;
+}
+
+struct Eio.Filter.Direct.Data
+{
+  info: const(Eina.File.Direct.Info)*;
+  filter: bool;
+}
+
+struct Eio.Filter.Name.Data
+{
+  file: const(char)*;
+  filter: bool;
+}
+
+struct Eio.Xattr.Data
+{
+  data: const(char)*;
+  size: uint;
+}
+
+class Eio.Job (Eo.Base)
+{
+  [[Class representing an asynchronous file operation.]]
+
+  legacy_prefix: null;
+
+  methods {
+
+    // Listing operations
+    file_ls {
+      [[Lists entries in a given path.]]
+      params {
+        @in path: const(char)*;
+        @inout promise: promise<int, const(char)*>;
+      }
+    }
+
+    file_direct_ls {
+      [[Lists entries in a given path with more information.]]
+      params {
+        @in path: const(char)*;
+        @inout promise: promise<int, const(Eina_File_Direct_Info)*>;
+      }
+    }
+
+    file_stat_ls {
+      [[Lists entries in a given path with stat information.]]
+      params {
+        @in path: const(char)*;
+        @inout promise: promise<int, const(Eina_File_Direct_Info)*>;
+      }
+    }
+
+    dir_stat_ls {
+      [[Recursively list the directory content and its sub content.]]
+      params {
+        @in path: const(char)*;
+        @inout promise: promise<int, const(Eina_File_Direct_Info)*>;
+      }
+    }
+
+    dir_direct_ls {
+      [[Recursively list the directory content and its sub content.]]
+      params {
+        @in path: const(char)*;
+        @inout promise: promise<int, const(Eina_File_Direct_Info)*>;
+      }
+    }
+
+    file_direct_stat {
+      [[Get stat info on a given file/directory.]]
+      params {
+        @in path: const(char)*;
+        @inout promise: promise<const(Eina_Stat)*>; //TODO Change to a delayed promise.
+      }
+    }
+
+    // Extended attributes
+
+    file_xattr {
+      [[Lists all extended attributes asynchronously.]]
+      params {
+        @in path: const(char)*;
+        @inout promise: promise<int, const(char)*>;
+      }
+    }
+
+    file_xattr_set {
+      [[Sets a given extended attribute.]]
+      params {
+        @in path: const(char)*;
+        @in attribute: const(char)*;
+        @in xattr_data: const(char)*;
+        @in xattr_size: uint;
+        @in flags: Eina.Xattr.Flags;
+        @inout promise: promise<int>;
+      }
+    }
+
+    file_xattr_get {
+      [[Sets a given extended attribute.]]
+      params {
+        @in path: const(char)*;
+        @in attribute: const(char)*;
+        @inout promise: promise<Eio.Xattr.Data*>;
+      }
+    }
+
+    // helper api
+    file_open {
+      [[Opens a file.
+
+      The fulfilled value in the promise will be the Eina.File*.]]
+      params {
+        @in path: const(char)*;
+        @in shared: bool;
+        @inout promise: promise<Eina.File*>;
+      }
+    }
+    file_close {
+      [[Closes an open Eina.File.]]
+      params {
+        @in file: Eina.File*;
+        // Here we're just interested whether the promise was fullfilled or not. No value needed.
+        @inout promise: promise<int>;
+      }
+    }
+    cancel_all {
+      [[Cancels all pending operations on this job.]]
+      params {
+        // Shall we need some promise here?
+      }
+    }
+  }
+ events {
+    filter,name: Eio.Filter.Name.Data;
+    filter,direct: Eio.Filter.Direct.Data;
+    xattr: Eio.Filter.Name.Data;
+ }
+
+ implements {
+    Eo.Base.constructor;
+    Eo.Base.destructor;
+  }
+}

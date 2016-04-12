@@ -2,7 +2,9 @@
 ### Library
 
 eio_eolian_files = \
-        lib/eio/eio_model.eo
+        lib/eio/eio_model.eo \
+        lib/eio/eio_job.eo \
+        lib/eio/eio_sentry.eo
 
 eio_eolian_h =  $(eio_eolian_files:%.eo=%.eo.h)
 eio_eolian_c =  $(eio_eolian_files:%.eo=%.eo.c)
@@ -20,13 +22,19 @@ lib/eio/Makefile.in
 
 installed_eiomainheadersdir = $(includedir)/eio-@VMAJ@
 
-dist_installed_eiomainheaders_DATA = lib/eio/Eio.h lib/eio/eio_inline_helper.x
+dist_installed_eiomainheaders_DATA = \
+lib/eio/Eio.h \
+lib/eio/Eio_Legacy.h \
+lib/eio/Eio_Eo.h \
+lib/eio/eio_inline_helper.x
 nodist_installed_eiomainheaders_DATA = $(eio_eoolian_h)
 
 lib_eio_libeio_la_SOURCES = \
 lib/eio/eio_dir.c \
 lib/eio/eio_eet.c \
 lib/eio/eio_file.c \
+lib/eio/eio_job.c \
+lib/eio/eio_sentry.c \
 lib/eio/eio_main.c \
 lib/eio/eio_map.c \
 lib/eio/eio_monitor.c \
@@ -62,13 +70,6 @@ if HAVE_NOTIFY_COCOA
 lib_eio_libeio_la_LDFLAGS += -framework CoreServices
 endif
 
-if HAVE_CXX11
-
-eio_eolian_cxx_hh = $(eio_eolian_files:%.eo=%.eo.hh)
-eio_eolian_cxx_impl = $(eio_eolian_files:%.eo=%.eo.impl.hh)
-
-endif
-
 if EFL_ENABLE_TESTS
 
 check_PROGRAMS += tests/eio/eio_suite
@@ -79,8 +80,13 @@ tests/eio/eio_suite.c \
 tests/eio/eio_model_test_file.c \
 tests/eio/eio_model_test_monitor_add.c \
 tests/eio/eio_test_monitor.c \
+tests/eio/eio_test_sentry.c \
 tests/eio/eio_test_file.c \
+tests/eio/eio_test_job.c \
+tests/eio/eio_test_job_xattr.c \
 tests/eio/eio_test_xattr.c \
+tests/eio/eio_test_common.c \
+tests/eio/eio_test_common.h \
 tests/eio/eio_suite.h
 
 tests_eio_eio_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
