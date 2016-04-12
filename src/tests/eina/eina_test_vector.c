@@ -45,7 +45,7 @@ START_TEST(eina_test_vector2_operations)
    eina_vector2_set(&v1, x, y);
    fail_if((v1.x != 1) || (v1.y != 2));
 
-   eina_vector2_array_set(&v2, &arr);
+   eina_vector2_array_set(&v2, arr);
    fail_if((v2.x != 5) || (v2.y != 5));
 
    eina_vector2_copy(&v1, &v2);
@@ -131,7 +131,7 @@ START_TEST(eina_test_vector3_operations)
    eina_vector3_set(&v1, x, y, z);
    fail_if((v1.x != 1) || (v1.y != 2) || (v1.z != 3));
 
-   eina_vector3_array_set(&v2, &arr);
+   eina_vector3_array_set(&v2, arr);
    fail_if((v2.x != 5) || (v2.y != 5) || (v2.z != 5));
 
    eina_vector3_copy(&v1, &v2);

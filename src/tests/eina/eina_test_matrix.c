@@ -83,7 +83,7 @@ START_TEST(eina_matrix2_operation)
            xy != yx ||
            xy != 0);
 
-   eina_matrix2_array_set(&m1, &arr);
+   eina_matrix2_array_set(&m1, arr);
    eina_matrix2_values_get(&m1,
                            &xx, &xy,
                            &yx, &yy);
@@ -260,7 +260,7 @@ START_TEST(eina_matrix4_operation)
             wx != xx ||
             ww != zy);
 
-   eina_matrix4_array_set(&m1, &arr);
+   eina_matrix4_array_set(&m1, arr);
    eina_matrix4_values_get(&m1,
                            &xx, &xy, &xz, &xw,
                            &yx, &yy, &yz, &yw,
@@ -575,7 +575,7 @@ START_TEST(eina_matrix3_operations)
             yx != 1 || yy != 1 || yz != 1 ||
             zx != 0 || zy != 0 || zz != 0);
 
-   eina_matrix3_array_set(&m1, &arr);
+   eina_matrix3_array_set(&m1, arr);
    eina_matrix3_values_get(&m1,
                            &xx, &xy, &xz,
                            &yx, &yy, &yz,
