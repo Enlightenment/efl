@@ -127,7 +127,7 @@ struct _Outbuf
 
 Surface *_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha, int compositor_version);
 
-Outbuf *_evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface, struct wl_display *disp, int compositor_version);
+Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info);
 void _evas_outbuf_free(Outbuf *ob);
 void _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 void _evas_outbuf_idle_flush(Outbuf *ob);

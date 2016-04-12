@@ -10,7 +10,7 @@
 #define BLUE_MASK 0x0000ff
 
 Outbuf *
-_evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface, struct wl_display *disp, int compositor_version)
+_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info)
 {
    Outbuf *ob = NULL;
    char *num;
@@ -23,9 +23,10 @@ _evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, s
    /* set outbuf properties */
    ob->w = w;
    ob->h = h;
-   ob->rotation = rot;
-   ob->depth = depth;
-   ob->priv.destination_alpha = alpha;
+   ob->info = info;
+   ob->rotation = info->info.rotation;
+   ob->depth = info->info.depth;
+   ob->priv.destination_alpha = info->info.destination_alpha;
 
    /* default to double buffer */
    ob->num_buff = 2;
@@ -46,15 +47,19 @@ _evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, s
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
         ob->surface =
-          _evas_shm_surface_create(disp, shm, surface, w, h, ob->num_buff,
-                                   alpha, compositor_version);
+          _evas_shm_surface_create(info->info.wl_disp, info->info.wl_shm,
+                                   info->info.wl_surface, w, h, ob->num_buff,
+                                   info->info.destination_alpha,
+                                   info->info.compositor_version);
         if (!ob->surface) goto surf_err;
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
         ob->surface =
-          _evas_shm_surface_create(disp, shm, surface, h, w, ob->num_buff,
-                                   alpha, compositor_version);
+          _evas_shm_surface_create(info->info.wl_disp, info->info.wl_shm,
+                                   info->info.wl_surface, h, w, ob->num_buff,
+                                   info->info.destination_alpha,
+                                   info->info.compositor_version);
         if (!ob->surface) goto surf_err;
      }
 
