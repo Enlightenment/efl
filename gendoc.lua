@@ -212,6 +212,39 @@ local notetypes = {
     ["TODO: "] = "<note>\n**TODO:** "
 }
 
+local gen_doc_markup = function(str)
+    local f = str:gmatch(".")
+    local c = f()
+    local buf = {}
+    while c do
+        if c == "\\" then
+            c = f()
+            if c ~= "@" and c ~= "$" then
+                buf[#buf + 1] = "\\"
+            end
+            buf[#buf + 1] = c
+            c = f()
+        elseif c == "$" then
+            c = f()
+            if c and c:match("[a-zA-Z_]") then
+                local wbuf = { c }
+                c = f()
+                while c and c:match("[a-zA-Z0-9_]") do
+                    wbuf[#wbuf + 1] = c
+                    c = f()
+                end
+                buf[#buf + 1] = "''" .. table.concat(wbuf) .. "''"
+            else
+                buf[#buf + 1] = "$"
+            end
+        else
+            buf[#buf + 1] = c
+            c = f()
+        end
+    end
+    return table.concat(buf)
+end
+
 local gen_doc_par = function(str)
     local tag
     for k, v in pairs(notetypes) do
@@ -222,9 +255,9 @@ local gen_doc_par = function(str)
         end
     end
     if tag then
-        return tag .. str .. "\n</note>"
+        return tag .. gen_doc_markup(str) .. "\n</note>"
     end
-    return str
+    return gen_doc_markup(str)
 end
 
 local gen_doc_refd = function(str)
