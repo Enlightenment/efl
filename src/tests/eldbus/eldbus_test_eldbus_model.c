@@ -87,19 +87,21 @@ efl_model_load_and_wait_for_load_status(Eo *obj, Efl_Model_Load_Status expected_
    efl_model_wait_for_load_status(obj, expected_status);
 }
 
+static int expected_ret = 0;
+
 void
 check_init(void)
 {
    ecore_init();
-   int ret = eldbus_init();
-   ck_assert_int_ge(ret, 1);
+   expected_ret = eldbus_init();
+   ck_assert_int_ge(expected_ret, 1);
 }
 
 void
 check_shutdown(void)
 {
    int ret = eldbus_shutdown();
-   ck_assert_int_eq(ret, 0);
+   ck_assert_int_eq(ret, expected_ret - 1);
    ecore_shutdown();
 }
 
