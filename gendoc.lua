@@ -185,6 +185,20 @@ local Buffer = Writer:clone {
 
 -- eolian to various doc elements conversions
 
+local classt_to_str = {
+    [eolian.class_type.REGULAR] = "class",
+    [eolian.class_type.ABSTRACT] = "class",
+    [eolian.class_type.MIXIN] = "mixin",
+    [eolian.class_type.INTERFACE] = "interface"
+}
+
+local funct_to_str = {
+    [eolian.function_type.PROPERTY] = "property",
+    [eolian.function_type.PROP_GET] = "property",
+    [eolian.function_type.PROP_SET] = "property",
+    [eolian.function_type.METHOD] = "method"
+}
+
 local str_split = function(str, delim)
     if not str then
         return nil
@@ -212,6 +226,95 @@ local notetypes = {
     ["TODO: "] = "<note>\n**TODO:** "
 }
 
+local get_decl_nspace = function(decl)
+    local dt = eolian.declaration_type
+    local tp = decl:type_get()
+    if tp == dt.ALIAS then
+        return "alias"
+    elseif tp == dt.STRUCT then
+        return "struct"
+    elseif tp == dt.ENUM then
+        return "enum"
+    elseif tp == dt.VAR then
+        return "var"
+    elseif tp == dt.CLASS then
+        local ret = classt_to_str[decl:class_get():type_get()]
+        if not ret then
+            error("unknown class type for class '" .. decl:name_get() .. "'")
+        end
+        return ret
+    else
+        error("unknown declaration type for declaration '"
+            .. decl:name_get() .. "'")
+    end
+end
+
+local gen_ref_link
+gen_ref_link = function(str)
+    local decl = eolian.declaration_get_by_name(str)
+    if decl then
+        return table.concat {
+            ":", root_nspace, ":", get_decl_nspace(decl), ":",
+            str:gsub("%.", ":"):lower()
+        }
+    end
+
+    -- field or func
+    local bstr = str:match("(.+)%.[^.]+")
+    if not bstr then
+        error("invalid reference '" .. str .. "'")
+    end
+
+    local sfx = str:sub(#bstr + 1)
+
+    decl = eolian.declaration_get_by_name(bstr)
+    if decl then
+        local dt = eolian.declaration_type
+        local tp = decl:type_get()
+        if tp == dt.STRUCT or tp == dt.ENUM then
+            -- TODO: point to the actual item
+            return gen_ref_link(bstr)
+        end
+    end
+
+    local ftp = eolian.function_type
+
+    local cl = eolian.class_get_by_name(bstr)
+    local fn
+    local ftype = ftp.UNRESOLVED
+    if not cl then
+        if sfx == ".get" then
+            ftype = ftp.PROP_GET
+        elseif sfx == ".set" then
+            ftype = ftp.PROP_SET
+        end
+        local mname
+        if ftype ~= ftp.UNRESOLVED then
+            mname = bstr:match(".+%.([^.]+)")
+            if not mname then
+                error("invalid reference '" .. str .. "'")
+            end
+            bstr = bstr:match("(.+)%.[^.]+")
+            cl = eolian.class_get_by_name(bstr)
+            if cl then
+                fn = cl:function_get_by_name(mname, ftype)
+            end
+        end
+    else
+        fn = cl:function_get_by_name(sfx:sub(2), ftype)
+        if fn then ftype = fn:type_get() end
+    end
+
+    if not fn or not funct_to_str[ftype] then
+        error("invalid reference '" .. str .. "'")
+    end
+
+    return table.concat {
+        gen_ref_link(bstr), ":", funct_to_str[ftype], ":",
+        fn:name_get():lower()
+    }
+end
+
 local gen_doc_markup = function(str)
     local f = str:gmatch(".")
     local c = f()
@@ -236,6 +339,29 @@ local gen_doc_markup = function(str)
                 buf[#buf + 1] = "''" .. table.concat(wbuf) .. "''"
             else
                 buf[#buf + 1] = "$"
+            end
+        elseif c == "@" then
+            c = f()
+            if c and c:match("[a-zA-Z_]") then
+                local rbuf = { c }
+                c = f()
+                while c and c:match("[a-zA-Z0-9_.]") do
+                    rbuf[#rbuf + 1] = c
+                    c = f()
+                end
+                local ldot = false
+                if rbuf[#rbuf] == "." then
+                    ldot = true
+                    rbuf[#rbuf] = nil
+                end
+                local title = table.concat(rbuf)
+                buf[#buf + 1] = Buffer():write_link(gen_ref_link(title),
+                    title):finish()
+                if ldot then
+                    buf[#buf + 1] = "."
+                end
+            else
+                buf[#buf + 1] = "@"
             end
         else
             buf[#buf + 1] = c
@@ -345,13 +471,6 @@ local gen_namespaces = function(v, subnspace, root)
     return table.concat(nspaces, ":")
 end
 
-local funct_to_str = {
-    [eolian.function_type.PROPERTY] = "property",
-    [eolian.function_type.PROP_GET] = "property",
-    [eolian.function_type.PROP_SET] = "property",
-    [eolian.function_type.METHOD] = "method"
-}
-
 local propt_to_type = {
     [eolian.function_type.PROPERTY] = "(get, set)",
     [eolian.function_type.PROP_GET] = "(get)",
@@ -444,13 +563,6 @@ local gen_func_csig = function(f, ftype)
 end
 
 -- builders
-
-local classt_to_str = {
-    [eolian.class_type.REGULAR] = "class",
-    [eolian.class_type.ABSTRACT] = "class",
-    [eolian.class_type.MIXIN] = "mixin",
-    [eolian.class_type.INTERFACE] = "interface"
-}
 
 local build_method, build_property
 
