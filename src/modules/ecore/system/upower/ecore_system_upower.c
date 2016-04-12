@@ -96,7 +96,9 @@ _warning_level_get_cb(void *data EINA_UNUSED,
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
-        ERR("Message error %s - %s", errname, errmsg);
+// don't print errors because this results in complaints about upower not
+// existing and it's OK if it doesn't exist. just no feature enabled then
+//        ERR("Message error %s - %s", errname, errmsg);
         return;
      }
    if (!eldbus_message_arguments_get(msg, "v", &variant))
