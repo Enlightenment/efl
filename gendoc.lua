@@ -120,7 +120,7 @@ local Writer = util.Object:clone {
 
     write_code = function(self, str, lang)
         lang = lang and (" " .. lang) or ""
-        self:write_raw("<code" .. lang .. ">\n", str, "\n</code>")
+        self:write_raw("<code" .. lang .. ">\n", str, "\n</code>\n")
     end,
 
     write_link = function(self, target, title)
@@ -185,6 +185,59 @@ local Buffer = Writer:clone {
 
 -- eolian to various doc elements conversions
 
+local str_split = function(str, delim)
+    if not str then
+        return nil
+    end
+    local s, e = str:find(delim, 1, true)
+    if not s then
+        return { str }
+    end
+    local t = {}
+    while s do
+        t[#t + 1] = str:sub(1, s - 1)
+        str = str:sub(e + 1)
+        s, e = str:find(delim, 1, true)
+        if not s then
+            t[#t + 1] = str
+        end
+    end
+    return t
+end
+
+local notetypes = {
+    ["Note: "] = "<note>\n",
+    ["Warning: "] = "<note warning>\n",
+    ["Remark: "] = "<note tip>\n",
+    ["TODO: "] = "<note>\n**TODO:** "
+}
+
+local gen_doc_par = function(str)
+    local tag
+    for k, v in pairs(notetypes) do
+        if str:match("^" .. k) then
+            tag = v
+            str = str:sub(#k + 1)
+            break
+        end
+    end
+    if tag then
+        return tag .. str .. "\n</note>"
+    end
+    return str
+end
+
+local gen_doc_refd = function(str)
+    if not str then
+        return nil
+    end
+    local pars = str_split(str, "\n\n")
+    for i = 1, #pars do
+        pars[i] = gen_doc_par(pars[i])
+    end
+    return table.concat(pars, "\n\n")
+end
+
 local get_fallback_fdoc = function(f, ftype)
     if not ftype then
         local ft = f:type_get()
@@ -206,7 +259,7 @@ local get_brief_doc = function(doc1, doc2)
     if not doc1 then
         doc1, doc2 = doc2, doc1
     end
-    return doc1:summary_get()
+    return gen_doc_refd(doc1:summary_get())
 end
 
 local get_brief_fdoc = function(f, ftype)
@@ -234,9 +287,9 @@ local get_full_doc = function(doc1, doc2)
         end
     end
     if not desc1 then
-        return sum1 .. edoc
+        return gen_doc_refd(sum1 .. edoc)
     end
-    return sum1 .. "\n\n" .. desc1 .. edoc
+    return gen_doc_refd(sum1 .. "\n\n" .. desc1 .. edoc)
 end
 
 local get_full_fdoc = function(f, ftype)
@@ -553,6 +606,7 @@ build_method = function(fn, cl)
 
     f:write_h("C signature", 3)
     f:write_code(gen_func_csig(fn), "c")
+    f:write_nl()
 
     f:write_h("Description", 3)
     write_full_doc(f, fn:documentation_get(eolian.function_type.METHOD))
@@ -585,6 +639,7 @@ build_property = function(fn, cl)
         codes[#codes + 1] = gen_func_csig(fn, fts.PROP_SET)
     end
     f:write_code(table.concat(codes, "\n"), "c")
+    f:write_nl()
 
     if isget and isset then
         f:write_h("Description", 3)
