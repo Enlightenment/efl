@@ -14,6 +14,7 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info)
 {
    Outbuf *ob = NULL;
    char *num;
+   int sw, sh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -46,23 +47,25 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info)
    /* try to create the outbuf surface */
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
-        ob->surface =
-          _evas_shm_surface_create(info->info.wl_disp, info->info.wl_shm,
-                                   info->info.wl_surface, w, h, ob->num_buff,
-                                   info->info.destination_alpha,
-                                   info->info.compositor_version);
-        if (!ob->surface) goto surf_err;
+        sw = w;
+        sh = h;
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
-        ob->surface =
-          _evas_shm_surface_create(info->info.wl_disp, info->info.wl_shm,
-                                   info->info.wl_surface, h, w, ob->num_buff,
-                                   info->info.destination_alpha,
-                                   info->info.compositor_version);
-        if (!ob->surface) goto surf_err;
+        sw = h;
+        sh = w;
      }
+   else goto unhandled_rotation;
 
+   ob->surface = _evas_shm_surface_create(info->info.wl_disp,
+                                          info->info.wl_shm,
+                                          info->info.wl_surface,
+                                          sw, sh, ob->num_buff,
+                                          info->info.destination_alpha,
+                                          info->info.compositor_version);
+   if (!ob->surface) goto surf_err;
+
+unhandled_rotation:
    eina_array_step_set(&ob->priv.onebuf_regions, sizeof(Eina_Array), 8);
 
    return ob;
