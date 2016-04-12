@@ -22,10 +22,13 @@ START_TEST(eldbus_test_eldbus)
 {
    int ret;
 
+   ecore_init();
    ret = eldbus_init();
    fail_if(ret < 1);
 
    ret = eldbus_shutdown();
+
+   ecore_shutdown();
 }
 END_TEST
 

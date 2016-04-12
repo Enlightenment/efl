@@ -90,6 +90,7 @@ efl_model_load_and_wait_for_load_status(Eo *obj, Efl_Model_Load_Status expected_
 void
 check_init(void)
 {
+   ecore_init();
    int ret = eldbus_init();
    ck_assert_int_ge(ret, 1);
 }
@@ -99,6 +100,7 @@ check_shutdown(void)
 {
    int ret = eldbus_shutdown();
    ck_assert_int_eq(ret, 0);
+   ecore_shutdown();
 }
 
 void
