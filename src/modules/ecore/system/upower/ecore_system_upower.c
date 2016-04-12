@@ -45,6 +45,8 @@ static Eina_Bool _ecore_on_battery = EINA_FALSE;
 static Eina_Bool _ecore_low_battery = EINA_FALSE;
 static int _ecore_battery_level = -1;
 
+static Eina_List *_eldbus_pending = NULL;
+
 static Eina_Bool _ecore_system_upower_display_device_init(void);
 static void _ecore_system_upower_shutdown(void);
 
@@ -89,11 +91,12 @@ _warning_level_from_variant(Eldbus_Message_Iter *variant)
 static void
 _warning_level_get_cb(void *data EINA_UNUSED,
                       const Eldbus_Message *msg,
-                      Eldbus_Pending *pending EINA_UNUSED)
+                      Eldbus_Pending *pending)
 {
    Eldbus_Message_Iter *variant;
    const char *errname, *errmsg;
 
+   _eldbus_pending = eina_list_remove(_eldbus_pending, pending);
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
 // don't print errors because this results in complaints about upower not
@@ -113,8 +116,11 @@ _warning_level_get_cb(void *data EINA_UNUSED,
 static void
 _warning_level_get(Eldbus_Proxy *proxy)
 {
-   eldbus_proxy_property_get(proxy, "WarningLevel",
-                             _warning_level_get_cb, NULL);
+   Eldbus_Pending *pend;
+
+   pend = eldbus_proxy_property_get(proxy, "WarningLevel",
+                                    _warning_level_get_cb, NULL);
+   _eldbus_pending = eina_list_append(_eldbus_pending, pend);
 }
 
 static void
@@ -135,11 +141,12 @@ _on_low_battery_from_variant(Eldbus_Message_Iter *variant)
 
 static void
 _on_low_battery_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
-                        Eldbus_Pending *pending EINA_UNUSED)
+                        Eldbus_Pending *pending)
 {
    Eldbus_Message_Iter *variant;
    const char *errname, *errmsg;
 
+   _eldbus_pending = eina_list_remove(_eldbus_pending, pending);
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Message error %s - %s", errname, errmsg);
@@ -157,8 +164,11 @@ _on_low_battery_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
 static void
 _on_low_battery_get(Eldbus_Proxy *proxy)
 {
-   eldbus_proxy_property_get(proxy, "OnLowBattery",
-                             _on_low_battery_get_cb, NULL);
+   Eldbus_Pending *pend;
+
+   pend = eldbus_proxy_property_get(proxy, "OnLowBattery",
+                                    _on_low_battery_get_cb, NULL);
+   _eldbus_pending = eina_list_append(_eldbus_pending, pend);
 }
 
 static void
@@ -179,11 +189,12 @@ _on_battery_from_variant(Eldbus_Message_Iter *variant)
 
 static void
 _on_battery_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
-                        Eldbus_Pending *pending EINA_UNUSED)
+                        Eldbus_Pending *pending)
 {
    Eldbus_Message_Iter *variant;
    const char *errname, *errmsg;
 
+   _eldbus_pending = eina_list_remove(_eldbus_pending, pending);
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Message error %s - %s", errname, errmsg);
@@ -201,8 +212,11 @@ _on_battery_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
 static void
 _on_battery_get(Eldbus_Proxy *proxy)
 {
-   eldbus_proxy_property_get(proxy, "OnBattery",
-                             _on_battery_get_cb, NULL);
+   Eldbus_Pending *pend;
+
+   pend = eldbus_proxy_property_get(proxy, "OnBattery",
+                                    _on_battery_get_cb, NULL);
+   _eldbus_pending = eina_list_append(_eldbus_pending, pend);
 }
 
 static void
@@ -263,11 +277,12 @@ _daemon_version_from_variant(Eldbus_Message_Iter *variant)
 
 static void
 _daemon_version_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
-                          Eldbus_Pending *pending EINA_UNUSED)
+                          Eldbus_Pending *pending)
 {
    Eldbus_Message_Iter *variant;
    const char *errname, *errmsg;
 
+   _eldbus_pending = eina_list_remove(_eldbus_pending, pending);
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Message error %s - %s", errname, errmsg);
@@ -285,8 +300,11 @@ _daemon_version_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
 static void
 _daemon_version_get(Eldbus_Proxy *proxy)
 {
-   eldbus_proxy_property_get(proxy, "DaemonVersion",
-                             _daemon_version_get_cb, NULL);
+   Eldbus_Pending *pend;
+
+   pend = eldbus_proxy_property_get(proxy, "DaemonVersion",
+                                    _daemon_version_get_cb, NULL);
+   _eldbus_pending = eina_list_append(_eldbus_pending, pend);
 }
 
 static void
@@ -445,6 +463,8 @@ _ecore_system_upower_init(void)
 static void
 _ecore_system_upower_shutdown(void)
 {
+   Eldbus_Pending *pend;
+
    DBG("ecore system 'upower' unloaded");
 
    eldbus_name_owner_changed_callback_del(_conn, "org.freedesktop.UPower",
@@ -484,6 +504,11 @@ _ecore_system_upower_shutdown(void)
      {
         eina_log_domain_unregister(_log_dom);
         _log_dom = -1;
+     }
+
+   EINA_LIST_FREE(_eldbus_pending, pend)
+     {
+        eldbus_pending_cancel(pend);
      }
 
    eldbus_shutdown();

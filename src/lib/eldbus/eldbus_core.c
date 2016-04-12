@@ -115,15 +115,6 @@ eldbus_init(void)
         return 0;
      }
 
-   if (!ecore_init())
-     {
-        ERR("Unable to initialize ecore");
-        eina_log_domain_unregister(_eldbus_log_dom);
-        _eldbus_log_dom = -1;
-        eina_shutdown();
-        return 0;
-     }
-
    eina_magic_string_set(ELDBUS_CONNECTION_MAGIC, "Eldbus_Connection");
    eina_magic_string_set(ELDBUS_MESSAGE_MAGIC, "Eldbus_Message");
    eina_magic_string_set(ELDBUS_SIGNAL_HANDLER_MAGIC, "Eldbus_Signal_Handler");
@@ -154,7 +145,6 @@ pending_failed:
 signal_handler_failed:
    eldbus_message_shutdown();
 message_failed:
-   ecore_shutdown();
    eina_log_domain_unregister(eldbus_model_log_dom);
    eldbus_model_log_dom = -1;
    eina_log_domain_unregister(_eldbus_log_dom);
@@ -257,7 +247,6 @@ eldbus_shutdown(void)
    eldbus_signal_handler_shutdown();
    eldbus_message_shutdown();
 
-   ecore_shutdown();
    eina_log_domain_unregister(eldbus_model_log_dom);
    eldbus_model_log_dom = -1;
    eina_log_domain_unregister(_eldbus_log_dom);

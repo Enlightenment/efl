@@ -11,7 +11,7 @@ static Eldbus_Connection *_conn = NULL;
 
 static Eina_List *_objs = NULL;
 static Eina_List *_proxies = NULL;
-static Eina_Bool _eldbus_initialized = EINA_FALSE;
+static Eina_List *_eldbus_pending = NULL;
 
 #ifdef CRI
 #undef CRI
@@ -122,11 +122,12 @@ static void _locale_envs_unset(void)
 }
 
 static void _locale_get(void *data EINA_UNUSED, const Eldbus_Message *msg,
-                        Eldbus_Pending *pending EINA_UNUSED)
+                        Eldbus_Pending *pending)
 {
    Eldbus_Message_Iter *variant, *array;
    const char *errname, *errmsg, *val;
 
+   _eldbus_pending = eina_list_remove(_eldbus_pending, pending);
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Message error %s - %s", errname, errmsg);
@@ -174,6 +175,7 @@ _props_changed_locale(void *data, const Eldbus_Message *msg)
    Eldbus_Proxy *proxy = data;
    Eldbus_Message_Iter *changed, *entry, *invalidated;
    const char *iface, *prop;
+   Eldbus_Pending *pend;
 
    if (!eldbus_message_arguments_get(msg, "sa{sv}as",
                                      &iface, &changed, &invalidated))
@@ -201,7 +203,8 @@ _props_changed_locale(void *data, const Eldbus_Message *msg)
    return;
 
  changed_locale:
-   eldbus_proxy_property_get(proxy, "Locale", _locale_get, NULL);
+   pend = eldbus_proxy_property_get(proxy, "Locale", _locale_get, NULL);
+   _eldbus_pending = eina_list_append(_eldbus_pending, pend);
 }
 
 static Eina_Bool
@@ -250,22 +253,7 @@ static void _ecore_system_systemd_shutdown(void);
 static Eina_Bool
 _ecore_system_systemd_init(void)
 {
-   int ref;
-
-   ref = eldbus_init();
-   if (!ref) return EINA_FALSE;
-   if (ref > 1)
-     {
-        // remove extra ref here, otherwise we have a loop like this:
-        // eldbus -> ecore -> (this module) -> eldbus
-        // and neither eldbus nor ecore can't be shutdown
-        _eldbus_initialized = EINA_FALSE;
-        eldbus_shutdown();
-     }
-   else
-     {
-        _eldbus_initialized = EINA_TRUE;
-     }
+   eldbus_init();
 
    _log_dom = eina_log_domain_register("ecore_system_systemd", NULL);
    if (_log_dom < 0)
@@ -305,6 +293,8 @@ _ecore_system_systemd_init(void)
 static void
 _ecore_system_systemd_shutdown(void)
 {
+   Eldbus_Pending *pend;
+
    DBG("ecore system 'systemd' unloaded");
 
    while (_proxies)
@@ -331,9 +321,12 @@ _ecore_system_systemd_shutdown(void)
         _log_dom = -1;
      }
 
-   if (_eldbus_initialized)
-     eldbus_shutdown();
-   _eldbus_initialized = EINA_FALSE;
+   EINA_LIST_FREE(_eldbus_pending, pend)
+     {
+        eldbus_pending_cancel(pend);
+     }
+
+   eldbus_shutdown();
 }
 
 EINA_MODULE_INIT(_ecore_system_systemd_init);
