@@ -58,7 +58,7 @@ static Eina_Bool
  }
 
 static void
-promise_then_count(void *data EINA_UNUSED, void *p)
+promise_then_count(void *data EINA_UNUSED, void *p, Eina_Promise* promise EINA_UNUSED)
 {
   int *total = p;
   ck_assert_ptr_ne(total, NULL);
@@ -67,7 +67,7 @@ promise_then_count(void *data EINA_UNUSED, void *p)
 }
 
 static void
-promise_then_accessor(void *data EINA_UNUSED, void* p)
+promise_then_accessor(void *data EINA_UNUSED, void* p, Eina_Promise* promise EINA_UNUSED)
 {
   Eina_Accessor **accessor = (Eina_Accessor**)p;
   ck_assert_ptr_ne(accessor, NULL);
@@ -84,7 +84,7 @@ promise_then_accessor(void *data EINA_UNUSED, void* p)
 }
 
 static void
-promise_then_value(void *user EINA_UNUSED, void *p)
+promise_then_value(void *user EINA_UNUSED, void *p, Eina_Promise* promise EINA_UNUSED)
 {
   Eina_Value* value = p;
   ck_assert_ptr_ne(value, NULL);
@@ -98,7 +98,7 @@ promise_then_value(void *user EINA_UNUSED, void *p)
 }
 
 static void
-error_promise_then(void* data EINA_UNUSED, Eina_Error const* error EINA_UNUSED)
+error_promise_then(void* data EINA_UNUSED, Eina_Error error EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 {
   ck_abort_msg(0, "Error Promise cb");
   ecore_main_loop_quit();

@@ -6,13 +6,16 @@
 #include "../efl_check.h"
 
 static const Efl_Test_Case etc[] = {
-  {"Eio_Monitor", eio_test_monitor},
-  {"Eio Model", eio_model_test_file},
-  {"Eio Model Monitor", eio_model_test_monitor_add},
-  {"Eio File", eio_test_file},
-#ifdef XATTR_TEST_DIR
-  {"Eio_Xattr", eio_test_xattr},
-#endif
+  /* {"Eio_Monitor", eio_test_monitor}, */
+  /* {"Eio_Sentry", eio_test_sentry}, */
+  /* {"Eio Model", eio_model_test_file}, */
+  /* {"Eio Model Monitor", eio_model_test_monitor_add}, */
+  /* {"Eio File", eio_test_file}, */
+  {"Eio Job", eio_test_job},
+/* #ifdef XATTR_TEST_DIR */
+/*   {"Eio_Xattr", eio_test_xattr}, */
+/*   {"Eio Job Xattr", eio_test_job_xattr}, */
+/* #endif */
   {NULL, NULL}
 };
 

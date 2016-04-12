@@ -1,0 +1,47 @@
+import eina_types;
+
+struct Eio.Sentry.Event
+{
+  [[Wraps the data about a monitor event on a file.]]
+  trigger: const(char)*; [[The cause of the event.]]
+  source: const(char)*; [[The original monitored path.]]
+}
+
+class Eio.Sentry (Eo.Base)
+{
+  [[Monitors files and directories for changes.]]
+
+  methods {
+    add {
+      [[Adds a new path to the list of monitored paths.]]
+      params {
+        @in path: const(char)*;
+      }
+      return : bool;
+    }
+    del {
+      [[Removes the given path from the monitored list.]]
+      params {
+        @in path: const(char)*;
+      }
+    }
+  }
+ events {
+    file,created: Eio.Sentry.Event;
+    file,deleted: Eio.Sentry.Event;
+    file,modified: Eio.Sentry.Event;
+    file,closed: Eio.Sentry.Event;
+    directory,created: Eio.Sentry.Event;
+    directory,deleted: Eio.Sentry.Event;
+    directory,modified: Eio.Sentry.Event;
+    directory,closed: Eio.Sentry.Event;
+    self,rename: Eio.Sentry.Event;
+    self,deleted: Eio.Sentry.Event;
+    error: Eio.Sentry.Event;
+ }
+
+ implements {
+    Eo.Base.constructor;
+    Eo.Base.destructor;
+  }
+}

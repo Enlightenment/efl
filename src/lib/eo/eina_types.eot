@@ -25,3 +25,19 @@ struct @extern Eina.Matrix3 {
 struct @extern Eina.Inarray;
 
 type @extern Eina.Unicode: uint32;
+
+struct @extern Eina.File.Direct.Info;
+/*{
+   path_lenght:    size_t;              [[Size of the whole path]]
+   name_length:    size_t;              [[Size of the filename/basename component]]
+   name_start:     size_t;              [[Start position of the filename/basename component]]
+   type:           Eina_File_Type;      [[File type]]
+   path:           char[EINA_PATH_MAX]; [[The path]]
+};*/
+
+enum @extern Eina.Xattr.Flags {
+  insert, [[This is the default behaviour, it will either create or replace the extended attribute]]
+  replace, [[This will only succeed if the extended attribute previously existed]]
+  created [[This will only succeed if the extended attribute wasn't previously set]]
+}
+

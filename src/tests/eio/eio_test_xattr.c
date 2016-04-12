@@ -12,6 +12,7 @@
 #include <Eio.h>
 
 #include "eio_suite.h"
+#include "eio_test_common.h"
 
 
 #ifdef XATTR_TEST_DIR
@@ -23,26 +24,18 @@ static int  int_data = 1234;
 static char *double_attr = "user.size";
 static double double_data = 123.456;
 
-const char *attribute[] =
+static const char *attribute[] =
   {
      "user.comment1",
      "user.comment2",
      "user.comment3"
   };
-const char *attr_data[] =
+static const char *attr_data[] =
   {
      "This is a test file",
      "This line is a comment",
      "This file has extra attributes"
   };
-
-Eina_Tmpstr*
-get_file_path(const char* tmpdirname, const char* filename)
-{
-    char file_path[PATH_MAX] = "";
-    eina_str_join(file_path, sizeof(file_path), '/', tmpdirname, filename);
-    return eina_tmpstr_add(file_path);
-}
 
 static Eina_Bool
 _filter_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const char *attr EINA_UNUSED)
@@ -149,7 +142,7 @@ START_TEST(eio_test_xattr_set)
    eina_init();
    eio_init();
 
-   test_file_path = get_file_path(XATTR_TEST_DIR, filename);
+   test_file_path = get_full_path(XATTR_TEST_DIR, filename);
    fd = open(test_file_path,
              O_WRONLY | O_CREAT | O_TRUNC,
              S_IRWXU | S_IRWXG | S_IRWXO);
@@ -207,7 +200,7 @@ START_TEST(eio_test_xattr_types_set)
    eina_init();
    eio_init();
 
-   test_file_path = get_file_path(XATTR_TEST_DIR, filename);
+   test_file_path = get_full_path(XATTR_TEST_DIR, filename);
    fd = open(test_file_path,
              O_WRONLY | O_CREAT | O_TRUNC,
              S_IRWXU | S_IRWXG | S_IRWXO);

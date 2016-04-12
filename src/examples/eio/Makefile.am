@@ -24,31 +24,53 @@ endif
 
 EXTRA_PROGRAMS = \
 eio_file_ls \
-eio_file_copy
+eio_file_copy \
+eio_job_open \
+eio_job_open_multi \
+eio_job_ls \
+eio_sentry
+
+EIO_EXAMPLES_LDADD = \
+$(top_builddir)/src/lib/eio/libeio.la \
+$(top_builddir)/src/lib/eo/libeo.la \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/efl/libefl.la \
+$(top_builddir)/src/lib/eet/libeet.la \
+$(top_builddir)/src/lib/emile/libemile.la \
+$(top_builddir)/src/lib/eina/libeina.la \
+@EIO_LDFLAGS@
 
 eio_file_ls_SOURCES = eio_file_ls.c
 eio_file_ls_LDADD = \
-$(top_builddir)/src/lib/eio/libeio.la \
-$(top_builddir)/src/lib/eo/libeo.la \
-$(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/eet/libeet.la \
-$(top_builddir)/src/lib/emile/libemile.la \
-$(top_builddir)/src/lib/eina/libeina.la \
-@EIO_LDFLAGS@
+$(EIO_EXAMPLES_LDADD)
 
 eio_file_copy_SOURCES = eio_file_copy.c
 eio_file_copy_LDADD = \
-$(top_builddir)/src/lib/eio/libeio.la \
-$(top_builddir)/src/lib/eo/libeo.la \
-$(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/eet/libeet.la \
-$(top_builddir)/src/lib/emile/libemile.la \
-$(top_builddir)/src/lib/eina/libeina.la \
-@EIO_LDFLAGS@
+$(EIO_EXAMPLES_LDADD)
+
+eio_job_open_SOURCES = eio_job_open.c
+eio_job_open_LDADD = \
+$(EIO_EXAMPLES_LDADD)
+
+eio_job_open_multi_SOURCES = eio_job_open_multi.c
+eio_job_open_multi_LDADD = \
+$(EIO_EXAMPLES_LDADD)
+
+eio_job_ls_SOURCES = eio_job_ls.c
+eio_job_ls_LDADD = \
+$(EIO_EXAMPLES_LDADD)
+
+eio_sentry_SOURCES = eio_sentry.c
+eio_sentry_LDADD = \
+$(EIO_EXAMPLES_LDADD)
 
 SRCS = \
 eio_file_ls.c \
-eio_file_copy.c
+eio_file_copy.c \
+eio_job_open.c \
+eio_job_open_multi.c \
+eio_job_ls.c \
+eio_sentry.c
 
 DATA_FILES = Makefile.examples
 

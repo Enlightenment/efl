@@ -64,7 +64,7 @@ _children_added_cb(void *data EINA_UNUSED, const Eo_Event* event)
 }
 
 static void
-_create_file(void *data EINA_UNUSED, void* value EINA_UNUSED)
+_create_file(void *data EINA_UNUSED, void* value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 {
    int fd;
    if((fd = eina_file_mkstemp("prefixXXXXXX.ext", &temp_filename)) > 0)
@@ -76,7 +76,7 @@ _create_file(void *data EINA_UNUSED, void* value EINA_UNUSED)
 
 
 static void
-_create_file_error(void *data EINA_UNUSED, const Eina_Error* value EINA_UNUSED)
+_create_file_error(void *data EINA_UNUSED, Eina_Error value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 {
    ck_abort_msg(0, "Error Promise cb called in Create file");
    ecore_main_loop_quit();
