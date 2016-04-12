@@ -1942,9 +1942,9 @@ eng_canvas_alpha_get(void *data, void *info EINA_UNUSED)
 static void
 eng_output_dump(void *data)
 {
-   Render_Engine *re;
+   Render_Engine *re = data;
 
-   re = (Render_Engine *)data;
+   eng_window_use(eng_get_ob(re));
    evas_common_image_image_all_unload();
    evas_common_font_font_all_unload();
    glsym_evas_gl_common_image_all_unload(eng_get_ob(re)->gl_context);

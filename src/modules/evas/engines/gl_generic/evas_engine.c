@@ -1400,6 +1400,37 @@ eng_image_cache_get(void *data EINA_UNUSED)
 }
 
 static void
+eng_font_cache_flush(void *data)
+{
+   Render_Engine_GL_Generic *re = data;
+   int tmp_size;
+
+   re->window_use(re->software.ob);
+   tmp_size = evas_common_font_cache_get();
+   evas_common_font_cache_set(0);
+   evas_common_font_flush();
+   evas_common_font_cache_set(tmp_size);
+}
+
+static void
+eng_font_cache_set(void *data, int bytes)
+{
+   Render_Engine_GL_Generic *re = data;
+
+   re->window_use(re->software.ob);
+   evas_common_font_cache_set(bytes);
+}
+
+static int
+eng_font_cache_get(void *data)
+{
+   Render_Engine_GL_Generic *re = data;
+
+   re->window_use(re->software.ob);
+   return evas_common_font_cache_get();
+}
+
+static void
 eng_image_stride_get(void *data EINA_UNUSED, void *image, int *stride)
 {
    Evas_GL_Image *im = image;
@@ -2834,6 +2865,10 @@ module_open(Evas_Module *em)
    ORD(image_cache_flush);
    ORD(image_cache_set);
    ORD(image_cache_get);
+
+   ORD(font_cache_flush);
+   ORD(font_cache_set);
+   ORD(font_cache_get);
 
    ORD(gl_surface_create);
    ORD(gl_pbuffer_surface_create);
