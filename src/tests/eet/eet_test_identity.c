@@ -193,7 +193,7 @@ START_TEST(eet_test_identity_open_pkcs8_enc)
 }
 END_TEST
 
-static const char *_cert_dir_find(const char *argv0)
+static const char *_cert_dir_find(const char *_argv0)
 {
    static char base[PATH_MAX] = "";
    char path[PATH_MAX];
@@ -212,7 +212,7 @@ static const char *_cert_dir_find(const char *argv0)
           return base;
      }
 
-   eina_strlcpy(base, argv0, sizeof(base));
+   eina_strlcpy(base, _argv0, sizeof(base));
    do
      {
         char *p = strrchr(base, '/');
