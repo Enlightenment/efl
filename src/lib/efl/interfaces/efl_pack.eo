@@ -1,0 +1,78 @@
+import eina_types;
+
+interface Efl.Pack (Efl.Pack_Item)
+{
+   [[API common to all UI container objects.]]
+   legacy_prefix: null;
+   methods
+   {
+      /* should this actually just be the eo children list? */
+      contents_iterate {
+         [[Begin iterating over this object's children.]]
+         return: free(own(iterator<Efl.Pack_Item *> *), eina_iterator_free) @warn_unused;
+      }
+      contents_count {
+         [[returns the number of UI elements packed in this container.]]
+         return: int;
+      }
+      clear {
+         [[removes all packed children, and unrefs them]]
+      }
+      unpack_all {
+         [[removes all packed children, without changing their refcount]]
+      }
+      unpack {
+         [[removes an existing item from the container, without unref.
+
+           delete the item directly if you actually wanted to pop and unref
+         ]]
+         return: bool; [[$false if $subobj wasn't a child or can't be removed]]
+         params {
+            subobj: Efl.Pack_Item*;
+         }
+      }
+      /* FIXME: confusing? two meanings: named slot vs. append */
+      pack {
+         [[Adds an item to this container.
+
+           Depending on the container this will either fill in the default
+           spot, replacing any already existing element or append to the end
+           of the container if there is no default part.
+
+           The container takes ownership of this object. This means if packing
+           failed, the object will be unrefed.
+         ]]
+         params {
+            subobj: Efl.Pack_Item*;
+         }
+      }
+      @property padding {
+         [[Padding between items contained in this object.]]
+         set {}
+         get {}
+         values {
+            pad_horiz: double;
+            pad_vert:  double;
+            scalable:  bool;
+         }
+      }
+      layout_update @protected {
+         [[Implementation of this container's layout algorithm.
+
+           EFL will call this function whenever the contents of this
+           container need to be re-layed out on the canvas.
+
+           This can be overriden to implement highly specific layout
+           behaviours.
+         ]]
+      }
+      layout_request {
+         [[Requests EFL to call the @.layout_update method on this object.]]
+      }
+   }
+   events {
+      child,added;
+      child,removed;
+      layout,updated;
+   }
+}

@@ -1,0 +1,68 @@
+/* FIXME: Efl.Pack.Linear */
+interface Efl.Pack_Linear (Efl.Pack)
+{
+   [[API for containers ]]
+   legacy_prefix: null;
+   eo_prefix: efl_pack;
+   methods {
+      pack_begin {
+         [[prepend, same as $pack_at($subobj, 0)]]
+         params {
+            @in subobj: Efl.Pack_Item*;
+         }
+      }
+      pack_end {
+         [[prepend, same as $pack_at($subobj, -1)]]
+         params {
+            @in subobj: Efl.Pack_Item*;
+         }
+      }
+      pack_before {
+         [[prepend before other subobj]]
+         return: bool @warn_unused; [[returns $false if $existing could not be found]]
+         params {
+            @in subobj: Efl.Pack_Item*;
+            @in existing: const(Efl.Pack_Item)*;
+         }
+      }
+      pack_after {
+         [[append after other subobj]]
+         return: bool @warn_unused; [[returns $false if $existing could not be found]]
+         params {
+            @in subobj: Efl.Pack_Item*;
+            @in existing: const(Efl.Pack_Item)*;
+         }
+      }
+      @property child_at {
+         set { [[Insert child at a specified index.]] }
+         get {}
+         keys {
+            index: int;
+         }
+         values {
+            subobj: Efl.Pack_Item *;
+         }
+      }
+      @property child_index {
+         [[index of the $subobj in this container, may be modified to move the $subobj]]
+         set {
+            return: bool; [[returns $false if $subobj is not a child]]
+         }
+         get {}
+         keys {
+            subobj: const(Efl.Pack_Item *);
+         }
+         values {
+            index: int;
+         }
+      }
+      @property direction {
+         [[primary up/left/right/down orientation for linear apis. default is right]]
+         set {}
+         get {}
+         values {
+            orient: Efl.Orient;
+         }
+      }
+   }
+}

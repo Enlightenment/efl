@@ -1,0 +1,14 @@
+interface Efl.Pack_Item
+{
+   [[Describes an item that can be packed in a container.]]
+   legacy_prefix: null;
+   methods {
+      /* FIXME: is this same as eo_parent? shouldn't it be? */
+      @property container {
+         get {}
+         values {
+            obj: const(Eo.Base)*; /* FIXME: this is an Efl.Pack* */
+         }
+      }
+   }
+}

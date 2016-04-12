@@ -35,6 +35,11 @@ extern "C" {
 
 #define EFL_VERSION_1_18 1
 
+/* Add here all the required ifdef for any @protected method */
+#ifdef EFL_EFL_BUILD
+# define EFL_PACK_PROTECTED
+#endif
+
 /**
  * @ingroup Efl
  * @since 1.18
@@ -110,6 +115,13 @@ static inline void efl_gfx_color16_type_set(Efl_Gfx_Color *color,
                                             unsigned short b, unsigned short a);
 
 #include "interfaces/efl_gfx.x"
+
+/* Packing & containers */
+#include "interfaces/efl_pack_item.eo.h"
+#include "interfaces/efl_pack.eo.h"
+#include "interfaces/efl_pack_linear.eo.h"
+#include "interfaces/efl_pack_grid.eo.h"
+#include "interfaces/efl_pack_named.eo.h"
 
 #else
 
