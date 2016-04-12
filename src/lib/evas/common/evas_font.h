@@ -68,6 +68,7 @@ EAPI void              evas_common_font_flush                (void);
 EAPI void              evas_common_font_flush_last           (void);
 EAPI RGBA_Font_Int    *evas_common_font_int_find             (const char *name, int size, Font_Rend_Flags wanted_rend);
 EAPI void              evas_common_font_all_clear            (void);
+EAPI void              evas_common_font_ext_clear            (void);
 
 /* query */
 

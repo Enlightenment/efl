@@ -57,6 +57,7 @@ _outbuf_free_region_for_update(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_U
 static void
 _outbuf_free(Outbuf *ob)
 {
+   evas_common_font_ext_clear();
    glsym_evas_gl_common_context_free(ob->gl_context);
 }
 

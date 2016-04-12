@@ -587,6 +587,8 @@ eng_window_free(Outbuf *gw)
    win_count--;
    eng_window_use(gw);
 
+   if (win_count == 0) evas_common_font_ext_clear();
+
    context = _tls_context_get();
    xwin = _tls_outbuf_get();
 

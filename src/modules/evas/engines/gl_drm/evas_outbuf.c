@@ -394,6 +394,8 @@ evas_outbuf_free(Outbuf *ob)
    win_count--;
    evas_outbuf_use(ob);
 
+   if (win_count == 0) evas_common_font_ext_clear();
+
    if (ob == _evas_gl_drm_window) _evas_gl_drm_window = NULL;
 
    if (ob->gl_context)

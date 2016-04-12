@@ -962,3 +962,60 @@ evas_common_font_int_find(const char *name, int size,
    eina_stringshare_del(tmp_fn.name);
    return fi;
 }
+
+static void
+_font_int_ext_clear(RGBA_Font_Int *fi)
+{
+   RGBA_Font_Glyph *fg;
+   Fash_Glyph_Map *fmap;
+   Fash_Glyph_Map2 *fash2;
+   Fash_Glyph *fash;
+   int i, j, k;
+
+   fash = fi->fash;
+   if (!fash) return;
+   for (k = 0; k <= 0xff; k++)
+     {
+        fash2 = fash->bucket[k];
+        if (fash2)
+          {
+             for (j = 0; j <= 0xff; j++)
+               {
+                  fmap = fash2->bucket[j];
+                  if (fmap)
+                    {
+                       for (i = 0; i <= 0xff; i++)
+                         {
+                            fg = fmap->item[i];
+                            if ((fg) && (fg != (void *)(-1)))
+                              {
+                                 if (fg->ext_dat)
+                                   {
+                                      if (fg->ext_dat_free)
+                                        fg->ext_dat_free(fg->ext_dat);
+                                      fg->ext_dat = NULL;
+                                      fg->ext_dat_free = NULL;
+                                   }
+                              }
+                         }
+                    }
+               }
+          }
+     }
+}
+
+static Eina_Bool
+_cb_hash_font_ext(const Eina_Hash *hash EINA_UNUSED,
+                  const void *key EINA_UNUSED,
+                  void *data EINA_UNUSED,
+                  void *fdata EINA_UNUSED)
+{
+   _font_int_ext_clear(data);
+   return EINA_TRUE;
+}
+
+EAPI void
+evas_common_font_ext_clear(void)
+{
+   eina_hash_foreach(fonts, _cb_hash_font_ext, NULL);
+}
