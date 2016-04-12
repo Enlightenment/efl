@@ -1,0 +1,50 @@
+class Efl.Ui.Grid (Elm.Widget, Efl.Pack_Grid)
+{
+   methods {
+   }
+   implements {
+      Eo.Base.constructor;
+
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.calculate;
+
+      Elm.Widget.focus_direction;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.theme_apply;
+
+      Efl.Pack.contents_iterate;
+      Efl.Pack.contents_count;
+      Efl.Pack.clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack.padding.get;
+      Efl.Pack.padding.set;
+      Efl.Pack.layout_update;
+      Efl.Pack.layout_request;
+      Efl.Pack_Grid.pack_grid;
+      Efl.Pack_Grid.grid_children_at;
+      Efl.Pack_Grid.grid_child_position.set;
+      Efl.Pack_Grid.grid_child_position.get;
+      Efl.Pack_Grid.grid_size.set;
+      Efl.Pack_Grid.grid_size.get;
+      Efl.Pack_Grid.max_span.set;
+      Efl.Pack_Grid.max_span.get;
+      Efl.Pack_Grid.columns.set;
+      Efl.Pack_Grid.columns.get;
+      Efl.Pack_Grid.rows.set;
+      Efl.Pack_Grid.rows.get;
+      Efl.Pack_Linear.pack_end;
+      //Efl.Pack_Linear.child_at.get;
+      //Efl.Pack_Linear.child_at.set;
+      //Efl.Pack_Linear.child_index.get;
+      //Efl.Pack_Linear.child_index.set;
+      Efl.Pack_Linear.direction.set;
+      Efl.Pack_Linear.direction.get;
+      Efl.Pack_Grid.directions.set;
+      Efl.Pack_Grid.directions.get;
+   }
+}
