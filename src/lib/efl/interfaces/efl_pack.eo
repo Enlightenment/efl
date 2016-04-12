@@ -64,8 +64,9 @@ interface Efl.Pack (Efl.Pack_Item)
          set { return: bool; }
          get {}
          values {
-            engine: const(Eo.Class)*; [[A class implementing a class function layout_do]]
-            data: void*; [[Any data to pass along to layout_do]]
+            engine: const(Eo.Class)*; [[A class implementing a class function layout_do.]]
+            data: const(void)*; [[Any data to pass along to layout_do.
+                                  Owned by the caller. Depends on the layout engine.]]
          }
       }
       layout_update @protected {

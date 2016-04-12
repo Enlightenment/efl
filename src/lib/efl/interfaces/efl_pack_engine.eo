@@ -5,7 +5,7 @@ interface Efl.Pack_Engine
       layout_do @class {
          params {
             pack: Efl.Pack*;
-            data: void*;
+            data: const(void)*;
          }
       }
    }

@@ -1,8 +1,5 @@
 #include "efl_ui_box_private.h"
 
-// FIXME: stop using Evas.Box
-#include <../evas/canvas/evas_box.eo.h>
-
 /* COPIED FROM ELM_BOX
  * - removed transition stuff (TODO: add back - needs clean API first)
  */
@@ -168,7 +165,7 @@ _efl_ui_box_efl_pack_layout_update(Eo *obj, Efl_Ui_Box_Data *pd)
 EOLIAN static void
 _efl_ui_box_efl_pack_engine_layout_do(Eo *klass EINA_UNUSED,
                                       void *_pd EINA_UNUSED,
-                                      Eo *obj, void *data EINA_UNUSED)
+                                      Eo *obj, const void *data EINA_UNUSED)
 {
    _layout_do(obj);
 }
@@ -177,10 +174,10 @@ EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_layout_engine_set(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd,
                                        const Eo_Class *klass, const void *data)
 {
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(eo_isa(klass, EFL_PACK_INTERFACE), EINA_FALSE);
-   pd->layout_engine = klass;
+   pd->layout_engine = klass ? klass : MY_CLASS;
    pd->layout_data = data;
-
+   efl_pack_layout_request(obj);
+   _sizing_eval(obj, pd);
    return EINA_TRUE;
 }
 

@@ -10,6 +10,9 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+// FIXME: stop using Evas.Box
+#include <../evas/canvas/evas_box.eo.h>
+
 #define MY_CLASS EFL_UI_BOX_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Box"
 
@@ -22,7 +25,7 @@ typedef struct _Box_Item_Iterator Box_Item_Iterator;
 struct _Efl_Ui_Box_Data
 {
    const Eo_Class *layout_engine;
-   void *layout_data;
+   const void *layout_data;
 
    Efl_Orient orient;
    Eina_Bool homogeneous : 1;
@@ -37,8 +40,8 @@ struct _Efl_Ui_Box_Data
 
 struct _Box_Item_Iterator
 {
-   Eina_List     *list;
    Eina_Iterator  iterator;
+   Eina_List     *list;
    Eina_Iterator *real_iterator;
    Efl_Ui_Box    *object;
 };

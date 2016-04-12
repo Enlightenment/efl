@@ -120,6 +120,7 @@ elm_eolian_files = \
 	lib/elementary/elm_diskselector_item.eo \
 	lib/elementary/elm_popup_item.eo \
 	lib/elementary/efl_ui_box.eo \
+	lib/elementary/efl_ui_box_flow.eo \
 	lib/elementary/efl_ui_grid.eo \
 	$(NULL)
 

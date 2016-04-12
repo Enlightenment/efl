@@ -91,6 +91,61 @@ margin_slider_cb(void *data, const Eo_Event *event)
    return EO_CALLBACK_CONTINUE;
 }
 
+static Efl_Ui_Box_Flow_Params s_flow_params = { 0.5, 0.5, 0, 0 };
+static Eina_Bool flow = EINA_FALSE;
+
+static Eina_Bool
+flow_check_cb(void *data, const Eo_Event *event)
+{
+   flow = elm_check_selected_get(event->obj);
+   efl_pack_layout_engine_set(data, flow ? EFL_UI_BOX_FLOW_CLASS : NULL, &s_flow_params);
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+horiz_check_cb(void *data, const Eo_Event *event)
+{
+   Eina_Bool chk = elm_check_selected_get(event->obj);
+   efl_pack_direction_set(data, chk ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL);
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+homo_check_cb(void *data, const Eo_Event *event)
+{
+   Eina_Bool chk = elm_check_selected_get(event->obj);
+   s_flow_params.homogenous = chk;
+   efl_pack_layout_engine_set(data, flow ? EFL_UI_BOX_FLOW_CLASS : NULL, &s_flow_params);
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+max_size_check_cb(void *data, const Eo_Event *event)
+{
+   Eina_Bool chk = elm_check_selected_get(event->obj);
+   s_flow_params.max_size = chk;
+   efl_pack_layout_engine_set(data, flow ? EFL_UI_BOX_FLOW_CLASS : NULL, &s_flow_params);
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+left_check_cb(void *data, const Eo_Event *event)
+{
+   Eina_Bool chk = elm_check_selected_get(event->obj);
+   if (chk)
+     {
+        s_flow_params.align_x = 0;
+        s_flow_params.align_y = 0;
+     }
+   else
+     {
+        s_flow_params.align_x = 0.5;
+        s_flow_params.align_y = 0.5;
+     }
+   efl_pack_layout_engine_set(data, flow ? EFL_UI_BOX_FLOW_CLASS : NULL, &s_flow_params);
+   return EO_CALLBACK_CONTINUE;
+}
+
 void
 test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -182,6 +237,61 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_radio_value_set(chk, NONE);
 
 
+   /* misc */
+   bx = eo_add(EFL_UI_BOX_CLASS, win,
+               efl_pack_direction_set(eo_self, EFL_ORIENT_DOWN));
+   evas_object_size_hint_align_set(bx, 0, -1);
+   evas_object_size_hint_weight_set(bx, 1, 1);
+   efl_pack(hbox, bx);
+   efl_gfx_visible_set(bx, 1);
+
+   o = elm_label_add(win);
+   elm_object_text_set(o, "Misc");
+   efl_pack(bx, o);
+   efl_gfx_visible_set(o, 1);
+
+   o = elm_check_add(win);
+   elm_check_selected_set(o, 0);
+   elm_object_text_set(o, "Flow");
+   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, flow_check_cb, bottombox);
+   evas_object_size_hint_align_set(o, 0, 0);
+   efl_pack(bx, o);
+   efl_gfx_visible_set(o, 1);
+
+   o = elm_check_add(win);
+   elm_check_selected_set(o, 1);
+   elm_object_text_set(o, "Horizontal");
+   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, horiz_check_cb, bottombox);
+   evas_object_size_hint_align_set(o, 0, 0);
+   efl_pack(bx, o);
+   efl_gfx_visible_set(o, 1);
+
+   o = elm_check_add(win);
+   elm_check_selected_set(o, 0);
+   elm_object_text_set(o, "Homogenous");
+   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, homo_check_cb, bottombox);
+   evas_object_size_hint_align_set(o, 0, 0);
+   efl_pack(bx, o);
+   efl_gfx_visible_set(o, 1);
+
+   o = elm_check_add(win);
+   elm_check_selected_set(o, 0);
+   elm_object_text_set(o, "Homogenous + Max");
+   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, max_size_check_cb, bottombox);
+   evas_object_size_hint_align_set(o, 0, 0);
+   efl_pack(bx, o);
+   efl_gfx_visible_set(o, 1);
+
+   o = elm_check_add(win);
+   elm_check_selected_set(o, 0);
+   elm_object_text_set(o, "Align left");
+   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, left_check_cb, bottombox);
+   evas_object_size_hint_align_set(o, 0, 0);
+   evas_object_size_hint_weight_set(o, 0, 1);
+   efl_pack(bx, o);
+   efl_gfx_visible_set(o, 1);
+
+
    /* min size setter */
    bx = eo_add(EFL_UI_BOX_CLASS, win,
                efl_pack_direction_set(eo_self, EFL_ORIENT_DOWN));
@@ -202,7 +312,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_align_set(o, 0.5, -1);
    evas_object_size_hint_weight_set(o, 1, 1);
    eo_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, min_slider_cb, NULL);
-   elm_slider_min_max_set(o, 1, 50);
+   elm_slider_min_max_set(o, 1, 150);
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 50);
    efl_pack(bx, o);
@@ -288,7 +398,6 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_value_set(o, 10);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
-
 
 
    /* contents */
