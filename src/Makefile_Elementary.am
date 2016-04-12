@@ -118,7 +118,10 @@ elm_eolian_files = \
 	lib/elementary/elm_list_item.eo \
 	lib/elementary/elm_toolbar_item.eo \
 	lib/elementary/elm_diskselector_item.eo \
-	lib/elementary/elm_popup_item.eo
+	lib/elementary/elm_popup_item.eo \
+	lib/elementary/efl_ui_box.eo \
+	lib/elementary/efl_ui_grid.eo \
+	$(NULL)
 
 elm_eolian_type_files = \
 	lib/elementary/elm_general.eot
@@ -492,7 +495,10 @@ includesub_HEADERS = \
 	lib/elementary/elm_win_eo.h \
 	lib/elementary/elm_win_legacy.h \
 	lib/elementary/elm_win_standard.h \
-	lib/elementary/elm_helper.h
+	lib/elementary/elm_helper.h \
+	lib/elementary/efl_ui_box_private.h \
+	$(NULL)
+
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
 lib_elementary_libelementary_la_SOURCES = \
@@ -617,7 +623,11 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/els_box.c \
 	lib/elementary/els_cursor.c \
 	lib/elementary/els_tooltip.c \
-	lib/elementary/elu_ews_wm.c
+	lib/elementary/elu_ews_wm.c \
+	lib/elementary/efl_ui_box.c \
+	lib/elementary/efl_ui_box_layout.c \
+	lib/elementary/efl_ui_grid.c \
+	$(NULL)
 
 lib_elementary_libelementary_la_CFLAGS = @ELEMENTARY_CFLAGS@
 lib_elementary_libelementary_la_LIBADD = \
@@ -768,6 +778,7 @@ bin/elementary/test_toolbar.c \
 bin/elementary/test_tooltip.c \
 bin/elementary/test_transit.c \
 bin/elementary/test_transit_bezier.c \
+bin/elementary/test_ui_box.c \
 bin/elementary/test_video.c \
 bin/elementary/test_weather.c \
 bin/elementary/test_web.c \
