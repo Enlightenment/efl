@@ -8,24 +8,10 @@ enum Elm.Ctxpopup.Direction
    unknown [[Ctxpopup does not determine it's direction yet.]]
 }
 
-class Elm.Ctxpopup (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
+class Elm.Ctxpopup (Elm.Layout, Elm.Interface_Atspi_Widget_Action, Efl.Orientation)
 {
    eo_prefix: elm_obj_ctxpopup;
    methods {
-      @property horizontal {
-         set {
-            [[Change the ctxpopup's orientation to horizontal or vertical.]]
-         }
-         get {
-            [[Get the value of current ctxpopup object's orientation.
-
-              See also @.horizontal.set.
-            ]]
-         }
-         values {
-            horizontal: bool; [[$true for horizontal mode, $false for vertical.]]
-         }
-      }
       @property auto_hide_disabled {
          set {
             [[Set ctxpopup auto hide mode triggered by ctxpopup policy.
@@ -234,6 +220,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
       Elm.Layout.sizing_eval;
       Elm.Interface_Atspi_Widget_Action.elm_actions.get;
       Elm.Interface_Atspi_Accessible.state_set.get;
+      Efl.Orientation.orientation;
    }
    events {
       dismissed;

@@ -53,9 +53,9 @@ struct _Elm_Ctxpopup_Data
 
    Elm_Ctxpopup_Direction dir;
    Elm_Ctxpopup_Direction dir_priority[4];
+   Efl_Orient             orient;
 
    Eina_Bool              list_visible : 1;
-   Eina_Bool              horizontal : 1;
    Eina_Bool              finished : 1;
    Eina_Bool              emitted : 1;
    Eina_Bool              visible : 1;

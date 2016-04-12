@@ -307,7 +307,7 @@ _base_geometry_calc(Evas_Object *obj,
      {
         Evas_Coord length[2];
 
-        if (!sd->horizontal)
+        if (sd->orient == EFL_ORIENT_VERTICAL)
           {
              length[0] = pos.y - hover_area.y;
              length[1] = (hover_area.y + hover_area.h) - pos.y;
@@ -1129,6 +1129,8 @@ _elm_ctxpopup_evas_object_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
    priv->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
    priv->auto_hide = EINA_TRUE;
 
+   priv->orient = EFL_ORIENT_VERTICAL;
+
    priv->box = elm_box_add(obj);
    evas_object_size_hint_weight_set
      (priv->box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1238,24 +1240,18 @@ _elm_ctxpopup_clear(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
    sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 }
 
-EOLIAN static void
-_elm_ctxpopup_horizontal_set(Eo *obj, Elm_Ctxpopup_Data *sd, Eina_Bool horizontal)
+EAPI void
+elm_ctxpopup_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
-   sd->horizontal = !!horizontal;
-
-   if (!sd->list) return;
-
-   elm_list_horizontal_set(sd->list, sd->horizontal);
-
-   sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
-
-   if (sd->visible) elm_layout_sizing_eval(obj);
+   efl_orientation_set(obj, horizontal ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL);
 }
 
-EOLIAN static Eina_Bool
-_elm_ctxpopup_horizontal_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
+EAPI Eina_Bool
+elm_ctxpopup_horizontal_get(Evas_Object *obj)
 {
-   return sd->horizontal;
+   ELM_CTXPOPUP_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+   return sd->orient == EFL_ORIENT_HORIZONTAL ? EINA_TRUE : EINA_FALSE;
 }
 
 static void
@@ -1434,7 +1430,8 @@ _elm_ctxpopup_item_init(Eo *eo_item,
           elm_object_style_set(sd->list, "ctxpopup");
         else elm_object_style_set(sd->list, elm_object_style_get(obj));
         elm_list_mode_set(sd->list, ELM_LIST_EXPAND);
-        elm_list_horizontal_set(sd->list, sd->horizontal);
+        //TODO: use orient interface API on list when implemented
+        elm_list_horizontal_set(sd->list, sd->orient == EFL_ORIENT_VERTICAL ? EINA_FALSE : EINA_TRUE);
         evas_object_event_callback_add
           (sd->list, EVAS_CALLBACK_RESIZE, _list_resize_cb, obj);
         elm_layout_content_set(obj, "default", sd->list);
@@ -1445,6 +1442,25 @@ _elm_ctxpopup_item_init(Eo *eo_item,
    item->wcb.cobj = obj;
 
    sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
+}
+
+EOLIAN static Efl_Orient
+_elm_ctxpopup_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *pd)
+{
+   return pd->orient;
+}
+
+EOLIAN static void
+_elm_ctxpopup_efl_orientation_orientation_set(Eo *obj, Elm_Ctxpopup_Data *pd, Efl_Orient orient)
+{
+   if (pd->orient == orient) return;
+   if (pd->orient != EFL_ORIENT_HORIZONTAL && pd->orient != EFL_ORIENT_VERTICAL) return;
+
+   pd->orient = orient;
+   //TODO: use orient API on list when its implemented
+   elm_list_horizontal_set(pd->list, pd->orient == EFL_ORIENT_HORIZONTAL ? EINA_TRUE : EINA_FALSE);
+   pd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
+   if (pd->visible) elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static const Elm_Atspi_Action*
