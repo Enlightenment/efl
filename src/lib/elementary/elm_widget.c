@@ -706,26 +706,26 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
 
    if (event->desc == EVAS_OBJECT_EVENT_KEY_DOWN)
      {
-        Evas_Event_Key_Down *ev = event->event_info;
+        Evas_Event_Key_Down *ev = event->info;
         event_flags = &(ev->event_flags);
         type = EVAS_CALLBACK_KEY_DOWN;
      }
    else if (event->desc == EVAS_OBJECT_EVENT_KEY_UP)
      {
-        Evas_Event_Key_Up *ev = event->event_info;
+        Evas_Event_Key_Up *ev = event->info;
         event_flags = &(ev->event_flags);
         type = EVAS_CALLBACK_KEY_UP;
      }
    else if (event->desc == EVAS_OBJECT_EVENT_MOUSE_WHEEL)
      {
-        Evas_Event_Mouse_Wheel *ev = event->event_info;
+        Evas_Event_Mouse_Wheel *ev = event->info;
         event_flags = &(ev->event_flags);
         type = EVAS_CALLBACK_MOUSE_WHEEL;
      }
    else
      return EO_CALLBACK_CONTINUE;
 
-   elm_widget_event_propagate(obj, type, event->event_info, event_flags);
+   elm_widget_event_propagate(obj, type, event->info, event_flags);
 
    return EO_CALLBACK_CONTINUE;
 }

@@ -50,7 +50,7 @@ static Eina_Bool
 _list_selected_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
-   Eo *child = event->event_info;
+   Eo *child = event->info;
    ethumb_client_file_free(elm_thumb_ethumb_client_get());
 
    printf("LIST selected model\n");
@@ -62,7 +62,7 @@ static Eina_Bool
 _tree_selected_cb(void *data, const Eo_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
-   Eo *child = event->event_info;
+   Eo *child = event->info;
    const Eina_Value *vpath;
    Eo *model;
    char *path;

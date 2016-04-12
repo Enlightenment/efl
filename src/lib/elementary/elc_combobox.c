@@ -228,7 +228,7 @@ _gl_filter_finished_cb(void *data, const Eo_Event *event)
         return EINA_TRUE;
      }
 
-   eo_event_callback_call(data, ELM_COMBOBOX_EVENT_FILTER_DONE, event->event_info);
+   eo_event_callback_call(data, ELM_COMBOBOX_EVENT_FILTER_DONE, event->info);
 
    if (sd->count > 0)
      {

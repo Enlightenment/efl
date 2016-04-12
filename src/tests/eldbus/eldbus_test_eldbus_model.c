@@ -34,7 +34,7 @@ _event_load_status_quit_cb(void *data, const Eo_Event *event)
 {
    printf("_event_load_status_quit_cb\n");
    Efl_Model_Load_Status expected_status = (Efl_Model_Load_Status)data;
-   Efl_Model_Load *actual_load = (Efl_Model_Load*)event->event_info;
+   Efl_Model_Load *actual_load = (Efl_Model_Load*)event->info;
 
    if (expected_status == actual_load->status)
      {

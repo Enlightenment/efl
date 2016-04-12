@@ -61,7 +61,7 @@ static Eina_Bool
 static Eina_Bool
 _load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Efl_Model_Load *st = event->event_info;
+   Efl_Model_Load *st = event->info;
    printf("Load CHANGE\n");
 
    if (st->status & EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN)
@@ -113,7 +113,7 @@ _load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
 static Eina_Bool
 _properties_change_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   const Efl_Model_Property_Event *evt = (Efl_Model_Property_Event *)event->event_info;
+   const Efl_Model_Property_Event *evt = (Efl_Model_Property_Event *)event->info;
    const char *prop;
    Eina_Array_Iterator it;
    unsigned int i;
@@ -137,7 +137,7 @@ _properties_change_cb(void *data EINA_UNUSED, const Eo_Event *event)
 static Eina_Bool
 _children_count_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   unsigned int *len = (unsigned int *)event->event_info;
+   unsigned int *len = (unsigned int *)event->info;
    unsigned int total;
 
    fprintf(stdout, "Children count number=%d\n", *len);

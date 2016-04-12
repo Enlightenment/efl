@@ -30,7 +30,7 @@ Eina_Bool
 _cb_added(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Simple_Public_Data *pd = eo_data_scope_get(event->obj, MY_CLASS);
-   const Eo_Callback_Array_Item *callback_array = event->event_info;
+   const Eo_Callback_Array_Item *callback_array = event->info;
 
    if (callback_array->desc != EV_A_CHANGED)
       return EINA_TRUE;
@@ -45,7 +45,7 @@ Eina_Bool
 _cb_deled(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Simple_Public_Data *pd = eo_data_scope_get(event->obj, MY_CLASS);
-   const Eo_Callback_Array_Item *callback_array = event->event_info;
+   const Eo_Callback_Array_Item *callback_array = event->info;
 
    if (callback_array->desc != EV_A_CHANGED)
       return EINA_TRUE;

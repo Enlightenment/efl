@@ -675,7 +675,7 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
    Eo_Event ev;
    ev.obj = obj_id;
    ev.desc = desc;
-   ev.event_info = event_info;
+   ev.info = event_info;
 
    pd->walking_list++;
 
@@ -734,7 +734,7 @@ _eo_event_forwarder_callback(void *data, const Eo_Event *event)
    Eo *new_obj = (Eo *) data;
    Eina_Bool ret = EINA_FALSE;
 
-   ret = eo_event_callback_call(new_obj, event->desc, event->event_info);
+   ret = eo_event_callback_call(new_obj, event->desc, event->info);
 
    return ret;
 }

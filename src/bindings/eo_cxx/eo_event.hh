@@ -141,8 +141,8 @@ event_callback(void *data, ::Eo_Event const* event)
 {
    T wrapper(::eo_ref(event->obj));
    F *f = static_cast<F*>(data);
-   return _detail::really_call_event(wrapper, *f, *event->desc, event->event_info
-                                     , std::is_void<decltype((*f)(wrapper, *event->desc, event->event_info))>());
+   return _detail::really_call_event(wrapper, *f, *event->desc, event->info
+                                     , std::is_void<decltype((*f)(wrapper, *event->desc, event->info))>());
 }
 
 }

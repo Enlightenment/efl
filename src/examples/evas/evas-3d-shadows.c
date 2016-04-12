@@ -84,12 +84,12 @@ _cb_clicked(void *data EINA_UNUSED, const Eo_Event *event)
    Eina_List *meshes = NULL, *l;
    Evas_Canvas3D_Mesh *m;
    Evas_Canvas3D_Node *billboard = NULL;
-   meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get((Evas_Canvas3D_Node *)event->event_info);
+   meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get((Evas_Canvas3D_Node *)event->info);
    EINA_LIST_FOREACH(meshes, l, m)
      {
         evas_canvas3d_mesh_shade_mode_set(m, EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);
      }
-   if (choosed_node != (Evas_Canvas3D_Node *)event->event_info)
+   if (choosed_node != (Evas_Canvas3D_Node *)event->info)
      {
         billboard = evas_canvas3d_node_billboard_target_get(choosed_node);
         if (!billboard)
@@ -100,7 +100,7 @@ _cb_clicked(void *data EINA_UNUSED, const Eo_Event *event)
                   evas_canvas3d_mesh_shade_mode_set(m, EVAS_CANVAS3D_SHADE_MODE_PHONG);
                }
           }
-        choosed_node = (Evas_Canvas3D_Node *)event->event_info;
+        choosed_node = (Evas_Canvas3D_Node *)event->info;
      }
 
    return EINA_TRUE;
@@ -111,7 +111,7 @@ _cb_collision(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Eina_List *meshes = NULL, *l;
    Evas_Canvas3D_Mesh *m;
-   meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get((Evas_Canvas3D_Node *)event->event_info);
+   meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get((Evas_Canvas3D_Node *)event->info);
    EINA_LIST_FOREACH(meshes, l, m)
      {
         evas_canvas3d_mesh_shade_mode_set(m, EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);

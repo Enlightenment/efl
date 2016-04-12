@@ -59,7 +59,7 @@ _evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event
    const Eo_Event_Description *eo_desc = NULL;
    Eina_Bool ret = EINA_FALSE;
 
-   target_node = (Evas_Canvas3D_Node *)event->event_info;
+   target_node = (Evas_Canvas3D_Node *)event->info;
    pd_target = eo_data_scope_get(target_node, EVAS_CANVAS3D_NODE_CLASS);
    collision_list = (Eina_List *)data;
    eo_desc = eo_base_legacy_only_event_description_get("collision");
@@ -81,7 +81,7 @@ _evas_canvas3d_node_private_callback_clicked(void *data EINA_UNUSED, const Eo_Ev
 {
    Eina_Bool ret = EINA_FALSE;
    const Eo_Event_Description *eo_desc = eo_base_legacy_only_event_description_get("clicked");
-   ret = eo_event_callback_call((Eo *)event->event_info, eo_desc, event->event_info);
+   ret = eo_event_callback_call((Eo *)event->info, eo_desc, event->info);
 
    return ret;
 }

@@ -41,7 +41,7 @@ elm_validator_regexp_status_get(Elm_Validator_Regexp *validator)
 EAPI Eina_Bool
 elm_validator_regexp_helper(void *data, const Eo_Event *event)
 {
-   Elm_Validate_Content *vc = event->event_info;
+   Elm_Validate_Content *vc = event->info;
    Elm_Validator_Regexp *validator = (Elm_Validator_Regexp *)data;
 
    validator->status = regexec(&validator->regex, vc->text, (size_t)0, NULL, 0) ? ELM_REG_NOMATCH : ELM_REG_NOERROR;

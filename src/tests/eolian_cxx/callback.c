@@ -19,7 +19,7 @@ typedef struct _Callback_Data Callback_Data;
 
 static Eina_Bool _callback_callback_added(void* data EINA_UNUSED, Eo_Event const* event)
 {
-  Callback_Data* pd = event->event_info;
+  Callback_Data* pd = event->info;
   ++pd->callbacks;
   eo_event_callback_call(event->obj, CALLBACK_EVENT_CALL_ON_ADD, &pd->callbacks);
   return EINA_TRUE;

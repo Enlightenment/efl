@@ -134,7 +134,7 @@ broadcast_event(Emotion_Event ev)
 static Eina_Bool
 bg_key_down(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Evas_Event_Key_Down *ev = event->event_info;
+   Evas_Event_Key_Down *ev = event->info;
    Eina_List *l;
    Evas_Object *o;
 

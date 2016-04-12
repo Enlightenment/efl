@@ -889,7 +889,7 @@ _text_button_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 static Eina_Bool
 _inc_dec_button_mouse_move_cb(void *data, const Eo_Event *event)
 {
-   Evas_Event_Mouse_Move *ev = event->event_info;
+   Evas_Event_Mouse_Move *ev = event->info;
    ELM_SPINNER_DATA_GET(data, sd);
 
    if ((ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) && sd->longpress_timer)

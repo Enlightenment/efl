@@ -193,7 +193,7 @@ static Eina_Bool
 _colorclass_activate(void *data, const Eo_Event *event)
 {
    Colorclass_UI *cc = data;
-   Elm_Object_Item *it = event->event_info;
+   Elm_Object_Item *it = event->info;
    Edje_Color_Class *ecc;
    Colorclass *lcc;
    Eina_List *l;

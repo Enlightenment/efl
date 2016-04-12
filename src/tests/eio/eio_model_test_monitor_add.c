@@ -21,7 +21,7 @@ const char* tmpdir = NULL;
 static Eina_Bool
 _load_monitor_status_cb(void *data, const Eo_Event *event)
 {
-  Efl_Model_Load* st = event->event_info;
+  Efl_Model_Load* st = event->info;
   Eo* parent = data;
   const Eina_Value* value_prop = NULL;
   const char* str = NULL;
@@ -51,7 +51,7 @@ _children_removed_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
   if(children_added)
     {
-       Efl_Model_Children_Event* evt = event->event_info;
+       Efl_Model_Children_Event* evt = event->info;
 
        Eina_Bool b;
        b = efl_model_load_status_get(evt->child);
@@ -75,7 +75,7 @@ _children_removed_cb(void *data EINA_UNUSED, const Eo_Event *event)
 static Eina_Bool
 _children_added_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-  Efl_Model_Children_Event* evt = event->event_info;
+  Efl_Model_Children_Event* evt = event->info;
   if (evt == NULL)
     return EINA_TRUE;
 
@@ -88,7 +88,7 @@ _children_added_cb(void *data EINA_UNUSED, const Eo_Event *event)
 static Eina_Bool
 _children_count_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   unsigned int *len = event->event_info;
+   unsigned int *len = event->info;
    Eina_Accessor *accessor;
    Efl_Model_Load_Status status;
    Eo *child;

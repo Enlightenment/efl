@@ -346,7 +346,7 @@ _elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_
    Eo_Event ev;
    ev.obj = accessible;
    ev.desc = event;
-   ev.event_info = event_info;
+   ev.info = event_info;
    EINA_LIST_FOREACH(global_callbacks, l, hdl)
      {
         if (hdl->cb)

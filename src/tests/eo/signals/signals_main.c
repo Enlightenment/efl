@@ -18,7 +18,7 @@ _null_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 static Eina_Bool
 _a_changed_cb(void *data, const Eo_Event *event)
 {
-   int new_a = *((int *) event->event_info);
+   int new_a = *((int *) event->info);
    printf("%s event_info:'%d' data:'%d'\n", __func__, new_a, (int) (intptr_t) data);
 
    cb_count++;

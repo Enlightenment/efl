@@ -3801,7 +3801,7 @@ _handle_listener_change(void *data, const Eldbus_Message *msg EINA_UNUSED)
 static Eina_Bool
 _state_changed_signal_send(void *data, const Eo_Event *event)
 {
-   Elm_Atspi_Event_State_Changed_Data *state_data = event->event_info;
+   Elm_Atspi_Event_State_Changed_Data *state_data = event->info;
    const char *type_desc;
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_FALSE);
 
@@ -3822,7 +3822,7 @@ _state_changed_signal_send(void *data, const Eo_Event *event)
 static Eina_Bool
 _property_changed_signal_send(void *data, const Eo_Event *event)
 {
-   const char *property = event->event_info;
+   const char *property = event->info;
    char *atspi_desc;
    enum _Atspi_Object_Property prop = ATSPI_OBJECT_PROPERTY_LAST;
 
@@ -3887,7 +3887,7 @@ _visible_data_changed_signal_send(void *data, const Eo_Event *event)
 static Eina_Bool
 _active_descendant_changed_signal_send(void *data, const Eo_Event *event)
 {
-   Eo *child = event->event_info;
+   Eo *child = event->info;
    int idx;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_FALSE);
@@ -3907,7 +3907,7 @@ static Eina_Bool
 _children_changed_signal_send(void *data, const Eo_Event *event)
 {
    const char *atspi_desc = NULL;
-   Elm_Atspi_Event_Children_Changed_Data *ev_data = event->event_info;
+   Elm_Atspi_Event_Children_Changed_Data *ev_data = event->info;
    int idx;
    enum _Atspi_Object_Child_Event_Type type;
 
@@ -4094,7 +4094,7 @@ _text_caret_moved_send(void *data, const Eo_Event *event)
 static Eina_Bool
 _text_text_inserted_send(void *data, const Eo_Event *event)
 {
-   Elm_Atspi_Text_Change_Info *info = event->event_info;
+   Elm_Atspi_Text_Change_Info *info = event->info;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_TRUE);
 
@@ -4110,7 +4110,7 @@ _text_text_inserted_send(void *data, const Eo_Event *event)
 static Eina_Bool
 _text_text_removed_send(void *data, const Eo_Event *event)
 {
-   Elm_Atspi_Text_Change_Info *info = event->event_info;
+   Elm_Atspi_Text_Change_Info *info = event->info;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_TRUE);
 

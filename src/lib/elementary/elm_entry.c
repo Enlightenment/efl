@@ -3870,7 +3870,7 @@ elm_entry_add(Evas_Object *parent)
 static Eina_Bool
 _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
 {
-   const Eo_Callback_Array_Item *event = ev->event_info;
+   const Eo_Callback_Array_Item *event = ev->info;
 
    ELM_ENTRY_DATA_GET(ev->obj, sd);
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
@@ -3881,7 +3881,7 @@ _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
 static Eina_Bool
 _cb_deleted(void *data EINA_UNUSED, const Eo_Event *ev)
 {
-   const Eo_Callback_Array_Item *event = ev->event_info;
+   const Eo_Callback_Array_Item *event = ev->info;
 
    ELM_ENTRY_DATA_GET(ev->obj, sd);
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)

@@ -701,7 +701,7 @@ _populate(Evas_Object *obj,
 static Eina_Bool
 _on_list_expanded(void *data, const Eo_Event *event)
 {
-   Elm_Object_Item *it = event->event_info;
+   Elm_Object_Item *it = event->info;
    const char *path = elm_object_item_data_get(it);
 
    _populate(data, path, it, NULL);
@@ -712,7 +712,7 @@ _on_list_expanded(void *data, const Eo_Event *event)
 static Eina_Bool
 _on_list_contracted(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Elm_Object_Item *it = event->event_info;
+   Elm_Object_Item *it = event->info;
 
    elm_genlist_item_subitems_clear(it);
 
@@ -722,7 +722,7 @@ _on_list_contracted(void *data EINA_UNUSED, const Eo_Event *event)
 static Eina_Bool
 _on_list_expand_req(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Elm_Object_Item *it = event->event_info;
+   Elm_Object_Item *it = event->info;
 
    elm_genlist_item_expanded_set(it, EINA_TRUE);
 
@@ -732,7 +732,7 @@ _on_list_expand_req(void *data EINA_UNUSED, const Eo_Event *event)
 static Eina_Bool
 _on_list_contract_req(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Elm_Object_Item *it = event->event_info;
+   Elm_Object_Item *it = event->info;
 
    elm_genlist_item_expanded_set(it, EINA_FALSE);
 
@@ -784,7 +784,7 @@ static Eina_Bool
 _on_item_activated(void *data, const Eo_Event *event)
 {
    //This event_info could be a list or gengrid item
-   Elm_Object_Item *it = event->event_info;
+   Elm_Object_Item *it = event->info;
    const char *path;
    Eina_Bool is_dir;
 
@@ -840,7 +840,7 @@ static Eina_Bool
 _on_item_selected(void *data, const Eo_Event *event)
 {
    //This event_info could be a list or gengrid item
-   Elm_Object_Item *it = event->event_info;
+   Elm_Object_Item *it = event->info;
    const char *path;
    char *parent_path;
    Eina_Bool is_dir;
@@ -931,7 +931,7 @@ _on_item_unselected(void *data, const Eo_Event *event)
    char *path;
    const char *unselected_path;
    Eina_Strbuf *buf;
-   Elm_Object_Item *it = event->event_info;
+   Elm_Object_Item *it = event->info;
    Eina_Bool first = EINA_TRUE;
 
    ELM_FILESELECTOR_DATA_GET(data, sd);
@@ -1175,7 +1175,7 @@ _on_text_unfocused(void *data, const Eo_Event *event EINA_UNUSED)
 static Eina_Bool
 _anchor_clicked(void *data, const Eo_Event *event)
 {
-   Elm_Entry_Anchor_Info *info = event->event_info;
+   Elm_Entry_Anchor_Info *info = event->info;
    Evas_Object *fs = data;
    const char *p;
 
@@ -1200,7 +1200,7 @@ _anchor_clicked(void *data, const Eo_Event *event)
 static Eina_Bool
 _files_key_down(void *data, const Eo_Event *event)
 {
-     Evas_Event_Key_Down *ev = event->event_info;
+     Evas_Event_Key_Down *ev = event->info;
      Evas_Object *par, *searchbar;
 
      par = data;

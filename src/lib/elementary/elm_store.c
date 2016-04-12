@@ -227,7 +227,7 @@ static Eina_Bool
 _store_genlist_item_realized(void *data, const Eo_Event *event)
 {
    Elm_Store *st = data;
-   Elm_Object_Item *gli = event->event_info;
+   Elm_Object_Item *gli = event->info;
    Elm_Store_Item *sti = elm_object_item_data_get(gli);
    if (!sti) return EINA_TRUE;
    st->realized_count++;
@@ -241,7 +241,7 @@ static Eina_Bool
 _store_genlist_item_unrealized(void *data, const Eo_Event *event)
 {
    Elm_Store *st = data;
-   Elm_Object_Item *gli = event->event_info;
+   Elm_Object_Item *gli = event->info;
    Elm_Store_Item *sti = elm_object_item_data_get(gli);
    if (!sti) return EINA_TRUE;
    st->realized_count--;

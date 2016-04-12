@@ -425,7 +425,7 @@ _menu_hide(void *data,
 static Eina_Bool
 _hover_dismissed_cb(void *data, const Eo_Event *event)
 {
-   _menu_hide(data, event->obj, event->event_info);
+   _menu_hide(data, event->obj, event->info);
    eo_event_callback_call
      (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
    eo_event_callback_call(data, ELM_MENU_EVENT_DISMISSED, NULL);

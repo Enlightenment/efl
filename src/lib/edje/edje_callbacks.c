@@ -7,7 +7,7 @@ _edje_hold_signal_cb(void *data, const Eo_Event *event)
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = event->event_info;
+   ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->obj, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
@@ -58,7 +58,7 @@ _edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = event->event_info;
+   ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->obj, "real_part");
    if (rp)
@@ -79,7 +79,7 @@ _edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = event->event_info;
+   ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->obj, "real_part");
    if (rp)
@@ -102,7 +102,7 @@ _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
    char buf[256];
    int ignored;
 
-   ev = event->event_info;
+   ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->obj, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
@@ -173,7 +173,7 @@ _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
    char buf[256];
    int ignored;
 
-   ev = event->event_info;
+   ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->obj, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
@@ -247,7 +247,7 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
    Edje_Real_Part *rp;
    int ignored;
 
-   ev = event->event_info;
+   ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->obj, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
@@ -356,7 +356,7 @@ _edje_mouse_wheel_signal_cb(void *data, const Eo_Event *event)
    Edje_Real_Part *rp;
    char buf[256];
 
-   ev = event->event_info;
+   ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->obj, "real_part");
    if (rp)

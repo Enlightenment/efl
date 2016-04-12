@@ -86,7 +86,7 @@ _children_changed_cb(void *data EINA_UNUSED, const Eo_Event *event)
    if (event->desc != ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED)
      return EINA_TRUE;
 
-   ev_data = *(Elm_Atspi_Event_Children_Changed_Data*)event->event_info;
+   ev_data = *(Elm_Atspi_Event_Children_Changed_Data*)event->info;
    current = event->obj;
    counter++;
 

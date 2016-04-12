@@ -82,7 +82,7 @@ _eo_signals_eo_del_cb(void *_data EINA_UNUSED, const Eo_Event *event EINA_UNUSED
 Eina_Bool
 _eo_signals_cb_added_deled(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *callback_array = event->event_info;
+   const Eo_Callback_Array_Item *callback_array = event->info;
 
    fail_if((callback_array != data) &&
          (callback_array->func != _eo_signals_cb_added_deled));

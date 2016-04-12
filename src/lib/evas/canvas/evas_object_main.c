@@ -87,7 +87,7 @@ _animator_repeater(void *data, const Eo_Event *event)
 {
    Evas_Object_Protected_Data *obj = data;
 
-   eo_event_callback_call(obj->object, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, event->event_info);
+   eo_event_callback_call(obj->object, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, event->info);
    DBG("Emitting animator tick on %p.", obj->object);
 
    return EO_CALLBACK_CONTINUE;
@@ -96,7 +96,7 @@ _animator_repeater(void *data, const Eo_Event *event)
 static Eina_Bool
 _check_event_catcher_add(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event->event_info;
+   const Eo_Callback_Array_Item *array = event->info;
    Evas_Object_Protected_Data *obj = data;
    int i;
 
@@ -122,7 +122,7 @@ _check_event_catcher_add(void *data, const Eo_Event *event)
 static Eina_Bool
 _check_event_catcher_del(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event->event_info;
+   const Eo_Callback_Array_Item *array = event->info;
    Evas_Object_Protected_Data *obj = data;
    int i;
 

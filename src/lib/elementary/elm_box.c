@@ -32,7 +32,7 @@ static Eina_Bool
 _child_added_cb_proxy(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
-   Evas_Object_Box_Option *opt = event->event_info;
+   Evas_Object_Box_Option *opt = event->info;
    eo_event_callback_call(box, ELM_BOX_EVENT_CHILD_ADDED, opt->obj);
 
    return EINA_TRUE;
@@ -42,7 +42,7 @@ static Eina_Bool
 _child_removed_cb_proxy(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
-   Evas_Object *child = event->event_info;
+   Evas_Object *child = event->info;
    eo_event_callback_call(box, ELM_BOX_EVENT_CHILD_REMOVED, child);
 
    return EINA_TRUE;
@@ -196,7 +196,7 @@ static Eina_Bool
 _transition_layout_child_added(void *data, const Eo_Event *event)
 {
    Transition_Animation_Data *tad;
-   Evas_Object_Box_Option *opt = event->event_info;
+   Evas_Object_Box_Option *opt = event->info;
    Elm_Box_Transition *layout_data = data;
 
    tad = calloc(1, sizeof(Transition_Animation_Data));
@@ -218,7 +218,7 @@ _transition_layout_child_removed(void *data, const Eo_Event *event)
 
    EINA_LIST_FOREACH(layout_data->objs, l, tad)
      {
-        if (tad->obj == event->event_info)
+        if (tad->obj == event->info)
           {
              free(eina_list_data_get(l));
              layout_data->objs = eina_list_remove_list(layout_data->objs, l);

@@ -65,7 +65,7 @@ static Eina_Bool
 _selection_done(void *data, const Eo_Event *event)
 {
    Elm_Fileselector_Button_Data *sd = data;
-   const char *file = event->event_info;
+   const char *file = event->info;
    Evas_Object *del;
 
    if (file) eina_stringshare_replace(&sd->fsd.path, file);

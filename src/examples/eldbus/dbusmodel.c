@@ -16,7 +16,7 @@ static unsigned int children_count = 0;
 static Eina_Bool
 _event_interface_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Efl_Model_Load *actual_load = (Efl_Model_Load*)event->event_info;
+   Efl_Model_Load *actual_load = (Efl_Model_Load*)event->info;
    Eina_Array *properties_list;
    Eina_Array_Iterator iterator;
    Eina_Value const* property_value;
@@ -57,7 +57,7 @@ _event_interface_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
 static Eina_Bool
 _event_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Efl_Model_Load *actual_load = (Efl_Model_Load*)event->event_info;
+   Efl_Model_Load *actual_load = (Efl_Model_Load*)event->info;
    Eina_Accessor *accessor;
    Eo *child = NULL;
    unsigned int i;

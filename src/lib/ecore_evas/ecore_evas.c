@@ -3143,7 +3143,7 @@ _ecore_evas_animator_fallback(void *data)
 static Eina_Bool
 _check_animator_event_catcher_add(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event->event_info;
+   const Eo_Callback_Array_Item *array = event->info;
    Ecore_Evas *ee = data;
    int i;
 
@@ -3179,7 +3179,7 @@ _check_animator_event_catcher_add(void *data, const Eo_Event *event)
 static Eina_Bool
 _check_animator_event_catcher_del(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event->event_info;
+   const Eo_Callback_Array_Item *array = event->info;
    Ecore_Evas *ee = data;
    int i;
 

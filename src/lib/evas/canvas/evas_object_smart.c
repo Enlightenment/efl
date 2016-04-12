@@ -64,7 +64,7 @@ static Eina_Bool
 _eo_evas_smart_cb(void *data, const Eo_Event *event)
 {
    _eo_evas_smart_cb_info *info = data;
-   if (info->func) info->func(info->data, event->obj, event->event_info);
+   if (info->func) info->func(info->data, event->obj, event->info);
    return EINA_TRUE;
 }
 

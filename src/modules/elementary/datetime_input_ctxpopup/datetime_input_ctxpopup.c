@@ -93,7 +93,7 @@ _diskselector_cb(void *data EINA_UNUSED, const Eo_Event *event)
    struct tm curr_time;
    const char *fmt;
 
-   disk_data = (DiskItem_Data *)elm_object_item_data_get(event->event_info);
+   disk_data = (DiskItem_Data *)elm_object_item_data_get(event->info);
    if (!disk_data || !(disk_data->ctx_mod)) return EINA_FALSE;
 
    elm_datetime_value_get(disk_data->ctx_mod->mod_data.base, &curr_time);

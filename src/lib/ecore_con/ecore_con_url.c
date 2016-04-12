@@ -164,7 +164,7 @@ extern Ecore_Con_Socks *_ecore_con_proxy_global;
 static Eina_Bool
 _efl_network_url_event_complete_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Ecore_Con_Event_Url_Complete *e, *f = event->event_info;
+   Ecore_Con_Event_Url_Complete *e, *f = event->info;
 
    e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
    if (!e) return EO_CALLBACK_STOP;
@@ -181,7 +181,7 @@ static Eina_Bool
 _efl_network_url_event_data_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Ecore_Con_Event_Url_Data *e;
-   Efl_Network_Event_Url_Data *f = event->event_info;
+   Efl_Network_Event_Url_Data *f = event->info;
 
    e = malloc(sizeof(Ecore_Con_Event_Url_Data) + sizeof(unsigned char) * f->size);
 
@@ -199,7 +199,7 @@ _efl_network_url_event_data_cb(void *data EINA_UNUSED, const Eo_Event *event)
 static Eina_Bool
 _efl_network_url_event_progress_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Ecore_Con_Event_Url_Progress *e, *f = event->event_info;
+   Ecore_Con_Event_Url_Progress *e, *f = event->info;
 
    e = malloc(sizeof(Ecore_Con_Event_Url_Progress));
    if (!e) return EO_CALLBACK_CONTINUE;

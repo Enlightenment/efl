@@ -303,7 +303,7 @@ _elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
 static Eina_Bool
 _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
 {
-   const Eo_Callback_Array_Item *event = ev->event_info;
+   const Eo_Callback_Array_Item *event = ev->info;
 
    ELM_GLVIEW_DATA_GET(ev->obj, sd);
 

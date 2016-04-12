@@ -47,7 +47,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
   static Eina_Bool                                                               \
   _##name##_fwd(void *data, const Eo_Event *ev EINA_UNUSED)                                          \
   {                                                                         \
-     eo_event_callback_call(data, event, ev->event_info);          \
+     eo_event_callback_call(data, event, ev->info);          \
                                                                       \
      return EINA_TRUE;                                                \
   }
@@ -67,7 +67,7 @@ SIG_FWD(UNPRESSED, EVAS_CLICKABLE_INTERFACE_EVENT_UNPRESSED)
 static Eina_Bool
 _FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
 {
-   const char *file = event->event_info;
+   const char *file = event->info;
    char *s;
 
    if (!file) return EINA_TRUE;
@@ -77,7 +77,7 @@ _FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
    elm_object_text_set(sd->entry, s);
    free(s);
    eo_event_callback_call
-     (data, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, event->event_info);
+     (data, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, event->info);
 
    return EINA_TRUE;
 }
@@ -92,7 +92,7 @@ _ACTIVATED_fwd(void *data, const Eo_Event *event)
    file = elm_object_text_get(sd->entry);
    elm_fileselector_path_set(sd->button, file);
    eo_event_callback_call
-     (data, ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event->event_info);
+     (data, ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event->info);
 
    return EINA_TRUE;
 }
