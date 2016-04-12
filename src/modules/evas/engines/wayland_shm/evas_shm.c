@@ -411,7 +411,7 @@ _evas_shm_surface_destroy(Surface *surface)
 }
 
 void 
-_evas_shm_surface_reconfigure(Surface *s, int w, int h, int num_buff, uint32_t flags)
+_evas_shm_surface_reconfigure(Surface *s, int w, int h, uint32_t flags)
 {
    Shm_Surface *surface;
    int i = 0, resize = 0;
@@ -436,7 +436,6 @@ _evas_shm_surface_reconfigure(Surface *s, int w, int h, int num_buff, uint32_t f
 
    surface->w = w;
    surface->h = h;
-   surface->num_buff = num_buff;
 
    for (i = 0; i < surface->num_buff; i++)
      {
