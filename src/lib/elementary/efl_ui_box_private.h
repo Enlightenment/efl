@@ -13,13 +13,17 @@
 #define MY_CLASS EFL_UI_BOX_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Box"
 
-void _efl_ui_box_custom_layout(Evas_Object *evas_box, Evas_Object_Box_Data *priv, void *data);
+// FIXME: stop using evas box
+void _efl_ui_box_custom_layout(Efl_Ui_Box *box, Evas_Object_Box_Data *priv);
 
 typedef struct _Efl_Ui_Box_Data Efl_Ui_Box_Data;
 typedef struct _Box_Item_Iterator Box_Item_Iterator;
 
 struct _Efl_Ui_Box_Data
 {
+   const Eo_Class *layout_engine;
+   void *layout_data;
+
    Efl_Orient orient;
    Eina_Bool homogeneous : 1;
    Eina_Bool delete_me : 1;

@@ -1,4 +1,4 @@
-class Efl.Ui.Box (Elm.Widget, Efl.Pack_Linear)
+class Efl.Ui.Box (Elm.Widget, Efl.Pack_Engine, Efl.Pack_Linear)
 {
    legacy_prefix: null;
    implements {
@@ -25,6 +25,8 @@ class Efl.Ui.Box (Elm.Widget, Efl.Pack_Linear)
       Efl.Pack.padding.set;
       Efl.Pack.layout_update;
       Efl.Pack.layout_request;
+      Efl.Pack.layout_engine.get;
+      Efl.Pack.layout_engine.set;
       Efl.Pack_Linear.pack_begin;
       Efl.Pack_Linear.pack_end;
       Efl.Pack_Linear.pack_before;
@@ -35,5 +37,7 @@ class Efl.Ui.Box (Elm.Widget, Efl.Pack_Linear)
       //Efl.Pack_Linear.child_index.set;
       Efl.Pack_Linear.direction.set;
       Efl.Pack_Linear.direction.get;
+
+      Efl.Pack_Engine.layout_do;
    }
 }

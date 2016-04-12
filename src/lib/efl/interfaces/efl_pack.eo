@@ -56,6 +56,18 @@ interface Efl.Pack (Efl.Pack_Item)
             scalable:  bool;
          }
       }
+      @property layout_engine {
+         [[Implementation of this container's layout algorithm.
+
+           The default value is the same as the widget class (eg. Efl.Ui.Box).
+         ]]
+         set { return: bool; }
+         get {}
+         values {
+            engine: const(Eo.Class)*; [[A class implementing a class function layout_do]]
+            data: void*; [[Any data to pass along to layout_do]]
+         }
+      }
       layout_update @protected {
          [[Implementation of this container's layout algorithm.
 
@@ -73,6 +85,6 @@ interface Efl.Pack (Efl.Pack_Item)
    events {
       child,added;
       child,removed;
-      layout,updated;
+      layout,updated; [[sent after the layout was updated]]
    }
 }

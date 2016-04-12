@@ -1,5 +1,8 @@
 #include "efl_ui_box_private.h"
 
+// FIXME: stop using Evas.Box
+#include <../evas/canvas/evas_box.eo.h>
+
 /* COPIED FROM ELM_BOX
  * - removed transition stuff (TODO: add back - needs clean API first)
  */
@@ -136,6 +139,59 @@ _on_size_hints_changed(void *data, Evas *e EINA_UNUSED,
      _sizing_eval(data, pd);
 }
 
+static void
+_evas_box_custom_layout(Evas_Object *evas_box EINA_UNUSED,
+                        Evas_Object_Box_Data *bd EINA_UNUSED, void *data)
+{
+   Efl_Ui_Box *obj = data;
+
+   efl_pack_layout_update(obj);
+}
+
+static void
+_layout_do(Efl_Ui_Box *obj)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   Evas_Object_Box_Data *bd;
+
+   bd = eo_data_scope_get(wd->resize_obj, EVAS_BOX_CLASS);
+   _efl_ui_box_custom_layout(obj, bd);
+}
+
+EOLIAN static void
+_efl_ui_box_efl_pack_layout_update(Eo *obj, Efl_Ui_Box_Data *pd)
+{
+   efl_pack_engine_layout_do(pd->layout_engine, obj, pd->layout_data);
+   eo_event_callback_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
+}
+
+EOLIAN static void
+_efl_ui_box_efl_pack_engine_layout_do(Eo *klass EINA_UNUSED,
+                                      void *_pd EINA_UNUSED,
+                                      Eo *obj, void *data EINA_UNUSED)
+{
+   _layout_do(obj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_box_efl_pack_layout_engine_set(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd,
+                                       const Eo_Class *klass, const void *data)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eo_isa(klass, EFL_PACK_INTERFACE), EINA_FALSE);
+   pd->layout_engine = klass;
+   pd->layout_data = data;
+
+   return EINA_TRUE;
+}
+
+EOLIAN static void
+_efl_ui_box_efl_pack_layout_engine_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd,
+                                       const Eo_Class **klass, const void **data)
+{
+   if (klass) *klass = pd->layout_engine;
+   if (data) *data = pd->layout_data;
+}
+
 EOLIAN static void
 _efl_ui_box_evas_object_smart_calculate(Eo *obj, Efl_Ui_Box_Data *pd)
 {
@@ -155,7 +211,7 @@ _efl_ui_box_evas_object_smart_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    elm_widget_resize_object_set(obj, evas_object_box_add(e), EINA_TRUE);
-   evas_object_box_layout_set(wd->resize_obj, _efl_ui_box_custom_layout, obj, NULL);
+   evas_object_box_layout_set(wd->resize_obj, _evas_box_custom_layout, obj, NULL);
 
    evas_object_event_callback_add(wd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);
@@ -219,6 +275,7 @@ _efl_ui_box_eo_base_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
    pd->orient = EFL_ORIENT_RIGHT;
+   pd->layout_engine = MY_CLASS;
 
    return obj;
 }
@@ -389,12 +446,6 @@ _efl_ui_box_efl_pack_linear_child_at_set(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSE
         else
           efl_pack_after(obj, subobj, other);
      }
-}
-
-EOLIAN static void
-_efl_ui_box_efl_pack_layout_update(Eo *obj, Efl_Ui_Box_Data *pd)
-{
-   _sizing_eval(obj, pd);
 }
 
 EOLIAN static void

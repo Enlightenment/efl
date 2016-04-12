@@ -19,10 +19,8 @@ struct _Item_Calc
 };
 
 void
-_efl_ui_box_custom_layout(Evas_Object *evas_box EINA_UNUSED,
-                          Evas_Object_Box_Data *bd, void *data)
+_efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
 {
-   Efl_Ui_Box *ui_box = data;
    Efl_Ui_Box_Data *pd = eo_data_scope_get(ui_box, EFL_UI_BOX_CLASS);
    Evas_Object_Box_Option *opt;
    Evas_Object *o;

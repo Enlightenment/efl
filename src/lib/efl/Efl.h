@@ -119,6 +119,7 @@ static inline void efl_gfx_color16_type_set(Efl_Gfx_Color *color,
 /* Packing & containers */
 #include "interfaces/efl_pack_item.eo.h"
 #include "interfaces/efl_pack.eo.h"
+#include "interfaces/efl_pack_engine.eo.h"
 #include "interfaces/efl_pack_linear.eo.h"
 #include "interfaces/efl_pack_grid.eo.h"
 #include "interfaces/efl_pack_named.eo.h"
