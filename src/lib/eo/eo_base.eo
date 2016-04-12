@@ -154,6 +154,35 @@ abstract Eo.Base ()
             @in key: const(char)*; [[the key associated with the data]]
          }
       }
+      key_obj_set {
+         [[Set generic object reference to object.
+
+           The object will be automatically ref'd when set and unref'd
+           when replaced or deleted or referring object is deleted. If
+           the referenced object is deleted then the key is deleted
+           automatically.
+
+           This is the same key store used by key_data_set etc. so keys
+           are shared and can store only one thing
+         ]]
+         params {
+            @in key: const(char)*; [[the key associated with the object ref]]
+            @in objdata: Eo *; [[the object to set]]
+         }
+      }
+      key_obj_get @const {
+         [[Get generic object reference from object.]]
+         params {
+            @in key: const(char)*; [[the key associated with the object ref]]
+         }
+         return: Eo *; [[the object reference for the key]]
+      }
+      key_obj_del {
+         [[Del generic objecrt reference from object.]]
+         params {
+            @in key: const(char)*; [[the key associated with the object ref]]
+         }
+      }
       event_thaw {
          [[thaw events of object.
 

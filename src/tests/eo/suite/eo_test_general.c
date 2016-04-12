@@ -598,6 +598,9 @@ START_TEST(eo_generic_data)
 {
    eo_init();
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj3 = eo_add(SIMPLE_CLASS, NULL);
+   Eo *objtmp;
    void *data = NULL;
 
    eo_key_data_set(obj, "test1", (void *) 1);
@@ -626,7 +629,37 @@ START_TEST(eo_generic_data)
    data = eo_key_data_get(obj, "test1");
    fail_if(data);
 
+
+
+   eo_key_obj_set(obj, "test1", obj2);
+   objtmp = eo_key_obj_get(obj, "test1");
+   fail_if(obj2 != objtmp);
+   eo_key_obj_del(obj, "test1");
+   objtmp = eo_key_obj_get(obj, "test1");
+   fail_if(objtmp);
+
+   eo_key_obj_set(obj, "test1", obj2);
+   eo_key_obj_set(obj, "test2", obj3);
+   objtmp = eo_key_obj_get(obj, "test1");
+   fail_if(obj2 != objtmp);
+   objtmp = eo_key_obj_get(obj, "test2");
+   fail_if(obj3 != objtmp);
+
+   data = eo_key_obj_get(obj, "test2");
+   fail_if(obj3 != objtmp);
+   eo_key_obj_del(obj, "test2");
+   objtmp = eo_key_obj_get(obj, "test2");
+   fail_if(objtmp);
+
+   objtmp = eo_key_obj_get(obj, "test1");
+   fail_if(obj2 != objtmp);
+   eo_key_obj_del(obj, "test1");
+   objtmp = eo_key_obj_get(obj, "test1");
+   fail_if(objtmp);
+
    eo_unref(obj);
+   eo_unref(obj2);
+   eo_unref(obj3);
 
    eo_shutdown();
 }
