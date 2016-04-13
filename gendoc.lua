@@ -122,12 +122,73 @@ local gen_nsp_func = function(fn, cl, root)
     return tbl
 end
 
-local gen_link_target = function(tbl, root)
-    if tbl[#tbl] == true or root then
-        if not root then tbl[#tbl] = nil end
-        return ":" .. root_nspace .. ":" .. table.concat(tbl, ":")
+local gen_nsp_ref
+gen_nsp_ref = function(str, root)
+    local decl = eolian.declaration_get_by_name(str)
+    if decl then
+        local t = { decl_to_nspace(decl) }
+        for tok in str:gmatch("[^%.]+") do
+            t[#t + 1] = tok:lower()
+        end
+        if root then t[#t + 1] = true end
+        return t
     end
-    return table.concat(tbl, ":")
+
+    -- field or func
+    local bstr = str:match("(.+)%.[^.]+")
+    if not bstr then
+        error("invalid reference '" .. str .. "'")
+    end
+
+    local sfx = str:sub(#bstr + 1)
+
+    decl = eolian.declaration_get_by_name(bstr)
+    if decl then
+        local dt = eolian.declaration_type
+        local tp = decl:type_get()
+        if tp == dt.STRUCT or tp == dt.ENUM then
+            -- TODO: point to the actual item
+            return gen_nsp_ref(bstr, root)
+        end
+    end
+
+    local ftp = eolian.function_type
+
+    local cl = eolian.class_get_by_name(bstr)
+    local fn
+    local ftype = ftp.UNRESOLVED
+    if not cl then
+        if sfx == ".get" then
+            ftype = ftp.PROP_GET
+        elseif sfx == ".set" then
+            ftype = ftp.PROP_SET
+        end
+        local mname
+        if ftype ~= ftp.UNRESOLVED then
+            mname = bstr:match(".+%.([^.]+)")
+            if not mname then
+                error("invalid reference '" .. str .. "'")
+            end
+            bstr = bstr:match("(.+)%.[^.]+")
+            cl = eolian.class_get_by_name(bstr)
+            if cl then
+                fn = cl:function_get_by_name(mname, ftype)
+            end
+        end
+    else
+        fn = cl:function_get_by_name(sfx:sub(2), ftype)
+        if fn then ftype = fn:type_get() end
+    end
+
+    if not fn or not funct_to_str[ftype] then
+        error("invalid reference '" .. str .. "'")
+    end
+
+    local ret = gen_nsp_ref(bstr)
+    ret[#ret + 1] = funct_to_str[ftype]
+    ret[#ret + 1] = fn:name_get():lower()
+    if root then ret[#ret + 1] = true end
+    return ret
 end
 
 -- generator
@@ -226,7 +287,12 @@ local Writer = util.Object:clone {
 
     write_link = function(self, target, title)
         if type(target) == "table" then
-            target = gen_link_target(target)
+            if target[#target] == true then
+                target[#target] = nil
+                target = ":" .. root_nspace .. ":" .. table.concat(target, ":")
+            else
+                target = table.concat(target, ":")
+            end
         end
         if not title then
             self:write_raw("[[", target:lower(), "|", target, "]]")
@@ -263,6 +329,97 @@ local Writer = util.Object:clone {
         return self
     end,
 
+    write_par_markup = function(self, str)
+        self:write_raw("%%")
+        local f = str:gmatch(".")
+        local c = f()
+        while c do
+            if c == "\\" then
+                c = f()
+                if c ~= "@" and c ~= "$" then
+                    self:write_raw("\\")
+                end
+                self:write_raw(c)
+                c = f()
+            elseif c == "$" then
+                c = f()
+                if c and c:match("[a-zA-Z_]") then
+                    local wbuf = { c }
+                    c = f()
+                    while c and c:match("[a-zA-Z0-9_]") do
+                        wbuf[#wbuf + 1] = c
+                        c = f()
+                    end
+                    self:write_raw("%%''" .. table.concat(wbuf) .. "''%%")
+                else
+                    self:write_raw("$")
+                end
+            elseif c == "@" then
+                c = f()
+                if c and c:match("[a-zA-Z_]") then
+                    local rbuf = { c }
+                    c = f()
+                    while c and c:match("[a-zA-Z0-9_.]") do
+                        rbuf[#rbuf + 1] = c
+                        c = f()
+                    end
+                    local ldot = false
+                    if rbuf[#rbuf] == "." then
+                        ldot = true
+                        rbuf[#rbuf] = nil
+                    end
+                    local title = table.concat(rbuf)
+                    self:write_raw("%%")
+                    self:write_link(gen_nsp_ref(title, true), title)
+                    self:write_raw("%%")
+                    if ldot then
+                        self:write_raw(".")
+                    end
+                else
+                    self:write_raw("@")
+                end
+            elseif c == "%" then
+                c = f()
+                if c == "%" then
+                    c = f()
+                    self:write_raw("%%<nowiki>%%</nowiki>%%")
+                else
+                    self:write_raw("%")
+                end
+            else
+                self:write_raw(c)
+                c = f()
+            end
+        end
+        self:write_raw("%%")
+        return self
+    end,
+
+    write_par = function(self, str)
+        local notetypes = {
+            ["Note: "] = "<note>\n",
+            ["Warning: "] = "<note warning>\n",
+            ["Remark: "] = "<note tip>\n",
+            ["TODO: "] = "<note>\n**TODO:** "
+        }
+        local tag
+        for k, v in pairs(notetypes) do
+            if str:match("^" .. k) then
+                tag = v
+                str = str:sub(#k + 1)
+                break
+            end
+        end
+        if tag then
+            self:write_raw(tag)
+            self:write_par_markup(str)
+            self:write_raw("\n</note>")
+        else
+            self:write_par_markup(str)
+        end
+        return self
+    end,
+
     finish = function(self)
         self.file:close()
     end
@@ -289,169 +446,13 @@ local Buffer = Writer:clone {
 
 -- eolian to various doc elements conversions
 
-local gen_ref_link
-gen_ref_link = function(str)
-    local decl = eolian.declaration_get_by_name(str)
-    if decl then
-        local t = { decl_to_nspace(decl) }
-        for tok in str:gmatch("[^%.]+") do
-            t[#t + 1] = tok:lower()
-        end
-        t[#t + 1] = true
-        return t
-    end
-
-    -- field or func
-    local bstr = str:match("(.+)%.[^.]+")
-    if not bstr then
-        error("invalid reference '" .. str .. "'")
-    end
-
-    local sfx = str:sub(#bstr + 1)
-
-    decl = eolian.declaration_get_by_name(bstr)
-    if decl then
-        local dt = eolian.declaration_type
-        local tp = decl:type_get()
-        if tp == dt.STRUCT or tp == dt.ENUM then
-            -- TODO: point to the actual item
-            return gen_ref_link(bstr)
-        end
-    end
-
-    local ftp = eolian.function_type
-
-    local cl = eolian.class_get_by_name(bstr)
-    local fn
-    local ftype = ftp.UNRESOLVED
-    if not cl then
-        if sfx == ".get" then
-            ftype = ftp.PROP_GET
-        elseif sfx == ".set" then
-            ftype = ftp.PROP_SET
-        end
-        local mname
-        if ftype ~= ftp.UNRESOLVED then
-            mname = bstr:match(".+%.([^.]+)")
-            if not mname then
-                error("invalid reference '" .. str .. "'")
-            end
-            bstr = bstr:match("(.+)%.[^.]+")
-            cl = eolian.class_get_by_name(bstr)
-            if cl then
-                fn = cl:function_get_by_name(mname, ftype)
-            end
-        end
-    else
-        fn = cl:function_get_by_name(sfx:sub(2), ftype)
-        if fn then ftype = fn:type_get() end
-    end
-
-    if not fn or not funct_to_str[ftype] then
-        error("invalid reference '" .. str .. "'")
-    end
-
-    local ret = gen_ref_link(bstr)
-    ret[#ret] = funct_to_str[ftype]
-    ret[#ret + 1] = fn:name_get():lower()
-    ret[#ret + 1] = true
-    return ret
-end
-
-local gen_doc_markup = function(str)
-    local f = str:gmatch(".")
-    local c = f()
-    local buf = {}
-    while c do
-        if c == "\\" then
-            c = f()
-            if c ~= "@" and c ~= "$" then
-                buf[#buf + 1] = "\\"
-            end
-            buf[#buf + 1] = c
-            c = f()
-        elseif c == "$" then
-            c = f()
-            if c and c:match("[a-zA-Z_]") then
-                local wbuf = { c }
-                c = f()
-                while c and c:match("[a-zA-Z0-9_]") do
-                    wbuf[#wbuf + 1] = c
-                    c = f()
-                end
-                buf[#buf + 1] = "%%''" .. table.concat(wbuf) .. "''%%"
-            else
-                buf[#buf + 1] = "$"
-            end
-        elseif c == "@" then
-            c = f()
-            if c and c:match("[a-zA-Z_]") then
-                local rbuf = { c }
-                c = f()
-                while c and c:match("[a-zA-Z0-9_.]") do
-                    rbuf[#rbuf + 1] = c
-                    c = f()
-                end
-                local ldot = false
-                if rbuf[#rbuf] == "." then
-                    ldot = true
-                    rbuf[#rbuf] = nil
-                end
-                local title = table.concat(rbuf)
-                buf[#buf + 1] = "%%"
-                buf[#buf + 1] = Buffer():write_link(gen_ref_link(title),
-                    title):finish()
-                buf[#buf + 1] = "%%"
-                if ldot then
-                    buf[#buf + 1] = "."
-                end
-            else
-                buf[#buf + 1] = "@"
-            end
-        elseif c == "%" then
-            c = f()
-            if c == "%" then
-                c = f()
-                buf[#buf + 1] = "%%<nowiki>%%</nowiki>%%"
-            else
-                buf[#buf + 1] = "%"
-            end
-        else
-            buf[#buf + 1] = c
-            c = f()
-        end
-    end
-    return "%%" .. table.concat(buf) .. "%%"
-end
-
-local gen_doc_par = function(str)
-    local notetypes = {
-        ["Note: "] = "<note>\n",
-        ["Warning: "] = "<note warning>\n",
-        ["Remark: "] = "<note tip>\n",
-        ["TODO: "] = "<note>\n**TODO:** "
-    }
-    local tag
-    for k, v in pairs(notetypes) do
-        if str:match("^" .. k) then
-            tag = v
-            str = str:sub(#k + 1)
-            break
-        end
-    end
-    if tag then
-        return tag .. gen_doc_markup(str) .. "\n</note>"
-    end
-    return gen_doc_markup(str)
-end
-
 local gen_doc_refd = function(str)
     if not str then
         return nil
     end
     local pars = str_split(str, "\n\n")
     for i = 1, #pars do
-        pars[i] = gen_doc_par(pars[i])
+        pars[i] = Buffer():write_par(pars[i]):finish()
     end
     return table.concat(pars, "\n\n")
 end
