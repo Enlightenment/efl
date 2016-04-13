@@ -541,49 +541,42 @@ _evas_shm_surface_data_get(Surface *s, int *w, int *h)
 void
 _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 {
+   void (*damage)(struct wl_surface *, int32_t, int32_t, int32_t, int32_t);
    /* struct wl_callback *frame_cb; */
-   Shm_Surface *surface;
+   Shm_Surface *surf;
    Shm_Leaf *leaf;
+   unsigned int k;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   surface = s->surf.shm;
-   leaf = surface->current;
+   surf = s->surf.shm;
+   leaf = surf->current;
    if (!leaf) return;
 
-   if (!surface->surface) return;
+   if (!surf->surface) return;
 
-   wl_surface_attach(surface->surface, leaf->data->buffer, 0, 0);
+   wl_surface_attach(surf->surface, leaf->data->buffer, 0, 0);
+
+   if (surf->compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
+     damage = wl_surface_damage_buffer;
+   else
+     damage = wl_surface_damage;
 
    if ((rects) && (count > 0))
-     {
-        unsigned int k = 0;
-
-        for (; k < count; k++)
-          if (surface->compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
-            wl_surface_damage_buffer(surface->surface,
-                                      rects[k].x, rects[k].y,
-                                      rects[k].w, rects[k].h);
-          else
-            wl_surface_damage(surface->surface,
-                               rects[k].x, rects[k].y,
-                               rects[k].w, rects[k].h);
-     }
+     for (k = 0; k < count; k++)
+       damage(surf->surface, rects[k].x, rects[k].y, rects[k].w, rects[k].h);
    else
-     if (surface->compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
-       wl_surface_damage_buffer(surface->surface, 0, 0, leaf->w, leaf->h);
-     else
-       wl_surface_damage(surface->surface, 0, 0, leaf->w, leaf->h);
+     damage(surf->surface, 0, 0, leaf->w, leaf->h);
 
    /* frame_cb = wl_surface_frame(surface->surface); */
    /* wl_callback_add_listener(frame_cb, &_shm_frame_listener, surface); */
 
-   wl_surface_commit(surface->surface);
+   wl_surface_commit(surf->surface);
 
    leaf->busy = EINA_TRUE;
    leaf->drawn = EINA_TRUE;
    leaf->age = 0;
-   surface->current = NULL;
+   surf->current = NULL;
 }
 
 Surface *
