@@ -25,6 +25,7 @@
  * @li @ref eolian_main an EO file parser and code generator.
  * @li @ref eina_cxx_main Eina C++ bindings.
  * @li @ref elocation_main awareness library.
+ * @li @ref elementary_main widget library.
  *
  */
 

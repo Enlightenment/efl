@@ -595,6 +595,8 @@ WARN_LOGFILE           =
 
 INPUT                  = @top_srcdir@/src/lib \
                          @top_srcdir@/src/bindings \
+                         @top_srcdir@/elm_intro.h \
+                         @srcdir@/index_elm.dox \
                          @srcdir@/main.dox \
                          @srcdir@/pkgconfig.dox \
                          @srcdir@/eina_examples.dox \
