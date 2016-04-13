@@ -336,7 +336,7 @@ local gen_doc_markup = function(str)
                     wbuf[#wbuf + 1] = c
                     c = f()
                 end
-                buf[#buf + 1] = "''" .. table.concat(wbuf) .. "''"
+                buf[#buf + 1] = "%%''" .. table.concat(wbuf) .. "''%%"
             else
                 buf[#buf + 1] = "$"
             end
@@ -355,20 +355,30 @@ local gen_doc_markup = function(str)
                     rbuf[#rbuf] = nil
                 end
                 local title = table.concat(rbuf)
+                buf[#buf + 1] = "%%"
                 buf[#buf + 1] = Buffer():write_link(gen_ref_link(title),
                     title):finish()
+                buf[#buf + 1] = "%%"
                 if ldot then
                     buf[#buf + 1] = "."
                 end
             else
                 buf[#buf + 1] = "@"
             end
+        elseif c == "%" then
+            c = f()
+            if c == "%" then
+                c = f()
+                buf[#buf + 1] = "%%<nowiki>%%</nowiki>%%"
+            else
+                buf[#buf + 1] = "%"
+            end
         else
             buf[#buf + 1] = c
             c = f()
         end
     end
-    return table.concat(buf)
+    return "%%" .. table.concat(buf) .. "%%"
 end
 
 local gen_doc_par = function(str)
