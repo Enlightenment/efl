@@ -251,15 +251,20 @@ _edje_del(Edje *ed)
      }
    _edje_message_del(ed);
    _edje_signal_callback_free(ed->callbacks);
+   ed->callbacks = NULL;
    _edje_file_del(ed);
    if (ed->path) eina_stringshare_del(ed->path);
    if (ed->group) eina_stringshare_del(ed->group);
    if (ed->parent) eina_stringshare_del(ed->parent);
    ed->path = NULL;
    ed->group = NULL;
+   ed->parent = NULL;
    eina_hash_free(ed->color_classes);
    eina_hash_free(ed->text_classes);
    eina_hash_free(ed->size_classes);
+   ed->color_classes = NULL;
+   ed->text_classes = NULL;
+   ed->size_classes = NULL;
    EINA_LIST_FREE(ed->text_insert_filter_callbacks, cb)
      {
         eina_stringshare_del(cb->part);
