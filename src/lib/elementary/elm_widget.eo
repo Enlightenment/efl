@@ -520,10 +520,10 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       focus_highlight_geometry_get @const {
          [[Get the focus highlight geometry of widget.]]
          params {
-            @in x: Evas.Coord *;
-            @in y: Evas.Coord *;
-            @in w: Evas.Coord *;
-            @in h: Evas.Coord *;
+            @out x: Evas.Coord;
+            @out y: Evas.Coord;
+            @out w: Evas.Coord;
+            @out h: Evas.Coord;
          }
       }
       activate {
