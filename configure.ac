@@ -5486,6 +5486,7 @@ src/Makefile
 src/lib/evil/Makefile
 src/lib/eina/Makefile
 src/lib/emile/Makefile
+src/lib/eet/Makefile
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
 src/benchmarks/evas/Makefile
