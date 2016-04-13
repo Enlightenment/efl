@@ -2,10 +2,14 @@ import ecore_types;
 
 class Ecore.Idle.Enterer (Eo.Base)
 {
+   [[Setup callbacks to be called when the program enters the idle state.
+
+   Enterer callbacks are good for updating your program's state, if it has a state engine.
+   ]]
    eo_prefix: ecore_idle_enterer;
    methods {
       before_constructor {
-         [[Contructor. Will insert the handler at the beginning of the list.]]
+         [[This constructor will insert the handler at the beginning of the list.]]
          legacy: null;
          params {
             @in func: Ecore_Task_Cb;
@@ -13,7 +17,7 @@ class Ecore.Idle.Enterer (Eo.Base)
          }
       }
       after_constructor {
-         [[Contructor. Will insert the handler at the end of the list.]]
+         [[This constructor will insert the handler at the end of the list.]]
          legacy: null;
          params {
             @in func: Ecore_Task_Cb;
