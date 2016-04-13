@@ -29,6 +29,8 @@ int main(void)
          return EXIT_FAILURE;
      }
 
+   eina_log_level_set(EINA_LOG_LEVEL_DBG);
+
    test(-1);
    test(0);
 

@@ -19,6 +19,8 @@ int main(void)
         return EXIT_FAILURE;
      }
 
+   eina_log_level_set(EINA_LOG_LEVEL_WARN);
+
    test_warn();
 
    eina_shutdown();
