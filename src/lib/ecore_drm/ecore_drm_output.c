@@ -530,6 +530,8 @@ _ecore_drm_output_planes_get(Ecore_Drm_Output *output)
              drmModeFreeProperty(prop);
           }
 
+        drmModeFreeObjectProperties(props);
+
         output->planes = eina_list_append(output->planes, eplane);
 
 free_plane:
