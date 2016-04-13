@@ -74,6 +74,7 @@ WGT_PREVIEW = \
 	mapbuf:preview-00.png:widget_preview_mapbuf:200:200 \
 	menu:preview-00.png:widget_preview_menu:100:100 \
 	notify:preview-00.png:widget_preview_notify:60:30 \
+	nstate:preview-00.png:widget_preview_nstate:45:28 \
 	panel:preview-00.png:widget_preview_panel:150:50 \
 	panes:preview-00.png:widget_preview_panes:200:100 \
 	photocam:preview-00.png:widget_preview_photocam:243:162 \
