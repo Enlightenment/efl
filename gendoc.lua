@@ -36,6 +36,67 @@ local mkdir_p = function(path)
     mkdir_r(path:match("(.+)/([^/]+)"))
 end
 
+local str_split = function(str, delim)
+    if not str then
+        return nil
+    end
+    local s, e = str:find(delim, 1, true)
+    if not s then
+        return { str }
+    end
+    local t = {}
+    while s do
+        t[#t + 1] = str:sub(1, s - 1)
+        str = str:sub(e + 1)
+        s, e = str:find(delim, 1, true)
+        if not s then
+            t[#t + 1] = str
+        end
+    end
+    return t
+end
+
+-- translation tables and funcs
+
+local classt_to_str = {
+    [eolian.class_type.REGULAR] = "class",
+    [eolian.class_type.ABSTRACT] = "class",
+    [eolian.class_type.MIXIN] = "mixin",
+    [eolian.class_type.INTERFACE] = "interface"
+}
+
+local funct_to_str = {
+    [eolian.function_type.PROPERTY] = "property",
+    [eolian.function_type.PROP_GET] = "property",
+    [eolian.function_type.PROP_SET] = "property",
+    [eolian.function_type.METHOD] = "method"
+}
+
+local decl_to_nspace = function(decl)
+    local dt = eolian.declaration_type
+    local decltypes = {
+        [dt.ALIAS] = "alias",
+        [dt.STRUCT] = "struct",
+        [dt.ENUM] = "enum",
+        [dt.VAR] = "var"
+    }
+    local ns = decltypes[decl:type_get()]
+    if ns then
+        return ns
+    elseif decl:type_get() == dt.CLASS then
+        local ret = classt_to_str[decl:class_get():type_get()]
+        if not ret then
+            error("unknown class type for class '" .. decl:name_get() .. "'")
+        end
+        return ret
+    else
+        error("unknown declaration type for declaration '"
+            .. decl:name_get() .. "'")
+    end
+end
+
+-- generator
+
 local Writer = util.Object:clone {
     __ctor = function(self, path)
         local subs = path:gsub(":", "/"):lower()
@@ -185,76 +246,12 @@ local Buffer = Writer:clone {
 
 -- eolian to various doc elements conversions
 
-local classt_to_str = {
-    [eolian.class_type.REGULAR] = "class",
-    [eolian.class_type.ABSTRACT] = "class",
-    [eolian.class_type.MIXIN] = "mixin",
-    [eolian.class_type.INTERFACE] = "interface"
-}
-
-local funct_to_str = {
-    [eolian.function_type.PROPERTY] = "property",
-    [eolian.function_type.PROP_GET] = "property",
-    [eolian.function_type.PROP_SET] = "property",
-    [eolian.function_type.METHOD] = "method"
-}
-
-local str_split = function(str, delim)
-    if not str then
-        return nil
-    end
-    local s, e = str:find(delim, 1, true)
-    if not s then
-        return { str }
-    end
-    local t = {}
-    while s do
-        t[#t + 1] = str:sub(1, s - 1)
-        str = str:sub(e + 1)
-        s, e = str:find(delim, 1, true)
-        if not s then
-            t[#t + 1] = str
-        end
-    end
-    return t
-end
-
-local notetypes = {
-    ["Note: "] = "<note>\n",
-    ["Warning: "] = "<note warning>\n",
-    ["Remark: "] = "<note tip>\n",
-    ["TODO: "] = "<note>\n**TODO:** "
-}
-
-local get_decl_nspace = function(decl)
-    local dt = eolian.declaration_type
-    local tp = decl:type_get()
-    if tp == dt.ALIAS then
-        return "alias"
-    elseif tp == dt.STRUCT then
-        return "struct"
-    elseif tp == dt.ENUM then
-        return "enum"
-    elseif tp == dt.VAR then
-        return "var"
-    elseif tp == dt.CLASS then
-        local ret = classt_to_str[decl:class_get():type_get()]
-        if not ret then
-            error("unknown class type for class '" .. decl:name_get() .. "'")
-        end
-        return ret
-    else
-        error("unknown declaration type for declaration '"
-            .. decl:name_get() .. "'")
-    end
-end
-
 local gen_ref_link
 gen_ref_link = function(str)
     local decl = eolian.declaration_get_by_name(str)
     if decl then
         return table.concat {
-            ":", root_nspace, ":", get_decl_nspace(decl), ":",
+            ":", root_nspace, ":", decl_to_nspace(decl), ":",
             str:gsub("%.", ":"):lower()
         }
     end
@@ -382,6 +379,12 @@ local gen_doc_markup = function(str)
 end
 
 local gen_doc_par = function(str)
+    local notetypes = {
+        ["Note: "] = "<note>\n",
+        ["Warning: "] = "<note warning>\n",
+        ["Remark: "] = "<note tip>\n",
+        ["TODO: "] = "<note>\n**TODO:** "
+    }
     local tag
     for k, v in pairs(notetypes) do
         if str:match("^" .. k) then
