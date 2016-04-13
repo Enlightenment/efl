@@ -3601,6 +3601,9 @@ EFL_INTERNAL_DEPEND_PKG([ELPUT], [eina])
 
 EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 0.6.0 xkbcommon >= 0.3.0])
 
+EFL_OPTIONAL_DEPEND_PKG([ELPUT], [${want_systemd}], [SYSTEMD], [libsystemd])
+EFL_ADD_FEATURE([ELPUT], [systemd-logind], [${want_systemd}])
+
 EFL_ADD_LIBS([ELPUT], [-lm])
 
 # API change from 0.7 to 0.8. So we define this to support both for now.
@@ -5750,7 +5753,7 @@ fi
 echo "Ecore_Audio.....: ${efl_lib_optional_ecore_audio} (${features_ecore_audio})"
 echo "Ecore_Avahi.....: yes (${features_ecore_avahi})"
 echo "Ecore_Evas......: yes (${features_ecore_evas})"
-echo "Elput...........: $want_elput"
+echo "Elput...........: $want_elput (${features_elput})"
 echo "Ector...........: yes"
 echo "Eeze............: ${efl_lib_optional_eeze} (${features_eeze})"
 echo "EPhysics........: ${efl_lib_optional_ephysics}"
