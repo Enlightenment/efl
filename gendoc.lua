@@ -95,11 +95,51 @@ local decl_to_nspace = function(decl)
     end
 end
 
+local gen_nsp_eo = function(eobj, subn, root)
+    local tbl = eobj:namespaces_get():to_array()
+    for i = 1, #tbl do
+        tbl[i] = tbl[i]:lower()
+    end
+    table.insert(tbl, 1, subn)
+    tbl[#tbl + 1] = eobj:name_get():lower()
+    if root then
+        tbl[#tbl + 1] = true
+    end
+    return tbl
+end
+
+local gen_nsp_class = function(cl, root)
+    return gen_nsp_eo(cl, classt_to_str[cl:type_get()], root)
+end
+
+local gen_nsp_func = function(fn, cl, root)
+    local tbl = gen_nsp_class(cl)
+    tbl[#tbl + 1] = funct_to_str[fn:type_get()]
+    tbl[#tbl + 1] = fn:name_get():lower()
+    if root then
+        tbl[#tbl + 1] = true
+    end
+    return tbl
+end
+
+local gen_link_target = function(tbl, root)
+    if tbl[#tbl] == true or root then
+        if not root then tbl[#tbl] = nil end
+        return ":" .. root_nspace .. ":" .. table.concat(tbl, ":")
+    end
+    return table.concat(tbl, ":")
+end
+
 -- generator
 
 local Writer = util.Object:clone {
     __ctor = function(self, path)
-        local subs = path:gsub(":", "/"):lower()
+        local subs
+        if type(path) == "table" then
+            subs = table.concat(path, "/")
+        else
+            subs = path:gsub(":", "/"):lower()
+        end
         mkdir_p(subs)
         self.file = assert(io.open(make_page(subs), "w"))
     end,
@@ -185,6 +225,9 @@ local Writer = util.Object:clone {
     end,
 
     write_link = function(self, target, title)
+        if type(target) == "table" then
+            target = gen_link_target(target)
+        end
         if not title then
             self:write_raw("[[", target:lower(), "|", target, "]]")
             return
@@ -250,10 +293,12 @@ local gen_ref_link
 gen_ref_link = function(str)
     local decl = eolian.declaration_get_by_name(str)
     if decl then
-        return table.concat {
-            ":", root_nspace, ":", decl_to_nspace(decl), ":",
-            str:gsub("%.", ":"):lower()
-        }
+        local t = { decl_to_nspace(decl) }
+        for tok in str:gmatch("[^%.]+") do
+            t[#t + 1] = tok:lower()
+        end
+        t[#t + 1] = true
+        return t
     end
 
     -- field or func
@@ -306,10 +351,11 @@ gen_ref_link = function(str)
         error("invalid reference '" .. str .. "'")
     end
 
-    return table.concat {
-        gen_ref_link(bstr), ":", funct_to_str[ftype], ":",
-        fn:name_get():lower()
-    }
+    local ret = gen_ref_link(bstr)
+    ret[#ret] = funct_to_str[ftype]
+    ret[#ret + 1] = fn:name_get():lower()
+    ret[#ret + 1] = true
+    return ret
 end
 
 local gen_doc_markup = function(str)
@@ -469,31 +515,11 @@ local get_full_fdoc = function(f, ftype)
                         get_fallback_fdoc(f, ftype))
 end
 
-local gen_namespaces = function(v, subnspace, root)
-    local nspaces = v:namespaces_get():to_array()
-    for i = 1, #nspaces do
-        nspaces[i] = nspaces[i]:lower()
-    end
-    nspaces[#nspaces + 1] = v:name_get()
-    if subnspace then
-        table.insert(nspaces, 1, subnspace)
-    end
-    if root then
-        table.insert(nspaces, 1, ":" .. root_nspace)
-    end
-    return table.concat(nspaces, ":")
-end
-
 local propt_to_type = {
     [eolian.function_type.PROPERTY] = "(get, set)",
     [eolian.function_type.PROP_GET] = "(get)",
     [eolian.function_type.PROP_SET] = "(set)",
 }
-
-local gen_func_link = function(base, f)
-    local ft = funct_to_str[f:type_get()]
-    return base .. ":" .. ft .. ":" .. f:name_get():lower()
-end
 
 local gen_func_sig = function(f, ftype)
     ftype = ftype or eolian.function_type.METHOD
@@ -587,7 +613,7 @@ local build_reftable = function(f, title, ctitle, ctype, t)
     local nt = {}
     for i, v in ipairs(t) do
         nt[#nt + 1] = {
-            Buffer():write_link(gen_namespaces(v, ctype, true),
+            Buffer():write_link(gen_nsp_eo(v, ctype, true),
                                 v:full_name_get()):finish(),
             get_brief_doc(v:documentation_get())
         }
@@ -602,12 +628,11 @@ local build_functable = function(f, title, ctitle, cl, tp)
     if #t == 0 then
         return
     end
-    local cns = gen_namespaces(cl, classt_to_str[cl:type_get()], true)
     f:write_h(title, 3)
     local nt = {}
     for i, v in ipairs(t) do
         local lbuf = Buffer()
-        lbuf:write_link(gen_func_link(cns, v), v:name_get())
+        lbuf:write_link(gen_nsp_func(v, cl, true), v:name_get())
         local pt = propt_to_type[v:type_get()]
         if pt then
             lbuf:write_raw(" ")
@@ -698,10 +723,9 @@ build_inherits = function(cl, t, lvl)
     t = t or {}
     lvl = lvl or 0
     local lbuf = Buffer()
-    local cltp = classt_to_str[cl:type_get()]
-    lbuf:write_link(gen_namespaces(cl, cltp, true), cl:full_name_get())
+    lbuf:write_link(gen_nsp_class(cl, true), cl:full_name_get())
     lbuf:write_raw(" ")
-    lbuf:write_i("(" .. cltp .. ")")
+    lbuf:write_i("(" .. classt_to_str[cl:type_get()] .. ")")
     if lvl == 0 then
         lbuf:write_b(lbuf:finish())
     end
@@ -717,7 +741,7 @@ build_inherits = function(cl, t, lvl)
 end
 
 local build_class = function(cl)
-    local f = Writer(gen_namespaces(cl, classt_to_str[cl:type_get()], false))
+    local f = Writer(gen_nsp_class(cl))
 
     f:write_h(cl:full_name_get(), 2)
 
@@ -756,9 +780,7 @@ local build_classes = function()
 end
 
 build_method = function(fn, cl)
-    local cns = gen_namespaces(cl, classt_to_str[cl:type_get()], false):lower()
-        .. ":method:" .. fn:name_get():lower()
-    local f = Writer(cns)
+    local f = Writer(gen_nsp_func(fn, cl))
 
     f:write_h(fn:name_get(), 2)
 
@@ -773,9 +795,7 @@ build_method = function(fn, cl)
 end
 
 build_property = function(fn, cl)
-    local cns = gen_namespaces(cl, classt_to_str[cl:type_get()], false):lower()
-        .. ":property:" .. fn:name_get():lower()
-    local f = Writer(cns)
+    local f = Writer(gen_nsp_func(fn, cl))
 
     local fts = eolian.function_type
     local ft = fn:type_get()
