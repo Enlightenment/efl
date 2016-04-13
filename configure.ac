@@ -5483,6 +5483,7 @@ doc/Doxyfile
 doc/previews/Makefile
 doc/widgets/Makefile
 src/Makefile
+src/lib/evil/Makefile
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
 src/benchmarks/evas/Makefile
