@@ -173,6 +173,10 @@
  *
  * @image html img/widget/notify/preview-00.png
  * @image latex img/widget/notify/preview-00.eps
+ * @li @ref Elm_Nstate
+ *
+ * @image html img/widget/nstate/preview-00.png
+ * @image latex img/widget/nstate/preview-00.eps
  * @li @ref Elm_Panel
  *
  * @image html img/widget/panel/preview-00.png
