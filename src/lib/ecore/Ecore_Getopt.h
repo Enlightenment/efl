@@ -211,7 +211,7 @@ struct _Ecore_Getopt_Desc
 struct _Ecore_Getopt
 {
    const char             *prog; /**< to be used when ecore_app_args_get() fails */
-   const char             *usage; /**< usage example, %prog is replaced */
+   const char             *usage; /**< usage example, %%prog is replaced by @ref prog */
    const char             *version; /**< if exists, --version will work */
    const char             *copyright; /**< if exists, --copyright will work */
    const char             *license; /**< if exists, --license will work */
