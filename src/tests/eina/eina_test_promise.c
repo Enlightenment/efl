@@ -122,6 +122,57 @@ START_TEST(eina_test_promise_immediate_set_lifetime_all)
 }
 END_TEST
 
+static void _eina_test_promise_value_all_cb(void* data, void* value)
+{
+  Eina_Iterator** iterator = value;
+  int *i, *j;
+  Eina_Bool b;
+
+  b = eina_iterator_next(*iterator, (void**)&i);
+  ck_assert(!!b);
+
+  b = eina_iterator_next(*iterator, (void**)&j);
+  ck_assert(!!b);
+
+  ck_assert(i != NULL);
+  ck_assert(j != NULL);
+  ck_assert(*i == 10);
+  ck_assert(*j == 15);
+
+  *(Eina_Bool*)data = EINA_TRUE;
+}
+
+START_TEST(eina_test_promise_values_all)
+{
+   Eina_Promise_Owner* owners[2];
+   Eina_Promise* promises[3] = {NULL, NULL, NULL};
+   Eina_Promise* promise_all;
+   Eina_Bool ran = EINA_FALSE;
+
+   eina_init();
+
+   int i = 10, j = 15;
+
+   owners[0] = eina_promise_default_add(sizeof(int));
+   owners[1] = eina_promise_default_add(sizeof(int));
+   
+   promises[0] = eina_promise_owner_promise_get(owners[0]);
+   promises[1] = eina_promise_owner_promise_get(owners[1]);
+
+   
+   promise_all = eina_promise_all(eina_carray_iterator_new((void**)&promises[0]));
+
+   eina_promise_owner_value_set(owners[0], &i, NULL);
+   eina_promise_owner_value_set(owners[1], &j, NULL);
+
+   eina_promise_then(promise_all, &_eina_test_promise_value_all_cb, NULL, &ran);
+
+   ck_assert(ran == EINA_TRUE);
+
+   eina_shutdown();
+}
+END_TEST
+
 static void cancel_callback(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
 {
    *(Eina_Bool*)data = EINA_TRUE;
@@ -192,6 +243,7 @@ eina_test_promise(TCase *tc)
    tcase_add_test(tc, eina_test_promise_normal_lifetime_all);
    tcase_add_test(tc, eina_test_promise_immediate_set_lifetime);
    tcase_add_test(tc, eina_test_promise_immediate_set_lifetime_all);
+   tcase_add_test(tc, eina_test_promise_values_all);
    tcase_add_test(tc, eina_test_promise_cancel_promise);
    tcase_add_test(tc, eina_test_promise_progress);
 }

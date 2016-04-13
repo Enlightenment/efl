@@ -108,7 +108,6 @@ _eina_promise_then_calls(_Eina_Promise_Default_Owner* promise)
 	 }
        else if (callback->callback)
 	 {
-	   fprintf(stderr, "then callback\n");
 	   (*callback->callback)(callback->data, &promise->value[0]);
 	 }
        _eina_promise_unref(&promise->promise);
@@ -151,18 +150,18 @@ _eina_promise_del(_Eina_Promise_Default_Owner* promise)
 }
 
 static void *
-_eina_promise_buffer_get(_Eina_Promise_Default_Owner* promise)
+_eina_promise_owner_buffer_get(_Eina_Promise_Default_Owner* promise)
 {
    return &promise->value[0];
 }
 
 static void *
-_eina_promise_value_get(_Eina_Promise_Default_Owner const* promise)
+_eina_promise_value_get(_Eina_Promise_Default const* p)
 {
-   if (promise->promise.has_finished)
+   _Eina_Promise_Default_Owner const* promise = EINA_PROMISE_GET_OWNER(p);
+   if (promise->promise.has_finished && !promise->promise.has_errored)
      {
-        return (void*)(promise->promise.value_size && !promise->promise.has_errored ?
-                       &promise->value[0] : NULL);
+       return (void*)&promise->value[0];
      }
    else
      {
@@ -171,7 +170,7 @@ _eina_promise_value_get(_Eina_Promise_Default_Owner const* promise)
 }
 
 static void
-_eina_promise_value_set(_Eina_Promise_Default_Owner* promise, void* data, Eina_Promise_Free_Cb free)
+_eina_promise_owner_value_set(_Eina_Promise_Default_Owner* promise, void* data, Eina_Promise_Free_Cb free)
 {
    if (data && promise->promise.value_size)
      {
@@ -198,7 +197,6 @@ _eina_promise_then(_Eina_Promise_Default* p, Eina_Promise_Cb callback,
    cb->error_cb = error_cb;
    cb->data = data;
    promise->promise.then_callbacks = eina_inlist_append(promise->promise.then_callbacks, EINA_INLIST_GET(cb));
-   fprintf(stderr, "appending then callback\n");
 
    if (!promise->promise.is_first_then)
      {
@@ -212,7 +210,7 @@ _eina_promise_then(_Eina_Promise_Default* p, Eina_Promise_Cb callback,
 }
 
 static void
-_eina_promise_error_set(_Eina_Promise_Default_Owner* promise, Eina_Error error)
+_eina_promise_owner_error_set(_Eina_Promise_Default_Owner* promise, Eina_Error error)
 {
    promise->promise.error = error;
    promise->promise.has_errored = EINA_TRUE;
@@ -231,11 +229,11 @@ _eina_promise_finish(_Eina_Promise_Default_Owner* promise)
 }
 
 static Eina_Error
-_eina_promise_error_get(_Eina_Promise_Default_Owner const* promise)
+_eina_promise_error_get(_Eina_Promise_Default const* promise)
 {
-   if (promise->promise.has_errored)
+   if (promise->has_errored)
      {
-        return promise->promise.error;
+        return promise->error;
      }
    else
      {
@@ -288,6 +286,12 @@ _eina_promise_cancel(_Eina_Promise_Default* promise)
 
 static size_t
 _eina_promise_value_size_get(_Eina_Promise_Default_Owner const* promise)
+{
+   return promise->promise.value_size;
+}
+
+static size_t
+_eina_promise_owner_value_size_get(_Eina_Promise_Default_Owner const* promise)
 {
    return promise->promise.value_size;
 }
@@ -377,12 +381,13 @@ eina_promise_default_add(int value_size)
    memset(&p->promise.cancel_callbacks, 0, sizeof(p->promise.cancel_callbacks));
    p->promise.value_size = value_size;
    p->promise.value_free_cb = NULL;
+   p->promise.error = 0;
 
    p->owner_vtable.version = EINA_PROMISE_VERSION;
-   p->owner_vtable.value_set = EINA_FUNC_PROMISE_OWNER_VALUE_SET(_eina_promise_value_set);
-   p->owner_vtable.error_set = EINA_FUNC_PROMISE_OWNER_ERROR_SET(_eina_promise_error_set);
-   p->owner_vtable.buffer_get = EINA_FUNC_PROMISE_OWNER_BUFFER_GET(_eina_promise_buffer_get);
-   p->owner_vtable.value_size_get = EINA_FUNC_PROMISE_OWNER_VALUE_SIZE_GET(_eina_promise_value_size_get);
+   p->owner_vtable.value_set = EINA_FUNC_PROMISE_OWNER_VALUE_SET(_eina_promise_owner_value_set);
+   p->owner_vtable.error_set = EINA_FUNC_PROMISE_OWNER_ERROR_SET(_eina_promise_owner_error_set);
+   p->owner_vtable.buffer_get = EINA_FUNC_PROMISE_OWNER_BUFFER_GET(_eina_promise_owner_buffer_get);
+   p->owner_vtable.value_size_get = EINA_FUNC_PROMISE_OWNER_VALUE_SIZE_GET(_eina_promise_owner_value_size_get);
    p->owner_vtable.promise_get = EINA_FUNC_PROMISE_OWNER_PROMISE_GET(_eina_promise_owner_promise_get);
    p->owner_vtable.pending_is = EINA_FUNC_PROMISE_OWNER_PENDING_IS(_eina_promise_owner_pending_is);
    p->owner_vtable.cancelled_is = EINA_FUNC_PROMISE_OWNER_CANCELLED_IS(_eina_promise_owner_cancelled_is);
