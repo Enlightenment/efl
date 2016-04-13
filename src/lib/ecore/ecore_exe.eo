@@ -39,6 +39,12 @@ enum Ecore.Exe_Flags
 
 class Ecore.Exe (Eo.Base, Efl.Control)
 {
+   [[Ecore.Exe is responsible for managing portable process spawning.
+
+   With this module you are able to spawn, pause and quit the spawned processes.
+   An interaction between your process and those spawned is possible using pipes or signals.
+   ]]
+
    eo_prefix: ecore_obj_exe;
    methods {
         @property command {
@@ -64,8 +70,8 @@ class Ecore.Exe (Eo.Base, Efl.Control)
       .command;
    }
    events {
-        data,get: Ecore.Exe_Event_Data;
-        data,error: Ecore.Exe_Event_Data;
+        data,get: Ecore.Exe_Event_Data; [[Data received event from the child process]]
+        data,error: Ecore.Exe_Event_Data; [[Error received event from the child process]]
    }
 }
 
