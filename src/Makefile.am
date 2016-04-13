@@ -70,6 +70,7 @@ include Makefile_Ethumb.am
 include Makefile_Ethumb_Client.am
 include Makefile_Elocation.am
 include Makefile_Elementary.am
+include Makefile_Elput.am
 
 include Makefile_Eina_Cxx.am
 include Makefile_Ecore_Cxx.am

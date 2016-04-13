@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: elput
+Description: E core library, libinput module
+Requires.private: @requirements_pc_elput@
+Version: @VERSION@
+Libs: -L${libdir} -lelput
+Libs.private: @requirements_libs_elput@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/elput-@VMAJ@

@@ -1,0 +1,59 @@
+if HAVE_ELPUT
+
+### Library
+
+lib_LTLIBRARIES += lib/elput/libelput.la
+
+installed_elputmainheadersdir = $(includedir)/elput-@VMAJ@
+dist_installed_elputmainheaders_DATA = \
+  lib/elput/Elput.h
+
+lib_elput_libelput_la_SOURCES = \
+lib/elput/elput_evdev.c \
+lib/elput/elput_input.c \
+lib/elput/elput_logind.c \
+lib/elput/elput_manager.c \
+lib/elput/elput.c \
+lib/elput/elput_private.h
+
+lib_elput_libelput_la_CPPFLAGS = \
+  -I$(top_builddir)/src/lib/efl \
+  @ELPUT_CFLAGS@ @EFL_CFLAGS@ \
+  -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+  -DMODULE_ARCH=\"$(MODULE_ARCH)\"
+
+lib_elput_libelput_la_LIBADD = @ELPUT_LIBS@
+if HAVE_SYSTEMD
+lib_elput_libelput_la_LIBADD += @SYSTEMD_LIBS@
+endif
+lib_elput_libelput_la_DEPENDENCIES = @ELPUT_INTERNAL_LIBS@
+lib_elput_libelput_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/elput/elput_suite
+TESTS += tests/elput/elput_suite
+
+tests_elput_elput_suite_SOURCES = \
+tests/elput/elput_suite.c \
+tests/elput/elput_test_elput.c \
+tests/elput/elput_suite.h
+
+tests_elput_elput_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/elput\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elput\" \
+@CHECK_CFLAGS@ \
+@ELPUT_CFLAGS@
+
+tests_elput_elput_suite_LDADD = \
+@CHECK_LIBS@ \
+@USE_ELPUT_LIBS@
+
+tests_elput_elput_suite_DEPENDENCIES = \
+@USE_ELPUT_INTERNAL_LIBS@
+
+endif
+
+endif
