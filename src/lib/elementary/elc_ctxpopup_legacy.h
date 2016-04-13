@@ -27,7 +27,7 @@ EAPI void                         elm_ctxpopup_horizontal_set(Evas_Object *obj, 
  *
  * @ingroup Elm_Ctxpopup
  */
-EAPI Eina_Bool                    elm_ctxpopup_horizontal_get(Evas_Object *obj);
+EAPI Eina_Bool                    elm_ctxpopup_horizontal_get(const Evas_Object *obj);
 
 #include "elm_ctxpopup_item.eo.legacy.h"
 #include "elm_ctxpopup.eo.legacy.h"

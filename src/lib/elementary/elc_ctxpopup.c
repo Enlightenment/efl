@@ -1247,7 +1247,7 @@ elm_ctxpopup_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 }
 
 EAPI Eina_Bool
-elm_ctxpopup_horizontal_get(Evas_Object *obj)
+elm_ctxpopup_horizontal_get(const Evas_Object *obj)
 {
    ELM_CTXPOPUP_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
 
