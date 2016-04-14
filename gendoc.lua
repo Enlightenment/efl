@@ -556,9 +556,7 @@ local gen_func_csig = function(f, ftype)
         for i = 1, #pars do
             pars[i] = gen_cparam(pars[i])
         end
-        if #pars == 0 then
-            pars = { "void" }
-        end
+        table.insert(pars, 1, "Eo *obj");
         return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
     end
 
@@ -574,6 +572,7 @@ local gen_func_csig = function(f, ftype)
         for i, par in ipairs(vals) do
             pars[#pars + 1] = gen_cparam(par)
         end
+        table.insert(pars, 1, "Eo *obj");
         return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
     end
 
@@ -596,9 +595,7 @@ local gen_func_csig = function(f, ftype)
     for i, par in ipairs(vals) do
         pars[#pars + 1] = gen_cparam(par, true)
     end
-    if #pars == 0 then
-        pars = { "void" }
-    end
+    table.insert(pars, 1, "Eo *obj");
     return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
 end
 
