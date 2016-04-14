@@ -62,7 +62,6 @@ _eo_base_cb_key_obj_del(void *data, const Eo_Event *event)
                                                         EINA_INLIST_GET(node));
                   eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
                                         _eo_base_cb_key_obj_del, data);
-                  eo_unref(node->data);
                   _eo_generic_data_node_free(node);
                   break;
                }
