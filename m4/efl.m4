@@ -374,6 +374,29 @@ m4_popdef([UP])dnl
 m4_popdef([DOWN])dnl
 ])
 
+dnl EFL_LIBS_SUBBUILD(TARGET, DEPENDENCIES)
+dnl Make TARGET contain all DEPENDENCIES relative to SUBDIR build
+AC_DEFUN([EFL_LIBS_SUBBUILD],
+[dnl
+$1=""
+_SUBDIR="../../"
+
+for dep in $2; do
+   case $dep in
+      lib*.la)
+         _DEPENDENCY=$_SUBDIR$dep
+      ;;
+      *)
+         _DEPENDENCY=$dep
+      ;;
+   esac
+
+   $1=${$1}" ${_DEPENDENCY}"
+done
+
+AC_SUBST([$1])
+])
+
 dnl EFL_LIB_END(PKG)
 dnl finishes the setup of an EFL library
 AC_DEFUN([EFL_LIB_END],
@@ -392,6 +415,10 @@ USE_[]m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} lib/${libdirna
 m4_defn([UP])_CFLAGS="${EFLALL_COV_CFLAGS} ${EFLALL_CFLAGS} ${m4_defn([UP])_CFLAGS} -I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} -I\$(top_srcdir)/src/bindings/${libdirname} -I\$(top_builddir)/src/bindings/${libdirname} ${requirements_cflags_[]m4_defn([DOWN])} ${requirements_cflags_eflall} -DEFL_[]m4_defn([UP])_BUILD=1"
 requirements_pc_[]m4_defn([DOWN])="${requirements_pc_[]m4_defn([DOWN])} ${requirements_pc_eflall}"
 requirements_pc_deps_[]m4_defn([DOWN])="${requirements_pc_deps_[]m4_defn([DOWN])} ${requirements_pc_deps_eflall}"
+
+EFL_LIBS_SUBBUILD(m4_defn([UP])_SUBBUILD_LIBS, ${m4_defn([UP])_LIBS})
+EFL_LIBS_SUBBUILD(m4_defn([UP])_SUBBUILD_INTERNAL_LIBS, ${m4_defn([UP])_INTERNAL_LIBS})
+EFL_LIBS_SUBBUILD(USE_[]m4_defn([UP])_SUBBUILD_LIBS, "USE_[]m4_defn([UP])_LIBS")
 
 AC_MSG_NOTICE([Finished $1 checks])dnl
 m4_popdef([UP])dnl
