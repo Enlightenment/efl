@@ -5491,6 +5491,7 @@ src/lib/eo/Makefile
 src/lib/efl/Makefile
 src/lib/ector/Makefile
 src/lib/ecore/Makefile
+src/lib/eio/Makefile
 src/lib/edje/Makefile
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
