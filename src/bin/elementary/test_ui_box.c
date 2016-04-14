@@ -146,6 +146,53 @@ left_check_cb(void *data, const Eo_Event *event)
    return EO_CALLBACK_CONTINUE;
 }
 
+static void
+_custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+                         Efl_Pack *pack, const void *data EINA_UNUSED)
+{
+   Eina_Iterator *it = efl_pack_contents_iterate(pack);
+   int count = efl_pack_contents_count(pack), i = 0;
+   int px, py, pw, ph;
+   Eo *sobj;
+
+   // Note: This is a TERRIBLE layout. Just an example of the API, not showing
+   // how to write a proper layout function.
+
+   evas_object_geometry_get(pack, &px, &py, &pw, &ph);
+   EINA_ITERATOR_FOREACH(it, sobj)
+     {
+        int x, y, h, w, mw, mh;
+        evas_object_size_hint_min_get(sobj, &mw, &mh);
+        x = (pw / count) * i;
+        y = (ph / count) * i;
+        w = mw;
+        h = mh;
+        evas_object_geometry_set(sobj, x + px, y + py, w, h);
+        i++;
+     }
+   eina_iterator_free(it);
+}
+
+/* Common Eo Class boilerplate. */
+static const Eo_Op_Description custom_engine_op_desc[] = {
+     EO_OP_CLASS_FUNC_OVERRIDE(efl_pack_engine_layout_do, _custom_engine_layout_do),
+};
+
+static const Eo_Class_Description custom_engine_class_desc = {
+     EO_VERSION, "Custom Layout Engine", EO_CLASS_TYPE_INTERFACE,
+     EO_CLASS_DESCRIPTION_OPS(custom_engine_op_desc), NULL, 0, NULL, NULL
+};
+
+EO_DEFINE_CLASS(custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_ENGINE_INTERFACE, NULL)
+
+static Eina_Bool
+custom_check_cb(void *data, const Eo_Event *event)
+{
+   Eina_Bool chk = elm_check_selected_get(event->obj);
+   efl_pack_layout_engine_set(data, chk ? custom_engine_class_get() : NULL, NULL);
+   return EO_CALLBACK_CONTINUE;
+}
+
 void
 test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -286,6 +333,14 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Align left");
    eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, left_check_cb, bottombox);
+   evas_object_size_hint_align_set(o, 0, 0);
+   efl_pack(bx, o);
+   efl_gfx_visible_set(o, 1);
+
+   o = elm_check_add(win);
+   elm_check_selected_set(o, 0);
+   elm_object_text_set(o, "Custom layout");
+   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, custom_check_cb, bottombox);
    evas_object_size_hint_align_set(o, 0, 0);
    evas_object_size_hint_weight_set(o, 0, 1);
    efl_pack(bx, o);
