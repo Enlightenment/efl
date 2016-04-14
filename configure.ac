@@ -5493,6 +5493,7 @@ src/lib/ector/Makefile
 src/lib/ecore/Makefile
 src/lib/eio/Makefile
 src/lib/edje/Makefile
+src/lib/elementary/Makefile
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
 src/benchmarks/evas/Makefile
