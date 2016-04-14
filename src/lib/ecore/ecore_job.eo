@@ -2,14 +2,20 @@ type @extern Ecore_Cb: __undefined_type;
 
 class Ecore.Job (Eo.Base)
 {
+   [[Ecore Jobs are queued until the main loop dealt with the current event.
+
+   Jobs are processed by the main loop similarly to events. They also will
+   be executed in the order in which they were added.
+   ]]
+
    eo_prefix: ecore_job;
    methods {
       constructor {
          [[Constructor.]]
          legacy: null;
          params {
-            @in func: Ecore_Cb;
-            @in data: const(void)*;
+            @in func: Ecore_Cb; [[Ecore job to be queued callback function.]]
+            @in data: const(void)*; [[Private data passed to callback function.]]
          }
       }
    }
