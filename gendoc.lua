@@ -550,13 +550,18 @@ local gen_func_csig = function(f, ftype)
     local cn = f:full_c_name_get(ftype)
     local rtype = f:return_type_get(ftype)
 
+    local fparam = "Eo *obj"
+    if f:is_const() or f:is_class() or ftype == eolian.function_type.PROP_GET then
+        fparam = "const Eo *obj"
+    end
+
     if f:type_get() == eolian.function_type.METHOD then
         local pars = f:parameters_get():to_array()
         local cnrt = rtype and rtype:c_type_named_get(cn) or ("void " .. cn)
         for i = 1, #pars do
             pars[i] = gen_cparam(pars[i])
         end
-        table.insert(pars, 1, "Eo *obj");
+        table.insert(pars, 1, fparam);
         return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
     end
 
@@ -572,7 +577,7 @@ local gen_func_csig = function(f, ftype)
         for i, par in ipairs(vals) do
             pars[#pars + 1] = gen_cparam(par)
         end
-        table.insert(pars, 1, "Eo *obj");
+        table.insert(pars, 1, fparam);
         return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
     end
 
@@ -595,7 +600,7 @@ local gen_func_csig = function(f, ftype)
     for i, par in ipairs(vals) do
         pars[#pars + 1] = gen_cparam(par, true)
     end
-    table.insert(pars, 1, "Eo *obj");
+    table.insert(pars, 1, fparam);
     return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
 end
 
