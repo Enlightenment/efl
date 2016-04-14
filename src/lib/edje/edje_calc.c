@@ -3660,18 +3660,15 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
 {
    Edje_Real_Part *rp = NULL;
 
-   if (cep && !strcmp(ep->part->name, cep->part->name))
-     {
-        return EINA_TRUE;
-     }
+   if (cep == ep) return EINA_TRUE;
+   if (!cep) cep = ep;
 
-   if ((ep->calculating & FLAG_X))
+   if ((cep->calculating & FLAG_X))
      {
-        if (ep->param1.description)
+        if (cep->param1.description)
           {
-             if (ep->param1.description->rel1.id_x >= 0)
+             if (cep->param1.description->rel1.id_x >= 0)
                {
-                  if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param1.description->rel1.id_x];
                   if (_circular_dependency_find(ed, ep, rp, clist))
                     {
@@ -3679,9 +3676,8 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                        return EINA_TRUE;
                     }
                }
-             if (ep->param1.description->rel2.id_x >= 0)
+             if (cep->param1.description->rel2.id_x >= 0)
                {
-                  if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param1.description->rel2.id_x];
                   if (_circular_dependency_find(ed, ep, rp, clist))
                     {
@@ -3691,11 +3687,10 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                }
           }
 
-        if (ep->param2)
+        if (cep->param2)
           {
-             if (ep->param2->description->rel1.id_x >= 0)
+             if (cep->param2->description->rel1.id_x >= 0)
                {
-                  if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param2->description->rel1.id_x];
                   if (_circular_dependency_find(ed, ep, rp, clist))
                     {
@@ -3703,9 +3698,8 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                        return EINA_TRUE;
                     }
                }
-             if (ep->param2->description->rel2.id_x >= 0)
+             if (cep->param2->description->rel2.id_x >= 0)
                {
-                  if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param2->description->rel2.id_x];
                   if (_circular_dependency_find(ed, ep, rp, clist))
                     {
@@ -3715,13 +3709,12 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                }
           }
      }
-   if ((ep->calculating & FLAG_Y))
+   if ((cep->calculating & FLAG_Y))
      {
-        if (ep->param1.description)
+        if (cep->param1.description)
           {
-             if (ep->param1.description->rel1.id_y >= 0)
+             if (cep->param1.description->rel1.id_y >= 0)
                {
-                  if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param1.description->rel1.id_y];
                   if (_circular_dependency_find(ed, ep, rp, clist))
                     {
@@ -3729,9 +3722,8 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                        return EINA_TRUE;
                     }
                }
-             if (ep->param1.description->rel2.id_y >= 0)
+             if (cep->param1.description->rel2.id_y >= 0)
                {
-                  if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param1.description->rel2.id_y];
                   if (_circular_dependency_find(ed, ep, rp, clist))
                     {
@@ -3740,11 +3732,10 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                     }
                }
           }
-        if (ep->param2)
+        if (cep->param2)
           {
-             if (ep->param2->description->rel1.id_y >= 0)
+             if (cep->param2->description->rel1.id_y >= 0)
                {
-                  if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param2->description->rel1.id_y];
                   if (_circular_dependency_find(ed, ep, rp, clist))
                     {
@@ -3752,9 +3743,8 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                        return EINA_TRUE;
                     }
                }
-             if (ep->param2->description->rel2.id_y >= 0)
+             if (cep->param2->description->rel2.id_y >= 0)
                {
-                  if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param2->description->rel2.id_y];
                   if (_circular_dependency_find(ed, ep, rp, clist))
                     {
