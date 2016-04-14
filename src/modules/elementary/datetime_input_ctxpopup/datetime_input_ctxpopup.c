@@ -145,6 +145,8 @@ _field_clicked_cb(void *data, const Eo_Event *event)
 
    snprintf(buf, sizeof(buf), "datetime/%s", elm_object_style_get(event->obj));
 
+   if (ctx_mod->ctxpopup)
+     evas_object_del(ctx_mod->ctxpopup);
    ctx_mod->ctxpopup = elm_ctxpopup_add(event->obj);
    elm_object_style_set(ctx_mod->ctxpopup, buf);
    elm_ctxpopup_horizontal_set(ctx_mod->ctxpopup, EINA_TRUE);
