@@ -140,6 +140,7 @@ void test_table5(void *data, Evas_Object *obj, void *event_info);
 void test_table6(void *data, Evas_Object *obj, void *event_info);
 void test_table7(void *data, Evas_Object *obj, void *event_info);
 void test_table8(void *data, Evas_Object *obj, void *event_info);
+void test_ui_grid(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid2(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid3(void *data, Evas_Object *obj, void *event_info);
@@ -592,6 +593,7 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "New Containers", "Ui.Box", test_ui_box);
+   ADD_TEST(NULL, "New Containers", "Ui.Grid", test_ui_grid);
 
    //------------------------------//
    ADD_TEST(NULL, "Entries", "Entry", test_entry);

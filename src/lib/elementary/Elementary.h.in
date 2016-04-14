@@ -271,6 +271,7 @@ EAPI extern Elm_Version *elm_version;
 #ifdef EFL_EO_API_SUPPORT
 # include <efl_ui_box.eo.h>
 # include <efl_ui_box_flow.eo.h>
+# include <efl_ui_grid.eo.h>
 #endif
 
 /* include deprecated calls last of all */
