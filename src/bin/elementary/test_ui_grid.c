@@ -353,3 +353,149 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    evas_object_show(win);
 }
+
+static const char *
+btn_text(const char *str)
+{
+   static char buf[64];
+   static int id = 0;
+   sprintf(buf, "%s %d", str ?: "item", ++id);
+   return buf;
+}
+
+static void
+remove_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   eo_unref(obj);
+}
+
+static void
+append_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eo *grid = data;
+   Eo *o = elm_button_add(grid);
+   elm_object_text_set(o, btn_text("appended"));
+   evas_object_smart_callback_add(o, "clicked", remove_cb, grid);
+   elm_object_tooltip_text_set(o, "Click to unpack");
+   efl_pack_end(grid, o);
+   efl_gfx_visible_set(o, 1);
+}
+
+static void
+rmrand_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eo *grid = data, *o;
+   int cols, rows;
+
+   efl_pack_grid_size_get(o, &cols, &rows);
+   if (!cols || !rows) return;
+
+   o = efl_pack_grid_child_at(grid, rand() % cols, rand() % rows);
+   eo_unref(o);
+}
+
+static void
+clear_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eo *grid = data;
+   efl_pack_clear(grid);
+}
+
+void
+test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *o, *vbox, *f, *hbox, *grid, *ico;
+
+   win = elm_win_util_standard_add("ui-grid-linear", "Efl.Ui.Grid Linear APIs");
+   elm_win_autodel_set(win, EINA_TRUE);
+   efl_gfx_size_set(win, 600, 400);
+
+   vbox = eo_add(EFL_UI_BOX_CLASS, win);
+   efl_pack_padding_set(vbox, 10, 10, EINA_TRUE);
+   efl_pack_direction_set(vbox, EFL_ORIENT_DOWN);
+   evas_object_size_hint_weight_set(vbox, 1, 1);
+   evas_object_size_hint_padding_set(vbox, 5, 5, 5, 5);
+   elm_win_resize_object_add(win, vbox);
+   efl_gfx_visible_set(vbox, 1);
+
+
+   // create here to pass in cb
+   grid = eo_add(EFL_UI_GRID_CLASS, win);
+
+
+   /* controls */
+   f = elm_frame_add(win);
+   elm_object_text_set(f, "Controls");
+   evas_object_size_hint_align_set(f, -1, -1);
+   evas_object_size_hint_weight_set(f, 1, 0);
+   efl_pack(vbox, f);
+   efl_gfx_visible_set(f, 1);
+
+   hbox = eo_add(EFL_UI_BOX_CLASS, win);
+   elm_object_content_set(f, hbox);
+   efl_pack_padding_set(hbox, 5, 0, EINA_TRUE);
+   efl_gfx_visible_set(hbox, 1);
+
+   ico = elm_icon_add(win);
+   elm_icon_standard_set(ico, "list-add");
+   o = elm_button_add(win);
+   elm_object_content_set(o, ico);
+   elm_object_text_set(o, "Append");
+   evas_object_smart_callback_add(o, "clicked", append_cb, grid);
+   efl_pack(hbox, o);
+   efl_gfx_visible_set(o, 1);
+
+   ico = elm_icon_add(win);
+   elm_icon_standard_set(ico, "edit-delete");
+   o = elm_button_add(win);
+   elm_object_content_set(o, ico);
+   elm_object_text_set(o, "Remove random");
+   evas_object_smart_callback_add(o, "clicked", rmrand_cb, grid);
+   efl_pack(hbox, o);
+   efl_gfx_visible_set(o, 1);
+
+   ico = elm_icon_add(win);
+   elm_icon_standard_set(ico, "edit-clear-all");
+   o = elm_button_add(win);
+   elm_object_content_set(o, ico);
+   elm_object_text_set(o, "Clear");
+   evas_object_smart_callback_add(o, "clicked", clear_cb, grid);
+   efl_pack(hbox, o);
+   efl_gfx_visible_set(o, 1);
+
+
+   /* contents */
+   f = elm_frame_add(win);
+   elm_object_text_set(f, "Contents");
+   evas_object_size_hint_align_set(f, -1, -1);
+   evas_object_size_hint_weight_set(f, 1, 1);
+   efl_pack(vbox, f);
+   efl_gfx_visible_set(f, 1);
+
+   efl_pack_max_span_set(grid, 4);
+   efl_pack_directions_set(grid, EFL_ORIENT_RIGHT, EFL_ORIENT_DOWN);
+   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_content_set(f, grid);
+   evas_object_show(grid);
+
+   o = elm_button_add(win);
+   elm_object_text_set(o, btn_text(NULL));
+   evas_object_smart_callback_add(o, "clicked", remove_cb, grid);
+   efl_pack(grid, o);
+   efl_gfx_visible_set(o, 1);
+
+   o = elm_button_add(win);
+   elm_object_text_set(o, btn_text(NULL));
+   evas_object_smart_callback_add(o, "clicked", remove_cb, grid);
+   efl_pack(grid, o);
+   efl_gfx_visible_set(o, 1);
+
+   o = elm_button_add(win);
+   elm_object_text_set(o, btn_text(NULL));
+   evas_object_smart_callback_add(o, "clicked", remove_cb, grid);
+   efl_pack(grid, o);
+   efl_gfx_visible_set(o, 1);
+
+   evas_object_show(win);
+}

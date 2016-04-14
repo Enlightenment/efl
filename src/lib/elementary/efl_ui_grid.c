@@ -22,7 +22,7 @@ struct _Grid_Item
 
    Efl_Pack_Item *object;
    int colspan, rowspan;
-   int col, row; // if linear, this may change
+   int col, row;
 
    Eina_Bool linear : 1;
 };
@@ -53,7 +53,7 @@ struct _Grid_Item_Iterator
 static inline Eina_Bool
 _horiz(Efl_Orient dir)
 {
-   return dir % 180 == 0;
+   return dir % 180 == EFL_ORIENT_RIGHT;
 }
 
 EOLIAN static Eina_Bool
@@ -250,6 +250,8 @@ _efl_ui_grid_eo_base_constructor(Eo *obj, Efl_Ui_Grid_Data *pd)
 
    pd->dir1 = EFL_ORIENT_RIGHT;
    pd->dir2 = EFL_ORIENT_DOWN;
+   pd->lastcol = -1;
+   pd->lastrow = -1;
 
    return obj;
 }
@@ -309,10 +311,12 @@ _efl_ui_grid_efl_pack_grid_pack_grid(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_Ite
    if ((row + rowspan) >= 0x7ffff)
      WRN("row + rowspan getting rather large (>32767)");
 
-   if ((col + colspan - 1) > pd->lastcol)
-     pd->lastcol = col + colspan;
-   if ((row + rowspan - 1) > pd->lastrow)
-     pd->lastrow = row + rowspan;
+   if ((pd->lastcol < (col + colspan - 1)) ||
+       (pd->lastrow < (row + rowspan - 1)))
+     {
+        pd->lastcol = col + colspan - 1;
+        pd->lastrow = row + rowspan - 1;
+     }
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
@@ -338,15 +342,24 @@ _efl_ui_grid_efl_pack_grid_grid_child_position_get(Eo *obj, Efl_Ui_Grid_Data *pd
    if (rowspan) *rowspan = irowspan;
 }
 
+EOLIAN static Efl_Pack_Item *
+_efl_ui_grid_efl_pack_grid_grid_child_at(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, int col, int row)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+
+   return evas_object_table_child_get(wd->resize_obj, col, row);
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_unpack(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, Efl_Pack_Item *subobj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   if (elm_widget_sub_object_del(obj, subobj))
+   if (evas_object_table_unpack(wd->resize_obj, subobj))
      {
-        evas_object_table_unpack(wd->resize_obj, subobj);
-        return EINA_TRUE;
+        if (elm_widget_sub_object_del(obj, subobj))
+          return EINA_TRUE;
+        return EINA_FALSE;
      }
 
    return EINA_FALSE;
@@ -440,19 +453,17 @@ _efl_ui_grid_efl_pack_contents_iterate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED
 EOLIAN static int
 _efl_ui_grid_efl_pack_contents_count(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 {
-   /* FIXME */
-   Eina_Iterator *it;
-   Efl_Pack_Item *pack;
-   int k = 0;
+   Eina_List *li;
+   int count;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
 
-   it = evas_object_table_iterator_new(obj);
-   EINA_ITERATOR_FOREACH(it, pack)
-     k++;
-   eina_iterator_free(it);
+   /* FIXME */
+   li = evas_object_table_children_get(wd->resize_obj);
+   count = eina_list_count(li);
+   eina_list_free(li);
 
-   return k;
+   return count;
 }
 
 EOLIAN static Eina_List *
@@ -616,6 +627,7 @@ _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_It
              col = 0;
              row++;
           }
+        if (row < 0) row = 0;
      }
    else
      {
@@ -625,9 +637,12 @@ _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_It
              row = 0;
              col++;
           }
+        if (col < 0) col = 0;
      }
 
    DBG("packing new obj at %d,%d", col, row);
+   pd->lastcol = col;
+   pd->lastrow = row;
    efl_pack_grid(obj, subobj, col, row, 1, 1);
 }
 

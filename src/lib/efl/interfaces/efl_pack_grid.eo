@@ -25,6 +25,14 @@ interface Efl.Pack_Grid (Efl.Pack_Linear)
             @in row: int;
          }
       }
+      grid_child_at {
+         [[returns the top child at position. see also grid_children_at]]
+         return: Efl.Pack_Item*;
+         params {
+            @in col: int;
+            @in row: int;
+         }
+      }
       @property grid_child_position {
          [[position and span of the $subobj in this container, may be modified to move the $subobj]]
          set { [[same as grid_pack]] }
