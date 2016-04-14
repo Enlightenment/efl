@@ -84,8 +84,8 @@ interface Efl.Pack (Efl.Pack_Item)
       }
    }
    events {
-      child,added;
-      child,removed;
-      layout,updated; [[sent after the layout was updated]]
+      child,added: Efl.Pack_Item*;    [[sent after a new item was added]]
+      child,removed: Efl.Pack_Item*;  [[sent after an item was removed, may happen after unref]]
+      layout,updated;                 [[sent after the layout was updated]]
    }
 }

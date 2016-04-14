@@ -16,12 +16,17 @@ typedef struct _Efl_Ui_Grid_Data Efl_Ui_Grid_Data;
 typedef struct _Grid_Item_Iterator Grid_Item_Iterator;
 typedef struct _Grid_Item Grid_Item;
 
+static Eina_Bool _subobj_del_cb(void *data, const Eo_Event *event);
+static void _item_remove(Efl_Ui_Grid *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_Item *subobj);
+
+#define GRID_ITEM_KEY "__grid_item"
+
 struct _Grid_Item
 {
    EINA_INLIST;
 
    Efl_Pack_Item *object;
-   int colspan, rowspan;
+   int col_span, row_span;
    int col, row;
 
    Eina_Bool linear : 1;
@@ -30,11 +35,11 @@ struct _Grid_Item
 struct _Efl_Ui_Grid_Data
 {
    Grid_Item *items;
+   int count;
 
-   int cols, rows; // requested
-   int max_span;
-   int lastcol, lastrow;
-   Efl_Orient dir1, dir2;
+   int req_cols, req_rows; // requested - 0 means infinite
+   int last_col, last_row; // only used by linear apis
+   Efl_Orient dir1, dir2;  // must be orthogonal (H,V or V,H)
    struct {
       double h, v;
       Eina_Bool scalable: 1;
@@ -48,6 +53,11 @@ struct _Grid_Item_Iterator
    Eina_Iterator  iterator;
    Eina_Iterator *real_iterator;
    Efl_Ui_Grid    *object;
+};
+
+static const Eo_Callback_Array_Item subobj_callbacks [] = {
+   { EO_BASE_EVENT_DEL, _subobj_del_cb },
+   { NULL, NULL }
 };
 
 static inline Eina_Bool
@@ -161,6 +171,13 @@ _efl_ui_grid_elm_widget_theme_apply(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 }
 
 static void
+_layout_updated_emit(Efl_Ui_Grid *obj)
+{
+   /* FIXME: can't be called properly since there is no smart calc event */
+   eo_event_callback_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
+}
+
+static void
 _sizing_eval(Evas_Object *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 {
    Evas_Coord minw = 0, minh = 0, maxw = -1, maxh = -1;
@@ -180,13 +197,13 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
    if ((maxw >= 0) && (w > maxw)) w = maxw;
    if ((maxh >= 0) && (h > maxh)) h = maxh;
    evas_object_resize(obj, w, h);
+   _layout_updated_emit(obj);
 }
 
 static void
-_on_size_hints_changed(void *data,
-                       Evas *e EINA_UNUSED,
-                       Evas_Object *obj EINA_UNUSED,
-                       void *event_info EINA_UNUSED)
+_table_size_hints_changed(void *data, Evas *e EINA_UNUSED,
+                          Evas_Object *table EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
 {
    Efl_Ui_Grid_Data *pd = eo_data_scope_get(data, MY_CLASS);
 
@@ -201,10 +218,11 @@ _efl_ui_grid_evas_object_smart_add(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
    elm_widget_sub_object_parent_add(obj);
 
    table = evas_object_table_add(evas_object_evas_get(obj));
+   evas_object_table_homogeneous_set(table, EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE);
    elm_widget_resize_object_set(obj, table, EINA_TRUE);
 
    evas_object_event_callback_add
-     (table, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);
+     (table, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _table_size_hints_changed, obj);
 
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
 
@@ -224,7 +242,7 @@ _efl_ui_grid_evas_object_smart_del(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 
    evas_object_event_callback_del_full
      (wd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-     _on_size_hints_changed, obj);
+     _table_size_hints_changed, obj);
 
    /* let's make our table object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
@@ -250,8 +268,10 @@ _efl_ui_grid_eo_base_constructor(Eo *obj, Efl_Ui_Grid_Data *pd)
 
    pd->dir1 = EFL_ORIENT_RIGHT;
    pd->dir2 = EFL_ORIENT_DOWN;
-   pd->lastcol = -1;
-   pd->lastrow = -1;
+   pd->last_col = -1;
+   pd->last_row = -1;
+   pd->req_cols = 0;
+   pd->req_rows = 0;
 
    return obj;
 }
@@ -285,81 +305,213 @@ _efl_ui_grid_efl_pack_padding_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, dou
    if (v) *v = pd->pad.v;
 }
 
-EOLIAN static void
-_efl_ui_grid_efl_pack_grid_pack_grid(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_Item *subobj, int col, int row, int colspan, int rowspan)
+static Eina_Bool
+_subobj_del_cb(void *data, const Eo_Event *event)
+{
+   Efl_Ui_Grid *obj = data;
+   Efl_Ui_Grid_Data *pd = eo_data_scope_get(obj, EFL_UI_GRID_CLASS);
+
+   eo_event_callback_array_del(event->obj, subobj_callbacks, data);
+   _item_remove(obj, pd, event->obj);
+
+   if (!elm_widget_sub_object_del(obj, event->obj))
+     WRN("failed to remove child from its parent");
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static void
+_pack_at(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_Item *subobj,
+         int col, int row, int colspan, int rowspan, Eina_Bool linear)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   Grid_Item *gi = NULL;
 
    if (col < 0) col = 0;
    if (row < 0) row = 0;
+
+   // note: we could have colspan = -1 mean "full width" if req_cols is set?
    if (colspan < 1) colspan = 1;
    if (rowspan < 1) rowspan = 1;
 
-   if ((0xffff - col) < colspan)
-     {
-        ERR("col + colspan > 0xffff. adjusted");
-        colspan = 0xffff - col;
-     }
-   if ((0xffff - row) < rowspan)
-     {
-        ERR("row + rowspan > 0xffff, adjusted");
-        rowspan = 0xffff - row;
-     }
+   if (((int64_t) col + (int64_t) colspan) > (int64_t) INT_MAX)
+     colspan = INT_MAX - col;
 
-   if ((col + colspan) >= 0x7ffff)
-     WRN("col + colspan getting rather large (>32767)");
-   if ((row + rowspan) >= 0x7ffff)
-     WRN("row + rowspan getting rather large (>32767)");
+   if (((int64_t) row + (int64_t) rowspan) > (int64_t) INT_MAX)
+     rowspan = INT_MAX - row;
 
-   if ((pd->lastcol < (col + colspan - 1)) ||
-       (pd->lastrow < (row + rowspan - 1)))
+   if ((pd->req_cols && ((col + colspan) > pd->req_cols)) ||
+       (pd->req_rows && ((row + rowspan) > pd->req_rows)))
      {
-        pd->lastcol = col + colspan - 1;
-        pd->lastrow = row + rowspan - 1;
+        ERR("grid requested size exceeded! packing in extra cell at "
+            "%d,%d %dx%d (grid: %dx%d)",
+            col, row, colspan, rowspan, pd->req_cols, pd->req_rows);
      }
 
-   elm_widget_sub_object_add(obj, subobj);
+   if (obj == elm_widget_parent_widget_get(subobj))
+     {
+        gi = eo_key_data_get(subobj, GRID_ITEM_KEY);
+        if (gi)
+          {
+             gi->col = col;
+             gi->row = row;
+             gi->col_span = colspan;
+             gi->row_span = rowspan;
+             gi->linear = EINA_FALSE;
+          }
+        else ERR("object is a child but internal data was not found!");
+     }
+
+   if (!gi)
+     {
+        gi = calloc(1, sizeof(*gi));
+        gi->col = col;
+        gi->row = row;
+        gi->col_span = colspan;
+        gi->row_span = rowspan;
+        gi->linear = !!linear;
+        gi->object = subobj; // xref(, obj);
+        pd->count++;
+        pd->items = (Grid_Item *)
+              eina_inlist_append(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
+
+        eo_key_data_set(subobj, GRID_ITEM_KEY, gi);
+        elm_widget_sub_object_add(obj, subobj);
+        eo_event_callback_call(obj, EFL_PACK_EVENT_CHILD_ADDED, subobj);
+        eo_event_callback_array_add(subobj, subobj_callbacks, obj);
+     }
+
    evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_grid_grid_child_position_set(Eo *obj, Efl_Ui_Grid_Data *pd, Evas_Object *subobj, int col, int row, int colspan, int rowspan)
+_efl_ui_grid_efl_pack_grid_pack_grid(Eo *obj, Efl_Ui_Grid_Data *pd,
+                                     Efl_Pack_Item *subobj,
+                                     int col, int row, int colspan, int rowspan)
 {
-   _efl_ui_grid_efl_pack_grid_pack_grid(obj, pd, subobj, col, row, colspan, rowspan);
+   EINA_SAFETY_ON_NULL_RETURN(subobj);
+
+   _pack_at(obj, pd, subobj, col, row, colspan, rowspan, EINA_FALSE);
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_grid_grid_child_position_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_ui_grid_efl_pack_grid_pack_child_position_set(Eo *obj, Efl_Ui_Grid_Data *pd, Evas_Object *subobj, int col, int row, int colspan, int rowspan)
 {
-   unsigned short icol, irow, icolspan, irowspan;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   EINA_SAFETY_ON_NULL_RETURN(subobj);
 
-   evas_object_table_pack_get
-     (wd->resize_obj, subobj, &icol, &irow, &icolspan, &irowspan);
-   if (col) *col = icol;
-   if (row) *row = irow;
-   if (colspan) *colspan = icolspan;
-   if (rowspan) *rowspan = irowspan;
+   if (obj != elm_widget_parent_widget_get(subobj))
+     {
+        ERR("object %p is not a child of %p", subobj, obj);
+        return;
+     }
+
+   _pack_at(obj, pd, subobj, col, row, colspan, rowspan, EINA_FALSE);
+}
+
+EOLIAN static void
+_efl_ui_grid_efl_pack_grid_pack_child_position_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan)
+{
+   int c = -1, r = -1, cs = 0, rs = 0;
+   Grid_Item *gi;
+
+   if (obj != elm_widget_parent_widget_get(subobj))
+     {
+        ERR("%p is not a child of %p", subobj, obj);
+        goto end;
+     }
+
+   gi = eo_key_data_get(subobj, GRID_ITEM_KEY);
+   if (gi)
+     {
+        c = gi->col;
+        r = gi->row;
+        cs = gi->col_span;
+        rs = gi->row_span;
+     }
+
+end:
+   if (col) *col = c;
+   if (row) *row = r;
+   if (colspan) *colspan = cs;
+   if (rowspan) *rowspan = rs;
 }
 
 EOLIAN static Efl_Pack_Item *
-_efl_ui_grid_efl_pack_grid_grid_child_at(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, int col, int row)
+_efl_ui_grid_efl_pack_grid_pack_child_at(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, int col, int row)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    return evas_object_table_child_get(wd->resize_obj, col, row);
 }
 
+static void
+_item_remove(Efl_Ui_Grid *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_Item *subobj)
+{
+   Grid_Item *gi = eo_key_data_get(subobj, GRID_ITEM_KEY);
+   Grid_Item *gi2, *last = NULL;
+
+   if (!gi)
+     {
+        WRN("item %p has no grid internal data", subobj);
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(pd->items), gi)
+          if (gi->object == subobj)
+            break;
+        if (!gi)
+          {
+             ERR("item %p was not found in this grid", subobj);
+             return;
+          }
+     }
+
+   if (!gi->linear)
+     goto end;
+
+   EINA_INLIST_REVERSE_FOREACH(EINA_INLIST_GET(pd->items), gi2)
+     {
+        if (gi2 == gi) continue;
+        if (!gi2->linear) continue;
+        last = gi2;
+        break;
+     }
+   if (last)
+     {
+        if (_horiz(pd->dir1))
+          {
+             pd->last_col = last->col + last->col_span - 1;
+             pd->last_row = last->row;
+          }
+        else
+          {
+             pd->last_row = last->row + last->row_span - 1;
+             pd->last_col = last->col;
+          }
+     }
+   else
+     {
+        pd->last_col = -1;
+        pd->last_row = -1;
+     }
+
+end:
+   eo_event_callback_call(obj, EFL_PACK_EVENT_CHILD_REMOVED, subobj);
+   pd->items = (Grid_Item *)
+         eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
+   pd->count--;
+   eo_key_data_del(subobj, GRID_ITEM_KEY);
+   free(gi);
+}
+
 EOLIAN static Eina_Bool
-_efl_ui_grid_efl_pack_unpack(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, Efl_Pack_Item *subobj)
+_efl_ui_grid_efl_pack_unpack(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_Item *subobj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
+   _item_remove(obj, pd, subobj);
    if (evas_object_table_unpack(wd->resize_obj, subobj))
      {
         if (elm_widget_sub_object_del(obj, subobj))
           return EINA_TRUE;
-        return EINA_FALSE;
+        return EINA_FALSE; // oops - unlikely
      }
 
    return EINA_FALSE;
@@ -390,9 +542,10 @@ _efl_ui_grid_evas_object_smart_calculate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUS
 }
 
 EOLIAN void
-_efl_ui_grid_efl_pack_layout_update(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
+_efl_ui_grid_efl_pack_layout_update(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
    _sizing_eval(obj, pd);
+   _layout_updated_emit(obj);
 }
 
 EOLIAN void
@@ -451,23 +604,13 @@ _efl_ui_grid_efl_pack_contents_iterate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED
 }
 
 EOLIAN static int
-_efl_ui_grid_efl_pack_contents_count(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
+_efl_ui_grid_efl_pack_contents_count(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
-   Eina_List *li;
-   int count;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
-
-   /* FIXME */
-   li = evas_object_table_children_get(wd->resize_obj);
-   count = eina_list_count(li);
-   eina_list_free(li);
-
-   return count;
+   return pd->count;
 }
 
 EOLIAN static Eina_List *
-_efl_ui_grid_efl_pack_grid_grid_children_at(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, int col, int row)
+_efl_ui_grid_efl_pack_grid_pack_children_at(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, int col, int row)
 {
    Eina_List *l = NULL;
 
@@ -541,13 +684,13 @@ _efl_ui_grid_efl_pack_grid_directions_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data 
 EOLIAN static void
 _efl_ui_grid_efl_pack_grid_grid_size_set(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, int cols, int rows)
 {
-   /* FIXME: what's the behaviour if items were packed OUTSIDE this box? */
-
    if (cols < 0) cols = 0;
    if (rows < 0) rows = 0;
 
-   efl_pack_columns_set(obj, cols);
-   efl_pack_rows_set(obj, rows);
+   pd->req_cols = cols;
+   pd->req_rows = rows;
+
+   efl_pack_layout_request(obj);
 }
 
 EOLIAN static void
@@ -558,27 +701,9 @@ _efl_ui_grid_efl_pack_grid_grid_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_grid_max_span_set(Eo *obj, Efl_Ui_Grid_Data *pd, int maxx)
-{
-   /* FIXME: what's the behaviour if items were packed OUTSIDE this range? */
-
-   if (maxx < 0) maxx = 0;
-   pd->max_span = maxx;
-
-   efl_pack_layout_request(obj);
-}
-
-EOLIAN static int
-_efl_ui_grid_efl_pack_grid_max_span_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
-{
-   return pd->max_span;
-}
-
-EOLIAN static void
 _efl_ui_grid_efl_pack_grid_columns_set(Eo *obj, Efl_Ui_Grid_Data *pd, int columns)
 {
-   /* FIXME: what's the behaviour if items were packed OUTSIDE this range? */
-   pd->cols = columns;
+   pd->req_cols = columns;
 
    efl_pack_layout_request(obj);
 }
@@ -586,14 +711,20 @@ _efl_ui_grid_efl_pack_grid_columns_set(Eo *obj, Efl_Ui_Grid_Data *pd, int column
 EOLIAN static int
 _efl_ui_grid_efl_pack_grid_columns_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
-   return pd->cols;
+   if (!pd->req_cols)
+     {
+        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
+        int cols;
+        evas_object_table_col_row_size_get(wd->resize_obj, &cols, NULL);
+        return cols;
+     }
+   return pd->req_cols;
 }
 
 EOLIAN static void
 _efl_ui_grid_efl_pack_grid_rows_set(Eo *obj, Efl_Ui_Grid_Data *pd, int rows)
 {
-   /* FIXME: what's the behaviour if items were packed OUTSIDE this range? */
-   pd->rows = rows;
+   pd->req_rows = rows;
 
    efl_pack_layout_request(obj);
 }
@@ -601,7 +732,14 @@ _efl_ui_grid_efl_pack_grid_rows_set(Eo *obj, Efl_Ui_Grid_Data *pd, int rows)
 EOLIAN static int
 _efl_ui_grid_efl_pack_grid_rows_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
-   return pd->rows;
+   if (!pd->req_rows)
+     {
+        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
+        int rows;
+        evas_object_table_col_row_size_get(wd->resize_obj, &rows, NULL);
+        return rows;
+     }
+   return pd->req_rows;
 }
 
 EOLIAN static void
@@ -616,13 +754,13 @@ _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_It
 {
    EINA_SAFETY_ON_NULL_RETURN(subobj);
 
-   int col = pd->lastcol;
-   int row = pd->lastrow;
+   int col = pd->last_col;
+   int row = pd->last_row;
 
    if (_horiz(pd->dir1))
      {
         col++;
-        if (pd->max_span && (col >= pd->max_span))
+        if (pd->req_cols && (col >= pd->req_cols))
           {
              col = 0;
              row++;
@@ -632,7 +770,7 @@ _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_It
    else
      {
         row++;
-        if (pd->max_span && (row >= pd->max_span))
+        if (pd->req_rows && (row >= pd->req_rows))
           {
              row = 0;
              col++;
@@ -640,10 +778,11 @@ _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_It
         if (col < 0) col = 0;
      }
 
+   pd->last_col = col;
+   pd->last_row = row;
+
    DBG("packing new obj at %d,%d", col, row);
-   pd->lastcol = col;
-   pd->lastrow = row;
-   efl_pack_grid(obj, subobj, col, row, 1, 1);
+   _pack_at(obj, pd, subobj, col, row, 1, 1, EINA_TRUE);
 }
 
 #include "efl_ui_grid.eo.c"

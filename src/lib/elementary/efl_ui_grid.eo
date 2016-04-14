@@ -26,14 +26,12 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack_Grid)
       Efl.Pack.layout_update;
       Efl.Pack.layout_request;
       Efl.Pack_Grid.pack_grid;
-      Efl.Pack_Grid.grid_children_at;
-      Efl.Pack_Grid.grid_child_at;
-      Efl.Pack_Grid.grid_child_position.set;
-      Efl.Pack_Grid.grid_child_position.get;
+      Efl.Pack_Grid.pack_children_at;
+      Efl.Pack_Grid.pack_child_at;
+      Efl.Pack_Grid.pack_child_position.set;
+      Efl.Pack_Grid.pack_child_position.get;
       Efl.Pack_Grid.grid_size.set;
       Efl.Pack_Grid.grid_size.get;
-      Efl.Pack_Grid.max_span.set;
-      Efl.Pack_Grid.max_span.get;
       Efl.Pack_Grid.columns.set;
       Efl.Pack_Grid.columns.get;
       Efl.Pack_Grid.rows.set;
