@@ -191,6 +191,285 @@ gen_nsp_ref = function(str, root)
     return ret
 end
 
+-- statistics
+
+local stats = {
+    class = 0,
+    class_undoc = 0,
+    interface = 0,
+    interface_undoc = 0,
+    mixin = 0,
+    mixin_undoc = 0,
+    method = 0,
+    method_undoc = 0,
+    param = 0,
+    param_undoc = 0,
+    mret = 0,
+    mret_undoc = 0,
+    getter = 0,
+    getter_undoc = 0,
+    gret = 0,
+    gret_undoc = 0,
+    gkey = 0,
+    gkey_undoc = 0,
+    gvalue = 0,
+    gvalue_undoc = 0,
+    setter = 0,
+    setter_undoc = 0,
+    sret = 0,
+    sret_undoc = 0,
+    skey = 0,
+    skey_undoc = 0,
+    svalue = 0,
+    svalue_undoc = 0,
+    event = 0,
+    event_undoc = 0,
+    alias = 0,
+    alias_undoc = 0,
+    struct = 0,
+    struct_undoc = 0,
+    sfield = 0,
+    sfield_undoc = 0,
+    enum = 0,
+    enum_undoc = 0,
+    efield = 0,
+    efield_undoc = 0,
+    constant = 0,
+    constant_undoc = 0,
+    global = 0,
+    global_undoc = 0
+}
+
+local stats_pd = function(n)
+    local ret = 0
+    if n == 0 then
+        return 1
+    end
+    while (n ~= 0) do
+        n = math.floor(n / 10)
+        ret = ret + 1
+    end
+    return ret
+end
+
+local fcol = 30
+local ncol = 0
+
+local print_stat = function(printname, statname, sub)
+    local sv = stats[statname]
+    local svu = stats[statname .. "_undoc"]
+    local percent = (sv == 0) and 100 or math.floor(((sv - svu) / sv) * 100 + 0.5)
+    local tb = (" "):rep(math.max(0, fcol - #printname - 1) + ncol - stats_pd(sv))
+    local dtb = (" "):rep(ncol - stats_pd(sv - svu))
+    print(("%s:%s%d (documented: %s%d or %d%%)")
+        :format(printname, tb, sv, dtb, sv - svu, percent))
+end
+
+local print_stats = function()
+    for k, v in pairs(stats) do
+        ncol = math.max(ncol, stats_pd(v))
+    end
+
+    print("=== CLASS SECTION ===\n")
+    print_stat("Classes", "class")
+    print_stat("Interfaces", "interface")
+    print_stat("Mixins", "mixin")
+    print_stat("Events", "event")
+
+    print("\n=== FUNCTION SECTION ===\n")
+    print_stat("Methods", "method")
+    print_stat("  Method params", "param")
+    print_stat("  Method returns", "mret")
+    print_stat("Getters", "getter")
+    print_stat("  Getter returns", "gret")
+    print_stat("  Getter keys", "gkey")
+    print_stat("  Getter values", "gvalue")
+    print_stat("Setters", "setter")
+    print_stat("  Setter returns", "sret")
+    print_stat("  Setter keys", "skey")
+    print_stat("  Setter values", "svalue")
+
+    print("\n=== TYPE SECTION ===\n")
+    print_stat("Aliases", "alias")
+    print_stat("Structs", "struct")
+    print_stat("Struct fields", "sfield")
+    print_stat("Enums", "enum")
+    print_stat("Enum fields", "efield")
+
+    print("\n=== VARIABLE SECTION ===\n")
+    print_stat("Constants", "constant")
+    print_stat("Globals", "global")
+end
+
+local stat_incr = function(name, missing)
+    stats[name] = stats[name] + 1
+    if missing then
+        stats[name .. "_undoc"] = stats[name .. "_undoc"] + 1
+    end
+end
+
+local print_missing = function(name, tp)
+    if not verbose then
+        return
+    end
+    print(tp .. " '" .. name .. "'" .. " missing documentation")
+end
+
+local check_class = function(cl)
+    local ct = classt_to_str[cl:type_get()]
+    if not ct then
+        return
+    end
+    if not cl:documentation_get() then
+        print_missing(cl:full_name_get(), ct)
+        stat_incr(ct, true)
+    else
+        stat_incr(ct, false)
+    end
+
+    for ev in cl:events_get() do
+        if not ev:documentation_get() then
+            print_missing(cl:full_name_get() .. "." .. ev:name_get(), "event")
+            stat_incr("event", true)
+        else
+            stat_incr("event", false)
+        end
+    end
+end
+
+local check_method = function(fn, cl)
+    local fts = eolian.function_type
+    local fulln = cl:full_name_get() .. "." .. fn:name_get()
+    if fn:return_type_get(fts.METHOD) then
+        if not fn:return_documentation_get(fts.METHOD) then
+            print_missing(fulln, "method return")
+            stat_incr("mret", true)
+        else
+            stat_incr("mret", false)
+        end
+    end
+    if not fn:documentation_get(fts.METHOD) then
+        print_missing(fulln, "method")
+        stat_incr("method", true)
+    else
+        stat_incr("method", false)
+    end
+    for p in fn:parameters_get() do
+        if not p:documentation_get() then
+            print_missing(fulln .. "." .. p:name_get(), "method parameter")
+            stat_incr("param", true)
+        else
+            stat_incr("param", false)
+        end
+    end
+end
+
+local check_property = function(fn, cl, ft)
+    local fts = eolian.function_type
+
+    local pfxs = {
+        [fts.PROP_GET] = "g",
+        [fts.PROP_SET] = "s",
+    }
+    local pfx = pfxs[ft]
+
+    local fulln = cl:full_name_get() .. "." .. fn:name_get()
+    if fn:return_type_get(ft) then
+        if not fn:return_documentation_get(ft) then
+            print_missing(fulln, pfx .. "etter return")
+            stat_incr(pfx .. "ret", true)
+        else
+            stat_incr(pfx .. "ret", false)
+        end
+    end
+
+    if not fn:documentation_get(fts.PROPERTY) and not fn:documentation_get(ft) then
+        print_missing(fulln, pfx .. "etter")
+        stat_incr(pfx .. "etter", true)
+    else
+        stat_incr(pfx .. "etter", false)
+    end
+
+    for p in fn:property_keys_get(ft) do
+        if not p:documentation_get() then
+            print_missing(fulln .. "." .. p:name_get(), pfx .. "etter key")
+            stat_incr(pfx .. "key", true)
+        else
+            stat_incr(pfx .. "key", false)
+        end
+    end
+
+    for p in fn:property_values_get(ft) do
+        if not p:documentation_get() then
+            print_missing(fulln .. "." .. p:name_get(), pfx .. "etter value")
+            stat_incr(pfx .. "value", true)
+        else
+            stat_incr(pfx .. "value", false)
+        end
+    end
+end
+
+local check_alias = function(v)
+    if not v:documentation_get() then
+        print_missing(v:full_name_get(), "alias")
+        stat_incr("alias", true)
+    else
+        stat_incr("alias", false)
+    end
+end
+
+local check_struct = function(v)
+    if not v:documentation_get() then
+        print_missing(v:full_name_get(), "struct")
+        stat_incr("struct", true)
+    else
+        stat_incr("struct", false)
+    end
+    for fl in v:struct_fields_get() do
+        if not fl:documentation_get() then
+            print_missing(v:full_name_get() .. "." .. fl:name_get(), "struct field")
+            stat_incr("sfield", true)
+        else
+            stat_incr("sfield", false)
+        end
+    end
+end
+
+local check_enum = function(v)
+    if not v:documentation_get() then
+        print_missing(v:full_name_get(), "enum")
+        stat_incr("enum", true)
+    else
+        stat_incr("enum", false)
+    end
+    for fl in v:enum_fields_get() do
+        if not fl:documentation_get() then
+            print_missing(v:full_name_get() .. "." .. fl:name_get(), "enum field")
+            stat_incr("efield", true)
+        else
+            stat_incr("efield", false)
+        end
+    end
+end
+
+local check_constant = function(v)
+    if not v:documentation_get() then
+        print_missing(v:full_name_get(), "constant")
+        stat_incr("constant", true)
+    else
+        stat_incr("constant", false)
+    end
+end
+
+local check_global = function(v)
+    if not v:documentation_get() then
+        print_missing(v:full_name_get(), "global")
+        stat_incr("global", true)
+    else
+        stat_incr("global", false)
+    end
+end
+
 -- generator
 
 local Writer = util.Object:clone {
@@ -615,13 +894,23 @@ end
 
 local build_method, build_property
 
+local reft_checks = {
+    ["alias"] = check_alias,
+    ["struct"] = check_struct,
+    ["enum"] = check_enum,
+    ["constant"] = check_constant,
+    ["global"] = check_global
+}
+
 local build_reftable = function(f, title, ctitle, ctype, t)
     if not t or #t == 0 then
         return
     end
     f:write_h(title, 2)
     local nt = {}
+    local cfunc = reft_checks[ctype]
     for i, v in ipairs(t) do
+        if cfunc then cfunc(v) end
         nt[#nt + 1] = {
             Buffer():write_link(gen_nsp_eo(v, ctype, true),
                                 v:full_name_get()):finish(),
@@ -752,6 +1041,7 @@ end
 
 local build_class = function(cl)
     local f = Writer(gen_nsp_class(cl))
+    check_class(cl)
 
     f:write_h(cl:full_name_get(), 2)
 
@@ -840,6 +1130,7 @@ end
 
 build_method = function(fn, cl)
     local f = Writer(gen_nsp_func(fn, cl))
+    check_method(fn, cl)
 
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
 
@@ -863,6 +1154,9 @@ build_property = function(fn, cl)
     local ft = fn:type_get()
     local isget = (ft == fts.PROP_GET or ft == fts.PROPERTY)
     local isset = (ft == fts.PROP_SET or ft == fts.PROPERTY)
+
+    if isget then check_property(fn, cl, fts.PROP_GET) end
+    if isset then check_property(fn, cl, fts.PROP_SET) end
 
     local doc = fn:documentation_get(fts.PROPERTY)
     local gdoc = fn:documentation_get(fts.PROP_GET)
@@ -962,6 +1256,7 @@ getopt.parse {
         mkdir_r(nil)
         build_ref()
         build_classes()
+        print_stats()
     end
 }
 
