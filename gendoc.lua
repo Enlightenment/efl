@@ -261,8 +261,9 @@ local print_stat = function(printname, statname, sub)
     local percent = (sv == 0) and 100 or math.floor(((sv - svu) / sv) * 100 + 0.5)
     local tb = (" "):rep(math.max(0, fcol - #printname - 1) + ncol - stats_pd(sv))
     local dtb = (" "):rep(ncol - stats_pd(sv - svu))
-    print(("%s:%s%d (documented: %s%d or %d%%)")
-        :format(printname, tb, sv, dtb, sv - svu, percent))
+    local ptb = (" "):rep(3 - stats_pd(percent))
+    print(("%s:%s%d (documented: %s%d or %s%d%%)")
+        :format(printname, tb, sv, dtb, sv - svu, ptb, percent))
 end
 
 local print_stats = function()
