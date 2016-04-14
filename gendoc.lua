@@ -841,7 +841,7 @@ end
 build_method = function(fn, cl)
     local f = Writer(gen_nsp_func(fn, cl))
 
-    f:write_h(fn:name_get(), 2)
+    f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
 
     f:write_h("C signature", 3)
     f:write_code(gen_func_csig(fn), "c")
@@ -868,7 +868,7 @@ build_property = function(fn, cl)
     local gdoc = fn:documentation_get(fts.PROP_GET)
     local sdoc = fn:documentation_get(fts.PROP_SET)
 
-    f:write_h(fn:name_get(), 2)
+    f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
 
     f:write_h("C signature", 3)
     local codes = {}
