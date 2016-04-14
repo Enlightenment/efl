@@ -49,17 +49,25 @@ abstract Eo.Base ()
 
    methods {
       @property parent {
-         set {
-            [[Set the parent of an object.
+         [[The parent of an object.
 
-              Parents keep references to their children so in order to
-              delete objects that have parents you need to set parent to
-              NULL or use eo_del() that does that for you (and also unrefs
-              the object).
-            ]]
+           Parents keep references to their children so in order to
+           delete objects that have parents you need to set parent to
+           NULL or use eo_del() that does that for you (and also unrefs
+           the object).
+
+           The Eo parent is conceptually user set. That means that a parent
+           should not be changed behind the scenes in a surprising manner.
+
+           For example:
+           if you have a widget that has a box internally, and
+           when you swallow into that widget the object you swallow ends up in
+           the box, the parent should be the widget, and not the box.
+         ]]
+
+         set {
          }
          get {
-            [[Get the parent of an object]]
          }
          values {
             parent: Eo.Base * @nullable; [[the new parent]]
