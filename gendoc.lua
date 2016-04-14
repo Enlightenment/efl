@@ -324,7 +324,14 @@ local Writer = util.Object:clone {
             if type(v) == "table" then
                 lvl, str = v[1] + 1, v[2]
             end
+            local pbeg, pend = str:match("([^\n]+)\n(.+)")
+            if not pbeg then
+                pbeg = str
+            end
             self:write_raw(("  "):rep(lvl), prec, " ", str, "\n")
+            if pend then
+                self:write_raw(pend, "\n")
+            end
         end
         return self
     end,
@@ -782,6 +789,27 @@ local build_classes = function()
     end
 end
 
+local pdir_to_str = {
+    [eolian.parameter_dir.IN] = "(in)",
+    [eolian.parameter_dir.OUT] = "(out)",
+    [eolian.parameter_dir.INOUT] = "(inout)"
+}
+
+local build_parlist = function(f, pl, nodir)
+    local params = {}
+    for i, p in ipairs(pl) do
+        local buf = Buffer()
+        buf:write_b(p:name_get())
+        if not nodir then
+            buf:write_raw(" ")
+            buf:write_i(pdir_to_str[p:direction_get()])
+        end
+        buf:write_raw(" - ", get_full_doc(p:documentation_get()))
+        params[#params + 1] = buf:finish()
+    end
+    f:write_list(params)
+end
+
 build_method = function(fn, cl)
     local f = Writer(gen_nsp_func(fn, cl))
 
@@ -790,6 +818,9 @@ build_method = function(fn, cl)
     f:write_h("C signature", 3)
     f:write_code(gen_func_csig(fn), "c")
     f:write_nl()
+
+    f:write_h("Parameters", 3)
+    build_parlist(f, fn:parameters_get():to_array())
 
     f:write_h("Description", 3)
     write_full_doc(f, fn:documentation_get(eolian.function_type.METHOD))
@@ -821,6 +852,43 @@ build_property = function(fn, cl)
     end
     f:write_code(table.concat(codes, "\n"), "c")
     f:write_nl()
+
+    local pgkeys = isget and fn:property_keys_get(fts.PROP_GET):to_array() or {}
+    local pskeys = isset and fn:property_keys_get(fts.PROP_SET):to_array() or {}
+    local pgvals = isget and fn:property_values_get(fts.PROP_GET):to_array() or {}
+    local psvals = isset and fn:property_values_get(fts.PROP_SET):to_array() or {}
+
+    if #pgkeys > 0 or #pskeys > 0 then
+        f:write_h("Keys", 3)
+        if #pgkeys > 0 then
+            if #pskeys > 0 then
+                f:write_h("Getter", 4)
+            end
+            build_parlist(f, pgkeys, true)
+        end
+        if #pskeys > 0 then
+            if #pgkeys > 0 then
+                f:write_h("Setter", 4)
+            end
+            build_parlist(f, pskeys, true)
+        end
+    end
+
+    if #pgvals > 0 or #psvals > 0 then
+        f:write_h("Values", 3)
+        if #pgvals > 0 then
+            if #psvals > 0 then
+                f:write_h("Getter", 4)
+            end
+            build_parlist(f, pgvals, true)
+        end
+        if #psvals > 0 then
+            if #pgvals > 0 then
+                f:write_h("Setter", 4)
+            end
+            build_parlist(f, psvals, true)
+        end
+    end
 
     if isget and isset then
         f:write_h("Description", 3)
