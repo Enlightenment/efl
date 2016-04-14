@@ -314,7 +314,7 @@ enum Evas.Canvas3D.State
    mesh_vertex_data,
    mesh_index_data,
    mesh_vertex_assembly,
-   mesh_shade_mode,
+   mesh_shader_mode,
    mesh_fog,
    mesh_blending,
    mesh_alpha_test,
@@ -339,7 +339,7 @@ enum Evas.Canvas3D.State
    node_mesh_geometry,
    node_mesh_material,
    node_mesh_frame,
-   node_mesh_shade_mode,
+   node_mesh_shader_mode,
    node_mesh_material_id,
    node_light,
    node_camera,
@@ -483,7 +483,7 @@ enum Evas.Canvas3D.Primitive_Mode
    alternative_uv [[Ptimitive with alternative uv (supported for sphere)]]
 }
 
-enum Evas.Canvas3D.Shade_Mode
+enum Evas.Canvas3D.Shader_Mode
 {
    [[Shader shade modes
 

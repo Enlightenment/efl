@@ -329,13 +329,13 @@ _mesh_setup(Scene_Data *data)
    data->mesh_aabb = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
    evas_canvas3d_mesh_from_primitive_set(data->mesh_aabb, 0, data->cube);
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_aabb, EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_aabb, EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_aabb, EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
    evas_canvas3d_mesh_frame_material_set(data->mesh_aabb, 0, data->material);
 
    data->mesh_sphere = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
    evas_canvas3d_mesh_from_primitive_set(data->mesh_sphere, 0, data->sphere);
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_sphere, EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_sphere, EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_sphere, EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
    evas_canvas3d_mesh_frame_material_set(data->mesh_sphere, 0, data->material);
 
    data->mesh_node =
@@ -368,7 +368,7 @@ _mesh_setup_model(Scene_Data *data)
 
    efl_file_set(data->mesh_model, mesh_path, NULL);
    evas_canvas3d_mesh_frame_material_set(data->mesh_model, 0, data->material_model);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_model, EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_model, EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
 }
 
 static void

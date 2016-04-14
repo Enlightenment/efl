@@ -327,7 +327,7 @@ e3d_renderer_draw(E3D_Renderer *renderer, E3D_Draw_Data *data)
 
    EINA_LIST_FOREACH(renderer->programs, l, p)
      {
-        if (e3d_program_shade_mode_get(p) == data->mode &&
+        if (e3d_program_shader_mode_get(p) == data->mode &&
             e3d_program_shader_flags_get(p) == data->flags)
           {
              program = p;

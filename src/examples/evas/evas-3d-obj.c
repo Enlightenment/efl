@@ -48,7 +48,7 @@
    snprintf(full_file_path, PATH_MAX, "%s%s", path, ".obj");                      \
    efl_file_set(mesh[num], full_file_path, NULL); \
    evas_canvas3d_mesh_frame_material_set(mesh[num], 0, name_of_material); \
-   evas_canvas3d_mesh_shade_mode_set(mesh[num], shade_mode);                                \
+   evas_canvas3d_mesh_shader_mode_set(mesh[num], shade_mode);                                \
    mesh_node[num] = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));   \
    evas_canvas3d_node_member_add(root_node, mesh_node[num]);                                \
    evas_canvas3d_node_mesh_add(mesh_node[num], mesh[num]); \
@@ -198,13 +198,13 @@ main(void)
              PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES);
 
    ADD_OBJ_MESH_AND_SAVED_COPY(home, -GRID_SIZE, -GRID_SIZE, 0,
-                               EVAS_CANVAS3D_SHADE_MODE_PHONG, material_with_tex)
+                               EVAS_CANVAS3D_SHADER_MODE_PHONG, material_with_tex)
    ADD_OBJ_MESH_AND_SAVED_COPY(home_without_normals, -GRID_SIZE, GRID_SIZE, 1,
-                               EVAS_CANVAS3D_SHADE_MODE_DIFFUSE, material_with_tex)
+                               EVAS_CANVAS3D_SHADER_MODE_DIFFUSE, material_with_tex)
    ADD_OBJ_MESH_AND_SAVED_COPY(home_without_tex_coords, GRID_SIZE, -GRID_SIZE, 2,
-                               EVAS_CANVAS3D_SHADE_MODE_PHONG, material)
+                               EVAS_CANVAS3D_SHADER_MODE_PHONG, material)
    ADD_OBJ_MESH_AND_SAVED_COPY(home_only_vertex_coords, GRID_SIZE, GRID_SIZE, 3,
-                               EVAS_CANVAS3D_SHADE_MODE_SHADOW_MAP_RENDER, NULL)
+                               EVAS_CANVAS3D_SHADER_MODE_SHADOW_MAP_RENDER, NULL)
 
    /* Set up scene. */
    evas_canvas3d_scene_root_node_set(scene, root_node);

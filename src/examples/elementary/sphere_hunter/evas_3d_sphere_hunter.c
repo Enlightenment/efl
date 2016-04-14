@@ -495,7 +495,7 @@ _mesh_cube_setup(Scene_Data *data)
    evas_canvas3d_mesh_frame_vertex_data_set(data->mesh_cube, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, 12 * sizeof(float), &cube_vertices[10]);
    evas_canvas3d_mesh_index_data_set(data->mesh_cube, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, 36, &cube_indices[0]);
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_cube, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_cube, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_cube, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(data->mesh_cube, 0, data->material_cube);
 
 }
@@ -531,7 +531,7 @@ _create_bondar(Scene_Data *data, Evas_Real scale_x, Evas_Real scale_y, Evas_Real
    evas_canvas3d_mesh_frame_vertex_data_set(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, 12 * sizeof(float), &cube_vertices[10]);
    evas_canvas3d_mesh_index_data_set(mesh, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, 36, &cube_indices[0]);
    evas_canvas3d_mesh_vertex_assembly_set(mesh, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
-   evas_canvas3d_mesh_shade_mode_set(mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
 
    evas_canvas3d_node_member_add(data->root_node, node);
@@ -596,7 +596,7 @@ _mesh_ball_setup(Scene_Data *data)
    evas_canvas3d_mesh_frame_vertex_data_set(data->mesh_ball, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, sizeof(vertex), &vertices[0].texcoord);
    evas_canvas3d_mesh_index_data_set(data->mesh_ball, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, index_count, &indices[0]);
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_ball, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_ball, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_ball, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(data->mesh_ball, 0, data->material_ball);
 
    evas_canvas3d_node_member_add(data->root_node, data->mesh_node_ball);

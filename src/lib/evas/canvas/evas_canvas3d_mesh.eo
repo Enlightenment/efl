@@ -236,18 +236,18 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
             @in primitive: Evas.Canvas3D.Primitive *; [[Specifies which data will be set.]]
          }
       }
-      @property shade_mode {
+      @property shader_mode {
          set {
-            [[Set the shade mode of the given mesh.
+            [[Set the shader mode of the given mesh.
 
-              Default shade mode is EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR.
+              Default shader mode is EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR.
             ]]
          }
          get {
-            [[Get the shade mode of the given mesh.]]
+            [[Get the shader mode of the given mesh.]]
          }
          values {
-            mode: Evas.Canvas3D.Shade_Mode; [[The shade mode.]]
+            mode: Evas.Canvas3D.Shader_Mode; [[The shader mode.]]
          }
       }
       @property color_pick_enable {

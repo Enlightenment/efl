@@ -1453,7 +1453,7 @@ struct _Edje_Part_Description_Spec_Mesh_Node
       Edje_Color            specular;
       Eina_Bool             normal;
       FLOAT_T               shininess;
-      Evas_Canvas3D_Shade_Mode    shade;
+      Evas_Canvas3D_Shader_Mode    shade;
 
       Evas_Canvas3D_Material_Attrib material_attrib;
    } properties;

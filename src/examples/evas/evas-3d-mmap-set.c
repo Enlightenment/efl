@@ -35,7 +35,7 @@
    mesh_##extention = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);                               \
    efl_file_mmap_set(mesh_##extention, extention##_file, NULL); \
    evas_canvas3d_mesh_frame_material_set(mesh_##extention, 0, material); \
-   evas_canvas3d_mesh_shade_mode_set(mesh_##extention, EVAS_CANVAS3D_SHADE_MODE_PHONG);                      \
+   evas_canvas3d_mesh_shader_mode_set(mesh_##extention, EVAS_CANVAS3D_SHADER_MODE_PHONG);                      \
    node_##extention = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));          \
    evas_canvas3d_node_member_add(root_node, node_##extention);                       \
    evas_canvas3d_node_mesh_add(node_##extention, mesh_##extention); \

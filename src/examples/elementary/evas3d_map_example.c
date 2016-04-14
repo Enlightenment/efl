@@ -884,7 +884,7 @@ skybox_setup(void)
    skybox_mesh_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_member_add(root_node, skybox_mesh_node);
    evas_canvas3d_node_mesh_add(skybox_mesh_node, skybox_mesh);
-   evas_canvas3d_mesh_shade_mode_set(skybox_mesh, EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);
+   evas_canvas3d_mesh_shader_mode_set(skybox_mesh, EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
 }
 
 static void
@@ -1004,7 +1004,7 @@ mesh_setup(void)
    mesh_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_member_add(root_node, mesh_node);
    evas_canvas3d_node_mesh_add(mesh_node, mesh);
-   evas_canvas3d_mesh_shade_mode_set(mesh, EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP);
+   evas_canvas3d_mesh_shader_mode_set(mesh, EVAS_CANVAS3D_SHADER_MODE_NORMAL_MAP);
 }
 
 static void

@@ -268,7 +268,7 @@ void _init_bounding()
    evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh_box, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, 12 * sizeof(float), &cube_vertices[10]);
    evas_canvas3d_mesh_index_data_copy_set(globalGraphical.mesh_box, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, 36, &cube_indices[0]);
    evas_canvas3d_mesh_vertex_assembly_set(globalGraphical.mesh_box, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
-   evas_canvas3d_mesh_shade_mode_set(globalGraphical.mesh_box, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(globalGraphical.mesh_box, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(globalGraphical.mesh_box, 0, globalGraphical.material_box);
 
    globalGraphical.mesh_nodebox =
@@ -319,13 +319,13 @@ _change_scene_setup()
               evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, sizeof(vertex), &globalGraphical.vertices[0].texcoord);
               evas_canvas3d_mesh_index_data_copy_set(globalGraphical.mesh, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, globalGraphical.index_count, &globalGraphical.indices[0]);
               evas_canvas3d_mesh_vertex_assembly_set(globalGraphical.mesh, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
-              evas_canvas3d_mesh_shade_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+              evas_canvas3d_mesh_shader_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
            }
          else
            {
               efl_file_set(globalGraphical.mesh, globalGraphical.model_path, NULL);
               evas_canvas3d_mesh_frame_material_set(globalGraphical.mesh, 0, globalGraphical.material);
-              evas_canvas3d_mesh_shade_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+              evas_canvas3d_mesh_shader_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
            }
 
          if (globalGraphical.flags.fog_enable)
@@ -456,13 +456,13 @@ _init_scene(Evas_Object *img)
               evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, sizeof(vertex), &globalGraphical.vertices[0].texcoord);
               evas_canvas3d_mesh_index_data_copy_set(globalGraphical.mesh, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, globalGraphical.index_count, &globalGraphical.indices[0]);
               evas_canvas3d_mesh_vertex_assembly_set(globalGraphical.mesh, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
-              evas_canvas3d_mesh_shade_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+              evas_canvas3d_mesh_shader_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
            }
          else
            {
               efl_file_set(globalGraphical.mesh, globalGraphical.model_path, NULL);
               evas_canvas3d_mesh_frame_material_set(globalGraphical.mesh, 0, globalGraphical.material);
-              evas_canvas3d_mesh_shade_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+              evas_canvas3d_mesh_shader_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
            }
          evas_canvas3d_mesh_frame_material_set(globalGraphical.mesh, 0, globalGraphical.material);
          globalGraphical.list_meshes = eina_list_append(globalGraphical.list_meshes, globalGraphical.mesh);

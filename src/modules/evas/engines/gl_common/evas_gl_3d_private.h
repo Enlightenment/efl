@@ -54,7 +54,7 @@ _flags_need_tex_coord(E3D_Shader_Flag flags)
 struct _E3D_Draw_Data
 {
    E3D_Shader_Flag      flags;
-   Evas_Canvas3D_Shade_Mode   mode;
+   Evas_Canvas3D_Shader_Mode   mode;
 
    Eina_Matrix4   matrix_mvp;
    Eina_Matrix4   matrix_mv;
@@ -163,10 +163,10 @@ struct _E3D_Drawable
 void                 e3d_texture_param_update(E3D_Texture *texture);
 
 /* Program */
-E3D_Program         *e3d_program_new(Evas_Canvas3D_Shade_Mode mode, E3D_Shader_Flag flags);
+E3D_Program         *e3d_program_new(Evas_Canvas3D_Shader_Mode mode, E3D_Shader_Flag flags);
 void                 e3d_program_free(E3D_Program *program);
 GLuint               e3d_program_id_get(const E3D_Program *program);
-Evas_Canvas3D_Shade_Mode   e3d_program_shade_mode_get(const E3D_Program *program);
+Evas_Canvas3D_Shader_Mode   e3d_program_shader_mode_get(const E3D_Program *program);
 E3D_Shader_Flag      e3d_program_shader_flags_get(const E3D_Program *program);
 void                 e3d_program_uniform_upload(E3D_Program *program, const E3D_Draw_Data *data);
 

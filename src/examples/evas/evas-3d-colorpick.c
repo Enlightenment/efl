@@ -244,7 +244,7 @@ _init_sphere(void *this, const char *texture)
    evas_canvas3d_primitive_precision_set(sphere->primitive, 50);
    evas_canvas3d_mesh_from_primitive_set(sphere->mesh, 0, sphere->primitive);
    evas_canvas3d_mesh_frame_material_set(sphere->mesh, 0, sphere->material);
-   evas_canvas3d_mesh_shade_mode_set(sphere->mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(sphere->mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
 
    evas_canvas3d_mesh_color_pick_enable_set(sphere->mesh, EINA_TRUE);
 

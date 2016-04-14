@@ -87,7 +87,7 @@ int rr;
    data->mesh_##name = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);                          \
    efl_file_set(data->mesh_##name, model, NULL); \
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_##name, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES); \
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_##name, EVAS_CANVAS3D_SHADE_MODE_##shade); \
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_##name, EVAS_CANVAS3D_SHADER_MODE_##shade); \
    evas_canvas3d_mesh_frame_material_set(data->mesh_##name, 0, data->material);
 
 #define CONVEX_HULL_MESH_INIT(name)                                                              \
@@ -108,7 +108,7 @@ int rr;
    evas_canvas3d_mesh_index_data_copy_set(data->mesh_##name##_ch, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, \
                                      ind->len, &index[0]); \
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_##name##_ch, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES); \
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_##name##_ch, EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR); \
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_##name##_ch, EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR); \
    evas_canvas3d_mesh_frame_material_set(data->mesh_##name##_ch, 0, data->material);                                    \
          free(vert);                                                                             \
          free(ind);
@@ -308,7 +308,7 @@ _mesh_setup(Scene_Data *data)
    data->mesh_sphere = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
    evas_canvas3d_mesh_from_primitive_set(data->mesh_sphere, 0, primitive);
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_sphere, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_sphere, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_sphere, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(data->mesh_sphere, 0, data->material);
 
    /* Setup mesh torus */
@@ -317,7 +317,7 @@ _mesh_setup(Scene_Data *data)
    evas_canvas3d_primitive_precision_set(primitive, 50);
    evas_canvas3d_mesh_from_primitive_set(data->mesh_torus, 0, primitive);
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_torus, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_torus, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_torus, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(data->mesh_torus, 0, data->material);
 
    /* Setup mesh cube */
@@ -326,7 +326,7 @@ _mesh_setup(Scene_Data *data)
    evas_canvas3d_primitive_precision_set(primitive, 50);
    evas_canvas3d_mesh_from_primitive_set(data->mesh_cube, 0, primitive);
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_cube, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_cube, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_cube, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(data->mesh_cube, 0, data->material);
 
    MODEL_MESH_INIT(plain, plain, PHONG)

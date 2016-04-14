@@ -43,14 +43,14 @@ static const char *file_name[8] = {"Normal_UVs_Colors.ply",
                                    "NoNormal_NoUVs_Colors.ply",
                                    "NoNormal_NoUVs_NoColors.ply"};
 
-int draw_mode[8] = {EVAS_CANVAS3D_SHADE_MODE_PHONG,
-                    EVAS_CANVAS3D_SHADE_MODE_PHONG,
-                    EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR,
-                    EVAS_CANVAS3D_SHADE_MODE_SHADOW_MAP_RENDER,
-                    EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR,
-                    EVAS_CANVAS3D_SHADE_MODE_SHADOW_MAP_RENDER,
-                    EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR,
-                    EVAS_CANVAS3D_SHADE_MODE_SHADOW_MAP_RENDER};
+int draw_mode[8] = {EVAS_CANVAS3D_SHADER_MODE_PHONG,
+                    EVAS_CANVAS3D_SHADER_MODE_PHONG,
+                    EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR,
+                    EVAS_CANVAS3D_SHADER_MODE_SHADOW_MAP_RENDER,
+                    EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR,
+                    EVAS_CANVAS3D_SHADER_MODE_SHADOW_MAP_RENDER,
+                    EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR,
+                    EVAS_CANVAS3D_SHADER_MODE_SHADOW_MAP_RENDER};
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
@@ -184,7 +184,7 @@ main(void)
         snprintf(buffer, PATH_MAX, "%s%s", input_template, file_name[i % 8]);
         efl_file_set(mesh[i], buffer, NULL);
         evas_canvas3d_mesh_frame_material_set(mesh[i], 0, material);
-        evas_canvas3d_mesh_shade_mode_set(mesh[i], draw_mode[(i % 8)]);
+        evas_canvas3d_mesh_shader_mode_set(mesh[i], draw_mode[(i % 8)]);
 
         snprintf(buffer, PATH_MAX, "%s%s", output_template, file_name[i % 8]);
         efl_file_save(mesh[i], buffer, NULL, NULL);
@@ -193,7 +193,7 @@ main(void)
           {
              efl_file_set(mesh[i], buffer, NULL);
              evas_canvas3d_mesh_frame_material_set(mesh[i], 0, material);
-             evas_canvas3d_mesh_shade_mode_set(mesh[i], draw_mode[(i % 8)]);
+             evas_canvas3d_mesh_shader_mode_set(mesh[i], draw_mode[(i % 8)]);
           }
 
         mesh_node[i] = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));

@@ -158,7 +158,7 @@ main(void)
 
    evas_canvas3d_node_member_add(root_node, mesh_node);
    evas_canvas3d_node_mesh_add(mesh_node, mesh);
-   evas_canvas3d_mesh_shade_mode_set(mesh, EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);
+   evas_canvas3d_mesh_shader_mode_set(mesh, EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
    evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
 
    /* Set up scene. */

@@ -115,7 +115,7 @@ static void
 _set_ball(Eo *mesh, Eo *sphere, Evas_Canvas3D_Material *material)
 {
    evas_canvas3d_mesh_from_primitive_set(mesh, 0, sphere);
-   evas_canvas3d_mesh_shade_mode_set(mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
 }
 

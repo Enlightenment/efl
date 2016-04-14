@@ -126,7 +126,7 @@ main(void)
 
    efl_file_set(mesh, model_path, NULL);
    evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
-   evas_canvas3d_mesh_shade_mode_set(mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
 
    texture = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
    evas_canvas3d_texture_file_set(texture, image_path, NULL);

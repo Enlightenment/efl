@@ -911,8 +911,8 @@ evas_canvas3d_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
                }
 
              float *tangent_data = (float *)f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT].data;
-             if (!tangent_data && ((mesh_pd->shade_mode == EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP) ||
-                 (mesh_pd->shade_mode == EVAS_CANVAS3D_SHADE_MODE_PARALLAX_OCCLUSION)))
+             if (!tangent_data && ((mesh_pd->shader_mode == EVAS_CANVAS3D_SHADER_MODE_NORMAL_MAP) ||
+                 (mesh_pd->shader_mode == EVAS_CANVAS3D_SHADER_MODE_PARALLAX_OCCLUSION)))
                {
                   index = (unsigned short int *)mesh_pd->indices;
                   tangent_data = (float*) malloc((3 * mesh_pd->vertex_count) * sizeof(float));

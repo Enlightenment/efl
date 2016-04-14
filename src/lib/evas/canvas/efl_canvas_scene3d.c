@@ -113,7 +113,7 @@ _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj,
         scene_data.post_processing = EINA_TRUE;
         scene_data.color_pick_enabled = EINA_FALSE;
         scene_data.render_to_texture = EINA_TRUE;
-        scene_data.post_processing_type = EVAS_CANVAS3D_SHADE_MODE_POST_PROCESSING_FXAA;
+        scene_data.post_processing_type = EVAS_CANVAS3D_SHADER_MODE_POST_PROCESSING_FXAA;
      }
    /* Phase 1 - Update scene graph tree. */
    evas_canvas3d_object_update(scene);

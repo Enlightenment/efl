@@ -1626,7 +1626,7 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
            ed->mesh_node.texture.filter1 = 0;
            ed->mesh_node.texture.filter2 = 0;
 
-           ed->mesh_node.properties.shade = EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR;
+           ed->mesh_node.properties.shade = EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR;
            ed->mesh_node.properties.ambient.r = 50;
            ed->mesh_node.properties.ambient.g = 50;
            ed->mesh_node.properties.ambient.b = 50;
@@ -11088,12 +11088,12 @@ st_collections_group_parts_part_description_properties_shade(void)
    check_arg_count(1);
 
    shade = parse_enum(0,
-                     "VERTEX_COLOR", EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR,
-                     "PARENT", EVAS_CANVAS3D_SHADE_MODE_DIFFUSE,
-                     "WORLD", EVAS_CANVAS3D_SHADE_MODE_FLAT,
-                     "PHONG", EVAS_CANVAS3D_SHADE_MODE_PHONG,
-                     "NORMAL_MAP", EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP,
-                     "RENDER", EVAS_CANVAS3D_SHADE_MODE_SHADOW_MAP_RENDER,
+                     "VERTEX_COLOR", EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR,
+                     "PARENT", EVAS_CANVAS3D_SHADER_MODE_DIFFUSE,
+                     "WORLD", EVAS_CANVAS3D_SHADER_MODE_FLAT,
+                     "PHONG", EVAS_CANVAS3D_SHADER_MODE_PHONG,
+                     "NORMAL_MAP", EVAS_CANVAS3D_SHADER_MODE_NORMAL_MAP,
+                     "RENDER", EVAS_CANVAS3D_SHADER_MODE_SHADOW_MAP_RENDER,
                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)

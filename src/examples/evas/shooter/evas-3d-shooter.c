@@ -735,7 +735,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
    SETUP_MESH_NODE(tommy)
    efl_file_set(data->mesh_tommy, gun_path, NULL);
    efl_file_save(data->mesh_tommy, "try.obj", NULL, NULL);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_tommy, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_tommy, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(data->mesh_tommy, 0, data->material_tommy);
 
    evas_canvas3d_node_scale_set(data->mesh_node_tommy, 1.5, 1.5, 1.5);
@@ -815,7 +815,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
 
    _set_ball(data->mesh_ball, 10);
 
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_ball, EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_ball, EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_ball, EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES);
    evas_canvas3d_mesh_frame_material_set(data->mesh_ball, 0, data->material_ball);
 
@@ -881,9 +881,9 @@ _mesh_setup_column(Scene_Data *data, int index)
    SETUP_MESH_NODE(column[index])
 
    evas_canvas3d_mesh_from_primitive_set(data->mesh_column[index], 0, data->cylinder_primitive);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_column[index], EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_column[index], EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_column[index], EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh_column[index], EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh_column[index], EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(data->mesh_column[index], 0, data->material_column);
 
    data->texture_diffuse_column = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);

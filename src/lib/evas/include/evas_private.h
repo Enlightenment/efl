@@ -363,7 +363,7 @@ struct _Evas_Canvas3D_Mesh_Frame
 
 struct _Evas_Canvas3D_Mesh
 {
-   Evas_Canvas3D_Shade_Mode      shade_mode;
+   Evas_Canvas3D_Shader_Mode      shader_mode;
 
    int                     vertex_count;
    int                     frame_count;
@@ -460,7 +460,7 @@ struct _Evas_Canvas3D_Scene_Public_Data
    unsigned int     lod_distance;
 
    Eina_Bool post_processing :1;
-   Evas_Canvas3D_Shade_Mode post_processing_type;
+   Evas_Canvas3D_Shader_Mode post_processing_type;
 };
 
 struct _Evas_Canvas3D_Pick_Data

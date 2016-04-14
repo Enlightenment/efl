@@ -994,7 +994,7 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
    data->blending = pdmesh->blending;
    data->blend_sfactor = pdmesh->blend_sfactor;
    data->blend_dfactor = pdmesh->blend_dfactor;
-   data->mode = pdmesh->shade_mode;
+   data->mode = pdmesh->shader_mode;
    data->assembly = pdmesh->assembly;
    data->vertex_count = pdmesh->vertex_count;
    data->index_count = pdmesh->index_count;
@@ -1018,12 +1018,12 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
           }                                                                   \
    } while (0)
 
-   if (pdmesh->shade_mode == EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR)
+   if (pdmesh->shader_mode == EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR)
      {
         BUILD(vertex_attrib,     VERTEX_ATTRIB_POSITION,     EINA_TRUE);
         BUILD(vertex_attrib,     VERTEX_ATTRIB_COLOR,        EINA_TRUE);
      }
-   else if (pdmesh->shade_mode == EVAS_CANVAS3D_SHADE_MODE_SHADOW_MAP_RENDER)
+   else if (pdmesh->shader_mode == EVAS_CANVAS3D_SHADER_MODE_SHADOW_MAP_RENDER)
      {
         BUILD(vertex_attrib,     VERTEX_ATTRIB_POSITION,     EINA_TRUE);
         if (pdmesh->alpha_test_enabled)
@@ -1034,11 +1034,11 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
                BUILD(vertex_attrib,     VERTEX_ATTRIB_TEXCOORD,     EINA_FALSE);
           }
      }
-   else if (pdmesh->shade_mode == EVAS_CANVAS3D_SHADE_MODE_COLOR_PICK)
+   else if (pdmesh->shader_mode == EVAS_CANVAS3D_SHADER_MODE_COLOR_PICK)
      {
         BUILD(vertex_attrib,     VERTEX_ATTRIB_POSITION,     EINA_TRUE);
      }
-   else if (pdmesh->shade_mode == EVAS_CANVAS3D_SHADE_MODE_DIFFUSE)
+   else if (pdmesh->shader_mode == EVAS_CANVAS3D_SHADER_MODE_DIFFUSE)
      {
         BUILD(vertex_attrib,     VERTEX_ATTRIB_POSITION,     EINA_TRUE);
         BUILD(material_color,    MATERIAL_ATTRIB_DIFFUSE,    EINA_TRUE);
@@ -1047,7 +1047,7 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         if (_flags_need_tex_coord(data->flags))
           BUILD(vertex_attrib,     VERTEX_ATTRIB_TEXCOORD,     EINA_FALSE);
      }
-   else if (pdmesh->shade_mode == EVAS_CANVAS3D_SHADE_MODE_FLAT)
+   else if (pdmesh->shader_mode == EVAS_CANVAS3D_SHADER_MODE_FLAT)
      {
         BUILD(vertex_attrib,     VERTEX_ATTRIB_POSITION,     EINA_TRUE);
         BUILD(vertex_attrib,     VERTEX_ATTRIB_NORMAL,       EINA_TRUE);
@@ -1068,7 +1068,7 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         if (_flags_need_tex_coord(data->flags))
           BUILD(vertex_attrib,     VERTEX_ATTRIB_TEXCOORD,     EINA_FALSE);
      }
-   else if (pdmesh->shade_mode == EVAS_CANVAS3D_SHADE_MODE_PHONG)
+   else if (pdmesh->shader_mode == EVAS_CANVAS3D_SHADER_MODE_PHONG)
      {
         BUILD(vertex_attrib,     VERTEX_ATTRIB_POSITION,     EINA_TRUE);
         BUILD(vertex_attrib,     VERTEX_ATTRIB_NORMAL,       EINA_TRUE);
@@ -1089,8 +1089,8 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         if (_flags_need_tex_coord(data->flags))
           BUILD(vertex_attrib,     VERTEX_ATTRIB_TEXCOORD,     EINA_FALSE);
      }
-   else if ((pdmesh->shade_mode == EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP) ||
-            (pdmesh->shade_mode == EVAS_CANVAS3D_SHADE_MODE_PARALLAX_OCCLUSION))
+   else if ((pdmesh->shader_mode == EVAS_CANVAS3D_SHADER_MODE_NORMAL_MAP) ||
+            (pdmesh->shader_mode == EVAS_CANVAS3D_SHADER_MODE_PARALLAX_OCCLUSION))
      {
         BUILD(vertex_attrib,     VERTEX_ATTRIB_POSITION,     EINA_TRUE);
         BUILD(vertex_attrib,     VERTEX_ATTRIB_NORMAL,       EINA_TRUE);
@@ -1099,7 +1099,7 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         BUILD(vertex_attrib,     VERTEX_ATTRIB_TANGENT,      EINA_FALSE);
 
 
-        if (pdmesh->shade_mode == EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP)
+        if (pdmesh->shader_mode == EVAS_CANVAS3D_SHADER_MODE_NORMAL_MAP)
           BUILD(vertex_attrib,     VERTEX_ATTRIB_TANGENT,      EINA_FALSE);
         else BUILD(vertex_attrib,     VERTEX_ATTRIB_TANGENT,      EINA_TRUE);
 
@@ -1156,7 +1156,7 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer,
 {
    Eina_List        *l;
    Evas_Canvas3D_Node     *n;
-   Evas_Canvas3D_Shade_Mode shade_mode;
+   Evas_Canvas3D_Shader_Mode shader_mode;
    Eina_Bool       blend_enabled;
    Evas_Color      c = {1.0, 1.0, 1.0, 1.0};
    Eina_Matrix4 matrix_vp;
@@ -1185,13 +1185,13 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer,
           {
              RENDER_MESH_NODE_ITERATE_BEGIN(light_eye)
                {
-                  shade_mode = pdmesh->shade_mode;
+                  shader_mode = pdmesh->shader_mode;
                   blend_enabled = pdmesh->blending;
                   pdmesh->blending = EINA_FALSE;
-                  pdmesh->shade_mode = EVAS_CANVAS3D_SHADE_MODE_SHADOW_MAP_RENDER;
+                  pdmesh->shader_mode = EVAS_CANVAS3D_SHADER_MODE_SHADOW_MAP_RENDER;
                   _mesh_draw(renderer, nm->mesh, nm->frame, light, matrix_light_eye,
                              &matrix_mv, &matrix_mvp, &matrix_mvp);
-                  pdmesh->shade_mode = shade_mode;
+                  pdmesh->shader_mode = shader_mode;
                   pdmesh->blending = blend_enabled;
                }
              RENDER_MESH_NODE_ITERATE_END
@@ -1351,7 +1351,7 @@ e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *rende
                                      Evas_Canvas3D_Scene_Public_Data *data)
 {
    const Eina_Matrix4  *matrix_eye;
-   Evas_Canvas3D_Shade_Mode shade_mode;
+   Evas_Canvas3D_Shader_Mode shader_mode;
    Eina_Stringshare *tmp;
    Eina_Iterator *itmn;
    void *ptrmn;
@@ -1398,11 +1398,11 @@ e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *rende
                              pdmesh->color_pick_key.r = unic_color->r;
                              pdmesh->color_pick_key.g = unic_color->g;
                              pdmesh->color_pick_key.b = unic_color->b;
-                             shade_mode = pdmesh->shade_mode;
-                             pdmesh->shade_mode = EVAS_CANVAS3D_SHADE_MODE_COLOR_PICK;
+                             shader_mode = pdmesh->shader_mode;
+                             pdmesh->shader_mode = EVAS_CANVAS3D_SHADER_MODE_COLOR_PICK;
                              _mesh_draw(renderer, nm->mesh, nm->frame, NULL, matrix_eye, &matrix_mv,
                                         &matrix_mvp, NULL);
-                             pdmesh->shade_mode = shade_mode;
+                             pdmesh->shader_mode = shader_mode;
                           }
                         eina_stringshare_del(tmp);
                      }

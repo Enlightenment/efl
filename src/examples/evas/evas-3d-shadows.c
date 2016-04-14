@@ -87,7 +87,7 @@ _cb_clicked(void *data EINA_UNUSED, const Eo_Event *event)
    meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get((Evas_Canvas3D_Node *)event->info);
    EINA_LIST_FOREACH(meshes, l, m)
      {
-        evas_canvas3d_mesh_shade_mode_set(m, EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);
+        evas_canvas3d_mesh_shader_mode_set(m, EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
      }
    if (choosed_node != (Evas_Canvas3D_Node *)event->info)
      {
@@ -97,7 +97,7 @@ _cb_clicked(void *data EINA_UNUSED, const Eo_Event *event)
              meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get(choosed_node);
              EINA_LIST_FOREACH(meshes, l, m)
                {
-                  evas_canvas3d_mesh_shade_mode_set(m, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+                  evas_canvas3d_mesh_shader_mode_set(m, EVAS_CANVAS3D_SHADER_MODE_PHONG);
                }
           }
         choosed_node = (Evas_Canvas3D_Node *)event->info;
@@ -114,7 +114,7 @@ _cb_collision(void *data EINA_UNUSED, const Eo_Event *event)
    meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get((Evas_Canvas3D_Node *)event->info);
    EINA_LIST_FOREACH(meshes, l, m)
      {
-        evas_canvas3d_mesh_shade_mode_set(m, EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);
+        evas_canvas3d_mesh_shader_mode_set(m, EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
      }
 
    return EINA_TRUE;
@@ -184,7 +184,7 @@ _body_material_set(Body_3D *body, float r, float g, float b)
    evas_canvas3d_material_color_set(body->material, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0);
    evas_canvas3d_material_shininess_set(body->material, 100.0);
 
-   evas_canvas3d_mesh_shade_mode_set(body->mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(body->mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(body->mesh, 0, body->material);
 }
 
@@ -282,7 +282,7 @@ _fence_setup(Body_3D *fence)
    evas_canvas3d_mesh_frame_material_set(fence->mesh, 0, fence->material);
    evas_canvas3d_mesh_alpha_func_set(fence->mesh, EVAS_CANVAS3D_COMPARISON_GREATER, 0);
    evas_canvas3d_mesh_alpha_test_enable_set(fence->mesh, EINA_TRUE);
-   evas_canvas3d_mesh_shade_mode_set(fence->mesh, EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP);
+   evas_canvas3d_mesh_shader_mode_set(fence->mesh, EVAS_CANVAS3D_SHADER_MODE_NORMAL_MAP);
    fence->node =
       eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
    evas_canvas3d_node_mesh_add(fence->node, fence->mesh);
@@ -346,7 +346,7 @@ _model_setup(Body_3D *model)
    model->mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
    efl_file_set(model->mesh, model_path, NULL);
    evas_canvas3d_mesh_frame_material_set(model->mesh, 0, model->material);
-   evas_canvas3d_mesh_shade_mode_set(model->mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(model->mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
 
    model->node =
       eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
@@ -376,7 +376,7 @@ _billboard_setup(Scene_Data *data)
    evas_canvas3d_mesh_frame_material_set(data->billboard.mesh, 0, data->billboard.material);
    evas_canvas3d_mesh_alpha_func_set(data->billboard.mesh, EVAS_CANVAS3D_COMPARISON_GREATER, 0);
    evas_canvas3d_mesh_alpha_test_enable_set(data->billboard.mesh, EINA_TRUE);
-   evas_canvas3d_mesh_shade_mode_set(data->billboard.mesh, EVAS_CANVAS3D_SHADE_MODE_DIFFUSE);
+   evas_canvas3d_mesh_shader_mode_set(data->billboard.mesh, EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
    evas_canvas3d_mesh_blending_enable_set(data->billboard.mesh, EINA_TRUE);
    evas_canvas3d_mesh_blending_func_set(data->billboard.mesh, EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA, EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA);
 
@@ -548,27 +548,27 @@ static void _init(Scene_Data *data)
    meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get(data->sphere.node);
    EINA_LIST_FOREACH(meshes, l, m)
      {
-        evas_canvas3d_mesh_shade_mode_set(m, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+        evas_canvas3d_mesh_shader_mode_set(m, EVAS_CANVAS3D_SHADER_MODE_PHONG);
      }
    meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get(data->cube.node);
    EINA_LIST_FOREACH(meshes, l, m)
      {
-        evas_canvas3d_mesh_shade_mode_set(m, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+        evas_canvas3d_mesh_shader_mode_set(m, EVAS_CANVAS3D_SHADER_MODE_PHONG);
      }
    meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get(data->cylinder.node);
    EINA_LIST_FOREACH(meshes, l, m)
      {
-        evas_canvas3d_mesh_shade_mode_set(m, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+        evas_canvas3d_mesh_shader_mode_set(m, EVAS_CANVAS3D_SHADER_MODE_PHONG);
      }
    meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get(data->model.node);
    EINA_LIST_FOREACH(meshes, l, m)
      {
-        evas_canvas3d_mesh_shade_mode_set(m, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+        evas_canvas3d_mesh_shader_mode_set(m, EVAS_CANVAS3D_SHADER_MODE_PHONG);
      }
    meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get(data->cone.node);
    EINA_LIST_FOREACH(meshes, l, m)
      {
-        evas_canvas3d_mesh_shade_mode_set(m, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+        evas_canvas3d_mesh_shader_mode_set(m, EVAS_CANVAS3D_SHADER_MODE_PHONG);
      }
 }
 

@@ -278,19 +278,19 @@ _evas_canvas3d_mesh_eo_base_destructor(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
 }
 
 EOLIAN static void
-_evas_canvas3d_mesh_shade_mode_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, Evas_Canvas3D_Shade_Mode mode)
+_evas_canvas3d_mesh_shader_mode_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, Evas_Canvas3D_Shader_Mode mode)
 {
-   if (pd->shade_mode != mode)
+   if (pd->shader_mode != mode)
      {
-        pd->shade_mode = mode;
-        evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_MESH_SHADE_MODE, NULL);
+        pd->shader_mode = mode;
+        evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_MESH_SHADER_MODE, NULL);
      }
 }
 
-EOLIAN static Evas_Canvas3D_Shade_Mode
-_evas_canvas3d_mesh_shade_mode_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+EOLIAN static Evas_Canvas3D_Shader_Mode
+_evas_canvas3d_mesh_shader_mode_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
-   return pd->shade_mode;
+   return pd->shader_mode;
 }
 
 EOLIAN static void

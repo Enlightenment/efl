@@ -14,7 +14,7 @@ evas_canvas3d_scene_data_init(Evas_Canvas3D_Scene_Public_Data *data)
    data->render_to_texture = EINA_FALSE;
    data->lod_distance = 0;
    data->post_processing = EINA_FALSE;
-   data->post_processing_type = EVAS_CANVAS3D_SHADE_MODE_POST_PROCESSING_FXAA;
+   data->post_processing_type = EVAS_CANVAS3D_SHADER_MODE_POST_PROCESSING_FXAA;
 }
 
 void

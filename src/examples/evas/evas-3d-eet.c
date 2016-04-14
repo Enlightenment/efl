@@ -149,7 +149,7 @@ main(void)
 
    efl_file_set(mesh, input_model_path, NULL);
    evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
-   evas_canvas3d_mesh_shade_mode_set(mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
 
    evas_canvas3d_material_enable_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE);
    evas_canvas3d_material_enable_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE);
@@ -167,7 +167,7 @@ main(void)
    efl_file_save(mesh, output_model_path, NULL, NULL);
 
    efl_file_set(mesh2, output_model_path, NULL);
-   evas_canvas3d_mesh_shade_mode_set(mesh2, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(mesh2, EVAS_CANVAS3D_SHADER_MODE_PHONG);
 
    mesh_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));
 

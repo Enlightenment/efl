@@ -173,7 +173,7 @@ main(void)
 
    efl_file_set(mesh, model_path, NULL);
    evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
-   evas_canvas3d_mesh_shade_mode_set(mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
 
    texture = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
    evas_canvas3d_texture_file_set(texture, image_path, NULL);
@@ -201,7 +201,7 @@ main(void)
    mesh_box = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
    evas_canvas3d_mesh_from_primitive_set(mesh_box, 0, cube);
    evas_canvas3d_mesh_vertex_assembly_set(mesh_box, EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES);
-   evas_canvas3d_mesh_shade_mode_set(mesh_box, EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR);
+   evas_canvas3d_mesh_shader_mode_set(mesh_box, EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR);
    evas_canvas3d_mesh_frame_material_set(mesh_box, 0, material_box);
     _redraw_aabb();
 

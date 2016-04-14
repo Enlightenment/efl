@@ -123,7 +123,7 @@ struct _E3D_Program
    GLuint               prog;
 
    E3D_Shader_Flag      flags;
-   Evas_Canvas3D_Shade_Mode   mode;
+   Evas_Canvas3D_Shader_Mode   mode;
 
    GLint                uniform_locations[E3D_UNIFORM_COUNT];
 };
@@ -665,7 +665,7 @@ e3d_program_uniform_upload(E3D_Program *program, const E3D_Draw_Data *data)
 }
 
 E3D_Program *
-e3d_program_new(Evas_Canvas3D_Shade_Mode mode, E3D_Shader_Flag flags)
+e3d_program_new(Evas_Canvas3D_Shader_Mode mode, E3D_Shader_Flag flags)
 {
    E3D_Shader_String vert, frag;
    E3D_Program *program = NULL;
@@ -737,8 +737,8 @@ e3d_program_id_get(const E3D_Program *program)
    return program->prog;
 }
 
-Evas_Canvas3D_Shade_Mode
-e3d_program_shade_mode_get(const E3D_Program *program)
+Evas_Canvas3D_Shader_Mode
+e3d_program_shader_mode_get(const E3D_Program *program)
 {
    return program->mode;
 }

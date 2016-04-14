@@ -185,7 +185,7 @@ _mesh_setup(Scene_Data *data)
    evas_canvas3d_mesh_frame_material_set(data->mesh, 0, data->material0);
    evas_canvas3d_mesh_frame_add(data->mesh, 20);
    evas_canvas3d_mesh_frame_material_set(data->mesh, 20, data->material1);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh, EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh, EVAS_CANVAS3D_SHADER_MODE_NORMAL_MAP);
 
    data->mesh_node =
       eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_MESH));

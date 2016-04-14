@@ -171,7 +171,7 @@ _mesh_setup(Scene_Data *data)
    evas_canvas3d_mesh_frame_vertex_data_set(data->mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, 12 * sizeof(float), &cube_vertices[10]);
    evas_canvas3d_mesh_index_data_set(data->mesh, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, 36, &cube_indices[0]);
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(data->mesh, 0, data->material);
 
    data->mesh_node =

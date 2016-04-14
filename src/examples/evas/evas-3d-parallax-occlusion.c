@@ -62,10 +62,10 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void 
    Evas_Event_Key_Down *ev = event_info;
 
    if (!strcmp("n", ev->key))
-     evas_canvas3d_mesh_shade_mode_set(scene->mesh, EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP);
+     evas_canvas3d_mesh_shader_mode_set(scene->mesh, EVAS_CANVAS3D_SHADER_MODE_NORMAL_MAP);
 
    if (!strcmp("p", ev->key))
-     evas_canvas3d_mesh_shade_mode_set(scene->mesh, EVAS_CANVAS3D_SHADE_MODE_PARALLAX_OCCLUSION);
+     evas_canvas3d_mesh_shader_mode_set(scene->mesh, EVAS_CANVAS3D_SHADER_MODE_PARALLAX_OCCLUSION);
 }
 
 static void
@@ -186,7 +186,7 @@ _mesh_setup(Scene_Data *data)
    data->mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
    evas_canvas3d_mesh_from_primitive_set(data->mesh, 0, data->cube);
    evas_canvas3d_mesh_from_primitive_set(data->mesh, 100, data->cube);
-   evas_canvas3d_mesh_shade_mode_set(data->mesh, EVAS_CANVAS3D_SHADE_MODE_PARALLAX_OCCLUSION);
+   evas_canvas3d_mesh_shader_mode_set(data->mesh, EVAS_CANVAS3D_SHADER_MODE_PARALLAX_OCCLUSION);
    evas_canvas3d_mesh_frame_material_set(data->mesh, 0, data->material_rocks);
 
    evas_canvas3d_mesh_frame_material_set(data->mesh, 100, data->material_wood);
