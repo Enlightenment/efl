@@ -445,7 +445,7 @@ _elm_code_widget_line_cb(void *data, const Eo_Event *event)
    Elm_Code_Widget *widget;
    Eina_Bool visible;
 
-   line = (Elm_Code_Line *)event->event_info;
+   line = (Elm_Code_Line *)event->info;
    widget = (Elm_Code_Widget *)data;
 
    visible = elm_obj_code_widget_line_visible_get(widget, line);
