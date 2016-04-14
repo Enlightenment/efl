@@ -810,6 +810,34 @@ local build_parlist = function(f, pl, nodir)
     f:write_list(params)
 end
 
+local build_vallist = function(f, pg, ps, title)
+    if #pg == #ps then
+        local same = true
+        for i = 1, #pg do
+            if pg[i] ~= ps[i] then
+                same = false
+                break
+            end
+        end
+        if same then ps = {} end
+    end
+    if #pg > 0 or #ps > 0 then
+        f:write_h(title, 3)
+        if #pg > 0 then
+            if #ps > 0 then
+                f:write_h("Getter", 4)
+            end
+            build_parlist(f, pg, true)
+        end
+        if #ps > 0 then
+            if #pg > 0 then
+                f:write_h("Setter", 4)
+            end
+            build_parlist(f, ps, true)
+        end
+    end
+end
+
 build_method = function(fn, cl)
     local f = Writer(gen_nsp_func(fn, cl))
 
@@ -855,40 +883,11 @@ build_property = function(fn, cl)
 
     local pgkeys = isget and fn:property_keys_get(fts.PROP_GET):to_array() or {}
     local pskeys = isset and fn:property_keys_get(fts.PROP_SET):to_array() or {}
+    build_vallist(f, pgkeys, pskeys, "Keys")
+
     local pgvals = isget and fn:property_values_get(fts.PROP_GET):to_array() or {}
     local psvals = isset and fn:property_values_get(fts.PROP_SET):to_array() or {}
-
-    if #pgkeys > 0 or #pskeys > 0 then
-        f:write_h("Keys", 3)
-        if #pgkeys > 0 then
-            if #pskeys > 0 then
-                f:write_h("Getter", 4)
-            end
-            build_parlist(f, pgkeys, true)
-        end
-        if #pskeys > 0 then
-            if #pgkeys > 0 then
-                f:write_h("Setter", 4)
-            end
-            build_parlist(f, pskeys, true)
-        end
-    end
-
-    if #pgvals > 0 or #psvals > 0 then
-        f:write_h("Values", 3)
-        if #pgvals > 0 then
-            if #psvals > 0 then
-                f:write_h("Getter", 4)
-            end
-            build_parlist(f, pgvals, true)
-        end
-        if #psvals > 0 then
-            if #pgvals > 0 then
-                f:write_h("Setter", 4)
-            end
-            build_parlist(f, psvals, true)
-        end
-    end
+    build_vallist(f, pgvals, psvals, "Values")
 
     if isget and isset then
         f:write_h("Description", 3)
