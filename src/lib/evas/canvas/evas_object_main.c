@@ -1,3 +1,5 @@
+#define EVAS_OBJECT_PROTECTED
+
 #include "evas_common_private.h"
 #include "evas_private.h"
 
@@ -2065,7 +2067,7 @@ _evas_object_is_frame_object_get(Eo *eo_obj  EINA_UNUSED, Evas_Object_Protected_
 }
 
 EOLIAN static Evas_Object *
-_evas_object_smart_parent_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_evas_object_render_parent_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if (!obj) return NULL;
    return obj->smart.parent;
