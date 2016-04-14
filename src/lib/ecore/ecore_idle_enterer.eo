@@ -12,16 +12,16 @@ class Ecore.Idle.Enterer (Eo.Base)
          [[This constructor will insert the handler at the beginning of the list.]]
          legacy: null;
          params {
-            @in func: Ecore_Task_Cb;
-            @in data: const(void)*;
+            @in func: Ecore_Task_Cb; [[Idle enterer callback function.]]
+            @in data: const(void)*; [[Private data passed to callback functions.]]
          }
       }
       after_constructor {
          [[This constructor will insert the handler at the end of the list.]]
          legacy: null;
          params {
-            @in func: Ecore_Task_Cb;
-            @in data: const(void)*;
+            @in func: Ecore_Task_Cb; [[Idle enterer callback function.]]
+            @in data: const(void)*; [[Private data passed to callback functions.]]
          }
       }
    }

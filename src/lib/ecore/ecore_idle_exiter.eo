@@ -10,8 +10,8 @@ class Ecore.Idle.Exiter (Eo.Base)
          [[Constructor.]]
          legacy: null;
          params {
-            @in func: Ecore_Task_Cb;
-            @in data: const(void)*;
+            @in func: Ecore_Task_Cb; [[Idle exiter callback function.]]
+            @in data: const(void)*; [[Private data passed to callback functions.]]
          }
       }
    }
