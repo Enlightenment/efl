@@ -407,7 +407,6 @@ _evas_shm_surface_destroy(Surface *surface)
      _shm_leaf_destroy(&surface->surf.shm->leaf[i]);
 
    free(surface->surf.shm);
-   free(surface);
 }
 
 void 
@@ -568,28 +567,25 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
    surf->current = NULL;
 }
 
-Surface *
-_evas_shm_surface_create(Evas_Engine_Info_Wayland_Shm *info, int w, int h, int num_buff)
+Eina_Bool
+_evas_shm_surface_create(Surface *s, int w, int h, int num_buff)
 {
-   Surface *s;
    Shm_Surface *surf;
    int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(s = calloc(1, sizeof(Surface)))) return NULL;
-   if (!(s->surf.shm = calloc(1, sizeof(Shm_Surface)))) goto err;
-   s->type = SURFACE_SHM;
+   if (!(s->surf.shm = calloc(1, sizeof(Shm_Surface)))) return EINA_FALSE;
    surf = s->surf.shm;
 
    surf->w = w;
    surf->h = h;
-   surf->disp = info->info.wl_disp;
-   surf->shm = info->info.wl_shm;
-   surf->surface = info->info.wl_surface;
+   surf->disp = s->info->info.wl_disp;
+   surf->shm = s->info->info.wl_shm;
+   surf->surface = s->info->info.wl_surface;
    surf->num_buff = num_buff;
-   surf->alpha = info->info.destination_alpha;
-   surf->compositor_version = info->info.compositor_version;
+   surf->alpha = s->info->info.destination_alpha;
+   surf->compositor_version = s->info->info.compositor_version;
 
    /* create surface buffers */
    for (; i < surf->num_buff; i++)
@@ -601,15 +597,16 @@ _evas_shm_surface_create(Evas_Engine_Info_Wayland_Shm *info, int w, int h, int n
           }
      }
 
+   s->type = SURFACE_SHM;
    s->funcs.destroy = _evas_shm_surface_destroy;
    s->funcs.reconfigure = _evas_shm_surface_reconfigure;
    s->funcs.data_get = _evas_shm_surface_data_get;
    s->funcs.assign = _evas_shm_surface_assign;
    s->funcs.post = _evas_shm_surface_post;
 
-   return s;
+   return EINA_TRUE;
 
 err:
    _evas_shm_surface_destroy(s);
-   return NULL;
+   return EINA_FALSE;
 }

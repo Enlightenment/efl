@@ -9,6 +9,30 @@
 #define GREEN_MASK 0x00ff00
 #define BLUE_MASK 0x0000ff
 
+Eina_Bool
+_evas_surface_init(Surface *s, int w, int h, int num_buf)
+{
+   if (_evas_shm_surface_create(s, w, h, num_buf)) return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+static Surface *
+_evas_surface_create(Evas_Engine_Info_Wayland_Shm *info, int w, int h, int num_buf)
+{
+   Surface *out;
+
+   out = calloc(1, sizeof(*out));
+   if (!out) return NULL;
+   out->type = SURFACE_EMPTY;
+   out->info = info;
+
+   if (_evas_surface_init(out, w, h, num_buf)) return out;
+
+   free(out);
+   return NULL;
+}
+
 Outbuf *
 _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info)
 {
@@ -57,7 +81,7 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info)
      }
    else goto unhandled_rotation;
 
-   ob->surface = _evas_shm_surface_create(info, sw, sh, ob->num_buff);
+   ob->surface = _evas_surface_create(info, sw, sh, ob->num_buff);
    if (!ob->surface) goto surf_err;
 
 unhandled_rotation:

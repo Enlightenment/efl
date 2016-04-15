@@ -76,6 +76,7 @@ typedef struct _Shm_Surface Shm_Surface;
 
 typedef enum _Surface_Type Surface_Type;
 enum _Surface_Type {
+   SURFACE_EMPTY,
    SURFACE_SHM
 };
 
@@ -86,6 +87,7 @@ struct _Surface
    union {
       Shm_Surface *shm;
    } surf;
+   Evas_Engine_Info_Wayland_Shm *info;
    struct
      {
         void (*destroy)(Surface *surface);
@@ -125,7 +127,7 @@ struct _Outbuf
      } priv;
 };
 
-Surface *_evas_shm_surface_create(Evas_Engine_Info_Wayland_Shm *info, int w, int h, int num_buff);
+Eina_Bool _evas_shm_surface_create(Surface *s, int w, int h, int num_buff);
 
 Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info);
 void _evas_outbuf_free(Outbuf *ob);
@@ -139,5 +141,7 @@ void *_evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int
 void _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void _evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
 void _evas_surface_damage(struct wl_surface *s, int compositor_version, int w, int h, Eina_Rectangle *rects, unsigned int count);
+
+Eina_Bool _evas_surface_init(Surface *s, int w, int h, int num_buf);
 
 #endif
