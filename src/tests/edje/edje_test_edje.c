@@ -49,16 +49,6 @@ test_layout_get(const char *name)
 
    snprintf(filename, PATH_MAX, TESTS_BUILD_DIR"/data/%s", name);
 
-   static int is_local = -1;
-   if (is_local == -1)
-     {
-        struct stat st;
-        is_local = (stat(filename, &st) == 0);
-     }
-
-   if (!is_local)
-     snprintf(filename, PATH_MAX, PACKAGE_DATA_DIR"/data/%s", name);
-
    return filename;
 }
 
