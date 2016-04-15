@@ -627,7 +627,7 @@ EAPI Eo *_eo_self_get(void);
 # define _eo_add_common(klass, parent, is_ref, ...) \
    ({ \
      Eo * const __eo_self = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref, EINA_FALSE); \
-     __VA_ARGS__; \
+     (void) (0, ##__VA_ARGS__); \
      (Eo *) _eo_add_end(eo_self, EINA_FALSE); \
     })
 
