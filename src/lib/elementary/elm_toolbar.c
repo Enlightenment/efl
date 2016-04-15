@@ -1179,6 +1179,95 @@ _item_select(Elm_Toolbar_Item_Data *it)
     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
 }
 
+/* Send order signals when item is added/deleted.
+ * If the given item is on deletion, item_on_deletion should be EINA_TRUE. */
+static void
+_elm_toolbar_item_order_signal_emit(Elm_Toolbar_Data *sd,
+                                    Elm_Toolbar_Item_Data *it,
+                                    Eina_List *prev_list,
+                                    Eina_Bool item_on_deletion)
+{
+   Elm_Toolbar_Item_Data *first_it = NULL, *last_it = NULL;
+   Evas_Object *first_it_view = NULL, *last_it_view = NULL;
+   Elm_Toolbar_Item_Data *prev_first_it = NULL, *prev_last_it = NULL;
+   Evas_Object *prev_first_it_view = NULL, *prev_last_it_view = NULL;
+   Eina_List *list;
+
+   list = evas_object_box_children_get(sd->bx);
+
+   if (!list) return;
+
+   if (prev_list)
+     {
+        prev_first_it_view = eina_list_data_get(prev_list);
+        prev_last_it_view = eina_list_data_get(eina_list_last(prev_list));
+        prev_first_it = evas_object_data_get(prev_first_it_view, "item");
+        prev_last_it = evas_object_data_get(prev_last_it_view, "item");
+     }
+
+   first_it_view = eina_list_data_get(list);
+   last_it_view = eina_list_data_get(eina_list_last(list));
+   first_it = evas_object_data_get(first_it_view, "item");
+   last_it = evas_object_data_get(last_it_view, "item");
+
+   if (prev_first_it)
+     {
+        if ((prev_first_it != first_it) && (prev_first_it != last_it))
+          elm_layout_signal_emit(VIEW(prev_first_it), "elm,order,default,item", "elm");
+        else if (prev_first_it == last_it)
+          elm_layout_signal_emit(VIEW(prev_first_it), "elm,order,last,item", "elm");
+     }
+
+   if (prev_last_it)
+     {
+        if ((prev_last_it != last_it) && (prev_last_it != first_it))
+          elm_layout_signal_emit(VIEW(prev_last_it), "elm,order,default,item", "elm");
+        else if (prev_last_it == first_it)
+          elm_layout_signal_emit(VIEW(prev_last_it), "elm,order,first,item", "elm");
+     }
+
+   if (it)
+     {
+        if (!item_on_deletion)
+          {
+             if (first_it == last_it)
+               {
+                  elm_layout_signal_emit(VIEW(it), "elm,order,first,item", "elm");
+                  elm_layout_signal_emit(VIEW(it), "elm,order,last,item", "elm");
+               }
+             else if (it == first_it)
+               {
+                  elm_layout_signal_emit(VIEW(it), "elm,order,first,item", "elm");
+               }
+             else if (it == last_it)
+               {
+                  elm_layout_signal_emit(VIEW(it), "elm,order,last,item", "elm");
+               }
+          }
+        else if (first_it != last_it)
+          {
+             if (it == first_it)
+               {
+                  Eina_List *next_l = eina_list_next(list);
+                  first_it_view = eina_list_data_get(next_l);
+                  first_it = evas_object_data_get(first_it_view, "item");
+
+                  elm_layout_signal_emit(first_it_view, "elm,order,first,item", "elm");
+               }
+             else if (it == last_it)
+               {
+                  Eina_List *prev_l = eina_list_prev(eina_list_last(list));
+                  last_it_view = eina_list_data_get(prev_l);
+                  last_it = evas_object_data_get(last_it_view, "item");
+
+                  elm_layout_signal_emit(last_it_view, "elm,order,last,item", "elm");
+               }
+          }
+     }
+
+   eina_list_free(list);
+}
+
 static void
 _item_del(Elm_Toolbar_Item_Data *it)
 {
@@ -1186,6 +1275,8 @@ _item_del(Elm_Toolbar_Item_Data *it)
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    _item_unselect(it);
+
+   _elm_toolbar_item_order_signal_emit(sd, it, NULL, EINA_TRUE);
 
    EINA_LIST_FREE(it->states, it_state)
      {
@@ -3027,10 +3118,13 @@ _elm_toolbar_item_append(Eo *obj, Elm_Toolbar_Data *sd, const char *icon, const 
 {
    Elm_Toolbar_Item_Data *it;
    double scale;
+   Eina_List *prev_list;
 
    it = _item_new(obj, icon, label, func, data);
    if (!it) return NULL;
    scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
+
+   prev_list = evas_object_box_children_get(sd->bx);
 
    sd->items = eina_inlist_append(sd->items, EINA_INLIST_GET(it));
    evas_object_box_append(sd->bx, VIEW(it));
@@ -3038,6 +3132,9 @@ _elm_toolbar_item_append(Eo *obj, Elm_Toolbar_Data *sd, const char *icon, const 
 
    _item_theme_hook(obj, it, scale, sd->icon_size);
    sd->item_count++;
+
+   _elm_toolbar_item_order_signal_emit(sd, it, prev_list, EINA_FALSE);
+   eina_list_free(prev_list);
 
    return EO_OBJ(it);
 }
@@ -3047,16 +3144,22 @@ _elm_toolbar_item_prepend(Eo *obj, Elm_Toolbar_Data *sd, const char *icon, const
 {
    Elm_Toolbar_Item_Data *it;
    double scale;
+   Eina_List *prev_list;
 
    it = _item_new(obj, icon, label, func, data);
    if (!it) return NULL;
    scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
+
+   prev_list = evas_object_box_children_get(sd->bx);
 
    sd->items = eina_inlist_prepend(sd->items, EINA_INLIST_GET(it));
    evas_object_box_prepend(sd->bx, VIEW(it));
    evas_object_show(VIEW(it));
    _item_theme_hook(obj, it, scale, sd->icon_size);
    sd->item_count++;
+
+   _elm_toolbar_item_order_signal_emit(sd, it, prev_list, EINA_FALSE);
+   eina_list_free(prev_list);
 
    return EO_OBJ(it);
 }
@@ -3066,6 +3169,7 @@ _elm_toolbar_item_insert_before(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *
 {
    Elm_Toolbar_Item_Data *it;
    double scale;
+   Eina_List *prev_list;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(eo_before, NULL);
    ELM_TOOLBAR_ITEM_DATA_GET(eo_before, _before);
@@ -3075,11 +3179,16 @@ _elm_toolbar_item_insert_before(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *
    if (!it) return NULL;
    scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
 
+   prev_list = evas_object_box_children_get(sd->bx);
+
    sd->items = eina_inlist_prepend_relative
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(_before));
    evas_object_box_insert_before(sd->bx, VIEW(it), VIEW(_before));
    _item_theme_hook(obj, it, scale, sd->icon_size);
    sd->item_count++;
+
+   _elm_toolbar_item_order_signal_emit(sd, it, prev_list, EINA_FALSE);
+   eina_list_free(prev_list);
 
    return EO_OBJ(it);
 }
@@ -3089,6 +3198,7 @@ _elm_toolbar_item_insert_after(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *e
 {
    Elm_Toolbar_Item_Data *it;
    double scale;
+   Eina_List *prev_list;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(eo_after, NULL);
    ELM_TOOLBAR_ITEM_DATA_GET(eo_after, _after);
@@ -3098,11 +3208,16 @@ _elm_toolbar_item_insert_after(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *e
    if (!it) return NULL;
    scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
 
+   prev_list = evas_object_box_children_get(sd->bx);
+
    sd->items = eina_inlist_append_relative
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(_after));
    evas_object_box_insert_after(sd->bx, VIEW(it), VIEW(_after));
    _item_theme_hook(obj, it, scale, sd->icon_size);
    sd->item_count++;
+
+   _elm_toolbar_item_order_signal_emit(sd, it, prev_list, EINA_FALSE);
+   eina_list_free(prev_list);
 
    return EO_OBJ(it);
 }
