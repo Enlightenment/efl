@@ -5,11 +5,11 @@ class Ecore.Timer (Eo.Base)
    [[Timers are objects that will call a given callback at some point
      in the future.
 
-     They may also optionall repeat themselves if the timer callback returns
+     They may also optionally repeat themselves if the timer callback returns
      true. If it does not they will be automatically deleted and never called
-     again. Timers require the ecore mainloop to be running and functioning
+     again. Timers require the ecore main loop to be running and functioning
      properly. They do not guarantee exact timing, but try to work on a "best
-     effort basis.
+     effort" basis.
    ]]
    eo_prefix: ecore_obj_timer;
    methods {
@@ -42,7 +42,7 @@ class Ecore.Timer (Eo.Base)
          }
       }
       constructor {
-         [[Create a timer to call in a given time from when the mainloop woke
+         [[Create a timer to call in a given time from when the main loop woke
            up from sleep]]
          legacy: null;
          params {
@@ -80,7 +80,7 @@ class Ecore.Timer (Eo.Base)
       Eo.Base.destructor;
       Eo.Base.finalize;
       Eo.Base.event_freeze;
-      /* XXX: can't document overriden methods
+      /* XXX: can't document overridden methods
        * Pauses a running timer.
        *
        * @param timer The timer to be paused.
@@ -96,7 +96,7 @@ class Ecore.Timer (Eo.Base)
        */
       Eo.Base.event_freeze_count.get;
       Eo.Base.event_thaw;
-      /* XXX: can't document overriden methods
+      /* XXX: can't document overridden methods
        * Resumes a frozen (paused) timer.
        *
        * @param timer The timer to be resumed.
