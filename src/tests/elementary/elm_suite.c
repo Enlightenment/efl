@@ -4,16 +4,9 @@
 
 #include <Elementary.h>
 #include "elm_suite.h"
+#include "../efl_check.h"
 
-typedef struct _Elementary_Test_Case Elementary_Test_Case;
-
-struct _Elementary_Test_Case
-{
-   const char *test_case;
-   void      (*build)(TCase *tc);
-};
-
-static const Elementary_Test_Case etc[] = {
+static const Efl_Test_Case etc[] = {
   { "Elementary", elm_test_init },
   { "elm_check", elm_test_check },
   { "elm_colorselector", elm_test_colorselector },
@@ -81,43 +74,19 @@ static const Elementary_Test_Case etc[] = {
   { NULL, NULL }
 };
 
-Suite *
-elm_suite()
-{
-   TCase *tc;
-   Suite *s;
-   int i;
-
-   s = suite_create("Elementary");
-
-   for (i = 0; etc[i].test_case; ++i)
-     {
-        tc = tcase_create(etc[i].test_case);
-        etc[i].build(tc);
-        suite_add_tcase(s, tc);
-        tcase_set_timeout(tc, 0);
-     }
-
-   return s;
-}
-
 int
-main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
+main(int argc, char **argv)
 {
    int failed_count;
-   Suite *s;
-   SRunner *sr;
 
+   if (!_efl_test_option_disp(argc, argv, etc))
+     return 0;
+
+   putenv("EFL_RUN_IN_TREE=1");
    putenv("ELM_RUN_IN_TREE=1");
 
-   s = elm_suite();
-   sr = srunner_create(s);
-
-   srunner_set_xml(sr, TESTS_BUILD_DIR "/check-results.xml");
-
-   srunner_run_all(sr, CK_ENV);
-   failed_count = srunner_ntests_failed(sr);
-   srunner_free(sr);
+   failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
+                                           "Elementary", etc);
 
    return (failed_count == 0) ? 0 : 255;
 }
