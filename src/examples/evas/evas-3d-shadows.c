@@ -1,12 +1,23 @@
 /**
  * This example illustrating use of shadows, callbacks(clicked, collision),
- * and technic of the billboard.
+ * technic of the billboard and post proccesing render with anti-aliasing.
  * Model and cube are clickable. Model detects collision with sphere.
- * Cube detects collision with sphere, model and cone.
+ * Cube detects collision with sphere, model and cone. Model and cude are moveable.
  * @see evas_canvas3d_scene_shadows_enable_set(Eina_Bool _shadows_enabled)
  * @see evas_canvas3d_object_callback_register
  * @see evas_canvas3d_billboard_set/get
+ * @see evas_object_anti_alias_set/get
  *
+ * Control keys and description:
+ * 'w'/'s' key to move up/down object;
+ * 'a'/'d' key to move left/right object;
+ * 'q'/'e' key to move near/far object;
+ * '1'/'2' key to change kind of node - billboard/normal model\n");
+ * '3'/'4' key to enable/disable post proccesing render;
+ * '5'/'6' key to enable/disable shadow effect;
+ * Up/Down key to change position of camera;
+ * 'i' key to return initial view of scene;
+
  * @verbatim
  * gcc -o evas-3d-shadows evas-3d-shadows.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
  * @endverbatim
@@ -130,6 +141,8 @@ _show_help()
    fprintf(stdout, "Cube detects intersection with model, sphere, cone\n");
    fprintf(stdout, "Model detects intersection with sphere\n");
    fprintf(stdout, "Press '1'/'2' key to change kind of node - billboard/normal model\n");
+   fprintf(stdout, "Press '3'/'4' key to enable/disable post render with anti-aliasing\n");
+   fprintf(stdout, "Press '5'/'6' key to enable/disable shadow effect\n");
    fprintf(stdout, "Press Up/Down key to change position of camera\n");
    fprintf(stdout, "Press 'i' key to return initial view of scene\n");
 }
@@ -517,6 +530,22 @@ _on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA_U
         evas_canvas3d_node_member_add(scene->root_node, scene->model.node);
         evas_canvas3d_node_member_del(scene->root_node, scene->billboard.node);
      }
+   else if(!strcmp("3", ev->key))
+     {
+        evas_object_anti_alias_set(image, EINA_TRUE);
+     }
+   else if(!strcmp("4", ev->key))
+     {
+        evas_object_anti_alias_set(image, EINA_FALSE);
+     }
+   else if(!strcmp("5", ev->key))
+     {
+        evas_canvas3d_scene_shadows_enable_set(scene->scene, EINA_TRUE);
+     }
+   else if(!strcmp("6", ev->key))
+     {
+        evas_canvas3d_scene_shadows_enable_set(scene->scene, EINA_FALSE);
+     }
    else if(!strcmp("Up", ev->key))
      {
         Evas_Real x, y, z;
@@ -619,7 +648,7 @@ main(void)
    image = eo_add(EFL_CANVAS_SCENE3D_CLASS, evas);
    efl_gfx_size_set(image, WIDTH, HEIGHT);
    efl_gfx_visible_set(image, EINA_TRUE);
-
+   evas_object_anti_alias_set(image, EINA_TRUE);
    evas_object_focus_set(image, EINA_TRUE);
    /* Set the image object as render target for 3D scene. */
    efl_canvas_scene3d_set(image, data.scene);
