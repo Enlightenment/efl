@@ -205,7 +205,6 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface_Atspi_Widget_Action, Efl.Orientati
       Evas.Object_Smart.add;
       Elm.Widget.parent.set;
       Elm.Widget.focus_direction;
-      Elm.Widget.sub_object_add;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;

@@ -617,16 +617,6 @@ _elm_ctxpopup_elm_layout_sub_object_add_enable(Eo *obj EINA_UNUSED, Elm_Ctxpopup
    return EINA_FALSE;
 }
 
-EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_widget_sub_object_add(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *sobj)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-
-   int_ret = elm_obj_widget_sub_object_add(eo_super(obj, MY_CLASS), sobj);
-
-   return int_ret;
-}
-
 EOLIAN static void
 _elm_ctxpopup_elm_layout_sizing_eval(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
