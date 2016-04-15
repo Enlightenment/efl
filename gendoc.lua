@@ -9,17 +9,31 @@ local verbose = false
 
 -- utils
 
+local path_sep = "/"
+
+local path_join = function(...)
+    return table.concat({ ... }, path_sep)
+end
+
+local path_to_nspace = function(p)
+    return p:gsub(path_sep, ":"):lower()
+end
+
+local nspace_to_path = function(ns)
+    return ns:gsub(":", path_sep):lower()
+end
+
 local make_page = function(path)
-    return doc_root .. "/" .. path .. ".txt"
+    return path_join(doc_root, path .. ".txt")
 end
 
 local mkdir_r = function(dirn)
-    local fullp = dirn and (doc_root .. "/" .. dirn) or doc_root
+    local fullp = dirn and path_join(doc_root, dirn) or doc_root
     local prev
-    for x in fullp:gmatch("[^/]+") do
+    for x in fullp:gmatch("[^" .. path_sep .. "]+") do
         local p
         if prev then
-            p = prev .. "/" .. x
+            p = path_join(prev, x)
         else
             p = x
         end
@@ -33,7 +47,7 @@ local mkdir_r = function(dirn)
 end
 
 local mkdir_p = function(path)
-    mkdir_r(path:match("(.+)/([^/]+)"))
+    mkdir_r(path:match("(.+)" .. path_sep .. "([^" .. path_sep .. "]+)"))
 end
 
 local str_split = function(str, delim)
@@ -477,9 +491,9 @@ local Writer = util.Object:clone {
     __ctor = function(self, path)
         local subs
         if type(path) == "table" then
-            subs = table.concat(path, "/")
+            subs = path_join(unpack(path))
         else
-            subs = path:gsub(":", "/"):lower()
+            subs = nspace_to_path(path)
         end
         mkdir_p(subs)
         self.file = assert(io.open(make_page(subs), "w"))
@@ -1238,7 +1252,7 @@ getopt.parse {
         if not opts["r"] then
             error("no documentation root supplied")
         end
-        doc_root = opts["r"] .. "/" .. root_nspace:gsub(":", "/")
+        doc_root = path_join(opts["r"], nspace_to_path(root_nspace))
         if not args[1] then
             if not eolian.system_directory_scan() then
                 error("failed scanning system directory")
