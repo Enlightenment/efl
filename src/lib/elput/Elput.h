@@ -5,23 +5,27 @@
 #  undef EAPI
 # endif
 
-# ifdef _MSC_VER
-#  ifdef BUILDING_DLL
-#   define EAPI __declspec(dllexport)
-#  else // ifdef BUILDING_DLL
+# ifdef _WIN32
+#  ifdef EFL_ELPUT_BUILD
+#   ifdef DLL_EXPORT
+#    define EAPI __declspec(dllexport)
+#   else
+#    define EAPI
+#   endif /* ! DLL_EXPORT */
+#  else
 #   define EAPI __declspec(dllimport)
-#  endif // ifdef BUILDING_DLL
-# else // ifdef _MSC_VER
+#  endif /* ! EFL_ELPUT_BUILD */
+# else
 #  ifdef __GNUC__
 #   if __GNUC__ >= 4
 #    define EAPI __attribute__ ((visibility("default")))
-#   else // if __GNUC__ >= 4
+#   else
 #    define EAPI
-#   endif // if __GNUC__ >= 4
-#  else // ifdef __GNUC__
+#   endif
+#  else
 #   define EAPI
-#  endif // ifdef __GNUC__
-# endif // ifdef _MSC_VER
+#  endif
+# endif /* ! _WIN32 */
 
 # ifdef EFL_BETA_API_SUPPORT
 
