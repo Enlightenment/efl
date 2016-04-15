@@ -9,30 +9,42 @@ enum Ecore.Poller_Type
 
 class Ecore.Poller (Eo.Base)
 {
+   [[Ecore poller provides infrastructure for the creation of pollers.
+
+   Pollers are, in essence, callbacks that share a single timer per type. Because
+   not all pollers need to be called at the same frequency the user may specify
+   the frequency in ticks(each expiration of the shared timer is called a tick,
+   in ecore poller parlance) for each added poller. Ecore pollers should only be
+   used when the poller doesn't have specific requirements on the exact times to
+   poll.
+
+   This architecture means that the main loop is only woken up once to handle
+   all pollers of that type, this will save power as the CPU has more of a
+   chance to go into a low power state the longer it is asleep for, so this
+   should be used in situations where power usage is a concern.
+
+   For now only 1 core poller type is supported: ECORE_POLLER_CORE, the default
+   interval for ECORE_POLLER_CORE is 0.125(or 1/8th) second.
+   ]]
    methods {
       constructor {
          [[Constructor with parameters for Ecore Poller.]]
          legacy: null;
          params {
-            @in type: Ecore.Poller_Type;
-            @in interval: int;
-            @in func: Ecore_Task_Cb;
-            @in data: const(void)*;
+            @in type: Ecore.Poller_Type; [[Ecore poller type which defines the frequency of ticks
+            for the poller.]]
+            @in interval: int; [[The tick interval; must be a power of 2 and <= 32768.]]
+            @in func: Ecore_Task_Cb; [[Ecore poller callback function.]]
+            @in data: const(void)*; [[Private data passed to callback function.]]
          }
       }
       @property interval {
+         [[Polling interval rate of the poller.]]
          set {
-            [[Changes the polling interval rate of the poller.
-
-              This allows the changing of a poller's polling interval. It is
-              useful when you want to alter a poll rate without deleting and
-              re-creating a poller.
-            ]]
             legacy: ecore_poller_poller_interval_set;
             return: bool; [[true on success, false on failure.]]
          }
          get {
-            [[Gets the polling interval rate of the poller.]]
             legacy: ecore_poller_poller_interval_get;
          }
          values {
