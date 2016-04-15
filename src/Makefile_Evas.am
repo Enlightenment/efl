@@ -1238,10 +1238,12 @@ modules/evas/engines/wayland_shm/Evas_Engine_Wayland_Shm.h \
 modules/evas/engines/wayland_shm/evas_engine.c \
 modules/evas/engines/wayland_shm/evas_engine.h \
 modules/evas/engines/wayland_shm/evas_shm.c \
+modules/evas/engines/wayland_shm/evas_dmabuf.c \
 modules/evas/engines/wayland_shm/evas_outbuf.c
 if EVAS_STATIC_BUILD_WAYLAND_SHM
 lib_evas_libevas_la_SOURCES += $(WAYLAND_SHM_SOURCES)
-lib_evas_libevas_la_CPPFLAGS += @evas_engine_wayland_shm_cflags@
+lib_evas_libevas_la_CPPFLAGS += @evas_engine_wayland_shm_cflags@ \
+-I$(top_srcdir)/src/static_libs/libdrm
 lib_evas_libevas_la_LIBADD += @evas_engine_wayland_shm_libs@
 else
 enginewaylandshmpkgdir = $(libdir)/evas/modules/engines/wayland_shm/$(MODULE_ARCH)
@@ -1257,6 +1259,7 @@ modules_evas_engines_wayland_shm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/lib/ecore_wl2 \
+-I$(top_srcdir)/src/static_libs/libdrm \
 @EVAS_CFLAGS@ \
 @evas_engine_wayland_shm_cflags@
 modules_evas_engines_wayland_shm_module_la_LIBADD = \
