@@ -22,7 +22,8 @@ edjeeolianfiles_DATA = \
                        $(edje_eolian_files) \
                        $(edje_eolian_type_files)
 
-EXTRA_DIST += \
+EXTRA_DIST += lib/edje/Makefile.am \
+	      lib/edje/Makefile.in \
               ${edjeeolianfiles_DATA}
 
 lib_LTLIBRARIES += lib/edje/libedje.la

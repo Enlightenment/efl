@@ -13,7 +13,10 @@ eioeolianfilesdir = $(datadir)/eolian/include/eio-@VMAJ@
 eioeolianfiles_DATA = $(EIO_EOS)
 
 lib_LTLIBRARIES += lib/eio/libeio.la
-EXTRA_DIST += $(eioeolianfiles_DATA)
+EXTRA_DIST += \
+$(eioeolianfiles_DATA) \
+lib/eio/Makefile.am \
+lib/eio/Makefile.in
 
 installed_eiomainheadersdir = $(includedir)/eio-@VMAJ@
 

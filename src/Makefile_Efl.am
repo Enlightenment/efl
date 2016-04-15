@@ -51,7 +51,10 @@ BUILT_SOURCES += \
 
 EXTRA_DIST += \
       lib/efl/Efl_Config.h \
+      lib/efl/Efl_Config.h.in \
       lib/efl/Efl.h \
+      lib/efl/Makefile.am \
+      lib/efl/Makefile.in \
       $(efl_eolian_files) \
       $(efl_eolian_type_files)
 

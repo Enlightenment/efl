@@ -45,7 +45,8 @@ eoeolianfiles_DATA = \
 					 $(eo_eolian_files) \
 					 lib/eo/eina_types.eot # We don't generate .c/.h on purpose
 
-EXTRA_DIST += \
+EXTRA_DIST += lib/eo/Makefile.am \
+	      lib/eo/Makefile.in \
               ${eoeolianfiles_DATA}
 
 ### Unit tests
