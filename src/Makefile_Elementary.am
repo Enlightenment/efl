@@ -1232,6 +1232,7 @@ tests_elementary_elm_suite_SOURCES = \
 tests_elementary_elm_suite_CPPFLAGS = \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
 	-DELM_IMAGE_DATA_DIR=\"${top_srcdir}/data/elementary\" \
+	-DELM_TEST_DATA_DIR=\"${abs_top_builddir}/data/elementary\" \
 	-I$(top_srcdir)/src/lib/elementary \
 	-I$(top_builddir)/src/lib/elementary \
 	@CHECK_CFLAGS@ \
