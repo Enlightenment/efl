@@ -153,6 +153,24 @@ _evas_outbuf_idle_flush(Outbuf *ob)
      }
 }
 
+void
+_evas_surface_damage(struct wl_surface *s, int compositor_version, int w, int h, Eina_Rectangle *rects, unsigned int count)
+{
+   void (*damage)(struct wl_surface *, int32_t, int32_t, int32_t, int32_t);
+   unsigned int k;
+
+   if (compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
+     damage = wl_surface_damage_buffer;
+   else
+     damage = wl_surface_damage;
+
+   if ((rects) && (count > 0))
+     for (k = 0; k < count; k++)
+       damage(s, rects[k].x, rects[k].y, rects[k].w, rects[k].h);
+   else
+       damage(s, 0, 0, w, h);
+}
+
 void 
 _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
 {

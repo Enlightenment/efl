@@ -541,11 +541,9 @@ _evas_shm_surface_data_get(Surface *s, int *w, int *h)
 void
 _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 {
-   void (*damage)(struct wl_surface *, int32_t, int32_t, int32_t, int32_t);
    /* struct wl_callback *frame_cb; */
    Shm_Surface *surf;
    Shm_Leaf *leaf;
-   unsigned int k;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -557,17 +555,8 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 
    wl_surface_attach(surf->surface, leaf->data->buffer, 0, 0);
 
-   if (surf->compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
-     damage = wl_surface_damage_buffer;
-   else
-     damage = wl_surface_damage;
-
-   if ((rects) && (count > 0))
-     for (k = 0; k < count; k++)
-       damage(surf->surface, rects[k].x, rects[k].y, rects[k].w, rects[k].h);
-   else
-     damage(surf->surface, 0, 0, leaf->w, leaf->h);
-
+   _evas_surface_damage(surf->surface, surf->compositor_version,
+                        leaf->w, leaf->h, rects, count);
    /* frame_cb = wl_surface_frame(surface->surface); */
    /* wl_callback_add_listener(frame_cb, &_shm_frame_listener, surface); */
 

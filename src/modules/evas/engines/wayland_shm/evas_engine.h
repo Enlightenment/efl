@@ -138,5 +138,6 @@ void _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth de
 void *_evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void _evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
+void _evas_surface_damage(struct wl_surface *s, int compositor_version, int w, int h, Eina_Rectangle *rects, unsigned int count);
 
 #endif
