@@ -166,6 +166,7 @@ Eina_Bool current_group_inherit = EINA_FALSE;
 Eina_Bool script_override = EINA_FALSE;
 static Edje_Program *sequencing = NULL;
 static Eina_List *sequencing_lookups = NULL;
+static int *anonymous_delete = NULL;
 
 Eina_List *po_files;
 
@@ -5745,6 +5746,11 @@ _program_remove(const char *name, Edje_Program **pgrms, unsigned int count)
 
           _edje_program_remove(pc, pr);
 
+          if (pr->action == EDJE_ACTION_TYPE_SCRIPT)
+            {
+               anonymous_delete = &pr->id;
+            }
+
           _program_free(pr);
           return EINA_TRUE;
        }
@@ -5794,6 +5800,11 @@ st_collections_group_program_remove(void)
         success |= _program_remove(name, pc->programs.nocmp, pc->programs.nocmp_count);
 
         copied_program_lookup_delete(pc, name);
+        if (anonymous_delete)
+          {
+             copied_program_anonymous_lookup_delete(pc, anonymous_delete);
+             anonymous_delete = NULL;
+          }
         if (!success)
           {
              ERR("Attempted removal of nonexistent program '%s' in group '%s'.",

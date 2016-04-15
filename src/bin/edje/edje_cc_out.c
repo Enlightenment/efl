@@ -2943,6 +2943,20 @@ data_queue_anonymous_lookup(Edje_Part_Collection *pc, Edje_Program *ep, int *des
 }
 
 void
+copied_program_anonymous_lookup_delete(Edje_Part_Collection *pc, int *dest)
+{
+   Program_Lookup *pl;
+   Eina_List *l, *ll;
+
+   EINA_LIST_FOREACH_SAFE(program_lookups, l, ll, pl)
+     {
+        if ((!pl->anonymous) || (pl->pc != pc) || (dest != &pl->u.ep->id)) continue;
+        program_lookups = eina_list_remove_list(program_lookups, l);
+        free(pl);
+     }
+}
+
+void
 data_queue_copied_anonymous_lookup(Edje_Part_Collection *pc, int *src, int *dest)
 {
    Eina_List *l;

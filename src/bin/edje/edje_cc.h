@@ -181,6 +181,7 @@ void   *data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, in
 void    program_lookup_rename(void *p, const char *name);
 void    copied_program_lookup_delete(Edje_Part_Collection *pc, const char *name);
 void    data_queue_copied_program_lookup(Edje_Part_Collection *pc, int *src, int *dest);
+void    copied_program_anonymous_lookup_delete(Edje_Part_Collection *pc, int *dest);
 void    data_queue_anonymous_lookup(Edje_Part_Collection *pc, Edje_Program *ep, int *dest);
 void    data_queue_copied_anonymous_lookup(Edje_Part_Collection *pc, int *src, int *dest);
 void    data_queue_image_lookup(char *name, int *dest, Eina_Bool *set);
