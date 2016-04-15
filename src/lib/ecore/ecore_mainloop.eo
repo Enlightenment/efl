@@ -2,38 +2,57 @@ type @extern Ecore_Select_Function: __undefined_type;
 
 class Ecore_Mainloop (Eo.Base)
 {
+   [[The Ecore Main Loop
+
+   Ecore is a clean and tiny event loop library with many modules to do lots of
+   convenient things for a programmer, to save time and effort. It's small and
+   lean, designed to work from embedded systems all the way up to large and
+   powerful multi-cpu workstations. The main loop has a number of primitives to
+   be used with its main loop. It serializes all the primitives and allows for
+   great responsiveness without the need for threads(or any other concurrency).
+   ]]
    legacy_prefix: null;
    data: null;
    methods {
       @property select_func {
+         [[Function to use when monitoring multiple file descriptors.]]
          set {
          }
          get {
          }
          values {
             select_func: Ecore_Select_Function;
+            [[This function will be used instead of the system call select.]]
          }
       }
       iterate {
+         [[Runs a single iteration of the main loop to process everything on the
+         queue.]]
       }
       iterate_may_block {
+      	 [[Runs a single iteration of the main loop to process everything on the
+      	 queue with block/non-blocking status.]]
          return: int;
          params {
-            may_block: int;
+            may_block: int; [[A flag if the main loop has a possibility of blocking.]]
          }
       }
       begin {
+         [[Runs the application main loop.]]
       }
       quit {
+         [[Quits the main loop once all the events currently on the queue have
+         been processed.]]
       }
       animator_ticked {
+         [[Returns if an animator has ticked off during this loop iteration.]]
          /* FIXME: Should it be a prooperty? */
          return: bool;
       }
    }
    events {
-      idle,enter;
-      idle,exit;
+      idle,enter; [[Event occurs once the main loop enters the idle state.]]
+      idle,exit; [[Event occurs once the main loop exits the idle state.]]
       idle; /* FIXME: We need to make sure we can get it work. */
       /* TODO: All of the legacy ecore events. (Ecore.h header) */
    }
