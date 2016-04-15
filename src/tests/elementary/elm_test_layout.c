@@ -7,7 +7,7 @@
 #include "elm_suite.h"
 
 
-START_TEST (elm_atspi_role_get)
+START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *layout;
    Elm_Atspi_Role role;
@@ -26,5 +26,5 @@ END_TEST
 
 void elm_test_layout(TCase *tc)
 {
- tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_atspi_role_get);
 }
