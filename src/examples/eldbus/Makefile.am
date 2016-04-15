@@ -90,12 +90,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	$(MKDIR_P) $(datadir)/eldbus/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eldbus/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/eldbus/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(DESTDIR)$(datadir)/eldbus/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \
-	  rm -f $(datadir)/eldbus/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/eldbus/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

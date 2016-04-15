@@ -81,12 +81,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	$(MKDIR_P) $(datadir)/ephysics/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(datadir)/ephysics/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/ephysics/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DESTDIR)$(datadir)/ephysics/examples
 
 uninstall-local:
 	for f in $(SRCS) ; do \
-	  rm -f $(datadir)/ephysics/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/ephysics/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

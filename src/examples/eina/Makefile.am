@@ -163,12 +163,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	$(MKDIR_P) $(datadir)/eina/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eina/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/eina/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(DESTDIR)$(datadir)/eina/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \
-	  rm -f $(datadir)/eina/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/eina/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

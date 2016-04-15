@@ -209,13 +209,13 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(EDJS) $(CODEGEN_GENERATED)
 
 install-examples: $(EDJS)
-	$(MKDIR_P) $(datadir)/edje/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DIST_EDCS) $(DATA_FILES) $(datadir)/edje/examples
-	cd $(builddir) && $(install_sh_DATA) -c $(EDJS) $(datadir)/edje/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/edje/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DIST_EDCS) $(DATA_FILES) $(DESTDIR)$(datadir)/edje/examples
+	cd $(builddir) && $(install_sh_DATA) -c $(EDJS) $(DESTDIR)$(datadir)/edje/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DIST_EDCS) $(DATA_FILES); do \
-	  rm -f $(datadir)/edje/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/edje/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

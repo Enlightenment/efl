@@ -45,12 +45,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	$(MKDIR_P) $(datadir)/elocation/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/elocation/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/elocation/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(DESTDIR)$(datadir)/elocation/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \
-	  rm -f $(datadir)/elocation/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/elocation/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

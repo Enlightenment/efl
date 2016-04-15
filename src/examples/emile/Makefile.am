@@ -38,12 +38,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	$(MKDIR_P) $(datadir)/emile/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/emile/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/emile/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(DESTDIR)$(datadir)/emile/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \
-	  rm -f $(datadir)/emile/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/emile/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

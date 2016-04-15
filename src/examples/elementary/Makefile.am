@@ -581,5 +581,10 @@ EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc e
 examples: $(examples_PROGRAMS)
 
 install-examples:
-	$(MKDIR_P) $(datadir)/elementary/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(datadir)/elementary/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/elementary/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DESTDIR)$(datadir)/elementary/examples
+
+uninstall-local:
+	for f in $(SRCS); do \
+	  rm -f $(DESTDIR)$(datadir)/elementary/examples/$$f ; \
+	done

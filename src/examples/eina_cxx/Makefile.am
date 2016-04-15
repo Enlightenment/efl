@@ -30,11 +30,11 @@ clean-local:
 
 install-examples:
 	$(MKDIR_P) $(datadir)/eina_cxx/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eina_cxx/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(DESTDIR)$(datadir)/eina_cxx/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \
-	  rm -f $(datadir)/eina_cxx/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/eina_cxx/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

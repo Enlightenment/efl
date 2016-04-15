@@ -50,12 +50,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	$(MKDIR_P) $(datadir)/eet/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eet/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/eet/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(DESTDIR)$(datadir)/eet/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \
-	  rm -f $(datadir)/eet/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/eet/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

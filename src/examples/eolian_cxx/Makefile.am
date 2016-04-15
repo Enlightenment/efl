@@ -158,12 +158,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(GENERATED)
 
 install-examples:
-	$(MKDIR_P) $(datadir)/eolian_cxx/examples
-	cd $(abs_srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eolian_cxx/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/eolian_cxx/examples
+	cd $(abs_srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(DESTDIR)$(datadir)/eolian_cxx/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \
-	  rm -f $(datadir)/eolian_cxx/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/eolian_cxx/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

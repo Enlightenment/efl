@@ -442,12 +442,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(EDJS)
 
 install-examples:
-	$(MKDIR_P) $(datadir)/evas/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(EDCS) $(DATA_FILES) $(datadir)/evas/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/evas/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(EDCS) $(DATA_FILES) $(DESTDIR)$(datadir)/evas/examples
 
 uninstall-local:
 	for f in $(SRCS) $(EDCS) $(DATA_FILES); do \
-	  rm -f $(datadir)/evas/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/evas/examples/$$f ; \
 	done
 
 EXTRA_DIST = $(EDCS) $(DATA_FILES)

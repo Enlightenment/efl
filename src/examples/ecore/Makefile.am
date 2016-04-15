@@ -331,12 +331,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	$(MKDIR_P) $(datadir)/ecore/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/ecore/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/ecore/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(DESTDIR)$(datadir)/ecore/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \
-	  rm -f $(datadir)/ecore/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/ecore/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES

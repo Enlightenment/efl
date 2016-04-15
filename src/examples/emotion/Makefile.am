@@ -49,12 +49,12 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	$(MKDIR_P) $(datadir)/emotion/examples
-	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/emotion/examples
+	$(MKDIR_P) $(DESTDIR)$(datadir)/emotion/examples
+	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(DESTDIR)$(datadir)/emotion/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \
-	  rm -f $(datadir)/emotion/examples/$$f ; \
+	  rm -f $(DESTDIR)$(datadir)/emotion/examples/$$f ; \
 	done
 
 if ALWAYS_BUILD_EXAMPLES
