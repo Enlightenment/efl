@@ -31,17 +31,28 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    Eina_Bool horiz = _horiz(pd->orient), zeroweight = EINA_FALSE;
    int id = 0, count, boxl = 0, boxr = 0, boxt = 0, boxb = 0;
    int length, want, deficit = 0, pad, extra = 0, rounding = 0;
-   double cur_pos = 0, weight = 0, scale;
+   double cur_pos = 0, weight[2] = { 0, 0 }, scale;
    double box_align[2];
+   Eina_Bool box_fill[2] = { EINA_FALSE, EINA_FALSE };
 
    evas_object_geometry_get(ui_box, &boxx, &boxy, &boxw, &boxh);
    evas_object_size_hint_padding_get(ui_box, &boxl, &boxr, &boxt, &boxb);
    scale = evas_object_scale_get(ui_box);
 
    // Box align: used if "item has max size and fill" or "no item has a weight"
-   //box_align[0] = bd->align.h;
-   //box_align[1] = bd->align.v;
-   evas_object_size_hint_align_get(ui_box, &box_align[0], &box_align[1]);
+   // Note: cells always expand on the orthogonal direction
+   box_align[0] = pd->align.h;
+   box_align[1] = pd->align.v;
+   if (box_align[0] < 0)
+     {
+        box_fill[0] = EINA_TRUE;
+        box_align[0] = 0.5;
+     }
+   if (box_align[1] < 0)
+     {
+        box_fill[1] = EINA_TRUE;
+        box_align[1] = 0.5;
+     }
 
    count = eina_list_count(bd->children);
    if (!count)
@@ -89,16 +100,16 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         item->want[0] = MAX(item->req[0], item->min[0]) + item->pad[0] + item->pad[1];
         item->want[1] = MAX(item->req[1], item->min[1]) + item->pad[2] + item->pad[3];
 
+        weight[0] += item->weight[0];
+        weight[1] += item->weight[1];
         if (horiz)
           {
-             weight += item->weight[0];
              wantw += item->want[0];
              if (item->want[1] > wanth)
                wanth = item->want[1];
           }
         else
           {
-             weight += item->weight[1];
              wanth += item->want[1];
              if (item->want[0] > wantw)
                wantw = item->want[0];
@@ -110,6 +121,8 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    // box outer margin
    boxw -= boxl + boxr;
    boxh -= boxt + boxb;
+   boxx += boxl;
+   boxy += boxt;
 
    // total space & available space
    if (horiz)
@@ -151,10 +164,9 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         extra = 0;
      }
 
-   if (!weight)
+   if (!weight[!horiz])
      {
-        double balign = box_align[!horiz];
-        if (balign < 0)
+        if (box_fill[!horiz])
           {
              // box is filled, set all weights to be equal
              zeroweight = EINA_TRUE;
@@ -162,14 +174,10 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         else
           {
              // move bounding box according to box align
-             cur_pos = extra * balign;
+             cur_pos = extra * box_align[!horiz];
           }
-        weight = count;
+        weight[!horiz] = count;
      }
-
-   // reset box_align to 0.5 if filled (only used by items with max size)
-   if (box_align[0] < 0) box_align[0] = 0.5;
-   if (box_align[1] < 0) box_align[1] = 0.5;
 
    for (id = 0; id < count; id++)
      {
@@ -182,18 +190,18 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
 
         if (horiz)
           {
-             cx = boxx + boxl + cur_pos;
-             cy = boxy + boxt;
-             cw = item->want[0] + rounding + (zeroweight ? 1.0 : item->weight[0]) * extra / weight;
+             cx = boxx + cur_pos;
+             cy = boxy;
+             cw = item->want[0] + rounding + (zeroweight ? 1.0 : item->weight[0]) * extra / weight[0];
              ch = boxh;
              cur_pos += cw + pad;
           }
         else
           {
-             cx = boxx + boxl;
-             cy = boxy + boxt + cur_pos;
+             cx = boxx;
+             cy = boxy + cur_pos;
              cw = boxw;
-             ch = item->want[1] + rounding + (zeroweight ? 1.0 : item->weight[1]) * extra / weight;
+             ch = item->want[1] + rounding + (zeroweight ? 1.0 : item->weight[1]) * extra / weight[1];
              cur_pos += ch + pad;
           }
 

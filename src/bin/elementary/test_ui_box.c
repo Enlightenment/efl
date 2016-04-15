@@ -91,6 +91,26 @@ margin_slider_cb(void *data, const Eo_Event *event)
    return EO_CALLBACK_CONTINUE;
 }
 
+static Eina_Bool
+alignh_slider_cb(void *data, const Eo_Event *event)
+{
+   double av, val;
+   val = elm_slider_value_get(event->obj);
+   efl_pack_align_get(data, NULL, &av);
+   efl_pack_align_set(data, val, av);
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+alignv_slider_cb(void *data, const Eo_Event *event)
+{
+   double ah, val;
+   val = elm_slider_value_get(event->obj);
+   efl_pack_align_get(data, &ah, NULL);
+   efl_pack_align_set(data, ah, val);
+   return EO_CALLBACK_CONTINUE;
+}
+
 static Efl_Ui_Box_Flow_Params s_flow_params = { 0.5, 0.5, 0, 0 };
 static Eina_Bool flow = EINA_FALSE;
 
@@ -451,6 +471,46 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_min_max_set(o, 0, 40);
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 10);
+   efl_pack(bx, o);
+   efl_gfx_visible_set(o, 1);
+
+
+   /* Box align */
+   bx = eo_add(EFL_UI_BOX_CLASS, win,
+               efl_pack_direction_set(eo_self, EFL_ORIENT_DOWN));
+   evas_object_size_hint_align_set(bx, 0, -1);
+   evas_object_size_hint_weight_set(bx, 1, 1);
+   efl_pack(hbox, bx);
+   efl_gfx_visible_set(bx, 1);
+
+   o = elm_label_add(win);
+   elm_object_text_set(o, "Box align");
+   efl_pack(bx, o);
+   efl_gfx_visible_set(o, 1);
+
+   o = elm_slider_add(win);
+   elm_slider_indicator_format_set(o, "%.1f");
+   elm_slider_indicator_show_set(o, 1);
+   elm_slider_horizontal_set(o, 0);
+   evas_object_size_hint_align_set(o, 0.5, -1);
+   evas_object_size_hint_weight_set(o, 1, 1);
+   eo_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, alignv_slider_cb, bottombox);
+   elm_slider_min_max_set(o, -0.1, 1.0);
+   elm_slider_step_set(o, 0.1);
+   elm_slider_value_set(o, 0.5);
+   efl_pack(bx, o);
+   efl_gfx_visible_set(o, 1);
+
+   o = elm_slider_add(win);
+   elm_slider_indicator_format_set(o, "%.1f");
+   elm_slider_indicator_show_set(o, 1);
+   elm_slider_horizontal_set(o, 1);
+   evas_object_size_hint_align_set(o, 0.5, -1);
+   evas_object_size_hint_weight_set(o, 1, 0);
+   eo_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, alignh_slider_cb, bottombox);
+   elm_slider_min_max_set(o, -0.1, 1.0);
+   elm_slider_step_set(o, 0.1);
+   elm_slider_value_set(o, 0.5);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
 

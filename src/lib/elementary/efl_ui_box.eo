@@ -23,6 +23,8 @@ class Efl.Ui.Box (Elm.Widget, Efl.Pack_Engine, Efl.Pack_Linear)
       Efl.Pack.pack;
       Efl.Pack.padding.get;
       Efl.Pack.padding.set;
+      Efl.Pack.pack_align.get;
+      Efl.Pack.pack_align.set;
       Efl.Pack.layout_update;
       Efl.Pack.layout_request;
       Efl.Pack.layout_engine.get;

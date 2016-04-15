@@ -273,6 +273,8 @@ _efl_ui_box_eo_base_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
 
    pd->orient = EFL_ORIENT_RIGHT;
    pd->layout_engine = MY_CLASS;
+   pd->align.h = 0.5;
+   pd->align.v = 0.5;
 
    return obj;
 }
@@ -554,6 +556,26 @@ _efl_ui_box_efl_pack_padding_get(Eo *obj, Efl_Ui_Box_Data *pd, double *h, double
    if (scalable) *scalable = pd->pad.scalable;
    if (h) *h = pd->pad.h;
    if (v) *v = pd->pad.v;
+}
+
+EOLIAN static void
+_efl_ui_box_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, double v)
+{
+   if (h < 0) h = -1;
+   if (v < 0) v = -1;
+   if (h > 1) h = 1;
+   if (v > 1) v = 1;
+   pd->align.h = h;
+   pd->align.v = v;
+
+   efl_pack_layout_request(obj);
+}
+
+EOLIAN static void
+_efl_ui_box_efl_pack_pack_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, double *h, double *v)
+{
+   if (h) *h = pd->align.h;
+   if (v) *v = pd->align.v;
 }
 
 #include "efl_ui_box.eo.c"

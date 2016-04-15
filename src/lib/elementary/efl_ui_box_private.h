@@ -36,6 +36,10 @@ struct _Efl_Ui_Box_Data
       double h, v;
       Eina_Bool scalable: 1;
    } pad;
+
+   struct {
+      double h, v;
+   } align;
 };
 
 struct _Box_Item_Iterator

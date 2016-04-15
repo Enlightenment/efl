@@ -46,6 +46,15 @@ interface Efl.Pack (Efl.Pack_Item)
             subobj: Efl.Pack_Item*;
          }
       }
+      @property pack_align {
+         [[Alignment of the container within its bounds]]
+         set {}
+         get {}
+         values {
+            align_horiz: double;
+            align_vert:  double;
+         }
+      }
       @property padding {
          [[Padding between items contained in this object.]]
          set {}
