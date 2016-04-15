@@ -125,7 +125,7 @@ struct _Outbuf
      } priv;
 };
 
-Surface *_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha, int compositor_version);
+Surface *_evas_shm_surface_create(Evas_Engine_Info_Wayland_Shm *info, int w, int h, int num_buff);
 
 Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info);
 void _evas_outbuf_free(Outbuf *ob);

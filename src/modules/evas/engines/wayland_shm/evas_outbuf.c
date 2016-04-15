@@ -57,12 +57,7 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland_Shm *info)
      }
    else goto unhandled_rotation;
 
-   ob->surface = _evas_shm_surface_create(info->info.wl_disp,
-                                          info->info.wl_shm,
-                                          info->info.wl_surface,
-                                          sw, sh, ob->num_buff,
-                                          info->info.destination_alpha,
-                                          info->info.compositor_version);
+   ob->surface = _evas_shm_surface_create(info, sw, sh, ob->num_buff);
    if (!ob->surface) goto surf_err;
 
 unhandled_rotation:

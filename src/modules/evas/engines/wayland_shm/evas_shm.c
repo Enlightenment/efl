@@ -569,7 +569,7 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 }
 
 Surface *
-_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha, int compositor_version)
+_evas_shm_surface_create(Evas_Engine_Info_Wayland_Shm *info, int w, int h, int num_buff)
 {
    Surface *s;
    Shm_Surface *surf;
@@ -584,12 +584,12 @@ _evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_
 
    surf->w = w;
    surf->h = h;
-   surf->disp = disp;
-   surf->shm = shm;
-   surf->surface = surface;
+   surf->disp = info->info.wl_disp;
+   surf->shm = info->info.wl_shm;
+   surf->surface = info->info.wl_surface;
    surf->num_buff = num_buff;
-   surf->alpha = alpha;
-   surf->compositor_version = compositor_version;
+   surf->alpha = info->info.destination_alpha;
+   surf->compositor_version = info->info.compositor_version;
 
    /* create surface buffers */
    for (; i < surf->num_buff; i++)
