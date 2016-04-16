@@ -1116,7 +1116,6 @@ _elm_win_focus_in(Ecore_Evas *ee)
    // FIXME: the event is deprecated but still in use.
    // Has to be removed in EFL2.0
    evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
-   eo_event_callback_call(obj, ELM_WIDGET_EVENT_FOCUSED, NULL);
    sd->focus_highlight.cur.visible = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
    if (sd->frame_obj)
@@ -1151,7 +1150,6 @@ _elm_win_focus_out(Ecore_Evas *ee)
    // FIXME: the event is deprecated but still in use.
    // Has to be removed in EFL2.0
    evas_object_smart_callback_call(obj, SIG_FOCUS_OUT, NULL);
-   eo_event_callback_call(obj, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
    sd->focus_highlight.cur.visible = EINA_FALSE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
    if (sd->frame_obj)
