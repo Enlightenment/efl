@@ -414,6 +414,34 @@ _elua_file_mkdir(lua_State *L)
    return 1;
 }
 
+static int
+_elua_file_mkpath(lua_State *L)
+{
+   lua_pushboolean(L, ecore_file_mkpath(luaL_checkstring(L, 1)));
+   return 1;
+}
+
+static int
+_elua_file_rmdir(lua_State *L)
+{
+   lua_pushboolean(L, ecore_file_rmdir(luaL_checkstring(L, 1)));
+   return 1;
+}
+
+static int
+_elua_file_unlink(lua_State *L)
+{
+   lua_pushboolean(L, ecore_file_unlink(luaL_checkstring(L, 1)));
+   return 1;
+}
+
+static int
+_elua_file_rmrf(lua_State *L)
+{
+   lua_pushboolean(L, ecore_file_recursive_rm(luaL_checkstring(L, 1)));
+   return 1;
+}
+
 const luaL_reg _elua_cutillib[] =
 {
    { "init_module", _elua_module_init },
@@ -421,6 +449,10 @@ const luaL_reg _elua_cutillib[] =
    { "file_is_dir", _elua_file_is_dir },
    { "file_exists", _elua_file_exists },
    { "file_mkdir" , _elua_file_mkdir  },
+   { "file_mkpath", _elua_file_mkpath },
+   { "file_rmdir" , _elua_file_rmdir  },
+   { "file_unlink", _elua_file_unlink },
+   { "file_rmrf"  , _elua_file_rmrf   },
    { NULL         , NULL              }
 };
 
