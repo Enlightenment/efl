@@ -28,22 +28,7 @@ local make_page = function(path)
 end
 
 local mkdir_r = function(dirn)
-    local fullp = dirn and path_join(doc_root, dirn) or doc_root
-    local prev
-    for x in fullp:gmatch("[^" .. path_sep .. "]+") do
-        local p
-        if prev then
-            p = path_join(prev, x)
-        else
-            p = x
-        end
-        prev = p
-        if cutil.file_exists(p) then
-            assert(cutil.file_is_dir(p))
-        else
-            assert(cutil.file_mkdir(p))
-        end
-    end
+    assert(cutil.file_mkpath(dirn and path_join(doc_root, dirn) or doc_root))
 end
 
 local mkdir_p = function(path)
@@ -1249,7 +1234,7 @@ getopt.parse {
             verbose = true
         end
         root_nspace = opts["n"] or "efl"
-        if not opts["r"] then
+        if not opts["r"] or opts["r"] == "" then
             error("no documentation root supplied")
         end
         doc_root = path_join(opts["r"], nspace_to_path(root_nspace))
@@ -1268,6 +1253,7 @@ getopt.parse {
         if not eolian.all_eo_files_parse() then
             error("failed parsing eo files")
         end
+        cutil.file_rmrf(path_join(doc_root))
         mkdir_r(nil)
         build_ref()
         build_classes()
