@@ -217,9 +217,11 @@ eina_one_big_init(const char *context,
       return NULL;
 
    item_size = va_arg(args, int);
+   if (item_size < 1) item_size = 1;
 
    pool->item_size = eina_mempool_alignof(item_size);
    pool->max = va_arg(args, int);
+   if (pool->max < 1) pool->max = 1;
 
    pool->offset_to_item_inlist = pool->item_size;
    if (pool->offset_to_item_inlist % (int)sizeof(void *) != 0)
