@@ -1233,9 +1233,9 @@ getopt.parse {
         if opts["v"] then
             verbose = true
         end
-        root_nspace = opts["n"] or "efl"
+        root_nspace = (not opts["n"] or opts["n"] == "") and "efl" or opts["n"]
         if not opts["r"] or opts["r"] == "" then
-            error("no documentation root supplied")
+            opts["r"] = "dokuwiki/data/pages"
         end
         doc_root = path_join(opts["r"], nspace_to_path(root_nspace))
         if not args[1] then
