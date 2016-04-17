@@ -20,6 +20,11 @@ typedef struct _Eina_Promise_Owner Eina_Promise_Owner;
 typedef void(*Eina_Promise_Free_Cb)(void* value);
 
 /*
+ * @brief Callback type for Promise_Owner to get notified of when someone registered a progress and/or then callback
+ */
+typedef void(*Eina_Promise_Progress_Notify_Cb)(void* data, Eina_Promise_Owner* promise);
+
+/*
  * @brief Function callback type for when using eina_promise_then
  */
 typedef void(*Eina_Promise_Cb)(void* data, void* value);
@@ -162,6 +167,14 @@ typedef Eina_Bool(*Eina_Promise_Owner_Progress_Cb)(Eina_Promise_Owner const* pro
 
 #define EINA_FUNC_PROMISE_OWNER_PROGRESS(Function) ((Eina_Promise_Owner_Progress_Cb)Function)
 
+/*
+ * @brief Function callback type for promise owner's progress notify registration function override
+ */
+typedef Eina_Bool(*Eina_Promise_Owner_Progress_Notify_Cb)(Eina_Promise_Owner* promise,
+   Eina_Promise_Progress_Notify_Cb progress_cb, void* data, Eina_Promise_Free_Cb free_cb);
+
+#define EINA_FUNC_PROMISE_OWNER_PROGRESS_NOTIFY(Function) ((Eina_Promise_Owner_Progress_Notify_Cb)Function)
+
 
 #define EINA_PROMISE_VERSION 1
 
@@ -193,6 +206,7 @@ struct _Eina_Promise_Owner
   Eina_Promise_Owner_Pending_Is_Cb pending_is;
   Eina_Promise_Owner_Cancelled_Is_Cb cancelled_is;
   Eina_Promise_Owner_Progress_Cb progress;
+  Eina_Promise_Owner_Progress_Notify_Cb progress_notify;
 #define EINA_MAGIC_PROMISE_OWNER 0x07932A5C
   EINA_MAGIC;
 };
@@ -378,6 +392,19 @@ EAPI Eina_Bool eina_promise_owner_cancelled_is(Eina_Promise_Owner const* promise
  */
 EAPI void eina_promise_owner_progress(Eina_Promise_Owner const* promise, void* progress);
 
+/*
+ * @brief Registers a progress notify callbacks in promise owner.
+ *
+ * The progress callbacks registered in @Eina_Promise must not free
+ * the progress data pointer. The data pointer ownership must be dealt
+ * by the @Eina_Promise_Owner's user.
+ *
+ * @param promise The promise for which to get the cancelled status
+ * @param data    The data to be passed to progress
+ */
+EAPI void eina_promise_owner_progress_notify(Eina_Promise_Owner* promise,
+    Eina_Promise_Progress_Notify_Cb notify_cb, void* data, Eina_Promise_Free_Cb free_cb);
+  
 /*
  * @brief Decrement the reference count for the Eina_Promise.
 
