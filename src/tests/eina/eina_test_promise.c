@@ -236,6 +236,90 @@ START_TEST(eina_test_promise_progress)
 }
 END_TEST
 
+static void progress_notify(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
+{
+   ck_assert(!*(Eina_Bool*)data);
+   *(Eina_Bool*)data = EINA_TRUE;
+}
+
+START_TEST(eina_test_promise_progress_notify1)
+{
+   Eina_Bool progress_notify_ran = EINA_FALSE;
+   Eina_Promise_Owner* owner;
+   Eina_Promise* promise;
+
+   eina_init();
+
+   owner = eina_promise_default_add(0);
+   eina_promise_owner_progress_notify(owner, &progress_notify, &progress_notify_ran, NULL);
+
+   promise = eina_promise_owner_promise_get(owner);
+   eina_promise_progress_cb_add(promise, &progress_callback, NULL); // never run
+   eina_promise_progress_cb_add(promise, &progress_callback, NULL); // never run
+
+   ck_assert(progress_notify_ran);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_promise_progress_notify2)
+{
+   Eina_Bool progress_notify_ran = EINA_FALSE;
+   Eina_Promise_Owner* owner;
+   Eina_Promise* promise;
+
+   eina_init();
+
+   owner = eina_promise_default_add(0);
+   eina_promise_owner_progress_notify(owner, &progress_notify, &progress_notify_ran, NULL);
+
+   promise = eina_promise_owner_promise_get(owner);
+   eina_promise_then(promise, NULL, &_cancel_promise_callback, NULL); // never run
+   eina_promise_then(promise, NULL, &_cancel_promise_callback, NULL); // never run
+
+   ck_assert(progress_notify_ran);
+
+   eina_shutdown();
+}
+END_TEST
+
+static void
+_eina_promise_progress_notify_fulfilled(void* data, void* value EINA_UNUSED)
+{
+  *(Eina_Bool*)data = EINA_TRUE;
+}
+
+static void
+_eina_promise_progress_notify_error(void* data EINA_UNUSED, Eina_Error const* error EINA_UNUSED)
+{
+  ck_assert(EINA_FALSE);
+}
+  
+START_TEST(eina_test_promise_progress_notify3)
+{
+   Eina_Bool progress_notify_ran = EINA_FALSE;
+   Eina_Promise_Owner* owner;
+   Eina_Promise* promise;
+   Eina_Promise* promise_progress;
+
+   eina_init();
+
+   owner = eina_promise_default_add(0);
+   promise_progress = eina_promise_progress_notification(owner);
+   eina_promise_then(promise_progress, &_eina_promise_progress_notify_fulfilled,
+                     &_eina_promise_progress_notify_error, &progress_notify_ran);
+
+   promise = eina_promise_owner_promise_get(owner);
+   eina_promise_progress_cb_add(promise, &progress_callback, NULL); // never run
+   eina_promise_progress_cb_add(promise, &progress_callback, NULL); // never run
+
+   ck_assert(progress_notify_ran);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_promise(TCase *tc)
 {
@@ -246,4 +330,7 @@ eina_test_promise(TCase *tc)
    tcase_add_test(tc, eina_test_promise_values_all);
    tcase_add_test(tc, eina_test_promise_cancel_promise);
    tcase_add_test(tc, eina_test_promise_progress);
+   tcase_add_test(tc, eina_test_promise_progress_notify1);
+   tcase_add_test(tc, eina_test_promise_progress_notify2);
+   tcase_add_test(tc, eina_test_promise_progress_notify3);
 }

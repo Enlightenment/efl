@@ -87,6 +87,7 @@ static int _eina_main_count = 0;
 static int _eina_main_thread_count = 0;
 #endif
 static int _eina_log_dom = -1;
+void _eina_promise_init(void);
 
 #ifdef ERR
 #undef ERR
@@ -299,6 +300,8 @@ eina_init(void)
           }
      }
 
+   _eina_promise_init();
+   
    eina_cpu_count_internal();
 
    eina_log_timing(_eina_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);

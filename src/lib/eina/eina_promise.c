@@ -9,6 +9,7 @@
 typedef struct _Eina_Promise_Then_Cb _Eina_Promise_Then_Cb;
 typedef struct _Eina_Promise_Progress_Cb _Eina_Promise_Progress_Cb;
 typedef struct _Eina_Promise_Cancel_Cb _Eina_Promise_Cancel_Cb;
+typedef struct _Eina_Promise_Owner_Progress_Notify_Data _Eina_Promise_Owner_Progress_Notify_Data;
 typedef struct _Eina_Promise_Default _Eina_Promise_Default;
 typedef struct _Eina_Promise_Default_Owner _Eina_Promise_Default_Owner;
 typedef struct _Eina_Promise_Iterator _Eina_Promise_Iterator;
@@ -40,6 +41,15 @@ struct _Eina_Promise_Cancel_Cb
    void* data;
 };
 
+struct _Eina_Promise_Owner_Progress_Notify_Data
+{
+   EINA_INLIST;
+
+   Eina_Promise_Progress_Notify_Cb callback;
+   Eina_Promise_Free_Cb free_cb;
+   void* data;
+};
+
 struct _Eina_Promise_Default
 {
    Eina_Promise vtable;
@@ -49,6 +59,7 @@ struct _Eina_Promise_Default
    Eina_Inlist *then_callbacks;
    Eina_Inlist *progress_callbacks;
    Eina_Inlist *cancel_callbacks;
+   Eina_Inlist *progress_notify_callbacks;
    Eina_Promise_Free_Cb value_free_cb;
 
    int ref;
@@ -88,6 +99,21 @@ static void _eina_promise_ref(_Eina_Promise_Default* promise);
 static void _eina_promise_unref(_Eina_Promise_Default* promise);
 
 static void _eina_promise_iterator_setup(_Eina_Promise_Iterator* iterator, Eina_Array* promises);
+
+static void _eina_promise_free_callback_list(Eina_Inlist** list, void(*free_cb)(void* node))
+{
+  struct node
+  {
+    EINA_INLIST;
+  } *node;
+  Eina_Inlist *list2;
+  
+  EINA_INLIST_FOREACH_SAFE(*list, list2, node)
+    {
+      free_cb(node);
+    }      
+  *list = NULL;
+}
 
 static void
 _eina_promise_then_calls(_Eina_Promise_Default_Owner* promise)
@@ -188,6 +214,7 @@ _eina_promise_then(_Eina_Promise_Default* p, Eina_Promise_Cb callback,
 {
    _Eina_Promise_Default_Owner* promise;
    _Eina_Promise_Then_Cb* cb;
+   _Eina_Promise_Owner_Progress_Notify_Data* notify_data;
 
    promise = EINA_PROMISE_GET_OWNER(p);
 
@@ -198,6 +225,12 @@ _eina_promise_then(_Eina_Promise_Default* p, Eina_Promise_Cb callback,
    cb->data = data;
    promise->promise.then_callbacks = eina_inlist_append(promise->promise.then_callbacks, EINA_INLIST_GET(cb));
 
+   EINA_INLIST_FOREACH(promise->promise.progress_notify_callbacks, notify_data)
+     {
+        (*notify_data->callback)(notify_data->data, &promise->owner_vtable);
+     }
+   _eina_promise_free_callback_list(&promise->promise.progress_notify_callbacks, &free);
+   
    if (!promise->promise.is_first_then)
      {
         _eina_promise_ref(p);
@@ -263,11 +296,19 @@ static void
 _eina_promise_progress_cb_add(_Eina_Promise_Default* promise, Eina_Promise_Progress_Cb callback, void* data)
 {
    _Eina_Promise_Progress_Cb* cb;
+   _Eina_Promise_Owner_Progress_Notify_Data* notify_data;
+   _Eina_Promise_Default_Owner* owner = EINA_PROMISE_GET_OWNER(promise);
 
    cb = malloc(sizeof(struct _Eina_Promise_Progress_Cb));
    cb->callback = callback;
    cb->data = data;
    promise->progress_callbacks = eina_inlist_append(promise->progress_callbacks, EINA_INLIST_GET(cb));
+
+   EINA_INLIST_FOREACH(owner->promise.progress_notify_callbacks, notify_data)
+     {
+       (*notify_data->callback)(notify_data->data, &owner->owner_vtable);
+     }
+   _eina_promise_free_callback_list(&owner->promise.progress_notify_callbacks, &free);
 }
 
 static void
@@ -356,6 +397,20 @@ _eina_promise_owner_progress(_Eina_Promise_Default_Owner* promise, void* data)
      }
 }
 
+static void
+_eina_promise_owner_progress_notify(_Eina_Promise_Default_Owner* promise, Eina_Promise_Progress_Notify_Cb notify,
+                                    void* data, Eina_Promise_Free_Cb free_cb)
+{
+   _Eina_Promise_Owner_Progress_Notify_Data* cb
+     = malloc(sizeof(struct _Eina_Promise_Owner_Progress_Notify_Data));
+
+   cb->callback = notify;
+   cb->free_cb = free_cb;
+   cb->data = data;
+   promise->promise.progress_notify_callbacks =
+     eina_inlist_append(promise->promise.progress_notify_callbacks, EINA_INLIST_GET(cb));
+}
+
 Eina_Promise_Owner *
 eina_promise_default_add(int value_size)
 {
@@ -378,6 +433,7 @@ eina_promise_default_add(int value_size)
    p->promise.ref = 1;
    memset(&p->promise.then_callbacks, 0, sizeof(p->promise.then_callbacks));
    memset(&p->promise.progress_callbacks, 0, sizeof(p->promise.progress_callbacks));
+   memset(&p->promise.progress_notify_callbacks, 0, sizeof(p->promise.progress_notify_callbacks));
    memset(&p->promise.cancel_callbacks, 0, sizeof(p->promise.cancel_callbacks));
    p->promise.value_size = value_size;
    p->promise.value_free_cb = NULL;
@@ -392,6 +448,7 @@ eina_promise_default_add(int value_size)
    p->owner_vtable.pending_is = EINA_FUNC_PROMISE_OWNER_PENDING_IS(_eina_promise_owner_pending_is);
    p->owner_vtable.cancelled_is = EINA_FUNC_PROMISE_OWNER_CANCELLED_IS(_eina_promise_owner_cancelled_is);
    p->owner_vtable.progress = EINA_FUNC_PROMISE_OWNER_PROGRESS(_eina_promise_owner_progress);
+   p->owner_vtable.progress_notify = EINA_FUNC_PROMISE_OWNER_PROGRESS_NOTIFY(_eina_promise_owner_progress_notify);
 
    return &p->owner_vtable;
 }
@@ -540,6 +597,36 @@ _eina_promise_iterator_setup(_Eina_Promise_Iterator* it, Eina_Array* promises_ar
    it->data.success_iterator_impl.free = FUNC_ITERATOR_FREE(_eina_promise_iterator_free);
 }
 
+static void
+_eina_promise_progress_notify_fulfilled(void* data, Eina_Promise_Owner* p EINA_UNUSED)
+{
+  Eina_Promise_Owner* owner = data;
+  eina_promise_owner_value_set(owner, NULL, NULL);
+}
+
+EAPI Eina_Error EINA_ERROR_PROMISE_NO_NOTIFY;
+
+static void
+_eina_promise_progress_notify_failed(void* data)
+{
+  Eina_Promise_Owner* owner = data;
+  if(eina_promise_owner_pending_is(owner))
+    eina_promise_owner_error_set(owner, EINA_ERROR_PROMISE_NO_NOTIFY);
+}
+
+EAPI Eina_Promise*
+eina_promise_progress_notification(Eina_Promise_Owner* promise)
+{
+  Eina_Promise_Owner* owner;
+
+  owner = eina_promise_default_add(0);
+
+  eina_promise_owner_progress_notify(promise, &_eina_promise_progress_notify_fulfilled, owner,
+                                     &_eina_promise_progress_notify_failed);
+
+  return eina_promise_owner_promise_get(owner);
+}
+
 // API functions
 EAPI void
 eina_promise_then(Eina_Promise* promise, Eina_Promise_Cb callback,
@@ -642,4 +729,18 @@ EAPI void
 eina_promise_owner_progress(Eina_Promise_Owner const* promise, void* progress)
 {
    promise->progress(promise, progress);
+}
+
+EAPI void
+eina_promise_owner_progress_notify(Eina_Promise_Owner* promise, Eina_Promise_Progress_Notify_Cb progress_cb,
+                                   void* data, Eina_Promise_Free_Cb free_cb)
+{
+   promise->progress_notify(promise, progress_cb, data, free_cb);
+}
+
+static const char EINA_ERROR_PROMISE_NO_NOTIFY_STR[] = "Out of memory";
+
+void _eina_promise_init()
+{
+   EINA_ERROR_PROMISE_NO_NOTIFY = eina_error_msg_static_register(EINA_ERROR_PROMISE_NO_NOTIFY_STR);
 }
