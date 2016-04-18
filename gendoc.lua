@@ -732,6 +732,20 @@ local Buffer = Writer:clone {
 
 -- eolian to various doc elements conversions
 
+local get_type_str
+get_type_str = function(tp)
+    local tps = eolian.type_type
+    local tpt = tp:type_get()
+    if tpt == tps.VOID then
+        return "void"
+    end
+    if tpt == tps.REGULAR then
+        return tp:full_name_get()
+    end
+    -- TODO
+    return tp:full_name_get()
+end
+
 local gen_doc_refd = function(str)
     if not str then
         return nil
@@ -888,6 +902,85 @@ local gen_func_csig = function(f, ftype)
     end
     table.insert(pars, 1, fparam);
     return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
+end
+
+local get_func_namesig = function(fn, cl, buf)
+    if fn:type_get() ~= eolian.function_type.METHOD then
+        buf[#buf + 1] = "@property "
+    end
+    buf[#buf + 1] = cl:full_name_get()
+    buf[#buf + 1] = "."
+    buf[#buf + 1] = fn:name_get()
+    buf[#buf + 1] = " "
+    if fn:scope_get() == eolian.object_scope.PROTECTED then
+        buf[#buf + 1] = "@protected "
+    end
+    if fn:is_class() then
+        buf[#buf + 1] = "@class "
+    end
+    if fn:is_const() then
+        buf[#buf + 1] = "@const "
+    end
+    if fn:is_c_only() then
+        buf[#buf + 1] = "@c_only "
+    end
+end
+
+local gen_func_param = function(fp, buf)
+    -- TODO: default value
+    buf[#buf + 1] = "        "
+    local dirs = {
+        [eolian.parameter_dir.IN] = "@in ",
+        [eolian.parameter_dir.OUT] = "@out ",
+        [eolian.parameter_dir.INOUT] = "@inout ",
+    }
+    buf[#buf + 1] = dirs[fp:direction_get()]
+    buf[#buf + 1] = fp:name_get()
+    buf[#buf + 1] = ": "
+    buf[#buf + 1] = get_type_str(fp:type_get())
+    if fp:is_nonull() then
+        buf[#buf + 1] = " @nonull"
+    end
+    if fp:is_nullable() then
+        buf[#buf + 1] = " @nullable"
+    end
+    if fp:is_optional() then
+        buf[#buf + 1] = " @optional"
+    end
+    buf[#buf + 1] = ";\n"
+end
+
+local get_method_sig = function(fn, cl)
+    local buf = {}
+    get_func_namesig(fn, cl, buf)
+    if fn:is_virtual_pure(eolian.function_type.METHOD) then
+        buf[#buf + 1] = "@virtual_pure "
+    end
+    buf[#buf + 1] = "{"
+    local params = fn:parameters_get():to_array()
+    local rtp = fn:return_type_get(eolian.function_type.METHOD)
+    if #params == 0 and not rtp then
+        buf[#buf + 1] = "}"
+        return table.concat(buf)
+    end
+    buf[#buf + 1] = "\n"
+    if #params > 0 then
+        buf[#buf + 1] = "    params {\n"
+        for i, fp in ipairs(params) do
+            gen_func_param(fp, buf)
+        end
+        buf[#buf + 1] = "    }"
+    end
+    buf[#buf + 1] = "}"
+    return table.concat(buf)
+end
+
+local get_property_sig = function(fn, cl)
+    local buf = {}
+    get_func_namesig(fn, cl, buf)
+    buf[#buf + 1] = "{"
+    buf[#buf + 1] = "}"
+    return table.concat(buf)
 end
 
 -- builders
@@ -1134,6 +1227,10 @@ build_method = function(fn, cl)
 
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
 
+    f:write_h("Signature", 3)
+    f:write_code(get_method_sig(fn, cl))
+    f:write_nl()
+
     f:write_h("C signature", 3)
     f:write_code(gen_func_csig(fn), "c")
     f:write_nl()
@@ -1163,6 +1260,10 @@ build_property = function(fn, cl)
     local sdoc = fn:documentation_get(fts.PROP_SET)
 
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
+
+    f:write_h("Signature", 3)
+    f:write_code(get_method_sig(fn, cl))
+    f:write_nl()
 
     f:write_h("C signature", 3)
     local codes = {}
@@ -1218,7 +1319,6 @@ getopt.parse {
         { "h", "help", nil, help = "Show this message.", metavar = "CATEGORY",
             callback = getopt.help_cb(io.stdout)
         },
-        -- TODO: implement verbose mode
         { "v", "verbose", false, help = "Be verbose." },
 
         { category = "Generator" },
