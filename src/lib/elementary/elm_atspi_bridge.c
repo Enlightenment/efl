@@ -828,6 +828,7 @@ _accessible_get_relation_set(const Eldbus_Service_Interface *iface EINA_UNUSED, 
    return ret;
 
 fail:
+   eldbus_message_unref(ret);
    return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Unable to get relation set.");
 }
 
