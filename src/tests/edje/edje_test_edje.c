@@ -381,6 +381,45 @@ START_TEST(edje_test_swallows)
 }
 END_TEST
 
+START_TEST(edje_test_box)
+{
+   Evas *evas;
+   Evas_Object *obj, *sobj, *sobjs[5];
+   const Evas_Object *box;
+   Eina_Iterator *it;
+   int i;
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_box.edj"), "test_group"));
+
+   for (i = 0; i < 5; i++)
+     {
+        sobjs[i] = evas_object_rectangle_add(evas);
+        fail_if(!sobjs[i]);
+     }
+
+   edje_object_part_box_append(obj, "box", sobjs[3]);
+   edje_object_part_box_prepend(obj, "box", sobjs[1]);
+   edje_object_part_box_insert_before(obj, "box", sobjs[0], sobjs[1]);
+   edje_object_part_box_insert_after(obj, "box", sobjs[4], sobjs[3]);
+   edje_object_part_box_insert_at(obj, "box", sobjs[2], 2);
+
+   box = edje_object_part_object_get(obj, "box");
+   it = evas_object_box_iterator_new(box);
+
+   i = 0;
+   EINA_ITERATOR_FOREACH(it, sobj)
+     {
+        fail_if(sobj != sobjs[i++]);
+     }
+   eina_iterator_free(it);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
@@ -395,4 +434,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_size_class);
    tcase_add_test(tc, edje_test_color_class);
    tcase_add_test(tc, edje_test_swallows);
+   tcase_add_test(tc, edje_test_box);
 }

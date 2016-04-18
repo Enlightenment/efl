@@ -1,0 +1,14 @@
+collections {
+   group { "test_group";
+      parts {
+         part { name: "box";
+            type: BOX;
+            description { state: "default" 0.0;
+               box {
+                  layout: "horizontal";
+               }
+            }
+         }
+      }
+   }
+}
