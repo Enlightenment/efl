@@ -70,17 +70,13 @@ ffi.cdef [[
 
     typedef enum
     {
-        EOLIAN_TYPE_UNKNOWN_TYPE,
+        EOLIAN_TYPE_UNKNOWN_TYPE = 0,
         EOLIAN_TYPE_VOID,
         EOLIAN_TYPE_REGULAR,
         EOLIAN_TYPE_COMPLEX,
         EOLIAN_TYPE_POINTER,
-        EOLIAN_TYPE_FUNCTION,
-        EOLIAN_TYPE_STRUCT,
-        EOLIAN_TYPE_STRUCT_OPAQUE,
-        EOLIAN_TYPE_ENUM,
-        EOLIAN_TYPE_ALIAS,
-        EOLIAN_TYPE_CLASS
+        EOLIAN_TYPE_CLASS,
+        EOLIAN_TYPE_UNDEFINED
     } Eolian_Type_Type;
 
     typedef enum {
@@ -459,13 +455,8 @@ M.type_type = {
     REGULAR       = 2,
     COMPLEX       = 3,
     POINTER       = 4,
-    FUNCTION      = 5,
-    STRUCT        = 6,
-    STRUCT_OPAQUE = 7,
-    ENUM          = 8,
-    ALIAS         = 9,
-    CLASS         = 10,
-    UNDEFINED     = 11
+    CLASS         = 5,
+    UNDEFINED     = 6
 }
 
 M.typedecl_type = {
