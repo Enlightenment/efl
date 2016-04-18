@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_WIDGET_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 
 #include <Elementary.h>
@@ -954,7 +955,7 @@ _elm_conformant_evas_object_smart_del(Eo *obj, Elm_Conformant_Data *sd)
 }
 
 EOLIAN static void
-_elm_conformant_elm_widget_parent_set(Eo *obj, Elm_Conformant_Data *sd, Evas_Object *parent)
+_elm_conformant_elm_widget_widget_parent_set(Eo *obj, Elm_Conformant_Data *sd, Evas_Object *parent)
 {
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top = elm_widget_top_get(parent);

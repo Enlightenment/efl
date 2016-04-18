@@ -5,7 +5,9 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
+#define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
+
 #include <Elementary.h>
 
 #include "elm_priv.h"
@@ -1158,7 +1160,7 @@ _elm_ctxpopup_evas_object_smart_del(Eo *obj, Elm_Ctxpopup_Data *sd)
 }
 
 EOLIAN static void
-_elm_ctxpopup_elm_widget_parent_set(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *parent)
+_elm_ctxpopup_elm_widget_widget_parent_set(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *parent)
 {
    //default parent is to be hover parent
    elm_ctxpopup_hover_parent_set(obj, parent);

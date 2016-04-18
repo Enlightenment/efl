@@ -84,7 +84,7 @@ class Elm.Notify (Elm.Container)
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
       Elm.Widget.focus_direction;
-      Elm.Widget.parent;
+      Elm.Widget.widget_parent;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_next_manager_is;

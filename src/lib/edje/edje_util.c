@@ -4966,6 +4966,7 @@ _edje_child_add(Edje *ed, Edje_Real_Part *rp, Evas_Object *child)
    evas_object_event_callback_add(child, EVAS_CALLBACK_DEL, _edje_child_del_cb, rp);
    evas_object_data_set(child, ".edje", ed);
    if (!ed) return;
+   eo_parent_set(child, ed->obj);
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
@@ -4975,11 +4976,21 @@ _edje_child_add(Edje *ed, Edje_Real_Part *rp, Evas_Object *child)
 }
 
 static void
+_eo_unparent_helper(Eo *child, Eo *parent)
+{
+   if (eo_parent_get(child) == parent)
+     {
+        eo_parent_set(child, evas_common_evas_get(parent));
+     }
+}
+
+static void
 _edje_child_remove(Edje *ed, Edje_Real_Part *rp, Evas_Object *child)
 {
    evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL, _edje_child_del_cb, rp);
    evas_object_data_del(child, ".edje");
    if (!ed) return;
+   _eo_unparent_helper(child, ed->obj);
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
@@ -6322,6 +6333,7 @@ _edje_real_part_swallow(Edje *ed,
 #endif
    if (!obj_swallow) return;
    rp->typedata.swallow->swallowed_object = obj_swallow;
+   eo_parent_set(obj_swallow, ed->obj);
    evas_object_smart_member_add(rp->typedata.swallow->swallowed_object, ed->obj);
    if (rp->part->clip_to_id >= 0)
      {
@@ -6380,6 +6392,7 @@ _edje_real_part_swallow_clear(Edje *ed, Edje_Real_Part *rp)
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
        (!rp->typedata.swallow)) return;
    if (!rp->typedata.swallow->swallowed_object) return;
+   _eo_unparent_helper(rp->typedata.swallow->swallowed_object, ed->obj);
    evas_object_smart_member_del(rp->typedata.swallow->swallowed_object);
    evas_object_event_callback_del_full(rp->typedata.swallow->swallowed_object,
                                        EVAS_CALLBACK_DEL,

@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_WIDGET_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
@@ -719,7 +720,7 @@ elm_hover_parent_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_hover_elm_widget_parent_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *parent)
+_elm_hover_elm_widget_widget_parent_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *parent)
 {
    _elm_hover_parent_detach(obj);
 
@@ -757,7 +758,7 @@ elm_hover_parent_get(const Evas_Object *obj)
 }
 
 EOLIAN static Evas_Object*
-_elm_hover_elm_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
+_elm_hover_elm_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
 {
    return sd->parent;
 }

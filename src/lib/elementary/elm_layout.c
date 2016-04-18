@@ -675,6 +675,15 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_eo_unparent_helper(Eo *child, Eo *parent)
+{
+   if (eo_parent_get(child) == parent)
+     {
+        eo_parent_set(child, evas_common_evas_get(parent));
+     }
+}
+
+static void
 _box_reference_del(void *data,
                    Evas *e EINA_UNUSED,
                    Evas_Object *obj EINA_UNUSED,
@@ -701,6 +710,7 @@ _sub_box_remove(Evas_Object *obj,
    edje_object_part_box_remove
      (wd->resize_obj, sub_d->part, child);
 
+   _eo_unparent_helper(child, obj);
    if (!elm_widget_sub_object_del(obj, child))
      {
         ERR("could not remove sub object %p from %p", child, obj);
@@ -738,6 +748,8 @@ _sub_table_remove(Evas_Object *obj,
 
    edje_object_part_table_unpack
      (wd->resize_obj, sub_d->part, child);
+
+   _eo_unparent_helper(child, obj);
 
    if (!elm_widget_sub_object_del(obj, child))
      {
@@ -1001,6 +1013,7 @@ _elm_layout_elm_container_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const 
              if (!strcmp(part, sub_d->part))
                {
                   if (content == sub_d->obj) goto end;
+                  _eo_unparent_helper(sub_d->obj, obj);
                   evas_object_del(sub_d->obj);
                   break;
                }
@@ -1040,6 +1053,7 @@ _elm_layout_elm_container_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const 
         sub_d->obj = content;
         sd->subs = eina_list_append(sd->subs, sub_d);
 
+        eo_parent_set(content, obj);
         _icon_signal_emit(sd, sub_d, EINA_TRUE);
      }
 
@@ -1116,6 +1130,7 @@ _elm_layout_elm_container_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, cons
 
              edje_object_part_unswallow
                (wd->resize_obj, content);
+             _eo_unparent_helper(content, obj);
              return content;
           }
      }
@@ -1284,6 +1299,15 @@ _elm_layout_text_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
    return edje_object_part_text_get(wd->resize_obj, part);
 }
 
+static void
+_layout_box_subobj_init(Elm_Layout_Smart_Data *sd, Elm_Layout_Sub_Object_Data *sub_d, const char *part, Evas_Object *child)
+{
+   sub_d->part = eina_stringshare_add(part);
+   sub_d->obj = child;
+   sd->subs = eina_list_append(sd->subs, sub_d);
+   eo_parent_set(child, sd->obj);
+}
+
 EOLIAN static Eina_Bool
 _elm_layout_box_append(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child)
 {
@@ -1314,9 +1338,7 @@ _elm_layout_box_append(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Eva
         return EINA_FALSE;
      }
    sub_d->type = BOX_APPEND;
-   sub_d->part = eina_stringshare_add(part);
-   sub_d->obj = child;
-   sd->subs = eina_list_append(sd->subs, sub_d);
+   _layout_box_subobj_init(sd, sub_d, part, child);
 
    elm_obj_layout_sizing_eval(obj);
 
@@ -1353,9 +1375,7 @@ _elm_layout_box_prepend(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Ev
         return EINA_FALSE;
      }
    sub_d->type = BOX_PREPEND;
-   sub_d->part = eina_stringshare_add(part);
-   sub_d->obj = child;
-   sd->subs = eina_list_prepend(sd->subs, sub_d);
+   _layout_box_subobj_init(sd, sub_d, part, child);
 
    elm_obj_layout_sizing_eval(obj);
 
@@ -1393,10 +1413,8 @@ _elm_layout_box_insert_before(Eo *obj, Elm_Layout_Smart_Data *sd, const char *pa
         return EINA_FALSE;
      }
    sub_d->type = BOX_INSERT_BEFORE;
-   sub_d->part = eina_stringshare_add(part);
-   sub_d->obj = child;
    sub_d->p.box.reference = reference;
-   sd->subs = eina_list_append(sd->subs, sub_d);
+   _layout_box_subobj_init(sd, sub_d, part, child);
 
    evas_object_event_callback_add
      ((Evas_Object *)reference, EVAS_CALLBACK_DEL, _box_reference_del, sub_d);
@@ -1436,10 +1454,8 @@ _elm_layout_box_insert_at(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, 
         return EINA_FALSE;
      }
    sub_d->type = BOX_INSERT_AT;
-   sub_d->part = eina_stringshare_add(part);
-   sub_d->obj = child;
    sub_d->p.box.pos = pos;
-   sd->subs = eina_list_append(sd->subs, sub_d);
+   _layout_box_subobj_init(sd, sub_d, part, child);
 
    elm_obj_layout_sizing_eval(obj);
 
@@ -1537,6 +1553,7 @@ _elm_layout_table_pack(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Eva
    sub_d->p.table.colspan = colspan;
    sub_d->p.table.rowspan = rowspan;
    sd->subs = eina_list_append(sd->subs, sub_d);
+   eo_parent_set(child, obj);
 
    elm_obj_layout_sizing_eval(obj);
 

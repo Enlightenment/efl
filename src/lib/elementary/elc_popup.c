@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 
 #include <Elementary.h>
@@ -471,7 +472,7 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
         edje_object_message_signal_process(elm_layout_edje_get(sd->content_area));
 
         elm_popup_align_get(obj, &horizontal, &vertical);
-        evas_object_geometry_get(elm_widget_parent_get(obj), NULL, NULL, &w, &h);
+        evas_object_geometry_get(sd->parent, NULL, NULL, &w, &h);
 
         if (horizontal == ELM_NOTIFY_ALIGN_FILL)
           minw = w;
@@ -1572,7 +1573,7 @@ _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_i
 }
 
 EOLIAN static void
-_elm_popup_elm_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object *parent)
+_elm_popup_elm_widget_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object *parent)
 {
    Evas_Coord x, y, w, h;
    evas_object_geometry_get(parent, &x, &y, &w, &h);

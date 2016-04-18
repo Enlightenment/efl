@@ -24,7 +24,41 @@ START_TEST(elm_atspi_role_get)
 }
 END_TEST
 
+START_TEST(elm_layout_swallows)
+{
+   char buf[PATH_MAX];
+   Evas_Object *win, *ly, *bt, *bt2;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
+
+   ly = eo_add(ELM_LAYOUT_CLASS, win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   elm_layout_file_set(ly, buf, "layout");
+   evas_object_show(ly);
+
+   bt = eo_add(ELM_BUTTON_CLASS, ly);
+   fail_if(!elm_obj_container_content_set(ly, "element1", bt));
+   ck_assert_ptr_eq(eo_parent_get(bt), ly);
+
+   bt = elm_obj_container_content_unset(ly, "element1");
+   ck_assert_ptr_eq(eo_parent_get(bt), evas_common_evas_get(bt));
+
+   fail_if(!elm_obj_container_content_set(ly, "element1", bt));
+   ck_assert_ptr_eq(eo_parent_get(bt), ly);
+
+   bt2 = eo_add(ELM_BUTTON_CLASS, ly);
+   fail_if(!elm_obj_container_content_set(ly, "element1", bt2));
+   ck_assert_ptr_eq(eo_parent_get(bt2), ly);
+   /* bt is deleted at this point. */
+   ck_assert_ptr_eq(eo_parent_get(bt), evas_common_evas_get(bt));
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_layout(TCase *tc)
 {
    tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_layout_swallows);
 }
