@@ -13,86 +13,73 @@ enum Ecore_Audio_Format {
 
 class Ecore_Audio (Eo.Base)
 {
+   [[Convenience audio class.]]
+
    legacy_prefix: null;
    eo_prefix: ecore_audio_obj;
    data: Ecore_Audio_Object;
    methods {
       @property name {
-         set {
-            [[Set the name of the object
+         [[Name of the object
 
-              @since 1.8
-            ]]
+           @since 1.8
+         ]]
+         set {
          }
          get {
-            [[Get the name of the object
-
-              @since 1.8
-            ]]
          }
          values {
-            name: const(char)*; 
+            name: const(char)*; [[Name]]
          }
       }
       @property paused {
-         set {
-            [[Set the pause state of the object
+         [[Pause state of the object
 
-              @since 1.8
-            ]]
+           @since 1.8
+         ]]
+         set {
          }
          get {
-            [[Get the pause state of the object
-
-              @since 1.8
-            ]]
          }
          values {
             paused: bool; [[true if object is paused, false if not]]
          }
       }
       @property volume {
-         set {
-            [[Set the volume of the object
+         [[Volume of the object
 
-              @since 1.8
-            ]]
+           @since 1.8
+         ]]
+         set {
          }
          get {
-            [[Get the volume of the object
-
-              @since 1.8
-            ]]
          }
          values {
-            volume: double; [[the volume]]
+            volume: double; [[The volume]]
          }
       }
       @property source {
+         [[Source of the object
+
+           What sources are supported depends on the actual object.
+           For example, the libsndfile class accepts WAV, OGG, FLAC
+           files as source.
+
+           @since 1.8
+         ]]
          set {
-            [[Set the source of the object
-
-              What sources are supported depends on the actual object.
-              For example, the libsndfile class accepts WAV, OGG, FLAC
-              files as source.
-
-              @since 1.8
-            ]]
             return: bool; [[true if the source was set correctly (i.e. the file
                             was opened), EINA_FALSE otherwise
                           ]]
          }
          get {
-            [[Get the source of the object
-
-              @since 1.8
-            ]]
          }
          values {
             source: const(char)*; [[the source to set to (i.e. file, URL, device)]]
          }
       }
       @property format {
+         [[Format of the object.]]
          set {
             [[Set the format of the object
 
