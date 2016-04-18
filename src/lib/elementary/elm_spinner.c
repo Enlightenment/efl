@@ -553,7 +553,11 @@ _min_max_validity_filter(void *data, Evas_Object *obj, char **text)
 
    max_len = log10(fabs(sd->val_max)) + 1;
    len = evas_string_char_len_get(new_str);
-   if (len < max_len) return;
+   if (len < max_len)
+     {
+        ELM_SAFE_FREE(new_str, free);
+        return;
+     }
 
    val = strtod(new_str, NULL);
    ELM_SAFE_FREE(new_str, free);
