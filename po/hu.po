@@ -6,12 +6,12 @@
 #: src/lib/elementary/elm_config.c:3692
 msgid ""
 msgstr ""
-"Project-Id-Version: Efl\n"
+"Project-Id-Version: elementary 1.8.2\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-04-11 23:34+0900\n"
-"PO-Revision-Date: 2014-01-29 15:08+0100\n"
+"POT-Creation-Date: 2016-04-18 13:45+0200\n"
+"PO-Revision-Date: 2014-01-29 15:27+0100\n"
 "Last-Translator: rezso <rezso@rezso.net>\n"
-"Language-Team: Enlightenment Team\n"
+"Language-Team: General\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -253,6 +253,7 @@ msgid "Search"
 msgstr ""
 
 #: src/lib/elementary/elc_fileselector.c:1728
+#: src/lib/elementary/elm_entry.c:1627 src/lib/elementary/elm_entry.c:1652
 msgid "Cancel"
 msgstr "Mégsem"
 
@@ -260,132 +261,290 @@ msgstr "Mégsem"
 msgid "OK"
 msgstr "OK"
 
+#: src/lib/elementary/elc_multibuttonentry.c:679
+msgid "multi button entry label"
+msgstr ""
+
+#: src/lib/elementary/elc_multibuttonentry.c:701
+msgid "multi button entry item"
+msgstr ""
+
+#: src/lib/elementary/elc_multibuttonentry.c:1585
+msgid "multi button entry"
+msgstr ""
+
+#: src/lib/elementary/elc_naviframe.c:431
+msgid "Title"
+msgstr "Cím"
+
 #: src/lib/elementary/elc_naviframe.c:982
+#: src/lib/elementary/elc_naviframe.c:1187
 msgid "Back"
 msgstr "Vissza"
 
-#~ msgid "Title"
-#~ msgstr "Cím"
+#: src/lib/elementary/elc_naviframe.c:1286
+msgid "Next"
+msgstr "Következő"
 
-#~ msgid "Next"
-#~ msgstr "Következő"
+#: src/lib/elementary/elc_popup.c:300 src/lib/elementary/elc_popup.c:970
+msgid "Popup Title"
+msgstr "Popup címsora"
 
-#~ msgid "Popup Title"
-#~ msgstr "Popup címsora"
+#: src/lib/elementary/elc_popup.c:310 src/lib/elementary/elc_popup.c:1046
+msgid "Popup Body Text"
+msgstr "Popup szövege"
 
-#~ msgid "Popup Body Text"
-#~ msgstr "Popup szövege"
+#: src/lib/elementary/elm_bubble.c:194
+msgid "Bubble"
+msgstr "Buborék"
 
-#~ msgid "Bubble"
-#~ msgstr "Buborék"
+#: src/lib/elementary/elm_button.c:66
+msgid "Clicked"
+msgstr ""
 
-#~ msgid "State: Disabled"
-#~ msgstr "Állapot: letiltva"
+#: src/lib/elementary/elm_button.c:275 src/lib/elementary/elm_check.c:211
+#: src/lib/elementary/elm_gengrid.c:1242 src/lib/elementary/elm_genlist.c:1713
+#: src/lib/elementary/elm_list.c:2172 src/lib/elementary/elm_radio.c:215
+#: src/lib/elementary/elm_segment_control.c:527
+#: src/lib/elementary/elm_spinner.c:1010 src/lib/elementary/elm_toolbar.c:2371
+msgid "State: Disabled"
+msgstr "Állapot: letiltva"
 
-#~ msgid "Button"
-#~ msgstr "Gomb"
+#: src/lib/elementary/elm_button.c:300
+msgid "Button"
+msgstr "Gomb"
 
-#~ msgid "%B %Y"
-#~ msgstr "%Y. %B"
+#: src/lib/elementary/elm_calendar.c:270
+msgid "%B %Y"
+msgstr "%Y. %B"
 
-#~ msgid "%B"
-#~ msgstr "%B"
+#: src/lib/elementary/elm_calendar.c:276
+msgid "%B"
+msgstr "%B"
 
-#~ msgid "%Y"
-#~ msgstr "%Y"
+#: src/lib/elementary/elm_calendar.c:282
+msgid "%Y"
+msgstr "%Y"
 
-#~ msgid "calendar item"
-#~ msgstr "naptárelem"
+#: src/lib/elementary/elm_calendar.c:396
+msgid "calendar item"
+msgstr "naptárelem"
 
-#~ msgid "calendar decrement month button"
-#~ msgstr "naptár: hónap csökkentése gomb"
+#: src/lib/elementary/elm_calendar.c:423
+msgid "calendar decrement month button"
+msgstr "naptár: hónap csökkentése gomb"
 
-#~ msgid "calendar decrement year button"
-#~ msgstr "naptár: év csökkentése gomb"
+#: src/lib/elementary/elm_calendar.c:429
+msgid "calendar decrement year button"
+msgstr "naptár: év csökkentése gomb"
 
-#~ msgid "calendar increment month button"
-#~ msgstr "naptár: hónap növelése gomb"
+#: src/lib/elementary/elm_calendar.c:435
+msgid "calendar increment month button"
+msgstr "naptár: hónap növelése gomb"
 
-#~ msgid "calendar increment year button"
-#~ msgstr "naptár: év növelése gomb"
+#: src/lib/elementary/elm_calendar.c:441
+msgid "calendar increment year button"
+msgstr "naptár: év növelése gomb"
 
-#~ msgid "calendar month"
-#~ msgstr "naptár hónapja"
+#: src/lib/elementary/elm_calendar.c:446
+msgid "calendar month"
+msgstr "naptár hónapja"
 
-#~ msgid "calendar year"
-#~ msgstr "naptár éve"
+#: src/lib/elementary/elm_calendar.c:451
+msgid "calendar year"
+msgstr "naptár éve"
 
-#~ msgid "State: On"
-#~ msgstr "Állapot: be"
+#: src/lib/elementary/elm_check.c:63 src/lib/elementary/elm_check.c:224
+#: src/lib/elementary/elm_radio.c:119 src/lib/elementary/elm_radio.c:216
+msgid "State: On"
+msgstr "Állapot: be"
 
-#~ msgid "State: Off"
-#~ msgstr "Állapot: ki"
+#: src/lib/elementary/elm_check.c:74 src/lib/elementary/elm_check.c:236
+#: src/lib/elementary/elm_radio.c:218
+msgid "State: Off"
+msgstr "Állapot: ki"
 
-#~ msgid "State"
-#~ msgstr "Állapot"
+#: src/lib/elementary/elm_check.c:220 src/lib/elementary/elm_check.c:233
+msgid "State"
+msgstr "Állapot"
 
-#~ msgid "Check"
-#~ msgstr "Ellenőrzés"
+#: src/lib/elementary/elm_check.c:314
+msgid "Check"
+msgstr "Ellenőrzés"
 
-#~ msgid "State: Editable"
-#~ msgstr "Állapot: szerkeszthető"
+#: src/lib/elementary/elm_clock.c:303
+msgid "clock increment button for am,pm"
+msgstr ""
 
-#~ msgid "Clock"
-#~ msgstr "Óra"
+#: src/lib/elementary/elm_clock.c:311
+msgid "clock decrement button for am,pm"
+msgstr ""
 
-#~ msgid "default:LTR"
-#~ msgstr "default:LTR"
+#: src/lib/elementary/elm_clock.c:647
+msgid "State: Editable"
+msgstr "Állapot: szerkeszthető"
 
-#~ msgid "Copy"
-#~ msgstr "Másolás"
+#: src/lib/elementary/elm_clock.c:682
+msgid "Clock"
+msgstr "Óra"
 
-#~ msgid "Cut"
-#~ msgstr "Kivágás"
+#: src/lib/elementary/elm_colorselector.c:898
+msgid "Pick a color"
+msgstr ""
 
-#~ msgid "Paste"
-#~ msgstr "Beillesztés"
+#: src/lib/elementary/elm_colorselector.c:936
+msgid "R:"
+msgstr ""
 
-#~ msgid "Select"
-#~ msgstr "Kiválaszt"
+#: src/lib/elementary/elm_colorselector.c:938
+msgid "G:"
+msgstr ""
 
-#~ msgid "Entry"
-#~ msgstr "Bejegyzés"
+#: src/lib/elementary/elm_colorselector.c:940
+msgid "B:"
+msgstr ""
 
-#~ msgid "Label"
-#~ msgstr "Címke"
+#: src/lib/elementary/elm_colorselector.c:942
+msgid "A:"
+msgstr ""
 
-#~ msgid "state: opened"
-#~ msgstr "állapot: nyitott"
+#: src/lib/elementary/elm_colorselector.c:1666
+msgid "color selector palette item"
+msgstr ""
 
-#~ msgid "state: closed"
-#~ msgstr "állapot: zárt"
+#: src/lib/elementary/elm_config.c:3708
+msgid "default:LTR"
+msgstr "default:LTR"
 
-#~ msgid "panel button"
-#~ msgstr "panelgomb"
+#: src/lib/elementary/elm_dayselector.c:407
+msgid "day selector item"
+msgstr ""
 
-#~ msgid "progressbar"
-#~ msgstr "folyamatjelző"
+#: src/lib/elementary/elm_diskselector.c:700
+msgid "diskselector item"
+msgstr ""
 
-#~ msgid "Radio"
-#~ msgstr "Rádió"
+#: src/lib/elementary/elm_entry.c:1614
+msgid "Copy"
+msgstr "Másolás"
 
-#~ msgid "State: Selected"
-#~ msgstr "Állapot: kijelölve"
+#: src/lib/elementary/elm_entry.c:1619
+msgid "Cut"
+msgstr "Kivágás"
 
-#~ msgid "State: Unselected"
-#~ msgstr "Állapot: nincs kijelölve"
+#: src/lib/elementary/elm_entry.c:1623 src/lib/elementary/elm_entry.c:1646
+msgid "Paste"
+msgstr "Beillesztés"
 
-#~ msgid "slider"
-#~ msgstr "csúszka"
+#: src/lib/elementary/elm_entry.c:1639
+msgid "Select"
+msgstr "Kiválaszt"
 
-#~ msgid "Selected"
-#~ msgstr "Kiválasztva"
+#: src/lib/elementary/elm_entry.c:3688
+msgid "Entry"
+msgstr "Bejegyzés"
 
-#~ msgid "Separator"
-#~ msgstr "Elválasztó"
+#: src/lib/elementary/elm_gengrid.c:1272
+msgid "Gengrid Item"
+msgstr ""
 
-#~ msgid "Unselected"
-#~ msgstr "Nincs kijelölve"
+#: src/lib/elementary/elm_index.c:96
+msgid "Index"
+msgstr ""
 
-#~ msgid "Toolbar Item"
-#~ msgstr "Eszköztár elem"
+#: src/lib/elementary/elm_index.c:124
+msgid "Index Item"
+msgstr ""
+
+#: src/lib/elementary/elm_label.c:393
+msgid "Label"
+msgstr "Címke"
+
+#: src/lib/elementary/elm_panel.c:71
+msgid "state: opened"
+msgstr "állapot: nyitott"
+
+#: src/lib/elementary/elm_panel.c:72
+msgid "state: closed"
+msgstr "állapot: zárt"
+
+#: src/lib/elementary/elm_panel.c:112
+msgid "A panel is open"
+msgstr ""
+
+#: src/lib/elementary/elm_panel.c:114
+msgid "Double tap to close panel menu"
+msgstr ""
+
+#: src/lib/elementary/elm_panel.c:166
+msgid "panel button"
+msgstr "panelgomb"
+
+#: src/lib/elementary/elm_progressbar.c:309
+msgid "progressbar"
+msgstr "folyamatjelző"
+
+#: src/lib/elementary/elm_radio.c:244
+msgid "Radio"
+msgstr "Rádió"
+
+#: src/lib/elementary/elm_segment_control.c:530
+#: src/lib/elementary/elm_toolbar.c:2373
+msgid "State: Selected"
+msgstr "Állapot: kijelölve"
+
+#: src/lib/elementary/elm_segment_control.c:532
+msgid "State: Unselected"
+msgstr "Állapot: nincs kijelölve"
+
+#: src/lib/elementary/elm_segment_control.c:546
+msgid "Segment Control Item"
+msgstr ""
+
+#: src/lib/elementary/elm_slider.c:1187
+msgid "slider"
+msgstr "csúszka"
+
+#: src/lib/elementary/elm_spinner.c:1040
+msgid "incremented"
+msgstr ""
+
+#: src/lib/elementary/elm_spinner.c:1046
+msgid "decremented"
+msgstr ""
+
+#: src/lib/elementary/elm_spinner.c:1079 src/lib/elementary/elm_spinner.c:1146
+msgid "spinner"
+msgstr ""
+
+#: src/lib/elementary/elm_spinner.c:1088 src/lib/elementary/elm_spinner.c:1129
+msgid "spinner increment button"
+msgstr ""
+
+#: src/lib/elementary/elm_spinner.c:1091 src/lib/elementary/elm_spinner.c:1138
+msgid "spinner decrement button"
+msgstr ""
+
+#: src/lib/elementary/elm_spinner.c:1093
+msgid "spinner text"
+msgstr ""
+
+#: src/lib/elementary/elm_toolbar.c:1832 src/lib/elementary/elm_toolbar.c:2429
+msgid "Selected"
+msgstr "Kiválasztva"
+
+#: src/lib/elementary/elm_toolbar.c:2369
+msgid "Separator"
+msgstr "Elválasztó"
+
+#: src/lib/elementary/elm_toolbar.c:2375
+msgid "Has menu"
+msgstr ""
+
+#: src/lib/elementary/elm_toolbar.c:2424
+msgid "Unselected"
+msgstr "Nincs kijelölve"
+
+#: src/lib/elementary/elm_toolbar.c:2441
+msgid "Toolbar Item"
+msgstr "Eszköztár elem"

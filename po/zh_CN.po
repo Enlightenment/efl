@@ -7,10 +7,10 @@
 #: src/lib/elementary/elm_config.c:3692
 msgid ""
 msgstr ""
-"Project-Id-Version: Efl\n"
+"Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-04-11 23:34+0900\n"
-"PO-Revision-Date: 2012-12-22 03:45+0800\n"
+"POT-Creation-Date: 2016-04-18 13:45+0200\n"
+"PO-Revision-Date: 2012-12-22 03:55+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
 "Language: zh_CN\n"
@@ -253,6 +253,7 @@ msgid "Search"
 msgstr ""
 
 #: src/lib/elementary/elc_fileselector.c:1728
+#: src/lib/elementary/elm_entry.c:1627 src/lib/elementary/elm_entry.c:1652
 msgid "Cancel"
 msgstr "取消"
 
@@ -260,152 +261,301 @@ msgstr "取消"
 msgid "OK"
 msgstr "确定"
 
+#: src/lib/elementary/elc_multibuttonentry.c:679
+msgid "multi button entry label"
+msgstr ""
+
+#: src/lib/elementary/elc_multibuttonentry.c:701
+msgid "multi button entry item"
+msgstr ""
+
+#: src/lib/elementary/elc_multibuttonentry.c:1585
+msgid "multi button entry"
+msgstr ""
+
+#: src/lib/elementary/elc_naviframe.c:431
+msgid "Title"
+msgstr ""
+
 #: src/lib/elementary/elc_naviframe.c:982
+#: src/lib/elementary/elc_naviframe.c:1187
 msgid "Back"
 msgstr ""
 
-#~ msgid "Bubble"
-#~ msgstr "气泡"
+#: src/lib/elementary/elc_naviframe.c:1286
+msgid "Next"
+msgstr ""
 
-#~ msgid "Clicked"
-#~ msgstr "点击"
+#: src/lib/elementary/elc_popup.c:300 src/lib/elementary/elc_popup.c:970
+msgid "Popup Title"
+msgstr ""
 
-#~ msgid "State: Disabled"
-#~ msgstr "状态：已禁用"
+#: src/lib/elementary/elc_popup.c:310 src/lib/elementary/elc_popup.c:1046
+msgid "Popup Body Text"
+msgstr ""
 
-#~ msgid "Button"
-#~ msgstr "按钮"
+#: src/lib/elementary/elm_bubble.c:194
+msgid "Bubble"
+msgstr "气泡"
 
-#~ msgid "%B %Y"
-#~ msgstr "%B %Y"
+#: src/lib/elementary/elm_button.c:66
+msgid "Clicked"
+msgstr "点击"
 
-#~ msgid "calendar item"
-#~ msgstr "日历条目"
+#: src/lib/elementary/elm_button.c:275 src/lib/elementary/elm_check.c:211
+#: src/lib/elementary/elm_gengrid.c:1242 src/lib/elementary/elm_genlist.c:1713
+#: src/lib/elementary/elm_list.c:2172 src/lib/elementary/elm_radio.c:215
+#: src/lib/elementary/elm_segment_control.c:527
+#: src/lib/elementary/elm_spinner.c:1010 src/lib/elementary/elm_toolbar.c:2371
+msgid "State: Disabled"
+msgstr "状态：已禁用"
 
+#: src/lib/elementary/elm_button.c:300
+msgid "Button"
+msgstr "按钮"
+
+#: src/lib/elementary/elm_calendar.c:270
+msgid "%B %Y"
+msgstr "%B %Y"
+
+#: src/lib/elementary/elm_calendar.c:276
+msgid "%B"
+msgstr ""
+
+#: src/lib/elementary/elm_calendar.c:282
+msgid "%Y"
+msgstr ""
+
+#: src/lib/elementary/elm_calendar.c:396
+msgid "calendar item"
+msgstr "日历条目"
+
+#: src/lib/elementary/elm_calendar.c:423
 #, fuzzy
-#~ msgid "calendar decrement month button"
-#~ msgstr "日历减量按钮"
+msgid "calendar decrement month button"
+msgstr "日历减量按钮"
 
+#: src/lib/elementary/elm_calendar.c:429
 #, fuzzy
-#~ msgid "calendar decrement year button"
-#~ msgstr "日历减量按钮"
+msgid "calendar decrement year button"
+msgstr "日历减量按钮"
 
+#: src/lib/elementary/elm_calendar.c:435
 #, fuzzy
-#~ msgid "calendar increment month button"
-#~ msgstr "日历增量按钮"
+msgid "calendar increment month button"
+msgstr "日历增量按钮"
 
+#: src/lib/elementary/elm_calendar.c:441
 #, fuzzy
-#~ msgid "calendar increment year button"
-#~ msgstr "日历增量按钮"
+msgid "calendar increment year button"
+msgstr "日历增量按钮"
 
-#~ msgid "calendar month"
-#~ msgstr "日历月"
+#: src/lib/elementary/elm_calendar.c:446
+msgid "calendar month"
+msgstr "日历月"
 
+#: src/lib/elementary/elm_calendar.c:451
 #, fuzzy
-#~ msgid "calendar year"
-#~ msgstr "日历条目"
+msgid "calendar year"
+msgstr "日历条目"
 
-#~ msgid "State: On"
-#~ msgstr "状态：开启"
+#: src/lib/elementary/elm_check.c:63 src/lib/elementary/elm_check.c:224
+#: src/lib/elementary/elm_radio.c:119 src/lib/elementary/elm_radio.c:216
+msgid "State: On"
+msgstr "状态：开启"
 
-#~ msgid "State: Off"
-#~ msgstr "状态：关闭"
+#: src/lib/elementary/elm_check.c:74 src/lib/elementary/elm_check.c:236
+#: src/lib/elementary/elm_radio.c:218
+msgid "State: Off"
+msgstr "状态：关闭"
 
-#~ msgid "State"
-#~ msgstr "状态"
+#: src/lib/elementary/elm_check.c:220 src/lib/elementary/elm_check.c:233
+msgid "State"
+msgstr "状态"
 
-#~ msgid "Check"
-#~ msgstr "检查"
+#: src/lib/elementary/elm_check.c:314
+msgid "Check"
+msgstr "检查"
 
-#~ msgid "clock increment button for am,pm"
-#~ msgstr "上下午的时钟增量按钮"
+#: src/lib/elementary/elm_clock.c:303
+msgid "clock increment button for am,pm"
+msgstr "上下午的时钟增量按钮"
 
-#~ msgid "clock decrement button for am,pm"
-#~ msgstr "上下午的时钟减量按钮"
+#: src/lib/elementary/elm_clock.c:311
+msgid "clock decrement button for am,pm"
+msgstr "上下午的时钟减量按钮"
 
-#~ msgid "State: Editable"
-#~ msgstr "状态：可编辑"
+#: src/lib/elementary/elm_clock.c:647
+msgid "State: Editable"
+msgstr "状态：可编辑"
 
-#~ msgid "Clock"
-#~ msgstr "时钟"
+#: src/lib/elementary/elm_clock.c:682
+msgid "Clock"
+msgstr "时钟"
 
-#~ msgid "color selector palette item"
-#~ msgstr "色彩选择器项目"
+#: src/lib/elementary/elm_colorselector.c:898
+msgid "Pick a color"
+msgstr ""
+
+#: src/lib/elementary/elm_colorselector.c:936
+msgid "R:"
+msgstr ""
+
+#: src/lib/elementary/elm_colorselector.c:938
+msgid "G:"
+msgstr ""
+
+#: src/lib/elementary/elm_colorselector.c:940
+msgid "B:"
+msgstr ""
+
+#: src/lib/elementary/elm_colorselector.c:942
+msgid "A:"
+msgstr ""
+
+#: src/lib/elementary/elm_colorselector.c:1666
+msgid "color selector palette item"
+msgstr "色彩选择器项目"
 
 # Don't change it!
-#~ msgid "default:LTR"
-#~ msgstr "default:LTR"
+#: src/lib/elementary/elm_config.c:3708
+msgid "default:LTR"
+msgstr "default:LTR"
 
+#: src/lib/elementary/elm_dayselector.c:407
 #, fuzzy
-#~ msgid "day selector item"
-#~ msgstr "磁盘选择器项目"
+msgid "day selector item"
+msgstr "磁盘选择器项目"
 
-#~ msgid "diskselector item"
-#~ msgstr "磁盘选择器项目"
+#: src/lib/elementary/elm_diskselector.c:700
+msgid "diskselector item"
+msgstr "磁盘选择器项目"
 
-#~ msgid "Copy"
-#~ msgstr "复制"
+#: src/lib/elementary/elm_entry.c:1614
+msgid "Copy"
+msgstr "复制"
 
-#~ msgid "Cut"
-#~ msgstr "粘贴"
+#: src/lib/elementary/elm_entry.c:1619
+msgid "Cut"
+msgstr "粘贴"
 
-#~ msgid "Paste"
-#~ msgstr "粘贴"
+#: src/lib/elementary/elm_entry.c:1623 src/lib/elementary/elm_entry.c:1646
+msgid "Paste"
+msgstr "粘贴"
 
-#~ msgid "Select"
-#~ msgstr "选择"
+#: src/lib/elementary/elm_entry.c:1639
+msgid "Select"
+msgstr "选择"
 
-#~ msgid "Entry"
-#~ msgstr "条目"
+#: src/lib/elementary/elm_entry.c:3688
+msgid "Entry"
+msgstr "条目"
 
-#~ msgid "Index"
-#~ msgstr "索引"
+#: src/lib/elementary/elm_gengrid.c:1272
+msgid "Gengrid Item"
+msgstr ""
 
-#~ msgid "Index Item"
-#~ msgstr "索引条目"
+#: src/lib/elementary/elm_index.c:96
+msgid "Index"
+msgstr "索引"
 
-#~ msgid "Label"
-#~ msgstr "标签"
+#: src/lib/elementary/elm_index.c:124
+msgid "Index Item"
+msgstr "索引条目"
 
-#~ msgid "state: opened"
-#~ msgstr "状态：已打开"
+#: src/lib/elementary/elm_label.c:393
+msgid "Label"
+msgstr "标签"
 
-#~ msgid "state: closed"
-#~ msgstr "状态：已关闭"
+#: src/lib/elementary/elm_panel.c:71
+msgid "state: opened"
+msgstr "状态：已打开"
 
-#~ msgid "panel button"
-#~ msgstr "面板按钮"
+#: src/lib/elementary/elm_panel.c:72
+msgid "state: closed"
+msgstr "状态：已关闭"
 
-#~ msgid "progressbar"
-#~ msgstr "进度条"
+#: src/lib/elementary/elm_panel.c:112
+msgid "A panel is open"
+msgstr ""
 
-#~ msgid "Radio"
-#~ msgstr "无线电"
+#: src/lib/elementary/elm_panel.c:114
+msgid "Double tap to close panel menu"
+msgstr ""
 
-#~ msgid "State: Selected"
-#~ msgstr "状态：已选择"
+#: src/lib/elementary/elm_panel.c:166
+msgid "panel button"
+msgstr "面板按钮"
 
+#: src/lib/elementary/elm_progressbar.c:309
+msgid "progressbar"
+msgstr "进度条"
+
+#: src/lib/elementary/elm_radio.c:244
+msgid "Radio"
+msgstr "无线电"
+
+#: src/lib/elementary/elm_segment_control.c:530
+#: src/lib/elementary/elm_toolbar.c:2373
+msgid "State: Selected"
+msgstr "状态：已选择"
+
+#: src/lib/elementary/elm_segment_control.c:532
 #, fuzzy
-#~ msgid "State: Unselected"
-#~ msgstr "状态：已选择"
+msgid "State: Unselected"
+msgstr "状态：已选择"
 
-#~ msgid "slider"
-#~ msgstr "滑块"
+#: src/lib/elementary/elm_segment_control.c:546
+msgid "Segment Control Item"
+msgstr ""
 
-#~ msgid "Selected"
-#~ msgstr "已选择"
+#: src/lib/elementary/elm_slider.c:1187
+msgid "slider"
+msgstr "滑块"
 
-#~ msgid "Separator"
-#~ msgstr "分隔符"
+#: src/lib/elementary/elm_spinner.c:1040
+msgid "incremented"
+msgstr ""
 
-#~ msgid "Has menu"
-#~ msgstr "有菜单"
+#: src/lib/elementary/elm_spinner.c:1046
+msgid "decremented"
+msgstr ""
 
-#~ msgid "Unselected"
-#~ msgstr "未选择"
+#: src/lib/elementary/elm_spinner.c:1079 src/lib/elementary/elm_spinner.c:1146
+msgid "spinner"
+msgstr ""
 
-#~ msgid "Toolbar Item"
-#~ msgstr "工具栏项目"
+#: src/lib/elementary/elm_spinner.c:1088 src/lib/elementary/elm_spinner.c:1129
+msgid "spinner increment button"
+msgstr ""
+
+#: src/lib/elementary/elm_spinner.c:1091 src/lib/elementary/elm_spinner.c:1138
+msgid "spinner decrement button"
+msgstr ""
+
+#: src/lib/elementary/elm_spinner.c:1093
+msgid "spinner text"
+msgstr ""
+
+#: src/lib/elementary/elm_toolbar.c:1832 src/lib/elementary/elm_toolbar.c:2429
+msgid "Selected"
+msgstr "已选择"
+
+#: src/lib/elementary/elm_toolbar.c:2369
+msgid "Separator"
+msgstr "分隔符"
+
+#: src/lib/elementary/elm_toolbar.c:2375
+msgid "Has menu"
+msgstr "有菜单"
+
+#: src/lib/elementary/elm_toolbar.c:2424
+msgid "Unselected"
+msgstr "未选择"
+
+#: src/lib/elementary/elm_toolbar.c:2441
+msgid "Toolbar Item"
+msgstr "工具栏项目"
 
 #~ msgid "List Item"
 #~ msgstr "列表条目"

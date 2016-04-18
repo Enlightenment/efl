@@ -8,10 +8,10 @@
 #: src/lib/elementary/elm_config.c:3692
 msgid ""
 msgstr ""
-"Project-Id-Version: Efl\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-04-11 23:34+0900\n"
-"PO-Revision-Date: 2014-05-22 21:29+0200\n"
+"POT-Creation-Date: 2016-04-18 13:45+0200\n"
+"PO-Revision-Date: 2014-05-22 22:44+0200\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "Language: cs\n"
@@ -256,6 +256,7 @@ msgid "Search"
 msgstr ""
 
 #: src/lib/elementary/elc_fileselector.c:1728
+#: src/lib/elementary/elm_entry.c:1627 src/lib/elementary/elm_entry.c:1652
 msgid "Cancel"
 msgstr "Zrušit"
 
@@ -263,187 +264,291 @@ msgstr "Zrušit"
 msgid "OK"
 msgstr "OK"
 
+#: src/lib/elementary/elc_multibuttonentry.c:679
+msgid "multi button entry label"
+msgstr "popisek vícetlačítkového vstupu"
+
+#: src/lib/elementary/elc_multibuttonentry.c:701
+msgid "multi button entry item"
+msgstr "položka vícetlačítkového vstupu"
+
+#: src/lib/elementary/elc_multibuttonentry.c:1585
+msgid "multi button entry"
+msgstr "vícetlačítkový vstup"
+
+#: src/lib/elementary/elc_naviframe.c:431
+msgid "Title"
+msgstr "Název"
+
 #: src/lib/elementary/elc_naviframe.c:982
+#: src/lib/elementary/elc_naviframe.c:1187
 msgid "Back"
 msgstr "Zpět"
 
-#~ msgid "multi button entry label"
-#~ msgstr "popisek vícetlačítkového vstupu"
+#: src/lib/elementary/elc_naviframe.c:1286
+msgid "Next"
+msgstr "Další"
 
-#~ msgid "multi button entry item"
-#~ msgstr "položka vícetlačítkového vstupu"
+#: src/lib/elementary/elc_popup.c:300 src/lib/elementary/elc_popup.c:970
+msgid "Popup Title"
+msgstr "Titulek vyskakujícího okna"
 
-#~ msgid "multi button entry"
-#~ msgstr "vícetlačítkový vstup"
+#: src/lib/elementary/elc_popup.c:310 src/lib/elementary/elc_popup.c:1046
+msgid "Popup Body Text"
+msgstr "Text vyskakovacího okna"
 
-#~ msgid "Title"
-#~ msgstr "Název"
+#: src/lib/elementary/elm_bubble.c:194
+msgid "Bubble"
+msgstr "Bublina"
 
-#~ msgid "Next"
-#~ msgstr "Další"
+#: src/lib/elementary/elm_button.c:66
+msgid "Clicked"
+msgstr "Kliknuto"
 
-#~ msgid "Popup Title"
-#~ msgstr "Titulek vyskakujícího okna"
+#: src/lib/elementary/elm_button.c:275 src/lib/elementary/elm_check.c:211
+#: src/lib/elementary/elm_gengrid.c:1242 src/lib/elementary/elm_genlist.c:1713
+#: src/lib/elementary/elm_list.c:2172 src/lib/elementary/elm_radio.c:215
+#: src/lib/elementary/elm_segment_control.c:527
+#: src/lib/elementary/elm_spinner.c:1010 src/lib/elementary/elm_toolbar.c:2371
+msgid "State: Disabled"
+msgstr "Stav: Zakázáno"
 
-#~ msgid "Popup Body Text"
-#~ msgstr "Text vyskakovacího okna"
+#: src/lib/elementary/elm_button.c:300
+msgid "Button"
+msgstr "Tlačítko"
 
-#~ msgid "Bubble"
-#~ msgstr "Bublina"
+#: src/lib/elementary/elm_calendar.c:270
+msgid "%B %Y"
+msgstr "%B %Y"
 
-#~ msgid "Clicked"
-#~ msgstr "Kliknuto"
+#: src/lib/elementary/elm_calendar.c:276
+msgid "%B"
+msgstr "%B"
 
-#~ msgid "State: Disabled"
-#~ msgstr "Stav: Zakázáno"
+#: src/lib/elementary/elm_calendar.c:282
+msgid "%Y"
+msgstr "%Y"
 
-#~ msgid "Button"
-#~ msgstr "Tlačítko"
+#: src/lib/elementary/elm_calendar.c:396
+msgid "calendar item"
+msgstr "položka kalendáře"
 
-#~ msgid "%B %Y"
-#~ msgstr "%B %Y"
+#: src/lib/elementary/elm_calendar.c:423
+msgid "calendar decrement month button"
+msgstr "odečítací tlačítko pro měsíc"
 
-#~ msgid "%B"
-#~ msgstr "%B"
+#: src/lib/elementary/elm_calendar.c:429
+msgid "calendar decrement year button"
+msgstr "odečítací tlačítko pro rok"
 
-#~ msgid "%Y"
-#~ msgstr "%Y"
+#: src/lib/elementary/elm_calendar.c:435
+msgid "calendar increment month button"
+msgstr "přičítací tlačítko pro měsíc"
 
-#~ msgid "calendar item"
-#~ msgstr "položka kalendáře"
+#: src/lib/elementary/elm_calendar.c:441
+msgid "calendar increment year button"
+msgstr "přičítací tlačítko pro rok"
 
-#~ msgid "calendar decrement month button"
-#~ msgstr "odečítací tlačítko pro měsíc"
+#: src/lib/elementary/elm_calendar.c:446
+msgid "calendar month"
+msgstr "kalendářní měsíc"
 
-#~ msgid "calendar decrement year button"
-#~ msgstr "odečítací tlačítko pro rok"
+#: src/lib/elementary/elm_calendar.c:451
+msgid "calendar year"
+msgstr "kalendářní rok"
 
-#~ msgid "calendar increment month button"
-#~ msgstr "přičítací tlačítko pro měsíc"
+#: src/lib/elementary/elm_check.c:63 src/lib/elementary/elm_check.c:224
+#: src/lib/elementary/elm_radio.c:119 src/lib/elementary/elm_radio.c:216
+msgid "State: On"
+msgstr "Stav: Zapnuto"
 
-#~ msgid "calendar increment year button"
-#~ msgstr "přičítací tlačítko pro rok"
+#: src/lib/elementary/elm_check.c:74 src/lib/elementary/elm_check.c:236
+#: src/lib/elementary/elm_radio.c:218
+msgid "State: Off"
+msgstr "Stav: Vypnuto"
 
-#~ msgid "calendar month"
-#~ msgstr "kalendářní měsíc"
+#: src/lib/elementary/elm_check.c:220 src/lib/elementary/elm_check.c:233
+msgid "State"
+msgstr "Stav"
 
-#~ msgid "calendar year"
-#~ msgstr "kalendářní rok"
+#: src/lib/elementary/elm_check.c:314
+msgid "Check"
+msgstr "Ověřit"
 
-#~ msgid "State: On"
-#~ msgstr "Stav: Zapnuto"
+#: src/lib/elementary/elm_clock.c:303
+msgid "clock increment button for am,pm"
+msgstr "přičítací tlačítko hodin pro am,pm"
 
-#~ msgid "State: Off"
-#~ msgstr "Stav: Vypnuto"
+#: src/lib/elementary/elm_clock.c:311
+msgid "clock decrement button for am,pm"
+msgstr "odečítací tlačítko hodin pro am,pm"
 
-#~ msgid "State"
-#~ msgstr "Stav"
+#: src/lib/elementary/elm_clock.c:647
+msgid "State: Editable"
+msgstr "Stav: Upravitelný"
 
-#~ msgid "Check"
-#~ msgstr "Ověřit"
+#: src/lib/elementary/elm_clock.c:682
+msgid "Clock"
+msgstr "Hodiny"
 
-#~ msgid "clock increment button for am,pm"
-#~ msgstr "přičítací tlačítko hodin pro am,pm"
+#: src/lib/elementary/elm_colorselector.c:898
+msgid "Pick a color"
+msgstr ""
 
-#~ msgid "clock decrement button for am,pm"
-#~ msgstr "odečítací tlačítko hodin pro am,pm"
+#: src/lib/elementary/elm_colorselector.c:936
+msgid "R:"
+msgstr ""
 
-#~ msgid "State: Editable"
-#~ msgstr "Stav: Upravitelný"
+#: src/lib/elementary/elm_colorselector.c:938
+msgid "G:"
+msgstr ""
 
-#~ msgid "Clock"
-#~ msgstr "Hodiny"
+#: src/lib/elementary/elm_colorselector.c:940
+msgid "B:"
+msgstr ""
 
-#~ msgid "color selector palette item"
-#~ msgstr "položka výběru barvy z palety"
+#: src/lib/elementary/elm_colorselector.c:942
+msgid "A:"
+msgstr ""
 
-#~ msgid "default:LTR"
-#~ msgstr "výchozí:LTR"
+#: src/lib/elementary/elm_colorselector.c:1666
+msgid "color selector palette item"
+msgstr "položka výběru barvy z palety"
 
-#~ msgid "day selector item"
-#~ msgstr "položka výběru dne"
+#: src/lib/elementary/elm_config.c:3708
+msgid "default:LTR"
+msgstr "výchozí:LTR"
 
-#~ msgid "diskselector item"
-#~ msgstr "položka výběru disků"
+#: src/lib/elementary/elm_dayselector.c:407
+msgid "day selector item"
+msgstr "položka výběru dne"
 
-#~ msgid "Copy"
-#~ msgstr "Kopírovat"
+#: src/lib/elementary/elm_diskselector.c:700
+msgid "diskselector item"
+msgstr "položka výběru disků"
 
-#~ msgid "Cut"
-#~ msgstr "Vyjmout"
+#: src/lib/elementary/elm_entry.c:1614
+msgid "Copy"
+msgstr "Kopírovat"
 
-#~ msgid "Paste"
-#~ msgstr "Vložit"
+#: src/lib/elementary/elm_entry.c:1619
+msgid "Cut"
+msgstr "Vyjmout"
 
-#~ msgid "Select"
-#~ msgstr "Vybrat"
+#: src/lib/elementary/elm_entry.c:1623 src/lib/elementary/elm_entry.c:1646
+msgid "Paste"
+msgstr "Vložit"
 
-#~ msgid "Entry"
-#~ msgstr "Vstup"
+#: src/lib/elementary/elm_entry.c:1639
+msgid "Select"
+msgstr "Vybrat"
 
-#~ msgid "Gengrid Item"
-#~ msgstr "Položka mřížky"
+#: src/lib/elementary/elm_entry.c:3688
+msgid "Entry"
+msgstr "Vstup"
 
-#~ msgid "Index"
-#~ msgstr "Index"
+#: src/lib/elementary/elm_gengrid.c:1272
+msgid "Gengrid Item"
+msgstr "Položka mřížky"
 
-#~ msgid "Index Item"
-#~ msgstr "Položka indexu"
+#: src/lib/elementary/elm_index.c:96
+msgid "Index"
+msgstr "Index"
 
-#~ msgid "Label"
-#~ msgstr "Popisek"
+#: src/lib/elementary/elm_index.c:124
+msgid "Index Item"
+msgstr "Položka indexu"
 
-#~ msgid "state: opened"
-#~ msgstr "stav: otevřeno"
+#: src/lib/elementary/elm_label.c:393
+msgid "Label"
+msgstr "Popisek"
 
-#~ msgid "state: closed"
-#~ msgstr "stav: zavřeno"
+#: src/lib/elementary/elm_panel.c:71
+msgid "state: opened"
+msgstr "stav: otevřeno"
 
-#~ msgid "panel button"
-#~ msgstr "tlačítko panelu"
+#: src/lib/elementary/elm_panel.c:72
+msgid "state: closed"
+msgstr "stav: zavřeno"
 
-#~ msgid "progressbar"
-#~ msgstr "ukazatel průběhu"
+#: src/lib/elementary/elm_panel.c:112
+msgid "A panel is open"
+msgstr ""
 
-#~ msgid "Radio"
-#~ msgstr "Přepínač"
+#: src/lib/elementary/elm_panel.c:114
+msgid "Double tap to close panel menu"
+msgstr ""
 
-#~ msgid "State: Selected"
-#~ msgstr "Stav: Vybráno"
+#: src/lib/elementary/elm_panel.c:166
+msgid "panel button"
+msgstr "tlačítko panelu"
 
-#~ msgid "State: Unselected"
-#~ msgstr "Stav: Nevybráno"
+#: src/lib/elementary/elm_progressbar.c:309
+msgid "progressbar"
+msgstr "ukazatel průběhu"
 
-#~ msgid "Segment Control Item"
-#~ msgstr "položka ovládání segmentu"
+#: src/lib/elementary/elm_radio.c:244
+msgid "Radio"
+msgstr "Přepínač"
 
-#~ msgid "slider"
-#~ msgstr "šoupátko"
+#: src/lib/elementary/elm_segment_control.c:530
+#: src/lib/elementary/elm_toolbar.c:2373
+msgid "State: Selected"
+msgstr "Stav: Vybráno"
 
-#~ msgid "spinner"
-#~ msgstr "spinner"
+#: src/lib/elementary/elm_segment_control.c:532
+msgid "State: Unselected"
+msgstr "Stav: Nevybráno"
 
-#~ msgid "spinner increment button"
-#~ msgstr "přičítací tlačítko spinneru"
+#: src/lib/elementary/elm_segment_control.c:546
+msgid "Segment Control Item"
+msgstr "položka ovládání segmentu"
 
-#~ msgid "spinner decrement button"
-#~ msgstr "odečítací tlačítko spinneru"
+#: src/lib/elementary/elm_slider.c:1187
+msgid "slider"
+msgstr "šoupátko"
 
+#: src/lib/elementary/elm_spinner.c:1040
+msgid "incremented"
+msgstr ""
+
+#: src/lib/elementary/elm_spinner.c:1046
+msgid "decremented"
+msgstr ""
+
+#: src/lib/elementary/elm_spinner.c:1079 src/lib/elementary/elm_spinner.c:1146
+msgid "spinner"
+msgstr "spinner"
+
+#: src/lib/elementary/elm_spinner.c:1088 src/lib/elementary/elm_spinner.c:1129
+msgid "spinner increment button"
+msgstr "přičítací tlačítko spinneru"
+
+#: src/lib/elementary/elm_spinner.c:1091 src/lib/elementary/elm_spinner.c:1138
+msgid "spinner decrement button"
+msgstr "odečítací tlačítko spinneru"
+
+#: src/lib/elementary/elm_spinner.c:1093
 #, fuzzy
-#~ msgid "spinner text"
-#~ msgstr "spinner"
+msgid "spinner text"
+msgstr "spinner"
 
-#~ msgid "Selected"
-#~ msgstr "Vybrané"
+#: src/lib/elementary/elm_toolbar.c:1832 src/lib/elementary/elm_toolbar.c:2429
+msgid "Selected"
+msgstr "Vybrané"
 
-#~ msgid "Separator"
-#~ msgstr "Oddělovač"
+#: src/lib/elementary/elm_toolbar.c:2369
+msgid "Separator"
+msgstr "Oddělovač"
 
-#~ msgid "Has menu"
-#~ msgstr "Má nabídku"
+#: src/lib/elementary/elm_toolbar.c:2375
+msgid "Has menu"
+msgstr "Má nabídku"
 
-#~ msgid "Unselected"
-#~ msgstr "Nevybrané"
+#: src/lib/elementary/elm_toolbar.c:2424
+msgid "Unselected"
+msgstr "Nevybrané"
 
-#~ msgid "Toolbar Item"
-#~ msgstr "Položka panelu nástrojů"
+#: src/lib/elementary/elm_toolbar.c:2441
+msgid "Toolbar Item"
+msgstr "Položka panelu nástrojů"
