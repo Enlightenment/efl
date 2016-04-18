@@ -10153,28 +10153,60 @@ _edje_program_targets_get(Evas_Object *obj, Edje_Program *epr)
 
    GET_ED_OR_RETURN(NULL);
 
-   //printf("GET TARGETS for program: %s [count: %d]\n", prog, eina_list_count(epr->targets));
    EINA_LIST_FOREACH(epr->targets, l, t)
      {
-        if (epr->action == EDJE_ACTION_TYPE_STATE_SET)
+        switch (epr->action)
           {
-             /* the target is a part */
-             Edje_Real_Part *p = NULL;
+           /*action types, that does not support targets*/
+           case EDJE_ACTION_TYPE_SCRIPT:
+           case EDJE_ACTION_TYPE_SOUND_SAMPLE:
+           case EDJE_ACTION_TYPE_SOUND_TONE:
+           case EDJE_ACTION_TYPE_VIBRATION_SAMPLE:
+           case EDJE_ACTION_TYPE_PARAM_COPY:
+           case EDJE_ACTION_TYPE_PARAM_SET:
+#ifdef HAVE_EPHYSICS
+           case EDJE_ACTION_TYPE_PHYSICS_IMPULSE:
+           case EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE:
+           case EDJE_ACTION_TYPE_PHYSICS_FORCE:
+           case EDJE_ACTION_TYPE_PHYSICS_TORQUE:
+           case EDJE_ACTION_TYPE_PHYSICS_VEL_SET:
+           case EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET:
+#endif
+           break;
 
-             p = ed->table_parts[t->id % ed->table_parts_size];
-             if (p && p->part && p->part->name)
-               targets = eina_list_append(targets,
-                                          eina_stringshare_add(p->part->name));
-          }
-        else if (epr->action == EDJE_ACTION_TYPE_ACTION_STOP)
-          {
-             /* the target is a program */
-             Edje_Program *p;
+           /* the target is a program */
+           case EDJE_ACTION_TYPE_ACTION_STOP:
+             {
+               Edje_Program *p = NULL;
 
-             p = ed->collection->patterns.table_programs[t->id % ed->collection->patterns.table_programs_size];
-             if (p && p->name)
-               targets = eina_list_append(targets,
-                                          eina_stringshare_add(p->name));
+               p = ed->collection->patterns.table_programs[t->id % ed->collection->patterns.table_programs_size];
+               if (p && p->name)
+                 targets = eina_list_append(targets,
+                                            eina_stringshare_add(p->name));
+             }
+           break;
+
+           /* the target is a part */
+           case EDJE_ACTION_TYPE_SIGNAL_EMIT:
+           case EDJE_ACTION_TYPE_STATE_SET:
+           case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+           case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+           case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+           case EDJE_ACTION_TYPE_FOCUS_SET:
+           case EDJE_ACTION_TYPE_FOCUS_OBJECT:
+#ifdef HAVE_EPHYSICS
+           case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
+           case EDJE_ACTION_TYPE_PHYSICS_STOP:
+           case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
+#endif
+             {
+                Edje_Real_Part *p = NULL;
+                p = ed->table_parts[t->id % ed->table_parts_size];
+                if (p && p->part && p->part->name)
+                  targets = eina_list_append(targets,
+                                             eina_stringshare_add(p->part->name));
+             }
+           break;
           }
      }
    return targets;
