@@ -296,7 +296,11 @@ lib_evas_libevas_la_SOURCES += \
 static_libs/draw/draw_alpha_main.c \
 static_libs/draw/draw_convert.c \
 static_libs/draw/draw_main_neon.c \
-static_libs/draw/draw_main.c
+static_libs/draw/draw_main.c \
+static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc2.c \
+static_libs/rg_etc/rg_etc1.h \
+static_libs/rg_etc/etc2_encoder.c
 
 # Engine
 lib_evas_libevas_la_SOURCES += \
@@ -2125,11 +2129,7 @@ EXTRA_DIST += static_libs/rg_etc/README
 if EVAS_STATIC_BUILD_TGV
 lib_evas_libevas_la_SOURCES += \
 modules/evas/image_loaders/tgv/evas_image_load_tgv.c \
-modules/evas/image_savers/tgv/evas_image_save_tgv.c \
-static_libs/rg_etc/rg_etc1.c \
-static_libs/rg_etc/rg_etc2.c \
-static_libs/rg_etc/rg_etc1.h \
-static_libs/rg_etc/etc2_encoder.c
+modules/evas/image_savers/tgv/evas_image_save_tgv.c
 if ! ENABLE_LIBLZ4
 lib_evas_libevas_la_SOURCES += \
 static_libs/lz4/lz4.c \
