@@ -224,23 +224,6 @@ _parts_signals_emit(Elm_Layout_Smart_Data *sd)
 }
 
 static void
-_parts_swallow_fix(Elm_Layout_Smart_Data *sd, Elm_Widget_Smart_Data *wd)
-{
-   Eina_List *l;
-   Elm_Layout_Sub_Object_Data *sub_d;
-
-   EINA_LIST_FOREACH(sd->subs, l, sub_d)
-     {
-        if (sub_d->type == SWALLOW)
-          {
-             if (sub_d->part)
-               edje_object_part_swallow(wd->resize_obj,
-                                        sub_d->part, sub_d->obj);
-          }
-     }
-}
-
-static void
 _parts_text_fix(Elm_Layout_Smart_Data *sd)
 {
    const Eina_List *l;
@@ -333,7 +316,6 @@ _visuals_refresh(Evas_Object *obj,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   _parts_swallow_fix(sd, wd);
    _parts_text_fix(sd);
    _parts_signals_emit(sd);
    _parts_cursors_apply(sd);
