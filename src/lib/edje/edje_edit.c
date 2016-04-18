@@ -1641,6 +1641,10 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
    EDIT_EMN(TABLE, Edje_Part_Description_Table, de);
    EDIT_EMN(EXTERNAL, Edje_Part_Description_External, de);
    EDIT_EMN(SPACER, Edje_Part_Description_Common, de);
+   EDIT_EMN(SNAPSHOT, Edje_Part_Description_Snapshot, de);
+   EDIT_EMN(MESH_NODE, Edje_Part_Description_Mesh_Node, de);
+   EDIT_EMN(LIGHT, Edje_Part_Description_Light, de);
+   EDIT_EMN(CAMERA, Edje_Part_Description_Camera, de);
    EDIT_EMN(part, Edje_Part, de);
 
    EDIT_EMNP(RECTANGLE, Edje_Part_Description_Common, de);
@@ -1654,6 +1658,10 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
    EDIT_EMNP(TABLE, Edje_Part_Description_Table, de);
    EDIT_EMNP(EXTERNAL, Edje_Part_Description_External, de);
    EDIT_EMNP(SPACER, Edje_Part_Description_Common, de);
+   EDIT_EMNP(SNAPSHOT, Edje_Part_Description_Snapshot, de);
+   EDIT_EMNP(MESH_NODE, Edje_Part_Description_Mesh_Node, de);
+   EDIT_EMNP(LIGHT, Edje_Part_Description_Light, de);
+   EDIT_EMNP(CAMERA, Edje_Part_Description_Camera, de);
 
    epc->id = id;
    epc->part = eina_stringshare_add(copy_name);
