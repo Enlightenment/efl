@@ -685,18 +685,22 @@ text_input_language(void                 *data,
 
     if (imcontext->language)
       {
-         free(imcontext->language);
-
          if (strcmp(imcontext->language, language) != 0)
-           changed = EINA_TRUE;
+           {
+              changed = EINA_TRUE;
+              free(imcontext->language);
+           }
       }
     else
       changed = EINA_TRUE;
 
-    imcontext->language = strdup(language);
+    if (changed)
+      {
+         imcontext->language = strdup(language);
 
-    if (imcontext->ctx && changed)
-      ecore_imf_context_input_panel_event_callback_call(imcontext->ctx, ECORE_IMF_INPUT_PANEL_LANGUAGE_EVENT, 0);
+         if (imcontext->ctx)
+           ecore_imf_context_input_panel_event_callback_call(imcontext->ctx, ECORE_IMF_INPUT_PANEL_LANGUAGE_EVENT, 0);
+      }
 }
 
 static void
