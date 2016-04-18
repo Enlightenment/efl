@@ -310,7 +310,7 @@ mixin Efl.Gfx.Shape
           x-direction (rx) and radius in y direction (ry).
 
           Use this api if you know the end point's of the arc otherwise use
-          more convenient function @.append_arc_to.
+          more convenient function @.append_arc.
 
           @since 1.14
         ]]
@@ -326,6 +326,21 @@ mixin Efl.Gfx.Shape
                              counter-clockwise or clockwise from current point
                              to the end point taking into account the large_arc
                              property.]]
+        }
+      }
+      append_arc {
+        [[Append an arc that enclosed in the given rectangle (x, y, w, h).
+          The angle is defined in counter clock wise , use -ve angle for clockwise arc.
+
+          @since 1.18
+        ]]
+        params {
+          @in x: double; [[X co-ordinate of the rect.]]
+          @in y: double; [[Y co-ordinate of the rect.]]
+          @in w: double; [[width of the rect.]]
+          @in h: double; [[height of the rect.]]
+          @in start_angle: double; [[Angle at which the arc will start]]
+          @in sweep_length: double; [[@ Length of the arc.]]
         }
       }
       append_close {

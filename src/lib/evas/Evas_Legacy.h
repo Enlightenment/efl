@@ -2239,6 +2239,22 @@ EAPI void evas_vg_shape_shape_append_scubic_to(Eo *obj, double x, double y, doub
 EAPI void evas_vg_shape_shape_append_arc_to(Eo *obj, double x, double y, double rx, double ry, double angle, Eina_Bool large_arc, Eina_Bool sweep);
 
 /**
+ * @brief Append an arc that enclosed in the given rectangle (x, y, w, h). The
+ * angle is defined in counter clock wise , use -ve angle for clockwise arc.
+ *
+ * @param[in] y Y co-ordinate of the rect.
+ * @param[in] w width of the rect.
+ * @param[in] h height of the rect.
+ * @param[in] start_angle Angle at which the arc will start
+ * @param[in] sweep_length @ Length of the arc.
+ *
+ * @since 1.18
+ *
+ * @ingroup Efl_Gfx_Shape
+ */
+EAPI void evas_vg_shape_shape_append_arc(Eo *obj, double x, double y, double w, double h, double start_angle, double sweep_length);
+
+/**
  *
  * Closes the current subpath by drawing a line to the beginning of the subpath,
  * automatically starting a new path. The current point of the new path is

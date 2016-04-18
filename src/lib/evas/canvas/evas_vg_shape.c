@@ -420,6 +420,12 @@ evas_vg_shape_shape_append_arc_to(Eo *obj, double x, double y, double rx, double
 }
 
 EAPI void
+evas_vg_shape_shape_append_arc(Eo *obj, double x, double y, double w, double h, double start_angle, double sweep_length)
+{
+   efl_gfx_shape_append_arc(obj, x, y, w, h, start_angle, sweep_length);
+}
+
+EAPI void
 evas_vg_shape_shape_append_close(Eo *obj)
 {
    efl_gfx_shape_append_close(obj);
