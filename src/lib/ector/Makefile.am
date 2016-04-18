@@ -98,6 +98,10 @@ draw_sources = \
 ../../static_libs/draw/draw_main_sse2.c \
 ../../static_libs/draw/draw_main.c \
 ../../static_libs/draw/draw_main_neon.c \
+static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc2.c \
+static_libs/rg_etc/rg_etc1.h \
+static_libs/rg_etc/etc2_encoder.c \
 $(NULL)
 
 # And the default software backend
