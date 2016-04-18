@@ -200,13 +200,13 @@ static const Eo_Class_Description custom_engine_class_desc = {
      EO_CLASS_DESCRIPTION_OPS(custom_engine_op_desc), NULL, 0, NULL, NULL
 };
 
-EO_DEFINE_CLASS(custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_ENGINE_INTERFACE, NULL)
+EO_DEFINE_CLASS(_test_ui_box_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_ENGINE_INTERFACE, NULL)
 
 static Eina_Bool
 custom_check_cb(void *data, const Eo_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->obj);
-   efl_pack_layout_engine_set(data, chk ? custom_engine_class_get() : NULL, NULL);
+   efl_pack_layout_engine_set(data, chk ? _test_ui_box_custom_engine_class_get() : NULL, NULL);
    return EO_CALLBACK_CONTINUE;
 }
 

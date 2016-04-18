@@ -10,46 +10,67 @@ typedef enum {
    NONE_BUT_FILL,
    EQUAL,
    ONE,
-   TWO
+   TWO,
+   CUSTOM
 } Weight_Mode;
 
-#define P(i) ((void*)(intptr_t)i)
-#define I(p) ((int)(intptr_t)p)
+static void _custom_engine_layout_do(Eo *obj, void *pd, Efl_Pack *pack, const void *data);
+
+/* Common Eo Class boilerplate. */
+static const Eo_Op_Description custom_engine_op_desc[] = {
+   EO_OP_CLASS_FUNC_OVERRIDE(efl_pack_engine_layout_do, _custom_engine_layout_do),
+};
+
+static const Eo_Class_Description custom_engine_class_desc = {
+   EO_VERSION, "Custom Layout Engine", EO_CLASS_TYPE_INTERFACE,
+   EO_CLASS_DESCRIPTION_OPS(custom_engine_op_desc), NULL, 0, NULL, NULL
+};
+
+EO_DEFINE_CLASS(_test_ui_grid_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_ENGINE_INTERFACE, NULL)
+
+#define CUSTOM_ENGINE_CLASS _test_ui_grid_custom_engine_class_get()
 
 static Eina_Bool
 weights_cb(void *data, const Eo_Event *event)
 {
    Weight_Mode mode = elm_radio_state_value_get(event->obj);
+   Eo *grid = data;
+
+   if (mode != CUSTOM)
+     efl_pack_layout_engine_set(grid, NULL, NULL);
 
    switch (mode)
      {
       case NONE:
-        evas_object_size_hint_align_set(data, 0.5, 0.5);
+        evas_object_size_hint_align_set(grid, 0.5, 0.5);
         for (int i = 0; i < 7; i++)
           evas_object_size_hint_weight_set(objects[i], 0, 0);
         break;
       case NONE_BUT_FILL:
-        evas_object_size_hint_align_set(data, -1, -1);
+        evas_object_size_hint_align_set(grid, -1, -1);
         for (int i = 0; i < 7; i++)
           evas_object_size_hint_weight_set(objects[i], 0, 0);
         break;
       case EQUAL:
-        evas_object_size_hint_align_set(data, 0.5, 0.5);
+        evas_object_size_hint_align_set(grid, 0.5, 0.5);
         for (int i = 0; i < 7; i++)
           evas_object_size_hint_weight_set(objects[i], 1, 1);
         break;
       case ONE:
-        evas_object_size_hint_align_set(data, 0.5, 0.5);
+        evas_object_size_hint_align_set(grid, 0.5, 0.5);
         for (int i = 0; i < 6; i++)
           evas_object_size_hint_weight_set(objects[i], 0, 0);
         evas_object_size_hint_weight_set(objects[6], 1, 1);
         break;
       case TWO:
-        evas_object_size_hint_align_set(data, 0.5, 0.5);
+        evas_object_size_hint_align_set(grid, 0.5, 0.5);
         for (int i = 0; i < 5; i++)
           evas_object_size_hint_weight_set(objects[i], 0, 0);
         evas_object_size_hint_weight_set(objects[5], 1, 1);
         evas_object_size_hint_weight_set(objects[6], 1, 1);
+        break;
+      case CUSTOM:
+        efl_pack_layout_engine_set(grid, CUSTOM_ENGINE_CLASS, NULL);
         break;
      }
 
@@ -121,6 +142,49 @@ child_evt_cb(void *data, const Eo_Event *event)
    elm_object_text_set(o, buf);
 
    return EO_CALLBACK_CONTINUE;
+}
+
+static void
+_custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+                         Efl_Pack *pack, const void *data EINA_UNUSED)
+{
+   /* Example custom layout for grid:
+    * divide space into regions of same size, place objects in center of their
+    * cells using their min size
+    * Note: This is a TERRIBLE layout function (disregards align, weight, ...)
+    */
+
+   int rows, cols, gw, gh, gx, gy, c, r, cs, rs, gmw = 0, gmh = 0;
+   Eina_Iterator *it;
+   Eo *item;
+
+   efl_gfx_size_get(pack, &gw, &gh);
+   efl_gfx_position_get(pack, &gx, &gy);
+
+   efl_pack_grid_size_get(pack, &cols, &rows);
+   if (!cols || !rows) goto end;
+
+   it = efl_pack_contents_iterate(pack);
+   EINA_ITERATOR_FOREACH(it, item)
+     {
+        if (efl_pack_child_position_get(pack, item, &c, &r, &cs, &rs))
+          {
+             int x, y, mw, mh;
+
+             evas_object_size_hint_min_get(item, &mw, &mh);
+             x = gx + c * gw / cols + (cs * gw / cols - mw) / 2;
+             y = gy + r * gh / rows + (rs * gh / rows - mh) / 2;
+             efl_gfx_size_set(item, mw, mh);
+             efl_gfx_position_set(item, x, y);
+
+             gmw = MAX(gmw, mw);
+             gmh = MAX(gmh, mh);
+          }
+     }
+   eina_iterator_free(it);
+
+end:
+   evas_object_size_hint_min_set(pack, gmw * cols, gmh * rows);
 }
 
 void
@@ -207,6 +271,15 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    eo_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, grid);
    evas_object_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, TWO);
+   elm_radio_group_add(o, chk);
+   efl_pack(bx, o);
+   efl_gfx_visible_set(o, 1);
+
+   o = elm_radio_add(win);
+   elm_object_text_set(o, "Custom layout");
+   eo_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, grid);
+   evas_object_size_hint_align_set(o, 0, 0.5);
+   elm_radio_state_value_set(o, CUSTOM);
    elm_radio_group_add(o, chk);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);

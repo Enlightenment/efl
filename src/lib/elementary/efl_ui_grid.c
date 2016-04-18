@@ -8,6 +8,7 @@
 #include "elm_priv.h"
 
 #include "efl_ui_grid.eo.h"
+#include "../evas/canvas/evas_table.eo.h"
 
 #define MY_CLASS EFL_UI_GRID_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Grid"
@@ -15,6 +16,7 @@
 typedef struct _Efl_Ui_Grid_Data Efl_Ui_Grid_Data;
 typedef struct _Grid_Item_Iterator Grid_Item_Iterator;
 typedef struct _Grid_Item Grid_Item;
+typedef struct _Custom_Table_Data Custom_Table_Data;
 
 static Eina_Bool _subobj_del_cb(void *data, const Eo_Event *event);
 static void _item_remove(Efl_Ui_Grid *obj, Efl_Ui_Grid_Data *pd, Efl_Pack_Item *subobj);
@@ -34,6 +36,9 @@ struct _Grid_Item
 
 struct _Efl_Ui_Grid_Data
 {
+   const Eo_Class *layout_engine;
+   const void     *layout_data;
+
    Grid_Item *items;
    int count;
 
@@ -49,10 +54,16 @@ struct _Efl_Ui_Grid_Data
 
 struct _Grid_Item_Iterator
 {
-   Eina_List     *list;
    Eina_Iterator  iterator;
    Eina_Iterator *real_iterator;
+   Eina_List     *list;
    Efl_Ui_Grid    *object;
+};
+
+struct _Custom_Table_Data
+{
+   Efl_Ui_Grid      *parent;
+   Efl_Ui_Grid_Data *gd;
 };
 
 static const Eo_Callback_Array_Item subobj_callbacks [] = {
@@ -173,7 +184,6 @@ _efl_ui_grid_elm_widget_theme_apply(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 static void
 _layout_updated_emit(Efl_Ui_Grid *obj)
 {
-   /* FIXME: can't be called properly since there is no smart calc event */
    eo_event_callback_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
 }
 
@@ -197,7 +207,6 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
    if ((maxw >= 0) && (w > maxw)) w = maxw;
    if ((maxh >= 0) && (h > maxh)) h = maxh;
    evas_object_resize(obj, w, h);
-   _layout_updated_emit(obj);
 }
 
 static void
@@ -210,14 +219,93 @@ _table_size_hints_changed(void *data, Evas *e EINA_UNUSED,
    _sizing_eval(data, pd);
 }
 
-EOLIAN static void
-_efl_ui_grid_evas_object_smart_add(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
+/* Custom table class: overrides smart_calculate. */
+static void _custom_table_calc(Eo *obj, Custom_Table_Data *pd);
+
+static const Eo_Op_Description custom_table_op_desc[] = {
+   EO_OP_CLASS_FUNC_OVERRIDE(evas_obj_smart_calculate, _custom_table_calc),
+};
+
+static const Eo_Class_Description custom_table_class_desc = {
+   EO_VERSION, "Efl.Ui.Grid.Internal", EO_CLASS_TYPE_REGULAR,
+   EO_CLASS_DESCRIPTION_OPS(custom_table_op_desc), NULL,
+   sizeof(Custom_Table_Data), NULL, NULL
+};
+
+EO_DEFINE_CLASS(_efl_ui_grid_custom_table_class_get, &custom_table_class_desc,
+                EVAS_TABLE_CLASS, NULL)
+
+#define CUSTOM_TABLE_CLASS _efl_ui_grid_custom_table_class_get()
+
+static void
+_custom_table_calc(Eo *obj, Custom_Table_Data *pd)
 {
+   int cols, rows;
+
+   evas_object_table_col_row_size_get(obj, &cols, &rows);
+   if ((cols < 1) || (rows < 1)) return;
+
+   efl_pack_layout_update(pd->parent);
+   _layout_updated_emit(pd->parent);
+}
+/* End of custom table class */
+
+EOLIAN Eina_Bool
+_efl_ui_grid_efl_pack_layout_engine_set(Eo *obj, Efl_Ui_Grid_Data *pd, const Eo_Class *engine, const void *data)
+{
+   pd->layout_engine = engine ? engine : eo_class_get(obj);
+   pd->layout_data = data;
+   efl_pack_layout_request(obj);
+   return EINA_TRUE;
+}
+
+EOLIAN void
+_efl_ui_grid_efl_pack_layout_engine_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, const Eo_Class **engine, const void **data)
+{
+   if (engine) *engine = pd->layout_engine;
+   if (data) *data = pd->layout_data;
+}
+
+EOLIAN static void
+_efl_ui_grid_efl_pack_layout_update(Eo *obj, Efl_Ui_Grid_Data *pd)
+{
+   _sizing_eval(obj, pd);
+   efl_pack_engine_layout_do(pd->layout_engine, obj, pd->layout_data);
+}
+
+EOLIAN static void
+_efl_ui_grid_efl_pack_engine_layout_do(Eo *klass EINA_UNUSED,
+                                      void *_pd EINA_UNUSED,
+                                      Eo *obj, const void *data EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   evas_obj_smart_calculate(eo_super(wd->resize_obj, CUSTOM_TABLE_CLASS));
+}
+
+EOLIAN void
+_efl_ui_grid_evas_object_smart_calculate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   efl_pack_layout_update(obj);
+}
+
+EOLIAN static void
+_efl_ui_grid_evas_object_smart_add(Eo *obj, Efl_Ui_Grid_Data *pd)
+{
+   Custom_Table_Data *custom;
    Evas_Object *table;
+
+   pd->layout_engine = MY_CLASS;
 
    elm_widget_sub_object_parent_add(obj);
 
-   table = evas_object_table_add(evas_object_evas_get(obj));
+   table = eo_add(CUSTOM_TABLE_CLASS, obj);
+   custom = eo_data_scope_get(table, CUSTOM_TABLE_CLASS);
+   custom->gd = pd;
+   custom->parent = obj;
+
    evas_object_table_homogeneous_set(table, EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE);
    elm_widget_resize_object_set(obj, table, EINA_TRUE);
 
@@ -275,6 +363,8 @@ _efl_ui_grid_eo_base_constructor(Eo *obj, Efl_Ui_Grid_Data *pd)
 
    return obj;
 }
+
+
 
 EOLIAN static void
 _efl_ui_grid_efl_pack_padding_set(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, double h, double v, Eina_Bool scalable)
@@ -408,11 +498,12 @@ _efl_ui_grid_efl_pack_grid_pack_child_position_set(Eo *obj, Efl_Ui_Grid_Data *pd
    _pack_at(obj, pd, subobj, col, row, colspan, rowspan, EINA_FALSE);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_grid_pack_child_position_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan)
 {
    int c = -1, r = -1, cs = 0, rs = 0;
    Grid_Item *gi;
+   Eina_Bool ret = EINA_FALSE;
 
    if (obj != elm_widget_parent_widget_get(subobj))
      {
@@ -429,11 +520,14 @@ _efl_ui_grid_efl_pack_grid_pack_child_position_get(Eo *obj, Efl_Ui_Grid_Data *pd
         rs = gi->row_span;
      }
 
+   ret = EINA_TRUE;
+
 end:
    if (col) *col = c;
    if (row) *row = r;
    if (colspan) *colspan = cs;
    if (rowspan) *rowspan = rs;
+   return ret;
 }
 
 EOLIAN static Efl_Pack_Item *
@@ -531,21 +625,6 @@ _efl_ui_grid_efl_pack_unpack_all(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_clear(wd->resize_obj, EINA_FALSE);
-}
-
-EOLIAN void
-_efl_ui_grid_evas_object_smart_calculate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   evas_object_smart_calculate(wd->resize_obj);
-}
-
-EOLIAN void
-_efl_ui_grid_efl_pack_layout_update(Eo *obj, Efl_Ui_Grid_Data *pd)
-{
-   _sizing_eval(obj, pd);
-   _layout_updated_emit(obj);
 }
 
 EOLIAN void

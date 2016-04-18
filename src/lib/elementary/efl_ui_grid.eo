@@ -1,7 +1,5 @@
-class Efl.Ui.Grid (Elm.Widget, Efl.Pack_Grid)
+class Efl.Ui.Grid (Elm.Widget, Efl.Pack_Grid, Efl.Pack_Engine)
 {
-   methods {
-   }
    implements {
       Eo.Base.constructor;
 
@@ -41,5 +39,9 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack_Grid)
       Efl.Pack_Linear.pack_end;
       Efl.Pack_Linear.direction.set;
       Efl.Pack_Linear.direction.get;
+
+      Efl.Pack.layout_engine.get;
+      Efl.Pack.layout_engine.set;
+      Efl.Pack_Engine.layout_do;
    }
 }

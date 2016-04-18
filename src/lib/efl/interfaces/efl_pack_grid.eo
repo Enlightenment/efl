@@ -36,7 +36,7 @@ interface Efl.Pack_Grid (Efl.Pack_Linear)
       @property pack_child_position {
          [[position and span of the $subobj in this container, may be modified to move the $subobj]]
          set { [[same as grid_pack]] }
-         get {}
+         get { return: bool; [[returns false if item is not a child]] }
          keys {
             subobj: Efl.Pack_Item*;
          }

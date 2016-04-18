@@ -148,16 +148,6 @@ _evas_box_custom_layout(Evas_Object *evas_box EINA_UNUSED,
    efl_pack_layout_update(obj);
 }
 
-static void
-_layout_do(Efl_Ui_Box *obj)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Evas_Object_Box_Data *bd;
-
-   bd = eo_data_scope_get(wd->resize_obj, EVAS_BOX_CLASS);
-   _efl_ui_box_custom_layout(obj, bd);
-}
-
 EOLIAN static void
 _efl_ui_box_efl_pack_layout_update(Eo *obj, Efl_Ui_Box_Data *pd)
 {
@@ -170,7 +160,11 @@ _efl_ui_box_efl_pack_engine_layout_do(Eo *klass EINA_UNUSED,
                                       void *_pd EINA_UNUSED,
                                       Eo *obj, const void *data EINA_UNUSED)
 {
-   _layout_do(obj);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   Evas_Object_Box_Data *bd;
+
+   bd = eo_data_scope_get(wd->resize_obj, EVAS_BOX_CLASS);
+   _efl_ui_box_custom_layout(obj, bd);
 }
 
 EOLIAN static Eina_Bool
