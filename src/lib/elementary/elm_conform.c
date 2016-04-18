@@ -852,6 +852,7 @@ _on_prop_change(void *data,
                         return ECORE_CALLBACK_DONE;
                      }
                 }
+              free(state);
           }
      }
    else if (sd->win_hidden)
