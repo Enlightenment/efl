@@ -971,9 +971,12 @@ _ecore_exe_exec_it(const char     *exe_cmd,
       char *token;
       char pre_command = 1;
       int num_tokens = 0;
+      int len;
 
-      if (!(buf = strdup(exe_cmd)))
-        return;
+      len = strlen(exe_cmd);
+      buf = alloca(len + 1);
+      strcpy(buf, exe_cmd);
+      buf[len] = 0;
 
       token = strtok(buf, " \t\n\v");
       while (token)
@@ -992,21 +995,18 @@ _ecore_exe_exec_it(const char     *exe_cmd,
          num_tokens++;
          token = strtok(NULL, " \t\n\v");
       }
-      IF_FREE(buf);
       if ((!token) && (num_tokens))
       {
          int i = 0;
 
-         if (!(buf = strdup(exe_cmd)))
-           return;
+         len = strlen(exe_cmd);
+         buf = alloca(len + 1);
+         strcpy(buf, exe_cmd);
+         buf[len] = 0;
 
          token = strtok(buf, " \t\n\v");
          use_sh = 0;
-         if (!(args = (char **)calloc(num_tokens + 1, sizeof(char *))))
-         {
-            IF_FREE(buf);
-            return;
-         }
+         args = alloca((num_tokens + 1) * sizeof(char *));
          for (i = 0; i < num_tokens; i++)
          {
             if (token)
@@ -1048,8 +1048,6 @@ _ecore_exe_exec_it(const char     *exe_cmd,
    { /* We can run this directly. */
       if (!args)
       {
-         IF_FREE(buf);
-         IF_FREE(args);
          ERR("arg[0] is NULL!");
          return;
       }
@@ -1058,8 +1056,6 @@ _ecore_exe_exec_it(const char     *exe_cmd,
    }
 
    save_errno = errno;
-   IF_FREE(buf);
-   IF_FREE(args);
    errno = save_errno;
    return;
 }
