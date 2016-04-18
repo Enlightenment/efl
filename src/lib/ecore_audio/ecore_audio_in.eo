@@ -1,113 +1,90 @@
 class Ecore_Audio_In (Ecore_Audio)
 {
+   [[Ecore Audio input object.]]
    legacy_prefix: null;
    eo_prefix: ecore_audio_obj_in;
    data: Ecore_Audio_Input;
    methods {
       @property speed {
-         set {
-            [[Set the playback speed of the input.
+         [[Playback speed of the input.
 
-              @since 1.8
-            ]]
+           @since 1.8
+         ]]
+         set {
          }
          get {
-            [[Get the playback speed of the input.
-
-              @since 1.8
-            ]]
          }
          values {
             speed: double; [[The speed, 1.0 is the default]]
          }
       }
       @property samplerate {
-         set {
-            [[Set the sample-rate of the input
+         [[Sample-rate of the input
 
-              @since 1.8
-            ]]
+           @since 1.8
+         ]]
+         set {
          }
          get {
-            [[Get the he sample-rate of the input
-
-              @since 1.8
-            ]]
          }
          values {
             samplerate: int; [[The samplerate in Hz]]
          }
       }
       @property channels {
-         set {
-            [[Set the amount of channels the input has
+         [[Amount of channels the input has
 
-              @since 1.8
-            ]]
+           @since 1.8
+         ]]
+         set {
          }
          get {
-            [[Get the amount of channels the input has
-
-              @since 1.8
-            ]]
          }
          values {
             channels: int; [[The number of channels]]
          }
       }
       @property preloaded {
-         set {
-            [[Set the preloaded state of the input
+         [[Preloaded state of the input
 
-              @since 1.8
-            ]]
+           @since 1.8
+         ]]
+         set {
          }
          get {
-            [[Get the the preloaded state of the input
-
-              @since 1.8
-            ]]
          }
          values {
             preloaded: bool; [[true if the input should be cached, false otherwise]]
          }
       }
       @property looped {
+         [[Looped state of the input
+
+           If the input is looped and reaches the end it will start from the
+           beginning again. At the same time the event
+           \@ref ECORE_AUDIO_EV_IN_LOOPED will be emitted
+
+           @since 1.8
+         ]]
          set {
-            [[Set the looped state of the input
-
-              If the input is looped and reaches the end it will start from the
-              beginning again. At the same time the event
-              \@ref ECORE_AUDIO_EV_IN_LOOPED will be emitted
-
-              @since 1.8
-            ]]
          }
          get {
-            [[Get the looped state of the input
-
-              @since 1.8
-            ]]
          }
          values {
             looped: bool; [[true if the input should be looped, false otherwise]]
          }
       }
       @property length {
+         [[Length of the input
+
+           This function is only implemented by some classes
+           (i.e. ECORE_AUDIO_OBJ_IN_TONE_CLASS)
+
+           @since 1.8
+         ]]
          set {
-            [[Set the length of the input
-
-              This function is only implemented by some classes
-              (i.e. ECORE_AUDIO_OBJ_IN_TONE_CLASS)
-
-              @since 1.8
-            ]]
          }
          get {
-            [[Get the length of the input
-
-              @since 1.8
-            ]]
          }
          values {
             length: double; [[The length of the input in seconds]]
