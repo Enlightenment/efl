@@ -111,7 +111,7 @@ alignv_slider_cb(void *data, const Eo_Event *event)
    return EO_CALLBACK_CONTINUE;
 }
 
-static Efl_Ui_Box_Flow_Params s_flow_params = { 0.5, 0.5, 0, 0 };
+static Efl_Ui_Box_Flow_Params s_flow_params = { 0, 0 };
 static Eina_Bool flow = EINA_FALSE;
 
 static Eina_Bool
@@ -154,15 +154,12 @@ left_check_cb(void *data, const Eo_Event *event)
    Eina_Bool chk = elm_check_selected_get(event->obj);
    if (chk)
      {
-        s_flow_params.align_x = 0;
-        s_flow_params.align_y = 0;
+        efl_pack_align_set(data, 0, 0.5);
      }
    else
      {
-        s_flow_params.align_x = 0.5;
-        s_flow_params.align_y = 0.5;
+        efl_pack_align_set(data, 0.5, 0.5);
      }
-   efl_pack_layout_engine_set(data, flow ? EFL_UI_BOX_FLOW_CLASS : NULL, &s_flow_params);
    return EO_CALLBACK_CONTINUE;
 }
 

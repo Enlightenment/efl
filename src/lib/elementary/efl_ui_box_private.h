@@ -13,9 +13,6 @@
 // FIXME: stop using Evas.Box
 #include <../evas/canvas/evas_box.eo.h>
 
-#define MY_CLASS EFL_UI_BOX_CLASS
-#define MY_CLASS_NAME "Efl.Ui.Box"
-
 // FIXME: stop using evas box
 void _efl_ui_box_custom_layout(Efl_Ui_Box *box, Evas_Object_Box_Data *priv);
 

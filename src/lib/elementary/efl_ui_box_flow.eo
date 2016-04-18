@@ -1,7 +1,5 @@
 struct Efl.Ui.Box_Flow_Params {
    [[Extra parameters for Box_Flow layout. Can be omitted.]]
-   align_x: double;
-   align_y: double;
    homogenous: bool;
    max_size: bool;
 }
@@ -10,8 +8,24 @@ class Efl.Ui.Box_Flow (Efl.Ui.Box, Efl.Pack_Engine)
 {
    [[A custom layout engine for @Efl.Ui.Box.]]
    legacy_prefix: null;
-   data: null;
+   methods {
+      @property box_flow_homogenous {
+         set {}
+         get {}
+         values {
+            val: bool;
+         }
+      }
+      @property box_flow_max_size {
+         set {}
+         get {}
+         values {
+            val: bool;
+         }
+      }
+   }
    implements {
+      Eo.Base.constructor;
       Efl.Pack_Engine.layout_do;
    }
 }

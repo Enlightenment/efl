@@ -1,5 +1,8 @@
 #include "efl_ui_box_private.h"
 
+#define MY_CLASS EFL_UI_BOX_CLASS
+#define MY_CLASS_NAME "Efl.Ui.Box"
+
 /* COPIED FROM ELM_BOX
  * - removed transition stuff (TODO: add back - needs clean API first)
  */
@@ -171,10 +174,10 @@ _efl_ui_box_efl_pack_engine_layout_do(Eo *klass EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_box_efl_pack_layout_engine_set(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd,
+_efl_ui_box_efl_pack_layout_engine_set(Eo *obj, Efl_Ui_Box_Data *pd,
                                        const Eo_Class *klass, const void *data)
 {
-   pd->layout_engine = klass ? klass : MY_CLASS;
+   pd->layout_engine = klass ? klass : eo_class_get(obj);
    pd->layout_data = data;
    efl_pack_layout_request(obj);
    _sizing_eval(obj, pd);
@@ -272,7 +275,7 @@ _efl_ui_box_eo_base_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
    pd->orient = EFL_ORIENT_RIGHT;
-   pd->layout_engine = MY_CLASS;
+   pd->layout_engine = eo_class_get(obj);
    pd->align.h = 0.5;
    pd->align.v = 0.5;
 
@@ -561,6 +564,8 @@ _efl_ui_box_efl_pack_padding_get(Eo *obj, Efl_Ui_Box_Data *pd, double *h, double
 EOLIAN static void
 _efl_ui_box_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, double v)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
    if (h < 0) h = -1;
    if (v < 0) v = -1;
    if (h > 1) h = 1;
@@ -568,6 +573,7 @@ _efl_ui_box_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, doub
    pd->align.h = h;
    pd->align.v = v;
 
+   evas_object_box_align_set(wd->resize_obj, h, v);
    efl_pack_layout_request(obj);
 }
 
