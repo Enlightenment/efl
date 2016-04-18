@@ -56,6 +56,7 @@ ffi.cdef [[
     typedef enum
     {
         EOLIAN_SCOPE_PUBLIC = 0,
+        EOLIAN_SCOPE_PRIVATE,
         EOLIAN_SCOPE_PROTECTED
     } Eolian_Object_Scope;
 
