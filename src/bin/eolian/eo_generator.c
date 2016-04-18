@@ -622,6 +622,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
 
    eina_strbuf_free(va_args);
    eina_strbuf_free(full_params);
+   eina_strbuf_free(impl_full_params);
    eina_strbuf_free(params_init);
    eina_strbuf_free(params);
    eina_strbuf_free(fbody);
