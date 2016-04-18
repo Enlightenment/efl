@@ -146,6 +146,7 @@ _long_press_cb(void *obj)
 {
    Evas_Object *img;
    const char *file;
+   char *sfile;
 
    ELM_PHOTO_DATA_GET(obj, sd);
 
@@ -161,8 +162,9 @@ _long_press_cb(void *obj)
      {
         char buf[4096 + 7];
 
-        file = eina_file_path_sanitize(file);
-        snprintf(buf, sizeof(buf), "file://%s", file);
+        sfile = eina_file_path_sanitize(file);
+        snprintf(buf, sizeof(buf), "file://%s", sfile);
+        free(sfile);
         if (elm_drag_start
               (obj, ELM_SEL_FORMAT_IMAGE, buf, ELM_XDND_ACTION_MOVE,
                   NULL, NULL,
