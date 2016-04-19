@@ -150,6 +150,7 @@ static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 static void  _calc_job(void *data);
+static void  _update_job(void *data);
 static Eina_Bool _item_block_recalc(Item_Block *itb, int in, Eina_Bool qadd);
 static void _item_mouse_callbacks_add(Elm_Gen_Item *it, Evas_Object *view);
 static void _item_mouse_callbacks_del(Elm_Gen_Item *it, Evas_Object *view);
@@ -2536,6 +2537,13 @@ _elm_genlist_pan_evas_object_smart_calculate(Eo *obj, Elm_Genlist_Pan_Data *psd)
      {
         git->item->want_realize = EINA_FALSE;
         if (git->realized) evas_object_raise(VIEW(git));
+     }
+
+   //update item before the render to prevent delayed update by job.
+   if (sd->update_job)
+     {
+        ELM_SAFE_FREE(sd->update_job, ecore_job_del);
+        _update_job(sd->obj);
      }
 
    evas_event_thaw(evas_object_evas_get(obj));
