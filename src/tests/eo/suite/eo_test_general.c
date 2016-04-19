@@ -1037,6 +1037,36 @@ START_TEST(eo_del_intercept)
 }
 END_TEST
 
+START_TEST(eo_name)
+{
+   eo_init();
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   const char *id;
+
+   id = eo_id_get(obj);
+   fail_if(NULL != id);
+
+   eo_id_set(obj, "Hello");
+   id = eo_id_get(obj);
+   fail_if(NULL == id);
+   fail_if(!!strcmp(id, "Hello"));
+
+   eo_id_set(obj, "Hello");
+   eo_id_set(obj, "");
+   id = eo_id_get(obj);
+   fail_if(NULL != id);
+
+   eo_id_set(obj, "Hello");
+   eo_id_set(obj, NULL);
+   id = eo_id_get(obj);
+   fail_if(NULL != id);
+
+   eo_del(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
@@ -1055,4 +1085,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_pointers_indirection);
    tcase_add_test(tc, eo_add_failures);
    tcase_add_test(tc, eo_del_intercept);
+   tcase_add_test(tc, eo_name);
 }

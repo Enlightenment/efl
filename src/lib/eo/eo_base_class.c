@@ -23,6 +23,7 @@ typedef struct
    Eina_Inlist *generic_data;
    Eo ***wrefs;
 
+   const char *id;
    Eo_Callback_Description *callbacks;
    unsigned short walking_list;
    unsigned short event_freeze_count;
@@ -260,6 +261,20 @@ _eo_base_key_obj_del(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
           }
      }
 }
+
+EOLIAN static void
+_eo_base_id_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *id)
+{
+   if ((id) && (!id[0])) id = NULL;
+   eina_stringshare_replace(&(pd->id), id);
+}
+
+EOLIAN static const char *
+_eo_base_id_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+{
+   return pd->id;
+}
+
 
 EOLIAN static void
 _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
@@ -1145,6 +1160,9 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    _eo_generic_data_del_all(obj, pd);
    _wref_destruct(pd);
    _eo_callback_remove_all(pd);
+
+   eina_stringshare_del(pd->id);
+   pd->id = NULL;
 
    _eo_condtor_done(obj);
 }

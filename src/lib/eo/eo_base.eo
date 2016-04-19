@@ -73,6 +73,23 @@ abstract Eo.Base ()
             parent: Eo.Base * @nullable; [[the new parent]]
          }
       }
+      @property id {
+         [[ The id/name of the object.
+
+           Every object can have a string name. Names may not contain
+           the slash "/" character. It is illegal. Using it in a name
+           will result in undefined behavior later on. An empty string
+           is considered the same as a NULL string or no string for the
+           name/id at all.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+           id: const(char)* @nullable; [[the id/name]]
+         }
+      }
       @property event_global_freeze_count @class {
          get {
             [[Return freeze events of object.
