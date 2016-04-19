@@ -17,7 +17,7 @@ struct Elm.Image.Error
      @since 1.8
    ]]
    status:     int;
-   open_error: Eina.Bool;
+   open_error: bool;
 }
 
 class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
