@@ -2401,7 +2401,7 @@ START_TEST(eina_value_test_blob)
    fail_unless(eina_value_get(value, &out));
    fail_unless(out.memory == blob);
    fail_unless(out.size == sizeof(blob));
-   fail_unless(memcmp(&in, &out, sizeof(Eina_Value_Blob)) == 0);
+   fail_unless(memcmp(in.memory, out.memory, in.size) == 0);
 
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
