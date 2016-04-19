@@ -1,3 +1,5 @@
+import elm_general;
+
 class Elm.Widget_Item(Eo.Base, Elm.Interface_Atspi_Accessible,
                       Elm.Interface_Atspi_Component)
 {
