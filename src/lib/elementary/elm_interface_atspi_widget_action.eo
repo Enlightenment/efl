@@ -1,3 +1,5 @@
+type Elm_Atspi_Action: __undefined_type;
+
 mixin Elm.Interface_Atspi_Widget_Action (Elm.Interface_Atspi_Action)
 {
    legacy_prefix: null;
