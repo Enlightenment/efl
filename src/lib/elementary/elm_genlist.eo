@@ -1,5 +1,6 @@
 import elm_general;
 import elm_list;
+import elm_genlist_item;
 
 class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
                    Elm.Interface_Atspi_Widget_Action, Elm.Interface_Atspi_Selection,
