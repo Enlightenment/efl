@@ -11079,7 +11079,7 @@ edje_edit_script_error_list_get(Evas_Object *obj)
 static const char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP", "BOX", "TABLE", "EXTERNAL", "PROXY", "SPACER"};
 static const char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW", "FAR_SHADOW", "FAR_SOFT_SHADOW", "GLOW"};
 static const char *shadow_direction[] = {"BOTTOM_RIGHT", "BOTTOM", "BOTTOM_LEFT", "LEFT", "TOP_LEFT", "TOP", "TOP_RIGHT", "RIGHT"};
-static const char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH"};
+static const char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH", "SOURCE"};
 static const char *entry_mode[] = {"NONE", "PLAIN", "EDITABLE", "PASSWORD"};
 static const char *aspect_mode[] = {"NONE", "NEITHER", "HORIZONTAL", "VERTICAL", "BOTH"};
 
