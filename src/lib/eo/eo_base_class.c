@@ -16,32 +16,32 @@ typedef struct _Eo_Callback_Description Eo_Callback_Description;
 
 typedef struct
 {
-   const char *id;
-   const char *comment;
+   const char                *id;
+   const char                *comment;
 } Eo_Base_Extension;
 
 typedef struct
 {
-   Eina_List *children;
-   Eo *parent;
-   Eina_List *parent_list;
+   Eina_List                 *children;
+   Eo                        *parent;
+   Eina_List                 *parent_list;
 
-   Eina_Inlist *generic_data;
-   Eo ***wrefs;
+   Eina_Inlist               *generic_data;
+   Eo                      ***wrefs;
 
-   Eo_Base_Extension *extension;
-   Eo_Callback_Description *callbacks;
-   unsigned short walking_list;
-   unsigned short event_freeze_count;
-   Eina_Bool deletions_waiting : 1;
+   Eo_Base_Extension         *extension;
+   Eo_Callback_Description   *callbacks;
+   unsigned short             walking_list;
+   unsigned short             event_freeze_count;
+   Eina_Bool                  deletions_waiting : 1;
 } Eo_Base_Data;
 
 typedef struct
 {
    EINA_INLIST;
-   Eina_Stringshare *key;
-   void             *data;
-   Eina_Bool         data_is_obj : 1;
+   Eina_Stringshare          *key;
+   void                      *data;
+   Eina_Bool                  data_is_obj : 1;
 } Eo_Generic_Data_Node;
 
 
