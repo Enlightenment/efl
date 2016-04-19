@@ -4070,6 +4070,36 @@ _edje_data_item_list_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key,
 
 #define STRDUP(x) x ? strdup(x) : NULL
 static void
+_filter_copy(Edje_Part_Description_Spec_Filter *ed, const Edje_Part_Description_Spec_Filter *parent)
+{
+   ed->code = STRDUP(parent->code);
+   if (ed->code)
+     {
+        const char *name;
+        Eina_List *l;
+        unsigned k;
+
+        ed->name = STRDUP(parent->name);
+        ed->sources = NULL;
+        EINA_LIST_FOREACH(parent->sources, l, name)
+          ed->sources = eina_list_append(ed->sources, STRDUP(name));
+        ed->data = NULL;
+        ed->data_count = 0;
+        if (parent->data)
+          {
+             ed->data = mem_alloc(parent->data_count * sizeof(*parent->data));
+             ed->data_count = parent->data_count;
+             for (k = 0; k < parent->data_count; k++)
+               {
+                  ed->data[k].name = STRDUP(parent->data[k].name);
+                  ed->data[k].value = STRDUP(parent->data[k].value);
+               }
+          }
+     }
+   else memset(ed, 0, sizeof(*ed));
+}
+
+static void
 _part_copy(Edje_Part *ep, Edje_Part *ep2)
 {
    Edje_Part_Collection *pc;
@@ -7767,18 +7797,7 @@ st_collections_group_parts_part_description_inherit(void)
               ted->text.text_class = STRDUP(ted->text.text_class);
               ted->text.font.str = STRDUP(ted->text.font.str);
 
-              /* Filters stuff */
-              ted->filter.code = STRDUP(ted->filter.code);
-              if (ted->filter.code)
-                {
-                   Eina_List *list, *l;
-                   const char *name;
-                   list = ted->filter.sources;
-                   ted->filter.sources = NULL;
-                   EINA_LIST_FOREACH(list, l, name)
-                     ted->filter.sources = eina_list_append(ted->filter.sources, STRDUP(name));
-                }
-
+              _filter_copy(&ted->filter, &tparent->filter);
               data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source), &ted->text.id_source_part);
               data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_text_source), &(ted->text.id_text_source), &ted->text.id_text_source_part);
 
@@ -7809,17 +7828,7 @@ st_collections_group_parts_part_description_inherit(void)
                    ied->image.tweens[i] = iid_new;
                 }
 
-              /* Filters stuff */
-              ied->filter.code = STRDUP(iparent->filter.code);
-              if (ied->filter.code)
-                {
-                   Eina_List *list, *l;
-                   const char *name;
-                   list = iparent->filter.sources;
-                   ied->filter.sources = NULL;
-                   EINA_LIST_FOREACH(list, l, name)
-                     ied->filter.sources = eina_list_append(ied->filter.sources, STRDUP(name));
-                }
+              _filter_copy(&ied->filter, &iparent->filter);
 
               break;
            }
@@ -7828,17 +7837,7 @@ st_collections_group_parts_part_description_inherit(void)
               Edje_Part_Description_Snapshot *sed = (Edje_Part_Description_Snapshot*) ed;
               Edje_Part_Description_Snapshot *sparent = (Edje_Part_Description_Snapshot*) parent;
 
-              /* Filters stuff */
-              sed->filter.code = STRDUP(sparent->filter.code);
-              if (sed->filter.code)
-                {
-                   Eina_List *list, *l;
-                   const char *name;
-                   list = sparent->filter.sources;
-                   sed->filter.sources = NULL;
-                   EINA_LIST_FOREACH(list, l, name)
-                     sed->filter.sources = eina_list_append(sed->filter.sources, STRDUP(name));
-                }
+              _filter_copy(&sed->filter, &sparent->filter);
 
               break;
            }
@@ -7848,18 +7847,7 @@ st_collections_group_parts_part_description_inherit(void)
               Edje_Part_Description_Proxy *pparent = (Edje_Part_Description_Proxy*) parent;
 
               data_queue_copied_part_lookup(pc, &(pparent->proxy.id), &(ped->proxy.id));
-
-              /* Filters stuff */
-              ped->filter.code = STRDUP(pparent->filter.code);
-              if (ped->filter.code)
-                {
-                   Eina_List *list, *l;
-                   const char *name;
-                   list = pparent->filter.sources;
-                   ped->filter.sources = NULL;
-                   EINA_LIST_FOREACH(list, l, name)
-                     ped->filter.sources = eina_list_append(ped->filter.sources, STRDUP(name));
-                }
+              _filter_copy(&ped->filter, &pparent->filter);
 
               break;
            }
