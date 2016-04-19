@@ -13,6 +13,9 @@ type Elm_Gen_Item_State_Get_Cb: __undefined_type;
 type Elm_Gen_Item_Del_Cb: __undefined_type;
 type Elm_Gen_Item_Filter_Get_Cb: __undefined_type;
 type Elm_Gen_Item_Reusable_Content_Get_Cb: __undefined_type;
+type Elm_Tooltip_Item_Content_Cb: __undefined_type;
+type Elm_Object_Item_Signal_Cb: __undefined_type;
+type Evas_Smart_Cb: __undefined_type;
 
 /* FIXME: This shouldn't be here, we don't do functions in eolian!!! */
 struct Elm.Gen.Item.Class.Functions
