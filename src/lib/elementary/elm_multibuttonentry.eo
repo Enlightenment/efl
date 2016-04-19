@@ -1,3 +1,6 @@
+type Elm_Multibuttonentry_Item_Filter_Cb: __undefined_type;
+type Elm_Multibuttonentry_Format_Cb: __undefined_type;
+
 class Elm.Multibuttonentry (Elm.Layout)
 {
    eo_prefix: elm_obj_multibuttonentry;
