@@ -195,7 +195,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                 ]]
                 params {
                      @in img: const (void) *; [[The binary data that will be used as an image.]]
-                     @in size: size_t; [[The size of binary data $img.]]
+                     @in size: size; [[The size of binary data $img.]]
                      @in format: const (char) *; [[Optional format of $img to pass to the image loader.]]
                      @in key: const (char) *; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
                 }
