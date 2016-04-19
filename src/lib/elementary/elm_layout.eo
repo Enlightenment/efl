@@ -1,3 +1,5 @@
+import edje_types;
+
 struct Elm.Layout_Part_Alias_Description
 {
    [[
@@ -254,7 +256,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          params {
             @in emission: const(char)*; [[The signal's name string.]]
             @in source: const(char)*; [[The signal's source string.]]
-            @in func: Edje_Signal_Cb; [[The callback function to be executed
+            @in func: Edje.Signal_Cb; [[The callback function to be executed
                                         when the signal is emitted.]]
             @in data: void * @optional; [[A pointer to data to pass in to the
                                           callback function.]]
@@ -365,7 +367,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          params {
             @in emission: const(char)*; [[The signal's name string.]]
             @in source: const(char)*; [[The signal's source string.]]
-            @in func: Edje_Signal_Cb; [[The callback function being executed
+            @in func: Edje.Signal_Cb; [[The callback function being executed
                                         when the signal was emitted.]]
          }
       }
