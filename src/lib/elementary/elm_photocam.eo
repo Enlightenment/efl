@@ -1,3 +1,5 @@
+import evas_types;
+
 enum Elm.Photocam.Zoom_Mode
 {
    [[Types of zoom available.]]
@@ -163,7 +165,7 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
             ]]
          }
          values {
-            orient: Evas.Image.Orient; [[The photocam image orientation
+            orient: Evas.Image_Orient; [[The photocam image orientation
                                          \@ref Evas_Image_Orient. Default is
                                          #EVAS_IMAGE_ORIENT_NONE.
                                        ]]
