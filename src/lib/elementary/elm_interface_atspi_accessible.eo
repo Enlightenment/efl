@@ -1,3 +1,6 @@
+/* FIXME: This definitely shouldn't be here. */
+type Eo_Event_Cb: __undefined_type;
+
 enum Elm.Atspi.Type
 {
    [[Type of accessibility object]]
