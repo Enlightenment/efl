@@ -419,16 +419,9 @@ static void
 check_packed_items(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
    unsigned int i;
-   char *def_name;
 
    for (i = 0; i < ep->items_count; ++i)
      {
-        if (!ep->items[i]->name)
-          {
-             def_name = alloca(strlen("item_") + strlen("0xFFFFFFFFFFFFFFFF") + 1);
-             sprintf(def_name, "item_%p", def_name);
-             ep->items[i]->name = strdup(def_name);
-          }
 	if (ep->items[i]->type == EDJE_PART_TYPE_GROUP && !ep->items[i]->source)
 	  error_and_abort(ef, "Collection %i: missing source on packed item "
 			  "of type GROUP in part \"%s\"",
