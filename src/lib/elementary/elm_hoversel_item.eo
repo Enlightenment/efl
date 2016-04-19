@@ -1,3 +1,5 @@
+import elm_icon;
+
 class Elm.Hoversel_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_hoversel_item;
