@@ -20,7 +20,6 @@
       sym_## xx = dlsym(lib, #xx); \
       if (!(sym_ ## xx)) {         \
          fail = 1;                 \
-fprintf(stderr, "RESOLVE FAILED %s\n", #xx);\
       }                            \
    } while (0)
 
