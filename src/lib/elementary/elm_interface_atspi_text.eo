@@ -1,3 +1,5 @@
+import eina_types;
+
 enum Elm.Atspi_Text.Granularity
 {
    char,
@@ -32,9 +34,9 @@ struct Elm.Atspi_Text.Range
 struct Elm.Atspi_Text.Change_Info
 {
    content: const(char)*;
-   inserted: Eina.Bool;
-   pos: size_t;
-   len: size_t;
+   inserted: bool;
+   pos: size;
+   len: size;
 }
 
 interface Elm.Interface_Atspi_Text ()
@@ -50,7 +52,7 @@ interface Elm.Interface_Atspi_Text ()
             offset: int; [[Position in text.]]
          }
          values {
-            character: Eina_Unicode; [[Character at offset. 0 when out-of bounds offset has been given.  Codepoints between DC80 and DCFF indicates that string includes invalid UTF8 chars.]]
+            character: Eina.Unicode; [[Character at offset. 0 when out-of bounds offset has been given.  Codepoints between DC80 and DCFF indicates that string includes invalid UTF8 chars.]]
          }
       }
       @property string @protected {
@@ -131,7 +133,7 @@ interface Elm.Interface_Atspi_Text ()
             screen_coords: bool;
          }
          values {
-            rect: Eina_Rectangle;
+            rect: Eina.Rectangle;
          }
       }
       @property character_count @protected {
@@ -158,7 +160,7 @@ interface Elm.Interface_Atspi_Text ()
          }
          keys {
             screen_coords: bool;
-            rect: Eina_Rectangle;
+            rect: Eina.Rectangle;
             xclip: Elm.Atspi_Text.Clip_Type;
             yclip: Elm.Atspi_Text.Clip_Type;
          }
@@ -176,7 +178,7 @@ interface Elm.Interface_Atspi_Text ()
             end_offset: int;
          }
          values {
-            rect: Eina_Rectangle;
+            rect: Eina.Rectangle;
          }
       }
       @property selections_count @protected {
