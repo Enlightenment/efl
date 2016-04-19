@@ -7083,8 +7083,9 @@ _elm_genlist_item_fields_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
                                    &GL_IT(it)->deco_all_contents,
                                    "contents", parts);
           }
-        if (it->has_contents != (!!it->contents))
-          it->item->mincalcd = EINA_FALSE;
+        //forcely recalc about item because even same content, size can be changed.
+        it->item->mincalcd = EINA_FALSE;
+        it->item->block->must_recalc = EINA_TRUE;
         it->has_contents = !!it->contents;
         if (it->item->type == ELM_GENLIST_ITEM_NONE)
           {
@@ -7101,7 +7102,10 @@ _elm_genlist_item_fields_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
      _item_state_realize(it, VIEW(it), parts);
 
    if (!it->item->mincalcd)
-     elm_genlist_item_update(eo_item);
+     {
+        ELM_SAFE_FREE(it->item->wsd->calc_job, ecore_job_del);
+        it->item->wsd->calc_job = ecore_job_add(_calc_job, it->item->wsd->obj);
+     }
 }
 
 EOLIAN static void
