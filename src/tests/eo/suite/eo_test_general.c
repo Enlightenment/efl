@@ -1067,6 +1067,36 @@ START_TEST(eo_name)
 }
 END_TEST
 
+START_TEST(eo_comment)
+{
+   eo_init();
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   const char *comment;
+
+   comment = eo_comment_get(obj);
+   fail_if(NULL != comment);
+
+   eo_comment_set(obj, "Hello");
+   comment = eo_comment_get(obj);
+   fail_if(NULL == comment);
+   fail_if(!!strcmp(comment, "Hello"));
+
+   eo_comment_set(obj, "Hello");
+   eo_comment_set(obj, "");
+   comment = eo_comment_get(obj);
+   fail_if(NULL != comment);
+
+   eo_comment_set(obj, "Hello");
+   eo_comment_set(obj, NULL);
+   comment = eo_comment_get(obj);
+   fail_if(NULL != comment);
+
+   eo_del(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
@@ -1086,4 +1116,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_add_failures);
    tcase_add_test(tc, eo_del_intercept);
    tcase_add_test(tc, eo_name);
+   tcase_add_test(tc, eo_comment);
 }

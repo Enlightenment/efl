@@ -16,6 +16,12 @@ typedef struct _Eo_Callback_Description Eo_Callback_Description;
 
 typedef struct
 {
+   const char *id;
+   const char *comment;
+} Eo_Base_Extension;
+
+typedef struct
+{
    Eina_List *children;
    Eo *parent;
    Eina_List *parent_list;
@@ -23,7 +29,7 @@ typedef struct
    Eina_Inlist *generic_data;
    Eo ***wrefs;
 
-   const char *id;
+   Eo_Base_Extension *extension;
    Eo_Callback_Description *callbacks;
    unsigned short walking_list;
    unsigned short event_freeze_count;
@@ -37,6 +43,23 @@ typedef struct
    void             *data;
    Eina_Bool         data_is_obj : 1;
 } Eo_Generic_Data_Node;
+
+
+
+static Eo_Base_Extension *
+_eo_base_extension_new(void)
+{
+   Eo_Base_Extension *extension = calloc(1, sizeof(Eo_Base_Extension));
+   return extension;
+}
+
+static void
+_eo_base_extension_free(Eo_Base_Extension *extension)
+{
+   free(extension);
+}
+
+
 
 static void
 _eo_generic_data_node_free(Eo_Generic_Data_Node *node)
@@ -266,13 +289,66 @@ EOLIAN static void
 _eo_base_id_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *id)
 {
    if ((id) && (!id[0])) id = NULL;
-   eina_stringshare_replace(&(pd->id), id);
+   if (id)
+     {
+        if (!pd->extension)
+          pd->extension = _eo_base_extension_new();
+        if (pd->extension)
+          eina_stringshare_replace(&(pd->extension->id), id);
+     }
+   else
+     {
+        if (!pd->extension) return;
+        if (pd->extension->id)
+          {
+             eina_stringshare_replace(&(pd->extension->id), id);
+             if (!pd->extension->comment)
+               {
+                  _eo_base_extension_free(pd->extension);
+                  pd->extension = NULL;
+               }
+          }
+     }
 }
 
 EOLIAN static const char *
 _eo_base_id_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
 {
-   return pd->id;
+   if (!pd->extension) return NULL;
+   return pd->extension->id;
+}
+
+EOLIAN static void
+_eo_base_comment_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *comment)
+{
+   if ((comment) && (!comment[0])) comment = NULL;
+   if (comment)
+     {
+        if (!pd->extension)
+          pd->extension = _eo_base_extension_new();
+        if (pd->extension)
+          eina_stringshare_replace(&(pd->extension->comment), comment);
+     }
+   else
+     {
+        if (!pd->extension) return;
+        if (pd->extension->comment)
+          {
+             eina_stringshare_replace(&(pd->extension->comment), comment);
+             if (!pd->extension->id)
+               {
+                  _eo_base_extension_free(pd->extension);
+                  pd->extension = NULL;
+               }
+          }
+     }
+}
+
+EOLIAN static const char *
+_eo_base_comment_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+{
+   if (!pd->extension) return NULL;
+   return pd->extension->comment;
 }
 
 
@@ -1161,8 +1237,15 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    _wref_destruct(pd);
    _eo_callback_remove_all(pd);
 
-   eina_stringshare_del(pd->id);
-   pd->id = NULL;
+   if (pd->extension)
+     {
+        eina_stringshare_del(pd->extension->id);
+        pd->extension->id = NULL;
+        eina_stringshare_del(pd->extension->comment);
+        pd->extension->comment = NULL;
+        _eo_base_extension_free(pd->extension);
+        pd->extension = NULL;
+     }
 
    _eo_condtor_done(obj);
 }

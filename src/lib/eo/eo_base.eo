@@ -90,6 +90,21 @@ abstract Eo.Base ()
            id: const(char)* @nullable; [[the id/name]]
          }
       }
+      @property comment {
+         [[ A human readable comment for the object
+
+           Every object can have a string comment intended for developers
+           and debugging. An empty string is considered the same as a NULL
+           string or no string for the comment at all.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+           comment: const(char)* @nullable; [[the comment]]
+         }
+      }
       @property event_global_freeze_count @class {
          get {
             [[Return freeze events of object.
