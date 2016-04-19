@@ -1,3 +1,4 @@
+#include "elm_interface_scrollable.eo.legacy.h"
 #include "elm_scroller.eo.legacy.h"
 /**
  * @brief Add a new scroller to the parent
