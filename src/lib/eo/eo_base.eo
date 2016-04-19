@@ -223,6 +223,34 @@ abstract Eo.Base ()
             @in key: const(char)*; [[the key associated with the object ref]]
          }
       }
+      key_value_set {
+         [[Set value on the object.
+
+           This stores the value with the given string key on the object
+           and it will be freed when replaced or deleted or the referring
+           object is deleted.
+
+           This is the same key store used by key_data_set and key_obj_set
+           etc. so keys are shared and can store only one thing
+         ]]
+         params {
+            @in key: const(char)*; [[the key associated with the value]]
+            @in value: Eina_Value *; [[the value to set]]
+         }
+      }
+      key_value_get @const {
+         [[Get generic value from object.]]
+         params {
+            @in key: const(char)*; [[the key associated with the value]]
+         }
+         return: Eina_Value *; [[the value for the key]]
+      }
+      key_value_del {
+         [[Del generic value from object.]]
+         params {
+            @in key: const(char)*; [[the key associated with the value]]
+         }
+      }
       event_thaw {
          [[thaw events of object.
 

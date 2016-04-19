@@ -602,6 +602,8 @@ START_TEST(eo_generic_data)
    Eo *obj3 = eo_add(SIMPLE_CLASS, NULL);
    Eo *objtmp;
    void *data = NULL;
+   Eina_Value *value;
+   Eina_Value *value2;
 
    eo_key_data_set(obj, "test1", (void *) 1);
    data = eo_key_data_get(obj, "test1");
@@ -656,6 +658,19 @@ START_TEST(eo_generic_data)
    eo_key_obj_del(obj, "test1");
    objtmp = eo_key_obj_get(obj, "test1");
    fail_if(objtmp);
+
+   value = eina_value_new(EINA_VALUE_TYPE_INT);
+   eina_value_set(value, 1234);
+   value2 = eo_key_value_get(obj, "value1");
+   fail_if(value2 != NULL);
+
+   eo_key_value_set(obj, "value1", value);
+   value2 = eo_key_value_get(obj, "value1");
+   fail_if(value != value2);
+
+   eo_key_value_del(obj, "value1");
+   value2 = eo_key_value_get(obj, "value1");
+   fail_if(value2 != NULL);
 
    eo_unref(obj);
    eo_unref(obj2);

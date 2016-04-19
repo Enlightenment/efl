@@ -42,6 +42,7 @@ typedef struct
    Eina_Stringshare          *key;
    void                      *data;
    Eina_Bool                  data_is_obj : 1;
+   Eina_Bool                  data_is_value : 1;
 } Eo_Generic_Data_Node;
 
 
@@ -110,6 +111,7 @@ _eo_generic_data_del_all(Eo *obj, Eo_Base_Data *pd)
                                    _eo_base_cb_key_obj_del, obj);
              eo_unref(node->data);
           }
+        else if (node->data_is_value) eina_value_free(node->data);
         _eo_generic_data_node_free(node);
      }
 }
@@ -124,7 +126,8 @@ _eo_base_key_data_set(Eo *obj, Eo_Base_Data *pd, const char *key, const void *da
      {
         if (!strcmp(node->key, key))
           {
-             if ((!node->data_is_obj) && (node->data == data)) return;
+             if ((!node->data_is_obj) && (!node->data_is_value) &&
+                 (node->data == data)) return;
              pd->generic_data = eina_inlist_remove(pd->generic_data,
                                                    EINA_INLIST_GET(node));
              if (node->data_is_obj)
@@ -133,6 +136,7 @@ _eo_base_key_data_set(Eo *obj, Eo_Base_Data *pd, const char *key, const void *da
                                         _eo_base_cb_key_obj_del, obj);
                   eo_unref(node->data);
                }
+             else if (node->data_is_value) eina_value_free(node->data);
              _eo_generic_data_node_free(node);
              break;
           }
@@ -157,7 +161,7 @@ _eo_base_key_data_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
      {
         if (!strcmp(node->key, key))
           {
-             if (!node->data_is_obj)
+             if ((!node->data_is_obj) && (!node->data_is_value))
                {
                   pd->generic_data = eina_inlist_promote(pd->generic_data,
                                                          EINA_INLIST_GET(node));
@@ -165,7 +169,7 @@ _eo_base_key_data_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
                }
              else
                {
-                  ERR("Object %p key '%s' is an object, not raw data",
+                  ERR("Object %p key '%s' wants raw data but is not raw data",
                       obj, key);
                   return NULL;
                }
@@ -192,6 +196,7 @@ _eo_base_key_data_del(Eo *obj, Eo_Base_Data *pd, const char *key)
                                         _eo_base_cb_key_obj_del, obj);
                   eo_unref(node->data);
                }
+             else if (node->data_is_value) eina_value_free(node->data);
              _eo_generic_data_node_free(node);
              return;
           }
@@ -217,6 +222,7 @@ _eo_base_key_obj_set(Eo *obj, Eo_Base_Data *pd, const char *key, Eo *objdata)
                                         _eo_base_cb_key_obj_del, obj);
                   eo_unref(node->data);
                }
+             else if (node->data_is_value) eina_value_free(node->data);
              _eo_generic_data_node_free(node);
              break;
           }
@@ -252,7 +258,7 @@ _eo_base_key_obj_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
                }
              else
                {
-                  ERR("Object %p key '%s' is an object, not an object",
+                  ERR("Object %p key '%s' asked for object but is not an object",
                       obj, key);
                   return NULL;
                }
@@ -279,6 +285,95 @@ _eo_base_key_obj_del(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
                                         _eo_base_cb_key_obj_del, obj);
                   eo_unref(node->data);
                }
+             else if (node->data_is_value) eina_value_free(node->data);
+             _eo_generic_data_node_free(node);
+             return;
+          }
+     }
+}
+
+EOLIAN static void
+_eo_base_key_value_set(Eo *obj, Eo_Base_Data *pd, const char *key, Eina_Value *value)
+{
+   Eo_Generic_Data_Node *node;
+
+   if (!key) return;
+   EINA_INLIST_FOREACH(pd->generic_data, node)
+     {
+        if (!strcmp(node->key, key))
+          {
+             if ((node->data_is_value) && (node->data == value)) return;
+             pd->generic_data = eina_inlist_remove(pd->generic_data,
+                                                   EINA_INLIST_GET(node));
+             if (node->data_is_obj)
+               {
+                  eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
+                                        _eo_base_cb_key_obj_del, obj);
+                  eo_unref(node->data);
+               }
+             else if (node->data_is_value) eina_value_free(node->data);
+             _eo_generic_data_node_free(node);
+             break;
+          }
+     }
+
+   node = calloc(1, sizeof(Eo_Generic_Data_Node));
+   if (!node) return;
+   node->key = eina_stringshare_add(key);
+   node->data = (void *)value;
+   node->data_is_value = EINA_TRUE;
+   eo_event_callback_add(node->data, EO_BASE_EVENT_DEL,
+                         _eo_base_cb_key_obj_del, obj);
+   pd->generic_data = eina_inlist_prepend(pd->generic_data,
+                                          EINA_INLIST_GET(node));
+}
+
+EOLIAN static Eina_Value *
+_eo_base_key_value_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
+{
+   Eo_Generic_Data_Node *node;
+
+   if (!key) return NULL;
+   EINA_INLIST_FOREACH(pd->generic_data, node)
+     {
+        if (!strcmp(node->key, key))
+          {
+             if (node->data_is_value)
+               {
+                  pd->generic_data = eina_inlist_promote(pd->generic_data,
+                                                         EINA_INLIST_GET(node));
+                  return node->data;
+               }
+             else
+               {
+                  ERR("Object %p key '%s' asked for value but is not a value",
+                      obj, key);
+                  return NULL;
+               }
+          }
+     }
+   return NULL;
+}
+
+EOLIAN static void
+_eo_base_key_value_del(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
+{
+   Eo_Generic_Data_Node *node;
+
+   if (!key) return;
+   EINA_INLIST_FOREACH(pd->generic_data, node)
+     {
+        if (!strcmp(node->key, key))
+          {
+             pd->generic_data = eina_inlist_remove(pd->generic_data,
+                                                   EINA_INLIST_GET(node));
+             if (node->data_is_obj)
+               {
+                  eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
+                                        _eo_base_cb_key_obj_del, obj);
+                  eo_unref(node->data);
+               }
+             else if (node->data_is_value) eina_value_free(node->data);
              _eo_generic_data_node_free(node);
              return;
           }
