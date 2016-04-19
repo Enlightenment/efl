@@ -1,37 +1,35 @@
 import eina_types;
 
-interface Efl.Pack (Efl.Pack_Item)
+interface Efl.Pack (Efl.Gfx.Base)
 {
    [[API common to all UI container objects.]]
    legacy_prefix: null;
    methods
    {
-      /* should this actually just be the eo children list? */
-      contents_iterate {
-         [[Begin iterating over this object's children.]]
-         return: free(own(iterator<Efl.Pack_Item *> *), eina_iterator_free) @warn_unused;
+      contents_get {
+         [[Begin iterating over this object's contents.]]
+         return: free(own(iterator<Efl.Gfx.Base *> *), eina_iterator_free) @warn_unused;
       }
       contents_count {
-         [[returns the number of UI elements packed in this container.]]
+         [[Returns the number of UI elements packed in this container.]]
          return: int;
       }
-      clear {
-         [[removes all packed children, and unrefs them]]
+      pack_clear {
+         [[Removes all packed contents, and unreferences them.]]
       }
       unpack_all {
-         [[removes all packed children, without changing their refcount]]
+         [[Removes all packed contents, without unreferencing them.
+
+           Use with caution.
+         ]]
       }
       unpack {
-         [[removes an existing item from the container, without unref.
-
-           delete the item directly if you actually wanted to pop and unref
-         ]]
+         [[Removes an existing item from the container, without deleting it.]]
          return: bool; [[$false if $subobj wasn't a child or can't be removed]]
          params {
-            subobj: Efl.Pack_Item*;
+            subobj: own(Efl.Gfx.Base *);
          }
       }
-      /* FIXME: confusing? two meanings: named slot vs. append */
       pack {
          [[Adds an item to this container.
 
@@ -43,7 +41,7 @@ interface Efl.Pack (Efl.Pack_Item)
            failed, the object will be unrefed.
          ]]
          params {
-            subobj: Efl.Pack_Item*;
+            subobj: own(Efl.Gfx.Base *);
          }
       }
       @property pack_align {
@@ -55,7 +53,7 @@ interface Efl.Pack (Efl.Pack_Item)
             align_vert:  double;
          }
       }
-      @property padding {
+      @property pack_padding {
          [[Padding between items contained in this object.]]
          set {}
          get {}
@@ -65,36 +63,10 @@ interface Efl.Pack (Efl.Pack_Item)
             scalable:  bool;
          }
       }
-      @property layout_engine {
-         [[Implementation of this container's layout algorithm.
-
-           The default value is the same as the widget class (eg. Efl.Ui.Box).
-         ]]
-         set { return: bool; }
-         get {}
-         values {
-            engine: const(Eo.Class)*; [[A class implementing a class function layout_do.]]
-            data: const(void)*; [[Any data to pass along to layout_do.
-                                  Owned by the caller. Depends on the layout engine.]]
-         }
-      }
-      layout_update @protected {
-         [[Implementation of this container's layout algorithm.
-
-           EFL will call this function whenever the contents of this
-           container need to be re-layed out on the canvas.
-
-           This can be overriden to implement highly specific layout
-           behaviours.
-         ]]
-      }
-      layout_request {
-         [[Requests EFL to call the @.layout_update method on this object.]]
-      }
    }
    events {
-      child,added: Efl.Pack_Item*;    [[sent after a new item was added]]
-      child,removed: Efl.Pack_Item*;  [[sent after an item was removed, may happen after unref]]
-      layout,updated;                 [[sent after the layout was updated]]
+      content,added: Efl.Gfx.Base*;    [[Sent after a new item was added.]]
+      content,removed: Efl.Gfx.Base*;  [[Sent after an item was removed, before unref.]]
+      layout,updated;                  [[Sent after the layout was updated.]]
    }
 }

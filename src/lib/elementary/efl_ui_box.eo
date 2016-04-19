@@ -1,10 +1,10 @@
-class Efl.Ui.Box (Elm.Widget, Efl.Pack_Engine, Efl.Pack_Linear)
+class Efl.Ui.Box (Elm.Widget, Efl.Pack_Linear, Efl.Pack_Layout)
 {
    legacy_prefix: null;
    implements {
       Eo.Base.constructor;
 
-      // smart obj
+      // Smart obj
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.calculate;
@@ -15,31 +15,33 @@ class Efl.Ui.Box (Elm.Widget, Efl.Pack_Engine, Efl.Pack_Linear)
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_next;
 
-      Efl.Pack.contents_iterate;
+      // Packing interfaces
+      Efl.Pack.contents_get;
       Efl.Pack.contents_count;
-      Efl.Pack.clear;
+      Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
       Efl.Pack.pack;
-      Efl.Pack.padding.get;
-      Efl.Pack.padding.set;
+      Efl.Pack.pack_padding.get;
+      Efl.Pack.pack_padding.set;
       Efl.Pack.pack_align.get;
       Efl.Pack.pack_align.set;
-      Efl.Pack.layout_update;
-      Efl.Pack.layout_request;
-      Efl.Pack.layout_engine.get;
-      Efl.Pack.layout_engine.set;
       Efl.Pack_Linear.pack_begin;
       Efl.Pack_Linear.pack_end;
       Efl.Pack_Linear.pack_before;
       Efl.Pack_Linear.pack_after;
-      Efl.Pack_Linear.child_at.get;
-      Efl.Pack_Linear.child_at.set;
-      //Efl.Pack_Linear.child_index.get;
-      //Efl.Pack_Linear.child_index.set;
+      Efl.Pack_Linear.pack_insert;
+      Efl.Pack_Linear.content_at.get;
+      Efl.Pack_Linear.content_index.get;
+      Efl.Pack_Linear.content_index.set;
       Efl.Pack_Linear.direction.set;
       Efl.Pack_Linear.direction.get;
 
-      Efl.Pack_Engine.layout_do;
+      // Custom layouts
+      Efl.Pack_Layout.layout_update;
+      Efl.Pack_Layout.layout_request;
+      Efl.Pack_Layout.layout_engine.get;
+      Efl.Pack_Layout.layout_engine.set;
+      Efl.Pack_Layout.layout_do;
    }
 }

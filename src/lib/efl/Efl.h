@@ -37,7 +37,7 @@ extern "C" {
 
 /* Add here all the required ifdef for any @protected method */
 #ifdef EFL_EFL_BUILD
-# define EFL_PACK_PROTECTED
+# define EFL_PACK_LAYOUT_PROTECTED
 #endif
 
 /**
@@ -117,9 +117,8 @@ static inline void efl_gfx_color16_type_set(Efl_Gfx_Color *color,
 #include "interfaces/efl_gfx.x"
 
 /* Packing & containers */
-#include "interfaces/efl_pack_item.eo.h"
 #include "interfaces/efl_pack.eo.h"
-#include "interfaces/efl_pack_engine.eo.h"
+#include "interfaces/efl_pack_layout.eo.h"
 #include "interfaces/efl_pack_linear.eo.h"
 #include "interfaces/efl_pack_grid.eo.h"
 #include "interfaces/efl_pack_named.eo.h"

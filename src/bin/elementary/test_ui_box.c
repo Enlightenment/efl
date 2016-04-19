@@ -3,6 +3,7 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_PACK_LAYOUT_PROTECTED
 #include <Elementary.h>
 #include <assert.h>
 
@@ -161,7 +162,7 @@ static void
 _custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
                          Efl_Pack *pack, const void *data EINA_UNUSED)
 {
-   Eina_Iterator *it = efl_pack_contents_iterate(pack);
+   Eina_Iterator *it = efl_pack_contents_get(pack);
    int count = efl_pack_contents_count(pack), i = 0;
    int px, py, pw, ph;
    Eo *sobj;
@@ -186,7 +187,7 @@ _custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
 
 /* Common Eo Class boilerplate. */
 static const Eo_Op_Description custom_engine_op_desc[] = {
-   EO_OP_CLASS_FUNC_OVERRIDE(efl_pack_engine_layout_do, _custom_engine_layout_do),
+   EO_OP_CLASS_FUNC_OVERRIDE(efl_pack_layout_do, _custom_engine_layout_do),
 };
 
 static const Eo_Class_Description custom_engine_class_desc = {
@@ -194,7 +195,7 @@ static const Eo_Class_Description custom_engine_class_desc = {
    EO_CLASS_DESCRIPTION_OPS(custom_engine_op_desc), NULL, 0, NULL, NULL
 };
 
-EO_DEFINE_CLASS(_test_ui_box_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_ENGINE_INTERFACE, NULL)
+EO_DEFINE_CLASS(_test_ui_box_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_LAYOUT_INTERFACE, NULL)
 
 static Eina_Bool
 custom_check_cb(void *data, const Eo_Event *event)

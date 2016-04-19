@@ -1,6 +1,8 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
+#define EFL_PACK_LAYOUT_PROTECTED
 #include <Elementary.h>
 
 static Evas_Object *objects[7] = {};
@@ -18,7 +20,7 @@ static void _custom_engine_layout_do(Eo *obj, void *pd, Efl_Pack *pack, const vo
 
 /* Common Eo Class boilerplate. */
 static const Eo_Op_Description custom_engine_op_desc[] = {
-   EO_OP_CLASS_FUNC_OVERRIDE(efl_pack_engine_layout_do, _custom_engine_layout_do),
+   EO_OP_CLASS_FUNC_OVERRIDE(efl_pack_layout_do, _custom_engine_layout_do),
 };
 
 static const Eo_Class_Description custom_engine_class_desc = {
@@ -26,7 +28,7 @@ static const Eo_Class_Description custom_engine_class_desc = {
    EO_CLASS_DESCRIPTION_OPS(custom_engine_op_desc), NULL, 0, NULL, NULL
 };
 
-EO_DEFINE_CLASS(_test_ui_grid_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_ENGINE_INTERFACE, NULL)
+EO_DEFINE_CLASS(_test_ui_grid_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_LAYOUT_INTERFACE, NULL)
 
 #define CUSTOM_ENGINE_CLASS _test_ui_grid_custom_engine_class_get()
 
@@ -130,12 +132,12 @@ static Eina_Bool
 child_evt_cb(void *data, const Eo_Event *event)
 {
    Elm_Label *o = data;
-   Efl_Pack_Item *it = event->info;
+   Efl_Gfx_Base *it = event->info;
    int col, row, colspan, rowspan;
    char buf[64];
 
-   efl_pack_child_position_get(event->obj, it, &col, &row, &colspan, &rowspan);
-   if (event->desc == EFL_PACK_EVENT_CHILD_ADDED)
+   efl_pack_grid_content_position_get(event->obj, it, &col, &row, &colspan, &rowspan);
+   if (event->desc == EFL_PACK_EVENT_CONTENT_ADDED)
      sprintf(buf, "pack %d,%d %dx%d", col, row, colspan, rowspan);
    else
      sprintf(buf, "unpack %d,%d %dx%d", col, row, colspan, rowspan);
@@ -164,10 +166,10 @@ _custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
    efl_pack_grid_size_get(pack, &cols, &rows);
    if (!cols || !rows) goto end;
 
-   it = efl_pack_contents_iterate(pack);
+   it = efl_pack_contents_get(pack);
    EINA_ITERATOR_FOREACH(it, item)
      {
-        if (efl_pack_child_position_get(pack, item, &c, &r, &cs, &rs))
+        if (efl_pack_grid_content_position_get(pack, item, &c, &r, &cs, &rs))
           {
              int x, y, mw, mh;
 
@@ -414,8 +416,8 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_gfx_visible_set(o, 1);
 
    o = elm_label_add(win);
-   eo_event_callback_add(grid, EFL_PACK_EVENT_CHILD_ADDED, child_evt_cb, o);
-   eo_event_callback_add(grid, EFL_PACK_EVENT_CHILD_REMOVED, child_evt_cb, o);
+   eo_event_callback_add(grid, EFL_PACK_EVENT_CONTENT_ADDED, child_evt_cb, o);
+   eo_event_callback_add(grid, EFL_PACK_EVENT_CONTENT_REMOVED, child_evt_cb, o);
    evas_object_size_hint_align_set(o, 0.5, 0);
    evas_object_size_hint_weight_set(o, 1, 1);
    efl_pack(bx, o);
@@ -596,8 +598,8 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_gfx_visible_set(o, 1);
 
    o = elm_label_add(win);
-   eo_event_callback_add(grid, EFL_PACK_EVENT_CHILD_ADDED, child_evt_cb, o);
-   eo_event_callback_add(grid, EFL_PACK_EVENT_CHILD_REMOVED, child_evt_cb, o);
+   eo_event_callback_add(grid, EFL_PACK_EVENT_CONTENT_ADDED, child_evt_cb, o);
+   eo_event_callback_add(grid, EFL_PACK_EVENT_CONTENT_REMOVED, child_evt_cb, o);
    evas_object_size_hint_align_set(o, 0.5, 0);
    evas_object_size_hint_weight_set(o, 1, 1);
    efl_pack(bx, o);
@@ -612,7 +614,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_pack(vbox, f);
    efl_gfx_visible_set(f, 1);
 
-   efl_pack_columns_set(grid, 4);
+   efl_pack_grid_columns_set(grid, 4);
    efl_pack_directions_set(grid, EFL_ORIENT_RIGHT, EFL_ORIENT_DOWN);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_content_set(f, grid);

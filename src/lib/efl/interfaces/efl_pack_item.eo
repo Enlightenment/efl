@@ -1,6 +1,0 @@
-/* FIXME: this is not necessary - just use efl.gfx.base */
-interface Efl.Pack_Item
-{
-   [[Describes an item that can be packed in a container.]]
-   legacy_prefix: null;
-}

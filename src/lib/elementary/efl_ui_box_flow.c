@@ -42,7 +42,7 @@ _efl_ui_box_flow_box_flow_max_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Flow_Data
 }
 
 EOLIAN static void
-_efl_ui_box_flow_efl_pack_engine_layout_do(Eo_Class *klass EINA_UNUSED,
+_efl_ui_box_flow_efl_pack_layout_layout_do(Eo_Class *klass EINA_UNUSED,
                                            void *_pd EINA_UNUSED,
                                            Eo *obj, const void *data)
 {

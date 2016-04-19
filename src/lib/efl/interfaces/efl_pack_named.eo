@@ -8,9 +8,8 @@ interface Efl.Pack_Named (Efl.Pack)
          [[Insert element in a named spot (swallow, part).]]
          params {
             part: const(char) *;
-            subobj: Efl.Pack_Item *;
+            subobj: Efl.Gfx.Base *;
          }
       }
-
    }
 }
