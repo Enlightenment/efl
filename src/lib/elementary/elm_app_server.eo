@@ -1,4 +1,5 @@
 import eina_types;
+import elm_general;
 
 type Elm_App_Server_Create_View_Cb: __undefined_type;
 
