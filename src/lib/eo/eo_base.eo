@@ -235,7 +235,7 @@ abstract Eo.Base ()
          ]]
          params {
             @in key: const(char)*; [[the key associated with the value]]
-            @in value: Eina_Value *; [[the value to set]]
+            @in value: Eina.Value *; [[the value to set]]
          }
       }
       key_value_get @const {
@@ -243,7 +243,7 @@ abstract Eo.Base ()
          params {
             @in key: const(char)*; [[the key associated with the value]]
          }
-         return: Eina_Value *; [[the value for the key]]
+         return: Eina.Value *; [[the value for the key]]
       }
       key_value_del {
          [[Del generic value from object.]]
