@@ -1,5 +1,4 @@
 import elm_general;
-type Eina_Compare_Cb: __undefined_type;
 
 enum Elm.List.Mode
 {
