@@ -2,6 +2,7 @@ local eolian = require("eolian")
 local getopt = require("getopt")
 local cutil = require("cutil")
 local util = require("util")
+local ffi = require("ffi")
 
 local doc_root
 local root_nspace
@@ -9,18 +10,21 @@ local verbose = false
 
 -- utils
 
-local path_sep = "/"
+local path_sep, rep_sep = "/", "\\"
+if ffi.os == "Windows" then
+    path_sep, rep_sep = rep_sep, path_sep
+end
 
 local path_join = function(...)
-    return table.concat({ ... }, path_sep)
+    return table.concat({ ... }, path_sep):gsub(rep_sep, path_sep)
 end
 
 local path_to_nspace = function(p)
-    return p:gsub(path_sep, ":"):lower()
+    return p:gsub(rep_sep, ":"):gsub(path_sep, ":"):lower()
 end
 
 local nspace_to_path = function(ns)
-    return ns:gsub(":", path_sep):lower()
+    return ns:gsub(":", path_sep):gsub(rep_sep, path_sep):lower()
 end
 
 local make_page = function(path)
