@@ -1,3 +1,8 @@
+import eina_types;
+
+type Elm_Prefs_Data: __undefined_type;
+type Elm_Prefs_Reset_Mode: __undefined_type;
+
 class Elm.Prefs (Elm.Widget, Efl.File)
 {
    eo_prefix: elm_obj_prefs;
@@ -85,7 +90,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          return: bool; [[$true, on success, $false otherwise]]
          params {
             @in name: const(char)*; [[The name of the item (as declared in the prefs collection)]]
-            @in value: const(Eina_Value)*; [[The value to set on the item. It should be typed as the item expects, preferably, or a conversion will take place]]
+            @in value: const(Eina.Value)*; [[The value to set on the item. It should be typed as the item expects, preferably, or a conversion will take place]]
          }
       }
       item_value_get @const {
@@ -98,7 +103,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          params {
             @in name: const(char)*; [[The name of the item (as declared in the prefs collection) to get value from]]
-            @out value: Eina_Value; [[Where to store the value of the item. It will be overwritten and setup with the type the item is bound to]]
+            @out value: Eina.Value; [[Where to store the value of the item. It will be overwritten and setup with the type the item is bound to]]
          }
       }
       item_object_get {

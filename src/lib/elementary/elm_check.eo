@@ -10,7 +10,7 @@ class Elm.Check (Elm.Nstate, Elm.Interface_Atspi_Widget_Action)
             [[Get the state of the check object.]]
          }
          values {
-            value: Eina_Bool;
+            value: bool;
          }
       }
    }

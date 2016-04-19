@@ -1,3 +1,6 @@
+type slider_func_type: __undefined_type;
+type slider_freefunc_type: __undefined_type;
+
 class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
                   Efl.Orientation,
                   Elm.Interface_Atspi_Value,
@@ -147,7 +150,7 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
             [[Get whether the range is enabled.]]
          }
          values {
-            enable: Eina_Bool;
+            enable: bool;
          }
       }
       @property range {

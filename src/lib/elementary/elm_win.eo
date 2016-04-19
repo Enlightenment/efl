@@ -1,3 +1,11 @@
+/* FIXME: Shouldn't be here. */
+type Ecore_Evas: __undefined_type;
+type Ecore_X_Window: __undefined_type;
+type Ecore_Wl2_Window: __undefined_type;
+type Ecore_Cocoa_Window: __undefined_type;
+type Ecore_Win32_Window: __undefined_type;
+type Ecore_Window: __undefined_type;
+
 enum Elm.Win.Type
 {
    [[Defines the types of window that can be created

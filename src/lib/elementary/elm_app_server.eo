@@ -1,3 +1,8 @@
+import eina_types;
+import elm_general;
+
+type Elm_App_Server_Create_View_Cb: __undefined_type;
+
 class Elm.App_Server (Eo.Base)
 {
    legacy_prefix: null;
@@ -9,7 +14,7 @@ class Elm.App_Server (Eo.Base)
          get {
          }
          values {
-            icon: Eina_Stringshare *; [[title of icon]]
+            icon: Eina.Stringshare *; [[title of icon]]
          }
       }
       @property views {
@@ -31,7 +36,7 @@ class Elm.App_Server (Eo.Base)
          get {
          }
          values {
-            ret: Eina_Stringshare *;
+            ret: Eina.Stringshare *;
          }
       }
       @property pixels {
@@ -83,7 +88,7 @@ class Elm.App_Server (Eo.Base)
       }
       title_get {
          [[Get title of application]]
-         return: Eina_Stringshare *; [[title of application]]
+         return: Eina.Stringshare *; [[title of application]]
       }
       save {
          [[Save the state of all views]]

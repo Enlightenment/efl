@@ -174,18 +174,11 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 static Eina_Bool
 _type_error(const Validator *vs, const Eolian_Type *tp, const char *msg)
 {
-   Eina_Bool weak = !getenv("EOLIAN_VALIDATE_STRICT");
    if (vs->silent_types)
-     return weak;
-   if (!weak)
-     {
-        fprintf(stderr, "eolian:%s:%d:%d: %s\n", tp->base.file, tp->base.line,
-                tp->base.column, msg);
-        return EINA_FALSE;
-     }
-   eina_log_print(_eolian_log_dom, EINA_LOG_LEVEL_WARN, tp->base.file, "",
-                  tp->base.line, "%s at column %d", msg, tp->base.column);
-   return EINA_TRUE;
+     return EINA_FALSE;
+   fprintf(stderr, "eolian:%s:%d:%d: %s\n", tp->base.file, tp->base.line,
+           tp->base.column, msg);
+   return EINA_FALSE;
 }
 
 static Eina_Bool

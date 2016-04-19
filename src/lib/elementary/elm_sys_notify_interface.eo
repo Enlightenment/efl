@@ -1,3 +1,5 @@
+type Elm_Sys_Notify_Send_Cb: __undefined_type;
+
 enum Elm.Sys_Notify.Urgency
 {
    [[Urgency levels of a notification

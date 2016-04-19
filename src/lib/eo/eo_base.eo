@@ -207,7 +207,7 @@ abstract Eo.Base ()
          ]]
          params {
             @in key: const(char)*; [[the key associated with the object ref]]
-            @in objdata: Eo *; [[the object to set]]
+            @in objdata: Eo.Base *; [[the object to set]]
          }
       }
       key_obj_get @const {
@@ -215,7 +215,7 @@ abstract Eo.Base ()
          params {
             @in key: const(char)*; [[the key associated with the object ref]]
          }
-         return: Eo *; [[the object reference for the key]]
+         return: Eo.Base *; [[the object reference for the key]]
       }
       key_obj_del {
          [[Del generic objecrt reference from object.]]

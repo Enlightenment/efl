@@ -1,3 +1,7 @@
+import elm_general;
+
+type Elm_App_Client_View_Cb: __undefined_type;
+
 class Elm.App_Client_View (Eo.Base)
 {
    legacy_prefix: null;
@@ -49,7 +53,7 @@ class Elm.App_Client_View (Eo.Base)
             [[Get DBus path of view]]
          }
          values {
-            ret: Eina_Stringshare *; [[DBus path of view]]
+            ret: Eina.Stringshare *; [[DBus path of view]]
          }
       }
       @property package {

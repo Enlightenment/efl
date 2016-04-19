@@ -1,3 +1,5 @@
+type Elm_Slideshow_Item_Class: __undefined_type;
+
 class Elm.Slideshow (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_slideshow;

@@ -1,4 +1,5 @@
 import elm_general;
+import ecore_types;
 
 enum Elm.Gengrid.Reorder_Type
 {

@@ -1,3 +1,47 @@
+import elm_general;
+
+type Elm_Interface_Scrollable_Cb: __undefined_type;
+type Elm_Interface_Scrollable_Resize_Cb: __undefined_type;
+type Elm_Interface_Scrollable_Min_Limit_Cb: __undefined_type;
+
+/* FIXME: Rename the namespace of the types. */
+enum Elm.Scroller.Policy
+{
+   [[Type that controls when scrollbars should appear.
+
+     See also @Elm.Interface_Scrollable.policy.set.
+   ]]
+   auto = 0, [[Show scrollbars as needed]]
+   on, [[Always show scrollbars]]
+   off, [[Never show scrollbars]]
+   last
+}
+
+enum Elm.Scroller.Single_Direction
+{
+   [[Type that controls how the content is scrolled.
+
+     See also @Elm.Interface_Scrollable.single_direction.set.
+   ]]
+   none = 0, [[Scroll every direction]]
+   soft, [[Scroll single direction if the direction is certain]]
+   hard, [[Scroll only single direction]]
+   last
+}
+
+enum Elm.Scroller.Movement_Block
+{
+   [[Type that blocks the scroll movement in one or more direction.
+
+     @since 1.8
+   ]]
+   legacy: elm_scroller_movement;
+   no_block = 1 << 0, [[Do not block movements]]
+   block_vertical = 1 << 1, [[Block vertical movements]]
+   block_horizontal = 1 << 2 [[Block horizontal movements]]
+}
+
+
 mixin Elm.Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
 {
    legacy_prefix: null;

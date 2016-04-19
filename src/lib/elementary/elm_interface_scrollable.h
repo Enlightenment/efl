@@ -56,6 +56,9 @@ typedef void      (*Elm_Interface_Scrollable_Resize_Cb)(Evas_Object *obj, Evas_C
 
 typedef struct _Elm_Scrollable_Smart_Interface_Data
   Elm_Scrollable_Smart_Interface_Data;
+
+#include "elm_interface_scrollable.eo.h"
+
 struct _Elm_Scrollable_Smart_Interface_Data
 {
    Evas_Coord                    x, y, w, h;
@@ -231,8 +234,6 @@ struct _Elm_Scrollable_Smart_Interface_Data
        if (getenv("ELM_ERROR_ABORT")) abort();                               \
        return __VA_ARGS__;                                                   \
     }
-
-#include "elm_interface_scrollable.eo.h"
 
 /**
  * @}
