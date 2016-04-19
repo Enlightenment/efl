@@ -11244,6 +11244,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    Edje_Program *epr;
    int tweenmode = 0;
 
+   GET_ED_OR_RETURN(EINA_FALSE);
    GET_EED_OR_RETURN(EINA_FALSE);
 
    epr = _edje_program_get_byname(obj, program);
@@ -11251,14 +11252,16 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    BUF_APPENDF(I3 "program { name: \"%s\";\n", program);
 
    /* Signal */
-   if ((s = eina_stringshare_add(epr->signal)))
+   s = eina_stringshare_add(epr->signal);
+   if ((s != NULL) && (strcmp(s, "")))
      {
         BUF_APPENDF(I4 "signal: \"%s\";\n", s);
         edje_edit_string_free(s);
      }
 
    /* Source */
-   if ((s = eina_stringshare_add(epr->source)))
+   s = eina_stringshare_add(epr->source);
+   if ((s != NULL) && (strcmp(s, "")))
      {
         BUF_APPENDF(I4 "source: \"%s\";\n", s);
         edje_edit_string_free(s);
@@ -11381,6 +11384,48 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
          BUF_APPENDF("%.4f %.4f;\n", epr->value, epr->value2);
          break;
       }
+
+      case EDJE_ACTION_TYPE_FOCUS_SET:
+      {
+         BUF_APPEND(I4 "action: FOCUS_SET;\n");
+         break;
+      }
+
+      case EDJE_ACTION_TYPE_FOCUS_OBJECT:
+      {
+         BUF_APPEND(I4 "action: FOCUS_OBJECT;\n");
+         break;
+      }
+
+      case EDJE_ACTION_TYPE_PARAM_COPY:
+      {
+         Edje_Real_Part *src_part, *dst_part;
+
+         src_part = ed->table_parts[epr->param.src % ed->table_parts_size];
+         dst_part = ed->table_parts[epr->param.dst % ed->table_parts_size];
+
+         if (!src_part || !dst_part) break;
+
+         BUF_APPEND(I4 "action: PARAM_COPY ");
+         BUF_APPENDF("\"%s\" \"%s\" \"%s\" \"%s\";\n",
+                     src_part->part->name, epr->state,
+                     dst_part->part->name, epr->state2);
+         break;
+      }
+
+      case EDJE_ACTION_TYPE_PARAM_SET:
+      {
+         Edje_Real_Part *part;
+
+         part = ed->table_parts[epr->param.dst % ed->table_parts_size];
+
+         if (!part) break;
+
+         BUF_APPEND(I4 "action: PARAM_SET ");
+         BUF_APPENDF("\"%s\" \"%s\" \"%s\";\n",
+                     part->part->name, epr->state, epr->state2);
+         break;
+       }
 
       default:
         break;
