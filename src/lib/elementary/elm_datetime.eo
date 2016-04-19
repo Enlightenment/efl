@@ -1,3 +1,5 @@
+import efl_types;
+
 enum Elm.Datetime.Field_Type
 {
    [[Identifies a Datetime field, The widget supports 6 fields : Year, month,
