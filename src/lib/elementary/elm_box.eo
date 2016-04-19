@@ -1,3 +1,7 @@
+import evas_box;
+
+type Ecore_Cb: __undefined_type;
+
 class Elm.Box (Elm.Widget)
 {
    eo_prefix: elm_obj_box;
