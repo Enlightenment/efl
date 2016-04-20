@@ -74,6 +74,7 @@ struct _Ecore_Wl2_Display
         struct wl_compositor *compositor;
         struct wl_subcompositor *subcompositor;
         struct wl_data_device_manager *data_device_manager;
+        int data_device_manager_version;
         struct wl_shm *shm;
         struct zwp_linux_dmabuf_v1 *dmabuf;
         struct wl_shell *wl_shell;
@@ -178,6 +179,8 @@ typedef struct _Ecore_Wl2_Dnd_Source
 
    struct wl_data_offer *offer;
    struct wl_array types;
+   uint32_t dnd_action;
+   uint32_t source_actions;
 } Ecore_Wl2_Dnd_Source;
 
 

@@ -115,8 +115,9 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
      }
    else if (!strcmp(interface, "wl_data_device_manager"))
      {
+        ewd->wl.data_device_manager_version = MIN(version, 3);
         ewd->wl.data_device_manager =
-          wl_registry_bind(registry, id, &wl_data_device_manager_interface, 1);
+          wl_registry_bind(registry, id, &wl_data_device_manager_interface, ewd->wl.data_device_manager_version);
      }
    else if (!strcmp(interface, "wl_shell"))
      {

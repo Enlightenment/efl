@@ -56,9 +56,28 @@ _offer_cb_offer(void *data, struct wl_data_offer *offer EINA_UNUSED, const char 
    if (t) *t = strdup(type);
 }
 
+
+static void
+data_offer_source_actions(void *data, struct wl_data_offer *wl_data_offer EINA_UNUSED, uint32_t source_actions)
+{
+   Ecore_Wl2_Dnd_Source *source = data;
+
+   source->source_actions = source_actions;
+}
+
+static void
+data_offer_action(void *data, struct wl_data_offer *wl_data_offer EINA_UNUSED, uint32_t dnd_action)
+{
+   Ecore_Wl2_Dnd_Source *source = data;
+
+   source->dnd_action = dnd_action;
+}
+
 static const struct wl_data_offer_listener _offer_listener =
 {
-   _offer_cb_offer
+   _offer_cb_offer,
+   data_offer_source_actions,
+   data_offer_action
 };
 
 static void
@@ -321,6 +340,12 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
         input->drag.source = wl_data_offer_get_user_data(offer);
         num = (input->drag.source->types.size / sizeof(char *));
         types = input->drag.source->types.data;
+        if (input->display->wl.data_device_manager_version >=
+            WL_DATA_OFFER_SET_ACTIONS_SINCE_VERSION)
+          wl_data_offer_set_actions(offer,
+               WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY |
+               WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE,
+               WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE);
      }
    else
      {
