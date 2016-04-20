@@ -5,6 +5,7 @@ struct Eo.Event_Description {
     name: const(char) *; [[name of the event.]]
     unfreezable: bool; [[Eina_True if the event cannot be frozen.]]
     legacy_is: bool; [[Internal use: if is a legacy event.]]
+    restart: bool; [[Eina_True if when the event is triggered again from a callback, it should start from where it was]]
 }
 
 struct Eo.Event {

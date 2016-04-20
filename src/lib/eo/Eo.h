@@ -259,7 +259,7 @@ typedef unsigned int Eo_Op;
  * @param name The name of the event.
  * @see Eo_Event_Description
  */
-#define EO_EVENT_DESCRIPTION(name) { name, EINA_FALSE, EINA_FALSE }
+#define EO_EVENT_DESCRIPTION(name) { name, EINA_FALSE, EINA_FALSE, EINA_FALSE }
 
 /**
  * @def EO_EVENT_DESCRIPTION_HOT(name)
@@ -269,7 +269,25 @@ typedef unsigned int Eo_Op;
  * @see Eo_Event_Description
  * @see EO_EVENT_DESCRIPTION
  */
-#define EO_EVENT_DESCRIPTION_HOT(name) { name, EINA_TRUE, EINA_FALSE }
+#define EO_EVENT_DESCRIPTION_HOT(name) { name, EINA_TRUE, EINA_FALSE, EINA_FALSE }
+
+/**
+ * @def EO_EVENT_DESCRIPTION(name)
+ * An helper macro to help populating #Eo_Event_Description
+ * @param name The name of the event.
+ * @see Eo_Event_Description
+ */
+#define EO_EVENT_DESCRIPTION_RESTART(name) { name, EINA_FALSE, EINA_FALSE, EINA_TRUE }
+
+/**
+ * @def EO_EVENT_DESCRIPTION_HOT(name)
+ * An helper macro to help populating #Eo_Event_Description and make
+ * the event impossible to freeze.
+ * @param name The name of the event.
+ * @see Eo_Event_Description
+ * @see EO_EVENT_DESCRIPTION
+ */
+#define EO_EVENT_DESCRIPTION_HOT_RESTART(name) { name, EINA_TRUE, EINA_FALSE, EINA_TRUE }
 
 
 

@@ -32,6 +32,9 @@ typedef struct
 
    Eo_Base_Extension         *extension;
    Eo_Callback_Description   *callbacks;
+
+   Eina_Inlist               *current;
+
    unsigned short             walking_list;
    unsigned short             event_freeze_count;
    Eina_Bool                  deletions_waiting : 1;
@@ -46,7 +49,12 @@ typedef struct
    Eina_Bool                  data_is_value : 1;
 } Eo_Generic_Data_Node;
 
-
+typedef struct
+{
+   EINA_INLIST;
+   const Eo_Event_Description *desc;
+   Eo_Callback_Description *current;
+} Eo_Current_Callback_Description;
 
 static Eo_Base_Extension *
 _eo_base_extension_new(void)
@@ -1157,14 +1165,45 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
 {
    Eina_Bool ret = EINA_TRUE;
    Eo_Callback_Description *cb;
+   Eo_Current_Callback_Description *lookup = NULL;
+   Eo_Current_Callback_Description saved;
    Eo_Event ev;
+
    ev.obj = obj_id;
    ev.desc = desc;
    ev.info = event_info;
 
    pd->walking_list++;
 
-   for (cb = pd->callbacks; cb; cb = cb->next)
+   // Handle event that require to restart where we were in the nested list walking
+   if (desc->restart)
+     {
+        EINA_INLIST_FOREACH(pd->current, lookup)
+          if (lookup->desc == desc)
+            break;
+
+        // This is the first event to trigger it, so register it here
+        if (!lookup)
+          {
+             // This following trick get us a zero allocation list
+             saved.desc = desc;
+             saved.current = NULL;
+             lookup = &saved;
+             // Ideally there will most of the time be only one item in this list
+             // But just to speed up things, prepend so we find it fast at the end
+             // of this function
+             pd->current = eina_inlist_prepend(pd->current, EINA_INLIST_GET(lookup));
+          }
+
+        if (!lookup->current) lookup->current = pd->callbacks;
+        cb = lookup->current;
+     }
+   else
+     {
+        cb = pd->callbacks;
+     }
+
+   for (; cb; cb = cb->next)
      {
         if (!cb->delete_me)
           {
@@ -1180,12 +1219,18 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
                            (event_freeze_count || pd->event_freeze_count))
                           continue;
 
+                       // Handle nested restart of walking list
+                       if (lookup) lookup->current = cb->next;
                        /* Abort callback calling if the func says so. */
                        if (!it->func((void *) cb->func_data, &ev))
                          {
                             ret = EINA_FALSE;
                             goto end;
                          }
+                       // We have actually walked this list during a nested call
+                       if (lookup &&
+                           lookup->current == NULL)
+                         goto end;
                     }
                }
              else
@@ -1196,17 +1241,30 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
                       (event_freeze_count || pd->event_freeze_count))
                     continue;
 
+                  // Handle nested restart of walking list
+                  if (lookup) lookup->current = cb->next;
                   /* Abort callback calling if the func says so. */
                   if (!cb->items.item.func((void *) cb->func_data, &ev))
                     {
                        ret = EINA_FALSE;
                        goto end;
                     }
+                  // We have actually walked this list during a nested call
+                  if (lookup &&
+                      lookup->current == NULL)
+                    goto end;
                }
           }
      }
 
 end:
+   // Handling restarting list walking complete exit.
+   if (lookup) lookup->current = NULL;
+   if (lookup == &saved)
+     {
+        pd->current = eina_inlist_remove(pd->current, EINA_INLIST_GET(lookup));
+     }
+
    pd->walking_list--;
    _eo_callbacks_clear(pd);
 
