@@ -2505,7 +2505,7 @@ _wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Se
        (selection == ELM_SEL_TYPE_SECONDARY))
      {
         const char *types[10] = {0, };
-        int i = -1;
+        int i = -1, j;
 
         if ((format & ELM_SEL_FORMAT_MARKUP) ||
             (format & ELM_SEL_FORMAT_TEXT))
@@ -2523,7 +2523,9 @@ _wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Se
 
         if (i < 0) return EINA_FALSE;
 
-        ecore_wl2_dnd_selection_get(ecore_wl2_window_input_get(win), *types);
+        for (j = 0; j <= i; j++)
+          if (ecore_wl2_dnd_selection_get(ecore_wl2_window_input_get(win), types[j]))
+            break;
      }
 
    return EINA_TRUE;
