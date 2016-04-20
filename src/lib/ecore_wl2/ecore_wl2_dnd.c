@@ -306,7 +306,7 @@ _ecore_wl2_dnd_add(Ecore_Wl2_Input *input, struct wl_data_offer *offer)
 }
 
 void
-_ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct wl_surface *surface, int x, int y, unsigned int timestamp)
+_ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct wl_surface *surface, int x, int y, uint32_t serial)
 {
    Ecore_Wl2_Window *window;
    Ecore_Wl2_Event_Dnd_Enter *ev;
@@ -341,7 +341,7 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
    ev->x = x;
    ev->y = y;
    ev->offer = offer;
-   ev->serial = timestamp;
+   ev->serial = serial;
    ev->num_types = num;
    ev->types = types;
 
@@ -367,7 +367,7 @@ _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
 }
 
 void
-_ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, unsigned int timestamp)
+_ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, uint32_t serial)
 {
    Ecore_Wl2_Event_Dnd_Motion *ev;
 
@@ -386,7 +386,7 @@ _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, unsigned int timesta
 
    ev->x = x;
    ev->y = y;
-   ev->serial = timestamp;
+   ev->serial = serial;
 
    ecore_event_add(ECORE_WL2_EVENT_DND_MOTION, ev, NULL, NULL);
 }

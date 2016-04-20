@@ -427,9 +427,9 @@ void _ecore_wl2_input_cursor_set(Ecore_Wl2_Input *input, const char *cursor);
 void _ecore_wl2_input_cursor_update_stop(Ecore_Wl2_Input *input);
 
 void _ecore_wl2_dnd_add(Ecore_Wl2_Input *input, struct wl_data_offer *offer);
-void _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct wl_surface *surface, int x, int y, unsigned int timestamp);
+void _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct wl_surface *surface, int x, int y, uint32_t serial);
 void _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input);
-void _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, unsigned int timestamp);
+void _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, uint32_t serial);
 void _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input);
 void _ecore_wl2_dnd_selection(Ecore_Wl2_Input *input, struct wl_data_offer *offer);
 void _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source);

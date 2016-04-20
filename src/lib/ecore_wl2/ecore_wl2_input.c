@@ -1008,7 +1008,7 @@ _data_cb_offer(void *data, struct wl_data_device *data_device EINA_UNUSED, struc
 }
 
 static void
-_data_cb_enter(void *data, struct wl_data_device *data_device EINA_UNUSED, unsigned int timestamp, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer)
+_data_cb_enter(void *data, struct wl_data_device *data_device EINA_UNUSED, uint32_t serial, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer)
 {
    Ecore_Wl2_Input *input;
 
@@ -1016,7 +1016,7 @@ _data_cb_enter(void *data, struct wl_data_device *data_device EINA_UNUSED, unsig
    if (!input) return;
 
    _ecore_wl2_dnd_enter(input, offer, surface,
-                        wl_fixed_to_int(x), wl_fixed_to_int(y), timestamp);
+                        wl_fixed_to_int(x), wl_fixed_to_int(y), serial);
 }
 
 static void
@@ -1031,7 +1031,7 @@ _data_cb_leave(void *data, struct wl_data_device *data_device EINA_UNUSED)
 }
 
 static void
-_data_cb_motion(void *data, struct wl_data_device *data_device EINA_UNUSED, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y)
+_data_cb_motion(void *data, struct wl_data_device *data_device EINA_UNUSED, uint32_t serial, wl_fixed_t x, wl_fixed_t y)
 {
    Ecore_Wl2_Input *input;
 
@@ -1039,7 +1039,7 @@ _data_cb_motion(void *data, struct wl_data_device *data_device EINA_UNUSED, unsi
    if (!input) return;
 
    _ecore_wl2_dnd_motion(input, wl_fixed_to_int(x),
-                         wl_fixed_to_int(y), timestamp);
+                         wl_fixed_to_int(y), serial);
 }
 
 static void
