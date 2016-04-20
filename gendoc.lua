@@ -1100,8 +1100,8 @@ local write_full_doc = function(f, doc1, doc2)
     if doc2 then
         since = doc2:since_get()
     end
-    if not since and doc then
-        since = doc:since_get()
+    if not since and doc1 then
+        since = doc1:since_get()
     end
     if since then
         f:write_i(since)
