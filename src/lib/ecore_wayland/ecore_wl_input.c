@@ -1261,7 +1261,7 @@ _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
 
    /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
 
-   if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
+   if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
 
    ev->timestamp = timestamp;
    ev->x = input->sx;
@@ -1379,7 +1379,7 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Button)))) return;
+   if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Button)))) return;
 
    if (button == BTN_LEFT)
      ev->buttons = 1;
@@ -1488,7 +1488,7 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int d
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Button)))) return;
+   if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Button)))) return;
 
    if (button == BTN_LEFT)
      ev->buttons = 1;
@@ -1551,7 +1551,7 @@ _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int v
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Wheel)))) return;
+   if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel)))) return;
 
    ev->timestamp = timestamp;
    ev->modifiers = input->modifiers;

@@ -295,7 +295,7 @@ _ecore_cocoa_feed_events(void *anEvent)
            Ecore_Event_Mouse_Wheel *ev;
            float dx, dy = 0;
 
-           ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
+           ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel));
            if (!ev) return pass;
 
            if ([event hasPreciseScrollingDeltas])

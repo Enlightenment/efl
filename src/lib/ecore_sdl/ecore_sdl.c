@@ -167,7 +167,7 @@ ecore_sdl_feed_events(void)
           {
              Ecore_Event_Mouse_Move *ev;
 
-             ev = malloc(sizeof(Ecore_Event_Mouse_Move));
+             ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
              if (!ev) return;
 
              ev->timestamp = timestamp;
@@ -192,7 +192,7 @@ ecore_sdl_feed_events(void)
           {
              Ecore_Event_Mouse_Button *ev;
 
-             ev = malloc(sizeof(Ecore_Event_Mouse_Button));
+             ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
              if (!ev) return;
 
              ev->timestamp = timestamp;
@@ -216,7 +216,7 @@ ecore_sdl_feed_events(void)
           {
              Ecore_Event_Mouse_Wheel *ev;
 
-             ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
+             ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel));
              if (!ev) return;
 
              ev->timestamp = timestamp;
@@ -234,7 +234,7 @@ ecore_sdl_feed_events(void)
           {
              Ecore_Event_Mouse_Button *ev;
 
-             ev = malloc(sizeof(Ecore_Event_Mouse_Button));
+             ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
              if (!ev) return;
              ev->timestamp = timestamp;
              ev->window = event.button.windowID;

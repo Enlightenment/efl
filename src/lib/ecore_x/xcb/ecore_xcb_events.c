@@ -609,7 +609,7 @@ _ecore_xcb_event_handle_button_press(xcb_generic_event_t *event)
      {
         Ecore_Event_Mouse_Wheel *e;
 
-        if (!(e = malloc(sizeof(Ecore_Event_Mouse_Wheel)))) return;
+        if (!(e = calloc(1, sizeof(Ecore_Event_Mouse_Wheel)))) return;
 
         e->timestamp = ev->time;
         e->modifiers = _ecore_xcb_events_modifiers_get(ev->state);
@@ -2524,7 +2524,7 @@ _ecore_xcb_event_mouse_move(uint16_t     timestamp,
 {
    Ecore_Event_Mouse_Move *e;
 
-   if (!(e = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
+   if (!(e = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
 
    e->window = win;
    e->root_window = root_win;
@@ -2597,7 +2597,7 @@ _ecore_xcb_event_mouse_button(int          event,
    Ecore_Event_Mouse_Button *e;
    Ecore_X_Mouse_Down_Info *info = NULL;
 
-   if (!(e = malloc(sizeof(Ecore_Event_Mouse_Button)))) return NULL;
+   if (!(e = calloc(1, sizeof(Ecore_Event_Mouse_Button)))) return NULL;
 
    e->window = win;
    e->root_window = root_win;

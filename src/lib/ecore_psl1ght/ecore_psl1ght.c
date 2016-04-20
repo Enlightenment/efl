@@ -383,7 +383,7 @@ _ecore_psl1ght_mouse_move(s32 x_axis, s32 y_axis)
 {
    Ecore_Event_Mouse_Move *ev;
 
-   ev = malloc(sizeof(Ecore_Event_Mouse_Move));
+   ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
    if (!ev) return;
 
    mouse_x += x_axis;
@@ -416,7 +416,7 @@ _ecore_psl1ght_mouse_button(int button, int pressed)
    Ecore_Event_Mouse_Button *ev;
    static unsigned int previous_timestamp = 0;
 
-   ev = malloc(sizeof(Ecore_Event_Mouse_Button));
+   ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
    if (!ev) return;
 
    ev->window = 0;
@@ -449,7 +449,7 @@ _ecore_psl1ght_mouse_wheel(s8 wheel, s8 tilt)
 {
    Ecore_Event_Mouse_Wheel *ev;
 
-   ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
+   ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel));
    if (!ev) return;
 
    ev->timestamp = _ecore_psl1ght_get_time ();
