@@ -1547,7 +1547,7 @@ parse_event(Eo_Lexer *ls)
    ev->name = eina_stringshare_add(eina_strbuf_string_get(buf));
    pop_strbuf(ls);
    Eina_Bool has_scope = EINA_FALSE, has_beta = EINA_FALSE,
-             has_hot   = EINA_FALSE;
+             has_hot   = EINA_FALSE, has_restart = EINA_FALSE;
    for (;;) switch (ls->t.kw)
      {
       case KW_at_private:
@@ -1566,6 +1566,11 @@ parse_event(Eo_Lexer *ls)
       case KW_at_hot:
         CASE_LOCK(ls, hot, "hot qualifier");
         ev->is_hot = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_restart:
+        CASE_LOCK(ls, restart, "restart qualifier");
+        ev->is_restart = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       default:

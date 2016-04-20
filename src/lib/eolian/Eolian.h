@@ -1207,6 +1207,20 @@ EAPI Eina_Bool eolian_event_is_beta(const Eolian_Event *event);
 EAPI Eina_Bool eolian_event_is_hot(const Eolian_Event *event);
 
 /*
+ * @brief Get whether an event is a restartable event.
+ *
+ * @param[in] event the event handle
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * In case of nested call, restartable event will start processing from where
+ * they where in the parent callback call skipping all the previously executed
+ * callback. Especially useful for nested main loop use case.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_event_is_restart(const Eolian_Event *event);
+
+/*
  * @brief Returns the C name of an event
  *
  * @param[in] event the event handle

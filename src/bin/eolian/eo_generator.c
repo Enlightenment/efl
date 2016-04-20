@@ -672,8 +672,10 @@ eo_source_beginning_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         Eina_Stringshare *evname = eolian_event_c_name_get(event);
 
         eina_strbuf_append_printf(tmpbuf,
-                                  "EOAPI const Eo_Event_Description _%s =\n   EO_EVENT_DESCRIPTION%s(\"%s\");\n",
-                                  evname, eolian_event_is_hot(event) ? "_HOT" : "",
+                                  "EOAPI const Eo_Event_Description _%s =\n   EO_EVENT_DESCRIPTION%s%s(\"%s\");\n",
+                                  evname,
+                                  eolian_event_is_hot(event) ? "_HOT" : "",
+                                  eolian_event_is_restart(event) ? "_RESTART" : "",
                                   eolian_event_name_get(event));
         eina_stringshare_del(evname);
      }

@@ -47,6 +47,13 @@ eolian_event_is_hot(const Eolian_Event *event)
    return event->is_hot;
 }
 
+EAPI Eina_Bool
+eolian_event_is_restart(const Eolian_Event *event)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_FALSE);
+   return event->is_restart;
+}
+
 EAPI Eina_Stringshare *
 eolian_event_c_name_get(const Eolian_Event *event)
 {
