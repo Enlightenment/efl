@@ -40,7 +40,7 @@ _eldbus_model_method_constructor(Eo *obj EINA_UNUSED,
    pd->method = method;
 }
 
-static Efl_Model_Load_Status
+static void
 _eldbus_model_method_call(Eo *obj EINA_UNUSED, Eldbus_Model_Method_Data *pd EINA_UNUSED)
 {
    Eldbus_Model_Arguments_Data *data = eo_data_scope_get(obj, ELDBUS_MODEL_ARGUMENTS_CLASS);
@@ -82,11 +82,10 @@ _eldbus_model_method_call(Eo *obj EINA_UNUSED, Eldbus_Model_Method_Data *pd EINA
    pending = eldbus_proxy_send(data->proxy, msg, _eldbus_model_method_call_cb, pd, -1);
    data->pending_list = eina_list_append(data->pending_list, pending);
 
-   return data->load.status;
+   return;
 
 on_error:
    eldbus_message_unref(msg);
-   return EFL_MODEL_LOAD_STATUS_ERROR;
 }
 
 static void

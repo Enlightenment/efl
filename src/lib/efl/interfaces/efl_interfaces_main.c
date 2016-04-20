@@ -48,5 +48,5 @@ EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
 EAPI void
 __efl_internal_init(void)
 {
-   /* nothing to do, the symbol only is required for link to work */
+   efl_model_init();
 }

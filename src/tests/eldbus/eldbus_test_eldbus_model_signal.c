@@ -30,17 +30,11 @@ _setup(void)
    fake_server_object = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eo_self, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, FAKE_SERVER_BUS, FAKE_SERVER_PATH));
    ck_assert_ptr_ne(NULL, fake_server_object);
 
-   efl_model_load_and_wait_for_load_status(fake_server_object, EFL_MODEL_LOAD_STATUS_LOADED);
-
    fake_server_proxy = eldbus_model_proxy_from_object_get(fake_server_object, FAKE_SERVER_INTERFACE);
    ck_assert_ptr_ne(NULL, fake_server_proxy);
 
-   efl_model_load_and_wait_for_load_status(fake_server_proxy, EFL_MODEL_LOAD_STATUS_LOADED);
-
    pong_signal = eldbus_model_signal_from_proxy_get(fake_server_proxy, FAKE_SERVER_PONG_SIGNAL_NAME);
    ck_assert_ptr_ne(NULL, pong_signal);
-
-   efl_model_load_and_wait_for_load_status(pong_signal, EFL_MODEL_LOAD_STATUS_LOADED);
 }
 
 static void
@@ -53,18 +47,10 @@ _teardown(void)
    check_shutdown();
 }
 
-START_TEST(load_status_get)
-{
-   check_efl_model_load_status_get(pong_signal, EFL_MODEL_LOAD_STATUS_LOADED);
-}
-END_TEST
-
 START_TEST(properties_get)
 {
-   Eina_Array *properties = NULL;
-   Efl_Model_Load_Status status;
-   status = efl_model_properties_get(pong_signal, &properties);
-   ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
+   const Eina_Array *properties = NULL;
+   properties = efl_model_properties_get(pong_signal);
    ck_assert_ptr_ne(NULL, properties);
 
    const unsigned int expected_properties_count = 1; // 'response' only
@@ -76,25 +62,23 @@ END_TEST
 START_TEST(property_get)
 {
    // Signal properties always have output direction
-   Eina_Value const* dummy;
-   Efl_Model_Load_Status status;
-   status = efl_model_property_get(pong_signal, ARGUMENT_A, &dummy);
-   ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
-   ck_assert_ptr_ne(NULL, dummy);
+   Eina_Promise *promise;
+   efl_model_property_get(pong_signal, ARGUMENT_A, &promise);
+   efl_model_promise_then(promise);
 
-   // Nonexistent property must return EFL_MODEL_LOAD_STATUS_ERROR
-   status = efl_model_property_get(pong_signal, "nonexistent", &dummy);
-   ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
+   // Nonexistent property must return ERROR
+   efl_model_property_get(pong_signal, "nonexistent", &promise);
+   check_efl_model_promise_error(promise, &EFL_MODEL_ERROR_NOT_FOUND);
 }
 END_TEST
 
 START_TEST(property_set)
 {
    // Signals have output arguments only. All returns error
+   Eina_Promise *promise;
    Eina_Value dummy = {0};
-   Efl_Model_Load_Status status;
-   status = efl_model_property_set(pong_signal, ARGUMENT_A, &dummy);
-   ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
+   efl_model_property_set(pong_signal, ARGUMENT_A, &dummy, &promise);
+   check_efl_model_promise_error(promise, NULL);
 }
 END_TEST
 
@@ -112,51 +96,9 @@ END_TEST
 
 START_TEST(children_slice_get)
 {
-   Eina_Accessor *accessor;
-   Efl_Model_Load_Status status;
-   status = efl_model_children_slice_get(pong_signal, 1, 1, &accessor);
-   ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
-   ck_assert_ptr_eq(NULL, accessor);
-}
-END_TEST
-
-static void
-_check_unload(void)
-{
-   check_efl_model_load_status_get(pong_signal, EFL_MODEL_LOAD_STATUS_LOADED);
-   efl_model_unload(pong_signal);
-   check_efl_model_load_status_get(pong_signal, EFL_MODEL_LOAD_STATUS_UNLOADED);
-
-   check_efl_model_children_count_eq(pong_signal, 0);
-}
-
-START_TEST(unload)
-{
-   _check_unload();
-}
-END_TEST
-
-START_TEST(properties_load)
-{
-   _check_unload();
-
-   efl_model_properties_load(pong_signal);
-   efl_model_wait_for_load_status(pong_signal, EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES);
-
-   check_efl_model_load_status_get(pong_signal, EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES);
-}
-END_TEST
-
-START_TEST(children_load)
-{
-   _check_unload();
-
-   efl_model_children_load(pong_signal);
-   efl_model_wait_for_load_status(pong_signal, EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN);
-
-   check_efl_model_load_status_get(pong_signal, EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN);
-
-   _test_signal_children_count(pong_signal);
+   Eina_Promise *promise;
+   efl_model_children_slice_get(pong_signal, 1, 1, &promise);
+   check_efl_model_promise_error(promise, &EFL_MODEL_ERROR_NOT_SUPPORTED);
 }
 END_TEST
 
@@ -170,11 +112,9 @@ END_TEST
 
 START_TEST(child_del)
 {
-   // efl_model_child_del always returns ERROR
+   // efl_model_child_del always returns ERROR FIXME catch error
    Eo *child = NULL;
-   Efl_Model_Load_Status status;
-   status = efl_model_child_del(pong_signal, child);
-   ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
+   efl_model_child_del(pong_signal, child);
 }
 END_TEST
 
@@ -183,13 +123,9 @@ START_TEST(signals)
    Eldbus_Model_Method *ping_method = eldbus_model_method_from_proxy_get(fake_server_proxy, FAKE_SERVER_PING_METHOD_NAME);
    ck_assert_ptr_ne(NULL, ping_method);
 
-   efl_model_load_and_wait_for_load_status(ping_method, EFL_MODEL_LOAD_STATUS_LOADED);
-
    check_efl_model_property_int_set(ping_method, ARGUMENT_A, 99);
 
-   Efl_Model_Load_Status status;
-   status = eldbus_model_method_call(ping_method);
-   ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
+   eldbus_model_method_call(ping_method);
 
    efl_model_wait_for_event(pong_signal, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED);
 
@@ -200,15 +136,11 @@ END_TEST
 void eldbus_test_eldbus_model_signal(TCase *tc)
 {
    tcase_add_checked_fixture(tc, _setup, _teardown);
-   tcase_add_test(tc, load_status_get);
    tcase_add_test(tc, properties_get);
    tcase_add_test(tc, property_get);
    tcase_add_test(tc, property_set);
    tcase_add_test(tc, children_count);
    tcase_add_test(tc, children_slice_get);
-   tcase_add_test(tc, unload);
-   tcase_add_test(tc, properties_load);
-   tcase_add_test(tc, children_load);
    tcase_add_test(tc, child_add);
    tcase_add_test(tc, child_del);
    tcase_add_test(tc, signals);

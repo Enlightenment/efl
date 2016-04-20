@@ -16,8 +16,6 @@ class Eldbus.Model_Signal (Eldbus.Model_Arguments) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Efl.Model.Base.properties_load;
-        Efl.Model.Base.unload;
     }
     constructors {
         .constructor;

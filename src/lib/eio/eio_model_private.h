@@ -14,7 +14,7 @@ struct _Eio_Model_Monitor_Data
    int mon_event_child_del[3]; /**< plus EIO_MONITOR_ERROR */
 };
 
-enum {
+typedef enum _Eio_Property_Name {
    EIO_MODEL_PROP_FILENAME = 0,
    EIO_MODEL_PROP_PATH,
    EIO_MODEL_PROP_MTIME,
@@ -22,7 +22,7 @@ enum {
    EIO_MODEL_PROP_IS_LNK,
    EIO_MODEL_PROP_SIZE,
    EIO_MODEL_PROP_LAST
-};
+} _Eio_Property_Name;
 
 static const char* _eio_model_prop_names[] =
 {
@@ -34,18 +34,37 @@ static const char* _eio_model_prop_names[] =
    [EIO_MODEL_PROP_SIZE]      = "size"
 };
 
+typedef struct _Eio_Property_Promise _Eio_Property_Promise;
+struct _Eio_Property_Promise
+{
+  _Eio_Property_Name property;
+  Eina_Promise_Owner* promise;
+};
+
+typedef struct _Eio_Children_Slice_Promise _Eio_Children_Slice_Promise;
+struct _Eio_Children_Slice_Promise
+{
+  unsigned start;
+  unsigned count;
+  Eina_Promise_Owner* promise;
+};
+
+typedef struct _Eio_Model_Data _Eio_Model_Data;
 struct _Eio_Model_Data
 {
    Eo *obj;
    char *path;
    Eina_Array *properties_name;
-   Eina_Value *properties_value[EIO_MODEL_PROP_LAST];
-   Efl_Model_Load load;
-   int load_pending;
+   Eina_Bool is_listed : 1;
+   Eina_Bool is_listing : 1;
    Eina_List *children_list;
+   Eina_List *property_promises;
+   Eina_List *children_promises;
    /**< EIO data */
-   Eio_File *file;
-   Eina_Bool is_dir;
+   Eio_File *stat_file;
+   Eio_File *listing_file;
+   Eio_File *move_file;
+   Eio_File *del_file;
    Eio_Monitor *monitor;
    Eio_Model_Monitor_Data mon;
    int cb_count_child_add; /**< monitor reference counter for child add event */

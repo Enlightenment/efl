@@ -13,14 +13,16 @@ typedef struct _Eldbus_Model_Connection_Data Eldbus_Model_Connection_Data;
 struct _Eldbus_Model_Connection_Data
 {
    Eo *obj;
-   Efl_Model_Load load;
+   Eina_Bool is_listed : 1;
    Eldbus_Connection *connection;
    Eina_Array *properties_array;
    Eina_List *children_list;
+   Eina_List *children_promises;
+   Eina_List *count_promises;
    Eldbus_Connection_Type type;
    Eina_Stringshare *address;
    bool private;
-   Eina_Value *unique_name;
+   char *unique_name;
    Eina_List *pending_list;
 };
 

@@ -13,7 +13,6 @@ typedef struct _Eldbus_Model_Arguments_Data Eldbus_Model_Arguments_Data;
 struct _Eldbus_Model_Arguments_Data
 {
    Eo *obj;
-   Efl_Model_Load load;
    Eldbus_Proxy *proxy;
    Eina_Array *properties_array;
    Eina_Hash *properties_hash;

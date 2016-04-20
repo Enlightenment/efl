@@ -127,7 +127,6 @@ _fakse_server_property_get(const Eldbus_Service_Interface *iface,
                            const Eldbus_Message *request_msg EINA_UNUSED,
                            Eldbus_Message **error EINA_UNUSED)
 {
-  fprintf(stderr, "%s:%d _fake_server_property_get %s\n", __FILE__, __LINE__, propname); fflush(stderr);
    Fake_Server_Data *data = eldbus_service_object_data_get(iface, FAKE_SERVER_DATA_KEY);
    ck_assert_ptr_ne(NULL, data);
 

@@ -42,7 +42,6 @@ elm_main(int argc, char **argv)
    memset(&priv, 0, sizeof(Efl_Model_Test_Fileview_Data));
 
    ecore_init();
-   eio_init();
 
    if(argv[1] != NULL) dirname = argv[1];
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
@@ -58,7 +57,6 @@ elm_main(int argc, char **argv)
    priv.filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, dirname));
    priv.fileview = eo_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(eo_self, genlist, ELM_GENLIST_ITEM_TREE, "double_label"));
    elm_view_list_model_set(priv.fileview, priv.filemodel);
-   efl_model_load(priv.filemodel);
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, &priv);
 
    elm_view_list_property_connect(priv.fileview, "filename", "elm.text");

@@ -5,25 +5,26 @@
 
 #include <stdbool.h>
 
-typedef struct _Eldbus_Model_Object_Data Eldbus_Model_Object_Data;
-
 /**
  * eldbus_model_object
  */
+typedef struct _Eldbus_Model_Object_Data Eldbus_Model_Object_Data;
 struct _Eldbus_Model_Object_Data
 {
    Eo *obj;
-   Efl_Model_Load load;
+   Eina_Bool is_listed : 1;
    Eldbus_Connection *connection;
    Eina_List *object_list;
    Eina_Array *properties_array;
    Eina_List *children_list;
+   Eina_List *children_promises;
+   Eina_List *count_promises;
    Eldbus_Connection_Type type;
    Eina_Stringshare *address;
    bool private;
    Eina_Stringshare *bus;
    Eina_Stringshare *path;
-   Eina_Value *unique_name;
+   char *unique_name;
    Eina_List *pending_list;
    Eldbus_Introspection_Node *introspection;
 };

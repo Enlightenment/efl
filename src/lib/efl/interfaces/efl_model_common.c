@@ -3,81 +3,85 @@
 #endif
 
 #include "Efl.h"
+#include "Efl_Model_Common.h"
 
-EAPI void
-efl_model_load_set(Efl_Model_Base *model, Efl_Model_Load *load, Efl_Model_Load_Status status)
+EAPI Eina_Error EFL_MODEL_ERROR_UNKNOWN = 0;
+EAPI Eina_Error EFL_MODEL_ERROR_NOT_SUPPORTED = 0;
+EAPI Eina_Error EFL_MODEL_ERROR_NOT_FOUND = 0;
+EAPI Eina_Error EFL_MODEL_ERROR_READ_ONLY = 0;
+EAPI Eina_Error EFL_MODEL_ERROR_INIT_FAILED = 0;
+EAPI Eina_Error EFL_MODEL_ERROR_PERMISSION_DENIED = 0;
+EAPI Eina_Error EFL_MODEL_ERROR_INCORRECT_VALUE = 0;
+
+static const char EFL_MODEL_ERROR_UNKNOWN_STR[]           = "Unknown Error";
+static const char EFL_MODEL_ERROR_NOT_SUPPORTED_STR[]     = "Operation not supported";
+static const char EFL_MODEL_ERROR_NOT_FOUND_STR[]         = "Value not found";
+static const char EFL_MODEL_ERROR_READ_ONLY_STR[]         = "Value read only";
+static const char EFL_MODEL_ERROR_INIT_FAILED_STR[]       = "Init failed";
+static const char EFL_MODEL_ERROR_PERMISSION_DENIED_STR[] = "Permission denied";
+static const char EFL_MODEL_ERROR_INCORRECT_VALUE_STR[]   = "Incorrect value";
+
+EAPI int
+efl_model_init()
 {
-   Efl_Model_Load new_load = {.status = status};
+   EFL_MODEL_ERROR_INCORRECT_VALUE = eina_error_msg_static_register(
+                   EFL_MODEL_ERROR_INCORRECT_VALUE_STR);
 
-   if ((load->status & (EFL_MODEL_LOAD_STATUS_LOADED | EFL_MODEL_LOAD_STATUS_LOADING)) &&
-       (new_load.status & (EFL_MODEL_LOAD_STATUS_LOADED | EFL_MODEL_LOAD_STATUS_LOADING)))
-     {
-        // Merge status
-        new_load.status = load->status | new_load.status;
+   EFL_MODEL_ERROR_UNKNOWN = eina_error_msg_static_register(
+                   EFL_MODEL_ERROR_UNKNOWN_STR);
 
-        // Removes incompatible statuses (LOADING vs LOADED)
-        switch (status)
-          {
-           case EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADING_PROPERTIES;
-             break;
-           case EFL_MODEL_LOAD_STATUS_LOADING_PROPERTIES:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES;
-             break;
-           case EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADING_CHILDREN;
-             break;
-           case EFL_MODEL_LOAD_STATUS_LOADING_CHILDREN:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN;
-             break;
-           case EFL_MODEL_LOAD_STATUS_LOADED:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADING;
-             break;
-           case EFL_MODEL_LOAD_STATUS_LOADING:
-             new_load.status &= ~EFL_MODEL_LOAD_STATUS_LOADED;
-             break;
-           default: break;
-          }
-     }
+   EFL_MODEL_ERROR_NOT_SUPPORTED = eina_error_msg_static_register(
+                   EFL_MODEL_ERROR_NOT_SUPPORTED_STR);
 
-   if (load->status != new_load.status)
-     {
-        load->status = new_load.status;
-        eo_event_callback_call(model, EFL_MODEL_BASE_EVENT_LOAD_STATUS, load);
-     }
+   EFL_MODEL_ERROR_NOT_FOUND = eina_error_msg_static_register(
+                   EFL_MODEL_ERROR_NOT_FOUND_STR);
+
+   EFL_MODEL_ERROR_READ_ONLY = eina_error_msg_static_register(
+                   EFL_MODEL_ERROR_READ_ONLY_STR);
+
+   EFL_MODEL_ERROR_INIT_FAILED = eina_error_msg_static_register(
+                   EFL_MODEL_ERROR_INIT_FAILED_STR);
+
+   EFL_MODEL_ERROR_PERMISSION_DENIED = eina_error_msg_static_register(
+                   EFL_MODEL_ERROR_PERMISSION_DENIED_STR);
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Accessor *
+EAPI Eina_Accessor*
 efl_model_list_slice(Eina_List *list, unsigned start, unsigned count)
 {
-  fprintf(stderr, "efl_model_list_slice\n");
-   if ((start == 0) && (count == 0))
+   if (!list) return NULL;
+
+   if ((start == 0) && (count == 0)) /* this is full data */
      {
-       fprintf(stderr, "efl_model_list_slice start == 0 count == 0\n");
+        /*
+         * children_accessor will be set to NULL by
+         * eina_list_accessor_new if the later fails.
+         */
        return eina_list_accessor_new(list);
      }
 
-   Eina_List *nth_list = eina_list_nth_list(list, (start - 1));
-   if (!nth_list)
-     return NULL;
-
-   Eina_List *it, *result = NULL;
-   const void *data;
-   EINA_LIST_FOREACH(nth_list, it, data)
+   Eo *child;
+   Eina_List *l, *ln, *lr = NULL;
+   ln = eina_list_nth_list(list, (start-1));
+   if (!ln)
      {
-        result = eina_list_append(result, data);
-        if (eina_list_count(result) == count)
+        return NULL;
+     }
+
+   EINA_LIST_FOREACH(ln, l, child)
+     {
+        eo_ref(child);
+        lr = eina_list_append(lr, child);
+        if (eina_list_count(lr) == count)
           break;
      }
 
-   return eina_list_accessor_new(result);
-}
+   if (!lr) return NULL;
 
-EAPI void
-efl_model_error_notify(Efl_Model_Base *model)
-{
-   Efl_Model_Load load = {.status = EFL_MODEL_LOAD_STATUS_ERROR};
-   eo_event_callback_call(model, EFL_MODEL_BASE_EVENT_LOAD_STATUS, &load);
+   // This may leak the children Eina_List.
+   return eina_list_accessor_new(lr);
 }
 
 EAPI void

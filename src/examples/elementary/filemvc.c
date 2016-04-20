@@ -51,11 +51,28 @@ _list_selected_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
    Eo *child = event->info;
-   ethumb_client_file_free(elm_thumb_ethumb_client_get());
+//   ethumb_client_file_free(elm_thumb_ethumb_client_get());
 
    printf("LIST selected model\n");
    elm_view_form_model_set(priv->formview, child);
    return EINA_TRUE;
+}
+
+static void
+_promise_then(void *data, void *value)
+{
+   Efl_Model_Test_Filemvc_Data *priv = data;
+   char *path;
+   Eo *model;
+
+   eina_value_get((Eina_Value *)value, &path);
+   model = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, path));
+   elm_view_list_model_set(priv->fileview, model);
+}
+
+static void
+_promise_error(void *data, const Eina_Error *err)
+{
 }
 
 static Eina_Bool
@@ -63,17 +80,12 @@ _tree_selected_cb(void *data, const Eo_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
    Eo *child = event->info;
-   const Eina_Value *vpath;
-   Eo *model;
-   char *path;
+   Eina_Promise *promise;
 
    printf("TREE selected model\n");
 
-   efl_model_property_get(child, "path", &vpath);
-   eina_value_get(vpath, &path);
-   model = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, path));
-   efl_model_load(model);
-   elm_view_list_model_set(priv->fileview, model);
+   efl_model_property_get(child, "path", &promise);
+   eina_promise_then(promise, &_promise_then, &_promise_error, priv);
    return EINA_TRUE;
 }
 
@@ -130,16 +142,12 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, panes);
 
-   ecore_init();
-   eio_init();
-
    if(argv[1] != NULL) dirname = argv[1];
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
 
    //treemodel
    priv.treemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, dirname));
    eio_model_children_filter_set(priv.treemodel, _filter_cb, NULL);
-   efl_model_load(priv.treemodel);
 
    //treeview
    genlist = elm_genlist_add(win);
@@ -155,6 +163,7 @@ elm_main(int argc, char **argv)
    _widget_init(vpanes);
    elm_object_part_content_set(panes, "right", vpanes);
    eo_event_callback_add(priv.treeview, ELM_VIEW_LIST_EVENT_MODEL_SELECTED, _tree_selected_cb, &priv);
+
    //listview
    genlist = elm_genlist_add(win);
    priv.fileview = eo_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(eo_self, genlist, ELM_GENLIST_ITEM_NONE, "double_label"));

@@ -1,26 +1,6 @@
-enum Efl.Model.Load_Status {
-     error = 0,
-     loading_properties = (1 << 0),
-     loading_children =   (1 << 1),
-     loading = (1 << 0) | (1 << 1),
-
-     loaded_properties = (1 << 2),
-     loaded_children =   (1 << 3),
-     loaded = (1 << 2) | (1 << 3),
-
-     unloading = (1 << 4),
-     unloaded = (1 << 5)
-}
-
 struct Efl.Model.Property_Event {
      changed_properties: array<const(char) *> *; [[List of changed properties]]
      invalidated_properties: array<const(char) *> *; [[Removed properties identified by name]]
-}
-
-struct Efl.Model.Load {
-     [[Structure to hold Efl_Model_Load_Status enum (and possible other data) to avoid ABI break.]]
-
-     status: Efl.Model.Load_Status;
 }
 
 interface Efl.Model.Base ()
@@ -28,20 +8,6 @@ interface Efl.Model.Base ()
    legacy_prefix: null;
    eo_prefix: efl_model;
       methods {
-         @property load_status {
-            get {
-               [[Get a load emodel current status.
-
-                 By convention this means get the current model status.
-                 Possible values are defined Efl_Model_Load_Status enumerator.
-
-                 See also \@ref Efl_Model_Load_Status, @.load
-
-                 @since 1.14
-               ]]
-               return: Efl.Model.Load_Status;
-            }
-         }
          @property properties {
             get {
                [[Get properties from model.
@@ -55,90 +21,57 @@ interface Efl.Model.Base ()
 
                  @since 1.14
                ]]
-               return: Efl.Model.Load_Status;
          }
          values {
-               properties: const(array<const(char)*>*); [[array of current properties]]
+               properties: const(array<const(char)*>)*; [[array of current properties]]
             }
         }
-         @property property {
-            set {
-               [[Set a property value of a given property name.
+        property_set {
+           [[Set a property value of a given property name.
 
-                 The caller must ensure to call at least efl_model_prop_list
-                 before being able to see/set properties. This function sets
-                 a new property value into given property name. Once the
-                 operation is completed the concrete implementation should
-                 raise EFL_MODEL_EVENT_PROPERTIES_CHANGE event in order to
-                 notify listeners of the new value of the property.
+             The caller must ensure to call at least efl_model_prop_list
+             before being able to see/set properties. This function sets
+             a new property value into given property name. Once the
+             operation is completed the concrete implementation should
+             raise EFL_MODEL_EVENT_PROPERTIES_CHANGE event in order to
+             notify listeners of the new value of the property.
 
-                 If the model doesn't have the property then there are two
-                 possibilities, either raise an error or create the new
-                 property in model
+             If the model doesn't have the property then there are two
+             possibilities, either raise an error or create the new
+             property in model
 
-                 See @.property.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGE
+             See @.property_get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGE
 
-                 @since 1.14
-               ]]
-               return: Efl.Model.Load_Status;
-            }
-            get {
-               [[Retrieve the value of a given property name.
+             @since 1.14
+            ]]
+           params {
+               @in property: const(char)*; [[Property name]]
+               @in value: const(generic_value)*; [[New value]]
+               @inout promise: promise<generic_value>*; [[Promise returning the recorded value or error]]
+           }
+        }
+        property_get {
+           [[Retrieve the value of a given property name.
 
-                 property_get will only be available when load status is equal
-                 to EFL_MODEL_LOAD_STATUS_LOADED.
+             At this point the caller is free to get values from properties.
+             The event EFL_MODEL_EVENT_PROPERTIES_CHANGE may be raised to
+             notify listeners of the property/value.
 
-                 At this point the caller is free to get values from properties.
-                 The event EFL_MODEL_EVENT_PROPERTIES_CHANGE may be raised to
-                 notify listeners of the property/value.
+             See @.properties.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGE
 
-                 See @.properties.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGE
-
-                 @since 1.14
-               ]]
-               return: Efl.Model.Load_Status;
-            }
-            keys {
-               property: const(char)*; [[Property name]]
-            }
-            values {
-               value: const(generic_value)*; [[New value]]
-            }
-         }
-         @property children_slice {
-            get {
-               /* doc FIXME: example
-                 Below are examples of both usage types: slices and full ranges.
-               @code
-
-               // Returns full list
-               eo_do(obj, efl_model_children_slice_get(0, 0, &children_accessor));
-
-               // Returns 5 items, counting from item #5
-               eo_do(obj, efl_model_children_slice_get(5, 5, &children_accessor));
-
-               @endcode
-               */
+             @since 1.14
+           ]]
+           params {
+               @in property: const(char)*; [[Property name]]
+               @inout value: promise<generic_value>*; [[Promise of the value that was got]]
+           }
+        }
+        children_slice_get {
                [[Get children slice OR full range.
-
-                 Before being able to get the children list the model status
-                 must be on loaded status (EFL_MODEL_LOAD_STATUS_LOADED).
-                 However there may be circunstancies where the model could be
-                 in a different state, in such cases it is advisable to simply
-                 return: its current state, which will be of course, different
-                 than EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN.
-
-                 When children accessor is returned as NULL one should then
-                 test the current load status return:ed by @.children_slice.get
-                 in order to check against an empty list or real error.
 
                  children_slice_get behaves in two different ways, it may
                  provide the slice if both $start AND $count are non-zero
                  OR full range otherwise.
-
-                 The return:ed Eina_Accessor must be freed when it is no longer
-                 needed and eo_unref() must be invoked for children if caller
-                 wants a copy.
 
                  Since 'slice' is a range, for example if we have 20 childs a
                  slice could be the range from 3(start) to 4(count), see:
@@ -155,24 +88,19 @@ interface Efl.Model.Base ()
                  Optionally the user can call children_count_get to know the
                  number of children so a valid range can be known in advance.
 
-                 See @.children_count.get, @.load, @.load_status.get.
+                 See @.children_count_get
 
                  @since 1.14
                ]]
-               return: Efl.Model.Load_Status;
-            }
-            keys {
-                start: uint; [[Range begin - start from here. If start and
+            params {
+                @in start: uint; [[Range begin - start from here. If start and
                                count are 0 slice is ignored.]]
-                count: uint; [[Range size. If count and start are 0 slice is
+                @in count: uint; [[Range size. If count and start are 0 slice is
                                ignored.]]
-            }
-            values {
-                children_accessor: accessor<list<Eo.Base*>*>*;
+                @inout promise: promise<accessor<list<Eo.Base*>*>*>*; [[Promise of the children]]
             }
          }
-         @property children_count {
-             get {
+         children_count_get {
                 [[Get children count.
 
                   When efl_model_load is completed efl_model_coildren_count_get
@@ -181,79 +109,13 @@ interface Efl.Model.Base ()
                   range is known. Event EFL_MODEL_CHILDREN_COUNT_CHANGED is
                   emitted when count is finished.
 
-                  See also @.children_slice.get, @.load, @.load_status.get.
+                  See also @.children_slice_get.
 
                   @since 1.14
                 ]]
-                return: Efl.Model.Load_Status;
-             }
-            values {
-                children_count: uint;
+            params {
+                @inout promise: promise<uint>*;
             }
-         }
-         load {
-            [[Load emodel.
-
-              By convention this means loading data from an external source and
-              populating the models properties and children with it. For example
-              in the case of file system backed model, this means opening the
-              relevant files and reading the data from them(creating the
-              properties and children from it). the model emit
-              EFL_MODEL_EVENT_LOAD_STATUS after end with Efl_Model_Load_Status
-
-              This convention should be followed, but no guarantees of behaviour
-              by user defined types can be given.
-
-              Alternatively is possible to use properties_load to load only
-              properties and children_load to load only children. If
-              efl_model_load is called then calling properties_load
-              and/or children_load is not necessary.
-
-              See also \@ref Efl_Model_Load_Status, @.properties_load,
-              @.children_load, @.unload, @.load_status.get
-
-              @since 1.14
-            ]]
-         }
-         unload {
-            [[Unload emodel.
-
-              By convention this means releasing data received/read from an
-              external source. For example of a database backed model this
-              might mean releasing the iterator for the currently loaded data
-              or deleting a temporary table. the model emit
-              EFL_MODEL_EVENT_LOAD_STATUS after end with model load status
-
-              This convention should be followed, but no guarantees of behaviour
-              by user defined types can be given.
-
-              See also \@ref Efl_Model_Load_Status, @.load,  @.load_status.get
-
-              @since 1.14
-            ]]
-         }
-         properties_load {
-            [[Properties emodel load.
-
-              By convention this means loading data from an external source and
-              populating the models properties only. This method is a subset
-              of @.load, meaning that it won't load children, it is a hint.
-              For loadind both properties and children use
-              efl_model_load instead.
-
-              @since 1.14
-            ]]
-         }
-         children_load {
-            [[Children emodel load.
-
-              By convention this means loading data from an external source and
-              populating the models children only. This method is a subset of
-              @.load, meaning that it won't load properties. For loadind both
-              properties and children use efl_model_load instead.
-
-              @since 1.14
-            ]]
          }
          child_add {
             [[Add a new child.
@@ -262,8 +124,6 @@ interface Efl.Model.Base ()
               of a internal keeping. When the child is effectively
               added the event \@ref EFL_MODEL_EVENT_CHILD_ADD is then raised
               and the new child is kept along with other children.
-
-              See also @.load_status.get.
 
               @since 1.14
             ]]
@@ -279,7 +139,6 @@ interface Efl.Model.Base ()
 
               @since 1.14
             ]]
-            return: Efl.Model.Load_Status;
             params {
                @in child: Eo.Base*; [[Child to be removed]]
             }
@@ -287,8 +146,6 @@ interface Efl.Model.Base ()
       }
 
    events {
-      load,status: Efl.Model.Load_Status; [[Event dispatch when load status
-                                            changes]]
       properties,changed: Efl.Model.Property_Event; [[Event dispatched when
                                                       properties list is
                                                       available.]]

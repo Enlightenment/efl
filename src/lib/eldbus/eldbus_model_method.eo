@@ -19,10 +19,8 @@ class Eldbus.Model_Method (Eldbus.Model_Arguments) {
               The event EMODEL_EVENT_PROPERTIES_CHANGED is raised for output arguments (properties).
 
               The event ELDBUS_MODEL_METHOD_EVENT_METHOD_CALLED is raised for a successful call. Otherwise
-              the event EMODEL_EVENT_LOAD_STATUS with the status set to EMODEL_LOAD_STATUS_ERROR is raised.
 
               @since 1.16]]
-            return: Efl.Model.Load_Status; [[#Emodel_Load_Status on success, #EMODEL_LOAD_STATUS_ERROR otherwise.]]
         }
     }
     implements {

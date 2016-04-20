@@ -6,6 +6,7 @@
 #include "eldbus_model_signal_private.h"
 #include "eldbus_model_private.h"
 
+#include <Ecore.h>
 #include <Eina.h>
 
 #define MY_CLASS ELDBUS_MODEL_SIGNAL_CLASS
@@ -38,6 +39,7 @@ _eldbus_model_signal_constructor(Eo *obj EINA_UNUSED,
    eldbus_model_arguments_constructor(eo_super(obj, MY_CLASS), proxy, signal->name, signal->arguments);
 
    pd->signal = signal;
+   _eldbus_model_signal_callback_add(pd);
 }
 
 static void
@@ -48,26 +50,6 @@ _eldbus_model_signal_eo_base_destructor(Eo *obj, Eldbus_Model_Signal_Data *pd)
    eo_destructor(eo_super(obj, MY_CLASS));
 }
 
-static void
-_eldbus_model_signal_efl_model_base_properties_load(Eo *obj, Eldbus_Model_Signal_Data *pd)
-{
-   Eldbus_Model_Arguments_Data *args_data = eo_data_scope_get(pd->obj, ELDBUS_MODEL_ARGUMENTS_CLASS);
-   EINA_SAFETY_ON_NULL_RETURN(args_data);
-
-   if (args_data->load.status & EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES)
-     return;
-
-   _eldbus_model_signal_callback_add(pd);
-
-   efl_model_properties_load(eo_super(obj, MY_CLASS));
-}
-
-static void
-_eldbus_model_signal_efl_model_base_unload(Eo *obj EINA_UNUSED, Eldbus_Model_Signal_Data *pd)
-{
-   _eldbus_model_signal_callback_del(pd);
-   efl_model_unload(eo_super(obj, MY_CLASS));
-}
 
 static void
 _eldbus_model_signal_callback_add(Eldbus_Model_Signal_Data *pd)

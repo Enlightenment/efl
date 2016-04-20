@@ -27,17 +27,12 @@ class Eldbus.Model_Arguments (Eo.Base, Efl.Model.Base) {
         Eo.Base.constructor;
         Eo.Base.destructor;
         Efl.Model.Base.properties.get;
-        Efl.Model.Base.properties_load;
-        Efl.Model.Base.property.set;
-        Efl.Model.Base.property.get;
-        Efl.Model.Base.load;
-        Efl.Model.Base.load_status.get;
-        Efl.Model.Base.unload;
+        Efl.Model.Base.property_set;
+        Efl.Model.Base.property_get;
         Efl.Model.Base.child_add;
         Efl.Model.Base.child_del;
-        Efl.Model.Base.children_slice.get;
-        Efl.Model.Base.children_count.get;
-        Efl.Model.Base.children_load;
+        Efl.Model.Base.children_slice_get;
+        Efl.Model.Base.children_count_get;
     }
     constructors {
         .constructor;
