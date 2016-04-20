@@ -51,9 +51,9 @@ class Ecore_Mainloop (Eo.Base)
       }
    }
    events {
-      idle,enter; [[Event occurs once the main loop enters the idle state.]]
-      idle,exit; [[Event occurs once the main loop exits the idle state.]]
-      idle; /* FIXME: We need to make sure we can get it work. */
+      idle,enter @restart; [[Event occurs once the main loop enters the idle state.]]
+      idle,exit @restart; [[Event occurs once the main loop exits the idle state.]]
+      idle @restart; /* FIXME: We need to make sure we can get it work. */
       /* TODO: All of the legacy ecore events. (Ecore.h header) */
    }
 }
