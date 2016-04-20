@@ -11,6 +11,9 @@ EAPI void simple_a_set(Eo *obj, int a);
 extern const Eo_Event_Description _EV_A_CHANGED;
 #define EV_A_CHANGED (&(_EV_A_CHANGED))
 
+extern const Eo_Event_Description _EV_RESTART;
+#define EV_RESTART (&(_EV_RESTART))
+
 #define SIMPLE_CLASS simple_class_get()
 const Eo_Class *simple_class_get(void);
 

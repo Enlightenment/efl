@@ -30,6 +30,34 @@ _a_changed_cb(void *data, const Eo_Event *event)
    return (cb_count != 3);
 }
 
+static Eina_Bool inside = EINA_FALSE;
+static int called = 0;
+
+static Eina_Bool
+_restart_1_cb(void *data, const Eo_Event *event)
+{
+   fprintf(stderr, "restart 1 inside: %i\n", inside);
+   fail_if(!inside);
+   called++;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_restart_2_cb(void *data, const Eo_Event *event)
+{
+   fprintf(stderr, "restart 2 inside: %i\n", inside);
+   fail_if(inside);
+
+   inside = EINA_TRUE;
+   eo_event_callback_call(event->obj, event->desc, data);
+   inside = EINA_FALSE;
+
+   called++;
+
+   fprintf(stderr, "restart 2 exit inside: %i (%i)\n", inside, called);
+   return EINA_FALSE;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -169,6 +197,11 @@ main(int argc, char *argv[])
    fcount = eo_event_global_freeze_count_get(EO_CLASS);
    fail_if(fcount != 0);
 
+   eo_event_callback_priority_add(obj, EV_RESTART, EO_CALLBACK_PRIORITY_DEFAULT, _restart_1_cb, NULL);
+   eo_event_callback_priority_add(obj, EV_RESTART, EO_CALLBACK_PRIORITY_BEFORE, _restart_2_cb, NULL);
+   eo_event_callback_call(obj, EV_RESTART, NULL);
+   fail_if(inside);
+   fail_if(called != 2);
 
    eo_unref(obj);
    eo_shutdown();

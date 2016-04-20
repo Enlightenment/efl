@@ -13,6 +13,8 @@ typedef struct
 
 EAPI const Eo_Event_Description _EV_A_CHANGED =
         EO_EVENT_DESCRIPTION("a,changed");
+EAPI const Eo_Event_Description _EV_RESTART =
+        EO_EVENT_DESCRIPTION_RESTART("restart");
 
 #define MY_CLASS SIMPLE_CLASS
 
@@ -79,6 +81,7 @@ static Eo_Op_Description op_descs[] = {
 
 static const Eo_Event_Description *event_desc[] = {
      EV_A_CHANGED,
+     EV_RESTART,
      NULL
 };
 
@@ -94,4 +97,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL);
-
