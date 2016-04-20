@@ -773,13 +773,13 @@ _elm_ctxpopup_elm_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
 /* kind of a big and tricky override here: an internal box will hold
  * the actual content. content aliases won't be of much help here */
 EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_container_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part, Evas_Object *content)
+_elm_ctxpopup_efl_container_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_TRUE;
 
    if ((part) && (strcmp(part, "default")))
      {
-        int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
+        int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
         return int_ret;
      }
 
@@ -807,13 +807,13 @@ _elm_ctxpopup_elm_container_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const ch
 }
 
 EOLIAN static Evas_Object*
-_elm_ctxpopup_elm_container_content_get(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
+_elm_ctxpopup_efl_container_content_get(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
 {
 
    if ((part) && (strcmp(part, "default")))
      {
         Evas_Object *ret = NULL;
-        ret = elm_obj_container_content_get(eo_super(obj, MY_CLASS), part);
+        ret = efl_content_get(eo_super(obj, MY_CLASS), part);
         return ret;
      }
 
@@ -821,13 +821,13 @@ _elm_ctxpopup_elm_container_content_get(Eo *obj, Elm_Ctxpopup_Data *sd, const ch
 }
 
 EOLIAN static Evas_Object*
-_elm_ctxpopup_elm_container_content_unset(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
+_elm_ctxpopup_efl_container_content_unset(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
 {
    Evas_Object *content = NULL;
 
    if ((part) && (strcmp(part, "default")))
      {
-        content = elm_obj_container_content_unset(eo_super(obj, MY_CLASS), part);
+        content = efl_content_unset(eo_super(obj, MY_CLASS), part);
         return content;
      }
 
@@ -1131,7 +1131,7 @@ _elm_ctxpopup_evas_object_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
      (priv->box, EVAS_CALLBACK_RESIZE, _on_content_resized, obj);
 
    /* box will be our content placeholder, thus the parent's version call */
-   elm_obj_container_content_set(eo_super(obj, MY_CLASS), "elm.swallow.content", priv->box);
+   efl_content_set(eo_super(obj, MY_CLASS), "elm.swallow.content", priv->box);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _on_show, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _on_hide, NULL);

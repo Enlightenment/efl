@@ -36,8 +36,6 @@
  * - elm_object_part_content_unset()
  */
 
-#include "elm_container.eo.h"
-
 /**
  * @}
  */

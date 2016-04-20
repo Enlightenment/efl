@@ -19,7 +19,6 @@ elm_public_eolian_files = \
 	lib/elementary/elm_colorselector.eo \
 	lib/elementary/elm_combobox.eo \
 	lib/elementary/elm_conformant.eo \
-	lib/elementary/elm_container.eo \
 	lib/elementary/elm_ctxpopup.eo \
 	lib/elementary/elm_datetime.eo \
 	lib/elementary/elm_dayselector.eo \
@@ -182,7 +181,6 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_clock.h \
 	lib/elementary/elm_widget_colorselector.h \
 	lib/elementary/elm_widget_conform.h \
-	lib/elementary/elm_widget_container.h \
 	lib/elementary/elm_widget_combobox.h \
 	lib/elementary/elm_widget_ctxpopup.h \
 	lib/elementary/elm_widget_datetime.h \
@@ -323,7 +321,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_conform.h \
 	lib/elementary/elm_conform_eo.h \
 	lib/elementary/elm_conform_legacy.h \
-	lib/elementary/elm_container.h \
 	lib/elementary/elm_cursor.h \
 	lib/elementary/elm_datetime.h \
 	lib/elementary/elm_datetime_common.h \
@@ -552,7 +549,6 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elc_combobox.c \
 	lib/elementary/elm_config.c \
 	lib/elementary/elm_conform.c \
-	lib/elementary/elm_container.c \
 	lib/elementary/elm_datetime.c \
 	lib/elementary/elm_dayselector.c \
 	lib/elementary/elm_dbus_menu.c \

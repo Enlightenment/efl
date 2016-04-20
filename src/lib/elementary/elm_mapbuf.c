@@ -190,7 +190,7 @@ _elm_mapbuf_evas_object_smart_hide(Eo *obj, Elm_Mapbuf_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_elm_container_content_set(Eo *obj, Elm_Mapbuf_Data *sd, const char *part, Evas_Object *content)
+_elm_mapbuf_efl_container_content_set(Eo *obj, Elm_Mapbuf_Data *sd, const char *part, Evas_Object *content)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -222,14 +222,14 @@ _elm_mapbuf_elm_container_content_set(Eo *obj, Elm_Mapbuf_Data *sd, const char *
 }
 
 EOLIAN static Evas_Object*
-_elm_mapbuf_elm_container_content_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, const char *part)
+_elm_mapbuf_efl_container_content_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
    return sd->content;
 }
 
 EOLIAN static Evas_Object*
-_elm_mapbuf_elm_container_content_unset(Eo *obj, Elm_Mapbuf_Data *sd, const char *part)
+_elm_mapbuf_efl_container_content_unset(Eo *obj, Elm_Mapbuf_Data *sd, const char *part)
 {
    Evas_Object *content;
    if (part && strcmp(part, "default")) return NULL;

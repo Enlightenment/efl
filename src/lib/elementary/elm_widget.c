@@ -3657,7 +3657,7 @@ elm_widget_content_part_set(Evas_Object *obj,
                             Evas_Object *content)
 {
    ELM_WIDGET_CHECK(obj);
-   elm_obj_container_content_set(obj, part, content);
+   efl_content_set(obj, part, content);
 }
 
 EAPI Evas_Object *
@@ -3666,7 +3666,7 @@ elm_widget_content_part_get(const Evas_Object *obj,
 {
    ELM_WIDGET_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   ret = elm_obj_container_content_get((Eo *) obj, part);
+   ret = efl_content_get((Eo *) obj, part);
    return ret;
 }
 
@@ -3676,7 +3676,7 @@ elm_widget_content_part_unset(Evas_Object *obj,
 {
    ELM_WIDGET_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   ret = elm_obj_container_content_unset(obj, part);
+   ret = efl_content_unset(obj, part);
    return ret;
 }
 

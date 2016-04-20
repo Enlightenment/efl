@@ -29,7 +29,7 @@ _child_added_cb_proxy(void *data, const Eo_Event *event)
    Evas_Object *box = data;
    Evas_Object_Box_Option *opt = event->info;
 
-   eo_event_callback_call(box, EFL_PACK_EVENT_CONTENT_ADDED, opt->obj);
+   eo_event_callback_call(box, EFL_CONTAINER_EVENT_CONTENT_ADDED, opt->obj);
 
    return EINA_TRUE;
 }
@@ -40,7 +40,7 @@ _child_removed_cb_proxy(void *data, const Eo_Event *event)
    Evas_Object *box = data;
    Evas_Object *child = event->info;
 
-   eo_event_callback_call(box, EFL_PACK_EVENT_CONTENT_REMOVED, child);
+   eo_event_callback_call(box, EFL_CONTAINER_EVENT_CONTENT_REMOVED, child);
 
    return EINA_TRUE;
 }
@@ -273,7 +273,7 @@ _efl_ui_box_eo_base_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
 /* CLEAN API BELOW */
 
 EOLIAN static int
-_efl_ui_box_efl_pack_contents_count(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED)
+_efl_ui_box_efl_container_content_count(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED)
 {
    Evas_Object_Box_Data *bd;
 
@@ -537,7 +537,7 @@ _box_item_iterator_free(Box_Item_Iterator *it)
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_box_efl_pack_contents_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED)
+_efl_ui_box_efl_container_content_iterate(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED)
 {
    Box_Item_Iterator *it;
 

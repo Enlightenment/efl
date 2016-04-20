@@ -1,4 +1,4 @@
-class Elm.Mapbuf (Elm.Container)
+class Elm.Mapbuf (Elm.Widget, Efl.Container)
 {
    eo_prefix: elm_obj_mapbuf;
    methods {
@@ -136,9 +136,9 @@ class Elm.Mapbuf (Elm.Container)
       Evas.Object_Smart.resize;
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
-      Elm.Container.content.get;
-      Elm.Container.content.set;
-      Elm.Container.content_unset;
+      Efl.Container.content.get;
+      Efl.Container.content.set;
+      Efl.Container.content_unset;
    }
 
 }

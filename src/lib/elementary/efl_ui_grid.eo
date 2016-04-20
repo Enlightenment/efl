@@ -17,8 +17,8 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack_Grid, Efl.Pack_Layout)
       Elm.Widget.theme_apply;
 
       // Packing interface
-      Efl.Pack.contents_get;
-      Efl.Pack.contents_count;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
@@ -26,8 +26,8 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack_Grid, Efl.Pack_Layout)
       Efl.Pack.pack_padding.get;
       Efl.Pack.pack_padding.set;
       Efl.Pack_Grid.pack_grid;
-      Efl.Pack_Grid.grid_contents_at;
       Efl.Pack_Grid.grid_content_at;
+      Efl.Pack_Grid.grid_content_iterate;
       Efl.Pack_Grid.grid_content_position.set;
       Efl.Pack_Grid.grid_content_position.get;
       Efl.Pack_Grid.grid_size.set;

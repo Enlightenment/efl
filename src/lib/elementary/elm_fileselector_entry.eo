@@ -90,9 +90,9 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface_Fileselector,
       Elm.Widget.focus_next;
       Elm.Widget.disable;
       Elm.Widget.focus_direction_manager_is;
-      Elm.Container.content.get;
-      Elm.Container.content_unset;
-      Elm.Container.content.set;
+      Efl.Container.content.get;
+      Efl.Container.content_unset;
+      Efl.Container.content.set;
       Elm.Layout.text.set;
       Elm.Layout.text.get;
       Elm.Layout.sizing_eval;

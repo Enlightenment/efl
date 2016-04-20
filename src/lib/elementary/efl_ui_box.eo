@@ -16,8 +16,8 @@ class Efl.Ui.Box (Elm.Widget, Efl.Pack_Linear, Efl.Pack_Layout)
       Elm.Widget.focus_next;
 
       // Packing interfaces
-      Efl.Pack.contents_get;
-      Efl.Pack.contents_count;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;

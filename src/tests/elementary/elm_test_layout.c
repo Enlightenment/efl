@@ -38,17 +38,17 @@ START_TEST(elm_layout_swallows)
    evas_object_show(ly);
 
    bt = eo_add(ELM_BUTTON_CLASS, ly);
-   fail_if(!elm_obj_container_content_set(ly, "element1", bt));
+   fail_if(!efl_content_set(ly, "element1", bt));
    ck_assert_ptr_eq(eo_parent_get(bt), ly);
 
-   bt = elm_obj_container_content_unset(ly, "element1");
+   bt = efl_content_unset(ly, "element1");
    ck_assert_ptr_eq(eo_parent_get(bt), evas_common_evas_get(bt));
 
-   fail_if(!elm_obj_container_content_set(ly, "element1", bt));
+   fail_if(!efl_content_set(ly, "element1", bt));
    ck_assert_ptr_eq(eo_parent_get(bt), ly);
 
    bt2 = eo_add(ELM_BUTTON_CLASS, ly);
-   fail_if(!elm_obj_container_content_set(ly, "element1", bt2));
+   fail_if(!efl_content_set(ly, "element1", bt2));
    ck_assert_ptr_eq(eo_parent_get(bt2), ly);
    /* bt is deleted at this point. */
    ck_assert_ptr_eq(eo_parent_get(bt), evas_common_evas_get(bt));

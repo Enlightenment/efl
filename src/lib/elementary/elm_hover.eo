@@ -70,9 +70,9 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface, Elm.Interface_Atspi_Widge
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.sub_object_del;
-      Elm.Container.content.get;
-      Elm.Container.content.set;
-      Elm.Container.content_unset;
+      Efl.Container.content.get;
+      Efl.Container.content.set;
+      Efl.Container.content_unset;
       Elm.Layout.sizing_eval;
       Elm.Layout.content_aliases.get;
       Elm.Interface_Atspi_Widget_Action.elm_actions.get;

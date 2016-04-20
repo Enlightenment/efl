@@ -371,7 +371,7 @@ _elm_notify_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd,
 }
 
 EOLIAN static Eina_Bool
-_elm_notify_elm_container_content_set(Eo *obj, Elm_Notify_Data *sd, const char *part, Evas_Object *content)
+_elm_notify_efl_container_content_set(Eo *obj, Elm_Notify_Data *sd, const char *part, Evas_Object *content)
 {
    if (part && strcmp(part, "default")) return EINA_FALSE;
    if (sd->content == content) return EINA_TRUE;
@@ -394,7 +394,7 @@ _elm_notify_elm_container_content_set(Eo *obj, Elm_Notify_Data *sd, const char *
 }
 
 EOLIAN static Evas_Object*
-_elm_notify_elm_container_content_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part)
+_elm_notify_efl_container_content_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
 
@@ -402,7 +402,7 @@ _elm_notify_elm_container_content_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, 
 }
 
 EOLIAN static Evas_Object*
-_elm_notify_elm_container_content_unset(Eo *obj, Elm_Notify_Data *sd, const char *part)
+_elm_notify_efl_container_content_unset(Eo *obj, Elm_Notify_Data *sd, const char *part)
 {
    Evas_Object *content;
 

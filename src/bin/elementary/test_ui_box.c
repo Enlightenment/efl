@@ -162,8 +162,8 @@ static void
 _custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
                          Efl_Pack *pack, const void *data EINA_UNUSED)
 {
-   Eina_Iterator *it = efl_pack_contents_get(pack);
-   int count = efl_pack_contents_count(pack), i = 0;
+   Eina_Iterator *it = efl_content_iterate(pack);
+   int count = efl_content_count(pack), i = 0;
    int px, py, pw, ph;
    Eo *sobj;
 

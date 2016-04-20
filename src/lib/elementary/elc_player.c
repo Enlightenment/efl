@@ -577,7 +577,7 @@ _str_free(char *data)
  * layout */
 
 EOLIAN static Eina_Bool
-_elm_player_elm_container_content_set(Eo *obj, Elm_Player_Data *sd, const char *part, Evas_Object *content)
+_elm_player_efl_container_content_set(Eo *obj, Elm_Player_Data *sd, const char *part, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
    double pos, length;
@@ -585,11 +585,11 @@ _elm_player_elm_container_content_set(Eo *obj, Elm_Player_Data *sd, const char *
 
    if (part && strcmp(part, "video"))
      {
-        int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
+        int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
         return int_ret;
      }
    if ((!part) || (!strcmp(part, "video"))) part = "elm.swallow.content";
-   int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
+   int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
 
    if (!_elm_video_check(content)) return EINA_FALSE;
    if (sd->video == content) goto end;

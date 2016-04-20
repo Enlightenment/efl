@@ -937,8 +937,8 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
       Elm.Widget.disable;
       Elm.Widget.sub_object_del;
       Elm.Widget.focus_next_manager_is;
-      Elm.Container.content_unset;
-      Elm.Container.content.set;
+      Efl.Container.content_unset;
+      Efl.Container.content.set;
       Elm.Layout.theme_enable;
       Elm.Layout.sizing_eval;
       Elm.Layout.text.get;

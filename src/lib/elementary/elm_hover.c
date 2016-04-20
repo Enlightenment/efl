@@ -396,7 +396,7 @@ _elm_hover_subs_del(Elm_Hover_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_hover_elm_container_content_set(Eo *obj, Elm_Hover_Data *sd, const char *swallow, Evas_Object *content)
+_elm_hover_efl_container_content_set(Eo *obj, Elm_Hover_Data *sd, const char *swallow, Evas_Object *content)
 {
    Eina_Bool int_ret;
 
@@ -434,7 +434,7 @@ _elm_hover_elm_container_content_set(Eo *obj, Elm_Hover_Data *sd, const char *sw
           }
      }
 
-   int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), swallow, content);
+   int_ret = efl_content_set(eo_super(obj, MY_CLASS), swallow, content);
    if (!int_ret) return EINA_FALSE;
 
    if (strstr(swallow, "elm.swallow.slot."))
@@ -455,7 +455,7 @@ end:
 }
 
 EOLIAN static Evas_Object*
-_elm_hover_elm_container_content_get(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
+_elm_hover_efl_container_content_get(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
 {
    Evas_Object *ret;
    ret = NULL;
@@ -463,25 +463,25 @@ _elm_hover_elm_container_content_get(Eo *obj, Elm_Hover_Data *sd, const char *sw
    if (!swallow) return ret;
 
    if (!strcmp(swallow, "smart"))
-      ret = elm_obj_container_content_get(eo_super(obj, MY_CLASS), sd->smt_sub->swallow);
+      ret = efl_content_get(eo_super(obj, MY_CLASS), sd->smt_sub->swallow);
    else
-      ret = elm_obj_container_content_get(eo_super(obj, MY_CLASS), swallow);
+      ret = efl_content_get(eo_super(obj, MY_CLASS), swallow);
 
    return ret;
 }
 
 EOLIAN static Evas_Object*
-_elm_hover_elm_container_content_unset(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
+_elm_hover_efl_container_content_unset(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
 {
    Evas_Object *ret = NULL;
 
    if (!swallow) return NULL;
 
    if (!strcmp(swallow, "smart"))
-      ret = elm_obj_container_content_unset
+      ret = efl_content_unset
             (eo_super(obj, MY_CLASS), sd->smt_sub->swallow);
    else
-      ret = elm_obj_container_content_unset
+      ret = efl_content_unset
             (eo_super(obj, MY_CLASS), swallow);
    return ret;
 }

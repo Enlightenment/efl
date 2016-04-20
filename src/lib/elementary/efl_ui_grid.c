@@ -464,7 +464,7 @@ _pack_at(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Base *subobj,
 
         eo_key_data_set(subobj, GRID_ITEM_KEY, gi);
         elm_widget_sub_object_add(obj, subobj);
-        eo_event_callback_call(obj, EFL_PACK_EVENT_CONTENT_ADDED, subobj);
+        eo_event_callback_call(obj, EFL_CONTAINER_EVENT_CONTENT_ADDED, subobj);
         eo_event_callback_array_add(subobj, subobj_callbacks(), obj);
      }
 
@@ -584,7 +584,7 @@ _item_remove(Efl_Ui_Grid *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Base *subobj)
      }
 
 end:
-   eo_event_callback_call(obj, EFL_PACK_EVENT_CONTENT_REMOVED, subobj);
+   eo_event_callback_call(obj, EFL_CONTAINER_EVENT_CONTENT_REMOVED, subobj);
    pd->items = (Grid_Item *)
          eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
    pd->count--;
@@ -679,7 +679,7 @@ _grid_item_iterator_create(Eo *obj, Eina_List *list)
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_grid_efl_pack_contents_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
+_efl_ui_grid_efl_container_content_iterate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 {
    Eina_List *list;
 
@@ -690,14 +690,14 @@ _efl_ui_grid_efl_pack_contents_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static int
-_efl_ui_grid_efl_pack_contents_count(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
+_efl_ui_grid_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
    return pd->count;
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_grid_efl_pack_grid_grid_contents_at(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED,
-                                            int col, int row, Eina_Bool below)
+_efl_ui_grid_efl_pack_grid_grid_content_iterate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED,
+                                                int col, int row, Eina_Bool below)
 {
    Eina_List *list, *atlist = NULL;
    Evas_Object *sobj;

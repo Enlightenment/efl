@@ -1,0 +1,50 @@
+interface Efl.Container (Efl.Gfx.Base)
+{
+   [[API common to all UI container objects.]]
+   legacy_prefix: null;
+   eo_prefix: efl_content;
+   methods {
+      @property content {
+         [[Swallowed sub-object contained in this object.]]
+         set {
+            return: bool;
+         }
+         get {}
+         keys {
+            part: const(char)*; [[the part in which to swallow the object]]
+         }
+         values {
+            content: Efl.Gfx.Base*; [[the object to swallow.]]
+         }
+      }
+      @property content_part_name {
+         [[The name of the part under which an object is swallowed.]]
+         get {}
+         keys {
+            content: Efl.Gfx.Base*;
+         }
+         values {
+            name: const(char)*;
+         }
+      }
+      content_unset {
+         [[Unswallow the object in the given part of the container and return it.]]
+         params {
+            @in name: const(char)* @nullable;
+         }
+         return: Efl.Gfx.Base*;
+      }
+      content_iterate {
+         [[Begin iterating over this object's contents.]]
+         return: free(own(iterator<Efl.Gfx.Base *> *), eina_iterator_free) @warn_unused;
+      }
+      content_count {
+         [[Returns the number of UI elements packed in this container.]]
+         return: int;
+      }
+   }
+   events {
+      content,added: Efl.Gfx.Base*;    [[Sent after a new item was added.]]
+      content,removed: Efl.Gfx.Base*;  [[Sent after an item was removed, before unref.]]
+   }
+}

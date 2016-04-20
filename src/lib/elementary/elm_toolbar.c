@@ -1714,7 +1714,7 @@ _elm_toolbar_item_elm_widget_item_part_content_set(Eo *eo_item EINA_UNUSED, Elm_
 
    if (part && strcmp(part, "object") && strcmp(part, "elm.swallow.object"))
      {
-        elm_obj_container_content_set(VIEW(item), part, content);
+        efl_content_set(VIEW(item), part, content);
         return;
      }
    if (item->object == content) return;
@@ -1737,7 +1737,7 @@ _elm_toolbar_item_elm_widget_item_part_content_get(Eo *eo_it EINA_UNUSED, Elm_To
 
    if (part && strcmp(part, "object") && strcmp(part, "elm.swallow.object"))
      {
-        content = elm_obj_container_content_get(VIEW(it), part);
+        content = efl_content_get(VIEW(it), part);
         if (content) return content;
         else return NULL;
      }
@@ -1756,7 +1756,7 @@ _elm_toolbar_item_elm_widget_item_part_content_unset(Eo *eo_item EINA_UNUSED, El
 
    if (part && strcmp(part, "object") && strcmp(part, "elm.swallow.object"))
      {
-        o = elm_obj_container_content_unset(VIEW(item), part);
+        o = efl_content_unset(VIEW(item), part);
         return o;
      }
 

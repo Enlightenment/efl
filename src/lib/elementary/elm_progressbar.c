@@ -174,10 +174,10 @@ _elm_progressbar_elm_widget_sub_object_del(Eo *obj, Elm_Progressbar_Data *_pd EI
  * spot is elm.swallow.content, not elm.swallow.icon. Fix that
  * whenever we can changed the theme API */
 EOLIAN static Eina_Bool
-_elm_progressbar_elm_container_content_set(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+_elm_progressbar_efl_container_content_set(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
+   int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);

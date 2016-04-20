@@ -525,7 +525,7 @@ _elm_popup_elm_widget_sub_object_del(Eo *obj, Elm_Popup_Data *sd, Evas_Object *s
      {
         if (sobj == it->icon)
           {
-             elm_obj_container_content_unset(VIEW(it), CONTENT_PART);
+             efl_content_unset(VIEW(it), CONTENT_PART);
              elm_layout_signal_emit(VIEW(it),
                                     "elm,state,item,icon,hidden", "elm");
              it->icon = NULL;
@@ -670,8 +670,8 @@ _create_scroller(Evas_Object *obj)
                                   _on_table_del, obj);
    if (!sd->scroll)
      {
-        elm_obj_container_content_set(sd->content_area, CONTENT_PART, sd->tbl);
-        elm_obj_container_content_set(sd->main_layout, CONTENT_PART, sd->content_area);
+        efl_content_set(sd->content_area, CONTENT_PART, sd->tbl);
+        efl_content_set(sd->main_layout, CONTENT_PART, sd->content_area);
      }
 
    //spacer
@@ -787,7 +787,7 @@ _item_icon_set(Elm_Popup_Item_Data *it,
      {
         elm_widget_sub_object_add(WIDGET(it), it->icon);
         evas_object_data_set(it->icon, "_popup_icon_parent_item", it);
-        elm_obj_container_content_set(VIEW(it), CONTENT_PART, it->icon);
+        efl_content_set(VIEW(it), CONTENT_PART, it->icon);
         elm_layout_signal_emit(VIEW(it), "elm,state,item,icon,visible", "elm");
      }
    else
@@ -831,7 +831,7 @@ _item_icon_unset(Elm_Popup_Item_Data *it)
    if (!it->icon) return NULL;
    elm_widget_sub_object_del(WIDGET(it), icon);
    evas_object_data_del(icon, "_popup_icon_parent_item");
-   elm_obj_container_content_unset(VIEW(it), CONTENT_PART);
+   efl_content_unset(VIEW(it), CONTENT_PART);
    elm_layout_signal_emit(VIEW(it), "elm,state,item,icon,hidden", "elm");
    it->icon = NULL;
 
@@ -1003,7 +1003,7 @@ _content_text_set(Evas_Object *obj,
    else
      {
         if (!sd->scroll)
-          elm_obj_container_content_set(sd->main_layout, CONTENT_PART, sd->content_area);
+          efl_content_set(sd->main_layout, CONTENT_PART, sd->content_area);
         else
           elm_object_content_set(sd->scr, sd->content_area);
      }
@@ -1011,7 +1011,7 @@ _content_text_set(Evas_Object *obj,
 
    if (sd->text_content_obj)
      {
-        sd->text_content_obj = elm_obj_container_content_unset(sd->content_area, CONTENT_PART);
+        sd->text_content_obj = efl_content_unset(sd->content_area, CONTENT_PART);
         evas_object_del(sd->text_content_obj);
         sd->text_content_obj = NULL;
      }
@@ -1029,7 +1029,7 @@ _content_text_set(Evas_Object *obj,
      (sd->text_content_obj, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set
      (sd->text_content_obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_obj_container_content_set
+   efl_content_set
      (sd->content_area, CONTENT_PART, sd->text_content_obj);
 
    /* access */
@@ -1117,7 +1117,7 @@ _title_icon_set(Evas_Object *obj,
    sd->title_icon = icon;
    title_visibility_current = (sd->title_text) || (sd->title_icon);
 
-   elm_obj_container_content_set
+   efl_content_set
       (sd->main_layout, "elm.swallow.title.icon", sd->title_icon);
 
    if (sd->title_icon)
@@ -1144,12 +1144,12 @@ _content_set(Evas_Object *obj,
    if (content)
      {
         if (!sd->scroll)
-          elm_obj_container_content_set
+          efl_content_set
                 (sd->main_layout, CONTENT_PART, sd->content_area);
         else
           elm_object_content_set(sd->scr, sd->content_area);
 
-        elm_obj_container_content_set
+        efl_content_set
           (sd->content_area, CONTENT_PART, content);
 
         evas_object_event_callback_add
@@ -1206,7 +1206,7 @@ _action_button_set(Evas_Object *obj,
         evas_object_event_callback_add
           (sd->action_area, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
            _size_hints_changed_cb, sd->main_layout);
-        elm_obj_container_content_set
+        efl_content_set
           (sd->main_layout, "elm.swallow.action_area", sd->action_area);
 
         _visuals_set(obj);
@@ -1222,7 +1222,7 @@ _action_button_set(Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_elm_popup_elm_container_content_set(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+_elm_popup_efl_container_content_set(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    unsigned int i;
    Eina_Bool ret = EINA_TRUE;
@@ -1244,7 +1244,7 @@ _elm_popup_elm_container_content_set(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, c
         _action_button_set(obj, content, i);
      }
    else
-     ret = elm_obj_container_content_set(_pd->main_layout, part, content);
+     ret = efl_content_set(_pd->main_layout, part, content);
 
    elm_layout_sizing_eval(obj);
 
@@ -1279,7 +1279,7 @@ _action_button_get(const Evas_Object *obj,
 }
 
 EOLIAN static Evas_Object*
-_elm_popup_elm_container_content_get(Eo *obj, Elm_Popup_Data *_pd, const char *part)
+_elm_popup_efl_container_content_get(Eo *obj, Elm_Popup_Data *_pd, const char *part)
 {
    Evas_Object *content = NULL;
    unsigned int i;
@@ -1298,7 +1298,7 @@ _elm_popup_elm_container_content_get(Eo *obj, Elm_Popup_Data *_pd, const char *p
         content = _action_button_get(obj, i);
      }
    else
-      content = elm_obj_container_content_get(_pd->main_layout, part);
+      content = efl_content_get(_pd->main_layout, part);
 
    if (!content)
      goto err;
@@ -1322,7 +1322,7 @@ _content_unset(Evas_Object *obj)
    evas_object_event_callback_del
      (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
 
-   content = elm_obj_container_content_unset(sd->content_area, CONTENT_PART);
+   content = efl_content_unset(sd->content_area, CONTENT_PART);
    sd->content = NULL;
 
    elm_layout_sizing_eval(obj);
@@ -1340,14 +1340,14 @@ _title_icon_unset(Evas_Object *obj)
    if (!sd->title_icon) return NULL;
 
    icon = sd->title_icon;
-   elm_obj_container_content_unset(sd->main_layout, "elm.swallow.title.icon");
+   efl_content_unset(sd->main_layout, "elm.swallow.title.icon");
    sd->title_icon = NULL;
 
    return icon;
 }
 
 EOLIAN static Evas_Object*
-_elm_popup_elm_container_content_unset(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, const char *part)
+_elm_popup_efl_container_content_unset(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, const char *part)
 {
    Evas_Object *content = NULL;
    unsigned int i;
@@ -1402,7 +1402,7 @@ _elm_popup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, Elm_Fo
         if (ao) items = eina_list_append(items, ao);
      }
 
-   base_it = elm_obj_container_content_objects_iterate(sd->main_layout);
+   base_it = efl_content_iterate(sd->main_layout);
    EINA_ITERATOR_FOREACH(base_it, ao)
      if (ao) items = eina_list_append(items, ao);
    eina_iterator_free(base_it);
@@ -1440,7 +1440,7 @@ _elm_popup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, c
         if (ao) items = eina_list_append(items, ao);
      }
 
-   base_it = elm_obj_container_content_objects_iterate(sd->main_layout);
+   base_it = efl_content_iterate(sd->main_layout);
    EINA_ITERATOR_FOREACH(base_it, ao)
      if (ao) items = eina_list_append(items, ao);
    eina_iterator_free(base_it);
@@ -1785,7 +1785,7 @@ _elm_popup_item_append(Eo *obj, Elm_Popup_Data *sd, const char *label, Evas_Obje
    if (sd->content || sd->text_content_obj)
      {
         prev_content =
-                             elm_obj_container_content_get(sd->content_area, CONTENT_PART);
+                             efl_content_get(sd->content_area, CONTENT_PART);
         evas_object_del(prev_content);
      }
 
@@ -1826,14 +1826,14 @@ _elm_popup_scrollable_set(Eo *obj, Elm_Popup_Data *pd, Eina_Bool scroll)
 
    if (!pd->scroll)
      {
-        elm_obj_container_content_set(pd->content_area, CONTENT_PART, pd->tbl);
-        elm_obj_container_content_set(pd->main_layout, CONTENT_PART, pd->content_area);
+        efl_content_set(pd->content_area, CONTENT_PART, pd->tbl);
+        efl_content_set(pd->main_layout, CONTENT_PART, pd->content_area);
         if (pd->theme_scroll)
           elm_layout_signal_emit(pd->content_area, "elm,scroll,disable", "elm");
      }
    else
      {
-        elm_obj_container_content_set(pd->main_layout, CONTENT_PART, pd->tbl);
+        efl_content_set(pd->main_layout, CONTENT_PART, pd->tbl);
         if (pd->theme_scroll)
           elm_layout_signal_emit(pd->content_area, "elm,scroll,enable", "elm");
      }

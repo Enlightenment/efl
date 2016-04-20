@@ -33,7 +33,7 @@ enum Elm.Flip.Direction
    right [[Allows interaction with the right portion of the widget]]
 }
 
-class Elm.Flip (Elm.Container)
+class Elm.Flip (Elm.Widget, Efl.Container)
 {
    eo_prefix: elm_obj_flip;
    methods {
@@ -238,9 +238,9 @@ class Elm.Flip (Elm.Container)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.sub_object_del;
-      Elm.Container.content.get;
-      Elm.Container.content.set;
-      Elm.Container.content_unset;
+      Efl.Container.content.get;
+      Efl.Container.content.set;
+      Efl.Container.content_unset;
    }
    events {
       animate,begin;

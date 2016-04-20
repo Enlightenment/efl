@@ -2993,10 +2993,10 @@ _elm_entry_elm_layout_signal_callback_del(Eo *obj, Elm_Entry_Data *sd, const cha
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_container_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+_elm_entry_efl_container_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
+   int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
    if (!int_ret) return EINA_FALSE;
 
    /* too bad entry does not follow the pattern
@@ -3011,10 +3011,10 @@ _elm_entry_elm_container_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, c
 }
 
 EOLIAN static Evas_Object*
-_elm_entry_elm_container_content_unset(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part)
+_elm_entry_efl_container_content_unset(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part)
 {
    Evas_Object *ret = NULL;
-   ret = elm_obj_container_content_unset(eo_super(obj, MY_CLASS), part);
+   ret = efl_content_unset(eo_super(obj, MY_CLASS), part);
    if (!ret) return NULL;
 
    /* too bad entry does not follow the pattern

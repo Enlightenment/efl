@@ -79,9 +79,9 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Widget.access;
       Elm.Widget.event;
       Elm.Widget.on_focus_region;
-      Elm.Container.content.get;
-      Elm.Container.content_unset;
-      Elm.Container.content.set;
+      Efl.Container.content.get;
+      Efl.Container.content_unset;
+      Efl.Container.content.set;
       Elm.Layout.sizing_eval;
       Elm.Interface_Atspi_Widget_Action.elm_actions.get;
    }

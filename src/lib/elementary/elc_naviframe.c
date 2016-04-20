@@ -1044,7 +1044,7 @@ _elm_naviframe_elm_layout_text_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, 
 /* we have to keep a "manual" set here because of the callbacks on the
  * children */
 EOLIAN static Eina_Bool
-_elm_naviframe_elm_container_content_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part, Evas_Object *content)
+_elm_naviframe_efl_container_content_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    Elm_Object_Item *it;
 
@@ -1060,7 +1060,7 @@ _elm_naviframe_elm_container_content_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UN
 }
 
 EOLIAN static Evas_Object*
-_elm_naviframe_elm_container_content_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
+_elm_naviframe_efl_container_content_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
 {
    Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
 
@@ -1070,7 +1070,7 @@ _elm_naviframe_elm_container_content_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UN
 }
 
 EOLIAN static Evas_Object*
-_elm_naviframe_elm_container_content_unset(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
+_elm_naviframe_efl_container_content_unset(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
 {
    Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
 

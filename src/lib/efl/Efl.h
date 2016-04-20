@@ -117,11 +117,11 @@ static inline void efl_gfx_color16_type_set(Efl_Gfx_Color *color,
 #include "interfaces/efl_gfx.x"
 
 /* Packing & containers */
+#include "interfaces/efl_container.eo.h"
 #include "interfaces/efl_pack.eo.h"
 #include "interfaces/efl_pack_layout.eo.h"
 #include "interfaces/efl_pack_linear.eo.h"
 #include "interfaces/efl_pack_grid.eo.h"
-#include "interfaces/efl_pack_named.eo.h"
 
 #else
 

@@ -121,7 +121,7 @@ layout_updated_cb(void *data, const Eo_Event *event)
    int rows, cols, count;
 
    efl_pack_grid_size_get(event->obj, &cols, &rows);
-   count = efl_pack_contents_count(event->obj);
+   count = efl_content_count(event->obj);
    sprintf(buf, "%d items (%dx%d)", count, cols, rows);
    elm_object_text_set(o, buf);
 
@@ -137,7 +137,7 @@ child_evt_cb(void *data, const Eo_Event *event)
    char buf[64];
 
    efl_pack_grid_content_position_get(event->obj, it, &col, &row, &colspan, &rowspan);
-   if (event->desc == EFL_PACK_EVENT_CONTENT_ADDED)
+   if (event->desc == EFL_CONTAINER_EVENT_CONTENT_ADDED)
      sprintf(buf, "pack %d,%d %dx%d", col, row, colspan, rowspan);
    else
      sprintf(buf, "unpack %d,%d %dx%d", col, row, colspan, rowspan);
@@ -166,7 +166,7 @@ _custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
    efl_pack_grid_size_get(pack, &cols, &rows);
    if (!cols || !rows) goto end;
 
-   it = efl_pack_contents_get(pack);
+   it = efl_content_iterate(pack);
    EINA_ITERATOR_FOREACH(it, item)
      {
         if (efl_pack_grid_content_position_get(pack, item, &c, &r, &cs, &rs))
@@ -416,8 +416,8 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_gfx_visible_set(o, 1);
 
    o = elm_label_add(win);
-   eo_event_callback_add(grid, EFL_PACK_EVENT_CONTENT_ADDED, child_evt_cb, o);
-   eo_event_callback_add(grid, EFL_PACK_EVENT_CONTENT_REMOVED, child_evt_cb, o);
+   eo_event_callback_add(grid, EFL_CONTAINER_EVENT_CONTENT_ADDED, child_evt_cb, o);
+   eo_event_callback_add(grid, EFL_CONTAINER_EVENT_CONTENT_REMOVED, child_evt_cb, o);
    evas_object_size_hint_align_set(o, 0.5, 0);
    evas_object_size_hint_weight_set(o, 1, 1);
    efl_pack(bx, o);
@@ -598,8 +598,8 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_gfx_visible_set(o, 1);
 
    o = elm_label_add(win);
-   eo_event_callback_add(grid, EFL_PACK_EVENT_CONTENT_ADDED, child_evt_cb, o);
-   eo_event_callback_add(grid, EFL_PACK_EVENT_CONTENT_REMOVED, child_evt_cb, o);
+   eo_event_callback_add(grid, EFL_CONTAINER_EVENT_CONTENT_ADDED, child_evt_cb, o);
+   eo_event_callback_add(grid, EFL_CONTAINER_EVENT_CONTENT_REMOVED, child_evt_cb, o);
    evas_object_size_hint_align_set(o, 0.5, 0);
    evas_object_size_hint_weight_set(o, 1, 1);
    efl_pack(bx, o);

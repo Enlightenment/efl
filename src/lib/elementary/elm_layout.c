@@ -973,12 +973,12 @@ elm_layout_content_set(Evas_Object *obj,
 {
    ELM_LAYOUT_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
-   ret = elm_obj_container_content_set(obj, swallow, content);
+   ret = efl_content_set(obj, swallow, content);
    return ret;
 }
 
 EOLIAN static Eina_Bool
-_elm_layout_elm_container_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *content)
+_elm_layout_efl_container_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *content)
 {
    Elm_Layout_Sub_Object_Data *sub_d;
    const Eina_List *l;
@@ -1051,12 +1051,12 @@ elm_layout_content_get(const Evas_Object *obj,
 {
    ELM_LAYOUT_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   ret = elm_obj_container_content_get((Eo *) obj, swallow);
+   ret = efl_content_get((Eo *) obj, swallow);
    return ret;
 }
 
 EOLIAN static Evas_Object*
-_elm_layout_elm_container_content_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
+_elm_layout_efl_container_content_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
 {
    const Eina_List *l;
    Elm_Layout_Sub_Object_Data *sub_d;
@@ -1078,12 +1078,12 @@ elm_layout_content_unset(Evas_Object *obj,
 {
    ELM_LAYOUT_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   ret = elm_obj_container_content_unset(obj, swallow);
+   ret = efl_content_unset(obj, swallow);
    return ret;
 }
 
 EOLIAN static Evas_Object*
-_elm_layout_elm_container_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
+_elm_layout_efl_container_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
 {
    Elm_Layout_Sub_Object_Data *sub_d;
    const Eina_List *l;
@@ -1140,19 +1140,7 @@ elm_layout_content_swallow_list_get(const Evas_Object *obj)
 }
 
 static Eina_Bool
-_names_iterator_next(Elm_Layout_Sub_Iterator *it, void **data)
-{
-   Elm_Layout_Sub_Object_Data *sub;
-
-   if (!eina_iterator_next(it->real_iterator, (void **)&sub))
-     return EINA_FALSE;
-
-   if (data) *data = (void*) sub->part;
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_objects_iterator_next(Elm_Layout_Sub_Iterator *it, void **data)
+_sub_iterator_next(Elm_Layout_Sub_Iterator *it, void **data)
 {
    Elm_Layout_Sub_Object_Data *sub;
 
@@ -1177,7 +1165,7 @@ _sub_iterator_free(Elm_Layout_Sub_Iterator *it)
 }
 
 static Eina_Iterator *
-_sub_iterator_create(Eo *eo_obj, Elm_Layout_Smart_Data *sd, Eina_Bool objects)
+_sub_iterator_create(Eo *eo_obj, Elm_Layout_Smart_Data *sd)
 {
    Elm_Layout_Sub_Iterator *it;
 
@@ -1188,28 +1176,42 @@ _sub_iterator_create(Eo *eo_obj, Elm_Layout_Smart_Data *sd, Eina_Bool objects)
 
    it->real_iterator = eina_list_iterator_new(sd->subs);
    it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_sub_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_sub_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_sub_iterator_free);
-
-   if (objects)
-     it->iterator.next = FUNC_ITERATOR_NEXT(_objects_iterator_next);
-   else
-     it->iterator.next = FUNC_ITERATOR_NEXT(_names_iterator_next);
    it->object = eo_obj;
 
    return &it->iterator;
 }
 
 EOLIAN static Eina_Iterator *
-_elm_layout_elm_container_content_names_iterate(Eo *eo_obj, Elm_Layout_Smart_Data *sd)
+_elm_layout_efl_container_content_iterate(Eo *eo_obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
 {
-   return _sub_iterator_create(eo_obj, sd, EINA_FALSE);
+   return _sub_iterator_create(eo_obj, sd);
 }
 
-EOLIAN static Eina_Iterator *
-_elm_layout_elm_container_content_objects_iterate(Eo *eo_obj, Elm_Layout_Smart_Data *sd)
+EOLIAN static const char *
+_elm_layout_efl_container_content_part_name_get(Eo *eo_obj EINA_UNUSED,
+                                                Elm_Layout_Smart_Data *sd,
+                                                Efl_Gfx_Base *content)
 {
-   return _sub_iterator_create(eo_obj, sd, EINA_TRUE);
+   Elm_Layout_Sub_Object_Data *sub;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(sd->subs, l, sub)
+     if (sub->type == SWALLOW)
+       {
+          if (sub->obj == content)
+            return sub->part;
+       }
+
+   return NULL;
+}
+
+EOLIAN static int
+_elm_layout_efl_container_content_count(Eo *eo_obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
+{
+   return eina_list_count(sd->subs);
 }
 
 EOLIAN static Eina_Bool

@@ -247,7 +247,7 @@ _elm_panel_elm_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
 
         if (edje_object_part_exists
             (wd->resize_obj, "elm.swallow.event"))
-          elm_obj_container_content_set(eo_super(obj, MY_CLASS), "elm.swallow.event", sd->event);
+          efl_content_set(eo_super(obj, MY_CLASS), "elm.swallow.event", sd->event);
      }
 
    elm_layout_sizing_eval(obj);
@@ -910,7 +910,7 @@ _elm_panel_elm_widget_event(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED, Evas_Objec
 }
 
 EOLIAN static Eina_Bool
-_elm_panel_elm_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *part, Evas_Object *content)
+_elm_panel_efl_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *part, Evas_Object *content)
 {
    if (part)
      {
@@ -923,7 +923,7 @@ _elm_panel_elm_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *pa
         if (strcmp(part, "default"))
           {
              Eina_Bool int_ret = EINA_TRUE;
-             int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
+             int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
              return int_ret;
           }
      }
@@ -946,7 +946,7 @@ _elm_panel_elm_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *pa
 }
 
 EOLIAN static Evas_Object*
-_elm_panel_elm_container_content_get(Eo *obj, Elm_Panel_Data *sd, const char *part)
+_elm_panel_efl_container_content_get(Eo *obj, Elm_Panel_Data *sd, const char *part)
 {
    if (part)
      {
@@ -959,7 +959,7 @@ _elm_panel_elm_container_content_get(Eo *obj, Elm_Panel_Data *sd, const char *pa
         if (strcmp(part, "default"))
           {
              Evas_Object *ret = NULL;
-             ret = elm_obj_container_content_get(eo_super(obj, MY_CLASS), part);
+             ret = efl_content_get(eo_super(obj, MY_CLASS), part);
              return ret;
           }
      }
@@ -968,7 +968,7 @@ _elm_panel_elm_container_content_get(Eo *obj, Elm_Panel_Data *sd, const char *pa
 }
 
 EOLIAN static Evas_Object*
-_elm_panel_elm_container_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *part)
+_elm_panel_efl_container_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *part)
 {
    Evas_Object *ret = NULL;
 
@@ -982,7 +982,7 @@ _elm_panel_elm_container_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *
           }
         if (strcmp(part, "default"))
           {
-             ret = elm_obj_container_content_unset(eo_super(obj, MY_CLASS), part);
+             ret = efl_content_unset(eo_super(obj, MY_CLASS), part);
              return ret;
           }
      }
@@ -1039,7 +1039,7 @@ _elm_panel_evas_object_smart_add(Eo *obj, Elm_Panel_Data *priv)
 
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
              evas_object_size_hint_min_set(priv->event, minw, minh);
-             elm_obj_container_content_set(eo_super(obj, MY_CLASS), "elm.swallow.event", priv->event);
+             efl_content_set(eo_super(obj, MY_CLASS), "elm.swallow.event", priv->event);
           }
      }
 

@@ -1771,7 +1771,7 @@ _flip_content_unset(Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_elm_container_content_set(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+_elm_flip_efl_container_content_set(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    if (!part || !strcmp(part, "front"))
       return _flip_content_set(obj, content, EINA_TRUE);
@@ -1781,7 +1781,7 @@ _elm_flip_elm_container_content_set(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, con
 }
 
 EOLIAN static Evas_Object*
-_elm_flip_elm_container_content_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, const char *part)
+_elm_flip_efl_container_content_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, const char *part)
 {
    if (!part || !strcmp(part, "front"))
       return sd->front.content;
@@ -1791,7 +1791,7 @@ _elm_flip_elm_container_content_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, cons
 }
 
 EOLIAN static Evas_Object*
-_elm_flip_elm_container_content_unset(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EINA_UNUSED, const char *part)
+_elm_flip_efl_container_content_unset(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EINA_UNUSED, const char *part)
 {
    if (!part || !strcmp(part, "front"))
       return _flip_content_unset(obj, EINA_TRUE);

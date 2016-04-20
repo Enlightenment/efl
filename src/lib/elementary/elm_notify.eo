@@ -1,4 +1,4 @@
-class Elm.Notify (Elm.Container)
+class Elm.Notify (Elm.Widget, Efl.Container)
 {
    eo_prefix: elm_obj_notify;
    methods {
@@ -92,9 +92,9 @@ class Elm.Notify (Elm.Container)
       Elm.Widget.sub_object_del;
       Elm.Widget.part_text.set;
       Elm.Widget.part_text.get;
-      Elm.Container.content.get;
-      Elm.Container.content.set;
-      Elm.Container.content_unset;
+      Efl.Container.content.get;
+      Efl.Container.content.set;
+      Efl.Container.content_unset;
    }
    events {
       block,clicked;

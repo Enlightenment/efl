@@ -217,7 +217,7 @@ _item_find(const Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item, Evas_Object *content)
+_elm_dayselector_efl_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -239,7 +239,7 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
      {
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
 
-        int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), buf, content);
+        int_ret = efl_content_set(eo_super(obj, MY_CLASS), buf, content);
         if (!int_ret) return EINA_FALSE;
 
         if (!content) return EINA_TRUE; /* item deletion already handled */
@@ -255,7 +255,7 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
 
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
 
-        int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), buf, content);
+        int_ret = efl_content_set(eo_super(obj, MY_CLASS), buf, content);
         if (!int_ret)
           {
              eo_del(eo_it);
@@ -299,7 +299,7 @@ _elm_dayselector_item_eo_base_constructor(Eo *eo_item, Elm_Dayselector_Item_Data
 }
 
 EOLIAN static Evas_Object*
-_elm_dayselector_elm_container_content_unset(Eo *obj, Elm_Dayselector_Data *sd, const char *item)
+_elm_dayselector_efl_container_content_unset(Eo *obj, Elm_Dayselector_Data *sd, const char *item)
 {
    int day;
    char buf[1024];
@@ -314,7 +314,7 @@ _elm_dayselector_elm_container_content_unset(Eo *obj, Elm_Dayselector_Data *sd, 
 
    content = VIEW(it);
 
-   content = elm_obj_container_content_unset(eo_super(obj, MY_CLASS), buf);
+   content = efl_content_unset(eo_super(obj, MY_CLASS), buf);
    if (!content) return NULL;
 
    sd->items = eina_list_remove(sd->items, it);

@@ -15,7 +15,7 @@ interface Efl.Pack_Grid (Efl.Pack_Linear)
             rowspan: int @optional; [[0 means 1, -1 means @.grid_rows]]
          }
       }
-      grid_contents_at {
+      grid_content_iterate {
          [[Returns all objects at a given position in this grid.]]
          return: free(own(iterator<Efl.Gfx.Base *> *), eina_iterator_free);
          params {
@@ -25,7 +25,7 @@ interface Efl.Pack_Grid (Efl.Pack_Linear)
          }
       }
       grid_content_at {
-         [[Returns the first child at position, see @.grid_contents_at.]]
+         [[Returns the first child at position, see @.grid_content_iterate.]]
          return: Efl.Gfx.Base*;
          params {
             @in col: int;

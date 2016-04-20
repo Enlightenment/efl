@@ -153,8 +153,8 @@ class Elm.Dayselector (Elm.Layout)
       Elm.Widget.theme_apply;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.translate;
-      Elm.Container.content_unset;
-      Elm.Container.content.set;
+      Efl.Container.content_unset;
+      Efl.Container.content.set;
       Elm.Layout.sizing_eval;
    }
    events {
