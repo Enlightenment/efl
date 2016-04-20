@@ -3,6 +3,7 @@
 #endif
 
 #include <Eina.h>
+#include <fnmatch.h>
 
 #define EO_BASE_BETA
 
@@ -411,6 +412,158 @@ _eo_base_id_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
 {
    if (!pd->extension) return NULL;
    return pd->extension->id;
+}
+
+static inline Eina_Bool
+_idmatch(const char *match, Eina_Bool is_glob, const char *str)
+{
+   if (str)
+     {
+        if (is_glob)
+          {
+             // if match string is empty - then it matches - same as "*"
+             if (!match[0]) return EINA_TRUE;
+             // if match string is "*" special case it and match
+             if ((match[0] == '*') && (match[1] == 0)) return EINA_TRUE;
+             // actual compare
+             if (!fnmatch(match, str, 0)) return EINA_TRUE;
+          }
+        else
+          {
+             // if match string is empty - then it matches - same as "*"
+             if (!match[0]) return EINA_TRUE;
+             // if pointers are the same they must be the same
+             if (match == str) return EINA_TRUE;
+             // actual compare
+             if (!strcmp(match, str)) return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+_matchall(const char *match)
+{
+   if ((match[0] == 0) || ((match[0] == '*') && (match[1] == 0)))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_hasglob(const char *match)
+{
+   if (strpbrk(match, "*?[")) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_ismultiglob(const char *match)
+{
+   if ((match[0] == '*') && (match[1] == '*') && (match[2] == 0))
+     return EINA_TRUE;
+   if ((match[0] == '*') && (match[1] == '*') && (match[2] == '/'))
+     return EINA_TRUE;
+   if ((match[0] == '/') && (match[1] == '*') && (match[2] == '*') && (match[3] == 0))
+     return EINA_TRUE;
+   if ((match[0] == '/') && (match[1] == '*') && (match[2] == '*') && (match[3] == '/'))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+EOLIAN static Eo_Base *
+_eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
+{
+   Eina_List *l;
+   Eo *child;
+   const char *id, *p, *klass_name;
+   size_t len;
+
+   // notes:
+   // if search contains NO "/" char, then its just a name search.
+   // if there is one or more "/" chars, then these are explicitly object
+   // delimiters.
+   // a name of "**" means 0 or more objects in the heirachy chain
+   // if the string has no "/" char at the start, it implies "/**/"
+   // a name can be a name or the form "class:name" where the object must
+   // be of class named "class" and name "name". if "name" is empty like:
+   // "class:" then an object of any name will match like "class:*". an
+   // empty class like ":name" is the sanme as "*:name" which is the same
+   // as "name". class ane name of course can be basic globs but not **
+
+   // search string NULL or "" is invalid
+   if (!search) return NULL;
+   if (!search[0]) return NULL;
+
+   len = strlen(search);
+
+   if (strchr(search, '/'))
+     {
+        ERR("Looking up object by path '%s' is not supported", search);
+        return NULL;
+     }
+   else
+     {
+        // if this is a multi glob - "**" then we don't have a name or
+        // class to match at all so just don't look
+        if (_ismultiglob(search)) return NULL;
+        // check if this is "class:name" or just "name"
+        if ((p = strchr(search, ':')))
+          {
+             // "class:name"
+             char *klass = alloca(len);
+             char *name = alloca(len);
+             Eina_Bool klass_glob = EINA_FALSE;
+             Eina_Bool name_glob = EINA_FALSE;
+
+             // split class:name into 2 strings dropping :
+             strncpy(klass, search, p - search);
+             klass[p - search] = 0;
+             strcpy(name, p + 1);
+
+             // figure out if class or name are globs
+             klass_glob = _hasglob(klass);
+             name_glob = _hasglob(name);
+             EINA_LIST_FOREACH(pd->children, l, child)
+               {
+                  id = eo_id_get(child);
+                  klass_name = eo_class_name_get(eo_class_get(child));
+                  if (_idmatch(klass, klass_glob, klass_name) &&
+                      (((!_matchall(klass)) && (!id) && (_matchall(name))) ||
+                       ((id) && _idmatch(name, name_glob, id))))
+                    return child;
+                  child = eo_id_find(child, search);
+                  if (child) return child;
+               }
+          }
+        else
+          {
+             if (_hasglob(search))
+               {
+                  // we have a glob - fnmatch
+                  EINA_LIST_FOREACH(pd->children, l, child)
+                    {
+                       id = eo_id_get(child);
+                       if ((id) && (_idmatch(search, EINA_TRUE, id)))
+                         return child;
+                       child = eo_id_find(child, search);
+                       if (child) return child;
+                    }
+               }
+             else
+               {
+                  // fast path for simple "name"
+                  EINA_LIST_FOREACH(pd->children, l, child)
+                    {
+                       id = eo_id_get(child);
+                       if ((id) && (_idmatch(search, EINA_FALSE, id)))
+                         return child;
+                       child = eo_id_find(child, search);
+                       if (child) return child;
+                    }
+               }
+          }
+     }
+   return NULL;
 }
 
 EOLIAN static void

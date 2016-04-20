@@ -1056,6 +1056,9 @@ START_TEST(eo_name)
 {
    eo_init();
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj3 = eo_add(SIMPLE_CLASS, NULL);
+   Eo *objtmp;
    const char *id;
 
    id = eo_id_get(obj);
@@ -1075,6 +1078,30 @@ START_TEST(eo_name)
    eo_id_set(obj, NULL);
    id = eo_id_get(obj);
    fail_if(NULL != id);
+
+   eo_id_set(obj2, "joe");
+   eo_id_set(obj3, "bob");
+
+   eo_parent_set(obj2, obj);
+   eo_parent_set(obj3, obj2);
+
+   objtmp = eo_id_find(obj, "bob");
+   fail_if(objtmp != obj3);
+
+   objtmp = eo_id_find(obj, "joe");
+   fail_if(objtmp != obj2);
+
+   objtmp = eo_id_find(obj, "bo*");
+   fail_if(objtmp != obj3);
+
+   objtmp = eo_id_find(obj, "*oe");
+   fail_if(objtmp != obj2);
+
+   objtmp = eo_id_find(obj, "Simple:*oe");
+   fail_if(objtmp != obj2);
+
+   objtmp = eo_id_find(obj, "*mple:joe");
+   fail_if(objtmp != obj2);
 
    eo_del(obj);
 
