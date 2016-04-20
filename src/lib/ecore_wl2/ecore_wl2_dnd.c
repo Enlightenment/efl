@@ -44,18 +44,14 @@ struct _dnd_read_ctx
 };
 
 static void
-_offer_cb_offer(void *data, struct wl_data_offer *offer EINA_UNUSED, const char *type)
+data_offer_offer(void *data, struct wl_data_offer *wl_data_offer EINA_UNUSED, const char *type)
 {
-   Ecore_Wl2_Dnd_Source *source;
-   char **t;
+   Ecore_Wl2_Dnd_Source *source = data;
+   char **p;
 
-   source = data;
-   if ((!source) || (!type)) return;
-
-   t = wl_array_add(&source->types, sizeof(*t));
-   if (t) *t = strdup(type);
+   p = wl_array_add(&source->types, sizeof *p);
+   *p = strdup(type);
 }
-
 
 static void
 data_offer_source_actions(void *data, struct wl_data_offer *wl_data_offer EINA_UNUSED, uint32_t source_actions)
@@ -75,7 +71,7 @@ data_offer_action(void *data, struct wl_data_offer *wl_data_offer EINA_UNUSED, u
 
 static const struct wl_data_offer_listener _offer_listener =
 {
-   _offer_cb_offer,
+   data_offer_offer,
    data_offer_source_actions,
    data_offer_action
 };
