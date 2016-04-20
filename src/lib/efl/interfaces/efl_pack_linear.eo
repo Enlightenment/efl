@@ -1,0 +1,89 @@
+import efl_orientation;
+
+/* FIXME: Efl.Pack.Linear */
+interface Efl.Pack_Linear (Efl.Pack)
+{
+   [[API for containers ]]
+   legacy_prefix: null;
+   eo_prefix: efl_pack;
+   methods {
+      pack_begin {
+         [[Prepend an object at the beginning of this container.
+
+           This is the same as @.pack_insert($subobj, 0).
+         ]]
+         params {
+            @in subobj: own(Efl.Gfx.Base *);
+         }
+      }
+      pack_end {
+         [[Append object at the end of this container.
+
+           This is the same as @.pack_insert($subobj, -1).
+         ]]
+         params {
+            @in subobj: own(Efl.Gfx.Base *);
+         }
+      }
+      pack_before {
+         [[Prepend item before other sub object.]]
+         return: bool @warn_unused; [[returns $false if $existing could not be found]]
+         params {
+            @in subobj: own(Efl.Gfx.Base *);
+            @in existing: const(Efl.Gfx.Base)*;
+         }
+      }
+      pack_after {
+         [[Append item after other sub object.]]
+         return: bool @warn_unused; [[returns $false if $existing could not be found]]
+         params {
+            @in subobj: own(Efl.Gfx.Base *);
+            @in existing: const(Efl.Gfx.Base)*;
+         }
+      }
+      pack_insert {
+          [[Inserts $subobj at the specified $index. If $index is not valid, appends.]]
+          params {
+             @in subobj: own(Efl.Gfx.Base *);
+             @in index: int;
+          }
+      }
+      @property content_at {
+         [[Content at a given index in this container.
+
+           Index -1 refers to the last item.
+         ]]
+         /* set {} - can be defined */
+         get {}
+         keys {
+            index: int;
+         }
+         values {
+            subobj: Efl.Gfx.Base *;
+         }
+      }
+      @property content_index {
+         [[Index of the child in this container, may be modified to move the $subobj.]]
+         set {
+
+            return: bool; [[Returns $false if $subobj is not a child.
+                            Negative values can be used to refer to the end.]]
+         }
+         get {}
+         keys {
+            subobj: Efl.Gfx.Base *;
+         }
+         values {
+            index: int;
+         }
+      }
+      @property direction {
+         [[Primary up/left/right/down orientation. Default is right.]]
+         set {}
+         get {}
+         values {
+            orient: Efl.Orient;
+         }
+      }
+   }
+}

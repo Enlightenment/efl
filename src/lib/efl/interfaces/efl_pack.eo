@@ -1,0 +1,72 @@
+import eina_types;
+
+interface Efl.Pack (Efl.Gfx.Base)
+{
+   [[API common to all UI container objects.]]
+   legacy_prefix: null;
+   methods
+   {
+      contents_get {
+         [[Begin iterating over this object's contents.]]
+         return: free(own(iterator<Efl.Gfx.Base *> *), eina_iterator_free) @warn_unused;
+      }
+      contents_count {
+         [[Returns the number of UI elements packed in this container.]]
+         return: int;
+      }
+      pack_clear {
+         [[Removes all packed contents, and unreferences them.]]
+      }
+      unpack_all {
+         [[Removes all packed contents, without unreferencing them.
+
+           Use with caution.
+         ]]
+      }
+      unpack {
+         [[Removes an existing item from the container, without deleting it.]]
+         return: bool; [[$false if $subobj wasn't a child or can't be removed]]
+         params {
+            subobj: own(Efl.Gfx.Base *);
+         }
+      }
+      pack {
+         [[Adds an item to this container.
+
+           Depending on the container this will either fill in the default
+           spot, replacing any already existing element or append to the end
+           of the container if there is no default part.
+
+           The container takes ownership of this object. This means if packing
+           failed, the object will be unrefed.
+         ]]
+         params {
+            subobj: own(Efl.Gfx.Base *);
+         }
+      }
+      @property pack_align {
+         [[Alignment of the container within its bounds]]
+         set {}
+         get {}
+         values {
+            align_horiz: double;
+            align_vert:  double;
+         }
+      }
+      @property pack_padding {
+         [[Padding between items contained in this object.]]
+         set {}
+         get {}
+         values {
+            pad_horiz: double;
+            pad_vert:  double;
+            scalable:  bool;
+         }
+      }
+   }
+   events {
+      content,added: Efl.Gfx.Base*;    [[Sent after a new item was added.]]
+      content,removed: Efl.Gfx.Base*;  [[Sent after an item was removed, before unref.]]
+      layout,updated;                  [[Sent after the layout was updated.]]
+   }
+}

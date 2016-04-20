@@ -26,6 +26,7 @@ void test_box_horiz(void *data, Evas_Object *obj, void *event_info);
 void test_box_homo(void *data, Evas_Object *obj, void *event_info);
 void test_box_transition(void *data, Evas_Object *obj, void *event_info);
 void test_box_align(void *data, Evas_Object *obj, void *event_info);
+void test_ui_box(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
 void test_cnp(void *data, Evas_Object *obj, void *event_info);
 void test_transit(void *data, Evas_Object *obj, void *event_info);
@@ -139,6 +140,8 @@ void test_table5(void *data, Evas_Object *obj, void *event_info);
 void test_table6(void *data, Evas_Object *obj, void *event_info);
 void test_table7(void *data, Evas_Object *obj, void *event_info);
 void test_table8(void *data, Evas_Object *obj, void *event_info);
+void test_ui_grid(void *data, Evas_Object *obj, void *event_info);
+void test_ui_grid_linear(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid2(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid3(void *data, Evas_Object *obj, void *event_info);
@@ -588,6 +591,11 @@ add_tests:
    ADD_TEST(NULL, "Containers", "Layout", test_layout);
    ADD_TEST(NULL, "Containers", "Layout 2", test_layout2);
    ADD_TEST(NULL, "Containers", "Grid", test_grid);
+
+   //------------------------------//
+   ADD_TEST(NULL, "New Containers", "Ui.Box", test_ui_box);
+   ADD_TEST(NULL, "New Containers", "Ui.Grid", test_ui_grid);
+   ADD_TEST(NULL, "New Containers", "Ui.Grid Linear", test_ui_grid_linear);
 
    //------------------------------//
    ADD_TEST(NULL, "Entries", "Entry", test_entry);

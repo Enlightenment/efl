@@ -1,0 +1,45 @@
+interface Efl.Pack_Layout ()
+{
+   [[Low-level APIs for object that can lay their children out.
+
+     Used for containers (box, grid).
+   ]]
+   legacy_prefix: null;
+   eo_prefix: efl_pack;
+   methods {
+      @property layout_engine {
+         [[Implementation of this container's layout algorithm.
+
+           The default value is the same as the widget class.
+         ]]
+         set {}
+         get {}
+         values {
+            /* FIXME: engine is an Eo.Class */
+            engine: const(Eo.Base)*; [[Must be an $Efl.Pack_Layout subclass.]]
+            data: const(void)*;      [[Any data to pass along to $Efl.Pack_Layout.layout_do.
+                                       Owned by the caller. Depends on the layout engine.]]
+         }
+      }
+      layout_request {
+         [[Requests EFL to call the @.layout_update method on this object.]]
+      }
+      layout_update @protected {
+         [[Implementation of this container's layout algorithm.
+
+           EFL will call this function whenever the contents of this
+           container need to be re-layed out on the canvas.
+
+           This can be overriden to implement highly specific layout
+           behaviours.
+         ]]
+      }
+      layout_do @class @protected {
+         [[Lay out (resize and move) children objects of $pack.]]
+         params {
+            pack: Efl.Gfx.Base*; [[The container to lay out.]]
+            data: const(void)* @optional; [[Extra data passed by the caller.]]
+         }
+      }
+   }
+}
