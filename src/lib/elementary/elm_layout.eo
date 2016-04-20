@@ -61,7 +61,7 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
             style: const(char)*; [[The style to used.]]
          }
       }
-      @property text_aliases {
+      @property text_aliases @protected {
          get {
             legacy: null;
          }
@@ -69,7 +69,7 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
             aliases: const(Elm.Layout_Part_Alias_Description)*;
          }
       }
-      @property content_aliases {
+      @property content_aliases @protected {
          get {
             legacy: null;
          }

@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_LAYOUT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
