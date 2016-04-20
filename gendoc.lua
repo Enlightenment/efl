@@ -1104,7 +1104,7 @@ local write_full_doc = function(f, doc1, doc2)
         since = doc1:since_get()
     end
     if since then
-        f:write_i(since)
+        f:write_i("Since " .. since)
         f:write_nl(2)
     end
 end
