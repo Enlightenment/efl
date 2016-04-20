@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 
 #include <Elementary.h>
+#include <elm_box.eo.h>
 #include "elm_priv.h"
 #include "els_box.h"
 #include "elm_widget_box.h"

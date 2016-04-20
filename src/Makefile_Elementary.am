@@ -1,7 +1,7 @@
 
 ### Library
 
-elm_eolian_files = \
+elm_public_eolian_files = \
 	lib/elementary/elm_access.eo \
 	lib/elementary/elm_actionslider.eo \
 	lib/elementary/elm_atspi_bridge.eo \
@@ -11,7 +11,6 @@ elm_eolian_files = \
 	lib/elementary/elm_app_server_view.eo \
 	lib/elementary/elm_atspi_app_object.eo \
 	lib/elementary/elm_bg.eo \
-	lib/elementary/elm_box.eo \
 	lib/elementary/elm_bubble.eo \
 	lib/elementary/elm_button.eo \
 	lib/elementary/elm_calendar.eo \
@@ -38,7 +37,6 @@ elm_eolian_files = \
 	lib/elementary/elm_genlist_pan.eo \
 	lib/elementary/elm_gesture_layer.eo \
 	lib/elementary/elm_glview.eo \
-	lib/elementary/elm_grid.eo \
 	lib/elementary/elm_hover.eo \
 	lib/elementary/elm_hoversel.eo \
 	lib/elementary/elm_icon.eo \
@@ -91,7 +89,6 @@ elm_eolian_files = \
 	lib/elementary/elm_sys_notify.eo \
 	lib/elementary/elm_sys_notify_dbus.eo \
 	lib/elementary/elm_systray.eo \
-	lib/elementary/elm_table.eo \
 	lib/elementary/elm_thumb.eo \
 	lib/elementary/elm_toolbar.eo \
 	lib/elementary/elm_video.eo \
@@ -124,22 +121,38 @@ elm_eolian_files = \
 	lib/elementary/efl_ui_grid.eo \
 	$(NULL)
 
+# Legacy classes - not part of public EO API
+elm_legacy_eolian_files = \
+	lib/elementary/elm_box.eo \
+	lib/elementary/elm_grid.eo \
+	lib/elementary/elm_table.eo \
+	$(NULL)
+
 elm_eolian_type_files = \
 	lib/elementary/elm_general.eot
 
-elm_eolian_c = $(elm_eolian_files:%.eo=%.eo.c)
-elm_eolian_h = $(elm_eolian_files:%.eo=%.eo.h) \
-	$(elm_eolian_files:%.eo=%.eo.legacy.h) \
-	$(elm_eolian_type_files:%.eot=%.eot.h)
+elm_public_eolian_c = $(elm_public_eolian_files:%.eo=%.eo.c)
+elm_public_eolian_h = $(elm_public_eolian_files:%.eo=%.eo.h) \
+        $(elm_public_eolian_files:%.eo=%.eo.legacy.h) \
+        $(elm_eolian_type_files:%.eot=%.eot.h)
+
+elm_legacy_eolian_c = $(elm_legacy_eolian_files:%.eo=%.eo.c)
+elm_legacy_eolian_eo_h = $(elm_legacy_eolian_files:%.eo=%.eo.h)
+elm_legacy_eolian_legacy_h = $(elm_legacy_eolian_files:%.eo=%.eo.legacy.h)
 
 BUILT_SOURCES += \
-	$(elm_eolian_c) \
-	$(elm_eolian_h)
+	$(elm_public_eolian_c) \
+	$(elm_legacy_eolian_c) \
+	$(elm_public_eolian_h) \
+	$(elm_legacy_eolian_eo_h) \
+	$(elm_legacy_eolian_legacy_h)
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
-elementaryeolianfiles_DATA = $(elm_eolian_files) $(elm_eolian_type_files)
+elementaryeolianfiles_DATA = $(elm_public_eolian_files) $(elm_eolian_type_files)
 
-EXTRA_DIST += ${elementaryeolianfiles_DATA}
+noinst_DATA = $(elm_legacy_eolian_eo_h)
+
+EXTRA_DIST += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files)
 
 lib_LTLIBRARIES += lib/elementary/libelementary.la
 
@@ -226,7 +239,9 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_web.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
-nodist_includesunstable_HEADERS = $(elm_eolian_h)
+nodist_includesunstable_HEADERS = \
+	$(elm_public_eolian_h) \
+	$(elm_legacy_eolian_legacy_h)
 
 includesub_HEADERS = \
 	lib/elementary/elc_ctxpopup.h \
@@ -279,7 +294,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_bg_eo.h \
 	lib/elementary/elm_bg_legacy.h \
 	lib/elementary/elm_box.h \
-	lib/elementary/elm_box_eo.h \
 	lib/elementary/elm_box_legacy.h \
 	lib/elementary/elm_box_common.h \
 	lib/elementary/elm_bubble.h \
@@ -361,7 +375,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_glview_eo.h \
 	lib/elementary/elm_glview_legacy.h \
 	lib/elementary/elm_grid.h \
-	lib/elementary/elm_grid_eo.h \
 	lib/elementary/elm_grid_legacy.h \
 	lib/elementary/elm_hover.h \
 	lib/elementary/elm_hover_eo.h \
@@ -469,7 +482,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_systray_watcher.h \
 	lib/elementary/elm_sys_notify.h \
 	lib/elementary/elm_table.h \
-	lib/elementary/elm_table_eo.h \
 	lib/elementary/elm_table_legacy.h \
 	lib/elementary/elm_theme.h \
 	lib/elementary/elm_thumb.h \

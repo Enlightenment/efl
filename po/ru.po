@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-04-18 13:45+0200\n"
+"POT-Creation-Date: 2016-04-20 11:19+0900\n"
 "PO-Revision-Date: 2015-02-07 15:16+0300\n"
 "Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -286,11 +286,11 @@ msgstr "Назад"
 msgid "Next"
 msgstr "Вперёд"
 
-#: src/lib/elementary/elc_popup.c:300 src/lib/elementary/elc_popup.c:970
+#: src/lib/elementary/elc_popup.c:301 src/lib/elementary/elc_popup.c:971
 msgid "Popup Title"
 msgstr "Заголовок всплывающего окна"
 
-#: src/lib/elementary/elc_popup.c:310 src/lib/elementary/elc_popup.c:1046
+#: src/lib/elementary/elc_popup.c:311 src/lib/elementary/elc_popup.c:1047
 msgid "Popup Body Text"
 msgstr "Текст всплывающего окна"
 
@@ -303,10 +303,10 @@ msgid "Clicked"
 msgstr "Нажато"
 
 #: src/lib/elementary/elm_button.c:275 src/lib/elementary/elm_check.c:211
-#: src/lib/elementary/elm_gengrid.c:1242 src/lib/elementary/elm_genlist.c:1713
+#: src/lib/elementary/elm_gengrid.c:1242 src/lib/elementary/elm_genlist.c:1717
 #: src/lib/elementary/elm_list.c:2172 src/lib/elementary/elm_radio.c:215
 #: src/lib/elementary/elm_segment_control.c:527
-#: src/lib/elementary/elm_spinner.c:1010 src/lib/elementary/elm_toolbar.c:2371
+#: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2371
 msgid "State: Disabled"
 msgstr "Состояние: Отключено"
 
@@ -505,27 +505,27 @@ msgstr "Элемент сегментного элемента управлен�
 msgid "slider"
 msgstr "бегунок"
 
-#: src/lib/elementary/elm_spinner.c:1040
+#: src/lib/elementary/elm_spinner.c:1044
 msgid "incremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1046
+#: src/lib/elementary/elm_spinner.c:1050
 msgid "decremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1079 src/lib/elementary/elm_spinner.c:1146
+#: src/lib/elementary/elm_spinner.c:1083 src/lib/elementary/elm_spinner.c:1150
 msgid "spinner"
 msgstr "счётчик"
 
-#: src/lib/elementary/elm_spinner.c:1088 src/lib/elementary/elm_spinner.c:1129
+#: src/lib/elementary/elm_spinner.c:1092 src/lib/elementary/elm_spinner.c:1133
 msgid "spinner increment button"
 msgstr "кнопка увеличения счётчика"
 
-#: src/lib/elementary/elm_spinner.c:1091 src/lib/elementary/elm_spinner.c:1138
+#: src/lib/elementary/elm_spinner.c:1095 src/lib/elementary/elm_spinner.c:1142
 msgid "spinner decrement button"
 msgstr "кнопка уменьшения счётчика"
 
-#: src/lib/elementary/elm_spinner.c:1093
+#: src/lib/elementary/elm_spinner.c:1097
 #, fuzzy
 msgid "spinner text"
 msgstr "счётчик"

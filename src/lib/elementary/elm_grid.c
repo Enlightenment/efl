@@ -5,7 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 
 #include <Elementary.h>
-
+#include <elm_grid.eo.h>
 #include "elm_priv.h"
 #include "elm_widget_grid.h"
 

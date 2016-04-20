@@ -29,9 +29,6 @@
  * @{
  */
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_table_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_table_legacy.h"
 #endif

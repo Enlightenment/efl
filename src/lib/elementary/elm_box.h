@@ -73,9 +73,6 @@
  */
 
 #include "elm_box_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_box_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_box_legacy.h"
 #endif
