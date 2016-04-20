@@ -1,6 +1,5 @@
 import evas_box;
-
-type Ecore_Cb: __undefined_type;
+import ecore_types;
 
 class Elm.Box (Elm.Widget)
 {

@@ -1,4 +1,4 @@
-type @extern Ecore_Cb: __undefined_type;
+import ecore_types;
 
 class Ecore.Job (Eo.Base)
 {
