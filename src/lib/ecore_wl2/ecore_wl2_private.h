@@ -175,7 +175,8 @@ typedef struct _Ecore_Wl2_Dnd_Source
 {
    Ecore_Wl2_Input *input;
 
-   int refcount, fd, x, y;
+   int x, y;
+   Ecore_Fd_Handler *fdh;
 
    struct wl_data_offer *offer;
    struct wl_array types;

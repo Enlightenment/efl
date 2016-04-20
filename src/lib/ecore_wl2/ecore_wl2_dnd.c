@@ -182,24 +182,23 @@ _selection_data_ready_cb_free(void *data EINA_UNUSED, void *event)
 }
 
 static Eina_Bool
-_selection_data_read(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
+_selection_data_read(void *data, Ecore_Fd_Handler *fdh)
 {
    int len;
    char buffer[PATH_MAX];
-   Ecore_Wl2_Dnd_Source *source;
+   Ecore_Wl2_Dnd_Source *source = data;
    Ecore_Wl2_Event_Selection_Data_Ready *event;
    Eina_Bool ret;
 
-   source = data;
-
-   len = read(source->fd, buffer, sizeof buffer);
+   len = read(ecore_main_fd_handler_fd_get(fdh), buffer, sizeof buffer);
 
    event = calloc(1, sizeof(Ecore_Wl2_Event_Selection_Data_Ready));
    if (!event) return ECORE_CALLBACK_CANCEL;
 
    if (len <= 0)
      {
-        close(source->fd);
+        if (source->input->selection.source == source)
+          source->input->selection.source = NULL;
         _ecore_wl2_dnd_del(source);
         event->done = EINA_TRUE;
         event->data = NULL;
@@ -226,36 +225,9 @@ _selection_data_read(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
    return ret;
 }
 
-static Eina_Bool
-_selection_cb_idle(void *data)
-{
-   struct _dnd_read_ctx *ctx;
-   struct _dnd_task *task;
-   int count, i;
-
-   ctx = data;
-   count = epoll_wait(ctx->epoll_fd, ctx->ep, 1, 0);
-   for (i = 0; i < count; i++)
-     {
-        task = ctx->ep->data.ptr;
-        if (task->cb(task->data, NULL) == ECORE_CALLBACK_CANCEL)
-          {
-             free(ctx->ep);
-             free(task);
-             free(ctx);
-             return ECORE_CALLBACK_CANCEL;
-          }
-     }
-   return ECORE_CALLBACK_RENEW;
-}
-
 static void
 _selection_data_receive(Ecore_Wl2_Dnd_Source *source, const char *type)
 {
-   int epoll_fd;
-   struct epoll_event *ep = NULL;
-   struct _dnd_task *task = NULL;
-   struct _dnd_read_ctx *read_ctx = NULL;
    int p[2];
 
    if (pipe2(p, O_CLOEXEC) == -1)
@@ -264,44 +236,8 @@ _selection_data_receive(Ecore_Wl2_Dnd_Source *source, const char *type)
    wl_data_offer_receive(source->offer, type, p[1]);
    close(p[1]);
 
-   /* Due to http://trac.enlightenment.org/e/ticket/1208,
-    * use epoll and idle handler instead of ecore_main_fd_handler_add() */
-
-   ep = calloc(1, sizeof(struct epoll_event));
-   if (!ep) goto err;
-
-   task = calloc(1, sizeof(struct _dnd_task));
-   if (!task) goto err;
-
-   read_ctx = calloc(1, sizeof(struct _dnd_read_ctx));
-   if (!read_ctx) goto err;
-
-   epoll_fd  = epoll_create1(0);
-   if (epoll_fd < 0) goto err;
-
-   task->data = source;
-   task->cb = _selection_data_read;
-   ep->events = EPOLLIN;
-   ep->data.ptr = task;
-
-   if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, p[0], ep) < 0) goto err;
-
-   read_ctx->epoll_fd = epoll_fd;
-   read_ctx->ep = ep;
-
-   if (!ecore_idler_add(_selection_cb_idle, read_ctx)) goto err;
-
-   source->refcount++;
-   source->fd = p[0];
-
-   return;
-
-err:
-   if (ep) free(ep);
-   if (task) free(task);
-   if (read_ctx) free(read_ctx);
-   close(p[0]);
-   return;
+   source->fdh = ecore_main_fd_handler_file_add(p[0], ECORE_FD_READ | ECORE_FD_ERROR,
+     _selection_data_read, source, NULL, NULL);
 }
 
 void
@@ -313,7 +249,6 @@ _ecore_wl2_dnd_add(Ecore_Wl2_Input *input, struct wl_data_offer *offer)
    if (!source) return;
 
    wl_array_init(&source->types);
-   source->refcount = 1;
    source->input = input;
    source->offer = offer;
 
@@ -456,13 +391,14 @@ void
 _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source)
 {
    if (!source) return;
-   source->refcount--;
-   if (source->refcount == 0)
+   if (source->fdh)
      {
-        wl_data_offer_destroy(source->offer);
-        wl_array_release(&source->types);
-        free(source);
+        close(ecore_main_fd_handler_fd_get(source->fdh));
+        ecore_main_fd_handler_del(source->fdh);
      }
+   wl_data_offer_destroy(source->offer);
+   wl_array_release(&source->types);
+   free(source);
 }
 
 EAPI void
