@@ -2,6 +2,8 @@ type @extern Eio_Filter_Direct_Cb: __undefined_type;
 
 class Eio.Model (Eo.Base, Efl.Model.Base)
 {
+    [[Eio model class]]
+
     legacy_prefix: null;
     methods {
        children_filter_set {
