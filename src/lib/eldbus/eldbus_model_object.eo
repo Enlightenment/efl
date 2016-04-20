@@ -1,6 +1,8 @@
 import eldbus_types;
 
 class Eldbus.Model_Object (Eo.Base, Efl.Model.Base) {
+    [[Eldbus model object class]]
+
     legacy_prefix: null;
     data: Eldbus_Model_Object_Data;
     methods {
@@ -10,8 +12,8 @@ class Eldbus.Model_Object (Eo.Base, Efl.Model.Base) {
               @since 1.16]]
             params {
                 @in type: int; [[The connection type]]
-                @in address: const(char)*; [[Remote address of dbus]]
-                @in private_: bool; [[Non shared dbus connection]]
+                @in address: const(char)*; [[Remote address of DBus]]
+                @in private_: bool; [[Non shared DBus connection]]
                 @in bus: const(char)*; [[DBus Name or unique-id]]
                 @in path: const(char)*; [[DBus path]]
             }
@@ -27,26 +29,31 @@ class Eldbus.Model_Object (Eo.Base, Efl.Model.Base) {
             }
         }
     @property type {
+            [[Connection type]]
             values {
                 value: int;
             }
         }
     @property address {
+            [[Remote address of DBus]]
             values {
                 value: const(char)*;
             }
         }
     @property private {
+            [[Indicate if the DBus connection is shared or private]]
             values {
                 value: bool;
             }
         }
     @property bus {
+            [[DBus Name or unique-id]]
             values {
                 value: const(char)*;
             }
         }
     @property path {
+            [[DBus path]]
             values {
                 value: const(char)*;
             }

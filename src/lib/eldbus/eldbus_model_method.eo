@@ -1,6 +1,7 @@
 import eldbus_types;
 
 class Eldbus.Model_Method (Eldbus.Model_Arguments) {
+    [[Eldbus model method class]]
     legacy_prefix: null;
     methods {
         constructor {

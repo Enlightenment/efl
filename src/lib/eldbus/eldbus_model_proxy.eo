@@ -1,6 +1,8 @@
 import eldbus_types;
 
 class Eldbus.Model_Proxy (Eo.Base, Efl.Model.Base) {
+    [[Eldbus model proxy class]]
+
     legacy_prefix: null;
     methods {
         constructor {
@@ -13,6 +15,7 @@ class Eldbus.Model_Proxy (Eo.Base, Efl.Model.Base) {
             }
         }
     @property name {
+            [[Proxy name]]
             get {}
             values {
                 value: const(char)*;

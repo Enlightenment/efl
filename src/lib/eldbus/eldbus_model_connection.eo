@@ -1,4 +1,6 @@
 class Eldbus.Model_Connection (Eo.Base, Efl.Model.Base) {
+    [[Eldbus model connection class]]
+
     legacy_prefix: null;
     methods {
         constructor {
@@ -7,21 +9,24 @@ class Eldbus.Model_Connection (Eo.Base, Efl.Model.Base) {
               @since 1.16]]
             params {
                 @in type: int; [[The connection type]]
-                @in address: const(char)*; [[Remote address of dbus]]
+                @in address: const(char)*; [[Remote address of DBus]]
                 @in private_: bool; [[Non shared dbus connection]]
             }
         }
     @property type {
+            [[Connection type]]
             values {
                 value: int;
             }
         }
     @property address {
+            [[Remote DBus address]]
             values {
                 value: const(char)*;
             }
         }
     @property private {
+            [[Indicate if the DBus connection is shared or private]]
             values {
                 value: bool;
             }

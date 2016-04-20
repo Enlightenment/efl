@@ -1,6 +1,8 @@
 import eldbus_types;
 
 class Eldbus.Model_Arguments (Eo.Base, Efl.Model.Base) {
+    [[Eldbus model arguments class]]
+
     legacy_prefix: null;
     methods {
         constructor {
@@ -14,6 +16,7 @@ class Eldbus.Model_Arguments (Eo.Base, Efl.Model.Base) {
             }
         }
     @property name {
+            [[Name of the argument]]
             get {}
             values {
                 value: const(char)*;
