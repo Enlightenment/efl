@@ -1239,6 +1239,7 @@ modules/evas/engines/wayland_shm/evas_engine.c \
 modules/evas/engines/wayland_shm/evas_engine.h \
 modules/evas/engines/wayland_shm/evas_shm.c \
 modules/evas/engines/wayland_shm/evas_dmabuf.c \
+lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c \
 modules/evas/engines/wayland_shm/evas_outbuf.c
 if EVAS_STATIC_BUILD_WAYLAND_SHM
 lib_evas_libevas_la_SOURCES += $(WAYLAND_SHM_SOURCES)
