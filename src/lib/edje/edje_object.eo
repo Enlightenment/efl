@@ -1,6 +1,6 @@
 import edje_types;
 
-class Edje.Object (Evas.Smart_Clipped, Efl.File)
+class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
 {
    legacy_prefix: edje_object;
    eo_prefix: edje_obj;
@@ -1408,19 +1408,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @in part: const(char)*; [[The part name]]
          }
       }
-      part_unswallow {
-         [[Unswallow an object.
-
-           Causes the edje to regurgitate a previously swallowed object. :)
-
-           Note: obj_swallow will  not be deleted or hidden.
-           Note: obj_swallow may appear shown on the evas depending on its state when
-           it got unswallowed. Make sure you delete it or hide it if you do not want it to.]]
-
-         params {
-            @in obj_swallow: Evas.Object *; [[The swallowed object]]
-         }
-      }
       part_text_prediction_allow_set {
          [[Set whether the prediction is allowed or not.
 
@@ -1542,14 +1529,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            See also @.freeze()]]
 
          return: int; [[The frozen state or 0 if the object is not frozen or on error.]]
-      }
-      part_swallow_get @const {
-         [[Get the object currently swallowed by a part.]]
-
-         return: Evas.Object *; [[The swallowed object, or $null if there is none.]]
-         params {
-            @in part: const(char)*; [[The part name]]
-         }
       }
       part_text_imf_context_reset @const {
          [[Reset the input method context if needed.
@@ -2168,44 +2147,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @in part: const(char)*; [[The part name]]
          }
       }
-      part_swallow {
-         [["Swallows" an object into one of the Edje object $SWALLOW
-            parts.
-
-            Swallowing an object into an Edje object is, for a given part of
-            type $SWALLOW in the EDC group which gave life to  obj, to set
-            an external object to be controlled by  obj, being displayed
-            exactly over that part's region inside the whole Edje object's
-            viewport.
-
-            From this point on,  obj will have total control over
-            obj_swallow's geometry and visibility. For instance, if  obj is
-            visible, as in \@ref evas_object_show(), the swallowed object will be
-            visible too -- if the given $SWALLOW part it's in is also visible.
-            Other actions on  obj will also reflect on the swallowed object as
-            well (e.g. resizing, moving, raising/lowering, etc.).
-
-            Finally, all internal changes to  part, specifically, will
-            reflect on the displaying of  obj_swallow, for example state
-            changes leading to different visibility states, geometries,
-            positions, etc.
-
-            If an object has already been swallowed into this part, then it
-            will first be unswallowed (as in edje_object_part_unswallow())
-            before the new object is swallowed.
-
-            Note:  obj  won't delete the swallowed object once it is
-            deleted --  obj_swallow will get to an unparented state again.
-
-            For more details on EDC $SWALLOW parts, see \@ref edcref "syntax
-            reference".]]
-
-         return: bool;
-         params {
-            @in part: const(char)*; [[The swallow part's name]]
-            @in obj_swallow: Evas.Object *; [[The object to occupy that part]]
-         }
-      }
       @property transition_duration_factor {
          set {
               [[Set transition duration factor.
@@ -2243,6 +2184,10 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
       Efl.File.file.get;
       Efl.File.mmap.set;
       Efl.File.mmap.get;
+      Efl.Container.content.set;
+      Efl.Container.content.get;
+      Efl.Container.content_unset; /* swallow NULL */
+      Efl.Container.content_remove; /* unswallow */
    }
    events {
       recalc; [[Edje re-calculated the object.]]

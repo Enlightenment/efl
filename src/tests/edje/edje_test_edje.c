@@ -362,17 +362,48 @@ START_TEST(edje_test_swallows)
 
 
    o1 = eo_add(EDJE_OBJECT_CLASS, ly);
-   fail_if(!edje_obj_part_swallow(ly, "swallow", o1));
+   fail_if(!edje_object_part_swallow(ly, "swallow", o1));
    ck_assert_ptr_eq(eo_parent_get(o1), ly);
 
-   edje_obj_part_unswallow(ly, o1);
+   edje_object_part_unswallow(ly, o1);
    ck_assert_ptr_eq(eo_parent_get(o1), evas_common_evas_get(o1));
 
-   fail_if(!edje_obj_part_swallow(ly, "swallow", o1));
+   fail_if(!edje_object_part_swallow(ly, "swallow", o1));
    ck_assert_ptr_eq(eo_parent_get(o1), ly);
 
    o2 = eo_add(EDJE_OBJECT_CLASS, ly);
-   fail_if(!edje_obj_part_swallow(ly, "swallow", o2));
+   fail_if(!edje_object_part_swallow(ly, "swallow", o2));
+   ck_assert_ptr_eq(eo_parent_get(o2), ly);
+   /* o1 is deleted at this point. */
+   ck_assert_ptr_eq(eo_parent_get(o1), evas_common_evas_get(o1));
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
+START_TEST(edje_test_swallows_eoapi)
+{
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   Evas_Object *ly, *o1, *o2;
+
+   ly = eo_add(EDJE_OBJECT_CLASS, evas);
+   fail_unless(edje_object_file_set(ly, test_layout_get("test_swallows.edj"), "test_group"));
+
+   fail_unless(edje_object_part_exists(ly, "swallow"));
+
+
+   o1 = eo_add(EDJE_OBJECT_CLASS, ly);
+   fail_if(!efl_content_set(ly, "swallow", o1));
+   ck_assert_ptr_eq(eo_parent_get(o1), ly);
+
+   efl_content_remove(ly, o1);
+   ck_assert_ptr_eq(eo_parent_get(o1), evas_common_evas_get(o1));
+
+   fail_if(!efl_content_set(ly, "swallow", o1));
+   ck_assert_ptr_eq(eo_parent_get(o1), ly);
+
+   o2 = eo_add(EDJE_OBJECT_CLASS, ly);
+   fail_if(!efl_content_set(ly, "swallow", o2));
    ck_assert_ptr_eq(eo_parent_get(o2), ly);
    /* o1 is deleted at this point. */
    ck_assert_ptr_eq(eo_parent_get(o1), evas_common_evas_get(o1));
@@ -434,5 +465,6 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_size_class);
    tcase_add_test(tc, edje_test_color_class);
    tcase_add_test(tc, edje_test_swallows);
+   tcase_add_test(tc, edje_test_swallows_eoapi);
    tcase_add_test(tc, edje_test_box);
 }

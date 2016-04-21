@@ -353,11 +353,11 @@ video_obj_frame_resize_cb(void *data, const Eo_Event *event)
    printf("HANDLE %ix%i @ %3.3f\n", iw, ih, ratio);
    if (ratio > 0.0) iw = (ih * ratio) + 0.5;
    evas_object_size_hint_min_set(event->obj, iw, ih);
-   edje_obj_part_swallow(oe, "video_swallow", event->obj);
+   edje_object_part_swallow(oe, "video_swallow", event->obj);
    edje_obj_size_min_calc(oe, &w, &h);
    efl_gfx_size_set(oe, w, h);
-   evas_obj_size_hint_min_set(event->obj, 0, 0);
-   edje_obj_part_swallow(oe, "video_swallow", event->obj);
+   evas_object_size_hint_min_set(event->obj, 0, 0);
+   edje_object_part_swallow(oe, "video_swallow", event->obj);
 
    return EINA_TRUE;
 }
@@ -643,7 +643,7 @@ init_video_object(const char *module_filename, const char *filename)
    eo_event_callback_add(oe, EVAS_OBJECT_EVENT_FREE, _oe_free_cb, fd);
    eo_key_data_set(oe, "frame_data", fd);
    efl_file_set(oe, theme_file, reflex ? "video_controller/reflex" : "video_controller");
-   edje_obj_part_swallow(oe, "video_swallow", o);
+   edje_object_part_swallow(oe, "video_swallow", o);
 
    offset = 20 * (eina_list_count(video_objs) - 1);
    efl_gfx_position_set(oe, offset, offset);

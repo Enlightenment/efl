@@ -228,6 +228,67 @@ Edje object
  */
 EAPI Eina_Bool edje_object_mmap_set(Edje_Object *obj, const Eina_File *file, const char *group);
 
+/**
+ * @brief "Swallows" an object into one of the Edje object @c SWALLOW parts.
+ *
+ * Swallowing an object into an Edje object is, for a given part of type
+ * @c SWALLOW in the EDC group which gave life to  obj, to set an external
+ * object to be controlled by  obj, being displayed exactly over that part's
+ * region inside the whole Edje object's viewport.
+ *
+ * From this point on,  obj will have total control over obj_swallow's geometry
+ * and visibility. For instance, if  obj is visible, as in @ref
+ * evas_object_show(), the swallowed object will be visible too -- if the given
+ * @c SWALLOW part it's in is also visible. Other actions on  obj will also
+ * reflect on the swallowed object as well (e.g. resizing, moving,
+ * raising/lowering, etc.).
+ *
+ * Finally, all internal changes to  part, specifically, will reflect on the
+ * displaying of  obj_swallow, for example state changes leading to different
+ * visibility states, geometries, positions, etc.
+ *
+ * If an object has already been swallowed into this part, then it will first
+ * be unswallowed (as in edje_object_part_unswallow()) before the new object is
+ * swallowed.
+ *
+ * @note  obj  won't delete the swallowed object once it is deleted --
+ *  obj_swallow will get to an unparented state again.
+ *
+ * For more details on EDC @c SWALLOW parts, see @ref edcref "syntax
+ * reference".
+ *
+ * @param[in] obj_swallow The object to occupy that part
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_swallow(Edje_Object *obj, const char *part, Evas_Object *obj_swallow);
+
+/**
+ * @brief Get the object currently swallowed by a part.
+ *
+ * @param[in] part The part name
+ *
+ * @return The swallowed object, or @c null if there is none.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Evas_Object *edje_object_part_swallow_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Unswallow an object.
+ *
+ * Causes the edje to regurgitate a previously swallowed object. :)
+ *
+ * @note obj_swallow will  not be deleted or hidden. Note: obj_swallow may
+ * appear shown on the evas depending on its state when it got unswallowed.
+ * Make sure you delete it or hide it if you do not want it to.
+ *
+ * @param[in] obj_swallow The swallowed object
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_unswallow(Edje_Object *obj, Evas_Object *obj_swallow);
+
 
 #include "edje_object.eo.legacy.h"
 #include "edje_edit.eo.legacy.h"

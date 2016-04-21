@@ -34,6 +34,13 @@ interface Efl.Container (Efl.Gfx.Base)
          }
          return: Efl.Gfx.Base*;
       }
+      content_remove {
+         [[Unswallow an object from this container.]]
+         params {
+            @in content: Efl.Gfx.Base*;
+         }
+         return: bool; [[$false if $content was not a child or can not be removed.]]
+      }
       content_iterate {
          [[Begin iterating over this object's contents.]]
          return: free(own(iterator<Efl.Gfx.Base *> *), eina_iterator_free) @warn_unused;
