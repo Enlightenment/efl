@@ -736,18 +736,48 @@ local Buffer = Writer:clone {
 
 -- eolian to various doc elements conversions
 
+local wrap_type_attrs = function(tp, str)
+    if tp:is_const() then
+        str = "const(" .. str .. ")"
+    end
+    if tp:is_own() then
+        str = "own(" .. str .. ")"
+    end
+    local ffunc = tp:free_func_get()
+    if ffunc then
+        str = "free(" .. str .. ", " .. ffunc .. ")"
+    end
+    return str
+end
+
 local get_type_str
 get_type_str = function(tp)
     local tps = eolian.type_type
     local tpt = tp:type_get()
-    if tpt == tps.VOID then
-        return "void"
+    if tpt == tps.UNKNOWN then
+        error("unknown type: " .. tp:full_name_get())
+    elseif tpt == tps.VOID then
+        return wrap_type_attrs(tp, "void")
+    elseif tpt == tps.UNDEFINED then
+        return wrap_type_attrs(tp, "__undefined_type")
+    elseif tpt == tps.REGULAR or tpt == tps.CLASS then
+        return wrap_type_attrs(tp, tp:full_name_get())
+    elseif tpt == tps.COMPLEX then
+        local stypes = {}
+        for stp in tp:subtypes_get() do
+            stypes[#stypes + 1] = get_type_str(stp)
+        end
+        return wrap_type_attrs(tp, tp:full_name_get() .. "<"
+            .. table.concat(stypes, ", ") .. ">")
+    elseif tpt == tps.POINTER then
+        local btp = tp:base_type_get()
+        local suffix = " *"
+        if btp:type_get() == tps.POINTER then
+            suffix = "*"
+        end
+        return wrap_type_attrs(tp, get_type_str(btp) .. suffix)
     end
-    if tpt == tps.REGULAR then
-        return tp:full_name_get()
-    end
-    -- TODO
-    return tp:full_name_get()
+    error("unhandled type type: " .. tpt)
 end
 
 local gen_doc_refd = function(str)
@@ -973,7 +1003,7 @@ local get_method_sig = function(fn, cl)
         for i, fp in ipairs(params) do
             gen_func_param(fp, buf)
         end
-        buf[#buf + 1] = "    }"
+        buf[#buf + 1] = "    }\n"
     end
     buf[#buf + 1] = "}"
     return table.concat(buf)
