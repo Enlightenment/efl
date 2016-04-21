@@ -636,7 +636,7 @@ START_TEST(eo_generic_data)
    eo_key_obj_set(obj, "test1", obj2);
    objtmp = eo_key_obj_get(obj, "test1");
    fail_if(obj2 != objtmp);
-   eo_key_obj_del(obj, "test1");
+   eo_key_del(obj, "test1");
    objtmp = eo_key_obj_get(obj, "test1");
    fail_if(objtmp);
 
@@ -649,13 +649,13 @@ START_TEST(eo_generic_data)
 
    data = eo_key_obj_get(obj, "test2");
    fail_if(obj3 != objtmp);
-   eo_key_obj_del(obj, "test2");
+   eo_key_del(obj, "test2");
    objtmp = eo_key_obj_get(obj, "test2");
    fail_if(objtmp);
 
    objtmp = eo_key_obj_get(obj, "test1");
    fail_if(obj2 != objtmp);
-   eo_key_obj_del(obj, "test1");
+   eo_key_del(obj, "test1");
    objtmp = eo_key_obj_get(obj, "test1");
    fail_if(objtmp);
 
@@ -668,7 +668,7 @@ START_TEST(eo_generic_data)
    value2 = eo_key_value_get(obj, "value1");
    fail_if(value != value2);
 
-   eo_key_value_del(obj, "value1");
+   eo_key_del(obj, "value1");
    value2 = eo_key_value_get(obj, "value1");
    fail_if(value2 != NULL);
    eo_key_del(obj, "value1");
