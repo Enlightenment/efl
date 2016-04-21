@@ -3421,14 +3421,23 @@ _wl_drops_accept(const char *type)
                    break;
                 case ELM_SEL_FORMAT_NONE:
                    break;
-                case ELM_SEL_FORMAT_TEXT:
-                   break;
                 case ELM_SEL_FORMAT_MARKUP:
-                   break;
+                case ELM_SEL_FORMAT_TEXT:
+                  if (eina_streq(type, "application/x-elementary-markup") ||
+                      eina_streq(type, "text/plain") ||
+                      eina_streq(type, "text/plain;charset=utf-8") ||
+                      eina_streq(type, "UTF8_STRING") ||
+                      eina_streq(type, "STRING") ||
+                      eina_streq(type, "TEXT"))
+                    return EINA_TRUE;
+                  break;
                 case ELM_SEL_FORMAT_VCARD:
                    break;
                 case ELM_SEL_FORMAT_HTML:
-                   break;
+                  if (eina_streq(type, "text/html") ||
+                      eina_streq(type, "text/html;charset=utf-8"))
+                    return EINA_TRUE;
+                  break;
                }
           }
      }
