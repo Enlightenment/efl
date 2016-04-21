@@ -246,6 +246,7 @@ EAPI void ecore_timer_thaw(Ecore_Timer *timer);
  *
  * @{
  */
+
 /**
  * Add an idler handler.
  * @param  func The function to call when idling.
@@ -320,8 +321,6 @@ EAPI Ecore_Idle_Exiter *ecore_idle_exiter_add(Ecore_Task_Cb func, const void *da
  *         successful.  NULL otherwise.
  */
 EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
-
-#include "ecore_idler.eo.legacy.h"
 
 /**
  * @}

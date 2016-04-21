@@ -52,7 +52,10 @@ class Ecore_Mainloop (Eo.Base)
    events {
       idle,enter @restart; [[Event occurs once the main loop enters the idle state.]]
       idle,exit @restart; [[Event occurs once the main loop exits the idle state.]]
-      idle @restart; /* FIXME: We need to make sure we can get it work. */
+      idle @restart; [[Event occurs once the main loop is idler. Be carefull, this will spin your CPU high if you keep listening on this event.]]
       /* TODO: All of the legacy ecore events. (Ecore.h header) */
+   }
+   implements {
+      Eo.Base.constructor;
    }
 }

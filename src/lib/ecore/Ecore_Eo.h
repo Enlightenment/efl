@@ -47,7 +47,6 @@ extern "C" {
  * @{
  */
 
-#include "ecore_idler.eo.h"
 #include "ecore_idle_exiter.eo.h"
 #include "ecore_idle_enterer.eo.h"
 

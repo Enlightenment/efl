@@ -402,7 +402,6 @@ ecore_shutdown(void)
 #endif
      _ecore_idle_enterer_shutdown();
      _ecore_idle_exiter_shutdown();
-     _ecore_idler_shutdown();
      _ecore_timer_shutdown();
      _ecore_event_shutdown();
      _ecore_main_shutdown();

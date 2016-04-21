@@ -722,7 +722,7 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
    if (g_main_loop_is_running(ecore_main_loop))
      {
         /* only set idling state in dispatch */
-         if (ecore_idling && !_ecore_idler_exist() && !_ecore_event_exist())
+         if (ecore_idling && !_ecore_idler_exist(_mainloop_singleton) && !_ecore_event_exist())
            {
               if (_ecore_timers_exists())
                 {
@@ -791,7 +791,7 @@ _ecore_main_gsource_check(GSource *source EINA_UNUSED)
    in_main_loop++;
 
    /* check if old timers expired */
-   if (ecore_idling && !_ecore_idler_exist() && !_ecore_event_exist())
+   if (ecore_idling && !_ecore_idler_exist(_mainloop_singleton) && !_ecore_event_exist())
      {
         if (timer_fd >= 0)
           {
@@ -846,7 +846,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
 
    events_ready = _ecore_event_exist();
    timers_ready = _ecore_timers_exists() && (0.0 == next_time);
-   idlers_ready = _ecore_idler_exist();
+   idlers_ready = _ecore_idler_exist(_mainloop_singleton);
 
    in_main_loop++;
    DBG("enter idling=%d fds=%d events=%d timers=%d (next=%.2f) idlers=%d",
@@ -866,7 +866,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
 
    if (ecore_idling)
      {
-        _ecore_idler_all_call();
+        _ecore_idler_all_call(_mainloop_singleton);
 
         events_ready = _ecore_event_exist();
 
@@ -2091,9 +2091,9 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
    double t = -1;
    if(_ecore_main_uv_idling)
      {
-       _ecore_idler_all_call();
+       _ecore_idler_all_call(_mainloop_singleton);
        DBG("called idles");
-       if(_ecore_idler_exist() || _ecore_event_exist())
+       if(_ecore_idler_exist(_mainloop_singleton) || _ecore_event_exist())
          t = 0.0;
      }
 
@@ -2159,8 +2159,10 @@ _ecore_main_loop_spin_core(void)
 {
    /* as we are spinning we need to update loop time per spin */
     _ecore_time_loop_time = ecore_time_get();
-    /* call all idlers, which returns false if no more idelrs exist */
-    if (!_ecore_idler_all_call()) return SPIN_RESTART;
+    /* call all idlers */
+    _ecore_idler_all_call(_mainloop_singleton);
+    /* which returns false if no more idelrs exist */
+    if (!_ecore_idler_exist(_mainloop_singleton)) return SPIN_RESTART;
     /* sneaky - drop through or if checks - the first one to succeed
      * drops through and returns "continue" so further ones dont run */
     if ((_ecore_main_select(0.0) > 0) || (_ecore_event_exist()) ||
@@ -2305,7 +2307,7 @@ start_loop: /*-*************************************************************/
         /* init flags */
         next_time = _ecore_timer_next_get();
         /* no idlers */
-        if (!_ecore_idler_exist())
+        if (!_ecore_idler_exist(_mainloop_singleton))
           {
              /* sleep until timeout or forever (-1.0) waiting for on fds */
              _ecore_main_select(next_time);
@@ -2762,6 +2764,55 @@ EOLIAN static Eina_Bool
 _ecore_mainloop_animator_ticked(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED)
 {
    return ecore_main_loop_animator_ticked_get();
+}
+
+static Eina_Bool
+_check_event_catcher_add(void *data, const Eo_Event *event)
+{
+   const Eo_Callback_Array_Item *array = event->info;
+   Ecore_Mainloop_Data *pd = data;
+   int i;
+
+   for (i = 0; array[i].desc != NULL; i++)
+     {
+        if (array[i].desc == ECORE_MAINLOOP_EVENT_IDLE)
+          {
+             ++pd->idlers;
+          }
+     }
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_check_event_catcher_del(void *data, const Eo_Event *event)
+{
+   const Eo_Callback_Array_Item *array = event->info;
+   Ecore_Mainloop_Data *pd = data;
+   int i;
+
+   for (i = 0; array[i].desc != NULL; i++)
+     {
+        if (array[i].desc == ECORE_MAINLOOP_EVENT_IDLE)
+          {
+             --pd->idlers;
+          }
+     }
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+EO_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
+                          { EO_BASE_EVENT_CALLBACK_ADD, _check_event_catcher_add },
+                          { EO_BASE_EVENT_CALLBACK_DEL, _check_event_catcher_del });
+
+EOLIAN static Eo_Base *
+_ecore_mainloop_eo_base_constructor(Eo *obj, Ecore_Mainloop_Data *pd)
+{
+   eo_constructor(eo_super(obj, ECORE_MAINLOOP_CLASS));
+   eo_event_callback_array_add(obj, event_catcher_watch(), pd);
+
+   return obj;
 }
 
 #include "ecore_mainloop.eo.c"

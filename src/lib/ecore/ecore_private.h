@@ -85,6 +85,12 @@ extern int _ecore_log_dom;
 # define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 #endif
 
+typedef struct _Ecore_Mainloop_Data Ecore_Mainloop_Data;
+struct _Ecore_Mainloop_Data
+{
+   int idlers;
+};
+
 #define EVAS_FRAME_QUEUING        1 /* for test */
 
 #define READBUFSIZ                65536
@@ -165,9 +171,8 @@ int          _ecore_timers_exists(void);
 
 int          _ecore_timer_expired_call(double when);
 
-void         _ecore_idler_shutdown(void);
-int          _ecore_idler_all_call(void);
-int          _ecore_idler_exist(void);
+void         _ecore_idler_all_call(Eo *loop);
+int          _ecore_idler_exist(Eo *loop);
 
 void         _ecore_idle_enterer_shutdown(void);
 void         _ecore_idle_enterer_call(void);
