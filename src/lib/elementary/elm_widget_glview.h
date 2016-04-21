@@ -43,8 +43,7 @@ struct _Elm_Glview_Data
    Elm_GLView_Func_Cb       resize_func;
    Elm_GLView_Func_Cb       render_func;
 
-   Ecore_Idle_Enterer      *render_idle_enterer;
-
+   Eina_Bool                render_idle_enterer : 1;
    Eina_Bool                initialized : 1;
    Eina_Bool                resized : 1;
    Eina_Bool                warned_about_dr : 1;

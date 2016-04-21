@@ -110,7 +110,7 @@ _elm_glview_evas_object_smart_resize(Eo *obj, Elm_Glview_Data *sd, Evas_Coord w,
 }
 
 static Eina_Bool
-_render_cb(void *obj)
+_render_cb(void *obj, const Eo_Event *event EINA_UNUSED)
 {
    ELM_GLVIEW_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -120,9 +120,8 @@ _render_cb(void *obj)
    // Do a make current
    if (!evas_gl_make_current(sd->evasgl, sd->surface, sd->context))
      {
-        sd->render_idle_enterer = NULL;
         ERR("Failed doing make current.\n");
-        return EINA_FALSE;
+        goto on_error;
      }
 
    // Call the init function if it hasn't been called already
@@ -151,21 +150,29 @@ _render_cb(void *obj)
 
    // Depending on the policy return true or false
    if (sd->render_policy == ELM_GLVIEW_RENDER_POLICY_ON_DEMAND)
-     return EINA_TRUE;
+     {
+        return EINA_TRUE;
+     }
    else if (sd->render_policy == ELM_GLVIEW_RENDER_POLICY_ALWAYS)
      {
         // Return false so it only runs once
-        sd->render_idle_enterer = NULL;
-        return EINA_FALSE;
+        goto on_error;
      }
    else
      {
         ERR("Invalid Render Policy.\n");
-        sd->render_idle_enterer = NULL;
-        return EINA_FALSE;
+        goto on_error;
      }
 
    return EINA_TRUE;
+
+ on_error:
+   eo_event_callback_del(ecore_main_loop_get(),
+                         EFL_LOOP_EVENT_IDLE_ENTER,
+                         _render_cb,
+                         obj);
+   sd->render_idle_enterer = 0;
+   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -178,9 +185,13 @@ _set_render_policy_callback(Evas_Object *obj)
      {
       case ELM_GLVIEW_RENDER_POLICY_ON_DEMAND:
          if (sd->render_idle_enterer)
-              evas_object_image_pixels_dirty_set(wd->resize_obj, EINA_TRUE);
+           evas_object_image_pixels_dirty_set(wd->resize_obj, EINA_TRUE);
          // Delete idle_enterer if it for some reason is around
-         ELM_SAFE_FREE(sd->render_idle_enterer, ecore_idle_enterer_del);
+         eo_event_callback_del(ecore_main_loop_get(),
+                               EFL_LOOP_EVENT_IDLE_ENTER,
+                               _render_cb,
+                               obj);
+         sd->render_idle_enterer = 0;
 
         // Set pixel getter callback
         evas_object_image_pixels_get_callback_set
@@ -191,7 +202,11 @@ _set_render_policy_callback(Evas_Object *obj)
 
       case ELM_GLVIEW_RENDER_POLICY_ALWAYS:
         if (evas_object_image_pixels_dirty_get(wd->resize_obj))
-          sd->render_idle_enterer = ecore_idle_enterer_before_add((Ecore_Task_Cb)_render_cb, obj);
+          sd->render_idle_enterer = eo_event_callback_priority_add(ecore_main_loop_get(),
+                                                                   EFL_LOOP_EVENT_IDLE_ENTER,
+                                                                   EO_CALLBACK_PRIORITY_BEFORE,
+                                                                   _render_cb,
+                                                                   obj);
         // Unset the pixel getter callback if set already
         evas_object_image_pixels_get_callback_set
           (wd->resize_obj, NULL, NULL);
@@ -285,7 +300,10 @@ _elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
    //TODO:will be optimised
    eo_event_callback_call(obj, ELM_GLVIEW_EVENT_DESTROYED, NULL);
 
-   ecore_idle_enterer_del(sd->render_idle_enterer);
+   eo_event_callback_del(ecore_main_loop_get(),
+                         EFL_LOOP_EVENT_IDLE_ENTER,
+                         _render_cb,
+                         obj);
    evas_gl_make_current(sd->evasgl, NULL, NULL);
 
    if (sd->surface)
@@ -517,8 +535,10 @@ _elm_glview_draw_request(Eo *obj, Elm_Glview_Data *sd)
      (wd->resize_obj, EINA_TRUE);
    if (sd->render_policy == ELM_GLVIEW_RENDER_POLICY_ALWAYS &&
        !sd->render_idle_enterer)
-     sd->render_idle_enterer =
-       ecore_idle_enterer_before_add((Ecore_Task_Cb)_render_cb, obj);
+     sd->render_idle_enterer = eo_event_callback_priority_add(ecore_main_loop_get(),
+                                                              EFL_LOOP_EVENT_IDLE_ENTER,
+                                                              EO_CALLBACK_PRIORITY_BEFORE,
+                                                              _render_cb, obj);
 }
 
 EOLIAN static Evas_GL *
