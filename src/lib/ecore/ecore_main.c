@@ -1160,7 +1160,7 @@ _ecore_main_loop_init(void)
 
    detect_time_changes_start();
 
-   _mainloop_singleton = eo_add(ECORE_MAINLOOP_CLASS, NULL);
+   _mainloop_singleton = eo_add(EFL_LOOP_CLASS, NULL);
 }
 
 void
@@ -2719,31 +2719,31 @@ EAPI Eo *ecore_main_loop_get(void)
 {
    if (!_mainloop_singleton)
      {
-        _mainloop_singleton = eo_add(ECORE_MAINLOOP_CLASS, NULL);
+        _mainloop_singleton = eo_add(EFL_LOOP_CLASS, NULL);
      }
 
    return _mainloop_singleton;
 }
 
 EOLIAN static void
-_ecore_mainloop_iterate(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED)
+_efl_loop_iterate(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
 {
    ecore_main_loop_iterate();
 }
 
-EOLIAN static int _ecore_mainloop_iterate_may_block(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED, int may_block)
+EOLIAN static int _efl_loop_iterate_may_block(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, int may_block)
 {
    return ecore_main_loop_iterate_may_block(may_block);
 }
 
 EOLIAN static void
-_ecore_mainloop_begin(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED)
+_efl_loop_begin(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
 {
    ecore_main_loop_begin();
 }
 
 EOLIAN static void
-_ecore_mainloop_quit(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED)
+_efl_loop_quit(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
@@ -2752,12 +2752,12 @@ static Eina_Bool
 _check_event_catcher_add(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *array = event->info;
-   Ecore_Mainloop_Data *pd = data;
+   Efl_Loop_Data *pd = data;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (array[i].desc == ECORE_MAINLOOP_EVENT_IDLE)
+        if (array[i].desc == EFL_LOOP_EVENT_IDLE)
           {
              ++pd->idlers;
           }
@@ -2770,12 +2770,12 @@ static Eina_Bool
 _check_event_catcher_del(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *array = event->info;
-   Ecore_Mainloop_Data *pd = data;
+   Efl_Loop_Data *pd = data;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (array[i].desc == ECORE_MAINLOOP_EVENT_IDLE)
+        if (array[i].desc == EFL_LOOP_EVENT_IDLE)
           {
              --pd->idlers;
           }
@@ -2789,12 +2789,12 @@ EO_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
                           { EO_BASE_EVENT_CALLBACK_DEL, _check_event_catcher_del });
 
 EOLIAN static Eo_Base *
-_ecore_mainloop_eo_base_constructor(Eo *obj, Ecore_Mainloop_Data *pd)
+_efl_loop_eo_base_constructor(Eo *obj, Efl_Loop_Data *pd)
 {
-   eo_constructor(eo_super(obj, ECORE_MAINLOOP_CLASS));
+   eo_constructor(eo_super(obj, EFL_LOOP_CLASS));
    eo_event_callback_array_add(obj, event_catcher_watch(), pd);
 
    return obj;
 }
 
-#include "ecore_mainloop.eo.c"
+#include "efl_loop.eo.c"

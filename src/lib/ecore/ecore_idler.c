@@ -84,7 +84,7 @@ _ecore_factorized_idle_add(const Eo_Callback_Array_Item *desc,
 /* Specific to Ecore_Idler implementation */
 
 EO_CALLBACKS_ARRAY_DEFINE(ecore_idler_callbacks,
-                          { ECORE_MAINLOOP_EVENT_IDLE, _ecore_factorized_idle_process },
+                          { EFL_LOOP_EVENT_IDLE, _ecore_factorized_idle_process },
                           { EO_BASE_EVENT_DEL, _ecore_factorized_idle_event_del });
 
 EAPI Ecore_Idler *
@@ -103,13 +103,13 @@ ecore_idler_del(Ecore_Idler *idler)
 void
 _ecore_idler_all_call(Eo *loop)
 {
-   eo_event_callback_call(loop, ECORE_MAINLOOP_EVENT_IDLE, NULL);
+   eo_event_callback_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
 }
 
 int
 _ecore_idler_exist(Eo *loop)
 {
-   Ecore_Mainloop_Data *dt = eo_data_scope_get(loop, ECORE_MAINLOOP_CLASS);
+   Efl_Loop_Data *dt = eo_data_scope_get(loop, EFL_LOOP_CLASS);
 
    return dt->idlers;
 }

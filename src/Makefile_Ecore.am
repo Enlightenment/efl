@@ -10,7 +10,7 @@ ecore_eolian_files_legacy = \
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_legacy) \
-	lib/ecore/ecore_mainloop.eo \
+	lib/ecore/efl_loop.eo \
 	lib/ecore/ecore_parent.eo
 
 ecore_eolian_type_files = \

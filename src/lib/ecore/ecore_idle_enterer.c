@@ -10,7 +10,7 @@
 #include "ecore_private.h"
 
 EO_CALLBACKS_ARRAY_DEFINE(ecore_idle_enterer_callbacks,
-                          { ECORE_MAINLOOP_EVENT_IDLE_ENTER, _ecore_factorized_idle_process },
+                          { EFL_LOOP_EVENT_IDLE_ENTER, _ecore_factorized_idle_process },
                           { EO_BASE_EVENT_DEL, _ecore_factorized_idle_event_del });
 
 
@@ -45,5 +45,5 @@ ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)
 void
 _ecore_idle_enterer_call(Eo *loop)
 {
-   eo_event_callback_call(loop, ECORE_MAINLOOP_EVENT_IDLE_ENTER, NULL);
+   eo_event_callback_call(loop, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
 }
