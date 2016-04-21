@@ -305,7 +305,6 @@ EDJE_TEST_FILES = tests/edje/data/test_layout.edj \
 
 noinst_DATA += $(EDJE_TEST_FILES)
 CLEANFILES += $(EDJE_TEST_FILES)
-BUILT_SOURCES += $(EDJE_TEST_FILES)
 
 endif
 
