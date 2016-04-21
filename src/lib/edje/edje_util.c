@@ -3800,66 +3800,78 @@ edje_box_layout_register(const char *name, Evas_Object_Box_Layout func, void *(*
      }
 }
 
-EOLIAN void
-_edje_object_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swallow)
+static Edje_Real_Part *
+_swallow_real_part_get(Evas_Object *obj_swallow)
 {
    Edje_Real_Part *rp;
 
-   if (!obj_swallow) return;
+   if (!obj_swallow)
+     return NULL;
 
    rp = (Edje_Real_Part *)evas_object_data_get(obj_swallow, "\377 edje.swallowing_part");
    if (!rp)
-     return;
+     return NULL;
    if (rp->part->type != EDJE_PART_TYPE_SWALLOW)
      {
-        ERR("cannot unswallow part %s: not swallow type!", rp->part->name);
-        return;
+        ERR("part %s is not a swallow type!", rp->part->name);
+        return NULL;
      }
 
-   if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-       (!rp->typedata.swallow)) return;
+   if ((rp->type != EDJE_RP_TYPE_SWALLOW) || (!rp->typedata.swallow))
+     return NULL;
 
    if (rp->typedata.swallow->swallowed_object == obj_swallow)
+     return rp;
+
+   return NULL;
+}
+
+EOLIAN Eina_Bool
+_edje_object_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swallow)
+{
+   Edje_Real_Part *rp;
+   Edje_User_Defined *eud;
+   Eina_List *l;
+
+   rp = _swallow_real_part_get(obj_swallow);
+   if (!rp) return EINA_FALSE;
+
+   if (obj)
      {
-        Edje_User_Defined *eud;
-        Eina_List *l;
-
-        if (obj)
+        if (!ed && obj)
           {
-             if (!ed && obj)
-               {
-                  ERR("edje_object_part_unswallow called on a non Edje object ('%s').",
-                      evas_object_type_get(obj));
-                  return;
-               }
-             else
-               {
-                  EINA_LIST_FOREACH(ed->user_defined, l, eud)
-                    if (eud->type == EDJE_USER_SWALLOW && eud->u.swallow.child == obj_swallow)
-                      {
-                         _edje_user_definition_free(eud);
-                         return;
-                      }
-               }
+             ERR("edje_object_part_unswallow called on a non Edje object ('%s').",
+                 evas_object_type_get(obj));
+             return EINA_FALSE;
           }
-
-        _edje_real_part_swallow_clear(ed, rp);
-        rp->typedata.swallow->swallowed_object = NULL;
-        rp->typedata.swallow->swallow_params.min.w = 0;
-        rp->typedata.swallow->swallow_params.min.h = 0;
-        rp->typedata.swallow->swallow_params.max.w = 0;
-        rp->typedata.swallow->swallow_params.max.h = 0;
-        ed->dirty = EINA_TRUE;
-        ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-        rp->invalidate = EINA_TRUE;
-#endif
-        /* this seems to be as unnecessary as the calc in part_swallow()
-         * -zmike, 6 April 2015
-         */
-        //_edje_recalc_do(ed);
-        return;
+        else
+          {
+             EINA_LIST_FOREACH(ed->user_defined, l, eud)
+               if (eud->type == EDJE_USER_SWALLOW && eud->u.swallow.child == obj_swallow)
+                 {
+                    _edje_user_definition_free(eud);
+                    return EINA_FALSE;
+                 }
+          }
      }
+
+   _edje_real_part_swallow_clear(ed, rp);
+   rp->typedata.swallow->swallowed_object = NULL;
+   rp->typedata.swallow->swallow_params.min.w = 0;
+   rp->typedata.swallow->swallow_params.min.h = 0;
+   rp->typedata.swallow->swallow_params.max.w = 0;
+   rp->typedata.swallow->swallow_params.max.h = 0;
+   ed->dirty = EINA_TRUE;
+   ed->recalc_call = EINA_TRUE;
+#ifdef EDJE_CALC_CACHE
+   rp->invalidate = EINA_TRUE;
+#endif
+   /* this seems to be as unnecessary as the calc in part_swallow()
+    * -zmike, 6 April 2015
+    */
+   //_edje_recalc_do(ed);
+
+   return EINA_TRUE;
 }
 
 EOLIAN Efl_Gfx_Base *
@@ -3880,15 +3892,31 @@ _edje_object_efl_container_content_get(Eo *obj EINA_UNUSED, Edje *ed, const char
    return rp->typedata.swallow->swallowed_object;
 }
 
-EOLIAN Eina_Bool
+/* new in eo */
+EOLIAN Efl_Gfx_Base *
 _edje_object_efl_container_content_unset(Eo *obj, Edje *ed EINA_UNUSED, const char *part)
 {
    Efl_Gfx_Base *content;
 
    content = efl_content_get(obj, part);
-   if (!content) return EINA_TRUE;
+   if (!content) return NULL;
 
-   return efl_content_remove(obj, content);
+   if (efl_content_remove(obj, content))
+     return content;
+
+   return NULL;
+}
+
+/* new in eo */
+EOLIAN const char *
+_edje_object_efl_container_content_part_name_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED, Efl_Gfx_Base *content)
+{
+   Edje_Real_Part *rp;
+
+   rp = _swallow_real_part_get(content);
+   if (!rp) return NULL;
+
+   return rp->part->name;
 }
 
 EOLIAN void

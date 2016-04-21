@@ -2186,8 +2186,9 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
       Efl.File.mmap.get;
       Efl.Container.content.set;
       Efl.Container.content.get;
-      Efl.Container.content_unset; /* swallow NULL */
-      Efl.Container.content_remove; /* unswallow */
+      Efl.Container.content_unset;
+      Efl.Container.content_remove;
+      Efl.Container.content_part_name.get;
    }
    events {
       recalc; [[Edje re-calculated the object.]]
