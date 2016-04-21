@@ -1,5 +1,3 @@
-type @extern Ecore_Select_Function: __undefined_type;
-
 class Ecore_Mainloop (Eo.Base)
 {
    [[The Ecore Main Loop
@@ -13,17 +11,6 @@ class Ecore_Mainloop (Eo.Base)
    ]]
    legacy_prefix: null;
    methods {
-      @property select_func {
-         [[Function to use when monitoring multiple file descriptors.]]
-         set {
-         }
-         get {
-         }
-         values {
-            select_func: Ecore_Select_Function;
-            [[This function will be used instead of the system call select.]]
-         }
-      }
       iterate {
          [[Runs a single iteration of the main loop to process everything on the
          queue.]]
