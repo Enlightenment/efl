@@ -912,7 +912,7 @@ EAPI Eina_Bool ecore_drm_output_backlight_get(Ecore_Drm_Output *output);
 /**
  * Get the edid of a given output
  *
- * @param output The Ecore_Drm_Output to get the backlight of
+ * @param output The Ecore_Drm_Output to get the edid of
  *
  * @return A string representing the edid
  *
