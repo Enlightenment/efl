@@ -3033,7 +3033,7 @@ EAPI char *ecore_timer_dump(void);
 /*
  * @since 1.8
  */
-typedef struct _Ecore_Idler Ecore_Idler; /**< A handle for idlers */
+typedef struct _Ecore_Factorized_Idle Ecore_Idler; /**< A handle for idlers */
 
 /*
  * @since 1.8

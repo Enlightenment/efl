@@ -85,6 +85,8 @@ extern int _ecore_log_dom;
 # define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 #endif
 
+typedef struct _Ecore_Factorized_Idle Ecore_Factorized_Idle;
+
 typedef struct _Ecore_Mainloop_Data Ecore_Mainloop_Data;
 struct _Ecore_Mainloop_Data
 {
@@ -170,6 +172,13 @@ void         _ecore_timer_expired_timers_call(double when);
 int          _ecore_timers_exists(void);
 
 int          _ecore_timer_expired_call(double when);
+
+Ecore_Factorized_Idle *_ecore_factorized_idle_add(const Eo_Callback_Array_Item*desc,
+                                                  Ecore_Task_Cb func,
+                                                  const void   *data);
+void        *_ecore_factorized_idle_del(Ecore_Idler *idler);
+Eina_Bool    _ecore_factorized_idle_process(void *data, const Eo_Event *event);
+Eina_Bool    _ecore_factorized_idle_event_del(void *data, const Eo_Event *event);
 
 void         _ecore_idler_all_call(Eo *loop);
 int          _ecore_idler_exist(Eo *loop);

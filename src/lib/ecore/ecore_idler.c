@@ -9,56 +9,54 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-struct _Ecore_Idler
+struct _Ecore_Factorized_Idle
 {
    Ecore_Task_Cb func;
    void         *data;
+
+   const Eo_Callback_Array_Item *desc;
 };
 
-static void *_ecore_idler_del(Ecore_Idler *idler);
-
-static Eina_Bool
-_ecore_idler_event_del(void *data, const Eo_Event *event EINA_UNUSED)
+Eina_Bool
+_ecore_factorized_idle_event_del(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   _ecore_idler_del(data);
+   _ecore_factorized_idle_del(data);
 
    return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
-_ecore_idler_process(void *data, const Eo_Event *event EINA_UNUSED)
+Eina_Bool
+_ecore_factorized_idle_process(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   Ecore_Idler *idler = data;
+   Ecore_Factorized_Idle *idler = data;
 
    if (!_ecore_call_task_cb(idler->func, idler->data))
-     _ecore_idler_del(idler);
+     _ecore_factorized_idle_del(idler);
 
    return EO_CALLBACK_CONTINUE;
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(ecore_idler_callbacks,
-                          { ECORE_MAINLOOP_EVENT_IDLE, _ecore_idler_process },
-                          { EO_BASE_EVENT_DEL, _ecore_idler_event_del });
-
-static void *
-_ecore_idler_del(Ecore_Idler *idler)
+void *
+_ecore_factorized_idle_del(Ecore_Idler *idler)
 {
    void *data;
 
    if (!idler) return NULL;
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
-   eo_event_callback_array_del(_mainloop_singleton, ecore_idler_callbacks(), idler);
+   eo_event_callback_array_del(_mainloop_singleton, idler->desc, idler);
 
    data = idler->data;
    free(idler);
    return data;
 }
 
-EAPI Ecore_Idler *
-ecore_idler_add(Ecore_Task_Cb func,
-                const void   *data)
+Ecore_Factorized_Idle *
+_ecore_factorized_idle_add(const Eo_Callback_Array_Item *desc,
+                           Ecore_Task_Cb func,
+                           const void   *data)
 {
-   Ecore_Idler *ret;
+   Ecore_Factorized_Idle *ret;
 
    if (EINA_UNLIKELY(!eina_main_loop_is()))
      {
@@ -76,19 +74,30 @@ ecore_idler_add(Ecore_Task_Cb func,
 
    ret->func = func;
    ret->data = (void*) data;
+   ret->desc = desc;
 
-   eo_event_callback_array_add(_mainloop_singleton, ecore_idler_callbacks(), ret);
+   eo_event_callback_array_add(_mainloop_singleton, desc, ret);
 
    return ret;
+}
+
+/* Specific to Ecore_Idler implementation */
+
+EO_CALLBACKS_ARRAY_DEFINE(ecore_idler_callbacks,
+                          { ECORE_MAINLOOP_EVENT_IDLE, _ecore_factorized_idle_process },
+                          { EO_BASE_EVENT_DEL, _ecore_factorized_idle_event_del });
+
+EAPI Ecore_Idler *
+ecore_idler_add(Ecore_Task_Cb func,
+                const void   *data)
+{
+   return _ecore_factorized_idle_add(ecore_idler_callbacks(), func, data);
 }
 
 EAPI void *
 ecore_idler_del(Ecore_Idler *idler)
 {
-   if (!idler) return NULL;
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-
-   return _ecore_idler_del(idler);
+   return _ecore_factorized_idle_del(idler);
 }
 
 void
