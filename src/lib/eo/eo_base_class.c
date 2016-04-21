@@ -682,6 +682,14 @@ _eo_base_finalized_get(Eo *obj_id, Eo_Base_Data *pd EINA_UNUSED)
    return obj->finalized;
 }
 
+// XXX: this should be Efl_Loop *;
+EOLIAN static Eo_Base *
+_eo_base_loop_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+{
+   if (!pd->parent) return eo_loop_get(pd->parent);
+   return NULL;
+}
+
 /* Children accessor */
 typedef struct _Eo_Children_Iterator Eo_Children_Iterator;
 struct _Eo_Children_Iterator

@@ -1139,6 +1139,23 @@ START_TEST(eo_comment)
 }
 END_TEST
 
+START_TEST(eo_loop)
+{
+   eo_init();
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
+   Eo *objtmp;
+
+   eo_parent_set(obj2, obj);
+   objtmp = eo_loop_get(obj2);
+   fail_if(NULL != objtmp);
+
+   eo_del(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
@@ -1159,4 +1176,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_del_intercept);
    tcase_add_test(tc, eo_name);
    tcase_add_test(tc, eo_comment);
+   tcase_add_test(tc, eo_loop);
 }

@@ -137,6 +137,24 @@ abstract Eo.Base ()
             finalized: bool;
          }
       }
+      @property loop {
+         [[The owning loop object.
+
+           Objects that have anything to do with I/O, time based events
+           or anything async should have an owining loop. They will ask
+           their parent for the owning loop and iterate until the
+           toplevel/root object. The root object should be a loop object
+           which will return itself. Some objects may shortcut this
+           and be fixed to live in only a single loop. Either way all
+           you need to do is get the loop for an object and use that
+           for I/O, timing etc. needs.
+         ]]
+         get {
+         }
+         values {
+            obj: Eo.Base *; [[ XXX: this should be Efl.Loop *; ]]
+         }
+      }
       constructor {
          [[Call the object's constructor.
 
