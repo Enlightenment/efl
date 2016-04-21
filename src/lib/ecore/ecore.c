@@ -361,6 +361,9 @@ ecore_shutdown(void)
        }
 #endif
 
+     eo_del(_mainloop_singleton);
+     _mainloop_singleton = NULL;
+
      if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
      _ecore_poller_shutdown();
      _ecore_animator_shutdown();

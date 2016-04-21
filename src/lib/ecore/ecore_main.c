@@ -1159,6 +1159,8 @@ _ecore_main_loop_init(void)
 #endif
 
    detect_time_changes_start();
+
+   _mainloop_singleton = eo_add(ECORE_MAINLOOP_CLASS, NULL);
 }
 
 void
@@ -2709,7 +2711,7 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
 
 #endif
 
-static Eo *_mainloop_singleton = NULL;
+Eo *_mainloop_singleton = NULL;
 
 EAPI Eo *ecore_main_loop_get(void)
 {
