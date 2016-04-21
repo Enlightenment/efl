@@ -20,6 +20,55 @@ collections {
                }
             }
          }
+         part {
+            name: "access_1";
+            type: TEXT;
+            access: 1;
+            effect: GLOW;
+
+            description {
+               state: "default" 0.0;
+
+               rel1 {
+                  relative: 0.0 0.0;
+               }
+               rel2 {
+                  relative: 1.0 0.5;
+               }
+
+               text {
+                  text: "Hello";
+                  font: "Sans";
+                  size: 48;
+                  ellipsis: -1;
+               }
+            }
+         }
+         part {
+            name: "access_2";
+            type: TEXT;
+            access: 1;
+            effect: GLOW;
+
+            description {
+               state: "default" 0.0;
+
+               rel1 {
+                  relative: 0.0 0.0;
+                  to: "access_1";
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+               }
+
+               text {
+                  text: "Hello";
+                  font: "Sans";
+                  size: 48;
+                  ellipsis: -1;
+               }
+            }
+         }
       }
    }
 }

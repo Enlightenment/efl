@@ -412,6 +412,49 @@ START_TEST(edje_test_swallows_eoapi)
 }
 END_TEST
 
+START_TEST(edje_test_access)
+{
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   const char *name;
+   Evas_Object *obj;
+   Eina_Iterator *it;
+   Eina_List *list;
+   char buf[20];
+   int i = 0;
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_layout.edj"), "test_group"));
+
+   /* eo api */
+   it = edje_obj_access_part_iterate(obj);
+   fail_if(!it);
+
+   EINA_ITERATOR_FOREACH(it, name)
+     {
+        i++;
+        sprintf(buf, "access_%d", i);
+        fail_if(!name || strcmp(name, buf) != 0);
+     }
+   fail_if(i != 2);
+   eina_iterator_free(it);
+
+   i = 0;
+
+   /* legacy api */
+   list = edje_object_access_part_list_get(obj);
+   fail_if(!list);
+   EINA_LIST_FREE(list, name)
+     {
+        i++;
+        sprintf(buf, "access_%d", i);
+        fail_if(!name || strcmp(name, buf) != 0);
+     }
+   fail_if(i != 2);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 START_TEST(edje_test_box)
 {
    Evas *evas;
@@ -466,5 +509,6 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_color_class);
    tcase_add_test(tc, edje_test_swallows);
    tcase_add_test(tc, edje_test_swallows_eoapi);
+   tcase_add_test(tc, edje_test_access);
    tcase_add_test(tc, edje_test_box);
 }
