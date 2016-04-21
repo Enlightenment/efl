@@ -4942,21 +4942,76 @@ _edje_object_part_box_remove_all(Eo *obj EINA_UNUSED, Edje *ed, const char *part
    return ret;
 }
 
-EOLIAN Eina_List *
-_edje_object_access_part_list_get(Eo *obj EINA_UNUSED, Edje *ed)
+typedef struct _Part_Iterator Part_Iterator;
+struct _Part_Iterator
+{
+   Eina_Iterator  iterator;
+   Eo            *object;
+   Edje          *ed;
+   unsigned       index;
+};
+
+static Eina_Bool
+_part_iterator_next(Part_Iterator *it, void **data)
+{
+   for (; it->index < it->ed->table_parts_size; it->index++)
+     {
+        Edje_Real_Part *rp = it->ed->table_parts[it->index];
+        if (rp->part->access)
+          {
+             if (data) *data = (void*) rp->part->name;
+             it->index++;
+             return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
+static Eo *
+_part_iterator_get_container(Part_Iterator *it)
+{
+   return it->object;
+}
+
+static void
+_part_iterator_free(Part_Iterator *it)
+{
+   free(it);
+}
+
+EOLIAN Eina_Iterator *
+_edje_object_access_part_iterate(Eo *obj EINA_UNUSED, Edje *ed)
+{
+   Part_Iterator *it;
+
+   it = calloc(1, sizeof(*it));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_part_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_part_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_part_iterator_free);
+   it->object = obj;
+   it->ed = ed;
+   it->index = 0;
+
+   return &it->iterator;
+}
+
+EAPI Eina_List *
+edje_object_access_part_list_get(const Edje_Object *obj)
 {
    Eina_List *access_parts = NULL;
+   Eina_Iterator *it;
+   const char *str;
 
-   if ((!ed)) return NULL;
-
-   unsigned int i;
-   for (i = 0; i < ed->table_parts_size; i++)
-     {
-        Edje_Real_Part *rp;
-        rp = ed->table_parts[i];
-        if (rp->part->access)
-          access_parts = eina_list_append(access_parts, rp->part->name);
-     }
+   it = edje_obj_access_part_iterate((Eo *) obj);
+   EINA_ITERATOR_FOREACH(it, str)
+     access_parts = eina_list_append(access_parts, str);
+   eina_iterator_free(it);
 
    return access_parts;
 }

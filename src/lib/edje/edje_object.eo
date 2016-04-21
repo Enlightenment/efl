@@ -352,13 +352,10 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
             minh: Evas.Coord; [[Pointer to a variable where to store the minimum height]]
          }
       }
-      @property access_part_list {
-         get {
-            [[Retrieve a list all accessibility part names
-
-              @since 1.7.0]]
-            return: list<const(char)*> *; [[A list all accessibility part names on obj]]
-         }
+      access_part_iterate {
+         [[Iterate over all accessibility-enabled part names.]]
+         legacy: null;
+         return: free(own(iterator<const(char)*> *), eina_iterator_free);
       }
       @property load_error {
          get {

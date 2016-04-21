@@ -289,6 +289,17 @@ EAPI Evas_Object *edje_object_part_swallow_get(const Edje_Object *obj, const cha
  */
 EAPI void edje_object_part_unswallow(Edje_Object *obj, Evas_Object *obj_swallow);
 
+/**
+ * @brief Retrieve a list all accessibility part names
+ *
+ * @return A list all accessibility part names on obj
+ *
+ * @since 1.7.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_List *edje_object_access_part_list_get(const Edje_Object *obj);
+
 
 #include "edje_object.eo.legacy.h"
 #include "edje_edit.eo.legacy.h"
