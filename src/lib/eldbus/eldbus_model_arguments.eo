@@ -19,7 +19,7 @@ class Eldbus.Model_Arguments (Eo.Base, Efl.Model.Base) {
             [[Name of the argument]]
             get {}
             values {
-                value: const(char)*;
+                name: const(char)*; [[Argument name]]
             }
         }
     }

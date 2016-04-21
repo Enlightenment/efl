@@ -16,19 +16,19 @@ class Eldbus.Model_Connection (Eo.Base, Efl.Model.Base) {
     @property type {
             [[Connection type]]
             values {
-                value: int;
+                type: int; [[Connection type]]
             }
         }
     @property address {
             [[Remote DBus address]]
             values {
-                value: const(char)*;
+                address: const(char)*; [[Address]]
             }
         }
     @property private {
             [[Indicate if the DBus connection is shared or private]]
             values {
-                value: bool;
+                private: bool; [[Private DBus connection]]
             }
         }
     }

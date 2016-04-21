@@ -31,31 +31,31 @@ class Eldbus.Model_Object (Eo.Base, Efl.Model.Base) {
     @property type {
             [[Connection type]]
             values {
-                value: int;
+                type: int; [[Connection type]]
             }
         }
     @property address {
             [[Remote address of DBus]]
             values {
-                value: const(char)*;
+                address: const(char)*; [[Address]]
             }
         }
     @property private {
             [[Indicate if the DBus connection is shared or private]]
             values {
-                value: bool;
+                private: bool; [[Private DBus connection]]
             }
         }
     @property bus {
             [[DBus Name or unique-id]]
             values {
-                value: const(char)*;
+                bus: const(char)*; [[DBus name]]
             }
         }
     @property path {
             [[DBus path]]
             values {
-                value: const(char)*;
+                path: const(char)*; [[DBus path]]
             }
         }
     }
