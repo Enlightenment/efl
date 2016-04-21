@@ -183,9 +183,7 @@ Eina_Bool    _ecore_factorized_idle_event_del(void *data, const Eo_Event *event)
 void         _ecore_idler_all_call(Eo *loop);
 int          _ecore_idler_exist(Eo *loop);
 
-void         _ecore_idle_enterer_shutdown(void);
-void         _ecore_idle_enterer_call(void);
-int          _ecore_idle_enterer_exist(void);
+void         _ecore_idle_enterer_call(Eo *loop);
 
 void         _ecore_idle_exiter_shutdown(void);
 void         _ecore_idle_exiter_call(void);

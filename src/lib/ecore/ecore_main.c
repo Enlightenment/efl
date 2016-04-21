@@ -708,7 +708,7 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
         _ecore_timer_expired_timers_call(_ecore_time_loop_time);
         _ecore_timer_cleanup();
 
-        _ecore_idle_enterer_call();
+        _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
         _ecore_glib_idle_enterer_called = FALSE;
 
@@ -891,7 +891,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
         _ecore_timer_expired_timers_call(_ecore_time_loop_time);
         _ecore_timer_cleanup();
 
-        _ecore_idle_enterer_call();
+        _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
         _ecore_glib_idle_enterer_called = TRUE;
 
@@ -2084,7 +2084,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
    if(!_ecore_main_uv_idling)
      {
         _ecore_main_uv_idling = EINA_TRUE;
-        _ecore_idle_enterer_call();
+        _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
      }
 
@@ -2239,7 +2239,7 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (_ecore_event_exist())
      {
         /* but first conceptually enter an idle state */
-        _ecore_idle_enterer_call();
+        _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
         /* now quickly poll to see which input fd's are active */
         _ecore_main_select(0.0);
@@ -2264,7 +2264,7 @@ _ecore_main_loop_iterate_internal(int once_only)
    else
      {
         /* call idle enterers ... */
-        _ecore_idle_enterer_call();
+        _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
      }
 
@@ -2284,7 +2284,7 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (once_only)
      {
         /* in once_only mode enter idle here instead and then return */
-        _ecore_idle_enterer_call();
+        _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
         _ecore_timer_enable_new();
         goto done;
@@ -2348,7 +2348,7 @@ process_all: /*-*********************************************************/
    if (once_only)
      {
         /* if in once_only mode handle idle exiting */
-        _ecore_idle_enterer_call();
+        _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
      }
 
