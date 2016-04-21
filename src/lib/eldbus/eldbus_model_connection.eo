@@ -28,7 +28,7 @@ class Eldbus.Model_Connection (Eo.Base, Efl.Model.Base) {
     @property private {
             [[Indicate if the DBus connection is shared or private]]
             values {
-                private: bool; [[Private DBus connection]]
+                private_: bool; [[Private DBus connection]]
             }
         }
     }

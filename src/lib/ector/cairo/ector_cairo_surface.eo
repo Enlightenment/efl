@@ -2,16 +2,21 @@ type @extern cairo_t: void *;
 
 class Ector.Cairo.Surface (Eo.Base, Ector.Generic.Surface)
 {
+   [[Ector surface on a cairo backend
+
+   Used to render ector content into a cairo backend.
+   ]]
    eo_prefix: ector_cairo_surface;
    legacy_prefix: null;
    methods {
       @property context {
+         [[Cairo context]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    ctx: cairo_t *;
+	    ctx: cairo_t *; [[Cairo context]]
 	 }
       }
       symbol_get {
