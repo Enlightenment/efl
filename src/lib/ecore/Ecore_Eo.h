@@ -42,18 +42,6 @@ extern "C" {
  */
 
 /**
- * @ingroup Ecore_Idle_Group
- *
- * @{
- */
-
-#include "ecore_idle_exiter.eo.h"
-
-/**
- * @}
- */
-
-/**
  * @ingroup Ecore_Exe_Group
  *
  * @{

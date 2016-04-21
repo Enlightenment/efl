@@ -185,9 +185,7 @@ int          _ecore_idler_exist(Eo *loop);
 
 void         _ecore_idle_enterer_call(Eo *loop);
 
-void         _ecore_idle_exiter_shutdown(void);
-void         _ecore_idle_exiter_call(void);
-int          _ecore_idle_exiter_exist(void);
+void         _ecore_idle_exiter_call(Eo *loop);
 
 void         _ecore_event_shutdown(void);
 int          _ecore_event_exist(void);

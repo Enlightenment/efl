@@ -441,7 +441,7 @@ _ecore_main_uv_poll_cb(uv_poll_t* handle, int status, int events)
      {
        DBG("not IDLE anymore");
        _ecore_main_uv_idling = EINA_FALSE;
-       _ecore_idle_exiter_call();
+       _ecore_idle_exiter_call(_mainloop_singleton);
        _ecore_animator_run_reset();
      }
   
@@ -856,7 +856,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
    if (ecore_idling && events_ready)
      {
         _ecore_animator_run_reset();
-        _ecore_idle_exiter_call();
+        _ecore_idle_exiter_call(_mainloop_singleton);
         ecore_idling = 0;
      }
    else if (!ecore_idling && !events_ready)
@@ -873,7 +873,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
         if (ecore_fds_ready || events_ready || timers_ready)
           {
              _ecore_animator_run_reset();
-             _ecore_idle_exiter_call();
+             _ecore_idle_exiter_call(_mainloop_singleton);
              ecore_idling = 0;
           }
      }
@@ -994,7 +994,7 @@ void _ecore_main_loop_timer_run(uv_timer_t* timer EINA_UNUSED)
   if(_ecore_main_uv_idling)
     {
       _ecore_main_uv_idling = EINA_FALSE;
-      _ecore_idle_exiter_call();
+      _ecore_idle_exiter_call(_mainloop_singleton);
       _ecore_animator_run_reset();
     }
   _ecore_time_loop_time = ecore_time_get();
@@ -2103,7 +2103,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
 
        if(_ecore_main_uv_idling)
          {
-            _ecore_idle_exiter_call();
+            _ecore_idle_exiter_call(_mainloop_singleton);
             _ecore_animator_run_reset();
 
             _ecore_main_uv_idling = EINA_FALSE;
@@ -2332,7 +2332,7 @@ process_all: /*-*********************************************************/
    if (!once_only)
      {
         _ecore_animator_run_reset();
-        _ecore_idle_exiter_call();
+        _ecore_idle_exiter_call(_mainloop_singleton);
      }
    /* call the fd handler per fd that became alive... */
    /* this should read or write any data to the monitored fd and then */
