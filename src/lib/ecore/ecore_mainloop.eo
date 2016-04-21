@@ -30,11 +30,6 @@ class Ecore_Mainloop (Eo.Base)
          [[Quits the main loop once all the events currently on the queue have
          been processed.]]
       }
-      animator_ticked {
-         [[Returns if an animator has ticked off during this loop iteration.]]
-         /* FIXME: Should it be a prooperty? */
-         return: bool;
-      }
    }
    events {
       idle,enter @restart; [[Event occurs once the main loop enters the idle state.]]

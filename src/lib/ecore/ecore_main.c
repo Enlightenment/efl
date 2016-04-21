@@ -2748,12 +2748,6 @@ _ecore_mainloop_quit(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED)
    ecore_main_loop_quit();
 }
 
-EOLIAN static Eina_Bool
-_ecore_mainloop_animator_ticked(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED)
-{
-   return ecore_main_loop_animator_ticked_get();
-}
-
 static Eina_Bool
 _check_event_catcher_add(void *data, const Eo_Event *event)
 {
