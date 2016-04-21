@@ -271,6 +271,17 @@ if EFL_ENABLE_TESTS
 check_PROGRAMS += tests/edje/edje_suite
 TESTS += tests/edje/edje_suite
 
+EDJE_TEST_FILES = tests/edje/data/test_layout.edj \
+                     tests/edje/data/complex_layout.edj \
+                     tests/edje/data/test_parens.edj \
+                     tests/edje/data/test_masking.edj \
+                     tests/edje/data/test_filters.edj \
+                     tests/edje/data/test_snapshot.edj \
+                     tests/edje/data/test_size_class.edj \
+                     tests/edje/data/test_swallows.edj \
+                     tests/edje/data/test_color_class.edj \
+		     tests/edje/data/test_box.edj
+
 tests_edje_edje_suite_SOURCES = \
 tests/edje/edje_suite.c \
 tests/edje/edje_test_edje.c \
@@ -283,6 +294,8 @@ $(EDJE_COMMON_CPPFLAGS) \
 @CHECK_CFLAGS@
 tests_edje_edje_suite_LDADD = @CHECK_LIBS@  $(USE_EDJE_BIN_LIBS)
 tests_edje_edje_suite_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
+tests_edje_edje_suitedir = $(datadir)/edje/data
+tests_edje_edje_suite_DATA = $(EDJE_TEST_FILES)
 
 tests/edje/data/%.edj: tests/edje/data/%.edc bin/edje/edje_cc${EXEEXT}
 	$(AM_V_EDJ) \
@@ -292,18 +305,6 @@ tests/edje/data/%.edj: tests/edje/data/%.edc bin/edje/edje_cc${EXEEXT}
 	-dd $(srcdir)/tests/edje/data \
 	$< $@
 
-EDJE_TEST_FILES = tests/edje/data/test_layout.edj \
-                     tests/edje/data/complex_layout.edj \
-                     tests/edje/data/test_parens.edj \
-                     tests/edje/data/test_masking.edj \
-                     tests/edje/data/test_filters.edj \
-                     tests/edje/data/test_snapshot.edj \
-                     tests/edje/data/test_size_class.edj \
-                     tests/edje/data/test_swallows.edj \
-                     tests/edje/data/test_color_class.edj \
-		     tests/edje/data/test_box.edj
-
-noinst_DATA += $(EDJE_TEST_FILES)
 CLEANFILES += $(EDJE_TEST_FILES)
 
 endif
