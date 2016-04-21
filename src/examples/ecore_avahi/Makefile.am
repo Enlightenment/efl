@@ -1,13 +1,14 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
--I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_avahi\
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_avahi \
 @AVAHI_CLIENT_CFLAGS@

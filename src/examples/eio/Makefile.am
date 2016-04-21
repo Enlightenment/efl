@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
--I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/emile \
 -I$(top_srcdir)/src/lib/eo \
@@ -11,6 +11,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/emile \
 -I$(top_builddir)/src/lib/eo \
+-I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/eet \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/eio

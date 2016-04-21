@@ -17,11 +17,13 @@
 #include <Ecore.hh>
 #include <Evas.hh>
 
+#warning TEST CASE DISABLED: EVAS TYPES NO MORE IN EO API
+
+#if 0
 #include <canvas/evas_canvas.eo.hh>
 #include <canvas/evas_image.eo.hh>
-
-#include "../../lib/evas/canvas/evas_text.eo.hh"
-#include "../../lib/evas/canvas/evas_grid.eo.hh"
+#include <canvas/evas_text.eo.hh>
+#include <canvas/evas_grid.eo.hh>
 
 namespace efl { namespace evas {
 using ::evas::canvas;
@@ -101,3 +103,7 @@ int main()
 
    return 0;
 }
+#else
+int main() { abort(); }
+#endif
+
