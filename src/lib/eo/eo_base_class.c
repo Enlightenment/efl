@@ -188,7 +188,7 @@ _eo_base_key_data_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
 }
 
 EOLIAN static void
-_eo_base_key_data_del(Eo *obj, Eo_Base_Data *pd, const char *key)
+_eo_base_key_del(Eo *obj, Eo_Base_Data *pd, const char *key)
 {
    Eo_Generic_Data_Node *node;
 
@@ -277,31 +277,6 @@ _eo_base_key_obj_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
 }
 
 EOLIAN static void
-_eo_base_key_obj_del(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
-{
-   Eo_Generic_Data_Node *node;
-
-   if (!key) return;
-   EINA_INLIST_FOREACH(pd->generic_data, node)
-     {
-        if (!strcmp(node->key, key))
-          {
-             pd->generic_data = eina_inlist_remove(pd->generic_data,
-                                                   EINA_INLIST_GET(node));
-             if (node->data_is_obj)
-               {
-                  eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
-                                        _eo_base_cb_key_obj_del, obj);
-                  eo_unref(node->data);
-               }
-             else if (node->data_is_value) eina_value_free(node->data);
-             _eo_generic_data_node_free(node);
-             return;
-          }
-     }
-}
-
-EOLIAN static void
 _eo_base_key_value_set(Eo *obj, Eo_Base_Data *pd, const char *key, Eina_Value *value)
 {
    Eo_Generic_Data_Node *node;
@@ -362,31 +337,6 @@ _eo_base_key_value_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
           }
      }
    return NULL;
-}
-
-EOLIAN static void
-_eo_base_key_value_del(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
-{
-   Eo_Generic_Data_Node *node;
-
-   if (!key) return;
-   EINA_INLIST_FOREACH(pd->generic_data, node)
-     {
-        if (!strcmp(node->key, key))
-          {
-             pd->generic_data = eina_inlist_remove(pd->generic_data,
-                                                   EINA_INLIST_GET(node));
-             if (node->data_is_obj)
-               {
-                  eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
-                                        _eo_base_cb_key_obj_del, obj);
-                  eo_unref(node->data);
-               }
-             else if (node->data_is_value) eina_value_free(node->data);
-             _eo_generic_data_node_free(node);
-             return;
-          }
-     }
 }
 
 EOLIAN static void

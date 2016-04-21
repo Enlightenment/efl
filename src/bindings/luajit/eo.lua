@@ -101,7 +101,7 @@ ffi.cdef [[
     void eo_key_data_set(const char *key, const void *data,
         eo_key_data_free_func free_func);
     void *eo_key_data_get(const char *key);
-    void  eo_key_data_del(const char *key);
+    void  eo_key_del(const char *key);
 
     Eina_Iterator *eo_children_iterator_new(void);
 

@@ -590,7 +590,7 @@ end:
    pd->items = (Grid_Item *)
          eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
    pd->count--;
-   eo_key_data_del(subobj, GRID_ITEM_KEY);
+   eo_key_del(subobj, GRID_ITEM_KEY);
    free(gi);
 }
 

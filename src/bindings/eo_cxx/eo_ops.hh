@@ -87,7 +87,7 @@ base_data_get(const Eo *obj, const char *key)
 inline void
 base_data_del(Eo *obj, const char *key)
 {
-   eo_key_data_del(obj, key);
+   eo_key_del(obj, key);
 }
 
 inline void

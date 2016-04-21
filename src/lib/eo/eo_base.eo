@@ -221,7 +221,7 @@ abstract Eo.Base ()
          }
          return: void *; [[the data for the key]]
       }
-      key_data_del {
+      key_del {
          [[Del generic data from object.]]
          params {
             @in key: const(char)*; [[the key associated with the data]]
@@ -250,12 +250,6 @@ abstract Eo.Base ()
          }
          return: Eo.Base *; [[the object reference for the key]]
       }
-      key_obj_del {
-         [[Del generic objecrt reference from object.]]
-         params {
-            @in key: const(char)*; [[the key associated with the object ref]]
-         }
-      }
       key_value_set {
          [[Set value on the object.
 
@@ -277,12 +271,6 @@ abstract Eo.Base ()
             @in key: const(char)*; [[the key associated with the value]]
          }
          return: Eina.Value *; [[the value for the key]]
-      }
-      key_value_del {
-         [[Del generic value from object.]]
-         params {
-            @in key: const(char)*; [[the key associated with the value]]
-         }
       }
       event_thaw {
          [[thaw events of object.

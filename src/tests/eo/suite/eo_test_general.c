@@ -608,7 +608,7 @@ START_TEST(eo_generic_data)
    eo_key_data_set(obj, "test1", (void *) 1);
    data = eo_key_data_get(obj, "test1");
    fail_if(1 != (intptr_t) data);
-   eo_key_data_del(obj, "test1");
+   eo_key_del(obj, "test1");
    data = eo_key_data_get(obj, "test1");
    fail_if(data);
 
@@ -621,13 +621,13 @@ START_TEST(eo_generic_data)
 
    data = eo_key_data_get(obj, "test2");
    fail_if(2 != (intptr_t) data);
-   eo_key_data_del(obj, "test2");
+   eo_key_del(obj, "test2");
    data = eo_key_data_get(obj, "test2");
    fail_if(data);
 
    data = eo_key_data_get(obj, "test1");
    fail_if(1 != (intptr_t) data);
-   eo_key_data_del(obj, "test1");
+   eo_key_del(obj, "test1");
    data = eo_key_data_get(obj, "test1");
    fail_if(data);
 
@@ -671,6 +671,7 @@ START_TEST(eo_generic_data)
    eo_key_value_del(obj, "value1");
    value2 = eo_key_value_get(obj, "value1");
    fail_if(value2 != NULL);
+   eo_key_del(obj, "value1");
 
    eo_unref(obj);
    eo_unref(obj2);
