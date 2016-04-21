@@ -3040,8 +3040,6 @@ typedef struct _Ecore_Factorized_Idle Ecore_Idler; /**< A handle for idlers */
  */
 typedef struct _Ecore_Factorized_Idle Ecore_Idle_Enterer; /**< A handle for idle enterers */
 
-#define _ECORE_IDLE_ENTERER_EO_CLASS_TYPE
-
 /*
  * @since 1.8
  */
