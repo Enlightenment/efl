@@ -44,6 +44,15 @@ typedef struct _Ecore_Wl2_Pointer Ecore_Wl2_Pointer;
 typedef struct _Ecore_Wl2_Keyboard Ecore_Wl2_Keyboard;
 typedef struct _Ecore_Wl2_Touch Ecore_Wl2_Touch;
 
+/* matches protocol values */
+typedef enum
+{
+   ECORE_WL2_DRAG_ACTION_NONE = 0,
+   ECORE_WL2_DRAG_ACTION_COPY = 1,
+   ECORE_WL2_DRAG_ACTION_MOVE = 2,
+   ECORE_WL2_DRAG_ACTION_ASK = 4,
+} Ecore_Wl2_Drag_Action;
+
 typedef struct _Ecore_Wl2_Global
 {
    Eina_Stringshare *interface;
@@ -99,10 +108,15 @@ typedef struct _Ecore_Wl2_Event_Dnd_End
    unsigned int win, source;
 } Ecore_Wl2_Event_Dnd_End;
 
-typedef struct _Ecore_Wl2_Event_Data_Source_Cancelled
+struct _Ecore_Wl2_Event_Data_Source_Event
 {
    unsigned int win, source;
-} Ecore_Wl2_Event_Data_Source_Cancelled;
+   Ecore_Wl2_Drag_Action action;
+};
+
+typedef struct _Ecore_Wl2_Event_Data_Source_Event Ecore_Wl2_Event_Data_Source_End;
+typedef struct _Ecore_Wl2_Event_Data_Source_Event Ecore_Wl2_Event_Data_Source_Drop;
+typedef struct _Ecore_Wl2_Event_Data_Source_Event Ecore_Wl2_Event_Data_Source_Action;
 
 typedef struct _Ecore_Wl2_Event_Data_Source_Target
 {
@@ -163,7 +177,9 @@ EAPI extern int ECORE_WL2_EVENT_DND_LEAVE; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_DND_MOTION; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_DND_DROP; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_DND_END; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_CANCELLED; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_END; /** @since 1.18 */
+EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_DROP; /** @since 1.18 */
+EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_ACTION; /** @since 1.18 */
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_TARGET; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_SEND; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_SELECTION_DATA_READY; /** @since 1.17 */

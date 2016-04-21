@@ -77,7 +77,7 @@ static const struct wl_data_offer_listener _offer_listener =
 };
 
 static void
-_source_cb_target_free(void *data EINA_UNUSED, void *event)
+data_source_target_free(void *data EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Data_Source_Target *ev;
 
@@ -89,7 +89,7 @@ _source_cb_target_free(void *data EINA_UNUSED, void *event)
 }
 
 static void
-_source_cb_target(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type)
+data_source_target(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type)
 {
    Ecore_Wl2_Input *input;
    Ecore_Wl2_Event_Data_Source_Target *ev;
@@ -103,11 +103,11 @@ _source_cb_target(void *data, struct wl_data_source *source EINA_UNUSED, const c
    if (mime_type) ev->type = strdup(mime_type);
 
    ecore_event_add(ECORE_WL2_EVENT_DATA_SOURCE_TARGET, ev,
-                   _source_cb_target_free, NULL);
+                   data_source_target_free, NULL);
 }
 
 static void
-_source_cb_send_free(void *data EINA_UNUSED, void *event)
+data_source_send_free(void *data EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Data_Source_Send *ev;
 
@@ -119,7 +119,7 @@ _source_cb_send_free(void *data EINA_UNUSED, void *event)
 }
 
 static void
-_source_cb_send(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type, int32_t fd)
+data_source_send(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type, int32_t fd)
 {
    Ecore_Wl2_Input *input;
    Ecore_Wl2_Event_Data_Source_Send *ev;
@@ -134,22 +134,15 @@ _source_cb_send(void *data, struct wl_data_source *source EINA_UNUSED, const cha
    ev->type = strdup(mime_type);
 
    ecore_event_add(ECORE_WL2_EVENT_DATA_SOURCE_SEND, ev,
-                   _source_cb_send_free, NULL);
+                   data_source_send_free, NULL);
 }
 
 static void
-_source_cb_cancelled(void *data, struct wl_data_source *source)
+data_source_event_emit(Ecore_Wl2_Input *input, int event)
 {
-   Ecore_Wl2_Input *input;
-   Ecore_Wl2_Event_Data_Source_Cancelled *ev;
+   Ecore_Wl2_Event_Data_Source_End *ev;
 
-   input = data;
-   if (!input) return;
-
-   if (input->data.source == source) input->data.source = NULL;
-   wl_data_source_destroy(source);
-
-   ev = calloc(1, sizeof(Ecore_Wl2_Event_Data_Source_Cancelled));
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Data_Source_End));
    if (!ev) return;
 
    if (input->focus.pointer)
@@ -158,15 +151,56 @@ _source_cb_cancelled(void *data, struct wl_data_source *source)
      ev->source = input->focus.keyboard->id;
 
    if (!ev->win) ev->win = ev->source;
+   ev->action = input->drag.source->dnd_action;
 
-   ecore_event_add(ECORE_WL2_EVENT_DATA_SOURCE_CANCELLED, ev, NULL, NULL);
+   ecore_event_add(event, ev, NULL, NULL);
+}
+
+static void
+data_source_cancelled(void *data, struct wl_data_source *source)
+{
+   Ecore_Wl2_Input *input = data;
+
+   if (input->data.source == source) input->data.source = NULL;
+   wl_data_source_destroy(source);
+   input->drag.source->dnd_action = 0;
+   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_END);
+}
+
+static void
+data_source_dnd_drop_performed(void *data, struct wl_data_source *source EINA_UNUSED)
+{
+   Ecore_Wl2_Input *input = data;
+   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_DROP);
+}
+
+static void
+data_source_dnd_finished(void *data, struct wl_data_source *source)
+{
+   Ecore_Wl2_Input *input = data;
+
+   if (input->data.source == source) input->data.source = NULL;
+   wl_data_source_destroy(source);
+   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_END);
+}
+
+static void
+data_source_action(void *data, struct wl_data_source *source EINA_UNUSED, uint32_t dnd_action)
+{
+   Ecore_Wl2_Input *input = data;
+
+   input->drag.source->dnd_action = dnd_action;
+   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_ACTION);
 }
 
 static const struct wl_data_source_listener _source_listener =
 {
-   _source_cb_target,
-   _source_cb_send,
-   _source_cb_cancelled
+   data_source_target,
+   data_source_send,
+   data_source_cancelled,
+   data_source_dnd_drop_performed,
+   data_source_dnd_finished,
+   data_source_action,
 };
 
 static void
@@ -197,6 +231,9 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
 
    if (len <= 0)
      {
+        if (source->input->display->wl.data_device_manager_version >=
+          WL_DATA_OFFER_FINISH_SINCE_VERSION)
+          wl_data_offer_finish(source->offer);
         if (source->input->selection.source == source)
           source->input->selection.source = NULL;
         _ecore_wl2_dnd_del(source);
@@ -269,6 +306,7 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
    if (offer)
      {
         input->drag.source = wl_data_offer_get_user_data(offer);
+        input->drag.source->dnd_action = WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE;
         num = (input->drag.source->types.size / sizeof(char *));
         types = input->drag.source->types.data;
         if (input->display->wl.data_device_manager_version >=
@@ -461,6 +499,10 @@ ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore
    osurface = ecore_wl2_window_surface_get(window);
    if (osurface)
      {
+        if (input->display->wl.data_device_manager_version >= WL_DATA_SOURCE_SET_ACTIONS_SINCE_VERSION)
+          wl_data_source_set_actions(input->data.source,
+            WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE | WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY);
+
         wl_data_device_start_drag(input->data.device, input->data.source,
                                   osurface, dsurface, input->display->serial);
 
