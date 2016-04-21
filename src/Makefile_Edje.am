@@ -271,6 +271,19 @@ if EFL_ENABLE_TESTS
 check_PROGRAMS += tests/edje/edje_suite
 TESTS += tests/edje/edje_suite
 
+tests_edje_edje_suite_SOURCES = \
+tests/edje/edje_suite.c \
+tests/edje/edje_test_edje.c \
+tests/edje/edje_suite.h
+
+tests/edje/data/%.edj: tests/edje/data/%.edc bin/edje/edje_cc${EXEEXT}
+	$(AM_V_EDJ) \
+	$(MKDIR_P) tests/edje/data; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/tests/edje/data \
+	-id $(srcdir)/tests/emotion/data \
+	-dd $(srcdir)/tests/edje/data \
+	$< $@
+
 EDJE_TEST_FILES = tests/edje/data/test_layout.edj \
                      tests/edje/data/complex_layout.edj \
                      tests/edje/data/test_parens.edj \
@@ -282,10 +295,7 @@ EDJE_TEST_FILES = tests/edje/data/test_layout.edj \
                      tests/edje/data/test_color_class.edj \
 		     tests/edje/data/test_box.edj
 
-tests_edje_edje_suite_SOURCES = \
-tests/edje/edje_suite.c \
-tests/edje/edje_test_edje.c \
-tests/edje/edje_suite.h
+CLEANFILES += $(EDJE_TEST_FILES)
 
 tests_edje_edje_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 $(EDJE_COMMON_CPPFLAGS) \
@@ -293,19 +303,7 @@ $(EDJE_COMMON_CPPFLAGS) \
 -DTESTS_BUILD_DIR=\"$(abs_top_builddir)/src/tests/edje\" \
 @CHECK_CFLAGS@
 tests_edje_edje_suite_LDADD = @CHECK_LIBS@  $(USE_EDJE_BIN_LIBS)
-tests_edje_edje_suite_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
-tests_edje_edje_suitedir = $(datadir)/edje/data
-tests_edje_edje_suite_DATA = $(EDJE_TEST_FILES)
-
-tests/edje/data/%.edj: tests/edje/data/%.edc bin/edje/edje_cc${EXEEXT}
-	$(AM_V_EDJ) \
-	$(MKDIR_P) tests/edje/data; \
-	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/tests/edje/data \
-	-id $(srcdir)/tests/emotion/data \
-	-dd $(srcdir)/tests/edje/data \
-	$< $@
-
-CLEANFILES += $(EDJE_TEST_FILES)
+tests_edje_edje_suite_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@ $(EDJE_TEST_FILES)
 
 endif
 
