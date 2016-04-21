@@ -12,7 +12,6 @@ class Ecore_Mainloop (Eo.Base)
    great responsiveness without the need for threads(or any other concurrency).
    ]]
    legacy_prefix: null;
-   data: null;
    methods {
       @property select_func {
          [[Function to use when monitoring multiple file descriptors.]]

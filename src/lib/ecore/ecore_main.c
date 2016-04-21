@@ -2724,42 +2724,42 @@ EAPI Eo *ecore_main_loop_get(void)
 }
 
 EOLIAN static void
-_ecore_mainloop_select_func_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Ecore_Select_Function select_func)
+_ecore_mainloop_select_func_set(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED, Ecore_Select_Function select_func)
 {
    ecore_main_loop_select_func_set(select_func);
 }
 
 EOLIAN static Ecore_Select_Function
-_ecore_mainloop_select_func_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_ecore_mainloop_select_func_get(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED)
 {
    return ecore_main_loop_select_func_get();
 }
 
 EOLIAN static void
-_ecore_mainloop_iterate(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_ecore_mainloop_iterate(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED)
 {
    ecore_main_loop_iterate();
 }
 
-EOLIAN static int _ecore_mainloop_iterate_may_block(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, int may_block)
+EOLIAN static int _ecore_mainloop_iterate_may_block(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED, int may_block)
 {
    return ecore_main_loop_iterate_may_block(may_block);
 }
 
 EOLIAN static void
-_ecore_mainloop_begin(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_ecore_mainloop_begin(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED)
 {
    ecore_main_loop_begin();
 }
 
 EOLIAN static void
-_ecore_mainloop_quit(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_ecore_mainloop_quit(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
 
 EOLIAN static Eina_Bool
-_ecore_mainloop_animator_ticked(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_ecore_mainloop_animator_ticked(Eo *obj EINA_UNUSED, Ecore_Mainloop_Data *pd EINA_UNUSED)
 {
    return ecore_main_loop_animator_ticked_get();
 }
