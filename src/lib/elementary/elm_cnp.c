@@ -2983,12 +2983,12 @@ _wl_dnd_enter(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    doaccept = EINA_FALSE;
    for (i = 0; i < ev->num_types; i++)
      {
-        doaccept = _wl_drops_accept(ev->types[i]);
+        doaccept |= _wl_drops_accept(ev->types[i]);
         if (doaccept)
           wl_data_offer_accept(ev->offer, ev->serial, ev->types[i]);
-        else
-          wl_data_offer_accept(ev->offer, ev->serial, NULL);
      }
+   if (!doaccept)
+     wl_data_offer_accept(ev->offer, ev->serial, NULL);
 
    return ECORE_CALLBACK_PASS_ON;
 }
