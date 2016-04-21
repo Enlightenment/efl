@@ -97,17 +97,13 @@ SRCS = \
 	eolian_cxx_simple_01.cc \
 	eolian_cxx_inherit_01.cc \
 	eolian_cxx_callbacks_01.cc \
-	eolian_cxx_eo_events_01.cc \
-	eolian_cxx_complex_types_01.cc \
 	$(IMPL)
 
 EXTRA_PROGRAMS = \
 	eolian_cxx_simple_01 \
 	eolian_cxx_simple_01_cxx_impl \
 	eolian_cxx_inherit_01 \
-	eolian_cxx_callbacks_01 \
-	eolian_cxx_eo_events_01 \
-	eolian_cxx_complex_types_01
+	eolian_cxx_callbacks_01
 
 DATA_FILES = Makefile.examples $(ECXX_EXAMPLE_EOS)
 EXTRA_DIST = $(DATA_FILES)
@@ -135,10 +131,6 @@ eolian_cxx_inherit_01_SOURCES = \
 eolian_cxx_inherit_01.$(OBJEXT): $(GENERATED)
 
 eolian_cxx_callbacks_01_SOURCES = eolian_cxx_callbacks_01.cc
-
-eolian_cxx_eo_events_01_SOURCES = eolian_cxx_eo_events_01.cc
-
-eolian_cxx_complex_types_01_SOURCES = eolian_cxx_complex_types_01.cc
 
 %.eo.hh: %.eo
 	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I${abs_srcdir} -o $@ $<
