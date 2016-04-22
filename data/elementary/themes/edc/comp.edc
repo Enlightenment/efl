@@ -394,7 +394,6 @@ group { name: "e/comp/frame/default";
          target: "focus-clipper";
          sequence {
              action: STATE_SET "default" 0.0;
-             transition: SINUSOIDAL 0.4;
              target: "glow";
          }
       }
