@@ -41,8 +41,9 @@ _dmabuf_cb_format(void *data EINA_UNUSED, struct zwp_linux_dmabuf_v1 *dmabuf EIN
    /* It would be awfully nice if this actually happened */
 };
 
-static const struct zwp_linux_dmabuf_v1_listener _dmabuf_listener = {
-        _dmabuf_cb_format
+static const struct zwp_linux_dmabuf_v1_listener _dmabuf_listener =
+{
+   _dmabuf_cb_format
 };
 
 static void
@@ -140,6 +141,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
    else if (eina_streq(interface, "www"))
      {
         Ecore_Wl2_Window *window;
+
         ewd->wl.www = wl_registry_bind(registry, id, &www_interface, 1);
         EINA_INLIST_FOREACH(ewd->windows, window)
           _ecore_wl2_window_www_surface_init(window);
@@ -662,6 +664,7 @@ EAPI void
 ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN(display);
+
    _ecore_wl2_display_cleanup(display);
    if (display->refs <= 0)
      {
@@ -679,6 +682,7 @@ EAPI void
 ecore_wl2_display_destroy(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN(display);
+
    _ecore_wl2_display_cleanup(display);
    if (display->refs <= 0)
      {
