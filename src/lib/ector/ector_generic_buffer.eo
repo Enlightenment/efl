@@ -1,6 +1,7 @@
 import efl_gfx_types;
 
 enum Ector.Buffer.Flag {
+   [[Buffer capabilities]]
    none              = 0x00, [[Buffer may not have any backing, indicates an invalid buffer.]]
    cpu_readable      = 0x01, [[Can be read from the CPU after map. Reading may still be very slow.]]
    cpu_writable      = 0x02, [[Can be written to by the CPU after map. Writing may still be very slow.]]
@@ -13,10 +14,11 @@ enum Ector.Buffer.Flag {
 }
 
 enum Ector.Buffer.Access_Flag {
-   none      = 0x0,
-   read      = 0x1,
-   write     = 0x2,
-   cow       = 0x4,  [[Forces copy-on-write if already mapped as read-only. Requires write.]]
+   [[Buffer access permissions]]
+   none      = 0x0, [[No access permission]]
+   read      = 0x1, [[Read access permission]]
+   write     = 0x2, [[Write access permission]]
+   cow       = 0x4, [[Forces copy-on-write if already mapped as read-only. Requires write.]]
 }
 
 mixin Ector.Generic.Buffer
@@ -28,18 +30,18 @@ mixin Ector.Generic.Buffer
    legacy_prefix: null;
    methods {
       @property size {
-         get {
-            [[Retrieves the (rectangular) size of the pixel buffer.]]
-         }
+         [[The (rectangular) size of the pixel buffer.]]
+         get {}
          values {
-            w: int;
-            h: int;
+            w: int; [[Width]]
+            h: int; [[Height]]
          }
       }
       @property cspace {
+         [[The colorspace of the pixel buffer.]]
          get {}
          values {
-            cspace: Efl.Gfx.Colorspace;
+            cspace: Efl.Gfx.Colorspace; [[Colorspace]]
          }
       }
       map {
@@ -51,12 +53,12 @@ mixin Ector.Generic.Buffer
          params {
             @out length: uint; [[Accessible buffer size in bytes, should not be $null.]]
             @in mode: Ector.Buffer.Access_Flag; [[Specifies whether to map for read-only,
-                                                  write-only or read-write access (OR combinaison of flags).]]
+                                                  write-only or read-write access (OR combination of flags).]]
             @in x: uint; [[X position of the top-left pixel to map]]
             @in y: uint; [[Y position of the top-left pixel to map]]
             @in w: uint; [[If 0, defaults to the buffer width]]
             @in h: uint; [[If 0, defaults to the buffer height]]
-            @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace. If differen from the internal cspace,
+            @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace. If different from the internal cspace,
                                               map should try to convert the data into a new buffer]]
             @out stride: uint @optional; [[Returns the length in bytes of a mapped line]]
          }
@@ -73,17 +75,17 @@ mixin Ector.Generic.Buffer
          [[Set the source pixels for this buffer, or allocate a new memory region]]
          params {
             @in pixels: void*; [[If $null, allocates an empty buffer]]
-            @in width: int;
-            @in height: int;
+            @in width: int; [[Buffer width]]
+            @in height: int; [[Buffer height]]
             @in stride: int; [[Can be 0]]
-            @in cspace: Efl.Gfx.Colorspace;
-            @in writable: bool;
+            @in cspace: Efl.Gfx.Colorspace; [[Buffer colorspace]]
+            @in writable: bool; [[Buffer is writable]]
             @in l: ubyte; [[Left border pixels, usually 0 or 1]]
             @in r: ubyte; [[Right border pixels, usually 0 or 1]]
             @in t: ubyte; [[Top border pixels, usually 0 or 1]]
             @in b: ubyte; [[Bottom border pixels, usually 0 or 1]]
          }
-         return: bool;
+         return: bool; [[True if pixels_set was successful]]
       }
       span_get {
          [[Get a single horizontal span of length w starting from (x,y)
@@ -104,11 +106,12 @@ mixin Ector.Generic.Buffer
       span_free {
          [[Must be called as soon as possible after span_get]]
          params {
-            data: uint8*;
+            data: uint8*; [[Data to be freed]]
          }
       }
       @property flags {
-         get { [[Get the capabilities of this buffer]] }
+         [[The capabilities of this buffer]]
+         get {}
          values {
             flag: Ector.Buffer.Flag; [[A bitmask of capability flags]]
          }
@@ -117,10 +120,10 @@ mixin Ector.Generic.Buffer
          [[Duplicated pixel borders of this buffer, used for GL scaling]]
          get {}
          values {
-            l: int;
-            r: int;
-            t: int;
-            b: int;
+            l: int; [[Left border]]
+            r: int; [[Right border]]
+            t: int; [[Top border]]
+            b: int; [[Bottom border]]
          }
       }
    }
