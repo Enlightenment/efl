@@ -422,18 +422,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
             maxh: Evas.Coord; [[Pointer to a variable where to store the maximum height]]
          }
       }
-      part_table_clear {
-         [[Removes all object from the table.
-
-           Removes all object from the table indicated by part, except the
-           internal ones set from the theme.]]
-
-         return: bool; [[$true clear the table, $false on failure]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in clear: bool; [[If set, will delete subobjs on remove]]
-         }
-      }
       part_external_param_type_get @const {
          [[Facility to query the type of the given parameter of the given part.]]
 
@@ -650,17 +638,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
             @out cy: Evas.Coord; [[Item y return (relative to entry part)]]
             @out cw: Evas.Coord; [[Item width return]]
             @out ch: Evas.Coord; [[Item height return]]
-         }
-      }
-      part_table_unpack {
-         [[Removes an object from the table.
-
-           Removes an object from the table indicated by part.]]
-
-         return: bool; [[$true object removed, $false on failure]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in child_obj: Evas.Object *; [[The object to pack in]]
          }
       }
       part_text_select_abort @const {
@@ -884,21 +861,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
             @in part: const(char)*; [[The part name]]
          }
       }
-      part_table_pack {
-         [[Packs an object into the table.
-
-           Packs an object into the table indicated by part.]]
-
-         return: bool; [[$true object was added, $false on failure]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in child_obj: Evas.Object *; [[The object to pack in]]
-            @in col: ushort; [[The column to place it in]]
-            @in row: ushort; [[The row to place it in]]
-            @in colspan: ushort; [[Columns the child will take]]
-            @in rowspan: ushort; [[Rows the child will take]]
-         }
-      }
       part_text_input_panel_language_set {
          [[Set the language mode of the input panel.
 
@@ -920,17 +882,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
          return: Edje.Input_Panel.Lang; [[input panel language type]]
          params {
             @in part: const(char)*; [[The part name]]
-         }
-      }
-      part_table_col_row_size_get @const {
-         [[Gets the number of columns and rows the table has.
-
-           Retrieves the size of the table in number of columns and rows.]]
-         return: bool; [[$true get some data, $false on failure]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @out cols: int; [[Pointer where to store number of columns (can be $null)]]
-            @out rows: int; [[Pointer where to store number of rows (can be $null)]]
          }
       }
       part_external_object_get @const {
@@ -1157,7 +1108,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
 
            Note: If the type of Edje part is GROUP, SWALLOW or EXTERNAL,
            returned handle by this function will indicate nothing or transparent
-           rectangle for events. Use @.part_swallow_get() in that case.]]
+           rectangle for events. Use $.part_swallow_get() in that case.]]
          return: const(Evas.Object)*; [[A pointer to the Evas object implementing the given part,
                                         or $null on failure (e.g. the given part doesn't exist)]]
          params {
@@ -1499,16 +1450,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
          return: Edje.Input_Panel.Return_Key_Type; [[The type of "return" key on the input panel]]
          params {
             @in part: const(char)*; [[The part name]]
-         }
-      }
-      part_table_child_get @const {
-         [[Retrieve a child from a table]]
-
-         return: Evas.Object *; [[The child Evas.Object]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in col: uint; [[The column of the child to get]]
-            @in row: uint; [[The row of the child to get]]
          }
       }
       part_external_param_set {

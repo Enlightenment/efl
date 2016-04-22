@@ -1,12 +1,12 @@
-class Efl.Canvas.Layout_Internal.Box (Eo.Base, Efl.Pack_Linear)
+class Efl.Canvas.Layout_Internal.Table (Eo.Base, Efl.Pack_Grid)
 {
-   [[Represents a Box created as part of a layout.
+   [[Represents a Table created as part of a layout.
 
      Can not be deleted, this is only a representation of an internal object
      of an EFL layout.
    ]]
    legacy_prefix: null;
-   data: Edje_Box_Data;
+   data: Edje_Table_Data;
    methods {
       @property real_part @protected {
          set {}
@@ -25,15 +25,12 @@ class Efl.Canvas.Layout_Internal.Box (Eo.Base, Efl.Pack_Linear)
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
-      Efl.Pack.pack;
-      Efl.Pack_Linear.pack_begin;
-      Efl.Pack_Linear.pack_end;
-      Efl.Pack_Linear.pack_before;
-      Efl.Pack_Linear.pack_after;
-      Efl.Pack_Linear.pack_insert;
-      Efl.Pack_Linear.content_at.get;
-      Efl.Pack_Linear.content_at_remove;
-      Efl.Pack_Linear.content_index.get;
-      Efl.Pack_Linear.direction.get;
+      Efl.Pack_Grid.pack_grid;
+      Efl.Pack_Grid.grid_content_at;
+      Efl.Pack_Grid.grid_content_iterate;
+      Efl.Pack_Grid.grid_content_position.get;
+      Efl.Pack_Grid.grid_size.get;
+      Efl.Pack_Grid.grid_columns.get;
+      Efl.Pack_Grid.grid_rows.get;
    }
 }

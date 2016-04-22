@@ -207,6 +207,11 @@ class Evas.Table (Evas.Smart_Clipped)
             @in child: Evas.Object * @nonull;
          }
       }
+      count {
+         [[Returns the number of items in the box.]]
+         legacy: null;
+         return: int;
+      }
    }
    implements {
       class.constructor;

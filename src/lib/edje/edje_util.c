@@ -3893,7 +3893,11 @@ _edje_object_efl_container_content_get(Eo *obj, Edje *ed, const char *part)
        if (!rp->typedata.swallow) return NULL;
        return rp->typedata.swallow->swallowed_object;
       case EDJE_RP_TYPE_CONTAINER:
-        return _edje_box_internal_proxy_get(obj, ed, rp);
+        if (rp->part->type == EDJE_PART_TYPE_BOX)
+          return _edje_box_internal_proxy_get(obj, ed, rp);
+        else if (rp->part->type == EDJE_PART_TYPE_TABLE)
+          return _edje_table_internal_proxy_get(obj, ed, rp);
+        else return NULL;
       case EDJE_RP_TYPE_TEXT:
         WRN("not implemented yet");
         return NULL;
@@ -5284,8 +5288,8 @@ _edje_real_part_box_remove_all(Edje *ed, Edje_Real_Part *rp, Eina_Bool clear)
    return EINA_TRUE;
 }
 
-EOLIAN Evas_Object *
-_edje_object_part_table_child_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, unsigned int col, unsigned int row)
+Evas_Object *
+_edje_part_table_child_get(Edje *ed, const char *part, unsigned int col, unsigned int row)
 {
    Edje_Real_Part *rp;
 
@@ -5298,8 +5302,8 @@ _edje_object_part_table_child_get(Eo *obj EINA_UNUSED, Edje *ed, const char *par
    return evas_object_table_child_get(rp->object, col, row);
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_table_pack(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
+Eina_Bool
+_edje_part_table_pack(Edje *ed, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
    Eina_Bool ret;
    Edje_Real_Part *rp;
@@ -5330,8 +5334,8 @@ _edje_object_part_table_pack(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Ev
    return ret;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_table_unpack(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *child_obj)
+Eina_Bool
+_edje_part_table_unpack(Edje *ed, const char *part, Evas_Object *child_obj)
 {
    Eina_Bool ret;
    Edje_Real_Part *rp;
@@ -5362,8 +5366,8 @@ _edje_object_part_table_unpack(Eo *obj EINA_UNUSED, Edje *ed, const char *part, 
    return ret;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_table_col_row_size_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, int *cols, int *rows)
+Eina_Bool
+_edje_part_table_col_row_size_get(Edje *ed, const char *part, int *cols, int *rows)
 {
    Edje_Real_Part *rp;
 
@@ -5378,8 +5382,8 @@ _edje_object_part_table_col_row_size_get(Eo *obj EINA_UNUSED, Edje *ed, const ch
    return EINA_TRUE;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_table_clear(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool clear)
+Eina_Bool
+_edje_part_table_clear(Edje *ed, const char *part, Eina_Bool clear)
 {
    Edje_Real_Part *rp;
 

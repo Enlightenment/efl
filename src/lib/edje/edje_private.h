@@ -2941,7 +2941,7 @@ void _edje_part_ignore_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags 
 Evas_Event_Flags _edje_part_mask_flags_get(Edje *ed, Edje_Real_Part *rp);
 void _edje_part_mask_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags mask_flags);
 
-/* part containers */
+/* part containers: box */
 Eo *_edje_box_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
 Eina_Bool _edje_part_box_append(Edje *ed, const char *part, Evas_Object *child);
 Eina_Bool _edje_part_box_prepend(Edje *ed, const char *part, Evas_Object *child);
@@ -2952,6 +2952,14 @@ Evas_Object *_edje_part_box_content_at(Edje *ed, const char *part, unsigned int 
 Evas_Object *_edje_part_box_remove(Edje *ed, const char *part, Evas_Object *child);
 Evas_Object *_edje_part_box_remove_at(Edje *ed, const char *part, unsigned int pos);
 Eina_Bool _edje_part_box_remove_all(Edje *ed, const char *part, Eina_Bool clear);
+
+/* part containers: table */
+Eo *_edje_table_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+Evas_Object *_edje_part_table_child_get(Edje *ed, const char *part, unsigned int col, unsigned int row);
+Eina_Bool _edje_part_table_pack(Edje *ed, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+Eina_Bool _edje_part_table_unpack(Edje *ed, const char *part, Evas_Object *child_obj);
+Eina_Bool _edje_part_table_col_row_size_get(Edje *ed, const char *part, int *cols, int *rows);
+Eina_Bool _edje_part_table_clear(Edje *ed, const char *part, Eina_Bool clear);
 
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>

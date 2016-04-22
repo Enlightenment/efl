@@ -442,5 +442,75 @@ EAPI Evas_Object *edje_object_part_box_remove(Edje_Object *obj, const char *part
  */
 EAPI Eina_Bool edje_object_part_box_remove_all(Edje_Object *obj, const char *part, Eina_Bool clear);
 
+/**
+ * @brief Packs an object into the table.
+ *
+ * Packs an object into the table indicated by part.
+ *
+ * @param[in] child_obj The object to pack in
+ * @param[in] col The column to place it in
+ * @param[in] row The row to place it in
+ * @param[in] colspan Columns the child will take
+ * @param[in] rowspan Rows the child will take
+ *
+ * @return @c true object was added, @c false on failure
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_table_pack(Edje_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+
+/**
+ * @brief Removes an object from the table.
+ *
+ * Removes an object from the table indicated by part.
+ *
+ * @param[in] child_obj The object to pack in
+ *
+ * @return @c true object removed, @c false on failure
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_table_unpack(Edje_Object *obj, const char *part, Evas_Object *child_obj);
+
+/**
+ * @brief Gets the number of columns and rows the table has.
+ *
+ * Retrieves the size of the table in number of columns and rows.
+ *
+ * @param[out] cols Pointer where to store number of columns (can be @c null)
+ * @param[out] rows Pointer where to store number of rows (can be @c null)
+ *
+ * @return @c true get some data, @c false on failure
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_table_col_row_size_get(const Edje_Object *obj, const char *part, int *cols, int *rows);
+
+/**
+ * @brief Retrieve a child from a table
+ *
+ * @param[in] col The column of the child to get
+ * @param[in] row The row of the child to get
+ *
+ * @return The child Evas.Object
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Evas_Object *edje_object_part_table_child_get(const Edje_Object *obj, const char *part, unsigned int col, unsigned int row);
+
+/**
+ * @brief Removes all object from the table.
+ *
+ * Removes all object from the table indicated by part, except the internal
+ * ones set from the theme.
+ *
+ * @param[in] clear If set, will delete subobjs on remove
+ *
+ * @return @c true clear the table, @c false on failure
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_table_clear(Edje_Object *obj, const char *part, Eina_Bool clear);
+
 #include "edje_object.eo.legacy.h"
 #include "edje_edit.eo.legacy.h"

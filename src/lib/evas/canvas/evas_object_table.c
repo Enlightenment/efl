@@ -1373,6 +1373,12 @@ _evas_table_children_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
    return new_list;
 }
 
+EOLIAN static int
+_evas_table_count(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
+{
+   return eina_list_count(priv->children);
+}
+
 EOLIAN static Evas_Object *
 _evas_table_child_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, unsigned short col, unsigned short row)
 {
