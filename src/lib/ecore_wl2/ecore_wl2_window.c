@@ -5,6 +5,25 @@
 #include "ecore_wl2_private.h"
 
 static void
+_session_recovery_uuid(void *data, struct zwp_e_session_recovery *session_recovery, const char *uuid)
+{
+   Ecore_Wl2_Window *win;
+   char str[37];
+
+   win = data;
+   if (!win) return;
+   if (!session_recovery) return;
+   uuid_parse(uuid, win->uuid);
+   uuid_unparse(win->uuid, str);
+   DBG("UUID event received from compositor with UUID: %s\n", str);
+}
+
+static const struct zwp_e_session_recovery_listener _session_listener =
+{
+   _session_recovery_uuid,
+};
+
+static void
 _ecore_wl2_window_configure_send(Ecore_Wl2_Window *window, int w, int h, unsigned int edges, Eina_Bool fs, Eina_Bool max)
 {
    Ecore_Wl2_Event_Window_Configure *ev;
@@ -360,6 +379,20 @@ ecore_wl2_window_surface_get(Ecore_Wl2_Window *window)
 
         window->surface_id =
           wl_proxy_get_id((struct wl_proxy *)window->surface);
+
+        if ((window->display->wl.session_recovery) &&
+            (getenv("EFL_WAYLAND_SESSION_RECOVERY")))
+          {
+             char uuid[37];
+
+             zwp_e_session_recovery_add_listener(window->display->wl.session_recovery,
+                                                 &_session_listener, window);
+             if (!uuid_is_null(window->uuid))
+               {
+                  uuid_unparse(window->uuid, uuid);
+                  zwp_e_session_recovery_provide_uuid(window->display->wl.session_recovery, uuid);
+               }
+          }
      }
 
    return window->surface;

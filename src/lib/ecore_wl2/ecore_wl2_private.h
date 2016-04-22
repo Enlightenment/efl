@@ -2,6 +2,7 @@
 # define _ECORE_WL2_PRIVATE_H
 
 # include <unistd.h>
+# include <uuid/uuid.h>
 # include "Ecore_Wl2.h"
 # include "Ecore_Input.h"
 # include "www-protocol.h"
@@ -14,6 +15,8 @@
 
 # include "xdg-shell-client-protocol.h"
 # define XDG_VERSION 5
+
+# include "session-recovery-client-protocol.h"
 
 extern int _ecore_wl2_log_dom;
 
@@ -80,6 +83,7 @@ struct _Ecore_Wl2_Display
         struct wl_shell *wl_shell;
         struct xdg_shell *xdg_shell;
         struct www *www;
+        struct zwp_e_session_recovery *session_recovery;
         int compositor_version;
      } wl;
 
@@ -136,6 +140,8 @@ struct _Ecore_Wl2_Window
    struct xdg_surface *xdg_surface;
    struct xdg_popup *xdg_popup;
    struct www_surface *www_surface;
+
+   uuid_t uuid;
 
    uint32_t configure_serial;
    void (*configure_ack)(struct xdg_surface *surface, uint32_t serial);

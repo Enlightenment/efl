@@ -144,6 +144,13 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         EINA_INLIST_FOREACH(ewd->windows, window)
           _ecore_wl2_window_www_surface_init(window);
      }
+   else if ((!strcmp(interface, "zwp_e_session_recovery")) &&
+            (getenv("EFL_WAYLAND_SESSION_RECOVERY")))
+     {
+        ewd->wl.session_recovery =
+          wl_registry_bind(registry, id,
+                           &zwp_e_session_recovery_interface, 1);
+     }
    else if (!strcmp(interface, "wl_output"))
      _ecore_wl2_output_add(ewd, id);
    else if (!strcmp(interface, "wl_seat"))
@@ -389,6 +396,8 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
 
    eina_hash_free(ewd->globals);
 
+   if (ewd->wl.session_recovery)
+     zwp_e_session_recovery_destroy(ewd->wl.session_recovery);
    if (ewd->wl.www) www_destroy(ewd->wl.www);
    if (ewd->wl.xdg_shell) xdg_shell_destroy(ewd->wl.xdg_shell);
    if (ewd->wl.wl_shell) wl_shell_destroy(ewd->wl.wl_shell);

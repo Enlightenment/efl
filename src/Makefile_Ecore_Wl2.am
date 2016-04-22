@@ -8,6 +8,8 @@ installed_ecorewl2mainheadersdir = $(includedir)/ecore-wl2-@VMAJ@
 dist_installed_ecorewl2mainheaders_DATA = lib/ecore_wl2/Ecore_Wl2.h
 
 lib_ecore_wl2_libecore_wl2_la_SOURCES = \
+lib/ecore_wl2/session-recovery-client-protocol.h \
+lib/ecore_wl2/session-recovery-protocol.c \
 lib/ecore_wl2/subsurface-client-protocol.h \
 lib/ecore_wl2/subsurface-protocol.c \
 lib/ecore_wl2/xdg-shell-client-protocol.h \
