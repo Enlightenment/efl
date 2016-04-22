@@ -1202,7 +1202,11 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            because it's meant to be managed by Edje, solely. You are safe to
            query information about its current state (with
            evas_object_visible_get() or \@ref evas_object_color_get() for
-           example), though.]]
+           example), though.
+
+           Note: If the type of Edje part is GROUP, SWALLOW or EXTERNAL,
+           returned handle by this function will indicate nothing or transparent
+           rectangle for events. Use @.part_swallow_get() in that case.]]
          return: const(Evas.Object)*; [[A pointer to the Evas object implementing the given part,
                                         or $null on failure (e.g. the given part doesn't exist)]]
          params {
