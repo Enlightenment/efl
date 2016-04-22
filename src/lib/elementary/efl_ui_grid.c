@@ -66,10 +66,8 @@ struct _Custom_Table_Data
    Efl_Ui_Grid_Data *gd;
 };
 
-static const Eo_Callback_Array_Item subobj_callbacks [] = {
-   { EO_BASE_EVENT_DEL, _subobj_del_cb },
-   { NULL, NULL }
-};
+EO_CALLBACKS_ARRAY_DEFINE(subobj_callbacks,
+                          { EO_BASE_EVENT_DEL, _subobj_del_cb });
 
 static inline Eina_Bool
 _horiz(Efl_Orient dir)
@@ -400,7 +398,7 @@ _subobj_del_cb(void *data, const Eo_Event *event)
    Efl_Ui_Grid *obj = data;
    Efl_Ui_Grid_Data *pd = eo_data_scope_get(obj, EFL_UI_GRID_CLASS);
 
-   eo_event_callback_array_del(event->obj, subobj_callbacks, data);
+   eo_event_callback_array_del(event->obj, subobj_callbacks(), data);
    _item_remove(obj, pd, event->obj);
 
    if (!elm_widget_sub_object_del(obj, event->obj))
@@ -467,7 +465,7 @@ _pack_at(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Base *subobj,
         eo_key_data_set(subobj, GRID_ITEM_KEY, gi);
         elm_widget_sub_object_add(obj, subobj);
         eo_event_callback_call(obj, EFL_PACK_EVENT_CONTENT_ADDED, subobj);
-        eo_event_callback_array_add(subobj, subobj_callbacks, obj);
+        eo_event_callback_array_add(subobj, subobj_callbacks(), obj);
      }
 
    evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
