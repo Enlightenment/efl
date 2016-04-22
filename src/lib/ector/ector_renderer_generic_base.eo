@@ -11,10 +11,13 @@ enum Ector.Quality
 
 abstract Ector.Renderer.Generic.Base (Eo.Base)
 {
+   [[Ector renderer abstract interface]]
+
    eo_prefix: ector_renderer;
    legacy_prefix: null;
    methods {
       @property surface {
+         [[Surface associated to this renderer]]
          set {
 	    [[Do not use.]]
 	 }
@@ -22,7 +25,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	    [[Get the surface associated to this renderer. Can not be set.]]
 	 }
 	 values {
-	    s: Ector.Generic.Surface *;
+	    s: Ector.Generic.Surface *; [[Associated surface]]
 	 }
       }
       @property transformation {
@@ -45,36 +48,30 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	 }
       }
       @property visibility {
+         [[The given Ector renderer visible or invisible.]]
          set {
-            [[Makes the given Ector renderer visible or invisible.]]
 	 }
 	 get {
-            [[Retrieves whether or not the given Ector renderer is visible.]]
 	 }
 	 values {
 	    v: bool; [[true if to make the object visible, false otherwise]]
 	 }
       }
       @property color {
-         set {
-            [[Sets the general/main color of the given Ector renderer to the
-              given one.
+         [[Retrieves the general/main color of the given Ector renderer.
 
-              These color values are expected to be premultiplied by alpha.
-            ]]
+           Retrieves the main color's RGB component (and alpha channel)
+           values, which range from 0 to 255. For the alpha channel,
+           which defines the object's transparency level, 0 means totally
+           transparent, while 255 means opaque. These color values are
+           premultiplied by the alpha value.
+
+           Use null pointers on the components you're not interested in,
+           they'll be ignored by the function.
+         ]]
+         set {
          }
          get {
-            [[Retrieves the general/main color of the given Ector renderer.
-
-              Retrieves the main color's RGB component (and alpha channel)
-              values, which range from 0 to 255. For the alpha channel,
-              which defines the object's transparency level, 0 means totally
-              transparent, while 255 means opaque. These color values are
-              premultiplied by the alpha value.
-
-              Use null pointers on the components you're not interested in,
-              they'll be ignored by the function.
-            ]]
 	 }
 	 values {
             r: int; [[The red component of the given color.]]
@@ -93,22 +90,25 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	 }
       }
       @property quality {
+         [[Quality of the renderer]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    q: Ector.Quality;
+	    q: Ector.Quality; [[Quality of the renderer]]
 	 }
       }
       @property crc {
+         [[Cyclic redundancy check]]
          get {
-            return: uint;
+            return: uint; [[CRC value]]
 	 }
       }
       bounds_get {
+         [[Retrieve the bounds of the renderer]]
 	 params {
-	    @out r: Eina.Rectangle;
+	    @out r: Eina.Rectangle; [[Bounds as @Eina.Rectangle]]
 	 }
       }
       draw {
