@@ -2748,6 +2748,12 @@ _efl_loop_quit(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
    ecore_main_loop_quit();
 }
 
+EOLIAN static Eo_Base *
+_efl_loop_eo_base_loop_get(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   return obj;
+}
+
 static Eina_Bool
 _check_event_catcher_add(void *data, const Eo_Event *event)
 {
