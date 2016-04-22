@@ -1898,6 +1898,7 @@ struct _Edje_Real_Part_Container
 {
    Eina_List                *items; // 4 //FIXME: only if table/box
    Edje_Part_Box_Animation  *anim; // 4 //FIXME: Used only if box
+   Eo                       *eo_proxy;
 };
 
 struct _Edje_Real_Part_Swallow
@@ -2430,6 +2431,7 @@ Eina_Bool         _edje_real_part_box_prepend(Edje *ed, Edje_Real_Part *rp, Evas
 Eina_Bool         _edje_real_part_box_insert_before(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref);
 Eina_Bool         _edje_real_part_box_insert_after(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref);
 Eina_Bool         _edje_real_part_box_insert_at(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj, unsigned int pos);
+Evas_Object      *_edje_real_part_box_content_at(Edje *ed, Edje_Real_Part *rp, unsigned int pos);
 Evas_Object      *_edje_real_part_box_remove(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj);
 Evas_Object      *_edje_real_part_box_remove_at(Edje *ed, Edje_Real_Part *rp, unsigned int pos);
 Eina_Bool         _edje_real_part_box_remove_all(Edje *ed, Edje_Real_Part *rp, Eina_Bool clear);
@@ -2938,6 +2940,18 @@ Evas_Event_Flags _edje_part_ignore_flags_get(Edje *ed, Edje_Real_Part *rp);
 void _edje_part_ignore_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags ignore_flags);
 Evas_Event_Flags _edje_part_mask_flags_get(Edje *ed, Edje_Real_Part *rp);
 void _edje_part_mask_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags mask_flags);
+
+/* part containers */
+Eo *_edje_box_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+Eina_Bool _edje_part_box_append(Edje *ed, const char *part, Evas_Object *child);
+Eina_Bool _edje_part_box_prepend(Edje *ed, const char *part, Evas_Object *child);
+Eina_Bool _edje_part_box_insert_before(Edje *ed, const char *part, Evas_Object *child, const Evas_Object *reference);
+Eina_Bool _edje_part_box_insert_after(Edje *ed, const char *part, Evas_Object *child, const Evas_Object *reference);
+Eina_Bool _edje_part_box_insert_at(Edje *ed, const char *part, Evas_Object *child, unsigned int pos);
+Evas_Object *_edje_part_box_content_at(Edje *ed, const char *part, unsigned int pos);
+Evas_Object *_edje_part_box_remove(Edje *ed, const char *part, Evas_Object *child);
+Evas_Object *_edje_part_box_remove_at(Edje *ed, const char *part, unsigned int pos);
+Eina_Bool _edje_part_box_remove_all(Edje *ed, const char *part, Eina_Bool clear);
 
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>

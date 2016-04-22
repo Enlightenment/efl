@@ -1900,6 +1900,13 @@ evas_object_box_children_get(const Evas_Object *o)
    return new_list;
 }
 
+EOLIAN static int
+_evas_box_count(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED)
+{
+   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(o, priv, 0);
+   return eina_list_count(priv->children);
+}
+
 EOLIAN static const char*
 _evas_box_option_property_name_get(const Eo *o EINA_UNUSED, Evas_Object_Box_Data *_pd EINA_UNUSED, int property EINA_UNUSED)
 {

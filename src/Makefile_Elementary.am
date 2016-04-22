@@ -149,7 +149,7 @@ BUILT_SOURCES += \
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = $(elm_public_eolian_files) $(elm_eolian_type_files)
 
-noinst_DATA = $(elm_legacy_eolian_eo_h)
+noinst_DATA += $(elm_legacy_eolian_eo_h)
 
 EXTRA_DIST += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files)
 

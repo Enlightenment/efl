@@ -300,6 +300,147 @@ EAPI void edje_object_part_unswallow(Edje_Object *obj, Evas_Object *obj_swallow)
  */
 EAPI Eina_List *edje_object_access_part_list_get(const Edje_Object *obj);
 
+/**
+ * @brief Appends an object to the box.
+ *
+ * Appends child to the box indicated by part.
+ *
+ * See also @ref edje_object_part_box_prepend(),
+ * @ref edje_object_part_box_insert_before(),
+ * @ref edje_object_part_box_insert_after() and
+ * @ref edje_object_part_box_insert_at()
+ *
+ * @param[in] child The object to append
+ *
+ * @return @c true: Successfully added. @c false: An error occurred.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_box_append(Edje_Object *obj, const char *part, Evas_Object *child);
+
+/**
+ * @brief Prepends an object to the box.
+ *
+ * Prepends child to the box indicated by part.
+ *
+ * See also @ref edje_object_part_box_append(),
+ * @ref edje_object_part_box_insert_before(),
+ * @ref edje_object_part_box_insert_after and
+ * @ref edje_object_part_box_insert_at()
+ *
+ * @param[in] child The object to prepend
+ *
+ * @return @c true: Successfully added. @c false: An error occurred.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_box_prepend(Edje_Object *obj, const char *part, Evas_Object *child);
+
+/**
+ * @brief Adds an object to the box.
+ *
+ * Inserts child in the box given by part, in the position marked by reference.
+ *
+ * See also @ref edje_object_part_box_append(),
+ * @ref edje_object_part_box_prepend(),
+ * @ref edje_object_part_box_insert_after() and
+ * @ref edje_object_part_box_insert_at()
+ *
+ * @param[in] child The object to insert
+ * @param[in] reference The object to be used as reference
+ *
+ * @return @c true: Successfully added. @c false: An error occurred.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_box_insert_before(Edje_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
+
+/**
+ * @brief Adds an object to the box.
+ *
+ * Inserts child in the box given by part, in the position marked by reference.
+ *
+ * See also @ref edje_object_part_box_append(),
+ * @ref edje_object_part_box_prepend(),
+ * @ref edje_object_part_box_insert_before() and
+ * @ref edje_object_part_box_insert_at()
+ *
+ * @param[in] child The object to insert
+ * @param[in] reference The object to be used as reference
+ *
+ * @return @c true: Successfully added. @c false: An error occurred.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_box_insert_after(Edje_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
+
+/**
+ * @brief Inserts an object to the box.
+ *
+ * Adds child to the box indicated by part, in the position given by pos.
+ *
+ * See also @ref edje_object_part_box_append(),
+ * @ref edje_object_part_box_prepend(),
+ * @ref edje_object_part_box_insert_before() and
+ * @ref edje_object_part_box_insert_after()
+ *
+ * @param[in] child The object to insert
+ * @param[in] pos The position where to insert child
+ *
+ * @return @c true: Successfully added. @c false: An error occurred.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_box_insert_at(Edje_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
+
+/**
+ * @brief Removes an object from the box.
+ *
+ * Removes from the box indicated by part, the object in the position pos.
+ *
+ * See also @ref edje_object_part_box_remove() and
+ * @ref edje_object_part_box_remove_all()
+ *
+ * @param[in] pos The position index of the object (starts counting from 0)
+ *
+ * @return Pointer to the object removed, or @c null.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Evas_Object *edje_object_part_box_remove_at(Edje_Object *obj, const char *part, unsigned int pos);
+
+/**
+ * @brief Removes an object from the box.
+ *
+ * Removes child from the box indicated by part.
+ *
+ * See also @ref edje_object_part_box_remove_at() and
+ * @ref edje_object_part_box_remove_all()
+ *
+ * @param[in] child The object to remove
+ *
+ * @return Pointer to the object removed, or @c null.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Evas_Object *edje_object_part_box_remove(Edje_Object *obj, const char *part, Evas_Object *child);
+
+/**
+ * @brief Removes all elements from the box.
+ *
+ * Removes all the external objects from the box indicated by part. Elements
+ * created from the theme will not be removed.
+ *
+ * See also @ref edje_object_part_box_remove() and
+ * @ref edje_object_part_box_remove_at()
+ *
+ * @param[in] clear Delete objects on removal
+ *
+ * @return 1: Successfully cleared. 0: An error occurred.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_box_remove_all(Edje_Object *obj, const char *part, Eina_Bool clear);
 
 #include "edje_object.eo.legacy.h"
 #include "edje_edit.eo.legacy.h"

@@ -646,7 +646,11 @@ class Evas.Box (Evas.Smart_Clipped)
               priv: Evas_Object_Box_Data *;
               data: void *;
          }
-
+      }
+      count {
+         [[Returns the number of items in the box.]]
+         legacy: null;
+         return: int;
       }
    }
    implements {

@@ -730,20 +730,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
             @in text: const(char)*; [[The text string]]
          }
       }
-      part_box_remove_at {
-         [[Removes an object from the box.
-
-           Removes from the box indicated by part, the object in the position
-           pos.
-
-           See also @.part_box_remove() and @.part_box_remove_all()]]
-
-         return: Evas.Object *; [[Pointer to the object removed, or $null.]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in pos: uint; [[The position index of the object (starts counting from 0)]]
-         }
-      }
       part_text_cursor_copy {
          [[Copy the cursor to another cursor.]]
 
@@ -1021,23 +1007,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
             @in part: const(char)*; [[The part name]]
          }
       }
-      part_box_insert_at {
-         [[Inserts an object to the box.
-
-           Adds child to the box indicated by part, in the position given by
-           pos.
-
-           See also @.part_box_append(), @.part_box_prepend(),
-           @.part_box_insert_before() and @.part_box_insert_after()]]
-
-         return: bool; [[$true: Successfully added.
-                         $false: An error occurred.]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in child: Evas.Object *; [[The object to insert]]
-            @in pos: uint; [[The position where to insert child]]
-         }
-      }
       part_text_anchor_geometry_get @const {
          [[Return a list of Evas_Textblock_Rectangle anchor rectangles.
 
@@ -1088,21 +1057,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
             @in part: const(char)*; [[The part name]]
             @out dx: double; [[The dx page increment pointer]]
             @out dy: double; [[The dy page increment pointer]]
-         }
-      }
-      part_box_prepend {
-         [[Prepends an object to the box.
-
-           Prepends child to the box indicated by part.
-
-           See also @.part_box_append(), @.part_box_insert_before(),
-           @.part_box_insert_after and @.part_box_insert_at()]]
-
-         return: bool; [[$true: Successfully added.
-                         $false: An error occurred.]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in child: Evas.Object *; [[The object to prepend]]
          }
       }
       signal_emit {
@@ -1502,19 +1456,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
            be processed only at idle time.]]
 
       }
-      part_box_remove {
-         [[Removes an object from the box.
-
-           Removes child from the box indicated by part.
-
-           See also @.part_box_remove_at() and @.part_box_remove_all()]]
-
-         return: Evas.Object *; [[Pointer to the object removed, or $null.]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in child: Evas.Object *; [[The object to remove]]
-         }
-      }
       thaw {
          [[Thaws the Edje object.
 
@@ -1568,40 +1509,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
             @in part: const(char)*; [[The part name]]
             @in col: uint; [[The column of the child to get]]
             @in row: uint; [[The row of the child to get]]
-         }
-      }
-      part_box_insert_before {
-         [[Adds an object to the box.
-
-           Inserts child in the box given by part, in the position marked by
-           reference.
-
-           See also @.part_box_append(), @.part_box_prepend(),
-           @.part_box_insert_after() and @.part_box_insert_at()]]
-
-         return: bool; [[$true: Successfully added.
-                         $false: An error occurred.]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in child: Evas.Object *; [[The object to insert]]
-            @in reference: const(Evas.Object)*; [[The object to be used as reference]]
-         }
-      }
-      part_box_insert_after {
-         [[Adds an object to the box.
-
-           Inserts child in the box given by part, in the position marked by
-           reference.
-
-           See also @.part_box_append(), @.part_box_prepend(),
-           @.part_box_insert_before() and @.part_box_insert_at()]]
-
-         return: bool; [[$true: Successfully added.
-                         $false: An error occurred.]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in child: Evas.Object *; [[The object to insert]]
-            @in reference: const(Evas.Object)*; [[The object to be used as reference]]
          }
       }
       part_external_param_set {
@@ -1675,21 +1582,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
                                      required height]]
          }
       }
-      part_box_append {
-         [[Appends an object to the box.
-
-           Appends child to the box indicated by part.
-
-           See also @.part_box_prepend(), @.part_box_insert_before(),
-           @.part_box_insert_after() and @.part_box_insert_at()]]
-
-         return: bool; [[$true: Successfully added.
-                         $false: An error occurred.]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in child: Evas.Object *; [[The object to append]]
-         }
-      }
       size_min_restricted_calc {
          [[Calculate the minimum required size for a given Edje object.
 
@@ -1716,21 +1608,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
                                            to be less than this value]]
             @in restrictedh: Evas.Coord; [[Do not allow object's calculated (minimum)
                                            height to be less than this value]]
-         }
-      }
-      part_box_remove_all {
-         [[Removes all elements from the box.
-
-           Removes all the external objects from the box indicated by part.
-           Elements created from the theme will not be removed.
-
-           See also @.part_box_remove() and @.part_box_remove_at()]]
-
-         return: bool; [[1: Successfully cleared.
-                         0: An error occurred.]]
-         params {
-            @in part: const(char)*; [[The part name]]
-            @in clear: bool; [[Delete objects on removal]]
          }
       }
       part_drag_page {

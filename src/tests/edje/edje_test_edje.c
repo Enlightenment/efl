@@ -494,10 +494,76 @@ START_TEST(edje_test_box)
 }
 END_TEST
 
+START_TEST(edje_test_box_eoapi)
+{
+   Evas *evas;
+   Evas_Object *obj, *sobj, *sobjs[5];
+   Eina_Iterator *it;
+   Eo *box;
+   int i;
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_box.edj"), "test_group"));
+
+   for (i = 0; i < 5; i++)
+     {
+        sobjs[i] = evas_object_rectangle_add(evas);
+        fail_if(!sobjs[i]);
+     }
+
+   /* same test case as legacy api above */
+   box = efl_content_get(obj, "box");
+   fail_if(!box);
+
+   efl_pack_end(box, sobjs[3]);
+   efl_pack_begin(box, sobjs[1]);
+   efl_pack_before(box, sobjs[0], sobjs[1]);
+   efl_pack_after(box, sobjs[4], sobjs[3]);
+   efl_pack_insert(box, sobjs[2], 2);
+   fail_if(efl_content_count(box) != 5);
+
+   it = efl_content_iterate(box);
+   i = 0;
+   EINA_ITERATOR_FOREACH(it, sobj)
+     fail_if(sobj != sobjs[i++]);
+   fail_if(i != 5);
+   eina_iterator_free(it);
+
+   /* clear up and test a bit more */
+   efl_pack_unpack_all(box);
+   fail_if(efl_content_count(box) != 0);
+
+   efl_pack(box, sobjs[1]);
+   efl_pack_insert(box, sobjs[0], 0);
+   efl_pack_insert(box, sobjs[2], -1);
+   it = efl_content_iterate(box);
+   i = 0;
+   EINA_ITERATOR_FOREACH(it, sobj)
+     fail_if(sobj != sobjs[i++]);
+   fail_if(i != 3);
+   eina_iterator_free(it);
+
+   fail_if(!efl_content_remove(box, sobjs[0]));
+   fail_if(efl_content_count(box) != 2);
+   fail_if(!efl_pack_content_at_remove(box, 1));
+   fail_if(efl_content_count(box) != 1);
+   fail_if(efl_pack_content_index_get(box, sobjs[1]) != 0);
+
+   efl_pack_clear(box);
+   fail_if(efl_content_count(box) != 0);
+
+   eo_del(box);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
-   tcase_add_test(tc,edje_test_load_simple_layout);
+   tcase_add_test(tc, edje_test_load_simple_layout);
    tcase_add_test(tc, edje_test_edje_load);
    tcase_add_test(tc, edje_test_simple_layout_geometry);
    tcase_add_test(tc, edje_test_complex_layout);
@@ -511,4 +577,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_swallows_eoapi);
    tcase_add_test(tc, edje_test_access);
    tcase_add_test(tc, edje_test_box);
+   tcase_add_test(tc, edje_test_box_eoapi);
 }
