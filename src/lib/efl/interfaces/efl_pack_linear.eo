@@ -62,6 +62,16 @@ interface Efl.Pack_Linear (Efl.Pack)
             subobj: Efl.Gfx.Base *;
          }
       }
+      content_at_remove {
+         [[Pop out item at specified $index.
+
+           Equivalent to unpack(content_at($index)).
+         ]]
+         params {
+            index: int;
+         }
+         return: Efl.Gfx.Base*; [[The child item if it could be removed.]]
+      }
       @property content_index {
          [[Index of the child in this container, may be modified to move the $subobj.]]
          set {

@@ -448,6 +448,21 @@ _efl_ui_box_efl_pack_linear_content_at_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNU
    return _box_item(eina_list_nth(bd->children, index));
 }
 
+EOLIAN static Efl_Gfx_Base *
+_efl_ui_box_efl_pack_linear_content_at_remove(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
+                                              int index)
+{
+   Efl_Gfx_Base *content;
+
+   content = efl_pack_content_at_get(obj, index);
+   if (!content) return NULL;
+
+   if (!efl_pack_unpack(obj, content))
+     return NULL;
+
+   return content;
+}
+
 EOLIAN static int
 _efl_ui_box_efl_pack_linear_content_index_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
                                               Efl_Gfx_Base *subobj)
