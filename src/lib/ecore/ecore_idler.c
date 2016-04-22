@@ -15,6 +15,9 @@ struct _Ecore_Factorized_Idle
    void         *data;
 
    const Eo_Callback_Array_Item *desc;
+
+   short         references;
+   Eina_Bool     delete_me : 1;
 };
 
 Eina_Bool
@@ -30,7 +33,13 @@ _ecore_factorized_idle_process(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Ecore_Factorized_Idle *idler = data;
 
+   idler->references++;
    if (!_ecore_call_task_cb(idler->func, idler->data))
+     idler->delete_me = EINA_TRUE;
+   idler->references--;
+
+   if (idler->delete_me &&
+       idler->references == 0)
      _ecore_factorized_idle_del(idler);
 
    return EO_CALLBACK_CONTINUE;
@@ -43,6 +52,12 @@ _ecore_factorized_idle_del(Ecore_Idler *idler)
 
    if (!idler) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
+
+   if (idler->references > 0)
+     {
+        idler->delete_me = EINA_TRUE;
+        return idler->data;
+     }
 
    eo_event_callback_array_del(_mainloop_singleton, idler->desc, idler);
 
@@ -75,6 +90,8 @@ _ecore_factorized_idle_add(const Eo_Callback_Array_Item *desc,
    ret->func = func;
    ret->data = (void*) data;
    ret->desc = desc;
+   ret->references = 0;
+   ret->delete_me = EINA_FALSE;
 
    eo_event_callback_array_add(_mainloop_singleton, desc, ret);
 
