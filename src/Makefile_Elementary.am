@@ -669,6 +669,13 @@ lib_elementary_libelementary_la_CPPFLAGS = \
 -DELEMENTARY_BUILD \
 @ELEMENTARY_CFLAGS@
 
+if HAVE_WINDOWS
+lib_elementary_libelementary_la_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_srcdir)/src/lib/evil/regex \
+-DPOSIX_MISTAKE
+endif
+
 EXTRA_DIST += \
 	lib/elementary/elm_factory.h \
 	lib/elementary/elm_factory.c \
@@ -867,6 +874,13 @@ bin_elementary_elm_prefs_cc_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 @ELEMENTARY_CFLAGS@
 
+if HAVE_WINDOWS
+bin_elementary_elm_prefs_cc_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_srcdir)/src/lib/evil/regex \
+-DPOSIX_MISTAKE
+endif
+
 if BUILD_QUICKLAUNCH
 bin_elementary_elementary_quicklaunch_SOURCES = bin/elementary/quicklaunch.c
 bin_elementary_elementary_quicklaunch_LDADD = @USE_ELEMENTARY_LIBS@
@@ -1007,6 +1021,14 @@ modules_elementary_prefs_module_la_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DELEMENTARY_BUILD \
 @ELEMENTARY_CFLAGS@
+
+if HAVE_WINDOWS
+modules_elementary_prefs_module_la_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_srcdir)/src/lib/evil/regex \
+-DPOSIX_MISTAKE
+endif
+
 modules_elementary_prefs_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
 modules_elementary_prefs_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 modules_elementary_prefs_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
