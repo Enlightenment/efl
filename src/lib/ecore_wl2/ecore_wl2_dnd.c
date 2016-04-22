@@ -151,7 +151,8 @@ data_source_event_emit(Ecore_Wl2_Input *input, int event)
      ev->source = input->focus.keyboard->id;
 
    if (!ev->win) ev->win = ev->source;
-   ev->action = input->drag.source->dnd_action;
+   if (input->drag.source)
+     ev->action = input->drag.source->dnd_action;
 
    ecore_event_add(event, ev, NULL, NULL);
 }
@@ -161,9 +162,10 @@ data_source_cancelled(void *data, struct wl_data_source *source)
 {
    Ecore_Wl2_Input *input = data;
 
+   if (input->drag.source)
+     input->drag.source->dnd_action = 0;
    if (input->data.source == source) input->data.source = NULL;
    wl_data_source_destroy(source);
-   input->drag.source->dnd_action = 0;
    data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_END);
 }
 
@@ -189,7 +191,8 @@ data_source_action(void *data, struct wl_data_source *source EINA_UNUSED, uint32
 {
    Ecore_Wl2_Input *input = data;
 
-   input->drag.source->dnd_action = dnd_action;
+   if (input->drag.source)
+     input->drag.source->dnd_action = dnd_action;
    data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_ACTION);
 }
 
@@ -231,9 +234,12 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
 
    if (len <= 0)
      {
-        if (source->input->display->wl.data_device_manager_version >=
-          WL_DATA_OFFER_FINISH_SINCE_VERSION)
-          wl_data_offer_finish(source->offer);
+        if (source->input->drag.source)
+          {
+             if (source->input->display->wl.data_device_manager_version >=
+               WL_DATA_OFFER_FINISH_SINCE_VERSION)
+               wl_data_offer_finish(source->offer);
+          }
         if (source->input->selection.source == source)
           source->input->selection.source = NULL;
         _ecore_wl2_dnd_del(source);
