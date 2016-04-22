@@ -938,7 +938,7 @@ local gen_func_csig = function(f, ftype)
     return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
 end
 
-local get_func_namesig = function(fn, cl, buf)
+local gen_func_namesig = function(fn, cl, buf)
     if fn:type_get() ~= eolian.function_type.METHOD then
         buf[#buf + 1] = "@property "
     end
@@ -990,9 +990,29 @@ local gen_func_param = function(fp, buf, nodir)
     buf[#buf + 1] = ";\n"
 end
 
-local get_method_sig = function(fn, cl)
+local gen_func_return = function(fp, ftype, buf, indent)
+    local rett = fp:return_type_get(ftype)
+    if not rett then
+        return
+    end
+    buf[#buf + 1] = indent and ("    "):rep(indent) or "    "
+    buf[#buf + 1] = "return: "
+    buf[#buf + 1] = get_type_str(rett)
+    local dval = fp:return_default_value_get(ftype)
+    if dval then
+        buf[#buf + 1] = " ("
+        buf[#buf + 1] = dval:serialize()
+        buf[#buf + 1] = ")"
+    end
+    if fp:return_is_warn_unused(ftype) then
+        buf[#buf + 1] = " @warn_unused"
+    end
+    buf[#buf + 1] = ";\n"
+end
+
+local gen_method_sig = function(fn, cl)
     local buf = {}
-    get_func_namesig(fn, cl, buf)
+    gen_func_namesig(fn, cl, buf)
     if fn:is_virtual_pure(eolian.function_type.METHOD) then
         buf[#buf + 1] = "@virtual_pure "
     end
@@ -1011,28 +1031,104 @@ local get_method_sig = function(fn, cl)
         end
         buf[#buf + 1] = "    }\n"
     end
-    local rett = fn:return_type_get(eolian.function_type.METHOD)
-    if rett then
-        buf[#buf + 1] = "    return: "
-        buf[#buf + 1] = get_type_str(rett)
-        local dval = fn:return_default_value_get(eolian.function_type.METHOD)
-        if dval then
-            buf[#buf + 1] = " ("
-            buf[#buf + 1] = dval:serialize()
-            buf[#buf + 1] = ")"
-        end
-        if fn:return_is_warn_unused(eolian.function_type.METHOD) then
-            buf[#buf + 1] = " @warn_unused"
-        end
-        buf[#buf + 1] = ";\n"
+    gen_func_return(fn, eolian.function_type.METHOD, buf)
+    buf[#buf + 1] = "}"
+    return table.concat(buf)
+end
+
+local eovals_check_same = function(a1, a2)
+    if #a1 ~= #a2 then return false end
+    for i, v in ipairs(a1) do
+        if v ~= a2[i] then return false end
     end
+    return true
+end
+
+local gen_prop_keyvals = function(tbl, kword, buf, indent)
+    local ind = indent and ("    "):rep(indent) or "    "
+    if #tbl == 0 then return end
+    buf[#buf + 1] = "    "
+    buf[#buf + 1] = ind
+    buf[#buf + 1] = kword
+    buf[#buf + 1] = " {\n"
+    for i, v in ipairs(tbl) do
+        buf[#buf + 1] = ind
+        gen_func_param(v, buf, true)
+    end
+    buf[#buf + 1] = "    "
+    buf[#buf + 1] = ind
+    buf[#buf + 1] = "}\n"
+end
+
+local gen_prop_sig = function(fn, cl)
+    local buf = {}
+    gen_func_namesig(fn, cl, buf)
+    local fnt = fn:type_get()
+    local ftt = eolian.function_type
+    local isget = (fnt == ftt.PROPERTY or fnt == ftt.PROP_GET)
+    local isset = (fnt == ftt.PROPERTY or fnt == ftt.PROP_SET)
+
+    local gvirt = fn:is_virtual_pure(ftt.PROP_GET)
+    local svirt = fn:is_virtual_pure(ftt.PROP_SET)
+
+    if (not isget or gvirt) and (not isset or svirt) then
+        buf[#buf + 1] = "@virtual_pure "
+    end
+
+    local gkeys = isget and fn:property_keys_get(ftt.PROP_GET):to_array() or {}
+    local skeys = isset and fn:property_keys_get(ftt.PROP_SET):to_array() or {}
+    local gvals = isget and fn:property_values_get(ftt.PROP_GET):to_array() or {}
+    local svals = isget and fn:property_values_get(ftt.PROP_SET):to_array() or {}
+    local grtt = isget and fn:return_type_get(ftt.PROP_GET) or nil
+    local srtt = isset and fn:return_type_get(ftt.PROP_SET) or nil
+
+    local keys_same = eovals_check_same(gkeys, skeys)
+    local vals_same = eovals_check_same(gvals, svals)
+
+    buf[#buf + 1] = "{\n"
+
+    if isget then
+        buf[#buf + 1] = "    get {"
+        if (#gkeys == 0 or keys_same) and (#gvals == 0 or vals_same) and
+           (not grtt or grtt == srtt) then
+            buf[#buf + 1] = "}\n"
+        else
+            buf[#buf + 1] = "\n"
+            if not keys_same then gen_prop_keyvals(gkeys, "keys", buf) end
+            if not vals_same then gen_prop_keyvals(gvals, "values", buf) end
+            if grtt ~= srtt then
+                gen_func_return(fn, ftt.PROP_GET, buf, 2)
+            end
+            buf[#buf + 1] = "    }\n"
+        end
+    end
+
+    if isset then
+        buf[#buf + 1] = "    set {"
+        if (#skeys == 0 or keys_same) and (#svals == 0 or vals_same) and
+           (not srtt or grtt == srtt) then
+            buf[#buf + 1] = "}\n"
+        else
+            buf[#buf + 1] = "\n"
+            if not keys_same then gen_prop_keyvals(skeys, "keys", buf) end
+            if not vals_same then gen_prop_keyvals(svals, "values", buf) end
+            if grtt ~= srtt then
+                gen_func_return(fn, ftt.PROP_SET, buf, 2)
+            end
+            buf[#buf + 1] = "    }\n"
+        end
+    end
+
+    if keys_same then gen_prop_keyvals(gkeys, "keys", buf, 0) end
+    if vals_same then gen_prop_keyvals(gvals, "values", buf, 0) end
+
     buf[#buf + 1] = "}"
     return table.concat(buf)
 end
 
 local get_property_sig = function(fn, cl)
     local buf = {}
-    get_func_namesig(fn, cl, buf)
+    gen_func_namesig(fn, cl, buf)
     buf[#buf + 1] = "{"
     buf[#buf + 1] = "}"
     return table.concat(buf)
@@ -1283,7 +1379,7 @@ build_method = function(fn, cl)
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
 
     f:write_h("Signature", 3)
-    f:write_code(get_method_sig(fn, cl))
+    f:write_code(gen_method_sig(fn, cl))
     f:write_nl()
 
     f:write_h("C signature", 3)
@@ -1317,7 +1413,7 @@ build_property = function(fn, cl)
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
 
     f:write_h("Signature", 3)
-    f:write_code(get_method_sig(fn, cl))
+    f:write_code(gen_prop_sig(fn, cl))
     f:write_nl()
 
     f:write_h("C signature", 3)
