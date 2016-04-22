@@ -76,7 +76,7 @@ struct _Ecore_File_Monitor
                  Ecore_File_Event event,
                  const char *path);
 
-   char               *path;
+   const char         *path;
    void               *data;
    Ecore_File         *files;
 };

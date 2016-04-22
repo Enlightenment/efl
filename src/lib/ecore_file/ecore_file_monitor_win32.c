@@ -243,6 +243,7 @@ ecore_file_monitor_backend_add(const char *path,
 {
    Ecore_File_Monitor_Win32 *m;
    Ecore_File_Monitor       *em;
+   char                     *path2;
    size_t                    len;
 
    if (!path || (*path == '\0')) return NULL;
@@ -256,22 +257,17 @@ ecore_file_monitor_backend_add(const char *path,
    em->func = func;
    em->data = data;
 
-   em->path = strdup(path);
-   if (!em->path)
-     {
-        free(em);
-        return NULL;
-     }
-   len = strlen(em->path);
-   if (em->path[len - 1] == '/' || em->path[len - 1] == '\\')
-     em->path[len - 1] = '\0';
+   len = strlen(path);
+   path2 = alloca(len + 1);
+   if (path2[len - 1] == '/' || path2[len - 1] == '\\') path2[len - 1] = 0;
+   em->path = eina_stringshare_add(path2);
 
    m = ECORE_FILE_MONITOR_WIN32(em);
 
    m->file = _ecore_file_monitor_win32_data_new(em, 0);
    if (!m->file)
      {
-        free(em->path);
+        eina_stringshare_del(em->path);
         free(em);
         return NULL;
      }
@@ -280,7 +276,7 @@ ecore_file_monitor_backend_add(const char *path,
    if (!m->dir)
      {
         _ecore_file_monitor_win32_data_free(m->file);
-        free(em->path);
+        eina_stringshare_del(em->path);
         free(em);
         return NULL;
      }
@@ -301,6 +297,6 @@ ecore_file_monitor_backend_del(Ecore_File_Monitor *em)
    m = ECORE_FILE_MONITOR_WIN32(em);
    _ecore_file_monitor_win32_data_free(m->dir);
    _ecore_file_monitor_win32_data_free(m->file);
-   free(em->path);
+   eina_stringshare_del(em->path);
    free(em);
 }

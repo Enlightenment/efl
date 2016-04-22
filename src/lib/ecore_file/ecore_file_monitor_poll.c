@@ -68,6 +68,7 @@ ecore_file_monitor_backend_add(const char *path,
                                void *data)
 {
    Ecore_File_Monitor *em;
+   char *path2;
    size_t len;
 
    if (!path) return NULL;
@@ -81,13 +82,13 @@ ecore_file_monitor_backend_add(const char *path,
    else
      ecore_timer_interval_set(_timer, ECORE_FILE_INTERVAL_MIN);
 
-   em->path = strdup(path);
-   len = strlen(em->path);
-   if (em->path[len - 1] == '/' && strcmp(em->path, "/"))
-     em->path[len - 1] = 0;
-
    em->func = func;
    em->data = data;
+
+   len = strlen(path);
+   path2 = alloca(len + 1);
+   if (path2[len - 1] == '/' && strcmp(path2, "/")) path2[len - 1] = 0;
+   em->path = eina_stringshare_add(path2);
 
    ECORE_FILE_MONITOR_POLL(em)->mtime = ecore_file_mod_time(em->path);
    _monitors = ECORE_FILE_MONITOR(eina_inlist_append(EINA_INLIST_GET(_monitors), EINA_INLIST_GET(em)));
@@ -160,7 +161,7 @@ ecore_file_monitor_backend_del(Ecore_File_Monitor *em)
    if (_monitors)
      _monitors = ECORE_FILE_MONITOR(eina_inlist_remove(EINA_INLIST_GET(_monitors), EINA_INLIST_GET(em)));
 
-   free(em->path);
+   eina_stringshare_del(em->path);
    free(em);
 
    if (_timer)
