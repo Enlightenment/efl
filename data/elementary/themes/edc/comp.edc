@@ -621,6 +621,9 @@ group { name: "e/comp/frame/menu";
             rel2.relative: 0.95 0.9;
          }
       }
+      image { "glow";
+         desc { "focused"; hid; }
+      }
    }
 }
 
@@ -632,6 +635,9 @@ group { name: "e/comp/frame/menu/fast";
             rel1.relative: 0.05 0.0;
             rel2.relative: 0.95 0.9;
          }
+      }
+      image { "glow";
+         desc { "focused"; hid; }
       }
    }
 }
