@@ -1555,6 +1555,48 @@ edje_edit_sound_samplesource_get(Evas_Object *obj, const char *sample_name)
 /*  GROUPS API  */
 /****************/
 
+static void
+_mempools_add(Edje_Part_Collection_Directory_Entry *de)
+{
+#define EDIT_EMN(Tp, Sz, Ce) \
+  Ce->mp.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
+#define EDIT_EMNP(Tp, Sz, Ce) \
+  Ce->mp_rtl.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
+
+   EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
+   EDIT_EMN(TEXT, Edje_Part_Description_Text, de);
+   EDIT_EMN(IMAGE, Edje_Part_Description_Image, de);
+   EDIT_EMN(PROXY, Edje_Part_Description_Proxy, de);
+   EDIT_EMN(SWALLOW, Edje_Part_Description_Common, de);
+   EDIT_EMN(TEXTBLOCK, Edje_Part_Description_Text, de);
+   EDIT_EMN(GROUP, Edje_Part_Description_Common, de);
+   EDIT_EMN(BOX, Edje_Part_Description_Box, de);
+   EDIT_EMN(TABLE, Edje_Part_Description_Table, de);
+   EDIT_EMN(EXTERNAL, Edje_Part_Description_External, de);
+   EDIT_EMN(SPACER, Edje_Part_Description_Common, de);
+   EDIT_EMN(SNAPSHOT, Edje_Part_Description_Snapshot, de);
+   EDIT_EMN(MESH_NODE, Edje_Part_Description_Mesh_Node, de);
+   EDIT_EMN(LIGHT, Edje_Part_Description_Light, de);
+   EDIT_EMN(CAMERA, Edje_Part_Description_Camera, de);
+   EDIT_EMN(part, Edje_Part, de);
+
+   EDIT_EMNP(RECTANGLE, Edje_Part_Description_Common, de);
+   EDIT_EMNP(TEXT, Edje_Part_Description_Text, de);
+   EDIT_EMNP(IMAGE, Edje_Part_Description_Image, de);
+   EDIT_EMNP(PROXY, Edje_Part_Description_Proxy, de);
+   EDIT_EMNP(SWALLOW, Edje_Part_Description_Common, de);
+   EDIT_EMNP(TEXTBLOCK, Edje_Part_Description_Text, de);
+   EDIT_EMNP(GROUP, Edje_Part_Description_Common, de);
+   EDIT_EMNP(BOX, Edje_Part_Description_Box, de);
+   EDIT_EMNP(TABLE, Edje_Part_Description_Table, de);
+   EDIT_EMNP(EXTERNAL, Edje_Part_Description_External, de);
+   EDIT_EMNP(SPACER, Edje_Part_Description_Common, de);
+   EDIT_EMNP(SNAPSHOT, Edje_Part_Description_Snapshot, de);
+   EDIT_EMNP(MESH_NODE, Edje_Part_Description_Mesh_Node, de);
+   EDIT_EMNP(LIGHT, Edje_Part_Description_Light, de);
+   EDIT_EMNP(CAMERA, Edje_Part_Description_Camera, de);
+}
+
 EAPI Eina_Bool
 edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_name)
 {
@@ -1623,45 +1665,9 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
    de->entry = eina_stringshare_add(copy_name);
    memcpy(&de->count, &e->count, sizeof (de->count));
 
-#define EDIT_EMN(Tp, Sz, Ce) \
-  Ce->mp.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
-#define EDIT_EMNP(Tp, Sz, Ce) \
-  Ce->mp_rtl.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
-
    eina_hash_direct_add(ed->file->collection, de->entry, de);
 
-   EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
-   EDIT_EMN(TEXT, Edje_Part_Description_Text, de);
-   EDIT_EMN(IMAGE, Edje_Part_Description_Image, de);
-   EDIT_EMN(PROXY, Edje_Part_Description_Proxy, de);
-   EDIT_EMN(SWALLOW, Edje_Part_Description_Common, de);
-   EDIT_EMN(TEXTBLOCK, Edje_Part_Description_Text, de);
-   EDIT_EMN(GROUP, Edje_Part_Description_Common, de);
-   EDIT_EMN(BOX, Edje_Part_Description_Box, de);
-   EDIT_EMN(TABLE, Edje_Part_Description_Table, de);
-   EDIT_EMN(EXTERNAL, Edje_Part_Description_External, de);
-   EDIT_EMN(SPACER, Edje_Part_Description_Common, de);
-   EDIT_EMN(SNAPSHOT, Edje_Part_Description_Snapshot, de);
-   EDIT_EMN(MESH_NODE, Edje_Part_Description_Mesh_Node, de);
-   EDIT_EMN(LIGHT, Edje_Part_Description_Light, de);
-   EDIT_EMN(CAMERA, Edje_Part_Description_Camera, de);
-   EDIT_EMN(part, Edje_Part, de);
-
-   EDIT_EMNP(RECTANGLE, Edje_Part_Description_Common, de);
-   EDIT_EMNP(TEXT, Edje_Part_Description_Text, de);
-   EDIT_EMNP(IMAGE, Edje_Part_Description_Image, de);
-   EDIT_EMNP(PROXY, Edje_Part_Description_Proxy, de);
-   EDIT_EMNP(SWALLOW, Edje_Part_Description_Common, de);
-   EDIT_EMNP(TEXTBLOCK, Edje_Part_Description_Text, de);
-   EDIT_EMNP(GROUP, Edje_Part_Description_Common, de);
-   EDIT_EMNP(BOX, Edje_Part_Description_Box, de);
-   EDIT_EMNP(TABLE, Edje_Part_Description_Table, de);
-   EDIT_EMNP(EXTERNAL, Edje_Part_Description_External, de);
-   EDIT_EMNP(SPACER, Edje_Part_Description_Common, de);
-   EDIT_EMNP(SNAPSHOT, Edje_Part_Description_Snapshot, de);
-   EDIT_EMNP(MESH_NODE, Edje_Part_Description_Mesh_Node, de);
-   EDIT_EMNP(LIGHT, Edje_Part_Description_Light, de);
-   EDIT_EMNP(CAMERA, Edje_Part_Description_Camera, de);
+   _mempools_add(de);
 
    epc->id = id;
    epc->part = eina_stringshare_add(copy_name);
@@ -1774,18 +1780,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    //cd = _alloc(sizeof(Code));
    //codes = eina_list_append(codes, cd);
 
-   EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
-   EDIT_EMN(TEXT, Edje_Part_Description_Text, de);
-   EDIT_EMN(IMAGE, Edje_Part_Description_Image, de);
-   EDIT_EMN(PROXY, Edje_Part_Description_Proxy, de);
-   EDIT_EMN(SWALLOW, Edje_Part_Description_Common, de);
-   EDIT_EMN(TEXTBLOCK, Edje_Part_Description_Text, de);
-   EDIT_EMN(GROUP, Edje_Part_Description_Common, de);
-   EDIT_EMN(BOX, Edje_Part_Description_Box, de);
-   EDIT_EMN(TABLE, Edje_Part_Description_Table, de);
-   EDIT_EMN(EXTERNAL, Edje_Part_Description_External, de);
-   EDIT_EMN(SPACER, Edje_Part_Description_Common, de);
-   EDIT_EMN(part, Edje_Part, de);
+   _mempools_add(de);
 
    ed->file->collection_cache = eina_list_prepend(ed->file->collection_cache, pc);
    _edje_cache_coll_clean(ed->file);
@@ -2178,18 +2173,7 @@ edje_edit_group_alias_add(Evas_Object *obj, const char *group_name, const char *
    memcpy(&de->count, &e->count, sizeof (de->count));
    eina_hash_direct_add(ed->file->collection, de->entry, de);
 
-   EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
-   EDIT_EMN(TEXT, Edje_Part_Description_Text, de);
-   EDIT_EMN(IMAGE, Edje_Part_Description_Image, de);
-   EDIT_EMN(PROXY, Edje_Part_Description_Proxy, de);
-   EDIT_EMN(SWALLOW, Edje_Part_Description_Common, de);
-   EDIT_EMN(TEXTBLOCK, Edje_Part_Description_Text, de);
-   EDIT_EMN(GROUP, Edje_Part_Description_Common, de);
-   EDIT_EMN(BOX, Edje_Part_Description_Box, de);
-   EDIT_EMN(TABLE, Edje_Part_Description_Table, de);
-   EDIT_EMN(EXTERNAL, Edje_Part_Description_External, de);
-   EDIT_EMN(SPACER, Edje_Part_Description_Common, de);
-   EDIT_EMN(part, Edje_Part, de);
+   _mempools_add(de);
 
    return EINA_TRUE;
 }
