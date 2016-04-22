@@ -960,7 +960,7 @@ local get_func_namesig = function(fn, cl, buf)
     end
 end
 
-local gen_func_param = function(fp, buf)
+local gen_func_param = function(fp, buf, nodir)
     -- TODO: default value
     buf[#buf + 1] = "        "
     local dirs = {
@@ -968,10 +968,16 @@ local gen_func_param = function(fp, buf)
         [eolian.parameter_dir.OUT] = "@out ",
         [eolian.parameter_dir.INOUT] = "@inout ",
     }
-    buf[#buf + 1] = dirs[fp:direction_get()]
+    if not nodir then buf[#buf + 1] = dirs[fp:direction_get()] end
     buf[#buf + 1] = fp:name_get()
     buf[#buf + 1] = ": "
     buf[#buf + 1] = get_type_str(fp:type_get())
+    local dval = fp:default_value_get()
+    if dval then
+        buf[#buf + 1] = " ("
+        buf[#buf + 1] = dval:serialize()
+        buf[#buf + 1] = ")"
+    end
     if fp:is_nonull() then
         buf[#buf + 1] = " @nonull"
     end
@@ -1004,6 +1010,21 @@ local get_method_sig = function(fn, cl)
             gen_func_param(fp, buf)
         end
         buf[#buf + 1] = "    }\n"
+    end
+    local rett = fn:return_type_get(eolian.function_type.METHOD)
+    if rett then
+        buf[#buf + 1] = "    return: "
+        buf[#buf + 1] = get_type_str(rett)
+        local dval = fn:return_default_value_get(eolian.function_type.METHOD)
+        if dval then
+            buf[#buf + 1] = " ("
+            buf[#buf + 1] = dval:serialize()
+            buf[#buf + 1] = ")"
+        end
+        if fn:return_is_warn_unused(eolian.function_type.METHOD) then
+            buf[#buf + 1] = " @warn_unused"
+        end
+        buf[#buf + 1] = ";\n"
     end
     buf[#buf + 1] = "}"
     return table.concat(buf)
