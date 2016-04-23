@@ -126,6 +126,7 @@ ecore_file_monitor_backend_add(const char *path,
 
    len = strlen(path);
    path2 = alloca(len + 1);
+   strcpy(path2, path);
    if (path2[len - 1] == '/' && strcmp(path2, "/")) path2[len - 1] = 0;
    em->path = eina_stringshare_add(path2);
 
