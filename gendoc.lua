@@ -196,52 +196,7 @@ end
 
 -- statistics
 
-local stats = {
-    class = 0,
-    class_undoc = 0,
-    interface = 0,
-    interface_undoc = 0,
-    mixin = 0,
-    mixin_undoc = 0,
-    method = 0,
-    method_undoc = 0,
-    param = 0,
-    param_undoc = 0,
-    mret = 0,
-    mret_undoc = 0,
-    getter = 0,
-    getter_undoc = 0,
-    gret = 0,
-    gret_undoc = 0,
-    gkey = 0,
-    gkey_undoc = 0,
-    gvalue = 0,
-    gvalue_undoc = 0,
-    setter = 0,
-    setter_undoc = 0,
-    sret = 0,
-    sret_undoc = 0,
-    skey = 0,
-    skey_undoc = 0,
-    svalue = 0,
-    svalue_undoc = 0,
-    event = 0,
-    event_undoc = 0,
-    alias = 0,
-    alias_undoc = 0,
-    struct = 0,
-    struct_undoc = 0,
-    sfield = 0,
-    sfield_undoc = 0,
-    enum = 0,
-    enum_undoc = 0,
-    efield = 0,
-    efield_undoc = 0,
-    constant = 0,
-    constant_undoc = 0,
-    global = 0,
-    global_undoc = 0
-}
+local stats = {}
 
 local stats_pd = function(n)
     local ret = 0
@@ -259,8 +214,8 @@ local fcol = 30
 local ncol = 0
 
 local print_stat = function(printname, statname, sub)
-    local sv = stats[statname]
-    local svu = stats[statname .. "_undoc"]
+    local sv = stats[statname] or 0
+    local svu = stats[statname .. "_undoc"] or 0
     local percent = (sv == 0) and 100 or math.floor(((sv - svu) / sv) * 100 + 0.5)
     local tb = (" "):rep(math.max(0, fcol - #printname - 1) + ncol - stats_pd(sv))
     local dtb = (" "):rep(ncol - stats_pd(sv - svu))
@@ -306,6 +261,9 @@ local print_stats = function()
 end
 
 local stat_incr = function(name, missing)
+    if not stats[name] then
+        stats[name], stats[name .. "_undoc"] = 0, 0
+    end
     stats[name] = stats[name] + 1
     if missing then
         stats[name .. "_undoc"] = stats[name .. "_undoc"] + 1
