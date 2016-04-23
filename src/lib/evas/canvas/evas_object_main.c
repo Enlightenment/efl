@@ -725,6 +725,7 @@ evas_object_del(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
 
    if (!obj) return;
+   evas_object_hide(eo_obj);
    evas_object_async_block(obj);
    if (obj->delete_me || obj->eo_del_called) return;
    if (obj->ref > 0)
