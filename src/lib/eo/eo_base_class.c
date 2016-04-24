@@ -19,6 +19,8 @@ typedef struct
 {
    const char                *id;
    const char                *comment;
+   Eina_Inlist               *generic_data;
+   Eo                      ***wrefs;
 } Eo_Base_Extension;
 
 typedef struct
@@ -27,10 +29,7 @@ typedef struct
    Eo                        *parent;
    Eina_List                 *parent_list;
 
-   Eina_Inlist               *generic_data;
-   Eo                      ***wrefs;
-
-   Eo_Base_Extension         *extension;
+   Eo_Base_Extension         *ext;
    Eo_Callback_Description   *callbacks;
 
    Eina_Inlist               *current;
@@ -56,18 +55,29 @@ typedef struct
    Eo_Callback_Description *current;
 } Eo_Current_Callback_Description;
 
-static Eo_Base_Extension *
-_eo_base_extension_new(void)
+static inline void
+_eo_base_extension_free(Eo_Base_Extension *ext)
 {
-   Eo_Base_Extension *extension = calloc(1, sizeof(Eo_Base_Extension));
-   return extension;
+   free(ext);
 }
 
-static void
-_eo_base_extension_free(Eo_Base_Extension *extension)
+static inline void
+_eo_base_extension_need(Eo_Base_Data *pd)
 {
-   free(extension);
+   if (pd->ext) return;
+   pd->ext = calloc(1, sizeof(Eo_Base_Extension));
 }
+
+static inline void
+_eo_base_extension_noneed(Eo_Base_Data *pd)
+{
+   Eo_Base_Extension *ext = pd->ext;
+   if ((!ext) || (ext->id) || (ext->comment) || (ext->generic_data) ||
+       (ext->wrefs)) return;
+   _eo_base_extension_free(pd->ext);
+   pd->ext = NULL;
+}
+
 
 
 
@@ -87,13 +97,15 @@ _eo_base_cb_key_obj_del(void *data, const Eo_Event *event)
    if (pd)
      {
         Eo_Generic_Data_Node *node;
+        Eo_Base_Extension *ext = pd->ext;
 
-        EINA_INLIST_FOREACH(pd->generic_data, node)
+        if (!ext) return EINA_TRUE;
+        EINA_INLIST_FOREACH(ext->generic_data, node)
           {
              if ((node->data_is_obj) && (node->data == event->obj))
                {
-                  pd->generic_data = eina_inlist_remove(pd->generic_data,
-                                                        EINA_INLIST_GET(node));
+                  ext->generic_data = eina_inlist_remove
+                    (ext->generic_data, EINA_INLIST_GET(node));
                   eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
                                         _eo_base_cb_key_obj_del, data);
                   _eo_generic_data_node_free(node);
@@ -108,12 +120,14 @@ static void
 _eo_generic_data_del_all(Eo *obj, Eo_Base_Data *pd)
 {
    Eo_Generic_Data_Node *node;
+   Eo_Base_Extension *ext = pd->ext;
 
-   while (pd->generic_data)
+   if (!ext) return;
+   while (ext->generic_data)
      {
-        node = (Eo_Generic_Data_Node *)pd->generic_data;
-        pd->generic_data = eina_inlist_remove(pd->generic_data,
-                                              EINA_INLIST_GET(node));
+        node = (Eo_Generic_Data_Node *)ext->generic_data;
+        ext->generic_data = eina_inlist_remove(ext->generic_data,
+                                               EINA_INLIST_GET(node));
         if (node->data_is_obj)
           {
              eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
@@ -129,51 +143,62 @@ EOLIAN static void
 _eo_base_key_data_set(Eo *obj, Eo_Base_Data *pd, const char *key, const void *data)
 {
    Eo_Generic_Data_Node *node;
+   Eo_Base_Extension *ext = pd->ext;
 
    if (!key) return;
-   EINA_INLIST_FOREACH(pd->generic_data, node)
+   if (ext)
      {
-        if (!strcmp(node->key, key))
+        EINA_INLIST_FOREACH(ext->generic_data, node)
           {
-             if ((!node->data_is_obj) && (!node->data_is_value) &&
-                 (node->data == data)) return;
-             pd->generic_data = eina_inlist_remove(pd->generic_data,
-                                                   EINA_INLIST_GET(node));
-             if (node->data_is_obj)
+             if (!strcmp(node->key, key))
                {
-                  eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
-                                        _eo_base_cb_key_obj_del, obj);
-                  eo_unref(node->data);
+                  if ((!node->data_is_obj) && (!node->data_is_value) &&
+                      (node->data == data)) return;
+                  ext->generic_data = eina_inlist_remove
+                    (ext->generic_data, EINA_INLIST_GET(node));
+                  if (node->data_is_obj)
+                    {
+                       eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
+                                             _eo_base_cb_key_obj_del, obj);
+                       eo_unref(node->data);
+                    }
+                  else if (node->data_is_value) eina_value_free(node->data);
+                  _eo_generic_data_node_free(node);
+                  break;
                }
-             else if (node->data_is_value) eina_value_free(node->data);
-             _eo_generic_data_node_free(node);
-             break;
           }
      }
 
-   node = calloc(1, sizeof(Eo_Generic_Data_Node));
-   if (!node) return;
-   node->key = eina_stringshare_add(key);
-   node->data = (void *)data;
-   node->data_is_obj = EINA_FALSE;
-   pd->generic_data = eina_inlist_prepend(pd->generic_data,
-                                          EINA_INLIST_GET(node));
+   _eo_base_extension_need(pd);
+   ext = pd->ext;
+   if (ext)
+     {
+        node = calloc(1, sizeof(Eo_Generic_Data_Node));
+        if (!node) return;
+        node->key = eina_stringshare_add(key);
+        node->data = (void *)data;
+        node->data_is_obj = EINA_FALSE;
+        ext->generic_data = eina_inlist_prepend
+          (ext->generic_data, EINA_INLIST_GET(node));
+     }
 }
 
 EOLIAN static void *
 _eo_base_key_data_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
 {
    Eo_Generic_Data_Node *node;
+   Eo_Base_Extension *ext = pd->ext;
 
    if (!key) return NULL;
-   EINA_INLIST_FOREACH(pd->generic_data, node)
+   if (!ext) return NULL;
+   EINA_INLIST_FOREACH(ext->generic_data, node)
      {
         if (!strcmp(node->key, key))
           {
              if ((!node->data_is_obj) && (!node->data_is_value))
                {
-                  pd->generic_data = eina_inlist_promote(pd->generic_data,
-                                                         EINA_INLIST_GET(node));
+                  ext->generic_data = eina_inlist_promote
+                    (ext->generic_data, EINA_INLIST_GET(node));
                   return node->data;
                }
              else
@@ -191,14 +216,16 @@ EOLIAN static void
 _eo_base_key_del(Eo *obj, Eo_Base_Data *pd, const char *key)
 {
    Eo_Generic_Data_Node *node;
+   Eo_Base_Extension *ext = pd->ext;
 
    if (!key) return;
-   EINA_INLIST_FOREACH(pd->generic_data, node)
+   if (!ext) return;
+   EINA_INLIST_FOREACH(ext->generic_data, node)
      {
         if (!strcmp(node->key, key))
           {
-             pd->generic_data = eina_inlist_remove(pd->generic_data,
-                                                   EINA_INLIST_GET(node));
+             ext->generic_data = eina_inlist_remove
+               (ext->generic_data, EINA_INLIST_GET(node));
              if (node->data_is_obj)
                {
                   eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
@@ -216,53 +243,64 @@ EOLIAN static void
 _eo_base_key_obj_set(Eo *obj, Eo_Base_Data *pd, const char *key, Eo *objdata)
 {
    Eo_Generic_Data_Node *node;
+   Eo_Base_Extension *ext = pd->ext;
 
    if (!key) return;
-   EINA_INLIST_FOREACH(pd->generic_data, node)
+   if (ext)
      {
-        if (!strcmp(node->key, key))
+        EINA_INLIST_FOREACH(ext->generic_data, node)
           {
-             if ((node->data_is_obj) && (node->data == objdata)) return;
-             pd->generic_data = eina_inlist_remove(pd->generic_data,
-                                                   EINA_INLIST_GET(node));
-             if (node->data_is_obj)
+             if (!strcmp(node->key, key))
                {
-                  eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
-                                        _eo_base_cb_key_obj_del, obj);
-                  eo_unref(node->data);
+                  if ((node->data_is_obj) && (node->data == objdata)) return;
+                  ext->generic_data = eina_inlist_remove
+                    (ext->generic_data, EINA_INLIST_GET(node));
+                  if (node->data_is_obj)
+                    {
+                       eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
+                                             _eo_base_cb_key_obj_del, obj);
+                       eo_unref(node->data);
+                    }
+                  else if (node->data_is_value) eina_value_free(node->data);
+                  _eo_generic_data_node_free(node);
+                  break;
                }
-             else if (node->data_is_value) eina_value_free(node->data);
-             _eo_generic_data_node_free(node);
-             break;
           }
      }
 
-   node = calloc(1, sizeof(Eo_Generic_Data_Node));
-   if (!node) return;
-   node->key = eina_stringshare_add(key);
-   node->data = (void *)objdata;
-   node->data_is_obj = EINA_TRUE;
-   eo_event_callback_add(node->data, EO_BASE_EVENT_DEL,
-                         _eo_base_cb_key_obj_del, obj);
-   eo_ref(node->data);
-   pd->generic_data = eina_inlist_prepend(pd->generic_data,
-                                          EINA_INLIST_GET(node));
+   _eo_base_extension_need(pd);
+   ext = pd->ext;
+   if (ext)
+     {
+        node = calloc(1, sizeof(Eo_Generic_Data_Node));
+        if (!node) return;
+        node->key = eina_stringshare_add(key);
+        node->data = (void *)objdata;
+        node->data_is_obj = EINA_TRUE;
+        eo_event_callback_add(node->data, EO_BASE_EVENT_DEL,
+                              _eo_base_cb_key_obj_del, obj);
+        eo_ref(node->data);
+        ext->generic_data = eina_inlist_prepend
+          (ext->generic_data, EINA_INLIST_GET(node));
+     }
 }
 
 EOLIAN static Eo *
 _eo_base_key_obj_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
 {
    Eo_Generic_Data_Node *node;
+   Eo_Base_Extension *ext = pd->ext;
 
    if (!key) return NULL;
-   EINA_INLIST_FOREACH(pd->generic_data, node)
+   if (!ext) return NULL;
+   EINA_INLIST_FOREACH(ext->generic_data, node)
      {
         if (!strcmp(node->key, key))
           {
              if (node->data_is_obj)
                {
-                  pd->generic_data = eina_inlist_promote(pd->generic_data,
-                                                         EINA_INLIST_GET(node));
+                  ext->generic_data = eina_inlist_promote
+                    (ext->generic_data, EINA_INLIST_GET(node));
                   return node->data;
                }
              else
@@ -280,52 +318,63 @@ EOLIAN static void
 _eo_base_key_value_set(Eo *obj, Eo_Base_Data *pd, const char *key, Eina_Value *value)
 {
    Eo_Generic_Data_Node *node;
+   Eo_Base_Extension *ext = pd->ext;
 
    if (!key) return;
-   EINA_INLIST_FOREACH(pd->generic_data, node)
+   if (ext)
      {
-        if (!strcmp(node->key, key))
+        EINA_INLIST_FOREACH(ext->generic_data, node)
           {
-             if ((node->data_is_value) && (node->data == value)) return;
-             pd->generic_data = eina_inlist_remove(pd->generic_data,
-                                                   EINA_INLIST_GET(node));
-             if (node->data_is_obj)
+             if (!strcmp(node->key, key))
                {
-                  eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
-                                        _eo_base_cb_key_obj_del, obj);
-                  eo_unref(node->data);
+                  if ((node->data_is_value) && (node->data == value)) return;
+                  ext->generic_data = eina_inlist_remove
+                    (ext->generic_data, EINA_INLIST_GET(node));
+                  if (node->data_is_obj)
+                    {
+                       eo_event_callback_del(node->data, EO_BASE_EVENT_DEL,
+                                             _eo_base_cb_key_obj_del, obj);
+                       eo_unref(node->data);
+                    }
+                  else if (node->data_is_value) eina_value_free(node->data);
+                  _eo_generic_data_node_free(node);
+                  break;
                }
-             else if (node->data_is_value) eina_value_free(node->data);
-             _eo_generic_data_node_free(node);
-             break;
           }
      }
 
-   node = calloc(1, sizeof(Eo_Generic_Data_Node));
-   if (!node) return;
-   node->key = eina_stringshare_add(key);
-   node->data = (void *)value;
-   node->data_is_value = EINA_TRUE;
-   eo_event_callback_add(node->data, EO_BASE_EVENT_DEL,
-                         _eo_base_cb_key_obj_del, obj);
-   pd->generic_data = eina_inlist_prepend(pd->generic_data,
-                                          EINA_INLIST_GET(node));
+   _eo_base_extension_need(pd);
+   ext = pd->ext;
+   if (ext)
+     {
+        node = calloc(1, sizeof(Eo_Generic_Data_Node));
+        if (!node) return;
+        node->key = eina_stringshare_add(key);
+        node->data = (void *)value;
+        node->data_is_value = EINA_TRUE;
+        eo_event_callback_add(node->data, EO_BASE_EVENT_DEL,
+                              _eo_base_cb_key_obj_del, obj);
+        ext->generic_data = eina_inlist_prepend
+          (ext->generic_data, EINA_INLIST_GET(node));
+     }
 }
 
 EOLIAN static Eina_Value *
 _eo_base_key_value_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
 {
    Eo_Generic_Data_Node *node;
+   Eo_Base_Extension *ext = pd->ext;
 
    if (!key) return NULL;
-   EINA_INLIST_FOREACH(pd->generic_data, node)
+   if (!ext) return NULL;
+   EINA_INLIST_FOREACH(ext->generic_data, node)
      {
         if (!strcmp(node->key, key))
           {
              if (node->data_is_value)
                {
-                  pd->generic_data = eina_inlist_promote(pd->generic_data,
-                                                         EINA_INLIST_GET(node));
+                  ext->generic_data = eina_inlist_promote
+                    (ext->generic_data, EINA_INLIST_GET(node));
                   return node->data;
                }
              else
@@ -345,22 +394,16 @@ _eo_base_id_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *id)
    if ((id) && (!id[0])) id = NULL;
    if (id)
      {
-        if (!pd->extension)
-          pd->extension = _eo_base_extension_new();
-        if (pd->extension)
-          eina_stringshare_replace(&(pd->extension->id), id);
+        _eo_base_extension_need(pd);
+        if (pd->ext) eina_stringshare_replace(&(pd->ext->id), id);
      }
    else
      {
-        if (!pd->extension) return;
-        if (pd->extension->id)
+        if (!pd->ext) return;
+        if (pd->ext->id)
           {
-             eina_stringshare_replace(&(pd->extension->id), id);
-             if (!pd->extension->comment)
-               {
-                  _eo_base_extension_free(pd->extension);
-                  pd->extension = NULL;
-               }
+             eina_stringshare_replace(&(pd->ext->id), id);
+             _eo_base_extension_noneed(pd);
           }
      }
 }
@@ -368,8 +411,8 @@ _eo_base_id_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *id)
 EOLIAN static const char *
 _eo_base_id_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
 {
-   if (!pd->extension) return NULL;
-   return pd->extension->id;
+   if (!pd->ext) return NULL;
+   return pd->ext->id;
 }
 
 static inline Eina_Bool
@@ -530,22 +573,16 @@ _eo_base_comment_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *comment)
    if ((comment) && (!comment[0])) comment = NULL;
    if (comment)
      {
-        if (!pd->extension)
-          pd->extension = _eo_base_extension_new();
-        if (pd->extension)
-          eina_stringshare_replace(&(pd->extension->comment), comment);
+        _eo_base_extension_need(pd);
+        if (pd->ext) eina_stringshare_replace(&(pd->ext->comment), comment);
      }
    else
      {
-        if (!pd->extension) return;
-        if (pd->extension->comment)
+        if (!pd->ext) return;
+        if (pd->ext->comment)
           {
-             eina_stringshare_replace(&(pd->extension->comment), comment);
-             if (!pd->extension->id)
-               {
-                  _eo_base_extension_free(pd->extension);
-                  pd->extension = NULL;
-               }
+             eina_stringshare_replace(&(pd->ext->comment), comment);
+             _eo_base_extension_noneed(pd);
           }
      }
 }
@@ -553,8 +590,8 @@ _eo_base_comment_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *comment)
 EOLIAN static const char *
 _eo_base_comment_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
 {
-   if (!pd->extension) return NULL;
-   return pd->extension->comment;
+   if (!pd->ext) return NULL;
+   return pd->ext->comment;
 }
 
 
@@ -740,13 +777,12 @@ _eo_base_dbg_info_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd EINA_UNUSED, Eo_Dbg_
 static inline size_t
 _wref_count(Eo_Base_Data *pd)
 {
-   size_t count = 0;
-   if (!pd->wrefs)
-      return 0;
-
    Eo ***itr;
-   for (itr = pd->wrefs; *itr; itr++)
-      count++;
+   size_t count = 0;
+   Eo_Base_Extension *ext = pd->ext;
+
+   if ((!ext) || (!ext->wrefs)) return 0;
+   for (itr = ext->wrefs; *itr; itr++) count++;
 
    return count;
 }
@@ -756,16 +792,21 @@ _eo_base_wref_add(Eo *obj, Eo_Base_Data *pd, Eo **wref)
 {
    size_t count;
    Eo ***tmp;
+   Eo_Base_Extension *ext;
 
    count = _wref_count(pd);
    count += 1; /* New wref. */
 
-   tmp = realloc(pd->wrefs, sizeof(*pd->wrefs) * (count + 1));
-   if (!tmp) return;
-   pd->wrefs = tmp;
+   _eo_base_extension_need(pd);
+   ext = pd->ext;
+   if (!ext) return;
 
-   pd->wrefs[count - 1] = wref;
-   pd->wrefs[count] = NULL;
+   tmp = realloc(ext->wrefs, sizeof(*ext->wrefs) * (count + 1));
+   if (!tmp) return;
+   ext->wrefs = tmp;
+
+   ext->wrefs[count - 1] = wref;
+   ext->wrefs[count] = NULL;
    *wref = obj;
 }
 
@@ -773,15 +814,16 @@ EOLIAN static void
 _eo_base_wref_del(Eo *obj, Eo_Base_Data *pd, Eo **wref)
 {
    size_t count;
+   Eo_Base_Extension *ext = pd->ext;
 
    if (*wref != obj)
      {
         ERR("Wref is a weak ref to %p, while this function was called on %p.",
-              *wref, obj);
+            *wref, obj);
         return;
      }
 
-   if (!pd->wrefs)
+   if ((!ext) || (!ext->wrefs))
      {
         ERR("There are no weak refs for object %p", obj);
         *wref = NULL;
@@ -793,11 +835,11 @@ _eo_base_wref_del(Eo *obj, Eo_Base_Data *pd, Eo **wref)
 
      {
         Eo ***itr;
-        for (itr = pd->wrefs; *itr; itr++)
+        for (itr = ext->wrefs; *itr; itr++)
           {
              if (*itr == wref)
                {
-                  *itr = pd->wrefs[count - 1];
+                  *itr = ext->wrefs[count - 1];
                   break;
                }
           }
@@ -813,16 +855,17 @@ _eo_base_wref_del(Eo *obj, Eo_Base_Data *pd, Eo **wref)
    if (count > 1)
      {
         Eo ***tmp;
-        // No count--; because of the NULL that is not included in the count. */
-        tmp = realloc(pd->wrefs, sizeof(*pd->wrefs) * count);
+        // No count--; because of the NULL that is not included in the count
+        tmp = realloc(ext->wrefs, sizeof(*ext->wrefs) * count);
         if (!tmp) return;
-        pd->wrefs = tmp;
-        pd->wrefs[count - 1] = NULL;
+        ext->wrefs = tmp;
+        ext->wrefs[count - 1] = NULL;
      }
    else
      {
-        free(pd->wrefs);
-        pd->wrefs = NULL;
+        free(ext->wrefs);
+        ext->wrefs = NULL;
+        _eo_base_extension_noneed(pd);
      }
 
    *wref = NULL;
@@ -832,15 +875,12 @@ static inline void
 _wref_destruct(Eo_Base_Data *pd)
 {
    Eo ***itr;
-   if (!pd->wrefs)
-      return;
+   Eo_Base_Extension *ext = pd->ext;
 
-   for (itr = pd->wrefs; *itr; itr++)
-     {
-        **itr = NULL;
-     }
-
-   free(pd->wrefs);
+   if ((!ext) || (!ext->wrefs)) return;
+   for (itr = ext->wrefs; *itr; itr++) **itr = NULL;
+   free(ext->wrefs);
+   ext->wrefs = NULL;
 }
 
 /* EOF Weak reference. */
@@ -1478,6 +1518,7 @@ EOLIAN static void
 _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
 {
    Eo *child;
+   Eo_Base_Extension *ext;
 
    DBG("%p - %s.", obj, eo_class_name_get(obj));
 
@@ -1501,14 +1542,15 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    _wref_destruct(pd);
    _eo_callback_remove_all(pd);
 
-   if (pd->extension)
+   ext = pd->ext;
+   if (ext)
      {
-        eina_stringshare_del(pd->extension->id);
-        pd->extension->id = NULL;
-        eina_stringshare_del(pd->extension->comment);
-        pd->extension->comment = NULL;
-        _eo_base_extension_free(pd->extension);
-        pd->extension = NULL;
+        eina_stringshare_del(ext->id);
+        ext->id = NULL;
+        eina_stringshare_del(ext->comment);
+        ext->comment = NULL;
+        _eo_base_extension_free(ext);
+        pd->ext = NULL;
      }
 
    _eo_condtor_done(obj);
