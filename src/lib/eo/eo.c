@@ -23,8 +23,9 @@ EAPI Eina_Spinlock _eo_class_creation_lock;
 EAPI unsigned int _eo_init_generation = 1;
 int _eo_log_dom = -1;
 
-static _Eo_Class **_eo_classes;
-static Eo_Id _eo_classes_last_id;
+static _Eo_Class **_eo_classes = NULL;
+static Eo_Id _eo_classes_last_id = 0;
+static Eo_Id _eo_classes_alloc = 0;
 static int _eo_init_count = 0;
 static Eo_Op _eo_ops_last_id = 0;
 static Eina_Hash *_ops_storage = NULL;
@@ -961,6 +962,57 @@ _eo_class_isa_func(Eo *eo_id EINA_UNUSED, void *class_data EINA_UNUSED, va_list 
    /* Do nonthing. */
 }
 
+static inline void
+_eo_classes_release(void)
+{
+#ifdef HAVE_MMAP
+   size_t size;
+
+   size = _eo_classes_alloc * sizeof(_Eo_Class *);
+   if (_eo_classes) munmap(_eo_classes, size);
+#else
+   free(_eo_classes);
+#endif
+   _eo_classes = NULL;
+   _eo_classes_last_id = 0;
+   _eo_classes_alloc = 0;
+}
+
+static inline void
+_eo_classes_expand(void)
+{
+   unsigned char *ptr;
+   size_t newsize, psize;
+
+   _eo_classes_last_id++;
+   if (_eo_classes_last_id <= _eo_classes_alloc) return;
+   psize = _eo_classes_alloc * sizeof(_Eo_Class *);
+#ifdef HAVE_MMAP
+   _eo_classes_alloc += (MEM_PAGE_SIZE / sizeof(_Eo_Class *));
+   newsize = _eo_classes_alloc * sizeof(_Eo_Class *);
+   ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
+              MAP_PRIVATE | MAP_ANON, -1, 0);
+   if (ptr == MAP_FAILED)
+     {
+        ERR("mmap of eo class table region failed!");
+        abort();
+     }
+   if (psize > 0) memcpy(ptr, _eo_classes, psize);
+   if (_eo_classes) munmap(_eo_classes, psize);
+#else
+   _eo_classes_alloc += 128;
+   newsize = _eo_classes_alloc * sizeof(_Eo_Class *);
+   ptr = realloc(_eo_classes, newsize);
+   if (!ptr)
+     {
+        ERR("realloc of eo class table region faile!!");
+        abort();
+     }
+#endif
+   memset(ptr + psize, 0, newsize - psize);
+   _eo_classes = (_Eo_Class **)ptr;
+}
+
 EAPI const Eo_Class *
 eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 {
@@ -1220,21 +1272,12 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      }
 
      {
-        Eo_Id new_id = ++_eo_classes_last_id | MASK_CLASS_TAG;
+        Eo_Id new_id;
+
         eina_spinlock_take(&_eo_class_creation_lock);
-
-        /* FIXME: Handle errors. */
-        size_t arrsize = _eo_classes_last_id * sizeof(*_eo_classes);
-        _Eo_Class **tmp;
-        tmp = realloc(_eo_classes, arrsize);
-
-        /* If it's the first allocation, memset. */
-        if (!_eo_classes)
-           memset(tmp, 0, arrsize);
-
-        _eo_classes = tmp;
+        new_id = (_eo_classes_last_id + 1) | MASK_CLASS_TAG;
+        _eo_classes_expand();
         _eo_classes[_UNMASK_ID(new_id) - 1] = klass;
-
         eina_spinlock_release(&_eo_class_creation_lock);
 
         klass->header.id = new_id;
@@ -1645,8 +1688,9 @@ eo_shutdown(void)
           eo_class_free(*cls_itr);
      }
 
-   if (_eo_classes)
-     free(_eo_classes);
+   eina_spinlock_take(&_eo_class_creation_lock);
+   _eo_classes_release();
+   eina_spinlock_release(&_eo_class_creation_lock);
 
    eina_hash_free(_ops_storage);
 
