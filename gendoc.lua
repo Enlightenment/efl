@@ -4,9 +4,7 @@ local cutil = require("cutil")
 local util = require("util")
 local ffi = require("ffi")
 
-local doc_root
-local root_nspace
-local verbose = false
+local global_opts = {}
 
 -- utils
 
@@ -28,11 +26,12 @@ local nspace_to_path = function(ns)
 end
 
 local make_page = function(path)
-    return path_join(doc_root, path .. ".txt")
+    return path_join(global_opts.doc_root, path .. ".txt")
 end
 
 local mkdir_r = function(dirn)
-    assert(cutil.file_mkpath(dirn and path_join(doc_root, dirn) or doc_root))
+    local dr = global_opts.doc_root
+    assert(cutil.file_mkpath(dirn and path_join(dr, dirn) or dr))
 end
 
 local mkdir_p = function(path)
@@ -271,7 +270,7 @@ local stat_incr = function(name, missing)
 end
 
 local print_missing = function(name, tp)
-    if not verbose then
+    if not global_opts.verbose then
         return
     end
     print(tp .. " '" .. name .. "'" .. " missing documentation")
@@ -530,7 +529,8 @@ local Writer = util.Object:clone {
         if type(target) == "table" then
             if target[#target] == true then
                 target[#target] = nil
-                target = ":" .. root_nspace .. ":" .. table.concat(target, ":")
+                target = ":" .. global_opts.root_nspace .. ":"
+                             .. table.concat(target, ":")
             else
                 target = table.concat(target, ":")
             end
@@ -1440,13 +1440,15 @@ getopt.parse {
     end,
     done_cb = function(parser, opts, args)
         if opts["v"] then
-            verbose = true
+            global_opts.verbose = true
         end
-        root_nspace = (not opts["n"] or opts["n"] == "") and "efl" or opts["n"]
+        global_opts.root_nspace = (not opts["n"] or opts["n"] == "")
+            and "efl" or opts["n"]
         if not opts["r"] or opts["r"] == "" then
             opts["r"] = "dokuwiki/data/pages"
         end
-        doc_root = path_join(opts["r"], nspace_to_path(root_nspace))
+        global_opts.doc_root = path_join(opts["r"],
+            nspace_to_path(global_opts.root_nspace))
         if not args[1] then
             if not eolian.system_directory_scan() then
                 error("failed scanning system directory")
@@ -1462,7 +1464,7 @@ getopt.parse {
         if not eolian.all_eo_files_parse() then
             error("failed parsing eo files")
         end
-        cutil.file_rmrf(path_join(doc_root))
+        cutil.file_rmrf(path_join(global_opts.doc_root))
         mkdir_r(nil)
         build_ref()
         build_classes()
