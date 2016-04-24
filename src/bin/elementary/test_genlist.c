@@ -5003,6 +5003,8 @@ test_genlist_focus(void *data EINA_UNUSED,
    evas_object_show(win);
 }
 
+
+/***  Genlist Filteer  *******************************************************/
 char *genlist_demo_names[] = {
         "Aaliyah", "Aamir", "Aaralyn", "Aaron", "Abagail",
         "Babitha", "Bahuratna", "Bandana", "Bulbul", "Cade", "Caldwell",
@@ -5150,6 +5152,8 @@ test_genlist_filter(void *data EINA_UNUSED,
    evas_object_smart_callback_add(entry, "changed,user", _entry_change_cb, api);
 }
 
+
+/***  Genlist Show/BringIN  **************************************************/
 static void
 _rd_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
@@ -5302,3 +5306,89 @@ test_genlist_show_bring(void *data EINA_UNUSED,
    evas_object_show(win);
 }
 
+
+/***  Genlist Cache  *********************************************************/
+static char *
+gl_cache_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   char buf[256];
+   int num = (int)(uintptr_t)data;
+
+   if ((num % 2) == 0)
+      snprintf(buf, sizeof(buf),
+               "<align=left> ← only icon  (Item # %d)</align>", num);
+   else
+      snprintf(buf, sizeof(buf),
+               "<align=right>(Item # %d)  only end → </align>", num);
+
+   return strdup(buf);
+}
+
+static Evas_Object *
+gl_cache_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   char buf[PATH_MAX];
+   Evas_Object *ic;
+   Eina_Bool even = (((int)(uintptr_t)data % 2) == 0);
+
+   if (even && !strcmp(part, "elm.swallow.icon"))
+     snprintf(buf, sizeof(buf), "%s/images/bubble.png", elm_app_data_dir_get());
+   else if (!even && !strcmp(part, "elm.swallow.end"))
+     snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   else
+      return NULL;
+
+   ic = elm_icon_add(obj);
+   elm_image_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   return ic;
+}
+
+void
+test_genlist_cache(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *fr, *lb, *gl;
+   Elm_Genlist_Item_Class *itc;
+   int i;
+
+   win = elm_win_util_standard_add("genlist-cache", "Genlist Cache");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_expand_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Information");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   lb = elm_label_add(fr);
+   elm_object_text_set(lb, "Even items should have only the icon (left),<br>"
+                       "while odd items should have only the end icon (right)");
+   elm_object_content_set(fr, lb);
+   evas_object_show(lb);
+
+   gl = elm_genlist_add(bx);
+   evas_object_size_hint_expand_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(gl);
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default_style";
+   itc->func.text_get = gl_cache_text_get;
+   itc->func.content_get = gl_cache_content_get;
+
+   for (i = 1; i <= 200; i++)
+       elm_genlist_item_append(gl, itc, (void*)(uintptr_t)i, NULL,
+                               ELM_GENLIST_ITEM_NONE, NULL, NULL);
+
+   elm_genlist_item_class_free(itc);
+
+   evas_object_resize(win, 480, 400);
+   explode_win_enable(win);
+   evas_object_show(win);
+}
