@@ -1121,6 +1121,23 @@ _elm_layout_efl_container_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, cons
    return NULL;
 }
 
+EOLIAN static Eina_Bool
+_elm_layout_efl_container_content_remove(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED,
+                                         Efl_Gfx_Base *content)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   if (!elm_widget_sub_object_del(obj, content))
+     {
+        ERR("could not remove sub object %p from %p", content, obj);
+        return EINA_FALSE;
+     }
+   edje_object_part_unswallow(wd->resize_obj, content);
+   _eo_unparent_helper(content, obj);
+
+   return content;
+}
+
 /* legacy only - eo is iterator */
 EAPI Eina_List *
 elm_layout_content_swallow_list_get(const Evas_Object *obj)

@@ -494,6 +494,7 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
       Efl.Container.content_unset;
       Efl.Container.content_part_name.get;
       Efl.Container.content_count;
+      Efl.Container.content_remove;
       Efl.Container.content_iterate;
    }
    events {
