@@ -2232,7 +2232,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
    if (ed->parent && length_index)
      {
         new_src[length_parent++] = EDJE_PART_PATH_SEPARATOR_INDEXL;
-        if (length_index == 12)
+        if (pack_it->parent->part->type == EDJE_PART_TYPE_BOX)
           length_parent += eina_convert_itoa(i, new_src + length_parent);
         else
           {
