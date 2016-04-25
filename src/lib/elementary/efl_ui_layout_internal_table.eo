@@ -1,0 +1,37 @@
+class Efl.Ui.Layout_Internal.Table (Eo.Base, Efl.Pack_Grid)
+{
+   [[Represents a Table created as part of a layout.
+
+     Can not be deleted, this is only a representation of an internal object
+     of an EFL layout.
+   ]]
+   legacy_prefix: null;
+   data: Efl_Ui_Layout_Table_Data;
+   methods {
+      @property real_part @protected {
+         set {}
+         values {
+            layout: Eo.Base*;
+            pack: Eo.Base*;
+            part: const(char)*;
+         }
+      }
+   }
+   implements {
+      Eo.Base.finalize;
+      Eo.Base.destructor;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
+      Efl.Container.content_remove;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack_Grid.pack_grid;
+      Efl.Pack_Grid.grid_content_at;
+      Efl.Pack_Grid.grid_content_iterate;
+      Efl.Pack_Grid.grid_content_position.get;
+      Efl.Pack_Grid.grid_size.get;
+      Efl.Pack_Grid.grid_columns.get;
+      Efl.Pack_Grid.grid_rows.get;
+   }
+}

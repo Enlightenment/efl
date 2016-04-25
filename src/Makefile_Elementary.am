@@ -118,6 +118,8 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_box.eo \
 	lib/elementary/efl_ui_box_flow.eo \
 	lib/elementary/efl_ui_grid.eo \
+	lib/elementary/efl_ui_layout_internal_box.eo \
+	lib/elementary/efl_ui_layout_internal_table.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -583,6 +585,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_inwin.c \
 	lib/elementary/elm_label.c \
 	lib/elementary/elm_layout.c \
+	lib/elementary/elm_layout_pack.c \
 	lib/elementary/elm_list.c \
 	lib/elementary/elm_main.c \
 	lib/elementary/elm_map.c \

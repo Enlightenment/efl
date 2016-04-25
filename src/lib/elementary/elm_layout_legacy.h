@@ -101,4 +101,144 @@ EAPI Eina_Bool elm_layout_file_set(Eo *obj, const char *file, const char *group)
  */
 EAPI void elm_layout_file_get(Eo *obj, const char **file, const char **group);
 
+/**
+ * @brief Append child to layout box part.
+ *
+ * Once the object is appended, it will become child of the layout. Its
+ * lifetime will be bound to the layout, whenever the layout dies the child
+ * will be deleted automatically. One should use @ref elm_layout_box_remove to
+ * make this layout forget about the object.
+ *
+ * @param[in] child The child object to append to box.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child);
+
+/**
+ * @brief Prepend child to layout box part.
+ *
+ * Once the object is prepended, it will become child of the layout. Its
+ * lifetime will be bound to the layout, whenever the layout dies the child
+ * will be deleted automatically. One should use @ref elm_layout_box_remove to
+ * make this layout forget about the object.
+ *
+ * @param[in] child The child object to prepend to box.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child);
+
+/**
+ * @brief Insert child to layout box part before a reference object.
+ *
+ * Once the object is inserted, it will become child of the layout. Its
+ * lifetime will be bound to the layout, whenever the layout dies the child
+ * will be deleted automatically. One should use @ref elm_layout_box_remove to
+ * make this layout forget about the object.
+ *
+ * @param[in] child The child object to insert into box.
+ * @param[in] reference Another reference object to insert before in box.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
+
+/**
+ * @brief Insert child to layout box part at a given position.
+ *
+ * Once the object is inserted, it will become child of the layout. Its
+ * lifetime will be bound to the layout, whenever the layout dies the child
+ * will be deleted automatically. One should use @ref elm_layout_box_remove to
+ * make this layout forget about the object.
+ *
+ * @param[in] child The child object to insert into box.
+ * @param[in] pos The numeric position >=0 to insert the child.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
+
+/**
+ * @brief Remove a child of the given part box.
+ *
+ * The object will be removed from the box part and its lifetime will not be
+ * handled by the layout anymore. This is equivalent to @ref
+ * elm_layout_content_unset for box.
+ *
+ * @param[in] child The object to remove from box.
+ *
+ * @return The object that was being used, or @c null if not found.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Evas_Object *elm_layout_box_remove(Evas_Object *obj, const char *part, Evas_Object *child);
+
+/**
+ * @brief Remove all children of the given part box.
+ *
+ * The objects will be removed from the box part and their lifetime will not be
+ * handled by the layout anymore. This is equivalent to
+ * @ref elm_layout_box_remove for all box children.
+ *
+ * @param[in] clear If true, then all objects will be deleted as well,
+ * otherwise they will just be removed and will be dangling on the canvas.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear);
+
+/**
+ * @brief Insert child to layout table part.
+ *
+ * Once the object is inserted, it will become child of the table. Its lifetime
+ * will be bound to the layout, and whenever the layout dies the child will be
+ * deleted automatically. One should use @ref elm_layout_table_unpack to make
+ * this layout forget about the object.
+ *
+ * If @c colspan or @c rowspan are bigger than 1, that object will occupy more
+ * space than a single cell.
+ *
+ * See also @ref elm_layout_table_unpack, @ref elm_layout_table_clear.
+ *
+ * @param[in] child The child object to pack into table.
+ * @param[in] col The column to which the child should be added. (>= 0)
+ * @param[in] row The row to which the child should be added. (>= 0)
+ * @param[in] colspan How many columns should be used to store this object. (>=
+ * 1)
+ * @param[in] rowspan How many rows should be used to store this object. (>= 1)
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_table_pack(Evas_Object *obj, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+
+/**
+ * @brief Unpack (remove) a child of the given part table.
+ *
+ * The object will be unpacked from the table part and its lifetime will not be
+ * handled by the layout anymore. This is equivalent to @ref
+ * elm_layout_content_unset for table.
+ *
+ * @param[in] child The object to remove from table.
+ *
+ * @return The object that was being used, or @c null if not found.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Evas_Object *elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child);
+
+/**
+ * @brief Remove all the child objects of the given part table.
+ *
+ * The objects will be removed from the table part and their lifetime will not
+ * be handled by the layout anymore. This is equivalent to
+ * @ref elm_layout_table_unpack for all table children.
+ *
+ * @param[in] clear If true, then all objects will be deleted as well,
+ * otherwise they will just be removed and will be dangling on the canvas.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear);
+
 #include "elm_layout.eo.legacy.h"

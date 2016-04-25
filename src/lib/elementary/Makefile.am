@@ -23,7 +23,6 @@ elm_eolian_files = \
 	elm_colorselector.eo \
 	elm_combobox.eo \
 	elm_conformant.eo \
-	elm_container.eo \
 	elm_ctxpopup.eo \
 	elm_datetime.eo \
 	elm_dayselector.eo \
@@ -121,7 +120,13 @@ elm_eolian_files = \
 	elm_list_item.eo \
 	elm_toolbar_item.eo \
 	elm_diskselector_item.eo \
-	elm_popup_item.eo
+	elm_popup_item.eo \
+	efl_ui_box.eo \
+	efl_ui_box_flow.eo \
+	efl_ui_grid.eo \
+	efl_ui_layout_internal_box.eo \
+	efl_ui_layout_internal_table.eo \
+	$(NULL)
 
 elm_eolian_type_files = \
 	elm_general.eot
@@ -276,7 +281,6 @@ includesub_HEADERS = \
 	elm_bg_eo.h \
 	elm_bg_legacy.h \
 	elm_box.h \
-	elm_box_eo.h \
 	elm_box_legacy.h \
 	elm_box_common.h \
 	elm_bubble.h \
@@ -306,7 +310,6 @@ includesub_HEADERS = \
 	elm_conform.h \
 	elm_conform_eo.h \
 	elm_conform_legacy.h \
-	elm_container.h \
 	elm_cursor.h \
 	elm_datetime.h \
 	elm_datetime_common.h \
@@ -358,7 +361,6 @@ includesub_HEADERS = \
 	elm_glview_eo.h \
 	elm_glview_legacy.h \
 	elm_grid.h \
-	elm_grid_eo.h \
 	elm_grid_legacy.h \
 	elm_hover.h \
 	elm_hover_eo.h \
@@ -466,7 +468,6 @@ includesub_HEADERS = \
 	elm_systray_watcher.h \
 	elm_sys_notify.h \
 	elm_table.h \
-	elm_table_eo.h \
 	elm_table_legacy.h \
 	elm_theme.h \
 	elm_thumb.h \
@@ -493,7 +494,10 @@ includesub_HEADERS = \
 	elm_win_eo.h \
 	elm_win_legacy.h \
 	elm_win_standard.h \
-	elm_helper.h
+	elm_helper.h \
+	efl_ui_box_private.h \
+	$(NULL)
+
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
 libelementary_la_SOURCES = \
@@ -534,7 +538,6 @@ libelementary_la_SOURCES = \
 	elc_combobox.c \
 	elm_config.c \
 	elm_conform.c \
-	elm_container.c \
 	elm_datetime.c \
 	elm_dayselector.c \
 	elm_dbus_menu.c \
@@ -569,6 +572,7 @@ libelementary_la_SOURCES = \
 	elm_inwin.c \
 	elm_label.c \
 	elm_layout.c \
+	elm_layout_pack.c \
 	elm_list.c \
 	elm_main.c \
 	elm_map.c \
@@ -618,7 +622,12 @@ libelementary_la_SOURCES = \
 	els_box.c \
 	els_cursor.c \
 	els_tooltip.c \
-	elu_ews_wm.c
+	elu_ews_wm.c \
+	efl_ui_box.c \
+	efl_ui_box_flow.c \
+	efl_ui_box_layout.c \
+	efl_ui_grid.c \
+	$(NULL)
 
 libelementary_la_CFLAGS = @ELEMENTARY_CFLAGS@
 libelementary_la_LIBADD = @ELEMENTARY_SUBBUILD_LIBS@ @LTLIBINTL@

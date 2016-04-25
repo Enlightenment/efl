@@ -1,0 +1,40 @@
+class Efl.Ui.Layout_Internal.Box (Eo.Base, Efl.Pack_Linear)
+{
+   [[Represents a Box created as part of a layout.
+
+     Can not be deleted, this is only a representation of an internal object
+     of an EFL layout.
+   ]]
+   legacy_prefix: null;
+   data: Efl_Ui_Layout_Table_Data;
+   methods {
+      @property real_part @protected {
+         set {}
+         values {
+            layout: Eo.Base*;
+            pack: Eo.Base*;
+            part: const(char)*;
+         }
+      }
+   }
+   implements {
+      Eo.Base.finalize;
+      Eo.Base.destructor;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
+      Efl.Container.content_remove;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_insert;
+      Efl.Pack_Linear.content_at.get;
+      Efl.Pack_Linear.content_at_remove;
+      Efl.Pack_Linear.content_index.get;
+      Efl.Pack_Linear.direction.get;
+   }
+}

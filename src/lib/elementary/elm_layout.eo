@@ -96,21 +96,6 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
                                      settings loaded \@ref elm_layout_file_set.]]
          }
       }
-      box_remove_all {
-         [[Remove all children of the given part box.
-
-           The objects will be removed from the box part and their lifetime
-           will not be handled by the layout anymore. This is equivalent to
-           @.box_remove for all box children.
-         ]]
-         return: bool;
-         params {
-            @in part: const(char)*; [[The box part name to remove child.]]
-            @in clear: bool; [[If true, then all objects will be deleted as
-                               well, otherwise they will just be removed and
-                               will be dangling on the canvas.]]
-         }
-      }
       part_cursor_engine_only_set {
          [[Sets if the cursor set should be searched on the theme or should
            use the provided by the engine, only.
@@ -134,19 +119,6 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
                          or also from theme.]]
          params {
             @in part_name: const(char)*; [[A part from loaded edje group.]]
-         }
-      }
-      table_unpack {
-         [[Unpack (remove) a child of the given part table.
-
-           The object will be unpacked from the table part and its lifetime
-           will not be handled by the layout anymore. This is equivalent to
-           \@ref elm_layout_content_unset for table.
-         ]]
-         return: Evas.Object *; [[The object that was being used, or $null if not found.]]
-         params {
-            @in part: const(char)*; [[The table part name to remove child.]]
-            @in child: Evas.Object *; [[The object to remove from table.]]
          }
       }
       freeze {
@@ -181,19 +153,6 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
            Also note that a standard signal of "size,eval" "elm" emitted
            from the edje object will cause this to happen too.
          ]]
-      }
-      box_remove {
-         [[Remove a child of the given part box.
-
-           The object will be removed from the box part and its lifetime
-           will not be handled by the layout anymore. This is equivalent to
-           \@ref elm_layout_content_unset for box.
-         ]]
-         return: Evas.Object *; [[The object that was being used, or $null if not found.]]
-         params {
-            @in part: const(char)*; [[The box part name to remove child.]]
-            @in child: Evas.Object *; [[The object to remove from box.]]
-         }
       }
       sizing_restricted_eval {
          [[Request sizing reevaluation, restricted to current width and/or
@@ -278,36 +237,6 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
             @in part_name: const(char)*; [[A part from loaded edje group.]]
          }
       }
-      box_insert_before {
-         [[Insert child to layout box part before a reference object.
-
-           Once the object is inserted, it will become child of the layout.
-           Its lifetime will be bound to the layout, whenever the layout
-           dies the child will be deleted automatically. One should use
-           @.box_remove to make this layout forget about the object.
-         ]]
-         return: bool;
-         params {
-            @in part: const(char)*; [[The box part to insert.]]
-            @in child: own(Evas.Object *); [[The child object to insert into box.]]
-            @in reference: const(Evas.Object)*; [[Another reference object to insert before in box.]]
-         }
-      }
-      box_insert_at {
-         [[Insert child to layout box part at a given position.
-
-           Once the object is inserted, it will become child of the layout.
-           Its lifetime will be bound to the layout, whenever the layout
-           dies the child will be deleted automatically. One should use
-           @.box_remove to make this layout forget about the object.
-         ]]
-         return: bool;
-         params {
-            @in part: const(char)*; [[The box part to insert.]]
-            @in child: own(Evas.Object *); [[The child object to insert into box.]]
-            @in pos: uint; [[The numeric position >=0 to insert the child.]]
-         }
-      }
       sub_object_add_enable {
          legacy: null;
          return: bool;
@@ -337,20 +266,6 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
          return: const(char)*; [[The edje data string.]]
          params {
             @in key: const(char)*; [[The data key.]]
-         }
-      }
-      box_append {
-         [[Append child to layout box part.
-
-           Once the object is appended, it will become child of the layout.
-           Its lifetime will be bound to the layout, whenever the layout
-           dies the child will be deleted automatically. One should use
-           @.box_remove to make this layout forget about the object.
-         ]]
-         return: bool;
-         params {
-            @in part: const(char)*; [[The box part to which the object will be appended.]]
-            @in child: own(Evas.Object *); [[The child object to append to box.]]
          }
       }
       signal_callback_del {
@@ -384,20 +299,6 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
          ]]
          return: int; [[The frozen state or 0 if the object is not frozen or on error.]]
       }
-      box_prepend {
-         [[Prepend child to layout box part.
-
-           Once the object is prepended, it will become child of the layout.
-           Its lifetime will be bound to the layout, whenever the layout
-           dies the child will be deleted automatically. One should use
-           @.box_remove to make this layout forget about the object.
-         ]]
-         return: bool;
-         params {
-            @in part: const(char)*; [[The box part to which the object will be prepended.]]
-            @in child: own(Evas.Object *); [[The child object to prepend to box.]]
-         }
-      }
       signal_emit {
          [[Send a (Edje) signal to a given layout widget's underlying Edje
            object.
@@ -412,40 +313,6 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
             @in source: const(char)*; [[The signal's source string.]]
          }
       }
-      table_pack {
-         [[Insert child to layout table part.
-
-           Once the object is inserted, it will become child of the table.
-           Its lifetime will be bound to the layout, and whenever the layout
-           dies the child will be deleted automatically. One should use
-           @.table_unpack to make this layout forget about the object.
-
-           If $colspan or $rowspan are bigger than 1, that object will occupy
-           more space than a single cell.
-
-           See also @.table_unpack, @.table_clear.
-         ]]
-         /* FIXME-doc
-         For instance, the following code:
-         @code
-         elm_layout_table_pack(layout, "table_part", child, 0, 1, 3, 1);
-         @endcode
-
-         Would result in an object being added like the following picture:
-
-         @image html layout_colspan.png
-         @image latex layout_colspan.eps width=\textwidth
-         */
-         return: bool;
-         params {
-            @in part: const(char)*; [[The box part to pack child.]]
-            @in child: own(Evas.Object *); [[The child object to pack into table.]]
-            @in col: ushort; [[The column to which the child should be added. (>= 0)]]
-            @in row: ushort; [[The row to which the child should be added. (>= 0)]]
-            @in colspan: ushort; [[How many columns should be used to store this object. (>= 1)]]
-            @in rowspan: ushort; [[How many rows should be used to store this object. (>= 1)]]
-         }
-      }
       part_cursor_unset {
          [[Unsets a cursor previously set with @.part_cursor_set.]]
          return: bool;
@@ -453,21 +320,6 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
             @in part_name: const(char)*; [[A part from loaded edje group,
                                            that had a cursor set wit
                                            @.part_cursor_set.]]
-         }
-      }
-      table_clear {
-         [[Remove all the child objects of the given part table.
-
-           The objects will be removed from the table part and their
-           lifetime will not be handled by the layout anymore. This
-           is equivalent to @.table_unpack for all table children.
-         ]]
-         return: bool;
-         params {
-            @in part: const(char)*; [[The table part name to remove child.]]
-            @in clear: bool; [[If true, then all objects will be deleted as
-                               well, otherwise they will just be removed and
-                               will be dangling on the canvas.]]
          }
       }
    }
