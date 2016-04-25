@@ -134,7 +134,7 @@ struct _Elm_Theme
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-#define ELM_CONFIG_FILE_GENERATION 0x0009
+#define ELM_CONFIG_FILE_GENERATION 0x000a
 #define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
 #define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
                                     ELM_CONFIG_FILE_GENERATION)
@@ -317,6 +317,7 @@ struct _Elm_Config
    int           gl_depth;
    int           gl_stencil;
    int           gl_msaa;
+   const char   *icon_theme;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;

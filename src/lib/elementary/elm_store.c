@@ -311,7 +311,6 @@ _store_item_content_get(void *data, Evas_Object *obj, const char *part)
                 case ELM_STORE_ITEM_MAPPING_ICON:
                    ic = elm_icon_add(obj);
                    s = *(char **)(((unsigned char *)sti->data) + m->offset);
-                   elm_icon_order_lookup_set(ic, m->details.icon.lookup_order);
                    evas_object_size_hint_aspect_set(ic,
                                                     EVAS_ASPECT_CONTROL_VERTICAL,
                                                     m->details.icon.w,

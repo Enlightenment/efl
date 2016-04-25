@@ -106,7 +106,10 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable,
          [[Sets icon lookup order, for toolbar items' icons.
 
            Icons added before calling this function will not be affected.
-           The default lookup order is #ELM_ICON_LOOKUP_THEME_FDO.]]
+           The default lookup order is #ELM_ICON_LOOKUP_THEME_FDO.
+
+           Warning: the icon_order_lookup property is deprecated.
+           See elm_config_icon_theme_set instead.]]
          set {
          }
          get {

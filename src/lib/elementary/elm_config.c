@@ -500,6 +500,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, popup_horizontal_align, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, popup_vertical_align, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, spinner_min_max_filter_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, icon_theme, T_STRING);
 #undef T
 #undef D
 #undef T_INT
@@ -1549,6 +1550,7 @@ _config_free(Elm_Config *cfg)
    eina_stringshare_del(cfg->indicator_service_90);
    eina_stringshare_del(cfg->indicator_service_180);
    eina_stringshare_del(cfg->indicator_service_270);
+   eina_stringshare_del(cfg->icon_theme);
    free(cfg);
 }
 
@@ -1823,6 +1825,7 @@ _config_load(void)
    _elm_config->naviframe_prev_btn_auto_pushed = EINA_TRUE;
    _elm_config->popup_horizontal_align = 0.5;
    _elm_config->popup_vertical_align = 0.5;
+   _elm_config->icon_theme = eina_stringshare_add(ELM_CONFIG_ICON_THEME_ELEMENTARY);
 }
 
 static void
@@ -2165,6 +2168,10 @@ _config_update(void)
 
    IFCFG(0x0009)
    _elm_config->scroll_accel_factor = 7.0;
+   IFCFGEND
+
+   IFCFG(0x000a)
+   _elm_config->icon_theme = eina_stringshare_add(ELM_CONFIG_ICON_THEME_ELEMENTARY);
    IFCFGEND
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
@@ -2650,6 +2657,26 @@ elm_config_scale_set(double scale)
    if (_elm_config->scale == scale) return;
    _elm_config->scale = scale;
    _elm_rescale();
+}
+
+EAPI const char *
+elm_config_icon_theme_get(void)
+{
+   if (!_elm_config->icon_theme)
+     return ELM_CONFIG_ICON_THEME_ELEMENTARY;
+
+   return _elm_config->icon_theme;
+}
+
+EAPI void
+elm_config_icon_theme_set(const char *theme)
+{
+   eina_stringshare_del(_elm_config->icon_theme);
+
+   if (theme)
+     _elm_config->icon_theme = eina_stringshare_add(theme);
+   else
+     _elm_config->icon_theme = eina_stringshare_add(ELM_CONFIG_ICON_THEME_ELEMENTARY);
 }
 
 EAPI Eina_Bool
