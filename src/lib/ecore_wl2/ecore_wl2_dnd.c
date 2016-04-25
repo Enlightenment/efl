@@ -240,9 +240,10 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
                WL_DATA_OFFER_FINISH_SINCE_VERSION)
                wl_data_offer_finish(source->offer);
           }
-        if (source->input->selection.source == source)
-          source->input->selection.source = NULL;
-        _ecore_wl2_dnd_del(source);
+        close(ecore_main_fd_handler_fd_get(source->fdh));
+        ecore_main_fd_handler_del(source->fdh);
+        source->fdh = NULL;
+
         event->done = EINA_TRUE;
         event->data = NULL;
         event->len = 0;
