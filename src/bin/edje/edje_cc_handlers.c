@@ -1009,10 +1009,12 @@ New_Statement_Handler statement_handlers[] =
                     rel1.relative: 0.5 0;
                     rel2.relative: 1 1;
                  }
-                 desc { "t2"; inherit: "default";
+                 desc { "t2";
+                    inherit: "default";
                     color: 0 255 0 255;
                  }
-                 desc { "t3"; inherit: "default";
+                 desc { "t3";
+                    inherit; // "default" can be omitted.
                     color: 0 0 255 255;
                  }
               }
