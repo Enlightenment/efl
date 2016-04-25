@@ -370,7 +370,8 @@ _resize_job(void *data)
    elm_interface_scrollable_content_viewport_geometry_get
          (obj, NULL, NULL, &vw, &vh);
    evas_object_size_hint_min_get(sd->bx, &mw, &mh);
-   evas_object_geometry_get(sd->bx, NULL, NULL, &w, &h);
+   w = sd->minw_bx;
+   h = sd->minh_bx;
 
    if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
      {
@@ -1536,7 +1537,10 @@ _sizing_eval(Evas_Object *obj)
           minh_bx = vh;
      }
 
-   evas_object_resize(sd->bx, minw_bx, minh_bx);
+   /* Keep the box's minimum size for a moment.
+      It will be used for resizing the box in _resize_job() function. */
+   sd->minw_bx = minw_bx;
+   sd->minh_bx = minh_bx;
    evas_object_resize(sd->more, minw_bx, minh_bx);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);

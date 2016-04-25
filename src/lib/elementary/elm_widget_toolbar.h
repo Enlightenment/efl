@@ -43,6 +43,7 @@ struct _Elm_Toolbar_Data
    int                                   theme_icon_size, priv_icon_size,
                                          icon_size;
    int                                   standard_priority;
+   int                                   minw_bx, minh_bx;
    unsigned int                          item_count;
    unsigned int                          separator_count;
    double                                align;
