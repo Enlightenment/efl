@@ -118,6 +118,15 @@ _error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
    ecore_main_loop_quit();
 }
 
+static void
+_open_done_cb(void *data, Eio_File *handler EINA_UNUSED, Eina_File *file)
+{
+   Eina_Bool *opened = (Eina_Bool *)data;
+   *opened = EINA_TRUE;
+   eina_file_close(file);
+   ecore_main_loop_quit();
+}
+
 Eina_Tmpstr*
 get_full_path(const char* tmpdirname, const char* filename)
 {
@@ -368,9 +377,47 @@ START_TEST(eio_file_test_file)
 }
 END_TEST
 
+START_TEST(eio_file_test_open)
+{
+   Eina_Bool opened_file;
+   int ret;
+
+   ret = ecore_init();
+   fail_if(ret < 1);
+   ret = eio_init();
+   fail_if(ret < 1);
+   ret = eina_init();
+   fail_if(ret < 1);
+   ret = ecore_file_init();
+   fail_if(ret < 1);
+
+
+   Eina_Tmpstr *test_dirname = get_eio_test_file_tmp_dir();
+   Eina_Tmpstr *nested_dirname = create_test_dirs(test_dirname);
+   Eina_Tmpstr *nested_filename = get_full_path(test_dirname, files[3]);
+
+   opened_file = EINA_FALSE;
+   eio_file_open(nested_filename, EINA_FALSE, _open_done_cb, _error_cb, &opened_file);
+   ecore_main_loop_begin();
+   fail_if(!opened_file);
+
+   // Cleanup
+   fail_if(!ecore_file_recursive_rm(test_dirname));
+
+   eina_tmpstr_del(nested_dirname);
+   eina_tmpstr_del(test_dirname);
+   eina_tmpstr_del(nested_filename);
+   ecore_file_shutdown();
+   eina_shutdown();
+   eio_shutdown();
+   ecore_shutdown();
+}
+END_TEST
+
 void
 eio_test_file(TCase *tc)
 {
     tcase_add_test(tc, eio_file_test_ls);
     tcase_add_test(tc, eio_file_test_file);
+    tcase_add_test(tc, eio_file_test_open);
 }
