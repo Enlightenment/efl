@@ -35,6 +35,7 @@
 #include "eina_list.h"
 #include "eina_trash.h"
 #include "eina_log.h"
+#include "eina_lock.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -98,6 +99,7 @@ struct _Eina_Rectangle_Alloc
 static Eina_Mempool *_eina_rectangle_alloc_mp = NULL;
 static Eina_Mempool *_eina_rectangle_mp = NULL;
 
+static Eina_Spinlock _eina_spinlock;
 static Eina_Trash *_eina_rectangles = NULL;
 static unsigned int _eina_rectangles_count = 0;
 static int _eina_rectangle_log_dom = -1;
@@ -559,6 +561,8 @@ eina_rectangle_init(void)
         goto init_error;
      }
 
+   eina_spinlock_new(&_eina_spinlock);
+
    return EINA_TRUE;
 
 init_error:
@@ -573,6 +577,7 @@ eina_rectangle_shutdown(void)
 {
    Eina_Rectangle *del;
 
+   eina_spinlock_free(&_eina_spinlock);
    while ((del = eina_trash_pop(&_eina_rectangles)))
       eina_mempool_free(_eina_rectangle_mp, del);
    _eina_rectangles_count = 0;
@@ -597,7 +602,9 @@ eina_rectangle_new(int x, int y, int w, int h)
 
    if (_eina_rectangles)
      {
+        eina_spinlock_take(&_eina_spinlock);
         rect = eina_trash_pop(&_eina_rectangles);
+        eina_spinlock_release(&_eina_spinlock);
         _eina_rectangles_count--;
      }
    else
@@ -620,7 +627,9 @@ eina_rectangle_free(Eina_Rectangle *rect)
       eina_mempool_free(_eina_rectangle_mp, rect);
    else
      {
+        eina_spinlock_take(&_eina_spinlock);
         eina_trash_push(&_eina_rectangles, rect);
+        eina_spinlock_release(&_eina_spinlock);
         _eina_rectangles_count++;
      }
 }
@@ -681,7 +690,7 @@ eina_rectangle_pool_free(Eina_Rectangle_Pool *pool)
         eina_mempool_free(_eina_rectangle_alloc_mp, del);
      }
 
-        MAGIC_FREE(pool);
+   MAGIC_FREE(pool);
 }
 
 EAPI int
