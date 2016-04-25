@@ -560,6 +560,160 @@ START_TEST(edje_test_box_eoapi)
 }
 END_TEST
 
+START_TEST(edje_test_table)
+{
+   Evas *evas;
+   Evas_Object *obj, *sobj, *sobjs[4];
+   int i, k, l, cols, rows;
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_table.edj"), "test_group"));
+
+   /* check items from EDC */
+   for (l = 0; l < 2; l++)
+     for (k = 0; k < 2; k++)
+       {
+          const char *txt;
+          char buf[20];
+
+          /* items have a text part "text" containing their position */
+          sprintf(buf, "%d,%d", k, l);
+          sobj = edje_object_part_table_child_get(obj, "table", k, l);
+          fail_if(!sobj);
+          txt = edje_object_part_text_get(sobj, "text");
+          fail_if(!txt);
+          fail_if(strcmp(txt, buf) != 0);
+       }
+
+   /* Add more items */
+   for (l = 0; l < 2; l++)
+     for (k = 0; k < 2; k++)
+       {
+          i = l*2 + k;
+          sobjs[i] = evas_object_rectangle_add(evas);
+          fail_if(!sobjs[i]);
+          edje_object_part_table_pack(obj, "table", sobjs[i], k, l + 2, 1, 1);
+       }
+
+   for (l = 0; l < 2; l++)
+     for (k = 0; k < 2; k++)
+       {
+          i = l*2 + k;
+          sobj = edje_object_part_table_child_get(obj, "table", k, l + 2);
+          fail_if(sobj != sobjs[i]);
+       }
+
+   /* table size and clear */
+   edje_object_part_table_col_row_size_get(obj, "table", &cols, &rows);
+   fail_if(cols != 2);
+   fail_if(rows != 4);
+
+   edje_object_part_table_clear(obj, "table", EINA_TRUE);
+
+   edje_object_part_table_col_row_size_get(obj, "table", &cols, &rows);
+   fail_if(cols != 2);
+   fail_if(rows != 2);
+
+   for (l = 0; l < 2; l++)
+     for (k = 0; k < 2; k++)
+       {
+          const char *txt;
+          char buf[20];
+
+          /* items have a text part "text" containing their position */
+          sprintf(buf, "%d,%d", k, l);
+          sobj = edje_object_part_table_child_get(obj, "table", k, l);
+          fail_if(!sobj);
+          txt = edje_object_part_text_get(sobj, "text");
+          fail_if(!txt);
+          fail_if(strcmp(txt, buf) != 0);
+       }
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
+START_TEST(edje_test_table_eoapi)
+{
+   Evas *evas;
+   Evas_Object *obj, *sobj, *sobjs[4];
+   Eina_Iterator *it;
+   Eo *table;
+   int i, k, l, cs, rs, cols, rows;
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_table.edj"), "test_group"));
+
+   table = efl_content_get(obj, "table");
+   fail_if(!table);
+
+   /* check items from EDC */
+   fail_if(efl_content_count(table) != 4);
+   for (l = 0; l < 2; l++)
+     for (k = 0; k < 2; k++)
+       {
+          const char *txt;
+          char buf[20];
+
+          /* items have a text part "text" containing their position */
+          sprintf(buf, "%d,%d", k, l);
+          sobj = efl_pack_grid_content_at(table, k, l);
+          fail_if(!sobj);
+          //txt = efl_part_text_get(sobj, "text");
+          txt = edje_object_part_text_get(sobj, "text");
+          fail_if(!txt);
+          fail_if(strcmp(txt, buf) != 0);
+       }
+
+   /* Add more items */
+   for (l = 0; l < 2; l++)
+     for (k = 0; k < 2; k++)
+       {
+          i = l*2 + k;
+          sobjs[i] = eo_add(EVAS_RECTANGLE_CLASS, evas);
+          fail_if(!sobjs[i]);
+          efl_pack_grid(table, sobjs[i], k, l + 2, 1, 1);
+       }
+
+   fail_if(efl_content_count(table) != 8);
+
+   i = 0;
+   it = efl_content_iterate(table);
+   EINA_ITERATOR_FOREACH(it, sobj)
+     {
+        efl_pack_grid_content_position_get(table, sobj, &k, &l, &cs, &rs);
+        fail_if(cs != 1);
+        fail_if(rs != 1);
+        if (l >= 2)
+          fail_if(sobj != sobjs[(l - 2)*2 + k]);
+        i++;
+     }
+   eina_iterator_free(it);
+   fail_if(i != 8);
+
+   /* table size and clear */
+   efl_pack_grid_size_get(table, &cols, &rows);
+   fail_if(cols != 2);
+   fail_if(rows != 4);
+
+   efl_pack_clear(table);
+   fail_if(efl_content_count(table) != 4);
+
+   efl_pack_grid_size_get(table, &cols, &rows);
+   fail_if(cols != 2);
+   fail_if(rows != 2);
+
+   /* release handle - not required */
+   eo_del(table);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
@@ -578,4 +732,6 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_access);
    tcase_add_test(tc, edje_test_box);
    tcase_add_test(tc, edje_test_box_eoapi);
+   tcase_add_test(tc, edje_test_table);
+   tcase_add_test(tc, edje_test_table_eoapi);
 }

@@ -269,6 +269,7 @@ tests/edje/data/test_size_class.edc \
 tests/edje/data/test_color_class.edc \
 tests/edje/data/test_swallows.edc \
 tests/edje/data/test_box.edc \
+tests/edje/data/test_table.edc \
 tests/edje/data/filter.lua
 
 
@@ -306,7 +307,9 @@ EDJE_TEST_FILES = tests/edje/data/test_layout.edj \
                      tests/edje/data/test_size_class.edj \
                      tests/edje/data/test_swallows.edj \
                      tests/edje/data/test_color_class.edj \
-		     tests/edje/data/test_box.edj
+		     tests/edje/data/test_box.edj \
+                     tests/edje/data/test_table.edj \
+                     $(NULL)
 
 CLEANFILES += $(EDJE_TEST_FILES)
 

@@ -1,0 +1,116 @@
+collections {
+   group { "item1";
+      parts {
+         text { "text";
+            desc {
+               text {
+                  font: "Sans";
+                  size: 42;
+                  text: "0,0";
+                  ellipsis: -1;
+               }
+               min: 1 1;
+            }
+         }
+      }
+   }
+   group { "item2";
+      parts {
+         text { "text";
+            desc {
+               text {
+                  font: "Sans";
+                  size: 42;
+                  text: "1,0";
+                  ellipsis: -1;
+               }
+               min: 1 1;
+            }
+         }
+      }
+   }
+   group { "item3";
+      parts {
+         text { "text";
+            desc {
+               text {
+                  font: "Sans";
+                  size: 42;
+                  text: "0,1";
+                  ellipsis: -1;
+               }
+               min: 1 1;
+            }
+         }
+      }
+   }
+   group { "item4";
+      parts {
+         text { "text";
+            desc {
+               text {
+                  font: "Sans";
+                  size: 42;
+                  text: "1,1";
+                  ellipsis: -1;
+               }
+               min: 1 1;
+            }
+         }
+      }
+   }
+   group { "test_group";
+      parts {
+         rect { "rect";
+            desc {
+               rel.to: "table";
+               color: 12 32 64 128;
+            }
+         }
+         table { "table";
+            desc {
+               table {
+                  homogeneous: TABLE;
+                  padding: 10 10;
+               }
+            }
+            table {
+               items {
+                  item {
+                     type: GROUP;
+                     source: "item1";
+                     position: 0 0;
+                     span: 1 1;
+                     weight: 1 1;
+                     align: -1 -1;
+                  }
+                  item {
+                     type: GROUP;
+                     source: "item2";
+                     position: 1 0;
+                     span: 1 1;
+                     weight: 1 1;
+                     align: -1 -1;
+                  }
+                  item {
+                     type: GROUP;
+                     source: "item3";
+                     position: 0 1;
+                     span: 1 1;
+                     weight: 1 1;
+                     align: -1 -1;
+                  }
+                  item {
+                     type: GROUP;
+                     source: "item4";
+                     position: 1 1;
+                     span: 1 1;
+                     weight: 1 1;
+                     align: -1 -1;
+                  }
+               }
+            }
+         }
+      }
+   }
+}
