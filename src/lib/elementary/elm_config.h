@@ -974,6 +974,29 @@ EAPI double elm_config_scale_get(void);
 EAPI void   elm_config_scale_set(double scale);
 
 /**
+ * Get the icon theme the user has set.
+ *
+ * This gets the global icon theme currently set or the default value
+ * ELM_CONFIG_ICON_THEME_ELEMENTARY.
+ *
+ * @return the icon theme to use
+ * @ingroup Elm_Icon
+ */
+EAPI const char *elm_config_icon_theme_get(void);
+
+/**
+ * Set the icon theme for all elementary apps.
+ *
+ * This method will set the icon theme for all elm_icon_standard_set calls.
+ * Valid parameters are the name of an installed freedesktop.org icon theme
+ * or ELM_CONFIG_ICON_THEME_ELEMENTARY for the built in theme.
+ *
+ * @param the name of a freedesktop.org icon theme or ELM_CONFIG_ICON_THEME_ELEMENTARY
+ * @ingroup Elm_Icon
+ */
+EAPI void elm_config_icon_theme_set(const char *theme);
+
+/**
  * @defgroup Elm_Password_last_show Password show last
  * @ingroup Elementary
  *
