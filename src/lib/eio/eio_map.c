@@ -44,7 +44,7 @@ static void
 _eio_file_open_free(Eio_File_Map *map)
 {
    if (map->name) eina_stringshare_del(map->name);
-   free(map);
+   eio_file_free((Eio_File*)map);
 }
 
 static void
@@ -144,7 +144,7 @@ _eio_file_map_end(void *data, Ecore_Thread *thread EINA_UNUSED)
    Eio_File_Map_Rule *map = data;
 
    map->map_cb((void*) map->common.data, &map->common, map->result, map->length);
-   free(map);
+   eio_file_free((Eio_File*)map);
 }
 
 static void
@@ -153,7 +153,7 @@ _eio_file_map_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
    Eio_File_Map_Rule *map = data;
 
    eio_file_error(&map->common);
-   free(map);
+   eio_file_free((Eio_File*)map);
 }
 
 /**
