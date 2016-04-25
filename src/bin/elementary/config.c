@@ -1032,6 +1032,14 @@ _cf_themes(void            *data,
 }
 
 static void
+_cf_icons(void            *data,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
+{
+   _flip_to(data, "icons");
+}
+
+static void
 _cf_fonts(void            *data,
           Evas_Object *obj EINA_UNUSED,
           void *event_info EINA_UNUSED)
@@ -1524,6 +1532,51 @@ _theme_sel(void            *data EINA_UNUSED,
    {
    printf("not implemented\n");
    }*/
+
+static void
+_icon_theme_use(void *data  EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = elm_object_top_widget_get(obj);
+   const char *theme = evas_object_data_get(win, "icon_theme");
+
+   elm_config_icon_theme_set(theme);
+   elm_config_all_flush();
+}
+
+static void
+_icon_theme_sel(void *data, Evas_Object *obj,
+           void *event_info EINA_UNUSED)
+{
+   const char *theme = (const char *)data;
+   Evas_Object *win = elm_object_top_widget_get(obj);
+
+   evas_object_data_set(win, "icon_theme", theme);
+}
+
+static Eina_Bool
+_icon_theme_valid(const char *theme)
+{
+   const char *icon_path;
+
+   icon_path = efreet_icon_path_find(theme, "folder", 48);
+   return !!icon_path;
+}
+
+static int
+_icon_theme_list_sort(const void *data1, const void *data2)
+{
+   const Efreet_Icon_Theme *t1, *t2;
+
+   t1 = data1;
+   t2 = data2;
+
+   if (!t1->name.name) return 1;
+   if (!t2->name.name) return -1;
+
+   return strcmp(t1->name.name, t2->name.name);
+}
 
 static void
 _status_config_sizing(Evas_Object *win,
@@ -2163,6 +2216,112 @@ _status_config_themes(Evas_Object *win,
    evas_object_data_set(win, "themes", tb);
    elm_naviframe_item_simple_push(naviframe, tb);
 }
+
+static void
+_status_config_icons(Evas_Object *win,
+                      Evas_Object *naviframe)
+{
+   Evas_Object *tb, *rc, *sp, *li, *ic, *pd, *fr, *bt;
+   Eina_List *list, *l;
+   const Efreet_Icon_Theme *th;
+   Elm_Object_Item *list_it, *def_it;
+
+   tb = elm_table_add(win);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   rc = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_weight_set(rc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_min_set(rc, 0, 130);
+   elm_table_pack(tb, rc, 0, 0, 1, 1);
+
+   rc = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_weight_set(rc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_min_set(rc, 0, 200);
+   elm_table_pack(tb, rc, 0, 1, 1, 1);
+
+   /////////////////////////////////////////////
+
+   pd = elm_frame_add(win);
+   elm_object_style_set(pd, "pad_medium");
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, pd, 0, 0, 1, 1);
+   evas_object_show(pd);
+
+   li = elm_list_add(win);
+   elm_list_multi_select_set(li, EINA_FALSE);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(pd, li);
+   evas_object_show(li);
+
+   evas_object_data_set(win, "icon_theme", elm_config_icon_theme_get());
+   ic = elm_icon_add(li);
+   def_it = elm_list_item_append(li, "Elementary", ic, NULL, _icon_theme_sel,
+                                 ELM_CONFIG_ICON_THEME_ELEMENTARY);
+
+   list = efreet_icon_theme_list_get();
+   list = eina_list_sort(list, eina_list_count(list), _icon_theme_list_sort);
+   EINA_LIST_FOREACH(list, l, th)
+     {
+        if (!_icon_theme_valid(th->name.internal))
+          continue;
+
+        ic = elm_icon_add(li);
+        elm_image_file_set(ic, efreet_icon_path_find(th->name.internal, "folder", 48), NULL);
+        list_it = elm_list_item_append(li, th->name.name, ic, NULL,
+                                       _icon_theme_sel, th->name.internal);
+
+        if (!strcmp(elm_config_icon_theme_get(), th->name.name))
+          elm_list_item_selected_set(list_it, EINA_TRUE);
+     }
+   if (!elm_list_selected_items_get(li))
+     elm_list_item_selected_set(def_it, EINA_TRUE);
+
+   elm_list_go(li);
+
+   pd = elm_frame_add(win);
+   elm_object_style_set(pd, "pad_medium");
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, pd, 0, 1, 1, 1);
+   evas_object_show(pd);
+
+   fr = elm_frame_add(win);
+   elm_object_text_set(fr, "Preview");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(pd, fr);
+   evas_object_show(fr);
+
+   /////////////////////////////////////////////
+   sp = elm_separator_add(win);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
+   elm_table_pack(tb, sp, 0, 2, 1, 1);
+   evas_object_show(sp);
+
+   pd = elm_frame_add(win);
+   elm_object_style_set(pd, "pad_medium");
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(pd, 0.5, 0.5);
+   elm_table_pack(tb, pd, 0, 3, 1, 1);
+   evas_object_show(pd);
+
+   bt = elm_button_add(win);
+   evas_object_smart_callback_add(bt, "clicked", _icon_theme_use, win);
+   elm_object_text_set(bt, "Use Icon Theme");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_object_content_set(pd, bt);
+   evas_object_show(bt);
+
+   evas_object_data_set(win, "icons", tb);
+   elm_naviframe_item_simple_push(naviframe, tb);
+}
+
 
 static void
 _font_preview_update(Evas_Object *win)
@@ -3941,6 +4100,10 @@ _status_config_full(Evas_Object *win,
                                 _cf_themes, win);
    elm_toolbar_item_priority_set(tb_it, 90);
 
+   tb_it = elm_toolbar_item_append(tb, "preferences-desktop-theme", "Icons",
+                                _cf_icons, win);
+   elm_toolbar_item_priority_set(tb_it, 90);
+
    elm_toolbar_item_append(tb, "preferences-desktop-font", "Fonts",
                            _cf_fonts, win);
 
@@ -3965,6 +4128,7 @@ _status_config_full(Evas_Object *win,
    evas_object_data_set(win, "naviframe", naviframe);
 
    _status_config_themes(win, naviframe);
+   _status_config_icons(win, naviframe);
    _status_config_fonts(win, naviframe);
    _status_config_profiles(win, naviframe);
    _status_config_rendering(win, naviframe);

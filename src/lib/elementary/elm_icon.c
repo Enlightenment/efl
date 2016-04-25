@@ -276,7 +276,7 @@ _icon_freedesktop_set(Evas_Object *obj,
      {
         Efreet_Icon_Theme *theme;
         /* TODO: Listen for EFREET_EVENT_ICON_CACHE_UPDATE */
-        theme = efreet_icon_theme_find(getenv("E_ICON_THEME"));
+        theme = efreet_icon_theme_find(elm_config_icon_theme_get());
         if (!theme)
           {
              const char **itr;
