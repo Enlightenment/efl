@@ -39,7 +39,6 @@ struct _Elm_Toolbar_Data
    Elm_Object_Item                      *last_focused_item; /**< This records the last focused item when widget looses focus. This is required to set the focus on last focused item when widgets gets focus. */
    Elm_Toolbar_Item_Data                *reorder_empty, *reorder_item;
    Elm_Toolbar_Shrink_Mode               shrink_mode;
-   Elm_Icon_Lookup_Order                 lookup_order;
    int                                   theme_icon_size, priv_icon_size,
                                          icon_size;
    int                                   standard_priority;

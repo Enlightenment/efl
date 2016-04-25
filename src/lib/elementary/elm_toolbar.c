@@ -2484,7 +2484,6 @@ _item_new(Evas_Object *obj,
    elm_interface_atspi_accessible_type_set(VIEW(it), ELM_ATSPI_TYPE_DISABLED);
 
    icon_obj = elm_icon_add(VIEW(it));
-   elm_icon_order_lookup_set(icon_obj, sd->lookup_order);
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      _access_widget_item_register(it);
@@ -2896,7 +2895,6 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move_cb, obj);
    evas_object_event_callback_add
      (priv->bx, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
-   elm_toolbar_icon_order_lookup_set(obj, ELM_ICON_LOOKUP_THEME_FDO);
 
    _elm_toolbar_highlight_in_theme(obj);
    _sizing_eval(obj);
@@ -3646,7 +3644,6 @@ _elm_toolbar_item_state_add(Eo *eo_item, Elm_Toolbar_Item_Data *item,
      }
 
    icon_obj = elm_icon_add(obj);
-   elm_icon_order_lookup_set(icon_obj, sd->lookup_order);
    if (!icon_obj) goto error_state_add;
 
    if (!_item_icon_set(icon_obj, "toolbar/", icon))
@@ -3810,24 +3807,17 @@ _elm_toolbar_item_state_prev(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *ite
    return eina_list_data_get(prev_state);
 }
 
-EOLIAN static void
-_elm_toolbar_icon_order_lookup_set(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd, Elm_Icon_Lookup_Order order)
+EINA_DEPRECATED EOLIAN static void
+_elm_toolbar_icon_order_lookup_set(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd EINA_UNUSED,
+                                   Elm_Icon_Lookup_Order order EINA_UNUSED)
 {
-   Elm_Toolbar_Item_Data *it;
-
-
-   if (sd->lookup_order == order) return;
-   sd->lookup_order = order;
-   EINA_INLIST_FOREACH(sd->items, it)
-     elm_icon_order_lookup_set(it->icon, order);
-   if (sd->more_item)
-     elm_icon_order_lookup_set(sd->more_item->icon, order);
+   // this method's behaviour has been overridden by elm_config_icon_theme_set
 }
 
-EOLIAN static Elm_Icon_Lookup_Order
-_elm_toolbar_icon_order_lookup_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+EINA_DEPRECATED EOLIAN static Elm_Icon_Lookup_Order
+_elm_toolbar_icon_order_lookup_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd EINA_UNUSED)
 {
-   return sd->lookup_order;
+   return ELM_ICON_LOOKUP_FDO_THEME;
 }
 
 EOLIAN static void

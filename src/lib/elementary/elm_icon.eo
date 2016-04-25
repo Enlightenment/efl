@@ -10,6 +10,8 @@ enum Elm.Icon.Lookup_Order
 {
    [[Lookup order used by elm_icon_standard_set(). Should look for icons in
      the theme, FDO paths, or both?
+
+     Warning: This enum will be removed as the lookup_order is deprecated.
    ]]
    legacy: elm_icon_lookup;
    fdo_theme, [[Icon look up order: freedesktop, theme.]]
@@ -24,6 +26,8 @@ class Elm.Icon (Elm.Image)
    eo_prefix: elm_obj_icon;
    methods {
       @property order_lookup {
+         [[Warning: the order_lookup property is deprecated.
+           See elm_config_icon_theme_set instead.]]
          set {
             [[Sets the icon lookup order used by elm_icon_standard_set().
 

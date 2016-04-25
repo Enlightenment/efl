@@ -24,7 +24,6 @@ struct _Elm_Icon_Data
 {
    Evas_Object          *obj; // the object itself
    const char           *stdicon;
-   Elm_Icon_Lookup_Order lookup_order;
 
    struct
    {

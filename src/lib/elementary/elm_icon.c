@@ -446,35 +446,16 @@ _internal_elm_icon_standard_set(Evas_Object *obj,
 
    ELM_ICON_DATA_GET(obj, sd);
 
-   /* try locating the icon using the specified lookup order */
-   switch (sd->lookup_order)
+   /* try locating the icon using the specified theme */
+   if (!strcmp(ELM_CONFIG_ICON_THEME_ELEMENTARY, elm_config_icon_theme_get()))
      {
-      case ELM_ICON_LOOKUP_FDO:
+        ret = _icon_standard_set(obj, name);
+        if (ret && fdo) *fdo = EINA_FALSE;
+     }
+   else
+     {
         ret = _icon_freedesktop_set(obj, name, _icon_size_min_get(obj));
         if (ret && fdo) *fdo = EINA_TRUE;
-        break;
-
-      case ELM_ICON_LOOKUP_THEME:
-        ret = _icon_standard_set(obj, name);
-        break;
-
-      case ELM_ICON_LOOKUP_THEME_FDO:
-        ret = _icon_standard_set(obj, name);
-        if (!ret)
-          {
-             ret = _icon_freedesktop_set(obj, name, _icon_size_min_get(obj));
-             if (ret && fdo) *fdo = EINA_TRUE;
-          }
-        break;
-
-      case ELM_ICON_LOOKUP_FDO_THEME:
-      default:
-        ret = _icon_freedesktop_set(obj, name, _icon_size_min_get(obj));
-        if (!ret)
-          ret = _icon_standard_set(obj, name);
-        else if (fdo)
-          *fdo = EINA_TRUE;
-        break;
      }
 
    if (ret)
@@ -485,13 +466,17 @@ _internal_elm_icon_standard_set(Evas_Object *obj,
      }
 
    if (_path_is_absolute(name))
-     return _icon_file_set(sd, obj, name);
+     {
+        if (fdo)
+          *fdo = EINA_FALSE;
+        return _icon_file_set(sd, obj, name);
+     }
 
    /* if that fails, see if icon name is in the format size/name. if so,
       try locating a fallback without the size specification */
    if (!(tmp = strchr(name, '/'))) return EINA_FALSE;
    ++tmp;
-   if (*tmp) return elm_icon_standard_set(obj, tmp);
+   if (*tmp) return _internal_elm_icon_standard_set(obj, tmp, fdo);
    /* give up */
    return EINA_FALSE;
 }
@@ -529,8 +514,6 @@ _elm_icon_evas_object_smart_add(Eo *obj, Elm_Icon_Data *priv)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
-
-   priv->lookup_order = ELM_ICON_LOOKUP_THEME_FDO;
 
    priv->thumb.request = NULL;
 }
@@ -774,16 +757,17 @@ _elm_icon_standard_get(Eo *obj EINA_UNUSED, Elm_Icon_Data *sd)
    return sd->stdicon;
 }
 
-EOLIAN static void
-_elm_icon_order_lookup_set(Eo *obj EINA_UNUSED, Elm_Icon_Data *sd, Elm_Icon_Lookup_Order order)
+EINA_DEPRECATED EOLIAN static void
+_elm_icon_order_lookup_set(Eo *obj EINA_UNUSED, Elm_Icon_Data *sd EINA_UNUSED,
+                           Elm_Icon_Lookup_Order order EINA_UNUSED)
 {
-   sd->lookup_order = order;
+   // this method's behaviour has been overridden by elm_config_icon_theme_set
 }
 
-EOLIAN static Elm_Icon_Lookup_Order
-_elm_icon_order_lookup_get(Eo *obj EINA_UNUSED, Elm_Icon_Data *sd)
+EINA_DEPRECATED EOLIAN static Elm_Icon_Lookup_Order
+_elm_icon_order_lookup_get(Eo *obj EINA_UNUSED, Elm_Icon_Data *sd EINA_UNUSED)
 {
-   return sd->lookup_order;
+   return ELM_ICON_LOOKUP_FDO_THEME;
 }
 
 EAPI void

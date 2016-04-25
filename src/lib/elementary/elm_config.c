@@ -1550,6 +1550,7 @@ _config_free(Elm_Config *cfg)
    eina_stringshare_del(cfg->indicator_service_90);
    eina_stringshare_del(cfg->indicator_service_180);
    eina_stringshare_del(cfg->indicator_service_270);
+   eina_stringshare_del(cfg->icon_theme);
    free(cfg);
 }
 
@@ -2661,6 +2662,9 @@ elm_config_scale_set(double scale)
 EAPI const char *
 elm_config_icon_theme_get(void)
 {
+   if (!_elm_config->icon_theme)
+     return ELM_CONFIG_ICON_THEME_ELEMENTARY;
+
    return _elm_config->icon_theme;
 }
 
