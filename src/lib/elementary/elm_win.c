@@ -15,6 +15,8 @@
 # include "ecore_evas_wayland_private.h"
 #endif
 
+#include "../evas/canvas/evas_box.eo.h"
+
 #define MY_CLASS ELM_WIN_CLASS
 
 #define MY_CLASS_NAME "Elm_Win"
@@ -93,6 +95,7 @@ static const Elm_Win_Trap *trap = NULL;
 #define ENGINE_GET() (_elm_preferred_engine ? _elm_preferred_engine : _elm_config->engine)
 
 typedef struct _Elm_Win_Data Elm_Win_Data;
+typedef struct _Box_Item_Iterator Box_Item_Iterator;
 
 struct _Elm_Win_Data
 {
@@ -233,6 +236,14 @@ struct _Elm_Win_Data
    Eina_Bool    noblank : 1;
    Eina_Bool    theme_alpha : 1; /**< alpha value fetched by a theme. this has higher priority than application_alpha */
    Eina_Bool    application_alpha : 1; /**< alpha value set by an elm_win_alpha_set() api. this has lower priority than theme_alpha */
+};
+
+struct _Box_Item_Iterator
+{
+   Eina_Iterator  iterator;
+   Eina_List     *list;
+   Eina_Iterator *real_iterator;
+   Eo            *object;
 };
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
@@ -4154,21 +4165,99 @@ elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title
 }
 
 EOLIAN static void
-_elm_win_resize_object_add(Eo *obj, Elm_Win_Data *sd, Evas_Object *subobj)
+_elm_win_efl_pack_pack(Eo *obj, Elm_Win_Data *sd, Efl_Gfx_Base *subobj)
 {
-   elm_widget_sub_object_add(obj, subobj);
+   Eina_Bool ret;
 
-   if (!evas_object_box_append(sd->box, subobj))
-     ERR("could not append %p to box", subobj);
+   ret  = elm_widget_sub_object_add(obj, subobj);
+   ret &= (evas_object_box_append(sd->box, subobj) != NULL);
+
+   if (!ret)
+     ERR("could not add sub object %p to window %p", subobj, obj);
+
+   //return ret;
 }
 
-EOLIAN static void
-_elm_win_resize_object_del(Eo *obj, Elm_Win_Data *sd, Evas_Object *subobj)
+EOLIAN static Eina_Bool
+_elm_win_efl_pack_unpack(Eo *obj, Elm_Win_Data *sd, Efl_Gfx_Base *subobj)
 {
-   if (!elm_widget_sub_object_del(obj, subobj))
-     ERR("could not remove sub object %p from %p", subobj, obj);
+   Eina_Bool ret;
 
-   evas_object_box_remove(sd->box, subobj);
+   ret  = elm_widget_sub_object_del(obj, subobj);
+   ret &= evas_object_box_remove(sd->box, subobj);
+
+   if (!ret)
+     ERR("could not remove sub object %p from window %p", subobj, obj);
+
+   return ret;
+}
+
+EOLIAN static Eina_Bool
+_elm_win_efl_container_content_remove(Eo *obj, Elm_Win_Data *sd EINA_UNUSED,
+                                      Efl_Gfx_Base *subobj)
+{
+   return efl_pack_unpack(obj, subobj);
+}
+
+EOLIAN static int
+_elm_win_efl_container_content_count(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
+{
+   Evas_Object_Box_Data *bd;
+
+   bd = eo_data_scope_get(sd->box, EVAS_BOX_CLASS);
+   if (!bd) return 0;
+
+   return eina_list_count(bd->children);
+}
+
+/* same as efl.ui.box but container is an elm win */
+static Eina_Bool
+_box_item_iterator_next(Box_Item_Iterator *it, void **data)
+{
+   Efl_Gfx_Base *sub;
+
+   if (!eina_iterator_next(it->real_iterator, (void **) &sub))
+     return EINA_FALSE;
+
+   if (data) *data = sub;
+   return EINA_TRUE;
+}
+
+static Elm_Layout *
+_box_item_iterator_get_container(Box_Item_Iterator *it)
+{
+   return it->object;
+}
+
+static void
+_box_item_iterator_free(Box_Item_Iterator *it)
+{
+   eina_iterator_free(it->real_iterator);
+   eina_list_free(it->list);
+   free(it);
+}
+
+EOLIAN static Eina_Iterator *
+_elm_win_efl_container_content_iterate(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
+{
+   Box_Item_Iterator *it;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+
+   it = calloc(1, sizeof(*it));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->list = evas_object_box_children_get(sd->box);
+   it->real_iterator = eina_list_iterator_new(it->list);
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_box_item_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_box_item_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_box_item_iterator_free);
+   it->object = obj;
+
+   return &it->iterator;
 }
 
 EOLIAN static void
@@ -5835,6 +5924,21 @@ _elm_win_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Win_Data *sd EINA_
    if (ret) return ret;
    const char *name = elm_win_title_get(obj);
    return name ? strdup(name) : NULL;
+}
+
+
+/* legacy APIs */
+
+EAPI void
+elm_win_resize_object_add(Eo *obj, Evas_Object *subobj)
+{
+   efl_pack(obj, subobj);
+}
+
+EAPI void
+elm_win_resize_object_del(Eo *obj, Evas_Object *subobj)
+{
+   efl_pack_unpack(obj, subobj);
 }
 
 #include "elm_win.eo.c"

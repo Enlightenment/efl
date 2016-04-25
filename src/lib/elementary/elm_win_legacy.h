@@ -244,3 +244,45 @@ EAPI void                  elm_win_wm_rotation_preferred_rotation_set(const Evas
  * this is definitely not the function you are looking for.
  */
 EAPI Ecore_Window          elm_win_window_id_get(const Evas_Object *obj);
+
+/**
+ * @brief Add @c subobj as a resize object of window @c obj.
+ *
+ * Setting an object as a resize object of the window means that the @c subobj
+ * child's size and position will be controlled by the window directly. That
+ * is, the object will be resized to match the window size and should never be
+ * moved or resized manually by the developer.
+ *
+ * In addition, resize objects of the window control what the minimum size of
+ * it will be, as well as whether it can or not be resized by the user.
+ *
+ * For the end user to be able to resize a window by dragging the handles or
+ * borders provided by the Window Manager, or using any other similar
+ * mechanism, all of the resize objects in the window should have their @ref
+ * evas_object_size_hint_weight_set set to EVAS_HINT_EXPAND.
+ *
+ * Also notice that the window can get resized to the current size of the
+ * object if the EVAS_HINT_EXPAND is set after the call to this. So if the
+ * object should get resized to the size of the window, set this hint before
+ * adding it as a resize object (this happens because the size of the window
+ * and the object are evaluated as soon as the object is added to the window).
+ *
+ * @param[in] subobj The resize object to add.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj);
+
+/**
+ * @brief Delete @c subobj as a resize object of window @c obj.
+ *
+ * This function removes the object @c subobj from the resize objects of the
+ * window @c obj. It will not delete the object itself, which will be left
+ * unmanaged and should be deleted by the developer, manually handled or set as
+ * child of some other container.
+ *
+ * @param[in] subobj The resize object to add.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj);

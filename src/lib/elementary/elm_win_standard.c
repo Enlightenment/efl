@@ -27,7 +27,7 @@ _elm_win_standard_eo_base_finalize(Eo *obj, void *pd EINA_UNUSED)
         return NULL;
      }
    evas_obj_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_obj_win_resize_object_add(obj, bg);
+   efl_pack(obj, bg);
    efl_gfx_visible_set(bg, EINA_TRUE);
 
    return obj;

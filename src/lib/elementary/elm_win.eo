@@ -163,7 +163,7 @@ enum Elm.Illume_Command
 }
 
 class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
-               Elm.Interface_Atspi_Widget_Action)
+               Elm.Interface_Atspi_Widget_Action, Efl.Pack)
 {
    eo_prefix: elm_obj_win;
    methods {
@@ -1172,36 +1172,6 @@ class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
            window will be the active one after it.
          ]]
       }
-      resize_object_add {
-         [[Add $subobj as a resize object of window $obj.
-
-           Setting an object as a resize object of the window means that
-           the $subobj child's size and position will be controlled by the
-           window directly. That is, the object will be resized to match
-           the window size and should never be moved or resized manually
-           by the developer.
-
-           In addition, resize objects of the window control what the
-           minimum size of it will be, as well as whether it can or not
-           be resized by the user.
-
-           For the end user to be able to resize a window by dragging the
-           handles or borders provided by the Window Manager, or using any
-           other similar mechanism, all of the resize objects in the window
-           should have their \@ref evas_object_size_hint_weight_set set to
-           EVAS_HINT_EXPAND.
-
-           Also notice that the window can get resized to the current size
-           of the object if the EVAS_HINT_EXPAND is set after the call to
-           this. So if the object should get resized to the size of the
-           window, set this hint before adding it as a resize object (this
-           happens because the size of the window and the object are
-           evaluated as soon as the object is added to the window).
-         ]]
-         params {
-            @in subobj: Evas.Object *; [[The resize object to add.]]
-         }
-      }
       raise {
          [[Raise a window object.
 
@@ -1221,18 +1191,6 @@ class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
            If @.override.set is not set, the Window Manager may ignore this
            request.
          ]]
-      }
-      resize_object_del {
-         [[Delete $subobj as a resize object of window $obj.
-
-           This function removes the object $subobj from the resize objects
-           of the window $obj. It will not delete the object itself, which
-           will be left unmanaged and should be deleted by the developer,
-           manually handled or set as child of some other container.
-         ]]
-         params {
-            @in subobj: Evas.Object *; [[The resize object to add.]]
-         }
       }
       center {
          [[Center a window on its screen
@@ -1295,6 +1253,11 @@ class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
       Elm.Interface_Atspi_Accessible.state_set.get;
       Elm.Interface_Atspi_Accessible.name.get;
       Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Efl.Container.content_remove;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
    }
    constructors {
       .name;
