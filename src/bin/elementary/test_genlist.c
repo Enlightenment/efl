@@ -5142,7 +5142,7 @@ test_genlist_filter(void *data EINA_UNUSED,
 
    for (i = 0; i < 500; i++)
      elm_genlist_item_append(gl, itc,
-                             (void *)(long)i, NULL,
+                             (void *)(intptr_t)i, NULL,
                              ELM_GENLIST_ITEM_NONE,
                              NULL, NULL);
 

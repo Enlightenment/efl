@@ -24,7 +24,7 @@ _cb_anim(void *data EINA_UNUSED, double pos)
    EINA_LIST_FOREACH(mirrors, l, o)
      {
         Evas_Map *m = evas_map_new(4);
-        int n = (int)((unsigned long)evas_object_data_get(o, "stack"));
+        int n = (int)((uintptr_t)evas_object_data_get(o, "stack"));
         double ang = (((double)(n + 1) * 20.0) / (double)tot);
         evas_map_util_points_populate_from_object(m, o);
         evas_map_util_3d_rotate(m, ang * v / 2.0, ang * v, 0,
@@ -66,7 +66,7 @@ explode_obj(Evas_Object *obj, int n)
         evas_object_resize(m, w, h);
         evas_object_show(m);
         evas_object_color_set(m, 0, 0, 0, 128);
-        evas_object_data_set(m, "stack", (void *)((unsigned long)n));
+        evas_object_data_set(m, "stack", (void *)((uintptr_t)n));
 
         n++;
 
@@ -81,7 +81,7 @@ explode_obj(Evas_Object *obj, int n)
         evas_object_move(m, x, y);
         evas_object_resize(m, w, h);
         evas_object_show(m);
-        evas_object_data_set(m, "stack", (void *)((unsigned long)n));
+        evas_object_data_set(m, "stack", (void *)((uintptr_t)n));
      }
    else
      {
