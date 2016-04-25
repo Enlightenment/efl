@@ -1200,7 +1200,6 @@ end
 
 local write_full_doc = function(f, doc1, doc2)
     f:write_raw(get_full_doc(doc1, doc2))
-    f:write_nl(2)
     local since
     if doc2 then
         since = doc2:since_get()
@@ -1209,8 +1208,8 @@ local write_full_doc = function(f, doc1, doc2)
         since = doc1:since_get()
     end
     if since then
-        f:write_i("Since " .. since)
         f:write_nl(2)
+        f:write_i("Since " .. since)
     end
 end
 
@@ -1252,6 +1251,7 @@ local build_class = function(cl)
 
     f:write_h("Description", 3)
     write_full_doc(f, cl:documentation_get())
+    f:write_nl(2)
 
     build_functable(f, "Methods", "Method name", cl, eolian.function_type.METHOD)
     build_functable(f, "Properties", "Property name",
@@ -1262,9 +1262,14 @@ local build_class = function(cl)
     if #evs == 0 then
         f:write_raw("This class does not define any events.\n")
     else
+        local first = true
         for i, ev in ipairs(evs) do
+            if not first then
+                f:write_nl(2)
+            end
             f:write_h(ev:name_get(), 4)
             write_full_doc(f, ev:documentation_get())
+            first = false
         end
     end
 
@@ -1349,6 +1354,7 @@ build_method = function(fn, cl)
 
     f:write_h("Description", 3)
     write_full_doc(f, fn:documentation_get(eolian.function_type.METHOD))
+    f:write_nl()
 
     f:finish()
 end
@@ -1398,6 +1404,9 @@ build_property = function(fn, cl)
         if doc or (not gdoc and not sdoc) then
             write_full_doc(f, doc)
         end
+        if (isget and gdoc) or (isset and sdoc) then
+            f:write_nl(2)
+        end
     end
 
     if isget and gdoc then
@@ -1407,6 +1416,9 @@ build_property = function(fn, cl)
             f:write_h("Description", 3)
         end
         write_full_doc(f, gdoc)
+        if isset and sdoc then
+            f:write_nl(2)
+        end
     end
 
     if isset and sdoc then
@@ -1418,6 +1430,7 @@ build_property = function(fn, cl)
         write_full_doc(f, sdoc)
     end
 
+    f:write_nl()
     f:finish()
 end
 
