@@ -3632,7 +3632,6 @@ _elm_toolbar_item_state_add(Eo *eo_item, Elm_Toolbar_Item_Data *item,
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
 
    obj = WIDGET(item);
-   ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
    if (!item->states)
      {

@@ -146,7 +146,7 @@ test_icon_transparent(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
 /* Test: Icon Standard */
 static void
-_standard_list_populate(Evas_Object *list, Elm_Icon_Lookup_Order order, int size)
+_standard_list_populate(Evas_Object *list, int size)
 {
    Evas_Object *ic;
    Eina_List *l;
@@ -168,7 +168,6 @@ _standard_list_populate(Evas_Object *list, Elm_Icon_Lookup_Order order, int size
          if ((strrchr(name, '-') != NULL) || !strcmp(name, "folder"))
            {
                ic = elm_icon_add(list);
-               elm_icon_order_lookup_set(ic, order);
                elm_icon_standard_set(ic, name);
                if (size)
                  evas_object_size_hint_min_set(ic, size, size);
@@ -185,14 +184,9 @@ _rdg_changed_cb(void *data, Evas_Object *obj EINA_UNUSED,
                 void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
-   Evas_Object *icon = evas_object_data_get(li, "resize_icon");
-   Evas_Object *order_rdg = evas_object_data_get(li, "order_rdg");
    Evas_Object *size_rdg = evas_object_data_get(li, "size_rdg");
 
-   _standard_list_populate(li, elm_radio_value_get(order_rdg),
-                           elm_radio_value_get(size_rdg));
-
-   elm_icon_order_lookup_set(icon, elm_radio_value_get(order_rdg));
+   _standard_list_populate(li, elm_radio_value_get(size_rdg));
 }
 
 static void
@@ -232,7 +226,6 @@ _std_btn_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    icon = elm_icon_add(panes);
    evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
    elm_icon_standard_set(icon, "folder");
    elm_object_part_content_set(panes, "left", icon);
    evas_object_show(icon);
@@ -240,7 +233,6 @@ _std_btn_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    icon = elm_icon_add(panes);
    evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
    elm_icon_standard_set(icon, "user-home");
    elm_object_part_content_set(panes, "right", icon);
    evas_object_show(icon);
@@ -253,7 +245,7 @@ void
 test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *li, *box, *hbox, *fr, *rd, *rdg, *icon, *sl, *bt;
+   Evas_Object *win, *li, *box, *hbox, *fr, *rd, *rdg, *label, *icon, *sl, *bt;
 
    win = elm_win_util_standard_add("icon-test-std", "Icon Standard");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -267,7 +259,7 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(li, "selected", _list_selected_cb, NULL);
-   _standard_list_populate(li, ELM_ICON_LOOKUP_FDO_THEME, 0);
+   _standard_list_populate(li, 0);
    evas_object_show(li);
 
    // lookup order
@@ -282,37 +274,10 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_object_content_set(fr, hbox);
    evas_object_show(hbox);
 
-   rdg = elm_radio_add(hbox);
-   elm_radio_state_value_set(rdg, ELM_ICON_LOOKUP_FDO_THEME);
-   elm_object_text_set(rdg, "fdo, theme");
-   elm_box_pack_end(hbox, rdg);
-   evas_object_show(rdg);
-   evas_object_smart_callback_add(rdg, "changed", _rdg_changed_cb, li);
-   evas_object_data_set(li, "order_rdg", rdg);
-
-   rd = elm_radio_add(hbox);
-   elm_radio_state_value_set(rd, ELM_ICON_LOOKUP_THEME_FDO);
-   elm_radio_group_add(rd, rdg);
-   elm_object_text_set(rd, "theme, fdo");
-   elm_box_pack_end(hbox, rd);
-   evas_object_show(rd);
-   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
-
-   rd = elm_radio_add(hbox);
-   elm_radio_state_value_set(rd, ELM_ICON_LOOKUP_FDO);
-   elm_radio_group_add(rd, rdg);
-   elm_object_text_set(rd, "fdo only");
-   elm_box_pack_end(hbox, rd);
-   evas_object_show(rd);
-   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
-
-   rd = elm_radio_add(hbox);
-   elm_radio_state_value_set(rd, ELM_ICON_LOOKUP_THEME);
-   elm_radio_group_add(rd, rdg);
-   elm_object_text_set(rd, "theme only");
-   elm_box_pack_end(hbox, rd);
-   evas_object_show(rd);
-   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
+   label = elm_label_add(hbox);
+   elm_object_text_set(label, "Lookup order has moved to elementary_config");
+   elm_box_pack_end(hbox, label);
+   evas_object_show(label);
 
    // size
    fr = elm_frame_add(box);
@@ -405,7 +370,6 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(hbox);
 
    icon = elm_icon_add(hbox);
-   elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
    elm_icon_standard_set(icon, "folder");
    evas_object_size_hint_min_set(icon, 16, 16);
    elm_box_pack_end(hbox, icon);
