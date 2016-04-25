@@ -2278,7 +2278,17 @@ _edje_object_part_text_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
      {
         if (rp->part->type == EDJE_PART_TYPE_TEXT)
           {
-             return rp->typedata.text->text;
+             Edje_Part_Description_Text *desc;
+             if (rp->typedata.text->text)
+               return rp->typedata.text->text;
+             else
+               {
+                  desc = (Edje_Part_Description_Text *) rp->chosen_description;
+                  if (desc->text.text.translated)
+                    return desc->text.text.translated;
+                  else
+                    return desc->text.text.str;
+               }
           }
         if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
           {
