@@ -1349,8 +1349,12 @@ build_method = function(fn, cl)
     f:write_code(gen_func_csig(fn), "c")
     f:write_nl()
 
-    f:write_h("Parameters", 3)
-    build_parlist(f, fn:parameters_get():to_array())
+    local pars = fn:parameters_get():to_array()
+    if #pars > 0 then
+        f:write_h("Parameters", 3)
+        build_parlist(f, pars)
+        f:write_nl()
+    end
 
     f:write_h("Description", 3)
     write_full_doc(f, fn:documentation_get(eolian.function_type.METHOD))
