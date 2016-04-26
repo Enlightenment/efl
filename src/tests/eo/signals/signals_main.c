@@ -34,7 +34,7 @@ static Eina_Bool inside = EINA_FALSE;
 static int called = 0;
 
 static Eina_Bool
-_restart_1_cb(void *data, const Eo_Event *event)
+_restart_1_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    fprintf(stderr, "restart 1 inside: %i\n", inside);
    fail_if(!inside);
