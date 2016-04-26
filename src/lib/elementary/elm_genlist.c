@@ -7507,11 +7507,13 @@ static void
 _filter_item_internal(Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
-   if (sd->filter_data && it->itc->func.filter_get)
+   if (sd->filter_data)
      {
-        if (!it->itc->func.filter_get(
-               (void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)),
-                WIDGET(it), sd->filter_data))
+        if ((it->parent && !_item_filtered_get(it->parent)) ||
+            (it->itc->func.filter_get &&
+             !it->itc->func.filter_get(
+                (void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)),
+                WIDGET(it), sd->filter_data)))
           {
              it->hide = EINA_TRUE;
              it->item->block->changed = EINA_TRUE;
