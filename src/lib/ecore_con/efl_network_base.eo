@@ -30,6 +30,8 @@ enum Ecore.Con.Type
 }
 
 abstract Efl.Network.Base (Eo.Base) {
+   [[Abstract base class for all EFL.Network classes]]
+
    legacy_prefix: ecore_con;
    eo_prefix: efl_network_base;
    data: null;
@@ -37,7 +39,7 @@ abstract Efl.Network.Base (Eo.Base) {
       @property ip {
          [[Control the IP address of a server that has been connected to.
 
-           The param is a pointer to an internal string that contains the IP
+           The parameter is a pointer to an internal string that contains the IP
            address of the connected server in the form "XXX.YYY.ZZZ.AAA" IP
            notation. This string should not be modified or trusted to stay
            valid after deletion for the svr object. If no IP is known
@@ -54,7 +56,7 @@ abstract Efl.Network.Base (Eo.Base) {
          [[Check how long the object has been connected
 
            This function is used to find out how long a client has been
-           connected for.
+           connected.
          ]]
          get {
              legacy: null;
@@ -64,7 +66,7 @@ abstract Efl.Network.Base (Eo.Base) {
          }
       }
       @property port {
-         [[Return the port that the obj is connected to]]
+         [[The port that the obj is connected to]]
          set {
              legacy: null;
          }
@@ -72,7 +74,7 @@ abstract Efl.Network.Base (Eo.Base) {
              legacy: null;
          }
          values {
-            port: int; [[The The port that obj is connected to, or -1 on error.]]
+            port: int; [[The port that obj is connected to, or -1 on error.]]
          }
       }
       @property fd {
@@ -110,7 +112,7 @@ abstract Efl.Network.Base (Eo.Base) {
            disconnected.
 
            This function is used by the server to set the default idle timeout
-           on clients. If the any of the clients becomes idle for a time higher
+           on clients. If any of the clients becomes idle for a time higher
            than this value, it will be disconnected. A value of < 1 disables
            the idle timeout.
 
@@ -186,15 +188,15 @@ abstract Efl.Network.Base (Eo.Base) {
       @virtual .send;
    }
    events {
-        data,received: Ecore_Con_Event_Data_Received;
+        data,received: Ecore_Con_Event_Data_Received; [[Data received on connection]]
         connection,upgraded;
-        connection,error: const(char) *;
+        connection,error: const(char) *; [[Error received on connection]]
    }
 }
 
 /* FIXME: Should actually be a binbuf. */
 struct Ecore_Con_Event_Data_Received {
-    data: void *; [[The data thet got sent.]]
+    data: void *; [[The data that got sent.]]
     size: int; [[The length of the data sent.]]
 }
 
