@@ -5225,6 +5225,26 @@ EAPI const char *edje_edit_font_path_get(Evas_Object *obj, const char *alias);
 
 //@}
 /******************************************************************************/
+/************************   IMAGE SET API   ***********************************/
+/******************************************************************************/
+/** @name Image Set API
+ *  Functions to deal with image objects (see @ref edcref).
+ */ //@{
+
+/** Check if given image name is set of images or not.
+ *
+ * @param obj Object being edited.
+ * @param image a name to check if it is set or not.
+ *
+ * @return @c EINA_TRUE in case when given name is set, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_image_set_exists(Evas_Object *obj, const char *image);
+
+//@}
+/******************************************************************************/
 /**************************   IMAGES API   ************************************/
 /******************************************************************************/
 /** @name Images API

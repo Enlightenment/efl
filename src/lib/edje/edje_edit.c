@@ -8089,6 +8089,32 @@ edje_edit_state_proxy_source_get(Evas_Object *obj, const char *part, const char 
    return eina_stringshare_add(source_name);
 }
 
+/*****************/
+/* IMAGE SET API */
+/*****************/
+
+EAPI Eina_Bool
+edje_edit_image_set_exists(Evas_Object *obj, const char *image)
+{
+   Edje_Image_Directory_Set *de;
+   unsigned int i;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file) return EINA_FALSE;
+   if (!ed->file->image_dir) return EINA_FALSE;
+
+   // Gets the Set Entry
+   for (i = 0; i < ed->file->image_dir->sets_count; ++i)
+     {
+        de = ed->file->image_dir->sets + i;
+        if (de->name && !strcmp(de->name, image))
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 /****************/
 /*  IMAGES API  */
 /****************/
