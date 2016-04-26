@@ -2803,4 +2803,54 @@ _efl_loop_eo_base_constructor(Eo *obj, Efl_Loop_Data *pd)
    return obj;
 }
 
+typedef struct _Efl_Internal_Job Efl_Internal_Job;
+struct _Efl_Internal_Job
+{
+   Ecore_Job *job;
+   Eina_Promise_Owner *promise;
+
+   const void *data;
+};
+
+static void
+_efl_loop_job_cb(void *data)
+{
+   Efl_Internal_Job *j = data;
+
+   eina_promise_owner_value_set(j->promise, &j->data, NULL);
+
+   free(j);
+}
+
+static void
+_efl_loop_job_cancel(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
+{
+   Efl_Internal_Job *j = data;
+
+   eina_promise_owner_error_set(j->promise, _promise_canceled);
+   ecore_job_del(j->job);
+   free(j);
+}
+
+static void
+_efl_loop_job(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, Eina_Promise_Owner *promise, const void *data)
+{
+   Efl_Internal_Job *j;
+
+   j = calloc(1, sizeof (Efl_Internal_Job));
+   if (!j) goto on_error;
+
+   eina_promise_owner_default_cancel_cb_add(promise, &_efl_loop_job_cancel, j, NULL);
+   j->promise = promise;
+   j->data = data;
+   j->job = ecore_job_add(_efl_loop_job_cb, j);
+   if (!j->job) goto on_error;
+
+   return ;
+
+ on_error:
+   eina_promise_owner_error_set(promise, _promise_canceled);
+   free(j);
+}
+
 #include "efl_loop.eo.c"

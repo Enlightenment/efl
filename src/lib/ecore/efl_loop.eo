@@ -31,6 +31,13 @@ class Efl.Loop (Eo.Base)
          [[Quits the main loop once all the events currently on the queue have
          been processed.]]
       }
+      job {
+         [[Will execute that promise in the near future.]]
+         params {
+            @inout promise: promise<void*>*;
+	    @in data: const(void)* @optional;
+	 }
+      }
    }
    events {
       idle,enter @restart; [[Event occurs once the main loop enters the idle state.]]

@@ -67,6 +67,8 @@ static int _ecore_init_count_threshold = 0;
 int _ecore_log_dom = -1;
 int _ecore_fps_debug = 0;
 
+Eina_Error _promise_canceled;
+
 typedef struct _Ecore_Safe_Call Ecore_Safe_Call;
 struct _Ecore_Safe_Call
 {
@@ -249,6 +251,8 @@ ecore_init(void)
    if (_ecore_fps_debug) _ecore_fps_debug_init();
    if (!ecore_mempool_init()) goto shutdown_mempool;
    _ecore_main_loop_init();
+
+   _promise_canceled = eina_error_msg_static_register("Promise has been canceled.");
 
    vpath = eo_add(EFL_VPATH_CORE_CLASS, NULL);
    if (vpath) efl_vpath_manager_register(EFL_VPATH_MANAGER_CLASS, 0, vpath);
