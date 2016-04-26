@@ -27,9 +27,9 @@ class Efl.Ui.Layout_Internal.Table (Eo.Base, Efl.Pack_Grid)
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
       Efl.Pack_Grid.pack_grid;
-      Efl.Pack_Grid.grid_content_at;
-      Efl.Pack_Grid.grid_content_iterate;
-      Efl.Pack_Grid.grid_content_position.get;
+      Efl.Pack_Grid.grid_content_get;
+      Efl.Pack_Grid.grid_contents_get;
+      Efl.Pack_Grid.grid_position.get;
       Efl.Pack_Grid.grid_size.get;
       Efl.Pack_Grid.grid_columns.get;
       Efl.Pack_Grid.grid_rows.get;

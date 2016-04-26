@@ -1942,7 +1942,7 @@ elm_layout_box_insert_at(Elm_Layout *obj, const char *part, Evas_Object *child, 
 {
    Eo *box = efl_content_get(obj, part);
    if (!box) return EINA_FALSE;
-   efl_pack_insert(box, child, pos);
+   efl_pack_at(box, child, pos);
    return EINA_TRUE;
 }
 

@@ -407,12 +407,13 @@ _subobj_del_cb(void *data, const Eo_Event *event)
    return EO_CALLBACK_CONTINUE;
 }
 
-static void
+static Eina_Bool
 _pack_at(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Base *subobj,
          int col, int row, int colspan, int rowspan, Eina_Bool linear)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Grid_Item *gi = NULL;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    if (col < 0) col = 0;
    if (row < 0) row = 0;
@@ -468,35 +469,21 @@ _pack_at(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Base *subobj,
         eo_event_callback_array_add(subobj, subobj_callbacks(), obj);
      }
 
-   evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
+   return evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_grid_pack_grid(Eo *obj, Efl_Ui_Grid_Data *pd,
                                      Efl_Gfx_Base *subobj,
                                      int col, int row, int colspan, int rowspan)
 {
-   EINA_SAFETY_ON_NULL_RETURN(subobj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(subobj, EINA_FALSE);
 
-   _pack_at(obj, pd, subobj, col, row, colspan, rowspan, EINA_FALSE);
-}
-
-EOLIAN static void
-_efl_ui_grid_efl_pack_grid_grid_content_position_set(Eo *obj, Efl_Ui_Grid_Data *pd, Evas_Object *subobj, int col, int row, int colspan, int rowspan)
-{
-   EINA_SAFETY_ON_NULL_RETURN(subobj);
-
-   if (obj != elm_widget_parent_widget_get(subobj))
-     {
-        ERR("object %p is not a child of %p", subobj, obj);
-        return;
-     }
-
-   _pack_at(obj, pd, subobj, col, row, colspan, rowspan, EINA_FALSE);
+   return _pack_at(obj, pd, subobj, col, row, colspan, rowspan, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_grid_efl_pack_grid_grid_content_position_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_ui_grid_efl_pack_grid_grid_position_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan)
 {
    int c = -1, r = -1, cs = 0, rs = 0;
    Grid_Item *gi;
@@ -528,7 +515,7 @@ end:
 }
 
 EOLIAN static Efl_Gfx_Base *
-_efl_ui_grid_efl_pack_grid_grid_content_at(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, int col, int row)
+_efl_ui_grid_efl_pack_grid_grid_content_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, int col, int row)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
@@ -608,20 +595,22 @@ _efl_ui_grid_efl_pack_unpack(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Base *subobj
    return EINA_FALSE;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_pack_clear(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    evas_object_table_clear(wd->resize_obj, EINA_TRUE);
+   return EINA_TRUE;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_unpack_all(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    evas_object_table_clear(wd->resize_obj, EINA_FALSE);
+   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -696,7 +685,7 @@ _efl_ui_grid_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_grid_efl_pack_grid_grid_content_iterate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED,
+_efl_ui_grid_efl_pack_grid_grid_contents_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED,
                                                 int col, int row, Eina_Bool below)
 {
    Eina_List *list, *atlist = NULL;
@@ -724,7 +713,7 @@ _efl_ui_grid_efl_pack_grid_grid_content_iterate(Eo *obj, Efl_Ui_Grid_Data *pd EI
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_linear_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Orient orient)
+_efl_ui_grid_efl_pack_linear_pack_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Orient orient)
 {
    EINA_SAFETY_ON_FALSE_RETURN((orient % 90) == 0);
 
@@ -744,13 +733,13 @@ _efl_ui_grid_efl_pack_linear_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Or
 }
 
 EOLIAN static Efl_Orient
-_efl_ui_grid_efl_pack_linear_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
+_efl_ui_grid_efl_pack_linear_pack_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
    return pd->dir1;
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_grid_directions_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Orient primary, Efl_Orient secondary)
+_efl_ui_grid_efl_pack_grid_grid_directions_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Orient primary, Efl_Orient secondary)
 {
    EINA_SAFETY_ON_FALSE_RETURN((primary % 90) == 0);
    EINA_SAFETY_ON_FALSE_RETURN((secondary % 90) == 0);
@@ -778,7 +767,7 @@ _efl_ui_grid_efl_pack_grid_directions_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ori
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_grid_directions_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Efl_Orient *primary, Efl_Orient *secondary)
+_efl_ui_grid_efl_pack_grid_grid_directions_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Efl_Orient *primary, Efl_Orient *secondary)
 {
    if (primary) *primary = pd->dir1;
    if (secondary) *secondary = pd->dir2;
@@ -845,17 +834,17 @@ _efl_ui_grid_efl_pack_grid_grid_rows_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *
    return pd->req_rows;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_pack(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, Efl_Gfx_Base *subobj)
 {
    /* this is just an alias */
-   efl_pack_end(obj, subobj);
+   return efl_pack_end(obj, subobj);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Base *subobj)
 {
-   EINA_SAFETY_ON_NULL_RETURN(subobj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(subobj, EINA_FALSE);
 
    int col = pd->last_col;
    int row = pd->last_row;
@@ -885,7 +874,7 @@ _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Bas
    pd->last_row = row;
 
    DBG("packing new obj at %d,%d", col, row);
-   _pack_at(obj, pd, subobj, col, row, 1, 1, EINA_TRUE);
+   return _pack_at(obj, pd, subobj, col, row, 1, 1, EINA_TRUE);
 }
 
 #include "efl_ui_grid.eo.c"

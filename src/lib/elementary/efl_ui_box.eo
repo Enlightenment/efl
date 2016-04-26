@@ -30,13 +30,12 @@ class Efl.Ui.Box (Elm.Widget, Efl.Pack_Linear, Efl.Pack_Layout)
       Efl.Pack_Linear.pack_end;
       Efl.Pack_Linear.pack_before;
       Efl.Pack_Linear.pack_after;
-      Efl.Pack_Linear.pack_insert;
-      Efl.Pack_Linear.content_at.get;
-      Efl.Pack_Linear.content_at_remove;
-      Efl.Pack_Linear.content_index.get;
-      Efl.Pack_Linear.content_index.set;
-      Efl.Pack_Linear.direction.set;
-      Efl.Pack_Linear.direction.get;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_index_get;
+      Efl.Pack_Linear.pack_direction.set;
+      Efl.Pack_Linear.pack_direction.get;
 
       // Custom layouts
       Efl.Pack_Layout.layout_update;

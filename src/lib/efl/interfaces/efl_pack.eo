@@ -8,19 +8,21 @@ interface Efl.Pack (Efl.Container)
    {
       pack_clear {
          [[Removes all packed contents, and unreferences them.]]
+         return: bool;
       }
       unpack_all {
          [[Removes all packed contents, without unreferencing them.
 
            Use with caution.
          ]]
+         return: bool;
       }
       unpack {
          [[Removes an existing item from the container, without deleting it.]]
-         return: bool; [[$false if $subobj wasn't a child or can't be removed]]
          params {
             subobj: own(Efl.Gfx.Base *);
          }
+         return: bool; [[$false if $subobj wasn't a child or can't be removed]]
       }
       pack {
          [[Adds an item to this container.
@@ -35,6 +37,7 @@ interface Efl.Pack (Efl.Container)
          params {
             subobj: own(Efl.Gfx.Base *);
          }
+         return: bool; [[$false if $subobj could not be packed.]]
       }
       @property pack_align {
          [[Alignment of the container within its bounds]]

@@ -521,7 +521,7 @@ START_TEST(edje_test_box_eoapi)
    efl_pack_begin(box, sobjs[1]);
    efl_pack_before(box, sobjs[0], sobjs[1]);
    efl_pack_after(box, sobjs[4], sobjs[3]);
-   efl_pack_insert(box, sobjs[2], 2);
+   efl_pack_at(box, sobjs[2], 2);
    fail_if(efl_content_count(box) != 5);
 
    it = efl_content_iterate(box);
@@ -536,8 +536,8 @@ START_TEST(edje_test_box_eoapi)
    fail_if(efl_content_count(box) != 0);
 
    efl_pack(box, sobjs[1]);
-   efl_pack_insert(box, sobjs[0], 0);
-   efl_pack_insert(box, sobjs[2], -1);
+   efl_pack_at(box, sobjs[0], 0);
+   efl_pack_at(box, sobjs[2], -1);
    it = efl_content_iterate(box);
    i = 0;
    EINA_ITERATOR_FOREACH(it, sobj)
@@ -547,9 +547,9 @@ START_TEST(edje_test_box_eoapi)
 
    fail_if(!efl_content_remove(box, sobjs[0]));
    fail_if(efl_content_count(box) != 2);
-   fail_if(!efl_pack_content_at_remove(box, 1));
+   fail_if(!efl_pack_unpack_at(box, 1));
    fail_if(efl_content_count(box) != 1);
-   fail_if(efl_pack_content_index_get(box, sobjs[1]) != 0);
+   fail_if(efl_pack_index_get(box, sobjs[1]) != 0);
 
    efl_pack_clear(box);
    fail_if(efl_content_count(box) != 0);
@@ -661,7 +661,7 @@ START_TEST(edje_test_table_eoapi)
 
           /* items have a text part "text" containing their position */
           sprintf(buf, "%d,%d", k, l);
-          sobj = efl_pack_grid_content_at(table, k, l);
+          sobj = efl_pack_grid_content_get(table, k, l);
           fail_if(!sobj);
           //txt = efl_part_text_get(sobj, "text");
           txt = edje_object_part_text_get(sobj, "text");
@@ -685,7 +685,7 @@ START_TEST(edje_test_table_eoapi)
    it = efl_content_iterate(table);
    EINA_ITERATOR_FOREACH(it, sobj)
      {
-        efl_pack_grid_content_position_get(table, sobj, &k, &l, &cs, &rs);
+        efl_pack_grid_position_get(table, sobj, &k, &l, &cs, &rs);
         fail_if(cs != 1);
         fail_if(rs != 1);
         if (l >= 2)

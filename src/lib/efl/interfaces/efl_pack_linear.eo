@@ -10,59 +10,72 @@ interface Efl.Pack_Linear (Efl.Pack)
       pack_begin {
          [[Prepend an object at the beginning of this container.
 
-           This is the same as @.pack_insert($subobj, 0).
+           This is the same as @.pack_at($subobj, 0).
          ]]
          params {
-            @in subobj: own(Efl.Gfx.Base *);
+            @in subobj: own(Efl.Gfx.Base *); [[Item to pack.]]
          }
+         return: bool; [[$false if $subobj could not be packed]]
       }
       pack_end {
          [[Append object at the end of this container.
 
-           This is the same as @.pack_insert($subobj, -1).
+           This is the same as @.pack_at($subobj, -1).
          ]]
          params {
-            @in subobj: own(Efl.Gfx.Base *);
+            @in subobj: own(Efl.Gfx.Base *); [[Item to pack.]]
          }
+         return: bool; [[$false if $subobj could not be packed]]
       }
       pack_before {
          [[Prepend item before other sub object.]]
-         return: bool @warn_unused; [[returns $false if $existing could not be found]]
          params {
-            @in subobj: own(Efl.Gfx.Base *);
-            @in existing: const(Efl.Gfx.Base)*;
+            @in subobj:   own(Efl.Gfx.Base *);   [[Item to pack.]]
+            @in existing: const(Efl.Gfx.Base)*;  [[Item to refer to.]]
          }
+         return: bool; [[$false if $existing could not be found or $subobj
+                         could not be packed]]
       }
       pack_after {
          [[Append item after other sub object.]]
-         return: bool @warn_unused; [[returns $false if $existing could not be found]]
          params {
-            @in subobj: own(Efl.Gfx.Base *);
-            @in existing: const(Efl.Gfx.Base)*;
+            @in subobj:   own(Efl.Gfx.Base *);   [[Item to pack.]]
+            @in existing: const(Efl.Gfx.Base)*;  [[Item to refer to.]]
          }
+         return: bool; [[$false if $existing could not be found or $subobj
+                         could not be packed]]
       }
-      pack_insert {
-          [[Inserts $subobj at the specified $index. If $index is not valid, appends.]]
+      pack_at {
+          [[Inserts $subobj at the specified $index.
+
+            Valid range: -$count to +$count. -1 refers to the last element.
+            Out of range indices will trigger an append.
+          ]]
           params {
-             @in subobj: own(Efl.Gfx.Base *);
-             @in index: int;
+             @in subobj: own(Efl.Gfx.Base *); [[Item to pack.]]
+             @in index:  int;                 [[A position.]]
           }
+          return: bool; [[$false if $subobj could not be packed]]
       }
-      @property content_at {
+      pack_content_get {
          [[Content at a given index in this container.
 
-           Index -1 refers to the last item.
+           Index -1 refers to the last item. The valid range is -(count - 1) to
+           (count - 1).
          ]]
-         /* set {} - can be defined */
-         get {}
-         keys {
+         params {
             index: int;
          }
-         values {
-            subobj: Efl.Gfx.Base *;
-         }
+         return: Efl.Gfx.Base *; [[The object contained at the given $index.]]
       }
-      content_at_remove {
+      pack_index_get {
+         [[Get the index of a child in this container.]]
+         params {
+            subobj: const(Efl.Gfx.Base)*; [[An object contained in this pack.]]
+         }
+         return: int(-1); [[-1 in case of failure, or the index of this item.]]
+      }
+      pack_unpack_at {
          [[Pop out item at specified $index.
 
            Equivalent to unpack(content_at($index)).
@@ -72,22 +85,7 @@ interface Efl.Pack_Linear (Efl.Pack)
          }
          return: Efl.Gfx.Base*; [[The child item if it could be removed.]]
       }
-      @property content_index {
-         [[Index of the child in this container, may be modified to move the $subobj.]]
-         set {
-
-            return: bool; [[Returns $false if $subobj is not a child.
-                            Negative values can be used to refer to the end.]]
-         }
-         get {}
-         keys {
-            subobj: Efl.Gfx.Base *;
-         }
-         values {
-            index: int;
-         }
-      }
-      @property direction {
+      @property pack_direction {
          [[Primary up/left/right/down orientation. Default is right.]]
          set {}
          get {}

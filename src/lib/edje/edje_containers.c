@@ -70,16 +70,16 @@ _efl_canvas_layout_internal_box_eo_base_finalize(Eo *obj, Edje_Box_Data *pd)
 
 /* Legacy features */
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_canvas_layout_internal_box_efl_pack_pack_clear(Eo *obj EINA_UNUSED, Edje_Box_Data *pd)
 {
-   _edje_part_box_remove_all(pd->ed, pd->part, EINA_TRUE);
+   return _edje_part_box_remove_all(pd->ed, pd->part, EINA_TRUE);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_canvas_layout_internal_box_efl_pack_unpack_all(Eo *obj EINA_UNUSED, Edje_Box_Data *pd)
 {
-   _edje_part_box_remove_all(pd->ed, pd->part, EINA_FALSE);
+   return _edje_part_box_remove_all(pd->ed, pd->part, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
@@ -90,22 +90,22 @@ _efl_canvas_layout_internal_box_efl_pack_unpack(Eo *obj EINA_UNUSED, Edje_Box_Da
    return (removed == subobj);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_canvas_layout_internal_box_efl_pack_pack(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx_Base *subobj)
 {
-   _edje_part_box_append(pd->ed, pd->part, subobj);
+   return _edje_part_box_append(pd->ed, pd->part, subobj);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_canvas_layout_internal_box_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx_Base *subobj)
 {
-   _edje_part_box_prepend(pd->ed, pd->part, subobj);
+   return _edje_part_box_prepend(pd->ed, pd->part, subobj);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_canvas_layout_internal_box_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx_Base *subobj)
 {
-   _edje_part_box_append(pd->ed, pd->part, subobj);
+   return _edje_part_box_append(pd->ed, pd->part, subobj);
 }
 
 EOLIAN static Eina_Bool
@@ -120,18 +120,20 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED, 
    return _edje_part_box_insert_after(pd->ed, pd->part, subobj, existing);
 }
 
-EOLIAN static void
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_insert(Eo *obj, Edje_Box_Data *pd, Efl_Gfx_Base *subobj, int index)
+EOLIAN static Eina_Bool
+_efl_canvas_layout_internal_box_efl_pack_linear_pack_at(Eo *obj, Edje_Box_Data *pd, Efl_Gfx_Base *subobj, int index)
 {
    int cnt = efl_content_count(obj);
+   if ((index < 0) && ((-index) <= (cnt + 1)))
+     index = cnt + index + 1;
    if ((index >= 0) && (index < cnt))
-     _edje_part_box_insert_at(pd->ed, pd->part, subobj, index);
+     return _edje_part_box_insert_at(pd->ed, pd->part, subobj, index);
    else
-     _edje_part_box_append(pd->ed, pd->part, subobj);
+     return _edje_part_box_append(pd->ed, pd->part, subobj);
 }
 
 EOLIAN static Efl_Gfx_Base *
-_efl_canvas_layout_internal_box_efl_pack_linear_content_at_remove(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, int index)
+_efl_canvas_layout_internal_box_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, int index)
 {
    if (index < 0) index += efl_content_count(obj);
    return _edje_part_box_remove_at(pd->ed, pd->part, index);
@@ -140,7 +142,7 @@ _efl_canvas_layout_internal_box_efl_pack_linear_content_at_remove(Eo *obj EINA_U
 /* New APIs with Eo */
 
 EOLIAN static Efl_Gfx_Base *
-_efl_canvas_layout_internal_box_efl_pack_linear_content_at_get(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, int index)
+_efl_canvas_layout_internal_box_efl_pack_linear_pack_content_get(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, int index)
 {
    if (index < 0) index += efl_content_count(obj);
    return _edje_part_box_content_at(pd->ed, pd->part, index);
@@ -153,7 +155,7 @@ _efl_canvas_layout_internal_box_efl_container_content_remove(Eo *obj, Edje_Box_D
 }
 
 EOLIAN static int
-_efl_canvas_layout_internal_box_efl_pack_linear_content_index_get(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx_Base * subobj)
+_efl_canvas_layout_internal_box_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, const Efl_Gfx_Base * subobj)
 {
    Evas_Object_Box_Option *opt;
    Evas_Object_Box_Data *priv;
@@ -237,7 +239,7 @@ _efl_canvas_layout_internal_box_efl_container_content_count(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Orient
-_efl_canvas_layout_internal_box_efl_pack_linear_direction_get(Eo *obj EINA_UNUSED, Edje_Box_Data *pd)
+_efl_canvas_layout_internal_box_efl_pack_linear_pack_direction_get(Eo *obj EINA_UNUSED, Edje_Box_Data *pd)
 {
    const Edje_Part_Description_Box *desc =
          (Edje_Part_Description_Box *) pd->rp->chosen_description;
@@ -308,16 +310,16 @@ _efl_canvas_layout_internal_table_efl_container_content_remove(Eo *obj, Edje_Tab
    return efl_pack_unpack(obj, content);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_canvas_layout_internal_table_efl_pack_pack_clear(Eo *obj EINA_UNUSED, Edje_Table_Data *pd)
 {
-   _edje_part_table_clear(pd->ed, pd->part, EINA_TRUE);
+   return _edje_part_table_clear(pd->ed, pd->part, EINA_TRUE);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_canvas_layout_internal_table_efl_pack_unpack_all(Eo *obj EINA_UNUSED, Edje_Table_Data *pd)
 {
-   _edje_part_table_clear(pd->ed, pd->part, EINA_FALSE);
+   return _edje_part_table_clear(pd->ed, pd->part, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
@@ -326,14 +328,14 @@ _efl_canvas_layout_internal_table_efl_pack_unpack(Eo *obj EINA_UNUSED EINA_UNUSE
    return _edje_part_table_unpack(pd->ed, pd->part, subobj);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_canvas_layout_internal_table_efl_pack_grid_pack_grid(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, Efl_Gfx_Base *subobj, int col, int row, int colspan, int rowspan)
 {
-   _edje_part_table_pack(pd->ed, pd->part, subobj, col, row, colspan, rowspan);
+   return _edje_part_table_pack(pd->ed, pd->part, subobj, col, row, colspan, rowspan);
 }
 
 EOLIAN static Efl_Gfx_Base *
-_efl_canvas_layout_internal_table_efl_pack_grid_grid_content_at(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, int col, int row)
+_efl_canvas_layout_internal_table_efl_pack_grid_grid_content_get(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, int col, int row)
 {
    return _edje_part_table_child_get(pd->ed, pd->part, col, row);
 }
@@ -391,7 +393,7 @@ _table_item_iterator_free(Part_Item_Iterator *it)
 }
 
 EOLIAN static Eina_Iterator *
-_efl_canvas_layout_internal_table_efl_pack_grid_grid_content_iterate(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, int col, int row, Eina_Bool below)
+_efl_canvas_layout_internal_table_efl_pack_grid_grid_contents_get(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, int col, int row, Eina_Bool below)
 {
    Evas_Object *sobj;
    Eina_Iterator *it;
@@ -433,7 +435,7 @@ _efl_canvas_layout_internal_table_efl_pack_grid_grid_content_iterate(Eo *obj EIN
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_table_efl_pack_grid_grid_content_position_get(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, Efl_Gfx_Base * subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_canvas_layout_internal_table_efl_pack_grid_grid_position_get(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, Efl_Gfx_Base * subobj, int *col, int *row, int *colspan, int *rowspan)
 {
    unsigned short c, r, cs, rs;
    Eina_Bool ret;
@@ -469,8 +471,7 @@ EAPI Eina_Bool
 edje_object_part_box_append(Edje_Object *obj, const char *part, Evas_Object *child)
 {
    Eo *box = PART_BOX_GET(obj, part, EINA_FALSE);
-   efl_pack_end(box, child);
-   return EINA_TRUE;
+   return efl_pack_end(box, child);
 }
 
 EAPI Eina_Bool
@@ -499,15 +500,14 @@ EAPI Eina_Bool
 edje_object_part_box_insert_at(Edje_Object *obj, const char *part, Evas_Object *child, unsigned int pos)
 {
    Eo *box = PART_BOX_GET(obj, part, EINA_FALSE);
-   efl_pack_insert(box, child, pos);
-   return EINA_TRUE;
+   return efl_pack_at(box, child, pos);
 }
 
 EAPI Evas_Object *
 edje_object_part_box_remove_at(Edje_Object *obj, const char *part, unsigned int pos)
 {
    Eo *box = PART_BOX_GET(obj, part, NULL);
-   return efl_pack_content_at_remove(box, pos);
+   return efl_pack_unpack_at(box, pos);
 }
 
 EAPI Evas_Object *
@@ -524,10 +524,9 @@ edje_object_part_box_remove_all(Edje_Object *obj, const char *part, Eina_Bool cl
 {
    Eo *box = PART_BOX_GET(obj, part, EINA_FALSE);
    if (clear)
-     efl_pack_clear(box);
+     return efl_pack_clear(box);
    else
-     efl_pack_unpack_all(box);
-   return EINA_TRUE;
+     return efl_pack_unpack_all(box);
 }
 
 #ifdef DEBUG
@@ -550,8 +549,7 @@ EAPI Eina_Bool
 edje_object_part_table_pack(Edje_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
    Eo *table = PART_TABLE_GET(obj, part, EINA_FALSE);
-   efl_pack_grid(table, child_obj, col, row, colspan, rowspan);
-   return EINA_TRUE;
+   return efl_pack_grid(table, child_obj, col, row, colspan, rowspan);
 }
 
 EAPI Eina_Bool
@@ -566,7 +564,7 @@ EAPI Evas_Object *
 edje_object_part_table_child_get(const Edje_Object *obj, const char *part, unsigned int col, unsigned int row)
 {
    Eo *table = PART_TABLE_GET(obj, part, NULL);
-   return efl_pack_grid_content_at(table, col, row);
+   return efl_pack_grid_content_get(table, col, row);
 }
 
 EAPI Eina_Bool
@@ -581,10 +579,9 @@ edje_object_part_table_clear(Edje_Object *obj, const char *part, Eina_Bool clear
 {
    Eo *table = PART_TABLE_GET(obj, part, EINA_FALSE);
    if (clear)
-     efl_pack_clear(table);
+     return efl_pack_clear(table);
    else
-     efl_pack_unpack_all(table);
-   return EINA_TRUE;
+     return efl_pack_unpack_all(table);
 }
 
 #include "efl_canvas_layout_internal_box.eo.c"

@@ -283,32 +283,40 @@ _efl_ui_box_efl_container_content_count(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED
    return bd ? eina_list_count(bd->children) : 0;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_pack_clear(Eo *obj, Efl_Ui_Box_Data *pd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   Eina_Bool ret;
 
-   evas_object_box_remove_all(wd->resize_obj, EINA_TRUE);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   ret = evas_object_box_remove_all(wd->resize_obj, EINA_TRUE);
    _sizing_eval(obj, pd);
+
+   return ret;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_unpack_all(Eo *obj, Efl_Ui_Box_Data *pd)
 {
    Evas_Object_Box_Data *bd;
    Evas_Object_Box_Option *opt;
    Eina_List *l;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   Eina_Bool ret;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    /* set this to block _sizing_eval() calls */
    pd->delete_me = EINA_TRUE;
    bd = evas_object_smart_data_get(wd->resize_obj);
-   EINA_LIST_FOREACH (bd->children, l, opt)
+   EINA_LIST_FOREACH(bd->children, l, opt)
      elm_widget_sub_object_del(obj, opt->obj);
    pd->delete_me = EINA_FALSE;
 
-   evas_object_box_remove_all(wd->resize_obj, EINA_FALSE);
+   ret = evas_object_box_remove_all(wd->resize_obj, EINA_FALSE);
    _sizing_eval(obj, pd);
+
+   return ret;
 }
 
 EOLIAN static Eina_Bool
@@ -326,28 +334,36 @@ _efl_ui_box_efl_pack_unpack(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Base *subobj)
    return ret;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_pack(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx_Base *subobj)
 {
-   efl_pack_end(obj, subobj);
+   return efl_pack_end(obj, subobj);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx_Base *subobj)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   Eina_Bool ret;
 
-   elm_widget_sub_object_add(obj, subobj);
-   evas_object_box_append(wd->resize_obj, subobj);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   ret  = elm_widget_sub_object_add(obj, subobj);
+   ret &= (evas_object_box_append(wd->resize_obj, subobj) != NULL);
+
+   return ret;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED, Efl_Gfx_Base *subobj)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   Eina_Bool ret;
 
-   elm_widget_sub_object_add(obj, subobj);
-   evas_object_box_prepend(wd->resize_obj, subobj);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   ret  = elm_widget_sub_object_add(obj, subobj);
+   ret &= (evas_object_box_prepend(wd->resize_obj, subobj) != NULL);
+
+   return ret;
 }
 
 EOLIAN static Eina_Bool
@@ -384,19 +400,20 @@ _efl_ui_box_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED
    return EINA_TRUE;
 }
 
-EOLIAN static void
-_efl_ui_box_efl_pack_linear_pack_insert(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
+EOLIAN static Eina_Bool
+_efl_ui_box_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
                                         Efl_Gfx_Base *subobj, int index)
 {
    if (!index)
-     efl_pack_begin(obj, subobj);
+     return efl_pack_begin(obj, subobj);
    else if (index == -1)
-     efl_pack_end(obj, subobj);
+     return efl_pack_end(obj, subobj);
    else
      {
-        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
         Evas_Object_Box_Data *bd;
         int cnt;
+
+        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
         bd = evas_object_smart_data_get(wd->resize_obj);
         cnt = eina_list_count(bd ? bd->children : NULL);
@@ -407,7 +424,7 @@ _efl_ui_box_efl_pack_linear_pack_insert(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED
              index %= cnt;
              if (index < 0) index += cnt;
           }
-        evas_object_box_insert_at(wd->resize_obj, subobj, index);
+        return (evas_object_box_insert_at(wd->resize_obj, subobj, index) != NULL);
      }
 }
 
@@ -418,7 +435,7 @@ _box_item(Evas_Object_Box_Option *opt)
 }
 
 EOLIAN static Efl_Gfx_Base *
-_efl_ui_box_efl_pack_linear_content_at_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
+_efl_ui_box_efl_pack_linear_pack_content_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
                                            int index)
 {
    Evas_Object_Box_Data *bd;
@@ -449,12 +466,12 @@ _efl_ui_box_efl_pack_linear_content_at_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNU
 }
 
 EOLIAN static Efl_Gfx_Base *
-_efl_ui_box_efl_pack_linear_content_at_remove(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
+_efl_ui_box_efl_pack_linear_pack_unpack_at(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
                                               int index)
 {
    Efl_Gfx_Base *content;
 
-   content = efl_pack_content_at_get(obj, index);
+   content = efl_pack_content_get(obj, index);
    if (!content) return NULL;
 
    if (!efl_pack_unpack(obj, content))
@@ -464,8 +481,8 @@ _efl_ui_box_efl_pack_linear_content_at_remove(Eo *obj, Efl_Ui_Box_Data *pd EINA_
 }
 
 EOLIAN static int
-_efl_ui_box_efl_pack_linear_content_index_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
-                                              Efl_Gfx_Base *subobj)
+_efl_ui_box_efl_pack_linear_pack_index_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
+                                           const Efl_Gfx_Base *subobj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, -1);
    Evas_Object_Box_Data *bd;
@@ -488,35 +505,6 @@ end:
    ERR("object %p (%s) is not a child of %p (%s)",
        subobj, eo_class_name_get(subobj), obj, eo_class_name_get(obj));
    return -1;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_box_efl_pack_linear_content_index_set(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
-                                              Efl_Gfx_Base *subobj, int index)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   Evas_Object_Box_Data *bd;
-   int cnt;
-
-   if (evas_object_smart_parent_get(subobj) != wd->resize_obj)
-     {
-        ERR("object %p (%s) is not a child of %p (%s)",
-            subobj, eo_class_name_get(subobj), obj, eo_class_name_get(obj));
-        return EINA_FALSE;
-     }
-
-   bd = evas_object_smart_data_get(wd->resize_obj);
-   cnt = eina_list_count(bd->children);
-   if (!cnt)
-     {
-        efl_pack(obj, subobj);
-        return EINA_TRUE;
-     }
-
-   index %= cnt;
-   if (index < 0) index += index;
-
-   return (evas_object_box_insert_at(wd->resize_obj, subobj, index) != NULL);
 }
 
 EOLIAN static void
@@ -575,7 +563,7 @@ _efl_ui_box_efl_container_content_iterate(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUS
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_linear_direction_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Orient dir)
+_efl_ui_box_efl_pack_linear_pack_direction_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Orient dir)
 {
    switch (dir)
      {
@@ -595,7 +583,7 @@ _efl_ui_box_efl_pack_linear_direction_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Orie
 }
 
 EOLIAN static Efl_Orient
-_efl_ui_box_efl_pack_linear_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd)
+_efl_ui_box_efl_pack_linear_pack_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd)
 {
    return pd->orient;
 }

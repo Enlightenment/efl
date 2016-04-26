@@ -136,7 +136,7 @@ child_evt_cb(void *data, const Eo_Event *event)
    int col, row, colspan, rowspan;
    char buf[64];
 
-   efl_pack_grid_content_position_get(event->obj, it, &col, &row, &colspan, &rowspan);
+   efl_pack_grid_position_get(event->obj, it, &col, &row, &colspan, &rowspan);
    if (event->desc == EFL_CONTAINER_EVENT_CONTENT_ADDED)
      sprintf(buf, "pack %d,%d %dx%d", col, row, colspan, rowspan);
    else
@@ -169,7 +169,7 @@ _custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
    it = efl_content_iterate(pack);
    EINA_ITERATOR_FOREACH(it, item)
      {
-        if (efl_pack_grid_content_position_get(pack, item, &c, &r, &cs, &rs))
+        if (efl_pack_grid_position_get(pack, item, &c, &r, &cs, &rs))
           {
              int x, y, mw, mh;
 
@@ -615,7 +615,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_gfx_visible_set(f, 1);
 
    efl_pack_grid_columns_set(grid, 4);
-   efl_pack_directions_set(grid, EFL_ORIENT_RIGHT, EFL_ORIENT_DOWN);
+   efl_pack_grid_directions_set(grid, EFL_ORIENT_RIGHT, EFL_ORIENT_DOWN);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_content_set(f, grid);
    evas_object_show(grid);

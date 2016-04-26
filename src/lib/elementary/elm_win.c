@@ -4164,7 +4164,7 @@ elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title
    return win;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _elm_win_efl_pack_pack(Eo *obj, Elm_Win_Data *sd, Efl_Gfx_Base *subobj)
 {
    Eina_Bool ret;
@@ -4175,7 +4175,7 @@ _elm_win_efl_pack_pack(Eo *obj, Elm_Win_Data *sd, Efl_Gfx_Base *subobj)
    if (!ret)
      ERR("could not add sub object %p to window %p", subobj, obj);
 
-   //return ret;
+   return ret;
 }
 
 EOLIAN static Eina_Bool
