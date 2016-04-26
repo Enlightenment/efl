@@ -178,7 +178,7 @@ Evas_Object *gl_content_full_get(void *data EINA_UNUSED, Evas_Object *obj, const
    elm_box_horizontal_set(bx, EINA_TRUE);
 
    ic = elm_icon_add(bx);
-   elm_icon_standard_set(ic, "home");
+   elm_icon_standard_set(ic, "go-home");
    evas_object_size_hint_min_set(ic,
                                  ELM_SCALE_SIZE(32),
                                  ELM_SCALE_SIZE(32));

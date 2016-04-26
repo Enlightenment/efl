@@ -995,7 +995,7 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
    if (edje_object_part_exists(ed, CONTENT_PART))
      {
         Evas_Object *ico = elm_icon_add(btn);
-        elm_icon_standard_set(ico, "arrow_left");
+        elm_icon_standard_set(ico, "go-left");
         elm_layout_content_set(btn, CONTENT_PART, ico);
      }
 

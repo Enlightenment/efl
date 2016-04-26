@@ -66,11 +66,10 @@ EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj EINA
 /**
  * @brief Set the icon by icon standards names.
  *
- * For example, freedesktop.org defines standard icon names such as "home",
- * "network", etc. There can be different icon sets to match those icon keys.
+ * For example, freedesktop.org defines standard icon names such as "go-home",
+ * "network-wired", etc. There can be different icon sets to match those icon keys.
  * The "name" given as parameter is one of these "keys", and will be used to
- * look in the freedesktop.org paths and elementary theme. One can change the
- * lookup order with @ref elm_icon_order_lookup_set.
+ * look in the freedesktop.org paths and elementary theme.
  *
  * If name is not found in any of the expected locations and it is the absolute
  * path of an image file, this image will be used.

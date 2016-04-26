@@ -193,7 +193,7 @@ _page4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 
    snprintf(img4, sizeof(img4), "%s/images/rock_02.jpg", elm_app_data_dir_get());
    ic = elm_icon_add(nf);
-   elm_icon_standard_set(ic, "arrow_right");
+   elm_icon_standard_set(ic, "go-right");
 
    bt = elm_button_add(nf);
    evas_object_smart_callback_add(bt, "clicked", _page5, nf);

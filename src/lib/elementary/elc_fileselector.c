@@ -1466,7 +1466,7 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
 
    // up btn
    ic = elm_icon_add(obj);
-   elm_icon_standard_set(ic, "arrow_up");
+   elm_icon_standard_set(ic, "go-up");
    bt = elm_button_add(obj);
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
    elm_object_part_content_set(bt, "icon", ic);
@@ -1480,7 +1480,7 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
 
    // home btn
    ic = elm_icon_add(obj);
-   elm_icon_standard_set(ic, "home");
+   elm_icon_standard_set(ic, "go-home");
    bt = elm_button_add(obj);
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
    elm_object_part_content_set(bt, "icon", ic);
@@ -1494,7 +1494,7 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
 
    // search entry
    ic = elm_icon_add(obj);
-   elm_icon_standard_set(ic, "search");
+   elm_icon_standard_set(ic, "edit-find");
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    en = elm_entry_add(obj);
    elm_entry_scrollable_set(en, EINA_TRUE);

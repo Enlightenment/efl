@@ -537,7 +537,7 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
    bt = elm_icon_add(win);
-   elm_icon_standard_set(bt, "home");
+   elm_icon_standard_set(bt, "go-home");
    evas_object_size_hint_min_set(bt, 48, 48);
    evas_object_color_set(bt, 128, 0, 0, 128);
    evas_object_show(bt);
@@ -2340,7 +2340,7 @@ test_entry8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_grid_pack(gd, en3, 5, 35, 90, 20);
 
    bt = elm_icon_add(win);
-   elm_icon_standard_set(bt, "home");
+   elm_icon_standard_set(bt, "go-home");
    evas_object_size_hint_min_set(bt, 48, 48);
    evas_object_color_set(bt, 128, 0, 0, 128);
    evas_object_show(bt);

@@ -31,14 +31,11 @@ IC("document-edit",        "icon_edit.png",             16, 0);
 IC("dialog-info",          "icon_info.png",             16, 0);
 IC("dialog-close",         "icon_close.png",            16, 0);
 
-IC("arrow-up",             "icon_arrow_up.png",         16, 0);
-IC("arrow-down",           "icon_arrow_down.png",       16, 0);
-IC("arrow-left",           "icon_arrow_left.png",       16, 0);
-IC("arrow-right",          "icon_arrow_right.png",      16, 0);
-IC("arrow-up-left",        "icon_arrow_up_left.png",    16, 0); /* */
-IC("arrow-up-right",       "icon_arrow_up_right.png",   16, 0); /* */
-IC("arrow-down-left",      "icon_arrow_down_left.png",  16, 0); /* */
-IC("arrow-down-right",     "icon_arrow_down_right.png", 16, 0); /* */
+IC("go-home",              "icon_home.png",             16, 0);
+IC("go-up",                "icon_arrow_up.png",         16, 0);
+IC("go-down",              "icon_arrow_down.png",       16, 0);
+IC("go-previous",          "icon_arrow_left.png",       16, 0);
+IC("go-next",              "icon_arrow_right.png",      16, 0);
 
 IC("edit-delete",          "icon_delete.png",           16, 0);
 IC("edit-find",            "icon_search.png",           16, 0);
