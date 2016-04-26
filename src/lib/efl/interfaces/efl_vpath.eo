@@ -15,6 +15,8 @@ interface Efl.Vpath
        "https://blahblah.com/file.jpg"
        "ssh://blahblah.com:~/file.jpg"
        ...
+
+     @since 1.18
    ]]
    legacy_prefix: null;
    eo_prefix: efl_vpath;

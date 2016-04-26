@@ -1,6 +1,9 @@
 class Efl.Vpath.Core (Eo.Base, Efl.Vpath)
 {
-   [[ Core EFL implementation of a Vpath system ]]
+   [[ Core EFL implementation of a Vpath system
+
+   @since 1.18
+   ]]
    legacy_prefix: null;
    eo_prefix: efl_vpath_core;
    methods {
