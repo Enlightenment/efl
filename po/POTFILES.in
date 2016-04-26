@@ -113,7 +113,6 @@ src/lib/elementary/elm_cnp.c
 src/lib/elementary/elm_colorselector.c
 src/lib/elementary/elm_config.c
 src/lib/elementary/elm_conform.c
-src/lib/elementary/elm_container.c
 src/lib/elementary/elm_datetime.c
 src/lib/elementary/elm_dayselector.c
 src/lib/elementary/elm_dbus_menu.c
