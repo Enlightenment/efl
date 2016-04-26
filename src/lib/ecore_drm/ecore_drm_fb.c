@@ -40,6 +40,7 @@ _ecore_drm_fb_create2(int fd, Ecore_Drm_Fb *fb)
 {
    struct drm_mode_fb_cmd2 cmd;
    uint32_t hdls[4], pitches[4], offsets[4], fmt;
+   uint64_t modifiers[4];
 
 #define _fourcc_code(a,b,c,d) \
    ((uint32_t)(a) | ((uint32_t)(b) << 8) | \
@@ -49,6 +50,7 @@ _ecore_drm_fb_create2(int fd, Ecore_Drm_Fb *fb)
    hdls[0] = fb->hdl;
    pitches[0] = fb->stride;
    offsets[0] = 0;
+   modifiers[0] = 0;
 
    memset(&cmd, 0, sizeof(struct drm_mode_fb_cmd2));
    cmd.fb_id = 0;
@@ -59,6 +61,7 @@ _ecore_drm_fb_create2(int fd, Ecore_Drm_Fb *fb)
    memcpy(cmd.handles, hdls, 4 * sizeof(hdls[0]));
    memcpy(cmd.pitches, pitches, 4 * sizeof(pitches[0]));
    memcpy(cmd.offsets, offsets, 4 * sizeof(offsets[0]));
+   memcpy(cmd.modifier, modifiers, 4 * sizeof(modifiers[0]));
 
    if (drmIoctl(fd, DRM_IOCTL_MODE_ADDFB2, &cmd))
      return EINA_FALSE;
