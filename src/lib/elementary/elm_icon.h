@@ -38,7 +38,7 @@
  * specification. Use of these names are @b preferred, at least if you want to
  * give your user the ability to use other themes. All these icons can be
  * seen in the elementary_test application, the test is called "Icon Standard".
- * 
+ *
  * @li @c "folder" (since 1.13)
  * @li @c "user-home" (since 1.13)
  * @li @c "user-trash" (since 1.13)
@@ -54,16 +54,14 @@
  * @li @c "dialog-info" (since 1.13)
  * @li @c "dialog-close" (since 1.13)
  *
- * @li @c "arrow-up" (since 1.13)
- * @li @c "arrow-down" (since 1.13)
- * @li @c "arrow-left" (since 1.13)
- * @li @c "arrow-right" (since 1.13)
- * @li @c "arrow-up-left" (since 1.13)
- * @li @c "arrow-up-right" (since 1.13)
- * @li @c "arrow-down-left" (since 1.13)
- * @li @c "arrow-down-right" (since 1.13)
+ * @li @c "go-home" (sine 1.18)
+ * @li @c "go-up" (since 1.18)
+ * @li @c "go-down" (since 1.18)
+ * @li @c "go-previous" (since 1.18)
+ * @li @c "go-next" (since 1.18)
  *
  * @li @c "edit-delete" (since 1.13)
+ * @li @c "edit-find" (since 1.13)
  *
  * @li @c "application-chat" (since 1.13)
  * @li @c "application-clock" (since 1.13)
@@ -79,7 +77,17 @@
  *
  * @li @c "audio-volume" (since 1.13)
  * @li @c "audio-volume-muted" (since 1.13)
- * 
+ *
+ * There is also a selection of old names that were used before standard names
+ * were being encouraged. These should be considered deprecated and one of the
+ * names above used instead.
+ *
+ * @li @c "arrow_up" (since 1.13)
+ * @li @c "arrow_down" (since 1.13)
+ * @li @c "arrow_left" (since 1.13)
+ * @li @c "arrow_right" (since 1.13)
+ * @li @c "search" (since 1.13)
+ *
  * These are names for icons that were first intended to be used in
  * toolbars, but can be used in many other places too:
  * @li @c "home"
