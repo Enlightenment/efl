@@ -1,5 +1,7 @@
 class Efl.Canvas.Surface_Wayland (Efl.Canvas.Surface)
 {
+   [[Native Wayland surface for Efl canvas]]
+
    legacy_prefix: null;
    implements {
       Eo.Base.constructor;

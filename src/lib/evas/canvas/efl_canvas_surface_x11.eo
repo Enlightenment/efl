@@ -7,6 +7,8 @@ struct Efl.Canvas.Surface.X11_Pixmap
 
 class Efl.Canvas.Surface_X11 (Efl.Canvas.Surface)
 {
+   [[Native X11 surface for Efl canvas]]
+
    legacy_prefix: null;
    methods {
       @property pixmap {
