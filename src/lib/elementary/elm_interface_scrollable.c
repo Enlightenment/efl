@@ -3513,8 +3513,6 @@ static void
 _elm_scroll_reconfigure(Elm_Scrollable_Smart_Interface_Data *sid)
 {
    _elm_scroll_scroll_bar_size_adjust(sid);
-   _elm_scroll_scroll_bar_h_visibility_apply(sid);
-   _elm_scroll_scroll_bar_v_visibility_apply(sid);
    _elm_scroll_page_adjust(sid);
 }
 
