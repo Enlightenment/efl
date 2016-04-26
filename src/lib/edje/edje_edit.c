@@ -11573,12 +11573,705 @@ _edje_source_with_double_values_append(const char *param_name, char val_num, dou
    eina_strbuf_free(string);
 }
 
+static void
+_edje_generate_source_state_relative(Edje *ed, Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
+{
+
+   Eina_Bool ret = EINA_TRUE;
+   int attr_amount = 0;
+   int indent_space = strlen(I6);
+
+   attr_amount += ((pd->rel1.relative_x == 0) && (pd->rel1.relative_y == 0)) ? 0 : 1;
+   attr_amount += ((pd->rel1.offset_x == 0) && (pd->rel1.offset_y == 0)) ? 0 : 1;
+   if ((pd->rel1.id_x != -1) || (pd->rel1.id_y != -1))
+     {
+        if ((pd->rel1.id_x == -1 && pd->rel1.id_y != -1) ||
+            (pd->rel1.id_x != -1 && pd->rel1.id_y == -1) ||
+            (pd->rel1.id_x == pd->rel1.id_y))
+          {
+             attr_amount++;
+          }
+        else
+          {
+             attr_amount += 2;
+          }
+     }
+
+   indent_space = strlen(I6);
+   if (attr_amount == 1)
+     indent_space = 0;
+
+   //Rel1
+   if (attr_amount)
+     {
+        if (attr_amount > 1)
+          BUF_APPEND(I5 "rel1 {\n");
+        else
+          BUF_APPEND(I5 "rel1.");
+
+        if (pd->rel1.relative_x != 0 || pd->rel1.relative_y != 0)
+          {
+             char relative[strlen("relative") + indent_space + 1];
+             snprintf(relative, strlen("relative") + indent_space + 1,
+                      "%*srelative", indent_space, "");
+             _edje_source_with_double_values_append(relative, 2,
+                                                  TO_DOUBLE(pd->rel1.relative_x),
+                                                  TO_DOUBLE(pd->rel1.relative_y),
+                                                  buf, &ret);
+          }
+
+        if (pd->rel1.offset_x != 0 || pd->rel1.offset_y != 0)
+          BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
+                      pd->rel1.offset_x, pd->rel1.offset_y);
+
+        if (pd->rel1.id_x != -1 && pd->rel1.id_x == pd->rel1.id_y)
+          {
+            BUF_APPENDF("%*sto: \"%s\";\n", indent_space, "",
+                        ed->table_parts[pd->rel1.id_x]->part->name);
+          }
+        else
+          {
+             if (pd->rel1.id_x != -1)
+               BUF_APPENDF("%*sto_x: \"%s\";\n", indent_space, "",
+                           ed->table_parts[pd->rel1.id_x]->part->name);
+
+             if (pd->rel1.id_y != -1)
+               BUF_APPENDF("%*sto_y: \"%s\";\n", indent_space, "",
+                           ed->table_parts[pd->rel1.id_y]->part->name);
+          }
+
+        if (attr_amount > 1)
+           BUF_APPEND(I5 "}\n");
+     }
+
+
+   attr_amount = 0;
+   attr_amount += ((pd->rel2.relative_x == 1) && (pd->rel2.relative_y == 1)) ? 0 : 1;
+   attr_amount += ((pd->rel2.offset_x == -1) && (pd->rel2.offset_y == -1)) ? 0 : 1;
+   if ((pd->rel2.id_x != -1) || (pd->rel2.id_y != -1))
+     {
+        if ((pd->rel2.id_x == -1 && pd->rel2.id_y != -1) ||
+            (pd->rel2.id_x != -1 && pd->rel2.id_y == -1) ||
+            (pd->rel2.id_x == pd->rel2.id_y))
+          {
+             attr_amount++;
+          }
+        else
+          {
+             attr_amount += 2;
+          }
+     }
+
+   indent_space = strlen(I6);
+   if (attr_amount == 1)
+     indent_space = 0;
+
+   //Rel2
+   if (attr_amount)
+     {
+        if (attr_amount > 1)
+          BUF_APPEND(I5 "rel2 {\n");
+        else
+          BUF_APPEND(I5 "rel2.");
+
+        if (pd->rel2.relative_x != 1 || pd->rel2.relative_y != 1)
+          {
+             char relative[strlen("relative") + indent_space + 1];
+             snprintf(relative, strlen("relative") + indent_space + 1,
+                      "%*srelative", indent_space, "");
+             _edje_source_with_double_values_append(relative, 2,
+                                                  TO_DOUBLE(pd->rel2.relative_x),
+                                                  TO_DOUBLE(pd->rel2.relative_y),
+                                                  buf, &ret);
+          }
+
+        if (pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1)
+          BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
+                      pd->rel2.offset_x, pd->rel2.offset_y);
+
+        if (pd->rel2.id_x != -1 && pd->rel2.id_x == pd->rel2.id_y)
+          {
+            BUF_APPENDF("%*sto: \"%s\";\n", indent_space, "",
+                        ed->table_parts[pd->rel2.id_x]->part->name);
+          }
+        else
+          {
+             if (pd->rel2.id_x != -1)
+               BUF_APPENDF("%*sto_x: \"%s\";\n", indent_space, "",
+                           ed->table_parts[pd->rel2.id_x]->part->name);
+
+             if (pd->rel2.id_y != -1)
+               BUF_APPENDF("%*sto_y: \"%s\";\n", indent_space, "",
+                           ed->table_parts[pd->rel2.id_y]->part->name);
+          }
+
+        if (attr_amount > 1)
+           BUF_APPEND(I5 "}\n");
+     }
+}
+
+static void
+_edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
+                                  const char *part, const char *state, double value,
+                                  Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
+{
+   Eina_Bool ret = EINA_TRUE;
+   Eina_List *l, *ll;
+   int attr_amount = 0;
+   int indent_space = strlen(I6);
+   char *data;
+   const char *image_name;
+
+   Edje_Part_Description_Image *img;
+
+   img = (Edje_Part_Description_Image *)pd;
+
+   image_name = _edje_image_name_find(eed, img->image.id);
+   ll = edje_edit_state_tweens_list_get(obj, part, state, value);
+
+   attr_amount = 0;
+   attr_amount += (image_name == NULL) ? 0 : 1;
+   attr_amount += (ll == NULL) ? 0 : 2;
+   attr_amount += (img->image.border.l == 0 && img->image.border.r == 0 && img->image.border.t == 0 && img->image.border.b == 0) ? 0 : 1;
+   attr_amount += (img->image.border.scale == 0) ? 0 : 1;
+   attr_amount += (img->image.scale_hint != EVAS_IMAGE_SCALE_HINT_DYNAMIC && img->image.scale_hint != EVAS_IMAGE_SCALE_HINT_STATIC) ? 0 : 1;
+   attr_amount += (img->image.border.no_fill == 0) ? 0 : 1;
+
+   if (attr_amount == 1)
+     indent_space = 0;
+
+   if (attr_amount > 1)
+      BUF_APPEND(I5 "image {\n");
+   else
+      BUF_APPEND(I5 "image.");
+
+   if (image_name)
+     BUF_APPENDF("%*snormal: \"%s\";\n", indent_space, "", image_name);
+
+   EINA_LIST_FOREACH(ll, l, data)
+     BUF_APPENDF("%*stween: \"%s\";\n", indent_space, "", data);
+   edje_edit_string_list_free(ll);
+
+   if (img->image.border.l || img->image.border.r ||
+       img->image.border.t || img->image.border.b)
+     BUF_APPENDF("%*sborder: %d %d %d %d;\n", indent_space, "",
+                 img->image.border.l, img->image.border.r,
+                 img->image.border.t, img->image.border.b);
+
+   if (img->image.border.scale_by != 0.0)
+     {
+        char border_scale_by[strlen("border_scale_by") + indent_space + 1];
+        snprintf(border_scale_by, strlen("border_scale_by") + indent_space + 1,
+                      "%*sborder_scale_by", indent_space, "");
+        _edje_source_with_double_values_append(border_scale_by, 1,
+                                              TO_DOUBLE(img->image.border.scale_by),
+                                              0.0, buf, &ret);
+     }
+   if (img->image.border.scale)
+     BUF_APPENDF("%*sborder_scale: 1;\n", indent_space, "");
+
+   if (img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_DYNAMIC)
+     {
+        BUF_APPENDF("%*sscale_hint: DYNAMIC;\n", indent_space, "");
+     }
+   else if (img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_STATIC)
+     {
+        BUF_APPENDF("%*sscale_hint: STATIC;\n", indent_space, "");
+     }
+
+   if (img->image.border.no_fill == 1)
+     {
+       BUF_APPENDF("%*smiddle: NONE;\n", indent_space, "");
+     }
+   else if (img->image.border.no_fill == 2)
+     {
+       BUF_APPENDF("%*smiddle: SOLID;\n", indent_space, "");
+     }
+
+   if (attr_amount > 1)
+     BUF_APPEND(I5 "}\n"); //image
+
+   //Fill
+
+   attr_amount = 0;
+   int attr_orig_amount = 0;
+   int attr_size_amount = 0;
+   attr_amount += (img->image.fill.smooth == 1) ? 0 : 1;
+   attr_amount += (img->image.fill.type == EDJE_FILL_TYPE_SCALE) ? 0 : 1;
+   attr_orig_amount += ((img->image.fill.pos_rel_x == 0) && (img->image.fill.pos_rel_y == 0)) ? 0 : 1;
+   attr_orig_amount += ((img->image.fill.pos_abs_x == 0) && (img->image.fill.pos_abs_y == 0)) ? 0 : 1;
+   attr_size_amount += ((TO_DOUBLE(img->image.fill.rel_x) == 1) && (TO_DOUBLE(img->image.fill.rel_y) == 1)) ? 0 : 1;
+   attr_size_amount += ((img->image.fill.abs_x == 0) && (img->image.fill.abs_y == 0)) ? 0 : 1;
+   attr_amount += attr_orig_amount + attr_size_amount;
+
+   indent_space = 0;
+   if (attr_amount > 1 || attr_size_amount || attr_orig_amount)
+     indent_space = strlen(I6);
+
+   if (attr_amount)
+     {
+       if (attr_amount > 1 || attr_size_amount || attr_orig_amount)
+         BUF_APPEND(I5 "fill {\n");
+       else
+         BUF_APPEND(I5 "fill.");
+
+       if (!img->image.fill.smooth)
+         BUF_APPENDF("%*ssmooth: 0;\n", indent_space, "");
+
+       if (img->image.fill.type == EDJE_FILL_TYPE_TILE)
+         BUF_APPENDF("%*stype: TILE;\n", indent_space, "");
+
+       if (attr_orig_amount)
+         {
+           indent_space = 0;
+           if (attr_orig_amount > 1)
+             indent_space = strlen(I7);
+           if (attr_orig_amount > 1)
+             BUF_APPEND(I6 "origin {\n");
+           else
+             BUF_APPEND(I6 "origin.");
+
+           if (img->image.fill.pos_rel_x || img->image.fill.pos_rel_y)
+             {
+               char relative[strlen("relative") + indent_space + 1];
+               snprintf(relative, strlen("relative") + indent_space + 1,
+                        "%*srelative", indent_space, "");
+               _edje_source_with_double_values_append(relative, 2,
+                        TO_DOUBLE(img->image.fill.pos_rel_x),
+                        TO_DOUBLE(img->image.fill.pos_rel_y),
+                        buf, &ret);
+             }
+
+           if (img->image.fill.pos_abs_x || img->image.fill.pos_abs_y)
+             BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
+                         img->image.fill.pos_abs_x, img->image.fill.pos_abs_y);
+
+            if (attr_orig_amount > 1)
+              BUF_APPEND(I6 "}\n");
+         }
+
+       if (attr_size_amount)
+         {
+           indent_space = 0;
+           if (attr_size_amount > 1)
+             indent_space = strlen(I7);
+
+           if (attr_size_amount > 1)
+             BUF_APPEND(I6 "size {\n");
+           else
+             BUF_APPEND(I6 "size.");
+
+           if (img->image.fill.rel_x != 1.0 || img->image.fill.rel_y != 1.0)
+             {
+               char relative[strlen("relative") + indent_space + 1];
+               snprintf(relative, strlen("relative") + indent_space + 1,
+                        "%*srelative", indent_space, "");
+               _edje_source_with_double_values_append(relative, 2,
+                        TO_DOUBLE(img->image.fill.rel_x),
+                        TO_DOUBLE(img->image.fill.rel_y),
+                        buf, &ret);
+             }
+
+           if (img->image.fill.abs_x || img->image.fill.abs_y)
+             BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
+                         img->image.fill.abs_x, img->image.fill.abs_y);
+
+           if (attr_size_amount > 1)
+             BUF_APPEND(I6 "}\n");
+         }
+
+       if (attr_amount > 1 || attr_size_amount || attr_orig_amount)
+         BUF_APPEND(I5 "}\n");
+    }
+}
+
+static void
+_edje_generate_source_state_map(Edje *ed, Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
+{
+   int attr_amount = 0;
+   int attr_rotate_amount = 0;
+   int indent_space = 0;
+   unsigned int i = 0;
+   Eina_Bool ret = EINA_FALSE;
+
+   attr_amount = (pd->map.id_persp == -1) ? 0 : 1;
+   attr_amount += (pd->map.id_light == -1) ? 0 : 1;
+   attr_amount += (pd->map.colors_count == 0) ? 0 : pd->map.colors_count;
+   attr_amount += (pd->map.backcull == EINA_FALSE) ? 0 : 1;
+   attr_amount += (pd->map.on == EINA_FALSE) ? 0 : 1;
+   attr_amount += (pd->map.persp_on == EINA_FALSE) ? 0 : 1;
+   attr_amount += (pd->map.smooth == EINA_TRUE) ? 0 : 1;
+   attr_amount += (pd->map.alpha == EINA_TRUE) ? 0 : 1;
+
+   attr_rotate_amount = (pd->map.rot.id_center == -1) ? 0 : 1;
+   attr_rotate_amount += (TO_DOUBLE(pd->map.rot.x == 0)) ? 0 : 1;
+   attr_rotate_amount += (TO_DOUBLE(pd->map.rot.y == 0)) ? 0 : 1;
+   attr_rotate_amount += (TO_DOUBLE(pd->map.rot.z == 0)) ? 0 : 1;
+
+   if (attr_rotate_amount > 0)
+     attr_amount += 2;
+
+   if (attr_amount > 1)
+     indent_space = strlen(I6);
+   if (attr_amount)
+     {
+        if (attr_amount > 1)
+          BUF_APPEND(I5 "map {\n");
+        else
+          BUF_APPEND(I5 "map.");
+
+        if (pd->map.id_persp != -1)
+          BUF_APPENDF("%*sperspective: \"%s\";\n", indent_space, "",
+                      _edje_part_name_find(ed, pd->map.id_persp));
+
+        if (pd->map.id_light != -1)
+          BUF_APPENDF("%*slight: \"%s\";\n", indent_space, "",
+                      _edje_part_name_find(ed, pd->map.id_light));
+
+        if (pd->map.backcull)
+          BUF_APPENDF("%*sbackface_cull: 1;\n", indent_space, "");
+        if (pd->map.on)
+          BUF_APPENDF("%*son: 1;\n", indent_space, "");
+        if (pd->map.persp_on)
+          BUF_APPENDF("%*sperspective_on: 1;\n", indent_space, "");
+        if (!pd->map.smooth)
+          BUF_APPENDF("%*ssmooth: 0;\n", indent_space, "");
+        if (!pd->map.alpha)
+          BUF_APPENDF("%*salpha: 0;\n", indent_space, "");
+
+        if (pd->map.colors_count > 0)
+          {
+             for (i = 0; i < pd->map.colors_count; ++i)
+               {
+                  if ((pd->map.colors[i]->r != 255) || (pd->map.colors[i]->g != 255) ||
+                      (pd->map.colors[i]->b != 255) || (pd->map.colors[i]->b != 255))
+                    BUF_APPENDF(I6 "color: %d %d %d %d %d;\n", pd->map.colors[i]->idx,
+                                pd->map.colors[i]->r, pd->map.colors[i]->g,
+                                pd->map.colors[i]->b, pd->map.colors[i]->a);
+               }
+          }
+
+        if (attr_rotate_amount)
+          {
+             if (attr_rotate_amount > 1)
+               {
+                 BUF_APPEND(I6 "rotation {\n");
+                 indent_space = strlen(I7);
+               }
+             else
+               {
+                  BUF_APPENDF(I6 "rotation.");
+                  indent_space = 0;
+               }
+
+             if (pd->map.rot.id_center != -1)
+               BUF_APPENDF("%*scenter: \"%s\";\n", indent_space, "",
+                           _edje_part_name_find(ed, pd->map.rot.id_center));
+
+             if (TO_DOUBLE(pd->map.rot.x) != 0.0)
+               {
+                 char rot_x[strlen("x") + indent_space + 1];
+                 snprintf(rot_x, strlen("x") + indent_space + 1,
+                          "%*sx", indent_space, "");
+                 _edje_source_with_double_values_append(rot_x, 1,
+                                                   TO_DOUBLE(pd->map.rot.x),
+                                                   0.0, buf, &ret);
+               }
+             if (TO_DOUBLE(pd->map.rot.y) != 0.0)
+               {
+                 char rot_y[strlen("y") + indent_space + 1];
+                 snprintf(rot_y, strlen("y") + indent_space + 1,
+                          "%*sy", indent_space, "");
+                 _edje_source_with_double_values_append(rot_y, 1,
+                                                   TO_DOUBLE(pd->map.rot.y),
+                                                   0.0, buf, &ret);
+               }
+             if (TO_DOUBLE(pd->map.rot.z) != 0.0)
+               {
+                 char rot_z[strlen("z") + indent_space + 1];
+                 snprintf(rot_z, strlen("z") + indent_space + 1,
+                          "%*sz", indent_space, "");
+                 _edje_source_with_double_values_append(rot_z, 1,
+                                                    TO_DOUBLE(pd->map.rot.z),
+                                                    0.0, buf, &ret);
+               }
+
+             if (attr_rotate_amount > 1)
+               BUF_APPEND(I6 "}\n");
+          }
+
+        if (attr_amount > 1)
+          BUF_APPEND(I5 "}\n");
+     }
+}
+
+static void
+_edje_generate_source_state_proxy(Edje *ed, Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
+{
+   int attr_amount = 0;
+   int indent_space = 0;
+   Eina_Bool ret;
+   Edje_Part_Description_Proxy *pro;
+
+   pro = (Edje_Part_Description_Proxy *)pd;
+
+   if (pro->proxy.id >= 0)
+     {
+        const char *source_name;
+        source_name = _edje_part_name_find(ed, pro->proxy.id);
+        if (source_name)
+          BUF_APPENDF(I5 "source: \"%s\";\n", source_name);
+     }
+
+   attr_amount += (pro->proxy.source_visible == 1) ? 0 : 1;
+   attr_amount += (pro->proxy.source_clip == 1) ? 0 : 1;
+
+   if (attr_amount > 1)
+     indent_space = strlen(I6);
+
+   //Proxy block
+   if (attr_amount)
+     {
+        if (attr_amount > 1)
+          BUF_APPEND(I5 "proxy {\n");
+        else
+          BUF_APPEND(I5 "proxy.");
+
+        if (pro->proxy.source_visible != 1)
+          BUF_APPENDF("%*ssource_visible: 0;\n", indent_space, "");
+
+        if (pro->proxy.source_clip != 1)
+          BUF_APPENDF("%*ssource_clip: 0;\n", indent_space, "");
+
+        if (attr_amount > 1)
+          BUF_APPEND(I5 "}\n");
+     }
+
+   //Fill
+   //TODO Support spread
+   //TODO Support source
+   attr_amount = 0;
+   int attr_orig_amount = 0;
+   int attr_size_amount = 0;
+   attr_amount += (pro->proxy.fill.smooth == 1) ? 0 : 1;
+   attr_amount += (pro->proxy.fill.type == EDJE_FILL_TYPE_SCALE) ? 0 : 1;
+   attr_orig_amount += ((pro->proxy.fill.pos_rel_x == 0) && (pro->proxy.fill.pos_rel_y == 0)) ? 0 : 1;
+   attr_orig_amount += ((pro->proxy.fill.pos_abs_x == 0) && (pro->proxy.fill.pos_abs_y == 0)) ? 0 : 1;
+   attr_size_amount += ((TO_DOUBLE(pro->proxy.fill.rel_x) == 1) && (TO_DOUBLE(pro->proxy.fill.rel_y) == 1)) ? 0 : 1;
+   attr_size_amount += ((pro->proxy.fill.abs_x == 0) && (pro->proxy.fill.abs_y == 0)) ? 0 : 1;
+   attr_amount += attr_orig_amount + attr_size_amount;
+
+   indent_space = 0;
+   if (attr_amount > 1 || attr_size_amount || attr_orig_amount)
+     indent_space = strlen(I6);
+
+   if (attr_amount)
+     {
+       if (attr_amount > 1 || attr_size_amount || attr_orig_amount)
+         BUF_APPEND(I5 "fill {\n");
+       else
+         BUF_APPEND(I5 "fill.");
+
+       if (!pro->proxy.fill.smooth)
+         BUF_APPENDF("%*ssmooth: 0;\n", indent_space, "");
+
+       if (pro->proxy.fill.type == EDJE_FILL_TYPE_TILE)
+         BUF_APPENDF("%*stype: TILE;\n", indent_space, "");
+
+       if (attr_orig_amount)
+         {
+           indent_space = 0;
+           if (attr_orig_amount > 1)
+             indent_space = strlen(I7);
+           if (attr_orig_amount > 1)
+             BUF_APPEND(I6 "origin {\n");
+           else
+             BUF_APPEND(I6 "origin.");
+
+           if (pro->proxy.fill.pos_rel_x || pro->proxy.fill.pos_rel_y)
+             {
+               char relative[strlen("relative") + indent_space + 1];
+               snprintf(relative, strlen("relative") + indent_space + 1,
+                        "%*srelative", indent_space, "");
+               _edje_source_with_double_values_append(relative, 2,
+                        TO_DOUBLE(pro->proxy.fill.pos_rel_x),
+                        TO_DOUBLE(pro->proxy.fill.pos_rel_y),
+                        buf, &ret);
+             }
+
+           if (pro->proxy.fill.pos_abs_x || pro->proxy.fill.pos_abs_y)
+             BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
+                         pro->proxy.fill.pos_abs_x, pro->proxy.fill.pos_abs_y);
+
+            if (attr_orig_amount > 1)
+              BUF_APPEND(I6 "}\n");
+         }
+
+       if (attr_size_amount)
+         {
+           indent_space = 0;
+           if (attr_size_amount > 1)
+             indent_space = strlen(I7);
+
+           if (attr_size_amount > 1)
+             BUF_APPEND(I6 "size {\n");
+           else
+             BUF_APPEND(I6 "size.");
+
+           if (pro->proxy.fill.rel_x != 1.0 || pro->proxy.fill.rel_y != 1.0)
+             {
+               char relative[strlen("relative") + indent_space + 1];
+               snprintf(relative, strlen("relative") + indent_space + 1,
+                        "%*srelative", indent_space, "");
+               _edje_source_with_double_values_append(relative, 2,
+                        TO_DOUBLE(pro->proxy.fill.rel_x),
+                        TO_DOUBLE(pro->proxy.fill.rel_y),
+                        buf, &ret);
+             }
+
+           if (pro->proxy.fill.abs_x || pro->proxy.fill.abs_y)
+             BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
+                         pro->proxy.fill.abs_x, pro->proxy.fill.abs_y);
+
+           if (attr_size_amount > 1)
+             BUF_APPEND(I6 "}\n");
+         }
+
+       if (attr_amount > 1 || attr_size_amount || attr_orig_amount)
+         BUF_APPEND(I5 "}\n");
+    }
+}
+
+static void
+_edje_generate_source_state_box(Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
+{
+   int attr_amount = 0;
+   int indent_space = 0;
+   Eina_Bool ret = EINA_FALSE;
+
+   Edje_Part_Description_Box *box;
+
+   box = (Edje_Part_Description_Box *)pd;
+
+   attr_amount += (box->box.layout == NULL && box->box.alt_layout == NULL) ? 0 : 1;
+   attr_amount += (box->box.align.x == 0.5 && box->box.align.y == 0.5) ? 0 : 1;
+   attr_amount += (box->box.padding.x == 0 && box->box.padding.y == 0) ? 0 : 1;
+   attr_amount += (box->box.min.h == 0 && box->box.min.v == 0) ? 0 : 1;
+
+   if (attr_amount > 1)
+     indent_space = strlen(I6);
+
+   if (attr_amount)
+    {
+       if (attr_amount > 1)
+         BUF_APPEND(I5 "box {\n");
+       else
+         BUF_APPEND(I5 "box.");
+
+        if (box->box.layout && box->box.alt_layout)
+          BUF_APPENDF("%*slayout: \"%s\" \"%s\";\n", indent_space, "",
+                      box->box.layout, box->box.alt_layout);
+        else if (!box->box.layout && box->box.alt_layout)
+          BUF_APPENDF("%*slayout: \"horizontal\" \"%s\";\n", indent_space, "",
+                      box->box.alt_layout);
+        else if (box->box.layout && !box->box.alt_layout)
+          BUF_APPENDF("%*slayout: \"%s\";\n", indent_space, "",
+                      box->box.layout);
+
+        if (box->box.align.x != 0.5 || box->box.align.y != 0.5)
+          {
+             char align[strlen("align") + indent_space + 1];
+             snprintf(align, strlen("align") + indent_space + 1,
+                      "%*salign", indent_space, "");
+             _edje_source_with_double_values_append(align, 2,
+                                    TO_DOUBLE(box->box.align.x),
+                                    TO_DOUBLE(box->box.align.y),
+                                    buf, &ret);
+          }
+
+        if (box->box.padding.x != 0 || box->box.padding.y != 0)
+          BUF_APPENDF("%*spadding: %d %d;\n", indent_space, "",
+                      box->box.padding.x, box->box.padding.y);
+
+        if (box->box.min.h || box->box.min.v)
+          BUF_APPENDF("%*smin: %d %d;\n", indent_space, "",
+                      box->box.min.h, box->box.min.v);
+
+        if (attr_amount > 1)
+          BUF_APPEND(I5 "}\n");
+   }
+}
+
+static void
+_edje_generate_source_state_table(Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
+{
+   int attr_amount = 0;
+   int indent_space = 0;
+   Eina_Bool ret = EINA_FALSE;
+
+   Edje_Part_Description_Table *table;
+
+   table = (Edje_Part_Description_Table *)pd;
+
+   attr_amount += (table->table.homogeneous == EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE) ? 0 : 1;
+   attr_amount += (table->table.align.x == 0.5 && table->table.align.y == 0.5) ? 0 : 1;
+   attr_amount += (table->table.padding.x == 0 && table->table.padding.y == 0) ? 0 : 1;
+   attr_amount += (table->table.min.h == 0 && table->table.min.v == 0) ? 0 : 1;
+
+   if (attr_amount > 1)
+     indent_space = strlen(I6);
+
+   if (attr_amount)
+     {
+        if (attr_amount > 1)
+          BUF_APPEND(I5 "table {\n");
+        else
+          BUF_APPEND(I5 "table.");
+
+        switch (table->table.homogeneous)
+          {
+           case EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE:
+           {
+              BUF_APPENDF("%*shomogeneous: TABLE;\n", indent_space, "");
+              break;
+           }
+
+           case EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM:
+           {
+              BUF_APPENDF("%*shomogeneous: ITEM;\n", indent_space, "");
+              break;
+           }
+          }
+
+        if (table->table.align.x != 0.5 || table->table.align.y != 0.5)
+          {
+             char align[strlen("align") + indent_space + 1];
+             snprintf(align, strlen("align") + indent_space + 1,
+                      "%*salign", indent_space, "");
+             _edje_source_with_double_values_append(align, 2,
+                                     TO_DOUBLE(table->table.align.x),
+                                     TO_DOUBLE(table->table.align.y),
+                                     buf, &ret);
+          }
+
+        if (table->table.padding.x != 0 || table->table.padding.y != 0)
+          BUF_APPENDF("%*spadding: %d %d;\n", indent_space, "",
+                      table->table.padding.x, table->table.padding.y);
+
+        if (table->table.min.h || table->table.min.v)
+          BUF_APPENDF("%*smin: %d %d;\n", indent_space, "",
+                      table->table.min.h, table->table.min.v);
+
+        if (attr_amount > 1)
+          BUF_APPEND(I5 "}\n");
+   }
+}
+
 static Eina_Bool
 _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *state, double value, Eina_Strbuf *buf)
 {
    Eina_List *l, *ll;
    Eina_Bool ret = EINA_TRUE;
-   unsigned int i;
 
    GET_PD_OR_RETURN(EINA_FALSE);
 
@@ -11671,198 +12364,6 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
                       txt->text.color3.r, txt->text.color3.g, txt->text.color3.b, txt->text.color3.a);
      }
 
-   if (rp->part->type == EDJE_PART_TYPE_BOX)
-     {
-        Edje_Part_Description_Box *box;
-
-        box = (Edje_Part_Description_Box *)pd;
-
-        if ((box->box.layout && box->box.alt_layout) ||
-            box->box.align.x != 0.5 || box->box.align.y != 0.5 ||
-            box->box.padding.x != 0 || box->box.padding.y != 0 ||
-            !box->box.min.h || !box->box.min.v)
-          {
-             BUF_APPEND(I5 "box {\n");
-
-             if (box->box.layout && box->box.alt_layout)
-               BUF_APPENDF(I6 "layout: \"%s\" \"%s\";\n", box->box.layout, box->box.alt_layout);
-             else if (!box->box.layout && box->box.alt_layout)
-               BUF_APPENDF(I6 "layout: \"horizontal\" \"%s\";\n", box->box.alt_layout);
-             else if (box->box.layout && !box->box.alt_layout)
-               BUF_APPENDF(I6 "layout: \"%s\";\n", box->box.layout);
-
-             if (box->box.align.x != 0.5 || box->box.align.y != 0.5)
-               _edje_source_with_double_values_append(I6 "align", 2,
-                                                      TO_DOUBLE(box->box.align.x),
-                                                      TO_DOUBLE(box->box.align.y),
-                                                      buf, &ret);
-
-             if (box->box.padding.x != 0 || box->box.padding.y != 0)
-               BUF_APPENDF(I6 "padding: %d %d;\n", box->box.padding.x, box->box.padding.y);
-
-             if (box->box.min.h || box->box.min.v)
-               BUF_APPENDF(I6 "min: %d %d;\n", box->box.min.h, box->box.min.v);
-
-             BUF_APPEND(I5 "}\n");
-          }
-     }
-
-   if (rp->part->type == EDJE_PART_TYPE_TABLE)
-     {
-        Edje_Part_Description_Table *table;
-
-        table = (Edje_Part_Description_Table *)pd;
-
-        if ((table->table.homogeneous != EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE) ||
-            table->table.align.x != 0.5 || table->table.align.y != 0.5 ||
-            table->table.padding.x != 0 || table->table.padding.y != 0 ||
-            !table->table.min.h || !table->table.min.v)
-          {
-             BUF_APPEND(I5 "table {\n");
-
-             switch (table->table.homogeneous)
-               {
-                case EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE:
-                {
-                   BUF_APPENDF(I6 "homogeneous: TABLE;\n");
-                   break;
-                }
-
-                case EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM:
-                {
-                   BUF_APPENDF(I6 "homogeneous: ITEM;\n");
-                   break;
-                }
-               }
-
-             if (table->table.align.x != 0.5 || table->table.align.y != 0.5)
-               _edje_source_with_double_values_append(I6 "align", 2,
-                                                      TO_DOUBLE(table->table.align.x),
-                                                      TO_DOUBLE(table->table.align.y),
-                                                      buf, &ret);
-
-             if (table->table.padding.x != 0 || table->table.padding.y != 0)
-               BUF_APPENDF(I6 "padding: %d %d;\n", table->table.padding.x, table->table.padding.y);
-
-             if (table->table.min.h || table->table.min.v)
-               BUF_APPENDF(I6 "min: %d %d;\n", table->table.min.h, table->table.min.v);
-
-             BUF_APPEND(I5 "}\n");
-          }
-     }
-
-   //Rel1
-   if (pd->rel1.relative_x || pd->rel1.relative_y || pd->rel1.offset_x ||
-       pd->rel1.offset_y || pd->rel1.id_x != -1 || pd->rel1.id_y != -1)
-     {
-        BUF_APPEND(I5 "rel1 {\n");
-        if (pd->rel1.relative_x || pd->rel1.relative_y)
-          _edje_source_with_double_values_append(I6 "relative", 2,
-                                                 TO_DOUBLE(pd->rel1.relative_x),
-                                                 TO_DOUBLE(pd->rel1.relative_y),
-                                                 buf, &ret);
-        if (pd->rel1.offset_x || pd->rel1.offset_y)
-          BUF_APPENDF(I6 "offset: %d %d;\n", pd->rel1.offset_x, pd->rel1.offset_y);
-        if (pd->rel1.id_x != -1 && pd->rel1.id_x == pd->rel1.id_y)
-          BUF_APPENDF(I6 "to: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
-        else
-          {
-             if (pd->rel1.id_x != -1)
-               BUF_APPENDF(I6 "to_x: \"%s\";\n", ed->table_parts[pd->rel1.id_x]->part->name);
-             if (pd->rel1.id_y != -1)
-               BUF_APPENDF(I6 "to_y: \"%s\";\n", ed->table_parts[pd->rel1.id_y]->part->name);
-          }
-        BUF_APPEND(I5 "}\n"); //rel1
-     }
-
-   //Rel2
-   if (pd->rel2.relative_x != 1.0 || pd->rel2.relative_y != 1.0 ||
-       pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1 ||
-       pd->rel2.id_x != -1 || pd->rel2.id_y != -1)
-     {
-        BUF_APPEND(I5 "rel2 {\n");
-        if (TO_DOUBLE(pd->rel2.relative_x) != 1.0 || TO_DOUBLE(pd->rel2.relative_y) != 1.0)
-          _edje_source_with_double_values_append(I6 "relative", 2,
-                                                 TO_DOUBLE(pd->rel2.relative_x),
-                                                 TO_DOUBLE(pd->rel2.relative_y),
-                                                 buf, &ret);
-        if (pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1)
-          BUF_APPENDF(I6 "offset: %d %d;\n", pd->rel2.offset_x, pd->rel2.offset_y);
-        if (pd->rel2.id_x != -1 && pd->rel2.id_x == pd->rel2.id_y)
-          BUF_APPENDF(I6 "to: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
-        else
-          {
-             if (pd->rel2.id_x != -1)
-               BUF_APPENDF(I6 "to_x: \"%s\";\n", ed->table_parts[pd->rel2.id_x]->part->name);
-             if (pd->rel2.id_y != -1)
-               BUF_APPENDF(I6 "to_y: \"%s\";\n", ed->table_parts[pd->rel2.id_y]->part->name);
-          }
-        BUF_APPEND(I5 "}\n"); //rel2
-     }
-
-   //Map
-   if ((pd->map.id_persp != -1) || (pd->map.id_light != -1) ||
-       (pd->map.rot.id_center != -1) || (TO_DOUBLE(pd->map.rot.x) != 0) ||
-       (TO_DOUBLE(pd->map.rot.y) != 0) || (TO_DOUBLE(pd->map.rot.z) != 0) ||
-       (pd->map.colors_count != 0) || (pd->map.backcull) || (pd->map.on) ||
-       (pd->map.persp_on) || (!pd->map.smooth) || (!pd->map.alpha))
-     {
-        BUF_APPEND(I5 "map {\n");
-
-        if (pd->map.id_persp != -1)
-          BUF_APPENDF(I6 "perspective: \"%s\";\n", _edje_part_name_find(ed, pd->map.id_persp));
-        if (pd->map.id_light != -1)
-          BUF_APPENDF(I6 "light: \"%s\";\n", _edje_part_name_find(ed, pd->map.id_light));
-
-        if (pd->map.backcull)
-          BUF_APPEND(I6 "backface_cull: 1;\n");
-        if (pd->map.on)
-          BUF_APPEND(I6 "on: 1;\n");
-        if (pd->map.persp_on)
-          BUF_APPEND(I6 "perspective_on: 1;\n");
-        if (!pd->map.smooth)
-          BUF_APPEND(I6 "smooth: 0;\n");
-        if (!pd->map.alpha)
-          BUF_APPEND(I6 "alpha: 0;\n");
-
-        if (pd->map.colors_count > 0)
-          {
-             for (i = 0; i < pd->map.colors_count; ++i)
-               {
-                  if ((pd->map.colors[i]->r != 255) || (pd->map.colors[i]->g != 255) ||
-                      (pd->map.colors[i]->b != 255) || (pd->map.colors[i]->b != 255))
-                    BUF_APPENDF(I6 "color: %d %d %d %d %d;\n", pd->map.colors[i]->idx,
-                                pd->map.colors[i]->r, pd->map.colors[i]->g,
-                                pd->map.colors[i]->b, pd->map.colors[i]->a);
-               }
-          }
-
-        if ((pd->map.rot.id_center != -1) || (pd->map.rot.x != 0) ||
-            (pd->map.rot.y != 0) || (pd->map.rot.z != 0))
-          {
-             BUF_APPEND(I6 "rotation {\n");
-
-             if (pd->map.rot.id_center != -1)
-               BUF_APPENDF(I7 "center: \"%s\";\n", _edje_part_name_find(ed, pd->map.rot.id_center));
-             if (TO_DOUBLE(pd->map.rot.x) != 0.0)
-               _edje_source_with_double_values_append(I7 "x", 1,
-                                                      TO_DOUBLE(pd->map.rot.x),
-                                                      0.0, buf, &ret);
-             if (TO_DOUBLE(pd->map.rot.y) != 0.0)
-               _edje_source_with_double_values_append(I7 "y", 1,
-                                                      TO_DOUBLE(pd->map.rot.y),
-                                                      0.0, buf, &ret);
-             if (TO_DOUBLE(pd->map.rot.z) != 0.0)
-               _edje_source_with_double_values_append(I7 "z", 1,
-                                                      TO_DOUBLE(pd->map.rot.z),
-                                                      0.0, buf, &ret);
-
-             BUF_APPEND(I6 "}\n");
-          }
-
-        BUF_APPEND(I5 "}\n");
-     }
-
    if ((pd->persp.zplane != 0) || (pd->persp.focal != 1000))
      {
         BUF_APPEND(I5 "perspective {\n");
@@ -11875,152 +12376,24 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
         BUF_APPEND(I5 "}\n");
      }
 
+   //Map
+    _edje_generate_source_state_map(ed, pd, buf);
+
+   //Box
+   if (rp->part->type == EDJE_PART_TYPE_BOX)
+     _edje_generate_source_state_box(pd, buf);
+
+   //Table
+   if (rp->part->type == EDJE_PART_TYPE_TABLE)
+     _edje_generate_source_state_table(pd, buf);
+
    //Image
    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
-     {
-        char *data;
-        const char *image_name;
+     _edje_generate_source_state_image(eed, obj, part, state, value, pd, buf);
 
-        Edje_Part_Description_Image *img;
-
-        img = (Edje_Part_Description_Image *)pd;
-
-        BUF_APPEND(I5 "image {\n");
-
-        image_name = _edje_image_name_find(eed, img->image.id);
-        if (image_name)
-          BUF_APPENDF(I6 "normal: \"%s\";\n", image_name);
-
-        ll = edje_edit_state_tweens_list_get(obj, part, state, value);
-        EINA_LIST_FOREACH(ll, l, data)
-          BUF_APPENDF(I6 "tween: \"%s\";\n", data);
-        edje_edit_string_list_free(ll);
-
-        if (img->image.border.l || img->image.border.r || img->image.border.t || img->image.border.b)
-          BUF_APPENDF(I6 "border: %d %d %d %d;\n", img->image.border.l, img->image.border.r, img->image.border.t, img->image.border.b);
-        if (img->image.border.scale_by != 0.0)
-          _edje_source_with_double_values_append(I6 "border_scale_by", 1,
-                                                 TO_DOUBLE(img->image.border.scale_by),
-                                                 0.0, buf, &ret);
-        if (img->image.border.scale)
-          BUF_APPEND(I6 "border_scale: 1;\n");
-
-        if (img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_DYNAMIC)
-          BUF_APPEND(I6 "scale_hint: DYNAMIC;\n");
-        else if (img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_STATIC)
-          BUF_APPEND(I6 "scale_hint: STATIC;\n");
-
-        if (img->image.border.no_fill == 1)
-          BUF_APPEND(I6 "middle: NONE;\n");
-        else if (img->image.border.no_fill == 0)
-          BUF_APPEND(I6 "middle: DEFAULT;\n");
-        else if (img->image.border.no_fill == 2)
-          BUF_APPEND(I6 "middle: SOLID;\n");
-
-        BUF_APPEND(I5 "}\n"); //image
-
-        //Fill
-
-        if (!img->image.fill.smooth || img->image.fill.pos_rel_x ||
-            img->image.fill.pos_rel_y || img->image.fill.pos_abs_x ||
-            img->image.fill.pos_abs_y || TO_DOUBLE(img->image.fill.rel_x) != 1.0 ||
-            TO_DOUBLE(img->image.fill.rel_y) != 1.0 ||
-            img->image.fill.abs_x || img->image.fill.abs_y
-            || img->image.fill.type == EDJE_FILL_TYPE_TILE)
-          {
-             BUF_APPEND(I5 "fill {\n");
-             if (!img->image.fill.smooth)
-               BUF_APPEND(I6 "smooth: 0;\n");
-             //TODO Support spread
-
-             if (img->image.fill.pos_rel_x || img->image.fill.pos_rel_y ||
-                 img->image.fill.pos_abs_x || img->image.fill.pos_abs_y)
-               {
-                  BUF_APPEND(I6 "origin {\n");
-                  if (img->image.fill.pos_rel_x || img->image.fill.pos_rel_y)
-                    _edje_source_with_double_values_append(I7 "relative", 2,
-                                                           TO_DOUBLE(img->image.fill.pos_rel_x),
-                                                           TO_DOUBLE(img->image.fill.pos_rel_y),
-                                                           buf, &ret);
-                  if (img->image.fill.pos_abs_x || img->image.fill.pos_abs_y)
-                    BUF_APPENDF(I7 "offset: %d %d;\n", img->image.fill.pos_abs_x, img->image.fill.pos_abs_y);
-                  BUF_APPEND(I6 "}\n");
-               }
-
-             if (TO_DOUBLE(img->image.fill.rel_x) != 1.0 || TO_DOUBLE(img->image.fill.rel_y) != 1.0 ||
-                 img->image.fill.abs_x || img->image.fill.abs_y)
-               {
-                  BUF_APPEND(I6 "size {\n");
-                  if (img->image.fill.rel_x != 1.0 || img->image.fill.rel_y != 1.0)
-                    _edje_source_with_double_values_append(I7 "relative", 2,
-                                                           TO_DOUBLE(img->image.fill.rel_x),
-                                                           TO_DOUBLE(img->image.fill.rel_y),
-                                                           buf, &ret);
-                  if (img->image.fill.abs_x || img->image.fill.abs_y)
-                    BUF_APPENDF(I7 "offset: %d %d;\n", img->image.fill.abs_x, img->image.fill.abs_y);
-                  BUF_APPEND(I6 "}\n");
-               }
-             if (img->image.fill.type == EDJE_FILL_TYPE_TILE)
-               BUF_APPEND(I6 "type: TILE;\n");
-
-             BUF_APPEND(I5 "}\n");
-          }
-     }
-
+   //Proxy
    if (rp->part->type == EDJE_PART_TYPE_PROXY)
-     {
-        Edje_Part_Description_Proxy *pro;
-
-        pro = (Edje_Part_Description_Proxy *)pd;
-
-        if (pro->proxy.id >= 0)
-          {
-             const char *source_name;
-             source_name = _edje_part_name_find(ed, pro->proxy.id);
-             if (source_name)
-               BUF_APPENDF(I5 "source: \"%s\";\n", source_name);
-          }
-
-        //Fill
-
-        BUF_APPEND(I5 "fill {\n");
-        if (!pro->proxy.fill.smooth)
-          BUF_APPEND(I6 "smooth: 0;\n");
-        //TODO Support spread
-        //TODO Support source
-
-        if (pro->proxy.fill.pos_rel_x || pro->proxy.fill.pos_rel_y ||
-            pro->proxy.fill.pos_abs_x || pro->proxy.fill.pos_abs_y)
-          {
-             BUF_APPEND(I6 "origin {\n");
-             if (pro->proxy.fill.pos_rel_x || pro->proxy.fill.pos_rel_y)
-               _edje_source_with_double_values_append(I7 "relative", 2,
-                                                      TO_DOUBLE(pro->proxy.fill.pos_rel_x),
-                                                      TO_DOUBLE(pro->proxy.fill.pos_rel_y),
-                                                      buf, &ret);
-             if (pro->proxy.fill.pos_abs_x || pro->proxy.fill.pos_abs_y)
-               BUF_APPENDF(I7 "offset: %d %d;\n", pro->proxy.fill.pos_abs_x, pro->proxy.fill.pos_abs_y);
-             BUF_APPEND(I6 "}\n");
-          }
-
-        if (TO_DOUBLE(pro->proxy.fill.rel_x) != 1.0 || TO_DOUBLE(pro->proxy.fill.rel_y) != 1.0 ||
-            pro->proxy.fill.abs_x || pro->proxy.fill.abs_y)
-          {
-             BUF_APPEND(I6 "size {\n");
-             if (pro->proxy.fill.rel_x != 1.0 || pro->proxy.fill.rel_y != 1.0)
-               _edje_source_with_double_values_append(I7 "relative", 2,
-                                                      TO_DOUBLE(pro->proxy.fill.rel_x),
-                                                      TO_DOUBLE(pro->proxy.fill.rel_y),
-                                                      buf, &ret);
-             if (pro->proxy.fill.abs_x || pro->proxy.fill.abs_y)
-               BUF_APPENDF(I7 "offset: %d %d;\n", pro->proxy.fill.abs_x, pro->proxy.fill.abs_y);
-             BUF_APPEND(I6 "}\n");
-          }
-        if (pro->proxy.fill.type == EDJE_FILL_TYPE_TILE)
-          BUF_APPEND(I6 "type: TILE;\n");
-
-        BUF_APPEND(I5 "}\n");
-     }
+     _edje_generate_source_state_proxy(ed, pd, buf);
 
    //Text
    if ((rp->part->type == EDJE_PART_TYPE_TEXT) || (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
@@ -12121,6 +12494,9 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
              BUF_APPEND(I5 "}\n");
           }
      }
+
+   //Relative block
+    _edje_generate_source_state_relative(ed, pd, buf);
 
    BUF_APPEND(I4 "}\n"); //description
    return ret;
