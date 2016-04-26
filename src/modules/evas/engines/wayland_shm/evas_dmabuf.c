@@ -19,7 +19,7 @@
    do {                            \
       sym_## xx = dlsym(lib, #xx); \
       if (!(sym_ ## xx)) {         \
-         fail = 1;                 \
+         fail = EINA_TRUE;         \
       }                            \
    } while (0)
 
@@ -83,7 +83,7 @@ _get_buffer_manager(void)
 {
    int fd;
    void *drm_intel_lib;
-   int fail;
+   Eina_Bool fail = EINA_FALSE;
 
    if (buffer_manager) return buffer_manager;
 
