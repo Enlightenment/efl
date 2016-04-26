@@ -1,4 +1,5 @@
 class Efl.Network.Server (Efl.Network.Base) {
+   [[Efl network server]]
    legacy_prefix: ecore_con_server;
    eo_prefix: efl_network_server;
    methods {
@@ -62,6 +63,7 @@ class Efl.Network.Server (Efl.Network.Base) {
          }
       }
       @property connection_type {
+        [[Type of the server connection as defined in @Ecore.Con.Type]]
         get {
             legacy: null;
         }
@@ -69,7 +71,7 @@ class Efl.Network.Server (Efl.Network.Base) {
             legacy: null;
         }
         values {
-            conn_type: Ecore.Con.Type;
+            conn_type: Ecore.Con.Type; [[Connection type]]
         }
       }
    }

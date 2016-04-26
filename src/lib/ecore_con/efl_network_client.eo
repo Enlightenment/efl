@@ -1,10 +1,10 @@
 class Efl.Network.Client (Efl.Network.Base) {
+   [[Efl network client]]
    legacy_prefix: ecore_con_client;
    eo_prefix: efl_network_client_obj;
    methods {
       @property server {
-         [[Controls the server representing the socket the client has
-           connected to.]]
+         [[The server the client is connected to.]]
          get {
          }
          values {
