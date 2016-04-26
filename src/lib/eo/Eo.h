@@ -855,18 +855,6 @@ EAPI void eo_del_intercept_set(Eo *obj, Eo_Del_Intercept del_intercept_func);
 EAPI Eo_Del_Intercept eo_del_intercept_get(const Eo *obj);
 
 /**
- * @brief Unrefs the object and reparents it to NULL.
- * @param obj the object to work on.
- *
- * Because eo_del() unrefs and reparents to NULL, it doesn't really delete the
- * object.
- *
- * @see eo_unref()
- * @see eo_parent_set()
- */
-EAPI void eo_del(const Eo *obj);
-
-/**
  * @def eo_xref(obj, ref_obj)
  * Convenience macro around eo_xref_internal()
  * @see eo_xref()

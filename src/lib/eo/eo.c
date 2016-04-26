@@ -1371,19 +1371,6 @@ eo_unref(const Eo *obj_id)
    _eo_unref(obj);
 }
 
-EAPI void
-eo_del(const Eo *obj)
-{
-   if (eo_parent_get((Eo *) obj))
-     {
-        eo_parent_set((Eo *) obj, NULL);
-     }
-   else
-     {
-        eo_unref(obj);
-     }
-}
-
 EAPI int
 eo_ref_get(const Eo *obj_id)
 {

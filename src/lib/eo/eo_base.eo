@@ -74,6 +74,15 @@ abstract Eo.Base ()
             parent: Eo.Base * @nullable; [[the new parent]]
          }
       }
+      del @const {
+         [[Unrefs the object and reparents it to NULL.
+
+           Because eo_del() unrefs and reparents to NULL, it doesn't really delete the object.
+
+           This method accepts a const object for convenience, so all objects
+           could be passed to it easily.
+         ]]
+      }
       @property id {
          [[ The id/name of the object.
 
