@@ -644,6 +644,13 @@ _elm_icon_eo_base_constructor(Eo *obj, Elm_Icon_Data *sd)
    return obj;
 }
 
+static void
+_elm_icon_class_constructor(Eo_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+/* Legacy deprecated functions */
 EAPI Eina_Bool
 elm_icon_memfile_set(Evas_Object *obj,
                      const void *img,
@@ -729,45 +736,6 @@ elm_icon_animated_play_get(const Evas_Object *obj)
    ELM_ICON_CHECK(obj) EINA_FALSE;
 
    return elm_image_animated_play_get(obj);
-}
-
-EOLIAN static Eina_Bool
-_elm_icon_standard_set(Eo *obj, Elm_Icon_Data *_pd EINA_UNUSED, const char *name)
-{
-   Eina_Bool fdo = EINA_FALSE;
-
-   if (!name) return EINA_FALSE;
-
-   evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, obj);
-
-   Eina_Bool int_ret = _internal_elm_icon_standard_set(obj, name, &fdo);
-
-   if (fdo)
-     evas_object_event_callback_add
-       (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, obj);
-
-   return int_ret;
-}
-
-EOLIAN static const char*
-_elm_icon_standard_get(Eo *obj EINA_UNUSED, Elm_Icon_Data *sd)
-{
-
-   return sd->stdicon;
-}
-
-EINA_DEPRECATED EOLIAN static void
-_elm_icon_order_lookup_set(Eo *obj EINA_UNUSED, Elm_Icon_Data *sd EINA_UNUSED,
-                           Elm_Icon_Lookup_Order order EINA_UNUSED)
-{
-   // this method's behaviour has been overridden by elm_config_icon_theme_set
-}
-
-EINA_DEPRECATED EOLIAN static Elm_Icon_Lookup_Order
-_elm_icon_order_lookup_get(Eo *obj EINA_UNUSED, Elm_Icon_Data *sd EINA_UNUSED)
-{
-   return ELM_ICON_LOOKUP_FDO_THEME;
 }
 
 EAPI void
@@ -902,12 +870,6 @@ elm_icon_aspect_fixed_get(const Evas_Object *obj)
    return elm_image_aspect_fixed_get(obj);
 }
 
-static void
-_elm_icon_class_constructor(Eo_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
-
 EAPI void
 elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group)
 {
@@ -936,6 +898,49 @@ elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group)
         sd->thumb.eeh = ecore_event_handler_add
             (ELM_ECORE_EVENT_ETHUMB_CONNECT, _icon_thumb_apply_cb, obj);
      }
+}
+
+EAPI Eina_Bool
+elm_icon_standard_set(Evas_Object *obj, const char *name)
+{
+   Eina_Bool fdo = EINA_FALSE;
+
+   ELM_ICON_CHECK(obj) EINA_FALSE;
+
+   if (!name) return EINA_FALSE;
+
+   evas_object_event_callback_del_full
+     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, obj);
+
+   Eina_Bool int_ret = _internal_elm_icon_standard_set(obj, name, &fdo);
+
+   if (fdo)
+     evas_object_event_callback_add
+       (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, obj);
+
+   return int_ret;
+}
+
+EAPI const char*
+elm_icon_standard_get(const Evas_Object *obj)
+{
+   ELM_ICON_CHECK(obj) NULL;
+   ELM_ICON_DATA_GET(obj, sd);
+
+   return sd->stdicon;
+}
+
+EAPI void
+elm_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED,
+                           Elm_Icon_Lookup_Order order EINA_UNUSED)
+{
+   // this method's behaviour has been overridden by elm_config_icon_theme_set
+}
+
+EAPI Elm_Icon_Lookup_Order
+elm_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED)
+{
+   return ELM_ICON_LOOKUP_FDO_THEME;
 }
 
 #include "elm_icon.eo.c"

@@ -3810,19 +3810,6 @@ _elm_toolbar_item_state_prev(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *ite
    return eina_list_data_get(prev_state);
 }
 
-EINA_DEPRECATED EOLIAN static void
-_elm_toolbar_icon_order_lookup_set(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd EINA_UNUSED,
-                                   Elm_Icon_Lookup_Order order EINA_UNUSED)
-{
-   // this method's behaviour has been overridden by elm_config_icon_theme_set
-}
-
-EINA_DEPRECATED EOLIAN static Elm_Icon_Lookup_Order
-_elm_toolbar_icon_order_lookup_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd EINA_UNUSED)
-{
-   return ELM_ICON_LOOKUP_FDO_THEME;
-}
-
 EOLIAN static void
 _elm_toolbar_horizontal_set(Eo *obj, Elm_Toolbar_Data *sd, Eina_Bool horizontal)
 {
@@ -4105,6 +4092,19 @@ _elm_toolbar_evas_object_smart_calculate(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUS
    _sizing_eval(obj);
 }
 
+/* Legacy deprecated functions */
 
+EAPI void
+elm_toolbar_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED,
+                                   Elm_Icon_Lookup_Order order EINA_UNUSED)
+{
+   // this method's behaviour has been overridden by elm_config_icon_theme_set
+}
+
+EAPI Elm_Icon_Lookup_Order
+elm_toolbar_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED)
+{
+   return ELM_ICON_LOOKUP_FDO_THEME;
+}
 #include "elm_toolbar.eo.c"
 #include "elm_toolbar_item.eo.c"

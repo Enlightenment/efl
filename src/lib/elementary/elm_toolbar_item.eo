@@ -102,7 +102,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
 
                        Toolbar will load icon image from fdo or current theme.
                        This behavior can be set by
-                       @Elm.Toolbar.icon_order_lookup.set function.
+                       elm_toolbar_icon_order_lookup_set function.
                        If an absolute path is provided it will load it direct
                        from a file.
 
@@ -217,7 +217,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                 [[Add a new state to $item.
 
                   Toolbar will load icon image from fdo or current theme.
-                  This behavior can be set by @Elm.Toolbar.icon_order_lookup.set
+                  This behavior can be set by elm_toolbar_icon_order_lookup_set
                   function. If an absolute path is provided it will load it
                   direct from a file.
 
