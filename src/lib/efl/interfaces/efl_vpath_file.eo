@@ -38,7 +38,7 @@ class Efl.Vpath_File (Eo.Base)
         return: bool; [[ Result callback already called ]]
       }
       wait {
-        [[ If not fteched yet, wait until it is and call result cb ]]
+        [[ If not fetched yet, wait until it is and call result cb ]]
       }
    }
    events {

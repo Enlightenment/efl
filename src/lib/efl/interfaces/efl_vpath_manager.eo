@@ -15,14 +15,14 @@ class Efl.Vpath_Manager (Eo.Base)
          return: own(Efl.Vpath_File *); [[ An object representing the file ]]
       }
       register @class {
-         [[ ]]
+         [[Register a vpath with the manager ]]
          params {
-            priority: int; [[ Search order - higher values tired first ]]
+            priority: int; [[ Search order - higher values tried first ]]
             vpath: Efl.Vpath * @nonull; [[ A Vpath implementation object ]]
          }
       }
       unregister @class {
-         [[ ]]
+         [[ Unregister a vpath from the manager ]]
          params {
             vpath: Efl.Vpath * @nonull; [[ A Vpath implementation object ]]
          }
