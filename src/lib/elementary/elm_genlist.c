@@ -6384,7 +6384,7 @@ _elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
    if (it->parent)
      {
         Elm_Object_Item *eo_rel = NULL;
-        Eina_List *l;
+        Eina_List *l, *last;
         int cmp_result;
 
         l = eina_list_search_sorted_near_list
@@ -6408,6 +6408,12 @@ _elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
                {
                   it->parent->item->items = eina_list_append_relative_list
                       (it->parent->item->items, eo_it, l);
+                  if (rel->item->items && rel->item->expanded)
+                    {
+                       last = eina_list_last(rel->item->items);
+                       eo_rel = eina_list_data_get(last);
+                       rel = eo_data_scope_get(eo_rel, ELM_GENLIST_ITEM_CLASS);
+                    }
                   sd->items = eina_inlist_append_relative
                       (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
                   it->item->before = EINA_FALSE;
