@@ -1,8 +1,8 @@
 enum Elm.Bg.Option
 {
-   [[
-     Identifiers on how a background widget is to display its image --
-     if it was set to use an image file.
+   [[Identifiers on how a background widget is to display its image
+
+   -- if it was set to use an image file.
 
      See also @Elm.Bg.option.set, @Elm.Bg.option.get.
    ]]
@@ -15,37 +15,33 @@ enum Elm.Bg.Option
 
 class Elm.Bg (Elm.Layout, Efl.File)
 {
+   [[The bg (background) widget is used for setting (solid) background decorations
+
+   to a window (unless it has transparency enabled) or to any container object. It
+   works just like an image, but has some properties useful to a background, like
+   setting it to tiled, centered, scaled or stretched.
+   ]]
    eo_prefix: elm_obj_bg;
    methods {
       @property option {
+         [[The mode of display for a given background widget's image]]
          set {
-            [[Set the mode of display for a given background widget's image
-
-              This sets how the background widget will display its image. This
+            [[This sets how the background widget will display its image. This
               will only work if the @Efl.File.file.set was previously called with
               an image file on $obj. The image can be display tiled, scaled,
               centered or stretched. @Elm.Bg.Option.scale by default.
-
-              See also @.option.get.
             ]]
-
          }
          get {
-            [[Get the mode of display for a given background widget's image.
-
-              See also @.option.set for more details
-
-            ]]
          }
          values {
             option: Elm.Bg.Option; [[The desired background option(See @Elm.Bg.Option)]]
          }
       }
       @property color {
+         [[The color on a given background widget]]
          set {
-            [[Set the color on a given background widget
-
-              This sets the color used for the background rectangle, in RGB
+            [[This sets the color used for the background rectangle, in RGB
               format. Each color component's range is from 0 to 255.
 
               Note: You probably only want to use this function if you haven't
@@ -53,20 +49,12 @@ class Elm.Bg (Elm.Layout, Efl.File)
               color background.
 
               Note: You can reset the color by setting $r, $g, $b as -1, -1, -1.
-
-              See also @.color.get
-
             ]]
             legacy: null; /* legacy doesn't have 'a' param */
          }
          get {
-            [[Get the color set on a given background widget
-
-              Note: Use $null pointers on the file components you're not
+            [[Note: Use $null pointers on the file components you're not
               interested in: they'll be ignored by the function.
-
-              See also @.color.get for more details
-
             ]]
             legacy: null; /* legacy doesn't have 'a' param */
 
@@ -113,5 +101,4 @@ class Elm.Bg (Elm.Layout, Efl.File)
       Efl.File.file.set;
       Efl.File.file.get;
    }
-
 }
