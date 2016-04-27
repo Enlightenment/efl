@@ -5243,6 +5243,55 @@ EAPI const char *edje_edit_font_path_get(Evas_Object *obj, const char *alias);
 EAPI Eina_Bool
 edje_edit_image_set_exists(Evas_Object *obj, const char *image);
 
+/** Get id of image set.
+ *
+ * @param obj Object being edited.
+ * @param name image set's name.
+ *
+ * @return The id of the given image name.
+ *
+ * @since 1.18
+ */
+EAPI int
+edje_edit_image_set_id_get(Evas_Object *obj, const char *name);
+
+/** Rename image set.
+ *
+ * @param obj Object being edited.
+ * @param set image set's name.
+ * @param new_set new name of image set.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_image_set_rename(Evas_Object *obj, const char *set, const char *new_set);
+
+/** Get the list of all the image sets in the given edje.
+ * Use edje_edit_string_list_free() when you don't need the list anymore.
+ *
+ * @param obj Object being edited.
+ *
+ * @return A List containing all image sets names found in the edje file.
+ *
+ * @since 1.18
+ */
+EAPI Eina_List *
+edje_edit_image_set_list_get(Evas_Object *obj);
+
+/** Add new image set.
+ *
+ * @param obj Object being edited.
+ * @param name image set's name.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_image_set_add(Evas_Object *obj, const char *name);
+
 //@}
 /******************************************************************************/
 /**************************   IMAGES API   ************************************/
