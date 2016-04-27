@@ -60,10 +60,8 @@ struct _Dmabuf_Surface
    Dmabuf_Buffer *pre;
    Dmabuf_Buffer **buffer;
    int nbuf;
-   int pending;
 
    Eina_Bool alpha : 1;
-   Eina_Bool failed : 1;
 };
 
 static void _internal_evas_dmabuf_surface_destroy(Dmabuf_Surface *surface);
@@ -121,12 +119,6 @@ buffer_release(void *data, struct wl_buffer *buffer EINA_UNUSED)
 {
    Dmabuf_Buffer *b = data;
 
-   if (dmabuf_totally_hosed)
-     {
-        _internal_evas_dmabuf_surface_destroy(b->surface);
-        return;
-     }
-
    b->busy = EINA_FALSE;
    if (b->orphaned) _evas_dmabuf_buffer_destroy(b);
 }
@@ -143,9 +135,10 @@ _allocation_complete(Dmabuf_Buffer *b)
    int w, h, num_buf;
    Eina_Bool recovered;
 
-   b->surface->pending--;
    b->pending = EINA_FALSE;
-   if (!b->surface->failed) return;
+   if (!dmabuf_totally_hosed) return;
+
+   if (!b->surface) return;
 
    /* Something went wrong, better try to fall back to a different
     * buffer type...
@@ -154,7 +147,11 @@ _allocation_complete(Dmabuf_Buffer *b)
    w = b->w;
    h = b->h;
    num_buf = b->surface->nbuf;
-   dmabuf_totally_hosed = EINA_TRUE;
+
+   /* Depending when things broke we may need this commit to get
+    * the frame callback to fire and keep the animator running
+    */
+   wl_surface_commit(b->surface->wl_surface);
    _evas_dmabuf_surface_destroy(b->surface->surface);
    recovered = _evas_surface_init(s, w, h, num_buf);
    if (recovered) return;
@@ -169,7 +166,6 @@ _create_succeeded(void *data,
                  struct wl_buffer *new_buffer)
 {
    Dmabuf_Buffer *b = data;
-   Eina_Bool failed;
 
    b->wl_buffer = new_buffer;
    wl_buffer_add_listener(b->wl_buffer, &buffer_listener, b);
@@ -177,16 +173,17 @@ _create_succeeded(void *data,
 
    if (b->orphaned)
      {
-        _evas_dmabuf_buffer_destroy(b);
         _allocation_complete(b);
+        _evas_dmabuf_buffer_destroy(b);
         return;
      }
+
+   _allocation_complete(b);
+   if (dmabuf_totally_hosed) return;
+
    if (!b->busy) return;
    if (b != b->surface->pre) return;
 
-   failed = b->surface->failed;
-   _allocation_complete(b);
-   if (failed) return;
    /* This buffer was drawn into before it had a handle */
    wl_surface_attach(b->surface->wl_surface, b->wl_buffer, 0, 0);
    _evas_surface_damage(b->surface->wl_surface, b->surface->compositor_version,
@@ -203,8 +200,8 @@ _create_failed(void *data, struct zwp_linux_buffer_params_v1 *params)
 
    zwp_linux_buffer_params_v1_destroy(params);
 
-   b->surface->failed = EINA_TRUE;
-   if (b->orphaned) _evas_dmabuf_buffer_destroy(b);
+   dmabuf_totally_hosed = EINA_TRUE;
+   _evas_dmabuf_buffer_destroy(b);
    _allocation_complete(b);
 }
 
@@ -224,12 +221,12 @@ _evas_dmabuf_buffer_unlock(Dmabuf_Buffer *b)
 static void
 _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
 {
-   if (b->busy || b->pending)
+   if (b->locked || b->busy || b->pending)
      {
         b->orphaned = EINA_TRUE;
+        b->surface = NULL;
         return;
      }
-   if (b->locked) _evas_dmabuf_buffer_unlock(b);
    sym_drm_intel_bo_unreference(b->bo);
    if (b->wl_buffer) wl_buffer_destroy(b->wl_buffer);
    b->wl_buffer = NULL;
@@ -393,7 +390,6 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    zwp_linux_buffer_params_v1_add_listener(dp, &params_listener, out);
    zwp_linux_buffer_params_v1_create(dp, out->w, out->h,
                                      DRM_FORMAT_ARGB8888, flags);
-   s->pending++;
    return out;
 err:
    _evas_dmabuf_buffer_destroy(out);
@@ -409,7 +405,6 @@ _internal_evas_dmabuf_surface_destroy(Dmabuf_Surface *surface)
       _evas_dmabuf_buffer_destroy(surface->buffer[i]);
 
    free(surface->buffer);
-   free(surface);
 }
 
 static void

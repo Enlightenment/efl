@@ -125,6 +125,7 @@ _evas_outbuf_free(Outbuf *ob)
    _evas_outbuf_idle_flush(ob);
 
    if (ob->surface) ob->surface->funcs.destroy(ob->surface);
+   free(ob->surface);
 
    eina_array_flush(&ob->priv.onebuf_regions);
 
