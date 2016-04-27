@@ -4,17 +4,13 @@ type Elm_Calendar_Format_Cb: __undefined_type;
 
 enum Elm.Calendar.Mark.Repeat.Type
 {
-   [[
-     Event periodicity, used to define if a mark should be repeated
-     beyond event's day. It's set when a mark is added.
+   [[Event periodicity, used to define if a mark should be repeated beyond event's day.
 
-     So, for a mark added to 13th May with periodicity set to WEEKLY,
-     there will be marks every week after this date. Marks will be displayed
-     at 13th, 20th, 27th, 3rd June ...
+   It's set when a mark is added. So, for a mark added to 13th May with periodicity
+   set to WEEKLY, there will be marks every week after this date. Marks will be
+   displayed at 13th, 20th, 27th, 3rd June ...
 
-     Values don't work as bitmask, only one can be chosen.
-
-     See also @Elm.Calendar.mark_add.
+   Values don't work as bitmask, only one can be chosen. See also @Elm.Calendar.mark_add.
    ]]
    legacy: elm_calendar;
    unique, [[Default value. Marks will be displayed only on event day.]]
@@ -29,30 +25,28 @@ enum Elm.Calendar.Mark.Repeat.Type
 
 enum Elm.Calendar.Weekday
 {
-   [[
-     A weekday
+   [[A weekday
 
-     See also @Elm.Calendar.first_day_of_week.set.
+   See also @Elm.Calendar.first_day_of_week.set.
    ]]
    legacy: elm_day;
-   sunday,
-   monday,
-   tuesday,
-   wednesday,
-   thursday,
-   friday,
-   saturday,
-   last
+   sunday, [[Sunday weekday]]
+   monday, [[Monday weekday]]
+   tuesday, [[Tusday weekday]]
+   wednesday, [[Wednesday weekday]]
+   thursday, [[Thursday weekday]]
+   friday, [[Friday weekday]]
+   saturday, [[Saturday weekday]]
+   last [[Sentinel value to mark last entry]]
 }
 
 enum Elm.Calendar.Select.Mode
 {
-   [[
-     The mode, who determine how user could select a day
+   [[The mode, who determine how user could select a day
 
-     See also @Elm.Calendar.select_mode.set()
+   See also @Elm.Calendar.select_mode.set()
    ]]
-   default = 0, [[Default value. a day is always selected.]]
+   default = 0, [[Default value. A day is always selected.]]
    always, [[A day is always selected.]]
    none, [[None of the days can be selected.]]
    ondemand [[User may have selected a day or not.]]
@@ -60,18 +54,17 @@ enum Elm.Calendar.Select.Mode
 
 enum Elm.Calendar.Selectable
 {
-   [[
-     A bitmask used to define which fields of a $tm struct will be taken into
-     account, when elm_calendar_selected_time_set() is invoked.
+   [[A bitmask used to define which fields of a $tm struct will be taken into
+   account, when elm_calendar_selected_time_set() is invoked.
 
-     See also @Elm.Calendar.selectable.set, @Elm.Calendar.selected_time_set.
+   See also @Elm.Calendar.selectable.set, @Elm.Calendar.selected_time_set.
 
-     @since 1.8
+   @since 1.8
    ]]
-   none = 0,
-   year = (1 << 0),
-   month = (1 << 1),
-   day = (1 << 2)
+   none = 0, [[Take no field into account]]
+   year = (1 << 0), [[Take year field into account]]
+   month = (1 << 1), [[Take month field into account]]
+   day = (1 << 2) [[Take day field into account]]
 }
 
 struct Elm.Calendar.Mark; [[Item handle for a calendar mark.
@@ -81,97 +74,82 @@ struct Elm.Calendar.Mark; [[Item handle for a calendar mark.
 
 class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
 {
+   [[Calendar widget
+
+   It helps applications to flexibly display a calendar with day of the week,
+   date, year and month. Applications are able to set specific dates to be
+   reported back, when selected, in the smart callbacks of the calendar widget.
+   ]]
    eo_prefix: elm_obj_calendar;
    methods {
       @property first_day_of_week {
+         [[The first day of week to use on calendar widgets'.]]
          set {
-            [[Set the first day of week to use on calendar widgets'.]]
          }
          get {
-            [[Get the first day of week, who are used on calendar widgets'.
-
-              See also  @.first_day_of_week.set for more details.
-
-            ]]
          }
          values {
-            day: Elm.Calendar.Weekday; [[An int which correspond to the first day of the week (Sunday = 0, Monday = 1,
-            ..., Saturday = 6).]]
+            day: Elm.Calendar.Weekday; [[Weekday enum value, see @Elm.Calendar.Weekday]]
          }
       }
       @property selectable {
+         [[Define which fields of a tm struct will be taken into account, when
+           Elm.Calendar.selected_time.set is invoked.
+
+           By Default the bitmask is set to use all fields of a tm struct (year,
+           month and day of the month).
+
+           See also @.selected_time_set.
+
+           @since 1.8
+         ]]
          set {
-            [[Define which fields of a tm struct will be taken into account, when
-              Elm.Calendar.selected_time.set is invoked.
-
-              By Default the bitmask is set to use all fields of a tm struct (year,
-              month and day of the month).
-
-
-              See also @.selected_time_set.
-
-              @since 1.8
-            ]]
          }
          get {
-            [[Get how elm_calendar_selected_time_set manage a date
-
-              See also @.selectable.set,
-              @.selected_time_set.
-
-              @since 1.8
-            ]]
          }
          values {
             selectable: Elm.Calendar.Selectable; [[A bitmask of Elm_Calendar_Selectable]]
          }
       }
       @property interval {
+         [[The interval on time updates for an user mouse button hold on calendar widgets'
+           month/year selection.
+
+           This interval value is decreased while the user holds the
+           mouse pointer either selecting next or previous month/year.
+
+           This helps the user to get to a given month distant from the
+           current one easier/faster, as it will start to change quicker and
+           quicker on mouse button holds.
+
+           The calculation for the next change interval value, starting from
+           the one set with this call, is the previous interval divided by
+           1.05, so it decreases a little bit.
+
+           The default starting interval value for automatic changes is
+           0.85 seconds.
+         ]]
          set {
-            [[Set the interval on time updates for an user mouse button hold
-              on calendar widgets' month/year selection.
-
-              This interval value is decreased while the user holds the
-              mouse pointer either selecting next or previous month/year.
-
-              This helps the user to get to a given month distant from the
-              current one easier/faster, as it will start to change quicker and
-              quicker on mouse button holds.
-
-              The calculation for the next change interval value, starting from
-              the one set with this call, is the previous interval divided by
-              1.05, so it decreases a little bit.
-
-              The default starting interval value for automatic changes is
-              0.85 seconds.
-
-              See also @.interval.get.
-            ]]
          }
          get {
-            [[Get the interval on time updates for an user mouse button hold
-              on calendar widgets' month/year selection.
-
-              See also @.interval.set for more details.
-            ]]
          }
          values {
             interval: double; [[The (first) interval value in seconds]]
          }
       }
       @property weekdays_names {
-         set {
-            [[Set weekdays names to be displayed by the calendar.
+         [[Weekdays names to be displayed by the calendar.
 
-              By default, weekdays abbreviations get from system are displayed:
-              E.g. for an en_US locale: "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
+           By default, weekdays abbreviations get from system are displayed:
+           E.g. for an en_US locale: "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
 
-              The first string should be related to Sunday, the second to Monday...
+           The first string should be related to Sunday, the second to Monday...
 
-              See also @.weekdays_names.get.
+           See also @.weekdays_names.get.
 
-              \@ref calendar_example_02.
-            ]]
+           \@ref calendar_example_02.
+           \@ref calendar_example_05.
+         ]]
               /* FIXME-doc
                *
                * The usage should be like this:
@@ -184,18 +162,9 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
                * elm_calendar_weekdays_names_set(calendar, weekdays);
                * @endcode
                */
+         set {
          }
          get {
-            [[Get weekdays names displayed by the calendar.
-
-              By default, weekdays abbreviations get from system are displayed:
-              E.g. for an en_US locale: "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
-              The first string is related to Sunday, the second to Monday...
-
-              See also @.weekdays_names.set.
-
-              \@ref calendar_example_05.
-            ]]
          }
          values {
             weekdays: const(char)**; [[Array of seven strings to be used as weekday names.
@@ -204,50 +173,36 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
          }
       }
       @property select_mode {
-         set {
-            [[Set select day mode to use.
+         [[Select day mode to use.
 
-              Set the day selection mode used.
-            ]]
+           The day selection mode used.
+         ]]
+         set {
          }
          get {
-            [[Get the select day mode used.
-
-              Get the day selection mode used.
-
-              See also @.select_mode.set for more details.
-
-            ]]
          }
          values {
             mode: Elm.Calendar.Select.Mode; [[The select mode to use.]]
          }
       }
       @property min_max_year {
+         [[The minimum and maximum values for the year
+
+           Maximum must be greater than minimum, except if you don't want to set
+           maximum year.
+           Default values are 1902 and -1.
+
+           If the maximum year is a negative value, it will be limited depending
+           on the platform architecture (year 2037 for 32 bits);
+
+           See also @.min_max_year.get.
+
+           \@ref calendar_example_03.
+           \@ref calendar_example_05.
+         ]]
          set {
-            [[Set the minimum and maximum values for the year
-
-              Maximum must be greater than minimum, except if you don't want to set
-              maximum year.
-              Default values are 1902 and -1.
-
-              If the maximum year is a negative value, it will be limited depending
-              on the platform architecture (year 2037 for 32 bits);
-
-              See also @.min_max_year.get.
-
-              \@ref calendar_example_03.
-            ]]
          }
          get {
-            [[Get the minimum and maximum values for the year
-
-              Default values are 1902 and -1.
-
-              See also @.min_max_year.set for more details.
-
-              \@ref calendar_example_05.
-             ]]
          }
          values {
             min: int; [[The minimum year, greater than 1901;]]
@@ -295,7 +250,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
               @.marks_clear.
 
             ]]
-            return: const(list<Elm.Calendar.Mark*>)*;
+            return: const(list<Elm.Calendar.Mark*>)*; [[List with all calendar marks]]
          }
       }
       selected_time_set {
@@ -325,7 +280,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
 
          \@ref calendar_example_05.
          ]]
-         return: bool;
+         return: bool; [[$true if the method succeeded, $false otherwise]]
          params {
             @inout selected_time: Efl.Time; [[A tm struct to point to selected date.]]
          }
@@ -341,11 +296,9 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
            For this, @.marks_draw(). However, when user selects
            next or previous month calendar forces marks drawn.
 
-           Marks created with this method can be deleted with
-           @.mark_del().
+           Marks created with this method can be deleted with @.mark_del().
 
-           See also @.marks_draw,
-           @.mark_del().
+           See also @.marks_draw, @.mark_del().
 
            \@ref calendar_example_06
          ]]
@@ -367,7 +320,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
             * elm_calendar_marks_draw(cal);
             * @endcode
             */
-         return: Elm.Calendar.Mark *;
+         return: Elm.Calendar.Mark *; [[The newly added calendar mark]]
          params {
             @in mark_type: const(char)*; [[A string used to define the type of mark. It will be
             emitted to the theme, that should display a related modification on these
@@ -380,14 +333,12 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
          }
       }
       mark_del {
-         [[
-           Delete mark from the calendar.
+         [[Delete mark from the calendar.
 
            If deleting all calendar marks is required, @.marks_clear()
            should be used instead of getting marks list and deleting each one.
 
-           See also @.mark_add(),
-           @.marks_clear().
+           See also @.mark_add(), @.marks_clear().
          ]]
          legacy: null;
          params {
@@ -397,11 +348,8 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
       marks_clear {
          [[Remove all calendar's marks
 
-           See also  @.mark_add,
-           @.mark_del().
-
+           See also  @.mark_add, @.mark_del().
          ]]
-
       }
       marks_draw {
          [[Draw calendar marks.
@@ -414,20 +362,17 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
            When the month is changed, i.e. user selects next or previous month,
            marks will be drawn.
 
-           See also  @.mark_add,
-           @.mark_del(),
-           @.marks_clear.
+           See also  @.mark_add, @.mark_del(), @.marks_clear.
 
            \@ref calendar_example_06
          ]]
-
       }
       displayed_time_get @const {
          [[Get the current time displayed in the widget
 
            @since 1.8
          ]]
-         return: bool;
+         return: bool; [[$true if the method succeeded, $false otherwise]]
          params {
             @inout displayed_time: Efl.Time; [[A tm struct to point to displayed date.]]
          }
@@ -449,8 +394,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
       Elm.Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      changed;
-      display,changed;
+      changed; [[Emitted when the date in the calendar is changed]]
+      display,changed; [[Emitted when the current month displayed in the calendar is changed]]
    }
-
 }
