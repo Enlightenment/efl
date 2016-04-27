@@ -1256,11 +1256,13 @@ local class_to_node = function(cl, main)
     local sn = cn:lower():gsub("%.", "_")
     local attrs = { "label = \"" .. cn .. "\"" }
     local clr = class_to_color(cl)
-    if main then
-        attrs[#attrs + 1] = "style = filled"
-        attrs[#attrs + 1] = "fillcolor = " .. clr[2]
-    end
+    attrs[#attrs + 1] = "style = filled"
     attrs[#attrs + 1] = "color = " .. clr[1]
+    if main then
+        attrs[#attrs + 1] = "fillcolor = " .. clr[2]
+    else
+        attrs[#attrs + 1] = "fillcolor = white"
+    end
 
     -- FIXME: need a dokuwiki graphviz plugin with proper URL support
     -- the existing one only supports raw URLs (no dokuwikí namespaces)
@@ -1290,6 +1292,7 @@ local build_igraph = function(cl)
     buf[#buf + 1] = "digraph hierarchy {\n"
     buf[#buf + 1] = "rankdir = TB\n"
     buf[#buf + 1] = "size = \"6\"\n"
+    buf[#buf + 1] = "bgcolor = \"transparent\"\n"
     buf[#buf + 1] = "node [shape = box]\n\n"
 
     local nbuf = {}
