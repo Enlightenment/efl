@@ -295,7 +295,6 @@ _keyboard_key_send(Elput_Device *dev, enum libinput_key_state state, const char 
    strcpy((char *)ev->key, key);
    if (strlen(compose)) strcpy((char *)ev->compose, compose);
 
-   /* ev->string = ev->compose; */
    ev->keycode = code;
    ev->modifiers = dev->seat->modifiers;
    ev->timestamp = timestamp;
@@ -493,7 +492,7 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
         compose = eina_str_convert("ISO8859-1", "UTF-8", buffer);
         if (!compose)
           {
-             ERR("Ecore_Drm2 cannot convert input key string '%s' to UTF-8. "
+             ERR("Elput cannot convert input key string '%s' to UTF-8. "
                  "Is Eina built with iconv support?", buffer);
           }
         else
