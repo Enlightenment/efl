@@ -1,85 +1,73 @@
 class Elm.Button (Elm.Layout, Evas.Clickable_Interface,
                   Elm.Interface_Atspi_Widget_Action)
 {
+   [[Push-button widget
+
+   Press it and run some function. It can contain a simple label and icon object
+   and it also has an autorepeat feature.
+   ]]
    eo_prefix: elm_obj_button;
    methods {
       @property autorepeat_initial_timeout {
+         [[The initial timeout before the autorepeat event is generated
+
+           Sets the timeout, in seconds, since the button is pressed until the
+           first $repeated signal is emitted. If $t is 0.0 or less, there
+           won't be any delay and the event will be fired the moment the button is
+           pressed.
+
+           See also @.autorepeat.set, @.autorepeat_gap_timeout.set.
+         ]]
          set {
-            [[Set the initial timeout before the autorepeat event is generated
-
-              Sets the timeout, in seconds, since the button is pressed until the
-              first $repeated signal is emitted. If $t is 0.0 or less, there
-              won't be any delay and the event will be fired the moment the button is
-              pressed.
-
-              See also @.autorepeat.set,
-              @.autorepeat_gap_timeout.set.
-
-            ]]
          }
          get {
-            [[Get the initial timeout before the autorepeat event is generated
-
-              See also @.autorepeat_initial_timeout.set.
-
-            ]]
          }
          values {
             t: double; [[Timeout in seconds]]
          }
       }
       @property autorepeat_gap_timeout {
+         [[The interval between each generated autorepeat event
+
+           After the first $repeated event is fired, all subsequent ones will
+           follow after a delay of $t seconds for each.
+
+           See also @.autorepeat_initial_timeout.set.
+         ]]
          set {
-            [[Set the interval between each generated autorepeat event
-
-              After the first $repeated event is fired, all subsequent ones will
-              follow after a delay of $t seconds for each.
-
-              See also @.autorepeat_initial_timeout.set.
-
-            ]]
          }
          get {
-            [[Get the interval between each generated autorepeat event]]
          }
          values {
             t: double; [[Interval in seconds]]
          }
       }
       @property autorepeat {
+         [[Turn on/off the autorepeat event generated when the button is kept pressed
+
+           When off, no autorepeat is performed and buttons emit a normal $clicked
+           signal when they are clicked.
+
+           When on, keeping a button pressed will continuously emit a $repeated
+           signal until the button is released. The time it takes until it starts
+           emitting the signal is given by @.autorepeat_initial_timeout.set, and the
+           time between each new emission by @.autorepeat_gap_timeout.set.
+         ]]
          set {
-            [[Turn on/off the autorepeat event generated when the button is kept pressed
-
-              When off, no autorepeat is performed and buttons emit a normal $clicked
-              signal when they are clicked.
-
-              When on, keeping a button pressed will continuously emit a $repeated
-              signal until the button is released. The time it takes until it starts
-              emitting the signal is given by
-              @.autorepeat_initial_timeout.set, and the time between each
-              new emission by @.autorepeat_gap_timeout.set.
-
-            ]]
          }
          get {
-            [[Get whether the autorepeat feature is enabled
-              ($true if autorepeat is on, $false otherwise)
-
-              See also @.autorepeat.set.
-
-            ]]
          }
          values {
             on: bool; [[A bool to turn on/off the event]]
          }
       }
       @property admits_autorepeat {
+         [[Whether the button supports autorepeat.]]
          get {
-            [[Get whether the button supports autorepeat.]]
             legacy: null;
          }
          values {
-            ret: bool;
+            ret: bool; [[$true if autorepeat is supported, $false otherwise]]
          }
       }
    }
