@@ -1,5 +1,6 @@
 class Elm.Access (Elm.Widget)
 {
+[[Elm abstract accessibility class]]
 eo_prefix: elm_obj_access;
    data: null;
    implements {
@@ -9,5 +10,4 @@ eo_prefix: elm_obj_access;
       Elm.Widget.activate;
       Elm.Widget.on_focus;
    }
-
 }
