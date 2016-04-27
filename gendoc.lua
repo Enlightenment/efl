@@ -1240,6 +1240,72 @@ build_inherits = function(cl, t, lvl)
     return t
 end
 
+
+local class_to_color = function(cl)
+    local classt_to_color = {
+        [eolian.class_type.REGULAR] = { "black", "gray" },
+        [eolian.class_type.ABSTRACT] = { "black", "gray" },
+        [eolian.class_type.MIXIN] = { "blue", "skyblue" },
+        [eolian.class_type.INTERFACE] = { "cornflowerblue", "azure" }
+    }
+    return classt_to_color[cl:type_get()]
+end
+
+local class_to_node = function(cl, main)
+    local cn = cl:full_name_get()
+    local sn = cn:lower():gsub("%.", "_")
+    local attrs = { "label = \"" .. cn .. "\"" }
+    local clr = class_to_color(cl)
+    if main then
+        attrs[#attrs + 1] = "style = filled"
+        attrs[#attrs + 1] = "fillcolor = " .. clr[2]
+    end
+    attrs[#attrs + 1] = "color = " .. clr[1]
+
+    -- FIXME: need a dokuwiki graphviz plugin with proper URL support
+    -- the existing one only supports raw URLs (no dokuwikí namespaces)
+    --local url = ":" .. global_opts.root_nspace .. ":"
+    --                .. table.concat(gen_nsp_class(cl), ":")
+    --attrs[#attrs + 1] = "URL=\"" .. url .. "\""
+
+    return sn .. " [" .. table.concat(attrs, ", ") .. "]"
+end
+
+local build_igraph_r
+build_igraph_r = function(cl, nbuf, ibuf)
+    local sn = cl:full_name_get():lower():gsub("%.", "_")
+    for cln in cl:inherits_get() do
+        local acl = eolian.class_get_by_name(cln)
+        if not acl then
+            error("error retrieving inherited class " .. cln)
+        end
+        nbuf[#nbuf + 1] = class_to_node(acl)
+        ibuf[#ibuf + 1] = sn .. " -> " .. cln:lower():gsub("%.", "_")
+        build_igraph_r(acl, nbuf, ibuf)
+    end
+end
+
+local build_igraph = function(cl)
+    local buf = { "<graphviz>\n" }
+    buf[#buf + 1] = "digraph hierarchy {\n"
+    buf[#buf + 1] = "rankdir = TB\n"
+    buf[#buf + 1] = "size = \"6\"\n"
+    buf[#buf + 1] = "node [shape = box]\n\n"
+
+    local nbuf = {}
+    local ibuf = {}
+    nbuf[#nbuf + 1] = class_to_node(cl, true)
+    build_igraph_r(cl, nbuf, ibuf)
+
+    buf[#buf + 1] = table.concat(nbuf, "\n")
+    buf[#buf + 1] = "\n\n"
+
+    buf[#buf + 1] = table.concat(ibuf, "\n")
+    buf[#buf + 1] = "\n}\n</graphviz>"
+
+    return table.concat(buf)
+end
+
 local build_class = function(cl)
     local f = Writer(gen_nsp_class(cl))
     check_class(cl)
@@ -1248,6 +1314,9 @@ local build_class = function(cl)
 
     f:write_h("Inheritance hierarchy", 3)
     f:write_list(build_inherits(cl))
+    f:write_nl()
+    f:write_raw(build_igraph(cl))
+    f:write_nl(2)
 
     f:write_h("Description", 3)
     write_full_doc(f, cl:documentation_get())
