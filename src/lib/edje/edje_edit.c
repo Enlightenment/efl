@@ -8692,6 +8692,68 @@ edje_edit_image_set_image_del(Evas_Object *obj, const char *set_name, unsigned i
 FUNC_IMAGE_SET_API_SIZE(min);
 FUNC_IMAGE_SET_API_SIZE(max);
 
+EAPI Eina_Bool
+edje_edit_image_set_image_border_get(Evas_Object *obj, const char *set_name, unsigned int place, int *l, int *r, int *b, int *t)
+{
+   Edje_Image_Directory_Set *de = NULL;
+   Edje_Image_Directory_Set_Entry *dim = NULL;
+   unsigned int i;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file) return EINA_FALSE;
+   if (!ed->file->image_dir) return EINA_FALSE;
+
+   for (i = 0; i < ed->file->image_dir->sets_count; ++i)
+     {
+        de = ed->file->image_dir->sets + i;
+        if ((de->name) && (!strcmp(set_name, de->name)))
+          break;
+     }
+   if (i == ed->file->image_dir->sets_count) return EINA_FALSE;
+
+   dim = eina_list_nth(de->entries, place);
+   if (!dim) return EINA_FALSE;
+
+   if (l) *l = dim->border.l;
+   if (r) *r = dim->border.r;
+   if (b) *b = dim->border.b;
+   if (t) *t = dim->border.t;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_image_set_image_border_set(Evas_Object *obj, const char *set_name, unsigned int place, int l, int r, int b, int t)
+{
+   Edje_Image_Directory_Set *de = NULL;
+   Edje_Image_Directory_Set_Entry *dim = NULL;
+   unsigned int i;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file) return EINA_FALSE;
+   if (!ed->file->image_dir) return EINA_FALSE;
+
+   for (i = 0; i < ed->file->image_dir->sets_count; ++i)
+     {
+        de = ed->file->image_dir->sets + i;
+        if ((de->name) && (!strcmp(set_name, de->name)))
+          break;
+     }
+   if (i == ed->file->image_dir->sets_count) return EINA_FALSE;
+
+   dim = eina_list_nth(de->entries, place);
+   if (!dim) return EINA_FALSE;
+
+   if (l >= 0) dim->border.l = l;
+   if (r >= 0) dim->border.r = r;
+   if (b >= 0) dim->border.b = b;
+   if (t >= 0) dim->border.t = t;
+
+   return EINA_TRUE;
+}
+
 /****************/
 /*  IMAGES API  */
 /****************/
