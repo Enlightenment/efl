@@ -8552,6 +8552,97 @@ edje_edit_image_set_add(Evas_Object *obj, const char *name)
    return EINA_TRUE;
 }
 
+EAPI Eina_List *
+edje_edit_image_set_images_list_get(Evas_Object *obj, const char *name)
+{
+   Eina_List *images = NULL, *l;
+   Edje_Image_Directory_Set *de = NULL;
+   Edje_Image_Directory_Set_Entry *dim = NULL;
+   unsigned int i;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file) return NULL;
+   if (!ed->file->image_dir) return NULL;
+   if (!name) return NULL;
+
+   for (i = 0; i < ed->file->image_dir->sets_count; ++i)
+     {
+        de = ed->file->image_dir->sets + i;
+        if ((de->name) && (!strcmp(name, de->name)))
+          break;
+     }
+   if (i == ed->file->image_dir->sets_count) return NULL;
+
+   EINA_LIST_FOREACH(de->entries, l, dim)
+     {
+        images = eina_list_append(images, eina_stringshare_add(dim->name));
+     }
+
+   return images;
+}
+
+EAPI Eina_Bool
+edje_edit_image_set_image_add(Evas_Object *obj, const char *set_name, const char *name)
+{
+   Edje_Image_Directory_Set *de = NULL;
+   Edje_Image_Directory_Set_Entry *dim = NULL;
+   unsigned int i;
+   int id;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file) return EINA_FALSE;
+   if (!ed->file->image_dir) return EINA_FALSE;
+   if (!name) return EINA_FALSE;
+   id = edje_edit_image_id_get(obj, name);
+   if (id < 0) return EINA_FALSE;
+
+   for (i = 0; i < ed->file->image_dir->sets_count; ++i)
+     {
+        de = ed->file->image_dir->sets + i;
+        if ((de->name) && (!strcmp(set_name, de->name)))
+          break;
+     }
+   if (i == ed->file->image_dir->sets_count) return EINA_FALSE;
+
+   dim = (Edje_Image_Directory_Set_Entry *)calloc(1, sizeof(Edje_Image_Directory_Set_Entry));
+   dim->name = name;
+   dim->id = id;
+   de->entries = eina_list_append(de->entries, dim);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_image_set_image_del(Evas_Object *obj, const char *set_name, unsigned int place)
+{
+   Edje_Image_Directory_Set *de = NULL;
+   Edje_Image_Directory_Set_Entry *dim = NULL;
+   unsigned int i;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file) return EINA_FALSE;
+   if (!ed->file->image_dir) return EINA_FALSE;
+
+   for (i = 0; i < ed->file->image_dir->sets_count; ++i)
+     {
+        de = ed->file->image_dir->sets + i;
+        if ((de->name) && (!strcmp(set_name, de->name)))
+          break;
+     }
+   if (i == ed->file->image_dir->sets_count) return EINA_FALSE;
+
+   dim = eina_list_nth(de->entries, place);
+   if (!dim) return EINA_FALSE;
+
+   de->entries = eina_list_remove_list(de->entries, eina_list_nth_list(de->entries, place));
+   free(dim);
+
+   return EINA_TRUE;
+}
+
 /****************/
 /*  IMAGES API  */
 /****************/
