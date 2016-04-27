@@ -14,23 +14,20 @@ enum Elm.Bubble.Pos
 
 class Elm.Bubble (Elm.Layout, Evas.Clickable_Interface)
 {
+   [[Speech bubble widget used in messaging applications]]
+
    eo_prefix: elm_obj_bubble;
    methods {
       @property pos {
-         set {
-            [[Set the corner of the bubble
+         [[The corner of the bubble
 
-              This function sets the corner of the bubble. The corner will be used to
-              determine where the arrow in the frame points to and where label, icon and
-              info are shown.
-
+           This function sets the corner of the bubble. The corner will be used to
+           determine where the arrow in the frame points to and where label, icon and
+           info are shown. See @Elm.Bubble.Pos
             ]]
+         set {
          }
          get {
-            [[Get the corner of the bubble
-
-              This function gets the selected corner of the bubble.
-            ]]
          }
          values {
             pos: Elm.Bubble.Pos; [[The given corner for the bubble.]]
