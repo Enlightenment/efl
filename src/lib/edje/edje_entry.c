@@ -4524,6 +4524,7 @@ _edje_entry_imf_retrieve_selection_cb(void *data, Ecore_IMF_Context *ctx EINA_UN
    Edje *ed = data;
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en = NULL;
+   const char *selection_text = NULL;
 
    if (!rp) return EINA_FALSE;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -4536,9 +4537,12 @@ _edje_entry_imf_retrieve_selection_cb(void *data, Ecore_IMF_Context *ctx EINA_UN
 
    if (en->have_selection)
      {
+        selection_text = _edje_entry_selection_get(rp);
+
         if (text)
-          *text = strdup(_edje_entry_selection_get(rp));
-        return EINA_TRUE;
+          *text = selection_text ? strdup(selection_text) : NULL;
+
+        return selection_text ? EINA_TRUE : EINA_FALSE;
      }
    else
      return EINA_FALSE;
