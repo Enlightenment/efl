@@ -17,6 +17,9 @@
 #define MY_CLASS_NAME "Elm_Image"
 #define MY_CLASS_NAME_LEGACY "elm_image"
 
+#define NON_EXISTING (void *)-1
+static const char *icon_theme = NULL;
+
 static const char SIG_DND[] = "drop";
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_DOWNLOAD_START[] = "download,start";
@@ -731,6 +734,10 @@ EOLIAN static Eina_Bool
 _elm_image_elm_widget_theme_apply(Eo *obj, Elm_Image_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
+
+   if (sd->stdicon)
+     _elm_theme_object_icon_set(obj, sd->stdicon, elm_widget_style_get(obj));
+
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
@@ -1466,6 +1473,178 @@ _elm_image_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
         { NULL, NULL, NULL, NULL },
    };
    return &atspi_actions[0];
+}
+
+static Eina_Bool
+_icon_standard_set(Evas_Object *obj, const char *name)
+{
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   if (_elm_theme_object_icon_set(obj, name, "default"))
+     {
+        /* TODO: elm_unneed_efreet() */
+        sd->freedesktop.use = EINA_FALSE;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_icon_freedesktop_set(Evas_Object *obj, const char *name, int size)
+{
+   const char *path;
+
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   elm_need_efreet();
+
+   if (icon_theme == NON_EXISTING) return EINA_FALSE;
+
+   if (!icon_theme)
+     {
+        Efreet_Icon_Theme *theme;
+        /* TODO: Listen for EFREET_EVENT_ICON_CACHE_UPDATE */
+        theme = efreet_icon_theme_find(elm_config_icon_theme_get());
+        if (!theme)
+          {
+             const char **itr;
+             static const char *themes[] = {
+                "gnome", "Human", "oxygen", "hicolor", NULL
+             };
+             for (itr = themes; *itr; itr++)
+               {
+                  theme = efreet_icon_theme_find(*itr);
+                  if (theme) break;
+               }
+          }
+
+        if (!theme)
+          {
+             icon_theme = NON_EXISTING;
+             return EINA_FALSE;
+          }
+        else
+          icon_theme = eina_stringshare_add(theme->name.internal);
+     }
+   path = efreet_icon_path_find(icon_theme, name, size);
+   sd->freedesktop.use = !!path;
+   if (sd->freedesktop.use)
+     {
+        sd->freedesktop.requested_size = size;
+        efl_file_set(obj, path, NULL);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static inline int
+_icon_size_min_get(Evas_Object *image)
+{
+   int w, h;
+
+   evas_object_geometry_get(image, NULL, NULL, &w, &h);
+
+   return MAX(16, MIN(w, h));
+}
+
+/* FIXME: move this code to ecore */
+#ifdef _WIN32
+static Eina_Bool
+_path_is_absolute(const char *path)
+{
+   //TODO: Check if this works with all absolute paths in windows
+   return (isalpha(*path)) && (*(path + 1) == ':') &&
+           ((*(path + 2) == '\\') || (*(path + 2) == '/'));
+}
+
+#else
+static Eina_Bool
+_path_is_absolute(const char *path)
+{
+   return *path == '/';
+}
+
+#endif
+
+static Eina_Bool
+_internal_elm_image_icon_set(Evas_Object *obj, const char *name, Eina_Bool *fdo)
+{
+   char *tmp;
+   Eina_Bool ret = EINA_FALSE;
+
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   /* try locating the icon using the specified theme */
+   if (!strcmp(ELM_CONFIG_ICON_THEME_ELEMENTARY, elm_config_icon_theme_get()))
+     {
+        ret = _icon_standard_set(obj, name);
+        if (ret && fdo) *fdo = EINA_FALSE;
+     }
+   else
+     {
+        ret = _icon_freedesktop_set(obj, name, _icon_size_min_get(obj));
+        if (ret && fdo) *fdo = EINA_TRUE;
+     }
+
+   if (ret)
+     {
+        eina_stringshare_replace(&sd->stdicon, name);
+        _elm_image_sizing_eval(obj);
+        return EINA_TRUE;
+     }
+
+   if (_path_is_absolute(name))
+     {
+        if (fdo)
+          *fdo = EINA_FALSE;
+        return efl_file_set(obj, name, NULL);
+     }
+
+   /* if that fails, see if icon name is in the format size/name. if so,
+		try locating a fallback without the size specification */
+   if (!(tmp = strchr(name, '/'))) return EINA_FALSE;
+   ++tmp;
+   if (*tmp) return _internal_elm_image_icon_set(obj, tmp, fdo);
+   /* give up */
+   return EINA_FALSE;
+}
+
+static void
+_elm_image_icon_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   ELM_IMAGE_DATA_GET(data, sd);
+   const char *refup = eina_stringshare_ref(sd->stdicon);
+   Eina_Bool fdo = EINA_FALSE;
+
+   if (!_internal_elm_image_icon_set(obj, sd->stdicon, &fdo) || (!fdo))
+     evas_object_event_callback_del_full
+       (obj, EVAS_CALLBACK_RESIZE, _elm_image_icon_resize_cb, data);
+   eina_stringshare_del(refup);
+}
+
+EOLIAN static Eina_Bool
+_elm_image_icon_set(Eo *obj, Elm_Image_Data *_pd EINA_UNUSED, const char *name)
+{
+   Eina_Bool fdo = EINA_FALSE;
+
+   if (!name) return EINA_FALSE;
+
+   evas_object_event_callback_del_full
+     (obj, EVAS_CALLBACK_RESIZE, _elm_image_icon_resize_cb, obj);
+
+   Eina_Bool int_ret = _internal_elm_image_icon_set(obj, name, &fdo);
+
+   if (fdo)
+     evas_object_event_callback_add
+       (obj, EVAS_CALLBACK_RESIZE, _elm_image_icon_resize_cb, obj);
+
+   return int_ret;
+}
+
+EOLIAN static const char*
+_elm_image_icon_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+{
+   return sd->stdicon;
 }
 
 EAPI void

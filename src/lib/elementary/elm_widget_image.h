@@ -74,6 +74,14 @@ struct _Elm_Image_Data
 
    Elm_Image_Preload_Status preload_status;
 
+   const char           *stdicon;
+
+
+   struct {
+      int       requested_size;
+      Eina_Bool use : 1;
+   } freedesktop;
+
    Eina_Bool             aspect_fixed : 1;
    Eina_Bool             fill_inside : 1;
    Eina_Bool             resize_down : 1;
