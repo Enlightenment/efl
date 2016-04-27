@@ -96,6 +96,15 @@ IC("search",      "toolbar/search",      "icon_search.png",      16, 0);
 IC("toolbar/more_menu",    "icon_arrow_down.png", 16, 0);
 IC("toolbar/folder",       "icon_folder.png",     16, 0);
 
+IC("arrow-up",             "icon_arrow_up.png",         16, 0);
+IC("arrow-down",           "icon_arrow_down.png",       16, 0);
+IC("arrow-left",           "icon_arrow_left.png",       16, 0);
+IC("arrow-right",          "icon_arrow_right.png",      16, 0);
+IC("arrow-up-left",        "icon_arrow_up_left.png",    16, 0);
+IC("arrow-up-right",       "icon_arrow_up_right.png",   16, 0);
+IC("arrow-down-left",      "icon_arrow_down_left.png",  16, 0);
+IC("arrow-down-right",     "icon_arrow_down_right.png", 16, 0);
+
 IC("arrow_up_left",        "icon_arrow_up_left.png",    16, 0);
 IC("arrow_up_right",       "icon_arrow_up_right.png",   16, 0);
 IC("arrow_down_left",      "icon_arrow_down_left.png",  16, 0);
