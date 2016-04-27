@@ -5292,6 +5292,54 @@ edje_edit_image_set_list_get(Evas_Object *obj);
 EAPI Eina_Bool
 edje_edit_image_set_add(Evas_Object *obj, const char *name);
 
+/** Get the list of all images inside of given set in the given edje.
+ * Use edje_edit_string_list_free() when you don't need the list anymore.
+ *
+ * @param obj Object being edited.
+ * @param name name of image set.
+ *
+ * @return A List containing all images found inside of given set in the edje file.
+ *
+ * @since 1.18
+ */
+EAPI Eina_List *
+edje_edit_image_set_images_list_get(Evas_Object *obj, const char *name);
+
+/** Add image to set.
+ *
+ * Add image to given set. If image is not exist inside of edje
+ * collection then function @see edje_edit_image_add should be
+ * used to get image added to edje collection.
+ * This function uses only already added functions
+ *
+ * @param obj Object being edited.
+ * @param set_name name of image set.
+ * @param name image set's name.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise (and when image is not exist).
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_image_set_image_add(Evas_Object *obj, const char *set_name, const char *name);
+
+/** Delete image on current position from set.
+ *
+ * Remove image from given set. To be sure what kind of image will be
+ * deleted, firstly check it's position via
+ * @see edje_edit_image_set_images_list_get function.
+ *
+ * @param obj Object being edited.
+ * @param set_name name of image set.
+ * @param place position of image to be deleted.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_image_set_image_del(Evas_Object *obj, const char *set_name, unsigned int place);
+
 //@}
 /******************************************************************************/
 /**************************   IMAGES API   ************************************/
