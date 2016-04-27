@@ -4167,7 +4167,8 @@ win_create(void)
      _status_config(win, bx0);
    else _status_config_full(win, bx0);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
