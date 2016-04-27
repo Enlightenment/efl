@@ -5434,6 +5434,33 @@ edje_edit_image_set_image_border_get(Evas_Object *obj, const char *set_name, uns
 EAPI Eina_Bool
 edje_edit_image_set_image_border_set(Evas_Object *obj, const char *set_name, unsigned int place, int l, int r, int b, int t);
 
+/** Get border scale of set's image.
+ *
+ * @param obj Object being edited.
+ * @param set_name name of image set.
+ * @param place position of image.
+ *
+ * @return @c border scale value on success, @c -1 otherwise.
+ *
+ * @since 1.18
+ */
+EAPI double
+edje_edit_image_set_image_border_scale_get(Evas_Object *obj, const char *set_name, unsigned int place);
+
+/** Set border scale of set's image.
+ *
+ * @param obj Object being edited.
+ * @param set_name name of image set.
+ * @param place position of image.
+ * @param scale_by New border scale.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_image_set_image_border_scale_set(Evas_Object *obj, const char *set_name, unsigned int place, double scale_by);
+
 //@}
 /******************************************************************************/
 /**************************   IMAGES API   ************************************/
