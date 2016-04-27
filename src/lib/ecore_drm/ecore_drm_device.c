@@ -154,9 +154,8 @@ _ecore_drm_device_cached_keymap_get(struct xkb_context *ctx, const struct xkb_ru
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
 
    if (!cached_keymap)
-     return xkb_map_new_from_names(ctx, names, flags);
-   else
-     return xkb_map_ref(cached_keymap);
+     cached_keymap = xkb_map_new_from_names(ctx, names, flags);
+   return xkb_map_ref(cached_keymap);
 }
 
 void
