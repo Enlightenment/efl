@@ -5400,6 +5400,40 @@ edje_edit_image_set_image_max_get(Evas_Object *obj, const char *set_name, unsign
 EAPI Eina_Bool
 edje_edit_image_set_image_max_set(Evas_Object *obj, const char *set_name, unsigned int place, int w, int h);
 
+/** Get border of set's image.
+ *
+ * @param obj Object being edited.
+ * @param set_name name of image set.
+ * @param place position of image.
+ * @param l Where to store the left border value.
+ * @param r Where to store the right border value.
+ * @param b Where to store the bottom border value.
+ * @param t Where to store the top border value.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_image_set_image_border_get(Evas_Object *obj, const char *set_name, unsigned int place, int *l, int *r, int *b, int *t);
+
+/** Set border of set's image.
+ *
+ * @param obj Object being edited.
+ * @param set_name name of image set.
+ * @param place position of image.
+ * @param l New value of left border value.
+ * @param r New value of right border value.
+ * @param b New value of bottom border value.
+ * @param t New value of top border value.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_image_set_image_border_set(Evas_Object *obj, const char *set_name, unsigned int place, int l, int r, int b, int t);
+
 //@}
 /******************************************************************************/
 /**************************   IMAGES API   ************************************/
