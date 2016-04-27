@@ -286,6 +286,22 @@ _edje_image_id_find(Edje_Edit *eed, const char *image_name)
    return -1;
 }
 
+static int
+_edje_set_id_find(Edje_Edit *eed, const char *set_name)
+{
+   unsigned int i;
+
+   if (!eed->base->file) return -1;
+   if (!eed->base->file->image_dir) return -1;
+
+   for (i = 0; i < eed->base->file->image_dir->sets_count; ++i)
+     if (eed->base->file->image_dir->sets[i].name
+         && !strcmp(set_name, eed->base->file->image_dir->sets[i].name))
+       return i;
+
+   return -1;
+}
+
 static const char *
 _edje_image_name_find(Edje_Edit *eed, int image_id)
 {
@@ -8427,6 +8443,113 @@ edje_edit_image_set_exists(Evas_Object *obj, const char *image)
      }
 
    return EINA_FALSE;
+}
+
+EAPI int
+edje_edit_image_set_id_get(Evas_Object *obj, const char *image_name)
+{
+   GET_EED_OR_RETURN(-1);
+
+   return _edje_set_id_find(eed, image_name);
+}
+
+EAPI Eina_Bool
+edje_edit_image_set_rename(Evas_Object *obj, const char *set, const char *new_set)
+{
+   Edje_Image_Directory_Set *de = NULL;
+   unsigned int i;
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!new_set) return EINA_FALSE;
+
+   // Check if image set with name 'new_set' already exists
+   if (edje_edit_image_set_id_get(obj, new_set) >= 0)
+     return EINA_FALSE;
+
+   for (i = 0; i < ed->file->image_dir->sets_count; ++i)
+     {
+        de = ed->file->image_dir->sets + i;
+        if ((de->name) && (!strcmp(set, de->name)))
+          break;
+     }
+   if (i == ed->file->image_dir->sets_count) return EINA_FALSE;
+
+   de->name = (char *)new_set;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_List *
+edje_edit_image_set_list_get(Evas_Object *obj)
+{
+   Eina_List *sets = NULL;
+   unsigned int i;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file) return NULL;
+   if (!ed->file->image_dir) return NULL;
+
+   for (i = 0; i < ed->file->image_dir->sets_count; ++i)
+     sets = eina_list_append(sets,
+                             eina_stringshare_add(ed->file->image_dir->sets[i].name));
+
+   return sets;
+}
+
+EAPI Eina_Bool
+edje_edit_image_set_add(Evas_Object *obj, const char *name)
+{
+   Edje_Image_Directory_Set *de;
+   unsigned int i;
+   int free_id = -1;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!name) return EINA_FALSE;
+   if (!ed->file) return EINA_FALSE;
+
+   /* Create Image_Directory if not exist */
+   if (!ed->file->image_dir)
+     {
+        ed->file->image_dir = _alloc(sizeof(Edje_Image_Directory));
+        if (!ed->file->image_dir) return EINA_FALSE;
+     }
+
+   /* Loop trough image directory to find if image exist */
+   for (i = 0; i < ed->file->image_dir->sets_count; ++i)
+     {
+        de = ed->file->image_dir->sets + i;
+
+        if (!de->name)
+          free_id = i;
+        else if (!strcmp(name, de->name))
+          return EINA_FALSE;
+     }
+
+   if (free_id == -1)
+     {
+        Edje_Image_Directory_Set *tmp;
+        unsigned int count;
+
+        count = ed->file->image_dir->sets_count + 1;
+
+        tmp = realloc(ed->file->image_dir->sets,
+                      sizeof (Edje_Image_Directory_Set) * count);
+        if (!tmp) return EINA_FALSE;
+
+        ed->file->image_dir->sets = tmp;
+        free_id = ed->file->image_dir->sets_count;
+        ed->file->image_dir->sets_count = count;
+     }
+
+   /* Set Image Entry */
+   de = ed->file->image_dir->sets + free_id;
+   de->name = (char *)name;
+   de->id = free_id;
+   de->entries = NULL;
+
+   return EINA_TRUE;
 }
 
 /****************/
