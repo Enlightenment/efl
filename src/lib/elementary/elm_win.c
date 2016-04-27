@@ -38,22 +38,13 @@ static const Elm_Win_Trap *trap = NULL;
 #define ELM_WIN_DATA_GET(o, sd) \
   Elm_Win_Data * sd = eo_data_scope_get(o, MY_CLASS)
 
-#define ELM_WIN_DATA_GET_OR_RETURN(o, ptr)           \
+#define ELM_WIN_DATA_GET_OR_RETURN(o, ptr, ...)      \
   ELM_WIN_DATA_GET(o, ptr);                          \
   if (!ptr)                                          \
     {                                                \
-       CRI("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_WIN_DATA_GET_OR_RETURN_VAL(o, ptr, val)  \
-  ELM_WIN_DATA_GET(o, ptr);                          \
-  if (!ptr)                                          \
-    {                                                \
-       CRI("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return val;                                   \
+       CRI("No widget data for object %p (%s)",      \
+            o, eo_class_name_get(o));                \
+       return __VA_ARGS__;                           \
     }
 
 #define ELM_WIN_CHECK(obj)                                             \
@@ -4867,7 +4858,7 @@ EAPI int
 elm_win_norender_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) - 1;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, -1);
    return sd->norender;
 }
 
@@ -5413,7 +5404,7 @@ EAPI Eina_Bool
 elm_win_floating_mode_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
 
    return sd->floating;
 }
@@ -5753,7 +5744,7 @@ EAPI Ecore_X_Window
 elm_win_xwindow_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) 0;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, 0);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, 0);
 
 #ifdef HAVE_ELEMENTARY_X
    if (sd->x.xwin) return sd->x.xwin;
@@ -5766,7 +5757,7 @@ EAPI Ecore_Wl2_Window *
 elm_win_wl_window_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
    const char *engine_name = ecore_evas_engine_name_get(sd->ee);
 
    if (!(engine_name &&
@@ -5794,7 +5785,7 @@ EAPI Ecore_Cocoa_Window *
 elm_win_cocoa_window_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
 
    const char *engine_name = ecore_evas_engine_name_get(sd->ee);
    if (!engine_name) return NULL;
@@ -5810,7 +5801,7 @@ EAPI Ecore_Win32_Window *
 elm_win_win32_window_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
 
    const char *engine_name = ecore_evas_engine_name_get(sd->ee);
 
@@ -5839,7 +5830,7 @@ EAPI void *
 elm_win_trap_data_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
 
    return sd->trap_data;
 }
@@ -5860,7 +5851,7 @@ EAPI Eina_Bool
 elm_win_override_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
 
    return ecore_evas_override_get(sd->ee);
 }
@@ -5905,7 +5896,7 @@ EAPI Eina_Bool
 elm_win_quickpanel_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
 
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
@@ -5938,7 +5929,7 @@ EAPI int
 elm_win_quickpanel_priority_major_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, -1);
 
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
@@ -5971,7 +5962,7 @@ EAPI int
 elm_win_quickpanel_priority_minor_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, -1);
 
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
@@ -6004,7 +5995,7 @@ EAPI int
 elm_win_quickpanel_zone_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, 0);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, 0);
 
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
@@ -6047,7 +6038,7 @@ EAPI Elm_Win_Indicator_Mode
 elm_win_indicator_mode_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, ELM_WIN_INDICATOR_UNKNOWN);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, ELM_WIN_INDICATOR_UNKNOWN);
 
    return sd->indmode;
 }
@@ -6083,7 +6074,7 @@ EAPI Elm_Win_Indicator_Opacity_Mode
 elm_win_indicator_opacity_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, ELM_WIN_INDICATOR_OPACITY_UNKNOWN);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, ELM_WIN_INDICATOR_OPACITY_UNKNOWN);
 
    return sd->ind_o_mode;
 }
@@ -6108,7 +6099,7 @@ EAPI Eina_Bool
 elm_win_keyboard_win_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
 
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
@@ -6139,7 +6130,7 @@ EAPI Eina_Bool
 elm_win_conformant_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
 
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
