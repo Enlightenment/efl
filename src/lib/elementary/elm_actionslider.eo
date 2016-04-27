@@ -12,45 +12,48 @@ enum Elm.Actionslider.Pos
 
 class Elm.Actionslider (Elm.Layout, Evas.Selectable_Interface)
 {
+   [[An actionslider is a switcher for 2 or 3 labels
+
+   with customizable magnet properties. The user drags and releases
+   the indicator, to choose a label. When the indicator is released,
+   it will move to its nearest "enabled and magnetized" position.
+   ]]
+
    eo_prefix: elm_obj_actionslider;
    methods {
       @property indicator_pos {
+         [[Actionslider position indicator]]
          set {
-            [[Set actionslider indicator position.]]
          }
          get {
-            [[Get actionslider indicator position.]]
          }
          values {
             pos: Elm.Actionslider.Pos; [[The position of the indicator.]]
          }
       }
       @property magnet_pos {
+         [[Actionslider magnet position.]]
          set {
-            [[Set actionslider magnet position.
-
-              To make multiple positions magnets OR them together (e.g.
-              ELM_ACTIONSLIDER_LEFT | #ELM_ACTIONSLIDER_RIGHT)
+            [[To make multiple positions magnets OR them together (e.g.
+              ELM_ACTIONSLIDER_LEFT | ELM_ACTIONSLIDER_RIGHT)
             ]]
          }
          get {
-            [[Get actionslider magnet position.]]
          }
          values {
             pos: Elm.Actionslider.Pos; [[Bit mask indicating the magnet positions.]]
          }
       }
       @property enabled_pos {
+         [[Actionslider enabled position.]]
          set {
-            [[Set actionslider enabled position. To set multiple positions as
-              enabled OR them together(e.g.
-              #ELM_ACTIONSLIDER_LEFT | #ELM_ACTIONSLIDER_RIGHT).
+            [[To set multiple positions as enabled OR them together(e.g.
+              ELM_ACTIONSLIDER_LEFT | ELM_ACTIONSLIDER_RIGHT).
 
               Note: All the positions are enabled by default.
             ]]
          }
          get {
-            [[Get actionslider enabled position.]]
          }
          values {
             pos: Elm.Actionslider.Pos; [[Bit mask indicating the enabled positions.]]
@@ -59,7 +62,7 @@ class Elm.Actionslider (Elm.Layout, Evas.Selectable_Interface)
       @property selected_label {
          get {
             [[Get actionslider selected label.]]
-            return: const(char)*;
+            return: const(char)*; [[Selected label]]
          }
       }
    }
@@ -76,7 +79,7 @@ class Elm.Actionslider (Elm.Layout, Evas.Selectable_Interface)
       Elm.Layout.sizing_eval;
    }
    events {
-      pos_changed;
+      pos_changed; [[The position of the actionslider has changed]]
    }
 
 }
