@@ -104,6 +104,7 @@ static const char *scale_set = NULL;
 static const char *web_backend = NULL;
 static Fonts_Data fndata = {NULL, NULL, NULL, NULL, NULL, NULL, 0.0};
 static Evas_Object *web_backend_entry = NULL;
+static Evas_Object *icon_theme_list = NULL,*icon_theme_elm = NULL;
 
 static void
 _font_styles_list_sel(void *data   EINA_UNUSED,
@@ -1534,6 +1535,22 @@ _theme_sel(void            *data EINA_UNUSED,
    }*/
 
 static void
+_icon_elm_change(void *data       EINA_UNUSED,
+          Evas_Object     *obj,
+          void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = elm_object_top_widget_get(obj);
+   Eina_Bool val = elm_check_state_get(obj);
+
+   if (val)
+     evas_object_data_set(win, "icon_theme", ELM_CONFIG_ICON_THEME_ELEMENTARY);
+   else
+     evas_object_data_set(win, "icon_theme", "hicolor");
+
+   elm_object_disabled_set(icon_theme_list, val);
+}
+
+static void
 _icon_theme_use(void *data  EINA_UNUSED,
            Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
@@ -1552,6 +1569,7 @@ _icon_theme_sel(void *data, Evas_Object *obj,
    const char *theme = (const char *)data;
    Evas_Object *win = elm_object_top_widget_get(obj);
 
+   elm_check_state_set(icon_theme_elm, EINA_FALSE);
    evas_object_data_set(win, "icon_theme", theme);
 }
 
@@ -2221,10 +2239,10 @@ static void
 _status_config_icons(Evas_Object *win,
                       Evas_Object *naviframe)
 {
-   Evas_Object *tb, *rc, *sp, *li, *ic, *pd, *fr, *bt;
+   Evas_Object *tb, *rc, *sp, *ck, *li, *bx, *ic, *pd, *fr, *bt;
    Eina_List *list, *l;
    const Efreet_Icon_Theme *th;
-   Elm_Object_Item *list_it, *def_it;
+   Elm_Object_Item *list_it, *def_it = NULL;
 
    tb = elm_table_add(win);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -2249,17 +2267,23 @@ _status_config_icons(Evas_Object *win,
    elm_table_pack(tb, pd, 0, 0, 1, 1);
    evas_object_show(pd);
 
-   li = elm_list_add(win);
+   bx = elm_box_add(pd);
+   elm_object_content_set(pd, bx);
+   evas_object_show(bx);
+   CHECK_ADD("Use Elementary icons", "Use icons from current elementary theme",
+             _icon_elm_change, NULL);
+   if (!strcmp(elm_config_icon_theme_get(), ELM_CONFIG_ICON_THEME_ELEMENTARY))
+     elm_check_state_set(ck, EINA_TRUE);
+   icon_theme_elm = ck;
+
+   li = icon_theme_list = elm_list_add(win);
    elm_list_multi_select_set(li, EINA_FALSE);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_content_set(pd, li);
+   elm_box_pack_end(bx, li);
    evas_object_show(li);
 
    evas_object_data_set(win, "icon_theme", elm_config_icon_theme_get());
-   ic = elm_icon_add(li);
-   def_it = elm_list_item_append(li, "Elementary", ic, NULL, _icon_theme_sel,
-                                 ELM_CONFIG_ICON_THEME_ELEMENTARY);
 
    list = efreet_icon_theme_list_get();
    list = eina_list_sort(list, eina_list_count(list), _icon_theme_list_sort);
@@ -2273,7 +2297,9 @@ _status_config_icons(Evas_Object *win,
         list_it = elm_list_item_append(li, th->name.name, ic, NULL,
                                        _icon_theme_sel, th->name.internal);
 
-        if (!strcmp(elm_config_icon_theme_get(), th->name.name))
+        if (!strcmp(th->name.internal, "hicolor"))
+          def_it = list_it;
+        if (!strcmp(elm_config_icon_theme_get(), th->name.internal))
           elm_list_item_selected_set(list_it, EINA_TRUE);
      }
    if (!elm_list_selected_items_get(li))
