@@ -1208,20 +1208,6 @@ struct _Evas_Font_Description
    Eina_Bool is_new : 1;
 };
 
-struct _Evas_Device
-{
-   DATA32 magic;
-   Evas *evas;
-   Evas_Device *parent;
-   Evas_Device *src;
-   Eina_List *children;
-   const char *name;
-   const char *desc;
-   int ref;
-   Evas_Device_Class clas;
-   Evas_Device_Subclass subclas;
-};
-
 struct _Evas_Object_Filter_Data
 {
    Eina_Stringshare    *name;
@@ -1946,8 +1932,6 @@ void _evas_touch_point_remove(Evas *e, int id);
 
 void _evas_device_cleanup(Evas *e);
 Evas_Device *_evas_device_top_get(const Evas *e);
-void _evas_device_ref(Evas_Device *dev);
-void _evas_device_unref(Evas_Device *dev);
 
 Eina_Bool evas_vg_loader_svg(Evas_Object *vg, const Eina_File *f, const char *key EINA_UNUSED);
 

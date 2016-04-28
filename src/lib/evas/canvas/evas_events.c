@@ -1041,7 +1041,7 @@ _evas_canvas_event_feed_mouse_down(Eo *eo_e, Evas_Public_Data *e, int b, Evas_Bu
    ev.timestamp = timestamp;
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) _evas_device_ref(ev.dev);
+   if (ev.dev) eo_ref(ev.dev);
 
    _evas_walk(e);
    /* append new touch point to the touch point list */
@@ -1101,7 +1101,7 @@ _evas_canvas_event_feed_mouse_down(Eo *eo_e, Evas_Public_Data *e, int b, Evas_Bu
    _evas_post_event_callback_call(eo_e, e);
    /* update touch point's state to EVAS_TOUCH_POINT_STILL */
    _evas_touch_point_update(eo_e, 0, e->pointer.x, e->pointer.y, EVAS_TOUCH_POINT_STILL);
-   if (ev.dev) _evas_device_unref(ev.dev);
+   if (ev.dev) eo_unref(ev.dev);
    _evas_unwalk(e);
 }
 
@@ -1129,7 +1129,7 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data)
    ev.timestamp = timestamp;
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) _evas_device_ref(ev.dev);
+   if (ev.dev) eo_ref(ev.dev);
 
    /* get new list of ins */
    ins = evas_event_objects_event_list(eo_e, NULL, e->pointer.x, e->pointer.y);
@@ -1226,7 +1226,7 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data)
      }
    if (e->pointer.inside)
       evas_event_feed_mouse_move(eo_e, e->pointer.x, e->pointer.y, timestamp, data);
-   if (ev.dev) _evas_device_unref(ev.dev);
+   if (ev.dev) eo_unref(ev.dev);
    return post_called;
 }
 
@@ -1265,7 +1265,7 @@ _evas_canvas_event_feed_mouse_up(Eo *eo_e, Evas_Public_Data *e, int b, Evas_Butt
         ev.timestamp = timestamp;
         ev.event_flags = e->default_event_flags;
         ev.dev = _evas_device_top_get(eo_e);
-        if (ev.dev) _evas_device_ref(ev.dev);
+        if (ev.dev) eo_ref(ev.dev);
 
         _evas_walk(e);
         /* update released touch point */
@@ -1309,7 +1309,7 @@ _evas_canvas_event_feed_mouse_up(Eo *eo_e, Evas_Public_Data *e, int b, Evas_Butt
         eina_list_free(copy);
         e->last_mouse_up_counter++;
         _evas_post_event_callback_call(eo_e, e);
-        if (ev.dev) _evas_device_unref(ev.dev);
+        if (ev.dev) eo_unref(ev.dev);
      }
 
    if (e->pointer.mouse_grabbed == 0)
@@ -1385,7 +1385,7 @@ _evas_canvas_event_feed_mouse_wheel(Eo *eo_e, Evas_Public_Data *e, int direction
    ev.timestamp = timestamp;
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) _evas_device_ref(ev.dev);
+   if (ev.dev) eo_ref(ev.dev);
 
    _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
@@ -1410,7 +1410,7 @@ _evas_canvas_event_feed_mouse_wheel(Eo *eo_e, Evas_Public_Data *e, int direction
    eina_list_free(copy);
    _evas_post_event_callback_call(eo_e, e);
 
-   if (ev.dev) _evas_device_unref(ev.dev);
+   if (ev.dev) eo_unref(ev.dev);
    _evas_unwalk(e);
 }
 
@@ -1464,7 +1464,7 @@ _canvas_event_feed_mouse_move_internal(Eo *eo_e, void *_pd, int x, int y, unsign
              ev.timestamp = timestamp;
              ev.event_flags = e->default_event_flags;
              ev.dev = _evas_device_top_get(eo_e);
-             if (ev.dev) _evas_device_ref(ev.dev);
+             if (ev.dev) eo_ref(ev.dev);
              copy = evas_event_list_copy(e->pointer.object.in);
              EINA_LIST_FOREACH(copy, l, eo_obj)
                {
@@ -1507,7 +1507,7 @@ _canvas_event_feed_mouse_move_internal(Eo *eo_e, void *_pd, int x, int y, unsign
                   if (e->delete_me) break;
                }
              _evas_post_event_callback_call(eo_e, e);
-             if (ev.dev) _evas_device_unref(ev.dev);
+             if (ev.dev) eo_unref(ev.dev);
           }
           {
              Evas_Event_Mouse_Out ev;
@@ -1527,7 +1527,7 @@ _canvas_event_feed_mouse_move_internal(Eo *eo_e, void *_pd, int x, int y, unsign
              ev.timestamp = timestamp;
              ev.event_flags = e->default_event_flags;
              ev.dev = _evas_device_top_get(eo_e);
-             if (ev.dev) _evas_device_ref(ev.dev);
+             if (ev.dev) eo_ref(ev.dev);
 
              eina_list_free(copy);
 
@@ -1558,7 +1558,7 @@ _canvas_event_feed_mouse_move_internal(Eo *eo_e, void *_pd, int x, int y, unsign
                     }
                }
              _evas_post_event_callback_call(eo_e, e);
-             if (ev.dev) _evas_device_unref(ev.dev);
+             if (ev.dev) eo_unref(ev.dev);
           }
      }
    else
@@ -1589,7 +1589,7 @@ _canvas_event_feed_mouse_move_internal(Eo *eo_e, void *_pd, int x, int y, unsign
         ev.timestamp = timestamp;
         ev.event_flags = e->default_event_flags;
         ev.dev = _evas_device_top_get(eo_e);
-        if (ev.dev) _evas_device_ref(ev.dev);
+        if (ev.dev) eo_ref(ev.dev);
 
         ev2.buttons = e->pointer.button;
         ev2.output.x = e->pointer.x;
@@ -1721,7 +1721,7 @@ _canvas_event_feed_mouse_move_internal(Eo *eo_e, void *_pd, int x, int y, unsign
              eina_list_free(ins);
           }
         _evas_post_event_callback_call(eo_e, e);
-        if (ev.dev) _evas_device_unref(ev.dev);
+        if (ev.dev) eo_unref(ev.dev);
      }
    _evas_unwalk(e);
    return;
@@ -1755,7 +1755,7 @@ nogrep:
         ev.timestamp = timestamp;
         ev.event_flags = e->default_event_flags;
         ev.dev = _evas_device_top_get(eo_e);
-        if (ev.dev) _evas_device_ref(ev.dev);
+        if (ev.dev) eo_ref(ev.dev);
 
         ev2.buttons = e->pointer.button;
         ev2.output.x = e->pointer.x;
@@ -1899,7 +1899,7 @@ nogrep:
         e->pointer.object.in = newin;
 
         _evas_post_event_callback_call(eo_e, e);
-        if (ev.dev) _evas_device_unref(ev.dev);
+        if (ev.dev) eo_unref(ev.dev);
      }
    _evas_unwalk(e);
 }
@@ -1947,7 +1947,7 @@ _evas_canvas_event_feed_mouse_in(Eo *eo_e, Evas_Public_Data *e, unsigned int tim
    ev.timestamp = timestamp;
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) _evas_device_ref(ev.dev);
+   if (ev.dev) eo_ref(ev.dev);
    
    _evas_walk(e);
    /* get new list of ins */
@@ -1977,7 +1977,7 @@ _evas_canvas_event_feed_mouse_in(Eo *eo_e, Evas_Public_Data *e, unsigned int tim
    e->pointer.object.in = ins;
    _evas_post_event_callback_call(eo_e, e);
    evas_event_feed_mouse_move(eo_e, e->pointer.x, e->pointer.y, timestamp, data);
-   if (ev.dev) _evas_device_unref(ev.dev);
+   if (ev.dev) eo_unref(ev.dev);
    _evas_unwalk(e);
 }
 
@@ -2007,7 +2007,7 @@ _evas_canvas_event_feed_mouse_out(Eo *eo_e, Evas_Public_Data *e, unsigned int ti
    ev.timestamp = timestamp;
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) _evas_device_ref(ev.dev);
+   if (ev.dev) eo_ref(ev.dev);
 
    _evas_walk(e);
    /* if our mouse button is inside any objects */
@@ -2042,7 +2042,7 @@ _evas_canvas_event_feed_mouse_out(Eo *eo_e, Evas_Public_Data *e, unsigned int ti
    e->pointer.object.in =  eina_list_free(e->pointer.object.in);
    e->pointer.mouse_grabbed = 0;
    _evas_post_event_callback_call(eo_e, e);
-   if (ev.dev) _evas_device_unref(ev.dev);
+   if (ev.dev) eo_unref(ev.dev);
    _evas_unwalk(e);
 }
 
@@ -2089,7 +2089,7 @@ _canvas_event_feed_multi_down_internal(Evas *eo_e, void *_pd,
    ev.timestamp = timestamp;
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) _evas_device_ref(ev.dev);
+   if (ev.dev) eo_ref(ev.dev);
 
    _evas_walk(e);
    /* append new touch point to the touch point list */
@@ -2132,7 +2132,7 @@ _canvas_event_feed_multi_down_internal(Evas *eo_e, void *_pd,
    _evas_post_event_callback_call(eo_e, e);
    /* update touch point's state to EVAS_TOUCH_POINT_STILL */
    _evas_touch_point_update(eo_e, d, x, y, EVAS_TOUCH_POINT_STILL);
-   if (ev.dev) _evas_device_unref(ev.dev);
+   if (ev.dev) eo_unref(ev.dev);
    _evas_unwalk(e);
 }
 
@@ -2200,7 +2200,7 @@ _canvas_event_feed_multi_up_internal(Evas *eo_e, void *_pd,
    ev.timestamp = timestamp;
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) _evas_device_ref(ev.dev);
+   if (ev.dev) eo_ref(ev.dev);
 
    _evas_walk(e);
    /* update released touch point */
@@ -2236,7 +2236,7 @@ _canvas_event_feed_multi_up_internal(Evas *eo_e, void *_pd,
       _evas_post_event_callback_call(eo_e, e);
    /* remove released touch point from the touch point list */
    _evas_touch_point_remove(eo_e, d);
-   if (ev.dev) _evas_device_unref(ev.dev);
+   if (ev.dev) eo_unref(ev.dev);
    _evas_unwalk(e);
 }
 
@@ -2308,7 +2308,7 @@ _canvas_event_feed_multi_move_internal(Eo *eo_e, void *_pd, int d, int x,
         ev.timestamp = timestamp;
         ev.event_flags = e->default_event_flags;
         ev.dev = _evas_device_top_get(eo_e);
-        if (ev.dev) _evas_device_ref(ev.dev);
+        if (ev.dev) eo_ref(ev.dev);
 
         copy = evas_event_list_copy(e->pointer.object.in);
         EINA_LIST_FOREACH(copy, l, eo_obj)
@@ -2341,7 +2341,7 @@ _canvas_event_feed_multi_move_internal(Eo *eo_e, void *_pd, int d, int x,
           }
         eina_list_free(copy);
         _evas_post_event_callback_call(eo_e, e);
-        if (ev.dev) _evas_device_unref(ev.dev);
+        if (ev.dev) eo_unref(ev.dev);
      }
    else
      {
@@ -2372,7 +2372,7 @@ _canvas_event_feed_multi_move_internal(Eo *eo_e, void *_pd, int d, int x,
         ev.timestamp = timestamp;
         ev.event_flags = e->default_event_flags;
         ev.dev = _evas_device_top_get(eo_e);
-        if (ev.dev) _evas_device_ref(ev.dev);
+        if (ev.dev) eo_ref(ev.dev);
 
         /* get all new in objects */
         ins = evas_event_objects_event_list(eo_e, NULL, x, y);
@@ -2427,7 +2427,7 @@ _canvas_event_feed_multi_move_internal(Eo *eo_e, void *_pd, int d, int x,
              eina_list_free(ins);
           }
         _evas_post_event_callback_call(eo_e, e);
-        if (ev.dev) _evas_device_unref(ev.dev);
+        if (ev.dev) eo_unref(ev.dev);
      }
    _evas_unwalk(e);
 }
@@ -2487,7 +2487,7 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
    ev.keycode = keycode;
-   if (ev.dev) _evas_device_ref(ev.dev);
+   if (ev.dev) eo_ref(ev.dev);
 
    if (e->grabs)
      {
@@ -2552,7 +2552,7 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
                                              &ev, event_id);
      }
    _evas_post_event_callback_call(eo_e, e);
-   if (ev.dev) _evas_device_unref(ev.dev);
+   if (ev.dev) eo_unref(ev.dev);
    _evas_unwalk(e);
 }
 
@@ -2592,7 +2592,7 @@ _canvas_event_feed_key_up_internal(Eo *eo_e,
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
    ev.keycode = keycode;
-   if (ev.dev) _evas_device_ref(ev.dev);
+   if (ev.dev) eo_ref(ev.dev);
 
    if (e->grabs)
      {
@@ -2657,7 +2657,7 @@ _canvas_event_feed_key_up_internal(Eo *eo_e,
                                              &ev, event_id);
      }
    _evas_post_event_callback_call(eo_e, e);
-   if (ev.dev) _evas_device_unref(ev.dev);
+   if (ev.dev) eo_unref(ev.dev);
    _evas_unwalk(e);
 }
 
@@ -2709,7 +2709,7 @@ _evas_canvas_event_feed_hold(Eo *eo_e, Evas_Public_Data *e, int hold, unsigned i
    ev.timestamp = timestamp;
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) _evas_device_ref(ev.dev);
+   if (ev.dev) eo_ref(ev.dev);
 
    _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
@@ -2727,7 +2727,7 @@ _evas_canvas_event_feed_hold(Eo *eo_e, Evas_Public_Data *e, int hold, unsigned i
      }
    eina_list_free(copy);
    _evas_post_event_callback_call(eo_e, e);
-   if (ev.dev) _evas_device_unref(ev.dev);
+   if (ev.dev) eo_unref(ev.dev);
    _evas_unwalk(e);
    _evas_object_event_new();
 }
@@ -2753,7 +2753,7 @@ _canvas_event_feed_axis_update_internal(Evas *eo_e, Evas_Public_Data *e, unsigne
    ev.naxis = naxis;
    ev.axis = (Evas_Axis *)axis;
    ev.dev = _evas_device_top_get(eo_e);
-   if (ev.dev) _evas_device_ref(ev.dev);
+   if (ev.dev) eo_ref(ev.dev);
 
    _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);

@@ -232,7 +232,6 @@ struct _Evas_Precision_Position /** A position with precision*/
 };
 
 typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source description of pixels for importing pixels */
-typedef struct _Evas_Device              Evas_Device; /**< A source device handle - where the event came from */
 typedef struct _Evas_Event_Mouse_Down    Evas_Event_Mouse_Down; /**< Event structure for #EVAS_CALLBACK_MOUSE_DOWN event callbacks */
 typedef struct _Evas_Event_Mouse_Up      Evas_Event_Mouse_Up; /**< Event structure for #EVAS_CALLBACK_MOUSE_UP event callbacks */
 typedef struct _Evas_Event_Mouse_In      Evas_Event_Mouse_In; /**< Event structure for #EVAS_CALLBACK_MOUSE_IN event callbacks */
@@ -247,6 +246,9 @@ typedef struct _Evas_Event_Key_Up        Evas_Event_Key_Up; /**< Event structure
 typedef struct _Evas_Event_Hold          Evas_Event_Hold; /**< Event structure for #EVAS_CALLBACK_HOLD event callbacks */
 typedef struct _Evas_Event_Render_Post   Evas_Event_Render_Post; /**< Event structure that may come with #EVAS_CALLBACK_RENDER_POST event callbacks @since 1.8 */
 typedef struct _Evas_Event_Axis_Update   Evas_Event_Axis_Update; /**< Event structure for #EVAS_CALLBACK_AXIS_UPDATE event callbacks @since 1.13 */
+
+/* Opaque types */
+typedef Eo                               Evas_Device; /**< A source device handle - where the event came from */
 
 typedef Efl_Image_Content_Hint           Evas_Image_Content_Hint;
 #define EVAS_IMAGE_CONTENT_HINT_NONE     EFL_IMAGE_CONTENT_HINT_NONE
@@ -315,32 +317,30 @@ typedef enum _Evas_Engine_Render_Mode
    EVAS_RENDER_MODE_NONBLOCKING = 1, /**< The rendering is non blocking mode*/
 } Evas_Engine_Render_Mode; /**< behaviour of the renderer*/
 
-typedef enum _Evas_Device_Class
-{
-   EVAS_DEVICE_CLASS_NONE, /**< Not a device @since 1.8 */
-   EVAS_DEVICE_CLASS_SEAT, /**< The user/seat (the user themselves) @since 1.8 */
-   EVAS_DEVICE_CLASS_KEYBOARD, /**< A regular keyboard, numberpad or attached buttons @since 1.8 */
-   EVAS_DEVICE_CLASS_MOUSE, /**< A mouse, trackball or touchpad relative motion device @since 1.8 */
-   EVAS_DEVICE_CLASS_TOUCH, /**< A touchscreen with fingers or stylus @since 1.8 */
-   EVAS_DEVICE_CLASS_PEN, /**< A special pen device @since 1.8 */
-   EVAS_DEVICE_CLASS_POINTER, /**< A laser pointer, wii-style or "minority report" pointing device @since 1.8 */
-   EVAS_DEVICE_CLASS_GAMEPAD /**<  A gamepad controller or joystick @since 1.8 */
-} Evas_Device_Class; /**< A general class of device @since 1.8 */
+typedef Efl_Input_Device_Class             Evas_Device_Class;
 
-typedef enum _Evas_Device_Subclass
-{
-   EVAS_DEVICE_SUBCLASS_NONE, /**< Not a device @since 1.8 */
-   EVAS_DEVICE_SUBCLASS_FINGER, /**< The normal flat of your finger @since 1.8 */
-   EVAS_DEVICE_SUBCLASS_FINGERNAIL, /**< A fingernail @since 1.8 */
-   EVAS_DEVICE_SUBCLASS_KNUCKLE, /**< A Knuckle @since 1.8 */
-   EVAS_DEVICE_SUBCLASS_PALM, /**< The palm of a users hand @since 1.8 */
-   EVAS_DEVICE_SUBCLASS_HAND_SIZE, /**< The side of your hand @since 1.8 */
-   EVAS_DEVICE_SUBCLASS_HAND_FLAT, /**< The flat of your hand @since 1.8 */
-   EVAS_DEVICE_SUBCLASS_PEN_TIP, /**< The tip of a pen @since 1.8 */
-   EVAS_DEVICE_SUBCLASS_TRACKPAD, /**< A trackpad style mouse @since 1.8 */
-   EVAS_DEVICE_SUBCLASS_TRACKPOINT, /**< A trackpoint style mouse @since 1.8 */
-   EVAS_DEVICE_SUBCLASS_TRACKBALL, /**< A trackball style mouse @since 1.8 */
-} Evas_Device_Subclass; /**< A general subclass of device @since 1.8 */
+#define EVAS_DEVICE_CLASS_NONE             EFL_INPUT_DEVICE_CLASS_NONE /**< Not a device @since 1.8 */
+#define EVAS_DEVICE_CLASS_SEAT             EFL_INPUT_DEVICE_CLASS_SEAT /**< The user/seat (the user themselves) @since 1.8 */
+#define EVAS_DEVICE_CLASS_KEYBOARD         EFL_INPUT_DEVICE_CLASS_KEYBOARD /**< A regular keyboard, numberpad or attached buttons @since 1.8 */
+#define EVAS_DEVICE_CLASS_MOUSE            EFL_INPUT_DEVICE_CLASS_MOUSE /**< A mouse, trackball or touchpad relative motion device @since 1.8 */
+#define EVAS_DEVICE_CLASS_TOUCH            EFL_INPUT_DEVICE_CLASS_TOUCH /**< A touchscreen with fingers or stylus @since 1.8 */
+#define EVAS_DEVICE_CLASS_PEN              EFL_INPUT_DEVICE_CLASS_PEN /**< A special pen device @since 1.8 */
+#define EVAS_DEVICE_CLASS_POINTER          EFL_INPUT_DEVICE_CLASS_POINTER /**< A laser pointer, wii-style or "minority report" pointing device @since 1.8 */
+#define EVAS_DEVICE_CLASS_GAMEPAD          EFL_INPUT_DEVICE_CLASS_GAMEPAD /**<  A gamepad controller or joystick @since 1.8 */
+
+typedef Efl_Input_Device_Sub_Class         Evas_Device_Subclass;
+
+#define EVAS_DEVICE_SUBCLASS_NONE          EFL_INPUT_DEVICE_SUBCLASS_NONE /**< Not a device @since 1.8 */
+#define EVAS_DEVICE_SUBCLASS_FINGER        EFL_INPUT_DEVICE_SUBCLASS_FINGER /**< The normal flat of your finger @since 1.8 */
+#define EVAS_DEVICE_SUBCLASS_FINGERNAIL    EFL_INPUT_DEVICE_SUBCLASS_FINGERNAIL /**< A fingernail @since 1.8 */
+#define EVAS_DEVICE_SUBCLASS_KNUCKLE       EFL_INPUT_DEVICE_SUBCLASS_KNUCKLE /**< A Knuckle @since 1.8 */
+#define EVAS_DEVICE_SUBCLASS_PALM          EFL_INPUT_DEVICE_SUBCLASS_PALM /**< The palm of a users hand @since 1.8 */
+#define EVAS_DEVICE_SUBCLASS_HAND_SIZE     EFL_INPUT_DEVICE_SUBCLASS_HAND_SIZE /**< The side of your hand @since 1.8 */
+#define EVAS_DEVICE_SUBCLASS_HAND_FLAT     EFL_INPUT_DEVICE_SUBCLASS_HAND_FLAT /**< The flat of your hand @since 1.8 */
+#define EVAS_DEVICE_SUBCLASS_PEN_TIP       EFL_INPUT_DEVICE_SUBCLASS_PEN_TIP /**< The tip of a pen @since 1.8 */
+#define EVAS_DEVICE_SUBCLASS_TRACKPAD      EFL_INPUT_DEVICE_SUBCLASS_TRACKPAD /**< A trackpad style mouse @since 1.8 */
+#define EVAS_DEVICE_SUBCLASS_TRACKPOINT    EFL_INPUT_DEVICE_SUBCLASS_TRACKPOINT /**< A trackpoint style mouse @since 1.8 */
+#define EVAS_DEVICE_SUBCLASS_TRACKBALL     EFL_INPUT_DEVICE_SUBCLASS_TRACKBALL /**< A trackball style mouse @since 1.8 */
 
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {

@@ -4,6 +4,7 @@ efl_eolian_legacy_files = \
 	lib/efl/interfaces/efl_gfx.eo \
 	lib/efl/interfaces/efl_image.eo \
 	lib/efl/interfaces/efl_image_animated.eo \
+	lib/efl/interfaces/efl_input_device.eo \
 	$(NULL)
 
 efl_eolian_files = \
@@ -62,6 +63,7 @@ EXTRA_DIST += \
       lib/efl/Efl.h \
       lib/efl/Makefile.am \
       lib/efl/Makefile.in \
+      lib/efl/interfaces/efl_common_internal.h \
       $(efl_eolian_files) \
       $(efl_eolian_type_files)
 
@@ -77,7 +79,9 @@ lib/efl/interfaces/efl_gfx_shape.c \
 lib/efl/interfaces/efl_vpath_file.c \
 lib/efl/interfaces/efl_vpath_manager.c \
 lib/efl/interfaces/efl_vpath_core.c \
-lib/efl/interfaces/efl_vpath_file_core.c
+lib/efl/interfaces/efl_vpath_file_core.c \
+lib/efl/interfaces/efl_input_device.c \
+$(NULL)
 
 lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA
 lib_efl_libefl_la_LIBADD = @EFL_LIBS@
