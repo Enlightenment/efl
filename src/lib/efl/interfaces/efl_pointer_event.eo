@@ -93,7 +93,7 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event)
       @property device {
          [[Pointing device that originated this event.]]
          values {
-            dev: Efl.Input.Device*;
+            dev: Efl.Input.Device;
          }
       }
       @property source {
@@ -101,7 +101,7 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event)
            propagation or repetition of the event.
          ]]
          values {
-            src: Efl.Gfx*;
+            src: Efl.Gfx;
          }
       }
       /* FIXME: why not double_click() and triple_click() */

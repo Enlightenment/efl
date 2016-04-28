@@ -336,6 +336,77 @@ EAPI int              evas_event_freeze_get(const Evas *e) EINA_WARN_UNUSED_RESU
  * out on new objects if the state change demands it.
  */
 EAPI void             evas_event_thaw_eval(Evas *e) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Mouse move event feed.
+ *
+ * This function will set some evas properties that is necessary when the mouse
+ * is moved from its last position. It prepares information to be treated by
+ * the callback function.
+ *
+ * @param[in] y The vertical position of the mouse pointer.
+ * @param[in] timestamp The timestamp of the mouse up event.
+ * @param[in] data The data for canvas.
+ */
+EAPI void             evas_event_feed_mouse_move(Evas *obj, int x, int y, unsigned int timestamp, const void *data);
+
+/**
+ * @brief Mouse move event feed from input.
+ *
+ * Similar to the @ref evas_event_feed_mouse_move, this function will inform
+ * Evas about mouse move events which were received by the input system,
+ * relative to the 0,0 of the window, not to the canvas 0,0. It will take care
+ * of doing any special transformation like adding the framespace offset to the
+ * mouse event.
+ *
+ * @param[in] y The vertical position of the mouse pointer relative to the 0,0
+ * of the window/surface.
+ * @param[in] timestamp The timestamp of the mouse move event.
+ * @param[in] data The data for canvas.
+ *
+ * @since 1.8
+ */
+EAPI void             evas_event_input_mouse_move(Evas *obj, int x, int y, unsigned int timestamp, const void *data);
+
+/**
+ * @brief Mouse up event feed.
+ *
+ * This function will set some evas properties that is necessary when the mouse
+ * button is released. It prepares information to be treated by the callback
+ * function.
+ *
+ * @param[in] flags Evas button flags.
+ * @param[in] timestamp The timestamp of the mouse up event.
+ * @param[in] data The data for canvas.
+ */
+EAPI void             evas_event_feed_mouse_up(Evas *obj, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
+
+/**
+ * @brief Mouse down event feed.
+ *
+ * This function will set some evas properties that is necessary when the mouse
+ * button is pressed. It prepares information to be treated by the callback
+ * function.
+ *
+ * @param[in] flags Evas button flags.
+ * @param[in] timestamp The timestamp of the mouse up event.
+ * @param[in] data The data for canvas.
+ */
+EAPI void             evas_event_feed_mouse_down(Evas *obj, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
+
+/**
+ * @brief Mouse wheel event feed.
+ *
+ * This function will set some evas properties that is necessary when the mouse
+ * wheel is scrolled up or down. It prepares information to  be treated by the
+ * callback function.
+ *
+ * @param[in] z How much mouse wheel was scrolled up or down.
+ * @param[in] timestamp The timestamp of the mouse up event.
+ * @param[in] data The data for canvas.
+ */
+EAPI void             evas_event_feed_mouse_wheel(Evas *obj, int direction, int z, unsigned int timestamp, const void *data);
+
 /**
  * @}
  */

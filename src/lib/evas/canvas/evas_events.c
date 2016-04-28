@@ -1,6 +1,9 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#define EFL_INTERNAL_UNSTABLE
+#include "interfaces/efl_common_internal.h"
+
 static Eina_List *
 _evas_event_object_list_in_get(Evas *eo_e, Eina_List *in,
                                const Eina_Inlist *list, Evas_Object *stop,
@@ -1008,9 +1011,10 @@ evas_event_thaw_eval(Evas *eo_e)
      }
 }
 
-EOLIAN void
-_evas_canvas_event_feed_mouse_down(Eo *eo_e, Evas_Public_Data *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
+EAPI void
+evas_event_feed_mouse_down(Eo *eo_e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Eina_List *l, *copy;
    Evas_Event_Mouse_Down ev;
    Evas_Object *eo_obj;
@@ -1230,9 +1234,10 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data)
    return post_called;
 }
 
-EOLIAN void
-_evas_canvas_event_feed_mouse_up(Eo *eo_e, Evas_Public_Data *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
+EAPI void
+evas_event_feed_mouse_up(Eo *eo_e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Eina_List *l, *copy;
 
    INF("ButtonEvent:up time=%u x=%d y=%d button=%d downs=%d", timestamp, e->pointer.x, e->pointer.y, b, e->pointer.downs);
@@ -1359,9 +1364,10 @@ _evas_canvas_event_feed_mouse_cancel(Eo *eo_e, Evas_Public_Data *e, unsigned int
    _evas_unwalk(e);
 }
 
-EOLIAN void
-_evas_canvas_event_feed_mouse_wheel(Eo *eo_e, Evas_Public_Data *e, int direction, int z, unsigned int timestamp, const void *data)
+EAPI void
+evas_event_feed_mouse_wheel(Eo *eo_e, int direction, int z, unsigned int timestamp, const void *data)
 {
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Eina_List *l, *copy;
    Evas_Event_Mouse_Wheel ev;
    Evas_Object *eo_obj;
@@ -1904,15 +1910,17 @@ nogrep:
    _evas_unwalk(e);
 }
 
-EOLIAN void
-_evas_canvas_event_input_mouse_move(Eo *eo_e, Evas_Public_Data *e, int x, int y, unsigned int timestamp, const void *data)
+EAPI void
+evas_event_input_mouse_move(Eo *eo_e, int x, int y, unsigned int timestamp, const void *data)
 {
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    _canvas_event_feed_mouse_move_internal(eo_e, e, x - e->framespace.x, y - e->framespace.y, timestamp, data);
 }
 
-EOLIAN void
-_evas_canvas_event_feed_mouse_move(Eo *eo_e, Evas_Public_Data *e, int x, int y, unsigned int timestamp, const void *data)
+EAPI void
+evas_event_feed_mouse_move(Eo *eo_e, int x, int y, unsigned int timestamp, const void *data)
 {
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    _canvas_event_feed_mouse_move_internal(eo_e, e, x, y, timestamp, data);
 }
 
@@ -1984,7 +1992,6 @@ _evas_canvas_event_feed_mouse_in(Eo *eo_e, Evas_Public_Data *e, unsigned int tim
 EOLIAN void
 _evas_canvas_event_feed_mouse_out(Eo *eo_e, Evas_Public_Data *e, unsigned int timestamp, const void *data)
 {
-
    Evas_Event_Mouse_Out ev;
    int event_id = 0;
 
@@ -3024,4 +3031,11 @@ EOLIAN int
 _evas_canvas_event_down_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->pointer.downs;
+}
+
+EOLIAN void
+_evas_canvas_event_feed(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const Efl_Pointer_Event *event)
+{
+   Efl_Pointer_Event_Data *ev = eo_data_scope_get(event, EFL_POINTER_EVENT_CLASS);
+   /* TODO */
 }
