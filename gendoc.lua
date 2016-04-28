@@ -701,12 +701,12 @@ local Writer = util.Object:clone {
     end,
 
     write_par = function(self, str)
-        local notetypes = {
+        local notetypes = global_opts.use_notes and {
             ["Note: "] = "<note>\n",
             ["Warning: "] = "<note warning>\n",
             ["Remark: "] = "<note tip>\n",
             ["TODO: "] = "<note>\n**TODO:** "
-        }
+        } or {}
         local tag
         for k, v in pairs(notetypes) do
             if str:match("^" .. k) then
@@ -1372,8 +1372,10 @@ local build_class = function(cl)
     f:write_h("Inheritance hierarchy", 3)
     f:write_list(build_inherits(cl))
     f:write_nl()
-    f:write_graph(build_igraph(cl))
-    f:write_nl(2)
+    if global_opts.use_dot then
+        f:write_graph(build_igraph(cl))
+        f:write_nl(2)
+    end
 
     f:write_h("Description", 3)
     write_full_doc(f, cl:documentation_get())
@@ -1575,16 +1577,18 @@ getopt.parse {
 
         { category = "Generator" },
         { "r", "root", true, help = "Root path of the docs." },
-        { "n", "namespace", true, help = "Root namespace of the docs." }
+        { "n", "namespace", true, help = "Root namespace of the docs." },
+        { nil, "disable-graphviz", false, help = "Disable graphviz usage." },
+        { nil, "disable-notes", false, help = "Disable notes plugin usage." }
     },
     error_cb = function(parser, msg)
         io.stderr:write(msg, "\n")
         getopt.help(parser, io.stderr)
     end,
     done_cb = function(parser, opts, args)
-        if opts["v"] then
-            global_opts.verbose = true
-        end
+        global_opts.verbose = not not opts["v"]
+        global_opts.use_dot = not opts["disable-graphviz"]
+        global_opts.use_notes = not opts["disable-notes"]
         global_opts.root_nspace = (not opts["n"] or opts["n"] == "")
             and "efl" or opts["n"]
         if not opts["r"] or opts["r"] == "" then
