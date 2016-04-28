@@ -113,11 +113,11 @@ typedef struct _Edje_Edit_Script_Error Edje_Edit_Script_Error;
  */
 struct _Edje_Part_Image_Use
 {
-   const char *group; /**< name of group that use image */
+   const char *group; /**< name of group (or set) that use image */
    const char *part; /**< name of part that use image */
    struct {
       const char     *name; /**< name of the state */
-      double         value; /**< value of the state */
+      double         value; /**< value of the state (-1 if it is set) */
    } state; /**< structure that contain state's information */
 };
 typedef struct _Edje_Part_Image_Use Edje_Part_Image_Use;
@@ -5280,6 +5280,20 @@ edje_edit_image_set_rename(Evas_Object *obj, const char *set, const char *new_se
 EAPI Eina_List *
 edje_edit_image_set_list_get(Evas_Object *obj);
 
+/** Get list of (Edje_Part_Image_Use *) - group-part-state triplets where given
+ * set is used
+ *
+ * Use edje_edit_image_usage_list_free() when you don't need it anymore.
+ *
+ * @param obj Object being edited.
+ * @param name The name of the image.
+ * @param first_only If EINA_TRUE, return only one triplete.
+ *
+ * @return Eina_List containing Edje_Part_Image_Use if successful, NULL otherwise
+ */
+EAPI Eina_List*
+edje_edit_set_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool first_only);
+
 /** Add new image set.
  *
  * @param obj Object being edited.
@@ -5291,6 +5305,20 @@ edje_edit_image_set_list_get(Evas_Object *obj);
  */
 EAPI Eina_Bool
 edje_edit_image_set_add(Evas_Object *obj, const char *name);
+
+/** Delete image set.
+ *
+ * Can't delete set if it is used by any part.
+ *
+ * @param obj Object being edited.
+ * @param name image set's name.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_image_set_del(Evas_Object *obj, const char *name);
 
 /** Get the list of all images inside of given set in the given edje.
  * Use edje_edit_string_list_free() when you don't need the list anymore.
