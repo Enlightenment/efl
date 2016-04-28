@@ -23,34 +23,43 @@ typedef struct _Evas_Modifier Evas_Modifier;
 typedef struct _Evas_Lock Evas_Lock;
 #endif
 
-#if 0
 struct _Efl_Pointer_Event_Data
 {
    Eo             *eo;
-   const Eo_Event_Description *event;
-   unsigned int    timestamp;
+   unsigned int    timestamp; /* FIXME: store as double? */
    int             button;
    unsigned int    pressed_buttons;
    struct {
-      int          x, y;
-   } output;
+      struct {
+         int       x, y;
+      } output;
+      struct {
+         int       x, y;
+      } canvas;
+   } cur, prev;
    struct {
-      int          x, y;
-   } canvas;
-   Eo             *source; /* may be ecore or evas or evas object (?) */
-   Efl_Pointer_Action       action;
-   Efl_Pointer_Button_Flags button_flags;
-   Efl_Pointer_Event_Flags  event_flags;
-   void           *data;   /* evas data - whatever that is */
+      Efl_Orient   dir;
+      int          z;
+   } wheel;
+   Efl_Gfx                    *source; /* could it be ecore? */
+   Efl_Input_Device           *device;
+   Efl_Pointer_Action          action;
+   Efl_Pointer_Button_Flags    button_flags;
+   Efl_Pointer_Event_Flags     event_flags;
+   void                       *data; /* evas data - whatever that is */
+   const Eo_Event_Description *event_desc;
+   //Efl_Input_State            state;
 };
 
 struct _Efl_Input_State_Data
 {
    Eo             *eo;
+   /* FIXME / TODO  */
+#if 0
    Evas_Modifier  *modifiers;
    Evas_Lock      *locks;
-};
 #endif
+};
 
 struct _Efl_Input_Device_Data
 {

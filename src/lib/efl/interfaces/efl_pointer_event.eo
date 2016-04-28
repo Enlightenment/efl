@@ -1,0 +1,138 @@
+import efl_orientation;
+
+/* FIXME: Do we need this? Or just use the Eo Event Description as a type? */
+enum Efl.Pointer.Action
+{
+   [[Pointer event type.
+
+     @since 1.18
+   ]]
+   none,        [[Not a valid event.]]
+   mouse_move,  [[Mouse or equivalent pointer moved.]]
+   mouse_down,  [[Mouse button pressed down.]]
+   mouse_up,    [[Mouse button released.]]
+   mouse_wheel, [[Mouse wheel scroll, horizontally or vertically.]]
+   touch_move,  [[Finger moved while touching surface.]]
+   touch_down,  [[Finger touch made contact.]]
+   touch_up,    [[Finger touch released.]]
+   hover,       [[A hovering movement over a distance-sensitive touch screen.]]
+}
+
+enum Efl.Pointer.Button_Flags
+{
+   /* Evas.Button_Flags */
+   none = 0,                [[No extra mouse button data]]
+   double_click = (1 << 0), [[This mouse button press was the 2nd press of a double click]]
+   triple_click = (1 << 1), [[This mouse button press was the 3rd press of a triple click]]
+}
+
+enum Efl.Pointer.Event_Flags
+{
+   /* Evas.Event_Flags */
+   none = 0,             [[No fancy flags set]]
+   on_hold = (1 << 0),   [[This event is being delivered but should be put "on hold" until the on hold flag is unset. The event should be used for informational purposes and maybe some indications visually, but not actually perform anything]]
+   on_scroll = (1 << 1), [[This event flag indicates the event occurs while scrolling; for example, DOWN event occurs during scrolling; the event should be used for informational purposes and maybe some indications visually, but not actually perform anything]]
+}
+
+class Efl.Pointer.Event (Eo.Base, Efl.Event)
+{
+   [[Event data carried over with any pointer event (mouse, touch, ...)
+
+     @since 1.18
+   ]]
+   legacy_prefix: null;
+   methods {
+      @property action {
+         [[The action represented by this event.]]
+         values {
+            act: Efl.Pointer.Action;
+         }
+      }
+      @property button {
+         [[The mouse button that triggered the event.]]
+         values {
+            but: int; [[1 to 32, 0 if not a button event.]]
+         }
+      }
+      @property button_pressed {
+         [[Whether a mouse button is pressed at the moment of the event.]]
+         keys {
+            button: int;
+         }
+         values {
+            pressed: bool;
+         }
+      }
+      /* FIXME: output vs. canvas position??? */
+      @property position {
+         [[Position where the event happened, relative to the window.]]
+         values {
+            x: int;
+            y: int;
+         }
+      }
+      @property previous_position {
+         [[Position of the previous event, valid for move events.
+
+           Relative to the window. May be equal to @.position.
+         ]]
+         values {
+            x: int;
+            y: int;
+         }
+      }
+      /*
+      @property input_state {
+         [[Carries information about keyboard modifiers and locks
+           at the moment of this event (eg. Ctrl, Alt or Caps Lock, Num Lock).]]
+         values {
+            modifiers: Efl.Input.State*; [[Can be $null (no info about state).]]
+         }
+      }
+      */
+      @property device {
+         [[Pointing device that originated this event.]]
+         values {
+            dev: Efl.Input.Device*;
+         }
+      }
+      @property source {
+         [[The object where this event first originated, in case of
+           propagation or repetition of the event.
+         ]]
+         values {
+            src: Efl.Gfx*;
+         }
+      }
+      /* FIXME: why not double_click() and triple_click() */
+      @property button_flags {
+         [[Double or triple click information.]]
+         values {
+            flags: Efl.Pointer.Button_Flags;
+         }
+      }
+      @property event_flags {
+         [[Extra flags for this event, may be changed by the user.]]
+         values {
+            flags: Efl.Pointer.Event_Flags;
+         }
+      }
+      @property wheel_direction {
+         values {
+            dir: Efl.Orient; [[Horizontal or Vertical only.]]
+         }
+      }
+      @property wheel_distance {
+         values {
+            dist: int;
+         }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Efl.Event.timestamp.set;
+      Efl.Event.timestamp.get;
+      Efl.Event.event_type.set;
+      Efl.Event.event_type.get;
+   }
+}
