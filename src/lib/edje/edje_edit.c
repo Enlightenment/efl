@@ -12934,7 +12934,7 @@ _edje_generate_source_state_proxy(Edje *ed, Edje_Part_Description_Common *pd, Ei
 {
    int attr_amount = 0;
    int indent_space = 0;
-   Eina_Bool ret;
+   Eina_Bool ret = 1;
    Edje_Part_Description_Proxy *pro;
 
    pro = (Edje_Part_Description_Proxy *)pd;
