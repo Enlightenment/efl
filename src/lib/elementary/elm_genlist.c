@@ -583,9 +583,6 @@ _item_scroll(Elm_Genlist_Data *sd)
    dw = it->item->block->w;
    dh = oh;
 
-   // hold on scrolling to item until block size calculation is finished.
-   if (dw < 1) return;
-
    switch (sd->scroll_to_type)
      {
       case ELM_GENLIST_ITEM_SCROLLTO_TOP:
