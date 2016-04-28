@@ -11,7 +11,6 @@
 #include "elm_widget_image.h"
 
 #define NON_EXISTING (void *)-1
-static const char *icon_theme = NULL;
 
 #define MY_CLASS ELM_ICON_CLASS
 #define MY_CLASS_NAME "Elm_Icon"
@@ -270,35 +269,7 @@ _icon_freedesktop_set(Evas_Object *obj,
 
    elm_need_efreet();
 
-   if (icon_theme == NON_EXISTING) return EINA_FALSE;
-
-   if (!icon_theme)
-     {
-        Efreet_Icon_Theme *theme;
-        /* TODO: Listen for EFREET_EVENT_ICON_CACHE_UPDATE */
-        theme = efreet_icon_theme_find(elm_config_icon_theme_get());
-        if (!theme)
-          {
-             const char **itr;
-             static const char *themes[] = {
-                "gnome", "Human", "oxygen", "hicolor", NULL
-             };
-             for (itr = themes; *itr; itr++)
-               {
-                  theme = efreet_icon_theme_find(*itr);
-                  if (theme) break;
-               }
-          }
-
-        if (!theme)
-          {
-             icon_theme = NON_EXISTING;
-             return EINA_FALSE;
-          }
-        else
-          icon_theme = eina_stringshare_add(theme->name.internal);
-     }
-   path = efreet_icon_path_find(icon_theme, name, size);
+   path = efreet_icon_path_find(elm_config_icon_theme_get(), name, size);
    sd->freedesktop.use = !!path;
    if (sd->freedesktop.use)
      {
