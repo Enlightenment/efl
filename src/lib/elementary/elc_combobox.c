@@ -380,7 +380,6 @@ _elm_combobox_multiple_selection_set(Eo *obj, Elm_Combobox_Data *pd,
         elm_object_part_text_set(pd->mbe, "guide", elm_object_part_text_get(pd->entry,
                                  "guide"));
         evas_object_hide(pd->entry);
-        eo_composite_attach(obj, pd->mbe);
 
         scr = elm_scroller_add(obj);
         elm_scroller_bounce_set(scr, EINA_FALSE, EINA_TRUE);
@@ -391,6 +390,8 @@ _elm_combobox_multiple_selection_set(Eo *obj, Elm_Combobox_Data *pd,
         elm_object_content_set(scr, pd->mbe);
         elm_object_part_content_set(obj, "elm.swallow.content", scr);
         elm_widget_can_focus_set(pd->genlist, EINA_FALSE);
+
+        eo_composite_attach(obj, pd->mbe);
      }
    else
      {
@@ -402,6 +403,8 @@ _elm_combobox_multiple_selection_set(Eo *obj, Elm_Combobox_Data *pd,
         elm_widget_can_focus_set(pd->genlist, EINA_TRUE);
         elm_genlist_item_bring_in(pd->item, ELM_GENLIST_ITEM_SCROLLTO_NONE);
         evas_object_hide(scr);
+
+        eo_composite_attach(obj, pd->entry);
      }
 }
 
@@ -481,10 +484,11 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    eo_event_callback_array_add(entry, entry_callbacks(), obj);
    evas_object_show(entry);
 
+   elm_object_part_content_set(obj, "elm.swallow.content", entry);
+
    eo_composite_attach(obj, gl);
    eo_composite_attach(obj, entry);
 
-   elm_object_part_content_set(obj, "elm.swallow.content", entry);
    return obj;
 }
 
