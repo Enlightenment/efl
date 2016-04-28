@@ -550,6 +550,63 @@ local Writer = util.Object:clone {
         return self
     end,
 
+    write_graph = function(self, tbl)
+        self:write_raw("<graphviz>\n")
+        self:write_raw("digraph ", tbl.type, " {\n")
+
+        for k, v in pairs(tbl.attrs or {}) do
+            self:write_raw("    ", k, " = \"", v, "\"\n")
+        end
+
+        local write_node = function(nname, attrs)
+            self:write_raw("    ", nname, " [")
+            local first = true
+            for k, v in pairs(attrs) do
+                if not first then
+                    self:write_raw(", ")
+                end
+                self:write_raw(k, " = \"", v, "\"")
+                first = false
+            end
+            self:write_raw("]\n")
+        end
+
+        if tbl.node then
+            self:write_nl()
+            write_node("node", tbl.node)
+        end
+        if tbl.edge then
+            if not tbl.node then self:write_nl() end
+            write_node("edge", tbl.edge)
+        end
+
+        self:write_nl()
+        for i, v in ipairs(tbl.nodes) do
+            local nname = v.name
+            v.name = nil
+            write_node(nname, v)
+        end
+
+        self:write_nl()
+        for i, v in ipairs(tbl.connections) do
+            local from, to, sep = v[1], v[2], (v[3] or "->")
+            if type(from) == "table" then
+                self:write_raw("    {", table.concat(from, ", "), "}")
+            else
+                self:write_raw("    ", from)
+            end
+            self:write_raw(" ", sep, " ")
+            if type(to) == "table" then
+                self:write_raw("{", table.concat(to, ", "), "}")
+            else
+                self:write_raw(to)
+            end
+            self:write_nl()
+        end
+
+        self:write_raw("}\n</graphviz>")
+    end,
+
     write_table = function(self, titles, tbl)
         self:write_raw("^ ", table.concat(titles, " ^ "), " ^\n")
         for i, v in ipairs(tbl) do
@@ -1252,25 +1309,22 @@ local class_to_color = function(cl)
 end
 
 local class_to_node = function(cl, main)
-    local cn = cl:full_name_get()
-    local sn = cn:lower():gsub("%.", "_")
-    local attrs = { "label = \"" .. cn .. "\"" }
+    local ret = {}
+
+    ret.label = cl:full_name_get()
+    ret.name = ret.label:lower():gsub("%.", "_")
+
     local clr = class_to_color(cl)
-    attrs[#attrs + 1] = "style = filled"
-    attrs[#attrs + 1] = "color = " .. clr[1]
-    if main then
-        attrs[#attrs + 1] = "fillcolor = " .. clr[2]
-    else
-        attrs[#attrs + 1] = "fillcolor = white"
-    end
+    ret.style = "filled"
+    ret.color = clr[1]
+    ret.fillcolor = main and clr[2] or "white"
 
     -- FIXME: need a dokuwiki graphviz plugin with proper URL support
     -- the existing one only supports raw URLs (no dokuwikí namespaces)
-    --local url = ":" .. global_opts.root_nspace .. ":"
-    --                .. table.concat(gen_nsp_class(cl), ":")
-    --attrs[#attrs + 1] = "URL=\"" .. url .. "\""
+    --ret.URL = ":" .. global_opts.root_nspace .. ":"
+    --              .. table.concat(gen_nsp_class(cl), ":")
 
-    return sn .. " [" .. table.concat(attrs, ", ") .. "]"
+    return ret
 end
 
 local build_igraph_r
@@ -1282,31 +1336,31 @@ build_igraph_r = function(cl, nbuf, ibuf)
             error("error retrieving inherited class " .. cln)
         end
         nbuf[#nbuf + 1] = class_to_node(acl)
-        ibuf[#ibuf + 1] = sn .. " -> " .. cln:lower():gsub("%.", "_")
+        ibuf[#ibuf + 1] = { sn, (cln:lower():gsub("%.", "_")) }
         build_igraph_r(acl, nbuf, ibuf)
     end
 end
 
 local build_igraph = function(cl)
-    local buf = { "<graphviz>\n" }
-    buf[#buf + 1] = "digraph hierarchy {\n"
-    buf[#buf + 1] = "rankdir = TB\n"
-    buf[#buf + 1] = "size = \"6\"\n"
-    buf[#buf + 1] = "bgcolor = \"transparent\"\n"
-    buf[#buf + 1] = "node [shape = box]\n\n"
+    local graph = {
+        type = "hierarchy",
+        attrs = {
+            rankdir = "TB",
+            size = "6",
+            bgcolor = "transparent"
+        },
+        node = { shape = "box" }
+    }
 
     local nbuf = {}
     local ibuf = {}
     nbuf[#nbuf + 1] = class_to_node(cl, true)
     build_igraph_r(cl, nbuf, ibuf)
 
-    buf[#buf + 1] = table.concat(nbuf, "\n")
-    buf[#buf + 1] = "\n\n"
+    graph.nodes = nbuf
+    graph.connections = ibuf
 
-    buf[#buf + 1] = table.concat(ibuf, "\n")
-    buf[#buf + 1] = "\n}\n</graphviz>"
-
-    return table.concat(buf)
+    return graph
 end
 
 local build_class = function(cl)
@@ -1318,7 +1372,7 @@ local build_class = function(cl)
     f:write_h("Inheritance hierarchy", 3)
     f:write_list(build_inherits(cl))
     f:write_nl()
-    f:write_raw(build_igraph(cl))
+    f:write_graph(build_igraph(cl))
     f:write_nl(2)
 
     f:write_h("Description", 3)
