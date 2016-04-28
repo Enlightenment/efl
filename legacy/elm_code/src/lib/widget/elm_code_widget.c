@@ -558,18 +558,23 @@ static void
 _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
 {
    Evas_Coord viewx, viewy, vieww, viewh, cellw, cellh;
-   Evas_Coord curx, cury;
+   Evas_Coord curx, cury, oy, rowy;
+   Evas_Object *grid;
    Elm_Code_Widget_Data *pd;
    int gutter;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
+   evas_object_geometry_get(widget, NULL, &oy, NULL, NULL);
    elm_scroller_region_get(pd->scroller, &viewx, &viewy, &vieww, &viewh);
    _elm_code_widget_cell_size_get(widget, &cellw, &cellh);
 
+   grid = eina_list_data_get(eina_list_nth_list(pd->grids, pd->cursor_line - 1));
+   evas_object_geometry_get(grid, NULL, &rowy, NULL, NULL);
+
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
    curx = (pd->cursor_col + gutter - 1) * cellw;
-   cury = (pd->cursor_line - 1) * cellh;
+   cury = rowy + viewy - oy;
 
    if (curx >= viewx && cury >= viewy && curx + cellw <= viewx + vieww && cury + cellh <= viewy + viewh)
      return;
