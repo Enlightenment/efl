@@ -19,7 +19,7 @@ EAPI Evas_Object       *elm_prefs_add(Evas_Object *parent);
 typedef struct _Elm_Prefs_Item_Spec_Void Elm_Prefs_Item_Spec_Void;
 struct _Elm_Prefs_Item_Spec_Void
 {
-   int:0;  //Trick for removing warning (warning: empty struct has size 0 in C, size 1 in C++)
+   char dummy;  //for compatibility (warning: empty struct has size 0 in C, size 1 in C++)
 };
 
 typedef struct _Elm_Prefs_Item_Spec_Bool Elm_Prefs_Item_Spec_Bool;
