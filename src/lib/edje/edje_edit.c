@@ -8825,12 +8825,14 @@ edje_edit_image_rename(Evas_Object *obj, const char *name, const char *new_name)
 EAPI Eina_List *
 edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool first_only)
 {
-   Eina_List *result = NULL;
+   Eina_List *result = NULL, *l;
    Eina_Iterator *it;
    Edje_Part_Collection_Directory_Entry *pce;
    Edje_Part_Image_Use *item;
    Edje_Part *part;
    Edje_Part_Description_Image *part_desc_image;
+   Edje_Image_Directory_Set *de = NULL;
+   Edje_Image_Directory_Set_Entry *dim = NULL;
    unsigned int i, j, k;
    int image_id;
 
@@ -8846,7 +8848,7 @@ edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool fir
 
    it = eina_hash_iterator_data_new(ed->file->collection);
 
-   #define ITEM_ADD()                                                          \
+#define ITEM_ADD()                                                             \
   item = (Edje_Part_Image_Use *)calloc(1, sizeof(Edje_Part_Image_Use));        \
   item->group = eina_stringshare_add(pce->entry);                              \
   item->part = eina_stringshare_add(part->name);                               \
@@ -8854,7 +8856,15 @@ edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool fir
   item->state.value = part_desc_image->common.state.value;                     \
   result = eina_list_append(result, item);
 
-   #define FIND_IN_PART_DESCRIPTION()                        \
+#define ITEM_SET_ADD()                                                  \
+  item = (Edje_Part_Image_Use *)calloc(1, sizeof(Edje_Part_Image_Use)); \
+  item->group = eina_stringshare_add(de->name);                         \
+  item->part = NULL;                                                    \
+  item->state.name = NULL;                                              \
+  item->state.value = -1;                                               \
+  result = eina_list_append(result, item);
+
+#define FIND_IN_PART_DESCRIPTION()                           \
   if ((part_desc_image->image.id == image_id) &&             \
       (!part_desc_image->image.set))                         \
     {                                                        \
@@ -8896,6 +8906,20 @@ edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool fir
                }
           }
      }
+
+   /* NOW CHECKING IF IMAGE IS USED INSIDE OF SET */
+   for (i = 0; i < ed->file->image_dir->sets_count; ++i)
+     {
+        de = ed->file->image_dir->sets + i;
+        EINA_LIST_FOREACH(de->entries, l, dim)
+          {
+             if (dim->id == image_id)
+               {
+                  ITEM_SET_ADD()
+               }
+          }
+     }
+
    #undef ITEM_ADD
    #undef FIND_IN_PART_DESCRIPTION
 end:

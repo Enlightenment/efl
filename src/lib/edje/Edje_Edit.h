@@ -5562,7 +5562,11 @@ EAPI Eina_Bool edje_edit_image_replace(Evas_Object *obj, const char *name, const
 EAPI Eina_Bool edje_edit_image_rename(Evas_Object *obj, const char *name, const char *new_name);
 
 /** Get list of (Edje_Part_Image_Use *) - group-part-state triplets where given
- * image is used
+ * image is used.
+ *
+ * Important! Image can also be used inside of set and plenty of times, so for each use
+ * inside of set triplet would set "set's" name into group name, and it's state
+ * value would be -1. Every other fields will be 0.
  *
  * Use edje_edit_image_usage_list_free() when you don't need it anymore.
  *
