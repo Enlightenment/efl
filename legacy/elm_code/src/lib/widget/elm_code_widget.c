@@ -409,18 +409,20 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, uns
 static void
 _elm_code_widget_refresh(Elm_Code_Widget *widget)
 {
-   Evas_Coord scroll_y, scroll_h, ch;
+   Evas_Coord scroll_y, scroll_h, oy;
    unsigned int first_row, last_row;
 
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   _elm_code_widget_cell_size_get(widget, NULL, &ch);
+   evas_object_geometry_get(widget, NULL, &oy, NULL, NULL);
    elm_scroller_region_get(pd->scroller, NULL, &scroll_y, NULL, &scroll_h);
+   if (scroll_h == 0)
+     return;
 
-   first_row = scroll_y / ch + 1;
-   last_row = (scroll_y + scroll_h) / ch + 1;
+   elm_code_widget_position_at_coordinates_get(widget, 0, oy, &first_row, NULL);
+   elm_code_widget_position_at_coordinates_get(widget, 0, oy + scroll_h, &last_row, NULL);
 
    if (last_row > elm_code_file_lines_get(pd->code->file))
      last_row = elm_code_file_lines_get(pd->code->file);
@@ -640,7 +642,7 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
      {
         evas_object_geometry_get(grid, NULL, &rowy, NULL, NULL);
 
-        if (rowy + sy - oy < y)
+        if (rowy + sy - oy - 1<= y)
           break;
 
         number--;
