@@ -1586,6 +1586,9 @@ getopt.parse {
         getopt.help(parser, io.stderr)
     end,
     done_cb = function(parser, opts, args)
+        if opts["h"] then
+            return
+        end
         global_opts.verbose = not not opts["v"]
         global_opts.use_dot = not opts["disable-graphviz"]
         global_opts.use_notes = not opts["disable-notes"]
