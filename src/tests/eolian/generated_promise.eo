@@ -7,6 +7,18 @@ class Generated_Promise (Eo.Base)
             @inout promise1: promise<int>*;
          }
       }
+      method_multiple_args_1 {
+         params {
+            @inout promise1: promise<int>*;
+            @in data: void*;
+         }
+      }
+      method_multiple_args_2 {
+         params {
+            @in data: void*;
+            @inout promise1: promise<int>*;
+         }
+      }
       method2 {
          params {
             @out promise1: promise<int>*;
