@@ -39,6 +39,12 @@ typedef struct
    Eina_Bool                  deletions_waiting : 1;
 } Eo_Base_Data;
 
+typedef enum {
+     DATA_PTR,
+     DATA_OBJ,
+     DATA_VAL
+} Eo_Generic_Data_Node_Type;
+
 typedef struct
 {
    EINA_INLIST;
@@ -48,11 +54,7 @@ typedef struct
         Eo *obj;
         void *ptr;
    } d;
-   enum {
-        DATA_PTR,
-        DATA_OBJ,
-        DATA_VAL
-   } d_type;
+   Eo_Generic_Data_Node_Type  d_type;
 } Eo_Generic_Data_Node;
 
 typedef struct
@@ -125,72 +127,6 @@ _eo_generic_data_del_all(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
 }
 
 EOLIAN static void
-_eo_base_key_data_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, const void *data)
-{
-   Eo_Generic_Data_Node *node;
-   Eo_Base_Extension *ext = pd->ext;
-
-   if (!key) return;
-   if (ext)
-     {
-        EINA_INLIST_FOREACH(ext->generic_data, node)
-          {
-             if (!strcmp(node->key, key))
-               {
-                  if ((node->d_type == DATA_PTR) && (node->d.ptr == data))
-                     return;
-                  ext->generic_data = eina_inlist_remove
-                    (ext->generic_data, EINA_INLIST_GET(node));
-                  _eo_generic_data_node_free(node);
-                  break;
-               }
-          }
-     }
-
-   _eo_base_extension_need(pd);
-   ext = pd->ext;
-   if (ext)
-     {
-        node = calloc(1, sizeof(Eo_Generic_Data_Node));
-        if (!node) return;
-        node->key = eina_stringshare_add(key);
-        node->d.ptr = (void *)data;
-        node->d_type = DATA_PTR;
-        ext->generic_data = eina_inlist_prepend
-          (ext->generic_data, EINA_INLIST_GET(node));
-     }
-}
-
-EOLIAN static void *
-_eo_base_key_data_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
-{
-   Eo_Generic_Data_Node *node;
-   Eo_Base_Extension *ext = pd->ext;
-
-   if (!key) return NULL;
-   if (!ext) return NULL;
-   EINA_INLIST_FOREACH(ext->generic_data, node)
-     {
-        if (!strcmp(node->key, key))
-          {
-             if (node->d_type == DATA_PTR)
-               {
-                  ext->generic_data = eina_inlist_promote
-                    (ext->generic_data, EINA_INLIST_GET(node));
-                  return node->d.ptr;
-               }
-             else
-               {
-                  ERR("Object %p key '%s' wants raw data but is not raw data",
-                      obj, key);
-                  return NULL;
-               }
-          }
-     }
-   return NULL;
-}
-
-EOLIAN static void
 _eo_base_key_del(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
 {
    Eo_Generic_Data_Node *node;
@@ -210,20 +146,22 @@ _eo_base_key_del(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
      }
 }
 
-EOLIAN static void
-_eo_base_key_obj_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, Eo *objdata)
+/* Return TRUE if the object was newly added. */
+static Eina_Bool
+_key_generic_set(const Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, const void *data, Eo_Generic_Data_Node_Type d_type)
 {
    Eo_Generic_Data_Node *node;
    Eo_Base_Extension *ext = pd->ext;
 
-   if (!key) return;
+   if (!key) return EINA_FALSE;
    if (ext)
      {
         EINA_INLIST_FOREACH(ext->generic_data, node)
           {
              if (!strcmp(node->key, key))
                {
-                  if ((node->d_type == DATA_OBJ) && (node->d.obj == objdata)) return;
+                  if ((node->d_type == d_type) && (node->d.ptr == data))
+                     return EINA_FALSE;
                   ext->generic_data = eina_inlist_remove
                     (ext->generic_data, EINA_INLIST_GET(node));
                   _eo_generic_data_node_free(node);
@@ -237,108 +175,82 @@ _eo_base_key_obj_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, Eo 
    if (ext)
      {
         node = calloc(1, sizeof(Eo_Generic_Data_Node));
-        if (!node) return;
+        if (!node) return EINA_FALSE;
         node->key = eina_stringshare_add(key);
-        node->d.obj = objdata;
-        node->d_type = DATA_OBJ;
-        eo_ref(node->d.obj);
+        node->d.ptr = (void *) data;
+        node->d_type = d_type;
         ext->generic_data = eina_inlist_prepend
           (ext->generic_data, EINA_INLIST_GET(node));
+        return EINA_TRUE;
      }
+
+   return EINA_FALSE;
+}
+
+static void *
+_key_generic_get(const Eo *obj, Eo_Base_Data *pd, const char *key, Eo_Generic_Data_Node_Type d_type)
+{
+   Eo_Generic_Data_Node *node;
+   Eo_Base_Extension *ext = pd->ext;
+
+   if (!key) return NULL;
+   if (!ext) return NULL;
+   EINA_INLIST_FOREACH(ext->generic_data, node)
+     {
+        if (!strcmp(node->key, key))
+          {
+             if (node->d_type == d_type)
+               {
+                  ext->generic_data = eina_inlist_promote
+                    (ext->generic_data, EINA_INLIST_GET(node));
+                  return node->d.ptr;
+               }
+             else
+               {
+                  ERR("Object %p key '%s' asked for %d but is %d'",
+                      obj, key, d_type, node->d_type);
+                  return NULL;
+               }
+          }
+     }
+   return NULL;
+}
+
+EOLIAN static void
+_eo_base_key_data_set(Eo *obj, Eo_Base_Data *pd, const char *key, const void *data)
+{
+   _key_generic_set(obj, pd, key, data, DATA_PTR);
+}
+
+EOLIAN static void *
+_eo_base_key_data_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
+{
+   return _key_generic_get(obj, pd, key, DATA_PTR);
+}
+
+EOLIAN static void
+_eo_base_key_obj_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, Eo *objdata)
+{
+   if (_key_generic_set(obj, pd, key, objdata, DATA_OBJ))
+      eo_ref(objdata);
 }
 
 EOLIAN static Eo *
 _eo_base_key_obj_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
 {
-   Eo_Generic_Data_Node *node;
-   Eo_Base_Extension *ext = pd->ext;
-
-   if (!key) return NULL;
-   if (!ext) return NULL;
-   EINA_INLIST_FOREACH(ext->generic_data, node)
-     {
-        if (!strcmp(node->key, key))
-          {
-             if (node->d_type == DATA_OBJ)
-               {
-                  ext->generic_data = eina_inlist_promote
-                    (ext->generic_data, EINA_INLIST_GET(node));
-                  return node->d.obj;
-               }
-             else
-               {
-                  ERR("Object %p key '%s' asked for object but is not an object",
-                      obj, key);
-                  return NULL;
-               }
-          }
-     }
-   return NULL;
+   return _key_generic_get(obj, pd, key, DATA_OBJ);
 }
 
 EOLIAN static void
 _eo_base_key_value_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, Eina_Value *value)
 {
-   Eo_Generic_Data_Node *node;
-   Eo_Base_Extension *ext = pd->ext;
-
-   if (!key) return;
-   if (ext)
-     {
-        EINA_INLIST_FOREACH(ext->generic_data, node)
-          {
-             if (!strcmp(node->key, key))
-               {
-                  if ((node->d_type == DATA_VAL) && (node->d.val == value)) return;
-                  ext->generic_data = eina_inlist_remove
-                    (ext->generic_data, EINA_INLIST_GET(node));
-                  _eo_generic_data_node_free(node);
-                  break;
-               }
-          }
-     }
-
-   _eo_base_extension_need(pd);
-   ext = pd->ext;
-   if (ext)
-     {
-        node = calloc(1, sizeof(Eo_Generic_Data_Node));
-        if (!node) return;
-        node->key = eina_stringshare_add(key);
-        node->d.val = value;
-        node->d_type = DATA_VAL;
-        ext->generic_data = eina_inlist_prepend
-          (ext->generic_data, EINA_INLIST_GET(node));
-     }
+   _key_generic_set(obj, pd, key, value, DATA_VAL);
 }
 
 EOLIAN static Eina_Value *
 _eo_base_key_value_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
 {
-   Eo_Generic_Data_Node *node;
-   Eo_Base_Extension *ext = pd->ext;
-
-   if (!key) return NULL;
-   if (!ext) return NULL;
-   EINA_INLIST_FOREACH(ext->generic_data, node)
-     {
-        if (!strcmp(node->key, key))
-          {
-             if (node->d_type == DATA_VAL)
-               {
-                  ext->generic_data = eina_inlist_promote
-                    (ext->generic_data, EINA_INLIST_GET(node));
-                  return node->d.val;
-               }
-             else
-               {
-                  ERR("Object %p key '%s' asked for value but is not a value",
-                      obj, key);
-                  return NULL;
-               }
-          }
-     }
-   return NULL;
+   return _key_generic_get(obj, pd, key, DATA_VAL);
 }
 
 EOLIAN static void
