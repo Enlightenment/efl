@@ -91,6 +91,17 @@ _eo_base_extension_noneed(Eo_Base_Data *pd)
 static void
 _eo_generic_data_node_free(Eo_Generic_Data_Node *node)
 {
+   switch (node->d_type)
+     {
+      case DATA_OBJ:
+         eo_unref(node->d.obj);
+         break;
+      case DATA_VAL:
+         eina_value_free(node->d.val);
+         break;
+      case DATA_PTR:
+         break;
+     }
    eina_stringshare_del(node->key);
    free(node);
 }
@@ -102,16 +113,13 @@ _eo_generic_data_del_all(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
    Eo_Base_Extension *ext = pd->ext;
 
    if (!ext) return;
+
    while (ext->generic_data)
      {
         node = (Eo_Generic_Data_Node *)ext->generic_data;
         ext->generic_data = eina_inlist_remove(ext->generic_data,
-                                               EINA_INLIST_GET(node));
-        if (node->d_type == DATA_OBJ)
-          {
-             eo_unref(node->d.obj);
-          }
-        else if (node->d_type == DATA_VAL) eina_value_free(node->d.val);
+              EINA_INLIST_GET(node));
+
         _eo_generic_data_node_free(node);
      }
 }
@@ -133,11 +141,6 @@ _eo_base_key_data_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, co
                      return;
                   ext->generic_data = eina_inlist_remove
                     (ext->generic_data, EINA_INLIST_GET(node));
-                  if (node->d_type == DATA_OBJ)
-                    {
-                       eo_unref(node->d.obj);
-                    }
-                  else if (node->d_type == DATA_VAL) eina_value_free(node->d.val);
                   _eo_generic_data_node_free(node);
                   break;
                }
@@ -201,11 +204,6 @@ _eo_base_key_del(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
           {
              ext->generic_data = eina_inlist_remove
                (ext->generic_data, EINA_INLIST_GET(node));
-             if (node->d_type == DATA_OBJ)
-               {
-                  eo_unref(node->d.obj);
-               }
-             else if (node->d_type == DATA_VAL) eina_value_free(node->d.val);
              _eo_generic_data_node_free(node);
              return;
           }
@@ -228,11 +226,6 @@ _eo_base_key_obj_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, Eo 
                   if ((node->d_type == DATA_OBJ) && (node->d.obj == objdata)) return;
                   ext->generic_data = eina_inlist_remove
                     (ext->generic_data, EINA_INLIST_GET(node));
-                  if (node->d_type == DATA_OBJ)
-                    {
-                       eo_unref(node->d.obj);
-                    }
-                  else if (node->d_type == DATA_VAL) eina_value_free(node->d.val);
                   _eo_generic_data_node_free(node);
                   break;
                }
@@ -299,11 +292,6 @@ _eo_base_key_value_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, E
                   if ((node->d_type == DATA_VAL) && (node->d.val == value)) return;
                   ext->generic_data = eina_inlist_remove
                     (ext->generic_data, EINA_INLIST_GET(node));
-                  if (node->d_type == DATA_OBJ)
-                    {
-                       eo_unref(node->d.obj);
-                    }
-                  else if (node->d_type == DATA_VAL) eina_value_free(node->d.val);
                   _eo_generic_data_node_free(node);
                   break;
                }
