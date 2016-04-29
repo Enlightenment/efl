@@ -58,16 +58,18 @@ static Eina_Bool
  }
 
 static void
-promise_then_count(Eo* obj EINA_UNUSED, int *total)
+promise_then_count(void *data EINA_UNUSED, void *p)
 {
+  int *total = p;
   ck_assert_ptr_ne(total, NULL);
   printf("efl_model_loaded count %d\n", *total); fflush(stdout);
   ecore_main_loop_quit();
 }
 
 static void
-promise_then_accessor(Eo* obj EINA_UNUSED, Eina_Accessor **accessor)
+promise_then_accessor(void *data EINA_UNUSED, void* p)
 {
+  Eina_Accessor **accessor = (Eina_Accessor**)p;
   ck_assert_ptr_ne(accessor, NULL);
   printf("efl_model_loaded accessor %p\n", *accessor); fflush(stdout);
 
@@ -82,8 +84,9 @@ promise_then_accessor(Eo* obj EINA_UNUSED, Eina_Accessor **accessor)
 }
 
 static void
-promise_then_value(void *user EINA_UNUSED, Eina_Value *value)
+promise_then_value(void *user EINA_UNUSED, void *p)
 {
+  Eina_Value* value = p;
   ck_assert_ptr_ne(value, NULL);
   char *str = eina_value_to_string(value);
 
@@ -95,7 +98,7 @@ promise_then_value(void *user EINA_UNUSED, Eina_Value *value)
 }
 
 static void
-error_promise_then(void* data, Eina_Error const* error)
+error_promise_then(void* data EINA_UNUSED, Eina_Error const* error EINA_UNUSED)
 {
   ck_abort_msg(0, "Error Promise cb");
   ecore_main_loop_quit();
@@ -104,8 +107,6 @@ error_promise_then(void* data, Eina_Error const* error)
 START_TEST(eio_model_test_test_file)
 {
    Eo *filemodel = NULL;
-   Eina_Array *properties_list = NULL;
-   unsigned int i;
 
    memset(&reqs, 0, sizeof(struct reqs_t));
 
