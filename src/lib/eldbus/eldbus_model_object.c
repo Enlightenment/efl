@@ -128,7 +128,7 @@ _eldbus_model_object_efl_model_base_property_set(Eo *obj EINA_UNUSED,
                                          Eina_Promise_Owner *promise)
 {
    ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET((strcmp(property, UNIQUE_NAME_PROPERTY) == 0), promise, EFL_MODEL_ERROR_NOT_FOUND);
-   eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_SUPPORTED);
+   eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_READ_ONLY);
 }
 
 static void

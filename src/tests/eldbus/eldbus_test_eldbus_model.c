@@ -39,9 +39,11 @@ _promise_check_err(void *data EINA_UNUSED, void *value EINA_UNUSED)
 static void
 _error_then_ok(void* data, Eina_Error const* error)
 {
-//   fprintf(stderr, "Promise ERROR CB: %s\n", eina_error_msg_get(*error));
+   Eina_Error const* expected_error = (Eina_Error*)data;
    if (data != NULL)
-     ck_assert_ptr_ne(error, (Eina_Error*)data);
+   {
+     ck_assert_int_eq(*error, *expected_error);
+   }
 
    ecore_main_loop_quit();
 }

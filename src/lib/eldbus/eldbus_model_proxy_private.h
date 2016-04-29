@@ -23,7 +23,6 @@ struct _Eldbus_Model_Proxy_Data
    Eina_Stringshare *name;
    Eina_List *pending_list;
    Eina_List *promise_list;
-   Eina_List *promises_set;
    bool monitoring;
    const Eldbus_Introspection_Interface *interface;
    Eina_Value tmp_value;

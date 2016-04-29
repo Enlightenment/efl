@@ -152,11 +152,11 @@ _eldbus_model_arguments_efl_model_base_property_get(Eo *obj EINA_UNUSED,
 
    _eldbus_model_arguments_properties_load(pd);
 
-   Eina_Bool ret = _eldbus_model_arguments_is_output_argument(pd, property);
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_PERMISSION_DENIED);
-
    Eina_Value* value = eina_hash_find(pd->properties_hash, property);
    ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(value, promise, EFL_MODEL_ERROR_NOT_FOUND);
+
+   Eina_Bool ret = _eldbus_model_arguments_is_output_argument(pd, property);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_PERMISSION_DENIED);
 
    eina_value_copy(value, eina_promise_owner_buffer_get(promise));
    eina_promise_owner_value_set(promise, NULL, (Eina_Promise_Free_Cb)&eina_value_flush);

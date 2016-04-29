@@ -14,15 +14,18 @@ static Eina_Bool _eldbus_model_proxy_load(Eldbus_Model_Proxy_Data *);
 static void _eldbus_model_proxy_unload(Eldbus_Model_Proxy_Data *);
 static void _eldbus_model_proxy_property_get_all_cb(void *, const Eldbus_Message *, Eldbus_Pending *);
 static void _eldbus_model_proxy_property_set_cb(void *, const Eldbus_Message *, Eldbus_Pending *);
+static void _eldbus_model_proxy_property_set_load_cb(void *, const Eldbus_Message *, Eldbus_Pending *);
 static void _eldbus_model_proxy_start_monitor(Eldbus_Model_Proxy_Data *);
 static void _eldbus_model_proxy_stop_monitor(Eldbus_Model_Proxy_Data *);
 static void _eldbus_model_proxy_property_changed_cb(void *, Eldbus_Proxy *, void *);
 static void _eldbus_model_proxy_property_invalidated_cb(void *, Eldbus_Proxy *, void *);
 static bool _eldbus_model_proxy_is_property_writeable(Eldbus_Model_Proxy_Data *, const char *);
+static bool _eldbus_model_proxy_has_property(Eldbus_Model_Proxy_Data *, const char *);
 static bool _eldbus_model_proxy_is_property_readable(Eldbus_Model_Proxy_Data *, const char *);
 static const char *_eldbus_model_proxy_property_type_get(Eldbus_Model_Proxy_Data *, const char *);
 static void _eldbus_model_proxy_create_methods_children(Eldbus_Model_Proxy_Data *);
 static void _eldbus_model_proxy_create_signals_children(Eldbus_Model_Proxy_Data *);
+
 
 typedef struct _Eldbus_Model_Proxy_Property_Set_Data Eldbus_Model_Proxy_Property_Set_Data;
 
@@ -31,9 +34,10 @@ struct _Eldbus_Model_Proxy_Property_Set_Data
    Eldbus_Model_Proxy_Data *pd;
    Eina_Stringshare *property;
    Eina_Value value;
+   Eina_Promise_Owner *promise;
 };
 
-static Eldbus_Model_Proxy_Property_Set_Data * _eldbus_model_proxy_property_set_data_new(Eldbus_Model_Proxy_Data *, const char *, const Eina_Value *);
+static Eldbus_Model_Proxy_Property_Set_Data * _eldbus_model_proxy_property_set_data_new(Eldbus_Model_Proxy_Data *, const char *, const Eina_Value *, Eina_Promise_Owner *promise);
 static void _eldbus_model_proxy_property_set_data_free(Eldbus_Model_Proxy_Property_Set_Data *);
 
 static void
@@ -118,16 +122,36 @@ _eldbus_model_proxy_efl_model_base_property_set(Eo *obj EINA_UNUSED,
    ret = _eldbus_model_proxy_load(pd);
    ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_INIT_FAILED);
 
+   ret = _eldbus_model_proxy_has_property(pd, property);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_NOT_FOUND);
+
    ret = _eldbus_model_proxy_is_property_writeable(pd, property);
    ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_READ_ONLY);
 
-   data = _eldbus_model_proxy_property_set_data_new(pd, property, value);
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(data, promise, EFL_MODEL_ERROR_UNKNOWN);
-
    signature = _eldbus_model_proxy_property_type_get(pd, property);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(signature, promise, EFL_MODEL_ERROR_UNKNOWN);
+
+   data = _eldbus_model_proxy_property_set_data_new(pd, property, value, promise);
    ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(data, promise, EFL_MODEL_ERROR_UNKNOWN);
 
-   pd->promises_set = eina_list_append(pd->promises_set, promise);
+   if (!pd->is_loaded)
+     {
+        Eldbus_Pending *pending;
+        _Eldbus_Property_Promise *p = calloc(1, sizeof(_Eldbus_Property_Promise));
+        EINA_SAFETY_ON_NULL_RETURN(p);
+
+        p->promise = promise;
+        p->property = strdup(property);
+        pd->promise_list = eina_list_append(pd->promise_list, p);
+
+        if (!pd->pending_list)
+          {
+             pending = eldbus_proxy_property_get_all(pd->proxy, _eldbus_model_proxy_property_set_load_cb, data);
+             pd->pending_list = eina_list_append(pd->pending_list, pending);
+          }
+        return;
+     }
+
    pending = eldbus_proxy_property_value_set
      (pd->proxy, property, signature, (Eina_Value*)value, _eldbus_model_proxy_property_set_cb, data);
    pd->pending_list = eina_list_append(pd->pending_list, pending);
@@ -146,6 +170,9 @@ _eldbus_model_proxy_efl_model_base_property_get(Eo *obj EINA_UNUSED,
 
    ret = _eldbus_model_proxy_load(pd);
    ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_INIT_FAILED);
+
+   ret = _eldbus_model_proxy_has_property(pd, property);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_NOT_FOUND);
 
    if (!pd->is_loaded)
      {
@@ -166,7 +193,7 @@ _eldbus_model_proxy_efl_model_base_property_get(Eo *obj EINA_UNUSED,
      }
 
    Eina_Value* value = eina_hash_find(pd->properties_hash, property);
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_NOT_FOUND);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(value, promise, EFL_MODEL_ERROR_NOT_FOUND);
 
    ret = _eldbus_model_proxy_is_property_writeable(pd, property);
    ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_READ_ONLY);
@@ -450,39 +477,26 @@ _eldbus_model_proxy_property_invalidated_cb(void *data,
    efl_model_property_invalidated_notify(pd->obj, event->name);
 }
 
-static void
-_eldbus_model_proxy_property_get_all_cb(void *data,
-                                        const Eldbus_Message *msg,
-                                        Eldbus_Pending *pending)
+static Eina_Array *
+_eldbus_model_proxy_property_get_all_load(const Eldbus_Message *msg, Eldbus_Model_Proxy_Data *pd)
 {
-   Eldbus_Model_Proxy_Data *pd = (Eldbus_Model_Proxy_Data*)data;
    Eldbus_Introspection_Property *prop;
-   Eina_Array *changed_properties;
    Eldbus_Message_Iter *values = NULL;
    Eldbus_Message_Iter *entry;
+   Eina_Array *changed_properties;
    Eina_List *it;
    const char *error_name, *error_text;
-
-   pd->pending_list = eina_list_remove(pd->pending_list, pending);
 
    if (eldbus_message_error_get(msg, &error_name, &error_text))
      {
         ERR("%s: %s", error_name, error_text);
-        Eina_List* i;
-        _Eldbus_Property_Promise* p;
-        EINA_LIST_FOREACH(pd->promise_list, i, p)
-          {
-             eina_promise_owner_error_set(p->promise, EFL_MODEL_ERROR_UNKNOWN);
-             free(p->property);
-          }
-        eina_list_free(pd->promise_list);
-        return;
+        return NULL;
      }
 
    if (!eldbus_message_arguments_get(msg, "a{sv}", &values))
      {
         ERR("%s", "Error getting arguments.");
-        return;
+        return NULL;
      }
 
    EINA_LIST_FOREACH(pd->interface->properties, it, prop)
@@ -529,13 +543,48 @@ _eldbus_model_proxy_property_get_all_cb(void *data,
      }
 
    pd->is_loaded = EINA_TRUE;
+   return changed_properties;
+
+ on_error:
+   eina_array_free(changed_properties);
+   return NULL;
+}
+
+static void
+_eldbus_model_proxy_property_get_all_cb(void *data,
+                                        const Eldbus_Message *msg,
+                                        Eldbus_Pending *pending)
+{
+   Eldbus_Model_Proxy_Data *pd = (Eldbus_Model_Proxy_Data*)data;
+
+   pd->pending_list = eina_list_remove(pd->pending_list, pending);
+   Eina_Array *changed_properties = _eldbus_model_proxy_property_get_all_load(msg, pd);
+   if (changed_properties == NULL)
+     {
+         Eina_List* i;
+         _Eldbus_Property_Promise* p;
+         EINA_LIST_FOREACH(pd->promise_list, i, p)
+           {
+               eina_promise_owner_error_set(p->promise, EFL_MODEL_ERROR_NOT_FOUND);
+               free(p->property);
+           }
+         eina_list_free(pd->promise_list);
+         return;
+     }
 
    Eina_List* i;
    _Eldbus_Property_Promise* p;
    EINA_LIST_FOREACH(pd->promise_list, i, p)
      {
         Eina_Value* value = eina_hash_find(pd->properties_hash, p->property);
-        if (!value || !_eldbus_model_proxy_is_property_readable(pd, p->property))
+        if (!value)
+          {
+             eina_promise_owner_error_set(p->promise, EFL_MODEL_ERROR_NOT_FOUND);
+             free(p->property);
+             continue;
+          }
+
+        if (!_eldbus_model_proxy_is_property_readable(pd, p->property))
           {
              eina_promise_owner_error_set(p->promise, EFL_MODEL_ERROR_READ_ONLY);
              free(p->property);
@@ -561,8 +610,36 @@ _eldbus_model_proxy_property_get_all_cb(void *data,
         eo_event_callback_call(pd->obj, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt);
      }
 
- on_error:
    eina_array_free(changed_properties);
+}
+
+
+static void
+_eldbus_model_proxy_property_set_load_cb(void *data,
+                                        const Eldbus_Message *msg,
+                                        Eldbus_Pending *pending)
+{
+   Eldbus_Model_Proxy_Property_Set_Data *set_data = (Eldbus_Model_Proxy_Property_Set_Data *)data;
+   Eldbus_Model_Proxy_Data *pd = set_data->pd;
+   const char *signature;
+
+   pd->pending_list = eina_list_remove(pd->pending_list, pending);
+   signature = _eldbus_model_proxy_property_type_get(pd, set_data->property);
+
+   Eina_Array *changed_properties = _eldbus_model_proxy_property_get_all_load(msg, pd);
+   if (signature == NULL || changed_properties == NULL)
+     {
+         eina_promise_owner_error_set(set_data->promise, EFL_MODEL_ERROR_UNKNOWN);
+
+         eina_array_free(changed_properties);
+         _eldbus_model_proxy_property_set_data_free(set_data);
+        return;
+     }
+
+   eina_array_free(changed_properties);
+   pending = eldbus_proxy_property_value_set
+     (pd->proxy, set_data->property, signature, &set_data->value, _eldbus_model_proxy_property_set_cb, set_data);
+   pd->pending_list = eina_list_append(pd->pending_list, pending);
 }
 
 
@@ -575,34 +652,53 @@ _eldbus_model_proxy_property_set_cb(void *data,
    Eldbus_Model_Proxy_Data *pd = property_set_data->pd;
    const char *error_name, *error_text;
    Eina_Value *prop_value;
-   Eina_Bool ret;
 
    pd->pending_list = eina_list_remove(pd->pending_list, pending);
 
    if (eldbus_message_error_get(msg, &error_name, &error_text))
      {
-        ERR("%s: %s", error_name, error_text);
-        goto on_error;
+         ERR("%s: %s", error_name, error_text);
+         eina_promise_owner_error_set(property_set_data->promise, EFL_MODEL_ERROR_UNKNOWN);
+         _eldbus_model_proxy_property_set_data_free(property_set_data);
+         return;
      }
 
-   prop_value = eina_hash_find(pd->properties_hash,
-                               property_set_data->property);
-   EINA_SAFETY_ON_NULL_GOTO(prop_value, on_error);
+   prop_value = eina_hash_find(pd->properties_hash, property_set_data->property);
+   if (prop_value != NULL)
+     {
+         if (eina_value_copy(&property_set_data->value, prop_value))
+           {
+               Efl_Model_Property_Event evt = {
+                         .changed_properties = pd->properties_array
+                       };
 
-   ret = eina_value_copy(&property_set_data->value, prop_value);
-   EINA_SAFETY_ON_FALSE_GOTO(ret, on_error);
+               eo_event_callback_call(pd->obj, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt);
+               efl_model_property_changed_notify(pd->obj, property_set_data->property);
 
- on_error:
-   {
-      Efl_Model_Property_Event evt = {
-        .changed_properties = pd->properties_array
-      };
-      eo_event_callback_call(pd->obj, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt);
-
-      efl_model_property_changed_notify(pd->obj, property_set_data->property);
-   }
+           }
+         eina_value_copy(prop_value, eina_promise_owner_buffer_get(property_set_data->promise));
+         eina_promise_owner_value_set(property_set_data->promise, NULL, (Eina_Promise_Free_Cb)&eina_value_flush);
+     }
+   else
+     {
+         eina_promise_owner_error_set(property_set_data->promise, EFL_MODEL_ERROR_NOT_FOUND);
+     }
 
    _eldbus_model_proxy_property_set_data_free(property_set_data);
+}
+
+static bool
+_eldbus_model_proxy_has_property(Eldbus_Model_Proxy_Data *pd, const char *property)
+{
+   Eldbus_Introspection_Property *property_introspection =
+     eldbus_introspection_property_find(pd->interface->properties, property);
+
+   if (property_introspection == NULL)
+     {
+        return false;
+     }
+
+   return true;
 }
 
 static bool
@@ -650,18 +746,19 @@ _eldbus_model_proxy_property_type_get(Eldbus_Model_Proxy_Data *pd, const char *p
      }
 
    return property_introspection->type;
-
 }
 
 static Eldbus_Model_Proxy_Property_Set_Data *
 _eldbus_model_proxy_property_set_data_new(Eldbus_Model_Proxy_Data *pd,
                                           const char *property,
-                                          const Eina_Value *value)
+                                          const Eina_Value *value,
+                                          Eina_Promise_Owner *promise)
 {
    Eldbus_Model_Proxy_Property_Set_Data *data = calloc(1, sizeof(Eldbus_Model_Proxy_Property_Set_Data));
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, NULL);
 
    data->pd = pd;
+   data->promise = promise;
    data->property = eina_stringshare_add(property);
    if (!eina_value_copy(value, &data->value))
      goto error;
