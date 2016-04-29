@@ -640,7 +640,7 @@ START_TEST(edje_test_table_eoapi)
    Evas *evas;
    Evas_Object *obj, *sobj, *sobjs[4];
    Eina_Iterator *it;
-   Eo *table;
+   Eo *table, *other;
    int i, k, l, cs, rs, cols, rows;
 
    evas = EDJE_TEST_INIT_EVAS();
@@ -707,8 +707,64 @@ START_TEST(edje_test_table_eoapi)
    fail_if(cols != 2);
    fail_if(rows != 2);
 
-   /* release handle - not required */
+
+   /* test proxy object references
+    * exact reference count is not part of API,
+    * only lifecycle of object matters
+    *
+    * very ugly code below - test case only!
+    */
+   i = eo_ref_get(table);
+   fail_if(i != 1);
    eo_del(table);
+
+   /* this will generate eo errors */
+   k = eo_ref_get(table);
+   fail_if(k > 0);
+
+   cols = -1; rows = -1;
+   /* this will generate eo errors */
+   efl_pack_grid_size_get(table, &cols, &rows);
+   fail_if(cols != -1);
+   fail_if(rows != -1);
+
+   table = efl_content_get(obj, "table");
+   fail_if(!table);
+   other = efl_content_get(obj, "table");
+   fail_if(other != table);
+   fail_if(eo_ref_get(other) != 1);
+
+   /* delete edje and verify proxy died */
+   eo_del(obj);
+
+   /* this will generate eo errors */
+   fail_if(eo_ref_get(table) > 0);
+
+   cols = -1; rows = -1;
+   /* this will generate eo errors */
+   efl_pack_grid_size_get(table, &cols, &rows);
+   fail_if(cols != -1);
+   fail_if(rows != -1);
+
+   /* try again but keep a ref on proxy */
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_table.edj"), "test_group"));
+
+   table = efl_content_get(obj, "table");
+   fail_if(!table);
+   eo_ref(table);
+   fflush(stderr);
+   eo_del(obj);
+   /* note: obj has > 0 refs because evas likes to keep objects around a bit */
+   fail_if(eo_ref_get(table) > 1);
+
+   cols = -1; rows = -1;
+   /* this will NOT generate eo errors (table is alive) */
+   efl_pack_grid_size_get(table, &cols, &rows);
+   fail_if(cols > 0);
+   fail_if(rows > 0);
+
+   eo_unref(table);
 
    EDJE_TEST_FREE_EVAS();
 }
