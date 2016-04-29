@@ -565,4 +565,68 @@ EAPI void elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
  */
 EAPI Eina_Bool elm_image_no_scale_get(const Evas_Object *obj);
 
+/**
+ * @brief Control if the whole image is inside the object area
+ * when keeping the aspect ratio.
+ *
+ * If the image should keep its aspect ratio when the object is resized to another
+ * aspect ratio, there are two possibilities to scale the image: keep the entire
+ * image inside the limits of height and width of the object ($fill_inside is
+ * @c true) or let the extra width or height go outside of the object, and the
+ * image will fill the entire object ($fill_inside is @c false).
+ *
+ * @note This option will have no effect if @ref elm_image_aspect_fixed_get is
+ * set to @c false.
+ *
+ * See also @ref Elm.Image.fill_outside.
+ *
+ * @param[in] fill_inside @c true if the whole image is inside the object area,
+ * @c false otherwise. Default is @c true.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_fill_inside_set(Evas_Object *obj, Eina_Bool fill_inside);
+
+/**
+ * @brief Get whether the whole image is inside the object area or not
+ * when keeping the aspect ratio.
+ *
+ * If the image should keep its aspect ratio when the object is resized to another
+ * aspect ratio, there are two possibilities to scale the image: keep the entire
+ * image inside the limits of height and width of the object ($fill_inside is
+ * @c true) or let the extra width or height go outside of the object, and the
+ * image will fill the entire object ($fill_inside is @c false).
+ *
+ * @note This option will have no effect if @ref elm_image_aspect_fixed_get is
+ * set to @c false.
+ *
+ * See also @ref Elm.Image.fill_outside.
+ *
+ * return @c true if the whole image is inside the object area,
+ * @c false otherwise. Default is @c true.
+ *
+ * @ingroup Elm_Image
+ */
+EAPI Eina_Bool elm_image_fill_inside_get(const Evas_Object *obj);
+
+/**
+ * @brief Control whether the internal image's aspect ratio
+ * is fixed to the original image's aspect ratio
+ *
+ * @param[in] fixed @ true if the aspect ratio is fixed
+ *
+ * @ingroup Elm_Image
+ */
+EAPI void elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
+
+/**
+ * @brief Get whether the internal image's aspect ratio
+ * is fixed to the original image's
+ *
+ * @return @ true if the aspect ratio is fixed
+ *
+ * @ingroup Elm_Image
+ */
+EAPI Eina_Bool elm_image_aspect_fixed_get(const Evas_Object *obj);
+
 #include "elm_image.eo.legacy.h"

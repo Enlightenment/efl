@@ -539,24 +539,6 @@ _elm_image_efl_image_smooth_scale_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
    return evas_object_image_smooth_scale_get(sd->img);
 }
 
-EOLIAN static void
-_elm_image_fill_inside_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool fill_inside)
-{
-   fill_inside = !!fill_inside;
-
-   if (sd->fill_inside == fill_inside) return;
-
-   sd->fill_inside = fill_inside;
-
-   _elm_image_internal_sizing_eval(obj, sd);
-}
-
-EOLIAN static Eina_Bool
-_elm_image_fill_inside_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
-{
-   return sd->fill_inside;
-}
-
 static Eina_Bool
 _elm_image_drag_n_drop_cb(void *elm_obj,
       Evas_Object *obj,
@@ -1286,23 +1268,6 @@ _elm_image_evas_draggable_interface_drag_target_get(Eo *obj EINA_UNUSED, Elm_Ima
    return sd->edit;
 }
 
-EOLIAN static void
-_elm_image_aspect_fixed_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool fixed)
-{
-   fixed = !!fixed;
-   if (sd->aspect_fixed == fixed) return;
-
-   sd->aspect_fixed = fixed;
-
-   _elm_image_internal_sizing_eval(obj, sd);
-}
-
-EOLIAN static Eina_Bool
-_elm_image_aspect_fixed_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
-{
-   return sd->aspect_fixed;
-}
-
 EAPI Eina_Bool
 elm_image_animated_available_get(const Evas_Object *obj)
 {
@@ -1442,6 +1407,31 @@ static void
 _elm_image_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static void
+_elm_image_scale_type_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd EINA_UNUSED, Elm_Image_Scale_Type type EINA_UNUSED)
+{
+   //TODO: implementation
+}
+
+EOLIAN static Elm_Image_Scale_Type
+_elm_image_scale_type_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd EINA_UNUSED)
+{
+   //TODO: implementation
+   return ELM_IMAGE_SCALE_TYPE_NONE;
+}
+
+EOLIAN static void
+_elm_image_scalable_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd EINA_UNUSED, Eina_Bool up EINA_UNUSED, Eina_Bool down EINA_UNUSED)
+{
+   //TODO: implementation
+}
+
+EOLIAN static void
+_elm_image_scalable_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd EINA_UNUSED, Eina_Bool *up EINA_UNUSED, Eina_Bool *down EINA_UNUSED)
+{
+   //TODO: implementation
 }
 
 // A11Y
@@ -1968,6 +1958,49 @@ elm_image_resizable_get(const Evas_Object *obj, Eina_Bool *size_up, Eina_Bool *s
    ELM_IMAGE_DATA_GET(obj, sd);
    if (size_up) *size_up = sd->resize_up;
    if (size_down) *size_down = sd->resize_down;
+}
+
+EAPI void
+elm_image_fill_inside_set(Evas_Object *obj, Eina_Bool fill_inside)
+{
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+   fill_inside = !!fill_inside;
+
+   if (sd->fill_inside == fill_inside) return;
+
+   sd->fill_inside = fill_inside;
+
+   _elm_image_internal_sizing_eval(obj, sd);
+}
+
+EAPI Eina_Bool
+elm_image_fill_inside_get(const Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ELM_IMAGE_DATA_GET(obj, sd);
+   return sd->fill_inside;
+}
+
+EAPI void
+elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
+{
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+   fixed = !!fixed;
+   if (sd->aspect_fixed == fixed) return;
+
+   sd->aspect_fixed = fixed;
+
+   _elm_image_internal_sizing_eval(obj, sd);
+}
+
+EAPI Eina_Bool
+elm_image_aspect_fixed_get(const Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ELM_IMAGE_DATA_GET(obj, sd);
+   return sd->aspect_fixed;
 }
 
 #include "elm_image.eo.c"

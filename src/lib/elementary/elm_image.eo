@@ -1,5 +1,26 @@
 import evas_image;
 
+enum Elm.Image.Scale_Type
+{
+   [[Enumeration that defines scale types for the object's internal image.
+
+     @since 1.18
+   ]]
+   none,       [[Not scale the internal image]]
+   fill,       [[Scale the internal image so that it matches the object's area exactly.
+                 The image's aspect ratio might be changed.]]
+   fit_inside, [[Scale the internal image
+                 so that it fits inside the object's area
+                 while maintaining the aspect ratio.
+                 At least one of the dimensions of the image
+                 should be equal to the corresponding dimension of the object.]]
+   fit_outside [[Scale the internal image
+                 so that it covers the entire object area
+                 while maintaining the aspect ratio.
+                 At least one of the dimensions of the image
+                 should be equal to the corresponding dimension of the object.]]
+}
+
 struct Elm.Image_Progress
 {
    [[
@@ -27,41 +48,35 @@ class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
 {
    eo_prefix: elm_obj_image;
    methods {
-      @property fill_inside {
-         [[Control the resize method for the object's internal image when maintaining a given aspect ratio.
+      @property scale_type {
+         [[Control how the internal image is scaled.
 
-           If $fill_inside is true, image does not overflow the widget and
-           blank spaces are added to fill the space that is still free. If it
-           is false, the image overflows the image will fill all space and
-           overflow in its larger dimension.
-
-           You can think of it as "fill: inside" or "fill: outside" and not as
-           "fill the inside".
-
-           @since 1.7]]
+           @since 1.18]]
          set {
-            legacy: null;
          }
          get {
-            legacy: null;
          }
          values {
-            fill_inside: bool; [[Resize method for the object's internal image.]]
+            scale_type: Elm.Image.Scale_Type;
          }
       }
-      @property aspect_fixed {
-         set {
-            [[Control whether the original aspect ratio of the image should be kept on resize.
+      @property scalable {
+         [[Enable or disable scaling up or down the internal image.
 
-              The original aspect ratio (width / height) of the image is usually
-              distorted to match the object's size. Enabling this option will retain
-              this original aspect, and the way that the image is fit into the object's
-              area depends on the option set by @.fill_inside.]]
+           @since 1.18]]
+         set {
          }
          get {
          }
          values {
-            fixed: bool; [[$true if the image should retain the aspect, $false otherwise.]]
+            scale_up: bool;   [[If $true, the internal image might be scaled up
+                                if necessary according to the scale type.
+                                if $false, the internal image is not scaled up
+                                no matter what the scale type is.]]
+            scale_down: bool; [[If $true, the internal image might be scaled down
+                                if necessary according to the scale type.
+                                if $false, the internal image is not scaled down
+                                no matter what the scale type is.]]
          }
 		}
       @property icon {
