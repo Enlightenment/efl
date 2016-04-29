@@ -13263,17 +13263,20 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    if (pd->aspect.prefer)
      BUF_APPENDF(I5 "aspect_preference: %s;\n", prefers[(int)pd->aspect.prefer]);
 
-   if (pd->color_class)
-     BUF_APPENDF(I5 "color_class: \"%s\";\n", pd->color_class);
+   if (rp->part->type != EDJE_PART_TYPE_SPACER)
+     {
+        if (pd->color_class)
+          BUF_APPENDF(I5 "color_class: \"%s\";\n", pd->color_class);
 
-   if (pd->color.r != 255 || pd->color.g != 255 ||
-       pd->color.b != 255 || pd->color.a != 255)
-     BUF_APPENDF(I5 "color: %d %d %d %d;\n",
-                 pd->color.r, pd->color.g, pd->color.b, pd->color.a);
-   if (pd->color2.r != 0 || pd->color2.g != 0 ||
-       pd->color2.b != 0 || pd->color2.a != 255)
-     BUF_APPENDF(I5 "color2: %d %d %d %d;\n",
-                 pd->color2.r, pd->color2.g, pd->color2.b, pd->color2.a);
+        if (pd->color.r != 255 || pd->color.g != 255 ||
+            pd->color.b != 255 || pd->color.a != 255)
+          BUF_APPENDF(I5 "color: %d %d %d %d;\n",
+                      pd->color.r, pd->color.g, pd->color.b, pd->color.a);
+        if (pd->color2.r != 0 || pd->color2.g != 0 ||
+            pd->color2.b != 0 || pd->color2.a != 255)
+          BUF_APPENDF(I5 "color2: %d %d %d %d;\n",
+                      pd->color2.r, pd->color2.g, pd->color2.b, pd->color2.a);
+     }
 
    if (rp->part->type == EDJE_PART_TYPE_TEXT
        || rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
