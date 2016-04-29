@@ -46,6 +46,7 @@ efl_eolian_files = \
 
 efl_eolian_type_files = \
 	lib/efl/interfaces/efl_gfx_types.eot \
+	lib/efl/interfaces/efl_event_types.eot \
 	lib/efl/interfaces/efl_types.eot \
 	$(NULL)
 

@@ -1,4 +1,5 @@
 import evas_types;
+import efl_event_types;
 
 class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
 {
@@ -113,7 +114,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
             ]]
          }
          values {
-            flags: Evas.Event_Flags; [[The default flags to use.]]
+            flags: Efl.Pointer.Event_Flags; [[The default flags to use.]]
          }
       }
       @property output_method {
@@ -731,7 +732,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
             @in ang: double;
             @in fx: double;
             @in fy: double;
-            @in flags: Evas.Button_Flags;
+            @in flags: Efl.Pointer.Button_Flags;
             @in timestamp: uint;
             @in data: const(void)*;
          }
@@ -748,7 +749,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
             @in ang: double;
             @in fx: double;
             @in fy: double;
-            @in flags: Evas.Button_Flags;
+            @in flags: Efl.Pointer.Button_Flags;
             @in timestamp: uint;
             @in data: const(void)*;
          }
@@ -844,7 +845,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
             @in ang: double;
             @in fx: double;
             @in fy: double;
-            @in flags: Evas.Button_Flags;
+            @in flags: Efl.Pointer.Button_Flags;
             @in timestamp: uint;
             @in data: const(void)*;
          }
@@ -1370,7 +1371,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
             @in ang: double;
             @in fx: double;
             @in fy: double;
-            @in flags: Evas.Button_Flags;
+            @in flags: Efl.Pointer.Button_Flags;
             @in timestamp: uint;
             @in data: const(void)*;
          }

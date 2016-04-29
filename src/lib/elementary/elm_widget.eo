@@ -1,5 +1,6 @@
 import edje_types;
 import elm_general;
+import efl_event_types;
 
 /* FIXME: This shouldn't be here. */
 type list_data_get_func_type: __undefined_type;
@@ -630,7 +631,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          params {
             @in type: Evas.Callback_Type;
             @in event_info: void *;
-            @in event_flags: Evas.Event_Flags *;
+            @in event_flags: Efl.Pointer.Event_Flags *;
          }
       }
       signal_callback_add {

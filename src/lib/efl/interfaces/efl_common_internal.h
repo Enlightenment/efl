@@ -19,8 +19,8 @@ typedef struct _Efl_Input_State_Data    Efl_Input_State_Data;
 
 #ifndef _EVAS_TYPES_EOT_H_
 /* FIXME */
-typedef struct _Evas_Modifier Evas_Modifier;
-typedef struct _Evas_Lock Evas_Lock;
+//typedef struct _Evas_Modifier Evas_Modifier;
+//typedef struct _Evas_Lock Evas_Lock;
 #endif
 
 struct _Efl_Pointer_Event_Data
