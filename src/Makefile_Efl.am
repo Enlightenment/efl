@@ -35,6 +35,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_vpath_file.eo \
       lib/efl/interfaces/efl_vpath_core.eo \
       lib/efl/interfaces/efl_vpath_file_core.eo \
+      lib/efl/interfaces/efl_ui_spin.eo \
       lib/efl/interfaces/efl_ui_progress.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)

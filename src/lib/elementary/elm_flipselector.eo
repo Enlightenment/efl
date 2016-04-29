@@ -1,42 +1,9 @@
-class Elm.Flipselector (Elm.Layout, Elm.Interface_Atspi_Widget_Action,
+class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
+                        Elm.Interface_Atspi_Widget_Action,
                         Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_flipselector;
    methods {
-      @property first_interval {
-         set {
-            [[Set the interval on time updates for a user mouse button hold
-              on a flip selector widget.
-
-              This interval value is decreased while the user holds the
-              mouse pointer either flipping up or flipping down a given flip
-              selector.
-
-              This helps the user to get to a given item distant from the
-              current one easier/faster, as it will start to flip quicker and
-              quicker on mouse button holds.
-
-              The calculation for the next flip interval value, starting from
-              the one set with this call, is the previous interval divided by
-              1.05, so it decreases a little bit.
-
-              The default starting interval value for automatic flips is
-              0.85 seconds.
-
-              See also @.first_interval.get.
-            ]]
-         }
-         get {
-            [[Get the interval on time updates for an user mouse button hold
-              on a flip selector widget.
-
-              See also @.first_interval.set for more details.
-            ]]
-         }
-         values {
-            interval: double; [[The (first) interval value in seconds.]]
-         }
-      }
       @property items {
          get {
             [[Get the internal list of items in a given flip selector widget.
@@ -164,6 +131,10 @@ class Elm.Flipselector (Elm.Layout, Elm.Interface_Atspi_Widget_Action,
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.event;
       Elm.Layout.sizing_eval;
+      Efl.Ui.Spin.min_max;
+      Efl.Ui.Spin.step;
+      Efl.Ui.Spin.value;
+      Efl.Ui.Spin.interval;
       Elm.Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {

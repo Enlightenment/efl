@@ -76,6 +76,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_properties.eo.h"
 #include "interfaces/efl_orientation.eo.h"
 #include "interfaces/efl_flipable.eo.h"
+#include "interfaces/efl_ui_spin.eo.h"
 #include "interfaces/efl_ui_progress.eo.h"
 
 #define EFL_ORIENT_0   EFL_ORIENT_UP

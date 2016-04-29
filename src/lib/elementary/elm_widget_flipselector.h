@@ -35,6 +35,8 @@ struct _Elm_Flipselector_Data
 
    unsigned int          max_len;
    double                interval, first_interval;
+   double                val_min, val_max;
+   double                step; /**< step for the value change. 1 by default. */
 
    int                   walking;
    Eina_Bool             evaluating : 1;
