@@ -6204,8 +6204,12 @@ _elm_genlist_item_append(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Ge
           eina_list_append(it->parent->item->items, EO_OBJ(it));
         if (!eo_it2) eo_it2 = EO_OBJ(it->parent);
         ELM_GENLIST_ITEM_DATA_GET(eo_it2, it2);
-        sd->items = eina_inlist_append_relative
-           (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(it2));
+        if (eo_it2 == EO_OBJ(it->parent))
+          sd->items = eina_inlist_prepend_relative
+             (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(it2));
+        else
+          sd->items = eina_inlist_append_relative
+             (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(it2));
         it->item->rel = it2;
         it2->item->rel_revs = eina_list_append(it2->item->rel_revs, it);
      }
