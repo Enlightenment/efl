@@ -391,7 +391,7 @@ _item_content_realize(Elm_Gen_Item *it,
              if (it->itc->func.content_get)
                content = it->itc->func.content_get
                   ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
-             if (!content) continue;
+             if (!content) goto out;
           }
 
         if (content != old)
@@ -414,8 +414,8 @@ _item_content_realize(Elm_Gen_Item *it,
                {
                   ERR("%s (%p) can not be swallowed into %s",
                       evas_object_type_get(content), content, key);
-                  evas_object_hide(content);
-                  continue;
+                  evas_object_del(content);
+                  goto out;
                }
              elm_widget_sub_object_add(WIDGET(it), content);
           }
@@ -426,7 +426,7 @@ _item_content_realize(Elm_Gen_Item *it,
 
         snprintf(buf, sizeof(buf), "elm,state,%s,visible", key);
         edje_object_signal_emit(target, buf, "elm");
-
+out:
         if (old && content != old)
           {
              *contents = eina_list_remove(*contents, old);
