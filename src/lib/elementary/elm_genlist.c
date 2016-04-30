@@ -359,80 +359,78 @@ _item_content_realize(Elm_Gen_Item *it,
 {
    Evas_Object *content;
    char buf[256];
+   Eina_List *source;
+   const char *key;
 
    if (!parts)
      {
         EINA_LIST_FREE(*contents, content)
           evas_object_del(content);
      }
-   if (it->itc->func.content_get ||
-      ((it->itc->version >= 3) && it->itc->func.reusable_content_get))
+   if ((!it->itc->func.content_get) &&
+      ((it->itc->version < 3) || (!it->itc->func.reusable_content_get))) return;
+
+   source = elm_widget_stringlist_get(edje_object_data_get(target, src));
+
+   EINA_LIST_FREE(source, key)
      {
-        Eina_List *source;
-        const char *key;
+        if (parts && fnmatch(parts, key, FNM_PERIOD))
+          continue;
 
-        source = elm_widget_stringlist_get(edje_object_data_get(target, src));
+        Evas_Object *old = NULL;
+        old = edje_object_part_swallow_get(target, key);
 
-        EINA_LIST_FREE(source, key)
+        // Reuse content by popping from the cache
+        content = NULL;
+        if (it->itc->func.reusable_content_get)
+          content = it->itc->func.reusable_content_get(
+             (void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key, old);
+        if (!content)
           {
-             if (parts && fnmatch(parts, key, FNM_PERIOD))
-               continue;
+             // Call the content get
+             if (it->itc->func.content_get)
+               content = it->itc->func.content_get
+                  ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
+             if (!content) continue;
+          }
 
-             Evas_Object *old = NULL;
-             old = edje_object_part_swallow_get(target, key);
-
-             // Reuse content by popping from the cache
-             content = NULL;
-             if (it->itc->func.reusable_content_get)
-             content = it->itc->func.reusable_content_get(
-                (void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key, old);
-             if (!content)
+        if (content != old)
+          {
+             // FIXME: cause elm_layout sizing eval is delayed by smart calc,
+             // genlist cannot get actual min size of edje.
+             // This is workaround code to set min size directly.
+             if (eo_class_get(content) == ELM_LAYOUT_CLASS)
                {
-                  // Call the content get
-                  if (it->itc->func.content_get)
-                    content = it->itc->func.content_get
-                       ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
-                  if (!content) continue;
+                  Evas_Coord old_w, old_h, minw = 0, minh = 0;
+                  evas_object_size_hint_min_get(content, &old_w, &old_h);
+                  edje_object_size_min_calc(elm_layout_edje_get(content), &minw, &minh);
+
+                  if (old_w > minw) minw = old_w;
+                  if (old_h > minh) minw = old_h;
+                  evas_object_size_hint_min_set(content, minw, minh);
                }
 
-             if (content != old)
+             if (!edje_object_part_swallow(target, key, content))
                {
-                  // FIXME: cause elm_layout sizing eval is delayed by smart calc,
-                  // genlist cannot get actual min size of edje.
-                  // This is workaround code to set min size directly.
-                  if (eo_class_get(content) == ELM_LAYOUT_CLASS)
-                    {
-                       Evas_Coord old_w, old_h, minw = 0, minh = 0;
-                       evas_object_size_hint_min_get(content, &old_w, &old_h);
-                       edje_object_size_min_calc(elm_layout_edje_get(content), &minw, &minh);
-
-                       if (old_w > minw) minw = old_w;
-                       if (old_h > minh) minw = old_h;
-                       evas_object_size_hint_min_set(content, minw, minh);
-                    }
-
-                  if (!edje_object_part_swallow(target, key, content))
-                    {
-                       ERR("%s (%p) can not be swallowed into %s",
-                           evas_object_type_get(content), content, key);
-                       evas_object_hide(content);
-                       continue;
-                    }
-                  elm_widget_sub_object_add(WIDGET(it), content);
+                  ERR("%s (%p) can not be swallowed into %s",
+                      evas_object_type_get(content), content, key);
+                  evas_object_hide(content);
+                  continue;
                }
-             *contents = eina_list_append(*contents, content);
+             elm_widget_sub_object_add(WIDGET(it), content);
+          }
+        *contents = eina_list_append(*contents, content);
 
-             if (elm_wdg_item_disabled_get(EO_OBJ(it)))
-               elm_widget_disabled_set(content, EINA_TRUE);
+        if (elm_wdg_item_disabled_get(EO_OBJ(it)))
+          elm_widget_disabled_set(content, EINA_TRUE);
 
-             snprintf(buf, sizeof(buf), "elm,state,%s,visible", key);
-             edje_object_signal_emit(target, buf, "elm");
+        snprintf(buf, sizeof(buf), "elm,state,%s,visible", key);
+        edje_object_signal_emit(target, buf, "elm");
 
-             if (old && content != old)
-               {
-                  *contents = eina_list_remove(*contents, old);
-                  evas_object_del(old);
-               }
+        if (old && content != old)
+          {
+             *contents = eina_list_remove(*contents, old);
+             evas_object_del(old);
           }
      }
 }
