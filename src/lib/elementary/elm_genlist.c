@@ -6296,6 +6296,8 @@ _elm_genlist_item_insert_after(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const 
             (GL_IT(after)->type & ELM_GENLIST_ITEM_GROUP))
           sd->group_items = eina_list_append_relative
              (sd->group_items, it, after);
+        else if (GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP)
+          CRI("GROUP ITEM INSERT FAILED: NON-GROUP ITEM PASSED AS 'after'!");
      }
    else
      {
@@ -6343,6 +6345,8 @@ _elm_genlist_item_insert_before(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
             (GL_IT(before)->type & ELM_GENLIST_ITEM_GROUP))
           sd->group_items =
             eina_list_prepend_relative(sd->group_items, it, before);
+        else if (GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP)
+          CRI("GROUP ITEM INSERT FAILED: NON-GROUP ITEM PASSED AS 'after'!");
      }
    else
      {
