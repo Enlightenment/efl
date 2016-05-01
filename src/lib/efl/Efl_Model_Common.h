@@ -11,8 +11,6 @@ EAPI extern Eina_Error EFL_MODEL_ERROR_INIT_FAILED;
 EAPI extern Eina_Error EFL_MODEL_ERROR_INCORRECT_VALUE;
 EAPI extern Eina_Error EFL_MODEL_ERROR_PERMISSION_DENIED;
 
-typedef struct _Eina_Promise Eina_Promise;
-
 /**
  * @struct _Efl_Model_Children_Event
  * Every time a child id added the event

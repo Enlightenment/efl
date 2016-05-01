@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <Eet.h>
 #include "evas_common_private.h"
 #include "evas_private.h"
 
