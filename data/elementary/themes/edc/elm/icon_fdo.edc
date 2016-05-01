@@ -1,0 +1,148 @@
+/*
+ * Standard FreeDesktop icons:
+ * 
+ * WARNING: When you add new icons you MUST ensure to use standard names as per:
+ * http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
+ *
+ * If you can't find the name in the spec then you MUST search in the Tango,
+ * Oxigen, Faenza (now Rave-X) icone themes to find a suitable name.
+ *
+ * IF you really cannot find anything try at least to be consistent with other
+ * existing names.
+ *
+ * NOTE: icons marked with an empty comment are names that are not in the 
+ *       FDO spec, so they are not really standard, but seems widly used.
+ *
+ * NOTE: if you add an new icon you must add it to:
+ *     - this file (of course)
+ *     - data/elementary/themes/Makefile.am
+ *     - elm_icon documentation   ?????  really? #################################
+ *     - check they appear in: elementary_test -to "Icon Standard"
+ * 
+ */
+
+
+// Single FDO icon
+#define ICO1(Cat, Name)                                         \
+   group { name: "elm/icon/"##Name##"/default";                 \
+      min: 16 16;                                               \
+      images.image: ##Cat##"/scalable/"##Name##".svg" COMP;     \
+      parts {                                                   \
+         part { name: "base";                                   \
+            desc {                                              \
+               image.normal: ##Cat##"/scalable/"##Name##".svg"; \
+               aspect: 1.0 1.0; aspect_preference: BOTH;        \
+   }  }  }  }
+
+
+// FDO icon with small and normal source
+#define ICO2(Cat, Name)                                         \
+   group { name: "elm/icon/"##Name##"/default";                 \
+      min: 16 16;                                               \
+      images {                                                  \
+         set { name: ##Name##;                                  \
+            image {                                             \
+               image: ##Cat##"/16/"##Name##".svg" COMP;         \
+               size: 0  0  22  22;                              \
+            }                                                   \
+            image {                                             \
+               image: ##Cat##"/scalable/"##Name##".svg" COMP;   \
+               size: 23  23  999  999;                          \
+            }                                                   \
+         }                                                      \
+      }                                                         \
+      parts {                                                   \
+         part { name: "base";                                   \
+            desc {                                              \
+               image.normal: ##Name##;                          \
+               aspect: 1.0 1.0; aspect_preference: BOTH;        \
+   }  }  }  }
+
+
+#define CTX "places"
+ICO1(CTX, "user-home")
+ICO1(CTX, "user-bookmarks")
+ICO1(CTX, "user-trash")
+ICO2(CTX, "folder")
+ICO2(CTX, "folder-remote")
+ICO2(CTX, "folder-open") /* */
+ICO2(CTX, "folder-home") /* */
+ICO2(CTX, "folder-downloads") /* */
+ICO1(CTX, "folder-recent") /* */
+ICO1(CTX, "folder-documents") /* */
+ICO1(CTX, "folder-images") /* */
+ICO1(CTX, "folder-music") /* */
+ICO1(CTX, "folder-videos") /* */
+ICO2(CTX, "network-server")
+ICO2(CTX, "network-workgroup")
+ICO2(CTX, "start-here")
+// TODO user-desktop
+#undef CTX
+
+
+#define CTX "emblems"
+ICO1(CTX, "emblem-default")
+ICO1(CTX, "emblem-downloads")
+ICO1(CTX, "emblem-favorite")
+ICO1(CTX, "emblem-important")
+ICO1(CTX, "emblem-readonly")
+ICO1(CTX, "emblem-shared")
+ICO1(CTX, "emblem-symbolic-link")
+ICO1(CTX, "emblem-unreadable")
+ICO1(CTX, "emblem-system")
+ICO1(CTX, "emblem-synchronized")
+ICO1(CTX, "emblem-synchronizing") /* */
+// TODO emblem-documents
+// TODO emblem-mail
+// TODO emblem-photos
+#undef CTX
+
+
+
+
+#undef ICO1
+#undef ICO2
+
+
+// TODO:
+
+// IC("view-close",           "icon_close.png")
+// IC("view-refresh",         "icon_refresh.png")
+// 
+// IC("window-close",         "icon_close.png")
+// 
+// IC("document-close",       "icon_close.png")
+// IC("document-edit",        "icon_edit.png")
+// 
+// IC("dialog-info",          "icon_info.png")
+// IC("dialog-close",         "icon_close.png")
+// 
+// IC("arrow-up",             "icon_arrow_up.png")
+// IC("arrow-down",           "icon_arrow_down.png")
+// IC("arrow-left",           "icon_arrow_left.png")
+// IC("arrow-right",          "icon_arrow_right.png")
+// IC("arrow-up-left",        "icon_arrow_up_left.png") /* */
+// IC("arrow-up-right",       "icon_arrow_up_right.png") /* */
+// IC("arrow-down-left",      "icon_arrow_down_left.png") /* */
+// IC("arrow-down-right",     "icon_arrow_down_right.png") /* */
+// 
+// IC("edit-delete",          "icon_delete.png")
+// IC("edit-find",            "icon_search.png")
+// 
+// IC("application-chat",     "icon_chat.png") /* */
+// IC("application-clock",    "icon_clock.png") /* */
+// 
+// IC("media-seek-forward",   "icon_forward.png")
+// IC("media-seek-backward",  "icon_rewind.png")
+// IC("media-skip-forward",   "icon_next.png")
+// IC("media-skip-backward",  "icon_prev.png")
+// IC("media-playback-pause", "icon_pause.png")
+// IC("media-playback-start", "icon_play.png")
+// IC("media-playback-stop",  "icon_stop.png")
+// IC("media-eject",          "icon_eject.png")
+// 
+// IC("audio-volume",         "icon_volume.png") /* */
+// IC("audio-volume-muted",   "icon_mute.png")
+
+
+

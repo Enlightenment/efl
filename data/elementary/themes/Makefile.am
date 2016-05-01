@@ -1,4 +1,12 @@
-EDJE_CC_ELM_FLAGS = -id $(top_srcdir)/data/elementary/themes/img -fd $(top_srcdir)/data/elementary/themes/fnt -sd $(top_srcdir)/data/elementary/themes/snd  -l $(top_srcdir)/COPYING -a $(top_srcdir)/AUTHORS -fastdecomp
+EDJE_CC_ELM_FLAGS = \
+-id $(top_srcdir)/data/elementary/themes/img \
+-id $(top_srcdir)/data/elementary/themes/fdo \
+-fd $(top_srcdir)/data/elementary/themes/fnt \
+-sd $(top_srcdir)/data/elementary/themes/snd  \
+-l $(top_srcdir)/COPYING \
+-a $(top_srcdir)/AUTHORS \
+-fastdecomp
+
 
 elementary_themes_files = \
 elementary/themes/default.edc \
@@ -104,6 +112,7 @@ elementary/themes/edc/elm/gengrid.edc \
 elementary/themes/edc/elm/genlist.edc \
 elementary/themes/edc/elm/hover.edc \
 elementary/themes/edc/elm/icon.edc \
+elementary/themes/edc/elm/icon_fdo.edc \
 elementary/themes/edc/elm/index.edc \
 elementary/themes/edc/elm/inwin.edc \
 elementary/themes/edc/elm/label.edc \

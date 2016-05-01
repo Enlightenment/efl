@@ -158,21 +158,23 @@ _standard_list_populate(Evas_Object *list, int size)
    EINA_LIST_FREE(l, group)
      {
         // group = "/elm/icon/standard-name/style/maybe_another_style??"
-         snprintf(name, sizeof(name), "%s", group + 9);
+        snprintf(name, sizeof(name), "%s", group + 9);
         if ((p = strrchr(name, '/')))
           *p = '\0';
-         // printf("Found group:%s  Name:%s\n", group, name);
+        // printf("Found group:%s  Name:%s\n", group, name);
 
-         // quick hack to show only standard-compliant icons
-         // apart from the "folder" one, all the others have "-" in the name
-         if ((strrchr(name, '-') != NULL) || !strcmp(name, "folder"))
-           {
-               ic = elm_icon_add(list);
-               elm_icon_standard_set(ic, name);
-               if (size)
-                 evas_object_size_hint_min_set(ic, size, size);
-               elm_list_item_append(list, name, ic, NULL, NULL, NULL);
-           }
+        // quick hack to show only standard-compliant icons
+        // apart from the "folder" one, all the others have "-" in the name
+        // ...also do not show deprecated arrow-* icons
+        if (((strrchr(name, '-') != NULL) || !strcmp(name, "folder"))
+            && (strncmp(name, "arrow-", 6)))
+          {
+             ic = elm_icon_add(list);
+             elm_icon_standard_set(ic, name);
+             if (size)
+               evas_object_size_hint_min_set(ic, size, size);
+             elm_list_item_append(list, name, ic, NULL, NULL, NULL);
+          }
 
          eina_stringshare_del(group);
      }

@@ -31,6 +31,7 @@ collections {
 #include "edc/elm/list.edc"
 #include "edc/elm/conform.edc"
 #include "edc/elm/icon.edc"
+#include "edc/elm/icon_fdo.edc"
 #include "edc/elm/video.edc"
 #include "edc/elm/access.edc"
 #include "edc/elm/photo.edc"

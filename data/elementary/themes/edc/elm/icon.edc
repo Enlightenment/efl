@@ -1,67 +1,11 @@
 
-
 /*
- * Standard FreeDesktop icons:
- * 
- * WARNING: When you add new icons you MUST ensure to use standard names as per:
- * http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
- * If you can't find the name in the spec then you MUST search in the Tango
- * and/or the Oxigen theme to find a suitable name. IF you really cannot find
- * anything try at least to be consistent with other existing names.
- * NOTE: icons marked with an empty comment are names that I cannot
- *       find anywhere else, so they are not really standard.
- */
-#define IC(Name, File, Min, Max) \
-   group { name: "elm/icon/"##Name##"/default"; min: Min Min; max: Max Max; \
-   images.image: File COMP; parts { part { name: "base"; \
-   description { aspect: 1.0 1.0; aspect_preference: BOTH; \
-   image.normal: File; } } } }
-IC("folder",               "icon_folder.png",           16, 0);
-IC("user-home",            "icon_home.png",             16, 0);
-IC("user-trash",           "icon_delete.png",           16, 0);
-
-IC("view-close",           "icon_close.png",            16, 0);
-IC("view-refresh",         "icon_refresh.png",          16, 0);
-
-IC("window-close",         "icon_close.png",            16, 0);
-
-IC("document-close",       "icon_close.png",            16, 0);
-IC("document-edit",        "icon_edit.png",             16, 0);
-
-IC("dialog-info",          "icon_info.png",             16, 0);
-IC("dialog-close",         "icon_close.png",            16, 0);
-
-IC("go-home",              "icon_home.png",             16, 0);
-IC("go-up",                "icon_arrow_up.png",         16, 0);
-IC("go-down",              "icon_arrow_down.png",       16, 0);
-IC("go-previous",          "icon_arrow_left.png",       16, 0);
-IC("go-next",              "icon_arrow_right.png",      16, 0);
-
-IC("edit-delete",          "icon_delete.png",           16, 0);
-IC("edit-find",            "icon_search.png",           16, 0);
-
-IC("application-chat",     "icon_chat.png",             16, 0); /* */
-IC("application-clock",    "icon_clock.png",            16, 0); /* */
-
-IC("media-seek-forward",   "icon_forward.png",          16, 0);
-IC("media-seek-backward",  "icon_rewind.png",           16, 0);
-IC("media-skip-forward",   "icon_next.png",             16, 0);
-IC("media-skip-backward",  "icon_prev.png",             16, 0);
-IC("media-playback-pause", "icon_pause.png",            16, 0);
-IC("media-playback-start", "icon_play.png",             16, 0);
-IC("media-playback-stop",  "icon_stop.png",             16, 0);
-IC("media-eject",          "icon_eject.png",            16, 0);
-
-IC("audio-volume",         "icon_volume.png",           16, 0); /* */
-IC("audio-volume-muted",   "icon_mute.png",             16, 0);
-
-/// TODO emoticons, file, no_photo
-#undef IC
-
-
-/*
- * All the icons below this point are not standard and are to be considered
+ * All the icons below are not standard and are to be considered
  * deprecated or at least just for internal usage only.
+ *
+ * We suggest to instead use the icons in icon_fdo.edc (at least if you
+ * want your app to be user customizable wrt icons)
+ * 
  */
 
 #define IC(Name, Alias, File, Min, Max) \
