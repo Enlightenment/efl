@@ -59,6 +59,7 @@
    }  }  }  }
 
 
+////  places  /////////////////////////////////////////////////////////////////
 #define CTX "places"
 ICO1(CTX, "user-home")
 ICO1(CTX, "user-bookmarks")
@@ -80,6 +81,7 @@ ICO2(CTX, "start-here")
 #undef CTX
 
 
+////  emblems  ////////////////////////////////////////////////////////////////
 #define CTX "emblems"
 ICO1(CTX, "emblem-default")
 ICO1(CTX, "emblem-downloads")
@@ -98,6 +100,311 @@ ICO1(CTX, "emblem-synchronizing") /* */
 #undef CTX
 
 
+////  actions  ////////////////////////////////////////////////////////////////
+#define CTX "actions"
+ICO1(CTX, "call-start")
+ICO1(CTX, "call-stop")
+ICO1(CTX, "document-open")
+ICO1(CTX, "document-open-recent")
+ICO1(CTX, "document-page-setup")
+ICO1(CTX, "document-properties")
+ICO1(CTX, "document-save")
+ICO1(CTX, "document-save-as")
+ICO1(CTX, "document-send")
+// TODO document-new
+// TODO document-print
+// TODO document-print-preview
+// TODO document-revert
+
+ICO1(CTX, "edit-clear")
+ICO1(CTX, "edit-copy")
+ICO1(CTX, "edit-cut")
+ICO1(CTX, "edit-delete")
+ICO1(CTX, "edit-find")
+ICO1(CTX, "edit-paste")
+ICO1(CTX, "edit-redo")
+ICO1(CTX, "edit-undo")
+ICO1(CTX, "edit-select-all")
+// TODO edit-find-replace
+
+ICO1(CTX, "format-indent-less")
+ICO1(CTX, "format-indent-more")
+ICO1(CTX, "format-justify-center")
+ICO1(CTX, "format-justify-fill")
+ICO1(CTX, "format-justify-left")
+ICO1(CTX, "format-justify-right")
+ICO1(CTX, "format-text-direction-ltr")
+ICO1(CTX, "format-text-direction-rtl")
+ICO1(CTX, "format-text-bold")
+ICO1(CTX, "format-text-italic")
+ICO1(CTX, "format-text-underline")
+ICO1(CTX, "format-text-strikethrough")
+
+ICO1(CTX, "go-home")
+ICO1(CTX, "go-bottom")
+ICO1(CTX, "go-down")
+ICO1(CTX, "go-first")
+ICO1(CTX, "go-jump")
+ICO1(CTX, "go-last")
+ICO1(CTX, "go-next")
+ICO1(CTX, "go-previous")
+ICO1(CTX, "go-top")
+ICO1(CTX, "go-up")
+
+ICO1(CTX, "insert-image")
+ICO1(CTX, "insert-link")
+ICO1(CTX, "insert-object")
+ICO1(CTX, "insert-text")
+
+ICO1(CTX, "list-add")
+ICO1(CTX, "list-remove")
+
+ICO1(CTX, "media-eject")
+ICO1(CTX, "media-playback-pause")
+ICO1(CTX, "media-playback-start")
+ICO1(CTX, "media-playback-stop")
+ICO1(CTX, "media-record")
+ICO1(CTX, "media-seek-backward")
+ICO1(CTX, "media-seek-forward")
+ICO1(CTX, "media-skip-backward")
+ICO1(CTX, "media-skip-forward")
+
+ICO1(CTX, "object-flip-horizontal")
+ICO1(CTX, "object-flip-vertical")
+ICO1(CTX, "object-rotate-left")
+ICO1(CTX, "object-rotate-right")
+
+ICO1(CTX, "zoom-fit-best")
+ICO1(CTX, "zoom-in")
+ICO1(CTX, "zoom-original")
+ICO1(CTX, "zoom-out")
+
+ICO1(CTX, "view-fullscreen")
+ICO1(CTX, "view-refresh")
+ICO1(CTX, "view-restore")
+// TODO view-sort-ascending
+// TODO view-sort-descending
+
+ICO1(CTX, "window-close")
+// TODO window-new
+
+ICO1(CTX, "system-run")
+ICO1(CTX, "system-shutdown")
+// TODO system-lock-screen
+// TODO system-log-out
+// TODO system-search
+// TODO system-reboot
+
+// TODO tools-check-spelling
+// TODO address-book-new
+// TODO application-exit
+// TODO appointment-new
+// TODO contact-new
+// TODO folder-new
+// TODO help-about
+// TODO help-contents
+// TODO help-faq
+// TODO mail-forward
+// TODO mail-mark-important
+// TODO mail-mark-junk
+// TODO mail-mark-notjunk
+// TODO mail-mark-read
+// TODO mail-mark-unread
+// TODO mail-message-new
+// TODO mail-reply-all
+// TODO mail-reply-sender
+// TODO mail-send
+// TODO mail-send-receive
+// TODO process-stop
+#undef CTX
+
+
+////  status  /////////////////////////////////////////////////////////////
+#define CTX "status"
+// TODO appointment-missed
+// TODO appointment-soon
+// TODO audio-volume-high
+// TODO audio-volume-low
+// TODO audio-volume-medium
+// TODO audio-volume-muted
+// TODO battery-caution
+// TODO battery-low
+// TODO dialog-error
+// TODO dialog-information
+// TODO dialog-password
+// TODO dialog-question
+// TODO dialog-warning
+// TODO folder-drag-accept
+// TODO folder-open
+// TODO folder-visiting
+// TODO image-loading
+// TODO image-missing
+// TODO mail-attachment
+// TODO mail-unread
+// TODO mail-read
+// TODO mail-replied
+// TODO mail-signed
+// TODO mail-signed-verified
+// TODO media-playlist-repeat
+// TODO media-playlist-shuffle
+// TODO network-error
+// TODO network-idle
+// TODO network-offline
+// TODO network-receive
+// TODO network-transmit
+// TODO network-transmit-receive
+// TODO printer-error
+// TODO printer-printing
+// TODO security-high
+// TODO security-medium
+// TODO security-low
+// TODO software-update-available
+// TODO software-update-urgent
+// TODO sync-error
+// TODO sync-synchronizing
+// TODO task-due
+// TODO task-past-due
+// TODO user-available
+// TODO user-away
+// TODO user-idle
+// TODO user-offline
+// TODO user-trash-full
+// TODO weather-clear
+// TODO weather-clear-night
+// TODO weather-few-clouds
+// TODO weather-few-clouds-night
+// TODO weather-fog
+// TODO weather-overcast
+// TODO weather-severe-alert
+// TODO weather-showers
+// TODO weather-showers-scattered
+// TODO weather-snow
+// TODO weather-storm
+#undef CTX
+
+
+////  animations  /////////////////////////////////////////////////////////////
+#define CTX "animations"
+// TODO process-working
+#undef CTX
+
+
+////  applications  ///////////////////////////////////////////////////////////
+#define CTX "applications"
+// TODO accessories-calculator
+// TODO accessories-character-map
+// TODO accessories-dictionary
+// TODO accessories-text-editor
+// TODO help-browser
+// TODO multimedia-volume-control
+// TODO preferences-desktop-accessibility
+// TODO preferences-desktop-font
+// TODO preferences-desktop-keyboard
+// TODO preferences-desktop-locale
+// TODO preferences-desktop-multimedia
+// TODO preferences-desktop-screensaver
+// TODO preferences-desktop-theme
+// TODO preferences-desktop-wallpaper
+// TODO system-file-manager
+// TODO system-software-install
+// TODO system-software-update
+// TODO utilities-system-monitor
+// TODO utilities-terminal
+#undef CTX
+
+
+////  categories  /////////////////////////////////////////////////////////////
+#define CTX "categories"
+// TODO applications-accessories
+// TODO applications-development
+// TODO applications-engineering
+// TODO applications-games
+// TODO applications-graphics
+// TODO applications-internet
+// TODO applications-multimedia
+// TODO applications-office
+// TODO applications-other
+// TODO applications-science
+// TODO applications-system
+// TODO applications-utilities
+// TODO preferences-desktop
+// TODO preferences-desktop-peripherals
+// TODO preferences-desktop-personal
+// TODO preferences-other
+// TODO preferences-system
+// TODO preferences-system-network
+// TODO system-help
+#undef CTX
+
+
+////  devices  ////////////////////////////////////////////////////////////////
+#define CTX "devices"
+// TODO audio-card
+// TODO audio-input-microphone
+// TODO battery
+// TODO camera-photo
+// TODO camera-video
+// TODO camera-web
+// TODO computer
+// TODO drive-harddisk
+// TODO drive-optical
+// TODO drive-removable-media
+// TODO input-gaming
+// TODO input-keyboard
+// TODO input-mouse
+// TODO input-tablet
+// TODO media-flash
+// TODO media-floppy
+// TODO media-optical
+// TODO media-tape
+// TODO modem
+// TODO multimedia-player
+// TODO network-wired
+// TODO network-wireless
+// TODO pda
+// TODO phone
+// TODO printer
+// TODO scanner
+// TODO video-display
+#undef CTX
+
+
+////  emotions  ///////////////////////////////////////////////////////////////
+#define CTX "emotions"
+// TODO face-angel
+// TODO face-angry
+// TODO face-cool
+// TODO face-crying
+// TODO face-devilish
+// TODO face-embarrassed
+// TODO face-kiss
+// TODO face-laugh
+// TODO face-monkey
+// TODO face-plain
+// TODO face-raspberry
+// TODO face-sad
+// TODO face-sick
+// TODO face-smile
+// TODO face-smile-big
+// TODO face-smirk
+// TODO face-surprise
+// TODO face-tired
+// TODO face-uncertain
+// TODO face-wink
+// TODO face-worried
+#undef CTX
+
+
+////  international  //////////////////////////////////////////////////////////
+#define CTX "international"
+// TODO flag-aa (The flag for the country with the ISO 3166 country code AA)
+#undef CTX
+
+
+////  mimetypes  //////////////////////////////////////////////////////////////
+#define CTX "mimetypes"
+// TODO ... don't really know about this one (they are LOTS of icons)
+#undef CTX
 
 
 #undef ICO1

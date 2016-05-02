@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg3027"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="media-skip-forward.svg">
+  <defs
+     id="defs3029" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="56.98419"
+     inkscape:cy="50.32264"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="false"
+     inkscape:window-width="1013"
+     inkscape:window-height="847"
+     inkscape:window-x="610"
+     inkscape:window-y="112"
+     inkscape:window-maximized="0"
+     showguides="true"
+     inkscape:guide-bbox="true" />
+  <metadata
+     id="metadata3032">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-924.36218)" />
+  <path
+     inkscape:connector-curvature="0"
+     d="m 23.387614,53.734105 0,16.15066 80.753306,0 0,-16.15066 -80.753306,0 z"
+     id="path15405"
+     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#3397ff;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+  <path
+     inkscape:connector-curvature="0"
+     d="m 79.916538,29.508115 0,8.07533 c 0,2.074471 1.048421,4.26749 2.523542,5.804144 l 18.42184,18.421846 -18.42184,18.421846 c -1.475121,1.536656 -2.523542,3.729673 -2.523542,5.804144 l 0,8.07533 8.075331,0 c 2.49891,0 4.460166,-0.729202 6.056495,-2.271187 L 123.57379,61.809435 94.048364,31.779302 c -1.596329,-1.541984 -3.557585,-2.271187 -6.056495,-2.271187 z"
+     id="rect3217-6-2-2-4-85-5"
+     sodipodi:nodetypes="ccccccccccccc"
+     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#bebebe;fill:#3397ff;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans" />
+  <path
+     inkscape:connector-curvature="0"
+     d="m 47.615218,29.508115 0,8.07533 c 0,2.074471 -1.048419,4.26749 -2.52354,5.804144 L 26.669832,61.809435 45.091678,80.231281 c 1.475121,1.536656 2.52354,3.729673 2.52354,5.804144 l 0,8.07533 -8.075329,0 c -2.498912,0 -4.460166,-0.729202 -6.056497,-2.271187 L 3.9579659,61.809435 33.483392,31.779302 c 1.596331,-1.541984 3.557585,-2.271187 6.056497,-2.271187 z"
+     id="rect3217-6-2-2-4-85-5-2"
+     sodipodi:nodetypes="ccccccccccccc"
+     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#bebebe;fill:#3397ff;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans" />
+</svg>
