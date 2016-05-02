@@ -487,6 +487,9 @@ group { name: "elm/button/base/anchor";
             rel1.offset: 0 0;
             rel2.offset: 0 0;
          }
+         desc { "clicked";
+            inherit: "default";
+         }
       }
       rect { "icon_clip";
          desc { "default";
