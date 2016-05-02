@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: ecore-drm2
+Description: E core library, DRM module
+Requires.private: @requirements_pc_ecore_drm2@
+Version: @VERSION@
+Libs: -L${libdir} -lecore_drm2
+Libs.private: @requirements_libs_ecore_drm2@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-drm2-@VMAJ@

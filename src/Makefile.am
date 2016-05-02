@@ -54,7 +54,9 @@ include Makefile_Ecore_IMF.am
 include Makefile_Ecore_IMF_Evas.am
 include Makefile_Eldbus.am
 include Makefile_Eeze.am
+include Makefile_Elput.am
 include Makefile_Ecore_Drm.am
+include Makefile_Ecore_Drm2.am
 include Makefile_Ecore_Evas.am
 include Makefile_Ecore_Audio.am
 include Makefile_Ecore_Avahi.am
@@ -69,7 +71,6 @@ include Makefile_Ethumb.am
 include Makefile_Ethumb_Client.am
 include Makefile_Elocation.am
 include Makefile_Elementary.am
-include Makefile_Elput.am
 
 include Makefile_Cxx.am
 include Makefile_Eolian_Cxx.am

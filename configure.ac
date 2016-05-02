@@ -2085,18 +2085,31 @@ if test "x${have_cocoa}" = "xyes"; then
 fi
 AC_SUBST(cocoa_coreservices_ldflags)
 
+AC_ARG_ENABLE([elput],
+   [AS_HELP_STRING([--enable-elput],[enable elput library. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_elput="yes"
+    else
+       want_elput="no"
+    fi
+   ],
+   [want_elput="no"])
+
 # Drm
 AC_ARG_ENABLE([drm],
    [AS_HELP_STRING([--enable-drm],[enable drm engine. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
-       want_drm="yes"
+      if test "x${want_elput}" != "xyes" ; then
+        AC_MSG_ERROR([elput is required to build drm support])
+      fi
+      want_drm="yes"
     else
        want_drm="no"
     fi
    ],
    [want_drm="no"])
-
 
 AC_ARG_ENABLE([gl-drm],
    [AC_HELP_STRING([--enable-gl-drm],
@@ -2295,17 +2308,6 @@ AC_ARG_ENABLE([ecore-buffer],
     fi
    ],
    [want_ecore_buffer="no"])
-
-AC_ARG_ENABLE([elput],
-   [AS_HELP_STRING([--enable-elput],[enable elput library. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_elput="yes"
-    else
-       want_elput="no"
-    fi
-   ],
-   [want_elput="no"])
 
 # Image Loaders
 
@@ -3633,7 +3635,52 @@ EFL_EVAL_PKGS([ELPUT])
 ### Checks for library functions
 
 EFL_LIB_END_OPTIONAL([Elput])
-#### End of Ecore_Drm
+#### End of Elput
+
+#### Ecore_Drm2
+have_libinput_new="no"
+EFL_LIB_START_OPTIONAL([Ecore_Drm2], [test "${want_drm}" = "yes"])
+
+### Additional options to configure
+SUID_CFLAGS=-fPIE
+SUID_LDFLAGS=-pie
+AC_SUBST([SUID_CFLAGS])
+AC_SUBST([SUID_LDFLAGS])
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ECORE_DRM2], [eo])
+EFL_INTERNAL_DEPEND_PKG([ECORE_DRM2], [efl])
+EFL_INTERNAL_DEPEND_PKG([ECORE_DRM2], [eina])
+EFL_INTERNAL_DEPEND_PKG([ECORE_DRM2], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_DRM2], [elput])
+EFL_INTERNAL_DEPEND_PKG([ECORE_DRM2], [eeze])
+
+EFL_DEPEND_PKG([ECORE_DRM2], [DRM], [libdrm >= 2.4 gbm])
+
+EFL_ADD_LIBS([ECORE_DRM2], [-lm])
+
+AC_CHECK_LIB(drm, drmModeAtomicCommit, AC_DEFINE(HAVE_ATOMIC_DRM, [], [Atomic modeset supported]))
+
+EFL_EVAL_PKGS([ECORE_DRM2])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END_OPTIONAL([Ecore_Drm2])
+#### End of Ecore_Drm2
 
 
 #### Ecore_Audio
@@ -5260,7 +5307,7 @@ EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${have_ps3}], [ecore_psl1ght])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_sdl}], [ecore_sdl])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_ecore_evas_gl_cocoa}], [ecore_cocoa])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${build_ecore_evas_win32}], [ecore_win32])
-EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_drm}], [ecore_drm])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_drm}], [ecore_drm2])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${build_ecore_evas_wayland}], [ecore_wl2])
 
 dnl Special case deps for ecore_drm
@@ -5605,6 +5652,7 @@ pc/elua.pc
 pc/elementary.pc
 pc/elementary-cxx.pc
 pc/elput.pc
+pc/ecore-drm2.pc
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/ethumb.service
 $po_makefile_in

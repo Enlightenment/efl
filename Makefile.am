@@ -290,6 +290,10 @@ if HAVE_ELPUT
 pkgconfig_DATA += pc/elput.pc
 endif
 
+if HAVE_ECORE_DRM2
+pkgconfig_DATA += pc/ecore-drm2.pc
+endif
+
 # Cmake configs:
 efl_cmakeconfigdir = $(libdir)/cmake/Efl/
 efl_cmakeconfig_DATA = \
