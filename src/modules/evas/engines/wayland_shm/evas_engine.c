@@ -157,7 +157,7 @@ eng_setup(Evas *eo_evas, void *info)
         else
           goto err;
      }
-   else
+   else if (einfo->info.wl_surface)
      {
         Outbuf *ob;
 
