@@ -59,6 +59,17 @@
    }  }  }  }
 
 
+// TODO (old icons provided by elm):
+//
+// IC("document-edit",        "icon_edit.png")
+// 
+// IC("dialog-info",          "icon_info.png")
+// IC("dialog-close",         "icon_close.png")
+//
+// IC("application-chat",     "icon_chat.png") /* */
+// IC("application-clock",    "icon_clock.png") /* */
+
+
 ////  places  /////////////////////////////////////////////////////////////////
 #define CTX "places"
 ICO1(CTX, "user-home")
@@ -111,6 +122,7 @@ ICO1(CTX, "document-properties")
 ICO1(CTX, "document-save")
 ICO1(CTX, "document-save-as")
 ICO1(CTX, "document-send")
+ICO1(CTX, "document-close") /* */
 // TODO document-new
 // TODO document-print
 // TODO document-print-preview
@@ -182,6 +194,7 @@ ICO1(CTX, "zoom-out")
 ICO1(CTX, "view-fullscreen")
 ICO1(CTX, "view-refresh")
 ICO1(CTX, "view-restore")
+ICO1(CTX, "view-close") /* */
 // TODO view-sort-ascending
 // TODO view-sort-descending
 
@@ -221,65 +234,105 @@ ICO1(CTX, "system-shutdown")
 
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
-// TODO appointment-missed
-// TODO appointment-soon
-// TODO audio-volume-high
-// TODO audio-volume-low
-// TODO audio-volume-medium
-// TODO audio-volume-muted
-// TODO battery-caution
-// TODO battery-low
-// TODO dialog-error
-// TODO dialog-information
-// TODO dialog-password
-// TODO dialog-question
-// TODO dialog-warning
-// TODO folder-drag-accept
-// TODO folder-open
-// TODO folder-visiting
-// TODO image-loading
-// TODO image-missing
-// TODO mail-attachment
-// TODO mail-unread
-// TODO mail-read
+ICO1(CTX, "audio-volume-high")
+ICO1(CTX, "audio-volume-low")
+ICO1(CTX, "audio-volume-medium")
+ICO1(CTX, "audio-volume-muted")
+ICO1(CTX, "audio-volume") /* */
+ICO1(CTX, "battery-caution")
+ICO1(CTX, "battery-empty") /* */
+ICO1(CTX, "battery-low")
+ICO1(CTX, "battery-good") /* */
+ICO1(CTX, "battery-full") /* */
+ICO1(CTX, "battery-caution-charging") /* */
+ICO1(CTX, "battery-empty-charging") /* */
+ICO1(CTX, "battery-low-charging") /* */
+ICO1(CTX, "battery-good-charging") /* */
+ICO1(CTX, "battery-full-charging") /* */
+ICO1(CTX, "bluetooth-active") /* */
+ICO1(CTX, "bluetooth-disabled") /* */
+ICO1(CTX, "changes-allow") /* */
+ICO1(CTX, "changes-prevent")/* */
+ICO1(CTX, "dialog-error")
+ICO1(CTX, "dialog-information")
+ICO1(CTX, "dialog-password")
+ICO1(CTX, "dialog-question")
+ICO1(CTX, "dialog-warning")
+ICO1(CTX, "media-playlist-repeat")
+ICO1(CTX, "media-playlist-shuffle")
+ICO1(CTX, "network-cellular-3g") /* */
+ICO1(CTX, "network-cellular-4g") /* */
+ICO1(CTX, "network-cellular-edge") /* */
+ICO1(CTX, "network-cellular-gprs") /* */
+ICO1(CTX, "network-cellular-umts") /* */
+ICO1(CTX, "network-cellular-connected") /* */
+ICO1(CTX, "network-cellular-signal-excellent") /* */
+ICO1(CTX, "network-cellular-signal-good") /* */
+ICO1(CTX, "network-cellular-signal-none") /* */
+ICO1(CTX, "network-cellular-signal-ok") /* */
+ICO1(CTX, "network-cellular-signal-weak") /* */
+ICO1(CTX, "network-cellular-signal-acquiring") /* */
+ICO1(CTX, "network-error")
+ICO1(CTX, "network-offline")
+ICO1(CTX, "network-receive")
+ICO1(CTX, "network-transmit-receive")
+ICO1(CTX, "network-transmit")
+ICO1(CTX, "network-idle")
+ICO1(CTX, "network-vpn") /* */
+ICO1(CTX, "network-vpn-acquiring") /* */
+ICO1(CTX, "network-wireless-acquiring") /* */
+ICO1(CTX, "network-wireless-encrypted") /* */
+ICO1(CTX, "network-wireless-signal-excellent") /* */
+ICO1(CTX, "network-wireless-signal-good") /* */
+ICO1(CTX, "network-wireless-signal-none") /* */
+ICO1(CTX, "network-wireless-signal-ok") /* */
+ICO1(CTX, "network-wireless-signal-weak") /* */
+ICO1(CTX, "printer-error")
+ICO1(CTX, "printer-printing")
+ICO1(CTX, "printer-warning") /* */
+ICO1(CTX, "security-high")
+ICO1(CTX, "security-medium")
+ICO1(CTX, "security-low")
+ICO1(CTX, "software-update-available")
+ICO1(CTX, "software-update-urgent")
+ICO1(CTX, "user-available")
+ICO1(CTX, "user-away")
+ICO1(CTX, "user-busy") /* */
+ICO1(CTX, "user-invisible") /* */
+ICO1(CTX, "user-idle")
+ICO1(CTX, "user-offline")
+ICO1(CTX, "weather-clear-night")
+ICO1(CTX, "weather-clear")
+ICO1(CTX, "weather-clouds-night") /* */
+ICO1(CTX, "weather-clouds") /* */
+ICO1(CTX, "weather-few-clouds-night")
+ICO1(CTX, "weather-few-clouds")
+ICO1(CTX, "weather-fog")
+ICO1(CTX, "weather-overcast")
+ICO1(CTX, "weather-severe-alert")
+ICO1(CTX, "weather-showers-scattered")
+ICO1(CTX, "weather-showers")
+ICO1(CTX, "weather-snow")
+ICO1(CTX, "weather-storm")
+ICO1(CTX, "mail-attachment")
+ICO1(CTX, "mail-unread")
+ICO1(CTX, "mail-read")
 // TODO mail-replied
 // TODO mail-signed
 // TODO mail-signed-verified
-// TODO media-playlist-repeat
-// TODO media-playlist-shuffle
-// TODO network-error
-// TODO network-idle
-// TODO network-offline
-// TODO network-receive
-// TODO network-transmit
-// TODO network-transmit-receive
-// TODO printer-error
-// TODO printer-printing
-// TODO security-high
-// TODO security-medium
-// TODO security-low
-// TODO software-update-available
-// TODO software-update-urgent
+// TODO appointment-missed
+// TODO appointment-soon
+// TODO folder-drag-accept
+// TODO folder-visiting
+// TODO image-loading
+// TODO image-missing
 // TODO sync-error
 // TODO sync-synchronizing
 // TODO task-due
 // TODO task-past-due
-// TODO user-available
-// TODO user-away
-// TODO user-idle
-// TODO user-offline
 // TODO user-trash-full
-// TODO weather-clear
-// TODO weather-clear-night
-// TODO weather-few-clouds
-// TODO weather-few-clouds-night
-// TODO weather-fog
-// TODO weather-overcast
-// TODO weather-severe-alert
-// TODO weather-showers
-// TODO weather-showers-scattered
-// TODO weather-snow
-// TODO weather-storm
+ICO1(CTX, "starred") /* */
+ICO1(CTX, "non-starred") /* */
 #undef CTX
 
 
@@ -409,47 +462,4 @@ ICO1(CTX, "system-shutdown")
 
 #undef ICO1
 #undef ICO2
-
-
-// TODO:
-
-// IC("view-close",           "icon_close.png")
-// IC("view-refresh",         "icon_refresh.png")
-// 
-// IC("window-close",         "icon_close.png")
-// 
-// IC("document-close",       "icon_close.png")
-// IC("document-edit",        "icon_edit.png")
-// 
-// IC("dialog-info",          "icon_info.png")
-// IC("dialog-close",         "icon_close.png")
-// 
-// IC("arrow-up",             "icon_arrow_up.png")
-// IC("arrow-down",           "icon_arrow_down.png")
-// IC("arrow-left",           "icon_arrow_left.png")
-// IC("arrow-right",          "icon_arrow_right.png")
-// IC("arrow-up-left",        "icon_arrow_up_left.png") /* */
-// IC("arrow-up-right",       "icon_arrow_up_right.png") /* */
-// IC("arrow-down-left",      "icon_arrow_down_left.png") /* */
-// IC("arrow-down-right",     "icon_arrow_down_right.png") /* */
-// 
-// IC("edit-delete",          "icon_delete.png")
-// IC("edit-find",            "icon_search.png")
-// 
-// IC("application-chat",     "icon_chat.png") /* */
-// IC("application-clock",    "icon_clock.png") /* */
-// 
-// IC("media-seek-forward",   "icon_forward.png")
-// IC("media-seek-backward",  "icon_rewind.png")
-// IC("media-skip-forward",   "icon_next.png")
-// IC("media-skip-backward",  "icon_prev.png")
-// IC("media-playback-pause", "icon_pause.png")
-// IC("media-playback-start", "icon_play.png")
-// IC("media-playback-stop",  "icon_stop.png")
-// IC("media-eject",          "icon_eject.png")
-// 
-// IC("audio-volume",         "icon_volume.png") /* */
-// IC("audio-volume-muted",   "icon_mute.png")
-
-
 

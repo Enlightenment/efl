@@ -166,7 +166,7 @@ _standard_list_populate(Evas_Object *list, int size)
         // quick hack to show only standard-compliant icons
         // apart from the "folder" one, all the others have "-" in the name
         // ...also do not show deprecated arrow-* icons
-        if (((strrchr(name, '-') != NULL) || !strcmp(name, "folder"))
+        if (((strrchr(name, '-') != NULL) || !strcmp(name, "folder")|| !strcmp(name, "starred"))
             && (strncmp(name, "arrow-", 6)))
           {
              ic = elm_icon_add(list);

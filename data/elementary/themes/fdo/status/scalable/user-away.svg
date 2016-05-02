@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg3027"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="user-available.svg">
+  <defs
+     id="defs3029" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.9140624"
+     inkscape:cx="90.895777"
+     inkscape:cy="51.036686"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="false"
+     inkscape:window-width="1013"
+     inkscape:window-height="847"
+     inkscape:window-x="573"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata3032">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-924.36218)" />
+  <path
+     style="fill:#3399ff"
+     inkscape:connector-curvature="0"
+     d="m 64.128138,14.961077 c -30.252439,0 -54.7767904,18.859649 -54.7767904,46.951534 0,28.091887 24.5243514,46.951539 54.7767904,46.951539 8.333897,0 16.159936,-1.7995 23.230836,-4.89078 l 31.545166,12.71604 -11.2488,-27.877482 c 7.06753,-8.566307 11.2488,-15.274117 11.2488,-26.899317 0,-28.091885 -24.524346,-46.951534 -54.776785,-46.951534 z m 0,15.650512 c 21.608661,0 39.126282,14.01425 39.126282,31.301022 0,17.286773 -17.517621,31.301024 -39.126282,31.301024 -21.608661,0 -39.126279,-14.014251 -39.126279,-31.301024 0,-17.286772 17.517618,-31.301022 39.126279,-31.301022 z"
+     id="path4-4" />
+</svg>

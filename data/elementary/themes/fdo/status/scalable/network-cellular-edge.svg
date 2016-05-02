@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg3027"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="network-cellular-edge.svg">
+  <defs
+     id="defs3029" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.7676601"
+     inkscape:cx="77.24482"
+     inkscape:cy="82.666717"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="false"
+     inkscape:window-width="1013"
+     inkscape:window-height="847"
+     inkscape:window-x="573"
+     inkscape:window-y="46"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata3032">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-924.36218)" />
+  <path
+     style="fill:#3399ff"
+     inkscape:connector-curvature="0"
+     d="m 20.763195,22.276773 c -3.971172,0 -7.16818,3.197008 -7.16818,7.168181 v 71.681816 c 0,3.97117 3.197008,7.16818 7.16818,7.16818 h 86.018195 c 3.97117,0 7.16818,-3.19701 7.16818,-7.16818 V 29.444954 c 0,-3.971173 -3.19701,-7.168181 -7.16818,-7.168181 z m 25.088631,14.336363 h 35.840907 c 1.985586,0 2.482699,1.931967 3.58409,3.58409 V 50.949498 H 56.604099 v 7.16818 H 78.108642 V 72.454041 H 56.604099 v 7.168181 h 28.672724 v 10.752273 c 0,1.985586 -1.598504,3.58409 -3.58409,3.58409 H 45.851826 c -1.985586,0 -3.58409,-1.598504 -3.58409,-3.58409 V 40.197226 c 0,-1.985586 1.598504,-3.58409 3.58409,-3.58409 z"
+     id="path4-9" />
+</svg>

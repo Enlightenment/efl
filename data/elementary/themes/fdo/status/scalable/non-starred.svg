@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg3027"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="starred.svg">
+  <defs
+     id="defs3029" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.9140624"
+     inkscape:cx="84.253062"
+     inkscape:cy="75.189"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="false"
+     inkscape:window-width="1013"
+     inkscape:window-height="847"
+     inkscape:window-x="573"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata3032">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="fill:#3399ff"
+     inkscape:connector-curvature="0"
+     d="M 63.701737,9.950685 46.41582,45.024372 7.8339638,50.786077 35.642787,78.093847 29.129101,116.67249 63.701737,98.386075 98.270363,116.67249 91.760687,78.093847 119.81964,50.786077 80.98605,45.024372 63.701737,9.950685 z m 0.250125,16.784865 10.271981,21.545265 a 7.4812376,7.4812376 0 0 0 5.762106,4.008421 l 23.802001,3.507369 -17.284308,16.784861 a 7.4812376,7.4812376 0 0 0 -2.252734,6.51609 L 88.507852,102.89154 67.211109,91.619864 a 7.4812376,7.4812376 0 0 0 -7.014737,0 L 38.902034,102.89315 42.910456,79.092747 A 7.4812376,7.4812376 0 0 0 40.906245,72.579862 L 23.619526,56.05154 47.670054,52.54337 a 7.4812376,7.4812376 0 0 0 5.51158,-4.008422 l 10.772232,-21.79539 z"
+     id="path4-3" />
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-924.36218)" />
+  <g
+     transform="matrix(6.8283434,0,0,6.8283434,10.39521,7.888222)"
+     style="fill:#3399ff"
+     id="g4-5" />
+</svg>
