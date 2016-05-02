@@ -4,6 +4,8 @@ static int _ecore_drm2_init_count = 0;
 
 int _ecore_drm2_log_dom = -1;
 
+EAPI int ECORE_DRM2_EVENT_OUTPUT_CHANGED = -1;
+
 EAPI int
 ecore_drm2_init(void)
 {
@@ -37,6 +39,8 @@ ecore_drm2_init(void)
         goto log_err;
      }
 
+   ECORE_DRM2_EVENT_OUTPUT_CHANGED = ecore_event_type_new();
+
    return _ecore_drm2_init_count;
 
 log_err:
@@ -61,6 +65,8 @@ ecore_drm2_shutdown(void)
      }
 
    if (--_ecore_drm2_init_count != 0) return _ecore_drm2_init_count;
+
+   ECORE_DRM2_EVENT_OUTPUT_CHANGED = -1;
 
    eina_log_domain_unregister(_ecore_drm2_log_dom);
    _ecore_drm2_log_dom = -1;
