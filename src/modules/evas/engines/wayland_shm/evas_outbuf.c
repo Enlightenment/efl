@@ -189,7 +189,7 @@ _evas_surface_damage(struct wl_surface *s, int compositor_version, int w, int h,
      for (k = 0; k < count; k++)
        damage(s, rects[k].x, rects[k].y, rects[k].w, rects[k].h);
    else
-       damage(s, 0, 0, w, h);
+     damage(s, 0, 0, w, h);
 }
 
 void 
