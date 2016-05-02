@@ -2,7 +2,6 @@
 # define _ECORE_DRM2_H
 
 # include <Ecore.h>
-# include <Elput.h>
 
 # ifdef EAPI
 #  undef EAPI
@@ -67,6 +66,7 @@ EAPI extern int ECORE_DRM2_EVENT_OUTPUT_CHANGED;
  * @li @ref Ecore_Drm2_Init_Group
  * @li @ref Ecore_Drm2_Device_Group
  * @li @ref Ecore_Drm2_Output_Group
+ * @li @ref Ecore_Drm2_Fb_Group
  */
 
 /**
@@ -301,6 +301,126 @@ EAPI void ecore_drm2_output_geometry_get(Ecore_Drm2_Output *output, int *x, int 
  * @since 1.18
  */
 EAPI unsigned int ecore_drm2_output_crtc_get(Ecore_Drm2_Output *output);
+
+/**
+ * Return the next Ecore_Drm2_Fb to be used on a given output
+ *
+ * @param output
+ *
+ * @return The next Ecore_Drm2_Fb which is scheduled to to be flipped, or NULL otherwise
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI Ecore_Drm2_Fb *ecore_drm2_output_next_fb_get(Ecore_Drm2_Output *output);
+
+/**
+ * Set the next Ecore_Drm2_Fb to be used on a given output
+ *
+ * @param output
+ * @param fb
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_output_next_fb_set(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb);
+
+/**
+ * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
+ *
+ * Functions that deal with setup of framebuffers
+ */
+
+/**
+ * Create a new framebuffer object
+ *
+ * @param fd
+ * @param width
+ * @param height
+ * @param depth
+ * @param bpp
+ * @param format
+ *
+ * @return A newly create framebuffer object, or NULL on failure
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.18
+ */
+EAPI Ecore_Drm2_Fb *ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned int format);
+
+EAPI Ecore_Drm2_Fb *ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride);
+
+/**
+ * Destroy a framebuffer object
+ *
+ * @param fb
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb);
+
+/**
+ * Get a framebuffer's mmap'd data
+ *
+ * @param fb
+ *
+ * @return The mmap'd area of the framebuffer or NULL on failure
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.18
+ */
+EAPI void *ecore_drm2_fb_data_get(Ecore_Drm2_Fb *fb);
+
+/**
+ * Get a framebuffer's size
+ *
+ * @param fb
+ *
+ * @return size of the framebuffers' mmap'd data or 0 on failure
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.18
+ */
+EAPI unsigned int ecore_drm2_fb_size_get(Ecore_Drm2_Fb *fb);
+
+/**
+ * Get a framebuffer's stride
+ *
+ * @param fb
+ *
+ * @return stride of the framebuffer or 0 on failure
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.18
+ */
+EAPI unsigned int ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb);
+
+/**
+ * Mark regions of a framebuffer as dirty
+ *
+ * @param fb
+ * @param rects
+ * @param count
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count);
+
+/**
+ * Schedule a pageflip to the given Ecore_Drm2_Fb
+ *
+ * @param fb
+ * @param output
+ * @param data
+ *
+ * @return The result of drmModePageFlip function call
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.18
+ */
+EAPI int ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output, void *data);
 
 # endif
 

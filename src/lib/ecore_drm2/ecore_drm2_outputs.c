@@ -884,3 +884,17 @@ ecore_drm2_output_crtc_get(Ecore_Drm2_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
    return output->crtc_id;
 }
+
+EAPI Ecore_Drm2_Fb *
+ecore_drm2_output_next_fb_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   return output->next;
+}
+
+EAPI void
+ecore_drm2_output_next_fb_set(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   output->next = fb;
+}
