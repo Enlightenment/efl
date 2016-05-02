@@ -7,13 +7,13 @@
 
 static const Efl_Test_Case etc[] = {
   { "eldbus_init", eldbus_test_eldbus_init },
-  { "eldbus_model", eldbus_test_eldbus_model },
-  { "eldbus_model_connection", eldbus_test_eldbus_model_connection },
-  { "eldbus_model_object", eldbus_test_eldbus_model_object },
-  { "eldbus_model_proxy", eldbus_test_eldbus_model_proxy },
-  { "eldbus_test_fake_server_eldbus_model_proxy", eldbus_test_fake_server_eldbus_model_proxy },
-  { "eldbus_model_method", eldbus_test_eldbus_model_method },
-  { "eldbus_model_signal", eldbus_test_eldbus_model_signal },
+//  { "eldbus_model", eldbus_test_eldbus_model },
+//  { "eldbus_model_connection", eldbus_test_eldbus_model_connection },
+//  { "eldbus_model_object", eldbus_test_eldbus_model_object },
+//  { "eldbus_model_proxy", eldbus_test_eldbus_model_proxy },
+//  { "eldbus_test_fake_server_eldbus_model_proxy", eldbus_test_fake_server_eldbus_model_proxy },
+//  { "eldbus_model_method", eldbus_test_eldbus_model_method },
+//  { "eldbus_model_signal", eldbus_test_eldbus_model_signal },
   { NULL, NULL }
 };
 
