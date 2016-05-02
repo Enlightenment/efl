@@ -55,4 +55,29 @@ extern int _ecore_drm2_log_dom;
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm2_log_dom, __VA_ARGS__)
 
+struct _Ecore_Drm2_Device
+{
+   Elput_Manager *em;
+
+   int fd;
+   const char *path;
+
+   int num_crtcs;
+   uint32_t *crtcs;
+
+   struct
+     {
+        uint32_t crtc, conn;
+     } alloc;
+
+   struct
+     {
+        uint32_t width, height;
+     } min, max;
+
+   Eeze_Udev_Watch *watch;
+
+   Eina_List *outputs;
+};
+
 #endif
