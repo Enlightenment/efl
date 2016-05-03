@@ -17,7 +17,7 @@ _do_delete_request(Eo *win)
 {
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Window xwin;
-   xwin = elm_obj_win_xwindow_get(win);
+   xwin = elm_win_xwindow_get(win);
    ecore_x_window_delete_request_send(xwin);
 #endif
 
