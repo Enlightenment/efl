@@ -7,16 +7,12 @@ include ../../Makefile_Eolian_Subbuild_Helper.am
 ecore_eolian_files_legacy = \
 	efl_timer.eo \
 	ecore_poller.eo \
-	ecore_job.eo \
 	ecore_exe.eo \
-	ecore_idler.eo \
-	ecore_idle_enterer.eo \
-	ecore_idle_exiter.eo \
 	ecore_animator.eo
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_legacy) \
-	ecore_mainloop.eo \
+	efl_loop.eo \
 	ecore_parent.eo
 
 ecore_eolian_type_files = \
