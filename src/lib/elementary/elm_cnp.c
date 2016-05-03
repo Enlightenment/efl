@@ -2424,6 +2424,8 @@ struct _Wl_Cnp_Selection
    Elm_Xdnd_Action action;
 
    Eina_Bool active : 1;
+   Eina_Bool requestfinished : 1;
+   const char *requesttype;
 };
 
 static Eina_Bool _wl_elm_cnp_init(void);
@@ -2432,7 +2434,7 @@ static Wl_Cnp_Selection wl_cnp_selection =
 {
    0, 0, NULL, NULL,
    NULL, 0, 0, NULL, NULL, NULL,
-   0, NULL, 0, EINA_FALSE
+   0, NULL, 0, EINA_FALSE, EINA_FALSE, ""
 };
 
 static void _wl_sel_obj_del2(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
@@ -2458,7 +2460,6 @@ static Eina_Bool _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, 
 static Eina_Bool _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 /* static Eina_Bool _wl_dnd_offer(void *data EINA_UNUSED, int type EINA_UNUSED, void *event); */
 
-static Eina_Bool _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event);
 static Eina_Bool _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
 static void _wl_dropable_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl2_Event_Selection_Data_Ready *ev);
 
@@ -2706,6 +2707,49 @@ _wl_selection_parser(void *_data,
 done:
    if (ret_data) *ret_data = files;
    if (ret_count) *ret_count = num_files;
+}
+
+static Eina_Bool
+_wl_selection_get_timer_cb(void *data)
+{
+   Wl_Cnp_Selection *sel = data;
+   Ecore_Wl2_Window *win;
+
+   win = _wl_elm_widget_window_get(sel->requestwidget);
+   ecore_wl2_dnd_selection_get(ecore_wl2_window_input_get(win),
+                               sel->requesttype);
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool
+_wl_notify_handler_targets(Wl_Cnp_Selection *sel, Ecore_Wl2_Event_Selection_Data_Ready *ev)
+{
+   cnp_debug("In\n");
+   if (!ev) return EINA_FALSE;
+   char *data = ev->data;
+   int len = ev->len;
+   int count = 0, i = 0;
+   char **data_arr = NULL;
+   Cnp_Atom *atom = NULL;
+
+   _wl_selection_parser(data, len, &data_arr, &count);
+   for (i = 0; i < count; i++)
+     {
+        atom = eina_hash_find(_types_hash, data_arr[i]);
+        if (atom && (atom->formats != ELM_SEL_FORMAT_TARGETS))
+          {
+             cnp_debug("Match found: %s\n", atom->name);
+             sel->requestfinished = EINA_FALSE;
+             /* Since we cannot call ecore_wl2_dnd_selection_get in here
+                (it makes selection_send cannot be called), we use ecore_timer
+                to call it */
+             sel->requesttype = atom->name;
+             ecore_timer_add(0.001, _wl_selection_get_timer_cb, sel);
+             break;
+          }
+     }
+   free(data_arr);
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -3021,9 +3065,9 @@ _wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Se
    sel->requestformat = format;
    sel->requestwidget = (Evas_Object *) obj;
    sel->win = win;
-   /* sel->request(win, ECORE_X_SELECTION_TARGET_TARGETS); */
    sel->datacb = datacb;
    sel->udata = udata;
+   sel->requesttype = "TARGETS";
 
    evas_object_event_callback_add(sel->requestwidget,
                                   EVAS_CALLBACK_DEL, _wl_sel_obj_del2,
@@ -3033,28 +3077,7 @@ _wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Se
        (selection == ELM_SEL_TYPE_PRIMARY) ||
        (selection == ELM_SEL_TYPE_SECONDARY))
      {
-        const char *types[10] = {0, };
-        int i = -1, j;
-
-        if ((format & ELM_SEL_FORMAT_MARKUP) ||
-            (format & ELM_SEL_FORMAT_TEXT))
-          {
-             types[++i] = "application/x-elementary-markup";
-             types[++i] = "text/plain";
-             types[++i] = "text/plain;charset=utf-8";
-          }
-
-        if (format & ELM_SEL_FORMAT_HTML)
-          {
-             types[++i] = "text/html";
-             types[++i] = "text/html;charset=utf-8";
-          }
-
-        if (i < 0) return EINA_FALSE;
-
-        for (j = 0; j <= i; j++)
-          if (ecore_wl2_dnd_selection_get(ecore_wl2_window_input_get(win), types[j]))
-            break;
+        ecore_wl2_dnd_selection_get(ecore_wl2_window_input_get(win), "TARGETS");
      }
 
    return EINA_TRUE;
@@ -3162,90 +3185,80 @@ _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static Eina_Bool
-_wl_selection_receive(void *udata, int type EINA_UNUSED, void *event)
+static void
+_wl_selection_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl2_Event_Selection_Data_Ready *ev)
 {
-   Wl_Cnp_Selection *sel = udata;
-   Ecore_Wl2_Event_Selection_Data_Ready *ev = event;
+   cnp_debug("In\n");
+   sel->requestfinished = EINA_TRUE;
+   if (sel->datacb)
+     {
+        if (!strcmp(sel->requesttype, "TARGETS") ||
+            !strcmp(sel->requesttype, "ATOMS"))
+          {
+             _wl_notify_handler_targets(sel, ev);
+          }
+        else
+          {
+             Cnp_Atom *atom = eina_hash_find(_types_hash, sel->requesttype);
+             if (atom && atom->wl_data_preparer)
+               {
+                  Elm_Selection_Data sdata;
+                  Tmp_Info *tmp_info = NULL;
+                  Eina_Bool success;
+                  sdata.data = NULL;
+
+                  cnp_debug("Call notify for: %s\n", atom->name);
+                  success = atom->wl_data_preparer(sel, &sdata, ev, &tmp_info);
+                  if (success)
+                    {
+                       sdata.x = sdata.y = 0;
+                       sel->datacb(sel->udata,
+                                   sel->requestwidget,
+                                   &sdata);
+                    }
+                  if (tmp_info) _tmpinfo_free(tmp_info);
+                  free(sdata.data);
+               }
+          }
+     }
+   else
+     {
+        cnp_debug("request to paste: datacb does not exist\n");
+     }
+}
+
+
+static Eina_Bool
+_wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
+{
+   Wl_Cnp_Selection *sel;
+   Ecore_Wl2_Event_Selection_Data_Ready *ev;
+   cnp_debug("In\n");
 
    _wl_elm_cnp_init();
+   ev = event;
+   sel = data;
 
    if (sel->requestwidget)
      {
         if (!ev->done)
           {
-             if (sel->seltype == ELM_SEL_TYPE_XDND)
+             if (ev->sel_type == ECORE_WL2_SELECTION_DND)
                {
-                  Elm_Selection_Data sdata;
-                  Eina_List *l;
-                  Dropable *dropable;
-
-                  EINA_LIST_FOREACH(drops, l, dropable)
-                    {
-                       if (dropable->obj == sel->requestwidget) break;
-                       dropable = NULL;
-                    }
-
-                  if (dropable)
-                    {
-                       Dropable_Cbs *cbs;
-
-                       sdata.x = savedtypes.x;
-                       sdata.y = savedtypes.y;
-                       sdata.format = ELM_SEL_FORMAT_TEXT;
-                       sdata.data = ev->data;
-                       sdata.len = ev->len;
-                       sdata.action = sel->action;
-
-                       EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
-                         if (cbs->dropcb)
-                           cbs->dropcb(cbs->dropdata, dropable->obj, &sdata);
-
-                       goto end;
-                    }
-               }
-
-             if (sel->datacb)
-               {
-                  Elm_Selection_Data sdata;
-
-                  sdata.x = sdata.y = 0;
-                  sdata.format = ELM_SEL_FORMAT_TEXT;
-                  sdata.data = ev->data;
-                  sdata.len = ev->len;
-                  sdata.action = sel->action;
-                  sel->datacb(sel->udata,
-                              sel->requestwidget,
-                              &sdata);
+                  _wl_dropable_data_handle(sel, ev);
                }
              else
                {
-                  char *stripstr, *mkupstr;
-
-                  stripstr = malloc(ev->len + 1);
-                  if (!stripstr) goto end;
-                  strncpy(stripstr, (char *)ev->data, ev->len);
-                  stripstr[ev->len] = '\0';
-                  mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
-                  /* TODO BUG: should never NEVER assume it's an elm_entry! */
-                  _elm_entry_entry_paste(sel->requestwidget, mkupstr);
-                  free(stripstr);
-                  free(mkupstr);
+                  _wl_selection_data_handle(sel, ev);
                }
           }
-        else
+        else if (sel->requestfinished)
           {
              evas_object_event_callback_del_full(sel->requestwidget,
                                                  EVAS_CALLBACK_DEL,
                                                  _wl_sel_obj_del2, sel);
              sel->requestwidget = NULL;
           }
-     }
-
-end:
-   if (sel->seltype == ELM_SEL_TYPE_XDND)
-     {
-        /* FIXME: Send Finished ?? */
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -3278,8 +3291,6 @@ _wl_elm_dnd_init(void)
    text_uri = eina_stringshare_add("text/uri-list");
 
    _wl_elm_cnp_init();
-   ecore_event_handler_add(ECORE_WL2_EVENT_SELECTION_DATA_READY,
-                           _wl_dnd_receive, &wl_cnp_selection);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_DND_END,
                            _wl_dnd_end, &wl_cnp_selection);
@@ -3703,34 +3714,6 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    win = ecore_wl2_display_window_find(_elm_wl_display, ev->win);
    ecore_wl2_dnd_drag_end(ecore_wl2_window_input_get(win));
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
-{
-   Wl_Cnp_Selection *sel;
-   Ecore_Wl2_Event_Selection_Data_Ready *ev;
-   cnp_debug("In\n");
-
-   ev = event;
-   sel = data;
-
-   if (sel->requestwidget)
-     {
-        if (!ev->done)
-          {
-             _wl_dropable_data_handle(sel, ev);
-          }
-        else
-          {
-             evas_object_event_callback_del_full(sel->requestwidget,
-                                                 EVAS_CALLBACK_DEL,
-                                                 _wl_sel_obj_del2, sel);
-             sel->requestwidget = NULL;
-          }
-     }
-
    return ECORE_CALLBACK_PASS_ON;
 }
 

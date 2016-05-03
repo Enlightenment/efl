@@ -235,7 +235,8 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
    event->sel_type = source->sel_type;
    if (len <= 0)
      {
-        if (source->input->drag.source)
+        if (source->input->drag.source &&
+            source->sel_type == ECORE_WL2_SELECTION_DND)
           {
              if (source->input->display->wl.data_device_manager_version >=
                WL_DATA_OFFER_FINISH_SINCE_VERSION)
