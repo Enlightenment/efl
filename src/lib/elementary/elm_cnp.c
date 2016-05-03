@@ -2470,6 +2470,21 @@ static Ecore_Wl2_Window *_wl_elm_widget_window_get(const Evas_Object *obj);
 static Evas * _wl_evas_get_from_win(unsigned int win);
 
 static Eina_Bool
+_wl_is_uri_type_data(const char *data, int len)
+{
+   char *p;
+   if (len < 6) return EINA_FALSE;
+
+   p = (char *)data;
+   if (!p) return EINA_FALSE;
+   if (strncmp(p, "file:/", 6))
+     {
+        if (*p != '/') return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _wl_targets_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *data EINA_UNUSED, int size EINA_UNUSED, void **data_ret, int *size_ret)
 {
    cnp_debug("in\n");
@@ -2912,6 +2927,10 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
 
    if (selbuf)
      {
+        int i = 0, count = 0;
+        Eina_Bool is_uri = EINA_FALSE;
+        const char **types;
+
         if (format & ELM_SEL_FORMAT_IMAGE)
           {
              /* FIXME */
@@ -2927,36 +2946,46 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
           }
         else
           {
-             const char *types[10] = {0, };
-             int i = -1;
-
-             if ((format & ELM_SEL_FORMAT_MARKUP) ||
-                 (format & ELM_SEL_FORMAT_TEXT))
-               {
-                  types[++i] = "application/x-elementary-markup";
-                  types[++i] = "text/plain";
-                  types[++i] = "text/plain;charset=utf-8";
-               }
-
-             if (format & ELM_SEL_FORMAT_HTML)
-               {
-                  types[++i] = "text/html";
-                  types[++i] = "text/html;charset=utf-8";
-               }
-
-             if (i < 0) return EINA_FALSE;
-
-             ecore_wl2_dnd_selection_set(ecore_wl2_window_input_get(win), types);
-
              free(sel->selbuf);
              sel->buflen = buflen;
              sel->selbuf = strdup((char*)selbuf);
-
-             return EINA_TRUE;
           }
+
+        is_uri = _wl_is_uri_type_data(selbuf, buflen);
+        types = malloc(sizeof(char *));
+        if (!types) return EINA_FALSE;
+        for (i = 0, count = 1; i < CNP_N_ATOMS; i++)
+          {
+             if (format & _atoms[i].formats)
+               {
+                  if ((is_uri) || ((!is_uri) &&
+                                   strcmp(_atoms[i].name, "text/uri-list")))
+                    {
+                       const char **t = NULL;
+
+                       types[count - 1] = _atoms[i].name;
+                       count++;
+                       t = realloc(types, sizeof(char *) * count);
+                       if (!t)
+                         {
+                            free(types);
+                            return EINA_FALSE;
+                         }
+                       types = t;
+                    }
+               }
+          }
+        types[count - 1] = 0;
+
+        ecore_wl2_dnd_selection_set(ecore_wl2_window_input_get(win), types);
+
+        free(types);
+        return EINA_TRUE;
      }
    else
-     sel->selbuf = NULL;
+     {
+        sel->selbuf = NULL;
+     }
 
    return EINA_FALSE;
 }
