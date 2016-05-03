@@ -615,9 +615,6 @@ ecore_wl2_display_connect(const char *name)
    ewd->xkb_context = xkb_context_new(0);
    if (!ewd->xkb_context) goto context_err;
 
-   /* add this new client display to hash */
-   eina_hash_add(_client_displays, ewd->name, ewd);
-
    /* check server display hash and match on pid. If match, skip sync */
    sync = _ecore_wl2_display_sync_get();
 
@@ -631,8 +628,24 @@ ecore_wl2_display_connect(const char *name)
          * other option here as we need the compositor, shell, etc, to be setup
          * before we can allow a user to make use of the API functions */
         while (!ewd->sync_done)
-          wl_display_dispatch(ewd->wl.display);
+          {
+             int ret;
+
+             ret = wl_display_dispatch(ewd->wl.display);
+             if ((ret < 0) && (errno != EAGAIN))
+               {
+                  ERR("Received Fatal Error on Wayland Display");
+
+                  _fatal_error = EINA_TRUE;
+                  _ecore_wl2_display_signal_exit();
+
+                  goto context_err;
+               }
+          }
      }
+
+   /* add this new client display to hash */
+   eina_hash_add(_client_displays, ewd->name, ewd);
 
    return ewd;
 
