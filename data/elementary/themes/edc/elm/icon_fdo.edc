@@ -59,15 +59,7 @@
    }  }  }  }
 
 
-// TODO (old icons provided by elm):
-//
-// IC("document-edit",        "icon_edit.png")
-// 
-// IC("dialog-info",          "icon_info.png")
-// IC("dialog-close",         "icon_close.png")
-//
-// IC("application-chat",     "icon_chat.png") /* */
-// IC("application-clock",    "icon_clock.png") /* */
+
 
 
 ////  places  /////////////////////////////////////////////////////////////////
