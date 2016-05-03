@@ -4113,13 +4113,6 @@ _elm_win_noblank_get(Eo *obj EINA_UNUSED, Elm_Win_Data *pd)
    return pd->noblank;
 }
 
-EOLIAN static void *
-_elm_win_trap_data_get(Eo *obj EINA_UNUSED, Elm_Win_Data *pd)
-{
-   return pd->trap_data;
-}
-
-
 EAPI Evas_Object *
 elm_win_util_standard_add(const char *name, const char *title)
 {
@@ -4367,18 +4360,6 @@ _elm_win_activate(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_lower(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   TRAP(sd, lower);
-}
-
-EOLIAN static void
-_elm_win_raise(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   TRAP(sd, raise);
-}
-
-EOLIAN static void
 _elm_win_center(Eo *obj, Elm_Win_Data *sd, Eina_Bool h, Eina_Bool v)
 {
    int win_w, win_h, screen_w, screen_h, nx, ny;
@@ -4472,21 +4453,6 @@ _elm_win_alpha_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
      }
 
    return EINA_FALSE;
-}
-
-EOLIAN static void
-_elm_win_override_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool override)
-{
-   TRAP(sd, override_set, override);
-#ifdef HAVE_ELEMENTARY_X
-   _elm_win_xwin_update(sd);
-#endif
-}
-
-EOLIAN static Eina_Bool
-_elm_win_override_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   return ecore_evas_override_get(sd->ee);
 }
 
 EOLIAN static void
@@ -5567,102 +5533,6 @@ _elm_win_socket_listen(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *svcnam
    return EINA_TRUE;
 }
 
-/* windowing specific calls - shall we do this differently? */
-
-EOLIAN static Ecore_X_Window
-_elm_win_xwindow_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-#ifdef HAVE_ELEMENTARY_X
-   if (sd->x.xwin) return sd->x.xwin;
-   if (sd->parent) return elm_win_xwindow_get(sd->parent);
-#endif
-   return 0;
-}
-
-EAPI Ecore_Wl2_Window *
-elm_win_wl_window_get(const Evas_Object *obj)
-{
-   ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
-   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
-
-   if (!(engine_name &&
-         ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
-          (!strcmp(engine_name, ELM_WAYLAND_EGL)))))
-     return NULL;
-
-   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
-     {
-        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-        return _elm_ee_wlwin_get(ee);
-     }
-
-   Ecore_Wl2_Window *ret = NULL;
-   ret = elm_obj_win_wl_window_get((Eo *) obj);
-   return ret;
-}
-
-EOLIAN static Ecore_Cocoa_Window *
-_elm_win_cocoa_window_get(Eo           *obj,
-                          Elm_Win_Data *sd)
-{
-   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
-   if (!engine_name) return NULL;
-   if (strcmp(engine_name, "gl_cocoa") != 0 &&
-       strcmp(engine_name, "opengl_cocoa") != 0)
-       return NULL;
-
-   Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-   return _elm_ee_cocoa_win_get(ee);
-}
-
-EOLIAN static Ecore_Wl2_Window*
-_elm_win_wl_window_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-#if HAVE_ELEMENTARY_WL2
-   if (sd->wl.win) return sd->wl.win;
-   if (sd->parent) return elm_win_wl_window_get(sd->parent);
-#else
-   (void)sd;
-#endif
-   return NULL;
-}
-
-EAPI Ecore_Win32_Window *
-elm_win_win32_window_get(const Evas_Object *obj)
-{
-   ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
-   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
-
-   if (!(engine_name &&
-         ((!strcmp(engine_name, ELM_SOFTWARE_WIN32)) ||
-          (!strcmp(engine_name, ELM_SOFTWARE_DDRAW)))))
-     return NULL;
-
-   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
-     {
-        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-        return _elm_ee_win32win_get(ee);
-     }
-
-   Ecore_Win32_Window *ret = NULL;
-   ret = elm_obj_win_win32_window_get((Eo *) obj);
-   return ret;
-}
-
-EOLIAN static Ecore_Win32_Window *
-_elm_win_win32_window_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-#if HAVE_ELEMENTARY_WIN32
-   if (sd->win32.win) return sd->win32.win;
-   if (sd->parent) return elm_win_win32_window_get(sd->parent);
-#else
-   (void)sd;
-#endif
-   return NULL;
-}
-
 EAPI Eina_Bool
 elm_win_trap_set(const Elm_Win_Trap *t)
 {
@@ -5939,6 +5809,142 @@ EAPI void
 elm_win_resize_object_del(Eo *obj, Evas_Object *subobj)
 {
    efl_pack_unpack(obj, subobj);
+}
+
+/* windowing specific calls - shall we do this differently? */
+
+EAPI Ecore_X_Window
+elm_win_xwindow_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) 0;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, 0);
+
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin) return sd->x.xwin;
+   if (sd->parent) return elm_win_xwindow_get(sd->parent);
+#endif
+   return 0;
+}
+
+EAPI Ecore_Wl2_Window *
+elm_win_wl_window_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) NULL;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
+
+   if (!(engine_name &&
+         ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
+          (!strcmp(engine_name, ELM_WAYLAND_EGL)))))
+     return NULL;
+
+   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
+     {
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        return _elm_ee_wlwin_get(ee);
+     }
+
+   Ecore_Wl2_Window *ret = NULL;
+
+#if HAVE_ELEMENTARY_WL2
+   if (sd->wl.win) ret = sd->wl.win;
+   if (sd->parent) ret = elm_win_wl_window_get(sd->parent);
+#endif
+
+   return ret;
+}
+
+EAPI Ecore_Cocoa_Window *
+elm_win_cocoa_window_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) NULL;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+
+   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
+   if (!engine_name) return NULL;
+   if (strcmp(engine_name, "gl_cocoa") != 0 &&
+       strcmp(engine_name, "opengl_cocoa") != 0)
+       return NULL;
+
+   Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+   return _elm_ee_cocoa_win_get(ee);
+}
+
+EAPI Ecore_Win32_Window *
+elm_win_win32_window_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) NULL;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+
+   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
+
+   if (!(engine_name &&
+         ((!strcmp(engine_name, ELM_SOFTWARE_WIN32)) ||
+          (!strcmp(engine_name, ELM_SOFTWARE_DDRAW)))))
+     return NULL;
+
+   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
+     {
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        return _elm_ee_win32win_get(ee);
+     }
+
+   Ecore_Win32_Window *ret = NULL;
+
+#if HAVE_ELEMENTARY_WIN32
+   if (sd->win32.win) ret = sd->win32.win;
+   if (sd->parent) ret = elm_win_win32_window_get(sd->parent);
+#endif
+
+   return ret;
+}
+
+EAPI void *
+elm_win_trap_data_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) NULL;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+
+   return sd->trap_data;
+}
+
+EAPI void
+elm_win_override_set(Evas_Object *obj, Eina_Bool override)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   TRAP(sd, override_set, override);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(sd);
+#endif
+}
+
+EAPI Eina_Bool
+elm_win_override_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+   return ecore_evas_override_get(sd->ee);
+}
+
+EAPI void
+elm_win_lower(Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   TRAP(sd, lower);
+}
+
+EAPI void
+elm_win_raise(Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   TRAP(sd, raise);
 }
 
 #include "elm_win.eo.c"

@@ -286,3 +286,120 @@ EAPI void elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj);
  * @ingroup Elm_Win
  */
 EAPI void elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj);
+
+/** Get the Ecore_X_Window of an Evas_Object.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Ecore_X_Window elm_win_xwindow_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the Ecore_Wl2_Window of an Evas_Object.
+ *
+ * @return The Ecore_Wl2_Window of @c obj.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Ecore_Wl2_Window *elm_win_wl_window_get(const Evas_Object *obj);
+
+
+/**
+ * @brief Get the Ecore_Win32_Window of an Evas_Object
+ *
+ * @return The Ecore_Win32_Window of @c obj.
+ *
+ * @since 1.17
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Ecore_Win32_Window *elm_win_win32_window_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the Ecore_Cocoa_Window of an Evas.Object.
+ *
+ * @return The Ecore_Cocoa_Window of @c obj.
+ *
+ * @since 1.17
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Ecore_Cocoa_Window *elm_win_cocoa_window_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the Ecore_Window of an Evas_Object
+ *
+ * When Elementary is using a Wayland engine, this function will return the
+ * surface id of the elm window's surface.
+ *
+ * @return The Ecore_Window of an Evas_Object.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Ecore_Window elm_win_window_id_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the trap data associated with a window.
+ *
+ * @return The trap data of the window.
+ *
+ * @since 1.12
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void *elm_win_trap_data_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the override state of a window.
+ *
+ * A window with @c override set to true will not be managed by the Window
+ * Manager. This means that no decorations of any kind will be shown for it,
+ * moving and resizing must be handled by the application, as well as the
+ * window visibility.
+ *
+ * This should not be used for normal windows, and even for not so normal ones,
+ * it should only be used when there's a good reason and with a lot of care.
+ * Mishandling override windows may result situations that disrupt the normal
+ * workflow of the end user.
+ *
+ * @param[in] override If true, the window is overridden.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_override_set(Evas_Object *obj, Eina_Bool override);
+
+/**
+ * @brief Get the override state of a window.
+ *
+ * @return If true, the window is overridden.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_override_get(const Evas_Object *obj);
+
+/**
+ * @brief Raise a window object.
+ *
+ * Places the window pointed by @c obj at the top of the stack, so that it's
+ * not covered by any other window.
+ *
+ * If @ref elm_win_override_set is not set, the Window Manager may ignore this
+ * request.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_raise(Evas_Object *obj);
+
+/**
+ * @brief Lower a window object.
+ *
+ * Places the window pointed by @c obj at the bottom of the stack, so that no
+ * other window is covered by it.
+ *
+ * If @ref elm_win_override_set is not set, the Window Manager may ignore this
+ * request.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_lower(Evas_Object *obj);
