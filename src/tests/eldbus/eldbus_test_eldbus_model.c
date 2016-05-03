@@ -22,6 +22,13 @@ _promise_then_quit_cb(void **data , void **value )
 }
 
 static void
+_promise_then_quit_u_cb(unsigned *data , unsigned *value)
+{
+   *data = *value;
+   ecore_main_loop_quit();
+}
+
+static void
 _promise_then_cp(Eina_Value *data , void *value)
 {
    eina_value_copy(value, data);
@@ -82,7 +89,7 @@ int
 efl_model_promise_then_u(Eina_Promise *promise)
 {
    unsigned i = 0;
-   eina_promise_then(promise, (Eina_Promise_Cb)&_promise_then_quit_cb, &_error_then_cb, &i);
+   eina_promise_then(promise, (Eina_Promise_Cb)&_promise_then_quit_u_cb, &_error_then_cb, &i);
    ecore_main_loop_begin();
    return i;
 }
