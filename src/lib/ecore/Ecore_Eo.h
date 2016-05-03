@@ -35,7 +35,7 @@ extern "C" {
  * @{
  */
 
-#include "ecore_timer.eo.h"
+#include "efl_timer.eo.h"
 
 /**
  * @}

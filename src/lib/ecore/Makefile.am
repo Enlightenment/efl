@@ -5,7 +5,7 @@ include ../../Makefile_Eolian_Subbuild_Helper.am
 ### Library
 
 ecore_eolian_files_legacy = \
-	ecore_timer.eo \
+	efl_timer.eo \
 	ecore_poller.eo \
 	ecore_job.eo \
 	ecore_exe.eo \

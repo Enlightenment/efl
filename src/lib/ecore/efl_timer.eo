@@ -1,6 +1,6 @@
 import ecore_types;
 
-class Ecore.Timer (Eo.Base)
+class Efl.Timer (Eo.Base)
 {
    [[Timers are objects that will call a given callback at some point
      in the future.
@@ -11,7 +11,7 @@ class Ecore.Timer (Eo.Base)
      properly. They do not guarantee exact timing, but try to work on a "best
      effort" basis.
    ]]
-   eo_prefix: ecore_obj_timer;
+   legacy_prefix: ecore_timer;
    methods {
       @property interval {
          [[Interval the timer ticks on.]]

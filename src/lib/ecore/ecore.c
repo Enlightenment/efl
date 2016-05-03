@@ -404,7 +404,7 @@ ecore_shutdown(void)
 #ifndef HAVE_EXOTIC
      _ecore_exe_shutdown();
 #endif
-     _ecore_timer_shutdown();
+     _efl_timer_shutdown();
      _ecore_event_shutdown();
      _ecore_main_shutdown();
      _ecore_signal_shutdown();

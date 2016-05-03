@@ -158,20 +158,20 @@ EAPI void _ecore_magic_fail(const void *d,
 
 void         _ecore_time_init(void);
 
-Ecore_Timer *_ecore_timer_loop_add(double in,
+Ecore_Timer *_efl_timer_loop_add(double in,
                                    Ecore_Task_Cb func,
                                    const void *data);
-void        *_ecore_timer_del(Ecore_Timer *timer);
-void         _ecore_timer_util_delay(Ecore_Timer *timer,
+void        *_efl_timer_del(Ecore_Timer *timer);
+void         _efl_timer_util_delay(Ecore_Timer *timer,
                                 double add);
-void         _ecore_timer_shutdown(void);
-void         _ecore_timer_cleanup(void);
-void         _ecore_timer_enable_new(void);
-double       _ecore_timer_next_get(void);
-void         _ecore_timer_expired_timers_call(double when);
-int          _ecore_timers_exists(void);
+void         _efl_timer_shutdown(void);
+void         _efl_timer_cleanup(void);
+void         _efl_timer_enable_new(void);
+double       _efl_timer_next_get(void);
+void         _efl_timer_expired_timers_call(double when);
+int          _efl_timers_exists(void);
 
-int          _ecore_timer_expired_call(double when);
+int          _efl_timer_expired_call(double when);
 
 Ecore_Factorized_Idle *_ecore_factorized_idle_add(const Eo_Callback_Array_Item*desc,
                                                   Ecore_Task_Cb func,
