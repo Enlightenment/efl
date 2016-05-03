@@ -103,5 +103,5 @@ static void
 _ecore_job_event_free(void *data,
                       void *job EINA_UNUSED)
 {
-   ecore_job_del(data);
+   free(data);
 }
