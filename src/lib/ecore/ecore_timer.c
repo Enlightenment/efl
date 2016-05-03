@@ -17,13 +17,6 @@
   if (!eo_isa((obj), MY_CLASS)) \
     return
 
-#ifdef WANT_ECORE_TIMER_DUMP
-# include <string.h>
-# include <execinfo.h>
-# define ECORE_TIMER_DEBUG_BT_NUM 64
-typedef void (*Ecore_Timer_Bt_Func)();
-#endif
-
 struct _Efl_Timer_Data
 {
    EINA_INLIST;
@@ -34,10 +27,6 @@ struct _Efl_Timer_Data
    Ecore_Task_Cb       func;
    void               *data;
 
-#ifdef WANT_ECORE_TIMER_DUMP
-   Ecore_Timer_Bt_Func timer_bt[ECORE_TIMER_DEBUG_BT_NUM];
-   int                 timer_bt_num;
-#endif
 
    int                 references;
    unsigned char       delete_me : 1;
@@ -52,10 +41,6 @@ static void _efl_timer_set(Ecore_Timer *timer,
                              double        in,
                              Ecore_Task_Cb func,
                              void         *data);
-#ifdef WANT_ECORE_TIMER_DUMP
-static int _efl_timer_cmp(const void *d1,
-                            const void *d2);
-#endif
 
 static int timers_added = 0;
 static int timers_delete_me = 0;
@@ -122,10 +107,6 @@ _efl_timer_add(Ecore_Timer *obj,
 
    if (in < 0.0) in = 0.0;
 
-#ifdef WANT_ECORE_TIMER_DUMP
-   timer->timer_bt_num = backtrace((void **)(timer->timer_bt),
-                                   ECORE_TIMER_DEBUG_BT_NUM);
-#endif
    _efl_timer_set(obj, now + in, in, func, (void *)data);
    return EINA_TRUE;
 }
@@ -300,55 +281,7 @@ _efl_timer_eo_base_event_thaw(Eo *obj, Efl_Timer_Data *timer)
 EAPI char *
 ecore_timer_dump(void)
 {
-#ifdef WANT_EFL_TIMER_DUMP
-   Eina_Strbuf *result;
-   char *out;
-   Efl_Timer_Data *tm;
-   Eina_List *tmp = NULL;
-   int living_timer = 0;
-   int unknow_timer = 0;
-
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   result = eina_strbuf_new();
-
-   EINA_INLIST_FOREACH(timers, tm)
-     tmp = eina_list_sorted_insert(tmp, _efl_timer_cmp, tm);
-
-   EINA_LIST_FREE(tmp, tm)
-     {
-        char **strings;
-        int j;
-
-        if (!tm->frozen && !tm->delete_me)
-          living_timer++;
-
-        strings = backtrace_symbols((void **)tm->timer_bt, tm->timer_bt_num);
-        if (tm->timer_bt_num <= 0 || strings == NULL)
-          {
-             unknow_timer++;
-             continue;
-          }
-
-        eina_strbuf_append_printf(result, "*** timer: %f ***\n", tm->in);
-        if (tm->frozen)
-          eina_strbuf_append(result, "FROZEN\n");
-        if (tm->delete_me)
-          eina_strbuf_append(result, "DELETED\n");
-        for (j = 0; j < tm->timer_bt_num; j++)
-          eina_strbuf_append_printf(result, "%s\n", strings[j]);
-
-        free(strings);
-     }
-
-   eina_strbuf_append_printf(result, "\n***\nThere is %i living timer.\nWe did lost track of %i timers.\n", living_timer, unknow_timer);
-
-   out = eina_strbuf_string_steal(result);
-   eina_strbuf_free(result);
-
-   return out;
-#else
    return NULL;
-#endif
 }
 
 Ecore_Timer *
@@ -736,17 +669,5 @@ _efl_timer_set(Ecore_Timer  *obj,
      }
    timers = (Efl_Timer_Data *)eina_inlist_prepend(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 }
-
-#ifdef WANT_ECORE_TIMER_DUMP
-static int
-_efl_timer_cmp(const void *d1,
-                 const void *d2)
-{
-   const Efl_Timer_Data *t1 = d1;
-   const Efl_Timer_Data *t2 = d2;
-
-   return (int)((t1->in - t2->in) * 100);
-}
-#endif
 
 #include "efl_timer.eo.c"
