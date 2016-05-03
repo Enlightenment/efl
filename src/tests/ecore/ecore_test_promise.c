@@ -386,7 +386,7 @@ START_TEST(ecore_test_promise_progress_promise)
 }
 END_TEST
 
-void ecore_test_ecore_promise(TCase *tc EINA_UNUSED)
+void ecore_test_ecore_promise(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_promise);
    tcase_add_test(tc, ecore_test_promise_error);
