@@ -32,7 +32,7 @@ _children_removed_cb(void *data EINA_UNUSED, const Eo_Event* event)
 
         Eina_Promise* promise;
         efl_model_property_get(evt->child, "path", &promise);
-        Eina_Value const* value = ecore_promise_value_get(promise);
+        Eina_Value const* value = eina_promise_value_get(promise);
         char* filename = eina_value_to_string(value);
 
         if(temp_filename && !strcmp(filename, temp_filename) == 0)
@@ -50,7 +50,7 @@ _children_added_cb(void *data EINA_UNUSED, const Eo_Event* event)
 
    Eina_Promise* promise;
    efl_model_property_get(evt->child, "path", &promise);
-   Eina_Value const* value = ecore_promise_value_get(promise);
+   Eina_Value const* value = eina_promise_value_get(promise);
    char* filename = eina_value_to_string(value);
 
    if(temp_filename && !strcmp(temp_filename, filename))
@@ -96,7 +96,7 @@ START_TEST(eio_model_test_test_monitor_add)
    Eina_Promise* promise;
    efl_model_children_slice_get(filemodel, 0, 0, &promise);
 
-   ecore_promise_then(promise, &_create_file, NULL);
+   eina_promise_then(promise, &_create_file, NULL, NULL);
 
    ecore_main_loop_begin();
 
