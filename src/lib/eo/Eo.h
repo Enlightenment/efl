@@ -313,7 +313,7 @@ typedef unsigned int Eo_Op;
  * You must use this macro if you want thread safety in class creation.
  */
 #define EO_DEFINE_CLASS(class_get_func_name, class_desc, parent_class, ...) \
-EWAPI const Eo_Class * \
+const Eo_Class * \
 class_get_func_name(void) \
 { \
    const Eo_Class *_tmp_parent_class; \
