@@ -361,8 +361,6 @@ EAPI Ecore_Job *ecore_job_add(Ecore_Cb func, const void *data);
  */
 EAPI void *ecore_job_del(Ecore_Job *obj);
 
-#include "ecore_job.eo.legacy.h"
-
 /**
  * @}
  */

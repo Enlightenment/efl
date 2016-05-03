@@ -3076,7 +3076,7 @@ typedef struct _Ecore_Factorized_Idle Ecore_Idle_Exiter; /**< A handle for idle 
 /**
  * @since 1.8
  */
-typedef Eo Ecore_Job;    /**< A job handle */
+typedef struct _Ecore_Job Ecore_Job;    /**< A job handle */
 
 #define _ECORE_JOB_EO_CLASS_TYPE
 /**

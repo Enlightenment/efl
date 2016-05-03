@@ -9,10 +9,6 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#define MY_CLASS ECORE_JOB_CLASS
-
-#define MY_CLASS_NAME "Ecore_Job"
-
 static Eina_Bool _ecore_job_event_handler(void *data,
                                           int   type,
                                           void *ev);
@@ -22,9 +18,7 @@ static void _ecore_job_event_free(void *data,
 static int ecore_event_job_type = 0;
 static Ecore_Event_Handler *_ecore_job_handler = NULL;
 
-typedef struct _Ecore_Job_Data Ecore_Job_Data;
-
-struct _Ecore_Job_Data
+struct _Ecore_Job
 {
    Ecore_Event *event;
    Ecore_Cb     func;
@@ -49,65 +43,48 @@ EAPI Ecore_Job *
 ecore_job_add(Ecore_Cb    func,
               const void *data)
 {
-   Ecore_Job *job = eo_add(MY_CLASS, _ecore_parent, ecore_job_constructor(eo_self, func, data));
-   return job;
-}
+   Ecore_Job *job;
 
-EOLIAN static void
-_ecore_job_constructor(Eo *obj, Ecore_Job_Data *job, Ecore_Cb func, const void *data)
-{
    if (EINA_UNLIKELY(!eina_main_loop_is()))
      {
-        EINA_MAIN_LOOP_CHECK_RETURN;
+        EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
      }
-   eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
      {
-        ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
-        return;
-     }
-
-   job->event = ecore_event_add(ecore_event_job_type, job, _ecore_job_event_free, obj);
-   if (!job->event)
-     {
-        ERR("no event was assigned to object '%p' of class '%s'", obj, MY_CLASS_NAME);
-        return;
-     }
-   job->func = func;
-   job->data = (void *)data;
-}
-
-EAPI void *
-ecore_job_del(Ecore_Job *obj)
-{
-   void *data;
-
-   if (!obj) return NULL;
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Job_Data *job = eo_data_scope_get(obj, MY_CLASS);
-   data = job->data;
-   ecore_event_del(job->event);
-   eo_parent_set(obj, NULL);
-   return data;
-}
-
-EOLIAN static void
-_ecore_job_eo_base_destructor(Eo *obj, Ecore_Job_Data *_pd EINA_UNUSED)
-{
-   /*FIXME: check if ecore_event_del should be called from here*/
-   eo_destructor(eo_super(obj, MY_CLASS));
-}
-
-EOLIAN static Eo *
-_ecore_job_eo_base_finalize(Eo *obj, Ecore_Job_Data *pd)
-{
-   if (!pd->func)
-     {
+        ERR("Callback function must be set up for an Ecore_Job object");
         return NULL;
      }
 
-   return eo_finalize(eo_super(obj, MY_CLASS));
+   job = calloc(1, sizeof (Ecore_Job));
+   if (!job) return NULL;
+
+   job->event = ecore_event_add(ecore_event_job_type, job, _ecore_job_event_free, job);
+   if (!job->event)
+     {
+        ERR("No event was assigned to Ecore_Job '%p'", job);
+        free(job);
+        return NULL;
+     }
+   job->func = func;
+   job->data = (void *)data;
+
+   return job;
+}
+
+EAPI void *
+ecore_job_del(Ecore_Job *job)
+{
+   void *data;
+
+   if (!job) return NULL;
+
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
+
+   data = job->data;
+   ecore_event_del(job->event);
+
+   return data;
 }
 
 static Eina_Bool
@@ -115,7 +92,7 @@ _ecore_job_event_handler(void *data EINA_UNUSED,
                          int   type EINA_UNUSED,
                          void *ev)
 {
-   Ecore_Job_Data *job;
+   Ecore_Job *job;
 
    job = ev;
    job->func(job->data);
@@ -126,14 +103,5 @@ static void
 _ecore_job_event_free(void *data,
                       void *job EINA_UNUSED)
 {
-   eo_parent_set(data, NULL);
-
-   Ecore_Job *obj = data;
-
-   if (eo_destructed_is(obj))
-      eo_manual_free(obj);
-   else
-      eo_manual_free_set(obj, EINA_FALSE);
+   ecore_job_del(data);
 }
-
-#include "ecore_job.eo.c"

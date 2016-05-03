@@ -55,18 +55,6 @@ extern "C" {
 
 
 /**
- * @ingroup Ecore_Job_Group
- *
- * @{
- */
-
-#include "ecore_job.eo.h"
-
-/**
- * @}
- */
-
-/**
  * @ingroup Ecore_MainLoop_Group
  *
  * @{
