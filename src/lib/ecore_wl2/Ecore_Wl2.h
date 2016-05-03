@@ -368,7 +368,7 @@ EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
  *
  * @since 1.18
  */
-EAPI void * ecore_wl2_display_dmabuf_get(Ecore_Wl2_Display *display);
+EAPI void *ecore_wl2_display_dmabuf_get(Ecore_Wl2_Display *display);
 
 /**
  * Return an Eina_Iterator that can be used to iterate through globals
