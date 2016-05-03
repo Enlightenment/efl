@@ -19,7 +19,6 @@
 #include "ecore_private.h"
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
-#include <Ecore_Wayland.h>
 #include <Ecore_Wl2.h>
 #include "ecore_wl2_private.h"
 
