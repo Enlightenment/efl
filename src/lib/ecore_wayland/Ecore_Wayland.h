@@ -27,6 +27,8 @@
 #  define EAPI
 # endif
 
+# warning The Ecore_Wayland library has been deprecated. Please use the Ecore_Wl2 library
+
 #ifdef __cplusplus
 extern "C" {
 #endif
