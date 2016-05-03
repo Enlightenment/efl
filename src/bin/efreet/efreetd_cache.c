@@ -89,7 +89,7 @@ subdir_cache_dir_free(Subdir_Cache_Dir *cd)
 static void *
 subdir_cache_hash_add(void *hash, const char *key, void *data)
 {
-   if (!hash) hash = eina_hash_stringshared_new(EINA_FREE_CB(subdir_cache_dir_free));
+   if (!hash) hash = eina_hash_string_superfast_new(EINA_FREE_CB(subdir_cache_dir_free));
    if (!hash) return NULL;
    eina_hash_add(hash, key, data);
    return hash;
@@ -140,7 +140,7 @@ subdir_cache_init(void)
 
    // if we don't have a hash in the subdir cache - allocate it
    if (!subdir_cache->dirs)
-     subdir_cache->dirs = eina_hash_stringshared_new(EINA_FREE_CB(subdir_cache_dir_free));
+     subdir_cache->dirs = eina_hash_string_superfast_new(EINA_FREE_CB(subdir_cache_dir_free));
 }
 
 static void
@@ -303,7 +303,7 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
    if ((!icon_flush) && (!icon_exts)) return ECORE_CALLBACK_CANCEL;
 
    if (icon_change_monitors) eina_hash_free(icon_change_monitors);
-   icon_change_monitors = eina_hash_stringshared_new
+   icon_change_monitors = eina_hash_string_superfast_new
      (EINA_FREE_CB(ecore_file_monitor_del));
    icon_changes_listen();
    subdir_cache_save();
@@ -360,7 +360,7 @@ desktop_cache_update_cache_cb(void *data EINA_UNUSED)
    desktop_queue = EINA_FALSE;
 
    if (desktop_change_monitors) eina_hash_free(desktop_change_monitors);
-   desktop_change_monitors = eina_hash_stringshared_new
+   desktop_change_monitors = eina_hash_string_superfast_new
      (EINA_FREE_CB(ecore_file_monitor_del));
    desktop_changes_listen();
    subdir_cache_save();
@@ -867,9 +867,9 @@ cache_init(void)
         goto error;
      }
 
-   icon_change_monitors = eina_hash_stringshared_new
+   icon_change_monitors = eina_hash_string_superfast_new
      (EINA_FREE_CB(ecore_file_monitor_del));
-   desktop_change_monitors = eina_hash_stringshared_new
+   desktop_change_monitors = eina_hash_string_superfast_new
      (EINA_FREE_CB(ecore_file_monitor_del));
 
    efreet_cache_update = 0;
