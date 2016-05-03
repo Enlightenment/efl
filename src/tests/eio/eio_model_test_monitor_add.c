@@ -35,8 +35,8 @@ _children_removed_cb(void *data EINA_UNUSED, const Eo_Event* event)
         Eina_Value const* value = eina_promise_value_get(promise);
         char* filename = eina_value_to_string(value);
 
-        if(temp_filename && !strcmp(filename, temp_filename) == 0)
-          ecore_main_loop_quit();
+        if(temp_filename && strcmp(filename, temp_filename) == 0)
+             ecore_main_loop_quit();
         free(filename);
      }
    return EINA_TRUE;
@@ -53,13 +53,13 @@ _children_added_cb(void *data EINA_UNUSED, const Eo_Event* event)
    Eina_Value const* value = eina_promise_value_get(promise);
    char* filename = eina_value_to_string(value);
 
-   if(temp_filename && !strcmp(temp_filename, filename))
+   if(temp_filename && strcmp(temp_filename, filename) == 0)
      {
         children_deleted = EINA_TRUE;
         efl_model_child_del(event->obj, evt->child);
      }
    free(filename);
-   
+
    return EINA_TRUE;
 }
 
@@ -72,6 +72,14 @@ _create_file(void *data EINA_UNUSED, void* value EINA_UNUSED)
         fprintf(stderr, __FILE__ ":%d %s\n", __LINE__, __func__);
         close(fd);
      }
+}
+
+
+static void
+_create_file_error(void *data EINA_UNUSED, const Eina_Error* value EINA_UNUSED)
+{
+   ck_abort_msg(0, "Error Promise cb called in Create file");
+   ecore_main_loop_quit();
 }
 
 START_TEST(eio_model_test_test_monitor_add)
@@ -96,7 +104,7 @@ START_TEST(eio_model_test_test_monitor_add)
    Eina_Promise* promise;
    efl_model_children_slice_get(filemodel, 0, 0, &promise);
 
-   eina_promise_then(promise, &_create_file, NULL, NULL);
+   eina_promise_then(promise, &_create_file, &_create_file_error, NULL);
 
    ecore_main_loop_begin();
 
