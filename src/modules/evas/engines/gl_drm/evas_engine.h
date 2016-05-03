@@ -7,6 +7,11 @@
 # include "Evas.h"
 # include "Evas_Engine_GL_Drm.h"
 
+# include <Ecore.h>
+# include <drm_fourcc.h>
+# include <xf86drm.h>
+# include <xf86drmMode.h>
+
 # define EGL_EGLEXT_PROTOTYPES
 # define GL_GLEXT_PROTOTYPES
 
@@ -64,6 +69,10 @@ typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine
 {
    Render_Engine_GL_Generic generic;
+
+   int fd;
+   drmEventContext ctx;
+   Ecore_Fd_Handler *hdlr;
 };
 
 struct _Context_3D
@@ -80,11 +89,10 @@ struct _Outbuf
 
    Evas *evas; // used for pre_swap, post_swap
 
-   int w, h;
-   unsigned int rotation, depth;
+   int fd, w, h, bpp;
+   unsigned int rotation, depth, format;
    Render_Engine_Swap_Mode swap_mode;
 
-   /* struct gbm_device *gbm; */
    struct gbm_surface *surface;
 
    struct 
@@ -98,6 +106,7 @@ struct _Outbuf
    struct 
      {
         struct gbm_bo *bo[2];
+        Ecore_Drm2_Output *output;
      } priv;
 
    Eina_Bool destination_alpha : 1;
@@ -123,6 +132,9 @@ void *evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int 
 void evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
 void evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
+void evas_outbuf_vblank(void *data, int fd);
+void evas_outbuf_page_flip(void *data, int fd);
+
 Evas_Engine_GL_Context* evas_outbuf_gl_context_get(Outbuf *ob);
 void *evas_outbuf_egl_display_get(Outbuf *ob);
 Context_3D *evas_outbuf_gl_context_new(Outbuf *ob);
@@ -136,6 +148,12 @@ _re_wincheck(Outbuf *ob)
    ob->lost_back = 1;
    if (!ob->surf) ERR("GL engine can't re-create window surface!");
    return EINA_FALSE;
+}
+
+static inline Outbuf *
+eng_get_ob(Render_Engine *re)
+{
+   return re->generic.software.ob;
 }
 
 extern unsigned int (*glsym_eglSwapBuffersWithDamage)(EGLDisplay a, void *b, const EGLint *d, EGLint c);

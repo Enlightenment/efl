@@ -1276,7 +1276,6 @@ endif
 endif
 
 if BUILD_ENGINE_DRM
-dist_installed_evasmainheaders_DATA += modules/evas/engines/drm/Evas_Engine_Drm.h
 DRM_SOURCES = \
 modules/evas/engines/drm/evas_outbuf.c \
 modules/evas/engines/drm/evas_engine.c \
@@ -1301,20 +1300,19 @@ modules_evas_engines_drm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/modules/evas/engines/drm \
 @EVAS_CFLAGS@ \
-@ECORE_DRM_CFLAGS@ \
+@ECORE_DRM2_CFLAGS@ \
 @evas_engine_drm_cflags@
 modules_evas_engines_drm_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
-@USE_ECORE_DRM_LIBS@ \
+@USE_ECORE_DRM2_LIBS@ \
 @evas_engine_drm_libs@
-modules_evas_engines_drm_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@ @USE_ECORE_DRM_INTERNAL_LIBS@
+modules_evas_engines_drm_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@ @USE_ECORE_DRM2_INTERNAL_LIBS@
 modules_evas_engines_drm_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_engines_drm_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
 if BUILD_ENGINE_GL_DRM
-dist_installed_evasmainheaders_DATA += modules/evas/engines/gl_drm/Evas_Engine_GL_Drm.h
 GL_DRM_SOURCES = \
 modules/evas/engines/gl_drm/evas_outbuf.c \
 modules/evas/engines/gl_drm/evas_engine.c \
@@ -1339,13 +1337,13 @@ modules_evas_engines_gl_drm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_drm \
 @EVAS_CFLAGS@ \
-@ECORE_DRM_CFLAGS@ \
+@ECORE_DRM2_CFLAGS@ \
 @evas_engine_gl_drm_cflags@
 modules_evas_engines_gl_drm_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
-@USE_ECORE_DRM_LIBS@ \
+@USE_ECORE_DRM2_LIBS@ \
 @evas_engine_gl_drm_libs@
-modules_evas_engines_gl_drm_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@ @USE_ECORE_DRM_INTERNAL_LIBS@
+modules_evas_engines_gl_drm_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@ @USE_ECORE_DRM2_INTERNAL_LIBS@
 modules_evas_engines_gl_drm_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_engines_gl_drm_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif

@@ -1,7 +1,7 @@
 #ifndef _EVAS_ENGINE_GL_DRM_H
 # define _EVAS_ENGINE_GL_DRM_H
 
-# include <Ecore_Drm.h>
+# include <Ecore_Drm2.h>
 # include <gbm.h>
 
 typedef enum _Evas_Engine_Info_GL_Drm_Swap_Mode
@@ -26,11 +26,11 @@ struct _Evas_Engine_Info_GL_Drm
      {
         struct gbm_device *gbm;
 
+        int fd, bpp;
         unsigned int rotation, depth;
-        unsigned int crtc_id, conn_id, buffer_id;
         unsigned int format, flags;
 
-        Ecore_Drm_Device *dev;
+        void *output;
 
         Eina_Bool destination_alpha : 1;
         Eina_Bool vsync : 1;

@@ -5,11 +5,85 @@
 static Outbuf *_evas_gl_drm_window = NULL;
 static EGLContext context = EGL_NO_CONTEXT;
 static int win_count = 0;
+static Eina_Bool ticking = EINA_FALSE;
 
 #ifdef EGL_MESA_platform_gbm
 static PFNEGLGETPLATFORMDISPLAYEXTPROC dlsym_eglGetPlatformDisplayEXT = NULL;
 static PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC dlsym_eglCreatePlatformWindowSurfaceEXT = NULL;
 #endif
+
+static void
+_outbuf_tick_schedule(int fd, void *data)
+{
+   if (!ticking) return;
+
+   drmVBlank vbl =
+     {
+        .request.type = DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT,
+        .request.sequence = 1,
+        .request.signal = (unsigned long)data,
+     };
+
+   drmWaitVBlank(fd, &vbl);
+}
+
+static void
+_outbuf_tick_begin(void *data)
+{
+   Outbuf *ob;
+
+   ob = data;
+   ticking = EINA_TRUE;
+   if (ob) _outbuf_tick_schedule(ob->fd, ob);
+}
+
+static void
+_outbuf_tick_end(void *data EINA_UNUSED)
+{
+   ticking = EINA_FALSE;
+}
+
+static void
+_outbuf_tick_source_set(Outbuf *ob)
+{
+   if (ob)
+     {
+        ecore_animator_custom_source_tick_begin_callback_set
+          (_outbuf_tick_begin, ob);
+        ecore_animator_custom_source_tick_end_callback_set
+          (_outbuf_tick_end, ob);
+        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
+     }
+   else
+     {
+        ecore_animator_custom_source_tick_begin_callback_set(NULL, NULL);
+        ecore_animator_custom_source_tick_end_callback_set(NULL, NULL);
+        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
+     }
+}
+
+void
+evas_outbuf_vblank(void *data, int fd)
+{
+   ecore_animator_custom_tick();
+   if (ticking) _outbuf_tick_schedule(fd, data);
+}
+
+void
+evas_outbuf_page_flip(void *data, int fd EINA_UNUSED)
+{
+   Outbuf *ob;
+   Ecore_Drm2_Fb *next;
+
+   ob = data;
+   next = ecore_drm2_output_next_fb_get(ob->priv.output);
+   if (next)
+     {
+        ecore_drm2_output_next_fb_set(ob->priv.output, NULL);
+        if (ecore_drm2_fb_flip(next, ob->priv.output, ob) < 0)
+          _outbuf_tick_source_set(NULL);
+     }
+}
 
 static void
 _evas_outbuf_gbm_surface_destroy(Outbuf *ob)
@@ -25,63 +99,51 @@ _evas_outbuf_gbm_surface_destroy(Outbuf *ob)
 static void
 _evas_outbuf_gbm_surface_create(Outbuf *ob, int w, int h)
 {
+   unsigned int format = GBM_FORMAT_XRGB8888;
+   unsigned int flags = GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING;
+
    if (!ob) return;
 
    ob->surface =
-     gbm_surface_create(ob->info->info.gbm, w, h,
-                        ob->info->info.format, ob->info->info.flags);
+     gbm_surface_create(ob->info->info.gbm, w, h, format, flags);
 
    if (!ob->surface) ERR("Failed to create gbm surface");
 }
 
 static void
-_evas_outbuf_fb_cb_destroy(struct gbm_bo *bo, void *data)
+_evas_outbuf_fb_cb_destroy(struct gbm_bo *bo EINA_UNUSED, void *data)
 {
-   Ecore_Drm_Fb *fb;
+   Ecore_Drm2_Fb *fb;
 
    fb = data;
-   if (fb)
-     {
-        struct gbm_device *gbm;
-
-        gbm = gbm_bo_get_device(bo);
-        drmModeRmFB(gbm_device_get_fd(gbm), fb->id);
-        free(fb);
-     }
+   if (fb) ecore_drm2_fb_destroy(fb);
 }
 
-static Ecore_Drm_Fb *
-_evas_outbuf_fb_get(Ecore_Drm_Device *dev, struct gbm_bo *bo)
+static Ecore_Drm2_Fb *
+_evas_outbuf_fb_get(Outbuf *ob, struct gbm_bo *bo)
 {
-   int ret;
-   Ecore_Drm_Fb *fb;
-   uint32_t format;
-   uint32_t handles[4], pitches[4], offsets[4];
+   Ecore_Drm2_Fb *fb;
+   uint32_t format, hdl, stride;
+   int w, h;
 
    fb = gbm_bo_get_user_data(bo);
    if (fb) return fb;
 
-   if (!(fb = calloc(1, sizeof(Ecore_Drm_Fb)))) return NULL;
-
    format = gbm_bo_get_format(bo);
+   w = gbm_bo_get_width(bo);
+   h = gbm_bo_get_height(bo);
+   hdl = gbm_bo_get_handle(bo).u32;
+   stride = gbm_bo_get_stride(bo);
+   /* fb->size = fb->stride * fb->h; */
 
-   fb->w = gbm_bo_get_width(bo);
-   fb->h = gbm_bo_get_height(bo);
-   fb->hdl = gbm_bo_get_handle(bo).u32;
-   fb->stride = gbm_bo_get_stride(bo);
-   fb->size = fb->stride * fb->h;
-
-   handles[0] = fb->hdl;
-   pitches[0] = fb->stride;
-   offsets[0] = 0;
-
-   ret = drmModeAddFB2(dev->drm.fd, fb->w, fb->h, format,
-                       handles, pitches, offsets, &(fb->id), 0);
-   if (ret)
-     ret = drmModeAddFB(dev->drm.fd, fb->w, fb->h, 24, 32,
-                        fb->stride, fb->hdl, &(fb->id));
-
-   if (ret) ERR("FAILED TO ADD FB: %m");
+   fb =
+     ecore_drm2_fb_gbm_create(ob->fd, w, h, ob->depth, ob->bpp,
+                              format, hdl, stride);
+   if (!fb)
+     {
+        ERR("Failed to create FBO");
+        return NULL;
+     }
 
    gbm_bo_set_user_data(bo, fb, _evas_outbuf_fb_cb_destroy);
 
@@ -91,7 +153,9 @@ _evas_outbuf_fb_get(Ecore_Drm_Device *dev, struct gbm_bo *bo)
 static void
 _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 {
-   Ecore_Drm_Fb *fb;
+   Ecore_Drm2_Fb *fb;
+
+   if (ob->priv.bo[1]) gbm_surface_release_buffer(ob->surface, ob->priv.bo[1]);
 
    /* Repulsive hack:  Right now we don't actually have a proper way to retire
     * buffers because the ticker and the flip handler are out of sync, the
@@ -106,15 +170,48 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    ob->priv.bo[0] = gbm_surface_lock_front_buffer(ob->surface);
    if (!ob->priv.bo[0])
      {
-        WRN("Could not lock front buffer");
+        WRN("Could not lock front buffer: %m");
         return;
      }
-   fb = _evas_outbuf_fb_get(ob->info->info.dev, ob->priv.bo[0]);
+
+   fb = _evas_outbuf_fb_get(ob, ob->priv.bo[0]);
    if (fb)
      {
-        ecore_drm_fb_dirty(fb, rects, count);
-        ecore_drm_fb_send(ob->info->info.dev, fb, NULL, NULL);
+        ecore_drm2_fb_dirty(fb, rects, count);
+        if (ecore_drm2_fb_flip(fb, ob->priv.output, ob) < 0)
+          _outbuf_tick_source_set(NULL);
+
+        /* Ecore_Drm2_Plane *plane; */
+
+        /* plane = ecore_drm2_plane_find(ob->priv.output, fb, ob->format); */
+        /* if (plane) */
+        /*   { */
+        /*      int ret; */
+        /*      drmVBlank vbl = */
+        /*        { */
+        /*           .request.type = DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT, */
+        /*           .request.sequence = 1, */
+        /*        }; */
+
+        /*      vbl.request.type |= ecore_drm2_output_vblank_get(ob->priv.output); */
+        /*      vbl.request.signal = (unsigned long)ob; */
+
+        /*      ecore_drm2_fb_dirty(fb, rects, count); */
+
+        /*      if (!ecore_drm2_plane_fb_set(plane, fb)) */
+        /*        { */
+        /*           ERR("Failed to set FB on Plane"); */
+        /*           return; */
+        /*        } */
+
+        /*      ret = drmWaitVBlank(ob->fd, &vbl); */
+        /*      if (ret) return; */
+        /*   } */
+        /* else */
+        /*   WRN("NO PLANE FOUND"); */
      }
+   else
+     WRN("Could not get FBO from Bo");
 }
 
 static Eina_Bool
@@ -253,9 +350,6 @@ _evas_outbuf_egl_setup(Outbuf *ob)
              return EINA_FALSE;
           }
 
-        DBG("Config Format: %d", format);
-        DBG("OB Format: %d", ob->info->info.format);
-
         if (format == (int)ob->info->info.format)
           {
              ob->egl.config = cfgs[i];
@@ -369,6 +463,11 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
    /* ob->vsync = info->info.vsync; */
    ob->swap_mode = swap_mode;
 
+   ob->fd = info->info.fd;
+   ob->bpp = info->info.bpp;
+   ob->format = info->info.format;
+   ob->priv.output = info->info.output;
+
    /* if ((num = getenv("EVAS_GL_DRM_VSYNC"))) */
    /*   ob->vsync = atoi(num); */
 
@@ -382,6 +481,8 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
         evas_outbuf_free(ob);
         return NULL;
      }
+
+   _outbuf_tick_source_set(ob);
 
    return ob;
 }
@@ -577,9 +678,7 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
         return swap_mode;
      }
    else
-     {
-        return MODE_FULL;
-     }
+     return MODE_FULL;
 
    return ob->swap_mode;
 }
