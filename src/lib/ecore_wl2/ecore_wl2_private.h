@@ -188,6 +188,7 @@ typedef struct _Ecore_Wl2_Dnd_Source
    struct wl_array types;
    uint32_t dnd_action;
    uint32_t source_actions;
+   Ecore_Wl2_Selection_Type sel_type;
 } Ecore_Wl2_Dnd_Source;
 
 

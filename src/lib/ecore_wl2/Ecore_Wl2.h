@@ -129,11 +129,18 @@ typedef struct _Ecore_Wl2_Event_Data_Source_Send
    int fd;
 } Ecore_Wl2_Event_Data_Source_Send;
 
+typedef enum
+{
+   ECORE_WL2_SELECTION_CNP,
+   ECORE_WL2_SELECTION_DND
+} Ecore_Wl2_Selection_Type;
+
 typedef struct _Ecore_Wl2_Event_Selection_Data_Ready
 {
    char *data;
    int len;
    Eina_Bool done;
+   Ecore_Wl2_Selection_Type sel_type;
 } Ecore_Wl2_Event_Selection_Data_Ready;
 
 typedef enum

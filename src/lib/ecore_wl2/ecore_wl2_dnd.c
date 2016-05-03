@@ -232,6 +232,7 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
    event = calloc(1, sizeof(Ecore_Wl2_Event_Selection_Data_Ready));
    if (!event) return ECORE_CALLBACK_CANCEL;
 
+   event->sel_type = source->sel_type;
    if (len <= 0)
      {
         if (source->input->drag.source)
@@ -530,6 +531,7 @@ ecore_wl2_dnd_drag_get(Ecore_Wl2_Input *input, const char *type)
 
    if (!*t) return EINA_FALSE;
 
+   input->drag.source->sel_type = ECORE_WL2_SELECTION_DND;
    _selection_data_receive(input->drag.source, type);
 
    return EINA_TRUE;
@@ -639,6 +641,7 @@ ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input, const char *type)
 
    if (!*t) return EINA_FALSE;
 
+   input->selection.source->sel_type = ECORE_WL2_SELECTION_CNP;
    _selection_data_receive(input->selection.source, type);
 
    return EINA_TRUE;
