@@ -240,6 +240,7 @@ void _evdev_device_destroy(Elput_Device *edev);
 void _evdev_keyboard_destroy(Elput_Keyboard *kbd);
 void _evdev_pointer_destroy(Elput_Pointer *ptr);
 void _evdev_touch_destroy(Elput_Touch *touch);
+void _evdev_pointer_motion_send(Elput_Device *edev);
 
 Elput_Pointer *_evdev_pointer_get(Elput_Seat *seat);
 Elput_Keyboard *_evdev_keyboard_get(Elput_Seat *seat);

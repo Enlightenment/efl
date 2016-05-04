@@ -300,3 +300,37 @@ elput_input_pointer_xy_get(Elput_Manager *manager, const char *seat, int *x, int
         break;
      }
 }
+
+EAPI void
+elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, int x, int y)
+{
+   Elput_Seat *eseat;
+   Elput_Device *edev;
+   Eina_List *l, *ll;
+
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+
+   /* if no seat name is passed in, just use default seat name */
+   if (!seat) seat = "seat0";
+
+   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
+     {
+        if (!eseat->ptr) continue;
+        if ((eseat->name) && (strcmp(eseat->name, seat)))
+          continue;
+
+        eseat->ptr->x = x;
+        eseat->ptr->y = y;
+        eseat->ptr->timestamp = ecore_loop_time_get();
+
+        EINA_LIST_FOREACH(eseat->devices, ll, edev)
+          {
+             if (!libinput_device_has_capability(edev->device,
+                                                 LIBINPUT_DEVICE_CAP_POINTER))
+               continue;
+
+             _evdev_pointer_motion_send(edev);
+             break;
+          }
+     }
+}

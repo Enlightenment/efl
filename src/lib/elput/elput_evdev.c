@@ -1325,6 +1325,12 @@ _evdev_touch_destroy(Elput_Touch *touch)
    free(touch);
 }
 
+void
+_evdev_pointer_motion_send(Elput_Device *edev)
+{
+   _pointer_motion_send(edev);
+}
+
 Elput_Pointer *
 _evdev_pointer_get(Elput_Seat *seat)
 {
