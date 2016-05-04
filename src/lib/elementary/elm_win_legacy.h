@@ -379,19 +379,6 @@ EAPI void elm_win_override_set(Evas_Object *obj, Eina_Bool override);
 EAPI Eina_Bool elm_win_override_get(const Evas_Object *obj);
 
 /**
- * @brief Raise a window object.
- *
- * Places the window pointed by @c obj at the top of the stack, so that it's
- * not covered by any other window.
- *
- * If @ref elm_win_override_set is not set, the Window Manager may ignore this
- * request.
- *
- * @ingroup Elm_Win
- */
-EAPI void elm_win_raise(Evas_Object *obj);
-
-/**
  * @brief Lower a window object.
  *
  * Places the window pointed by @c obj at the bottom of the stack, so that no

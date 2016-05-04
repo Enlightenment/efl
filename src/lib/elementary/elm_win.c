@@ -4360,6 +4360,12 @@ _elm_win_activate(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
+_elm_win_raise(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
+{
+   TRAP(sd, raise);
+}
+
+EOLIAN static void
 _elm_win_center(Eo *obj, Elm_Win_Data *sd, Eina_Bool h, Eina_Bool v)
 {
    int win_w, win_h, screen_w, screen_h, nx, ny;
@@ -5936,15 +5942,6 @@ elm_win_lower(Evas_Object *obj)
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
    TRAP(sd, lower);
-}
-
-EAPI void
-elm_win_raise(Evas_Object *obj)
-{
-   ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
-
-   TRAP(sd, raise);
 }
 
 #include "elm_win.eo.c"

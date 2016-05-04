@@ -1105,6 +1105,13 @@ class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
            window will be the active one after it.
          ]]
       }
+      raise {
+         [[Raise a window object.
+
+           Places the window pointed by $obj at the top of the stack, so
+           that it's not covered by any other window.
+         ]]
+      }
       center {
          [[Center a window on its screen
 
