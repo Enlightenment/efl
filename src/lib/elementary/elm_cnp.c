@@ -8,7 +8,7 @@
 # include <sys/mman.h>
 #endif
 
-#define DEBUGON 1
+//#define DEBUGON 1
 #ifdef DEBUGON
 # define cnp_debug(fmt, args...) fprintf(stderr, __FILE__":%s/%d : " fmt , __FUNCTION__, __LINE__, ##args)
 #else
