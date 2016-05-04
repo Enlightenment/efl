@@ -2749,9 +2749,11 @@ _efl_loop_quit(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static Eo_Base *
-_efl_loop_eo_base_loop_get(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
+_efl_loop_eo_base_provider_find(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const Eo_Base *klass)
 {
-   return obj;
+   if (klass == EFL_LOOP_CLASS) return obj;
+
+   return eo_provider_find(eo_super(obj, EFL_LOOP_CLASS), klass);
 }
 
 static Eina_Bool

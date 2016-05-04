@@ -1140,16 +1140,16 @@ START_TEST(eo_comment)
 }
 END_TEST
 
-START_TEST(eo_loop)
+START_TEST(eo_rec_interface)
 {
    eo_init();
-   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
-   Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
+   Eo *s = eo_add(SEARCHABLE_CLASS, NULL);
+   Eo *obj = eo_add(SIMPLE_CLASS, s);
+   Eo *obj2 = eo_add(SIMPLE_CLASS, obj);
    Eo *objtmp;
 
-   eo_parent_set(obj2, obj);
-   objtmp = eo_loop_get(obj2);
-   fail_if(NULL != objtmp);
+   objtmp = eo_provider_find(obj2, SEARCHABLE_CLASS);
+   fail_if(objtmp != s);
 
    eo_del(obj);
 
@@ -1177,5 +1177,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_del_intercept);
    tcase_add_test(tc, eo_name);
    tcase_add_test(tc, eo_comment);
-   tcase_add_test(tc, eo_loop);
+   tcase_add_test(tc, eo_rec_interface);
 }

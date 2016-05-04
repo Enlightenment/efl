@@ -137,3 +137,28 @@ static const Eo_Class_Description class_desc2 = {
 };
 
 EO_DEFINE_CLASS(simple2_class_get, &class_desc2, EO_CLASS, NULL)
+
+static Eo_Base*
+_interface_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const Eo_Base *klass)
+{
+   if (klass == SEARCHABLE_CLASS) return obj;
+
+   return eo_provider_find(eo_super(obj, SEARCHABLE_CLASS), klass);
+}
+
+static Eo_Op_Description op_descs_searchable[] = {
+     EO_OP_FUNC_OVERRIDE(eo_provider_find, _interface_get)
+};
+
+static const Eo_Class_Description class_desc_searchable = {
+     EO_VERSION,
+     "Searchable",
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(op_descs_searchable),
+     NULL,
+     0,
+     NULL,
+     NULL
+};
+
+EO_DEFINE_CLASS(searchable_class_get, &class_desc_searchable, EO_CLASS, NULL)

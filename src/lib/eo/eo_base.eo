@@ -146,23 +146,20 @@ abstract Eo.Base ()
             finalized: bool;
          }
       }
-      @property loop {
-         [[The owning loop object.
+      provider_find {
+        [[Searches up in the object tree for a provider which knows the given class/interface.
 
-           Objects that have anything to do with I/O, time based events
-           or anything async should have an owining loop. They will ask
-           their parent for the owning loop and iterate until the
-           toplevel/root object. The root object should be a loop object
-           which will return itself. Some objects may shortcut this
-           and be fixed to live in only a single loop. Either way all
-           you need to do is get the loop for an object and use that
-           for I/O, timing etc. needs.
-         ]]
-         get {
-         }
-         values {
-            obj: Eo.Base *; [[ XXX: this should be Efl.Loop *; ]]
-         }
+          The object from the provider will then be returned.
+          The base implementation calls the provider_find function on the object parent,
+          and returnes its result. If no parent is present NULL is returned.
+          Each implementation has to support this function by overriding
+          it and returning itself if the interface matches the parameter.
+          If this is not done the class cannot be found up in the object tree.
+        ]]
+        params {
+          klass : const(Eo.Base)*; [[The class identifier to search for]]
+        }
+        return : Eo.Base*;
       }
       constructor {
          [[Call the object's constructor.
