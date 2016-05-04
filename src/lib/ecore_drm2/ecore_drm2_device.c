@@ -182,3 +182,22 @@ ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *device, int *width, int *he
         if (ret == 0) *height = caps;
      }
 }
+
+EAPI void
+ecore_drm2_device_pointer_xy_get(Ecore_Drm2_Device *device, int *x, int *y)
+{
+   if (x) *x = 0;
+   if (y) *y = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   elput_input_pointer_xy_get(device->em, NULL, x, y);
+}
+
+EAPI void
+ecore_drm2_device_pointer_warp(Ecore_Drm2_Device *device, int x, int y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   elput_input_pointer_xy_set(device->em, NULL, x, y);
+}

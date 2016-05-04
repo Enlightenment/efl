@@ -175,6 +175,30 @@ EAPI int ecore_drm2_device_clock_id_get(Ecore_Drm2_Device *device);
 EAPI void ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *device, int *width, int *height);
 
 /**
+ * Get the current pointer position
+ *
+ * @param device
+ * @param x
+ * @param y
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_device_pointer_xy_get(Ecore_Drm2_Device *device, int *x, int *y);
+
+/**
+ * Warp the pointer position to given coordinates
+ *
+ * @param dev
+ * @param x
+ * @param y
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_device_pointer_warp(Ecore_Drm2_Device *device, int x, int y);
+
+/**
  * @defgroup Ecore_Drm2_Output_Group Drm output functions
  *
  * Functions that deal with setup of outputs
