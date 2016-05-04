@@ -227,6 +227,19 @@ EAPI Eina_Bool elput_input_init(Elput_Manager *manager, const char *seat);
 EAPI void elput_input_shutdown(Elput_Manager *manager);
 
 /**
+ * Get the pointer position on a given seat
+ *
+ * @param manager
+ * @param seat
+ * @param x
+ * @param y
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.18
+ */
+EAPI void elput_input_pointer_xy_get(Elput_Manager *manager, const char *seat, int *x, int *y);
+
+/**
  * @defgroup Elput_Device_Group
  *
  * Functions that deal with input devices.

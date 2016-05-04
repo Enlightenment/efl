@@ -275,3 +275,28 @@ elput_input_shutdown(Elput_Manager *manager)
 
    libinput_unref(manager->input.lib);
 }
+
+EAPI void
+elput_input_pointer_xy_get(Elput_Manager *manager, const char *seat, int *x, int *y)
+{
+   Elput_Seat *eseat;
+   Eina_List *l;
+
+   if (x) *x = 0;
+   if (y) *y = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+
+   /* if no seat name is passed in, just use default seat name */
+   if (!seat) seat = "seat0";
+
+   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
+     {
+        if (!eseat->ptr) continue;
+        if ((eseat->name) && (strcmp(eseat->name, seat)))
+          continue;
+        if (x) *x = eseat->ptr->x;
+        if (y) *y = eseat->ptr->y;
+        break;
+     }
+}
