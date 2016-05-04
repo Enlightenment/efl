@@ -461,7 +461,6 @@ _ecore_main_uv_poll_cb(uv_poll_t* handle, int status, int events)
   _ecore_event_call();
   _ecore_main_fd_handlers_cleanup();
   _efl_timer_expired_timers_call(_ecore_time_loop_time);
-  _efl_timer_cleanup();
 }
 
 static int
@@ -706,7 +705,6 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
      {
         _ecore_time_loop_time = ecore_time_get();
         _efl_timer_expired_timers_call(_ecore_time_loop_time);
-        _efl_timer_cleanup();
 
         _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
@@ -889,7 +887,6 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
         _ecore_main_fd_handlers_cleanup();
 
         _efl_timer_expired_timers_call(_ecore_time_loop_time);
-        _efl_timer_cleanup();
 
         _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
@@ -1023,7 +1020,6 @@ _ecore_main_loop_uv_check(uv_check_t* handle EINA_UNUSED)
        _ecore_event_call();
        _ecore_main_fd_handlers_cleanup();
        _efl_timer_expired_timers_call(_ecore_time_loop_time);
-       _efl_timer_cleanup();
      }
    while(fd_handlers_to_call);
 quit:
@@ -2230,7 +2226,6 @@ _ecore_main_loop_iterate_internal(int once_only)
    in_main_loop++;
    /* expire any timers */
    _efl_timer_expired_timers_call(_ecore_time_loop_time);
-   _efl_timer_cleanup();
 
    /* process signals into events .... */
    _ecore_signal_received_process();

@@ -30,30 +30,6 @@ class Efl.Timer (Eo.Base)
             return: double;
          }
       }
-      loop_constructor {
-         [[Create a timer to call in a given time from now]]
-         legacy: null;
-         params {
-            @in in: double; [[The time, in seconds, from now when to go off]]
-            @in func: Ecore_Task_Cb; [[The callback function to call when the
-                                       timer goes off]]
-            @in data: const(void)*; [[A pointer to pass to the callback function
-                                      as its data pointer]]
-         }
-      }
-      constructor {
-         [[Create a timer to call in a given time from when the main loop woke
-           up from sleep]]
-         legacy: null;
-         params {
-            @in in: double; [[The time, in seconds, from when the main loop
-                              woke up, to go off]]
-            @in func: Ecore_Task_Cb; [[The callback function to call when the
-                                       timer goes off]]
-            @in data: const(void)*; [[A pointer to pass to the callback
-                                      function as its data pointer]]
-         }
-      }
       reset {
          /* FIXME-doc:
           * @note This is equivalent to (but faster than)
@@ -67,6 +43,11 @@ class Efl.Timer (Eo.Base)
             @since 1.2
           ]]
       }
+      loop_reset {
+         [[This effectively reset a timer, but based on the time when this iteration of the main loop started.
+           @since 1.18
+	 ]]
+      }
       delay {
          [[Add some delay for the next occurrence of a timer.
            This doesn't affect the interval of a timer.
@@ -76,7 +57,11 @@ class Efl.Timer (Eo.Base)
          }
       }
    }
+   events {
+      tick; [[Event triggered when the specified time as passed.]]
+   }
    implements {
+      Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.finalize;
       Eo.Base.event_freeze;
@@ -109,9 +94,5 @@ class Efl.Timer (Eo.Base)
        *
        * @see ecore_timer_freeze()
        */
-   }
-   constructors {
-      .constructor;
-      .loop_constructor;
    }
 }

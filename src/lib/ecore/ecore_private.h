@@ -158,14 +158,8 @@ EAPI void _ecore_magic_fail(const void *d,
 
 void         _ecore_time_init(void);
 
-Ecore_Timer *_efl_timer_loop_add(double in,
-                                   Ecore_Task_Cb func,
-                                   const void *data);
 void        *_efl_timer_del(Ecore_Timer *timer);
-void         _efl_timer_util_delay(Ecore_Timer *timer,
-                                double add);
 void         _efl_timer_shutdown(void);
-void         _efl_timer_cleanup(void);
 void         _efl_timer_enable_new(void);
 double       _efl_timer_next_get(void);
 void         _efl_timer_expired_timers_call(double when);
