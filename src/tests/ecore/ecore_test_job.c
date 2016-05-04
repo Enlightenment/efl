@@ -6,11 +6,11 @@
 #include "ecore_suite.h"
 
 static void
-_ecore_promise_quit(void *data, void **value)
+_ecore_promise_quit(void *data, void *value)
 {
    Eina_Bool *bob = data;
 
-   fail_if(data != *value);
+   fail_if(data != *(Eina_Bool**)value);
    *bob = EINA_TRUE;
    ecore_main_loop_quit();
 }
