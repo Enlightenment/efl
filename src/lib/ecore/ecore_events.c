@@ -377,7 +377,7 @@ _ecore_event_purge_deleted(void)
 }
 
 static inline void
-_ecore_event_filters_apply()
+_ecore_event_filters_apply(void)
 {
    if (!event_filter_current)
      {
