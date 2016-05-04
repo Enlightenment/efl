@@ -286,7 +286,7 @@ _ecore_audio_out_pulse_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_Dat
   }
 
   class_vars.outputs = eina_list_append(class_vars.outputs, eo_obj);
-  if (class_vars.state_job) eo_del(class_vars.state_job);
+  if (class_vars.state_job) ecore_job_del(class_vars.state_job);
   class_vars.state_job = ecore_job_add(_state_job, NULL);
 
   return eo_obj;
