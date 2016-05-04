@@ -2800,54 +2800,121 @@ _efl_loop_eo_base_constructor(Eo *obj, Efl_Loop_Data *pd)
    return obj;
 }
 
-typedef struct _Efl_Internal_Job Efl_Internal_Job;
-struct _Efl_Internal_Job
+typedef struct _Efl_Internal_Promise Efl_Internal_Promise;
+struct _Efl_Internal_Promise
 {
-   Ecore_Job *job;
+   union {
+      Ecore_Job *job;
+      Efl_Timer *timer;
+   } u;
    Eina_Promise_Owner *promise;
 
    const void *data;
+
+   Eina_Bool job_is : 1;
 };
 
 static void
 _efl_loop_job_cb(void *data)
 {
-   Efl_Internal_Job *j = data;
+   Efl_Internal_Promise *j = data;
 
    eina_promise_owner_value_set(j->promise, &j->data, NULL);
 
    free(j);
 }
 
+static Eina_Bool
+_efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
+{
+   Efl_Internal_Promise *t = data;
+
+   eina_promise_owner_value_set(t->promise, &t->data, NULL);
+
+   eo_del(t->u.timer);
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static void
+_efl_loop_internal_cancel(Efl_Internal_Promise *p)
+{
+   eina_promise_owner_error_set(p->promise, _promise_canceled);
+   free(p);
+}
+
 static void
 _efl_loop_job_cancel(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
 {
-   Efl_Internal_Job *j = data;
+   Efl_Internal_Promise *j = data;
 
-   eina_promise_owner_error_set(j->promise, _promise_canceled);
-   ecore_job_del(j->job);
-   free(j);
+   if (j->job_is)
+     ecore_job_del(j->u.job);
+   else
+     eo_del(j->u.timer);
+   _efl_loop_internal_cancel(j);
+}
+
+static Efl_Internal_Promise *
+_efl_internal_promise_new(Eina_Promise_Owner* promise, const void *data)
+{
+   Efl_Internal_Promise *p;
+
+   p = calloc(1, sizeof (Efl_Internal_Promise));
+   if (!p) return NULL;
+
+   eina_promise_owner_default_cancel_cb_add(promise, &_efl_loop_job_cancel, p, NULL);
+   p->promise = promise;
+   p->data = data;
+
+   return p;
 }
 
 static void
 _efl_loop_job(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, Eina_Promise_Owner *promise, const void *data)
 {
-   Efl_Internal_Job *j;
+   Efl_Internal_Promise *j;
 
-   j = calloc(1, sizeof (Efl_Internal_Job));
-   if (!j) goto on_error;
+   j = _efl_internal_promise_new(promise, data);
+   if (!j) return ;
 
-   eina_promise_owner_default_cancel_cb_add(promise, &_efl_loop_job_cancel, j, NULL);
-   j->promise = promise;
-   j->data = data;
-   j->job = ecore_job_add(_efl_loop_job_cb, j);
-   if (!j->job) goto on_error;
+   j->job_is = EINA_TRUE;
+   j->u.job = ecore_job_add(_efl_loop_job_cb, j);
 
-   return ;
+   if (j->u.job) return ;
 
- on_error:
-   eina_promise_owner_error_set(promise, _promise_canceled);
-   free(j);
+   _efl_loop_internal_cancel(j);
+}
+
+/* This event will be triggered when the main loop is destroyed and destroy its timers along */
+static Eina_Bool
+_efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED)
+{
+   _efl_loop_internal_cancel(data);
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+EO_CALLBACKS_ARRAY_DEFINE(timeout,
+                          { EFL_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
+                          { EO_BASE_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
+
+static void
+_efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, Eina_Promise_Owner *promise, double time, const void *data)
+{
+   Efl_Internal_Promise *t;
+
+   t = _efl_internal_promise_new(promise, data);
+   if (!t) return ;
+
+   t->job_is = EINA_FALSE;
+   t->u.timer = eo_add(EFL_TIMER_CLASS, obj,
+                       efl_timer_interval_set(eo_self, time),
+                       eo_event_callback_array_add(eo_self, timeout(), t));
+
+   if (t->u.timer) return ;
+
+   _efl_loop_internal_cancel(t);
 }
 
 #include "efl_loop.eo.c"
