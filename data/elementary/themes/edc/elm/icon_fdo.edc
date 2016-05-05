@@ -15,9 +15,10 @@
  *
  * NOTE: if you add an new icon you must add it to:
  *     - this file (of course)
- *     - data/elementary/themes/Makefile.am
- *     - elm_icon documentation   ?????  really? #################################
+ *     - data/elementary/themes/Makefile.am (only for new dirs)
+ *     - elm_icon documentation   ?????  really?
  *     - check they appear in: elementary_test -to "Icon Standard"
+ *     - don't forget to run "make distcheck"
  * 
  */
 

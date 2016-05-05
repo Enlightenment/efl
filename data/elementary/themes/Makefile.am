@@ -2,7 +2,7 @@ EDJE_CC_ELM_FLAGS = \
 -id $(top_srcdir)/data/elementary/themes/img \
 -id $(top_srcdir)/data/elementary/themes/fdo \
 -fd $(top_srcdir)/data/elementary/themes/fnt \
--sd $(top_srcdir)/data/elementary/themes/snd  \
+-sd $(top_srcdir)/data/elementary/themes/snd \
 -l $(top_srcdir)/COPYING \
 -a $(top_srcdir)/AUTHORS \
 -fastdecomp
@@ -984,6 +984,14 @@ elementary/themes/snd/kbd-tap2.wav \
 elementary/themes/snd/kbd-tap3.wav \
 elementary/themes/snd/kbd-tap4.wav \
 elementary/themes/snd/kbd-tap5.wav \
-elementary/themes/snd/kbd-tap.wav
+elementary/themes/snd/kbd-tap.wav \
+\
+elementary/themes/fdo/actions/scalable \
+elementary/themes/fdo/categories/scalable \
+elementary/themes/fdo/emblems/scalable \
+elementary/themes/fdo/places/16 \
+elementary/themes/fdo/places/scalable \
+elementary/themes/fdo/status/scalable
+
 
 EXTRA_DIST += $(elementary_themes_files)
