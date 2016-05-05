@@ -1228,23 +1228,13 @@ end
 
 local build_method, build_property
 
-local reft_checks = {
-    ["alias"] = check_alias,
-    ["struct"] = check_struct,
-    ["enum"] = check_enum,
-    ["constant"] = check_constant,
-    ["global"] = check_global
-}
-
 local build_reftable = function(f, title, ctitle, ctype, t)
     if not t or #t == 0 then
         return
     end
     f:write_h(title, 2)
     local nt = {}
-    local cfunc = reft_checks[ctype]
     for i, v in ipairs(t) do
-        if cfunc then cfunc(v) end
         nt[#nt + 1] = {
             Buffer():write_link(gen_nsp_eo(v, ctype, true),
                                 v:full_name_get()):finish(),
@@ -1490,15 +1480,35 @@ local build_classes = function()
 end
 
 local build_alias = function(tp)
+    local f = Writer(gen_nsp_eo(tp, "alias"))
+    check_alias(tp)
+
+    f:finish()
 end
 
 local build_struct = function(tp)
+    local f = Writer(gen_nsp_eo(tp, "struct"))
+    check_struct(tp)
+
+    f:finish()
 end
 
 local build_enum = function(tp)
+    local f = Writer(gen_nsp_eo(tp, "enum"))
+    check_enum(tp)
+
+    f:finish()
 end
 
 local build_variable = function(v, constant)
+    local f = Writer(gen_nsp_eo(v, constant and "constant" or "global"))
+    if constant then
+        check_constant(v)
+    else
+        check_global(v)
+    end
+
+    f:finish()
 end
 
 local build_typedecls = function()
@@ -1513,7 +1523,9 @@ local build_typedecls = function()
     for tp in eolian.typedecl_all_enums_get() do
         build_enum(tp)
     end
+end
 
+local build_variables = function()
     for v in eolian.variable_all_constants_get() do
         build_variable(v, true)
     end
@@ -1728,6 +1740,7 @@ getopt.parse {
         build_ref()
         build_classes()
         build_typedecls()
+        build_variables()
         print_stats()
     end
 }
