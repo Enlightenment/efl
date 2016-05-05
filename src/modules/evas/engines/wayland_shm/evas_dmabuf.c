@@ -197,12 +197,14 @@ static void
 _create_failed(void *data, struct zwp_linux_buffer_params_v1 *params)
 {
    Dmabuf_Buffer *b = data;
+   Eina_Bool orphaned;
 
    zwp_linux_buffer_params_v1_destroy(params);
 
    dmabuf_totally_hosed = EINA_TRUE;
-   _evas_dmabuf_buffer_destroy(b);
+   orphaned = b->orphaned;
    _allocation_complete(b);
+   if (orphaned) _evas_dmabuf_buffer_destroy(b);
 }
 
 static const struct zwp_linux_buffer_params_v1_listener params_listener =
