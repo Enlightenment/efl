@@ -360,23 +360,23 @@ ICO1(CTX, "non-starred") /* */
 
 ////  categories  /////////////////////////////////////////////////////////////
 #define CTX "categories"
-// TODO applications-accessories
-// TODO applications-development
+ICO1(CTX, "applications-accessories")
+ICO1(CTX, "applications-development")
+ICO1(CTX, "applications-games")
+ICO1(CTX, "applications-graphics")
+ICO1(CTX, "applications-internet")
+ICO1(CTX, "applications-multimedia")
+ICO1(CTX, "applications-office")
+ICO1(CTX, "applications-other")
+ICO1(CTX, "applications-science")
+ICO1(CTX, "applications-system")
+ICO1(CTX, "applications-utilities")
+ICO1(CTX, "preferences-desktop")
+ICO1(CTX, "preferences-system")
+ICO1(CTX, "preferences-other")
 // TODO applications-engineering
-// TODO applications-games
-// TODO applications-graphics
-// TODO applications-internet
-// TODO applications-multimedia
-// TODO applications-office
-// TODO applications-other
-// TODO applications-science
-// TODO applications-system
-// TODO applications-utilities
-// TODO preferences-desktop
 // TODO preferences-desktop-peripherals
 // TODO preferences-desktop-personal
-// TODO preferences-other
-// TODO preferences-system
 // TODO preferences-system-network
 // TODO system-help
 #undef CTX

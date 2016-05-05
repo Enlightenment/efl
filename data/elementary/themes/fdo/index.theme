@@ -1,8 +1,8 @@
 [Icon Theme]
 Name=Bluish-X
 Inherits=hicolor
-Comment=The EFL Bluish-X Icon theme. Orig. Based on Rave-X and Mint-X Icon Themes.
-Directories=actions/scalable,status/scalable,places/scalable,places/16,emblems/scalable
+Comment=The EFL Bluish-X Icon theme. Orig. Based on Rave-X, Mint-X and Faenza Icon Themes.
+Directories=actions/scalable,status/scalable,places/scalable,places/16,emblems/scalable,categories/scalable
 Example=directory-x-normal
 
 [actions/scalable]
@@ -33,4 +33,9 @@ MaxSize=22
 [emblems/scalable]
 Size=96
 Context=Emblems
+Type=Scalable
+
+[categories/scalable]
+Size=128
+Context=Categories
 Type=Scalable
