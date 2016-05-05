@@ -795,6 +795,81 @@ get_type_str = function(tp)
     error("unhandled type type: " .. tpt)
 end
 
+local add_typedecl_attrs = function(tp, buf)
+    if tp:is_extern() then
+        buf[#buf + 1] = "@extern "
+    end
+    local ffunc = tp:free_func_get()
+    if ffunc then
+        buf[#buf + 1] = "@free("
+        buf[#buf + 1] = ffunc
+        buf[#buf + 1] = ") "
+    end
+end
+
+local get_typedecl_str = function(tp)
+    local tps = eolian.typedecl_type
+    local tpt = tp:type_get()
+    if tpt == tps.UNKNOWN then
+        error("unknown typedecl: " .. tp:full_name_get())
+    elseif tpt == tps.STRUCT or tpt == tps.STURCT_OPAQUE then
+        local buf = { "struct " }
+        add_typedecl_attrs(tp, buf)
+        buf[#buf + 1] = tp:full_name_get()
+        if tpt == tps.STRUCT_OPAQUE then
+            buf[#buf + 1] = ";"
+            return table.concat(buf)
+        end
+        local fields = tp:struct_fields_get():to_array()
+        if #fields == 0 then
+            buf[#buf + 1] = " {}"
+            return table.concat(buf)
+        end
+        buf[#buf + 1] = " {\n"
+        for i, fld in ipairs(fields) do
+            buf[#buf + 1] = "    "
+            buf[#buf + 1] = fld:name_get()
+            buf[#buf + 1] = ": "
+            buf[#buf + 1] = get_type_str(fld:type_get())
+            buf[#buf + 1] = ";\n"
+        end
+        buf[#buf + 1] = "}"
+        return table.concat(buf)
+    elseif tpt == tps.ENUM then
+        local buf = { "enum " }
+        add_typedecl_attrs(tp, buf)
+        buf[#buf + 1] = tp:full_name_get()
+        local fields = tp:enum_fields_get():to_array()
+        if #fields == 0 then
+            buf[#buf + 1] = " {}"
+            return table.concat(buf)
+        end
+        buf[#buf + 1] = " {\n"
+        for i, fld in ipairs(fields) do
+            buf[#buf + 1] = "    "
+            buf[#buf + 1] = fld:name_get()
+            buf[#buf + 1] = ": "
+            buf[#buf + 1] = fld:value_get():serialize()
+            if i == #fields then
+                buf[#buf + 1] = "\n"
+            else
+                buf[#buf + 1] = ",\n"
+            end
+        end
+        buf[#buf + 1] = "}"
+        return table.concat(buf)
+    elseif tpt == tps.ALIAS then
+        local buf = { "type " }
+        add_typedecl_attrs(tp, buf)
+        buf[#buf + 1] = tp:full_name_get()
+        buf[#buf + 1] = ": "
+        buf[#buf + 1] = get_type_str(tp:base_type_get())
+        buf[#buf + 1] = ";"
+        return table.concat(buf)
+    end
+    error("unhandled typedecl type: " .. tpt)
+end
+
 local gen_doc_refd = function(str)
     if not str then
         return nil
@@ -1414,6 +1489,40 @@ local build_classes = function()
     end
 end
 
+local build_alias = function(tp)
+end
+
+local build_struct = function(tp)
+end
+
+local build_enum = function(tp)
+end
+
+local build_variable = function(v, constant)
+end
+
+local build_typedecls = function()
+    for tp in eolian.typedecl_all_aliases_get() do
+        build_alias(tp)
+    end
+
+    for tp in eolian.typedecl_all_structs_get() do
+        build_struct(tp)
+    end
+
+    for tp in eolian.typedecl_all_enums_get() do
+        build_enum(tp)
+    end
+
+    for v in eolian.variable_all_constants_get() do
+        build_variable(v, true)
+    end
+
+    for v in eolian.variable_all_globals_get() do
+        build_variable(v, false)
+    end
+end
+
 local pdir_to_str = {
     [eolian.parameter_dir.IN] = "(in)",
     [eolian.parameter_dir.OUT] = "(out)",
@@ -1618,6 +1727,7 @@ getopt.parse {
         mkdir_r(nil)
         build_ref()
         build_classes()
+        build_typedecls()
         print_stats()
     end
 }
