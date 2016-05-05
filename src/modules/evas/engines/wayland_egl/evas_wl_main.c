@@ -192,6 +192,7 @@ eng_window_free(Outbuf *gw)
 {
    int ref = 0;
 
+   if (!gw) return;
    win_count--;
    eng_window_use(gw);
 
