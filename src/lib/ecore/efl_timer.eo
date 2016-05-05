@@ -1,6 +1,6 @@
 import ecore_types;
 
-class Efl.Timer (Eo.Base)
+class Efl.Timer (Efl.Loop_User)
 {
    [[Timers are objects that will call a given callback at some point
      in the future.
