@@ -5,6 +5,7 @@
 /* local variables */
 static Outbuf *_evas_gl_wl_window = NULL;
 static EGLContext context = EGL_NO_CONTEXT;
+static struct wl_display *display = NULL;
 static int win_count = 0;
 
 Outbuf *
@@ -29,6 +30,9 @@ eng_window_new(Evas *evas, Evas_Engine_Info_Wayland_Egl *einfo, int w, int h, Re
    gw->h = h;
    gw->swap_mode = swap_mode;
    gw->disp = einfo->info.display;
+   if (display && (display != gw->disp))
+     context = EGL_NO_CONTEXT;
+   display = gw->disp;
    gw->surface = einfo->info.surface;
    gw->screen = einfo->info.screen;
    gw->depth = einfo->info.depth;
