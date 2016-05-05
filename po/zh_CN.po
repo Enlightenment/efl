@@ -4,12 +4,12 @@
 # This file is distributed under the same license as the Efl package.
 # Aron Xu <happyaron.xu@gmail.com>, 2012.
 #
-#: src/lib/elementary/elm_config.c:3692
+#: src/lib/elementary/elm_config.c:3719
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-04-20 11:19+0900\n"
+"POT-Creation-Date: 2016-05-05 11:03-0700\n"
 "PO-Revision-Date: 2012-12-22 03:55+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
@@ -253,7 +253,7 @@ msgid "Search"
 msgstr ""
 
 #: src/lib/elementary/elc_fileselector.c:1728
-#: src/lib/elementary/elm_entry.c:1627 src/lib/elementary/elm_entry.c:1652
+#: src/lib/elementary/elm_entry.c:1554 src/lib/elementary/elm_entry.c:1579
 msgid "Cancel"
 msgstr "取消"
 
@@ -294,23 +294,23 @@ msgstr ""
 msgid "Popup Body Text"
 msgstr ""
 
-#: src/lib/elementary/elm_bubble.c:194
+#: src/lib/elementary/elm_bubble.c:195
 msgid "Bubble"
 msgstr "气泡"
 
-#: src/lib/elementary/elm_button.c:66
+#: src/lib/elementary/elm_button.c:67
 msgid "Clicked"
 msgstr "点击"
 
-#: src/lib/elementary/elm_button.c:275 src/lib/elementary/elm_check.c:211
-#: src/lib/elementary/elm_gengrid.c:1242 src/lib/elementary/elm_genlist.c:1717
-#: src/lib/elementary/elm_list.c:2172 src/lib/elementary/elm_radio.c:215
+#: src/lib/elementary/elm_button.c:276 src/lib/elementary/elm_check.c:212
+#: src/lib/elementary/elm_gengrid.c:1242 src/lib/elementary/elm_genlist.c:1712
+#: src/lib/elementary/elm_list.c:2172 src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:527
-#: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2371
+#: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2375
 msgid "State: Disabled"
 msgstr "状态：已禁用"
 
-#: src/lib/elementary/elm_button.c:300
+#: src/lib/elementary/elm_button.c:301
 msgid "Button"
 msgstr "按钮"
 
@@ -359,21 +359,21 @@ msgstr "日历月"
 msgid "calendar year"
 msgstr "日历条目"
 
-#: src/lib/elementary/elm_check.c:63 src/lib/elementary/elm_check.c:224
-#: src/lib/elementary/elm_radio.c:119 src/lib/elementary/elm_radio.c:216
+#: src/lib/elementary/elm_check.c:64 src/lib/elementary/elm_check.c:225
+#: src/lib/elementary/elm_radio.c:120 src/lib/elementary/elm_radio.c:217
 msgid "State: On"
 msgstr "状态：开启"
 
-#: src/lib/elementary/elm_check.c:74 src/lib/elementary/elm_check.c:236
-#: src/lib/elementary/elm_radio.c:218
+#: src/lib/elementary/elm_check.c:75 src/lib/elementary/elm_check.c:237
+#: src/lib/elementary/elm_radio.c:219
 msgid "State: Off"
 msgstr "状态：关闭"
 
-#: src/lib/elementary/elm_check.c:220 src/lib/elementary/elm_check.c:233
+#: src/lib/elementary/elm_check.c:221 src/lib/elementary/elm_check.c:234
 msgid "State"
 msgstr "状态"
 
-#: src/lib/elementary/elm_check.c:314
+#: src/lib/elementary/elm_check.c:315
 msgid "Check"
 msgstr "检查"
 
@@ -418,7 +418,7 @@ msgid "color selector palette item"
 msgstr "色彩选择器项目"
 
 # Don't change it!
-#: src/lib/elementary/elm_config.c:3708
+#: src/lib/elementary/elm_config.c:3735
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -431,23 +431,23 @@ msgstr "磁盘选择器项目"
 msgid "diskselector item"
 msgstr "磁盘选择器项目"
 
-#: src/lib/elementary/elm_entry.c:1614
+#: src/lib/elementary/elm_entry.c:1541
 msgid "Copy"
 msgstr "复制"
 
-#: src/lib/elementary/elm_entry.c:1619
+#: src/lib/elementary/elm_entry.c:1546
 msgid "Cut"
 msgstr "粘贴"
 
-#: src/lib/elementary/elm_entry.c:1623 src/lib/elementary/elm_entry.c:1646
+#: src/lib/elementary/elm_entry.c:1550 src/lib/elementary/elm_entry.c:1573
 msgid "Paste"
 msgstr "粘贴"
 
-#: src/lib/elementary/elm_entry.c:1639
+#: src/lib/elementary/elm_entry.c:1566
 msgid "Select"
 msgstr "选择"
 
-#: src/lib/elementary/elm_entry.c:3688
+#: src/lib/elementary/elm_entry.c:3615
 msgid "Entry"
 msgstr "条目"
 
@@ -463,7 +463,7 @@ msgstr "索引"
 msgid "Index Item"
 msgstr "索引条目"
 
-#: src/lib/elementary/elm_label.c:393
+#: src/lib/elementary/elm_label.c:394
 msgid "Label"
 msgstr "标签"
 
@@ -487,16 +487,16 @@ msgstr ""
 msgid "panel button"
 msgstr "面板按钮"
 
-#: src/lib/elementary/elm_progressbar.c:309
+#: src/lib/elementary/elm_progressbar.c:310
 msgid "progressbar"
 msgstr "进度条"
 
-#: src/lib/elementary/elm_radio.c:244
+#: src/lib/elementary/elm_radio.c:245
 msgid "Radio"
 msgstr "无线电"
 
 #: src/lib/elementary/elm_segment_control.c:530
-#: src/lib/elementary/elm_toolbar.c:2373
+#: src/lib/elementary/elm_toolbar.c:2377
 msgid "State: Selected"
 msgstr "状态：已选择"
 
@@ -509,7 +509,7 @@ msgstr "状态：已选择"
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elementary/elm_slider.c:1187
+#: src/lib/elementary/elm_slider.c:1188
 msgid "slider"
 msgstr "滑块"
 
@@ -537,23 +537,23 @@ msgstr ""
 msgid "spinner text"
 msgstr ""
 
-#: src/lib/elementary/elm_toolbar.c:1832 src/lib/elementary/elm_toolbar.c:2429
+#: src/lib/elementary/elm_toolbar.c:1836 src/lib/elementary/elm_toolbar.c:2433
 msgid "Selected"
 msgstr "已选择"
 
-#: src/lib/elementary/elm_toolbar.c:2369
+#: src/lib/elementary/elm_toolbar.c:2373
 msgid "Separator"
 msgstr "分隔符"
 
-#: src/lib/elementary/elm_toolbar.c:2375
+#: src/lib/elementary/elm_toolbar.c:2379
 msgid "Has menu"
 msgstr "有菜单"
 
-#: src/lib/elementary/elm_toolbar.c:2424
+#: src/lib/elementary/elm_toolbar.c:2428
 msgid "Unselected"
 msgstr "未选择"
 
-#: src/lib/elementary/elm_toolbar.c:2441
+#: src/lib/elementary/elm_toolbar.c:2445
 msgid "Toolbar Item"
 msgstr "工具栏项目"
 

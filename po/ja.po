@@ -2,12 +2,12 @@
 # Copyright (C) 2012 Enlightenment development team
 # This file is put in the public domain.
 #
-#: src/lib/elementary/elm_config.c:3692
+#: src/lib/elementary/elm_config.c:3719
 msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-04-20 11:19+0900\n"
+"POT-Creation-Date: 2016-05-05 11:03-0700\n"
 "PO-Revision-Date: 2012-06-24 17:10+0900\n"
 "Last-Translator: Daichi Fukui<when.a.cat.sits.beside.you@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -251,7 +251,7 @@ msgid "Search"
 msgstr ""
 
 #: src/lib/elementary/elc_fileselector.c:1728
-#: src/lib/elementary/elm_entry.c:1627 src/lib/elementary/elm_entry.c:1652
+#: src/lib/elementary/elm_entry.c:1554 src/lib/elementary/elm_entry.c:1579
 msgid "Cancel"
 msgstr ""
 
@@ -292,23 +292,23 @@ msgstr ""
 msgid "Popup Body Text"
 msgstr ""
 
-#: src/lib/elementary/elm_bubble.c:194
+#: src/lib/elementary/elm_bubble.c:195
 msgid "Bubble"
 msgstr ""
 
-#: src/lib/elementary/elm_button.c:66
+#: src/lib/elementary/elm_button.c:67
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elementary/elm_button.c:275 src/lib/elementary/elm_check.c:211
-#: src/lib/elementary/elm_gengrid.c:1242 src/lib/elementary/elm_genlist.c:1717
-#: src/lib/elementary/elm_list.c:2172 src/lib/elementary/elm_radio.c:215
+#: src/lib/elementary/elm_button.c:276 src/lib/elementary/elm_check.c:212
+#: src/lib/elementary/elm_gengrid.c:1242 src/lib/elementary/elm_genlist.c:1712
+#: src/lib/elementary/elm_list.c:2172 src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:527
-#: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2371
+#: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2375
 msgid "State: Disabled"
 msgstr ""
 
-#: src/lib/elementary/elm_button.c:300
+#: src/lib/elementary/elm_button.c:301
 msgid "Button"
 msgstr ""
 
@@ -352,21 +352,21 @@ msgstr ""
 msgid "calendar year"
 msgstr ""
 
-#: src/lib/elementary/elm_check.c:63 src/lib/elementary/elm_check.c:224
-#: src/lib/elementary/elm_radio.c:119 src/lib/elementary/elm_radio.c:216
+#: src/lib/elementary/elm_check.c:64 src/lib/elementary/elm_check.c:225
+#: src/lib/elementary/elm_radio.c:120 src/lib/elementary/elm_radio.c:217
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elementary/elm_check.c:74 src/lib/elementary/elm_check.c:236
-#: src/lib/elementary/elm_radio.c:218
+#: src/lib/elementary/elm_check.c:75 src/lib/elementary/elm_check.c:237
+#: src/lib/elementary/elm_radio.c:219
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elementary/elm_check.c:220 src/lib/elementary/elm_check.c:233
+#: src/lib/elementary/elm_check.c:221 src/lib/elementary/elm_check.c:234
 msgid "State"
 msgstr ""
 
-#: src/lib/elementary/elm_check.c:314
+#: src/lib/elementary/elm_check.c:315
 msgid "Check"
 msgstr ""
 
@@ -410,7 +410,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elementary/elm_config.c:3708
+#: src/lib/elementary/elm_config.c:3735
 #, fuzzy
 msgid "default:LTR"
 msgstr "Default:"
@@ -423,23 +423,23 @@ msgstr ""
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elementary/elm_entry.c:1614
+#: src/lib/elementary/elm_entry.c:1541
 msgid "Copy"
 msgstr ""
 
-#: src/lib/elementary/elm_entry.c:1619
+#: src/lib/elementary/elm_entry.c:1546
 msgid "Cut"
 msgstr ""
 
-#: src/lib/elementary/elm_entry.c:1623 src/lib/elementary/elm_entry.c:1646
+#: src/lib/elementary/elm_entry.c:1550 src/lib/elementary/elm_entry.c:1573
 msgid "Paste"
 msgstr ""
 
-#: src/lib/elementary/elm_entry.c:1639
+#: src/lib/elementary/elm_entry.c:1566
 msgid "Select"
 msgstr ""
 
-#: src/lib/elementary/elm_entry.c:3688
+#: src/lib/elementary/elm_entry.c:3615
 msgid "Entry"
 msgstr ""
 
@@ -455,7 +455,7 @@ msgstr ""
 msgid "Index Item"
 msgstr ""
 
-#: src/lib/elementary/elm_label.c:393
+#: src/lib/elementary/elm_label.c:394
 msgid "Label"
 msgstr ""
 
@@ -479,16 +479,16 @@ msgstr ""
 msgid "panel button"
 msgstr ""
 
-#: src/lib/elementary/elm_progressbar.c:309
+#: src/lib/elementary/elm_progressbar.c:310
 msgid "progressbar"
 msgstr ""
 
-#: src/lib/elementary/elm_radio.c:244
+#: src/lib/elementary/elm_radio.c:245
 msgid "Radio"
 msgstr ""
 
 #: src/lib/elementary/elm_segment_control.c:530
-#: src/lib/elementary/elm_toolbar.c:2373
+#: src/lib/elementary/elm_toolbar.c:2377
 msgid "State: Selected"
 msgstr ""
 
@@ -500,7 +500,7 @@ msgstr ""
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elementary/elm_slider.c:1187
+#: src/lib/elementary/elm_slider.c:1188
 msgid "slider"
 msgstr ""
 
@@ -528,22 +528,22 @@ msgstr ""
 msgid "spinner text"
 msgstr ""
 
-#: src/lib/elementary/elm_toolbar.c:1832 src/lib/elementary/elm_toolbar.c:2429
+#: src/lib/elementary/elm_toolbar.c:1836 src/lib/elementary/elm_toolbar.c:2433
 msgid "Selected"
 msgstr ""
 
-#: src/lib/elementary/elm_toolbar.c:2369
+#: src/lib/elementary/elm_toolbar.c:2373
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elementary/elm_toolbar.c:2375
+#: src/lib/elementary/elm_toolbar.c:2379
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elementary/elm_toolbar.c:2424
+#: src/lib/elementary/elm_toolbar.c:2428
 msgid "Unselected"
 msgstr ""
 
-#: src/lib/elementary/elm_toolbar.c:2441
+#: src/lib/elementary/elm_toolbar.c:2445
 msgid "Toolbar Item"
 msgstr ""
