@@ -11,20 +11,6 @@ static const char o_type[] = "vectors";
 
 const char *o_vg_type = o_type;
 
-/* private struct for rectangle object internal data */
-typedef struct _Evas_VG_Data      Evas_VG_Data;
-
-struct _Evas_VG_Data
-{
-   void   *engine_data;
-   Efl_VG *root;
-
-   Eina_Rectangle fill;
-
-   unsigned int width, height;
-
-   Eina_Array cleanup;
-};
 
 static void evas_object_vg_render(Evas_Object *eo_obj,
                                   Evas_Object_Protected_Data *obj,
