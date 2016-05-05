@@ -1469,7 +1469,7 @@ _evas_canvas_font_hinting_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 EOLIAN Eina_Bool
 _evas_canvas_font_hinting_can_hint(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Font_Hinting_Flags hinting)
 {
-   if (e->engine.func->font_hinting_can_hint)
+   if (e->engine.func->font_hinting_can_hint && e->engine.data.output)
      return e->engine.func->font_hinting_can_hint(e->engine.data.output,
 						  hinting);
    else return EINA_FALSE;
@@ -1480,7 +1480,8 @@ _evas_canvas_font_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    evas_canvas_async_block(e);
    evas_render_rendering_wait(e);
-   e->engine.func->font_cache_flush(e->engine.data.output);
+   if (e->engine.data.output)
+     e->engine.func->font_cache_flush(e->engine.data.output);
 }
 
 EOLIAN void
@@ -1489,14 +1490,16 @@ _evas_canvas_font_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
    if (size < 0) size = 0;
    evas_canvas_async_block(e);
    evas_render_rendering_wait(e);
-   e->engine.func->font_cache_set(e->engine.data.output, size);
+   if (e->engine.data.output)
+     e->engine.func->font_cache_set(e->engine.data.output, size);
 }
 
 EOLIAN int
 _evas_canvas_font_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   return e->engine.func->font_cache_get(e->engine.data.output);
-
+   if (e->engine.data.output)
+     return e->engine.func->font_cache_get(e->engine.data.output);
+   return -1;
 }
 
 EOLIAN Eina_List*

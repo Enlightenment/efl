@@ -1119,7 +1119,8 @@ _evas_canvas_image_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    evas_canvas_async_block(e);
    evas_render_rendering_wait(e);
-   e->engine.func->image_cache_flush(e->engine.data.output);
+   if (e->engine.data.output)
+     e->engine.func->image_cache_flush(e->engine.data.output);
 }
 
 EOLIAN void
@@ -1167,13 +1168,16 @@ _evas_canvas_image_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size
    if (size < 0) size = 0;
    evas_canvas_async_block(e);
    evas_render_rendering_wait(e);
-   e->engine.func->image_cache_set(e->engine.data.output, size);
+   if (e->engine.data.output)
+     e->engine.func->image_cache_set(e->engine.data.output, size);
 }
 
 EOLIAN int
 _evas_canvas_image_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   return e->engine.func->image_cache_get(e->engine.data.output);
+   if (e->engine.data.output)
+     return e->engine.func->image_cache_get(e->engine.data.output);
+   return -1;
 }
 
 EOLIAN Eina_Bool
