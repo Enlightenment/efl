@@ -27,6 +27,8 @@ static drm_intel_bufmgr *buffer_manager;
 
 static Eina_Bool dmabuf_totally_hosed;
 
+static int drm_fd = -1;
+
 typedef struct _Dmabuf_Surface Dmabuf_Surface;
 
 typedef struct _Dmabuf_Buffer Dmabuf_Buffer;
@@ -73,8 +75,8 @@ drm_intel_bufmgr *(*sym_drm_intel_bufmgr_gem_init)(int fd, int batch_size) = NUL
 int (*sym_drm_intel_gem_bo_unmap_gtt)(drm_intel_bo *bo) = NULL;
 int (*sym_drm_intel_gem_bo_map_gtt)(drm_intel_bo *bo) = NULL;
 drm_intel_bo *(*sym_drm_intel_bo_alloc_tiled)(drm_intel_bufmgr *mgr, const char *name, int x, int y, int cpp, uint32_t *tile, unsigned long *pitch, unsigned long flags) = NULL;
-int (*sym_drm_intel_bo_gem_export_to_prime)(drm_intel_bo *bo, int *fd) = NULL;
 void (*sym_drm_intel_bo_unreference)(drm_intel_bo *bo) = NULL;
+int (*sym_drmPrimeHandleToFD)(int fd, uint32_t handle, uint32_t flags, int *prime_fd);
 
 static drm_intel_bufmgr *
 _get_buffer_manager(void)
@@ -92,8 +94,8 @@ _get_buffer_manager(void)
    SYM(drm_intel_lib, drm_intel_gem_bo_unmap_gtt);
    SYM(drm_intel_lib, drm_intel_gem_bo_map_gtt);
    SYM(drm_intel_lib, drm_intel_bo_alloc_tiled);
-   SYM(drm_intel_lib, drm_intel_bo_gem_export_to_prime);
    SYM(drm_intel_lib, drm_intel_bo_unreference);
+   SYM(drm_intel_lib, drmPrimeHandleToFD);
 
    if (fail) goto err_dlsym;
 
@@ -103,6 +105,7 @@ _get_buffer_manager(void)
    buffer_manager = sym_drm_intel_bufmgr_gem_init(fd, 32);
    if (!buffer_manager) goto err_bufmgr;
 
+   drm_fd = fd;
    return buffer_manager;
 
 err_bufmgr:
@@ -384,7 +387,16 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    out->w = w;
    out->h = h;
    if (tile != I915_TILING_NONE) goto err;
-   if (sym_drm_intel_bo_gem_export_to_prime(out->bo, &out->fd) != 0) goto err;
+   /* First try to allocate an mmapable buffer with O_RDWR,
+    * if that fails retry unmappable - if the compositor is
+    * using GL it won't need to mmap the buffer and this can
+    * work - otherwise it'll reject this buffer and we'll
+    * have to fall back to shm rendering.
+    */
+   if (sym_drmPrimeHandleToFD(drm_fd, out->bo->handle,
+                              DRM_CLOEXEC | O_RDWR, &out->fd) != 0)
+     if (sym_drmPrimeHandleToFD(drm_fd, out->bo->handle,
+                                DRM_CLOEXEC, &out->fd) != 0) goto err;
 
    out->pending = EINA_TRUE;
    dp = zwp_linux_dmabuf_v1_create_params(out->surface->dmabuf);
