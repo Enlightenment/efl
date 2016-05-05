@@ -62,6 +62,8 @@ extern "C" {
 
 #include "efl_loop.eo.h"
 
+#include "efl_loop_user.eo.h"
+
 /* We ue the factory pattern here, so you shouldn't call eo_add directly. */
 EAPI Eo *ecore_main_loop_get(void);
 

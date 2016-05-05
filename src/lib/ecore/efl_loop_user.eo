@@ -1,0 +1,15 @@
+class Efl.Loop_User (Eo.Base)
+{
+   [[An Efl.Loop_User is a class that require one of the parent to provide
+     an Efl.Loop interface when doing provider_find. It will enforce this by
+     only allowing parent that provide such interface or NULL.]]
+   legacy_prefix: null;
+   methods {
+      loop_get {
+         return: Efl.Loop *;
+      }
+   }
+   implements {
+      Eo.Base.parent.set;
+   }
+}

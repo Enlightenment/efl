@@ -2,15 +2,16 @@
 ### Library
 
 ecore_eolian_files_legacy = \
-	lib/ecore/efl_timer.eo \
 	lib/ecore/ecore_poller.eo \
 	lib/ecore/ecore_exe.eo \
 	lib/ecore/ecore_animator.eo
 
 ecore_eolian_files = \
-	$(ecore_eolian_files_legacy) \
 	lib/ecore/efl_loop.eo \
-	lib/ecore/ecore_parent.eo
+	lib/ecore/efl_loop_user.eo \
+	lib/ecore/efl_timer.eo \
+	lib/ecore/ecore_parent.eo \
+	$(ecore_eolian_files_legacy)
 
 ecore_eolian_type_files = \
 	lib/ecore/ecore_types.eot
@@ -58,6 +59,7 @@ lib/ecore/ecore_idle_exiter.c \
 lib/ecore/ecore_idler.c \
 lib/ecore/ecore_job.c \
 lib/ecore/ecore_main.c \
+lib/ecore/efl_loop_user.c \
 lib/ecore/ecore_pipe.c \
 lib/ecore/ecore_poller.c \
 lib/ecore/ecore_time.c \
