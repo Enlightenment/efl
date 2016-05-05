@@ -1,0 +1,4 @@
+class Ns.Name.Other {
+  legacy_prefix: null;
+}
+

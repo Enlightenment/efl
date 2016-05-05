@@ -1,0 +1,4 @@
+class Ns.Name {
+  legacy_prefix: null;
+}
+
