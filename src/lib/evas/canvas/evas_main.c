@@ -5,6 +5,10 @@
 #include "evas_cs2_private.h"
 #endif
 
+#include "evas_image_private.h"
+#include "evas_polygon_private.h"
+#include "evas_vg_private.h"
+
 #define MY_CLASS EVAS_CANVAS_CLASS
 
 #ifdef LKDEBUG
@@ -709,6 +713,114 @@ EAPI void
 evas_language_reinit(void)
 {
    evas_common_language_reinit();
+}
+
+static void
+_image_data_unset(Evas_Object_Protected_Data *obj, Eina_List **list)
+{
+   if (obj->is_smart)
+     {
+        Evas_Object_Protected_Data *obj2;
+
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj->object), obj2)
+          _image_data_unset(obj2, list);
+        return;
+     }
+#define CHECK(TYPE, STRUCT, FREE) \
+   if (eo_isa(obj->object, TYPE))\
+     {\
+        STRUCT *data = eo_data_scope_get(obj->object, TYPE);\
+        FREE; \
+        data->engine_data = NULL;\
+     }
+   CHECK(EVAS_IMAGE_CLASS, Evas_Image_Data,
+         ENFN->image_free(ENDT, data->engine_data))
+   else CHECK(EFL_CANVAS_IMAGE_CLASS, Evas_Image_Data,
+         ENFN->image_free(ENDT, data->engine_data))
+   else CHECK(EFL_CANVAS_SCENE3D_CLASS, Evas_Image_Data,
+         ENFN->image_free(ENDT, data->engine_data))
+   else CHECK(EVAS_VG_CLASS, Evas_VG_Data,
+        obj->layer->evas->engine.func->ector_free(data->engine_data))
+   else CHECK(EFL_CANVAS_POLYGON_CLASS, Efl_Canvas_Polygon_Data,
+        data->engine_data =
+          obj->layer->evas->engine.func->polygon_points_clear(obj->layer->evas->engine.data.output,
+                                                              obj->layer->evas->engine.data.context,
+                                                              data->engine_data))
+   else CHECK(EVAS_CANVAS3D_TEXTURE_CLASS, Evas_Canvas3D_Texture_Data,
+        if (obj->layer->evas->engine.func->texture_free)
+          obj->layer->evas->engine.func->texture_free(obj->layer->evas->engine.data.output, data->engine_data))
+   else return;
+#undef CHECK
+   evas_object_ref(obj->object);
+   *list = eina_list_append(*list, obj->object);
+}
+
+EAPI Eina_List *
+_evas_canvas_image_data_unset(Evas *eo_e)
+{
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, MY_CLASS);
+   Evas_Layer *lay;
+   Eina_List *list = NULL;
+
+   EINA_INLIST_FOREACH(e->layers, lay)
+     {
+        Evas_Object_Protected_Data *o;
+        EINA_INLIST_FOREACH(lay->objects, o)
+          {
+             if (!o->delete_me)
+               _image_data_unset(o, &list);
+          }
+     }
+   return list;
+}
+
+static void
+_image_image_data_regenerate(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *data)
+{
+   unsigned int orient = data->cur->orient;
+
+   _evas_image_load(eo_obj, obj, data);
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(data, state_write)
+     {
+        state_write->has_alpha = !state_write->has_alpha;
+        state_write->orient = -1;
+     }
+   EINA_COW_IMAGE_STATE_WRITE_END(data, state_write);
+   evas_object_image_alpha_set(eo_obj, !data->cur->has_alpha);
+   _evas_image_orientation_set(eo_obj, data, orient);
+}
+
+static void
+_image_data_regenerate(Evas_Object *eo_obj)
+{
+   Evas_Object_Protected_Data *obj;
+
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_change(eo_obj, obj);
+#define CHECK(TYPE, STRUCT, REGEN) \
+   if (eo_isa(eo_obj, TYPE))\
+     {\
+        STRUCT *data = eo_data_scope_get(eo_obj, TYPE);\
+        REGEN; \
+     }
+   CHECK(EVAS_IMAGE_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
+   else CHECK(EFL_CANVAS_IMAGE_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
+   else CHECK(EFL_CANVAS_SCENE3D_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
+   //else CHECK(EVAS_VG_CLASS, Evas_VG_Data,)
+   //else CHECK(EFL_CANVAS_POLYGON_CLASS, Efl_Canvas_Polygon_Data,)
+   //else CHECK(EVAS_CANVAS3D_TEXTURE_CLASS, Evas_Canvas3D_Texture_Data,
+}
+
+EAPI void
+_evas_canvas_image_data_regenerate(Eina_List *list)
+{
+   Evas_Object *eo_obj;
+
+   EINA_LIST_FREE(list, eo_obj)
+     {
+        _image_data_regenerate(eo_obj);
+        evas_object_unref(eo_obj);
+     }
 }
 
 #include "canvas/evas_canvas.eo.c"

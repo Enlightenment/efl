@@ -1914,6 +1914,8 @@ void _evas_unwalk(Evas_Public_Data *e_pd);
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
 EAPI const char *_evas_module_libdir_get(void);
 const char *_evas_module_datadir_get(void);
+EAPI Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
+EAPI void _evas_canvas_image_data_regenerate(Eina_List *list);
 
 Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj,
                              Evas_Object_Protected_Data *source_pd,
