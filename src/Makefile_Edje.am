@@ -36,7 +36,7 @@ noinst_DATA += $(edje_eolian_priv_c) $(edje_eolian_priv_h)
 EXTRA_DIST += lib/edje/Makefile.am \
 	      lib/edje/Makefile.in \
               ${edjeeolianfiles_DATA} \
-              $(edje_eolian_priv_files
+              $(edje_eolian_priv_files)
 
 lib_LTLIBRARIES += lib/edje/libedje.la
 
