@@ -1,5 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
+#include "evas_polygon_private.h"
 
 #define MY_CLASS EFL_CANVAS_POLYGON_CLASS
 
@@ -7,19 +8,7 @@
 static const char o_type[] = "polygon";
 
 /* private struct for line object internal data */
-typedef struct _Efl_Canvas_Polygon_Data      Efl_Canvas_Polygon_Data;
 typedef struct _Efl_Canvas_Polygon_Point       Efl_Canvas_Polygon_Point;
-
-struct _Efl_Canvas_Polygon_Data
-{
-   Eina_List           *points;
-   void                *engine_data;
-   struct {
-      int x, y;
-   } offset;
-   Evas_Coord_Rectangle geometry;
-   Eina_Bool            changed : 1;
-};
 
 struct _Efl_Canvas_Polygon_Point
 {
