@@ -30,6 +30,9 @@
 # endif
 #endif /* ! _WIN32 */
 
+extern EAPI Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
+extern EAPI void _evas_canvas_image_data_regenerate(Eina_List *list);
+
 /* local function prototypes */
 static void _ecore_evas_wl_move_resize(Ecore_Evas *ee, int x, int y, int w, int h);
 static void _ecore_evas_wl_show(Ecore_Evas *ee);
@@ -117,6 +120,19 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
 
 /* external variables */
 
+void
+_ee_egl_display_unset(Ecore_Evas *ee)
+{
+   Evas_Engine_Info_Wayland_Egl *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+   einfo->info.display = NULL;
+   wdata = ee->engine.data;
+   wdata->regen_objs = _evas_canvas_image_data_unset(ecore_evas_get(ee));
+   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+}
+
 static Eina_Bool
 _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -136,10 +152,19 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
         einfo->info.rotation = ee->rotation;
         einfo->info.surface = ecore_wl2_window_surface_get(wdata->win);
 
-        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+        if (wdata->reset_pending)
           {
-             ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
+             ecore_evas_manual_render_set(ee, 0);
           }
+        if (evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             if (wdata->reset_pending)
+               _evas_canvas_image_data_regenerate(wdata->regen_objs);
+             wdata->regen_objs = NULL;
+          }
+        else
+          ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
+        wdata->reset_pending = 0;
      }
    else
      {
@@ -164,15 +189,7 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
              einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
              if (einfo)
                {
-                  struct wl_surface *surf;
-
-                  surf = ecore_wl2_window_surface_get(wdata->win);
-                  if ((!einfo->info.surface) || (einfo->info.surface != surf))
-                    {
-                       einfo->info.surface = surf;
-                       evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-                       evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
-                    }
+                  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
                   einfo->www_avail = !!wdata->win->www_surface;
                   einfo->just_mapped = EINA_TRUE;
                }
@@ -362,6 +379,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    wdata->sync_done = EINA_FALSE;
    wdata->parent = p;
    wdata->display = ewd;
+   wdata->display_unset = _ee_egl_display_unset;
    wdata->win = ecore_wl2_window_new(ewd, p, x, y, w + fw, h + fh);
    ee->prop.window = ecore_wl2_window_id_get(wdata->win);
 
@@ -432,7 +450,8 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process, 
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
 
-   ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _ee_cb_sync_done, ee);
+   wdata->sync_handler = ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _ee_cb_sync_done, ee);
+   ee_list = eina_list_append(ee_list, ee);
 
    return ee;
 

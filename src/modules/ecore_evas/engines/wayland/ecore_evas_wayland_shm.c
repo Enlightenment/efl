@@ -131,6 +131,7 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
+        ecore_evas_manual_render_set(ee, 0);
         einfo->info.wl_disp = ecore_wl2_display_get(wdata->display);
         einfo->info.wl_dmabuf = ecore_wl2_display_dmabuf_get(wdata->display);
         einfo->info.wl_shm = ecore_wl2_display_shm_get(wdata->display);
@@ -162,22 +163,7 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
         if (wdata->win)
-          {
-
-             einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
-             if (einfo)
-               {
-                  struct wl_surface *surf;
-
-                  surf = ecore_wl2_window_surface_get(wdata->win);
-                  if ((!einfo->info.wl_surface) || (einfo->info.wl_surface != surf))
-                    {
-                       einfo->info.wl_surface = surf;
-                       evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-                       evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
-                    }
-               }
-          }
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
 
         if (wdata->frame)
           {
@@ -373,7 +359,8 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process, 
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
 
-   ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _ee_cb_sync_done, ee);
+   wdata->sync_handler = ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _ee_cb_sync_done, ee);
+   ee_list = eina_list_append(ee_list, ee);
 
    return ee;
 

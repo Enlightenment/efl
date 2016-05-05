@@ -53,6 +53,13 @@ typedef enum
    ECORE_WL2_DRAG_ACTION_ASK = 4,
 } Ecore_Wl2_Drag_Action;
 
+struct _Ecore_Wl2_Event_Connection
+{
+   Ecore_Wl2_Display *display;
+};
+typedef struct _Ecore_Wl2_Event_Connection Ecore_Wl2_Event_Connect;
+typedef struct _Ecore_Wl2_Event_Connection Ecore_Wl2_Event_Disconnect;
+
 typedef struct _Ecore_Wl2_Global
 {
    Eina_Stringshare *interface;
@@ -175,6 +182,8 @@ typedef enum _Ecore_Wl2_Window_Type
 typedef void (*Ecore_Wl2_Bind_Cb)(struct wl_client *client, void *data, uint32_t version, uint32_t id);
 typedef void (*Ecore_Wl2_Unbind_Cb)(struct wl_resource *resource);
 
+EAPI extern int ECORE_WL2_EVENT_DISCONNECT; /** @since 1.18 */
+EAPI extern int ECORE_WL2_EVENT_CONNECT; /** @since 1.18 */
 EAPI extern int ECORE_WL2_EVENT_GLOBAL_ADDED; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_FOCUS_IN; /** @since 1.17 */

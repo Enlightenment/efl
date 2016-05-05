@@ -12,6 +12,8 @@
 static const char *interface_wl_name = "wayland";
 static const int interface_wl_version = 1;
 
+Eina_List *ee_list;
+
 /* local structures for the frame smart object */
 typedef struct _EE_Wl_Smart_Data EE_Wl_Smart_Data;
 struct _EE_Wl_Smart_Data
@@ -34,7 +36,7 @@ EVAS_SMART_SUBCLASS_NEW(_smart_frame_type, _ecore_evas_wl_frame,
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
-static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[7];
+static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[8];
 
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 
@@ -159,6 +161,30 @@ _ecore_evas_wl_common_cb_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED,
    ee->prop.focused = EINA_FALSE;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_wl_common_cb_disconnect(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Disconnect *ev = event;
+   Eina_List *l;
+   Ecore_Evas *ee;
+
+   EINA_LIST_FOREACH(ee_list, l, ee)
+     {
+        Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+
+        if (wdata->display != ev->display) continue;
+        if (wdata->anim_callback) wl_callback_destroy(wdata->anim_callback);
+        wdata->anim_callback = NULL;
+        wdata->sync_done = EINA_FALSE;
+        wdata->defer_show = EINA_TRUE;
+        wdata->reset_pending = 1;
+        ecore_evas_manual_render_set(ee, 1);
+        if (wdata->display_unset)
+          wdata->display_unset(ee);
+     }
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -441,6 +467,9 @@ _ecore_evas_wl_common_init(void)
    _ecore_evas_wl_event_hdls[6] =
      ecore_event_handler_add(_ecore_wl2_event_window_www_drag,
                              _ecore_evas_wl_common_cb_www_drag, NULL);
+   _ecore_evas_wl_event_hdls[7] =
+     ecore_event_handler_add(ECORE_WL2_EVENT_DISCONNECT,
+                             _ecore_evas_wl_common_cb_disconnect, NULL);
    ecore_event_evas_init();
 
    return _ecore_evas_wl_init_count;
@@ -489,9 +518,14 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
    if (!ee) return;
 
    wdata = ee->engine.data;
+   ee_list = eina_list_remove(ee_list, ee);
+
+   eina_list_free(wdata->regen_objs);
 
    if (wdata->anim_callback) wl_callback_destroy(wdata->anim_callback);
    wdata->anim_callback = NULL;
+
+   ecore_event_handler_del(wdata->sync_handler);
 
    if (wdata->win) ecore_wl2_window_free(wdata->win);
    wdata->win = NULL;

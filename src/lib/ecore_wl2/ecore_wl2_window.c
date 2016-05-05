@@ -5,22 +5,16 @@
 #include "ecore_wl2_private.h"
 
 static void
-_session_recovery_uuid(void *data, struct zwp_e_session_recovery *session_recovery, const char *uuid)
+_session_recovery_create_uuid(void *data, struct zwp_e_session_recovery *session_recovery EINA_UNUSED, struct wl_surface *surface EINA_UNUSED, const char *uuid)
 {
-   Ecore_Wl2_Window *win;
-   char str[37];
+   Ecore_Wl2_Window *win = data;
 
-   win = data;
-   if (!win) return;
-   if (!session_recovery) return;
-   uuid_parse(uuid, win->uuid);
-   uuid_unparse(win->uuid, str);
-   DBG("UUID event received from compositor with UUID: %s\n", str);
+   eina_stringshare_replace(&win->uuid, uuid);
 }
 
 static const struct zwp_e_session_recovery_listener _session_listener =
 {
-   _session_recovery_uuid,
+   _session_recovery_create_uuid,
 };
 
 static void
@@ -300,6 +294,22 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 
         window->configure_ack = xdg_surface_ack_configure;
         _ecore_wl2_window_type_set(window);
+        if (window->display->wl.session_recovery)
+          {
+             if (window->uuid)
+               {
+                  zwp_e_session_recovery_set_uuid(window->display->wl.session_recovery,
+                    window->surface, window->uuid);
+                  xdg_surface_set_window_geometry(window->xdg_surface,
+                    window->geometry.x, window->geometry.y,
+                    window->geometry.w, window->geometry.h);
+                  ecore_wl2_window_opaque_region_set(window,
+                    window->opaque.x, window->opaque.y,
+                    window->opaque.w, window->opaque.h);
+               }
+             else
+               zwp_e_session_recovery_get_uuid(window->display->wl.session_recovery, window->surface);
+          }
      }
    else if ((window->display->wl.wl_shell) && (!window->wl_shell_surface))
      {
@@ -380,19 +390,9 @@ ecore_wl2_window_surface_get(Ecore_Wl2_Window *window)
         window->surface_id =
           wl_proxy_get_id((struct wl_proxy *)window->surface);
 
-        if ((window->display->wl.session_recovery) &&
-            (getenv("EFL_WAYLAND_SESSION_RECOVERY")))
-          {
-             char uuid[37];
-
-             zwp_e_session_recovery_add_listener(window->display->wl.session_recovery,
-                                                 &_session_listener, window);
-             if (!uuid_is_null(window->uuid))
-               {
-                  uuid_unparse(window->uuid, uuid);
-                  zwp_e_session_recovery_provide_uuid(window->display->wl.session_recovery, uuid);
-               }
-          }
+        if (window->display->wl.session_recovery)
+          zwp_e_session_recovery_add_listener(window->display->wl.session_recovery,
+                                              &_session_listener, window);
      }
 
    return window->surface;
@@ -432,6 +432,8 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
 EAPI void
 ecore_wl2_window_hide(Ecore_Wl2_Window *window)
 {
+   Ecore_Wl2_Subsurface *subsurf;
+   Eina_Inlist *tmp;
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    if (window->xdg_surface) xdg_surface_destroy(window->xdg_surface);
@@ -448,8 +450,18 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
      www_surface_destroy(window->www_surface);
    window->www_surface = NULL;
 
+   EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
+     _ecore_wl2_subsurf_unmap(subsurf);
+
+   if (window->uuid && window->surface && window->display->wl.session_recovery)
+     zwp_e_session_recovery_destroy_uuid(window->display->wl.session_recovery,
+       window->surface, window->uuid);
+
    if (window->surface) wl_surface_destroy(window->surface);
    window->surface = NULL;
+
+   window->configure_serial = 0;
+   window->configure_ack = NULL;
 }
 
 EAPI void
@@ -482,6 +494,7 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
      _ecore_wl2_subsurf_free(subsurf);
 
    ecore_wl2_window_hide(window);
+   eina_stringshare_replace(&window->uuid, NULL);
 
    if (window->title) eina_stringshare_del(window->title);
    if (window->class) eina_stringshare_del(window->class);

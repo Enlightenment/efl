@@ -2,7 +2,6 @@
 # define _ECORE_WL2_PRIVATE_H
 
 # include <unistd.h>
-# include <uuid/uuid.h>
 # include "Ecore_Wl2.h"
 # include "Ecore_Input.h"
 # include "www-protocol.h"
@@ -16,9 +15,10 @@
 # include "xdg-shell-client-protocol.h"
 # define XDG_VERSION 5
 
-# include "session-recovery-client-protocol.h"
+# include "session-recovery.h"
 
 extern int _ecore_wl2_log_dom;
+extern Eina_Bool no_session_recovery;
 
 # ifdef EAPI
 #  undef EAPI
@@ -95,6 +95,7 @@ struct _Ecore_Wl2_Display
    Ecore_Fd_Handler *fd_hdl;
 
    Eina_Hash *globals;
+   Ecore_Timer *recovery_timer;
 
    Eina_Inlist *windows;
    Eina_Inlist *outputs;
@@ -141,7 +142,7 @@ struct _Ecore_Wl2_Window
    struct xdg_popup *xdg_popup;
    struct www_surface *www_surface;
 
-   uuid_t uuid;
+   Eina_Stringshare *uuid;
 
    uint32_t configure_serial;
    void (*configure_ack)(struct xdg_surface *surface, uint32_t serial);
@@ -445,6 +446,7 @@ void _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input);
 void _ecore_wl2_dnd_selection(Ecore_Wl2_Input *input, struct wl_data_offer *offer);
 void _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source);
 
+void _ecore_wl2_subsurf_unmap(Ecore_Wl2_Subsurface *subsurf);
 void _ecore_wl2_subsurf_free(Ecore_Wl2_Subsurface *subsurf);
 
 void _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window);
