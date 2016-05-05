@@ -299,12 +299,24 @@ START_TEST(eo_composite_tests)
    fail_if(!obj);
    Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj2);
+   Eo *obj3 = eo_add(SIMPLE_CLASS, NULL);
+   fail_if(!obj3);
 
    eo_composite_attach(obj, obj2);
-   eo_parent_set(obj2, NULL);
-   fail_if(eo_composite_part_is(obj2));
+   fail_if(!eo_composite_part_is(obj2));
 
-   eo_unref(obj2);
+   /* Check swapping attachments works. */
+   eo_composite_attach(obj3, obj2);
+   fail_if(!eo_composite_part_is(obj2));
+
+   /* Check that a deletion of a child detaches from the parent. */
+   eo_del(obj2);
+   fail_if(!eo_composite_attach(obj3, obj));
+
+   /* Check that a deletion of the parent detaches the child. */
+   eo_del(obj3);
+   fail_if(eo_composite_part_is(obj));
+
    eo_unref(obj);
 
    eo_shutdown();

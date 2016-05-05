@@ -103,7 +103,6 @@ struct _Eo_Object
      Eina_Bool condtor_done:1;
      Eina_Bool finalized:1;
 
-     Eina_Bool composite:1;
      Eina_Bool del_triggered:1;
      Eina_Bool destructed:1;
      Eina_Bool manual_free:1;

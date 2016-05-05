@@ -19,6 +19,7 @@ typedef struct
 {
    const char                *id;
    const char                *comment;
+   Eo                        *composite_parent;
    Eina_Inlist               *generic_data;
    Eo                      ***wrefs;
 } Eo_Base_Extension;
@@ -82,7 +83,7 @@ _eo_base_extension_noneed(Eo_Base_Data *pd)
 {
    Eo_Base_Extension *ext = pd->ext;
    if ((!ext) || (ext->id) || (ext->comment) || (ext->generic_data) ||
-       (ext->wrefs)) return;
+       (ext->wrefs) || (ext->composite_parent)) return;
    _eo_base_extension_free(pd->ext);
    pd->ext = NULL;
 }
@@ -477,11 +478,6 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
 {
    if (pd->parent == parent_id)
      return;
-
-   if (eo_composite_part_is(obj) && pd->parent)
-     {
-        eo_composite_detach(pd->parent, obj);
-     }
 
    if (pd->parent)
      {
@@ -1236,23 +1232,34 @@ _eo_base_composite_attach(Eo *parent_id, Eo_Base_Data *pd EINA_UNUSED, Eo *comp_
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
    EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
 
-   if (!eo_isa(parent_id, _eo_class_id_get(comp_obj->klass))) return EINA_FALSE;
+   if (!eo_isa(parent_id, _eo_class_id_get(comp_obj->klass)))
+     {
+        return EINA_FALSE;
+     }
 
+   Eo_Base_Data *comp_pd = eo_data_scope_get(comp_obj_id, EO_BASE_CLASS);
+   /* Don't composite if we already have a composite object of this type */
      {
         Eina_List *itr;
         Eo *emb_obj_id;
         EINA_LIST_FOREACH(parent->composite_objects, itr, emb_obj_id)
           {
              EO_OBJ_POINTER_RETURN_VAL(emb_obj_id, emb_obj, EINA_FALSE);
-             if(emb_obj->klass == comp_obj->klass)
+             if (emb_obj->klass == comp_obj->klass)
                return EINA_FALSE;
           }
      }
 
-   comp_obj->composite = EINA_TRUE;
-   parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
+   if (eo_composite_part_is(comp_obj_id))
+     {
+        eo_composite_detach(comp_pd->ext->composite_parent, comp_obj_id);
+     }
 
-   eo_parent_set(comp_obj_id, parent_id);
+   /* Set the parent comp on the child. */
+   _eo_base_extension_need(comp_pd);
+   comp_pd->ext->composite_parent = parent_id;
+
+   parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
 
    return EINA_TRUE;
 }
@@ -1263,22 +1270,25 @@ _eo_base_composite_detach(Eo *parent_id, Eo_Base_Data *pd EINA_UNUSED, Eo *comp_
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
    EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
 
-   if (!comp_obj->composite)
+   if (!eo_composite_part_is(comp_obj_id))
       return EINA_FALSE;
 
-   comp_obj->composite = EINA_FALSE;
    parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
-   eo_parent_set(comp_obj_id, NULL);
+   /* Clear the comp parent on the child. */
+     {
+        Eo_Base_Data *comp_pd = eo_data_scope_get(comp_obj_id, EO_BASE_CLASS);
+        comp_pd->ext->composite_parent = NULL;
+
+        _eo_base_extension_noneed(comp_pd);
+     }
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_eo_base_composite_part_is(Eo *comp_obj_id, Eo_Base_Data *pd EINA_UNUSED)
+_eo_base_composite_part_is(Eo *comp_obj_id EINA_UNUSED, Eo_Base_Data *pd)
 {
-   EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
-
-   return comp_obj->composite;
+   return pd->ext && pd->ext->composite_parent;
 }
 
 /* Eo_Dbg */
@@ -1406,6 +1416,22 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
      {
         child = eina_list_data_get(pd->children);
         eo_parent_set(child, NULL);
+     }
+
+   /* If we are a composite object, detach children */
+     {
+        EO_OBJ_POINTER_RETURN(obj, obj_data);
+        Eina_List *itr;
+        Eo *emb_obj_id;
+        EINA_LIST_FOREACH(obj_data->composite_objects, itr, emb_obj_id)
+          {
+             eo_composite_detach(obj, emb_obj_id);
+          }
+     }
+
+   if (pd->ext && pd->ext->composite_parent)
+     {
+        eo_composite_detach(pd->ext->composite_parent, obj);
      }
 
    if (pd->parent)
