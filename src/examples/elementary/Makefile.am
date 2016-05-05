@@ -227,8 +227,14 @@ files_DATA += \
 	evas3d_map_example.edj \
 	twitter_example_01.edj
 
+CLEANFILES = \
+	theme_example.edj \
+	layout_example.edj\
+	evas3d_map_example.edj \
+	twitter_example_01.edj
+
 clean-local:
-	rm -f *.edj *.epb *.cfg *.cfg.bkp
+	rm -f *.epb *.cfg *.cfg.bkp
 
 ELEMENTARY_CODEGEN_FLAGS = --prefix=codegen_example
 
