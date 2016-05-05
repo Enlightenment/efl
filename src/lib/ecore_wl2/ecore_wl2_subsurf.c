@@ -5,12 +5,20 @@
 #include "ecore_wl2_private.h"
 
 void
+_ecore_wl2_subsurf_unmap(Ecore_Wl2_Subsurface *subsurf)
+{
+   if (subsurf->wl.subsurface) wl_subsurface_destroy(subsurf->wl.subsurface);
+   if (subsurf->wl.surface) wl_surface_destroy(subsurf->wl.surface);
+   subsurf->wl.subsurface = NULL;
+   subsurf->wl.surface = NULL;
+}
+
+void
 _ecore_wl2_subsurf_free(Ecore_Wl2_Subsurface *subsurf)
 {
    Ecore_Wl2_Window *parent;
 
-   if (subsurf->wl.subsurface) wl_subsurface_destroy(subsurf->wl.subsurface);
-   if (subsurf->wl.surface) wl_surface_destroy(subsurf->wl.surface);
+   _ecore_wl2_subsurf_unmap(subsurf);
 
    parent = subsurf->parent;
    if (parent)
