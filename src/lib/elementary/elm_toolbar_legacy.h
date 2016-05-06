@@ -85,5 +85,29 @@ EAPI void elm_toolbar_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED, Elm_Ic
  * @ingroup Elm_Toolbar
  */
 EAPI Elm_Icon_Lookup_Order elm_toolbar_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED);
+
+/**
+ * @brief Change a toolbar's orientation
+ *
+ * By default, a toolbar will be horizontal. Use this function to create a
+ * vertical toolbar.
+ *
+ * @param[in] horizontal If @c true, the toolbar is horizontal.
+ *
+ * @ingroup Elm_Toolbar
+ */
+EAPI void elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+
+/**
+ * @brief Get toolbar's current orientation
+ *
+ * Use this function to get orientation of toolbar.
+ *
+ * @return If @c true, the toolbar is horizontal.
+ *
+ * @ingroup Elm_Toolbar
+ */
+EAPI Eina_Bool elm_toolbar_horizontal_get(const Evas_Object *obj);
+
 #include "elm_toolbar_item.eo.legacy.h"
 #include "elm_toolbar.eo.legacy.h"

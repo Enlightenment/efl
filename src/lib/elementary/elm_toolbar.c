@@ -112,7 +112,7 @@ _items_visibility_fix(Elm_Toolbar_Data *sd,
    if (sd->more_item)
      {
         evas_object_geometry_get(sd->VIEW(more_item), NULL, NULL, &ciw, &cih);
-        if (sd->vertical) *iw += cih;
+        if (sd->orientation == EFL_ORIENT_VERTICAL) *iw += cih;
         else *iw += ciw;
      }
 
@@ -121,7 +121,7 @@ _items_visibility_fix(Elm_Toolbar_Data *sd,
         if (it->prio.priority > sd->standard_priority)
           {
              evas_object_geometry_get(VIEW(it), NULL, NULL, &ciw, &cih);
-             if (sd->vertical) *iw += cih;
+             if (sd->orientation == EFL_ORIENT_VERTICAL) *iw += cih;
              else *iw += ciw;
              it->prio.visible = (*iw <= vw);
              it->in_box = sd->bx;
@@ -279,7 +279,7 @@ _items_size_fit(Evas_Object *obj, Evas_Coord *bl, Evas_Coord view)
 
         if (mw != -1 || mh != -1)
           {
-             if (sd->vertical) min = mh;
+             if (sd->orientation == EFL_ORIENT_VERTICAL) min = mh;
              else min = mw;
 
              if ((!full) && ((sumf + min) > view))
@@ -377,7 +377,7 @@ _resize_job(void *data)
      {
         Evas_Coord iw = 0, ih = 0, more_w = 0, more_h = 0;
 
-        if (sd->vertical)
+        if (sd->orientation == EFL_ORIENT_VERTICAL)
           {
              h = vh;
              _items_visibility_fix(sd, &ih, vh, &more);
@@ -390,7 +390,7 @@ _resize_job(void *data)
         evas_object_geometry_get
           (sd->VIEW(more_item), NULL, NULL, &more_w, &more_h);
 
-        if (sd->vertical)
+        if (sd->orientation == EFL_ORIENT_VERTICAL)
           {
              if ((ih - more_h) <= vh) ih -= more_h;
           }
@@ -403,8 +403,8 @@ _resize_job(void *data)
          * individual items won't trigger a resize. Items are be
          * readded below. */
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
-        if (((sd->vertical) && (ih > vh)) ||
-            ((!sd->vertical) && (iw > vw)) || more)
+        if (((sd->orientation == EFL_ORIENT_VERTICAL) && (ih > vh)) ||
+            ((sd->orientation == EFL_ORIENT_HORIZONTAL) && (iw > vw)) || more)
           {
              Evas_Object *menu;
 
@@ -457,7 +457,7 @@ _resize_job(void *data)
      {
         Evas_Coord iw = 0, ih = 0;
 
-        if (sd->vertical)
+        if (sd->orientation == EFL_ORIENT_VERTICAL)
           {
              h = vh;
              _items_visibility_fix(sd, &ih, vh, &more);
@@ -468,8 +468,8 @@ _resize_job(void *data)
              _items_visibility_fix(sd, &iw, vw, &more);
           }
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
-        if (((sd->vertical) && (ih > vh)) ||
-            ((!sd->vertical) && (iw > vw)) || more)
+        if (((sd->orientation == EFL_ORIENT_VERTICAL) && (ih > vh)) ||
+            ((sd->orientation == EFL_ORIENT_HORIZONTAL) && (iw > vw)) || more)
           {
              EINA_INLIST_FOREACH(sd->items, it)
                {
@@ -496,12 +496,12 @@ _resize_job(void *data)
      {
         Evas_Coord iw = 0, ih = 0;
 
-        if (sd->vertical)
+        if (sd->orientation == EFL_ORIENT_VERTICAL)
           h = (vh >= mh) ? vh : mh;
         else
           w = (vw >= mw) ? vw : mw;
 
-        if (sd->vertical)
+        if (sd->orientation == EFL_ORIENT_VERTICAL)
           _items_visibility_fix(sd, &ih, vh, &more);
         else
           _items_visibility_fix(sd, &iw, vw, &more);
@@ -526,7 +526,7 @@ _resize_job(void *data)
         else
           evas_object_hide(sd->VIEW(more_item));
 
-        if (sd->vertical)
+        if (sd->orientation == EFL_ORIENT_VERTICAL)
           {
              if (h > vh) _items_size_fit(obj, &h, vh);
              if (sd->item_count - sd->separator_count > 0)
@@ -543,7 +543,7 @@ _resize_job(void *data)
      }
    else
      {
-        if (sd->vertical)
+        if (sd->orientation == EFL_ORIENT_VERTICAL)
           h = (vh >= mh) ? vh : mh;
         else
           w = (vw >= mw) ? vw : mw;
@@ -557,7 +557,7 @@ _resize_job(void *data)
 
    if (sd->transverse_expanded)
      {
-        if (sd->vertical)
+        if (sd->orientation == EFL_ORIENT_VERTICAL)
           w = vw;
         else
           h = vh;
@@ -700,8 +700,8 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 
    item_list = evas_object_box_children_get(sd->bx);
 
-   if ((sd->vertical && (iy < vy)) ||
-       (!sd->vertical && (iw < vw)) ||
+   if ((sd->orientation == EFL_ORIENT_VERTICAL && (iy < vy)) ||
+       (sd->orientation == EFL_ORIENT_HORIZONTAL && (iw < vw)) ||
        search_next)
      {
         while ((item_list = eina_list_next(item_list)))
@@ -884,8 +884,8 @@ _item_focused_next( Evas_Object *obj,
    if (!next_focused_item)
      return EINA_FALSE;
 
-   if ((!sd->vertical && (dir == ELM_FOCUS_LEFT || dir == ELM_FOCUS_RIGHT))
-         || (sd->vertical && (dir == ELM_FOCUS_UP || dir == ELM_FOCUS_DOWN)))
+   if ((sd->orientation == EFL_ORIENT_HORIZONTAL && (dir == ELM_FOCUS_LEFT || dir == ELM_FOCUS_RIGHT))
+         || (sd->orientation == EFL_ORIENT_VERTICAL && (dir == ELM_FOCUS_UP || dir == ELM_FOCUS_DOWN)))
    {
       elm_object_item_focus_set(EO_OBJ(next_focused_item), EINA_TRUE);
       return EINA_TRUE;
@@ -1400,7 +1400,7 @@ _item_theme_hook(Evas_Object *obj,
 
    _item_shrink_signal_emit(view, sd->shrink_mode);
 
-   if (sd->vertical)
+   if (sd->orientation == EFL_ORIENT_VERTICAL)
      elm_layout_signal_emit(view, "elm,orient,vertical", "elm");
    else
      elm_layout_signal_emit(view, "elm,orient,horizontal", "elm");
@@ -1410,7 +1410,7 @@ _item_theme_hook(Evas_Object *obj,
       elm_coords_finger_size_adjust(1, &mw, 1, &mh);
     if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
       {
-         if (sd->vertical)
+         if (sd->orientation == EFL_ORIENT_VERTICAL)
            {
               evas_object_size_hint_weight_set(view, EVAS_HINT_EXPAND, -1.0);
               evas_object_size_hint_align_set
@@ -1502,7 +1502,7 @@ _sizing_eval(Evas_Object *obj)
      }
    else if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND)
      {
-        if (sd->vertical)
+        if (sd->orientation == EFL_ORIENT_VERTICAL)
           {
              minw = minw_bx + (w - vw);
              if (minh_bx <= vh) minh_bx = vh;
@@ -1517,7 +1517,7 @@ _sizing_eval(Evas_Object *obj)
      }
    else
      {
-        if (sd->vertical)
+        if (sd->orientation == EFL_ORIENT_VERTICAL)
           {
              minw = minw_bx + (w - vw);
              minh = h - vh;
@@ -1531,7 +1531,7 @@ _sizing_eval(Evas_Object *obj)
 
    if (sd->transverse_expanded)
      {
-        if (sd->vertical)
+        if (sd->orientation == EFL_ORIENT_VERTICAL)
           minw_bx = vw;
         else
           minh_bx = vh;
@@ -1578,7 +1578,7 @@ _elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
    elm_widget_theme_object_set
      (obj, wd->resize_obj, "toolbar", "base",
      elm_widget_style_get(obj));
-   if (sd->vertical)
+   if (sd->orientation == EFL_ORIENT_VERTICAL)
      edje_object_signal_emit(wd->resize_obj, "elm,orient,vertical", "elm");
    else
      edje_object_signal_emit(wd->resize_obj, "elm,orient,horizontal", "elm");
@@ -1586,7 +1586,7 @@ _elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
    if (!elm_layout_theme_set
        (sd->more, "toolbar", "more", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
-   if (sd->vertical)
+   if (sd->orientation == EFL_ORIENT_VERTICAL)
      elm_object_signal_emit(sd->more, "elm,orient,vertical", "elm");
    else
      elm_object_signal_emit(sd->more, "elm,orient,horizontal", "elm");
@@ -2071,7 +2071,7 @@ _mouse_move_reorder(Elm_Toolbar_Item_Data *item,
    ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
    evas_object_geometry_get(VIEW(item), &x, &y, &w, &h);
-   if (sd->vertical)
+   if (sd->orientation == EFL_ORIENT_VERTICAL)
      evas_object_move(item->proxy, x, ev->cur.canvas.y - (h / 2));
    else
      evas_object_move(item->proxy, ev->cur.canvas.x - (w / 2), y);
@@ -2346,10 +2346,14 @@ _layout(Evas_Object *o,
         void *data)
 {
    Evas_Object *obj = (Evas_Object *)data;
+   Eina_Bool horizontal;
 
    ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   horizontal = sd->orientation ? EINA_TRUE : EINA_FALSE;
+
    _els_box_layout
-     (o, priv, !sd->vertical, sd->homogeneous, elm_widget_mirrored_get(obj));
+     (o, priv, horizontal, sd->homogeneous, elm_widget_mirrored_get(obj));
 }
 
 static char *
@@ -2832,6 +2836,7 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
    elm_interface_scrollable_objects_set(obj, edje, priv->hit_rect);
 
    priv->standard_priority = -99999;
+   priv->orientation = EFL_ORIENT_HORIZONTAL;
 
    elm_interface_scrollable_bounce_allow_set
          (obj, _elm_config->thumbscroll_bounce_enable, EINA_FALSE);
@@ -2869,7 +2874,7 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
    priv->more = elm_layout_add(obj);
    if (!elm_layout_theme_set(priv->more, "toolbar", "more", "default"))
      CRI("Failed to set layout!");
-   if (priv->vertical)
+   if (priv->orientation == EFL_ORIENT_VERTICAL)
      elm_object_signal_emit(priv->more, "elm,orient,vertical", "elm");
    else
      elm_object_signal_emit(priv->more, "elm,orient,horizontal", "elm");
@@ -3045,7 +3050,7 @@ _elm_toolbar_coordinates_adjust(Elm_Toolbar_Item_Data *it,
    *y = iy;
    *w = iw;
    *h = ih;
-   if (sd->vertical)
+   if (sd->orientation == EFL_ORIENT_VERTICAL)
      {
         //TODO: Enhance it later.
         if ((ix < vx) || (ix + iw) > (vx + vw) || (iy + ih) > (vy + vh))
@@ -3582,7 +3587,7 @@ _elm_toolbar_menu_parent_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 EOLIAN static void
 _elm_toolbar_align_set(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd, double align)
 {
-   if (sd->vertical)
+   if (sd->orientation == EFL_ORIENT_VERTICAL)
      {
         if (sd->align != align)
           evas_object_box_align_set(sd->bx, 0.5, align);
@@ -3811,12 +3816,15 @@ _elm_toolbar_item_state_prev(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *ite
 }
 
 EOLIAN static void
-_elm_toolbar_horizontal_set(Eo *obj, Elm_Toolbar_Data *sd, Eina_Bool horizontal)
+_elm_toolbar_efl_orientation_orientation_set(Eo *obj, Elm_Toolbar_Data *sd, Efl_Orient dir)
 {
-   horizontal = !!horizontal;
-   if (horizontal != sd->vertical) return;
-   sd->vertical = !horizontal;
-   if (sd->vertical)
+   if (dir != EFL_ORIENT_VERTICAL &&
+       dir != EFL_ORIENT_HORIZONTAL)
+     return;
+
+   sd->orientation = dir;
+
+   if (sd->orientation == EFL_ORIENT_VERTICAL)
      evas_object_box_align_set(sd->bx, 0.5, sd->align);
    else
      evas_object_box_align_set(sd->bx, sd->align, 0.5);
@@ -3824,10 +3832,34 @@ _elm_toolbar_horizontal_set(Eo *obj, Elm_Toolbar_Data *sd, Eina_Bool horizontal)
    _sizing_eval(obj);
 }
 
-EOLIAN static Eina_Bool
-_elm_toolbar_horizontal_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+EOLIAN static Efl_Orient
+_elm_toolbar_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
-   return !sd->vertical;
+   return sd->orientation;
+}
+
+EAPI void
+elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   Efl_Orient orient;
+
+   if (horizontal)
+     orient = EFL_ORIENT_HORIZONTAL;
+   else
+     orient = EFL_ORIENT_VERTICAL;
+
+   efl_orientation_set(obj, orient);
+}
+
+EAPI Eina_Bool
+elm_toolbar_horizontal_get(const Evas_Object *obj)
+{
+   ELM_TOOLBAR_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+   if (sd->orientation == EFL_ORIENT_VERTICAL)
+     return EINA_FALSE;
+   else
+     return EINA_TRUE;
 }
 
 EOLIAN static unsigned int

@@ -49,8 +49,8 @@ struct _Elm_Toolbar_Data
    Elm_Object_Select_Mode                select_mode;
    Ecore_Timer                          *long_timer;
    Ecore_Job                            *resize_job;
+   Efl_Orient                            orientation;
 
-   Eina_Bool                             vertical : 1;
    Eina_Bool                             long_press : 1;
    Eina_Bool                             homogeneous : 1;
    Eina_Bool                             delete_me : 1;

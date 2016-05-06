@@ -24,7 +24,7 @@ enum Elm.Toolbar.Shrink_Mode
    last [[Indicates error if returned by elm_toolbar_shrink_mode_get()]]
 }
 
-class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable,
+class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
                    Elm.Interface_Atspi_Widget_Action, Elm.Interface_Atspi_Selection,
                    Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
@@ -88,18 +88,6 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable,
          }
          values {
             icon_size: int; [[The icon size in pixels]]
-         }
-      }
-      @property horizontal {
-         [[Change a toolbar's orientation
-
-           By default, a toolbar will be horizontal. Use this function to create a vertical toolbar.]]
-         set {
-         }
-         get {
-         }
-         values {
-            horizontal: bool; [[If $true, the toolbar is horizontal.]]
          }
       }
       @property shrink_mode {
@@ -370,6 +358,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable,
       Elm.Widget.event;
       Elm.Widget.focus_highlight_geometry_get;
       Elm.Widget.focused_item.get;
+      Efl.Orientation.orientation;
       Elm.Interface_Atspi_Widget_Action.elm_actions.get;
       Elm.Interface_Atspi_Accessible.children.get;
       Elm.Interface_Atspi_Accessible.state_set.get;
