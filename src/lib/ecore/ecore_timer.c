@@ -157,8 +157,14 @@ _ecore_timer_legacy_tick(void *data, const Eo_Event *event)
 
    if (!_ecore_call_task_cb(legacy->func, (void*)legacy->data))
      {
-        eo_del(event->obj);
-        free(legacy);
+        if (eo_key_data_get(event->obj, "_legacy"))
+          {
+             eo_key_del(event->obj, "_legacy");
+             eo_event_callback_del(event->obj, EFL_TIMER_EVENT_TICK,
+                                   _ecore_timer_legacy_tick, legacy),
+             free(legacy);
+             eo_del(event->obj);
+          }
      }
 
    return EO_CALLBACK_CONTINUE;
@@ -219,8 +225,10 @@ ecore_timer_del(Ecore_Timer *timer)
    legacy = eo_key_data_get(timer, "_legacy");
    data = (void*) legacy->data;
 
-   free(legacy);
    eo_key_del(timer, "_legacy");
+   eo_event_callback_del(timer, EFL_TIMER_EVENT_TICK,
+                         _ecore_timer_legacy_tick, legacy),
+   free(legacy);
    eo_del(timer);
 
    return data;
