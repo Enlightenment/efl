@@ -577,6 +577,7 @@ struct _Edje_File
    char                            fid[8+8+8+2];
 
    unsigned char                   free_strings : 1;
+   unsigned char                   allocated_strings : 1;
    unsigned char                   dangling : 1;
    unsigned char		   warning : 1;
 };

@@ -821,12 +821,14 @@ _edje_if_string_free(Edje *ed, const char **str)
    Eet_Dictionary *dict;
 
    if (!ed || !str) return;
+   if (!ed->file->allocated_strings) goto the_end;
 
    dict = eet_dictionary_get(ed->file->ef);
 
    if (!eet_dictionary_string_check(dict, *str))
      eina_stringshare_del(*str);
 
+ the_end:
    *str = NULL;
 }
 
@@ -837,6 +839,7 @@ _edje_if_string_replace(Edje *ed, const char **str, const char *str_new)
 
    if (!ed || !str) return;
 
+   ed->file->allocated_strings = EINA_TRUE;
    dict = eet_dictionary_get(ed->file->ef);
    if (*str && eet_dictionary_string_check(dict, *str))
      *str = eina_stringshare_add(str_new);

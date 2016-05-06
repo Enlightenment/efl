@@ -463,7 +463,8 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
              /* Add and Handle tag parsed data */
              if (ts)
                {
-                  if (eet_dictionary_string_check(eet_dictionary_get(edf->ef), tag->value) == 0)
+                  if (edf->allocated_strings &&
+                      eet_dictionary_string_check(eet_dictionary_get(edf->ef), tag->value) == 0)
                     eina_stringshare_del(tag->value);
                   tag->value = eina_stringshare_add(ts);
                   eina_strbuf_append(txt, tag->value);
@@ -522,7 +523,9 @@ _edje_textblock_style_cleanup(Edje_File *edf)
 
         EINA_LIST_FREE(stl->tags, tag)
           {
-             if (tag->value && eet_dictionary_string_check(eet_dictionary_get(edf->ef), tag->value) == 0)
+             if (edf->allocated_strings &&
+                 tag->value &&
+                 eet_dictionary_string_check(eet_dictionary_get(edf->ef), tag->value) == 0)
                eina_stringshare_del(tag->value);
              if (edf->free_strings)
                {
