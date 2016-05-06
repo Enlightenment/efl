@@ -2636,6 +2636,17 @@ if test "${have_tizen_vconf}"  = "yes"; then
   AC_DEFINE(HAVE_TIZEN_CONFIGURATION_MANAGER, 1, [Define to 1 if you have Tizen configuration manager(vconf).])
 fi
 
+AC_ARG_ENABLE([ecore_wayland],
+   [AS_HELP_STRING([--enable-ecore-wayland],[enable legacy Ecore_Wayland support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_ecore_wayland="yes"
+    else
+       want_ecore_wayland="no"
+    fi
+   ],
+   [want_ecore_wayland="no"])
+
 ### Default values
 
 if test "${have_windows}" = "yes"; then
@@ -3271,7 +3282,7 @@ EFL_LIB_END_OPTIONAL([Ecore_SDL])
 
 
 #### Ecore_Wayland
-EFL_LIB_START_OPTIONAL([Ecore_Wayland], [test "${want_wayland}" = "yes"])
+EFL_LIB_START_OPTIONAL([Ecore_Wayland], [test "${want_ecore_wayland}" = "yes"])
 
 if test "x${want_wayland_ivi_shell}" = "xyes" ; then
    AC_DEFINE(USE_IVI_SHELL, 1, [Ecore_Wayland IVI-Shell Support])
@@ -5748,7 +5759,7 @@ echo "Ecore_File......: yes"
 echo "Ecore_IMF.......: yes (${features_ecore_imf})"
 echo "Ecore_X.........: ${with_x11} (${features_ecore_x})"
 echo "Ecore_SDL.......: $want_sdl"
-echo "Ecore_Wayland...: $want_wayland"
+echo "Ecore_Wayland...: $want_ecore_wayland"
 echo "Ecore_Wl2.......: $want_wayland"
 echo "IVI-Shell.......: $want_wayland_ivi_shell"
 echo "Ecore_Buffer....: $want_ecore_buffer (${features_ecore_buffer})"
