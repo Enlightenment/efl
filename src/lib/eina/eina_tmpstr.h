@@ -137,7 +137,7 @@ typedef const char Eina_Tmpstr;
  * NULL will be returned, otherwise a valid string pointer will be returned
  * that you can treat as any other C string (eg strdup(tmpstr) or
  * printf("%s\n", tmpstr) etc.). This string should be considered read-only
- * and immutable, and when youa re done with the string yo should delete it
+ * and immutable, and when you are done with the string you should delete it
  * with eina_tmpstr_del().
  *
  * Example usage:
