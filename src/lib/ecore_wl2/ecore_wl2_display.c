@@ -300,11 +300,13 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
 static void
 _begin_recovery_maybe(Ecore_Wl2_Display *ewd)
 {
-   ERR("Wayland Socket Error: %s", strerror(errno));
    if (ewd->wl.session_recovery)// && (errno == EPIPE))
      _recovery_timer_add(ewd);
    else
-     _ecore_wl2_display_signal_exit();
+     {
+        ERR("Wayland Socket Error: %s", strerror(errno));
+        _ecore_wl2_display_signal_exit();
+     }
 }
 
 static Eina_Bool
