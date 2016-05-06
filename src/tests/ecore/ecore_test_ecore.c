@@ -267,6 +267,49 @@ START_TEST(ecore_test_ecore_main_loop_fd_handler)
 }
 END_TEST
 
+static Eina_Bool
+_eo_read_cb(void *data, const Eo_Event *info EINA_UNUSED)
+{
+   Eina_Bool *did = data;
+
+   *did = EINA_TRUE;
+   ecore_main_loop_quit();
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+START_TEST(ecore_test_efl_loop_fd)
+{
+   Eina_Bool did = EINA_FALSE;
+   Eo *fd;
+   int comm[2];
+   int ret;
+
+   ret = ecore_init();
+   fail_if(ret < 1);
+
+   ret = pipe(comm);
+   fail_if(ret != 0);
+
+   fd = eo_add(EFL_LOOP_FD_CLASS, ecore_main_loop_get(),
+               efl_loop_fd_set(eo_self, comm[0]),
+               eo_event_callback_add(eo_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did));
+   fail_if(fd == NULL);
+
+   ret = write(comm[1], &did, 1);
+   fail_if(ret != 1);
+
+   ecore_main_loop_begin();
+
+   close(comm[0]);
+   close(comm[1]);
+
+   fail_if(did == EINA_FALSE);
+
+   ret = ecore_shutdown();
+}
+END_TEST
+
 START_TEST(ecore_test_ecore_main_loop_fd_handler_activate_modify)
 {
    Eina_Bool did = EINA_FALSE;
@@ -745,4 +788,5 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_app);
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller);
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller_add_del);
+   tcase_add_test(tc, ecore_test_efl_loop_fd);
 }
