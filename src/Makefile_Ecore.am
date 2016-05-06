@@ -4,12 +4,12 @@
 ecore_eolian_files_legacy = \
 	lib/ecore/ecore_poller.eo \
 	lib/ecore/ecore_exe.eo \
-	lib/ecore/ecore_animator.eo
+	lib/ecore/ecore_animator.eo \
+	lib/ecore/efl_timer.eo
 
 ecore_eolian_files = \
 	lib/ecore/efl_loop.eo \
 	lib/ecore/efl_loop_user.eo \
-	lib/ecore/efl_timer.eo \
 	lib/ecore/ecore_parent.eo \
 	$(ecore_eolian_files_legacy)
 
