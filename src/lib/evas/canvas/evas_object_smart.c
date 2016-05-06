@@ -257,6 +257,8 @@ _evas_object_smart_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Object *eo
 
    obj->layer->usage++;
    obj->smart.parent = smart_obj;
+   obj->smart.parent_data = o;
+   obj->smart.parent_object_data = smart;
    o->contained = eina_inlist_append(o->contained, EINA_INLIST_GET(obj));
    eo_data_ref(eo_obj, NULL);
    evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_TRUE,
@@ -1198,7 +1200,9 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
 	if (computeminmax)
           {
-             evas_object_smart_need_bounding_box_update(obj->smart.parent);
+             evas_object_smart_need_bounding_box_update(obj->smart.parent,
+                                                        obj->smart.parent_data,
+                                                        obj->smart.parent_object_data);
           }
      }
    else
@@ -1345,19 +1349,20 @@ evas_object_smart_member_stack_below(Evas_Object *eo_member, Evas_Object *eo_oth
 }
 
 void
-evas_object_smart_need_bounding_box_update(Evas_Object *eo_obj)
+evas_object_smart_need_bounding_box_update(Evas_Object *eo_obj, Evas_Smart_Data *o, Evas_Object_Protected_Data *obj)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   Evas_Smart_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    evas_object_async_block(obj);
    if (o->update_boundingbox_needed) return;
    o->update_boundingbox_needed = EINA_TRUE;
 
-   if (obj->smart.parent) evas_object_smart_need_bounding_box_update(obj->smart.parent);
+   if (obj->smart.parent)
+     evas_object_smart_need_bounding_box_update(obj->smart.parent,
+                                                obj->smart.parent_data,
+                                                obj->smart.parent_object_data);
 }
 
 void

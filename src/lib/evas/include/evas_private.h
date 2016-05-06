@@ -80,6 +80,8 @@ typedef struct _Evas_Proxy_Render_Data      Evas_Proxy_Render_Data;
 typedef struct _Evas_Object_3D_Data         Evas_Object_3D_Data;
 typedef struct _Evas_Object_Mask_Data       Evas_Object_Mask_Data;
 
+typedef struct _Evas_Smart_Data             Evas_Smart_Data;
+
 typedef struct _Evas_Object_Protected_State Evas_Object_Protected_State;
 typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
 
@@ -1077,6 +1079,8 @@ struct _Evas_Object_Protected_Data
    struct {
       Evas_Smart              *smart;
       Evas_Object             *parent;
+      Evas_Smart_Data         *parent_data;
+      Evas_Object_Protected_Data *parent_object_data;
    } smart;
 
    // Eina_Cow pointer be careful when writing to it
@@ -1584,7 +1588,7 @@ const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
 void _evas_object_smart_members_all_del(Evas_Object *obj);
 void evas_call_smarts_calculate(Evas *e);
 void evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-void evas_object_smart_need_bounding_box_update(Evas_Object *obj);
+void evas_object_smart_need_bounding_box_update(Evas_Object *eo_obj, Evas_Smart_Data *o, Evas_Object_Protected_Data *obj);
 Eina_Bool evas_object_smart_changed_get(Evas_Object *eo_obj);
 void *evas_mem_calloc(int size);
 void _evas_post_event_callback_call(Evas *e, Evas_Public_Data* e_pd);
