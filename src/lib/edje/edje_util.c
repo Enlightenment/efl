@@ -180,7 +180,7 @@ _edje_class_member_add(Edje *ed, Eina_Hash **ghash, const char *class)
         er->ed = ed;
         EINA_REFCOUNT_INIT(er);
 
-        eina_hash_add(members, &er->ed, er);
+        eina_hash_direct_add(members, &er->ed, er);
      }
    else
      {
