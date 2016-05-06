@@ -979,8 +979,17 @@ static void
 _disconnected(void *data, const Eldbus_Message *msg EINA_UNUSED)
 {
    Eldbus_Connection *conn = data;
+   Ecore_Event_Signal_Exit *ev;
+
    _eldbus_connection_event_callback_call(
       conn, ELDBUS_CONNECTION_EVENT_DISCONNECTED, NULL);
+   if (conn->type != ELDBUS_CONNECTION_TYPE_SESSION) return;
+
+   ev = calloc(1, sizeof(Ecore_Event_Signal_Exit));
+   if (!ev) return;
+
+   ev->quit = EINA_TRUE;
+   ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, ev, NULL, NULL);
 }
 
 /* Param address is only used for ELDBUS_CONNECTION_TYPE_ADDRESS type */
