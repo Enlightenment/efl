@@ -226,7 +226,7 @@ START_TEST(eina_test_promise_progress)
    owner = eina_promise_default_add(0);
 
    promise = eina_promise_owner_promise_get(owner);
-   eina_promise_progress_cb_add(promise, &progress_callback, &progress_ran);
+   eina_promise_progress_cb_add(promise, &progress_callback, &progress_ran, NULL);
 
    eina_promise_owner_progress(owner, &i);
 
@@ -254,8 +254,8 @@ START_TEST(eina_test_promise_progress_notify1)
    eina_promise_owner_progress_notify(owner, &progress_notify, &progress_notify_ran, NULL);
 
    promise = eina_promise_owner_promise_get(owner);
-   eina_promise_progress_cb_add(promise, &progress_callback, NULL); // never run
-   eina_promise_progress_cb_add(promise, &progress_callback, NULL); // never run
+   eina_promise_progress_cb_add(promise, &progress_callback, NULL, NULL); // never run
+   eina_promise_progress_cb_add(promise, &progress_callback, NULL, NULL); // never run
 
    ck_assert(progress_notify_ran);
 
@@ -311,10 +311,26 @@ START_TEST(eina_test_promise_progress_notify3)
                      &_eina_promise_progress_notify_error, &progress_notify_ran);
 
    promise = eina_promise_owner_promise_get(owner);
-   eina_promise_progress_cb_add(promise, &progress_callback, NULL); // never run
-   eina_promise_progress_cb_add(promise, &progress_callback, NULL); // never run
+   eina_promise_progress_cb_add(promise, &progress_callback, NULL, NULL); // never run
+   eina_promise_progress_cb_add(promise, &progress_callback, NULL, NULL); // never run
 
    ck_assert(progress_notify_ran);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_promise_ignored)
+{
+   Eina_Promise_Owner* owner;
+   Eina_Promise* promise;
+
+   eina_init();
+
+   owner = eina_promise_default_add(0);
+   promise = eina_promise_owner_promise_get(owner);
+   eina_promise_unref(promise);
+   eina_promise_owner_value_set(owner, NULL, NULL);
 
    eina_shutdown();
 }
@@ -333,4 +349,5 @@ eina_test_promise(TCase *tc)
    tcase_add_test(tc, eina_test_promise_progress_notify1);
    tcase_add_test(tc, eina_test_promise_progress_notify2);
    tcase_add_test(tc, eina_test_promise_progress_notify3);
+   tcase_add_test(tc, eina_test_promise_ignored);
 }

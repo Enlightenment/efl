@@ -71,7 +71,8 @@ typedef Eina_Bool(*Eina_Promise_Pending_Is_Cb)(Eina_Promise const* promise);
 /*
  * @brief Function callback type for promise's progress add function override
  */
-typedef void(*Eina_Promise_Progress_Cb_Add_Cb)(Eina_Promise* promise, Eina_Promise_Progress_Cb callback, void* data);
+typedef void(*Eina_Promise_Progress_Cb_Add_Cb)(Eina_Promise* promise, Eina_Promise_Progress_Cb callback, void* data
+                                               , Eina_Promise_Free_Cb free_cb);
 
 #define EINA_FUNC_PROMISE_PROGRESS_CB_ADD(Function) ((Eina_Promise_Progress_Cb_Add_Cb)Function)
 
@@ -338,7 +339,8 @@ EAPI Eina_Bool eina_promise_pending_is(Eina_Promise const* promise);
  * @param progress The callback to be called when progress is made
  * @param data The private data that will be passed to the progress callback
  */
-EAPI void eina_promise_progress_cb_add(Eina_Promise* promise, Eina_Promise_Progress_Cb progress, void* data);
+EAPI void eina_promise_progress_cb_add(Eina_Promise* promise, Eina_Promise_Progress_Cb progress, void* data,
+                                       Eina_Promise_Free_Cb free_cb);
 
 /*
  * @brief Increments the reference count for the Eina_Promise
@@ -482,6 +484,14 @@ EAPI void eina_promise_owner_default_call_then(Eina_Promise_Owner* promise);
  * free'd before any progress callback was registered
  */
 EAPI extern Eina_Error EINA_ERROR_PROMISE_NO_NOTIFY;
+
+/**
+ * @var EINA_ERROR_PROMISE_CANCEL
+ *
+ * @brief The error identifier corresponding to when a promise was
+ * cancelled before the callback can be called
+ */
+EAPI extern Eina_Error EINA_ERROR_PROMISE_CANCEL;
 
 /*
  * @internal

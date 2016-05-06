@@ -378,7 +378,7 @@ START_TEST(ecore_test_promise_progress_promise)
 
    ecore_thread_promise_run(&promise_progress_thread, NULL, NULL, 0, &promise);
 
-   eina_promise_progress_cb_add(promise, &_progress_callback, NULL);
+   eina_promise_progress_cb_add(promise, &_progress_callback, NULL, NULL);
 
    ecore_main_loop_begin();
 

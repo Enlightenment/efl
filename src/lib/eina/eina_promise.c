@@ -4,7 +4,16 @@
 
 #include <Eina.h>
 
+#include <eina_private.h>
+
 #include <assert.h>
+
+static int _eina_promise_log_dom = -1;
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_promise_log_dom, __VA_ARGS__)
 
 typedef struct _Eina_Promise_Then_Cb _Eina_Promise_Then_Cb;
 typedef struct _Eina_Promise_Progress_Cb _Eina_Promise_Progress_Cb;
@@ -29,6 +38,7 @@ struct _Eina_Promise_Progress_Cb
    EINA_INLIST;
 
    Eina_Promise_Progress_Cb callback;
+   Eina_Promise_Free_Cb free;
    void* data;
 };
 
@@ -94,6 +104,22 @@ struct _Eina_Promise_Iterator
    } data;
 };
 
+static void _eina_promise_free_progress_callback_node(void* node)
+{
+   _Eina_Promise_Progress_Cb *progress_cb = node;
+   if(progress_cb->free)
+     progress_cb->free(progress_cb->data);
+   free(progress_cb);
+}
+
+static void _eina_promise_free_progress_notify_callback_node(void* node)
+{
+   _Eina_Promise_Owner_Progress_Notify_Data *progress_notify_cb = node;
+   if(progress_notify_cb->free_cb)
+     progress_notify_cb->free_cb(progress_notify_cb->data);
+   free(progress_notify_cb);
+}
+
 static void _eina_promise_finish(_Eina_Promise_Default_Owner* promise);
 static void _eina_promise_ref(_Eina_Promise_Default* promise);
 static void _eina_promise_unref(_Eina_Promise_Default* promise);
@@ -119,14 +145,14 @@ static void
 _eina_promise_then_calls(_Eina_Promise_Default_Owner* promise)
 {
    _Eina_Promise_Then_Cb* callback;
-   Eina_Inlist* list2;
    Eina_Bool error;
 
    _eina_promise_ref(&promise->promise);
    error = promise->promise.has_errored;
 
-   EINA_INLIST_FOREACH_SAFE(promise->promise.then_callbacks, list2, callback)
+   EINA_INLIST_FREE(promise->promise.then_callbacks, callback)
      {
+       promise->promise.then_callbacks = eina_inlist_remove(promise->promise.then_callbacks, EINA_INLIST_GET(callback));
        if (error)
 	 {
 	   if (callback->error_cb)
@@ -136,6 +162,7 @@ _eina_promise_then_calls(_Eina_Promise_Default_Owner* promise)
 	 {
 	   (*callback->callback)(callback->data, &promise->value[0]);
 	 }
+       free(callback);
        _eina_promise_unref(&promise->promise);
      }
    _eina_promise_unref(&promise->promise);
@@ -145,14 +172,15 @@ static void
 _eina_promise_cancel_calls(_Eina_Promise_Default_Owner* promise, Eina_Bool call_cancel EINA_UNUSED)
 {
    _Eina_Promise_Cancel_Cb* callback;
-   Eina_Inlist* list2;
 
-   EINA_INLIST_FOREACH_SAFE(promise->promise.cancel_callbacks, list2, callback)
+   EINA_INLIST_FREE(promise->promise.cancel_callbacks, callback)
      {
-       if (callback->callback)
-	 {
-	   (*callback->callback)(callback->data, (Eina_Promise_Owner*)promise);
-	 }
+        promise->promise.cancel_callbacks = eina_inlist_remove(promise->promise.cancel_callbacks, EINA_INLIST_GET(callback));
+        if (callback->callback)
+          {
+             (*callback->callback)(callback->data, (Eina_Promise_Owner*)promise);
+          }
+        free(callback);
      }
 
    if (!promise->promise.is_manual_then)
@@ -164,15 +192,19 @@ _eina_promise_cancel_calls(_Eina_Promise_Default_Owner* promise, Eina_Bool call_
 static void
 _eina_promise_del(_Eina_Promise_Default_Owner* promise)
 {
-   if (promise->promise.has_finished)
+   if (!promise->promise.has_finished)
      {
-        if (promise->promise.value_free_cb)
-          promise->promise.value_free_cb((void*)&promise->value[0]);
+        ERR("Promise is being deleted, despite not being finished yet. This will cause intermitent crashes");
      }
-   else
-     {
-        _eina_promise_cancel_calls(promise, EINA_TRUE);
-     }
+
+   if (promise->promise.value_free_cb)
+     promise->promise.value_free_cb((void*)&promise->value[0]);
+
+   _eina_promise_free_callback_list(&promise->promise.progress_callbacks,
+                                    &_eina_promise_free_progress_callback_node);
+   _eina_promise_free_callback_list(&promise->promise.progress_notify_callbacks,
+                                    &_eina_promise_free_progress_notify_callback_node);
+   free(promise);
 }
 
 static void *
@@ -234,8 +266,9 @@ _eina_promise_then(_Eina_Promise_Default* p, Eina_Promise_Cb callback,
    if (!promise->promise.is_first_then)
      {
         _eina_promise_ref(p);
-        promise->promise.is_first_then = EINA_FALSE;
      }
+   else
+     promise->promise.is_first_then = EINA_FALSE;
    if (promise->promise.has_finished)
      {
         _eina_promise_then_calls(promise);
@@ -258,6 +291,10 @@ _eina_promise_finish(_Eina_Promise_Default_Owner* promise)
    if (!promise->promise.is_manual_then)
      {
         _eina_promise_then_calls(promise);
+     }
+   if(promise->promise.ref == 0)
+     {
+        _eina_promise_del(promise);
      }
 }
 
@@ -293,7 +330,8 @@ _eina_promise_owner_cancelled_is(_Eina_Promise_Default_Owner const* promise)
 }
 
 static void
-_eina_promise_progress_cb_add(_Eina_Promise_Default* promise, Eina_Promise_Progress_Cb callback, void* data)
+_eina_promise_progress_cb_add(_Eina_Promise_Default* promise, Eina_Promise_Progress_Cb callback, void* data,
+                              Eina_Promise_Free_Cb free_cb)
 {
    _Eina_Promise_Progress_Cb* cb;
    _Eina_Promise_Owner_Progress_Notify_Data* notify_data;
@@ -302,13 +340,15 @@ _eina_promise_progress_cb_add(_Eina_Promise_Default* promise, Eina_Promise_Progr
    cb = malloc(sizeof(struct _Eina_Promise_Progress_Cb));
    cb->callback = callback;
    cb->data = data;
+   cb->free = free_cb;
    promise->progress_callbacks = eina_inlist_append(promise->progress_callbacks, EINA_INLIST_GET(cb));
 
    EINA_INLIST_FOREACH(owner->promise.progress_notify_callbacks, notify_data)
      {
        (*notify_data->callback)(notify_data->data, &owner->owner_vtable);
      }
-   _eina_promise_free_callback_list(&owner->promise.progress_notify_callbacks, &free);
+   _eina_promise_free_callback_list(&owner->promise.progress_notify_callbacks,
+                                    &_eina_promise_free_progress_notify_callback_node);
 }
 
 static void
@@ -393,7 +433,8 @@ _eina_promise_owner_progress(_Eina_Promise_Default_Owner* promise, void* data)
 
    EINA_INLIST_FOREACH_SAFE(promise->promise.progress_callbacks, list2, callback)
      {
-       (*callback->callback)(callback->data, data);
+        if(callback->callback)
+          (*callback->callback)(callback->data, data);
      }
 }
 
@@ -605,6 +646,7 @@ _eina_promise_progress_notify_fulfilled(void* data, Eina_Promise_Owner* p EINA_U
 }
 
 EAPI Eina_Error EINA_ERROR_PROMISE_NO_NOTIFY;
+EAPI Eina_Error EINA_ERROR_PROMISE_CANCEL;
 
 static void
 _eina_promise_progress_notify_failed(void* data)
@@ -666,9 +708,10 @@ eina_promise_pending_is(Eina_Promise const* promise)
 }
 
 EAPI void
-eina_promise_progress_cb_add(Eina_Promise* promise, Eina_Promise_Progress_Cb callback, void* data)
+eina_promise_progress_cb_add(Eina_Promise* promise, Eina_Promise_Progress_Cb callback, void* data,
+                             Eina_Promise_Free_Cb free_cb)
 {
-   promise->progress_cb_add(promise, callback, data);
+   promise->progress_cb_add(promise, callback, data, free_cb);
 }
 
 EAPI void
@@ -739,8 +782,27 @@ eina_promise_owner_progress_notify(Eina_Promise_Owner* promise, Eina_Promise_Pro
 }
 
 static const char EINA_ERROR_PROMISE_NO_NOTIFY_STR[] = "Out of memory";
+static const char EINA_ERROR_PROMISE_CANCEL_STR[] = "Promise cancelled";
 
-void _eina_promise_init()
+Eina_Bool eina_promise_init()
 {
    EINA_ERROR_PROMISE_NO_NOTIFY = eina_error_msg_static_register(EINA_ERROR_PROMISE_NO_NOTIFY_STR);
+   EINA_ERROR_PROMISE_CANCEL = eina_error_msg_static_register(EINA_ERROR_PROMISE_CANCEL_STR);
+
+   _eina_promise_log_dom = eina_log_domain_register("eina_promise",
+                                                    EINA_LOG_COLOR_DEFAULT);
+   if (_eina_promise_log_dom < 0)
+     {
+        EINA_LOG_ERR("Could not register log domain: eina_promise");
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+Eina_Bool eina_promise_shutdown()
+{
+   eina_log_domain_unregister(_eina_promise_log_dom);
+   _eina_promise_log_dom = -1;
+   return EINA_TRUE;
 }
