@@ -147,22 +147,39 @@ typedef struct _Ecore_Timer_Legacy Ecore_Timer_Legacy;
 struct _Ecore_Timer_Legacy
 {
    Ecore_Task_Cb func;
+
    const void *data;
+
+   Eina_Bool inside_call : 1;
+   Eina_Bool delete_me : 1;
 };
+
+static Eina_Bool
+_ecore_timer_legacy_del(void *data, const Eo_Event *event EINA_UNUSED)
+{
+   Ecore_Timer_Legacy *legacy = data;
+
+   free(legacy);
+
+   return EO_CALLBACK_CONTINUE;
+}
 
 static Eina_Bool
 _ecore_timer_legacy_tick(void *data, const Eo_Event *event)
 {
    Ecore_Timer_Legacy *legacy = data;
 
-   if (!_ecore_call_task_cb(legacy->func, (void*)legacy->data))
-     {
-        eo_del(event->obj);
-        free(legacy);
-     }
+   legacy->inside_call = 1;
+   if (!_ecore_call_task_cb(legacy->func, (void*)legacy->data) ||
+       legacy->delete_me)
+     eo_del(event->obj);
 
    return EO_CALLBACK_CONTINUE;
 }
+
+EO_CALLBACKS_ARRAY_DEFINE(legacy_timer,
+                          { EFL_TIMER_EVENT_TICK, _ecore_timer_legacy_tick },
+                          { EO_BASE_EVENT_DEL, _ecore_timer_legacy_del });
 
 EAPI Ecore_Timer *
 ecore_timer_add(double        in,
@@ -178,7 +195,7 @@ ecore_timer_add(double        in,
    legacy->func = func;
    legacy->data = data;
    timer = eo_add(MY_CLASS, ecore_main_loop_get(),
-                  eo_event_callback_add(eo_self, EFL_TIMER_EVENT_TICK, _ecore_timer_legacy_tick, legacy),
+                  eo_event_callback_array_add(eo_self, legacy_timer(), legacy),
                   eo_key_data_set(eo_self, "_legacy", legacy),
                   efl_timer_interval_set(eo_self, in));
 
@@ -199,7 +216,7 @@ ecore_timer_loop_add(double        in,
    legacy->func = func;
    legacy->data = data;
    timer = eo_add(MY_CLASS, ecore_main_loop_get(),
-                  eo_event_callback_add(eo_self, EFL_TIMER_EVENT_TICK, _ecore_timer_legacy_tick, legacy),
+                  eo_event_callback_array_add(eo_self, legacy_timer(), legacy),
                   eo_key_data_set(eo_self, "_legacy", legacy),
                   efl_timer_loop_reset(eo_self),
                   efl_timer_interval_set(eo_self, in));
@@ -219,9 +236,10 @@ ecore_timer_del(Ecore_Timer *timer)
    legacy = eo_key_data_get(timer, "_legacy");
    data = (void*) legacy->data;
 
-   free(legacy);
-   eo_key_del(timer, "_legacy");
-   eo_del(timer);
+   if (legacy->inside_call)
+     legacy->delete_me = EINA_TRUE;
+   else
+     eo_del(timer);
 
    return data;
 }
