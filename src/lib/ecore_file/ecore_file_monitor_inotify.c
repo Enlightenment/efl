@@ -95,6 +95,8 @@ ecore_file_monitor_backend_shutdown(void)
         if (fd > -1)
           close(fd);
      }
+   eina_hash_free(monitor_hash);
+   monitor_hash = NULL;
    _inotify_fd_pid = -1;
    return 1;
 }
