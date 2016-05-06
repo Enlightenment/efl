@@ -12,25 +12,12 @@ eolian_implement_full_name_get(const Eolian_Implement *impl)
    return impl->full_name;
 }
 
-static Eina_Bool
-_fill_class(Eolian_Implement *impl)
-{
-   const Eolian_Class *class = NULL;
-   if (impl->klass)
-     return EINA_TRUE;
-   if (!database_class_name_validate(impl->full_name, &class) || !class)
-     return EINA_FALSE;
-   impl->klass = class;
-   return EINA_TRUE;
-}
-
 EAPI const Eolian_Class *
 eolian_implement_class_get(const Eolian_Implement *impl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, NULL);
-   if (!_fill_class((Eolian_Implement*)impl))
-     return NULL;
-   return impl->klass;
+   Eolian_Implement *mimpl = (Eolian_Implement *)impl;
+   return database_object_class_fill(impl->full_name, &mimpl->klass);
 }
 
 EAPI const Eolian_Function *

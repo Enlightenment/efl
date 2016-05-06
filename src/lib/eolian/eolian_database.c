@@ -275,42 +275,17 @@ database_class_to_filename(const char *cname)
    return ret;
 }
 
-/*
- * ret false -> clash, class = NULL
- * ret true && class -> only one class corresponding
- * ret true && !class -> no class corresponding
- */
-Eina_Bool
-database_class_name_validate(const char *class_name, const Eolian_Class **cl)
+const Eolian_Class *
+database_object_class_fill(const char *class_name, const Eolian_Class **cl)
 {
+   if (*cl) return *cl;
    char *name = strdup(class_name);
-   char *colon = name + 1;
-   const Eolian_Class *found_class = NULL;
-   const Eolian_Class *candidate;
-   if (cl) *cl = NULL;
-   do
-     {
-        colon = strchr(colon, '.');
-        if (colon) *colon = '\0';
-        candidate = eolian_class_get_by_name(name);
-        if (candidate)
-          {
-             if (found_class)
-               {
-                  fprintf(stderr, "eolian: name clash between classes '%s' and '%s'\n",
-                        candidate->full_name,
-                        found_class->full_name);
-                  free(name);
-                  return EINA_FALSE; // Names clash
-               }
-             found_class = candidate;
-          }
-        if (colon) *colon++ = '.';
-     }
-   while(colon);
-   if (cl) *cl = found_class;
+   char *ldot = strrchr(name + 1, '.');
+   if (ldot) *ldot = '\0';
+   const Eolian_Class *found = eolian_class_get_by_name(name);
+   *cl = found;
    free(name);
-   return EINA_TRUE;
+   return found;
 }
 
 EAPI Eina_Bool

@@ -284,7 +284,7 @@ int database_shutdown(void);
 
 char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(Eina_Bool silent_types);
-Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Class **cl);
+const Eolian_Class *database_object_class_fill(const char *class_name, const Eolian_Class **cl);
 
 void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
                        Eina_Stringshare *file, void *ptr);
