@@ -277,7 +277,7 @@ _ecore_drm_output_mode_add(Ecore_Drm_Output *output, drmModeModeInfo *info)
    mode->width = info->hdisplay;
    mode->height = info->vdisplay;
 
-   refresh = (info->clock * 1000000LL / info->htotal + info->vtotal / 2) / info->vtotal;
+   refresh = (info->clock * 1000LL / info->htotal + info->vtotal / 2) / info->vtotal;
    if (info->flags & DRM_MODE_FLAG_INTERLACE)
      refresh *= 2;
    if (info->flags & DRM_MODE_FLAG_DBLSCAN)
