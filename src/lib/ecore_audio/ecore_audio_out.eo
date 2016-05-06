@@ -1,4 +1,4 @@
-class Ecore_Audio_Out (Ecore_Audio)
+class Ecore.Audio.Out (Ecore.Audio)
 {
    [[Ecore Audio output object.]]
 
@@ -13,7 +13,7 @@ class Ecore_Audio_Out (Ecore_Audio)
          ]]
          return: bool; [[true if the input was attached, false otherwise]]
          params {
-            @in input: Ecore_Audio_In *; [[The input to attach to the output]]
+            @in input: Ecore.Audio.In *; [[The input to attach to the output]]
          }
       }
       input_detach {
@@ -23,7 +23,7 @@ class Ecore_Audio_Out (Ecore_Audio)
          ]]
          return: bool; [[true if the input was detached, false otherwise]]
          params {
-            @in input: Ecore_Audio_In *; [[The input to detach to the output]]
+            @in input: Ecore.Audio.In *; [[The input to detach to the output]]
          }
       }
       inputs_get {
@@ -31,12 +31,12 @@ class Ecore_Audio_Out (Ecore_Audio)
 
            @since 1.8
          ]]
-         return: list<Ecore_Audio_In*> *; [[A list of the inputs that are attached to the output]]
+         return: list<Ecore.Audio.In*> *; [[A list of the inputs that are attached to the output]]
       }
    }
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Ecore_Audio.vio_set;
+      Ecore.Audio.vio_set;
    }
 }

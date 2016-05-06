@@ -1,4 +1,4 @@
-class Ecore_Audio_In (Ecore_Audio)
+class Ecore.Audio.In (Ecore.Audio)
 {
    [[Ecore Audio input object.]]
    legacy_prefix: null;
@@ -98,7 +98,7 @@ class Ecore_Audio_In (Ecore_Audio)
             ]]
          }
          values {
-            output: Ecore_Audio *; [[The output]] /* FIXME-cyclic Should be Ecore_Audio_Out */
+            output: Ecore.Audio *; [[The output]] /* FIXME-cyclic Should be Ecore.Audio.Out */
          }
       }
       @property remaining {
@@ -152,7 +152,7 @@ class Ecore_Audio_In (Ecore_Audio)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Ecore_Audio.vio_set;
+      Ecore.Audio.vio_set;
       @virtual .preloaded.get;
       @virtual .preloaded.set;
       @virtual .seek;

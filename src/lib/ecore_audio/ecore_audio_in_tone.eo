@@ -1,4 +1,4 @@
-class Ecore_Audio_In_Tone (Ecore_Audio_In)
+class Ecore.Audio.In.Tone (Ecore.Audio.In)
 {
    [[Ecore Audio tone input.]]
    eo_prefix: ecore_audio_obj_in_tone;
@@ -6,8 +6,8 @@ class Ecore_Audio_In_Tone (Ecore_Audio_In)
       Eo.Base.constructor;
       Eo.Base.key_data_set;
       Eo.Base.key_data_get;
-      Ecore_Audio_In.length.set;
-      Ecore_Audio_In.seek;
-      Ecore_Audio_In.read_internal;
+      Ecore.Audio.In.length.set;
+      Ecore.Audio.In.seek;
+      Ecore.Audio.In.read_internal;
    }
 }

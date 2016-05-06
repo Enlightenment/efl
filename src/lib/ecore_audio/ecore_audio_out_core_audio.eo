@@ -1,10 +1,10 @@
-class Ecore_Audio_Out_Core_Audio (Ecore_Audio_Out)
+class Ecore.Audio.Out.Core_Audio (Ecore.Audio.Out)
 {
    [[Ecore audio output for Mac OSX Core Aduio.]]
    eo_prefix: ecore_audio_obj_out_core_audio;
    implements {
-      Ecore_Audio.volume.set;
-      Ecore_Audio_Out.input_attach;
-      Ecore_Audio_Out.input_detach;
+      Ecore.Audio.volume.set;
+      Ecore.Audio.Out.input_attach;
+      Ecore.Audio.Out.input_detach;
    }
 }

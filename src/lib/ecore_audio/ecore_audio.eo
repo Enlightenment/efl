@@ -1,7 +1,7 @@
-type @extern Ecore_Audio_Vio: __undefined_type; /* FIXME: Had function pointer members. */
+type @extern Ecore.Audio.Vio: __undefined_type; /* FIXME: Had function pointer members. */
 type @extern eo_key_data_free_func: __undefined_type; /* FIXME: Function pointers not allowed. */
 
-enum Ecore_Audio_Format {
+enum Ecore.Audio.Format {
     auto, [[Automatically detect the format (for inputs)]]
     raw, [[RAW samples (float)]]
     wav, [[WAV format]]
@@ -11,7 +11,7 @@ enum Ecore_Audio_Format {
     last [[Sentinel value, do not use]]
 }
 
-class Ecore_Audio (Eo.Base)
+class Ecore.Audio (Eo.Base)
 {
    [[Convenience audio class.]]
 
@@ -100,7 +100,7 @@ class Ecore_Audio (Eo.Base)
             ]]
          }
          values {
-            format: Ecore_Audio_Format; [[the format of the object]]
+            format: Ecore.Audio.Format; [[the format of the object]]
          }
       }
       vio_set {
@@ -109,7 +109,7 @@ class Ecore_Audio (Eo.Base)
            @since 1.8
          ]]
          params {
-              vio: Ecore_Audio_Vio *; [[the \@ref Ecore_Audio_Vio struct with
+              vio: Ecore.Audio.Vio *; [[the @Ecore.Audio.Vio struct with
                                         the function callbacks
                                       ]]
               data: void *; [[user data to pass to the VIO functions]]

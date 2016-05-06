@@ -1,15 +1,15 @@
-class Ecore_Audio_In_Sndfile (Ecore_Audio_In)
+class Ecore.Audio.In.Sndfile (Ecore.Audio.In)
 {
    [[Ecore Audio sndfile input.]]
    eo_prefix: ecore_audio_obj_in_sndfile;
    implements {
       Eo.Base.destructor;
-      Ecore_Audio.source.set;
-      Ecore_Audio.source.get;
-      Ecore_Audio.format.set;
-      Ecore_Audio.format.get;
-      Ecore_Audio.vio_set;
-      Ecore_Audio_In.seek;
-      Ecore_Audio_In.read_internal;
+      Ecore.Audio.source.set;
+      Ecore.Audio.source.get;
+      Ecore.Audio.format.set;
+      Ecore.Audio.format.get;
+      Ecore.Audio.vio_set;
+      Ecore.Audio.In.seek;
+      Ecore.Audio.In.read_internal;
    }
 }
