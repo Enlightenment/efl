@@ -106,96 +106,96 @@ ICO1(CTX, "emblem-synchronizing", 96) /* */
 
 ////  actions  ////////////////////////////////////////////////////////////////
 #define CTX "actions"
-// ICO1(CTX, "call-start")
-// ICO1(CTX, "call-stop")
-// ICO1(CTX, "document-open")
-// ICO1(CTX, "document-open-recent")
-// ICO1(CTX, "document-page-setup")
-// ICO1(CTX, "document-properties")
-// ICO1(CTX, "document-save")
-// ICO1(CTX, "document-save-as")
-// ICO1(CTX, "document-send")
-// ICO1(CTX, "document-close") /* */
+ICO1(CTX, "call-start", 128)
+ICO1(CTX, "call-stop", 128)
+ICO1(CTX, "document-open", 128)
+ICO1(CTX, "document-open-recent", 128)
+ICO1(CTX, "document-page-setup", 128)
+ICO1(CTX, "document-properties", 128)
+ICO1(CTX, "document-save", 128)
+ICO1(CTX, "document-save-as", 128)
+ICO1(CTX, "document-send", 128)
+ICO1(CTX, "document-close", 128) /* */
 // TODO document-new
 // TODO document-print
 // TODO document-print-preview
 // TODO document-revert
 
-// ICO1(CTX, "edit-clear")
-// ICO1(CTX, "edit-copy")
-// ICO1(CTX, "edit-cut")
-// ICO1(CTX, "edit-delete")
-// ICO1(CTX, "edit-find")
-// ICO1(CTX, "edit-paste")
-// ICO1(CTX, "edit-redo")
-// ICO1(CTX, "edit-undo")
-// ICO1(CTX, "edit-select-all")
+ICO1(CTX, "edit-clear", 128)
+ICO1(CTX, "edit-copy", 128)
+ICO1(CTX, "edit-cut", 128)
+ICO1(CTX, "edit-delete", 128)
+ICO1(CTX, "edit-find", 128)
+ICO1(CTX, "edit-paste", 128)
+ICO1(CTX, "edit-redo", 128)
+ICO1(CTX, "edit-undo", 128)
+ICO1(CTX, "edit-select-all", 128)
 // TODO edit-find-replace
 
-// ICO1(CTX, "format-indent-less")
-// ICO1(CTX, "format-indent-more")
-// ICO1(CTX, "format-justify-center")
-// ICO1(CTX, "format-justify-fill")
-// ICO1(CTX, "format-justify-left")
-// ICO1(CTX, "format-justify-right")
-// ICO1(CTX, "format-text-direction-ltr")
-// ICO1(CTX, "format-text-direction-rtl")
-// ICO1(CTX, "format-text-bold")
-// ICO1(CTX, "format-text-italic")
-// ICO1(CTX, "format-text-underline")
-// ICO1(CTX, "format-text-strikethrough")
-// 
-// ICO1(CTX, "go-home")
-// ICO1(CTX, "go-bottom")
-// ICO1(CTX, "go-down")
-// ICO1(CTX, "go-first")
-// ICO1(CTX, "go-jump")
-// ICO1(CTX, "go-last")
-// ICO1(CTX, "go-next")
-// ICO1(CTX, "go-previous")
-// ICO1(CTX, "go-top")
-// ICO1(CTX, "go-up")
-// 
-// ICO1(CTX, "insert-image")
-// ICO1(CTX, "insert-link")
-// ICO1(CTX, "insert-object")
-// ICO1(CTX, "insert-text")
-// 
-// ICO1(CTX, "list-add")
-// ICO1(CTX, "list-remove")
-// 
-// ICO1(CTX, "media-eject")
-// ICO1(CTX, "media-playback-pause")
-// ICO1(CTX, "media-playback-start")
-// ICO1(CTX, "media-playback-stop")
-// ICO1(CTX, "media-record")
-// ICO1(CTX, "media-seek-backward")
-// ICO1(CTX, "media-seek-forward")
-// ICO1(CTX, "media-skip-backward")
-// ICO1(CTX, "media-skip-forward")
-// 
-// ICO1(CTX, "object-flip-horizontal")
-// ICO1(CTX, "object-flip-vertical")
-// ICO1(CTX, "object-rotate-left")
-// ICO1(CTX, "object-rotate-right")
-// 
-// ICO1(CTX, "zoom-fit-best")
-// ICO1(CTX, "zoom-in")
-// ICO1(CTX, "zoom-original")
-// ICO1(CTX, "zoom-out")
-// 
-// ICO1(CTX, "view-fullscreen")
-// ICO1(CTX, "view-refresh")
-// ICO1(CTX, "view-restore")
-// ICO1(CTX, "view-close") /* */
+ICO1(CTX, "format-indent-less", 128)
+ICO1(CTX, "format-indent-more", 128)
+ICO1(CTX, "format-justify-center", 128)
+ICO1(CTX, "format-justify-fill", 128)
+ICO1(CTX, "format-justify-left", 128)
+ICO1(CTX, "format-justify-right", 128)
+ICO1(CTX, "format-text-direction-ltr", 128)
+ICO1(CTX, "format-text-direction-rtl", 128)
+ICO1(CTX, "format-text-bold", 128)
+ICO1(CTX, "format-text-italic", 128)
+ICO1(CTX, "format-text-underline", 128)
+ICO1(CTX, "format-text-strikethrough", 128)
+
+ICO1(CTX, "go-home", 128)
+ICO1(CTX, "go-bottom", 128)
+ICO1(CTX, "go-down", 128)
+ICO1(CTX, "go-first", 128)
+ICO1(CTX, "go-jump", 128)
+ICO1(CTX, "go-last", 128)
+ICO1(CTX, "go-next", 128)
+ICO1(CTX, "go-previous", 128)
+ICO1(CTX, "go-top", 128)
+ICO1(CTX, "go-up", 128)
+
+ICO1(CTX, "insert-image", 128)
+ICO1(CTX, "insert-link", 128)
+ICO1(CTX, "insert-object", 128)
+ICO1(CTX, "insert-text", 128)
+
+ICO1(CTX, "list-add", 128)
+ICO1(CTX, "list-remove", 128)
+
+ICO1(CTX, "media-eject", 128)
+ICO1(CTX, "media-playback-pause", 128)
+ICO1(CTX, "media-playback-start", 128)
+ICO1(CTX, "media-playback-stop", 128)
+ICO1(CTX, "media-record", 128)
+ICO1(CTX, "media-seek-backward", 128)
+ICO1(CTX, "media-seek-forward", 128)
+ICO1(CTX, "media-skip-backward", 128)
+ICO1(CTX, "media-skip-forward", 128)
+
+ICO1(CTX, "object-flip-horizontal", 128)
+ICO1(CTX, "object-flip-vertical", 128)
+ICO1(CTX, "object-rotate-left", 128)
+ICO1(CTX, "object-rotate-right", 128)
+
+ICO1(CTX, "zoom-fit-best", 128)
+ICO1(CTX, "zoom-in", 128)
+ICO1(CTX, "zoom-original", 128)
+ICO1(CTX, "zoom-out", 128)
+
+ICO1(CTX, "view-fullscreen", 128)
+ICO1(CTX, "view-refresh", 128)
+ICO1(CTX, "view-restore", 128)
+ICO1(CTX, "view-close", 128) /* */
 // TODO view-sort-ascending
 // TODO view-sort-descending
 
-// ICO1(CTX, "window-close")
+ICO1(CTX, "window-close", 128)
 // TODO window-new
 
-// ICO1(CTX, "system-run")
-// ICO1(CTX, "system-shutdown")
+ICO1(CTX, "system-run", 128)
+ICO1(CTX, "system-shutdown", 128)
 // TODO system-lock-screen
 // TODO system-log-out
 // TODO system-search

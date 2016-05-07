@@ -986,7 +986,7 @@ elementary/themes/snd/kbd-tap4.wav \
 elementary/themes/snd/kbd-tap5.wav \
 elementary/themes/snd/kbd-tap.wav \
 \
-elementary/themes/fdo/actions/scalable \
+elementary/themes/fdo/actions/128 \
 elementary/themes/fdo/categories/16 \
 elementary/themes/fdo/categories/128 \
 elementary/themes/fdo/emblems/96 \
