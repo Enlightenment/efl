@@ -213,7 +213,7 @@ _evas_object_smart_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Object *eo
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *smart = eo_data_scope_get(smart_obj, EVAS_OBJECT_CLASS);
-   Evas_Smart_Data *member_o;
+   Evas_Smart_Data *member_o = NULL;
 
    if (obj->delete_me)
      {
@@ -281,7 +281,7 @@ _evas_object_smart_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Object *eo
    evas_object_mapped_clip_across_mark(eo_obj, obj);
    if (smart->smart.smart && smart->smart.smart->smart_class->member_add)
      smart->smart.smart->smart_class->member_add(smart_obj, eo_obj);
-   evas_object_update_bounding_box(eo_obj, obj);
+   evas_object_update_bounding_box(eo_obj, obj, member_o);
 }
 
 EAPI void
@@ -1090,9 +1090,8 @@ evas_object_smart_del(Evas_Object *eo_obj)
 }
 
 void
-evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Smart_Data *s)
 {
-   Evas_Smart_Data *s = NULL;
    Eina_Bool propagate = EINA_FALSE;
    Eina_Bool computeminmax = EINA_FALSE;
    Evas_Coord x, y, w, h;
@@ -1108,7 +1107,7 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
    if (obj->is_smart)
      {
-        s = eo_data_scope_get(eo_obj, MY_CLASS);
+        s = s == NULL ? eo_data_scope_get(eo_obj, MY_CLASS) : s;
 
         x = s->cur.bounding_box.x;
         y = s->cur.bounding_box.y;
@@ -1134,8 +1133,8 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    /* We are not yet trying to find the smallest bounding box, but we want to find a good approximation quickly.
     * That's why we initialiaze min and max search to geometry of the parent object.
     */
-   Evas_Object_Protected_Data *smart_obj = eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_CLASS);
-   Evas_Smart_Data *smart_parent = eo_data_scope_get(obj->smart.parent, MY_CLASS);
+   Evas_Object_Protected_Data *smart_obj = obj->smart.parent_object_data;
+   Evas_Smart_Data *smart_parent = obj->smart.parent_data;
    if (!smart_parent || !smart_obj) return;
 
    if (smart_obj->cur->valid_bounding_box)
@@ -1223,7 +1222,7 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
      }
 
    if (propagate)
-     evas_object_update_bounding_box(obj->smart.parent, smart_obj);
+     evas_object_update_bounding_box(obj->smart.parent, smart_obj, smart_parent);
 }
 
 void

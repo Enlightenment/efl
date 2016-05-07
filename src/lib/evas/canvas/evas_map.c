@@ -528,7 +528,7 @@ _evas_object_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bo
    else
      {
         if (_evas_object_map_parent_check(obj->smart.parent))
-          evas_object_update_bounding_box(eo_obj, obj);
+          evas_object_update_bounding_box(eo_obj, obj, NULL);
      }
 }
 

@@ -372,7 +372,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
         EINA_COW_STATE_WRITE_END(clip, state_write, cur);
 
         if (clip->changed)
-          evas_object_update_bounding_box(eo_clip, clip);
+          evas_object_update_bounding_box(eo_clip, clip, NULL);
      }
 
    evas_object_change(eo_clip, clip);

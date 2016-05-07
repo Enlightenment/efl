@@ -904,7 +904,7 @@ _evas_object_efl_gfx_base_position_set(Eo *eo_obj, Evas_Object_Protected_Data *o
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
-   evas_object_update_bounding_box(eo_obj, obj);
+   evas_object_update_bounding_box(eo_obj, obj, NULL);
 
 ////   obj->cur->cache.geometry.validity = 0;
    obj->changed_move = EINA_TRUE;
@@ -986,7 +986,7 @@ _evas_object_efl_gfx_base_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
-   evas_object_update_bounding_box(eo_obj, obj);
+   evas_object_update_bounding_box(eo_obj, obj, NULL);
 
 ////   obj->cur->cache.geometry.validity = 0;
    evas_object_change(eo_obj, obj);

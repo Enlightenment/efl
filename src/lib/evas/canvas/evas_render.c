@@ -578,7 +578,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
              evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
              evas_object_clip_dirty(obj->cur->clipper->object, obj->cur->clipper);
              evas_object_clip_recalc(obj->cur->clipper);
-             evas_object_update_bounding_box(eo_obj, obj);
+             evas_object_update_bounding_box(eo_obj, obj, NULL);
           }
         if (obj->changed)
           {
@@ -638,7 +638,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
              evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
              evas_object_clip_dirty(obj->cur->clipper->object, obj->cur->clipper);
              evas_object_clip_recalc(obj->cur->clipper);
-             evas_object_update_bounding_box(eo_obj, obj);
+             evas_object_update_bounding_box(eo_obj, obj, NULL);
           }
      }
 

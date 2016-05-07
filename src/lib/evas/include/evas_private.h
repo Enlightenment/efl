@@ -1518,7 +1518,7 @@ Evas_Object *evas_object_new(Evas *e);
 void evas_object_change_reset(Evas_Object *obj);
 void evas_object_cur_prev(Evas_Object *obj);
 void evas_object_free(Evas_Object *obj, int clean_layer);
-void evas_object_update_bounding_box(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+void evas_object_update_bounding_box(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Smart_Data *s);
 void evas_object_inject(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas *e);
 void evas_object_release(Evas_Object *obj, Evas_Object_Protected_Data *pd, int clean_layer);
 void evas_object_change(Evas_Object *obj, Evas_Object_Protected_Data *pd);
@@ -1575,9 +1575,8 @@ void _evas_object_image_video_overlay_hide(Evas_Object *obj);
 void _evas_object_image_video_overlay_do(Evas_Object *obj);
 void _evas_object_image_free(Evas_Object *obj);
 void evas_object_smart_bounding_box_get(Evas_Object *eo_obj,
-					Evas_Coord_Rectangle *cur_bounding_box,
-					Evas_Coord_Rectangle *prev_bounding_box);
-void evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+                                        Evas_Coord_Rectangle *cur_bounding_box,
+                                        Evas_Coord_Rectangle *prev_bounding_box);
 void evas_object_smart_del(Evas_Object *obj);
 void evas_object_smart_cleanup(Evas_Object *obj);
 void evas_object_smart_member_raise(Evas_Object *member);
