@@ -31,11 +31,7 @@ collections {
 #include "edc/elm/list.edc"
 #include "edc/elm/conform.edc"
 #include "edc/elm/icon.edc"
-
-// Disable all the FDO icons for the moment as they are in svg format, the svg
-// loader is still outside the efl tree, thus we cannot build efl :(
-// #include "edc/elm/icon_fdo.edc"
-
+#include "edc/elm/icon_fdo.edc"
 #include "edc/elm/video.edc"
 #include "edc/elm/access.edc"
 #include "edc/elm/photo.edc"
