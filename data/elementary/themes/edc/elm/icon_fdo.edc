@@ -361,20 +361,20 @@ ICO1(CTX, "emblem-synchronizing", 96) /* */
 
 ////  categories  /////////////////////////////////////////////////////////////
 #define CTX "categories"
-// ICO1(CTX, "applications-accessories")
-// ICO1(CTX, "applications-development")
-// ICO1(CTX, "applications-games")
-// ICO1(CTX, "applications-graphics")
-// ICO1(CTX, "applications-internet")
-// ICO1(CTX, "applications-multimedia")
-// ICO1(CTX, "applications-office")
-// ICO1(CTX, "applications-other")
-// ICO1(CTX, "applications-science")
-// ICO1(CTX, "applications-system")
-// ICO1(CTX, "applications-utilities")
-// ICO1(CTX, "preferences-desktop")
-// ICO1(CTX, "preferences-system")
-// ICO1(CTX, "preferences-other")
+ICO2(CTX, "applications-accessories")
+ICO2(CTX, "applications-development")
+ICO2(CTX, "applications-games")
+ICO2(CTX, "applications-graphics")
+ICO2(CTX, "applications-internet")
+ICO2(CTX, "applications-multimedia")
+ICO2(CTX, "applications-office")
+ICO2(CTX, "applications-other")
+ICO2(CTX, "applications-science")
+ICO2(CTX, "applications-system")
+ICO2(CTX, "applications-utilities")
+ICO2(CTX, "preferences-desktop")
+ICO2(CTX, "preferences-system")
+ICO2(CTX, "preferences-other")
 // TODO applications-engineering
 // TODO preferences-desktop-peripherals
 // TODO preferences-desktop-personal
