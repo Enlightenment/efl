@@ -23,16 +23,16 @@
  */
 
 
-// Single FDO icon in 128px size
-#define ICO1(Cat, Name)                                         \
-   group { name: "elm/icon/"##Name##"/default";                 \
-      min: 16 16;                                               \
-      images.image: ##Cat##"/128/"##Name##".png" COMP;          \
-      parts {                                                   \
-         part { name: "base";                                   \
-            desc {                                              \
-               image.normal: ##Cat##"/128/"##Name##".png";      \
-               aspect: 1.0 1.0; aspect_preference: BOTH;        \
+// Single FDO icon
+#define ICO1(Cat, Name, Size)                                     \
+   group { name: "elm/icon/"##Name##"/default";                   \
+      min: 16 16;                                                 \
+      images.image: ##Cat##"/"##Size##"/"##Name##".png" COMP;     \
+      parts {                                                     \
+         part { name: "base";                                     \
+            desc {                                                \
+               image.normal: ##Cat##"/"##Size##"/"##Name##".png"; \
+               aspect: 1.0 1.0; aspect_preference: BOTH;          \
    }  }  }  }
 
 
@@ -65,19 +65,19 @@
 
 ////  places  /////////////////////////////////////////////////////////////////
 #define CTX "places"
-ICO1(CTX, "user-home")
-ICO1(CTX, "user-bookmarks")
-ICO1(CTX, "user-trash")
+ICO1(CTX, "user-home", 128)
+ICO1(CTX, "user-bookmarks", 128)
+ICO1(CTX, "user-trash", 128)
 ICO2(CTX, "folder")
 ICO2(CTX, "folder-remote")
 ICO2(CTX, "folder-open") /* */
 ICO2(CTX, "folder-home") /* */
 ICO2(CTX, "folder-downloads") /* */
-ICO1(CTX, "folder-recent") /* */
-ICO1(CTX, "folder-documents") /* */
-ICO1(CTX, "folder-images") /* */
-ICO1(CTX, "folder-music") /* */
-ICO1(CTX, "folder-videos") /* */
+ICO1(CTX, "folder-recent", 128) /* */
+ICO1(CTX, "folder-documents", 128) /* */
+ICO1(CTX, "folder-images", 128) /* */
+ICO1(CTX, "folder-music", 128) /* */
+ICO1(CTX, "folder-videos", 128) /* */
 ICO2(CTX, "network-server")
 ICO2(CTX, "network-workgroup")
 ICO2(CTX, "start-here")
@@ -87,17 +87,17 @@ ICO2(CTX, "start-here")
 
 ////  emblems  ////////////////////////////////////////////////////////////////
 #define CTX "emblems"
-// ICO1(CTX, "emblem-default")
-// ICO1(CTX, "emblem-downloads")
-// ICO1(CTX, "emblem-favorite")
-// ICO1(CTX, "emblem-important")
-// ICO1(CTX, "emblem-readonly")
-// ICO1(CTX, "emblem-shared")
-// ICO1(CTX, "emblem-symbolic-link")
-// ICO1(CTX, "emblem-unreadable")
-// ICO1(CTX, "emblem-system")
-// ICO1(CTX, "emblem-synchronized")
-// ICO1(CTX, "emblem-synchronizing") /* */
+ICO1(CTX, "emblem-default", 96)
+ICO1(CTX, "emblem-downloads", 96)
+ICO1(CTX, "emblem-favorite", 96)
+ICO1(CTX, "emblem-important", 96)
+ICO1(CTX, "emblem-readonly", 96)
+ICO1(CTX, "emblem-shared", 96)
+ICO1(CTX, "emblem-symbolic-link", 96)
+ICO1(CTX, "emblem-unreadable", 96)
+ICO1(CTX, "emblem-system", 96)
+ICO1(CTX, "emblem-synchronized", 96)
+ICO1(CTX, "emblem-synchronizing", 96) /* */
 // TODO emblem-documents
 // TODO emblem-mail
 // TODO emblem-photos
