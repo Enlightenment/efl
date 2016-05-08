@@ -106,31 +106,41 @@ ICO1(CTX, "emblem-synchronizing", 96) /* */
 
 ////  actions  ////////////////////////////////////////////////////////////////
 #define CTX "actions"
+// TODO address-book-new
+// TODO appointment-new
+// TODO contact-new
+ICO1(CTX, "application-exit", 128)
 ICO1(CTX, "call-start", 128)
 ICO1(CTX, "call-stop", 128)
 ICO1(CTX, "document-open", 128)
-ICO1(CTX, "document-open-recent", 128)
+// ICO1(CTX, "document-open-recent", 128)
 ICO1(CTX, "document-page-setup", 128)
 ICO1(CTX, "document-properties", 128)
 ICO1(CTX, "document-save", 128)
 ICO1(CTX, "document-save-as", 128)
 ICO1(CTX, "document-send", 128)
 ICO1(CTX, "document-close", 128) /* */
-// TODO document-new
-// TODO document-print
-// TODO document-print-preview
-// TODO document-revert
+ICO1(CTX, "document-new", 128);
+ICO1(CTX, "document-print", 128);
+ICO1(CTX, "document-print-preview", 128);
+ICO1(CTX, "document-revert", 128);
+ICO1(CTX, "document-export", 128); /* */
+ICO1(CTX, "document-import", 128); /* */
 
 ICO1(CTX, "edit-clear", 128)
 ICO1(CTX, "edit-copy", 128)
 ICO1(CTX, "edit-cut", 128)
 ICO1(CTX, "edit-delete", 128)
 ICO1(CTX, "edit-find", 128)
+ICO1(CTX, "edit-find-replace", 128)
 ICO1(CTX, "edit-paste", 128)
 ICO1(CTX, "edit-redo", 128)
 ICO1(CTX, "edit-undo", 128)
 ICO1(CTX, "edit-select-all", 128)
-// TODO edit-find-replace
+
+ICO1(CTX, "folder-copy", 128) /* */
+ICO1(CTX, "folder-move", 128) /* */
+ICO1(CTX, "folder-new", 128) /* */
 
 ICO1(CTX, "format-indent-less", 128)
 ICO1(CTX, "format-indent-more", 128)
@@ -164,6 +174,18 @@ ICO1(CTX, "insert-text", 128)
 ICO1(CTX, "list-add", 128)
 ICO1(CTX, "list-remove", 128)
 
+// TODO mail-forward
+// TODO mail-mark-important
+// TODO mail-mark-junk
+// TODO mail-mark-notjunk
+// TODO mail-mark-read
+// TODO mail-mark-unread
+// TODO mail-message-new
+// TODO mail-reply-all
+// TODO mail-reply-sender
+// TODO mail-send
+// TODO mail-send-receive
+
 ICO1(CTX, "media-eject", 128)
 ICO1(CTX, "media-playback-pause", 128)
 ICO1(CTX, "media-playback-start", 128)
@@ -179,49 +201,41 @@ ICO1(CTX, "object-flip-vertical", 128)
 ICO1(CTX, "object-rotate-left", 128)
 ICO1(CTX, "object-rotate-right", 128)
 
-ICO1(CTX, "zoom-fit-best", 128)
-ICO1(CTX, "zoom-in", 128)
-ICO1(CTX, "zoom-original", 128)
-ICO1(CTX, "zoom-out", 128)
+ICO1(CTX, "process-stop", 128)
+ICO1(CTX, "tools-check-spelling", 128)
+
+ICO1(CTX, "view-list-compact", 128) /* */
+ICO1(CTX, "view-list-details", 128) /* */
+ICO1(CTX, "view-list-icons", 128) /* */
 
 ICO1(CTX, "view-fullscreen", 128)
 ICO1(CTX, "view-refresh", 128)
 ICO1(CTX, "view-restore", 128)
+ICO1(CTX, "view-sort-ascending", 128)
+ICO1(CTX, "view-sort-descending", 128)
 ICO1(CTX, "view-close", 128) /* */
-// TODO view-sort-ascending
-// TODO view-sort-descending
 
 ICO1(CTX, "window-close", 128)
-// TODO window-new
+ICO1(CTX, "window-new", 128)
 
 ICO1(CTX, "system-run", 128)
 ICO1(CTX, "system-shutdown", 128)
+ICO1(CTX, "system-reboot", 128)
+ICO1(CTX, "system-log-out", 128)
+ICO1(CTX, "system-search", 128)
 // TODO system-lock-screen
-// TODO system-log-out
-// TODO system-search
-// TODO system-reboot
 
-// TODO tools-check-spelling
-// TODO address-book-new
-// TODO application-exit
-// TODO appointment-new
-// TODO contact-new
-// TODO folder-new
-// TODO help-about
-// TODO help-contents
+ICO1(CTX, "help-about", 128)
+ICO1(CTX, "help-contents", 128)
 // TODO help-faq
-// TODO mail-forward
-// TODO mail-mark-important
-// TODO mail-mark-junk
-// TODO mail-mark-notjunk
-// TODO mail-mark-read
-// TODO mail-mark-unread
-// TODO mail-message-new
-// TODO mail-reply-all
-// TODO mail-reply-sender
-// TODO mail-send
-// TODO mail-send-receive
-// TODO process-stop
+
+ICO1(CTX, "zoom-fit-best", 128)
+ICO1(CTX, "zoom-fit", 128) /* */
+// TODO ICO1(CTX, "zoom-fill", 128) /* */
+ICO1(CTX, "zoom-in", 128)
+ICO1(CTX, "zoom-original", 128)
+ICO1(CTX, "zoom-out", 128)
+
 #undef CTX
 
 

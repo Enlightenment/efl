@@ -14,31 +14,11 @@
    id="svg3027"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="go-down.svg">
-  <defs
-     id="defs3029" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="2.8"
-     inkscape:cx="55.527467"
-     inkscape:cy="24.763114"
-     inkscape:document-units="px"
-     inkscape:current-layer="svg3027"
-     showgrid="false"
-     inkscape:window-width="1013"
-     inkscape:window-height="847"
-     inkscape:window-x="610"
-     inkscape:window-y="112"
-     inkscape:window-maximized="0"
-     showguides="true"
-     inkscape:guide-bbox="true" />
+   sodipodi:docname="go-down.svg"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <metadata
-     id="metadata3032">
+     id="metadata5">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -49,14 +29,63 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <g
-     inkscape:label="Livello 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-924.36218)" />
+  <defs
+     id="defs3029" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="86.96211"
+     inkscape:cy="54.968792"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="true"
+     inkscape:window-width="1013"
+     inkscape:window-height="847"
+     inkscape:window-x="1932"
+     inkscape:window-y="20"
+     inkscape:window-maximized="0"
+     inkscape:showpageshadow="false"
+     borderlayer="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-to-guides="false"
+     inkscape:snap-grids="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2981"
+       empspacing="4"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       spacingx="4px"
+       spacingy="4px"
+       dotted="false" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="0,120"
+       id="guide2999" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="120,128"
+       id="guide3001" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="0,8"
+       id="guide3003" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="8,128"
+       id="guide3005" />
+  </sodipodi:namedview>
   <path
+     style="fill:#3399ff;fill-opacity:1;stroke:none;display:inline"
+     d="m 42.677699,112.1852 0,-34.675102 -19.593117,0 40.936823,-64.435089 40.936825,64.435089 -19.39113,0 0,34.675102 z"
+     id="Symbol"
      inkscape:connector-curvature="0"
-     d="M 11.352953,102.11841 A 10.091406,10.091406 0 0 1 6.3077547,84.775543 L 56.759738,34.32356 64.01221,27.386409 71.264684,34.32356 121.71668,84.775543 A 10.256547,10.256547 0 1 1 107.21173,99.280488 L 64.01221,56.080978 20.8127,99.280488 a 10.091406,10.091406 0 0 1 -9.459747,2.837922 z"
-     id="path8378"
-     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#3397ff;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+     sodipodi:nodetypes="cccccccc" />
 </svg>

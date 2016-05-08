@@ -14,31 +14,11 @@
    id="svg3027"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="insert-image.svg">
-  <defs
-     id="defs3029" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="2.8"
-     inkscape:cx="55.527467"
-     inkscape:cy="24.763114"
-     inkscape:document-units="px"
-     inkscape:current-layer="svg3027"
-     showgrid="false"
-     inkscape:window-width="1013"
-     inkscape:window-height="847"
-     inkscape:window-x="610"
-     inkscape:window-y="112"
-     inkscape:window-maximized="0"
-     showguides="true"
-     inkscape:guide-bbox="true" />
+   sodipodi:docname="insert-text.svg"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <metadata
-     id="metadata3032">
+     id="metadata5">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -49,32 +29,62 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <g
-     inkscape:label="Livello 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-924.36218)" />
+  <defs
+     id="defs3029" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="40.179582"
+     inkscape:cy="55.189844"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="true"
+     inkscape:window-width="1013"
+     inkscape:window-height="847"
+     inkscape:window-x="1958"
+     inkscape:window-y="81"
+     inkscape:window-maximized="0"
+     inkscape:showpageshadow="false"
+     borderlayer="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-to-guides="false"
+     inkscape:snap-grids="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2981"
+       empspacing="4"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       spacingx="4px"
+       spacingy="4px"
+       dotted="false" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="0,120"
+       id="guide2999" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="120,128"
+       id="guide3001" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="0,8"
+       id="guide3003" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="8,128"
+       id="guide3005" />
+  </sodipodi:namedview>
   <path
      inkscape:connector-curvature="0"
-     d="m 87.63166,90.319937 -7.710971,0 c -1.981003,0 -4.07492,1.00113 -5.542264,2.409709 l -9.879523,9.879674 -9.8796,-9.879754 c -1.465418,-1.410425 -3.561338,-2.409629 -5.542418,-2.409321 l -7.710971,0 -7.7e-5,7.710965 c 0,2.38614 0.695509,4.25893 2.169091,5.78305 l 20.964129,20.48219 20.963975,-20.48219 c 1.472274,-1.5245 2.168783,-3.39714 2.168783,-5.783192 l 0,-7.710977 z"
-     id="path9197"
-     sodipodi:nodetypes="ccccccccccccc"
-     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#bebebe;fill:#3397ff;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans" />
-  <path
-     inkscape:connector-curvature="0"
-     d="m 78.184667,36.085324 a 6.8722955,7.4158781 0 0 0 1.359415,14.669314 l 36.250758,0 a 6.8722955,7.4158781 0 1 0 0,-14.669314 l -36.250758,0 a 6.8722955,7.4158781 0 0 0 -1.359415,0 z"
-     id="path12155"
-     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#3397ff;fill-opacity:1;stroke:none;stroke-width:1.89557707000000009;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
-  <path
-     inkscape:connector-curvature="0"
-     d="m 12.16482,36.085324 c -3.3036189,0.750969 -5.7947946,4.398085 -5.4587429,7.991671 0.336383,3.59366 3.4532919,6.641001 6.8305669,6.677643 l 36.099033,0 c 3.930196,0.62709 7.95895,-3.085452 7.95895,-7.334694 0,-4.249168 -4.028754,-7.961784 -7.95895,-7.33462 l -36.099033,0 c -0.456072,-0.0514 -0.916066,-0.0514 -1.371824,0 z"
-     id="path12167"
-     sodipodi:nodetypes="csccsccc"
-     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#3397ff;fill-opacity:1;stroke:none;stroke-width:1.89557707000000009;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
-  <path
-     inkscape:connector-curvature="0"
-     d="m 50.682684,13.49755 c -6.272214,0.951138 -11.518135,5.100589 -13.997628,10.785018 -0.521425,1.194852 -0.867971,2.536342 -1.147327,3.900964 l 58.771852,0 C 94.117929,27.264777 93.916657,26.25607 93.621469,25.42991 91.077424,18.325199 84.301055,13.49755 76.411357,13.49755 l -22.974802,0 c -0.932295,0 -1.857622,-0.135845 -2.75357,0 z M 35.537729,57.555495 c 1.727857,8.311899 9.104361,14.685982 17.898525,14.685982 l 22.974802,0 c 8.79409,0 16.170741,-6.374083 17.898525,-14.685982 z"
-     id="path16654"
-     sodipodi:nodetypes="cccccsscccsccc"
-     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#3397ff;fill-opacity:1;stroke:none;stroke-width:2.00102352999999988;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:new;font-family:Sans;-inkscape-font-specification:Sans" />
+     id="path3648-6"
+     d="m 23.860245,43.060078 c -5.55979,0 -10.03573,4.475935 -10.03573,10.035728 l 0,20.071454 c 0,5.559794 4.47594,10.035726 10.03573,10.035726 l 25.08932,0 c 5.55979,0 10.03572,-4.475932 10.03572,-10.035726 l -12.54466,0 -7.52679,0 -12.54466,0 c -1.38995,0 -2.50893,-1.118983 -2.50893,-2.508932 l 0,-15.05359 c 0,-1.389949 1.11898,-2.508932 2.50893,-2.508932 l 12.54466,0 7.52679,0 12.54466,0 c 0,-5.559793 -4.47593,-10.035728 -10.03572,-10.035728 l -25.08932,0 z m 55.1965,0 c -5.55979,0 -10.03572,4.475935 -10.03572,10.035728 l 12.54465,0 7.5268,0 12.544655,0 c 1.38994,0 2.50892,1.118983 2.50892,2.508932 l 0,15.05359 c 0,1.389949 -1.11898,2.508932 -2.50892,2.508932 l -12.544655,0 -7.5268,0 -12.54465,0 c 0,5.559794 4.47593,10.035726 10.03572,10.035726 l 25.089305,0 c 5.5598,0 10.03574,-4.475932 10.03574,-10.035726 l 0,-20.071454 c 0,-5.559793 -4.47594,-10.035728 -10.03574,-10.035728 l -25.089305,0 z M 43.931705,58.11367 c -2.7799,0 -5.01787,2.237967 -5.01787,5.017862 0,2.779897 2.23797,5.017864 5.01787,5.017864 l 40.1429,0 c 2.7799,0 5.01787,-2.237967 5.01787,-5.017864 0,-2.779895 -2.23797,-5.017862 -5.01787,-5.017862 l -40.1429,0 z m 0,41.81553 20.07145,20.07146 20.07145,-20.07146 -40.1429,0 z"
+     style="font-size:8.9971447px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#3399ff;fill-opacity:1;stroke:none;display:inline;font-family:Sans;-inkscape-font-specification:Abandoned Bitplane Bold" />
 </svg>
