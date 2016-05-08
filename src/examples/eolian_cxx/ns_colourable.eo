@@ -1,4 +1,4 @@
-class Colourable (Eo.Base)
+class Ns.Colourable (Eo.Base)
 {
     [[Colourable class.]]
     legacy_prefix: legacy;

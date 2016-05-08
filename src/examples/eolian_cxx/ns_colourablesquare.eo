@@ -1,4 +1,4 @@
-class ColourableSquare (Colourable)
+class Ns.ColourableSquare (Ns.Colourable)
 {
     legacy_prefix: legacy;
     data: ColourableSquare_Data;

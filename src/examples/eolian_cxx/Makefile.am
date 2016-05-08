@@ -69,21 +69,21 @@ LDADD = \
 	$(top_builddir)/src/lib/ecore_evas/libecore_evas.la
 
 GENERATED = \
-	colourable.eo.c \
-	colourable.eo.h \
-	colourable.eo.hh \
-	colourable.eo.impl.hh \
-	colourablesquare.eo.c \
-	colourablesquare.eo.h \
-	colourablesquare.eo.hh \
-	colourablesquare.eo.impl.hh
+	ns_colourable.eo.c \
+	ns_colourable.eo.h \
+	ns_colourable.eo.hh \
+	ns_colourable.eo.impl.hh \
+	ns_colourablesquare.eo.c \
+	ns_colourablesquare.eo.h \
+	ns_colourablesquare.eo.hh \
+	ns_colourablesquare.eo.impl.hh
 
 BUILT_SOURCES = $(GENERATED)
 CLEANFILES += $(BUILT_SOURCES)
 
 ECXX_EXAMPLE_EOS = \
-	colourable.eo \
-	colourablesquare.eo
+	ns_colourable.eo \
+	ns_colourablesquare.eo
 
 IMPL = \
 	colourable.c \

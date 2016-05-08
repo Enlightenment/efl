@@ -7,8 +7,8 @@
 # include <config.h>
 #endif
 
-#include "colourable.eo.hh"
-#include "colourablesquare.eo.hh"
+#include "ns_colourable.eo.hh"
+#include "ns_colourablesquare.eo.hh"
 
 int
 main()
@@ -18,21 +18,21 @@ main()
    eina_log_domain_level_set("colourablesquare", EINA_LOG_LEVEL_DBG);
 
    int r, g, b;
-   ::colourable obj1(
+   ::ns::Colourable obj1(
      obj1.rgb_24bits_constructor(0x123456)
    );
    obj1.colour_set(0xc0ffee);
    obj1.composite_colour_get(&r, &g, &b);
 
-   ::colourablesquare obj2(
+   ::ns::ColourableSquare obj2(
      obj2.size_constructor(10)
    );
    obj2.composite_colour_set(r, g, b);
    obj2.size_set(11);
    assert(obj1.colour_get() == obj2.colour_get());
 
-   efl::eo::wref<::colourable> ref = obj1;
-   efl::eina::optional<::colourable> obj3 = ref.lock();
+   efl::eo::wref< ::ns::Colourable> ref = obj1;
+   efl::eina::optional< ::ns::Colourable> obj3 = ref.lock();
    assert(obj3);
    obj3->colour_set(0x00);
 

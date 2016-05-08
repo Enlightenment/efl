@@ -6,24 +6,24 @@
 # include <config.h>
 #endif
 
-#include "colourable.eo.hh"
-#include "colourablesquare.eo.hh"
+#include "ns_colourable.eo.hh"
+#include "ns_colourablesquare.eo.hh"
 
 #include <eo_inherit.hh>
 
 using namespace efl;
 
 struct ColourableCircle
-  : efl::eo::inherit<ColourableCircle, ::colourable>
+  : efl::eo::inherit<ColourableCircle, ::ns::Colourable>
 {
    ColourableCircle(int rgb)
-     : inherit_base(::colourable::rgb_24bits_constructor(rgb))
+     : inherit_base(::ns::Colourable::rgb_24bits_constructor(rgb))
    {}
 
    int colour_get()
    {
       int rgb = 0;
-      rgb = ::colourable_colour_get(eo_super(_eo_ptr(), _eo_class()));
+      rgb = ::ns_colourable_colour_get(eo_super(_eo_ptr(), _eo_class()));
       std::cout << "ColourableCircle::colour_get(" << this << ") ==> "
                 << std::hex << rgb << std::endl;
       return rgb;
@@ -43,16 +43,16 @@ struct ColourableFoo
 };*/
 
 struct ColourableBar
-  : efl::eo::inherit<ColourableBar, ::colourablesquare>
+  : efl::eo::inherit<ColourableBar, ::ns::ColourableSquare>
 {
    ColourableBar()
-     : inherit_base(::colourable::rgb_24bits_constructor(0))
+     : inherit_base(::ns::Colourable::rgb_24bits_constructor(0))
    {}
 
    int colour_get()
    {
       int rgb = 0;
-      rgb = ::colourable_colour_get(eo_super(_eo_ptr(), _eo_class()));
+      rgb = ::ns_colourable_colour_get(eo_super(_eo_ptr(), _eo_class()));
       std::cout << "ColourableBar::colour_get(" << this << ") ==> "
                 << std::hex << rgb << std::endl;
       return rgb;
