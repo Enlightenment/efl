@@ -1,4 +1,6 @@
 
+// Example disabled while Eo Evas API is still rapidly changing
+#if 0
 #include <iostream>
 
 #ifdef HAVE_CONFIG_H
@@ -54,3 +56,8 @@ int main()
    ::ecore_evas_shutdown();
    return 0;
 }
+#else
+int main()
+{
+}
+#endif
