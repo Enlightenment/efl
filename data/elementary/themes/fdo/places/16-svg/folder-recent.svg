@@ -15,7 +15,7 @@
    id="svg8860"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="folder.svg">
+   sodipodi:docname="folder (copia).svg">
   <defs
      id="defs8862">
     <linearGradient
@@ -139,18 +139,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="15.696216"
-     inkscape:cx="5.9220792"
-     inkscape:cy="5.4490333"
+     inkscape:zoom="31.392432"
+     inkscape:cx="4.547738"
+     inkscape:cy="7.2330121"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
      inkscape:window-width="1363"
      inkscape:window-height="924"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0">
+     inkscape:window-x="1792"
+     inkscape:window-y="155"
+     inkscape:window-maximized="0"
+     inkscape:snap-grids="false"
+     inkscape:snap-to-guides="false">
     <inkscape:grid
        type="xygrid"
        id="grid3778"
@@ -167,7 +169,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -206,5 +208,12 @@
        inkscape:connector-curvature="0"
        id="rect3086-0"
        style="opacity:0.3;color:#000000;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <path
+       inkscape:connector-curvature="0"
+       style="opacity:0.8;fill:#ffffff;fill-opacity:1;stroke:none;display:inline"
+       d="m 3.2638112,10.02072 2.3247911,3.249965 2.3632433,-3.249965 -1.8394213,0 C 6.2219474,8.8121678 7.2321377,7.873049 8.469624,7.873049 c 1.310813,2.4e-6 2.370275,1.0594823 2.370275,2.370296 0,1.31081 -1.059462,2.370293 -2.370275,2.370293 l 0,0.595849 0,0.595848 c 1.966208,0 3.561968,-1.595771 3.561968,-3.56199 0,-1.9662187 -1.59576,-3.5619904 -3.561968,-3.5619904 -1.8915474,0 -3.4339902,1.4765894 -3.5488941,3.3393654 z"
+       id="Symbol"
+       sodipodi:nodetypes="ccccsscccsscc"
+       inkscape:label="#path3281" />
   </g>
 </svg>

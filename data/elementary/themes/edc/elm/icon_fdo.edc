@@ -67,21 +67,21 @@
 #define CTX "places"
 ICO1(CTX, "user-home", 128)
 ICO1(CTX, "user-bookmarks", 128)
+ICO2(CTX, "user-desktop")
 ICO1(CTX, "user-trash", 128)
 ICO2(CTX, "folder")
 ICO2(CTX, "folder-remote")
 ICO2(CTX, "folder-open") /* */
 ICO2(CTX, "folder-home") /* */
-ICO2(CTX, "folder-downloads") /* */
-ICO1(CTX, "folder-recent", 128) /* */
-ICO1(CTX, "folder-documents", 128) /* */
-ICO1(CTX, "folder-images", 128) /* */
-ICO1(CTX, "folder-music", 128) /* */
-ICO1(CTX, "folder-videos", 128) /* */
+ICO2(CTX, "folder-download") /* */
+ICO2(CTX, "folder-recent") /* */
+ICO2(CTX, "folder-documents") /* */
+ICO2(CTX, "folder-pictures") /* */
+ICO2(CTX, "folder-music") /* */
+ICO2(CTX, "folder-videos") /* */
 ICO2(CTX, "network-server")
 ICO2(CTX, "network-workgroup")
 ICO2(CTX, "start-here")
-// TODO user-desktop
 #undef CTX
 
 

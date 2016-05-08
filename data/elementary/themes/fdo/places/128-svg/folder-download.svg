@@ -15,7 +15,7 @@
    id="svg26392"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="folder-documents.svg">
+   sodipodi:docname="folder-download.svg">
   <defs
      id="defs26394">
     <linearGradient
@@ -237,9 +237,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.8890874"
-     inkscape:cx="108.20209"
-     inkscape:cy="22.150491"
+     inkscape:zoom="1.9445437"
+     inkscape:cx="241.7895"
+     inkscape:cy="30.96938"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:document-units="px"
@@ -323,17 +323,35 @@
        inkscape:connector-curvature="0"
        id="path3369-7"
        style="opacity:0.3;fill:none;stroke:#000000;stroke-width:0.99999982;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-    <path
+    <g
+       id="g12587-31-2-0-6"
        style="opacity:0.3;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.70000005;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 52.286027,-10.001597 c -1.662,0 -3,1.3379999 -3,2.9999999 l 0,42.0000001 c 0,1.662 1.338,3 3,3 l 30,0 c 1.662,0 3,-1.338 3,-3 l 0,-29.9999996 c 0,-1.662 -13.338,-15.0000004 -15,-15.0000004 z m 1.5,2.9999999 16.5,0 0,12.0000005 12,0 0,28.4999996 c 0,0.831 -0.669,1.5 -1.5,1.5 l -27,0 c -0.831,0 -1.5,-0.669 -1.5,-1.5 l 0,-39.0000001 c 0,-0.831 0.669,-1.5 1.5,-1.5 z"
-       id="rect21401-5-9-7"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="sssssssssscccssssss" />
-    <path
+       transform="matrix(3,0,0,3,41.310952,-9.4400858)">
+      <path
+         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.70000005;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="path2991-3-3-6-2"
+         inkscape:connector-curvature="0"
+         d="M 8,0 C 3.5817219,0 0,3.5817221 0,8 c 0,4.418278 3.5817219,8 8,8 4.418278,0 8,-3.581722 8,-8 C 16,3.5817221 12.418278,0 8,0 z m 0,2 c 3.313708,0 6,2.6862915 6,6 0,3.313708 -2.686292,6 -6,6 C 4.6862915,14 2,11.313708 2,8 2,4.6862915 4.6862915,2 8,2 z" />
+      <path
+         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.70000005;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="rect3005-5-8-6-7-9"
+         inkscape:connector-curvature="0"
+         d="M 7,4 7,8 4,8 8,12 12,8 9,8 9,4 z" />
+    </g>
+    <g
+       id="g12587-31-2-0"
        style="color:#000000;fill:#ffffff;fill-opacity:0.85098039;fill-rule:nonzero;stroke:none;stroke-width:1.70000005;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 52.286027,-11.001837 c -1.662,0 -3,1.3379999 -3,2.9999999 l 0,42.0000001 c 0,1.662 1.338,3 3,3 l 30,0 c 1.662,0 3,-1.338 3,-3 l 0,-29.9999996 c 0,-1.662 -13.338,-15.0000004 -15,-15.0000004 z m 1.5,2.9999999 16.5,0 0,12.0000005 12,0 0,28.4999996 c 0,0.831 -0.669,1.5 -1.5,1.5 l -27,0 c -0.831,0 -1.5,-0.669 -1.5,-1.5 l 0,-39.0000001 c 0,-0.831 0.669,-1.5 1.5,-1.5 z"
-       id="rect21401-5-9"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="sssssssssscccssssss" />
+       transform="matrix(3,0,0,3,41.310952,-10.440326)">
+      <path
+         style="color:#000000;fill:#ffffff;fill-opacity:0.85098039;fill-rule:nonzero;stroke:none;stroke-width:1.70000005;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="path2991-3-3-6"
+         inkscape:connector-curvature="0"
+         d="M 8,0 C 3.5817219,0 0,3.5817221 0,8 c 0,4.418278 3.5817219,8 8,8 4.418278,0 8,-3.581722 8,-8 C 16,3.5817221 12.418278,0 8,0 z m 0,2 c 3.313708,0 6,2.6862915 6,6 0,3.313708 -2.686292,6 -6,6 C 4.6862915,14 2,11.313708 2,8 2,4.6862915 4.6862915,2 8,2 z" />
+      <path
+         style="color:#000000;fill:#ffffff;fill-opacity:0.85098039;fill-rule:nonzero;stroke:none;stroke-width:1.70000005;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="rect3005-5-8-6-7"
+         inkscape:connector-curvature="0"
+         d="M 7,4 7,8 4,8 8,12 12,8 9,8 9,4 z" />
+    </g>
   </g>
 </svg>

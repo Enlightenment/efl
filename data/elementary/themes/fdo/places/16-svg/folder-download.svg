@@ -15,7 +15,7 @@
    id="svg8860"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="folder.svg">
+   sodipodi:docname="folder-download_.svg">
   <defs
      id="defs8862">
     <linearGradient
@@ -131,6 +131,37 @@
        id="linearGradient8858"
        xlink:href="#linearGradient4346"
        inkscape:collect="always" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2264"
+       id="linearGradient3295"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0,-0.2216864,-0.20614647,0,15.422131,15.914558)"
+       x1="28.314739"
+       y1="20.709501"
+       x2="0.81572169"
+       y2="20.709501" />
+    <linearGradient
+       id="linearGradient2264">
+      <stop
+         offset="0"
+         style="stop-color:#f4f4f4;stop-opacity:1;"
+         id="stop2266" />
+      <stop
+         offset="1"
+         style="stop-color:#dbdbdb;stop-opacity:1;"
+         id="stop2268" />
+    </linearGradient>
+    <linearGradient
+       y2="20.709501"
+       x2="0.81572169"
+       y1="20.709501"
+       x1="28.314739"
+       gradientTransform="matrix(0,-0.2216864,-0.20614647,0,15.355721,15.902032)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3134"
+       xlink:href="#linearGradient2264"
+       inkscape:collect="always" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -140,17 +171,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="15.696216"
-     inkscape:cx="5.9220792"
-     inkscape:cy="5.4490333"
+     inkscape:cx="21.700578"
+     inkscape:cy="5.310628"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
-     inkscape:window-width="1363"
-     inkscape:window-height="924"
-     inkscape:window-x="0"
+     inkscape:window-width="1680"
+     inkscape:window-height="979"
+     inkscape:window-x="1680"
      inkscape:window-y="0"
-     inkscape:window-maximized="0">
+     inkscape:window-maximized="0"
+     inkscape:snap-grids="false">
     <inkscape:grid
        type="xygrid"
        id="grid3778"
@@ -206,5 +238,11 @@
        inkscape:connector-curvature="0"
        id="rect3086-0"
        style="opacity:0.3;color:#000000;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:url(#linearGradient3134);fill-opacity:1;fill-rule:nonzero;stroke:#9a9a9a;stroke-width:0.99829459;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible"
+       id="path3288-5"
+       d="m 14.49375,10.63768 -4.073274,4.858368 -4.0528603,-4.858368 1.9609739,0 0,-4.1643909 4.2050004,0 0,4.1643909 z"
+       sodipodi:nodetypes="cccccccc" />
   </g>
 </svg>
