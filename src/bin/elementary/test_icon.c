@@ -145,40 +145,298 @@ test_icon_transparent(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 /* Test: Icon Standard */
-static void
-_standard_list_populate(Evas_Object *list, int size)
+static char *
+_gl_group_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   return strdup(data);
+}
+
+static char *
+_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   return strdup(data);
+}
+
+static Evas_Object *
+_gl_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic;
-   Eina_List *l;
-   const char *group;
-   char name[128], *p;
+   const char *name = data;
+   int size = elm_radio_value_get(evas_object_data_get(obj, "size_rdg"));
 
-   elm_list_clear(list);
-   l = elm_theme_group_base_list(NULL, "elm/icon/");
-   EINA_LIST_FREE(l, group)
+   if (!strcmp(part, "elm.swallow.icon"))
      {
-        // group = "/elm/icon/standard-name/style/maybe_another_style??"
-        snprintf(name, sizeof(name), "%s", group + 9);
-        if ((p = strrchr(name, '/')))
-          *p = '\0';
-        // printf("Found group:%s  Name:%s\n", group, name);
-
-        // quick hack to show only standard-compliant icons
-        // apart from the "folder" one, all the others have "-" in the name
-        // ...also do not show deprecated arrow-* icons
-        if (((strrchr(name, '-') != NULL) || !strcmp(name, "folder")|| !strcmp(name, "starred"))
-            && (strncmp(name, "arrow-", 6)))
-          {
-             ic = elm_icon_add(list);
-             elm_icon_standard_set(ic, name);
-             if (size)
-               evas_object_size_hint_min_set(ic, size, size);
-             elm_list_item_append(list, name, ic, NULL, NULL, NULL);
-          }
-
-         eina_stringshare_del(group);
+        ic = elm_icon_add(obj);
+        // evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        elm_icon_standard_set(ic, name);
+        if (size)
+          evas_object_size_hint_min_set(ic, size, size);
+        return ic;
      }
-   elm_list_go(list);
+
+   return NULL;
+}
+
+static void
+_standard_genlist_populate(Evas_Object *gl)
+{
+   Elm_Genlist_Item_Class *itc, *itc_g;
+   Elm_Object_Item *git;
+
+   itc_g = elm_genlist_item_class_new();
+   itc_g->item_style = "group_index";
+   itc_g->func.text_get = _gl_group_text_get;
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = _gl_text_get;
+   itc->func.content_get = _gl_content_get;
+
+#define CONTEXT(NAME) \
+   git = elm_genlist_item_append(gl, itc_g, NAME, NULL, \
+                                 ELM_GENLIST_ITEM_GROUP, NULL, NULL);
+
+#define IC(NAME) \
+   elm_genlist_item_append(gl, itc, NAME, git, \
+                           ELM_GENLIST_ITEM_NONE, NULL, NULL);
+
+   CONTEXT("Places")
+   IC("user-home")
+   IC("user-bookmarks")
+   IC("user-desktop")
+   IC("user-trash")
+   IC("folder")
+   IC("folder-remote")
+   IC("folder-open")
+   IC("folder-home")
+   IC("folder-download")
+   IC("folder-recent")
+   IC("folder-documents")
+   IC("folder-pictures")
+   IC("folder-music")
+   IC("folder-videos")
+   IC("network-server")
+   IC("network-workgroup")
+   IC("start-here")
+
+   CONTEXT("Emblems")
+   IC("emblem-default")
+   IC("emblem-downloads")
+   IC("emblem-favorite")
+   IC("emblem-important")
+   IC("emblem-readonly")
+   IC("emblem-shared")
+   IC("emblem-symbolic-link")
+   IC("emblem-unreadable")
+   IC("emblem-system")
+   IC("emblem-synchronized")
+   IC("emblem-synchronizing")
+
+   CONTEXT("Actions")
+   IC("application-exit")
+   IC("call-start")
+   IC("call-stop")
+   IC("document-open")
+   IC("document-page-setup")
+   IC("document-properties")
+   IC("document-save")
+   IC("document-save-as")
+   IC("document-send")
+   IC("document-close")
+   IC("document-new")
+   IC("document-print")
+   IC("document-print-preview")
+   IC("document-revert")
+   IC("document-export")
+   IC("document-import")
+   IC("edit-clear")
+   IC("edit-copy")
+   IC("edit-cut")
+   IC("edit-delete")
+   IC("edit-find")
+   IC("edit-find-replace")
+   IC("edit-paste")
+   IC("edit-redo")
+   IC("edit-undo")
+   IC("edit-select-all")
+   IC("folder-copy")
+   IC("folder-move")
+   IC("folder-new")
+   IC("format-indent-less")
+   IC("format-indent-more")
+   IC("format-justify-center")
+   IC("format-justify-fill")
+   IC("format-justify-left")
+   IC("format-justify-right")
+   IC("format-text-direction-ltr")
+   IC("format-text-direction-rtl")
+   IC("format-text-bold")
+   IC("format-text-italic")
+   IC("format-text-underline")
+   IC("format-text-strikethrough")
+   IC("go-home")
+   IC("go-bottom")
+   IC("go-down")
+   IC("go-first")
+   IC("go-jump")
+   IC("go-last")
+   IC("go-next")
+   IC("go-previous")
+   IC("go-top")
+   IC("go-up")
+   IC("insert-image")
+   IC("insert-link")
+   IC("insert-object")
+   IC("insert-text")
+   IC("list-add")
+   IC("list-remove")
+   IC("media-eject")
+   IC("media-playback-pause")
+   IC("media-playback-start")
+   IC("media-playback-stop")
+   IC("media-record")
+   IC("media-seek-backward")
+   IC("media-seek-forward")
+   IC("media-skip-backward")
+   IC("media-skip-forward")
+   IC("object-flip-horizontal")
+   IC("object-flip-vertical")
+   IC("object-rotate-left")
+   IC("object-rotate-right")
+   IC("process-stop")
+   IC("tools-check-spelling")
+   IC("view-list-compact")
+   IC("view-list-details")
+   IC("view-list-icons")
+   IC("view-fullscreen")
+   IC("view-refresh")
+   IC("view-restore")
+   IC("view-sort-ascending")
+   IC("view-sort-descending")
+   IC("view-close")
+   IC("window-close")
+   IC("window-new")
+   IC("system-run")
+   IC("system-shutdown")
+   IC("system-reboot")
+   IC("system-log-out")
+   IC("system-search")
+   IC("help-about")
+   IC("help-contents")
+   IC("zoom-fit-best")
+   IC("zoom-fit")
+   IC("zoom-in")
+   IC("zoom-original")
+   IC("zoom-out")
+
+   CONTEXT("Status")
+   IC("audio-volume-high")
+   IC("audio-volume-low")
+   IC("audio-volume-medium")
+   IC("audio-volume-muted")
+   IC("audio-volume")
+   IC("battery-caution")
+   IC("battery-empty")
+   IC("battery-low")
+   IC("battery-good")
+   IC("battery-full")
+   IC("battery-caution-charging")
+   IC("battery-empty-charging")
+   IC("battery-low-charging")
+   IC("battery-good-charging")
+   IC("battery-full-charging")
+   IC("bluetooth-active")
+   IC("bluetooth-disabled")
+   IC("changes-allow")
+   IC("changes-prevent")
+   IC("dialog-error")
+   IC("dialog-information")
+   IC("dialog-password")
+   IC("dialog-question")
+   IC("dialog-warning")
+   IC("media-playlist-repeat")
+   IC("media-playlist-shuffle")
+   IC("network-cellular-3g")
+   IC("network-cellular-4g")
+   IC("network-cellular-edge")
+   IC("network-cellular-gprs")
+   IC("network-cellular-umts")
+   IC("network-cellular-connected")
+   IC("network-cellular-signal-excellent")
+   IC("network-cellular-signal-good")
+   IC("network-cellular-signal-none")
+   IC("network-cellular-signal-ok")
+   IC("network-cellular-signal-weak")
+   IC("network-cellular-signal-acquiring")
+   IC("network-error")
+   IC("network-offline")
+   IC("network-receive")
+   IC("network-transmit-receive")
+   IC("network-transmit")
+   IC("network-idle")
+   IC("network-vpn")
+   IC("network-vpn-acquiring")
+   IC("network-wireless-acquiring")
+   IC("network-wireless-encrypted")
+   IC("network-wireless-signal-excellent")
+   IC("network-wireless-signal-good")
+   IC("network-wireless-signal-none")
+   IC("network-wireless-signal-ok")
+   IC("network-wireless-signal-weak")
+   IC("printer-error")
+   IC("printer-printing")
+   IC("printer-warning")
+   IC("security-high")
+   IC("security-medium")
+   IC("security-low")
+   IC("software-update-available")
+   IC("software-update-urgent")
+   IC("user-available")
+   IC("user-away")
+   IC("user-busy")
+   IC("user-invisible")
+   IC("user-idle")
+   IC("user-offline")
+   IC("weather-clear-night")
+   IC("weather-clear")
+   IC("weather-clouds-night")
+   IC("weather-clouds")
+   IC("weather-few-clouds-night")
+   IC("weather-few-clouds")
+   IC("weather-fog")
+   IC("weather-overcast")
+   IC("weather-severe-alert")
+   IC("weather-showers-scattered")
+   IC("weather-showers")
+   IC("weather-snow")
+   IC("weather-storm")
+   IC("mail-attachment")
+   IC("mail-unread")
+   IC("mail-read")
+   IC("starred")
+   IC("non-starred")
+
+   CONTEXT("Categories")
+   IC("applications-accessories")
+   IC("applications-development")
+   IC("applications-games")
+   IC("applications-graphics")
+   IC("applications-internet")
+   IC("applications-multimedia")
+   IC("applications-office")
+   IC("applications-other")
+   IC("applications-science")
+   IC("applications-system")
+   IC("applications-utilities")
+   IC("preferences-desktop")
+   IC("preferences-system")
+   IC("preferences-other")
+
+#undef CONTEXT
+#undef IC
+
+   elm_genlist_item_class_free(itc);
+   elm_genlist_item_class_free(itc_g);
 }
 
 static void
@@ -186,9 +444,8 @@ _rdg_changed_cb(void *data, Evas_Object *obj EINA_UNUSED,
                 void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
-   Evas_Object *size_rdg = evas_object_data_get(li, "size_rdg");
 
-   _standard_list_populate(li, elm_radio_value_get(size_rdg));
+   elm_genlist_realized_items_update(li);
 }
 
 static void
@@ -257,11 +514,10 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
-   li = elm_list_add(box);
-   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   li = elm_genlist_add(box);
+   evas_object_size_hint_expand_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(li, "selected", _list_selected_cb, NULL);
-   _standard_list_populate(li, 0);
    evas_object_show(li);
 
    // lookup order
@@ -357,7 +613,8 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(rd);
    evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
 
-   // pack the list
+   // populate and pack the list
+   _standard_genlist_populate(li);
    elm_box_pack_end(box, li);
 
    // live resize
@@ -398,6 +655,6 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(bt);
 
    // show the win
-   evas_object_resize(win, 300, 400);
+   evas_object_resize(win, 300, 500);
    evas_object_show(win);
 }
