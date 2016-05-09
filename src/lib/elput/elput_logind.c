@@ -90,8 +90,7 @@ _cb_device_resumed(void *data, const Eldbus_Message *msg)
 {
    Elput_Manager *em;
    const char *errname, *errmsg;
-   uint32_t maj, min;
-   int fd;
+   uint32_t maj;
 
    em = data;
 
@@ -101,7 +100,7 @@ _cb_device_resumed(void *data, const Eldbus_Message *msg)
         return;
      }
 
-   if (eldbus_message_arguments_get(msg, "uuh", &maj, &min, &fd))
+   if (eldbus_message_arguments_get(msg, "u", &maj))
      {
         if ((em->sync) && (maj == 226)) // DRM_MAJOR
           {
