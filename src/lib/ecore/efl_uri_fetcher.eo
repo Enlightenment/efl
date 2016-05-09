@@ -1,0 +1,13 @@
+import eina_types;
+
+interface Efl.Uri.Fetcher
+{
+   methods {
+      fetch {
+         params {
+            @in file: const(char)*;
+         }
+         return: promise<Eina.Stringshare*>;
+      }
+   }
+}

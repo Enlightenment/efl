@@ -1,0 +1,13 @@
+import eina_types;
+
+interface Efl.Uri.Mapper
+{
+   methods {
+      fetch {
+         params {
+            @in file: const(stringshare);
+         }
+         return: promise<Eina.File*>;
+      }
+   }
+}

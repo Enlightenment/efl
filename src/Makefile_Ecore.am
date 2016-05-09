@@ -10,14 +10,20 @@ ecore_eolian_files = \
 	lib/ecore/efl_loop.eo \
 	lib/ecore/efl_loop_user.eo \
 	lib/ecore/efl_loop_fd.eo \
+	lib/ecore/efl_uri_manager.eo \
+	lib/ecore/efl_uri_mapper.eo \
+	lib/ecore/efl_uri_fetcher.eo \
 	lib/ecore/ecore_parent.eo \
 	$(ecore_eolian_files_legacy)
+
+ecore_eolian_files_internal = \
+	$(ecore_eolian_files)
 
 ecore_eolian_type_files = \
 	lib/ecore/ecore_types.eot
 
-ecore_eolian_c = $(ecore_eolian_files:%.eo=%.eo.c)
-ecore_eolian_h = $(ecore_eolian_files:%.eo=%.eo.h) \
+ecore_eolian_c = $(ecore_eolian_files_internal:%.eo=%.eo.c)
+ecore_eolian_h = $(ecore_eolian_files_internal:%.eo=%.eo.h) \
                  $(ecore_eolian_files_legacy:%.eo=%.eo.legacy.h) \
                  $(ecore_eolian_type_files:%.eot=%.eot.h)
 
@@ -61,6 +67,7 @@ lib/ecore/ecore_job.c \
 lib/ecore/ecore_main.c \
 lib/ecore/efl_loop_user.c \
 lib/ecore/efl_loop_fd.c \
+lib/ecore/efl_uri_manager.c \
 lib/ecore/ecore_pipe.c \
 lib/ecore/ecore_poller.c \
 lib/ecore/ecore_time.c \

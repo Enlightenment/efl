@@ -1,0 +1,67 @@
+import eina_types;
+
+class Efl.Uri.Manager (Efl.Loop_User)
+{
+   [[The Efl Uri manager
+
+   Efl URI manager give you an easy way to request the opening of a file
+   providing expansion of local FreeDesktop name (and more) along with
+   remote file access if your system provide them. Of course everything
+   being done asynchronously.]]
+
+   methods {
+      fetch {
+         [[Request the resolution of all possible needed expansion for a
+         specific file path.]]
+         params {
+            @in file: const(char)*; [[The file path to expand.]]
+         }
+         return: promise<Eina.Stringshare*>; [[A promise to return the expanded file path in the future.]]
+      }
+      mmap {
+         [[Request the resolution of all possible expansion and provide the
+           file. This may include doing network operation.]]
+         params {
+            @in file: const(char)*; [[The file to get.]]
+         }
+         return: promise<Eina.File*>; [[A promise to return the content of the file path in the future.]]
+      }
+      register_fetcher {
+         [[Register an URI fetcher that will be run when a specific regexp has been found to match
+         its expansion capability.]]
+         params {
+            @in regexp: const(char)* @nonull; [[The regexp to match against]]
+            @in manager: const(Efl.Uri.Fetcher); [[The fetcher manager to ask for this expansion.]]
+         }
+         return: bool; [[Will return true uppon success.]]
+      }
+      unregister_fetcher {
+         [[Register an URI fetcher that will be run when a specific regexp has been found to match
+         its expansion capability.]]
+         params {
+            @in regexp: const(char)* @nonull; [[The regexp to match against]]
+            @in manager: const(Efl.Uri.Fetcher); [[The fetcher manager to ask for this expansion.]]
+         }
+         return: bool; [[Will return true uppon success.]]
+      }      
+      register_mapper {
+         [[Register an URI mapper that will be run for a specific kind of URI schema.]]
+         params {
+            @in prefix: const(char)*; [[The URI schema to identify the capability provided.]]
+            @in manager: const(Efl.Uri.Mapper); [[The URI mapper to match the above schema.]]
+         }
+         return: bool; [[Will return true uppon success.]]
+      }
+      unregister_mapper {
+         [[Register an URI mapper that will be run for a specific kind of URI schema.]]
+         params {
+            @in prefix: const(char)*; [[The URI schema to identify the capability provided.]]
+            @in manager: const(Efl.Uri.Mapper); [[The URI mapper to match the above schema.]]
+         }
+         return: bool; [[Will return true uppon success.]]
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+   }
+}
