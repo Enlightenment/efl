@@ -122,6 +122,14 @@ static inline unsigned int eina_swap32(unsigned int x);
  */
 static inline unsigned long long eina_swap64(unsigned long long x);
 
+#ifndef MIN
+# define MIN(x, y)          (((x) > (y)) ? (y) : (x))
+#endif
+
+#ifndef MAX
+# define MAX(x, y)          (((x) > (y)) ? (x) : (y))
+#endif
+
 #include "eina_inline_cpu.x"
 
 /**
