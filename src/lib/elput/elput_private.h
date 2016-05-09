@@ -222,6 +222,7 @@ struct _Elput_Manager
    char *sid;
    const char *seat;
    unsigned int vt_num;
+   Ecore_Event_Handler *vt_hdlr;
 
    struct
      {
