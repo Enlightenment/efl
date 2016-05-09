@@ -698,8 +698,48 @@ _selection_data_cb(void *data EINA_UNUSED,
    return EINA_TRUE;
 }
 
+static void
+_dnd_enter_cb(void *data EINA_UNUSED,
+              Evas_Object *obj)
+{
+   elm_object_focus_set(obj, EINA_TRUE);
+}
+
+static void
+_dnd_leave_cb(void *data EINA_UNUSED,
+              Evas_Object *obj)
+{
+   if (_elm_config->desktop_entry)
+     elm_object_focus_set(obj, EINA_FALSE);
+}
+
+static void
+_dnd_pos_cb(void *data EINA_UNUSED,
+            Evas_Object *obj,
+            Evas_Coord x,
+            Evas_Coord y,
+            Elm_Xdnd_Action action EINA_UNUSED)
+{
+   int pos;
+   Evas_Coord ox, oy, ex, ey;
+
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
+   evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
+   x = x + ox - ex;
+   y = y + oy - ey;
+
+   edje_object_part_text_cursor_coord_set
+      (sd->entry_edje, "elm.text", EDJE_CURSOR_USER, x, y);
+   pos = edje_object_part_text_cursor_pos_get
+      (sd->entry_edje, "elm.text", EDJE_CURSOR_USER);
+   edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                                        EDJE_CURSOR_MAIN, pos);
+}
+
 static Eina_Bool
-_drag_drop_cb(void *data EINA_UNUSED,
+_dnd_drop_cb(void *data EINA_UNUSED,
               Evas_Object *obj,
               Elm_Selection_Data *drop)
 {
@@ -732,10 +772,10 @@ EOLIAN static Eina_Bool
 _elm_entry_elm_widget_disable(Eo *obj, Elm_Entry_Data *sd)
 {
    elm_drop_target_del(obj, sd->drop_format,
-                       NULL, NULL,
-                       NULL, NULL,
-                       NULL, NULL,
-                       _drag_drop_cb, NULL);
+                       _dnd_enter_cb, NULL,
+                       _dnd_leave_cb, NULL,
+                       _dnd_pos_cb, NULL,
+                       _dnd_drop_cb, NULL);
    if (elm_object_disabled_get(obj))
      {
         edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
@@ -757,10 +797,10 @@ _elm_entry_elm_widget_disable(Eo *obj, Elm_Entry_Data *sd)
         sd->disabled = EINA_FALSE;
         sd->drop_format = _get_drop_format(obj);
         elm_drop_target_add(obj, sd->drop_format,
-                            NULL, NULL,
-                            NULL, NULL,
-                            NULL, NULL,
-                            _drag_drop_cb, NULL);
+                            _dnd_enter_cb, NULL,
+                            _dnd_leave_cb, NULL,
+                            _dnd_pos_cb, NULL,
+                            _dnd_drop_cb, NULL);
      }
 
    return EINA_TRUE;
@@ -3479,10 +3519,10 @@ _elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
 
    priv->drop_format = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
    elm_drop_target_add(obj, priv->drop_format,
-                       NULL, NULL,
-                       NULL, NULL,
-                       NULL, NULL,
-                       _drag_drop_cb, NULL);
+                       _dnd_enter_cb, NULL,
+                       _dnd_leave_cb, NULL,
+                       _dnd_pos_cb, NULL,
+                       _dnd_drop_cb, NULL);
 
    if (!elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
@@ -3898,10 +3938,10 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
    sd->password = password;
 
    elm_drop_target_del(obj, sd->drop_format,
-                       NULL, NULL,
-                       NULL, NULL,
-                       NULL, NULL,
-                       _drag_drop_cb, NULL);
+                       _dnd_enter_cb, NULL,
+                       _dnd_leave_cb, NULL,
+                       _dnd_pos_cb, NULL,
+                       _dnd_drop_cb, NULL);
    if (password)
      {
         sd->single_line = EINA_TRUE;
@@ -3914,10 +3954,10 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
      {
         sd->drop_format = _get_drop_format(obj);
         elm_drop_target_add(obj, sd->drop_format,
-                            NULL, NULL,
-                            NULL, NULL,
-                            NULL, NULL,
-                            _drag_drop_cb, NULL);
+                            _dnd_enter_cb, NULL,
+                            _dnd_leave_cb, NULL,
+                            _dnd_pos_cb, NULL,
+                            _dnd_drop_cb, NULL);
 
         elm_entry_input_hint_set(obj, ((sd->input_hints | ELM_INPUT_HINT_AUTO_COMPLETE) & ~ELM_INPUT_HINT_SENSITIVE_DATA));
         _entry_selection_callbacks_register(obj);
@@ -4041,18 +4081,18 @@ _elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
    elm_obj_widget_theme_apply(obj);
 
    elm_drop_target_del(obj, sd->drop_format,
-                       NULL, NULL,
-                       NULL, NULL,
-                       NULL, NULL,
-                       _drag_drop_cb, NULL);
+                       _dnd_enter_cb, NULL,
+                       _dnd_leave_cb, NULL,
+                       _dnd_pos_cb, NULL,
+                       _dnd_drop_cb, NULL);
    if (editable)
      {
         sd->drop_format = _get_drop_format(obj);
         elm_drop_target_add(obj, sd->drop_format,
-                            NULL, NULL,
-                            NULL, NULL,
-                            NULL, NULL,
-                            _drag_drop_cb, NULL);
+                            _dnd_enter_cb, NULL,
+                            _dnd_leave_cb, NULL,
+                            _dnd_pos_cb, NULL,
+                            _dnd_drop_cb, NULL);
      }
 }
 
@@ -4733,16 +4773,16 @@ _elm_entry_cnp_mode_set(Eo *obj, Elm_Entry_Data *sd, Elm_Cnp_Mode cnp_mode)
      format |= ELM_SEL_FORMAT_IMAGE;
 
    elm_drop_target_del(obj, sd->drop_format,
-                       NULL, NULL,
-                       NULL, NULL,
-                       NULL, NULL,
-                       _drag_drop_cb, NULL);
+                       _dnd_enter_cb, NULL,
+                       _dnd_leave_cb, NULL,
+                       _dnd_pos_cb, NULL,
+                       _dnd_drop_cb, NULL);
    sd->drop_format = format;
    elm_drop_target_add(obj, sd->drop_format,
-                       NULL, NULL,
-                       NULL, NULL,
-                       NULL, NULL,
-                       _drag_drop_cb, NULL);
+                       _dnd_enter_cb, NULL,
+                       _dnd_leave_cb, NULL,
+                       _dnd_pos_cb, NULL,
+                       _dnd_drop_cb, NULL);
 }
 
 EOLIAN static Elm_Cnp_Mode
