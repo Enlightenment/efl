@@ -91,11 +91,19 @@ typedef struct _Elput_Event_Device_Change
    Elput_Device_Change_Type type;
 } Elput_Event_Device_Change;
 
+/* structure to represent session active changes */
+typedef struct _Elput_Event_Session_Active
+{
+   const char *session;
+   Eina_Bool active : 1;
+} Elput_Event_Session_Active;
+
 EAPI extern int ELPUT_EVENT_SEAT_CAPS;
 EAPI extern int ELPUT_EVENT_SEAT_FRAME;
 EAPI extern int ELPUT_EVENT_KEYMAP_SEND;
 EAPI extern int ELPUT_EVENT_MODIFIERS_SEND;
 EAPI extern int ELPUT_EVENT_DEVICE_CHANGE;
+EAPI extern int ELPUT_EVENT_SESSION_ACTIVE;
 
 /**
  * @file

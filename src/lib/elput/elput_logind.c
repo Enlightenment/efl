@@ -3,6 +3,31 @@
 #ifdef HAVE_SYSTEMD
 
 static void
+_logind_session_active_cb_free(void *data EINA_UNUSED, void *event)
+{
+   Elput_Event_Session_Active *ev;
+
+   ev = event;
+   eina_stringshare_del(ev->session);
+   free(ev);
+}
+
+static void
+_logind_session_active_send(Elput_Manager *em, Eina_Bool active)
+{
+   Elput_Event_Session_Active *ev;
+
+   ev = calloc(1, sizeof(Elput_Event_Session_Active));
+   if (!ev) return;
+
+   ev->session = eina_stringshare_add(em->sid);
+   ev->active = active;
+
+   ecore_event_add(ELPUT_EVENT_SESSION_ACTIVE, ev,
+                   _logind_session_active_cb_free, NULL);
+}
+
+static void
 _logind_device_pause_complete(Elput_Manager *em, uint32_t major, uint32_t minor)
 {
    Eldbus_Proxy *proxy;
@@ -79,9 +104,7 @@ _cb_device_paused(void *data, const Eldbus_Message *msg)
           _logind_device_pause_complete(em, maj, min);
 
         if ((em->sync) && (maj == 226)) // DRM_MAJOR
-          {
-             /* TODO: _ecore_drm2_launcher_activate_send(em, EINA_FALSE); */
-          }
+          _logind_session_active_send(em, EINA_FALSE);
      }
 }
 
@@ -103,9 +126,7 @@ _cb_device_resumed(void *data, const Eldbus_Message *msg)
    if (eldbus_message_arguments_get(msg, "u", &maj))
      {
         if ((em->sync) && (maj == 226)) // DRM_MAJOR
-          {
-             /* TODO: _ecore_drm2_launcher_activate_send(em, EINA_TRUE); */
-          }
+          _logind_session_active_send(em, EINA_TRUE);
      }
 }
 
@@ -125,9 +146,7 @@ _cb_property_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
      {
         eina_value_get(ev->value, &active);
         if ((!em->sync) || (!active))
-          {
-             /* TODO: _ecore_drm2_launcher_activate_send(em, active); */
-          }
+          _logind_session_active_send(em, active);
      }
 }
 
