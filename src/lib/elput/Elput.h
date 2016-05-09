@@ -206,6 +206,19 @@ EAPI int elput_manager_open(Elput_Manager *manager, const char *path, int flags)
 EAPI void elput_manager_close(Elput_Manager *manager, int fd);
 
 /**
+ * Request to switch to a given vt
+ *
+ * @param manager
+ * @param vt
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Manager_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool elput_manager_vt_set(Elput_Manager *manager, int vt);
+
+/**
  * @defgroup Elput_Input_Group Elput input functions
  *
  * Functions that deal with setup of inputs

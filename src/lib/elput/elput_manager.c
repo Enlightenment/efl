@@ -62,3 +62,16 @@ elput_manager_close(Elput_Manager *manager, int fd)
    if (manager->interface->close)
      manager->interface->close(manager, fd);
 }
+
+EAPI Eina_Bool
+elput_manager_vt_set(Elput_Manager *manager, int vt)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(manager, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(manager->interface, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((vt < 0), EINA_FALSE);
+
+   if (manager->interface->vt_set)
+     return manager->interface->vt_set(manager, vt);
+
+   return EINA_FALSE;
+}

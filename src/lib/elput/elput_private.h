@@ -72,6 +72,7 @@ typedef struct _Elput_Interface
    void (*disconnect)(Elput_Manager *manager);
    int (*open)(Elput_Manager *manager, const char *path, int flags);
    void (*close)(Elput_Manager *manager, int fd);
+   Eina_Bool (*vt_set)(Elput_Manager *manager, int vt);
 } Elput_Interface;
 
 typedef struct _Elput_Input

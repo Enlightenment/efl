@@ -574,12 +574,62 @@ _logind_close(Elput_Manager *em, int fd)
    _logind_device_release(em, major(st.st_rdev), minor(st.st_rdev));
 }
 
+static Eina_Bool
+_logind_vt_set(Elput_Manager *em, int vt)
+{
+   Eldbus_Object *obj;
+   Eldbus_Proxy *proxy;
+   Eldbus_Message *msg;
+   char self[PATH_MAX];
+
+   snprintf(self, sizeof(self), "/org/freedesktop/login1/seat/self");
+
+   obj = eldbus_object_get(em->dbus.conn, "org.freedesktop.login1", self);
+   if (!obj)
+     {
+        ERR("Could not get dbus object");
+        goto obj_err;
+     }
+
+   proxy = eldbus_proxy_get(obj, "org.freedesktop.login1.Seat");
+   if (!proxy)
+     {
+        ERR("Could not get dbus proxy");
+        goto proxy_err;
+     }
+
+   msg = eldbus_proxy_method_call_new(proxy, "SwitchTo");
+   if (!msg)
+     {
+        ERR("Could not create method call for proxy");
+        goto msg_err;
+     }
+
+   eldbus_message_arguments_append(msg, "u", &vt);
+
+   eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
+
+   eldbus_message_unref(msg);
+   eldbus_proxy_unref(proxy);
+   eldbus_object_unref(obj);
+
+   return EINA_TRUE;
+
+msg_err:
+   eldbus_proxy_unref(proxy);
+proxy_err:
+   eldbus_object_unref(obj);
+obj_err:
+   return EINA_FALSE;
+}
+
 Elput_Interface _logind_interface =
 {
    _logind_connect,
    _logind_disconnect,
    _logind_open,
    _logind_close,
+   _logind_vt_set,
 };
 
 #endif
