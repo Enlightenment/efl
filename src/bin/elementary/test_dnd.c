@@ -65,6 +65,7 @@ _drag_data_build(Eina_List **items)
         Elm_Object_Item *it;
         const char *t;
         unsigned int len = 0;
+        int i = 0;
 
         EINA_LIST_FOREACH(*items, l, it)
           {
@@ -73,17 +74,20 @@ _drag_data_build(Eina_List **items)
                len += strlen(t);
           }
 
-        drag_data = malloc(len + eina_list_count(*items) * (FILESEP_LEN + 1) + 1);
+        drag_data = malloc(len + eina_list_count(*items) * (FILESEP_LEN + 1));
         strcpy((char *) drag_data, "");
 
-        /* drag data in form: file://URI1\nfile://URI2\n */
+        /* drag data in form: file://URI1\nfile://URI2 */
         EINA_LIST_FOREACH(*items, l, it)
           {
              t = (char *)elm_object_item_data_get(it);
              if (t)
                {
+                  if (i > 0)
+                    strcat((char *) drag_data, "\n");
                   strcat((char *) drag_data, FILESEP);
                   strcat((char *) drag_data, t);
+                  i++;
                }
           }
      }
