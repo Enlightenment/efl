@@ -137,18 +137,12 @@ _device_add(Elput_Manager *em, struct libinput_device *dev)
 static void
 _device_remove(Elput_Manager *em EINA_UNUSED, struct libinput_device *device)
 {
-   /* Elput_Seat *eseat; */
    Elput_Device *edev;
 
    edev = libinput_device_get_user_data(device);
    if (!edev) return;
 
-   /* eseat = _udev_seat_get(em, device); */
-   /* if (eseat) */
-   /*   eseat->devices = eina_list_remove(eseat->devices, edev); */
-
    _device_event_send(edev, ELPUT_DEVICE_REMOVED);
-   /* _evdev_device_destroy(edev); */
 }
 
 static int

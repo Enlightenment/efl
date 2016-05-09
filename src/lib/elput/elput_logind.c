@@ -140,8 +140,6 @@ _cb_property_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
    em = data;
    ev = event;
 
-   DBG("DBus Property Changed: %s", ev->name);
-
    if (!strcmp(ev->name, "Active"))
      {
         eina_value_get(ev->value, &active);
