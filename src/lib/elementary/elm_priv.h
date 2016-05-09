@@ -169,10 +169,6 @@ extern const char *_elm_engines[];
 #define ELM_ATSPI_MODE_ON    EINA_TRUE
 
 /* convenience macro to compress code and avoid typos */
-#undef MIN
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-#undef MAX
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #undef CEIL
 #define CEIL(a)   (((a) % 2 != 0) ? ((a) / 2 + 1) : ((a) / 2))
 #undef IS_INSIDE

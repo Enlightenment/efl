@@ -1,6 +1,3 @@
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
 #define  FOG_COLOR        0.5, 0.5, 0.5
 #define  FOG_FACTOR       0.01
 #define  WIDTH            1920

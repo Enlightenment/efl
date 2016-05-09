@@ -130,10 +130,6 @@ EAPI extern int _edje_default_log_dom ;
 #define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 #endif
 
-#ifndef MIN
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#endif
-
 
 #ifdef BUILD_EDJE_FP
 

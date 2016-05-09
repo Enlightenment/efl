@@ -1,9 +1,5 @@
 #include "ecore_xcb_private.h"
 
-#ifndef MIN
-# define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#endif
-
 /* local structures */
 typedef struct _Version_Cache_Item
 {

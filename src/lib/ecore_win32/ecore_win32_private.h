@@ -6,16 +6,6 @@
 extern "C" {
 #endif
 
-#ifdef MIN
-# undef MIN
-#endif
-#define MIN(a,b) (((a) < (b)) ? (a) : (b))
-
-#ifdef MAX
-# undef MAX
-#endif
-#define MAX(a,b) (((a) < (b)) ? (b) : (a))
-
 /* logging messages macros */
 extern int _ecore_win32_log_dom_global;
 

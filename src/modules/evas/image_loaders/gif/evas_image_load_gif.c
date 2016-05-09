@@ -37,9 +37,6 @@ struct _Frame_Info
    Eina_Bool interlace : 1; // interlaced or not
 };
 
-#ifndef MIN
-# define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#endif
 #define LOADERR(x) \
 do { \
    *error = (x); \

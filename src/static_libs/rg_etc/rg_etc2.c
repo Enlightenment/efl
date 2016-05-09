@@ -92,7 +92,9 @@ static const int kAlphaModifiers[16][8] = {
 #define CLAMP(a) ({ int _b = (a); (((_b) >= 0) ? (((_b) < 256) ? (_b) : 255) : 0); })
 
 // Simple min
-#define MIN(a,b) ({ int _z = (a), _y = (b); ((_z <= _y) ? _z : _y); })
+#ifndef MIN
+# define MIN(a,b) ({ int _z = (a), _y = (b); ((_z <= _y) ? _z : _y); })
+#endif
 
 // Write a BGRA value for output to Evas
 #define BGRA(r,g,b,a) ((a << 24) | (r << 16) | (g << 8) | b)

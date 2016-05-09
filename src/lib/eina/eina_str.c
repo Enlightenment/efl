@@ -35,7 +35,7 @@
 
 #include "eina_private.h"
 #include "eina_str.h"
-
+#include "eina_cpu.h"
 
 /*============================================================================*
 *                                  Local                                     *

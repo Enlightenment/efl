@@ -7,12 +7,6 @@
 #undef SGN
 #define SGN(x) (((x) < 0) ? -1 : 1)
 
-#undef MIN
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
-#undef MAX
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-
 /* clamp b between a and c */
 #undef CLAMP
 #define CLAMP(a,b,c) MIN(MAX((b),(a)),(c))

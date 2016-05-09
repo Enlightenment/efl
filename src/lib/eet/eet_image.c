@@ -54,12 +54,6 @@
 #define OFFSET_HEIGHT 12
 #define OFFSET_BLOCKS 16
 
-#undef MIN
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
-#undef MAX
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-
 /*---*/
 
 typedef struct _JPEG_error_mgr *emptr;

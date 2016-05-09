@@ -84,13 +84,6 @@ struct _Region
 #define PIXREGION_END(reg)       PIXREGION_BOX(reg, (reg)->data->num - 1)
 #define PIXREGION_SZOF(n)        (sizeof(Region_Data) + ((n) * sizeof(Box)))
 
-#ifndef MIN
-# define MIN(a, b) ((a) < (b) ? (a) : (b))
-#endif
-#ifndef MAX
-# define MAX(a, b) ((a) > (b) ? (a) : (b))
-#endif
-
 // r1 and r2 overlap
 #define OVERLAP(r1, r2) \
    (!(((r1)->x2 <= (r2)->x1) || ((r1)->x1 >= (r2)->x2)  || \

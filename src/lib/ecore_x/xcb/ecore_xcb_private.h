@@ -73,14 +73,6 @@ extern int _ecore_xcb_log_dom;
 #  define MAXHOSTNAMELEN 256
 # endif
 
-# ifndef MIN
-#  define MIN(x, y) (((x) > (y)) ? (y) : (x))
-# endif
-
-# ifndef MAX
-#  define MAX(a, b) ((a < b) ? b : a)
-# endif
-
 #define CHECK_XCB_CONN                              \
   {                                                 \
      if (xcb_connection_has_error(_ecore_xcb_conn)) \

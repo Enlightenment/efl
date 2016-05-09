@@ -33,8 +33,12 @@ typedef unsigned int uint;
 typedef unsigned int uint32;
 typedef unsigned char DATA8;
 
-#define MIN(A, B) ((A < B) ? A : B)
-#define MAX(A, B) ((A > B) ? A : B)
+#ifndef MIN
+# define MIN(A, B) ((A < B) ? A : B)
+#endif
+#ifndef MAX
+# define MAX(A, B) ((A > B) ? A : B)
+#endif
 #define CLAMP(Value, Low, High) ((Value < Low) ? Low : ((Value > High) ? High : Value))
 #define SQUARE(Value) (Value * Value)
 
