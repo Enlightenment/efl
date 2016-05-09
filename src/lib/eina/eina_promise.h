@@ -224,12 +224,28 @@ EAPI void eina_promise_then(Eina_Promise* promise, Eina_Promise_Cb callback,
                             Eina_Promise_Error_Cb error_cb, void* data);
 
 /*
- * @brief Creates a new Eina_Promise from other Eina_Promises
+ * @brief Creates a new @Eina_Promise from other @Eina_Promise's
+ *
+ * The new @Eina_Promise is fulfilled when all promises
+ * have also been fulfilled with success or when the
+ * first one fails
  *
  * @param promises An Eina_Iterator for all Eina_Promises
  * @return Returns a new Eina_Promise
  */
 EAPI Eina_Promise* eina_promise_all(Eina_Iterator* promises);
+
+/*
+ * @brief Creates a new @Eina_Promise from other @Eina_Promises
+ *
+ * The new @Eina_Promise is fulfilled when the first promise
+ * has been fulfilled with success or when the
+ * first one fails
+ *
+ * @param promises An Eina_Iterator for all Eina_Promises
+ * @return Returns a new Eina_Promise
+ */
+EAPI Eina_Promise* eina_promise_race(Eina_Iterator* promises);
 
 /*
  * @brief Creates a new @Eina_Promise from another @Eina_Promise_Owner which

@@ -336,6 +336,28 @@ START_TEST(eina_test_promise_ignored)
 }
 END_TEST
 
+START_TEST(eina_test_promise_race)
+{
+   Eina_Promise_Owner* promise_owner;
+   Eina_Promise* first[2] = {NULL, NULL};
+   Eina_Promise* promise;
+   Eina_Bool ran = EINA_FALSE;
+
+   eina_init();
+
+   promise_owner = eina_promise_default_add(0);
+   first[0] = eina_promise_owner_promise_get(promise_owner);
+   promise = eina_promise_race(eina_carray_iterator_new((void**)&first[0]));
+
+   eina_promise_then(promise, &_eina_test_promise_cb, NULL, &ran);
+   eina_promise_owner_value_set(promise_owner, NULL, NULL);
+
+   ck_assert(ran == EINA_TRUE);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_promise(TCase *tc)
 {
@@ -350,4 +372,5 @@ eina_test_promise(TCase *tc)
    tcase_add_test(tc, eina_test_promise_progress_notify2);
    tcase_add_test(tc, eina_test_promise_progress_notify3);
    tcase_add_test(tc, eina_test_promise_ignored);
+   tcase_add_test(tc, eina_test_promise_race);
 }

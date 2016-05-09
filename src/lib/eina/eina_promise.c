@@ -104,6 +104,19 @@ struct _Eina_Promise_Iterator
    } data;
 };
 
+typedef struct _Eina_Promise_Race_Value_Type _Eina_Promise_Race_Value_Type;
+struct _Eina_Promise_Race_Value_Type
+{
+   void* value;
+   unsigned int promise_index;
+   unsigned int num_promises;
+   struct _Eina_Promise_Race_Information
+   {
+      Eina_Promise* promise;
+      _Eina_Promise_Default_Owner* self;
+   } promises[];
+};
+
 static void _eina_promise_free_progress_callback_node(void* node)
 {
    _Eina_Promise_Progress_Cb *progress_cb = node;
@@ -667,6 +680,96 @@ eina_promise_progress_notification(Eina_Promise_Owner* promise)
                                      &_eina_promise_progress_notify_failed);
 
   return eina_promise_owner_promise_get(owner);
+}
+
+// Race implementation
+static void
+_eina_promise_race_free(_Eina_Promise_Race_Value_Type* value)
+{
+   unsigned i = 0;
+   for (;i != value->num_promises; ++i)
+     {
+        eina_promise_unref(value->promises[i].promise);
+     }
+}
+
+static void
+_eina_promise_race_compose_then_cb(struct _Eina_Promise_Race_Information* info, void* value EINA_UNUSED)
+{
+   _Eina_Promise_Default_Owner* race_promise;
+   _Eina_Promise_Race_Value_Type *race_value;
+
+   race_promise = info->self;
+   race_value = (_Eina_Promise_Race_Value_Type*)race_promise->value;
+
+   if (!race_promise->promise.has_finished)
+     {
+        race_value->value = value;
+        race_value->promise_index =  info - &race_value->promises[0];
+        _eina_promise_finish(race_promise);
+     }
+}
+
+static void
+_eina_promise_race_compose_error_then_cb(struct _Eina_Promise_Race_Information* info, Eina_Error const* error)
+{
+   _Eina_Promise_Default_Owner* race_promise;
+   _Eina_Promise_Race_Value_Type *race_value;
+
+   race_promise = info->self;
+   race_value = (_Eina_Promise_Race_Value_Type*)race_promise->value;
+
+   if (!race_promise->promise.has_finished)
+     {
+        race_value->promise_index =  info - &race_value->promises[0];
+        eina_promise_owner_error_set(&race_promise->owner_vtable, *error);
+     }
+}
+
+Eina_Promise *
+eina_promise_race(Eina_Iterator* it)
+{
+   _Eina_Promise_Default_Owner *promise;
+   Eina_Promise* current;
+   Eina_Array* promises;
+   struct _Eina_Promise_Race_Information *cur_promise, *last;
+   _Eina_Promise_Race_Value_Type *value;
+   int num_promises;
+
+   promises = eina_array_new(20);
+
+   EINA_ITERATOR_FOREACH(it, current)
+     {
+        eina_array_push(promises, current);
+     }
+
+   eina_iterator_free(it);
+
+   num_promises = eina_array_count_get(promises);
+   promise = (_Eina_Promise_Default_Owner*)
+     eina_promise_default_add(sizeof(_Eina_Promise_Race_Value_Type) +
+                              sizeof(struct _Eina_Promise_Race_Information*)*num_promises);
+   value = eina_promise_owner_buffer_get((Eina_Promise_Owner*)promise);
+   value->value = NULL;
+   value->promise_index = -1;
+   value->num_promises = num_promises;
+
+   promise->promise.value_free_cb = (Eina_Promise_Free_Cb)&_eina_promise_race_free;
+
+   cur_promise = value->promises;
+   last = value->promises + value->num_promises;
+   for (int i = 0;cur_promise != last; ++cur_promise, ++i)
+     {
+        cur_promise->promise = eina_array_data_get(promises, i);
+        cur_promise->self = promise;
+        eina_promise_then(cur_promise->promise, (Eina_Promise_Cb)&_eina_promise_race_compose_then_cb,
+                          (Eina_Promise_Error_Cb)&_eina_promise_race_compose_error_then_cb, cur_promise);
+        eina_promise_ref(cur_promise->promise); // We need to keep the value alive until this promise is freed
+     }
+
+   eina_array_free(promises);
+
+   return &promise->promise.vtable;
 }
 
 // API functions
