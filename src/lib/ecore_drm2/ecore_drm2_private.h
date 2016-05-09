@@ -177,6 +177,7 @@ struct _Ecore_Drm2_Device
      } min, max;
 
    Eeze_Udev_Watch *watch;
+   Ecore_Event_Handler *active_hdlr;
 
    Eina_List *outputs;
 };

@@ -8,6 +8,24 @@
 # define DRM_CAP_CURSOR_HEIGHT 0x9
 #endif
 
+static Eina_Bool
+_cb_session_active(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Elput_Event_Session_Active *ev;
+   Ecore_Drm2_Event_Activate *ea;
+
+   ev = event;
+
+   ea = calloc(1, sizeof(Ecore_Drm2_Event_Activate));
+   if (!ea) return ECORE_CALLBACK_RENEW;
+
+   ea->active = ev->active;
+
+   ecore_event_add(ECORE_DRM2_EVENT_ACTIVATE, ea, NULL, NULL);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 static const char *
 _drm2_device_find(const char *seat)
 {
@@ -119,6 +137,10 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    DBG("Device Path: %s", device->path);
    DBG("Device Fd: %d", device->fd);
 
+   device->active_hdlr =
+     ecore_event_handler_add(ELPUT_EVENT_SESSION_ACTIVE,
+                             _cb_session_active, device);
+
    /* NB: Not going to enable planes if we don't support atomic */
    /* if (drmSetClientCap(device->fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0) */
    /*   ERR("Could not set Universal Plane support: %m"); */
@@ -139,6 +161,9 @@ EAPI void
 ecore_drm2_device_free(Ecore_Drm2_Device *device)
 {
    EINA_SAFETY_ON_NULL_RETURN(device);
+
+   if (device->active_hdlr) ecore_event_handler_del(device->active_hdlr);
+   device->active_hdlr = NULL;
 
    eina_stringshare_del(device->path);
    free(device);

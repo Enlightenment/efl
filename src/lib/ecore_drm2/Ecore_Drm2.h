@@ -52,7 +52,14 @@ typedef struct _Ecore_Drm2_Event_Output_Changed
    Eina_Bool enabled : 1;
 } Ecore_Drm2_Event_Output_Changed;
 
+/* structure to represent event for session state changes */
+typedef struct _Ecore_Drm2_Event_Activate
+{
+   Eina_Bool active : 1;
+} Ecore_Drm2_Event_Activate;
+
 EAPI extern int ECORE_DRM2_EVENT_OUTPUT_CHANGED;
+EAPI extern int ECORE_DRM2_EVENT_ACTIVATE;
 
 /**
  * @file
