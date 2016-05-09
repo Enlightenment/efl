@@ -189,14 +189,25 @@ _edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const ch
     *    (GROUP parts or BOX/TABLE items pointing to non-existent/renamed
     *    groups).
     */
+   Efl_Vpath_File *file_obj =
+     efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
+   efl_vpath_file_do(file_obj);
+   // XXX:FIXME: allow this to be async
+   efl_vpath_file_wait(file_obj);
+   file = efl_vpath_file_result_get(file_obj);
+
    Eina_Bool int_ret = EINA_FALSE;
    int_ret = efl_file_set(eo_super(obj, MY_CLASS), file, group);
    if (!int_ret)
-     return ret;
+     {
+        eo_del(file_obj);
+        return ret;
+     }
 
    eed->program_scripts = eina_hash_int32_new((Eina_Free_Cb)_edje_edit_program_script_free);
 
    ef = eet_open(file, EET_FILE_MODE_READ);
+   eo_del(file_obj);
 
    snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%i",
             eed->base->collection->id);

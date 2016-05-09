@@ -246,11 +246,18 @@ edje_file_collection_list(const char *file)
    Eina_List *lst;
 
    if ((!file) || (!*file)) return NULL;
+   Efl_Vpath_File *file_obj =
+     efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
+   efl_vpath_file_do(file_obj);
+   // XXX:FIXME: allow this to be async
+   efl_vpath_file_wait(file_obj);
+   file = efl_vpath_file_result_get(file_obj);
    f = eina_file_open(file, EINA_FALSE);
 
    lst = edje_mmap_collection_list(f);
 
    eina_file_close(f);
+   eo_del(file_obj);
    return lst;
 }
 
@@ -1411,11 +1418,6 @@ _edje_file_add(Edje *ed, const Eina_File *f)
              _edje_cache_file_unref(ed->file);
              ed->file = NULL;
           }
-     }
-   else
-     {
-        // FIXME: it will be actually better to remove ed->path.
-        ed->path = eina_stringshare_add(eina_file_filename_get(f));
      }
 }
 

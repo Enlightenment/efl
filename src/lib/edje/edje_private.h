@@ -1660,6 +1660,8 @@ struct _Edje
 
    double                duration_scale;
 
+   Efl_Vpath_File       *file_obj;
+
    Eina_List            *user_defined;
 
    lua_State            *L;

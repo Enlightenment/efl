@@ -50,6 +50,11 @@ _edje_object_eo_base_constructor(Eo *obj, Edje *ed)
 EOLIAN static void
 _edje_object_eo_base_destructor(Eo *obj, Edje *class_data)
 {
+   if (class_data->file_obj)
+     {
+        eo_del(class_data->file_obj);
+        class_data->file_obj = NULL;
+     }
    eo_destructor(eo_super(obj, MY_CLASS));
    eo_data_unref(obj, class_data->base);
 }
@@ -359,11 +364,28 @@ _edje_object_efl_file_file_set(Eo *obj, Edje *ed, const char *file, const char *
 
    ret = EINA_FALSE;
 
+   if (ed->file_obj)
+     {
+        eo_del(ed->file_obj);
+        ed->file_obj = NULL;
+     }
    if (file)
      {
-        f = eina_file_open(file, EINA_FALSE);
+        const char *file2;
+
+        ed->file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
+        efl_vpath_file_do(ed->file_obj);
+        // XXX:FIXME: allow this to be async
+        efl_vpath_file_wait(ed->file_obj);
+        file2 = efl_vpath_file_result_get(ed->file_obj);
+
+        f = eina_file_open(file2, EINA_FALSE);
         if (!f)
           {
+             eo_del(ed->file_obj);
+             ed->file_obj = NULL;
+             if (ed->path) eina_stringshare_del(ed->path);
+             ed->path = NULL;
              ed->load_error = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
              return ret;
           }
@@ -371,7 +393,23 @@ _edje_object_efl_file_file_set(Eo *obj, Edje *ed, const char *file, const char *
    nested = eina_array_new(8);
 
    if (_edje_object_file_set_internal(obj, f, group, NULL, NULL, nested))
-     ret = EINA_TRUE;
+     {
+        if (file)
+          {
+             ed->path = eina_stringshare_add(file);
+          }
+        else
+          {
+             if (ed->path) eina_stringshare_del(ed->path);
+             ed->path = NULL;
+          }
+        ret = EINA_TRUE;
+     }
+   else
+     {
+        if (ed->path) eina_stringshare_del(ed->path);
+        ed->path = NULL;
+     }
 
    eina_array_free(nested);
    eina_file_close(f);
