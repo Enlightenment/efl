@@ -219,6 +219,18 @@ EAPI void elput_manager_close(Elput_Manager *manager, int fd);
 EAPI Eina_Bool elput_manager_vt_set(Elput_Manager *manager, int vt);
 
 /**
+ * Get the list of seats from a manager
+ *
+ * @param manager
+ *
+ * @return An Eina_List of existing Elput_Seats or NULL on failure
+ *
+ * @ingroup Elput_Manager_Group
+ * @since 1.18
+ */
+EAPI const Eina_List *elput_manager_seats_get(Elput_Manager *manager);
+
+/**
  * @defgroup Elput_Input_Group Elput input functions
  *
  * Functions that deal with setup of inputs

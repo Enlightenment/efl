@@ -112,3 +112,10 @@ elput_manager_vt_set(Elput_Manager *manager, int vt)
 
    return EINA_FALSE;
 }
+
+EAPI const Eina_List *
+elput_manager_seats_get(Elput_Manager *manager)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(manager, NULL);
+   return manager->input.seats;
+}
