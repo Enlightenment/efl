@@ -7,7 +7,6 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event)
 
      @since 1.18
    ]]
-   legacy_prefix: null;
    methods {
       @property action {
          [[The action represented by this event.]]
@@ -36,6 +35,8 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event)
          values {
             x: int;
             y: int;
+            xsub: double;
+            ysub: double;
          }
       }
       @property previous_position {
@@ -61,6 +62,22 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event)
          [[Pointing device that originated this event.]]
          values {
             dev: Efl.Input.Device;
+         }
+      }
+      @property finger {
+         [[Finger ID in case of a multi touch event.]]
+         values {
+            id: int;
+         }
+      }
+      @property touch {
+         [[Touch information about a specific finger or pointer.]]
+         values {
+            radius: double;
+            rad_x: double;
+            rad_y: double;
+            pressure: double;
+            angle: double;
          }
       }
       @property source {
@@ -94,9 +111,21 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event)
             dist: int;
          }
       }
+      instance_get @class {
+         [[Creates an instance of this events or returns a fresh one from
+           a memory pool.
+         ]]
+         params {
+            @in  owner: Eo.Base; [[The parent object.]]
+            @out priv: void*; [[Pointer to the internal data of the object.]]
+         }
+         return: own(Efl.Pointer.Event);
+      }
    }
    implements {
       Eo.Base.constructor;
+      class.destructor;
+      Efl.Event.reset;
       Efl.Event.timestamp.set;
       Efl.Event.timestamp.get;
       Efl.Event.event_type.set;

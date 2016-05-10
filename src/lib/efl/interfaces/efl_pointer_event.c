@@ -20,12 +20,75 @@
  * Do not add any logic here.
  */
 
+static Efl_Pointer_Event *s_cached_event = NULL;
+
+static void
+_del_hook(Eo *evt)
+{
+   if (!s_cached_event)
+     {
+        if (eo_parent_get(evt))
+          {
+             eo_ref(evt);
+             eo_parent_set(evt, NULL);
+          }
+        s_cached_event = evt;
+     }
+   else
+     {
+        eo_del_intercept_set(evt, NULL);
+        eo_unref(evt);
+     }
+}
+
+EOLIAN static Efl_Pointer_Event *
+_efl_pointer_event_instance_get(Eo_Class *klass EINA_UNUSED, void *pd EINA_UNUSED,
+                                Eo *owner, void **priv)
+{
+   Efl_Pointer_Event *evt;
+
+   if (s_cached_event)
+     {
+        evt = s_cached_event;
+        s_cached_event = NULL;
+        efl_event_reset(evt);
+        eo_parent_set(evt, owner);
+     }
+   else
+     {
+        evt = eo_add(EFL_POINTER_EVENT_CLASS, owner);
+        eo_del_intercept_set(evt, _del_hook);
+     }
+
+   if (priv)
+     *priv = eo_data_scope_get(evt, EFL_POINTER_EVENT_CLASS);
+
+   return evt;
+}
+
+EOLIAN static void
+_efl_pointer_event_class_destructor(Eo_Class *klass EINA_UNUSED)
+{
+   // this is a strange situation...
+   eo_unref(s_cached_event);
+   s_cached_event = NULL;
+}
+
 EOLIAN static Eo_Base *
-_efl_pointer_event_eo_base_constructor(Eo *obj, Efl_Pointer_Event_Data *pd)
+_efl_pointer_event_eo_base_constructor(Eo *obj, Efl_Pointer_Event_Data *pd EINA_UNUSED)
 {
    eo_constructor(eo_super(obj, MY_CLASS));
-   pd->eo = obj;
+   efl_event_reset(obj);
    return obj;
+}
+
+EOLIAN static void
+_efl_pointer_event_efl_event_reset(Eo *obj, Efl_Pointer_Event_Data *pd)
+{
+   free(pd->legacy);
+   memset(pd, 0, sizeof(*pd));
+   pd->eo = obj;
+   pd->wheel.dir = EFL_ORIENT_VERTICAL;
 }
 
 EOLIAN static void
@@ -72,37 +135,35 @@ _efl_pointer_event_button_pressed_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Dat
 }
 
 EOLIAN static void
-_efl_pointer_event_position_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int x, int y)
+_efl_pointer_event_position_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int x, int y, double xsub, double ysub)
 {
-   pd->cur.canvas.x = x;
-   pd->cur.canvas.y = y;
-   /* FIXME: What is the difference??? */
-   pd->cur.output.x = x;
-   pd->cur.output.y = y;
+   pd->cur.x = x;
+   pd->cur.y = y;
+   pd->cur.xsub = xsub;
+   pd->cur.ysub = ysub;
 }
 
 EOLIAN static void
-_efl_pointer_event_position_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int *x, int *y)
+_efl_pointer_event_position_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int *x, int *y, double *xsub, double *ysub)
 {
-   if (x) *x = pd->cur.canvas.x;
-   if (y) *y = pd->cur.canvas.y;
+   if (x) *x = pd->cur.x;
+   if (y) *y = pd->cur.y;
+   if (xsub) *xsub = pd->cur.xsub;
+   if (ysub) *ysub = pd->cur.ysub;
 }
 
 EOLIAN static void
 _efl_pointer_event_previous_position_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int x, int y)
 {
-   pd->prev.canvas.x = x;
-   pd->prev.canvas.y = y;
-   /* FIXME: What is the difference??? */
-   pd->prev.output.x = x;
-   pd->prev.output.y = y;
+   pd->prev.x = x;
+   pd->prev.y = y;
 }
 
 EOLIAN static void
 _efl_pointer_event_previous_position_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int *x, int *y)
 {
-   if (x) *x = pd->prev.canvas.x;
-   if (y) *y = pd->prev.canvas.y;
+   if (x) *x = pd->prev.x;
+   if (y) *y = pd->prev.y;
 }
 
 
@@ -217,6 +278,39 @@ EOLIAN static int
 _efl_pointer_event_wheel_distance_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd)
 {
    return pd->wheel.z;
+}
+
+EOLIAN static int
+_efl_pointer_event_finger_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd)
+{
+   return pd->finger;
+}
+
+EOLIAN static void
+_efl_pointer_event_finger_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int id)
+{
+   pd->finger = id;
+}
+
+EOLIAN static void
+_efl_pointer_event_touch_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, double *r, double *rx, double *ry, double *press, double *angle)
+{
+   if (r) *r = pd->radius;
+   if (rx) *rx = pd->radius_x;
+   if (ry) *ry = pd->radius_y;
+   if (press) *press = pd->pressure;
+   if (angle) *angle = pd->angle;
+}
+
+
+EOLIAN static void
+_efl_pointer_event_touch_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, double r, double rx, double ry, double press, double angle)
+{
+   pd->radius = r;
+   pd->radius_x = rx;
+   pd->radius_y = ry;
+   pd->pressure = press;
+   pd->angle = angle;
 }
 
 #include "interfaces/efl_pointer_event.eo.c"

@@ -34,5 +34,8 @@ interface Efl.Event
             type: const(Eo_Event_Description)*;
          }
       }
+      reset {
+         [[Resets the internal data to 0 or default values.]]
+      }
    }
 }

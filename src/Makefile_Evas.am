@@ -152,6 +152,7 @@ lib/evas/canvas/evas_common_interface.c \
 lib/evas/canvas/evas_data.c \
 lib/evas/canvas/evas_device.c \
 lib/evas/canvas/evas_events.c \
+lib/evas/canvas/evas_events_legacy.c \
 lib/evas/canvas/evas_focus.c \
 lib/evas/canvas/evas_key.c \
 lib/evas/canvas/evas_key_grab.c \

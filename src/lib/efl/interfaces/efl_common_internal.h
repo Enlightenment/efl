@@ -23,19 +23,27 @@ typedef struct _Efl_Input_State_Data    Efl_Input_State_Data;
 //typedef struct _Evas_Lock Evas_Lock;
 #endif
 
+struct _Efl_Input_State_Data
+{
+   Eo             *eo;
+   /* FIXME / TODO  */
+//   Evas_Modifier  *modifiers;
+//   Evas_Lock      *locks;
+};
+
 struct _Efl_Pointer_Event_Data
 {
    Eo             *eo;
    unsigned int    timestamp; /* FIXME: store as double? */
    int             button;
    unsigned int    pressed_buttons;
+   int             finger;
+   double          radius, radius_x, radius_y;
+   double          pressure;
+   double          angle;
    struct {
-      struct {
-         int       x, y;
-      } output;
-      struct {
-         int       x, y;
-      } canvas;
+      int          x, y;
+      double       xsub, ysub; // couldn't we just cast from double to int?
    } cur, prev;
    struct {
       Efl_Orient   dir;
@@ -48,17 +56,11 @@ struct _Efl_Pointer_Event_Data
    Efl_Pointer_Event_Flags     event_flags;
    void                       *data; /* evas data - whatever that is */
    const Eo_Event_Description *event_desc;
-   //Efl_Input_State            state;
-};
-
-struct _Efl_Input_State_Data
-{
-   Eo             *eo;
-   /* FIXME / TODO  */
-#if 0
-   Evas_Modifier  *modifiers;
-   Evas_Lock      *locks;
-#endif
+   Eina_Bool                   window_pos; /* true if positions are window-relative
+                                              (see input vs. feed: this is "input") */
+   //Efl_Input_State            *state;
+   void                       *legacy; /* DO NOT TOUCH */
+   Eina_Bool                   evas_done; /* set by evas */
 };
 
 struct _Efl_Input_Device_Data

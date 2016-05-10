@@ -199,6 +199,8 @@ _evas_canvas_eo_base_constructor(Eo *eo_obj, Evas_Public_Data *e)
    eina_lock_new(&(e->lock_objects));
    eina_spinlock_new(&(e->render.lock));
 
+   _evas_canvas_event_init(eo_obj, e);
+
    return eo_obj;
 }
 
@@ -230,6 +232,7 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
    evas_render_idle_flush(eo_e);
 
    _evas_post_event_callback_free(eo_e);
+   _evas_canvas_event_shutdown(eo_e, e);
 
    del = EINA_TRUE;
    e->walking_list++;

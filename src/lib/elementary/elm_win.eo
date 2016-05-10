@@ -830,7 +830,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             name: const(char)* @nullable;
          }
       }
-      @property type {
+      @property type { /* FIXME: before finalize */
          [[The type of the window.
 
            It is a hint of how the Window Manager should handle it.

@@ -1421,9 +1421,8 @@ evas_event_feed_mouse_wheel(Eo *eo_e, int direction, int z, unsigned int timesta
 }
 
 static void
-_canvas_event_feed_mouse_move_internal(Eo *eo_e, void *_pd, int x, int y, unsigned int timestamp, const void *data)
+_canvas_event_feed_mouse_move_internal(Eo *eo_e, Evas_Public_Data *e, int x, int y, unsigned int timestamp, const void *data)
 {
-   Evas_Public_Data *e = _pd;
    Evas_Object *nogrep_obj = NULL;
    int px, py;
 
@@ -3033,9 +3032,67 @@ _evas_canvas_event_down_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
    return e->pointer.downs;
 }
 
-EOLIAN void
-_evas_canvas_event_feed(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const Efl_Pointer_Event *event)
+static Eina_Bool
+_evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
 {
-   Efl_Pointer_Event_Data *ev = eo_data_scope_get(event, EFL_POINTER_EVENT_CLASS);
-   /* TODO */
+   Efl_Pointer_Event_Data *ev = eo_data_scope_get(event->info, EFL_POINTER_EVENT_CLASS);
+   Evas_Public_Data *e = data;
+   Evas *eo_e = event->object;
+
+   if (!ev) return EO_CALLBACK_CONTINUE;
+
+   /* TODO:
+    * - pass event to the internal functions
+    * - implement legacy over oo instead of this
+    */
+
+   switch (ev->action)
+     {
+      case EFL_POINTER_ACTION_MOUSE_MOVE:
+        if (ev->window_pos)
+          {
+             _canvas_event_feed_mouse_move_internal(eo_e, e,
+                                                    ev->cur.x - e->framespace.x,
+                                                    ev->cur.y - e->framespace.y,
+                                                    ev->timestamp, ev->data);
+          }
+        else
+          {
+             _canvas_event_feed_mouse_move_internal(eo_e, e, ev->cur.x, ev->cur.y,
+                                                    ev->timestamp, ev->data);
+          }
+        break;
+
+      case EFL_POINTER_ACTION_MOUSE_DOWN:
+        evas_event_feed_mouse_down(eo_e, ev->button, ev->button_flags, ev->timestamp, ev->data);
+        break;
+
+      case EFL_POINTER_ACTION_MOUSE_UP:
+        evas_event_feed_mouse_up(eo_e, ev->button, ev->button_flags, ev->timestamp, ev->data);
+        break;
+
+      case EFL_POINTER_ACTION_MOUSE_WHEEL:
+        evas_event_feed_mouse_wheel(eo_e,
+                                    (ev->wheel.dir == EFL_ORIENT_HORIZONTAL) ? 1 : 0,
+                                    ev->wheel.z, ev->timestamp, ev->data);
+        break;
+
+      default:
+        ERR("not implemented yet");
+        break;
+     }
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+void
+_evas_canvas_event_init(Evas *eo_e, Evas_Public_Data *e)
+{
+   eo_event_callback_add(eo_e, EVAS_CANVAS_EVENT_POINTER, _evas_canvas_event_pointer_cb, e);
+}
+
+void
+_evas_canvas_event_shutdown(Evas *eo_e, Evas_Public_Data *e)
+{
+   eo_event_callback_del(eo_e, EVAS_CANVAS_EVENT_POINTER, _evas_canvas_event_pointer_cb, e);
 }
