@@ -4,8 +4,6 @@
 
 #include "ecore_wl2_private.h"
 
-/* for MIN() */
-#include <sys/param.h>
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 
 static Eina_Hash *_server_displays = NULL;
