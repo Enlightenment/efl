@@ -18,6 +18,7 @@ typedef struct _Eet_St1           Eet_St1;
 typedef struct _Eet_St2           Eet_St2;
 typedef struct _Eet_St3           Eet_St3;
 typedef struct _Eet_List          Eet_List;
+typedef struct _Eet_Hash          Eet_Hash;
 
 typedef enum _Eet_Union
 {
@@ -100,6 +101,11 @@ struct _Eet_Inherit_Test3
 struct _Eet_List
 {
    Eina_List *list;
+};
+
+struct _Eet_Hash
+{
+   Eina_Hash *hash;
 };
 
 static const char *
@@ -752,6 +758,64 @@ START_TEST(eet_test_data_variant)
 } /* START_TEST */
 END_TEST
 
+START_TEST(eet_test_data_hash_value)
+{
+   Eet_Hash *h;
+   Eina_Value *val;
+   Eet_Data_Descriptor_Class eddc;
+   Eet_Data_Descriptor *edd;
+   void *blob;
+   int size;
+   int i;
+   double d;
+   char *s;
+
+   eina_init();
+   eet_init();
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_Hash);
+   edd = eet_data_descriptor_stream_new(&eddc);
+
+   EET_DATA_DESCRIPTOR_ADD_HASH_VALUE(edd, Eet_Hash, "hash", hash);
+
+   h = calloc(1, sizeof(Eet_Hash));
+   h->hash = eina_hash_string_small_new((Eina_Free_Cb)eina_value_free);
+
+   val = eina_value_new(EINA_VALUE_TYPE_INT);
+   eina_value_set(val, EET_TEST_INT);
+   eina_hash_direct_add(h->hash, "val/int", val);
+
+   val = eina_value_new(EINA_VALUE_TYPE_DOUBLE);
+   eina_value_set(val, EET_TEST_DOUBLE);
+   eina_hash_direct_add(h->hash, "val/double", val);
+
+   val = eina_value_new(EINA_VALUE_TYPE_STRING);
+   eina_value_set(val, EET_TEST_STRING);
+   eina_hash_direct_add(h->hash, "val/string", val);
+
+   blob = eet_data_descriptor_encode(edd, h, &size);
+   fail_if((!blob) || (size <= 0));
+
+   h = eet_data_descriptor_decode(edd, blob, size);
+   fail_if(!h);
+
+   val = (Eina_Value *)eina_hash_find(h->hash, "val/int");
+   eina_value_get(val, &i);
+   fail_if((!val) || (i != EET_TEST_INT));
+
+   val = (Eina_Value *)eina_hash_find(h->hash, "val/double");
+   eina_value_get(val, &d);
+   fail_if((!val) || (d != EET_TEST_DOUBLE));
+
+   val = (Eina_Value *)eina_hash_find(h->hash, "val/string");
+   eina_value_get(val, &s);
+   fail_if((!val) || strcmp(s, EET_TEST_STRING));
+
+   eet_shutdown();
+   eina_shutdown();
+} /* START_TEST */
+END_TEST
+
 void eet_test_data(TCase *tc)
 {
    tcase_add_test(tc, eet_test_data_basic_type_encoding_decoding);
@@ -761,4 +825,5 @@ void eet_test_data(TCase *tc)
    tcase_add_test(tc, eet_test_data_fp);
    tcase_add_test(tc, eet_test_data_union);
    tcase_add_test(tc, eet_test_data_variant);
+   tcase_add_test(tc, eet_test_data_hash_value);
 }

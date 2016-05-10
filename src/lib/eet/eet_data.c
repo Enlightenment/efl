@@ -632,6 +632,7 @@ static int _eet_data_words_bigendian = -1;
 #define EET_I_STRING         1 << 4
 #define EET_I_INLINED_STRING 2 << 4
 #define EET_I_NULL           3 << 4
+#define EET_I_VALUE          4 << 4
 
 #define EET_MAGIC_VARIANT    0xF1234BC
 /*---*/
@@ -1281,7 +1282,7 @@ _eet_type_to_eina_value_get(int eet_type)
 
    return NULL;
 }
- 
+
 static int
 _eina_value_to_eet_type_get(const Eina_Value_Type *eina_type)
 {
@@ -1361,7 +1362,7 @@ eet_data_put_value(Eet_Dictionary *ed,
 		   const void     *src,      
 		   int            *size_ret) 
 {
-   const Eina_Value *value = *(void**)src;
+   const Eina_Value *value = *(Eina_Value **)src;
    const Eina_Value_Type *value_type;
    void *int_data;
    void *type_data;
@@ -1522,6 +1523,7 @@ case EET_I_ ## Type: chnk->type = EET_T_ ## Type; break;
 
                   EET_UNMATCH_TYPE(STRING);
                   EET_UNMATCH_TYPE(INLINED_STRING);
+                  EET_UNMATCH_TYPE(VALUE);
                   EET_UNMATCH_TYPE(NULL);
 
                 default:
@@ -1701,6 +1703,7 @@ case EET_T_ ## Type: type += EET_I_ ## Type; break;
 
                    EET_MATCH_TYPE(STRING);
                    EET_MATCH_TYPE(INLINED_STRING);
+                   EET_MATCH_TYPE(VALUE);
                    EET_MATCH_TYPE(NULL);
 
                  default:
@@ -2221,7 +2224,8 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    if ((group_type > EET_G_UNKNOWN)
        && (group_type < EET_G_LAST)
        && (((type > EET_T_UNKNOW) && (type < EET_T_STRING))
-           || ((type > EET_T_NULL) && (type < EET_T_LAST)))
+           || ((type > EET_T_NULL) && (type < EET_T_VALUE))
+           || ((type > EET_T_VALUE) && (type < EET_T_LAST)))
        && (!subtype))
      {
         subtype = calloc(1, sizeof (Eet_Data_Descriptor));
