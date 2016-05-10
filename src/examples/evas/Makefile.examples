@@ -9,7 +9,7 @@ EXAMPLES= evas-aspect-hints \
           evas-box \
           evas-buffer-simple \
           evas-events \
-          evas-3d-fog.c \
+          evas-3d-fog \
           evas-hints \
           evas-images \
           evas-images2 \
