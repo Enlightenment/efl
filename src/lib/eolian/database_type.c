@@ -99,6 +99,8 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      }
    else if (tp->type == EOLIAN_TYPE_VOID)
      eina_strbuf_append(buf, "void");
+   else if (tp->type == EOLIAN_TYPE_UNDEFINED)
+     eina_strbuf_append(buf, "__undefined_type");
    else
      {
         Eolian_Type *btp = tp->base_type;
