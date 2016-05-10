@@ -136,7 +136,6 @@ _eldbus_model_proxy_efl_model_property_set(Eo *obj EINA_UNUSED,
 
    if (!pd->is_loaded)
      {
-        Eldbus_Pending *pending;
         _Eldbus_Property_Promise *p = calloc(1, sizeof(_Eldbus_Property_Promise));
         EINA_SAFETY_ON_NULL_RETURN(p);
 
