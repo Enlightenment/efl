@@ -10,6 +10,6 @@ class Ector.Renderer.Cairo.Gradient_Linear (Ector.Renderer.Cairo.Base, Ector.Ren
       Ector.Renderer.Cairo.Base.fill;
       Eo.Base.finalize;
       Eo.Base.destructor;
-      Efl.Gfx.Gradient.Base.stop.set;
+      Efl.Gfx.Gradient.stop.set;
    }
 }

@@ -1,6 +1,6 @@
 import efl_gfx_types;
 
-interface Efl.Gfx.Gradient.Base
+interface Efl.Gfx.Gradient
 {
    eo_prefix: efl_gfx_gradient;
    legacy_prefix: null;

@@ -8,7 +8,7 @@
 #include "ector_private.h"
 
 static void
-_ector_renderer_generic_gradient_efl_gfx_gradient_base_stop_set(Eo *obj EINA_UNUSED,
+_ector_renderer_generic_gradient_efl_gfx_gradient_stop_set(Eo *obj EINA_UNUSED,
                                                                 Ector_Renderer_Generic_Gradient_Data *pd,
                                                                 const Efl_Gfx_Gradient_Stop *colors,
                                                                 unsigned int length)
@@ -25,7 +25,7 @@ _ector_renderer_generic_gradient_efl_gfx_gradient_base_stop_set(Eo *obj EINA_UNU
 }
 
 static void
-_ector_renderer_generic_gradient_efl_gfx_gradient_base_stop_get(Eo *obj EINA_UNUSED,
+_ector_renderer_generic_gradient_efl_gfx_gradient_stop_get(Eo *obj EINA_UNUSED,
                                                                 Ector_Renderer_Generic_Gradient_Data *pd,
                                                                 const Efl_Gfx_Gradient_Stop **colors,
                                                                 unsigned int *length)
@@ -35,7 +35,7 @@ _ector_renderer_generic_gradient_efl_gfx_gradient_base_stop_get(Eo *obj EINA_UNU
 }
 
 static void
-_ector_renderer_generic_gradient_efl_gfx_gradient_base_spread_set(Eo *obj EINA_UNUSED,
+_ector_renderer_generic_gradient_efl_gfx_gradient_spread_set(Eo *obj EINA_UNUSED,
                                                                   Ector_Renderer_Generic_Gradient_Data *pd,
                                                                   Efl_Gfx_Gradient_Spread s)
 {
@@ -43,7 +43,7 @@ _ector_renderer_generic_gradient_efl_gfx_gradient_base_spread_set(Eo *obj EINA_U
 }
 
 static Efl_Gfx_Gradient_Spread
-_ector_renderer_generic_gradient_efl_gfx_gradient_base_spread_get(Eo *obj EINA_UNUSED,
+_ector_renderer_generic_gradient_efl_gfx_gradient_spread_get(Eo *obj EINA_UNUSED,
                                                                   Ector_Renderer_Generic_Gradient_Data *pd)
 {
    return pd->s;

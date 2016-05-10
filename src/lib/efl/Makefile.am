@@ -21,7 +21,7 @@ interfaces/efl_gfx_stack.eo \
 interfaces/efl_gfx_view.eo \
 interfaces/efl_gfx_buffer.eo \
 interfaces/efl_gfx_shape.eo \
-interfaces/efl_gfx_gradient_base.eo \
+interfaces/efl_gfx_gradient.eo \
 interfaces/efl_gfx_gradient_linear.eo \
 interfaces/efl_gfx_gradient_radial.eo \
 interfaces/efl_gfx_filter.eo \

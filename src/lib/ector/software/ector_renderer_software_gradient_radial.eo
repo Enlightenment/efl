@@ -10,6 +10,6 @@ class Ector.Renderer.Software.Gradient_Radial (Ector.Renderer.Software.Base, Ect
       Ector.Renderer.Software.Base.fill;
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Efl.Gfx.Gradient.Base.stop.set;
+      Efl.Gfx.Gradient.stop.set;
    }
 }

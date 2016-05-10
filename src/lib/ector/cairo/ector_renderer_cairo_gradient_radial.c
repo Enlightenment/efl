@@ -169,7 +169,7 @@ _ector_renderer_cairo_gradient_radial_eo_base_destructor(Eo *obj,
 }
 
 static void
-_ector_renderer_cairo_gradient_radial_efl_gfx_gradient_base_stop_set(Eo *obj,
+_ector_renderer_cairo_gradient_radial_efl_gfx_gradient_stop_set(Eo *obj,
                                                                      Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED,
                                                                      const Efl_Gfx_Gradient_Stop *colors,
                                                                      unsigned int length)

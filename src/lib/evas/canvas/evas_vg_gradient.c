@@ -6,7 +6,7 @@
 #include <strings.h>
 
 static void
-_efl_vg_gradient_efl_gfx_gradient_base_stop_set(Eo *obj EINA_UNUSED,
+_efl_vg_gradient_efl_gfx_gradient_stop_set(Eo *obj EINA_UNUSED,
                                                 Efl_VG_Gradient_Data *pd,
                                                 const Efl_Gfx_Gradient_Stop *colors,
                                                 unsigned int length)
@@ -25,7 +25,7 @@ _efl_vg_gradient_efl_gfx_gradient_base_stop_set(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_gradient_efl_gfx_gradient_base_stop_get(Eo *obj EINA_UNUSED,
+_efl_vg_gradient_efl_gfx_gradient_stop_get(Eo *obj EINA_UNUSED,
                                                 Efl_VG_Gradient_Data *pd,
                                                 const Efl_Gfx_Gradient_Stop **colors,
                                                 unsigned int *length)
@@ -35,7 +35,7 @@ _efl_vg_gradient_efl_gfx_gradient_base_stop_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_gradient_efl_gfx_gradient_base_spread_set(Eo *obj EINA_UNUSED,
+_efl_vg_gradient_efl_gfx_gradient_spread_set(Eo *obj EINA_UNUSED,
                                                   Efl_VG_Gradient_Data *pd,
                                                   Efl_Gfx_Gradient_Spread s)
 {
@@ -45,7 +45,7 @@ _efl_vg_gradient_efl_gfx_gradient_base_spread_set(Eo *obj EINA_UNUSED,
 }
 
 static Efl_Gfx_Gradient_Spread
-_efl_vg_gradient_efl_gfx_gradient_base_spread_get(Eo *obj EINA_UNUSED,
+_efl_vg_gradient_efl_gfx_gradient_spread_get(Eo *obj EINA_UNUSED,
                                                   Efl_VG_Gradient_Data *pd)
 {
    return pd->s;

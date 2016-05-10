@@ -17,7 +17,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_view.eo \
       lib/efl/interfaces/efl_gfx_buffer.eo \
       lib/efl/interfaces/efl_gfx_shape.eo \
-      lib/efl/interfaces/efl_gfx_gradient_base.eo \
+      lib/efl/interfaces/efl_gfx_gradient.eo \
       lib/efl/interfaces/efl_gfx_gradient_linear.eo \
       lib/efl/interfaces/efl_gfx_gradient_radial.eo \
       lib/efl/interfaces/efl_gfx_filter.eo \

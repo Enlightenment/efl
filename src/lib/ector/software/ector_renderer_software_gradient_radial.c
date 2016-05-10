@@ -101,7 +101,7 @@ _ector_renderer_software_gradient_radial_eo_base_destructor(Eo *obj,
 }
 
 void
-_ector_renderer_software_gradient_radial_efl_gfx_gradient_base_stop_set(Eo *obj, Ector_Renderer_Software_Gradient_Data *pd, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
+_ector_renderer_software_gradient_radial_efl_gfx_gradient_stop_set(Eo *obj, Ector_Renderer_Software_Gradient_Data *pd, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
 {
    efl_gfx_gradient_stop_set(eo_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS), colors, length);
 

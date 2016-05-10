@@ -89,7 +89,7 @@ _ector_renderer_gl_gradient_linear_eo_base_destructor(Eo *obj, Ector_Renderer_GL
 }
 
 static void
-_ector_renderer_gl_gradient_linear_efl_gfx_gradient_base_stop_set(Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd EINA_UNUSED, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
+_ector_renderer_gl_gradient_linear_efl_gfx_gradient_stop_set(Eo *obj, Ector_Renderer_GL_Gradient_Linear_Data *pd EINA_UNUSED, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
 {
    efl_gfx_gradient_stop_set(eo_super(obj, ECTOR_RENDERER_GL_GRADIENT_LINEAR_CLASS), colors, length);
 }
