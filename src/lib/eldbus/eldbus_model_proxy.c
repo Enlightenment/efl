@@ -95,7 +95,7 @@ _eldbus_model_proxy_eo_base_destructor(Eo *obj, Eldbus_Model_Proxy_Data *pd)
 }
 
 static Eina_Array const *
-_eldbus_model_proxy_efl_model_base_properties_get(Eo *obj EINA_UNUSED,
+_eldbus_model_proxy_efl_model_properties_get(Eo *obj EINA_UNUSED,
                                                Eldbus_Model_Proxy_Data *pd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
@@ -105,7 +105,7 @@ _eldbus_model_proxy_efl_model_base_properties_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_eldbus_model_proxy_efl_model_base_property_set(Eo *obj EINA_UNUSED,
+_eldbus_model_proxy_efl_model_property_set(Eo *obj EINA_UNUSED,
                                         Eldbus_Model_Proxy_Data *pd,
                                         const char *property,
                                         Eina_Value const* value,
@@ -158,7 +158,7 @@ _eldbus_model_proxy_efl_model_base_property_set(Eo *obj EINA_UNUSED,
 }
 
 static void
-_eldbus_model_proxy_efl_model_base_property_get(Eo *obj EINA_UNUSED,
+_eldbus_model_proxy_efl_model_property_get(Eo *obj EINA_UNUSED,
                                         Eldbus_Model_Proxy_Data *pd,
                                         const char *property,
                                         Eina_Promise_Owner *promise)
@@ -203,21 +203,21 @@ _eldbus_model_proxy_efl_model_base_property_get(Eo *obj EINA_UNUSED,
 }
 
 static Eo *
-_eldbus_model_proxy_efl_model_base_child_add(Eo *obj EINA_UNUSED,
+_eldbus_model_proxy_efl_model_child_add(Eo *obj EINA_UNUSED,
                                         Eldbus_Model_Proxy_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
 
 static void
-_eldbus_model_proxy_efl_model_base_child_del(Eo *obj EINA_UNUSED,
+_eldbus_model_proxy_efl_model_child_del(Eo *obj EINA_UNUSED,
                                      Eldbus_Model_Proxy_Data *pd EINA_UNUSED,
                                      Eo *child EINA_UNUSED)
 {
 }
 
 static void
-_eldbus_model_proxy_efl_model_base_children_slice_get(Eo *obj EINA_UNUSED,
+_eldbus_model_proxy_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
                                               Eldbus_Model_Proxy_Data *pd,
                                               unsigned start,
                                               unsigned count,
@@ -238,7 +238,7 @@ _eldbus_model_proxy_efl_model_base_children_slice_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_eldbus_model_proxy_efl_model_base_children_count_get(Eo *obj EINA_UNUSED,
+_eldbus_model_proxy_efl_model_children_count_get(Eo *obj EINA_UNUSED,
                                               Eldbus_Model_Proxy_Data *pd,
                                               Eina_Promise_Owner *promise)
 {
@@ -607,7 +607,7 @@ _eldbus_model_proxy_property_get_all_cb(void *data,
           .changed_properties = changed_properties
         };
 
-        eo_event_callback_call(pd->obj, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt);
+        eo_event_callback_call(pd->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
      }
 
    eina_array_free(changed_properties);
@@ -672,7 +672,7 @@ _eldbus_model_proxy_property_set_cb(void *data,
                          .changed_properties = pd->properties_array
                        };
 
-               eo_event_callback_call(pd->obj, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt);
+               eo_event_callback_call(pd->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
                efl_model_property_changed_notify(pd->obj, property_set_data->property);
 
            }

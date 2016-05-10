@@ -25,7 +25,7 @@ interfaces/efl_gfx_gradient_base.eo \
 interfaces/efl_gfx_gradient_linear.eo \
 interfaces/efl_gfx_gradient_radial.eo \
 interfaces/efl_gfx_filter.eo \
-interfaces/efl_model_base.eo \
+interfaces/efl_model.eo \
 interfaces/efl_animator.eo \
 interfaces/efl_orientation.eo \
 interfaces/efl_flipable.eo \

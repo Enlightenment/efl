@@ -1,6 +1,6 @@
 type @extern Eio_Filter_Direct_Cb: __undefined_type;
 
-class Eio.Model (Eo.Base, Efl.Model.Base)
+class Eio.Model (Eo.Base, Efl.Model)
 {
     [[Eio model class]]
 
@@ -15,7 +15,7 @@ class Eio.Model (Eo.Base, Efl.Model.Base)
             by returning either EINA_FALSE, to abort the notification or
             EINA_TRUE to keep it.
 
-            See also @Efl.Model.Base.children_slice_get.
+            See also @Efl.Model.children_slice_get.
 
             @since 1.11
           ]]
@@ -37,12 +37,12 @@ class Eio.Model (Eo.Base, Efl.Model.Base)
     implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Efl.Model.Base.properties.get;
-      Efl.Model.Base.property_set;
-      Efl.Model.Base.property_get;
-      Efl.Model.Base.child_add;
-      Efl.Model.Base.child_del;
-      Efl.Model.Base.children_slice_get;
-      Efl.Model.Base.children_count_get;
+      Efl.Model.properties.get;
+      Efl.Model.property_set;
+      Efl.Model.property_get;
+      Efl.Model.child_add;
+      Efl.Model.child_del;
+      Efl.Model.children_slice_get;
+      Efl.Model.children_count_get;
     }
 }

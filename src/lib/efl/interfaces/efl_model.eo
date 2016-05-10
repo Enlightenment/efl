@@ -3,7 +3,7 @@ struct Efl.Model.Property_Event {
      invalidated_properties: array<const(char) *> *; [[Removed properties identified by name]]
 }
 
-interface Efl.Model.Base ()
+interface Efl.Model ()
 {
    legacy_prefix: null;
    eo_prefix: efl_model;

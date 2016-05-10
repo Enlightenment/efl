@@ -102,8 +102,8 @@ efl_model_wait_for_event(Eo *obj, const Eo_Event_Description* event)
    eo_event_callback_del(obj, event, _eo_event_quit_cb, NULL);
 }
 
-Efl_Model_Base *
-efl_model_nth_child_get(Efl_Model_Base *efl_model, unsigned int n)
+Efl_Model *
+efl_model_nth_child_get(Efl_Model *efl_model, unsigned int n)
 {
    Eina_Accessor *accessor;
    Eina_Promise *promise;
@@ -122,8 +122,8 @@ efl_model_nth_child_get(Efl_Model_Base *efl_model, unsigned int n)
    return child;
 }
 
-Efl_Model_Base *
-efl_model_first_child_get(Efl_Model_Base *efl_model)
+Efl_Model *
+efl_model_first_child_get(Efl_Model *efl_model)
 {
    return efl_model_nth_child_get(efl_model, 1);
 }
@@ -180,7 +180,7 @@ create_object(void)
 }
 
 void
-check_efl_model_children_count_eq(Efl_Model_Base *efl_model, unsigned int expected_children_count)
+check_efl_model_children_count_eq(Efl_Model *efl_model, unsigned int expected_children_count)
 {
    unsigned int actual_children_count;
    Eina_Promise *promise;
@@ -190,7 +190,7 @@ check_efl_model_children_count_eq(Efl_Model_Base *efl_model, unsigned int expect
 }
 
 void
-check_efl_model_children_count_ge(Efl_Model_Base *efl_model, unsigned int minimum_children_count)
+check_efl_model_children_count_ge(Efl_Model *efl_model, unsigned int minimum_children_count)
 {
    unsigned int actual_children_count;
    Eina_Promise *promise;
@@ -200,7 +200,7 @@ check_efl_model_children_count_ge(Efl_Model_Base *efl_model, unsigned int minimu
 }
 
 void
-check_efl_model_children_slice_get(Efl_Model_Base *efl_model)
+check_efl_model_children_slice_get(Efl_Model *efl_model)
 {
    unsigned count;
    Eina_Promise *promise;
@@ -400,7 +400,7 @@ eldbus_model_signal_from_proxy_get(Eldbus_Model_Proxy *proxy, const char *signal
 }
 
 void
-check_efl_model_property_int_eq(Efl_Model_Base *efl_model, const char *property, int expected_value)
+check_efl_model_property_int_eq(Efl_Model *efl_model, const char *property, int expected_value)
 {
    Eina_Value property_value;
    Eina_Promise *promise;
@@ -420,7 +420,7 @@ check_efl_model_property_int_eq(Efl_Model_Base *efl_model, const char *property,
 }
 
 void
-check_efl_model_property_int_set(Efl_Model_Base *efl_model, const char *property, int value)
+check_efl_model_property_int_set(Efl_Model *efl_model, const char *property, int value)
 {
    Eina_Value eina_value, value_ret;
    Eina_Promise *promise;

@@ -39,7 +39,7 @@ EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
 #include "interfaces/efl_pack_linear.eo.c"
 #include "interfaces/efl_pack_grid.eo.c"
 
-#include "interfaces/efl_model_base.eo.c"
+#include "interfaces/efl_model.eo.c"
 #include "interfaces/efl_animator.eo.c"
 #include "interfaces/efl_orientation.eo.c"
 #include "interfaces/efl_flipable.eo.c"

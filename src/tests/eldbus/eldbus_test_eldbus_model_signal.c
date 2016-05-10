@@ -127,7 +127,7 @@ START_TEST(signals)
 
    eldbus_model_method_call(ping_method);
 
-   efl_model_wait_for_event(pong_signal, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED);
+   efl_model_wait_for_event(pong_signal, EFL_MODEL_EVENT_PROPERTIES_CHANGED);
 
    check_efl_model_property_int_eq(pong_signal, ARGUMENT_A, 100);
 }

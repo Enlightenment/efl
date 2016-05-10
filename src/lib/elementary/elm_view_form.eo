@@ -8,7 +8,7 @@ class Elm.View_Form (Eo.Base)
                @since 1.11
              ]]
              params {
-                 @in model: Efl.Model.Base*; [[Emodel object]]
+                 @in model: Efl.Model*; [[Emodel object]]
              }
         }
         widget_add {

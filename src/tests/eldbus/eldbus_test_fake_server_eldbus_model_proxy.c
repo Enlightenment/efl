@@ -85,7 +85,7 @@ _check_property_set(const char *property_name, int expected_property_value, int 
    efl_model_property_set(fake_server_proxy, property_name, &value, NULL);
    eina_value_flush(&value);
 
-   efl_model_wait_for_event(fake_server_proxy, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED);
+   efl_model_wait_for_event(fake_server_proxy, EFL_MODEL_EVENT_PROPERTIES_CHANGED);
 
    ck_assert_int_eq(expected_property_value, *actual_property_value);
 }

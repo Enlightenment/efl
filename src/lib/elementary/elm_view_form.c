@@ -287,7 +287,7 @@ _elm_view_form_model_set(Eo *obj EINA_UNUSED, Elm_View_Form_Data *priv, Eo *mode
 {
    if (priv->model_obj != NULL)
      {
-        eo_event_callback_del(priv->model_obj, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, priv);
+        eo_event_callback_del(priv->model_obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, priv);
         eo_unref(priv->model_obj);
      }
 
@@ -296,7 +296,7 @@ _elm_view_form_model_set(Eo *obj EINA_UNUSED, Elm_View_Form_Data *priv, Eo *mode
    if (priv->model_obj != NULL)
      {
         eo_ref(priv->model_obj);
-        eo_event_callback_add(priv->model_obj, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, priv);
+        eo_event_callback_add(priv->model_obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, priv);
         _update_model_properties(priv);
      }
 }

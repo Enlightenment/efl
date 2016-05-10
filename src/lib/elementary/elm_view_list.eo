@@ -40,7 +40,7 @@ class Elm.View_List (Eo.Base)
                @since 1.11
              ]]
              params {
-                 @in model: Efl.Model.Base *; [[New Emodel to set]]
+                 @in model: Efl.Model *; [[New Emodel to set]]
              }
         }
         model_unset {
@@ -55,7 +55,7 @@ class Elm.View_List (Eo.Base)
                @since 1.11
              ]]
              params {
-                 @out model: Efl.Model.Base *; [[Returned Emodel]]
+                 @out model: Efl.Model *; [[Returned Emodel]]
              }
         }
     }

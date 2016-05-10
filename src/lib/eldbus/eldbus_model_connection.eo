@@ -1,4 +1,4 @@
-class Eldbus.Model_Connection (Eo.Base, Efl.Model.Base) {
+class Eldbus.Model_Connection (Eo.Base, Efl.Model) {
     [[Eldbus model connection class]]
 
     legacy_prefix: null;
@@ -35,13 +35,13 @@ class Eldbus.Model_Connection (Eo.Base, Efl.Model.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Efl.Model.Base.properties.get;
-        Efl.Model.Base.property_set;
-        Efl.Model.Base.property_get;
-        Efl.Model.Base.child_add;
-        Efl.Model.Base.child_del;
-        Efl.Model.Base.children_slice_get;
-        Efl.Model.Base.children_count_get;
+        Efl.Model.properties.get;
+        Efl.Model.property_set;
+        Efl.Model.property_get;
+        Efl.Model.child_add;
+        Efl.Model.child_del;
+        Efl.Model.children_slice_get;
+        Efl.Model.children_count_get;
     }
     constructors {
         .constructor;

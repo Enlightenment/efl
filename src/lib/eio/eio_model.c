@@ -98,7 +98,7 @@ _eio_move_done_cb(void *data, Eio_File *handler EINA_UNUSED)
    eina_array_push(properties, _eio_model_prop_names[EIO_MODEL_PROP_FILENAME]);
    evt.changed_properties = properties;
 
-   eo_event_callback_call(priv->obj, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt);
+   eo_event_callback_call(priv->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
    eina_array_free(properties);
 }
 
@@ -150,7 +150,7 @@ _efl_model_evt_added_ecore_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void
    eio_model_children_filter_set(cevt.child, priv->filter_cb, priv->filter_userdata);
    eina_value_flush(&path);
 
-   eo_event_callback_call(priv->obj, EFL_MODEL_BASE_EVENT_CHILD_ADDED, &cevt);
+   eo_event_callback_call(priv->obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
 
    return EINA_TRUE;
 }
@@ -179,7 +179,7 @@ _efl_model_evt_deleted_ecore_cb(void *data EINA_UNUSED, int type EINA_UNUSED, vo
              cevt.index = i;
              cevt.child = cur->data;
 
-             eo_event_callback_call(priv->obj, EFL_MODEL_BASE_EVENT_CHILD_REMOVED, &cevt);
+             eo_event_callback_call(priv->obj, EFL_MODEL_EVENT_CHILD_REMOVED, &cevt);
 
              priv->children_list = eina_list_remove_list(priv->children_list, cur);
              eo_unref(cevt.child);
@@ -240,7 +240,7 @@ _eio_error_unlink_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int 
  * Interfaces impl.
  */
 static Eina_Array const *
-_eio_model_efl_model_base_properties_get(Eo *obj EINA_UNUSED, Eio_Model_Data *_pd)
+_eio_model_efl_model_properties_get(Eo *obj EINA_UNUSED, Eio_Model_Data *_pd)
 {
    Eio_Model_Data *priv = _pd;
 
@@ -254,7 +254,7 @@ _eio_model_efl_model_base_properties_get(Eo *obj EINA_UNUSED, Eio_Model_Data *_p
  * Property Get
  */
 static void
-_eio_model_efl_model_base_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, const char *property, Eina_Promise_Owner *promise)
+_eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, const char *property, Eina_Promise_Owner *promise)
 {
    _Eio_Property_Name property_name;
    const char* value = NULL;
@@ -320,7 +320,7 @@ _eio_model_efl_model_base_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv
  * Property Set
  */
 static void
-_eio_model_efl_model_base_property_set(Eo *obj EINA_UNUSED,
+_eio_model_efl_model_property_set(Eo *obj EINA_UNUSED,
                                                 Eio_Model_Data *priv,
                                                 const char * property,
                                                 const Eina_Value *value,
@@ -361,14 +361,14 @@ _eio_model_efl_model_base_property_set(Eo *obj EINA_UNUSED,
  * Children Count Get
  */
 static void
-_eio_model_efl_model_base_children_count_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eina_Promise_Owner *promise)
+_eio_model_efl_model_children_count_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eina_Promise_Owner *promise)
 {
    unsigned int c = eina_list_count(priv->children_list);
    eina_promise_owner_value_set(promise, &c, NULL);
 }
 
 static void
-_eio_model_efl_model_base_monitor_add(Eio_Model_Data *priv)
+_eio_model_efl_model_monitor_add(Eio_Model_Data *priv)
 {
    if (!priv->monitor)
      {
@@ -478,13 +478,13 @@ _eio_model_children_filter_set(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eio_Fi
  * Child Add
  */
 static Eo *
-_eio_model_efl_model_base_child_add(Eo *obj EINA_UNUSED, Eio_Model_Data *priv EINA_UNUSED)
+_eio_model_efl_model_child_add(Eo *obj EINA_UNUSED, Eio_Model_Data *priv EINA_UNUSED)
 {
    return eo_add(EIO_MODEL_CLASS, obj);
 }
 
 static void
-_eio_model_efl_model_base_child_del_stat(void* data, Eio_File* handler EINA_UNUSED, const Eina_Stat* stat)
+_eio_model_efl_model_child_del_stat(void* data, Eio_File* handler EINA_UNUSED, const Eina_Stat* stat)
 {
    Eo* child = data;
    Eio_Model_Data *child_priv = eo_data_scope_get(child, MY_CLASS);
@@ -504,7 +504,7 @@ _eio_model_efl_model_base_child_del_stat(void* data, Eio_File* handler EINA_UNUS
  * Child Remove
  */
 static void
-_eio_model_efl_model_base_child_del(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eo *child)
+_eio_model_efl_model_child_del(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eo *child)
 {
    Eio_Model_Data *child_priv;
    EINA_SAFETY_ON_NULL_RETURN(child);
@@ -513,7 +513,7 @@ _eio_model_efl_model_base_child_del(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, E
    EINA_SAFETY_ON_NULL_RETURN(child_priv);
 
    priv->del_file = eio_file_direct_stat(child_priv->path,
-                                         &_eio_model_efl_model_base_child_del_stat,
+                                         &_eio_model_efl_model_child_del_stat,
                                          &_eio_error_unlink_cb,
                                          child);
    eo_ref(child);
@@ -523,7 +523,7 @@ _eio_model_efl_model_base_child_del(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, E
  * Children Slice Get
  */
 static void
-_eio_model_efl_model_base_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv,
+_eio_model_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv,
                                              unsigned start, unsigned count, Eina_Promise_Owner *promise)
 {
    /**
@@ -540,7 +540,7 @@ _eio_model_efl_model_base_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data
 
        priv->children_promises = eina_list_prepend(priv->children_promises, p);
 
-       _eio_model_efl_model_base_monitor_add(priv);
+       _eio_model_efl_model_monitor_add(priv);
 
 
        if (priv->is_listing == EINA_FALSE)

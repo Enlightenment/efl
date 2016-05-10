@@ -37,7 +37,7 @@ struct _Efl_Model_Children_Event
  */
 typedef struct _Efl_Model_Children_Event Efl_Model_Children_Event;
 
-#include "interfaces/efl_model_base.eo.h"
+#include "interfaces/efl_model.eo.h"
 
 EAPI int efl_model_init(void);
 
@@ -64,7 +64,7 @@ EAPI Eina_Accessor *efl_model_list_slice(Eina_List *list, unsigned start, unsign
  *
  * @since 1.17
  */
-EAPI void efl_model_property_changed_notify(Efl_Model_Base *model, const char *property);
+EAPI void efl_model_property_changed_notify(Efl_Model *model, const char *property);
 
 /**
  * @brief Notifies a property invalidated event with an @c EFL_MODEL_EVENT_PROPERTIES_CHANGED
@@ -74,7 +74,7 @@ EAPI void efl_model_property_changed_notify(Efl_Model_Base *model, const char *p
  *
  * @since 1.17
  */
-EAPI void efl_model_property_invalidated_notify(Efl_Model_Base *model, const char *property);
+EAPI void efl_model_property_invalidated_notify(Efl_Model *model, const char *property);
 
 /**
  * @brief Callback to setup a member of @c Eina_Value_Struct

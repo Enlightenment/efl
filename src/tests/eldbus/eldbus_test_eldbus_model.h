@@ -11,14 +11,14 @@ Eo *create_connection(void);
 Eo *create_object(void);
 
 void efl_model_wait_for_event(Eo *obj, const Eo_Event_Description *event);
-Efl_Model_Base *efl_model_nth_child_get(Efl_Model_Base *obj, unsigned int n);
-Efl_Model_Base *efl_model_first_child_get(Efl_Model_Base *efl_model);
+Efl_Model *efl_model_nth_child_get(Efl_Model *obj, unsigned int n);
+Efl_Model *efl_model_first_child_get(Efl_Model *efl_model);
 
-void check_efl_model_children_count_eq(Efl_Model_Base *obj, unsigned int expected_children_count);
-void check_efl_model_children_count_ge(Efl_Model_Base *obj, unsigned int minimum_children_count);
-void check_efl_model_children_slice_get(Efl_Model_Base *efl_model);
-void check_efl_model_property_int_eq(Efl_Model_Base *obj, const char *property, int expected_value);
-void check_efl_model_property_int_set(Efl_Model_Base *obj, const char *property, int value);
+void check_efl_model_children_count_eq(Efl_Model *obj, unsigned int expected_children_count);
+void check_efl_model_children_count_ge(Efl_Model *obj, unsigned int minimum_children_count);
+void check_efl_model_children_slice_get(Efl_Model *efl_model);
+void check_efl_model_property_int_eq(Efl_Model *obj, const char *property, int expected_value);
+void check_efl_model_property_int_set(Efl_Model *obj, const char *property, int value);
 void check_efl_model_promise_error(Eina_Promise *promise, Eina_Error *err);
 
 

@@ -57,7 +57,7 @@ static Eina_Bool _contracted_cb(void *data EINA_UNUSED, const Eo_Event *event);
 
 /* --- Genlist Callbacks --- */
 EO_CALLBACKS_ARRAY_DEFINE(model_callbacks,
-                          { EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, _efl_model_children_count_change_cb });
+                          { EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _efl_model_children_count_change_cb });
 EO_CALLBACKS_ARRAY_DEFINE(genlist_callbacks,
                           { ELM_GENLIST_EVENT_EXPAND_REQUEST, _expand_request_cb },
                           { ELM_GENLIST_EVENT_CONTRACT_REQUEST, _contract_request_cb },
@@ -81,7 +81,7 @@ _item_del(void *data, Evas_Object *obj EINA_UNUSED)
       return;
 
    eo_event_callback_array_del(idata->model, model_callbacks(), idata);
-   eo_event_callback_del(idata->model, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, idata);
+   eo_event_callback_del(idata->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, idata);
 
    eo_unref(idata->model);
    idata->model = NULL;
@@ -320,7 +320,7 @@ _efl_model_load_children_then(View_List_ItemData *pdata, Eina_Accessor **accesso
         idata->parent = pdata;
         idata->model = child;
         eo_ref(child);
-        eo_event_callback_add(child, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, idata);
+        eo_event_callback_add(child, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, idata);
         idata->item = elm_genlist_item_append(priv->genlist, priv->itc, idata, pdata->item,
                                                        priv->itype, _item_sel_cb, idata);
      }
@@ -456,7 +456,7 @@ _elm_view_list_property_connect(Eo *obj EINA_UNUSED, Elm_View_List_Data *priv,
 }
 
 static void
-_elm_view_list_model_set(Eo *obj EINA_UNUSED, Elm_View_List_Data *priv, Efl_Model_Base *model)
+_elm_view_list_model_set(Eo *obj EINA_UNUSED, Elm_View_List_Data *priv, Efl_Model *model)
 {
    EINA_SAFETY_ON_NULL_RETURN(priv);
    EINA_SAFETY_ON_NULL_RETURN(model);
