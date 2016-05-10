@@ -93,7 +93,7 @@ EAPI extern const Eo_Event_Description _EFL_GFX_PATH_CHANGED;
 #define EFL_GFX_CHANGED (&(_EFL_GFX_CHANGED))
 #define EFL_GFX_PATH_CHANGED (&(_EFL_GFX_PATH_CHANGED))
 
-#include "interfaces/efl_gfx_base.eo.h"
+#include "interfaces/efl_gfx.eo.h"
 #include "interfaces/efl_gfx_buffer.eo.h"
 #include "interfaces/efl_gfx_stack.eo.h"
 #include "interfaces/efl_gfx_fill.eo.h"
@@ -129,7 +129,7 @@ static inline void efl_gfx_color16_type_set(Efl_Gfx_Color *color,
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "interfaces/efl_gfx_types.eot.h"
 #include "interfaces/efl_gfx_fill.eo.legacy.h"
-#include "interfaces/efl_gfx_base.eo.legacy.h"
+#include "interfaces/efl_gfx.eo.legacy.h"
 #include "interfaces/efl_image.eo.legacy.h"
 #include "interfaces/efl_image_animated.eo.legacy.h"
 #endif

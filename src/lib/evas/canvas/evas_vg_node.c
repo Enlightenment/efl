@@ -87,7 +87,7 @@ _efl_vg_base_origin_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_base_efl_gfx_base_position_set(Eo *obj EINA_UNUSED,
+_efl_vg_base_efl_gfx_position_set(Eo *obj EINA_UNUSED,
                                        Efl_VG_Base_Data *pd,
                                        int x, int y)
 {
@@ -98,7 +98,7 @@ _efl_vg_base_efl_gfx_base_position_set(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_base_efl_gfx_base_position_get(Eo *obj EINA_UNUSED,
+_efl_vg_base_efl_gfx_position_get(Eo *obj EINA_UNUSED,
                                        Efl_VG_Base_Data *pd,
                                        int *x, int *y)
 {
@@ -107,7 +107,7 @@ _efl_vg_base_efl_gfx_base_position_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_base_efl_gfx_base_visible_set(Eo *obj EINA_UNUSED,
+_efl_vg_base_efl_gfx_visible_set(Eo *obj EINA_UNUSED,
                                       Efl_VG_Base_Data *pd, Eina_Bool v)
 {
    pd->visibility = v;
@@ -117,14 +117,14 @@ _efl_vg_base_efl_gfx_base_visible_set(Eo *obj EINA_UNUSED,
 
 
 static Eina_Bool
-_efl_vg_base_efl_gfx_base_visible_get(Eo *obj EINA_UNUSED,
+_efl_vg_base_efl_gfx_visible_get(Eo *obj EINA_UNUSED,
                                       Efl_VG_Base_Data *pd)
 {
    return pd->visibility;
 }
 
 static void
-_efl_vg_base_efl_gfx_base_color_set(Eo *obj EINA_UNUSED,
+_efl_vg_base_efl_gfx_color_set(Eo *obj EINA_UNUSED,
                                     Efl_VG_Base_Data *pd,
                                     int r, int g, int b, int a)
 {
@@ -157,18 +157,18 @@ _efl_vg_base_efl_gfx_base_color_set(Eo *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_efl_vg_base_efl_gfx_base_color_part_set(Eo *obj, Efl_VG_Base_Data *pd,
+_efl_vg_base_efl_gfx_color_part_set(Eo *obj, Efl_VG_Base_Data *pd,
                                          const char *part,
                                          int r, int g, int b, int a)
 {
    if (part) return EINA_FALSE;
 
-   _efl_vg_base_efl_gfx_base_color_set(obj, pd, r, g, b, a);
+   _efl_vg_base_efl_gfx_color_set(obj, pd, r, g, b, a);
    return EINA_TRUE;
 }
 
 static void
-_efl_vg_base_efl_gfx_base_color_get(Eo *obj EINA_UNUSED,
+_efl_vg_base_efl_gfx_color_get(Eo *obj EINA_UNUSED,
                                     Efl_VG_Base_Data *pd,
                                     int *r, int *g, int *b, int *a)
 {
@@ -179,13 +179,13 @@ _efl_vg_base_efl_gfx_base_color_get(Eo *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_efl_vg_base_efl_gfx_base_color_part_get(Eo *obj, Efl_VG_Base_Data *pd,
+_efl_vg_base_efl_gfx_color_part_get(Eo *obj, Efl_VG_Base_Data *pd,
                                          const char *part,
                                          int *r, int *g, int *b, int *a)
 {
    if (part) return EINA_FALSE;
 
-   _efl_vg_base_efl_gfx_base_color_get(obj, pd, r, g, b, a);
+   _efl_vg_base_efl_gfx_color_get(obj, pd, r, g, b, a);
    return EINA_TRUE;
 }
 
@@ -209,7 +209,7 @@ _efl_vg_base_mask_get(Eo *obj EINA_UNUSED, Efl_VG_Base_Data *pd)
 }
 
 static void
-_efl_vg_base_efl_gfx_base_size_get(Eo *obj,
+_efl_vg_base_efl_gfx_size_get(Eo *obj,
                                    Efl_VG_Base_Data *pd EINA_UNUSED,
                                    int *w, int *h)
 {

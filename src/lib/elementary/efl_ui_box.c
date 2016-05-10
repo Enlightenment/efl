@@ -320,7 +320,7 @@ _efl_ui_box_efl_pack_unpack_all(Eo *obj, Efl_Ui_Box_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_box_efl_pack_unpack(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Base *subobj)
+_efl_ui_box_efl_pack_unpack(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx *subobj)
 {
    Eina_Bool ret = EINA_FALSE;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -335,13 +335,13 @@ _efl_ui_box_efl_pack_unpack(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Base *subobj)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_box_efl_pack_pack(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx_Base *subobj)
+_efl_ui_box_efl_pack_pack(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx *subobj)
 {
    return efl_pack_end(obj, subobj);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_box_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx_Base *subobj)
+_efl_ui_box_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx *subobj)
 {
    Eina_Bool ret;
 
@@ -354,7 +354,7 @@ _efl_ui_box_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, E
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_box_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED, Efl_Gfx_Base *subobj)
+_efl_ui_box_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED, Efl_Gfx *subobj)
 {
    Eina_Bool ret;
 
@@ -367,7 +367,7 @@ _efl_ui_box_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_box_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED, Efl_Gfx_Base *subobj, const Efl_Gfx_Base *existing)
+_efl_ui_box_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED, Efl_Gfx *subobj, const Efl_Gfx *existing)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -384,7 +384,7 @@ _efl_ui_box_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_box_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED, Efl_Gfx_Base *subobj, const Efl_Gfx_Base *existing)
+_efl_ui_box_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED, Efl_Gfx *subobj, const Efl_Gfx *existing)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -402,7 +402,7 @@ _efl_ui_box_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED
 
 EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
-                                        Efl_Gfx_Base *subobj, int index)
+                                        Efl_Gfx *subobj, int index)
 {
    if (!index)
      return efl_pack_begin(obj, subobj);
@@ -428,13 +428,13 @@ _efl_ui_box_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
      }
 }
 
-static inline Efl_Gfx_Base *
+static inline Efl_Gfx *
 _box_item(Evas_Object_Box_Option *opt)
 {
    return opt ? opt->obj : NULL;
 }
 
-EOLIAN static Efl_Gfx_Base *
+EOLIAN static Efl_Gfx *
 _efl_ui_box_efl_pack_linear_pack_content_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
                                            int index)
 {
@@ -465,11 +465,11 @@ _efl_ui_box_efl_pack_linear_pack_content_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_U
    return _box_item(eina_list_nth(bd->children, index));
 }
 
-EOLIAN static Efl_Gfx_Base *
+EOLIAN static Efl_Gfx *
 _efl_ui_box_efl_pack_linear_pack_unpack_at(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
                                               int index)
 {
-   Efl_Gfx_Base *content;
+   Efl_Gfx *content;
 
    content = efl_pack_content_get(obj, index);
    if (!content) return NULL;
@@ -482,7 +482,7 @@ _efl_ui_box_efl_pack_linear_pack_unpack_at(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNU
 
 EOLIAN static int
 _efl_ui_box_efl_pack_linear_pack_index_get(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED,
-                                           const Efl_Gfx_Base *subobj)
+                                           const Efl_Gfx *subobj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, -1);
    Evas_Object_Box_Data *bd;
@@ -516,7 +516,7 @@ _efl_ui_box_efl_pack_layout_layout_request(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNU
 static Eina_Bool
 _box_item_iterator_next(Box_Item_Iterator *it, void **data)
 {
-   Efl_Gfx_Base *sub;
+   Efl_Gfx *sub;
 
    if (!eina_iterator_next(it->real_iterator, (void **) &sub))
      return EINA_FALSE;

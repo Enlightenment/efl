@@ -1,7 +1,7 @@
 # Even though libefl is new, it contains definitions used by legacy APIs
 efl_eolian_legacy_files = \
 	lib/efl/interfaces/efl_gfx_fill.eo \
-	lib/efl/interfaces/efl_gfx_base.eo \
+	lib/efl/interfaces/efl_gfx.eo \
 	lib/efl/interfaces/efl_image.eo \
 	lib/efl/interfaces/efl_image_animated.eo \
 	$(NULL)

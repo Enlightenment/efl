@@ -37,7 +37,7 @@ interface Efl.Pack_Layout ()
       layout_do @class @protected {
          [[Lay out (resize and move) children objects of $pack.]]
          params {
-            pack: Efl.Gfx.Base*; [[The container to lay out.]]
+            pack: Efl.Gfx*; [[The container to lay out.]]
             data: const(void)* @optional; [[Extra data passed by the caller.]]
          }
       }

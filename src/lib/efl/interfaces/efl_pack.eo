@@ -20,7 +20,7 @@ interface Efl.Pack (Efl.Container)
       unpack {
          [[Removes an existing item from the container, without deleting it.]]
          params {
-            subobj: own(Efl.Gfx.Base *);
+            subobj: own(Efl.Gfx *);
          }
          return: bool; [[$false if $subobj wasn't a child or can't be removed]]
       }
@@ -35,7 +35,7 @@ interface Efl.Pack (Efl.Container)
            failed, the object will be unrefed.
          ]]
          params {
-            subobj: own(Efl.Gfx.Base *);
+            subobj: own(Efl.Gfx *);
          }
          return: bool; [[$false if $subobj could not be packed.]]
       }

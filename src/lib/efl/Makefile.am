@@ -5,7 +5,7 @@ include ../../Makefile_Eolian_Subbuild_Helper.am
 # Even though libefl is new, it contains definitions used by legacy APIs
 efl_eolian_legacy_files = \
 interfaces/efl_gfx_fill.eo \
-interfaces/efl_gfx_base.eo \
+interfaces/efl_gfx.eo \
 interfaces/efl_image.eo \
 interfaces/efl_image_animated.eo \
 $(NULL)

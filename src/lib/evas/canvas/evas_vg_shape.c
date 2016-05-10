@@ -45,7 +45,7 @@ _efl_vg_shape_fill_get(Eo *obj EINA_UNUSED, Efl_VG_Shape_Data *pd)
 }
 
 static Eina_Bool
-_efl_vg_shape_efl_gfx_base_color_part_set(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED,
+_efl_vg_shape_efl_gfx_color_part_set(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED,
                                           const char * part,
                                           int r, int g, int b, int a)
 {
@@ -63,7 +63,7 @@ _efl_vg_shape_efl_gfx_base_color_part_set(Eo *obj, Efl_VG_Shape_Data *pd EINA_UN
 }
 
 static Eina_Bool
-_efl_vg_shape_efl_gfx_base_color_part_get(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED,
+_efl_vg_shape_efl_gfx_color_part_get(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED,
                                           const char * part,
                                           int *r, int *g, int *b, int *a)
 {

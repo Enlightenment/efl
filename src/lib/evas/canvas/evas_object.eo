@@ -1,6 +1,6 @@
 import evas_types;
 
-abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stack, Efl.Animator)
+abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator)
 {
    eo_prefix: evas_obj;
    data: Evas_Object_Protected_Data;
@@ -1225,16 +1225,16 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
       Evas.Common_Interface.evas.get;
-      Efl.Gfx.Base.visible.set;
-      Efl.Gfx.Base.visible.get;
-      Efl.Gfx.Base.position.set;
-      Efl.Gfx.Base.position.get;
-      Efl.Gfx.Base.color.set;
-      Efl.Gfx.Base.color.get;
-      Efl.Gfx.Base.color_part.set;
-      Efl.Gfx.Base.color_part.get;
-      Efl.Gfx.Base.size.set;
-      Efl.Gfx.Base.size.get;
+      Efl.Gfx.visible.set;
+      Efl.Gfx.visible.get;
+      Efl.Gfx.position.set;
+      Efl.Gfx.position.get;
+      Efl.Gfx.color.set;
+      Efl.Gfx.color.get;
+      Efl.Gfx.color_part.set;
+      Efl.Gfx.color_part.get;
+      Efl.Gfx.size.set;
+      Efl.Gfx.size.get;
       Efl.Gfx.Stack.layer.set;
       Efl.Gfx.Stack.layer.get;
       Efl.Gfx.Stack.below.get;

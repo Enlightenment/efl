@@ -8,7 +8,7 @@ interface Efl.Pack_Grid (Efl.Pack_Linear)
    methods {
       pack_grid {
          params {
-            subobj: own(Efl.Gfx.Base *);
+            subobj: own(Efl.Gfx *);
             col: int;
             row: int;
             colspan: int @optional; [[0 means 1, -1 means @.grid_columns]]
@@ -18,7 +18,7 @@ interface Efl.Pack_Grid (Efl.Pack_Linear)
       }
       grid_contents_get {
          [[Returns all objects at a given position in this grid.]]
-         return: free(own(iterator<Efl.Gfx.Base *> *), eina_iterator_free);
+         return: free(own(iterator<Efl.Gfx *> *), eina_iterator_free);
          params {
             @in col: int;
             @in row: int;
@@ -27,7 +27,7 @@ interface Efl.Pack_Grid (Efl.Pack_Linear)
       }
       grid_content_get {
          [[Returns a child at a given position, see @.grid_contents_get.]]
-         return: Efl.Gfx.Base*;
+         return: Efl.Gfx*;
          params {
             @in col: int;
             @in row: int;
@@ -37,7 +37,7 @@ interface Efl.Pack_Grid (Efl.Pack_Linear)
          [[position and span of the $subobj in this container, may be modified to move the $subobj]]
          get { return: bool; [[returns false if item is not a child]] }
          keys {
-            subobj: Efl.Gfx.Base*;
+            subobj: Efl.Gfx*;
          }
          values {
             col: int;

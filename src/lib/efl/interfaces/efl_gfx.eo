@@ -1,6 +1,6 @@
 import efl_gfx_types;
 
-interface Efl.Gfx.Base {
+interface Efl.Gfx {
    legacy_prefix: null;
    eo_prefix: efl_gfx;
    methods {
@@ -72,7 +72,7 @@ interface Efl.Gfx.Base {
       }
       @property color_part {
          set {
-            [[Sets a specifc color of the given Efl.Gfx.Base object to the
+            [[Sets a specifc color of the given Efl.Gfx object to the
               given one.
 
               See also @.color.get (for an example)

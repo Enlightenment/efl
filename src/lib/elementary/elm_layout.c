@@ -1137,7 +1137,7 @@ _elm_layout_efl_container_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, cons
 
 EOLIAN static Eina_Bool
 _elm_layout_efl_container_content_remove(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED,
-                                         Efl_Gfx_Base *content)
+                                         Efl_Gfx *content)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -1225,7 +1225,7 @@ _elm_layout_efl_container_content_iterate(Eo *eo_obj EINA_UNUSED, Elm_Layout_Sma
 EOLIAN static const char *
 _elm_layout_efl_container_content_part_name_get(Eo *eo_obj EINA_UNUSED,
                                                 Elm_Layout_Smart_Data *sd,
-                                                Efl_Gfx_Base *content)
+                                                Efl_Gfx *content)
 {
    Elm_Layout_Sub_Object_Data *sub;
    Eina_List *l;

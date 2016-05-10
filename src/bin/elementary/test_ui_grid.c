@@ -132,7 +132,7 @@ static Eina_Bool
 child_evt_cb(void *data, const Eo_Event *event)
 {
    Elm_Label *o = data;
-   Efl_Gfx_Base *it = event->info;
+   Efl_Gfx *it = event->info;
    int col, row, colspan, rowspan;
    char buf[64];
 

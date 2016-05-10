@@ -86,7 +86,7 @@ interface Efl.Gfx.Filter
             name: const(char)*; [[Buffer name as used in the program.]]
          }
          values {
-            source: Efl.Gfx.Base*; [[Object to use as a source of pixels.]]
+            source: Efl.Gfx*; [[Object to use as a source of pixels.]]
          }
       }
       @property filter_data {

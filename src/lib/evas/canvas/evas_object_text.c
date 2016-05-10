@@ -972,7 +972,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
 }
 
 EOLIAN static void
-_evas_text_efl_gfx_base_size_set(Eo *eo_obj, Evas_Text_Data *o, int w, int h)
+_evas_text_efl_gfx_size_set(Eo *eo_obj, Evas_Text_Data *o, int w, int h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 

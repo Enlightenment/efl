@@ -83,7 +83,7 @@ _efl_canvas_layout_internal_box_efl_pack_unpack_all(Eo *obj EINA_UNUSED, Edje_Bo
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_unpack(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx_Base *subobj)
+_efl_canvas_layout_internal_box_efl_pack_unpack(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx *subobj)
 {
    Evas_Object *removed;
    removed = _edje_part_box_remove(pd->ed, pd->part, subobj);
@@ -91,37 +91,37 @@ _efl_canvas_layout_internal_box_efl_pack_unpack(Eo *obj EINA_UNUSED, Edje_Box_Da
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_pack(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx_Base *subobj)
+_efl_canvas_layout_internal_box_efl_pack_pack(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx *subobj)
 {
    return _edje_part_box_append(pd->ed, pd->part, subobj);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx_Base *subobj)
+_efl_canvas_layout_internal_box_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx *subobj)
 {
    return _edje_part_box_prepend(pd->ed, pd->part, subobj);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx_Base *subobj)
+_efl_canvas_layout_internal_box_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx *subobj)
 {
    return _edje_part_box_append(pd->ed, pd->part, subobj);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx_Base *subobj, const Efl_Gfx_Base *existing)
+_efl_canvas_layout_internal_box_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx *subobj, const Efl_Gfx *existing)
 {
    return _edje_part_box_insert_before(pd->ed, pd->part, subobj, existing);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx_Base *subobj, const Efl_Gfx_Base *existing)
+_efl_canvas_layout_internal_box_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, Efl_Gfx *subobj, const Efl_Gfx *existing)
 {
    return _edje_part_box_insert_after(pd->ed, pd->part, subobj, existing);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_at(Eo *obj, Edje_Box_Data *pd, Efl_Gfx_Base *subobj, int index)
+_efl_canvas_layout_internal_box_efl_pack_linear_pack_at(Eo *obj, Edje_Box_Data *pd, Efl_Gfx *subobj, int index)
 {
    int cnt = efl_content_count(obj);
    if ((index < 0) && ((-index) <= (cnt + 1)))
@@ -132,7 +132,7 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_at(Eo *obj, Edje_Box_Data *
      return _edje_part_box_append(pd->ed, pd->part, subobj);
 }
 
-EOLIAN static Efl_Gfx_Base *
+EOLIAN static Efl_Gfx *
 _efl_canvas_layout_internal_box_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, int index)
 {
    if (index < 0) index += efl_content_count(obj);
@@ -141,7 +141,7 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUS
 
 /* New APIs with Eo */
 
-EOLIAN static Efl_Gfx_Base *
+EOLIAN static Efl_Gfx *
 _efl_canvas_layout_internal_box_efl_pack_linear_pack_content_get(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, int index)
 {
    if (index < 0) index += efl_content_count(obj);
@@ -149,13 +149,13 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_content_get(Eo *obj EINA_UN
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_box_efl_container_content_remove(Eo *obj, Edje_Box_Data *pd EINA_UNUSED, Efl_Gfx_Base *subobj)
+_efl_canvas_layout_internal_box_efl_container_content_remove(Eo *obj, Edje_Box_Data *pd EINA_UNUSED, Efl_Gfx *subobj)
 {
    return efl_pack_unpack(obj, subobj);
 }
 
 EOLIAN static int
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, const Efl_Gfx_Base * subobj)
+_efl_canvas_layout_internal_box_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, const Efl_Gfx * subobj)
 {
    Evas_Object_Box_Option *opt;
    Evas_Object_Box_Data *priv;
@@ -177,7 +177,7 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUS
 static Eina_Bool
 _part_item_iterator_next(Part_Item_Iterator *it, void **data)
 {
-   Efl_Gfx_Base *sub;
+   Efl_Gfx *sub;
 
    if (!it->object) return EINA_FALSE;
    if (!eina_iterator_next(it->real_iterator, (void **) &sub))
@@ -305,7 +305,7 @@ _efl_canvas_layout_internal_table_efl_container_content_count(Eo *obj EINA_UNUSE
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_table_efl_container_content_remove(Eo *obj, Edje_Table_Data *pd EINA_UNUSED, Efl_Gfx_Base *content)
+_efl_canvas_layout_internal_table_efl_container_content_remove(Eo *obj, Edje_Table_Data *pd EINA_UNUSED, Efl_Gfx *content)
 {
    return efl_pack_unpack(obj, content);
 }
@@ -323,18 +323,18 @@ _efl_canvas_layout_internal_table_efl_pack_unpack_all(Eo *obj EINA_UNUSED, Edje_
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_table_efl_pack_unpack(Eo *obj EINA_UNUSED EINA_UNUSED, Edje_Table_Data *pd, Efl_Gfx_Base *subobj)
+_efl_canvas_layout_internal_table_efl_pack_unpack(Eo *obj EINA_UNUSED EINA_UNUSED, Edje_Table_Data *pd, Efl_Gfx *subobj)
 {
    return _edje_part_table_unpack(pd->ed, pd->part, subobj);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_table_efl_pack_grid_pack_grid(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, Efl_Gfx_Base *subobj, int col, int row, int colspan, int rowspan)
+_efl_canvas_layout_internal_table_efl_pack_grid_pack_grid(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, Efl_Gfx *subobj, int col, int row, int colspan, int rowspan)
 {
    return _edje_part_table_pack(pd->ed, pd->part, subobj, col, row, colspan, rowspan);
 }
 
-EOLIAN static Efl_Gfx_Base *
+EOLIAN static Efl_Gfx *
 _efl_canvas_layout_internal_table_efl_pack_grid_grid_content_get(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, int col, int row)
 {
    return _edje_part_table_child_get(pd->ed, pd->part, col, row);
@@ -367,7 +367,7 @@ _efl_canvas_layout_internal_table_efl_pack_grid_grid_rows_get(Eo *obj EINA_UNUSE
 static Eina_Bool
 _table_item_iterator_next(Part_Item_Iterator *it, void **data)
 {
-   Efl_Gfx_Base *sub;
+   Efl_Gfx *sub;
 
    if (!it->object) return EINA_FALSE;
    if (!eina_iterator_next(it->real_iterator, (void **) &sub))
@@ -435,7 +435,7 @@ _efl_canvas_layout_internal_table_efl_pack_grid_grid_contents_get(Eo *obj EINA_U
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_table_efl_pack_grid_grid_position_get(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, Efl_Gfx_Base * subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_canvas_layout_internal_table_efl_pack_grid_grid_position_get(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, Efl_Gfx * subobj, int *col, int *row, int *colspan, int *rowspan)
 {
    unsigned short c, r, cs, rs;
    Eina_Bool ret;

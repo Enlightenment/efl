@@ -849,7 +849,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 }
 
 EOLIAN static void
-_evas_object_efl_gfx_base_position_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+_evas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                        Evas_Coord x, Evas_Coord y)
 {
 
@@ -940,7 +940,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 }
 
 EOLIAN static void
-_evas_object_efl_gfx_base_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+_evas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                    Evas_Coord w, Evas_Coord h)
 {
    Eina_Bool is, was = EINA_FALSE;
@@ -1030,7 +1030,7 @@ evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y
 }
 
 EOLIAN static void
-_evas_object_efl_gfx_base_position_get(Eo *obj EINA_UNUSED,
+_evas_object_efl_gfx_position_get(Eo *obj EINA_UNUSED,
                                        Evas_Object_Protected_Data *pd,
                                        Evas_Coord *x, Evas_Coord *y)
 {
@@ -1045,7 +1045,7 @@ _evas_object_efl_gfx_base_position_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_evas_object_efl_gfx_base_size_get(Eo *obj EINA_UNUSED,
+_evas_object_efl_gfx_size_get(Eo *obj EINA_UNUSED,
                                    Evas_Object_Protected_Data *pd,
                                    Evas_Coord *w, Evas_Coord *h)
 {
@@ -1310,7 +1310,7 @@ evas_object_visible_get(const Evas_Object *obj)
 }
 
 static void
-_evas_object_efl_gfx_base_visible_set(Eo *eo_obj,
+_evas_object_efl_gfx_visible_set(Eo *eo_obj,
                                       Evas_Object_Protected_Data *obj,
                                       Eina_Bool visible)
 {
@@ -1488,7 +1488,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static Eina_Bool
-_evas_object_efl_gfx_base_visible_get(Eo *eo_obj EINA_UNUSED,
+_evas_object_efl_gfx_visible_get(Eo *eo_obj EINA_UNUSED,
                                          Evas_Object_Protected_Data *obj)
 {
    if (obj->delete_me) return EINA_FALSE;
@@ -1502,7 +1502,7 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
 }
 
 EOLIAN static void
-_evas_object_efl_gfx_base_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+_evas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                     int r, int g, int b, int a)
 {
    if (obj->delete_me) return;
@@ -1559,13 +1559,13 @@ _evas_object_efl_gfx_base_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 }
 
 EOLIAN static Eina_Bool
-_evas_object_efl_gfx_base_color_part_set(Eo *obj, Evas_Object_Protected_Data *pd,
+_evas_object_efl_gfx_color_part_set(Eo *obj, Evas_Object_Protected_Data *pd,
                                          const char *part,
                                          int r, int g, int b, int a)
 {
    if (part) return EINA_FALSE;
 
-   _evas_object_efl_gfx_base_color_set(obj, pd, r, g, b, a);
+   _evas_object_efl_gfx_color_set(obj, pd, r, g, b, a);
    return EINA_TRUE;
 }
 
@@ -1576,7 +1576,7 @@ evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 }
 
 EOLIAN static void
-_evas_object_efl_gfx_base_color_get(Eo *eo_obj EINA_UNUSED,
+_evas_object_efl_gfx_color_get(Eo *eo_obj EINA_UNUSED,
                                     Evas_Object_Protected_Data *obj,
                                     int *r, int *g, int *b, int *a)
 {
@@ -1592,14 +1592,14 @@ _evas_object_efl_gfx_base_color_get(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_evas_object_efl_gfx_base_color_part_get(Eo *obj,
+_evas_object_efl_gfx_color_part_get(Eo *obj,
                                          Evas_Object_Protected_Data *pd,
                                          const char *part,
                                          int *r, int *g, int *b, int *a)
 {
    if (part) return EINA_FALSE;
 
-   _evas_object_efl_gfx_base_color_get(obj, pd, r, g, b, a);
+   _evas_object_efl_gfx_color_get(obj, pd, r, g, b, a);
    return EINA_TRUE;
 }
 

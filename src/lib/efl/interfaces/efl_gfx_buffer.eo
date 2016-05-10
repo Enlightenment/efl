@@ -59,7 +59,7 @@ interface Efl.Gfx.Buffer ()
               whether or not to use alpha channel data. A value of $true
               makes it use alpha channel data, and $false makes it ignore
               that data. Note that this has nothing to do with an object's
-              color as manipulated by @Efl.Gfx.Base.color.set.
+              color as manipulated by @Efl.Gfx.color.set.
             ]]
          }
          get {

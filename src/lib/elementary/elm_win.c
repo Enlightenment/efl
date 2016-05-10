@@ -4158,7 +4158,7 @@ elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title
 }
 
 EOLIAN static Eina_Bool
-_elm_win_efl_pack_pack(Eo *obj, Elm_Win_Data *sd, Efl_Gfx_Base *subobj)
+_elm_win_efl_pack_pack(Eo *obj, Elm_Win_Data *sd, Efl_Gfx *subobj)
 {
    Eina_Bool ret;
 
@@ -4172,7 +4172,7 @@ _elm_win_efl_pack_pack(Eo *obj, Elm_Win_Data *sd, Efl_Gfx_Base *subobj)
 }
 
 EOLIAN static Eina_Bool
-_elm_win_efl_pack_unpack(Eo *obj, Elm_Win_Data *sd, Efl_Gfx_Base *subobj)
+_elm_win_efl_pack_unpack(Eo *obj, Elm_Win_Data *sd, Efl_Gfx *subobj)
 {
    Eina_Bool ret;
 
@@ -4187,7 +4187,7 @@ _elm_win_efl_pack_unpack(Eo *obj, Elm_Win_Data *sd, Efl_Gfx_Base *subobj)
 
 EOLIAN static Eina_Bool
 _elm_win_efl_container_content_remove(Eo *obj, Elm_Win_Data *sd EINA_UNUSED,
-                                      Efl_Gfx_Base *subobj)
+                                      Efl_Gfx *subobj)
 {
    return efl_pack_unpack(obj, subobj);
 }
@@ -4207,7 +4207,7 @@ _elm_win_efl_container_content_count(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 static Eina_Bool
 _box_item_iterator_next(Box_Item_Iterator *it, void **data)
 {
-   Efl_Gfx_Base *sub;
+   Efl_Gfx *sub;
 
    if (!eina_iterator_next(it->real_iterator, (void **) &sub))
      return EINA_FALSE;

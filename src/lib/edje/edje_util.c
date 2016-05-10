@@ -3513,7 +3513,7 @@ _edje_object_text_markup_filter_callback_del_full(Eo *obj EINA_UNUSED, Edje *ed,
 
 EOLIAN Eina_Bool
 _edje_object_efl_container_content_set(Eo *obj EINA_UNUSED, Edje *ed,
-                                       const char *part, Efl_Gfx_Base *obj_swallow)
+                                       const char *part, Efl_Gfx *obj_swallow)
 {
    Edje_Real_Part *rp, *rpcur;
    Edje_User_Defined *eud = NULL;
@@ -3884,7 +3884,7 @@ _edje_object_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Ob
    return EINA_TRUE;
 }
 
-EOLIAN Efl_Gfx_Base *
+EOLIAN Efl_Gfx *
 _edje_object_efl_container_content_get(Eo *obj, Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
@@ -3917,10 +3917,10 @@ _edje_object_efl_container_content_get(Eo *obj, Edje *ed, const char *part)
 }
 
 /* new in eo */
-EOLIAN Efl_Gfx_Base *
+EOLIAN Efl_Gfx *
 _edje_object_efl_container_content_unset(Eo *obj, Edje *ed EINA_UNUSED, const char *part)
 {
-   Efl_Gfx_Base *content;
+   Efl_Gfx *content;
 
    content = efl_content_get(obj, part);
    if (!content) return NULL;
@@ -3933,7 +3933,7 @@ _edje_object_efl_container_content_unset(Eo *obj, Edje *ed EINA_UNUSED, const ch
 
 /* new in eo */
 EOLIAN const char *
-_edje_object_efl_container_content_part_name_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED, Efl_Gfx_Base *content)
+_edje_object_efl_container_content_part_name_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED, Efl_Gfx *content)
 {
    Edje_Real_Part *rp;
 
