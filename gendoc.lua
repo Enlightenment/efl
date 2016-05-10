@@ -812,7 +812,7 @@ local get_typedecl_str = function(tp)
     local tpt = tp:type_get()
     if tpt == tps.UNKNOWN then
         error("unknown typedecl: " .. tp:full_name_get())
-    elseif tpt == tps.STRUCT or tpt == tps.STURCT_OPAQUE then
+    elseif tpt == tps.STRUCT or tpt == tps.STRUCT_OPAQUE then
         local buf = { "struct " }
         add_typedecl_attrs(tp, buf)
         buf[#buf + 1] = tp:full_name_get()
@@ -848,8 +848,11 @@ local get_typedecl_str = function(tp)
         for i, fld in ipairs(fields) do
             buf[#buf + 1] = "    "
             buf[#buf + 1] = fld:name_get()
-            buf[#buf + 1] = ": "
-            buf[#buf + 1] = fld:value_get():serialize()
+            local val = fld:value_get()
+            if val then
+                buf[#buf + 1] = ": "
+                buf[#buf + 1] = val:serialize()
+            end
             if i == #fields then
                 buf[#buf + 1] = "\n"
             else
@@ -1479,9 +1482,23 @@ local build_classes = function()
     end
 end
 
+local write_tsigs = function(f, tp)
+    f:write_h(tp:full_name_get(), 2)
+
+    f:write_h("Signature", 3)
+    f:write_code(get_typedecl_str(tp))
+    f:write_nl()
+
+    f:write_h("C signature", 3)
+    f:write_code(tp:c_type_get() .. ";")
+    f:write_nl()
+end
+
 local build_alias = function(tp)
     local f = Writer(gen_nsp_eo(tp, "alias"))
     check_alias(tp)
+
+    write_tsigs(f, tp)
 
     f:finish()
 end
@@ -1490,12 +1507,16 @@ local build_struct = function(tp)
     local f = Writer(gen_nsp_eo(tp, "struct"))
     check_struct(tp)
 
+    write_tsigs(f, tp)
+
     f:finish()
 end
 
 local build_enum = function(tp)
     local f = Writer(gen_nsp_eo(tp, "enum"))
     check_enum(tp)
+
+    write_tsigs(f, tp)
 
     f:finish()
 end
