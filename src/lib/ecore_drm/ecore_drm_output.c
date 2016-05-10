@@ -1503,8 +1503,7 @@ ecore_drm_output_mode_set(Ecore_Drm_Output *output, Ecore_Drm_Output_Mode *mode,
         if (drmModeSetCrtc(dev->drm.fd, output->crtc_id,
                            0, 0, 0, 0, 0, NULL) < 0)
           {
-             ERR("Failed to set Mode %dx%d for Output %s: %m",
-                 mode->width, mode->height, output->name);
+             ERR("Failed to turn off Output %s: %m", output->name);
              ret = EINA_FALSE;
           }
      }
