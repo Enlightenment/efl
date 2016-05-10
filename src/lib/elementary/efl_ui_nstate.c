@@ -2,23 +2,29 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_NSTATE_PROTECTED
+#define EFL_UI_NSTATE_PROTECTED
 #include "Elementary.h"
 #include "elm_priv.h"
-#include "elm_widget_nstate.h"
+#include "efl_ui_nstate.eo.h"
 #include "elm_widget_button.h"
 
-#define MY_CLASS ELM_NSTATE_CLASS
+#define MY_CLASS EFL_UI_NSTATE_CLASS
 
-#define MY_CLASS_NAME "Elm_Nstate"
-#define MY_CLASS_NAME_LEGACY "elm_nstate"
+#define MY_CLASS_NAME "Efl.Ui.Nstate"
+
+
+typedef struct
+{
+   int nstate;
+   int state;
+} Efl_Ui_Nstate_Data;
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
-static void _state_active(Evas_Object *obj, Elm_Nstate_Data *sd);
+static void _state_active(Evas_Object *obj, Efl_Ui_Nstate_Data *sd);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
@@ -26,10 +32,10 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static Eo_Base *
-_elm_nstate_eo_base_constructor(Eo *obj, Elm_Nstate_Data *pd EINA_UNUSED)
+_efl_ui_nstate_eo_base_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_type_set(obj, MY_CLASS_NAME);
    evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    //TODO: Add ATSPI call here
 
@@ -37,14 +43,14 @@ _elm_nstate_eo_base_constructor(Eo *obj, Elm_Nstate_Data *pd EINA_UNUSED)
 }
 
 static void
-_next_state_set(Elm_Nstate_Data *sd)
+_next_state_set(Efl_Ui_Nstate_Data *sd)
 {
    ++sd->state;
    if (sd->state == sd->nstate) sd->state = 0;
 }
 
 static void
-_state_active(Evas_Object *obj, Elm_Nstate_Data *sd)
+_state_active(Evas_Object *obj, Efl_Ui_Nstate_Data *sd)
 {
    char buf[64];
 
@@ -52,7 +58,7 @@ _state_active(Evas_Object *obj, Elm_Nstate_Data *sd)
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
    elm_obj_layout_sizing_eval(obj);
-   eo_event_callback_call(obj, ELM_NSTATE_EVENT_STATE_CHANGED, NULL);
+   eo_event_callback_call(obj, EFL_UI_NSTATE_EVENT_STATE_CHANGED, NULL);
 }
 
 static void
@@ -65,7 +71,7 @@ _on_state_changed(void *data,
 }
 
 EOLIAN static void
-_elm_nstate_evas_object_smart_add(Eo *obj, Elm_Nstate_Data *pd)
+_efl_ui_nstate_evas_object_smart_add(Eo *obj, Efl_Ui_Nstate_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -84,19 +90,19 @@ _elm_nstate_evas_object_smart_add(Eo *obj, Elm_Nstate_Data *pd)
 }
 
 EOLIAN static void
-_elm_nstate_evas_object_smart_del(Eo *obj, Elm_Nstate_Data *pd EINA_UNUSED)
+_efl_ui_nstate_evas_object_smart_del(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
 {
    evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static int
-_elm_nstate_count_get(Eo *obj EINA_UNUSED, Elm_Nstate_Data *pd)
+_efl_ui_nstate_count_get(Eo *obj EINA_UNUSED, Efl_Ui_Nstate_Data *pd)
 {
    return pd->nstate;
 }
 
 EOLIAN static void
-_elm_nstate_count_set(Eo *obj EINA_UNUSED, Elm_Nstate_Data *pd, int nstate)
+_efl_ui_nstate_count_set(Eo *obj EINA_UNUSED, Efl_Ui_Nstate_Data *pd, int nstate)
 {
    if (pd->nstate == nstate) return;
 
@@ -105,13 +111,13 @@ _elm_nstate_count_set(Eo *obj EINA_UNUSED, Elm_Nstate_Data *pd, int nstate)
 }
 
 EOLIAN static int
-_elm_nstate_value_get(Eo *obj EINA_UNUSED, Elm_Nstate_Data *pd)
+_efl_ui_nstate_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Nstate_Data *pd)
 {
    return pd->state;
 }
 
 static Eina_Bool
-_is_valid_state(Elm_Nstate_Data *sd, int state)
+_is_valid_state(Efl_Ui_Nstate_Data *sd, int state)
 {
    if (sd->state == state || (state < 0 || state >= sd->nstate))
      return EINA_FALSE;
@@ -120,7 +126,7 @@ _is_valid_state(Elm_Nstate_Data *sd, int state)
 }
 
 EOLIAN static void
-_elm_nstate_value_set(Eo *obj, Elm_Nstate_Data *pd, int state)
+_efl_ui_nstate_value_set(Eo *obj, Efl_Ui_Nstate_Data *pd, int state)
 {
    if (!_is_valid_state(pd, state)) return;
 
@@ -129,7 +135,7 @@ _elm_nstate_value_set(Eo *obj, Elm_Nstate_Data *pd, int state)
 }
 
 EOLIAN static Eina_Bool
-_elm_nstate_elm_widget_theme_apply(Eo *obj, Elm_Nstate_Data *pd)
+_efl_ui_nstate_elm_widget_theme_apply(Eo *obj, Efl_Ui_Nstate_Data *pd)
 {
    Eina_Bool int_ret;
 
@@ -149,7 +155,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_nstate_elm_widget_event(Eo *obj, Elm_Nstate_Data *_pd EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
+_efl_ui_nstate_elm_widget_event(Eo *obj, Efl_Ui_Nstate_Data *_pd EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
 
@@ -164,16 +170,16 @@ _elm_nstate_elm_widget_event(Eo *obj, Elm_Nstate_Data *_pd EINA_UNUSED, Evas_Obj
 }
 
 EOLIAN static void
-_elm_nstate_activate(Eo *obj, Elm_Nstate_Data *_pd)
+_efl_ui_nstate_activate(Eo *obj, Efl_Ui_Nstate_Data *_pd)
 {
    _next_state_set(_pd);
    _state_active(obj, _pd);
 }
 
 EOLIAN static void
-_elm_nstate_class_constructor(Eo_Class *klass)
+_efl_ui_nstate_class_constructor(Eo_Class *klass)
 {
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 
-#include "elm_nstate.eo.c"
+#include "efl_ui_nstate.eo.c"

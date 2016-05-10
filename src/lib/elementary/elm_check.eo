@@ -1,4 +1,4 @@
-class Elm.Check (Elm.Nstate, Elm.Interface_Atspi_Widget_Action)
+class Elm.Check (Efl.Ui.Nstate, Elm.Interface_Atspi_Widget_Action)
 {
    [[Check widget
 
@@ -29,8 +29,8 @@ class Elm.Check (Elm.Nstate, Elm.Interface_Atspi_Widget_Action)
       Elm.Widget.sub_object_del;
       Elm.Widget.event;
       Elm.Layout.text_aliases.get;
-      Elm.Nstate.count.set;
-      Elm.Nstate.value.set;
+      Efl.Ui.Nstate.count.set;
+      Efl.Ui.Nstate.value.set;
       Elm.Interface_Atspi_Accessible.state_set.get;
       Elm.Interface_Atspi_Widget_Action.elm_actions.get;
    }

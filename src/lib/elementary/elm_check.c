@@ -5,12 +5,12 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
-#define ELM_NSTATE_PROTECTED
+#define EFL_UI_NSTATE_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "efl_ui_nstate.eo.h"
 #include "elm_widget_check.h"
-#include "elm_widget_nstate.h"
 
 #define MY_CLASS ELM_CHECK_CLASS
 
@@ -341,13 +341,13 @@ _elm_check_selected_set(Eo *obj, Elm_Check_Data *pd EINA_UNUSED, Eina_Bool value
 }
 
 EOLIAN static void
-_elm_check_elm_nstate_count_set(Eo *obj EINA_UNUSED, Elm_Check_Data *pd EINA_UNUSED, int nstate EINA_UNUSED)
+_elm_check_efl_ui_nstate_count_set(Eo *obj EINA_UNUSED, Elm_Check_Data *pd EINA_UNUSED, int nstate EINA_UNUSED)
 {
    //NOP;
 }
 
 EOLIAN static void
-_elm_check_elm_nstate_value_set(Eo *obj, Elm_Check_Data *pd EINA_UNUSED, int state)
+_elm_check_efl_ui_nstate_value_set(Eo *obj, Elm_Check_Data *pd EINA_UNUSED, int state)
 {
    Eina_Bool _state = !!state;
    if (_state == efl_ui_nstate_value_get(obj)) return;

@@ -22,5 +22,5 @@
  */
 
 #ifdef EFL_EO_API_SUPPORT
-#include "elm_nstate.eo.h"
+#include "efl_ui_nstate.eo.h"
 #endif

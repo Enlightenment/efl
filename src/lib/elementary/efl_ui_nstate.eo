@@ -1,8 +1,6 @@
-class Elm.Nstate(Elm.Button)
+class Efl.Ui.Nstate(Elm.Button)
 {
-   eo_prefix: efl_ui_nstate;
    legacy_prefix: null;
-   data: Elm_Nstate_Data;
    methods {
       activate @protected {
       }

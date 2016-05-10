@@ -69,7 +69,7 @@ elm_eolian_files = \
 	elm_multibuttonentry.eo \
 	elm_naviframe.eo \
 	elm_notify.eo \
-	elm_nstate.eo \
+	efl_ui_nstate.eo \
 	elm_pan.eo \
 	elm_panel.eo \
 	elm_panes.eo \
@@ -203,7 +203,6 @@ includesunstable_HEADERS = \
 	elm_widget_multibuttonentry.h \
 	elm_widget_naviframe.h \
 	elm_widget_notify.h \
-	elm_widget_nstate.h \
 	elm_widget_panel.h \
 	elm_widget_panes.h \
 	elm_widget_photo.h \
@@ -405,7 +404,7 @@ includesub_HEADERS = \
 	elm_notify_common.h \
 	elm_notify_eo.h \
 	elm_notify_legacy.h \
-	elm_nstate.h \
+	efl_ui_nstate.h \
 	elm_object.h \
 	elm_object_item.h \
 	elm_panel.h \
@@ -580,7 +579,7 @@ libelementary_la_SOURCES = \
 	elm_menu.c \
 	elm_module.c \
 	elm_notify.c \
-	elm_nstate.c \
+	efl_ui_nstate.c \
 	elm_panel.c \
 	elm_panes.c \
 	elm_photo.c \

@@ -64,7 +64,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_multibuttonentry.eo \
 	lib/elementary/elm_naviframe.eo \
 	lib/elementary/elm_notify.eo \
-	lib/elementary/elm_nstate.eo \
+	lib/elementary/efl_ui_nstate.eo \
 	lib/elementary/elm_pan.eo \
 	lib/elementary/elm_panel.eo \
 	lib/elementary/elm_panes.eo \
@@ -215,7 +215,6 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_multibuttonentry.h \
 	lib/elementary/elm_widget_naviframe.h \
 	lib/elementary/elm_widget_notify.h \
-	lib/elementary/elm_widget_nstate.h \
 	lib/elementary/elm_widget_panel.h \
 	lib/elementary/elm_widget_panes.h \
 	lib/elementary/elm_widget_photo.h \
@@ -419,7 +418,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_notify_common.h \
 	lib/elementary/elm_notify_eo.h \
 	lib/elementary/elm_notify_legacy.h \
-	lib/elementary/elm_nstate.h \
+	lib/elementary/efl_ui_nstate.h \
 	lib/elementary/elm_object.h \
 	lib/elementary/elm_object_item.h \
 	lib/elementary/elm_panel.h \
@@ -594,7 +593,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_menu.c \
 	lib/elementary/elm_module.c \
 	lib/elementary/elm_notify.c \
-	lib/elementary/elm_nstate.c \
+	lib/elementary/efl_ui_nstate.c \
 	lib/elementary/elm_panel.c \
 	lib/elementary/elm_panes.c \
 	lib/elementary/elm_photo.c \
