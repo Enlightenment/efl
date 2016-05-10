@@ -328,3 +328,10 @@ elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, int x, int 
           }
      }
 }
+
+EAPI const Eina_List *
+elput_input_devices_get(Elput_Seat *seat)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
+   return seat->devices;
+}

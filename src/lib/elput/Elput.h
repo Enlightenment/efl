@@ -286,6 +286,18 @@ EAPI void elput_input_pointer_xy_get(Elput_Manager *manager, const char *seat, i
 EAPI void elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, int x, int y);
 
 /**
+ * Get the list of devices on a given seat
+ *
+ * @param seat
+ *
+ * @return An Eina_List of existing Elput_Devices on a given seat or NULL on failure
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.18
+ */
+EAPI const Eina_List *elput_input_devices_get(Elput_Seat *seat);
+
+/**
  * @defgroup Elput_Device_Group
  *
  * Functions that deal with input devices.
