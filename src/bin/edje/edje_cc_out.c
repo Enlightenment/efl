@@ -2945,6 +2945,25 @@ copied_program_anonymous_lookup_delete(Edje_Part_Collection *pc, int *dest)
      {
         if ((!pl->anonymous) || (pl->pc != pc) || (dest != &pl->u.ep->id)) continue;
         program_lookups = eina_list_remove_list(program_lookups, l);
+
+        Code *cd;
+        Code_Program *cp;
+        Edje_Part_Collection_Directory_Entry *de;
+        Eina_List *l, *ll;
+
+        de = eina_hash_find(edje_file->collection, pl->pc->part);
+        cd = eina_list_nth(codes, de->id);
+
+        EINA_LIST_FOREACH_SAFE(cd->programs, l, ll, cp)
+          {
+             if (pl->dest == &cp->id)
+               {
+                  cd->programs = eina_list_remove(cd->programs, cp);
+                  free(cp);
+                  break;
+               }
+          }
+
         free(pl);
      }
 }

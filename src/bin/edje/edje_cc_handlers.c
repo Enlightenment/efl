@@ -1814,6 +1814,8 @@ _edje_program_check(const char *name, Edje_Program *me, Edje_Program **pgrms, un
               {
                  _edje_program_remove(pc, me);
                  current_program = pgrms[i];
+                 if (pgrms[i]->action == EDJE_ACTION_TYPE_SCRIPT)
+                   copied_program_anonymous_lookup_delete(pc, &pgrms[i]->id);
                  epp->can_override = EINA_FALSE;
                  return;
               }
@@ -5744,8 +5746,11 @@ st_collections_group_parts_part_inherit(void)
 static void
 _program_free(Edje_Program *pr)
 {
+   Edje_Part_Collection *pc;
    Edje_Program_Target *prt;
    Edje_Program_After *pa;
+
+   pc = eina_list_last_data_get(edje_collections);
 
    free((void*)pr->name);
    free((void*)pr->signal);
@@ -5757,7 +5762,10 @@ _program_free(Edje_Program *pr)
    free((void*)pr->sample_name);
    free((void*)pr->tone_name);
    EINA_LIST_FREE(pr->targets, prt)
-      free(prt);
+     {
+        part_lookup_del(pc, &prt->id);
+        free(prt);
+     }
    EINA_LIST_FREE(pr->after, pa)
       free(pa);
    free(pr);
