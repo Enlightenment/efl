@@ -298,6 +298,18 @@ EAPI void elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, i
 EAPI const Eina_List *elput_input_devices_get(Elput_Seat *seat);
 
 /**
+ * Set the maximum position of any existing mouse pointers
+ *
+ * @param manager
+ * @param maxw
+ * @param maxh
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.18
+ */
+EAPI void elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh);
+
+/**
  * @defgroup Elput_Device_Group
  *
  * Functions that deal with input devices.

@@ -338,3 +338,20 @@ elput_input_devices_get(Elput_Seat *seat)
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
    return seat->devices;
 }
+
+EAPI void
+elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh)
+{
+   Eina_List *l;
+   Elput_Seat *eseat;
+
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+
+   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
+     {
+        if (!eseat->ptr) continue;
+
+        eseat->ptr->maxw = maxw;
+        eseat->ptr->maxh = maxh;
+     }
+}
