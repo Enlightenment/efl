@@ -61,21 +61,14 @@ _drag_data_build(Eina_List **items)
    const char *drag_data = NULL;
    if (*items)
      {
+        Eina_Strbuf *str;
         Eina_List *l;
         Elm_Object_Item *it;
         const char *t;
-        unsigned int len = 0;
         int i = 0;
 
-        EINA_LIST_FOREACH(*items, l, it)
-          {
-             t = (char *)elm_object_item_data_get(it);
-             if (t)
-               len += strlen(t);
-          }
-
-        drag_data = malloc(len + eina_list_count(*items) * (FILESEP_LEN + 1));
-        strcpy((char *) drag_data, "");
+        str = eina_strbuf_new();
+        if (!str) return NULL;
 
         /* drag data in form: file://URI1\nfile://URI2 */
         EINA_LIST_FOREACH(*items, l, it)
@@ -84,12 +77,14 @@ _drag_data_build(Eina_List **items)
              if (t)
                {
                   if (i > 0)
-                    strcat((char *) drag_data, "\n");
-                  strcat((char *) drag_data, FILESEP);
-                  strcat((char *) drag_data, t);
+                    eina_strbuf_append(str, "\n");
+                  eina_strbuf_append(str, FILESEP);
+                  eina_strbuf_append(str, t);
                   i++;
                }
           }
+        drag_data = eina_strbuf_string_steal(str);
+        eina_strbuf_free(str);
      }
    return drag_data;
 }
