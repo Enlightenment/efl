@@ -1398,6 +1398,80 @@ _hover_selected_cb(void *data,
      elm_widget_scroll_hold_push(data);
 }
 
+static char *
+_item_tags_remove(const char *str)
+{
+   char *ret;
+   Eina_Strbuf *buf;
+
+   if (!str)
+     return NULL;
+
+   buf = eina_strbuf_new();
+   if (!buf)
+     return NULL;
+
+   if (!eina_strbuf_append(buf, str))
+     {
+        eina_strbuf_free(buf);
+        return NULL;
+     }
+
+   while (EINA_TRUE)
+     {
+        const char *temp = eina_strbuf_string_get(buf);
+        char *start_tag = NULL;
+        char *end_tag = NULL;
+        size_t sindex;
+        size_t eindex;
+
+        start_tag = strstr(temp, "<item");
+        if (!start_tag)
+          start_tag = strstr(temp, "</item");
+        if (start_tag)
+          end_tag = strstr(start_tag, ">");
+        else
+          break;
+        if (!end_tag || start_tag > end_tag)
+          break;
+
+        sindex = start_tag - temp;
+        eindex = end_tag - temp + 1;
+        if (!eina_strbuf_remove(buf, sindex, eindex))
+          break;
+     }
+
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+
+   return ret;
+}
+
+void
+_elm_entry_entry_paste(Evas_Object *obj,
+                       const char *entry)
+{
+   char *str = NULL;
+
+   if (!entry) return;
+
+   ELM_ENTRY_CHECK(obj);
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   if (sd->cnp_mode == ELM_CNP_MODE_NO_IMAGE)
+     {
+        str = _item_tags_remove(entry);
+        if (!str) str = strdup(entry);
+     }
+   else
+     str = strdup(entry);
+   if (!str) str = (char *)entry;
+
+   _edje_entry_user_insert(obj, str);
+
+   if (str != entry) free(str);
+}
+
 static void
 _paste_cb(void *data,
           Evas_Object *obj EINA_UNUSED,

@@ -600,6 +600,9 @@ _elm_dgettext(const char *string)
 
 #endif
 
+/* Used by the paste handler */
+void   _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
+
 double _elm_atof(const char *s);
 
 #endif
