@@ -1698,7 +1698,8 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
 
    epc->id = id;
    epc->part = eina_stringshare_add(copy_name);
-   ed->file->collection_cache = eina_list_prepend(ed->file->collection_cache, epc);
+   snprintf(buf, sizeof(buf), "edje/collections/%i", epc->id);
+   eet_data_write(eetf, _edje_edd_edje_part_collection, buf, epc, 1);
 
    /* Copying Scripts */
    snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%d", e->id);
@@ -1729,6 +1730,8 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
         free(keys);
      }
 
+   _edje_edit_edje_file_save(eetf, ed->file);
+   _edje_collection_free(ed->file, epc, de);
    eet_close(eetf);
 
    return EINA_TRUE;
