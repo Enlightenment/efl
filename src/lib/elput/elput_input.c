@@ -226,6 +226,9 @@ elput_input_init(Elput_Manager *manager, const char *seat)
         goto udev_err;
      }
 
+   /* if not seat name is passed in, just use default seat name */
+   if (!seat) seat = "seat0";
+
    if (libinput_udev_assign_seat(manager->input.lib, seat) != 0)
      {
         ERR("libinput could not assign udev seat");
