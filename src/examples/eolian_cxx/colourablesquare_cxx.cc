@@ -12,11 +12,11 @@
 extern "C"
 {
 #include "colourablesquare_stub.h"
-#include "colourable.eo.h"
-#include "colourablesquare.eo.h"
+#include "ns_colourable.eo.h"
+#include "ns_colourablesquare.eo.h"
 }
 
-#define MY_CLASS COLOURABLESQUARE_CLASS
+#define MY_CLASS NS_COLOURABLESQUARE_CLASS
 
 static efl::eina::log_domain domain("colourablesquare");
 

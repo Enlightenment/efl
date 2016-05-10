@@ -6,16 +6,16 @@
 
 #include "Eo.h"
 #include "Eina.h"
-#include "colourable.eo.h"
+#include "ns_colourable.eo.h"
 
-#define MY_CLASS COLOURABLE_CLASS
+#define MY_CLASS NS_COLOURABLE_CLASS
 
-static int _colourable_impl_logdomain;
+static int _ns_colourable_impl_logdomain;
 
 #ifdef DBG
 #undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(_colourable_impl_logdomain, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_ns_colourable_impl_logdomain, __VA_ARGS__)
 
 struct _Colourable_Data
 {
@@ -27,102 +27,102 @@ struct _Colourable_Data
 typedef struct _Colourable_Data  Colourable_Data;
 
 Eo *
-_colourable_eo_base_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
+_ns_colourable_eo_base_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 {
-   if(!_colourable_impl_logdomain)
+   if(!_ns_colourable_impl_logdomain)
      {
-        _colourable_impl_logdomain
+        _ns_colourable_impl_logdomain
           = eina_log_domain_register("colourable", EINA_COLOR_BLUE);
      }
-   DBG("_colourable_constructor(%p, %p)\n", obj, MY_CLASS);
+   DBG("_ns_colourable_constructor(%p, %p)\n", obj, MY_CLASS);
    return eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 void
-_colourable_eo_base_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
+_ns_colourable_eo_base_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 {
-   if(_colourable_impl_logdomain)
+   if(_ns_colourable_impl_logdomain)
      {
-        eina_log_domain_unregister(_colourable_impl_logdomain);
-        _colourable_impl_logdomain = 0;
+        eina_log_domain_unregister(_ns_colourable_impl_logdomain);
+        _ns_colourable_impl_logdomain = 0;
      }
-   DBG("_colourable_destructor()\n");
+   DBG("_ns_colourable_destructor()\n");
    eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 void
-_colourable_rgb_24bits_constructor(Eo *obj, Colourable_Data *self, int rgb)
+_ns_colourable_rgb_24bits_constructor(Eo *obj, Colourable_Data *self, int rgb)
 {
-   if(!_colourable_impl_logdomain)
+   if(!_ns_colourable_impl_logdomain)
      {
-        _colourable_impl_logdomain
+        _ns_colourable_impl_logdomain
           = eina_log_domain_register("colourable", EINA_COLOR_BLUE);
      }
 
    self->r = (rgb & 0x00ff0000) >> 16;
    self->g = (rgb & 0x0000ff00) >> 8;
    self->b = rgb & 0x000000ff;
-   DBG("_colourable_rgb_24bits_constructor(0x%.6x)\n", (int)rgb);
+   DBG("_ns_colourable_rgb_24bits_constructor(0x%.6x)\n", (int)rgb);
    eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 void
-_colourable_print_colour(Eo *obj EINA_UNUSED, Colourable_Data *self EINA_UNUSED)
+_ns_colourable_print_colour(Eo *obj EINA_UNUSED, Colourable_Data *self EINA_UNUSED)
 {
-   DBG("_colourable_print_colour() ==> 0x%2.x 0x%2.x 0x%2.x\n", self->r, self->g, self->b);
+   DBG("_ns_colourable_print_colour() ==> 0x%2.x 0x%2.x 0x%2.x\n", self->r, self->g, self->b);
 }
 
 int
-_colourable_colour_mask(Eo *obj EINA_UNUSED, Colourable_Data *self, int mask)
+_ns_colourable_colour_mask(Eo *obj EINA_UNUSED, Colourable_Data *self, int mask)
 {
    int masked_rgb =
      (((self->r << 16)& 0x00ff0000) |
       ((self->g << 8) & 0x0000ff00) |
       (self->b & 0x000000ff)) & mask;
-   DBG("_colourable_colour_mask() ==> 0x%2.x\n", (unsigned int)masked_rgb);
+   DBG("_ns_colourable_colour_mask() ==> 0x%2.x\n", (unsigned int)masked_rgb);
    return masked_rgb;
 }
 
 void
-_colourable_composite_colour_get(Eo *obj EINA_UNUSED, Colourable_Data *self, int* r, int* g, int* b)
+_ns_colourable_composite_colour_get(Eo *obj EINA_UNUSED, Colourable_Data *self, int* r, int* g, int* b)
 {
    *r = self->r;
    *g = self->g;
    *b = self->b;
-   DBG("_colourable_composite_colour_get() ==> 0x%2.x 0x%2.x 0x%2.x\n", *r, *g, *b);
+   DBG("_ns_colourable_composite_colour_get() ==> 0x%2.x 0x%2.x 0x%2.x\n", *r, *g, *b);
    return;
 }
 
 void
-_colourable_composite_colour_set(Eo *obj EINA_UNUSED, Colourable_Data *self, int r, int g, int b)
+_ns_colourable_composite_colour_set(Eo *obj EINA_UNUSED, Colourable_Data *self, int r, int g, int b)
 {
    self->r = r;
    self->g = g;
    self->b = b;
-   DBG("_colourable_composite_colour_set(0x%2.x, 0x%2.x, 0x%2.x)\n",
+   DBG("_ns_colourable_composite_colour_set(0x%2.x, 0x%2.x, 0x%2.x)\n",
        (int)self->r, (int)self->g, (int)self->b);
    return;
 }
 
 int
-_colourable_colour_get(Eo *obj EINA_UNUSED, Colourable_Data *self)
+_ns_colourable_colour_get(Eo *obj EINA_UNUSED, Colourable_Data *self)
 {
    int rgb =
      ((self->r << 16)& 0x00ff0000) |
      ((self->g << 8) & 0x0000ff00) |
      (self->b & 0x000000ff);
-   DBG("_colourable_colour_get() ==> 0x%.6x\n", (unsigned int)rgb);
+   DBG("_ns_colourable_colour_get() ==> 0x%.6x\n", (unsigned int)rgb);
    return rgb;
 }
 
 void
-_colourable_colour_set(Eo *obj EINA_UNUSED, Colourable_Data *self, int rgb)
+_ns_colourable_colour_set(Eo *obj EINA_UNUSED, Colourable_Data *self, int rgb)
 {
    self->r = (rgb & 0x00ff0000) >> 16;
    self->g = (rgb & 0x0000ff00) >> 8;
    self->b = rgb & 0x000000ff;
-   DBG("_colourable_colour_set(0x%.6x)\n", (unsigned int)rgb);
+   DBG("_ns_colourable_colour_set(0x%.6x)\n", (unsigned int)rgb);
    return;
 }
 
-#include "colourable.eo.c"
+#include "ns_colourable.eo.c"

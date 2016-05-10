@@ -12,10 +12,10 @@
 extern "C"
 {
 #include "colourable_stub.h"
-#include "colourable.eo.h"
+#include "ns_colourable.eo.h"
 }
 
-#define MY_CLASS COLOURABLE_CLASS
+#define MY_CLASS NS_COLOURABLE_CLASS
 
 static efl::eina::log_domain domain("colourable");
 

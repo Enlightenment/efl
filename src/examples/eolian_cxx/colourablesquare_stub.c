@@ -7,6 +7,6 @@
 #include "Eo.h"
 
 #include "colourablesquare_stub.h"
-#include "colourable.eo.h"
-#include "colourablesquare.eo.h"
-#include "colourablesquare.eo.c"
+#include "ns_colourable.eo.h"
+#include "ns_colourablesquare.eo.h"
+#include "ns_colourablesquare.eo.c"

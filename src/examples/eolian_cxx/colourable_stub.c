@@ -8,5 +8,5 @@
 #include "Eina.h"
 
 #include "colourable_stub.h"
-#include "colourable.eo.h"
-#include "colourable.eo.c"
+#include "ns_colourable.eo.h"
+#include "ns_colourable.eo.c"
