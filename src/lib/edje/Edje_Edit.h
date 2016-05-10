@@ -4718,6 +4718,72 @@ EAPI Eina_Bool edje_edit_state_proxy_source_set(Evas_Object *obj, const char *pa
  */
 EAPI Eina_Stringshare * edje_edit_state_proxy_source_get(Evas_Object *obj, const char *part, const char *state, double value);
 
+/** Set the source clip for given PROXY part state.
+ *
+ * The source clipper is ignored or used when rendering the proxy part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state.
+ * @param value The state value.
+ * @param clip Value to set if ignore or use source cliper.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_state_proxy_source_clip_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool clip);
+
+/** Get the source clip for given PROXY part state.
+ *
+ * The source clipper is ignored or used when rendering the proxy part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state.
+ * @param value The state value.
+ *
+ * @return @c EINA_TRUE in case if source clipper is used, @c EINA_FALSE otherwise.
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_state_proxy_source_clip_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set the source visibility for given PROXY part state.
+ *
+ * Defines if both the proxy and its source object will be visible or not.
+ * In case of false flag, the source object will not be visible at all while
+ * proxy will still show source object.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state.
+ * @param value The state value.
+ * @param visibility Value to set if source object is visible or not.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_state_proxy_source_visible_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool visibility);
+
+/** Get the source visibility for given PROXY part state.
+ *
+ * Defines if both the proxy and its source object will be visible or not.
+ * In case of false flag, the source object will not be visible at all while
+ * proxy will still show source object.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state.
+ * @param value The state value.
+ *
+ * @return @c EINA_TRUE in case when source object visibility is set to true, @c EINA_FALSE otherwise.
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_state_proxy_source_visible_get(Evas_Object *obj, const char *part, const char *state, double value);
+
 //@}
 /******************************************************************************/
 /**************************   TEXT API   ************************************/

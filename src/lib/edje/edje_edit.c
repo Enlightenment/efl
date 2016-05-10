@@ -8108,6 +8108,56 @@ edje_edit_state_proxy_source_get(Evas_Object *obj, const char *part, const char 
    return eina_stringshare_add(source_name);
 }
 
+EAPI Eina_Bool
+edje_edit_state_proxy_source_clip_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool clip)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if (rp->part->type != EDJE_PART_TYPE_PROXY)
+     return EINA_FALSE;
+
+   Edje_Part_Description_Proxy *proxy_part = (Edje_Part_Description_Proxy *)pd;
+   proxy_part->proxy.source_clip = clip;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_proxy_source_clip_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if (rp->part->type != EDJE_PART_TYPE_PROXY)
+     return EINA_FALSE;
+
+   Edje_Part_Description_Proxy *proxy_part = (Edje_Part_Description_Proxy *)pd;
+
+   return proxy_part->proxy.source_clip;
+}
+
+EAPI Eina_Bool
+edje_edit_state_proxy_source_visible_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool visibility)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if (rp->part->type != EDJE_PART_TYPE_PROXY)
+     return EINA_FALSE;
+
+   Edje_Part_Description_Proxy *proxy_part = (Edje_Part_Description_Proxy *)pd;
+   proxy_part->proxy.source_visible = visibility;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_proxy_source_visible_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if (rp->part->type != EDJE_PART_TYPE_PROXY)
+     return EINA_FALSE;
+
+   Edje_Part_Description_Proxy *proxy_part = (Edje_Part_Description_Proxy *)pd;
+
+   return proxy_part->proxy.source_visible;
+}
+
 /*****************/
 /* IMAGE SET API */
 /*****************/
