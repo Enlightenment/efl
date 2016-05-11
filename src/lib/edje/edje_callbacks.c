@@ -222,7 +222,7 @@ _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
           }
      }
 
-   if ((rp->still_in) && (rp->clicked_button == ev->button) && (!ignored))
+   if ((rp->still_in) && (rp->clicked_button == ev->button) && (!ev->event_flags))
      {
         snprintf(buf, sizeof(buf), "mouse,clicked,%i", ev->button);
         _edje_emit(ed, buf, rp->part->name);
