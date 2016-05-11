@@ -4353,7 +4353,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
 
    eo_event_callback_call(e, EVAS_CANVAS_EVENT_POINTER, evt);
    processed = ev->evas_done;
-   eo_del(evt);
+   eo_unref(evt);
 
    return processed;
 }
