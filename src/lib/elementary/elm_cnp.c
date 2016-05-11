@@ -1077,14 +1077,15 @@ _x11_data_preparer_uri(Ecore_X_Event_Selection_Notify *notify,
 {
    Ecore_X_Selection_Data *data;
    Ecore_X_Selection_Data_Files *files;
-   char *p, *s, *stripstr = NULL;
+   char *p, *stripstr = NULL;
 
    data = notify->data;
    cnp_debug("data->format is %d %p %p\n", data->format, notify, data);
    if (data->content == ECORE_X_SELECTION_CONTENT_FILES)
      {
-        int i, len = 0;
-        Efreet_Uri **uri;
+        Efreet_Uri *uri;
+        Eina_Strbuf *strbuf;
+        int i;
 
         cnp_debug("got a files list\n");
         files = notify->data;
@@ -1098,62 +1099,27 @@ _x11_data_preparer_uri(Ecore_X_Event_Selection_Notify *notify,
         stripstr = p = strdup(files->files[0]);
          */
 
-        uri = calloc(1, sizeof(*uri) * files->num_files);
-        if (!uri) return EINA_FALSE;
+        strbuf = eina_strbuf_new();
+        if (!strbuf)
+          return EINA_FALSE;
 
         for (i = 0; i < files->num_files ; i++)
           {
-             uri[i] = efreet_uri_decode(files->files[i]);
-             if (!uri[i])
+             uri = efreet_uri_decode(files->files[i]);
+             if (uri)
                {
-                  /* Is there any reason why we care of URI without scheme? */
-                  if (files->files[i][0] != '/') continue;
-                  len += strlen(files->files[i]) + 1;
+                  eina_strbuf_append(strbuf, uri->path);
+                  efreet_uri_free(uri);
                }
              else
                {
-                  if (strcmp(uri[i]->protocol, "file"))
-                    {
-                       efreet_uri_free(uri[i]);
-                       uri[i] = NULL;
-                       continue;
-                    }
-                  len += strlen(uri[i]->path) + 1;
+                  eina_strbuf_append(strbuf, files->files[i]);
                }
+             if (i < (files->num_files - 1))
+               eina_strbuf_append(strbuf, "\n");
           }
-        p = NULL;
-        if (len > 0)
-          {
-             s = stripstr = malloc(len + 1);
-             for (i = 0; i < files->num_files ; i++)
-               {
-                  if (uri[i])
-                    p = (char *)uri[i]->path;
-                  else
-                    p = files->files[i];
-
-                  if (s)
-                    {
-                       len = strlen(p);
-                       strcpy(s, p);
-                       if (i < (files->num_files - 1))
-                         {
-                            s[len] = '\n';
-                            s[len + 1] = 0;
-                            s += len + 1;
-                         }
-                       else
-                         {
-                            s[len] = 0;
-                            s += len;
-                         }
-                    }
-
-                  if (uri[i])
-                    efreet_uri_free(uri[i]);
-               }
-          }
-        free(uri);
+        stripstr = eina_strbuf_string_steal(strbuf);
+        eina_strbuf_free(strbuf);
      }
    else
      {
@@ -1171,9 +1137,8 @@ _x11_data_preparer_uri(Ecore_X_Event_Selection_Notify *notify,
         else
           {
              free(p);
-             stripstr = (char *)eina_memdup((unsigned char *)uri->path, strlen(uri->path), EINA_TRUE);
+             stripstr = strdup(uri->path);
              efreet_uri_free(uri);
-             if (!stripstr) return EINA_FALSE;
           }
      }
 
@@ -2726,7 +2691,7 @@ _wl_data_preparer_uri(Wl_Cnp_Selection *sel, Elm_Selection_Data *ddata, Ecore_Wl
 {
    cnp_debug("In\n");
 
-   char *p, *s, *stripstr = NULL;
+   char *p, *stripstr = NULL;
    char *data = ev->data;
    Dropable *drop;
    const char *type = NULL;
@@ -2738,67 +2703,33 @@ _wl_data_preparer_uri(Wl_Cnp_Selection *sel, Elm_Selection_Data *ddata, Ecore_Wl
      {
         int num_files = 0;
         char **files = NULL;
-        int i, len = 0;
-        Efreet_Uri **uri;
+        Efreet_Uri *uri;
+        Eina_Strbuf *strbuf;
+        int i;
 
         _wl_selection_parser(ev->data, ev->len, &files, &num_files);
         cnp_debug("got a files list\n");
-        uri = calloc(1, sizeof(*uri) * num_files);
-        if (!uri) return EINA_FALSE;
 
-        for (i = 0; i < num_files ; i++)
+        strbuf = eina_strbuf_new();
+        if (!strbuf)
+          return EINA_FALSE;
+        for (i = 0; i < num_files; i++)
           {
-             uri[i] = efreet_uri_decode(files[i]);
-             if (!uri[i])
+             uri = efreet_uri_decode(files[i]);
+             if (uri)
                {
-                  /* Is there any reason why we care of URI without scheme? */
-                  if (files[i][0] != '/') continue;
-                  len += strlen(files[i]) + 1;
+                  eina_strbuf_append(strbuf, uri->path);
+                  efreet_uri_free(uri);
                }
              else
                {
-                  if (strcmp(uri[i]->protocol, "file"))
-                    {
-                       efreet_uri_free(uri[i]);
-                       uri[i] = NULL;
-                       continue;
-                    }
-                  len += strlen(uri[i]->path) + 1;
+                  eina_strbuf_append(strbuf, files[i]);
                }
+             if (i < (num_files - 1))
+               eina_strbuf_append(strbuf, "\n");
           }
-        p = NULL;
-        if (len > 0)
-          {
-             s = stripstr = malloc(len + 1);
-             for (i = 0; i < num_files ; i++)
-               {
-                  if (uri[i])
-                    p = (char *)uri[i]->path;
-                  else
-                    p = files[i];
-
-                  if (s)
-                    {
-                       len = strlen(p);
-                       strcpy(s, p);
-                       if (i < (num_files - 1))
-                         {
-                            s[len] = '\n';
-                            s[len + 1] = 0;
-                            s += len + 1;
-                         }
-                       else
-                         {
-                            s[len] = 0;
-                            s += len;
-                         }
-                    }
-
-                  if (uri[i])
-                    efreet_uri_free(uri[i]);
-               }
-          }
-        free(uri);
+        stripstr = eina_strbuf_string_steal(strbuf);
+        eina_strbuf_free(strbuf);
      }
    else
      {
@@ -2817,10 +2748,8 @@ _wl_data_preparer_uri(Wl_Cnp_Selection *sel, Elm_Selection_Data *ddata, Ecore_Wl
         else
           {
              free(p);
-             stripstr = (char *)eina_memdup((unsigned char *)uri->path,
-                                            strlen(uri->path), EINA_TRUE);
+             stripstr = strdup(uri->path);
              efreet_uri_free(uri);
-             if (!stripstr) return EINA_FALSE;
           }
      }
 
