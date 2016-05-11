@@ -1032,3 +1032,19 @@ ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mo
 
    return ret;
 }
+
+EAPI char *
+ecore_drm2_output_name_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->name, NULL);
+   return strdup(output->name);
+}
+
+EAPI char *
+ecore_drm2_output_model_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->model, NULL);
+   return strdup(output->model);
+}

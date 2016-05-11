@@ -495,6 +495,30 @@ EAPI void ecore_drm2_output_mode_info_get(Ecore_Drm2_Output_Mode *mode, int *w, 
 EAPI Eina_Bool ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode, int x, int y);
 
 /**
+ * Get the name of a given output
+ *
+ * @param output
+ *
+ * @return A string representing the output's name. Caller should free this return.
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI char *ecore_drm2_output_name_get(Ecore_Drm2_Output *output);
+
+/**
+ * Get the model of a given output
+ *
+ * @param output
+ *
+ * @return A string representing the output's model. Caller should free this return.
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI char *ecore_drm2_output_model_get(Ecore_Drm2_Output *output);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
