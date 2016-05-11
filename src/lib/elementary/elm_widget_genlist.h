@@ -276,7 +276,7 @@ struct _Item_Cache
    EINA_INLIST;
 
    Evas_Object *base_view, *spacer;
-   const char  *item_style; // it->itc->item_style
+   const Elm_Genlist_Item_Class  *item_class; // it->itc
    Eina_Bool    tree : 1; // it->group
    Eina_List   *contents; // content objects for reusing
 };

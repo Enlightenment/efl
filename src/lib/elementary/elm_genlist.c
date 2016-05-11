@@ -1508,7 +1508,7 @@ _item_cache_free(Item_Cache *itc)
 
    evas_object_del(itc->spacer);
    evas_object_del(itc->base_view);
-   eina_stringshare_del(itc->item_style);
+   itc->item_class = NULL;
    EINA_LIST_FREE(itc->contents, c)
      {
         evas_object_del(c);
@@ -1568,7 +1568,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
      }
    itc->spacer = it->spacer;
    itc->base_view = VIEW(it);
-   itc->item_style = eina_stringshare_add(it->itc->item_style);
+   itc->item_class = it->itc;
    itc->contents = contents;
    if (it->item->type & ELM_GENLIST_ITEM_TREE)
      {
@@ -1632,9 +1632,9 @@ _item_cache_find(Elm_Gen_Item *it)
    EINA_INLIST_FOREACH_SAFE(sd->item_cache, l, itc)
      {
         if ((itc->tree == tree) &&
-            (((!it->itc->item_style) && (!itc->item_style)) ||
-             (it->itc->item_style && itc->item_style &&
-              (!strcmp(it->itc->item_style, itc->item_style)))))
+            (((!it->itc) && (!itc->item_class)) ||
+             (it->itc && itc->item_class &&
+              (it->itc == itc->item_class))))
           {
              itc = _item_cache_pop(sd, itc);
              if (!itc) continue;
