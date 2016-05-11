@@ -3043,38 +3043,65 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
 
    /* TODO:
     * - pass event to the internal functions
-    * - implement legacy over oo instead of this
+    * - implement legacy over eo instead of this
     */
 
    switch (ev->action)
      {
       case EFL_POINTER_ACTION_MOUSE_MOVE:
-        if (ev->window_pos)
-          {
-             _canvas_event_feed_mouse_move_internal(eo_e, e,
-                                                    ev->cur.x - e->framespace.x,
-                                                    ev->cur.y - e->framespace.y,
-                                                    ev->timestamp, ev->data);
-          }
-        else
+        if (ev->finger == 0)
           {
              _canvas_event_feed_mouse_move_internal(eo_e, e, ev->cur.x, ev->cur.y,
                                                     ev->timestamp, ev->data);
           }
+        else
+          {
+             _canvas_event_feed_multi_move_internal(eo_e, e, ev->finger, ev->cur.x, ev->cur.y,
+                                                    ev->radius, ev->radius_x, ev->radius_y,
+                                                    ev->pressure, ev->angle,
+                                                    ev->cur.xsub, ev->cur.ysub,
+                                                    ev->timestamp, ev->data);
+          }
+        ev->evas_done = EINA_TRUE;
         break;
 
       case EFL_POINTER_ACTION_MOUSE_DOWN:
-        evas_event_feed_mouse_down(eo_e, ev->button, ev->button_flags, ev->timestamp, ev->data);
+        if (ev->finger == 0)
+          {
+             evas_event_feed_mouse_down(eo_e, ev->button, ev->button_flags, ev->timestamp, ev->data);
+          }
+        else
+          {
+             evas_event_feed_multi_down(eo_e, ev->finger, ev->cur.x, ev->cur.y,
+                                        ev->radius, ev->radius_x, ev->radius_y,
+                                        ev->pressure, ev->angle,
+                                        ev->cur.xsub, ev->cur.ysub, ev->button_flags,
+                                        ev->timestamp, ev->data);
+          }
+        ev->evas_done = EINA_TRUE;
         break;
 
       case EFL_POINTER_ACTION_MOUSE_UP:
-        evas_event_feed_mouse_up(eo_e, ev->button, ev->button_flags, ev->timestamp, ev->data);
+        if (ev->finger == 0)
+          {
+             evas_event_feed_mouse_up(eo_e, ev->button, ev->button_flags, ev->timestamp, ev->data);
+          }
+        else
+          {
+             evas_event_feed_multi_up(eo_e, ev->finger, ev->cur.x, ev->cur.y,
+                                      ev->radius, ev->radius_x, ev->radius_y,
+                                      ev->pressure, ev->angle,
+                                      ev->cur.xsub, ev->cur.ysub, ev->button_flags,
+                                      ev->timestamp, ev->data);
+          }
+        ev->evas_done = EINA_TRUE;
         break;
 
       case EFL_POINTER_ACTION_MOUSE_WHEEL:
         evas_event_feed_mouse_wheel(eo_e,
                                     (ev->wheel.dir == EFL_ORIENT_HORIZONTAL) ? 1 : 0,
                                     ev->wheel.z, ev->timestamp, ev->data);
+        ev->evas_done = EINA_TRUE;
         break;
 
       default:

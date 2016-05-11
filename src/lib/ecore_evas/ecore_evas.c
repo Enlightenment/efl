@@ -36,6 +36,9 @@
 #include "ecore_evas_extn.h"
 #include "ecore_evas_win32.h"
 
+#define EFL_INTERNAL_UNSTABLE
+#include "interfaces/efl_common_internal.h"
+
 #ifndef O_BINARY
 # define O_BINARY 0
 #endif
@@ -4300,16 +4303,71 @@ _direct_key_up_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Key *info EINA_U
    return EINA_FALSE;
 }
 
+#define EVENT_XY_SET(EV, X, Y, MX, MY, FX, FY) do { \
+   EV->cur.x = (X) - (FX); EV->cur.xsub = (MX) - (FX); \
+   EV->cur.y = (Y) - (FY); EV->cur.ysub = (MY) - (FY); \
+   } while (0)
+
 static Eina_Bool
-_direct_mouse_down_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *info EINA_UNUSED)
+_direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_Pointer_Action action)
 {
-   return EINA_FALSE;
+   Efl_Pointer_Event_Data *ev;
+   Efl_Pointer_Event *evt;
+   Evas *e = ee->evas;
+   Eina_Bool processed;
+   int fx, fy, fw, fh, x, y;
+   double mx, my;
+
+   evt = efl_pointer_event_instance_get(EFL_POINTER_EVENT_CLASS, e, (void **) &ev);
+   if (!evt) return EINA_FALSE;
+
+   ev->action = action;
+   ev->button = info->buttons;
+   if (info->double_click) ev->button_flags |= EFL_POINTER_BUTTON_FLAGS_DOUBLE_CLICK;
+   if (info->triple_click) ev->button_flags |= EFL_POINTER_BUTTON_FLAGS_TRIPLE_CLICK;
+   ev->timestamp = info->timestamp;
+   ev->finger = info->multi.device;
+
+   evas_output_framespace_get(ee->evas, &fx, &fy, &fw, &fh);
+   x = info->x;
+   y = info->y;
+   mx = info->multi.x;
+   my = info->multi.y;
+
+   if (ee->rotation == 0)
+     EVENT_XY_SET(ev, x, y, mx, my, fx, fy);
+   else if (ee->rotation == 90)
+     EVENT_XY_SET(ev, ee->h + fw - y - 1, x, ee->h + fw - my - 1, mx, fx, fy);
+   else if (ee->rotation == 180)
+     EVENT_XY_SET(ev, ee->w + fw - x - 1, ee->h + fh - y - 1,
+                  ee->w + fw - mx - 1, ee->h + fh - my - 1,
+                  fx, fy);
+   else if (ee->rotation == 270)
+     EVENT_XY_SET(ev, y, ee->w + fh - x - 1, y, ee->w + fh - mx - 1, fx, fy);
+
+   ev->radius = info->multi.radius;
+   ev->radius_x = info->multi.radius_x;
+   ev->radius_y = info->multi.radius_y;
+   ev->pressure = info->multi.pressure;
+   ev->angle = info->multi.angle - ee->rotation;
+
+   eo_event_callback_call(e, EVAS_CANVAS_EVENT_POINTER, evt);
+   processed = ev->evas_done;
+   eo_del(evt);
+
+   return processed;
+}
+
+static Eina_Bool
+_direct_mouse_down_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info)
+{
+   return _direct_mouse_updown(ee, info, EFL_POINTER_ACTION_MOUSE_DOWN);
 }
 
 static Eina_Bool
 _direct_mouse_up_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *info EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return _direct_mouse_updown(ee, info, EFL_POINTER_ACTION_MOUSE_UP);
 }
 
 static Eina_Bool
