@@ -1,4 +1,4 @@
-mixin Ector.Renderer.Gradient_Linear (Efl.Gfx.Gradient.Linear)
+mixin Ector.Renderer.Gradient.Linear (Efl.Gfx.Gradient.Linear)
 {
    eo_prefix: ector_renderer_gradient_linear;
    legacy_prefix: null;

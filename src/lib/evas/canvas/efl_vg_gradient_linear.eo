@@ -1,4 +1,4 @@
-class Efl.VG.Gradient_Linear (Efl.VG.Gradient, Efl.Gfx.Gradient.Linear)
+class Efl.VG.Gradient.Linear (Efl.VG.Gradient, Efl.Gfx.Gradient.Linear)
 {
    legacy_prefix: evas_vg_gradient_linear;
    implements {

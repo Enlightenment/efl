@@ -1,4 +1,4 @@
-class Ector.Renderer.Cairo.Gradient_Radial (Ector.Renderer.Cairo, Ector.Renderer.Gradient, Ector.Renderer.Gradient_Radial)
+class Ector.Renderer.Cairo.Gradient.Radial (Ector.Renderer.Cairo, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial)
 {
    eo_prefix: ector_renderer_cairo_gradient_radial;
    legacy_prefix: null;
