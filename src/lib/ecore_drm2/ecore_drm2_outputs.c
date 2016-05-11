@@ -917,3 +917,17 @@ ecore_drm2_output_crtc_size_get(Ecore_Drm2_Output *output, int *w, int *h)
 
    drmModeFreeCrtc(crtc);
 }
+
+EAPI Eina_Bool
+ecore_drm2_output_primary_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   return output->primary;
+}
+
+EAPI void
+ecore_drm2_output_primary_set(Ecore_Drm2_Output *output, Eina_Bool primary)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   output->primary = primary;
+}

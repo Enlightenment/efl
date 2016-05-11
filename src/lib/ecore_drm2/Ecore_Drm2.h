@@ -392,6 +392,29 @@ EAPI void ecore_drm2_output_next_fb_set(Ecore_Drm2_Output *output, Ecore_Drm2_Fb
 EAPI void ecore_drm2_output_crtc_size_get(Ecore_Drm2_Output *output, int *w, int *h);
 
 /**
+ * Get if a given output is marked as the primary output
+ *
+ * @param output
+ *
+ * @return EINA_TRUE if output is primary, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool ecore_drm2_output_primary_get(Ecore_Drm2_Output *output);
+
+/**
+ * Set a given output to be primary
+ *
+ * @param output
+ * @param primary
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_output_primary_set(Ecore_Drm2_Output *output, Eina_Bool primary);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
