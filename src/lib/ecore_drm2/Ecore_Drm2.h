@@ -519,6 +519,30 @@ EAPI char *ecore_drm2_output_name_get(Ecore_Drm2_Output *output);
 EAPI char *ecore_drm2_output_model_get(Ecore_Drm2_Output *output);
 
 /**
+ * Get if a given output is connected
+ *
+ * @param output
+ *
+ * @return EINA_TRUE if connected, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool ecore_drm2_output_connected_get(Ecore_Drm2_Output *output);
+
+/**
+ * Get if a given output is cloned
+ *
+ * @param output
+ *
+ * @return EINA_TRUE if cloned, EINA_FALSE otherwise.
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool ecore_drm2_output_cloned_get(Ecore_Drm2_Output *output);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
