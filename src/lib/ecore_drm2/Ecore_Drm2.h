@@ -580,6 +580,22 @@ EAPI unsigned int ecore_drm2_output_connector_type_get(Ecore_Drm2_Output *output
 EAPI void ecore_drm2_output_resolution_get(Ecore_Drm2_Output *output, int *w, int *h, unsigned int *refresh);
 
 /**
+ * Get if an output can be used on a given crtc
+ *
+ * This function will loop the possible crtcs of an encoder to determine if
+ * a given output can be assigned to a given crtc
+ *
+ * @param output
+ * @param crtc
+ *
+ * @return EINA_TRUE if the output can be assigned to given crtc, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool ecore_drm2_output_possible_crtc_get(Ecore_Drm2_Output *output, unsigned int crtc);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers

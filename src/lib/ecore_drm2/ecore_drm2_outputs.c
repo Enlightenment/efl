@@ -219,7 +219,7 @@ static int
 _output_crtc_find(const drmModeRes *res, const drmModeConnector *conn, Ecore_Drm2_Device *dev)
 {
    drmModeEncoder *enc;
-   uint32_t pcrtcs;
+   uint32_t crtc;
    int i = 0, j = 0;
 
    for (j = 0; j < conn->count_encoders; j++)
@@ -227,15 +227,12 @@ _output_crtc_find(const drmModeRes *res, const drmModeConnector *conn, Ecore_Drm
         enc = drmModeGetEncoder(dev->fd, conn->encoders[j]);
         if (!enc) continue;
 
-        pcrtcs = enc->possible_crtcs;
+        crtc = enc->crtc_id;
         drmModeFreeEncoder(enc);
 
         for (i = 0; i < res->count_crtcs; i++)
-          {
-             if ((pcrtcs & (1 << i)) &&
-                 (!(dev->alloc.crtc & (1 << res->crtcs[i]))))
-               return i;
-          }
+          if (crtc == res->crtcs[i])
+            return i;
      }
 
    return -1;
@@ -1090,4 +1087,59 @@ ecore_drm2_output_resolution_get(Ecore_Drm2_Output *output, int *w, int *h, unsi
    if (w) *w = output->current_mode->width;
    if (h) *h = output->current_mode->height;
    if (refresh) *refresh = output->current_mode->refresh;
+}
+
+EAPI Eina_Bool
+ecore_drm2_output_possible_crtc_get(Ecore_Drm2_Output *output, unsigned int crtc)
+{
+   drmModeRes *res;
+   drmModeConnector *conn;
+   drmModeEncoder *enc;
+   int i = 0, j = 0, k = 0;
+   unsigned int p = 0;
+   Eina_Bool ret = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((output->fd < 0), EINA_FALSE);
+
+   res = drmModeGetResources(output->fd);
+   if (!res) return EINA_FALSE;
+
+   for (; i < res->count_connectors; i++)
+     {
+        conn = drmModeGetConnector(output->fd, res->connectors[i]);
+        if (!conn) continue;
+
+        for (j = 0; j < conn->count_encoders; j++)
+          {
+             enc = drmModeGetEncoder(output->fd, conn->encoders[j]);
+             if (!enc) continue;
+
+             if (enc->crtc_id != crtc) goto next;
+
+             p = enc->possible_crtcs;
+
+             for (k = 0; k < res->count_crtcs; k++)
+               {
+                  if (res->crtcs[k] != output->crtc_id) continue;
+
+                  if (p & (1 << k))
+                    {
+                       ret = EINA_TRUE;
+                       break;
+                    }
+               }
+
+next:
+             drmModeFreeEncoder(enc);
+             if (ret) break;
+          }
+
+        drmModeFreeConnector(conn);
+        if (ret) break;
+     }
+
+   drmModeFreeResources(res);
+
+   return ret;
 }
