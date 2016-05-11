@@ -5629,7 +5629,7 @@ _elm_win_window_id_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
         if (sd->parent)
           {
              Ecore_Cocoa_Window *pwin;
-             pwin = elm_obj_win_cocoa_window_get(sd->parent);
+             pwin = elm_win_cocoa_window_get(sd->parent);
              return (Ecore_Window)pwin;
           }
 #endif
