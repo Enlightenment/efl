@@ -1838,6 +1838,17 @@ ecore_evas_focus_set(Ecore_Evas *ee, Eina_Bool on)
      }
    IFC(ee, fn_focus_set) (ee, on);
    IFE;
+   if (on)
+     {
+        evas_focus_in(ee->evas);
+        if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+     }
+   else
+     {
+        evas_focus_out(ee->evas);
+        if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
+     }
+   ee->prop.focused = !!on;
 }
 
 EAPI Eina_Bool
