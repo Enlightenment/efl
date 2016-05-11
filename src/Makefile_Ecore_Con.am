@@ -2,7 +2,7 @@
 ### Library
 
 ecore_con_eolian_files = \
-	lib/ecore_con/efl_network_base.eo \
+	lib/ecore_con/efl_network.eo \
 	lib/ecore_con/efl_network_client.eo \
 	lib/ecore_con/efl_network_server.eo \
 	lib/ecore_con/efl_network_connector.eo \

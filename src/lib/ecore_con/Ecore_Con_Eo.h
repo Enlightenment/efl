@@ -1,4 +1,4 @@
-#include "efl_network_base.eo.h"
+#include "efl_network.eo.h"
 #include "efl_network_server.eo.h"
 #include "efl_network_connector.eo.h"
 #include "efl_network_client.eo.h"

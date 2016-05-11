@@ -3,7 +3,7 @@
 #include <Eina.h>
 #include <Eo.h>
 
-#include "efl_network_base.eo.legacy.h"
+#include "efl_network.eo.legacy.h"
 #include "efl_network_server.eo.legacy.h"
 #include "efl_network_connector.eo.legacy.h"
 #include "efl_network_client.eo.legacy.h"
