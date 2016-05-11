@@ -452,6 +452,20 @@ EAPI void ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool ena
 EAPI void ecore_drm2_output_physical_size_get(Ecore_Drm2_Output *output, int *w, int *h);
 
 /**
+ * Get a list of the modes supported on a given output
+ *
+ * @param output
+ *
+ * @return An Eina_List of the modes supported for this output
+ *
+ * @note The returned list should not be freed
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI const Eina_List *ecore_drm2_output_modes_get(Ecore_Drm2_Output *output);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
