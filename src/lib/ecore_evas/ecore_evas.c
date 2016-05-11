@@ -4291,18 +4291,6 @@ ecore_evas_psl1ght_new(const char* name, int w, int h)
  *  3. let evas send legacy & eo events to the objects
  */
 
-static Eina_Bool
-_direct_key_down_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Key *info EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-_direct_key_up_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Key *info EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 #define EVENT_XY_SET(EV, X, Y, MX, MY, FX, FY) do { \
    EV->cur.x = (X) - (FX); EV->cur.xsub = (MX) - (FX); \
    EV->cur.y = (Y) - (FY); EV->cur.ysub = (MY) - (FY); \
@@ -4379,10 +4367,9 @@ _direct_mouse_up_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info)
 }
 
 static Eina_Bool
-_direct_mouse_cancel_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *info EINA_UNUSED)
+_direct_mouse_cancel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info)
 {
-   /* TODO: Add cancel event type. */
-   return EINA_FALSE;
+   return _direct_mouse_updown(ee, info, EFL_POINTER_ACTION_CANCEL);
 }
 
 static Eina_Bool
@@ -4457,16 +4444,53 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
 }
 
 static Eina_Bool
-_direct_mouse_in_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_IO *info EINA_UNUSED)
+_direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointer_Action action)
 {
-   /* TODO: Add mouse in event type. */
+   Efl_Pointer_Event_Data *ev;
+   Efl_Pointer_Event *evt;
+   Evas *e = ee->evas;
+   Eina_Bool processed;
+
+   /* Unused information:
+    * event_window
+    * modifiers
+    */
+
+   evt = efl_pointer_event_instance_get(EFL_POINTER_EVENT_CLASS, e, (void **) &ev);
+   if (!evt) return EINA_FALSE;
+
+   ev->action = action;
+   ev->timestamp = info->timestamp;
+   _pointer_position_set(ev, ee, info->x, info->y, info->x, info->y);
+
+   eo_event_callback_call(e, EVAS_CANVAS_EVENT_POINTER, evt);
+   processed = ev->evas_done;
+   eo_del(evt);
+
+   return processed;
+}
+
+static Eina_Bool
+_direct_mouse_in_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info)
+{
+   return _direct_mouse_inout(ee, info, EFL_POINTER_ACTION_IN);
+}
+
+static Eina_Bool
+_direct_mouse_out_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info)
+{
+   return _direct_mouse_inout(ee, info, EFL_POINTER_ACTION_OUT);
+}
+
+static Eina_Bool
+_direct_key_down_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Key *info EINA_UNUSED)
+{
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_direct_mouse_out_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_IO *info EINA_UNUSED)
+_direct_key_up_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Key *info EINA_UNUSED)
 {
-   /* TODO: Add mouse out event type. */
    return EINA_FALSE;
 }
 
@@ -4482,24 +4506,24 @@ _ecore_evas_input_direct_cb(void *window, int type, const void *info)
 {
    Ecore_Evas *ee = window;
 
-   if (type == ECORE_EVENT_KEY_DOWN)
-     return _direct_key_down_cb(ee, (const Ecore_Event_Key *) info);
-   else if (type == ECORE_EVENT_KEY_UP)
-     return _direct_key_up_cb(ee, (const Ecore_Event_Key *) info);
+   if (type == ECORE_EVENT_MOUSE_MOVE)
+     return _direct_mouse_move_cb(ee, (const Ecore_Event_Mouse_Move *) info);
    else if (type == ECORE_EVENT_MOUSE_BUTTON_DOWN)
      return _direct_mouse_down_cb(ee, (const Ecore_Event_Mouse_Button *) info);
    else if (type == ECORE_EVENT_MOUSE_BUTTON_UP)
      return _direct_mouse_up_cb(ee, (const Ecore_Event_Mouse_Button *) info);
-   else if (type == ECORE_EVENT_MOUSE_BUTTON_CANCEL)
-     return _direct_mouse_cancel_cb(ee, (const Ecore_Event_Mouse_Button *) info);
-   else if (type == ECORE_EVENT_MOUSE_MOVE)
-     return _direct_mouse_move_cb(ee, (const Ecore_Event_Mouse_Move *) info);
    else if (type == ECORE_EVENT_MOUSE_WHEEL)
      return _direct_mouse_wheel_cb(ee, (const Ecore_Event_Mouse_Wheel *) info);
    else if (type == ECORE_EVENT_MOUSE_IN)
      return _direct_mouse_in_cb(ee, (const Ecore_Event_Mouse_IO *) info);
    else if (type == ECORE_EVENT_MOUSE_OUT)
      return _direct_mouse_out_cb(ee, (const Ecore_Event_Mouse_IO *) info);
+   else if (type == ECORE_EVENT_KEY_DOWN)
+     return _direct_key_down_cb(ee, (const Ecore_Event_Key *) info);
+   else if (type == ECORE_EVENT_MOUSE_BUTTON_CANCEL)
+     return _direct_mouse_cancel_cb(ee, (const Ecore_Event_Mouse_Button *) info);
+   else if (type == ECORE_EVENT_KEY_UP)
+     return _direct_key_up_cb(ee, (const Ecore_Event_Key *) info);
    else if (type == ECORE_EVENT_AXIS_UPDATE)
      return _direct_axis_update_cb(ee, (const Ecore_Event_Axis_Update *) info);
    else

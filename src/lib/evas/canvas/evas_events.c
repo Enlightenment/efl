@@ -3052,6 +3052,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
     * - implement legacy over eo instead of this
     */
 
+   ev->evas_done = EINA_TRUE;
    switch (ev->action)
      {
       case EFL_POINTER_ACTION_MOVE:
@@ -3068,7 +3069,6 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
                                                     ev->cur.xsub, ev->cur.ysub,
                                                     ev->timestamp, ev->data);
           }
-        ev->evas_done = EINA_TRUE;
         break;
 
       case EFL_POINTER_ACTION_DOWN:
@@ -3084,7 +3084,6 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
                                         ev->cur.xsub, ev->cur.ysub, ev->button_flags,
                                         ev->timestamp, ev->data);
           }
-        ev->evas_done = EINA_TRUE;
         break;
 
       case EFL_POINTER_ACTION_UP:
@@ -3100,18 +3099,29 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
                                       ev->cur.xsub, ev->cur.ysub, ev->button_flags,
                                       ev->timestamp, ev->data);
           }
-        ev->evas_done = EINA_TRUE;
+        break;
+
+      case EFL_POINTER_ACTION_CANCEL:
+        evas_event_feed_mouse_cancel(eo_e, ev->timestamp, ev->data);
+        break;
+
+      case EFL_POINTER_ACTION_IN:
+        evas_event_feed_mouse_in(eo_e, ev->timestamp, ev->data);
+        break;
+
+      case EFL_POINTER_ACTION_OUT:
+        evas_event_feed_mouse_out(eo_e, ev->timestamp, ev->data);
         break;
 
       case EFL_POINTER_ACTION_WHEEL:
         evas_event_feed_mouse_wheel(eo_e,
                                     (ev->wheel.dir == EFL_ORIENT_HORIZONTAL) ? 1 : 0,
                                     ev->wheel.z, ev->timestamp, ev->data);
-        ev->evas_done = EINA_TRUE;
         break;
 
       default:
-        ERR("not implemented yet");
+        ERR("unsupported event type: %d", ev->action);
+        ev->evas_done = EINA_FALSE;
         break;
      }
 
