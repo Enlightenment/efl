@@ -188,7 +188,9 @@ START_TEST(eio_test_xattr_set)
 
    close(fd);
    unlink(test_file_path);
+   eina_tmpstr_del(test_file_path);
    eio_shutdown();
+   eina_shutdown();
    ecore_shutdown();
 }
 END_TEST
