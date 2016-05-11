@@ -899,6 +899,13 @@ ecore_drm2_output_next_fb_set(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
    output->next = fb;
 }
 
+EAPI Ecore_Drm2_Fb *
+ecore_drm2_output_current_fb_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   return output->current;
+}
+
 EAPI void
 ecore_drm2_output_crtc_size_get(Ecore_Drm2_Output *output, int *w, int *h)
 {

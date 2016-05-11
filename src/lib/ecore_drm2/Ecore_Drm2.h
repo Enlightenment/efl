@@ -369,6 +369,18 @@ EAPI unsigned int ecore_drm2_output_crtc_get(Ecore_Drm2_Output *output);
 EAPI Ecore_Drm2_Fb *ecore_drm2_output_next_fb_get(Ecore_Drm2_Output *output);
 
 /**
+ * Return the current Ecore_Drm2_Fb used on a given output
+ *
+ * @param output
+ *
+ * @return The current Ecore_Drm2_Fb used on this output, or NULL otherwise
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI Ecore_Drm2_Fb *ecore_drm2_output_current_fb_get(Ecore_Drm2_Output *output);
+
+/**
  * Set the next Ecore_Drm2_Fb to be used on a given output
  *
  * @param output
