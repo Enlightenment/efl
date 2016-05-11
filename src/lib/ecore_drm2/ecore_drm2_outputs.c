@@ -973,3 +973,19 @@ ecore_drm2_output_modes_get(Ecore_Drm2_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
    return output->modes;
 }
+
+EAPI void
+ecore_drm2_output_mode_info_get(Ecore_Drm2_Output_Mode *mode, int *w, int *h, unsigned int *refresh, unsigned int *flags)
+{
+   if (w) *w = 0;
+   if (h) *h = 0;
+   if (refresh) *refresh = 0;
+   if (flags) *flags = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(mode);
+
+   if (w) *w = mode->width;
+   if (h) *h = mode->height;
+   if (refresh) *refresh = mode->refresh;
+   if (flags) *flags = mode->flags;
+}
