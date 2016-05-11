@@ -268,3 +268,19 @@ ecore_drm2_device_crtcs_get(Ecore_Drm2_Device *device, int *num)
    if (num) *num = device->num_crtcs;
    return device->crtcs;
 }
+
+EAPI void
+ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *device, int *minw, int *minh, int *maxw, int *maxh)
+{
+   if (minw) *minw = 0;
+   if (minh) *minh = 0;
+   if (maxw) *maxw = 0;
+   if (maxh) *maxh = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   if (minw) *minw = device->min.width;
+   if (minh) *minh = device->min.height;
+   if (maxw) *maxw = device->max.width;
+   if (maxh) *maxh = device->max.height;
+}

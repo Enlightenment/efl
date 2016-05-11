@@ -58,8 +58,8 @@ _output_debug(Ecore_Drm2_Output *output, const drmModeConnector *conn)
 
    EINA_LIST_FOREACH(output->modes, l, omode)
      {
-        DBG("\tAdded Mode: %dx%d@%.1f%s%s%s",
-            omode->width, omode->height, (omode->refresh / 1000.0),
+        DBG("\tAdded Mode: %dx%d@%d%s%s%s",
+            omode->width, omode->height, omode->refresh,
             (omode->flags & DRM_MODE_TYPE_PREFERRED) ? ", preferred" : "",
             (omode->flags & DRM_MODE_TYPE_DEFAULT) ? ", current" : "",
             (conn->count_modes == 0) ? ", built-in" : "");
