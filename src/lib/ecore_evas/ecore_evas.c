@@ -1813,6 +1813,7 @@ ecore_evas_layer_set(Ecore_Evas *ee, int layer)
      }
    IFC(ee, fn_layer_set) (ee, layer);
    IFE;
+   ee->prop.layer = layer;
 }
 
 EAPI int
@@ -1874,6 +1875,7 @@ ecore_evas_iconified_set(Ecore_Evas *ee, Eina_Bool on)
      }
    IFC(ee, fn_iconified_set) (ee, on);
    IFE;
+   ee->prop.iconified = !!on;
 }
 
 EAPI Eina_Bool
@@ -1899,6 +1901,7 @@ ecore_evas_borderless_set(Ecore_Evas *ee, Eina_Bool on)
      }
    IFC(ee, fn_borderless_set) (ee, on);
    IFE;
+   ee->prop.borderless = !!on;
 }
 
 EAPI Eina_Bool
@@ -1924,6 +1927,7 @@ ecore_evas_override_set(Ecore_Evas *ee, Eina_Bool on)
      }
    IFC(ee, fn_override_set) (ee, on);
    IFE;
+   ee->prop.override = !!on;
 }
 
 EAPI Eina_Bool
