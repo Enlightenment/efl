@@ -989,3 +989,46 @@ ecore_drm2_output_mode_info_get(Ecore_Drm2_Output_Mode *mode, int *w, int *h, un
    if (refresh) *refresh = mode->refresh;
    if (flags) *flags = mode->flags;
 }
+
+EAPI Eina_Bool
+ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode, int x, int y)
+{
+   Eina_Bool ret = EINA_TRUE;
+   unsigned int buffer = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((output->fd < 0), EINA_FALSE);
+
+   output->x = x;
+   output->y = y;
+   output->current_mode = mode;
+
+   if (mode)
+     {
+        if (output->current)
+          buffer = output->current->id;
+        else if (output->next)
+          buffer = output->next->id;
+        else
+          buffer = output->ocrtc->buffer_id;
+
+        if (drmModeSetCrtc(output->fd, output->crtc_id, buffer,
+                           x, y, &output->conn_id, 1, &mode->info) < 0)
+          {
+             ERR("Failed to set Mode %dx%d for Output %s: %m",
+                 mode->width, mode->height, output->name);
+             ret = EINA_FALSE;
+          }
+     }
+   else
+     {
+        if (drmModeSetCrtc(output->fd, output->crtc_id, 0,
+                           0, 0, 0, 0, NULL) < 0)
+          {
+             ERR("Failed to turn off Output %s: %m", output->name);
+             ret = EINA_FALSE;
+          }
+     }
+
+   return ret;
+}

@@ -480,6 +480,21 @@ EAPI const Eina_List *ecore_drm2_output_modes_get(Ecore_Drm2_Output *output);
 EAPI void ecore_drm2_output_mode_info_get(Ecore_Drm2_Output_Mode *mode, int *w, int *h, unsigned int *refresh, unsigned int *flags);
 
 /**
+ * Set a given mode to be used on a given output
+ *
+ * @param output
+ * @param mode
+ * @param x
+ * @param y
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode, int x, int y);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
