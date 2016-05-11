@@ -18,8 +18,8 @@ struct _Ector_Renderer_Software_Shape_Data
    Efl_Gfx_Shape_Public                *public_shape;
 
    Ector_Software_Surface_Data         *surface;
-   Ector_Renderer_Generic_Shape_Data   *shape;
-   Ector_Renderer_Generic_Base_Data    *base;
+   Ector_Renderer_Shape_Data   *shape;
+   Ector_Renderer_Data    *base;
 
    Shape_Rle_Data                      *shape_data;
    Shape_Rle_Data                      *outline_data;
@@ -571,7 +571,7 @@ _update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 }
 
 static Eina_Bool
-_ector_renderer_software_shape_ector_renderer_generic_base_prepare(Eo *obj,
+_ector_renderer_software_shape_ector_renderer_prepare(Eo *obj,
                                                                    Ector_Renderer_Software_Shape_Data *pd)
 {
    // FIXME: shouldn't that be part of the shape generic implementation ?
@@ -590,7 +590,7 @@ _ector_renderer_software_shape_ector_renderer_generic_base_prepare(Eo *obj,
 }
 
 static Eina_Bool
-_ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
+_ector_renderer_software_shape_ector_renderer_draw(Eo *obj,
                                                                 Ector_Renderer_Software_Shape_Data *pd,
                                                                 Efl_Gfx_Render_Op op, Eina_Array *clips,
                                                                 unsigned int mul_col)
@@ -700,8 +700,8 @@ _ector_renderer_software_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Softw
    if (!obj) return NULL;
 
    pd->public_shape = eo_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
-   pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
-   pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
+   pd->shape = eo_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
+   pd->base = eo_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
    eo_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_software_shape_path_changed, pd);
 
    return obj;
@@ -725,7 +725,7 @@ _ector_renderer_software_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Softwa
 
 
 unsigned int
-_ector_renderer_software_shape_ector_renderer_generic_base_crc_get(Eo *obj,
+_ector_renderer_software_shape_ector_renderer_crc_get(Eo *obj,
                                                                    Ector_Renderer_Software_Shape_Data *pd)
 {
    unsigned int crc;

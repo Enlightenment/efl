@@ -58,15 +58,15 @@ _ector_cairo_surface_symbol_get(Eo *obj EINA_UNUSED,
   if (!Sym) return Error;
 
 static Ector_Renderer *
-_ector_cairo_surface_ector_generic_surface_renderer_factory_new(Eo *obj,
+_ector_cairo_surface_ector_surface_renderer_factory_new(Eo *obj,
                                                                 Ector_Cairo_Surface_Data *pd EINA_UNUSED,
                                                                 const Eo_Class *type)
 {
-   if (type == ECTOR_RENDERER_GENERIC_SHAPE_MIXIN)
+   if (type == ECTOR_RENDERER_SHAPE_MIXIN)
      return eo_add(ECTOR_RENDERER_CAIRO_SHAPE_CLASS, NULL, ector_renderer_surface_set(eo_self, obj));
-   else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN)
+   else if (type == ECTOR_RENDERER_GRADIENT_LINEAR_MIXIN)
      return eo_add(ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, NULL, ector_renderer_surface_set(eo_self, obj));
-   else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN)
+   else if (type == ECTOR_RENDERER_GRADIENT_RADIAL_MIXIN)
      return eo_add(ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, NULL, ector_renderer_surface_set(eo_self, obj));
 
    ERR("Couldn't find class for type: %s\n", eo_class_name_get(type));
@@ -106,7 +106,7 @@ _ector_cairo_surface_context_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_ector_cairo_surface_ector_generic_surface_reference_point_set(Eo *obj EINA_UNUSED,
+_ector_cairo_surface_ector_surface_reference_point_set(Eo *obj EINA_UNUSED,
                                                                Ector_Cairo_Surface_Data *pd,
                                                                int x, int y)
 {

@@ -73,7 +73,7 @@ _efl_vg_gradient_linear_render_pre(Eo *obj,
 
    if (!nd->renderer)
      {
-        nd->renderer = ector_surface_renderer_factory_new(s, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN);
+        nd->renderer = ector_surface_renderer_factory_new(s, ECTOR_RENDERER_GRADIENT_LINEAR_MIXIN);
      }
 
    ector_renderer_transformation_set(nd->renderer, current);

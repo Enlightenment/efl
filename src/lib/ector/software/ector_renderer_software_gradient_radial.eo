@@ -1,12 +1,12 @@
-class Ector.Renderer.Software.Gradient_Radial (Ector.Renderer.Software, Ector.Renderer.Generic.Gradient, Ector.Renderer.Generic.Gradient_Radial)
+class Ector.Renderer.Software.Gradient_Radial (Ector.Renderer.Software, Ector.Renderer.Gradient, Ector.Renderer.Gradient_Radial)
 {
    eo_prefix: ector_renderer_software_gradient_radial;
    legacy_prefix: null;
    data: Ector_Renderer_Software_Gradient_Data;
    implements {
-      Ector.Renderer.Generic.Base.prepare;
-      Ector.Renderer.Generic.Base.draw;
-      Ector.Renderer.Generic.Base.crc.get;
+      Ector.Renderer.prepare;
+      Ector.Renderer.draw;
+      Ector.Renderer.crc.get;
       Ector.Renderer.Software.fill;
       Eo.Base.constructor;
       Eo.Base.destructor;

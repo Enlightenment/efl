@@ -1,12 +1,12 @@
-class Ector.Renderer.Cairo.Gradient_Linear (Ector.Renderer.Cairo, Ector.Renderer.Generic.Gradient, Ector.Renderer.Generic.Gradient_Linear)
+class Ector.Renderer.Cairo.Gradient_Linear (Ector.Renderer.Cairo, Ector.Renderer.Gradient, Ector.Renderer.Gradient_Linear)
 {
    eo_prefix: ector_renderer_cairo_gradient_linear;
    legacy_prefix: null;
    implements {
-      Ector.Renderer.Generic.Base.prepare;
-      Ector.Renderer.Generic.Base.draw;
-      Ector.Renderer.Generic.Base.bounds_get;
-      Ector.Renderer.Generic.Base.crc.get;
+      Ector.Renderer.prepare;
+      Ector.Renderer.draw;
+      Ector.Renderer.bounds_get;
+      Ector.Renderer.crc.get;
       Ector.Renderer.Cairo.fill;
       Eo.Base.finalize;
       Eo.Base.destructor;

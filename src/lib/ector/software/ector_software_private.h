@@ -25,10 +25,10 @@ typedef struct _Software_Gradient_Radial_Data
 typedef struct _Ector_Renderer_Software_Gradient_Data
 {
    Ector_Software_Surface_Data *surface;
-   Ector_Renderer_Generic_Gradient_Data *gd;
+   Ector_Renderer_Gradient_Data *gd;
    union {
-      Ector_Renderer_Generic_Gradient_Linear_Data *gld;
-      Ector_Renderer_Generic_Gradient_Radial_Data *grd;
+      Ector_Renderer_Gradient_Linear_Data *gld;
+      Ector_Renderer_Gradient_Radial_Data *grd;
    };
    union {
       Software_Gradient_Linear_Data linear;

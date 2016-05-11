@@ -145,7 +145,7 @@ _efl_vg_shape_render_pre(Eo *obj EINA_UNUSED,
 
    if (!nd->renderer)
      {
-        nd->renderer = ector_surface_renderer_factory_new(s, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN);
+        nd->renderer = ector_surface_renderer_factory_new(s, ECTOR_RENDERER_SHAPE_MIXIN);
      }
 
    ector_renderer_transformation_set(nd->renderer, current);

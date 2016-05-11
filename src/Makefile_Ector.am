@@ -1,14 +1,14 @@
 
 ### Library
 ector_eolian_files_generic = \
-	lib/ector/ector_generic_surface.eo \
-	lib/ector/ector_generic_buffer.eo \
-	lib/ector/ector_renderer_generic_base.eo \
-	lib/ector/ector_renderer_generic_shape.eo \
-	lib/ector/ector_renderer_generic_buffer.eo \
-	lib/ector/ector_renderer_generic_gradient.eo \
-	lib/ector/ector_renderer_generic_gradient_radial.eo \
-	lib/ector/ector_renderer_generic_gradient_linear.eo
+	lib/ector/ector_surface.eo \
+	lib/ector/ector_buffer.eo \
+	lib/ector/ector_renderer.eo \
+	lib/ector/ector_renderer_shape.eo \
+	lib/ector/ector_renderer_buffer.eo \
+	lib/ector/ector_renderer_gradient.eo \
+	lib/ector/ector_renderer_gradient_radial.eo \
+	lib/ector/ector_renderer_gradient_linear.eo
 ector_eolian_generic_h = $(ector_eolian_files_generic:%.eo=%.eo.h)
 
 # Handle cairo backend
@@ -87,13 +87,13 @@ lib_LTLIBRARIES += lib/ector/libector.la
 lib_ector_libector_la_SOURCES = \
 lib/ector/ector_main.c \
 lib/ector/ector_gl_internal.h \
-lib/ector/ector_generic_buffer.c \
-lib/ector/ector_renderer_generic_shape.c \
-lib/ector/ector_renderer_generic_base.c \
-lib/ector/ector_renderer_generic_buffer.c \
-lib/ector/ector_renderer_generic_gradient.c \
-lib/ector/ector_renderer_generic_gradient_radial.c \
-lib/ector/ector_renderer_generic_gradient_linear.c
+lib/ector/ector_buffer.c \
+lib/ector/ector_renderer_shape.c \
+lib/ector/ector_renderer.c \
+lib/ector/ector_renderer_buffer.c \
+lib/ector/ector_renderer_gradient.c \
+lib/ector/ector_renderer_gradient_radial.c \
+lib/ector/ector_renderer_gradient_linear.c
 
 # And now the cairo backend
 lib_ector_libector_la_SOURCES += \

@@ -9,7 +9,7 @@ enum Ector.Quality
    last, [[Sentinel]]
 }
 
-abstract Ector.Renderer.Generic.Base (Eo.Base)
+abstract Ector.Renderer (Eo.Base)
 {
    [[Ector renderer abstract interface]]
 
@@ -25,7 +25,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	    [[Get the surface associated to this renderer. Can not be set.]]
 	 }
 	 values {
-	    s: Ector.Generic.Surface *; [[Associated surface]]
+	    s: Ector.Surface *; [[Associated surface]]
 	 }
       }
       @property transformation {
@@ -86,7 +86,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	 get {
 	 }
 	 values {
-	    r: Ector.Renderer.Generic.Base *;
+	    r: Ector.Renderer *;
 	 }
       }
       @property quality {

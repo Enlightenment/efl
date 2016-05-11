@@ -14,8 +14,8 @@ struct _Ector_Renderer_GL_Shape_Data
 {
    Efl_Gfx_Shape_Public *public_shape;
 
-   Ector_Renderer_Generic_Shape_Data *shape;
-   Ector_Renderer_Generic_Base_Data *base;
+   Ector_Renderer_Shape_Data *shape;
+   Ector_Renderer_Data *base;
 
    GLshort *vertex;
 };
@@ -32,7 +32,7 @@ _ector_renderer_gl_shape_path_changed(void *data, const Eo_Event *event EINA_UNU
 }
 
 static Eina_Bool
-_ector_renderer_gl_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
+_ector_renderer_gl_shape_ector_renderer_prepare(Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
 {
    Eina_Rectangle bounding_box;
    Eina_Bool r;
@@ -70,7 +70,7 @@ _ector_renderer_gl_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_Rend
 }
 
 static Eina_Bool
-_ector_renderer_gl_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Efl_Gfx_Render_Op op, Eina_Array *clips, unsigned int mul_col)
+_ector_renderer_gl_shape_ector_renderer_draw(Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Efl_Gfx_Render_Op op, Eina_Array *clips, unsigned int mul_col)
 {
    uint64_t flags = 0;
 
@@ -107,7 +107,7 @@ _ector_renderer_gl_shape_ector_renderer_gl_fill(Eo *obj EINA_UNUSED,
 }
 
 static void
-_ector_renderer_gl_shape_ector_renderer_generic_base_bounds_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Eina_Rectangle *r)
+_ector_renderer_gl_shape_ector_renderer_bounds_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Eina_Rectangle *r)
 {
    efl_gfx_shape_bounds_get(obj, r);
 
@@ -116,7 +116,7 @@ _ector_renderer_gl_shape_ector_renderer_generic_base_bounds_get(Eo *obj, Ector_R
 }
 
 static unsigned int
-_ector_renderer_gl_shape_ector_renderer_generic_base_crc_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
+_ector_renderer_gl_shape_ector_renderer_crc_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
 {
    unsigned int crc;
 
@@ -148,8 +148,8 @@ _ector_renderer_gl_shape_eo_base_constructor(Eo *obj, Ector_Renderer_GL_Shape_Da
    if (!obj) return NULL;
 
    pd->public_shape = eo_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
-   pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
-   pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
+   pd->shape = eo_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
+   pd->base = eo_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
 
    eo_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_gl_shape_path_changed, pd);
 

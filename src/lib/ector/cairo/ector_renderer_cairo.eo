@@ -1,4 +1,4 @@
-abstract Ector.Renderer.Cairo (Ector.Renderer.Generic.Base)
+abstract Ector.Renderer.Cairo (Ector.Renderer)
 {
    legacy_prefix: null;
    methods {
@@ -11,10 +11,10 @@ abstract Ector.Renderer.Cairo (Ector.Renderer.Generic.Base)
    }
    implements {
       @virtual .fill;
-      Ector.Renderer.Generic.Base.prepare;
-      Ector.Renderer.Generic.Base.draw;
-      Ector.Renderer.Generic.Base.color.set;
-      Ector.Renderer.Generic.Base.color.get;
+      Ector.Renderer.prepare;
+      Ector.Renderer.draw;
+      Ector.Renderer.color.set;
+      Ector.Renderer.color.get;
       Eo.Base.constructor;
       Eo.Base.finalize;
       Eo.Base.destructor;

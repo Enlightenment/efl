@@ -1,4 +1,4 @@
-mixin Ector.Generic.Surface (Ector.Generic.Buffer)
+mixin Ector.Surface (Ector.Buffer)
 {
    [[Surface interface for Ector]]
 

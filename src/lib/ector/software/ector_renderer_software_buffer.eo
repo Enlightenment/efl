@@ -1,4 +1,4 @@
-class Ector.Renderer.Software.Buffer (Ector.Renderer.Software, Ector.Renderer.Generic.Buffer)
+class Ector.Renderer.Software.Buffer (Ector.Renderer.Software, Ector.Renderer.Buffer)
 {
    legacy_prefix: null;
    methods {
@@ -6,13 +6,13 @@ class Ector.Renderer.Software.Buffer (Ector.Renderer.Software, Ector.Renderer.Ge
          set {}
          get {}
          values {
-            buf: Ector.Generic.Buffer *;
+            buf: Ector.Buffer *;
          }
       }
    }
    implements {
-      Ector.Renderer.Generic.Base.prepare;
-      Ector.Renderer.Generic.Base.crc.get;
+      Ector.Renderer.prepare;
+      Ector.Renderer.crc.get;
       Ector.Renderer.Software.fill;
       Eo.Base.destructor;
    }

@@ -1,6 +1,6 @@
-import ector_renderer_generic_base;
+import ector_renderer;
 
-mixin Ector.Renderer.Generic.Shape (Efl.Gfx.Shape)
+mixin Ector.Renderer.Shape (Efl.Gfx.Shape)
 {
    eo_prefix: ector_renderer_shape;
    legacy_prefix: null;
@@ -11,7 +11,7 @@ mixin Ector.Renderer.Generic.Shape (Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    r: const(Ector.Renderer.Generic.Base) *;
+	    r: const(Ector.Renderer) *;
 	 }
       }
       @property stroke_fill {
@@ -20,7 +20,7 @@ mixin Ector.Renderer.Generic.Shape (Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    r: const(Ector.Renderer.Generic.Base) *;
+	    r: const(Ector.Renderer) *;
 	 }
       }
       @property stroke_marker {
@@ -29,7 +29,7 @@ mixin Ector.Renderer.Generic.Shape (Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    r: const(Ector.Renderer.Generic.Base) *;
+	    r: const(Ector.Renderer) *;
 	 }
       }
    }

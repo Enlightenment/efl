@@ -1,4 +1,4 @@
-mixin Ector.GL.Buffer.Base (Ector.Generic.Buffer)
+mixin Ector.GL.Buffer.Base (Ector.Buffer)
 {
    legacy_prefix: null;
    methods {

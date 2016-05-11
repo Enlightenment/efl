@@ -1,11 +1,11 @@
-class Ector.Software.Surface (Ector.Software.Buffer, Ector.Generic.Surface)
+class Ector.Software.Surface (Ector.Software.Buffer, Ector.Surface)
 {
    eo_prefix: ector_software_surface;
    legacy_prefix: null;
    methods {}
    implements {
-      Ector.Generic.Surface.renderer_factory_new;
-      Ector.Generic.Surface.reference_point.set;
+      Ector.Surface.renderer_factory_new;
+      Ector.Surface.reference_point.set;
       Eo.Base.destructor;
       Eo.Base.constructor;
    }

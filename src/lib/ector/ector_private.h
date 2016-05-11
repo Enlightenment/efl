@@ -60,16 +60,16 @@ _eo_xrefplace(Eo **d, Eo *s, const Eo *ref_obj)
    return *d;
 }
 
-typedef struct _Ector_Renderer_Generic_Base_Data Ector_Renderer_Generic_Base_Data;
-typedef struct _Ector_Renderer_Generic_Gradient_Data Ector_Renderer_Generic_Gradient_Data;
-typedef struct _Ector_Renderer_Generic_Gradient_Linear_Data Ector_Renderer_Generic_Gradient_Linear_Data;
-typedef struct _Ector_Renderer_Generic_Gradient_Radial_Data Ector_Renderer_Generic_Gradient_Radial_Data;
-typedef struct _Ector_Renderer_Generic_Shape_Data Ector_Renderer_Generic_Shape_Data;
-typedef struct _Ector_Renderer_Generic_Buffer_Data Ector_Renderer_Generic_Buffer_Data;
+typedef struct _Ector_Renderer_Data Ector_Renderer_Data;
+typedef struct _Ector_Renderer_Gradient_Data Ector_Renderer_Gradient_Data;
+typedef struct _Ector_Renderer_Gradient_Linear_Data Ector_Renderer_Gradient_Linear_Data;
+typedef struct _Ector_Renderer_Gradient_Radial_Data Ector_Renderer_Gradient_Radial_Data;
+typedef struct _Ector_Renderer_Shape_Data Ector_Renderer_Shape_Data;
+typedef struct _Ector_Renderer_Buffer_Data Ector_Renderer_Buffer_Data;
 
-struct _Ector_Renderer_Generic_Base_Data
+struct _Ector_Renderer_Data
 {
-   Ector_Generic_Surface *surface;
+   Ector_Surface *surface;
    Eina_Matrix3 *m;
 
    struct {
@@ -88,7 +88,7 @@ struct _Ector_Renderer_Generic_Base_Data
    Eina_Bool finalized : 1;
 };
 
-struct _Ector_Renderer_Generic_Gradient_Data
+struct _Ector_Renderer_Gradient_Data
 {
    Efl_Gfx_Gradient_Stop *colors;
    unsigned int colors_count;
@@ -96,14 +96,14 @@ struct _Ector_Renderer_Generic_Gradient_Data
    Efl_Gfx_Gradient_Spread s;
 };
 
-struct _Ector_Renderer_Generic_Gradient_Linear_Data
+struct _Ector_Renderer_Gradient_Linear_Data
 {
    struct {
       double x, y;
    } start, end;
 };
 
-struct _Ector_Renderer_Generic_Gradient_Radial_Data
+struct _Ector_Renderer_Gradient_Radial_Data
 {
    struct {
       double x, y;
@@ -111,7 +111,7 @@ struct _Ector_Renderer_Generic_Gradient_Radial_Data
    double radius;
 };
 
-struct _Ector_Renderer_Generic_Shape_Data
+struct _Ector_Renderer_Shape_Data
 {
    Ector_Renderer *fill;
    struct {
@@ -120,7 +120,7 @@ struct _Ector_Renderer_Generic_Shape_Data
    } stroke;
 };
 
-struct _Ector_Renderer_Generic_Buffer_Data
+struct _Ector_Renderer_Buffer_Data
 {
    Ector_Buffer *eo_buffer;
    struct {

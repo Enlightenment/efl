@@ -1,12 +1,12 @@
-class Ector.Renderer.GL.Shape (Ector.Renderer.GL, Ector.Renderer.Generic.Shape)
+class Ector.Renderer.GL.Shape (Ector.Renderer.GL, Ector.Renderer.Shape)
 {
    eo_prefix: ector_renderer_gl_shape;
    legacy_prefix: null;
    implements {
-      Ector.Renderer.Generic.Base.prepare;
-      Ector.Renderer.Generic.Base.draw;
-      Ector.Renderer.Generic.Base.bounds_get;
-      Ector.Renderer.Generic.Base.crc.get;
+      Ector.Renderer.prepare;
+      Ector.Renderer.draw;
+      Ector.Renderer.bounds_get;
+      Ector.Renderer.crc.get;
       Ector.Renderer.GL.fill;
       Eo.Base.constructor;
       Eo.Base.destructor;

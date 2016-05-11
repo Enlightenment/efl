@@ -1,6 +1,6 @@
 import ector_types;
 
-abstract Ector.Renderer.GL (Ector.Renderer.Generic.Base)
+abstract Ector.Renderer.GL (Ector.Renderer)
 {
    legacy_prefix: null;
    methods {
@@ -16,8 +16,8 @@ abstract Ector.Renderer.GL (Ector.Renderer.Generic.Base)
    }
    implements {
       @virtual .fill;
-      Ector.Renderer.Generic.Base.prepare;
-      Ector.Renderer.Generic.Base.draw;
+      Ector.Renderer.prepare;
+      Ector.Renderer.draw;
       Eo.Base.constructor;
       Eo.Base.destructor;
    }

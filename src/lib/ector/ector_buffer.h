@@ -3,20 +3,20 @@
 
 #include <Ector.h>
 
-#include "ector_generic_buffer.eo.h"
+#include "ector_buffer.eo.h"
 #include "software/ector_software_buffer_base.eo.h"
 
 /**
  * @typedef Ector_Buffer
  * A generic pixel buffer type (2D). May be readable or writeable or both.
  */
-typedef Ector_Generic_Buffer Ector_Buffer;
+typedef Ector_Buffer Ector_Buffer;
 
-typedef struct _Ector_Generic_Buffer_Data Ector_Generic_Buffer_Data;
+typedef struct _Ector_Buffer_Data Ector_Buffer_Data;
 typedef struct _Ector_Software_Buffer_Base_Data Ector_Software_Buffer_Base_Data;
 typedef struct _Ector_GL_Buffer_Base_Data Ector_GL_Buffer_Base_Data;
 
-struct _Ector_Generic_Buffer_Data
+struct _Ector_Buffer_Data
 {
    Ector_Buffer       *eo;
    unsigned int        w, h;
@@ -27,7 +27,7 @@ struct _Ector_Generic_Buffer_Data
 
 struct _Ector_Software_Buffer_Base_Data
 {
-   Ector_Generic_Buffer_Data *generic;
+   Ector_Buffer_Data *generic;
    union {
       unsigned int     *u32;
       unsigned char    *u8;
@@ -43,7 +43,7 @@ struct _Ector_Software_Buffer_Base_Data
 
 struct _Ector_GL_Buffer_Base_Data
 {
-   Ector_Generic_Buffer_Data *generic;
+   Ector_Buffer_Data *generic;
    int texid;
    int fboid;
    struct {

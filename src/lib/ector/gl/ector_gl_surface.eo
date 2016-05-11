@@ -1,6 +1,6 @@
 import ector_types;
 
-class Ector.GL.Surface (Ector.GL.Buffer, Ector.Generic.Surface)
+class Ector.GL.Surface (Ector.GL.Buffer, Ector.Surface)
 {
    eo_prefix: ector_gl_surface;
    legacy_prefix: null;
@@ -29,8 +29,8 @@ class Ector.GL.Surface (Ector.GL.Buffer, Ector.Generic.Surface)
       }
    }
    implements {
-      Ector.Generic.Surface.renderer_factory_new;
-      Ector.Generic.Surface.reference_point.set;
+      Ector.Surface.renderer_factory_new;
+      Ector.Surface.reference_point.set;
       Eo.Base.destructor;
       Eo.Base.constructor;
    }
