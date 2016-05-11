@@ -12,7 +12,7 @@ typedef struct {
 } cairo_matrix_t;
 
 typedef struct _Ector_Cairo_Surface_Data Ector_Cairo_Surface_Data;
-typedef struct _Ector_Renderer_Cairo_Base_Data Ector_Renderer_Cairo_Base_Data;
+typedef struct _Ector_Renderer_Cairo_Data Ector_Renderer_Cairo_Data;
 
 struct _Ector_Cairo_Surface_Data
 {
@@ -22,7 +22,7 @@ struct _Ector_Cairo_Surface_Data
    } current;
 };
 
-struct _Ector_Renderer_Cairo_Base_Data
+struct _Ector_Renderer_Cairo_Data
 {
    Ector_Cairo_Surface_Data *parent;
    Ector_Renderer_Generic_Base_Data *generic;

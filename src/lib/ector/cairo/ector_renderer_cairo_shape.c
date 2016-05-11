@@ -175,14 +175,14 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
     cairo_set_fill_rule(pd->parent->cairo, CAIRO_FILL_RULE_WINDING);
 
    if (pd->shape->fill)
-     ector_renderer_cairo_base_fill(pd->shape->fill, mul_col);
+     ector_renderer_cairo_fill(pd->shape->fill, mul_col);
 
    if (pd->shape->stroke.fill || pd->public_shape->stroke.color.a > 0)
      {
         cairo_fill_preserve(pd->parent->cairo);
 
         if (pd->shape->stroke.fill)
-          ector_renderer_cairo_base_fill(pd->shape->stroke.fill, mul_col);
+          ector_renderer_cairo_fill(pd->shape->stroke.fill, mul_col);
        else
          {
             r = (((pd->public_shape->stroke.color.r * R_VAL(&mul_col)) + 0xff) >> 8);
@@ -222,7 +222,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
 }
 
 static Eina_Bool
-_ector_renderer_cairo_shape_ector_renderer_cairo_base_fill(Eo *obj EINA_UNUSED,
+_ector_renderer_cairo_shape_ector_renderer_cairo_fill(Eo *obj EINA_UNUSED,
                                                            Ector_Renderer_Cairo_Shape_Data *pd EINA_UNUSED,
                                                            unsigned int mul_col EINA_UNUSED)
 {
@@ -237,12 +237,12 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_bounds_get(Eo *obj,
                                                                    Ector_Renderer_Cairo_Shape_Data *pd EINA_UNUSED,
                                                                    Eina_Rectangle *r)
 {
-   Ector_Renderer_Cairo_Base_Data *bd;
+   Ector_Renderer_Cairo_Data *bd;
 
    // FIXME: It should be possible to actually ask cairo about that
    efl_gfx_shape_bounds_get(obj, r);
 
-   bd = eo_data_scope_get(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS);
+   bd = eo_data_scope_get(obj, ECTOR_RENDERER_CAIRO_CLASS);
    r->x += bd->generic->origin.x;
    r->y += bd->generic->origin.y;
 }

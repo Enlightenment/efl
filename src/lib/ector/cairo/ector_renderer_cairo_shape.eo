@@ -1,4 +1,4 @@
-class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo.Base, Ector.Renderer.Generic.Shape)
+class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo, Ector.Renderer.Generic.Shape)
 {
    eo_prefix: ector_renderer_cairo_shape;
    legacy_prefix: null;
@@ -7,7 +7,7 @@ class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo.Base, Ector.Renderer.Gene
       Ector.Renderer.Generic.Base.draw;
       Ector.Renderer.Generic.Base.bounds_get;
       Ector.Renderer.Generic.Base.crc.get;
-      Ector.Renderer.Cairo.Base.fill;
+      Ector.Renderer.Cairo.fill;
       Eo.Base.constructor;
       Eo.Base.finalize;
       Eo.Base.destructor;

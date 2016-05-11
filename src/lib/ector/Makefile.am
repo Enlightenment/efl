@@ -18,7 +18,7 @@ ector_eolian_generic_h = $(ector_eolian_files_generic:%.eo=%.eo.h)
 ector_eolian_files_cairo = \
 	cairo/ector_cairo_surface.eo \
 	cairo/ector_cairo_software_surface.eo \
-	cairo/ector_renderer_cairo_base.eo \
+	cairo/ector_renderer_cairo.eo \
 	cairo/ector_renderer_cairo_shape.eo \
 	cairo/ector_renderer_cairo_gradient_linear.eo \
 	cairo/ector_renderer_cairo_gradient_radial.eo
@@ -89,7 +89,7 @@ libector_la_SOURCES += \
 cairo/ector_renderer_cairo_gradient_linear.c \
 cairo/ector_renderer_cairo_gradient_radial.c \
 cairo/ector_renderer_cairo_shape.c \
-cairo/ector_renderer_cairo_base.c \
+cairo/ector_renderer_cairo.c \
 cairo/ector_cairo_software_surface.c \
 cairo/ector_cairo_surface.c
 

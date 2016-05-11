@@ -1,4 +1,4 @@
-class Ector.Renderer.Cairo.Gradient_Radial (Ector.Renderer.Cairo.Base, Ector.Renderer.Generic.Gradient, Ector.Renderer.Generic.Gradient_Radial)
+class Ector.Renderer.Cairo.Gradient_Radial (Ector.Renderer.Cairo, Ector.Renderer.Generic.Gradient, Ector.Renderer.Generic.Gradient_Radial)
 {
    eo_prefix: ector_renderer_cairo_gradient_radial;
    legacy_prefix: null;
@@ -7,7 +7,7 @@ class Ector.Renderer.Cairo.Gradient_Radial (Ector.Renderer.Cairo.Base, Ector.Ren
       Ector.Renderer.Generic.Base.draw;
       Ector.Renderer.Generic.Base.bounds_get;
       Ector.Renderer.Generic.Base.crc.get;
-      Ector.Renderer.Cairo.Base.fill;
+      Ector.Renderer.Cairo.fill;
       Eo.Base.destructor;
       Eo.Base.finalize;
       Efl.Gfx.Gradient.stop.set;

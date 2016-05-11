@@ -15,7 +15,7 @@ ector_eolian_generic_h = $(ector_eolian_files_generic:%.eo=%.eo.h)
 ector_eolian_files_cairo = \
 	lib/ector/cairo/ector_cairo_surface.eo \
 	lib/ector/cairo/ector_cairo_software_surface.eo \
-	lib/ector/cairo/ector_renderer_cairo_base.eo \
+	lib/ector/cairo/ector_renderer_cairo.eo \
 	lib/ector/cairo/ector_renderer_cairo_shape.eo \
 	lib/ector/cairo/ector_renderer_cairo_gradient_linear.eo \
 	lib/ector/cairo/ector_renderer_cairo_gradient_radial.eo
@@ -100,7 +100,7 @@ lib_ector_libector_la_SOURCES += \
 lib/ector/cairo/ector_renderer_cairo_gradient_linear.c \
 lib/ector/cairo/ector_renderer_cairo_gradient_radial.c \
 lib/ector/cairo/ector_renderer_cairo_shape.c \
-lib/ector/cairo/ector_renderer_cairo_base.c \
+lib/ector/cairo/ector_renderer_cairo.c \
 lib/ector/cairo/ector_cairo_software_surface.c \
 lib/ector/cairo/ector_cairo_surface.c
 

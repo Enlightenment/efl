@@ -73,8 +73,8 @@ static cairo_matrix_t identity;
 
 // Cairo need unpremul color, so force unpremul here
 void
-_ector_renderer_cairo_base_ector_renderer_generic_base_color_set(Eo *obj EINA_UNUSED,
-                                                                 Ector_Renderer_Cairo_Base_Data *pd,
+_ector_renderer_cairo_ector_renderer_generic_base_color_set(Eo *obj EINA_UNUSED,
+                                                                 Ector_Renderer_Cairo_Data *pd,
                                                                  int r, int g, int b, int a)
 {
    pd->generic->color.r = r;
@@ -84,8 +84,8 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_color_set(Eo *obj EINA_UN
 }
 
 void
-_ector_renderer_cairo_base_ector_renderer_generic_base_color_get(Eo *obj EINA_UNUSED,
-                                                                 Ector_Renderer_Cairo_Base_Data *pd,
+_ector_renderer_cairo_ector_renderer_generic_base_color_get(Eo *obj EINA_UNUSED,
+                                                                 Ector_Renderer_Cairo_Data *pd,
                                                                  int *r, int *g, int *b, int *a)
 {
    if (r) *r = pd->generic->color.r;
@@ -95,7 +95,7 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_color_get(Eo *obj EINA_UN
 }
 
 static Eina_Bool
-_ector_renderer_cairo_base_ector_renderer_generic_base_prepare(Eo *obj, Ector_Renderer_Cairo_Base_Data *pd)
+_ector_renderer_cairo_ector_renderer_generic_base_prepare(Eo *obj, Ector_Renderer_Cairo_Data *pd)
 {
    if (!pd->parent)
      {
@@ -119,8 +119,8 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_prepare(Eo *obj, Ector_Re
 }
 
 static Eina_Bool
-_ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
-                                                            Ector_Renderer_Cairo_Base_Data *pd,
+_ector_renderer_cairo_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
+                                                            Ector_Renderer_Cairo_Data *pd,
                                                             Efl_Gfx_Render_Op op,
                                                             Eina_Array *clips EINA_UNUSED,
                                                             unsigned int mul_col)
@@ -180,9 +180,9 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
 }
 
 static Eo *
-_ector_renderer_cairo_base_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Base_Data *pd EINA_UNUSED)
+_ector_renderer_cairo_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Data *pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS));
+   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_CAIRO_CLASS));
    if (!obj) return NULL;
 
    pd->generic = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
@@ -191,9 +191,9 @@ _ector_renderer_cairo_base_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Bas
 }
 
 static Eo_Base *
-_ector_renderer_cairo_base_eo_base_finalize(Eo *obj, Ector_Renderer_Cairo_Base_Data *pd)
+_ector_renderer_cairo_eo_base_finalize(Eo *obj, Ector_Renderer_Cairo_Data *pd)
 {
-   obj = eo_finalize(eo_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS));
+   obj = eo_finalize(eo_super(obj, ECTOR_RENDERER_CAIRO_CLASS));
    if (!obj) return NULL;
 
    USE(pd->generic, cairo_matrix_init, NULL);
@@ -213,7 +213,7 @@ _ector_renderer_cairo_base_eo_base_finalize(Eo *obj, Ector_Renderer_Cairo_Base_D
 }
 
 static void
-_ector_renderer_cairo_base_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Base_Data *pd)
+_ector_renderer_cairo_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Data *pd)
 {
    Ector_Renderer_Generic_Base_Data *base;
 
@@ -223,7 +223,7 @@ _ector_renderer_cairo_base_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Base
 
    free(pd->m);
 
-   eo_destructor(eo_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS));
+   eo_destructor(eo_super(obj, ECTOR_RENDERER_CAIRO_CLASS));
 }
 
-#include "ector_renderer_cairo_base.eo.c"
+#include "ector_renderer_cairo.eo.c"
