@@ -438,6 +438,20 @@ EAPI Eina_Bool ecore_drm2_output_enabled_get(Ecore_Drm2_Output *output);
 EAPI void ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled);
 
 /**
+ * Get the physical size of a given output
+ *
+ * This function will give the physical size (in mm) of an output
+ *
+ * @param output
+ * @param *w
+ * @param *h
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_output_physical_size_get(Ecore_Drm2_Output *output, int *w, int *h);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers

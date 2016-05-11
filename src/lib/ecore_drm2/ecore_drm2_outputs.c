@@ -954,3 +954,15 @@ ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled)
 
    _output_event_send(output);
 }
+
+EAPI void
+ecore_drm2_output_physical_size_get(Ecore_Drm2_Output *output, int *w, int *h)
+{
+   if (w) *w = 0;
+   if (h) *h = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   if (w) *w = output->pw;
+   if (h) *h = output->ph;
+}
