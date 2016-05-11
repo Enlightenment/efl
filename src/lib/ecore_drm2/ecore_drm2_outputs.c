@@ -1062,3 +1062,10 @@ ecore_drm2_output_cloned_get(Ecore_Drm2_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
    return output->cloned;
 }
+
+EAPI unsigned int
+ecore_drm2_output_connector_type_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
+   return output->conn_type;
+}

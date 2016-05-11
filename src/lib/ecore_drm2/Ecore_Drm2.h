@@ -543,6 +543,18 @@ EAPI Eina_Bool ecore_drm2_output_connected_get(Ecore_Drm2_Output *output);
 EAPI Eina_Bool ecore_drm2_output_cloned_get(Ecore_Drm2_Output *output);
 
 /**
+ * Get the connector type of a given output
+ *
+ * @param output
+ *
+ * @return An unsigned integer representing the type of connector for this output
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI unsigned int ecore_drm2_output_connector_type_get(Ecore_Drm2_Output *output);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
