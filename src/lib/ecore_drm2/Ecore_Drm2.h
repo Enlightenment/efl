@@ -206,6 +206,29 @@ EAPI void ecore_drm2_device_pointer_xy_get(Ecore_Drm2_Device *device, int *x, in
 EAPI void ecore_drm2_device_pointer_warp(Ecore_Drm2_Device *device, int x, int y);
 
 /**
+ * Set which window is to be used for input events
+ *
+ * @param device
+ * @param window
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int window);
+
+/**
+ * Set maximium position that pointer device is allowed to move
+ *
+ * @param device
+ * @param w
+ * @param h
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *device, int w, int h);
+
+/**
  * @defgroup Ecore_Drm2_Output_Group Drm output functions
  *
  * Functions that deal with setup of outputs
@@ -355,6 +378,18 @@ EAPI Ecore_Drm2_Fb *ecore_drm2_output_next_fb_get(Ecore_Drm2_Output *output);
  * @since 1.18
  */
 EAPI void ecore_drm2_output_next_fb_set(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb);
+
+/**
+ * Get the size of the crtc for a given output
+ *
+ * @param output
+ * @param *w
+ * @param *h
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_output_crtc_size_get(Ecore_Drm2_Output *output, int *w, int *h);
 
 /**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions

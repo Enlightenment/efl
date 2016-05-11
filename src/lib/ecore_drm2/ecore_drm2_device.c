@@ -226,3 +226,36 @@ ecore_drm2_device_pointer_warp(Ecore_Drm2_Device *device, int x, int y)
 
    elput_input_pointer_xy_set(device->em, NULL, x, y);
 }
+
+EAPI void
+ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int window)
+{
+   const Eina_List *seats, *l;
+   const Eina_List *devs, *ll;
+   Elput_Seat *seat;
+   Elput_Device *dev;
+
+   EINA_SAFETY_ON_NULL_RETURN(device);
+   EINA_SAFETY_ON_NULL_RETURN(device->em);
+
+   seats = elput_manager_seats_get(device->em);
+   if (!seats) return;
+
+   EINA_LIST_FOREACH(seats, l, seat)
+     {
+        devs = elput_input_devices_get(seat);
+        if (!devs) continue;
+
+        EINA_LIST_FOREACH(devs, ll, dev)
+          elput_device_window_set(dev, window);
+     }
+}
+
+EAPI void
+ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *device, int w, int h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(device);
+   EINA_SAFETY_ON_NULL_RETURN(device->em);
+
+   elput_input_pointer_max_set(device->em, w, h);
+}

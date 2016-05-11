@@ -898,3 +898,22 @@ ecore_drm2_output_next_fb_set(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
    EINA_SAFETY_ON_NULL_RETURN(output);
    output->next = fb;
 }
+
+EAPI void
+ecore_drm2_output_crtc_size_get(Ecore_Drm2_Output *output, int *w, int *h)
+{
+   drmModeCrtcPtr crtc;
+
+   if (w) *w = 0;
+   if (h) *h = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   crtc = drmModeGetCrtc(output->fd, output->crtc_id);
+   if (!crtc) return;
+
+   if (w) *w = crtc->width;
+   if (h) *h = crtc->height;
+
+   drmModeFreeCrtc(crtc);
+}
