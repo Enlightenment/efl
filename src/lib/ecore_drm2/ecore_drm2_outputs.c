@@ -1069,3 +1069,18 @@ ecore_drm2_output_connector_type_get(Ecore_Drm2_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
    return output->conn_type;
 }
+
+EAPI void
+ecore_drm2_output_resolution_get(Ecore_Drm2_Output *output, int *w, int *h, unsigned int *refresh)
+{
+   if (w) *w = 0;
+   if (h) *h = 0;
+   if (refresh) *refresh = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_TRUE_RETURN(!output->current_mode);
+
+   if (w) *w = output->current_mode->width;
+   if (h) *h = output->current_mode->height;
+   if (refresh) *refresh = output->current_mode->refresh;
+}

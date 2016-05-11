@@ -555,6 +555,19 @@ EAPI Eina_Bool ecore_drm2_output_cloned_get(Ecore_Drm2_Output *output);
 EAPI unsigned int ecore_drm2_output_connector_type_get(Ecore_Drm2_Output *output);
 
 /**
+ * Get the current resolution of a given output
+ *
+ * @param output
+ * @param *w
+ * @param *h
+ * @param *refresh
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_output_resolution_get(Ecore_Drm2_Output *output, int *w, int *h, unsigned int *refresh);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
