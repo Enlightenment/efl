@@ -1261,6 +1261,38 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static inline void
+_feed_cancel_out(const Ecore_X_Event_Mouse_Out *e, Eina_Bool cancel)
+{
+   /* equivalent to:
+    *  if (cancel) evas_event_feed_mouse_cancel(ee->evas, e->time, NULL);
+    *  evas_event_feed_mouse_out(ee->evas, e->time, NULL);
+    * but this goes through ecore_event_evas and direct eo event callback
+    */
+   if (cancel)
+     {
+        Ecore_Event_Mouse_Button cancel = {
+           .event_window = (Ecore_Window) e->event_win,
+           .modifiers = e->modifiers,
+           .timestamp = e->time,
+           .window = (Ecore_Window) e->win,
+           .x = e->x,
+           .y = e->y,
+        };
+        ecore_event_evas_mouse_button_cancel(NULL, ECORE_EVENT_MOUSE_BUTTON_CANCEL, &cancel);
+     }
+
+   Ecore_Event_Mouse_IO io = {
+      .event_window = (Ecore_Window) e->event_win,
+      .modifiers = e->modifiers,
+      .timestamp = e->time,
+      .window = (Ecore_Window) e->win,
+      .x = e->x,
+      .y = e->y
+   };
+   ecore_event_evas_mouse_out(NULL, ECORE_EVENT_MOUSE_OUT, &io);
+}
+
 static Eina_Bool
 _fake_out(void *data)
 {
@@ -1272,9 +1304,8 @@ _fake_out(void *data)
 
    ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
    _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
-   if (e->mode == ECORE_X_EVENT_MODE_GRAB)
-     evas_event_feed_mouse_cancel(ee->evas, e->time, NULL);
-   evas_event_feed_mouse_out(ee->evas, e->time, NULL);
+   _feed_cancel_out(e, (e->mode == ECORE_X_EVENT_MODE_GRAB));
+
    if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
    if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
    ee->in = EINA_FALSE;
@@ -1348,10 +1379,17 @@ _ecore_evas_x_event_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    if (!ee->in)
      {
+        Ecore_Event_Mouse_IO io = {
+           .event_window = (Ecore_Window) e->event_win,
+           .modifiers = e->modifiers,
+           .timestamp = e->time,
+           .window = (Ecore_Window) e->win,
+           .x = e->x,
+           .y = e->y
+        };
+
         if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
-        ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
-        evas_event_feed_mouse_in(ee->evas, e->time, NULL);
-        _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+        ecore_event_evas_mouse_in(NULL, ECORE_EVENT_MOUSE_IN, &io);
         ee->in = EINA_TRUE;
      }
    return ECORE_CALLBACK_PASS_ON;
@@ -1434,9 +1472,7 @@ _ecore_evas_x_event_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void
           return ECORE_CALLBACK_PASS_ON;
         ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
         _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
-        if (e->mode == ECORE_X_EVENT_MODE_GRAB)
-          evas_event_feed_mouse_cancel(ee->evas, e->time, NULL);
-        evas_event_feed_mouse_out(ee->evas, e->time, NULL);
+        _feed_cancel_out(e, (e->mode == ECORE_X_EVENT_MODE_GRAB));
         if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
         if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
         ee->in = EINA_FALSE;
@@ -1732,8 +1768,7 @@ _ecore_evas_x_event_window_hide(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (ee->in)
      {
-        evas_event_feed_mouse_cancel(ee->evas, e->time, NULL);
-        evas_event_feed_mouse_out(ee->evas, e->time, NULL);
+        _feed_cancel_out(e, EINA_TRUE);
         if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
         if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
         ee->in = EINA_FALSE;
