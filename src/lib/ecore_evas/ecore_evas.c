@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#define ECORE_EVAS_INTERNAL
+
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -3598,6 +3600,7 @@ ecore_evas_input_event_register(Ecore_Evas *ee)
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+   _ecore_event_window_direct_cb_set((Ecore_Window)ee, _ecore_evas_input_direct_cb);
 }
 
 EAPI void
@@ -4275,4 +4278,104 @@ ecore_evas_psl1ght_new(const char* name, int w, int h)
    EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
 
    return new(name, w, h);
+}
+
+
+/* new input model with eo:
+ *  1. pass all events from ecore_input_evas through
+ *     ecore_evas and send eo events from here
+ *  2. those eo events can then be translated to legacy by evas
+ *  3. let evas send legacy & eo events to the objects
+ */
+
+static Eina_Bool
+_direct_key_down_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Key *ev EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_direct_key_up_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Key *ev EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_direct_mouse_down_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *ev EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_direct_mouse_up_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *ev EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_direct_mouse_cancel_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *ev EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_direct_mouse_move_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Move *ev EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_direct_mouse_wheel_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Wheel *ev EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_direct_mouse_in_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_IO *ev EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_direct_mouse_out_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_IO *ev EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_direct_axis_update_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Axis_Update *ev EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+_ecore_evas_input_direct_cb(void *window, int type, const void *info)
+{
+   Ecore_Evas *ee = window;
+
+   if (type == ECORE_EVENT_KEY_DOWN)
+     return _direct_key_down_cb(ee, (const Ecore_Event_Key *) info);
+   else if (type == ECORE_EVENT_KEY_UP)
+     return _direct_key_up_cb(ee, (const Ecore_Event_Key *) info);
+   else if (type == ECORE_EVENT_MOUSE_BUTTON_DOWN)
+     return _direct_mouse_down_cb(ee, (const Ecore_Event_Mouse_Button *) info);
+   else if (type == ECORE_EVENT_MOUSE_BUTTON_UP)
+     return _direct_mouse_up_cb(ee, (const Ecore_Event_Mouse_Button *) info);
+   else if (type == ECORE_EVENT_MOUSE_BUTTON_CANCEL)
+     return _direct_mouse_cancel_cb(ee, (const Ecore_Event_Mouse_Button *) info);
+   else if (type == ECORE_EVENT_MOUSE_MOVE)
+     return _direct_mouse_move_cb(ee, (const Ecore_Event_Mouse_Move *) info);
+   else if (type == ECORE_EVENT_MOUSE_WHEEL)
+     return _direct_mouse_wheel_cb(ee, (const Ecore_Event_Mouse_Wheel *) info);
+   else if (type == ECORE_EVENT_MOUSE_IN)
+     return _direct_mouse_in_cb(ee, (const Ecore_Event_Mouse_IO *) info);
+   else if (type == ECORE_EVENT_MOUSE_OUT)
+     return _direct_mouse_out_cb(ee, (const Ecore_Event_Mouse_IO *) info);
+   else if (type == ECORE_EVENT_AXIS_UPDATE)
+     return _direct_axis_update_cb(ee, (const Ecore_Event_Axis_Update *) info);
+   else
+     {
+        ERR("unhandled input event type %d", type);
+        return EINA_FALSE;
+     }
 }

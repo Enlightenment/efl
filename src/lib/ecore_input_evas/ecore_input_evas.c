@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#define ECORE_EVAS_INTERNAL
+
 #include <string.h>
 #include <stdlib.h>
 
@@ -22,6 +24,7 @@ struct _Ecore_Input_Window
    Ecore_Event_Multi_Move_Cb move_multi;
    Ecore_Event_Multi_Down_Cb down_multi;
    Ecore_Event_Multi_Up_Cb up_multi;
+   Ecore_Event_Direct_Input_Cb direct;
    int ignore_event;
 };
 
@@ -357,6 +360,16 @@ EAPI void
 ecore_event_window_unregister(Ecore_Window id)
 {
    eina_hash_del(_window_hash, &id, NULL);
+}
+
+EAPI void
+_ecore_event_window_direct_cb_set(Ecore_Window id, Ecore_Event_Direct_Input_Cb fptr)
+{
+   Ecore_Input_Window *lookup;
+
+   lookup = eina_hash_find(_window_hash, &id);
+   if (!lookup) return;
+   lookup->direct = fptr;
 }
 
 EAPI void *
