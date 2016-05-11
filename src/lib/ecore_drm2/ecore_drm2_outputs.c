@@ -90,11 +90,21 @@ _output_event_send(Ecore_Drm2_Output *output)
 
    ev->x = output->x;
    ev->y = output->y;
-   ev->w = output->current_mode->width;
-   ev->h = output->current_mode->height;
+   if (output->current_mode)
+     {
+        ev->w = output->current_mode->width;
+        ev->h = output->current_mode->height;
+        ev->refresh = output->current_mode->refresh;
+     }
+   else
+     {
+        ev->w = output->ocrtc->width;
+        ev->h = output->ocrtc->height;
+        ev->refresh = 0;
+     }
+
    ev->phys_width = output->pw;
    ev->phys_height = output->ph;
-   ev->refresh = output->current_mode->refresh;
 
    ev->scale = output->scale;
    ev->subpixel = output->subpixel;
