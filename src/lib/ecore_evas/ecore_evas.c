@@ -4289,61 +4289,61 @@ ecore_evas_psl1ght_new(const char* name, int w, int h)
  */
 
 static Eina_Bool
-_direct_key_down_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Key *ev EINA_UNUSED)
+_direct_key_down_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Key *info EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_direct_key_up_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Key *ev EINA_UNUSED)
+_direct_key_up_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Key *info EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_direct_mouse_down_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *ev EINA_UNUSED)
+_direct_mouse_down_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *info EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_direct_mouse_up_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *ev EINA_UNUSED)
+_direct_mouse_up_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *info EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_direct_mouse_cancel_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *ev EINA_UNUSED)
+_direct_mouse_cancel_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Button *info EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_direct_mouse_move_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Move *ev EINA_UNUSED)
+_direct_mouse_move_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Move *info EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_direct_mouse_wheel_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Wheel *ev EINA_UNUSED)
+_direct_mouse_wheel_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_Wheel *info EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_direct_mouse_in_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_IO *ev EINA_UNUSED)
+_direct_mouse_in_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_IO *info EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_direct_mouse_out_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_IO *ev EINA_UNUSED)
+_direct_mouse_out_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Mouse_IO *info EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_direct_axis_update_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Axis_Update *ev EINA_UNUSED)
+_direct_axis_update_cb(Ecore_Evas *ee EINA_UNUSED, const Ecore_Event_Axis_Update *info EINA_UNUSED)
 {
    return EINA_FALSE;
 }
