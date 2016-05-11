@@ -20,7 +20,7 @@ _evas_vg_root_node_render_pre(Eo *obj EINA_UNUSED,
                               Eina_Matrix3 *parent,
                               Ector_Surface *s,
                               void *data,
-                              Efl_VG_Base_Data *nd)
+                              Efl_VG_Data *nd)
 {
    Efl_VG_Container_Data *pd = data;
    Eina_List *l;
@@ -36,7 +36,7 @@ static Eina_Bool
 _evas_vg_root_node_changed(void *data, const Eo_Event *event)
 {
    Efl_VG_Root_Node_Data *pd = data;
-   Efl_VG_Base_Data *bd = eo_data_scope_get(event->obj, EFL_VG_BASE_CLASS);
+   Efl_VG_Data *bd = eo_data_scope_get(event->obj, EFL_VG_CLASS);
 
    if (bd->changed) return EINA_TRUE;
    bd->changed = EINA_TRUE;
@@ -51,7 +51,7 @@ _efl_vg_root_node_eo_base_parent_set(Eo *obj,
                                      Eo *parent)
 {
    // Nice little hack, jump over parent parent_set in Efl_VG_Root
-   eo_parent_set(eo_super(obj, EFL_VG_BASE_CLASS), parent);
+   eo_parent_set(eo_super(obj, EFL_VG_CLASS), parent);
    if (parent && !eo_isa(parent, EVAS_VG_CLASS))
      {
         ERR("Parent of VG_ROOT_NODE must be a VG_CLASS");
@@ -68,7 +68,7 @@ _efl_vg_root_node_eo_base_constructor(Eo *obj,
                                       Efl_VG_Root_Node_Data *pd)
 {
    Efl_VG_Container_Data *cd;
-   Efl_VG_Base_Data *nd;
+   Efl_VG_Data *nd;
    Eo *parent;
 
    // We are copying here the code of the vg container to make it possible to
@@ -78,7 +78,7 @@ _efl_vg_root_node_eo_base_constructor(Eo *obj,
    cd->names = eina_hash_stringshared_new(NULL);
 
    // Nice little hack, jump over parent constructor in Efl_VG_Root
-   obj = eo_constructor(eo_super(obj, EFL_VG_BASE_CLASS));
+   obj = eo_constructor(eo_super(obj, EFL_VG_CLASS));
    parent = eo_parent_get(obj);
    efl_vg_name_set(obj, "root");
    if (!eo_isa(parent, EVAS_VG_CLASS)) {
@@ -86,7 +86,7 @@ _efl_vg_root_node_eo_base_constructor(Eo *obj,
         return NULL;
    }
 
-   nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
+   nd = eo_data_scope_get(obj, EFL_VG_CLASS);
    nd->render_pre = _evas_vg_root_node_render_pre;
    nd->data = cd;
 

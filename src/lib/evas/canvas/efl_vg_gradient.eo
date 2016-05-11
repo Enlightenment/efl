@@ -1,4 +1,4 @@
-abstract Efl.VG.Gradient (Efl.VG.Base, Efl.Gfx.Gradient)
+abstract Efl.VG.Gradient (Efl.VG, Efl.Gfx.Gradient)
 {
    legacy_prefix: evas_vg_gradient;
    implements {
@@ -6,7 +6,7 @@ abstract Efl.VG.Gradient (Efl.VG.Base, Efl.Gfx.Gradient)
       Efl.Gfx.Gradient.stop.get;
       Efl.Gfx.Gradient.spread.set;
       Efl.Gfx.Gradient.spread.get;
-      Efl.VG.Base.interpolate;
-      Efl.VG.Base.dup;
+      Efl.VG.interpolate;
+      Efl.VG.dup;
    }
 }

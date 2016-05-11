@@ -1,6 +1,6 @@
 import eina_types;
 
-abstract Efl.VG.Base (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
+abstract Efl.VG (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
 {
    eo_prefix: efl_vg;
    legacy_prefix: evas_vg_node;
@@ -68,7 +68,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
          get {
          }
          values {
-            m: Efl.VG.Base *;
+            m: Efl.VG *;
          }
       }
 /*      quality {
@@ -94,14 +94,14 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
       interpolate {
         return: bool;
         params {
-          @in from: const(Efl.VG.Base)*;
-          @in to: const(Efl.VG.Base)*;
+          @in from: const(Efl.VG)*;
+          @in to: const(Efl.VG)*;
           @in pos_map: double;
         }
       }
       dup {
         params {
-          @in from: const(Efl.VG.Base)*;
+          @in from: const(Efl.VG)*;
         }
       }
    }

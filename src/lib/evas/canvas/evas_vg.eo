@@ -14,7 +14,7 @@ class Evas.VG (Evas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
               @since 1.14]]
          }
          values {
-            container: Eo.Base *; [[Root node of the VG canvas.]] /* FIXME: Should be Efl.VG.Base */
+            container: Eo.Base *; [[Root node of the VG canvas.]] /* FIXME: Should be Efl.VG */
          }
       }
    }

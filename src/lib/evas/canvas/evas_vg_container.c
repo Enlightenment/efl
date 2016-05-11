@@ -10,7 +10,7 @@ _efl_vg_container_render_pre(Eo *obj EINA_UNUSED,
                              Eina_Matrix3 *parent,
                              Ector_Surface *s,
                              void *data,
-                             Efl_VG_Base_Data *nd)
+                             Efl_VG_Data *nd)
 {
    Efl_VG_Container_Data *pd = data;
    Eina_List *l;
@@ -29,13 +29,13 @@ static Eo *
 _efl_vg_container_eo_base_constructor(Eo *obj,
                                       Efl_VG_Container_Data *pd)
 {
-   Efl_VG_Base_Data *nd;
+   Efl_VG_Data *nd;
 
    pd->names = eina_hash_stringshared_new(NULL);
 
    obj = eo_constructor(eo_super(obj, MY_CLASS));
 
-   nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
+   nd = eo_data_scope_get(obj, EFL_VG_CLASS);
    nd->render_pre = _efl_vg_container_render_pre;
    nd->data = pd;
 
@@ -53,7 +53,7 @@ _efl_vg_container_eo_base_destructor(Eo *obj,
 }
 
 static void
-_efl_vg_container_efl_vg_base_bounds_get(Eo *obj EINA_UNUSED,
+_efl_vg_container_efl_vg_bounds_get(Eo *obj EINA_UNUSED,
                                         Efl_VG_Container_Data *pd,
                                         Eina_Rectangle *r)
 {
@@ -79,11 +79,11 @@ _efl_vg_container_efl_vg_base_bounds_get(Eo *obj EINA_UNUSED,
      }
 }
 
-static Efl_VG_Base *
+static Efl_VG *
 _efl_vg_container_child_get(Eo *obj EINA_UNUSED, Efl_VG_Container_Data *pd, const char *name)
 {
    const char *tmp = eina_stringshare_add(name);
-   Efl_VG_Base *r;
+   Efl_VG *r;
 
    r = eina_hash_find(pd->names, tmp);
    eina_stringshare_del(tmp);
@@ -98,9 +98,9 @@ _efl_vg_container_children_get(Eo *obj EINA_UNUSED, Efl_VG_Container_Data *pd)
 }
 
 static Eina_Bool
-_efl_vg_container_efl_vg_base_interpolate(Eo *obj,
+_efl_vg_container_efl_vg_interpolate(Eo *obj,
                                           Efl_VG_Container_Data *pd,
-                                          const Efl_VG_Base *from, const Efl_VG_Base *to,
+                                          const Efl_VG *from, const Efl_VG *to,
                                           double pos_map)
 {
    Efl_VG_Container_Data *fd;
@@ -136,9 +136,9 @@ _efl_vg_container_efl_vg_base_interpolate(Eo *obj,
 }
 
 static void
-_efl_vg_container_efl_vg_base_dup(Eo *obj,
+_efl_vg_container_efl_vg_dup(Eo *obj,
                                   Efl_VG_Container_Data *pd,
-                                  const Efl_VG_Base *from)
+                                  const Efl_VG *from)
 {
    Efl_VG_Container_Data *fromd;
    Eina_List *l;

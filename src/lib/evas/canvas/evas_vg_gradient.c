@@ -21,7 +21,7 @@ _efl_vg_gradient_efl_gfx_gradient_stop_set(Eo *obj EINA_UNUSED,
    memcpy(pd->colors, colors, length * sizeof(Efl_Gfx_Gradient_Stop));
    pd->colors_count = length;
 
-   _efl_vg_base_changed(obj);
+   _efl_vg_changed(obj);
 }
 
 static void
@@ -41,7 +41,7 @@ _efl_vg_gradient_efl_gfx_gradient_spread_set(Eo *obj EINA_UNUSED,
 {
    pd->s = s;
 
-   _efl_vg_base_changed(obj);
+   _efl_vg_changed(obj);
 }
 
 static Efl_Gfx_Gradient_Spread
@@ -52,9 +52,9 @@ _efl_vg_gradient_efl_gfx_gradient_spread_get(Eo *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_efl_vg_gradient_efl_vg_base_interpolate(Eo *obj,
+_efl_vg_gradient_efl_vg_interpolate(Eo *obj,
                                          Efl_VG_Gradient_Data *pd,
-                                         const Efl_VG_Base *from, const Efl_VG_Base *to,
+                                         const Efl_VG *from, const Efl_VG *to,
                                          double pos_map)
 {
    Efl_VG_Gradient_Data *fromd, *tod;
@@ -95,9 +95,9 @@ _efl_vg_gradient_efl_vg_base_interpolate(Eo *obj,
 }
 
 static void
-_efl_vg_gradient_efl_vg_base_dup(Eo *obj,
+_efl_vg_gradient_efl_vg_dup(Eo *obj,
                                  Efl_VG_Gradient_Data *pd EINA_UNUSED,
-                                 const Efl_VG_Base *from)
+                                 const Efl_VG *from)
 {
    Efl_VG_Gradient_Data *fromd;
 

@@ -1905,7 +1905,7 @@ EAPI void evas_vg_node_raise(Eo *obj);
  */
 EAPI void evas_vg_node_lower(Eo *obj);
 
-#include "canvas/efl_vg_base.eo.legacy.h"
+#include "canvas/efl_vg.eo.legacy.h"
 
 /**
  *

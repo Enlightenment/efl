@@ -17,7 +17,7 @@ struct _Efl_VG_Shape_Data
 };
 
 static void
-_efl_vg_shape_efl_vg_base_bounds_get(Eo *obj,
+_efl_vg_shape_efl_vg_bounds_get(Eo *obj,
                                     Efl_VG_Shape_Data *pd EINA_UNUSED,
                                     Eina_Rectangle *r)
 {
@@ -35,7 +35,7 @@ _efl_vg_shape_fill_set(Eo *obj EINA_UNUSED,
    pd->fill = eo_ref(f);
    eo_unref(tmp);
 
-   _efl_vg_base_changed(obj);
+   _efl_vg_changed(obj);
 }
 
 static Efl_VG *
@@ -90,7 +90,7 @@ _efl_vg_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
    pd->stroke.fill = eo_ref(f);
    eo_unref(tmp);
 
-   _efl_vg_base_changed(obj);
+   _efl_vg_changed(obj);
 }
 
 static Efl_VG *
@@ -110,7 +110,7 @@ _efl_vg_shape_stroke_marker_set(Eo *obj EINA_UNUSED,
    pd->stroke.marker = eo_ref(m);
    eo_unref(tmp);
 
-   _efl_vg_base_changed(obj);
+   _efl_vg_changed(obj);
 }
 
 static Efl_VG_Shape *
@@ -125,10 +125,10 @@ _efl_vg_shape_render_pre(Eo *obj EINA_UNUSED,
                          Eina_Matrix3 *parent,
                          Ector_Surface *s,
                          void *data,
-                         Efl_VG_Base_Data *nd)
+                         Efl_VG_Data *nd)
 {
    Efl_VG_Shape_Data *pd = data;
-   Efl_VG_Base_Data *fill, *stroke_fill, *stroke_marker, *mask;
+   Efl_VG_Data *fill, *stroke_fill, *stroke_marker, *mask;
    double xn = nd->x, yn = nd->y ;
 
    if (!nd->changed) return ;
@@ -163,7 +163,7 @@ _efl_vg_shape_render_pre(Eo *obj EINA_UNUSED,
 static Eo *
 _efl_vg_shape_eo_base_constructor(Eo *obj, Efl_VG_Shape_Data *pd)
 {
-   Efl_VG_Base_Data *nd;
+   Efl_VG_Data *nd;
 
    obj = eo_constructor(eo_super(obj, MY_CLASS));
 
@@ -172,7 +172,7 @@ _efl_vg_shape_eo_base_constructor(Eo *obj, Efl_VG_Shape_Data *pd)
    efl_gfx_shape_stroke_cap_set(obj, EFL_GFX_CAP_BUTT);
    efl_gfx_shape_stroke_join_set(obj, EFL_GFX_JOIN_MITER);
 
-   nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
+   nd = eo_data_scope_get(obj, EFL_VG_CLASS);
    nd->render_pre = _efl_vg_shape_render_pre;
    nd->data = pd;
 
@@ -186,9 +186,9 @@ _efl_vg_shape_eo_base_destructor(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED)
 }
 
 static Eina_Bool
-_efl_vg_shape_efl_vg_base_interpolate(Eo *obj,
+_efl_vg_shape_efl_vg_interpolate(Eo *obj,
                                       Efl_VG_Shape_Data *pd,
-                                      const Efl_VG_Base *from, const Efl_VG_Base *to,
+                                      const Efl_VG *from, const Efl_VG *to,
                                       double pos_map)
 {
    Efl_VG_Shape_Data *fromd, *tod;
@@ -218,7 +218,7 @@ _efl_vg_shape_efl_vg_base_interpolate(Eo *obj,
 }
 
 static void
-_efl_vg_shape_efl_vg_base_dup(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED, const Efl_VG_Base *from)
+_efl_vg_shape_efl_vg_dup(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED, const Efl_VG *from)
 {
    Efl_VG_Shape_Data *fromd;
    Eo *parent;

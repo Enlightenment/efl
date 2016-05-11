@@ -163,9 +163,9 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Evas_VG_Data *vd,
      }
    else
      {
-        Efl_VG_Base_Data *nd;
+        Efl_VG_Data *nd;
 
-        nd = eo_data_scope_get(n, EFL_VG_BASE_CLASS);
+        nd = eo_data_scope_get(n, EFL_VG_CLASS);
 
         obj->layer->evas->engine.func->ector_renderer_draw(output, context, surface, vd->engine_data, nd->renderer, clips, do_async);
 
@@ -228,7 +228,7 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
                           void *type_private_data)
 {
    Evas_VG_Data *vd = type_private_data;
-   Efl_VG_Base_Data *rnd;
+   Efl_VG_Data *rnd;
    int is_v, was_v;
    Ector_Surface *s;
 
@@ -264,7 +264,7 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
 
    // FIXME: for now the walking Evas_VG_Node tree doesn't trigger any damage
    // So just forcing it here if necessary
-   rnd = eo_data_scope_get(vd->root, EFL_VG_BASE_CLASS);
+   rnd = eo_data_scope_get(vd->root, EFL_VG_CLASS);
 
    // Once the destructor has been called, root node will be zero
    // and a full redraw is still necessary.

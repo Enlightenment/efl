@@ -6,9 +6,9 @@ class Efl.VG.Gradient_Linear (Efl.VG.Gradient, Efl.Gfx.Gradient.Linear)
       Efl.Gfx.Gradient.Linear.start.get;
       Efl.Gfx.Gradient.Linear.end.set;
       Efl.Gfx.Gradient.Linear.end.get;
-      Efl.VG.Base.bounds_get;
-      Efl.VG.Base.interpolate;
-      Efl.VG.Base.dup;
+      Efl.VG.bounds_get;
+      Efl.VG.interpolate;
+      Efl.VG.dup;
       Eo.Base.constructor;
       Eo.Base.destructor;
    }
