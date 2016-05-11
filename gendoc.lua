@@ -1741,13 +1741,15 @@ getopt.parse {
         end
         global_opts.doc_root = path_join(opts["r"],
             nspace_to_path(global_opts.root_nspace))
-        if not args[1] then
+        if #args == 0 then
             if not eolian.system_directory_scan() then
                 error("failed scanning system directory")
             end
         else
-            if not eolian.directory_scan(args[1]) then
-                error("failed scanning directory: " .. args[1])
+            for i, p in ipairs(args) do
+                if not eolian.directory_scan(p) then
+                    error("failed scanning directory: " .. p)
+                end
             end
         end
         if not eolian.all_eot_files_parse() then
