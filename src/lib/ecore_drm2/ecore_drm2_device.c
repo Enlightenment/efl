@@ -259,3 +259,12 @@ ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *device, int w, int h)
 
    elput_input_pointer_max_set(device->em, w, h);
 }
+
+EAPI unsigned int *
+ecore_drm2_device_crtcs_get(Ecore_Drm2_Device *device, int *num)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
+
+   if (num) *num = device->num_crtcs;
+   return device->crtcs;
+}

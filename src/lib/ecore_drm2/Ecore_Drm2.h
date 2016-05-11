@@ -229,6 +229,19 @@ EAPI void ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int w
 EAPI void ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *device, int w, int h);
 
 /**
+ * Get the crtcs of a given device
+ *
+ * @param device
+ * @param num
+ *
+ * @return The crtcs of this given device or NULL on failure
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.18
+ */
+EAPI unsigned int *ecore_drm2_device_crtcs_get(Ecore_Drm2_Device *device, int *num);
+
+/**
  * @defgroup Ecore_Drm2_Output_Group Drm output functions
  *
  * Functions that deal with setup of outputs
