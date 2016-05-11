@@ -3054,7 +3054,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
 
    switch (ev->action)
      {
-      case EFL_POINTER_ACTION_MOUSE_MOVE:
+      case EFL_POINTER_ACTION_MOVE:
         if (ev->finger == 0)
           {
              _canvas_event_feed_mouse_move_internal(eo_e, e, ev->cur.x, ev->cur.y,
@@ -3071,7 +3071,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
         ev->evas_done = EINA_TRUE;
         break;
 
-      case EFL_POINTER_ACTION_MOUSE_DOWN:
+      case EFL_POINTER_ACTION_DOWN:
         if (ev->finger == 0)
           {
              evas_event_feed_mouse_down(eo_e, ev->button, ev->button_flags, ev->timestamp, ev->data);
@@ -3087,7 +3087,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
         ev->evas_done = EINA_TRUE;
         break;
 
-      case EFL_POINTER_ACTION_MOUSE_UP:
+      case EFL_POINTER_ACTION_UP:
         if (ev->finger == 0)
           {
              evas_event_feed_mouse_up(eo_e, ev->button, ev->button_flags, ev->timestamp, ev->data);
@@ -3103,7 +3103,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
         ev->evas_done = EINA_TRUE;
         break;
 
-      case EFL_POINTER_ACTION_MOUSE_WHEEL:
+      case EFL_POINTER_ACTION_WHEEL:
         evas_event_feed_mouse_wheel(eo_e,
                                     (ev->wheel.dir == EFL_ORIENT_HORIZONTAL) ? 1 : 0,
                                     ev->wheel.z, ev->timestamp, ev->data);

@@ -4369,13 +4369,13 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
 static Eina_Bool
 _direct_mouse_down_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info)
 {
-   return _direct_mouse_updown(ee, info, EFL_POINTER_ACTION_MOUSE_DOWN);
+   return _direct_mouse_updown(ee, info, EFL_POINTER_ACTION_DOWN);
 }
 
 static Eina_Bool
 _direct_mouse_up_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info)
 {
-   return _direct_mouse_updown(ee, info, EFL_POINTER_ACTION_MOUSE_UP);
+   return _direct_mouse_updown(ee, info, EFL_POINTER_ACTION_UP);
 }
 
 static Eina_Bool
@@ -4405,7 +4405,7 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
    evt = efl_pointer_event_instance_get(EFL_POINTER_EVENT_CLASS, e, (void **) &ev);
    if (!evt) return EINA_FALSE;
 
-   ev->action = EFL_POINTER_ACTION_MOUSE_MOVE;
+   ev->action = EFL_POINTER_ACTION_MOVE;
    ev->timestamp = info->timestamp;
    ev->finger = info->multi.device;
    _pointer_position_set(ev, ee, info->x, info->y, info->multi.x, info->multi.y);
@@ -4443,7 +4443,7 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
    evt = efl_pointer_event_instance_get(EFL_POINTER_EVENT_CLASS, e, (void **) &ev);
    if (!evt) return EINA_FALSE;
 
-   ev->action = EFL_POINTER_ACTION_MOUSE_WHEEL;
+   ev->action = EFL_POINTER_ACTION_WHEEL;
    ev->timestamp = info->timestamp;
    _pointer_position_set(ev, ee, info->x, info->y, info->x, info->y);
    ev->wheel.z = info->z;

@@ -5,15 +5,17 @@ enum Efl.Pointer.Action
 
      @since 1.18
    ]]
-   none,        [[Not a valid event.]]
-   mouse_move,  [[Mouse or equivalent pointer moved.]]
-   mouse_down,  [[Mouse button pressed down.]]
-   mouse_up,    [[Mouse button released.]]
-   mouse_wheel, [[Mouse wheel scroll, horizontally or vertically.]]
-   touch_move,  [[Finger moved while touching surface.]]
-   touch_down,  [[Finger touch made contact.]]
-   touch_up,    [[Finger touch released.]]
-   hover,       [[A hovering movement over a distance-sensitive touch screen.]]
+   none,   [[Not a valid event.]]
+   move,   [[Mouse or equivalent pointer moved.]]
+   down,   [[Mouse button or equivalent pointer pressed down.
+             Always followed by up or cancel.]]
+   up,     [[Mouse button or equivalent pointer released. See also cancel.]]
+   cancel, [[Special event happening after a down if the up counterpart
+             can not happen (eg. another window forcibly stole the focus).]]
+   in,     [[Mouse or pointer entered the object.]]
+   out,    [[Mouse or pointer exited the object.]]
+   wheel,  [[Mouse wheel scroll, horizontally or vertically.]]
+   axis,   [[Joystick event.]]
 }
 
 enum Efl.Pointer.Button_Flags
