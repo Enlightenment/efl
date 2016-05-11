@@ -18,7 +18,7 @@ typedef short        GLshort;
 #include "gl/ector_gl_buffer_base.eo.h"
 #include "gl/ector_gl_buffer.eo.h"
 #include "gl/ector_gl_surface.eo.h"
-#include "gl/ector_renderer_gl_base.eo.h"
+#include "gl/ector_renderer_gl.eo.h"
 #include "gl/ector_renderer_gl_shape.eo.h"
 #include "gl/ector_renderer_gl_gradient_linear.eo.h"
 #include "gl/ector_renderer_gl_gradient_radial.eo.h"

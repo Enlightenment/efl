@@ -1,6 +1,6 @@
 import ector_types;
 
-abstract Ector.Renderer.GL.Base (Ector.Renderer.Generic.Base)
+abstract Ector.Renderer.GL (Ector.Renderer.Generic.Base)
 {
    legacy_prefix: null;
    methods {

@@ -41,7 +41,7 @@ ector_eolian_files_gl = \
 	gl/ector_gl_surface.eo \
 	gl/ector_gl_buffer.eo \
 	gl/ector_gl_buffer_base.eo \
-	gl/ector_renderer_gl_base.eo \
+	gl/ector_renderer_gl.eo \
 	gl/ector_renderer_gl_shape.eo \
 	gl/ector_renderer_gl_gradient_radial.eo \
 	gl/ector_renderer_gl_gradient_linear.eo
@@ -124,7 +124,7 @@ libector_la_SOURCES += \
 gl/ector_renderer_gl_gradient_linear.c \
 gl/ector_renderer_gl_gradient_radial.c \
 gl/ector_renderer_gl_shape.c \
-gl/ector_renderer_gl_base.c \
+gl/ector_renderer_gl.c \
 gl/ector_gl_buffer.c \
 gl/ector_gl_buffer_base.c \
 gl/ector_gl_surface.c \

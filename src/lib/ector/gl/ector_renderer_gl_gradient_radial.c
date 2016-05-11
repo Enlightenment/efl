@@ -39,7 +39,7 @@ _ector_renderer_gl_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, Ect
 }
 
 static Eina_Bool
-_ector_renderer_gl_gradient_radial_ector_renderer_gl_base_fill(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd, uint64_t flags, GLshort *vertex, unsigned int vertex_count, unsigned int mul_col)
+_ector_renderer_gl_gradient_radial_ector_renderer_gl_fill(Eo *obj, Ector_Renderer_GL_Gradient_Radial_Data *pd, uint64_t flags, GLshort *vertex, unsigned int vertex_count, unsigned int mul_col)
 {
    // FIXME: The idea here is to select the right shader and push the needed parameter for it
    // along with the other value
