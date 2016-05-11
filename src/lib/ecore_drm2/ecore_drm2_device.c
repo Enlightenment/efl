@@ -134,6 +134,12 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
 
    device->fd = elput_manager_open(device->em, device->path, -1);
 
+   if (!elput_input_init(device->em, NULL))
+     {
+        ERR("Could not initialize Elput Input");
+        goto err;
+     }
+
    DBG("Device Path: %s", device->path);
    DBG("Device Fd: %d", device->fd);
 
@@ -146,6 +152,10 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    /*   ERR("Could not set Universal Plane support: %m"); */
 
    return device->fd;
+
+err:
+   elput_manager_close(device->em, device->fd);
+   return -1;
 }
 
 EAPI void
@@ -154,6 +164,7 @@ ecore_drm2_device_close(Ecore_Drm2_Device *device)
    EINA_SAFETY_ON_NULL_RETURN(device);
    EINA_SAFETY_ON_TRUE_RETURN(device->fd < 0);
 
+   elput_input_shutdown(device->em);
    elput_manager_close(device->em, device->fd);
 }
 
