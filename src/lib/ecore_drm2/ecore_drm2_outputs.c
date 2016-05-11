@@ -931,3 +931,26 @@ ecore_drm2_output_primary_set(Ecore_Drm2_Output *output, Eina_Bool primary)
    EINA_SAFETY_ON_NULL_RETURN(output);
    output->primary = primary;
 }
+
+EAPI Eina_Bool
+ecore_drm2_output_enabled_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   return output->enabled;
+}
+
+EAPI void
+ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   if (output->enabled == enabled) return;
+   output->enabled = enabled;
+
+   if (output->enabled)
+     ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_ON);
+   else
+     ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_OFF);
+
+   _output_event_send(output);
+}

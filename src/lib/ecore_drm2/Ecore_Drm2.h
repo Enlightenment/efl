@@ -415,6 +415,29 @@ EAPI Eina_Bool ecore_drm2_output_primary_get(Ecore_Drm2_Output *output);
 EAPI void ecore_drm2_output_primary_set(Ecore_Drm2_Output *output, Eina_Bool primary);
 
 /**
+ * Get if a given output is enabled
+ *
+ * @param output
+ *
+ * @return EINA_TRUE if enabled, EINA_FALSE otherwise.
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool ecore_drm2_output_enabled_get(Ecore_Drm2_Output *output);
+
+/**
+ * Set if a given output is enabled
+ *
+ * @param output
+ * @param enabled
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
