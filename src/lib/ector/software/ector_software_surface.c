@@ -57,4 +57,4 @@ _ector_software_surface_ector_generic_surface_reference_point_set(Eo *obj EINA_U
 }
 
 #include "ector_software_surface.eo.c"
-#include "ector_renderer_software_base.eo.c"
+#include "ector_renderer_software.eo.c"

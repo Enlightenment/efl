@@ -610,7 +610,7 @@ _ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
 
    if (pd->shape->fill)
      {
-        ector_renderer_software_base_fill(pd->shape->fill);
+        ector_renderer_software_fill(pd->shape->fill);
         ector_software_rasterizer_draw_rle_data(pd->surface->rasterizer,
                                                 x, y, mul_col, op,
                                                 pd->shape_data);
@@ -632,7 +632,7 @@ _ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
 
    if (pd->shape->stroke.fill)
      {
-        ector_renderer_software_base_fill(pd->shape->stroke.fill);
+        ector_renderer_software_fill(pd->shape->stroke.fill);
         ector_software_rasterizer_draw_rle_data(pd->surface->rasterizer,
                                                 x, y, mul_col, op,
                                                 pd->outline_data);
@@ -656,7 +656,7 @@ _ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
 }
 
 static Eina_Bool
-_ector_renderer_software_shape_ector_renderer_software_base_fill(Eo *obj EINA_UNUSED,
+_ector_renderer_software_shape_ector_renderer_software_fill(Eo *obj EINA_UNUSED,
                                                                  Ector_Renderer_Software_Shape_Data *pd EINA_UNUSED)
 {
    // FIXME: let's find out how to fill a shape with a shape later.

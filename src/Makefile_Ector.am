@@ -26,7 +26,7 @@ ector_eolian_files_software = \
 	lib/ector/software/ector_software_surface.eo \
 	lib/ector/software/ector_software_buffer.eo \
 	lib/ector/software/ector_software_buffer_base.eo \
-	lib/ector/software/ector_renderer_software_base.eo \
+	lib/ector/software/ector_renderer_software.eo \
 	lib/ector/software/ector_renderer_software_shape.eo \
 	lib/ector/software/ector_renderer_software_buffer.eo \
 	lib/ector/software/ector_renderer_software_gradient_radial.eo \

@@ -29,7 +29,7 @@ ector_eolian_files_software = \
 	software/ector_software_surface.eo \
 	software/ector_software_buffer.eo \
 	software/ector_software_buffer_base.eo \
-	software/ector_renderer_software_base.eo \
+	software/ector_renderer_software.eo \
 	software/ector_renderer_software_shape.eo \
 	software/ector_renderer_software_buffer.eo \
 	software/ector_renderer_software_gradient_radial.eo \

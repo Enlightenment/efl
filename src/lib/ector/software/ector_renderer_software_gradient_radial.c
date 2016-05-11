@@ -66,7 +66,7 @@ _ector_renderer_software_gradient_radial_ector_renderer_generic_base_draw(Eo *ob
 
 // Clearly duplicated and should be in a common place...
 static Eina_Bool
-_ector_renderer_software_gradient_radial_ector_renderer_software_base_fill(Eo *obj EINA_UNUSED, Ector_Renderer_Software_Gradient_Data *pd)
+_ector_renderer_software_gradient_radial_ector_renderer_software_fill(Eo *obj EINA_UNUSED, Ector_Renderer_Software_Gradient_Data *pd)
 {
    ector_software_rasterizer_radial_gradient_set(pd->surface->rasterizer, pd);
    return EINA_TRUE;

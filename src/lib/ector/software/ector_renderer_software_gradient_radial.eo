@@ -1,4 +1,4 @@
-class Ector.Renderer.Software.Gradient_Radial (Ector.Renderer.Software.Base, Ector.Renderer.Generic.Gradient, Ector.Renderer.Generic.Gradient_Radial)
+class Ector.Renderer.Software.Gradient_Radial (Ector.Renderer.Software, Ector.Renderer.Generic.Gradient, Ector.Renderer.Generic.Gradient_Radial)
 {
    eo_prefix: ector_renderer_software_gradient_radial;
    legacy_prefix: null;
@@ -7,7 +7,7 @@ class Ector.Renderer.Software.Gradient_Radial (Ector.Renderer.Software.Base, Ect
       Ector.Renderer.Generic.Base.prepare;
       Ector.Renderer.Generic.Base.draw;
       Ector.Renderer.Generic.Base.crc.get;
-      Ector.Renderer.Software.Base.fill;
+      Ector.Renderer.Software.fill;
       Eo.Base.constructor;
       Eo.Base.destructor;
       Efl.Gfx.Gradient.stop.set;

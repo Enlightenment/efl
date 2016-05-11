@@ -32,7 +32,7 @@ _ector_renderer_software_buffer_buffer_get(Eo *obj EINA_UNUSED, Ector_Renderer_S
 }
 
 EOLIAN static Eina_Bool
-_ector_renderer_software_buffer_ector_renderer_software_base_fill(Eo *obj, Ector_Renderer_Software_Buffer_Data *pd)
+_ector_renderer_software_buffer_ector_renderer_software_fill(Eo *obj, Ector_Renderer_Software_Buffer_Data *pd)
 {
    Ector_Software_Buffer *buffer = eo_data_scope_get(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
    ector_software_rasterizer_buffer_set(pd->surface, buffer);

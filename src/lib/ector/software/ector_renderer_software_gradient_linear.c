@@ -54,7 +54,7 @@ _ector_renderer_software_gradient_linear_ector_renderer_generic_base_draw(Eo *ob
 }
 
 static Eina_Bool
-_ector_renderer_software_gradient_linear_ector_renderer_software_base_fill(Eo *obj EINA_UNUSED,
+_ector_renderer_software_gradient_linear_ector_renderer_software_fill(Eo *obj EINA_UNUSED,
                                                                            Ector_Renderer_Software_Gradient_Data *pd)
 {
    ector_software_rasterizer_linear_gradient_set(pd->surface->rasterizer, pd);
