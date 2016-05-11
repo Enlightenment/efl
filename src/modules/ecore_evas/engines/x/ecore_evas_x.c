@@ -2629,6 +2629,8 @@ _alpha_do(Ecore_Evas *ee, int alpha)
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+
    if (ee->prop.borderless)
      ecore_x_mwm_borderless_set(ee->prop.window, ee->prop.borderless);
    if (ee->visible || ee->should_be_visible)
@@ -2783,6 +2785,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                                     (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                     (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                     (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+        _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+
         if (ee->prop.borderless)
           ecore_x_mwm_borderless_set(ee->prop.window, ee->prop.borderless);
         if (ee->visible || ee->should_be_visible)
@@ -4111,6 +4115,8 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+
    return ee;
 }
 
@@ -4428,6 +4434,7 @@ _ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window w
                                     (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                     (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                     (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+        _ecore_event_window_direct_cb_set(win, _ecore_evas_input_direct_cb);
      }
 }
 #endif
@@ -4562,6 +4569,7 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
 
    return ee;
 }
