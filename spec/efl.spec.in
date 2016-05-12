@@ -1,5 +1,13 @@
+%define __os_install_post /usr/lib/rpm/brp-compress
+%define debug_package %{nil}
 %{!?_rel:%{expand:%%global _rel 0.enl%{?dist}}}
 %define _missing_doc_files_terminate_build 0
+
+%if %(systemctl --version | head -1 | cut -d' ' -f2) >= 209
+%{expand:%%global have_systemd 1}
+%endif
+
+%{expand:%%global ac_enable_systemd --%{?have_systemd:en}%{!?have_systemd:dis}able-systemd}
 
 Summary: Enlightenment Foundation Libraries
 Name: efl
@@ -29,6 +37,10 @@ Provides: eio = %{version}-%{release}
 Obsoletes: eio < %{version}-%{release}
 Provides: ecore = %{version}-%{release}
 Obsoletes: ecore < %{version}-%{release}
+Provides: edje = %{version}-%{release}
+Obsoletes: edje < %{version}-%{release}
+Provides: elementary = %{version}-%{release}
+Obsoletes: elementary < %{version}-%{release}
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -56,6 +68,10 @@ Provides: eio-devel = %{version}-%{release}
 Obsoletes: eio-devel < %{version}-%{release}
 Provides: ecore-devel = %{version}-%{release}
 Obsoletes: ecore-devel < %{version}-%{release}
+Provides: edje-devel = %{version}-%{release}
+Obsoletes: edje-devel < %{version}-%{release}
+Provides: elementary-devel = %{version}-%{release}
+Obsoletes: elementary-devel < %{version}-%{release}
 
 %description devel
 Headers, static libraries, test programs and documentation for EFL
@@ -66,14 +82,15 @@ Headers, static libraries, test programs and documentation for EFL
 
 
 %build
-%{configure} --prefix=%{_prefix}
+%{configure} --prefix=%{_prefix} %{ac_enable_systemd} CFLAGS="-O0 -ggdb3"
 ### use this if you have build problems
-#./configure --prefix=%{_prefix}
+#./configure --prefix=%{_prefix} %{ac_enable_systemd} CFLAGS="-O0 -ggdb3"
 %{__make} %{?_smp_mflags} %{?mflags}
 
 
 %install
 %{__make} %{?mflags_install} -j1 DESTDIR=$RPM_BUILD_ROOT install
+find $RPM_BUILD_ROOT%{_prefix} -name '*.la' -print0 | xargs -0 rm -f
 
 %{find_lang} %{name}
 
@@ -94,30 +111,35 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %doc AUTHORS README NEWS COPYING licenses/COPYING.BSD licenses/COPYING.LGPL licenses/COPYING.GPL licenses/COPYING.FTL
 %{_bindir}/*
-%{_libdir}/*.so.*
-%{_libdir}/evas/cserve2/loaders/*/linux-gnu-*/*.so
-%{_libdir}/evas/modules/engines/*/linux-gnu-*/*.so
-%{_libdir}/evas/modules/image_loaders/*/linux-gnu-*/*.so
-%{_libdir}/evas/modules/image_savers/*/linux-gnu-*/*.so
-%{_libdir}/ecore/*/*.so
-%{_libdir}/ecore_evas/*/*/*/*.so
-%{_libexecdir}/*
+%{_libdir}/*.so*
+%{_libdir}/e*/
+%{_datadir}/applications/*.desktop
+%{_datadir}/dbus*/services/*
+%{_datadir}/ecore*/
+%{_datadir}/edje/
+%{_datadir}/eeze/
+%{_datadir}/efreet/
+%{_datadir}/elementary/
+%{_datadir}/elua/
+%{_datadir}/embryo/
+%{_datadir}/emotion/
 %{_datadir}/eo/
+%{_datadir}/ethumb*/
+%{_datadir}/evas/
+%{_datadir}/icons/*
+%{_datadir}/gdb/auto-load%{_libdir}/lib*.py
+%{_datadir}/mime/packages/*.xml
+%if %{?have_systemd:1}0
+%{_prefix}/lib/systemd/*/*.service
+%endif
 
 %files devel
 %defattr(-, root, root)
 %{_includedir}/*
+%{_libdir}/cmake/*
 %{_libdir}/pkgconfig/*
-%{_libdir}/*.a
-%{_libdir}/*.la
-%{_libdir}/*.so
-%{_libdir}/ecore/*/*.la
-%{_libdir}/ecore_evas/*/*/*/*.la
-%{_libdir}/evas/cserve2/loaders/*/linux-gnu-*/*.la
-%{_libdir}/evas/modules/engines/*/linux-gnu-*/*.la
-%{_libdir}/evas/modules/image_loaders/*/linux-gnu-*/*.la
-%{_libdir}/evas/modules/image_savers/*/linux-gnu-*/*.la
 %{_datadir}/embryo/
+%{_datadir}/eolian/
 %{_datadir}/evas/
 
 
