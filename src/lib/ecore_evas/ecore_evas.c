@@ -4465,7 +4465,7 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
 
    eo_event_callback_call(e, EVAS_CANVAS_EVENT_POINTER, evt);
    processed = ev->evas_done;
-   eo_del(evt);
+   eo_unref(evt);
 
    return processed;
 }

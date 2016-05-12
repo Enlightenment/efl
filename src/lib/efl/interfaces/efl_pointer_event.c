@@ -91,6 +91,21 @@ _efl_pointer_event_efl_event_reset(Eo *obj, Efl_Pointer_Event_Data *pd)
    pd->wheel.dir = EFL_ORIENT_VERTICAL;
 }
 
+EOLIAN static Efl_Event *
+_efl_pointer_event_efl_event_dup(Eo *obj, Efl_Pointer_Event_Data *pd)
+{
+   Efl_Pointer_Event_Data *ev;
+   Efl_Pointer_Event *evt;
+
+   evt = _efl_pointer_event_instance_get(EFL_POINTER_EVENT_CLASS, NULL, obj, &ev);
+   if (!evt) return NULL;
+
+   memcpy(ev, pd, sizeof(*ev));
+   ev->eo = evt;
+
+   return evt;
+}
+
 EOLIAN static void
 _efl_pointer_event_action_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, Efl_Pointer_Action act)
 {

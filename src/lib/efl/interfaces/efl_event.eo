@@ -37,5 +37,9 @@ interface Efl.Event
       reset {
          [[Resets the internal data to 0 or default values.]]
       }
+      dup {
+         [[Creates a copy of this event.]]
+         return: own(Efl.Event);
+      }
    }
 }

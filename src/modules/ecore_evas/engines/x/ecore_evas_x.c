@@ -1271,7 +1271,7 @@ _feed_cancel_out(const Ecore_X_Event_Mouse_Out *e, Eina_Bool cancel)
     */
    if (cancel)
      {
-        Ecore_Event_Mouse_Button cancel = {
+        Ecore_Event_Mouse_Button ev = {
            .event_window = (Ecore_Window) e->event_win,
            .modifiers = e->modifiers,
            .timestamp = e->time,
@@ -1279,7 +1279,7 @@ _feed_cancel_out(const Ecore_X_Event_Mouse_Out *e, Eina_Bool cancel)
            .x = e->x,
            .y = e->y,
         };
-        ecore_event_evas_mouse_button_cancel(NULL, ECORE_EVENT_MOUSE_BUTTON_CANCEL, &cancel);
+        ecore_event_evas_mouse_button_cancel(NULL, ECORE_EVENT_MOUSE_BUTTON_CANCEL, &ev);
      }
 
    Ecore_Event_Mouse_IO io = {
@@ -1768,7 +1768,15 @@ _ecore_evas_x_event_window_hide(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (ee->in)
      {
-        _feed_cancel_out(e, EINA_TRUE);
+        Ecore_X_Event_Mouse_Out out = {
+           .event_win = e->event_win,
+           .modifiers = 0,
+           .time = e->time,
+           .win = e->win,
+           .x = 0,
+           .y = 0,
+        };
+        _feed_cancel_out(&out, EINA_TRUE);
         if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
         if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
         ee->in = EINA_FALSE;
