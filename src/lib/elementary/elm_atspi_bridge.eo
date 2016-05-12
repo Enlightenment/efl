@@ -1,4 +1,4 @@
-class Elm.Atspi_Bridge (Eo.Base)
+class Elm.Atspi.Bridge (Eo.Base)
 {
    eo_prefix: elm_obj_atspi_bridge;
    methods {
