@@ -1,7 +1,7 @@
 /* XXX: Putting the next two as externs because this interface will hopefully
    be removed for efl 2.0, so no need to bother. */
 struct @extern Evas.Smart;
-struct @extern Evas.Smart_Cb_Description;
+struct @extern Evas.Smart.Cb_Description;
 
 class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
 {
@@ -142,8 +142,8 @@ class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
 
          return: bool; [[$true on success, $false on failure.]]
          params {
-            @in descriptions: const(Evas.Smart_Cb_Description)*; [[$null terminated array with
-            @Evas.Smart_Cb_Description descriptions. Array elements won't be
+            @in descriptions: const(Evas.Smart.Cb_Description)*; [[$null terminated array with
+            @Evas.Smart.Cb_Description descriptions. Array elements won't be
             modified at run time, but references to them and their contents
             will be made, so this array should be kept alive during the whole
             object's lifetime.]]
@@ -168,12 +168,12 @@ class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
 
            \@ref evas_smart_callbacks_descriptions_get().]]
          params {
-            @out class_descriptions: const(Evas.Smart_Cb_Description)**; [[Where to store class callbacks
+            @out class_descriptions: const(Evas.Smart.Cb_Description)**; [[Where to store class callbacks
             descriptions array, if any is known. If no descriptions are
             known, $null is returned.]]
             @out class_count: uint; [[Returns how many class callbacks descriptions
             are known.]]
-            @out instance_descriptions: const(Evas.Smart_Cb_Description)**; [[Where to store instance callbacks
+            @out instance_descriptions: const(Evas.Smart.Cb_Description)**; [[Where to store instance callbacks
             descriptions array, if any is known. If no descriptions are
             known, $null is returned.]]
             @out instance_count: uint; [[Returns how many instance callbacks
@@ -200,10 +200,10 @@ class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
             search have a special case for name being the same
             pointer as registered with Evas_Smart_Cb_Description, one
             can use it to avoid excessive use of strcmp().]]
-            @out class_description: const(Evas.Smart_Cb_Description)*; [[pointer to return class description or
+            @out class_description: const(Evas.Smart.Cb_Description)*; [[pointer to return class description or
             $null if not found. If parameter is $null, no search will
             be done on class descriptions.]]
-            @out instance_description: const(Evas.Smart_Cb_Description)*; [[pointer to return instance description.]]
+            @out instance_description: const(Evas.Smart.Cb_Description)*; [[pointer to return instance description.]]
          }
       }
       hide {
