@@ -26,7 +26,7 @@ enum Elm.Fileselector.Sort
    last [[Sentinel (helper) value, not used.]]
 }
 
-interface Elm.Interface_Fileselector ()
+interface Elm.Interface.Fileselector ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_fileselector;

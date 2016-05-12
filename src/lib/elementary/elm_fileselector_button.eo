@@ -1,4 +1,4 @@
-class Elm.Fileselector_Button (Elm.Button, Elm.Interface_Fileselector)
+class Elm.Fileselector_Button (Elm.Button, Elm.Interface.Fileselector)
 {
    eo_prefix: elm_obj_fileselector_button;
    methods {
@@ -87,17 +87,17 @@ class Elm.Fileselector_Button (Elm.Button, Elm.Interface_Fileselector)
       Evas.Object.Smart.del;
       Elm.Widget.theme_apply;
       Elm.Button.admits_autorepeat.get;
-      Elm.Interface_Fileselector.selected_paths.get;
-      Elm.Interface_Fileselector.expandable;
-      Elm.Interface_Fileselector.thumbnail_size;
-      Elm.Interface_Fileselector.selected;
-      Elm.Interface_Fileselector.hidden_visible;
-      Elm.Interface_Fileselector.is_save;
-      Elm.Interface_Fileselector.path;
-      Elm.Interface_Fileselector.sort_method;
-      Elm.Interface_Fileselector.multi_select;
-      Elm.Interface_Fileselector.folder_only;
-      Elm.Interface_Fileselector.mode;
+      Elm.Interface.Fileselector.selected_paths.get;
+      Elm.Interface.Fileselector.expandable;
+      Elm.Interface.Fileselector.thumbnail_size;
+      Elm.Interface.Fileselector.selected;
+      Elm.Interface.Fileselector.hidden_visible;
+      Elm.Interface.Fileselector.is_save;
+      Elm.Interface.Fileselector.path;
+      Elm.Interface.Fileselector.sort_method;
+      Elm.Interface.Fileselector.multi_select;
+      Elm.Interface.Fileselector.folder_only;
+      Elm.Interface.Fileselector.mode;
    }
    events {
       file,chosen;
