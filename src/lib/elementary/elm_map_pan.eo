@@ -1,5 +1,6 @@
 class Elm.Map.Pan (Elm.Pan)
 {
+   legacy_prefix: elm_map_pan;
    eo_prefix: elm_obj_map_pan;
    implements {
       class.constructor;

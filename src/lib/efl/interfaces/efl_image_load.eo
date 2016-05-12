@@ -25,7 +25,6 @@ enum Efl.Image.Load.State
 interface Efl.Image.Load ()
 {
    [[Common APIs for all loadable 2D images.]]
-   legacy_prefix: null;
 
    methods {
       load_async_start {

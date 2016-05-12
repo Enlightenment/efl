@@ -40,6 +40,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
                 Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
                 Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
+   legacy_prefix: elm_list;
    eo_prefix: elm_obj_list;
    methods {
       @property horizontal {

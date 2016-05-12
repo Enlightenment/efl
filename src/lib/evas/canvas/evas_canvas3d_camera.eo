@@ -2,7 +2,6 @@ import evas_types;
 
 class Evas.Canvas3D.Camera (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
-   legacy_prefix: null;
    data: Evas_Canvas3D_Camera_Data;
    methods {
       projection_matrix_set {

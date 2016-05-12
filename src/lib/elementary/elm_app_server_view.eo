@@ -2,7 +2,6 @@ import elm_general;
 
 class Elm.App.Server.View (Eo.Base)
 {
-   legacy_prefix: null;
    eo_prefix: elm_app_server_view;
    methods {
       @property progress {

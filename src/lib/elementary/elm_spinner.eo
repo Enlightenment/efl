@@ -1,6 +1,7 @@
 class Elm.Spinner (Elm.Layout, Efl.Ui.Spin,
                    Elm.Interface.Atspi.Value, Elm.Interface.Atspi_Widget_Action)
 {
+   legacy_prefix: elm_spinner;
    eo_prefix: elm_obj_spinner;
    methods {
       @property wrap {

@@ -2,7 +2,6 @@ class Efl.Canvas.Surface.Tbm (Efl.Canvas.Surface)
 {
    [[Native Tizen Buffer Manager surface for Efl canvas]]
 
-   legacy_prefix: null;
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;

@@ -46,6 +46,7 @@ class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
                  Elm.Interface.Atspi_Image, Elm.Interface.Atspi_Widget_Action,
                  Edje.Object, Efl.Orientation, Efl.Flipable)
 {
+   legacy_prefix: elm_image;
    eo_prefix: elm_obj_image;
    methods {
       @property scale_type {

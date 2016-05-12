@@ -1,5 +1,6 @@
 class Elm.Route (Elm.Widget)
 {
+   legacy_prefix: elm_route;
    eo_prefix: elm_obj_route;
    methods {
       @property emap {

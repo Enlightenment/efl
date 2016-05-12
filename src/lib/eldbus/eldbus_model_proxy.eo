@@ -3,7 +3,6 @@ import eldbus_types;
 class Eldbus.Model.Proxy (Eo.Base, Efl.Model) {
     [[Eldbus model proxy class]]
 
-    legacy_prefix: null;
     methods {
         constructor {
             [[Custom Eldbus_Model_Proxy constructor.

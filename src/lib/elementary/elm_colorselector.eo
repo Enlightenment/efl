@@ -15,6 +15,7 @@ enum Elm.Colorselector.Mode
 class Elm.Colorselector (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
                          Evas.Clickable_Interface)
 {
+   legacy_prefix: elm_colorselector;
    eo_prefix: elm_obj_colorselector;
    methods {
       @property color {

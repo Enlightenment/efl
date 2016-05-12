@@ -22,6 +22,7 @@ struct @extern Elm.Theme;
 
 abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi_Component)
 {
+   legacy_prefix: elm_widget;
    eo_prefix: elm_obj_widget;
    data: Elm_Widget_Smart_Data;
    methods {
@@ -417,7 +418,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          }
       }
       @property parent_widget {
-         get {
+         get @virtual_pure {
             return: Evas.Object *;
             legacy: null;
          }
@@ -612,7 +613,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
             @in dir: Elm.Focus_Direction; [[Direction to move the focus.]]
          }
       }
-      focus_direction {
+      focus_direction @virtual_pure {
          [['Virtual' function handling passing focus to sub-objects given a direction, in degrees.]]
          params {
             @in base: const(Evas.Object)*;
@@ -736,7 +737,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       }
       focus_hide_handle {
       }
-      focus_next {
+      focus_next @virtual_pure {
          [['Virtual' function handling passing focus to sub-objects.]]
          params {
             @in dir: Elm.Focus_Direction;
@@ -860,9 +861,6 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       Evas.Object.Smart.member_add;
       Evas.Object.Smart.resize;
       Evas.Object.Smart.smart_no_render.set;
-      @virtual .focus_direction;
-      @virtual .focus_next;
-      @virtual .parent_widget.get;
       Elm.Interface.Atspi_Accessible.name.get;
       Elm.Interface.Atspi_Accessible.state_set.get;
       Elm.Interface.Atspi_Accessible.children.get;

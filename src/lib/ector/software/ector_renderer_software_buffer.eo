@@ -1,6 +1,5 @@
 class Ector.Renderer.Software.Buffer (Ector.Renderer.Software, Ector.Renderer.Buffer)
 {
-   legacy_prefix: null;
    methods {
       @property buffer {
          set {}

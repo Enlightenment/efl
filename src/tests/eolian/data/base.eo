@@ -7,13 +7,10 @@ class Base {
                 c: float;
            }
       }
-      constructor {
+      constructor @virtual_pure {
       }
       destructor {
       }
-   }
-   implements {
-      @virtual .constructor;
    }
    constructors {
       .constructor;

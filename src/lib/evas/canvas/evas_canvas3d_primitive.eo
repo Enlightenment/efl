@@ -2,7 +2,6 @@ import evas_types;
 
 class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
-   legacy_prefix: null;
    data: Evas_Canvas3D_Primitive_Data;
 
    methods {

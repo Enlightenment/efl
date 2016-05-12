@@ -118,6 +118,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
                  Elm.Interface.Atspi.Text, Elm.Interface.Atspi.Text.Editable, Efl.File,
                  Evas.Selectable_Interface, Evas.Scrollable_Interface)
 {
+   legacy_prefix: elm_entry;
    eo_prefix: elm_obj_entry;
    methods {
       @property scrollable {

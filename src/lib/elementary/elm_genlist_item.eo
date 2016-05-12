@@ -38,6 +38,7 @@ enum Elm.Genlist.Item.Scrollto_Type
 
 class Elm.Genlist.Item(Elm.Widget.Item)
 {
+   legacy_prefix: elm_genlist_item;
       eo_prefix: elm_obj_genlist_item;
       data: Elm_Gen_Item;
       methods {

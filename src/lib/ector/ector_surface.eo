@@ -3,28 +3,23 @@ mixin Ector.Surface (Ector.Buffer)
    [[Surface interface for Ector]]
 
    eo_prefix: ector_surface;
-   legacy_prefix: null;
    data: null;
    methods {
       @property reference_point {
          [[This define where is (0,0) in pixels coordinate inside the surface]]
-         set {
+         set @virtual_pure {
          }
          values {
             x: int; [[X coordinate for reference point]]
             y: int; [[Y coordinate for reference point]]
          }
       }
-      renderer_factory_new {
+      renderer_factory_new @virtual_pure {
          [[Create a new renderer factory for the given type]]
          return: Eo.Base *; /* FIXME: Should be a more restricted type, only here for cyclic. */
          params {
             @in type: const(Eo.Class) * @nonull; /* FIXME: Should probably be a more restricted type */
          }
       }
-   }
-   implements {
-      @virtual .renderer_factory_new;
-      @virtual .reference_point.set;
    }
 }

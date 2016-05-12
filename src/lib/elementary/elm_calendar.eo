@@ -80,6 +80,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
    date, year and month. Applications are able to set specific dates to be
    reported back, when selected, in the smart callbacks of the calendar widget.
    ]]
+   legacy_prefix: elm_calendar;
    eo_prefix: elm_obj_calendar;
    methods {
       @property first_day_of_week {

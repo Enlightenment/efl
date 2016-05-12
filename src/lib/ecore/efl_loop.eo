@@ -10,7 +10,6 @@ class Efl.Loop (Eo.Base)
    great responsiveness without the need for threads (or any other concurrency), but
    provide them if you need to.
    ]]
-   legacy_prefix: null;
    methods {
       iterate {
          [[Runs a single iteration of the main loop to process everything on the

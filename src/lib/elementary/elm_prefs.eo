@@ -5,6 +5,7 @@ type Elm_Prefs_Reset_Mode: __undefined_type;
 
 class Elm.Prefs (Elm.Widget, Efl.File)
 {
+   legacy_prefix: elm_prefs;
    eo_prefix: elm_obj_prefs;
    methods {
       @property data {

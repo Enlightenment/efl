@@ -1,5 +1,4 @@
 interface Efl.Text {
-   legacy_prefix: null;
    methods {
       @property text {
          set {

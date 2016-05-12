@@ -1,6 +1,5 @@
 class Benchmark_Object (Eo.Base)
 {
-   legacy_prefix: null;
    data: null;
    methods {
       emptyarg {

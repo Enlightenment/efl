@@ -1,5 +1,6 @@
 class Elm.Photocam.Pan (Elm.Pan)
 {
+   legacy_prefix: elm_photocam_pan;
    eo_prefix: elm_obj_photocam_pan;
    implements {
       class.constructor;

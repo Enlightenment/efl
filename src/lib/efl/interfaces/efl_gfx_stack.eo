@@ -1,5 +1,4 @@
 interface Efl.Gfx.Stack {
-   legacy_prefix: null;
    methods {
       @property layer {
          set {

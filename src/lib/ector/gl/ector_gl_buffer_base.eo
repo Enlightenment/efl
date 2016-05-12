@@ -1,6 +1,5 @@
 mixin Ector.GL.Buffer.Base (Ector.Buffer)
 {
-   legacy_prefix: null;
    methods {
       @property texture {
          get {}

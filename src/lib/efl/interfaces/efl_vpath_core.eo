@@ -4,7 +4,6 @@ class Efl.Vpath.Core (Eo.Base, Efl.Vpath)
 
    @since 1.18
    ]]
-   legacy_prefix: null;
    eo_prefix: efl_vpath_core;
    methods {
       get @class {

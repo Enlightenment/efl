@@ -6,6 +6,7 @@ class Elm.Button (Elm.Layout, Evas.Clickable_Interface,
    Press it and run some function. It can contain a simple label and icon object
    and it also has an autorepeat feature.
    ]]
+   legacy_prefix: elm_button;
    eo_prefix: elm_obj_button;
    methods {
       @property autorepeat_initial_timeout {

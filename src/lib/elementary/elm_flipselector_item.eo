@@ -1,5 +1,6 @@
 class Elm.Flipselector.Item(Elm.Widget.Item)
 {
+   legacy_prefix: elm_flipselector_item;
    eo_prefix: elm_obj_flipselector_item;
    methods {
         @property selected {

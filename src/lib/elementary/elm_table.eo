@@ -1,5 +1,6 @@
 class Elm.Table (Elm.Widget)
 {
+   legacy_prefix: elm_table;
    eo_prefix: elm_obj_table;
    data: null;
    methods {

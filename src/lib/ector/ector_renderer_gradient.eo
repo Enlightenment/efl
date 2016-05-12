@@ -1,7 +1,6 @@
 mixin Ector.Renderer.Gradient (Efl.Gfx.Gradient)
 {
    eo_prefix: ector_renderer_gradient;
-   legacy_prefix: null;
    implements {
       Efl.Gfx.Gradient.stop.set;
       Efl.Gfx.Gradient.stop.get;

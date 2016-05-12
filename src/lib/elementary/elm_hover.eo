@@ -9,6 +9,7 @@ enum Elm.Hover.Axis
 
 class Elm.Hover (Elm.Layout, Evas.Clickable_Interface, Elm.Interface.Atspi_Widget_Action)
 {
+   legacy_prefix: elm_hover;
    eo_prefix: elm_obj_hover;
    methods {
       @property target {

@@ -1,5 +1,6 @@
 class Elm.Grid (Elm.Widget)
 {
+   legacy_prefix: elm_grid;
    eo_prefix: elm_obj_grid;
    data: null;
    methods {

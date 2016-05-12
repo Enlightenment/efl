@@ -6,7 +6,6 @@ class Efl.Canvas.Snapshot (Evas.Image)
      all the objects below it. This allows applications to save screenshots
      of all or part of their UI, or apply filters to parts of the UI.
    ]]
-   legacy_prefix: null;
    data: null;
    implements {
       Eo.Base.constructor;

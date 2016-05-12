@@ -2,7 +2,6 @@ import eldbus_types;
 
 class Eldbus.Model.Method (Eldbus.Model.Arguments) {
     [[Eldbus model method class]]
-    legacy_prefix: null;
     methods {
         constructor {
             [[Custom Eldbus_Model_Method constructor.

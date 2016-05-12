@@ -8,7 +8,6 @@ mixin Efl.Canvas.Surface (Evas.Image)
      (C or C++), with direct access to the display system or a buffer
      allocation system.
    ]]
-   legacy_prefix: null;
    methods {
       @property native_buffer {
           [[External buffer attached to this native surface.
@@ -16,7 +15,7 @@ mixin Efl.Canvas.Surface (Evas.Image)
             Set to $null to detach this surface from the external buffer.
           ]]
           get {}
-          set {
+          set @virtual_pure {
              [[Set the buffer. If this fails, this function returns $false,
                and the surface is left without any attached buffer.
              ]]
@@ -29,6 +28,5 @@ mixin Efl.Canvas.Surface (Evas.Image)
    }
    implements {
       Eo.Base.constructor;
-      @virtual .native_buffer.set;
    }
 }

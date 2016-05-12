@@ -1,5 +1,6 @@
 class Elm.Genlist.Pan (Elm.Pan)
 {
+   legacy_prefix: elm_genlist_pan;
    eo_prefix: elm_obj_genlist_pan;
    implements {
       class.constructor;

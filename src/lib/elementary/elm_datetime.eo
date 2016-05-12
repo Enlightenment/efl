@@ -17,6 +17,7 @@ enum Elm.Datetime.Field_Type
 
 class Elm.Datetime (Elm.Layout)
 {
+   legacy_prefix: elm_datetime;
    eo_prefix: elm_obj_datetime;
    methods {
       @property format {

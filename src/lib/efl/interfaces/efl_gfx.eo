@@ -1,7 +1,6 @@
 import efl_gfx_types;
 
 interface Efl.Gfx {
-   legacy_prefix: null;
    eo_prefix: efl_gfx;
    methods {
       @property position {

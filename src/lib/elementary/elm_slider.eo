@@ -6,6 +6,7 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
                   Elm.Interface.Atspi.Value,
                   Elm.Interface.Atspi_Widget_Action)
 {
+   legacy_prefix: elm_slider;
    eo_prefix: elm_obj_slider;
    methods {
       @property indicator_format {

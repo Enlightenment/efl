@@ -8,6 +8,7 @@ enum Elm.Icon.Type
 
 class Elm.Icon (Elm.Image)
 {
+   legacy_prefix: elm_icon;
    eo_prefix: elm_obj_icon;
    methods {
    }

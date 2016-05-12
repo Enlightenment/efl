@@ -14,7 +14,6 @@ abstract Ector.Renderer (Eo.Base)
    [[Ector renderer abstract interface]]
 
    eo_prefix: ector_renderer;
-   legacy_prefix: null;
    methods {
       @property surface {
          [[Surface associated to this renderer]]
@@ -105,13 +104,13 @@ abstract Ector.Renderer (Eo.Base)
             return: uint; [[CRC value]]
 	 }
       }
-      bounds_get {
+      bounds_get @virtual_pure {
          [[Retrieve the bounds of the renderer]]
 	 params {
 	    @out r: Eina.Rectangle; [[Bounds as @Eina.Rectangle]]
 	 }
       }
-      draw {
+      draw @virtual_pure {
          return: bool @warn_unused;
 	 params {
 	    @in op: Efl.Gfx.Render_Op;
@@ -124,15 +123,12 @@ abstract Ector.Renderer (Eo.Base)
 	 params {
 	 }
       }
-      done {
+      done @virtual_pure {
          return: bool @warn_unused;
       }
    }
    implements {
       Eo.Base.destructor;
       Eo.Base.finalize;
-      @virtual .draw;
-      @virtual .bounds_get;
-      @virtual .done;
    }
 }

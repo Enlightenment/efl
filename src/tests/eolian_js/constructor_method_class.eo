@@ -1,6 +1,5 @@
 class Constructor_Method_Class (Eo.Base)
 {
-   legacy_prefix: null;
    data: Constructor_Method_Class_Data;
    methods {
       @property fail {

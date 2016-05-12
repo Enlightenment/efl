@@ -1,6 +1,7 @@
 class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
                        Efl.Orientation)
 {
+   legacy_prefix: elm_progressbar;
    eo_prefix: elm_obj_progressbar;
    methods {
       @property pulse {

@@ -2,9 +2,8 @@ import ector_types;
 
 abstract Ector.Renderer.GL (Ector.Renderer)
 {
-   legacy_prefix: null;
    methods {
-      fill {
+      fill @virtual_pure {
          return: bool;
 	 params {
 	    @in flags: uint64;
@@ -15,7 +14,6 @@ abstract Ector.Renderer.GL (Ector.Renderer)
       }
    }
    implements {
-      @virtual .fill;
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
       Eo.Base.constructor;

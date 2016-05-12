@@ -1,7 +1,6 @@
 class Ector.Software.Surface (Ector.Software.Buffer, Ector.Surface)
 {
    eo_prefix: ector_software_surface;
-   legacy_prefix: null;
    methods {}
    implements {
       Ector.Surface.renderer_factory_new;

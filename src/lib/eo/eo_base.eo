@@ -46,7 +46,6 @@ type Eo.Callback_Priority: short; [[Callback priority value. Range is -32k - 32k
 abstract Eo.Base ()
 {
    eo_prefix: eo;
-   legacy_prefix: null;
 
    methods {
       @property parent {

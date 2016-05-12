@@ -1,7 +1,6 @@
 class Eldbus.Model.Signal (Eldbus.Model.Arguments) {
     [[Eldbus model signal class]]
 
-    legacy_prefix: null;
     methods {
         constructor {
               [[Custom Eldbus_Model_Signal constructor.

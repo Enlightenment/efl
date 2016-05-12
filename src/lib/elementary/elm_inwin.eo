@@ -1,5 +1,6 @@
 class Elm.Inwin (Elm.Layout)
 {
+   legacy_prefix: elm_inwin;
    eo_prefix: elm_obj_win_inwin;
    data: null;
    methods {

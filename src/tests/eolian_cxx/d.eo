@@ -1,6 +1,5 @@
 class D (B, C)
 {
-   legacy_prefix: null;
    data: D_Data;
    implements {
       Eo.Base.constructor;

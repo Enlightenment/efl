@@ -9,7 +9,6 @@ class Efl.Loop.Fd (Efl.Loop_User)
      The object will trigger relevant event depending
      on what is happening.]]
 
-   legacy_prefix: null;
    methods {
       @property fd {
          [[Define which file descriptor to watch. If it is a file, use file_fd variant.]]

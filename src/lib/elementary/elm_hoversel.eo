@@ -3,6 +3,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
                     Evas.Clickable_Interface,
                     Elm.Interface.Atspi_Widget_Action)
 {
+   legacy_prefix: elm_hoversel;
    eo_prefix: elm_obj_hoversel;
    methods {
       @property horizontal {

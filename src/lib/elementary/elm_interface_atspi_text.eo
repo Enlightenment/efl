@@ -41,7 +41,6 @@ struct Elm.Atspi_Text.Change_Info
 
 interface Elm.Interface.Atspi.Text ()
 {
-   legacy_prefix: null;
    eo_prefix: elm_interface_atspi_text;
    methods {
       @property character @protected {

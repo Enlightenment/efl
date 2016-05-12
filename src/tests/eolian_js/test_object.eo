@@ -11,7 +11,6 @@ struct Test.Struct_Ex {
 }
 
 class Test.Object (Eo.Base) {
-   legacy_prefix: null;
    methods {
        method_integral_in_a_check {
            [[ tests integral in ]]

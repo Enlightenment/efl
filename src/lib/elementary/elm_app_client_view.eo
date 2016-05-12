@@ -4,7 +4,6 @@ type Elm_App_Client_View_Cb: __undefined_type;
 
 class Elm.App.Client.View (Eo.Base)
 {
-   legacy_prefix: null;
    methods {
       @property state {
          get {

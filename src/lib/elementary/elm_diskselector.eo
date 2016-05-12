@@ -3,6 +3,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
                         Evas.Clickable_Interface, Evas.Scrollable_Interface,
                         Evas.Selectable_Interface)
 {
+   legacy_prefix: elm_diskselector;
    eo_prefix: elm_obj_diskselector;
    methods {
       @property side_text_max_length {

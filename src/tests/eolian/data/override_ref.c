@@ -1,5 +1,3 @@
-EOAPI EO_VOID_FUNC_BODY(override_a_set);
-EOAPI EO_VOID_FUNC_BODY(override_foo);
 
 static void __eolian_override_b_set(Eo *obj EINA_UNUSED, Override_Data *pd, int idx EINA_UNUSED, float a, char b, int c)
 {
@@ -24,6 +22,7 @@ static int __eolian_override_c_get(Eo *obj EINA_UNUSED, Override_Data *pd EINA_U
 }
 
 EOAPI EO_FUNC_BODYV_CONST(override_c_get, int, 50, EO_FUNC_CALL(idx), int idx);
+EOAPI EO_VOID_FUNC_BODY(override_a_set);
 
 void _override_a_get(Eo *obj, Override_Data *pd);
 
@@ -36,6 +35,7 @@ EOAPI EO_VOID_FUNC_BODYV_CONST(override_b_get, EO_FUNC_CALL(idx, a, b, c), int i
 void _override_c_set(Eo *obj, Override_Data *pd, int idx, int c);
 
 EOAPI EO_VOID_FUNC_BODYV(override_c_set, EO_FUNC_CALL(idx, c), int idx, int c);
+EOAPI EO_VOID_FUNC_BODY(override_foo);
 
 void _override_base_constructor(Eo *obj, Override_Data *pd);
 
@@ -57,14 +57,14 @@ static const Eo_Op_Description _override_op_desc[] = {
      EO_OP_FUNC_OVERRIDE(base_constructor, _override_base_constructor),
      EO_OP_FUNC_OVERRIDE(base_z_get, __eolian_override_base_z_get),
      EO_OP_FUNC_OVERRIDE(base_z_set, __eolian_override_base_z_set),
-     EO_OP_FUNC(override_a_set, NULL),
-     EO_OP_FUNC(override_foo, NULL),
      EO_OP_FUNC(override_b_set, __eolian_override_b_set),
      EO_OP_FUNC(override_bar, __eolian_override_bar),
      EO_OP_FUNC(override_c_get, __eolian_override_c_get),
+     EO_OP_FUNC(override_a_set, NULL),
      EO_OP_FUNC(override_a_get, _override_a_get),
      EO_OP_FUNC(override_b_get, _override_b_get),
      EO_OP_FUNC(override_c_set, _override_c_set),
+     EO_OP_FUNC(override_foo, NULL),
 };
 
 static const Eo_Class_Description _override_class_desc = {

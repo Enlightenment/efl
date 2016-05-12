@@ -1,6 +1,5 @@
 class Simple (Eo.Base)
 {
-   legacy_prefix: null;
    data: null;
    implements {
       Eo.Base.constructor;

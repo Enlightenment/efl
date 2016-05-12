@@ -27,7 +27,6 @@ mixin Ector.Buffer
      @since 1.17
    ]]
    eo_prefix: ector_buffer;
-   legacy_prefix: null;
    methods {
       @property size {
          [[The (rectangular) size of the pixel buffer.]]
@@ -44,7 +43,7 @@ mixin Ector.Buffer
             cspace: Efl.Gfx.Colorspace; [[Colorspace]]
          }
       }
-      map {
+      map @virtual_pure {
          [[Map a region of this buffer for read or write access by the CPU,
            fetch data from the GPU if needed. This operation may be slow if
            cpu_readable_fast or cpu_writeable_fast are not true, or if the
@@ -64,14 +63,14 @@ mixin Ector.Buffer
          }
          return: void* @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
       }
-      unmap {
+      unmap @virtual_pure {
          [[Unmap a region of this buffer, and upload data to the GPU (if needed).]]
          params {
             @in data: void*; [[Data pointer returned by a previous call to map]]
             @in length: uint; [[Must be the same as returned by map.]]
          }
       }
-      pixels_set {
+      pixels_set @virtual_pure {
          [[Set the source pixels for this buffer, or allocate a new memory region]]
          params {
             @in pixels: void*; [[If $null, allocates an empty buffer]]
@@ -87,7 +86,7 @@ mixin Ector.Buffer
          }
          return: bool; [[True if pixels_set was successful]]
       }
-      span_get {
+      span_get @virtual_pure {
          [[Get a single horizontal span of length w starting from (x,y)
 
            Call span_free() to release it. This function will try not to
@@ -103,7 +102,7 @@ mixin Ector.Buffer
          }
          return: uint8*; [[A temporary memory buffer containing the pixels requested.]]
       }
-      span_free {
+      span_free @virtual_pure {
          [[Must be called as soon as possible after span_get]]
          params {
             data: uint8*; [[Data to be freed]]
@@ -129,12 +128,5 @@ mixin Ector.Buffer
    }
    events {
       detached; [[Emitted whenever the previously attached pixels are detached during pixels_set]]
-   }
-   implements {
-      @virtual .pixels_set;
-      @virtual .span_get;
-      @virtual .span_free;
-      @virtual .map;
-      @virtual .unmap;
    }
 }

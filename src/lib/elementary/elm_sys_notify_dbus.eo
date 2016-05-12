@@ -1,5 +1,6 @@
 class Elm.Sys_Notify.Dbus (Eo.Base, Elm.Sys_Notify_Interface)
 {
+   legacy_prefix: elm_sys_notify_dbus;
    eo_prefix: elm_obj_sys_notify_dbus;
    data: null;
 

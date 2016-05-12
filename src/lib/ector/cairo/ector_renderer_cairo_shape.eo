@@ -1,7 +1,6 @@
 class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo, Ector.Renderer.Shape)
 {
    eo_prefix: ector_renderer_cairo_shape;
-   legacy_prefix: null;
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;

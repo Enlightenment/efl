@@ -11,6 +11,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
                    Evas.Clickable_Interface, Elm.Interface.Atspi_Widget_Action,
                    Elm.Interface.Atspi.Selection)
 {
+   legacy_prefix: elm_gengrid;
    eo_prefix: elm_obj_gengrid;
    methods {
       @property align {

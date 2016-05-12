@@ -1,5 +1,6 @@
 class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection)
 {
+   legacy_prefix: elm_menu_item;
    eo_prefix: elm_obj_menu_item;
    methods {
         @property icon_name {

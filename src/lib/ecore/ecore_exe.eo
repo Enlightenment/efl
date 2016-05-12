@@ -45,6 +45,7 @@ class Ecore.Exe (Eo.Base, Efl.Control)
    An interaction between your process and those spawned is possible using pipes or signals.
    ]]
 
+   legacy_prefix: ecore_exe;
    eo_prefix: ecore_obj_exe;
    methods {
         @property command {

@@ -1,7 +1,6 @@
 class Ector.Renderer.Software.Gradient.Radial (Ector.Renderer.Software, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial)
 {
    eo_prefix: ector_renderer_software_gradient_radial;
-   legacy_prefix: null;
    data: Ector_Renderer_Software_Gradient_Data;
    implements {
       Ector.Renderer.prepare;

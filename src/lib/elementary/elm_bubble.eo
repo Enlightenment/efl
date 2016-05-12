@@ -16,6 +16,7 @@ class Elm.Bubble (Elm.Layout, Evas.Clickable_Interface)
 {
    [[Speech bubble widget used in messaging applications]]
 
+   legacy_prefix: elm_bubble;
    eo_prefix: elm_obj_bubble;
    methods {
       @property pos {

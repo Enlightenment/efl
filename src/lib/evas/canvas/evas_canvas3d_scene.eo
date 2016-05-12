@@ -2,7 +2,6 @@ import evas_types;
 
 class Evas.Canvas3D.Scene (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
-   legacy_prefix: null;
    data: Evas_Canvas3D_Scene_Data;
    methods {
       size_set {

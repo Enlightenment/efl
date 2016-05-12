@@ -1,5 +1,6 @@
 class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
+   legacy_prefix: elm_naviframe;
    eo_prefix: elm_obj_naviframe;
    methods {
       @property event_enabled {

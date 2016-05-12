@@ -9,7 +9,6 @@ class Efl.Canvas.Surface.X11 (Efl.Canvas.Surface)
 {
    [[Native X11 surface for Efl canvas]]
 
-   legacy_prefix: null;
    methods {
       @property pixmap {
          [[This is a helper for @Efl.Canvas.Surface.native_buffer.]]

@@ -5,6 +5,7 @@ class Edje.Edit (Edje.Object)
    This was intended ONLY for use in an actual edje editor program. Unless
    you are writing one of these, do NOT use this API here.
    ]]
+   legacy_prefix: edje_edit;
    data: Edje_Edit;
    implements {
       Eo.Base.constructor;

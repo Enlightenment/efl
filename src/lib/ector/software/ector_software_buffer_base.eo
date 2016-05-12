@@ -2,7 +2,6 @@ mixin Ector.Software.Buffer.Base (Ector.Buffer)
 {
    [[A buffer in Ector Software is a readable & optionally writable image]]
    eo_prefix: ector_software_buffer;
-   legacy_prefix: null;
    methods {
       pixels_clear @protected {
         [[Clear internal pixel buffer]]

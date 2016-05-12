@@ -5,7 +5,6 @@ type Elm_App_Client_Pending: __undefined_type;
 
 class Elm.App.Client (Eo.Base)
 {
-   legacy_prefix: null;
    methods {
       @property views {
          get {

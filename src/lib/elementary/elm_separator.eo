@@ -1,5 +1,6 @@
 class Elm.Separator (Elm.Layout)
 {
+   legacy_prefix: elm_separator;
    eo_prefix: elm_obj_separator;
    methods {
       @property horizontal {

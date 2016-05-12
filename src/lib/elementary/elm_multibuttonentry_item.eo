@@ -1,6 +1,7 @@
 class Elm.Multibuttonentry.Item(Elm.Widget.Item,
                                 Elm.Interface.Atspi_Widget_Action)
 {
+   legacy_prefix: elm_multibuttonentry_item;
    eo_prefix: elm_obj_multibuttonentry_item;
    methods {
         @property selected {

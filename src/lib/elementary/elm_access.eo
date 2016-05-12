@@ -1,7 +1,8 @@
 class Elm.Access (Elm.Widget)
 {
-[[Elm abstract accessibility class]]
-eo_prefix: elm_obj_access;
+   [[Elm abstract accessibility class]]
+   legacy_prefix: elm_access;
+   eo_prefix: elm_obj_access;
    data: null;
    implements {
       class.constructor;

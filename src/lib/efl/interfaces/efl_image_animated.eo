@@ -11,7 +11,6 @@ enum Efl.Image.Animated.Loop_Hint {
 
 interface Efl.Image.Animated ()
 {
-   legacy_prefix: null;
    eo_prefix: efl_image;
 
    methods {

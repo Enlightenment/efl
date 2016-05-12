@@ -1,5 +1,4 @@
 interface Efl.Gfx.View {
-   legacy_prefix: null;
    eo_prefix: efl_gfx;
    methods {
       @property view_size {

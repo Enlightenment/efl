@@ -4,7 +4,6 @@ class Efl.Vpath.File.Core (Efl.Vpath.File)
 
    @since 1.18
    ]]
-   legacy_prefix: null;
    eo_prefix: efl_vpath_file_core;
    implements {
       Eo.Base.constructor;

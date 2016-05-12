@@ -2,7 +2,6 @@ import elm_genlist_item;
 
 class Elm.View.List (Eo.Base)
 {
-    legacy_prefix: null;
     methods {
         genlist_set {
              [[Constructor wrapper

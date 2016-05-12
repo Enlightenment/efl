@@ -3,7 +3,6 @@ import eina_types;
 interface Efl.Pack (Efl.Container)
 {
    [[API common to all UI container objects.]]
-   legacy_prefix: null;
    methods
    {
       pack_clear {

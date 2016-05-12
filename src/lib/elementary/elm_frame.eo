@@ -1,5 +1,6 @@
 class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
 {
+   legacy_prefix: elm_frame;
    eo_prefix: elm_obj_frame;
    methods {
       @property collapse {

@@ -1,5 +1,4 @@
 interface Efl.Ui.Progress {
-   legacy_prefix: null;
    methods {
       @property span_size {
          [[Control the (exact) length of the bar region of a given progress widget

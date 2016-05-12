@@ -1,5 +1,4 @@
 class Evas.Ector.GL.Buffer (Eo.Base, Evas.Ector.Buffer, Ector.GL.Buffer.Base)
 {
-   legacy_prefix: null;
    data: null;
 }

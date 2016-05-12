@@ -3,7 +3,6 @@ import eldbus_types;
 class Eldbus.Model.Arguments (Eo.Base, Efl.Model) {
     [[Eldbus model arguments class]]
 
-    legacy_prefix: null;
     methods {
         constructor {
             [[Custom Eldbus_Model_Arguments constructor.

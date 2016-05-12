@@ -2,7 +2,6 @@ import ecore_types;
 
 class Generic (Eo.Base)
 {
-   legacy_prefix: null;
    data: Generic_Data;
    methods {
       @property req_ctor_a_value {

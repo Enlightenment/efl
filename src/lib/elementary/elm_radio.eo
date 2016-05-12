@@ -1,5 +1,6 @@
 class Elm.Radio (Elm.Check, Elm.Interface.Atspi_Widget_Action)
 {
+   legacy_prefix: elm_radio;
    eo_prefix: elm_obj_radio;
    methods {
       @property state_value {

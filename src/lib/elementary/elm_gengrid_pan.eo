@@ -1,5 +1,6 @@
 class Elm.Gengrid.Pan (Elm.Pan)
 {
+   legacy_prefix: elm_gengrid_pan;
    eo_prefix: elm_obj_gengrid_pan;
    implements {
       class.constructor;

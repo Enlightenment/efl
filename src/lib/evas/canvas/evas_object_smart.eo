@@ -5,6 +5,7 @@ struct @extern Evas.Smart.Cb_Description;
 
 class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
 {
+   legacy_prefix: evas_object_smart;
    eo_prefix: evas_obj_smart;
    data: Evas_Smart_Data;
    methods {

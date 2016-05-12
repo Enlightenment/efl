@@ -2,6 +2,7 @@ class Elm.Combobox (Elm.Button, Evas.Selectable_Interface,
                     Elm.Interface.Atspi_Widget_Action,
                     Elm.Entry, Elm.Genlist, Elm.Hover, Elm.Multibuttonentry)
 {
+   legacy_prefix: elm_combobox;
    eo_prefix: elm_obj_combobox;
    methods {
       @property expanded {

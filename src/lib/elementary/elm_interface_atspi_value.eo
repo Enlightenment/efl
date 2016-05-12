@@ -1,6 +1,5 @@
 interface Elm.Interface.Atspi.Value ()
 {
-   legacy_prefix: null;
    eo_prefix: elm_interface_atspi_value;
    methods {
       @property value_and_text @protected {

@@ -1,7 +1,6 @@
 type Efl_Font_Size: int;
 
 interface Efl.Text.Properties {
-   legacy_prefix: null;
    methods {
       @property font {
          set {

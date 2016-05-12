@@ -1,6 +1,5 @@
 interface Elm.Interface.Atspi.Selection ()
 {
-   legacy_prefix: null;
    eo_prefix: elm_interface_atspi_selection;
    methods {
       @property selected_children_count @protected {

@@ -1,11 +1,10 @@
 mixin Elm.Interface.Atspi_Image ()
 {
-   legacy_prefix: null;
    eo_prefix: elm_interface_atspi_image;
    data: null;
    methods {
       @property extents @protected {
-         get {
+         get @virtual_pure {
             [[Gets an image extents.]]
          }
          keys {
@@ -36,8 +35,5 @@ mixin Elm.Interface.Atspi_Image ()
             locale: const(char)*;
          }
       }
-   }
-   implements {
-      @virtual .extents.get;
    }
 }

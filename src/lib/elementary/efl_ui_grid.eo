@@ -1,6 +1,5 @@
 class Efl.Ui.Grid (Elm.Widget, Efl.Pack.Grid, Efl.Pack.Layout)
 {
-   legacy_prefix: null;
    implements {
       Eo.Base.constructor;
 

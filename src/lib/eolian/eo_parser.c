@@ -1105,6 +1105,12 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
           prop->type = EOLIAN_PROP_SET;
      }
    eo_lexer_get(ls);
+   if (ls->t.kw == KW_at_virtual_pure)
+     {
+        if (is_get) prop->get_virtual_pure = EINA_TRUE;
+        else prop->set_virtual_pure = EINA_TRUE;
+        eo_lexer_get(ls);
+     }
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
@@ -1181,9 +1187,9 @@ end:
 }
 
 static void
-_interface_virtual_set(Eo_Lexer *ls, Eolian_Function *foo_id)
+_func_virtual_set(Eo_Lexer *ls, Eolian_Function *foo_id, Eina_Bool virt)
 {
-   if (ls->tmp.kls->type != EOLIAN_CLASS_INTERFACE)
+   if (ls->tmp.kls->type != EOLIAN_CLASS_INTERFACE && !virt)
      return;
 
    if (foo_id->type == EOLIAN_PROP_GET || foo_id->type == EOLIAN_METHOD)
@@ -1202,7 +1208,8 @@ parse_property(Eo_Lexer *ls)
    Eina_Bool has_get       = EINA_FALSE, has_set    = EINA_FALSE,
              has_keys      = EINA_FALSE, has_values = EINA_FALSE,
              has_protected = EINA_FALSE, has_class  = EINA_FALSE,
-             has_c_only    = EINA_FALSE, has_beta   = EINA_FALSE;
+             has_c_only    = EINA_FALSE, has_beta   = EINA_FALSE,
+             has_virtp     = EINA_FALSE;
    prop = calloc(1, sizeof(Eolian_Function));
    prop->klass = ls->tmp.kls;
    prop->type = EOLIAN_UNRESOLVED;
@@ -1231,6 +1238,10 @@ parse_property(Eo_Lexer *ls)
       case KW_at_beta:
         CASE_LOCK(ls, beta, "beta qualifier");
         prop->is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_virtual_pure:
+        CASE_LOCK(ls, virtp, "virtual_pure qualifier");
         eo_lexer_get(ls);
         break;
       default:
@@ -1266,7 +1277,7 @@ end:
    check_match(ls, '}', '{', line, col);
    if (!has_get && !has_set)
      prop->type = EOLIAN_PROPERTY;
-   _interface_virtual_set(ls, prop);
+   _func_virtual_set(ls, prop, has_virtp);
 }
 
 static void
@@ -1278,7 +1289,7 @@ parse_method(Eo_Lexer *ls)
              has_return      = EINA_FALSE, has_legacy = EINA_FALSE,
              has_protected   = EINA_FALSE, has_class  = EINA_FALSE,
              has_eo          = EINA_FALSE, has_c_only = EINA_FALSE,
-             has_beta        = EINA_FALSE;
+             has_beta        = EINA_FALSE, has_virtp  = EINA_FALSE;
    meth = calloc(1, sizeof(Eolian_Function));
    meth->klass = ls->tmp.kls;
    meth->type = EOLIAN_METHOD;
@@ -1312,6 +1323,10 @@ parse_method(Eo_Lexer *ls)
       case KW_at_beta:
         CASE_LOCK(ls, beta, "beta qualifier");
         meth->is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_virtual_pure:
+        CASE_LOCK(ls, virtp, "virtual_pure qualifier");
         eo_lexer_get(ls);
         break;
       default:
@@ -1356,7 +1371,7 @@ body:
      }
 end:
    check_match(ls, '}', '{', line, col);
-   _interface_virtual_set(ls, meth);
+   _func_virtual_set(ls, meth, has_virtp);
 }
 
 static void
@@ -1389,10 +1404,6 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
    ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements, impl);
    switch (ls->t.kw)
      {
-        case KW_at_virtual:
-          impl->is_virtual = EINA_TRUE;
-          eo_lexer_get(ls);
-          break;
         case KW_at_auto:
           impl->is_auto = EINA_TRUE;
           eo_lexer_get(ls);
@@ -1406,15 +1417,12 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
      }
    if (ls->t.token == '.')
      {
-        if (!impl->is_virtual && !impl->is_auto && !impl->is_empty)
+        if (!impl->is_auto && !impl->is_empty)
           goto fullclass;
         check_next(ls, '.');
         if ((ls->t.token != TOK_VALUE) || (ls->t.kw == KW_get || ls->t.kw == KW_set))
           eo_lexer_syntax_error(ls, "name expected");
-        if (impl->is_virtual)
-          impl->full_name = eina_stringshare_ref(ls->t.value.s);
-        else
-          impl->full_name = eina_stringshare_printf(".%s", ls->t.value.s);
+        impl->full_name = eina_stringshare_printf(".%s", ls->t.value.s);
         eo_lexer_get(ls);
         if (ls->t.token == '.')
           {

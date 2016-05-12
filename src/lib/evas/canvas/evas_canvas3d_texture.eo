@@ -2,7 +2,6 @@ type @extern Evas_Colorspace: int; /* FIXME: Need to get emile migrated. */
 
 class Evas.Canvas3D.Texture (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
-   legacy_prefix: null;
    data : Evas_Canvas3D_Texture_Data;
    methods {
       @property source_visible {
