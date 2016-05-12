@@ -1,6 +1,6 @@
 /* FIXME: The structures are not namespaced correctly. */
 
-struct Ecore.Exe_Event_Data_Line
+struct Ecore.Exe.Event_Data.Line
 {
    [[A structure that stores information of lines data from a child process.]]
    line: char *; [[The bytes of a line of buffered data]]
@@ -11,12 +11,12 @@ struct Ecore.Exe_Event_Data_Line
  * @struct _Ecore_Exe_Event_Data
  * @brief A structure that stores information of data from a child process event.
  */
-struct Ecore.Exe_Event_Data
+struct Ecore.Exe.Event_Data
 {
    exe: Eo.Base *;  [[The handle to the process. FIXME: should actually be Ecore.Exe, workaround cyclic]]
    data: void *; [[the raw binary data from the child process that was received]]
    size: int; [[the size of this data in bytes]]
-   lines: Ecore.Exe_Event_Data_Line *; [[an array of line data if line buffered, the last one has it's line member set to $NULL]]
+   lines: Ecore.Exe.Event_Data.Line *; [[an array of line data if line buffered, the last one has it's line member set to $NULL]]
 }
 
 enum Ecore.Exe_Flags
@@ -70,8 +70,8 @@ class Ecore.Exe (Eo.Base, Efl.Control)
       .command;
    }
    events {
-        data,get: Ecore.Exe_Event_Data; [[Data received event from the child process]]
-        data,error: Ecore.Exe_Event_Data; [[Error received event from the child process]]
+        data,get: Ecore.Exe.Event_Data; [[Data received event from the child process]]
+        data,error: Ecore.Exe.Event_Data; [[Error received event from the child process]]
    }
 }
 
