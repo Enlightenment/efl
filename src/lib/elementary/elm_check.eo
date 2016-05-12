@@ -1,4 +1,4 @@
-class Elm.Check (Efl.Ui.Nstate, Elm.Interface_Atspi_Widget_Action)
+class Elm.Check (Efl.Ui.Nstate, Elm.Interface.Atspi_Widget_Action)
 {
    [[Check widget
 
@@ -31,8 +31,8 @@ class Elm.Check (Efl.Ui.Nstate, Elm.Interface_Atspi_Widget_Action)
       Elm.Layout.text_aliases.get;
       Efl.Ui.Nstate.count.set;
       Efl.Ui.Nstate.value.set;
-      Elm.Interface_Atspi_Accessible.state_set.get;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Accessible.state_set.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       changed; [[This is called whenever the user changes the state of the check

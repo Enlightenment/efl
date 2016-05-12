@@ -222,7 +222,7 @@ struct Elm.Atspi.Relation
 
 type Elm.Atspi.Relation_Set: list<Elm.Atspi.Relation *> *;
 
-mixin Elm.Interface_Atspi_Accessible ()
+mixin Elm.Interface.Atspi_Accessible ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_accessible;
@@ -269,7 +269,7 @@ mixin Elm.Interface_Atspi_Accessible ()
             [[Gets widget's accessible children.]]
          }
          values {
-            children: free(own(list<Elm.Interface_Atspi_Accessible *> *), eina_list_free);
+            children: free(own(list<Elm.Interface.Atspi_Accessible *> *), eina_list_free);
          }
       }
       @property role_name @protected {
@@ -315,7 +315,7 @@ mixin Elm.Interface_Atspi_Accessible ()
             [[Sets widget accessible parent.]]
          }
          values {
-            parent: Elm.Interface_Atspi_Accessible *;
+            parent: Elm.Interface.Atspi_Accessible *;
          }
       }
       @property state_set @protected {
@@ -342,7 +342,7 @@ mixin Elm.Interface_Atspi_Accessible ()
       }
       event_emit @class @protected {
          params {
-            @in accessible: Elm.Interface_Atspi_Accessible *; [[Accessibility object.]]
+            @in accessible: Elm.Interface.Atspi_Accessible *; [[Accessibility object.]]
             @in event: const(Eo.Event_Description)*; [[Accessibility event type.]]
             @in event_info: void*; [[Accessibility event details.]]
          }
@@ -401,7 +401,7 @@ mixin Elm.Interface_Atspi_Accessible ()
          return: bool;
          params {
             @in type: Elm.Atspi.Relation_Type;
-            @in relation_object: const(Elm.Interface_Atspi_Accessible)*;
+            @in relation_object: const(Elm.Interface.Atspi_Accessible)*;
          }
       }
       relationship_remove {
@@ -412,7 +412,7 @@ mixin Elm.Interface_Atspi_Accessible ()
          ]]
          params {
             @in type: Elm.Atspi.Relation_Type;
-            @in relation_object: const(Elm.Interface_Atspi_Accessible)*;
+            @in relation_object: const(Elm.Interface.Atspi_Accessible)*;
          }
       }
       relationships_clear {

@@ -1,4 +1,4 @@
-class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface_Atspi_Selection)
+class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection)
 {
    eo_prefix: elm_obj_menu_item;
    methods {
@@ -81,12 +81,12 @@ class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface_Atspi_Selection)
         Elm.Widget.Item.part_text.set;
         Elm.Widget.Item.part_content.get;
         Elm.Widget.Item.part_content.set;
-        Elm.Interface_Atspi_Accessible.children.get;
-        Elm.Interface_Atspi_Accessible.parent.get;
-        Elm.Interface_Atspi_Accessible.role.get;
-        Elm.Interface_Atspi_Accessible.name.get;
-        Elm.Interface_Atspi_Accessible.state_set.get;
-        Elm.Interface_Atspi_Selection.selected_children_count.get;
-        Elm.Interface_Atspi_Selection.selected_child.get;
+        Elm.Interface.Atspi_Accessible.children.get;
+        Elm.Interface.Atspi_Accessible.parent.get;
+        Elm.Interface.Atspi_Accessible.role.get;
+        Elm.Interface.Atspi_Accessible.name.get;
+        Elm.Interface.Atspi_Accessible.state_set.get;
+        Elm.Interface.Atspi.Selection.selected_children_count.get;
+        Elm.Interface.Atspi.Selection.selected_child.get;
    }
 }

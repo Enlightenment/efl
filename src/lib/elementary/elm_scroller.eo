@@ -1,5 +1,5 @@
 class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
-                    Elm.Interface_Atspi_Widget_Action,
+                    Elm.Interface.Atspi_Widget_Action,
                     Evas.Scrollable_Interface)
 {
    eo_prefix: elm_obj_scroller;
@@ -77,7 +77,7 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Interface_Scrollable.page_size.set;
       Elm.Interface_Scrollable.policy.set;
       Elm.Interface_Scrollable.single_direction;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       scroll,page,changed;

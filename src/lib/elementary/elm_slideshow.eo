@@ -1,6 +1,6 @@
 type Elm_Slideshow_Item_Class: __undefined_type;
 
-class Elm.Slideshow (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
+class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_slideshow;
    methods {
@@ -308,7 +308,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.event;
       Elm.Layout.sizing_eval;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       changed;

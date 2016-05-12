@@ -1,7 +1,7 @@
 import elm_icon;
 class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
                     Evas.Clickable_Interface,
-                    Elm.Interface_Atspi_Widget_Action)
+                    Elm.Interface.Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_hoversel;
    methods {
@@ -99,7 +99,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
       Elm.Widget.translate;
       Elm.Widget.event;
       Elm.Button.admits_autorepeat.get;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       dismissed;

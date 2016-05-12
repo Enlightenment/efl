@@ -23,7 +23,7 @@ enum Elm.Popup.Orient
 }
 
 
-class Elm.Popup (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
+class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_popup;
    methods {
@@ -184,8 +184,8 @@ class Elm.Popup (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
       Elm.Layout.text.get;
       Elm.Layout.sizing_eval;
       Elm.Layout.signal_emit;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
-      Elm.Interface_Atspi_Accessible.state_set.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Accessible.state_set.get;
    }
    events {
       block,clicked;

@@ -1,5 +1,5 @@
 class Elm.Fileselector (Elm.Layout, Elm.Interface_Fileselector,
-                        Elm.Interface_Atspi_Widget_Action,
+                        Elm.Interface.Atspi_Widget_Action,
                         Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_fileselector;
@@ -56,7 +56,7 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface_Fileselector,
       Elm.Interface_Fileselector.folder_only;
       Elm.Interface_Fileselector.mode;
       Elm.Interface_Fileselector.current_name;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       done;

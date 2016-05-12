@@ -1,4 +1,4 @@
-class Elm.Index.Item(Elm.Widget.Item, Elm.Interface_Atspi_Widget_Action)
+class Elm.Index.Item(Elm.Widget.Item, Elm.Interface.Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_index_item;
    methods {
@@ -42,7 +42,7 @@ class Elm.Index.Item(Elm.Widget.Item, Elm.Interface_Atspi_Widget_Action)
         Eo.Base.constructor;
         Eo.Base.destructor;
         Elm.Widget.Item.access_register;
-        Elm.Interface_Atspi_Accessible.name.get;
-        Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+        Elm.Interface.Atspi_Accessible.name.get;
+        Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
 }

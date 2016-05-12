@@ -115,7 +115,7 @@ enum Elm.Cnp_Mode
 }
 
 class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
-                 Elm.Interface_Atspi_Text, Elm.Interface_Atspi_Editable_Text, Efl.File,
+                 Elm.Interface.Atspi.Text, Elm.Interface.Atspi_Editable_Text, Efl.File,
                  Evas.Selectable_Interface, Evas.Scrollable_Interface)
 {
    eo_prefix: elm_obj_entry;
@@ -960,32 +960,32 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
       Elm.Layout.content_aliases.get;
       Elm.Interface_Scrollable.policy.set;
       Elm.Interface_Scrollable.bounce_allow.set;
-      Elm.Interface_Atspi_Accessible.state_set.get;
-      Elm.Interface_Atspi_Accessible.name.get;
-      Elm.Interface_Atspi_Text.text.get;
-      Elm.Interface_Atspi_Text.string.get;
-      Elm.Interface_Atspi_Text.attribute.get;
-      Elm.Interface_Atspi_Text.attributes.get;
-      Elm.Interface_Atspi_Text.default_attributes.get;
-      Elm.Interface_Atspi_Text.caret_offset.get;
-      Elm.Interface_Atspi_Text.caret_offset.set;
-      Elm.Interface_Atspi_Text.character.get;
-      Elm.Interface_Atspi_Text.character_extents.get;
-      Elm.Interface_Atspi_Text.character_count.get;
-      Elm.Interface_Atspi_Text.offset_at_point.get;
-      Elm.Interface_Atspi_Text.bounded_ranges.get;
-      Elm.Interface_Atspi_Text.range_extents.get;
-      Elm.Interface_Atspi_Text.selection.get;
-      Elm.Interface_Atspi_Text.selections_count.get;
-      Elm.Interface_Atspi_Text.selection_add;
-      Elm.Interface_Atspi_Text.selection_remove;
-      Elm.Interface_Atspi_Text.selection.set;
-      Elm.Interface_Atspi_Editable_Text.content.set;
-      Elm.Interface_Atspi_Editable_Text.insert;
-      Elm.Interface_Atspi_Editable_Text.copy;
-      Elm.Interface_Atspi_Editable_Text.cut;
-      Elm.Interface_Atspi_Editable_Text.delete;
-      Elm.Interface_Atspi_Editable_Text.paste;
+      Elm.Interface.Atspi_Accessible.state_set.get;
+      Elm.Interface.Atspi_Accessible.name.get;
+      Elm.Interface.Atspi.Text.text.get;
+      Elm.Interface.Atspi.Text.string.get;
+      Elm.Interface.Atspi.Text.attribute.get;
+      Elm.Interface.Atspi.Text.attributes.get;
+      Elm.Interface.Atspi.Text.default_attributes.get;
+      Elm.Interface.Atspi.Text.caret_offset.get;
+      Elm.Interface.Atspi.Text.caret_offset.set;
+      Elm.Interface.Atspi.Text.character.get;
+      Elm.Interface.Atspi.Text.character_extents.get;
+      Elm.Interface.Atspi.Text.character_count.get;
+      Elm.Interface.Atspi.Text.offset_at_point.get;
+      Elm.Interface.Atspi.Text.bounded_ranges.get;
+      Elm.Interface.Atspi.Text.range_extents.get;
+      Elm.Interface.Atspi.Text.selection.get;
+      Elm.Interface.Atspi.Text.selections_count.get;
+      Elm.Interface.Atspi.Text.selection_add;
+      Elm.Interface.Atspi.Text.selection_remove;
+      Elm.Interface.Atspi.Text.selection.set;
+      Elm.Interface.Atspi_Editable_Text.content.set;
+      Elm.Interface.Atspi_Editable_Text.insert;
+      Elm.Interface.Atspi_Editable_Text.copy;
+      Elm.Interface.Atspi_Editable_Text.cut;
+      Elm.Interface.Atspi_Editable_Text.delete;
+      Elm.Interface.Atspi_Editable_Text.paste;
       Efl.File.file.set;
       Efl.File.file.get;
    }

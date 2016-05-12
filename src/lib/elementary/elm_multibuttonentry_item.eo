@@ -1,5 +1,5 @@
 class Elm.Multibuttonentry.Item(Elm.Widget.Item,
-                                Elm.Interface_Atspi_Widget_Action)
+                                Elm.Interface.Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_multibuttonentry_item;
    methods {
@@ -29,7 +29,7 @@ class Elm.Multibuttonentry.Item(Elm.Widget.Item,
         Elm.Widget.Item.part_text.get;
         Elm.Widget.Item.part_text.set;
         Elm.Widget.Item.disable;
-        Elm.Interface_Atspi_Accessible.name.get;
-        Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+        Elm.Interface.Atspi_Accessible.name.get;
+        Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
 }

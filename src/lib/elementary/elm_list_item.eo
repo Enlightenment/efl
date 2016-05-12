@@ -116,8 +116,8 @@ class Elm.List.Item(Elm.Widget.Item)
            Elm.Widget.Item.part_content.get;
            Elm.Widget.Item.part_content.set;
            Elm.Widget.Item.part_content_unset;
-           Elm.Interface_Atspi_Accessible.name.get;
-           Elm.Interface_Atspi_Accessible.state_set.get;
+           Elm.Interface.Atspi_Accessible.name.get;
+           Elm.Interface.Atspi_Accessible.state_set.get;
       }
 }
 

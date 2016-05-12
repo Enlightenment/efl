@@ -1,4 +1,4 @@
-interface Elm.Interface_Atspi_Selection ()
+interface Elm.Interface.Atspi.Selection ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_selection;

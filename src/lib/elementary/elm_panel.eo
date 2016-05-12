@@ -9,7 +9,7 @@ enum Elm.Panel.Orient
 }
 
 class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
-                 Elm.Interface_Atspi_Widget_Action)
+                 Elm.Interface.Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_panel;
    methods {
@@ -83,6 +83,6 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
       Efl.Container.content_unset;
       Efl.Container.content.set;
       Elm.Layout.sizing_eval;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
 }

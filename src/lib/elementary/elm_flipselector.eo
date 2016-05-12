@@ -1,5 +1,5 @@
 class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
-                        Elm.Interface_Atspi_Widget_Action,
+                        Elm.Interface.Atspi_Widget_Action,
                         Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_flipselector;
@@ -135,7 +135,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
       Efl.Ui.Spin.step;
       Efl.Ui.Spin.value;
       Efl.Ui.Spin.interval;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       underflowed;

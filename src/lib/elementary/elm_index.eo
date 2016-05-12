@@ -243,7 +243,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
       Elm.Widget.access;
       Elm.Widget.focus_next;
       Elm.Layout.sizing_eval;
-      Elm.Interface_Atspi_Accessible.children.get;
+      Elm.Interface.Atspi_Accessible.children.get;
    }
    events {
       changed;

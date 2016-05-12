@@ -1,7 +1,7 @@
 import elm_general;
 
-class Elm.Widget.Item(Eo.Base, Elm.Interface_Atspi_Accessible,
-                      Elm.Interface_Atspi_Component)
+class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
+                      Elm.Interface.Atspi_Component)
 {
       eo_prefix: elm_wdg_item;
       legacy_prefix: elm_object_item;
@@ -531,11 +531,11 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface_Atspi_Accessible,
       implements {
            Eo.Base.constructor;
            Eo.Base.destructor;
-           Elm.Interface_Atspi_Accessible.state_set.get;
-           Elm.Interface_Atspi_Component.extents.get;
-           Elm.Interface_Atspi_Component.extents.set;
-           Elm.Interface_Atspi_Component.alpha.get;
-           Elm.Interface_Atspi_Component.layer.get;
-           Elm.Interface_Atspi_Component.focus_grab;
+           Elm.Interface.Atspi_Accessible.state_set.get;
+           Elm.Interface.Atspi_Component.extents.get;
+           Elm.Interface.Atspi_Component.extents.set;
+           Elm.Interface.Atspi_Component.alpha.get;
+           Elm.Interface.Atspi_Component.layer.get;
+           Elm.Interface.Atspi_Component.focus_grab;
       }
 }

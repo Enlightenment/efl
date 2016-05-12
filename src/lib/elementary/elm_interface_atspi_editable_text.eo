@@ -1,4 +1,4 @@
-interface Elm.Interface_Atspi_Editable_Text ()
+interface Elm.Interface.Atspi_Editable_Text ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_editable_text;

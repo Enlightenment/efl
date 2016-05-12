@@ -161,8 +161,8 @@ enum Elm.Illume_Command
    close [[Closes the currently active window]]
 }
 
-class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
-               Elm.Interface_Atspi_Widget_Action, Efl.Pack)
+class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
+               Elm.Interface.Atspi_Widget_Action, Efl.Pack)
 {
    eo_prefix: elm_obj_win;
    methods {
@@ -1169,10 +1169,10 @@ class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
       Elm.Widget.event;
-      Elm.Interface_Atspi_Accessible.parent.get;
-      Elm.Interface_Atspi_Accessible.state_set.get;
-      Elm.Interface_Atspi_Accessible.name.get;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Accessible.parent.get;
+      Elm.Interface.Atspi_Accessible.state_set.get;
+      Elm.Interface.Atspi_Accessible.name.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
       Efl.Container.content_remove;
       Efl.Container.content_iterate;
       Efl.Container.content_count;

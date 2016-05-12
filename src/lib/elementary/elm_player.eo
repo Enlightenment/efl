@@ -1,4 +1,4 @@
-class Elm.Player (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
+class Elm.Player (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_player;
    implements {
@@ -10,7 +10,7 @@ class Elm.Player (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
       Elm.Widget.event;
       Efl.Container.content.set;
       Elm.Layout.sizing_eval;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       forward,clicked;

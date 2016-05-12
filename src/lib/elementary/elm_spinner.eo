@@ -1,5 +1,5 @@
 class Elm.Spinner (Elm.Layout, Efl.Ui.Spin,
-                   Elm.Interface_Atspi_Value, Elm.Interface_Atspi_Widget_Action)
+                   Elm.Interface.Atspi.Value, Elm.Interface.Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_spinner;
    methods {
@@ -158,12 +158,12 @@ class Elm.Spinner (Elm.Layout, Efl.Ui.Spin,
       Efl.Ui.Spin.step;
       Efl.Ui.Spin.value;
       Efl.Ui.Spin.interval;
-      Elm.Interface_Atspi_Accessible.name.get;
-      Elm.Interface_Atspi_Value.value_and_text.get;
-      Elm.Interface_Atspi_Value.value_and_text.set;
-      Elm.Interface_Atspi_Value.range.get;
-      Elm.Interface_Atspi_Value.increment.get;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Accessible.name.get;
+      Elm.Interface.Atspi.Value.value_and_text.get;
+      Elm.Interface.Atspi.Value.value_and_text.set;
+      Elm.Interface.Atspi.Value.range.get;
+      Elm.Interface.Atspi.Value.increment.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       changed;

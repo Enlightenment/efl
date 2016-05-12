@@ -1,4 +1,4 @@
-class Elm.Naviframe (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
+class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_naviframe;
    methods {
@@ -158,7 +158,7 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
       Elm.Layout.text.get;
       Elm.Layout.signal_emit;
       Elm.Layout.sizing_eval;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       transition,finished;

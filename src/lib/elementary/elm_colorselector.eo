@@ -12,7 +12,7 @@ enum Elm.Colorselector.Mode
    all [[All possible color selector is displayed.]]
 }
 
-class Elm.Colorselector (Elm.Layout, Elm.Interface_Atspi_Widget_Action,
+class Elm.Colorselector (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
                          Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_colorselector;
@@ -115,7 +115,7 @@ selected.]]
       Elm.Widget.access;
       Elm.Widget.event;
       Elm.Layout.sizing_eval;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       color,item,selected;

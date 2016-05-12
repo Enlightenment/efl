@@ -11,7 +11,7 @@ enum Elm.Photocam.Zoom_Mode
 }
 
 class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
-                    Elm.Interface_Atspi_Widget_Action, Efl.File,
+                    Elm.Interface.Atspi_Widget_Action, Efl.File,
                     Evas.Clickable_Interface, Evas.Scrollable_Interface,
                     Evas.Zoomable_Interface)
 {
@@ -196,7 +196,7 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
       Elm.Widget.on_focus;
       Elm.Widget.event;
       Elm.Interface_Scrollable.region_bring_in;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
       Efl.File.file.set;
       Efl.File.file.get;
    }

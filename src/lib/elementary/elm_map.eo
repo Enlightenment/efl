@@ -70,7 +70,7 @@ enum Elm.Map.Route_Method
 
 
 class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
-               Elm.Interface_Atspi_Widget_Action,
+               Elm.Interface.Atspi_Widget_Action,
                Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_map;
@@ -632,7 +632,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
       Elm.Widget.event;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       press;

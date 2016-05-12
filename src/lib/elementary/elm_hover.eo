@@ -7,7 +7,7 @@ enum Elm.Hover.Axis
    both [[ELM_HOVER_AXIS_BOTH -- both.]]
 }
 
-class Elm.Hover (Elm.Layout, Evas.Clickable_Interface, Elm.Interface_Atspi_Widget_Action)
+class Elm.Hover (Elm.Layout, Evas.Clickable_Interface, Elm.Interface.Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_hover;
    methods {
@@ -75,7 +75,7 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface, Elm.Interface_Atspi_Widge
       Efl.Container.content_unset;
       Elm.Layout.sizing_eval;
       Elm.Layout.content_aliases.get;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       smart,changed;

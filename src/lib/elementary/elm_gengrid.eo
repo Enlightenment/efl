@@ -8,8 +8,8 @@ enum Elm.Gengrid.Reorder_Type
 }
 
 class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
-                   Evas.Clickable_Interface, Elm.Interface_Atspi_Widget_Action,
-                   Elm.Interface_Atspi_Selection)
+                   Evas.Clickable_Interface, Elm.Interface.Atspi_Widget_Action,
+                   Elm.Interface.Atspi.Selection)
 {
    eo_prefix: elm_obj_gengrid;
    methods {
@@ -559,17 +559,17 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Layout.sizing_eval;
       Elm.Interface_Scrollable.bounce_allow.set;
       Elm.Interface_Scrollable.policy;
-      Elm.Interface_Atspi_Accessible.children.get;
-      Elm.Interface_Atspi_Accessible.state_set.get;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
-      Elm.Interface_Atspi_Selection.selected_children_count.get;
-      Elm.Interface_Atspi_Selection.selected_child.get;
-      Elm.Interface_Atspi_Selection.selected_child_deselect;
-      Elm.Interface_Atspi_Selection.child_select;
-      Elm.Interface_Atspi_Selection.child_deselect;
-      Elm.Interface_Atspi_Selection.is_child_selected;
-      Elm.Interface_Atspi_Selection.all_children_select;
-      Elm.Interface_Atspi_Selection.clear;
+      Elm.Interface.Atspi_Accessible.children.get;
+      Elm.Interface.Atspi_Accessible.state_set.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi.Selection.selected_children_count.get;
+      Elm.Interface.Atspi.Selection.selected_child.get;
+      Elm.Interface.Atspi.Selection.selected_child_deselect;
+      Elm.Interface.Atspi.Selection.child_select;
+      Elm.Interface.Atspi.Selection.child_deselect;
+      Elm.Interface.Atspi.Selection.is_child_selected;
+      Elm.Interface.Atspi.Selection.all_children_select;
+      Elm.Interface.Atspi.Selection.clear;
    }
    events {
       realized;

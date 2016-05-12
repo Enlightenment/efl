@@ -1,5 +1,5 @@
 class Elm.Combobox (Elm.Button, Evas.Selectable_Interface,
-                    Elm.Interface_Atspi_Widget_Action,
+                    Elm.Interface.Atspi_Widget_Action,
                     Elm.Entry, Elm.Genlist, Elm.Hover, Elm.Multibuttonentry)
 {
    eo_prefix: elm_obj_combobox;
@@ -65,7 +65,7 @@ class Elm.Combobox (Elm.Button, Evas.Selectable_Interface,
       Elm.Widget.event;
       Elm.Button.admits_autorepeat.get;
       Elm.Genlist.filter.set;
-      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface.Atspi_Widget_Action.elm_actions.get;
    }
    events {
       dismissed;

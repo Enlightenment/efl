@@ -20,7 +20,7 @@ struct Elm.Tooltip;
 struct Elm.Cursor;
 struct @extern Elm.Theme;
 
-abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Interface_Atspi_Component)
+abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi_Component)
 {
    eo_prefix: elm_obj_widget;
    data: Elm_Widget_Smart_Data;
@@ -863,12 +863,12 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       @virtual .focus_direction;
       @virtual .focus_next;
       @virtual .parent_widget.get;
-      Elm.Interface_Atspi_Accessible.name.get;
-      Elm.Interface_Atspi_Accessible.state_set.get;
-      Elm.Interface_Atspi_Accessible.children.get;
-      Elm.Interface_Atspi_Accessible.parent.get;
-      Elm.Interface_Atspi_Accessible.attributes.get;
-      Elm.Interface_Atspi_Component.focus_grab;
+      Elm.Interface.Atspi_Accessible.name.get;
+      Elm.Interface.Atspi_Accessible.state_set.get;
+      Elm.Interface.Atspi_Accessible.children.get;
+      Elm.Interface.Atspi_Accessible.parent.get;
+      Elm.Interface.Atspi_Accessible.attributes.get;
+      Elm.Interface.Atspi_Component.focus_grab;
    }
    events {
       moved;

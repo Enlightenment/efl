@@ -1,4 +1,4 @@
-class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm.Interface_Atspi_Selection)
+class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm.Interface.Atspi.Selection)
 {
    eo_prefix: elm_obj_menu;
    methods {
@@ -76,9 +76,9 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm.Interface_Atspi_Select
       Elm.Widget.widget_parent;
       Elm.Widget.theme_apply;
       Elm.Widget.translate;
-      Elm.Interface_Atspi_Accessible.children.get;
-      Elm.Interface_Atspi_Selection.selected_children_count.get;
-      Elm.Interface_Atspi_Selection.selected_child.get;
+      Elm.Interface.Atspi_Accessible.children.get;
+      Elm.Interface.Atspi.Selection.selected_children_count.get;
+      Elm.Interface.Atspi.Selection.selected_child.get;
    }
    events {
       dismissed;
