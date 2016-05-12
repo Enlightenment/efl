@@ -3,7 +3,7 @@ import efl_network_server;
 type @extern Ecore_Con_Eet_Data_Cb: __undefined_type; /* FIXME: function pointers not supported. */
 type @extern Ecore_Con_Eet_Raw_Data_Cb: __undefined_type; /* FIXME: function pointers not supported. */
 
-struct @extern Eet_Data_Descriptor;
+struct @extern Eet.Data.Descriptor;
 struct Ecore.Con.Reply;
 
 class Ecore.Con.Eet.Base (Eo.Base) {
@@ -60,12 +60,12 @@ class Ecore.Con.Eet.Base (Eo.Base) {
          }
       }
       register {
-         [[Function to register a \@ref Eet_Data_Descriptor to the
+         [[Function to register a \@ref Eet.Data.Descriptor to the
            ecore_con_eet object.]]
          legacy: ecore_con_eet;
          params {
             name: const (char) *; [[The name of the eet stream.]]
-            edd: Eet_Data_Descriptor *; [[The Eet_Data_Descriptor that
+            edd: Eet.Data.Descriptor *; [[The Eet.Data.Descriptor that
                                           is to be registered.]]
          }
       }
