@@ -1,4 +1,4 @@
-class Efl.Vpath_File (Eo.Base)
+class Efl.Vpath.File (Eo.Base)
 {
    [[ VPath File is an actual representation of a downloaded/mapped vpath file
 

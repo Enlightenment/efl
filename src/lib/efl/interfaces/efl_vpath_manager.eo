@@ -1,4 +1,4 @@
-class Efl.Vpath_Manager (Eo.Base)
+class Efl.Vpath.Manager (Eo.Base)
 {
    [[ Vpath Manager manages multiple VPath objects that remap/download
 
@@ -12,7 +12,7 @@ class Efl.Vpath_Manager (Eo.Base)
          params {
             path: const(char)*; [[ The input virtual file path to fetch ]]
          }
-         return: own(Efl.Vpath_File *); [[ An object representing the file ]]
+         return: own(Efl.Vpath.File *); [[ An object representing the file ]]
       }
       register @class {
          [[Register a vpath with the manager ]]

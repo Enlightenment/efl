@@ -1,4 +1,4 @@
-class Efl.Vpath_File.Core (Efl.Vpath_File)
+class Efl.Vpath.File.Core (Efl.Vpath.File)
 {
    [[ Core EFL implementation of a Vpath File
 
@@ -9,7 +9,7 @@ class Efl.Vpath_File.Core (Efl.Vpath_File)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Efl.Vpath_File.do;
-      Efl.Vpath_File.wait;
+      Efl.Vpath.File.do;
+      Efl.Vpath.File.wait;
    }
 }
