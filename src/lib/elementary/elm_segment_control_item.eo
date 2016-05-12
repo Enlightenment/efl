@@ -1,4 +1,4 @@
-class Elm.Segment_Control_Item(Elm.Widget.Item)
+class Elm.Segment_Control.Item(Elm.Widget.Item)
 {
    eo_prefix: elm_obj_segment_control_item;
    methods {
