@@ -1,4 +1,4 @@
-class Ector.Cairo_Software.Surface (Ector.Cairo.Surface, Ector.Software.Buffer.Base)
+class Ector.Cairo.Software.Surface (Ector.Cairo.Surface, Ector.Software.Buffer.Base)
 {
    [[Ector surface on a cairo software backend
 
