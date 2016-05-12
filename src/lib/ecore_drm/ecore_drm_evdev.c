@@ -585,6 +585,22 @@ _device_handle_button(struct libinput_device *device, struct libinput_event_poin
      ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
 }
 
+#if LIBINPUT_HIGHER_08
+static double
+_event_scroll_get(struct libinput_event_pointer *pe, enum libinput_pointer_axis axis)
+{
+   switch (libinput_event_pointer_get_axis_source(pe))
+     {
+      case LIBINPUT_POINTER_AXIS_SOURCE_WHEEL:
+         return libinput_event_pointer_get_axis_value_discrete(pe, axis);
+      case LIBINPUT_POINTER_AXIS_SOURCE_FINGER:
+      case LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS:
+         return libinput_event_pointer_get_axis_value(pe, axis);
+     }
+   return 0.0;
+}
+#endif
+
 static void 
 _device_handle_axis(struct libinput_device *device, struct libinput_event_pointer *event)
 {
@@ -618,13 +634,13 @@ _device_handle_axis(struct libinput_device *device, struct libinput_event_pointe
 #if LIBINPUT_HIGHER_08
    axis = LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL;
    if (libinput_event_pointer_has_axis(event, axis))
-     ev->z = libinput_event_pointer_get_axis_value(event, axis);
+     ev->z = _event_scroll_get(event, axis);
 
    axis = LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL;
    if (libinput_event_pointer_has_axis(event, axis)) 
      {
         ev->direction = 1;
-        ev->z = libinput_event_pointer_get_axis_value(event, axis);
+        ev->z = _event_scroll_get(event, axis);
      }
 #else
    axis = libinput_event_pointer_get_axis(event);
