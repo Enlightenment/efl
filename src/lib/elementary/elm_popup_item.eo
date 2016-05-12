@@ -1,15 +1,15 @@
-class Elm.Popup_Item(Elm.Widget_Item)
+class Elm.Popup.Item(Elm.Widget.Item)
 {
       eo_prefix: elm_obj_popup_item;
       implements {
            Eo.Base.constructor;
            Eo.Base.destructor;
-           Elm.Widget_Item.disable;
-           Elm.Widget_Item.signal_emit;
-           Elm.Widget_Item.part_text.get;
-           Elm.Widget_Item.part_text.set;
-           Elm.Widget_Item.part_content.get;
-           Elm.Widget_Item.part_content.set;
-           Elm.Widget_Item.part_content_unset;
+           Elm.Widget.Item.disable;
+           Elm.Widget.Item.signal_emit;
+           Elm.Widget.Item.part_text.get;
+           Elm.Widget.Item.part_text.set;
+           Elm.Widget.Item.part_content.get;
+           Elm.Widget.Item.part_content.set;
+           Elm.Widget.Item.part_content_unset;
       }
 }

@@ -135,8 +135,8 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
               items list is changed. It should be fetched again with another
               call to this function when changes happen.
             ]]
-            return: const(list<Elm.Widget_Item *>)*; [[
-               The list of items (#Elm.Widget_Item as data) or $null on
+            return: const(list<Elm.Widget.Item *>)*; [[
+               The list of items (#Elm.Widget.Item as data) or $null on
                errors.
             ]]
          }
@@ -187,7 +187,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
       @property item_current {
          get {
             [[Returns the currently displayed item, in a given slideshow widget.]]
-            return: Elm.Widget_Item *; [[A handle to the item being displayed
+            return: Elm.Widget.Item *; [[A handle to the item being displayed
                                          in $obj or $null, if none is (and
                                          on errors)]]
          }
@@ -238,7 +238,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
          [[Get the the item, in a given slideshow widget, placed at
            position $nth, in its internal items list.
          ]]
-         return: Elm.Widget_Item *; [[The item stored in $obj at position
+         return: Elm.Widget.Item *; [[The item stored in $obj at position
                                       $nth or $null if there's no item with
                                       that index (and on errors).]]
          params {
@@ -272,7 +272,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
            parameter is going to be passed to both class functions of the
            item.
          ]]
-         return: Elm.Widget_Item *; [[A handle to the item added or $null on errors.]]
+         return: Elm.Widget.Item *; [[A handle to the item added or $null on errors.]]
          params {
             @in itc: const(Elm_Slideshow_Item_Class)*; [[The item class for the item.]]
             @in data: const(void)*; [[The item's data.]]
@@ -289,7 +289,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
            Elementary photo, for example. The $data parameter is going to
            be passed to both class functions of the item.
          ]]
-         return: Elm.Widget_Item *; [[Returns The slideshow item handle,
+         return: Elm.Widget.Item *; [[Returns The slideshow item handle,
                                       on success, or $null on errors.]]
          params {
             @in itc: const(Elm_Slideshow_Item_Class)*; [[The item class for the item.]]

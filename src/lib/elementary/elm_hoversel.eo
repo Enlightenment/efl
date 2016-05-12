@@ -40,7 +40,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
       @property items {
          get {
             [[Get the list of items within the given hoversel.]]
-            return: const(list<Elm.Widget_Item *>)*;
+            return: const(list<Elm.Widget.Item *>)*;
          }
       }
       @property auto_update {
@@ -69,14 +69,14 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
          [[Add an item to the hoversel button
 
            This adds an item to the hoversel to show when it is clicked. Note: if you
-           need to use an icon from an edje file then use Elm.Hoversel_Item.icon.set
+           need to use an icon from an edje file then use Elm.Hoversel.Item.icon.set
            right after this function, and set icon_file to $null here.]]
 
            /* FIXME: Make the hoversel_item reference in the doc a real ref. */
            /* FIXME-doc
            For more information on what $icon_file and $icon_type are, see the
            @ref Icon "icon documentation". */
-         return: Elm.Widget_Item *; [[A handle to the added item.]]
+         return: Elm.Widget.Item *; [[A handle to the added item.]]
          params {
             @in label: const(char)* @optional; [[The text label to use for the item (NULL if not desired)]]
             @in icon_file: const(char)* @optional; [[An image file path on disk to use for the icon or standard icon name (NULL if not desired)]]

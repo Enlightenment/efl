@@ -1,4 +1,4 @@
-class Elm.Diskselector_Item(Elm.Widget_Item)
+class Elm.Diskselector.Item(Elm.Widget.Item)
 {
       eo_prefix: elm_obj_diskselector_item;
       methods {
@@ -17,7 +17,7 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                     ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; [[The item before $item, or $null if none or on failure.]]
+                     item: Elm.Widget.Item *; [[The item before $item, or $null if none or on failure.]]
                 }
            }
            @property next {
@@ -35,7 +35,7 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                      ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; [[The item after $item, or $null if none or on failure.]]
+                     item: Elm.Widget.Item *; [[The item after $item, or $null if none or on failure.]]
                 }
            }
            @property selected {
@@ -82,9 +82,9 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
       implements {
            Eo.Base.constructor;
            Eo.Base.destructor;
-           Elm.Widget_Item.part_text.get;
-           Elm.Widget_Item.part_text.set;
-           Elm.Widget_Item.part_content.get;
-           Elm.Widget_Item.part_content.set;
+           Elm.Widget.Item.part_text.get;
+           Elm.Widget.Item.part_text.set;
+           Elm.Widget.Item.part_content.get;
+           Elm.Widget.Item.part_content.set;
       }
 }

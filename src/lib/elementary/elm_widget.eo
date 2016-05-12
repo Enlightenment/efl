@@ -405,7 +405,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       @property focused_item {
          get {
             [[Get the focused widget item.]]
-            return: Elm.Widget_Item *;
+            return: Elm.Widget.Item *;
          }
       }
       @property parents_bounce {
@@ -491,7 +491,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
 
            @since 1.16]]
          params {
-            @in next_item: Elm.Widget_Item * @nullable; [[Focus next object item]]
+            @in next_item: Elm.Widget.Item * @nullable; [[Focus next object item]]
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
@@ -499,7 +499,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
          [[Get the next object item with specific focus direction.
 
            @since 1.16]]
-         return: Elm.Widget_Item *; [[Focus next object item]]
+         return: Elm.Widget.Item *; [[Focus next object item]]
          params {
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
@@ -591,7 +591,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       on_focus {
          [['Virtual' function handling focus in/out events on the widget.  return true if this widget can handle focus, false otherwise]]
          params {
-            @in item: Elm.Widget_Item * @nullable;
+            @in item: Elm.Widget.Item * @nullable;
          }
          return: bool;
       }
@@ -618,7 +618,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
             @in base: const(Evas.Object)*;
             @in degree: double;
             @out direction: Evas.Object *;
-            @out direction_item: Elm.Widget_Item *;
+            @out direction_item: Elm.Widget.Item *;
             @out weight: double;
          }
          return: bool;
@@ -658,7 +658,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
             @in list_data_get: list_data_get_func_type;
             @in degree: double;
             @out direction: Evas.Object *;
-            @out direction_item: Elm.Widget_Item *;
+            @out direction_item: Elm.Widget.Item *;
             @out weight: double;
          }
       }
@@ -699,7 +699,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
          params {
             @in dir: Elm.Focus_Direction;
             @out next: Evas.Object *;
-            @out next_item: Elm.Widget_Item *;
+            @out next_item: Elm.Widget.Item *;
          }
       }
       translatable_part_text_get @const {
@@ -731,7 +731,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       }
       focus_steal {
          params {
-            @in item: Elm.Widget_Item * @nullable;
+            @in item: Elm.Widget.Item * @nullable;
          }
       }
       focus_hide_handle {
@@ -741,7 +741,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
          params {
             @in dir: Elm.Focus_Direction;
             @out next: Evas.Object *;
-            @out next_item: Elm.Widget_Item *;
+            @out next_item: Elm.Widget.Item *;
          }
          return: bool;
       }
@@ -752,7 +752,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
             @in list_data_get: list_data_get_func_type;
             @in dir: Elm.Focus_Direction;
             @out next: Evas.Object *;
-            @out next_item: Elm.Widget_Item *;
+            @out next_item: Elm.Widget.Item *;
          }
       }
       focus_mouse_up_handle {
@@ -768,7 +768,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
             @in base: const(Evas.Object)*;
             @in degree: double;
             @out direction: Evas.Object *;
-            @out direction_item: Elm.Widget_Item *;
+            @out direction_item: Elm.Widget.Item *;
             @out weight: double;
          }
       }

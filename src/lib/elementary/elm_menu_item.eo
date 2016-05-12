@@ -1,4 +1,4 @@
-class Elm.Menu_Item(Elm.Widget_Item, Elm.Interface_Atspi_Selection)
+class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface_Atspi_Selection)
 {
    eo_prefix: elm_obj_menu_item;
    methods {
@@ -35,11 +35,11 @@ class Elm.Menu_Item(Elm.Widget_Item, Elm.Interface_Atspi_Selection)
         }
       prev_get @const {
             [[Get the previous item in the menu.]]
-            return: Elm.Widget_Item*;
+            return: Elm.Widget.Item*;
         }
       next_get @const {
              [[Get the next item in the menu.]]
-             return: Elm.Widget_Item*;
+             return: Elm.Widget.Item*;
         }
       index_get @const {
              [[Get the next item in the menu.]]
@@ -56,7 +56,7 @@ class Elm.Menu_Item(Elm.Widget_Item, Elm.Interface_Atspi_Selection)
         }
      subitems_get @const {
              [[Returns a list of $item's subitems.]]
-             return: const (list<Elm.Widget_Item *>) *; [[a list of $item's subitems]]
+             return: const (list<Elm.Widget.Item *>) *; [[a list of $item's subitems]]
         }
      is_separator @const {
              [[Returns whether $item is a separator.]]
@@ -75,12 +75,12 @@ class Elm.Menu_Item(Elm.Widget_Item, Elm.Interface_Atspi_Selection)
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm.Widget_Item.disable;
-        Elm.Widget_Item.signal_emit;
-        Elm.Widget_Item.part_text.get;
-        Elm.Widget_Item.part_text.set;
-        Elm.Widget_Item.part_content.get;
-        Elm.Widget_Item.part_content.set;
+        Elm.Widget.Item.disable;
+        Elm.Widget.Item.signal_emit;
+        Elm.Widget.Item.part_text.get;
+        Elm.Widget.Item.part_text.set;
+        Elm.Widget.Item.part_content.get;
+        Elm.Widget.Item.part_content.set;
         Elm.Interface_Atspi_Accessible.children.get;
         Elm.Interface_Atspi_Accessible.parent.get;
         Elm.Interface_Atspi_Accessible.role.get;

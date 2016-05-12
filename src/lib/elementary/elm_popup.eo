@@ -148,7 +148,7 @@ class Elm.Popup (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
            only one of content, content-text and item(s) can be there
            in a popup content area.
          ]]
-         return: Elm.Widget_Item *; [[A handle to the item added or $null on errors.]]
+         return: Elm.Widget.Item *; [[A handle to the item added or $null on errors.]]
          params {
             @in label: const(char)*; [[The Label of the new item.]]
             @in icon: Evas.Object * @optional; [[Icon to be set on new item.]]

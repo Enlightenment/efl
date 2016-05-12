@@ -43,21 +43,21 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
          get {
             [[Get a list of all the naviframe items.]]
 
-            return: free(own(list<Elm.Widget_Item *> *), eina_list_free) @warn_unused; [[A list of naviframe items, @Elm.Widget_Item, or $NULL on failure. Note: The returned list MUST be freed.]]
+            return: free(own(list<Elm.Widget.Item *> *), eina_list_free) @warn_unused; [[A list of naviframe items, @Elm.Widget.Item, or $NULL on failure. Note: The returned list MUST be freed.]]
          }
       }
       @property top_item {
          get {
             [[Get a top item on the naviframe stack]]
 
-            return: Elm.Widget_Item *; [[The top item on the naviframe stack or $NULL, if the stack is empty]]
+            return: Elm.Widget.Item *; [[The top item on the naviframe stack or $NULL, if the stack is empty]]
          }
       }
       @property bottom_item {
          get {
             [[Get a bottom item on the naviframe stack]]
 
-            return: Elm.Widget_Item *; [[The bottom item on the naviframe stack or $NULL, if the stack is empty]]
+            return: Elm.Widget.Item *; [[The bottom item on the naviframe stack or $NULL, if the stack is empty]]
          }
       }
       item_pop {
@@ -79,9 +79,9 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
            The item is inserted into the naviframe straight away without any
            transition operations. This item will be deleted when it is popped.]]
 
-         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
+         return: Elm.Widget.Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in before: Elm.Widget_Item *; [[The naviframe item to insert before.]]
+            @in before: Elm.Widget.Item *; [[The naviframe item to insert before.]]
             @in title_label: const(char)* @optional; [[The label in the title area. The name of the title label part is "elm.text.title"]]
             @in prev_btn: Evas.Object * @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
             @in next_btn: Evas.Object * @nullable; [[The button to go to the next item. Or It could be just an extra function button. The name of the next_btn part is "elm.swallow.next_btn"]]
@@ -101,7 +101,7 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
            The following styles are available for this item:
            "default"]]
 
-         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
+         return: Elm.Widget.Item *; [[The created item or $NULL upon failure.]]
          params {
             @in title_label: const(char)* @optional; [[The label in the title area. The name of the title label part is "elm.text.title"]]
             @in prev_btn: Evas.Object * @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
@@ -126,9 +126,9 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
            The following styles are available for this item:
            "default"]]
 
-         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
+         return: Elm.Widget.Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in after: Elm.Widget_Item *; [[The naviframe item to insert after.]]
+            @in after: Elm.Widget.Item *; [[The naviframe item to insert after.]]
             @in title_label: const(char)* @optional; [[The label in the title area. The name of the title label part is "elm.text.title"]]
             @in prev_btn: Evas.Object * @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
             @in next_btn: Evas.Object * @nullable; [[The button to go to the next item. Or It could be just an extra function button. The name of the next_btn part is "elm.swallow.next_btn"]]

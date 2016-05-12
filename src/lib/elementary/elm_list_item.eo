@@ -1,4 +1,4 @@
-class Elm.List_Item(Elm.Widget_Item)
+class Elm.List.Item(Elm.Widget.Item)
 {
       eo_prefix: elm_obj_list_item;
       methods {
@@ -64,7 +64,7 @@ class Elm.List_Item(Elm.Widget_Item)
                      legacy: elm_list_item_prev;
                 }
                 values {
-                     item: Elm.Widget_Item *; [[The item before or $null.]]
+                     item: Elm.Widget.Item *; [[The item before or $null.]]
                 }
            }
            @property next {
@@ -76,7 +76,7 @@ class Elm.List_Item(Elm.Widget_Item)
                      legacy: elm_list_item_next;
                 }
                 values {
-                     item: Elm.Widget_Item *; [[The item after or $null.]]
+                     item: Elm.Widget.Item *; [[The item after or $null.]]
                 }
            }
            /*      init { FIXME
@@ -106,16 +106,16 @@ class Elm.List_Item(Elm.Widget_Item)
       }
       implements {
            Eo.Base.constructor;
-           Elm.Widget_Item.disable;
-           Elm.Widget_Item.del_pre;
-           Elm.Widget_Item.signal_emit;
-           Elm.Widget_Item.focus.set;
-           Elm.Widget_Item.focus.get;
-           Elm.Widget_Item.part_text.get;
-           Elm.Widget_Item.part_text.set;
-           Elm.Widget_Item.part_content.get;
-           Elm.Widget_Item.part_content.set;
-           Elm.Widget_Item.part_content_unset;
+           Elm.Widget.Item.disable;
+           Elm.Widget.Item.del_pre;
+           Elm.Widget.Item.signal_emit;
+           Elm.Widget.Item.focus.set;
+           Elm.Widget.Item.focus.get;
+           Elm.Widget.Item.part_text.get;
+           Elm.Widget.Item.part_text.set;
+           Elm.Widget.Item.part_content.get;
+           Elm.Widget.Item.part_content.set;
+           Elm.Widget.Item.part_content_unset;
            Elm.Interface_Atspi_Accessible.name.get;
            Elm.Interface_Atspi_Accessible.state_set.get;
       }

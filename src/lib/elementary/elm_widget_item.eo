@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.Widget_Item(Eo.Base, Elm.Interface_Atspi_Accessible,
+class Elm.Widget.Item(Eo.Base, Elm.Interface_Atspi_Accessible,
                       Elm.Interface_Atspi_Component)
 {
       eo_prefix: elm_wdg_item;
@@ -516,14 +516,14 @@ class Elm.Widget_Item(Eo.Base, Elm.Interface_Atspi_Accessible,
                 params {
                      dir: Elm.Focus_Direction; [[Focus direction]]
                 }
-                return: Elm.Widget_Item *; [[Focus next object item]]
+                return: Elm.Widget.Item *; [[Focus next object item]]
            }
            focus_next_item_set {
                 [[Set the next object item with specific focus direction.
 
                   @since 1.16]]
                 params {
-                     next_item: Elm.Widget_Item * @nullable; [[Focus next object item]]
+                     next_item: Elm.Widget.Item * @nullable; [[Focus next object item]]
                      dir: Elm.Focus_Direction; [[Focus direction]]
                 }
            }

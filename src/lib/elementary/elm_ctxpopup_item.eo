@@ -1,4 +1,4 @@
-class Elm.Ctxpopup_Item(Elm.Widget_Item)
+class Elm.Ctxpopup.Item(Elm.Widget.Item)
 {
    eo_prefix: elm_obj_ctxpopup_item;
    methods {
@@ -13,7 +13,7 @@ class Elm.Ctxpopup_Item(Elm.Widget_Item)
             ]]
          }
          values {
-              item: Elm.Widget_Item *; [[The item before the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
+              item: Elm.Widget.Item *; [[The item before the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
          }
       }
       @property next {
@@ -27,7 +27,7 @@ class Elm.Ctxpopup_Item(Elm.Widget_Item)
             ]]
          }
          values {
-              item: Elm.Widget_Item *; [[The item after the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
+              item: Elm.Widget.Item *; [[The item after the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
          }
       }
       init {
@@ -40,13 +40,13 @@ class Elm.Ctxpopup_Item(Elm.Widget_Item)
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm.Widget_Item.disable;
-        Elm.Widget_Item.signal_emit;
-        Elm.Widget_Item.part_text.get;
-        Elm.Widget_Item.part_text.set;
-        Elm.Widget_Item.part_content.get;
-        Elm.Widget_Item.part_content.set;
-        Elm.Widget_Item.focus.set;
-        Elm.Widget_Item.focus.get;
+        Elm.Widget.Item.disable;
+        Elm.Widget.Item.signal_emit;
+        Elm.Widget.Item.part_text.get;
+        Elm.Widget.Item.part_text.set;
+        Elm.Widget.Item.part_content.get;
+        Elm.Widget.Item.part_content.set;
+        Elm.Widget.Item.focus.set;
+        Elm.Widget.Item.focus.get;
    }
 }

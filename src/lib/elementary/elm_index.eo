@@ -113,7 +113,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
            $item will be the pointer returned back on $"changed",
            "delay,changed" and $"selected" smart events.]]
 
-         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
+         return: Elm.Widget.Item *; [[A handle to the item added or $NULL, on errors]]
          params {
             @in letter: const(char)*; [[Letter under which the item should be indexed]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is selected.]]
@@ -139,9 +139,9 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
            Note: If $relative is $NULL this function will behave as
            elm_index_item_append().]]
 
-         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
+         return: Elm.Widget.Item *; [[A handle to the item added or $NULL, on errors]]
          params {
-            @in after: Elm.Widget_Item *; [[The index item to insert after.]]
+            @in after: Elm.Widget.Item *; [[The index item to insert after.]]
             @in letter: const(char)*; [[Letter under which the item should be indexed]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
             @in data: const(void)* @optional; [[The item data to set for the index's item]]
@@ -150,7 +150,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
       item_find {
          [[Find a given index widget's item, using item data.]]
 
-         return: Elm.Widget_Item *; [[The index item handle, if found, or $NULL otherwise]]
+         return: Elm.Widget.Item *; [[The index item handle, if found, or $NULL otherwise]]
          params {
             @in data: const(void)*; [[The item data pointed to by the desired index item]]
          }
@@ -168,9 +168,9 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
            Note: If $relative is $NULL this function will behave as
            elm_index_item_prepend().]]
 
-         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
+         return: Elm.Widget.Item *; [[A handle to the item added or $NULL, on errors]]
          params {
-            @in before: Elm.Widget_Item *; [[The index item to insert after.]]
+            @in before: Elm.Widget.Item *; [[The index item to insert after.]]
             @in letter: const(char)*; [[Letter under which the item should be indexed]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
             @in data: const(void)* @optional; [[The item data to set for the index's item]]
@@ -186,7 +186,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
            $item will be the pointer returned back on $"changed",
            "delay,changed" and $"selected" smart events.]]
 
-         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
+         return: Elm.Widget.Item *; [[A handle to the item added or $NULL, on errors]]
          params {
             @in letter: const(char)*; [[Letter under which the item should be indexed]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is selected.]]
@@ -196,7 +196,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
       selected_item_get @const {
          [[Returns the last selected item, for a given index widget.]]
 
-         return: Elm.Widget_Item *; [[The last item selected on $obj (or $NULL, on errors).]]
+         return: Elm.Widget.Item *; [[The last item selected on $obj (or $NULL, on errors).]]
          params {
             @in level: int; [[$0 or $1, the currently implemented levels.]]
          }
@@ -211,7 +211,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
            $item will be the pointer returned back on $"changed",
            "delay,changed" and $"selected" smart events.]]
 
-         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
+         return: Elm.Widget.Item *; [[A handle to the item added or $NULL, on errors]]
          params {
             @in letter: const(char)*; [[Letter under which the item should be indexed]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]

@@ -1,6 +1,6 @@
 import elm_icon;
 
-class Elm.Hoversel_Item(Elm.Widget_Item)
+class Elm.Hoversel.Item(Elm.Widget.Item)
 {
    eo_prefix: elm_obj_hoversel_item;
    methods {
@@ -22,13 +22,13 @@ class Elm.Hoversel_Item(Elm.Widget_Item)
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm.Widget_Item.disable;
-        Elm.Widget_Item.signal_emit;
-        Elm.Widget_Item.part_text.set;
-        Elm.Widget_Item.part_text.get;
-        Elm.Widget_Item.style.get;
-        Elm.Widget_Item.style.set;
-        Elm.Widget_Item.focus.set;
-        Elm.Widget_Item.focus.get;
+        Elm.Widget.Item.disable;
+        Elm.Widget.Item.signal_emit;
+        Elm.Widget.Item.part_text.set;
+        Elm.Widget.Item.part_text.get;
+        Elm.Widget.Item.style.get;
+        Elm.Widget.Item.style.set;
+        Elm.Widget.Item.focus.set;
+        Elm.Widget.Item.focus.get;
    }
 }

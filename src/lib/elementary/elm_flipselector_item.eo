@@ -1,4 +1,4 @@
-class Elm.Flipselector_Item(Elm.Widget_Item)
+class Elm.Flipselector.Item(Elm.Widget.Item)
 {
    eo_prefix: elm_obj_flipselector_item;
    methods {
@@ -33,7 +33,7 @@ class Elm.Flipselector_Item(Elm.Widget_Item)
 
               See also @.next_get.
             ]]
-            return: Elm.Widget_Item *; [[The item before the $item, in its parent's list. If there is no previous item for $item or there's an error, $null is returned.]]
+            return: Elm.Widget.Item *; [[The item before the $item, in its parent's list. If there is no previous item for $item or there's an error, $null is returned.]]
         }
       next_get @const {
             [[Get the item after $item in a flip selector widget's
@@ -41,14 +41,14 @@ class Elm.Flipselector_Item(Elm.Widget_Item)
 
               See also @.prev_get.
             ]]
-             return: Elm.Widget_Item *; [[The item after the $item, in its parent's list. If there is no next item for $item or there's an error, $null is returned.]]
+             return: Elm.Widget.Item *; [[The item after the $item, in its parent's list. If there is no next item for $item or there's an error, $null is returned.]]
         }
    }
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm.Widget_Item.signal_emit;
-        Elm.Widget_Item.part_text.get;
-        Elm.Widget_Item.part_text.set;
+        Elm.Widget.Item.signal_emit;
+        Elm.Widget.Item.part_text.get;
+        Elm.Widget.Item.part_text.set;
    }
 }

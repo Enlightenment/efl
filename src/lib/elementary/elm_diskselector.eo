@@ -94,7 +94,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
               See also @.item_append,
               @.items.get.
             ]]
-            return: Elm.Widget_Item *; [[The first item, or $null if none.]]
+            return: Elm.Widget.Item *; [[The first item, or $null if none.]]
          }
       }
       @property items {
@@ -105,7 +105,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
               \@ref elm_object_item_del,
               @.clear.
             ]]
-            return: const(list<Elm.Widget_Item*>)*; [[A $list of diskselector items, or $ull on failure.]]
+            return: const(list<Elm.Widget.Item*>)*; [[A $list of diskselector items, or $ull on failure.]]
          }
       }
       @property last_item {
@@ -118,7 +118,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
               See also @.item_append,
               @.items.get.
             ]]
-            return: Elm.Widget_Item *; [[The last item, or $null if none.]]
+            return: Elm.Widget.Item *; [[The last item, or $null if none.]]
          }
       }
       @property selected_item {
@@ -135,7 +135,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
               apply on the selected item. More details on
               @.side_text_max_length.set.
             ]]
-            return: Elm.Widget_Item *; [[The selected diskselector item.]]
+            return: Elm.Widget.Item *; [[The selected diskselector item.]]
          }
       }
       item_append {
@@ -174,7 +174,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
             * elm_diskselector_item_append(disk, "label", ic, NULL, NULL);
             * @endcode
             */
-         return: Elm.Widget_Item *;
+         return: Elm.Widget.Item *;
          params {
             @in label: const(char)*; [[The label of the diskselector item.]]
             @in icon: Evas.Object * @optional; [[The icon object to use at left side of the item. An

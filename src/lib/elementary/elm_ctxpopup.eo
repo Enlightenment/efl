@@ -114,7 +114,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface_Atspi_Widget_Action, Efl.Orientati
 
               @since 1.11
             ]]
-            return: const(list<Elm.Widget_Item*>)*; [[The list of items or
+            return: const(list<Elm.Widget.Item*>)*; [[The list of items or
             $null on errors.]]
 
          }
@@ -129,7 +129,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface_Atspi_Widget_Action, Efl.Orientati
 
               @since 1.11
             ]]
-            return: Elm.Widget_Item *; [[The first item or $null, if it has no items (and on
+            return: Elm.Widget.Item *; [[The first item or $null, if it has no items (and on
               errors).]]
 
          }
@@ -144,7 +144,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface_Atspi_Widget_Action, Efl.Orientati
 
               @since 1.1
             ]]
-            return: Elm.Widget_Item *; [[The last item or $null, if it has no items (and on
+            return: Elm.Widget.Item *; [[The last item or $null, if it has no items (and on
               errors).]]
 
          }
@@ -169,7 +169,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface_Atspi_Widget_Action, Efl.Orientati
 
            See also \@ref elm_object_content_set.
          ]]
-         return: Elm.Widget_Item *; [[A handle to the item added or $null, on errors.]]
+         return: Elm.Widget.Item *; [[A handle to the item added or $null, on errors.]]
 
          params {
             @in label: const(char)*; [[The Label of the new item]]
@@ -188,7 +188,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface_Atspi_Widget_Action, Efl.Orientati
 
            @since 1.11
          ]]
-         return: Elm.Widget_Item *; [[A handle to the item added or $null, on errors.]]
+         return: Elm.Widget.Item *; [[A handle to the item added or $null, on errors.]]
 
          params {
             @in label: const(char)*; [[The Label of the new item]]

@@ -1,4 +1,4 @@
-enum Elm.Toolbar_Item.Scrollto_Type
+enum Elm.Toolbar.Item.Scrollto_Type
 {
    [[Defines where to position the item in the toolbar.]]
    legacy: elm_toolbar_item_scrollto;
@@ -10,7 +10,7 @@ enum Elm.Toolbar_Item.Scrollto_Type
    last = (1 << 3) [[to the last of viewport]]
 }
 
-struct Elm.Toolbar_Item.State
+struct Elm.Toolbar.Item.State
 {
    [[
      State of a Elm_Toolbar_Item.
@@ -23,7 +23,7 @@ struct Elm.Toolbar_Item.State
    data: const(void)*;
 }
 
-class Elm.Toolbar_Item(Elm.Widget_Item)
+class Elm.Toolbar.Item(Elm.Widget.Item)
 {
       eo_prefix: elm_obj_toolbar_item;
       methods {
@@ -35,7 +35,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; [[The item before $item, or $null
+                     item: Elm.Widget.Item *; [[The item before $item, or $null
                                                 if none or on failure.]]
                 }
            }
@@ -47,7 +47,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; [[The item after $item, or $null
+                     item: Elm.Widget.Item *; [[The item after $item, or $null
                                                 if none or on failure.]]
                 }
            }
@@ -178,7 +178,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      return: bool;
                 }
                 values {
-                     state: Elm.Toolbar_Item.State * @nullable;
+                     state: Elm.Toolbar.Item.State * @nullable;
                 }
            }
            /*      init { FIXME
@@ -230,12 +230,12 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked when this state is selected.]]
                      @in data: const (void) * @optional; [[The data to associate with the state.]]
                 }
-                return: Elm.Toolbar_Item.State *; [[The toolbar item state, or $null upon failure.]]
+                return: Elm.Toolbar.Item.State *; [[The toolbar item state, or $null upon failure.]]
            }
            state_del {
                 [[Delete a previously added state to $item.]]
                 params {
-                     @in state: Elm.Toolbar_Item.State *; [[The state to be deleted.]]
+                     @in state: Elm.Toolbar.Item.State *; [[The state to be deleted.]]
                 }
                 return: bool; [[$true on success or $false on failure.]]
            }
@@ -245,7 +245,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                   If last state is selected, this function will return first
                   state.
                 ]]
-                return: Elm.Toolbar_Item.State *; [[The state after current state, or $null on failure.]]
+                return: Elm.Toolbar.Item.State *; [[The state after current state, or $null on failure.]]
            }
            state_prev {
                 [[Get the state before selected state in toolbar's $item.
@@ -253,7 +253,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                   If first state is selected, this function will return last
                   state.
                 ]]
-                return: Elm.Toolbar_Item.State *; [[The state before current state, or $null on failure.]]
+                return: Elm.Toolbar.Item.State *; [[The state before current state, or $null on failure.]]
            }
            show {
                 [[Show a specific item, when the toolbar can be scrolled.
@@ -261,7 +261,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                   @since 1.8
                 ]]
                 params {
-                     @in scrollto: Elm.Toolbar_Item.Scrollto_Type; [[The position the item should appear at.]]
+                     @in scrollto: Elm.Toolbar.Item.Scrollto_Type; [[The position the item should appear at.]]
                 }
            }
            bring_in {
@@ -271,7 +271,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                   @since 1.8
                 ]]
                 params {
-                     @in scrollto: Elm.Toolbar_Item.Scrollto_Type; [[The position the item should appear at.]]
+                     @in scrollto: Elm.Toolbar.Item.Scrollto_Type; [[The position the item should appear at.]]
                 }
            }
            menu_set {
@@ -308,15 +308,15 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
       implements {
            Eo.Base.constructor;
            Eo.Base.destructor;
-           Elm.Widget_Item.disable;
-           Elm.Widget_Item.focus.set;
-           Elm.Widget_Item.focus.get;
-           Elm.Widget_Item.signal_emit;
-           Elm.Widget_Item.part_text.get;
-           Elm.Widget_Item.part_text.set;
-           Elm.Widget_Item.part_content.get;
-           Elm.Widget_Item.part_content.set;
-           Elm.Widget_Item.part_content_unset;
+           Elm.Widget.Item.disable;
+           Elm.Widget.Item.focus.set;
+           Elm.Widget.Item.focus.get;
+           Elm.Widget.Item.signal_emit;
+           Elm.Widget.Item.part_text.get;
+           Elm.Widget.Item.part_text.set;
+           Elm.Widget.Item.part_content.get;
+           Elm.Widget.Item.part_content.set;
+           Elm.Widget.Item.part_content_unset;
            Elm.Interface_Atspi_Accessible.name.get;
            Elm.Interface_Atspi_Accessible.state_set.get;
       }

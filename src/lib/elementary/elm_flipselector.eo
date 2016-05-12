@@ -20,7 +20,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
               items list is changed. It should be fetched again with another
               call to this function when changes happen.
             ]]
-            return: const(list<Elm.Widget_Item*>)*;
+            return: const(list<Elm.Widget.Item*>)*;
          }
       }
       @property first_item {
@@ -31,7 +31,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
               See also @.item_append,
               @.last_item.get.
             ]]
-            return: Elm.Widget_Item *; [[The first item or $null, if it has no items (and on
+            return: Elm.Widget.Item *; [[The first item or $null, if it has no items (and on
             errors).]]
 
          }
@@ -44,7 +44,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
               See also @.item_prepend,
               @.first_item.get.
             ]]
-            return: Elm.Widget_Item *; [[The last item or $null, if it has no items (and on
+            return: Elm.Widget.Item *; [[The last item or $null, if it has no items (and on
             errors).]]
 
          }
@@ -52,7 +52,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
       @property selected_item {
          get {
             [[Get the currently selected item in a flip selector widget.]]
-            return: Elm.Widget_Item *; [[The selected item or $null, if the widget has no items
+            return: Elm.Widget.Item *; [[The selected item or $null, if the widget has no items
               (and on errors).]]
 
          }
@@ -72,7 +72,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
            determined by the widget's theme. Strings larger than
            that value are going to be truncated.
          ]]
-         return: Elm.Widget_Item *;
+         return: Elm.Widget.Item *;
          params {
             @in label: const(char)*; [[The (text) label of the new item.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience callback function to take place when
@@ -103,7 +103,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
            determined by the widget's theme. Strings larger than
            that value are going to be truncated.
          ]]
-         return: Elm.Widget_Item *;
+         return: Elm.Widget.Item *;
          params {
             @in label: const(char)*; [[The (text) label of the new item.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience callback function to take place when

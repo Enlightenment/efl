@@ -5,25 +5,25 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm.Interface_Atspi_Select
       @property selected_item {
          get {
             [[Get the selected item in the menu.]]
-            return: Elm.Widget_Item *; [[The selected item or $null.]]
+            return: Elm.Widget.Item *; [[The selected item or $null.]]
          }
       }
       @property items {
          get {
             [[Returns a list of the item's items.]]
-            return: const(list<Elm.Widget_Item *>)*;
+            return: const(list<Elm.Widget.Item *>)*;
          }
       }
       @property first_item {
          get {
             [[Get the first item in the menu.]]
-            return: Elm.Widget_Item *;
+            return: Elm.Widget.Item *;
          }
       }
       @property last_item {
          get {
             [[Get the last item in the menu.]]
-            return: Elm.Widget_Item *;
+            return: Elm.Widget.Item *;
          }
       }
       move {
@@ -43,9 +43,9 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm.Interface_Atspi_Select
 
            Note: This function does not accept relative icon path.
          ]]
-         return: Elm.Widget_Item *; [[The new menu item.]]
+         return: Elm.Widget.Item *; [[The new menu item.]]
          params {
-            @in parent: Elm.Widget_Item * @optional; [[The parent menu item (optional).]]
+            @in parent: Elm.Widget.Item * @optional; [[The parent menu item (optional).]]
             @in icon: const(char)* @optional; [[An icon display on the item. The icon will be destroyed by the menu.]]
             @in label: const(char)*; [[The label of the item.]]
             @in func: Evas_Smart_Cb @optional; [[Function called when the user select the item.]]
@@ -60,9 +60,9 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm.Interface_Atspi_Select
       }
       item_separator_add {
          [[Add a separator item to menu $obj under $parent.]]
-         return: Elm.Widget_Item *; [[The created item or $null.]]
+         return: Elm.Widget.Item *; [[The created item or $null.]]
          params {
-            @in parent: Elm.Widget_Item *; [[The item to add the separator under.]]
+            @in parent: Elm.Widget.Item *; [[The item to add the separator under.]]
          }
       }
    }

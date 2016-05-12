@@ -1,6 +1,6 @@
 type Elm_Naviframe_Item_Pop_Cb: __undefined_type;
 
-class Elm.Naviframe_Item(Elm.Widget_Item)
+class Elm.Naviframe.Item(Elm.Widget.Item)
 {
    eo_prefix: elm_obj_naviframe_item;
    methods {
@@ -76,11 +76,11 @@ class Elm.Naviframe_Item(Elm.Widget_Item)
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm.Widget_Item.signal_emit;
-        Elm.Widget_Item.part_text.set;
-        Elm.Widget_Item.part_text.get;
-        Elm.Widget_Item.part_content.get;
-        Elm.Widget_Item.part_content.set;
-        Elm.Widget_Item.part_content_unset;
+        Elm.Widget.Item.signal_emit;
+        Elm.Widget.Item.part_text.set;
+        Elm.Widget.Item.part_text.get;
+        Elm.Widget.Item.part_content.get;
+        Elm.Widget.Item.part_content.set;
+        Elm.Widget.Item.part_content_unset;
    }
 }

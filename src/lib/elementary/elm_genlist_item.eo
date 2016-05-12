@@ -36,7 +36,7 @@ enum Elm.Genlist.Item.Scrollto_Type
    bottom = (1 << 3)   [[To the bottom of viewport.]]
 }
 
-class Elm.Genlist_Item(Elm.Widget_Item)
+class Elm.Genlist.Item(Elm.Widget.Item)
 {
       eo_prefix: elm_obj_genlist_item;
       data: Elm_Gen_Item;
@@ -54,7 +54,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; [[The item before $item, or $null if there's none (and on errors).]]
+                     item: Elm.Widget.Item *; [[The item before $item, or $null if there's none (and on errors).]]
                 }
            }
            @property next {
@@ -70,7 +70,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; [[The item after $item, or $null if there's none (and on errors).]]
+                     item: Elm.Widget.Item *; [[The item after $item, or $null if there's none (and on errors).]]
                 }
            }
            @property parent {
@@ -83,7 +83,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; [[The parent of the item or $null if it has no parent.]]
+                     item: Elm.Widget.Item *; [[The parent of the item or $null if it has no parent.]]
                 }
            }
            @property subitems {
@@ -97,7 +97,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      ]]
                 }
                 values {
-                     subitems: const (list<Elm.Widget_Item *>) *; [[The list of subitems, $null on error.]]
+                     subitems: const (list<Elm.Widget.Item *>) *; [[The list of subitems, $null on error.]]
                 }
            }
            @property selected {
@@ -419,24 +419,24 @@ class Elm.Genlist_Item(Elm.Widget_Item)
       }
       implements {
            Eo.Base.constructor;
-           Elm.Widget_Item.del_pre;
-           Elm.Widget_Item.disable;
-           Elm.Widget_Item.signal_emit;
-           Elm.Widget_Item.style.get;
-           Elm.Widget_Item.style.set;
-           Elm.Widget_Item.focus.set;
-           Elm.Widget_Item.focus.get;
-           Elm.Widget_Item.part_text.get;
-           Elm.Widget_Item.part_content.get;
-           Elm.Widget_Item.tooltip_text_set;
-           Elm.Widget_Item.tooltip_style.set;
-           Elm.Widget_Item.tooltip_style.get;
-           Elm.Widget_Item.tooltip_window_mode.set;
-           Elm.Widget_Item.tooltip_window_mode.get;
-           Elm.Widget_Item.tooltip_content_cb_set;
-           Elm.Widget_Item.tooltip_unset;
-           Elm.Widget_Item.cursor.set;
-           Elm.Widget_Item.cursor_unset;
+           Elm.Widget.Item.del_pre;
+           Elm.Widget.Item.disable;
+           Elm.Widget.Item.signal_emit;
+           Elm.Widget.Item.style.get;
+           Elm.Widget.Item.style.set;
+           Elm.Widget.Item.focus.set;
+           Elm.Widget.Item.focus.get;
+           Elm.Widget.Item.part_text.get;
+           Elm.Widget.Item.part_content.get;
+           Elm.Widget.Item.tooltip_text_set;
+           Elm.Widget.Item.tooltip_style.set;
+           Elm.Widget.Item.tooltip_style.get;
+           Elm.Widget.Item.tooltip_window_mode.set;
+           Elm.Widget.Item.tooltip_window_mode.get;
+           Elm.Widget.Item.tooltip_content_cb_set;
+           Elm.Widget.Item.tooltip_unset;
+           Elm.Widget.Item.cursor.set;
+           Elm.Widget.Item.cursor_unset;
            Elm.Interface_Atspi_Accessible.name.get;
            Elm.Interface_Atspi_Accessible.state_set.get;
       }

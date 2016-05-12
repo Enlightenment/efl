@@ -19,7 +19,7 @@ class Elm.Segment_Control (Elm.Layout)
 
               The selected item always will be highlighted on segment control.]]
 
-            return: Elm.Widget_Item *; [[The selected item or $NULL if none of segment items is selected.]]
+            return: Elm.Widget.Item *; [[The selected item or $NULL if none of segment items is selected.]]
 
          }
       }
@@ -53,7 +53,7 @@ class Elm.Segment_Control (Elm.Layout)
            icon and label, even that an empty string, icon will be smaller and
            positioned at left.]]
 
-         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
+         return: Elm.Widget.Item *; [[The created item or $NULL upon failure.]]
          params {
             @in icon: Evas.Object * @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in label: const(char)* @optional; [[The label of the item.]]
@@ -68,7 +68,7 @@ class Elm.Segment_Control (Elm.Layout)
            Count is the number of items, that can be get with
            elm_segment_control_item_count_get().]]
 
-         return: Elm.Widget_Item *; [[The segment control item or $NULL on failure.]]
+         return: Elm.Widget.Item *; [[The segment control item or $NULL on failure.]]
          params {
             @in idx: int; [[The index of the segment item.]]
          }
@@ -111,7 +111,7 @@ class Elm.Segment_Control (Elm.Layout)
          evas_object_show(sc);
          @endcode */
 
-         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
+         return: Elm.Widget.Item *; [[The created item or $NULL upon failure.]]
          params {
             @in icon: Evas.Object * @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in label: const(char)* @optional; [[The label of the item.  Note that, NULL is different from empty string "".]]

@@ -1,4 +1,4 @@
-class Elm.Multibuttonentry_Item(Elm.Widget_Item,
+class Elm.Multibuttonentry.Item(Elm.Widget.Item,
                                 Elm.Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_multibuttonentry_item;
@@ -15,20 +15,20 @@ class Elm.Multibuttonentry_Item(Elm.Widget_Item,
         }
         prev_get @const {
              [[Get the previous item in the multibuttonentry]]
-             return: Elm.Widget_Item *; [[The item before the item]]
+             return: Elm.Widget.Item *; [[The item before the item]]
         }
         next_get @const {
              [[Get the next item in the multibuttonentry]]
-             return: Elm.Widget_Item *; [[The item after the item]]
+             return: Elm.Widget.Item *; [[The item after the item]]
         }
    }
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm.Widget_Item.signal_emit;
-        Elm.Widget_Item.part_text.get;
-        Elm.Widget_Item.part_text.set;
-        Elm.Widget_Item.disable;
+        Elm.Widget.Item.signal_emit;
+        Elm.Widget.Item.part_text.get;
+        Elm.Widget.Item.part_text.set;
+        Elm.Widget.Item.disable;
         Elm.Interface_Atspi_Accessible.name.get;
         Elm.Interface_Atspi_Widget_Action.elm_actions.get;
    }
