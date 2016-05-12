@@ -2,7 +2,7 @@ import elm_general;
 
 type Elm_App_Client_View_Cb: __undefined_type;
 
-class Elm.App_Client_View (Eo.Base)
+class Elm.App.Client.View (Eo.Base)
 {
    legacy_prefix: null;
    methods {

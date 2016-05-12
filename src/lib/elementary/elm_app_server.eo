@@ -3,7 +3,7 @@ import elm_general;
 
 type Elm_App_Server_Create_View_Cb: __undefined_type;
 
-class Elm.App_Server (Eo.Base)
+class Elm.App.Server (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_server;
@@ -22,7 +22,7 @@ class Elm.App_Server (Eo.Base)
             [[Return a iterator with all views of application]]
          }
          values {
-            ret: free(own(iterator<Elm.App_Server_View *> *), eina_iterator_free); [[Iterator with all views of application, you must free iterator after use]]
+            ret: free(own(iterator<Elm.App.Server.View *> *), eina_iterator_free); [[Iterator with all views of application, you must free iterator after use]]
          }
       }
       @property path {
@@ -77,7 +77,7 @@ class Elm.App_Server (Eo.Base)
            requested by create_view_cb.
          ]]
          params {
-            @in view: Elm.App_Server_View *; [[elm_app_server_view]]
+            @in view: Elm.App.Server.View *; [[elm_app_server_view]]
          }
       }
       title_set {
