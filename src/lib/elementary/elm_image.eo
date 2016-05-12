@@ -21,7 +21,7 @@ enum Elm.Image.Scale_Type
                  should be equal to the corresponding dimension of the object.]]
 }
 
-struct Elm.Image_Progress
+struct Elm.Image.Progress
 {
    [[
      Structure associated with smart callback 'download,progress'.
