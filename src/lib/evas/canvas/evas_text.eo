@@ -1,4 +1,4 @@
-class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties, Evas.Filter)
+class Evas.Text (Evas.Object, Efl.Text, Efl.Text.Properties, Evas.Filter)
 {
    legacy_prefix: evas_object_text;
    eo_prefix: evas_obj_text;
@@ -256,10 +256,10 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties, Evas.Filter)
       Efl.Gfx.size.set;
       Efl.Text.text.set;
       Efl.Text.text.get;
-      Efl.Text_Properties.font.get;
-      Efl.Text_Properties.font.set;
-      Efl.Text_Properties.font_source.get;
-      Efl.Text_Properties.font_source.set;
+      Efl.Text.Properties.font.get;
+      Efl.Text.Properties.font.set;
+      Efl.Text.Properties.font_source.get;
+      Efl.Text.Properties.font_source.set;
       Efl.Gfx.Filter.filter_program.set;
       Evas.Filter.filter_input_alpha;
       Evas.Filter.filter_input_render;
