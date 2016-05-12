@@ -1,6 +1,6 @@
 import eldbus_types;
 
-class Eldbus.Model_Object (Eo.Base, Efl.Model) {
+class Eldbus.Model.Object (Eo.Base, Efl.Model) {
     [[Eldbus model object class]]
 
     legacy_prefix: null;

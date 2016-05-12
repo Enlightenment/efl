@@ -1,4 +1,4 @@
-class Eldbus.Model_Signal (Eldbus.Model_Arguments) {
+class Eldbus.Model.Signal (Eldbus.Model.Arguments) {
     [[Eldbus model signal class]]
 
     legacy_prefix: null;

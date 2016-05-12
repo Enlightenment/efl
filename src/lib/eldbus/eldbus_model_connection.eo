@@ -1,4 +1,4 @@
-class Eldbus.Model_Connection (Eo.Base, Efl.Model) {
+class Eldbus.Model.Connection (Eo.Base, Efl.Model) {
     [[Eldbus model connection class]]
 
     legacy_prefix: null;

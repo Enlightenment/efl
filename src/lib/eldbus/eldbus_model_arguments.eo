@@ -1,6 +1,6 @@
 import eldbus_types;
 
-class Eldbus.Model_Arguments (Eo.Base, Efl.Model) {
+class Eldbus.Model.Arguments (Eo.Base, Efl.Model) {
     [[Eldbus model arguments class]]
 
     legacy_prefix: null;
