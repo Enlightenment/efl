@@ -3,7 +3,7 @@
 
 eo_eolian_files = \
 	lib/eo/eo_base.eo \
-	lib/eo/eo_abstract_class.eo \
+	lib/eo/eo_class.eo \
 	lib/eo/eo_interface.eo
 
 eo_eolian_c = $(eo_eolian_files:%.eo=%.eo.c)

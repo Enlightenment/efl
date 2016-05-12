@@ -117,6 +117,7 @@ typedef struct _Eo_Opaque Eo;
  * The basic class type - should be removed, just for compat.
  */
 typedef Eo Eo_Class;
+#define _EO_CLASS_EO_CLASS_TYPE
 
 /**
  * @var _eo_class_creation_lock
@@ -935,7 +936,7 @@ EAPI Eina_Bool eo_destructed_is(const Eo *obj);
  * @{
  */
 
-#include "eo_abstract_class.eo.h"
+#include "eo_class.eo.h"
 
 /**
  * @}

@@ -5,7 +5,7 @@ include ../../Makefile_Eolian_Subbuild_Helper.am
 ### Library
 eo_eolian_files = \
 	eo_base.eo \
-	eo_abstract_class.eo \
+	eo_class.eo \
 	eo_interface.eo
 
 eo_eolian_c = $(eo_eolian_files:%.eo=%.eo.c)

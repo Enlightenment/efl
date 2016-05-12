@@ -4,8 +4,8 @@
 generated_eo_cxx_bindings = \
 lib/eo/eo_base.eo.hh \
 lib/eo/eo_base.eo.impl.hh \
-lib/eo/eo_abstract_class.eo.hh \
-lib/eo/eo_abstract_class.eo.impl.hh
+lib/eo/eo_class.eo.hh \
+lib/eo/eo_class.eo.impl.hh
 
 ### Library
 

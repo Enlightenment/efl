@@ -4,5 +4,5 @@
 
 #include "Eo.h"
 
-#include "eo_abstract_class.eo.c"
+#include "eo_class.eo.c"
 
