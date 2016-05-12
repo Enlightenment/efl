@@ -230,7 +230,7 @@ enum Evas.Callback_Type
    last [[kept as last element/sentinel -- not really an event]]
 }
 
-enum Evas.Image_Orient
+enum Evas.Image.Orient
 {
    [[Possible orientation options for evas_object_image_orient_set().
      @since 1.14]]
