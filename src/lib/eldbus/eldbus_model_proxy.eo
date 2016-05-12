@@ -10,7 +10,7 @@ class Eldbus.Model.Proxy (Eo.Base, Efl.Model) {
 
               @since 1.16]]
             params {
-                @in object: Eldbus_Object *; [[Eldbus object]]
+                @in object: Eldbus.Object *; [[Eldbus object]]
                 @in interface: const(Eldbus.Introspection.Interface)*; [[The introspected interface]]
             }
         }

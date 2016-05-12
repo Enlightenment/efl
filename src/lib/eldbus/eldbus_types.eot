@@ -1,8 +1,8 @@
 import eina_types;
 
 struct Eldbus.Proxy;
-struct Eldbus_Connection; [[Represents a connection of one the type of connection with the DBus daemon.]]
-struct Eldbus_Object; [[Represents an object path already attached with bus name or unique id]]
+struct Eldbus.Connection; [[Represents a connection of one the type of connection with the DBus daemon.]]
+struct Eldbus.Object; [[Represents an object path already attached with bus name or unique id]]
 
 enum Eldbus.Introspection.Argument_Direction
 {

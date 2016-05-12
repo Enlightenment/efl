@@ -23,7 +23,7 @@ class Eldbus.Model.Object (Eo.Base, Efl.Model) {
 
               @since 1.16]]
             params {
-                @in connection: Eldbus_Connection*; [[Eldbus connection]]
+                @in connection: Eldbus.Connection*; [[Eldbus connection]]
                 @in bus: const(char)*; [[DBus Name or unique-id]]
                 @in path: const(char)*; [[DBus path]]
             }
