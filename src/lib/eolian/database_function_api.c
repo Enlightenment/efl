@@ -30,13 +30,9 @@ static const char *
 _get_eo_prefix(const Eolian_Function *foo_id, char *buf, Eina_Bool use_legacy)
 {
     char *tmp = buf;
-    if (use_legacy && foo_id->klass->legacy_prefix)
-      {
-         if (!strcmp(foo_id->klass->legacy_prefix, "null"))
-           return NULL;
-         return foo_id->klass->legacy_prefix;
-      }
-    else if (!use_legacy && foo_id->klass->eo_prefix)
+    if (use_legacy)
+      return foo_id->klass->legacy_prefix;
+    else if (foo_id->klass->eo_prefix)
       return foo_id->klass->eo_prefix;
     strcpy(buf, foo_id->klass->full_name);
     eina_str_tolower(&buf);
