@@ -1,6 +1,6 @@
 import eina_types;
 
-struct Eo.Event_Description {
+struct Eo.Event.Description {
     [[This struct holds the description of a specific event.]]
     name: const(char) *; [[name of the event.]]
     unfreezable: bool; [[Eina_True if the event cannot be frozen.]]
@@ -11,7 +11,7 @@ struct Eo.Event_Description {
 struct Eo.Event {
      [[Parameter passed in event callbacks holding extra event parameters]]
      obj: Eo.Base *; [[The object the event was called on.]]
-     desc: const(Eo.Event_Description) *; [[The event description.]]
+     desc: const(Eo.Event.Description) *; [[The event description.]]
      info: void *; [[Extra event information passed by the event caller.]]
 }
 
@@ -24,7 +24,7 @@ struct Eo.Callback_Array_Item {
 
       See also \@ref eo_event_callback_array_add.
     ]]
-    desc: const(Eo.Event_Description) *; [[The event description.]]
+    desc: const(Eo.Event.Description) *; [[The event description.]]
     func: Eo.Event_Cb; [[The callback function.]]
 }
 
@@ -310,7 +310,7 @@ abstract Eo.Base ()
          ]]
          return: bool; [[Return true when the callback has been successfully added.]]
          params {
-            @in desc: const(Eo.Event_Description)*; [[The description of the event to listen to]]
+            @in desc: const(Eo.Event.Description)*; [[The description of the event to listen to]]
             @in priority: Eo.Callback_Priority; [[The priority of the callback]]
             @in cb: Eo.Event_Cb; [[the callback to call]]
             @in data: const(void)*; [[additional data to pass to the callback]]
@@ -320,7 +320,7 @@ abstract Eo.Base ()
          [[Del a callback with a specific data associated to it for an event.]]
          return: bool; [[Return true when the callback has been successfully removed.]]
          params {
-            @in desc: const(Eo.Event_Description)*; [[The description of the event to listen to]]
+            @in desc: const(Eo.Event.Description)*; [[The description of the event to listen to]]
             @in func: Eo.Event_Cb; [[the callback to delete]]
             @in user_data: const(void)*; [[The data to compare]]
          }
@@ -351,7 +351,7 @@ abstract Eo.Base ()
       event_callback_call {
          [[Call the callbacks for an event of an object.]]
          params {
-            @in desc: const(Eo.Event_Description)*; [[The description of the event to call]]
+            @in desc: const(Eo.Event.Description)*; [[The description of the event to call]]
             @in event_info: void *; [[Extra event info to pass to the callbacks]]
          }
          return: bool; [[$true if one of the callbacks aborted the call,
@@ -361,14 +361,14 @@ abstract Eo.Base ()
       event_callback_forwarder_add {
          [[Add an event callback forwarder for an event and an object.]]
          params {
-            @in desc: const(Eo.Event_Description)*; [[The description of the event to listen to]]
+            @in desc: const(Eo.Event.Description)*; [[The description of the event to listen to]]
             @in new_obj: Eo.Base *; [[The object to emit events from]]
          }
       }
       event_callback_forwarder_del {
          [[Remove an event callback forwarder for an event and an object.]]
          params {
-            @in desc: const(Eo.Event_Description)*; [[The description of the event to listen to]]
+            @in desc: const(Eo.Event.Description)*; [[The description of the event to listen to]]
             @in new_obj: Eo.Base *; [[The object to emit events from]]
          }
       }

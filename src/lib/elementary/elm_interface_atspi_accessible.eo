@@ -343,7 +343,7 @@ mixin Elm.Interface.Atspi_Accessible ()
       event_emit @class @protected {
          params {
             @in accessible: Elm.Interface.Atspi_Accessible *; [[Accessibility object.]]
-            @in event: const(Eo.Event_Description)*; [[Accessibility event type.]]
+            @in event: const(Eo.Event.Description)*; [[Accessibility event type.]]
             @in event_info: void*; [[Accessibility event details.]]
          }
       }
