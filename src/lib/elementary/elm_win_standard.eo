@@ -1,4 +1,4 @@
-class Elm.Win_Standard (Elm.Win)
+class Elm.Win.Standard (Elm.Win)
 {
    data: null;
    implements {
