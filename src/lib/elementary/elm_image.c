@@ -125,24 +125,24 @@ _img_new(Evas_Object *obj)
 static void
 _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Data *sd)
 {
-   Evas_Coord x, y, w, h;
-
    if (!sd->img) return;
-
-   w = sd->img_w;
-   h = sd->img_h;
 
    if (eo_isa(sd->img, EDJE_OBJECT_CLASS))
      {
-        x = sd->img_x;
-        y = sd->img_y;
-        evas_object_move(sd->img, x, y);
-        evas_object_resize(sd->img, w, h);
+        evas_object_move(sd->img, sd->img_x, sd->img_y);
+        evas_object_resize(sd->img, sd->img_w, sd->img_h);
+
+        evas_object_move(sd->hit_rect, sd->img_x, sd->img_y);
+        evas_object_resize(sd->hit_rect, sd->img_w, sd->img_h);
      }
    else
      {
+        Evas_Coord x = 0, y = 0, w = 1, h = 1;
+
         double alignh = 0.5, alignv = 0.5;
-        int iw = 0, ih = 0, offset_w = 0, offset_h = 0;
+        int iw = 0, ih = 0, offset_x = 0, offset_y = 0;
+
+        //1. Get the original image size (iw x ih)
         evas_object_image_size_get(sd->img, &iw, &ih);
 
         iw = ((double)iw) * sd->scale;
@@ -151,68 +151,89 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Data *sd)
         if (iw < 1) iw = 1;
         if (ih < 1) ih = 1;
 
-        if (sd->aspect_fixed)
+        //2. Calculate internal image size (w x h)
+        //   according to (iw x ih), (sd->img_w x sd->img_h), and scale_type
+        switch (sd->scale_type)
           {
-             h = ((double)ih * w) / (double)iw;
-             if (sd->fill_inside)
-               {
-                  if (h > sd->img_h)
-                    {
-                       h = sd->img_h;
-                       w = ((double)iw * h) / (double)ih;
-                    }
-               }
-             else
-               {
-                  if (h < sd->img_h)
-                    {
-                       h = sd->img_h;
-                       w = ((double)iw * h) / (double)ih;
-                    }
-               }
-          }
-        if (!sd->resize_up)
-          {
-             if (w > iw) w = iw;
-             if (h > ih) h = ih;
-          }
-        if (!sd->resize_down)
-          {
-             if (w < iw) w = iw;
-             if (h < ih) h = ih;
+           case ELM_IMAGE_SCALE_TYPE_NONE:
+              w = iw;
+              h = ih;
+              break;
+           case ELM_IMAGE_SCALE_TYPE_FILL:
+              w = sd->img_w;
+              h = sd->img_h;
+              break;
+           case ELM_IMAGE_SCALE_TYPE_FIT_INSIDE:
+              w = sd->img_w;
+              h = ((double)ih * w) / (double)iw;
+
+              if (h > sd->img_h)
+                {
+                   h = sd->img_h;
+                   w = ((double)iw * h) / (double)ih;
+                }
+
+              if (((!sd->scale_up) && (w > iw))
+                  || ((!sd->scale_down) && (w < iw)))
+                {
+                   w = iw;
+                   h = ih;
+                }
+              break;
+           case ELM_IMAGE_SCALE_TYPE_FIT_OUTSIDE:
+              w = sd->img_w;
+              h = ((double)ih * w) / (double)iw;
+              if (h < sd->img_h)
+                {
+                   h = sd->img_h;
+                   w = ((double)iw * h) / (double)ih;
+                }
+
+              if (((!sd->scale_up) && (w > iw))
+                  || ((!sd->scale_down) && (w < iw)))
+                {
+                   w = iw;
+                   h = ih;
+                }
+              break;
           }
 
+        //3. Calculate offset according to align value
         evas_object_size_hint_align_get
            (obj, &alignh, &alignv);
 
         if (alignh == EVAS_HINT_FILL) alignh = 0.5;
         if (alignv == EVAS_HINT_FILL) alignv = 0.5;
 
-        offset_w = ((sd->img_w - w) * alignh);
-        offset_h = ((sd->img_h - h) * alignv);
+        offset_x = ((sd->img_w - w) * alignh);
+        offset_y = ((sd->img_h - h) * alignv);
 
-        if (sd->aspect_fixed && !sd->fill_inside)
+        x = sd->img_x + offset_x;
+        y = sd->img_y + offset_y;
+
+        //4. Fill, move, resize
+        if (offset_x >= 0) offset_x = 0;
+        if (offset_y >= 0) offset_y = 0;
+
+        evas_object_image_fill_set(sd->img, offset_x, offset_y, w, h);
+
+        if (offset_x < 0)
           {
-             evas_object_image_fill_set(sd->img, offset_w, offset_h, w, h);
-
-             w = sd->img_w;
-             h = sd->img_h;
              x = sd->img_x;
-             y = sd->img_y;
+             w = sd->img_w;
           }
-        else
+        if (offset_y < 0)
           {
-             evas_object_image_fill_set(sd->img, 0, 0, w, h);
-
-             x = sd->img_x + offset_w;
-             y = sd->img_y + offset_h;
+             y = sd->img_y;
+             h = sd->img_h;
           }
 
         evas_object_move(sd->img, x, y);
         evas_object_resize(sd->img, w, h);
+
+        evas_object_move(sd->hit_rect, x, y);
+        evas_object_resize(sd->hit_rect, w, h);
      }
-   evas_object_move(sd->hit_rect, x, y);
-   evas_object_resize(sd->hit_rect, w, h);
 }
 
 static inline void
@@ -586,6 +607,8 @@ _elm_image_evas_object_smart_add(Eo *obj, Elm_Image_Data *priv)
    priv->aspect_fixed = EINA_TRUE;
    priv->load_size = 0;
    priv->scale = 1.0;
+   priv->scale_up = EINA_TRUE;
+   priv->scale_down = EINA_TRUE;
    eina_spinlock_new(&priv->async.lck);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -1410,28 +1433,37 @@ _elm_image_class_constructor(Eo_Class *klass)
 }
 
 EOLIAN static void
-_elm_image_scale_type_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd EINA_UNUSED, Elm_Image_Scale_Type type EINA_UNUSED)
+_elm_image_scale_type_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd EINA_UNUSED, Elm_Image_Scale_Type scale_type)
 {
-   //TODO: implementation
+   if (scale_type == sd->scale_type) return;
+
+   sd->scale_type = scale_type;
+
+   _elm_image_internal_sizing_eval(obj);
 }
 
 EOLIAN static Elm_Image_Scale_Type
-_elm_image_scale_type_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd EINA_UNUSED)
+_elm_image_scale_type_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
-   //TODO: implementation
-   return ELM_IMAGE_SCALE_TYPE_NONE;
+   return sd->scale_type;
 }
 
 EOLIAN static void
-_elm_image_scalable_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd EINA_UNUSED, Eina_Bool up EINA_UNUSED, Eina_Bool down EINA_UNUSED)
+_elm_image_scalable_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool up, Eina_Bool down)
 {
-   //TODO: implementation
+   if ((up == sd->scale_up) && (down == sd->scale_down)) return;
+
+   sd->scale_up = !!up;
+   sd->scale_down = !!down;
+
+   _elm_image_internal_sizing_eval(obj);
 }
 
 EOLIAN static void
-_elm_image_scalable_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd EINA_UNUSED, Eina_Bool *up EINA_UNUSED, Eina_Bool *down EINA_UNUSED)
+_elm_image_scalable_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool *up, Eina_Bool *down)
 {
-   //TODO: implementation
+   if (up) *size_up = sd->scale_up;
+   if (down) *size_down = sd->scale_down;
 }
 
 // A11Y
@@ -1752,10 +1784,21 @@ elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 {
    ELM_IMAGE_CHECK(obj);
    ELM_IMAGE_DATA_GET(obj, sd);
+   fill_outside = !!fill_outside;
+
+   if (sd->fill_inside == !fill_outside) return;
 
    sd->fill_inside = !fill_outside;
 
-   _elm_image_sizing_eval(obj);
+   if (sd->aspect_fixed)
+     {
+        if (sd->fill_inside) sd->scale_type = ELM_IMAGE_SCALE_TYPE_FIT_INSIDE;
+        else sd->scale_type = ELM_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+     }
+   else
+     sd->scale_type = ELM_IMAGE_SCALE_TYPE_FILL;
+
+   _elm_image_internal_sizing_eval(obj, sd);
 }
 
 EAPI Eina_Bool
@@ -1877,9 +1920,9 @@ elm_image_resize_down_set(Evas_Object *obj, Eina_Bool resize_down)
 
    resize_down = !!resize_down;
 
-   if (sd->resize_down == resize_down) return;
+   if (sd->scale_down == resize_down) return;
 
-   sd->resize_down = resize_down;
+   sd->scale_down = resize_down;
 
    _elm_image_internal_sizing_eval(obj, sd);
 }
@@ -1889,7 +1932,7 @@ elm_image_resize_down_get(const Evas_Object *obj)
 {
    ELM_IMAGE_CHECK(obj) EINA_FALSE;
    ELM_IMAGE_DATA_GET(obj, sd);
-   return sd->resize_down;
+   return sd->scale_down;
 }
 
 EAPI void
@@ -1900,9 +1943,9 @@ elm_image_resize_up_set(Evas_Object *obj, Eina_Bool resize_up)
 
    resize_up = !!resize_up;
 
-   if (sd->resize_up == resize_up) return;
+   if (sd->scale_up == resize_up) return;
 
-   sd->resize_up = resize_up;
+   sd->scale_up = resize_up;
 
    _elm_image_internal_sizing_eval(obj, sd);
 }
@@ -1912,7 +1955,7 @@ elm_image_resize_up_get(const Evas_Object *obj)
 {
    ELM_IMAGE_CHECK(obj) EINA_FALSE;
    ELM_IMAGE_DATA_GET(obj, sd);
-   return sd->resize_up;
+   return sd->scale_up;
 }
 
 EAPI void
@@ -1945,10 +1988,10 @@ elm_image_resizable_set(Evas_Object *obj, Eina_Bool up, Eina_Bool down)
 {
    ELM_IMAGE_CHECK(obj);
    ELM_IMAGE_DATA_GET(obj, sd);
-   sd->resize_up = !!up;
-   sd->resize_down = !!down;
+   sd->scale_up = !!up;
+   sd->scale_down = !!down;
 
-   _elm_image_sizing_eval(obj);
+   _elm_image_internal_sizing_eval(obj);
 }
 
 EAPI void
@@ -1956,8 +1999,8 @@ elm_image_resizable_get(const Evas_Object *obj, Eina_Bool *size_up, Eina_Bool *s
 {
    ELM_IMAGE_CHECK(obj);
    ELM_IMAGE_DATA_GET(obj, sd);
-   if (size_up) *size_up = sd->resize_up;
-   if (size_down) *size_down = sd->resize_down;
+   if (size_up) *size_up = sd->scale_up;
+   if (size_down) *size_down = sd->scale_down;
 }
 
 EAPI void
@@ -1970,6 +2013,14 @@ elm_image_fill_inside_set(Evas_Object *obj, Eina_Bool fill_inside)
    if (sd->fill_inside == fill_inside) return;
 
    sd->fill_inside = fill_inside;
+
+   if (sd->aspect_fixed)
+     {
+        if (sd->fill_inside) sd->scale_type = ELM_IMAGE_SCALE_TYPE_FIT_INSIDE;
+        else sd->scale_type = ELM_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+     }
+   else
+     sd->scale_type = ELM_IMAGE_SCALE_TYPE_FILL;
 
    _elm_image_internal_sizing_eval(obj, sd);
 }
@@ -1991,6 +2042,14 @@ elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
    if (sd->aspect_fixed == fixed) return;
 
    sd->aspect_fixed = fixed;
+
+   if (sd->aspect_fixed)
+     {
+        if (sd->fill_inside) sd->scale_type = ELM_IMAGE_SCALE_TYPE_FIT_INSIDE;
+        else sd->scale_type = ELM_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+     }
+   else
+     sd->scale_type = ELM_IMAGE_SCALE_TYPE_FILL;
 
    _elm_image_internal_sizing_eval(obj, sd);
 }

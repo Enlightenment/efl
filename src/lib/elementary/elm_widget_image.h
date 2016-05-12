@@ -73,6 +73,7 @@ struct _Elm_Image_Data
    } async;
 
    Elm_Image_Preload_Status preload_status;
+   Elm_Image_Scale_Type scale_type;
 
    const char           *stdicon;
 
@@ -96,6 +97,8 @@ struct _Elm_Image_Data
    Eina_Bool             async_enable : 1;
    Eina_Bool             async_opening : 1;
    Eina_Bool             async_failed : 1;
+   Eina_Bool             scale_up : 1;
+   Eina_Bool             scale_down : 1;
 };
 
 /**
