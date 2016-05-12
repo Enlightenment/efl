@@ -109,6 +109,7 @@ struct _Elm_Entry_Data
    Eina_Bool                             has_text : 1;
    Eina_Bool                             use_down : 1;
    Eina_Bool                             sel_mode : 1;
+   Eina_Bool                             sel_allow : 1;
    Eina_Bool                             changed : 1;
    Eina_Bool                             scroll : 1;
    Eina_Bool                             input_panel_show_on_demand : 1;

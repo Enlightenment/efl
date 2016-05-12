@@ -862,8 +862,12 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    elm_widget_theme_object_set
      (obj, sd->entry_edje, "entry", _elm_entry_theme_group_get(obj), style);
 
-   edje_object_part_text_select_allow_set
-       (sd->entry_edje, "elm.text", _elm_config->desktop_entry);
+   if (sd->sel_allow && _elm_config->desktop_entry)
+     edje_obj_part_text_select_allow_set
+        (sd->entry_edje, "elm.text", EINA_TRUE);
+   else
+     edje_obj_part_text_select_allow_set
+        (sd->entry_edje, "elm.text", EINA_FALSE);
 
    elm_object_text_set(obj, t);
    eina_stringshare_del(t);
@@ -1383,6 +1387,8 @@ _hover_selected_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd->sel_allow) return;
+
    sd->sel_mode = EINA_TRUE;
    edje_object_part_text_select_none(sd->entry_edje, "elm.text");
 
@@ -1673,7 +1679,7 @@ _menu_call(Evas_Object *obj)
           {
              if (!sd->sel_mode)
                {
-                  if (!_elm_config->desktop_entry)
+                  if (sd->sel_allow && !_elm_config->desktop_entry)
                     {
                        if (!sd->password)
                          elm_hoversel_item_add
@@ -3590,6 +3596,7 @@ _elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
    priv->context_menu = EINA_TRUE;
    priv->auto_save = EINA_TRUE;
    priv->editable = EINA_TRUE;
+   priv->sel_allow = EINA_TRUE;
 
    priv->drop_format = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
    elm_drop_target_add(obj, priv->drop_format,
@@ -5311,6 +5318,21 @@ EOLIAN static Eina_Bool
 _elm_entry_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    return EINA_FALSE;
+}
+
+EOLIAN static void
+_elm_entry_select_allow_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool allow)
+{
+   if (sd->sel_allow == allow) return;
+   sd->sel_allow = allow;
+
+   edje_obj_part_text_select_allow_set(sd->entry_edje, "elm.text", allow);
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_select_allow_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+{
+   return sd->sel_allow;
 }
 
 static void

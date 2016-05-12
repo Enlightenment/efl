@@ -650,6 +650,17 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
             return: bool;
          }
       }
+      @property select_allow {
+         set {
+            [[Allow selection in the entry.]]
+         }
+         get {
+            [[Returns whether selection in the entry is allowed.]]
+         }
+         values {
+            allow: bool; [[If $allow is true, the text selection is allowed.]]
+         }
+      }
       cursor_prev {
          [[This moves the cursor one place to the left within the entry.]]
          return: bool;
