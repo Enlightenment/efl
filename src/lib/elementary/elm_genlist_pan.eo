@@ -1,4 +1,4 @@
-class Elm.Genlist_Pan (Elm.Pan)
+class Elm.Genlist.Pan (Elm.Pan)
 {
    eo_prefix: elm_obj_genlist_pan;
    implements {
