@@ -1,6 +1,6 @@
 import edje_types;
 
-class Edje.Object (Evas.Smart_Clipped, Efl.File, Efl.Container)
+class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container)
 {
    legacy_prefix: edje_object;
    eo_prefix: edje_obj;

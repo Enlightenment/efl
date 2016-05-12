@@ -1,4 +1,7 @@
-class Evas.Smart_Clipped (Evas.Object.Smart)
+/* XXX: It's Evas.Smart.Clipped and not Evas.Object.Smart.Clipped because of
+   clashes with legacy. Not edaling with it too much because it'll be deprecated
+   soon anyway. */
+class Evas.Smart.Clipped (Evas.Object.Smart)
 {
    legacy_prefix: evas_object_smart_clipped;
    eo_prefix: evas_obj_smart_clipped;

@@ -1,4 +1,4 @@
-class Elm.Pan (Evas.Smart_Clipped)
+class Elm.Pan (Evas.Smart.Clipped)
 {
    eo_prefix: elm_obj_pan;
    data: Elm_Pan_Smart_Data;
