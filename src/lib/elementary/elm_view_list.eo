@@ -1,6 +1,6 @@
 import elm_genlist_item;
 
-class Elm.View_List (Eo.Base)
+class Elm.View.List (Eo.Base)
 {
     legacy_prefix: null;
     methods {
