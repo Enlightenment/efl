@@ -61,6 +61,14 @@ eluaapps_DATA = \
 
 EXTRA_DIST += $(eluaapps_DATA)
 
+eluadocgendir = $(datadir)/elua/apps/docgen
+
+eluadocgen_DATA = \
+	scripts/elua/apps/docgen/gendoc.lua \
+	scripts/elua/apps/docgen/README.md
+
+EXTRA_DIST += $(eluadocgen_DATA)
+
 eluamodulesdir = $(datadir)/elua/modules
 
 eluamodules_DATA = \
