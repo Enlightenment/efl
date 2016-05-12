@@ -1,7 +1,7 @@
 /* FIXME: invalid type from evas/emile! */
 /* type @extern Evas.Animated_Loop_Hint: int; */
 
-enum Efl.Image_Animated.Loop_Hint {
+enum Efl.Image.Animated.Loop_Hint {
    none = 0,       [[No looping order specified.]]
    loop = 1,       [[Standard loop: 1->2->3->1->2->3->1]]
    pingpong = 2    [[Ping-pong bouncing loop: 1->2->3->2->1->2->3->1]]
@@ -9,7 +9,7 @@ enum Efl.Image_Animated.Loop_Hint {
 
 /* FIXME: rename to Efl.Image.Animated when eo/eolian are fixed */
 
-interface Efl.Image_Animated ()
+interface Efl.Image.Animated ()
 {
    legacy_prefix: null;
    eo_prefix: efl_image;
@@ -64,18 +64,18 @@ interface Efl.Image_Animated ()
 
               This returns the kind of looping the image object wants to do.
 
-              If it returns @Efl.Image_Animated.Loop_Hint.loop, you should
+              If it returns @Efl.Image.Animated.Loop_Hint.loop, you should
               display frames in a sequence like: 1->2->3->1->2->3->1...
 
-              If it returns @Efl.Image_Animated.Loop_Hint.pingpong, it is
+              If it returns @Efl.Image.Animated.Loop_Hint.pingpong, it is
               better to display frames in a sequence like:
               1->2->3->2->1->2->3->1...
 
-              The default type is @Efl.Image_Animated.Loop_Hint.loop.
+              The default type is @Efl.Image.Animated.Loop_Hint.loop.
 
               @since 1.1
             ]]
-            return: Efl.Image_Animated.Loop_Hint; [[Loop type of the image object.]]
+            return: Efl.Image.Animated.Loop_Hint; [[Loop type of the image object.]]
          }
       }
       @property animated_loop_count {

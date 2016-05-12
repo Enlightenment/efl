@@ -1,4 +1,4 @@
-class Emotion.Object (Evas.Object.Smart, Efl.File, Efl.Player, Efl.Image, Efl.Image_Load) {
+class Emotion.Object (Evas.Object.Smart, Efl.File, Efl.Player, Efl.Image, Efl.Image.Load) {
    eo_prefix: emotion_obj;
    methods {
         @property option {
@@ -74,7 +74,7 @@ class Emotion.Object (Evas.Object.Smart, Efl.File, Efl.Player, Efl.Image, Efl.Im
         Efl.Player.audio_mute.get;
         Efl.Player.length.get;
         Efl.Player.seekable.get;
-        Efl.Image_Load.load_size.get;
+        Efl.Image.Load.load_size.get;
         Efl.Image.ratio.get;
         Efl.Image.smooth_scale.set;
         Efl.Image.smooth_scale.get;

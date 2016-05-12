@@ -1,5 +1,5 @@
 /* FIXME: maybe add error code for "currently running" or "pending" ? */
-enum Efl.Image_Load.Error
+enum Efl.Image.Load.Error
 {
    none = 0,                       [[No error on load]]
    generic = 1,                    [[A non-specific error occurred]]
@@ -11,18 +11,18 @@ enum Efl.Image_Load.Error
 }
 
 /* FIXME: state or status??? */
-enum Efl.Image_Load.State
+enum Efl.Image.Load.State
 {
    none = 0,      [[Not loading any image.]]
    loaded = 1,    [[Image data is loaded, nothing is pending.]]
    pending = 2,   [[The image has been queued for load, but actual loading may not have started yet.]]
    loading = 3,   [[The image is currently loading.]]
-   error = 4,     [[Image load has failed. Call @Efl.Image_Load.load_error.get to know why.]]
+   error = 4,     [[Image load has failed. Call @Efl.Image.Load.load_error.get to know why.]]
    cancelled = 5  [[Image load has been cancelled.]]
 }
 
 /* FIXME: Efl.Image.Load */
-interface Efl.Image_Load ()
+interface Efl.Image.Load ()
 {
    [[Common APIs for all loadable 2D images.]]
    legacy_prefix: null;
@@ -53,7 +53,7 @@ interface Efl.Image_Load ()
             ]]
          }
          values {
-            state: Efl.Image_Load.State;
+            state: Efl.Image.Load.State;
          }
       }
       @property load_size {
@@ -187,9 +187,9 @@ interface Efl.Image_Load ()
             [[Retrieves a number representing any error that occurred during
               the last loading of the given image object's source image.
             ]]
-            return: Efl.Image_Load.Error @warn_unused; [[
+            return: Efl.Image.Load.Error @warn_unused; [[
                A value giving the last error that occurred, one of
-               @Efl.Image_Load.Error values. @Efl.Image_Load.Error.none is
+               @Efl.Image.Load.Error values. @Efl.Image.Load.Error.none is
                returned if there was no error.
             ]]
          }
@@ -197,7 +197,7 @@ interface Efl.Image_Load ()
    }
    events {
       load,done;
-      load,error: Efl.Image_Load.Error;
+      load,error: Efl.Image.Load.Error;
       load,cancelled;
    }
 }

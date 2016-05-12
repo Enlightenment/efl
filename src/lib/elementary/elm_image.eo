@@ -42,7 +42,7 @@ struct Elm.Image.Error
 }
 
 class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
-                 Efl.File, Efl.Image, Efl.Image_Load, Efl.Player, Efl.Gfx.View, Efl.Player,
+                 Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View, Efl.Player,
                  Elm.Interface_Atspi_Image, Elm.Interface_Atspi_Widget_Action,
                  Edje.Object, Efl.Orientation, Efl.Flipable)
 {
@@ -123,8 +123,8 @@ class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
       Efl.File.async.get;
       Efl.File.async_wait;
       Efl.Gfx.View.view_size.get;
-      Efl.Image_Load.load_size.set;
-      Efl.Image_Load.load_size.get;
+      Efl.Image.Load.load_size.set;
+      Efl.Image.Load.load_size.get;
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
       Efl.Orientation.orientation.set;
