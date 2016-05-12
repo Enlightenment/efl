@@ -4,7 +4,6 @@ import evas_canvas;
 
 interface Evas.Ector.Buffer
 {
-   legacy_prefix: null;
    methods {
       @property engine_image {
          get {}

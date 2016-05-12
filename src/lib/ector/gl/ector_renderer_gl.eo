@@ -2,7 +2,6 @@ import ector_types;
 
 abstract Ector.Renderer.GL (Ector.Renderer)
 {
-   legacy_prefix: null;
    methods {
       fill @virtual_pure {
          return: bool;

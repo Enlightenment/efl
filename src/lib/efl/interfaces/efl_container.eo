@@ -1,7 +1,6 @@
 interface Efl.Container (Efl.Gfx)
 {
    [[API common to all UI container objects.]]
-   legacy_prefix: null;
    eo_prefix: efl_content;
    methods {
       @property content {

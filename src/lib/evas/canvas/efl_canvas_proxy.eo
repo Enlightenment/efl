@@ -6,7 +6,6 @@ class Efl.Canvas.Proxy (Evas.Image, Efl.Gfx.Buffer)
      object attached to it. It can be used to apply some sort of image
      transformation to any object (eg. filters, map or zoom).
    ]]
-   legacy_prefix: null;
    data: null;
    methods {
       @property source {

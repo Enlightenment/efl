@@ -3,7 +3,6 @@ import eldbus_types;
 class Eldbus.Model.Object (Eo.Base, Efl.Model) {
     [[Eldbus model object class]]
 
-    legacy_prefix: null;
     data: Eldbus_Model_Object_Data;
     methods {
         constructor {

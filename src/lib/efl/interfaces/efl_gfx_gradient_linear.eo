@@ -1,6 +1,5 @@
 interface Efl.Gfx.Gradient.Linear (Efl.Gfx.Gradient)
 {
-   legacy_prefix: null;
    methods {
       @property start {
          set {

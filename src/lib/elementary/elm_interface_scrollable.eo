@@ -44,7 +44,6 @@ enum Elm.Scroller.Movement_Block
 
 mixin Elm.Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object.Smart)
 {
-   legacy_prefix: null;
    eo_prefix: elm_interface_scrollable;
    data: Elm_Scrollable_Smart_Interface_Data;
    methods {

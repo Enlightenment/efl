@@ -7,7 +7,6 @@ struct Efl.Ui.Box.Flow_Params {
 class Efl.Ui.Box.Flow (Efl.Ui.Box, Efl.Pack.Layout)
 {
    [[A custom layout engine for @Efl.Ui.Box.]]
-   legacy_prefix: null;
    methods {
       @property box_flow_homogenous {
          set {}

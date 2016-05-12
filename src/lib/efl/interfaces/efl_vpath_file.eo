@@ -14,7 +14,6 @@ class Efl.Vpath.File (Eo.Base)
 
       @since 1.18
    ]]
-   legacy_prefix: null;
    eo_prefix: efl_vpath_file;
    methods {
       @property path {

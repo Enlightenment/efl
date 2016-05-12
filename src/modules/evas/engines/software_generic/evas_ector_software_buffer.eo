@@ -1,7 +1,6 @@
 class Evas.Ector.Software.Buffer (Ector.Software.Buffer, Evas.Ector.Buffer)
 {
    [[A buffer object wrapping an existing Evas Image_Entry.]]
-   legacy_prefix: null;
    implements {
       Eo.Base.constructor;
       Eo.Base.finalize;

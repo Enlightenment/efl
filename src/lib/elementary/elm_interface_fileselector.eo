@@ -28,7 +28,6 @@ enum Elm.Fileselector.Sort
 
 interface Elm.Interface.Fileselector ()
 {
-   legacy_prefix: null;
    eo_prefix: elm_interface_fileselector;
    methods {
       @property folder_only {

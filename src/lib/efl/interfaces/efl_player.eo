@@ -1,5 +1,4 @@
 interface Efl.Player {
-   legacy_prefix: null;
    methods {
         @property playable {
              [[Whether or not the object data can be played.]]

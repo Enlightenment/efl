@@ -1,7 +1,6 @@
 class Evas.Ector.GL.RGBAImage.Buffer (Ector.Software.Buffer, Evas.Ector.Buffer)
 {
    [[A buffer object wrapping an existing Evas RGBA_Image for the GL Engine.]]
-   legacy_prefix: null;
    implements {
       Eo.Base.constructor;
       Eo.Base.finalize;

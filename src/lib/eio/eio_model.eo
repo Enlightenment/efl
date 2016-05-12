@@ -4,7 +4,6 @@ class Eio.Model (Eo.Base, Efl.Model)
 {
     [[Eio model class]]
 
-    legacy_prefix: null;
     methods {
        children_filter_set {
           [[Set children filter callback.

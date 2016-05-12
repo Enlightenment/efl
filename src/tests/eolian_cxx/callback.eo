@@ -2,7 +2,6 @@ import ecore_types;
 
 class Callback (Eo.Base)
 {
-   legacy_prefix: null;
    data: Callback_Data;
    methods {
       onecallback {

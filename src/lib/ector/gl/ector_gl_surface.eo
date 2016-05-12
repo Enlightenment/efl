@@ -3,7 +3,6 @@ import ector_types;
 class Ector.GL.Surface (Ector.GL.Buffer, Ector.Surface)
 {
    eo_prefix: ector_gl_surface;
-   legacy_prefix: null;
    methods {
       shader_get {
          return: uint;

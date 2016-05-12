@@ -3,7 +3,6 @@ import efl_gfx_types;
 
 mixin Efl.Gfx.Shape
 {
-   legacy_prefix: null;
    methods {
       @property stroke_scale {
          set {

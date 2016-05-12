@@ -1,7 +1,6 @@
 class Ecore.Con.Eet.Client.Obj (Ecore.Con.Eet.Base) {
    [[Ecore Connection Eet Client class.]]
 
-   legacy_prefix: null;
    eo_prefix: ecore_con_eet_client_obj;
    implements {
         Eo.Base.constructor;

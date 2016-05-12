@@ -3,7 +3,6 @@ import ector_renderer;
 mixin Ector.Renderer.Shape (Efl.Gfx.Shape)
 {
    eo_prefix: ector_renderer_shape;
-   legacy_prefix: null;
    methods {
       @property fill {
          set {

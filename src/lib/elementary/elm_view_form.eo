@@ -1,6 +1,5 @@
 class Elm.View.Form (Eo.Base)
 {
-    legacy_prefix: null;
     methods {
         model_set {
              [[Set model

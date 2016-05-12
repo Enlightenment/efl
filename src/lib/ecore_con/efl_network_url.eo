@@ -1,6 +1,5 @@
 class Efl.Network.Url (Eo.Base) {
    [[Uniform Resource Locator (URL) base class]]
-   legacy_prefix: null;
    eo_prefix: efl_network_url;
    methods {
       @property url {

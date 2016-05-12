@@ -5,7 +5,6 @@ struct Efl.Model.Property_Event {
 
 interface Efl.Model ()
 {
-   legacy_prefix: null;
    eo_prefix: efl_model;
       methods {
          @property properties {

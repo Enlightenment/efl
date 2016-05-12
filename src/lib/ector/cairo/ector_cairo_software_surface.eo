@@ -5,7 +5,6 @@ class Ector.Cairo.Software.Surface (Ector.Cairo.Surface, Ector.Software.Buffer.B
    Used to render ector content into a cairo software backend.
    ]]
    eo_prefix: ector_cairo_software_surface;
-   legacy_prefix: null;
    methods {}
    implements {
       Ector.Buffer.pixels_set;

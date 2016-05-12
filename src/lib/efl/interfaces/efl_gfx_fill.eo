@@ -1,5 +1,4 @@
 interface Efl.Gfx.Fill {
-   legacy_prefix: null;
    methods {
       @property fill_auto {
          [[Binds the object's @.fill property to its actual geometry.

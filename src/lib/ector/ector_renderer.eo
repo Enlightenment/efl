@@ -14,7 +14,6 @@ abstract Ector.Renderer (Eo.Base)
    [[Ector renderer abstract interface]]
 
    eo_prefix: ector_renderer;
-   legacy_prefix: null;
    methods {
       @property surface {
          [[Surface associated to this renderer]]

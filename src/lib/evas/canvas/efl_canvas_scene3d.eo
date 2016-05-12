@@ -1,7 +1,6 @@
 class Efl.Canvas.Scene3d (Evas.Image)
 {
    [[A UI view for EFL Canvas 3D.]]
-   legacy_prefix: null;
    data: null;
    methods {
       @property scene3d {

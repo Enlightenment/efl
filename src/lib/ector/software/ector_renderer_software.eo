@@ -1,6 +1,5 @@
 class Ector.Renderer.Software (Ector.Renderer)
 {
-   legacy_prefix: null;
    data: null;
    methods {
       fill @virtual_pure {

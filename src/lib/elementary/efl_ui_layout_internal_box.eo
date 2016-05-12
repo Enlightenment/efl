@@ -5,7 +5,6 @@ class Efl.Ui.Layout_Internal.Box (Eo.Base, Efl.Pack.Linear)
      Can not be deleted, this is only a representation of an internal object
      of an EFL layout.
    ]]
-   legacy_prefix: null;
    data: Efl_Ui_Layout_Table_Data;
    methods {
       @property real_part @protected {

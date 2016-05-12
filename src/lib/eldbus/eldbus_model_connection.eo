@@ -1,7 +1,6 @@
 class Eldbus.Model.Connection (Eo.Base, Efl.Model) {
     [[Eldbus model connection class]]
 
-    legacy_prefix: null;
     methods {
         constructor {
             [[Custom Eldbus_Model_Connection constructor.

@@ -11,7 +11,6 @@ class Ecore.Con.Eet.Base (Eo.Base) {
    
    This class provides Eet data serialization features to Ecore Connection objects.]]
 
-   legacy_prefix: null;
    methods {
       @property server {
          [[The server object to which we send and receive.]]

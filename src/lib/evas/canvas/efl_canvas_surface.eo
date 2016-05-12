@@ -8,7 +8,6 @@ mixin Efl.Canvas.Surface (Evas.Image)
      (C or C++), with direct access to the display system or a buffer
      allocation system.
    ]]
-   legacy_prefix: null;
    methods {
       @property native_buffer {
           [[External buffer attached to this native surface.

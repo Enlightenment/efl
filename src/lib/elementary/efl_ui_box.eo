@@ -1,6 +1,5 @@
 class Efl.Ui.Box (Elm.Widget, Efl.Pack.Linear, Efl.Pack.Layout)
 {
-   legacy_prefix: null;
    implements {
       Eo.Base.constructor;
 

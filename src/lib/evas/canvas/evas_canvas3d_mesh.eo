@@ -3,7 +3,6 @@ import evas_types;
 
 class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
 {
-   legacy_prefix: null;
    data: Evas_Canvas3D_Mesh_Data;
 
    methods {

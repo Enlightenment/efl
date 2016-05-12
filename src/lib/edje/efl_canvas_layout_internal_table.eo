@@ -5,7 +5,6 @@ class Efl.Canvas.Layout_Internal.Table (Eo.Base, Efl.Pack.Grid)
      Can not be deleted, this is only a representation of an internal object
      of an EFL layout.
    ]]
-   legacy_prefix: null;
    data: Edje_Table_Data;
    methods {
       @property real_part @protected {

@@ -27,7 +27,6 @@ mixin Ector.Buffer
      @since 1.17
    ]]
    eo_prefix: ector_buffer;
-   legacy_prefix: null;
    methods {
       @property size {
          [[The (rectangular) size of the pixel buffer.]]

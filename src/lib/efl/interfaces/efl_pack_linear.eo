@@ -4,7 +4,6 @@ import efl_orientation;
 interface Efl.Pack.Linear (Efl.Pack)
 {
    [[API for containers ]]
-   legacy_prefix: null;
    eo_prefix: efl_pack;
    methods {
       pack_begin {

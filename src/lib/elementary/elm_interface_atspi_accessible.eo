@@ -224,7 +224,6 @@ type Elm.Atspi.Relation_Set: list<Elm.Atspi.Relation *> *;
 
 mixin Elm.Interface.Atspi_Accessible ()
 {
-   legacy_prefix: null;
    eo_prefix: elm_interface_atspi_accessible;
    data: Elm_Interface_Atspi_Accessible_Data;
    methods {

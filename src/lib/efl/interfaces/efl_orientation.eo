@@ -16,7 +16,6 @@ enum Efl.Orient
 
 interface Efl.Orientation
 {
-   legacy_prefix: null;
    methods {
        @property orientation{
          [[Control the orientation of a given widget

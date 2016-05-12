@@ -7,7 +7,6 @@ class Ector.Cairo.Surface (Eo.Base, Ector.Surface)
    Used to render ector content into a cairo backend.
    ]]
    eo_prefix: ector_cairo_surface;
-   legacy_prefix: null;
    methods {
       @property context {
          [[Cairo context]]

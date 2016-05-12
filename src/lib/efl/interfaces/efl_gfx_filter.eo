@@ -11,7 +11,6 @@ interface Efl.Gfx.Filter
      @since 1.18
    ]]
    eo_prefix: efl_gfx;
-   legacy_prefix: null;
    methods {
       @property filter_program {
          set {

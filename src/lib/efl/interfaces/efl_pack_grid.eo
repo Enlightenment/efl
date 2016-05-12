@@ -3,7 +3,6 @@ import efl_gfx_types;
 interface Efl.Pack.Grid (Efl.Pack.Linear)
 {
    [[2D containers aligned on a grid with rows and columns]]
-   legacy_prefix: null;
    eo_prefix: efl_pack;
    methods {
       pack_grid {

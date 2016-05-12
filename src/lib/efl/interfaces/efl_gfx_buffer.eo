@@ -11,7 +11,6 @@ enum Efl.Gfx.Buffer.Access_Mode {
 interface Efl.Gfx.Buffer ()
 {
    [[Common APIs for all objects representing images and 2D pixel buffers.]]
-   legacy_prefix: null;
 
    methods {
       @property buffer_size {

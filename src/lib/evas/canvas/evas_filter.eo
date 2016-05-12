@@ -3,7 +3,6 @@ mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
    [[Evas internal implementation of filters.]]
 
    eo_prefix: evas;
-   legacy_prefix: null;
 
    methods {
       @property filter_changed @protected {

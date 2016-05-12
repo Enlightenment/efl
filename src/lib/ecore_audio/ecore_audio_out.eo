@@ -2,7 +2,6 @@ class Ecore.Audio.Out (Ecore.Audio)
 {
    [[Ecore Audio output object.]]
 
-   legacy_prefix: null;
    eo_prefix: ecore_audio_obj_out;
    data: Ecore_Audio_Output;
    methods {

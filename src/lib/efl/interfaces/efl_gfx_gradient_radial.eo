@@ -1,6 +1,5 @@
 interface Efl.Gfx.Gradient.Radial (Efl.Gfx.Gradient)
 {
-   legacy_prefix: null;
    methods {
       @property center {
          set {

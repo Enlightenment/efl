@@ -20,7 +20,6 @@ enum Efl.Image.Scale_Hint
 interface Efl.Image ()
 {
    [[Common APIs for all 2D images that can be rendered on the canvas.]]
-   legacy_prefix: null;
 
    methods {
       @property smooth_scale {

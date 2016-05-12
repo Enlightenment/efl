@@ -1,6 +1,5 @@
 class Efl.Ui.Nstate(Elm.Button)
 {
-   legacy_prefix: null;
    methods {
       activate @protected {
       }

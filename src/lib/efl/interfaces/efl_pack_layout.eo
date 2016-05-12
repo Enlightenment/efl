@@ -4,7 +4,6 @@ interface Efl.Pack.Layout ()
 
      Used for containers (box, grid).
    ]]
-   legacy_prefix: null;
    eo_prefix: efl_pack;
    methods {
       @property layout_engine {

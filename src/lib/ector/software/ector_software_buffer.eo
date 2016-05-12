@@ -1,6 +1,5 @@
 class Ector.Software.Buffer (Eo.Base, Ector.Software.Buffer.Base)
 {
-   legacy_prefix: null;
    data: null;
    implements {
       Eo.Base.constructor;

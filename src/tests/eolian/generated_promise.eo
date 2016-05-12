@@ -1,6 +1,5 @@
 class Generated_Promise (Eo.Base)
 {
-   legacy_prefix: null;
    methods {
       method1 {
          params {

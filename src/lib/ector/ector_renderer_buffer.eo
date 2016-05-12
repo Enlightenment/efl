@@ -2,7 +2,6 @@ mixin Ector.Renderer.Buffer (Ector.Renderer, Efl.Gfx.Fill)
 {
    [[Ector buffers have a default fill set to repeat]]
    eo_prefix: ector_renderer_buffer;
-   legacy_prefix: null;
    methods {
       @property buffer {
 	 set { [[Sets the source buffer for this renderer, adds a ref]] }

@@ -1,6 +1,5 @@
 abstract Ector.Renderer.Cairo (Ector.Renderer)
 {
-   legacy_prefix: null;
    methods {
       fill @virtual_pure {
          return: bool;

@@ -1,6 +1,5 @@
 interface Efl.Ui.Spin()
 {
-   legacy_prefix: null;
    methods {
       @property min_max {
          [[Control the minimum and maximum values for the spinner.

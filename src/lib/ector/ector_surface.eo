@@ -3,7 +3,6 @@ mixin Ector.Surface (Ector.Buffer)
    [[Surface interface for Ector]]
 
    eo_prefix: ector_surface;
-   legacy_prefix: null;
    data: null;
    methods {
       @property reference_point {
