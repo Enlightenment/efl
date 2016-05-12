@@ -188,14 +188,14 @@ abstract Efl.Network (Eo.Base) {
       @virtual .send;
    }
    events {
-        data,received: Ecore_Con_Event_Data_Received; [[Data received on connection]]
+        data,received: Ecore.Con.Event_Data.Received; [[Data received on connection]]
         connection,upgraded;
         connection,error: const(char) *; [[Error received on connection]]
    }
 }
 
 /* FIXME: Should actually be a binbuf. */
-struct Ecore_Con_Event_Data_Received {
+struct Ecore.Con.Event_Data.Received {
     data: void *; [[The data that got sent.]]
     size: int; [[The length of the data sent.]]
 }
