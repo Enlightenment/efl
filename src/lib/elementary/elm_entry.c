@@ -4,7 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
-#define ELM_INTERFACE_ATSPI_EDITABLE_TEXT_PROTECTED
+#define ELM_INTERFACE_ATSPI_TEXT_EDITABLE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
 #include <Elementary.h>
@@ -5824,14 +5824,14 @@ _elm_entry_elm_interface_atspi_text_default_attributes_get(Eo *obj EINA_UNUSED, 
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_editable_text_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *content)
+_elm_entry_elm_interface_atspi_text_editable_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *content)
 {
    elm_entry_entry_set(obj, content);
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_editable_text_insert(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *string, int position)
+_elm_entry_elm_interface_atspi_text_editable_insert(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *string, int position)
 {
    elm_entry_cursor_pos_set(obj, position);
    elm_entry_entry_insert(obj, string);
@@ -5840,7 +5840,7 @@ _elm_entry_elm_interface_atspi_editable_text_insert(Eo *obj, Elm_Entry_Data *_pd
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_editable_text_copy(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start, int end)
+_elm_entry_elm_interface_atspi_text_editable_copy(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start, int end)
 {
    elm_entry_select_region_set(obj, start, end);
    elm_entry_selection_copy(obj);
@@ -5849,7 +5849,7 @@ _elm_entry_elm_interface_atspi_editable_text_copy(Eo *obj, Elm_Entry_Data *_pd E
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_editable_text_delete(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
+_elm_entry_elm_interface_atspi_text_editable_delete(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
@@ -5881,7 +5881,7 @@ _elm_entry_elm_interface_atspi_editable_text_delete(Eo *obj, Elm_Entry_Data *_pd
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_editable_text_paste(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int position)
+_elm_entry_elm_interface_atspi_text_editable_paste(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int position)
 {
    elm_entry_cursor_pos_set(obj, position);
    elm_entry_selection_paste(obj);
@@ -5889,7 +5889,7 @@ _elm_entry_elm_interface_atspi_editable_text_paste(Eo *obj, Elm_Entry_Data *_pd 
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_editable_text_cut(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start, int end)
+_elm_entry_elm_interface_atspi_text_editable_cut(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start, int end)
 {
    elm_entry_select_region_set(obj, start, end);
    elm_entry_selection_cut(obj);

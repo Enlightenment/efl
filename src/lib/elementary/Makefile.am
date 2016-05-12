@@ -49,7 +49,7 @@ elm_eolian_files = \
 	elm_interface_atspi_accessible.eo \
 	elm_interface_atspi_action.eo \
 	elm_interface_atspi_component.eo \
-	elm_interface_atspi_editable_text.eo \
+	elm_interface_atspi_text_editable.eo \
 	elm_interface_atspi_image.eo \
 	elm_interface_atspi_selection.eo \
 	elm_interface_atspi_text.eo \
@@ -559,7 +559,7 @@ libelementary_la_SOURCES = \
 	elm_interface_atspi_accessible.c \
 	elm_interface_atspi_action.c \
 	elm_interface_atspi_component.c \
-	elm_interface_atspi_editable_text.c \
+	elm_interface_atspi_text_editable.c \
 	elm_interface_atspi_image.c \
 	elm_interface_atspi_selection.c \
 	elm_interface_atspi_text.c \

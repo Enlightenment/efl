@@ -115,7 +115,7 @@ enum Elm.Cnp_Mode
 }
 
 class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
-                 Elm.Interface.Atspi.Text, Elm.Interface.Atspi_Editable_Text, Efl.File,
+                 Elm.Interface.Atspi.Text, Elm.Interface.Atspi.Text.Editable, Efl.File,
                  Evas.Selectable_Interface, Evas.Scrollable_Interface)
 {
    eo_prefix: elm_obj_entry;
@@ -980,12 +980,12 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
       Elm.Interface.Atspi.Text.selection_add;
       Elm.Interface.Atspi.Text.selection_remove;
       Elm.Interface.Atspi.Text.selection.set;
-      Elm.Interface.Atspi_Editable_Text.content.set;
-      Elm.Interface.Atspi_Editable_Text.insert;
-      Elm.Interface.Atspi_Editable_Text.copy;
-      Elm.Interface.Atspi_Editable_Text.cut;
-      Elm.Interface.Atspi_Editable_Text.delete;
-      Elm.Interface.Atspi_Editable_Text.paste;
+      Elm.Interface.Atspi.Text.Editable.content.set;
+      Elm.Interface.Atspi.Text.Editable.insert;
+      Elm.Interface.Atspi.Text.Editable.copy;
+      Elm.Interface.Atspi.Text.Editable.cut;
+      Elm.Interface.Atspi.Text.Editable.delete;
+      Elm.Interface.Atspi.Text.Editable.paste;
       Efl.File.file.set;
       Efl.File.file.get;
    }

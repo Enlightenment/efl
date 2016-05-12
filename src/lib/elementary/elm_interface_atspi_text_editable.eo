@@ -1,7 +1,7 @@
-interface Elm.Interface.Atspi_Editable_Text ()
+interface Elm.Interface.Atspi.Text.Editable ()
 {
    legacy_prefix: null;
-   eo_prefix: elm_interface_atspi_editable_text;
+   eo_prefix: elm_interface_atspi_text_editable;
    methods {
       @property content @protected {
          set {

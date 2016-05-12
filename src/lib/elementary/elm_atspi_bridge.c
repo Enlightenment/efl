@@ -9,7 +9,7 @@
 #define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
 #define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
-#define ELM_INTERFACE_ATSPI_EDITABLE_TEXT_PROTECTED
+#define ELM_INTERFACE_ATSPI_TEXT_EDITABLE_PROTECTED
 
 #include "atspi/atspi-constants.h"
 
@@ -1846,7 +1846,7 @@ _editable_text_text_content_set(const Eldbus_Service_Interface *iface, const Eld
    Eldbus_Message *ret;
    Eina_Bool res;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "s", &content))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "String expected.");
@@ -1854,7 +1854,7 @@ _editable_text_text_content_set(const Eldbus_Service_Interface *iface, const Eld
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   res = elm_interface_atspi_editable_text_content_set(obj, content);
+   res = elm_interface_atspi_text_editable_content_set(obj, content);
 
    eldbus_message_arguments_append(ret, "b", res);
 
@@ -1872,7 +1872,7 @@ _editable_text_text_insert(const Eldbus_Service_Interface *iface, const Eldbus_M
    int pos, len;
    Eina_Bool res;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "isi", &pos, &text, &len))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Postion, string, length expected.");
@@ -1880,7 +1880,7 @@ _editable_text_text_insert(const Eldbus_Service_Interface *iface, const Eldbus_M
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   res = elm_interface_atspi_editable_text_insert(obj, text, pos);
+   res = elm_interface_atspi_text_editable_insert(obj, text, pos);
 
    eldbus_message_arguments_append(ret, "b", res);
 
@@ -1897,7 +1897,7 @@ _editable_text_text_copy(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    int start, end;
    Eina_Bool res;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "ii", &start, &end))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Start and end index expected.");
@@ -1905,7 +1905,7 @@ _editable_text_text_copy(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   res = elm_interface_atspi_editable_text_copy(obj, start, end);
+   res = elm_interface_atspi_text_editable_copy(obj, start, end);
 
    eldbus_message_arguments_append(ret, "b", res);
 
@@ -1922,7 +1922,7 @@ _editable_text_text_cut(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    int start, end;
    Eina_Bool res;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "ii", &start, &end))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Start and end index expected.");
@@ -1930,7 +1930,7 @@ _editable_text_text_cut(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   res = elm_interface_atspi_editable_text_cut(obj, start, end);
+   res = elm_interface_atspi_text_editable_cut(obj, start, end);
 
    eldbus_message_arguments_append(ret, "b", res);
 
@@ -1947,7 +1947,7 @@ _editable_text_text_delete(const Eldbus_Service_Interface *iface, const Eldbus_M
    int start, end;
    Eina_Bool res;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "ii", &start, &end))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Start and end index expected.");
@@ -1955,7 +1955,7 @@ _editable_text_text_delete(const Eldbus_Service_Interface *iface, const Eldbus_M
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   res = elm_interface_atspi_editable_text_delete(obj, start, end);
+   res = elm_interface_atspi_text_editable_delete(obj, start, end);
 
    eldbus_message_arguments_append(ret, "b", res);
 
@@ -1972,7 +1972,7 @@ _editable_text_text_paste(const Eldbus_Service_Interface *iface, const Eldbus_Me
    int pos;
    Eina_Bool res;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &pos))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Start and end index expected.");
@@ -1980,7 +1980,7 @@ _editable_text_text_paste(const Eldbus_Service_Interface *iface, const Eldbus_Me
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   res = elm_interface_atspi_editable_text_paste(obj, pos);
+   res = elm_interface_atspi_text_editable_paste(obj, pos);
 
    eldbus_message_arguments_append(ret, "b", res);
 
@@ -2493,7 +2493,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
         else if (!strcmp(ifc_name, "component"))
           class = ELM_INTERFACE_ATSPI_COMPONENT_MIXIN;
         else if (!strcmp(ifc_name, "editabletext"))
-          class = ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE;
+          class = ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE;
         else if (!strcmp(ifc_name, "text"))
           class = ELM_INTERFACE_ATSPI_TEXT_INTERFACE;
         else if (!strcmp(ifc_name, "image"))
@@ -3115,7 +3115,7 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_APPLICATION);
   if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_COMPONENT);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE))
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_EDITABLE_TEXT);
   if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_IMAGE);

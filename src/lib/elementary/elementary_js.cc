@@ -42,7 +42,7 @@ EAPI void register_elm_atspi_app_object(v8::Handle<v8::Object> global, v8::Isola
 EAPI void register_elm_interface_atspi_accessible(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_atspi_action(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_atspi_component(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_elm_interface_atspi_editable_text(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_elm_interface_atspi_text_editable(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_atspi_image(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_atspi_selection(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_atspi_text(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -211,7 +211,7 @@ void init(v8::Handle<v8::Object> exports)
       ::register_elm_interface_atspi_accessible(exports, v8::Isolate::GetCurrent());
       ::register_elm_interface_atspi_action(exports, v8::Isolate::GetCurrent());
       ::register_elm_interface_atspi_component(exports, v8::Isolate::GetCurrent());
-      ::register_elm_interface_atspi_editable_text(exports, v8::Isolate::GetCurrent());
+      ::register_elm_interface_atspi_text_editable(exports, v8::Isolate::GetCurrent());
       ::register_elm_interface_atspi_image(exports, v8::Isolate::GetCurrent());
       ::register_elm_interface_atspi_selection(exports, v8::Isolate::GetCurrent());
       ::register_elm_interface_atspi_text(exports, v8::Isolate::GetCurrent());
