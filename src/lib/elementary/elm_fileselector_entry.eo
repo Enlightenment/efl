@@ -1,6 +1,7 @@
 class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
                               Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
+   legacy_prefix: elm_fileselector_entry;
    eo_prefix: elm_obj_fileselector_entry;
    methods {
       @property inwin_mode {

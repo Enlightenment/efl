@@ -19,6 +19,7 @@ class Elm.Actionslider (Elm.Layout, Evas.Selectable_Interface)
    it will move to its nearest "enabled and magnetized" position.
    ]]
 
+   legacy_prefix: elm_actionslider;
    eo_prefix: elm_obj_actionslider;
    methods {
       @property indicator_pos {

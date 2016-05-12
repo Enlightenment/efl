@@ -1,5 +1,6 @@
 class Elm.Video (Elm.Layout, Efl.File, Elm.Interface.Atspi_Widget_Action)
 {
+   legacy_prefix: elm_video;
    eo_prefix: elm_obj_video;
    methods {
       @property audio_level {

@@ -8,6 +8,7 @@ class Ecore.Animator (Eo.Base)
    should be run and having a callback that does the animation.
    ]]
 
+   legacy_prefix: ecore_animator;
    eo_prefix: ecore_animator;
    methods {
       timeline_constructor {

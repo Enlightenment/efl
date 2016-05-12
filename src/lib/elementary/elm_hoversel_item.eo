@@ -2,6 +2,7 @@ import elm_icon;
 
 class Elm.Hoversel.Item(Elm.Widget.Item)
 {
+   legacy_prefix: elm_hoversel_item;
    eo_prefix: elm_obj_hoversel_item;
    methods {
         @property icon {

@@ -1,5 +1,6 @@
 class Elm.Slideshow.Item(Elm.Widget.Item)
 {
+   legacy_prefix: elm_slideshow_item;
    eo_prefix: elm_obj_slideshow_item;
    methods {
       show {

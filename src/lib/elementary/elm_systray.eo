@@ -24,6 +24,7 @@ enum Elm.Systray.Status
 
 class Elm.Systray (Eo.Base)
 {
+   legacy_prefix: elm_systray;
    eo_prefix: elm_obj_systray;
    data: null;
    methods {

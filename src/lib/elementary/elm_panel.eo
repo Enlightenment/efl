@@ -11,6 +11,7 @@ enum Elm.Panel.Orient
 class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
                  Elm.Interface.Atspi_Widget_Action)
 {
+   legacy_prefix: elm_panel;
    eo_prefix: elm_obj_panel;
    methods {
       @property orient {

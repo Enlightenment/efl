@@ -2,6 +2,7 @@ type Elm_Naviframe_Item_Pop_Cb: __undefined_type;
 
 class Elm.Naviframe.Item(Elm.Widget.Item)
 {
+   legacy_prefix: elm_naviframe_item;
    eo_prefix: elm_obj_naviframe_item;
    methods {
         @property style {

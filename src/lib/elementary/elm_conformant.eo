@@ -1,5 +1,6 @@
 class Elm.Conformant (Elm.Layout)
 {
+   legacy_prefix: elm_conformant;
    eo_prefix: elm_obj_conformant;
    implements {
       class.constructor;

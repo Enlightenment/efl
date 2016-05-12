@@ -16,6 +16,7 @@ enum Elm.Web.Zoom_Mode
 
 class Elm.Web (Elm.Widget)
 {
+   legacy_prefix: elm_web;
    eo_prefix: elm_obj_web;
    methods {
       @property text_matches_highlight @virtual_pure {

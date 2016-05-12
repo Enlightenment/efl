@@ -15,6 +15,7 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
                     Evas.Clickable_Interface, Evas.Scrollable_Interface,
                     Evas.Zoomable_Interface)
 {
+   legacy_prefix: elm_photocam;
    eo_prefix: elm_obj_photocam;
    methods {
       @property paused {

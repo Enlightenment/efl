@@ -2,6 +2,7 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
                     Elm.Interface.Atspi_Widget_Action,
                     Evas.Scrollable_Interface)
 {
+   legacy_prefix: elm_scroller;
    eo_prefix: elm_obj_scroller;
    methods {
       @property propagate_events {

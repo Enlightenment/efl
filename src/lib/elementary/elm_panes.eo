@@ -1,5 +1,6 @@
 class Elm.Panes (Elm.Layout, Evas.Clickable_Interface)
 {
+   legacy_prefix: elm_panes;
    eo_prefix: elm_obj_panes;
    methods {
       @property content_left_size {

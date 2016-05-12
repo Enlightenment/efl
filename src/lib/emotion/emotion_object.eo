@@ -1,4 +1,5 @@
 class Emotion.Object (Evas.Object.Smart, Efl.File, Efl.Player, Efl.Image, Efl.Image.Load) {
+   legacy_prefix: emotion_object;
    eo_prefix: emotion_obj;
    methods {
         @property option {

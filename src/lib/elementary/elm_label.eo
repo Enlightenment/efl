@@ -10,6 +10,7 @@ enum Elm.Label.Slide_Mode
 
 class Elm.Label (Elm.Layout)
 {
+   legacy_prefix: elm_label;
    eo_prefix: elm_obj_label;
    methods {
       @property wrap_width {

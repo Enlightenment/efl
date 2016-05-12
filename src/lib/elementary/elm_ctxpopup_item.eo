@@ -1,5 +1,6 @@
 class Elm.Ctxpopup.Item(Elm.Widget.Item)
 {
+   legacy_prefix: elm_ctxpopup_item;
    eo_prefix: elm_obj_ctxpopup_item;
    methods {
       @property prev {

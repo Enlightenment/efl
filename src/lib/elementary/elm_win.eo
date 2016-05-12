@@ -164,6 +164,7 @@ enum Elm.Illume_Command
 class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                Elm.Interface.Atspi_Widget_Action, Efl.Pack)
 {
+   legacy_prefix: elm_win;
    eo_prefix: elm_obj_win;
    methods {
       @property keyboard_win {

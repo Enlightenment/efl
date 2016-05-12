@@ -22,6 +22,7 @@ struct @extern Elm.Theme;
 
 abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi_Component)
 {
+   legacy_prefix: elm_widget;
    eo_prefix: elm_obj_widget;
    data: Elm_Widget_Smart_Data;
    methods {

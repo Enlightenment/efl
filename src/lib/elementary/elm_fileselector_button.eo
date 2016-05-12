@@ -1,5 +1,6 @@
 class Elm.Fileselector_Button (Elm.Button, Elm.Interface.Fileselector)
 {
+   legacy_prefix: elm_fileselector_button;
    eo_prefix: elm_obj_fileselector_button;
    methods {
       @property inwin_mode {

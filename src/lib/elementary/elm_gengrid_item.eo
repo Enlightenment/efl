@@ -25,6 +25,7 @@ enum Elm.Gengrid.Item.Field_Type
 
 class Elm.Gengrid.Item(Elm.Widget.Item)
 {
+      legacy_prefix: elm_gengrid_item;
       eo_prefix: elm_obj_gengrid_item;
       data: Elm_Gen_Item;
       methods {

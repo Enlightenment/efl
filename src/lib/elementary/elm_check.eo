@@ -7,6 +7,7 @@ class Elm.Check (Efl.Ui.Nstate, Elm.Interface.Atspi_Widget_Action)
    except they do not work as a group, but independently, and only toggle
    the value of a boolean between false and true.
    ]]
+   legacy_prefix: elm_check;
    eo_prefix: efl_ui_check;
    methods {
       @property selected {

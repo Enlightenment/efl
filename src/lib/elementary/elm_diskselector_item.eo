@@ -1,5 +1,6 @@
 class Elm.Diskselector.Item(Elm.Widget.Item)
 {
+      legacy_prefix: elm_diskselector_item;
       eo_prefix: elm_obj_diskselector_item;
       methods {
            @property prev {

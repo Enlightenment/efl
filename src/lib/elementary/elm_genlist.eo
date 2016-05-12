@@ -6,6 +6,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
                    Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
                    Evas.Selectable_Interface)
 {
+   legacy_prefix: elm_genlist;
    eo_prefix: elm_obj_genlist;
    methods {
       @property homogeneous {

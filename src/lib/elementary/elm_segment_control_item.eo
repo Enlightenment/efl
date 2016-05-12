@@ -1,5 +1,6 @@
 class Elm.Segment_Control.Item(Elm.Widget.Item)
 {
+   legacy_prefix: elm_segment_control_item;
    eo_prefix: elm_obj_segment_control_item;
    methods {
       index_get @const {

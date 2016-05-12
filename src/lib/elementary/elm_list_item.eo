@@ -1,5 +1,6 @@
 class Elm.List.Item(Elm.Widget.Item)
 {
+   legacy_prefix: elm_list_item;
       eo_prefix: elm_obj_list_item;
       methods {
            @property separator {

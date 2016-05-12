@@ -1,5 +1,6 @@
 class Elm.Player (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
+   legacy_prefix: elm_player;
    eo_prefix: elm_obj_player;
    implements {
       class.constructor;

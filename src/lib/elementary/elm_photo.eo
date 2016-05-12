@@ -1,5 +1,6 @@
 class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_Interface)
 {
+   legacy_prefix: elm_photo;
    eo_prefix: elm_obj_photo;
    implements {
       class.constructor;

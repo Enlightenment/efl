@@ -1,5 +1,6 @@
 class Elm.Plug (Elm.Widget, Evas.Clickable_Interface)
 {
+   legacy_prefix: elm_plug;
    eo_prefix: elm_obj_plug;
    data: null;
    methods {

@@ -28,6 +28,7 @@ class Elm.Clock (Elm.Layout)
    A newly created clock will fetch system's time (already considering local time adjustments) to
    start with, and will tick accordingly.
    ]]
+   legacy_prefix: elm_clock;
    eo_prefix: elm_obj_clock;
    methods {
       @property show_am_pm {

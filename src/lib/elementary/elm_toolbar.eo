@@ -28,6 +28,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
                    Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
                    Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
+   legacy_prefix: elm_toolbar;
    eo_prefix: elm_obj_toolbar;
    methods {
       @property homogeneous {

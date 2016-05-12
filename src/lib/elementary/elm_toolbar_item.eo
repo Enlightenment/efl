@@ -25,6 +25,7 @@ struct Elm.Toolbar.Item.State
 
 class Elm.Toolbar.Item(Elm.Widget.Item)
 {
+      legacy_prefix: elm_toolbar_item;
       eo_prefix: elm_obj_toolbar_item;
       methods {
            @property prev {

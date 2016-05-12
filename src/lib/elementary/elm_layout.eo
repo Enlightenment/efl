@@ -19,6 +19,7 @@ struct Elm.Layout_Part_Alias_Description
 
 class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
 {
+   legacy_prefix: elm_layout;
    eo_prefix: elm_obj_layout;
    data: Elm_Layout_Smart_Data;
    methods {

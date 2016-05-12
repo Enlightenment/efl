@@ -21,6 +21,7 @@ class Elm.Bg (Elm.Layout, Efl.File)
    works just like an image, but has some properties useful to a background, like
    setting it to tiled, centered, scaled or stretched.
    ]]
+   legacy_prefix: elm_bg;
    eo_prefix: elm_obj_bg;
    methods {
       @property option {

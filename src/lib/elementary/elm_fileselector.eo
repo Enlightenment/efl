@@ -2,6 +2,7 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
                         Elm.Interface.Atspi_Widget_Action,
                         Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
+   legacy_prefix: elm_fileselector;
    eo_prefix: elm_obj_fileselector;
    methods {
       @property buttons_ok_cancel {

@@ -82,6 +82,7 @@ enum Elm.GLView.Render.Policy
 
 class Elm.Glview (Elm.Widget, Efl.Gfx.View)
 {
+   legacy_prefix: elm_glview;
    eo_prefix: elm_obj_glview;
    methods {
       version_constructor {

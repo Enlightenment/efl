@@ -1,5 +1,6 @@
 class Elm.Notify (Elm.Widget, Efl.Container)
 {
+   legacy_prefix: elm_notify;
    eo_prefix: elm_obj_notify;
    methods {
       @property align {

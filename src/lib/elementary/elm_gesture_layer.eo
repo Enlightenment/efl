@@ -33,6 +33,7 @@ enum Elm.Gesture.State
 
 class Elm.Gesture_Layer (Elm.Widget)
 {
+   legacy_prefix: elm_gesture_layer;
    eo_prefix: elm_obj_gesture_layer;
    methods {
       @property zoom_step {

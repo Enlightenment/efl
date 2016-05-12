@@ -3,6 +3,7 @@ type Elm_Multibuttonentry_Format_Cb: __undefined_type;
 
 class Elm.Multibuttonentry (Elm.Layout)
 {
+   legacy_prefix: elm_multibuttonentry;
    eo_prefix: elm_obj_multibuttonentry;
    methods {
       @property editable {
