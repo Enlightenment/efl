@@ -1,7 +1,7 @@
 import efl_orientation;
 
 /* FIXME: Efl.Pack.Linear */
-interface Efl.Pack_Linear (Efl.Pack)
+interface Efl.Pack.Linear (Efl.Pack)
 {
    [[API for containers ]]
    legacy_prefix: null;

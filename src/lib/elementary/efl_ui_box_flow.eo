@@ -4,7 +4,7 @@ struct Efl.Ui.Box_Flow_Params {
    max_size: bool;
 }
 
-class Efl.Ui.Box_Flow (Efl.Ui.Box, Efl.Pack_Layout)
+class Efl.Ui.Box_Flow (Efl.Ui.Box, Efl.Pack.Layout)
 {
    [[A custom layout engine for @Efl.Ui.Box.]]
    legacy_prefix: null;
@@ -26,6 +26,6 @@ class Efl.Ui.Box_Flow (Efl.Ui.Box, Efl.Pack_Layout)
    }
    implements {
       Eo.Base.constructor;
-      Efl.Pack_Layout.layout_do;
+      Efl.Pack.Layout.layout_do;
    }
 }

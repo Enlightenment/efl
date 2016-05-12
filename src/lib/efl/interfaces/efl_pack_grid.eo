@@ -1,6 +1,6 @@
 import efl_gfx_types;
 
-interface Efl.Pack_Grid (Efl.Pack_Linear)
+interface Efl.Pack.Grid (Efl.Pack.Linear)
 {
    [[2D containers aligned on a grid with rows and columns]]
    legacy_prefix: null;
@@ -72,7 +72,7 @@ interface Efl.Pack_Grid (Efl.Pack_Linear)
       @property grid_directions {
          [[Primary and secondary up/left/right/down orientations for linear apis.
 
-           Default is right and down. Overrides @Efl.Pack_Linear.pack_direction.
+           Default is right and down. Overrides @Efl.Pack.Linear.pack_direction.
          ]]
          set {}
          get {}
