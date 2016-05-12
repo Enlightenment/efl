@@ -1,10 +1,10 @@
-struct Efl.Ui.Box_Flow_Params {
+struct Efl.Ui.Box.Flow_Params {
    [[Extra parameters for Box_Flow layout. Can be omitted.]]
    homogenous: bool;
    max_size: bool;
 }
 
-class Efl.Ui.Box_Flow (Efl.Ui.Box, Efl.Pack.Layout)
+class Efl.Ui.Box.Flow (Efl.Ui.Box, Efl.Pack.Layout)
 {
    [[A custom layout engine for @Efl.Ui.Box.]]
    legacy_prefix: null;
