@@ -22,11 +22,11 @@ mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
             val: bool;
          }
       }
-      filter_input_alpha @protected {
+      filter_input_alpha @protected @virtual_pure {
          [[Called by Evas.Filter to determine whether the input is alpha or rgba.]]
          return: bool;
       }
-      filter_input_render @protected {
+      filter_input_render @protected @virtual_pure {
          [[Called by Evas.Filter when the parent class must render the input.
          ;
          ]]
@@ -41,7 +41,7 @@ mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
             do_async: bool;
          }
       }
-      filter_dirty @protected {
+      filter_dirty @protected @virtual_pure {
          [[Called when the filter changes must trigger a redraw of the object.
 
            Virtual, to be implemented in the parent class.
@@ -71,8 +71,5 @@ mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
       Efl.Gfx.Filter.filter_source.get;
       Efl.Gfx.Filter.filter_data.get;
       Efl.Gfx.Filter.filter_data.set;
-      @virtual .filter_input_alpha;
-      @virtual .filter_input_render;
-      @virtual .filter_dirty;
    }
 }

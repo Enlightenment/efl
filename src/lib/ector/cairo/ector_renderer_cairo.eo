@@ -2,7 +2,7 @@ abstract Ector.Renderer.Cairo (Ector.Renderer)
 {
    legacy_prefix: null;
    methods {
-      fill {
+      fill @virtual_pure {
          return: bool;
          params {
             @in mul_col: uint;
@@ -10,7 +10,6 @@ abstract Ector.Renderer.Cairo (Ector.Renderer)
       }
    }
    implements {
-      @virtual .fill;
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
       Ector.Renderer.color.set;

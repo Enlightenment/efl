@@ -3,11 +3,8 @@ class Ector.Renderer.Software (Ector.Renderer)
    legacy_prefix: null;
    data: null;
    methods {
-      fill {
+      fill @virtual_pure {
          return: bool;
       }
-   }
-   implements {
-      @virtual .fill;
    }
 }

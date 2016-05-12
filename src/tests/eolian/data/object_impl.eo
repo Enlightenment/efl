@@ -19,7 +19,7 @@ class Object_Impl (Base) {
       @property b {
          set {
          }
-         get {
+         get @virtual_pure {
             /* set as virtual pure - no implementation expected */
          }
          values {
@@ -50,7 +50,7 @@ class Object_Impl (Base) {
             @in b: const(char)*;
          }
       }
-      pure_foo3 {
+      pure_foo3 @virtual_pure {
          /* set as virtual pure - no implementation expected */
       }
    }
@@ -59,8 +59,6 @@ class Object_Impl (Base) {
       class.destructor;
       Base.constructor;
       Base.destructor;
-      @virtual .pure_foo3;
-      @virtual .b.get;
    }
    constructors {
       .constructor_1;

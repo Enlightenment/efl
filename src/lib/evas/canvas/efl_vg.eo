@@ -80,7 +80,7 @@ abstract Efl.VG (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
             Evas_VG_Quality q;
          }
       } */
-      bounds_get {
+      bounds_get @virtual_pure {
          [[Give the bounding box in screen coordinate as being drawn.
 
            It will start as the control box until it is refined once the shape
@@ -124,6 +124,5 @@ abstract Efl.VG (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
       Efl.Gfx.Stack.stack_above;
       Efl.Gfx.Stack.raise;
       Efl.Gfx.Stack.lower;
-      @virtual .bounds_get;
    }
 }

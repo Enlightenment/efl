@@ -2,11 +2,8 @@ class nmsp1.nmsp11.class2
 {
    methods {
       @property a {
-         set {
+         set @virtual_pure {
          }
       }
-   }
-   implements {
-      @virtual .a.set;
    }
 }

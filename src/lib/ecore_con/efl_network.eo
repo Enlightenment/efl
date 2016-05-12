@@ -45,7 +45,7 @@ abstract Efl.Network (Eo.Base) {
            valid after deletion for the svr object. If no IP is known
            null is returned.
          ]]
-         get {
+         get @virtual_pure {
              legacy: null;
          }
          values {
@@ -58,14 +58,14 @@ abstract Efl.Network (Eo.Base) {
            This function is used to find out how long a client has been
            connected.
          ]]
-         get {
+         get @virtual_pure {
              legacy: null;
          }
          values {
             uptime: double; [[The total time, in seconds, that the object has been connected.]]
          }
       }
-      @property port {
+      @property port @virtual_pure {
          [[The port that the obj is connected to]]
          set {
              legacy: null;
@@ -91,7 +91,7 @@ abstract Efl.Network (Eo.Base) {
 
            @since 1.1
          ]]
-         get {
+         get @virtual_pure {
              legacy: null;
          }
          values {
@@ -100,14 +100,14 @@ abstract Efl.Network (Eo.Base) {
       }
       @property connected {
          [[Returns whether the client is still connected]]
-         get {
+         get @virtual_pure {
              legacy: null;
          }
          values {
             connected: bool; [[Returns true if connected, false otherwise.]]
          }
       }
-      @property timeout {
+      @property timeout @virtual_pure {
          [[Control the default time after which an inactive client will be
            disconnected.
 
@@ -131,14 +131,14 @@ abstract Efl.Network (Eo.Base) {
             timeout: double; [[The timeout, in seconds, to disconnect after.]]
          }
       }
-      flush {
+      flush @virtual_pure {
          [[Flushes all pending data to the given server.
 
            This function will block until all data is sent to the server.
          ]]
          legacy: null;
       }
-      send {
+      send @virtual_pure {
          [[Sends the given data to the given server.
 
            This function will send the given data to the server as soon as the
@@ -174,18 +174,6 @@ abstract Efl.Network (Eo.Base) {
          }
          return: bool; [[true if the request did not fail to be set up, false otherwise.]]
       }
-   }
-   implements {
-      @virtual .ip.get;
-      @virtual .uptime.get;
-      @virtual .port.set;
-      @virtual .port.get;
-      @virtual .fd.get;
-      @virtual .connected.get;
-      @virtual .timeout.set;
-      @virtual .timeout.get;
-      @virtual .flush;
-      @virtual .send;
    }
    events {
         data,received: Ecore.Con.Event_Data.Received; [[Data received on connection]]

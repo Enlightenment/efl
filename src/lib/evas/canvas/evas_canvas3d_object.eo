@@ -35,13 +35,13 @@ class Evas.Canvas3D.Object (Eo.Base, Evas.Common_Interface)
       update {
          [[Update request for the object.]]
       }
-      update_notify {
+      update_notify @virtual_pure {
          [[Pure virtual update_notify function.
 
            Update request for the object.]]
       }
 
-      change_notify {
+      change_notify @virtual_pure {
          [[Pure virtual change_notify function.
 
            Update request for the object.]]
@@ -50,14 +50,14 @@ class Evas.Canvas3D.Object (Eo.Base, Evas.Common_Interface)
            @in ref: Evas.Canvas3D.Object *; [[The Object that caused the change.]]
          }
       }
-      callback_register {
+      callback_register @virtual_pure {
          [[Pure virtual register samrt callback function.]]
          params {
            @in event: const(char)*; [[Event type.]]
            @in data: const(void)*;  [[User data.]]
          }
       }
-      callback_unregister {
+      callback_unregister @virtual_pure {
          [[Pure virtual unregister smart callback function.]]
          params {
            @in event: const(char)*; [[Event type.]]
@@ -70,10 +70,6 @@ class Evas.Canvas3D.Object (Eo.Base, Evas.Common_Interface)
       Eo.Base.event_callback_priority_add;
       Eo.Base.event_callback_del;
       Evas.Common_Interface.evas.get;
-      @virtual .update_notify;
-      @virtual .change_notify;
-      @virtual .callback_register;
-      @virtual .callback_unregister;
    }
    events {
       clicked; [[Clicked Event.]]

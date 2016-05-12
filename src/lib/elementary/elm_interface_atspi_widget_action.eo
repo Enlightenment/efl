@@ -7,7 +7,7 @@ mixin Elm.Interface.Atspi_Widget_Action (Elm.Interface.Atspi_Action)
    data: null;
    methods {
       @property elm_actions @protected {
-         get {
+         get @virtual_pure {
          }
          values {
             actions: const(Elm_Atspi_Action)*; [[NULL-terminated array of Elm_Atspi_Action]]
@@ -21,6 +21,5 @@ mixin Elm.Interface.Atspi_Widget_Action (Elm.Interface.Atspi_Action)
       Elm.Interface.Atspi_Action.description.set;
       Elm.Interface.Atspi_Action.description.get;
       Elm.Interface.Atspi_Action.actions.get;
-      @virtual .elm_actions.get;
    }
 }

@@ -58,7 +58,7 @@ class Ecore.Audio (Eo.Base)
             volume: double; [[The volume]]
          }
       }
-      @property source {
+      @property source @virtual_pure {
          [[Source of the object
 
            What sources are supported depends on the actual object.
@@ -78,7 +78,7 @@ class Ecore.Audio (Eo.Base)
             source: const(char)*; [[the source to set to (i.e. file, URL, device)]]
          }
       }
-      @property format {
+      @property format @virtual_pure {
          [[Format of the object.]]
          set {
             [[Set the format of the object
@@ -103,7 +103,7 @@ class Ecore.Audio (Eo.Base)
             format: Ecore.Audio.Format; [[the format of the object]]
          }
       }
-      vio_set {
+      vio_set @virtual_pure {
          [[Set the virtual IO functions
 
            @since 1.8
@@ -123,10 +123,5 @@ class Ecore.Audio (Eo.Base)
    }
    implements {
       Eo.Base.constructor;
-      @virtual .source.get;
-      @virtual .source.set;
-      @virtual .format.get;
-      @virtual .format.set;
-      @virtual .vio_set;
    }
 }

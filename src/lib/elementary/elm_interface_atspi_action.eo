@@ -4,7 +4,7 @@ mixin Elm.Interface.Atspi_Action ()
    eo_prefix: elm_interface_atspi_action;
    data: null;
    methods {
-      @property name @protected {
+      @property name @protected @virtual_pure {
          get {
             [[Gets action name for given id]]
          }
@@ -26,7 +26,7 @@ mixin Elm.Interface.Atspi_Action ()
             id: int;
          }
       }
-      @property description @protected {
+      @property description @protected @virtual_pure {
          get {
             [[Gets action description for given id]]
          }
@@ -42,35 +42,26 @@ mixin Elm.Interface.Atspi_Action ()
          }
       }
       @property actions @protected {
-         get {
+         get @virtual_pure {
             [[Get list of available widget actions]]
          }
          values {
             actions: list<Elm_Atspi_Action> *; [[contains statically allocated strings]]
          }
       }
-      action_do @protected {
+      action_do @protected @virtual_pure {
          [[Performs action on given widget.]]
          params {
             @in id: int;
          }
          return: bool;
       }
-      keybinding_get @protected {
+      keybinding_get @protected @virtual_pure {
          [[Gets configured keybinding for specific action and widget.]]
          params {
             @in id: int;
          }
          return: own(char *) @warn_unused; [[Should be freed by the user.]]
       }
-   }
-   implements {
-      @virtual .action_do;
-      @virtual .keybinding_get;
-      @virtual .name.get;
-      @virtual .name.set;
-      @virtual .description.get;
-      @virtual .description.set;
-      @virtual .actions.get;
    }
 }

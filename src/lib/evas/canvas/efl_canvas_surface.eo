@@ -16,7 +16,7 @@ mixin Efl.Canvas.Surface (Evas.Image)
             Set to $null to detach this surface from the external buffer.
           ]]
           get {}
-          set {
+          set @virtual_pure {
              [[Set the buffer. If this fails, this function returns $false,
                and the surface is left without any attached buffer.
              ]]
@@ -29,6 +29,5 @@ mixin Efl.Canvas.Surface (Evas.Image)
    }
    implements {
       Eo.Base.constructor;
-      @virtual .native_buffer.set;
    }
 }
