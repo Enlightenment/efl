@@ -121,7 +121,7 @@ struct Efl.Gfx.Gradient.Stop
   a: int; [[The component A color of the graident stop]]
 }
 
-struct Efl.Gfx.Stroke_Color
+struct Efl.Gfx.Stroke.Color
 {
   [[Internal structure for @Efl.Gfx.Stroke.]]
   r: int;
@@ -139,7 +139,7 @@ struct Efl.Gfx.Stroke
   scale: double;
   width: double;
   centered: double;
-  color: Efl.Gfx.Stroke_Color;
+  color: Efl.Gfx.Stroke.Color;
   dash: Efl.Gfx.Dash*;
   dash_length: uint;
   cap: Efl.Gfx.Cap;
