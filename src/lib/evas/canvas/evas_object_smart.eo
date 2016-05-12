@@ -3,7 +3,7 @@
 struct @extern Evas.Smart;
 struct @extern Evas.Smart_Cb_Description;
 
-class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
+class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
 {
    eo_prefix: evas_obj_smart;
    data: Evas_Smart_Data;

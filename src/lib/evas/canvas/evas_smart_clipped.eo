@@ -1,4 +1,4 @@
-class Evas.Smart_Clipped (Evas.Object_Smart)
+class Evas.Smart_Clipped (Evas.Object.Smart)
 {
    legacy_prefix: evas_object_smart_clipped;
    eo_prefix: evas_obj_smart_clipped;
@@ -6,15 +6,15 @@ class Evas.Smart_Clipped (Evas.Object_Smart)
 
    implements {
       Eo.Base.constructor;
-      Evas.Object_Smart.hide;
-      Evas.Object_Smart.clip.set;
-      Evas.Object_Smart.clip_unset;
-      Evas.Object_Smart.show;
-      Evas.Object_Smart.color.set;
-      Evas.Object_Smart.move;
-      Evas.Object_Smart.member_del;
-      Evas.Object_Smart.add;
-      Evas.Object_Smart.del;
-      Evas.Object_Smart.member_add;
+      Evas.Object.Smart.hide;
+      Evas.Object.Smart.clip.set;
+      Evas.Object.Smart.clip_unset;
+      Evas.Object.Smart.show;
+      Evas.Object.Smart.color.set;
+      Evas.Object.Smart.move;
+      Evas.Object.Smart.member_del;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.del;
+      Evas.Object.Smart.member_add;
    }
 }

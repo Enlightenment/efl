@@ -55,8 +55,8 @@ class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object_Smart.add;
-      Evas.Object_Smart.del;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.del;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;

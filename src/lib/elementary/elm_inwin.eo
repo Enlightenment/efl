@@ -20,7 +20,7 @@ class Elm.Inwin (Elm.Layout)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object_Smart.add;
+      Evas.Object.Smart.add;
       Elm.Widget.widget_parent.set;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;

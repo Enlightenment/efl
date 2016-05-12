@@ -30,7 +30,7 @@ class Elm.Plug (Elm.Widget, Evas.Clickable_Interface)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object_Smart.add;
+      Evas.Object.Smart.add;
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
    }

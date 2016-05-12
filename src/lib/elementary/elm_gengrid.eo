@@ -538,11 +538,11 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object_Smart.move;
-      Evas.Object_Smart.add;
-      Evas.Object_Smart.del;
-      Evas.Object_Smart.member_add;
-      Evas.Object_Smart.resize;
+      Evas.Object.Smart.move;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.del;
+      Evas.Object.Smart.member_add;
+      Evas.Object.Smart.resize;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;

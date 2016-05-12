@@ -1,7 +1,7 @@
 class Elm.Web.None (Elm.Web)
 {
    implements {
-      Evas.Object_Smart.add;
+      Evas.Object.Smart.add;
       Elm.Web.tab_propagate.get;
       Elm.Web.tab_propagate.set;
       Elm.Web.webkit_view.get;

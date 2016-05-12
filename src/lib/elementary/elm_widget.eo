@@ -20,7 +20,7 @@ struct Elm.Tooltip;
 struct Elm.Cursor;
 struct @extern Elm.Theme;
 
-abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Interface_Atspi_Component)
+abstract Elm.Widget (Evas.Object.Smart, Elm.Interface_Atspi_Accessible, Elm.Interface_Atspi_Component)
 {
    eo_prefix: elm_obj_widget;
    data: Elm_Widget_Smart_Data;
@@ -34,7 +34,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
            the focus from this object, passing it back to the previous element in the
            focus chain list.
 
-           Warning: Only visible object can get a focus. Call @Evas.Object_Smart.show
+           Warning: Only visible object can get a focus. Call @Evas.Object.Smart.show
            before calling this API, if you want to give a focus to the evas object.]]
          set {
            [[$true set the focus to the object,
@@ -847,19 +847,19 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
-      Evas.Object_Smart.hide;
-      Evas.Object_Smart.calculate;
-      Evas.Object_Smart.clip_unset;
-      Evas.Object_Smart.show;
-      Evas.Object_Smart.color.set;
-      Evas.Object_Smart.move;
-      Evas.Object_Smart.member_del;
-      Evas.Object_Smart.add;
-      Evas.Object_Smart.del;
-      Evas.Object_Smart.clip.set;
-      Evas.Object_Smart.member_add;
-      Evas.Object_Smart.resize;
-      Evas.Object_Smart.smart_no_render.set;
+      Evas.Object.Smart.hide;
+      Evas.Object.Smart.calculate;
+      Evas.Object.Smart.clip_unset;
+      Evas.Object.Smart.show;
+      Evas.Object.Smart.color.set;
+      Evas.Object.Smart.move;
+      Evas.Object.Smart.member_del;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.del;
+      Evas.Object.Smart.clip.set;
+      Evas.Object.Smart.member_add;
+      Evas.Object.Smart.resize;
+      Evas.Object.Smart.smart_no_render.set;
       @virtual .focus_direction;
       @virtual .focus_next;
       @virtual .parent_widget.get;

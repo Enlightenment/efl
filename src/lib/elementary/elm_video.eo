@@ -111,8 +111,8 @@ class Elm.Video (Elm.Layout, Efl.File, Elm.Interface_Atspi_Widget_Action)
       Eo.Base.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
-      Evas.Object_Smart.add;
-      Evas.Object_Smart.del;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.del;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.event;

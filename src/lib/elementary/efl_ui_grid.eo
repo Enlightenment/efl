@@ -5,9 +5,9 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack_Grid, Efl.Pack_Layout)
       Eo.Base.constructor;
 
       // Smart obj
-      Evas.Object_Smart.add;
-      Evas.Object_Smart.del;
-      Evas.Object_Smart.calculate;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.del;
+      Evas.Object.Smart.calculate;
 
       // Focus
       Elm.Widget.focus_direction;

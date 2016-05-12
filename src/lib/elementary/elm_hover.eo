@@ -58,12 +58,12 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface, Elm.Interface_Atspi_Widge
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object_Smart.del;
-      Evas.Object_Smart.hide;
-      Evas.Object_Smart.show;
-      Evas.Object_Smart.move;
-      Evas.Object_Smart.add;
-      Evas.Object_Smart.resize;
+      Evas.Object.Smart.del;
+      Evas.Object.Smart.hide;
+      Evas.Object.Smart.show;
+      Evas.Object.Smart.move;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.resize;
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_add;
       Elm.Widget.widget_parent;

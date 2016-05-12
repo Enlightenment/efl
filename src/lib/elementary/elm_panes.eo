@@ -133,7 +133,7 @@ class Elm.Panes (Elm.Layout, Evas.Clickable_Interface)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object_Smart.add;
+      Evas.Object.Smart.add;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.theme_apply;

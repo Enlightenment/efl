@@ -6,7 +6,7 @@ eo_prefix: elm_obj_access;
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object_Smart.add;
+      Evas.Object.Smart.add;
       Elm.Widget.activate;
       Elm.Widget.on_focus;
    }

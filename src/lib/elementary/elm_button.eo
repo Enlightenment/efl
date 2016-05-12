@@ -74,7 +74,7 @@ class Elm.Button (Elm.Layout, Evas.Clickable_Interface,
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object_Smart.add;
+      Evas.Object.Smart.add;
       Elm.Widget.activate;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;

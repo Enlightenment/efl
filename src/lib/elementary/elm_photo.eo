@@ -5,8 +5,8 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
       class.constructor;
       Eo.Base.constructor;
       Efl.File.file.set;
-      Evas.Object_Smart.add;
-      Evas.Object_Smart.del;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.del;
       Elm.Widget.theme_apply;
    }
 

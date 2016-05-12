@@ -214,8 +214,8 @@ class Elm.Prefs (Elm.Widget, Efl.File)
       Eo.Base.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
-      Evas.Object_Smart.del;
-      Evas.Object_Smart.add;
+      Evas.Object.Smart.del;
+      Evas.Object.Smart.add;
       Elm.Widget.focus_next;
    }
    events {

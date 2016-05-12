@@ -90,10 +90,10 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
       class.constructor;
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Evas.Object_Smart.hide;
-      Evas.Object_Smart.show;
-      Evas.Object_Smart.add;
-      Evas.Object_Smart.del;
+      Evas.Object.Smart.hide;
+      Evas.Object.Smart.show;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.del;
       Elm.Widget.widget_parent.set;
       Elm.Widget.theme_apply;
       Elm.Widget.translate;

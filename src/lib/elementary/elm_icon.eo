@@ -14,8 +14,8 @@ class Elm.Icon (Elm.Image)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object_Smart.add;
-      Evas.Object_Smart.del;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.del;
       Elm.Widget.theme_apply;
       Efl.File.file.set;
    }

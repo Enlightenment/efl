@@ -1,4 +1,4 @@
-class Emotion.Object (Evas.Object_Smart, Efl.File, Efl.Player, Efl.Image, Efl.Image_Load) {
+class Emotion.Object (Evas.Object.Smart, Efl.File, Efl.Player, Efl.Image, Efl.Image_Load) {
    eo_prefix: emotion_obj;
    methods {
         @property option {
@@ -52,15 +52,15 @@ class Emotion.Object (Evas.Object_Smart, Efl.File, Efl.Player, Efl.Image, Efl.Im
    }
    implements {
         Eo.Base.constructor;
-        Evas.Object_Smart.add;
-        Evas.Object_Smart.del;
-        Evas.Object_Smart.move;
-        Evas.Object_Smart.resize;
-        Evas.Object_Smart.show;
-        Evas.Object_Smart.hide;
-        Evas.Object_Smart.color.set;
-        Evas.Object_Smart.clip.set;
-        Evas.Object_Smart.clip_unset;
+        Evas.Object.Smart.add;
+        Evas.Object.Smart.del;
+        Evas.Object.Smart.move;
+        Evas.Object.Smart.resize;
+        Evas.Object.Smart.show;
+        Evas.Object.Smart.hide;
+        Evas.Object.Smart.color.set;
+        Evas.Object.Smart.clip.set;
+        Evas.Object.Smart.clip_unset;
         Efl.File.file.set;
         Efl.File.file.get;
         Efl.Player.play.set;

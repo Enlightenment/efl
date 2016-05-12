@@ -216,9 +216,9 @@ class Evas.Table (Evas.Smart_Clipped)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object_Smart.add;
-      Evas.Object_Smart.del;
-      Evas.Object_Smart.calculate;
-      Evas.Object_Smart.resize;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.del;
+      Evas.Object.Smart.calculate;
+      Evas.Object.Smart.resize;
    }
 }
