@@ -1,4 +1,4 @@
-type @extern Eo_Event_Description: __undefined_type;
+import eo_base;
 
 interface Efl.Event
 {
@@ -31,7 +31,7 @@ interface Efl.Event
          set {}
          get {}
          values {
-            type: const(Eo_Event_Description)*;
+            type: const(Eo.Event.Description)*;
          }
       }
       reset {

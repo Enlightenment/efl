@@ -123,4 +123,8 @@ interface Efl.Gfx {
          }
       }
    }
+   events {
+      /* FIXME: eolian thinks there's a cyclic dependency here. wtf */
+      pointer /*: Efl.Pointer.Event*/; [[New generic pointer (mouse, finger, pen...) event.]]
+   }
 }

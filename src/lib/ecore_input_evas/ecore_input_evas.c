@@ -599,6 +599,9 @@ ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *
    e = event;
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
+   if (lookup->direct &&
+       lookup->direct(lookup->window, ECORE_EVENT_MOUSE_MOVE, e))
+     return ECORE_CALLBACK_PASS_ON;
    if (e->multi.device == 0)
      {
         _ecore_event_evas_push_mouse_move(e);

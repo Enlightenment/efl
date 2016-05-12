@@ -85,7 +85,7 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event)
            propagation or repetition of the event.
          ]]
          values {
-            src: Efl.Gfx;
+            src: Eo.Base; [[Source object: $Efl.Gfx]]
          }
       }
       /* FIXME: why not double_click() and triple_click() */

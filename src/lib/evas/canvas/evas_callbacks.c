@@ -58,10 +58,29 @@ typedef struct
    Evas_Callback_Type type;
 } _eo_evas_object_cb_info;
 
+static inline void *
+_pointer_event_get(const _eo_evas_object_cb_info *info, const Eo_Event *event)
+{
+   if (!info->data) return NULL;
+   switch (info->type)
+     {
+      case EVAS_CALLBACK_MOUSE_MOVE:
+        return ((Evas_Event_Mouse_Move *) event->info)->reserved;
+      default:
+        return NULL;
+     }
+}
+
 static Eina_Bool
 _eo_evas_object_cb(void *data, const Eo_Event *event)
 {
    _eo_evas_object_cb_info *info = data;
+   void *pe = _pointer_event_get(info, event);
+   if (pe)
+     {
+        DBG("triggering eo pointer event!");
+        eo_event_callback_call(event->object, EFL_GFX_EVENT_POINTER, pe);
+     }
    if (info->func) info->func(info->data, evas_object_evas_get(event->object), event->object, event->info);
    return EINA_TRUE;
 }

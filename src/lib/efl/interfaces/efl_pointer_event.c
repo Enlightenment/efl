@@ -97,7 +97,8 @@ _efl_pointer_event_efl_event_dup(Eo *obj, Efl_Pointer_Event_Data *pd)
    Efl_Pointer_Event_Data *ev;
    Efl_Pointer_Event *evt;
 
-   evt = _efl_pointer_event_instance_get(EFL_POINTER_EVENT_CLASS, NULL, obj, &ev);
+   evt = _efl_pointer_event_instance_get((Eo_Class *) EFL_POINTER_EVENT_CLASS,
+                                         NULL, obj, (void **) &ev);
    if (!evt) return NULL;
 
    memcpy(ev, pd, sizeof(*ev));

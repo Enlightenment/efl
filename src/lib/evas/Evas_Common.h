@@ -441,6 +441,7 @@ struct _Evas_Event_Mouse_Move /** Mouse move event */
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
    Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
+   void            *reserved; /* internal use only */
 };
 
 struct _Evas_Event_Mouse_Wheel /** Wheel event */
