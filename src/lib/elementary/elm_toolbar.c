@@ -1174,7 +1174,6 @@ _item_select(Elm_Toolbar_Item_Data *it)
      {
         if (it->func) it->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(it))), WIDGET(it), EO_OBJ(it));
      }
-   eo_event_callback_call(obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, EO_OBJ(it));
    eo_event_callback_call(obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
@@ -1807,7 +1806,7 @@ _move_cb(void *data,
 }
 
 static void
-_select_filter_cb(Elm_Toolbar_Item_Data *it,
+_mouse_clicked_cb(Elm_Toolbar_Item_Data *it,
                   Evas_Object *obj EINA_UNUSED,
                   const char *emission,
                   const char *source EINA_UNUSED)
@@ -1816,16 +1815,21 @@ _select_filter_cb(Elm_Toolbar_Item_Data *it,
    char buf[sizeof("elm,action,click,") + 1];
 
    button = atoi(emission + sizeof("mouse,clicked,") - 1);
-   if (button == 1) return;  /* regular left click event */
+   if (button == 1)
+     {
+        /* regular left click event */
+        eo_event_callback_call(WIDGET(it), EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, EO_OBJ(it));
+        return;
+     }
    snprintf(buf, sizeof(buf), "elm,action,click,%d", button);
    elm_layout_signal_emit(VIEW(it), buf, "elm");
 }
 
 static void
-_select_cb(void *data,
-           Evas_Object *obj EINA_UNUSED,
-           const char *emission EINA_UNUSED,
-           const char *source EINA_UNUSED)
+_action_click_cb(void *data,
+                 Evas_Object *obj EINA_UNUSED,
+                 const char *emission EINA_UNUSED,
+                 const char *source EINA_UNUSED)
 {
    Elm_Toolbar_Item_Data *it = data;
 
@@ -2512,9 +2516,9 @@ _item_new(Evas_Object *obj,
        (VIEW(it), "toolbar", "item", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
    elm_layout_signal_callback_add
-     (VIEW(it), "elm,action,click", "elm", _select_cb, it);
+     (VIEW(it), "elm,action,click", "elm", _action_click_cb, it);
    elm_layout_signal_callback_add
-     (VIEW(it), "mouse,clicked,*", "*", (Edje_Signal_Cb)_select_filter_cb, it);
+     (VIEW(it), "mouse,clicked,*", "*", (Edje_Signal_Cb)_mouse_clicked_cb, it);
    elm_layout_signal_callback_add
      (VIEW(it), "elm,mouse,in", "elm", _mouse_in_cb, it);
    elm_layout_signal_callback_add
