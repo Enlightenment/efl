@@ -306,8 +306,7 @@ _popup_center_title_content_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    char buf[256];
 
    popup = elm_popup_add(data);
-   if (is_popup_scroll)
-     elm_popup_scrollable_set(popup, is_popup_scroll);
+   elm_popup_scrollable_set(popup, is_popup_scroll);
 
    // popup title
    elm_object_part_text_set(popup, "title,text", "Title");
@@ -368,8 +367,7 @@ _popup_center_title_item_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    Evas_Object *popup, *icon1, *btn1, *btn2, *btn3;
 
    popup = elm_popup_add(data);
-   if (is_popup_scroll)
-     elm_popup_scrollable_set(popup, is_popup_scroll);
+   elm_popup_scrollable_set(popup, is_popup_scroll);
 
    // popup title
    elm_object_part_text_set(popup, "title,text", "Title");
@@ -441,8 +439,7 @@ _popup_center_title_text_2button_restack_cb(void *data, Evas_Object *obj EINA_UN
    Evas_Object *btn, *btn2;
 
    popup = elm_popup_add(data);
-   if (is_popup_scroll)
-     elm_popup_scrollable_set(popup, is_popup_scroll);
+   elm_popup_scrollable_set(popup, is_popup_scroll);
    evas_object_smart_callback_add(popup, "block,clicked",
                                   _restack_block_clicked_cb, NULL);
 
@@ -486,8 +483,7 @@ _popup_center_text_1button_hide_show_cb(void *data, Evas_Object *obj EINA_UNUSED
      }
 
    g_popup = elm_popup_add(data);
-   if (is_popup_scroll)
-     elm_popup_scrollable_set(g_popup, is_popup_scroll);
+   elm_popup_scrollable_set(g_popup, is_popup_scroll);
    elm_object_text_set(g_popup, "Hide this popup by using the button."
                        "When you click list item again, you can see this popup.");
 
@@ -535,8 +531,7 @@ _popup_center_text_3button_add_remove_button_cb(void *data,
    int i;
 
    popup = elm_popup_add(data);
-   if (is_popup_scroll)
-     elm_popup_scrollable_set(popup, is_popup_scroll);
+   elm_popup_scrollable_set(popup, is_popup_scroll);
 
    // popup title
    elm_object_part_text_set(popup, "title,text",
@@ -571,8 +566,7 @@ _popup_transparent_cb(void *data, Evas_Object *obj EINA_UNUSED,
    Evas_Object *btn;
 
    popup = elm_popup_add(data);
-   if (is_popup_scroll)
-     elm_popup_scrollable_set(popup, is_popup_scroll);
+   elm_popup_scrollable_set(popup, is_popup_scroll);
    elm_object_style_set(popup, "transparent");
    elm_object_text_set(popup, "This Popup has transparent background");
 
@@ -595,8 +589,7 @@ _popup_transparent_align_cb(void *data, Evas_Object *obj EINA_UNUSED,
    Evas_Object *btn, *btn1;
 
    popup = elm_popup_add(data);
-   if (is_popup_scroll)
-     elm_popup_scrollable_set(popup, is_popup_scroll);
+   elm_popup_scrollable_set(popup, is_popup_scroll);
    elm_object_style_set(popup, "transparent");
    elm_object_text_set(popup, "This Popup has transparent background");
 
@@ -638,8 +631,7 @@ _popup_center_title_list_content_1button_cb(void *data, Evas_Object *obj EINA_UN
    Evas_Object *btn;
 
    popup = elm_popup_add(data);
-   if (is_popup_scroll)
-     elm_popup_scrollable_set(popup, is_popup_scroll);
+   elm_popup_scrollable_set(popup, is_popup_scroll);
    elm_object_part_text_set(popup, "title,text", "Title");
 
    // list as a popup content
@@ -670,8 +662,7 @@ _popup_center_title_genlist_content_1button_cb(void *data, Evas_Object *obj EINA
    int i;
 
    popup = elm_popup_add(data);
-   if (is_popup_scroll)
-     elm_popup_scrollable_set(popup, is_popup_scroll);
+   elm_popup_scrollable_set(popup, is_popup_scroll);
    elm_object_part_text_set(popup, "title,text", "Title");
 
    Elm_Genlist_Item_Class *itc1 = elm_genlist_item_class_new();
@@ -683,7 +674,9 @@ _popup_center_title_genlist_content_1button_cb(void *data, Evas_Object *obj EINA
 
    // genlist as a popup content
    genlist = elm_genlist_add(popup);
-   elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
+   elm_genlist_mode_set(genlist, ELM_LIST_EXPAND);
+   evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_content_min_limit(genlist, EINA_FALSE, EINA_TRUE);
 
    for (i = 0; i < 10; i++)
@@ -718,8 +711,7 @@ _subpopup_cb(void *data, Evas_Object *obj EINA_UNUSED,
    Evas_Object *btn, *btnclose;
 
    popup = elm_popup_add(data);
-   if (is_popup_scroll)
-     elm_popup_scrollable_set(popup, is_popup_scroll);
+   elm_popup_scrollable_set(popup, is_popup_scroll);
    elm_object_style_set(popup, "subpopup");
    elm_object_part_text_set(popup, "title,text", "Title");
 
@@ -754,8 +746,7 @@ _popup_content_only_cb(void *data, Evas_Object *obj EINA_UNUSED,
    Evas_Object *win = data;
 
    popup = elm_popup_add(win);
-   if (is_popup_scroll)
-     elm_popup_scrollable_set(popup, is_popup_scroll);
+   elm_popup_scrollable_set(popup, is_popup_scroll);
 
    bx = elm_box_add(popup);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -928,6 +919,9 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_box_pack_end(box, check);
    evas_object_show(check);
    evas_object_smart_callback_add(check, "changed", _popup_scroll_cb, NULL);
+
+   elm_check_state_set(check, EINA_TRUE);
+   is_popup_scroll = EINA_TRUE;
 
    evas_object_resize(win, 480, 400);
    evas_object_show(win);

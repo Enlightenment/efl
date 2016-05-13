@@ -1552,6 +1552,8 @@ _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
    _populate_theme_scroll(priv);
 
    _visuals_set(obj);
+
+   elm_popup_scrollable_set(obj, EINA_TRUE);
 }
 
 static void
