@@ -318,7 +318,7 @@ const Eo_Class * \
 class_get_func_name(void) \
 { \
    const Eo_Class *_tmp_parent_class; \
-   static volatile char lk_init = 0; \
+   static volatile unsigned char lk_init = 0; \
    static Eina_Spinlock _my_lock; \
    static const Eo_Class * volatile _my_class = NULL; \
    static unsigned int _my_init_generation = 1; \
