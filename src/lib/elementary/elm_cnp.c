@@ -195,10 +195,10 @@ static  Eina_Bool _local_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format fo
                          Elm_Drag_Pos poscb, void *posdata,
                          Elm_Drop_Cb dropcb, void *dropdata);
 
-#ifdef HAVE_ELEMENTARY_X
-static Ecore_X_Window _x11_elm_widget_xwin_get(const Evas_Object *obj);
 static Tmp_Info  *_tempfile_new      (int size);
 static int        _tmpinfo_free      (Tmp_Info *tmp);
+#ifdef HAVE_ELEMENTARY_X
+static Ecore_X_Window _x11_elm_widget_xwin_get(const Evas_Object *obj);
 
 typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
 
