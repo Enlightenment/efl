@@ -5,7 +5,7 @@ import elm_interface_scrollable;
 struct @extern Elm_Code; /* The main interface currently defined in code */
 struct @extern Elm_Code_Line; /* Parts of the interface currently defined in code */
 
-class Elm.Code_Widget (Elm.Layout, Elm.Interface_Atspi_Text)
+class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
 {
    eo_prefix: elm_obj_code_widget;
    legacy_prefix: elm_code_widget;
@@ -245,7 +245,7 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface_Atspi_Text)
       class.constructor;
       Eo.Base.constructor;
       Eo.Base.finalize;
-      Evas.Object_Smart.add;
+      Evas.Object.Smart.add;
       Elm.Widget.event;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
