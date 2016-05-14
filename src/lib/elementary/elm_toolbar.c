@@ -3495,7 +3495,7 @@ _elm_toolbar_shrink_mode_set(Eo *obj, Elm_Toolbar_Data *sd, Elm_Toolbar_Shrink_M
         elm_toolbar_homogeneous_set(obj, EINA_FALSE);
         elm_interface_scrollable_policy_set
               (obj, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-        sd->more_item = _item_new(obj, "more_menu", "More", NULL, NULL);
+        sd->more_item = _item_new(obj, "go-down", "More", NULL, NULL);
         _resizing_eval_item(sd->more_item);
      }
    else if (shrink_mode == ELM_TOOLBAR_SHRINK_HIDE)
@@ -3509,7 +3509,7 @@ _elm_toolbar_shrink_mode_set(Eo *obj, Elm_Toolbar_Data *sd, Elm_Toolbar_Shrink_M
         elm_toolbar_homogeneous_set(obj, EINA_FALSE);
         elm_interface_scrollable_policy_set
               (obj, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
-        sd->more_item = _item_new(obj, "more_menu", "More", NULL, NULL);
+        sd->more_item = _item_new(obj, "go-down", "More", NULL, NULL);
         _resizing_eval_item(sd->more_item);
      }
    else
