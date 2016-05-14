@@ -897,7 +897,7 @@ _pointer_axis_value(struct libinput_event_pointer *event, enum libinput_pointer_
    switch (source)
      {
       case LIBINPUT_POINTER_AXIS_SOURCE_WHEEL:
-        val = 10 * libinput_event_pointer_get_axis_value_discrete(event, axis);
+        val = libinput_event_pointer_get_axis_value_discrete(event, axis);
         break;
       case LIBINPUT_POINTER_AXIS_SOURCE_FINGER:
       case LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS:
