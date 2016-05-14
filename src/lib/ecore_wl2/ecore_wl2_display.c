@@ -150,7 +150,8 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         EINA_INLIST_FOREACH(ewd->windows, window)
           _ecore_wl2_window_shell_surface_init(window);
      }
-   else if (eina_streq(interface, "www"))
+   else if ((eina_streq(interface, "www")) &&
+            (!getenv("EFL_WAYLAND_DISABLE_WWW")))
      {
         Ecore_Wl2_Window *window;
 
