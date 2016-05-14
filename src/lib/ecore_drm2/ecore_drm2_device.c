@@ -133,11 +133,12 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, -1);
 
    device->fd = elput_manager_open(device->em, device->path, -1);
+   if (device->fd < 0) goto open_err;
 
    if (!elput_input_init(device->em, NULL))
      {
         ERR("Could not initialize Elput Input");
-        goto err;
+        goto input_err;
      }
 
    DBG("Device Path: %s", device->path);
@@ -153,8 +154,9 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
 
    return device->fd;
 
-err:
+input_err:
    elput_manager_close(device->em, device->fd);
+open_err:
    return -1;
 }
 
