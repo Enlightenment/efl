@@ -87,7 +87,7 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
 }
 
 static Evas_Object *
-_elm_code_test_editor_setup(Evas_Object *parent)
+_elm_code_test_editor_setup(Evas_Object *parent, Eina_Bool log)
 {
    Elm_Code *code;
    Elm_Code_Line *line;
@@ -100,14 +100,17 @@ _elm_code_test_editor_setup(Evas_Object *parent)
    elm_obj_code_widget_show_whitespace_set(widget, EINA_TRUE);
    elm_obj_code_widget_line_numbers_set(widget, EINA_TRUE);
 
-   _append_line(code->file, "Edit me :)");
-   _append_line(code->file, "");
-   _append_line(code->file, "");
-   _append_line(code->file, "...Please?");
+   if (!log)
+     {
+        _append_line(code->file, "Edit me :)");
+        _append_line(code->file, "");
+        _append_line(code->file, "");
+        _append_line(code->file, "...Please?");
 
-   line = elm_code_file_line_get(code->file, 1);
-   elm_code_line_token_add(line, 5, 6, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
-   elm_code_callback_fire(code, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
+        line = elm_code_file_line_get(code->file, 1);
+        elm_code_line_token_add(line, 5, 6, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+        elm_code_callback_fire(code, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
+     }
 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -164,6 +167,36 @@ _elm_code_test_diff_setup(Evas_Object *parent)
    return diff;
 }
 
+static Eina_Bool
+_elm_code_test_log_timer(void *data)
+{
+   Elm_Code *code = data;
+   static int line = 0;
+   char buf[250];
+
+   sprintf(buf, "line %d", ++line);
+   _append_line(code->file, buf);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_elm_code_test_log_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   static Ecore_Timer *t = NULL;
+
+   if (t)
+     {
+        elm_object_text_set(obj, "Start");
+        ecore_timer_del(t);
+        t = NULL;
+        return;
+     }
+
+   t = ecore_timer_add(0.05, _elm_code_test_log_timer, data);
+   elm_object_text_set(obj, "Stop");
+}
+
 static void
 _elm_code_test_welcome_editor_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -172,7 +205,31 @@ _elm_code_test_welcome_editor_cb(void *data, Evas_Object *obj EINA_UNUSED, void 
    naviframe = (Evas_Object *)data;
    screen = elm_box_add(naviframe);
    evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_box_pack_end(screen, _elm_code_test_editor_setup(screen));
+   elm_box_pack_end(screen, _elm_code_test_editor_setup(screen, EINA_FALSE));
+   evas_object_show(screen);
+
+   elm_naviframe_item_push(naviframe, "Editor",
+                           NULL, NULL, screen, NULL);
+}
+
+static void
+_elm_code_test_welcome_log_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *naviframe, *screen, *o, *code;
+
+   naviframe = (Evas_Object *)data;
+   screen = elm_box_add(naviframe);
+   evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   code = _elm_code_test_editor_setup(screen, EINA_TRUE);
+   elm_box_pack_end(screen, code);
+
+   o = elm_button_add(screen);
+   elm_object_text_set(o, "log");
+   evas_object_smart_callback_add(o, "clicked", _elm_code_test_log_clicked, elm_obj_code_widget_code_get(code));
+   elm_box_pack_end(screen, o);
+   evas_object_show(o);
+
    evas_object_show(screen);
 
    elm_naviframe_item_push(naviframe, "Editor",
@@ -190,7 +247,7 @@ _elm_code_test_welcome_mirror_cb(void *data, Evas_Object *obj EINA_UNUSED, void 
    elm_box_homogeneous_set(screen, EINA_TRUE);
    evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-   widget = _elm_code_test_editor_setup(screen);
+   widget = _elm_code_test_editor_setup(screen, EINA_FALSE);
    code = elm_obj_code_widget_code_get(widget);
    elm_box_pack_end(screen, widget);
 
@@ -261,6 +318,15 @@ elm_code_test_win_setup(void)
    evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 1.0);
    evas_object_smart_callback_add(button, "clicked",
                                        _elm_code_test_welcome_editor_cb, naviframe);
+   elm_box_pack_end(vbox, button);
+   evas_object_show(button);
+
+   button = elm_button_add(vbox);
+   elm_object_text_set(button, "Log viewer");
+   evas_object_size_hint_weight_set(button, 0.5, 0.0);
+   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 1.0);
+   evas_object_smart_callback_add(button, "clicked",
+                                  _elm_code_test_welcome_log_cb, naviframe);
    elm_box_pack_end(vbox, button);
    evas_object_show(button);
 
