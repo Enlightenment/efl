@@ -432,6 +432,18 @@ _standard_genlist_populate(Evas_Object *gl)
    IC("preferences-system")
    IC("preferences-other")
 
+   CONTEXT("Applications")
+   IC("preferences-color")
+   IC("preferences-profile")
+   IC("preferences-desktop-display")
+   IC("preferences-desktop-font")
+   IC("preferences-desktop-keyboard")
+   IC("preferences-desktop-locale")
+   IC("preferences-desktop-multimedia")
+   IC("preferences-desktop-screensaver")
+   IC("preferences-desktop-theme")
+   IC("preferences-desktop-wallpaper")
+
 #undef CONTEXT
 #undef IC
 

@@ -992,7 +992,8 @@ elementary/themes/fdo/categories/128 \
 elementary/themes/fdo/emblems/96 \
 elementary/themes/fdo/places/16 \
 elementary/themes/fdo/places/128 \
-elementary/themes/fdo/status/128
+elementary/themes/fdo/status/128 \
+elementary/themes/fdo/apps/64
 
 
 EXTRA_DIST += $(elementary_themes_files)

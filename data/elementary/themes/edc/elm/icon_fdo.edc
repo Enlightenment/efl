@@ -15,9 +15,9 @@
  *
  * NOTE: if you add an new icon you must add it to:
  *     - this file (of course)
+ *     - src/bin/elementary/test_icon.c (elementary_test -to "Icon Standard")
  *     - data/elementary/themes/Makefile.am (only for new dirs)
  *     - elm_icon documentation   ?????  really?
- *     - check they appear in: elementary_test -to "Icon Standard"
  *     - don't forget to run "make distcheck"
  * 
  */
@@ -120,12 +120,12 @@ ICO1(CTX, "document-save", 128)
 ICO1(CTX, "document-save-as", 128)
 ICO1(CTX, "document-send", 128)
 ICO1(CTX, "document-close", 128) /* */
-ICO1(CTX, "document-new", 128);
-ICO1(CTX, "document-print", 128);
-ICO1(CTX, "document-print-preview", 128);
-ICO1(CTX, "document-revert", 128);
-ICO1(CTX, "document-export", 128); /* */
-ICO1(CTX, "document-import", 128); /* */
+ICO1(CTX, "document-new", 128)
+ICO1(CTX, "document-print", 128)
+ICO1(CTX, "document-print-preview", 128)
+ICO1(CTX, "document-revert", 128)
+ICO1(CTX, "document-export", 128) /* */
+ICO1(CTX, "document-import", 128) /* */
 
 ICO1(CTX, "edit-clear", 128)
 ICO1(CTX, "edit-copy", 128)
@@ -350,26 +350,29 @@ ICO1(CTX, "non-starred", 128) /* */
 
 
 ////  applications  ///////////////////////////////////////////////////////////
-#define CTX "applications"
+#define CTX "apps"
 // TODO accessories-calculator
 // TODO accessories-character-map
 // TODO accessories-dictionary
 // TODO accessories-text-editor
-// TODO help-browser
 // TODO multimedia-volume-control
+// TODO help-browser
+ICO1(CTX, "preferences-color", 64) /* */
+ICO1(CTX, "preferences-profile", 64) /* Elm specific */
 // TODO preferences-desktop-accessibility
-// TODO preferences-desktop-font
-// TODO preferences-desktop-keyboard
-// TODO preferences-desktop-locale
-// TODO preferences-desktop-multimedia
-// TODO preferences-desktop-screensaver
-// TODO preferences-desktop-theme
-// TODO preferences-desktop-wallpaper
-// TODO system-file-manager
+ICO1(CTX, "preferences-desktop-display", 64) /* */
+ICO1(CTX, "preferences-desktop-font", 64)
+ICO1(CTX, "preferences-desktop-keyboard", 64)
+ICO1(CTX, "preferences-desktop-locale", 64)
+ICO1(CTX, "preferences-desktop-multimedia", 64)
+ICO1(CTX, "preferences-desktop-screensaver", 64)
+ICO1(CTX, "preferences-desktop-theme", 64)
+ICO1(CTX, "preferences-desktop-wallpaper", 64)
 // TODO system-software-install
 // TODO system-software-update
 // TODO utilities-system-monitor
 // TODO utilities-terminal
+// TODO system-file-manager
 #undef CTX
 
 
