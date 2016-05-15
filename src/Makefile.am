@@ -35,8 +35,8 @@ include Makefile_Emile.am
 include Makefile_Eet.am
 include Makefile_Eolian.am
 include Makefile_Ector.am
-include Makefile_Evas.am
 include Makefile_Ecore.am
+include Makefile_Evas.am
 include Makefile_Ecore_Con.am
 include Makefile_Ecore_Ipc.am
 include Makefile_Ecore_File.am

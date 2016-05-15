@@ -1546,6 +1546,314 @@ EFL_LIB_END([ECTOR])
 
 #### End of Ector
 
+
+#### Ecore
+
+EFL_LIB_START([Ecore])
+
+### Additional options to configure
+
+# glib
+
+AC_ARG_WITH([glib],
+   [AS_HELP_STRING([--with-glib=yes|no|always],[add glib support. @<:@default=enabled@:>@])],
+   [
+    if test "x${withval}" = "xyes" ; then
+       with_glib="yes"
+    else
+       if test "x${withval}" = "xalways" ; then
+          with_glib="always"
+       else
+          with_glib="no"
+       fi
+    fi
+   ],
+   [with_glib="yes"])
+
+AC_ARG_ENABLE([g-main-loop],
+   [AS_HELP_STRING([--enable-g-main-loop],[enable ecore_main_loop based on g_main_loop. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_g_main_loop="yes"
+       CFOPT_WARNING="xyes"
+    else
+       want_g_main_loop="no"
+    fi
+   ],
+   [want_g_main_loop="no"])
+AC_ARG_ENABLE([libuv],
+   [AS_HELP_STRING([--enable-libuv],[enable ecore_main_loop based on libuv. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_libuv="yes"
+       CFOPT_WARNING="xyes"
+    else
+       want_libuv="no"
+    fi
+   ],
+   [want_libuv="no"])
+
+AC_ARG_ENABLE([gstreamer],
+   [AS_HELP_STRING([--enable-gstreamer],[enable gstreamer 0.10 support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_gstreamer="yes"
+       CFOPT_WARNING="xyes"
+    else
+       want_gstreamer="no"
+    fi
+   ],
+   [want_gstreamer="no"])
+
+AC_ARG_ENABLE([gstreamer1],
+   [AS_HELP_STRING([--disable-gstreamer1],[disable gstreamer 1.0 support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_gstreamer1="yes"
+    else
+       want_gstreamer1="no"
+       CFOPT_WARNING="xyes"
+    fi
+   ],
+   [want_gstreamer1="yes"])
+
+AC_ARG_ENABLE([tizen],
+   [AS_HELP_STRING([--enable-tizen],[enable tizen support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_tizen="yes"
+    else
+       want_tizen="no"
+    fi
+   ],
+   [want_tizen="no"])
+
+if test "${want_tizen}" = "yes"; then
+     PKG_CHECK_MODULES([TIZEN_CONFIGURATION_MANAGER],
+      [vconf],
+      [have_tizen_vconf="yes"],
+      [have_tizen_vconf="no"])
+  PKG_CHECK_MODULES([TIZEN_CONFIGURATION_MANAGER], [vconf])
+fi
+
+AM_CONDITIONAL([HAVE_TIZEN_CONFIGURATION_MANAGER], [test "${have_tizen_vconf}" = "yes"])
+if test "${have_tizen_vconf}"  = "yes"; then
+  AC_DEFINE(HAVE_TIZEN_CONFIGURATION_MANAGER, 1, [Define to 1 if you have Tizen configuration manager(vconf).])
+fi
+
+AC_ARG_ENABLE([ecore_wayland],
+   [AS_HELP_STRING([--enable-ecore-wayland],[enable legacy Ecore_Wayland support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_ecore_wayland="yes"
+    else
+       want_ecore_wayland="no"
+    fi
+   ],
+   [want_ecore_wayland="no"])
+
+### Default values
+
+if test "${have_windows}" = "yes"; then
+   with_glib="no"
+fi
+
+want_glib="no"
+if test "x${with_glib}" = "xyes" || test "x${with_glib}" = "xalways" ; then
+   want_glib="yes"
+fi
+
+want_ecore_timer_dump="no"
+if test "x${build_profile}" = "xdebug" && test "x${ac_cv_func_backtrace}" = "xyes"; then
+   want_ecore_timer_dump="yes"
+   AC_DEFINE([WANT_ECORE_TIMER_DUMP], [1], [Want Ecore_Timer dump infrastructure])
+fi
+
+### Checks for programs
+
+### Checks for libraries
+EFL_PLATFORM_DEPEND([ECORE], [all])
+EFL_INTERNAL_DEPEND_PKG([ECORE], [eo])
+EFL_INTERNAL_DEPEND_PKG([ECORE], [eina])
+EFL_INTERNAL_DEPEND_PKG([ECORE], [efl])
+
+EFL_ADD_LIBS([ECORE], [-lm])
+
+# glib
+
+EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_glib}], [GLIB], [glib-2.0 gthread-2.0])
+if test "x${have_glib}" = "xno"; then
+   want_g_main_loop="no"
+fi
+
+EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_systemd}], [SYSTEMD], [libsystemd])
+
+EFL_ADD_FEATURE([ECORE], [systemd-daemon], [${want_systemd}])
+EFL_ADD_FEATURE([ECORE], [glib])
+EFL_ADD_FEATURE([ECORE], [g-main-loop])
+EFL_ADD_FEATURE([ECORE], [libuv])
+
+want_glib_integration_always=no
+if test "x${with_glib}" = "xalways" ; then
+  want_glib_integration_always="yes"
+  AC_DEFINE([GLIB_INTEGRATION_ALWAYS], [1], [Always integrate glib if support compiled])
+fi
+
+if test "x${want_g_main_loop}" = "xyes" ; then
+  AC_DEFINE([USE_G_MAIN_LOOP], [1], [Use g_main_loop in ecore])
+  if test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlibuv" ; then
+    AC_MSG_ERROR([Can't define glib and libuv integration together])
+  fi
+fi
+
+# not EFL_OPTIONAL_DEPEND_PKG() because it's only used for ecore examples
+if test "${want_gstreamer1}" = "yes" -a "${want_gstreamer}" = "yes"; then
+   AC_MSG_ERROR([You can only enable either GStreamer 1.0 or GStreamer 0.10 support])
+fi
+
+if test "${want_gstreamer1}" = "yes"; then
+  PKG_CHECK_MODULES([GSTREAMER], [gstreamer-1.0])
+fi
+if test "${want_gstreamer}" = "yes"; then
+  PKG_CHECK_MODULES([GSTREAMER], [gstreamer-0.10])
+fi
+AM_CONDITIONAL([HAVE_GSTREAMER], [test "${want_gstreamer}" = "yes" -o "${want_gstreamer1}" = "yes"])
+
+EFL_EVAL_PKGS([ECORE])
+
+### Checks for header files
+
+AC_HEADER_SYS_WAIT
+
+AC_CHECK_HEADERS([sys/socket.h])
+
+AC_CHECK_HEADERS([ \
+arpa/inet.h \
+langinfo.h \
+features.h \
+netinet/in.h \
+netinet/tcp.h \
+sys/prctl.h \
+sys/resource.h \
+sys/timerfd.h \
+sys/un.h \
+],[],[],
+[
+ #ifdef HAVE_SYS_SOCKET_H
+ # include <sys/socket.h>
+ #endif
+])
+
+AC_CHECK_HEADERS([net/if.h], [], [],
+[#include <stdio.h>
+#if STDC_HEADERS
+# include <stdlib.h>
+# include <stddef.h>
+#else
+# if HAVE_STDLIB_H
+#  include <stdlib.h>
+# endif
+#endif
+#if HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+])
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+## ecore
+
+# isfinite
+
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <math.h>
+       ]],
+       [[
+int i = isfinite(0);
+       ]])],
+   [
+    AC_DEFINE(HAVE_ISFINITE, 1, [Define to 1 if you have `isfinite', as a function or macro.])
+    have_isfinite="yes"
+   ],
+   [have_isfinite="no"])
+
+AC_MSG_CHECKING([for isfinite])
+AC_MSG_RESULT([${have_isfinite}])
+
+# mallinfo, timerfd_create, clock_gettime
+
+AC_CHECK_FUNCS_ONCE([mallinfo timerfd_create clock_gettime malloc_info])
+
+if ! test "x${ac_cv_func_clock_gettime}" = "xyes" ; then
+   AC_CHECK_LIB([rt], [clock_gettime],
+      [
+        EFL_ADD_LIBS([ECORE], [-lrt])
+        AC_DEFINE([HAVE_CLOCK_GETTIME], [1], [Have clock_gettime()])
+       ])
+fi
+
+EFL_ADD_LIBS([ECORE], [${LTLIBINTL}])
+
+# coroutine function specific
+
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <ucontext.h>
+       ]],
+       [[
+ucontext_t test;
+getcontext(&test);
+       ]])],
+   [have_ucontext="yes"],
+   [have_ucontext="no"])
+
+AC_MSG_CHECKING([for ucontext])
+AC_MSG_RESULT([${have_ucontext}])
+
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <setjmp.h>
+       ]],
+       [[
+jmp_buf context;
+setjmp(&context);
+       ]])],
+   [have_setjmp="yes"],
+   [have_setjmp="no"])
+
+AC_MSG_CHECKING([for setjmp])
+AC_MSG_RESULT([${have_setjmp}])
+
+if test "X${have_windows}" = "xyes"; then
+   AC_DEFINE(USE_FIBER, 1, [Define to 1 if you have Windows Fiber support.])
+   EFL_ADD_FEATURE([system], [coroutine], [fiber])
+elif test "x${have_ucontext}" = "xyes"; then
+   AC_DEFINE(USE_UCONTEXT, 1, [Define to 1 if you have posix ucontext functions.])
+   EFL_ADD_FEATURE([system], [coroutine], [ucontext])
+elif test "x${have_setjmp}" = "xyes"; then
+   AC_DEFINE(USE_SETJMP, 1, [Define to 1 if you have setjmp/longjmp functions.])
+   EFL_ADD_FEATURE([system], [coroutine], [setjmp])
+else
+   AC_MSG_ERROR([You don't have a working way to implement coroutine. Exiting...])
+fi
+
+### Check availability
+
+EFL_LIB_END([Ecore])
+#### End of Ecore
+
 #### Evas
 
 EFL_LIB_START([Evas])
@@ -2542,313 +2850,6 @@ fi
 EFL_LIB_END([Embryo])
 #### End of Embryo
 
-
-#### Ecore
-
-EFL_LIB_START([Ecore])
-
-### Additional options to configure
-
-# glib
-
-AC_ARG_WITH([glib],
-   [AS_HELP_STRING([--with-glib=yes|no|always],[add glib support. @<:@default=enabled@:>@])],
-   [
-    if test "x${withval}" = "xyes" ; then
-       with_glib="yes"
-    else
-       if test "x${withval}" = "xalways" ; then
-          with_glib="always"
-       else
-          with_glib="no"
-       fi
-    fi
-   ],
-   [with_glib="yes"])
-
-AC_ARG_ENABLE([g-main-loop],
-   [AS_HELP_STRING([--enable-g-main-loop],[enable ecore_main_loop based on g_main_loop. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_g_main_loop="yes"
-       CFOPT_WARNING="xyes"
-    else
-       want_g_main_loop="no"
-    fi
-   ],
-   [want_g_main_loop="no"])
-AC_ARG_ENABLE([libuv],
-   [AS_HELP_STRING([--enable-libuv],[enable ecore_main_loop based on libuv. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_libuv="yes"
-       CFOPT_WARNING="xyes"
-    else
-       want_libuv="no"
-    fi
-   ],
-   [want_libuv="no"])
-
-AC_ARG_ENABLE([gstreamer],
-   [AS_HELP_STRING([--enable-gstreamer],[enable gstreamer 0.10 support. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_gstreamer="yes"
-       CFOPT_WARNING="xyes"
-    else
-       want_gstreamer="no"
-    fi
-   ],
-   [want_gstreamer="no"])
-
-AC_ARG_ENABLE([gstreamer1],
-   [AS_HELP_STRING([--disable-gstreamer1],[disable gstreamer 1.0 support. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_gstreamer1="yes"
-    else
-       want_gstreamer1="no"
-       CFOPT_WARNING="xyes"
-    fi
-   ],
-   [want_gstreamer1="yes"])
-
-AC_ARG_ENABLE([tizen],
-   [AS_HELP_STRING([--enable-tizen],[enable tizen support. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_tizen="yes"
-    else
-       want_tizen="no"
-    fi
-   ],
-   [want_tizen="no"])
-
-if test "${want_tizen}" = "yes"; then
-     PKG_CHECK_MODULES([TIZEN_CONFIGURATION_MANAGER],
-      [vconf],
-      [have_tizen_vconf="yes"],
-      [have_tizen_vconf="no"])
-  PKG_CHECK_MODULES([TIZEN_CONFIGURATION_MANAGER], [vconf])
-fi
-
-AM_CONDITIONAL([HAVE_TIZEN_CONFIGURATION_MANAGER], [test "${have_tizen_vconf}" = "yes"])
-if test "${have_tizen_vconf}"  = "yes"; then
-  AC_DEFINE(HAVE_TIZEN_CONFIGURATION_MANAGER, 1, [Define to 1 if you have Tizen configuration manager(vconf).])
-fi
-
-AC_ARG_ENABLE([ecore_wayland],
-   [AS_HELP_STRING([--enable-ecore-wayland],[enable legacy Ecore_Wayland support. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_ecore_wayland="yes"
-    else
-       want_ecore_wayland="no"
-    fi
-   ],
-   [want_ecore_wayland="no"])
-
-### Default values
-
-if test "${have_windows}" = "yes"; then
-   with_glib="no"
-fi
-
-want_glib="no"
-if test "x${with_glib}" = "xyes" || test "x${with_glib}" = "xalways" ; then
-   want_glib="yes"
-fi
-
-want_ecore_timer_dump="no"
-if test "x${build_profile}" = "xdebug" && test "x${ac_cv_func_backtrace}" = "xyes"; then
-   want_ecore_timer_dump="yes"
-   AC_DEFINE([WANT_ECORE_TIMER_DUMP], [1], [Want Ecore_Timer dump infrastructure])
-fi
-
-### Checks for programs
-
-### Checks for libraries
-EFL_PLATFORM_DEPEND([ECORE], [all])
-EFL_INTERNAL_DEPEND_PKG([ECORE], [eo])
-EFL_INTERNAL_DEPEND_PKG([ECORE], [eina])
-EFL_INTERNAL_DEPEND_PKG([ECORE], [efl])
-
-EFL_ADD_LIBS([ECORE], [-lm])
-
-# glib
-
-EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_glib}], [GLIB], [glib-2.0 gthread-2.0])
-if test "x${have_glib}" = "xno"; then
-   want_g_main_loop="no"
-fi
-
-EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_systemd}], [SYSTEMD], [libsystemd])
-
-EFL_ADD_FEATURE([ECORE], [systemd-daemon], [${want_systemd}])
-EFL_ADD_FEATURE([ECORE], [glib])
-EFL_ADD_FEATURE([ECORE], [g-main-loop])
-EFL_ADD_FEATURE([ECORE], [libuv])
-
-want_glib_integration_always=no
-if test "x${with_glib}" = "xalways" ; then
-  want_glib_integration_always="yes"
-  AC_DEFINE([GLIB_INTEGRATION_ALWAYS], [1], [Always integrate glib if support compiled])
-fi
-
-if test "x${want_g_main_loop}" = "xyes" ; then
-  AC_DEFINE([USE_G_MAIN_LOOP], [1], [Use g_main_loop in ecore])
-  if test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlibuv" ; then
-    AC_MSG_ERROR([Can't define glib and libuv integration together])
-  fi
-fi
-
-# not EFL_OPTIONAL_DEPEND_PKG() because it's only used for ecore examples
-if test "${want_gstreamer1}" = "yes" -a "${want_gstreamer}" = "yes"; then
-   AC_MSG_ERROR([You can only enable either GStreamer 1.0 or GStreamer 0.10 support])
-fi
-
-if test "${want_gstreamer1}" = "yes"; then
-  PKG_CHECK_MODULES([GSTREAMER], [gstreamer-1.0])
-fi
-if test "${want_gstreamer}" = "yes"; then
-  PKG_CHECK_MODULES([GSTREAMER], [gstreamer-0.10])
-fi
-AM_CONDITIONAL([HAVE_GSTREAMER], [test "${want_gstreamer}" = "yes" -o "${want_gstreamer1}" = "yes"])
-
-EFL_EVAL_PKGS([ECORE])
-
-### Checks for header files
-
-AC_HEADER_SYS_WAIT
-
-AC_CHECK_HEADERS([sys/socket.h])
-
-AC_CHECK_HEADERS([ \
-arpa/inet.h \
-langinfo.h \
-features.h \
-netinet/in.h \
-netinet/tcp.h \
-sys/prctl.h \
-sys/resource.h \
-sys/timerfd.h \
-sys/un.h \
-],[],[],
-[
- #ifdef HAVE_SYS_SOCKET_H
- # include <sys/socket.h>
- #endif
-])
-
-AC_CHECK_HEADERS([net/if.h], [], [],
-[#include <stdio.h>
-#if STDC_HEADERS
-# include <stdlib.h>
-# include <stddef.h>
-#else
-# if HAVE_STDLIB_H
-#  include <stdlib.h>
-# endif
-#endif
-#if HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
-#endif
-])
-
-### Checks for types
-
-### Checks for structures
-
-### Checks for compiler characteristics
-
-### Checks for linker characteristics
-
-### Checks for library functions
-
-## ecore
-
-# isfinite
-
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <math.h>
-       ]],
-       [[
-int i = isfinite(0);
-       ]])],
-   [
-    AC_DEFINE(HAVE_ISFINITE, 1, [Define to 1 if you have `isfinite', as a function or macro.])
-    have_isfinite="yes"
-   ],
-   [have_isfinite="no"])
-
-AC_MSG_CHECKING([for isfinite])
-AC_MSG_RESULT([${have_isfinite}])
-
-# mallinfo, timerfd_create, clock_gettime
-
-AC_CHECK_FUNCS_ONCE([mallinfo timerfd_create clock_gettime malloc_info])
-
-if ! test "x${ac_cv_func_clock_gettime}" = "xyes" ; then
-   AC_CHECK_LIB([rt], [clock_gettime],
-      [
-        EFL_ADD_LIBS([ECORE], [-lrt])
-        AC_DEFINE([HAVE_CLOCK_GETTIME], [1], [Have clock_gettime()])
-       ])
-fi
-
-EFL_ADD_LIBS([ECORE], [${LTLIBINTL}])
-
-# coroutine function specific
-
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <ucontext.h>
-       ]],
-       [[
-ucontext_t test;
-getcontext(&test);
-       ]])],
-   [have_ucontext="yes"],
-   [have_ucontext="no"])
-
-AC_MSG_CHECKING([for ucontext])
-AC_MSG_RESULT([${have_ucontext}])
-
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <setjmp.h>
-       ]],
-       [[
-jmp_buf context;
-setjmp(&context);
-       ]])],
-   [have_setjmp="yes"],
-   [have_setjmp="no"])
-
-AC_MSG_CHECKING([for setjmp])
-AC_MSG_RESULT([${have_setjmp}])
-
-if test "X${have_windows}" = "xyes"; then
-   AC_DEFINE(USE_FIBER, 1, [Define to 1 if you have Windows Fiber support.])
-   EFL_ADD_FEATURE([system], [coroutine], [fiber])
-elif test "x${have_ucontext}" = "xyes"; then
-   AC_DEFINE(USE_UCONTEXT, 1, [Define to 1 if you have posix ucontext functions.])
-   EFL_ADD_FEATURE([system], [coroutine], [ucontext])
-elif test "x${have_setjmp}" = "xyes"; then
-   AC_DEFINE(USE_SETJMP, 1, [Define to 1 if you have setjmp/longjmp functions.])
-   EFL_ADD_FEATURE([system], [coroutine], [setjmp])
-else
-   AC_MSG_ERROR([You don't have a working way to implement coroutine. Exiting...])
-fi
-
-### Check availability
-
-EFL_LIB_END([Ecore])
-#### End of Ecore
 
 #### Ecore CXX
 EFL_LIB_START([Ecore_Cxx])
