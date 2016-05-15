@@ -828,7 +828,7 @@ _grid_viewport_get(Grid *g,
                    int *h)
 {
    int xx, yy, ww, hh;
-   Evas_Coord vx, vy, vw, vh;
+   Evas_Coord vx = 0, vy = 0, vw = 0, vh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(g);
 
