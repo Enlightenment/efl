@@ -974,6 +974,10 @@ _elm_conformant_elm_widget_widget_parent_set(Eo *obj, Elm_Conformant_Data *sd, E
         sd->clipboard_state = ECORE_X_ILLUME_CLIPBOARD_STATE_OFF;
      }
    // FIXME: get kbd region prop
+#else
+   (void)obj;
+   (void)sd;
+   (void)parent;
 #endif
 }
 

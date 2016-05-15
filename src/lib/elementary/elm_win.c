@@ -345,12 +345,12 @@ _elm_win_first_frame_do(void *data, Evas *e EINA_UNUSED, void *event_info EINA_U
 static void
 _win_noblank_eval(void)
 {
+#ifdef HAVE_ELEMENTARY_X
    Eina_List *l;
    Evas_Object *obj;
    int noblanks = 0;
    Eina_Bool change = EINA_FALSE;
 
-#ifdef HAVE_ELEMENTARY_X
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
      {
         ELM_WIN_DATA_GET(obj, sd);
@@ -411,6 +411,8 @@ _elm_win_apply_alpha(Eo *obj, Elm_Win_Data *sd)
              _elm_win_xwin_update(sd);
           }
         else
+#else
+          (void)obj;
 #endif
           TRAP(sd, alpha_set, enabled);
      }
@@ -4525,7 +4527,9 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
 EOLIAN static Evas_Object *
 _elm_win_main_menu_get(Eo *obj, Elm_Win_Data *sd)
 {
+#ifdef HAVE_ELEMENTARY_X
    Eina_Bool use_dbus = EINA_FALSE;
+#endif
 
    if (sd->main_menu) goto end;
 
@@ -5092,6 +5096,7 @@ _elm_win_keyboard_win_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool is_ke
    if (sd->x.xwin)
      ecore_x_e_virtual_keyboard_set(sd->x.xwin, is_keyboard);
 #else
+   (void)sd;
    (void)is_keyboard;
 #endif
 }
@@ -5102,6 +5107,8 @@ _elm_win_keyboard_win_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin) return ecore_x_e_virtual_keyboard_get(sd->x.xwin);
+#else
+   (void)sd;
 #endif
    return EINA_FALSE;
 }
@@ -5210,6 +5217,7 @@ _elm_win_conformant_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool conform
    if (sd->x.xwin)
      ecore_x_e_illume_conformant_set(sd->x.xwin, conformant);
 #else
+   (void)sd;
    (void)conformant;
 #endif
 }
@@ -5221,6 +5229,8 @@ _elm_win_conformant_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      return ecore_x_e_illume_conformant_get(sd->x.xwin);
+#else
+   (void)sd;
 #endif
 
    return EINA_FALSE;
@@ -5245,6 +5255,7 @@ _elm_win_quickpanel_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool quickpa
           }
      }
 #else
+   (void)sd;
    (void)quickpanel;
 #endif
 }
@@ -5256,6 +5267,8 @@ _elm_win_quickpanel_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      return ecore_x_e_illume_quickpanel_get(sd->x.xwin);
+#else
+   (void)sd;
 #endif
 
    return EINA_FALSE;
@@ -5269,6 +5282,7 @@ _elm_win_quickpanel_priority_major_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, in
    if (sd->x.xwin)
      ecore_x_e_illume_quickpanel_priority_major_set(sd->x.xwin, priority);
 #else
+   (void)sd;
    (void)priority;
 #endif
 }
@@ -5280,6 +5294,8 @@ _elm_win_quickpanel_priority_major_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      return ecore_x_e_illume_quickpanel_priority_major_get(sd->x.xwin);
+#else
+   (void)sd;
 #endif
 
    return -1;
@@ -5293,6 +5309,7 @@ _elm_win_quickpanel_priority_minor_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, in
    if (sd->x.xwin)
      ecore_x_e_illume_quickpanel_priority_minor_set(sd->x.xwin, priority);
 #else
+   (void)sd;
    (void)priority;
 #endif
 }
@@ -5304,6 +5321,8 @@ _elm_win_quickpanel_priority_minor_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      return ecore_x_e_illume_quickpanel_priority_minor_get(sd->x.xwin);
+#else
+   (void)sd;
 #endif
 
    return -1;
@@ -5317,6 +5336,7 @@ _elm_win_quickpanel_zone_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int zone)
    if (sd->x.xwin)
      ecore_x_e_illume_quickpanel_zone_set(sd->x.xwin, zone);
 #else
+   (void)sd;
    (void)zone;
 #endif
 }
@@ -5328,6 +5348,8 @@ _elm_win_quickpanel_zone_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      return ecore_x_e_illume_quickpanel_zone_get(sd->x.xwin);
+#else
+   (void)sd;
 #endif
 
    return 0;
@@ -5372,6 +5394,7 @@ _elm_win_illume_command_send(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Elm_Illume_C
           }
      }
 #else
+   (void)sd;
    (void)command;
 #endif
 }
@@ -5404,6 +5427,10 @@ _elm_win_keygrab_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *key, Eva
           }
          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, x_grab_mode);
      }
+#else
+   (void)sd;
+   (void)key;
+   (void)grab_mode;
 #endif
    return ret;
 }
@@ -5416,6 +5443,9 @@ _elm_win_keygrab_unset(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *key, E
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      ret = ecore_x_window_keygrab_unset(sd->x.xwin, key, 0, 0);
+#else
+   (void)sd;
+   (void)key;
 #endif
    return ret;
 }
