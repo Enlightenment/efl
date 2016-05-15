@@ -1,7 +1,7 @@
 [Icon Theme]
-Name=Bluish-X
+Name=Enlightenment-X
 Inherits=hicolor
-Comment=The EFL Bluish-X Icon theme. Orig. Based on Rave-X, Mint-X and Faenza Icon Themes.
+Comment=The Enlightenment-X Icon theme. Orig. based on Rave-X, Mint-X and Faenza Icon Themes.
 Directories=actions/128,status/128,places/128,places/16,emblems/96,categories/128,categories/16,apps/64
 Example=folder-home
 
