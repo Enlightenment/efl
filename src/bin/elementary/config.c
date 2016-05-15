@@ -4109,7 +4109,7 @@ _status_config_full(Evas_Object *win,
                     Evas_Object *bx0)
 {
    Evas_Object *tb, *naviframe;
-   Elm_Object_Item *tb_sizing, *tb_it;
+   Elm_Object_Item *tb_it;
 
    tb = elm_toolbar_add(win);
    elm_toolbar_select_mode_set(tb, ELM_OBJECT_SELECT_MODE_ALWAYS);
@@ -4118,30 +4118,21 @@ _status_config_full(Evas_Object *win,
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   tb_sizing = elm_toolbar_item_append(tb, "zoom-fit-best", "Sizing",
-                                    _cf_sizing, win);
-   elm_toolbar_item_priority_set(tb_sizing, 100);
-
-   tb_it = elm_toolbar_item_append(tb, "preferences-desktop-theme", "Theme",
-                                _cf_themes, win);
-   elm_toolbar_item_priority_set(tb_it, 90);
-
-   tb_it = elm_toolbar_item_append(tb, "preferences-desktop-theme", "Icons",
-                                _cf_icons, win);
-   elm_toolbar_item_priority_set(tb_it, 90);
-
-   elm_toolbar_item_append(tb, "preferences-desktop-font", "Fonts",
-                           _cf_fonts, win);
-
-   tb_it = elm_toolbar_item_append(tb, "system-users", "Profiles",
-                                _cf_profiles, win);
-   elm_toolbar_item_priority_set(tb_it, 90);
-
-   elm_toolbar_item_append(tb, "system-run", "Scrolling", _cf_scrolling, win);
-   elm_toolbar_item_append(tb, "video-display", "Rendering",
-                           _cf_rendering, win);
-   elm_toolbar_item_append(tb, "appointment-new", "Caches", _cf_caches, win);
-   elm_toolbar_item_append(tb, "sound", "Audio", _cf_audio, win);
+   tb_it = elm_toolbar_item_append(tb, "preferences-desktop-display",
+                                   "Sizing", _cf_sizing, win);
+   elm_toolbar_item_append(tb, "preferences-desktop-theme",
+                           "Theme", _cf_themes, win);
+   elm_toolbar_item_append(tb, "preferences-color",
+                           "Icons", _cf_icons, win);
+   elm_toolbar_item_append(tb, "preferences-desktop-font",
+                           "Fonts", _cf_fonts, win);
+   elm_toolbar_item_append(tb, "preferences-desktop-multimedia",
+                           "Audio", _cf_audio, win);
+   elm_toolbar_item_append(tb, "preferences-profile",
+                           "Profiles", _cf_profiles, win);
+   elm_toolbar_item_append(tb, NULL, "Scrolling", _cf_scrolling, win);
+   elm_toolbar_item_append(tb, NULL, "Rendering", _cf_rendering, win);
+   elm_toolbar_item_append(tb, NULL, "Caches", _cf_caches, win);
    elm_toolbar_item_append(tb, NULL, "Focus", _cf_focus, win);
    elm_toolbar_item_append(tb, NULL, "Etc", _cf_etc, win);
 
@@ -4167,7 +4158,7 @@ _status_config_full(Evas_Object *win,
 
    // FIXME uncomment after flip style fix, please
    //elm_object_style_set(naviframe, "flip");
-   elm_toolbar_item_selected_set(tb_sizing, EINA_TRUE);
+   elm_toolbar_item_selected_set(tb_it, EINA_TRUE);
    elm_box_pack_end(bx0, naviframe);
    evas_object_show(naviframe);
 }
