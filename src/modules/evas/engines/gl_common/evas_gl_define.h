@@ -107,6 +107,9 @@
 #ifndef GL_UNPACK_ROW_LENGTH
 # define GL_UNPACK_ROW_LENGTH 0x0CF2
 #endif
+#ifndef GL_DEPTH_COMPONENT24
+# define GL_DEPTH_COMPONENT24 0x81A6
+#endif
 #ifndef EGL_NO_DISPLAY
 # define EGL_NO_DISPLAY 0
 #endif
