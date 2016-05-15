@@ -180,9 +180,9 @@ _ecore_promise_quit(void *data, void *value)
 {
    Eina_Bool *bob = data;
    double *start = *(double**)value;
-   double delta = fabs(ecore_loop_time_get() - *start);
+   double delta = ecore_loop_time_get() - *start;
 
-   fail_if(fabs(delta - 0.2) > 0.01);
+   fail_if(delta - 0.2 > 0.01);
 
    *bob = EINA_TRUE;
    ecore_main_loop_quit();
