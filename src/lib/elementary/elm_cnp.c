@@ -168,9 +168,11 @@ static int _dragx = 0, _dragy = 0;
 static Ecore_Event_Handler *handler_pos = NULL;
 static Ecore_Event_Handler *handler_drop = NULL;
 static Ecore_Event_Handler *handler_enter = NULL;
-static Ecore_Event_Handler *handler_status = NULL;
 static Ecore_Event_Handler *handler_leave = NULL;
+#ifdef HAVE_ELEMENTARY_X
+static Ecore_Event_Handler *handler_status = NULL;
 static Ecore_Event_Handler *handler_up = NULL;
+#endif
 
 /* TODO BUG: should NEVER have these as globals! They should be per context (window). */
 static Elm_Drag_Pos dragposcb = NULL;
