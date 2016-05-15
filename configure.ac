@@ -5480,6 +5480,16 @@ AC_SUBST([ELEMENTARYJS_CXXFLAGS])
 EFL_LIB_END_OPTIONAL([ELEMENTARY_JS])
 #### End of Efl_Js
 
+## Disable warning for OS that have a specifc configuration
+case "$host_os" in
+   mingw*|cygwin*)
+      CFOPT_WARNING=""
+      ;;
+   darwin*)
+      CFOPT_WARNING=""
+      ;;
+esac
+
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
