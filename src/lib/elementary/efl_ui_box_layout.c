@@ -30,7 +30,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    Item_Calc *items, *item;
    Eina_Bool horiz = _horiz(pd->orient), zeroweight = EINA_FALSE;
    int id = 0, count, boxl = 0, boxr = 0, boxt = 0, boxb = 0;
-   int length, want, deficit = 0, pad, extra = 0, rounding = 0;
+   int length, want, pad, extra = 0, rounding = 0;
    double cur_pos = 0, weight[2] = { 0, 0 }, scale;
    double box_align[2];
    Eina_Bool box_fill[2] = { EINA_FALSE, EINA_FALSE };
@@ -157,12 +157,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                                       wanth + pad * (count - 1) + boxt + boxb);
      }
 
-   if (extra < 0)
-     {
-        // note: deficit unused
-        deficit = (-extra);
-        extra = 0;
-     }
+   if (extra < 0) extra = 0;
 
    if (!weight[!horiz])
      {
