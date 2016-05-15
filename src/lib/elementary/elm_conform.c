@@ -50,6 +50,7 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
  * ILLUME_IND="0, 0, 800, 32"
  * ILLUME_STK="0, 568, 800, 32"
  */
+#ifdef HAVE_ELEMENTARY_X
 static Eina_Bool
 _conformant_part_geometry_get_from_env(const char *part,
                                        int *sx,
@@ -90,6 +91,7 @@ _conformant_part_geometry_get_from_env(const char *part,
 
    return EINA_TRUE;
 }
+#endif
 
 static void
 _conformant_part_size_hints_set(Evas_Object *obj,
@@ -656,6 +658,7 @@ _move_resize_cb(void *data EINA_UNUSED,
    _conformant_part_sizing_eval(obj, part_type);
 }
 
+#ifdef HAVE_ELEMENTARY_X
 static void
 _show_region_job(void *data)
 {
@@ -680,7 +683,6 @@ _show_region_job(void *data)
 }
 
 // showing the focused/important region.
-#ifdef HAVE_ELEMENTARY_X
 static void
 _on_content_resize(void *data,
                    Evas *e EINA_UNUSED,
