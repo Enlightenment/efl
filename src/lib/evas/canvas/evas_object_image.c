@@ -480,7 +480,7 @@ _evas_image_eo_base_dbg_info_get(Eo *eo_obj, Evas_Image_Data *o, Eo_Dbg_Info *ro
    EO_DBG_INFO_APPEND(group, "Source", EINA_VALUE_TYPE_UINT64,
                           (uint64_t) (uintptr_t) evas_object_image_source_get(eo_obj));
 
-   if (efl_image_load_error_get(eo_obj) != EVAS_LOAD_ERROR_NONE)
+   if (efl_image_load_error_get(eo_obj) != EFL_IMAGE_LOAD_ERROR_NONE)
      {
         Evas_Load_Error error = EVAS_LOAD_ERROR_GENERIC;
         error = (Evas_Load_Error) _evas_image_load_error_get(eo_obj);
