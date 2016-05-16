@@ -9,7 +9,7 @@ filesdir = $(datadir)/elementary/config
 
 files_DATA = profile.cfg
 
-.cfg: .src
+%.cfg: %.src
 	$(AM_V_EET) \
 	$(MKDIR_P) $(top_builddir)/config/; \
 	$(EET) -i $(top_builddir)/config/$@ config $< 0

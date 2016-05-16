@@ -5,22 +5,22 @@ am__v_EOL_0 = @echo "  EOLIAN  " $@;
 
 SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h .eot .eot.h
 
-.eo.c: .eo ${_EOLIAN_GEN_DEP}
+%.eo.c: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_GEN) --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
 
-.eo.h: .eo ${_EOLIAN_GEN_DEP}
+%.eo.h: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_GEN) $(EOLIAN_FLAGS) --gh -o $@ $<
 
-.eot.h: .eot ${_EOLIAN_GEN_DEP}
+%.eot.h: %.eot ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_GEN) $(EOLIAN_FLAGS) --gh -o $@ $<
 
-.eo.legacy.h: .eo ${_EOLIAN_GEN_DEP}
+%.eo.legacy.h: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_GEN) --legacy $(EOLIAN_FLAGS) --gh -o $@ $<

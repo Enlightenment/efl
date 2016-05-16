@@ -19,5 +19,5 @@ am__v_ELUA_0 = @echo "  ELUA    " $@;
 
 SUFFIXES += .lua
 
-.eo.lua: .eo ${_ELUA_GEN_DEP}
+%.eo.lua: %.eo ${_ELUA_GEN_DEP}
 	$(AM_V_ELUA)$(ELUA_GEN) $(EOLIAN_FLAGS) -o $@ $<
