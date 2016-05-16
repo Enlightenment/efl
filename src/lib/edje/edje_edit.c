@@ -13087,80 +13087,46 @@ fill_proxy:
 }
 
 static void
-_edje_generate_source_state_box(Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
+_edje_generate_source_state_table(Edje_Part_Description_Common *pd,
+                                  Edje_Part_Description_Common *inherit_pd,
+                                  Eina_Strbuf *buf)
 {
    int attr_amount = 0;
    int indent_space = 0;
    Eina_Bool ret = EINA_FALSE;
 
-   Edje_Part_Description_Box *box;
+   Edje_Part_Description_Table *table = (Edje_Part_Description_Table *)pd;
+   Edje_Part_Description_Table *inherit_pd_table = (Edje_Part_Description_Table *) inherit_pd;
 
-   box = (Edje_Part_Description_Box *)pd;
+   Eina_Bool homogeneous = EINA_FALSE;
+   Eina_Bool align = EINA_FALSE;
+   Eina_Bool padding = EINA_FALSE;
+   Eina_Bool min = EINA_FALSE;
 
-   attr_amount += (box->box.layout == NULL && box->box.alt_layout == NULL) ? 0 : 1;
-   attr_amount += (box->box.align.x == 0.5 && box->box.align.y == 0.5) ? 0 : 1;
-   attr_amount += (box->box.padding.x == 0 && box->box.padding.y == 0) ? 0 : 1;
-   attr_amount += (box->box.min.h == 0 && box->box.min.v == 0) ? 0 : 1;
+   if (inherit_pd_table)
+     {
+        homogeneous = (inherit_pd_table->table.homogeneous == table->table.homogeneous) ? EINA_FALSE : EINA_TRUE;
 
-   if (attr_amount > 1)
-     indent_space = strlen(I6);
+        align = ((inherit_pd_table->table.align.x == table->table.align.x) &&
+                 (inherit_pd_table->table.align.y == table->table.align.y)) ? EINA_FALSE : EINA_TRUE;
 
-   if (attr_amount)
-    {
-       if (attr_amount > 1)
-         BUF_APPEND(I5 "box {\n");
-       else
-         BUF_APPEND(I5 "box.");
+        padding = ((inherit_pd_table->table.padding.x == table->table.padding.x) &&
+                   (inherit_pd_table->table.padding.y == table->table.padding.y)) ? EINA_FALSE : EINA_TRUE;
 
-        if (box->box.layout && box->box.alt_layout)
-          BUF_APPENDF("%*slayout: \"%s\" \"%s\";\n", indent_space, "",
-                      box->box.layout, box->box.alt_layout);
-        else if (!box->box.layout && box->box.alt_layout)
-          BUF_APPENDF("%*slayout: \"horizontal\" \"%s\";\n", indent_space, "",
-                      box->box.alt_layout);
-        else if (box->box.layout && !box->box.alt_layout)
-          BUF_APPENDF("%*slayout: \"%s\";\n", indent_space, "",
-                      box->box.layout);
+        min = ((inherit_pd_table->table.min.h == table->table.min.h) &&
+               (inherit_pd_table->table.min.v == table->table.min.v)) ? EINA_FALSE : EINA_TRUE;
+     }
+   else
+     {
+        homogeneous = (table->table.homogeneous == EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE) ? EINA_FALSE : EINA_TRUE;
+        align = (table->table.align.x == 0.5 && table->table.align.y == 0.5) ? EINA_FALSE : EINA_TRUE;
+        padding = (table->table.padding.x == 0 && table->table.padding.y == 0) ? EINA_FALSE : EINA_TRUE;
+        min = (table->table.min.h == 0 && table->table.min.v == 0) ? EINA_FALSE : EINA_TRUE;
+     }
 
-        if (box->box.align.x != 0.5 || box->box.align.y != 0.5)
-          {
-             char align[strlen("align") + indent_space + 1];
-             snprintf(align, strlen("align") + indent_space + 1,
-                      "%*salign", indent_space, "");
-             _edje_source_with_double_values_append(align, 2,
-                                    TO_DOUBLE(box->box.align.x),
-                                    TO_DOUBLE(box->box.align.y),
-                                    buf, &ret);
-          }
+   attr_amount = homogeneous + align + padding + min;
 
-        if (box->box.padding.x != 0 || box->box.padding.y != 0)
-          BUF_APPENDF("%*spadding: %d %d;\n", indent_space, "",
-                      box->box.padding.x, box->box.padding.y);
-
-        if (box->box.min.h || box->box.min.v)
-          BUF_APPENDF("%*smin: %d %d;\n", indent_space, "",
-                      box->box.min.h, box->box.min.v);
-
-        if (attr_amount > 1)
-          BUF_APPEND(I5 "}\n");
-   }
-}
-
-static void
-_edje_generate_source_state_table(Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
-{
-   int attr_amount = 0;
-   int indent_space = 0;
-   Eina_Bool ret = EINA_FALSE;
-
-   Edje_Part_Description_Table *table;
-
-   table = (Edje_Part_Description_Table *)pd;
-
-   attr_amount += (table->table.homogeneous == EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE) ? 0 : 1;
-   attr_amount += (table->table.align.x == 0.5 && table->table.align.y == 0.5) ? 0 : 1;
-   attr_amount += (table->table.padding.x == 0 && table->table.padding.y == 0) ? 0 : 1;
-   attr_amount += (table->table.min.h == 0 && table->table.min.v == 0) ? 0 : 1;
+   if (attr_amount == 0) return;
 
    if (attr_amount > 1)
      indent_space = strlen(I6);
@@ -13187,24 +13153,118 @@ _edje_generate_source_state_table(Edje_Part_Description_Common *pd, Eina_Strbuf 
            }
           }
 
-        if (table->table.align.x != 0.5 || table->table.align.y != 0.5)
+        if (align)
           {
-             char align[strlen("align") + indent_space + 1];
-             snprintf(align, strlen("align") + indent_space + 1,
+             char align_str[strlen("align") + indent_space + 1];
+             snprintf(align_str, strlen("align") + indent_space + 1,
                       "%*salign", indent_space, "");
-             _edje_source_with_double_values_append(align, 2,
+             _edje_source_with_double_values_append(align_str, 2,
                                      TO_DOUBLE(table->table.align.x),
                                      TO_DOUBLE(table->table.align.y),
                                      buf, &ret);
           }
 
-        if (table->table.padding.x != 0 || table->table.padding.y != 0)
+        if (padding)
           BUF_APPENDF("%*spadding: %d %d;\n", indent_space, "",
                       table->table.padding.x, table->table.padding.y);
 
-        if (table->table.min.h || table->table.min.v)
+        if (min)
           BUF_APPENDF("%*smin: %d %d;\n", indent_space, "",
                       table->table.min.h, table->table.min.v);
+
+        if (attr_amount > 1)
+          BUF_APPEND(I5 "}\n");
+   }
+}
+
+static void
+_edje_generate_source_state_box(Edje_Part_Description_Common *pd,
+                                Edje_Part_Description_Common *inherit_pd,
+                                Eina_Strbuf *buf)
+{
+   int attr_amount = 0;
+   int indent_space = 0;
+   Eina_Bool ret = EINA_FALSE;
+
+   Edje_Part_Description_Box *box = (Edje_Part_Description_Box *)pd;
+   Edje_Part_Description_Box *inherit_pd_box = (Edje_Part_Description_Box *)inherit_pd;
+
+   Eina_Bool alt_layout = EINA_FALSE;
+   Eina_Bool layout = EINA_FALSE;
+   Eina_Bool align = EINA_FALSE;
+   Eina_Bool padding = EINA_FALSE;
+   Eina_Bool min = EINA_FALSE;
+
+   if (inherit_pd_box)
+     {
+        layout = ((inherit_pd_box->box.layout != NULL && box->box.layout != NULL &&
+                  !strcmp(inherit_pd_box->box.layout, box->box.layout)) ||
+                  (inherit_pd_box->box.layout == NULL && box->box.layout == NULL)) ? EINA_FALSE : EINA_TRUE;
+
+        alt_layout = ((inherit_pd_box->box.alt_layout != NULL && box->box.alt_layout != NULL &&
+                      !strcmp(inherit_pd_box->box.alt_layout, box->box.alt_layout)) ||
+                      (inherit_pd_box->box.alt_layout == NULL && box->box.alt_layout == NULL)) ? EINA_FALSE : EINA_TRUE;
+
+        align = ((inherit_pd_box->box.align.x == box->box.align.x) &&
+                 (inherit_pd_box->box.align.y == box->box.align.y)) ? EINA_FALSE : EINA_TRUE;
+
+        padding = ((inherit_pd_box->box.padding.x == box->box.padding.x) &&
+                   (inherit_pd_box->box.padding.y == box->box.padding.y)) ? EINA_FALSE : EINA_TRUE;
+
+        min = ((inherit_pd_box->box.min.h == box->box.min.h) &&
+               (inherit_pd_box->box.min.v == box->box.min.v)) ? EINA_FALSE : EINA_TRUE;
+     }
+   else
+     {
+        layout = (box->box.layout == NULL) ? EINA_FALSE : EINA_TRUE;
+        alt_layout = (box->box.alt_layout == NULL) ? EINA_FALSE : EINA_TRUE;
+        align = (box->box.align.x == 0.5 && box->box.align.y == 0.5) ? EINA_FALSE : EINA_TRUE;
+        padding = (box->box.padding.x == 0 && box->box.padding.y == 0) ? EINA_FALSE : EINA_TRUE;
+        min =  (box->box.min.h == 0 && box->box.min.v == 0) ? EINA_FALSE : EINA_TRUE;
+     }
+
+   attr_amount = (layout || alt_layout) + align + padding + min;
+
+   if (attr_amount == 0) return;
+
+   if (attr_amount > 1)
+     indent_space = strlen(I6);
+
+   if (attr_amount)
+    {
+       if (attr_amount > 1)
+         BUF_APPEND(I5 "box {\n");
+       else
+         BUF_APPEND(I5 "box.");
+
+        if (layout && alt_layout)
+          BUF_APPENDF("%*slayout: \"%s\" \"%s\";\n", indent_space, "",
+                      box->box.layout, box->box.alt_layout);
+        else if (!layout && alt_layout)
+          BUF_APPENDF("%*slayout: \"horizontal\" \"%s\";\n", indent_space, "",
+                      box->box.alt_layout);
+        else if (layout && !alt_layout)
+          BUF_APPENDF("%*slayout: \"%s\";\n", indent_space, "",
+                      box->box.layout);
+
+        if (align)
+          {
+             char align_str[strlen("align") + indent_space + 1];
+             snprintf(align_str, strlen("align") + indent_space + 1,
+                      "%*salign", indent_space, "");
+             _edje_source_with_double_values_append(align_str, 2,
+                                    TO_DOUBLE(box->box.align.x),
+                                    TO_DOUBLE(box->box.align.y),
+                                    buf, &ret);
+          }
+
+        if (padding)
+          BUF_APPENDF("%*spadding: %d %d;\n", indent_space, "",
+                      box->box.padding.x, box->box.padding.y);
+
+        if (min)
+          BUF_APPENDF("%*smin: %d %d;\n", indent_space, "",
+                      box->box.min.h, box->box.min.v);
 
         if (attr_amount > 1)
           BUF_APPEND(I5 "}\n");
@@ -13891,11 +13951,11 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 
    //Box
    if (rp->part->type == EDJE_PART_TYPE_BOX)
-     _edje_generate_source_state_box(pd, buf);
+     _edje_generate_source_state_box(pd, inherit_pd, buf);
 
    //Table
    if (rp->part->type == EDJE_PART_TYPE_TABLE)
-     _edje_generate_source_state_table(pd, buf);
+     _edje_generate_source_state_table(pd, inherit_pd, buf);
 
    //Image
    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
