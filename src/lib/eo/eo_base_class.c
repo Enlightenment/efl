@@ -343,7 +343,6 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
    Eina_List *l;
    Eo *child;
    const char *id, *p, *klass_name;
-   size_t len;
 
    // notes:
    // if search contains NO "/" char, then its just a name search.
@@ -361,8 +360,6 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
    if (!search) return NULL;
    if (!search[0]) return NULL;
 
-   len = strlen(search);
-
    if (strchr(search, '/'))
      {
         ERR("Looking up object by path '%s' is not supported", search);
@@ -377,15 +374,17 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
         if ((p = strchr(search, ':')))
           {
              // "class:name"
-             char *klass = alloca(len);
-             char *name = alloca(len);
+             char *klass;
+             char *name;
+             size_t colon_location = p - search;
              Eina_Bool klass_glob = EINA_FALSE;
              Eina_Bool name_glob = EINA_FALSE;
 
              // split class:name into 2 strings dropping :
-             strncpy(klass, search, p - search);
-             klass[p - search] = 0;
-             strcpy(name, p + 1);
+             klass = alloca(strlen(search) + 1);
+             strcpy(klass, search);
+             klass[colon_location] = '\0';
+             name = klass + colon_location + 1;
 
              // figure out if class or name are globs
              klass_glob = _hasglob(klass);
