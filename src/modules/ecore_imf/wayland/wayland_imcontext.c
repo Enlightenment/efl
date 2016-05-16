@@ -336,6 +336,15 @@ commit_preedit(WaylandIMContext *imcontext)
    if (!imcontext->ctx)
      return;
 
+   ecore_imf_context_preedit_changed_event_add(imcontext->ctx);
+   ecore_imf_context_event_callback_call(imcontext->ctx,
+                                         ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
+                                         NULL);
+
+   ecore_imf_context_preedit_end_event_add(imcontext->ctx);
+   ecore_imf_context_event_callback_call(imcontext->ctx,
+                                         ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
+
    ecore_imf_context_commit_event_add(imcontext->ctx, 
                                       imcontext->preedit_commit);
    ecore_imf_context_event_callback_call(imcontext->ctx, 
@@ -654,15 +663,6 @@ text_input_leave(void                 *data,
    /* clear preedit */
    commit_preedit(imcontext);
    clear_preedit(imcontext);
-
-   ecore_imf_context_preedit_changed_event_add(imcontext->ctx);
-   ecore_imf_context_event_callback_call(imcontext->ctx, 
-                                         ECORE_IMF_CALLBACK_PREEDIT_CHANGED, 
-                                         NULL);
-
-   ecore_imf_context_preedit_end_event_add(imcontext->ctx);
-   ecore_imf_context_event_callback_call(imcontext->ctx, 
-                                         ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
 }
 
 static void
