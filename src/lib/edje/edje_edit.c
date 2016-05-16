@@ -13400,6 +13400,151 @@ _edje_generate_source_state_text(Edje *ed, Edje_Part_Description_Common *pd,
      BUF_APPEND(I5 "}\n");
 }
 
+#define COMMON_STATE_ATTRIBUTES_AMOUNT 32
+static int
+_edje_common_desc_diff_calculate(Edje_Part_Description_Common *ed,
+                                 Edje_Part_Description_Common *inherit_pd)
+{
+   int diffs_amount= 0;
+
+   diffs_amount += ((ed->align.x != inherit_pd->align.x) || (ed->align.y != inherit_pd->align.y)) ? 1 : 0;
+
+   diffs_amount += ((ed->minmul.have != inherit_pd->minmul.have) ||
+                    (ed->minmul.w != inherit_pd->minmul.w) ||
+                    (ed->minmul.h != inherit_pd->minmul.h)) ? 1 : 0;
+   diffs_amount += ((ed->min.w != inherit_pd->min.w) ||
+                    (ed->min.h != inherit_pd->min.h) ||
+                    (ed->min.limit != inherit_pd->min.limit)) ? 1 : 0;
+   diffs_amount += ((ed->step.x != inherit_pd->step.x) || (ed->step.y != inherit_pd->step.y)) ? 1 : 0;
+   diffs_amount += ((ed->aspect.min != inherit_pd->aspect.min) ||
+                    (ed->aspect.max != inherit_pd->aspect.max) ||
+                    (ed->aspect.prefer!= inherit_pd->aspect.prefer)) ? 1 : 0;
+   diffs_amount += ((ed->color_class != NULL && inherit_pd->color_class == NULL) ||
+                    (ed->color_class == NULL && inherit_pd->color_class != NULL) ||
+                    (ed->color_class != NULL && inherit_pd->color_class != NULL &&
+                     strcmp(ed->color_class, inherit_pd->color_class))) ? 1 : 0;
+   diffs_amount += (ed->clip_to_id != inherit_pd->clip_to_id) ? 1 : 0;
+   diffs_amount += ((ed->size_class != NULL && inherit_pd->size_class == NULL) ||
+                    (ed->size_class == NULL && inherit_pd->size_class != NULL) ||
+                    (ed->size_class != NULL && inherit_pd->size_class != NULL &&
+                     strcmp(ed->size_class, inherit_pd->size_class))) ? 1 : 0;
+
+   /*Rel1 block*/
+   diffs_amount += ((ed->rel1.relative_x != inherit_pd->rel1.relative_x) ||
+                    (ed->rel1.relative_y != inherit_pd->rel1.relative_y)) ? 1 : 0;
+   diffs_amount += ((ed->rel1.offset_x != inherit_pd->rel1.offset_x) ||
+                    (ed->rel1.offset_y != inherit_pd->rel1.offset_y)) ? 1 : 0;
+   diffs_amount += (ed->rel1.id_x != inherit_pd->rel1.id_x) ? 1 : 0;
+   diffs_amount += (ed->rel1.id_y != inherit_pd->rel1.id_y) ? 1 : 0;
+   /*End of Rel1 block*/
+
+   /*Rel2 block*/
+   diffs_amount += ((ed->rel2.relative_x != inherit_pd->rel2.relative_x) ||
+                    (ed->rel2.relative_y != inherit_pd->rel2.relative_y)) ? 1 : 0;
+   diffs_amount += ((ed->rel2.offset_x != inherit_pd->rel2.offset_x) ||
+                    (ed->rel2.offset_y != inherit_pd->rel2.offset_y)) ? 1 : 0;
+   diffs_amount += (ed->rel2.id_x != inherit_pd->rel2.id_x) ? 1 : 0;
+   diffs_amount += (ed->rel2.id_y != inherit_pd->rel2.id_y) ? 1 : 0;
+   /*End of Rel1 block*/
+
+   diffs_amount += (ed->visible != inherit_pd->visible) ? 1 : 0;
+
+   diffs_amount += (inherit_pd->map.id_persp == ed->map.id_persp) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += (inherit_pd->map.id_light == ed->map.id_light) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += (inherit_pd->map.colors_count == ed->map.colors_count) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += (inherit_pd->map.backcull == ed->map.backcull) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += (inherit_pd->map.on == ed->map.on) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += (inherit_pd->map.persp_on == ed->map.persp_on) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += (inherit_pd->map.smooth == ed->map.smooth) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += (inherit_pd->map.alpha == ed->map.alpha) ? EINA_FALSE : EINA_TRUE;
+
+   diffs_amount += (inherit_pd->map.rot.id_center == ed->map.rot.id_center) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += (inherit_pd->map.rot.x == ed->map.rot.x) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += (inherit_pd->map.rot.y == ed->map.rot.y) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += (inherit_pd->map.rot.z == ed->map.rot.z) ? EINA_FALSE : EINA_TRUE;
+
+   /*In case when colors are equal do not append points into diffs_amount*/
+   diffs_amount += ((ed->color.r == inherit_pd->color.r) &&
+                    (ed->color.g == inherit_pd->color.g) &&
+                    (ed->color.b == inherit_pd->color.g) &&
+                    (ed->color.a == inherit_pd->color.a)) ? EINA_FALSE : EINA_TRUE;
+   diffs_amount += ((ed->color2.r == inherit_pd->color2.r) &&
+                    (ed->color2.g == inherit_pd->color2.g) &&
+                    (ed->color2.b == inherit_pd->color2.g) &&
+                    (ed->color2.a == inherit_pd->color2.a)) ? EINA_FALSE : EINA_TRUE;
+
+   return diffs_amount;
+}
+
+static Edje_Part_Description_Common *
+_edje_generate_source_of_state_inherit(Edje_Edit *eed EINA_UNUSED, Edje_Part *ep, Edje_Part_Description_Common *pd)
+{
+/*
+ * DIFFERENCE_LEVEL constant describe coefficient of difference.
+ * All states pairs, that has the difference coefficient below
+ * than this constant, could be inhereted one by one.
+ * Value 10 mean that states should has maximum 10% differences in all attributes
+ */
+
+#define DIFFERENCE_LEVEL 10
+   unsigned int i = 0;
+   int diff_min = 99;
+   int diff_coeff = 99;
+   int diff_amount = 0;
+
+   Edje_Part_Description_Common *inherit = NULL;
+   Edje_Part_Description_Common *desc = NULL;
+
+   if (pd->state.value == 0 && !strcmp(pd->state.name, "default"))
+     return NULL;
+
+   /*calculate  metric of difference*/
+   switch (ep->type)
+     {
+      /*TODO: add speceific part types description diff calculating*/
+     default:
+         diff_amount = _edje_common_desc_diff_calculate(pd, ep->default_desc);
+         diff_coeff = (int)(((100 * diff_amount) / (COMMON_STATE_ATTRIBUTES_AMOUNT)));
+         break;
+     }
+
+   /*
+    * For case when beetwen current state and "default" state little amount of
+    * differencies - stop search
+    */
+   if (ep->default_desc && diff_amount <= 1)
+     return inherit;
+
+   if ((diff_coeff <= DIFFERENCE_LEVEL) && (diff_coeff < diff_min))
+     {
+        diff_min = diff_coeff;
+        inherit = ep->default_desc;
+     }
+
+   for (i = 0; i < ep->other.desc_count; i++)
+     {
+        desc = ep->other.desc[i];
+
+        if (!strcmp(desc->state.name, pd->state.name) && (desc->state.value == pd->state.value))
+          break;
+
+        /*calculate  metric of difference*/
+         switch (ep->type)
+           {
+            /*TODO: add speceific part types description diff calculating*/
+            default:
+               diff_coeff = _edje_common_desc_diff_calculate(pd, desc);
+               break;
+           }
+         if ((diff_coeff <= DIFFERENCE_LEVEL) && (diff_coeff < diff_min))
+           {
+              diff_min = diff_coeff;
+              inherit = desc;
+           }
+     }
+   return inherit;
+}
+
 static Eina_Bool
 _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *state, double value, Eina_Strbuf *buf)
 {
@@ -13410,94 +13555,215 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 
    BUF_APPENDF(I4 "description { state: \"%s\"", pd->state.name);
    _edje_source_with_double_values_append(NULL, 1, pd->state.value, 0, buf, &ret);
-   //TODO Support inherit
 
-   if (!pd->visible)
-     BUF_APPEND(I5 "visible: 0;\n");
+   Edje_Part_Description_Common *inherit_pd = _edje_generate_source_of_state_inherit(eed, rp->part, pd);
 
-   if (pd->limit)
+   Eina_Bool color = EINA_FALSE;
+   Eina_Bool color_2 = EINA_FALSE;
+   Eina_Bool color_class = EINA_FALSE;
+   Eina_Bool align = EINA_FALSE;
+   Eina_Bool fixed = EINA_FALSE;
+   Eina_Bool size_class = EINA_FALSE;
+   Eina_Bool minmul = EINA_FALSE;
+   Eina_Bool min = EINA_FALSE, min_source = EINA_FALSE;
+   Eina_Bool max = EINA_FALSE, max_source = EINA_FALSE;
+   Eina_Bool aspect = EINA_FALSE;
+   Eina_Bool aspect_prefer = EINA_FALSE;
+   Eina_Bool step = EINA_FALSE;
+   Eina_Bool limit = EINA_FALSE;
+   Eina_Bool zplane = EINA_FALSE;
+   Eina_Bool focal = EINA_FALSE;
+   Eina_Bool clip_to = EINA_FALSE;
+
+   if (inherit_pd)
+     {
+        BUF_APPENDF(I5 "inherit: \"%s\" %.2f;\n", inherit_pd->state.name, inherit_pd->state.value);
+
+        color =  ((pd->color.r == inherit_pd->color.r) &&
+                  (pd->color.g == inherit_pd->color.g) &&
+                  (pd->color.b == inherit_pd->color.b) &&
+                  (pd->color.a == inherit_pd->color.a)) ? EINA_FALSE : EINA_TRUE;
+
+        color_2 =  ((pd->color2.r == inherit_pd->color2.r) &&
+                    (pd->color2.g == inherit_pd->color2.g) &&
+                    (pd->color2.b == inherit_pd->color2.b) &&
+                    (pd->color2.a == inherit_pd->color2.a)) ? EINA_FALSE : EINA_TRUE;
+
+        color_class = ((pd->color_class == inherit_pd->color_class) ||
+                       ((pd->color_class != NULL) &&
+                        (inherit_pd->color_class != NULL) &&
+                        (!strcmp(pd->color_class, inherit_pd->color_class)))) ? EINA_FALSE : EINA_TRUE;
+
+        align = ((pd->align.x == inherit_pd->align.x) &&
+                 (pd->align.y == inherit_pd->align.y)) ? EINA_FALSE : EINA_TRUE;
+
+        fixed = ((pd->fixed.w == inherit_pd->fixed.w) &&
+                 (pd->fixed.h == inherit_pd->fixed.h)) ? EINA_FALSE : EINA_TRUE;
+
+        min = ((pd->min.w == inherit_pd->min.w) &&
+               (pd->min.h == inherit_pd->min.h)) ? EINA_FALSE : EINA_TRUE;
+
+        min_source = (pd->min.limit == inherit_pd->min.limit) ? EINA_FALSE : EINA_TRUE;
+
+        max = ((pd->max.w == inherit_pd->max.w) &&
+               (pd->max.h == inherit_pd->max.h)) ? EINA_FALSE : EINA_TRUE;
+
+        max_source = (pd->max.limit == inherit_pd->max.limit) ? EINA_FALSE : EINA_TRUE;
+
+        minmul = ((pd->minmul.have == inherit_pd->minmul.have) &&
+                  (pd->minmul.w == inherit_pd->minmul.w) &&
+                  (pd->minmul.h == inherit_pd->minmul.h)) ? EINA_FALSE : EINA_TRUE;
+
+        size_class = ((pd->size_class == inherit_pd->size_class) ||
+                      ((pd->size_class != NULL) && (inherit_pd->size_class != NULL) &&
+                       (!strcmp(pd->size_class, inherit_pd->size_class)))) ? EINA_FALSE : EINA_TRUE;
+
+        step = ((pd->step.x == inherit_pd->step.x) &&
+                (pd->step.y == inherit_pd->step.y)) ? EINA_FALSE : EINA_TRUE;
+
+        aspect = ((pd->aspect.min == inherit_pd->aspect.min) &&
+                  (pd->aspect.max == inherit_pd->aspect.max)) ? EINA_FALSE : EINA_TRUE;
+
+        aspect_prefer = (pd->aspect.prefer == inherit_pd->aspect.prefer) ? EINA_FALSE : EINA_TRUE;
+
+        limit = (pd->limit == inherit_pd->limit) ? EINA_FALSE : EINA_TRUE;
+
+        zplane = (pd->persp.zplane == inherit_pd->persp.zplane) ? EINA_FALSE : EINA_TRUE;
+
+        focal = (pd->persp.focal == inherit_pd->persp.focal) ? EINA_FALSE : EINA_TRUE;
+
+        clip_to = (pd->clip_to_id == inherit_pd->clip_to_id) ? EINA_FALSE : EINA_TRUE;
+     }
+   else
+     {
+        color = ((pd->color.r == 255) && (pd->color.g == 255) &&
+                 (pd->color.b == 255) && (pd->color.a == 255)) ? EINA_FALSE : EINA_TRUE;
+
+        color_2 = ((pd->color2.r == 0) && (pd->color2.g == 0) &&
+                   (pd->color2.b == 0) && (pd->color2.a == 255)) ? EINA_FALSE : EINA_TRUE;
+
+        color_class = (pd->color_class == NULL) ? EINA_FALSE : EINA_TRUE;
+
+        align = ((pd->align.x == 0.5) && (pd->align.y == 0.5)) ? EINA_FALSE : EINA_TRUE;
+
+        fixed = ((pd->fixed.w == 0) && (pd->fixed.h == 0)) ? EINA_FALSE : EINA_TRUE;
+
+        min = ((pd->min.w == 0) && (pd->min.h == 0)) ? EINA_FALSE : EINA_TRUE;
+        min_source = pd->min.limit;
+
+        max = ((pd->max.w == -1) && (pd->max.h == -1)) ? EINA_FALSE : EINA_TRUE;
+        max_source = pd->max.limit;
+
+        minmul = ((pd->minmul.have == 0) ||
+                  ((pd->minmul.w == 1) && (pd->minmul.h == 1))) ? EINA_FALSE : EINA_TRUE;
+
+        size_class = (pd->size_class == NULL) ? EINA_FALSE : EINA_TRUE;
+
+        step = ((pd->step.x == 0) && (pd->step.y == 0)) ? EINA_FALSE : EINA_TRUE;
+
+        aspect = ((pd->aspect.min == 0) && (pd->aspect.max == 0)) ? EINA_FALSE : EINA_TRUE;
+
+        aspect_prefer = (pd->aspect.prefer == 0) ? EINA_FALSE : EINA_TRUE;
+
+        limit = (pd->limit == EDJE_STATE_LIMIT_NONE) ? EINA_FALSE : EINA_TRUE;
+
+        zplane = (pd->persp.zplane == 0) ? EINA_FALSE : EINA_TRUE;
+
+        focal = (pd->persp.focal == 1000) ? EINA_FALSE : EINA_TRUE;
+
+        clip_to = (pd->clip_to_id == -1) ? EINA_FALSE : EINA_TRUE;
+     }
+
+   if (inherit_pd && inherit_pd->visible != pd->visible)
+     {
+       BUF_APPENDF(I5 "visible: %d;\n", pd->visible);
+     }
+   else if (!pd->visible)
+     {
+       BUF_APPEND(I5 "visible: 0;\n");
+     }
+
+   if (limit)
      {
         switch (pd->limit)
           {
            case EDJE_STATE_LIMIT_WIDTH:
            {
-              BUF_APPEND("limit: WIDTH;\n");
+              BUF_APPEND(I5 "limit: WIDTH;\n");
               break;
            }
 
            case EDJE_STATE_LIMIT_HEIGHT:
            {
-              BUF_APPEND("limit: HEIGHT;\n");
+              BUF_APPEND(I5 "limit: HEIGHT;\n");
               break;
            }
 
            case EDJE_STATE_LIMIT_BOTH:
            {
-              BUF_APPEND("limit: BOTH;\n");
+              BUF_APPEND(I5 "limit: BOTH;\n");
               break;
            }
           }
      }
 
-   if (pd->align.x != 0.5 || pd->align.y != 0.5)
+   if (align)
      _edje_source_with_double_values_append(I5 "align", 2,
                                             TO_DOUBLE(pd->align.x),
                                             TO_DOUBLE(pd->align.y),
                                             buf, &ret);
 
-   if (pd->fixed.w || pd->fixed.h)
+   if (fixed)
      BUF_APPENDF(I5 "fixed: %d %d;\n", pd->fixed.w, pd->fixed.h);
 
-   if (pd->min.w || pd->min.h)
+   if (min && !min_source)
      BUF_APPENDF(I5 "min: %d %d;\n", pd->min.w, pd->min.h);
-   if (pd->max.w != -1 || pd->max.h != -1)
+   else if (min_source)
+     BUF_APPEND(I5 "min: SOURCE;\n");
+
+   if (max && !max_source)
      BUF_APPENDF(I5 "max: %d %d;\n", pd->max.w, pd->max.h);
-   if ((pd->minmul.have) && (pd->minmul.w != 1 || pd->minmul.h != 1))
+   else if (max_source)
+     BUF_APPEND(I5 "max: SOURCE;\n");
+
+   if (minmul)
      _edje_source_with_double_values_append(I5 "minmul", 2,
                                             TO_DOUBLE(pd->minmul.w),
                                             TO_DOUBLE(pd->minmul.h),
                                             buf, &ret);
 
-   if (pd->size_class)
+   if (size_class)
      BUF_APPENDF(I5 "size_class: \"%s\";\n", pd->size_class);
 
-   if (pd->step.x && pd->step.y)
+   if (step)
      BUF_APPENDF(I5 "step: %d %d;\n", TO_INT(pd->step.x), TO_INT(pd->step.y));
 
-   if (pd->aspect.min || pd->aspect.max)
+   if (aspect)
      _edje_source_with_double_values_append(I5 "aspect", 2,
                                             TO_DOUBLE(pd->aspect.min),
                                             TO_DOUBLE(pd->aspect.max),
                                             buf, &ret);
-   if (pd->aspect.prefer)
+
+   if (aspect_prefer)
      BUF_APPENDF(I5 "aspect_preference: %s;\n", prefers[(int)pd->aspect.prefer]);
+
+   if (clip_to)
+     BUF_APPENDF(I5 "clip_to: \"%s\";\n",
+                      (pd->clip_to_id == -1 ? "" : _edje_part_name_find(ed, pd->clip_to_id)));
+
 
    if (rp->part->type != EDJE_PART_TYPE_SPACER)
      {
-        if (pd->color_class)
-          BUF_APPENDF(I5 "color_class: \"%s\";\n", pd->color_class);
+        if (color_class)
+          BUF_APPENDF(I5 "color_class: \"%s\";\n",
+                      (pd->color_class == NULL ? "" : pd->color_class));
 
-        if (pd->color.r != 255 || pd->color.g != 255 ||
-            pd->color.b != 255 || pd->color.a != 255)
+        if (color)
           BUF_APPENDF(I5 "color: %d %d %d %d;\n",
                       pd->color.r, pd->color.g, pd->color.b, pd->color.a);
-        if (pd->color2.r != 0 || pd->color2.g != 0 ||
-            pd->color2.b != 0 || pd->color2.a != 255)
+        if (color_2)
           BUF_APPENDF(I5 "color2: %d %d %d %d;\n",
                       pd->color2.r, pd->color2.g, pd->color2.b, pd->color2.a);
-     }
-
-   if (rp->part->type == EDJE_PART_TYPE_TEXT
-       || rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
-     {
-        Edje_Part_Description_Text *txt;
-
-        txt = (Edje_Part_Description_Text *)pd;
-
-        if (txt->text.color3.r != 0 || txt->text.color3.g != 0 ||
-            txt->text.color3.b != 0 || txt->text.color3.a != 128)
-          BUF_APPENDF(I5 "color3: %d %d %d %d;\n",
-                      txt->text.color3.r, txt->text.color3.g, txt->text.color3.b, txt->text.color3.a);
      }
 
    if ((pd->persp.zplane != 0) || (pd->persp.focal != 1000))
@@ -13582,6 +13848,25 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 
    //Relative block
     _edje_generate_source_state_relative(ed, pd, buf);
+
+   if (zplane || focal)
+     {
+        if (zplane && focal)
+          {
+             BUF_APPEND(I5 "perspective {\n");
+             BUF_APPENDF(I6 "zplane: %d;\n", pd->persp.zplane);
+             BUF_APPENDF(I6 "focal: %d;\n", pd->persp.focal);
+             BUF_APPEND(I5 "}\n");
+          }
+        else
+          {
+             BUF_APPEND(I5 "perspective.");
+             if (zplane)
+               BUF_APPENDF("zplane: %d;\n", pd->persp.zplane);
+             if (focal)
+               BUF_APPENDF("focal: %d;\n", pd->persp.focal);
+          }
+     }
 
    BUF_APPEND(I4 "}\n"); //description
    return ret;
