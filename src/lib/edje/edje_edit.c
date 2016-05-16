@@ -12670,7 +12670,10 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
 }
 
 static void
-_edje_generate_source_state_map(Edje *ed, Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
+_edje_generate_source_state_map(Edje *ed,
+                                Edje_Part_Description_Common *pd,
+                                Edje_Part_Description_Common *inherit_pd,
+                                Eina_Strbuf *buf)
 {
    int attr_amount = 0;
    int attr_rotate_amount = 0;
@@ -12678,25 +12681,60 @@ _edje_generate_source_state_map(Edje *ed, Edje_Part_Description_Common *pd, Eina
    unsigned int i = 0;
    Eina_Bool ret = EINA_FALSE;
 
-   attr_amount = (pd->map.id_persp == -1) ? 0 : 1;
-   attr_amount += (pd->map.id_light == -1) ? 0 : 1;
-   attr_amount += (pd->map.colors_count == 0) ? 0 : pd->map.colors_count;
-   attr_amount += (pd->map.backcull == EINA_FALSE) ? 0 : 1;
-   attr_amount += (pd->map.on == EINA_FALSE) ? 0 : 1;
-   attr_amount += (pd->map.persp_on == EINA_FALSE) ? 0 : 1;
-   attr_amount += (pd->map.smooth == EINA_TRUE) ? 0 : 1;
-   attr_amount += (pd->map.alpha == EINA_TRUE) ? 0 : 1;
+   Eina_Bool persp = EINA_FALSE;
+   Eina_Bool light = EINA_FALSE;
+   Eina_Bool colors_count = EINA_FALSE;
+   Eina_Bool backcull = EINA_FALSE;
+   Eina_Bool on = EINA_FALSE;
+   Eina_Bool persp_on = EINA_FALSE;
+   Eina_Bool smooth = EINA_FALSE;
+   Eina_Bool alpha = EINA_FALSE;
+   Eina_Bool center = 0, x = 0, y = 0, z = EINA_FALSE;
 
-   attr_rotate_amount = (pd->map.rot.id_center == -1) ? 0 : 1;
-   attr_rotate_amount += (TO_DOUBLE(pd->map.rot.x == 0)) ? 0 : 1;
-   attr_rotate_amount += (TO_DOUBLE(pd->map.rot.y == 0)) ? 0 : 1;
-   attr_rotate_amount += (TO_DOUBLE(pd->map.rot.z == 0)) ? 0 : 1;
+   if (inherit_pd)
+     {
+        persp = (inherit_pd->map.id_persp == pd->map.id_persp) ? EINA_FALSE : EINA_TRUE;
+        light = (inherit_pd->map.id_light == pd->map.id_light) ? EINA_FALSE : EINA_TRUE;
+        colors_count = (inherit_pd->map.colors_count == pd->map.colors_count) ? EINA_FALSE : EINA_TRUE;
+        backcull = (inherit_pd->map.backcull == pd->map.backcull) ? EINA_FALSE : EINA_TRUE;
+        on = (inherit_pd->map.on == pd->map.on) ? EINA_FALSE : EINA_TRUE;
+        persp_on = (inherit_pd->map.persp_on == pd->map.persp_on) ? EINA_FALSE : EINA_TRUE;
+        smooth = (inherit_pd->map.smooth == pd->map.smooth) ? EINA_FALSE : EINA_TRUE;
+        alpha = (inherit_pd->map.alpha == pd->map.alpha) ? EINA_FALSE : EINA_TRUE;
+
+        center = (inherit_pd->map.rot.id_center == pd->map.rot.id_center) ? EINA_FALSE : EINA_TRUE;
+        x = (inherit_pd->map.rot.x == pd->map.rot.x) ? EINA_FALSE : EINA_TRUE;
+        y = (inherit_pd->map.rot.y == pd->map.rot.y) ? EINA_FALSE : EINA_TRUE;
+        z = (inherit_pd->map.rot.z == pd->map.rot.z) ? EINA_FALSE : EINA_TRUE;
+     }
+   else
+     {
+        persp = (pd->map.id_persp == -1) ? EINA_FALSE : EINA_TRUE;
+        light = (pd->map.id_light == -1) ? EINA_FALSE : EINA_TRUE;
+        colors_count = (pd->map.colors_count == 0) ? EINA_FALSE : EINA_TRUE;
+        backcull = (pd->map.backcull == EINA_FALSE) ? EINA_FALSE : EINA_TRUE;
+        on = (pd->map.on == EINA_FALSE) ? EINA_FALSE : EINA_TRUE;
+        persp_on = (pd->map.persp_on == EINA_FALSE) ? EINA_FALSE : EINA_TRUE;
+        smooth = (pd->map.smooth == EINA_TRUE) ? EINA_FALSE : EINA_TRUE;
+        alpha = (pd->map.alpha == EINA_TRUE) ? EINA_FALSE : EINA_TRUE;
+
+        center = (pd->map.rot.id_center == -1) ? EINA_FALSE : EINA_TRUE;
+        x = (TO_DOUBLE(pd->map.rot.x == 0)) ? EINA_FALSE : EINA_TRUE;
+        y = (TO_DOUBLE(pd->map.rot.y == 0)) ? EINA_FALSE : EINA_TRUE;
+        z = (TO_DOUBLE(pd->map.rot.z == 0)) ? EINA_FALSE : EINA_TRUE;
+     }
+
+   attr_amount  = persp + light + colors_count + backcull + on + persp_on + smooth + alpha;
+   attr_rotate_amount = center + x + y + z;
 
    if (attr_rotate_amount > 0)
      attr_amount += 2;
 
+   if (attr_amount == 0) return;
+
    if (attr_amount > 1)
      indent_space = strlen(I6);
+
    if (attr_amount)
      {
         if (attr_amount > 1)
@@ -12704,26 +12742,30 @@ _edje_generate_source_state_map(Edje *ed, Edje_Part_Description_Common *pd, Eina
         else
           BUF_APPEND(I5 "map.");
 
-        if (pd->map.id_persp != -1)
+        if (persp)
           BUF_APPENDF("%*sperspective: \"%s\";\n", indent_space, "",
-                      _edje_part_name_find(ed, pd->map.id_persp));
+                      (_edje_part_name_find(ed, pd->map.id_persp) == NULL ? "" : _edje_part_name_find(ed, pd->map.id_persp)));
 
-        if (pd->map.id_light != -1)
+        if (light)
           BUF_APPENDF("%*slight: \"%s\";\n", indent_space, "",
                       _edje_part_name_find(ed, pd->map.id_light));
 
-        if (pd->map.backcull)
+        if (backcull)
           BUF_APPENDF("%*sbackface_cull: 1;\n", indent_space, "");
-        if (pd->map.on)
+
+        if (on)
           BUF_APPENDF("%*son: 1;\n", indent_space, "");
-        if (pd->map.persp_on)
+
+        if (persp_on)
           BUF_APPENDF("%*sperspective_on: 1;\n", indent_space, "");
-        if (!pd->map.smooth)
+
+        if (smooth)
           BUF_APPENDF("%*ssmooth: 0;\n", indent_space, "");
-        if (!pd->map.alpha)
+
+        if (alpha)
           BUF_APPENDF("%*salpha: 0;\n", indent_space, "");
 
-        if (pd->map.colors_count > 0)
+        if (colors_count)
           {
              for (i = 0; i < pd->map.colors_count; ++i)
                {
@@ -12748,11 +12790,12 @@ _edje_generate_source_state_map(Edje *ed, Edje_Part_Description_Common *pd, Eina
                   indent_space = 0;
                }
 
-             if (pd->map.rot.id_center != -1)
+             if (center)
                BUF_APPENDF("%*scenter: \"%s\";\n", indent_space, "",
-                           _edje_part_name_find(ed, pd->map.rot.id_center));
+                           (_edje_part_name_find(ed, pd->map.rot.id_center) == NULL ? "" :
+                            _edje_part_name_find(ed, pd->map.rot.id_center)));
 
-             if (TO_DOUBLE(pd->map.rot.x) != 0.0)
+             if (x)
                {
                  char rot_x[strlen("x") + indent_space + 1];
                  snprintf(rot_x, strlen("x") + indent_space + 1,
@@ -12761,7 +12804,7 @@ _edje_generate_source_state_map(Edje *ed, Edje_Part_Description_Common *pd, Eina
                                                    TO_DOUBLE(pd->map.rot.x),
                                                    0.0, buf, &ret);
                }
-             if (TO_DOUBLE(pd->map.rot.y) != 0.0)
+             if (y)
                {
                  char rot_y[strlen("y") + indent_space + 1];
                  snprintf(rot_y, strlen("y") + indent_space + 1,
@@ -12770,7 +12813,7 @@ _edje_generate_source_state_map(Edje *ed, Edje_Part_Description_Common *pd, Eina
                                                    TO_DOUBLE(pd->map.rot.y),
                                                    0.0, buf, &ret);
                }
-             if (TO_DOUBLE(pd->map.rot.z) != 0.0)
+             if (z)
                {
                  char rot_z[strlen("z") + indent_space + 1];
                  snprintf(rot_z, strlen("z") + indent_space + 1,
@@ -13571,9 +13614,6 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
         BUF_APPEND(I5 "}\n");
      }
 
-   //Map
-    _edje_generate_source_state_map(ed, pd, buf);
-
    //Box
    if (rp->part->type == EDJE_PART_TYPE_BOX)
      _edje_generate_source_state_box(pd, buf);
@@ -13641,6 +13681,9 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 
    //Relative block
    _edje_generate_source_state_relative(ed, pd, inherit_pd, buf);
+
+   //Map
+   _edje_generate_source_state_map(ed, pd, inherit_pd, buf);
 
    if (zplane || focal)
      {
