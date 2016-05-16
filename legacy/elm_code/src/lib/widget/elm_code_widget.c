@@ -97,7 +97,7 @@ _elm_code_widget_cell_size_get(Elm_Code_Widget *widget, Evas_Coord *width, Evas_
 {
    Elm_Code_Widget_Data *pd;
    Evas_Object *grid;
-   Evas_Coord w, h;
+   Evas_Coord w = 0, h = 0;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
