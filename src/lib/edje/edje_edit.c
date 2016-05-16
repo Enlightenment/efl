@@ -13096,6 +13096,7 @@ _edje_generate_source_state_table(Edje_Part_Description_Common *pd, Eina_Strbuf 
 
 static void
 _edje_generate_source_state_text(Edje *ed, Edje_Part_Description_Common *pd,
+                                 Edje_Part_Description_Common *inherit_pd,
                                  Eina_Strbuf *buf)
 {
    int attr_amount = 0;
@@ -13120,25 +13121,82 @@ _edje_generate_source_state_text(Edje *ed, Edje_Part_Description_Common *pd,
    Eina_Bool style = EINA_FALSE;
 
    Edje_Part_Description_Text *txt = (Edje_Part_Description_Text *)pd;
+   Edje_Part_Description_Text *inherit_pd_txt = (Edje_Part_Description_Text *)inherit_pd;
 
-   text = (edje_string_get(&txt->text.text) == NULL) ? EINA_FALSE : EINA_TRUE;
-   font = (edje_string_get(&txt->text.font) == NULL) ? EINA_FALSE : EINA_TRUE;
-   repch = (edje_string_get(&txt->text.repch) == NULL) ? EINA_FALSE : EINA_TRUE;
-   size = (txt->text.size == 0) ? EINA_FALSE : EINA_TRUE;
-   text_class = (txt->text.text_class == NULL) ? EINA_FALSE : EINA_TRUE;
-   domain = (txt->text.domain == NULL) ? EINA_FALSE : EINA_TRUE;
-   size_range = ((txt->text.size_range_min == 0) && (txt->text.size_range_max == 0)) ? EINA_FALSE : EINA_TRUE;
-   fit = ((txt->text.fit_x == 0) && (txt->text.fit_y == 0)) ? EINA_FALSE : EINA_TRUE;
-   min = ((txt->text.min_x == 0) && (txt->text.min_y == 0)) ? EINA_FALSE : EINA_TRUE;
-   max = ((txt->text.max_x == 0) && (txt->text.max_y == 0)) ? EINA_FALSE : EINA_TRUE;
-   align = ((txt->text.align.x == 0.5) && (txt->text.align.y == 0.5)) ? EINA_FALSE : EINA_TRUE;
-   source = (txt->text.id_source == -1) ? EINA_FALSE : EINA_TRUE;
-   text_source = (txt->text.id_text_source == -1) ? EINA_FALSE : EINA_TRUE;
-   ellipsis = (txt->text.ellipsis == 0) ? EINA_FALSE : EINA_TRUE;
-   style = (edje_string_id_get(&txt->text.style) == 0) ? EINA_FALSE : EINA_TRUE;
-   color_3 = ((txt->text.color3.r == 0) && (txt->text.color3.g == 0) &&
-              (txt->text.color3.b == 0) && (txt->text.color3.a == 128)) ? EINA_FALSE : EINA_TRUE;
+   if (inherit_pd_txt)
+     {
+        text = ((edje_string_id_get(&txt->text.text) ==
+                 (edje_string_id_get(&inherit_pd_txt->text.text)))) ? EINA_FALSE : EINA_TRUE;
 
+        font = ((edje_string_id_get(&inherit_pd_txt->text.font) ==
+                 (edje_string_id_get(&txt->text.font)))) ? EINA_FALSE : EINA_TRUE;
+
+        repch = ((edje_string_id_get(&inherit_pd_txt->text.repch) ==
+                  (edje_string_id_get(&txt->text.repch)))) ? EINA_FALSE : EINA_TRUE;
+
+        size = (inherit_pd_txt->text.size == txt->text.size) ? EINA_FALSE : EINA_TRUE;
+
+        text_class = ((inherit_pd_txt->text.text_class == txt->text.text_class) ||
+                      ((inherit_pd_txt->text.text_class != NULL) &&
+                      (txt->text.text_class != NULL) &&
+                      (!strcmp(inherit_pd_txt->text.text_class, txt->text.text_class)))) ? EINA_FALSE : EINA_TRUE;
+
+        domain = ((inherit_pd_txt->text.domain == txt->text.domain) ||
+                      ((inherit_pd_txt->text.domain != NULL) &&
+                      (txt->text.domain != NULL) &&
+                      (!strcmp(inherit_pd_txt->text.domain, txt->text.domain)))) ? EINA_FALSE : EINA_TRUE;
+
+        size_range = ((inherit_pd_txt->text.size_range_max == txt->text.size_range_max) &&
+                      (inherit_pd_txt->text.size_range_min == txt->text.size_range_min)) ? EINA_FALSE : EINA_TRUE;
+
+        fit = ((inherit_pd_txt->text.fit_x == txt->text.fit_x) &&
+               (inherit_pd_txt->text.fit_y == txt->text.fit_y)) ? EINA_FALSE : EINA_TRUE;
+
+        min = ((inherit_pd_txt->text.min_x == txt->text.min_x) &&
+               (inherit_pd_txt->text.min_y == txt->text.min_y)) ? EINA_FALSE : EINA_TRUE;
+
+        max = ((inherit_pd_txt->text.max_x == txt->text.max_x) &&
+               (inherit_pd_txt->text.max_y == txt->text.max_y)) ? EINA_FALSE : EINA_TRUE;
+
+        align = ((inherit_pd_txt->text.align.x == txt->text.align.x) &&
+                 (inherit_pd_txt->text.align.y == txt->text.align.y)) ? EINA_FALSE : EINA_TRUE;
+
+        source = ((inherit_pd_txt->text.id_source == txt->text.id_source)) ? EINA_FALSE : EINA_TRUE;
+
+        text_source = ((inherit_pd_txt->text.id_text_source == txt->text.id_text_source)) ? EINA_FALSE : EINA_TRUE;
+
+
+        ellipsis = ((inherit_pd_txt->text.ellipsis == txt->text.ellipsis)) ? EINA_FALSE : EINA_TRUE;
+
+        style = (edje_string_id_get(&inherit_pd_txt->text.style) ==
+                 edje_string_id_get(&txt->text.style)) ? EINA_FALSE : EINA_TRUE;
+
+        color_3 = ((inherit_pd_txt->text.color3.r == txt->text.color3.r) &&
+                   (inherit_pd_txt->text.color3.g == txt->text.color3.g) &&
+                   (inherit_pd_txt->text.color3.b == txt->text.color3.b) &&
+                   (inherit_pd_txt->text.color3.a == txt->text.color3.a)) ? EINA_FALSE : EINA_TRUE;
+
+     }
+   else
+     {
+        text = (edje_string_get(&txt->text.text) == NULL) ? EINA_FALSE : EINA_TRUE;
+        font = (edje_string_get(&txt->text.font) == NULL) ? EINA_FALSE : EINA_TRUE;
+        repch = (edje_string_get(&txt->text.repch) == NULL) ? EINA_FALSE : EINA_TRUE;
+        size = (txt->text.size == 0) ? EINA_FALSE : EINA_TRUE;
+        text_class = (txt->text.text_class == NULL) ? EINA_FALSE : EINA_TRUE;
+        domain = (txt->text.domain == NULL) ? EINA_FALSE : EINA_TRUE;
+        size_range = ((txt->text.size_range_min == 0) && (txt->text.size_range_max == 0)) ? EINA_FALSE : EINA_TRUE;
+        fit = ((txt->text.fit_x == 0) && (txt->text.fit_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        min = ((txt->text.min_x == 0) && (txt->text.min_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        max = ((txt->text.max_x == 0) && (txt->text.max_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        align = ((txt->text.align.x == 0.5) && (txt->text.align.y == 0.5)) ? EINA_FALSE : EINA_TRUE;
+        source = (txt->text.id_source == -1) ? EINA_FALSE : EINA_TRUE;
+        text_source = (txt->text.id_text_source == -1) ? EINA_FALSE : EINA_TRUE;
+        ellipsis = (txt->text.ellipsis == 0) ? EINA_FALSE : EINA_TRUE;
+        style = (edje_string_id_get(&txt->text.style) == 0) ? EINA_FALSE : EINA_TRUE;
+        color_3 = ((txt->text.color3.r == 0) && (txt->text.color3.g == 0) &&
+                   (txt->text.color3.b == 0) && (txt->text.color3.a == 128)) ? EINA_FALSE : EINA_TRUE;
+     }
 
    if (color_3)
      BUF_APPENDF(I5 "color3: %d %d %d %d;\n",
@@ -13312,6 +13370,59 @@ _edje_common_desc_diff_calculate(Edje_Part_Description_Common *ed,
    return diffs_amount;
 }
 
+#define TEXT_STATE_ATTRIBUTES_AMOUNT (14 + COMMON_STATE_ATTRIBUTES_AMOUNT)
+static int
+_edje_text_desc_diff_calculate(Edje_Part_Description_Common *ed, Edje_Part_Description_Common *inherit_pd)
+{
+   int diffs_amount=  _edje_common_desc_diff_calculate(ed, inherit_pd);
+
+   Edje_Part_Description_Text *ed_text = (Edje_Part_Description_Text *) ed;
+   Edje_Part_Description_Text *inherit_pd_text = (Edje_Part_Description_Text *) inherit_pd;
+
+   diffs_amount += ((ed_text->text.color3.r == inherit_pd_text->text.color3.r) &&
+                    (ed_text->text.color3.g == inherit_pd_text->text.color3.g) &&
+                    (ed_text->text.color3.b == inherit_pd_text->text.color3.g) &&
+                    (ed_text->text.color3.a == inherit_pd_text->text.color3.a)) ? EINA_FALSE : EINA_TRUE;
+
+   /*Descriprion specific comparsion */
+   diffs_amount += ((ed_text->text.text.str == NULL && inherit_pd_text->text.text.str != NULL) ||
+                    (ed_text->text.text.str != NULL && inherit_pd_text->text.text.str == NULL) ||
+                    (ed_text->text.text.str != NULL && inherit_pd_text->text.text.str != NULL &&
+                     strcmp(ed_text->text.text.str, inherit_pd_text->text.text.str))) ? 1 : 0;
+
+   diffs_amount += ((ed_text->text.domain != NULL && inherit_pd_text->text.domain == NULL) ||
+                    (ed_text->text.domain == NULL && inherit_pd_text->text.domain != NULL) ||
+                    (ed_text->text.domain != NULL && inherit_pd_text->text.domain != NULL &&
+                     strcmp(ed_text->text.domain, inherit_pd_text->text.domain))) ? 1 : 0;
+
+   diffs_amount += ((ed_text->text.text_class != NULL && inherit_pd_text->text.text_class == NULL) ||
+                    (ed_text->text.text_class == NULL && inherit_pd_text->text.text_class != NULL) ||
+                    (ed_text->text.text_class != NULL && inherit_pd_text->text.text_class != NULL &&
+                     strcmp(ed_text->text.text_class, inherit_pd_text->text.text_class))) ? 1 : 0;
+
+   diffs_amount += ((ed_text->text.font.str == NULL && inherit_pd_text->text.font.str != NULL) ||
+                    (ed_text->text.font.str != NULL && inherit_pd_text->text.font.str == NULL) ||
+                    (ed_text->text.font.str != NULL && inherit_pd_text->text.font.str != NULL &&
+                     strcmp(ed_text->text.font.str, inherit_pd_text->text.font.str))) ? 1 : 0;
+
+   diffs_amount += ((ed_text->text.align.x != inherit_pd_text->text.align.x) ||
+                    (ed_text->text.align.y != inherit_pd_text->text.align.y)) ? 1 : 0;
+   diffs_amount += (ed_text->text.ellipsis != inherit_pd_text->text.ellipsis) ? 1 : 0;
+   diffs_amount += (ed_text->text.size != inherit_pd_text->text.size) ? 1 : 0;
+   diffs_amount += (ed_text->text.id_source != inherit_pd_text->text.id_source) ? 1 : 0;
+   diffs_amount += (ed_text->text.id_text_source != inherit_pd_text->text.id_text_source) ? 1 : 0;
+   diffs_amount += ((ed_text->text.fit_x != inherit_pd_text->text.fit_x) ||
+                    (ed_text->text.fit_y != inherit_pd_text->text.fit_y)) ? 1 : 0;
+   diffs_amount += ((ed_text->text.min_x != inherit_pd_text->text.min_x) ||
+                    (ed_text->text.min_y != inherit_pd_text->text.min_y)) ? 1 : 0;
+   diffs_amount += ((ed_text->text.max_x != inherit_pd_text->text.max_x) ||
+                    (ed_text->text.max_y != inherit_pd_text->text.max_y)) ? 1 : 0;
+   diffs_amount += ((ed_text->text.size_range_min != inherit_pd_text->text.size_range_min) ||
+                    (ed_text->text.size_range_max != inherit_pd_text->text.size_range_max)) ? 1 : 0;
+
+   return diffs_amount;
+}
+
 static Edje_Part_Description_Common *
 _edje_generate_source_of_state_inherit(Edje_Edit *eed EINA_UNUSED, Edje_Part *ep, Edje_Part_Description_Common *pd)
 {
@@ -13338,7 +13449,11 @@ _edje_generate_source_of_state_inherit(Edje_Edit *eed EINA_UNUSED, Edje_Part *ep
    switch (ep->type)
      {
       /*TODO: add speceific part types description diff calculating*/
-     default:
+      case EDJE_PART_TYPE_TEXT:
+         diff_amount = _edje_text_desc_diff_calculate(pd, ep->default_desc);
+         diff_coeff = (int)(((100 * diff_amount) / (TEXT_STATE_ATTRIBUTES_AMOUNT)));
+         break;
+      default:
          diff_amount = _edje_common_desc_diff_calculate(pd, ep->default_desc);
          diff_coeff = (int)(((100 * diff_amount) / (COMMON_STATE_ATTRIBUTES_AMOUNT)));
          break;
@@ -13368,6 +13483,9 @@ _edje_generate_source_of_state_inherit(Edje_Edit *eed EINA_UNUSED, Edje_Part *ep
          switch (ep->type)
            {
             /*TODO: add speceific part types description diff calculating*/
+            case EDJE_PART_TYPE_TEXT:
+               diff_coeff = _edje_text_desc_diff_calculate(pd, desc);
+               break;
             default:
                diff_coeff = _edje_common_desc_diff_calculate(pd, desc);
                break;
@@ -13633,7 +13751,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    //Text
    if ((rp->part->type == EDJE_PART_TYPE_TEXT) ||
        (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
-     _edje_generate_source_state_text(ed, pd, buf);
+     _edje_generate_source_state_text(ed, pd, inherit_pd, buf);
 
    //External
    if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
