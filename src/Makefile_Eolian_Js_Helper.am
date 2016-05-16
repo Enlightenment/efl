@@ -12,5 +12,5 @@ am__v_EOLJS_0 = @echo "  EOLJS  " $@;
 
 SUFFIXES += .eo.js.cc
 
-%.eo.js.cc: %.eo $(_EOLIAN_JS_DEP)
+.eo.js.cc: .eo $(_EOLIAN_JS_DEP)
 	$(AM_V_EOLJS)$(EOLIAN_JS) $(EOLIAN_FLAGS) -o $@ $<

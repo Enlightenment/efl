@@ -239,7 +239,7 @@ clean-local:
 ELEMENTARY_CODEGEN_FLAGS = --prefix=codegen_example
 
 codegen_example_generated.c codegen_example_generated.h: codegen_example.edj
-	$(AM_V_CODEGEN)$(ELEMENTARY_CODEGEN) $(ELEMENTARY_CODEGEN_FLAGS) $(<) elm/example/mylayout/default codegen_example_generated.c codegen_example_generated.h
+	$(AM_V_CODEGEN)$(ELEMENTARY_CODEGEN) $(ELEMENTARY_CODEGEN_FLAGS) $< elm/example/mylayout/default codegen_example_generated.c codegen_example_generated.h
 
 BUILT_SOURCES = codegen_example_generated.c codegen_example_generated.h
 

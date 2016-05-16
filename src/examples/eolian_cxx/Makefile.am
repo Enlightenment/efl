@@ -1,3 +1,4 @@
+
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES =
 
@@ -132,16 +133,16 @@ eolian_cxx_inherit_01.$(OBJEXT): $(GENERATED)
 
 eolian_cxx_callbacks_01_SOURCES = eolian_cxx_callbacks_01.cc
 
-%.eo.hh: %.eo
+.eo.hh: .eo
 	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I${abs_srcdir} -o $@ $<
 
-%.eo.impl.hh: %.eo.hh
+.eo.impl.hh: .eo.hh
 	true $<
 
-%.eo.c: %.eo
+.eo.c: .eo
 	$(AM_V_EOL)$(EOLIAN_GEN) --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
 
-%.eo.h: %.eo
+.eo.h: .eo
 	$(AM_V_EOL)$(EOLIAN_GEN) $(EOLIAN_FLAGS) --gh -o $@ $<
 
 examples: $(ECXX_EXAMPLE_EOS) $(GENERATED) $(EXTRA_PROGRAMS)

@@ -13,7 +13,7 @@ files_DATA = \
         icon.png \
         base.cfg
 
-%.cfg: %.src
+.cfg: .src
 	$(AM_V_EET) \
 	$(MKDIR_P) $(top_builddir)/config/standard/; \
 	$(EET) -e $(top_builddir)/config/standard/$@ config $< 1
