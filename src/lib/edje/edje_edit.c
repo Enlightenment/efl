@@ -12497,7 +12497,9 @@ _edje_generate_source_state_relative(Edje *ed,
 static void
 _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
                                   const char *part, const char *state, double value,
-                                  Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
+                                  Edje_Part_Description_Common *pd,
+                                  Edje_Part_Description_Common *inherit_pd,
+                                  Eina_Strbuf *buf)
 {
    Eina_Bool ret = EINA_TRUE;
    Eina_List *l, *ll;
@@ -12506,21 +12508,57 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
    char *data;
    const char *image_name;
 
-   Edje_Part_Description_Image *img;
+   Eina_Bool name = EINA_FALSE;
+   Eina_Bool border = EINA_FALSE;
+   Eina_Bool border_scale_by = EINA_FALSE;
+   Eina_Bool scale_hint = EINA_FALSE;
+   Eina_Bool border_no_fill = EINA_FALSE;
+   Eina_Bool border_scale = EINA_FALSE;
 
+   Edje_Part_Description_Image *img;
    img = (Edje_Part_Description_Image *)pd;
+   Edje_Part_Description_Image *inherit_pd_img = (Edje_Part_Description_Image *)inherit_pd;
 
    image_name = _edje_image_name_find(eed, img->image.id);
    ll = edje_edit_state_tweens_list_get(obj, part, state, value);
 
-   attr_amount = 0;
-   attr_amount += (image_name == NULL) ? 0 : 1;
-   attr_amount += (ll == NULL) ? 0 : 2;
-   attr_amount += (img->image.border.l == 0 && img->image.border.r == 0 && img->image.border.t == 0 && img->image.border.b == 0) ? 0 : 1;
-   attr_amount += (img->image.border.scale == 0) ? 0 : 1;
-   attr_amount += (img->image.scale_hint != EVAS_IMAGE_SCALE_HINT_DYNAMIC && img->image.scale_hint != EVAS_IMAGE_SCALE_HINT_STATIC) ? 0 : 1;
-   attr_amount += (img->image.border.no_fill == 0) ? 0 : 1;
+/*TODO: support tweens inherit*/
+   if (inherit_pd)
+     {
+        const char *inherit_name = _edje_image_name_find(eed, inherit_pd_img->image.id);
+        name = ((image_name != NULL) && (inherit_name != NULL) && (!strcmp(image_name, inherit_name))) ? EINA_FALSE : EINA_TRUE;
 
+        border = ((img->image.border.l == inherit_pd_img->image.border.l) &&
+                  (img->image.border.r == inherit_pd_img->image.border.r) &&
+                  (img->image.border.t == inherit_pd_img->image.border.t) &&
+                  (img->image.border.b == inherit_pd_img->image.border.b)) ? EINA_FALSE : EINA_TRUE;
+
+        border_scale_by = (img->image.border.scale_by == inherit_pd_img->image.border.scale_by) ? EINA_FALSE : EINA_TRUE;
+
+        scale_hint = (img->image.scale_hint == inherit_pd_img->image.scale_hint) ? EINA_FALSE : EINA_TRUE;
+
+        border_no_fill = (img->image.border.no_fill == inherit_pd_img->image.border.no_fill) ? EINA_FALSE : EINA_TRUE;
+
+        border_scale = (img->image.border.scale == inherit_pd_img->image.border.scale) ? EINA_FALSE : EINA_TRUE;
+
+        /*Add check for a tween images*/
+     }
+   else
+     {
+        name = (image_name == NULL) ? EINA_FALSE : EINA_TRUE;
+        border = (img->image.border.l == 0 && img->image.border.r == 0 &&
+                  img->image.border.t == 0 && img->image.border.b == 0) ? EINA_FALSE : EINA_TRUE;
+        border_scale_by = (img->image.border.scale_by == 0) ? EINA_FALSE : EINA_TRUE;
+        scale_hint = (img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_NONE) ? EINA_FALSE : EINA_TRUE;
+        border_no_fill = (img->image.border.no_fill == 0) ? EINA_FALSE : EINA_TRUE;
+        border_scale = (img->image.border.scale == 0) ? EINA_FALSE : EINA_TRUE;
+     }
+
+
+   attr_amount =  name + border + border_scale_by + scale_hint + border_no_fill + border_scale;
+   attr_amount += (ll == NULL) ? 0 : 2;
+
+   if (attr_amount == 0) goto fill;
    if (attr_amount == 1)
      indent_space = 0;
 
@@ -12529,45 +12567,45 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
    else
       BUF_APPEND(I5 "image.");
 
-   if (image_name)
+   if (name && image_name)
      BUF_APPENDF("%*snormal: \"%s\";\n", indent_space, "", image_name);
 
    EINA_LIST_FOREACH(ll, l, data)
      BUF_APPENDF("%*stween: \"%s\";\n", indent_space, "", data);
    edje_edit_string_list_free(ll);
 
-   if (img->image.border.l || img->image.border.r ||
-       img->image.border.t || img->image.border.b)
+   if (border)
      BUF_APPENDF("%*sborder: %d %d %d %d;\n", indent_space, "",
                  img->image.border.l, img->image.border.r,
                  img->image.border.t, img->image.border.b);
 
-   if (img->image.border.scale_by != 0.0)
+   if (border_scale_by)
      {
-        char border_scale_by[strlen("border_scale_by") + indent_space + 1];
-        snprintf(border_scale_by, strlen("border_scale_by") + indent_space + 1,
+        char border_scale_by_str[strlen("border_scale_by") + indent_space + 1];
+        snprintf(border_scale_by_str, strlen("border_scale_by") + indent_space + 1,
                       "%*sborder_scale_by", indent_space, "");
-        _edje_source_with_double_values_append(border_scale_by, 1,
+        _edje_source_with_double_values_append(border_scale_by_str, 1,
                                               TO_DOUBLE(img->image.border.scale_by),
                                               0.0, buf, &ret);
      }
-   if (img->image.border.scale)
+
+   if (border_scale)
      BUF_APPENDF("%*sborder_scale: 1;\n", indent_space, "");
 
-   if (img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_DYNAMIC)
+   if (scale_hint && img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_DYNAMIC)
      {
         BUF_APPENDF("%*sscale_hint: DYNAMIC;\n", indent_space, "");
      }
-   else if (img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_STATIC)
+   else if (scale_hint && img->image.scale_hint == EVAS_IMAGE_SCALE_HINT_STATIC)
      {
         BUF_APPENDF("%*sscale_hint: STATIC;\n", indent_space, "");
      }
 
-   if (img->image.border.no_fill == 1)
+   if (border_no_fill && img->image.border.no_fill == 1)
      {
        BUF_APPENDF("%*smiddle: NONE;\n", indent_space, "");
      }
-   else if (img->image.border.no_fill == 2)
+   else if (border_no_fill && img->image.border.no_fill == 2)
      {
        BUF_APPENDF("%*smiddle: SOLID;\n", indent_space, "");
      }
@@ -12576,17 +12614,50 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
      BUF_APPEND(I5 "}\n"); //image
 
    //Fill
-
+fill:
    attr_amount = 0;
    int attr_orig_amount = 0;
    int attr_size_amount = 0;
-   attr_amount += (img->image.fill.smooth == 1) ? 0 : 1;
-   attr_amount += (img->image.fill.type == EDJE_FILL_TYPE_SCALE) ? 0 : 1;
-   attr_orig_amount += ((img->image.fill.pos_rel_x == 0) && (img->image.fill.pos_rel_y == 0)) ? 0 : 1;
-   attr_orig_amount += ((img->image.fill.pos_abs_x == 0) && (img->image.fill.pos_abs_y == 0)) ? 0 : 1;
-   attr_size_amount += ((TO_DOUBLE(img->image.fill.rel_x) == 1) && (TO_DOUBLE(img->image.fill.rel_y) == 1)) ? 0 : 1;
-   attr_size_amount += ((img->image.fill.abs_x == 0) && (img->image.fill.abs_y == 0)) ? 0 : 1;
-   attr_amount += attr_orig_amount + attr_size_amount;
+
+   Eina_Bool smooth = EINA_FALSE;
+   Eina_Bool type = EINA_FALSE;
+   Eina_Bool orig_rel = EINA_FALSE;
+   Eina_Bool orig_abs = EINA_FALSE;
+   Eina_Bool size_rel = EINA_FALSE;
+   Eina_Bool size_abs = EINA_FALSE;
+
+   if (inherit_pd_img)
+     {
+        smooth = (inherit_pd_img->image.fill.smooth == img->image.fill.smooth) ? EINA_FALSE : EINA_TRUE;
+        type = (inherit_pd_img->image.fill.type == img->image.fill.type) ? EINA_FALSE : EINA_TRUE;
+        orig_rel = ((inherit_pd_img->image.fill.pos_rel_x == img->image.fill.pos_rel_x) &&
+                    (inherit_pd_img->image.fill.pos_rel_y == img->image.fill.pos_rel_y)) ? EINA_FALSE : EINA_TRUE;
+        orig_abs = ((inherit_pd_img->image.fill.pos_abs_x == img->image.fill.pos_abs_x) &&
+                    (inherit_pd_img->image.fill.pos_abs_y == img->image.fill.pos_abs_y)) ? EINA_FALSE : EINA_TRUE;
+
+        size_rel = ((inherit_pd_img->image.fill.rel_x == img->image.fill.rel_x) &&
+                    (inherit_pd_img->image.fill.rel_y == img->image.fill.rel_y)) ? EINA_FALSE : EINA_TRUE;
+        size_abs = ((inherit_pd_img->image.fill.abs_x == img->image.fill.abs_x) &&
+                    (inherit_pd_img->image.fill.abs_y == img->image.fill.abs_y)) ? EINA_FALSE : EINA_TRUE;
+     }
+   else
+     {
+        smooth = (img->image.fill.smooth == 1) ? EINA_FALSE : EINA_TRUE;
+        type = (img->image.fill.type == EDJE_FILL_TYPE_SCALE) ? EINA_FALSE : EINA_TRUE;
+        orig_rel = ((img->image.fill.pos_rel_x == 0) && (img->image.fill.pos_rel_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        orig_abs = ((img->image.fill.pos_abs_x == 0) && (img->image.fill.pos_abs_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        size_rel = ((TO_DOUBLE(img->image.fill.rel_x) == 1) && (TO_DOUBLE(img->image.fill.rel_y) == 1)) ? EINA_FALSE : EINA_TRUE;
+        size_abs = ((img->image.fill.abs_x == 0) && (img->image.fill.abs_y == 0)) ? EINA_FALSE : EINA_TRUE;
+     }
+
+
+
+   attr_amount = smooth + type;
+   attr_orig_amount = orig_rel + orig_abs;
+   attr_size_amount = size_rel + size_abs;
+   attr_amount = smooth + type + attr_orig_amount + attr_size_amount;
+
+   if (attr_amount == 0) return;
 
    indent_space = 0;
    if (attr_amount > 1 || attr_size_amount || attr_orig_amount)
@@ -12599,10 +12670,10 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
        else
          BUF_APPEND(I5 "fill.");
 
-       if (!img->image.fill.smooth)
+       if (smooth)
          BUF_APPENDF("%*ssmooth: 0;\n", indent_space, "");
 
-       if (img->image.fill.type == EDJE_FILL_TYPE_TILE)
+       if (type)
          BUF_APPENDF("%*stype: TILE;\n", indent_space, "");
 
        if (attr_orig_amount)
@@ -12615,7 +12686,7 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
            else
              BUF_APPEND(I6 "origin.");
 
-           if (img->image.fill.pos_rel_x || img->image.fill.pos_rel_y)
+           if (orig_rel)
              {
                char relative[strlen("relative") + indent_space + 1];
                snprintf(relative, strlen("relative") + indent_space + 1,
@@ -12626,7 +12697,7 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
                         buf, &ret);
              }
 
-           if (img->image.fill.pos_abs_x || img->image.fill.pos_abs_y)
+           if (orig_abs)
              BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
                          img->image.fill.pos_abs_x, img->image.fill.pos_abs_y);
 
@@ -12645,7 +12716,7 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
            else
              BUF_APPEND(I6 "size.");
 
-           if (img->image.fill.rel_x != 1.0 || img->image.fill.rel_y != 1.0)
+           if (size_rel)
              {
                char relative[strlen("relative") + indent_space + 1];
                snprintf(relative, strlen("relative") + indent_space + 1,
@@ -12656,7 +12727,7 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
                         buf, &ret);
              }
 
-           if (img->image.fill.abs_x || img->image.fill.abs_y)
+           if (size_abs)
              BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
                          img->image.fill.abs_x, img->image.fill.abs_y);
 
@@ -13423,6 +13494,39 @@ _edje_text_desc_diff_calculate(Edje_Part_Description_Common *ed, Edje_Part_Descr
    return diffs_amount;
 }
 
+#define IMAGE_STATE_ATTRIBUTES_AMOUNT (5 + COMMON_STATE_ATTRIBUTES_AMOUNT)
+static int
+_edje_image_desc_diff_calculate(Edje_Edit *eed,
+                                Edje_Part_Description_Common *pd,
+                                Edje_Part_Description_Common *inherit_pd)
+{
+   int diffs_amount = _edje_common_desc_diff_calculate(pd, inherit_pd);
+
+   /*TODO: support tweens */
+   Edje_Part_Description_Image *image_pd = (Edje_Part_Description_Image *) pd;
+   Edje_Part_Description_Image *inherit_pd_image = (Edje_Part_Description_Image *) inherit_pd;
+
+   const char *image_name = _edje_image_name_find(eed, image_pd->image.id);
+   const char *inherit_name = _edje_image_name_find(eed, inherit_pd_image->image.id);
+   diffs_amount += ((image_name != NULL) && (inherit_name != NULL) &&
+                    (!strcmp(image_name, inherit_name))) ? EINA_FALSE : EINA_TRUE;
+
+   diffs_amount += ((image_pd->image.border.l == inherit_pd_image->image.border.l) &&
+             (image_pd->image.border.r == inherit_pd_image->image.border.r) &&
+             (image_pd->image.border.t == inherit_pd_image->image.border.t) &&
+             (image_pd->image.border.b == inherit_pd_image->image.border.b)) ? EINA_FALSE : EINA_TRUE;
+
+   diffs_amount += (image_pd->image.border.scale == inherit_pd_image->image.border.scale) ? EINA_FALSE : EINA_TRUE;
+
+   diffs_amount += (image_pd->image.border.scale_by == inherit_pd_image->image.border.scale_by) ? EINA_FALSE : EINA_TRUE;
+
+   diffs_amount += (image_pd->image.scale_hint == inherit_pd_image->image.scale_hint) ? EINA_FALSE : EINA_TRUE;
+
+   diffs_amount += (image_pd->image.border.no_fill == inherit_pd_image->image.border.no_fill) ? EINA_FALSE : EINA_TRUE;
+
+   return diffs_amount;
+}
+
 static Edje_Part_Description_Common *
 _edje_generate_source_of_state_inherit(Edje_Edit *eed EINA_UNUSED, Edje_Part *ep, Edje_Part_Description_Common *pd)
 {
@@ -13453,24 +13557,28 @@ _edje_generate_source_of_state_inherit(Edje_Edit *eed EINA_UNUSED, Edje_Part *ep
          diff_amount = _edje_text_desc_diff_calculate(pd, ep->default_desc);
          diff_coeff = (int)(((100 * diff_amount) / (TEXT_STATE_ATTRIBUTES_AMOUNT)));
          break;
+      case EDJE_PART_TYPE_IMAGE:
+         diff_amount = _edje_image_desc_diff_calculate(eed, pd, ep->default_desc);
+         diff_coeff = (int)(((100 * diff_amount) / (IMAGE_STATE_ATTRIBUTES_AMOUNT)));
+         break;
       default:
          diff_amount = _edje_common_desc_diff_calculate(pd, ep->default_desc);
          diff_coeff = (int)(((100 * diff_amount) / (COMMON_STATE_ATTRIBUTES_AMOUNT)));
          break;
      }
 
-   /*
-    * For case when beetwen current state and "default" state little amount of
-    * differencies - stop search
-    */
-   if (ep->default_desc && diff_amount <= 1)
-     return inherit;
-
-   if ((diff_coeff <= DIFFERENCE_LEVEL) && (diff_coeff < diff_min))
+  if ((diff_coeff <= DIFFERENCE_LEVEL) && (diff_coeff < diff_min))
      {
         diff_min = diff_coeff;
         inherit = ep->default_desc;
      }
+
+   /*
+    * For case when beetwen current state and "default" state little amount of
+    * differencies - stop search
+    */
+   if (inherit && diff_amount <= 1)
+     return inherit;
 
    for (i = 0; i < ep->other.desc_count; i++)
      {
@@ -13485,6 +13593,9 @@ _edje_generate_source_of_state_inherit(Edje_Edit *eed EINA_UNUSED, Edje_Part *ep
             /*TODO: add speceific part types description diff calculating*/
             case EDJE_PART_TYPE_TEXT:
                diff_coeff = _edje_text_desc_diff_calculate(pd, desc);
+               break;
+            case EDJE_PART_TYPE_IMAGE:
+               diff_coeff = _edje_image_desc_diff_calculate(eed, pd, desc);
                break;
             default:
                diff_coeff = _edje_common_desc_diff_calculate(pd, desc);
@@ -13742,7 +13853,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 
    //Image
    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
-     _edje_generate_source_state_image(eed, obj, part, state, value, pd, buf);
+     _edje_generate_source_state_image(eed, obj, part, state, value, pd, inherit_pd, buf) ;
 
    //Proxy
    if (rp->part->type == EDJE_PART_TYPE_PROXY)
