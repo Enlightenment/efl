@@ -12904,26 +12904,39 @@ _edje_generate_source_state_map(Edje *ed,
 }
 
 static void
-_edje_generate_source_state_proxy(Edje *ed, Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
+_edje_generate_source_state_proxy(Edje *ed, Edje_Part_Description_Common *pd,
+                                  Edje_Part_Description_Common *inherit_pd,
+                                  Eina_Strbuf *buf)
 {
    int attr_amount = 0;
    int indent_space = 0;
    Eina_Bool ret = 1;
-   Edje_Part_Description_Proxy *pro;
+   Edje_Part_Description_Proxy *pro = (Edje_Part_Description_Proxy *)pd;
+   Edje_Part_Description_Proxy *inherit_pd_pro = (Edje_Part_Description_Proxy *) inherit_pd;
 
-   pro = (Edje_Part_Description_Proxy *)pd;
+   int source_visible = EINA_FALSE;
+   int source_clip = EINA_FALSE;
+   int source = EINA_FALSE;
 
-   if (pro->proxy.id >= 0)
+   if (inherit_pd_pro)
      {
-        const char *source_name;
-        source_name = _edje_part_name_find(ed, pro->proxy.id);
-        if (source_name)
-          BUF_APPENDF(I5 "source: \"%s\";\n", source_name);
+        source = (inherit_pd_pro->proxy.id == pro->proxy.id) ? EINA_FALSE : EINA_TRUE;
+
+        source_visible = (inherit_pd_pro->proxy.source_visible == pro->proxy.source_visible) ? EINA_FALSE : EINA_TRUE;
+        source_clip = (inherit_pd_pro->proxy.source_clip == pro->proxy.source_clip) ? EINA_FALSE : EINA_TRUE;
+     }
+   else
+     {
+        source = (pro->proxy.id == -1) ? EINA_FALSE : EINA_TRUE;
+        source_visible = (pro->proxy.source_visible == 1) ? EINA_FALSE : EINA_TRUE;
+        source_clip = (pro->proxy.source_clip == 1) ? EINA_FALSE : EINA_TRUE;
      }
 
-   attr_amount += (pro->proxy.source_visible == 1) ? 0 : 1;
-   attr_amount += (pro->proxy.source_clip == 1) ? 0 : 1;
+   if (source)
+     BUF_APPENDF(I5 "source: \"%s\";\n", (pro->proxy.id >= 0) ? _edje_part_name_find(ed, pro->proxy.id) : "");
 
+   attr_amount = source_visible + source_clip;
+   if (!attr_amount) goto fill_proxy;
    if (attr_amount > 1)
      indent_space = strlen(I6);
 
@@ -12935,29 +12948,62 @@ _edje_generate_source_state_proxy(Edje *ed, Edje_Part_Description_Common *pd, Ei
         else
           BUF_APPEND(I5 "proxy.");
 
-        if (pro->proxy.source_visible != 1)
+        if (source_visible)
           BUF_APPENDF("%*ssource_visible: 0;\n", indent_space, "");
 
-        if (pro->proxy.source_clip != 1)
+        if (source_clip)
           BUF_APPENDF("%*ssource_clip: 0;\n", indent_space, "");
 
         if (attr_amount > 1)
           BUF_APPEND(I5 "}\n");
      }
 
-   //Fill
-   //TODO Support spread
-   //TODO Support source
+fill_proxy:
    attr_amount = 0;
+
+   //Fill
    int attr_orig_amount = 0;
    int attr_size_amount = 0;
-   attr_amount += (pro->proxy.fill.smooth == 1) ? 0 : 1;
-   attr_amount += (pro->proxy.fill.type == EDJE_FILL_TYPE_SCALE) ? 0 : 1;
-   attr_orig_amount += ((pro->proxy.fill.pos_rel_x == 0) && (pro->proxy.fill.pos_rel_y == 0)) ? 0 : 1;
-   attr_orig_amount += ((pro->proxy.fill.pos_abs_x == 0) && (pro->proxy.fill.pos_abs_y == 0)) ? 0 : 1;
-   attr_size_amount += ((TO_DOUBLE(pro->proxy.fill.rel_x) == 1) && (TO_DOUBLE(pro->proxy.fill.rel_y) == 1)) ? 0 : 1;
-   attr_size_amount += ((pro->proxy.fill.abs_x == 0) && (pro->proxy.fill.abs_y == 0)) ? 0 : 1;
-   attr_amount += attr_orig_amount + attr_size_amount;
+
+   Eina_Bool smooth = EINA_FALSE;
+   Eina_Bool type = EINA_FALSE;
+   Eina_Bool orig_rel = EINA_FALSE;
+   Eina_Bool orig_abs = EINA_FALSE;
+   Eina_Bool size_rel = EINA_FALSE;
+   Eina_Bool size_abs = EINA_FALSE;
+
+   if (inherit_pd_pro)
+     {
+        smooth = (inherit_pd_pro->proxy.fill.smooth == pro->proxy.fill.smooth) ? EINA_FALSE : EINA_TRUE;
+        type = (inherit_pd_pro->proxy.fill.type == pro->proxy.fill.type) ? EINA_FALSE : EINA_TRUE;
+        orig_rel = ((inherit_pd_pro->proxy.fill.pos_rel_x == pro->proxy.fill.pos_rel_x) &&
+                    (inherit_pd_pro->proxy.fill.pos_rel_y == pro->proxy.fill.pos_rel_y)) ? EINA_FALSE : EINA_TRUE;
+        orig_abs = ((inherit_pd_pro->proxy.fill.pos_abs_x == pro->proxy.fill.pos_abs_x) &&
+                    (inherit_pd_pro->proxy.fill.pos_abs_y == pro->proxy.fill.pos_abs_y)) ? EINA_FALSE : EINA_TRUE;
+
+        size_rel = ((inherit_pd_pro->proxy.fill.rel_x == pro->proxy.fill.rel_x) &&
+                    (inherit_pd_pro->proxy.fill.rel_y == pro->proxy.fill.rel_y)) ? EINA_FALSE : EINA_TRUE;
+        size_abs = ((inherit_pd_pro->proxy.fill.abs_x == pro->proxy.fill.abs_x) &&
+                    (inherit_pd_pro->proxy.fill.abs_y == pro->proxy.fill.abs_y)) ? EINA_FALSE : EINA_TRUE;
+     }
+   else
+     {
+        smooth = (pro->proxy.fill.smooth == 1) ? EINA_FALSE : EINA_TRUE;
+        type = (pro->proxy.fill.type == EDJE_FILL_TYPE_SCALE) ? EINA_FALSE : EINA_TRUE;
+        orig_rel = ((pro->proxy.fill.pos_rel_x == 0) && (pro->proxy.fill.pos_rel_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        orig_abs = ((pro->proxy.fill.pos_abs_x == 0) && (pro->proxy.fill.pos_abs_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        size_rel = ((TO_DOUBLE(pro->proxy.fill.rel_x) == 1) && (TO_DOUBLE(pro->proxy.fill.rel_y) == 1)) ? EINA_FALSE : EINA_TRUE;
+        size_abs = ((pro->proxy.fill.abs_x == 0) && (pro->proxy.fill.abs_y == 0)) ? EINA_FALSE : EINA_TRUE;
+     }
+
+
+
+   attr_amount = smooth + type;
+   attr_orig_amount = orig_rel + orig_abs;
+   attr_size_amount = size_rel + size_abs;
+   attr_amount = smooth + type + attr_orig_amount + attr_size_amount;
+
+   if (attr_amount == 0) return;
 
    indent_space = 0;
    if (attr_amount > 1 || attr_size_amount || attr_orig_amount)
@@ -12970,10 +13016,10 @@ _edje_generate_source_state_proxy(Edje *ed, Edje_Part_Description_Common *pd, Ei
        else
          BUF_APPEND(I5 "fill.");
 
-       if (!pro->proxy.fill.smooth)
+       if (smooth)
          BUF_APPENDF("%*ssmooth: 0;\n", indent_space, "");
 
-       if (pro->proxy.fill.type == EDJE_FILL_TYPE_TILE)
+       if (type)
          BUF_APPENDF("%*stype: TILE;\n", indent_space, "");
 
        if (attr_orig_amount)
@@ -12986,7 +13032,7 @@ _edje_generate_source_state_proxy(Edje *ed, Edje_Part_Description_Common *pd, Ei
            else
              BUF_APPEND(I6 "origin.");
 
-           if (pro->proxy.fill.pos_rel_x || pro->proxy.fill.pos_rel_y)
+           if (orig_rel)
              {
                char relative[strlen("relative") + indent_space + 1];
                snprintf(relative, strlen("relative") + indent_space + 1,
@@ -12997,7 +13043,7 @@ _edje_generate_source_state_proxy(Edje *ed, Edje_Part_Description_Common *pd, Ei
                         buf, &ret);
              }
 
-           if (pro->proxy.fill.pos_abs_x || pro->proxy.fill.pos_abs_y)
+           if (orig_abs)
              BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
                          pro->proxy.fill.pos_abs_x, pro->proxy.fill.pos_abs_y);
 
@@ -13016,7 +13062,7 @@ _edje_generate_source_state_proxy(Edje *ed, Edje_Part_Description_Common *pd, Ei
            else
              BUF_APPEND(I6 "size.");
 
-           if (pro->proxy.fill.rel_x != 1.0 || pro->proxy.fill.rel_y != 1.0)
+           if (size_rel)
              {
                char relative[strlen("relative") + indent_space + 1];
                snprintf(relative, strlen("relative") + indent_space + 1,
@@ -13027,7 +13073,7 @@ _edje_generate_source_state_proxy(Edje *ed, Edje_Part_Description_Common *pd, Ei
                         buf, &ret);
              }
 
-           if (pro->proxy.fill.abs_x || pro->proxy.fill.abs_y)
+           if (size_abs)
              BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
                          pro->proxy.fill.abs_x, pro->proxy.fill.abs_y);
 
@@ -13857,7 +13903,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 
    //Proxy
    if (rp->part->type == EDJE_PART_TYPE_PROXY)
-     _edje_generate_source_state_proxy(ed, pd, buf);
+     _edje_generate_source_state_proxy(ed, pd, inherit_pd, buf);
 
    //Text
    if ((rp->part->type == EDJE_PART_TYPE_TEXT) ||
