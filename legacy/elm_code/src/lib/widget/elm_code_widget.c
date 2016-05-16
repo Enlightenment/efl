@@ -1355,6 +1355,17 @@ _elm_code_widget_unfocused_event_cb(void *data, Evas_Object *obj,
    _elm_code_widget_refresh(obj, NULL);
 }
 
+static void
+_elm_code_widget_scroll_event_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                 void *event_info EINA_UNUSED)
+{
+   Elm_Code_Widget *widget;
+
+   widget = (Elm_Code_Widget *)data;
+
+   _elm_code_widget_refresh(widget, NULL);
+}
+
 EOLIAN static Eina_Bool
 _elm_code_widget_elm_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd EINA_UNUSED,
                                   Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
@@ -1827,6 +1838,7 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
 
    evas_object_smart_callback_add(obj, "focused", _elm_code_widget_focused_event_cb, obj);
    evas_object_smart_callback_add(obj, "unfocused", _elm_code_widget_unfocused_event_cb, obj);
+   evas_object_smart_callback_add(scroller, "scroll", _elm_code_widget_scroll_event_cb, obj);
 
    eo_event_callback_add(obj, &ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_widget_line_cb, obj);
    eo_event_callback_add(obj, &ELM_CODE_EVENT_FILE_LOAD_DONE, _elm_code_widget_file_cb, obj);
