@@ -2049,7 +2049,7 @@ window = [[NSWindow alloc]
 fi
 AC_SUBST(cocoa_ldflags)
 
-if test "x${want_cocoa}" = "xyes"; then
+if test "x${have_cocoa}" = "xyes"; then
     #test cocoa requirements (objc and Cocoa/Cocoa.h)
     cocoa_coreservices_ldflags=""
     have_cocoa_coreservices="no"
@@ -3122,7 +3122,7 @@ EFL_LIB_END([Ecore_Input_Evas])
 
 
 #### Ecore_Cocoa
-EFL_LIB_START_OPTIONAL([Ecore_Cocoa], [test "${want_cocoa}" = "yes"])
+EFL_LIB_START_OPTIONAL([Ecore_Cocoa], [test "${have_cocoa}" = "yes"])
 
 ### Additional options to configure
 
