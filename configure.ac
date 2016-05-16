@@ -2327,7 +2327,7 @@ ARG_ENABLE_EVAS_IMAGE_LOADER(DDS, static)
 
 want_evas_engine_software_gdi="${have_win32}"
 want_evas_engine_software_ddraw="${have_win32}"
-want_evas_engine_gl_cocoa="${want_cocoa}"
+want_evas_engine_gl_cocoa="${have_cocoa}"
 want_evas_engine_wayland_egl="no"
 if test "${want_wayland}" = "yes" && test "${want_egl}" = "yes" && test "${with_opengl}" = "es"; then
    want_evas_engine_wayland_egl="yes"
