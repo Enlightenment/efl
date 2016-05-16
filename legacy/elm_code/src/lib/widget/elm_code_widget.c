@@ -50,7 +50,7 @@ Eina_Unicode status_icons[] = {
      } \
 } while (0)
 
-static void _elm_code_widget_resize(Elm_Code_Widget *widget);
+static void _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline);
 
 EAPI Evas_Object *
 elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
@@ -389,14 +389,19 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 }
 
 static void
-_elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, unsigned int last_row)
+_elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, unsigned int last_row,
+                            Elm_Code_Line *newline)
 {
    Elm_Code_Line *line;
    unsigned int y;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   _elm_code_widget_resize(widget);
+   _elm_code_widget_resize(widget, newline);
+
+   // if called from new line cb, no need to update whole range unless visible
+   if (newline && !elm_obj_code_widget_line_visible_get(widget, newline))
+     return;
 
    for (y = first_row; y <= last_row; y++)
      {
@@ -407,7 +412,7 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, uns
 }
 
 static void
-_elm_code_widget_refresh(Elm_Code_Widget *widget)
+_elm_code_widget_refresh(Elm_Code_Widget *widget, Elm_Code_Line *line)
 {
    Evas_Coord scroll_y, scroll_h, oy;
    unsigned int first_row, last_row;
@@ -427,7 +432,7 @@ _elm_code_widget_refresh(Elm_Code_Widget *widget)
    if (last_row > elm_code_file_lines_get(pd->code->file))
      last_row = elm_code_file_lines_get(pd->code->file);
 
-   _elm_code_widget_fill_range(widget, first_row, last_row);
+   _elm_code_widget_fill_range(widget, first_row, last_row, line);
 }
 
 static void
@@ -437,7 +442,7 @@ _elm_code_widget_fill(Elm_Code_Widget *widget)
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   _elm_code_widget_fill_range(widget, 1, elm_code_file_lines_get(pd->code->file));
+   _elm_code_widget_fill_range(widget, 1, elm_code_file_lines_get(pd->code->file), NULL);
 }
 
 static Eina_Bool
@@ -445,17 +450,11 @@ _elm_code_widget_line_cb(void *data, const Eo_Event *event)
 {
    Elm_Code_Line *line;
    Elm_Code_Widget *widget;
-   Eina_Bool visible;
 
    line = (Elm_Code_Line *)event->info;
    widget = (Elm_Code_Widget *)data;
 
-   visible = elm_obj_code_widget_line_visible_get(widget, line);
-   if (!visible)
-     return EO_CALLBACK_CONTINUE;
-
-   // FIXME refresh just the row unless we have resized (by being the result of a row append)
-   _elm_code_widget_refresh(widget);
+   _elm_code_widget_refresh(widget, line);
 
    return EO_CALLBACK_CONTINUE;
 }
@@ -478,7 +477,7 @@ _elm_code_widget_selection_cb(void *data, const Eo_Event *event EINA_UNUSED)
 
    widget = (Elm_Code_Widget *)data;
 
-   _elm_code_widget_refresh(widget);
+   _elm_code_widget_refresh(widget, NULL);
    return EO_CALLBACK_CONTINUE;
 }
 
@@ -501,7 +500,7 @@ _elm_code_widget_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 
    widget = (Elm_Code_Widget *)data;
 
-   _elm_code_widget_refresh(widget);
+   _elm_code_widget_refresh(widget, NULL);
 }
 
 static Eina_Bool
@@ -1339,7 +1338,7 @@ _elm_code_widget_focused_event_cb(void *data, Evas_Object *obj,
    pd->focussed = EINA_TRUE;
 
    _elm_code_widget_update_focus_directions(widget);
-   _elm_code_widget_refresh(obj);
+   _elm_code_widget_refresh(obj, NULL);
 }
 
 static void
@@ -1353,7 +1352,7 @@ _elm_code_widget_unfocused_event_cb(void *data, Evas_Object *obj,
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    pd->focussed = EINA_FALSE;
-   _elm_code_widget_refresh(obj);
+   _elm_code_widget_refresh(obj, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -1513,7 +1512,7 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
 }
 
 static void
-_elm_code_widget_resize(Elm_Code_Widget *widget)
+_elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
 {
    Elm_Code_Line *line;
    Eina_List *item;
@@ -1522,6 +1521,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    int w, h, cw, ch, gutter;
    unsigned int line_width;
    Elm_Code_Widget_Data *pd;
+   Eina_Bool neww = EINA_FALSE;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
@@ -1533,14 +1533,30 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
 
    old_width = ww;
    old_height = wh;
-
    w = 0;
    h = elm_code_file_lines_get(pd->code->file);
-   EINA_LIST_FOREACH(pd->code->file->lines, item, line)
+
+   if (newline)
      {
+        line = eina_list_data_get(pd->code->file->lines);
+        if (line)
+          {
+             line_width = elm_code_widget_line_text_column_width_get(widget, newline);
+             w = (int) line_width + gutter + 1;
+          }
         line_width = elm_code_widget_line_text_column_width_get(widget, line);
         if ((int) line_width + gutter + 1 > w)
           w = (int) line_width + gutter + 1;
+     }
+   else
+     {
+        neww = EINA_TRUE;
+        EINA_LIST_FOREACH(pd->code->file->lines, item, line)
+          {
+             line_width = elm_code_widget_line_text_column_width_get(widget, line);
+             if ((int) line_width + gutter + 1 > w)
+               w = (int) line_width + gutter + 1;
+          }
      }
 
    _elm_code_widget_ensure_n_grid_rows(widget, h);
@@ -1551,10 +1567,19 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
      wh = h*ch;
    pd->col_count = ww/cw + 1;
 
-   EINA_LIST_FOREACH(pd->grids, item, grid)
+   if (newline)
      {
+        grid = eina_list_nth(pd->grids, newline->number - 1);
         evas_object_textgrid_size_set(grid, pd->col_count, 1);
         evas_object_size_hint_min_set(grid, w*cw, ch);
+     }
+   else if (neww)
+     {
+        EINA_LIST_FOREACH(pd->grids, item, grid)
+          {
+             evas_object_textgrid_size_set(grid, pd->col_count, 1);
+             evas_object_size_hint_min_set(grid, w*cw, ch);
+          }
      }
 
    if (pd->gravity_x == 1.0 || pd->gravity_y == 1.0)
