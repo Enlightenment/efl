@@ -95,7 +95,7 @@ elm_code_free(Elm_Code *code)
 
    EINA_LIST_FREE(code->parsers, parser)
      {
-        free(parser);
+        _elm_code_parser_free(parser);
      }
 
    free(code);

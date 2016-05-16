@@ -34,5 +34,6 @@ void _elm_code_parse_file(Elm_Code *code, Elm_Code_File *file);
 
 void _elm_code_parse_reset_file(Elm_Code *code, Elm_Code_File *file);
 
+void _elm_code_parser_free(Elm_Code_Parser *parser);
 
 #endif

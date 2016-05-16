@@ -13,6 +13,7 @@ struct _Elm_Code_Parser
    void (*parse_file)(Elm_Code_File *, void *);
 
    void *data;
+   Eina_Bool standard;
 };
 
 
@@ -69,6 +70,7 @@ _elm_code_parser_new(void (*parse_line)(Elm_Code_Line *, void *),
 
    parser->parse_line = parse_line;
    parser->parse_file = parse_file;
+   parser->standard = EINA_FALSE;
 
    return parser;
 }
@@ -95,6 +97,7 @@ elm_code_parser_standard_add(Elm_Code *code, Elm_Code_Parser *parser)
    if (!parser || !code)
      return;
 
+   parser->standard = EINA_TRUE;
    code->parsers = eina_list_append(code->parsers, parser);
 }
 
@@ -183,6 +186,15 @@ _elm_code_parser_todo_parse_line(Elm_Code_Line *line, void *data EINA_UNUSED)
      elm_code_line_status_set(line, ELM_CODE_STATUS_TYPE_TODO);
    else if (elm_code_line_text_strpos(line, "FIXME", 0) != ELM_CODE_TEXT_NOT_FOUND)
      elm_code_line_status_set(line, ELM_CODE_STATUS_TYPE_TODO);
+}
+
+void
+_elm_code_parser_free(Elm_Code_Parser *parser)
+{
+   if (parser->standard)
+     return;
+
+   free(parser);
 }
 
 void
