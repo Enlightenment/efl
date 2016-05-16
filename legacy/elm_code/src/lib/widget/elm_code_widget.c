@@ -1521,7 +1521,6 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
    int w, h, cw, ch, gutter;
    unsigned int line_width;
    Elm_Code_Widget_Data *pd;
-   Eina_Bool neww = EINA_FALSE;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
@@ -1550,7 +1549,6 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
      }
    else
      {
-        neww = EINA_TRUE;
         EINA_LIST_FOREACH(pd->code->file->lines, item, line)
           {
              line_width = elm_code_widget_line_text_column_width_get(widget, line);
@@ -1573,7 +1571,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
         evas_object_textgrid_size_set(grid, pd->col_count, 1);
         evas_object_size_hint_min_set(grid, w*cw, ch);
      }
-   else if (neww)
+   else
      {
         EINA_LIST_FOREACH(pd->grids, item, grid)
           {
