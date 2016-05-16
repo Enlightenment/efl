@@ -12564,29 +12564,92 @@ _edje_source_with_double_values_append(const char *param_name, char val_num, dou
    eina_strbuf_free(string);
 }
 
+#define INHERIT_CHECK(ATTRIBUTE) (pd->ATTRIBUTE != inherit_pd->ATTRIBUTE)
+
+#define INHERIT_CHECK_DOUBLE(ATTRIBUTE_1, ATTRIBUTE_2) ((pd->ATTRIBUTE_1 != inherit_pd->ATTRIBUTE_1) || (pd->ATTRIBUTE_2 != inherit_pd->ATTRIBUTE_2))
+
+#define INHERIT_CHECK_STRING(ATTRIBUTE_STR) (strcmp(inherit_pd->ATTRIBUTE_STR, pd->ATTRIBUTE_STR))
+
 static void
-_edje_generate_source_state_relative(Edje *ed, Edje_Part_Description_Common *pd, Eina_Strbuf *buf)
+_edje_generate_source_state_relative(Edje *ed,
+                                     Edje_Part_Description_Common *pd,
+                                     Edje_Part_Description_Common *inherit_pd,
+                                     Eina_Strbuf *buf)
 {
 
    Eina_Bool ret = EINA_TRUE;
    int attr_amount = 0;
    int indent_space = strlen(I6);
 
-   attr_amount += ((pd->rel1.relative_x == 0) && (pd->rel1.relative_y == 0)) ? 0 : 1;
-   attr_amount += ((pd->rel1.offset_x == 0) && (pd->rel1.offset_y == 0)) ? 0 : 1;
-   if ((pd->rel1.id_x != -1) || (pd->rel1.id_y != -1))
+   Eina_Bool relative = EINA_FALSE;
+   Eina_Bool offset = EINA_FALSE;
+   Eina_Bool rel_to = EINA_FALSE;
+   Eina_Bool rel_to_x = EINA_FALSE;
+   Eina_Bool rel_to_y = EINA_FALSE;
+
+   if (inherit_pd)
      {
-        if ((pd->rel1.id_x == -1 && pd->rel1.id_y != -1) ||
-            (pd->rel1.id_x != -1 && pd->rel1.id_y == -1) ||
-            (pd->rel1.id_x == pd->rel1.id_y))
-          {
-             attr_amount++;
-          }
-        else
-          {
-             attr_amount += 2;
-          }
+         relative = !INHERIT_CHECK_DOUBLE(rel1.relative_x, rel1.relative_y) ? EINA_FALSE : EINA_TRUE;
+         offset = !INHERIT_CHECK_DOUBLE(rel1.offset_x, rel1.offset_y) ? EINA_FALSE : EINA_TRUE;
+         if ((pd->rel1.id_x != inherit_pd->rel1.id_x) || (pd->rel1.id_y != inherit_pd->rel1.id_y))
+           {
+              if (pd->rel1.id_x == inherit_pd->rel1.id_x && pd->rel1.id_y != inherit_pd->rel1.id_y)
+                {
+                   rel_to = 1;
+                   rel_to_y = 1;
+                }
+              else if (pd->rel1.id_x != inherit_pd->rel1.id_x && pd->rel1.id_y == inherit_pd->rel1.id_y)
+                {
+                   rel_to = 1;
+                   rel_to_x = 1;
+                }
+              else if (pd->rel1.id_x == pd->rel1.id_y && pd->rel1.id_x != -1)
+                {
+                   rel_to = 1;
+                   rel_to_x = EINA_FALSE;
+                   rel_to_y = EINA_FALSE;
+                }
+              else
+                {
+                   rel_to = 2;
+                   rel_to_x = 1;
+                   rel_to_y = 1;
+                }
+           }
+
      }
+   else
+     {
+        relative = ((pd->rel1.relative_x == 0) && (pd->rel1.relative_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        offset = ((pd->rel1.offset_x == 0) && (pd->rel1.offset_y == 0)) ? EINA_FALSE : EINA_TRUE;
+        if ((pd->rel1.id_x != -1) || (pd->rel1.id_y != -1))
+          {
+             if (pd->rel1.id_x == -1 && pd->rel1.id_y != -1)
+               {
+                  rel_to = 1;
+                  rel_to_y = 1;
+               }
+             else if (pd->rel1.id_x != -1 && pd->rel1.id_y == -1)
+               {
+                  rel_to = 1;
+                  rel_to_x = 1;
+               }
+             else if (pd->rel1.id_x == pd->rel1.id_y && pd->rel1.id_x != -1)
+               {
+                  rel_to = 1;
+                  rel_to_x = EINA_FALSE;
+                  rel_to_y = EINA_FALSE;
+               }
+             else
+               {
+                  rel_to = 2;
+                  rel_to_x = 1;
+                  rel_to_y = 1;
+               }
+          }
+    }
+
+   attr_amount = relative + offset + rel_to;
 
    indent_space = strlen(I6);
    if (attr_amount == 1)
@@ -12600,64 +12663,119 @@ _edje_generate_source_state_relative(Edje *ed, Edje_Part_Description_Common *pd,
         else
           BUF_APPEND(I5 "rel1.");
 
-        if (pd->rel1.relative_x != 0 || pd->rel1.relative_y != 0)
+        if (relative)
           {
-             char relative[strlen("relative") + indent_space + 1];
-             snprintf(relative, strlen("relative") + indent_space + 1,
+             char relative_str[strlen("relative") + indent_space + 1];
+             snprintf(relative_str, strlen("relative") + indent_space + 1,
                       "%*srelative", indent_space, "");
-             _edje_source_with_double_values_append(relative, 2,
+             _edje_source_with_double_values_append(relative_str, 2,
                                                   TO_DOUBLE(pd->rel1.relative_x),
                                                   TO_DOUBLE(pd->rel1.relative_y),
                                                   buf, &ret);
           }
 
-        if (pd->rel1.offset_x != 0 || pd->rel1.offset_y != 0)
+        if (offset)
           BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
                       pd->rel1.offset_x, pd->rel1.offset_y);
 
-        if (pd->rel1.id_x != -1 && pd->rel1.id_x == pd->rel1.id_y)
+        if (rel_to != 0)
           {
-            BUF_APPENDF("%*sto: \"%s\";\n", indent_space, "",
-                        ed->table_parts[pd->rel1.id_x]->part->name);
-          }
-        else
-          {
-             if (pd->rel1.id_x != -1)
-               BUF_APPENDF("%*sto_x: \"%s\";\n", indent_space, "",
-                           ed->table_parts[pd->rel1.id_x]->part->name);
+            if (rel_to_x == 0 && rel_to_y == 0)
+              {
+                 BUF_APPENDF("%*sto: \"%s\";\n", indent_space, "",
+                             pd->rel1.id_x == -1 ? "" :  ed->table_parts[pd->rel1.id_x]->part->name);
+              }
+            if (rel_to_x == 1)
+              {
+                 BUF_APPENDF("%*sto_x: \"%s\";\n", indent_space, "",
+                            pd->rel1.id_x == -1 ? "" :ed->table_parts[pd->rel1.id_x]->part->name);
+              }
 
-             if (pd->rel1.id_y != -1)
-               BUF_APPENDF("%*sto_y: \"%s\";\n", indent_space, "",
-                           ed->table_parts[pd->rel1.id_y]->part->name);
+            if (rel_to_y == 1)
+              {
+                BUF_APPENDF("%*sto_y: \"%s\";\n", indent_space, "",
+                           pd->rel1.id_y == -1 ? "" : ed->table_parts[pd->rel1.id_y]->part->name);
+             }
           }
-
         if (attr_amount > 1)
            BUF_APPEND(I5 "}\n");
      }
 
-
+   //Rel 2
    attr_amount = 0;
-   attr_amount += ((pd->rel2.relative_x == 1) && (pd->rel2.relative_y == 1)) ? 0 : 1;
-   attr_amount += ((pd->rel2.offset_x == -1) && (pd->rel2.offset_y == -1)) ? 0 : 1;
-   if ((pd->rel2.id_x != -1) || (pd->rel2.id_y != -1))
+   relative = EINA_FALSE;
+   offset = EINA_FALSE;
+   rel_to = EINA_FALSE;
+   rel_to_x = EINA_FALSE;
+   rel_to_y = EINA_FALSE;
+   if (inherit_pd)
      {
-        if ((pd->rel2.id_x == -1 && pd->rel2.id_y != -1) ||
-            (pd->rel2.id_x != -1 && pd->rel2.id_y == -1) ||
-            (pd->rel2.id_x == pd->rel2.id_y))
-          {
-             attr_amount++;
-          }
-        else
-          {
-             attr_amount += 2;
-          }
+         relative = !INHERIT_CHECK_DOUBLE(rel2.relative_x, rel2.relative_y) ? EINA_FALSE : EINA_TRUE;
+         offset = !INHERIT_CHECK_DOUBLE(rel2.offset_x, rel2.offset_y) ? EINA_FALSE : EINA_TRUE;
+         if ((pd->rel2.id_x != inherit_pd->rel2.id_x) || (pd->rel2.id_y != inherit_pd->rel2.id_y))
+           {
+              if (pd->rel2.id_x == inherit_pd->rel2.id_x && pd->rel2.id_y != inherit_pd->rel2.id_y)
+                {
+                   rel_to = 1;
+                   rel_to_y = 1;
+                }
+              else if (pd->rel2.id_x != inherit_pd->rel2.id_x && pd->rel2.id_y == inherit_pd->rel2.id_y)
+                {
+                   rel_to = 1;
+                   rel_to_x = 1;
+                }
+              else if (pd->rel2.id_x == pd->rel2.id_y && pd->rel2.id_x != -1)
+                {
+                   rel_to = 1;
+                   rel_to_x = EINA_FALSE;
+                   rel_to_y = EINA_FALSE;
+                }
+              else
+                {
+                   rel_to = 2;
+                   rel_to_x = 1;
+                   rel_to_y = 1;
+                }
+           }
+
      }
+   else
+     {
+        relative = ((pd->rel2.relative_x == 1) && (pd->rel2.relative_y == 1)) ? EINA_FALSE : EINA_TRUE;
+        offset = ((pd->rel2.offset_x == -1) && (pd->rel2.offset_y == -1)) ? EINA_FALSE : EINA_TRUE;
+        if ((pd->rel2.id_x != -1) || (pd->rel2.id_y != -1))
+          {
+             if (pd->rel2.id_x == -1 && pd->rel2.id_y != -1)
+               {
+                  rel_to = 1;
+                  rel_to_y = 1;
+               }
+             else if (pd->rel2.id_x != -1 && pd->rel2.id_y == -1)
+               {
+                  rel_to = 1;
+                  rel_to_x = 1;
+               }
+             else if (pd->rel2.id_x == pd->rel2.id_y && pd->rel2.id_x != -1)
+               {
+                  rel_to = 1;
+                  rel_to_x = EINA_FALSE;
+                  rel_to_y = EINA_FALSE;
+               }
+             else
+               {
+                  rel_to = 2;
+                  rel_to_x = 1;
+                  rel_to_y = 1;
+               }
+          }
+    }
+
+   attr_amount = relative + offset + rel_to;
 
    indent_space = strlen(I6);
    if (attr_amount == 1)
      indent_space = 0;
 
-   //Rel2
    if (attr_amount)
      {
         if (attr_amount > 1)
@@ -12665,37 +12783,40 @@ _edje_generate_source_state_relative(Edje *ed, Edje_Part_Description_Common *pd,
         else
           BUF_APPEND(I5 "rel2.");
 
-        if (pd->rel2.relative_x != 1 || pd->rel2.relative_y != 1)
+        if (relative)
           {
-             char relative[strlen("relative") + indent_space + 1];
-             snprintf(relative, strlen("relative") + indent_space + 1,
+             char relative_str[strlen("relative") + indent_space + 1];
+             snprintf(relative_str, strlen("relative") + indent_space + 1,
                       "%*srelative", indent_space, "");
-             _edje_source_with_double_values_append(relative, 2,
+             _edje_source_with_double_values_append(relative_str, 2,
                                                   TO_DOUBLE(pd->rel2.relative_x),
                                                   TO_DOUBLE(pd->rel2.relative_y),
                                                   buf, &ret);
           }
 
-        if (pd->rel2.offset_x != -1 || pd->rel2.offset_y != -1)
+        if (offset)
           BUF_APPENDF("%*soffset: %d %d;\n", indent_space, "",
                       pd->rel2.offset_x, pd->rel2.offset_y);
 
-        if (pd->rel2.id_x != -1 && pd->rel2.id_x == pd->rel2.id_y)
+        if (rel_to != 0)
           {
-            BUF_APPENDF("%*sto: \"%s\";\n", indent_space, "",
-                        ed->table_parts[pd->rel2.id_x]->part->name);
-          }
-        else
-          {
-             if (pd->rel2.id_x != -1)
-               BUF_APPENDF("%*sto_x: \"%s\";\n", indent_space, "",
-                           ed->table_parts[pd->rel2.id_x]->part->name);
+            if (rel_to_x == 0 && rel_to_y == 0 )
+              {
+                 BUF_APPENDF("%*sto: \"%s\";\n", indent_space, "",
+                              pd->rel2.id_x == -1 ? "" : ed->table_parts[pd->rel2.id_x]->part->name);
+              }
+            if (rel_to_x == 1)
+              {
+                 BUF_APPENDF("%*sto_x: \"%s\";\n", indent_space, "",
+                            pd->rel2.id_x == -1 ? "" : ed->table_parts[pd->rel2.id_x]->part->name);
+              }
 
-             if (pd->rel2.id_y != -1)
-               BUF_APPENDF("%*sto_y: \"%s\";\n", indent_space, "",
-                           ed->table_parts[pd->rel2.id_y]->part->name);
+            if (rel_to_y == 1)
+              {
+                BUF_APPENDF("%*sto_y: \"%s\";\n", indent_space, "",
+                           pd->rel2.id_y == -1 ? "" : ed->table_parts[pd->rel2.id_y]->part->name);
+             }
           }
-
         if (attr_amount > 1)
            BUF_APPEND(I5 "}\n");
      }
@@ -13847,7 +13968,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
      }
 
    //Relative block
-    _edje_generate_source_state_relative(ed, pd, buf);
+   _edje_generate_source_state_relative(ed, pd, inherit_pd, buf);
 
    if (zplane || focal)
      {
