@@ -5237,125 +5237,6 @@ _elm_win_conformant_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_quickpanel_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool quickpanel)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     {
-        ecore_x_e_illume_quickpanel_set(sd->x.xwin, quickpanel);
-        if (quickpanel)
-          {
-             Ecore_X_Window_State states[2];
-
-             states[0] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
-             states[1] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
-             ecore_x_netwm_window_state_set(sd->x.xwin, states, 2);
-             ecore_x_icccm_hints_set(sd->x.xwin, 0, 0, 0, 0, 0, 0, 0);
-          }
-     }
-#else
-   (void)sd;
-   (void)quickpanel;
-#endif
-}
-
-EOLIAN static Eina_Bool
-_elm_win_quickpanel_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_get(sd->x.xwin);
-#else
-   (void)sd;
-#endif
-
-   return EINA_FALSE;
-}
-
-EOLIAN static void
-_elm_win_quickpanel_priority_major_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int priority)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     ecore_x_e_illume_quickpanel_priority_major_set(sd->x.xwin, priority);
-#else
-   (void)sd;
-   (void)priority;
-#endif
-}
-
-EOLIAN static int
-_elm_win_quickpanel_priority_major_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_priority_major_get(sd->x.xwin);
-#else
-   (void)sd;
-#endif
-
-   return -1;
-}
-
-EOLIAN static void
-_elm_win_quickpanel_priority_minor_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int priority)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     ecore_x_e_illume_quickpanel_priority_minor_set(sd->x.xwin, priority);
-#else
-   (void)sd;
-   (void)priority;
-#endif
-}
-
-EOLIAN static int
-_elm_win_quickpanel_priority_minor_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_priority_minor_get(sd->x.xwin);
-#else
-   (void)sd;
-#endif
-
-   return -1;
-}
-
-EOLIAN static void
-_elm_win_quickpanel_zone_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int zone)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     ecore_x_e_illume_quickpanel_zone_set(sd->x.xwin, zone);
-#else
-   (void)sd;
-   (void)zone;
-#endif
-}
-
-EOLIAN static int
-_elm_win_quickpanel_zone_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     return ecore_x_e_illume_quickpanel_zone_get(sd->x.xwin);
-#else
-   (void)sd;
-#endif
-
-   return 0;
-}
-
-EOLIAN static void
 _elm_win_prop_focus_skip_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool skip)
 {
    sd->skip_focus = skip;
@@ -5972,6 +5853,149 @@ elm_win_lower(Evas_Object *obj)
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
    TRAP(sd, lower);
+}
+
+EAPI void
+elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     {
+        ecore_x_e_illume_quickpanel_set(sd->x.xwin, quickpanel);
+        if (quickpanel)
+          {
+             Ecore_X_Window_State states[2];
+
+             states[0] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
+             states[1] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
+             ecore_x_netwm_window_state_set(sd->x.xwin, states, 2);
+             ecore_x_icccm_hints_set(sd->x.xwin, 0, 0, 0, 0, 0, 0, 0);
+          }
+     }
+#else
+   (void)sd;
+   (void)quickpanel;
+#endif
+}
+
+EAPI Eina_Bool
+elm_win_quickpanel_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     return ecore_x_e_illume_quickpanel_get(sd->x.xwin);
+#else
+   (void)sd;
+#endif
+
+   return EINA_FALSE;
+}
+
+EAPI void
+elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     ecore_x_e_illume_quickpanel_priority_major_set(sd->x.xwin, priority);
+#else
+   (void)sd;
+   (void)priority;
+#endif
+}
+
+EAPI int
+elm_win_quickpanel_priority_major_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
+
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     return ecore_x_e_illume_quickpanel_priority_major_get(sd->x.xwin);
+#else
+   (void)sd;
+#endif
+
+   return -1;
+}
+
+EAPI void
+elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     ecore_x_e_illume_quickpanel_priority_minor_set(sd->x.xwin, priority);
+#else
+   (void)sd;
+   (void)priority;
+#endif
+}
+
+EAPI int
+elm_win_quickpanel_priority_minor_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
+
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     return ecore_x_e_illume_quickpanel_priority_minor_get(sd->x.xwin);
+#else
+   (void)sd;
+#endif
+
+   return -1;
+}
+
+EAPI void
+elm_win_quickpanel_zone_set(Evas_Object *obj, int zone)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     ecore_x_e_illume_quickpanel_zone_set(sd->x.xwin, zone);
+#else
+   (void)sd;
+   (void)zone;
+#endif
+}
+
+EAPI int
+elm_win_quickpanel_zone_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, 0);
+
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     return ecore_x_e_illume_quickpanel_zone_get(sd->x.xwin);
+#else
+   (void)sd;
+#endif
+
+   return 0;
 }
 
 #include "elm_win.eo.c"

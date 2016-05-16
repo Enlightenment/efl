@@ -270,17 +270,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             return: bool;
          }
       }
-      @property quickpanel_zone {
-         set {
-            [[Set which zone this quickpanel should appear in.]]
-         }
-         get {
-            [[Get which zone this quickpanel should appear in.]]
-         }
-         values {
-            zone: int; [[The requested zone for this quickpanel.]]
-         }
-      }
       @property maximized {
          set {
             [[Set the maximized state of a window.]]
@@ -569,17 +558,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             }
          }
       }
-      @property quickpanel_priority_minor {
-         set {
-            [[Set the minor priority of a quickpanel window.]]
-         }
-         get {
-            [[Get the minor priority of a quickpanel window.]]
-         }
-         values {
-            priority: int(-1); [[The minor priority for this quickpanel.]]
-         }
-      }
       @property sticky {
          set {
             [[Set the sticky state of the window.
@@ -633,17 +611,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          values {
             aspect: double; [[If 0, the window has no aspect limits,
                               otherwise it is width divided by height.]]
-         }
-      }
-      @property quickpanel_priority_major {
-         set {
-            [[Set the major priority of a quickpanel window.]]
-         }
-         get {
-            [[Get the major priority of a quickpanel window.]]
-         }
-         values {
-            priority: int(-1); [[The major priority for this quickpanel or -1.]]
          }
       }
       @property indicator_opacity {
@@ -831,20 +798,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          values {
             w: int; [[The base width.]]
             h: int; [[The base height.]]
-         }
-      }
-      @property quickpanel {
-         set {
-            [[Set a window to be an illume quickpanel window.
-
-              By default window objects are not quickpanel windows.
-            ]]
-         }
-         get {
-            [[Get if this window is a quickpanel or not.]]
-         }
-         values {
-            quickpanel: bool; [[The quickpanel flag.]]
          }
       }
       @property rotation_with_resize {
