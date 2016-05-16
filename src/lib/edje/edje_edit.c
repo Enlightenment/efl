@@ -13258,6 +13258,148 @@ _edje_generate_source_state_table(Edje_Part_Description_Common *pd, Eina_Strbuf 
    }
 }
 
+static void
+_edje_generate_source_state_text(Edje *ed, Edje_Part_Description_Common *pd,
+                                 Eina_Strbuf *buf)
+{
+   int attr_amount = 0;
+   int indent_space = 0;
+   Eina_Bool ret = EINA_TRUE;
+
+   Eina_Bool color_3 = EINA_FALSE;
+   Eina_Bool domain = EINA_FALSE;
+   Eina_Bool text = EINA_FALSE;
+   Eina_Bool font = EINA_FALSE;
+   Eina_Bool repch = EINA_FALSE;
+   Eina_Bool size = EINA_FALSE;
+   Eina_Bool text_class = EINA_FALSE;
+   Eina_Bool size_range = EINA_FALSE;
+   Eina_Bool fit = EINA_FALSE;
+   Eina_Bool min = EINA_FALSE;
+   Eina_Bool max = EINA_FALSE;
+   Eina_Bool align = EINA_FALSE;
+   Eina_Bool source = EINA_FALSE;
+   Eina_Bool text_source = EINA_FALSE;
+   Eina_Bool ellipsis = EINA_FALSE;
+   Eina_Bool style = EINA_FALSE;
+
+   Edje_Part_Description_Text *txt = (Edje_Part_Description_Text *)pd;
+
+   text = (edje_string_get(&txt->text.text) == NULL) ? EINA_FALSE : EINA_TRUE;
+   font = (edje_string_get(&txt->text.font) == NULL) ? EINA_FALSE : EINA_TRUE;
+   repch = (edje_string_get(&txt->text.repch) == NULL) ? EINA_FALSE : EINA_TRUE;
+   size = (txt->text.size == 0) ? EINA_FALSE : EINA_TRUE;
+   text_class = (txt->text.text_class == NULL) ? EINA_FALSE : EINA_TRUE;
+   domain = (txt->text.domain == NULL) ? EINA_FALSE : EINA_TRUE;
+   size_range = ((txt->text.size_range_min == 0) && (txt->text.size_range_max == 0)) ? EINA_FALSE : EINA_TRUE;
+   fit = ((txt->text.fit_x == 0) && (txt->text.fit_y == 0)) ? EINA_FALSE : EINA_TRUE;
+   min = ((txt->text.min_x == 0) && (txt->text.min_y == 0)) ? EINA_FALSE : EINA_TRUE;
+   max = ((txt->text.max_x == 0) && (txt->text.max_y == 0)) ? EINA_FALSE : EINA_TRUE;
+   align = ((txt->text.align.x == 0.5) && (txt->text.align.y == 0.5)) ? EINA_FALSE : EINA_TRUE;
+   source = (txt->text.id_source == -1) ? EINA_FALSE : EINA_TRUE;
+   text_source = (txt->text.id_text_source == -1) ? EINA_FALSE : EINA_TRUE;
+   ellipsis = (txt->text.ellipsis == 0) ? EINA_FALSE : EINA_TRUE;
+   style = (edje_string_id_get(&txt->text.style) == 0) ? EINA_FALSE : EINA_TRUE;
+   color_3 = ((txt->text.color3.r == 0) && (txt->text.color3.g == 0) &&
+              (txt->text.color3.b == 0) && (txt->text.color3.a == 128)) ? EINA_FALSE : EINA_TRUE;
+
+
+   if (color_3)
+     BUF_APPENDF(I5 "color3: %d %d %d %d;\n",
+                      txt->text.color3.r, txt->text.color3.g, txt->text.color3.b, txt->text.color3.a);
+
+
+   attr_amount = text + font + repch + size + text_class + domain +
+                 size_range + fit + min + max + align + source + text_source + ellipsis + style;
+
+   if (attr_amount == 0) return;
+
+   if (attr_amount > 1)
+     indent_space = strlen(I6);
+
+   if (attr_amount > 1)
+     BUF_APPEND(I5 "text {\n");
+   else
+     BUF_APPEND(I5 "text.");
+
+   if (text)
+     {
+        if (txt->text.text.id)
+          BUF_APPENDF("%*stext: _(\"%s\");\n", indent_space, "", edje_string_id_get(&txt->text.text));
+        else if (edje_string_get(&txt->text.text) == NULL)
+          BUF_APPENDF("%*stext: \"\";\n", indent_space, "");
+        else
+          BUF_APPENDF("%*stext: \"%s\";\n", indent_space, "", edje_string_get(&txt->text.text));
+     }
+
+   if (font)
+     {
+        if (txt->text.font.id)
+          BUF_APPENDF("%*sfont: _(\"%s\");\n", indent_space, "", edje_string_id_get(&txt->text.font));
+        else if (edje_string_get(&txt->text.font) == NULL)
+          BUF_APPENDF("%*sfont: \"\";\n", indent_space, "");
+        else
+          BUF_APPENDF("%*sfont: \"%s\";\n", indent_space, "", edje_string_get(&txt->text.font));
+     }
+
+   if (repch)
+     BUF_APPENDF("%*srepch: \"%s\";\n", indent_space, "", edje_string_id_get(&txt->text.repch));
+
+   if (size)
+     BUF_APPENDF("%*ssize: %d;\n", indent_space, "", txt->text.size);
+
+   if (text_class)
+     BUF_APPENDF("%*stext_class: \"%s\";\n", indent_space, "", txt->text.text_class);
+
+   if (domain)
+     BUF_APPENDF("%*sdomain: \"%s\";\n", indent_space, "", txt->text.domain);
+
+   if (size_range)
+     BUF_APPENDF("%*ssize_range: %d %d;\n", indent_space, "", txt->text.size_range_min, txt->text.size_range_max);
+
+   if (fit)
+     BUF_APPENDF("%*sfit: %d %d;\n", indent_space, "", txt->text.fit_x, txt->text.fit_y);
+
+   if (min)
+     BUF_APPENDF("%*smin: %d %d;\n", indent_space, "", txt->text.min_x, txt->text.min_y);
+
+   if (max)
+     BUF_APPENDF("%*smax: %d %d;\n", indent_space, "", txt->text.max_x, txt->text.max_y);
+
+   if (align)
+     {
+        char align_str[strlen("align") + indent_space + 1];
+        snprintf(align_str, strlen("align") + indent_space + 1,
+                 "%*salign", indent_space, "");
+        _edje_source_with_double_values_append(align_str, 2,
+                                            TO_DOUBLE(txt->text.align.x),
+                                            TO_DOUBLE(txt->text.align.y),
+                                            buf, &ret);
+     }
+
+   if (source)
+     BUF_APPENDF("%*ssource: \"%s\";\n", indent_space, "", _edje_part_name_find(ed, txt->text.id_source));
+
+   if (text_source)
+     BUF_APPENDF("%*stext_source: \"%s\";\n", indent_space, "", _edje_part_name_find(ed, txt->text.id_text_source));
+
+   if (ellipsis)
+     {
+        char ellipsis_str[strlen("ellipsis") + indent_space + 1];
+        snprintf(ellipsis_str, strlen("ellipsis") + indent_space + 1,
+                 "%*sellipsis", indent_space, "");
+         _edje_source_with_double_values_append(ellipsis_str, 1,
+                                               txt->text.ellipsis,
+                                               0.0, buf, &ret);
+     }
+   if (style)
+     BUF_APPENDF("%*sstyle: \"%s\";\n", indent_space, "", edje_string_id_get(&txt->text.style));
+
+   //TODO Filter
+   if (attr_amount > 1)
+     BUF_APPEND(I5 "}\n");
+}
+
 static Eina_Bool
 _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *state, double value, Eina_Strbuf *buf)
 {
@@ -13390,60 +13532,9 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
      _edje_generate_source_state_proxy(ed, pd, buf);
 
    //Text
-   if ((rp->part->type == EDJE_PART_TYPE_TEXT) || (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
-     {
-        Edje_Part_Description_Text *txt;
-
-        txt = (Edje_Part_Description_Text *)pd;
-
-        BUF_APPEND(I5 "text {\n");
-        if (edje_string_get(&txt->text.text))
-          {
-             if (txt->text.text.id)
-               BUF_APPENDF(I6 "text: _(\"%s\");\n", edje_string_id_get(&txt->text.text));
-             else
-               BUF_APPENDF(I6 "text: \"%s\";\n", edje_string_get(&txt->text.text));
-          }
-        if (edje_string_get(&txt->text.font))
-          {
-             if (txt->text.font.id)
-               BUF_APPENDF(I6 "font: _(\"%s\");\n", edje_string_id_get(&txt->text.font));
-             else
-               BUF_APPENDF(I6 "font: \"%s\";\n", edje_string_get(&txt->text.font));
-          }
-        if (edje_string_id_get(&txt->text.repch))
-          BUF_APPENDF(I6 "repch: \"%s\";\n", edje_string_id_get(&txt->text.repch));
-        if (txt->text.size)
-          BUF_APPENDF(I6 "size: %d;\n", txt->text.size);
-        if (txt->text.text_class)
-          BUF_APPENDF(I6 "text_class: \"%s\";\n", txt->text.text_class);
-        if (txt->text.size_range_min || txt->text.size_range_max)
-          BUF_APPENDF(I6 "size_range: %d %d;\n", txt->text.size_range_min, txt->text.size_range_max);
-        if (txt->text.fit_x || txt->text.fit_y)
-          BUF_APPENDF(I6 "fit: %d %d;\n", txt->text.fit_x, txt->text.fit_y);
-        if (txt->text.min_x || txt->text.min_y)
-          BUF_APPENDF(I6 "min: %d %d;\n", txt->text.min_x, txt->text.min_y);
-        if (txt->text.max_x || txt->text.max_y)
-          BUF_APPENDF(I6 "max: %d %d;\n", txt->text.max_x, txt->text.max_y);
-        if (TO_DOUBLE(txt->text.align.x) != 0.5 || TO_DOUBLE(txt->text.align.y) != 0.5)
-          _edje_source_with_double_values_append(I6 "align", 2,
-                                                 TO_DOUBLE(txt->text.align.x),
-                                                 TO_DOUBLE(txt->text.align.y),
-                                                 buf, &ret);
-
-        if (txt->text.id_source != -1)
-          BUF_APPENDF(I6 "source: \"%s\";\n", _edje_part_name_find(ed, txt->text.id_source));
-        if (txt->text.id_text_source != -1)
-          BUF_APPENDF(I6 "text_source: \"%s\";\n", _edje_part_name_find(ed, txt->text.id_text_source));
-        if (txt->text.ellipsis)
-          _edje_source_with_double_values_append(I6 "ellipsis", 1,
-                                                 txt->text.ellipsis,
-                                                 0.0, buf, &ret);
-        if (edje_string_id_get(&txt->text.style))
-          BUF_APPENDF(I6 "style: \"%s\";\n", edje_string_id_get(&txt->text.style));
-        //TODO Filter
-        BUF_APPEND(I5 "}\n");
-     }
+   if ((rp->part->type == EDJE_PART_TYPE_TEXT) ||
+       (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+     _edje_generate_source_state_text(ed, pd, buf);
 
    //External
    if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
