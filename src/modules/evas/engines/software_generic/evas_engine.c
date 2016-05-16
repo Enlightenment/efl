@@ -1110,35 +1110,49 @@ static void *
 eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 {
    Evas_Native_Surface *ns = native;
-   Image_Entry *im = image, *im2 = NULL;
+   RGBA_Image *im = image;
+   Image_Entry *ie = image, *ie2;
 
-   if (!im || !ns) return im;
+   if (!im) return NULL;
+   if (!ns)
+     {
+        if (im->native.data && im->native.func.free)
+          im->native.func.free(im);
+        return NULL;
+     }
 
    if ((ns->type == EVAS_NATIVE_SURFACE_EVASGL) &&
        (ns->version == EVAS_NATIVE_SURFACE_VERSION))
      {
 
-        im2 = evas_cache_image_data(evas_common_image_cache_get(),
-                                    im->w, im->h,
+        ie2 = evas_cache_image_data(evas_common_image_cache_get(),
+                                    ie->w, ie->h,
                                     ns->data.evasgl.surface, 1,
                                     EVAS_COLORSPACE_ARGB8888);
      }
    else
-     im2 = evas_cache_image_data(evas_common_image_cache_get(), 
-                                 im->w, im->h, 
+     ie2 = evas_cache_image_data(evas_common_image_cache_get(),
+                                 ie->w, ie->h,
                                  NULL, 1,
                                  EVAS_COLORSPACE_ARGB8888);
-   if (im->references > 1)
+   if (ie->references > 1)
      ERR("Setting native with more than one references for im=%p", im);
 
+   if (im->native.data)
+     {
+        if (im->native.func.free)
+          im->native.func.free(im);
+     }
+
 #ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(im))
-     evas_cache2_image_close(im);
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
+     evas_cache2_image_close(ie);
    else
 #endif
-   evas_cache_image_drop(im);
+   evas_cache_image_drop(ie);
 
-   return im2;
+
+   return ie2;
 }
 
 static void *
