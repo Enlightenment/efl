@@ -636,18 +636,13 @@ ecore_wl2_display_connect(const char *name)
      {
         /* client wants to connect to default display */
         n = getenv("WAYLAND_DISPLAY");
+        if (!n) n = "wayland-0";
 
-        if (!n)
-          n = "wayland-0";
+        /* we have a default wayland display */
 
-        if (n)
-          {
-             /* we have a default wayland display */
-
-             /* check hash of cached client displays for this name */
-             ewd = eina_hash_find(_client_displays, n);
-             if (ewd) goto found;
-          }
+        /* check hash of cached client displays for this name */
+        ewd = eina_hash_find(_client_displays, n);
+        if (ewd) goto found;
      }
    else
      {
