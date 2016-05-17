@@ -170,7 +170,7 @@ START_TEST(eina_test_vector3_operations)
    fail_if(res != 75);
 
    res = eina_vector3_distance_get(&v2, &v1);
-   fail_if((res - sqrt(29)) > DBL_EPSILON);
+   fail_if((res - sqrt(29)) > (DBL_EPSILON * 2.0));
 
    res = eina_vector3_distance_square_get(&v2, &v1);
    fail_if(res != 29);
