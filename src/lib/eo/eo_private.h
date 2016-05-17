@@ -97,8 +97,8 @@ struct _Eo_Object
      Eina_List *composite_objects;
      Eo_Del_Intercept del_intercept;
 
-     int refcount;
-     int datarefcount;
+     short refcount;
+     short datarefcount;
 
      Eina_Bool condtor_done:1;
      Eina_Bool finalized:1;
