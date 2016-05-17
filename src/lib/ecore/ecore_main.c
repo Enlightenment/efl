@@ -1030,6 +1030,8 @@ quit:
 void
 _ecore_main_loop_init(void)
 {
+   // Please note that this function is being also called in case of a bad fd to reset the main loop.
+
    DBG("_ecore_main_loop_init");
    epoll_fd = epoll_create(1);
    if ((epoll_fd < 0) && HAVE_EPOLL)
@@ -1117,7 +1119,7 @@ _ecore_main_loop_init(void)
      DBG("loaded dlsyms uv");
    }
 #endif
-   
+
    /* setup for the g_main_loop only integration */
 #ifdef USE_G_MAIN_LOOP
    ecore_glib_source = g_source_new(&ecore_gsource_funcs, sizeof (GSource));
@@ -1155,13 +1157,13 @@ _ecore_main_loop_init(void)
 #endif
 
    detect_time_changes_start();
-
-   _mainloop_singleton = eo_add(EFL_LOOP_CLASS, NULL);
 }
 
 void
 _ecore_main_loop_shutdown(void)
 {
+   // Please note that _ecore_main_loop_shutdown is called in cycle to restart the main loop in case of a bad fd
+
 #ifdef USE_G_MAIN_LOOP
    if (ecore_glib_source)
      {

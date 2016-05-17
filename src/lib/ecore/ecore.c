@@ -257,6 +257,8 @@ ecore_init(void)
    vpath = eo_add(EFL_VPATH_CORE_CLASS, NULL);
    if (vpath) efl_vpath_manager_register(EFL_VPATH_MANAGER_CLASS, 0, vpath);
 
+   _mainloop_singleton = eo_add(EFL_LOOP_CLASS, NULL);
+
    _ecore_signal_init();
 #ifndef HAVE_EXOTIC
    _ecore_exe_init();
