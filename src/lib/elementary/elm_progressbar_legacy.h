@@ -55,7 +55,7 @@ EAPI Evas_Coord elm_progressbar_span_size_get(const Evas_Object *obj);
  *
  * Use this call to set progress bar levels.
  *
- * @note If you passes a value out of the specified range for @c val, it will
+ * @note If you pass a value out of the specified range for @c val, it will
  * be interpreted as the closest of the boundary values in the range.
  *
  * @param[in] val The progress value (must be between $0.0 and 1.0)
@@ -65,15 +65,10 @@ EAPI Evas_Coord elm_progressbar_span_size_get(const Evas_Object *obj);
 EAPI void elm_progressbar_value_set(Evas_Object *obj, double val);
 
 /**
- * @brief Control the progress value (in percentage) on a given progress bar
+ * @brief Get the progress value (in percentage) on a given progress bar
  * widget
  *
- * Use this call to set progress bar levels.
- *
- * @note If you passes a value out of the specified range for @c val, it will
- * be interpreted as the closest of the boundary values in the range.
- *
- * @return The progress value (must be between $0.0 and 1.0)
+ * @return The progress value (between $0.0 and 1.0)
  *
  * @ingroup Elm_Progressbar
  */

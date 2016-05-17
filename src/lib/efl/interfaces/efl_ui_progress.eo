@@ -26,7 +26,7 @@ interface Efl.Ui.Progress {
 
            Use this call to set progress levels.
 
-           Note: If you passes a value out of the specified range for
+           Note: If you pass a value out of the specified range for
            $val, it will be interpreted as the closest of the boundary
            values in the range.]]
          set {
