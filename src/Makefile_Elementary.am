@@ -59,7 +59,6 @@ elm_public_eolian_files = \
 	lib/elementary/elm_list.eo \
 	lib/elementary/elm_map.eo \
 	lib/elementary/elm_map_pan.eo \
-	lib/elementary/elm_mapbuf.eo \
 	lib/elementary/elm_menu.eo \
 	lib/elementary/elm_multibuttonentry.eo \
 	lib/elementary/elm_naviframe.eo \
@@ -127,6 +126,7 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_box.eo \
 	lib/elementary/elm_grid.eo \
 	lib/elementary/elm_table.eo \
+	lib/elementary/elm_mapbuf.eo \
 	$(NULL)
 
 elm_eolian_type_files = \
@@ -407,7 +407,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_map_eo.h \
 	lib/elementary/elm_map_legacy.h \
 	lib/elementary/elm_mapbuf.h \
-	lib/elementary/elm_mapbuf_eo.h \
 	lib/elementary/elm_mapbuf_legacy.h \
 	lib/elementary/elm_menu.h \
 	lib/elementary/elm_menu_eo.h \

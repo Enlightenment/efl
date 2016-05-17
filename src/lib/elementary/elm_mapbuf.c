@@ -9,6 +9,7 @@
 #include "elm_priv.h"
 #include "elm_widget_mapbuf.h"
 #include "elm_widget_container.h"
+#include "elm_mapbuf.eo.h"
 
 #define MY_CLASS ELM_MAPBUF_CLASS
 

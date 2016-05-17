@@ -1,7 +1,7 @@
 class Elm.Mapbuf (Elm.Widget, Efl.Container)
 {
    legacy_prefix: elm_mapbuf;
-   eo_prefix: elm_obj_mapbuf;
+   eo_prefix: elm_private_mapbuf;
    methods {
       @property auto {
          set {
