@@ -247,7 +247,6 @@ static void st_collections_base_scale(void);
 
 static void ob_collections_group(void);
 static void st_collections_group_name(void);
-static void st_collections_group_scene_size(void);
 static void st_collections_group_inherit_only(void);
 static void st_collections_group_inherit(void);
 static void st_collections_group_program_source(void);
@@ -258,6 +257,7 @@ static void st_collections_group_script_recursion(void);
 static void st_collections_group_alias(void);
 static void st_collections_group_min(void);
 static void st_collections_group_max(void);
+static void st_collections_group_scene_size(void);
 static void st_collections_group_broadcast_signal(void);
 static void st_collections_group_data_item(void);
 static void st_collections_group_orientation(void);
@@ -705,7 +705,6 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.vibrations.sample.name", st_collections_group_vibration_sample_name}, /* dup */
      {"collections.group.vibrations.sample.source", st_collections_group_vibration_sample_source}, /* dup */
      {"collections.group.name", st_collections_group_name},
-     {"collections.group.scene_size", st_collections_group_scene_size},
      {"collections.group.program_source", st_collections_group_program_source},
      {"collections.group.inherit", st_collections_group_inherit},
      {"collections.group.inherit_only", st_collections_group_inherit_only},
@@ -717,6 +716,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.alias", st_collections_group_alias},
      {"collections.group.min", st_collections_group_min},
      {"collections.group.max", st_collections_group_max},
+     {"collections.group.scene_size", st_collections_group_scene_size},
      {"collections.group.broadcast_signal", st_collections_group_broadcast_signal},
      {"collections.group.orientation", st_collections_group_orientation},
      {"collections.group.mouse_events", st_collections_group_mouse_events},
@@ -3961,6 +3961,9 @@ ob_collections_group(void)
    pcp = (Edje_Part_Collection_Parser *)pc;
    pcp->default_mouse_events = 1;
 
+   pc->scene_size.width = 0;
+   pc->scene_size.height = 0;
+
 #ifdef HAVE_EPHYSICS
    pc->physics.world.gravity.x = 0;
    pc->physics.world.gravity.y = 294;
@@ -4031,28 +4034,6 @@ st_collections_group_name(void)
 {
    check_arg_count(1);
    _group_name(parse_str(0));
-}
-
-/**
-    @page edcref
-    @property
-        scene_size
-    @parameters
-        [scene size]
-    @effect
-        Height and width of scene
-    @endproperty
-*/
-static void
-st_collections_group_scene_size(void)
-{
-   Edje_Part_Collection *current_pc;
-
-   check_arg_count(2);
-
-   current_pc = eina_list_data_get(eina_list_last(edje_collections));
-   current_pc->scene_size.width = parse_float(0);
-   current_pc->scene_size.height = parse_float(1);
 }
 
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
@@ -4689,6 +4670,28 @@ st_collections_group_max(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->prop.max.w = parse_int_range(0, 0, 0x7fffffff);
    pc->prop.max.h = parse_int_range(1, 0, 0x7fffffff);
+}
+
+/**
+    @page edcref
+    @property
+        scne_size
+    @parameters
+        [width] [height]
+    @effect
+        Size of scene.
+    @endproperty
+*/
+static void
+st_collections_group_scene_size(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   pc->scene_size.width = parse_float(0);
+   pc->scene_size.height = parse_float(1);
 }
 
 /**
@@ -6037,6 +6040,9 @@ st_collections_group_parts_part_type(void)
                      "TABLE", EDJE_PART_TYPE_TABLE,
                      "EXTERNAL", EDJE_PART_TYPE_EXTERNAL,
                      "PROXY", EDJE_PART_TYPE_PROXY,
+                     "MESH_NODE", EDJE_PART_TYPE_MESH_NODE,
+                     "LIGHT", EDJE_PART_TYPE_LIGHT,
+                     "CAMERA", EDJE_PART_TYPE_CAMERA,
                      "SPACER", EDJE_PART_TYPE_SPACER,
                      "SNAPSHOT", EDJE_PART_TYPE_SNAPSHOT,
                      NULL);

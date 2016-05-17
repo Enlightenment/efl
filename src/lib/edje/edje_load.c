@@ -470,6 +470,13 @@ _edje_programs_patterns_clean(Edje_Part_Collection *edc)
    edc->patterns.programs.u.programs.globing = NULL;
 }
 
+void
+_evas_object_viewport_del(void *data, Evas *_evas EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void   *event_info EINA_UNUSED)
+{
+   Eo* viewport = (Eo*) data;
+   evas_object_del(viewport);
+}
+
 #ifdef HAVE_EPHYSICS
 static void
 _edje_physics_world_update_cb(void *data, EPhysics_World *world EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -850,7 +857,12 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                           evas_canvas3d_node_camera_set(rp->node, camera);
 
                           rp->object = evas_object_image_filled_add(ed->base->evas);
-                          evas_object_resize(rp->object, ed->collection->scene_size.width, ed->collection->scene_size.height);
+
+                          Eo* viewport = evas_object_image_filled_add(ed->base->evas);
+                          evas_object_image_source_set(rp->object, viewport);
+                          evas_object_show(viewport);
+                          evas_object_event_callback_add(rp->object, EVAS_CALLBACK_DEL, _evas_object_viewport_del, viewport);
+
                           break;
                        }
 

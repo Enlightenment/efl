@@ -4658,10 +4658,25 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              break;
            case EDJE_PART_TYPE_CAMERA:
              {
+                Evas_Object *viewport;
                 Evas_Canvas3D_Camera *camera = NULL;
                 Edje_Part_Description_Camera *pd_camera;
 
+                efl_gfx_size_set(ep->object, pf->req.w, pf->req.h);
+
                 pd_camera = (Edje_Part_Description_Camera*) ep->chosen_description;
+
+                efl_gfx_position_set(ep->object, ed->x + pf->final.x, ed->y + pf->final.y),
+                efl_gfx_size_set(ep->object, pf->final.w, pf->final.h);
+
+                viewport = evas_object_image_source_get(ep->object);
+
+                efl_gfx_size_set(viewport, pf->req.w, pf->req.h);
+
+                evas_object_image_source_visible_set(ep->object, EINA_FALSE);
+                evas_object_image_source_events_set(ep->object, EINA_TRUE);
+                evas_object_show(ep->object);
+
                 camera = evas_canvas3d_node_camera_get(ep->node);
 
                 evas_canvas3d_camera_projection_perspective_set(camera, pd_camera->camera.camera.fovy, pd_camera->camera.camera.aspect, pd_camera->camera.camera.frustum_near, pd_camera->camera.camera.frustum_far);
