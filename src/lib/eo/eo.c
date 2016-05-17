@@ -420,7 +420,7 @@ end:
 
              if (EINA_LIKELY(func->func && func->src))
                {
-                  call->eo_id = _eo_id_get(emb_obj);
+                  call->eo_id = _eo_obj_id_get(emb_obj);
                   call->obj = obj; /* FIXME-eo4: Hack, we retain the previous object so we unref it... */
                   call->func = func->func;
                   call->data = _eo_data_scope_get(emb_obj, func->src);
@@ -660,7 +660,7 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
    EINA_MAGIC_SET((Eo_Header *) obj, EO_EINA_MAGIC);
 #endif
    obj->header.id = _eo_id_allocate(obj);
-   Eo *eo_id = _eo_id_get(obj);
+   Eo *eo_id = _eo_obj_id_get(obj);
 
    _eo_condtor_reset(obj);
 
@@ -1459,7 +1459,7 @@ _eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Cl
    (obj->datarefcount)++;
 #ifdef EO_DEBUG
    Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
-   xref->ref_obj = _eo_id_get(ref_obj);
+   xref->ref_obj = _eo_obj_id_get(ref_obj);
    xref->file = file;
    xref->line = line;
 
@@ -1488,7 +1488,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
 #endif
    if (obj->datarefcount == 0)
      {
-        ERR("Data for object %zx (%s) is already not referenced.", (size_t)_eo_id_get(obj), obj->klass->desc->name);
+        ERR("Data for object %zx (%s) is already not referenced.", (size_t)_eo_obj_id_get(obj), obj->klass->desc->name);
      }
    else
      {
@@ -1498,7 +1498,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
    Eo_Xref_Node *xref = NULL;
    EINA_INLIST_FOREACH(obj->data_xrefs, xref)
      {
-        if (xref->ref_obj == _eo_id_get(ref_obj))
+        if (xref->ref_obj == _eo_obj_id_get(ref_obj))
           break;
      }
 
@@ -1509,7 +1509,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
      }
    else
      {
-        ERR("ref_obj (0x%zx) does not reference data (%p) of obj (0x%zx).", (size_t)_eo_id_get(ref_obj), data, (size_t)_eo_id_get(obj));
+        ERR("ref_obj (0x%zx) does not reference data (%p) of obj (0x%zx).", (size_t)_eo_obj_id_get(ref_obj), data, (size_t)_eo_obj_id_get(obj));
      }
 #else
    (void) ref_obj;

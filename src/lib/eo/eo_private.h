@@ -195,7 +195,7 @@ Eo_Class *_eo_class_id_get(const _Eo_Class *klass)
 }
 
 static inline
-Eo *_eo_id_get(const _Eo_Object *obj)
+Eo *_eo_obj_id_get(const _Eo_Object *obj)
 {
    return _eo_header_id_get((Eo_Header *) obj);
 }
@@ -214,11 +214,11 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
 
    const _Eo_Class *klass = obj->klass;
 
-   eo_event_callback_call(_eo_id_get(obj), EO_BASE_EVENT_DEL, NULL);
+   eo_event_callback_call(_eo_obj_id_get(obj), EO_BASE_EVENT_DEL, NULL);
 
    _eo_condtor_reset(obj);
 
-   eo_destructor(_eo_id_get(obj));
+   eo_destructor(_eo_obj_id_get(obj));
 
    if (!obj->condtor_done)
      {
@@ -232,7 +232,7 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
         Eo *emb_obj;
         EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
           {
-             eo_composite_detach(_eo_id_get(obj), emb_obj);
+             eo_composite_detach(_eo_obj_id_get(obj), emb_obj);
           }
      }
 
@@ -251,7 +251,7 @@ _eo_free(_Eo_Object *obj)
         ERR("Object %p data still referenced %d time(s).", obj, obj->datarefcount);
      }
 #endif
-   _eo_id_release((Eo_Id) _eo_id_get(obj));
+   _eo_id_release((Eo_Id) _eo_obj_id_get(obj));
 
    eina_spinlock_take(&klass->objects.trash_lock);
    if (klass->objects.trash_count <= 8)
@@ -287,20 +287,20 @@ _eo_unref(_Eo_Object *obj)
 
         if (obj->destructed)
           {
-             ERR("Object %p already destructed.", _eo_id_get(obj));
+             ERR("Object %p already destructed.", _eo_obj_id_get(obj));
              return;
           }
 
         if (obj->del_triggered)
           {
-             ERR("Object %p deletion already triggered. You wrongly call eo_unref() within a destructor.", _eo_id_get(obj));
+             ERR("Object %p deletion already triggered. You wrongly call eo_unref() within a destructor.", _eo_obj_id_get(obj));
              return;
           }
 
         if (obj->del_intercept)
           {
              (obj->refcount)++;
-             obj->del_intercept(_eo_id_get(obj));
+             obj->del_intercept(_eo_obj_id_get(obj));
              return;
           }
 
@@ -322,7 +322,7 @@ _eo_unref(_Eo_Object *obj)
           {
              Eina_Inlist *nitr = obj->data_xrefs->next;
              Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
-             ERR("Data of object 0x%lx is still referenced by object %p", (unsigned long) _eo_id_get(obj), xref->ref_obj);
+             ERR("Data of object 0x%lx is still referenced by object %p", (unsigned long) _eo_obj_id_get(obj), xref->ref_obj);
 
              free(xref);
              obj->data_xrefs = nitr;

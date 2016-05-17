@@ -390,7 +390,7 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
              name_glob = _hasglob(name);
              EINA_INLIST_FOREACH(pd->children, child_eo)
                {
-                  child = _eo_id_get(child_eo);
+                  child = _eo_obj_id_get(child_eo);
                   id = eo_id_get(child);
                   klass_name = eo_class_name_get(eo_class_get(child));
                   if (_idmatch(klass, klass_glob, klass_name) &&
@@ -408,7 +408,7 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
                   // we have a glob - fnmatch
                   EINA_INLIST_FOREACH(pd->children, child_eo)
                     {
-                       child = _eo_id_get(child_eo);
+                       child = _eo_obj_id_get(child_eo);
                        id = eo_id_get(child);
                        if ((id) && (_idmatch(search, EINA_TRUE, id)))
                          return child;
@@ -421,7 +421,7 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
                   // fast path for simple "name"
                   EINA_INLIST_FOREACH(pd->children, child_eo)
                     {
-                       child = _eo_id_get(child_eo);
+                       child = _eo_obj_id_get(child_eo);
                        id = eo_id_get(child);
                        if ((id) && (_idmatch(search, EINA_FALSE, id)))
                          return child;
@@ -570,7 +570,7 @@ _eo_children_iterator_next(Eo_Children_Iterator *it, void **data)
    if (data)
      {
         _Eo_Object *eo_obj = EINA_INLIST_CONTAINER_GET(it->current, _Eo_Object);
-        *data = _eo_id_get(eo_obj);
+        *data = _eo_obj_id_get(eo_obj);
      }
    it->current = it->current->next;
 
@@ -1420,7 +1420,7 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    // extra things like removes other children too later on in the list
    while (pd->children)
      {
-        child = _eo_id_get(EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object));
+        child = _eo_obj_id_get(EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object));
         eo_parent_set(child, NULL);
      }
 
