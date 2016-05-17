@@ -1063,6 +1063,8 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
    col_width = elm_code_widget_line_text_column_width_to_position(widget, line, position + length) -
                elm_code_widget_line_text_column_width_to_position(widget, line, position);
 
+   // a workaround for when the cursor position would be off the line width
+   _elm_code_widget_resize(widget, line);
    elm_obj_code_widget_cursor_position_set(widget, col + col_width, row);
    eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
