@@ -65,14 +65,14 @@ START_TEST(ecore_test_ecore_audio_obj_pulse)
    in = eo_add(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL);
    fail_if(!in);
 
-   ecore_audio_obj_name_set(in, "modem.wav");
-   ret = ecore_audio_obj_source_set(in, TESTS_SRC_DIR"/modem.wav");
+   ecore_audio_obj_name_set(in, "sample.wav");
+   ret = ecore_audio_obj_source_set(in, TESTS_SRC_DIR"/sample.wav");
    fail_if(!ret);
 
    out = eo_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL);
    fail_if(!out);
 
-   ecore_timer_add(0.3, _seek_vol, in);
+   ecore_timer_add(1.8, _seek_vol, in);
 
    eo_event_callback_add(in, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _finished_cb, NULL);
    eo_event_callback_add(out, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _failed_cb, &pulse_context_failed);
@@ -250,12 +250,12 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    ret = ecore_audio_obj_format_set(in, ECORE_AUDIO_FORMAT_AUTO);
    fail_if(!ret);
 
-   ecore_audio_obj_name_set(in, "sms.ogg");
-   ret = ecore_audio_obj_source_set(in, TESTS_SRC_DIR"/sms.ogg");
+   ecore_audio_obj_name_set(in, "sample.ogg");
+   ret = ecore_audio_obj_source_set(in, TESTS_SRC_DIR"/sample.ogg");
    fail_if(!ret);
 
    src = ecore_audio_obj_source_get(in);
-   ck_assert_str_eq(src, TESTS_SRC_DIR"/sms.ogg");
+   ck_assert_str_eq(src, TESTS_SRC_DIR"/sample.ogg");
 
    fmt = ecore_audio_obj_format_get(in);
    fail_if(fmt != ECORE_AUDIO_FORMAT_OGG);
@@ -275,11 +275,11 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    len = ecore_audio_obj_in_seek(in, 0.5, SEEK_SET);
    fail_if(len != 0.5);
 
-   len = ecore_audio_obj_in_seek(in, 0.5, SEEK_CUR);
-   fail_if(len != 1.0);
+   len = ecore_audio_obj_in_seek(in, 1.0, SEEK_CUR);
+   fail_if(len != 1.5);
 
-   len = ecore_audio_obj_in_seek(in, -1.0, SEEK_END);
-   fail_if(fabs(rem - 1 - len) > 0.1);
+   len = ecore_audio_obj_in_seek(in, -1.5, SEEK_END);
+   fail_if(fabs(rem - 1 - len) > 0.6);
 
    out = eo_add(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
    fail_if(!out);
