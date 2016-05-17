@@ -42,6 +42,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
 {
    legacy_prefix: elm_list;
    eo_prefix: elm_obj_list;
+   event_prefix: elm_list;
    methods {
       @property horizontal {
          [[Control horizontal mode on the list object.

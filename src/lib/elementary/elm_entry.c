@@ -3945,8 +3945,8 @@ _elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
    evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ENTRY);
-   eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_ADD, _cb_added, NULL);
-   eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
+   eo_event_callback_add(obj, EO_EVENT_CALLBACK_ADD, _cb_added, NULL);
+   eo_event_callback_add(obj, EO_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
 
    return obj;
 }

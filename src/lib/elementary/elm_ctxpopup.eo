@@ -12,6 +12,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
 {
    legacy_prefix: elm_ctxpopup;
    eo_prefix: elm_obj_ctxpopup;
+   event_prefix: elm_ctxpopup;
    methods {
       @property auto_hide_disabled {
          set {

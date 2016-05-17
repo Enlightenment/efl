@@ -21,6 +21,7 @@ class Elm.Dayselector (Elm.Layout)
 {
    legacy_prefix: elm_dayselector;
    eo_prefix: elm_obj_dayselector;
+   event_prefix: elm_dayselector;
    methods {
       @property week_start {
          set {

@@ -63,8 +63,8 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
 
-   eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_ADD, _cb_added, NULL);
-   eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_DEL, _cb_deled, NULL);
+   eo_event_callback_add(obj, EO_EVENT_CALLBACK_ADD, _cb_added, NULL);
+   eo_event_callback_add(obj, EO_EVENT_CALLBACK_DEL, _cb_deled, NULL);
 
    eo_key_data_set(obj, "cb_count", NULL);
 

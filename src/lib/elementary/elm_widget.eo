@@ -24,6 +24,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
 {
    legacy_prefix: elm_widget;
    eo_prefix: elm_obj_widget;
+   event_prefix: elm_widget;
    data: Elm_Widget_Smart_Data;
    methods {
       @property focus {

@@ -3,6 +3,7 @@ class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
 {
    legacy_prefix: elm_progressbar;
    eo_prefix: elm_obj_progressbar;
+   event_prefix: elm_progressbar;
    methods {
       @property pulse {
          [[Control whether a given progress bar widget is at "pulsing mode" or not.

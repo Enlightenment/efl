@@ -3,6 +3,7 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
 {
    legacy_prefix: elm_fileselector_entry;
    eo_prefix: elm_obj_fileselector_entry;
+   event_prefix: elm_fileselector_entry;
    methods {
       @property inwin_mode {
          set {

@@ -1,4 +1,5 @@
 class Events {
+   event_prefix: totally_not_events;
    events {
       clicked @beta; [[Comment for clicked]]
       clicked,double: Evas_Event_Clicked_Double_Info; /* No comment */

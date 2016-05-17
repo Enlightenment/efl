@@ -5,6 +5,7 @@ class Elm.Multibuttonentry (Elm.Layout)
 {
    legacy_prefix: elm_multibuttonentry;
    eo_prefix: elm_obj_multibuttonentry;
+   event_prefix: elm_multibuttonentry;
    methods {
       @property editable {
          [[Control if the multibuttonentry is to be editable or not.

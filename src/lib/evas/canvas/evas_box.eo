@@ -8,6 +8,7 @@ class Evas.Box (Evas.Smart.Clipped)
 {
    legacy_prefix: evas_object_box;
    eo_prefix: evas_obj_box;
+   event_prefix: evas_box;
    data: Evas_Object_Box_Data;
    methods {
       @property align {

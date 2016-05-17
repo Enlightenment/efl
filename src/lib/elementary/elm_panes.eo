@@ -3,6 +3,7 @@ class Elm.Panes (Elm.Layout, Efl.Orientation,
 {
    legacy_prefix: elm_panes;
    eo_prefix: elm_obj_panes;
+   event_prefix: elm_panes;
    methods {
       @property content_left_size {
          [[Set the size proportion of panes widget's left side.

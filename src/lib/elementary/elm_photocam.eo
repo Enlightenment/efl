@@ -17,6 +17,7 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
 {
    legacy_prefix: elm_photocam;
    eo_prefix: elm_obj_photocam;
+   event_prefix: elm_photocam;
    methods {
       @property paused {
          set {

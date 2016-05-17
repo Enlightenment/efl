@@ -82,6 +82,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
    ]]
    legacy_prefix: elm_calendar;
    eo_prefix: elm_obj_calendar;
+   event_prefix: elm_calendar;
    methods {
       @property first_day_of_week {
          [[The first day of week to use on calendar widgets'.]]

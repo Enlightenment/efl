@@ -48,6 +48,7 @@ class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
 {
    legacy_prefix: elm_image;
    eo_prefix: elm_obj_image;
+   event_prefix: elm_image;
    methods {
       @property scale_type {
          [[Control how the internal image is scaled.

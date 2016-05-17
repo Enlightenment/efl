@@ -102,7 +102,7 @@ _ecore_factorized_idle_add(const Eo_Callback_Array_Item *desc,
 
 EO_CALLBACKS_ARRAY_DEFINE(ecore_idler_callbacks,
                           { EFL_LOOP_EVENT_IDLE, _ecore_factorized_idle_process },
-                          { EO_BASE_EVENT_DEL, _ecore_factorized_idle_event_del });
+                          { EO_EVENT_DEL, _ecore_factorized_idle_event_del });
 
 EAPI Ecore_Idler *
 ecore_idler_add(Ecore_Task_Cb func,

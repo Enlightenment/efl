@@ -30,7 +30,7 @@ static Eo *_callback_eo_base_constructor(Eo *obj, Callback_Data *pd EINA_UNUSED)
   pd->callbacks = 0;
   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
-  eo_event_callback_priority_add(obj, EO_BASE_EVENT_CALLBACK_ADD, EO_CALLBACK_PRIORITY_DEFAULT
+  eo_event_callback_priority_add(obj, EO_EVENT_CALLBACK_ADD, EO_CALLBACK_PRIORITY_DEFAULT
                                  , &_callback_callback_added, pd);
 
   return obj;

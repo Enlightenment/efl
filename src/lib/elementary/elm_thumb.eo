@@ -4,6 +4,7 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface,
 {
    legacy_prefix: elm_thumb;
    eo_prefix: elm_obj_thumb;
+   event_prefix: elm_thumb;
    implements {
       class.constructor;
       Eo.Base.constructor;

@@ -8,6 +8,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
 {
    legacy_prefix: elm_genlist;
    eo_prefix: elm_obj_genlist;
+   event_prefix: elm_genlist;
    methods {
       @property homogeneous {
          set {

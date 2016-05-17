@@ -4,6 +4,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack, Ef
 {
    legacy_prefix: evas_object;
    eo_prefix: evas_obj;
+   event_prefix: evas_object;
    data: Evas_Object_Protected_Data;
    methods {
       legacy_ctor @protected {

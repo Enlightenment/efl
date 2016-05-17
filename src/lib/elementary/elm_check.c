@@ -75,7 +75,7 @@ _activate(Evas_Object *obj)
              _elm_access_say(E_("State: Off"));
      }
 
-   eo_event_callback_call(obj, ELM_CHECK_EVENT_CHANGED, NULL);
+   eo_event_callback_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
        elm_interface_atspi_accessible_state_changed_signal_emit(obj,
@@ -251,7 +251,7 @@ _on_check_off(void *data,
    if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
 
    elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-   eo_event_callback_call(obj, ELM_CHECK_EVENT_CHANGED, NULL);
+   eo_event_callback_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
        elm_interface_atspi_accessible_state_changed_signal_emit(data,
@@ -272,7 +272,7 @@ _on_check_on(void *data,
    efl_ui_nstate_value_set(obj, 1);
    if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
    elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-   eo_event_callback_call(obj, ELM_CHECK_EVENT_CHANGED, NULL);
+   eo_event_callback_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(data,

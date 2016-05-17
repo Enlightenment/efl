@@ -151,8 +151,8 @@ _check_fd_event_catcher_del(void *data, const Eo_Event *event)
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(fd_watch,
-                          { EO_BASE_EVENT_CALLBACK_ADD, _check_fd_event_catcher_add },
-                          { EO_BASE_EVENT_CALLBACK_DEL, _check_fd_event_catcher_del });
+                          { EO_EVENT_CALLBACK_ADD, _check_fd_event_catcher_add },
+                          { EO_EVENT_CALLBACK_DEL, _check_fd_event_catcher_del });
 
 static Eo_Base *
 _efl_loop_fd_eo_base_constructor(Eo *obj, Efl_Loop_Fd_Data *pd)

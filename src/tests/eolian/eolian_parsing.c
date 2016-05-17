@@ -110,6 +110,7 @@ START_TEST(eolian_events)
 
    /* Class */
    fail_if(!(class = eolian_class_get_by_name("Events")));
+   fail_if(strcmp(eolian_class_event_prefix_get(class), "totally_not_events"));
 
    /* Events */
    fail_if(!(iter = eolian_class_events_get(class)));

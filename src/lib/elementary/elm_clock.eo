@@ -30,6 +30,7 @@ class Elm.Clock (Elm.Layout)
    ]]
    legacy_prefix: elm_clock;
    eo_prefix: elm_obj_clock;
+   event_prefix: elm_clock;
    methods {
       @property show_am_pm {
          [[If the given clock widget must show hours in military or am/pm mode

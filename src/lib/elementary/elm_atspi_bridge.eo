@@ -2,6 +2,7 @@ class Elm.Atspi.Bridge (Eo.Base)
 {
    legacy_prefix: elm_atspi_bridge;
    eo_prefix: elm_obj_atspi_bridge;
+   event_prefix: elm_atspi_bridge;
    methods {
       @property connected {
          get {

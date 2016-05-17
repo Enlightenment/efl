@@ -334,7 +334,7 @@ parameter_type(Eolian_Function_Parameter const& parameter)
 }
 
 inline efl::eolian::eo_event
-event_create(Eolian_Class const& klass, const Eolian_Event *event_)
+event_create(const Eolian_Event *event_)
 {
    efl::eolian::eo_event event;
    const char *name = ::eolian_event_name_get(event_);
@@ -346,8 +346,7 @@ event_create(Eolian_Class const& klass, const Eolian_Event *event_)
         event.scope = eolian_scope_cxx(::eolian_event_scope_get(event_));
         event.is_beta = (::eolian_event_is_beta(event_) != EINA_FALSE);
         event.name = normalize_spaces(name_);
-        event.eo_name = safe_upper
-          (find_replace(safe_lower(class_full_name(klass)), ".", "_") + "_EVENT_" + event.name);
+        event.eo_name = safe_str(::eolian_event_c_name_get(event_));
         /* FIXME: use doc api */
         event.comment = safe_str("");
      }
@@ -362,7 +361,7 @@ event_list(Eolian_Class const& klass)
    Eolian_Event *e;
    EINA_ITERATOR_FOREACH(itr, e)
      {
-        events.push_back(event_create(klass, e));
+        events.push_back(event_create(e));
      }
    eina_iterator_free(itr);
    return events;

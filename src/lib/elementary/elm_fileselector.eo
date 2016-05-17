@@ -4,6 +4,7 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
 {
    legacy_prefix: elm_fileselector;
    eo_prefix: elm_obj_fileselector;
+   event_prefix: elm_fileselector;
    methods {
       @property buttons_ok_cancel {
          set {

@@ -30,6 +30,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
 {
    legacy_prefix: elm_toolbar;
    eo_prefix: elm_obj_toolbar;
+   event_prefix: elm_toolbar;
    methods {
       @property homogeneous {
          [[Control homogeneous mode.

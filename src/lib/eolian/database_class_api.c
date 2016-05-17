@@ -85,6 +85,13 @@ eolian_class_eo_prefix_get(const Eolian_Class *cl)
 }
 
 EAPI Eina_Stringshare*
+eolian_class_event_prefix_get(const Eolian_Class *cl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
+   return cl->ev_prefix;
+}
+
+EAPI Eina_Stringshare*
 eolian_class_data_type_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);

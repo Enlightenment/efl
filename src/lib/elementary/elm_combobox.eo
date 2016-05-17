@@ -4,6 +4,7 @@ class Elm.Combobox (Elm.Button, Evas.Selectable_Interface,
 {
    legacy_prefix: elm_combobox;
    eo_prefix: elm_obj_combobox;
+   event_prefix: elm_combobox;
    methods {
       @property expanded {
          get {

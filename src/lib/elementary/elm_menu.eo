@@ -2,6 +2,7 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm.Interface.Atspi.Select
 {
    legacy_prefix: elm_menu;
    eo_prefix: elm_obj_menu;
+   event_prefix: elm_menu;
    methods {
       @property selected_item {
          get {

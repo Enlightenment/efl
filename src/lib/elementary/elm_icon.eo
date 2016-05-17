@@ -10,6 +10,7 @@ class Elm.Icon (Elm.Image)
 {
    legacy_prefix: elm_icon;
    eo_prefix: elm_obj_icon;
+   event_prefix: elm_icon;
    methods {
    }
    implements {

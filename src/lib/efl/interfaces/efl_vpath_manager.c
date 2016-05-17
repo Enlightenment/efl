@@ -54,7 +54,7 @@ static Eina_Bool
 _cb_vpath_del(void *data, const Eo_Event *event)
 {
    efl_vpath_manager_unregister(EFL_VPATH_MANAGER_CLASS, event->obj);
-   eo_event_callback_del(event->obj, EO_BASE_EVENT_DEL, _cb_vpath_del, data);
+   eo_event_callback_del(event->obj, EO_EVENT_DEL, _cb_vpath_del, data);
    return EINA_TRUE;
 }
 
@@ -64,7 +64,7 @@ _efl_vpath_manager_register(Eo *obj, void *pd EINA_UNUSED, int priority, Efl_Vpa
    Efl_Vpath_Manager_Entry *entry = malloc(sizeof(Efl_Vpath_Manager_Entry));
    entry->vpath = vpath;
    entry->priority = priority;
-   eo_event_callback_add(vpath, EO_BASE_EVENT_DEL, _cb_vpath_del, obj);
+   eo_event_callback_add(vpath, EO_EVENT_DEL, _cb_vpath_del, obj);
    vpath_manager.list = eina_list_sorted_insert
      (vpath_manager.list, EINA_COMPARE_CB(_register_sort_cb), entry);
 }

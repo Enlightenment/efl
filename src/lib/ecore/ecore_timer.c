@@ -116,8 +116,8 @@ _check_timer_event_catcher_del(void *data, const Eo_Event *event)
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(timer_watch,
-                          { EO_BASE_EVENT_CALLBACK_ADD, _check_timer_event_catcher_add },
-                          { EO_BASE_EVENT_CALLBACK_DEL, _check_timer_event_catcher_del });
+                          { EO_EVENT_CALLBACK_ADD, _check_timer_event_catcher_add },
+                          { EO_EVENT_CALLBACK_DEL, _check_timer_event_catcher_del });
 
 EOLIAN static Eo *
 _efl_timer_eo_base_constructor(Eo *obj, Efl_Timer_Data *timer)
@@ -179,7 +179,7 @@ _ecore_timer_legacy_tick(void *data, const Eo_Event *event)
 
 EO_CALLBACKS_ARRAY_DEFINE(legacy_timer,
                           { EFL_TIMER_EVENT_TICK, _ecore_timer_legacy_tick },
-                          { EO_BASE_EVENT_DEL, _ecore_timer_legacy_del });
+                          { EO_EVENT_DEL, _ecore_timer_legacy_del });
 
 EAPI Ecore_Timer *
 ecore_timer_add(double        in,

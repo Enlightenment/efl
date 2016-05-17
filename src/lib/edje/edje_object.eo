@@ -4,6 +4,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container)
 {
    legacy_prefix: edje_object;
    eo_prefix: edje_obj;
+   event_prefix: edje_object;
    data: Edje;
    methods {
       @property update_hints {

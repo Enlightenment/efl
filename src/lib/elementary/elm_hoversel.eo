@@ -5,6 +5,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
 {
    legacy_prefix: elm_hoversel;
    eo_prefix: elm_obj_hoversel;
+   event_prefix: elm_hoversel;
    methods {
       @property horizontal {
          [[Control if the hoversel should expand horizontally.

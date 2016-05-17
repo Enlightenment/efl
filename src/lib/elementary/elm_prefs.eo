@@ -7,6 +7,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 {
    legacy_prefix: elm_prefs;
    eo_prefix: elm_obj_prefs;
+   event_prefix: elm_prefs;
    methods {
       @property data {
          [[Set user data for a given prefs widget

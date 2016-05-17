@@ -67,7 +67,7 @@ struct _Custom_Table_Data
 };
 
 EO_CALLBACKS_ARRAY_DEFINE(subobj_callbacks,
-                          { EO_BASE_EVENT_DEL, _subobj_del_cb });
+                          { EO_EVENT_DEL, _subobj_del_cb });
 
 static inline Eina_Bool
 _horiz(Efl_Orient dir)

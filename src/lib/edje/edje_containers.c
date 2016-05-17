@@ -47,7 +47,7 @@ _edje_box_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp)
    if (eo) return eo;
 
    eo = eo_add(BOX_CLASS, obj, efl_canvas_layout_internal_box_real_part_set(eo_self, ed, rp, rp->part->name));
-   eo_event_callback_add(eo, EO_BASE_EVENT_DEL, _del_cb, rp);
+   eo_event_callback_add(eo, EO_EVENT_DEL, _del_cb, rp);
 
    rp->typedata.container->eo_proxy = eo;
    return eo;
@@ -266,7 +266,7 @@ _edje_table_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp)
    if (eo) return eo;
 
    eo = eo_add(TABLE_CLASS, obj, efl_canvas_layout_internal_table_real_part_set(eo_self, ed, rp, rp->part->name));
-   eo_event_callback_add(eo, EO_BASE_EVENT_DEL, _del_cb, rp);
+   eo_event_callback_add(eo, EO_EVENT_DEL, _del_cb, rp);
 
    rp->typedata.container->eo_proxy = eo;
    return eo;

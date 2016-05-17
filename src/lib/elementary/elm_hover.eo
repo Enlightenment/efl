@@ -11,6 +11,7 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface, Elm.Interface.Atspi_Widge
 {
    legacy_prefix: elm_hover;
    eo_prefix: elm_obj_hover;
+   event_prefix: elm_hover;
    methods {
       @property target {
          set {

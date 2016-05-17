@@ -21,6 +21,7 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
 {
    legacy_prefix: elm_layout;
    eo_prefix: elm_obj_layout;
+   event_prefix: elm_layout;
    data: Elm_Layout_Smart_Data;
    methods {
       @property edje_object_can_access {

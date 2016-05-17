@@ -312,7 +312,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Flow");
-   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, flow_check_cb, bottombox);
+   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, flow_check_cb, bottombox);
    evas_object_size_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
@@ -320,7 +320,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 1);
    elm_object_text_set(o, "Horizontal");
-   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, horiz_check_cb, bottombox);
+   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, horiz_check_cb, bottombox);
    evas_object_size_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
@@ -328,7 +328,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Homogenous");
-   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, homo_check_cb, bottombox);
+   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, homo_check_cb, bottombox);
    evas_object_size_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
@@ -336,7 +336,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Homogenous + Max");
-   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, max_size_check_cb, bottombox);
+   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, max_size_check_cb, bottombox);
    evas_object_size_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
@@ -344,7 +344,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Align left");
-   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, left_check_cb, bottombox);
+   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, left_check_cb, bottombox);
    evas_object_size_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
@@ -352,7 +352,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Custom layout");
-   eo_event_callback_add(o, ELM_CHECK_EVENT_CHANGED, custom_check_cb, bottombox);
+   eo_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, custom_check_cb, bottombox);
    evas_object_size_hint_align_set(o, 0, 0);
    evas_object_size_hint_weight_set(o, 0, 1);
    efl_pack(bx, o);

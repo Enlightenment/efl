@@ -2790,8 +2790,8 @@ _check_event_catcher_del(void *data, const Eo_Event *event)
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
-                          { EO_BASE_EVENT_CALLBACK_ADD, _check_event_catcher_add },
-                          { EO_BASE_EVENT_CALLBACK_DEL, _check_event_catcher_del });
+                          { EO_EVENT_CALLBACK_ADD, _check_event_catcher_add },
+                          { EO_EVENT_CALLBACK_DEL, _check_event_catcher_del });
 
 EOLIAN static Eo_Base *
 _efl_loop_eo_base_constructor(Eo *obj, Efl_Loop_Data *pd)
@@ -2899,7 +2899,7 @@ _efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED)
 
 EO_CALLBACKS_ARRAY_DEFINE(timeout,
                           { EFL_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
-                          { EO_BASE_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
+                          { EO_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
 
 static void
 _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, Eina_Promise_Owner *promise, double time, const void *data)

@@ -12,6 +12,7 @@ class Elm.Label (Elm.Layout)
 {
    legacy_prefix: elm_label;
    eo_prefix: elm_obj_label;
+   event_prefix: elm_label;
    methods {
       @property wrap_width {
          [[Control wrap width of the label

@@ -84,6 +84,7 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
 {
    legacy_prefix: elm_glview;
    eo_prefix: elm_obj_glview;
+   event_prefix: elm_glview;
    methods {
       version_constructor {
          [[Constructor with context version number.]]

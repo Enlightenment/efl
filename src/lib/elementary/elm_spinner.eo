@@ -3,6 +3,7 @@ class Elm.Spinner (Elm.Layout, Efl.Ui.Spin,
 {
    legacy_prefix: elm_spinner;
    eo_prefix: elm_obj_spinner;
+   event_prefix: elm_spinner;
    methods {
       @property wrap {
          [[Control whether the spinner should wrap when it reaches its minimum or maximum value.

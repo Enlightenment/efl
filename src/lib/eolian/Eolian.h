@@ -586,6 +586,16 @@ EAPI Eina_Stringshare *eolian_class_legacy_prefix_get(const Eolian_Class *klass)
 EAPI Eina_Stringshare* eolian_class_eo_prefix_get(const Eolian_Class *klass);
 
 /*
+ * @brief Returns the event prefix of a class
+ *
+ * @param[in] klass the class
+ * @return the event prefix
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare* eolian_class_event_prefix_get(const Eolian_Class *klass);
+
+/*
  * @brief Returns the data type of a class
  *
  * @param[in] klass the class

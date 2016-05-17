@@ -34,13 +34,13 @@ _elm_interface_atspi_image_description_set(Eo *obj, void *sd EINA_UNUSED, const 
    if (old_descr)
      {
         eina_stringshare_del(old_descr);
-        eo_event_callback_del(obj, EO_BASE_EVENT_DEL, _free_desc_cb, old_descr);
+        eo_event_callback_del(obj, EO_EVENT_DEL, _free_desc_cb, old_descr);
      }
 
    if (descr)
      {
         eo_key_data_set(obj, key, descr);
-        eo_event_callback_add(obj, EO_BASE_EVENT_DEL, _free_desc_cb, descr);
+        eo_event_callback_add(obj, EO_EVENT_DEL, _free_desc_cb, descr);
      }
 }
 

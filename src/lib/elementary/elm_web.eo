@@ -18,6 +18,7 @@ class Elm.Web (Elm.Widget)
 {
    legacy_prefix: elm_web;
    eo_prefix: elm_obj_web;
+   event_prefix: elm_web;
    methods {
       @property text_matches_highlight @virtual_pure {
          set {

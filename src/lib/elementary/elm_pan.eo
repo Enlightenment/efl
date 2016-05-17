@@ -2,6 +2,7 @@ class Elm.Pan (Evas.Smart.Clipped)
 {
    legacy_prefix: elm_pan;
    eo_prefix: elm_obj_pan;
+   event_prefix: elm_pan;
    data: Elm_Pan_Smart_Data;
    methods {
       @property gravity {

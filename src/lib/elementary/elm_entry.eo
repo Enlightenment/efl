@@ -120,6 +120,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
 {
    legacy_prefix: elm_entry;
    eo_prefix: elm_obj_entry;
+   event_prefix: elm_entry;
    methods {
       @property scrollable {
          set {

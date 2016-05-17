@@ -27,6 +27,7 @@ class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
    legacy_prefix: elm_popup;
    eo_prefix: elm_obj_popup;
+   event_prefix: elm_popup;
    methods {
       @property align {
          set {

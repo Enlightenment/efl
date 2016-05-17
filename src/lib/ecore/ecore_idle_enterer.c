@@ -11,7 +11,7 @@
 
 EO_CALLBACKS_ARRAY_DEFINE(ecore_idle_enterer_callbacks,
                           { EFL_LOOP_EVENT_IDLE_ENTER, _ecore_factorized_idle_process },
-                          { EO_BASE_EVENT_DEL, _ecore_factorized_idle_event_del });
+                          { EO_EVENT_DEL, _ecore_factorized_idle_event_del });
 
 
 EAPI Ecore_Idle_Enterer *

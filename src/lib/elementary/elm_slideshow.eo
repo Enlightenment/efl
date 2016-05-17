@@ -4,6 +4,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_slideshow;
    legacy_prefix: elm_slideshow;
+   event_prefix: elm_slideshow;
    methods {
       @property cache_after {
          set {

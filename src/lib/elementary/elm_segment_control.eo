@@ -2,6 +2,7 @@ class Elm.Segment_Control (Elm.Layout)
 {
    legacy_prefix: elm_segment_control;
    eo_prefix: elm_obj_segment_control;
+   event_prefix: elm_segment_control;
    methods {
       @property item_count {
          get {

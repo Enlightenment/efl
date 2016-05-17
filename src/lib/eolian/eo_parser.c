@@ -1684,6 +1684,7 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 {
    Eina_Bool has_legacy_prefix = EINA_FALSE,
              has_eo_prefix     = EINA_FALSE,
+             has_event_prefix  = EINA_FALSE,
              has_data          = EINA_FALSE,
              has_methods       = EINA_FALSE,
              has_implements    = EINA_FALSE,
@@ -1711,6 +1712,15 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
         check_next(ls, ':');
         _validate_pfx(ls);
         ls->tmp.kls->eo_prefix = eina_stringshare_ref(ls->t.value.s);
+        eo_lexer_get(ls);
+        check_next(ls, ';');
+        break;
+      case KW_event_prefix:
+        CASE_LOCK(ls, event_prefix, "event prefix definition")
+        eo_lexer_get(ls);
+        check_next(ls, ':');
+        _validate_pfx(ls);
+        ls->tmp.kls->ev_prefix = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;

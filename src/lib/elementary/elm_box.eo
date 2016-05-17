@@ -5,6 +5,7 @@ class Elm.Box (Elm.Widget)
 {
    legacy_prefix: elm_box;
    eo_prefix: elm_obj_box;
+   event_prefix: elm_box;
    methods {
       @property homogeneous {
          set {

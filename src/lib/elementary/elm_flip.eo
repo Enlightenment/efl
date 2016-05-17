@@ -37,6 +37,7 @@ class Elm.Flip (Elm.Widget, Efl.Container)
 {
    legacy_prefix: elm_flip;
    eo_prefix: elm_obj_flip;
+   event_prefix: elm_flip;
    methods {
       @property interaction {
          set {

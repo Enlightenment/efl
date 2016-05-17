@@ -25,14 +25,14 @@ enum Tokens
 #define KEYWORDS KW(class), KW(const), KW(enum), KW(return), KW(struct), \
     \
     KW(abstract), KW(constructor), KW(constructors), KW(data), \
-    KW(destructor), KW(eo), KW(eo_prefix), KW(events), KW(free), \
+    KW(destructor), KW(eo), KW(eo_prefix), KW(event_prefix), KW(events), KW(free), \
     KW(get), KW(implements), KW(import), KW(interface), KW(keys), KW(legacy), \
     KW(legacy_prefix), KW(methods), KW(mixin), KW(own), KW(params), \
     KW(set), KW(type), KW(values), KW(var), KWAT(auto), KWAT(beta), \
     KWAT(c_only), KWAT(class), KWAT(const), KWAT(empty), KWAT(extern), \
-    KWAT(free), KWAT(hot), KWAT(restart), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(nullable), \
+    KWAT(free), KWAT(hot), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(nullable), \
     KWAT(optional), KWAT(out), KWAT(private), KWAT(property), \
-    KWAT(protected), KWAT(virtual_pure), KWAT(warn_unused), \
+    KWAT(protected), KWAT(restart), KWAT(virtual_pure), KWAT(warn_unused), \
     \
     KW(byte), KW(ubyte), KW(char), KW(short), KW(ushort), KW(int), KW(uint), \
     KW(long), KW(ulong), KW(llong), KW(ullong), \

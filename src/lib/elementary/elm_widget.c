@@ -4501,7 +4501,7 @@ _elm_widget_item_eo_base_constructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 
    item->widget = widget;
    item->eo_obj = eo_item;
-   eo_event_callback_add(eo_item, EO_BASE_EVENT_DEL, _eo_del_cb, NULL);
+   eo_event_callback_add(eo_item, EO_EVENT_DEL, _eo_del_cb, NULL);
 
    return eo_item;
 }

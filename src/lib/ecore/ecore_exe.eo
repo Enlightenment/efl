@@ -47,6 +47,7 @@ class Ecore.Exe (Eo.Base, Efl.Control)
 
    legacy_prefix: ecore_exe;
    eo_prefix: ecore_obj_exe;
+   event_prefix: ecore_exe;
    methods {
         @property command {
              [[Control the command that's executed. FIXME: May need a split/rename.]]

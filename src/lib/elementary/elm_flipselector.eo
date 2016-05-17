@@ -4,6 +4,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
 {
    legacy_prefix: elm_flipselector;
    eo_prefix: elm_obj_flipselector;
+   event_prefix: elm_flipselector;
    methods {
       @property items {
          get {

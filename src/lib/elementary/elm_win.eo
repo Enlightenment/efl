@@ -166,6 +166,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
 {
    legacy_prefix: elm_win;
    eo_prefix: elm_obj_win;
+   event_prefix: elm_win;
    methods {
       @property keyboard_win {
          set {

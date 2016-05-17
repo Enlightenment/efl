@@ -21,6 +21,7 @@ class Elm.Actionslider (Elm.Layout, Evas.Selectable_Interface)
 
    legacy_prefix: elm_actionslider;
    eo_prefix: elm_obj_actionslider;
+   event_prefix: elm_actionslider;
    methods {
       @property indicator_pos {
          [[Actionslider position indicator]]

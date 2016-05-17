@@ -148,8 +148,8 @@ _check_event_catcher_del(void *data, const Eo_Event *event)
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
-                          { EO_BASE_EVENT_CALLBACK_ADD, _check_event_catcher_add },
-                          { EO_BASE_EVENT_CALLBACK_DEL, _check_event_catcher_del });
+                          { EO_EVENT_CALLBACK_ADD, _check_event_catcher_add },
+                          { EO_EVENT_CALLBACK_DEL, _check_event_catcher_del });
 
 EOLIAN static Eo *
 _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)

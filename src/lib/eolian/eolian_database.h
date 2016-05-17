@@ -88,6 +88,7 @@ struct _Eolian_Class
    Eolian_Documentation *doc;
    Eina_Stringshare *legacy_prefix;
    Eina_Stringshare *eo_prefix;
+   Eina_Stringshare *ev_prefix;
    Eina_Stringshare *data_type;
    Eina_List *inherits; /* List Eina_Stringshare * */
    Eina_List *properties; /* List prop_name -> Eolian_Function */

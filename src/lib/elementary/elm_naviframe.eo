@@ -2,6 +2,7 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
 {
    legacy_prefix: elm_naviframe;
    eo_prefix: elm_obj_naviframe;
+   event_prefix: elm_naviframe;
    methods {
       @property event_enabled {
          [[Control the event enabled when pushing/popping items

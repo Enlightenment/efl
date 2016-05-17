@@ -2,6 +2,7 @@ interface Efl.Container (Efl.Gfx)
 {
    [[API common to all UI container objects.]]
    eo_prefix: efl_content;
+   event_prefix: efl_container;
    methods {
       @property content {
          [[Swallowed sub-object contained in this object.]]

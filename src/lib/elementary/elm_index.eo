@@ -2,6 +2,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
 {
    legacy_prefix: elm_index;
    eo_prefix: elm_obj_index;
+   event_prefix: elm_index;
    methods {
       @property autohide_disabled {
          [[Enable or disable auto hiding feature for a given index widget.]]

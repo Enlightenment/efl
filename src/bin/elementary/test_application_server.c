@@ -115,7 +115,7 @@ _create_view_cb(Elm_App_Server *app_server, const Eina_Value *args EINA_UNUSED, 
    eo_event_callback_add(view, ELM_APP_SERVER_VIEW_EVENT_CLOSED, _close_cb, ctx);
    eo_event_callback_add(view, ELM_APP_SERVER_VIEW_EVENT_PAUSED, _pause_cb, ctx);
    eo_event_callback_add(view, ELM_APP_SERVER_VIEW_EVENT_RESUMED, _resume_cb, ctx);
-   eo_event_callback_add(view, EO_BASE_EVENT_DEL, _view_del_cb, ctx);
+   eo_event_callback_add(view, EO_EVENT_DEL, _view_del_cb, ctx);
 
    return view;
 }
@@ -160,7 +160,7 @@ test_application_server_common(const char *pkg)
         eo_event_callback_add(view, ELM_APP_SERVER_VIEW_EVENT_CLOSED, _close_cb, ctx);
         eo_event_callback_add(view, ELM_APP_SERVER_VIEW_EVENT_PAUSED, _pause_cb, ctx);
         eo_event_callback_add(view, ELM_APP_SERVER_VIEW_EVENT_RESUMED, _resume_cb, ctx);
-        eo_event_callback_add(view, EO_BASE_EVENT_DEL, _view_del_cb, ctx);
+        eo_event_callback_add(view, EO_EVENT_DEL, _view_del_cb, ctx);
      }
    eina_iterator_free(views_iter);
 
@@ -187,7 +187,7 @@ test_application_server_phone(void *data EINA_UNUSED,
      }
    printf("Starting phone\n");
    phone_server = test_application_server_common("org.enlightenment.phone");
-   eo_event_callback_add(phone_server, EO_BASE_EVENT_DEL, _server_del_cb, &phone_server);
+   eo_event_callback_add(phone_server, EO_EVENT_DEL, _server_del_cb, &phone_server);
 }
 
 void
@@ -202,5 +202,5 @@ test_application_server_message(void *data EINA_UNUSED,
      }
    printf("Starting message\n");
    msg_server = test_application_server_common( "org.enlightenment.message");
-   eo_event_callback_add(msg_server, EO_BASE_EVENT_DEL, _server_del_cb, &msg_server);
+   eo_event_callback_add(msg_server, EO_EVENT_DEL, _server_del_cb, &msg_server);
 }

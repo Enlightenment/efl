@@ -2,6 +2,7 @@ class Elm.Plug (Elm.Widget, Evas.Clickable_Interface)
 {
    legacy_prefix: elm_plug;
    eo_prefix: elm_obj_plug;
+   event_prefix: elm_plug;
    data: null;
    methods {
       @property image_object {
