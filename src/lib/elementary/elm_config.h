@@ -2034,6 +2034,28 @@ EAPI Eina_Bool elm_config_window_auto_focus_animate_get(void);
 EAPI void      elm_config_window_auto_focus_animate_set(Eina_Bool enable);
 
 /**
+ * Get the popup scrollable flag
+ *
+ * If scrollable is true, popup's contents is wrapped in a scroller container
+ * in order to popup shouldn't be larger than its parent.
+ *
+ * @return The enabled state for popup scroll
+ * @since 1.18
+ */
+EAPI Eina_Bool elm_config_popup_scrollable_get(void);
+
+/**
+ * Set the popup scrollable flag
+ *
+ * If scrollable is true, popup's contents is wrapped in a scroller container
+ * in order to popup shouldn't be larger than its parent.
+ *
+ * @param enable the popup scroll
+ * @since 1.18
+ */
+EAPI void      elm_config_popup_scrollable_set(Eina_Bool scrollable);
+
+/**
  * @defgroup ATSPI AT-SPI2 Accessibility
  * @ingroup Elementary
  *

@@ -102,6 +102,7 @@ group "Elm_Config" struct {
   value "naviframe_prev_btn_auto_pushed" uchar: 1;
   value "popup_horizontal_align" double: 0.5;
   value "popup_vertical_align" double: 0.5;
+  value "popup_scrollable" uchar: 0;
   value "spinner_min_max_filter_enable" uchar: 1;
   group "color_palette" list {
      group "Elm_Custom_Palette" struct {

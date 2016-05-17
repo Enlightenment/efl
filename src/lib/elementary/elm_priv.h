@@ -247,6 +247,7 @@ struct _Elm_Config
    Elm_Slider_Indicator_Visible_Mode  slider_indicator_visible_mode;  /**< this sets the slider indicator visible mode */
    double        popup_horizontal_align;
    double        popup_vertical_align;
+   Eina_Bool     popup_scrollable;
    int           toolbar_shrink_mode;
    unsigned char fileselector_expand_enable;
    unsigned char fileselector_double_tap_navigation_enable;
