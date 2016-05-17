@@ -65,8 +65,8 @@
        fail_if(!set_ok);                                                \
        res = _compare_meshes(mesh, mesh2);                              \
        fail_if(res == 1);                                               \
-       eo_del(mesh2);                                                   \
-       eo_del(mesh);                                                    \
+       eo_unref(mesh2);                                                   \
+       eo_unref(mesh);                                                    \
        unlink(buffer);                                                  \
     }
 

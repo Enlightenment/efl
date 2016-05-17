@@ -4049,7 +4049,7 @@ eng_ector_create(void *data EINA_UNUSED)
 static void
 eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
 {
-   if (ector) eo_del(ector);
+   if (ector) eo_unref(ector);
 }
 
 static Ector_Buffer *

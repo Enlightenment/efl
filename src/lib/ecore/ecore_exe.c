@@ -209,7 +209,7 @@ ecore_exe_free(Ecore_Exe *obj)
       return NULL;
 
    void *data = exe->data;
-   eo_del(obj);
+   eo_unref(obj);
 
    return data;
 }

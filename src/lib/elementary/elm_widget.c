@@ -4579,7 +4579,7 @@ _elm_widget_item_del(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
    Eina_Bool del_ok;
    del_ok = elm_wdg_item_del_pre(item->eo_obj);
    if (del_ok)
-      eo_del(item->eo_obj);
+      eo_unref(item->eo_obj);
    return;
 }
 

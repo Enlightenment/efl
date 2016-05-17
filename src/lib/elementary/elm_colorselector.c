@@ -232,7 +232,7 @@ _items_del(Elm_Colorselector_Data *sd)
 
    EINA_LIST_FREE(sd->items, item)
      {
-        eo_del (item);
+        eo_unref (item);
      }
 
    sd->items = NULL;

@@ -54,7 +54,7 @@ _item_del(Elm_Object_Item *eo_item)
      _item_del(child);
    eina_list_free(item->submenu.items);
 
-   eo_del(eo_item);
+   eo_unref(eo_item);
 }
 
 static void

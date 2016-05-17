@@ -633,7 +633,7 @@ _elm_segment_control_evas_object_smart_del(Eo *obj, Elm_Segment_Control_Data *sd
 
    EINA_LIST_FREE(sd->items, eo_it)
      {
-        eo_del(eo_it);
+        eo_unref(eo_it);
      }
 
    evas_obj_smart_del(eo_super(obj, MY_CLASS));

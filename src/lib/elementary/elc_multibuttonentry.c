@@ -1594,7 +1594,7 @@ _elm_multibuttonentry_evas_object_smart_del(Eo *obj, Elm_Multibuttonentry_Data *
    Elm_Multibuttonentry_Item_Filter *_item_filter = NULL;
 
    EINA_LIST_FREE(sd->items, eo_item)
-     eo_del(eo_item);
+     eo_unref(eo_item);
 
    sd->items = NULL;
 

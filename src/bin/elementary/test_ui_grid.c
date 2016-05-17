@@ -502,7 +502,7 @@ static void
 remove_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    //efl_pack_unpack(data, obj);
-   eo_del(obj);
+   eo_unref(obj);
 }
 
 static void

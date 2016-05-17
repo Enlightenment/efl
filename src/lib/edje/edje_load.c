@@ -257,7 +257,7 @@ edje_file_collection_list(const char *file)
    lst = edje_mmap_collection_list(f);
 
    eina_file_close(f);
-   eo_del(file_obj);
+   eo_unref(file_obj);
    return lst;
 }
 
@@ -1596,7 +1596,7 @@ _edje_file_del(Edje *ed)
                        _edje_box_layout_free_data(rp->typedata.container->anim);
                        rp->typedata.container->anim = NULL;
                     }
-                  eo_del(rp->typedata.container->eo_proxy);
+                  eo_unref(rp->typedata.container->eo_proxy);
                   free(rp->typedata.container);
                }
              else if ((rp->type == EDJE_RP_TYPE_TEXT) &&

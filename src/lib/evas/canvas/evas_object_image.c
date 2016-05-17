@@ -262,7 +262,7 @@ _evas_image_init_set(const Eina_File *f, const char *file, const char *key,
      }
    if (o->file_obj)
      {
-        eo_del(o->file_obj);
+        eo_unref(o->file_obj);
         o->file_obj = NULL;
      }
    o->load_error = EVAS_LOAD_ERROR_NONE;
@@ -1429,7 +1429,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    o->engine_data = NULL;
    if (o->file_obj)
      {
-        eo_del(o->file_obj);
+        eo_unref(o->file_obj);
         o->file_obj = NULL;
      }
    if (o->pixels->pixel_updates)

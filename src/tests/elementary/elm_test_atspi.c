@@ -438,7 +438,7 @@ START_TEST (elm_atspi_relationship_remove)
    /* Test if relationship is implicity removed when object is deleted */
    elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_TO, g_bg);
    elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_FROM, g_bg);
-   eo_del(g_bg);
+   eo_unref(g_bg);
    set = elm_interface_atspi_accessible_relation_set_get(g_btn);
 
    rel_to = rel_from = NULL;

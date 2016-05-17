@@ -356,7 +356,7 @@ del_handler_read:
 close_event_read:
    CloseHandle(svr->event_read);
 free_cl:
-   eo_del(cl_obj);
+   eo_unref(cl_obj);
 
    return ECORE_CALLBACK_CANCEL;
 }

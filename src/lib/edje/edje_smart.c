@@ -52,7 +52,7 @@ _edje_object_eo_base_destructor(Eo *obj, Edje *class_data)
 {
    if (class_data->file_obj)
      {
-        eo_del(class_data->file_obj);
+        eo_unref(class_data->file_obj);
         class_data->file_obj = NULL;
      }
    eo_destructor(eo_super(obj, MY_CLASS));
@@ -366,7 +366,7 @@ _edje_object_efl_file_file_set(Eo *obj, Edje *ed, const char *file, const char *
 
    if (ed->file_obj)
      {
-        eo_del(ed->file_obj);
+        eo_unref(ed->file_obj);
         ed->file_obj = NULL;
      }
    if (file)
@@ -382,7 +382,7 @@ _edje_object_efl_file_file_set(Eo *obj, Edje *ed, const char *file, const char *
         f = eina_file_open(file2, EINA_FALSE);
         if (!f)
           {
-             eo_del(ed->file_obj);
+             eo_unref(ed->file_obj);
              ed->file_obj = NULL;
              if (ed->path) eina_stringshare_del(ed->path);
              ed->path = NULL;

@@ -104,7 +104,7 @@ _iface_del(void *data, const Eldbus_Message *msg)
 
         eina_hash_del(cdata->views, path, NULL);
         eo_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_DELETED, view);
-        eo_del(view);
+        eo_unref(view);
      }
 }
 
@@ -145,7 +145,7 @@ _pkg_name_owner_changed_cb(void *data, const char *bus EINA_UNUSED, const char *
 
         eina_hash_del(cdata->views, path, NULL);
         eo_event_callback_call(eo, ELM_APP_CLIENT_EVENT_VIEW_DELETED, view);
-        eo_del(view);
+        eo_unref(view);
      }
 }
 
@@ -313,7 +313,7 @@ _elm_app_client_eo_base_destructor(Eo *eo, Elm_App_Client_Data *data)
 
    iter = eina_hash_iterator_data_new(data->views);
    EINA_ITERATOR_FOREACH(iter, view)
-     eo_del(view);
+     eo_unref(view);
    eina_iterator_free(iter);
    eina_hash_free(data->views);
 

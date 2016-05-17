@@ -81,8 +81,8 @@ START_TEST(eo_destructor_double_del)
    fail_if(!obj);
 
    TEST_EO_ERROR("_eo_unref", "Object %p already destructed.");
-   eo_del(obj);
-   eo_del(obj);
+   eo_unref(obj);
+   eo_unref(obj);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 

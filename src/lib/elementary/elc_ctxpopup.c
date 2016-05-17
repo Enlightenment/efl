@@ -1154,7 +1154,7 @@ _elm_ctxpopup_evas_object_smart_del(Eo *obj, Elm_Ctxpopup_Data *sd)
    ELM_SAFE_FREE(sd->bg, evas_object_del);
 
    EINA_LIST_FREE(sd->items, it)
-     eo_del(it);
+     eo_unref(it);
 
    evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }

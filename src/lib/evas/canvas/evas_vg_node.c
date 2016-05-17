@@ -287,7 +287,7 @@ _efl_vg_eo_base_destructor(Eo *obj, Efl_VG_Data *pd)
 
    if (pd->renderer)
      {
-        eo_del(pd->renderer);
+        eo_unref(pd->renderer);
         pd->renderer = NULL;
      }
    if (pd->intp)
@@ -670,7 +670,7 @@ _efl_vg_interpolate(Eo *obj,
    tod = eo_data_scope_get(to, EFL_VG_CLASS);
    from_map = 1.0 - pos_map;
 
-   eo_del(pd->renderer);
+   eo_unref(pd->renderer);
    pd->renderer = NULL;
 
    if (fromd->m || tod->m)
@@ -760,7 +760,7 @@ _efl_vg_dup(Eo *obj, Efl_VG_Data *pd, const Efl_VG *from)
 
    if (pd->renderer)
      {
-        eo_del(pd->renderer);
+        eo_unref(pd->renderer);
         pd->renderer = NULL;
      }
 

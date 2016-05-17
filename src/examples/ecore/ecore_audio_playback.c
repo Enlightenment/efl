@@ -201,7 +201,7 @@ static Eina_Bool _play_finished(void *data EINA_UNUSED, const Eo_Event *event)
 
   inputs = eina_list_remove(inputs, event->obj);
   ret = ecore_audio_obj_out_input_detach(out, event->obj);
-  eo_del(event->obj);
+  eo_unref(event->obj);
 
   if (!ret)
     printf("Could not detach input %s\n", name);

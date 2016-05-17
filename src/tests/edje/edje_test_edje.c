@@ -714,7 +714,7 @@ START_TEST(edje_test_table_eoapi)
 
    i = eo_ref_get(table);
    fail_if(i != 1);
-   eo_del(table);
+   eo_unref(table);
 
    /* this will generate eo errors */
    k = eo_ref_get(table);
@@ -733,7 +733,7 @@ START_TEST(edje_test_table_eoapi)
    fail_if(eo_ref_get(other) != 1);
 
    /* delete edje and verify proxy died */
-   eo_del(obj);
+   eo_unref(obj);
 
    /* this will generate eo errors */
    fail_if(eo_ref_get(table) > 0);
@@ -752,7 +752,7 @@ START_TEST(edje_test_table_eoapi)
    fail_if(!table);
    eo_ref(table);
    fflush(stderr);
-   eo_del(obj);
+   eo_unref(obj);
    /* note: obj has > 0 refs because evas likes to keep objects around a bit */
    fail_if(eo_ref_get(table) > 1);
 

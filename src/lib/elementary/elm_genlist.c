@@ -5859,7 +5859,7 @@ _item_select(Elm_Gen_Item *it)
 item_deleted:
    it->walking = -1; //This item was removed from it's item list.
    _item_del(it);
-   eo_del(eo_it);
+   eo_unref(eo_it);
    evas_object_unref(obj);
    return EINA_TRUE;
 }

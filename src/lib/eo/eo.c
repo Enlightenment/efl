@@ -684,7 +684,7 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
         ERR("Object of class '%s' - Error while constructing object",
             klass->desc->name);
         _eo_unref(obj);
-        eo_del((Eo *) obj->header.id);
+        _eo_unref(obj);
         return NULL;
      }
 
@@ -734,7 +734,7 @@ _eo_add_internal_end(Eo *eo_id, Eo *finalized_id)
 
 cleanup:
    _eo_unref(obj);
-   eo_del((Eo *) obj->header.id);
+   _eo_unref(obj);
    return NULL;
 }
 

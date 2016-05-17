@@ -332,7 +332,7 @@ _efl_network_lookup(Eo *kls_obj EINA_UNUSED, void *pd EINA_UNUSED, const char *n
      return EINA_TRUE;
 
    free(lk);
-   eo_del(obj);
+   eo_unref(obj);
    return EINA_FALSE;
 }
 
@@ -1293,7 +1293,7 @@ ecore_con_event_client_error(Ecore_Con_Client *obj, const char *error)
 static void
 _ecore_con_server_free(Ecore_Con_Server *obj)
 {
-   eo_del(obj);
+   eo_unref(obj);
 }
 
 EOLIAN static void
@@ -1381,7 +1381,7 @@ end:
 static void
 _ecore_con_client_free(Ecore_Con_Client *obj)
 {
-   eo_del(obj);
+   eo_unref(obj);
 }
 
 EOLIAN static void
@@ -2130,7 +2130,7 @@ error:
            ecore_event_del(ev);
         }
    }
-   eo_del(obj);
+   eo_unref(obj);
    if (clerr || errno) ecore_con_event_server_error(svr_obj, clerr ? : strerror(errno));
    return ECORE_CALLBACK_RENEW;
 }

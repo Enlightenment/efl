@@ -155,7 +155,7 @@ _elm_sys_notify_servers_set(Eo                     *obj  EINA_UNUSED,
           {
              /* Delete if server type is not provided */
              if (!(servers & (1 << i)))
-               eo_del(sd->servers[i]);
+               eo_unref(sd->servers[i]);
           }
         else
           {
@@ -223,7 +223,7 @@ _elm_unneed_sys_notify(void)
    if (manager)
      {
         elm_obj_sys_notify_servers_set(manager, ELM_SYS_NOTIFY_SERVER_NONE);
-        eo_del(manager);
+        eo_unref(manager);
      }
 }
 

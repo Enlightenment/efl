@@ -668,7 +668,7 @@ _elm_list_deletions_process(Elm_List_Data *sd)
 
         /* issuing free because of "locking" item del pre hook */
         _elm_list_item_free(it);
-        eo_del(EO_OBJ(it));
+        eo_unref(EO_OBJ(it));
      }
 
    sd->walking--;
@@ -2485,7 +2485,7 @@ _elm_list_evas_object_smart_del(Eo *obj, Elm_List_Data *sd)
         /* issuing free because of "locking" item del pre hook */
         _elm_list_item_free(it);
         WIDGET(it) = NULL;
-        eo_del(eo_it);
+        eo_unref(eo_it);
      }
 
    _elm_list_unwalk(obj, sd);
@@ -2746,7 +2746,7 @@ _elm_list_clear(Eo *obj, Elm_List_Data *sd)
         ELM_LIST_ITEM_DATA_GET(eo_it, it);
         /* issuing free because of "locking" item del pre hook */
         _elm_list_item_free(it);
-        eo_del(eo_it);
+        eo_unref(eo_it);
      }
 
    _elm_list_unwalk(obj, sd);

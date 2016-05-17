@@ -289,7 +289,7 @@ _change_scene_setup()
      {
         evas_canvas3d_node_member_del(globalGraphical.root_node, node);
         globalGraphical.list_nodes = eina_list_remove(globalGraphical.list_nodes, node);
-        /*eo_del(node);Unless evas_canvas3d_destructors work properly*/
+        /*eo_unref(node);Unless evas_canvas3d_destructors work properly*/
      }
    eina_list_free(globalGraphical.list_nodes);
    eina_list_free(l);
@@ -298,7 +298,7 @@ _change_scene_setup()
    EINA_LIST_FOREACH (globalGraphical.list_meshes, l, m)
      {
         globalGraphical.list_meshes = eina_list_remove(globalGraphical.list_meshes, m);
-        /*eo_del(m); Unless evas_canvas3d_destructors work properly*/
+        /*eo_unref(m); Unless evas_canvas3d_destructors work properly*/
      }
    eina_list_free(globalGraphical.list_meshes);
    eina_list_free(l);
