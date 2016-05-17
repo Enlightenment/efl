@@ -11754,6 +11754,71 @@ static Eina_Bool
  _edje_generate_source_of_colorclass(Edje *ed, const char *name, Eina_Strbuf *buf);
 
 static Eina_Strbuf *
+_edje_generate_image_set_source(Evas_Object *obj, const char *entry)
+{
+   Eina_Strbuf *buf = eina_strbuf_new();
+   Eina_Bool ret = EINA_FALSE;
+   if (!buf) return NULL;
+
+   BUF_APPENDF(I1 "set { name: \"%s\";\n", entry);
+   Eina_List *images = NULL, *ll = NULL;
+   const char *image_name = NULL;
+   unsigned int place = 0;
+
+   images = edje_edit_image_set_images_list_get(obj, entry);
+   EINA_LIST_FOREACH(images, ll, image_name)
+     {
+        BUF_APPEND(I2 "image {\n");
+        int comp = edje_edit_image_compression_type_get(obj, image_name);
+        if (comp < 0)
+          {
+            eina_strbuf_free(buf);
+            return NULL;
+          }
+        BUF_APPENDF(I3 "image: \"%s\" ", image_name);
+
+        if (comp == EDJE_EDIT_IMAGE_COMP_LOSSY)
+          BUF_APPENDF("LOSSY %d;\n",
+                      edje_edit_image_compression_rate_get(obj, image_name));
+        else if (comp == EDJE_EDIT_IMAGE_COMP_LOSSY_ETC1)
+          BUF_APPENDF("LOSSY_ETC1 %d;\n",
+                      edje_edit_image_compression_rate_get(obj, image_name));
+        else if (comp == EDJE_EDIT_IMAGE_COMP_LOSSY_ETC2)
+          BUF_APPENDF("LOSSY_ETC2 %d;\n",
+                      edje_edit_image_compression_rate_get(obj, image_name));
+        else if (comp == EDJE_EDIT_IMAGE_COMP_RAW)
+          BUF_APPEND("RAW;\n");
+        else if (comp == EDJE_EDIT_IMAGE_COMP_USER)
+          BUF_APPEND("USER;\n");
+        else
+          BUF_APPEND("COMP;\n");
+
+        int min_w = 0, min_h = 0, max_w = 0, max_h = 0;
+        edje_edit_image_set_image_min_get(obj, entry, place, &min_w, &min_h);
+        edje_edit_image_set_image_max_get(obj, entry, place, &max_w, &max_h);
+        if (min_w != 0 || min_h != 0 || max_w != 0 || max_h != 0)
+          BUF_APPENDF(I3 "size: %d %d %d %d;\n", min_w, min_h, max_w, max_h);
+
+        int l = 0, r = 0, t = 0, b = 0;
+        edje_edit_image_set_image_border_get(obj, entry, place, &l, &r, &t, &b);
+        if (l != 0 || r != 0 || t != 0 || b != 0)
+          BUF_APPENDF(I3 "border: %d %d %d %d;\n", l, r, t, b);
+
+        double scale_by = 0;
+        scale_by = edje_edit_image_set_image_border_scale_get(obj, entry, place);
+        if (scale_by != 0)
+          BUF_APPENDF(I3 "border_scale_by: %.3f;\n", scale_by);
+
+        BUF_APPEND(I2 "}\n");
+        place++;
+     }
+   BUF_APPEND(I1 "}\n");
+
+   return buf;
+}
+
+
+static Eina_Strbuf *
 _edje_generate_image_source(Evas_Object *obj, const char *entry)
 {
    Eina_Strbuf *buf = eina_strbuf_new();
@@ -11805,6 +11870,7 @@ edje_edit_source_generate(Evas_Object *obj)
    Eina_Strbuf *buf = NULL;
    Eina_Bool ret = EINA_TRUE;
    Eina_List *images = NULL, *color_classes = NULL, *styles = NULL, *fonts = NULL;
+   Eina_List *images_set = NULL;
    Eina_List *sounds = NULL;
    Eina_List *l;
 
@@ -11827,9 +11893,18 @@ edje_edit_source_generate(Evas_Object *obj)
           {
              /*  parse "default" description of this part. */
              part_desc_image = (Edje_Part_Description_Image *)part->default_desc;
-             /* find image name according to it's id that is in description */
-             entry = _edje_image_name_find(eed, part_desc_image->image.id);
-             COLLECT_RESOURCE(entry, images);
+
+             if (part_desc_image->image.set)
+               {
+                  entry = _edje_set_name_find(eed, part_desc_image->image.id);
+                  COLLECT_RESOURCE(entry, images_set);
+               }
+             else
+               {
+                  /* find image name according to it's id that is in description */
+                  entry = _edje_image_name_find(eed, part_desc_image->image.id);
+                  COLLECT_RESOURCE(entry, images);
+               }
              for (j = 0; j < part_desc_image->image.tweens_count; j++)
                {
                   entry = _edje_image_name_find(eed, part_desc_image->image.tweens[j]->id);
@@ -11839,9 +11914,19 @@ edje_edit_source_generate(Evas_Object *obj)
              for (j = 0; j < part->other.desc_count; j++)
                {
                   part_desc_image = (Edje_Part_Description_Image *)part->other.desc[j];
-                  entry = _edje_image_name_find(eed, part_desc_image->image.id);
-                  COLLECT_RESOURCE(entry, images);
-               }
+
+                  if (part_desc_image->image.set)
+                    {
+                       entry = _edje_set_name_find(eed, part_desc_image->image.id);
+                       COLLECT_RESOURCE(entry, images_set);
+                    }
+                  else
+                    {
+                       /* find image name according to it's id that is in description */
+                       entry = _edje_image_name_find(eed, part_desc_image->image.id);
+                       COLLECT_RESOURCE(entry, images);
+                    }
+              }
           }
         /* find all text, textblock part and fonts, styles required by those parts. */
         if ((part->type == EDJE_PART_TYPE_TEXTBLOCK) ||
@@ -11965,7 +12050,7 @@ edje_edit_source_generate(Evas_Object *obj)
      }
 
    /* if images were found, print them */
-   if (images)
+   if (images || images_set)
      {
         BUF_APPEND(I0 "images {\n");
 
@@ -11977,6 +12062,16 @@ edje_edit_source_generate(Evas_Object *obj)
              BUF_APPENDF(I1 "%s", eina_strbuf_string_get(gen_buf));
              eina_strbuf_free(gen_buf);
           }
+
+        EINA_LIST_FOREACH(images_set, l, entry)
+          {
+             Eina_Strbuf *gen_buf = _edje_generate_image_set_source(obj, entry);
+             if (!gen_buf) continue;
+
+             BUF_APPENDF("%s", eina_strbuf_string_get(gen_buf));
+             eina_strbuf_free(gen_buf);
+          }
+
 
         BUF_APPEND(I0 "}\n\n");
         eina_list_free(images);
@@ -12834,7 +12929,6 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
    int attr_amount = 0;
    int indent_space = strlen(I6);
    char *data;
-   const char *image_name;
 
    Eina_Bool name = EINA_FALSE;
    Eina_Bool border = EINA_FALSE;
@@ -12847,14 +12941,12 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
    img = (Edje_Part_Description_Image *)pd;
    Edje_Part_Description_Image *inherit_pd_img = (Edje_Part_Description_Image *)inherit_pd;
 
-   image_name = _edje_image_name_find(eed, img->image.id);
    ll = edje_edit_state_tweens_list_get(obj, part, state, value);
 
 /*TODO: support tweens inherit*/
    if (inherit_pd)
      {
-        const char *inherit_name = _edje_image_name_find(eed, inherit_pd_img->image.id);
-        name = ((image_name != NULL) && (inherit_name != NULL) && (!strcmp(image_name, inherit_name))) ? EINA_FALSE : EINA_TRUE;
+        name = (img->image.id == inherit_pd_img->image.id) ? EINA_FALSE : EINA_TRUE;
 
         border = ((img->image.border.l == inherit_pd_img->image.border.l) &&
                   (img->image.border.r == inherit_pd_img->image.border.r) &&
@@ -12873,7 +12965,7 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
      }
    else
      {
-        name = (image_name == NULL) ? EINA_FALSE : EINA_TRUE;
+        name = (img->image.id == -1) ? EINA_FALSE : EINA_TRUE;
         border = (img->image.border.l == 0 && img->image.border.r == 0 &&
                   img->image.border.t == 0 && img->image.border.b == 0) ? EINA_FALSE : EINA_TRUE;
         border_scale_by = (img->image.border.scale_by == 0) ? EINA_FALSE : EINA_TRUE;
@@ -12895,8 +12987,17 @@ _edje_generate_source_state_image(Edje_Edit *eed, Evas_Object *obj,
    else
       BUF_APPEND(I5 "image.");
 
-   if (name && image_name)
-     BUF_APPENDF("%*snormal: \"%s\";\n", indent_space, "", image_name);
+   if (name)
+     {
+        if (img->image.set)
+          {
+             BUF_APPENDF("%*snormal: \"%s\";\n", indent_space, "", _edje_set_name_find(eed, img->image.id));
+          }
+        else
+          {
+             BUF_APPENDF("%*snormal: \"%s\";\n", indent_space, "", _edje_image_name_find(eed, img->image.id));
+          }
+     }
 
    EINA_LIST_FOREACH(ll, l, data)
      BUF_APPENDF("%*stween: \"%s\";\n", indent_space, "", data);
@@ -14852,7 +14953,7 @@ _edje_generate_source(Evas_Object *obj)
 {
    Eina_Strbuf *buf;
 
-   Eina_List *l, *ll;
+   Eina_List *l, *ll, *ll_set;
    Edje_Font_Directory_Entry *fnt;
 
    char *entry;
@@ -14869,7 +14970,9 @@ _edje_generate_source(Evas_Object *obj)
    //TODO Probably we need to save the file before generation
 
    /* Images */
-   if ((ll = edje_edit_images_list_get(obj)))
+   ll_set = edje_edit_image_set_list_get(obj);
+   ll = edje_edit_images_list_get(obj);
+   if (ll || ll_set)
      {
         BUF_APPEND(I0 "images {\n");
 
@@ -14881,8 +14984,19 @@ _edje_generate_source(Evas_Object *obj)
              BUF_APPENDF(I1 "%s", eina_strbuf_string_get(gen_buf));
              eina_strbuf_free(gen_buf);
           }
+
+         EINA_LIST_FOREACH(ll_set, l, entry)
+          {
+             Eina_Strbuf *gen_buf = _edje_generate_image_set_source(obj, entry);
+             if (!gen_buf) continue;
+
+             BUF_APPENDF("%s", eina_strbuf_string_get(gen_buf));
+             eina_strbuf_free(gen_buf);
+          }
+
         BUF_APPEND(I0 "}\n\n");
         edje_edit_string_list_free(ll);
+        edje_edit_string_list_free(ll_set);
 
         if (!ret)
           {
