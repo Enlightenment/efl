@@ -88,6 +88,7 @@ struct _Eo_Header
 struct _Eo_Object
 {
      Eo_Header header;
+     EINA_INLIST;
      const _Eo_Class *klass;
 #ifdef EO_DEBUG
      Eina_Inlist *xrefs;

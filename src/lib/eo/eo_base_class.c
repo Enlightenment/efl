@@ -26,9 +26,8 @@ typedef struct
 
 typedef struct
 {
-   Eina_List                 *children;
+   Eina_Inlist               *children;
    Eo                        *parent;
-   Eina_List                 *parent_list;
 
    Eo_Base_Extension         *ext;
    Eo_Callback_Description   *callbacks;
@@ -340,8 +339,8 @@ _ismultiglob(const char *match)
 EOLIAN static Eo_Base *
 _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
 {
-   Eina_List *l;
    Eo *child;
+   _Eo_Object *child_eo;
    const char *id, *p, *klass_name;
 
    // notes:
@@ -389,8 +388,9 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
              // figure out if class or name are globs
              klass_glob = _hasglob(klass);
              name_glob = _hasglob(name);
-             EINA_LIST_FOREACH(pd->children, l, child)
+             EINA_INLIST_FOREACH(pd->children, child_eo)
                {
+                  child = _eo_id_get(child_eo);
                   id = eo_id_get(child);
                   klass_name = eo_class_name_get(eo_class_get(child));
                   if (_idmatch(klass, klass_glob, klass_name) &&
@@ -406,8 +406,9 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
              if (_hasglob(search))
                {
                   // we have a glob - fnmatch
-                  EINA_LIST_FOREACH(pd->children, l, child)
+                  EINA_INLIST_FOREACH(pd->children, child_eo)
                     {
+                       child = _eo_id_get(child_eo);
                        id = eo_id_get(child);
                        if ((id) && (_idmatch(search, EINA_TRUE, id)))
                          return child;
@@ -418,8 +419,9 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
              else
                {
                   // fast path for simple "name"
-                  EINA_LIST_FOREACH(pd->children, l, child)
+                  EINA_INLIST_FOREACH(pd->children, child_eo)
                     {
+                       child = _eo_id_get(child_eo);
                        id = eo_id_get(child);
                        if ((id) && (_idmatch(search, EINA_FALSE, id)))
                          return child;
@@ -478,6 +480,8 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
    if (pd->parent == parent_id)
      return;
 
+   EO_OBJ_POINTER(obj, eo_obj);
+
    if (pd->parent)
      {
         Eo_Base_Data *old_parent_pd;
@@ -485,9 +489,8 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
         old_parent_pd = eo_data_scope_get(pd->parent, EO_BASE_CLASS);
         if (old_parent_pd)
           {
-             old_parent_pd->children = eina_list_remove_list(old_parent_pd->children,
-                                                             pd->parent_list);
-             pd->parent_list = NULL;
+             old_parent_pd->children = eina_inlist_remove(old_parent_pd->children,
+                   EINA_INLIST_GET(eo_obj));
           }
         else
           {
@@ -511,8 +514,8 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
         if (EINA_LIKELY(parent_pd != NULL))
           {
              pd->parent = parent_id;
-             parent_pd->children = eina_list_append(parent_pd->children, obj);
-             pd->parent_list = eina_list_last(parent_pd->children);
+             parent_pd->children = eina_inlist_append(parent_pd->children,
+                   EINA_INLIST_GET(eo_obj));
           }
         else
           {
@@ -554,7 +557,7 @@ typedef struct _Eo_Children_Iterator Eo_Children_Iterator;
 struct _Eo_Children_Iterator
 {
    Eina_Iterator iterator;
-   Eina_List *current;
+   Eina_Inlist *current;
    _Eo_Object *obj;
    Eo *obj_id;
 };
@@ -564,8 +567,12 @@ _eo_children_iterator_next(Eo_Children_Iterator *it, void **data)
 {
    if (!it->current) return EINA_FALSE;
 
-   if (data) *data = eina_list_data_get(it->current);
-   it->current = eina_list_next(it->current);
+   if (data)
+     {
+        _Eo_Object *eo_obj = EINA_INLIST_CONTAINER_GET(it->current, _Eo_Object);
+        *data = _eo_id_get(eo_obj);
+     }
+   it->current = it->current->next;
 
    return EINA_TRUE;
 }
@@ -1413,7 +1420,7 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    // extra things like removes other children too later on in the list
    while (pd->children)
      {
-        child = eina_list_data_get(pd->children);
+        child = _eo_id_get(EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object));
         eo_parent_set(child, NULL);
      }
 
