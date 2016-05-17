@@ -1074,46 +1074,46 @@ START_TEST(eo_name)
    Eo *objtmp;
    const char *id;
 
-   id = eo_id_get(obj);
+   id = eo_name_get(obj);
    fail_if(NULL != id);
 
-   eo_id_set(obj, "Hello");
-   id = eo_id_get(obj);
+   eo_name_set(obj, "Hello");
+   id = eo_name_get(obj);
    fail_if(NULL == id);
    fail_if(!!strcmp(id, "Hello"));
 
-   eo_id_set(obj, "Hello");
-   eo_id_set(obj, "");
-   id = eo_id_get(obj);
+   eo_name_set(obj, "Hello");
+   eo_name_set(obj, "");
+   id = eo_name_get(obj);
    fail_if(NULL != id);
 
-   eo_id_set(obj, "Hello");
-   eo_id_set(obj, NULL);
-   id = eo_id_get(obj);
+   eo_name_set(obj, "Hello");
+   eo_name_set(obj, NULL);
+   id = eo_name_get(obj);
    fail_if(NULL != id);
 
-   eo_id_set(obj2, "joe");
-   eo_id_set(obj3, "bob");
+   eo_name_set(obj2, "joe");
+   eo_name_set(obj3, "bob");
 
    eo_parent_set(obj2, obj);
    eo_parent_set(obj3, obj2);
 
-   objtmp = eo_id_find(obj, "bob");
+   objtmp = eo_name_find(obj, "bob");
    fail_if(objtmp != obj3);
 
-   objtmp = eo_id_find(obj, "joe");
+   objtmp = eo_name_find(obj, "joe");
    fail_if(objtmp != obj2);
 
-   objtmp = eo_id_find(obj, "bo*");
+   objtmp = eo_name_find(obj, "bo*");
    fail_if(objtmp != obj3);
 
-   objtmp = eo_id_find(obj, "*oe");
+   objtmp = eo_name_find(obj, "*oe");
    fail_if(objtmp != obj2);
 
-   objtmp = eo_id_find(obj, "Simple:*oe");
+   objtmp = eo_name_find(obj, "Simple:*oe");
    fail_if(objtmp != obj2);
 
-   objtmp = eo_id_find(obj, "*mple:joe");
+   objtmp = eo_name_find(obj, "*mple:joe");
    fail_if(objtmp != obj2);
 
    eo_del(obj);

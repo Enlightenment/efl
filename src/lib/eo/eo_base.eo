@@ -82,22 +82,22 @@ abstract Eo.Base ()
            could be passed to it easily.
          ]]
       }
-      @property id {
-         [[ The id/name of the object.
+      @property name {
+         [[ The name of the object.
 
            Every object can have a string name. Names may not contain
            the following charactors:
              / ? * [ ] ! \ :
            They are illegal. Using it in a name will result in undefined
            behavior later on. An empty string is considered the same as a
-           NULL string or no string for the name/id at all.
+           NULL string or no string for the name at all.
          ]]
          set {
          }
          get {
          }
          values {
-           id: const(char)* @nullable; [[the id/name]]
+           name: const(char)* @nullable; [[the name]]
          }
       }
       @property comment {
@@ -177,8 +177,8 @@ abstract Eo.Base ()
          [[Called at the end of #eo_add. Should not be called, just overridden.]]
          return: Eo.Base *; [[The new object created, can be NULL if aborting]]
       }
-      id_find {
-         [[Find a child object with the given name/id and return it.
+      name_find {
+         [[Find a child object with the given name and return it.
            The search string can be a glob (shell style). It can also
            specify class name in the format of "class:name" where ":"
            separates class and name. Both class and name can be globs.
@@ -186,7 +186,7 @@ abstract Eo.Base ()
            the search will match any object of that class.
          ]]
          params {
-            @in search: const(char)*; [[the name/id search string]]
+            @in search: const(char)*; [[the name search string]]
          }
          return: Eo.Base *; [[the first object found]]
       }

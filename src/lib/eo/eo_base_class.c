@@ -17,7 +17,7 @@ typedef struct _Eo_Callback_Description Eo_Callback_Description;
 
 typedef struct
 {
-   const char                *id;
+   const char                *name;
    const char                *comment;
    Eo                        *composite_parent;
    Eina_Inlist               *generic_data;
@@ -81,7 +81,7 @@ static inline void
 _eo_base_extension_noneed(Eo_Base_Data *pd)
 {
    Eo_Base_Extension *ext = pd->ext;
-   if ((!ext) || (ext->id) || (ext->comment) || (ext->generic_data) ||
+   if ((!ext) || (ext->name) || (ext->comment) || (ext->generic_data) ||
        (ext->wrefs) || (ext->composite_parent)) return;
    _eo_base_extension_free(pd->ext);
    pd->ext = NULL;
@@ -254,34 +254,34 @@ _eo_base_key_value_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
 }
 
 EOLIAN static void
-_eo_base_id_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *id)
+_eo_base_name_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *name)
 {
-   if ((id) && (!id[0])) id = NULL;
-   if (id)
+   if ((name) && (!name[0])) name = NULL;
+   if (name)
      {
         _eo_base_extension_need(pd);
-        if (pd->ext) eina_stringshare_replace(&(pd->ext->id), id);
+        if (pd->ext) eina_stringshare_replace(&(pd->ext->name), name);
      }
    else
      {
         if (!pd->ext) return;
-        if (pd->ext->id)
+        if (pd->ext->name)
           {
-             eina_stringshare_replace(&(pd->ext->id), id);
+             eina_stringshare_replace(&(pd->ext->name), name);
              _eo_base_extension_noneed(pd);
           }
      }
 }
 
 EOLIAN static const char *
-_eo_base_id_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+_eo_base_name_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
 {
    if (!pd->ext) return NULL;
-   return pd->ext->id;
+   return pd->ext->name;
 }
 
 static inline Eina_Bool
-_idmatch(const char *match, Eina_Bool is_glob, const char *str)
+_name_match(const char *match, Eina_Bool is_glob, const char *str)
 {
    if (str)
      {
@@ -337,11 +337,11 @@ _ismultiglob(const char *match)
 }
 
 EOLIAN static Eo_Base *
-_eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
+_eo_base_name_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
 {
    Eo *child;
    _Eo_Object *child_eo;
-   const char *id, *p, *klass_name;
+   const char *name, *p, *klass_name;
 
    // notes:
    // if search contains NO "/" char, then its just a name search.
@@ -374,7 +374,7 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
           {
              // "class:name"
              char *klass;
-             char *name;
+             char *search_name;
              size_t colon_location = p - search;
              Eina_Bool klass_glob = EINA_FALSE;
              Eina_Bool name_glob = EINA_FALSE;
@@ -383,21 +383,21 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
              klass = alloca(strlen(search) + 1);
              strcpy(klass, search);
              klass[colon_location] = '\0';
-             name = klass + colon_location + 1;
+             search_name = klass + colon_location + 1;
 
              // figure out if class or name are globs
              klass_glob = _hasglob(klass);
-             name_glob = _hasglob(name);
+             name_glob = _hasglob(search_name);
              EINA_INLIST_FOREACH(pd->children, child_eo)
                {
                   child = _eo_obj_id_get(child_eo);
-                  id = eo_id_get(child);
+                  name = eo_name_get(child);
                   klass_name = eo_class_name_get(eo_class_get(child));
-                  if (_idmatch(klass, klass_glob, klass_name) &&
-                      (((!_matchall(klass)) && (!id) && (_matchall(name))) ||
-                       ((id) && _idmatch(name, name_glob, id))))
+                  if (_name_match(klass, klass_glob, klass_name) &&
+                      (((!_matchall(klass)) && (!name) && (_matchall(search_name))) ||
+                       ((name) && _name_match(search_name, name_glob, name))))
                     return child;
-                  child = eo_id_find(child, search);
+                  child = eo_name_find(child, search);
                   if (child) return child;
                }
           }
@@ -409,10 +409,10 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
                   EINA_INLIST_FOREACH(pd->children, child_eo)
                     {
                        child = _eo_obj_id_get(child_eo);
-                       id = eo_id_get(child);
-                       if ((id) && (_idmatch(search, EINA_TRUE, id)))
+                       name = eo_name_get(child);
+                       if ((name) && (_name_match(search, EINA_TRUE, name)))
                          return child;
-                       child = eo_id_find(child, search);
+                       child = eo_name_find(child, search);
                        if (child) return child;
                     }
                }
@@ -422,10 +422,10 @@ _eo_base_id_find(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *search)
                   EINA_INLIST_FOREACH(pd->children, child_eo)
                     {
                        child = _eo_obj_id_get(child_eo);
-                       id = eo_id_get(child);
-                       if ((id) && (_idmatch(search, EINA_FALSE, id)))
+                       name = eo_name_get(child);
+                       if ((name) && (_name_match(search, EINA_FALSE, name)))
                          return child;
-                       child = eo_id_find(child, search);
+                       child = eo_name_find(child, search);
                        if (child) return child;
                     }
                }
@@ -1454,8 +1454,8 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    ext = pd->ext;
    if (ext)
      {
-        eina_stringshare_del(ext->id);
-        ext->id = NULL;
+        eina_stringshare_del(ext->name);
+        ext->name = NULL;
         eina_stringshare_del(ext->comment);
         ext->comment = NULL;
         _eo_base_extension_free(ext);
