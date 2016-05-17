@@ -60,11 +60,11 @@ inline Eina_Bool event_callback(void* data, Eo_Event const* eo_event)
   v8::HandleScope handle_scope(isolate);
   event_callback_information* event = static_cast<event_callback_information*>(data);
   v8::Handle<v8::Value> a[] = {eina::js::compatibility_new<v8::External>(isolate, eo_event->object)};
-  v8::Local<v8::Object> self = (event->info->constructor->handle())->NewInstance(1, a);
+  v8::Local<v8::Object> self = (event->event_info->constructor->handle())->NewInstance(1, a);
 
   v8::Local<v8::Value> call_args[] = {
     self,
-    get_event_info<T>(eo_event->info, isolate, event->info->class_name)
+    get_event_info<T>(eo_event->info, isolate, event->event_info->class_name)
   };
   event->function.handle()->Call(eina::js::compatibility_global(), 2, call_args);
   

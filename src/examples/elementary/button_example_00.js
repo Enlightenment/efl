@@ -1,12 +1,11 @@
 
 efl = require('efl');
-elm = require('elm');
 
-win = new elm.Elm.WinStandard(null);
+win = new efl.Elm.Win.Standard(null);
 win.setTitle("Hello, World!");
 win.setAutohide(true);
 
-btn = new elm.Elm.Button(win);
+btn = new efl.Elm.Button(win);
 btn.setText(null, "Good-Bye, World!");
 btn.setSize(120, 30);
 btn.setPosition(60, 15);

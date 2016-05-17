@@ -153,7 +153,8 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
           {"array", "Eina_Array"},
           {"iterator", "Eina_Iterator"},
           {"hash", "Eina_Hash"},
-          {"list", "Eina_List"}
+          {"list", "Eina_List"},
+          {"promise", "Eina_Promise"}
         };
 
         std::string type_name = eolian_type_name_get(tp);

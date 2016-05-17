@@ -1,6 +1,5 @@
 
 efl = require('efl');
-elm = require('elm');
 
 util = require('util');
 fs = require('fs');
@@ -17,16 +16,16 @@ var twit = new Twitter({
   access_token_secret: 'l7ccNKXTVv6cymfSD1gQH61tmfixkdna2QmOjPtpVxSHD'
 });
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Twitter App");
-win.setAutohide(true);
+win = new efl.ui.WinStandard(null);
+win.title = "Twitter App";
+win.autohide = true;
 
-box = new elm.Elm.Box(win);
+box = new efl.ui.Box(win);
 box.setSizeHintWeight(1.0, 1.0);
 win.resizeObjectAdd(box);
 box.setVisible(true);
 
-list = new elm.Elm.List(win);
+list = new efl.List(win);
 list.setSizeHintWeight(1.0, 1.0);
 list.setSizeHintAlign(-1.0, -1.0);
 box.packEnd(list);
@@ -41,7 +40,7 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
             console.log("finished");
             for (i=0; i < icon_array.length; i++) {
                 console.log(i);
-                icon_array[i].setFile("/tmp/twitter_pic.jpg", null);
+                icon_array[i].file = "/tmp/twitter_pic.jpg";
             }
         });
         if (tweets.length > 0) {
@@ -49,8 +48,8 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
         }
 
         for(i=0; i < tweets.length; i++){
-            var layout = new elm.Elm.Layout(win);
-            layout.setFile("twitter_example_01.edj", "tweet");
+            var layout = new efl.ui.Layout(win);
+            layout.file["tweet"] = "twitter_example_01.edj";
 
             var user_name = tweets[i].user.name;
             var screen_name = tweets[i].user.screen_name;
@@ -59,24 +58,24 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
 
             layout.setText("user_name", screen_name);
             layout.setText("screen_name", " - @"+screen_name);
-            var entry = new elm.Elm.Entry(win);
-            entry.setText("elm.text", text);
+            var entry = new efl.ui.Entry(win);
+            entry.text["elm.text"] = text;
             console.log(text);
-            layout.contentSet("tweet_text", entry);
+            layout.content["tweet_text"] = entry;
 
-            layout.setSizeHintMin(127, 96);
-            layout.setSizeHintWeight(1.0, 1.0);
-            layout.setSizeHintAlign(-1.0, -1.0);
+            layout.sizeHintMin = {127, 96};
+            layout.sizeHintWeight = {1.0, 1.0};
+            layout.sizeHintAlign = {-1.0, -1.0};
 
-            var icon = new elm.Elm.Image(win);
-            icon.setFillInside(true);
+            var icon = new efl.ui.Image(win);
+            icon.fillInside = true;
             icon_array.push(icon);
-            layout.contentSet("user_icon", icon);
+            layout.content["user_icon"] = icon;
             item = list.itemAppend("", layout, null, null, null);
         }
         list.go();
     }
 });
 
-win.setSize(380,400);
-win.setVisible(true);
+win.size = {380,400};
+win.visible = {true};

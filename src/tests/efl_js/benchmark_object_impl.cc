@@ -65,7 +65,7 @@ using efl::eina::js::compatibility_new;
       }                                                                 \
     eina_counter_stop(counter, 20000);                                  \
     fprintf(stderr, "%s", eina_counter_dump(counter));                  \
-    eo_del(object);                                                     \
+    eo_unref(object);                                                   \
     return compatibility_return();                                      \
   }
 

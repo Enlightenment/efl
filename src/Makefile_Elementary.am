@@ -1290,7 +1290,7 @@ endif
 
 if HAVE_ELUA
 
-elementary_eolian_lua = $(elm_eolian_files:%.eo=%.eo.lua)
+elementary_eolian_lua = $(elm_public_eolian_files:%.eo=%.eo.lua)
 
 generated_elementary_lua_all = $(elementary_eolian_lua)
 
@@ -1303,7 +1303,7 @@ endif
 
 if HAVE_JS
 
-generated_elementary_js_bindings = $(elm_eolian_files:%.eo=%.eo.js.cc)
+generated_elementary_js_bindings = $(elm_public_eolian_files:%.eo=%.eo.js.cc)
 
 CLEANFILES += $(generated_elementary_js_bindings)
 

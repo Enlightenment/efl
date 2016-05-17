@@ -59,6 +59,7 @@ endif
 bindings/js/efl_js/eolian_js_bindings.cc: $(GENERATED_JS_BINDINGS)
 	@echo @ECHO_E@ "#ifdef HAVE_CONFIG_H" > $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
 	@echo @ECHO_E@ "#include \"config.h\"" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include \"elementary_config.h\"" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
 	@echo @ECHO_E@ "#endif\n" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
 	@echo @ECHO_E@ "#include <Efl.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
 	@echo @ECHO_E@ "#include <Efl_Config.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
@@ -69,7 +70,10 @@ bindings/js/efl_js/eolian_js_bindings.cc: $(GENERATED_JS_BINDINGS)
 	@echo @ECHO_E@ "#include <Evas.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
 	@echo @ECHO_E@ "#include <Edje.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
 	@echo @ECHO_E@ "#include <Ecore_Con_Eet.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Emotion.h>\n" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Emotion.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#define ELM_INTERNAL_API_ARGESFSDFEFC" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <Elementary.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <elm_widget.h>\n" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
 	@for i in $(GENERATED_JS_BINDINGS); do echo "#include <$$i>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc; done
 
 CLEANFILES += bindings/js/efl_js/eolian_js_bindings.cc
@@ -177,7 +181,8 @@ lib_efl_js_libefl_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ELDBUS_JS_CFLAGS@ \
 @EIO_JS_CFLAGS@ \
 @ETHUMB_JS_CFLAGS@ \
-@EINA_CXX_CFLAGS@
+@EINA_CXX_CFLAGS@ \
+@ELEMENTARY_CFLAGS@
 lib_efl_js_libefl_js_la_LIBADD = @EFL_JS_LIBS@
 lib_efl_js_libefl_js_la_DEPENDENCIES = @EFL_JS_INTERNAL_LIBS@
 lib_efl_js_libefl_js_la_LIBTOOLFLAGS = --tag=disable-static
