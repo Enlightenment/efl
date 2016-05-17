@@ -29,6 +29,25 @@
 
 //#include <Evas_Common.h>
 
+struct dmabuf_attributes
+{
+  /* This must exactly match the struct in Enlightenment.
+   * Wayland dmabuf is still an experimental protocol and may
+   * change.  If the version doesn't match we won't even attempt
+   * to read the struct.
+   */
+   int version;
+   int32_t width;
+   int32_t height;
+   uint32_t format;
+   uint32_t flags; /* enum zlinux_buffer_params_flags */
+   int n_planes;
+   int fd[4];
+   uint32_t offset[4];
+   uint32_t stride[4];
+   uint64_t modifier[4];
+};
+
 typedef struct _Native Native;
 struct _Native
 {
@@ -53,6 +72,18 @@ struct _Native
          void                     *wl_buf; /* struct wl_buffer */
          void                     *surface; /*egl surface*/
       } wl_surface; /**< Set this struct fields if surface data is Wayland based. */
+
+       /*  EVAS_NATIVE_SURFACE_WL_DMABUF */
+      struct
+      {
+         struct dmabuf_attributes attr; /* Plane attributes of buffer */
+         void                     *resource; /* Wayland resource for buffer */
+
+         // Run-time storage for bind/unbind
+         size_t                   size; /* size of are when mmapped */
+         void                     *ptr; /* data area when mmapped */
+         void                     *image; /* EGLImage when bound for GL */
+      } wl_surface_dmabuf; /**< Set this struct fields if surface data is Wayland dmabuf based. */
 
       /* EVAS_NATIVE_SURFACE_OPENGL */
       struct

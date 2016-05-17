@@ -2560,6 +2560,7 @@ typedef enum _Evas_Native_Surface_Type
    EVAS_NATIVE_SURFACE_WL, /**< Wayland system based type. buffer of surface */
    EVAS_NATIVE_SURFACE_TBM, /**< Tizen system based type. tbm surface @since 1.14  */
    EVAS_NATIVE_SURFACE_EVASGL, /**< Evas GL based type. evas gl surface @since 1.14 */
+   EVAS_NATIVE_SURFACE_WL_DMABUF, /**< Wayland system based type. using dmabuf @since 1.18 */
 } Evas_Native_Surface_Type;
 
 /**
@@ -2612,6 +2613,11 @@ struct _Evas_Native_Surface
       {
          void *legacy_buffer; /**< wayland client buffer to use */
       } wl; /**< Set this struct fields if surface data is Wayland based. */
+      struct
+      {
+         void *attr; /**< Pointer to dmabuf attributes - contents copied */
+         void *resource; /**< Wayland resource pointer, kept as is */
+      } wl_dmabuf; /**< Set this struct fields if surface data is Wayland dmabuf based. @since 1.18 */
       struct
       {
          void *buffer; /**< tbm surface buffer to use @since 1.14 */
