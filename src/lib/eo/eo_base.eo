@@ -200,73 +200,66 @@ abstract Eo.Base ()
             @in wref: Eo.Base **;
          }
       }
-      key_data_set {
-         [[Set generic data to object.
+      @property key_data {
+         [[Generic data with string key on an object.
 
-           The user is in change to free the data.
+           The user is in charge of freeing the data.
          ]]
-         params {
-            @in key: const(char)*; [[the key associated with the data]]
-            @in data: const(void)*; [[the data to set]]
+         keys {
+            key: const(char) *; [[the key associated with the data]]
+         }
+         set {
+            values {
+               data: const(void) *; [[the data to set]]
+            }
+         }
+         get {
+            values {
+               data: void *; [[the data to set]]
+            }
          }
       }
-      key_data_get @const {
-         [[Get generic data from object.]]
-         params {
-            @in key: const(char)*; [[the key associated with the data]]
-         }
-         return: void *; [[the data for the key]]
-      }
-      key_del {
-         [[Del generic data from object.]]
-         params {
-            @in key: const(char)*; [[the key associated with the data]]
-         }
-      }
-      key_obj_set {
-         [[Set generic object reference to object.
+      @property key_obj {
+         [[Generic object reference with string key to object.
 
            The object will be automatically ref'd when set and unref'd
            when replaced or deleted or referring object is deleted. If
            the referenced object is deleted then the key is deleted
            automatically.
 
-           This is the same key store used by key_data_set etc. so keys
+           This is the same key store used by key_data and key_value so keys
            are shared and can store only one thing
          ]]
-         params {
-            @in key: const(char)*; [[the key associated with the object ref]]
-            @in objdata: Eo.Base *; [[the object to set]]
+         keys {
+            key: const(char) *; [[the key associated with the object ref]]
+         }
+         set {
+            values {
+               objdata: const(Eo.Base) *; [[the object to set]]
+            }
+         }
+         get {
+            values {
+               objdata: Eo.Base *; [[the object to set]]
+            }
          }
       }
-      key_obj_get @const {
-         [[Get generic object reference from object.]]
-         params {
-            @in key: const(char)*; [[the key associated with the object ref]]
-         }
-         return: Eo.Base *; [[the object reference for the key]]
-      }
-      key_value_set {
-         [[Set value on the object.
+      @property key_value {
+         [[Value on with string key on the object.
 
            This stores the value with the given string key on the object
            and it will be freed when replaced or deleted or the referring
            object is deleted.
 
-           This is the same key store used by key_data_set and key_obj_set
-           etc. so keys are shared and can store only one thing
+           This is the same key store used by key_data and key_obj so keys
+           are shared and can store only one thing
          ]]
-         params {
-            @in key: const(char)*; [[the key associated with the value]]
-            @in value: Eina.Value *; [[the value to set]]
+         keys {
+            key: const(char)*; [[the key associated with the value]]
          }
-      }
-      key_value_get @const {
-         [[Get generic value from object.]]
-         params {
-            @in key: const(char)*; [[the key associated with the value]]
+         values {
+            value: Eina.Value *; [[the value to set]]
          }
-         return: Eina.Value *; [[the value for the key]]
       }
       event_thaw {
          [[thaw events of object.

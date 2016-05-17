@@ -4382,7 +4382,7 @@ _local_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
         if (!dropable->cbs_list)
           {
              drops = eina_list_remove(drops, dropable);
-             eo_key_del(obj, "__elm_dropable");
+             eo_key_data_set(obj, "__elm_dropable", NULL);
              free(dropable);
              dropable = NULL;
              evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,

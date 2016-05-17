@@ -91,7 +91,7 @@ _efl_ui_layout_internal_box_eo_base_finalize(Eo *obj, Efl_Ui_Layout_Box_Data *pd
 EOLIAN static void
 _efl_ui_layout_internal_box_eo_base_destructor(Eo *obj, Efl_Ui_Layout_Box_Data *pd)
 {
-   eo_key_del(pd->pack, DATA_KEY);
+   eo_key_data_set(pd->pack, DATA_KEY, NULL);
    eo_destructor(eo_super(obj, BOX_CLASS));
 }
 
@@ -291,7 +291,7 @@ _efl_ui_layout_internal_table_eo_base_finalize(Eo *obj EINA_UNUSED, Efl_Ui_Layou
 EOLIAN static void
 _efl_ui_layout_internal_table_eo_base_destructor(Eo *obj, Efl_Ui_Layout_Box_Data *pd)
 {
-   eo_key_del(pd->pack, DATA_KEY);
+   eo_key_data_set(pd->pack, DATA_KEY, NULL);
    eina_stringshare_del(pd->part);
    eo_destructor(eo_super(obj, TABLE_CLASS));
 }

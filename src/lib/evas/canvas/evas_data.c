@@ -30,6 +30,6 @@ evas_object_data_del(Evas_Object *obj, const char *key)
    MAGIC_CHECK_END();
    void *data = NULL;
    data = eo_key_data_get(obj, key);
-   eo_key_del(obj, key);
+   eo_key_data_set(obj, key, NULL);
    return data;
 }

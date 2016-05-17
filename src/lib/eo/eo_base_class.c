@@ -126,14 +126,12 @@ _eo_generic_data_del_all(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
      }
 }
 
-EOLIAN static void
-_eo_base_key_del(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
+static void
+_eo_key_generic_del(const Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
 {
    Eo_Generic_Data_Node *node;
    Eo_Base_Extension *ext = pd->ext;
 
-   if (!key) return;
-   if (!ext) return;
    EINA_INLIST_FOREACH(ext->generic_data, node)
      {
         if (!strcmp(node->key, key))
@@ -148,7 +146,7 @@ _eo_base_key_del(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
 
 /* Return TRUE if the object was newly added. */
 static Eina_Bool
-_key_generic_set(const Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, const void *data, Eo_Generic_Data_Node_Type d_type)
+_key_generic_set(const Eo *obj, Eo_Base_Data *pd, const char *key, const void *data, Eo_Generic_Data_Node_Type d_type)
 {
    Eo_Generic_Data_Node *node;
    Eo_Base_Extension *ext = pd->ext;
@@ -156,6 +154,11 @@ _key_generic_set(const Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, c
    if (!key) return EINA_FALSE;
    if (ext)
      {
+        if (!data)
+          {
+             _eo_key_generic_del(obj, pd, key);
+             return EINA_TRUE;
+          }
         EINA_INLIST_FOREACH(ext->generic_data, node)
           {
              if (!strcmp(node->key, key))
@@ -223,20 +226,20 @@ _eo_base_key_data_set(Eo *obj, Eo_Base_Data *pd, const char *key, const void *da
 }
 
 EOLIAN static void *
-_eo_base_key_data_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
+_eo_base_key_data_get(Eo *obj, Eo_Base_Data *pd, const char *key)
 {
    return _key_generic_get(obj, pd, key, DATA_PTR);
 }
 
 EOLIAN static void
-_eo_base_key_obj_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, Eo *objdata)
+_eo_base_key_obj_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, const Eo *objdata)
 {
    if (_key_generic_set(obj, pd, key, objdata, DATA_OBJ))
       eo_ref(objdata);
 }
 
 EOLIAN static Eo *
-_eo_base_key_obj_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
+_eo_base_key_obj_get(Eo *obj, Eo_Base_Data *pd, const char *key)
 {
    return _key_generic_get(obj, pd, key, DATA_OBJ);
 }
@@ -248,7 +251,7 @@ _eo_base_key_value_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, E
 }
 
 EOLIAN static Eina_Value *
-_eo_base_key_value_get(const Eo *obj, Eo_Base_Data *pd, const char *key)
+_eo_base_key_value_get(Eo *obj, Eo_Base_Data *pd, const char *key)
 {
    return _key_generic_get(obj, pd, key, DATA_VAL);
 }
