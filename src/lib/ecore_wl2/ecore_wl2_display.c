@@ -689,7 +689,6 @@ connect_err:
    free(ewd);
    return NULL;
 
-name_err:
    if (hash_create)
      {
         eina_hash_free(_client_displays);
