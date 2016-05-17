@@ -1,4 +1,5 @@
-class Elm.Panes (Elm.Layout, Evas.Clickable_Interface)
+class Elm.Panes (Elm.Layout, Efl.Orientation,
+                 Evas.Clickable_Interface)
 {
    legacy_prefix: elm_panes;
    eo_prefix: elm_obj_panes;
@@ -23,25 +24,6 @@ class Elm.Panes (Elm.Layout, Evas.Clickable_Interface)
          }
          values {
             size: double; [[Value between 0.0 and 1.0 representing size proportion of left side.]]
-         }
-      }
-      @property horizontal {
-         [[Set how to split and dispose each content.
-
-           Use this function to change how your panes is to be disposed:
-           vertically or horizontally.
-           Horizontal panes have "top" and "bottom" contents, vertical panes have
-           "left" and "right" contents.
-
-           By default panes is in a vertical mode.]]
-         set {
-         }
-         get {
-         }
-         values {
-            horizontal: bool; [[Use $true to make $obj to split panes
-            horizontally ("top" and "bottom" contents). $false to make it
-            vertically ("left" and "right" contents).]]
          }
       }
       @property fixed {
@@ -139,6 +121,7 @@ class Elm.Panes (Elm.Layout, Evas.Clickable_Interface)
       Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
       Elm.Layout.content_aliases.get;
+      Efl.Orientation.orientation;
    }
    events {
       press;

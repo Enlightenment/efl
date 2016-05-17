@@ -52,7 +52,7 @@ _elm_panes_elm_widget_theme_apply(Eo *obj, Elm_Panes_Data *sd)
    Eina_Bool int_ret = EINA_FALSE;
    ELM_LAYOUT_DATA_GET(obj, ld);
 
-   if (sd->horizontal)
+   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
      eina_stringshare_replace(&ld->group, "horizontal");
    else
      eina_stringshare_replace(&ld->group, "vertical");
@@ -100,7 +100,8 @@ _elm_panes_elm_widget_focus_next(Eo *obj, Elm_Panes_Data *sd, Elm_Focus_Directio
    left = elm_layout_content_get(obj, "left");
    right = elm_layout_content_get(obj, "right");
 
-   if (((sd->horizontal) && (h == 0.0)) || ((!sd->horizontal) && (w == 0.0)))
+   if (((sd->orientation == EFL_ORIENT_HORIZONTAL) && (h == 0.0)) ||
+       ((sd->orientation == EFL_ORIENT_VERTICAL) && (w == 0.0)))
      {
        return elm_widget_focus_next_get(right, dir, next, next_item);
      }
@@ -193,7 +194,7 @@ _set_min_size(void *data)
         sizer = sizer / sum;
         sizel = sizel / sum;
      }
-   if (sd->horizontal)
+   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
      {
         edje_object_part_drag_value_set
            (wd->resize_obj, "right_constraint", 0.0, (1 - sizer));
@@ -219,7 +220,7 @@ _update_fixed_sides(void *data)
 
    if (sd->right_min_size_is_relative)
      {
-        if (sd->horizontal)
+        if (sd->orientation == EFL_ORIENT_HORIZONTAL)
            sd->right_min_size = (int)(h * sd->right_min_relative_size);
         else
            sd->right_min_size =(int)(w * sd->right_min_relative_size);
@@ -227,15 +228,15 @@ _update_fixed_sides(void *data)
    else
      {
         sd->right_min_relative_size = 0;
-        if (sd->horizontal && (h > 0))
+        if (sd->orientation == EFL_ORIENT_HORIZONTAL && (h > 0))
               sd->right_min_relative_size = sd->right_min_size / (double)h;
-        if (!sd->horizontal && (w > 0))
+        if (sd->orientation == EFL_ORIENT_VERTICAL && (w > 0))
               sd->right_min_relative_size = sd->right_min_size / (double)w;
      }
 
    if(sd->left_min_size_is_relative)
      {
-        if (sd->horizontal)
+        if (sd->orientation == EFL_ORIENT_HORIZONTAL)
              sd->left_min_size = (int)(h * sd->left_min_relative_size);
         else
            sd->left_min_size = (int)(w * sd->left_min_relative_size);
@@ -243,9 +244,9 @@ _update_fixed_sides(void *data)
    else
      {
         sd->left_min_relative_size = 0;
-        if (sd->horizontal && (h > 0))
+        if (sd->orientation == EFL_ORIENT_HORIZONTAL && (h > 0))
            sd->left_min_relative_size = sd->left_min_size / (double)h;
-        if (!sd->horizontal && (w > 0))
+        if (sd->orientation == EFL_ORIENT_VERTICAL && (w > 0))
            sd->left_min_relative_size = sd->left_min_size / (double)w;
      }
    _set_min_size(data);
@@ -385,7 +386,8 @@ _elm_panes_content_left_size_get(Eo *obj, Elm_Panes_Data *sd)
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.bar", &w, &h);
 
-   if (sd->horizontal) return h;
+   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+     return h;
    else return w;
 }
 
@@ -397,7 +399,7 @@ _elm_panes_content_left_size_set(Eo *obj, Elm_Panes_Data *sd, double size)
    if (size < 0.0) size = 0.0;
    else if (size > 1.0) size = 1.0;
 
-   if (sd->horizontal)
+   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
      edje_object_part_drag_value_set
        (wd->resize_obj, "elm.bar", 0.0, size);
    else
@@ -418,19 +420,46 @@ _elm_panes_content_right_size_set(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED, doub
 }
 
 EOLIAN static void
-_elm_panes_horizontal_set(Eo *obj, Elm_Panes_Data *sd, Eina_Bool horizontal)
+_elm_panes_efl_orientation_orientation_set(Eo *obj, Elm_Panes_Data *sd, Efl_Orient dir)
 {
-   sd->horizontal = horizontal;
+   if ((dir != EFL_ORIENT_HORIZONTAL) && (dir != EFL_ORIENT_VERTICAL))
+     return;
+
+   sd->orientation = dir;
    elm_obj_widget_theme_apply(obj);
    _update_fixed_sides(obj);
 
    elm_panes_content_left_size_set(obj, 0.5);
 }
 
-EOLIAN static Eina_Bool
-_elm_panes_horizontal_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *sd)
+EOLIAN static Efl_Orient
+_elm_panes_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *sd)
 {
-   return sd->horizontal;
+   return sd->orientation;
+}
+
+EAPI void
+elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   Efl_Orient orient;
+
+   if (horizontal)
+     orient = EFL_ORIENT_HORIZONTAL;
+   else
+     orient = EFL_ORIENT_VERTICAL;
+
+   efl_orientation_set(obj, orient);
+}
+
+EAPI Eina_Bool
+elm_panes_horizontal_get(const Evas_Object *obj)
+{
+   Efl_Orient orient = efl_orientation_get(obj);
+
+   if (orient == EFL_ORIENT_HORIZONTAL)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 EOLIAN static void

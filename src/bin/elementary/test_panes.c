@@ -76,7 +76,7 @@ test_panes(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    // add panes
    panes_h = elm_panes_add(win);
-   elm_panes_horizontal_set(panes_h, EINA_TRUE);
+   efl_orientation_set(panes_h, EFL_ORIENT_HORIZONTAL);
    elm_panes_content_right_min_size_set(panes_h, 100);
    elm_panes_content_right_size_set(panes_h, 0.3);
    evas_object_show(panes_h);
