@@ -122,6 +122,8 @@ TESTS += tests/eo/test_constructors
 tests_eo_eo_suite_SOURCES = \
 tests/eo/suite/eo_test_class_simple.c \
 tests/eo/suite/eo_test_class_simple.h \
+tests/eo/suite/eo_test_class_singleton.c \
+tests/eo/suite/eo_test_class_singleton.h \
 tests/eo/suite/eo_suite.c \
 tests/eo/suite/eo_suite.h \
 tests/eo/suite/eo_error_msgs.h \

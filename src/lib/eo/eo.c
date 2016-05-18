@@ -683,9 +683,19 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
      {
         ERR("Object of class '%s' - Error while constructing object",
             klass->desc->name);
+
+        /* We have two refs at this point. */
         _eo_unref(obj);
         _eo_unref(obj);
         return NULL;
+     }
+   else if (eo_id != _eo_obj_id_get(obj))
+     {
+        /* We have two refs at this point. */
+        _eo_unref(obj);
+        _eo_unref(obj);
+
+        eo_ref(eo_id);
      }
 
    if (is_fallback)

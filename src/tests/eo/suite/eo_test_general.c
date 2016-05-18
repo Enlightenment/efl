@@ -10,6 +10,7 @@
 
 #include "eo_suite.h"
 #include "eo_test_class_simple.h"
+#include "eo_test_class_singleton.h"
 
 /* Loading this internal header for testing purposes. */
 #include "eo_ptr_indirection.h"
@@ -25,6 +26,25 @@ START_TEST(eo_simple)
    eo_constructor(obj);
    eo_destructor(obj);
    eo_unref(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
+START_TEST(eo_singleton)
+{
+   eo_init();
+
+   Eo *obj = eo_add(SINGLETON_CLASS, NULL);
+   fail_if(!obj);
+
+   Eo *obj2 = eo_add(SINGLETON_CLASS, NULL);
+   fail_if(!obj2);
+
+   ck_assert_ptr_eq(obj, obj2);
+
+   eo_unref(obj);
+   eo_unref(obj2);
 
    eo_shutdown();
 }
@@ -1171,6 +1191,7 @@ END_TEST
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
+   tcase_add_test(tc, eo_singleton);
    tcase_add_test(tc, eo_stack);
    tcase_add_test(tc, eo_signals);
    tcase_add_test(tc, eo_data_fetch);
