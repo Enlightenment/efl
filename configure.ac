@@ -725,7 +725,10 @@ AC_SUBST([USER_SESSION_DIR])
 
 if test "x${have_systemd_pkg}" = "xauto" -o "x${have_systemd_pkg}" = "xyes"; then
    PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 209],
-   [have_systemd_pkg="yes"],
+   [
+     have_systemd_pkg="yes"
+     AC_DEFINE_UNQUOTED([HAVE_SYSTEMD_LOGIN_209],[1],[Defined if systemd >= 209])
+   ],
    [have_systemd_pkg="no"])
 fi
 
