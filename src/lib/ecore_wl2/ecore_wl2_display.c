@@ -292,7 +292,8 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
    EINA_INLIST_FOREACH_SAFE(ewd->windows, tmp, window)
      ecore_wl2_window_hide(window);
 
-   ewd->recovery_timer = ecore_timer_add(0.5, (Ecore_Task_Cb)_recovery_timer, ewd);
+   ewd->recovery_timer =
+     ecore_timer_add(0.5, (Ecore_Task_Cb)_recovery_timer, ewd);
    _ecore_wl2_display_event(ewd, ECORE_WL2_EVENT_DISCONNECT);
 }
 
@@ -408,6 +409,7 @@ static Eina_Bool
 _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync)
 {
    struct wl_callback *cb;
+
    /* try to connect to wayland display with this name */
    ewd->wl.display = wl_display_connect(ewd->name);
    if (!ewd->wl.display)
