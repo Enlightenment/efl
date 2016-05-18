@@ -8,16 +8,6 @@
 #ifndef __ECORE_COCOA_H__
 #define __ECORE_COCOA_H__
 
-/*
- * DO NOT USE THIS HEADER. IT IS WORK IN PROGRESS. IT IS NOT FINAL AND
- * THE API MAY CHANGE.
- */
-
-#ifndef ECORE_COCOA_WIP_GNSIDNQI
-# warning "You are using a work in progress API. This API is not stable"
-# warning "and is subject to change. You use this at your own risk."
-#endif
-
 #include <Eina.h>
 
 #ifdef EAPI
@@ -43,6 +33,7 @@ extern "C" {
 /**
  * @typedef Ecore_Cocoa_Window
  * Opaque handler to manipulate a Cocoa Window through Ecore
+ * @since 1.18
  */
 typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
 #endif /* ! _ECORE_COCOA_WINDOW_PREDEF */
@@ -50,36 +41,42 @@ typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
 /**
  * @typedef Ecore_Cocoa_Screen
  * Opaque handler to manipulate a Cocoa Screen through Ecore
+ * @since 1.18
  */
 typedef struct _Ecore_Cocoa_Screen Ecore_Cocoa_Screen;
 
 /**
  * @typedef Ecore_Cocoa_Object
  * Opaque handler to refer to an objective-c object (aka id)
+ * @since 1.18
  */
 typedef void Ecore_Cocoa_Object;
 
 /**
  * @typedef Ecore_Cocoa_Event_Window_Resize_Request
  * Type of event thrown when a Cocoa window is resized
+ * @since 1.18
  */
 typedef struct _Ecore_Cocoa_Event_Window_Resize_Request Ecore_Cocoa_Event_Window_Resize_Request;
 
 /**
  * @typedef Ecore_Cocoa_Event_Window_Focused
  * Type of event thrown when a Cocoa window receives focus
+ * @since 1.18
  */
 typedef struct _Ecore_Cocoa_Event_Window_Focused Ecore_Cocoa_Event_Window_Focused;
 
 /**
  * @typedef Ecore_Cocoa_Event_Window_Unfocused
  * Type of event thrown when a Cocoa window loses the focus
+ * @since 1.18
  */
 typedef struct _Ecore_Cocoa_Event_Window_Unfocused Ecore_Cocoa_Event_Window_Unfocused;
 
 /**
  * @typedef Ecore_Cocoa_Event_Window_Destroy
  * Type of event thrown when a Cocoa window gets destoyed
+ * @since 1.18
  */
 typedef struct _Ecore_Cocoa_Event_Window_Destroy Ecore_Cocoa_Event_Window_Destroy;
 
@@ -87,6 +84,7 @@ typedef struct _Ecore_Cocoa_Event_Window_Destroy Ecore_Cocoa_Event_Window_Destro
  * @typedef Ecore_Cocoa_Cursor
  * Values of the Cocoa cursors handled by Ecore_Cocoa
  * See https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSCursor_Class/index.html for images of each cursors.
+ * @since 1.18
  */
 typedef enum
 {
@@ -116,21 +114,29 @@ typedef enum
 } Ecore_Cocoa_Cursor;
 
 
-/** Event triggered when a Cocoa window receives focus */
+/** Event triggered when a Cocoa window receives focus
+ * @since 1.18
+ */
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_FOCUSED;
 
-/** Event triggered when a Cocoa window loses focus */
+/**
+ * Event triggered when a Cocoa window loses focus
+ * @since 1.18
+ */
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_UNFOCUSED;
 
 /** Event triggered when a Cocoa window is resized */
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST;
 
-/** Event triggered when a Cocoa window get destroyed */
+/** Event triggered when a Cocoa window get destroyed
+ * @since 1.18
+ */
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_DESTROY;
 
 /**
  * @struct _Ecore_Cocoa_Event_Window_Resize_Request
  * Data available when a window is resized
+ * @since 1.18
  */
 struct _Ecore_Cocoa_Event_Window_Resize_Request
 {
@@ -142,6 +148,7 @@ struct _Ecore_Cocoa_Event_Window_Resize_Request
 /**
  * @struct _Ecore_Cocoa_Event_Window_Focused
  * Data available when a Cocoa window receives focus
+ * @since 1.18
  */
 struct _Ecore_Cocoa_Event_Window_Focused
 {
@@ -151,6 +158,7 @@ struct _Ecore_Cocoa_Event_Window_Focused
 /**
  * @struct _Ecore_Cocoa_Event_Window_Unfocused
  * Data available when a Cocoa window losrs focus
+ * @since 1.18
  */
 struct _Ecore_Cocoa_Event_Window_Unfocused
 {
@@ -160,6 +168,7 @@ struct _Ecore_Cocoa_Event_Window_Unfocused
 /**
  * @struct _Ecore_Cocoa_Event_Window_Destroy
  * Data available when a Cocoa window is destroyed
+ * @since 1.18
  */
 struct _Ecore_Cocoa_Event_Window_Destroy
 {
@@ -170,6 +179,7 @@ struct _Ecore_Cocoa_Event_Window_Destroy
  * @typedef Ecore_Cocoa_Cnp_Type
  * Type used to interact with the Cocoa pasteboard.
  * It hold types that can apply to a context.
+ * @since 1.18
  */
 typedef enum
 {
@@ -188,12 +198,14 @@ typedef enum
 /**
  * Inits the Ecore_Cocoa library
  * @return How many times Ecore_Cocoa has been initted
+ * @since 1.18
  */
 EAPI int ecore_cocoa_init(void);
 
 /**
  * Shuts the Ecore_Cocoa library down
  * @return How many times Ecore_Cocoa has been initted
+ * @since 1.18
  */
 EAPI int ecore_cocoa_shutdown(void);
 
@@ -207,6 +219,7 @@ EAPI int ecore_cocoa_shutdown(void);
  * @param screen The screen which size must be retrieved
  * @param [out] w The width of the screen
  * @param [out] h The height of the screen
+ * @since 1.18
  */
 EAPI void ecore_cocoa_screen_size_get(Ecore_Cocoa_Screen *screen, int *w, int *h);
 
@@ -222,6 +235,7 @@ EAPI void ecore_cocoa_screen_size_get(Ecore_Cocoa_Screen *screen, int *w, int *h
  * @param w The width of the window
  * @param h The height of the window
  * @return A handler on the window. NULL on failure
+ * @since 1.18
  */
 EAPI Ecore_Cocoa_Window *ecore_cocoa_window_new(int x,
                                                 int y,
@@ -233,6 +247,7 @@ EAPI Ecore_Cocoa_Window *ecore_cocoa_window_new(int x,
 /**
  * Releases a Cocoa window
  * @param window The window to be released
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_free(Ecore_Cocoa_Window *window)
    EINA_ARG_NONNULL(1);
@@ -242,6 +257,7 @@ EAPI void ecore_cocoa_window_free(Ecore_Cocoa_Window *window)
  * @param window The window to be moved
  * @param x The new origin of the window (X)
  * @param y The new origin of the window (Y)
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_move(Ecore_Cocoa_Window *window,
                                   int                 x,
@@ -253,6 +269,7 @@ EAPI void ecore_cocoa_window_move(Ecore_Cocoa_Window *window,
  * @param window The window to be moved
  * @param w The new width of the window
  * @param h The new height of the window
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_resize(Ecore_Cocoa_Window *window,
                                     int                 w,
@@ -269,6 +286,7 @@ EAPI void ecore_cocoa_window_resize(Ecore_Cocoa_Window *window,
  *
  * @see ecore_cocoa_window_resize()
  * @see ecore_cocoa_window_move()
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_move_resize(Ecore_Cocoa_Window *window,
                                          int                 x,
@@ -284,6 +302,7 @@ EAPI void ecore_cocoa_window_move_resize(Ecore_Cocoa_Window *window,
  * @param y Pointer used to retrieve its origin in Y
  * @param w Pointer used to retrieve its width
  * @param h Pointer used to retrieve its height
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_geometry_get(const Ecore_Cocoa_Window *window,
                                           int                      *x,
@@ -297,6 +316,7 @@ EAPI void ecore_cocoa_window_geometry_get(const Ecore_Cocoa_Window *window,
  * @param window The window which size is queried
  * @param w Pointer used to retrieve its width
  * @param h Pointer used to retrieve its height
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_size_get(const Ecore_Cocoa_Window *window,
                                       int                      *w,
@@ -308,6 +328,7 @@ EAPI void ecore_cocoa_window_size_get(const Ecore_Cocoa_Window *window,
  * @param window The window which minimum size is to be altered
  * @param w The new minimum width of the window
  * @param h The new minimum height of the window
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
                                           int                 w,
@@ -319,6 +340,7 @@ EAPI void ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
  * @param window The window which minimum size is queried
  * @param w Pointer used to retrieve its minimum width
  * @param h Pointer used to retrieve its minimum height
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_size_min_get(const Ecore_Cocoa_Window *window,
                                           int                      *w,
@@ -330,6 +352,7 @@ EAPI void ecore_cocoa_window_size_min_get(const Ecore_Cocoa_Window *window,
  * @param window The window which maximum size is to be altered
  * @param w The new maximum width of the window
  * @param h The new maximum height of the window
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
                                           int                 w,
@@ -341,6 +364,7 @@ EAPI void ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
  * @param window The window which maximum size is queried
  * @param w Pointer used to retrieve its maximum width
  * @param h Pointer used to retrieve its maximum height
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_size_max_get(const Ecore_Cocoa_Window *window,
                                           int                      *w,
@@ -352,6 +376,7 @@ EAPI void ecore_cocoa_window_size_max_get(const Ecore_Cocoa_Window *window,
  * @param window The Cocoa window which resize increment is to be set
  * @param w The width size increment
  * @param h The height size increment
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
                                            int                 w,
@@ -363,6 +388,7 @@ EAPI void ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
  * @param window The Cocoa window which resize increment queried
  * @param w The width size increment
  * @param h The height size increment
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_size_step_get(const Ecore_Cocoa_Window *window,
                                            int                      *w,
@@ -372,6 +398,7 @@ EAPI void ecore_cocoa_window_size_step_get(const Ecore_Cocoa_Window *window,
 /**
  * Display a Cocoa window
  * @param window The Cocoa window to be displayed
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_show(Ecore_Cocoa_Window *window)
    EINA_ARG_NONNULL(1);
@@ -379,6 +406,7 @@ EAPI void ecore_cocoa_window_show(Ecore_Cocoa_Window *window)
 /**
  * Hide a Cocoa window
  * @param window The Cocoa window to be hid
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_hide(Ecore_Cocoa_Window *window)
    EINA_ARG_NONNULL(1);
@@ -386,6 +414,7 @@ EAPI void ecore_cocoa_window_hide(Ecore_Cocoa_Window *window)
 /**
  * Brings a Cocoa window to front
  * @param window The Cocoa window to be raised
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_raise(Ecore_Cocoa_Window *window)
    EINA_ARG_NONNULL(1);
@@ -393,6 +422,7 @@ EAPI void ecore_cocoa_window_raise(Ecore_Cocoa_Window *window)
 /**
  * Brings a Cocoa window back
  * @param window The Cocoa window to be lowered
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_lower(Ecore_Cocoa_Window *window)
    EINA_ARG_NONNULL(1);
@@ -400,6 +430,7 @@ EAPI void ecore_cocoa_window_lower(Ecore_Cocoa_Window *window)
 /**
  * Makes a Cocoa window the current key window by raising it
  * @param window The Cocoa window to be activated
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_activate(Ecore_Cocoa_Window *window)
    EINA_ARG_NONNULL(1);
@@ -417,6 +448,7 @@ EAPI void ecore_cocoa_window_title_set(Ecore_Cocoa_Window *window,
  * Miniaturize or deminiaturize a Cocoa window
  * @param window The Cocoa window which iconify status is to be changed
  * @param on If #EINA_TRUE, will miniaturize the window. Will deminiaturize it if #EINA_FALSE
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_iconified_set(Ecore_Cocoa_Window *window,
                                            Eina_Bool           on)
@@ -426,6 +458,7 @@ EAPI void ecore_cocoa_window_iconified_set(Ecore_Cocoa_Window *window,
  * Manage the borders of a Cocoa window
  * @param window The Cocoa window which borders are to be changed
  * @param on If #EINA_TRUE, will remove borders. Will restore them if #EINA_FALSE
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
                                             Eina_Bool           on)
@@ -435,6 +468,7 @@ EAPI void ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
  * Set the content view of a Cocoa window
  * @param window The Cocoa window which internal view is to be set
  * @param view The NSView to be set as @c window content view
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
                                       Ecore_Cocoa_Object *view)
@@ -444,6 +478,7 @@ EAPI void ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
 /**
  * Get the height of the title bar of Cocoa windows
  * @return The height of the title bar of Cocoa windows
+ * @since 1.18
  */
 EAPI int ecore_cocoa_titlebar_height_get(void);
 
@@ -451,6 +486,7 @@ EAPI int ecore_cocoa_titlebar_height_get(void);
  * Retrieves the actual NSWindow behind the Ecore_Cocoa wrapper
  * @param window The Ecore_Cocoa wrapper which window is to be retrieved
  * @return The Cocoa NSWindow manipulated by @c window
+ * @since 1.18
  */
 EAPI Ecore_Cocoa_Object *ecore_cocoa_window_get(const Ecore_Cocoa_Window *window)
    EINA_ARG_NONNULL(1)
@@ -462,6 +498,7 @@ EAPI Ecore_Cocoa_Object *ecore_cocoa_window_get(const Ecore_Cocoa_Window *window
  * @param size The size in bytes of @c data
  * @param type
  * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @since 1.18
  */
 EAPI Eina_Bool ecore_cocoa_selection_clipboard_set(const void *data,
                                                    int size,
@@ -477,6 +514,7 @@ EAPI Eina_Bool ecore_cocoa_selection_clipboard_set(const void *data,
  * If @c type was ECORE_COCOA_CNP_TYPE_STRING or ECORE_COCOA_CNP_TYPE_MARKUP,
  * @c retrieved_types will contain ECORE_COCOA_CNP_TYPE_STRING and the data
  * will be a C string (char*) that must be freed after use.
+ * @since 1.18
  */
 EAPI void *ecore_cocoa_selection_clipboard_get(int *size,
                                                Ecore_Cocoa_Cnp_Type type,
@@ -485,6 +523,7 @@ EAPI void *ecore_cocoa_selection_clipboard_get(int *size,
 
 /**
  * Deletes the contents of the Cocoa clipboard
+ * @since 1.18
  */
 EAPI void ecore_cocoa_selection_clipboard_clear(void);
 
@@ -492,6 +531,7 @@ EAPI void ecore_cocoa_selection_clipboard_clear(void);
  * Set the Cocoa cursor for a given Cocoa window
  * @param win The Cocoa window on which the cursor is to be changed.
  * @param c The cursor to be set
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_cursor_set(Ecore_Cocoa_Window *win,
                                         Ecore_Cocoa_Cursor  c)
@@ -501,10 +541,24 @@ EAPI void ecore_cocoa_window_cursor_set(Ecore_Cocoa_Window *win,
  * Hide or show the Cocoa cursor for a given Cocoa window
  * @param win The Cocoa window on which the cursor is to be hid
  * @param show Shows the cursor if EINA_TRUE. Hides it if EINA_FALSE
- *
+ * @since 1.18
  */
 EAPI void ecore_cocoa_window_cursor_show(Ecore_Cocoa_Window *win, Eina_Bool show);
    EINA_ARG_NONNULL(1);
+
+
+typedef struct _Ecore_Cocoa_Notification Ecore_Cocoa_Notification;
+typedef void (*Ecore_Cocoa_Notify_Send_Cb)(void *data, unsigned int uid);
+
+EAPI Ecore_Cocoa_Notification *ecore_cocoa_notification_get(unsigned int uid);
+
+EAPI void
+ecore_cocoa_notification_send(Ecore_Cocoa_Notification *replaces EINA_UNUSED,
+                              const char *name,
+                              const char *description,
+                              const char *icon EINA_UNUSED,
+                              Ecore_Cocoa_Notify_Send_Cb cb,
+                              const void *cb_data);
 
 #ifdef __cplusplus
 }

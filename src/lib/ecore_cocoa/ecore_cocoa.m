@@ -67,6 +67,9 @@ ecore_cocoa_init(void)
    if (!_ecore_cocoa_window_init())
      return --_ecore_cocoa_init_count;
 
+   if (!_ecore_cocoa_notification_init())
+     return --_ecore_cocoa_init_count;
+
    return _ecore_cocoa_init_count;
 }
 
@@ -81,6 +84,8 @@ ecore_cocoa_shutdown(void)
 {
    if (--_ecore_cocoa_init_count != 0)
      return _ecore_cocoa_init_count;
+
+   _ecore_cocoa_notification_shutdown();
 
    DBG("Ecore Cocoa shutdown");
 

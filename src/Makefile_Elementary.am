@@ -87,6 +87,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_sys_notify_interface.eo \
 	lib/elementary/elm_sys_notify.eo \
 	lib/elementary/elm_sys_notify_dbus.eo \
+	lib/elementary/elm_sys_notify_cocoa.eo \
 	lib/elementary/elm_systray.eo \
 	lib/elementary/elm_thumb.eo \
 	lib/elementary/elm_toolbar.eo \
@@ -617,6 +618,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_sys_notify_interface.c \
 	lib/elementary/elm_sys_notify.c \
 	lib/elementary/elm_sys_notify_dbus.c \
+	lib/elementary/elm_sys_notify_cocoa.c \
 	lib/elementary/elm_table.c \
 	lib/elementary/elm_theme.c \
 	lib/elementary/elm_thumb.c \

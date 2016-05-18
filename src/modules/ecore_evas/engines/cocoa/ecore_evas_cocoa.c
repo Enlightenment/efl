@@ -221,7 +221,7 @@ _ecore_evas_resize_common(Ecore_Evas *ee,
    ee->w = w;
    ee->h = h;
 
-   DBG("Ecore_Evas Resize %d %d", w, h);
+   CRI("Ecore_Evas Resize %d %d", w, h);
 
    if (resize_cocoa)
      ecore_cocoa_window_resize((Ecore_Cocoa_Window *)ee->prop.window, w, h);

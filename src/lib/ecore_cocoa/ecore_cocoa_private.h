@@ -43,6 +43,8 @@ struct _Ecore_Cocoa_Screen
 
 /* Internal init */
 Eina_Bool _ecore_cocoa_window_init(void);
+Eina_Bool _ecore_cocoa_notification_init(void);
+void _ecore_cocoa_notification_shutdown(void);
 
 Eina_Bool _ecore_cocoa_feed_events(void *anEvent);
 

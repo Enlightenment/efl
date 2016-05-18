@@ -1,0 +1,12 @@
+class Elm.Sys_Notify.Cocoa (Eo.Base, Elm.Sys_Notify_Interface)
+{
+   legacy_prefix: elm_sys_notify_cocoa;
+   eo_prefix: elm_obj_sys_notify_cocoa;
+   data: null;
+
+   implements {
+      Elm.Sys_Notify_Interface.send;
+      Elm.Sys_Notify_Interface.simple_send;
+      Elm.Sys_Notify_Interface.close;
+   }
+}

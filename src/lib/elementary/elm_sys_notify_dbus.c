@@ -393,6 +393,18 @@ _elm_sys_notify_dbus_eo_base_destructor(Eo   *obj,
    eo_destructor(eo_super(obj, MY_CLASS));
 }
 
+#if 0
+EOLIAN static void
+_elm_sys_notify_dbus_elm_sys_notify_interface_available_get(const Eo   *obj,
+                                                            void       *sd)
+{
+#ifdef HAVE_ELEMENTARY_COCOA
+   return EINA_FALSE;
+#else
+   return EINA_TRUE;
+#endif
+}
+#endif
+
 
 #include "elm_sys_notify_dbus.eo.c"
-

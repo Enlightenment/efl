@@ -92,6 +92,7 @@ elm_eolian_files = \
 	elm_sys_notify_interface.eo \
 	elm_sys_notify.eo \
 	elm_sys_notify_dbus.eo \
+	elm_sys_notify_cocoa.eo \
 	elm_systray.eo \
 	elm_table.eo \
 	elm_thumb.eo \
@@ -603,6 +604,7 @@ libelementary_la_SOURCES = \
 	elm_sys_notify_interface.c \
 	elm_sys_notify.c \
 	elm_sys_notify_dbus.c \
+	elm_sys_notify_cocoa.c \
 	elm_table.c \
 	elm_theme.c \
 	elm_thumb.c \
