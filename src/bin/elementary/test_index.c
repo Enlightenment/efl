@@ -82,7 +82,7 @@ set_api_state(api_data *api)
          break;
 
       case INDEX_HORIZONTAL:
-         elm_index_horizontal_set(d->id, EINA_TRUE);
+         efl_orientation_set(d->id, EFL_ORIENT_HORIZONTAL);
          break;
 
       case INDEX_INDICATOR_DISABLED:
@@ -564,7 +564,7 @@ test_index_horizontal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(list);
 
    api->dt.id = id = elm_index_add(win);
-   elm_index_horizontal_set(id, EINA_TRUE);
+   efl_orientation_set(id, EFL_ORIENT_HORIZONTAL);
    evas_object_size_hint_weight_set(id, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(id, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, id, 0, 0, 1, 1);

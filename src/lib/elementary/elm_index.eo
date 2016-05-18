@@ -1,4 +1,5 @@
-class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface)
+class Elm.Index (Elm.Layout, Efl.Orientation,
+                 Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
    legacy_prefix: elm_index;
    eo_prefix: elm_obj_index;
@@ -36,24 +37,6 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
          }
          values {
             priority: int; [[$priority target priority value in index]]
-         }
-      }
-
-      @property horizontal {
-          [[Enable or disable horizontal mode on the index object
-
-            Note: Vertical mode is set by default.
-
-            On horizontal mode items are displayed on index from left to right,
-            instead of from top to bottom. Also, the index will scroll horizontally.]]
-         set {
-         }
-         get {
-         }
-         values {
-            horizontal: bool; [[$true to enable horizontal or $false to
-            disable it, i.e., to enable vertical mode. it's an area one Fingers
-            "finger" wide on the bottom side of the index widget's container.]]
          }
       }
       @property delay_change_time {
@@ -244,6 +227,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.access;
       Elm.Widget.focus_next;
+      Efl.Orientation.orientation;
       Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Accessible.children.get;
    }

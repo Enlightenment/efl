@@ -59,8 +59,14 @@ _box_custom_layout(Evas_Object *o,
                    void *data)
 {
    Elm_Index_Data *sd = data;
+   Eina_Bool horizontal;
 
-   _els_box_layout(o, priv, sd->horizontal, EINA_TRUE, EINA_FALSE);
+   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+     horizontal = EINA_TRUE;
+   else
+     horizontal = EINA_FALSE;
+
+   _els_box_layout(o, priv, horizontal, EINA_TRUE, EINA_FALSE);
 }
 
 static void
@@ -320,7 +326,7 @@ _index_box_auto_fill(Evas_Object *obj,
         edje_object_mirrored_set(VIEW(it), rtl);
         o = VIEW(it);
 
-        if (sd->horizontal)
+        if (sd->orientation == EFL_ORIENT_HORIZONTAL)
           {
              if (i & 0x1)
                elm_widget_theme_object_set
@@ -433,7 +439,7 @@ _elm_index_elm_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
    _index_box_clear(obj, 0);
    _index_box_clear(obj, 1);
 
-   if (sd->horizontal)
+   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
      eina_stringshare_replace(&ld->group, "base/horizontal");
    else
      eina_stringshare_replace(&ld->group, "base/vertical");
@@ -650,7 +656,7 @@ _sel_eval(Evas_Object *obj,
                   x = (x * x) + (y * y);
                   if ((x < dist) || (!it_closest))
                     {
-                       if (sd->horizontal)
+                       if (sd->orientation == EFL_ORIENT_HORIZONTAL)
                          cdv = (double)(xx - bx) / (double)bw;
                        else
                          cdv = (double)(yy - by) / (double)bh;
@@ -889,7 +895,7 @@ _on_mouse_move(void *data,
      (wd->resize_obj, "elm.dragable.pointer",
      (!edje_object_mirrored_get(wd->resize_obj)) ?
      x : (x - w), y);
-   if (!sd->horizontal)
+   if (sd->orientation == EFL_ORIENT_VERTICAL)
      {
         if (adx > minw)
           {
@@ -1223,6 +1229,28 @@ elm_index_add(Evas_Object *parent)
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    Evas_Object *obj = eo_add(MY_CLASS, parent);
    return obj;
+}
+
+EAPI void elm_index_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   Efl_Orient orient;
+
+   if (horizontal)
+     orient = EFL_ORIENT_HORIZONTAL;
+   else
+     orient = EFL_ORIENT_VERTICAL;
+
+   efl_orientation_set(obj, orient);
+}
+
+EAPI Eina_Bool elm_index_horizontal_get(const Evas_Object *obj)
+{
+   Efl_Orient orient = efl_orientation_get(obj);
+
+   if (orient == EFL_ORIENT_HORIZONTAL)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 EOLIAN static Eo *
@@ -1593,19 +1621,20 @@ _elm_index_item_letter_get(const Eo *item EINA_UNUSED, Elm_Index_Item_Data *it)
 }
 
 EOLIAN static void
-_elm_index_horizontal_set(Eo *obj, Elm_Index_Data *sd, Eina_Bool horizontal)
+_elm_index_efl_orientation_orientation_set(Eo *obj, Elm_Index_Data *sd, Efl_Orient dir)
 {
-   horizontal = !!horizontal;
-   if (horizontal == sd->horizontal) return;
+   if ((dir != EFL_ORIENT_HORIZONTAL) && (dir != EFL_ORIENT_VERTICAL))
+     return;
 
-   sd->horizontal = horizontal;
+   sd->orientation = dir;
+
    elm_obj_widget_theme_apply(obj);
 }
 
-EOLIAN static Eina_Bool
-_elm_index_horizontal_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
+EOLIAN static Efl_Orient
+_elm_index_efl_orientation_orientation_get(Eo *obj, Elm_Index_Data *sd)
 {
-   return sd->horizontal;
+   return sd->orientation;
 }
 
 EOLIAN static void
@@ -1623,7 +1652,7 @@ _elm_index_delay_change_time_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 EOLIAN static void
 _elm_index_omit_enabled_set(Eo *obj, Elm_Index_Data *sd, Eina_Bool enabled)
 {
-   if (sd->horizontal) return;
+   if (sd->orientation == EFL_ORIENT_HORIZONTAL) return;
 
    enabled = !!enabled;
    if (sd->omit_enabled == enabled) return;

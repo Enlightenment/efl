@@ -33,6 +33,7 @@ struct _Elm_Index_Data
                                   * small */
    Eina_List            *omit;
 
+   Efl_Orient            orientation;
    int                   level;
    Evas_Coord            dx, dy;
    Ecore_Timer          *delay;
@@ -44,7 +45,6 @@ struct _Elm_Index_Data
    int                   show_group, next_group;
 
    Eina_Bool             mouse_down : 1;
-   Eina_Bool             horizontal : 1;
    Eina_Bool             autohide_disabled : 1;
    Eina_Bool             indicator_disabled : 1;
    Eina_Bool             omit_enabled : 1;
