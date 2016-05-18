@@ -45,12 +45,6 @@ ref_get(const Eo *obj)
    return ::eo_ref_get(obj);
 }
 
-inline void
-del(Eo *obj)
-{
-   ::eo_del(obj);
-}
-
 inline Eina_Bool
 isa(const Eo *obj, const Eo_Class *klass)
 {
