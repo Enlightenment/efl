@@ -211,8 +211,6 @@ _stop_scene(void *data,
 
    if (ev->button == 1)
      {
-        Evas_Canvas3D_Node *ret;
-
         if (evas_canvas3d_scene_exist(d->scene, (ev->canvas.x - (d_w / 2)), (ev->canvas.y - (d_h / 2)), d->mesh_node))
           {
              d_angle = 0;
