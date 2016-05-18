@@ -1151,6 +1151,8 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 #endif
    evas_cache_image_drop(ie);
 
+   if (ns->type == EVAS_NATIVE_SURFACE_WL_DMABUF)
+      return _evas_native_dmabuf_surface_image_set(ie2, ns);
 
    return ie2;
 }
