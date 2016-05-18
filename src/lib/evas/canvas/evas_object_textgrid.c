@@ -1266,10 +1266,14 @@ _evas_textgrid_palette_set(Eo *eo_obj, Evas_Textgrid_Data *o, Evas_Textgrid_Pale
 
    if ((idx < 0) || (idx > 255)) return;
 
-   if (a > 255) a = 255; if (a < 0) a = 0;
-   if (r > 255) r = 255; if (r < 0) r = 0;
-   if (g > 255) g = 255; if (g < 0) g = 0;
-   if (b > 255) b = 255; if (b < 0) b = 0;
+   if (a > 255) a = 255;
+   if (a < 0) a = 0;
+   if (r > 255) r = 255;
+   if (r < 0) r = 0;
+   if (g > 255) g = 255;
+   if (g < 0) g = 0;
+   if (b > 255) b = 255;
+   if (b < 0) b = 0;
    if (r > a)
      {
         r = a;

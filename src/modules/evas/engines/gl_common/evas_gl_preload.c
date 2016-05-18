@@ -73,14 +73,14 @@ evas_gl_preload_pop(Evas_GL_Texture *tex)
      if (async->tex == tex)
        {
           async_loader_tex = eina_list_remove_list(async_loader_tex, l);
-          
+
           evas_gl_common_texture_free(async->tex, EINA_FALSE);
 #ifdef EVAS_CSERVE2
-        if (evas_cache2_image_cached(&async->im->cache_entry))
-          evas_cache2_image_close(&async->im->cache_entry);
-        else
+          if (evas_cache2_image_cached(&async->im->cache_entry))
+            evas_cache2_image_close(&async->im->cache_entry);
+          else
 #endif
-          evas_cache_image_drop(&async->im->cache_entry);
+            evas_cache_image_drop(&async->im->cache_entry);
           free(async);
 
           break;

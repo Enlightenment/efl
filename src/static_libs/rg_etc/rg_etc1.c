@@ -2797,9 +2797,12 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_BGRA, rg_e
      }
    else
      {
-        if (dr < 0) dr += 8; dst_block[0] = (uint8)((best_results[0].m_block_color_unscaled.comp.r << 3) | dr);
-        if (dg < 0) dg += 8; dst_block[1] = (uint8)((best_results[0].m_block_color_unscaled.comp.g << 3) | dg);
-        if (db < 0) db += 8; dst_block[2] = (uint8)((best_results[0].m_block_color_unscaled.comp.b << 3) | db);
+        if (dr < 0) dr += 8;
+        dst_block[0] = (uint8)((best_results[0].m_block_color_unscaled.comp.r << 3) | dr);
+        if (dg < 0) dg += 8;
+        dst_block[1] = (uint8)((best_results[0].m_block_color_unscaled.comp.g << 3) | dg);
+        if (db < 0) db += 8;
+        dst_block[2] = (uint8)((best_results[0].m_block_color_unscaled.comp.b << 3) | db);
      }
 
    dst_block[3] = (uint8)((best_results[1].m_block_inten_table << 2) |

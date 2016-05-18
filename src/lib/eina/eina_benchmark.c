@@ -327,14 +327,14 @@ eina_benchmark_run(Eina_Benchmark *bench)
       else
          fprintf(main_script, ", \\\n");
 
-         fprintf(main_script,
+      fprintf(main_script,
               "\"%s\" using 1:2 title \'%s\' with line",
               buffer, run->name);
    }
 
-         fprintf(main_script, "\n");
+   fprintf(main_script, "\n");
 
-         fclose(main_script);
+   fclose(main_script);
 
    bench->names = eina_list_append(bench->names, ea);
 

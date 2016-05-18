@@ -200,55 +200,52 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
    _evas_walk(e);
 
-   if (type == EVAS_CALLBACK_MOVE &&
-       obj->move_ref == 0)
+   if ((type == EVAS_CALLBACK_MOVE) && (obj->move_ref == 0))
      goto nothing_here;
 
+   switch (type)
      {
-        switch (type)
-          {
-           case EVAS_CALLBACK_MOUSE_DOWN:
-                {
-                   Evas_Event_Mouse_Down *ev = event_info;
+      case EVAS_CALLBACK_MOUSE_DOWN:
+           {
+              Evas_Event_Mouse_Down *ev = event_info;
 
-                   flags = ev->flags;
-                   if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
-                     {
-                        if (obj->last_mouse_down_counter < (e->last_mouse_down_counter - 1))
-                          ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
-                     }
-                   obj->last_mouse_down_counter = e->last_mouse_down_counter;
-                   break;
-                }
-           case EVAS_CALLBACK_MOUSE_UP:
+              flags = ev->flags;
+              if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
                 {
-                   Evas_Event_Mouse_Up *ev = event_info;
-
-                   flags = ev->flags;
-                   if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
-                     {
-                        if (obj->last_mouse_up_counter < (e->last_mouse_up_counter - 1))
-                          ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
-                     }
-                   obj->last_mouse_up_counter = e->last_mouse_up_counter;
-                   break;
+                   if (obj->last_mouse_down_counter < (e->last_mouse_down_counter - 1))
+                     ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
                 }
-           default:
+              obj->last_mouse_down_counter = e->last_mouse_down_counter;
               break;
-          }
+           }
+      case EVAS_CALLBACK_MOUSE_UP:
+           {
+              Evas_Event_Mouse_Up *ev = event_info;
 
-        eo_event_callback_call(eo_obj, _legacy_evas_callback_table[type], event_info);
+              flags = ev->flags;
+              if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
+                {
+                   if (obj->last_mouse_up_counter < (e->last_mouse_up_counter - 1))
+                     ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
+                }
+              obj->last_mouse_up_counter = e->last_mouse_up_counter;
+              break;
+           }
+      default:
+         break;
+     }
 
-        if (type == EVAS_CALLBACK_MOUSE_DOWN)
-          {
-             Evas_Event_Mouse_Down *ev = event_info;
-             ev->flags = flags;
-          }
-        else if (type == EVAS_CALLBACK_MOUSE_UP)
-          {
-             Evas_Event_Mouse_Up *ev = event_info;
-             ev->flags = flags;
-          }
+   eo_event_callback_call(eo_obj, _legacy_evas_callback_table[type], event_info);
+
+   if (type == EVAS_CALLBACK_MOUSE_DOWN)
+     {
+        Evas_Event_Mouse_Down *ev = event_info;
+        ev->flags = flags;
+     }
+   else if (type == EVAS_CALLBACK_MOUSE_UP)
+     {
+        Evas_Event_Mouse_Up *ev = event_info;
+        ev->flags = flags;
      }
 
  nothing_here:

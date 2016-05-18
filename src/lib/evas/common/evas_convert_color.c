@@ -157,22 +157,34 @@ evas_common_convert_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, 
    switch (i)
      {
        case 1:
-         if (r) *r = v - f;  if (g) *g = v;  if (b) *b = s;
+         if (r) *r = v - f;
+         if (g) *g = v;
+         if (b) *b = s;
          return;
        case 2:
-         if (r) *r = s;  if (g) *g = v;  if (b) *b = s + f;
+         if (r) *r = s;
+         if (g) *g = v;
+         if (b) *b = s + f;
          return;
        case 3:
-         if (r) *r = s;  if (g) *g = v - f;  if (b) *b = v;
+         if (r) *r = s;
+         if (g) *g = v - f;
+         if (b) *b = v;
          return;
        case 4:
-         if (r) *r = s + f;  if (g) *g = s;  if (b) *b = v;
+         if (r) *r = s + f;
+         if (g) *g = s;
+         if (b) *b = v;
          return;
        case 5:
-         if (r) *r = v;  if (g) *g = s;  if (b) *b = v - f;
+         if (r) *r = v;
+         if (g) *g = s;
+         if (b) *b = v - f;
          return;
        default:
-         if (r) *r = v;  if (g) *g = s + f;  if (b) *b = s;
+         if (r) *r = v;
+         if (g) *g = s + f;
+         if (b) *b = s;
          break;
      }
 }

@@ -172,7 +172,7 @@ eina_magic_string_shutdown(void)
       if (ems->string_allocated)
          free((char *)ems->string);
 
-         free(_eina_magic_strings);
+   free(_eina_magic_strings);
    _eina_magic_strings = NULL;
    _eina_magic_strings_count = 0;
    _eina_magic_strings_allocated = 0;

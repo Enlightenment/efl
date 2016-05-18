@@ -949,7 +949,8 @@ _evas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
    if (obj->delete_me) return;
    if (!obj->layer) return;
-   if (w < 0) w = 0; if (h < 0) h = 0;
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
 
    evas_object_async_block(obj);
    if (evas_object_intercept_call_resize(eo_obj, obj, w, h)) return;
@@ -1022,7 +1023,10 @@ EAPI void
 evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (x) *x = 0; if (y) *y = 0; if (w) *w = 0; if (h) *h = 0;
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
    return;
    MAGIC_CHECK_END();
    efl_gfx_position_get((Eo *)eo_obj, x, y);
@@ -1036,7 +1040,8 @@ _evas_object_efl_gfx_position_get(Eo *obj EINA_UNUSED,
 {
    if ((pd->delete_me) || (!pd->layer))
      {
-        if (x) *x = 0; if (y) *y = 0;
+        if (x) *x = 0;
+        if (y) *y = 0;
         return;
      }
 
@@ -1051,7 +1056,8 @@ _evas_object_efl_gfx_size_get(Eo *obj EINA_UNUSED,
 {
    if (pd->delete_me)
      {
-        if (w) *w = 0; if (h) *h = 0;
+        if (w) *w = 0;
+        if (h) *h = 0;
         return;
      }
 
@@ -1102,7 +1108,8 @@ _evas_object_size_hint_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Dat
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
-        if (w) *w = 0; if (h) *h = 0;
+        if (w) *w = 0;
+        if (h) *h = 0;
         return;
      }
    if (w) *w = obj->size_hints->min.w;
@@ -1128,7 +1135,8 @@ _evas_object_size_hint_max_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Dat
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
-        if (w) *w = -1; if (h) *h = -1;
+        if (w) *w = -1;
+        if (h) *h = -1;
         return;
      }
    if (w) *w = obj->size_hints->max.w;
@@ -1154,7 +1162,8 @@ _evas_object_size_hint_request_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
-        if (w) *w = 0; if (h) *h = 0;
+        if (w) *w = 0;
+        if (h) *h = 0;
         return;
      }
    if (w) *w = obj->size_hints->request.w;
@@ -1181,7 +1190,8 @@ _evas_object_size_hint_aspect_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_
    if ((!obj->size_hints) || obj->delete_me)
      {
         if (aspect) *aspect = EVAS_ASPECT_CONTROL_NONE;
-        if (w) *w = 0; if (h) *h = 0;
+        if (w) *w = 0;
+        if (h) *h = 0;
         return;
      }
    if (aspect) *aspect = obj->size_hints->aspect.mode;
@@ -1209,7 +1219,8 @@ _evas_object_size_hint_align_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_D
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
-        if (x) *x = 0.5; if (y) *y = 0.5;
+        if (x) *x = 0.5;
+        if (y) *y = 0.5;
         return;
      }
    if (x) *x = obj->size_hints->align.x;
@@ -1235,7 +1246,8 @@ _evas_object_size_hint_weight_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
-        if (x) *x = 0.0; if (y) *y = 0.0;
+        if (x) *x = 0.0;
+        if (y) *y = 0.0;
         return;
      }
    if (x) *x = obj->size_hints->weight.x;
@@ -1261,8 +1273,10 @@ _evas_object_size_hint_padding_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
-        if (l) *l = 0; if (r) *r = 0;
-        if (t) *t = 0; if (b) *b = 0;
+        if (l) *l = 0;
+        if (r) *r = 0;
+        if (t) *t = 0;
+        if (b) *b = 0;
         return;
      }
    if (l) *l = obj->size_hints->padding.l;
@@ -1506,10 +1520,14 @@ _evas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                     int r, int g, int b, int a)
 {
    if (obj->delete_me) return;
-   if (r > 255) r = 255; if (r < 0) r = 0;
-   if (g > 255) g = 255; if (g < 0) g = 0;
-   if (b > 255) b = 255; if (b < 0) b = 0;
-   if (a > 255) a = 255; if (a < 0) a = 0;
+   if (r > 255) r = 255;
+   if (r < 0) r = 0;
+   if (g > 255) g = 255;
+   if (g < 0) g = 0;
+   if (b > 255) b = 255;
+   if (b < 0) b = 0;
+   if (a > 255) a = 255;
+   if (a < 0) a = 0;
    if (r > a)
      {
         r = a;
@@ -1582,7 +1600,10 @@ _evas_object_efl_gfx_color_get(Eo *eo_obj EINA_UNUSED,
 {
    if (obj->delete_me)
      {
-        if (r) *r = 0; if (g) *g = 0; if (b) *b = 0; if (a) *a = 0;
+        if (r) *r = 0;
+        if (g) *g = 0;
+        if (b) *b = 0;
+        if (a) *a = 0;
         return;
      }
    if (r) *r = obj->cur->color.r;
