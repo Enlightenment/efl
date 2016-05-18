@@ -1,6 +1,6 @@
 import edje_types;
 
-class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container)
+class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 {
    legacy_prefix: edje_object;
    eo_prefix: edje_obj;
@@ -2005,6 +2005,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container)
       Efl.Container.content_unset;
       Efl.Container.content_remove;
       Efl.Container.content_part_name.get;
+      Efl.Part.part;
    }
    events {
       recalc; [[Edje re-calculated the object.]]

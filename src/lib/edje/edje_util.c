@@ -3897,23 +3897,15 @@ _edje_object_efl_container_content_get(Eo *obj, Edje *ed, const char *part)
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return NULL;
 
-   switch (rp->type)
+   if (rp->type != EDJE_RP_TYPE_SWALLOW)
      {
-      case EDJE_RP_TYPE_SWALLOW:
-       if (!rp->typedata.swallow) return NULL;
-       return rp->typedata.swallow->swallowed_object;
-      case EDJE_RP_TYPE_CONTAINER:
-        if (rp->part->type == EDJE_PART_TYPE_BOX)
-          return _edje_box_internal_proxy_get(obj, ed, rp);
-        else if (rp->part->type == EDJE_PART_TYPE_TABLE)
-          return _edje_table_internal_proxy_get(obj, ed, rp);
-        else return NULL;
-      case EDJE_RP_TYPE_TEXT:
-        WRN("not implemented yet");
-        return NULL;
-      default:
+        ERR("Edje group '%s' part '%s' is not a swallow. Did "
+            "you mean to call efl_part() instead?", ed->group, part);
         return NULL;
      }
+
+   if (!rp->typedata.swallow) return NULL;
+   return rp->typedata.swallow->swallowed_object;
 }
 
 /* new in eo */
@@ -3941,6 +3933,26 @@ _edje_object_efl_container_content_part_name_get(Eo *obj EINA_UNUSED, Edje *ed E
    if (!rp) return NULL;
 
    return rp->part->name;
+}
+
+EOLIAN Eo *
+_edje_object_efl_part_part(Eo *obj, Edje *ed, const char *part)
+{
+   Edje_Real_Part *rp;
+
+   if ((!ed) || (!part)) return NULL;
+
+   /* Need to recalc before providing the object. */
+   _edje_recalc_do(ed);
+
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return NULL;
+
+   if (rp->part->type == EDJE_PART_TYPE_BOX)
+     return _edje_box_internal_proxy_get(obj, ed, rp);
+   else if (rp->part->type == EDJE_PART_TYPE_TABLE)
+     return _edje_table_internal_proxy_get(obj, ed, rp);
+   else return NULL; /* FIXME/TODO: text & others (color, ...) */
 }
 
 EOLIAN void

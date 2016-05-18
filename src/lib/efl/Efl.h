@@ -71,6 +71,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_image.eo.h"
 #include "interfaces/efl_image_animated.eo.h"
 #include "interfaces/efl_image_load.eo.h"
+#include "interfaces/efl_part.eo.h"
 #include "interfaces/efl_player.eo.h"
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_properties.eo.h"

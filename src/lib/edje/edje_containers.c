@@ -21,6 +21,7 @@ struct _Edje_Part_Data
    Edje           *ed;
    Edje_Real_Part *rp;
    const char     *part;
+   Eina_Bool       temp;
 };
 
 struct _Part_Item_Iterator
@@ -31,26 +32,12 @@ struct _Part_Item_Iterator
    Eo            *object;
 };
 
-static Eina_Bool
-_del_cb(void *data, const Eo_Event *event EINA_UNUSED)
-{
-   Edje_Real_Part *rp = data;
-   rp->typedata.container->eo_proxy = NULL;
-   return EO_CALLBACK_CONTINUE;
-}
-
 Eo *
 _edje_box_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp)
 {
-   Efl_Canvas_Layout_Internal_Box *eo = rp->typedata.container->eo_proxy;
-
-   if (eo) return eo;
-
-   eo = eo_add(BOX_CLASS, obj, efl_canvas_layout_internal_box_real_part_set(eo_self, ed, rp, rp->part->name));
-   eo_event_callback_add(eo, EO_EVENT_DEL, _del_cb, rp);
-
-   rp->typedata.container->eo_proxy = eo;
-   return eo;
+   // TODO: optimize (cache)
+   return eo_add(BOX_CLASS, obj,
+                 efl_canvas_layout_internal_box_real_part_set(eo_self, ed, rp, rp->part->name));
 }
 
 EOLIAN static void
@@ -59,6 +46,7 @@ _efl_canvas_layout_internal_box_real_part_set(Eo *obj EINA_UNUSED, Edje_Box_Data
    pd->ed = ed;
    pd->rp = rp;
    pd->part = part;
+   pd->temp = EINA_TRUE;
 }
 
 EOLIAN static Eo_Base *
@@ -261,15 +249,9 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_direction_get(Eo *obj EINA_
 Eo *
 _edje_table_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp)
 {
-   Efl_Canvas_Layout_Internal_Box *eo = rp->typedata.container->eo_proxy;
-
-   if (eo) return eo;
-
-   eo = eo_add(TABLE_CLASS, obj, efl_canvas_layout_internal_table_real_part_set(eo_self, ed, rp, rp->part->name));
-   eo_event_callback_add(eo, EO_EVENT_DEL, _del_cb, rp);
-
-   rp->typedata.container->eo_proxy = eo;
-   return eo;
+   // TODO: optimize (cache)
+   return eo_add(TABLE_CLASS, obj,
+                 efl_canvas_layout_internal_table_real_part_set(eo_self, ed, rp, rp->part->name));
 }
 
 EOLIAN static void
@@ -278,6 +260,7 @@ _efl_canvas_layout_internal_table_real_part_set(Eo *obj EINA_UNUSED, Edje_Table_
    pd->ed = ed;
    pd->rp = rp;
    pd->part = part;
+   pd->temp = EINA_TRUE;
 }
 
 EOLIAN static Eo_Base *
@@ -453,7 +436,7 @@ _efl_canvas_layout_internal_table_efl_pack_grid_grid_position_get(Eo *obj EINA_U
 
 #ifdef DEGUG
 #define PART_BOX_GET(obj, part, ...) ({ \
-   Eo *__box = efl_content_get(obj, part); \
+   Eo *__box = efl_part(obj, part); \
    if (!__box || !eo_isa(__box, EFL_CANVAS_LAYOUT_INTERNAL_BOX_CLASS)) \
      { \
         ERR("No such box part '%s' in layout %p", part, obj); \
@@ -462,7 +445,7 @@ _efl_canvas_layout_internal_table_efl_pack_grid_grid_position_get(Eo *obj EINA_U
    __box; })
 #else
 #define PART_BOX_GET(obj, part, ...) ({ \
-   Eo *__box = efl_content_get(obj, part); \
+   Eo *__box = efl_part(obj, part); \
    if (!__box) return __VA_ARGS__; \
    __box; })
 #endif
@@ -531,7 +514,7 @@ edje_object_part_box_remove_all(Edje_Object *obj, const char *part, Eina_Bool cl
 
 #ifdef DEBUG
 #define PART_TABLE_GET(obj, part, ...) ({ \
-   Eo *__table = efl_content_get(obj, part); \
+   Eo *__table = efl_part(obj, part); \
    if (!__table || !eo_isa(__table, EFL_CANVAS_LAYOUT_INTERNAL_TABLE_CLASS)) \
      { \
         ERR("No such table part '%s' in layout %p", part, obj); \
@@ -540,7 +523,7 @@ edje_object_part_box_remove_all(Edje_Object *obj, const char *part, Eina_Bool cl
    __table; })
 #else
 #define PART_TABLE_GET(obj, part, ...) ({ \
-   Eo *__table = efl_content_get(obj, part); \
+   Eo *__table = efl_part(obj, part); \
    if (!__table) return __VA_ARGS__; \
    __table; })
 #endif

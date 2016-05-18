@@ -1897,7 +1897,6 @@ struct _Edje_Real_Part_Container
 {
    Eina_List                *items; // 4 //FIXME: only if table/box
    Edje_Part_Box_Animation  *anim; // 4 //FIXME: Used only if box
-   Eo                       *eo_proxy;
 };
 
 struct _Edje_Real_Part_Swallow

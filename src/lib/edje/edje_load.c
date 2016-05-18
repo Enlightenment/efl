@@ -1596,7 +1596,6 @@ _edje_file_del(Edje *ed)
                        _edje_box_layout_free_data(rp->typedata.container->anim);
                        rp->typedata.container->anim = NULL;
                     }
-                  eo_unref(rp->typedata.container->eo_proxy);
                   free(rp->typedata.container);
                }
              else if ((rp->type == EDJE_RP_TYPE_TEXT) &&

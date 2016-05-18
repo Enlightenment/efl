@@ -1,0 +1,46 @@
+import eo_base;
+
+interface Efl.Part
+{
+   [[Interface for objects supporting named parts.
+
+     An object implementing this interface will be able to
+     provide access to some of its sub-objects by name.
+     This gives access to parts as defined in a widget's
+     theme.
+
+     Part proxy objects have a special lifetime that
+     is limited to one and only one function call.
+
+     In other words, the caller does not hold a reference
+     to this proxy object. It may be possible, in languages
+     that allow it, to get an extra reference to this part
+     object and extend its lifetime to more than a single
+     function call.
+
+     In pseudo-code, this means only the following two
+     use cases are supported:
+
+       obj.func(part(obj, "part"), args)
+
+     And:
+
+       part = ref(part(obj, "part"))
+       func1(part, args)
+       func2(part, args)
+       func3(part, args)
+       unref(part)
+   ]]
+   methods {
+      part @const {
+         [[Get a proxy object referring to a part of an object.
+
+           The returned object is valid for only a single function call.
+         ]]
+         params {
+            name: const(char)*; [[The part name.]]
+         }
+         return: Eo.Base; [[A (proxy) object, valid for a single call.]]
+      }
+   }
+}
