@@ -1466,8 +1466,8 @@ _eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Cl
         data = _eo_data_scope_safe_get(obj, klass);
         if (data == NULL) return NULL;
      }
-   (obj->datarefcount)++;
 #ifdef EO_DEBUG
+   (obj->datarefcount)++;
    Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
    xref->ref_obj = _eo_obj_id_get(ref_obj);
    xref->file = file;
@@ -1494,8 +1494,10 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
         ERR("Data %p is not in the data range of the object %p (%s).", data, (Eo *)obj->headr.id, obj->klass->desc->name);
      }
 #else
+   (void) obj;
    (void) data;
 #endif
+#ifdef EO_DEBUG
    if (obj->datarefcount == 0)
      {
         ERR("Data for object %zx (%s) is already not referenced.", (size_t)_eo_obj_id_get(obj), obj->klass->desc->name);
@@ -1504,7 +1506,6 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
      {
         (obj->datarefcount)--;
      }
-#ifdef EO_DEBUG
    Eo_Xref_Node *xref = NULL;
    EINA_INLIST_FOREACH(obj->data_xrefs, xref)
      {

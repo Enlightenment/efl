@@ -99,7 +99,9 @@ struct _Eo_Object
      Eo_Del_Intercept del_intercept;
 
      short refcount;
+#ifdef EO_DEBUG
      short datarefcount;
+#endif
 
      Eina_Bool condtor_done:1;
      Eina_Bool finalized:1;
