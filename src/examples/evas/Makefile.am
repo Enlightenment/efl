@@ -265,7 +265,10 @@ evas_canvas3d_shadows_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_canvas3d_shadows_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_canvas3d_shooter
-evas_canvas3d_shooter_SOURCES = shooter/evas-3d-shooter.c shooter/evas-3d-shooter-header.c
+evas_canvas3d_shooter_SOURCES = shooter/evas-3d-shooter.c \
+				shooter/evas-3d-shooter-header.c \
+				shooter/evas-3d-shooter-header.h \
+				shooter/evas-3d-shooter-macros.h
 evas_canvas3d_shooter_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_canvas3d_shooter_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
