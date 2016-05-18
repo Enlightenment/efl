@@ -1632,7 +1632,7 @@ _elm_index_efl_orientation_orientation_set(Eo *obj, Elm_Index_Data *sd, Efl_Orie
 }
 
 EOLIAN static Efl_Orient
-_elm_index_efl_orientation_orientation_get(Eo *obj, Elm_Index_Data *sd)
+_elm_index_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
    return sd->orientation;
 }
