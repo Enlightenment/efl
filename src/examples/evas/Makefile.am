@@ -249,6 +249,11 @@ evas_canvas3d_hull_SOURCES = evas-3d-hull.c
 evas_canvas3d_hull_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_canvas3d_hull_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_canvas3d_fog
+evas_canvas3d_fog_SOURCES = evas-3d-fog.c
+evas_canvas3d_fog_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
+evas_canvas3d_fog_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_canvas3d_frustum
 evas_canvas3d_frustum_SOURCES = evas-3d-frustum.c
 evas_canvas3d_frustum_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
@@ -349,7 +354,6 @@ evas-aspect-hints.c \
 evas-box.c \
 evas-buffer-simple.c \
 evas-events.c \
-evas-3d-fog.c \
 evas-hints.c \
 evas-images.c \
 evas-images2.c \
