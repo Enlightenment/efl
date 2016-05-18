@@ -133,6 +133,23 @@ START_TEST (elm_code_test_widget_undo_delete)
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("test", content, length);
 
+   elm_code_widget_cursor_position_set(widget, 4, 1);
+   _elm_code_widget_text_at_cursor_insert(widget, "\t", 1);
+   _elm_code_widget_backspace(widget);
+   content = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("test", content, length);
+   elm_code_widget_undo(widget);
+   content = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("tes\tt", content, length);
+
+   elm_code_widget_cursor_position_set(widget, 4, 1);
+   _elm_code_widget_delete(widget);
+   content = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("test", content, length);
+   elm_code_widget_undo(widget);
+   content = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("tes\tt", content, length);
+
    elm_code_free(code);
    elm_shutdown();
 }

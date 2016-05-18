@@ -37,10 +37,6 @@ static void
 _elm_code_widget_undo_change(Evas_Object *widget,
                              Elm_Code_Widget_Change_Info *info)
 {
-   Elm_Code_Line *line;
-   Elm_Code_Widget_Data *pd;
-   unsigned int position;
-
    if (info->insert)
      {
         elm_code_widget_selection_start(widget, info->start_line, info->start_col);
@@ -49,12 +45,8 @@ _elm_code_widget_undo_change(Evas_Object *widget,
      }
    else
      {
-        pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-        line = elm_code_file_line_get(pd->code->file, info->start_line);
-        position = elm_code_widget_line_text_position_for_column_get(widget, line, info->start_col);
-
-        elm_code_line_text_insert(line, position, info->content, info->length);
-        elm_code_widget_cursor_position_set(widget, info->end_col, info->end_line);
+        elm_code_widget_cursor_position_set(widget, info->start_col, info->start_line);
+        _elm_code_widget_text_at_cursor_insert(widget, info->content, info->length);
      }
 }
 

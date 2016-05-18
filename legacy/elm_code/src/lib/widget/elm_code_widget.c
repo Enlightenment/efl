@@ -1172,7 +1172,7 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
    Elm_Code *code;
    Elm_Code_Line *line;
    Elm_Code_Widget_Change_Info *change;
-   unsigned int row, col, position, start_col, char_width;
+   unsigned int row, col, position, start_col, end_col, char_width;
    const char *text;
 
    if (_elm_code_widget_delete_selection(widget))
@@ -1193,17 +1193,18 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
    line = elm_code_file_line_get(code->file, row);
 
    position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
+   end_col = elm_code_widget_line_text_column_width_to_position(widget, line, position);
    start_col = elm_code_widget_line_text_column_width_to_position(widget, line,
       elm_code_widget_line_text_position_for_column_get(widget, line, col - 1));
    char_width = position - elm_code_widget_line_text_position_for_column_get(widget, line, start_col);
 
-   text = elm_code_widget_text_between_positions_get(widget, start_col, row, start_col, row);
+   text = elm_code_widget_text_between_positions_get(widget, start_col, row, end_col, row);
    elm_code_line_text_remove(line, position - char_width, char_width);
    elm_obj_code_widget_cursor_position_set(widget, start_col, row);
 
    eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
-   change = _elm_code_widget_change_create(start_col, row, col, row, text, char_width, EINA_FALSE);
+   change = _elm_code_widget_change_create(start_col, row, end_col, row, text, char_width, EINA_FALSE);
    _elm_code_widget_undo_change_add(widget, change);
    _elm_code_widget_change_free(change);
 }
@@ -1214,7 +1215,7 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
    Elm_Code *code;
    Elm_Code_Line *line;
    Elm_Code_Widget_Change_Info *change;
-   unsigned int row, col, position, char_width, start_col;
+   unsigned int row, col, position, char_width, start_col, end_col;
    const char *text;
 
    if (_elm_code_widget_delete_selection(widget))
@@ -1234,10 +1235,13 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
 
    position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
    char_width = elm_code_widget_line_text_position_for_column_get(widget, line, col + 1) - position;
+   if (char_width == 0) // a partial tab
+     char_width = 1;
    start_col = elm_code_widget_line_text_column_width_to_position(widget, line, position);
+   end_col = elm_code_widget_line_text_column_width_to_position(widget, line, position + char_width);
 
-   text = elm_code_widget_text_between_positions_get(widget, start_col, row, start_col, row);
-   elm_code_line_text_remove(line, position, char_width?char_width:1);
+   text = elm_code_widget_text_between_positions_get(widget, start_col, row, end_col, row);
+   elm_code_line_text_remove(line, position, char_width);
    elm_obj_code_widget_cursor_position_set(widget, start_col, row);
    eo_event_callback_call(widget, ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
