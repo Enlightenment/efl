@@ -786,7 +786,7 @@ _zoom_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
      {
         sd->no_smooth--;
         if (!sd->no_smooth) _smooth_update(data);
-        eo_event_callback_del(obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+        eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
         eo_event_callback_call(obj, EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_STOP, NULL);
      }
 
@@ -1079,7 +1079,7 @@ _bounce_eval(void *data, const Eo_Event *event EINA_UNUSED)
 
    elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
 
-   eo_event_callback_del(obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+   eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
    return EO_CALLBACK_CONTINUE;
 }
 
@@ -1088,7 +1088,7 @@ _elm_photocam_bounce_reset(Eo *obj, Elm_Photocam_Data *sd EINA_UNUSED)
 {
    Eina_Bool r;
 
-   r = eo_event_callback_del(obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+   r = eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
    if (r) _zoom_do(obj, 1.0);
 }
 
@@ -1097,7 +1097,7 @@ _elm_photocam_zoom_reset(Eo *obj, Elm_Photocam_Data *sd)
 {
    Eina_Bool r;
 
-   r = eo_event_callback_del(obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+   r = eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
    if (r)
      {
         sd->no_smooth--;
@@ -1302,7 +1302,7 @@ _g_layer_zoom_end_cb(void *data,
         sd->g_layer_zoom.bounce.t_end = t +
           _elm_config->page_scroll_friction;
 
-        eo_event_callback_add(obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+        eo_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
      }
    else
      {
@@ -1470,8 +1470,8 @@ _elm_photocam_evas_object_smart_del(Eo *obj, Elm_Photocam_Data *sd)
    ecore_job_del(sd->calc_job);
    ecore_timer_del(sd->scr_timer);
    ecore_timer_del(sd->long_timer);
-   eo_event_callback_del(obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
-   eo_event_callback_del(obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+   eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+   eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
 
    evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
@@ -1939,8 +1939,8 @@ done:
      }
    else
      {
-        an = eo_event_callback_del(obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
-        eo_event_callback_add(obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+        an = eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+        eo_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
         if (!an)
           {
              sd->no_smooth++;

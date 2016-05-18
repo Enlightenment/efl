@@ -1125,7 +1125,7 @@ _elm_panel_evas_object_smart_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, E
          break;
      }
 
-   eo_event_callback_add(obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj);
+   eo_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj);
 }
 
 EOLIAN static void
@@ -1378,7 +1378,7 @@ _elm_panel_scrollable_content_size_set(Eo *obj, Elm_Panel_Data *sd, double ratio
          break;
      }
 
-   eo_event_callback_add(obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj);
+   eo_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj);
 }
 
 EOLIAN static Eina_Bool

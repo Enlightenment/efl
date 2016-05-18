@@ -31,12 +31,12 @@
     }
 
 #define ELM_ANIMATOR_CONNECT(Obj, Bool, Callback, Data)                 \
-  eo_event_callback_del(Obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data); \
-  eo_event_callback_add(Obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data); \
+  eo_event_callback_del(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
+  eo_event_callback_add(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
   Bool = 1;
 
 #define ELM_ANIMATOR_DISCONNECT(Obj, Bool, Callback, Data)              \
-  eo_event_callback_del(Obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data); \
+  eo_event_callback_del(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
   Bool = 0;
 
 static const char SIG_CHANGED[] = "changed";

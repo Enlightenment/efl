@@ -1437,7 +1437,7 @@ _deferred(void *data, const Eo_Event *event EINA_UNUSED)
         free(nfo);
      }
 
-   eo_event_callback_del(nfd->obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _deferred, nfd);
+   eo_event_callback_del(nfd->obj, EFL_EVENT_ANIMATOR_TICK, _deferred, nfd);
    return EO_CALLBACK_CONTINUE;
 }
 
@@ -1522,7 +1522,7 @@ static void
 _schedule_deferred(Elm_Naviframe_Op *nfo, Elm_Naviframe_Data *sd)
 {
    if (!sd->ops)
-     eo_event_callback_add(sd->obj, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _deferred, sd);
+     eo_event_callback_add(sd->obj, EFL_EVENT_ANIMATOR_TICK, _deferred, sd);
 
    sd->ops = eina_list_append(sd->ops, nfo);
 }

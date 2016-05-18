@@ -93,5 +93,5 @@ test_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
 
-   eo_event_callback_add(win, EFL_ANIMATOR_EVENT_ANIMATOR_TICK, _anim_tick, NULL);
+   eo_event_callback_add(win, EFL_EVENT_ANIMATOR_TICK, _anim_tick, NULL);
 }

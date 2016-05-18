@@ -6,6 +6,7 @@ struct Efl.Event.Animator_Tick {
 
 interface Efl.Animator {
    eo_prefix: efl_animator;
+   event_prefix: efl;
    events {
       animator,tick: Efl.Event.Animator_Tick; [[Animator tick synchronized with screen vsync if possible.]]
    }
