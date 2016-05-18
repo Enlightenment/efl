@@ -1046,6 +1046,11 @@ wayland_im_context_input_hint_set(Ecore_IMF_Context *ctx,
      imcontext->content_hint |= WL_TEXT_INPUT_CONTENT_HINT_SENSITIVE_DATA;
    else
      imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_SENSITIVE_DATA;
+
+   if (input_hints & ECORE_IMF_INPUT_HINT_MULTILINE)
+     imcontext->content_hint |= WL_TEXT_INPUT_CONTENT_HINT_MULTILINE;
+   else
+     imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_MULTILINE;
 }
 
 EAPI void

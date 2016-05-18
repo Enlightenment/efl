@@ -356,6 +356,7 @@ typedef enum
    ECORE_IMF_INPUT_HINT_NONE                = 0,        /**< No active hints @since 1.12 */
    ECORE_IMF_INPUT_HINT_AUTO_COMPLETE       = 1 << 0,   /**< Suggest word auto completion @since 1.12 */
    ECORE_IMF_INPUT_HINT_SENSITIVE_DATA      = 1 << 1,   /**< Typed text should not be stored. @since 1.12 */
+   ECORE_IMF_INPUT_HINT_MULTILINE           = 1 << 2,   /**< Multiline text @since 1.18 */
 } Ecore_IMF_Input_Hints;
 
 enum
