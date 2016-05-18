@@ -58,7 +58,7 @@ static inline void _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _
       })
 
 static inline void
-_dich_chain_alloc(Dich_Chain1 *chain1)
+_vtable_chain_alloc(Dich_Chain1 *chain1)
 {
    if (!chain1->funcs)
      {
@@ -67,18 +67,18 @@ _dich_chain_alloc(Dich_Chain1 *chain1)
 }
 
 static inline void
-_dich_copy_all(_Eo_Class *dst, const _Eo_Class *src)
+_vtable_copy_all(Eo_Vtable *dst, const Eo_Vtable *src)
 {
    Eo_Op i;
    const Dich_Chain1 *sc1 = src->chain;
    Dich_Chain1 *dc1 = dst->chain;
-   for (i = 0 ; i < src->chain_size ; i++, sc1++, dc1++)
+   for (i = 0 ; i < src->size ; i++, sc1++, dc1++)
      {
         if (sc1->funcs)
           {
              size_t j;
 
-             _dich_chain_alloc(dc1);
+             _vtable_chain_alloc(dc1);
 
              const op_type_funcs *sf = sc1->funcs;
              op_type_funcs *df = dc1->funcs;
@@ -94,12 +94,12 @@ _dich_copy_all(_Eo_Class *dst, const _Eo_Class *src)
 }
 
 static inline const op_type_funcs *
-_dich_func_get(const _Eo_Class *klass, Eo_Op op)
+_vtable_func_get(const Eo_Vtable *vtable, Eo_Op op)
 {
    size_t idx1 = DICH_CHAIN1(op);
-   if (EINA_UNLIKELY(idx1 >= klass->chain_size))
+   if (EINA_UNLIKELY(idx1 >= vtable->size))
       return NULL;
-   Dich_Chain1 *chain1 = &klass->chain[idx1];
+   Dich_Chain1 *chain1 = &vtable->chain[idx1];
    if (EINA_UNLIKELY(!chain1->funcs))
       return NULL;
    return &chain1->funcs[DICH_CHAIN_LAST(op)];
@@ -130,12 +130,12 @@ _eo_op_class_get(Eo_Op op)
 }
 
 static inline Eina_Bool
-_dich_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
+_vtable_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
 {
    op_type_funcs *fsrc;
    size_t idx1 = DICH_CHAIN1(op);
-   Dich_Chain1 *chain1 = &klass->chain[idx1];
-   _dich_chain_alloc(chain1);
+   Dich_Chain1 *chain1 = &klass->vtable.chain[idx1];
+   _vtable_chain_alloc(chain1);
    fsrc = &chain1->funcs[DICH_CHAIN_LAST(op)];
    if (fsrc->src == klass)
      {
@@ -152,18 +152,18 @@ _dich_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
 }
 
 static inline void
-_dich_func_clean_all(_Eo_Class *klass)
+_vtable_func_clean_all(_Eo_Class *klass)
 {
    size_t i;
-   Dich_Chain1 *chain1 = klass->chain;
+   Dich_Chain1 *chain1 = klass->vtable.chain;
 
-   for (i = 0 ; i < klass->chain_size ; i++, chain1++)
+   for (i = 0 ; i < klass->vtable.size ; i++, chain1++)
      {
         if (chain1->funcs)
            free(chain1->funcs);
      }
-   free(klass->chain);
-   klass->chain = NULL;
+   free(klass->vtable.chain);
+   klass->vtable.chain = NULL;
 }
 
 /* END OF DICH */
@@ -236,7 +236,7 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
         kls_itr++;
         while (*kls_itr)
           {
-             const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op);
+             const op_type_funcs *fsrc = _vtable_func_get(&(*kls_itr)->vtable, op);
              if (!fsrc || !fsrc->func)
                {
                   kls_itr++;
@@ -358,7 +358,7 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
           }
 #endif
 
-        func = _dich_func_get(klass, cache->op);
+        func = _vtable_func_get(&klass->vtable, cache->op);
 
         if (!func)
           goto end;
@@ -414,7 +414,7 @@ end:
              if (!emb_obj)
                continue;
 
-             func = _dich_func_get(emb_obj->klass, cache->op);
+             func = _vtable_func_get(emb_obj->vtable, cache->op);
              if (func == NULL)
                continue;
 
@@ -607,7 +607,7 @@ _eo_class_funcs_set(_Eo_Class *klass)
 
         DBG("%p->%p '%s'", op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
 
-        if (!_dich_func_set(klass, op, op_desc->func))
+        if (!_vtable_func_set(klass, op, op_desc->func))
           return EINA_FALSE;
 
         last_api_func = op_desc->api_func;
@@ -655,6 +655,7 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 
    obj->refcount++;
    obj->klass = klass;
+   obj->vtable = &klass->vtable;
 
 #ifndef HAVE_EO_ID
    EINA_MAGIC_SET((Eo_Header *) obj, EO_EINA_MAGIC);
@@ -806,8 +807,8 @@ _eo_class_base_op_init(_Eo_Class *klass)
 
    _eo_ops_last_id += desc->ops.count + 1;
 
-   klass->chain_size = DICH_CHAIN1(_eo_ops_last_id) + 1;
-   klass->chain = calloc(klass->chain_size, sizeof(*klass->chain));
+   klass->vtable.size = DICH_CHAIN1(_eo_ops_last_id) + 1;
+   klass->vtable.chain = calloc(klass->vtable.size, sizeof(*klass->vtable.chain));
 }
 
 #ifdef EO_DEBUG
@@ -950,7 +951,7 @@ eo_class_free(_Eo_Class *klass)
         if (klass->desc->class_destructor)
            klass->desc->class_destructor(_eo_class_id_get(klass));
 
-        _dich_func_clean_all(klass);
+        _vtable_func_clean_all(klass);
      }
 
    EINA_TRASH_CLEAN(&klass->objects.trash, data)
@@ -1245,7 +1246,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         /* Skip ourselves. */
         for ( mro_itr-- ; mro_itr > klass->mro ; mro_itr--)
           {
-             _dich_copy_all(klass, *mro_itr);
+             _vtable_copy_all(&klass->vtable, &(*mro_itr)->vtable);
           }
      }
 
@@ -1257,16 +1258,16 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
           {
              const _Eo_Class *extn = *extn_itr;
              /* Set it in the dich. */
-             _dich_func_set(klass, extn->base_id +
+             _vtable_func_set(klass, extn->base_id +
                    extn->desc->ops.count, _eo_class_isa_func);
           }
 
-        _dich_func_set(klass, klass->base_id + klass->desc->ops.count,
+        _vtable_func_set(klass, klass->base_id + klass->desc->ops.count,
               _eo_class_isa_func);
 
         if (klass->parent)
           {
-             _dich_func_set(klass,
+             _vtable_func_set(klass,
                    klass->parent->base_id + klass->parent->desc->ops.count,
                    _eo_class_isa_func);
           }
@@ -1276,7 +1277,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      {
         eina_spinlock_free(&klass->objects.trash_lock);
         eina_spinlock_free(&klass->iterators.trash_lock);
-        _dich_func_clean_all(klass);
+        _vtable_func_clean_all(klass);
         free(klass);
         return NULL;
      }
@@ -1305,7 +1306,7 @@ eo_isa(const Eo *eo_id, const Eo_Class *klass_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
-   const op_type_funcs *func = _dich_func_get(obj->klass,
+   const op_type_funcs *func = _vtable_func_get(obj->vtable,
          klass->base_id + klass->desc->ops.count);
 
    /* Currently implemented by reusing the LAST op id. Just marking it with

@@ -77,6 +77,14 @@ static inline void _eo_free_ids_tables(void);
 
 void _eo_condtor_done(Eo *obj);
 
+typedef struct _Dich_Chain1 Dich_Chain1;
+
+typedef struct _Eo_Vtable
+{
+   Dich_Chain1 *chain;
+   unsigned int size;
+} Eo_Vtable;
+
 struct _Eo_Header
 {
 #ifndef HAVE_EO_ID
@@ -94,6 +102,8 @@ struct _Eo_Object
      Eina_Inlist *xrefs;
      Eina_Inlist *data_xrefs;
 #endif
+
+     Eo_Vtable *vtable;
 
      Eina_List *composite_objects;
      Eo_Del_Intercept del_intercept;
@@ -113,8 +123,6 @@ struct _Eo_Object
 
 /* FIXME: Change the type to something generic that makes sense for eo */
 typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
-
-typedef struct _Dich_Chain1 Dich_Chain1;
 
 typedef struct
 {
@@ -139,7 +147,7 @@ struct _Eo_Class
 
    const _Eo_Class *parent;
    const Eo_Class_Description *desc;
-   Dich_Chain1 *chain; /**< The size is chain size */
+   Eo_Vtable vtable;
 
    const _Eo_Class **extensions;
 
@@ -162,7 +170,6 @@ struct _Eo_Class
    } iterators;
 
    unsigned int obj_size; /**< size of an object of this class */
-   unsigned int chain_size;
    unsigned int base_id;
    unsigned int data_offset; /* < Offset of the data within object data. */
 

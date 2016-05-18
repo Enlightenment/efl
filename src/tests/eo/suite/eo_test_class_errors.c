@@ -329,7 +329,7 @@ START_TEST(eo_dich_func_override)
         NULL
    };
 
-   TEST_EO_ERROR("_dich_func_set", "Class '%s': Overriding func %p for op %d (%s) with %p.");
+   TEST_EO_ERROR("_vtable_func_set", "Class '%s': Overriding func %p for op %d (%s) with %p.");
    klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
