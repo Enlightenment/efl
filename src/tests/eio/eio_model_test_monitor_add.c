@@ -56,7 +56,7 @@ _children_added_cb(void *data EINA_UNUSED, const Eo_Event* event)
    if(temp_filename && strcmp(temp_filename, filename) == 0)
      {
         children_deleted = EINA_TRUE;
-        efl_model_child_del(event->obj, evt->child);
+        efl_model_child_del(event->object, evt->child);
      }
    free(filename);
 

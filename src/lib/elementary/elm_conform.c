@@ -514,7 +514,7 @@ static Eina_Bool
 _on_indicator_mode_changed(void *data, const Eo_Event *event)
 {
    Evas_Object *conformant = data;
-   Evas_Object *win = event->obj;
+   Evas_Object *win = event->object;
 
    Elm_Win_Indicator_Mode indmode;
    Elm_Win_Indicator_Opacity_Mode ind_o_mode;
@@ -534,7 +534,7 @@ static Eina_Bool
 _on_rotation_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    int rot = 0;
-   Evas_Object *win = event->obj;
+   Evas_Object *win = event->object;
    Evas_Object *conformant = data;
    Evas_Object *old_indi = NULL;
 
@@ -1004,7 +1004,7 @@ _elm_conformant_eo_base_constructor(Eo *obj, Elm_Conformant_Data *sd)
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
    Eo_Event event = {};
-   event.obj = sd->win;
+   event.object = sd->win;
    sd->win = elm_widget_top_get(obj);
    _on_indicator_mode_changed(obj, &event);
    _on_rotation_changed(obj, &event);

@@ -40,7 +40,7 @@ _async_error_cb(void *data, const Eo_Event *event)
    Test_Data *td = data;
    char path[PATH_MAX];
    sprintf(path, pathfmt, td->image_id);
-   efl_file_set(event->obj, path, NULL);
+   efl_file_set(event->object, path, NULL);
    return EO_CALLBACK_CONTINUE;
 }
 
@@ -52,7 +52,7 @@ _async_opened_cb(void *data, const Eo_Event *event)
    char path[PATH_MAX];
 
    sprintf(path, pathfmt, td->image_id);
-   efl_file_get(event->obj, &ff, &kk);
+   efl_file_get(event->object, &ff, &kk);
    r1 = strrchr(ff, '/');
    r2 = strrchr(path, '/');
    ck_assert(!strcmp(r1, r2));
@@ -62,7 +62,7 @@ _async_opened_cb(void *data, const Eo_Event *event)
      {
         td->image_id++;
         sprintf(path, pathfmt, td->image_id);
-        efl_file_set(event->obj, path, NULL);
+        efl_file_set(event->object, path, NULL);
         return EO_CALLBACK_CONTINUE;
      }
    else if (td->image_id < MAX_IMAGE_ID)
@@ -71,7 +71,7 @@ _async_opened_cb(void *data, const Eo_Event *event)
         for (; td->image_id < MAX_IMAGE_ID;)
           {
              sprintf(path, pathfmt, ++td->image_id);
-             efl_file_set(event->obj, path, NULL);
+             efl_file_set(event->object, path, NULL);
           }
         return EO_CALLBACK_CONTINUE;
      }

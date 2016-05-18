@@ -20,11 +20,11 @@ static Eina_Bool _play_finished(void *data EINA_UNUSED, const Eo_Event *event)
   const char *name;
   Eo *out;
 
-  ecore_audio_obj_name_get(event->obj, &name);
+  ecore_audio_obj_name_get(event->object, &name);
   printf("Done: %s\n", name);
 
-  ecore_audio_obj_in_output_get(event->obj, &out);
-  eo_unref(event->obj);
+  ecore_audio_obj_in_output_get(event->object, &out);
+  eo_unref(event->object);
   eo_unref(out);
 
   ecore_main_loop_quit();

@@ -36,7 +36,7 @@ static Eina_Bool
 _evas_vg_root_node_changed(void *data, const Eo_Event *event)
 {
    Efl_VG_Root_Node_Data *pd = data;
-   Efl_VG_Data *bd = eo_data_scope_get(event->obj, EFL_VG_CLASS);
+   Efl_VG_Data *bd = eo_data_scope_get(event->object, EFL_VG_CLASS);
 
    if (bd->changed) return EINA_TRUE;
    bd->changed = EINA_TRUE;

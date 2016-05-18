@@ -1058,7 +1058,7 @@ _on_text_activated(void *data, const Eo_Event *event)
 
    ELM_FILESELECTOR_DATA_GET(fs, sd);
 
-   path = elm_widget_part_text_get(event->obj, NULL);
+   path = elm_widget_part_text_get(event->object, NULL);
 
    if (!ecore_file_exists(path))
      {
@@ -1134,7 +1134,7 @@ _on_text_activated(void *data, const Eo_Event *event)
    free(dir);
 
 end:
-   elm_object_focus_set(event->obj, EINA_FALSE);
+   elm_object_focus_set(event->object, EINA_FALSE);
 
    return EINA_TRUE;
 }
@@ -1187,7 +1187,7 @@ _anchor_clicked(void *data, const Eo_Event *event)
    eina_stringshare_del(p);
    /* After anchor was clicked, entry will be focused, and will be editable.
     * It's wrong. So remove focus. */
-   elm_object_focus_set(event->obj, EINA_FALSE);
+   elm_object_focus_set(event->object, EINA_FALSE);
 
    if (sd->path_entry_idler) {
        ecore_idler_del(sd->path_entry_idler);
@@ -1429,7 +1429,7 @@ _preedit_cb(void *data, const Eo_Event *event)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
-   sd->search_string = elm_entry_entry_get(event->obj);
+   sd->search_string = elm_entry_entry_get(event->object);
 
    if (sd->search_string && sd->path)
      _populate(data, sd->path, NULL, NULL);

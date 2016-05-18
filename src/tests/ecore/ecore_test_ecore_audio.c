@@ -34,7 +34,7 @@ static Eina_Bool _finished_cb(void *data EINA_UNUSED, const Eo_Event *event EINA
 
 static Eina_Bool _looped_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-  ecore_audio_obj_in_looped_set(event->obj, EINA_FALSE);
+  ecore_audio_obj_in_looped_set(event->object, EINA_FALSE);
 
   return EINA_TRUE;
 }

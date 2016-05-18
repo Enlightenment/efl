@@ -146,7 +146,7 @@ create_handles(Evas_Object *obj)
 static Eina_Bool
 _notify_end(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   eo_unref(event->obj);
+   eo_unref(event->object);
    return EINA_FALSE;
 }
 

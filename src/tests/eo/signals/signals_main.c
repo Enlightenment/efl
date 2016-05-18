@@ -23,8 +23,8 @@ _a_changed_cb(void *data, const Eo_Event *event)
 
    cb_count++;
 
-   eo_event_callback_priority_add(event->obj, EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _null_cb, (void *) 23423);
-   eo_event_callback_del(event->obj, EV_A_CHANGED, _null_cb, (void *) 23423);
+   eo_event_callback_priority_add(event->object, EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _null_cb, (void *) 23423);
+   eo_event_callback_del(event->object, EV_A_CHANGED, _null_cb, (void *) 23423);
 
    /* Stop as we reached the 3rd one. */
    return (cb_count != 3);
@@ -49,7 +49,7 @@ _restart_2_cb(void *data, const Eo_Event *event)
    fail_if(inside);
 
    inside = EINA_TRUE;
-   eo_event_callback_call(event->obj, event->desc, data);
+   eo_event_callback_call(event->object, event->desc, data);
    inside = EINA_FALSE;
 
    called++;

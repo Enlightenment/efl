@@ -139,7 +139,7 @@ template <typename T, typename F>
 Eina_Bool
 event_callback(void *data, ::Eo_Event const* event)
 {
-   T wrapper(::eo_ref(event->obj));
+   T wrapper(::eo_ref(event->object));
    F *f = static_cast<F*>(data);
    return _detail::really_call_event(wrapper, *f, *event->desc, event->info
                                      , std::is_void<decltype((*f)(wrapper, *event->desc, event->info))>());

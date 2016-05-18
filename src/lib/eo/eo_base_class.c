@@ -1036,7 +1036,7 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
    Eo_Current_Callback_Description saved;
    Eo_Event ev;
 
-   ev.obj = obj_id;
+   ev.object = obj_id;
    ev.desc = desc;
    ev.info = event_info;
 

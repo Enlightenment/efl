@@ -172,7 +172,7 @@ _efl_network_url_event_complete_cb(void *data EINA_UNUSED, const Eo_Event *event
    e->status = f->status;
    e->url_con = f->url_con;
    ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e,
-                   (Ecore_End_Cb)_ecore_con_event_url_free, event->obj);
+                   (Ecore_End_Cb)_ecore_con_event_url_free, event->object);
 
    return EO_CALLBACK_STOP;
 }
@@ -191,7 +191,7 @@ _efl_network_url_event_data_cb(void *data EINA_UNUSED, const Eo_Event *event)
    e->size = f->size;
    memcpy(e->data, f->data, f->size);
    ecore_event_add(ECORE_CON_EVENT_URL_DATA, e,
-                   (Ecore_End_Cb)_ecore_con_event_url_free, event->obj);
+                   (Ecore_End_Cb)_ecore_con_event_url_free, event->object);
 
    return EO_CALLBACK_CONTINUE;
 }
@@ -210,7 +210,7 @@ _efl_network_url_event_progress_cb(void *data EINA_UNUSED, const Eo_Event *event
    e->up.total = f->up.total;
    e->up.now = f->up.now;
    ecore_event_add(ECORE_CON_EVENT_URL_PROGRESS, e,
-                   (Ecore_End_Cb)_ecore_con_event_url_free, event->obj);
+                   (Ecore_End_Cb)_ecore_con_event_url_free, event->object);
 
    return EO_CALLBACK_CONTINUE;
 }

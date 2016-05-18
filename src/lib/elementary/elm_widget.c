@@ -243,7 +243,7 @@ _parents_unfocus(Evas_Object *obj)
 static Eina_Bool
 _on_sub_obj_hide(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   elm_widget_focus_hide_handle(event->obj);
+   elm_widget_focus_hide_handle(event->object);
    return EO_CALLBACK_CONTINUE;
 }
 
@@ -252,23 +252,23 @@ _on_sub_obj_del(void *data, const Eo_Event *event)
 {
    ELM_WIDGET_DATA_GET(data, sd);
 
-   if (_elm_widget_is(event->obj))
+   if (_elm_widget_is(event->object))
      {
-        if (_is_focused(event->obj)) _parents_unfocus(sd->obj);
+        if (_is_focused(event->object)) _parents_unfocus(sd->obj);
      }
-   if (event->obj == sd->resize_obj)
+   if (event->object == sd->resize_obj)
      {
         /* already dels sub object */
         elm_widget_resize_object_set(sd->obj, NULL, EINA_TRUE);
      }
-   else if (event->obj == sd->hover_obj)
+   else if (event->object == sd->hover_obj)
      {
         sd->hover_obj = NULL;
      }
    else
      {
-        if (!elm_widget_sub_object_del(sd->obj, event->obj))
-          ERR("failed to remove sub object %p from %p\n", event->obj, sd->obj);
+        if (!elm_widget_sub_object_del(sd->obj, event->object))
+          ERR("failed to remove sub object %p from %p\n", event->object, sd->obj);
      }
 
    return EO_CALLBACK_CONTINUE;
@@ -707,7 +707,7 @@ _propagate_y_drag_lock(Evas_Object *obj,
 static Eina_Bool
 _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Eo *obj = event->obj;
+   Eo *obj = event->object;
    INTERNAL_ENTRY EO_CALLBACK_CONTINUE;
    Evas_Callback_Type type;
    Evas_Event_Flags *event_flags = NULL;
@@ -4377,7 +4377,7 @@ static Eina_Bool
 _track_obj_view_update(void *data, const Eo_Event *event)
 {
    Elm_Widget_Item_Data *item = data;
-   _track_obj_update(item->track_obj, event->obj);
+   _track_obj_update(item->track_obj, event->object);
    return EO_CALLBACK_CONTINUE;
 }
 
@@ -4457,10 +4457,10 @@ _elm_widget_item_signal_callback_list_get(Elm_Widget_Item_Data *item, Eina_List 
 static Eina_Bool
 _eo_del_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Elm_Widget_Item_Data *item = eo_data_scope_get(event->obj, ELM_WIDGET_ITEM_CLASS);
+   Elm_Widget_Item_Data *item = eo_data_scope_get(event->object, ELM_WIDGET_ITEM_CLASS);
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_TRUE);
    if (item->del_func)
-      item->del_func((void *) WIDGET_ITEM_DATA_GET(event->obj), item->widget, item->eo_obj);
+      item->del_func((void *) WIDGET_ITEM_DATA_GET(event->object), item->widget, item->eo_obj);
    return EINA_TRUE;
 }
 

@@ -9,7 +9,7 @@ _edje_hold_signal_cb(void *data, const Eo_Event *event)
 
    ev = event->info;
    ed = data;
-   rp = evas_object_data_get(event->obj, "real_part");
+   rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
    if (ev->hold)
      _edje_emit(ed, "hold,on", rp->part->name);
@@ -26,7 +26,7 @@ _edje_focus_in_signal_cb(void *data, const Eo_Event *event)
    Edje_Real_Part *rp;
 
    ed = data;
-   rp = evas_object_data_get(event->obj, "real_part");
+   rp = evas_object_data_get(event->object, "real_part");
    if ((!rp) || (!ed))
      return EO_CALLBACK_CONTINUE;
 
@@ -42,7 +42,7 @@ _edje_focus_out_signal_cb(void *data, const Eo_Event *event)
    Edje_Real_Part *rp;
 
    ed = data;
-   rp = evas_object_data_get(event->obj, "real_part");
+   rp = evas_object_data_get(event->object, "real_part");
    if ((!rp) || (!ed))
      return EO_CALLBACK_CONTINUE;
 
@@ -60,7 +60,7 @@ _edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
 
    ev = event->info;
    ed = data;
-   rp = evas_object_data_get(event->obj, "real_part");
+   rp = evas_object_data_get(event->object, "real_part");
    if (rp)
      {
         if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))
@@ -81,7 +81,7 @@ _edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
 
    ev = event->info;
    ed = data;
-   rp = evas_object_data_get(event->obj, "real_part");
+   rp = evas_object_data_get(event->object, "real_part");
    if (rp)
      {
         if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))
@@ -104,7 +104,7 @@ _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
 
    ev = event->info;
    ed = data;
-   rp = evas_object_data_get(event->obj, "real_part");
+   rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
 
    ignored = rp->part->ignore_flags & ev->event_flags;
@@ -175,7 +175,7 @@ _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
 
    ev = event->info;
    ed = data;
-   rp = evas_object_data_get(event->obj, "real_part");
+   rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
 
    ignored = rp->part->ignore_flags & ev->event_flags;
@@ -249,7 +249,7 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
 
    ev = event->info;
    ed = data;
-   rp = evas_object_data_get(event->obj, "real_part");
+   rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
    if (rp->part->dragable.event_id >= 0)
      {
@@ -270,7 +270,7 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
           {
              Evas_Coord x, y, w, h;
 
-             evas_object_geometry_get(event->obj, &x, &y, &w, &h);
+             evas_object_geometry_get(event->object, &x, &y, &w, &h);
              if ((ev->cur.canvas.x < x) || (ev->cur.canvas.y < y) ||
                  (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
                {
@@ -287,7 +287,7 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
           {
              Evas_Coord x, y, w, h;
 
-             evas_object_geometry_get(event->obj, &x, &y, &w, &h);
+             evas_object_geometry_get(event->object, &x, &y, &w, &h);
              if ((ev->cur.canvas.x >= x) && (ev->cur.canvas.y >= y) &&
                  (ev->cur.canvas.x < (x + w)) && (ev->cur.canvas.y < (y + h)))
                {
@@ -358,7 +358,7 @@ _edje_mouse_wheel_signal_cb(void *data, const Eo_Event *event)
 
    ev = event->info;
    ed = data;
-   rp = evas_object_data_get(event->obj, "real_part");
+   rp = evas_object_data_get(event->object, "real_part");
    if (rp)
      {
         if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))

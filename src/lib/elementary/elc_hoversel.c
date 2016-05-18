@@ -114,7 +114,7 @@ _on_hover_clicked(void *data, const Eo_Event *event)
 {
    const char *dismissstr;
 
-   dismissstr = elm_layout_data_get(event->obj, "dismiss");
+   dismissstr = elm_layout_data_get(event->object, "dismiss");
 
    if (!dismissstr || strcmp(dismissstr, "on"))
      elm_hoversel_hover_end(data); // for backward compatibility

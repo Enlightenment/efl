@@ -53,8 +53,8 @@ _register_sort_cb(Efl_Vpath_Manager_Entry *e1, Efl_Vpath_Manager_Entry *e2)
 static Eina_Bool
 _cb_vpath_del(void *data, const Eo_Event *event)
 {
-   efl_vpath_manager_unregister(EFL_VPATH_MANAGER_CLASS, event->obj);
-   eo_event_callback_del(event->obj, EO_EVENT_DEL, _cb_vpath_del, data);
+   efl_vpath_manager_unregister(EFL_VPATH_MANAGER_CLASS, event->object);
+   eo_event_callback_del(event->object, EO_EVENT_DEL, _cb_vpath_del, data);
    return EINA_TRUE;
 }
 

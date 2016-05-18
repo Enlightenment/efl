@@ -45,7 +45,7 @@ _close_cb(void *data, const Eo_Event *event)
    App_View_Context *ctx = data;
    if (ctx->win)
      evas_object_del(ctx->win);
-   eo_unref(event->obj);
+   eo_unref(event->object);
    return EINA_TRUE;
 }
 
@@ -66,7 +66,7 @@ _resume_cb(void *data, const Eo_Event *event)
    if (!ctx->win)
      {
         _window_create(ctx);
-        elm_app_server_view_window_set(event->obj, ctx->win);
+        elm_app_server_view_window_set(event->object, ctx->win);
      }
 
    _text_update(ctx, "alive");
@@ -80,7 +80,7 @@ _view_del_cb(void *data, const Eo_Event *event)
 
    if (ctx->win)
      evas_object_del(ctx->win);
-   elm_app_server_view_window_set(event->obj, NULL);
+   elm_app_server_view_window_set(event->object, NULL);
    eina_stringshare_del(ctx->view_name);
    free(ctx);
    return EINA_TRUE;
@@ -126,11 +126,11 @@ _terminate_cb(void *data EINA_UNUSED, const Eo_Event *event)
    const char *title = NULL;
 
    printf("terminate cb\n");
-   elm_app_server_save(event->obj);
-   title = elm_app_server_title_get(event->obj);
+   elm_app_server_save(event->object);
+   title = elm_app_server_title_get(event->object);
 
    printf("Closing: %s\n", title);
-   eo_unref(event->obj);
+   eo_unref(event->object);
    return EINA_TRUE;
 }
 

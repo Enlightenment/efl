@@ -87,7 +87,7 @@ _children_changed_cb(void *data EINA_UNUSED, const Eo_Event *event)
      return EINA_TRUE;
 
    ev_data = *(Elm_Atspi_Event_Children_Changed_Data*)event->info;
-   current = event->obj;
+   current = event->object;
    counter++;
 
    return EINA_TRUE;

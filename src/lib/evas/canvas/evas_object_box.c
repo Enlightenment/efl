@@ -125,7 +125,7 @@ _on_child_del(void *data, const Eo_Event *event)
    Evas_Object *box = data;
 
    Evas_Object *ret = NULL;
-   ret = evas_obj_box_internal_remove(box, event->obj);
+   ret = evas_obj_box_internal_remove(box, event->object);
    if (!ret)
      ERR("child removal failed");
    evas_object_smart_changed(box);

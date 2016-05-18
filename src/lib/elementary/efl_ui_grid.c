@@ -398,10 +398,10 @@ _subobj_del_cb(void *data, const Eo_Event *event)
    Efl_Ui_Grid *obj = data;
    Efl_Ui_Grid_Data *pd = eo_data_scope_get(obj, EFL_UI_GRID_CLASS);
 
-   eo_event_callback_array_del(event->obj, subobj_callbacks(), data);
-   _item_remove(obj, pd, event->obj);
+   eo_event_callback_array_del(event->object, subobj_callbacks(), data);
+   _item_remove(obj, pd, event->object);
 
-   if (!elm_widget_sub_object_del(obj, event->obj))
+   if (!elm_widget_sub_object_del(obj, event->object))
      WRN("failed to remove child from its parent");
 
    return EO_CALLBACK_CONTINUE;

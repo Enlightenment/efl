@@ -10,7 +10,7 @@ static Eina_Bool outfail = EINA_FALSE;
 static Eina_Bool
 _play_finished(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   eo_unref(event->obj);
+   eo_unref(event->object);
 
    return EINA_TRUE;
 }
@@ -19,7 +19,7 @@ static Eina_Bool
 _out_fail(void *data EINA_UNUSED, const Eo_Event *event)
 {
    outfail = EINA_TRUE;
-   eo_unref(event->obj);
+   eo_unref(event->object);
    out = NULL;
    return EINA_TRUE;
 }

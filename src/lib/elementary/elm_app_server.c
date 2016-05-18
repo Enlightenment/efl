@@ -32,7 +32,7 @@ static Eina_Bool
 _view_del_cb(void *data, const Eo_Event *event)
 {
    Elm_App_Server_Data *cdata = data;
-   eina_hash_del(cdata->views, NULL, event->obj);
+   eina_hash_del(cdata->views, NULL, event->object);
    return EINA_TRUE;
 }
 

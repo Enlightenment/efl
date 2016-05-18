@@ -1775,7 +1775,7 @@ static Eina_Bool
 _x11_win_rotation_changed_cb(void *data, const Eo_Event *event)
 {
    Evas_Object *win = data;
-   int rot = elm_win_rotation_get(event->obj);
+   int rot = elm_win_rotation_get(event->object);
    elm_win_rotation_set(win, rot);
    return EINA_TRUE;
 }

@@ -326,7 +326,7 @@ video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
 static Eina_Bool
 video_obj_frame_decode_cb(void *data, const Eo_Event *event)
 {
-   video_obj_time_changed(event->obj, data);
+   video_obj_time_changed(event->object, data);
 
    if (0)
      {
@@ -348,16 +348,16 @@ video_obj_frame_resize_cb(void *data, const Eo_Event *event)
    double ratio;
 
    oe = data;
-   emotion_object_size_get(event->obj, &iw, &ih);
-   ratio = emotion_object_ratio_get(event->obj);
+   emotion_object_size_get(event->object, &iw, &ih);
+   ratio = emotion_object_ratio_get(event->object);
    printf("HANDLE %ix%i @ %3.3f\n", iw, ih, ratio);
    if (ratio > 0.0) iw = (ih * ratio) + 0.5;
-   evas_object_size_hint_min_set(event->obj, iw, ih);
-   edje_object_part_swallow(oe, "video_swallow", event->obj);
+   evas_object_size_hint_min_set(event->object, iw, ih);
+   edje_object_part_swallow(oe, "video_swallow", event->object);
    edje_obj_size_min_calc(oe, &w, &h);
    efl_gfx_size_set(oe, w, h);
-   evas_object_size_hint_min_set(event->obj, 0, 0);
-   edje_object_part_swallow(oe, "video_swallow", event->obj);
+   evas_object_size_hint_min_set(event->object, 0, 0);
+   edje_object_part_swallow(oe, "video_swallow", event->object);
 
    return EINA_TRUE;
 }
@@ -366,7 +366,7 @@ static Eina_Bool
 video_obj_length_change_cb(void *data, const Eo_Event *event)
 {
    printf("len change!\n");
-   video_obj_time_changed(event->obj, data);
+   video_obj_time_changed(event->object, data);
 
    return EINA_TRUE;
 }
@@ -375,7 +375,7 @@ static Eina_Bool
 video_obj_position_update_cb(void *data, const Eo_Event *event)
 {
    printf("pos up!\n");
-   video_obj_time_changed(event->obj, data);
+   video_obj_time_changed(event->object, data);
 
    return EINA_TRUE;
 }
@@ -386,8 +386,8 @@ video_obj_stopped_cb(void *data EINA_UNUSED, const Eo_Event *event)
    printf("video stopped!!!\n");
    if (loop)
      {
-        emotion_object_position_set(event->obj, 0.0);
-        emotion_object_play_set(event->obj, EINA_TRUE);
+        emotion_object_position_set(event->object, 0.0);
+        emotion_object_play_set(event->object, EINA_TRUE);
      }
 
    return EINA_TRUE;
@@ -397,9 +397,9 @@ static Eina_Bool
 video_obj_channels_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    printf("channels changed: [AUD %i][VID %i][SPU %i]\n",
-          emotion_object_audio_channel_count(event->obj),
-          emotion_object_video_channel_count(event->obj),
-          emotion_object_spu_channel_count(event->obj));
+          emotion_object_audio_channel_count(event->object),
+          emotion_object_video_channel_count(event->object),
+          emotion_object_spu_channel_count(event->object));
 
    return EINA_TRUE;
 }
@@ -407,7 +407,7 @@ video_obj_channels_cb(void *data EINA_UNUSED, const Eo_Event *event)
 static Eina_Bool
  video_obj_title_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   printf("video title to: \"%s\"\n", emotion_object_title_get(event->obj));
+   printf("video title to: \"%s\"\n", emotion_object_title_get(event->object));
 
    return EINA_TRUE;
 }
@@ -416,8 +416,8 @@ static Eina_Bool
 video_obj_progress_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    printf("progress: \"%s\" %3.3f\n",
-          emotion_object_progress_info_get(event->obj),
-          emotion_object_progress_status_get(event->obj));
+          emotion_object_progress_info_get(event->object),
+          emotion_object_progress_status_get(event->object));
 
    return EINA_TRUE;
 }
@@ -426,8 +426,8 @@ static Eina_Bool
 video_obj_ref_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    printf("video ref to: \"%s\" %i\n",
-          emotion_object_ref_file_get(event->obj),
-          emotion_object_ref_num_get(event->obj));
+          emotion_object_ref_file_get(event->object),
+          emotion_object_ref_num_get(event->object));
 
    return EINA_TRUE;
 }
@@ -436,7 +436,7 @@ static Eina_Bool
 video_obj_button_num_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    printf("video spu buttons to: %i\n",
-          emotion_object_spu_button_count_get(event->obj));
+          emotion_object_spu_button_count_get(event->object));
 
    return EINA_TRUE;
 }
@@ -445,7 +445,7 @@ static Eina_Bool
 video_obj_button_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    printf("video selected spu button: %i\n",
-          emotion_object_spu_button_get(event->obj));
+          emotion_object_spu_button_get(event->object));
 
    return EINA_TRUE;
 }

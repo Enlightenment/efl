@@ -96,7 +96,7 @@ _on_hover_clicked(void *data, const Eo_Event *event)
 {
    const char *dismissstr;
 
-   dismissstr = elm_layout_data_get(event->obj, "dismiss");
+   dismissstr = elm_layout_data_get(event->object, "dismiss");
 
    if (!dismissstr || strcmp(dismissstr, "on"))
      elm_combobox_hover_end(data); // for backward compatibility
@@ -322,7 +322,7 @@ static Eina_Bool
 _mbe_clicked_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    //Unset the multibuttonentry to contracted mode of single line
-   elm_multibuttonentry_expanded_set(event->obj, EINA_TRUE);
+   elm_multibuttonentry_expanded_set(event->object, EINA_TRUE);
    return EINA_TRUE;
 }
 
@@ -336,7 +336,7 @@ static Eina_Bool
 _mbe_unfocused_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    //Set the multibuttonentry to contracted mode of single line
-   elm_multibuttonentry_expanded_set(event->obj, EINA_FALSE);
+   elm_multibuttonentry_expanded_set(event->object, EINA_FALSE);
    return EINA_TRUE;
 }
 

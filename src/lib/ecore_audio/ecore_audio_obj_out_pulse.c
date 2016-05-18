@@ -96,10 +96,10 @@ static Eina_Bool _update_samplerate_cb(void *data EINA_UNUSED, const Eo_Event *e
   int samplerate = 0;
   double speed = 0;
 
-  samplerate = ecore_audio_obj_in_samplerate_get(event->obj);
-  speed = ecore_audio_obj_in_speed_get(event->obj);
+  samplerate = ecore_audio_obj_in_samplerate_get(event->object);
+  speed = ecore_audio_obj_in_speed_get(event->object);
 
-  stream = eo_key_data_get(event->obj, "pulse_data");
+  stream = eo_key_data_get(event->object, "pulse_data");
 
   pa_operation_unref(pa_stream_update_sample_rate(stream, samplerate * speed, NULL, NULL));
 
@@ -151,9 +151,9 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
 static Eina_Bool _delayed_attach_cb(void *data, const Eo_Event *event)
 {
   Eo *in = data;
-  eo_event_callback_del(event->obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, _delayed_attach_cb, in);
+  eo_event_callback_del(event->object, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, _delayed_attach_cb, in);
 
-  _input_attach_internal(event->obj, in);
+  _input_attach_internal(event->object, in);
 
   return EINA_TRUE;
 }

@@ -3920,7 +3920,7 @@ _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    const Eo_Callback_Array_Item *event = ev->info;
 
-   ELM_ENTRY_DATA_GET(ev->obj, sd);
+   ELM_ENTRY_DATA_GET(ev->object, sd);
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
      sd->validators++;
    return EO_CALLBACK_CONTINUE;
@@ -3931,7 +3931,7 @@ _cb_deleted(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    const Eo_Callback_Array_Item *event = ev->info;
 
-   ELM_ENTRY_DATA_GET(ev->obj, sd);
+   ELM_ENTRY_DATA_GET(ev->object, sd);
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
      sd->validators--;
    return EO_CALLBACK_CONTINUE;

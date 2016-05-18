@@ -247,7 +247,7 @@ static Eina_Bool
 _on_child_del(void *data, const Eo_Event *event)
 {
    Evas_Object *table = data;
-   evas_object_table_unpack(table, event->obj);
+   evas_object_table_unpack(table, event->object);
 
    return EO_CALLBACK_CONTINUE;
 }

@@ -344,7 +344,7 @@ _elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_
      }
 
    Eo_Event ev;
-   ev.obj = accessible;
+   ev.object = accessible;
    ev.desc = event;
    ev.info = event_info;
    EINA_LIST_FOREACH(global_callbacks, l, hdl)
@@ -426,7 +426,7 @@ _on_rel_obj_del(void *data, const Eo_Event *event)
      {
         EINA_LIST_FOREACH_SAFE(rel->objects, p, p2, rel_obj)
           {
-          if (rel_obj == event->obj)
+          if (rel_obj == event->object)
                rel->objects = eina_list_remove_list(rel->objects, p);
           }
         if (!rel->objects)

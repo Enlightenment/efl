@@ -853,7 +853,7 @@ _inc_dec_button_pressed_cb(void *data, const Eo_Event *event)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
-   sd->inc_clicked = sd->inc_button == event->obj ? EINA_TRUE : EINA_FALSE;
+   sd->inc_clicked = sd->inc_button == event->object ? EINA_TRUE : EINA_FALSE;
 
    if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
 

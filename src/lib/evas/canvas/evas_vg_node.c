@@ -26,7 +26,7 @@ _efl_vg_property_changed(void *data, const Eo_Event *event)
    if (pd->changed) return EINA_TRUE;
    pd->changed = EINA_TRUE;
 
-   parent = eo_parent_get(event->obj);
+   parent = eo_parent_get(event->object);
    eo_event_callback_call(parent, event->desc, event->info);
    return EINA_TRUE;
 }

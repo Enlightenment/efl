@@ -486,7 +486,7 @@ _clipper_del_cb(void *data, const Eo_Event *event)
    if (!obj) return EO_CALLBACK_CONTINUE;
 
    _evas_object_clip_unset(eo_obj, obj);
-   if (obj->prev->clipper && (obj->prev->clipper->object == event->obj))
+   if (obj->prev->clipper && (obj->prev->clipper->object == event->object))
      {
         // not removing cb since it's the del cb... it can't be called again!
         EINA_COW_STATE_WRITE_BEGIN(obj, state_write, prev)

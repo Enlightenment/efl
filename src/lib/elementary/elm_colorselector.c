@@ -641,11 +641,11 @@ _spinner_changed_cb(void *data, const Eo_Event *event)
    Evas_Object *parent;
    int i, v;
 
-   for (i = 0; i < 4 && sd->spinners[i] != event->obj; i++);
+   for (i = 0; i < 4 && sd->spinners[i] != event->object; i++);
 
-   parent = evas_object_data_get(event->obj, "parent");
-   v = elm_spinner_value_get(event->obj);
-   evas_object_data_set(event->obj, "_changed", event->obj);
+   parent = evas_object_data_get(event->object, "parent");
+   v = elm_spinner_value_get(event->object);
+   evas_object_data_set(event->object, "_changed", event->object);
 
    switch (i)
      {
@@ -662,7 +662,7 @@ _spinner_changed_cb(void *data, const Eo_Event *event)
          _colors_set(parent, sd->r, sd->g, sd->b, v);
          break;
      }
-   evas_object_data_del(event->obj, "_changed");
+   evas_object_data_del(event->object, "_changed");
    eo_event_callback_call(parent, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
 
    return EINA_TRUE;
@@ -701,7 +701,7 @@ _start_grab_pick_cb(void *data, const Eo_Event *event)
 
    ELM_COLORSELECTOR_DATA_GET(o, sd);
 
-   elm_object_disabled_set(event->obj, EINA_TRUE);
+   elm_object_disabled_set(event->object, EINA_TRUE);
 
    sd->grab.mouse_motion = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _mouse_grab_pixels, o);
    sd->grab.key_up = ecore_event_handler_add(ECORE_EVENT_KEY_UP, _key_up_cb, o);
@@ -1018,7 +1018,7 @@ _button_clicked_cb(void *data, const Eo_Event *event)
    double x, y, step;
    ELM_COLORSELECTOR_DATA_GET(cb_data->parent, sd);
 
-   if (event->obj == cb_data->rbt) step = 1.0;
+   if (event->object == cb_data->rbt) step = 1.0;
    else step = -1.0;
 
    edje_object_part_drag_value_get(cb_data->colorbar, "elm.arrow", &x, &y);
@@ -1062,7 +1062,7 @@ _button_repeat_cb(void *data, const Eo_Event *event EINA_UNUSED)
    Color_Bar_Data *cb_data = data;
    double x, y, step;
 
-   if (event->obj == cb_data->rbt) step = 1.0 / BASE_STEP;
+   if (event->object == cb_data->rbt) step = 1.0 / BASE_STEP;
    else step = -1.0 / BASE_STEP;
 
    edje_object_part_drag_value_get(cb_data->colorbar, "elm.arrow", &x, &y);
@@ -2007,7 +2007,7 @@ _key_action_move(Evas_Object *obj, const char *params)
         else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           {
              Eo_Event event = {};
-             event.obj = sd->cb_data[sd->sel_color_type]->lbt;
+             event.object = sd->cb_data[sd->sel_color_type]->lbt;
              _button_clicked_cb(sd->cb_data[sd->sel_color_type], &event);
           }
         else return EINA_FALSE;
@@ -2021,7 +2021,7 @@ _key_action_move(Evas_Object *obj, const char *params)
         else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           {
              Eo_Event event = {};
-             event.obj = sd->cb_data[sd->sel_color_type]->rbt;
+             event.object = sd->cb_data[sd->sel_color_type]->rbt;
              _button_clicked_cb(sd->cb_data[sd->sel_color_type], &event);
           }
         else return EINA_FALSE;

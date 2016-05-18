@@ -7402,7 +7402,7 @@ _obstacle_del_cb(void *data, const Eo_Event *event)
 
    EINA_LIST_FOREACH(obj->obstacles, i, obs)
      {
-        if (event->obj == obs->eo_obs)
+        if (event->object == obs->eo_obs)
            break;
      }
    obj->obstacles = eina_list_remove_list(obj->obstacles, i);

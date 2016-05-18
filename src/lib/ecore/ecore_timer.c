@@ -172,7 +172,7 @@ _ecore_timer_legacy_tick(void *data, const Eo_Event *event)
    legacy->inside_call = 1;
    if (!_ecore_call_task_cb(legacy->func, (void*)legacy->data) ||
        legacy->delete_me)
-     eo_unref(event->obj);
+     eo_unref(event->object);
 
    return EO_CALLBACK_CONTINUE;
 }

@@ -62,7 +62,7 @@ static Eina_Bool
 _eo_evas_object_cb(void *data, const Eo_Event *event)
 {
    _eo_evas_object_cb_info *info = data;
-   if (info->func) info->func(info->data, evas_object_evas_get(event->obj), event->obj, event->info);
+   if (info->func) info->func(info->data, evas_object_evas_get(event->object), event->object, event->info);
    return EINA_TRUE;
 }
 
@@ -78,7 +78,7 @@ static Eina_Bool
 _eo_evas_cb(void *data, const Eo_Event *event)
 {
    _eo_evas_cb_info *info = data;
-   if (info->func) info->func(info->data, event->obj, event->info);
+   if (info->func) info->func(info->data, event->object, event->info);
    return EINA_TRUE;
 }
 

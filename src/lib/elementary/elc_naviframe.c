@@ -956,7 +956,7 @@ _on_item_back_btn_clicked(void *data, const Eo_Event *event)
       multiple times on some heavy environment. This callback del will
       prevent those scenario and guarantee only one clicked for it's own
       page. */
-   eo_event_callback_del(event->obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_back_btn_clicked, data);
+   eo_event_callback_del(event->object, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_back_btn_clicked, data);
    elm_naviframe_item_pop(data);
 
    return EINA_TRUE;

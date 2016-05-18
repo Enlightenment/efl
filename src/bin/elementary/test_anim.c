@@ -19,18 +19,18 @@ _anim_tick(void *data EINA_UNUSED, const Eo_Event *event)
    double lx, ly;
    unsigned int i;
 
-   evas_output_viewport_get(evas_object_evas_get(event->obj), 0, 0, &vw, &vh);
+   evas_output_viewport_get(evas_object_evas_get(event->object), 0, 0, &vw, &vh);
    r = 48;
    t = ecore_loop_time_get();
    fac = 2.0 / (double)((sizeof(names) / sizeof(char *) / 2));
-   evas_pointer_canvas_xy_get(evas_object_evas_get(event->obj), &x, &y);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(event->object), &x, &y);
    lx = x;
    ly = y;
 
    for (i = 0; i < (sizeof(names) / sizeof(char *) / 2); i++)
      {
-        bub = evas_object_data_get(event->obj, names[i * 2]);
-        sh = evas_object_data_get(event->obj, names[(i * 2) + 1]);
+        bub = evas_object_data_get(event->object, names[i * 2]);
+        sh = evas_object_data_get(event->object, names[(i * 2) + 1]);
         zz = (((2 + sin(t * 6 + (M_PI * (i * fac)))) / 3) * 64) * 2;
         xx = (cos(t * 4 + (M_PI * (i * fac))) * r) * 2;
         yy = (sin(t * 6 + (M_PI * (i * fac))) * r) * 2;

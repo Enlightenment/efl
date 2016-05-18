@@ -323,7 +323,7 @@ _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    const Eo_Callback_Array_Item *event = ev->info;
 
-   ELM_GLVIEW_DATA_GET(ev->obj, sd);
+   ELM_GLVIEW_DATA_GET(ev->object, sd);
 
    if (event->desc == ELM_GLVIEW_EVENT_CREATED)
      {
@@ -331,7 +331,7 @@ _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
      }
    else if (event->desc == ELM_GLVIEW_EVENT_RENDER)
      {
-        _set_render_policy_callback(ev->obj);
+        _set_render_policy_callback(ev->object);
      }
 
    return EO_CALLBACK_CONTINUE;

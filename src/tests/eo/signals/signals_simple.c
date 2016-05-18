@@ -31,7 +31,7 @@ _a_set(Eo *obj, void *class_data, int a)
 Eina_Bool
 _cb_added(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Simple_Public_Data *pd = eo_data_scope_get(event->obj, MY_CLASS);
+   Simple_Public_Data *pd = eo_data_scope_get(event->object, MY_CLASS);
    const Eo_Callback_Array_Item *callback_array = event->info;
 
    if (callback_array->desc != EV_A_CHANGED)
@@ -39,14 +39,14 @@ _cb_added(void *data EINA_UNUSED, const Eo_Event *event)
 
    pd->cb_count++;
 
-   printf("Added EV_A_CHANGED callback to %p. Count: %d\n", event->obj, pd->cb_count);
+   printf("Added EV_A_CHANGED callback to %p. Count: %d\n", event->object, pd->cb_count);
    return EO_CALLBACK_CONTINUE;
 }
 
 Eina_Bool
 _cb_deled(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Simple_Public_Data *pd = eo_data_scope_get(event->obj, MY_CLASS);
+   Simple_Public_Data *pd = eo_data_scope_get(event->object, MY_CLASS);
    const Eo_Callback_Array_Item *callback_array = event->info;
 
    if (callback_array->desc != EV_A_CHANGED)
@@ -54,7 +54,7 @@ _cb_deled(void *data EINA_UNUSED, const Eo_Event *event)
 
    pd->cb_count--;
 
-   printf("Removed EV_A_CHANGED callback from %p. Count: %d\n", event->obj, pd->cb_count);
+   printf("Removed EV_A_CHANGED callback from %p. Count: %d\n", event->object, pd->cb_count);
    return EO_CALLBACK_CONTINUE;
 }
 

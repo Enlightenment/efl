@@ -35,7 +35,7 @@ EO_DEFINE_CLASS(_test_ui_grid_custom_engine_class_get, &custom_engine_class_desc
 static Eina_Bool
 weights_cb(void *data, const Eo_Event *event)
 {
-   Weight_Mode mode = elm_radio_state_value_get(event->obj);
+   Weight_Mode mode = elm_radio_state_value_get(event->object);
    Eo *grid = data;
 
    if (mode != CUSTOM)
@@ -82,7 +82,7 @@ weights_cb(void *data, const Eo_Event *event)
 static Eina_Bool
 request_slider_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   int val = elm_slider_value_get(event->obj);
+   int val = elm_slider_value_get(event->object);
    for (int i = 0; i < 6; i++)
      evas_object_size_hint_request_set(objects[i], val, 0);
    return EO_CALLBACK_CONTINUE;
@@ -91,7 +91,7 @@ request_slider_cb(void *data EINA_UNUSED, const Eo_Event *event)
 static Eina_Bool
 padding_slider_cb(void *data, const Eo_Event *event)
 {
-   int val = elm_slider_value_get(event->obj);
+   int val = elm_slider_value_get(event->object);
    efl_pack_padding_set(data, val, val, EINA_TRUE);
    return EO_CALLBACK_CONTINUE;
 }
@@ -99,7 +99,7 @@ padding_slider_cb(void *data, const Eo_Event *event)
 static Eina_Bool
 margin_slider_cb(void *data, const Eo_Event *event)
 {
-   int val = elm_slider_value_get(event->obj);
+   int val = elm_slider_value_get(event->object);
    evas_object_size_hint_padding_set(data, val, val, val, val);
    return EO_CALLBACK_CONTINUE;
 }
@@ -107,7 +107,7 @@ margin_slider_cb(void *data, const Eo_Event *event)
 static Eina_Bool
 btnmargins_slider_cb(void *data, const Eo_Event *event)
 {
-   int val = elm_slider_value_get(event->obj);
+   int val = elm_slider_value_get(event->object);
    for (int i = 1; i < 7; i++)
      evas_object_size_hint_padding_set(data, val, val, val, val);
    return EO_CALLBACK_CONTINUE;
@@ -120,8 +120,8 @@ layout_updated_cb(void *data, const Eo_Event *event)
    char buf[64];
    int rows, cols, count;
 
-   efl_pack_grid_size_get(event->obj, &cols, &rows);
-   count = efl_content_count(event->obj);
+   efl_pack_grid_size_get(event->object, &cols, &rows);
+   count = efl_content_count(event->object);
    sprintf(buf, "%d items (%dx%d)", count, cols, rows);
    elm_object_text_set(o, buf);
 
@@ -136,7 +136,7 @@ child_evt_cb(void *data, const Eo_Event *event)
    int col, row, colspan, rowspan;
    char buf[64];
 
-   efl_pack_grid_position_get(event->obj, it, &col, &row, &colspan, &rowspan);
+   efl_pack_grid_position_get(event->object, it, &col, &row, &colspan, &rowspan);
    if (event->desc == EFL_CONTAINER_EVENT_CONTENT_ADDED)
      sprintf(buf, "pack %d,%d %dx%d", col, row, colspan, rowspan);
    else
