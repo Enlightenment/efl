@@ -1,3 +1,5 @@
+#ifndef EINA_PROMISE_H_
+#define EINA_PROMISE_H_
 
 #ifdef EFL_BETA_API_SUPPORT
 
@@ -532,3 +534,5 @@ EAPI extern Eina_Error EINA_ERROR_PROMISE_CANCEL;
     *Promise = eina_promise_owner_promise_get(__eo_promise);
 
 #endif
+
+#endif /* ! EINA_PROMISE_H_ */
