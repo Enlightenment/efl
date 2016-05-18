@@ -4953,8 +4953,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                          {
 #endif
                             if (mo)
-                              evas_obj_map_enable_set(mo, 0);
-                              evas_obj_map_set(mo, NULL);
+                              {
+                                 evas_obj_map_enable_set(mo, 0);
+                                 evas_obj_map_set(mo, NULL);
+                              }
 #ifdef HAVE_EPHYSICS
                          }
 #endif
