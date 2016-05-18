@@ -1490,7 +1490,7 @@ _elm_index_item_sorted_insert(Eo *obj, Elm_Index_Data *sd, const char *letter, E
              if (cmp_data_func(WIDGET_ITEM_DATA_GET(eo_p_it), item_data) >= 0)
                WIDGET_ITEM_DATA_SET(eo_p_it, item_data);
              elm_wdg_item_del(eo_item);
-             eo_item = NULL;
+             return NULL;
           }
      }
    ELM_INDEX_ITEM_DATA_GET(eo_item, it);
