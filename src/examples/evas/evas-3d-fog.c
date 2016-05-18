@@ -20,8 +20,6 @@
 #define  FOG_COLOR      0.5, 0.5, 0.5
 #define  FOG_FACTOR     0.2
 
-static double pi = 3.14159265359;
-
 typedef struct _Scene_Data
 {
    Eo     *scene;
