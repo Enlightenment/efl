@@ -97,14 +97,14 @@ START_TEST(eo_signals)
           { EV_A_CHANGED, _eo_signals_a_changed_cb },
           { EV_A_CHANGED, _eo_signals_a_changed_cb2 },
           { EV_A_CHANGED, _eo_signals_a_changed_never },
-          { EO_BASE_EVENT_DEL, _eo_signals_eo_del_cb },
+          { EO_EVENT_DEL, _eo_signals_eo_del_cb },
           { NULL, NULL }
    };
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    Eina_Bool r;
 
-   eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_ADD, _eo_signals_cb_added_deled, callbacks);
-   r = eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_DEL, _eo_signals_cb_added_deled, callbacks);
+   eo_event_callback_add(obj, EO_EVENT_CALLBACK_ADD, _eo_signals_cb_added_deled, callbacks);
+   r = eo_event_callback_add(obj, EO_EVENT_CALLBACK_DEL, _eo_signals_cb_added_deled, callbacks);
    fail_if(!r);
    eo_event_callback_array_priority_add(obj, callbacks, -100, (void *) 1);
    eo_event_callback_array_add(obj, callbacks, (void *) 3);
