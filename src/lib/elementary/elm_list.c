@@ -91,8 +91,12 @@ _is_no_select(Elm_List_Item_Data *it)
 static inline void
 _elm_list_item_free(Elm_List_Item_Data *it)
 {
+   Elm_Object_Item *eo_it;
+
+   if (!it) return;
+
    ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
-   Elm_Object_Item *eo_it = it?EO_OBJ(it):NULL;
+   eo_it = EO_OBJ(it);
 
    if (sd->focused_item == eo_it)
      sd->focused_item = NULL;
