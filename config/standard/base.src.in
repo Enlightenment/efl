@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 131079;
+  value "config_version" int: 131083;
   value "engine" string: "";
   value "vsync" uchar: 0;
   value "thumbscroll_enable" uchar: 0;
@@ -597,6 +597,12 @@ group "Elm_Config" struct {
               value "key" string: "KP_Down";
               value "action" string: "move";
               value "params" string: "down";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Escape";
+              value "action" string: "escape";
+              value "params" string: "esc";
            }
         }
      }

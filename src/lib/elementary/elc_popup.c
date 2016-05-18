@@ -44,6 +44,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 static void _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 static Eina_Bool
 _block_clicked_cb(void *data, const Eo_Event *event);
@@ -55,6 +56,7 @@ _hide_effect_finished_cb(void *data, const Eo_Event *event);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
+   {"escape", _key_action_escape},
    {NULL, NULL}
 };
 
@@ -1474,6 +1476,15 @@ _key_action_move(Evas_Object *obj, const char *params)
 
    return EINA_TRUE;
 
+}
+
+static Eina_Bool
+_key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_POPUP_DATA_GET(obj, pd);
+   elm_layout_signal_emit(pd->main_layout, "elm,state,hide", "elm");
+   elm_notify_dismiss(pd->notify);
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
