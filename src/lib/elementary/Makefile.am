@@ -393,7 +393,6 @@ includesub_HEADERS = \
 	elm_map_eo.h \
 	elm_map_legacy.h \
 	elm_mapbuf.h \
-	elm_mapbuf_eo.h \
 	elm_mapbuf_legacy.h \
 	elm_menu.h \
 	elm_menu_eo.h \
