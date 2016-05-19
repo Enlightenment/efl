@@ -103,34 +103,38 @@ _efl_vg_container_efl_vg_interpolate(Eo *obj,
                                           const Efl_VG *from, const Efl_VG *to,
                                           double pos_map)
 {
-   Efl_VG_Container_Data *fd;
-   Efl_VG_Container_Data *td;
-   Eina_Iterator *it;
-   Eina_Hash_Tuple *tuple;
-   Eina_Bool r;
+   Eina_Iterator *from_it, *to_it;
+   Eina_List *l;
+   Eina_Bool r, res = EINA_TRUE;
+   Eo *from_child, *to_child, *child;
+
+   //1. check if both the object are containers
+   if (!(eo_isa(from, EFL_VG_CONTAINER_CLASS) &&
+         eo_isa(to, EFL_VG_CONTAINER_CLASS)))
+     return EINA_FALSE;
 
    r = efl_vg_interpolate(eo_super(obj, EFL_VG_CONTAINER_CLASS), from, to, pos_map);
 
    if (!r) return EINA_FALSE;
 
-   fd = eo_data_scope_get(from, EFL_VG_CONTAINER_CLASS);
-   td = eo_data_scope_get(to, EFL_VG_CONTAINER_CLASS);
-
-   it = eina_hash_iterator_tuple_new(pd->names);
-   EINA_ITERATOR_FOREACH(it, tuple)
+   from_it = efl_vg_container_children_get((Efl_VG *)from);
+   to_it = efl_vg_container_children_get((Efl_VG *)to);
+   EINA_LIST_FOREACH (pd->children, l, child)
      {
-        Eo *fromc, *toc;
-        Eo *cc = tuple->data;
-
-        fromc = eina_hash_find(fd->names, tuple->key);
-        toc = eina_hash_find(td->names, tuple->key);
-
-        if (!toc || !fromc) continue ;
-        if (eo_class_get(toc) != eo_class_get(fromc)) continue ;
-
-        r &= efl_vg_interpolate(cc, fromc, toc, pos_map);
+        res &= eina_iterator_next(from_it, (void **)&from_child);
+        res &= eina_iterator_next(to_it, (void **)&to_child);
+        if (!res && (eo_class_get(from_child) != eo_class_get(to_child) ||
+            (eo_class_get(child) != eo_class_get(from_child))))
+          {
+             r = EINA_FALSE;
+             break;
+          }
+        r &= efl_vg_interpolate(child, from_child, to_child, pos_map);
+        if (!r)
+          break;
      }
-   eina_iterator_free(it);
+   eina_iterator_free(from_it);
+   eina_iterator_free(to_it);
 
    return r;
 }
