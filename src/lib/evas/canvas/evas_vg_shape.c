@@ -232,22 +232,25 @@ _efl_vg_shape_efl_vg_dup(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED, const Efl_V
 
    if (fromd->fill)
      {
-        fill = eo_add(eo_class_get(fromd->fill), parent, efl_vg_dup(eo_self, fromd->fill));
+        fill = eo_add(eo_class_get(fromd->fill), NULL, efl_vg_dup(eo_self, fromd->fill));
+        efl_vg_shape_fill_set(obj, fill);
+        eo_unref(fill);
      }
 
    if (fromd->stroke.fill)
      {
-        stroke_fill = eo_add(eo_class_get(fromd->stroke.fill), parent, efl_vg_dup(eo_self, fromd->stroke.fill));
+        stroke_fill = eo_add(eo_class_get(fromd->stroke.fill), NULL, efl_vg_dup(eo_self, fromd->stroke.fill));
+        efl_vg_shape_stroke_fill_set(obj, stroke_fill);
+        eo_unref(stroke_fill);
      }
 
    if (fromd->stroke.marker)
      {
-        stroke_marker = eo_add(eo_class_get(fromd->stroke.marker), parent, efl_vg_dup(eo_self, fromd->stroke.marker));
+        stroke_marker = eo_add(eo_class_get(fromd->stroke.marker), NULL, efl_vg_dup(eo_self, fromd->stroke.marker));
+        efl_vg_shape_stroke_marker_set(obj, stroke_marker);
+        eo_unref(stroke_marker);
      }
 
-   efl_vg_shape_fill_set(obj, fill);
-   efl_vg_shape_stroke_fill_set(obj, stroke_fill);
-   efl_vg_shape_stroke_marker_set(obj, stroke_marker);
    efl_gfx_shape_dup(obj, from);
 }
 
