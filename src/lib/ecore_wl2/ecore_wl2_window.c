@@ -129,11 +129,12 @@ _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSE
    win->configure_serial = serial;
    if ((win->geometry.w == w) && (win->geometry.h == h))
      w = h = 0;
-   else if ((!w) && (!h) &&
-     (!win->fullscreen) && (!win->maximized) && ((win->fullscreen != fs) || (win->maximized != max)))
+   else if ((!w) && (!h) && (!win->fullscreen) && (!win->maximized) &&
+            ((win->fullscreen != fs) || (win->maximized != max)))
      w = win->saved.w, h = win->saved.h;
 
-   _ecore_wl2_window_configure_send(win, w, h, !!win->resizing, win->fullscreen, win->maximized);
+   _ecore_wl2_window_configure_send(win, w, h, !!win->resizing,
+                                    win->fullscreen, win->maximized);
 }
 
 static void
