@@ -222,12 +222,9 @@ static void
 _efl_vg_shape_efl_vg_dup(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED, const Efl_VG *from)
 {
    Efl_VG_Shape_Data *fromd;
-   Eo *parent;
    Eo *fill = NULL, *stroke_fill = NULL, *stroke_marker = NULL;
 
    efl_vg_dup(eo_super(obj, MY_CLASS), from);
-
-   parent = eo_parent_get(obj);
 
    fromd = eo_data_scope_get(from, MY_CLASS);
 
