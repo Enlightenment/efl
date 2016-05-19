@@ -5173,6 +5173,20 @@ _elm_win_indicator_opacity_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
+_elm_win_indicator_overlap_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED, Elm_Win_Indicator_Overlap_Mode mode EINA_UNUSED)
+{
+   //TODO: this mode will be implemented after removing the conformant.
+   return;
+}
+
+EOLIAN static Elm_Win_Indicator_Overlap_Mode
+_elm_win_indicator_overlap_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED)
+{
+   //TODO: this mode will be implemented after removing the conformant.
+   return ELM_WIN_INDICATOR_OVERLAP_UNKNOWN;
+}
+
+EOLIAN static void
 _elm_win_screen_position_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *x, int *y)
 {
    if (x) *x = sd->screen.x;

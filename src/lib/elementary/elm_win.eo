@@ -104,8 +104,9 @@ enum Elm.Win.Indicator_Mode
 
      Sometimes you don't want it because you provide the same functionality
      inside your app, so this will request that the indicator is hidden in
-     this circumstance if you use ELM_ILLUME_INDICATOR_HIDE. The default
-     is to have the indicator shown.
+     this circumstance. The default is depend on the environments.
+     For example, like phones, default is to have the indicator shown.
+     But like TV, default is to have the indicator hidden.
    ]]
 
    legacy: elm_win_indicator;
@@ -124,6 +125,20 @@ enum Elm.Win.Indicator_Opacity_Mode
    opaque, [[Opacifies the indicator]]
    translucent, [[Be translucent the indicator]]
    transparent [[Transparentizes the indicator]]
+}
+
+enum Elm.Win.Indicator_Overlap_Mode
+{
+   [[Defines the overlap modes of indicator that can be shown.
+     Using this mode, user can determine whether the content of window 
+     overlaps with indicator or not.]]
+   legacy: elm_win_indicator;
+
+   overlap_unknown, [[Unknown indicator overlap mode]]
+   overlap, [[Indicator can be overlapped with the content of window.
+              Content can be placed under the indicator in z-order.]]
+   nooverlap, [[Indicator can not be overlapped with the content of window.
+	           The Y coordinate of content is same as (Y coordinate of indicator + indicator height)]]
 }
 
 /**
@@ -168,6 +183,39 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
    eo_prefix: elm_obj_win;
    event_prefix: elm_win;
    methods {
+      @property indicator_mode {
+         set {
+            [[Sets the indicator mode of the window.]]
+         }
+         get {
+            [[Get the indicator mode of the window.]]
+         }
+         values {
+            mode: Elm.Win.Indicator_Mode; [[The mode, one of #Elm_Win_Indicator_Mode.]]
+         }
+      }
+      @property indicator_opacity {
+         set {
+            [[Sets the indicator opacity mode of the window.]]
+         }
+         get {
+            [[Get the indicator opacity mode of the window.]]
+         }
+         values {
+            mode: Elm.Win.Indicator_Opacity_Mode; [[The mode, one of #Elm_Win_Indicator_Opacity_Mode.]]
+         }
+      }
+      @property indicator_overlap {
+         set {
+            [[Sets the indicator overlap mode of the window.]]
+         }
+         get {
+            [[Get the indicator overlap mode of the window.]]
+         }
+         values {
+            mode: Elm.Win.Indicator_Overlap_Mode; [[The mode, one of #Elm_Win_Indicator_Overlap_Mode.]]
+         }
+      }
       @property keyboard_win {
          set {
             [[Sets whether the window is a keyboard.]]
@@ -614,17 +662,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                               otherwise it is width divided by height.]]
          }
       }
-      @property indicator_opacity {
-         set {
-            [[Sets the indicator opacity mode of the window.]]
-         }
-         get {
-            [[Get the indicator opacity mode of the window.]]
-         }
-         values {
-            mode: Elm.Win.Indicator_Opacity_Mode; [[The mode, one of #Elm_Win_Indicator_Opacity_Mode.]]
-         }
-      }
       @property demand_attention {
          set {
             [[Set the demand_attention state of a window.]]
@@ -756,17 +793,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          values {
             set: bool; [[$true to set manual rotation done mode, $false otherwise.]]
-         }
-      }
-      @property indicator_mode {
-         set {
-            [[Sets the indicator mode of the window.]]
-         }
-         get {
-            [[Get the indicator mode of the window.]]
-         }
-         values {
-            mode: Elm.Win.Indicator_Mode; [[The mode, one of #Elm_Win_Indicator_Mode.]]
          }
       }
       @property conformant {
