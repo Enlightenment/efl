@@ -118,7 +118,7 @@ _frame_decode_cb(void *data EINA_UNUSED, const Eo_Event *ev EINA_UNUSED)
 static Eina_Bool
 _length_change_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
-   fprintf(stderr, "smartcb: length_change: %0.3f\n", emotion_object_play_length_get(ev->obj));
+   fprintf(stderr, "smartcb: length_change: %0.3f\n", emotion_object_play_length_get(ev->object));
 
    return EINA_TRUE;
 }
@@ -126,7 +126,7 @@ _length_change_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 static Eina_Bool
 _position_update_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
-   fprintf(stderr, "smartcb: position_update: %0.3f\n", emotion_object_position_get(ev->obj));
+   fprintf(stderr, "smartcb: position_update: %0.3f\n", emotion_object_position_get(ev->object));
 
    return EINA_TRUE;
 }
@@ -135,8 +135,8 @@ static Eina_Bool
 _progress_change_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    fprintf(stderr, "smartcb: progress_change: %0.3f, %s\n",
-	   emotion_object_progress_status_get(ev->obj),
-	   emotion_object_progress_info_get(ev->obj));
+	   emotion_object_progress_status_get(ev->object),
+	   emotion_object_progress_info_get(ev->object));
 
    return EINA_TRUE;
 }
@@ -145,7 +145,7 @@ static Eina_Bool
 _frame_resize_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    int w, h;
-   emotion_object_size_get(ev->obj, &w, &h);
+   emotion_object_size_get(ev->object, &w, &h);
    fprintf(stderr, "smartcb: frame_resize: %dx%d\n", w, h);
 
    return EINA_TRUE;

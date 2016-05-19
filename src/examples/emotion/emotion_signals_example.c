@@ -37,7 +37,7 @@ static Eina_Bool
 _playback_started_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    printf(">>> Emotion object started playback.\n");
-   _display_info(ev->obj);
+   _display_info(ev->object);
 
    return EINA_TRUE;
 }
@@ -46,7 +46,7 @@ static Eina_Bool
 _playback_finished_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    printf(">>> Emotion object finished playback.\n");
-   _display_info(ev->obj);
+   _display_info(ev->object);
 
    return EINA_TRUE;
 }
@@ -55,7 +55,7 @@ static Eina_Bool
 _open_done_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    printf(">>> Emotion object open done.\n");
-   _display_info(ev->obj);
+   _display_info(ev->object);
 
    return EINA_TRUE;
 }
@@ -64,8 +64,8 @@ static Eina_Bool
 _position_update_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    printf(">>> Emotion object first position update.\n");
-   eo_event_callback_del(ev->obj, EMOTION_OBJECT_EVENT_POSITION_UPDATE, _position_update_cb, NULL);
-   _display_info(ev->obj);
+   eo_event_callback_del(ev->object, EMOTION_OBJECT_EVENT_POSITION_UPDATE, _position_update_cb, NULL);
+   _display_info(ev->object);
 
    return EINA_TRUE;
 }
@@ -74,8 +74,8 @@ static Eina_Bool
 _frame_decode_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    printf(">>> Emotion object first frame decode.\n");
-   eo_event_callback_del(ev->obj, EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, NULL);
-   _display_info(ev->obj);
+   eo_event_callback_del(ev->object, EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, NULL);
+   _display_info(ev->object);
 
    return EINA_TRUE;
 }
@@ -84,7 +84,7 @@ static Eina_Bool
 _decode_stop_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    printf(">>> Emotion object decode stop.\n");
-   _display_info(ev->obj);
+   _display_info(ev->object);
 
    return EINA_TRUE;
 }
@@ -93,7 +93,7 @@ static Eina_Bool
 _frame_resize_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    printf(">>> Emotion object frame resize.\n");
-   _display_info(ev->obj);
+   _display_info(ev->object);
 
    return EINA_TRUE;
 }
