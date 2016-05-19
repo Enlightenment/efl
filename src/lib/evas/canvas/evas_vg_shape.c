@@ -131,8 +131,9 @@ _efl_vg_shape_render_pre(Eo *obj EINA_UNUSED,
    Efl_VG_Data *fill, *stroke_fill, *stroke_marker, *mask;
    double xn = nd->x, yn = nd->y ;
 
-   if (!nd->changed) return ;
-   nd->changed = EINA_FALSE;
+   if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return ;
+
+   nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
    if(parent) eina_matrix3_point_transform(parent, nd->x, nd->y, &xn, &yn);
 

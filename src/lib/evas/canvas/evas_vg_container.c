@@ -15,14 +15,25 @@ _efl_vg_container_render_pre(Eo *obj EINA_UNUSED,
    Efl_VG_Container_Data *pd = data;
    Eina_List *l;
    Eo *child;
+   Efl_VG_Data *child_nd;
+   Efl_Gfx_Change_Flag flag;
 
-   if (!nd->changed) return ;
-   nd->changed = EINA_FALSE;
+   if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return ;
+
+   flag = nd->flags;
+   nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
    EFL_VG_COMPUTE_MATRIX(current, parent, nd);
 
    EINA_LIST_FOREACH(pd->children, l, child)
-     _evas_vg_render_pre(child, s, current);
+     {
+        if (flag & EFL_GFX_CHANGE_FLAG_MATRIX)
+          {
+             child_nd = eo_data_scope_get(child, EFL_VG_CLASS);
+             child_nd->flags |= EFL_GFX_CHANGE_FLAG_MATRIX;
+          }
+        _evas_vg_render_pre(child, s, current);
+     }
 }
 
 static Eo *
@@ -38,6 +49,7 @@ _efl_vg_container_eo_base_constructor(Eo *obj,
    nd = eo_data_scope_get(obj, EFL_VG_CLASS);
    nd->render_pre = _efl_vg_container_render_pre;
    nd->data = pd;
+   nd->flags = EFL_GFX_CHANGE_FLAG_ALL;
 
    return obj;
 }

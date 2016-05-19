@@ -23,8 +23,7 @@ _efl_vg_property_changed(void *data, const Eo_Event *event)
    Efl_VG_Data *pd = data;
    Eo *parent;
 
-   if (pd->changed) return EINA_TRUE;
-   pd->changed = EINA_TRUE;
+   if (!pd->flags) pd->flags = EFL_GFX_CHANGE_FLAG_ALL;
 
    parent = eo_parent_get(event->object);
    eo_event_callback_call(parent, event->desc, event->info);
@@ -57,6 +56,7 @@ _efl_vg_transformation_set(Eo *obj,
         pd->m = NULL;
      }
 
+   pd->flags |= EFL_GFX_CHANGE_FLAG_MATRIX;
    _efl_vg_changed(obj);
 }
 
@@ -275,6 +275,7 @@ _efl_vg_eo_base_constructor(Eo *obj,
    }
 
    eo_event_callback_add(obj, EFL_GFX_CHANGED, _efl_vg_property_changed, pd);
+   pd->flags = EFL_GFX_CHANGE_FLAG_ALL;
    pd->changed = EINA_TRUE;
 
    return obj;

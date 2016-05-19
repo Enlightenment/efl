@@ -65,8 +65,9 @@ _efl_vg_gradient_linear_render_pre(Eo *obj,
    Efl_VG_Gradient_Linear_Data *pd = data;
    Efl_VG_Gradient_Data *gd;
 
-   if (!nd->changed) return ;
-   nd->changed = EINA_FALSE;
+   if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return ;
+
+   nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
    gd = eo_data_scope_get(obj, EFL_VG_GRADIENT_CLASS);
    EFL_VG_COMPUTE_MATRIX(current, parent, nd);

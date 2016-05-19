@@ -37,6 +37,7 @@ struct _Efl_VG_Data
 
    double x, y;
    int r, g, b, a;
+   Efl_Gfx_Change_Flag flags;
 
    Eina_Bool visibility : 1;
    Eina_Bool changed : 1;
