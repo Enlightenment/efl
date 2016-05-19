@@ -18,3 +18,11 @@ struct @extern Efl.Time
    tm_yday: int;  [[Days in year.[0-365] ]]
    tm_isdst: int; [[DST. [-1/0/1] ]]
 }
+
+enum Efl.BiDi.Direction
+{
+   neutral = 0,
+   ltr,
+   rtl,
+   inherit
+}

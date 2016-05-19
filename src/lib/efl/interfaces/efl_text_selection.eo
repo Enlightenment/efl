@@ -1,0 +1,61 @@
+interface Efl.Text.Selection {
+   methods {
+      @property enable {
+         set {
+            [[TODO
+            ]]
+         }
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            enable: bool; [[TODO]]
+         }
+      }
+      @property region {
+         set {
+            [[TODO
+            ]]
+         }
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            start: int; [[TODO]]
+            end: int; [[TODO]]
+         }
+      }
+      @property handler_disabled {
+         set {
+            [[TODO
+            ]]
+         }
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            disabled: bool; [[TODO]]
+         }
+      }
+      @property text {
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            text: const(char)*; [[TODO]]
+         }
+      }
+      all {
+         [[TODO
+	 ]]
+      }
+      none {
+         [[TODO
+	 ]]
+      }
+   }
+}

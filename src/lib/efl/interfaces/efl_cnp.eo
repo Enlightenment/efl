@@ -1,0 +1,33 @@
+enum Efl.Cnp.Mode
+{
+   markup = 0,
+   no_image,
+   plain
+}
+
+interface Efl.Cnp {
+   methods {
+      @property mode {
+         set {
+            [[TODO
+            ]]
+         }
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            mode: Efl.Cnp.Mode; [[TODO]]
+         }
+      }
+      copy {
+         return: const (char)*; [[TODO]]
+      }
+      cut {
+         return: const (char)*; [[TODO]]
+      }
+      paste {
+         return: const (char)*; [[TODO]]
+      }
+   }
+}

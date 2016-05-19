@@ -1,5 +1,37 @@
 type Efl_Font_Size: int;
 
+enum Efl.Text.Properties.Ellipsis
+{
+   none = 0,
+   start,
+   middle,
+   end
+}
+
+enum Efl.Text.Properties.Horizontal.Alignment
+{
+   default = 0,
+   left,
+   middle,
+   right
+}
+
+enum Efl.Text.Properties.Vertical.Alignment
+{
+   default = 0,
+   top,
+   center,
+   bottom
+}
+
+enum Efl.Text.Properties.Wrap.Mode
+{
+   none = 0,
+   char,
+   word,
+   mixed
+}
+
 interface Efl.Text.Properties {
    methods {
       @property font {
@@ -52,6 +84,67 @@ interface Efl.Text.Properties {
          }
          values {
             font_source: const(char)*; [[The font file's path.]]
+         }
+      }
+      @property ellipsis {
+         set {
+            [[TODO
+            ]]
+         }
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            ellipsis: Efl.Text.Properties.Ellipsis; [[TODO]]
+         }
+      }
+      @property horizontal_alignment {
+         set {
+            [[TODO
+            ]]
+         }
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            align: Efl.Text.Properties.Horizontal.Alignment; [[TODO]]
+         }
+      }
+      @property vertical_alignment {
+         set {
+            [[TODO
+            ]]
+         }
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            align: Efl.Text.Properties.Vertical.Alignment; [[TODO]]
+         }
+      }
+      @property wrap_mode {
+         set {
+            [[TODO
+            ]]
+         }
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            ellipsis: Efl.Text.Properties.Ellipsis; [[TODO]]
+         }
+      }
+      @property BiDi {
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            bidi: Efl.BiDi.Direction; [[TODO]]
          }
       }
    }

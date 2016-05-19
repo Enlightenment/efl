@@ -1,0 +1,68 @@
+interface Efl.Text.Cursor {
+   methods {
+      @property position {
+         set {
+            [[TODO
+            ]]
+         }
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            position: int; [[TODO]]
+         }
+      }
+      @property geometry {
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            x: int; [[TODO]]
+            y: int; [[TODO]]
+            w: int; [[TODO]]
+            h: int; [[TODO]]
+         }
+      }
+      @property bidi {
+         get {
+            [[TODO
+            ]]
+         }
+         values {
+            bidi: int; [[TODO]]
+         }
+      }
+      first {
+         [[TODO
+         ]]
+         return: bool; [[TODO]]
+      }
+      last {
+         [[TODO
+         ]]
+         return: bool; [[TODO]]
+      }
+      next {
+         [[TODO
+         ]]
+         return: bool; [[TODO]]
+      }
+      prev {
+         [[TODO
+         ]]
+         return: bool; [[TODO]]
+      }
+      up {
+         [[TODO
+         ]]
+         return: bool; [[TODO]]
+      }
+      down {
+         [[TODO
+         ]]
+         return: bool; [[TODO]]
+      }
+   }
+}
