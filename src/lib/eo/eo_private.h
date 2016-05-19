@@ -85,6 +85,9 @@ typedef struct _Eo_Vtable
    unsigned int size;
 } Eo_Vtable;
 
+/* Clean the vtable. */
+void _vtable_func_clean_all(Eo_Vtable *vtable);
+
 struct _Eo_Header
 {
 #ifndef HAVE_EO_ID
@@ -249,6 +252,12 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
    obj->refcount--;
 }
 
+static inline Eina_Bool
+_obj_is_override(_Eo_Object *obj)
+{
+   return (obj->vtable != &obj->klass->vtable);
+}
+
 static inline void
 _eo_free(_Eo_Object *obj)
 {
@@ -260,6 +269,13 @@ _eo_free(_Eo_Object *obj)
         ERR("Object %p data still referenced %d time(s).", obj, obj->datarefcount);
      }
 #endif
+   if (_obj_is_override(obj))
+     {
+        _vtable_func_clean_all(obj->vtable);
+        free(obj->vtable);
+        obj->vtable = &klass->vtable;
+     }
+
    _eo_id_release((Eo_Id) _eo_obj_id_get(obj));
 
    eina_spinlock_take(&klass->objects.trash_lock);

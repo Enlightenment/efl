@@ -169,6 +169,7 @@ typedef enum _Eo_Op_Type Eo_Op_Type;
  */
 typedef void (*Eo_Del_Intercept) (Eo *obj_id);
 
+#include "eo_override.eo.h"
 #include "eo_base.eo.h"
 #define EO_CLASS EO_BASE_CLASS
 
@@ -386,6 +387,18 @@ typedef struct _Eo_Op_Description
 } Eo_Op_Description;
 
 /**
+ * @struct _Eo_Ops
+ *
+ * This struct holds the ops and the size of the ops.
+ * Please use the #EO_CLASS_DESCRIPTION_OPS macro when populating it.
+ */
+typedef struct _Eo_Ops
+{
+   const Eo_Op_Description *descs; /**< The op descriptions array of size count. */
+   size_t count; /**< Number of op descriptions. */
+} Eo_Ops;
+
+/**
  * @struct _Eo_Class_Description
  * This struct holds the description of a class.
  * This description should be passed to eo_class_new.
@@ -396,10 +409,7 @@ struct _Eo_Class_Description
    unsigned int version; /**< The current version of eo, use #EO_VERSION */
    const char *name; /**< The name of the class. */
    Eo_Class_Type type; /**< The type of the class. */
-   struct {
-        const Eo_Op_Description *descs; /**< The op descriptions array of size count. */
-        size_t count; /**< Number of op descriptions. */
-   } ops; /**< The ops description, should be filled using #EO_CLASS_DESCRIPTION_OPS (later sorted by Eo). */
+   Eo_Ops ops;  /**< The ops description, should be filled using #EO_CLASS_DESCRIPTION_OPS (later sorted by Eo). */
    const Eo_Event_Description **events; /**< The event descriptions for this class. */
    size_t data_size; /**< The size of data (private + protected + public) this class needs per object. */
    void (*class_constructor)(Eo_Class *klass); /**< The constructor of the class. */
@@ -425,6 +435,21 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
  * @see #EO_DEFINE_CLASS
  */
 EAPI const Eo_Class *eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...);
+
+/**
+ * @brief Override Eo functions of this object.
+ * @param ops The op description to override with.
+ * @return true on success, false otherwise.
+ *
+ * This lets you override all of the Eo functions of this object (this
+ * one included) and repalce them with ad-hoc implementation.
+ * The contents of the array are copied so they can for example reside
+ * on the stack.
+ *
+ * You are only allowed to override functions that are defined in the
+ * class or any of its interfaces (that is, eo_isa returning true).
+ */
+EAPI Eina_Bool eo_override(Eo *obj, Eo_Ops ops);
 
 /**
  * @brief Check if an object "is a" klass.
@@ -466,8 +491,8 @@ EAPI Eina_Bool eo_init(void);
 EAPI Eina_Bool eo_shutdown(void);
 
 // Helpers macro to help populating #Eo_Class_Description.
-#define EO_CLASS_DESCRIPTION_NOOPS() { NULL, 0}
-#define EO_CLASS_DESCRIPTION_OPS(op_descs) { op_descs, EINA_C_ARRAY_LENGTH(op_descs) }
+#define EO_CLASS_DESCRIPTION_NOOPS() ((Eo_Ops) { NULL, 0})
+#define EO_CLASS_DESCRIPTION_OPS(op_descs) ((Eo_Ops) { op_descs, EINA_C_ARRAY_LENGTH(op_descs) })
 
 // to fetch internal function and object data at once
 typedef struct _Eo_Op_Call_Data

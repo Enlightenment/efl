@@ -15,6 +15,8 @@
 #include "eo_private.h"
 #include "eo_add_fallback.h"
 
+#include "eo_override.eo.c"
+
 #define EO_CLASS_IDS_FIRST 1
 #define EO_OP_IDS_FIRST 1
 
@@ -130,11 +132,11 @@ _eo_op_class_get(Eo_Op op)
 }
 
 static inline Eina_Bool
-_vtable_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
+_vtable_func_set(Eo_Vtable *vtable, const _Eo_Class *klass, Eo_Op op, eo_op_func_type func)
 {
    op_type_funcs *fsrc;
    size_t idx1 = DICH_CHAIN1(op);
-   Dich_Chain1 *chain1 = &klass->vtable.chain[idx1];
+   Dich_Chain1 *chain1 = &vtable->chain[idx1];
    _vtable_chain_alloc(chain1);
    fsrc = &chain1->funcs[DICH_CHAIN_LAST(op)];
    if (fsrc->src == klass)
@@ -151,19 +153,19 @@ _vtable_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
    return EINA_TRUE;
 }
 
-static inline void
-_vtable_func_clean_all(_Eo_Class *klass)
+void
+_vtable_func_clean_all(Eo_Vtable *vtable)
 {
    size_t i;
-   Dich_Chain1 *chain1 = klass->vtable.chain;
+   Dich_Chain1 *chain1 = vtable->chain;
 
-   for (i = 0 ; i < klass->vtable.size ; i++, chain1++)
+   for (i = 0 ; i < vtable->size ; i++, chain1++)
      {
         if (chain1->funcs)
            free(chain1->funcs);
      }
-   free(klass->vtable.chain);
-   klass->vtable.chain = NULL;
+   free(vtable->chain);
+   vtable->chain = NULL;
 }
 
 /* END OF DICH */
@@ -270,8 +272,10 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
    const _Eo_Class *klass, *inputklass, *main_klass;
    const _Eo_Class *cur_klass = NULL;
    _Eo_Object *obj = NULL;
+   const Eo_Vtable *vtable = NULL;
    const op_type_funcs *func;
    Eina_Bool is_obj;
+   Eina_Bool is_override = EINA_FALSE;
 
    if (((Eo_Id) eo_id) & MASK_SUPER_TAG)
      {
@@ -301,6 +305,19 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
         EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
         obj = _obj;
         klass = _obj->klass;
+        vtable = obj->vtable;
+
+        if (_obj_is_override(obj) && cur_klass &&
+              (_eo_class_id_get(cur_klass) == EO_OVERRIDE_CLASS))
+          {
+             /* Doing a eo_super(obj, EO_OVERRIDE_CLASS) should result in calling
+              * as if it's a normal class. */
+             vtable = &klass->vtable;
+             cur_klass = NULL;
+          }
+
+        is_override = _obj_is_override(obj) && (cur_klass == NULL);
+
         call->obj = obj;
         _eo_ref(_obj);
      }
@@ -308,6 +325,7 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
      {
         EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
         klass = _klass;
+        vtable = &klass->vtable;
         call->obj = NULL;
         call->data = NULL;
      }
@@ -337,28 +355,31 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
    else
      {
 # if EO_CALL_CACHE_SIZE > 0
-# if EO_CALL_CACHE_SIZE > 1
-        int i;
-
-        for (i = 0; i < EO_CALL_CACHE_SIZE; i++)
-# else
-        const int i = 0;
-# endif
+        if (!is_override)
           {
-             if ((const void *)inputklass == cache->index[i].klass)
+# if EO_CALL_CACHE_SIZE > 1
+             int i;
+
+             for (i = 0; i < EO_CALL_CACHE_SIZE; i++)
+# else
+                const int i = 0;
+# endif
                {
-                  func = (const op_type_funcs *)cache->entry[i].func;
-                  call->func = func->func;
-                  if (is_obj)
+                  if ((const void *)inputklass == cache->index[i].klass)
                     {
-                       call->data = (char *) obj + cache->off[i].off;
+                       func = (const op_type_funcs *)cache->entry[i].func;
+                       call->func = func->func;
+                       if (is_obj)
+                         {
+                            call->data = (char *) obj + cache->off[i].off;
+                         }
+                       return EINA_TRUE;
                     }
-                  return EINA_TRUE;
                }
           }
 #endif
 
-        func = _vtable_func_get(&klass->vtable, cache->op);
+        func = _vtable_func_get(vtable, cache->op);
 
         if (!func)
           goto end;
@@ -374,7 +395,7 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
           }
 
 # if EO_CALL_CACHE_SIZE > 0
-        if (!cur_klass)
+        if (!cur_klass && !is_override)
           {
 # if EO_CALL_CACHE_SIZE > 1
              const int slot = cache->next_slot;
@@ -535,8 +556,10 @@ _eo_api_op_id_get(const void *api_func)
    return op;
 }
 
+/* klass is the klass we are working on. hierarchy_klass is the class whe should
+ * use when validating. */
 static Eina_Bool
-_eo_class_funcs_set(_Eo_Class *klass)
+_eo_class_funcs_set(Eo_Vtable *vtable, const Eo_Ops *ops, const _Eo_Class *hierarchy_klass, const _Eo_Class *klass, Eina_Bool override_only)
 {
    unsigned int i;
    int op_id;
@@ -544,15 +567,15 @@ _eo_class_funcs_set(_Eo_Class *klass)
    const Eo_Op_Description *op_desc;
    const Eo_Op_Description *op_descs;
 
-   op_id = klass->base_id;
-   op_descs = klass->desc->ops.descs;
+   op_id = hierarchy_klass->base_id;
+   op_descs = ops->descs;
 
    DBG("Set functions for class '%s':%p", klass->desc->name, klass);
 
    if (!op_descs) return EINA_TRUE;
 
    last_api_func = NULL;
-   for (i = 0, op_desc = op_descs; i < klass->desc->ops.count; i++, op_desc++)
+   for (i = 0, op_desc = op_descs; i < ops->count; i++, op_desc++)
      {
         Eo_Op op = EO_NOOP;
 
@@ -565,6 +588,12 @@ _eo_class_funcs_set(_Eo_Class *klass)
 
         if ((op_desc->op_type == EO_OP_TYPE_REGULAR) || (op_desc->op_type == EO_OP_TYPE_CLASS))
           {
+             if (override_only)
+               {
+                  ERR("Creation of new functions is not allowed when overriding an object's vtable.");
+                  return EINA_FALSE;
+               }
+
              if (_eo_api_func_equal(op_desc->api_func, last_api_func))
                {
                   ERR("Class '%s': API previously defined (%p->%p '%s').",
@@ -586,12 +615,19 @@ _eo_class_funcs_set(_Eo_Class *klass)
         else if ((op_desc->op_type == EO_OP_TYPE_REGULAR_OVERRIDE) || (op_desc->op_type == EO_OP_TYPE_CLASS_OVERRIDE))
           {
              const Eo_Op_Description *api_desc;
-             api_desc = _eo_api_desc_get(op_desc->api_func, klass->parent, klass->extensions);
+             if (override_only)
+               {
+                  api_desc = _eo_api_desc_get(op_desc->api_func, hierarchy_klass, NULL);
+               }
+             else
+               {
+                  api_desc = _eo_api_desc_get(op_desc->api_func, hierarchy_klass->parent, hierarchy_klass->extensions);
+               }
 
              if (api_desc == NULL)
                {
                   ERR("Class '%s': Can't find api func description in class hierarchy (%p->%p) (%s).",
-                      klass->desc->name, op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
+                      hierarchy_klass->desc->name, op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
                   return EINA_FALSE;
                }
 
@@ -607,7 +643,7 @@ _eo_class_funcs_set(_Eo_Class *klass)
 
         DBG("%p->%p '%s'", op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
 
-        if (!_vtable_func_set(klass, op, op_desc->func))
+        if (!_vtable_func_set(vtable, klass, op, op_desc->func))
           return EINA_FALSE;
 
         last_api_func = op_desc->api_func;
@@ -799,6 +835,13 @@ eo_class_name_get(const Eo_Class *eo_id)
 }
 
 static void
+_vtable_init(Eo_Vtable *vtable, size_t size)
+{
+   vtable->size = size;
+   vtable->chain = calloc(vtable->size, sizeof(vtable->chain));
+}
+
+static void
 _eo_class_base_op_init(_Eo_Class *klass)
 {
    const Eo_Class_Description *desc = klass->desc;
@@ -807,8 +850,7 @@ _eo_class_base_op_init(_Eo_Class *klass)
 
    _eo_ops_last_id += desc->ops.count + 1;
 
-   klass->vtable.size = DICH_CHAIN1(_eo_ops_last_id) + 1;
-   klass->vtable.chain = calloc(klass->vtable.size, sizeof(*klass->vtable.chain));
+   _vtable_init(&klass->vtable, DICH_CHAIN1(_eo_ops_last_id) + 1);
 }
 
 #ifdef EO_DEBUG
@@ -951,7 +993,7 @@ eo_class_free(_Eo_Class *klass)
         if (klass->desc->class_destructor)
            klass->desc->class_destructor(_eo_class_id_get(klass));
 
-        _vtable_func_clean_all(klass);
+        _vtable_func_clean_all(&klass->vtable);
      }
 
    EINA_TRASH_CLEAN(&klass->objects.trash, data)
@@ -1258,26 +1300,26 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
           {
              const _Eo_Class *extn = *extn_itr;
              /* Set it in the dich. */
-             _vtable_func_set(klass, extn->base_id +
+             _vtable_func_set(&klass->vtable, klass, extn->base_id +
                    extn->desc->ops.count, _eo_class_isa_func);
           }
 
-        _vtable_func_set(klass, klass->base_id + klass->desc->ops.count,
+        _vtable_func_set(&klass->vtable, klass, klass->base_id + klass->desc->ops.count,
               _eo_class_isa_func);
 
         if (klass->parent)
           {
-             _vtable_func_set(klass,
+             _vtable_func_set(&klass->vtable, klass,
                    klass->parent->base_id + klass->parent->desc->ops.count,
                    _eo_class_isa_func);
           }
      }
 
-   if (!_eo_class_funcs_set(klass))
+   if (!_eo_class_funcs_set(&klass->vtable, &(klass->desc->ops), klass, klass, EINA_FALSE))
      {
         eina_spinlock_free(&klass->objects.trash_lock);
         eina_spinlock_free(&klass->iterators.trash_lock);
-        _vtable_func_clean_all(klass);
+        _vtable_func_clean_all(&klass->vtable);
         free(klass);
         return NULL;
      }
@@ -1299,6 +1341,25 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    DBG("Finished building class '%s'", klass->desc->name);
 
    return _eo_class_id_get(klass);
+}
+
+EAPI Eina_Bool
+eo_override(Eo *eo_id, Eo_Ops ops)
+{
+   EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
+   EO_CLASS_POINTER_RETURN_VAL(EO_OVERRIDE_CLASS, klass, EINA_FALSE);
+   Eo_Vtable *previous = obj->vtable;
+   obj->vtable = calloc(1, sizeof(*obj->vtable));
+   _vtable_init(obj->vtable, previous->size);
+   _vtable_copy_all(obj->vtable, previous);
+
+   if (!_eo_class_funcs_set(obj->vtable, &ops, obj->klass, klass, EINA_TRUE))
+     {
+        ERR("Failed to override functions for %p", eo_id);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool

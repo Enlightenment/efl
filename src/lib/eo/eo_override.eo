@@ -1,0 +1,4 @@
+abstract Eo.Override ()
+{
+    data: null;
+}

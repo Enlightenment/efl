@@ -50,6 +50,68 @@ START_TEST(eo_singleton)
 }
 END_TEST
 
+#define OVERRIDE_A_SIMPLE 100859
+#define OVERRIDE_A 324000
+static int
+_simple_obj_override_a_get(Eo *obj, void *class_data EINA_UNUSED)
+{
+   return OVERRIDE_A + simple_a_get(eo_super(obj, EO_OVERRIDE_CLASS));
+}
+
+static void
+_simple_obj_override_a_double_set(Eo *obj, void *class_data EINA_UNUSED, int a)
+{
+   simple_a_set(eo_super(obj, EO_OVERRIDE_CLASS), 2 * a);
+}
+
+START_TEST(eo_override_tests)
+{
+   eo_init();
+
+   Eo_Op_Description override_descs[] = {
+        EO_OP_FUNC_OVERRIDE(simple_a_get, _simple_obj_override_a_get),
+   };
+
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+
+   /* First get the value before the override to make sure it works and to
+    * make sure we don't cache. */
+   ck_assert_int_eq(simple_a_get(obj), 0);
+
+   fail_if(!eo_override(obj, EO_CLASS_DESCRIPTION_OPS(override_descs)));
+
+   ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A);
+
+   /* Check super works. */
+   simple_a_set(obj, OVERRIDE_A_SIMPLE);
+   ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A + OVERRIDE_A_SIMPLE);
+
+
+   /* Override again. */
+   Eo_Op_Description override_descs2[] = {
+        EO_OP_FUNC_OVERRIDE(simple_a_set, _simple_obj_override_a_double_set),
+   };
+
+   fail_if(!eo_override(obj, EO_CLASS_DESCRIPTION_OPS(override_descs2)));
+
+   simple_a_set(obj, OVERRIDE_A_SIMPLE);
+   ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A + (OVERRIDE_A_SIMPLE * 2));
+
+
+   /* Try introducing a new function */
+   Eo_Op_Description override_descs3[] = {
+        EO_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set),
+   };
+
+   fail_if(eo_override(obj, (Eo_Ops) EO_CLASS_DESCRIPTION_OPS(override_descs3)));
+
+   eo_unref(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
 static int _eo_signals_cb_current = 0;
 static int _eo_signals_cb_flag = 0;
 
@@ -1178,6 +1240,7 @@ void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
    tcase_add_test(tc, eo_singleton);
+   tcase_add_test(tc, eo_override_tests);
    tcase_add_test(tc, eo_signals);
    tcase_add_test(tc, eo_data_fetch);
    tcase_add_test(tc, eo_isa_tests);
