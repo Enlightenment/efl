@@ -140,7 +140,7 @@ _vtable_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
    if (fsrc->src == klass)
      {
         const _Eo_Class *op_kls = _eo_op_class_get(op);
-        ERR("Class '%s': Overriding func %p for op %d (%s) with %p.",
+        ERR("Class '%s': Overriding already set func %p for op %d (%s) with %p.",
               klass->desc->name, fsrc->func, op, op_kls->desc->name, func);
         return EINA_FALSE;
      }
