@@ -478,13 +478,14 @@ static void st_collections_group_parts_part_api(void);
 
 /* external part parameters */
 static void st_collections_group_parts_part_description_params_int(void);
-static void ob_collections_group_programs_program(void);
 static void st_collections_group_parts_part_description_params_double(void);
-
-static void st_collections_group_programs_program_name(void);
 static void st_collections_group_parts_part_description_params_string(void);
 static void st_collections_group_parts_part_description_params_bool(void);
 static void st_collections_group_parts_part_description_params_choice(void);
+static void st_collections_group_parts_part_description_params_smart(void);
+
+static void ob_collections_group_programs_program(void);
+static void st_collections_group_programs_program_name(void);
 static void st_collections_group_programs_program_signal(void);
 static void st_collections_group_programs_program_source(void);
 static void st_collections_group_programs_program_filter(void);
@@ -963,6 +964,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.params.string", st_collections_group_parts_part_description_params_string},
      {"collections.group.parts.part.description.params.bool", st_collections_group_parts_part_description_params_bool},
      {"collections.group.parts.part.description.params.choice", st_collections_group_parts_part_description_params_choice},
+     {"collections.group.parts.part.description.params.*", st_collections_group_parts_part_description_params_smart},
      IMAGE_STATEMENTS("collections.group.parts.part.description.")
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.group.parts.part.description.")
@@ -1148,6 +1150,163 @@ New_Statement_Handler statement_handlers_short_single[] =
      {"collections.group.nobroadcast", st_collections_group_nobroadcast},
      {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
 };
+
+/** @edcsubsection{lazedc_external_params,
+ *                 LazEDC Group.Parts.External.Desc.Params} */
+
+/**
+    @page edcref
+    @block
+       params
+    @context
+       ...
+       external {
+          desc { "default";
+             params {
+                number: 10;       -> int: "number" 10;
+                number2: 1.1;     -> double: "number2" 1.1;
+                label: "OK";      -> string: "label" "OK";
+                check: true;      -> bool: "check" 1;
+                check2: false;    -> bool: "check2" 0;
+                text_wrap: mixed; -> choice: "text_wrap" "mixed";
+             }
+          }
+       }
+       ...
+    @description
+       The name of parameter can be used as a statement keyword in params block.
+       The type of parameter is determined automatically by the value,
+       so it should follow the next rules.
+       Number without decimal point is considered as an integer.
+       Number with decimal point is considered as a double.
+       Double-quoted string is considered as a string.
+       'true' or 'false' without quotes is considred as a boolean.
+       String without quotes except for 'true' or 'false' is considered as a choice.
+    @since 1.18
+    @endblock
+*/
+static Edje_External_Param_Type
+_parse_external_param_type(char *token)
+{
+   Eina_Bool num, point;
+   char *begin;
+
+   if (param_had_quote(0))
+     return EDJE_EXTERNAL_PARAM_TYPE_STRING;
+
+   num = EINA_TRUE;
+   point = EINA_FALSE;
+   begin = token;
+
+   while (*token)
+     {
+        if ((*token < '0') || (*token > '9'))
+          {
+             if ((!point) && (*token == '.'))
+               {
+                  point = EINA_TRUE;
+               }
+             else
+               {
+                  num = EINA_FALSE;
+                  break;
+               }
+          }
+        token++;
+     }
+
+   if (num)
+     {
+        if (!point)
+          return EDJE_EXTERNAL_PARAM_TYPE_INT;
+        else
+          return EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+     }
+   else
+     {
+        if (!strcmp(begin, "true") || !strcmp(begin, "false"))
+          return EDJE_EXTERNAL_PARAM_TYPE_BOOL;
+        else
+          return EDJE_EXTERNAL_PARAM_TYPE_CHOICE;
+     }
+}
+
+static void
+st_collections_group_parts_part_description_params_smart(void)
+{
+   Edje_Part_Description_External *ed;
+   Edje_External_Param *param;
+   Eina_List *l;
+   char *last, *name, *token;
+   int found = 0;
+
+   check_arg_count(1);
+
+   if (current_part->type != EDJE_PART_TYPE_EXTERNAL)
+     {
+        ERR("parse error %s:%i. params in non-EXTERNAL part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_External*) current_desc;
+
+   last = eina_list_last_data_get(stack);
+   if (!strncmp(last, "params.", strlen("params.")))
+     name = strdup(last + strlen("params."));
+   else
+     name = strdup(last);
+
+   /* if a param with this name already exists, overwrite it */
+   EINA_LIST_FOREACH(ed->external_params, l, param)
+     {
+        if (!strcmp(param->name, name))
+          {
+             found = 1;
+             break;
+          }
+     }
+
+   if (!found)
+     {
+        param = mem_alloc(SZ(Edje_External_Param));
+        param->name = name;
+     }
+
+   token = parse_str(0);
+
+   param->type = _parse_external_param_type(token);
+   param->i = 0;
+   param->d = 0;
+   param->s = NULL;
+
+   switch (param->type)
+     {
+      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+         if (!strcmp(token, "true"))
+           param->i = 1;
+         else if (!strcmp(token, "false"))
+           param->i = 0;
+         break;
+      case EDJE_EXTERNAL_PARAM_TYPE_INT:
+         param->i = parse_int(0);
+         break;
+      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+         param->d = parse_float(0);
+         break;
+      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
+      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+         param->s = parse_str(0);
+         break;
+      default:
+         ERR("parse error %s:%i. Invalid param type.",
+             file_in, line - 1);
+         break;
+     }
+
+   if (!found)
+     ed->external_params = eina_list_append(ed->external_params, param);
+}
 
 #define PROGRAM_OBJECTS(PREFIX) \
      {PREFIX".program", ob_collections_group_programs_program}, /* dup */ \

@@ -220,6 +220,7 @@ int     get_arg_count(void);
 void    check_arg_count(int n);
 void    check_min_arg_count(int n);
 int     check_range_arg_count(int n, int m);
+int     param_had_quote(int n);
 
 int     object_handler_num(void);
 int     object_handler_short_num(void);

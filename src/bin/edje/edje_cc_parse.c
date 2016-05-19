@@ -65,6 +65,7 @@ int        line = 0;
 Eina_List *stack = NULL;
 Eina_Array params;
 int had_quote = 0;
+int params_quote = 0;
 
 static char  file_buf[4096];
 static int   did_wildcard = 0;
@@ -210,6 +211,19 @@ new_object(void)
                sh = eina_hash_find(_new_statement_short_hash, id);
              if (!sh)
                sh = eina_hash_find(_new_statement_short_single_hash, id);
+             if (!sh)
+               {
+                  char buf[512] = { 0, };
+                  char *end;
+
+                  strcpy(buf, id);
+                  end = strrchr(buf, '.');
+                  if (end) end++;
+                  else end = buf;
+
+                  strcpy(end, "*");
+                  sh = eina_hash_find(_new_statement_hash, buf);
+               }
              if ((!sh) && (!did_wildcard) && (!had_quote))
                {
                   ERR("%s:%i unhandled keyword %s",
@@ -239,11 +253,29 @@ new_statement(void)
      }
    else
      {
-        ERR("%s:%i unhandled keyword %s",
-            file_in, line - 1,
-            (char *)eina_list_data_get(eina_list_last(stack)));
-        err_show();
-        exit(-1);
+        char buf[512] = { 0, };
+        char *end;
+
+        strcpy(buf, id);
+        end = strrchr(buf, '.');
+        if (end) end++;
+        else end = buf;
+
+        strcpy(end, "*");
+        sh = eina_hash_find(_new_statement_hash, buf);
+
+        if (sh)
+          {
+             if (sh->func) sh->func();
+          }
+        else
+          {
+             ERR("%s:%i unhandled keyword %s",
+                 file_in, line - 1,
+                 (char *)eina_list_data_get(eina_list_last(stack)));
+             err_show();
+             exit(-1);
+          }
      }
 }
 
@@ -729,6 +761,7 @@ parse(char *data, off_t size)
                        /* clear out params */
                        while ((param = eina_array_pop(&params)))
                          free(param);
+                       params_quote = 0;
                        /* remove top from stack */
                        stack_pop();
                     }
@@ -775,10 +808,14 @@ parse(char *data, off_t size)
           {
              if (do_params)
                {
+                  if (had_quote)
+                    params_quote |= (1 << eina_array_count(&params));
                   eina_array_push(&params, token);
                }
              else if (do_indexes)
                {
+                  if (had_quote)
+                    params_quote |= (1 << eina_array_count(&params));
                   do_indexes++;
                   eina_array_push(&params, token);
                }
@@ -1867,4 +1904,10 @@ get_param_index(char *str)
      }
 
    return -1;
+}
+
+int
+param_had_quote(int n)
+{
+   return (params_quote & (1 << n));
 }
