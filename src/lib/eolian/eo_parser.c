@@ -1114,6 +1114,16 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
+   if ((ls->t.token == TOK_DOC) && !prop->common_doc)
+     {
+        if (getenv("EOLIAN_PROPERTY_DOC_WARN"))
+          {
+             fprintf(stderr, "eolian:%s:%d:%d: %s doc without property "
+                             "doc for '%s.%s'\n",
+                     prop->base.file, line, col, is_get ? "getter" : "setter",
+                     ls->tmp.kls->full_name, prop->name);
+          }
+     }
    if (is_get)
      {
         FILL_DOC(ls, prop, get_doc);
