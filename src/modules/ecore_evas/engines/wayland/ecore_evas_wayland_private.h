@@ -20,10 +20,10 @@
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
 #include <Ecore_Wl2.h>
-#include "ecore_wl2_private.h"
 
 #include <Ecore_Evas.h>
 #endif
+#include "ecore_wl2_private.h"
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
 #include "ecore_evas_wayland.h"

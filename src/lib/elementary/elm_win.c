@@ -134,6 +134,7 @@ struct _Elm_Win_Data
       Ecore_Win32_Window *win;
    } win32;
 #endif
+   Eina_Stringshare *teamwork_uri;
 
    Eina_Bool                     deferred_resize_job;
    Ecore_Job                     *deferred_child_eval_job;
@@ -2013,6 +2014,7 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
    ecore_job_del(sd->deferred_child_eval_job);
    eina_stringshare_del(sd->shot.info);
    ecore_timer_del(sd->shot.timer);
+   eina_stringshare_replace(&sd->teamwork_uri, NULL);
 
 #ifdef HAVE_ELEMENTARY_X
    ecore_event_handler_del(sd->x.client_message_handler);
@@ -6010,6 +6012,102 @@ elm_win_quickpanel_zone_get(const Evas_Object *obj)
 #endif
 
    return 0;
+}
+
+static EOLIAN void
+_elm_win_teamwork_uri_preload(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *uri)
+{
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, uri);
+        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PRELOAD,
+          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, 0, 0, 0, 0);
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     {
+        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
+        if (ewd->wl.teamwork)
+          zwp_teamwork_preload_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win), uri);
+     }
+#endif
+   eina_stringshare_replace(&sd->teamwork_uri, uri);
+}
+
+static EOLIAN void
+_elm_win_teamwork_uri_show(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *uri)
+{
+   int x, y;
+
+   EINA_SAFETY_ON_NULL_RETURN(uri);
+   if (eina_streq(uri, sd->teamwork_uri)) return;
+
+   evas_pointer_canvas_xy_get(sd->evas, &x, &y);
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, uri);
+        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_ACTIVATE,
+          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, x, y, 0, 0);
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     {
+        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
+        if (ewd->wl.teamwork)
+          zwp_teamwork_activate_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win),
+            uri, wl_fixed_from_int(x), wl_fixed_from_int(y));
+     }
+#endif
+   eina_stringshare_replace(&sd->teamwork_uri, uri);
+}
+
+static EOLIAN void
+_elm_win_teamwork_uri_hide(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
+{
+   if (!sd->teamwork_uri) return;
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, sd->teamwork_uri);
+        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_DEACTIVATE,
+          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, 0, 0, 0, 0);
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     {
+        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
+        if (ewd->wl.teamwork)
+          zwp_teamwork_deactivate_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win), sd->teamwork_uri);
+     }
+#endif
+   eina_stringshare_replace(&sd->teamwork_uri, NULL);
+}
+
+static EOLIAN void
+_elm_win_teamwork_uri_open(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *uri)
+{
+   EINA_SAFETY_ON_NULL_RETURN(uri);
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, uri);
+        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_OPEN,
+          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, 0, 0, 0, 0);
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     {
+        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
+        if (ewd->wl.teamwork)
+          zwp_teamwork_open_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win), uri);
+     }
+#endif
 }
 
 #include "elm_win.eo.c"

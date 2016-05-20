@@ -1132,6 +1132,43 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             @in not_modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
          }
       }
+      teamwork_uri_preload {
+         [[Notify the compositor that a uri should be preloaded
+           @since 1.18
+         ]]
+         params {
+            @in uri: const(char)*; [[This is the uri to notify with]]
+         }
+      }
+      teamwork_uri_show {
+         [[Notify the compositor that a uri should be displayed
+
+           Sends the current mouse coordinates as a hint for displaying the
+           related uri in the compositor.
+           @since 1.18
+         ]]
+         params {
+            @in uri: const(char)*; [[This is the uri to notify with]]
+         }
+      }
+      teamwork_uri_hide {
+         [[Notify the compositor that a uri should be hidden
+
+           Hides any uri-related media displayed in the compositor through
+           previous \@ref elm_win_teamwork_uri_show request
+           @since 1.18
+         ]]
+      }
+      teamwork_uri_open {
+         [[Notify the compositor that a uri should be opened
+
+           Use the compositor's default application to open a uri
+           @since 1.18
+         ]]
+         params {
+            @in uri: const(char)*; [[This is the uri to open]]
+         }
+      }
    }
    implements {
       class.constructor;

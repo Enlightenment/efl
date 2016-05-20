@@ -337,4 +337,15 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_ALLOWED; /**< @since 1.1
 /* E keyrouter protocol */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_KEYROUTER_SUPPORTED; /**< @since 1.15 */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_KEYROUTER_WINDOW_KEYTABLE; /**< @since 1.15 */
+
+/* Teamwork protocol */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_PROPERTY; /**< @since 1.18 */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_PRELOAD; /**< @since 1.18 */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_ACTIVATE; /**< @since 1.18 */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_DEACTIVATE; /**< @since 1.18 */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_OPEN; /**< @since 1.18 */
+
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_COMPLETED; /**< @since 1.18 */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_PROGRESS; /**< @since 1.18 */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEAMWORK_STARTED; /**< @since 1.18 */
 #endif /* _ECORE_X_ATOMS_H */

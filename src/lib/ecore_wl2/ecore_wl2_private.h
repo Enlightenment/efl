@@ -6,6 +6,9 @@
 # include "Ecore_Input.h"
 # include "www-protocol.h"
 
+#define EFL_TEAMWORK_VERSION 2
+# include "teamwork_protocol.h"
+
 /* NB: Test if subsurface protocol is part of wayland code, if not then
  * include our own copy */
 # ifndef WL_SUBSURFACE_ERROR_ENUM
@@ -84,6 +87,7 @@ struct _Ecore_Wl2_Display
         struct xdg_shell *xdg_shell;
         struct www *www;
         struct zwp_e_session_recovery *session_recovery;
+        struct zwp_teamwork *teamwork;
         int compositor_version;
      } wl;
 

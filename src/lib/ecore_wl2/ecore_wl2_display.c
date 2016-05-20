@@ -166,6 +166,12 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
           wl_registry_bind(registry, id,
                            &zwp_e_session_recovery_interface, 1);
      }
+   else if (!strcmp(interface, "zwp_teamwork"))
+     {
+        ewd->wl.teamwork =
+          wl_registry_bind(registry, id,
+                           &zwp_teamwork_interface, EFL_TEAMWORK_VERSION);
+     }
    else if (!strcmp(interface, "wl_output"))
      _ecore_wl2_output_add(ewd, id);
    else if (!strcmp(interface, "wl_seat"))
