@@ -357,6 +357,7 @@ _outbuf_fb_wait(Outbuf *ob)
      {
         for (i = 0; i < ob->priv.num; i++)
           {
+             if (&ob->priv.ofb[i] == ob->priv.current) continue;
              if (ob->priv.ofb[i].busy) continue;
              if (ob->priv.ofb[i].valid) return &(ob->priv.ofb[i]);
           }
