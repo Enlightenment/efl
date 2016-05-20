@@ -2958,7 +2958,7 @@ copied_program_anonymous_lookup_delete(Edje_Part_Collection *pc, int *dest)
           {
              if (pl->dest == &cp->id)
                {
-                  cd->programs = eina_list_remove(cd->programs, cp);
+                  cd->programs = eina_list_remove_list(cd->programs, l2);
                   free(cp);
                   break;
                }
