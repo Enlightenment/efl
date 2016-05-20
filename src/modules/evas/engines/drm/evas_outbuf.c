@@ -50,14 +50,7 @@ _outbuf_tick_source_set(Outbuf *ob)
 static void
 _outbuf_tick_schedule(int fd EINA_UNUSED, void *data)
 {
-   Outbuf *ob;
-   Outbuf_Fb *ofb;
-
-   ob = data;
    if (!ticking) return;
-
-   ofb = ob->priv.current;
-   if (!ofb) return;
 
    drmVBlank vbl =
      {
@@ -382,6 +375,7 @@ _outbuf_fb_assign(Outbuf *ob)
           {
              if (ob->priv.ofb[i].valid)
                {
+                  ob->priv.ofb[i].busy = 0;
                   ob->priv.ofb[i].age = 0;
                   ob->priv.ofb[i].drawn = EINA_FALSE;
                }
