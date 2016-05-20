@@ -2949,12 +2949,12 @@ copied_program_anonymous_lookup_delete(Edje_Part_Collection *pc, int *dest)
         Code *cd;
         Code_Program *cp;
         Edje_Part_Collection_Directory_Entry *de;
-        Eina_List *l, *ll;
+        Eina_List *l2, *ll2;
 
         de = eina_hash_find(edje_file->collection, pl->pc->part);
         cd = eina_list_nth(codes, de->id);
 
-        EINA_LIST_FOREACH_SAFE(cd->programs, l, ll, cp)
+        EINA_LIST_FOREACH_SAFE(cd->programs, l2, ll2, cp)
           {
              if (pl->dest == &cp->id)
                {
