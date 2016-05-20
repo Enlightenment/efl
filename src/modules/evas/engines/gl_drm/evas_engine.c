@@ -750,14 +750,11 @@ _native_cb_free(void *image)
         eina_hash_del(img->native.shared->native_wl_hash, &wlid, img);
         if (n->ns_data.wl_surface.surface)
           {
-             if (glsym_eglDestroyImage)
+             if (glsym_eglDestroyImage && n->ns_data.wl_surface_dmabuf.image)
                {
                   glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface_dmabuf.image);
-                  if (eglGetError() != EGL_SUCCESS)
-                    ERR("eglDestroyImage() failed.");
+                  GLERRV("eglDestroyImage() failed.");
                }
-             else
-               ERR("Try eglDestroyImage on EGL with  no support");
           }
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
