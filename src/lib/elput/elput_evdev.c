@@ -680,7 +680,6 @@ _pointer_motion(struct libinput_device *idev, struct libinput_event_pointer *eve
 {
    Elput_Device *edev;
    Elput_Pointer *ptr;
-   double x, y;
 
    edev = libinput_device_get_user_data(idev);
    if (!edev) return EINA_FALSE;
@@ -688,21 +687,8 @@ _pointer_motion(struct libinput_device *idev, struct libinput_event_pointer *eve
    ptr = _evdev_pointer_get(edev->seat);
    if (!ptr) return EINA_FALSE;
 
-   x = ptr->x + libinput_event_pointer_get_dx(event);
-   y = ptr->y + libinput_event_pointer_get_dy(event);
-
-   if (x < ptr->minx)
-     x = ptr->minx;
-   else if (x >= ptr->minx + ptr->maxw)
-     x = ptr->minx + ptr->maxw - 1;
-
-   if (y < ptr->miny)
-     y = ptr->miny;
-   else if (y >= ptr->miny + ptr->maxh)
-     y = ptr->miny + ptr->maxh - 1;
-
-   ptr->x = x;
-   ptr->y = y;
+   ptr->x += libinput_event_pointer_get_dx(event);
+   ptr->y += libinput_event_pointer_get_dy(event);
    ptr->timestamp = libinput_event_pointer_get_time(event);
 
    _pointer_motion_send(edev);
