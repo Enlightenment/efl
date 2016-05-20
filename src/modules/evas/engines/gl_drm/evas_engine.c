@@ -766,8 +766,7 @@ _native_cb_free(void *image)
              if (glsym_eglDestroyImage)
                {
                   glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface.surface);
-                  if (eglGetError() != EGL_SUCCESS)
-                    ERR("eglDestroyImage() failed.");
+                  GLERRV("eglDestroyImage() failed.");
                }
              else
                ERR("Try eglDestroyImage on EGL with  no support");
