@@ -412,7 +412,9 @@ static inline Eina_Bool
 eina_vector3_equivalent(Eina_Vector3 *a, const Eina_Vector3 *b)
 {
    /* Assume "v" is a directional vector. (v->w == 0.0) */
-   return ((a->x == b->x) &&  (a->y == b->y) && (a->z == b->z));
+   return (EINA_DOUBLE_EQUAL(a->x, b->x) &&
+           EINA_DOUBLE_EQUAL(a->y, b->y) &&
+           EINA_DOUBLE_EQUAL(a->z, b->z));
 }
 
 static inline Eina_Bool
@@ -420,11 +422,16 @@ eina_vector3_triangle_equivalent(Eina_Vector3 *v0, Eina_Vector3 *v1,
                                  Eina_Vector3 *v2, Eina_Vector3 *w0,
                                  Eina_Vector3 *w1, Eina_Vector3 *w2)
 {
-   if (((v0->x == w0->x) && (v0->y == w0->y) && (v0->z == w0->z)) &&
-       ((v1->x == w1->x) && (v1->y == w1->y) && (v1->z == w1->z)) &&
-       ((v2->x == w2->x) && (v2->y == w2->y) && (v2->z == w2->z)))
+   if ((EINA_DOUBLE_EQUAL(v0->x, w0->x) &&
+        EINA_DOUBLE_EQUAL(v0->y, w0->y) &&
+        EINA_DOUBLE_EQUAL(v0->z, w0->z)) &&
+       (EINA_DOUBLE_EQUAL(v1->x, w1->x) &&
+        EINA_DOUBLE_EQUAL(v1->y, w1->y) &&
+        EINA_DOUBLE_EQUAL(v1->z, w1->z)) &&
+       (EINA_DOUBLE_EQUAL(v2->x, w2->x) &&
+        EINA_DOUBLE_EQUAL(v2->y, w2->y) &&
+        EINA_DOUBLE_EQUAL(v2->z, w2->z)))
      return EINA_TRUE;
-
    return EINA_FALSE;
 }
 

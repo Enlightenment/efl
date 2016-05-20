@@ -410,6 +410,16 @@ typedef void (*Eina_Free_Cb)(void *data);
 #define EINA_C_ARRAY_LENGTH(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 /**
+ * @def EINA_DOUBLE_EQUAL
+ * Macro to compare 2 double floating point values and deal with precision
+ * loss issues.
+ * 
+ * @since 1.18
+ */
+#define EINA_DOUBLE_EQUAL(x, y) \
+   (fabs((x) - (y)) <= (2.2204460492503131e-16) * fabs((x)))
+
+/**
  * @}
  */
 
