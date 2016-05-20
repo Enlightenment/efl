@@ -643,16 +643,19 @@ _pointer_motion_send(Elput_Device *edev)
    else if (y >= ptr->miny + ptr->maxh)
      y = ptr->miny + ptr->maxh - 1;
 
+   ptr->x = x;
+   ptr->y = y;
+
    ev->window = edev->window;
    ev->event_window = edev->window;
    ev->root_window = edev->window;
    ev->timestamp = ptr->timestamp;
    ev->same_screen = 1;
 
-   ev->x = x;
-   ev->y = y;
-   ev->root.x = x;
-   ev->root.y = y;
+   ev->x = ptr->x;
+   ev->y = ptr->y;
+   ev->root.x = ptr->x;
+   ev->root.y = ptr->y;
 
    kbd = _evdev_keyboard_get(edev->seat);
    if (kbd) _keyboard_modifiers_update(kbd, edev->seat);
@@ -1132,7 +1135,7 @@ _evdev_device_calibrate(Elput_Device *dev)
    if ((w == 0) || (h == 0)) return;
 
    if ((!libinput_device_config_calibration_has_matrix(dev->device)) ||
-       (libinput_device_config_calibration_get_default_matrix(dev->device, cal)))
+       (libinput_device_config_calibration_get_default_matrix(dev->device, cal) != 0))
      return;
 
    sysname = libinput_device_get_sysname(dev->device);
