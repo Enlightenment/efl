@@ -253,15 +253,17 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
 
 /************************************ EO ************************************/
 
-static const Eo_Class *_super_class = NULL;
+static const _Eo_Class *_super_class = NULL;
 static Eina_Spinlock _super_class_lock;
 
 EAPI Eo *
 eo_super(const Eo *obj, const Eo_Class *cur_klass)
 {
+   EO_CLASS_POINTER_RETURN_VAL(cur_klass, klass, NULL);
+
    /* FIXME: Switch to atomic operations intead of lock. */
    eina_spinlock_take(&_super_class_lock);
-   _super_class = cur_klass;
+   _super_class = klass;
 
    return (Eo *) ((Eo_Id) obj | MASK_SUPER_TAG);
 }
@@ -279,18 +281,11 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
 
    if (((Eo_Id) eo_id) & MASK_SUPER_TAG)
      {
-        const Eo_Class *tmp = _super_class;
+        cur_klass = _super_class;
         _super_class = NULL;
         eina_spinlock_release(&_super_class_lock);
 
         eo_id = (Eo *) ((Eo_Id) eo_id & ~MASK_SUPER_TAG);
-
-        cur_klass = _eo_class_pointer_get(tmp);
-        if (!cur_klass)
-          {
-             ERR("Invalid super class found. Aborting.");
-             return EINA_FALSE;
-          }
      }
 
    if (EINA_UNLIKELY(!eo_id))
