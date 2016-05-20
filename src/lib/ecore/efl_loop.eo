@@ -33,17 +33,18 @@ class Efl.Loop (Eo.Base)
       job {
          [[Will execute that promise in the near future.]]
          params {
-            @inout promise: promise<void*>*; [[The promise that will be triggered.]]
 	    @in data: const(void)* @optional; [[The data to be given when the promise is done.]]
 	 }
+	 return: promise<void*>*; [[The promise that will be triggered.]]
       }
       timeout {
          [[Will trigger this promise when the specified timeout occur.]]
 	 params {
-            @inout promise: promise<void*>*; [[The promise that will be triggered.]]
 	    @in time: double; [[The time from now in second that the main loop will wait before triggering it.]]
 	    @in data: const(void)* @optional; [[The data to be given when the promise is done.]]
 	 }
+	 return: promise<void*>*; [[The promise that will be triggered.]]
+
       }
    }
    events {

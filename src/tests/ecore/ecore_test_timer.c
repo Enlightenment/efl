@@ -197,7 +197,7 @@ START_TEST(ecore_test_timeout)
    ecore_init();
 
    start = ecore_time_get();
-   efl_loop_timeout(ecore_main_loop_get(), &timeout, 0.2, &start);
+   timeout = efl_loop_timeout(ecore_main_loop_get(), 0.2, &start);
    eina_promise_then(timeout, &_ecore_promise_quit, NULL, &bob);
 
    ecore_main_loop_begin();

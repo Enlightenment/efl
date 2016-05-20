@@ -22,7 +22,7 @@ START_TEST(ecore_test_job_promise)
 
    ecore_init();
 
-   efl_loop_job(ecore_main_loop_get(), &job, &bob);
+   job = efl_loop_job(ecore_main_loop_get(), &bob);
    eina_promise_then(job, &_ecore_promise_quit, NULL, &bob);
 
    ecore_main_loop_begin();

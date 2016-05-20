@@ -2872,20 +2872,31 @@ _efl_internal_promise_new(Eina_Promise_Owner* promise, const void *data)
    return p;
 }
 
-static void
-_efl_loop_job(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, Eina_Promise_Owner *promise, const void *data)
+static Eina_Promise *
+_efl_loop_job(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, const void *data)
 {
    Efl_Internal_Promise *j;
+   Eina_Promise_Owner *promise;
+
+   promise = eina_promise_default_add(sizeof (void*));
+   fprintf(stderr, "da promise: %p\n", promise);
+   if (!promise) return NULL;
 
    j = _efl_internal_promise_new(promise, data);
-   if (!j) return ;
+   fprintf(stderr, "da internal job: %p\n", j);
+   if (!j) goto on_error;
 
    j->job_is = EINA_TRUE;
    j->u.job = ecore_job_add(_efl_loop_job_cb, j);
+   if (!j->u.job) goto on_error;
 
-   if (j->u.job) return ;
+   return eina_promise_owner_promise_get(promise);
 
-   _efl_loop_internal_cancel(j);
+ on_error:
+   eina_promise_unref(eina_promise_owner_promise_get(promise));
+   free(j);
+
+   return NULL;
 }
 
 /* This event will be triggered when the main loop is destroyed and destroy its timers along */
@@ -2901,22 +2912,32 @@ EO_CALLBACKS_ARRAY_DEFINE(timeout,
                           { EFL_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
                           { EO_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
 
-static void
-_efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, Eina_Promise_Owner *promise, double time, const void *data)
+static Eina_Promise *
+_efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const void *data)
 {
    Efl_Internal_Promise *t;
+   Eina_Promise_Owner *promise;
+
+   promise = eina_promise_default_add(sizeof (void*));
+   if (!promise) return NULL;
 
    t = _efl_internal_promise_new(promise, data);
-   if (!t) return ;
+   if (!t) goto on_error;
 
    t->job_is = EINA_FALSE;
    t->u.timer = eo_add(EFL_TIMER_CLASS, obj,
                        efl_timer_interval_set(eo_self, time),
                        eo_event_callback_array_add(eo_self, timeout(), t));
 
-   if (t->u.timer) return ;
+   if (!t->u.timer) goto on_error;
 
-   _efl_loop_internal_cancel(t);
+   return eina_promise_owner_promise_get(promise);
+
+ on_error:
+   eina_promise_unref(eina_promise_owner_promise_get(promise));
+   free(t);
+
+   return NULL;
 }
 
 #include "efl_loop.eo.c"
