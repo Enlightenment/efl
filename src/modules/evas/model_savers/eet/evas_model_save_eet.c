@@ -20,9 +20,9 @@ _set_geometry_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Data *mesh,
    int i;
    float *src;
    Evas_Canvas3D_Vertex_Eet *vertices =
-      malloc(sizeof(Evas_Canvas3D_Vertex_Eet) * mesh->vertex_count);
+      calloc(1, sizeof(Evas_Canvas3D_Vertex_Eet) * mesh->vertex_count);
    Evas_Canvas3D_Geometry_Eet *geometry =
-      malloc(sizeof(Evas_Canvas3D_Geometry_Eet));
+      calloc(1, sizeof(Evas_Canvas3D_Geometry_Eet));
    int *geometries = malloc(sizeof(int));
 
    if ((vertices == NULL) || (geometry == NULL))
