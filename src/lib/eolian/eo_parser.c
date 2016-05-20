@@ -836,7 +836,24 @@ parse_type_void_base(Eo_Lexer *ls, Eina_Bool noptr)
 parse_ptr:
    /* check: complex/class type must always be behind a pointer */
    if (!noptr && ((def->type == EOLIAN_TYPE_CLASS) || (def->type == EOLIAN_TYPE_COMPLEX)))
-     check(ls, '*');
+     {
+        if (getenv("EOLIAN_CLASS_NO_PTR"))
+          {
+             fprintf(stderr, "eolian:%s:%d:%d: pointer around complex/class type '%s'\n",
+                     def->base.file, line, col, def->full_name);
+             if (ls->t.token != '*')
+               {
+                  Eolian_Type *pdef;
+                  pop_type(ls);
+                  pdef = push_type(ls);
+                  FILL_BASE(pdef->base, ls, ls->line_number, ls->column);
+                  pdef->base_type = def;
+                  pdef->type = EOLIAN_TYPE_POINTER;
+                  def = pdef;
+               }
+          }
+        else check(ls, '*');
+     }
    while (ls->t.token == '*')
      {
         Eolian_Type *pdef;
