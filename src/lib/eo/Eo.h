@@ -451,6 +451,8 @@ EAPI const Eo_Class *eo_class_new(const Eo_Class_Description *desc, const Eo_Cla
  */
 EAPI Eina_Bool eo_override(Eo *obj, Eo_Ops ops);
 
+#define EO_OVERRIDE_OPS(op_descs) ((Eo_Ops) { op_descs, EINA_C_ARRAY_LENGTH(op_descs) })
+
 /**
  * @brief Check if an object "is a" klass.
  * @param obj The object to check
@@ -491,8 +493,8 @@ EAPI Eina_Bool eo_init(void);
 EAPI Eina_Bool eo_shutdown(void);
 
 // Helpers macro to help populating #Eo_Class_Description.
-#define EO_CLASS_DESCRIPTION_NOOPS() ((Eo_Ops) { NULL, 0})
-#define EO_CLASS_DESCRIPTION_OPS(op_descs) ((Eo_Ops) { op_descs, EINA_C_ARRAY_LENGTH(op_descs) })
+#define EO_CLASS_DESCRIPTION_NOOPS() { NULL, 0}
+#define EO_CLASS_DESCRIPTION_OPS(op_descs) { op_descs, EINA_C_ARRAY_LENGTH(op_descs) }
 
 // to fetch internal function and object data at once
 typedef struct _Eo_Op_Call_Data

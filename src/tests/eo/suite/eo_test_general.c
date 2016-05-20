@@ -79,7 +79,7 @@ START_TEST(eo_override_tests)
     * make sure we don't cache. */
    ck_assert_int_eq(simple_a_get(obj), 0);
 
-   fail_if(!eo_override(obj, EO_CLASS_DESCRIPTION_OPS(override_descs)));
+   fail_if(!eo_override(obj, EO_OVERRIDE_OPS(override_descs)));
 
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A);
 
@@ -93,7 +93,7 @@ START_TEST(eo_override_tests)
         EO_OP_FUNC_OVERRIDE(simple_a_set, _simple_obj_override_a_double_set),
    };
 
-   fail_if(!eo_override(obj, EO_CLASS_DESCRIPTION_OPS(override_descs2)));
+   fail_if(!eo_override(obj, EO_OVERRIDE_OPS(override_descs2)));
 
    simple_a_set(obj, OVERRIDE_A_SIMPLE);
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A + (OVERRIDE_A_SIMPLE * 2));
@@ -104,7 +104,7 @@ START_TEST(eo_override_tests)
         EO_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set),
    };
 
-   fail_if(eo_override(obj, (Eo_Ops) EO_CLASS_DESCRIPTION_OPS(override_descs3)));
+   fail_if(eo_override(obj, EO_OVERRIDE_OPS(override_descs3)));
 
    eo_unref(obj);
 
