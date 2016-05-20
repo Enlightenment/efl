@@ -1078,6 +1078,7 @@ START_TEST(eo_add_failures)
 }
 END_TEST
 
+#ifdef HAVE_EO_ID
 static Eina_Bool intercepted = EINA_FALSE;
 
 static void
@@ -1087,6 +1088,7 @@ _del_intercept(Eo *obj)
    eo_del_intercept_set(obj, NULL);
    eo_unref(obj);
 }
+#endif
 
 START_TEST(eo_del_intercept)
 {
