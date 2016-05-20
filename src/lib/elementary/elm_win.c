@@ -6014,6 +6014,10 @@ elm_win_quickpanel_zone_get(const Evas_Object *obj)
    return 0;
 }
 
+#ifndef EFL_TEAMWORK_VERSION
+# define EFL_TEAMWORK_VERSION 2
+#endif
+
 static EOLIAN void
 _elm_win_teamwork_uri_preload(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *uri)
 {
