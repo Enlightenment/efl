@@ -2,7 +2,7 @@
 Name=Enlightenment-X
 Inherits=hicolor
 Comment=The Enlightenment-X Icon theme. Orig. based on Rave-X, Mint-X and Faenza Icon Themes.
-Directories=actions/128,status/128,places/128,places/16,emblems/96,categories/128,categories/16,apps/64
+Directories=actions/128,status/128,places/128,places/16,devices/128,emblems/96,categories/128,categories/16,apps/64
 Example=folder-home
 
 
@@ -51,6 +51,13 @@ MaxSize=256
 [status/128]
 Size=128
 Context=Status
+Type=Scalable
+MinSize=16
+MaxSize=256
+
+[devices/128]
+Size=128
+Context=Devices
 Type=Scalable
 MinSize=16
 MaxSize=256

@@ -993,6 +993,7 @@ elementary/themes/fdo/emblems/96 \
 elementary/themes/fdo/places/16 \
 elementary/themes/fdo/places/128 \
 elementary/themes/fdo/status/128 \
+elementary/themes/fdo/devices/128 \
 elementary/themes/fdo/apps/64
 
 
