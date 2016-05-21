@@ -328,7 +328,9 @@ eina_vector3_homogeneous_position_transform(Eina_Vector3 *out, const Eina_Matrix
         return;
      }
 
-   if (((m->xw * v->x) + (m->yw * v->y) + (m->zw * v->z) + m->ww) == 0.0)
+   if (EINA_DOUBLE_EQUAL((m->xw * v->x) + (m->yw * v->y) +
+                         (m->zw * v->z) + m->ww,
+                         0.0))
      return;
 
    tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z) + m->wx;
