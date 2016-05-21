@@ -5,523 +5,524 @@
 #define THEME "Tango"
 #define SIZE 16
 
-#define ADDRESS_BOOK_NEW "address-book-new"
-#define APPLICATION_EXIT "application-exit"
-#define APPOINTMENT_NEW "appointment-new"
-#define CONTACT_NEW "contact-new"
-#define DIALOG_APPLY "dialog-apply"
-#define DIALOG_CANCEL "dialog-cancel"
-#define DIALOG_CLOSE "dialog-close"
-#define DIALOG_OK "dialog-ok"
-#define DOCUMENT_NEW "document-new"
-#define DOCUMENT_OPEN "document-open"
-#define DOCUMENT_OPEN_RECENT "document-open-recent"
-#define DOCUMENT_PAGE_SETUP "document-page-setup"
-#define DOCUMENT_PRINT "document-print"
-#define DOCUMENT_PRINT_PREVIEW "document-print-preview"
-#define DOCUMENT_PROPERTIES "document-properties"
-#define DOCUMENT_REVERT "document-revert"
-#define DOCUMENT_SAVE "document-save"
-#define DOCUMENT_SAVE_AS "document-save-as"
-#define EDIT_COPY "edit-copy"
-#define EDIT_CUT "edit-cut"
-#define EDIT_DELETE "edit-delete"
-#define EDIT_FIND "edit-find"
-#define EDIT_FIND_REPLACE "edit-find-replace"
-#define EDIT_PASTE "edit-paste"
-#define EDIT_REDO "edit-redo"
-#define EDIT_SELECT_ALL "edit-select-all"
-#define EDIT_UNDO "edit-undo"
-#define FORMAT_INDENT_LESS "format-indent-less"
-#define FORMAT_INDENT_MORE "format-indent-more"
-#define FORMAT_JUSTIFY_CENTER "format-justify-center"
-#define FORMAT_JUSTIFY_FILL "format-justify-fill"
-#define FORMAT_JUSTIFY_LEFT "format-justify-left"
-#define FORMAT_JUSTIFY_RIGHT "format-justify-right"
-#define FORMAT_TEXT_DIRECTION_LTR "format-text-direction-ltr"
-#define FORMAT_TEXT_DIRECTION_RTL "format-text-direction-rtl"
-#define FORMAT_TEXT_BOLD "format-text-bold"
-#define FORMAT_TEXT_ITALIC "format-text-italic"
-#define FORMAT_TEXT_UNDERLINE "format-text-underline"
-#define FORMAT_TEXT_STRIKETHROUGH "format-text-strikethrough"
-#define GO_BOTTOM "go-bottom"
-#define GO_DOWN "go-down"
-#define GO_FIRST "go-first"
-#define GO_HOME "go-home"
-#define GO_JUMP "go-jump"
-#define GO_LAST "go-last"
-#define GO_NEXT "go-next"
-#define GO_PREVIOUS "go-previous"
-#define GO_TOP "go-top"
-#define GO_UP "go-up"
-#define HELP_ABOUT "help-about"
-#define HELP_CONTENTS "help-contents"
-#define HELP_FAQ "help-faq"
-#define INSERT_IMAGE "insert-image"
-#define INSERT_LINK "insert-link"
-#define INSERT_OBJECT "insert-object"
-#define INSERT_TEXT "insert-text"
-#define LIST_ADD "list-add"
-#define LIST_REMOVE "list-remove"
-#define MAIL_FORWARD "mail-forward"
-#define MAIL_MARK_IMPORTANT "mail-mark-important"
-#define MAIL_MARK_JUNK "mail-mark-junk"
-#define MAIL_MARK_NOTJUNK "mail-mark-notjunk"
-#define MAIL_MARK_READ "mail-mark-read"
-#define MAIL_MARK_UNREAD "mail-mark-unread"
-#define MAIL_MESSAGE_NEW "mail-message-new"
-#define MAIL_REPLY_ALL "mail-reply-all"
-#define MAIL_REPLY_SENDER "mail-reply-sender"
-#define MAIL_SEND_RECEIVE "mail-send-receive"
-#define MEDIA_EJECT "media-eject"
-#define MEDIA_PLAYBACK_PAUSE "media-playback-pause"
-#define MEDIA_PLAYBACK_START "media-playback-start"
-#define MEDIA_PLAYBACK_STOP "media-playback-stop"
-#define MEDIA_RECORD "media-record"
-#define MEDIA_SEEK_BACKWARD "media-seek-backward"
-#define MEDIA_SEEK_FORWARD "media-seek-forward"
-#define MEDIA_SKIP_BACKWARD "media-skip-backward"
-#define MEDIA_SKIP_FORWARD "media-skip-forward"
-#define SYSTEM_LOCK_SCREEN "system-lock-screen"
-#define SYSTEM_LOG_OUT "system-log-out"
-#define SYSTEM_RUN "system-run"
-#define SYSTEM_SEARCH "system-search"
-#define TOOLS_CHECK_SPELLING "tools-check-spelling"
-#define VIEW_FULLSCREEN "view-fullscreen"
-#define VIEW_REFRESH "view-refresh"
-#define VIEW_SORT_ASCENDING "view-sort-ascending"
-#define VIEW_SORT_DESCENDING "view-sort-descending"
-#define WINDOW_CLOSE "window-close"
-#define WINDOW_NEW "window-new"
-#define ZOOM_BEST_FIT "zoom-best-fit"
-#define ZOOM_IN "zoom-in"
-#define ZOOM_ORIGINAL "zoom-original"
-#define ZOOM_OUT "zoom-out"
+#define TANGO_ADDRESS_BOOK_NEW "address-book-new"
+#define TANGO_APPLICATION_EXIT "application-exit"
+#define TANGO_APPOINTMENT_NEW "appointment-new"
+#define TANGO_CONTACT_NEW "contact-new"
+#define TANGO_DIALOG_APPLY "dialog-apply"
+#define TANGO_DIALOG_CANCEL "dialog-cancel"
+#define TANGO_DIALOG_CLOSE "dialog-close"
+#define TANGO_DIALOG_OK "dialog-ok"
+#define TANGO_DOCUMENT_NEW "document-new"
+#define TANGO_DOCUMENT_OPEN "document-open"
+#define TANGO_DOCUMENT_OPEN_RECENT "document-open-recent"
+#define TANGO_DOCUMENT_PAGE_SETUP "document-page-setup"
+#define TANGO_DOCUMENT_PRINT "document-print"
+#define TANGO_DOCUMENT_PRINT_PREVIEW "document-print-preview"
+#define TANGO_DOCUMENT_PROPERTIES "document-properties"
+#define TANGO_DOCUMENT_REVERT "document-revert"
+#define TANGO_DOCUMENT_SAVE "document-save"
+#define TANGO_DOCUMENT_SAVE_AS "document-save-as"
+#define TANGO_EDIT_COPY "edit-copy"
+#define TANGO_EDIT_CUT "edit-cut"
+#define TANGO_EDIT_DELETE "edit-delete"
+#define TANGO_EDIT_FIND "edit-find"
+#define TANGO_EDIT_FIND_REPLACE "edit-find-replace"
+#define TANGO_EDIT_PASTE "edit-paste"
+#define TANGO_EDIT_REDO "edit-redo"
+#define TANGO_EDIT_SELECT_ALL "edit-select-all"
+#define TANGO_EDIT_UNDO "edit-undo"
+#define TANGO_FORMAT_INDENT_LESS "format-indent-less"
+#define TANGO_FORMAT_INDENT_MORE "format-indent-more"
+#define TANGO_FORMAT_JUSTIFY_CENTER "format-justify-center"
+#define TANGO_FORMAT_JUSTIFY_FILL "format-justify-fill"
+#define TANGO_FORMAT_JUSTIFY_LEFT "format-justify-left"
+#define TANGO_FORMAT_JUSTIFY_RIGHT "format-justify-right"
+#define TANGO_FORMAT_TEXT_DIRECTION_LTR "format-text-direction-ltr"
+#define TANGO_FORMAT_TEXT_DIRECTION_RTL "format-text-direction-rtl"
+#define TANGO_FORMAT_TEXT_BOLD "format-text-bold"
+#define TANGO_FORMAT_TEXT_ITALIC "format-text-italic"
+#define TANGO_FORMAT_TEXT_UNDERLINE "format-text-underline"
+#define TANGO_FORMAT_TEXT_STRIKETHROUGH "format-text-strikethrough"
+#define TANGO_GO_BOTTOM "go-bottom"
+#define TANGO_GO_DOWN "go-down"
+#define TANGO_GO_FIRST "go-first"
+#define TANGO_GO_HOME "go-home"
+#define TANGO_GO_JUMP "go-jump"
+#define TANGO_GO_LAST "go-last"
+#define TANGO_GO_NEXT "go-next"
+#define TANGO_GO_PREVIOUS "go-previous"
+#define TANGO_GO_TOP "go-top"
+#define TANGO_GO_UP "go-up"
+#define TANGO_HELP_ABOUT "help-about"
+#define TANGO_HELP_CONTENTS "help-contents"
+#define TANGO_HELP_FAQ "help-faq"
+#define TANGO_INSERT_IMAGE "insert-image"
+#define TANGO_INSERT_LINK "insert-link"
+#define TANGO_INSERT_OBJECT "insert-object"
+#define TANGO_INSERT_TEXT "insert-text"
+#define TANGO_LIST_ADD "list-add"
+#define TANGO_LIST_REMOVE "list-remove"
+#define TANGO_MAIL_FORWARD "mail-forward"
+#define TANGO_MAIL_MARK_IMPORTANT "mail-mark-important"
+#define TANGO_MAIL_MARK_JUNK "mail-mark-junk"
+#define TANGO_MAIL_MARK_NOTJUNK "mail-mark-notjunk"
+#define TANGO_MAIL_MARK_READ "mail-mark-read"
+#define TANGO_MAIL_MARK_UNREAD "mail-mark-unread"
+#define TANGO_MAIL_MESSAGE_NEW "mail-message-new"
+#define TANGO_MAIL_REPLY_ALL "mail-reply-all"
+#define TANGO_MAIL_REPLY_SENDER "mail-reply-sender"
+#define TANGO_MAIL_SEND_RECEIVE "mail-send-receive"
+#define TANGO_MEDIA_EJECT "media-eject"
+#define TANGO_MEDIA_PLAYBACK_PAUSE "media-playback-pause"
+#define TANGO_MEDIA_PLAYBACK_START "media-playback-start"
+#define TANGO_MEDIA_PLAYBACK_STOP "media-playback-stop"
+#define TANGO_MEDIA_RECORD "media-record"
+#define TANGO_MEDIA_SEEK_BACKWARD "media-seek-backward"
+#define TANGO_MEDIA_SEEK_FORWARD "media-seek-forward"
+#define TANGO_MEDIA_SKIP_BACKWARD "media-skip-backward"
+#define TANGO_MEDIA_SKIP_FORWARD "media-skip-forward"
+#define TANGO_SYSTEM_LOCK_SCREEN "system-lock-screen"
+#define TANGO_SYSTEM_LOG_OUT "system-log-out"
+#define TANGO_SYSTEM_RUN "system-run"
+#define TANGO_SYSTEM_SEARCH "system-search"
+#define TANGO_TOOLS_CHECK_SPELLING "tools-check-spelling"
+#define TANGO_VIEW_FULLSCREEN "view-fullscreen"
+#define TANGO_VIEW_REFRESH "view-refresh"
+#define TANGO_VIEW_SORT_ASCENDING "view-sort-ascending"
+#define TANGO_VIEW_SORT_DESCENDING "view-sort-descending"
+#define TANGO_WINDOW_CLOSE "window-close"
+#define TANGO_WINDOW_NEW "window-new"
+#define TANGO_ZOOM_BEST_FIT "zoom-best-fit"
+#define TANGO_ZOOM_IN "zoom-in"
+#define TANGO_ZOOM_ORIGINAL "zoom-original"
+#define TANGO_ZOOM_OUT "zoom-out"
 
-#define PROCESS_WORKING "process-working"
+#define TANGO_PROCESS_WORKING "process-working"
 
-#define ACCESSORIES_CALCULATOR "accessories-calculator"
-#define ACCESSORIES_CHARACTER_MAP "accessories-character-map"
-#define ACCESSORIES_DICTIONARY "accessories-dictionary"
-#define ACCESSORIES_TEXT_EDITOR "accessories-text-editor"
-#define HELP_BROWSER "help-browser"
-#define MULTIMEDIA_VOLUME_CONTROL "multimedia-volume-control"
-#define PREFERENCES_DESKTOP_ACCESSIBILITY "preferences-desktop-accessibility"
-#define PREFERENCES_DESKTOP_FONT "preferences-desktop-font"
-#define PREFERENCES_DESKTOP_KEYBOARD "preferences-desktop-keyboard"
-#define PREFERENCES_DESKTOP_LOCALE "preferences-desktop-locale"
-#define PREFERENCES_DESKTOP_MULTIMEDIA "preferences-desktop-multimedia"
-#define PREFERENCES_DESKTOP_SCREENSAVER "preferences-desktop-screensaver"
-#define PREFERENCES_DESKTOP_THEME "preferences-desktop-theme"
-#define PREFERENCES_DESKTOP_WALLPAPER "preferences-desktop-wallpaper"
-#define SYSTEM_FILE_MANAGER "system-file-manager"
-#define SYSTEM_SOFTWARE_UPDATE "system-software-update"
-#define UTILITIES_TERMINAL "utilities-terminal"
+#define TANGO_ACCESSORIES_CALCULATOR "accessories-calculator"
+#define TANGO_ACCESSORIES_CHARACTER_MAP "accessories-character-map"
+#define TANGO_ACCESSORIES_DICTIONARY "accessories-dictionary"
+#define TANGO_ACCESSORIES_TEXT_EDITOR "accessories-text-editor"
+#define TANGO_HELP_BROWSER "help-browser"
+#define TANGO_MULTIMEDIA_VOLUME_CONTROL "multimedia-volume-control"
+#define TANGO_PREFERENCES_DESKTOP_ACCESSIBILITY "preferences-desktop-accessibility"
+#define TANGO_PREFERENCES_DESKTOP_FONT "preferences-desktop-font"
+#define TANGO_PREFERENCES_DESKTOP_KEYBOARD "preferences-desktop-keyboard"
+#define TANGO_PREFERENCES_DESKTOP_LOCALE "preferences-desktop-locale"
+#define TANGO_PREFERENCES_DESKTOP_MULTIMEDIA "preferences-desktop-multimedia"
+#define TANGO_PREFERENCES_DESKTOP_SCREENSAVER "preferences-desktop-screensaver"
+#define TANGO_PREFERENCES_DESKTOP_THEME "preferences-desktop-theme"
+#define TANGO_PREFERENCES_DESKTOP_WALLPAPER "preferences-desktop-wallpaper"
+#define TANGO_SYSTEM_FILE_MANAGER "system-file-manager"
+#define TANGO_SYSTEM_SOFTWARE_UPDATE "system-software-update"
+#define TANGO_UTILITIES_TERMINAL "utilities-terminal"
 
-#define APPLICATIONS_ACCESSORIES "applications-accessories"
-#define APPLICATIONS_DEVELOPMENT "applications-development"
-#define APPLICATIONS_GAMES "applications-games"
-#define APPLICATIONS_GRAPHICS "applications-graphics"
-#define APPLICATIONS_INTERNET "applications-internet"
-#define APPLICATIONS_MULTIMEDIA "applications-multimedia"
-#define APPLICATIONS_OFFICE "applications-office"
-#define APPLICATIONS_OTHER "applications-other"
-#define APPLICATIONS_SYSTEM "applications-system"
-#define APPLICATIONS_UTILITIES "applications-utilities"
-#define PREFERENCES_DESKTOP "preferences-desktop"
-#define PREFERENCES_DESKTOP_ACCESSIBILITY "preferences-desktop-accessibility"
-#define PREFERENCES_DESKTOP_PERIPHERALS "preferences-desktop-peripherals"
-#define PREFERENCES_DESKTOP_PERSONAL "preferences-desktop-personal"
-#define PREFERENCES_OTHER "preferences-other"
-#define PREFERENCES_SYSTEM "preferences-system"
-#define PREFERENCES_SYSTEM_NETWORK "preferences-system-network"
-#define SYSTEM_HELP "system-help"
+#define TANGO_APPLICATIONS_ACCESSORIES "applications-accessories"
+#define TANGO_APPLICATIONS_DEVELOPMENT "applications-development"
+#define TANGO_APPLICATIONS_GAMES "applications-games"
+#define TANGO_APPLICATIONS_GRAPHICS "applications-graphics"
+#define TANGO_APPLICATIONS_INTERNET "applications-internet"
+#define TANGO_APPLICATIONS_MULTIMEDIA "applications-multimedia"
+#define TANGO_APPLICATIONS_OFFICE "applications-office"
+#define TANGO_APPLICATIONS_OTHER "applications-other"
+#define TANGO_APPLICATIONS_SYSTEM "applications-system"
+#define TANGO_APPLICATIONS_UTILITIES "applications-utilities"
+#define TANGO_PREFERENCES_DESKTOP "preferences-desktop"
+#define TANGO_PREFERENCES_DESKTOP_ACCESSIBILITY "preferences-desktop-accessibility"
+#define TANGO_PREFERENCES_DESKTOP_PERIPHERALS "preferences-desktop-peripherals"
+#define TANGO_PREFERENCES_DESKTOP_PERSONAL "preferences-desktop-personal"
+#define TANGO_PREFERENCES_OTHER "preferences-other"
+#define TANGO_PREFERENCES_SYSTEM "preferences-system"
+#define TANGO_PREFERENCES_SYSTEM_NETWORK "preferences-system-network"
+#define TANGO_SYSTEM_HELP "system-help"
 
-#define AUDIO_CARD "audio-card"
-#define AUDIO_INPUT_MICROPHONE "audio-input-microphone"
-#define BATTERY "battery"
-#define CAMERA_PHOTO "camera-photo"
-#define CAMERA_VIDEO "camera-video"
-#define COMPUTER "computer"
-#define DRIVE_CDROM "drive-cdrom"
-#define DRIVE_HARDDISK "drive-harddisk"
-#define DRIVE_REMOVABLE_MEDIA "drive-removable-media"
-#define INPUT_GAMING "input-gaming"
-#define INPUT_KEYBOARD "input-keyboard"
-#define INPUT_MOUSE "input-mouse"
-#define MEDIA_CDROM "media-cdrom"
-#define MEDIA_FLOPPY "media-floppy"
-#define MULTIMEDIA_PLAYER "multimedia-player"
-#define NETWORK_WIRED "network-wired"
-#define NETWORK_WIRELESS "network-wireless"
-#define PRINTER "printer"
+#define TANGO_AUDIO_CARD "audio-card"
+#define TANGO_AUDIO_INPUT_MICROPHONE "audio-input-microphone"
+#define TANGO_BATTERY "battery"
+#define TANGO_CAMERA_PHOTO "camera-photo"
+#define TANGO_CAMERA_VIDEO "camera-video"
+#define TANGO_COMPUTER "computer"
+#define TANGO_DRIVE_CDROM "drive-cdrom"
+#define TANGO_DRIVE_HARDDISK "drive-harddisk"
+#define TANGO_DRIVE_REMOVABLE_MEDIA "drive-removable-media"
+#define TANGO_INPUT_GAMING "input-gaming"
+#define TANGO_INPUT_KEYBOARD "input-keyboard"
+#define TANGO_INPUT_MOUSE "input-mouse"
+#define TANGO_MEDIA_CDROM "media-cdrom"
+#define TANGO_MEDIA_FLOPPY "media-floppy"
+#define TANGO_MULTIMEDIA_PLAYER "multimedia-player"
+#define TANGO_NETWORK_WIRED "network-wired"
+#define TANGO_NETWORK_WIRELESS "network-wireless"
+#define TANGO_PRINTER "printer"
 
-#define EMBLEM_DEFAULT "emblem-default"
-#define EMBLEM_DOCUMENTS "emblem-documents"
-#define EMBLEM_DOWNLOADS "emblem-downloads"
-#define EMBLEM_FAVORITE "emblem-favorite"
-#define EMBLEM_IMPORTANT "emblem-important"
-#define EMBLEM_MAIL "emblem-mail"
-#define EMBLEM_PHOTOS "emblem-photos"
-#define EMBLEM_READONLY "emblem-readonly"
-#define EMBLEM_SHARED "emblem-shared"
-#define EMBLEM_SYMBOLIC_LINK "emblem-symbolic-link"
-#define EMBLEM_SYNCHRONIZED "emblem-synchronized"
-#define EMBLEM_SYSTEM "emblem-system"
-#define EMBLEM_UNREADABLE "emblem-unreadable"
+#define TANGO_EMBLEM_DEFAULT "emblem-default"
+#define TANGO_EMBLEM_DOCUMENTS "emblem-documents"
+#define TANGO_EMBLEM_DOWNLOADS "emblem-downloads"
+#define TANGO_EMBLEM_FAVORITE "emblem-favorite"
+#define TANGO_EMBLEM_IMPORTANT "emblem-important"
+#define TANGO_EMBLEM_MAIL "emblem-mail"
+#define TANGO_EMBLEM_PHOTOS "emblem-photos"
+#define TANGO_EMBLEM_READONLY "emblem-readonly"
+#define TANGO_EMBLEM_SHARED "emblem-shared"
+#define TANGO_EMBLEM_SYMBOLIC_LINK "emblem-symbolic-link"
+#define TANGO_EMBLEM_SYNCHRONIZED "emblem-synchronized"
+#define TANGO_EMBLEM_SYSTEM "emblem-system"
+#define TANGO_EMBLEM_UNREADABLE "emblem-unreadable"
 
-#define FACE_ANGEL "face-angel"
-#define FACE_CRYING "face-crying"
-#define FACE_DEVIL_GRIN "face-devil-grin"
-#define FACE_DEVIL_SAD "face-devil-sad"
-#define FACE_GLASSES "face-glasses"
-#define FACE_KISS "face-kiss"
-#define FACE_MONKEY "face-monkey"
-#define FACE_PLAIN "face-plain"
-#define FACE_SAD "face-sad"
-#define FACE_SMILE "face-smile"
-#define FACE_SMILE_BIG "face-smile-big"
-#define FACE_SMIRK "face-smirk"
-#define FACE_SURPRISE "face-surprise"
-#define FACE_WINK "face-wink"
+#define TANGO_FACE_ANGEL "face-angel"
+#define TANGO_FACE_CRYING "face-crying"
+#define TANGO_FACE_DEVIL_GRIN "face-devil-grin"
+#define TANGO_FACE_DEVIL_SAD "face-devil-sad"
+#define TANGO_FACE_GLASSES "face-glasses"
+#define TANGO_FACE_KISS "face-kiss"
+#define TANGO_FACE_MONKEY "face-monkey"
+#define TANGO_FACE_PLAIN "face-plain"
+#define TANGO_FACE_SAD "face-sad"
+#define TANGO_FACE_SMILE "face-smile"
+#define TANGO_FACE_SMILE_BIG "face-smile-big"
+#define TANGO_FACE_SMIRK "face-smirk"
+#define TANGO_FACE_SURPRISE "face-surprise"
+#define TANGO_FACE_WINK "face-wink"
 
-#define APPLICATION_X_EXECUTABLE "application-x-executable"
-#define AUDIO_X_GENERIC "audio-x-generic"
-#define FONT_X_GENERIC "font-x-generic"
-#define IMAGE_X_GENERIC "image-x-generic"
-#define PACKAGE_X_GENERIC "package-x-generic"
-#define TEXT_HTML "text-html"
-#define TEXT_X_GENERIC "text-x-generic"
-#define TEXT_X_GENERIC_TEMPLATE "text-x-generic-template"
-#define TEXT_X_SCRIPT "text-x-script"
-#define VIDEO_X_GENERIC "video-x-generic"
-#define X_OFFICE_ADDRESS_BOOK "x-office-address-book"
-#define X_OFFICE_CALENDAR "x-office-calendar"
-#define X_OFFICE_DOCUMENT "x-office-document"
-#define X_OFFICE_PRESENTATION "x-office-presentation"
-#define X_OFFICE_SPREADSHEET "x-office-spreadsheet"
+#define TANGO_APPLICATION_X_EXECUTABLE "application-x-executable"
+#define TANGO_AUDIO_X_GENERIC "audio-x-generic"
+#define TANGO_FONT_X_GENERIC "font-x-generic"
+#define TANGO_IMAGE_X_GENERIC "image-x-generic"
+#define TANGO_PACKAGE_X_GENERIC "package-x-generic"
+#define TANGO_TEXT_HTML "text-html"
+#define TANGO_TEXT_X_GENERIC "text-x-generic"
+#define TANGO_TEXT_X_GENERIC_TEMPLATE "text-x-generic-template"
+#define TANGO_TEXT_X_SCRIPT "text-x-script"
+#define TANGO_VIDEO_X_GENERIC "video-x-generic"
+#define TANGO_X_OFFICE_ADDRESS_BOOK "x-office-address-book"
+#define TANGO_X_OFFICE_CALENDAR "x-office-calendar"
+#define TANGO_X_OFFICE_DOCUMENT "x-office-document"
+#define TANGO_X_OFFICE_PRESENTATION "x-office-presentation"
+#define TANGO_X_OFFICE_SPREADSHEET "x-office-spreadsheet"
 
-#define FOLDER "folder"
-#define FOLDER_REMOTE "folder-remote"
-#define NETWORK_SERVER "network-server"
-#define NETWORK_WORKGROUP "network-workgroup"
-#define START_HERE "start-here"
-#define USER_DESKTOP "user-desktop"
-#define USER_HOME "user-home"
-#define USER_TRASH "user-trash"
+#define TANGO_FOLDER "folder"
+#define TANGO_FOLDER_REMOTE "folder-remote"
+#define TANGO_NETWORK_SERVER "network-server"
+#define TANGO_NETWORK_WORKGROUP "network-workgroup"
+#define TANGO_START_HERE "start-here"
+#define TANGO_USER_DESKTOP "user-desktop"
+#define TANGO_USER_HOME "user-home"
+#define TANGO_USER_TRASH "user-trash"
 
-#define APPOINTMENT_MISSED "appointment-missed"
-#define APPOINTMENT_SOON "appointment-soon"
-#define AUDIO_VOLUME_HIGH "audio-volume-high"
-#define AUDIO_VOLUME_LOW "audio-volume-low"
-#define AUDIO_VOLUME_MEDIUM "audio-volume-medium"
-#define AUDIO_VOLUME_MUTED "audio-volume-muted"
-#define BATTERY_CAUTION "battery-caution"
-#define BATTERY_LOW "battery-low"
-#define DIALOG_ERROR "dialog-error"
-#define DIALOG_INFORMATION "dialog-information"
-#define DIALOG_PASSWORD "dialog-password"
-#define DIALOG_QUESTION "dialog-question"
-#define DIALOG_WARNING "dialog-warning"
-#define FOLDER_DRAG_ACCEPT "folder-drag-accept"
-#define FOLDER_OPEN "folder-open"
-#define FOLDER_VISITING "folder-visiting"
-#define IMAGE_LOADING "image-loading"
-#define IMAGE_MISSING "image-missing"
-#define MAIL_ATTACHMENT "mail-attachment"
-#define MAIL_UNREAD "mail-unread"
-#define MAIL_READ "mail-read"
-#define MAIL_REPLIED "mail-replied"
-#define MAIL_SIGNED "mail-signed"
-#define MAIL_SIGNED_VERIFIED "mail-signed-verified"
-#define MEDIA_PLAYLIST_REPEAT "media-playlist-repeat"
-#define MEDIA_PLAYLIST_SHUFFLE "media-playlist-shuffle"
-#define NETWORK_ERROR "network-error"
-#define NETWORK_IDLE "network-idle"
+#define TANGO_APPOINTMENT_MISSED "appointment-missed"
+#define TANGO_APPOINTMENT_SOON "appointment-soon"
+#define TANGO_AUDIO_VOLUME_HIGH "audio-volume-high"
+#define TANGO_AUDIO_VOLUME_LOW "audio-volume-low"
+#define TANGO_AUDIO_VOLUME_MEDIUM "audio-volume-medium"
+#define TANGO_AUDIO_VOLUME_MUTED "audio-volume-muted"
+#define TANGO_BATTERY_CAUTION "battery-caution"
+#define TANGO_BATTERY_LOW "battery-low"
+#define TANGO_DIALOG_ERROR "dialog-error"
+#define TANGO_DIALOG_INFORMATION "dialog-information"
+#define TANGO_DIALOG_PASSWORD "dialog-password"
+#define TANGO_DIALOG_QUESTION "dialog-question"
+#define TANGO_DIALOG_WARNING "dialog-warning"
+#define TANGO_FOLDER_DRAG_ACCEPT "folder-drag-accept"
+#define TANGO_FOLDER_OPEN "folder-open"
+#define TANGO_FOLDER_VISITING "folder-visiting"
+#define TANGO_IMAGE_LOADING "image-loading"
+#define TANGO_IMAGE_MISSING "image-missing"
+#define TANGO_MAIL_ATTACHMENT "mail-attachment"
+#define TANGO_MAIL_UNREAD "mail-unread"
+#define TANGO_MAIL_READ "mail-read"
+#define TANGO_MAIL_REPLIED "mail-replied"
+#define TANGO_MAIL_SIGNED "mail-signed"
+#define TANGO_MAIL_SIGNED_VERIFIED "mail-signed-verified"
+#define TANGO_MEDIA_PLAYLIST_REPEAT "media-playlist-repeat"
+#define TANGO_MEDIA_PLAYLIST_SHUFFLE "media-playlist-shuffle"
+#define TANGO_NETWORK_ERROR "network-error"
+#define TANGO_NETWORK_IDLE "network-idle"
 
-#define NETWORK_OFFLINE "network-offline"
-#define NETWORK_RECEIVE "network-receive"
-#define NETWORK_TRANSMIT "network-transmit"
-#define NETWORK_TRANSMIT_RECEIVE "network-transmit-receive"
-#define PRINTER_ERROR "printer-error"
-#define PRINTER_PRINTING "printer-printing"
-#define SOFTWARE_UPDATE_AVAILABLE "software-update-available"
-#define SOFTWARE_UPDATE_URGENT "software-update-urgent"
-#define SYNC_ERROR "sync-error"
-#define SYNC_SYNCHRONIZING "sync-synchronizing"
-#define TASK_DUE "task-due"
-#define TASK_PASSED_DUE "task-passed-due"
-#define USER_AWAY "user-away"
-#define USER_IDLE "user-idle"
-#define USER_OFFLINE "user-offline"
-#define USER_ONLINE "user-online"
-#define USER_TRASH_FULL "user-trash-full"
-#define WEATHER_CLEAR "weather-clear"
-#define WEATHER_CLEAR_NIGHT "weather-clear-night"
-#define WEATHER_FEW_CLOUDS "weather-few-clouds"
-#define WEATHER_FEW_CLOUDS_NIGHT "weather-few-clouds-night"
-#define WEATHER_FOG "weather-fog"
-#define WEATHER_OVERCAST "weather-overcast"
-#define WEATHER_SEVERE_ALERT "weather-severe-alert"
-#define WEATHER_SHOWERS "weather-showers"
-#define WEATHER_SHOWERS_SCATTERED "weather-showers-scattered"
-#define WEATHER_SNOW "weather-snow"
-#define WEATHER_STORM "weather-storm"
+#define TANGO_NETWORK_OFFLINE "network-offline"
+#define TANGO_NETWORK_RECEIVE "network-receive"
+#define TANGO_NETWORK_TRANSMIT "network-transmit"
+#define TANGO_NETWORK_TRANSMIT_RECEIVE "network-transmit-receive"
+#define TANGO_PRINTER_ERROR "printer-error"
+#define TANGO_PRINTER_PRINTING "printer-printing"
+#define TANGO_SOFTWARE_UPDATE_AVAILABLE "software-update-available"
+#define TANGO_SOFTWARE_UPDATE_URGENT "software-update-urgent"
+#define TANGO_SYNC_ERROR "sync-error"
+#define TANGO_SYNC_SYNCHRONIZING "sync-synchronizing"
+#define TANGO_TASK_DUE "task-due"
+#define TANGO_TASK_PASSED_DUE "task-passed-due"
+#define TANGO_USER_AWAY "user-away"
+#define TANGO_USER_IDLE "user-idle"
+#define TANGO_USER_OFFLINE "user-offline"
+#define TANGO_USER_ONLINE "user-online"
+#define TANGO_USER_TRASH_FULL "user-trash-full"
+#define TANGO_WEATHER_CLEAR "weather-clear"
+#define TANGO_WEATHER_CLEAR_NIGHT "weather-clear-night"
+#define TANGO_WEATHER_FEW_CLOUDS "weather-few-clouds"
+#define TANGO_WEATHER_FEW_CLOUDS_NIGHT "weather-few-clouds-night"
+#define TANGO_WEATHER_FOG "weather-fog"
+#define TANGO_WEATHER_OVERCAST "weather-overcast"
+#define TANGO_WEATHER_SEVERE_ALERT "weather-severe-alert"
+#define TANGO_WEATHER_SHOWERS "weather-showers"
+#define TANGO_WEATHER_SHOWERS_SCATTERED "weather-showers-scattered"
+#define TANGO_WEATHER_SNOW "weather-snow"
+#define TANGO_WEATHER_STORM "weather-storm"
 
-const char *icons[] = {
-			ADDRESS_BOOK_NEW,
-			APPLICATION_EXIT,
-			APPOINTMENT_NEW,
-			CONTACT_NEW,
-			DIALOG_APPLY,
-			DIALOG_CANCEL,
-			DIALOG_CLOSE,
-			DIALOG_OK,
-			DOCUMENT_NEW,
-			DOCUMENT_OPEN,
-			DOCUMENT_OPEN_RECENT,
-			DOCUMENT_PAGE_SETUP,
-			DOCUMENT_PRINT,
-			DOCUMENT_PRINT_PREVIEW,
-			DOCUMENT_PROPERTIES,
-			DOCUMENT_REVERT,
-			DOCUMENT_SAVE,
-			DOCUMENT_SAVE_AS,
-			EDIT_COPY,
-			EDIT_CUT,
-			EDIT_DELETE,
-			EDIT_FIND,
-			EDIT_FIND_REPLACE,
-			EDIT_PASTE,
-			EDIT_REDO,
-			EDIT_SELECT_ALL,
-			EDIT_UNDO,
-			FORMAT_INDENT_LESS,
-			FORMAT_INDENT_MORE,
-			FORMAT_JUSTIFY_CENTER,
-			FORMAT_JUSTIFY_FILL,
-			FORMAT_JUSTIFY_LEFT,
-			FORMAT_JUSTIFY_RIGHT,
-			FORMAT_TEXT_DIRECTION_LTR,
-			FORMAT_TEXT_DIRECTION_RTL,
-			FORMAT_TEXT_BOLD,
-			FORMAT_TEXT_ITALIC,
-			FORMAT_TEXT_UNDERLINE,
-			FORMAT_TEXT_STRIKETHROUGH,
-			GO_BOTTOM,
-			GO_DOWN,
-			GO_FIRST,
-			GO_HOME,
-			GO_JUMP,
-			GO_LAST,
-			GO_NEXT,
-			GO_PREVIOUS,
-			GO_TOP,
-			GO_UP,
-			HELP_ABOUT,
-			HELP_CONTENTS,
-			HELP_FAQ,
-			INSERT_IMAGE,
-			INSERT_LINK,
-			INSERT_OBJECT,
-			INSERT_TEXT,
-			LIST_ADD,
-			LIST_REMOVE,
-			MAIL_FORWARD,
-			MAIL_MARK_IMPORTANT,
-			MAIL_MARK_JUNK,
-			MAIL_MARK_NOTJUNK,
-			MAIL_MARK_READ,
-			MAIL_MARK_UNREAD,
-			MAIL_MESSAGE_NEW,
-			MAIL_REPLY_ALL,
-			MAIL_REPLY_SENDER,
-			MAIL_SEND_RECEIVE,
-			MEDIA_EJECT,
-			MEDIA_PLAYBACK_PAUSE,
-			MEDIA_PLAYBACK_START,
-			MEDIA_PLAYBACK_STOP,
-			MEDIA_RECORD,
-			MEDIA_SEEK_BACKWARD,
-			MEDIA_SEEK_FORWARD,
-			MEDIA_SKIP_BACKWARD,
-			MEDIA_SKIP_FORWARD,
-			SYSTEM_LOCK_SCREEN,
-			SYSTEM_LOG_OUT,
-			SYSTEM_RUN,
-			SYSTEM_SEARCH,
-			TOOLS_CHECK_SPELLING,
-			VIEW_FULLSCREEN,
-			VIEW_REFRESH,
-			VIEW_SORT_ASCENDING,
-			VIEW_SORT_DESCENDING,
-			WINDOW_CLOSE,
-			WINDOW_NEW,
-			ZOOM_BEST_FIT,
-			ZOOM_IN,
-			ZOOM_ORIGINAL,
-			ZOOM_OUT,
-			PROCESS_WORKING,
-			ACCESSORIES_CALCULATOR,
-			ACCESSORIES_CHARACTER_MAP,
-			ACCESSORIES_DICTIONARY,
-			ACCESSORIES_TEXT_EDITOR,
-			HELP_BROWSER,
-			MULTIMEDIA_VOLUME_CONTROL,
-			PREFERENCES_DESKTOP_ACCESSIBILITY,
-			PREFERENCES_DESKTOP_FONT,
-			PREFERENCES_DESKTOP_KEYBOARD,
-			PREFERENCES_DESKTOP_LOCALE,
-			PREFERENCES_DESKTOP_MULTIMEDIA,
-			PREFERENCES_DESKTOP_SCREENSAVER,
-			PREFERENCES_DESKTOP_THEME,
-			PREFERENCES_DESKTOP_WALLPAPER,
-			SYSTEM_FILE_MANAGER,
-			SYSTEM_SOFTWARE_UPDATE,
-			UTILITIES_TERMINAL,
-			APPLICATIONS_ACCESSORIES,
-			APPLICATIONS_DEVELOPMENT,
-			APPLICATIONS_GAMES,
-			APPLICATIONS_GRAPHICS,
-			APPLICATIONS_INTERNET,
-			APPLICATIONS_MULTIMEDIA,
-			APPLICATIONS_OFFICE,
-			APPLICATIONS_OTHER,
-			APPLICATIONS_SYSTEM,
-			APPLICATIONS_UTILITIES,
-			PREFERENCES_DESKTOP,
-			PREFERENCES_DESKTOP_ACCESSIBILITY,
-			PREFERENCES_DESKTOP_PERIPHERALS,
-			PREFERENCES_DESKTOP_PERSONAL,
-			PREFERENCES_OTHER,
-			PREFERENCES_SYSTEM,
-			PREFERENCES_SYSTEM_NETWORK,
-			SYSTEM_HELP,
-			AUDIO_CARD,
-			AUDIO_INPUT_MICROPHONE,
-			BATTERY,
-			CAMERA_PHOTO,
-			CAMERA_VIDEO,
-			COMPUTER,
-			DRIVE_CDROM,
-			DRIVE_HARDDISK,
-			DRIVE_REMOVABLE_MEDIA,
-			INPUT_GAMING,
-			INPUT_KEYBOARD,
-			INPUT_MOUSE,
-			MEDIA_CDROM,
-			MEDIA_FLOPPY,
-			MULTIMEDIA_PLAYER,
-			NETWORK_WIRED,
-			NETWORK_WIRELESS,
-			PRINTER,
-			EMBLEM_DEFAULT,
-			EMBLEM_DOCUMENTS,
-			EMBLEM_DOWNLOADS,
-			EMBLEM_FAVORITE,
-			EMBLEM_IMPORTANT,
-			EMBLEM_MAIL,
-			EMBLEM_PHOTOS,
-			EMBLEM_READONLY,
-			EMBLEM_SHARED,
-			EMBLEM_SYMBOLIC_LINK,
-			EMBLEM_SYNCHRONIZED,
-			EMBLEM_SYSTEM,
-			EMBLEM_UNREADABLE,
-			FACE_ANGEL,
-			FACE_CRYING,
-			FACE_DEVIL_GRIN,
-			FACE_DEVIL_SAD,
-			FACE_GLASSES,
-			FACE_KISS,
-			FACE_MONKEY,
-			FACE_PLAIN,
-			FACE_SAD,
-			FACE_SMILE,
-			FACE_SMILE_BIG,
-			FACE_SMIRK,
-			FACE_SURPRISE,
-			FACE_WINK,
-			APPLICATION_X_EXECUTABLE,
-			AUDIO_X_GENERIC,
-			FONT_X_GENERIC,
-			IMAGE_X_GENERIC,
-			PACKAGE_X_GENERIC,
-			TEXT_HTML,
-			TEXT_X_GENERIC,
-			TEXT_X_GENERIC_TEMPLATE,
-			TEXT_X_SCRIPT,
-			VIDEO_X_GENERIC,
-			X_OFFICE_ADDRESS_BOOK,
-			X_OFFICE_CALENDAR,
-			X_OFFICE_DOCUMENT,
-			X_OFFICE_PRESENTATION,
-			X_OFFICE_SPREADSHEET,
-			FOLDER,
-			FOLDER_REMOTE,
-			NETWORK_SERVER,
-			NETWORK_WORKGROUP,
-			START_HERE,
-			USER_DESKTOP,
-			USER_HOME,
-			USER_TRASH,
-			APPOINTMENT_MISSED,
-			APPOINTMENT_SOON,
-			AUDIO_VOLUME_HIGH,
-			AUDIO_VOLUME_LOW,
-			AUDIO_VOLUME_MEDIUM,
-			AUDIO_VOLUME_MUTED,
-			BATTERY_CAUTION,
-			BATTERY_LOW,
-			DIALOG_ERROR,
-			DIALOG_INFORMATION,
-			DIALOG_PASSWORD,
-			DIALOG_QUESTION,
-			DIALOG_WARNING,
-			FOLDER_DRAG_ACCEPT,
-			FOLDER_OPEN,
-			FOLDER_VISITING,
-			IMAGE_LOADING,
-			IMAGE_MISSING,
-			MAIL_ATTACHMENT,
-			MAIL_UNREAD,
-			MAIL_READ,
-			MAIL_REPLIED,
-			MAIL_SIGNED,
-			MAIL_SIGNED_VERIFIED,
-			MEDIA_PLAYLIST_REPEAT,
-			MEDIA_PLAYLIST_SHUFFLE,
-			NETWORK_ERROR,
-			NETWORK_IDLE,
-			NETWORK_OFFLINE,
-			NETWORK_RECEIVE,
-			NETWORK_TRANSMIT,
-			NETWORK_TRANSMIT_RECEIVE,
-			PRINTER_ERROR,
-			PRINTER_PRINTING,
-			SOFTWARE_UPDATE_AVAILABLE,
-			SOFTWARE_UPDATE_URGENT,
-			SYNC_ERROR,
-			SYNC_SYNCHRONIZING,
-			TASK_DUE,
-			TASK_PASSED_DUE,
-			USER_AWAY,
-			USER_IDLE,
-			USER_OFFLINE,
-			USER_ONLINE,
-			USER_TRASH_FULL,
-			WEATHER_CLEAR,
-			WEATHER_CLEAR_NIGHT,
-			WEATHER_FEW_CLOUDS,
-			WEATHER_FEW_CLOUDS_NIGHT,
-			WEATHER_FOG,
-			WEATHER_OVERCAST,
-			WEATHER_SEVERE_ALERT,
-			WEATHER_SHOWERS,
-			WEATHER_SHOWERS_SCATTERED,
-			WEATHER_SNOW,
-			WEATHER_STORM,
-			NULL
-		};
+const char *icons[] =
+{
+   TANGO_ADDRESS_BOOK_NEW,
+   TANGO_APPLICATION_EXIT,
+   TANGO_APPOINTMENT_NEW,
+   TANGO_CONTACT_NEW,
+   TANGO_DIALOG_APPLY,
+   TANGO_DIALOG_CANCEL,
+   TANGO_DIALOG_CLOSE,
+   TANGO_DIALOG_OK,
+   TANGO_DOCUMENT_NEW,
+   TANGO_DOCUMENT_OPEN,
+   TANGO_DOCUMENT_OPEN_RECENT,
+   TANGO_DOCUMENT_PAGE_SETUP,
+   TANGO_DOCUMENT_PRINT,
+   TANGO_DOCUMENT_PRINT_PREVIEW,
+   TANGO_DOCUMENT_PROPERTIES,
+   TANGO_DOCUMENT_REVERT,
+   TANGO_DOCUMENT_SAVE,
+   TANGO_DOCUMENT_SAVE_AS,
+   TANGO_EDIT_COPY,
+   TANGO_EDIT_CUT,
+   TANGO_EDIT_DELETE,
+   TANGO_EDIT_FIND,
+   TANGO_EDIT_FIND_REPLACE,
+   TANGO_EDIT_PASTE,
+   TANGO_EDIT_REDO,
+   TANGO_EDIT_SELECT_ALL,
+   TANGO_EDIT_UNDO,
+   TANGO_FORMAT_INDENT_LESS,
+   TANGO_FORMAT_INDENT_MORE,
+   TANGO_FORMAT_JUSTIFY_CENTER,
+   TANGO_FORMAT_JUSTIFY_FILL,
+   TANGO_FORMAT_JUSTIFY_LEFT,
+   TANGO_FORMAT_JUSTIFY_RIGHT,
+   TANGO_FORMAT_TEXT_DIRECTION_LTR,
+   TANGO_FORMAT_TEXT_DIRECTION_RTL,
+   TANGO_FORMAT_TEXT_BOLD,
+   TANGO_FORMAT_TEXT_ITALIC,
+   TANGO_FORMAT_TEXT_UNDERLINE,
+   TANGO_FORMAT_TEXT_STRIKETHROUGH,
+   TANGO_GO_BOTTOM,
+   TANGO_GO_DOWN,
+   TANGO_GO_FIRST,
+   TANGO_GO_HOME,
+   TANGO_GO_JUMP,
+   TANGO_GO_LAST,
+   TANGO_GO_NEXT,
+   TANGO_GO_PREVIOUS,
+   TANGO_GO_TOP,
+   TANGO_GO_UP,
+   TANGO_HELP_ABOUT,
+   TANGO_HELP_CONTENTS,
+   TANGO_HELP_FAQ,
+   TANGO_INSERT_IMAGE,
+   TANGO_INSERT_LINK,
+   TANGO_INSERT_OBJECT,
+   TANGO_INSERT_TEXT,
+   TANGO_LIST_ADD,
+   TANGO_LIST_REMOVE,
+   TANGO_MAIL_FORWARD,
+   TANGO_MAIL_MARK_IMPORTANT,
+   TANGO_MAIL_MARK_JUNK,
+   TANGO_MAIL_MARK_NOTJUNK,
+   TANGO_MAIL_MARK_READ,
+   TANGO_MAIL_MARK_UNREAD,
+   TANGO_MAIL_MESSAGE_NEW,
+   TANGO_MAIL_REPLY_ALL,
+   TANGO_MAIL_REPLY_SENDER,
+   TANGO_MAIL_SEND_RECEIVE,
+   TANGO_MEDIA_EJECT,
+   TANGO_MEDIA_PLAYBACK_PAUSE,
+   TANGO_MEDIA_PLAYBACK_START,
+   TANGO_MEDIA_PLAYBACK_STOP,
+   TANGO_MEDIA_RECORD,
+   TANGO_MEDIA_SEEK_BACKWARD,
+   TANGO_MEDIA_SEEK_FORWARD,
+   TANGO_MEDIA_SKIP_BACKWARD,
+   TANGO_MEDIA_SKIP_FORWARD,
+   TANGO_SYSTEM_LOCK_SCREEN,
+   TANGO_SYSTEM_LOG_OUT,
+   TANGO_SYSTEM_RUN,
+   TANGO_SYSTEM_SEARCH,
+   TANGO_TOOLS_CHECK_SPELLING,
+   TANGO_VIEW_FULLSCREEN,
+   TANGO_VIEW_REFRESH,
+   TANGO_VIEW_SORT_ASCENDING,
+   TANGO_VIEW_SORT_DESCENDING,
+   TANGO_WINDOW_CLOSE,
+   TANGO_WINDOW_NEW,
+   TANGO_ZOOM_BEST_FIT,
+   TANGO_ZOOM_IN,
+   TANGO_ZOOM_ORIGINAL,
+   TANGO_ZOOM_OUT,
+   TANGO_PROCESS_WORKING,
+   TANGO_ACCESSORIES_CALCULATOR,
+   TANGO_ACCESSORIES_CHARACTER_MAP,
+   TANGO_ACCESSORIES_DICTIONARY,
+   TANGO_ACCESSORIES_TEXT_EDITOR,
+   TANGO_HELP_BROWSER,
+   TANGO_MULTIMEDIA_VOLUME_CONTROL,
+   TANGO_PREFERENCES_DESKTOP_ACCESSIBILITY,
+   TANGO_PREFERENCES_DESKTOP_FONT,
+   TANGO_PREFERENCES_DESKTOP_KEYBOARD,
+   TANGO_PREFERENCES_DESKTOP_LOCALE,
+   TANGO_PREFERENCES_DESKTOP_MULTIMEDIA,
+   TANGO_PREFERENCES_DESKTOP_SCREENSAVER,
+   TANGO_PREFERENCES_DESKTOP_THEME,
+   TANGO_PREFERENCES_DESKTOP_WALLPAPER,
+   TANGO_SYSTEM_FILE_MANAGER,
+   TANGO_SYSTEM_SOFTWARE_UPDATE,
+   TANGO_UTILITIES_TERMINAL,
+   TANGO_APPLICATIONS_ACCESSORIES,
+   TANGO_APPLICATIONS_DEVELOPMENT,
+   TANGO_APPLICATIONS_GAMES,
+   TANGO_APPLICATIONS_GRAPHICS,
+   TANGO_APPLICATIONS_INTERNET,
+   TANGO_APPLICATIONS_MULTIMEDIA,
+   TANGO_APPLICATIONS_OFFICE,
+   TANGO_APPLICATIONS_OTHER,
+   TANGO_APPLICATIONS_SYSTEM,
+   TANGO_APPLICATIONS_UTILITIES,
+   TANGO_PREFERENCES_DESKTOP,
+   TANGO_PREFERENCES_DESKTOP_ACCESSIBILITY,
+   TANGO_PREFERENCES_DESKTOP_PERIPHERALS,
+   TANGO_PREFERENCES_DESKTOP_PERSONAL,
+   TANGO_PREFERENCES_OTHER,
+   TANGO_PREFERENCES_SYSTEM,
+   TANGO_PREFERENCES_SYSTEM_NETWORK,
+   TANGO_SYSTEM_HELP,
+   TANGO_AUDIO_CARD,
+   TANGO_AUDIO_INPUT_MICROPHONE,
+   TANGO_BATTERY,
+   TANGO_CAMERA_PHOTO,
+   TANGO_CAMERA_VIDEO,
+   TANGO_COMPUTER,
+   TANGO_DRIVE_CDROM,
+   TANGO_DRIVE_HARDDISK,
+   TANGO_DRIVE_REMOVABLE_MEDIA,
+   TANGO_INPUT_GAMING,
+   TANGO_INPUT_KEYBOARD,
+   TANGO_INPUT_MOUSE,
+   TANGO_MEDIA_CDROM,
+   TANGO_MEDIA_FLOPPY,
+   TANGO_MULTIMEDIA_PLAYER,
+   TANGO_NETWORK_WIRED,
+   TANGO_NETWORK_WIRELESS,
+   TANGO_PRINTER,
+   TANGO_EMBLEM_DEFAULT,
+   TANGO_EMBLEM_DOCUMENTS,
+   TANGO_EMBLEM_DOWNLOADS,
+   TANGO_EMBLEM_FAVORITE,
+   TANGO_EMBLEM_IMPORTANT,
+   TANGO_EMBLEM_MAIL,
+   TANGO_EMBLEM_PHOTOS,
+   TANGO_EMBLEM_READONLY,
+   TANGO_EMBLEM_SHARED,
+   TANGO_EMBLEM_SYMBOLIC_LINK,
+   TANGO_EMBLEM_SYNCHRONIZED,
+   TANGO_EMBLEM_SYSTEM,
+   TANGO_EMBLEM_UNREADABLE,
+   TANGO_FACE_ANGEL,
+   TANGO_FACE_CRYING,
+   TANGO_FACE_DEVIL_GRIN,
+   TANGO_FACE_DEVIL_SAD,
+   TANGO_FACE_GLASSES,
+   TANGO_FACE_KISS,
+   TANGO_FACE_MONKEY,
+   TANGO_FACE_PLAIN,
+   TANGO_FACE_SAD,
+   TANGO_FACE_SMILE,
+   TANGO_FACE_SMILE_BIG,
+   TANGO_FACE_SMIRK,
+   TANGO_FACE_SURPRISE,
+   TANGO_FACE_WINK,
+   TANGO_APPLICATION_X_EXECUTABLE,
+   TANGO_AUDIO_X_GENERIC,
+   TANGO_FONT_X_GENERIC,
+   TANGO_IMAGE_X_GENERIC,
+   TANGO_PACKAGE_X_GENERIC,
+   TANGO_TEXT_HTML,
+   TANGO_TEXT_X_GENERIC,
+   TANGO_TEXT_X_GENERIC_TEMPLATE,
+   TANGO_TEXT_X_SCRIPT,
+   TANGO_VIDEO_X_GENERIC,
+   TANGO_X_OFFICE_ADDRESS_BOOK,
+   TANGO_X_OFFICE_CALENDAR,
+   TANGO_X_OFFICE_DOCUMENT,
+   TANGO_X_OFFICE_PRESENTATION,
+   TANGO_X_OFFICE_SPREADSHEET,
+   TANGO_FOLDER,
+   TANGO_FOLDER_REMOTE,
+   TANGO_NETWORK_SERVER,
+   TANGO_NETWORK_WORKGROUP,
+   TANGO_START_HERE,
+   TANGO_USER_DESKTOP,
+   TANGO_USER_HOME,
+   TANGO_USER_TRASH,
+   TANGO_APPOINTMENT_MISSED,
+   TANGO_APPOINTMENT_SOON,
+   TANGO_AUDIO_VOLUME_HIGH,
+   TANGO_AUDIO_VOLUME_LOW,
+   TANGO_AUDIO_VOLUME_MEDIUM,
+   TANGO_AUDIO_VOLUME_MUTED,
+   TANGO_BATTERY_CAUTION,
+   TANGO_BATTERY_LOW,
+   TANGO_DIALOG_ERROR,
+   TANGO_DIALOG_INFORMATION,
+   TANGO_DIALOG_PASSWORD,
+   TANGO_DIALOG_QUESTION,
+   TANGO_DIALOG_WARNING,
+   TANGO_FOLDER_DRAG_ACCEPT,
+   TANGO_FOLDER_OPEN,
+   TANGO_FOLDER_VISITING,
+   TANGO_IMAGE_LOADING,
+   TANGO_IMAGE_MISSING,
+   TANGO_MAIL_ATTACHMENT,
+   TANGO_MAIL_UNREAD,
+   TANGO_MAIL_READ,
+   TANGO_MAIL_REPLIED,
+   TANGO_MAIL_SIGNED,
+   TANGO_MAIL_SIGNED_VERIFIED,
+   TANGO_MEDIA_PLAYLIST_REPEAT,
+   TANGO_MEDIA_PLAYLIST_SHUFFLE,
+   TANGO_NETWORK_ERROR,
+   TANGO_NETWORK_IDLE,
+   TANGO_NETWORK_OFFLINE,
+   TANGO_NETWORK_RECEIVE,
+   TANGO_NETWORK_TRANSMIT,
+   TANGO_NETWORK_TRANSMIT_RECEIVE,
+   TANGO_PRINTER_ERROR,
+   TANGO_PRINTER_PRINTING,
+   TANGO_SOFTWARE_UPDATE_AVAILABLE,
+   TANGO_SOFTWARE_UPDATE_URGENT,
+   TANGO_SYNC_ERROR,
+   TANGO_SYNC_SYNCHRONIZING,
+   TANGO_TASK_DUE,
+   TANGO_TASK_PASSED_DUE,
+   TANGO_USER_AWAY,
+   TANGO_USER_IDLE,
+   TANGO_USER_OFFLINE,
+   TANGO_USER_ONLINE,
+   TANGO_USER_TRASH_FULL,
+   TANGO_WEATHER_CLEAR,
+   TANGO_WEATHER_CLEAR_NIGHT,
+   TANGO_WEATHER_FEW_CLOUDS,
+   TANGO_WEATHER_FEW_CLOUDS_NIGHT,
+   TANGO_WEATHER_FOG,
+   TANGO_WEATHER_OVERCAST,
+   TANGO_WEATHER_SEVERE_ALERT,
+   TANGO_WEATHER_SHOWERS,
+   TANGO_WEATHER_SHOWERS_SCATTERED,
+   TANGO_WEATHER_SNOW,
+   TANGO_WEATHER_STORM,
+   NULL
+};
 
 #endif
