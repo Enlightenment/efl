@@ -1541,13 +1541,24 @@ _icon_elm_change(void *data       EINA_UNUSED,
 {
    Evas_Object *win = elm_object_top_widget_get(obj);
    Eina_Bool val = elm_check_state_get(obj);
+   Elm_Object_Item *item;
 
    if (val)
-     evas_object_data_set(win, "icon_theme", ELM_CONFIG_ICON_THEME_ELEMENTARY);
-   else
-     evas_object_data_set(win, "icon_theme", "hicolor");
+     {
+        evas_object_data_set(win, "icon_theme", ELM_CONFIG_ICON_THEME_ELEMENTARY);
 
-   elm_object_disabled_set(icon_theme_list, val);
+        item = elm_list_selected_item_get(icon_theme_list);
+        if (item)
+          elm_list_item_selected_set(item, EINA_FALSE);
+     }
+   else
+     {
+        evas_object_data_set(win, "icon_theme", "hicolor");
+
+        item = elm_list_first_item_get(icon_theme_list);
+        if (item)
+          elm_list_item_selected_set(item, EINA_TRUE);
+     }
 }
 
 static void
