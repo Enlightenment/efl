@@ -338,7 +338,8 @@ eina_vector3_homogeneous_position_transform(Eina_Vector3 *out, const Eina_Matrix
    tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z) + m->wz;
 
    eina_vector3_scale(out, &tmp,
-                   1.0 / ((m->xw * v->x) + (m->yw * v->y) + (m->zw * v->z) + m->ww));
+                      1.0 / ((m->xw * v->x) + (m->yw * v->y) +
+                             (m->zw * v->z) + m->ww));
 }
 
 static inline void
