@@ -260,6 +260,7 @@ _icon_thumb_apply_cb(void *data,
 
 static Eina_Bool
 _icon_freedesktop_set(Evas_Object *obj,
+                      const char *theme,
                       const char *name,
                       int size)
 {
@@ -268,8 +269,10 @@ _icon_freedesktop_set(Evas_Object *obj,
    ELM_ICON_DATA_GET(obj, sd);
 
    elm_need_efreet();
+   if (!theme)
+     theme = elm_config_icon_theme_get();
 
-   path = efreet_icon_path_find(elm_config_icon_theme_get(), name, size);
+   path = efreet_icon_path_find(theme, name, size);
    sd->freedesktop.use = !!path;
    if (sd->freedesktop.use)
      {
@@ -422,10 +425,16 @@ _internal_elm_icon_standard_set(Evas_Object *obj,
      {
         ret = _icon_standard_set(obj, name);
         if (ret && fdo) *fdo = EINA_FALSE;
+
+        if (!ret)
+          {
+             ret = _icon_freedesktop_set(obj, "hicolor", name, _icon_size_min_get(obj));
+             if (ret && fdo) *fdo = EINA_TRUE;
+          }
      }
    else
      {
-        ret = _icon_freedesktop_set(obj, name, _icon_size_min_get(obj));
+        ret = _icon_freedesktop_set(obj, NULL, name, _icon_size_min_get(obj));
         if (ret && fdo) *fdo = EINA_TRUE;
      }
 
