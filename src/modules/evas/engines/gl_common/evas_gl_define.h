@@ -222,7 +222,9 @@
 #ifndef EGL_OPENGL_ES3_BIT
 # define EGL_OPENGL_ES3_BIT 0x00000040
 #endif
-
+#ifndef EGL_WAYLAND_Y_INVERTED_WL
+# define EGL_WAYLAND_Y_INVERTED_WL 0x31DB
+#endif
 // Evas_3d require GL_BGR, but that's an extention and will not be necessary once we move to Evas_GL_Image
 #ifndef GL_BGR
 #define GL_BGR 0x80E0
