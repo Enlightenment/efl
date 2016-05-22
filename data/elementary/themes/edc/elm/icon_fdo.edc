@@ -229,12 +229,12 @@ ICO1(CTX, "help-about", 128)
 ICO1(CTX, "help-contents", 128)
 // TODO help-faq
 
-ICO1(CTX, "zoom-fit-best", 128)
-ICO1(CTX, "zoom-fit", 128) /* */
-// TODO ICO1(CTX, "zoom-fill", 128) /* */
 ICO1(CTX, "zoom-in", 128)
-ICO1(CTX, "zoom-original", 128)
 ICO1(CTX, "zoom-out", 128)
+ICO1(CTX, "zoom-original", 128)
+ICO1(CTX, "zoom-fit", 128) /* */
+ICO1(CTX, "zoom-fill", 128) /* */
+ICO1(CTX, "zoom-fit-best", 128)
 
 #undef CTX
 
