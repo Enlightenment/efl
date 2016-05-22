@@ -225,8 +225,6 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
                                          _data, (void *) 2);
    fail_if(handlers[5] == NULL);
 
-   fail_if (ecore_con_server_connected_get(server));
-
    server = ecore_con_server_add(compl_type, name, server_port,
                                  server_data);
    fail_if (server == NULL);
