@@ -51,7 +51,8 @@ lib/ecore_con/ecore_con_url_curl.c \
 lib/ecore_con/ecore_con_url_curl.h \
 static_libs/http-parser/http_parser.c \
 static_libs/http-parser/http_parser.h \
-lib/ecore_con/ecore_con_private.h
+lib/ecore_con/ecore_con_private.h \
+lib/ecore_con/ecore_con_info.c
 
 EXTRA_DIST += lib/ecore_con/ecore_con_legacy.c
 
@@ -61,29 +62,12 @@ else
 lib_ecore_con_libecore_con_la_SOURCES += lib/ecore_con/ecore_con_local.c
 endif
 
-if HAVE_CARES
-lib_ecore_con_libecore_con_la_SOURCES += lib/ecore_con/ecore_con_ares.c
-else
-if HAVE_IPV6
-lib_ecore_con_libecore_con_la_SOURCES += \
-lib/ecore_con/ecore_con_dns.c \
-static_libs/dns/dns.c \
-static_libs/dns/dns.h
-else
-lib_ecore_con_libecore_con_la_SOURCES += lib/ecore_con/ecore_con_info.c
-endif
-endif
-
 lib_ecore_con_libecore_con_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_CON_CFLAGS@
 lib_ecore_con_libecore_con_la_LIBADD = @ECORE_CON_LIBS@ @EVIL_LIBS@
 lib_ecore_con_libecore_con_la_DEPENDENCIES = @ECORE_CON_INTERNAL_LIBS@
 lib_ecore_con_libecore_con_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 lib_ecore_con_libecore_con_la_CPPFLAGS += -I$(top_srcdir)/src/static_libs/http-parser
-
-if HAVE_IPV6
-lib_ecore_con_libecore_con_la_CPPFLAGS += -I$(top_srcdir)/src/static_libs/dns/
-endif
 
 EXTRA_DIST += \
 tests/ecore_con/server.key \

@@ -23,14 +23,21 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <ctype.h>
-#include <sys/socket.h>
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
 #ifdef __OpenBSD__
 # include <sys/types.h>
 #endif
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <arpa/nameser.h>
-
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
+#ifdef HAVE_ARPA_NAMESER_H
+# include <arpa/nameser.h>
+#endif
 #ifdef HAVE_NETDB_H
 # include <netdb.h>
 #endif
@@ -48,21 +55,20 @@ struct _CB_Data
    EINA_INLIST;
    Ecore_Con_Info_Cb    cb_done;
    void                *data;
-   Ecore_Fd_Handler    *fdh;
-   pid_t                pid;
-   Ecore_Event_Handler *handler;
-   int                  fd2;
+   Ecore_Thread        *thread;
+   struct addrinfo      hints;
+   Ecore_Con_Info      *result;
+   int                  error;
+   char                 service[NI_MAXSERV];
+   char                 name[NI_MAXHOST];
 };
 
-static void      _ecore_con_info_readdata(CB_Data *cbdata);
-static void      _ecore_con_info_slave_free(CB_Data *cbdata);
-static Eina_Bool _ecore_con_info_data_handler(void *data,
-                                              Ecore_Fd_Handler *fd_handler);
-static Eina_Bool _ecore_con_info_exit_handler(void *data,
-                                              int type EINA_UNUSED,
-                                              void *event);
+static void  _ecore_con_info_slave_free  (CB_Data *cbdata);
+static void  _ecore_con_info_slave_result(void *data, Ecore_Thread *th);
+static void  _ecore_con_info_slave_cancel(void *data, Ecore_Thread *th);
+static void  _ecore_con_info_slave_lookup(void *data, Ecore_Thread *th);
 
-static int info_init = 0;
+static int      info_init = 0;
 static CB_Data *info_slaves = NULL;
 
 int
@@ -77,10 +83,29 @@ ecore_con_info_shutdown(void)
 {
    info_init--;
    if (info_init == 0)
-     while (info_slaves)
-       _ecore_con_info_slave_free(info_slaves);
+     {
+        while (info_slaves)
+          {
+             CB_Data *cbdata;
 
+             cbdata = info_slaves;
+             info_slaves = (CB_Data *)eina_inlist_remove
+               (EINA_INLIST_GET(info_slaves), EINA_INLIST_GET(info_slaves));
+             ecore_thread_cancel(cbdata->thread);
+          }
+     }
    return info_init;
+}
+
+static void
+_hints_fill(struct addrinfo *hints, int flags, int proto)
+{
+   memset(hints, 0, sizeof(struct addrinfo));
+   hints->ai_family = AF_UNSPEC;
+   hints->ai_flags = flags;
+   if (proto == IPPROTO_TCP) hints->ai_socktype = SOCK_STREAM;
+   else hints->ai_socktype = SOCK_DGRAM;
+   hints->ai_protocol = proto;
 }
 
 int
@@ -89,16 +114,7 @@ ecore_con_info_tcp_connect(Ecore_Con_Server *svr,
                            void *data)
 {
    struct addrinfo hints;
-
-   memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_UNSPEC;
-   hints.ai_socktype = SOCK_STREAM;
-   hints.ai_flags = AI_CANONNAME;
-   hints.ai_protocol = IPPROTO_TCP;
-   hints.ai_canonname = NULL;
-   hints.ai_next = NULL;
-   hints.ai_addr = NULL;
-
+   _hints_fill(&hints, AI_CANONNAME, IPPROTO_TCP);
    return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
@@ -108,16 +124,7 @@ ecore_con_info_tcp_listen(Ecore_Con_Server *svr,
                           void *data)
 {
    struct addrinfo hints;
-
-   memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_UNSPEC;
-   hints.ai_socktype = SOCK_STREAM;
-   hints.ai_flags = AI_PASSIVE;
-   hints.ai_protocol = IPPROTO_TCP;
-   hints.ai_canonname = NULL;
-   hints.ai_next = NULL;
-   hints.ai_addr = NULL;
-
+   _hints_fill(&hints, AI_PASSIVE, IPPROTO_TCP);
    return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
@@ -127,16 +134,7 @@ ecore_con_info_udp_connect(Ecore_Con_Server *svr,
                            void *data)
 {
    struct addrinfo hints;
-
-   memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_UNSPEC;
-   hints.ai_socktype = SOCK_DGRAM;
-   hints.ai_flags = AI_CANONNAME;
-   hints.ai_protocol = IPPROTO_UDP;
-   hints.ai_canonname = NULL;
-   hints.ai_next = NULL;
-   hints.ai_addr = NULL;
-
+   _hints_fill(&hints, AI_CANONNAME, IPPROTO_UDP);
    return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
@@ -146,16 +144,7 @@ ecore_con_info_udp_listen(Ecore_Con_Server *svr,
                           void *data)
 {
    struct addrinfo hints;
-
-   memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_UNSPEC;
-   hints.ai_socktype = SOCK_DGRAM;
-   hints.ai_flags = AI_PASSIVE;
-   hints.ai_protocol = IPPROTO_UDP;
-   hints.ai_canonname = NULL;
-   hints.ai_next = NULL;
-   hints.ai_addr = NULL;
-
+   _hints_fill(&hints, AI_PASSIVE, IPPROTO_UDP);
    return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
@@ -165,151 +154,44 @@ ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
                             void *data)
 {
    struct addrinfo hints;
-
-   memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_UNSPEC;
-   hints.ai_socktype = SOCK_DGRAM;
-   hints.ai_flags = 0;
-   hints.ai_protocol = IPPROTO_UDP;
-   hints.ai_canonname = NULL;
-   hints.ai_next = NULL;
-   hints.ai_addr = NULL;
-
+   _hints_fill(&hints, 0, IPPROTO_UDP);
    return ecore_con_info_get(svr, done_cb, data, &hints);
 }
 
-static void
-_ecore_con_fd_close_on_exec(int fd)
-{
-#ifdef HAVE_FCNTL
-   int flags;
-
-   flags = fcntl(fd, F_GETFD);
-   if (flags == -1) return;
-   flags |= FD_CLOEXEC;
-   if (fcntl(fd, F_SETFD, flags) == -1) return;
-#else
-   (void)fd;
-#endif
-}
-
 EAPI int
-ecore_con_info_get(Ecore_Con_Server *svr,
+ecore_con_info_get(Ecore_Con_Server *obj,
                    Ecore_Con_Info_Cb done_cb,
                    void *data,
                    struct addrinfo *hints)
 {
+   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    CB_Data *cbdata;
-   int fd[2];
 
-   if (pipe(fd) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        return 0;
-     }
-
-   _ecore_con_fd_close_on_exec(fd[0]);
-   _ecore_con_fd_close_on_exec(fd[1]);
-
+   if (!svr) return 0;
    cbdata = calloc(1, sizeof(CB_Data));
    if (!cbdata)
      {
-        close(fd[0]);
-        close(fd[1]);
+        ecore_con_event_server_error(obj, "Memory allocation failure");
         return 0;
      }
 
    cbdata->cb_done = done_cb;
    cbdata->data = data;
-   cbdata->fd2 = fd[1];
-   if (!(cbdata->fdh = ecore_main_fd_handler_add(fd[0], ECORE_FD_READ,
-                                                 _ecore_con_info_data_handler,
-                                                 cbdata,
-                                                 NULL, NULL)))
+   cbdata->hints = *hints;
+   cbdata->thread = ecore_thread_run(_ecore_con_info_slave_lookup,
+                                     _ecore_con_info_slave_result,
+                                     _ecore_con_info_slave_cancel,
+                                     cbdata);
+   if (!cbdata->thread)
      {
-        ecore_con_event_server_error(svr, "Memory allocation failure");
         free(cbdata);
-        close(fd[0]);
-        close(fd[1]);
+        ecore_con_event_server_error(obj, "Memory allocation failure");
         return 0;
      }
-
-   if ((cbdata->pid = fork()) == 0)
-     {
-        Ecore_Con_Info *container;
-        struct addrinfo *result = NULL;
-        char service[NI_MAXSERV] = {0};
-        char hbuf[NI_MAXHOST] = {0};
-        char sbuf[NI_MAXSERV] = {0};
-        unsigned char *tosend = NULL;
-        int tosend_len;
-        int canonname_len = 0;
-
-        eina_convert_itoa(svr->ecs ? svr->ecs->port : svr->port, service);
-        /* CHILD */
-        if (!getaddrinfo(svr->ecs ? svr->ecs->ip : svr->name, service, hints, &result) && result)
-          {
-             if (result->ai_canonname)
-               canonname_len = strlen(result->ai_canonname) + 1;
-
-             tosend_len = sizeof(Ecore_Con_Info) + result->ai_addrlen +
-               canonname_len;
-
-             tosend = alloca(tosend_len);
-             memset(tosend, 0, tosend_len);
-
-             container = (Ecore_Con_Info *)tosend;
-             container->size = tosend_len;
-
-             memcpy(&container->info,
-                    result,
-                    sizeof(struct addrinfo));
-             memcpy(tosend + sizeof(Ecore_Con_Info),
-                    result->ai_addr,
-                    result->ai_addrlen);
-             if (result->ai_canonname) /* FIXME: else... */
-               memcpy(tosend + sizeof(Ecore_Con_Info) + result->ai_addrlen,
-                      result->ai_canonname,
-                      canonname_len);
-
-             if (!getnameinfo(result->ai_addr, result->ai_addrlen,
-                              hbuf, sizeof(hbuf), sbuf, sizeof(sbuf),
-                              NI_NUMERICHOST | NI_NUMERICSERV))
-               {
-                  memcpy(container->ip, hbuf, sizeof(container->ip));
-                  memcpy(container->service, sbuf, sizeof(container->service));
-               }
-
-             if (write(fd[1], tosend, tosend_len) < 0) perror("write");
-          }
-
-        if (result)
-          freeaddrinfo(result);
-
-        if (write(fd[1], "", 1) < 0) perror("write");
-        close(fd[1]);
-#if defined(__USE_ISOC99) && !defined(__UCLIBC__)
-        _Exit(0);
-#else
-        _exit(0);
-#endif
-     }
-
-   /* PARENT */
-   cbdata->handler =
-     ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _ecore_con_info_exit_handler,
-                             cbdata);
-   close(fd[1]);
-   if (!cbdata->handler)
-     {
-        ecore_main_fd_handler_del(cbdata->fdh);
-        free(cbdata);
-        close(fd[0]);
-        return 0;
-     }
-
-   info_slaves = (CB_Data *)eina_inlist_append(EINA_INLIST_GET(
-                                                 info_slaves),
+   eina_convert_itoa(svr->ecs ? svr->ecs->port : svr->port, cbdata->service);
+   strncpy(cbdata->name, svr->ecs ? svr->ecs->ip : svr->name, NI_MAXHOST - 1);
+   cbdata->name[NI_MAXHOST - 1] = 0;
+   info_slaves = (CB_Data *)eina_inlist_append(EINA_INLIST_GET(info_slaves),
                                                EINA_INLIST_GET(cbdata));
    svr->infos = eina_list_append(svr->infos, cbdata);
    return 1;
@@ -323,127 +205,92 @@ ecore_con_info_data_clear(void *info)
 }
 
 static void
-_ecore_con_info_readdata(CB_Data *cbdata)
-{
-   Ecore_Con_Info container;
-   Ecore_Con_Info *recv_info;
-   unsigned char *torecv;
-   int torecv_len;
-
-   ssize_t size;
-
-   size = read(ecore_main_fd_handler_fd_get(cbdata->fdh), &container,
-               sizeof(Ecore_Con_Info));
-   if (size == sizeof(Ecore_Con_Info))
-     {
-        torecv_len = container.size;
-        torecv = malloc(torecv_len);
-
-        memcpy(torecv, &container, sizeof(Ecore_Con_Info));
-
-        size = read(ecore_main_fd_handler_fd_get(cbdata->fdh),
-                    torecv + sizeof(Ecore_Con_Info),
-                    torecv_len - sizeof(Ecore_Con_Info));
-        if ((size > 0) &&
-            ((size_t)size == torecv_len - sizeof(Ecore_Con_Info)))
-          {
-             recv_info = (Ecore_Con_Info *)torecv;
-
-             recv_info->info.ai_addr =
-               (struct sockaddr *)(torecv + sizeof(Ecore_Con_Info));
-             if ((size_t)torecv_len !=
-                 (sizeof(Ecore_Con_Info) + recv_info->info.ai_addrlen))
-               recv_info->info.ai_canonname = (char *)
-                 (torecv + sizeof(Ecore_Con_Info) + recv_info->info.ai_addrlen);
-             else
-               recv_info->info.ai_canonname = NULL;
-
-             recv_info->info.ai_next = NULL;
-
-             if (cbdata->data)
-               {
-                  cbdata->cb_done(cbdata->data, recv_info);
-                  ecore_con_server_infos_del(cbdata->data, cbdata);
-               }
-
-             free(torecv);
-          }
-        else
-          {
-             if (cbdata->data)
-               {
-                  cbdata->cb_done(cbdata->data, NULL);
-                  ecore_con_server_infos_del(cbdata->data, cbdata);
-               }
-          }
-     }
-   else
-     {
-        if (cbdata->data)
-          {
-             ecore_con_event_server_error(cbdata->data, strerror(errno));
-             cbdata->cb_done(cbdata->data, NULL);
-             ecore_con_server_infos_del(cbdata->data, cbdata);
-          }
-     }
-
-   cbdata->cb_done = NULL;
-}
-
-static void
 _ecore_con_info_slave_free(CB_Data *cbdata)
 {
    info_slaves = (CB_Data *)eina_inlist_remove(EINA_INLIST_GET(info_slaves),
                                                EINA_INLIST_GET(cbdata));
-   ecore_main_fd_handler_del(cbdata->fdh);
-   ecore_event_handler_del(cbdata->handler);
-   close(ecore_main_fd_handler_fd_get(cbdata->fdh));
+   if (cbdata->result) free(cbdata->result);
+   cbdata->result = NULL;
    if (cbdata->data) ecore_con_server_infos_del(cbdata->data, cbdata);
+   cbdata->data = NULL;
    free(cbdata);
 }
 
-static Eina_Bool
-_ecore_con_info_data_handler(void *data,
-                             Ecore_Fd_Handler *fd_handler)
+static void
+_ecore_con_info_slave_result(void *data, Ecore_Thread *th EINA_UNUSED)
 {
-   CB_Data *cbdata;
+   CB_Data *cbdata = data;
 
-   cbdata = data;
-   if (cbdata->cb_done)
+   if (cbdata->result) // lookup ok
      {
-        if (ecore_main_fd_handler_active_get(fd_handler,
-                                             ECORE_FD_READ))
-          _ecore_con_info_readdata(cbdata);
-        else
+        if (cbdata->data) cbdata->cb_done(cbdata->data, cbdata->result);
+     }
+   else // an error occured
+     {
+        if (cbdata->data)
           {
-             if (cbdata->data)
-               {
-                  cbdata->cb_done(cbdata->data, NULL);
-                  cbdata->cb_done = NULL;
-                  ecore_con_server_infos_del(cbdata->data, cbdata);
-               }
+             char *str = strerror(cbdata->error);
+             ecore_con_event_server_error(cbdata->data, str);
+             cbdata->cb_done(cbdata->data, NULL);
           }
      }
-
+   if (cbdata->data) ecore_con_server_infos_del(cbdata->data, cbdata);
+   cbdata->data = NULL;
    _ecore_con_info_slave_free(cbdata);
-   return ECORE_CALLBACK_CANCEL;
 }
 
-static Eina_Bool
-_ecore_con_info_exit_handler(void *data,
-                             int type EINA_UNUSED,
-                             void *event)
+static void
+_ecore_con_info_slave_cancel(void *data, Ecore_Thread *th EINA_UNUSED)
 {
-   CB_Data *cbdata;
-   Ecore_Exe_Event_Del *ev;
-
-   ev = event;
-   cbdata = data;
-   if (cbdata->pid != ev->pid)
-     return ECORE_CALLBACK_RENEW;
-
-   return ECORE_CALLBACK_CANCEL; /* FIXME: Woot ??? */
+   CB_Data *cbdata = data;
    _ecore_con_info_slave_free(cbdata);
-   return ECORE_CALLBACK_CANCEL;
 }
 
+static void
+_ecore_con_info_slave_lookup(void *data, Ecore_Thread *th EINA_UNUSED)
+{
+   CB_Data *cbdata = data;
+   struct addrinfo *result = NULL;
+
+   // do lookup, fill cbdata
+   if ((!getaddrinfo(cbdata->name, cbdata->service, &(cbdata->hints), &result))
+       && (result))
+     {
+        Ecore_Con_Info *info;
+        unsigned int canonname_size = 0, size;
+
+        if (result->ai_canonname)
+          canonname_size = strlen(result->ai_canonname) + 1;
+        size = sizeof(Ecore_Con_Info) + result->ai_addrlen + canonname_size;
+        info = calloc(1, size);
+        if (info)
+          {
+             char hbuf[NI_MAXHOST] = { 0 }, sbuf[NI_MAXSERV] = { 0 }, *p;
+
+             info->size = size;
+             memcpy(&(info->info), result, sizeof(struct addrinfo));
+             p = ((char *)info) + sizeof(Ecore_Con_Info);
+             memcpy(p, result->ai_addr, result->ai_addrlen);
+             info->info.ai_addr = (struct sockaddr *)p;
+             if (result->ai_canonname)
+               {
+                  p = ((char *)info) + sizeof(Ecore_Con_Info) + result->ai_addrlen;
+                  memcpy(p, result->ai_canonname, canonname_size);
+                  info->info.ai_canonname = p;
+               }
+             // we don't care about multiple entries - take first one then
+             info->info.ai_next = NULL;
+             if (!getnameinfo(result->ai_addr, result->ai_addrlen,
+                              hbuf, sizeof(hbuf), sbuf, sizeof(sbuf),
+                              NI_NUMERICHOST | NI_NUMERICSERV))
+               {
+                  memcpy(info->ip, hbuf, sizeof(info->ip));
+                  memcpy(info->service, sbuf, sizeof(info->service));
+               }
+             cbdata->result = info;
+          }
+        if (!cbdata->result) free(info);
+     }
+   if (!cbdata->result) cbdata->error = errno;
+   if (result) freeaddrinfo(result);
+}

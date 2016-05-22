@@ -1732,6 +1732,7 @@ AC_CHECK_HEADERS([sys/socket.h])
 
 AC_CHECK_HEADERS([ \
 arpa/inet.h \
+arpa/nameser.h \
 langinfo.h \
 features.h \
 netinet/in.h \
@@ -2878,17 +2879,12 @@ want_ecore_con_local_sockets="yes"
 want_ecore_con_abstract_sockets="yes"
 
 if test "${have_win32}" = "yes"; then
-   want_cares="yes"
    want_ecore_con_abstract_sockets="no"
 elif test "${have_darwin}" = "yes"; then
-   want_cares="no"
    want_ecore_con_abstract_sockets="yes"
 elif test "${have_ps3}" = "yes"; then
-   want_cares="no"
    want_ecore_con_local_sockets="no"
    want_ecore_con_abstract_sockets="no"
-else
-   want_cares="no"
 fi
 
 AC_DEFINE_IF([HAVE_LOCAL_SOCKETS],
@@ -2914,24 +2910,10 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [emile])
 
 EFL_ADD_LIBS([ECORE_CON], [-lm])
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_cares}],
-   [CARES], [libcares >= 1.6.1])
-AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
-
-if test "x$have_cares" = "xyes" ; then
-   ecore_con_resolver="cares"
-elif test "x$ac_cv_prog_cc_c99" != "xno" ; then
-   ecore_con_resolver="dns.c"
-else
-   ecore_con_resolver="fork"
-fi
-
 EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_systemd}], [SYSTEMD], [libsystemd])
 
-EFL_ADD_FEATURE([ECORE_CON], [cares])
 EFL_ADD_FEATURE([ECORE_CON], [local-sockets], [${want_ecore_con_local_sockets}])
 EFL_ADD_FEATURE([ECORE_CON], [abstract-sockets], [${want_ecore_con_abstract_sockets}])
-EFL_ADD_FEATURE([ECORE_CON], [resolver], [${ecore_con_resolver}])
 EFL_ADD_FEATURE([ECORE_CON], [systemd-daemon], [${want_systemd}])
 
 EFL_EVAL_PKGS([ECORE_CON])
