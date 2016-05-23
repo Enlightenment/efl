@@ -560,8 +560,11 @@ typedef struct _Eo_Call_Cache
                            __FILE__, __LINE__)) return DefRet;          \
      _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \
 
-#define _EO_API_BEFORE_HOOK
-#define _EO_API_AFTER_HOOK
+EAPI void _eo_real_ref(_Eo_Object *obj);
+EAPI void _eo_real_unref(_Eo_Object *obj);
+
+#define _EO_API_BEFORE_HOOK _eo_real_ref(___call.obj);
+#define _EO_API_AFTER_HOOK _eo_real_unref(___call.obj);
 #define _EO_API_CALL_HOOK(x) x
 
 // to define an EAPI function
