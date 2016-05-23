@@ -53,7 +53,7 @@ class Elm.List.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     obj: Evas.Object *; [[The base Edje object associated with the item.]]
+                     obj: Evas.Object; [[The base Edje object associated with the item.]]
                 }
            }
            @property prev {
@@ -65,7 +65,7 @@ class Elm.List.Item(Elm.Widget.Item)
                      legacy: elm_list_item_prev;
                 }
                 values {
-                     item: Elm.Widget.Item *; [[The item before or $null.]]
+                     item: Elm.Widget.Item; [[The item before or $null.]]
                 }
            }
            @property next {
@@ -77,7 +77,7 @@ class Elm.List.Item(Elm.Widget.Item)
                      legacy: elm_list_item_next;
                 }
                 values {
-                     item: Elm.Widget.Item *; [[The item after or $null.]]
+                     item: Elm.Widget.Item; [[The item after or $null.]]
                 }
            }
            /*      init { FIXME

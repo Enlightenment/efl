@@ -34,7 +34,7 @@ class Elm.Flipselector.Item(Elm.Widget.Item)
 
               See also @.next_get.
             ]]
-            return: Elm.Widget.Item *; [[The item before the $item, in its parent's list. If there is no previous item for $item or there's an error, $null is returned.]]
+            return: Elm.Widget.Item; [[The item before the $item, in its parent's list. If there is no previous item for $item or there's an error, $null is returned.]]
         }
       next_get @const {
             [[Get the item after $item in a flip selector widget's
@@ -42,7 +42,7 @@ class Elm.Flipselector.Item(Elm.Widget.Item)
 
               See also @.prev_get.
             ]]
-             return: Elm.Widget.Item *; [[The item after the $item, in its parent's list. If there is no next item for $item or there's an error, $null is returned.]]
+             return: Elm.Widget.Item; [[The item after the $item, in its parent's list. If there is no next item for $item or there's an error, $null is returned.]]
         }
    }
    implements {

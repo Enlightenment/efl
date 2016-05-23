@@ -8,7 +8,7 @@ class Efl.Network.Client (Efl.Network) {
          get {
          }
          values {
-            svr: Efl.Network.Server *; [[The server the client is connected to.]]
+            svr: Efl.Network.Server; [[The server the client is connected to.]]
          }
       }
    }

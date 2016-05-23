@@ -25,7 +25,7 @@ class Elm.Grid (Elm.Widget)
               It's possible to remove objects from the grid when walking this
               list, but these removals won't be reflected on it.
             ]]
-            return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
+            return: free(own(list<Evas.Object>), eina_list_free) @warn_unused;
          }
       }
       clear {
@@ -37,13 +37,13 @@ class Elm.Grid (Elm.Widget)
       unpack {
          [[Unpack a child from a grid object]]
          params {
-            @in subobj: Evas.Object *; [[The child to unpack]]
+            @in subobj: Evas.Object; [[The child to unpack]]
          }
       }
       pack {
          [[Pack child at given position and size]]
          params {
-            @in subobj: Evas.Object *; [[The child to pack.]]
+            @in subobj: Evas.Object; [[The child to pack.]]
             @in x: Evas.Coord; [[The virtual x coord at which to pack it.]]
             @in y: Evas.Coord; [[The virtual y coord at which to pack it.]]
             @in w: Evas.Coord; [[The virtual width at which to pack it.]]

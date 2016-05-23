@@ -19,7 +19,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
          get {
          }
          values {
-            data: Efl.Network.Server *;
+            data: Efl.Network.Server;
          }
       }
       @property data_callback {

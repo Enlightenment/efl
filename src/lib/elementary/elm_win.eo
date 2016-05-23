@@ -564,7 +564,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             @endcode
             */
             values {
-               icon: Evas.Object* @nullable; [[The Evas image object to use for an icon.]]
+               icon: Evas.Object @nullable; [[The Evas image object to use for an icon.]]
             }
          }
          get {
@@ -574,7 +574,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
               the object to use for the window icon.
             ]]
             values {
-               icon: const(Evas.Object)* @nullable; [[The Evas image object to use for an icon.]]
+               icon: const(Evas.Object) @nullable; [[The Evas image object to use for an icon.]]
             }
          }
       }
@@ -881,7 +881,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
       @property main_menu {
          get {
             [[Get the Main Menu of a window.]]
-            return: Evas.Object *; [[The Main Menu of the window ($null on error).]]
+            return: Evas.Object; [[The Main Menu of the window ($null on error).]]
          }
       }
       @property window_id {
@@ -920,7 +920,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
               control of elementary), and use it to do things like get
               pixel data, save the image to a file, etc.
             ]]
-            return: Evas.Object *; [[The inlined image object or $null if none exists.]]
+            return: Evas.Object; [[The inlined image object or $null if none exists.]]
          }
       }
       @property name {

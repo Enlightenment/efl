@@ -25,7 +25,7 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface, Elm.Interface.Atspi_Widge
             [[Get the target object for the hover.]]
          }
          values {
-            target: Evas.Object *; [[The target object.]]
+            target: Evas.Object; [[The target object.]]
          }
       }
       best_content_location_get @const {

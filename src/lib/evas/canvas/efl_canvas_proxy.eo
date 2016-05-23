@@ -30,7 +30,7 @@ class Efl.Canvas.Proxy (Evas.Image, Efl.Gfx.Buffer)
          }
          get {}
          values {
-            src: Evas.Object * @nonull; [[Source object to use for the proxy.]]
+            src: Evas.Object @nonull; [[Source object to use for the proxy.]]
          }
       }
       @property source_clip {

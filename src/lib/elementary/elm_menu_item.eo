@@ -36,11 +36,11 @@ class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection)
         }
       prev_get @const {
             [[Get the previous item in the menu.]]
-            return: Elm.Widget.Item*;
+            return: Elm.Widget.Item;
         }
       next_get @const {
              [[Get the next item in the menu.]]
-             return: Elm.Widget.Item*;
+             return: Elm.Widget.Item;
         }
       index_get @const {
              [[Get the next item in the menu.]]
@@ -57,7 +57,7 @@ class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection)
         }
      subitems_get @const {
              [[Returns a list of $item's subitems.]]
-             return: const (list<Elm.Widget.Item *>) *; [[a list of $item's subitems]]
+             return: const(list<Elm.Widget.Item>); [[a list of $item's subitems]]
         }
      is_separator @const {
              [[Returns whether $item is a separator.]]
@@ -69,7 +69,7 @@ class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection)
 
                Warning: Don't manipulate this object!
              ]]
-             return: Evas.Object*; [[The base Edje object containing the
+             return: Evas.Object; [[The base Edje object containing the
                                      swallowed content associated with the item.]]
         }
    }

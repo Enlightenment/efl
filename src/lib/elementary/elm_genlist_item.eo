@@ -55,7 +55,7 @@ class Elm.Genlist.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     item: Elm.Widget.Item *; [[The item before $item, or $null if there's none (and on errors).]]
+                     item: Elm.Widget.Item; [[The item before $item, or $null if there's none (and on errors).]]
                 }
            }
            @property next {
@@ -71,7 +71,7 @@ class Elm.Genlist.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     item: Elm.Widget.Item *; [[The item after $item, or $null if there's none (and on errors).]]
+                     item: Elm.Widget.Item; [[The item after $item, or $null if there's none (and on errors).]]
                 }
            }
            @property parent {
@@ -84,7 +84,7 @@ class Elm.Genlist.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     item: Elm.Widget.Item *; [[The parent of the item or $null if it has no parent.]]
+                     item: Elm.Widget.Item; [[The parent of the item or $null if it has no parent.]]
                 }
            }
            @property subitems {
@@ -98,7 +98,7 @@ class Elm.Genlist.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     subitems: const (list<Elm.Widget.Item *>) *; [[The list of subitems, $null on error.]]
+                     subitems: const(list<Elm.Widget.Item>); [[The list of subitems, $null on error.]]
                 }
            }
            @property selected {
@@ -326,7 +326,7 @@ class Elm.Genlist.Item(Elm.Widget.Item)
                   elsewhere if the user wants to.
                 ]]
                 params {
-                     @out l: own(list<own(Evas.Object *)> *); [[The contents list to return.]]
+                     @out l: own(list<own(Evas.Object)>); [[The contents list to return.]]
                 }
            }
            update {

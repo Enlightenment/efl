@@ -59,7 +59,7 @@ class Efl.Network.Server (Efl.Network) {
          }
          values {
             // FIXME: Efl.Network.Client is needed, but that introduces a cycle
-            clients: const(list<const(Efl.Network) *>) *; [[The list of clients on this server.]]
+            clients: const(list<const(Efl.Network)>); [[The list of clients on this server.]]
          }
       }
       @property connection_type {

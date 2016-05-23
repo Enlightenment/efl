@@ -16,7 +16,7 @@ class Elm.Plug (Elm.Widget, Evas.Clickable_Interface)
               Note: Be careful to not manipulate it, as it is under control of
               elementary.
             ]]
-            return: Evas.Object *; [[The inlined image object or $null.]]
+            return: Evas.Object; [[The inlined image object or $null.]]
          }
       }
       connect {

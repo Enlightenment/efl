@@ -692,10 +692,9 @@ _parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
 }
 
 static Eolian_Type *
-parse_type_void_base(Eo_Lexer *ls, Eina_Bool noptr)
+parse_type_void(Eo_Lexer *ls)
 {
    Eolian_Type *def;
-   const char *ctype;
    Eina_Strbuf *buf;
    int line = ls->line_number, col = ls->column;
    switch (ls->t.kw)
@@ -707,7 +706,7 @@ parse_type_void_base(Eo_Lexer *ls, Eina_Bool noptr)
            pline = ls->line_number;
            pcol = ls->column;
            check_next(ls, '(');
-           def = parse_type_void_base(ls, EINA_TRUE);
+           def = parse_type_void(ls);
            FILL_BASE(def->base, ls, line, col);
            def->is_const = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcol);
@@ -721,11 +720,13 @@ parse_type_void_base(Eo_Lexer *ls, Eina_Bool noptr)
            pcolumn = ls->column;
            check_next(ls, '(');
            eo_lexer_context_push(ls);
-           def = parse_type_void_base(ls, EINA_TRUE);
-           if (def->type != EOLIAN_TYPE_POINTER)
+           def = parse_type_void(ls);
+           if (def->type != EOLIAN_TYPE_POINTER &&
+               def->type != EOLIAN_TYPE_COMPLEX &&
+               def->type != EOLIAN_TYPE_CLASS)
              {
                 eo_lexer_context_restore(ls);
-                eo_lexer_syntax_error(ls, "pointer type expected");
+                eo_lexer_syntax_error(ls, "ownable type expected");
              }
            eo_lexer_context_pop(ls);
            FILL_BASE(def->base, ls, line, col);
@@ -741,11 +742,13 @@ parse_type_void_base(Eo_Lexer *ls, Eina_Bool noptr)
            pcolumn = ls->column;
            check_next(ls, '(');
            eo_lexer_context_push(ls);
-           def = parse_type_void_base(ls, EINA_TRUE);
-           if (def->type != EOLIAN_TYPE_POINTER)
+           def = parse_type_void(ls);
+           if (def->type != EOLIAN_TYPE_POINTER &&
+               def->type != EOLIAN_TYPE_COMPLEX &&
+               def->type != EOLIAN_TYPE_CLASS)
              {
                 eo_lexer_context_restore(ls);
-                eo_lexer_syntax_error(ls, "pointer type expected");
+                eo_lexer_syntax_error(ls, "freeable type expected");
              }
            eo_lexer_context_pop(ls);
            check_next(ls, ',');
@@ -776,8 +779,7 @@ parse_type_void_base(Eo_Lexer *ls, Eina_Bool noptr)
         int tpid = ls->t.kw;
         def->type = EOLIAN_TYPE_REGULAR;
         check(ls, TOK_VALUE);
-        ctype = eo_lexer_get_c_type(ls->t.kw);
-        if (ctype)
+        if (eo_lexer_get_c_type(ls->t.kw))
           {
              _fill_name(eina_stringshare_ref(ls->t.value.s), &def->full_name,
                         &def->name, &def->namespaces);
@@ -834,25 +836,10 @@ parse_type_void_base(Eo_Lexer *ls, Eina_Bool noptr)
           }
      }
 parse_ptr:
-   /* check: complex/class type must always be behind a pointer */
-   if (!noptr && ((def->type == EOLIAN_TYPE_CLASS) || (def->type == EOLIAN_TYPE_COMPLEX)))
+   if ((def->type == EOLIAN_TYPE_CLASS) || (def->type == EOLIAN_TYPE_COMPLEX))
      {
-        if (getenv("EOLIAN_CLASS_NO_PTR"))
-          {
-             fprintf(stderr, "eolian:%s:%d:%d: pointer around complex/class type '%s'\n",
-                     def->base.file, line, col, def->full_name);
-             if (ls->t.token != '*')
-               {
-                  Eolian_Type *pdef;
-                  pop_type(ls);
-                  pdef = push_type(ls);
-                  FILL_BASE(pdef->base, ls, ls->line_number, ls->column);
-                  pdef->base_type = def;
-                  pdef->type = EOLIAN_TYPE_POINTER;
-                  def = pdef;
-               }
-          }
-        else check(ls, '*');
+        if (ls->t.token == '*')
+          eo_lexer_syntax_error(ls, "pointer to complex/class type");
      }
    while (ls->t.token == '*')
      {
@@ -866,12 +853,6 @@ parse_ptr:
         eo_lexer_get(ls);
      }
    return def;
-}
-
-static Eolian_Type *
-parse_type_void(Eo_Lexer *ls)
-{
-   return parse_type_void_base(ls, EINA_FALSE);
 }
 
 static Eolian_Typedecl *

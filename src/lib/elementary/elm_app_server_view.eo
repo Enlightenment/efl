@@ -44,7 +44,7 @@ class Elm.App.Server.View (Eo.Base)
          set {
          }
          values {
-            win: Evas.Object *;
+            win: Evas.Object;
          }
       }
       @property id {

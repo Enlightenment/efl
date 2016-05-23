@@ -24,24 +24,24 @@ enum Eldbus.Introspection.Property_Access
 struct Eldbus.Introspection.Node
 {
    name: Eina.Stringshare *; [[optional]]
-   nodes: list<void *> *;
-   interfaces: list<void *> *;
+   nodes: list<void *>;
+   interfaces: list<void *>;
 }
 
 struct Eldbus.Introspection.Interface
 {
    name: Eina.Stringshare *;
-   methods: list<void *> *;
-   signals: list<void *> *;
-   properties: list<void *> *;
-   annotations: list<void *> *;
+   methods: list<void *>;
+   signals: list<void *>;
+   properties: list<void *>;
+   annotations: list<void *>;
 }
 
 struct Eldbus.Introspection.Method
 {
    name: Eina.Stringshare *;
-   arguments: list<void *> *;
-   annotations: list<void *> *;
+   arguments: list<void *>;
+   annotations: list<void *>;
 }
 
 struct Eldbus.Introspection.Property
@@ -49,7 +49,7 @@ struct Eldbus.Introspection.Property
    name: Eina.Stringshare *;
    type: Eina.Stringshare *;
    access: Eldbus.Introspection.Property_Access;
-   annotations: list<void *> *;
+   annotations: list<void *>;
 }
 
 struct Eldbus.Introspection.Annotation
@@ -68,6 +68,6 @@ struct Eldbus.Introspection.Argument
 struct Eldbus.Introspection.Signal
 {
     name: Eina.Stringshare *;
-    arguments: list<Eldbus.Introspection.Argument *> *;
-    annotations: list<Eldbus.Introspection.Annotation *> *;
+    arguments: list<Eldbus.Introspection.Argument *>;
+    annotations: list<Eldbus.Introspection.Annotation *>;
 }

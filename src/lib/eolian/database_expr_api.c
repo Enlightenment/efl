@@ -33,6 +33,7 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type)
            return database_expr_eval(expr, mask);
         }
       case EOLIAN_TYPE_CLASS:
+      case EOLIAN_TYPE_COMPLEX:
         return database_expr_eval(expr, EOLIAN_MASK_NULL);
       case EOLIAN_TYPE_REGULAR:
         {

@@ -356,7 +356,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container)
       access_part_iterate {
          [[Iterate over all accessibility-enabled part names.]]
          legacy: null;
-         return: free(own(iterator<const(char)*> *), eina_iterator_free);
+         return: free(own(iterator<const(char)*>), eina_iterator_free);
       }
       @property load_error {
          get {
@@ -898,7 +898,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container)
            Note: Almost all swallow rules apply: you should not move, resize,
            hide, show, set the color or clipper of such part. It's a bit
            more restrictive as one must  never delete this object!]]
-         return: Evas.Object *; [[The externally created object, or $null if there is none or
+         return: Evas.Object; [[The externally created object, or $null if there is none or
                                   part is not an external.]]
          params {
             @in part: const(char)*; [[The part name]]
@@ -909,7 +909,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container)
 
            The content string must not be $null. Its actual value depends on the
            code providing the EXTERNAL.]]
-         return: Evas.Object *;
+         return: Evas.Object;
          params {
             @in part: const(char)*; [[The name of the part holding the EXTERNAL]]
             @out content: const(char); [[A string identifying which content from the EXTERNAL to get]]
@@ -964,8 +964,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container)
 
            This function return a list of Evas_Textblock_Rectangle anchor
            rectangles.]]
-         return: const(list<const(Evas.Textblock_Rectangle)*>)*; [[The list of anchor rects (const Evas_Textblock_Rectangle
-                                                                   *), do not modify! Geometry is relative to entry part.]]
+         return: const(list<const(Evas.Textblock_Rectangle)*>); [[The list of anchor rects (const Evas_Textblock_Rectangle
+                                                                  *), do not modify! Geometry is relative to entry part.]]
          params {
             @in part: const(char)*; [[The part name]]
             @in anchor: const(char)*; [[The anchor name]]
@@ -1110,7 +1110,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container)
            Note: If the type of Edje part is GROUP, SWALLOW or EXTERNAL,
            returned handle by this function will indicate nothing or transparent
            rectangle for events. Use $.part_swallow_get() in that case.]]
-         return: const(Evas.Object)*; [[A pointer to the Evas object implementing the given part,
+         return: const(Evas.Object); [[A pointer to the Evas object implementing the given part,
                                         or $null on failure (e.g. the given part doesn't exist)]]
          params {
             @in part: const(char)*; [[The Edje part's name]]
@@ -1838,7 +1838,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container)
          [[Return a list of char anchor names.
 
            This function returns a list of char anchor names.]]
-         return: const(list<const(char)*>)*; [[The list of anchors (const char *), do not modify!]]
+         return: const(list<const(char)*>); [[The list of anchors (const char *), do not modify!]]
          params {
             @in part: const(char)*; [[The part name]]
          }
@@ -1958,7 +1958,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container)
          [[Return a list of char item names.
 
            This function returns a list of char item names.]]
-         return: const(list<const(char)*>)*; [[The list of items (const char *), do not modify!]]
+         return: const(list<const(char)*>); [[The list of items (const char *), do not modify!]]
          params {
             @in part: const(char)*; [[The part name]]
          }

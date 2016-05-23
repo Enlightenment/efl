@@ -57,7 +57,7 @@ class Elm.Radio (Elm.Check, Elm.Interface.Atspi_Widget_Action)
       @property selected_object {
          get {
             [[Get the selected radio object.]]
-            return: Evas.Object *; [[The selected radio object]]
+            return: Evas.Object; [[The selected radio object]]
          }
       }
       group_add {
@@ -70,8 +70,8 @@ class Elm.Radio (Elm.Check, Elm.Interface.Atspi_Widget_Action)
          ]]
 
          params {
-            @in group: Elm.Radio *; [[Any radio object whose group the obj is
-                                      to join.]]
+            @in group: Elm.Radio; [[Any radio object whose group the obj is
+                                    to join.]]
          }
       }
    }

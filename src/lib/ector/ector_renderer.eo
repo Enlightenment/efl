@@ -24,7 +24,7 @@ abstract Ector.Renderer (Eo.Base)
 	    [[Get the surface associated to this renderer. Can not be set.]]
 	 }
 	 values {
-	    s: Ector.Surface *; [[Associated surface]]
+	    s: Ector.Surface; [[Associated surface]]
 	 }
       }
       @property transformation {
@@ -85,7 +85,7 @@ abstract Ector.Renderer (Eo.Base)
 	 get {
 	 }
 	 values {
-	    r: Ector.Renderer *;
+	    r: Ector.Renderer;
 	 }
       }
       @property quality {
@@ -114,7 +114,7 @@ abstract Ector.Renderer (Eo.Base)
          return: bool @warn_unused;
 	 params {
 	    @in op: Efl.Gfx.Render_Op;
-	    @in clips: array<Eina.Rectangle *> *; [[array of @Eina.Rectangle clip]]
+	    @in clips: array<Eina.Rectangle *>; [[array of @Eina.Rectangle clip]]
 	    @in mul_col: uint;
 	 }
       }

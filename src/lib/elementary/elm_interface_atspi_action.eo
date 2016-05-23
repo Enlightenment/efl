@@ -45,7 +45,7 @@ mixin Elm.Interface.Atspi_Action ()
             [[Get list of available widget actions]]
          }
          values {
-            actions: list<Elm_Atspi_Action> *; [[contains statically allocated strings]]
+            actions: list<Elm_Atspi_Action>; [[contains statically allocated strings]]
          }
       }
       action_do @protected @virtual_pure {

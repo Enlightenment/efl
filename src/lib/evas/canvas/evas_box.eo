@@ -191,10 +191,10 @@ class Evas.Box (Evas.Smart.Clipped)
       }
       internal_remove {
          [[No description supplied by the EAPI.]]
-         return: Evas.Object *;
+         return: Evas.Object;
          legacy: null;
          params {
-            @in child: Evas.Object *;
+            @in child: Evas.Object;
          }
       }
       layout_flow_vertical {
@@ -232,8 +232,8 @@ class Evas.Box (Evas.Smart.Clipped)
          return: Evas_Object_Box_Option *; [[A box option bound to the recently added box item or
                                              $null, on errors]]
          params {
-            @in child: Evas.Object * @nonull; [[A child Evas object to be made a member of $o.]]
-            @in reference: const(Evas.Object)* @nonull; [[The child object to place this new one after.]]
+            @in child: Evas.Object @nonull; [[A child Evas object to be made a member of $o.]]
+            @in reference: const(Evas.Object) @nonull; [[The child object to place this new one after.]]
          }
       }
       remove_all {
@@ -252,7 +252,7 @@ class Evas.Box (Evas.Smart.Clipped)
          [[Get an iterator to walk the list of children of a given box object.
 
            Note: Do not remove or delete objects while walking the list.]]
-         return: free(own(iterator<Evas.Object *> *), eina_iterator_free)
+         return: free(own(iterator<Evas.Object>), eina_iterator_free)
             @warn_unused; [[An iterator on $o's child objects, on success, or $null, on errors.]]
       }
       add_to {
@@ -261,7 +261,7 @@ class Evas.Box (Evas.Smart.Clipped)
            This is a helper function that has the same effect of putting a new
            box object into $parent by use of evas_object_smart_member_add.]]
 
-         return: Evas.Object * @warn_unused; [[$null on error, a pointer to a new box object on
+         return: Evas.Object @warn_unused; [[$null on error, a pointer to a new box object on
                                                success.]]
       }
       append {
@@ -280,7 +280,7 @@ class Evas.Box (Evas.Smart.Clipped)
          return: Evas_Object_Box_Option *; [[A box option bound to the recently added box item or
                                              $null, on errors.]]
          params {
-            @in child: Evas.Object * @nonull; [[A child Evas object to be made a member of $o.]]
+            @in child: Evas.Object @nonull; [[A child Evas object to be made a member of $o.]]
          }
       }
       option_property_id_get @const {
@@ -316,7 +316,7 @@ class Evas.Box (Evas.Smart.Clipped)
          return: Evas_Object_Box_Option *; [[A box option bound to the recently added box item or
                                              $null, on errors.]]
          params {
-            @in child: Evas.Object * @nonull; [[A child Evas object to be made a member of $o.]]
+            @in child: Evas.Object @nonull; [[A child Evas object to be made a member of $o.]]
          }
       }
       accessor_new @const {
@@ -324,7 +324,7 @@ class Evas.Box (Evas.Smart.Clipped)
            list of children of a given box object.
 
            Note: Do not remove or delete objects while walking the list.]]
-         return: free(own(accessor<Evas.Object *> *), eina_accessor_free)
+         return: free(own(accessor<Evas.Object>), eina_accessor_free)
             @warn_unused; [[An accessor on $o's child objects, on success, or $null,
                             on errors.]]
       }
@@ -333,7 +333,7 @@ class Evas.Box (Evas.Smart.Clipped)
          legacy: null;
          return: Evas_Object_Box_Option *;
          params {
-            @in child: Evas.Object *;
+            @in child: Evas.Object;
          }
       }
       option_property_vset {
@@ -358,7 +358,7 @@ class Evas.Box (Evas.Smart.Clipped)
       internal_remove_at {
          [[No description supplied by the EAPI.]]
          legacy: null;
-         return: Evas.Object *;
+         return: Evas.Object;
          params {
             @in pos: uint;
          }
@@ -407,7 +407,7 @@ class Evas.Box (Evas.Smart.Clipped)
          legacy: null;
          return: Evas_Object_Box_Option *;
          params {
-            @in child: Evas.Object *;
+            @in child: Evas.Object;
             @in pos: uint;
          }
       }
@@ -428,8 +428,8 @@ class Evas.Box (Evas.Smart.Clipped)
          return: Evas_Object_Box_Option *; [[A box option bound to the recently added box item or
                                              $null, on errors.]]
          params {
-            @in child: Evas.Object * @nonull; [[A child Evas object to be made a member of $o.]]
-            @in reference: const(Evas.Object)* @nonull; [[The child object to place this new one before.]]
+            @in child: Evas.Object @nonull; [[A child Evas object to be made a member of $o.]]
+            @in reference: const(Evas.Object) @nonull; [[The child object to place this new one before.]]
          }
       }
       option_property_name_get @const {
@@ -453,8 +453,8 @@ class Evas.Box (Evas.Smart.Clipped)
          legacy: null;
          return: Evas_Object_Box_Option *;
          params {
-            @in child: Evas.Object *;
-            @in reference: const(Evas.Object)*;
+            @in child: Evas.Object;
+            @in reference: const(Evas.Object);
          }
       }
       layout_homogeneous_horizontal {
@@ -499,7 +499,7 @@ class Evas.Box (Evas.Smart.Clipped)
          legacy: null;
          return: Evas_Object_Box_Option*;
          params {
-            @in child: Evas.Object *;
+            @in child: Evas.Object;
          }
       }
       layout_homogeneous_max_size_vertical {
@@ -520,8 +520,8 @@ class Evas.Box (Evas.Smart.Clipped)
          legacy: null;
          return: Evas_Object_Box_Option *;
          params {
-            @in child: Evas.Object *;
-            @in reference: const(Evas.Object)*;
+            @in child: Evas.Object;
+            @in reference: const(Evas.Object);
          }
       }
       insert_at {
@@ -542,7 +542,7 @@ class Evas.Box (Evas.Smart.Clipped)
          return: Evas_Object_Box_Option *; [[A box option bound to the recently added box item or
                                              $null, on errors.]]
          params {
-            @in child: Evas.Object * @nonull; [[A child Evas object to be made a member of $o.]]
+            @in child: Evas.Object @nonull; [[A child Evas object to be made a member of $o.]]
             @in pos: uint; [[The numeric position (starting from $0) to place the
                              new child object at.]]
          }
@@ -552,7 +552,7 @@ class Evas.Box (Evas.Smart.Clipped)
          legacy: null;
          return: Evas_Object_Box_Option*;
          params {
-            @in child: Evas.Object *;
+            @in child: Evas.Object;
          }
       }
       remove {
@@ -569,7 +569,7 @@ class Evas.Box (Evas.Smart.Clipped)
 
          return: bool; [[$true on success, $false otherwise.]]
          params {
-            @in child: Evas.Object * @nonull; [[The handle to the child object to be removed.]]
+            @in child: Evas.Object @nonull; [[The handle to the child object to be removed.]]
          }
       }
       layout_stack {

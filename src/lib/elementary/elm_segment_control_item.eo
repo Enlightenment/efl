@@ -16,7 +16,7 @@ class Elm.Segment_Control.Item(Elm.Widget.Item)
              [[Get the real Evas(Edje) object created to implement the view of a given segment_control item.
 
                Base object is the @Evas.Object that represents that item.]]
-             return: Evas.Object*; [[The base Edje object associated with $it]]
+             return: Evas.Object; [[The base Edje object associated with $it]]
         }
       selected_set {
              [[Set the selected state of an item.

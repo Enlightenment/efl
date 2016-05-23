@@ -307,7 +307,7 @@ class Elm.Web (Elm.Widget)
               return the internal reference. Be careful using it as it may
               interfere with elm_web behavior.
             ]]
-            return: Evas.Object *; [[The internal ewk_view object or $null
+            return: Evas.Object; [[The internal ewk_view object or $null
                                      if it does not exist. (Failure to
                                      create or Elementary compiled
                                      without ewebkit)]]

@@ -108,7 +108,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                      part: const (char) * @nullable; [[The content part name  (NULL for the default content)]]
                 }
                 values {
-                     content: Evas.Object *; [[The content of the object item]]
+                     content: Evas.Object; [[The content of the object item]]
                 }
            }
            @property part_text {
@@ -189,14 +189,14 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                   [[Get highlight order
 
                     @since 1.8]]
-                return: const(list<Evas.Object *>) *;
+                return: const(list<Evas.Object>);
            }
            access_order_set {
                 [[Set highlight order
 
                   @since 1.8]]
                 params {
-                     @in objs: own(list<Evas.Object *> *); [[Order of objects to pass highlight]]
+                     @in objs: own(list<Evas.Object>); [[Order of objects to pass highlight]]
                 }
            }
            widget_get @const {
@@ -204,7 +204,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
 
                   Note: This returns the widget object itself that an item belongs to.
                   Note: Every elm_object_item supports this API]]
-                  return: Evas.Object*; [[The widget object]]
+                  return: Evas.Object; [[The widget object]]
            }
            del {
                 [[Delete the given item.]]
@@ -260,7 +260,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                 params {
                      part: const (char) *; [[The content part name to unset (NULL for the default content)]]
                 }
-                return: Evas.Object*;
+                return: Evas.Object;
            }
            part_text_custom_update @protected {
                 [[Update additional text part content]]
@@ -322,7 +322,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                 [[Get an accessible object of the object item.
 
                   @since 1.8]]
-                return: Evas.Object*; [[Accessible object of the object item or NULL for any error]]
+                return: Evas.Object; [[Accessible object of the object item or NULL for any error]]
            }
            domain_translatable_part_text_set {
                 [[Set the text for an object item's part, marking it as translatable.
@@ -408,7 +408,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                   See: @.track_get
 
                   @since 1.8]]
-                return: Evas.Object*; [[The track object]]
+                return: Evas.Object; [[The track object]]
            }
            untrack {
                 [[This retrieve the track object of the item.
@@ -472,7 +472,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                 [[Register object item as an accessible object.
 
                   @since 1.8]]
-                return: Evas.Object*; [[Accessible object of the object item or NULL for any error]]
+                return: Evas.Object; [[Accessible object of the object item or NULL for any error]]
            }
            access_unregister {
                 [[Unregister accessible object of the object item.
@@ -498,14 +498,14 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                 params {
                      dir: Elm.Focus_Direction; [[Focus direction]]
                 }
-                return: Evas.Object *; [[Focus next object]]
+                return: Evas.Object; [[Focus next object]]
            }
            focus_next_object_set {
                 [[Set the next object with specific focus direction.
 
                   @since 1.16]]
                 params {
-                     next: Evas.Object * @nullable; [[Focus next object]]
+                     next: Evas.Object @nullable; [[Focus next object]]
                      dir: Elm.Focus_Direction; [[Focus direction]]
                 }
            }
@@ -516,14 +516,14 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                 params {
                      dir: Elm.Focus_Direction; [[Focus direction]]
                 }
-                return: Elm.Widget.Item *; [[Focus next object item]]
+                return: Elm.Widget.Item; [[Focus next object item]]
            }
            focus_next_item_set {
                 [[Set the next object item with specific focus direction.
 
                   @since 1.16]]
                 params {
-                     next_item: Elm.Widget.Item * @nullable; [[Focus next object item]]
+                     next_item: Elm.Widget.Item @nullable; [[Focus next object item]]
                      dir: Elm.Focus_Direction; [[Focus direction]]
                 }
            }

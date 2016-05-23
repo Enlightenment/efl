@@ -1739,11 +1739,10 @@ EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Type *tp);
 EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Type *tp);
 
 /*
- * @brief Get whether the given type is @own.
+ * @brief Get whether the given type is owned.
  *
  * @param[in] tp the type.
- * @return EINA_TRUE when @c tp is a non-function type and not NULL,
- * EINA_FALSE otherwise.
+ * @return EINA_TRUE when the type is marked owned, EINA_FALSE otherwise.
  *
  * @ingroup Eolian
  */
@@ -1753,8 +1752,7 @@ EAPI Eina_Bool eolian_type_is_own(const Eolian_Type *tp);
  * @brief Get whether the given type is const.
  *
  * @param[in] tp the type.
- * @return EINA_TRUE when @c tp is a non-function type and not NULL,
- * EINA_FALSE otherwise.
+ * @return EINA_TRUE when the type is const, EINA_FALSE otherwise.
  *
  * @ingroup Eolian
  */
@@ -1830,8 +1828,8 @@ EAPI Eina_Iterator *eolian_type_namespaces_get(const Eolian_Type *tp);
  * @param[in] tp the type.
  * @return the free func name.
  *
- * For pointer types, this returns name of the func used to free the pointer.
- * For other types, this returns NULL.
+ * For pointer, class and complex types, this returns name of the func used
+ * to free the pointer. For other types, this returns NULL.
  *
  * @ingroup Eolian
  */

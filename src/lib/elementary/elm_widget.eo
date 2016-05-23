@@ -172,12 +172,12 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
               the list of objects. The previous list will be deleted and this list
               will be managed by elementary. After it is set, don't modify it.]]
             values {
-               objs: list<Evas.Object*>*; [[Chain of objects to pass focus]]
+               objs: list<Evas.Object>; [[Chain of objects to pass focus]]
             }
          }
          get {
             values {
-               objs: const(list<Evas.Object*>)*; [[Chain of objects]]
+               objs: const(list<Evas.Object>); [[Chain of objects]]
             }
          }
       }
@@ -222,7 +222,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
             legacy: elm_widget_parent_get; /* Needed because we don't do duplication removal for legacy names. */
          }
          values {
-            parent: Evas.Object * @nullable;
+            parent: Evas.Object @nullable;
          }
       }
       @property access_info {
@@ -274,7 +274,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
             return: bool;
          }
          values {
-            edj: Evas.Object *;
+            edj: Evas.Object;
             wname: const(char)*;
             welement: const(char)*;
             wstyle: const(char)*;
@@ -284,7 +284,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          set {
          }
          values {
-            sobj: Evas.Object * @nullable;
+            sobj: Evas.Object @nullable;
          }
       }
       @property display_mode {
@@ -322,7 +322,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          set {
          }
          values {
-            sobj: Evas.Object * @nullable;
+            sobj: Evas.Object @nullable;
             sub_obj: bool;
          }
       }
@@ -340,7 +340,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
             [[Function to operate on a given widget's scrollabe children when necessary.
 
               Warning: free the returned list with eina_list_free().]]
-            return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
+            return: free(own(list<Evas.Object>), eina_list_free) @warn_unused;
          }
       }
       @property scroll_hold {
@@ -386,7 +386,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       }
       @property top {
          get {
-            return: Evas.Object *;
+            return: Evas.Object;
          }
       }
       @property focus_order {
@@ -401,13 +401,13 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       }
       @property can_focus_child_list {
          get {
-            return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
+            return: free(own(list<Evas.Object>), eina_list_free) @warn_unused;
          }
       }
       @property focused_item {
          get {
             [[Get the focused widget item.]]
-            return: Elm.Widget.Item *;
+            return: Elm.Widget.Item;
          }
       }
       @property parents_bounce {
@@ -420,7 +420,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       }
       @property parent_widget {
          get @virtual_pure {
-            return: Evas.Object *;
+            return: Evas.Object;
             legacy: null;
          }
       }
@@ -432,7 +432,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       @property focused_object {
          [[Current focused object in object tree.]]
          get {
-            return: Evas.Object *; [[Current focused or $null, if there is no focused object.]]
+            return: Evas.Object; [[Current focused or $null, if there is no focused object.]]
          }
       }
       @property parent2 {
@@ -441,7 +441,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          get {
          }
          values {
-            parent: Evas.Object * @nullable;
+            parent: Evas.Object @nullable;
          }
       }
       @property part_text {
@@ -457,7 +457,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          }
       }
       newest_focus_order_get @const {
-         return: Evas.Object *;
+         return: Evas.Object;
          params {
             @out newest_focus_order: uint;
             @in can_focus_only: bool;
@@ -475,7 +475,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
 
            @since 1.8]]
          params {
-            @in next: Evas.Object * @nullable; [[Focus next object]]
+            @in next: Evas.Object @nullable; [[Focus next object]]
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
@@ -483,7 +483,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          [[Get the next object with specific focus direction.
 
            @since 1.8]]
-         return: Evas.Object *; [[Focus next object]]
+         return: Evas.Object; [[Focus next object]]
          params {
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
@@ -493,7 +493,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
 
            @since 1.16]]
          params {
-            @in next_item: Elm.Widget.Item * @nullable; [[Focus next object item]]
+            @in next_item: Elm.Widget.Item @nullable; [[Focus next object item]]
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
@@ -501,7 +501,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          [[Get the next object item with specific focus direction.
 
            @since 1.16]]
-         return: Elm.Widget.Item *; [[Focus next object item]]
+         return: Elm.Widget.Item; [[Focus next object item]]
          params {
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
@@ -516,8 +516,8 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
 
            Note: On focus cycle, only will be evaluated children of this container.]]
          params {
-            @in child: Evas.Object *; [[The child to be added in custom chain.]]
-            @in relative_child: Evas.Object * @optional; [[The relative object to position the child.]]
+            @in child: Evas.Object; [[The child to be added in custom chain.]]
+            @in relative_child: Evas.Object @optional; [[The relative object to position the child.]]
          }
       }
       part_text_translate {
@@ -548,7 +548,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          [['Virtual' function handling sub objects being added.]]
          return: bool;
          params {
-            @in sobj: Evas.Object *;
+            @in sobj: Evas.Object;
          }
       }
       focus_direction_manager_is {
@@ -559,7 +559,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       event {
          [['Virtual' function handling input events on the widget.]]
          params {
-            @in source: Evas.Object *;
+            @in source: Evas.Object;
             @in type: Evas.Callback_Type;
             @in event_info: void *;
          }
@@ -593,7 +593,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       on_focus {
          [['Virtual' function handling focus in/out events on the widget.  return true if this widget can handle focus, false otherwise]]
          params {
-            @in item: Elm.Widget.Item * @nullable;
+            @in item: Elm.Widget.Item @nullable;
          }
          return: bool;
       }
@@ -617,10 +617,10 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       focus_direction @virtual_pure {
          [['Virtual' function handling passing focus to sub-objects given a direction, in degrees.]]
          params {
-            @in base: const(Evas.Object)*;
+            @in base: const(Evas.Object);
             @in degree: double;
-            @out direction: Evas.Object *;
-            @out direction_item: Elm.Widget.Item *;
+            @out direction: Evas.Object;
+            @out direction_item: Elm.Widget.Item;
             @out weight: double;
          }
          return: bool;
@@ -646,7 +646,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          return: bool;
       }
       name_find @const {
-         return: Evas.Object *;
+         return: Evas.Object;
          params {
             @in name: const(char)*;
             @in recurse: int;
@@ -655,12 +655,12 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       focus_list_direction_get @const {
          return: bool;
          params {
-            @in base: const(Evas.Object)*;
-            @in items: const(list<Eo.Base*>)*;
+            @in base: const(Evas.Object);
+            @in items: const(list<Eo.Base>);
             @in list_data_get: list_data_get_func_type;
             @in degree: double;
-            @out direction: Evas.Object *;
-            @out direction_item: Elm.Widget.Item *;
+            @out direction: Evas.Object;
+            @out direction_item: Elm.Widget.Item;
             @out weight: double;
          }
       }
@@ -700,8 +700,8 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          return: bool;
          params {
             @in dir: Elm.Focus_Direction;
-            @out next: Evas.Object *;
-            @out next_item: Elm.Widget.Item *;
+            @out next: Evas.Object;
+            @out next_item: Elm.Widget.Item;
          }
       }
       translatable_part_text_get @const {
@@ -733,7 +733,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       }
       focus_steal {
          params {
-            @in item: Elm.Widget.Item * @nullable;
+            @in item: Elm.Widget.Item @nullable;
          }
       }
       focus_hide_handle {
@@ -742,19 +742,19 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          [['Virtual' function handling passing focus to sub-objects.]]
          params {
             @in dir: Elm.Focus_Direction;
-            @out next: Evas.Object *;
-            @out next_item: Elm.Widget.Item *;
+            @out next: Evas.Object;
+            @out next_item: Elm.Widget.Item;
          }
          return: bool;
       }
       focus_list_next_get @const {
          return: bool;
          params {
-            @in items: const(list<Eo.Base*>)*;
+            @in items: const(list<Eo.Base>);
             @in list_data_get: list_data_get_func_type;
             @in dir: Elm.Focus_Direction;
-            @out next: Evas.Object *;
-            @out next_item: Elm.Widget.Item *;
+            @out next: Evas.Object;
+            @out next_item: Elm.Widget.Item;
          }
       }
       focus_mouse_up_handle {
@@ -767,10 +767,10 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       focus_direction_get @const {
          return: bool;
          params {
-            @in base: const(Evas.Object)*;
+            @in base: const(Evas.Object);
             @in degree: double;
-            @out direction: Evas.Object *;
-            @out direction_item: Elm.Widget.Item *;
+            @out direction: Evas.Object;
+            @out direction_item: Elm.Widget.Item;
             @out weight: double;
          }
       }
@@ -796,7 +796,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          [['Virtual' function handling sub objects being removed.]]
          return: bool;
          params {
-            @in sobj: Evas.Object *;
+            @in sobj: Evas.Object;
          }
       }
       tooltip_add {
@@ -816,8 +816,8 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
 
            Note: On focus cycle, only will be evaluated children of this container.]]
          params {
-            @in child: Evas.Object *; [[The child to be added in custom chain.]]
-            @in relative_child: Evas.Object * @optional; [[The relative object to position the child.]]
+            @in child: Evas.Object; [[The child to be added in custom chain.]]
+            @in relative_child: Evas.Object @optional; [[The relative object to position the child.]]
          }
       }
       @property focus_move_policy {

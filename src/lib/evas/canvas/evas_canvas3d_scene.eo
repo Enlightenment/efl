@@ -64,28 +64,28 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object, Evas.Common_Interface)
          ]]
          return: bool;
          params {
-            @in x: Evas.Real;                [[X coordinate of the picking position.]]
-            @in y: Evas.Real;                [[Y coordinate of the picking position.]]
-            @out node: Evas.Canvas3D.Node *; [[Pointer to receive the node contains the picked mesh.]]
-            @out mesh: Evas.Canvas3D.Mesh *; [[Pointer to receive the picked mesh.]]
-            @out s: Evas.Real;               [[Pointer to receive the texture "s" coordinate.]]
-            @out t: Evas.Real;               [[Pointer to receive the texture "t" coordinate.]]
+            @in x: Evas.Real;              [[X coordinate of the picking position.]]
+            @in y: Evas.Real;              [[Y coordinate of the picking position.]]
+            @out node: Evas.Canvas3D.Node; [[Pointer to receive the node contains the picked mesh.]]
+            @out mesh: Evas.Canvas3D.Mesh; [[Pointer to receive the picked mesh.]]
+            @out s: Evas.Real;             [[Pointer to receive the texture "s" coordinate.]]
+            @out t: Evas.Real;             [[Pointer to receive the texture "t" coordinate.]]
          }
       }
 
       exist @const {
          [[Search given node in the given position.]]
-         return: Evas.Canvas3D.Node *;
+         return: Evas.Canvas3D.Node;
          params {
             @in x: Evas.Real; [[X coordinate of the picking position.]]
             @in y: Evas.Real; [[Y coordinate of the picking position.]]
-            @in node: Evas.Canvas3D.Node *; [[Node for search.]]
+            @in node: Evas.Canvas3D.Node; [[Node for search.]]
          }
       }
 
       pick_member_list_get @const {
          [[Get list of the all root members from scene in the given position.]]
-         return: list<Evas.Canvas3D.Node *> *;
+         return: list<Evas.Canvas3D.Node>;
          params {
             @in x: Evas.Real; [[X coordinate of the picking position.]]
             @in y: Evas.Real; [[Y coordinate of the picking position.]]
@@ -127,8 +127,8 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object, Evas.Common_Interface)
             [[Get the root node of a scene.]]
          }
          values {
-            node: Evas.Canvas3D.Node *; [[A node which will be used as a
-                                          root node for the scene.]]
+            node: Evas.Canvas3D.Node; [[A node which will be used as a
+                                        root node for the scene.]]
          }
       }
 
@@ -140,8 +140,8 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object, Evas.Common_Interface)
             [[Get the camera node of a scene.]]
          }
          values {
-            node: Evas.Canvas3D.Node *; [[A node which will be used as a
-                                          camera node for the scene.]]
+            node: Evas.Canvas3D.Node; [[A node which will be used as a
+                                        camera node for the scene.]]
          }
       }
       @property shadows_depth {

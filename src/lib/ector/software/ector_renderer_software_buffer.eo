@@ -5,7 +5,7 @@ class Ector.Renderer.Software.Buffer (Ector.Renderer.Software, Ector.Renderer.Bu
          set {}
          get {}
          values {
-            buf: Ector.Buffer *;
+            buf: Ector.Buffer;
          }
       }
    }

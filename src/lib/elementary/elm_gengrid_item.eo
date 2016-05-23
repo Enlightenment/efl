@@ -37,7 +37,7 @@ class Elm.Gengrid.Item(Elm.Widget.Item)
                        gengrid.]]
                 }
                 values {
-                     item: Elm.Widget.Item *; [[The item before $item, or $NULL if there's none (and on errors)]]
+                     item: Elm.Widget.Item; [[The item before $item, or $NULL if there's none (and on errors)]]
                 }
            }
            @property next {
@@ -49,7 +49,7 @@ class Elm.Gengrid.Item(Elm.Widget.Item)
                        gengrid.]]
                 }
                 values {
-                     item: Elm.Widget.Item *; [[The item after $item, or $NULL if there's none (and on errors)]]
+                     item: Elm.Widget.Item; [[The item after $item, or $NULL if there's none (and on errors)]]
                 }
            }
            @property selected {
@@ -201,7 +201,7 @@ class Elm.Gengrid.Item(Elm.Widget.Item)
                  floating "orphans" that can be re-used elsewhere if the user wants
                  to.]]
                 params {
-                     @out l: own(list<own(Evas.Object *)> *); [[The contents list to return.]]
+                     @out l: own(list<own(Evas.Object)>); [[The contents list to return.]]
                 }
            }
       }

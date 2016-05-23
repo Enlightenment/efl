@@ -119,7 +119,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
            @since 1.8]]
 
-         return: const(Evas.Object)*; [[A valid widget handle, on success, or $NULL, otherwise]]
+         return: const(Evas.Object); [[A valid widget handle, on success, or $NULL, otherwise]]
          params {
             @in name: const(char)*; [[The name of the item (as declared in the prefs collection) to get object from]]
          }
@@ -151,7 +151,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          return: bool; [[$true, on success, $false otherwise]]
          params {
             @in name: const(char)*; [[the name of the SWALLOW item (as declared in the prefs collection)]]
-            @in child: Evas.Object *; [[The object to occupy the item]]
+            @in child: Evas.Object; [[The object to occupy the item]]
          }
       }
       item_editable_set {
@@ -182,7 +182,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
            @since 1.8]]
 
-         return: Evas.Object *; [[The unswallowed object, or NULL on errors]]
+         return: Evas.Object; [[The unswallowed object, or NULL on errors]]
          params {
             @in name: const(char)*; [[the name of the SWALLOW item (as declared in the prefs collection)]]
          }

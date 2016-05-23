@@ -11,7 +11,7 @@ class Elm.App.Client (Eo.Base)
             [[Return a iterator with all views of application.]]
          }
          values {
-            ret: free(own(iterator<Elm.App.Client.View *> *), eina_iterator_free); [[The iterator with all views, must be freed after use.]]
+            ret: free(own(iterator<Elm.App.Client.View>), eina_iterator_free); [[The iterator with all views, must be freed after use.]]
          }
       }
       @property package {

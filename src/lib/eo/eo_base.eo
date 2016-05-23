@@ -10,7 +10,7 @@ struct Eo.Event.Description {
 
 struct Eo.Event {
      [[Parameter passed in event callbacks holding extra event parameters]]
-     object: Eo.Base *; [[The object the event was called on.]]
+     object: Eo.Base; [[The object the event was called on.]]
      desc: const(Eo.Event.Description) *; [[The event description.]]
      info: void *; [[Extra event information passed by the event caller.]]
 }
@@ -70,7 +70,7 @@ abstract Eo.Base ()
          get {
          }
          values {
-            parent: Eo.Base * @nullable; [[the new parent]]
+            parent: Eo.Base @nullable; [[the new parent]]
          }
       }
       @property name {
@@ -147,16 +147,16 @@ abstract Eo.Base ()
           If this is not done the class cannot be found up in the object tree.
         ]]
         params {
-          klass : const(Eo.Base)*; [[The class identifier to search for]]
+          klass : const(Eo.Base); [[The class identifier to search for]]
         }
-        return : Eo.Base*;
+        return : Eo.Base;
       }
       constructor {
          [[Call the object's constructor.
 
            Should not be used with #eo_do. Only use it with #eo_do_super.
          ]]
-         return: Eo.Base *; [[The new object created, can be NULL if aborting]]
+         return: Eo.Base; [[The new object created, can be NULL if aborting]]
       }
       destructor {
          [[Call the object's destructor.
@@ -166,7 +166,7 @@ abstract Eo.Base ()
       }
       finalize {
          [[Called at the end of #eo_add. Should not be called, just overridden.]]
-         return: Eo.Base *; [[The new object created, can be NULL if aborting]]
+         return: Eo.Base; [[The new object created, can be NULL if aborting]]
       }
       name_find {
          [[Find a child object with the given name and return it.
@@ -179,7 +179,7 @@ abstract Eo.Base ()
          params {
             @in search: const(char)*; [[the name search string]]
          }
-         return: Eo.Base *; [[the first object found]]
+         return: Eo.Base; [[the first object found]]
       }
       wref_add {
          [[Add a new weak reference to obj.
@@ -191,13 +191,13 @@ abstract Eo.Base ()
            being freed.
          ]]
          params {
-            @out wref: Eo.Base *;
+            @out wref: Eo.Base;
          }
       }
       wref_del {
          [[Delete the weak reference passed.]]
          params {
-            @in wref: Eo.Base **;
+            @out wref: Eo.Base;
          }
       }
       @property key_data {
@@ -235,12 +235,12 @@ abstract Eo.Base ()
          }
          set {
             values {
-               objdata: const(Eo.Base) *; [[the object to set]]
+               objdata: const(Eo.Base); [[the object to set]]
             }
          }
          get {
             values {
-               objdata: Eo.Base *; [[the object to set]]
+               objdata: Eo.Base; [[the object to set]]
             }
          }
       }
@@ -345,14 +345,14 @@ abstract Eo.Base ()
          [[Add an event callback forwarder for an event and an object.]]
          params {
             @in desc: const(Eo.Event.Description)*; [[The description of the event to listen to]]
-            @in new_obj: Eo.Base *; [[The object to emit events from]]
+            @in new_obj: Eo.Base; [[The object to emit events from]]
          }
       }
       event_callback_forwarder_del {
          [[Remove an event callback forwarder for an event and an object.]]
          params {
             @in desc: const(Eo.Event.Description)*; [[The description of the event to listen to]]
-            @in new_obj: Eo.Base *; [[The object to emit events from]]
+            @in new_obj: Eo.Base; [[The object to emit events from]]
          }
       }
       dbg_info_get {
@@ -363,7 +363,7 @@ abstract Eo.Base ()
       }
       children_iterator_new {
          [[Get an iterator on all childrens]]
-         return: free(own(iterator<Eo.Base *> *), eina_iterator_free) @warn_unused;
+         return: free(own(iterator<Eo.Base>), eina_iterator_free) @warn_unused;
       }
       composite_attach @beta {
            [[Make an object a composite object of another.
@@ -375,7 +375,7 @@ abstract Eo.Base ()
              See @.composite_detach, @.composite_part_is.
            ]]
            params {
-                @in comp_obj: Eo.Base *; [[the object that will be used to composite the parent.]]
+                @in comp_obj: Eo.Base; [[the object that will be used to composite the parent.]]
            }
            return: bool; [[$true if successful. $false otherwise.]]
       }
@@ -387,7 +387,7 @@ abstract Eo.Base ()
              See @.composite_attach, @.composite_part_is.
            ]]
            params {
-                @in comp_obj: Eo.Base *; [[the object that will be removed from the parent.]]
+                @in comp_obj: Eo.Base; [[the object that will be removed from the parent.]]
            }
            return: bool; [[$true if successful. $false otherwise.]]
       }

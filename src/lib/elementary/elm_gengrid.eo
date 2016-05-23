@@ -283,7 +283,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
               in the list is selected, which might not be very useful. For
               that case, see @.selected_items.get.
             ]]
-            return: Elm.Widget.Item *; [[The selected item's handle or $null
+            return: Elm.Widget.Item; [[The selected item's handle or $null
                                          if none is selected at the moment
                                          (and on errors).]]
          }
@@ -298,7 +298,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
               in the list are only valid so long as those items are not
               deleted or the gengrid is not deleted.
             ]]
-            return: free(own(list<Elm_Gen_Item *> *), eina_list_free) @warn_unused; [[
+            return: free(own(list<Elm_Gen_Item *>), eina_list_free) @warn_unused; [[
                 The list of realized items or $null if none are realized.
             ]]
          }
@@ -310,7 +310,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
               This returns the first item in the $obj's internal list of
               items.
             ]]
-            return: Elm.Widget.Item *; [[
+            return: Elm.Widget.Item; [[
                The first item's handle or $null, if there are no
                items in $obj (and on errors)
             ]]
@@ -326,7 +326,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
               by deletion). The list contains Gengrid item pointers as
               data, naturally.
             ]]
-            return: const(list<Elm.Widget.Item *>)*; [[
+            return: const(list<Elm.Widget.Item>); [[
                The list of selected items or $null, if none is
                selected at the moment (and on errors).
             ]]
@@ -339,7 +339,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
               This returns the last item in the $obj's internal list of
               items.
             ]]
-            return: Elm.Widget.Item *; [[The last item's handle or $null
+            return: Elm.Widget.Item; [[The last item's handle or $null
                                          if there are no  items in $obj
                                          (and on errors).]]
          }
@@ -371,11 +371,11 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
 
            This inserts an item before another in the gengrid.
          ]]
-         return: Elm.Widget.Item *; [[A handle to the item added or $null on errors.]]
+         return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
             @in itc: const(Elm.Gengrid.Item.Class)*; [[The item class for the item.]]
             @in data: const(void)*; [[The item data.]]
-            @in relative: Elm.Widget.Item *; [[The item to place this new one before.]]
+            @in relative: Elm.Widget.Item; [[The item to place this new one before.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called
                                                  when the item is selected.]]
             @in func_data: const(void)* @optional; [[Data to be passed to $func.]]
@@ -397,11 +397,11 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
 
            This inserts an item after another in the gengrid.
          ]]
-         return: Elm.Widget.Item *; [[A handle to the item added or $null on error.]]
+         return: Elm.Widget.Item; [[A handle to the item added or $null on error.]]
          params {
             @in itc: const(Elm.Gengrid.Item.Class)*; [[The item class for the item.]]
             @in data: const(void)*; [[The item data.]]
-            @in relative: Elm.Widget.Item *; [[The item to place this new one after.]]
+            @in relative: Elm.Widget.Item; [[The item to place this new one after.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called
                                                  when the item is selected.]]
             @in func_data: const(void)* @optional; [[Data to be passed to $func.]]
@@ -432,7 +432,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
            there), then posret may indicate -1 or 1 based if the coordinate
            is above or below all items respectively in the gengrid.
          ]]
-         return: Elm.Widget.Item *; [[The item at the coordinates or $null if none.]]
+         return: Elm.Widget.Item; [[The item at the coordinates or $null if none.]]
          params {
             @in x: Evas.Coord; [[The input x coordinate.]]
             @in y: Evas.Coord; [[The input y coordinate.]]
@@ -445,7 +445,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
 
            This adds an item to the beginning of the gengrid.
          ]]
-         return: Elm.Widget.Item *; [[A handle to the item added or $null on errors.]]
+         return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
             @in itc: const(Elm.Gengrid.Item.Class)*; [[The item class for the item.]]
             @in data: const(void)*; [[The item data.]]
@@ -459,7 +459,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
 
            This adds an item to the end of the gengrid.
          ]]
-         return: Elm.Widget.Item *; [[A handle to the item added or $null on errors.]]
+         return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
             @in itc: const(Elm.Gengrid.Item.Class)*; [[The item class for the item.]]
             @in data: const(void)*; [[The item data.]]
@@ -484,7 +484,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
            comparison function. The two arguments passed to the function
            $func are gengrid item handles to compare.
          ]]
-         return: Elm.Widget.Item *; [[A handle to the item added or $null on errors.]]
+         return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
             @in itc: const(Elm.Gengrid.Item.Class)*; [[The item class for the item.]]
             @in data: const(void)*; [[The item data.]]
@@ -508,11 +508,11 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
 
            @since 1.11
          ]]
-         return: Elm.Widget.Item *; [[Pointer to the gengrid item which matches
+         return: Elm.Widget.Item; [[Pointer to the gengrid item which matches
                                       search_string in case of success,
                                       otherwise $null.]]
          params {
-            @in item_to_search_from: Elm.Widget.Item * @optional; [[
+            @in item_to_search_from: Elm.Widget.Item @optional; [[
                Pointer to item to start search from. If $null, search will
                be started from the first item of the gengrid.
             ]]

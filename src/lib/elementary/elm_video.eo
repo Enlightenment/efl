@@ -77,7 +77,7 @@ class Elm.Video (Elm.Layout, Efl.File, Elm.Interface.Atspi_Widget_Action)
       @property emotion {
          get {
             [[Get the underlying Emotion object.]]
-            return: Evas.Object *; [[the underlying Emotion object.]]
+            return: Evas.Object; [[the underlying Emotion object.]]
          }
       }
       @property is_seekable {

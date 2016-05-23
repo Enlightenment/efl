@@ -232,7 +232,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
          [[Set the data of given mesh frame from the given primitive.]]
          params {
             @in frame: int; [[Specifies data of which frame of given mesh will be set.]]
-            @in primitive: Evas.Canvas3D.Primitive *; [[Specifies which data will be set.]]
+            @in primitive: Evas.Canvas3D.Primitive; [[Specifies which data will be set.]]
          }
       }
       @property shader_mode {
@@ -356,7 +356,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
             frame: int; [[The number of the key frame.]]
          }
          values {
-            material: Evas.Canvas3D.Material *; [[The material to be set to the key frame.]]
+            material: Evas.Canvas3D.Material; [[The material to be set to the key frame.]]
          }
       }
 

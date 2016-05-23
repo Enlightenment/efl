@@ -6,10 +6,10 @@ class Efl.VG.Container (Efl.VG)
          params {
             @in name: const(char)*;
          }
-         return: Efl.VG *;
+         return: Efl.VG;
       }
       children_get {
-         return: free(own(iterator<Efl.VG *>*), eina_iterator_free) @warn_unused;
+         return: free(own(iterator<Efl.VG>), eina_iterator_free) @warn_unused;
       }
    }
    implements {

@@ -7,7 +7,7 @@ class Elm.View.Form (Eo.Base)
                @since 1.11
              ]]
              params {
-                 @in model: Efl.Model*; [[Emodel object]]
+                 @in model: Efl.Model; [[Emodel object]]
              }
         }
         widget_add {
@@ -17,7 +17,7 @@ class Elm.View.Form (Eo.Base)
              ]]
              params {
                  @in propname: const(char)*; [[Property name]]
-                 @in evas: Evas.Object *; [[Evas widget]]
+                 @in evas: Evas.Object; [[Evas widget]]
              }
         }
     }

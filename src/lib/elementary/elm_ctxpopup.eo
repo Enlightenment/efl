@@ -63,7 +63,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
             ]]
          }
          values {
-            parent: Evas.Object *; [[The parent to use.]]
+            parent: Evas.Object; [[The parent to use.]]
          }
       }
       @property direction_priority {
@@ -116,7 +116,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
 
               @since 1.11
             ]]
-            return: const(list<Elm.Widget.Item*>)*; [[The list of items or
+            return: const(list<Elm.Widget.Item>); [[The list of items or
             $null on errors.]]
 
          }
@@ -131,7 +131,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
 
               @since 1.11
             ]]
-            return: Elm.Widget.Item *; [[The first item or $null, if it has no items (and on
+            return: Elm.Widget.Item; [[The first item or $null, if it has no items (and on
               errors).]]
 
          }
@@ -146,7 +146,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
 
               @since 1.1
             ]]
-            return: Elm.Widget.Item *; [[The last item or $null, if it has no items (and on
+            return: Elm.Widget.Item; [[The last item or $null, if it has no items (and on
               errors).]]
 
          }
@@ -171,11 +171,11 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
 
            See also \@ref elm_object_content_set.
          ]]
-         return: Elm.Widget.Item *; [[A handle to the item added or $null, on errors.]]
+         return: Elm.Widget.Item; [[A handle to the item added or $null, on errors.]]
 
          params {
             @in label: const(char)*; [[The Label of the new item]]
-            @in icon: Evas.Object * @optional; [[Icon to be set on new item]]
+            @in icon: Evas.Object @optional; [[Icon to be set on new item]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when item selected]]
             @in data: const(void)* @optional; [[Data passed to $func]]
          }
@@ -190,11 +190,11 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
 
            @since 1.11
          ]]
-         return: Elm.Widget.Item *; [[A handle to the item added or $null, on errors.]]
+         return: Elm.Widget.Item; [[A handle to the item added or $null, on errors.]]
 
          params {
             @in label: const(char)*; [[The Label of the new item]]
-            @in icon: Evas.Object * @optional; [[Icon to be set on new item]]
+            @in icon: Evas.Object @optional; [[Icon to be set on new item]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when item selected]]
             @in data: const(void)* @optional; [[Data passed to $func]]
          }

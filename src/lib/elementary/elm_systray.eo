@@ -69,7 +69,7 @@ class Elm.Systray (Eo.Base)
             [[Get the object path of the D-Bus Menu currently in use.]]
          }
          values {
-            menu: const(Eo.Base)* @nullable;
+            menu: const(Eo.Base) @nullable;
          }
       }
       @property att_icon_name {

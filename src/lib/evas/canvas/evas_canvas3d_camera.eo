@@ -69,8 +69,8 @@ class Evas.Canvas3D.Camera (Evas.Canvas3D.Object, Evas.Common_Interface)
            If the nodes are $null or nodes type mismatch error wrong type of nodes will be generated and returned $false.]]
          return: bool; [[$true in frustum, $false otherwise]]
          params {
-            @in camera_node: Evas.Canvas3D.Node *; [[The given camera node.]]
-            @in node: Evas.Canvas3D.Node *; [[The given node.]]
+            @in camera_node: Evas.Canvas3D.Node; [[The given camera node.]]
+            @in node: Evas.Canvas3D.Node; [[The given node.]]
             @in key: Evas.Canvas3D.Frustum_Mode;
          }
       }

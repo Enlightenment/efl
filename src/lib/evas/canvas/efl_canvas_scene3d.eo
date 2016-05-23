@@ -11,7 +11,7 @@ class Efl.Canvas.Scene3d (Evas.Image)
          set {}
          get {}
          values {
-            scene: Evas.Canvas3D.Scene *; [[3D scene.]]
+            scene: Evas.Canvas3D.Scene; [[3D scene.]]
          }
       }
    }

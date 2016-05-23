@@ -79,7 +79,7 @@ class Elm.Sys_Notify (Eo.Base, Elm.Sys_Notify_Interface)
 
            @since 1.17
          ]]
-         return: Elm.Sys_Notify *; [[The unique notification manager]]
+         return: Elm.Sys_Notify; [[The unique notification manager]]
       }
    }
 

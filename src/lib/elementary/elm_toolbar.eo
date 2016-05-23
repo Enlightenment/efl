@@ -136,7 +136,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
          get {
          }
          values {
-            parent: Evas.Object *; [[The parent of the menu objects.]]
+            parent: Evas.Object; [[The parent of the menu objects.]]
          }
       }
       @property standard_priority {
@@ -163,7 +163,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
 
               The selected item always will be highlighted on toolbar.]]
 
-            return: Elm.Widget.Item *; [[The selected toolbar item.]]
+            return: Elm.Widget.Item; [[The selected toolbar item.]]
          }
       }
       @property first_item {
@@ -172,7 +172,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
 
               See: @.item_append and @.last_item]]
 
-            return: Elm.Widget.Item *; [[The first item or $NULL, if it has no items (and on errors)]]
+            return: Elm.Widget.Item; [[The first item or $NULL, if it has no items (and on errors)]]
          }
       }
       @property more_item {
@@ -184,7 +184,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
               The more item can be manipulated by elm_object_item_text_set() and
               elm_object_item_content_set.]]
 
-            return: Elm.Widget.Item *; [[The toolbar more item.]]
+            return: Elm.Widget.Item; [[The toolbar more item.]]
          }
       }
       @property last_item {
@@ -192,7 +192,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
             [[Get the last item in the given toolbar widget's list of items.
 
               See: @.item_prepend and @.first_item]]
-            return: Elm.Widget.Item *; [[The last item or $NULL, if it has no items (and on errors)]]
+            return: Elm.Widget.Item; [[The last item or $NULL, if it has no items (and on errors)]]
          }
       }
       item_insert_before {
@@ -220,9 +220,9 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
 
            See: elm_toolbar_item_icon_set()]]
 
-         return: Elm.Widget.Item *; [[The created item or $NULL upon failure.]]
+         return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
-            @in before: Elm.Widget.Item *; [[The toolbar item to insert before.]]
+            @in before: Elm.Widget.Item; [[The toolbar item to insert before.]]
             @in icon: const(char)* @optional; [[A string with icon name or the absolute path of an image file.]]
             @in label: const(char)*; [[The label of the item.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
@@ -254,9 +254,9 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
 
            See: elm_toolbar_item_icon_set()]]
 
-         return: Elm.Widget.Item *; [[The created item or $NULL upon failure.]]
+         return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
-            @in after: Elm.Widget.Item *; [[The toolbar item to insert after.]]
+            @in after: Elm.Widget.Item; [[The toolbar item to insert after.]]
             @in icon: const(char)* @optional; [[A string with icon name or the absolute path of an image file.]]
             @in label: const(char)*; [[The label of the item.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
@@ -288,7 +288,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
 
            See: elm_toolbar_item_icon_set()]]
 
-         return: Elm.Widget.Item *; [[The created item or $NULL upon failure.]]
+         return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
             @in icon: const(char)* @optional; [[A string with icon name or the absolute path of an image file.]]
             @in label: const(char)*; [[The label of the item.]]
@@ -325,7 +325,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
 
            See: elm_toolbar_item_icon_set()]]
 
-         return: Elm.Widget.Item *; [[The created item or $NULL upon failure.]]
+         return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
             @in icon: const(char)* @optional; [[A string with icon name or the absolute path of an image file.]]
             @in label: const(char)*; [[The label of the item.]]
@@ -336,7 +336,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
       item_find_by_label @const {
          [[Returns a pointer to a toolbar item by its label.]]
 
-         return: Elm.Widget.Item *; [[The pointer to the toolbar item matching $label or $NULL on failure.]]
+         return: Elm.Widget.Item; [[The pointer to the toolbar item matching $label or $NULL on failure.]]
          params {
             @in label: const(char)*; [[The label of the item to find.]]
          }

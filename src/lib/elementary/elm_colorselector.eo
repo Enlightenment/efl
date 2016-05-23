@@ -77,7 +77,7 @@ class Elm.Colorselector (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
 
               @since 1.9
             ]]
-            return: const(list<Elm.Widget.Item*>)*;[[The list of color palette items.]]
+            return: const(list<Elm.Widget.Item>);[[The list of color palette items.]]
          }
       }
       @property palette_selected_item {
@@ -86,14 +86,14 @@ class Elm.Colorselector (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
 
               @since 1.9]]
 
-            return: Elm.Widget.Item *;[[The selected item, or $null if none
+            return: Elm.Widget.Item;[[The selected item, or $null if none
 selected.]]
          }
       }
       palette_color_add {
          [[Add a new color item to palette.]]
 
-         return: Elm.Widget.Item *;[[A new color palette Item.]]
+         return: Elm.Widget.Item;[[A new color palette Item.]]
          params {
             @in r: int; [[r-value of color]]
             @in g: int; [[g-value of color]]

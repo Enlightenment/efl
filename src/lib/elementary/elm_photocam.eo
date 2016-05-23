@@ -134,7 +134,7 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
               modify it. It is for inspection only, and hooking callbacks
               to. Nothing else. It may be deleted at any time as well.
             ]]
-            return: Evas.Object *; [[The internal image object handle or $null]]
+            return: Evas.Object; [[The internal image object handle or $null]]
          }
       }
       @property image_size {

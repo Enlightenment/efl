@@ -26,7 +26,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
            See also @Evas.Canvas3D.Node.parent_get.]]
 
          params {
-            @in member: Evas.Canvas3D.Node *;  [[Node object to be added.]]
+            @in member: Evas.Canvas3D.Node;  [[Node object to be added.]]
          }
       }
       member_del {
@@ -34,7 +34,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            See also @Evas.Canvas3D.Node.member_add.]]
          params {
-            @in member: Evas.Canvas3D.Node *;  [[Member node to be deleted from the given node.]]
+            @in member: Evas.Canvas3D.Node;  [[Member node to be deleted from the given node.]]
          }
       }
 
@@ -42,19 +42,19 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
          [[Get the parent node of the given node.
 
            See also @Evas.Canvas3D.Node.member_add.]]
-         return: Evas.Canvas3D.Node *; [[The parent node of the given node.]]
+         return: Evas.Canvas3D.Node; [[The parent node of the given node.]]
       }
 
       member_list_get @const {
          [[Get the list of member nodes of the given node.
 
            See also @Evas.Canvas3D.Node.member_add.]]
-         return: const(list<Evas.Canvas3D.Node *>)*; [[The list of member nodes if any or $null if there are none.]]
+         return: const(list<Evas.Canvas3D.Node>); [[The list of member nodes if any or $null if there are none.]]
       }
       scene_root_get {
          [[Get hash table of scenes using this node as root.]]
 
-         return: hash<Evas.Canvas3D.Object *, uintptr> *; [[ scenes using this node as root. FIXME: Actually a scene, not object.]]
+         return: hash<Evas.Canvas3D.Object, uintptr>; [[ scenes using this node as root. FIXME: Actually a scene, not object.]]
       }
       position_set {
          [[Set the position of the given node.
@@ -182,7 +182,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            See also @Evas.Canvas3D.Node.member_add.]]
          params {
-            @in mesh: Evas.Canvas3D.Mesh *;      [[The mesh to be added.]]
+            @in mesh: Evas.Canvas3D.Mesh;      [[The mesh to be added.]]
          }
       }
 
@@ -194,7 +194,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            See also @Evas.Canvas3D.Node.mesh_add.]]
          params {
-            @in mesh: Evas.Canvas3D.Mesh *;      [[The mesh to be deleted.]]
+            @in mesh: Evas.Canvas3D.Mesh;      [[The mesh to be deleted.]]
          }
       }
 
@@ -206,7 +206,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
            node, $null will be returned.
 
            See also @Evas.Canvas3D.Node.mesh_add.]]
-         return: const(list<Evas.Canvas3D.Mesh *>)*; [[The list of meshes if any, or $null if there're none.]]
+         return: const(list<Evas.Canvas3D.Mesh>); [[The list of meshes if any, or $null if there're none.]]
       }
 
       bounding_box_get{
@@ -303,7 +303,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
          }
          values {
             // FIXME: Evas_Canvas3D_Camera is necessary, but that introduces a cycle
-            camera: Evas.Canvas3D.Object *; [[The camera of the given node if any, or $null if there're none.]]
+            camera: Evas.Canvas3D.Object; [[The camera of the given node if any, or $null if there're none.]]
          }
       }
 
@@ -322,7 +322,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
               See also @Evas.Canvas3D.Node.light.set.]]
          }
          values {
-            light: Evas.Canvas3D.Light *; [[The light of the given node if any, or $null if there're none.]]
+            light: Evas.Canvas3D.Light; [[The light of the given node if any, or $null if there're none.]]
          }
       }
 
@@ -346,7 +346,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
               See also @Evas.Canvas3D.Node.mesh_add.]]
          }
          keys {
-            mesh: Evas.Canvas3D.Mesh *; [[The given mesh.]]
+            mesh: Evas.Canvas3D.Mesh; [[The given mesh.]]
          }
          values {
             frame: int; [[The animation frame number.]]
@@ -363,8 +363,8 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
               See also @Evas.Canvas3D.Node.billboard_target.set.]]
          }
          values {
-            target: Evas.Canvas3D.Node *; [[The pointer to target node for billboard object,
-                                            or $null if there're none.]]
+            target: Evas.Canvas3D.Node; [[The pointer to target node for billboard object,
+                                          or $null if there're none.]]
          }
       }
       @property lod_enable {

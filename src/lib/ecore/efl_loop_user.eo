@@ -5,7 +5,7 @@ class Efl.Loop_User (Eo.Base)
      only allowing parent that provide such interface or NULL.]]
    methods {
       loop_get {
-         return: Efl.Loop *;
+         return: Efl.Loop;
       }
    }
    implements {

@@ -68,7 +68,7 @@ abstract Efl.VG (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
          get {
          }
          values {
-            m: Efl.VG *;
+            m: Efl.VG;
          }
       }
 /*      quality {
@@ -94,14 +94,14 @@ abstract Efl.VG (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
       interpolate {
         return: bool;
         params {
-          @in from: const(Efl.VG)*;
-          @in to: const(Efl.VG)*;
+          @in from: const(Efl.VG);
+          @in to: const(Efl.VG);
           @in pos_map: double;
         }
       }
       dup {
         params {
-          @in from: const(Efl.VG)*;
+          @in from: const(Efl.VG);
         }
       }
    }

@@ -51,7 +51,7 @@ class Elm.Table (Elm.Widget)
       }
       child_get @const {
          [[Get child object of table at given coordinates.]]
-         return: Evas.Object *; [[Child of object if find if not return $null.]]
+         return: Evas.Object; [[Child of object if find if not return $null.]]
          params {
             @in col: int; [[Column number of child object.]]
             @in row: int; [[Row number of child object.]]
@@ -68,7 +68,7 @@ class Elm.Table (Elm.Widget)
            means only takes that 1 cell.
          ]]
          params {
-            @in subobj: Evas.Object *; [[The subobject to be modified in the table.]]
+            @in subobj: Evas.Object; [[The subobject to be modified in the table.]]
             @in column: int; [[Column number.]]
             @in row: int; [[Row number.]]
             @in colspan: int;
@@ -79,7 +79,7 @@ class Elm.Table (Elm.Widget)
       pack_get {
          [[Get the packing location of an existing child of the table.]]
          params {
-            @in subobj: Evas.Object *; [[The subobject to be modified in the table.]]
+            @in subobj: Evas.Object; [[The subobject to be modified in the table.]]
             @out column: int; [[Column number.]]
             @out row: int; [[Row number.]]
             @out colspan: int;
@@ -90,7 +90,7 @@ class Elm.Table (Elm.Widget)
       unpack {
          [[Remove child from table.]]
          params {
-            @in subobj: Evas.Object *; [[The subobject.]]
+            @in subobj: Evas.Object; [[The subobject.]]
          }
       }
       pack {
@@ -108,7 +108,7 @@ class Elm.Table (Elm.Widget)
            able to fit in 16bits will result in failure.
          ]]
          params {
-            @in subobj: Evas.Object *; [[The subobject to be added to the table.]]
+            @in subobj: Evas.Object; [[The subobject to be added to the table.]]
             @in column: int; [[Column number.]]
             @in row: int; [[Row number.]]
             @in colspan: int;

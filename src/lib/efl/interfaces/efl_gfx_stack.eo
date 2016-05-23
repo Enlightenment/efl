@@ -37,7 +37,7 @@ interface Efl.Gfx.Stack {
               objects on layers below the one $obj is placed at.
 
               See also @.layer.get(), @.layer.set() and @.below.get()]]
-            return: Efl.Gfx.Stack * @warn_unused; [[the #Efl_Gfx_Stack directly below $obj, if any,
+            return: Efl.Gfx.Stack @warn_unused; [[the #Efl_Gfx_Stack directly below $obj, if any,
                                                     or $null, if none]]
          }
       }
@@ -49,7 +49,7 @@ interface Efl.Gfx.Stack {
               objects on layers above the one $obj is placed at.
 
               See also @.layer.get(), @.layer.set() and @.below.get()]]
-            return: Efl.Gfx.Stack * @warn_unused; [[the #Efl_Gfx_Stack directly below $obj, if any,
+            return: Efl.Gfx.Stack @warn_unused; [[the #Efl_Gfx_Stack directly below $obj, if any,
                                                     or $null, if none]]
          }
       }
@@ -75,7 +75,7 @@ interface Efl.Gfx.Stack {
            See also @.layer.get(), @.layer.set() and @.stack_below()]]
 
          params {
-            @in below: Efl.Gfx.Stack * @nonull; [[the object below which to stack]]
+            @in below: Efl.Gfx.Stack @nonull; [[the object below which to stack]]
          }
       }
       raise {
@@ -109,7 +109,7 @@ interface Efl.Gfx.Stack {
            See also @.layer.get(), @.layer.set() and @.stack_below()]]
 
          params {
-            @in above: Efl.Gfx.Stack * @nonull; [[the object above which to stack]]
+            @in above: Efl.Gfx.Stack @nonull; [[the object above which to stack]]
          }
       }
       lower {

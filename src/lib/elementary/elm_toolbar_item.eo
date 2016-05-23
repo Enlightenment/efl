@@ -18,7 +18,7 @@ struct Elm.Toolbar.Item.State
    ]]
    label: const(char)*;
    icon_str: const(char)*;
-   icon: Evas.Object *;
+   icon: Evas.Object;
    func: Evas_Smart_Cb ;
    data: const(void)*;
 }
@@ -36,7 +36,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     item: Elm.Widget.Item *; [[The item before $item, or $null
+                     item: Elm.Widget.Item; [[The item before $item, or $null
                                                 if none or on failure.]]
                 }
            }
@@ -48,7 +48,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     item: Elm.Widget.Item *; [[The item after $item, or $null
+                     item: Elm.Widget.Item; [[The item after $item, or $null
                                                 if none or on failure.]]
                 }
            }
@@ -122,7 +122,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     obj: Evas.Object *; [[The base Edje object associated with $it.]]
+                     obj: Evas.Object; [[The base Edje object associated with $it.]]
                 }
            }
            @property icon_object {
@@ -133,7 +133,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     obj: Evas.Object *; [[The icon object.]]
+                     obj: Evas.Object; [[The icon object.]]
                 }
            }
            @property separator {
@@ -162,7 +162,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     menu: Evas.Object *; [[Item's menu object or $null on failure.]]
+                     menu: Evas.Object; [[Item's menu object or $null on failure.]]
                 }
            }
            @property state {

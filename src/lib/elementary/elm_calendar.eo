@@ -252,7 +252,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
               @.marks_clear.
 
             ]]
-            return: const(list<Elm.Calendar.Mark*>)*; [[List with all calendar marks]]
+            return: const(list<Elm.Calendar.Mark*>); [[List with all calendar marks]]
          }
       }
       selected_time_set {

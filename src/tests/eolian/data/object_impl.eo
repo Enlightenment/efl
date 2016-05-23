@@ -3,7 +3,7 @@ class Object_Impl (Base) {
       @property a {
          set {
             values {
-                value: const(list<int>)*;
+                value: const(list<int>);
             }
             return: bool (false);
          }
@@ -13,7 +13,7 @@ class Object_Impl (Base) {
             part: const(char)*;
          }
          values {
-            value: own(list<int>*);
+            value: own(list<int>);
          }
       }
       @property b {
@@ -23,7 +23,7 @@ class Object_Impl (Base) {
             /* set as virtual pure - no implementation expected */
          }
          values {
-            value: own(list<int>*);
+            value: own(list<int>);
          }
       }
       constructor_1 {

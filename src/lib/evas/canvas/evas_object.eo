@@ -445,7 +445,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack, Ef
             */
          }
          values {
-            clip: Evas.Object * @nonull; [[The object to clip $obj by.]]
+            clip: Evas.Object @nonull; [[The object to clip $obj by.]]
          }
       }
       @property size_hint_padding {
@@ -924,7 +924,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack, Ef
               Use this function if you want to change any of this clipper's
               properties, like colors.
             ]]
-            return: Evas.Object * @warn_unused;
+            return: Evas.Object @warn_unused;
          }
       }
       @property clipees {
@@ -963,7 +963,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack, Ef
             evas_object_show(obj_tmp);
             }
             @endcode */
-            return: const(list<Evas.Object*>)* @warn_unused; [[A list of objects being clipped by $obj.]]
+            return: const(list<Evas.Object>) @warn_unused; [[A list of objects being clipped by $obj.]]
          }
       }
       @property render_parent @protected {
@@ -979,7 +979,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack, Ef
             legacy: evas_object_smart_parent_get;
          }
          values {
-            parent: Evas.Object *; [[The parent smart object of $obj or $null.]]
+            parent: Evas.Object; [[The parent smart object of $obj or $null.]]
          }
       }
       @property size_hint_display_mode {
@@ -1108,7 +1108,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack, Ef
 
            @since 1.2
          ]]
-         return: Evas.Object * @warn_unused; [[The Evas object with the given name
+         return: Evas.Object @warn_unused; [[The Evas object with the given name
                                                on success, Otherwise $null.]]
          params {
             @in name: const(char)*; [[The given name.]]

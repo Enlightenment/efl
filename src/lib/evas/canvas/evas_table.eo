@@ -121,7 +121,7 @@ class Evas.Table (Evas.Smart.Clipped)
               It's up to the user to destroy it when it no longer needs it.
               It's possible to remove objects from the table when walking this
               list, but these removals won't be reflected on it.]]
-            return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
+            return: free(own(list<Evas.Object>), eina_list_free) @warn_unused;
          }
       }
       @property child {
@@ -135,7 +135,7 @@ class Evas.Table (Evas.Smart.Clipped)
             row: ushort;
          }
          values {
-            child: Evas.Object *;
+            child: Evas.Object;
          }
       }
       clear {
@@ -149,20 +149,20 @@ class Evas.Table (Evas.Smart.Clipped)
          [[Get an accessor to get random access to the list of children for the table.
 
            Note: Do not remove or delete objects while walking the list.]]
-         return: free(own(accessor<Evas.Object *> *), eina_accessor_free)
+         return: free(own(accessor<Evas.Object>), eina_accessor_free)
             @warn_unused;
       }
       iterator_new @const {
          [[Get an iterator to walk the list of children for the table.
 
            Note: Do not remove or delete objects while walking the list.]]
-         return: free(own(iterator<Evas.Object *> *), eina_iterator_free)
+         return: free(own(iterator<Evas.Object>), eina_iterator_free)
             @warn_unused;
       }
       add_to {
          [[Create a table that is child of a given element $parent.]]
 
-         return: Evas.Object * @warn_unused;
+         return: Evas.Object @warn_unused;
       }
       pack_get @const {
          [[Get packing location of a child of table
@@ -170,7 +170,7 @@ class Evas.Table (Evas.Smart.Clipped)
          @since 1.1]]
          return: bool; [[$true on success, $false on failure.]]
          params {
-            @in child: Evas.Object *; [[The child object to add.]]
+            @in child: Evas.Object; [[The child object to add.]]
             @out col: ushort; [[pointer to store relative-horizontal position to place child.]]
             @out row: ushort; [[pointer to store relative-vertical position to place child.]]
             @out colspan: ushort; [[pointer to store how many relative-horizontal position to use for this child.]]
@@ -188,7 +188,7 @@ class Evas.Table (Evas.Smart.Clipped)
 
          return: bool; [[$true on success, $false on failure.]]
          params {
-            @in child: Evas.Object * @nonull; [[The child object to add.]]
+            @in child: Evas.Object @nonull; [[The child object to add.]]
             @in col: ushort; [[relative-horizontal position to place child.]]
             @in row: ushort; [[relative-vertical position to place child.]]
             @in colspan: ushort; [[how many relative-horizontal position to use for this child.]]
@@ -204,7 +204,7 @@ class Evas.Table (Evas.Smart.Clipped)
 
          return: bool; [[$true on success, $false on failure.]]
          params {
-            @in child: Evas.Object * @nonull;
+            @in child: Evas.Object @nonull;
          }
       }
       count {

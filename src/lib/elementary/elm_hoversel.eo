@@ -30,7 +30,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
          get {
          }
          values {
-            parent: Evas.Object * @nullable; [[The parent to use]]
+            parent: Evas.Object @nullable; [[The parent to use]]
          }
       }
       @property expanded {
@@ -42,7 +42,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
       @property items {
          get {
             [[Get the list of items within the given hoversel.]]
-            return: const(list<Elm.Widget.Item *>)*;
+            return: const(list<Elm.Widget.Item>);
          }
       }
       @property auto_update {
@@ -78,7 +78,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
            /* FIXME-doc
            For more information on what $icon_file and $icon_type are, see the
            @ref Icon "icon documentation". */
-         return: Elm.Widget.Item *; [[A handle to the added item.]]
+         return: Elm.Widget.Item; [[A handle to the added item.]]
          params {
             @in label: const(char)* @optional; [[The text label to use for the item (NULL if not desired)]]
             @in icon_file: const(char)* @optional; [[An image file path on disk to use for the icon or standard icon name (NULL if not desired)]]

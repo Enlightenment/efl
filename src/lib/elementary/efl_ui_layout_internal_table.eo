@@ -10,8 +10,8 @@ class Efl.Ui.Layout_Internal.Table (Eo.Base, Efl.Pack.Grid)
       @property real_part @protected {
          set {}
          values {
-            layout: Eo.Base*;
-            pack: Eo.Base*;
+            layout: Eo.Base;
+            pack: Eo.Base;
             part: const(char)*;
          }
       }

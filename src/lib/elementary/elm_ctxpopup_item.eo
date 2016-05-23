@@ -14,7 +14,7 @@ class Elm.Ctxpopup.Item(Elm.Widget.Item)
             ]]
          }
          values {
-              item: Elm.Widget.Item *; [[The item before the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
+              item: Elm.Widget.Item; [[The item before the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
          }
       }
       @property next {
@@ -28,7 +28,7 @@ class Elm.Ctxpopup.Item(Elm.Widget.Item)
             ]]
          }
          values {
-              item: Elm.Widget.Item *; [[The item after the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
+              item: Elm.Widget.Item; [[The item after the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
          }
       }
       init {

@@ -113,14 +113,14 @@ interface Elm.Interface.Atspi.Text ()
             end_offset: int *;
          }
          values {
-            attributes: own(list<own(Elm.Atspi_Text.Attribute *)> *);
+            attributes: own(list<own(Elm.Atspi_Text.Attribute *)>);
          }
       }
       @property default_attributes @protected {
          get {
          }
          values {
-            attributes: own(list<own(Elm.Atspi_Text.Attribute *)>*);
+            attributes: own(list<own(Elm.Atspi_Text.Attribute *)>);
          }
       }
       @property character_extents @protected {
@@ -164,7 +164,7 @@ interface Elm.Interface.Atspi.Text ()
             yclip: Elm.Atspi_Text.Clip_Type;
          }
          values {
-            ranges: own(list<own(Elm.Atspi_Text.Range *)> *);
+            ranges: own(list<own(Elm.Atspi_Text.Range *)>);
          }
       }
       @property range_extents @protected {

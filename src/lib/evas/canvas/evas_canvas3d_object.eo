@@ -8,7 +8,7 @@ class Evas.Canvas3D.Object (Eo.Base, Evas.Common_Interface)
          [[Notify the object regarding its  state change.]]
          params {
            @in state: Evas.Canvas3D.State;  [[State that is changed.]]
-           @in ref: Evas.Canvas3D.Object *; [[The Object that caused the change.]]
+           @in ref: Evas.Canvas3D.Object; [[The Object that caused the change.]]
          }
       }
       type_get @const {
@@ -46,7 +46,7 @@ class Evas.Canvas3D.Object (Eo.Base, Evas.Common_Interface)
            Update request for the object.]]
          params {
            @in state: Evas.Canvas3D.State;  [[State that is changed.]]
-           @in ref: Evas.Canvas3D.Object *; [[The Object that caused the change.]]
+           @in ref: Evas.Canvas3D.Object; [[The Object that caused the change.]]
          }
       }
       callback_register @virtual_pure {

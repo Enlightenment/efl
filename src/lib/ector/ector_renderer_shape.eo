@@ -10,7 +10,7 @@ mixin Ector.Renderer.Shape (Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    r: const(Ector.Renderer) *;
+	    r: const(Ector.Renderer);
 	 }
       }
       @property stroke_fill {
@@ -19,7 +19,7 @@ mixin Ector.Renderer.Shape (Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    r: const(Ector.Renderer) *;
+	    r: const(Ector.Renderer);
 	 }
       }
       @property stroke_marker {
@@ -28,7 +28,7 @@ mixin Ector.Renderer.Shape (Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    r: const(Ector.Renderer) *;
+	    r: const(Ector.Renderer);
 	 }
       }
    }

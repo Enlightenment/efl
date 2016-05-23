@@ -1,6 +1,6 @@
 struct Efl.Model.Property_Event {
-     changed_properties: array<const(char) *> *; [[List of changed properties]]
-     invalidated_properties: array<const(char) *> *; [[Removed properties identified by name]]
+     changed_properties: array<const(char) *>; [[List of changed properties]]
+     invalidated_properties: array<const(char) *>; [[Removed properties identified by name]]
 }
 
 interface Efl.Model ()
@@ -22,7 +22,7 @@ interface Efl.Model ()
                ]]
          }
          values {
-               properties: const(array<const(char)*>)*; [[array of current properties]]
+               properties: const(array<const(char)*>); [[array of current properties]]
             }
         }
         property_set {
@@ -46,7 +46,7 @@ interface Efl.Model ()
            params {
                @in property: const(char)*; [[Property name]]
                @in value: const(generic_value)*; [[New value]]
-               @inout promise: promise<generic_value>*; [[Promise returning the recorded value or error]]
+               @inout promise: promise<generic_value>; [[Promise returning the recorded value or error]]
            }
         }
         property_get {
@@ -62,7 +62,7 @@ interface Efl.Model ()
            ]]
            params {
                @in property: const(char)*; [[Property name]]
-               @inout value: promise<generic_value>*; [[Promise of the value that was got]]
+               @inout value: promise<generic_value>; [[Promise of the value that was got]]
            }
         }
         children_slice_get {
@@ -96,7 +96,7 @@ interface Efl.Model ()
                                count are 0 slice is ignored.]]
                 @in count: uint; [[Range size. If count and start are 0 slice is
                                ignored.]]
-                @inout promise: promise<accessor<list<Eo.Base*>*>*>*; [[Promise of the children]]
+                @inout promise: promise<accessor<list<Eo.Base> > >; [[Promise of the children]]
             }
          }
          children_count_get {
@@ -113,7 +113,7 @@ interface Efl.Model ()
                   @since 1.14
                 ]]
             params {
-                @inout promise: promise<uint>*;
+                @inout promise: promise<uint>;
             }
          }
          child_add {
@@ -126,7 +126,7 @@ interface Efl.Model ()
 
               @since 1.14
             ]]
-            return: Eo.Base *;
+            return: Eo.Base;
          }
          child_del {
             [[Remove a child.
@@ -139,7 +139,7 @@ interface Efl.Model ()
               @since 1.14
             ]]
             params {
-               @in child: Eo.Base*; [[Child to be removed]]
+               @in child: Eo.Base; [[Child to be removed]]
             }
          }
       }

@@ -8,7 +8,7 @@ interface Evas.Common_Interface ()
          }
          values {
             /* FIXME: This is actually wrong, should return Evas. */
-            ret: Evas.Common_Interface *;
+            ret: Evas.Common_Interface;
          }
       }
    }

@@ -97,227 +97,227 @@ class Test.Object (Eo.Base) {
        method_array_at_check {
            [[ tests array ]]
            params {
-               array: array<int>*;
+               array: array<int>;
                index: int;
            }
            return: int;
        }
        method_array_with_42_check {
            [[ tests parameters ]]
-           return: free(own(array<int> *), eina_array_free) @warn_unused;
+           return: free(own(array<int>), eina_array_free) @warn_unused;
        }
        method_array_in_array_out_check {
            [[ tests parameters ]]
            params {
-               @in a_in: array<int> *;
-               @out a_out: array<int> *;
+               @in a_in: array<int>;
+               @out a_out: array<int>;
            }
        }
        method_array_of_objects_check {
            params {
-               @in a_in: array<Test.Object *> *;
+               @in a_in: array<Test.Object>;
            }
-           return: array<Test.Object *> *;
+           return: array<Test.Object>;
        }
        method_array_of_strings_check {
            params {
-               @in a_in: array<const(char) *> *;
+               @in a_in: array<const(char) *>;
            }
-           return: array<const(char) *> *;
+           return: array<const(char) *>;
        }
        method_array_of_ints_check {
            params {
-               @in a_in: array<int> *;
+               @in a_in: array<int>;
            }
-           return: array<int> *;
+           return: array<int>;
        }
        method_array_of_bools_check {
            params {
-               @in a_in: array<bool> *;
+               @in a_in: array<bool>;
            }
-           return: array<bool> *;
+           return: array<bool>;
        }
        method_array_of_doubles_check {
            params {
-               @in a_in: array<double> *;
+               @in a_in: array<double>;
            }
-           return: array<double> *;
+           return: array<double>;
        }
        method_array_of_enums_check {
            params {
-               @in a_in: array<Test.Enum_Ex> *;
+               @in a_in: array<Test.Enum_Ex>;
            }
-           return: array<Test.Enum_Ex> *;
+           return: array<Test.Enum_Ex>;
        }
        method_array_of_structs_check {
            params {
-               @in a_in: array<Test.Struct_Ex> *;
+               @in a_in: array<Test.Struct_Ex>;
            }
-           return: array<Test.Struct_Ex> *;
+           return: array<Test.Struct_Ex>;
        }
        method_list_with_42_check {
            [[ tests parameters ]]
-           return: free(own(list<int> *), eina_list_free) @warn_unused;
+           return: free(own(list<int>), eina_list_free) @warn_unused;
        }
        method_list_in_list_out_check {
            [[ tests parameters ]]
            params {
-               @in l_in: list<int> *;
-               @out l_out: list<int> *;
+               @in l_in: list<int>;
+               @out l_out: list<int>;
            }
        }
        method_list_of_objects_check {
            params {
-               @in l_in: list<Test.Object *> *;
+               @in l_in: list<Test.Object>;
            }
-           return: list<Test.Object *> *;
+           return: list<Test.Object>;
        }
        method_list_of_strings_check {
            params {
-               @in l_in: list<const(char) *> *;
+               @in l_in: list<const(char) *>;
            }
-           return: list<const(char) *> *;
+           return: list<const(char) *>;
        }
        method_list_of_ints_check {
            params {
-               @in l_in: list<int> *;
+               @in l_in: list<int>;
            }
-           return: list<int> *;
+           return: list<int>;
        }
        method_list_of_bools_check {
            params {
-               @in l_in: list<bool> *;
+               @in l_in: list<bool>;
            }
-           return: list<bool> *;
+           return: list<bool>;
        }
        method_list_of_doubles_check {
            params {
-               @in l_in: list<double> *;
+               @in l_in: list<double>;
            }
-           return: list<double> *;
+           return: list<double>;
        }
        method_list_of_enums_check {
            params {
-               @in l_in: list<Test.Enum_Ex> *;
+               @in l_in: list<Test.Enum_Ex>;
            }
-           return: list<Test.Enum_Ex> *;
+           return: list<Test.Enum_Ex>;
        }
        method_list_of_structs_check {
            params {
-               @in l_in: list<Test.Struct_Ex> *;
+               @in l_in: list<Test.Struct_Ex>;
            }
-           return: list<Test.Struct_Ex> *;
+           return: list<Test.Struct_Ex>;
        }
        method_accessor_of_objects_check {
            params {
-               @in a_in: accessor<Test.Object *> *;
+               @in a_in: accessor<Test.Object>;
            }
-           return: accessor<Test.Object *> *;
+           return: accessor<Test.Object>;
        }
        method_accessor_of_strings_check {
            params {
-               @in a_in: accessor<const(char) *> *;
+               @in a_in: accessor<const(char) *>;
            }
-           return: accessor<const(char) *> *;
+           return: accessor<const(char) *>;
        }
        method_accessor_of_ints_check {
            params {
-               @in a_in: accessor<int> *;
+               @in a_in: accessor<int>;
            }
-           return: accessor<int> *;
+           return: accessor<int>;
        }
        method_accessor_of_bools_check {
            params {
-               @in a_in: accessor<bool> *;
+               @in a_in: accessor<bool>;
            }
-           return: accessor<bool> *;
+           return: accessor<bool>;
        }
        method_accessor_of_doubles_check {
            params {
-               @in a_in: accessor<double> *;
+               @in a_in: accessor<double>;
            }
-           return: accessor<double> *;
+           return: accessor<double>;
        }
        method_accessor_of_enums_check {
            params {
-               @in a_in: accessor<Test.Enum_Ex> *;
+               @in a_in: accessor<Test.Enum_Ex>;
            }
-           return: accessor<Test.Enum_Ex> *;
+           return: accessor<Test.Enum_Ex>;
        }
        method_accessor_of_structs_check {
            params {
-               @in a_in: accessor<Test.Struct_Ex> *;
+               @in a_in: accessor<Test.Struct_Ex>;
            }
-           return: accessor<Test.Struct_Ex> *;
+           return: accessor<Test.Struct_Ex>;
        }
        method_iterator_of_objects_check {
            params {
-               @in i_in: iterator<Test.Object *> *;
+               @in i_in: iterator<Test.Object>;
            }
-           return: iterator<Test.Object *> *;
+           return: iterator<Test.Object>;
        }
        method_iterator_of_strings_check {
            params {
-               @in i_in: iterator<const(char) *> *;
+               @in i_in: iterator<const(char) *>;
            }
-           return: iterator<const(char) *> *;
+           return: iterator<const(char) *>;
        }
        method_iterator_of_ints_check {
            params {
-               @in i_in: iterator<int> *;
+               @in i_in: iterator<int>;
            }
-           return: iterator<int> *;
+           return: iterator<int>;
        }
        method_iterator_of_bools_check {
            params {
-               @in i_in: iterator<bool> *;
+               @in i_in: iterator<bool>;
            }
-           return: iterator<bool> *;
+           return: iterator<bool>;
        }
        method_iterator_of_doubles_check {
            params {
-               @in i_in: iterator<double> *;
+               @in i_in: iterator<double>;
            }
-           return: iterator<double> *;
+           return: iterator<double>;
        }
        method_iterator_of_enums_check {
            params {
-               @in i_in: iterator<Test.Enum_Ex> *;
+               @in i_in: iterator<Test.Enum_Ex>;
            }
-           return: iterator<Test.Enum_Ex> *;
+           return: iterator<Test.Enum_Ex>;
        }
        method_iterator_of_structs_check {
            params {
-               @in i_in: iterator<Test.Struct_Ex> *;
+               @in i_in: iterator<Test.Struct_Ex>;
            }
-           return: iterator<Test.Struct_Ex> *;
+           return: iterator<Test.Struct_Ex>;
        }
        method_array_of_arrays_of_ints_check {
            params {
-               @in a_in: array<array<int> *> *;
+               @in a_in: array<array<int> >;
            }
-           return: array<array<int> *> *;
+           return: array<array<int> >;
        }
        method_list_of_lists_of_ints_check {
            params {
-               @in l_in: list<list<int> *> *;
+               @in l_in: list<list<int> >;
            }
-           return: list<list<int> *> *;
+           return: list<list<int> >;
        }
        method_array_of_lists_of_ints_check {
            params {
-               @in a_in: array<list<int> *> *;
+               @in a_in: array<list<int> >;
            }
-           return: array<list<int> *> *;
+           return: array<list<int> >;
        }
        method_list_of_arrays_of_ints_check {
            params {
-               @in l_in: list<array<int> *> *;
+               @in l_in: list<array<int> >;
            }
-           return: list<array<int> *> *;
+           return: list<array<int> >;
        }
        method_list_with_opaque_elements_check {
-           return: const(list<Elm.Calendar.Mark*>)*;
+           return: const(list<Elm.Calendar.Mark*>);
        }
        method_in_enum_return_enum_check {
            params { e: Test.Enum_Ex; }

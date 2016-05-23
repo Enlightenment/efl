@@ -147,7 +147,7 @@ interface Elm.Interface.Fileselector ()
             [[Get a list of selected paths in the fileselector.]]
          }
          values {
-            ret: const(list<const(char)*>)*;
+            ret: const(list<const(char)*>);
          }
       }
       @property current_name {

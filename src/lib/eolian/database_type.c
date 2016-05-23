@@ -110,9 +110,13 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
         eina_strbuf_append_char(buf, '*');
         if (tp->is_const) eina_strbuf_append(buf, " const");
      }
+   if (tp->type == EOLIAN_TYPE_COMPLEX || tp->type == EOLIAN_TYPE_CLASS)
+     eina_strbuf_append(buf, " *");
    if (name)
      {
-        if (tp->type != EOLIAN_TYPE_POINTER)
+        if (tp->type != EOLIAN_TYPE_POINTER &&
+            tp->type != EOLIAN_TYPE_CLASS &&
+            tp->type != EOLIAN_TYPE_COMPLEX)
           eina_strbuf_append_char(buf, ' ');
         eina_strbuf_append(buf, name);
      }

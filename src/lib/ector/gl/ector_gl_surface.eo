@@ -23,7 +23,7 @@ class Ector.GL.Surface (Ector.GL.Buffer, Ector.Surface)
          return: bool;
 	 params {
             @in op: Efl.Gfx.Render_Op;
-	    @in clips: array<Eina.Rectangle *> *; [[array of @Eina.Rectangle clip]]
+	    @in clips: array<Eina.Rectangle *>; [[array of @Eina.Rectangle clip]]
 	 }
       }
    }

@@ -98,7 +98,7 @@ class Ecore.Audio.In (Ecore.Audio)
             ]]
          }
          values {
-            output: Ecore.Audio *; [[The output]] /* FIXME-cyclic Should be Ecore.Audio.Out */
+            output: Ecore.Audio; [[The output]] /* FIXME-cyclic Should be Ecore.Audio.Out */
          }
       }
       @property remaining {

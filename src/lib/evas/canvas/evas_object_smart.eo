@@ -52,7 +52,7 @@ class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
             legacy: null;
          }
          values {
-            clip: Evas.Object *;
+            clip: Evas.Object;
          }
       }
       @property color {
@@ -92,7 +92,7 @@ class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
               See also @.member_add, @.member_del and @.iterator_new.
 
               @since 1.7]]
-            return: list<Evas.Object*> * @warn_unused; [[Returns the list of the member objects of $obj.]]
+            return: list<Evas.Object> @warn_unused; [[Returns the list of the member objects of $obj.]]
          }
       }
       @property smart {
@@ -187,7 +187,7 @@ class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
            See also @.member_add and @.member_del
 
            @since 1.8]]
-         return: free(own(iterator<Evas.Object *> *), eina_iterator_free)
+         return: free(own(iterator<Evas.Object>), eina_iterator_free)
             @warn_unused; [[Returns the iterator of the member objects of $obj.]]
       }
       callback_description_find @const {
@@ -247,7 +247,7 @@ class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
            See also @.member_del.]]
 
          params {
-            @in sub_obj: Evas.Object * @nonull; [[The member object.]]
+            @in sub_obj: Evas.Object @nonull; [[The member object.]]
          }
          legacy: null;
       }
@@ -283,7 +283,7 @@ class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
            See also @.member_add for more details.]]
 
          params {
-            @in sub_obj: Evas.Object *; [[the member object.]]
+            @in sub_obj: Evas.Object; [[the member object.]]
          }
          legacy: null;
       }

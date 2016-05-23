@@ -15,9 +15,9 @@ interface Efl.Pack.Layout ()
          get {}
          values {
             /* FIXME: engine is an Eo.Class */
-            engine: const(Eo.Base)*; [[Must be an $Efl.Pack.Layout subclass.]]
-            data: const(void)*;      [[Any data to pass along to $Efl.Pack.Layout.layout_do.
-                                       Owned by the caller. Depends on the layout engine.]]
+            engine: const(Eo.Base); [[Must be an $Efl.Pack.Layout subclass.]]
+            data: const(void)*;     [[Any data to pass along to $Efl.Pack.Layout.layout_do.
+                                      Owned by the caller. Depends on the layout engine.]]
          }
       }
       layout_request {
@@ -36,7 +36,7 @@ interface Efl.Pack.Layout ()
       layout_do @class @protected {
          [[Lay out (resize and move) children objects of $pack.]]
          params {
-            pack: Efl.Gfx*; [[The container to lay out.]]
+            pack: Efl.Gfx; [[The container to lay out.]]
             data: const(void)* @optional; [[Extra data passed by the caller.]]
          }
       }

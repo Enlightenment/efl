@@ -391,7 +391,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
                   Eina_Iterator* promise_values;
                   has_promise = EINA_TRUE;
                   promise_param_name = eina_stringshare_add(pname);
-                  promise_values = eolian_type_subtypes_get(eolian_type_base_type_get(ptypet));
+                  promise_values = eolian_type_subtypes_get(ptypet);
                   Eolian_Type* subtype;
                   if(eina_iterator_next(promise_values, (void**)&subtype))
                       promise_value_type = eolian_type_c_type_get(subtype);

@@ -2,19 +2,19 @@ class Complex_Type {
    methods {
       @property a {
          set {
-            return: own(list<array<own(Eo**)>*>*);
+            return: own(list<array<own(Eo**)> >);
          }
          get {
          }
          values {
-            value: own(list<int>*);
+            value: own(list<int>);
          }
       }
       foo {
          params {
             buf: own(char*);
          }
-         return: own(list<Eina.Stringshare*>*); [[comment for method return]]
+         return: own(list<Eina.Stringshare*>); [[comment for method return]]
       }
    }
 }

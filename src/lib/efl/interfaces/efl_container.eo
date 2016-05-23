@@ -14,14 +14,14 @@ interface Efl.Container (Efl.Gfx)
             part: const(char)*; [[the part in which to swallow the object]]
          }
          values {
-            content: Efl.Gfx*; [[the object to swallow.]]
+            content: Efl.Gfx; [[the object to swallow.]]
          }
       }
       @property content_part_name {
          [[The name of the part under which an object is swallowed.]]
          get {}
          keys {
-            content: Efl.Gfx*;
+            content: Efl.Gfx;
          }
          values {
             name: const(char)*;
@@ -32,18 +32,18 @@ interface Efl.Container (Efl.Gfx)
          params {
             @in name: const(char)* @nullable;
          }
-         return: Efl.Gfx*;
+         return: Efl.Gfx;
       }
       content_remove {
          [[Unswallow an object from this container.]]
          params {
-            @in content: Efl.Gfx*;
+            @in content: Efl.Gfx;
          }
          return: bool; [[$false if $content was not a child or can not be removed.]]
       }
       content_iterate {
          [[Begin iterating over this object's contents.]]
-         return: free(own(iterator<Efl.Gfx *> *), eina_iterator_free) @warn_unused;
+         return: free(own(iterator<Efl.Gfx>), eina_iterator_free) @warn_unused;
       }
       content_count {
          [[Returns the number of UI elements packed in this container.]]
@@ -51,7 +51,7 @@ interface Efl.Container (Efl.Gfx)
       }
    }
    events {
-      content,added: Efl.Gfx*;    [[Sent after a new item was added.]]
-      content,removed: Efl.Gfx*;  [[Sent after an item was removed, before unref.]]
+      content,added: Efl.Gfx;    [[Sent after a new item was added.]]
+      content,removed: Efl.Gfx;  [[Sent after an item was removed, before unref.]]
    }
 }

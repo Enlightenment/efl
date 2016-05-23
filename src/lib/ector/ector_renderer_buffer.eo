@@ -7,7 +7,7 @@ mixin Ector.Renderer.Buffer (Ector.Renderer, Efl.Gfx.Fill)
 	 set { [[Sets the source buffer for this renderer, adds a ref]] }
 	 get { [[Return the current source, no ref change]] }
 	 values {
-	    buf: Ector.Buffer*;
+	    buf: Ector.Buffer;
 	 }
       }
    }

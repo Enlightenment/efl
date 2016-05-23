@@ -11,7 +11,7 @@ class Eldbus.Model.Arguments (Eo.Base, Efl.Model) {
             params {
                 @in proxy: Eldbus.Proxy*; [[Eldbus proxy]]
                 @in name: const(char)*; [[Name]]
-                @in arguments: const(list<Eldbus.Introspection.Argument *>)*; [[The introspected arguments]]
+                @in arguments: const(list<Eldbus.Introspection.Argument *>); [[The introspected arguments]]
             }
         }
     @property name {

@@ -111,7 +111,7 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object, Evas.Common_Interface)
             attrib: Evas.Canvas3D.Material_Attrib; [[Material attribute ID.]]
          }
          values {
-            texture: Evas.Canvas3D.Texture *; [[The texture set to the attribute.]]
+            texture: Evas.Canvas3D.Texture; [[The texture set to the attribute.]]
          }
       }
    }
