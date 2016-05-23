@@ -104,13 +104,6 @@ ecore_drm2_device_find(const char *seat, unsigned int tty, Eina_Bool sync)
    dev = calloc(1, sizeof(Ecore_Drm2_Device));
    if (!dev) return NULL;
 
-   dev->em = elput_manager_connect(seat, tty, sync);
-   if (!dev->em)
-     {
-        ERR("Could not connect to input manager");
-        goto man_err;
-     }
-
    dev->path = _drm2_device_find(seat);
    if (!dev->path)
      {
@@ -118,11 +111,18 @@ ecore_drm2_device_find(const char *seat, unsigned int tty, Eina_Bool sync)
         goto path_err;
      }
 
+   dev->em = elput_manager_connect(seat, tty, sync);
+   if (!dev->em)
+     {
+        ERR("Could not connect to input manager");
+        goto man_err;
+     }
+
    return dev;
 
-path_err:
-   elput_manager_disconnect(dev->em);
 man_err:
+   eina_stringshare_del(dev->path);
+path_err:
    free(dev);
    return NULL;
 }
