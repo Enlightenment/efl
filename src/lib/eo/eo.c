@@ -833,7 +833,7 @@ static void
 _vtable_init(Eo_Vtable *vtable, size_t size)
 {
    vtable->size = size;
-   vtable->chain = calloc(vtable->size, sizeof(vtable->chain));
+   vtable->chain = calloc(vtable->size, sizeof(*vtable->chain));
 }
 
 static void
