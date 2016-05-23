@@ -1,6 +1,8 @@
 #ifndef EINA_CLONE_ALLOCATORS_HH_
 #define EINA_CLONE_ALLOCATORS_HH_
 
+#include <eina_workarounds.hh>
+
 #include <Eo.h>
 
 #include <memory>
@@ -122,6 +124,18 @@ struct view_clone_allocator
  */
 struct heap_no_copy_allocator
 {
+  static void deallocate_clone(_Elm_Calendar_Mark const volatile*) {}
+  static void deallocate_clone(_Elm_Calendar_Mark volatile*) {}
+  static void deallocate_clone(_Elm_Calendar_Mark const*) {}
+  static void deallocate_clone(_Elm_Calendar_Mark*) {}
+  static void deallocate_clone(Elm_Gen_Item const volatile*) {}
+  static void deallocate_clone(Elm_Gen_Item volatile*) {}
+  static void deallocate_clone(Elm_Gen_Item const*) {}
+  static void deallocate_clone(Elm_Gen_Item*) {}
+  static void deallocate_clone(_Elm_Map_Overlay const volatile*) {}
+  static void deallocate_clone(_Elm_Map_Overlay volatile*) {}
+  static void deallocate_clone(_Elm_Map_Overlay const*) {}
+  static void deallocate_clone(_Elm_Map_Overlay*) {}
   template <typename T>
   static void deallocate_clone(T* p)
   {

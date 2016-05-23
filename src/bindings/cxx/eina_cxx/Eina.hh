@@ -23,6 +23,7 @@
 #include <eina_optional.hh>
 #include <eina_integer_sequence.hh>
 #include <eina_pp.hh>
+#include <eina_workarounds.hh>
 
 /**
  * @page eina_cxx_main Eina C++ (BETA)

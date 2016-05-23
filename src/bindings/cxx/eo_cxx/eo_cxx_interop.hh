@@ -303,6 +303,55 @@ to_cxx(Eina_List* x, std::tuple<std::true_type, Args...>, tag< eina::optional<ef
    return efl::eina::list<T> {x};
 }
 
+template <typename T, typename ...Args>
+inline efl::eina::range_array<T const>
+to_cxx(const Eina_Array* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_array<T> >)
+{
+   return efl::eina::range_array<T const> {x};
+}
+
+template <typename T, typename ...Args>
+inline eina::optional<efl::eina::range_array<T const> >
+to_cxx(const Eina_Array* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::range_array<T> > >)
+{
+   if (!x)
+     return nullptr;
+   return efl::eina::range_array<T const> {x};
+}
+
+template <typename T, typename ...Args>
+inline efl::eina::range_array<T>
+to_cxx(Eina_Array* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_array<T> >)
+{
+   return efl::eina::range_array<T>{x};
+}
+
+template <typename T, typename ...Args>
+inline eina::optional<efl::eina::range_array<T> >
+to_cxx(Eina_Array* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::range_array<T> > >)
+{
+   if (!x)
+     return nullptr;
+   return efl::eina::range_array<T>{x};
+}
+
+template <typename T, typename ...Args>
+inline efl::eina::array<T>
+to_cxx(Eina_Array* x, std::tuple<std::true_type, Args...>, tag< efl::eina::array<T> >)
+{
+   return efl::eina::array<T> {x};
+}
+
+template <typename T, typename ...Args>
+inline eina::optional<efl::eina::array<T> >
+to_cxx(Eina_Array* x, std::tuple<std::true_type, Args...>, tag< eina::optional<efl::eina::array<T> > >)
+{
+   if (!x)
+     return nullptr;
+   return efl::eina::array<T> {x};
+}
+
+    
 inline eina::stringshare
 to_cxx(Eina_Stringshare const* x, const std::false_type, tag<eina::stringshare>)
 {
