@@ -1,6 +1,23 @@
 ==========
-EFL 1.17.0
+EFL 1.17.1
 ==========
+
+Changes since 1.17.0:
+---------------------
+
+Fixes:
+
+   * Ecore con: Close server socket fd on failure.
+   * eina: invalidate last add/del rects when the opposite operation occurs
+   * Evas textblock: Fix markup cache, was completely broken.
+   * Edje textblock: Assume textblock knows to deal with setting the same markup.
+   * ecore-wl2: do not send double mouse up events during input ungrab
+   * edje: clear pending programs upon calling stop_programs_on()
+   * Evas textblock: fix cached markup's stringshare refs
+   * edje entry: fix bug not to call ecore_imf_context_cursor_position_set when deleting surrounding text
+   * evas: Fix improper extra library linkage for various engines
+   * ecore-drm: Add missing initializer for fb2 command
+   * ecore-evas-wayland: Remove include for old Ecore_Wayland library
 
 Changes since 1.16.0:
 ---------------------
