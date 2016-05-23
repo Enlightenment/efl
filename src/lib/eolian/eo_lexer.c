@@ -954,9 +954,9 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
                 tok->kw = (int)(uintptr_t)eina_hash_find(keyword_map,
                                                         str);
                 ls->column = col + 1;
+                tok->value.s = eina_stringshare_add(str);
                 if (at_kw && tok->kw == 0)
                   eo_lexer_syntax_error(ls, "invalid keyword");
-                tok->value.s = eina_stringshare_add(str);
                 return TOK_VALUE;
              }
            else
