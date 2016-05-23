@@ -5116,76 +5116,32 @@ _elm_win_keyboard_win_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_indicator_mode_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Elm_Win_Indicator_Mode mode)
-{
-   if (mode == sd->indmode) return;
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-#endif
-   sd->indmode = mode;
-#ifdef HAVE_ELEMENTARY_X
-   if (sd->x.xwin)
-     {
-        if (sd->indmode == ELM_WIN_INDICATOR_SHOW)
-          ecore_x_e_illume_indicator_state_set
-            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
-        else if (sd->indmode == ELM_WIN_INDICATOR_HIDE)
-          ecore_x_e_illume_indicator_state_set
-            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
-     }
-#endif
-   eo_event_callback_call
-     (obj, ELM_WIN_EVENT_INDICATOR_PROP_CHANGED, NULL);
-}
-
-EOLIAN static Elm_Win_Indicator_Mode
-_elm_win_indicator_mode_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   return sd->indmode;
-}
-
-EOLIAN static void
-_elm_win_indicator_opacity_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Elm_Win_Indicator_Opacity_Mode mode)
-{
-   if (mode == sd->ind_o_mode) return;
-   sd->ind_o_mode = mode;
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     {
-        if (sd->ind_o_mode == ELM_WIN_INDICATOR_OPAQUE)
-          ecore_x_e_illume_indicator_opacity_set
-            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_OPAQUE);
-        else if (sd->ind_o_mode == ELM_WIN_INDICATOR_TRANSLUCENT)
-          ecore_x_e_illume_indicator_opacity_set
-            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_TRANSLUCENT);
-        else if (sd->ind_o_mode == ELM_WIN_INDICATOR_TRANSPARENT)
-          ecore_x_e_illume_indicator_opacity_set
-            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_TRANSPARENT);
-     }
-#endif
-   eo_event_callback_call
-     (obj, ELM_WIN_EVENT_INDICATOR_PROP_CHANGED, NULL);
-}
-
-EOLIAN static Elm_Win_Indicator_Opacity_Mode
-_elm_win_indicator_opacity_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   return sd->ind_o_mode;
-}
-
-EOLIAN static void
-_elm_win_indicator_overlap_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED, Elm_Win_Indicator_Overlap_Mode mode EINA_UNUSED)
+_elm_win_indicator_enabled_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED, Eina_Bool enable EINA_UNUSED)
 {
    //TODO: this mode will be implemented after removing the conformant.
    return;
 }
 
-EOLIAN static Elm_Win_Indicator_Overlap_Mode
-_elm_win_indicator_overlap_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED)
+EOLIAN static Eina_Bool
+_elm_win_indicator_enabled_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED)
 {
    //TODO: this mode will be implemented after removing the conformant.
-   return ELM_WIN_INDICATOR_OVERLAP_UNKNOWN;
+   return EINA_FALSE;
+}
+
+EOLIAN static void
+_elm_win_indicator_type_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED, Elm_Win_Indicator_Type type EINA_UNUSED)
+{
+   //TODO: this mode will be implemented after removing the conformant.
+   return;
+}
+
+EOLIAN static Elm_Win_Indicator_Type
+_elm_win_indicator_type_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED)
+{
+   //TODO: this mode will be implemented after removing the conformant.
+
+   return ELM_WIN_INDICATOR_TYPE_UNKNOWN;
 }
 
 EOLIAN static void
@@ -6012,6 +5968,77 @@ elm_win_quickpanel_zone_get(const Evas_Object *obj)
 #endif
 
    return 0;
+}
+
+EAPI void
+elm_win_indicator_mode_set(Evas_Object *obj, Elm_Win_Indicator_Mode mode)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   if (mode == sd->indmode) return;
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+#endif
+   sd->indmode = mode;
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        if (sd->indmode == ELM_WIN_INDICATOR_SHOW)
+          ecore_x_e_illume_indicator_state_set
+            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
+        else if (sd->indmode == ELM_WIN_INDICATOR_HIDE)
+          ecore_x_e_illume_indicator_state_set
+            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
+     }
+#endif
+   eo_event_callback_call
+     (obj, ELM_WIN_EVENT_INDICATOR_PROP_CHANGED, NULL);
+}
+
+EAPI Elm_Win_Indicator_Mode
+elm_win_indicator_mode_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, ELM_WIN_INDICATOR_UNKNOWN);
+
+   return sd->indmode;
+}
+
+EAPI void
+elm_win_indicator_opacity_set(Evas_Object *obj, Elm_Win_Indicator_Opacity_Mode mode)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   if (mode == sd->ind_o_mode) return;
+   sd->ind_o_mode = mode;
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     {
+        if (sd->ind_o_mode == ELM_WIN_INDICATOR_OPAQUE)
+          ecore_x_e_illume_indicator_opacity_set
+            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_OPAQUE);
+        else if (sd->ind_o_mode == ELM_WIN_INDICATOR_TRANSLUCENT)
+          ecore_x_e_illume_indicator_opacity_set
+            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_TRANSLUCENT);
+        else if (sd->ind_o_mode == ELM_WIN_INDICATOR_TRANSPARENT)
+          ecore_x_e_illume_indicator_opacity_set
+            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_TRANSPARENT);
+     }
+#endif
+   eo_event_callback_call
+     (obj, ELM_WIN_EVENT_INDICATOR_PROP_CHANGED, NULL);
+}
+
+EAPI Elm_Win_Indicator_Opacity_Mode
+elm_win_indicator_opacity_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, ELM_WIN_INDICATOR_OPACITY_UNKNOWN);
+
+   return sd->ind_o_mode;
 }
 
 #ifndef EFL_TEAMWORK_VERSION

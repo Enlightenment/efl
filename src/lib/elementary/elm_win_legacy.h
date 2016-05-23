@@ -1,6 +1,37 @@
 #include "elm_win.eo.legacy.h"
 
 /**
+ * @brief In some environments, like phones, you may have an indicator that
+ * shows battery status, reception, time etc. This is the indicator.
+ *
+ * Sometimes you don't want it because you provide the same functionality
+ * inside your app, so this will request that the indicator is hidden in this
+ * circumstance. The default is depend on the environments. For example, like
+ * phones, default is to have the indicator shown. But like TV, default is to
+ * have the indicator hidden.
+ *
+ * @ingroup Elm_Win
+ */
+typedef enum
+{
+  ELM_WIN_INDICATOR_UNKNOWN = 0, /** Unknown indicator state */
+  ELM_WIN_INDICATOR_HIDE, /** Hides the indicator */
+  ELM_WIN_INDICATOR_SHOW /** Shows the indicator */
+} Elm_Win_Indicator_Mode;
+
+/** Defines the opacity modes of indicator that can be shown
+ *
+ * @ingroup Elm_Win
+ */
+typedef enum
+{
+  ELM_WIN_INDICATOR_OPACITY_UNKNOWN = 0, /** Unknown indicator opacity mode */
+  ELM_WIN_INDICATOR_OPAQUE, /** Opacifies the indicator */
+  ELM_WIN_INDICATOR_TRANSLUCENT, /** Be translucent the indicator */
+  ELM_WIN_INDICATOR_TRANSPARENT /** Transparentizes the indicator */
+} Elm_Win_Indicator_Opacity_Mode;
+
+/**
  * Adds a window object. If this is the first window created, pass NULL as
  * @p parent.
  *
@@ -462,4 +493,40 @@ EAPI void elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority);
  * @ingroup Elm_Win
  */
 EAPI int elm_win_quickpanel_priority_minor_get(const Evas_Object *obj);
+
+/**
+ * @brief Sets the indicator mode of the window.
+ *
+ * @param[in] mode The mode, one of #Elm_Win_Indicator_Mode.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_indicator_mode_set(Evas_Object *obj, Elm_Win_Indicator_Mode mode);
+
+/**
+ * @brief Get the indicator mode of the window.
+ *
+ * @return The mode, one of #Elm_Win_Indicator_Mode.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Elm_Win_Indicator_Mode elm_win_indicator_mode_get(const Evas_Object *obj);
+
+/**
+ * @brief Sets the indicator opacity mode of the window.
+ *
+ * @param[in] mode The mode, one of #Elm_Win_Indicator_Opacity_Mode.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_indicator_opacity_set(Evas_Object *obj, Elm_Win_Indicator_Opacity_Mode mode);
+
+/**
+ * @brief Get the indicator opacity mode of the window.
+ *
+ * @return The mode, one of #Elm_Win_Indicator_Opacity_Mode.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Elm_Win_Indicator_Opacity_Mode elm_win_indicator_opacity_get(const Evas_Object *obj);
 

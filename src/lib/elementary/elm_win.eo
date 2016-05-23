@@ -97,48 +97,20 @@ enum Elm.Win.Keyboard_Mode
    j2me [[J2ME keyboard layout]]
 }
 
-enum Elm.Win.Indicator_Mode
+enum Elm.Win.Indicator_Type
 {
-   [[In some environments, like phones, you may have an indicator that
-     shows battery status, reception, time etc. This is the indicator.
-
-     Sometimes you don't want it because you provide the same functionality
-     inside your app, so this will request that the indicator is hidden in
-     this circumstance. The default is depend on the environments.
-     For example, like phones, default is to have the indicator shown.
-     But like TV, default is to have the indicator hidden.
-   ]]
-
+   [[Defines the type indicator that can be shown]]
    legacy: elm_win_indicator;
 
-   unknown, [[Unknown indicator state]]
-   hide, [[Hides the indicator]]
-   show [[Shows the indicator]]
-}
-
-enum Elm.Win.Indicator_Opacity_Mode
-{
-   [[Defines the opacity modes of indicator that can be shown]]
-   legacy: elm_win_indicator;
-
-   opacity_unknown, [[Unknown indicator opacity mode]]
-   opaque, [[Opacifies the indicator]]
-   translucent, [[Be translucent the indicator]]
-   transparent [[Transparentizes the indicator]]
-}
-
-enum Elm.Win.Indicator_Overlap_Mode
-{
-   [[Defines the overlap modes of indicator that can be shown.
-     Using this mode, user can determine whether the content of window 
-     overlaps with indicator or not.]]
-   legacy: elm_win_indicator;
-
-   overlap_unknown, [[Unknown indicator overlap mode]]
-   overlap, [[Indicator can be overlapped with the content of window.
-              Content can be placed under the indicator in z-order.]]
-   nooverlap, [[Indicator can not be overlapped with the content of window.
-	           The Y coordinate of content is same as (Y coordinate of indicator + indicator height)]]
+   type_unknown, [[Unknown indicator type]]
+   bg_opaque, [[The icon of indicator is opaque, the background of indicator is also opaque. 
+                The content of window is located the end of indicator.
+                The area of indicator and window content are not overlapped]]
+   bg_transparent, [[The icon of indicator is opaque, but the background is transparent.
+                     The content of window is located under the indicator in Z-order.
+                     The area of indicator and window content are overlapped]]
+   hidden [[The indicator is hidden, So user can see only the content of window like the video mode.
+            If user flicks the upper side of window, the incator is shown temporarily.]]
 }
 
 /**
@@ -183,37 +155,36 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
    eo_prefix: elm_obj_win;
    event_prefix: elm_win;
    methods {
-      @property indicator_mode {
+      @property indicator_enabled {
          set {
-            [[Sets the indicator mode of the window.]]
+             [[In some environments, like phones, you may have an indicator that
+               shows battery status, reception, time etc. This is the indicator.
+
+               Sometimes you don't want it because you provide the same functionality
+               inside your app, so this will request that the indicator is disabled in
+               this circumstance. The default is depend on the environments.
+               For example, like phones, default is to enable the indicator.
+               But like TV, default is to disable the indicator.
+
+               Sets the indicator enable of the window.]]
          }
          get {
-            [[Get the indicator mode of the window.]]
+            [[Get the indicator enable of the window.]]
          }
          values {
-            mode: Elm.Win.Indicator_Mode; [[The mode, one of #Elm_Win_Indicator_Mode.]]
+            enabled: bool; [[If true, the indicator is enabled,
+                             If false, the indicator is disabled.]]
          }
       }
-      @property indicator_opacity {
+      @property indicator_type {
          set {
-            [[Sets the indicator opacity mode of the window.]]
+            [[Sets the indicator type of the window.]]
          }
          get {
-            [[Get the indicator opacity mode of the window.]]
+            [[Get the indicator type of the window.]]
          }
          values {
-            mode: Elm.Win.Indicator_Opacity_Mode; [[The mode, one of #Elm_Win_Indicator_Opacity_Mode.]]
-         }
-      }
-      @property indicator_overlap {
-         set {
-            [[Sets the indicator overlap mode of the window.]]
-         }
-         get {
-            [[Get the indicator overlap mode of the window.]]
-         }
-         values {
-            mode: Elm.Win.Indicator_Overlap_Mode; [[The mode, one of #Elm_Win_Indicator_Overlap_Mode.]]
+            type: Elm.Win.Indicator_Type; [[The type, one of #Elm_Win_Indicator_Type.]]
          }
       }
       @property keyboard_win {
