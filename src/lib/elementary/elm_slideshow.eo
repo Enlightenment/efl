@@ -81,12 +81,11 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       }
       @property loop {
          set {
-            [[Set if, after a slideshow is started, for a given slideshow
-              widget, its items should be displayed cyclically or not.
+            [[Set if the slideshow items should be displayed cyclically or not,
+              so when the end is reached it will restart from the first item.
 
-              Note: @.next and @.previous will ignore what is set by this
-              functions, i.e., they'll always cycle through items. This
-              affects only the "automatic" slideshow, as set by @.timeout.set.
+              Note: This will affect the "automatic" slidshow behaviour and the
+              @.next and @.previous functions as well.
             ]]
          }
          get {
