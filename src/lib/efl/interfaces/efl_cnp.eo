@@ -8,26 +8,33 @@ enum Efl.Cnp.Mode
 interface Efl.Cnp {
    methods {
       @property mode {
-         set {
-            [[TODO
+         [[Control pasting of text and images for the widget.
+
+           Normally the entry allows both text and images to be pasted.
+           By setting cnp_mode to be #EFL_CNP_MODE_NO_IMAGE, this prevents images from being copy or past.
+           By setting cnp_mode to be #EFL_CNP_MODE_PLAINTEXT, this remove all tags in text .
+
+           Note: This only changes the behaviour of text.
             ]]
+         set {
          }
          get {
-            [[TODO
-            ]]
          }
          values {
-            mode: Efl.Cnp.Mode; [[TODO]]
+            mode: Efl.Cnp.Mode; [[One of #Efl_Cnp_Mode: #EFL_CNP_MODE_MARKUP, #EFL_CNP_MODE_NO_IMAGE, #EFL_CNP_MODE_PLAINTEXT.]]
          }
       }
       copy {
-         return: const (char)*; [[TODO]]
+         [[This executes a "copy" action on the text of the object.]]
+         return: const (char)*; [[Returns copied text]]
       }
       cut {
-         return: const (char)*; [[TODO]]
+         [[This executes a "cut" action on the text of the object.]]
+         return: const (char)*; [[Returns cutted text]]
       }
       paste {
-         return: const (char)*; [[TODO]]
+         [[This executes a "paste" action on the text of the object.]]
+         return: const (char)*; [[Returns pasted text]]
       }
    }
 }

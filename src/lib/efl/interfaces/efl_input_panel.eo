@@ -1,0 +1,136 @@
+enum Efl.Input_Panel.Layout
+{
+   normal = 0,
+   number,
+   email,
+   url,
+   phonenumber,
+   ip,
+   month,
+   numberonly,
+   invalid,
+   hex,
+   terminal,
+   password,
+   datetime,
+   emoticon
+}
+
+enum Efl.Input_Panel.Lang
+{
+   automatic = 0,
+   alphabet
+}
+
+enum Efl.Input_Panel.Return.Key.Type
+{
+   default = 0,
+   done,
+   go,
+   join,
+   login,
+   next,
+   search,
+   send,
+   signin
+}
+
+interface Efl.Input_Panel {
+   methods {
+      @property layout {
+         set {
+            [[Set the input panel layout.]]
+         }
+         get {
+            [[Get the input panel layout.]]
+         }
+         values {
+            layout: Efl.Input_Panel.Layout(Efl.Input_Panel.Layout.invalid); [[layout type.]]
+         }
+      }
+      @property visible {
+         [[Controls visiblity of the input panel.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            visible: bool; [[If visible is true, the input panel will be shown. If visible is false, the input panel will be hidden.]]
+         }
+      }
+      @property language {
+         set {
+            [[Set the language mode of the input panel.
+
+              This API can be used if you want to show the alphabet keyboard mode.
+            ]]
+         }
+         get {
+            [[Get the language mode of the input panel.
+            ]]
+         }
+         values {
+            language: Efl.Input_Panel.Lang; [[language to be set to the input panel.]]
+         }
+      }
+      @property return_key_type {
+         set {
+            [[Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
+
+              An input panel displays the string or icon associated with this type.
+            ]]
+         }
+         get {
+            [[Get the "return" key type.
+            ]]
+         }
+         values {
+            type: Efl.Input_Panel.Return.Key.Type; [[The type of "return" key on the input panel.]]
+         }
+      }
+      @property return_key_disabled {
+         set {
+            [[Set the return key on the input panel to be disabled.
+            ]]
+         }
+         get {
+            [[Get whether the return key on the input panel should be disabled or not.
+            ]]
+         }
+         values {
+            disabled: bool; [[The state to put in in: $true for
+            disabled, $false for enabled.]]
+         }
+      }
+      @property return_key_autoenabled {
+         [[Set whether the return key on the input panel is disabled automatically when there is no text.
+
+           If $enabled is $true, The return key on input panel is disabled when there is no text.
+           The return key on the input panel is automatically enabled when there is text.
+           The default value is $false.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            enabled: bool; [[If $enabled is true, the return key is automatically disabled when there is no text.]]
+         }
+      }
+      @property show_on_demand {
+         set {
+            [[Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+              It doesn't request to show the input panel even though it has focus.
+            ]]
+         }
+         get {
+            [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+            ]]
+         }
+         values {
+            on_demand: bool; [[If true, the input panel will be shown in case of only Mouse up event.]]
+         }
+      }
+   }
+}

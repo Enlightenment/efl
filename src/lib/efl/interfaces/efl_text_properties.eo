@@ -8,7 +8,7 @@ enum Efl.Text.Properties.Ellipsis
    end
 }
 
-enum Efl.Text.Properties.Horizontal.Alignment
+enum Efl.Text.Properties.Horizontal_Alignment
 {
    default = 0,
    left,
@@ -16,7 +16,7 @@ enum Efl.Text.Properties.Horizontal.Alignment
    right
 }
 
-enum Efl.Text.Properties.Vertical.Alignment
+enum Efl.Text.Properties.Vertical_Alignment
 {
    default = 0,
    top,
@@ -24,7 +24,7 @@ enum Efl.Text.Properties.Vertical.Alignment
    bottom
 }
 
-enum Efl.Text.Properties.Wrap.Mode
+enum Efl.Text.Properties.Wrap_Mode
 {
    none = 0,
    char,
@@ -87,64 +87,48 @@ interface Efl.Text.Properties {
          }
       }
       @property ellipsis {
+         [[Controls the ellipsis for the text object.]]
          set {
-            [[TODO
-            ]]
          }
          get {
-            [[TODO
-            ]]
          }
          values {
-            ellipsis: Efl.Text.Properties.Ellipsis; [[TODO]]
+            ellipsis: Efl.Text.Properties.Ellipsis; [[The ellipsis. See @Efl.Text.Properties.Ellipsis]]
          }
       }
       @property horizontal_alignment {
+         [[Controls horizontal alignment for text.]]
          set {
-            [[TODO
-            ]]
          }
          get {
-            [[TODO
-            ]]
          }
          values {
-            align: Efl.Text.Properties.Horizontal.Alignment; [[TODO]]
+            align: Efl.Text.Properties.Horizontal_Alignment; [[The horizontal alignment. See @Efl.Text.Properties.Horizontal_Alignment]]
          }
       }
       @property vertical_alignment {
+         [[Controls vertical alignment for text.]]
          set {
-            [[TODO
-            ]]
          }
          get {
-            [[TODO
-            ]]
          }
          values {
-            align: Efl.Text.Properties.Vertical.Alignment; [[TODO]]
+            align: Efl.Text.Properties.Vertical_Alignment; [[The vertical alignment. See @Efl.Text.Properties.Vertical_Alignment]]
          }
       }
       @property wrap_mode {
+         [[Controls wrap mode. This tells how the text will be implicitly cut
+           into a new line (without inserting a line break or paragraph separator)
+           when it reaches the far edge of the object.
+
+           Note that #EFL_TEXT_PROPERTIES_WRAP_MODE_NONE indicates single-line mode.
+           ]]
          set {
-            [[TODO
-            ]]
          }
          get {
-            [[TODO
-            ]]
          }
          values {
-            ellipsis: Efl.Text.Properties.Ellipsis; [[TODO]]
-         }
-      }
-      @property BiDi {
-         get {
-            [[TODO
-            ]]
-         }
-         values {
-            bidi: Efl.BiDi.Direction; [[TODO]]
+            ellipsis: Efl.Text.Properties.Wrap_Mode; [[The wrap mode to use. See @Efl.Text.Properties.Wrap_Mode for details on them.]]
          }
       }
    }

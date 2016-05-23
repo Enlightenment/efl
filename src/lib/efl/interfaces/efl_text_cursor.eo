@@ -1,68 +1,86 @@
+enum Efl.Text.Cursor.Type
+{
+   under = 0,
+   before
+}
+
 interface Efl.Text.Cursor {
    methods {
+      @property type {
+         [[Contols cursor type. It may change the cursor's geometry
+           according to cursor type.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            type: Efl.Text.Cursor.Type; [[The cursor's type]]
+         }
+      }
       @property position {
          set {
-            [[TODO
+            [[Set the cursor pos.
             ]]
          }
          get {
-            [[TODO
+            [[Return the current cursor pos.
             ]]
          }
          values {
-            position: int; [[TODO]]
+            position: int; [[The cursor's position]]
          }
       }
       @property geometry {
          get {
-            [[TODO
+            [[Returns the geometry of the cursor.
             ]]
          }
          values {
-            x: int; [[TODO]]
-            y: int; [[TODO]]
-            w: int; [[TODO]]
-            h: int; [[TODO]]
+            x: int; [[Cursor X position]]
+            y: int; [[Cursor Y position]]
+            w: int; [[Cursor width]]
+            h: int; [[Cursor height]]
          }
       }
       @property bidi {
          get {
-            [[TODO
+            [[Returns the direction of the cursor.
             ]]
          }
          values {
-            bidi: int; [[TODO]]
+            bidi: Efl.BiDi.Direction; [[the diretion of the cursor]]
          }
       }
-      first {
-         [[TODO
+      move_begin {
+         [[Move the cursor to the beginning of text. 
          ]]
-         return: bool; [[TODO]]
+         return: bool; [[If the cursor is moved to the beginning of text, it returns true]]
       }
-      last {
-         [[TODO
+      move_end {
+         [[Move the cursor to the end of text.
          ]]
-         return: bool; [[TODO]]
+         return: bool; [[If the cursor is moved to the end of text, it returns true]]
       }
-      next {
-         [[TODO
+      move_next {
+         [[Move the cursor to the next position of text.
          ]]
-         return: bool; [[TODO]]
+         return: bool; [[If the cursor is moved to the next position of text, it returns true]]
       }
-      prev {
-         [[TODO
+      move_prev {
+         [[Move the cursor to the previous position of text.
          ]]
-         return: bool; [[TODO]]
+         return: bool; [[If the cursor is moved to the previous position of text, it returns true]]
       }
-      up {
-         [[TODO
+      move_up {
+         [[Move the cursor to the above line of text. 
          ]]
-         return: bool; [[TODO]]
+         return: bool; [[If the cursor is moved to the above line of text, it returns true]]
       }
-      down {
-         [[TODO
+      move_down {
+         [[Move the cursor to the below line of text.
          ]]
-         return: bool; [[TODO]]
+         return: bool; [[If the cursor is moved to the below line of text, it returns true]]]
       }
    }
 }

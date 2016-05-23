@@ -1,61 +1,58 @@
 interface Efl.Text.Selection {
    methods {
       @property enable {
+         [[Enable or disable selection feature.]]
          set {
-            [[TODO
-            ]]
          }
          get {
-            [[TODO
-            ]]
          }
          values {
-            enable: bool; [[TODO]]
+            enable: bool; [[If $enable is true, the text selection is enabled.]]
          }
       }
       @property region {
+         [[This selects a region of text within the object.
          set {
-            [[TODO
-            ]]
          }
          get {
-            [[TODO
-            ]]
          }
          values {
-            start: int; [[TODO]]
-            end: int; [[TODO]]
+            start: int; [[The starting position.]]
+            end: int; [[The end position.]]
          }
       }
       @property handler_disabled {
+         [[This disabled the selection handlers.]]
          set {
-            [[TODO
-            ]]
          }
          get {
-            [[TODO
-            ]]
          }
          values {
-            disabled: bool; [[TODO]]
+            disabled: bool; [[If $true, the selection handlers are disabled.]]
          }
       }
       @property text {
          get {
-            [[TODO
+            [[Get any selected text within the object.
+
+              If there's any selected text in the object, this function returns it as
+              a string in markup format. $null is returned if no selection exists or
+              if an error occurred.
+
+              The returned value points to an internal string and should not be freed
+              or modified in any way. If the object is deleted or its
+              contents are changed, the returned pointer should be considered invalid.
             ]]
          }
          values {
-            text: const(char)*; [[TODO]]
+            text: const(char)*;
          }
       }
       all {
-         [[TODO
-	 ]]
+         [[This selects all text within the object.]]
       }
       none {
-         [[TODO
-	 ]]
+         [[This drops any existing text selection within the object.]]
       }
    }
 }
