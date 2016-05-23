@@ -197,6 +197,7 @@ abstract Eo.Base ()
       wref_del {
          [[Delete the weak reference passed.]]
          params {
+            /* FIXME: this should be @ref when I add it */
             @out wref: Eo.Base;
          }
       }
