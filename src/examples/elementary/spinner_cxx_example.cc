@@ -1,3 +1,9 @@
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+# include "elementary_config.h"
+#endif
+
 #include <Elementary.hh>
 
 EAPI_MAIN int
@@ -5,28 +11,28 @@ elm_main (int argc, char *argv[])
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   ::elm::win win(elm_win_util_standard_add("spinner", "Spinner Example"));
+   ::elm::win::Standard win(elm_win_util_standard_add("spinner", "Spinner Example"));
    win.autohide_set(true);
 
-   ::elm::box bx(efl::eo::parent = win);
+   ::elm::Box bx(efl::eo::parent = win);
    bx.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    win.resize_object_add(bx);
    bx.visible_set(true);
 
-   ::elm::spinner sp(efl::eo::parent = win);
+   ::elm::Spinner sp(efl::eo::parent = win);
    sp.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    sp.size_hint_align_set(EVAS_HINT_FILL, 0.5);
    bx.pack_end(sp);
    sp.visible_set(true);
 
-   ::elm::spinner sp2(efl::eo::parent = win);
+   ::elm::Spinner sp2(efl::eo::parent = win);
    sp2.label_format_set("Percentage %%%1.2f something");
    sp2.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    sp2.size_hint_align_set(EVAS_HINT_FILL, 0.5);
    bx.pack_end(sp2);
    sp2.visible_set(true);
 
-   ::elm::spinner sp3(efl::eo::parent = win);
+   ::elm::Spinner sp3(efl::eo::parent = win);
    sp3.label_format_set("%1.1f units");
    sp3.step_set(1.5);
    sp3.wrap_set(true);
@@ -36,7 +42,7 @@ elm_main (int argc, char *argv[])
    bx.pack_end(sp3);
    sp3.visible_set(true);
 
-   ::elm::spinner sp4(efl::eo::parent = win);
+   ::elm::Spinner sp4(efl::eo::parent = win);
    sp4.style_set("vertical");
    sp4.interval_set(0.2);
    sp4.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -44,14 +50,14 @@ elm_main (int argc, char *argv[])
    bx.pack_end(sp4);
    sp4.visible_set(true);
 
-   ::elm::spinner sp5(efl::eo::parent = win);
+   ::elm::Spinner sp5(efl::eo::parent = win);
    sp5.editable_set(false);
    sp5.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    sp5.size_hint_align_set(EVAS_HINT_FILL, 0.5);
    bx.pack_end(sp5);
    sp5.visible_set(true);
 
-   ::elm::spinner sp6(efl::eo::parent = win);
+   ::elm::Spinner sp6(efl::eo::parent = win);
    sp6.editable_set(false);
    sp6.min_max_set(1, 12);
    sp6.special_value_add(1, "January");
@@ -71,7 +77,7 @@ elm_main (int argc, char *argv[])
    bx.pack_end(sp6);
    sp6.visible_set(true);
 
-   ::elm::spinner sp7(efl::eo::parent = win);
+   ::elm::Spinner sp7(efl::eo::parent = win);
    sp7.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    sp7.size_hint_align_set(EVAS_HINT_FILL, 0.5);
    bx.pack_end(sp7);

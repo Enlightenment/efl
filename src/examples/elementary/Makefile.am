@@ -18,14 +18,14 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl/interfaces \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/bindings/eina_cxx \
--I$(top_builddir)/src/bindings/eina_cxx \
+-I$(top_srcdir)/src/bindings/cxx/eina_cxx \
+-I$(top_builddir)/src/bindings/cxx/eina_cxx \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_builddir)/src/lib/eo \
--I$(top_srcdir)/src/bindings/eo_cxx \
--I$(top_builddir)/src/bindings/eo_cxx \
--I$(top_srcdir)/src/bindings/eldbus_cxx \
--I$(top_builddir)/src/bindings/eldbus_cxx \
+-I$(top_srcdir)/src/bindings/cxx/eo_cxx \
+-I$(top_builddir)/src/bindings/cxx/eo_cxx \
+-I$(top_srcdir)/src/bindings/cxx/eldbus_cxx \
+-I$(top_builddir)/src/bindings/cxx/eldbus_cxx \
 -I$(top_srcdir)/src/lib/ector \
 -I$(top_builddir)/src/lib/ector \
 -I$(top_srcdir)/src/lib/evas \
@@ -177,35 +177,35 @@ evas3d_map_example.c \
 track_example_01.c \
 twitter_example_01.edc
 
-# if HAVE_CXX11
-# SRCS += \
-# thumb_cxx_example_01.cc \
-# table_cxx_example_02.cc \
-# table_cxx_example_01.cc \
-# spinner_cxx_example.cc \
-# slider_cxx_example.cc \
-# separator_cxx_example_01.cc \
-# radio_cxx_example_01.cc \
-# popup_cxx_example_01.cc \
-# menu_cxx_example_01.cc \
-# location_cxx_example_01.cc \
-# icon_cxx_example_01.cc \
-# hoversel_cxx_example_01.cc \
-# glview_cxx_example_01.cc \
-# datetime_cxx_example.cc \
-# clock_cxx_example.cc \
-# calendar_cxx_example_05.cc \
-# calendar_cxx_example_04.cc \
-# calendar_cxx_example_03.cc \
-# calendar_cxx_example_02.cc \
-# calendar_cxx_example_01.cc \
-# button_cxx_example_01.cc \
-# button_cxx_example_00.cc \
-# bubble_cxx_example_01.cc \
-# box_cxx_example_02.cc \
-# bg_cxx_example_02.cc \
-# bg_cxx_example_01.cc
-# endif
+if HAVE_CXX11
+SRCS += \
+thumb_cxx_example_01.cc \
+table_cxx_example_02.cc \
+table_cxx_example_01.cc \
+spinner_cxx_example.cc \
+slider_cxx_example.cc \
+separator_cxx_example_01.cc \
+radio_cxx_example_01.cc \
+popup_cxx_example_01.cc \
+menu_cxx_example_01.cc \
+location_cxx_example_01.cc \
+icon_cxx_example_01.cc \
+hoversel_cxx_example_01.cc \
+glview_cxx_example_01.cc \
+datetime_cxx_example.cc \
+clock_cxx_example.cc \
+calendar_cxx_example_05.cc \
+calendar_cxx_example_04.cc \
+calendar_cxx_example_03.cc \
+calendar_cxx_example_02.cc \
+calendar_cxx_example_01.cc \
+button_cxx_example_01.cc \
+button_cxx_example_00.cc \
+bubble_cxx_example_01.cc \
+box_cxx_example_02.cc \
+bg_cxx_example_02.cc \
+bg_cxx_example_01.cc
+endif
 
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
@@ -382,35 +382,35 @@ sphere_hunter/sphere_hunter.edj: sphere_hunter/sphere_hunter.edc
 	$(MKDIR_P) sphere_hunter/; \
 	$(EDJE_CC) $(EDJE_CC_FLAGS) -id sphere_hunter/ -id $(top_srcdir)/data/elementary/themes $< $@
 
-# if HAVE_CXX11
-# examples_PROGRAMS += \
-# thumb_cxx_example_01 \
-# table_cxx_example_02 \
-# table_cxx_example_01 \
-# spinner_cxx_example \
-# slider_cxx_example \
-# separator_cxx_example_01 \
-# radio_cxx_example_01 \
-# popup_cxx_example_01 \
-# menu_cxx_example_01 \
-# location_cxx_example_01 \
-# icon_cxx_example_01 \
-# hoversel_cxx_example_01 \
-# glview_cxx_example_01 \
-# datetime_cxx_example \
-# clock_cxx_example \
-# calendar_cxx_example_05 \
-# calendar_cxx_example_04 \
-# calendar_cxx_example_03 \
-# calendar_cxx_example_02 \
-# calendar_cxx_example_01 \
-# button_cxx_example_01 \
-# button_cxx_example_00 \
-# bubble_cxx_example_01 \
-# box_cxx_example_02 \
-# bg_cxx_example_02 \
-# bg_cxx_example_01
-# endif
+if HAVE_CXX11
+examples_PROGRAMS += \
+thumb_cxx_example_01 \
+table_cxx_example_02 \
+table_cxx_example_01 \
+spinner_cxx_example \
+slider_cxx_example \
+separator_cxx_example_01 \
+radio_cxx_example_01 \
+popup_cxx_example_01 \
+menu_cxx_example_01 \
+location_cxx_example_01 \
+icon_cxx_example_01 \
+hoversel_cxx_example_01 \
+glview_cxx_example_01 \
+datetime_cxx_example \
+clock_cxx_example \
+calendar_cxx_example_05 \
+calendar_cxx_example_04 \
+calendar_cxx_example_03 \
+calendar_cxx_example_02 \
+calendar_cxx_example_01 \
+button_cxx_example_01 \
+button_cxx_example_00 \
+bubble_cxx_example_01 \
+box_cxx_example_02 \
+bg_cxx_example_02 \
+bg_cxx_example_01
+endif
 
 if HAVE_WINDOWS
 efl_thread_1_SOURCES = efl_thread_win32_1.c
@@ -424,34 +424,34 @@ efl_thread_3_SOURCES = efl_thread_3.c
 efl_thread_4_SOURCES = efl_thread_4.c
 endif
 
-# if HAVE_CXX11
-# thumb_cxx_example_01_SOURCES = thumb_cxx_example_01.cc
-# table_cxx_example_02_SOURCES = table_cxx_example_02.cc
-# table_cxx_example_01_SOURCES = table_cxx_example_01.cc
-# spinner_cxx_example_SOURCES = spinner_cxx_example.cc
-# slider_cxx_example_SOURCES = slider_cxx_example.cc
-# separator_cxx_example_01_SOURCES = separator_cxx_example_01.cc
-# radio_cxx_example_01_SOURCES = radio_cxx_example_01.cc
-# popup_cxx_example_01_SOURCES = popup_cxx_example_01.cc
-# menu_cxx_example_01_SOURCES = menu_cxx_example_01.cc
-# location_cxx_example_01_SOURCES = location_cxx_example_01.cc
-# icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
-# hoversel_cxx_example_01_SOURCES = hoversel_cxx_example_01.cc
-# glview_cxx_example_01_SOURCES = glview_cxx_example_01.cc
-# datetime_cxx_example_SOURCES = datetime_cxx_example.cc
-# clock_cxx_example_SOURCES = clock_cxx_example.cc
-# calendar_cxx_example_05_SOURCES = calendar_cxx_example_05.cc
-# calendar_cxx_example_04_SOURCES = calendar_cxx_example_04.cc
-# calendar_cxx_example_03_SOURCES = calendar_cxx_example_03.cc
-# calendar_cxx_example_02_SOURCES = calendar_cxx_example_02.cc
-# calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
-# button_cxx_example_01_SOURCES = button_cxx_example_01.cc
-# button_cxx_example_00_SOURCES = button_cxx_example_00.cc
-# bubble_cxx_example_01_SOURCES = bubble_cxx_example_01.cc
-# box_cxx_example_02_SOURCES = box_cxx_example_02.cc
-# bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
-# bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
-# endif
+if HAVE_CXX11
+thumb_cxx_example_01_SOURCES = thumb_cxx_example_01.cc
+table_cxx_example_02_SOURCES = table_cxx_example_02.cc
+table_cxx_example_01_SOURCES = table_cxx_example_01.cc
+spinner_cxx_example_SOURCES = spinner_cxx_example.cc
+slider_cxx_example_SOURCES = slider_cxx_example.cc
+separator_cxx_example_01_SOURCES = separator_cxx_example_01.cc
+radio_cxx_example_01_SOURCES = radio_cxx_example_01.cc
+popup_cxx_example_01_SOURCES = popup_cxx_example_01.cc
+menu_cxx_example_01_SOURCES = menu_cxx_example_01.cc
+location_cxx_example_01_SOURCES = location_cxx_example_01.cc
+icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
+hoversel_cxx_example_01_SOURCES = hoversel_cxx_example_01.cc
+glview_cxx_example_01_SOURCES = glview_cxx_example_01.cc
+datetime_cxx_example_SOURCES = datetime_cxx_example.cc
+clock_cxx_example_SOURCES = clock_cxx_example.cc
+calendar_cxx_example_05_SOURCES = calendar_cxx_example_05.cc
+calendar_cxx_example_04_SOURCES = calendar_cxx_example_04.cc
+calendar_cxx_example_03_SOURCES = calendar_cxx_example_03.cc
+calendar_cxx_example_02_SOURCES = calendar_cxx_example_02.cc
+calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
+button_cxx_example_01_SOURCES = button_cxx_example_01.cc
+button_cxx_example_00_SOURCES = button_cxx_example_00.cc
+bubble_cxx_example_01_SOURCES = bubble_cxx_example_01.cc
+box_cxx_example_02_SOURCES = box_cxx_example_02.cc
+bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
+bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
+endif
 
 # This variable will hold the list of screenshots that will be made
 # by "make screenshots". Each item in the list is of the form:
@@ -539,33 +539,33 @@ table_example_01:table_example_01.png:0.0 \
 table_example_02:table_example_02.png:0.0 \
 menu_example_01:menu_example_01.png:0.5
 
-# if HAVE_CXX11
-# SCREENSHOTS += \
-# bg_cxx_example_02:bg_cxx_example_02.png:0.0 \
-# box_cxx_example_02:box_cxx_example_02.png:1.3 \
-# bubble_cxx_example_01:bubble_cxx_example_01.png:0.0 \
-# button_cxx_example_00:button_cxx_example_00.png:0.0 \
-# button_cxx_example_01:button_cxx_example_01.png:0.0 \
-# calendar_cxx_example_01:calendar_cxx_example_01.png:0.0 \
-# calendar_cxx_example_02:calendar_cxx_example_02.png:0.0 \
-# calendar_cxx_example_03:calendar_cxx_example_03.png:0.0 \
-# calendar_cxx_example_04:calendar_cxx_example_04.png:0.0 \
-# calendar_cxx_example_05:calendar_cxx_example_05.png:0.0 \
-# clock_cxx_example:clock_cxx_example.png:0.5 \
-# datetime_cxx_example:datetime_cxx_example.png:0.0 \
-# hoversel_cxx_example_01:hoversel_cxx_example_01.png:0.0 \
-# icon_cxx_example_01:icon_cxx_example_01.png:0.0 \
-# menu_cxx_example_01:menu_cxx_example_01.png:0.5 \
-# popup_cxx_example_01:popup_cxx_example_01.png:1.0 \
-# popup_cxx_example_01:popup_cxx_example_01_a.png:6.0 \
-# radio_cxx_example_01:radio_cxx_example_01.png:0.0 \
-# separator_cxx_example_01:separator_cxx_example_01.png:0.0 \
-# slider_cxx_example:slider_cxx_example.png:0.0 \
-# spinner_cxx_example:spinner_cxx_example.png:0.0 \
-# table_cxx_example_01:table_cxx_example_01.png:0.0 \
-# table_cxx_example_02:table_cxx_example_02.png:0.0 \
-# thumb_cxx_example_01:thumb_cxx_example_01.png:0.5
-# endif
+if HAVE_CXX11
+SCREENSHOTS += \
+bg_cxx_example_02:bg_cxx_example_02.png:0.0 \
+box_cxx_example_02:box_cxx_example_02.png:1.3 \
+bubble_cxx_example_01:bubble_cxx_example_01.png:0.0 \
+button_cxx_example_00:button_cxx_example_00.png:0.0 \
+button_cxx_example_01:button_cxx_example_01.png:0.0 \
+calendar_cxx_example_01:calendar_cxx_example_01.png:0.0 \
+calendar_cxx_example_02:calendar_cxx_example_02.png:0.0 \
+calendar_cxx_example_03:calendar_cxx_example_03.png:0.0 \
+calendar_cxx_example_04:calendar_cxx_example_04.png:0.0 \
+calendar_cxx_example_05:calendar_cxx_example_05.png:0.0 \
+clock_cxx_example:clock_cxx_example.png:0.5 \
+datetime_cxx_example:datetime_cxx_example.png:0.0 \
+hoversel_cxx_example_01:hoversel_cxx_example_01.png:0.0 \
+icon_cxx_example_01:icon_cxx_example_01.png:0.0 \
+menu_cxx_example_01:menu_cxx_example_01.png:0.5 \
+popup_cxx_example_01:popup_cxx_example_01.png:1.0 \
+popup_cxx_example_01:popup_cxx_example_01_a.png:6.0 \
+radio_cxx_example_01:radio_cxx_example_01.png:0.0 \
+separator_cxx_example_01:separator_cxx_example_01.png:0.0 \
+slider_cxx_example:slider_cxx_example.png:0.0 \
+spinner_cxx_example:spinner_cxx_example.png:0.0 \
+table_cxx_example_01:table_cxx_example_01.png:0.0 \
+table_cxx_example_02:table_cxx_example_02.png:0.0 \
+thumb_cxx_example_01:thumb_cxx_example_01.png:0.5
+endif
 
 HTML_SS_DIR=$(top_builddir)/doc/html/screenshots
 LATEX_SS_DIR=$(top_builddir)/doc/latex/screenshots

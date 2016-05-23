@@ -1,3 +1,9 @@
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+# include "elementary_config.h"
+#endif
+
 #include <Elementary.hh>
 
 EAPI_MAIN int
@@ -7,11 +13,11 @@ elm_main (int argc, char *argv[])
 
    static int val = 1;
 
-   ::elm::win_standard win;
+   ::elm::win::Standard win;
    win.title_set("Radio");
    win.autohide_set(true);
 
-   ::elm::box bx(efl::eo::parent = win);
+   ::elm::Box bx(efl::eo::parent = win);
    bx.horizontal_set(true);
    bx.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    win.resize_object_add(bx);
