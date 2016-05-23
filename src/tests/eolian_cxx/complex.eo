@@ -1,0 +1,15 @@
+class Complex (Eo.Base)
+{
+   data: Complex_Data;
+   methods {
+      foo {
+         params {
+            l: list<int*>;
+         }
+      }
+      bar {
+         return: array<int*>;
+      }
+   }
+}
+

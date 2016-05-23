@@ -78,6 +78,8 @@ tests/eolian_cxx/name_name_cxx.cc \
 tests/eolian_cxx/generic.c \
 tests/eolian_cxx/eolian_cxx_test_inheritance.cc \
 tests/eolian_cxx/eolian_cxx_test_generate.cc \
+tests/eolian_cxx/complex.c \
+tests/eolian_cxx/complex_cxx.cc \
 tests/eolian_cxx/eolian_cxx_suite.h
 
 tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-eolian_cxx_test_wrapper.$(OBJEXT): tests/eolian_cxx/callback.eo.hh tests/eolian_cxx/callback.eo.h
@@ -96,6 +98,9 @@ tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-d.$(OBJEXT): tests/eolian_cxx
 
 tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-name_name.$(OBJEXT): tests/eolian_cxx/name_name.eo.c tests/eolian_cxx/name_name.eo.h tests/eolian_cxx/ns_name.eo.c tests/eolian_cxx/ns_name.eo.h tests/eolian_cxx/ns_name_other.eo.c tests/eolian_cxx/ns_name_other.eo.h
 tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-name_name_cxx.$(OBJEXT): tests/eolian_cxx/name_name.eo.h tests/eolian_cxx/name_name.eo.hh tests/eolian_cxx/ns_name.eo.h tests/eolian_cxx/ns_name.eo.hh tests/eolian_cxx/ns_name_other.eo.h tests/eolian_cxx/ns_name_other.eo.hh
+
+tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-complex.$(OBJEXT): tests/eolian_cxx/complex.eo.c tests/eolian_cxx/complex.eo.h
+tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-complex_cxx.$(OBJEXT): tests/eolian_cxx/complex.eo.h tests/eolian_cxx/complex.eo.hh
 
 CLEANFILES += \
 tests/eolian_cxx/callback.eo.hh \
@@ -125,7 +130,11 @@ tests/eolian_cxx/ns_name.eo.impl.hh \
 tests/eolian_cxx/ns_name_other.eo.hh \
 tests/eolian_cxx/ns_name_other.eo.c \
 tests/eolian_cxx/ns_name_other.eo.h \
-tests/eolian_cxx/ns_name_other.eo.impl.hh
+tests/eolian_cxx/ns_name_other.eo.impl.hh \
+tests/eolian_cxx/complex.eo.hh \
+tests/eolian_cxx/complex.eo.c \
+tests/eolian_cxx/complex.eo.h \
+tests/eolian_cxx/complex.eo.impl.hh
 
 
 tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS = \
