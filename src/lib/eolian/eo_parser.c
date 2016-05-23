@@ -799,6 +799,12 @@ parse_type_void(Eo_Lexer *ls)
                                                         parse_type(ls));
                        pop_type(ls);
                     }
+                  else if(tpid == KW_promise && test_next(ls, ','))
+                    {
+                       def->subtypes = eina_list_append(def->subtypes,
+                                                        parse_type(ls));
+                       pop_type(ls);
+                    }
                   check_match(ls, '>', '<', bline, bcol);
                }
           }

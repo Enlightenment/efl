@@ -6,6 +6,11 @@ class Generated_Promise (Eo.Base)
             @inout promise1: promise<int>;
          }
       }
+      method_progress_type {
+         params {
+            @inout promise1: promise<int, double>;
+         }
+      }
       method_multiple_args_1 {
          params {
             @inout promise1: promise<int>;

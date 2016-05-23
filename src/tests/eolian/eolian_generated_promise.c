@@ -11,6 +11,11 @@
 struct Generated_Promise_Data {};
 typedef struct Generated_Promise_Data Generated_Promise_Data;
 
+static void _generated_promise_method_progress_type(Eo *obj EINA_UNUSED, Generated_Promise_Data *pd EINA_UNUSED,
+                                                    Eina_Promise_Owner *promise1 EINA_UNUSED)
+{
+}
+
 static Eina_Promise * _generated_promise_prop1_get(Eo *obj EINA_UNUSED, Generated_Promise_Data *pd EINA_UNUSED)
 {
    return NULL;
