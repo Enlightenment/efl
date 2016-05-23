@@ -225,3 +225,10 @@ CLEANFILES += $(generated_eo_js_bindings)
 GENERATED_JS_BINDINGS += $(generated_eo_js_bindings)
 
 endif
+
+if HAVE_CXX11
+
+eo_eolian_cxx_hh = $(eo_eolian_files:%.eo=%.eo.hh)
+eo_eolian_cxx_impl_hh = $(eo_eolian_files:%.eo=%.eo.impl.hh)
+
+endif

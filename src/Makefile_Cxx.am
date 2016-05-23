@@ -1,0 +1,351 @@
+if HAVE_CXX11
+
+### Eo C++
+CLEANFILES += $(eo_eolian_cxx_hh) $(eo_eolian_cxx_impl_hh)
+
+installed_eocxxheadersdir = $(includedir)/eo-cxx-@VMAJ@/
+nodist_installed_eocxxheaders_DATA = $(eo_eolian_cxx_hh) $(eo_eolian_cxx_impl)
+dist_installed_eocxxheaders_DATA = \
+bindings/cxx/eo_cxx/eo_concrete.hh \
+bindings/cxx/eo_cxx/eo_event.hh \
+bindings/cxx/eo_cxx/eo_init.hh \
+bindings/cxx/eo_cxx/eo_wref.hh \
+bindings/cxx/eo_cxx/eo_inherit.hh \
+bindings/cxx/eo_cxx/eo_ops.hh \
+bindings/cxx/eo_cxx/eo_private.hh \
+bindings/cxx/eo_cxx/eo_inherit_bindings.hh \
+bindings/cxx/eo_cxx/eo_cxx_interop.hh \
+bindings/cxx/eo_cxx/Eo.hh
+
+### Elementary C++
+installed_elementarycxxmainheadersdir = $(includedir)/elementary-cxx-@VMAJ@/
+nodist_installed_elementarycxxmainheaders_DATA = $(elementary_eolian_cxx_hh) $(elementary_eolian_cxx_impl) \
+lib/elementary/Elementary.hh
+
+lib/elementary/Elementary.hh: $(elementary_eolian_cxx_hh)
+	@echo @ECHO_E@ "#ifndef EFL_CXX_ELEMENTARY_HH\n#define EFL_CXX_ELEMENTARY_HH\n" > $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#if defined(ELEMENTARY_H) || defined(ELM_WIDGET_H)" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#error Do not include Elm C API headers before including Elementary.hh" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#endif" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#ifndef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#define EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#endif\n" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#ifndef ELM_INTERNAL_API_ARGESFSDFEFC" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#define ELM_INTERNAL_API_ARGESFSDFEFC" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#endif\n" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "extern \"C\" {" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#include \"Elementary.h\"" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#include \"elm_widget.h\"" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "}" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@for i in $(elementary_eolian_cxx_hh); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/elementary/Elementary.hh; done
+	@echo @ECHO_E@ "#endif\n" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+
+CLEANFILES += $(elementary_eolian_cxx_hh) $(elementary_eolian_cxx_impl) lib/elementary/Elementary.hh
+
+### Efl C++
+installed_eflcxxmainheadersdir = $(includedir)/efl-cxx-@VMAJ@/
+nodist_installed_eflcxxmainheaders_DATA = $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl) lib/efl/Efl.hh
+
+lib/efl/Efl.hh: $(efl_eolian_cxx_hh)
+	@echo @ECHO_E@ "#ifndef EFL_CXX_HH\n#define EFL_CXX_HH\n" > $(top_builddir)/src/lib/efl/Efl.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/efl/Efl.hh
+	@for i in $(efl_eolian_cxx_hh); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/efl/Efl.hh; done
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/efl/Efl.hh
+
+CLEANFILES += $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl) lib/efl/Efl.hh
+
+### Evas C++
+installed_evascxxmainheadersdir = $(includedir)/evas-cxx-@VMAJ@/
+nodist_installed_evascxxmainheaders_DATA = lib/evas/Evas.hh
+
+installed_evascxxcanvasheadersdir = $(includedir)/evas-cxx-@VMAJ@/canvas
+nodist_installed_evascxxcanvasheaders_DATA = $(evas_eolian_cxx_hh) $(evas_eolian_cxx_impl)
+
+lib/evas/Evas.hh: $(evas_eolian_cxx_hh)
+	@echo @ECHO_E@ "#ifndef EFL_CXX_EVAS_HH\n#define EFL_CXX_EVAS_HH\n" > $(top_builddir)/src/lib/evas/Evas.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/evas/Evas.hh
+	@for i in $(evas_eolian_cxx_hh); do echo "#include <canvas/$$(basename $$i)>" >> $(top_builddir)/src/lib/evas/Evas.hh; done
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/evas/Evas.hh
+
+CLEANFILES += $(evas_eolian_cxx_hh) $(evas_eolian_cxx_impl) lib/evas/Evas.hh
+
+### Eldbus C++
+installed_eldbuscxxmainheadersdir = $(includedir)/eldbus_cxx-@VMAJ@
+nodist_installed_eldbuscxxmainheaders_DATA = $(eldbus_eolian_cxx_hh) $(eldbus_eolian_cxx_impl) lib/eldbus/Eldbus_Model.hh
+dist_installed_eldbuscxxmainheaders_DATA = \
+bindings/cxx/eldbus_cxx/eldbus_basic.hh \
+bindings/cxx/eldbus_cxx/eldbus_error.hh \
+bindings/cxx/eldbus_cxx/eldbus_freedesktop.hh \
+bindings/cxx/eldbus_cxx/Eldbus.hh \
+bindings/cxx/eldbus_cxx/eldbus_integer_sequence.hh \
+bindings/cxx/eldbus_cxx/eldbus_message_arguments.hh \
+bindings/cxx/eldbus_cxx/eldbus_message.hh \
+bindings/cxx/eldbus_cxx/eldbus_proxy_call.hh \
+bindings/cxx/eldbus_cxx/eldbus_raw_tuple.hh \
+bindings/cxx/eldbus_cxx/eldbus_service.hh \
+bindings/cxx/eldbus_cxx/eldbus_signature_traits.hh
+
+lib/eldbus/Eldbus_Model.hh: $(eldbus_eolian_cxx_hh)
+	@echo @ECHO_E@ "#ifndef EFL_CXX_ELDBUS_MODEL_HH\n#define EFL_CXX_ELDBUS_MODEL_HH\n" > $(top_builddir)/src/lib/eldbus/Eldbus_Model.hh
+	@echo @ECHO_E@ "#include <Eldbus_Model.h>" >> $(top_builddir)/src/lib/eldbus/Eldbus_Model.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/eldbus/Eldbus_Model.hh
+	@for i in $(eldbus_eolian_cxx_hh); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/eldbus/Eldbus_Model.hh; done
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/eldbus/Eldbus_Model.hh
+
+CLEANFILES += $(eldbus_eolian_cxx_hh) $(eldbus_eolian_cxx_impl) lib/eldbus/Eldbus_Model.hh
+
+### Eet C++
+installed_eetcxxheadersdir = $(includedir)/eet-cxx-@VMAJ@
+dist_installed_eetcxxheaders_DATA = \
+bindings/cxx/eet_cxx/eet_composite.hh \
+bindings/cxx/eet_cxx/eet_register.hh \
+bindings/cxx/eet_cxx/eet_type.hh \
+bindings/cxx/eet_cxx/Eet.hh
+
+### Generated headers src/lib/edje
+installed_edjecxxmainheadersdir = $(includedir)/edje-cxx-@VMAJ@/
+nodist_installed_edjecxxmainheaders_DATA = $(edje_eolian_cxx_hh) $(edje_eolian_cxx_impl) lib/edje/Edje.hh
+
+lib/edje/Edje.hh: $(edje_eolian_cxx_hh)
+	@echo @ECHO_E@ "#ifndef EFL_CXX_EDJE_HH\n#define EFL_CXX_EDJE_HH\n" > $(top_builddir)/src/lib/edje/Edje.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/edje/Edje.hh
+	@for i in $(edje_eolian_cxx_hh); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/edje/Edje.hh; done
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/edje/Edje.hh
+
+CLEANFILES += $(edje_eolian_cxx_hh) $(edje_eolian_cxx_impl) lib/edje/Edje.hh
+
+### Ecore src/lib/ecore
+installed_ecorecxxheadersdir = $(includedir)/ecore-cxx-@VMAJ@
+nodist_installed_ecorecxxheaders_DATA = $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl) \
+bindings/cxx/ecore_cxx/Ecore.hh \
+lib/ecore/Ecore.eo.hh
+
+lib/ecore/Ecore.eo.hh: $(ecore_eolian_cxx_hh)
+	@echo @ECHO_E@ "#ifndef EFL_CXX_ECORE_HH\n#define EFL_CXX_ECORE_HH\n" > $(top_builddir)/src/lib/ecore/Ecore.eo.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh
+	@for i in $(ecore_eolian_cxx_hh); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh; done
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh
+
+CLEANFILES += $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl) llib/ecore/Ecore.eo.hh
+
+## Eina src/lib/eina
+installed_einacxxheadersdir = $(includedir)/eina-cxx-@VMAJ@
+dist_installed_einacxxheaders_DATA = \
+bindings/cxx/eina_cxx/eina_accessor.hh       \
+bindings/cxx/eina_cxx/eina_array.hh \
+bindings/cxx/eina_cxx/eina_clone_allocators.hh       \
+bindings/cxx/eina_cxx/eina_error.hh     \
+bindings/cxx/eina_cxx/eina_eo_concrete_fwd.hh     \
+bindings/cxx/eina_cxx/eina_fold.hh     \
+bindings/cxx/eina_cxx/eina_function.hh     \
+bindings/cxx/eina_cxx/eina_inarray.hh  \
+bindings/cxx/eina_cxx/eina_inlist.hh   \
+bindings/cxx/eina_cxx/eina_integer_sequence.hh \
+bindings/cxx/eina_cxx/eina_iterator.hh \
+bindings/cxx/eina_cxx/eina_lists_auxiliary.hh \
+bindings/cxx/eina_cxx/eina_list.hh \
+bindings/cxx/eina_cxx/eina_log.hh \
+bindings/cxx/eina_cxx/eina_logical.hh \
+bindings/cxx/eina_cxx/eina_optional.hh \
+bindings/cxx/eina_cxx/eina_pp.hh \
+bindings/cxx/eina_cxx/eina_ptrarray.hh \
+bindings/cxx/eina_cxx/eina_ptrlist.hh \
+bindings/cxx/eina_cxx/eina_range_types.hh \
+bindings/cxx/eina_cxx/eina_ref.hh \
+bindings/cxx/eina_cxx/eina_stringshare.hh \
+bindings/cxx/eina_cxx/eina_string_view.hh \
+bindings/cxx/eina_cxx/eina_thread.hh \
+bindings/cxx/eina_cxx/eina_throw.hh \
+bindings/cxx/eina_cxx/eina_tuple.hh \
+bindings/cxx/eina_cxx/eina_tuple_c.hh \
+bindings/cxx/eina_cxx/eina_tuple_unwrap.hh \
+bindings/cxx/eina_cxx/eina_type_traits.hh \
+bindings/cxx/eina_cxx/eina_value.hh \
+bindings/cxx/eina_cxx/Eina.hh
+
+### Eio
+installed_eiocxxmainheadersdir = $(includedir)/eio-cxx-@VMAJ@/
+nodist_installed_eiocxxmainheaders_DATA = $(eio_eolian_cxx_hh) $(eio_eolian_cxx_impl) lib/eio/Eio.hh
+
+lib/eio/Eio.hh: $(eio_eolian_cxx_hh)
+	@echo @ECHO_E@ "#ifndef EFL_CXX_EIO_HH\n#define EFL_CXX_EIO_HH\n" > $(top_builddir)/src/lib/eio/Eio.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/eio/Eio.hh
+	@for i in $(eio_eolian_cxx_hh); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/eio/Eio.hh; done
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/eio/Eio.hh
+
+CLEANFILES += $(eio_eolian_cxx_hh) $(eio_eolian_cxx_impl) lib/eio/Eio.hh
+
+### Tests
+
+if EFL_ENABLE_TESTS
+
+### Tests for Eina
+check_PROGRAMS += tests/eina_cxx/eina_cxx_suite
+TESTS += tests/eina_cxx/eina_cxx_suite
+
+tests_eina_cxx_eina_cxx_suite_SOURCES = \
+tests/eina_cxx/eina_cxx_suite.cc \
+tests/eina_cxx/eina_cxx_test_inlist.cc \
+tests/eina_cxx/eina_cxx_test_log.cc \
+tests/eina_cxx/eina_cxx_test_inarray.cc \
+tests/eina_cxx/eina_cxx_test_iterator.cc \
+tests/eina_cxx/eina_cxx_test_ptrarray.cc \
+tests/eina_cxx/eina_cxx_test_ptrlist.cc \
+tests/eina_cxx/eina_cxx_test_stringshare.cc \
+tests/eina_cxx/eina_cxx_test_error.cc \
+tests/eina_cxx/eina_cxx_test_accessor.cc \
+tests/eina_cxx/eina_cxx_test_thread.cc \
+tests/eina_cxx/eina_cxx_test_optional.cc \
+tests/eina_cxx/eina_cxx_test_value.cc \
+tests/eina_cxx/simple.c \
+tests/eina_cxx/eina_cxx_suite.h
+
+tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_accessor.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_ptrarray.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_ptrlist.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_iterator.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+
+tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-simple.$(OBJEXT): tests/eina_cxx/simple.eo.c tests/eina_cxx/simple.eo.h
+
+CLEANFILES += \
+tests/eina_cxx/simple.eo.c \
+tests/eina_cxx/simple.eo.h \
+tests/eina_cxx/simple.eo.hh \
+tests/eina_cxx/simple.eo.impl.hh
+
+tests_eina_cxx_eina_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina_cxx\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eina_cxx\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eina_cxx\" \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl/interfaces \
+-I$(top_srcdir)/src/bin/eina_cxx \
+-I$(top_builddir)/src/tests/eina_cxx \
+@CHECK_CFLAGS@ \
+@EO_CFLAGS@ \
+@ECORE_CFLAGS@ \
+@EO_CXX_CFLAGS@ \
+@EINA_CXX_CFLAGS@
+tests_eina_cxx_eina_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@
+tests_eina_cxx_eina_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
+
+EXTRA_DIST += \
+tests/eina_cxx/simple.eo
+
+### Tests for ecore
+
+check_PROGRAMS += tests/ecore_cxx/ecore_cxx_suite tests/ecore_cxx/cxx_compile_test
+TESTS += tests/ecore_cxx/ecore_cxx_suite tests/ecore_cxx/cxx_compile_test
+
+tests_ecore_cxx_ecore_cxx_suite_SOURCES = \
+tests/ecore_cxx/ecore_cxx_suite.cc \
+tests/ecore_cxx/ecore_cxx_test_safe_call.cc \
+tests/ecore_cxx/ecore_cxx_suite.h
+
+tests_ecore_cxx_ecore_cxx_suite_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl/interfaces \
+-I$(top_builddir)/src/lib/ecore \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_cxx\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_cxx\" \
+@CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ @EINA_CFLAGS@ \
+@ECORE_CFLAGS@ @EVAS_CFLAGS@ @EO_CFLAGS@ @EO_CXX_CFLAGS@
+
+tests_ecore_cxx_ecore_cxx_suite_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
+tests_ecore_cxx_ecore_cxx_suite_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
+
+tests_ecore_cxx_cxx_compile_test_SOURCES = tests/ecore_cxx/cxx_compile_test.cc
+tests_ecore_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl/interfaces \
+-I$(top_builddir)/src/lib/ecore \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_cxx\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_cxx\" \
+@CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EINA_CFLAGS@ \
+@ECORE_CFLAGS@ @EO_CFLAGS@ @EO_CXX_CFLAGS@
+
+tests_ecore_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
+tests_ecore_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
+
+### Tests for Eet
+check_PROGRAMS += tests/eet_cxx/eet_cxx_suite
+TESTS += tests/eet_cxx/eet_cxx_suite
+
+tests_eet_cxx_eet_cxx_suite_SOURCES = \
+tests/eet_cxx/eet_cxx_suite.cc \
+tests/eet_cxx/eet_cxx_test_descriptors.cc \
+tests/eet_cxx/eet_cxx_suite.h
+
+tests_eet_cxx_eet_cxx_suite_CPPFLAGS = 	\
+-I$(top_builddir)/src/lib/efl \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eet_cxx\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eet_cxx\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eet_cxx\" \
+@EO_CFLAGS@ @CHECK_CFLAGS@ @EET_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EET_CFLAGS@ @EINA_CFLAGS@
+tests_eet_cxx_eet_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EET_LIBS@
+tests_eet_cxx_eet_cxx_suite_DEPENDENCIES = @USE_EET_INTERNAL_LIBS@
+
+### Tests for eldbus
+check_PROGRAMS += tests/eldbus_cxx/eldbus_cxx_suite
+TESTS += tests/eldbus_cxx/eldbus_cxx_suite
+
+tests_eldbus_cxx_eldbus_cxx_suite_SOURCES = \
+tests/eldbus_cxx/eldbus_cxx_suite.cc \
+tests/eldbus_cxx/eldbus_cxx_test_eldbus_connect.cc \
+tests/eldbus_cxx/eldbus_cxx_test_eldbus_client.cc \
+tests/eldbus_cxx/eldbus_cxx_suite.h
+
+tests_eldbus_cxx_eldbus_cxx_suite_CPPFLAGS = \
+-I$(top_builddir)/src/bindings/cxx/eina_cxx \
+-I$(top_srcdir)/src/bindings/cxx/eina_cxx \
+-I$(top_builddir)/src/bindings/cxx/ecore_cxx \
+-I$(top_srcdir)/src/bindings/cxx/ecore_cxx \
+-I$(top_builddir)/src/bindings/cxx/eldbus_cxx \
+-I$(top_srcdir)/src/bindings/cxx/eldbus_cxx \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl/interfaces \
+-I$(top_builddir)/src/lib/ecore \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eldbus\" \
+@CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EINA_CFLAGS@ \
+@ECORE_CFLAGS@ @EO_CFLAGS@ @EO_CXX_CFLAGS@ @ELDBUS_CFLAGS@
+
+tests_eldbus_cxx_eldbus_cxx_suite_LDADD = @CHECK_LIBS@ @USE_ELDBUS_LIBS@
+tests_eldbus_cxx_eldbus_cxx_suite_DEPENDENCIES = @USE_ELDBUS_INTERNAL_LIBS@
+
+### Tests for Evas
+check_PROGRAMS += tests/evas_cxx/cxx_compile_test
+TESTS += tests/evas_cxx/cxx_compile_test
+
+tests_evas_cxx_cxx_compile_test_SOURCES = tests/evas_cxx/cxx_compile_test.cc
+tests_evas_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+ -I$(top_builddir)/src/lib/efl/interfaces/ \
+ -I$(top_builddir)/src/lib/evas/canvas/ \
+ -I$(top_builddir)/src/lib/evas/include/ \
+ -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evas_cxx\" \
+ -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/evas_cxx\" \
+ @CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \
+ @ECORE_CFLAGS@ @EINA_CFLAGS@ @EVAS_CFLAGS@ @EO_CFLAGS@
+tests_evas_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_EVAS_LIBS@
+tests_evas_cxx_cxx_compile_test_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+
+### Tests for Elementary
+check_PROGRAMS += tests/elementary_cxx/cxx_compile_test
+TESTS += tests/elementary_cxx/cxx_compile_test
+
+tests_elementary_cxx_cxx_compile_test_SOURCES = tests/elementary_cxx/cxx_compile_test.cc
+tests_elementary_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/evas/canvas/ \
+-I$(top_builddir)/src/lib/efl/interfaces/ \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/elementary_cxx\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elementary_cxx\" \
+@CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ @ELEMENTARY_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \
+@ECORE_CFLAGS@ @EINA_CFLAGS@ @EVAS_CFLAGS@ @ELEMENTARY_CFLAGS@ @EO_CFLAGS@
+tests_elementary_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
+tests_elementary_cxx_cxx_compile_test_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
+
+endif
+endif

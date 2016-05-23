@@ -112,6 +112,11 @@ bin_eldbus_eldbus_codegen_LDADD = @USE_ELDBUS_LIBS@
 endif
 bin_eldbus_eldbus_codegen_DEPENDENCIES = @USE_ELDBUS_INTERNAL_LIBS@
 
+if HAVE_CXX11
+eldbus_eolian_cxx_hh = $(eldbus_eolian_files:%.eo=%.eo.hh)
+eldbus_eolian_cxx_impl = $(eldbus_eolian_files:%.eo=%.eo.impl.hh)
+endif
+
 ### Unit tests
 
 if EFL_ENABLE_TESTS

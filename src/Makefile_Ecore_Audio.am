@@ -111,4 +111,3 @@ GENERATED_JS_BINDINGS += $(generated_ecore_audio_js_bindings)
 endif
 
 endif
-

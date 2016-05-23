@@ -57,7 +57,6 @@ include Makefile_Eeze.am
 include Makefile_Ecore_Drm.am
 include Makefile_Ecore_Evas.am
 include Makefile_Ecore_Audio.am
-include Makefile_Ecore_Audio_Cxx.am
 include Makefile_Ecore_Avahi.am
 include Makefile_Embryo.am
 include Makefile_Eio.am
@@ -72,17 +71,8 @@ include Makefile_Elocation.am
 include Makefile_Elementary.am
 include Makefile_Elput.am
 
-include Makefile_Eina_Cxx.am
-include Makefile_Ecore_Cxx.am
-include Makefile_Eldbus_Cxx.am
+include Makefile_Cxx.am
 include Makefile_Eolian_Cxx.am
-include Makefile_Eet_Cxx.am
-include Makefile_Eo_Cxx.am
-include Makefile_Efl_Cxx.am
-include Makefile_Edje_Cxx.am
-include Makefile_Evas_Cxx.am
-include Makefile_Eio_Cxx.am
-include Makefile_Elementary_Cxx.am
 
 include Makefile_Elua.am
 

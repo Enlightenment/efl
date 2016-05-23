@@ -45,6 +45,7 @@ bin_eolian_cxx_eolian_cxx_SOURCES = \
 bin_eolian_cxx_eolian_cxx_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eolian_cxx/ \
 @CHECK_CFLAGS@ @EINA_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_CFLAGS@ \
+-I$(top_srcdir)/src/bindings/cxx/eina_cxx \
 @EOLIAN_CXX_CFLAGS@ @EOLIAN_CFLAGS@
 
 bin_eolian_cxx_eolian_cxx_LDADD = @CHECK_LIBS@ @USE_EOLIAN_LIBS@

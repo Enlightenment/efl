@@ -1,16 +1,16 @@
 
 ### Library
 
-EIO_EOS = \
+eio_eolian_files = \
         lib/eio/eio_model.eo
 
-EIO_EOS_H =  $(EIO_EOS:%.eo=%.eo.h)
-EIO_EOS_C =  $(EIO_EOS:%.eo=%.eo.c)
+eio_eolian_h =  $(eio_eolian_files:%.eo=%.eo.h)
+eio_eolian_c =  $(eio_eolian_files:%.eo=%.eo.c)
 
-BUILT_SOURCES += $(EIO_EOS_C) $(EIO_EOS_H)
+BUILT_SOURCES += $(eio_eolian_c) $(eio_eolian_h)
 
 eioeolianfilesdir = $(datadir)/eolian/include/eio-@VMAJ@
-eioeolianfiles_DATA = $(EIO_EOS)
+eioeolianfiles_DATA = $(eio_eolian_files)
 
 lib_LTLIBRARIES += lib/eio/libeio.la
 EXTRA_DIST += \
@@ -21,7 +21,7 @@ lib/eio/Makefile.in
 installed_eiomainheadersdir = $(includedir)/eio-@VMAJ@
 
 dist_installed_eiomainheaders_DATA = lib/eio/Eio.h lib/eio/eio_inline_helper.x
-nodist_installed_eiomainheaders_DATA = $(EIO_EOS_H)
+nodist_installed_eiomainheaders_DATA = $(eio_eoolian_h)
 
 lib_eio_libeio_la_SOURCES = \
 lib/eio/eio_dir.c \
@@ -60,6 +60,13 @@ lib_eio_libeio_la_DEPENDENCIES = @EIO_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
 lib_eio_libeio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 if HAVE_NOTIFY_COCOA
 lib_eio_libeio_la_LDFLAGS += -framework CoreServices
+endif
+
+if HAVE_CXX11
+
+eio_eolian_cxx_hh = $(eio_eolian_files:%.eo=%.eo.hh)
+eio_eolian_cxx_impl = $(eio_eolian_files:%.eo=%.eo.impl.hh)
+
 endif
 
 if EFL_ENABLE_TESTS

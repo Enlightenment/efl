@@ -117,7 +117,11 @@ generated_efl_js_bindings = $(efl_eolian_files:%.eo=%.eo.js.cc)
 CLEANFILES += $(generated_efl_js_bindings)
 
 GENERATED_JS_BINDINGS += $(generated_efl_js_bindings)
+endif
 
+if HAVE_CXX11
+efl_eolian_cxx_hh = $(efl_eolian_files:%.eo=%.eo.hh)
+efl_eolian_cxx_impl = $(efl_eolian_files:%.eo=%.eo.impl.hh)
 endif
 
 ### Binary

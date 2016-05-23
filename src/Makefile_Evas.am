@@ -2375,3 +2375,8 @@ CLEANFILES += $(generated_evas_js_bindings)
 GENERATED_JS_BINDINGS += $(generated_evas_js_bindings)
 
 endif
+
+if HAVE_CXX11
+evas_eolian_cxx_hh = $(evas_eolian_pub_files:%.eo=%.eo.hh)
+evas_eolian_cxx_impl = $(evas_eolian_pub_files:%.eo=%.eo.impl.hh)
+endif

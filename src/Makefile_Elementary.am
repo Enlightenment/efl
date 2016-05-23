@@ -1312,6 +1312,11 @@ GENERATED_JS_BINDINGS += $(generated_elementary_js_bindings)
 
 endif
 
+if HAVE_CXX11
+elementary_eolian_cxx_hh = $(elm_public_eolian_files:%.eo=%.eo.hh)
+elementary_eolian_cxx_impl = $(elm_public_eolian_files:%.eo=%.eo.impl.hh)
+endif
+
 EXTRA_DIST += \
 tests/elementary/elm_suite.h \
 tests/elementary/elm_test_helper.h \
