@@ -3846,24 +3846,12 @@ _edje_object_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Ob
    rp = _swallow_real_part_get(obj_swallow);
    if (!rp) return EINA_FALSE;
 
-   if (obj)
-     {
-        if (!ed && obj)
-          {
-             ERR("edje_object_part_unswallow called on a non Edje object ('%s').",
-                 evas_object_type_get(obj));
-             return EINA_FALSE;
-          }
-        else
-          {
-             EINA_LIST_FOREACH(ed->user_defined, l, eud)
-               if (eud->type == EDJE_USER_SWALLOW && eud->u.swallow.child == obj_swallow)
-                 {
-                    _edje_user_definition_free(eud);
-                    return EINA_FALSE;
-                 }
-          }
-     }
+   EINA_LIST_FOREACH(ed->user_defined, l, eud)
+     if ((eud->type == EDJE_USER_SWALLOW) && (eud->u.swallow.child == obj_swallow))
+       {
+          _edje_user_definition_free(eud);
+          return EINA_FALSE;
+       }
 
    _edje_real_part_swallow_clear(ed, rp);
    rp->typedata.swallow->swallowed_object = NULL;
