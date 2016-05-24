@@ -128,7 +128,7 @@ lib/ecore/Ecore.eo.hh: $(ecore_eolian_cxx_hh)
 	@for i in $(ecore_eolian_cxx_hh); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh; done
 	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh
 
-CLEANFILES += $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl) llib/ecore/Ecore.eo.hh
+CLEANFILES += $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl) lib/ecore/Ecore.eo.hh
 
 ## Eina src/lib/eina
 installed_einacxxheadersdir = $(includedir)/eina-cxx-@VMAJ@
