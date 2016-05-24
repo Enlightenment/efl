@@ -58,6 +58,14 @@ elput_manager_disconnect(Elput_Manager *manager)
    EINA_SAFETY_ON_NULL_RETURN(manager);
    EINA_SAFETY_ON_NULL_RETURN(manager->interface);
 
+
+   if (manager->input.thread)
+     {
+        ecore_thread_cancel(manager->input.thread);
+        manager->del = 1;
+        return;
+     }
+
    if (manager->interface->disconnect)
      manager->interface->disconnect(manager);
 }

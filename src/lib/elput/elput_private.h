@@ -71,6 +71,7 @@ typedef struct _Elput_Interface
    Eina_Bool (*connect)(Elput_Manager **manager, const char *seat, unsigned int tty);
    void (*disconnect)(Elput_Manager *manager);
    int (*open)(Elput_Manager *manager, const char *path, int flags);
+   void (*open_async)(Elput_Manager *manager, const char *path, int flags);
    void (*close)(Elput_Manager *manager, int fd);
    Eina_Bool (*vt_set)(Elput_Manager *manager, int vt);
 } Elput_Interface;
@@ -82,6 +83,9 @@ typedef struct _Elput_Input
    Ecore_Fd_Handler *hdlr;
 
    Eina_List *seats;
+   Ecore_Thread *thread;
+   Eldbus_Pending *current_pending;
+   int pipe;
 
    Eina_Bool suspended : 1;
 } Elput_Input;
@@ -224,17 +228,29 @@ struct _Elput_Manager
    char *sid;
    const char *seat;
    unsigned int vt_num;
+   int vt_fd;
    Ecore_Event_Handler *vt_hdlr;
+   uint32_t window;
 
    struct
      {
         char *path;
         Eldbus_Object *obj;
         Eldbus_Connection *conn;
+        Eldbus_Proxy *session;
+        Eldbus_Proxy *manager;
      } dbus;
 
    Elput_Input input;
+   Eina_Bool del : 1;
 };
+
+typedef struct _Elput_Async_Open
+{
+   Elput_Manager *manager;
+   char *path;
+   int flags;
+} Elput_Async_Open;
 
 int _evdev_event_process(struct libinput_event *event);
 Elput_Device *_evdev_device_create(Elput_Seat *seat, struct libinput_device *device);

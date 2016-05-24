@@ -240,14 +240,13 @@ EAPI const Eina_List *elput_manager_seats_get(Elput_Manager *manager);
  * Initialize input
  *
  * @param manager
- * @param seat
  *
  * @return EINA_TRUE on success, EINA_FALSE on failure
  *
  * @ingroup Elput_Input_Group
  * @since 1.18
  */
-EAPI Eina_Bool elput_input_init(Elput_Manager *manager, const char *seat);
+EAPI Eina_Bool elput_input_init(Elput_Manager *manager);
 
 /**
  * Shutdown input

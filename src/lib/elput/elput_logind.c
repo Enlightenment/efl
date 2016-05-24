@@ -30,31 +30,19 @@ _logind_session_active_send(Elput_Manager *em, Eina_Bool active)
 static void
 _logind_device_pause_complete(Elput_Manager *em, uint32_t major, uint32_t minor)
 {
-   Eldbus_Proxy *proxy;
    Eldbus_Message *msg;
 
-   proxy =
-     eldbus_proxy_get(em->dbus.obj, "org.freedesktop.login1.Session");
-   if (!proxy)
-     {
-        ERR("Could not get proxy for session");
-        return;
-     }
-
-   msg = eldbus_proxy_method_call_new(proxy, "PauseDeviceComplete");
+   msg = eldbus_proxy_method_call_new(em->dbus.session, "PauseDeviceComplete");
    if (!msg)
      {
         ERR("Could not create method call for proxy");
-        goto end;
+        eldbus_message_unref(msg);
+        return;
      }
 
    eldbus_message_arguments_append(msg, "uu", major, minor);
 
-   eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
-
-end:
-   eldbus_message_unref(msg);
-   eldbus_proxy_unref(proxy);
+   eldbus_proxy_send(em->dbus.session, msg, NULL, NULL, -1);
 }
 
 static void
@@ -194,10 +182,10 @@ _logind_dbus_setup(Elput_Manager *em)
         ERR("Could not get dbus proxy");
         goto proxy_err;
      }
+   em->dbus.manager = proxy;
 
    eldbus_proxy_signal_handler_add(proxy, "SessionRemoved",
                                    _cb_session_removed, em);
-   eldbus_proxy_unref(proxy);
 
    proxy =
      eldbus_proxy_get(em->dbus.obj, "org.freedesktop.login1.Session");
@@ -206,13 +194,12 @@ _logind_dbus_setup(Elput_Manager *em)
         ERR("Could not get dbus proxy");
         goto proxy_err;
      }
+   em->dbus.session = proxy;
 
    eldbus_proxy_signal_handler_add(proxy, "PauseDevice",
                                    _cb_device_paused, em);
    eldbus_proxy_signal_handler_add(proxy, "ResumeDevice",
                                    _cb_device_resumed, em);
-   eldbus_proxy_unref(proxy);
-
    proxy =
      eldbus_proxy_get(em->dbus.obj, "org.freedesktop.DBus.Properties");
    if (!proxy)
@@ -235,173 +222,189 @@ obj_err:
 static Eina_Bool
 _logind_control_take(Elput_Manager *em)
 {
-   Eldbus_Proxy *proxy;
    Eldbus_Message *msg, *reply;
    const char *errname, *errmsg;
 
-   proxy =
-     eldbus_proxy_get(em->dbus.obj, "org.freedesktop.login1.Session");
-   if (!proxy)
-     {
-        ERR("Could not get proxy for session");
-        return EINA_FALSE;
-     }
-
-   msg = eldbus_proxy_method_call_new(proxy, "TakeControl");
+   msg = eldbus_proxy_method_call_new(em->dbus.session, "TakeControl");
    if (!msg)
      {
         ERR("Could not create method call for proxy");
-        goto msg_err;
+        return EINA_FALSE;
      }
 
    eldbus_message_arguments_append(msg, "b", EINA_FALSE);
 
-   reply = eldbus_proxy_send_and_block(proxy, msg, -1);
+   reply = eldbus_proxy_send_and_block(em->dbus.session, msg, -1);
    if (eldbus_message_error_get(reply, &errname, &errmsg))
      {
         ERR("Eldbus Message Error: %s %s", errname, errmsg);
-        goto msg_err;
+        return EINA_FALSE;
      }
 
    eldbus_message_unref(reply);
-   eldbus_proxy_unref(proxy);
 
    return EINA_TRUE;
-
-msg_err:
-   eldbus_proxy_unref(proxy);
-   return EINA_FALSE;
 }
 
 static void
 _logind_control_release(Elput_Manager *em)
 {
-   Eldbus_Proxy *proxy;
    Eldbus_Message *msg;
 
-   proxy =
-     eldbus_proxy_get(em->dbus.obj, "org.freedesktop.login1.Session");
-   if (!proxy)
-     {
-        ERR("Could not get proxy for session");
-        return;
-     }
-
-   msg = eldbus_proxy_method_call_new(proxy, "ReleaseControl");
+   msg = eldbus_proxy_method_call_new(em->dbus.session, "ReleaseControl");
    if (!msg)
      {
         ERR("Could not create method call for proxy");
-        goto end;
+        return;
      }
 
-   eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
+   eldbus_proxy_send(em->dbus.session, msg, NULL, NULL, -1);
+}
 
-end:
-   eldbus_proxy_unref(proxy);
+static void
+_logind_device_release(Elput_Manager *em, uint32_t major, uint32_t minor)
+{
+   Eldbus_Message *msg;
+
+   msg = eldbus_proxy_method_call_new(em->dbus.session, "ReleaseDevice");
+   if (!msg)
+     {
+        ERR("Could not create method call for proxy");
+        return;
+     }
+
+   eldbus_message_arguments_append(msg, "uu", major, minor);
+
+   eldbus_proxy_send(em->dbus.session, msg, NULL, NULL, -1);
+}
+
+static void
+_logind_pipe_write_fd(Elput_Manager *em, int fd)
+{
+   write(em->input.pipe, &fd, sizeof(int));
+   close(em->input.pipe);
+   em->input.pipe = -1;
+}
+
+static void
+_logind_device_take_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+{
+   Eina_Bool p = EINA_FALSE;
+   const char *errname, *errmsg;
+   int ret, fd = -1;
+   int fl, flags;
+   Elput_Manager *em = data;
+
+   if (em->input.current_pending == pending)
+     em->input.current_pending = NULL;
+
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     {
+        ERR("Eldbus Message Error: %s %s", errname, errmsg);
+        goto err;
+     }
+
+   if (!eldbus_message_arguments_get(msg, "hb", &fd, &p))
+     ERR("Could not get UNIX_FD from dbus message");
+
+   if (fd < 0) goto err;
+
+   fl = fcntl(fd, F_GETFL);
+   if (fl < 0) goto err;
+
+   flags = (intptr_t)eldbus_pending_data_get(pending, "flags");
+
+   if (flags & O_NONBLOCK)
+     fl |= O_NONBLOCK;
+
+   ret = fcntl(fd, F_SETFL, fl);
+   if (ret < 0) goto err;
+
+   _logind_pipe_write_fd(em, fd);
+   return;
+
+err:
+   if (fd >= 0)
+     {
+        uintptr_t majo, mino;
+
+        close(fd);
+        majo = (uintptr_t)eldbus_pending_data_get(pending, "major");
+        mino = (uintptr_t)eldbus_pending_data_get(pending, "minor");
+        _logind_device_release(em, majo, mino);
+     }
+   fd = -1;
+   _logind_pipe_write_fd(em, fd);
+}
+
+static void
+_logind_device_take_async(Elput_Manager *em, int flags, uint32_t major, uint32_t minor)
+{
+   Eldbus_Message *msg;
+   intptr_t fd = -1;
+
+   msg = eldbus_proxy_method_call_new(em->dbus.session, "TakeDevice");
+   if (!msg)
+     {
+        ERR("Could not create method call for proxy");
+        _logind_pipe_write_fd(em, fd);
+        return;
+     }
+
+   eldbus_message_arguments_append(msg, "uu", major, minor);
+
+   em->input.current_pending = eldbus_proxy_send(em->dbus.session, msg, _logind_device_take_cb, em, -1);
+   if (!em->input.current_pending) CRIT("FAIL!");
+   eldbus_pending_data_set(em->input.current_pending, "major", (uintptr_t*)(uintptr_t)major);
+   eldbus_pending_data_set(em->input.current_pending, "minor", (uintptr_t*)(uintptr_t)minor);
+   eldbus_pending_data_set(em->input.current_pending, "flags", (intptr_t*)(intptr_t)flags);
 }
 
 static int
 _logind_device_take(Elput_Manager *em, uint32_t major, uint32_t minor)
 {
-   Eldbus_Proxy *proxy;
    Eldbus_Message *msg, *reply;
    Eina_Bool p = EINA_FALSE;
    const char *errname, *errmsg;
    int fd = -1;
 
-   proxy =
-     eldbus_proxy_get(em->dbus.obj, "org.freedesktop.login1.Session");
-   if (!proxy)
-     {
-        ERR("Could not get dbus proxy");
-        return -1;
-     }
-
-   msg = eldbus_proxy_method_call_new(proxy, "TakeDevice");
+   msg = eldbus_proxy_method_call_new(em->dbus.session, "TakeDevice");
    if (!msg)
      {
         ERR("Could not create method call for proxy");
-        goto err;
+        return -1;
      }
 
    eldbus_message_arguments_append(msg, "uu", major, minor);
 
-   reply = eldbus_proxy_send_and_block(proxy, msg, -1);
+   reply = eldbus_proxy_send_and_block(em->dbus.session, msg, -1);
    if (eldbus_message_error_get(reply, &errname, &errmsg))
      {
         ERR("Eldbus Message Error: %s %s", errname, errmsg);
-        goto err;
+        return -1;
      }
 
    if (!eldbus_message_arguments_get(reply, "hb", &fd, &p))
      ERR("Could not get UNIX_FD from dbus message");
 
    eldbus_message_unref(reply);
-
-err:
-   eldbus_proxy_unref(proxy);
    return fd;
-}
-
-static void
-_logind_device_release(Elput_Manager *em, uint32_t major, uint32_t minor)
-{
-   Eldbus_Proxy *proxy;
-   Eldbus_Message *msg;
-
-   proxy =
-     eldbus_proxy_get(em->dbus.obj, "org.freedesktop.login1.Session");
-   if (!proxy)
-     {
-        ERR("Could not get proxy for session");
-        return;
-     }
-
-   msg = eldbus_proxy_method_call_new(proxy, "ReleaseDevice");
-   if (!msg)
-     {
-        ERR("Could not create method call for proxy");
-        goto end;
-     }
-
-   eldbus_message_arguments_append(msg, "uu", major, minor);
-
-   eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
-
-end:
-   eldbus_proxy_unref(proxy);
 }
 
 static Eina_Bool
 _logind_activate(Elput_Manager *em)
 {
-   Eldbus_Proxy *proxy;
    Eldbus_Message *msg;
 
-   proxy =
-     eldbus_proxy_get(em->dbus.obj, "org.freedesktop.login1.Session");
-   if (!proxy)
-     {
-        ERR("Could not get proxy for session");
-        return EINA_FALSE;
-     }
-
-   msg = eldbus_proxy_method_call_new(proxy, "Activate");
+   msg = eldbus_proxy_method_call_new(em->dbus.session, "Activate");
    if (!msg)
      {
         ERR("Could not create method call for proxy");
-        goto msg_err;
+        return EINA_FALSE;
      }
 
-   eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
-
-   eldbus_proxy_unref(proxy);
-
+   eldbus_proxy_send(em->dbus.session, msg, NULL, NULL, -1);
    return EINA_TRUE;
-
-msg_err:
-   eldbus_proxy_unref(proxy);
-   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -498,12 +501,26 @@ static void
 _logind_disconnect(Elput_Manager *em)
 {
    _logind_control_release(em);
+   eldbus_proxy_unref(em->dbus.manager);
+   eldbus_proxy_unref(em->dbus.session);
    eldbus_object_unref(em->dbus.obj);
    free(em->dbus.path);
    _logind_dbus_close(em->dbus.conn);
    eina_stringshare_del(em->seat);
    free(em->sid);
    free(em);
+}
+
+static void
+_logind_open_async(Elput_Manager *em, const char *path, int flags)
+{
+   struct stat st;
+   intptr_t fd = -1;
+
+   if ((stat(path, &st) < 0) || (!S_ISCHR(st.st_mode)))
+        _logind_pipe_write_fd(em, fd);
+   else
+     _logind_device_take_async(em, flags, major(st.st_rdev), minor(st.st_rdev));
 }
 
 static int
@@ -606,6 +623,7 @@ Elput_Interface _logind_interface =
    _logind_connect,
    _logind_disconnect,
    _logind_open,
+   _logind_open_async,
    _logind_close,
    _logind_vt_set,
 };

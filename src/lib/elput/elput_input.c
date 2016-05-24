@@ -1,12 +1,82 @@
 #include "elput_private.h"
+#include <libudev.h>
+
+void
+_elput_input_window_update(Elput_Manager *manager)
+{
+   Eina_List *l, *ll;
+   Elput_Seat *seat;
+   Elput_Device *device;
+
+   if (manager->input.thread) return;
+   EINA_LIST_FOREACH(manager->input.seats, l, seat)
+     EINA_LIST_FOREACH(seat->devices, ll, device)
+       device->window = manager->window;
+}
+
+void
+_elput_input_pointer_max_update(Elput_Manager *manager)
+{
+   Eina_List *l;
+   Elput_Seat *eseat;
+
+   if (manager->input.thread) return;
+   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
+     {
+        if (!eseat->ptr) continue;
+
+        eseat->ptr->maxw = manager->input.pointer_w;
+        eseat->ptr->maxh = manager->input.pointer_h;
+     }
+}
 
 static int
 _cb_open_restricted(const char *path, int flags, void *data)
 {
-   Elput_Manager *em;
+   Elput_Manager *em = data;
+   int ret = -1;
+   Elput_Async_Open *ao;
+   int p[2];
 
-   em = data;
-   return elput_manager_open(em, path, flags);
+   if (!em->input.thread)
+     return em->interface->open(em, path, flags);
+   if (!em->interface->open_async) return ret;
+   ao = calloc(1, sizeof(Elput_Async_Open));
+   if (!ao) return ret;
+   if (pipe2(p, O_CLOEXEC) < 0)
+     {
+        free(ao);
+        return ret;
+     }
+   ao->manager = em;
+   ao->path = strdup(path);
+   ao->flags = flags;
+   em->input.pipe = p[1];
+   ecore_thread_feedback(em->input.thread, ao);
+   while (!ecore_thread_check(em->input.thread))
+     {
+        int avail, fd;
+        fd_set rfds, wfds, exfds;
+        struct timeval tv, *t;
+
+        FD_ZERO(&rfds);
+        FD_ZERO(&wfds);
+        FD_ZERO(&exfds);
+        FD_SET(p[0], &rfds);
+        tv.tv_sec = 0;
+        tv.tv_usec = 300;
+        t = &tv;
+        avail = select(p[0] + 1, &rfds, &wfds, &exfds, t);
+        if (avail > 0)
+          {
+             read(p[0], &fd, sizeof(int));
+             ret = fd;
+             break;
+          }
+        if (avail < 0) break;
+     }
+   close(p[0]);
+   return ret;
 }
 
 static void
@@ -209,52 +279,91 @@ _cb_input_dispatch(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-elput_input_init(Elput_Manager *manager, const char *seat)
+static void
+_elput_input_init_cancel(void *data, Ecore_Thread *eth EINA_UNUSED)
 {
-   int fd;
+   Elput_Manager *manager = data;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(manager, EINA_FALSE);
+   manager->input.thread = NULL;
+   if (manager->input.current_pending)
+     {
+        eldbus_pending_cancel(manager->input.current_pending);
+        if (manager->input.pipe >= 0)
+          close(manager->input.pipe);
+     }
+   if (manager->del)
+     elput_manager_disconnect(manager);
+}
 
-   memset(&manager->input, 0, sizeof(Elput_Input));
+static void
+_elput_input_init_end(void *data, Ecore_Thread *eth EINA_UNUSED)
+{
+   Elput_Manager *manager = data;
+
+   manager->input.thread = NULL;
+   if (!manager->input.lib) return;
+   manager->input.hdlr =
+     ecore_main_fd_handler_add(libinput_get_fd(manager->input.lib), ECORE_FD_READ,
+       _cb_input_dispatch, &manager->input, NULL, NULL);
+
+   if (manager->input.hdlr)
+     {
+        _process_events(&manager->input);
+        _elput_input_window_update(manager);
+        _elput_input_pointer_max_update(manager);
+     }
+   else
+     {
+        ERR("Could not create input fd handler");
+        libinput_unref(manager->input.lib);
+        manager->input.lib = NULL;
+     }
+}
+
+static void
+_elput_input_init_notify(void *data EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED, void *msg_data)
+{
+   Elput_Async_Open *ao = msg_data;
+
+   ao->manager->interface->open_async(ao->manager, ao->path, ao->flags);
+   free(ao->path);
+   free(ao);
+}
+
+static void
+_elput_input_init_thread(void *data, Ecore_Thread *eth EINA_UNUSED)
+{
+   Elput_Manager *manager = data;
+   struct udev *udev = udev_new();
 
    manager->input.lib =
-     libinput_udev_create_context(&_input_interface, manager, eeze_udev_get());
+     libinput_udev_create_context(&_input_interface, manager, udev);
    if (!manager->input.lib)
      {
         ERR("libinput could not create udev context");
-        goto udev_err;
+        return;
      }
+   udev_unref(udev);
 
-   /* if not seat name is passed in, just use default seat name */
-   if (!seat) seat = "seat0";
-
-   if (libinput_udev_assign_seat(manager->input.lib, seat) != 0)
+   if (libinput_udev_assign_seat(manager->input.lib, manager->seat))
      {
         ERR("libinput could not assign udev seat");
-        goto seat_err;
+        libinput_unref(manager->input.lib);
+        manager->input.lib = NULL;
      }
+}
 
-   _process_events(&manager->input);
+EAPI Eina_Bool
+elput_input_init(Elput_Manager *manager)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(manager, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!!manager->input.hdlr, EINA_TRUE);
 
-   fd = libinput_get_fd(manager->input.lib);
-
-   manager->input.hdlr =
-     ecore_main_fd_handler_add(fd, ECORE_FD_READ, _cb_input_dispatch,
-                               &manager->input, NULL, NULL);
-   if (!manager->input.hdlr)
-     {
-        ERR("Could not create input fd handler");
-        goto hdlr_err;
-     }
-
-   return EINA_TRUE;
-
-hdlr_err:
-seat_err:
-   libinput_unref(manager->input.lib);
-udev_err:
-   return EINA_FALSE;
+   memset(&manager->input, 0, sizeof(Elput_Input));
+   manager->input.thread =
+     ecore_thread_feedback_run(_elput_input_init_thread, _elput_input_init_notify,
+     _elput_input_init_end, _elput_input_init_cancel, manager, 1);
+   return !!manager->input.thread;
 }
 
 EAPI void
@@ -263,14 +372,18 @@ elput_input_shutdown(Elput_Manager *manager)
    Elput_Seat *seat;
 
    EINA_SAFETY_ON_NULL_RETURN(manager);
-   EINA_SAFETY_ON_NULL_RETURN(&manager->input);
 
-   if (manager->input.hdlr) ecore_main_fd_handler_del(manager->input.hdlr);
+   ecore_main_fd_handler_del(manager->input.hdlr);
 
    EINA_LIST_FREE(manager->input.seats, seat)
      _udev_seat_destroy(seat);
-
-   libinput_unref(manager->input.lib);
+   if (manager->input.thread)
+     ecore_thread_cancel(manager->input.thread);
+   else
+     {
+        libinput_unref(manager->input.lib);
+        manager->input.lib = NULL;
+     }
 }
 
 EAPI void
