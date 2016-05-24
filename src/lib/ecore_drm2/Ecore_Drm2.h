@@ -206,6 +206,19 @@ EAPI void ecore_drm2_device_pointer_xy_get(Ecore_Drm2_Device *device, int *x, in
 EAPI void ecore_drm2_device_pointer_warp(Ecore_Drm2_Device *device, int x, int y);
 
 /**
+ * Set a left handed mode for the given device
+ *
+ * @param device
+ * @param left
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool ecore_drm2_device_pointer_left_handed_set(Ecore_Drm2_Device *device, Eina_Bool left);
+
+/**
  * Set which window is to be used for input events
  *
  * @param device
