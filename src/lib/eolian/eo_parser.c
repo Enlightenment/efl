@@ -847,6 +847,11 @@ parse_ptr:
         if (ls->t.token == '*')
           eo_lexer_syntax_error(ls, "pointer to complex/class type");
      }
+   if (getenv("EOLIAN_WARN_PTR") && ls->t.token == '*')
+     {
+        fprintf(stderr, "eolian:%s:%d:%d: found pointer type\n",
+                def->base.file, line, col);
+     }
    while (ls->t.token == '*')
      {
         Eolian_Type *pdef;
