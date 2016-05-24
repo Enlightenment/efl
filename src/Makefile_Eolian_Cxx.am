@@ -168,7 +168,8 @@ tests/eolian_cxx/c.eo \
 tests/eolian_cxx/d.eo \
 tests/eolian_cxx/name_name.eo \
 tests/eolian_cxx/ns_name.eo \
-tests/eolian_cxx/ns_name_other.eo
+tests/eolian_cxx/ns_name_other.eo \
+tests/eolian_cxx/complex.eo
 
 include Makefile_Eolian_Cxx_Helper.am
 
