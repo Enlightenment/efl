@@ -259,7 +259,7 @@ abstract Eo.Base ()
             key: const(char)*; [[the key associated with the value]]
          }
          values {
-            value: Eina.Value *; [[the value to set]]
+            value: generic_value *; [[the value to set]]
          }
       }
       event_thaw {

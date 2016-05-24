@@ -25,5 +25,3 @@ struct @extern Eina.Matrix3 {
 struct @extern Eina.Inarray;
 
 type @extern Eina.Unicode: uint32;
-
-struct @extern Eina.Value;

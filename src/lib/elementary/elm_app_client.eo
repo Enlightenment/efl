@@ -38,7 +38,7 @@ class Elm.App.Client (Eo.Base)
       view_open {
          [[Open an application view.]]
          params {
-            @in args: Eina.Value * @optional; [[an array of.]]
+            @in args: generic_value * @optional; [[an array of.]]
             @in view_open_cb: Elm_App_Client_Open_View_Cb @optional; [[callback to be called when view open]]
             @in data: const(void)* @optional; [[callback user data]]
          }
