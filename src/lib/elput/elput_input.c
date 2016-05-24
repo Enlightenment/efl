@@ -332,6 +332,47 @@ elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, int x, int 
      }
 }
 
+EAPI Eina_Bool
+elput_input_pointer_left_handed_set(Elput_Manager *manager, const char *seat, Eina_Bool left)
+{
+   Elput_Seat *eseat;
+   Elput_Device *edev;
+   Eina_List *l, *ll;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(manager, EINA_FALSE);
+
+   /* if no seat name is passed in, just use default seat name */
+   if (!seat) seat = "seat0";
+
+   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
+     {
+        if ((eseat->name) && (strcmp(eseat->name, seat)))
+          continue;
+
+        EINA_LIST_FOREACH(eseat->devices, ll, edev)
+          {
+             if (!libinput_device_has_capability(edev->device,
+                                                 LIBINPUT_DEVICE_CAP_POINTER))
+               continue;
+
+             if (edev->left_handed == left) continue;
+
+             if (libinput_device_config_left_handed_set(edev->device,
+                                                        (int)left) !=
+                 LIBINPUT_CONFIG_STATUS_SUCCESS)
+               {
+                  WRN("Failed to set left handed mode for device: %s",
+                      libinput_device_get_name(edev->device));
+                  continue;
+               }
+             else
+               edev->left_handed = !!left;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
 EAPI const Eina_List *
 elput_input_devices_get(Elput_Seat *seat)
 {

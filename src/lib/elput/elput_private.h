@@ -212,6 +212,8 @@ struct _Elput_Device
    struct libinput_device *device;
 
    Elput_Device_Capability caps;
+
+   Eina_Bool left_handed : 1;
 };
 
 struct _Elput_Manager

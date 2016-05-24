@@ -286,6 +286,20 @@ EAPI void elput_input_pointer_xy_get(Elput_Manager *manager, const char *seat, i
 EAPI void elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, int x, int y);
 
 /**
+ * Set the pointer left-handed mode
+ *
+ * @param manager
+ * @param seat
+ * @param left
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool elput_input_pointer_left_handed_set(Elput_Manager *manager, const char *seat, Eina_Bool left);
+
+/**
  * Get the list of devices on a given seat
  *
  * @param seat
