@@ -1910,6 +1910,8 @@ _item_realize(Elm_Gen_Item *it,
                     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
                   if (sd->mode == ELM_LIST_COMPRESS)
                     mw = sd->prev_viewport_w;
+                  // Process signal for proper size calc with text and content visible.
+                  edje_object_message_signal_process(VIEW(it));
                   edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
                   it->item->w = it->item->minw = mw;
                   it->item->h = it->item->minh = mh;
