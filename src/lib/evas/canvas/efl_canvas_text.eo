@@ -1,0 +1,451 @@
+struct Efl.Canvas.Text.Cursor;
+struct Efl.Canvas.Text.Style;
+struct Efl.Canvas.Text.Annotation;
+
+enum Efl.Canvas.Text.Cursor_Type
+{
+   before,
+   under
+}
+
+class Efl.Canvas.Text (Evas.Object, Efl.Text)
+{
+   legacy_prefix: evas_object_textblock;
+   methods {
+      @property valign {
+         [[The vertical alignment of text within the textblock object as a whole.
+
+           Normally alignment is 0.0 (top of object). Values given should
+           be between 0.0 and 1.0 (1.0 bottom of object, 0.5 being
+           vertically centered etc.).
+
+           @since 1.1
+         ]]
+         set {}
+         get {}
+         values {
+            align: double; [[The alignment set for the object.]]
+         }
+      }
+      @property bidi_delimiters {
+         [[BiDi delimiters are used for in-paragraph separation of bidi
+           segments. This is useful for example in recipients fields of
+           e-mail clients where bidi oddities can occur when mixing RTL
+           and LTR.
+
+           @since 1.1
+         ]]
+         set {}
+         get {}
+         values {
+            delim: string; [[A null terminated string of delimiters, e.g ",|" or $null if empty.]]
+         }
+      }
+      @property replace_char {
+         [[The "replacement character" to use for the given textblock object.]]
+         set {}
+         get {}
+         values {
+            ch: string; [[The charset name.]]
+         }
+      }
+      @property legacy_newline {
+         [[When true, newline character will behave as a paragraph separator.
+
+           @since 1.1
+         ]]
+         set {}
+         get {}
+         values {
+            mode: bool; [[$true for legacy mode, $false otherwise.]]
+         }
+      }
+      @property style {
+         [[The text style of the object]]
+         set {
+            legacy: null;
+         }
+         get {
+            legacy: null;
+         }
+         values {
+            ts: string; [[The style.]]
+         }
+      }
+      @property size_formatted {
+         [[The formatted width and height.
+
+           This calculates the actual size after restricting the
+           textblock to the current size of the object.
+
+           The main difference between this and @.size_native.get
+           is that the "native" function does not wrapping into account
+           it just calculates the real width of the object if it was
+           placed on an infinite canvas, while this function gives the
+           size after wrapping according to the size restrictions of the
+           object.
+
+           For example for a textblock containing the text:
+           "You shall not pass!" with no margins or padding and assuming
+           a monospace font and a size of 7x10 char widths (for simplicity)
+           has a native size of 19x1 and a formatted size of 5x4.
+         ]]
+         get {}
+         values {
+            w: Evas.Coord; [[The width of the object.]]
+            h: Evas.Coord; [[The height of the object.]]
+         }
+      }
+      @property cursor {
+         [[The object's main cursor.]]
+         get {
+            return: Efl.Canvas.Text.Cursor *;
+         }
+      }
+      @property size_native {
+         [[The native width and height.
+
+           This calculates the actual size without taking account the
+           current size of the object.
+
+           The main difference between this and @.size_formatted.get
+           is that the "native" function does not take wrapping into
+           account it just calculates the real width of the object if
+           it was placed on an infinite canvas, while the "formatted"
+           function gives the size after  wrapping text according to
+           the size restrictions of the object.
+
+           For example for a textblock containing the text:
+           "You shall not pass!" with no margins or padding and assuming
+           a monospace font and a size of 7x10 char widths (for simplicity)
+           has a native size of 19x1 and a formatted size of 5x4.
+         ]]
+         get {}
+         values {
+            w: Evas.Coord; [[The width returned.]]
+            h: Evas.Coord; [[The height returned.]]
+         }
+      }
+      @property style_insets {
+         get {}
+         values {
+            l: Evas.Coord;
+            r: Evas.Coord;
+            t: Evas.Coord;
+            b: Evas.Coord;
+         }
+      }
+      style_user_pop {
+         [[Del the from the top of the user style stack.
+
+           See also @.style.get.
+
+           @since 1.2
+         ]]
+         legacy: null;
+      }
+      cursor_new @const {
+         [[Create a new cursor, associate it to the obj and init it to point
+           to the start of the textblock.
+
+           Association to the object means the cursor will be updated when
+           the object will change.
+
+           Note: if you need speed and you know what you are doing, it's
+           slightly faster to just allocate the cursor yourself and not
+           associate it. (only people developing the actual object, and
+           not users of the object).
+         ]]
+         return: Efl.Canvas.Text.Cursor *; [[The new cursor.]]
+      }
+      style_user_peek @const {
+         [[Get (don't remove) the style at the top of the user style stack.
+
+           See also @.style.get.
+
+           @since 1.2
+         ]]
+         legacy: null;
+         return: string; [[The style of the object.]]
+      }
+      style_user_push {
+         [[Push ts to the top of the user style stack.
+
+           FIXME: API is solid but currently only supports 1 style in the
+           stack.
+
+           The user style overrides the corresponding elements of the
+           regular style. This is the proper way to do theme overrides
+           in code.
+
+           See also @.style.set.
+
+           @since 1.2
+         ]]
+         legacy: null;
+         params {
+            @in style: string; [[The style to set.]]
+         }
+      }
+      obstacle_add {
+         [[Add obstacle evas object $eo_obs to be observed during layout
+           of text.
+
+           The textblock does the layout of the text according to the
+           position of the obstacle.
+
+           @since 1.15
+         ]]
+         params {
+            @in eo_obs: Evas.Object;
+         }
+         return: bool; [[$true on success, $false otherwise.]]
+      }
+      obstacle_del {
+         [[Removes $eo_obs from observation during text layout.
+
+           @since 1.15
+         ]]
+         params {
+            @in eo_obs: Evas.Object;
+         }
+         return: bool; [[$true on success, $false otherwise.]]
+      }
+      obstacles_update {
+         [[Triggers for relayout due to obstacles' state change.
+
+           The obstacles alone don't affect the layout, until this is
+           called. Use this after doing changes (moving, positioning etc.)
+           in the obstacles that you  would like to be considered in the
+           layout.
+
+           For example: if you have just repositioned the obstacles to
+           differrent coordinates relative to the textblock, you need to
+           call this so it will consider this new state and will relayout
+           the text.
+
+           @since 1.15
+         ]]
+      }
+      cursor_pos_set {
+         [[Sets position of cursor to given pos. ]]
+         legacy: null;
+         params {
+            @in cur: Efl.Canvas.Text.Cursor *; [[Cursor to the object.]]
+            @in pos: int; [[Position in the text to move the cursor.]]
+         }
+      }
+      cursor_text_append {
+         [[Adds text to the current cursor position and set the cursor to *before*
+           the start of the text just added.
+         ]]
+         legacy: null;
+         params {
+            @in cur: Efl.Canvas.Text.Cursor *; [[Cursor to the object.]]
+            @in text: string; [[Text to append (UTF-8 format).]]
+         }
+         return: int; [[Length of the appended text.]]
+      }
+      cursor_char_delete {
+         [[Deletes a single character from position pointed by given cursor.]]
+         legacy: null;
+         params {
+            @in cur: Efl.Canvas.Text.Cursor *; [[Cursor to the object.]]
+         }
+      }
+      cursor_free {
+         [[Free the cursor and unassociate it from the object.
+
+           Note: do not use it to free unassociated cursors.]]
+
+         params {
+            @in cur: Efl.Canvas.Text.Cursor *; [[The cursor to free.]]
+         }
+      }
+      cursor_compare {
+         [[Compares two cursors.
+
+           Note that 0 will be returned if they are cursors of different
+           textblock objects.
+         ]]
+         return: int; [[-1 if cur1 < cur2, 0 if cur1 == cur2, 1 otherwise.]]
+         params {
+            @in cur1: const(Efl.Canvas.Text.Cursor)*; [[The first cursor.]]
+            @in cur2: const(Efl.Canvas.Text.Cursor)*; [[The second cursor.]]
+         }
+      }
+      cursor_char_coord_set {
+         [[Sets the position of the cursor according to the X and Y
+           coordinates.]]
+         return: bool; [[$true on success, $false otherwise.]]
+         params {
+            @in cur: Efl.Canvas.Text.Cursor *; [[The cursor to be set.]]
+            @in x: Evas.Coord; [[x coord to set by.]]
+            @in y: Evas.Coord; [[y coord to set by.]]
+         }
+      }
+      @property annotation {
+         [[A new format for $annotation.
+
+           This will replace the format applied by $annotation with $format.
+           Assumes that $annotation is a handle for an existing annotation,
+           i.e. one that was added using @.annotation_insert to this object.
+           Otherwise, this will fail and return $false.
+
+           @since 1.18
+         ]]
+         set {
+            legacy: null;
+            return: bool; [[$true on success, $false otherwise.]]
+         }
+         get {
+            legacy: null;
+         }
+         keys {
+            annotation: Efl.Canvas.Text.Annotation *;
+         }
+         values {
+            format: string;
+         }
+      }
+      annotation_in_range_get {
+         [[Returns an iterator of all the handles in a range.
+
+           @since 1.18
+         ]]
+         legacy: null;
+         params {
+              @in start: const(Efl.Canvas.Text.Cursor)*;
+              @in end:   const(Efl.Canvas.Text.Cursor)*;
+         }
+         return: free(own(iterator<Efl.Canvas.Text.Annotation *>),
+                 eina_iterator_free); [[Handle of the Annotation]]
+      }
+      annotation_del {
+         [[Deletes $annotation.
+
+           All formats applied by $annotations will be removed and it will be
+           deleted.
+         ]]
+         legacy: null;
+         params {
+            @in annotation: Efl.Canvas.Text.Annotation *;
+         }
+         return: bool; [[$true on success, $false otherwise.]]
+      }
+      annotation_insert {
+         [[Inserts an annotation format in a specified range [$start, $end - 1].
+
+           This will add both opening and closing formats for the given
+           $format.
+           Returns a handle to manipulate the inserted annotation.
+
+           @since 1.18
+         ]]
+         legacy: null;
+         params {
+              @in start: Efl.Canvas.Text.Cursor *;
+              @in end:   Efl.Canvas.Text.Cursor *;
+              @in format: string;
+         }
+         return: Efl.Canvas.Text.Annotation *;
+      }
+      object_item_insert {
+         [[Inserts a object item at specified position.
+
+           This adds a placeholder to be queried by higher-level code,
+           which in turn place graphics on top of it. It essentially places an
+           OBJECT REPLACEMENT CHARACTER and set a special annotation to it.
+         ]]
+         legacy: null;
+         params {
+            @in cur: Efl.Canvas.Text.Cursor *; [[Position of the inserted item.]]
+            @in format: string; [[Format of the inserted item.
+            See Format styles.]]
+         }
+         return: Efl.Canvas.Text.Annotation *; [[The annotation handle of the
+         inserted item.]]
+      }
+      cursor_geometry_get {
+         [[Returns the geometry of two cursors ("split cursor"), if logical cursor is
+           between LTR/RTL text, also considering paragraph direction.
+           Upper cursor is shown for the text of the same direction as paragraph,
+           lower cursor - for opposite.
+
+           Split cursor geometry is valid only  in '|' cursor mode.
+           In this case $true is returned and $cx2, $cy2, $cw2, $ch2 are set.
+         ]]
+         legacy: null;
+         params {
+            @in  cur: const(Efl.Canvas.Text.Cursor)*; [[ the cursor.]]
+            @in  ctype: Efl.Canvas.Text.Cursor_Type; [[ the type of the cursor.]]
+            @out cx: Evas.Coord; [[the x of the cursor (or upper cursor)]]
+            @out cy: Evas.Coord; [[the y of the cursor (or upper cursor)]]
+            @out cw: Evas.Coord; [[the width of the cursor (or upper cursor)]]
+            @out ch: Evas.Coord; [[the height of the cursor (or upper cursor)]]
+            @out cx2: Evas.Coord; [[ the x of the lower cursor]]
+            @out cy2: Evas.Coord; [[ the y of the lower cursor]]
+            @out cw2: Evas.Coord; [[ the width of the lower cursor]]
+            @out ch2: Evas.Coord; [[ the height of the lower cursor]]
+         }
+         return: bool; [[ $true if split cursor, $false otherwise.]]
+      }
+      cursor_range_geometry_get {
+         [[Get the geometry of a range.  The geometry is the geometry in
+           which rectangles in middle lines of range are merged into one big
+           rectangle.
+
+           @since 1.13
+         ]]
+         legacy: null;
+         params {
+             @in cur1: const(Efl.Canvas.Text.Cursor)*;
+             @in cur2: const(Efl.Canvas.Text.Cursor)*;
+         }
+         return: free(own(iterator<Eina.Rectangle>),
+                         eina_iterator_free);
+      }
+      cursor_copy {
+         [[Copies source cursor to destination cursor.]]
+         legacy: null;
+         params {
+             @in dst: Efl.Canvas.Text.Cursor *; [[Destination cursor.]]
+             @in src: const(Efl.Canvas.Text.Cursor)*; [[Cursor to copy.]]
+         }
+      }
+      cursor_text_prepend {
+         [[Adds text to the current cursor position and set the cursor to *after*
+           the start of the text just added.
+         ]]
+         legacy: null;
+         params {
+            @in cur: Efl.Canvas.Text.Cursor *; [[Cursor to the object.]]
+            @in text: string; [[Text to append (UTF-8 format).]]
+         }
+         return: int; [[Length of the appended text.]]
+      }
+      cursor_char_prev {
+         [[Advances the cursor one char backwards.]]
+         params {
+            @in cur: Efl.Canvas.Text.Cursor *; [[The cursor to advance.]]
+         }
+         return: bool; [[$true on success, $false otherwise.]]
+      }
+      cursor_char_next {
+         [[Advances the cursor one char forward.]]
+         params {
+            @in cur: Efl.Canvas.Text.Cursor *; [[The cursor to advance.]]
+         }
+         return: bool; [[$true on success, $false otherwise.]]
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Eo.Base.dbg_info_get;
+      Evas.Object.paragraph_direction.set;
+      Evas.Object.paragraph_direction.get;
+      Efl.Text.text.set;
+      Efl.Text.text.get;
+   }
+}

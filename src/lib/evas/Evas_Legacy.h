@@ -4496,62 +4496,7 @@ EAPI void evas_object_text_font_get(const Eo *obj, const char **font, Evas_Font_
  * @}
  */
 
-/**
- * @ingroup Evas_Object_Textblock
- *
- * @{
- */
-
-/**
- * Adds a textblock to the given evas.
- * @param   e The given evas.
- * @return  The new textblock object.
- */
-EAPI Evas_Object                             *evas_object_textblock_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-
-/**
- * Return the plain version of the markup.
- *
- * Works as if you set the markup to a textblock and then retrieve the plain
- * version of the text. i.e: <br> and <\n> will be replaced with \n, &...; with
- * the actual char and etc.
- *
- * @param obj The textblock object to work with. (if @c NULL, tries the
- * default).
- * @param text The markup text (if @c NULL, return @c NULL).
- * @return An allocated plain text version of the markup.
- * @since 1.2
- */
-EAPI char                                    *evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
-
-/**
- * Return the markup version of the plain text.
- *
- * Replaces \\n -\> \<br/\> \\t -\> \<tab/\> and etc. Generally needed before you pass
- * plain text to be set in a textblock.
- *
- * @param obj the textblock object to work with (if @c NULL, it just does the
- * default behaviour, i.e with no extra object information).
- * @param text The plain text (if @c NULL, return @c NULL).
- * @return An allocated markup version of the plain text.
- * @since 1.2
- */
-EAPI char                                    *evas_textblock_text_utf8_to_markup(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
-
-/**
- * Clear the textblock object.
- * @note Does *NOT* free the Evas object itself.
- *
- * @param obj the object to clear.
- * @return nothing.
- */
-EAPI void                                     evas_object_textblock_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-#include "canvas/evas_textblock.eo.legacy.h"
-
-/**
- * @}
- */
+#include "Evas_Textblock_Legacy.h"
 
 /**
  * @ingroup Evas_Object_Grid

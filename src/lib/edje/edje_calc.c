@@ -1495,7 +1495,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 
              if (ep->part->scale) base_s = TO_DOUBLE(sc);
              evas_obj_scale_set(ep->object, base_s);
-             evas_obj_textblock_size_native_get(ep->object, &tw, &th);
+             efl_canvas_text_size_native_get(ep->object, &tw, &th);
 
              orig_s = base_s;
              /* Now make it bigger so calculations will be more accurate
@@ -1504,7 +1504,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                 orig_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
                                                                                orig_s * TO_INT(params->eval.w) / tw);
                 evas_obj_scale_set(ep->object, orig_s);
-                evas_obj_textblock_size_native_get(ep->object, &tw, &th);
+                efl_canvas_text_size_native_get(ep->object, &tw, &th);
              }
              if (chosen_desc->text.fit_x)
                {
@@ -1513,7 +1513,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                        s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
                                                                                  orig_s * TO_INT(params->eval.w) / tw);
                        evas_obj_scale_set(ep->object, s);
-                       evas_obj_textblock_size_native_get(ep->object, NULL, NULL);
+                       efl_canvas_text_size_native_get(ep->object, NULL, NULL);
                     }
                }
              if (chosen_desc->text.fit_y)
@@ -1530,7 +1530,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                          }
 
                        evas_obj_scale_set(ep->object, s);
-                       evas_obj_textblock_size_native_get(ep->object, NULL, NULL);
+                       efl_canvas_text_size_native_get(ep->object, NULL, NULL);
                     }
                }
 
@@ -1539,7 +1539,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
              {
                 int i = 5;   /* Tries before we give up. */
                 Evas_Coord fw, fh;
-                evas_obj_textblock_size_native_get(ep->object, &fw, &fh);
+                efl_canvas_text_size_native_get(ep->object, &fw, &fh);
 
                 /* If we are still too big, try reducing the size to
                  * 95% each try. */
@@ -1555,7 +1555,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                      s = tmp_s;
 
                      evas_obj_scale_set(ep->object, s);
-                     evas_obj_textblock_size_native_get(ep->object, &fw, &fh);
+                     efl_canvas_text_size_native_get(ep->object, &fw, &fh);
                      i--;
                   }
              }
@@ -1582,7 +1582,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   if (!chosen_desc->text.min_x)
                     {
                        efl_gfx_size_set(ep->object, TO_INT(params->eval.w), TO_INT(params->eval.h));
-                       evas_obj_textblock_size_formatted_get(ep->object, &tw, &th);
+                       efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
                     }
                   else
                     evas_object_textblock_size_native_get(ep->object, &tw, &th);
@@ -1609,7 +1609,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
              if (!chosen_desc->text.max_x)
                {
                   efl_gfx_size_set(ep->object, TO_INT(params->eval.w), TO_INT(params->eval.h));
-                  evas_obj_textblock_size_formatted_get(ep->object, &tw, &th);
+                  efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
                }
              else
                evas_object_textblock_size_native_get(ep->object, &tw, &th);
