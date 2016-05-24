@@ -719,7 +719,7 @@ cb_timeout_add(DBusTimeout *timeout, void *data)
    td->interval = dbus_timeout_get_interval(timeout);
    td->timeout = timeout;
 
-   td->handler = ecore_timer_add(td->interval, eldbus_timeout_handler, td);
+   td->handler = ecore_timer_add(td->interval / 1000.0, eldbus_timeout_handler, td);
    conn->timeouts = eina_inlist_append(conn->timeouts,
                                        EINA_INLIST_GET(td));
 
