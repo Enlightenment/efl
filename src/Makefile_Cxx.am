@@ -118,8 +118,9 @@ CLEANFILES += $(edje_eolian_cxx_hh) $(edje_eolian_cxx_impl) lib/edje/Edje.hh
 
 ### Ecore src/lib/ecore
 installed_ecorecxxheadersdir = $(includedir)/ecore-cxx-@VMAJ@
+dist_installed_ecorecxxheaders_DATA = \
+bindings/cxx/ecore_cxx/Ecore.hh
 nodist_installed_ecorecxxheaders_DATA = $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl) \
-bindings/cxx/ecore_cxx/Ecore.hh \
 lib/ecore/Ecore.eo.hh
 
 lib/ecore/Ecore.eo.hh: $(ecore_eolian_cxx_hh)
@@ -163,6 +164,7 @@ bindings/cxx/eina_cxx/eina_tuple_c.hh \
 bindings/cxx/eina_cxx/eina_tuple_unwrap.hh \
 bindings/cxx/eina_cxx/eina_type_traits.hh \
 bindings/cxx/eina_cxx/eina_value.hh \
+bindings/cxx/eina_cxx/eina_workarounds.hh \
 bindings/cxx/eina_cxx/Eina.hh
 
 ### Eio
