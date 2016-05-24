@@ -2959,6 +2959,8 @@ Eina_Bool _edje_part_table_unpack(Edje *ed, const char *part, Evas_Object *child
 Eina_Bool _edje_part_table_col_row_size_get(Edje *ed, const char *part, int *cols, int *rows);
 Eina_Bool _edje_part_table_clear(Edje *ed, const char *part, Eina_Bool clear);
 
+void _edje_internal_proxy_shutdown(void);
+
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>
 #endif

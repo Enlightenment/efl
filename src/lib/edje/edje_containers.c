@@ -21,7 +21,7 @@ struct _Edje_Part_Data
    Edje           *ed;
    Edje_Real_Part *rp;
    const char     *part;
-   Eina_Bool       temp;
+   unsigned char   temp;
 };
 
 struct _Part_Item_Iterator
@@ -32,24 +32,90 @@ struct _Part_Item_Iterator
    Eo            *object;
 };
 
-#define RETURN_VAL(a) do { typeof(a) _ret = a; if (pd->temp) { pd->temp = 0; eo_unref(obj); } return _ret; } while(0)
-#define RETURN_VOID do { if (pd->temp) { pd->temp = 0; eo_unref(obj); } return; } while(0)
+#define PROXY_REF(obj, pd) do { if (!(pd->temp++)) eo_ref(obj); } while(0)
+#define PROXY_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) eo_unref(obj); } } while(0)
+#define RETURN_VAL(a) do { typeof(a) _ret = a; PROXY_UNREF(obj, pd); return _ret; } while(0)
+#define RETURN_VOID do { PROXY_UNREF(obj, pd); return; } while(0)
+#define PROXY_CALL(a) ({ PROXY_REF(obj, pd); a; })
+
+static Eo *_box_proxy = NULL;
+static Eo *_table_proxy = NULL;
+
+void
+_edje_internal_proxy_shutdown(void)
+{
+   if (_box_proxy)
+     {
+        eo_del_intercept_set(_box_proxy, NULL);
+        eo_unref(_box_proxy);
+        _box_proxy = NULL;
+     }
+   if (_table_proxy)
+     {
+        eo_del_intercept_set(_table_proxy, NULL);
+        eo_unref(_table_proxy);
+        _table_proxy = NULL;
+     }
+}
+
+static void
+_box_del_cb(Eo *proxy)
+{
+   if (_box_proxy)
+     {
+        eo_del_intercept_set(proxy, NULL);
+        eo_unref(proxy);
+        return;
+     }
+   if (eo_parent_get(proxy))
+     {
+        eo_ref(proxy);
+        eo_parent_set(proxy, NULL);
+     }
+   _box_proxy = proxy;
+}
 
 Eo *
-_edje_box_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp)
+_edje_box_internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Edje_Real_Part *rp)
 {
-   // TODO: optimize (cache)
-   return eo_add(BOX_CLASS, obj,
-                 efl_canvas_layout_internal_box_real_part_set(eo_self, ed, rp, rp->part->name));
+   Edje_Box_Data *pd;
+   Eo *proxy;
+
+   pd = eo_data_scope_get(_box_proxy, BOX_CLASS);
+   if (!pd)
+     {
+        if (_box_proxy)
+          {
+             ERR("Found invalid handle for efl_part. Reset.");
+             _box_proxy = NULL;
+          }
+        return eo_add
+              (BOX_CLASS, ed->obj,
+               efl_canvas_layout_internal_box_real_part_set(eo_self, ed, rp, rp->part->name));
+     }
+   if (EINA_UNLIKELY(pd->temp))
+     {
+        /* warn about misuse, since non-implemented functions may trigger this
+         * misuse by accident. */
+        ERR("Misuse of efl_part detected. Handles returned by efl_part() are "
+            "valid for a single function call! Did you call a non implemented "
+            "function?");
+     }
+   proxy = _box_proxy;
+   _box_proxy = NULL;
+   efl_canvas_layout_internal_box_real_part_set(proxy, ed, rp, rp->part->name);
+   return proxy;
 }
 
 EOLIAN static void
-_efl_canvas_layout_internal_box_real_part_set(Eo *obj EINA_UNUSED, Edje_Box_Data *pd, void *ed, void *rp, const char *part)
+_efl_canvas_layout_internal_box_real_part_set(Eo *obj, Edje_Box_Data *pd, void *ed, void *rp, const char *part)
 {
    pd->ed = ed;
    pd->rp = rp;
    pd->part = part;
-   pd->temp = EINA_TRUE;
+   pd->temp = 1;
+   eo_del_intercept_set(obj, _box_del_cb);
+   eo_parent_set(obj, pd->ed->obj);
 }
 
 EOLIAN static Eo_Base *
@@ -114,7 +180,7 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_after(Eo *obj, Edje_Box_Dat
 EOLIAN static Eina_Bool
 _efl_canvas_layout_internal_box_efl_pack_linear_pack_at(Eo *obj, Edje_Box_Data *pd, Efl_Gfx *subobj, int index)
 {
-   int cnt = efl_content_count(obj);
+   int cnt = PROXY_CALL(efl_content_count(obj));
    if ((index < 0) && ((-index) <= (cnt + 1)))
      index = cnt + index + 1;
    if ((index >= 0) && (index < cnt))
@@ -126,7 +192,7 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_at(Eo *obj, Edje_Box_Data *
 EOLIAN static Efl_Gfx *
 _efl_canvas_layout_internal_box_efl_pack_linear_pack_unpack_at(Eo *obj, Edje_Box_Data *pd, int index)
 {
-   if (index < 0) index += efl_content_count(obj);
+   if (index < 0) index += PROXY_CALL(efl_content_count(obj));
    RETURN_VAL(_edje_part_box_remove_at(pd->ed, pd->part, index));
 }
 
@@ -135,14 +201,14 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_unpack_at(Eo *obj, Edje_Box
 EOLIAN static Efl_Gfx *
 _efl_canvas_layout_internal_box_efl_pack_linear_pack_content_get(Eo *obj, Edje_Box_Data *pd, int index)
 {
-   if (index < 0) index += efl_content_count(obj);
+   if (index < 0) index += PROXY_CALL(efl_content_count(obj));
    RETURN_VAL(_edje_part_box_content_at(pd->ed, pd->part, index));
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_layout_internal_box_efl_container_content_remove(Eo *obj, Edje_Box_Data *pd EINA_UNUSED, Efl_Gfx *subobj)
 {
-   RETURN_VAL(efl_pack_unpack(obj, subobj));
+   RETURN_VAL(PROXY_CALL(efl_pack_unpack(obj, subobj)));
 }
 
 EOLIAN static int
@@ -249,12 +315,54 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_direction_get(Eo *obj, Edje
 
 /* Table */
 
-Eo *
-_edje_table_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp)
+static void
+_table_del_cb(Eo *proxy)
 {
-   // TODO: optimize (cache)
-   return eo_add(TABLE_CLASS, obj,
-                 efl_canvas_layout_internal_table_real_part_set(eo_self, ed, rp, rp->part->name));
+   if (_table_proxy)
+     {
+        eo_del_intercept_set(proxy, NULL);
+        eo_unref(proxy);
+        return;
+     }
+   if (eo_parent_get(proxy))
+     {
+        eo_ref(proxy);
+        eo_parent_set(proxy, NULL);
+     }
+   _table_proxy = proxy;
+}
+
+Eo *
+_edje_table_internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Edje_Real_Part *rp)
+{
+   Edje_Box_Data *pd;
+   Eo *proxy;
+
+   pd = eo_data_scope_get(_table_proxy, TABLE_CLASS);
+   if (!pd)
+     {
+        if (_table_proxy)
+          {
+             ERR("Found invalid handle for efl_part. Reset.");
+             _table_proxy = NULL;
+          }
+        return eo_add
+              (TABLE_CLASS, ed->obj,
+               efl_canvas_layout_internal_table_real_part_set(eo_self, ed, rp, rp->part->name));
+     }
+
+   if (EINA_UNLIKELY(pd->temp))
+     {
+        /* warn about misuse, since non-implemented functions may trigger this
+         * misuse by accident. */
+        ERR("Misuse of efl_part detected. Handles returned by efl_part() are "
+            "valid for a single function call! Did you call a non implemented "
+            "function?");
+     }
+   proxy = _table_proxy;
+   _table_proxy = NULL;
+   efl_canvas_layout_internal_table_real_part_set(proxy, ed, rp, rp->part->name);
+   return proxy;
 }
 
 EOLIAN static void
@@ -263,7 +371,9 @@ _efl_canvas_layout_internal_table_real_part_set(Eo *obj EINA_UNUSED, Edje_Table_
    pd->ed = ed;
    pd->rp = rp;
    pd->part = part;
-   pd->temp = EINA_TRUE;
+   pd->temp = 1;
+   eo_del_intercept_set(obj, _table_del_cb);
+   eo_parent_set(obj, pd->ed->obj);
 }
 
 EOLIAN static Eo_Base *
@@ -293,7 +403,7 @@ _efl_canvas_layout_internal_table_efl_container_content_count(Eo *obj, Edje_Tabl
 EOLIAN static Eina_Bool
 _efl_canvas_layout_internal_table_efl_container_content_remove(Eo *obj, Edje_Table_Data *pd EINA_UNUSED, Efl_Gfx *content)
 {
-   RETURN_VAL(efl_pack_unpack(obj, content));
+   RETURN_VAL(PROXY_CALL(efl_pack_unpack(obj, content)));
 }
 
 EOLIAN static Eina_Bool
