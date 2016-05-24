@@ -332,8 +332,6 @@ _eo_unref(_Eo_Object *obj)
         obj->del_triggered = EINA_TRUE;
 
         _eo_del_internal(__FILE__, __LINE__, obj);
-
-        obj->del_triggered = EINA_FALSE;
 #ifdef EO_DEBUG
         /* If for some reason it's not empty, clear it. */
         while (obj->xrefs)

@@ -488,8 +488,9 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
                  pd->parent, obj);
           }
 
-        /* Only unref if we don't have a new parent instead. */
-        if (!parent_id)
+        /* Only unref if we don't have a new parent instead and we are not at
+         * the process of deleting the object.*/
+        if (!parent_id && !eo_obj->del_triggered)
           {
              _eo_unref(eo_obj);
           }
@@ -1432,8 +1433,6 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
 
    if (pd->parent)
      {
-        /* A bit ugly, but unparent unrefs, so we need to ref before. */
-        eo_ref(obj);
         eo_parent_set(obj, NULL);
      }
 
