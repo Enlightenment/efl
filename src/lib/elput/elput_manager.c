@@ -89,6 +89,7 @@ elput_manager_open(Elput_Manager *manager, const char *path, int flags)
              manager->vt_hdlr =
                ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
                                        _cb_key_down, manager);
+             manager->vt_fd = ret;
           }
      }
 
@@ -101,8 +102,11 @@ elput_manager_close(Elput_Manager *manager, int fd)
    EINA_SAFETY_ON_NULL_RETURN(manager);
    EINA_SAFETY_ON_NULL_RETURN(manager->interface);
 
-   if (manager->vt_hdlr) ecore_event_handler_del(manager->vt_hdlr);
-   manager->vt_hdlr = NULL;
+   if (fd == manager->vt_fd)
+     {
+        if (manager->vt_hdlr) ecore_event_handler_del(manager->vt_hdlr);
+        manager->vt_hdlr = NULL;
+     }
 
    if (manager->interface->close)
      manager->interface->close(manager, fd);
@@ -119,6 +123,15 @@ elput_manager_vt_set(Elput_Manager *manager, int vt)
      return manager->interface->vt_set(manager, vt);
 
    return EINA_FALSE;
+}
+
+EAPI void
+elput_manager_window_set(Elput_Manager *manager, unsigned int window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+
+   manager->window = window;
+   _elput_input_window_update(manager);
 }
 
 EAPI const Eina_List *

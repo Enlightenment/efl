@@ -500,12 +500,8 @@ elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh)
    Elput_Seat *eseat;
 
    EINA_SAFETY_ON_NULL_RETURN(manager);
+   manager->input.pointer_w = maxw;
+   manager->input.pointer_h = maxh;
 
-   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
-     {
-        if (!eseat->ptr) continue;
-
-        eseat->ptr->maxw = maxw;
-        eseat->ptr->maxh = maxh;
-     }
+   _elput_input_pointer_max_update(manager);
 }

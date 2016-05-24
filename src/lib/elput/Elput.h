@@ -230,6 +230,24 @@ EAPI Eina_Bool elput_manager_vt_set(Elput_Manager *manager, int vt);
  */
 EAPI const Eina_List *elput_manager_seats_get(Elput_Manager *manager);
 
+
+/**
+ * Set which window to use for this input manager
+ *
+ * @brief This function should be used to specify which window to set on the
+ *        input manager. Setting a window on the input manager is done so that
+ *        when we raise events (mouse movement, keyboard key, etc) then
+ *        this window is passed to the event structure as the window which
+ *        the event occured on.
+ *
+ * @param manager
+ * @param window
+ *
+ * @ingroup Elput_Manager_Group
+ * @since 1.18
+ */
+EAPI void elput_manager_window_set(Elput_Manager *manager, unsigned int window);
+
 /**
  * @defgroup Elput_Input_Group Elput input functions
  *
@@ -327,23 +345,6 @@ EAPI void elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh
  *
  * Functions that deal with input devices.
  */
-
-/**
- * Set which window to use for this input device
- *
- * @brief This function should be used to specify which window to set on the
- *        input device. Setting a window on the input device is done so that
- *        when we raise events (mouse movement, keyboard key, etc) then
- *        this window is passed to the event structure as the window which
- *        the event occured on.
- *
- * @param device
- * @param window
- *
- * @ingroup Elput_Device_Group
- * @since 1.18
- */
-EAPI void elput_device_window_set(Elput_Device *device, unsigned int window);
 
 /**
  * Set size of output for input device calibration

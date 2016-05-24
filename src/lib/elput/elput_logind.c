@@ -200,16 +200,6 @@ _logind_dbus_setup(Elput_Manager *em)
                                    _cb_device_paused, em);
    eldbus_proxy_signal_handler_add(proxy, "ResumeDevice",
                                    _cb_device_resumed, em);
-   proxy =
-     eldbus_proxy_get(em->dbus.obj, "org.freedesktop.DBus.Properties");
-   if (!proxy)
-     {
-        ERR("Could not get dbus proxy");
-        goto proxy_err;
-     }
-
-   eldbus_proxy_unref(proxy);
-
    return EINA_TRUE;
 
 proxy_err:
