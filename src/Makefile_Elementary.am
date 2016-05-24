@@ -119,6 +119,22 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_grid.eo \
 	lib/elementary/efl_ui_layout_internal_box.eo \
 	lib/elementary/efl_ui_layout_internal_table.eo \
+	lib/elementary/elm_button_internal_part.eo \
+	lib/elementary/elm_ctxpopup_internal_part.eo \
+	lib/elementary/elm_dayselector_internal_part.eo \
+	lib/elementary/elm_entry_internal_part.eo \
+	lib/elementary/elm_fileselector_entry_internal_part.eo \
+	lib/elementary/elm_flip_internal_part.eo \
+	lib/elementary/elm_hover_internal_part.eo \
+	lib/elementary/elm_layout_internal_part.eo \
+	lib/elementary/elm_mapbuf_internal_part.eo \
+	lib/elementary/elm_naviframe_internal_part.eo \
+	lib/elementary/elm_notify_internal_part.eo \
+	lib/elementary/elm_panel_internal_part.eo \
+	lib/elementary/elm_player_internal_part.eo \
+	lib/elementary/elm_progressbar_internal_part.eo \
+	lib/elementary/elm_popup_internal_part.eo \
+	lib/elementary/elm_scroller_internal_part.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -508,6 +524,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_win_standard.h \
 	lib/elementary/elm_helper.h \
 	lib/elementary/efl_ui_box_private.h \
+	lib/elementary/elm_part_helper.h \
 	$(NULL)
 
 includesubdir = $(includedir)/elementary-@VMAJ@/

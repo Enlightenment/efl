@@ -1713,7 +1713,7 @@ _elm_toolbar_item_elm_widget_item_part_content_set(Eo *eo_item EINA_UNUSED, Elm_
 
    if (part && strcmp(part, "object") && strcmp(part, "elm.swallow.object"))
      {
-        efl_content_set(VIEW(item), part, content);
+        efl_content_set(efl_part(VIEW(item), part), content);
         return;
      }
    if (item->object == content) return;
@@ -1732,13 +1732,9 @@ EOLIAN static Evas_Object *
 _elm_toolbar_item_elm_widget_item_part_content_get(Eo *eo_it EINA_UNUSED, Elm_Toolbar_Item_Data *it,
                        const char *part)
 {
-   Evas_Object *content;
-
    if (part && strcmp(part, "object") && strcmp(part, "elm.swallow.object"))
      {
-        content = efl_content_get(VIEW(it), part);
-        if (content) return content;
-        else return NULL;
+        return efl_content_get(efl_part(VIEW(it), part));
      }
    return it->object;
 }
@@ -1755,8 +1751,7 @@ _elm_toolbar_item_elm_widget_item_part_content_unset(Eo *eo_item EINA_UNUSED, El
 
    if (part && strcmp(part, "object") && strcmp(part, "elm.swallow.object"))
      {
-        o = efl_content_unset(VIEW(item), part);
-        return o;
+        return efl_content_unset(efl_part(VIEW(item), part));
      }
 
    elm_layout_content_unset(VIEW(item), "elm.swallow.object");

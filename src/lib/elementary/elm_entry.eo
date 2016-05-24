@@ -950,8 +950,6 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
       Elm.Widget.disable;
       Elm.Widget.sub_object_del;
       Elm.Widget.focus_next_manager_is;
-      Efl.Container.content_unset;
-      Efl.Container.content.set;
       Elm.Layout.theme_enable;
       Elm.Layout.sizing_eval;
       Elm.Layout.text.get;
@@ -990,6 +988,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
       Elm.Interface.Atspi.Text.Editable.paste;
       Efl.File.file.set;
       Efl.File.file.get;
+      Efl.Part.part;
    }
    events {
       activated;

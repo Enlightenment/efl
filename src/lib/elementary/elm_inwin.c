@@ -137,29 +137,24 @@ _elm_inwin_activate(Eo *obj, void *_pd EINA_UNUSED)
 }
 
 EAPI void
-elm_win_inwin_content_set(Evas_Object *obj,
-                          Evas_Object *content)
+elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_INWIN_CHECK(obj);
-   efl_content_set(obj, NULL, content);
+   efl_content_set(obj, content);
 }
 
 EAPI Evas_Object *
 elm_win_inwin_content_get(const Evas_Object *obj)
 {
    ELM_INWIN_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   ret = efl_content_get((Eo *)obj, NULL);
-   return ret;
+   return efl_content_get(obj);
 }
 
 EAPI Evas_Object *
 elm_win_inwin_content_unset(Evas_Object *obj)
 {
    ELM_INWIN_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   ret = efl_content_unset(obj, NULL);
-   return ret;
+   return efl_content_unset(obj);
 }
 
 static void

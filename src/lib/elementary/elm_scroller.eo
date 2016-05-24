@@ -72,14 +72,12 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Widget.focus_direction;
       Elm.Widget.sub_object_del;
       Elm.Widget.event;
-      Efl.Container.content.get;
-      Efl.Container.content.set;
-      Efl.Container.content_unset;
       Elm.Layout.sizing_eval;
       Elm.Interface_Scrollable.page_size.set;
       Elm.Interface_Scrollable.policy.set;
       Elm.Interface_Scrollable.single_direction;
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Efl.Part.part;
    }
    events {
       scroll,page,changed;

@@ -11,6 +11,9 @@
 #include "elm_widget_naviframe.h"
 #include "elm_widget_container.h"
 
+#include "elm_naviframe_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_NAVIFRAME_CLASS
 
 #define MY_CLASS_NAME "Elm_Naviframe"
@@ -1043,8 +1046,8 @@ _elm_naviframe_elm_layout_text_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, 
 
 /* we have to keep a "manual" set here because of the callbacks on the
  * children */
-EOLIAN static Eina_Bool
-_elm_naviframe_efl_container_content_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_naviframe_content_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    Elm_Object_Item *it;
 
@@ -1059,8 +1062,8 @@ _elm_naviframe_efl_container_content_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UN
    return EINA_FALSE;
 }
 
-EOLIAN static Evas_Object*
-_elm_naviframe_efl_container_content_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
+static Evas_Object*
+_elm_naviframe_content_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
 {
    Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
 
@@ -1069,8 +1072,8 @@ _elm_naviframe_efl_container_content_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UN
    return elm_object_item_part_content_get(it, part);
 }
 
-EOLIAN static Evas_Object*
-_elm_naviframe_efl_container_content_unset(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
+static Evas_Object*
+_elm_naviframe_content_unset(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
 {
    Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
 
@@ -2002,6 +2005,16 @@ _elm_naviframe_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
    };
    return &atspi_actions[0];
 }
+
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
+#include "elm_naviframe_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_naviframe_item.eo.c"
 #include "elm_naviframe.eo.c"

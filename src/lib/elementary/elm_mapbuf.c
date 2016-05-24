@@ -11,6 +11,9 @@
 #include "elm_widget_container.h"
 #include "elm_mapbuf.eo.h"
 
+#include "elm_mapbuf_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_MAPBUF_CLASS
 
 #define MY_CLASS_NAME "Elm_Mapbuf"
@@ -54,8 +57,8 @@ _changed_size_hints_cb(void *data,
 }
 
 static void
-_elm_mapbuf_content_unset(Elm_Mapbuf_Data *sd, Evas_Object *obj,
-                          Evas_Object *content)
+_elm_mapbuf_content_unset_internal(Elm_Mapbuf_Data *sd, Evas_Object *obj,
+                                   Evas_Object *content)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -79,7 +82,7 @@ _elm_mapbuf_elm_widget_sub_object_del(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object 
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->content)
-     _elm_mapbuf_content_unset(sd, (Evas_Object *)obj, sobj);
+     _elm_mapbuf_content_unset_internal(sd, (Evas_Object *)obj, sobj);
    return EINA_TRUE;
 }
 
@@ -190,8 +193,8 @@ _elm_mapbuf_evas_object_smart_hide(Eo *obj, Elm_Mapbuf_Data *sd)
    _configure(obj);
 }
 
-EOLIAN static Eina_Bool
-_elm_mapbuf_efl_container_content_set(Eo *obj, Elm_Mapbuf_Data *sd, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_mapbuf_content_set(Eo *obj, Elm_Mapbuf_Data *sd, const char *part, Evas_Object *content)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -222,15 +225,15 @@ _elm_mapbuf_efl_container_content_set(Eo *obj, Elm_Mapbuf_Data *sd, const char *
    return EINA_TRUE;
 }
 
-EOLIAN static Evas_Object*
-_elm_mapbuf_efl_container_content_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, const char *part)
+static Evas_Object*
+_elm_mapbuf_content_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
    return sd->content;
 }
 
-EOLIAN static Evas_Object*
-_elm_mapbuf_efl_container_content_unset(Eo *obj, Elm_Mapbuf_Data *sd, const char *part)
+static Evas_Object*
+_elm_mapbuf_content_unset(Eo *obj, Elm_Mapbuf_Data *sd, const char *part)
 {
    Evas_Object *content;
    if (part && strcmp(part, "default")) return NULL;
@@ -238,8 +241,26 @@ _elm_mapbuf_efl_container_content_unset(Eo *obj, Elm_Mapbuf_Data *sd, const char
 
    content = sd->content;
    elm_widget_sub_object_del(obj, content);
-   _elm_mapbuf_content_unset(sd, obj, content);
+   _elm_mapbuf_content_unset_internal(sd, obj, content);
    return content;
+}
+
+EOLIAN static Eina_Bool
+_elm_mapbuf_efl_container_content_set(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *content)
+{
+   return _elm_mapbuf_content_set(obj, sd, NULL, content);
+}
+
+EOLIAN static Evas_Object*
+_elm_mapbuf_efl_container_content_get(Eo *obj, Elm_Mapbuf_Data *sd)
+{
+   return _elm_mapbuf_content_get(obj, sd, NULL);
+}
+
+EOLIAN static Evas_Object*
+_elm_mapbuf_efl_container_content_unset(Eo *obj, Elm_Mapbuf_Data *sd)
+{
+   return _elm_mapbuf_content_unset(obj, sd, NULL);
 }
 
 EOLIAN static void
@@ -417,5 +438,15 @@ _elm_mapbuf_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+/* Efl.Part begin */
+
+ELM_PART_IMPLEMENT(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_SET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_GET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
+#include "elm_mapbuf_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_mapbuf.eo.c"

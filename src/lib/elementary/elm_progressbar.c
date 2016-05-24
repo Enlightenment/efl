@@ -11,6 +11,9 @@
 #include "elm_widget_progressbar.h"
 #include "elm_widget_layout.h"
 
+#include "elm_progressbar_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_PROGRESSBAR_CLASS
 
 #define MY_CLASS_NAME "Elm_Progressbar"
@@ -174,11 +177,11 @@ _elm_progressbar_elm_widget_sub_object_del(Eo *obj, Elm_Progressbar_Data *_pd EI
 /* FIXME: replicated from elm_layout just because progressbar's icon
  * spot is elm.swallow.content, not elm.swallow.icon. Fix that
  * whenever we can changed the theme API */
-EOLIAN static Eina_Bool
-_elm_progressbar_efl_container_content_set(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_progressbar_content_set(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
+   int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -648,5 +651,13 @@ _elm_progressbar_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE(elm_progressbar, ELM_PROGRESSBAR, ELM_LAYOUT, Elm_Progressbar_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_progressbar, ELM_PROGRESSBAR, ELM_LAYOUT, Elm_Progressbar_Data, Elm_Part_Data)
+#include "elm_progressbar_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_progressbar.eo.c"

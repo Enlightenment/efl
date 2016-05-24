@@ -1,0 +1,15 @@
+interface Efl.Canvas.Layout_Internal ()
+{
+   [[Internal APIs used by Edje part objects.]]
+   eo_prefix: _edje;
+   methods {
+      @property real_part @protected {
+         set {}
+         values {
+            ed: void*;
+            rp: void*;
+            part: const(char)*;
+         }
+      }
+   }
+}

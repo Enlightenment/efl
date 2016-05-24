@@ -9,6 +9,9 @@
 #include "elm_widget_flip.h"
 #include "elm_widget_container.h"
 
+#include "elm_flip_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_FLIP_CLASS
 
 #define MY_CLASS_NAME "Elm_Flip"
@@ -1770,8 +1773,8 @@ _flip_content_unset(Evas_Object *obj,
    return content;
 }
 
-EOLIAN static Eina_Bool
-_elm_flip_efl_container_content_set(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_flip_content_set(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    if (!part || !strcmp(part, "front"))
       return _flip_content_set(obj, content, EINA_TRUE);
@@ -1780,8 +1783,8 @@ _elm_flip_efl_container_content_set(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, con
    return EINA_FALSE;
 }
 
-EOLIAN static Evas_Object*
-_elm_flip_efl_container_content_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, const char *part)
+static Evas_Object*
+_elm_flip_content_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, const char *part)
 {
    if (!part || !strcmp(part, "front"))
       return sd->front.content;
@@ -1790,8 +1793,8 @@ _elm_flip_efl_container_content_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, cons
    return NULL;
 }
 
-EOLIAN static Evas_Object*
-_elm_flip_efl_container_content_unset(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EINA_UNUSED, const char *part)
+static Evas_Object*
+_elm_flip_content_unset(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EINA_UNUSED, const char *part)
 {
    if (!part || !strcmp(part, "front"))
       return _flip_content_unset(obj, EINA_TRUE);
@@ -2065,5 +2068,15 @@ _elm_flip_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+/* Efl.Part begin */
+
+ELM_PART_IMPLEMENT(elm_flip, ELM_FLIP, Elm_Flip_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_SET(elm_flip, ELM_FLIP, Elm_Flip_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_GET(elm_flip, ELM_FLIP, Elm_Flip_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_flip, ELM_FLIP, Elm_Flip_Data, Elm_Part_Data)
+#include "elm_flip_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_flip.eo.c"

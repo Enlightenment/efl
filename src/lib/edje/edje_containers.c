@@ -1,19 +1,25 @@
 #include "edje_private.h"
 
+#define EFL_CANVAS_LAYOUT_INTERNAL_PROTECTED
 #define EFL_CANVAS_LAYOUT_INTERNAL_BOX_PROTECTED
 #define EFL_CANVAS_LAYOUT_INTERNAL_TABLE_PROTECTED
+#define EFL_CANVAS_LAYOUT_INTERNAL_SWALLOW_PROTECTED
 
+#include "efl_canvas_layout_internal.eo.h"
 #include "efl_canvas_layout_internal_box.eo.h"
 #include "efl_canvas_layout_internal_table.eo.h"
+#include "efl_canvas_layout_internal_swallow.eo.h"
 
 #include "../evas/canvas/evas_box.eo.h"
 #include "../evas/canvas/evas_table.eo.h"
 
-#define BOX_CLASS   EFL_CANVAS_LAYOUT_INTERNAL_BOX_CLASS
-#define TABLE_CLASS EFL_CANVAS_LAYOUT_INTERNAL_TABLE_CLASS
+#define BOX_CLASS     EFL_CANVAS_LAYOUT_INTERNAL_BOX_CLASS
+#define TABLE_CLASS   EFL_CANVAS_LAYOUT_INTERNAL_TABLE_CLASS
+#define SWALLOW_CLASS EFL_CANVAS_LAYOUT_INTERNAL_SWALLOW_CLASS
 
 typedef struct _Edje_Part_Data     Edje_Box_Data;
 typedef struct _Edje_Part_Data     Edje_Table_Data;
+typedef struct _Edje_Part_Data     Edje_Swallow_Data;
 typedef struct _Part_Item_Iterator Part_Item_Iterator;
 
 struct _Edje_Part_Data
@@ -38,92 +44,109 @@ struct _Part_Item_Iterator
 #define RETURN_VOID do { PROXY_UNREF(obj, pd); return; } while(0)
 #define PROXY_CALL(a) ({ PROXY_REF(obj, pd); a; })
 
+/* ugly macros to avoid code duplication */
+
+#define PROXY_RESET(type) \
+   do { if (_ ## type ## _proxy) \
+     { \
+        eo_del_intercept_set(_ ## type ## _proxy, NULL); \
+        eo_unref(_ ## type ## _proxy); \
+        _ ## type ## _proxy = NULL; \
+     } } while (0)
+
+#define PROXY_DEL_CB(type) \
+static void \
+type ## _del_cb(Eo *proxy) \
+{ \
+   if (_ ## type ## _proxy) \
+     { \
+        eo_del_intercept_set(proxy, NULL); \
+        eo_unref(proxy); \
+        return; \
+     } \
+   if (eo_parent_get(proxy)) \
+     { \
+        eo_ref(proxy); \
+        eo_parent_set(proxy, NULL); \
+     } \
+   _ ## type ## _proxy = proxy; \
+}
+
+#define PROXY_IMPLEMENTATION(type, TYPE, datatype) \
+Eo * \
+_edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Edje_Real_Part *rp) \
+{ \
+   Edje_Box_Data *pd; \
+   Eo *proxy; \
+   \
+   pd = eo_data_scope_get(_ ## type ## _proxy, TYPE ## _CLASS); \
+   if (!pd) \
+     { \
+        if (_ ## type ## _proxy) \
+          { \
+             ERR("Found invalid handle for efl_part. Reset."); \
+             _ ## type ## _proxy = NULL; \
+          } \
+        return eo_add(TYPE ## _CLASS, ed->obj, \
+                      _edje_real_part_set(eo_self, ed, rp, rp->part->name)); \
+     } \
+   \
+   if (EINA_UNLIKELY(pd->temp)) \
+     { \
+        /* warn about misuse, since non-implemented functions may trigger this \
+         * misuse by accident. */ \
+        ERR("Misuse of efl_part detected. Handles returned by efl_part() are " \
+            "valid for a single function call! Did you call a non implemented " \
+            "function?"); \
+     } \
+   proxy = _ ## type ## _proxy; \
+   _ ## type ## _proxy = NULL; \
+   _edje_real_part_set(proxy, ed, rp, rp->part->name); \
+   return proxy; \
+} \
+\
+EOLIAN static void \
+_efl_canvas_layout_internal_ ## type ## _efl_canvas_layout_internal_real_part_set(Eo *obj, datatype *pd, void *ed, void *rp, const char *part) \
+{ \
+   pd->ed = ed; \
+   pd->rp = rp; \
+   pd->part = part; \
+   pd->temp = 1; \
+   eo_del_intercept_set(obj, type ## _del_cb); \
+   eo_parent_set(obj, pd->ed->obj); \
+} \
+\
+EOLIAN static Eo_Base * \
+_efl_canvas_layout_internal_ ## type ## _eo_base_finalize(Eo *obj, datatype *pd) \
+{ \
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->rp && pd->ed && pd->part, NULL); \
+   return eo_finalize(eo_super(obj, TYPE ## _CLASS)); \
+}
+
 static Eo *_box_proxy = NULL;
 static Eo *_table_proxy = NULL;
+static Eo *_swallow_proxy = NULL;
 
 void
 _edje_internal_proxy_shutdown(void)
 {
-   if (_box_proxy)
-     {
-        eo_del_intercept_set(_box_proxy, NULL);
-        eo_unref(_box_proxy);
-        _box_proxy = NULL;
-     }
-   if (_table_proxy)
-     {
-        eo_del_intercept_set(_table_proxy, NULL);
-        eo_unref(_table_proxy);
-        _table_proxy = NULL;
-     }
+   PROXY_RESET(box);
+   PROXY_RESET(table);
+   PROXY_RESET(swallow);
 }
 
-static void
-_box_del_cb(Eo *proxy)
-{
-   if (_box_proxy)
-     {
-        eo_del_intercept_set(proxy, NULL);
-        eo_unref(proxy);
-        return;
-     }
-   if (eo_parent_get(proxy))
-     {
-        eo_ref(proxy);
-        eo_parent_set(proxy, NULL);
-     }
-   _box_proxy = proxy;
-}
+PROXY_DEL_CB(box)
+PROXY_DEL_CB(table)
+PROXY_DEL_CB(swallow)
 
-Eo *
-_edje_box_internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Edje_Real_Part *rp)
-{
-   Edje_Box_Data *pd;
-   Eo *proxy;
+PROXY_IMPLEMENTATION(box, BOX, Edje_Box_Data)
+PROXY_IMPLEMENTATION(table, TABLE, Edje_Table_Data)
+PROXY_IMPLEMENTATION(swallow, SWALLOW, Edje_Swallow_Data)
 
-   pd = eo_data_scope_get(_box_proxy, BOX_CLASS);
-   if (!pd)
-     {
-        if (_box_proxy)
-          {
-             ERR("Found invalid handle for efl_part. Reset.");
-             _box_proxy = NULL;
-          }
-        return eo_add
-              (BOX_CLASS, ed->obj,
-               efl_canvas_layout_internal_box_real_part_set(eo_self, ed, rp, rp->part->name));
-     }
-   if (EINA_UNLIKELY(pd->temp))
-     {
-        /* warn about misuse, since non-implemented functions may trigger this
-         * misuse by accident. */
-        ERR("Misuse of efl_part detected. Handles returned by efl_part() are "
-            "valid for a single function call! Did you call a non implemented "
-            "function?");
-     }
-   proxy = _box_proxy;
-   _box_proxy = NULL;
-   efl_canvas_layout_internal_box_real_part_set(proxy, ed, rp, rp->part->name);
-   return proxy;
-}
+#undef PROXY_RESET
+#undef PROXY_DEL_CB
+#undef PROXY_IMPLEMENTATION
 
-EOLIAN static void
-_efl_canvas_layout_internal_box_real_part_set(Eo *obj, Edje_Box_Data *pd, void *ed, void *rp, const char *part)
-{
-   pd->ed = ed;
-   pd->rp = rp;
-   pd->part = part;
-   pd->temp = 1;
-   eo_del_intercept_set(obj, _box_del_cb);
-   eo_parent_set(obj, pd->ed->obj);
-}
-
-EOLIAN static Eo_Base *
-_efl_canvas_layout_internal_box_eo_base_finalize(Eo *obj, Edje_Box_Data *pd)
-{
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->rp && pd->ed && pd->part, NULL);
-   return eo_finalize(eo_super(obj, BOX_CLASS));
-}
 
 /* Legacy features */
 
@@ -313,76 +336,6 @@ _efl_canvas_layout_internal_box_efl_pack_linear_pack_direction_get(Eo *obj, Edje
    RETURN_VAL(EFL_ORIENT_NONE);
 }
 
-/* Table */
-
-static void
-_table_del_cb(Eo *proxy)
-{
-   if (_table_proxy)
-     {
-        eo_del_intercept_set(proxy, NULL);
-        eo_unref(proxy);
-        return;
-     }
-   if (eo_parent_get(proxy))
-     {
-        eo_ref(proxy);
-        eo_parent_set(proxy, NULL);
-     }
-   _table_proxy = proxy;
-}
-
-Eo *
-_edje_table_internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Edje_Real_Part *rp)
-{
-   Edje_Box_Data *pd;
-   Eo *proxy;
-
-   pd = eo_data_scope_get(_table_proxy, TABLE_CLASS);
-   if (!pd)
-     {
-        if (_table_proxy)
-          {
-             ERR("Found invalid handle for efl_part. Reset.");
-             _table_proxy = NULL;
-          }
-        return eo_add
-              (TABLE_CLASS, ed->obj,
-               efl_canvas_layout_internal_table_real_part_set(eo_self, ed, rp, rp->part->name));
-     }
-
-   if (EINA_UNLIKELY(pd->temp))
-     {
-        /* warn about misuse, since non-implemented functions may trigger this
-         * misuse by accident. */
-        ERR("Misuse of efl_part detected. Handles returned by efl_part() are "
-            "valid for a single function call! Did you call a non implemented "
-            "function?");
-     }
-   proxy = _table_proxy;
-   _table_proxy = NULL;
-   efl_canvas_layout_internal_table_real_part_set(proxy, ed, rp, rp->part->name);
-   return proxy;
-}
-
-EOLIAN static void
-_efl_canvas_layout_internal_table_real_part_set(Eo *obj EINA_UNUSED, Edje_Table_Data *pd, void *ed, void *rp, const char *part)
-{
-   pd->ed = ed;
-   pd->rp = rp;
-   pd->part = part;
-   pd->temp = 1;
-   eo_del_intercept_set(obj, _table_del_cb);
-   eo_parent_set(obj, pd->ed->obj);
-}
-
-EOLIAN static Eo_Base *
-_efl_canvas_layout_internal_table_eo_base_finalize(Eo *obj, Edje_Table_Data *pd)
-{
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->rp && pd->ed && pd->part, NULL);
-   return eo_finalize(eo_super(obj, TABLE_CLASS));
-}
-
 EOLIAN static Eina_Iterator *
 _efl_canvas_layout_internal_table_efl_container_content_iterate(Eo *obj, Edje_Table_Data *pd)
 {
@@ -546,6 +499,29 @@ _efl_canvas_layout_internal_table_efl_pack_grid_grid_position_get(Eo *obj, Edje_
    RETURN_VAL(ret);
 }
 
+/* Swallow parts */
+EOLIAN static Efl_Gfx *
+_efl_canvas_layout_internal_swallow_efl_container_content_get(Eo *obj, Edje_Swallow_Data *pd)
+{
+   RETURN_VAL(_edje_efl_container_content_get(pd->ed, pd->part));
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_layout_internal_swallow_efl_container_content_set(Eo *obj, Edje_Swallow_Data *pd, Efl_Gfx *content)
+{
+   RETURN_VAL(_edje_efl_container_content_set(pd->ed, pd->part, content));
+}
+
+EOLIAN static Efl_Gfx *
+_efl_canvas_layout_internal_swallow_efl_container_content_unset(Eo *obj, Edje_Swallow_Data *pd)
+{
+   Efl_Gfx *content = _edje_efl_container_content_get(pd->ed, pd->part);
+   if (!content) RETURN_VAL(NULL);
+   PROXY_CALL(efl_content_remove(obj, content));
+   RETURN_VAL(content);
+}
+
+
 /* Legacy API implementation */
 
 #ifdef DEGUG
@@ -681,5 +657,7 @@ edje_object_part_table_clear(Edje_Object *obj, const char *part, Eina_Bool clear
      return efl_pack_unpack_all(table);
 }
 
+#include "efl_canvas_layout_internal.eo.c"
 #include "efl_canvas_layout_internal_box.eo.c"
 #include "efl_canvas_layout_internal_table.eo.c"
+#include "efl_canvas_layout_internal_swallow.eo.c"

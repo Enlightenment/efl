@@ -13,9 +13,6 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
       Elm.Widget.focus_next;
       Elm.Widget.disable;
       Elm.Widget.focus_direction_manager_is;
-      Efl.Container.content.get;
-      Efl.Container.content_unset;
-      Efl.Container.content.set;
       Elm.Layout.text.set;
       Elm.Layout.text.get;
       Elm.Layout.sizing_eval;
@@ -24,6 +21,7 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
       Elm.Interface.Fileselector.is_save;
       Elm.Interface.Fileselector.path;
       Elm.Interface.Fileselector.expandable;
+      Efl.Part.part;
    }
    events {
       changed;

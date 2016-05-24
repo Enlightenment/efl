@@ -2959,6 +2959,11 @@ Eina_Bool _edje_part_table_unpack(Edje *ed, const char *part, Evas_Object *child
 Eina_Bool _edje_part_table_col_row_size_get(Edje *ed, const char *part, int *cols, int *rows);
 Eina_Bool _edje_part_table_clear(Edje *ed, const char *part, Eina_Bool clear);
 
+/* part containers: swallow */
+Eo *_edje_swallow_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+Efl_Gfx *_edje_efl_container_content_get(Edje *ed, const char *part);
+Eina_Bool _edje_efl_container_content_set(Edje *ed, const char *part, Efl_Gfx *obj_swallow);
+
 void _edje_internal_proxy_shutdown(void);
 
 #ifdef HAVE_LIBREMIX

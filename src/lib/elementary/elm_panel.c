@@ -12,6 +12,9 @@
 
 #include "els_box.h"
 
+#include "elm_panel_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_PANEL_CLASS
 
 #define MY_CLASS_NAME "Elm_Panel"
@@ -245,9 +248,8 @@ _elm_panel_elm_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
         elm_coords_finger_size_adjust(1, &minw, 1, &minh);
         evas_object_size_hint_min_set(sd->event, minw, minh);
 
-        if (edje_object_part_exists
-            (wd->resize_obj, "elm.swallow.event"))
-          efl_content_set(eo_super(obj, MY_CLASS), "elm.swallow.event", sd->event);
+        if (edje_object_part_exists(wd->resize_obj, "elm.swallow.event"))
+          efl_content_set(efl_part(eo_super(obj, MY_CLASS), "elm.swallow.event"), sd->event);
      }
 
    elm_layout_sizing_eval(obj);
@@ -909,8 +911,8 @@ _elm_panel_elm_widget_event(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED, Evas_Objec
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_elm_panel_efl_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_panel_content_set(Eo *obj, Elm_Panel_Data *sd, const char *part, Evas_Object *content)
 {
    if (part)
      {
@@ -923,7 +925,7 @@ _elm_panel_efl_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *pa
         if (strcmp(part, "default"))
           {
              Eina_Bool int_ret = EINA_TRUE;
-             int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
+             int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
              return int_ret;
           }
      }
@@ -945,8 +947,8 @@ _elm_panel_efl_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *pa
    return EINA_TRUE;
 }
 
-EOLIAN static Evas_Object*
-_elm_panel_efl_container_content_get(Eo *obj, Elm_Panel_Data *sd, const char *part)
+static Evas_Object*
+_elm_panel_content_get(Eo *obj, Elm_Panel_Data *sd, const char *part)
 {
    if (part)
      {
@@ -959,7 +961,7 @@ _elm_panel_efl_container_content_get(Eo *obj, Elm_Panel_Data *sd, const char *pa
         if (strcmp(part, "default"))
           {
              Evas_Object *ret = NULL;
-             ret = efl_content_get(eo_super(obj, MY_CLASS), part);
+             ret = efl_content_get(efl_part(eo_super(obj, MY_CLASS), part));
              return ret;
           }
      }
@@ -967,8 +969,8 @@ _elm_panel_efl_container_content_get(Eo *obj, Elm_Panel_Data *sd, const char *pa
    return sd->content;
 }
 
-EOLIAN static Evas_Object*
-_elm_panel_efl_container_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *part)
+static Evas_Object*
+_elm_panel_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *part)
 {
    Evas_Object *ret = NULL;
 
@@ -982,7 +984,7 @@ _elm_panel_efl_container_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *
           }
         if (strcmp(part, "default"))
           {
-             ret = efl_content_unset(eo_super(obj, MY_CLASS), part);
+             ret = efl_content_unset(efl_part(eo_super(obj, MY_CLASS), part));
              return ret;
           }
      }
@@ -1039,7 +1041,7 @@ _elm_panel_evas_object_smart_add(Eo *obj, Elm_Panel_Data *priv)
 
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
              evas_object_size_hint_min_set(priv->event, minw, minh);
-             efl_content_set(eo_super(obj, MY_CLASS), "elm.swallow.event", priv->event);
+             efl_content_set(efl_part(eo_super(obj, MY_CLASS), "elm.swallow.event"), priv->event);
           }
      }
 
@@ -1523,5 +1525,15 @@ _elm_panel_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
    };
    return &atspi_actions[0];
 }
+
+/* Efl.Part begin */
+
+ELM_PART_IMPLEMENT(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_SET(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_GET(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
+#include "elm_panel_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_panel.eo.c"

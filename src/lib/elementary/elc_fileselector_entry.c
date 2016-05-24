@@ -10,6 +10,9 @@
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_entry.h"
 
+#include "elm_fileselector_entry_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_FILESELECTOR_ENTRY_CLASS
 
 #define MY_CLASS_NAME "Elm_Fileselector_Entry"
@@ -230,12 +233,12 @@ _elm_fileselector_entry_elm_layout_text_get(Eo *obj, Elm_Fileselector_Entry_Data
    return elm_object_text_get(sd->button);
 }
 
-EOLIAN static Eina_Bool
-_elm_fileselector_entry_efl_container_content_set(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_fileselector_entry_content_set(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part, Evas_Object *content)
 {
    if (part && strcmp(part, "button icon"))
      {
-        return efl_content_set(eo_super(obj, MY_CLASS), part, content);
+        return efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
      }
 
    elm_layout_content_set(sd->button, NULL, content);
@@ -243,23 +246,23 @@ _elm_fileselector_entry_efl_container_content_set(Eo *obj, Elm_Fileselector_Entr
    return EINA_TRUE;
 }
 
-EOLIAN static Evas_Object *
-_elm_fileselector_entry_efl_container_content_get(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part)
+static Evas_Object *
+_elm_fileselector_entry_content_get(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part)
 {
    if (part && strcmp(part, "button icon"))
      {
-        return efl_content_get(eo_super(obj, MY_CLASS), part);
+        return efl_content_get(efl_part(eo_super(obj, MY_CLASS), part));
      }
 
    return elm_layout_content_get(sd->button, NULL);
 }
 
-EOLIAN static Evas_Object *
-_elm_fileselector_entry_efl_container_content_unset(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part)
+static Evas_Object *
+_elm_fileselector_entry_content_unset(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part)
 {
    if (part && strcmp(part, "button icon"))
      {
-        return efl_content_unset(eo_super(obj, MY_CLASS), part);
+        return efl_content_unset(efl_part(eo_super(obj, MY_CLASS), part));
      }
 
    return elm_layout_content_unset(sd->button, NULL);
@@ -549,5 +552,15 @@ _elm_fileselector_entry_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, ELM_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, ELM_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, ELM_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, ELM_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
+#include "elm_fileselector_entry_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_fileselector_entry.eo.c"

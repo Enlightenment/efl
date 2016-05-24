@@ -3657,7 +3657,7 @@ elm_widget_content_part_set(Evas_Object *obj,
                             Evas_Object *content)
 {
    ELM_WIDGET_CHECK(obj);
-   efl_content_set(obj, part, content);
+   efl_content_set(efl_part(obj, part), content);
 }
 
 EAPI Evas_Object *
@@ -3665,9 +3665,7 @@ elm_widget_content_part_get(const Evas_Object *obj,
                             const char *part)
 {
    ELM_WIDGET_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   ret = efl_content_get((Eo *) obj, part);
-   return ret;
+   return efl_content_get(efl_part(obj, part));
 }
 
 EAPI Evas_Object *
@@ -3675,9 +3673,7 @@ elm_widget_content_part_unset(Evas_Object *obj,
                               const char *part)
 {
    ELM_WIDGET_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   ret = efl_content_unset(obj, part);
-   return ret;
+   return efl_content_unset(efl_part(obj, part));
 }
 
 EOLIAN static void

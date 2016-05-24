@@ -2000,9 +2000,6 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
       Efl.File.file.get;
       Efl.File.mmap.set;
       Efl.File.mmap.get;
-      Efl.Container.content.set;
-      Efl.Container.content.get;
-      Efl.Container.content_unset;
       Efl.Container.content_remove;
       Efl.Container.content_part_name.get;
       Efl.Part.part;

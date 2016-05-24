@@ -12,6 +12,9 @@
 #include "elm_priv.h"
 #include "elm_widget_entry.h"
 
+#include "elm_entry_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_ENTRY_CLASS
 
 #define MY_CLASS_NAME "Elm_Entry"
@@ -3048,11 +3051,11 @@ _elm_entry_elm_layout_signal_callback_del(Eo *obj, Elm_Entry_Data *sd, const cha
    return data;
 }
 
-EOLIAN static Eina_Bool
-_elm_entry_efl_container_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_entry_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
+   int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
    if (!int_ret) return EINA_FALSE;
 
    /* too bad entry does not follow the pattern
@@ -3066,11 +3069,11 @@ _elm_entry_efl_container_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, c
    return EINA_TRUE;
 }
 
-EOLIAN static Evas_Object*
-_elm_entry_efl_container_content_unset(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part)
+static Evas_Object*
+_elm_entry_content_unset(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part)
 {
    Evas_Object *ret = NULL;
-   ret = efl_content_unset(eo_super(obj, MY_CLASS), part);
+   ret = efl_content_unset(efl_part(eo_super(obj, MY_CLASS), part));
    if (!ret) return NULL;
 
    /* too bad entry does not follow the pattern
@@ -5926,5 +5929,14 @@ _elm_entry_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Entry_Data *sd)
    const char *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
    return ret ? strdup(ret) : NULL;
 }
+
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+#include "elm_entry_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_entry.eo.c"

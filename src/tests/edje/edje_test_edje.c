@@ -393,17 +393,17 @@ START_TEST(edje_test_swallows_eoapi)
 
 
    o1 = eo_add(EDJE_OBJECT_CLASS, ly);
-   fail_if(!efl_content_set(ly, "swallow", o1));
+   fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));
    ck_assert_ptr_eq(eo_parent_get(o1), ly);
 
    efl_content_remove(ly, o1);
    ck_assert_ptr_eq(eo_parent_get(o1), evas_common_evas_get(o1));
 
-   fail_if(!efl_content_set(ly, "swallow", o1));
+   fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));
    ck_assert_ptr_eq(eo_parent_get(o1), ly);
 
    o2 = eo_add(EDJE_OBJECT_CLASS, ly);
-   fail_if(!efl_content_set(ly, "swallow", o2));
+   fail_if(!efl_content_set(efl_part(ly, "swallow"), o2));
    ck_assert_ptr_eq(eo_parent_get(o2), ly);
    /* o1 is deleted at this point. */
    ck_assert_ptr_eq(eo_parent_get(o1), evas_common_evas_get(o1));

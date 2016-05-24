@@ -12,6 +12,9 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_player.h"
 
+#include "elm_player_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_PLAYER_CLASS
 
 #define MY_CLASS_NAME "Elm_Player"
@@ -576,8 +579,8 @@ _str_free(char *data)
  * treating this special case here and delegating other objects to own
  * layout */
 
-EOLIAN static Eina_Bool
-_elm_player_efl_container_content_set(Eo *obj, Elm_Player_Data *sd, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_player_content_set(Eo *obj, Elm_Player_Data *sd, const char *part, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
    double pos, length;
@@ -585,11 +588,11 @@ _elm_player_efl_container_content_set(Eo *obj, Elm_Player_Data *sd, const char *
 
    if (part && strcmp(part, "video"))
      {
-        int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
+        int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
         return int_ret;
      }
    if ((!part) || (!strcmp(part, "video"))) part = "elm.swallow.content";
-   int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
+   int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
 
    if (!_elm_video_check(content)) return EINA_FALSE;
    if (sd->video == content) goto end;
@@ -640,6 +643,7 @@ _elm_player_efl_container_content_set(Eo *obj, Elm_Player_Data *sd, const char *
 end:
    return EINA_TRUE;
 }
+
 
 EOLIAN static void
 _elm_player_evas_object_smart_add(Eo *obj, Elm_Player_Data *priv)
@@ -714,8 +718,7 @@ EAPI Evas_Object *
 elm_player_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
-   return obj;
+   return eo_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -746,5 +749,13 @@ _elm_player_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSE
    };
    return &atspi_actions[0];
 }
+
+/* Efl.Part implementation */
+
+ELM_PART_OVERRIDE(elm_player, ELM_PLAYER, ELM_LAYOUT, Elm_Player_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_player, ELM_PLAYER, ELM_LAYOUT, Elm_Player_Data, Elm_Part_Data)
+#include "elm_player_internal_part.eo.c"
+
+/* End of Efl.Part */
 
 #include "elm_player.eo.c"
