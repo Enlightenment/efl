@@ -1,0 +1,35 @@
+# Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>
+pkgname=emotion_generic_players
+pkgver=@VERSION@
+pkgrel=1
+pkgdesc="Emotion external binary executable players - GIT development snapshot"
+arch=('i686' 'x86_64' 'arm')
+url="http://www.enlightenment.org"
+license=('BSD')
+depends=('efl' 'vlc' 'libdvdcss' 'vcdimager' 'libcdio'
+         'ttf-freefont' 'ttf-dejavu' 'libssh2')
+options=('debug')
+build() {
+  cd "../.."
+  export CFLAGS="$CFLAGS -fvisibility=hidden -fomit-frame-pointer"
+  export CXXFLAGS="$CXXFLAGS -fvisibility=hidden -fomit-frame-pointer"
+  make clean distclean
+  ./configure --prefix=/usr
+  make
+}
+
+#check() {
+#  cd "../.."
+#  make -k check
+#}
+
+package() {
+  cd "../.."
+  make -j1 DESTDIR="$pkgdir/" install
+  install -Dm644 README "$pkgdir/usr/share/$pkgname/README"
+  install -Dm644 NEWS "$pkgdir/usr/share/$pkgname/NEWS"
+  install -Dm644 ChangeLog "$pkgdir/usr/share/$pkgname/ChangeLog"
+  install -Dm644 AUTHORS "$pkgdir/usr/share/$pkgname/AUTHORS"
+  install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+  ln -s "../licenses/$pkgname/COPYING" "$pkgdir/usr/share/$pkgname/COPYING"
+}

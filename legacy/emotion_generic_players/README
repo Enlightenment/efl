@@ -1,0 +1,65 @@
+Emotion Generic Players 1.11.0
+==============================
+
+******************************************************************************
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+******************************************************************************
+  
+These are binary players for Emotion using the "generic" module.
+
+Emotion supports multiple modules provided as shared-objects under
+PREFIX/lib/emotion/modules, making it extensible. However these
+live in the same process as the application, thus problems handling
+the media may crash or halt the application. Unfortunately media
+handling is very error prone due multiple sources, sinks, decoders et
+al, each with their own level of stability.
+
+To solve this, Emotion ships with a "generic" module that is a
+layer to talk to another process, the "player", using pipes and shared
+memory (shm). If this external process dies, the main application
+remains working (without any media, of course). Thus it is safer and
+has some nice side effects such as avoiding bringing in many libraries to
+decode media, saving memory in the application process, etc.
+
+A secondary benefit is that the generic player is a separate process
+and does not link with the user application code or EFL, avoiding
+license conflicts. Many decoding libraries or elements exist with
+conflicting licenses with GPL, LGPL or even proprietary code.
+
+
+REQUIREMENTS
+------------
+
+  * vlc (libvlc >= 2.0)
+
+
+COMPONENTS
+----------
+
+**VLC Generic Player:**
+
+//GPL v2 license//
+
+This is a binary that uses the VLC library (libvlc) to play videos
+inot shared memory.
+
+COMPILING AND INSTALLING
+------------------------
+
+    ./configure
+    make
+    sudo make install
+
+
+COMPILER FLAGS
+--------------
+
+You may want to change the install prefix for EFL with:
+
+    --prefix=/path/to/prefix
+
+**NOTE:**
+
+You should put generic players in the same prefix as EFL or they will
+not be found by EFL at runtime.

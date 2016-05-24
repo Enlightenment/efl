@@ -1,0 +1,70 @@
+==============================
+Emotion Generic Players 1.17.0
+==============================
+
+Changes since 1.16.0:
+---------------------
+
+No significant changes in this release.
+
+Changes since 1.15.0:
+---------------------
+
+No significant changes in this release.
+
+Changes since 1.14.0:
+---------------------
+
+No significant changes in this release.
+
+Changes since 1.13.0:
+---------------------
+
+No significant changes in this release.
+
+Changes since 1.12.0:
+---------------------
+
+No significant changes in this release.
+
+Changes since 1.11.0:
+---------------------
+
+No significant changes in this release.
+
+Changes since Emotion Generic Players 1.10.0:
+---------------------------------------------
+
+Fixes:
+   * emotion generic players - work around vlc bug that segvs (T1530)
+
+Changes since Emotion Generic Players 1.9.0:
+--------------------------------------------
+
+No changes since version 1.9.0
+
+Changes since Emotion Generic Players 1.8.0:
+--------------------------------------------
+
+Improvements:
+
+   * Emotion VLC player: debug++
+   * Emotion VLC: cleanup: only changed function order in file.
+   * Simplify player version dir fallback to match efl 1.9 simplification changes
+   * Emotion_generic_players - commented out unused func.
+   * Emotion VLC: no more need to send the size twice.
+   * Emotion VLC: use Eina_Bool instead of int for bools.
+   * Emotion VLC: defer the resource free until the video is actually stopped.
+
+Fixes:
+
+   * Emotion VLC backend: fix pause/stop to work again.
+     The EM_CMD_STOP command do not have any parameter so it must be
+     handled in the first call of the pipe.
+   * Check for libvlc >= 2.0 as a minimum as we use 2.x funcs
+   * Emotion VLC: remove quite all the old hacks from loading stage which fixes the problem that
+     audio was audible on start
+   * Emotion VLC: fix the random-player-stop bug !!
+   * Emotion VLC: fix send position_change while paused.
+   * Emotion VLC: recreate the player when end reached.
+   * Emotion VLC: fix the volume/mute bug.
