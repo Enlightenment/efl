@@ -70,7 +70,7 @@ _ecore_evas_drm_init(Ecore_Evas_Engine_Drm_Data *edata, const char *device)
 
    if (!device) device = "seat0";
 
-   edata->dev = ecore_drm2_device_find(device, 0, EINA_TRUE);
+   edata->dev = ecore_drm2_device_find(device, 0);
    if (!edata->dev)
      {
         ERR("Failed to create device");

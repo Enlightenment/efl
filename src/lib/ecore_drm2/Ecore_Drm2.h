@@ -123,7 +123,7 @@ EAPI int ecore_drm2_shutdown(void);
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI Ecore_Drm2_Device *ecore_drm2_device_find(const char *seat, unsigned int tty, Eina_Bool sync);
+EAPI Ecore_Drm2_Device *ecore_drm2_device_find(const char *seat, unsigned int tty);
 
 /**
  * Try to open a given Ecore_Drm2_Device

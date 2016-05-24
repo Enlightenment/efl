@@ -97,7 +97,7 @@ out:
 }
 
 EAPI Ecore_Drm2_Device *
-ecore_drm2_device_find(const char *seat, unsigned int tty, Eina_Bool sync)
+ecore_drm2_device_find(const char *seat, unsigned int tty)
 {
    Ecore_Drm2_Device *dev;
 
@@ -111,7 +111,7 @@ ecore_drm2_device_find(const char *seat, unsigned int tty, Eina_Bool sync)
         goto path_err;
      }
 
-   dev->em = elput_manager_connect(seat, tty, sync);
+   dev->em = elput_manager_connect(seat, tty);
    if (!dev->em)
      {
         ERR("Could not connect to input manager");
@@ -135,7 +135,7 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    device->fd = elput_manager_open(device->em, device->path, -1);
    if (device->fd < 0) goto open_err;
 
-   if (!elput_input_init(device->em, NULL))
+   if (!elput_input_init(device->em))
      {
         ERR("Could not initialize Elput Input");
         goto input_err;
@@ -251,25 +251,9 @@ ecore_drm2_device_pointer_left_handed_set(Ecore_Drm2_Device *device, Eina_Bool l
 EAPI void
 ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int window)
 {
-   const Eina_List *seats, *l;
-   const Eina_List *devs, *ll;
-   Elput_Seat *seat;
-   Elput_Device *dev;
-
    EINA_SAFETY_ON_NULL_RETURN(device);
    EINA_SAFETY_ON_NULL_RETURN(device->em);
-
-   seats = elput_manager_seats_get(device->em);
-   if (!seats) return;
-
-   EINA_LIST_FOREACH(seats, l, seat)
-     {
-        devs = elput_input_devices_get(seat);
-        if (!devs) continue;
-
-        EINA_LIST_FOREACH(devs, ll, dev)
-          elput_device_window_set(dev, window);
-     }
+   elput_manager_window_set(device->em, window);
 }
 
 EAPI void
