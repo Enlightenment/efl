@@ -12,6 +12,9 @@
 #include "elm_priv.h"
 #include "elm_widget_hover.h"
 
+#include "elm_hover_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_HOVER_CLASS
 
 #define MY_CLASS_NAME "Elm_Hover"
@@ -396,8 +399,8 @@ _elm_hover_subs_del(Elm_Hover_Data *sd)
    sd->smt_sub = NULL;
 }
 
-EOLIAN static Eina_Bool
-_elm_hover_efl_container_content_set(Eo *obj, Elm_Hover_Data *sd, const char *swallow, Evas_Object *content)
+static Eina_Bool
+_elm_hover_content_set(Eo *obj, Elm_Hover_Data *sd, const char *swallow, Evas_Object *content)
 {
    Eina_Bool int_ret;
 
@@ -435,7 +438,7 @@ _elm_hover_efl_container_content_set(Eo *obj, Elm_Hover_Data *sd, const char *sw
           }
      }
 
-   int_ret = efl_content_set(eo_super(obj, MY_CLASS), swallow, content);
+   int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), swallow), content);
    if (!int_ret) return EINA_FALSE;
 
    if (strstr(swallow, "elm.swallow.slot."))
@@ -455,36 +458,26 @@ end:
    return EINA_TRUE;
 }
 
-EOLIAN static Evas_Object*
-_elm_hover_efl_container_content_get(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
+static Evas_Object*
+_elm_hover_content_get(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
 {
-   Evas_Object *ret;
-   ret = NULL;
-
-   if (!swallow) return ret;
-
-   if (!strcmp(swallow, "smart"))
-      ret = efl_content_get(eo_super(obj, MY_CLASS), sd->smt_sub->swallow);
-   else
-      ret = efl_content_get(eo_super(obj, MY_CLASS), swallow);
-
-   return ret;
-}
-
-EOLIAN static Evas_Object*
-_elm_hover_efl_container_content_unset(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
-{
-   Evas_Object *ret = NULL;
-
    if (!swallow) return NULL;
 
    if (!strcmp(swallow, "smart"))
-      ret = efl_content_unset
-            (eo_super(obj, MY_CLASS), sd->smt_sub->swallow);
+     return efl_content_get(efl_part(eo_super(obj, MY_CLASS), sd->smt_sub->swallow));
    else
-      ret = efl_content_unset
-            (eo_super(obj, MY_CLASS), swallow);
-   return ret;
+     return efl_content_get(efl_part(eo_super(obj, MY_CLASS), swallow));
+}
+
+static Evas_Object*
+_elm_hover_content_unset(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
+{
+   if (!swallow) return NULL;
+
+   if (!strcmp(swallow, "smart"))
+     return efl_content_unset(efl_part(eo_super(obj, MY_CLASS), sd->smt_sub->swallow));
+   else
+     return efl_content_unset(efl_part(eo_super(obj, MY_CLASS), swallow));
 }
 
 static void
@@ -849,5 +842,15 @@ _elm_hover_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
    };
    return &atspi_actions[0];
 }
+
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE(elm_hover, ELM_HOVER, ELM_LAYOUT, Elm_Hover_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_hover, ELM_HOVER, ELM_LAYOUT, Elm_Hover_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_hover, ELM_HOVER, ELM_LAYOUT, Elm_Hover_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_hover, ELM_HOVER, ELM_LAYOUT, Elm_Hover_Data, Elm_Part_Data)
+#include "elm_hover_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_hover.eo.c"

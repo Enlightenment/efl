@@ -28,5 +28,4 @@ class Elm.Inwin (Elm.Layout)
       Elm.Layout.content_aliases.get;
       Elm.Layout.sizing_eval;
    }
-
 }

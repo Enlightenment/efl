@@ -1,0 +1,9 @@
+class Elm.Hover.Internal.Part (Elm.Layout.Internal.Part)
+{
+   data: null;
+   implements {
+      Efl.Container.content.set;
+      Efl.Container.content.get;
+      Efl.Container.content_unset;
+   }
+}

@@ -214,14 +214,12 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Efl.Orientati
       Elm.Widget.translate;
       Elm.Widget.theme_apply;
       Elm.Widget.event;
-      Efl.Container.content.get;
-      Efl.Container.content.set;
-      Efl.Container.content_unset;
       Elm.Layout.sub_object_add_enable;
       Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
       Elm.Interface.Atspi_Accessible.state_set.get;
       Efl.Orientation.orientation;
+      Efl.Part.part;
    }
    events {
       dismissed;

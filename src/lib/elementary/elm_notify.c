@@ -11,6 +11,9 @@
 #include "elm_widget_notify.h"
 #include "elm_widget_container.h"
 
+#include "elm_notify_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_NOTIFY_CLASS
 
 #define MY_CLASS_NAME "Elm_Notify"
@@ -370,8 +373,8 @@ _elm_notify_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd,
    return elm_widget_focus_direction_get(cur, base, degree, direction, direction_item, weight);
 }
 
-EOLIAN static Eina_Bool
-_elm_notify_efl_container_content_set(Eo *obj, Elm_Notify_Data *sd, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_notify_content_set(Eo *obj, Elm_Notify_Data *sd, const char *part, Evas_Object *content)
 {
    if (part && strcmp(part, "default")) return EINA_FALSE;
    if (sd->content == content) return EINA_TRUE;
@@ -393,16 +396,16 @@ _elm_notify_efl_container_content_set(Eo *obj, Elm_Notify_Data *sd, const char *
    return EINA_TRUE;
 }
 
-EOLIAN static Evas_Object*
-_elm_notify_efl_container_content_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part)
+static Evas_Object*
+_elm_notify_content_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
 
    return sd->content;
 }
 
-EOLIAN static Evas_Object*
-_elm_notify_efl_container_content_unset(Eo *obj, Elm_Notify_Data *sd, const char *part)
+static Evas_Object*
+_elm_notify_content_unset(Eo *obj, Elm_Notify_Data *sd, const char *part)
 {
    Evas_Object *content;
 
@@ -414,6 +417,24 @@ _elm_notify_efl_container_content_unset(Eo *obj, Elm_Notify_Data *sd, const char
    edje_object_part_unswallow(sd->notify, content);
 
    return content;
+}
+
+EOLIAN static Eina_Bool
+_elm_notify_efl_container_content_set(Eo *obj, Elm_Notify_Data *sd, Evas_Object *content)
+{
+   return _elm_notify_content_set(obj, sd, NULL, content);
+}
+
+EOLIAN static Evas_Object*
+_elm_notify_efl_container_content_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
+{
+   return _elm_notify_content_get(obj, sd, NULL);
+}
+
+EOLIAN static Evas_Object*
+_elm_notify_efl_container_content_unset(Eo *obj, Elm_Notify_Data *sd)
+{
+   return _elm_notify_content_unset(obj, sd, NULL);
 }
 
 static void
@@ -692,5 +713,15 @@ _elm_notify_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+/* Efl.Part begin */
+
+ELM_PART_IMPLEMENT(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_SET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_GET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
+#include "elm_notify_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_notify.eo.c"

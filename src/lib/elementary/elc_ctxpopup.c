@@ -13,6 +13,9 @@
 #include "elm_priv.h"
 #include "elm_widget_ctxpopup.h"
 
+#include "elm_ctxpopup_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_CTXPOPUP_CLASS
 
 #define MY_CLASS_NAME "Elm_Ctxpopup"
@@ -772,15 +775,12 @@ _elm_ctxpopup_elm_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
 
 /* kind of a big and tricky override here: an internal box will hold
  * the actual content. content aliases won't be of much help here */
-EOLIAN static Eina_Bool
-_elm_ctxpopup_efl_container_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_ctxpopup_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part, Evas_Object *content)
 {
-   Eina_Bool int_ret = EINA_TRUE;
-
    if ((part) && (strcmp(part, "default")))
      {
-        int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
-        return int_ret;
+        return efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
      }
 
    if (!content) return EINA_FALSE;
@@ -806,30 +806,22 @@ _elm_ctxpopup_efl_container_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const ch
    return EINA_TRUE;
 }
 
-EOLIAN static Evas_Object*
-_elm_ctxpopup_efl_container_content_get(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
+static Evas_Object*
+_elm_ctxpopup_content_get(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
 {
-
    if ((part) && (strcmp(part, "default")))
-     {
-        Evas_Object *ret = NULL;
-        ret = efl_content_get(eo_super(obj, MY_CLASS), part);
-        return ret;
-     }
+     return efl_content_get(efl_part(eo_super(obj, MY_CLASS), part));
 
    return sd->content;
 }
 
-EOLIAN static Evas_Object*
-_elm_ctxpopup_efl_container_content_unset(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
+static Evas_Object*
+_elm_ctxpopup_content_unset(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
 {
    Evas_Object *content = NULL;
 
    if ((part) && (strcmp(part, "default")))
-     {
-        content = efl_content_unset(eo_super(obj, MY_CLASS), part);
-        return content;
-     }
+     return efl_content_unset(efl_part(eo_super(obj, MY_CLASS), part));
 
    content = sd->content;
    if (!content) return content;
@@ -1131,7 +1123,7 @@ _elm_ctxpopup_evas_object_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
      (priv->box, EVAS_CALLBACK_RESIZE, _on_content_resized, obj);
 
    /* box will be our content placeholder, thus the parent's version call */
-   efl_content_set(eo_super(obj, MY_CLASS), "elm.swallow.content", priv->box);
+   efl_content_set(efl_part(eo_super(obj, MY_CLASS), "elm.swallow.content"), priv->box);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _on_show, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _on_hide, NULL);
@@ -1481,6 +1473,16 @@ _elm_ctxpopup_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Ctxpopup
 
    return ret;
 }
+
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
+#include "elm_ctxpopup_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_ctxpopup_item.eo.c"
 #include "elm_ctxpopup.eo.c"

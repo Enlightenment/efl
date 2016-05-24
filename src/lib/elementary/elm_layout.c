@@ -10,6 +10,9 @@
 #include "elm_priv.h"
 #include "elm_widget_layout.h"
 
+#include "elm_layout_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_LAYOUT_CLASS
 
 #define MY_CLASS_NAME "Elm_Layout"
@@ -975,13 +978,12 @@ elm_layout_content_set(Evas_Object *obj,
                        Evas_Object *content)
 {
    ELM_LAYOUT_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   ret = efl_content_set(obj, swallow, content);
-   return ret;
+
+   return efl_content_set(efl_part(obj, swallow), content);
 }
 
-EOLIAN static Eina_Bool
-_elm_layout_efl_container_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_layout_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *content)
 {
    Elm_Layout_Sub_Object_Data *sub_d;
    const Eina_List *l;
@@ -1053,14 +1055,12 @@ elm_layout_content_get(const Evas_Object *obj,
                        const char *swallow)
 {
    ELM_LAYOUT_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
 
-   ret = efl_content_get((Eo *) obj, swallow);
-   return ret;
+   return efl_content_get(efl_part(obj, swallow));
 }
 
-EOLIAN static Evas_Object*
-_elm_layout_efl_container_content_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
+static Evas_Object*
+_elm_layout_content_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
 {
    const Eina_List *l;
    Elm_Layout_Sub_Object_Data *sub_d;
@@ -1074,6 +1074,7 @@ _elm_layout_efl_container_content_get(Eo *obj, Elm_Layout_Smart_Data *sd, const 
           {
              if (sub_d->type == SWALLOW)
                return sub_d->obj;
+             /* FIXME: Implement as efl_part */
              if ((sub_d->type == TABLE_PACK) || _sub_box_is(sub_d))
                return _elm_layout_pack_proxy_get(obj, sub_d->obj, sub_d->part);
           }
@@ -1084,7 +1085,7 @@ _elm_layout_efl_container_content_get(Eo *obj, Elm_Layout_Smart_Data *sd, const 
    if (!_elm_layout_part_aliasing_eval(obj, sd, &part, EINA_FALSE))
      return NULL;
 
-   return efl_content_get(wd->resize_obj, part);
+   return efl_content_get(efl_part(wd->resize_obj, part));
 }
 
 EAPI Evas_Object *
@@ -1093,12 +1094,12 @@ elm_layout_content_unset(Evas_Object *obj,
 {
    ELM_LAYOUT_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   ret = efl_content_unset(obj, swallow);
+   ret = efl_content_unset(efl_part(obj, swallow));
    return ret;
 }
 
-EOLIAN static Evas_Object*
-_elm_layout_efl_container_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
+static Evas_Object*
+_elm_layout_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
 {
    Elm_Layout_Sub_Object_Data *sub_d;
    const Eina_List *l;
@@ -1133,6 +1134,24 @@ _elm_layout_efl_container_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, cons
      }
 
    return NULL;
+}
+
+EOLIAN static Eina_Bool
+_elm_layout_efl_container_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, Evas_Object *content)
+{
+   return _elm_layout_content_set(obj, sd, NULL, content);
+}
+
+EOLIAN static Evas_Object*
+_elm_layout_efl_container_content_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
+{
+   return _elm_layout_content_get(obj, sd, NULL);
+}
+
+EOLIAN static Evas_Object*
+_elm_layout_efl_container_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd)
+{
+   return _elm_layout_content_unset(obj, sd, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -1899,6 +1918,8 @@ EOLIAN static void _elm_layout_class_constructor(Eo_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+
+
 /* Legacy APIs */
 
 EAPI Eina_Bool
@@ -1916,7 +1937,7 @@ elm_layout_file_get(Eo *obj, const char **file, const char **group)
 EAPI Eina_Bool
 elm_layout_box_append(Elm_Layout *obj, const char *part, Evas_Object *child)
 {
-   Eo *box = efl_content_get(obj, part);
+   Eo *box = efl_content_get(efl_part(obj, part));
    if (!box) return EINA_FALSE;
    efl_pack(box, child);
    return EINA_TRUE;
@@ -1925,7 +1946,7 @@ elm_layout_box_append(Elm_Layout *obj, const char *part, Evas_Object *child)
 EAPI Eina_Bool
 elm_layout_box_prepend(Elm_Layout *obj, const char *part, Evas_Object *child)
 {
-   Eo *box = efl_content_get(obj, part);
+   Eo *box = efl_content_get(efl_part(obj, part));
    if (!box) return EINA_FALSE;
    efl_pack_begin(box, child);
    return EINA_TRUE;
@@ -1934,13 +1955,13 @@ elm_layout_box_prepend(Elm_Layout *obj, const char *part, Evas_Object *child)
 EAPI Eina_Bool
 elm_layout_box_insert_before(Elm_Layout *obj, const char *part, Evas_Object *child, const Evas_Object *reference)
 {
-   return efl_pack_before(efl_content_get(obj, part), child, reference);
+   return efl_pack_before(efl_content_get(efl_part(obj, part)), child, reference);
 }
 
 EAPI Eina_Bool
 elm_layout_box_insert_at(Elm_Layout *obj, const char *part, Evas_Object *child, unsigned int pos)
 {
-   Eo *box = efl_content_get(obj, part);
+   Eo *box = efl_content_get(efl_part(obj, part));
    if (!box) return EINA_FALSE;
    efl_pack_at(box, child, pos);
    return EINA_TRUE;
@@ -1949,7 +1970,7 @@ elm_layout_box_insert_at(Elm_Layout *obj, const char *part, Evas_Object *child, 
 EAPI Evas_Object *
 elm_layout_box_remove(Elm_Layout *obj, const char *part, Evas_Object *child)
 {
-   Eo *box = efl_content_get(obj, part);
+   Eo *box = efl_content_get(efl_part(obj, part));
    if (!box) return NULL;
    if (!efl_pack_unpack(box, child))
      return NULL;
@@ -1959,7 +1980,7 @@ elm_layout_box_remove(Elm_Layout *obj, const char *part, Evas_Object *child)
 EAPI Eina_Bool
 elm_layout_box_remove_all(Elm_Layout *obj, const char *part, Eina_Bool clear)
 {
-   Eo *box = efl_content_get(obj, part);
+   Eo *box = efl_content_get(efl_part(obj, part));
    if (!box) return EINA_FALSE;
    if (clear)
      efl_pack_clear(box);
@@ -1971,7 +1992,7 @@ elm_layout_box_remove_all(Elm_Layout *obj, const char *part, Eina_Bool clear)
 EAPI Eina_Bool
 elm_layout_table_pack(Elm_Layout *obj, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
-   Eo *table = efl_content_get(obj, part);
+   Eo *table = efl_content_get(efl_part(obj, part));
    if (!table) return EINA_FALSE;
    efl_pack_grid(table, child, col, row, colspan, rowspan);
    return EINA_TRUE;
@@ -1980,7 +2001,7 @@ elm_layout_table_pack(Elm_Layout *obj, const char *part, Evas_Object *child, uns
 EAPI Evas_Object *
 elm_layout_table_unpack(Elm_Layout *obj, const char *part, Evas_Object *child)
 {
-   Eo *table = efl_content_get(obj, part);
+   Eo *table = efl_content_get(efl_part(obj, part));
    if (!table) return NULL;
    if (efl_pack_unpack(table, child))
      return child;
@@ -1990,7 +2011,7 @@ elm_layout_table_unpack(Elm_Layout *obj, const char *part, Evas_Object *child)
 EAPI Eina_Bool
 elm_layout_table_clear(Elm_Layout *obj, const char *part, Eina_Bool clear)
 {
-   Eo *table = efl_content_get(obj, part);
+   Eo *table = efl_content_get(efl_part(obj, part));
    if (!table) return EINA_FALSE;
    if (clear)
      efl_pack_clear(table);
@@ -1998,5 +2019,15 @@ elm_layout_table_clear(Elm_Layout *obj, const char *part, Eina_Bool clear)
      efl_pack_unpack_all(table);
    return EINA_TRUE;
 }
+
+/* Efl.Part implementation */
+
+ELM_PART_IMPLEMENT(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_SET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_GET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
+#include "elm_layout_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_layout.eo.c"

@@ -9,8 +9,10 @@ edje_eolian_type_files = \
     lib/edje/edje_types.eot
 
 edje_eolian_priv_files = \
+	lib/edje/efl_canvas_layout_internal.eo \
 	lib/edje/efl_canvas_layout_internal_box.eo \
-	lib/edje/efl_canvas_layout_internal_table.eo
+	lib/edje/efl_canvas_layout_internal_table.eo \
+	lib/edje/efl_canvas_layout_internal_swallow.eo
 
 edje_eolian_c = $(edje_eolian_files:%.eo=%.eo.c)
 edje_eolian_h = $(edje_eolian_files:%.eo=%.eo.h) \

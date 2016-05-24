@@ -1,4 +1,4 @@
-class Efl.Canvas.Layout_Internal.Table (Eo.Base, Efl.Pack.Grid)
+class Efl.Canvas.Layout_Internal.Table (Eo.Base, Efl.Canvas.Layout_Internal, Efl.Pack.Grid)
 {
    [[Represents a Table created as part of a layout.
 
@@ -6,18 +6,9 @@ class Efl.Canvas.Layout_Internal.Table (Eo.Base, Efl.Pack.Grid)
      of an EFL layout.
    ]]
    data: Edje_Table_Data;
-   methods {
-      @property real_part @protected {
-         set {}
-         values {
-            ed: void*;
-            rp: void*;
-            part: const(char)*;
-         }
-      }
-   }
    implements {
       Eo.Base.finalize;
+      Efl.Canvas.Layout_Internal.real_part.set;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;

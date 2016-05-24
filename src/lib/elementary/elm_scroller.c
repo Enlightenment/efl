@@ -12,6 +12,9 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_scroller.h"
 
+#include "elm_scroller_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_SCROLLER_CLASS
 
 #define MY_CLASS_NAME "Elm_Scroller"
@@ -757,14 +760,12 @@ _loop_content_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *content)
      }
 }
 
-EOLIAN static Eina_Bool
-_elm_scroller_efl_container_content_set(Eo *obj, Elm_Scroller_Data *sd, const char *part, Evas_Object *content)
+static Eina_Bool
+_elm_scroller_content_set(Eo *obj, Elm_Scroller_Data *sd, const char *part, Evas_Object *content)
 {
    if (part && strcmp(part, "default"))
      {
-        Eina_Bool int_ret = EINA_FALSE;
-        int_ret = efl_content_set(eo_super(obj, MY_CLASS), part, content);
-        return int_ret;
+        return efl_content_set(efl_part(eo_super(obj, MY_CLASS), part), content);
      }
 
    if (sd->content == content) return EINA_TRUE;
@@ -802,27 +803,24 @@ _elm_scroller_efl_container_content_set(Eo *obj, Elm_Scroller_Data *sd, const ch
    return EINA_TRUE;
 }
 
-EOLIAN static Evas_Object*
-_elm_scroller_efl_container_content_get(Eo *obj, Elm_Scroller_Data *sd, const char *part)
+static Evas_Object*
+_elm_scroller_content_get(Eo *obj, Elm_Scroller_Data *sd, const char *part)
 {
    if (part && strcmp(part, "default"))
      {
-        Evas_Object *ret = NULL;
-        ret = efl_content_get(eo_super(obj, MY_CLASS), part);
-        return ret;
+        return efl_content_get(efl_part(eo_super(obj, MY_CLASS), part));
      }
 
    return sd->content;
 }
 
-EOLIAN static Evas_Object*
-_elm_scroller_efl_container_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
+static Evas_Object*
+_elm_scroller_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
 {
    Evas_Object *ret = NULL;
    if (part && strcmp(part, "default"))
      {
-        ret = efl_content_unset(eo_super(obj, MY_CLASS), part);
-        return ret;
+        return efl_content_unset(efl_part(eo_super(obj, MY_CLASS), part));
      }
 
    if (!sd->content) return NULL;
@@ -1413,5 +1411,24 @@ _elm_scroller_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
    };
    return &atspi_actions[0];
 }
+
+/* Efl.Part begin */
+
+/* FIXME: Should be OVERRIDE, but... it doesn't work (buggy scrollers in
+ * elm_test). Why? No idea! */
+#if 0
+ELM_PART_OVERRIDE(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
+#else
+ELM_PART_IMPLEMENT(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_SET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_GET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data, Elm_Part_Data)
+#endif
+#include "elm_scroller_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_scroller.eo.c"

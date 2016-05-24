@@ -9,6 +9,9 @@
 #include "elm_widget_dayselector.h"
 #include "elm_widget_container.h"
 
+#include "elm_dayselector_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_DAYSELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Dayselector"
@@ -216,8 +219,8 @@ _item_find(const Evas_Object *obj,
    return NULL;
 }
 
-EOLIAN static Eina_Bool
-_elm_dayselector_efl_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item, Evas_Object *content)
+static Eina_Bool
+_elm_dayselector_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -239,7 +242,7 @@ _elm_dayselector_efl_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
      {
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
 
-        int_ret = efl_content_set(eo_super(obj, MY_CLASS), buf, content);
+        int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), buf), content);
         if (!int_ret) return EINA_FALSE;
 
         if (!content) return EINA_TRUE; /* item deletion already handled */
@@ -255,7 +258,7 @@ _elm_dayselector_efl_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
 
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
 
-        int_ret = efl_content_set(eo_super(obj, MY_CLASS), buf, content);
+        int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), buf), content);
         if (!int_ret)
           {
              eo_unref(eo_it);
@@ -298,8 +301,8 @@ _elm_dayselector_item_eo_base_constructor(Eo *eo_item, Elm_Dayselector_Item_Data
    return eo_item;
 }
 
-EOLIAN static Evas_Object*
-_elm_dayselector_efl_container_content_unset(Eo *obj, Elm_Dayselector_Data *sd, const char *item)
+static Evas_Object*
+_elm_dayselector_content_unset(Eo *obj, Elm_Dayselector_Data *sd, const char *item)
 {
    int day;
    char buf[1024];
@@ -314,7 +317,7 @@ _elm_dayselector_efl_container_content_unset(Eo *obj, Elm_Dayselector_Data *sd, 
 
    content = VIEW(it);
 
-   content = efl_content_unset(eo_super(obj, MY_CLASS), buf);
+   content = efl_content_unset(efl_part(eo_super(obj, MY_CLASS), buf));
    if (!content) return NULL;
 
    sd->items = eina_list_remove(sd->items, it);
@@ -611,6 +614,15 @@ _elm_dayselector_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE(elm_dayselector, ELM_DAYSELECTOR, ELM_LAYOUT, Elm_Dayselector_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_dayselector, ELM_DAYSELECTOR, ELM_LAYOUT, Elm_Dayselector_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_dayselector, ELM_DAYSELECTOR, ELM_LAYOUT, Elm_Dayselector_Data, Elm_Part_Data)
+#include "elm_dayselector_internal_part.eo.c"
+
+/* Efl.Part end */
 
 #include "elm_dayselector.eo.c"
 #include "elm_dayselector_item.eo.c"

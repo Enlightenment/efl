@@ -1,0 +1,7 @@
+class Elm.Button.Internal.Part (Elm.Layout.Internal.Part)
+{
+   data: null;
+   implements {
+      Efl.Container.content.set;
+   }
+}

@@ -4,19 +4,6 @@ interface Efl.Container (Efl.Gfx)
    eo_prefix: efl_content;
    event_prefix: efl_container;
    methods {
-      @property content {
-         [[Swallowed sub-object contained in this object.]]
-         set {
-            return: bool;
-         }
-         get {}
-         keys {
-            part: const(char)*; [[the part in which to swallow the object]]
-         }
-         values {
-            content: Efl.Gfx; [[the object to swallow.]]
-         }
-      }
       @property content_part_name {
          [[The name of the part under which an object is swallowed.]]
          get {}
@@ -27,11 +14,18 @@ interface Efl.Container (Efl.Gfx)
             name: const(char)*;
          }
       }
-      content_unset {
-         [[Unswallow the object in the given part of the container and return it.]]
-         params {
-            @in name: const(char)* @nullable;
+      @property content {
+         [[Swallowed sub-object contained in this object.]]
+         set {
+            return: bool;
          }
+         get {}
+         values {
+            content: Efl.Gfx; [[the object to swallow.]]
+         }
+      }
+      content_unset {
+         [[Unswallow the object in the current container and return it.]]
          return: Efl.Gfx;
       }
       content_remove {

@@ -17,7 +17,7 @@ struct Elm.Layout_Part_Alias_Description
    real_part: const(char)*; [[Target part name for the alias set on Elm.Layout_Part_Proxies_Description::real_part. An example of usage would be "default" on that field, with "elm.content.swallow" on this one]]
 }
 
-class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
+class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
 {
    legacy_prefix: elm_layout;
    eo_prefix: elm_obj_layout;
@@ -343,13 +343,14 @@ class Elm.Layout (Elm.Widget, Efl.Container, Efl.File)
       Elm.Widget.disable;
       Elm.Widget.sub_object_del;
       Elm.Widget.on_focus;
-      Efl.Container.content.get;
-      Efl.Container.content.set;
-      Efl.Container.content_unset;
       Efl.Container.content_part_name.get;
       Efl.Container.content_count;
       Efl.Container.content_remove;
       Efl.Container.content_iterate;
+      Efl.Container.content.set;
+      Efl.Container.content.get;
+      Efl.Container.content_unset;
+      Efl.Part.part;
    }
    events {
       theme,changed;

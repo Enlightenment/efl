@@ -1,0 +1,10 @@
+class Elm.Layout.Internal.Part (Eo.Base, Efl.Container)
+{
+   data: Elm_Part_Data;
+   implements {
+      Eo.Base.destructor;
+      Efl.Container.content.set;
+      Efl.Container.content.get;
+      Efl.Container.content_unset;
+   }
+}

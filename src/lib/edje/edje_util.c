@@ -3511,9 +3511,8 @@ _edje_object_text_markup_filter_callback_del_full(Eo *obj EINA_UNUSED, Edje *ed,
    return NULL;
 }
 
-EOLIAN Eina_Bool
-_edje_object_efl_container_content_set(Eo *obj EINA_UNUSED, Edje *ed,
-                                       const char *part, Efl_Gfx *obj_swallow)
+Eina_Bool
+_edje_efl_container_content_set(Edje *ed, const char *part, Efl_Gfx *obj_swallow)
 {
    Edje_Real_Part *rp, *rpcur;
    Edje_User_Defined *eud = NULL;
@@ -3872,8 +3871,8 @@ _edje_object_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Ob
    return EINA_TRUE;
 }
 
-EOLIAN Efl_Gfx *
-_edje_object_efl_container_content_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+Efl_Gfx *
+_edje_efl_container_content_get(Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
 
@@ -3894,21 +3893,6 @@ _edje_object_efl_container_content_get(Eo *obj EINA_UNUSED, Edje *ed, const char
 
    if (!rp->typedata.swallow) return NULL;
    return rp->typedata.swallow->swallowed_object;
-}
-
-/* new in eo */
-EOLIAN Efl_Gfx *
-_edje_object_efl_container_content_unset(Eo *obj, Edje *ed EINA_UNUSED, const char *part)
-{
-   Efl_Gfx *content;
-
-   content = efl_content_get(obj, part);
-   if (!content) return NULL;
-
-   if (efl_content_remove(obj, content))
-     return content;
-
-   return NULL;
 }
 
 /* new in eo */
@@ -3940,6 +3924,8 @@ _edje_object_efl_part_part(Eo *obj, Edje *ed, const char *part)
      return _edje_box_internal_proxy_get(obj, ed, rp);
    else if (rp->part->type == EDJE_PART_TYPE_TABLE)
      return _edje_table_internal_proxy_get(obj, ed, rp);
+   else if (rp->part->type == EDJE_PART_TYPE_SWALLOW)
+     return _edje_swallow_internal_proxy_get(obj, ed, rp);
    else return NULL; /* FIXME/TODO: text & others (color, ...) */
 }
 
@@ -6822,7 +6808,7 @@ _edje_part_mask_flags_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Evas_Event_F
 EAPI Eina_Bool
 edje_object_part_swallow(Edje_Object *obj, const char *part, Evas_Object *obj_swallow)
 {
-   return efl_content_set(obj, part, obj_swallow);
+   return efl_content_set(efl_part(obj, part), obj_swallow);
 }
 
 EAPI void
@@ -6834,7 +6820,7 @@ edje_object_part_unswallow(Edje_Object *obj, Evas_Object *obj_swallow)
 EAPI Evas_Object *
 edje_object_part_swallow_get(const Edje_Object *obj, const char *part)
 {
-   return efl_content_get(obj, part);
+   return efl_content_get(efl_part(obj, part));
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

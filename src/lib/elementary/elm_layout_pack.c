@@ -16,6 +16,8 @@
 #include "../evas/canvas/evas_box.eo.h"
 #include "../evas/canvas/evas_table.eo.h"
 
+#warning TODO: Implement proper lifecycle of proxy objects (single call)
+
 /* layout internals for box & table */
 Eina_Bool    _elm_layout_box_append(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child);
 Eina_Bool    _elm_layout_box_prepend(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child);
@@ -269,7 +271,7 @@ _efl_ui_layout_internal_box_efl_pack_linear_pack_direction_get(Eo *obj EINA_UNUS
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_ORIENT_NONE);
 
-   return efl_pack_direction_get(efl_content_get(wd->resize_obj, pd->part));
+   return efl_pack_direction_get(efl_content_get(efl_part(wd->resize_obj, pd->part)));
 }
 
 EOLIAN static void

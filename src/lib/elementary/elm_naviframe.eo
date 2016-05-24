@@ -153,14 +153,12 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.translate;
       Elm.Widget.theme_apply;
       Elm.Widget.event;
-      Efl.Container.content.get;
-      Efl.Container.content.set;
-      Efl.Container.content_unset;
       Elm.Layout.text.set;
       Elm.Layout.text.get;
       Elm.Layout.signal_emit;
       Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
+      Efl.Part.part;
    }
    events {
       transition,finished;

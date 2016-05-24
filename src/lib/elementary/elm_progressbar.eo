@@ -63,7 +63,6 @@ class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.sub_object_del;
-      Efl.Container.content.set;
       Elm.Layout.text_aliases.get;
       Elm.Layout.content_aliases.get;
       Elm.Layout.sizing_eval;
@@ -71,6 +70,7 @@ class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
       Efl.Ui.Progress.progress_value;
       Efl.Ui.Progress.unit_format;
       Efl.Orientation.orientation;
+      Efl.Part.part;
    }
    events {
       changed;
