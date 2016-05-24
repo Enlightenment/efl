@@ -3885,7 +3885,7 @@ _edje_object_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Ob
 }
 
 EOLIAN Efl_Gfx *
-_edje_object_efl_container_content_get(Eo *obj, Edje *ed, const char *part)
+_edje_object_efl_container_content_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
 

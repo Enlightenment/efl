@@ -513,14 +513,14 @@ START_TEST(edje_test_box_eoapi)
      }
 
    /* same test case as legacy api above */
-   efl_pack_end(efl_content_get(obj, "box"), sobjs[3]);
-   efl_pack_begin(efl_content_get(obj, "box"), sobjs[1]);
-   efl_pack_before(efl_content_get(obj, "box"), sobjs[0], sobjs[1]);
-   efl_pack_after(efl_content_get(obj, "box"), sobjs[4], sobjs[3]);
-   efl_pack_at(efl_content_get(obj, "box"), sobjs[2], 2);
-   fail_if(efl_content_count(efl_content_get(obj, "box")) != 5);
+   efl_pack_end(efl_part(obj, "box"), sobjs[3]);
+   efl_pack_begin(efl_part(obj, "box"), sobjs[1]);
+   efl_pack_before(efl_part(obj, "box"), sobjs[0], sobjs[1]);
+   efl_pack_after(efl_part(obj, "box"), sobjs[4], sobjs[3]);
+   efl_pack_at(efl_part(obj, "box"), sobjs[2], 2);
+   fail_if(efl_content_count(efl_part(obj, "box")) != 5);
 
-   it = efl_content_iterate(efl_content_get(obj, "box"));
+   it = efl_content_iterate(efl_part(obj, "box"));
    i = 0;
    EINA_ITERATOR_FOREACH(it, sobj)
      fail_if(sobj != sobjs[i++]);
@@ -528,27 +528,27 @@ START_TEST(edje_test_box_eoapi)
    eina_iterator_free(it);
 
    /* clear up and test a bit more */
-   efl_pack_unpack_all(efl_content_get(obj, "box"));
-   fail_if(efl_content_count(efl_content_get(obj, "box")) != 0);
+   efl_pack_unpack_all(efl_part(obj, "box"));
+   fail_if(efl_content_count(efl_part(obj, "box")) != 0);
 
-   efl_pack(efl_content_get(obj, "box"), sobjs[1]);
-   efl_pack_at(efl_content_get(obj, "box"), sobjs[0], 0);
-   efl_pack_at(efl_content_get(obj, "box"), sobjs[2], -1);
-   it = efl_content_iterate(efl_content_get(obj, "box"));
+   efl_pack(efl_part(obj, "box"), sobjs[1]);
+   efl_pack_at(efl_part(obj, "box"), sobjs[0], 0);
+   efl_pack_at(efl_part(obj, "box"), sobjs[2], -1);
+   it = efl_content_iterate(efl_part(obj, "box"));
    i = 0;
    EINA_ITERATOR_FOREACH(it, sobj)
      fail_if(sobj != sobjs[i++]);
    fail_if(i != 3);
    eina_iterator_free(it);
 
-   fail_if(!efl_content_remove(efl_content_get(obj, "box"), sobjs[0]));
-   fail_if(efl_content_count(efl_content_get(obj, "box")) != 2);
-   fail_if(!efl_pack_unpack_at(efl_content_get(obj, "box"), 1));
-   fail_if(efl_content_count(efl_content_get(obj, "box")) != 1);
-   fail_if(efl_pack_index_get(efl_content_get(obj, "box"), sobjs[1]) != 0);
+   fail_if(!efl_content_remove(efl_part(obj, "box"), sobjs[0]));
+   fail_if(efl_content_count(efl_part(obj, "box")) != 2);
+   fail_if(!efl_pack_unpack_at(efl_part(obj, "box"), 1));
+   fail_if(efl_content_count(efl_part(obj, "box")) != 1);
+   fail_if(efl_pack_index_get(efl_part(obj, "box"), sobjs[1]) != 0);
 
-   efl_pack_clear(efl_content_get(obj, "box"));
-   fail_if(efl_content_count(efl_content_get(obj, "box")) != 0);
+   efl_pack_clear(efl_part(obj, "box"));
+   fail_if(efl_content_count(efl_part(obj, "box")) != 0);
 
    EDJE_TEST_FREE_EVAS();
 }
@@ -632,7 +632,7 @@ END_TEST
 START_TEST(edje_test_table_eoapi)
 {
    Evas *evas;
-   Evas_Object *obj, *sobj, *sobjs[4];
+   Evas_Object *obj, *sobj, *sobjs[4], *proxy;
    Eina_Iterator *it;
    int i, k, l, cs, rs, cols, rows;
 
@@ -642,7 +642,7 @@ START_TEST(edje_test_table_eoapi)
    fail_unless(edje_object_file_set(obj, test_layout_get("test_table.edj"), "test_group"));
 
    /* check items from EDC */
-   fail_if(efl_content_count(efl_content_get(obj, "table")) != 4);
+   fail_if(efl_content_count(efl_part(obj, "table")) != 4);
    for (l = 0; l < 2; l++)
      for (k = 0; k < 2; k++)
        {
@@ -651,7 +651,7 @@ START_TEST(edje_test_table_eoapi)
 
           /* items have a text part "text" containing their position */
           sprintf(buf, "%d,%d", k, l);
-          sobj = efl_pack_grid_content_get(efl_content_get(obj, "table"), k, l);
+          sobj = efl_pack_grid_content_get(efl_part(obj, "table"), k, l);
           fail_if(!sobj);
           //txt = efl_part_text_get(sobj, "text");
           txt = edje_object_part_text_get(sobj, "text");
@@ -666,16 +666,16 @@ START_TEST(edje_test_table_eoapi)
           i = l*2 + k;
           sobjs[i] = eo_add(EVAS_RECTANGLE_CLASS, evas);
           fail_if(!sobjs[i]);
-          efl_pack_grid(efl_content_get(obj, "table"), sobjs[i], k, l + 2, 1, 1);
+          efl_pack_grid(efl_part(obj, "table"), sobjs[i], k, l + 2, 1, 1);
        }
 
-   fail_if(efl_content_count(efl_content_get(obj, "table")) != 8);
+   fail_if(efl_content_count(efl_part(obj, "table")) != 8);
 
    i = 0;
-   it = efl_content_iterate(efl_content_get(obj, "table"));
+   it = efl_content_iterate(efl_part(obj, "table"));
    EINA_ITERATOR_FOREACH(it, sobj)
      {
-        efl_pack_grid_position_get(efl_content_get(obj, "table"), sobj, &k, &l, &cs, &rs);
+        efl_pack_grid_position_get(efl_part(obj, "table"), sobj, &k, &l, &cs, &rs);
         fail_if(cs != 1);
         fail_if(rs != 1);
         if (l >= 2)
@@ -686,83 +686,24 @@ START_TEST(edje_test_table_eoapi)
    fail_if(i != 8);
 
    /* table size and clear */
-   efl_pack_grid_size_get(efl_content_get(obj, "table"), &cols, &rows);
+   efl_pack_grid_size_get(efl_part(obj, "table"), &cols, &rows);
    fail_if(cols != 2);
    fail_if(rows != 4);
 
-   efl_pack_clear(efl_content_get(obj, "table"));
-   fail_if(efl_content_count(efl_content_get(obj, "table")) != 4);
+   efl_pack_clear(efl_part(obj, "table"));
+   fail_if(efl_content_count(efl_part(obj, "table")) != 4);
 
-   efl_pack_grid_size_get(efl_content_get(obj, "table"), &cols, &rows);
+   efl_pack_grid_size_get(efl_part(obj, "table"), &cols, &rows);
    fail_if(cols != 2);
    fail_if(rows != 2);
 
-
-   /* Test proxy object lifecycle.
-    *
-    * Note: Some things below this point may break if the implementation
-    * changes, that's OK. We only want to provide a certain level of safety
-    * against misuse. Only the above use case is correct.
-    *
-    * Pretty much everything below this point is a misuse of the API.
-    */
-
-   Eo *table, *other;
-
-   table = efl_content_get(obj, "table");
-   fail_if(!table);
-
-   i = eo_ref_get(table);
-   fail_if(i != 1);
-   eo_unref(table);
-
-   /* this will generate eo errors */
-   k = eo_ref_get(table);
-   fail_if(k > 0);
-
-   cols = -1; rows = -1;
-   /* this will generate eo errors */
-   efl_pack_grid_size_get(table, &cols, &rows);
-   fail_if(cols != -1);
-   fail_if(rows != -1);
-
-   table = efl_content_get(obj, "table");
-   fail_if(!table);
-   other = efl_content_get(obj, "table");
-   fail_if(other != table);
-   fail_if(eo_ref_get(other) != 1);
-
-   /* delete edje and verify proxy died */
-   eo_unref(obj);
-
-   /* this will generate eo errors */
-   fail_if(eo_ref_get(table) > 0);
-
-   cols = -1; rows = -1;
-   /* this will generate eo errors */
-   efl_pack_grid_size_get(table, &cols, &rows);
-   fail_if(cols != -1);
-   fail_if(rows != -1);
-
-   /* try again but keep a ref on proxy */
-   obj = edje_object_add(evas);
-   fail_unless(edje_object_file_set(obj, test_layout_get("test_table.edj"), "test_group"));
-
-   table = efl_content_get(obj, "table");
-   fail_if(!table);
-   eo_ref(table);
-   fflush(stderr);
-   eo_unref(obj);
-   /* note: obj has > 0 refs because evas likes to keep objects around a bit */
-   fail_if(eo_ref_get(table) > 1);
-
-   cols = -1; rows = -1;
-   /* this will NOT generate eo errors (table is alive) */
-   efl_pack_grid_size_get(table, &cols, &rows);
-   fail_if(cols > 0);
-   fail_if(rows > 0);
-
-   eo_unref(table);
+   /* test multiple ops on a proxy object */
+   proxy = eo_ref(efl_part(obj, "table"));
+   fail_if(!proxy);
+   fail_if(!efl_pack_clear(proxy));
+   fail_if(!efl_pack_clear(proxy));
+   fail_if(!efl_pack_clear(proxy));
+   eo_unref(proxy);
 
    EDJE_TEST_FREE_EVAS();
 }
