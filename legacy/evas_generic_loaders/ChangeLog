@@ -1,0 +1,44 @@
+2011-12-02 Carsten Haitzler (The Rasterman)
+
+        1.1.0 release
+
+2011-12-02 Carsten Haitzler (The Rasterman)
+
+        * Add symlinks for *.dv, *.qt and *.rv video file formats
+
+2012-03-18 Carsten Haitzler (The Rasterman)
+
+        * Fix distcheck with highly parallel builds
+
+2012-04-26 Carsten Haitzler (The Rasterman)
+
+        1.2.0 release
+
+2012-05-18  Cedric Bail
+
+	* Make rsvg backend use the generic backend as it is our main
+	source of crash in e17.
+
+2012-05-06  Fanina Cristian
+
+	* Add support for Poppler 0.20.
+
+2012-06-30 Carsten Haitzler (The Rasterman)
+
+        * Add timeout (default 5 seconds) for gstreamer loader in case
+        gst hangs.
+
+2012-08-30  Carsten Haitzler (The Rasterman)
+
+        1.7.0 release
+
+2012-09-26  Carsten Haitzler (The Rasterman)
+
+        * Add various alarm/signal based timeouts for all generic
+        loaders in case they get stuck
+
+OUT OF DATE NOTICE:
+-------------------
+With the start of the 1.9.x release cycle we now longer update the ChangeLog and rely on git log for
+this functionality. We keep however a NEWS files for a high level overview of changes in a new
+release which will be filled at the end of the release cycle.

@@ -1,0 +1,85 @@
+Evas generic loaders 1.11.0
+===========================
+
+******************************************************************************
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+******************************************************************************
+
+These are additional "generic" loaders for Evas that are stand-alone
+executables that evas may run from its generic loader module. This
+means that if they crash, the application loading the image does not
+crash also. In addition the licensing of these binaries will not
+affect the license of any application that uses Evas as this uses a
+completely generic execution system that allows anything to be plugged
+in as a loader.
+
+
+REQUIREMENTS
+------------
+
+Required by default:
+
+  * libc
+  * libm
+  * zlib
+
+Highly recommended:
+
+  * gstreamer (1.x or 0.10) (ensure you have all the gstreamer codecs you need/want)
+  * poppler
+  * libraw
+  * libspectre
+  * librsvg
+
+Suggested:
+
+  * libreoffice
+
+
+COMPONENTS
+----------
+
+Generic loaders currently provided:
+
+  * **XCF** (.xcf .xcf.gz)
+
+  * **PDF** (using poppler)
+   * use -key option to specific what page to get and load options for size
+     Should we add mupdf ?
+
+  * **PS** (using libspectre)
+   * use -key option to specific what page to get and load options for size
+     Should we use directly libgs ?
+
+  * **RAW** (using libraw)
+  
+  * **SVG** (using librsvg)
+
+  * **MPG/AVI/OGV/MOV/MKV/WMV** etc. (using gstreamer)
+   * Should we add libxine and vlc ?
+  
+  * **PPT/PPTX/DOC/DOCX/XLS** etc.
+   * Required PDF loader, and uses libreoffice binaries as slaves to
+     export PDFs to load
+
+
+COMPILING AND INSTALLING
+------------------------
+
+    ./configure
+    make
+    sudo make install
+
+
+COMPILER FLAGS
+--------------
+
+You may want to change the install prefix for EFL with:
+
+    --prefix=/path/to/prefix
+
+**NOTE:**
+
+You should put generic loaders in the same prefix as EFL or they will
+not be found by EFL at runtime.

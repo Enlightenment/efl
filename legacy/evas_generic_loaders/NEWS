@@ -1,0 +1,107 @@
+===========================
+Evas Generic Loaders 1.17.0
+===========================
+
+Changes since 1.16.0:
+---------------------
+
+No significant changes in this release.
+
+Changes since 1.15.0:
+---------------------
+
+Fixes:
+
+   * generic loaders - fix load if process esits before stdout produced
+
+Changes since 1.14.0:
+---------------------
+
+No significant changes in this release.
+
+Changes since 1.13.0:
+---------------------
+
+Fixes:
+
+   * pdf: Add support for changes with poppler >= 0.31 (T2184)
+
+Changes since 1.12.0:
+---------------------
+
+   * No relevant changes.
+
+Changes since 1.11.0:
+---------------------
+
+Fixes:
+
+   * Improve LO binary detection
+   * xcf: Make sure complete calculation is unsigned (CID63748, CID63749)
+   * raw: Make sure to keep the correct sign (CID63746, CID63747)
+
+Changes since Evas Generic Loaders 1.10.0:
+------------------------------------------
+
+Features:
+
+   * Trying to port evas_generic_loaders to gstreamer1.0
+   * Add in older gst 0.10 support in evas_generic_loaders
+
+Fixes:
+
+   * gst1 support fixed now to do argb properly
+   * Remove autogen.sh from the dist tarball.
+   * fix gst video loader in generic to have key actually work
+
+Changes since Evas Generic Loaders 1.9.0:
+-----------------------------------------
+
+Fixes:
+
+   * license: update FSF address. (T1042)
+
+Changes since Evas Generic Loaders 1.8.0:
+-----------------------------------------
+
+Improvements:
+
+   * gst loader - support key as stream position in 1/1000th of a second
+
+Fixes:
+
+   * bugfix: add a typefind to gstreamer plugin pipeline
+     previously, we would load any file and try to force it into video/x-raw-rgb, which was
+     (obviously) problematic for audio-only files. with a typefind added to the pipeline, only
+     files which can output to video/x-raw-rgb will be processed
+   * bugfix: unbreak gstreamer plugin by not using the n-video property which is only available in 1.0+
+
+Changes since Evas Generic Loaders 1.7.0:
+-----------------------------------------
+
+Improvements:
+
+   * All generic loader binaries have built-in timeouts in case they
+   get stuck.
+   * Libreoffice support for thumbnailing office documents
+
+Changes since Evas Generic Loaders 1.2.0:
+-----------------------------------------
+
+Additions:
+
+   * Add a librsvg generic loader.
+   * Add support for poppler 0.20
+
+Evas Generic Loaders 1.2.0
+
+Changes since Evas Generic Loaders 1.1.0:
+-----------------------------------------
+
+Additions:
+
+   * symlinks for *.dv, *.qt and *.rv video file formats
+
+Fixes:
+
+   * distcheck for parallel builds
