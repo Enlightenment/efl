@@ -68,7 +68,7 @@ typedef enum _Elput_Device_Capability
 
 typedef struct _Elput_Interface
 {
-   Eina_Bool (*connect)(Elput_Manager **manager, const char *seat, unsigned int tty, Eina_Bool sync);
+   Eina_Bool (*connect)(Elput_Manager **manager, const char *seat, unsigned int tty);
    void (*disconnect)(Elput_Manager *manager);
    int (*open)(Elput_Manager *manager, const char *path, int flags);
    void (*close)(Elput_Manager *manager, int fd);
@@ -234,8 +234,6 @@ struct _Elput_Manager
      } dbus;
 
    Elput_Input input;
-
-   Eina_Bool sync : 1;
 };
 
 int _evdev_event_process(struct libinput_event *event);

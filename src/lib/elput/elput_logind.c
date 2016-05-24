@@ -103,7 +103,7 @@ _cb_device_paused(void *data, const Eldbus_Message *msg)
         if (!strcmp(type, "pause"))
           _logind_device_pause_complete(em, maj, min);
 
-        if ((em->sync) && (maj == 226)) // DRM_MAJOR
+        if (maj == 226) // DRM_MAJOR
           _logind_session_active_send(em, EINA_FALSE);
      }
 }
@@ -125,26 +125,8 @@ _cb_device_resumed(void *data, const Eldbus_Message *msg)
 
    if (eldbus_message_arguments_get(msg, "u", &maj))
      {
-        if ((em->sync) && (maj == 226)) // DRM_MAJOR
+        if (maj == 226) // DRM_MAJOR
           _logind_session_active_send(em, EINA_TRUE);
-     }
-}
-
-static void
-_cb_property_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
-{
-   Elput_Manager *em;
-   Eldbus_Proxy_Event_Property_Changed *ev;
-   Eina_Bool active = EINA_FALSE;
-
-   em = data;
-   ev = event;
-
-   if (!strcmp(ev->name, "Active"))
-     {
-        eina_value_get(ev->value, &active);
-        if ((!em->sync) || (!active))
-          _logind_session_active_send(em, active);
      }
 }
 
@@ -239,9 +221,6 @@ _logind_dbus_setup(Elput_Manager *em)
         goto proxy_err;
      }
 
-   eldbus_proxy_properties_monitor(proxy, EINA_TRUE);
-   eldbus_proxy_event_callback_add(proxy, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
-                                   _cb_property_changed, em);
    eldbus_proxy_unref(proxy);
 
    return EINA_TRUE;
@@ -426,7 +405,7 @@ msg_err:
 }
 
 static Eina_Bool
-_logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty, Eina_Bool sync)
+_logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty)
 {
    Elput_Manager *em;
    int ret = 0;
@@ -436,7 +415,6 @@ _logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty, Ein
    if (!em) return EINA_FALSE;
 
    em->interface = &_logind_interface;
-   em->sync = sync;
    em->seat = eina_stringshare_add(seat);
 
    ret = sd_pid_get_session(getpid(), &em->sid);

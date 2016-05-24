@@ -168,7 +168,7 @@ EAPI int elput_shutdown(void);
  * @ingroup Elput_Manager_Group
  * @since 1.18
  */
-EAPI Elput_Manager *elput_manager_connect(const char *seat, unsigned int tty, Eina_Bool sync);
+EAPI Elput_Manager *elput_manager_connect(const char *seat, unsigned int tty);
 
 /**
  * Disconnect an input manager

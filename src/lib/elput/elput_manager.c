@@ -35,7 +35,7 @@ _cb_key_down(void *data, int type EINA_UNUSED, void *event)
 }
 
 EAPI Elput_Manager *
-elput_manager_connect(const char *seat, unsigned int tty, Eina_Bool sync)
+elput_manager_connect(const char *seat, unsigned int tty)
 {
    Elput_Interface **it;
 
@@ -45,7 +45,7 @@ elput_manager_connect(const char *seat, unsigned int tty, Eina_Bool sync)
         Elput_Manager *em;
 
         iface = *it;
-        if (iface->connect(&em, seat, tty, sync))
+        if (iface->connect(&em, seat, tty))
           return em;
      }
 
