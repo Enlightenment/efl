@@ -491,7 +491,7 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
         /* Only unref if we don't have a new parent instead. */
         if (!parent_id)
           {
-             eo_unref(obj);
+             _eo_unref(eo_obj);
           }
      }
 
