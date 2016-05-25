@@ -1242,7 +1242,6 @@ _elm_slider_range_enabled_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool enable)
    elm_obj_widget_theme_apply(obj);
    if (sd->range_enable)
      {
-        _popup_add(sd, obj, &sd->popup2, &sd->track2, sd->range_enable);
         elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
         if (sd->indicator_show)
           edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
