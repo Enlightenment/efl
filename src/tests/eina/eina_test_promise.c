@@ -32,7 +32,7 @@
 #include "eina_suite.h"
 
 static void
-_eina_test_promise_cb(void* data, void* value EINA_UNUSED)
+_eina_test_promise_cb(void* data, void* value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 {
    *(Eina_Bool*)data = EINA_TRUE;
 }
@@ -122,7 +122,7 @@ START_TEST(eina_test_promise_immediate_set_lifetime_all)
 }
 END_TEST
 
-static void _eina_test_promise_value_all_cb(void* data, void* value)
+static void _eina_test_promise_value_all_cb(void* data, void* value, Eina_Promise* promise EINA_UNUSED)
 {
   Eina_Iterator** iterator = value;
   int *i, *j;
@@ -178,9 +178,8 @@ static void cancel_callback(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
    *(Eina_Bool*)data = EINA_TRUE;
 }
 
-static void _cancel_promise_callback(void* data EINA_UNUSED, Eina_Error const* value)
+static void _cancel_promise_callback(void* data EINA_UNUSED, Eina_Error error, Eina_Promise* promise EINA_UNUSED)
 {
-   ck_assert(!!value);
    *(Eina_Bool*)data = EINA_TRUE;
 }
 
@@ -207,7 +206,7 @@ START_TEST(eina_test_promise_cancel_promise)
 }
 END_TEST
 
-void progress_callback(void* data, void* value)
+void progress_callback(void* data, void* value, Eina_Promise* promise EINA_UNUSED)
 {
    int* i = value;
    ck_assert(*i == 1);
@@ -285,13 +284,13 @@ START_TEST(eina_test_promise_progress_notify2)
 END_TEST
 
 static void
-_eina_promise_progress_notify_fulfilled(void* data, void* value EINA_UNUSED)
+_eina_promise_progress_notify_fulfilled(void* data, void* value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 {
   *(Eina_Bool*)data = EINA_TRUE;
 }
 
 static void
-_eina_promise_progress_notify_error(void* data EINA_UNUSED, Eina_Error const* error EINA_UNUSED)
+_eina_promise_progress_notify_error(void* data EINA_UNUSED, Eina_Error error EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 {
   ck_assert(EINA_FALSE);
 }

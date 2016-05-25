@@ -169,11 +169,11 @@ _eina_promise_then_calls(_Eina_Promise_Default_Owner* promise)
        if (error)
 	 {
 	   if (callback->error_cb)
-	     (*callback->error_cb)(callback->data, &promise->promise.error);
+	     (*callback->error_cb)(callback->data, promise->promise.error, &promise->promise.vtable);
 	 }
        else if (callback->callback)
 	 {
-	   (*callback->callback)(callback->data, &promise->value[0]);
+	   (*callback->callback)(callback->data, &promise->value[0], &promise->promise.vtable);
 	 }
        free(callback);
        _eina_promise_unref(&promise->promise);
@@ -240,8 +240,23 @@ _eina_promise_value_get(_Eina_Promise_Default const* p)
      }
 }
 
+static void *
+_eina_promise_release_value_ownership(_Eina_Promise_Default* p)
+{
+   _Eina_Promise_Default_Owner* promise = EINA_PROMISE_GET_OWNER(p);
+   if (promise->promise.has_finished && !promise->promise.has_errored)
+     {
+       promise->promise.value_free_cb = NULL;
+       return (void*)&promise->value[0];
+     }
+   else
+     {
+        return NULL;
+     }
+}
+
 static void
-_eina_promise_owner_value_set(_Eina_Promise_Default_Owner* promise, void* data, Eina_Promise_Free_Cb free)
+_eina_promise_owner_value_set(_Eina_Promise_Default_Owner* promise, const void* data, Eina_Promise_Free_Cb free)
 {
    if (data && promise->promise.value_size)
      {
@@ -481,6 +496,7 @@ eina_promise_default_add(int value_size)
    p->promise.vtable.ref = EINA_FUNC_PROMISE_REF(_eina_promise_ref);
    p->promise.vtable.unref = EINA_FUNC_PROMISE_UNREF(_eina_promise_unref);
    p->promise.vtable.value_size_get = EINA_FUNC_PROMISE_VALUE_SIZE_GET(_eina_promise_value_size_get);
+   p->promise.vtable.release_value_ownership = EINA_FUNC_PROMISE_RELEASE_VALUE_OWNERSHIP(_eina_promise_release_value_ownership);
    p->promise.has_finished = p->promise.has_errored =
      p->promise.is_cancelled = p->promise.is_manual_then = EINA_FALSE;
    p->promise.is_first_then = EINA_TRUE;
@@ -781,7 +797,7 @@ eina_promise_then(Eina_Promise* promise, Eina_Promise_Cb callback,
 }
 
 EAPI void
-eina_promise_owner_value_set(Eina_Promise_Owner* promise, void* value, Eina_Promise_Free_Cb free)
+eina_promise_owner_value_set(Eina_Promise_Owner* promise, const void* value, Eina_Promise_Free_Cb free)
 {
    promise->value_set(promise, value, free);
 }
@@ -845,6 +861,12 @@ EAPI void *
 eina_promise_buffer_get(Eina_Promise* promise)
 {
    return promise->buffer_get(promise);
+}
+
+EAPI void *
+eina_promise_release_value_ownership(Eina_Promise* promise)
+{
+   return promise->release_value_ownership(promise);
 }
 
 EAPI size_t

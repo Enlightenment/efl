@@ -29,12 +29,12 @@ typedef void(*Eina_Promise_Progress_Notify_Cb)(void* data, Eina_Promise_Owner* p
 /*
  * @brief Function callback type for when using eina_promise_then
  */
-typedef void(*Eina_Promise_Cb)(void* data, void* value);
+typedef void(*Eina_Promise_Cb)(void* data, void* value, Eina_Promise* promise);
 
 /*
  * @brief Function callback type for when using eina_promise_then
  */
-typedef void(*Eina_Promise_Error_Cb)(void* data, Eina_Error const* error);
+typedef void(*Eina_Promise_Error_Cb)(void* data, Eina_Error error, Eina_Promise* promise);
 
 /*
  * @brief Function callback type for progress information
@@ -107,6 +107,13 @@ typedef void*(*Eina_Promise_Buffer_Get_Cb)(Eina_Promise* promise);
 #define EINA_FUNC_PROMISE_BUFFER_GET(Function) ((Eina_Promise_Buffer_Get_Cb)Function)
 
 /*
+ * @brief Function callback type for promise's release_value_ownership function override
+ */
+typedef void*(*Eina_Promise_Release_Value_Ownership_Cb)(Eina_Promise* promise);
+
+#define EINA_FUNC_PROMISE_RELEASE_VALUE_OWNERSHIP(Function) ((Eina_Promise_Release_Value_Ownership_Cb)Function)
+
+/*
  * @brief Function callback type for promise's value_size_get function override
  */
 typedef size_t(*Eina_Promise_Value_Size_Get_Cb)(Eina_Promise const* promise);
@@ -138,7 +145,7 @@ typedef void*(*Eina_Promise_Owner_Promise_Get_Cb)(Eina_Promise_Owner const* prom
 /*
  * @brief Function callback type for promise owner's value_set function override
  */
-typedef void(*Eina_Promise_Owner_Value_Set_Cb)(Eina_Promise_Owner* promise, void* data, Eina_Promise_Free_Cb free_fun);
+typedef void(*Eina_Promise_Owner_Value_Set_Cb)(Eina_Promise_Owner* promise, const void* data, Eina_Promise_Free_Cb free_fun);
 
 #define EINA_FUNC_PROMISE_OWNER_VALUE_SET(Function) ((Eina_Promise_Owner_Value_Set_Cb)Function)
 
@@ -194,6 +201,7 @@ struct _Eina_Promise
   Eina_Promise_Unref_Cb unref;
   Eina_Promise_Value_Size_Get_Cb value_size_get;
   Eina_Promise_Buffer_Get_Cb buffer_get;
+  Eina_Promise_Release_Value_Ownership_Cb release_value_ownership;
 #define EINA_MAGIC_PROMISE 0x07932A5B
   EINA_MAGIC;
 };
@@ -269,7 +277,7 @@ EAPI Eina_Promise* eina_promise_progress_notification(Eina_Promise_Owner* promis
  * @param value The pointer to the value that is going to be copied, or NULL.
  * @param free_cb Callback function to be used to free the value copied
  */
-EAPI void eina_promise_owner_value_set(Eina_Promise_Owner* promise, void* value, Eina_Promise_Free_Cb free_cb);
+EAPI void eina_promise_owner_value_set(Eina_Promise_Owner* promise, const void* value, Eina_Promise_Free_Cb free_cb);
 
 /*
  * @brief Returns the pointer to the value
@@ -294,6 +302,15 @@ EAPI void* eina_promise_value_get(Eina_Promise const* promise);
  * @return Buffer pointer
  */
 EAPI void* eina_promise_buffer_get(Eina_Promise* promise);
+
+/*
+ * @brief Returns the pointer to the value and releases ownership of
+ * the value by the promise.
+ * 
+ * @param promise The promise for which to release value ownership
+ * @return Pointer to value
+ */
+EAPI void* eina_promise_release_value_ownership(Eina_Promise* promise);
 
 /*
  * @brief Returns the pointer to the buffer that holds the value.
