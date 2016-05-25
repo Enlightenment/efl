@@ -350,6 +350,12 @@ group { name: "elm/slider/horizontal/default";
             rel1.offset: -3 2;
             rel2.offset: -3 -3;
          }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: -3 2;
+            rel2.offset: -3 -3;
+            color: 255 255 255 64;
+         }
       }
       part { name: "elm.units"; type: TEXT; mouse_events: 0;
          effect: SHADOW BOTTOM;
@@ -621,6 +627,9 @@ group { name: "elm/slider/horizontal/indicator/default";
          description { state: "default" 0.0;
             fixed: 1 1;
             min: 16 16;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
          }
       }
       part { name: "clip"; type: RECT;
@@ -1328,6 +1337,9 @@ group { name: "elm/slider/vertical/indicator/default";
          description { state: "default" 0.0;
             fixed: 1 1;
             min: 16 16;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
          }
       }
       part { name: "clip"; type: RECT;
@@ -2605,6 +2617,12 @@ group { name: "elm/slider/range/vertical/default";
             min: SOURCE;
             rel1.offset: 2 -3;
             rel2.offset: -3 -3;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: -3 2;
+            rel2.offset: -3 -3;
+            color: 255 255 255 64;
          }
       }
       part { name: "elm.units"; type: TEXT; mouse_events: 0;
