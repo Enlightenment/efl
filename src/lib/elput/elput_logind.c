@@ -343,11 +343,15 @@ _logind_device_take_async(Elput_Manager *em, int flags, uint32_t major, uint32_t
 
    eldbus_message_arguments_append(msg, "uu", major, minor);
 
-   em->input.current_pending = eldbus_proxy_send(em->dbus.session, msg, _logind_device_take_cb, em, -1);
+   em->input.current_pending =
+     eldbus_proxy_send(em->dbus.session, msg, _logind_device_take_cb, em, -1);
    if (!em->input.current_pending) CRIT("FAIL!");
-   eldbus_pending_data_set(em->input.current_pending, "major", (uintptr_t*)(uintptr_t)major);
-   eldbus_pending_data_set(em->input.current_pending, "minor", (uintptr_t*)(uintptr_t)minor);
-   eldbus_pending_data_set(em->input.current_pending, "flags", (intptr_t*)(intptr_t)flags);
+   eldbus_pending_data_set(em->input.current_pending, "major",
+                           (uintptr_t*)(uintptr_t)major);
+   eldbus_pending_data_set(em->input.current_pending, "minor",
+                           (uintptr_t*)(uintptr_t)minor);
+   eldbus_pending_data_set(em->input.current_pending, "flags",
+                           (intptr_t*)(intptr_t)flags);
 }
 
 static int
