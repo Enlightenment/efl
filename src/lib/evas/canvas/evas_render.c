@@ -2220,6 +2220,26 @@ _cb_always_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
    for (i = 0; i < freeze_num; i++) eo_event_freeze(eo_e);
 }
 
+static inline Eina_Bool
+_is_obj_in_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
+                int x, int y, int w, int h)
+{
+   if (obj->is_smart)
+     {
+        Evas_Coord_Rectangle rect;
+
+        evas_object_smart_bounding_box_get(eo_obj, &rect, NULL);
+        if (RECTS_INTERSECT(x, y, w, h, rect.x, rect.y, rect.w, rect.h))
+          return EINA_TRUE;
+     }
+   else
+     {
+        if (evas_object_is_in_output_rect(eo_obj, obj, x, y, w, h))
+          return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static Eina_Bool
 evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                                   void *surface, void *context,
@@ -2295,8 +2315,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
         RD(level, "    OBJ: [%p", eo_obj);
         IFRD(obj->name, 0, " '%s'", obj->name);
         RD(level, "] '%s' %i %i %ix%i\n", obj->type, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
-        if ((evas_object_is_in_output_rect(eo_obj, obj, ux - fx, uy - fy, uw, uh) ||
-             (obj->is_smart)) &&
+        if ((_is_obj_in_rect(eo_obj, obj, ux - fx, uy - fy, uw, uh)) &&
             (!obj->clip.clipees) &&
             (obj->cur->visible) &&
             (!obj->delete_me) &&
