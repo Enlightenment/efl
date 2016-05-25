@@ -1421,18 +1421,6 @@ eo_xunref(Eo *obj_id, const Eo *ref_obj_id)
    _eo_unref(obj);
 }
 
-EAPI void
-_eo_real_ref(_Eo_Object *obj)
-{
-   if (obj) _eo_ref(obj);
-}
-
-EAPI void
-_eo_real_unref(_Eo_Object *obj)
-{
-   if (obj) _eo_unref(obj);
-}
-
 EAPI Eo *
 eo_ref(const Eo *obj_id)
 {
