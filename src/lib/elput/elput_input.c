@@ -115,7 +115,7 @@ _udev_seat_get(Elput_Manager *em, struct libinput_device *device)
    const char *name;
 
    lseat = libinput_device_get_seat(device);
-   name = libinput_seat_get_logical_name(lseat);
+   name = libinput_seat_get_physical_name(lseat);
 
    return _udev_seat_named_get(em, name);
 }
