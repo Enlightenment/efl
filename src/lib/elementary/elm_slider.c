@@ -748,7 +748,10 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
 
    if (_is_horizontal(sd->orientation))
      {
-        eina_stringshare_replace(&ld->group, "horizontal");
+        if (!sd->range_enable)
+          eina_stringshare_replace(&ld->group, "horizontal");
+        else
+          eina_stringshare_replace(&ld->group, "range/horizontal");
         if (sd->popup)
           _elm_theme_set(elm_widget_theme_get(obj), sd->popup,
                          "slider", "horizontal/popup",
@@ -760,7 +763,11 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
      }
    else
      {
-        eina_stringshare_replace(&ld->group, "vertical");
+        if (!sd->range_enable)
+          eina_stringshare_replace(&ld->group, "vertical");
+        else
+          eina_stringshare_replace(&ld->group, "range/vertical");
+
         if (sd->popup)
           _elm_theme_set(elm_widget_theme_get(obj), sd->popup,
                          "slider", "vertical/popup",
@@ -1231,6 +1238,8 @@ _elm_slider_range_enabled_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool enable)
    if (sd->range_enable == enable) return;
 
    sd->range_enable = enable;
+
+   elm_obj_widget_theme_apply(obj);
    if (sd->range_enable)
      {
         _popup_add(sd, obj, &sd->popup2, &sd->track2, sd->range_enable);
