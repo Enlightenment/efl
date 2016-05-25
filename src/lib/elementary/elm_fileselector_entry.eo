@@ -1,87 +1,8 @@
 class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
                               Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
-   legacy_prefix: elm_fileselector_entry;
-   eo_prefix: elm_obj_fileselector_entry;
+   [[Not an EO API.]]
    event_prefix: elm_fileselector_entry;
-   methods {
-      @property inwin_mode {
-         set {
-            [[Set whether a given file selector entry widget's internal file
-              selector will raise an Elementary "inner window", instead of a
-              dedicated Elementary window. By default, it depends on the current
-              profile.
-
-              See also \@ref elm_win_inwin_add for more information on inner windows,
-              @.inwin_mode.get.
-            ]]
-         }
-         get {
-            [[Get whether a given file selector entry widget's internal file
-              selector will raise an Elementary "inner window", instead of a
-              dedicated Elementary window.
-
-              See also @.inwin_mode.set for more details.
-            ]]
-         }
-         values {
-            value: bool; [[$true to make it use an inner window, $false
-            to make it use a dedicated window.]]
-         }
-      }
-      @property window_size {
-         set {
-            [[Set the size of a given file selector entry widget's window,
-              holding the file selector itself.
-
-              Note: it will only take any effect if the file selector entry
-              widget is not under "inwin mode". The default size for the
-              window (when applicable) is 400x400 pixels.
-
-              See also @.window_size.get.
-            ]]
-         }
-         get {
-            [[Get the size of a given file selector entry widget's window,
-              holding the file selector itself.
-
-              Note: Use $null pointers on the size values you're not
-              interested in: they'll be ignored by the function.
-
-              See also @.window_size.set, for more details.
-            ]]
-         }
-         values {
-            width: Evas.Coord; [[The window's width.]]
-            height: Evas.Coord; [[The window's height.]]
-         }
-      }
-      @property window_title {
-         set {
-            [[Set the title for a given file selector entry widget's window
-
-              This will change the window's title, when the file selector pops
-              out after a click on the entry's button. Those windows have the
-              default (unlocalized) value of $"Select a file" as titles.
-
-              Note: It will only take any effect if the file selector
-              entry widget is not under "inwin mode".
-
-              See also @.window_title.get.
-            ]]
-         }
-         get {
-            [[Get the title set for a given file selector entry widget's
-              window.
-
-              See also @.window_title.set for more details.
-            ]]
-         }
-         values {
-            title: const(char)*; [[The title string.]]
-         }
-      }
-   }
    implements {
       class.constructor;
       Eo.Base.constructor;
