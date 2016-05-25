@@ -149,7 +149,6 @@ struct _Elput_Pointer
    unsigned int timestamp;
 
    int minx, miny;
-   int maxw, maxh;
    int hotx, hoty;
 
    struct
@@ -203,13 +202,13 @@ struct _Elput_Seat
    Elput_Touch *touch;
 
    Eina_List *devices;
+   Elput_Manager *manager;
 };
 
 struct _Elput_Device
 {
    Elput_Seat *seat;
 
-   uint32_t window;
    uint32_t ow, oh;
 
    const char *path;

@@ -1,35 +1,6 @@
 #include "elput_private.h"
 #include <libudev.h>
 
-void
-_elput_input_window_update(Elput_Manager *manager)
-{
-   Eina_List *l, *ll;
-   Elput_Seat *seat;
-   Elput_Device *device;
-
-   if (manager->input.thread) return;
-   EINA_LIST_FOREACH(manager->input.seats, l, seat)
-     EINA_LIST_FOREACH(seat->devices, ll, device)
-       device->window = manager->window;
-}
-
-void
-_elput_input_pointer_max_update(Elput_Manager *manager)
-{
-   Eina_List *l;
-   Elput_Seat *eseat;
-
-   if (manager->input.thread) return;
-   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
-     {
-        if (!eseat->ptr) continue;
-
-        eseat->ptr->maxw = manager->input.pointer_w;
-        eseat->ptr->maxh = manager->input.pointer_h;
-     }
-}
-
 static int
 _cb_open_restricted(const char *path, int flags, void *data)
 {
@@ -101,6 +72,7 @@ _udev_seat_create(Elput_Manager *em, const char *name)
 
    eseat = calloc(1, sizeof(Elput_Seat));
    if (!eseat) return NULL;
+   eseat->manager = em;
 
    eseat->name = eina_stringshare_add(name);
    em->input.seats = eina_list_append(em->input.seats, eseat);
@@ -307,11 +279,7 @@ _elput_input_init_end(void *data, Ecore_Thread *eth EINA_UNUSED)
        _cb_input_dispatch, &manager->input, NULL, NULL);
 
    if (manager->input.hdlr)
-     {
-        _process_events(&manager->input);
-        _elput_input_window_update(manager);
-        _elput_input_pointer_max_update(manager);
-     }
+      _process_events(&manager->input);
    else
      {
         ERR("Could not create input fd handler");
@@ -496,12 +464,7 @@ elput_input_devices_get(Elput_Seat *seat)
 EAPI void
 elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh)
 {
-   Eina_List *l;
-   Elput_Seat *eseat;
-
    EINA_SAFETY_ON_NULL_RETURN(manager);
    manager->input.pointer_w = maxw;
    manager->input.pointer_h = maxh;
-
-   _elput_input_pointer_max_update(manager);
 }

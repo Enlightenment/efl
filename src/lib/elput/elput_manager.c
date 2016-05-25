@@ -131,7 +131,6 @@ elput_manager_window_set(Elput_Manager *manager, unsigned int window)
    EINA_SAFETY_ON_NULL_RETURN(manager);
 
    manager->window = window;
-   _elput_input_window_update(manager);
 }
 
 EAPI const Eina_List *

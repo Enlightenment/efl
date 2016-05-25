@@ -300,9 +300,9 @@ _keyboard_key_send(Elput_Device *dev, enum libinput_key_state state, const char 
    ev->timestamp = timestamp;
    ev->same_screen = 1;
 
-   ev->window = dev->window;
-   ev->event_window = dev->window;
-   ev->root_window = dev->window;
+   ev->window = dev->seat->manager->window;
+   ev->event_window = dev->seat->manager->window;
+   ev->root_window = dev->seat->manager->window;
 
    if (state == LIBINPUT_KEY_STATE_PRESSED)
      ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
@@ -635,20 +635,20 @@ _pointer_motion_send(Elput_Device *edev)
 
    if (x < ptr->minx)
      x = ptr->minx;
-   else if (x >= ptr->minx + ptr->maxw)
-     x = ptr->minx + ptr->maxw - 1;
+   else if (x >= ptr->minx + ptr->seat->manager->input.pointer_w)
+     x = ptr->minx + ptr->seat->manager->input.pointer_w - 1;
 
    if (y < ptr->miny)
      y = ptr->miny;
-   else if (y >= ptr->miny + ptr->maxh)
-     y = ptr->miny + ptr->maxh - 1;
+   else if (y >= ptr->miny + ptr->seat->manager->input.pointer_h)
+     y = ptr->miny + ptr->seat->manager->input.pointer_h - 1;
 
    ptr->x = x;
    ptr->y = y;
 
-   ev->window = edev->window;
-   ev->event_window = edev->window;
-   ev->root_window = edev->window;
+   ev->window = edev->seat->manager->window;
+   ev->event_window = edev->seat->manager->window;
+   ev->root_window = edev->seat->manager->window;
    ev->timestamp = ptr->timestamp;
    ev->same_screen = 1;
 
@@ -736,9 +736,9 @@ _pointer_button_send(Elput_Device *edev, enum libinput_button_state state)
    ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
    if (!ev) return;
 
-   ev->window = edev->window;
-   ev->event_window = edev->window;
-   ev->root_window = edev->window;
+   ev->window = edev->seat->manager->window;
+   ev->event_window = edev->seat->manager->window;
+   ev->root_window = edev->seat->manager->window;
    ev->timestamp = ptr->timestamp;
    ev->same_screen = 1;
 
@@ -854,9 +854,9 @@ _pointer_axis_send(Elput_Device *dev, int direction, int value)
    ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel));
    if (!ev) return;
 
-   ev->window = dev->window;
-   ev->event_window = dev->window;
-   ev->root_window = dev->window;
+   ev->window = dev->seat->manager->window;
+   ev->event_window = dev->seat->manager->window;
+   ev->root_window = dev->seat->manager->window;
    ev->timestamp = ptr->timestamp;
    ev->same_screen = 1;
 
@@ -960,9 +960,9 @@ _touch_event_send(Elput_Device *dev, struct libinput_event_touch *event, int typ
    ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
    if (!ev) return;
 
-   ev->window = dev->window;
-   ev->event_window = dev->window;
-   ev->root_window = dev->window;
+   ev->window = dev->seat->manager->window;
+   ev->event_window = dev->seat->manager->window;
+   ev->root_window = dev->seat->manager->window;
    ev->timestamp = libinput_event_touch_get_time(event);
    ev->same_screen = 1;
 
@@ -1067,9 +1067,9 @@ _touch_motion_send(Elput_Device *dev, struct libinput_event_touch *event)
    ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
    if (!ev) return;
 
-   ev->window = dev->window;
-   ev->event_window = dev->window;
-   ev->root_window = dev->window;
+   ev->window = dev->seat->manager->window;
+   ev->event_window = dev->seat->manager->window;
+   ev->root_window = dev->seat->manager->window;
    ev->timestamp = libinput_event_touch_get_time(event);
    ev->same_screen = 1;
 
