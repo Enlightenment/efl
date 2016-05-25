@@ -232,32 +232,40 @@ _elm_fileselector_button_eo_base_constructor(Eo *obj, Elm_Fileselector_Button_Da
    return obj;
 }
 
-EOLIAN static void
-_elm_fileselector_button_window_title_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd, const char *title)
+EAPI void
+elm_fileselector_button_window_title_set(Eo *obj, const char *title)
 {
+   ELM_FILESELECTOR_BUTTON_CHECK(obj);
+   ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(obj, sd);
    eina_stringshare_replace(&sd->window_title, title);
-
    if (sd->fsw) elm_win_title_set(sd->fsw, sd->window_title);
 }
 
-EOLIAN static const char *
-_elm_fileselector_button_window_title_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd)
+EAPI const char *
+elm_fileselector_button_window_title_get(const Eo *obj)
 {
+   ELM_FILESELECTOR_BUTTON_CHECK(obj) NULL;
+   ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
    return sd->window_title;
 }
 
-EOLIAN static void
-_elm_fileselector_button_window_size_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd, Evas_Coord width, Evas_Coord height)
+EAPI void
+elm_fileselector_button_window_size_set(Eo *obj, Evas_Coord width, Evas_Coord height)
 {
+   ELM_FILESELECTOR_BUTTON_CHECK(obj);
+   ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(obj, sd);
    sd->w = width;
    sd->h = height;
-
    if (sd->fsw) evas_object_resize(sd->fsw, sd->w, sd->h);
 }
 
-EOLIAN static void
-_elm_fileselector_button_window_size_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd, Evas_Coord *width, Evas_Coord *height)
+EAPI void
+elm_fileselector_button_window_size_get(const Eo *obj, Evas_Coord *width, Evas_Coord *height)
 {
+   if (width) *width = 0;
+   if (height) *height = 0;
+   ELM_FILESELECTOR_BUTTON_CHECK(obj);
+   ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(obj, sd);
    if (width) *width = sd->w;
    if (height) *height = sd->h;
 }
@@ -502,15 +510,19 @@ _elm_fileselector_button_elm_interface_fileselector_hidden_visible_get(Eo *obj E
    return sd->fsd.hidden_visible;
 }
 
-EOLIAN static void
-_elm_fileselector_button_inwin_mode_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd, Eina_Bool value)
+EAPI void
+elm_fileselector_button_inwin_mode_set(Eo *obj, Eina_Bool value)
 {
+   ELM_FILESELECTOR_BUTTON_CHECK(obj);
+   ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(obj, sd);
    sd->inwin_mode = value;
 }
 
-EOLIAN static Eina_Bool
-_elm_fileselector_button_inwin_mode_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd)
+EAPI Eina_Bool
+elm_fileselector_button_inwin_mode_get(const Eo *obj)
 {
+   ELM_FILESELECTOR_BUTTON_CHECK(obj) EINA_FALSE;
+   ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
    return sd->inwin_mode;
 }
 
