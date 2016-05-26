@@ -548,7 +548,7 @@ eina_promise_owner_default_call_then(Eina_Promise_Owner* promise)
 }
 
 static void
-_eina_promise_all_compose_then_cb(_Eina_Promise_Default_Owner* promise, void* value EINA_UNUSED)
+_eina_promise_all_compose_then_cb(_Eina_Promise_Default_Owner* promise, void* value EINA_UNUSED, Eina_Promise* promise_then EINA_UNUSED)
 {
    _Eina_Promise_Iterator* iterator;
 
@@ -563,12 +563,12 @@ _eina_promise_all_compose_then_cb(_Eina_Promise_Default_Owner* promise, void* va
 }
 
 static void
-_eina_promise_all_compose_error_then_cb(_Eina_Promise_Default_Owner* promise, Eina_Error const* error)
+_eina_promise_all_compose_error_then_cb(_Eina_Promise_Default_Owner* promise, Eina_Error error, Eina_Promise* promise_then EINA_UNUSED)
 {
    if (!promise->promise.has_finished)
      {
         promise->promise.has_finished = promise->promise.has_errored = EINA_TRUE;
-        promise->promise.error = *error;
+        promise->promise.error = error;
         _eina_promise_finish(promise);
      }
 }
@@ -718,7 +718,7 @@ _eina_promise_race_free(_Eina_Promise_Race_Value_Type* value)
 }
 
 static void
-_eina_promise_race_compose_then_cb(struct _Eina_Promise_Race_Information* info, void* value EINA_UNUSED)
+_eina_promise_race_compose_then_cb(struct _Eina_Promise_Race_Information* info, void* value EINA_UNUSED, Eina_Promise* promise_then EINA_UNUSED)
 {
    _Eina_Promise_Default_Owner* race_promise;
    _Eina_Promise_Race_Value_Type *race_value;
@@ -735,7 +735,7 @@ _eina_promise_race_compose_then_cb(struct _Eina_Promise_Race_Information* info, 
 }
 
 static void
-_eina_promise_race_compose_error_then_cb(struct _Eina_Promise_Race_Information* info, Eina_Error const* error)
+_eina_promise_race_compose_error_then_cb(struct _Eina_Promise_Race_Information* info, Eina_Error error, Eina_Promise* promise_then EINA_UNUSED)
 {
    _Eina_Promise_Default_Owner* race_promise;
    _Eina_Promise_Race_Value_Type *race_value;
@@ -746,7 +746,7 @@ _eina_promise_race_compose_error_then_cb(struct _Eina_Promise_Race_Information* 
    if (!race_promise->promise.has_finished)
      {
         race_value->promise_index =  info - &race_value->promises[0];
-        eina_promise_owner_error_set(&race_promise->owner_vtable, *error);
+        eina_promise_owner_error_set(&race_promise->owner_vtable, error);
      }
 }
 
