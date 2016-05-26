@@ -232,6 +232,9 @@ struct _Elput_Manager
    Ecore_Event_Handler *vt_hdlr;
    uint32_t window;
 
+   int pending_ptr_x;
+   int pending_ptr_y;
+
    struct
      {
         char *path;
@@ -261,6 +264,7 @@ void _evdev_keyboard_destroy(Elput_Keyboard *kbd);
 void _evdev_pointer_destroy(Elput_Pointer *ptr);
 void _evdev_touch_destroy(Elput_Touch *touch);
 void _evdev_pointer_motion_send(Elput_Device *edev);
+void _evdev_device_calibrate(Elput_Device *dev);
 
 Elput_Pointer *_evdev_pointer_get(Elput_Seat *seat);
 Elput_Keyboard *_evdev_keyboard_get(Elput_Seat *seat);

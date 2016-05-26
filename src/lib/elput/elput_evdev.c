@@ -1120,7 +1120,7 @@ _touch_motion(struct libinput_device *idevice, struct libinput_event_touch *even
    _touch_motion_send(dev, event);
 }
 
-static void
+void
 _evdev_device_calibrate(Elput_Device *dev)
 {
    float cal[6];

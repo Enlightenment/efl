@@ -288,6 +288,14 @@ _elput_input_init_end(void *data, Ecore_Thread *eth EINA_UNUSED)
         libinput_unref(manager->input.lib);
         manager->input.lib = NULL;
      }
+
+   if ((manager->pending_ptr_x) || (manager->pending_ptr_y))
+     {
+        elput_input_pointer_xy_set(manager, NULL, manager->pending_ptr_x,
+                                   manager->pending_ptr_y);
+        manager->pending_ptr_x = 0;
+        manager->pending_ptr_y = 0;
+     }
 }
 
 static void
@@ -398,6 +406,13 @@ elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, int x, int 
    /* if no seat name is passed in, just use default seat name */
    if (!seat) seat = "seat0";
 
+   if (eina_list_count(manager->input.seats) < 1)
+     {
+        manager->pending_ptr_x = x;
+        manager->pending_ptr_y = y;
+        return;
+     }
+
    EINA_LIST_FOREACH(manager->input.seats, l, eseat)
      {
         if (!eseat->ptr) continue;
@@ -474,4 +489,24 @@ elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh)
    EINA_SAFETY_ON_NULL_RETURN(manager);
    manager->input.pointer_w = maxw;
    manager->input.pointer_h = maxh;
+}
+
+EAPI void
+elput_input_devices_calibrate(Elput_Manager *manager, int w, int h)
+{
+   Elput_Seat *eseat;
+   Elput_Device *edev;
+   Eina_List *l, *ll;
+
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+
+   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
+     {
+        EINA_LIST_FOREACH(eseat->devices, ll, edev)
+          {
+             edev->ow = w;
+             edev->oh = h;
+             _evdev_device_calibrate(edev);
+          }
+     }
 }

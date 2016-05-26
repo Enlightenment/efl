@@ -339,6 +339,18 @@ EAPI const Eina_List *elput_input_devices_get(Elput_Seat *seat);
  */
 EAPI void elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh);
 
+/**
+ * Calibrate input devices for given screen size
+ *
+ * @param manager
+ * @param w
+ * @param h
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.18
+ */
+EAPI void elput_input_devices_calibrate(Elput_Manager *manager, int w, int h);
+
 # endif
 
 # undef EAPI
