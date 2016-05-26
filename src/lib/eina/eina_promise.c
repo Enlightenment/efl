@@ -227,6 +227,13 @@ _eina_promise_owner_buffer_get(_Eina_Promise_Default_Owner* promise)
 }
 
 static void *
+_eina_promise_buffer_get(_Eina_Promise_Default const* promise)
+{
+   _Eina_Promise_Default_Owner const* p = EINA_PROMISE_GET_OWNER(promise);
+   return (void*)&p->value[0];
+}
+
+static void *
 _eina_promise_value_get(_Eina_Promise_Default const* p)
 {
    _Eina_Promise_Default_Owner const* promise = EINA_PROMISE_GET_OWNER(p);
@@ -496,6 +503,7 @@ eina_promise_default_add(int value_size)
    p->promise.vtable.ref = EINA_FUNC_PROMISE_REF(_eina_promise_ref);
    p->promise.vtable.unref = EINA_FUNC_PROMISE_UNREF(_eina_promise_unref);
    p->promise.vtable.value_size_get = EINA_FUNC_PROMISE_VALUE_SIZE_GET(_eina_promise_value_size_get);
+   p->promise.vtable.buffer_get = EINA_FUNC_PROMISE_BUFFER_GET(_eina_promise_buffer_get);
    p->promise.vtable.release_value_ownership = EINA_FUNC_PROMISE_RELEASE_VALUE_OWNERSHIP(_eina_promise_release_value_ownership);
    p->promise.has_finished = p->promise.has_errored =
      p->promise.is_cancelled = p->promise.is_manual_then = EINA_FALSE;
