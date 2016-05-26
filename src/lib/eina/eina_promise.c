@@ -772,7 +772,7 @@ eina_promise_race(Eina_Iterator* it)
    num_promises = eina_array_count_get(promises);
    promise = (_Eina_Promise_Default_Owner*)
      eina_promise_default_add(sizeof(_Eina_Promise_Race_Value_Type) +
-                              sizeof(struct _Eina_Promise_Race_Information*)*num_promises);
+                              sizeof(struct _Eina_Promise_Race_Information)*num_promises);
    value = eina_promise_owner_buffer_get((Eina_Promise_Owner*)promise);
    value->value = NULL;
    value->promise_index = -1;
