@@ -530,3 +530,22 @@ EAPI void elm_win_indicator_opacity_set(Evas_Object *obj, Elm_Win_Indicator_Opac
  */
 EAPI Elm_Win_Indicator_Opacity_Mode elm_win_indicator_opacity_get(const Evas_Object *obj);
 
+/**
+ * @brief Sets whether the window is a keyboard.
+ *
+ * @param[in] mode If true, the window is a virtual keyboard..
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard);
+
+/**
+ * @brief Get whether the window is a keyboard
+ *
+ * @return The mode, If true, the window is a virtual keyboard..
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_keyboard_win_get(const Evas_Object *obj);
+
+

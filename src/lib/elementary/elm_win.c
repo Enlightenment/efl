@@ -5091,31 +5091,6 @@ _elm_win_keyboard_mode_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_keyboard_win_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool is_keyboard)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     ecore_x_e_virtual_keyboard_set(sd->x.xwin, is_keyboard);
-#else
-   (void)sd;
-   (void)is_keyboard;
-#endif
-}
-
-EOLIAN static Eina_Bool
-_elm_win_keyboard_win_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin) return ecore_x_e_virtual_keyboard_get(sd->x.xwin);
-#else
-   (void)sd;
-#endif
-   return EINA_FALSE;
-}
-
-EOLIAN static void
 _elm_win_indicator_enabled_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED, Eina_Bool enable EINA_UNUSED)
 {
    //TODO: this mode will be implemented after removing the conformant.
@@ -6039,6 +6014,37 @@ elm_win_indicator_opacity_get(const Evas_Object *obj)
    ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, ELM_WIN_INDICATOR_OPACITY_UNKNOWN);
 
    return sd->ind_o_mode;
+}
+
+EAPI void
+elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     ecore_x_e_virtual_keyboard_set(sd->x.xwin, is_keyboard);
+#else
+   (void)sd;
+   (void)is_keyboard;
+#endif
+}
+
+EAPI Eina_Bool
+elm_win_keyboard_win_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin) return ecore_x_e_virtual_keyboard_get(sd->x.xwin);
+#else
+   (void)sd;
+#endif
+   return EINA_FALSE;
 }
 
 #ifndef EFL_TEAMWORK_VERSION

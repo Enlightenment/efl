@@ -187,15 +187,15 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             type: Elm.Win.Indicator_Type; [[The type, one of #Elm_Win_Indicator_Type.]]
          }
       }
-      @property keyboard_win {
+      @property keyboard_mode {
          set {
-            [[Sets whether the window is a keyboard.]]
+            [[Sets the keyboard mode of the window.]]
          }
          get {
-            [[Get whether the window is a keyboard.]]
+            [[Get the keyboard mode of the window.]]
          }
          values {
-            is_keyboard: bool; [[If true, the window is a virtual keyboard.]]
+            mode: Elm.Win.Keyboard_Mode; [[The mode, one of #Elm_Win_Keyboard_Mode.]]
          }
       }
       @property autodel {
@@ -592,17 +592,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          values {
             sticky: bool; [[If true, the window's sticky state is enabled.]]
-         }
-      }
-      @property keyboard_mode {
-         set {
-            [[Sets the keyboard mode of the window.]]
-         }
-         get {
-            [[Get the keyboard mode of the window.]]
-         }
-         values {
-            mode: Elm.Win.Keyboard_Mode; [[The mode, one of #Elm_Win_Keyboard_Mode.]]
          }
       }
       @property focus_highlight_animate {
