@@ -279,10 +279,6 @@ struct _Evas_Engine_GL_Context
          Shader_Type     type;
       } region;
       struct {
-         int             x, y, w, h;
-         Eina_Bool       active : 1;
-      } clip;
-      struct {
          Evas_GL_Program *prog;
          Evas_GL_Image  *surface;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
