@@ -1617,6 +1617,8 @@ _evgl_glDrawBuffers(GLsizei n, const GLenum *bufs)
     Eina_Bool target_is_fbo = EINA_FALSE;
     unsigned int drawbuffer;
 
+    if (!_gles3_api.glDrawBuffers) return;
+
     ctx = evas_gl_common_current_context_get();
     if (!ctx)
       {
@@ -1626,7 +1628,7 @@ _evgl_glDrawBuffers(GLsizei n, const GLenum *bufs)
 
     if (!bufs)
       {
-         glDrawBuffers(n, bufs);
+         _gles3_api.glDrawBuffers(n, bufs);
          return;
       }
 
@@ -1643,7 +1645,7 @@ _evgl_glDrawBuffers(GLsizei n, const GLenum *bufs)
               if (*bufs == GL_BACK)
                 {
                    drawbuffer = GL_COLOR_ATTACHMENT0;
-                   glDrawBuffers(n, &drawbuffer);
+                   _gles3_api.glDrawBuffers(n, &drawbuffer);
                 }
               else if ((*bufs & GL_COLOR_ATTACHMENT0) == GL_COLOR_ATTACHMENT0)
                 {
@@ -1651,7 +1653,7 @@ _evgl_glDrawBuffers(GLsizei n, const GLenum *bufs)
                 }
               else
                 {
-                   glDrawBuffers(n, bufs);
+                   _gles3_api.glDrawBuffers(n, bufs);
                 }
            }
          else
@@ -1661,7 +1663,7 @@ _evgl_glDrawBuffers(GLsizei n, const GLenum *bufs)
       }
     else
       {
-        glDrawBuffers(n, bufs);
+         _gles3_api.glDrawBuffers(n, bufs);
       }
 }
 
@@ -1670,6 +1672,8 @@ _evgl_glReadBuffer(GLenum src)
 {
     EVGL_Context *ctx;
     Eina_Bool target_is_fbo = EINA_FALSE;
+
+    if (!_gles3_api.glReadBuffer) return;
 
     ctx = evas_gl_common_current_context_get();
     if (!ctx)
@@ -1688,7 +1692,7 @@ _evgl_glReadBuffer(GLenum src)
       {
          if (src == GL_BACK)
            {
-              glReadBuffer(GL_COLOR_ATTACHMENT0);
+              _gles3_api.glReadBuffer(GL_COLOR_ATTACHMENT0);
            }
          else if((src & GL_COLOR_ATTACHMENT0) == GL_COLOR_ATTACHMENT0)
            {
@@ -1696,12 +1700,12 @@ _evgl_glReadBuffer(GLenum src)
            }
          else
            {
-              glReadBuffer(src);
+              _gles3_api.glReadBuffer(src);
            }
       }
     else
       {
-         glReadBuffer(src);
+         _gles3_api.glReadBuffer(src);
       }
 }
 
