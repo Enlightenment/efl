@@ -15,21 +15,21 @@
 #include "eldbus_suite.h"
 
 static void
-_promise_then_quit_cb(void **data , void **value )
+_promise_then_quit_cb(void **data , void **value, Eina_Promise* promise EINA_UNUSED)
 {
    *data = *value;
    ecore_main_loop_quit();
 }
 
 static void
-_promise_then_quit_u_cb(unsigned *data , unsigned *value)
+_promise_then_quit_u_cb(unsigned *data , unsigned *value, Eina_Promise* promise EINA_UNUSED)
 {
    *data = *value;
    ecore_main_loop_quit();
 }
 
 static void
-_promise_then_cp(Eina_Value *data , void *value)
+_promise_then_cp(Eina_Value *data , void *value, Eina_Promise* promise EINA_UNUSED)
 {
    eina_value_copy(value, data);
    ecore_main_loop_quit();
@@ -37,28 +37,28 @@ _promise_then_cp(Eina_Value *data , void *value)
 
 
 static void
-_promise_check_err(void *data EINA_UNUSED, void *value EINA_UNUSED)
+_promise_check_err(void *data EINA_UNUSED, void *value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 {
    ck_assert_msg(0, "Promise Expected Error:\n");
    ecore_main_loop_quit();
 }
 
 static void
-_error_then_ok(void* data, Eina_Error const* error)
+_error_then_ok(void* data, Eina_Error error, Eina_Promise* promise EINA_UNUSED)
 {
    Eina_Error const* expected_error = (Eina_Error*)data;
    if (data != NULL)
    {
-     ck_assert_int_eq(*error, *expected_error);
+     ck_assert_int_eq(error, *expected_error);
    }
 
    ecore_main_loop_quit();
 }
 
 static void
-_error_then_cb(void* data EINA_UNUSED, Eina_Error const* error)
+_error_then_cb(void* data EINA_UNUSED, Eina_Error error, Eina_Promise* promise EINA_UNUSED)
 {
-   ck_assert_msg(0,"Promise ERROR: %s\n", eina_error_msg_get(*error));
+   ck_assert_msg(0,"Promise ERROR: %s\n", eina_error_msg_get(error));
    ecore_main_loop_quit();
 }
 

@@ -6,7 +6,7 @@
 #include "ecore_suite.h"
 
 static void
-_ecore_promise_quit(void *data, void *value)
+_ecore_promise_quit(void *data, void *value, Eina_Promise* promise EINA_UNUSED)
 {
    Eina_Bool *bob = data;
 
