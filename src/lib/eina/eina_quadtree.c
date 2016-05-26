@@ -167,7 +167,9 @@ _eina_quadtree_item_cmp(const void *a, const void *b)
    const Eina_QuadTree_Item *i = a;
    const Eina_QuadTree_Item *j = b;
 
-   return i->index - j->index;
+   if (i->index == j->index) return 0;
+   if (i->index > j->index) return 1;
+   return -1;
 }
 
 static Eina_QuadTree_Root *

@@ -536,20 +536,24 @@ static int
 _eina_int32_key_cmp(const uint32_t *key1, EINA_UNUSED int key1_length,
                     const uint32_t *key2, EINA_UNUSED int key2_length)
 {
-   return *key1 - *key2;
+   if (*key1 == *key2) return 0;
+   if (*key1 > *key2) return 1;
+   return -1;
 }
 
 static unsigned int
-_eina_int64_key_length(EINA_UNUSED const uint32_t *key)
+_eina_int64_key_length(EINA_UNUSED const uint64_t *key)
 {
-   return 8;
+   return sizeof(int64_t);
 }
 
 static int
 _eina_int64_key_cmp(const uint64_t *key1, EINA_UNUSED int key1_length,
                     const uint64_t *key2, EINA_UNUSED int key2_length)
 {
-   return *key1 - *key2;
+   if (*key1 == *key2) return 0;
+   if (*key1 > *key2) return 1;
+   return -1;
 }
 
 static Eina_Bool
