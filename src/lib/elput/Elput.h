@@ -117,7 +117,6 @@ EAPI extern int ELPUT_EVENT_SESSION_ACTIVE;
  * @li @ref Elput_Init_Group
  * @li @ref Elput_Manager_Group
  * @li @ref Elput_Input_Group
- * @li @ref Elput_Device_Group
  *
  */
 
@@ -339,24 +338,6 @@ EAPI const Eina_List *elput_input_devices_get(Elput_Seat *seat);
  * @since 1.18
  */
 EAPI void elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh);
-
-/**
- * @defgroup Elput_Device_Group
- *
- * Functions that deal with input devices.
- */
-
-/**
- * Set size of output for input device calibration
- *
- * @param device
- * @param w
- * @param h
- *
- * @ingroup Elput_Device_Group
- * @since 1.18
- */
-EAPI void elput_device_output_size_set(Elput_Device *device, int w, int h);
 
 # endif
 

@@ -1344,27 +1344,3 @@ _evdev_touch_get(Elput_Seat *seat)
    if (seat->count.touch) return seat->touch;
    return NULL;
 }
-
-EAPI void
-elput_device_output_size_set(Elput_Device *device, int w, int h)
-{
-   EINA_SAFETY_ON_NULL_RETURN(device);
-
-   device->ow = w;
-   device->oh = h;
-
-   if (libinput_device_has_capability(device->device,
-                                      LIBINPUT_DEVICE_CAP_POINTER))
-     {
-        Elput_Pointer *ptr;
-
-        ptr = _evdev_pointer_get(device->seat);
-        if (ptr)
-          {
-             ptr->x = device->ow / 2;
-             ptr->y = device->oh / 2;
-          }
-     }
-
-   _evdev_device_calibrate(device);
-}
