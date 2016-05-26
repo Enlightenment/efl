@@ -1439,7 +1439,7 @@ _elm_image_scale_type_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd EINA_UNUSED, E
 
    sd->scale_type = scale_type;
 
-   _elm_image_internal_sizing_eval(obj);
+   _elm_image_internal_sizing_eval(obj, sd);
 }
 
 EOLIAN static Elm_Image_Scale_Type
@@ -1456,14 +1456,14 @@ _elm_image_scalable_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool up, Eina_Bool dow
    sd->scale_up = !!up;
    sd->scale_down = !!down;
 
-   _elm_image_internal_sizing_eval(obj);
+   _elm_image_internal_sizing_eval(obj, sd);
 }
 
 EOLIAN static void
-_elm_image_scalable_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool *up, Eina_Bool *down)
+_elm_image_scalable_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool *scale_up, Eina_Bool *scale_down)
 {
-   if (up) *size_up = sd->scale_up;
-   if (down) *size_down = sd->scale_down;
+   if (scale_up) *scale_up = sd->scale_up;
+   if (scale_down) *scale_down = sd->scale_down;
 }
 
 // A11Y
@@ -1991,7 +1991,7 @@ elm_image_resizable_set(Evas_Object *obj, Eina_Bool up, Eina_Bool down)
    sd->scale_up = !!up;
    sd->scale_down = !!down;
 
-   _elm_image_internal_sizing_eval(obj);
+   _elm_image_internal_sizing_eval(obj, sd);
 }
 
 EAPI void
