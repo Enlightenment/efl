@@ -691,6 +691,14 @@ _parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
      }
 }
 
+static Eina_Bool
+_type_is_ownable(Eolian_Type *tp)
+{
+   return (tp->type == EOLIAN_TYPE_POINTER ||
+           tp->type == EOLIAN_TYPE_COMPLEX ||
+           tp->type == EOLIAN_TYPE_CLASS);
+}
+
 static Eolian_Type *
 parse_type_void(Eo_Lexer *ls)
 {
@@ -721,9 +729,7 @@ parse_type_void(Eo_Lexer *ls)
            check_next(ls, '(');
            eo_lexer_context_push(ls);
            def = parse_type_void(ls);
-           if (def->type != EOLIAN_TYPE_POINTER &&
-               def->type != EOLIAN_TYPE_COMPLEX &&
-               def->type != EOLIAN_TYPE_CLASS)
+           if (!_type_is_ownable(def))
              {
                 eo_lexer_context_restore(ls);
                 eo_lexer_syntax_error(ls, "ownable type expected");
@@ -743,9 +749,7 @@ parse_type_void(Eo_Lexer *ls)
            check_next(ls, '(');
            eo_lexer_context_push(ls);
            def = parse_type_void(ls);
-           if (def->type != EOLIAN_TYPE_POINTER &&
-               def->type != EOLIAN_TYPE_COMPLEX &&
-               def->type != EOLIAN_TYPE_CLASS)
+           if (!_type_is_ownable(def))
              {
                 eo_lexer_context_restore(ls);
                 eo_lexer_syntax_error(ls, "freeable type expected");
