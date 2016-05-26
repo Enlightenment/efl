@@ -153,8 +153,15 @@ int
 eina_file_map_key_cmp(const unsigned long long int *key1, int key1_length EINA_UNUSED,
                        const unsigned long long int *key2, int key2_length EINA_UNUSED)
 {
-   if (key1[0] - key2[0] == 0) return key1[1] - key2[1];
-   return key1[0] - key2[0];
+   if (key1[0] == key2[0])
+     {
+        if (key1[1] == key2[1]) return 0;
+        if (key1[1] > key2[1]) return 1;
+        return -1;
+     }
+   if (key1[0] == key2[0]) return 0;
+   if (key1[0] > key2[0]) return 1;
+   return -1;
 }
 
 int
