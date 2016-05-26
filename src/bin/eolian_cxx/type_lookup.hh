@@ -65,32 +65,27 @@ type_from_eolian(Eolian_Type const& type)
    efl::eolian::eolian_type x;
 
    Eolian_Type_Type tpt = ::eolian_type_type_get(&type);
-   if (tpt == EOLIAN_TYPE_POINTER || tpt == EOLIAN_TYPE_REGULAR)
+   if (tpt == EOLIAN_TYPE_CLASS)
      {
-        Eolian_Type const* base_type = ::eolian_type_base_type_get(&type);
-        if (base_type && ::eolian_type_type_get(base_type) == EOLIAN_TYPE_CLASS)
+        Eolian_Class const* klass = ::eolian_type_class_get(&type);
+        if (klass)
           {
-             Eolian_Class const* klass = ::eolian_type_class_get(base_type);
-             if (klass)
-               {
-                  x.category = efl::eolian::eolian_type::simple_;
-                  x.is_class = true;
-                  x.binding_requires_optional = false;
-                  x.binding = "::" + class_format_cxx(safe_str(::eolian_class_full_name_get(klass)));
-                  x.native = "::";
-                  x.native += safe_str( ::eolian_class_full_name_get(klass));
-                  std::replace(x.native.begin(), x.native.end(), '.', '_');
+             x.category = efl::eolian::eolian_type::simple_;
+             x.is_class = true;
+             x.binding_requires_optional = false;
+             x.binding = "::" + class_format_cxx(safe_str(::eolian_class_full_name_get(klass)));
+             x.native = "::";
+             x.native += safe_str( ::eolian_class_full_name_get(klass));
+             std::replace(x.native.begin(), x.native.end(), '.', '_');
 
-                  if( ::eolian_type_is_const(base_type))
-                    x.native += " const";
+             if( ::eolian_type_is_const(&type))
+               x.native += " const";
                   
-                  x.native += '*';
-                  
+             x.native += '*';
 
-                  Eina_Stringshare* klass_file = ::eolian_class_file_get(klass);
-                  if (klass_file)
-                    x.includes = {safe_str(klass_file) + ".hh"};
-               }
+             Eina_Stringshare* klass_file = ::eolian_class_file_get(klass);
+             if (klass_file)
+               x.includes = {safe_str(klass_file) + ".hh"};
           }
      }
 
@@ -124,7 +119,7 @@ type_lookup(const Eolian_Type* type,
    std::vector<Eolian_Type const*> types;
    types.push_back(type);
 
-   if (::eolian_type_type_get(type) == EOLIAN_TYPE_COMPLEX/* && type_is_complex(*eolian_type_base_type_get(type))*/)
+   if (type_is_complex(*type))
      {
         efl::eina::iterator<Eolian_Type const> end;
         efl::eina::iterator<Eolian_Type const> it
@@ -134,7 +129,8 @@ type_lookup(const Eolian_Type* type,
              if(Eolian_Type const* t = &*it)
                {
                   types.push_back
-                    ( ::eolian_type_type_get(t) == EOLIAN_TYPE_POINTER ? ::eolian_type_base_type_get(t) /* remove this base type get when pointers are removed */
+                     /* remove this base type get when pointers are removed */
+                    ( ::eolian_type_type_get(t) == EOLIAN_TYPE_POINTER ? ::eolian_type_base_type_get(t)
                       : t
                     );
                   ++it;
