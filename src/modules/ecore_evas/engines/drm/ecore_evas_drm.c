@@ -58,8 +58,6 @@ static int _drm_init_count = 0;
 static int
 _ecore_evas_drm_init(Ecore_Evas_Engine_Drm_Data *edata, const char *device)
 {
-   int mw, mh;
-
    if (++_drm_init_count != 1) return _drm_init_count;
 
    if (!ecore_drm2_init())
@@ -96,9 +94,6 @@ _ecore_evas_drm_init(Ecore_Evas_Engine_Drm_Data *edata, const char *device)
    edata->output = ecore_drm2_output_find(edata->dev, edata->x, edata->y);
    if (!edata->output)
      WRN("Could not find output at %d %d", edata->x, edata->y);
-
-   ecore_drm2_output_crtc_size_get(edata->output, &mw, &mh);
-   ecore_drm2_device_pointer_max_set(edata->dev, mw, mh);
 
    ecore_event_evas_init();
 
@@ -678,7 +673,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
    Evas_Engine_Info_Drm *einfo;
    Ecore_Evas_Interface_Drm *iface;
    Ecore_Evas_Engine_Drm_Data *edata;
-   int method;
+   int method, mw, mh;
 
    method = evas_render_method_lookup("drm");
    if (!method) return NULL;
@@ -776,6 +771,12 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
 
+   ecore_drm2_output_crtc_size_get(edata->output, &mw, &mh);
+
+   ecore_drm2_device_calibrate(edata->dev, mw, mh);
+   ecore_drm2_device_pointer_max_set(edata->dev, mw, mh);
+   ecore_drm2_device_pointer_warp(edata->dev, mw / 2, mh / 2);
+
    return ee;
 
 eng_err:
@@ -791,7 +792,7 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
    Evas_Engine_Info_GL_Drm *einfo;
    Ecore_Evas_Interface_Drm *iface;
    Ecore_Evas_Engine_Drm_Data *edata;
-   int method;
+   int method, mw, mh;
 
    method = evas_render_method_lookup("gl_drm");
    if (!method) return NULL;
@@ -904,6 +905,12 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+
+   ecore_drm2_output_crtc_size_get(edata->output, &mw, &mh);
+
+   ecore_drm2_device_calibrate(edata->dev, mw, mh);
+   ecore_drm2_device_pointer_max_set(edata->dev, mw, mh);
+   ecore_drm2_device_pointer_warp(edata->dev, mw / 2, mh / 2);
 
    return ee;
 
