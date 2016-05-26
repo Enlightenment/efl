@@ -269,6 +269,18 @@ EAPI unsigned int *ecore_drm2_device_crtcs_get(Ecore_Drm2_Device *device, int *n
 EAPI void ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *device, int *minw, int *minh, int *maxw, int *maxh);
 
 /**
+ * Calibrate any input devices for given screen size
+ *
+ * @param device
+ * @param w
+ * @param h
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm2_device_calibrate(Ecore_Drm2_Device *device, int w, int h);
+
+/**
  * @defgroup Ecore_Drm2_Output_Group Drm output functions
  *
  * Functions that deal with setup of outputs

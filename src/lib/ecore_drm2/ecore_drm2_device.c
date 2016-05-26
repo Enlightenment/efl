@@ -289,3 +289,11 @@ ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *device, int *minw, in
    if (maxw) *maxw = device->max.width;
    if (maxh) *maxh = device->max.height;
 }
+
+EAPI void
+ecore_drm2_device_calibrate(Ecore_Drm2_Device *device, int w, int h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   elput_input_devices_calibrate(device->em, w, h);
+}
