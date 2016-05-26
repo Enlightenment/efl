@@ -603,7 +603,10 @@ public:
     return rhs.size() == lhs.size() && std::equal(rhs.begin(), rhs.end(), lhs.begin());
   }
 };
-    
+
+template <typename T>
+using crange_array = range_array<typename std::add_const<T>::type>;
+
 } }
 
 #endif
