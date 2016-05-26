@@ -178,7 +178,7 @@ static void cancel_callback(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
    *(Eina_Bool*)data = EINA_TRUE;
 }
 
-static void _cancel_promise_callback(void* data EINA_UNUSED, Eina_Error error, Eina_Promise* promise EINA_UNUSED)
+static void _cancel_promise_callback(void* data EINA_UNUSED, Eina_Error error EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 {
    *(Eina_Bool*)data = EINA_TRUE;
 }
@@ -206,7 +206,7 @@ START_TEST(eina_test_promise_cancel_promise)
 }
 END_TEST
 
-void progress_callback(void* data, void* value, Eina_Promise* promise EINA_UNUSED)
+void progress_callback(void* data, void* value)
 {
    int* i = value;
    ck_assert(*i == 1);
