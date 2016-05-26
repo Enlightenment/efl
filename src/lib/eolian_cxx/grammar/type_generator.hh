@@ -76,7 +76,7 @@ operator<<(std::ostream& out, efl::eolian::grammar::c_type const& x)
    std::string res;
    for (auto rit = x._list.parts.rbegin(), last = x._list.parts.rend(); rit != last; ++rit)
      {
-       res = /*type_is_binding(*rit) ? (*rit).binding :*/ (*rit).native;
+       res = (*rit).native;
      }
    assert(!res.empty());
    return out << res;
