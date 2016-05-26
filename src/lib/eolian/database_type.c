@@ -114,9 +114,7 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      eina_strbuf_append(buf, " *");
    if (name)
      {
-        if (tp->type != EOLIAN_TYPE_POINTER &&
-            tp->type != EOLIAN_TYPE_CLASS &&
-            tp->type != EOLIAN_TYPE_COMPLEX)
+        if (eina_strbuf_string_get(buf)[eina_strbuf_length_get(buf) - 1] != '*')
           eina_strbuf_append_char(buf, ' ');
         eina_strbuf_append(buf, name);
      }

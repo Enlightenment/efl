@@ -694,6 +694,14 @@ _parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
 static Eina_Bool
 _type_is_ownable(Eolian_Type *tp)
 {
+   if (tp->type == EOLIAN_TYPE_REGULAR)
+     {
+        int kwid = eo_lexer_keyword_str_to_id(tp->name);
+        const char *ct = eo_lexer_get_c_type(kwid);
+        if (!ct)
+          return EINA_FALSE;
+        return (ct[strlen(ct) - 1] == '*');
+     }
    return (tp->type == EOLIAN_TYPE_POINTER ||
            tp->type == EOLIAN_TYPE_COMPLEX ||
            tp->type == EOLIAN_TYPE_CLASS);
