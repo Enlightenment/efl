@@ -26,7 +26,6 @@
 #include "../efl_check.h"
 
 static const Efl_Test_Case etc[] = {
-/*
    { "FixedPoint", eina_test_fp },
    { "Inarray", eina_test_inarray },
    { "Array", eina_test_array },
@@ -65,7 +64,6 @@ static const Efl_Test_Case etc[] = {
    { "COW", eina_test_cow },
    // Disabling Eina_Model test
    //   { "Model", eina_test_model },
- */
    { "Barrier", eina_test_barrier },
    { "Tmp String", eina_test_tmpstr },
    { "Locking", eina_test_locking },
