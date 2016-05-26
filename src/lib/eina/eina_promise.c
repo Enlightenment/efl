@@ -237,7 +237,7 @@ static void *
 _eina_promise_value_get(_Eina_Promise_Default const* p)
 {
    _Eina_Promise_Default_Owner const* promise = EINA_PROMISE_GET_OWNER(p);
-   if (promise->promise.has_finished && !promise->promise.has_errored)
+   if (p->has_finished && !p->has_errored)
      {
        return (void*)&promise->value[0];
      }
@@ -251,9 +251,9 @@ static void *
 _eina_promise_release_value_ownership(_Eina_Promise_Default* p)
 {
    _Eina_Promise_Default_Owner* promise = EINA_PROMISE_GET_OWNER(p);
-   if (promise->promise.has_finished && !promise->promise.has_errored)
+   if (p->has_finished && !p->has_errored)
      {
-       promise->promise.value_free_cb = NULL;
+       p->value_free_cb = NULL;
        return (void*)&promise->value[0];
      }
    else
