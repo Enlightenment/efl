@@ -755,17 +755,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             set: bool; [[$true to set manual rotation done mode, $false otherwise.]]
          }
       }
-      @property conformant {
-         set {
-            [[Set if this window is an illume conformant window.]]
-         }
-         get {
-            [[Get if this window is an illume conformant window.]]
-         }
-         values {
-            conformant: bool; [[The conformant flag.]]
-         }
-      }
       @property size_base {
          set {
             [[Set the base window size used with stepping calculation

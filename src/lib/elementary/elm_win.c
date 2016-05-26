@@ -5157,33 +5157,6 @@ _elm_win_screen_dpi_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *xdpi, int *y
 }
 
 EOLIAN static void
-_elm_win_conformant_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool conformant)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     ecore_x_e_illume_conformant_set(sd->x.xwin, conformant);
-#else
-   (void)sd;
-   (void)conformant;
-#endif
-}
-
-EOLIAN static Eina_Bool
-_elm_win_conformant_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     return ecore_x_e_illume_conformant_get(sd->x.xwin);
-#else
-   (void)sd;
-#endif
-
-   return EINA_FALSE;
-}
-
-EOLIAN static void
 _elm_win_prop_focus_skip_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool skip)
 {
    sd->skip_focus = skip;
@@ -5660,6 +5633,105 @@ _elm_win_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Win_Data *sd EINA_
    return name ? strdup(name) : NULL;
 }
 
+#ifndef EFL_TEAMWORK_VERSION
+# define EFL_TEAMWORK_VERSION 2
+#endif
+
+static EOLIAN void
+_elm_win_teamwork_uri_preload(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *uri)
+{
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, uri);
+        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PRELOAD,
+          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, 0, 0, 0, 0);
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     {
+        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
+        if (ewd->wl.teamwork)
+          zwp_teamwork_preload_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win), uri);
+     }
+#endif
+   eina_stringshare_replace(&sd->teamwork_uri, uri);
+}
+
+static EOLIAN void
+_elm_win_teamwork_uri_show(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *uri)
+{
+   int x, y;
+
+   EINA_SAFETY_ON_NULL_RETURN(uri);
+   if (eina_streq(uri, sd->teamwork_uri)) return;
+
+   evas_pointer_canvas_xy_get(sd->evas, &x, &y);
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, uri);
+        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_ACTIVATE,
+          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, x, y, 0, 0);
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     {
+        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
+        if (ewd->wl.teamwork)
+          zwp_teamwork_activate_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win),
+            uri, wl_fixed_from_int(x), wl_fixed_from_int(y));
+     }
+#endif
+   eina_stringshare_replace(&sd->teamwork_uri, uri);
+}
+
+static EOLIAN void
+_elm_win_teamwork_uri_hide(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
+{
+   if (!sd->teamwork_uri) return;
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, sd->teamwork_uri);
+        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_DEACTIVATE,
+          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, 0, 0, 0, 0);
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     {
+        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
+        if (ewd->wl.teamwork)
+          zwp_teamwork_deactivate_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win), sd->teamwork_uri);
+     }
+#endif
+   eina_stringshare_replace(&sd->teamwork_uri, NULL);
+}
+
+static EOLIAN void
+_elm_win_teamwork_uri_open(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *uri)
+{
+   EINA_SAFETY_ON_NULL_RETURN(uri);
+#ifdef HAVE_ELEMENTARY_X
+   if (sd->x.xwin)
+     {
+        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, uri);
+        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_OPEN,
+          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, 0, 0, 0, 0);
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     {
+        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
+        if (ewd->wl.teamwork)
+          zwp_teamwork_open_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win), uri);
+     }
+#endif
+}
 
 /* legacy APIs */
 
@@ -6047,104 +6119,37 @@ elm_win_keyboard_win_get(const Evas_Object *obj)
    return EINA_FALSE;
 }
 
-#ifndef EFL_TEAMWORK_VERSION
-# define EFL_TEAMWORK_VERSION 2
-#endif
-
-static EOLIAN void
-_elm_win_teamwork_uri_preload(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *uri)
+EAPI void
+elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant)
 {
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
 #ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     {
-        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, uri);
-        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PRELOAD,
-          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, 0, 0, 0, 0);
-     }
+     ecore_x_e_illume_conformant_set(sd->x.xwin, conformant);
+#else
+   (void)sd;
+   (void)conformant;
 #endif
-#ifdef HAVE_ELEMENTARY_WL2
-   if (sd->wl.win)
-     {
-        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
-        if (ewd->wl.teamwork)
-          zwp_teamwork_preload_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win), uri);
-     }
-#endif
-   eina_stringshare_replace(&sd->teamwork_uri, uri);
 }
 
-static EOLIAN void
-_elm_win_teamwork_uri_show(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *uri)
+EAPI Eina_Bool
+elm_win_conformant_get(const Evas_Object *obj)
 {
-   int x, y;
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
 
-   EINA_SAFETY_ON_NULL_RETURN(uri);
-   if (eina_streq(uri, sd->teamwork_uri)) return;
-
-   evas_pointer_canvas_xy_get(sd->evas, &x, &y);
 #ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
-     {
-        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, uri);
-        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_ACTIVATE,
-          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, x, y, 0, 0);
-     }
+     return ecore_x_e_illume_conformant_get(sd->x.xwin);
+#else
+   (void)sd;
 #endif
-#ifdef HAVE_ELEMENTARY_WL2
-   if (sd->wl.win)
-     {
-        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
-        if (ewd->wl.teamwork)
-          zwp_teamwork_activate_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win),
-            uri, wl_fixed_from_int(x), wl_fixed_from_int(y));
-     }
-#endif
-   eina_stringshare_replace(&sd->teamwork_uri, uri);
-}
 
-static EOLIAN void
-_elm_win_teamwork_uri_hide(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   if (!sd->teamwork_uri) return;
-#ifdef HAVE_ELEMENTARY_X
-   if (sd->x.xwin)
-     {
-        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, sd->teamwork_uri);
-        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_DEACTIVATE,
-          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, 0, 0, 0, 0);
-     }
-#endif
-#ifdef HAVE_ELEMENTARY_WL2
-   if (sd->wl.win)
-     {
-        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
-        if (ewd->wl.teamwork)
-          zwp_teamwork_deactivate_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win), sd->teamwork_uri);
-     }
-#endif
-   eina_stringshare_replace(&sd->teamwork_uri, NULL);
-}
-
-static EOLIAN void
-_elm_win_teamwork_uri_open(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *uri)
-{
-   EINA_SAFETY_ON_NULL_RETURN(uri);
-#ifdef HAVE_ELEMENTARY_X
-   if (sd->x.xwin)
-     {
-        ecore_x_window_prop_string_set(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_PROPERTY, uri);
-        ecore_x_client_message32_send(sd->x.xwin, ECORE_X_ATOM_TEAMWORK_OPEN,
-          ECORE_X_EVENT_MASK_WINDOW_MANAGE | ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE, EFL_TEAMWORK_VERSION, 0, 0, 0, 0);
-     }
-#endif
-#ifdef HAVE_ELEMENTARY_WL2
-   if (sd->wl.win)
-     {
-        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(sd->wl.win);
-        if (ewd->wl.teamwork)
-          zwp_teamwork_open_uri(ewd->wl.teamwork, ecore_wl2_window_surface_get(sd->wl.win), uri);
-     }
-#endif
+   return EINA_FALSE;
 }
 
 #include "elm_win.eo.c"

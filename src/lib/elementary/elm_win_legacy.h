@@ -548,4 +548,21 @@ EAPI void elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard);
  */
 EAPI Eina_Bool elm_win_keyboard_win_get(const Evas_Object *obj);
 
+/**
+ * @brief Set if this window is an illume conformant window.
+ *
+ * @param[in] conformant The conformant flag.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant);
+
+/**
+ * @brief Get if this window is an illume conformant window.
+ *
+ * @return The conformant flag.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_conformant_get(const Evas_Object *obj);
 
