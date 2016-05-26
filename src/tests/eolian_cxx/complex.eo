@@ -10,6 +10,24 @@ class Complex (Eo.Base)
       bar {
          return: array<int*>;
       }
+      wrapper_r {
+         return: Complex;
+      }
+      wrapper_in {
+         params {
+            @in a1: Complex;
+         }
+      }
+      wrapper_inout {
+         params {
+            @inout a1: Complex;
+         }
+      }
+      wrapper_out {
+         params {
+            @out a1: Complex;
+         }
+      }
    }
 }
 

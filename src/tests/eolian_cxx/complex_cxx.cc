@@ -4,25 +4,37 @@
 #include "complex.eo.h"
 #include "complex.eo.hh"
 
-template <typename T>
-struct test1;
-
 template <typename T, typename U>
-struct test1<void(T::*)(U) const>
+struct test_return_type;
+
+template <typename T, typename R, typename U>
+struct test_return_type<R(T::*)(), U>
 {
-  static_assert(std::is_same<efl::eina::range_list<int>, U>::value, "Wrong type");
+   static_assert(std::is_same<R, U>::value, "Wrong type");
+};
+template <typename T, typename R, typename U>
+struct test_return_type<R(T::*)() const, U>
+{
+   static_assert(std::is_same<R, U>::value, "Wrong type");
 };
 
-template <typename T>
-struct test2;
-
 template <typename T, typename U>
-struct test2<U(T::*)() const>
+struct test_param_type;
+
+template <typename T, typename P, typename U>
+struct test_param_type<void(T::*)(P) const, U>
 {
-  static_assert(std::is_same<efl::eina::range_array<int>, U>::value, "Wrong type");
+   static_assert(std::is_same<P, U>::value, "Wrong type");
+};
+template <typename T, typename P, typename U>
+struct test_param_type<void(T::*)(P), U>
+{
+   static_assert(std::is_same<P, U>::value, "Wrong type");
 };
 
-test1<typeof( & nonamespace::Complex::foo )> foo;
-test2<typeof( & nonamespace::Complex::bar )> bar;
-
-  
+test_param_type<typeof( & nonamespace::Complex::foo ), efl::eina::range_list<int>> foo;
+test_return_type<typeof( & nonamespace::Complex::bar ), efl::eina::range_array<int>> bar;
+test_return_type<typeof( & nonamespace::Complex::wrapper_r ), nonamespace::Complex> wrapper_r;
+test_param_type<typeof( & nonamespace::Complex::wrapper_in ), nonamespace::Complex> wrapper_in;
+test_param_type<typeof( & nonamespace::Complex::wrapper_inout ), nonamespace::Complex*> wrapper_inout;
+test_param_type<typeof( & nonamespace::Complex::wrapper_out ), nonamespace::Complex*> wrapper_out;
