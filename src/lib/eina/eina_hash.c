@@ -508,7 +508,22 @@ static int
 _eina_stringshared_key_cmp(const char *key1, EINA_UNUSED int key1_length,
                            const char *key2, EINA_UNUSED int key2_length)
 {
-   return key1 - key2;
+// logically we want to do this:
+//   return key1 - key2;
+// but since they are ptrs and an int can't store the different of 2 ptrs in
+// either 32 or 64bit (signed hasn't got enough range for the diff of 2
+// 32bit values regardless of their type... we'd need 33bits or 65bits)
+// so do this...
+   if (key1 == key2) return 0;
+   if (key1 > key2) return 1;
+   return -1;
+// NOTE: this seems odd. we don't sort by string content at all... we sort
+// by pointer location in memory. this seems odd at first, BUT this does
+// work because with stringshare each ptr holds a unique string and we
+// cannot have 2 ptrs in stringshare have the same string content thus we
+// can't go wrong and have 2 ptrs be different yet the string key be the
+// same, thus we can avoid walking the string, so sorting by ptr value is
+// frankly as good as anything. :) (this is only within the bucket too)
 }
 
 static unsigned int
