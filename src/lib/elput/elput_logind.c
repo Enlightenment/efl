@@ -512,7 +512,7 @@ _logind_open_async(Elput_Manager *em, const char *path, int flags)
    intptr_t fd = -1;
 
    if ((stat(path, &st) < 0) || (!S_ISCHR(st.st_mode)))
-        _logind_pipe_write_fd(em, fd);
+     _logind_pipe_write_fd(em, fd);
    else
      _logind_device_take_async(em, flags, major(st.st_rdev), minor(st.st_rdev));
 }

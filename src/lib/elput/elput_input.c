@@ -274,9 +274,11 @@ _elput_input_init_end(void *data, Ecore_Thread *eth EINA_UNUSED)
 
    manager->input.thread = NULL;
    if (!manager->input.lib) return;
+
    manager->input.hdlr =
-     ecore_main_fd_handler_add(libinput_get_fd(manager->input.lib), ECORE_FD_READ,
-       _cb_input_dispatch, &manager->input, NULL, NULL);
+     ecore_main_fd_handler_add(libinput_get_fd(manager->input.lib),
+                               ECORE_FD_READ, _cb_input_dispatch,
+                               &manager->input, NULL, NULL);
 
    if (manager->input.hdlr)
       _process_events(&manager->input);
@@ -302,7 +304,9 @@ static void
 _elput_input_init_thread(void *data, Ecore_Thread *eth EINA_UNUSED)
 {
    Elput_Manager *manager = data;
-   struct udev *udev = udev_new();
+   struct udev *udev;
+
+   udev = udev_new();
 
    manager->input.lib =
      libinput_udev_create_context(&_input_interface, manager, udev);
@@ -329,8 +333,10 @@ elput_input_init(Elput_Manager *manager)
 
    memset(&manager->input, 0, sizeof(Elput_Input));
    manager->input.thread =
-     ecore_thread_feedback_run(_elput_input_init_thread, _elput_input_init_notify,
-     _elput_input_init_end, _elput_input_init_cancel, manager, 1);
+     ecore_thread_feedback_run(_elput_input_init_thread,
+                               _elput_input_init_notify,
+                               _elput_input_init_end,
+                               _elput_input_init_cancel, manager, 1);
    return !!manager->input.thread;
 }
 
@@ -345,6 +351,7 @@ elput_input_shutdown(Elput_Manager *manager)
 
    EINA_LIST_FREE(manager->input.seats, seat)
      _udev_seat_destroy(seat);
+
    if (manager->input.thread)
      ecore_thread_cancel(manager->input.thread);
    else
