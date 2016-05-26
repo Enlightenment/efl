@@ -396,6 +396,7 @@ _eina_promise_cancel(_Eina_Promise_Default* promise)
         owner->promise.is_cancelled = EINA_TRUE;
         owner->promise.has_finished = EINA_TRUE;
         owner->promise.has_errored = EINA_TRUE;
+        owner->promise.error = EINA_ERROR_PROMISE_CANCEL;
         _eina_promise_cancel_calls(owner, EINA_TRUE);
      }
 }

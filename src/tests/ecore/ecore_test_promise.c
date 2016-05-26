@@ -329,7 +329,7 @@ static void _cancel_callback(const void* data, Eina_Promise_Owner* promise EINA_
 
 static void _cancel_promise_callback(void* data EINA_UNUSED, Eina_Error value, Eina_Promise* promise EINA_UNUSED)
 {
-  ck_assert(!!value);
+  ck_assert(value == EINA_ERROR_PROMISE_CANCEL);
   ecore_main_loop_quit();
 }
 
