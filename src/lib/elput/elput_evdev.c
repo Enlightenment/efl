@@ -384,6 +384,20 @@ _keyboard_keymap_update(Elput_Seat *seat)
 }
 
 static int
+_keyboard_remapped_key_get(Elput_Device *edev, int code)
+{
+   void *ret = NULL;
+
+   if (!edev) return code;
+   if (!edev->key_remap) return code;
+   if (!edev->key_remap_hash) return code;
+
+   ret = eina_hash_find(edev->key_remap_hash, &code);
+   if (ret) code = (int)(intptr_t)ret;
+   return code;
+}
+
+static int
 _keyboard_keysym_translate(xkb_keysym_t keysym, unsigned int modifiers, char *buffer, int bytes)
 {
    unsigned long hbytes = 0;
@@ -456,7 +470,9 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
        ((state == LIBINPUT_KEY_STATE_RELEASED) && (count != 0)))
      return;
 
-   code = libinput_event_keyboard_get_key(event) + 8;
+   code = libinput_event_keyboard_get_key(event);
+   code = _keyboard_remapped_key_get(dev, code) + 8;
+
    timestamp = libinput_event_keyboard_get_time(event);
 
    if (state == LIBINPUT_KEY_STATE_PRESSED)
@@ -1280,6 +1296,9 @@ _evdev_device_destroy(Elput_Device *edev)
 
    libinput_device_unref(edev->device);
    eina_stringshare_del(edev->output_name);
+
+   if (edev->key_remap_hash) eina_hash_free(edev->key_remap_hash);
+
    free(edev);
 }
 

@@ -351,6 +351,34 @@ EAPI void elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh
  */
 EAPI void elput_input_devices_calibrate(Elput_Manager *manager, int w, int h);
 
+/**
+ * Enable key remap functionality
+ *
+ * @param manager
+ * @param enable
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool elput_input_key_remap_enable(Elput_Manager *manager, Eina_Bool enable);
+
+/**
+ * Set a given set of keys as remapped keys
+ *
+ * @param manager
+ * @param from_keys
+ * @param to_keys
+ * @param num
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool elput_input_key_remap_set(Elput_Manager *manager, int *from_keys, int *to_keys, int num);
+
 # endif
 
 # undef EAPI

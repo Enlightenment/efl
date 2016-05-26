@@ -217,7 +217,10 @@ struct _Elput_Device
 
    Elput_Device_Capability caps;
 
+   Eina_Hash *key_remap_hash;
+
    Eina_Bool left_handed : 1;
+   Eina_Bool key_remap : 1;
 };
 
 struct _Elput_Manager

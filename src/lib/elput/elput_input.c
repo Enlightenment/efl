@@ -510,3 +510,69 @@ elput_input_devices_calibrate(Elput_Manager *manager, int w, int h)
           }
      }
 }
+
+EAPI Eina_Bool
+elput_input_key_remap_enable(Elput_Manager *manager, Eina_Bool enable)
+{
+   Elput_Seat *eseat;
+   Elput_Device *edev;
+   Eina_List *l, *ll;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(manager, EINA_FALSE);
+
+   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
+     {
+        EINA_LIST_FOREACH(eseat->devices, ll, edev)
+          {
+             if (!(edev->caps & EVDEV_SEAT_KEYBOARD)) continue;
+
+             edev->key_remap = enable;
+             if ((!enable) && (edev->key_remap_hash))
+               {
+                  eina_hash_free(edev->key_remap_hash);
+                  edev->key_remap_hash = NULL;
+               }
+          }
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+elput_input_key_remap_set(Elput_Manager *manager, int *from_keys, int *to_keys, int num)
+{
+   Elput_Seat *eseat;
+   Elput_Device *edev;
+   Eina_List *l, *ll;
+   int i = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(manager, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(from_keys, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(to_keys, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((num <= 0), EINA_FALSE);
+
+   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
+     {
+        EINA_LIST_FOREACH(eseat->devices, ll, edev)
+          {
+             if (!(edev->caps & EVDEV_SEAT_KEYBOARD)) continue;
+
+             if (!edev->key_remap) continue;
+             if (!edev->key_remap_hash)
+               edev->key_remap_hash = eina_hash_int32_new(NULL);
+             if (!edev->key_remap_hash) continue;
+
+             for (i = 0; i < num; i++)
+               {
+                  if ((!from_keys[i]) || (!to_keys[i]))
+                    continue;
+               }
+
+             for (i = 0; i < num; i++)
+               eina_hash_add(edev->key_remap_hash, &from_keys[i],
+                             (void *)(intptr_t)to_keys[i]);
+          }
+     }
+
+   return EINA_TRUE;
+}
