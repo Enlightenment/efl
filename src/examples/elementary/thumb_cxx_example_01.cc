@@ -11,11 +11,11 @@ elm_main(int argc, char *argv[])
    elm_app_info_set(reinterpret_cast<void*>(elm_main), "elementary", "images/plant_01.jpg");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   ::elm::win_standard win;
-   win.title_set("Thumbnailer");
+   efl::ui::win::Standard win;
+   //win.title_set("Thumbnailer");
    win.autohide_set(true);
 
-   ::elm::thumb thumb(efl::eo::parent = win);
+   elm::Thumb thumb(win);
 
    auto generation_started = std::bind([] { std::cout << "thumbnail generation started." << std::endl; });
 
@@ -23,22 +23,21 @@ elm_main(int argc, char *argv[])
 
    auto generation_error = std::bind([] { std::cout << "thumbnail generation error." << std::endl; });
 
-   thumb.callback_generate_start_add( generation_started );
-   thumb.callback_generate_stop_add( generation_finished );
-   thumb.callback_generate_error_add( generation_error );
+   efl::eolian::event_add(thumb.generate_start_event, thumb, generation_started);
+   efl::eolian::event_add(thumb.generate_stop_event, thumb, generation_finished);
+   efl::eolian::event_add(thumb.generate_error_event, thumb, generation_error);
 
-   thumb.size_set(160, 160);
-   thumb.editable_set(false);
    std::stringstream ss;
    ss << elm_app_data_dir_get() << "/images/plant_01.jpg";
    thumb.file_set(ss.str(), "image");
-   thumb.reload();
+   thumb.eo_cxx::efl::Gfx::size_set(160, 160);
+   //thumb.reload();
 
-   thumb.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   win.resize_object_add(thumb);
+   // thumb.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   //win.resize_object_add(thumb);
    thumb.visible_set(true);
 
-   win.size_set(320, 320);
+   win.eo_cxx::efl::Gfx::size_set(200, 200);
    win.visible_set(true);
 
    elm_run();

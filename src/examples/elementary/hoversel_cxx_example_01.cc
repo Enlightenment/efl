@@ -12,18 +12,18 @@ elm_main (int argc, char *argv[])
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   ::elm::win_standard win;
+   ::elm::win::Standard win;
    win.title_set("Hoversel");
    win.autohide_set(true);
 
-   evas::rectangle rect(efl::eo::parent = win);
+   ::evas::Rectangle rect(efl::eo::parent = win);
    rect.color_set(255, 0, 0, 255);
    rect.visible_set(true);
 
    ::elm::hoversel hoversel(efl::eo::parent = win);
    hoversel.horizontal_set(false);
-   hoversel.text_set("elm.text", "Add an item to Hoversel");
-   hoversel.content_set(nullptr, rect);
+   hoversel.part_text_set("elm.text", "Add an item to Hoversel");
+   hoversel.part_content_set(nullptr, rect);
 
    hoversel.item_add("Print items", nullptr, ELM_ICON_NONE, &_print_items, NULL);
    hoversel.item_add( "Option 2", "home", ELM_ICON_STANDARD, NULL,NULL);

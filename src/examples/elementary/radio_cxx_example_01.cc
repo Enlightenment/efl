@@ -11,7 +11,7 @@ elm_main (int argc, char *argv[])
    win.title_set("Radio");
    win.autohide_set(true);
 
-   ::elm::box bx(efl::eo::parent = win);
+   ::efl::ui::Box bx(efl::eo::parent = win);
    bx.horizontal_set(true);
    bx.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    win.resize_object_add(bx);

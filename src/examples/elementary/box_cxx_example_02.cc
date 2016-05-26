@@ -46,21 +46,21 @@ elm_main(int argc, char *argv[])
 
    Transitions_Data tdata;
 
-   ::elm::win_standard win;
+   ::elm::win::Standard win;
    win.title_set("Box Transition");
    win.autohide_set(true);
 
-   elm::box bigbox ( efl::eo::parent = win );
+   elm::Ui::Box bigbox ( efl::eo::parent = win );
    bigbox.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   win.resize_object_add(bigbox);
+   //win.resize_object_add(bigbox);
    bigbox.visible_set(true);
 
-   elm::box buttons ( efl::eo::parent = win );
-   buttons.horizontal_set(EINA_TRUE);
+   elm::ui::Box buttons ( efl::eo::parent = win );
+   //buttons.horizontal_set(true);
    bigbox.pack_end(buttons);
    buttons.visible_set(true);
 
-   elm::button add ( efl::eo::parent = win );
+   elm::Button add ( efl::eo::parent = win );
    add.text_set("elm.text", "Add");
    buttons.pack_end(add);
    add.visible_set(true);
@@ -76,13 +76,13 @@ elm_main(int argc, char *argv[])
          }
       }));
 
-   elm::button clear ( efl::eo::parent = win );
+   elm::Button clear ( efl::eo::parent = win );
    clear.text_set("elm.text", "Clear");
    buttons.pack_end(clear);
    clear.visible_set(true);
    clear.callback_clicked_add(std::bind([&tdata] { tdata.box.lock()->clear(); }));
 
-   elm::box dynamic ( efl::eo::parent = win );
+   elm::Box dynamic ( efl::eo::parent = win );
    dynamic.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    dynamic.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
    bigbox.pack_end(dynamic);
@@ -90,14 +90,14 @@ elm_main(int argc, char *argv[])
 
    auto unpack = std::bind([&tdata] (evas::clickable_interface obj)
      {
-        elm::button btn = efl::eo::downcast<elm::button>(obj);
+       elm::Button btn = efl::eo::downcast<elm::button>(obj);
         tdata.box.lock()->unpack(btn);
         btn.position_set(0, 50);
         btn.object_smart::color_set(128, 64, 0, 128);
      }, std::placeholders::_1)
    ;
 
-   elm::button bt1 ( efl::eo::parent = win );
+   elm::Button bt1 ( efl::eo::parent = win );
    bt1.text_set("elm.text", "Button 1");
    bt1.callback_clicked_add(unpack);
    bt1.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -105,7 +105,7 @@ elm_main(int argc, char *argv[])
    dynamic.pack_end(bt1);
    bt1.visible_set(true);
 
-   elm::button bt2 ( efl::eo::parent = win );
+   elm::Button bt2 ( efl::eo::parent = win );
    bt2.text_set("elm.text", "Button 2");
    bt2.size_hint_weight_set(EVAS_HINT_EXPAND, 0.0);
    bt2.size_hint_align_set(1.0, 0.5);
@@ -113,7 +113,7 @@ elm_main(int argc, char *argv[])
    dynamic.pack_end(bt2);
    bt2.visible_set(true);
 
-   elm::button bt3 ( efl::eo::parent = win );
+   elm::Button bt3 ( efl::eo::parent = win );
    bt3.text_set("elm.text", "Button 3");
    bt3.callback_clicked_add(unpack);
    dynamic.pack_end(bt3);

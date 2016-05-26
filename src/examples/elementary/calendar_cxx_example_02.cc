@@ -1,3 +1,8 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#include "elementary_config.h"
+#endif
+
 #include <Elementary.hh>
 
 static char *
@@ -18,17 +23,19 @@ elm_main (int argc, char *argv[])
        "S", "M", "T", "W", "T", "F", "S"
      };
 
-   ::elm::win_standard win;
-   win.title_set("Calendar Layout Formatting Example");
+   efl::ui::win::Standard win;
+   //win.title_set("Calendar Layout Formatting Example");
    win.autohide_set(true);
 
-   ::elm::calendar cal(efl::eo::parent = win);
-   cal.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   win.resize_object_add(cal);
+   ::elm::Calendar cal(win);
+   //cal.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   //win.resize_object_add(cal);
 
    cal.format_function_set(_format_month_year);
-   cal.weekdays_names_set(weekdays);
+   // cal.weekdays_names_set(weekdays);
 
+   cal.eo_cxx::efl::Gfx::size_set(125,134);  
+   win.eo_cxx::efl::Gfx::size_set(125,134);
    cal.visible_set(true);
    win.visible_set(true);
 

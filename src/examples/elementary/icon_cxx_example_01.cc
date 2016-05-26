@@ -1,3 +1,8 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#include "elementary_config.h"
+#endif
+
 #include <Elementary.hh>
 
 EAPI_MAIN int
@@ -5,31 +10,30 @@ elm_main (int argc, char *argv[])
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   ::elm::win win(elm_win_util_standard_add("icon", "Icon"));
+   efl::ui::win::Standard win;
+   //win.title_set("Icon");
    win.autohide_set(true);
 
-   ::elm::icon icon(efl::eo::parent = win);
-   icon.order_lookup_set(ELM_ICON_LOOKUP_THEME_FDO);
-   icon.standard_set("home");
+   efl::ui::Image icon(win);
+   icon.icon_set("home");
 
-   const char *path, *group;
-   icon.file_get(&path, &group);
+   efl::eina::string_view path, group;
+   icon.file_get(path, group);
    std::cout << "path = " << path << ", group = "<< group;
 
-   efl::eina::optional<std::string> name;
-   name = icon.standard_get();
-   std::cout << ", name = " << *name << std::endl;
+   std::cout << ", name = " << icon.icon_get() << std::endl;
 
-   icon.no_scale_set(true);
-   icon.resizable_set(false, true);
-   icon.smooth_set(false);
-   icon.fill_outside_set(true);
+   icon.scale_type_set(EFL_UI_IMAGE_SCALE_TYPE_NONE);
+   //icon.resizable_set(false, true);
+   //icon.smooth_set(false);
+   //icon.fill_outside_set(true);
 
-   icon.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   win.resize_object_add(icon);
+   // icon.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   //win.resize_object_add(icon);
+   icon.eo_cxx::efl::Gfx::size_set(320,320);
    icon.visible_set(true);
 
-   win.size_set(320, 320);
+   win.eo_cxx::efl::Gfx::size_set(320, 320);
    win.visible_set(true);
 
    elm_run();
