@@ -784,6 +784,25 @@ group { name: "page_layout";
            }
          }
       }
+      part { name: "element1";
+         type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+           rel1.relative: 0.4 0.2;
+           rel1.to:"bg";
+           rel2.relative: 0.6 0.4;
+           rel2.to:"bg";
+         }
+      }
+      part { name: "element2";
+         type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+           rel1.relative: 0.4 0.6;
+           rel1.to:"bg";
+           rel2.relative: 0.6 0.8;
+           rel2.to:"bg";
+         }
+      }
    }
-
 }

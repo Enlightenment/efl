@@ -1273,6 +1273,8 @@ _elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *ite
 EOLIAN static Eina_Bool
 _elm_entry_elm_widget_on_focus_region(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
+   Evas_Coord edje_x, edje_y, elm_x, elm_y;
+
    edje_object_part_text_cursor_geometry_get
      (sd->entry_edje, "elm.text", x, y, w, h);
 
@@ -1281,6 +1283,13 @@ _elm_entry_elm_widget_on_focus_region(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, E
         evas_object_geometry_get(sd->entry_edje, NULL, NULL, NULL, h);
         if (y) *y = 0;
      }
+
+   evas_object_geometry_get(sd->entry_edje, &edje_x, &edje_y, NULL, NULL);
+
+   evas_object_geometry_get(obj, &elm_x, &elm_y, NULL, NULL);
+
+   if (x) *x += edje_x - elm_x;
+   if (y) *y += edje_y - elm_y;
 
    return EINA_TRUE;
 }

@@ -686,6 +686,82 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 }
 
 static void
+my_en_bt_clr(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+   elm_entry_cursor_end_set(en);
+}
+
+void
+test_entry_on_page_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *sc, *bx, *ly, *rect, *en, *btn, *lb;
+   char buf[PATH_MAX];
+
+   win = elm_win_util_standard_add("entry-on-page-scroll", "Entry on Page Scroll");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   sc = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_scroller_page_relative_set(sc, 1.0, 0.0);
+   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_page_scroll_limit_set(sc, 1, 0);
+   elm_win_resize_object_add(win, sc);
+   evas_object_show(sc);
+
+   bx = elm_box_add(sc);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_object_content_set(sc, bx);
+   evas_object_show(bx);
+
+   ly = elm_layout_add(bx);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "page_layout");
+   rect = evas_object_rectangle_add(evas_object_evas_get(ly));
+   evas_object_color_set(rect, 50, 0, 0, 50);
+   elm_object_part_content_set(ly, "page", rect);
+
+   en = elm_entry_add(ly);
+   elm_object_part_text_set(en, "guide", "Entry area");
+   elm_object_text_set(en, "This is very long text, it is longer than width of this page. So if scroller is moved to next page, that is bug when you click under button and then click this entry text");
+   elm_object_part_content_set(ly, "element1", en);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   evas_object_show(en);
+
+   btn = elm_button_add(ly);
+   elm_object_text_set(btn, "Click this and then click entry");
+   elm_object_part_content_set(ly, "element2", btn);
+   evas_object_smart_callback_add(btn, "clicked", my_en_bt_clr, en);
+   evas_object_show(btn);
+   elm_object_focus_set(btn, EINA_TRUE);
+
+   elm_object_part_text_set(ly, "text", "Page1");
+   elm_box_pack_end(bx, ly);
+   evas_object_show(ly);
+
+   ly = elm_layout_add(bx);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "page_layout");
+   rect = evas_object_rectangle_add(evas_object_evas_get(ly));
+   evas_object_color_set(rect, 0, 50, 0, 50);
+   elm_object_part_content_set(ly, "page", rect);
+   elm_object_part_text_set(ly, "text", "Page2");
+
+   lb = elm_label_add(ly);
+   elm_object_text_set(lb, "It should be shown by user's scroll");
+   elm_object_part_content_set(ly, "element2", lb);
+   evas_object_show(lb);
+
+   elm_box_pack_end(bx, ly);
+   evas_object_show(ly);
+
+   evas_object_resize(win, 400, 550);
+   evas_object_show(win);
+
+}
+
+static void
 my_ent_bt_clr(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
