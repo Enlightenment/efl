@@ -524,6 +524,7 @@ _pointer_create(Elput_Seat *seat)
    if (!ptr) return NULL;
 
    ptr->seat = seat;
+   ptr->mouse.threshold = 250;
 
    return ptr;
 }
