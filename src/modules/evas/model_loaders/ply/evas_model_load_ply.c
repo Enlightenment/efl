@@ -191,9 +191,9 @@ void
 evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
 {
    char *current = NULL, *map = NULL;
-   Evas_Model_Load_Save_Header header = { 0 };
-   Evas_Model_Load_Save_Data data = { 0 };
-   Evas_Model_Load_Save_Stride stride = { 0 };
+   Evas_Model_Load_Save_Header header = { 0, 0, 0, 0, 0, 0 };
+   Evas_Model_Load_Save_Data data = { NULL, NULL, NULL, NULL, NULL };
+   Evas_Model_Load_Save_Stride stride = { 0, 0, 0, 0 };
 
    map = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
    if (map == NULL)
