@@ -3,10 +3,13 @@
 
 #include "elm_layout_internal_part.eo.h"
 
+//#define ELM_PART_HOOK do { ERR("%p:%s [%d]", pd->obj, pd->part, (int) pd->temp); } while(0)
+#define ELM_PART_HOOK
+
 #define ELM_PART_REF(obj, pd) do { if (!(pd->temp++)) eo_ref(obj); } while(0)
 #define ELM_PART_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) eo_unref(obj); } } while(0)
-#define ELM_PART_RETURN_VAL(a) do { typeof(a) _ret = a; ELM_PART_UNREF(obj, pd); return _ret; } while(0)
-#define ELM_PART_RETURN_VOID do { ELM_PART_UNREF(obj, pd); return; } while(0)
+#define ELM_PART_RETURN_VAL(a) do { ELM_PART_HOOK; typeof(a) _ret = a; ELM_PART_UNREF(obj, pd); return _ret; } while(0)
+#define ELM_PART_RETURN_VOID do { ELM_PART_HOOK; ELM_PART_UNREF(obj, pd); return; } while(0)
 #define ELM_PART_CALL(a) ({ ELM_PART_REF(obj, pd); a; })
 
 typedef struct _Elm_Part_Data Elm_Part_Data;
@@ -21,17 +24,19 @@ struct _Elm_Part_Data
 // Note: this generic implementation can be improved to support part object
 // caching or something...
 
-// Main part proxy implementation
-#define ELM_PART_IMPLEMENT(type, TYPE, typedata, partdata) \
-\
+#define ELM_PART_IMPLEMENT_DESTRUCTOR(type, TYPE, typedata, partdata) \
 static EOLIAN void \
 _ ## type ## _internal_part_eo_base_destructor(Eo *obj, partdata *pd) \
 { \
+   ELM_PART_HOOK; \
    free(pd->part); \
    eo_data_xunref(pd->obj, pd->sd, obj); \
    eo_destructor(eo_super(obj, TYPE ## _INTERNAL_PART_CLASS)); \
 } \
-\
+
+// Main part proxy implementation
+#define ELM_PART_IMPLEMENT(type, TYPE, typedata, partdata) \
+ELM_PART_IMPLEMENT_DESTRUCTOR(type, TYPE, typedata, partdata) \
 static EOLIAN Eo_Base * \
 _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const char *part) \
 { \

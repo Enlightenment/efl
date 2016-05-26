@@ -17,7 +17,6 @@ class Efl.Ui.Layout_Internal.Box (Eo.Base, Efl.Pack.Linear)
       }
    }
    implements {
-      Eo.Base.finalize;
       Eo.Base.destructor;
       Efl.Container.content_iterate;
       Efl.Container.content_count;

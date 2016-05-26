@@ -1993,45 +1993,24 @@ elm_layout_table_clear(Elm_Layout *obj, const char *part, Eina_Bool clear)
 
 /* Efl.Part implementation */
 
-static EOLIAN void
-_elm_layout_internal_part_eo_base_destructor(Eo *obj, Elm_Part_Data *pd)
-{
-   free(pd->part);
-   eo_data_xunref(pd->obj, pd->sd, obj);
-   eo_destructor(eo_super(obj, ELM_LAYOUT_INTERNAL_PART_CLASS));
-}
-
 static EOLIAN Eo_Base *
 _elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd,
                           const char *part)
 {
-   Elm_Layout_Sub_Object_Data *sub_d;
    const Evas_Object *subobj;
    Elm_Part_Data *pd;
-   Eina_List *l;
    Eo *proxy;
 
    if (!_elm_layout_part_aliasing_eval(obj, sd, &part, EINA_FALSE))
      return NULL;
 
-   // Find parts which already have content
-   if (EINA_LIKELY(!!part))
-     {
-        EINA_LIST_FOREACH(sd->subs, l, sub_d)
-          {
-             if ((sub_d->type == TABLE_PACK) || _sub_box_is(sub_d))
-               {
-                  if (!strcmp(part, sub_d->part))
-                    return _elm_layout_pack_proxy_get((Eo *) obj, sub_d->obj, part);
-               }
-          }
-     }
-
-   // Ask edje for existing parts: BOX & TABLE
    ELM_WIDGET_DATA_GET_OR_RETURN((Eo *) obj, wd, NULL);
+
+   // Ask edje for existing parts
    subobj = edje_object_part_object_get(wd->resize_obj, part);
    if (subobj)
      {
+        // Support BOX & TABLE
         proxy = _elm_layout_pack_proxy_get((Eo *) obj, (Eo *) subobj, part);
         if (proxy) return proxy;
      }
@@ -2050,6 +2029,7 @@ _elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd,
    return proxy;
 }
 
+ELM_PART_IMPLEMENT_DESTRUCTOR(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_SET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_GET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)

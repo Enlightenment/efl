@@ -17,7 +17,6 @@ class Efl.Ui.Layout_Internal.Table (Eo.Base, Efl.Pack.Grid)
       }
    }
    implements {
-      Eo.Base.finalize;
       Eo.Base.destructor;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
