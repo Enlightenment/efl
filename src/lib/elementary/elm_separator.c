@@ -21,7 +21,7 @@ _elm_separator_elm_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
    Eina_Bool int_ret = EINA_FALSE;
    ELM_LAYOUT_DATA_GET(obj, ld);
 
-   if (sd->horizontal)
+   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
      eina_stringshare_replace(&ld->group, "horizontal");
    else
      eina_stringshare_replace(&ld->group, "vertical");
@@ -51,6 +51,8 @@ _elm_separator_evas_object_smart_add(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
+   sd->orientation = EFL_ORIENT_VERTICAL;
+
    if (!elm_layout_theme_set
        (obj, "separator", "vertical", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
@@ -66,6 +68,32 @@ elm_separator_add(Evas_Object *parent)
    return obj;
 }
 
+EAPI void
+elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   Efl_Orient orient;
+
+   if (horizontal)
+     orient = EFL_ORIENT_HORIZONTAL;
+   else
+     orient = EFL_ORIENT_VERTICAL;
+
+   if (orient == efl_orientation_get(obj)) return;
+
+   efl_orientation_set(obj, orient);
+}
+
+EAPI Eina_Bool
+elm_separator_horizontal_get(const Evas_Object *obj)
+{
+   ELM_SEPARATOR_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+   if (sd->orientation == EFL_ORIENT_VERTICAL)
+     return EINA_FALSE;
+   else
+     return EINA_TRUE;
+}
+
 EOLIAN static Eo *
 _elm_separator_eo_base_constructor(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
@@ -77,20 +105,23 @@ _elm_separator_eo_base_constructor(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_separator_horizontal_set(Eo *obj, Elm_Separator_Data *sd, Eina_Bool horizontal)
+_elm_separator_efl_orientation_orientation_set(Eo *obj, Elm_Separator_Data *sd, Efl_Orient dir)
 {
-   horizontal = !!horizontal;
-   if (sd->horizontal == horizontal) return;
+   if (dir != EFL_ORIENT_VERTICAL &&
+       dir != EFL_ORIENT_HORIZONTAL)
+     return;
 
-   sd->horizontal = horizontal;
+   if (sd->orientation == dir) return;
+
+   sd->orientation = dir;
 
    elm_obj_widget_theme_apply(obj);
 }
 
-EOLIAN static Eina_Bool
-_elm_separator_horizontal_get(Eo *obj EINA_UNUSED, Elm_Separator_Data *sd)
+EOLIAN static Efl_Orient
+_elm_separator_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Elm_Separator_Data *sd)
 {
-   return sd->horizontal;
+   return sd->orientation;
 }
 
 EOLIAN static Eina_Bool

@@ -26,7 +26,7 @@
 typedef struct _Elm_Separator_Data Elm_Separator_Data;
 struct _Elm_Separator_Data
 {
-   Eina_Bool             horizontal : 1;
+   Efl_Orient  orientation;
 };
 
 /**
