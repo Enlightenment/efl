@@ -265,6 +265,22 @@ ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *device, int w, int h)
    elput_input_pointer_max_set(device->em, w, h);
 }
 
+EAPI void
+ecore_drm2_device_keyboard_cached_context_set(Ecore_Drm2_Device *device, void *context)
+{
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   elput_input_keyboard_cached_context_set(device->em, context);
+}
+
+EAPI void
+ecore_drm2_device_keyboard_cached_keymap_set(Ecore_Drm2_Device *device, void *keymap)
+{
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   elput_input_keyboard_cached_keymap_set(device->em, keymap);
+}
+
 EAPI unsigned int *
 ecore_drm2_device_crtcs_get(Ecore_Drm2_Device *device, int *num)
 {
