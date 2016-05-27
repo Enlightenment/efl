@@ -390,6 +390,17 @@ EAPI Eina_Bool elput_input_key_remap_set(Elput_Manager *manager, int *from_keys,
  */
 EAPI void elput_input_keyboard_cached_context_set(Elput_Manager *manager, void *context);
 
+/**
+ * Set a cached keymap to be used for keyboards
+ *
+ * @param manager
+ * @param keymap
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.18
+ */
+EAPI void elput_input_keyboard_cached_keymap_set(Elput_Manager *manager, void *keymap);
+
 # endif
 
 # undef EAPI

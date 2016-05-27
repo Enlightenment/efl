@@ -165,9 +165,10 @@ _keyboard_info_destroy(Elput_Keyboard_Info *info, Eina_Bool external)
 {
    if (--info->refs > 0) return;
 
+   xkb_keymap_unref(info->keymap.map);
+
    if (!external)
      {
-        xkb_keymap_unref(info->keymap.map);
         if (info->keymap.area) munmap(info->keymap.area, info->keymap.size);
         if (info->keymap.fd >= 0) close(info->keymap.fd);
      }

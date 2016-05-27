@@ -249,6 +249,7 @@ struct _Elput_Manager
 
    struct
      {
+        struct xkb_keymap *keymap;
         struct xkb_context *context;
      } cached;
 

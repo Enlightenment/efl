@@ -585,3 +585,12 @@ elput_input_keyboard_cached_context_set(Elput_Manager *manager, void *context)
    if ((context) && (manager->cached.context == context)) return;
    manager->cached.context = context;
 }
+
+EAPI void
+elput_input_keyboard_cached_keymap_set(Elput_Manager *manager, void *keymap)
+{
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+
+   if ((keymap) && (manager->cached.keymap == keymap)) return;
+   manager->cached.keymap = keymap;
+}
