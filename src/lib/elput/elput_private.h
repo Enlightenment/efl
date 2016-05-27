@@ -247,6 +247,11 @@ struct _Elput_Manager
         Eldbus_Proxy *manager;
      } dbus;
 
+   struct
+     {
+        struct xkb_context *context;
+     } cached;
+
    Elput_Input input;
    Eina_Bool del : 1;
 };

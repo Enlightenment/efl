@@ -576,3 +576,12 @@ elput_input_key_remap_set(Elput_Manager *manager, int *from_keys, int *to_keys, 
 
    return EINA_TRUE;
 }
+
+EAPI void
+elput_input_keyboard_cached_context_set(Elput_Manager *manager, void *context)
+{
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+
+   if ((context) && (manager->cached.context == context)) return;
+   manager->cached.context = context;
+}

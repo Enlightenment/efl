@@ -206,6 +206,7 @@ _keyboard_create(Elput_Seat *seat)
    if (!kbd) return NULL;
 
    kbd->seat = seat;
+
    return kbd;
 }
 
@@ -1247,7 +1248,7 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
 
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_KEYBOARD))
      {
-        _keyboard_init(seat, NULL);
+        _keyboard_init(seat, seat->manager->cached.keymap);
         edev->caps |= EVDEV_SEAT_KEYBOARD;
      }
  
