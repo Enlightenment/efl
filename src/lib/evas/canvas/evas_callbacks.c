@@ -62,13 +62,26 @@ static inline void *
 _pointer_event_get(const _eo_evas_object_cb_info *info, const Eo_Event *event)
 {
    if (!info->data) return NULL;
+
+   /* See also evas_events.c: _pointer_event_create() */
+
+#define EV_CASE(TYPE, Type) \
+   case EVAS_CALLBACK_ ## TYPE: return ((Evas_Event_ ## Type *) event->info)->reserved
    switch (info->type)
      {
-      case EVAS_CALLBACK_MOUSE_MOVE:
-        return ((Evas_Event_Mouse_Move *) event->info)->reserved;
-      default:
-        return NULL;
+      EV_CASE(MOUSE_MOVE, Mouse_Move);
+      EV_CASE(MOUSE_OUT, Mouse_Out);
+      EV_CASE(MOUSE_IN, Mouse_In);
+      EV_CASE(MOUSE_DOWN, Mouse_Down);
+      EV_CASE(MOUSE_UP, Mouse_Up);
+      EV_CASE(MULTI_MOVE, Multi_Move);
+      EV_CASE(MULTI_DOWN, Multi_Down);
+      EV_CASE(MULTI_UP, Multi_Up);
+      EV_CASE(MOUSE_WHEEL, Mouse_Wheel);
+      default: return NULL;
      }
+#undef EV_CASE
+
 }
 
 static Eina_Bool

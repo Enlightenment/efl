@@ -24,11 +24,50 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
 
 #warning Modifiers and locks not supported yet - very bad!
 
+#if defined(DEBUG)
+# define CHKACT(a) do { if (evdata->action != EFL_POINTER_ACTION_ ## a) abort(); } while (0)
+#else
+# define CHKACT(a) do {} while(0)
+#endif
+
    switch (type)
      {
-      //cse EVAS_CALLBACK_MOUSE_IN:
-      //case EVAS_CALLBACK_MOUSE_OUT:
+      case EVAS_CALLBACK_MOUSE_IN:
+        CHKACT(IN);
+        {
+           const Evas_Event_Mouse_In *e = event_info;
+           ev->action = EFL_POINTER_ACTION_IN;
+           ev->cur.x = e->canvas.x;
+           ev->cur.y = e->canvas.y;
+           ev->cur.xsub = e->canvas.x;
+           ev->cur.ysub = e->canvas.y;
+           ev->data = e->data;
+           ev->timestamp = e->timestamp;
+           ev->event_flags = e->event_flags;
+           ev->device = e->dev;
+           ev->source = e->event_src;
+           break;
+        }
+
+      case EVAS_CALLBACK_MOUSE_OUT:
+        CHKACT(OUT);
+        {
+           const Evas_Event_Mouse_Out *e = event_info;
+           ev->action = EFL_POINTER_ACTION_OUT;
+           ev->cur.x = e->canvas.x;
+           ev->cur.y = e->canvas.y;
+           ev->cur.xsub = e->canvas.x;
+           ev->cur.ysub = e->canvas.y;
+           ev->data = e->data;
+           ev->timestamp = e->timestamp;
+           ev->event_flags = e->event_flags;
+           ev->device = e->dev;
+           ev->source = e->event_src;
+           break;
+        }
+
       case EVAS_CALLBACK_MOUSE_DOWN:
+        CHKACT(DOWN);
         {
            const Evas_Event_Mouse_Down *e = event_info;
            ev->action = EFL_POINTER_ACTION_DOWN;
@@ -47,6 +86,7 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
         }
 
       case EVAS_CALLBACK_MOUSE_UP:
+        CHKACT(UP);
         {
            const Evas_Event_Mouse_Up *e = event_info;
            ev->action = EFL_POINTER_ACTION_UP;
@@ -65,6 +105,7 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
         }
 
       case EVAS_CALLBACK_MOUSE_MOVE:
+        CHKACT(MOVE);
         {
            const Evas_Event_Mouse_Move *e = event_info;
            ev->action = EFL_POINTER_ACTION_MOVE;
@@ -86,6 +127,7 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
         }
 
       case EVAS_CALLBACK_MOUSE_WHEEL:
+        CHKACT(WHEEL);
         {
            const Evas_Event_Mouse_Wheel *e = event_info;
            ev->action = EFL_POINTER_ACTION_WHEEL;
@@ -103,6 +145,7 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
         }
 
       case EVAS_CALLBACK_MULTI_DOWN:
+        CHKACT(DOWN);
         {
            const Evas_Event_Multi_Down *e = event_info;
            ev->action = EFL_POINTER_ACTION_DOWN;
@@ -125,6 +168,7 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
         }
 
       case EVAS_CALLBACK_MULTI_UP:
+        CHKACT(UP);
         {
            const Evas_Event_Multi_Up *e = event_info;
            ev->action = EFL_POINTER_ACTION_UP;
@@ -147,6 +191,7 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
         }
 
       case EVAS_CALLBACK_MULTI_MOVE:
+        CHKACT(MOVE);
         {
            const Evas_Event_Multi_Move *e = event_info;
            ev->action = EFL_POINTER_ACTION_MOVE;
@@ -183,12 +228,57 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
 
    switch (ev->action)
      {
+      case EFL_POINTER_ACTION_IN:
+        {
+           Evas_Event_Mouse_In *e = calloc(1, sizeof(*e));
+           if (ptype) *ptype = EVAS_CALLBACK_MOUSE_IN;
+           ev->legacy = e;
+           e->reserved = ev->eo;
+
+           e->buttons = ev->pressed_buttons;
+           e->canvas.x = ev->cur.x;
+           e->canvas.y = ev->cur.y;
+           e->output.x = ev->cur.x;
+           e->output.y = ev->cur.y;
+           e->data = ev->data;
+           e->timestamp = ev->timestamp;
+           e->event_flags = ev->event_flags;
+           e->dev = ev->device;
+           e->modifiers = NULL; /* FIXME */
+           e->locks = NULL; /* FIXME */
+           e->event_src = ev->source;
+        }
+        break;
+
+      case EFL_POINTER_ACTION_OUT:
+        {
+           Evas_Event_Mouse_Out *e = calloc(1, sizeof(*e));
+           if (ptype) *ptype = EVAS_CALLBACK_MOUSE_OUT;
+           ev->legacy = e;
+           e->reserved = ev->eo;
+
+           e->buttons = ev->pressed_buttons;
+           e->canvas.x = ev->cur.x;
+           e->canvas.y = ev->cur.y;
+           e->output.x = ev->cur.x;
+           e->output.y = ev->cur.y;
+           e->data = ev->data;
+           e->timestamp = ev->timestamp;
+           e->event_flags = ev->event_flags;
+           e->dev = ev->device;
+           e->event_src = ev->source;
+           e->modifiers = NULL; /* FIXME */
+           e->locks = NULL; /* FIXME */
+        }
+        break;
+
       case EFL_POINTER_ACTION_DOWN:
         if (!ev->finger || !multi)
           {
              Evas_Event_Mouse_Down *e = calloc(1, sizeof(*e));
              if (ptype) *ptype = EVAS_CALLBACK_MOUSE_DOWN;
              ev->legacy = e;
+             e->reserved = ev->eo;
 
              e->button = ev->button;
              e->canvas.x = ev->cur.x;
@@ -201,12 +291,15 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
              e->event_src = ev->source;
+             e->modifiers = NULL; /* FIXME */
+             e->locks = NULL; /* FIXME */
           }
         else
           {
              Evas_Event_Multi_Down *e = calloc(1, sizeof(*e));
              if (ptype) *ptype = EVAS_CALLBACK_MULTI_DOWN;
              ev->legacy = e;
+             e->reserved = ev->eo;
 
              e->device = ev->finger;
              e->radius = ev->radius;
@@ -225,6 +318,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->timestamp = ev->timestamp;
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
+             e->modifiers = NULL; /* FIXME */
+             e->locks = NULL; /* FIXME */
           }
         break;
 
@@ -234,6 +329,7 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              Evas_Event_Mouse_Up *e = calloc(1, sizeof(*e));
              if (ptype) *ptype = EVAS_CALLBACK_MOUSE_UP;
              ev->legacy = e;
+             e->reserved = ev->eo;
 
              e->button = ev->button;
              e->canvas.x = ev->cur.x;
@@ -246,12 +342,15 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
              e->event_src = ev->source;
+             e->modifiers = NULL; /* FIXME */
+             e->locks = NULL; /* FIXME */
           }
         else
           {
              Evas_Event_Multi_Down *e = calloc(1, sizeof(*e));
              if (ptype) *ptype = EVAS_CALLBACK_MULTI_UP;
              ev->legacy = e;
+             e->reserved = ev->eo;
 
              e->device = ev->finger;
              e->radius = ev->radius;
@@ -270,6 +369,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->timestamp = ev->timestamp;
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
+             e->modifiers = NULL; /* FIXME */
+             e->locks = NULL; /* FIXME */
              break;
           }
         break;
@@ -280,6 +381,7 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              Evas_Event_Mouse_Move *e = calloc(1, sizeof(*e));
              if (ptype) *ptype = EVAS_CALLBACK_MOUSE_MOVE;
              ev->legacy = e;
+             e->reserved = ev->eo;
 
              e->buttons = ev->pressed_buttons;
              e->cur.canvas.x = ev->cur.x;
@@ -295,12 +397,15 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
              e->event_src = ev->source;
+             e->modifiers = NULL; /* FIXME */
+             e->locks = NULL; /* FIXME */
           }
         else
           {
              Evas_Event_Multi_Move *e = calloc(1, sizeof(*e));
              if (ptype) *ptype = EVAS_CALLBACK_MULTI_MOVE;
              ev->legacy = e;
+             e->reserved = ev->eo;
 
              e->device = ev->finger;
              e->radius = ev->radius;
@@ -318,6 +423,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->timestamp = ev->timestamp;
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
+             e->modifiers = NULL; /* FIXME */
+             e->locks = NULL; /* FIXME */
           }
         break;
 
@@ -326,6 +433,7 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
            Evas_Event_Mouse_Wheel *e = calloc(1, sizeof(*e));
            if (ptype) *ptype = EVAS_CALLBACK_MOUSE_WHEEL;
            ev->legacy = e;
+           e->reserved = ev->eo;
 
            e->direction = (ev->wheel.dir == EFL_ORIENT_VERTICAL);
            e->z = ev->wheel.z;
@@ -337,6 +445,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
            e->timestamp = ev->timestamp;
            e->event_flags = ev->event_flags;
            e->dev = ev->device;
+           e->modifiers = NULL; /* FIXME */
+           e->locks = NULL; /* FIXME */
            break;
         }
 
