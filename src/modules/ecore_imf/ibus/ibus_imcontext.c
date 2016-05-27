@@ -48,6 +48,7 @@ typedef struct _KeyEvent KeyEvent;
 struct _KeyEvent
 {
    int keysym;
+   int keycode;
    int state;
 };
 
@@ -64,6 +65,7 @@ static void _ecore_imf_context_ibus_bus_connected_cb(IBusBus *bus, IBusIMContext
 static XKeyEvent _ecore_imf_ibus_x_key_event_generate(Window win,
                                                       Eina_Bool press,
                                                       int keysym,
+                                                      int keycode,
                                                       int modifiers);
 
 static unsigned int
@@ -163,7 +165,7 @@ _ecore_imf_locks_to_ibus_modifier(unsigned int locks)
 }
 
 static void
-_ecore_imf_ibus_key_event_put(int keysym, int state)
+_ecore_imf_ibus_key_event_put(int keysym, int keycode, int state)
 {
    // Find the window which has the current keyboard focus.
    Window winFocus = 0;
@@ -177,6 +179,7 @@ _ecore_imf_ibus_key_event_put(int keysym, int state)
         event = _ecore_imf_ibus_x_key_event_generate(winFocus,
                                                      EINA_FALSE,
                                                      keysym,
+                                                     keycode,
                                                      state);
         XSendEvent(event.display, event.window, True, KeyReleaseMask, (XEvent *)&event);
      }
@@ -185,16 +188,18 @@ _ecore_imf_ibus_key_event_put(int keysym, int state)
         event = _ecore_imf_ibus_x_key_event_generate(winFocus,
                                                      EINA_TRUE,
                                                      keysym,
+                                                     keycode,
                                                      state);
         XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
      }
 }
 
 static KeyEvent *
-_ecore_imf_ibus_key_event_copy(int keysym, int state)
+_ecore_imf_ibus_key_event_copy(int keysym, int keycode, int state)
 {
    KeyEvent *kev = calloc(1, sizeof(KeyEvent));
    kev->keysym = keysym;
+   kev->keycode = keycode;
    kev->state = state;
 
    return kev;
@@ -221,7 +226,9 @@ _ecore_imf_ibus_process_key_event_done(GObject      *object,
 
    if (retval == EINA_FALSE)
      {
-        _ecore_imf_ibus_key_event_put(event->keysym, event->state);
+        _ecore_imf_ibus_key_event_put(event->keysym,
+                                      event->keycode,
+                                      event->state);
      }
    free(event);
 }
@@ -394,7 +401,7 @@ ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx,
              if (ev->timestamp == 0)
                return EINA_FALSE;
 
-             keycode = ecore_x_keysym_keycode_get(ev->key);
+             keycode = ecore_x_keysym_keycode_get(ev->keyname);
              keysym = XStringToKeysym(ev->key);
              state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers) |
                      _ecore_imf_locks_to_ibus_modifier(ev->locks) | IBUS_RELEASE_MASK;
@@ -415,7 +422,7 @@ ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx,
                                                              -1,
                                                              NULL,
                                                              _ecore_imf_ibus_process_key_event_done,
-                                                             _ecore_imf_ibus_key_event_copy(keysym, state));
+                                                             _ecore_imf_ibus_key_event_copy(keysym, keycode, state));
                   retval = EINA_TRUE;
                }
           }
@@ -427,7 +434,7 @@ ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx,
 
              _request_surrounding_text(ibusimcontext);
 
-             keycode = ecore_x_keysym_keycode_get(ev->key);
+             keycode = ecore_x_keysym_keycode_get(ev->keyname);
              keysym = XStringToKeysym(ev->key);
              state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers) |
                      _ecore_imf_locks_to_ibus_modifier(ev->locks);
@@ -448,7 +455,7 @@ ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx,
                                                              -1,
                                                              NULL,
                                                              _ecore_imf_ibus_process_key_event_done,
-                                                             _ecore_imf_ibus_key_event_copy(keysym, state));
+                                                             _ecore_imf_ibus_key_event_copy(keysym, keycode, state));
                   retval = EINA_TRUE;
                }
           }
@@ -716,6 +723,7 @@ _ecore_imf_context_ibus_commit_text_cb(IBusInputContext *ibuscontext EINA_UNUSED
 static XKeyEvent _ecore_imf_ibus_x_key_event_generate(Window win,
                                                       Eina_Bool press,
                                                       int keysym,
+                                                      int keycode,
                                                       int modifiers)
 {
    XKeyEvent event;
@@ -731,8 +739,16 @@ static XKeyEvent _ecore_imf_ibus_x_key_event_generate(Window win,
    event.x_root      = 1;
    event.y_root      = 1;
    event.same_screen = EINA_TRUE;
-   event.state       = modifiers;
-   event.keycode     = XKeysymToKeycode(display, keysym);
+   if (keycode == -1)
+     {
+        event.keycode     = XKeysymToKeycode(display, keysym);
+        event.state       = 0;
+     }
+   else
+     {
+        event.keycode     = keycode;
+        event.state       = modifiers;
+     }
    if (press)
      event.type = KeyPress;
    else
@@ -751,7 +767,7 @@ _ecore_imf_context_ibus_forward_key_event_cb(IBusInputContext  *ibuscontext EINA
 {
    EINA_LOG_DBG("keyval : %d, state : %d", keyval, state);
 
-   _ecore_imf_ibus_key_event_put(keyval, state);
+   _ecore_imf_ibus_key_event_put(keyval, -1, state);
 }
 
 static void
