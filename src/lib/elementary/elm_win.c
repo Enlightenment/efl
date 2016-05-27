@@ -6068,7 +6068,7 @@ elm_win_conformant_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_win_wm_manual_rotation_done_set(Evas_Object *obj, Eina_Bool set)
+elm_win_wm_rotation_manual_rotation_done_set(Evas_Object *obj, Eina_Bool set)
 {
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
@@ -6078,7 +6078,7 @@ elm_win_wm_manual_rotation_done_set(Evas_Object *obj, Eina_Bool set)
 }
 
 EAPI Eina_Bool
-elm_win_wm_manual_rotation_done_get(const Evas_Object *obj)
+elm_win_wm_rotation_manual_rotation_done_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
@@ -6088,7 +6088,7 @@ elm_win_wm_manual_rotation_done_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_win_wm_manual_rotation_done_manual(Evas_Object *obj)
+elm_win_wm_rotation_manual_rotation_done(Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
@@ -6152,7 +6152,7 @@ elm_win_wm_preferred_rotation_set(Evas_Object *obj, int rotation)
 }
 
 EAPI int
-elm_win_wm_preferred_rotation_get(const Evas_Object *obj)
+elm_win_wm_rotation_preferred_rotation_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) -1;
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd, -1);
