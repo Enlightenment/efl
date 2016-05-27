@@ -1,0 +1,265 @@
+import evas_types;
+import edje_types;
+import elm_interface_scrollable;
+
+struct @extern Elm_Code; /* The main interface currently defined in code */
+struct @extern Elm_Code_Line; /* Parts of the interface currently defined in code */
+
+class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
+{
+   eo_prefix: elm_obj_code_widget;
+   legacy_prefix: elm_code_widget;
+   methods {
+      @property code {
+         set {
+            [[Set the underlying code object that this widget renders.
+            This can only be set during construction, once the widget is created the
+            backing code object cannot be changed.]]
+         }
+         get {
+            [[Get the underlying code object we are rendering]]
+         }
+         values {
+            code: Elm_Code *; [[Our underlying Elm_Code object]]
+         }
+      }
+      @property font {
+         set {
+            [[Set the font that this widget uses, the font should be a monospaced scalable font.
+            Passing NULL will load the default system monospaced font.]]
+         }
+         get {
+            [[Get the font currently in use.
+            The font name is a copy ad should be freed once it is no longer needed]]
+         }
+         values {
+            name: const(char) *; [[The name of the font to load]]
+            size: Evas.Font.Size; [[The font size for the widget]]
+         }
+      }
+      @property columns {
+         get {
+            [[Get the number of columns in the widget currently.
+            This will be the max of the number of columns to represent the longest line and
+            the minimum required to fill the visible widget width.]]
+         }
+         values {
+            columns: uint; [[The number of columns required to render the widget]]
+         }
+      }
+      @property gravity {
+         set {
+            [[Set how this widget's scroller should respond to new lines being added.
+
+            An x value of 0.0 will maintain the distance from the left edge, 1.0 will ensure the rightmost edge (of the longest line) is respected
+            With 0.0 for y the view will keep it's position relative to the top whereas 1.0 will scroll downward as lines are added.]]
+         }
+         get {
+            [[Get the current x and y gravity of the widget's scroller]]
+         }
+         values {
+            x: double; [[The horizontal value of the scroller gravity - valid values are 0.0 and 1.0]]
+            y: double; [[The vertical gravity of the widget's scroller - valid values are 0.0 and 1.0]]
+         }
+      }
+      @property policy {
+         set {
+           [[Set the policy for scrollbar visibility.]]
+         }
+         get {
+           [[Get the widget's policy for scrollbar visibility.]]
+         }
+         values {
+            policy_h: Elm.Scroller.Policy; [[The horizontal scrollbar visibility policy]]
+            policy_v: Elm.Scroller.Policy; [[The vertical scrollbar visibility policy]]
+         }
+      }
+      @property tabstop {
+         set {
+            [[Set the width of a tab stop, used purely for visual layout of tab characters.
+
+            Recommended value is between 2 and 8.]]
+         }
+         get {
+            [[Get the current width of a tab stop.
+            This is used to determine where characters after a tab should appear in the line.]]
+         }
+         values {
+            tabstop: uint; [[Maximum width of a tab character]]
+         }
+      }
+      @property editable {
+         set {
+            [[Set whether this widget allows editing
+
+            If editable then the widget will allow user input to manipulate
+            the underlying Elm_Code_File of this Elm_Code instance.
+            Any other Elm_Code_Widget's connected to this Elm_Code will
+            update to reflect the changes.]]
+         }
+         get {
+            [[Get the current editable state of this widget
+
+            returns EINA_TRUE if the widget is editable, EINA_FALSE otherwise.
+            If this widget is not editable the underlying Elm_Code_File could
+            still be manipulated by a different widget or the filesystem.]]
+         }
+         values {
+            editable: bool; [[The editable state of the widget]]
+         }
+      }
+      @property line_numbers {
+         set {
+            [[Set whether line numbers should be displayed in the left gutter.
+
+            Passing EINA_TRUE will reserve a space for showing line numbers,
+            EINA_FALSE will turn this off.]]
+         }
+         get {
+            [[Get the status of line number display for this widget.]]
+         }
+         values {
+            line_numbers: bool; [[Whether or not line numbers (or their placeholder) should be shown]]
+         }
+      }
+      @property line_width_marker {
+         set {
+            [[Set where the line width market should be shown.
+
+            Passing a non-zero value will set which line width to mark with a vertical line.
+            Passing 0 will hide this marker.]]
+         }
+         get {
+            [[Get the position of the line width marker, any positive return indicates where the marker appears.]]
+         }
+         values {
+            line_width_marker: uint; [[Where to display a line width marker, if at all]]
+         }
+      }
+      @property show_whitespace {
+         set {
+            [[Set where white space should be shown.]]
+         }
+         get {
+            [[Get whether or not white space will be visible.]]
+         }
+         values {
+            show_whitespace: bool; [[Whether or not we show whitespace characters]]
+         }
+      }
+      @property tab_inserts_spaces {
+         set {
+            [[Set whether space characters should be inserted instead of tabs.]]
+         }
+         get {
+            [[Get whether or not space characters will be inserted instead of tabs.]]
+         }
+         values {
+            tab_inserts_spaces: bool; [[EINA_TRUE if we should insert space characters instead of a tab when the Tab key is pressed]]
+         }
+      }
+      @property cursor_position {
+         set {
+            [[Set the current location of the text cursor.]]
+         }
+         get {
+            [[Get the current x and y position of the widget's cursor.]]
+         }
+         values {
+            col: uint; [[The horizontal position of the cursor, starting from column 1]]
+            line: uint; [[The vertical position of the cursor - the top row is 1]]
+         }
+      }
+      line_refresh {
+         params {
+            line: Elm_Code_Line *; [[The line to refresh.]]
+         }
+      }
+      line_visible_get {
+         params {
+            line: Elm_Code_Line *; [[The line to test for visibility.]]
+         }
+         return: bool; [[true if the line specified is currently visible within the scroll region.]]
+      }
+      lines_visible_get {
+         return: uint; [[the number of lines currently visible in the widget.]]
+      }
+      position_at_coordinates_get {
+         [[get the row, col position for a given coordinate on the widget.]]
+         params {
+            x: Evas.Coord; [[the x coordinate in the widget]]
+            y: Evas.Coord; [[the y coordinate in the widget]]
+            row: uint *; [[the row for the coordinates]]
+            col: int *; [[the column for the coordinates]]
+         }
+         return: bool; [[true if a line exists at these coordinates]]
+      }
+
+      //text functions
+      text_left_gutter_width_get {
+         return: int; [[the current column width of the gutter for the widget.]]
+      }
+      text_line_number_width_get {
+         return: int; [[the column width required to represent the number of lines in the widget.]]
+      }
+      text_between_positions_get {
+         params {
+            start_col: uint; [[the widget column of the first character to get]]
+            start_line: uint; [[the line of the first character to get]]
+            end_col: uint; [[the widget column of the last character to get]]
+            end_line: uint; [[the line of the last character to get]]
+         }
+         return: char *; [[the text content between start and end positions]]
+      }
+
+      line_text_column_width_to_position {
+         params {
+            line: Elm_Code_Line *;
+            position: uint;
+         }
+         return: uint;
+      }
+      line_text_column_width_get {
+         params {
+            line: Elm_Code_Line *;
+         }
+         return: uint;
+      }
+      line_text_position_for_column_get {
+         params {
+            line: Elm_Code_Line *;
+            column: uint;
+         }
+         return: uint;
+      }
+      text_tabwidth_at_column_get {
+         params {
+            column: uint;
+         }
+         return: uint;
+      }
+      undo {
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Eo.Base.finalize;
+      Evas.Object.Smart.add;
+      Elm.Widget.event;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+   }
+   constructors {
+      .code;
+   }
+   events {
+      line,clicked;
+      line,gutter,clicked;
+      cursor,changed;
+      changed,user;
+      selection,changed;
+      selection,cleared;
+   }
+
+}
