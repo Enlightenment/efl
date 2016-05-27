@@ -597,16 +597,23 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_DRM],
 [
 
 requirement=""
-have_dep="yes"
+have_dep="no"
 have_hw_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
+
+PKG_CHECK_EXISTS([libdrm],
+  [
+    have_dep="yes"
+    requirement="libdrm"
+  ], [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$3" = "xstatic" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
    else
+      PKG_CHECK_MODULES([DRM], [${requirement}])
       evas_engine_[]$1[]_cflags="${DRM_CFLAGS}"
       evas_engine_[]$1[]_libs="${DRM_LIBS}"
    fi
@@ -636,10 +643,10 @@ else
    AC_MSG_ERROR([We currently do not support GL DRM without OpenGL ES. Please consider OpenGL ES if you want to use it.])
 fi
 
-PKG_CHECK_EXISTS([egl ${gl_library} gbm wayland-client >= REQUIRED_WAYLAND_VERSION],
+PKG_CHECK_EXISTS([egl ${gl_library} libdrm gbm wayland-client >= REQUIRED_WAYLAND_VERSION],
    [
     have_dep="yes"
-    requirement="egl ${gl_library} gbm wayland-client >= REQUIRED_WAYLAND_VERSION"
+    requirement="egl ${gl_library} libdrm gbm wayland-client >= REQUIRED_WAYLAND_VERSION"
    ],
    [have_dep="no"])
 

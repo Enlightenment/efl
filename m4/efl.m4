@@ -174,6 +174,9 @@ case "m4_defn([DOWNOTHER])" in
    ecore_win32)
       depname="ecore-win32"
       ;;
+   ecore_drm2)
+      depname="ecore-drm2"
+      ;;
 esac
 requirements_pc_[]m4_defn([DOWNEFL])="${depname} >= ${PACKAGE_VERSION} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
 requirements_cflags_[]m4_defn([DOWNEFL])="-I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"

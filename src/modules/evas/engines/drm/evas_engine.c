@@ -1,65 +1,57 @@
 #include "evas_engine.h"
 
-/* local structures */
-typedef struct _Render_Engine Render_Engine;
-
-struct _Render_Engine
+typedef struct _Render_Engine
 {
    Render_Engine_Software_Generic generic;
-};
+} Render_Engine;
 
-/* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
-/* external variables */
 int _evas_engine_drm_log_dom;
 
-/* local functions */
-static void *
-_output_setup(Evas_Engine_Info_Drm *info, int w, int h)
+static Render_Engine *
+_render_engine_setup(Evas_Engine_Info_Drm *info, int w, int h)
 {
-   Render_Engine *re = NULL;
+   Render_Engine *re;
    Outbuf *ob;
 
-   /* try to allocate space for our render engine structure */
-   if (!(re = calloc(1, sizeof(Render_Engine))))
-     goto on_error;
+   re = calloc(1, sizeof(Render_Engine));
+   if (!re) return NULL;
 
-   /* try to create new outbuf */
-   if (!(ob = evas_outbuf_setup(info, w, h)))
-     goto on_error;
+   ob = _outbuf_setup(info, w, h);
+   if (!ob) goto err;
 
    if (!evas_render_engine_software_generic_init(&re->generic, ob,
-                                                 evas_outbuf_buffer_state_get,
-                                                 evas_outbuf_rot_get,
-                                                 evas_outbuf_reconfigure, NULL,
-                                                 evas_outbuf_update_region_new,
-                                                 evas_outbuf_update_region_push,
-                                                 evas_outbuf_update_region_free,
-                                                 NULL, evas_outbuf_flush,
-                                                 evas_outbuf_free, 
+                                                 _outbuf_state_get,
+                                                 _outbuf_rotation_get,
+                                                 _outbuf_reconfigure,
+                                                 NULL,
+                                                 _outbuf_update_region_new,
+                                                 _outbuf_update_region_push,
+                                                 _outbuf_update_region_free,
+                                                 NULL,
+                                                 _outbuf_flush,
+                                                 _outbuf_free,
                                                  ob->w, ob->h))
-     goto on_error;
+     goto init_err;
 
-   /* return the allocated render_engine structure */
    return re;
 
- on_error:
-   if (re) evas_render_engine_software_generic_clean(&re->generic);
-
+init_err:
+   evas_render_engine_software_generic_clean(&re->generic);
+err:
    free(re);
    return NULL;
 }
 
-/* engine api functions */
 static void *
 eng_info(Evas *evas EINA_UNUSED)
 {
    Evas_Engine_Info_Drm *info;
 
    /* try to allocate space for our engine info structure */
-   if (!(info = calloc(1, sizeof(Evas_Engine_Info_Drm))))
-     return NULL;
+   info = calloc(1, sizeof(Evas_Engine_Info_Drm));
+   if (!info) return NULL;
 
    /* set some engine default properties */
    info->magic.magic = rand();
@@ -74,55 +66,47 @@ eng_info_free(Evas *evas EINA_UNUSED, void *einfo)
    Evas_Engine_Info_Drm *info;
 
    /* free the engine info */
-   if ((info = (Evas_Engine_Info_Drm *)einfo))
-     free(info);
+   info = (Evas_Engine_Info_Drm *)einfo;
+   free(info);
 }
 
 static int
 eng_setup(Evas *evas, void *einfo)
 {
-   Evas_Engine_Info_Drm *info;
-   Evas_Public_Data *epd;
    Render_Engine *re;
+   Evas_Public_Data *epd;
+   Evas_Engine_Info_Drm *info;
 
-   /* try to cast to our engine info structure */
-   if (!(info = (Evas_Engine_Info_Drm *)einfo)) return 0;
+   info = (Evas_Engine_Info_Drm *)einfo;
+   if (!info) return 0;
 
-   /* try to get the evas public data */
-   if (!(epd = eo_data_scope_get(evas, EVAS_CANVAS_CLASS))) return 0;
+   epd = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
+   if (!epd) return 0;
 
-   /* check for valid engine output */
-   if (!(re = epd->engine.data.output))
+   re = epd->engine.data.output;
+   if (!re)
      {
-        /* NB: If we have no valid output then assume we have not been
-         * initialized yet and call any needed common init routines */
         evas_common_init();
 
-        /* try to create a new render_engine */
-        if (!(re = _output_setup(info, epd->output.w, epd->output.h)))
-          return 0;
+        re = _render_engine_setup(info, epd->output.w, epd->output.h);
+        if (!re) return 0;
      }
    else
      {
         Outbuf *ob;
 
-        /* try to create a new outbuf */
-        ob = evas_outbuf_setup(info, epd->output.w, epd->output.h);
+        ob = _outbuf_setup(info, epd->output.w, epd->output.h);
         if (!ob) return 0;
 
-        /* if we have an existing outbuf, free it */
-        evas_render_engine_software_generic_update(&re->generic, ob, 
+        evas_render_engine_software_generic_update(&re->generic, ob,
                                                    ob->w, ob->h);
      }
 
-   /* reassign engine output */
    epd->engine.data.output = re;
    if (!epd->engine.data.output) return 0;
 
-   /* check for valid engine context */
    if (!epd->engine.data.context)
      {
-        /* create a context if needed */
         epd->engine.data.context =
           epd->engine.func->context_new(epd->engine.data.output);
      }
@@ -135,7 +119,8 @@ eng_output_free(void *data)
 {
    Render_Engine *re;
 
-   if ((re = data))
+   re = data;
+   if (re)
      {
         evas_render_engine_software_generic_clean(&re->generic);
         free(re);
@@ -144,7 +129,6 @@ eng_output_free(void *data)
    evas_common_shutdown();
 }
 
-/* module api functions */
 static int
 module_open(Evas_Module *em)
 {
@@ -164,6 +148,8 @@ module_open(Evas_Module *em)
         EINA_LOG_ERR("Can not create a module log domain.");
         return 0;
      }
+
+   ecore_init();
 
    /* store parent functions */
    func = pfunc;
@@ -185,6 +171,8 @@ module_close(Evas_Module *em EINA_UNUSED)
 {
    /* unregister the eina log domain for this engine */
    eina_log_domain_unregister(_evas_engine_drm_log_dom);
+
+   ecore_shutdown();
 }
 
 static Evas_Module_Api evas_modapi =

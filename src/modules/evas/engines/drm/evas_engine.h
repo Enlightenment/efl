@@ -6,8 +6,13 @@
 # include "evas_private.h"
 # include "Evas.h"
 # include "Evas_Engine_Drm.h"
+# include <Ecore.h>
+# include <Ecore_Drm2.h>
+# include <drm_fourcc.h>
+# include <xf86drm.h>
+# include <xf86drmMode.h>
 
-#include "../software_generic/Evas_Engine_Software_Generic.h"
+# include "../software_generic/Evas_Engine_Software_Generic.h"
 
 extern int _evas_engine_drm_log_dom;
 
@@ -36,35 +41,44 @@ extern int _evas_engine_drm_log_dom;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_drm_log_dom, __VA_ARGS__)
 
+typedef struct _Outbuf_Fb
+{
+   int age;
+   Ecore_Drm2_Fb *fb;
+
+   Eina_Bool valid : 1;
+   Eina_Bool drawn : 1;
+   Eina_Bool busy : 1;
+} Outbuf_Fb;
+
 struct _Outbuf
 {
-   Evas_Engine_Info_Drm *info;
-
-   int w, h;
-   int rotation;
-   unsigned int depth;
+   int fd, w, h, bpp, rotation;
+   unsigned int depth, format;
 
    struct
      {
-        Ecore_Drm_Fb *buffer[4];
-
-        Eina_List *pending_writes;
-
-        int curr, last, num;
+        int num;
+        Outbuf_Fb ofb[4], *current;
+        Ecore_Drm2_Output *output;
+        Eina_List *pending;
      } priv;
 
-   Eina_Bool destination_alpha : 1;
+   drmEventContext ctx;
+   Ecore_Fd_Handler *hdlr;
+
+   Eina_Bool alpha : 1;
    Eina_Bool vsync : 1;
 };
 
-Outbuf *evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h);
-void evas_outbuf_free(Outbuf *ob);
-void evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
-Render_Engine_Swap_Mode evas_outbuf_buffer_state_get(Outbuf *ob);
-int evas_outbuf_rot_get(Outbuf *ob);
-void *evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
-void evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
-void evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
-void evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
+Outbuf *_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h);
+void _outbuf_free(Outbuf *ob);
+int _outbuf_rotation_get(Outbuf *ob);
+void _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth);
+Render_Engine_Swap_Mode _outbuf_state_get(Outbuf *ob);
+void *_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
+void _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
+void _outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
+void _outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 
 #endif

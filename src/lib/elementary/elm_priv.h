@@ -10,7 +10,7 @@
 #include <Ecore_Wl2.h>
 #endif
 #ifdef HAVE_ELEMENTARY_DRM
-#include <Ecore_Drm.h>
+#include <Ecore_Drm2.h>
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
 /* Ecore_Cocoa is still in Beta. In Elementary, we know what we are

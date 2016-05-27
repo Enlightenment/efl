@@ -118,12 +118,9 @@ static const EVGL_Interface evgl_funcs =
 Eina_Bool
 eng_gbm_init(Evas_Engine_Info_GL_Drm *info)
 {
-   Ecore_Drm_Device *dev;
-
    if (!info) return EINA_FALSE;
-   if (!(dev = info->info.dev)) return EINA_FALSE;
 
-   if (!(info->info.gbm = gbm_create_device(dev->drm.fd)))
+   if (!(info->info.gbm = gbm_create_device(info->info.fd)))
      {
         ERR("Coult not create gbm device");
         return EINA_FALSE;
@@ -144,13 +141,6 @@ eng_gbm_shutdown(Evas_Engine_Info_GL_Drm *info)
      }
 
    return EINA_TRUE;
-}
-
-/* local inline functions */
-static inline Outbuf *
-eng_get_ob(Render_Engine *re)
-{
-   return re->generic.software.ob;
 }
 
 /* local functions */
@@ -362,6 +352,8 @@ evgl_eng_native_window_create(void *data)
    Render_Engine *re;
    struct gbm_surface *surface;
    Evas_Engine_Info_GL_Drm *info;
+   unsigned int format = GBM_FORMAT_XRGB8888;
+   unsigned int flags = GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING;
 
    re = (Render_Engine *)data;
    if (!re)
@@ -377,9 +369,9 @@ evgl_eng_native_window_create(void *data)
         return NULL;
      }
 
-   surface = gbm_surface_create(info->info.gbm,
-                                eng_get_ob(re)->w, eng_get_ob(re)->h,
-                                info->info.format, info->info.flags);
+   surface =
+     gbm_surface_create(info->info.gbm,
+                        eng_get_ob(re)->w, eng_get_ob(re)->h, format, flags);
    if (!surface)
      {
         ERR("Could not create gl drm window");
@@ -786,6 +778,37 @@ _native_cb_free(void *image)
    free(n);
 }
 
+static void
+_cb_vblank(int fd, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
+{
+   evas_outbuf_vblank(data, fd);
+}
+
+static void
+_cb_page_flip(int fd, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
+{
+   evas_outbuf_page_flip(data, fd);
+}
+
+static Eina_Bool
+_cb_drm_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
+{
+   Render_Engine *re;
+   int ret;
+
+   re = data;
+   if (!re) return EINA_TRUE;
+
+   ret = drmHandleEvent(re->fd, &re->ctx);
+   if (ret)
+     {
+        ERR("drmHandleEvent failed to read an event: %m");
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
 /* engine specific override functions */
 static void *
 eng_info(Evas *eo_e EINA_UNUSED)
@@ -899,6 +922,17 @@ eng_setup(Evas *evas, void *in)
              return 0;
           }
 
+        re->fd = info->info.fd;
+
+        memset(&re->ctx, 0, sizeof(re->ctx));
+        re->ctx.version = DRM_EVENT_CONTEXT_VERSION;
+        re->ctx.vblank_handler = _cb_vblank;
+        re->ctx.page_flip_handler = _cb_page_flip;
+
+        re->hdlr =
+          ecore_main_fd_handler_add(info->info.fd, ECORE_FD_READ,
+                                    _cb_drm_event, re, NULL, NULL);
+
         /* try to create new outbuf */
         ob = evas_outbuf_new(info, epd->output.w, epd->output.h, swap_mode);
         if (!ob)
@@ -970,16 +1004,16 @@ eng_setup(Evas *evas, void *in)
                   re->generic.software.ob = NULL;
                   gl_wins--;
 
+                  if (ob_old) evas_outbuf_free(ob_old);
+
                   ob = evas_outbuf_new(info, epd->output.w, epd->output.h, swap_mode);
                   if (!ob)
                     {
-                       if (ob_old) evas_outbuf_free(ob_old);
                        free(re);
                        return 0;
                     }
 
                   evas_outbuf_use(ob);
-                  if (ob_old) evas_outbuf_free(ob_old);
 
                   ob->evas = evas;
 
@@ -1439,6 +1473,8 @@ module_open(Evas_Module *em)
         return 0;
      }
 
+   ecore_init();
+
    /* store it for later use */
    func = pfunc;
 
@@ -1471,6 +1507,8 @@ module_close(Evas_Module *em EINA_UNUSED)
    /* unregister the eina log domain for this engine */
    eina_log_domain_unregister(_evas_engine_gl_drm_log_dom);
    _evas_engine_gl_drm_log_dom = -1;
+
+   ecore_shutdown();
 }
 
 static Evas_Module_Api evas_modapi =
