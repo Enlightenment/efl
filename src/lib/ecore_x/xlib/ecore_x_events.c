@@ -347,14 +347,15 @@ _ecore_key_press(int event,
    char *key;
    char keyname_buffer[256];
    char compose_buffer[256];
-   KeySym sym;
+   KeySym sym, sym2 = 0;
    XComposeStatus status;
    int val;
    int key_len, keyname_len, compose_len;
 
    _ecore_x_last_event_mouse_move = 0;
-   keyname = XKeysymToString(_ecore_x_XKeycodeToKeysym(xevent->display,
-                                                       xevent->keycode, 0));
+   sym = _ecore_x_XKeycodeToKeysym(xevent->display, xevent->keycode, 0);
+   keyname = XKeysymToString(sym);
+
    if (!keyname)
      {
         snprintf(keyname_buffer,
@@ -364,13 +365,12 @@ _ecore_key_press(int event,
         keyname = keyname_buffer;
      }
 
-   sym = 0;
    key = NULL;
    compose = NULL;
    val = XLookupString(xevent,
                        compose_buffer,
                        sizeof(compose_buffer),
-                       &sym,
+                       &sym2,
                        &status);
    if (val > 0)
      {
@@ -381,6 +381,7 @@ _ecore_key_press(int event,
           ERR("Ecore_X cannot convert input key string '%s' to UTF-8. "
               "Is Eina built with iconv support?", compose_buffer);
         tmp = compose;
+        sym = sym2;
      }
 
    key = XKeysymToString(sym);
