@@ -198,6 +198,47 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             mode: Elm.Win.Keyboard_Mode; [[The mode, one of #Elm_Win_Keyboard_Mode.]]
          }
       }
+      @property wm_available_rotations {
+         set {
+            [[Set the array of available window rotations.
+
+              This function is used to set the available rotations to give
+              the hints to WM. WM will refer this hints and set the
+              orientation window properly.
+
+              @since 1.9
+            ]]
+            legacy: elm_win_wm_rotation_available_rotations_set;
+            values {
+               rotations: const(int)*; [[The array of rotation value.]]
+               count: uint; [[The size of the rotations array.]]
+            }
+         }
+         get {
+            [[Get the array of available window rotations.
+
+              This function is used to get the available rotations.
+
+              @since 1.9
+            ]]
+            legacy: elm_win_wm_rotation_available_rotations_get;
+            values {
+               rotations: int*; [[The array of rotation value.]]
+               count: uint; [[The size of the rotations array.]]
+            }
+            return: bool;
+         }
+      }
+      @property screen_rotation {
+         get {
+            [[Get the rotation of the screen.
+
+              Most engines only return multiples of 90.
+              @since 1.19
+            ]]
+            return: int;
+         }
+      }
       @property autodel {
          set {
             [[Set the window's autodel state.
@@ -257,37 +298,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          values {
             iconified: bool; [[If true, the window is iconified.]]
-         }
-      }
-      @property wm_available_rotations {
-         set {
-            [[Set the array of available window rotations.
-
-              This function is used to set the available rotations to give
-              the hints to WM. WM will refer this hints and set the
-              orientation window properly.
-
-              @since 1.9
-            ]]
-            legacy: elm_win_wm_rotation_available_rotations_set;
-            values {
-               rotations: const(int)*; [[The array of rotation value.]]
-               count: uint; [[The size of the rotations array.]]
-            }
-         }
-         get {
-            [[Get the array of available window rotations.
-
-              This function is used to get the available rotations.
-
-              @since 1.9
-            ]]
-            legacy: elm_win_wm_rotation_available_rotations_get;
-            values {
-               rotations: int*; [[The array of rotation value.]]
-               count: uint; [[The size of the rotations array.]]
-            }
-            return: bool;
          }
       }
       @property maximized {
@@ -520,27 +530,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             urgent: bool; [[If true, the window is urgent.]]
          }
       }
-      @property rotation {
-         set {
-            [[Set the rotation of the window.
-
-              Most engines only work with multiples of 90.
-
-              This function is used to set the orientation of the window
-              $obj to match that of the screen. The window itself will be
-              resized to adjust to the new geometry of its contents. If
-              you want to keep the window size,
-              see @.rotation_with_resize.set.
-            ]]
-         }
-         get {
-            [[Get the rotation of the window.]]
-         }
-         values {
-            rotation: int; [[The rotation of the window, in degrees (0-360),
-                             counter-clockwise.]]
-         }
-      }
       @property icon_object {
          set {
             [[Set a window object's icon.
@@ -633,31 +622,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             demand_attention: bool; [[If true, the window is demand_attention.]]
          }
       }
-      @property wm_preferred_rotation {
-         set {
-            [[Set the preferred rotation value.
-
-              This function is used to set the orientation of window
-              $obj to spicific angle fixed.
-
-              @since 1.9
-            ]]
-            legacy: null;
-         }
-         get {
-            [[Get the preferred rotation value.
-
-              This function is used to get the preferred rotoation value.
-
-              @since 1.9
-            ]]
-            legacy: elm_win_wm_rotation_preferred_rotation_get;
-         }
-         values {
-            rotation: int; [[The preferred rotation of the window in degrees
-                             (0-360), counter-clockwise.]]
-         }
-      }
       @property layer {
          set {
             [[Set the layer of the window.
@@ -748,19 +712,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             h: int; [[The base height.]]
          }
       }
-      @property rotation_with_resize {
-         set {
-            [[Rotates the window and resizes it.
-
-              Like @.rotation.set, but it also resizes the window's
-              contents so that they fit inside the current window geometry.
-            ]]
-         }
-         values {
-            rotation: int; [[The rotation of the window in degrees (0-360),
-                             counter-clockwise.]]
-         }
-      }
       @property prop_focus_skip {
          set {
             [[Set the window to be skipped by keyboard focus.
@@ -792,22 +743,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          values {
             x: int; [[The int to store the x coordinate to.]]
             y: int; [[The int to store the y coordinate to.]]
-         }
-      }
-      @property wm_rotation_supported {
-         get {
-            [[Query whether window manager supports window rotation or not.
-
-              The window manager rotation allows the WM to controls the
-              rotation of application windows. It is designed to support
-              synchronized rotation for the multiple application windows
-              at same time.
-
-              See also @.wm_preferred_rotation, @.wm_available_rotations.
-
-              @since 1.9
-            ]]
-            return: bool;
          }
       }
       @property focus {

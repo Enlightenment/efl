@@ -4906,68 +4906,13 @@ _win_rotate(Evas_Object *obj, Elm_Win_Data *sd, int rotation, Eina_Bool resize)
      (obj, ELM_WIN_EVENT_ROTATION_CHANGED, NULL);
 }
 
-EOLIAN static void
-_elm_win_rotation_set(Eo *obj, Elm_Win_Data *sd, int rotation)
-{
-   _win_rotate(obj, sd, rotation, EINA_FALSE);
-}
-
-/*
- * This API does not resize the internal window (ex: X window).
- * But this resizes evas_output, elm window, and its contents.
- */
-EOLIAN static void
-_elm_win_rotation_with_resize_set(Eo *obj, Elm_Win_Data *sd, int rotation)
-{
-   _win_rotate(obj, sd, rotation, EINA_TRUE);
-}
-
 EOLIAN static int
-_elm_win_rotation_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
+_elm_win_screen_rotation_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
-   return sd->rot;
-}
+   //TODO: query to wm about device's rotation
+   (void)sd;
 
-EOLIAN static Eina_Bool
-_elm_win_wm_rotation_supported_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   return sd->wm_rot.wm_supported;
-}
-
-/* This will unset a preferred rotation, if given preferred rotation is '-1'.
- */
-EAPI void
-elm_win_wm_rotation_preferred_rotation_set(const Evas_Object *obj,
-                                           int rotation)
-{
-   ELM_WIN_CHECK(obj);
-   elm_obj_win_wm_preferred_rotation_set((Eo *) obj, rotation);
-}
-
-EOLIAN static void
-_elm_win_wm_preferred_rotation_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int rotation)
-{
-   int rot;
-
-   if (!sd->wm_rot.use)
-     sd->wm_rot.use = EINA_TRUE;
-
-   // '-1' means that elm_win doesn't use preferred rotation.
-   if (rotation == -1)
-     rot = -1;
-   else
-     rot = _win_rotation_degree_check(rotation);
-
-   if (sd->wm_rot.preferred_rot == rot) return;
-   sd->wm_rot.preferred_rot = rot;
-
-   ecore_evas_wm_rotation_preferred_rotation_set(sd->ee, rot);
-}
-
-EOLIAN static int
-_elm_win_wm_preferred_rotation_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   return sd->wm_rot.preferred_rot;
+   return 0;
 }
 
 EOLIAN static void
@@ -6150,6 +6095,87 @@ elm_win_wm_manual_rotation_done_manual(Evas_Object *obj)
 
    if (!sd->wm_rot.use) return;
    ecore_evas_wm_rotation_manual_rotation_done(sd->ee);
+}
+
+EAPI void
+elm_win_rotation_set(Evas_Object *obj, int rotation)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   _win_rotate(obj, sd, rotation, EINA_FALSE);
+}
+
+/*
+ * This API does not resize the internal window (ex: X window).
+ * But this resizes evas_output, elm window, and its contents.
+ */
+EAPI void
+elm_win_rotation_with_resize_set(Evas_Object *obj, int rotation)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   _win_rotate(obj, sd, rotation, EINA_TRUE);
+}
+
+EAPI int
+elm_win_rotation_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) -1;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, -1);
+
+   return sd->rot;
+}
+
+EAPI void
+elm_win_wm_preferred_rotation_set(Evas_Object *obj, int rotation)
+{
+   int rot;
+
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   if (!sd->wm_rot.use)
+     sd->wm_rot.use = EINA_TRUE;
+
+   // '-1' means that elm_win doesn't use preferred rotation.
+   if (rotation == -1)
+     rot = -1;
+   else
+     rot = _win_rotation_degree_check(rotation);
+
+   if (sd->wm_rot.preferred_rot == rot) return;
+   sd->wm_rot.preferred_rot = rot;
+
+   ecore_evas_wm_rotation_preferred_rotation_set(sd->ee, rot);
+}
+
+EAPI int
+elm_win_wm_preferred_rotation_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) -1;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, -1);
+
+   return sd->wm_rot.preferred_rot;
+}
+
+EAPI Eina_Bool
+elm_win_wm_rotation_supported_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
+
+   return sd->wm_rot.wm_supported;
+}
+
+/* This will unset a preferred rotation, if given preferred rotation is '-1'.
+ */
+EAPI void
+elm_win_wm_rotation_preferred_rotation_set(Evas_Object *obj, int rotation)
+{
+   ELM_WIN_CHECK(obj);
+   elm_win_wm_preferred_rotation_set(obj, rotation);
 }
 
 #include "elm_win.eo.c"

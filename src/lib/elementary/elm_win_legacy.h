@@ -259,7 +259,7 @@ EAPI Ecore_Win32_Window *elm_win_win32_window_get(const Evas_Object *obj);
  * ingroup Elm_Win
  * @since 1.9
  */
-EAPI void                  elm_win_wm_rotation_preferred_rotation_set(const Evas_Object *obj, int rotation);
+EAPI void                  elm_win_wm_rotation_preferred_rotation_set(Evas_Object *obj, int rotation);
 
 /**
  * Get the Ecore_Window of an Evas_Object
@@ -605,4 +605,73 @@ EAPI Eina_Bool elm_win_wm_rotation_manual_rotation_done_get(const Evas_Object *o
  * @ingroup Elm_Win
  */
 EAPI void elm_win_wm_rotation_manual_rotation_done(Evas_Object *obj);
+
+/**
+ * @brief Set the rotation of the window.
+ *
+ * Most engines only work with multiples of 90.
+ *
+ * This function is used to set the orientation of the window @c obj to match
+ * that of the screen. The window itself will be resized to adjust to the new
+ * geometry of its contents. If you want to keep the window size, see
+ * @ref elm_win_rotation_with_resize_set.
+ *
+ * @param[in] rotation The rotation of the window, in degrees (0-360),
+ * counter-clockwise.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_rotation_set(Evas_Object *obj, int rotation);
+
+/**
+ * @brief Get the rotation of the window.
+ *
+ * @return The rotation of the window, in degrees (0-360), counter-clockwise.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI int elm_win_rotation_get(const Evas_Object *obj);
+
+/**
+ * @brief Rotates the window and resizes it.
+ *
+ * Like @ref elm_win_rotation_set, but it also resizes the window's contents so
+ * that they fit inside the current window geometry.
+ *
+ * @param[in] rotation The rotation of the window in degrees (0-360),
+ * counter-clockwise.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_rotation_with_resize_set(Evas_Object *obj, int rotation);
+
+/**
+ * @brief Query whether window manager supports window rotation or not.
+ *
+ * The window manager rotation allows the WM to controls the rotation of
+ * application windows. It is designed to support synchronized rotation for the
+ * multiple application windows at same time.
+ *
+ * See also @ref elm_win_wm_rotation_preferred_rotation_get,
+ * @ref elm_win_wm_rotation_available_rotations_get.
+ *
+ * @since 1.9
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_wm_rotation_supported_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the preferred rotation value.
+ *
+ * This function is used to get the preferred rotoation value.
+ *
+ * @return The preferred rotation of the window in degrees (0-360),
+ * counter-clockwise.
+ *
+ * @since 1.9
+ *
+ * @ingroup Elm_Win
+ */
+EAPI int elm_win_wm_rotation_preferred_rotation_get(const Evas_Object *obj);
 
