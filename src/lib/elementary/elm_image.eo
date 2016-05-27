@@ -83,7 +83,20 @@ class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
                                 if $false, the internal image is not scaled down
                                 no matter what the scale type is.]]
          }
-		}
+      }
+      @property align {
+         [[Control how the internal image is positioned inside an image object.
+
+           @since 1.18]]
+         set {
+         }
+         get {
+         }
+         values {
+            align_x: double; [[Alignment in the horizontal axis (0 <= align_x <= 1).]]
+            align_y: double; [[Alignment in the vertical axis (0 <= align_y <= 1).]]
+         }
+      }
       @property icon {
          set {
             [[Set the image by icon standards names.

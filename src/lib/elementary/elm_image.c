@@ -123,7 +123,7 @@ _img_new(Evas_Object *obj)
 }
 
 static void
-_elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Data *sd)
+_elm_image_internal_sizing_eval(Evas_Object *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
    if (!sd->img) return;
 
@@ -139,7 +139,6 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Data *sd)
      {
         Evas_Coord x = 0, y = 0, w = 1, h = 1;
 
-        double alignh = 0.5, alignv = 0.5;
         int iw = 0, ih = 0, offset_x = 0, offset_y = 0;
 
         //1. Get the original image size (iw x ih)
@@ -199,14 +198,8 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Data *sd)
           }
 
         //3. Calculate offset according to align value
-        evas_object_size_hint_align_get
-           (obj, &alignh, &alignv);
-
-        if (alignh == EVAS_HINT_FILL) alignh = 0.5;
-        if (alignv == EVAS_HINT_FILL) alignv = 0.5;
-
-        offset_x = ((sd->img_w - w) * alignh);
-        offset_y = ((sd->img_h - h) * alignv);
+        offset_x = ((sd->img_w - w) * sd->align_x);
+        offset_y = ((sd->img_h - h) * sd->align_y);
 
         x = sd->img_x + offset_x;
         y = sd->img_y + offset_y;
@@ -609,6 +602,8 @@ _elm_image_evas_object_smart_add(Eo *obj, Elm_Image_Data *priv)
    priv->scale = 1.0;
    priv->scale_up = EINA_TRUE;
    priv->scale_down = EINA_TRUE;
+   priv->align_x = 0.5;
+   priv->align_y = 0.5;
    eina_spinlock_new(&priv->async.lck);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -1464,6 +1459,34 @@ _elm_image_scalable_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool *scal
 {
    if (scale_up) *scale_up = sd->scale_up;
    if (scale_down) *scale_down = sd->scale_down;
+}
+
+EOLIAN static void
+_elm_image_align_set(Eo *obj, Elm_Image_Data *sd, double align_x, double align_y)
+{
+   if (align_x > 1.0)
+     align_x = 1.0;
+   else if (align_x < 0.0)
+     align_x = 0.0;
+
+   if (align_y > 1.0)
+     align_y = 1.0;
+   else if (align_y < 0.0)
+     align_y = 0.0;
+
+   if ((align_x == sd->align_x) && (align_y == sd->align_y)) return;
+
+   sd->align_x = align_x;
+   sd->align_y = align_y;
+
+   _elm_image_internal_sizing_eval(obj, sd);
+}
+
+EOLIAN static void
+_elm_image_align_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, double *align_x, double *align_y)
+{
+   if (align_x) *align_x = sd->align_x;
+   if (align_y) *align_y = sd->align_y;
 }
 
 // A11Y

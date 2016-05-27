@@ -54,6 +54,7 @@ struct _Elm_Image_Data
 
    double                scale;
    double                frame_duration;
+   double                align_x, align_y;
 
    Evas_Coord            img_x, img_y, img_w, img_h;
 
