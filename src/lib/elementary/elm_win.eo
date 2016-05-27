@@ -727,34 +727,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             fullscreen: bool; [[If $true, the window is fullscreen.]]
          }
       }
-      @property wm_manual_rotation_done {
-         set {
-            [[Set the manual rotation done mode.
-
-              This function is used to set or reset the manual rotation
-              done mode. the message of rotation done is sent to WM after
-              rendering its canvas in Ecore_Evas. but if set the manual
-              rotation done mode, it's disabled and user should call
-              this explicitly to sends the message.
-
-              @since 1.9
-            ]]
-            legacy: elm_win_wm_rotation_manual_rotation_done_set;
-         }
-         get {
-            [[Get the state of manual rotation done mode.
-
-              This function is used to get the state of manual rotation
-              done mode.
-
-              @since 1.9
-            ]]
-            legacy: elm_win_wm_rotation_manual_rotation_done_get;
-         }
-         values {
-            set: bool; [[$true to set manual rotation done mode, $false otherwise.]]
-         }
-      }
       @property size_base {
          set {
             [[Set the base window size used with stepping calculation
@@ -831,8 +803,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
               synchronized rotation for the multiple application windows
               at same time.
 
-              See also @.wm_preferred_rotation, @.wm_available_rotations,
-              @.wm_manual_rotation_done.
+              See also @.wm_preferred_rotation, @.wm_available_rotations.
 
               @since 1.9
             ]]
@@ -982,15 +953,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
            values {
                 oee: Ecore_Evas *;
            }
-      }
-      wm_manual_rotation_done_manual {
-         [[To notify the rotation done to WM manually.
-
-           This function is used to notify the rotation done to WM manually.
-
-           @since 1.9
-         ]]
-         legacy: elm_win_wm_rotation_manual_rotation_done;
       }
       socket_listen {
          [[Create a socket to provide the service for Plug widget.]]

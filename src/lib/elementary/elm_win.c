@@ -5024,27 +5024,6 @@ _elm_win_wm_available_rotations_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *
 }
 
 EOLIAN static void
-_elm_win_wm_manual_rotation_done_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool set)
-{
-   if (!sd->wm_rot.use) return;
-   ecore_evas_wm_rotation_manual_rotation_done_set(sd->ee, set);
-}
-
-EOLIAN static Eina_Bool
-_elm_win_wm_manual_rotation_done_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   if (!sd->wm_rot.use) return EINA_FALSE;
-   return ecore_evas_wm_rotation_manual_rotation_done_get(sd->ee);
-}
-
-EOLIAN static void
-_elm_win_wm_manual_rotation_done_manual(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   if (!sd->wm_rot.use) return;
-   ecore_evas_wm_rotation_manual_rotation_done(sd->ee);
-}
-
-EOLIAN static void
 _elm_win_sticky_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool sticky)
 {
 //   sd->sticky = sticky;
@@ -6141,6 +6120,36 @@ elm_win_conformant_get(const Evas_Object *obj)
 #endif
 
    return EINA_FALSE;
+}
+
+EAPI void
+elm_win_wm_manual_rotation_done_set(Evas_Object *obj, Eina_Bool set)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   if (!sd->wm_rot.use) return;
+   ecore_evas_wm_rotation_manual_rotation_done_set(sd->ee, set);
+}
+
+EAPI Eina_Bool
+elm_win_wm_manual_rotation_done_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
+
+   if (!sd->wm_rot.use) return EINA_FALSE;
+   return ecore_evas_wm_rotation_manual_rotation_done_get(sd->ee);
+}
+
+EAPI void
+elm_win_wm_manual_rotation_done_manual(Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   if (!sd->wm_rot.use) return;
+   ecore_evas_wm_rotation_manual_rotation_done(sd->ee);
 }
 
 #include "elm_win.eo.c"

@@ -566,3 +566,43 @@ EAPI void elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant);
  */
 EAPI Eina_Bool elm_win_conformant_get(const Evas_Object *obj);
 
+/**
+ * @brief Set the manual rotation done mode.
+ *
+ * This function is used to set or reset the manual rotation done mode. the
+ * message of rotation done is sent to WM after rendering its canvas in
+ * Ecore_Evas. but if set the manual rotation done mode, it's disabled and user
+ * should call this explicitly to sends the message.
+ *
+ * @param[in] set @c true to set manual rotation done mode, @c false otherwise.
+ *
+ * @since 1.9
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_wm_rotation_manual_rotation_done_set(Evas_Object *obj, Eina_Bool set);
+
+/**
+ * @brief Get the state of manual rotation done mode.
+ *
+ * This function is used to get the state of manual rotation done mode.
+ *
+ * @return @c true to set manual rotation done mode, @c false otherwise.
+ *
+ * @since 1.9
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_wm_rotation_manual_rotation_done_get(const Evas_Object *obj);
+
+/**
+ * @brief To notify the rotation done to WM manually.
+ *
+ * This function is used to notify the rotation done to WM manually.
+ *
+ * @since 1.9
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_wm_rotation_manual_rotation_done(Evas_Object *obj);
+
