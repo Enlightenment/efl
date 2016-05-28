@@ -64,6 +64,28 @@ _eina_debug_unwind_bt(void **bt, int max)
    return total;
 }
 
+static inline void
+_bt_cpu_set(int slot)
+{
+#if HAVE_SCHED_GETCPU
+   _bt_cpu[slot] = sched_getcpu();
+#else
+   _bt_cpu[slot] = -1;
+#endif
+}
+
+static inline void
+_bt_ts_set(int slot, pthread_t self)
+{
+#if defined(__clockid_t_defined)
+   clockid_t cid;
+   pthread_getcpuclockid(self, &cid);
+   clock_gettime(cid, &(_bt_ts[slot]));
+#else
+   memset(&(_bt_ts[slot]), 0, sizeof(struct timespec));
+#endif
+}
+
 // this signal handler is called inside each and every thread when the
 // thread gets a signal via pthread_kill(). this causes the thread to
 // stop here inside this handler and "do something" then when this returns
@@ -75,7 +97,6 @@ _eina_debug_signal(int sig EINA_UNUSED,
 {
    int i, slot = 0;
    pthread_t self = pthread_self();
-   clockid_t cid;
 
    // find which slot in the array of threads we have so we store info
    // in the correct slot for us
@@ -100,9 +121,8 @@ found:
    // we have consumed (it's cumulative so subtracing deltas can give
    // you an average amount of cpu time consumed between now and the
    // previous time we looked) and also a full backtrace
-   _bt_cpu[slot] = sched_getcpu();
-   pthread_getcpuclockid(self, &cid);
-   clock_gettime(cid, &(_bt_ts[slot]));
+   _bt_cpu_set(slot);
+   _bt_ts_set(slot, self);
    _bt_buf_len[slot] = _eina_debug_unwind_bt(_bt_buf[slot], EINA_MAX_BT);
    // now wake up the monitor to let them know we are done collecting our
    // backtrace info
