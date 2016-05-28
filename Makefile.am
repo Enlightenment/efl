@@ -42,6 +42,7 @@ m4/efl_compiler.m4 \
 m4/efl_doxygen.m4 \
 m4/efl_path_max.m4 \
 m4/efl_threads.m4 \
+m4/efl_libunwind.m4 \
 m4/eina_check.m4 \
 m4/eina_config.m4 \
 m4/eio_check_options.m4 \
