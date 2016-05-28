@@ -172,6 +172,15 @@ case "$host_os" in
 esac
 ])
 
+dnl _EFL_CHECK_FUNC_SCHED_GETCPU is for internal use
+dnl _EFL_CHECK_FUNC_SCHED_GETCPU(EFL, VARIABLE)
+AC_DEFUN([_EFL_CHECK_FUNC_SCHED_GETCPU],
+[
+   EFL_CHECK_LIB_CODE([$1], [], [$2], [[
+#include <sched.h>
+]], [[int cpu = sched_getcpu();]])
+])
+
 dnl _EFL_CHECK_FUNC_GETTIMEOFDAY is for internal use
 dnl _EFL_CHECK_FUNC_GETTIMEOFDAY(EFL, VARIABLE)
 AC_DEFUN([_EFL_CHECK_FUNC_GETTIMEOFDAY],

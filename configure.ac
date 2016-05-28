@@ -649,7 +649,7 @@ pause \
 AC_FUNC_ALLOCA
 AC_FUNC_MMAP
 
-EFL_CHECK_FUNCS([EFLALL], [fnmatch gettimeofday dirfd fcntl])
+EFL_CHECK_FUNCS([EFLALL], [fnmatch gettimeofday dirfd fcntl sched_getcpu])
 
 have_atfile_source="${ac_cv_func_fstatat}"
 AC_DEFINE_IF([HAVE_ATFILE_SOURCE],
