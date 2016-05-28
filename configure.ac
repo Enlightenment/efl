@@ -2020,7 +2020,6 @@ if test "${want_cocoa}" = "yes"; then
     have_cocoa="no"
     m4_ifdef([AC_PROG_OBJC],
       [
-       if test "x${have_gnu_objc}" = "xyes" ; then
           AC_LANG_PUSH([Objective C])
           LIBS_save="$LIBS"
           LIBS="$LIBS -framework Cocoa"
@@ -2048,7 +2047,6 @@ window = [[NSWindow alloc]
           AC_MSG_CHECKING([whether Cocoa framework is supported])
           AC_MSG_RESULT([${have_cocoa}])
           AC_LANG_POP([Objective C])
-       fi
    ])
 fi
 AC_SUBST(cocoa_ldflags)
@@ -2059,7 +2057,6 @@ if test "x${have_cocoa}" = "xyes"; then
     have_cocoa_coreservices="no"
     m4_ifdef([AC_PROG_OBJC],
       [
-       if test "x${have_gnu_objc}" = "xyes" ; then
           AC_LANG_PUSH([Objective C])
           LIBS_save="$LIBS"
           LIBS="$LIBS -framework CoreServices"
@@ -2080,7 +2077,6 @@ if test "x${have_cocoa}" = "xyes"; then
           AC_MSG_CHECKING([whether Cocoa CoreServices framework is supported])
           AC_MSG_RESULT([${have_cocoa_coreservices}])
           AC_LANG_POP([Objective C])
-       fi
    ])
 fi
 AC_SUBST(cocoa_coreservices_ldflags)
