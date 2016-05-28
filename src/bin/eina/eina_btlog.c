@@ -175,7 +175,7 @@ _atos(const char *bin_dir, const char *bin_name, unsigned long long addr,
    /* Default value, used as a fallback when cannot be determined */
    *file_line = -1;
 
-   if (*s == '-') /* objc method... will contain an extra space */
+   if ((*s == '-') || (*s == '+')) /* objc methods... will contain an extra space */
      func_space_count = 2;
    else
      func_space_count = 1;
