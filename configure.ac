@@ -154,15 +154,15 @@ AC_ARG_WITH([dbus-services],
 AC_SUBST(dbusservicedir)
 
 efl_deprecated_option="no"
-EFL_WITH_BIN([eet], [eet-eet], [eet])
+EFL_WITH_BIN([eet], [eet-eet])
 EFL_WITH_BIN([edje], [edje-cc])
 EFL_WITH_BIN([eolian], [eolian-gen])
 EFL_WITH_BIN([eolian_cxx], [eolian-cxx])
-EFL_WITH_BIN([eolian-js], [eolian-js], [eolian_js])
+EFL_WITH_BIN([eolian-js], [eolian-js])
 EFL_WITH_BIN_SUFFIX([elua], [elua], [_bin])
-EFL_WITH_BIN([eldbus], [eldbus_codegen], [eldbus-codegen])
-EFL_WITH_BIN([elementary], [elementary-codegen], [elementary_codegen])
-EFL_WITH_BIN([elementary], [elm-prefs-cc], [elm_prefs_cc])
+EFL_WITH_BIN([eldbus], [eldbus_codegen])
+EFL_WITH_BIN([elementary], [elementary-codegen])
+EFL_WITH_BIN([elementary], [elm-prefs-cc])
 
 #### Default values
 
