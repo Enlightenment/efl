@@ -27,7 +27,7 @@ lib/eio/Eio.h \
 lib/eio/Eio_Legacy.h \
 lib/eio/Eio_Eo.h \
 lib/eio/eio_inline_helper.x
-nodist_installed_eiomainheaders_DATA = $(eio_eoolian_h)
+nodist_installed_eiomainheaders_DATA = $(eio_eolian_h)
 
 lib_eio_libeio_la_SOURCES = \
 lib/eio/eio_dir.c \

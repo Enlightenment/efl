@@ -4,7 +4,9 @@ include ../../Makefile_Eolian_Subbuild_Helper.am
 
 ### Library
 
-EIO_EOS = eio_model.eo
+EIO_EOS = eio_model.eo \
+          eio_job.eo \
+          eio_sentry.eo
 
 EIO_EOS_H =  $(EIO_EOS:%.eo=%.eo.h)
 EIO_EOS_C =  $(EIO_EOS:%.eo=%.eo.c)
@@ -31,6 +33,8 @@ eio_monitor.c \
 eio_monitor_poll.c \
 eio_single.c \
 eio_xattr.c \
+eio_job.c \
+eio_sentry.c \
 eio_model.c \
 eio_model_private.h \
 eio_private.h \
