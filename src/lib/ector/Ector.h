@@ -153,6 +153,10 @@ EAPI int ector_shutdown(void);
 
 EAPI Eina_Bool ector_glsym_set(void *(*glsym)(void *lib, const char *name), void *lib);
 
+/* Avoid redefinition of types */
+#define _ECTOR_SURFACE_EO_CLASS_TYPE
+#define _ECTOR_RENDERER_EO_CLASS_TYPE
+
 #include "ector_surface.h"
 #include "ector_renderer.h"
 #include "ector_util.h"
