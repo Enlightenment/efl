@@ -5399,7 +5399,6 @@ build_quicklaunch="no"
 if test "x${ac_cv_func_fork}" = "xyes" -a "x${efl_func_dlopen}" = "xyes"; then
    build_quicklaunch="yes"
 fi
-echo ${build_quicklaunch}
 
 AM_CONDITIONAL([BUILD_QUICKLAUNCH], [test "x${build_quicklaunch}" = "xyes"])
 EFL_ADD_FEATURE([ELEMENTARY], [quicklaunch], [${build_quicklaunch}])
