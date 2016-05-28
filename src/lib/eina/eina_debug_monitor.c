@@ -82,6 +82,7 @@ _bt_ts_set(int slot, pthread_t self)
    pthread_getcpuclockid(self, &cid);
    clock_gettime(cid, &(_bt_ts[slot]));
 #else
+   (void) self;
    memset(&(_bt_ts[slot]), 0, sizeof(struct timespec));
 #endif
 }
