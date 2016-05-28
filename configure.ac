@@ -865,11 +865,7 @@ case "${build_profile}" in
      ;;
 esac
 
-PKG_CHECK_MODULES(UNWIND, [libunwind libunwind-generic],
-                  [have_unwind=yes], [have_unwind=no])
-AS_IF([test "x$have_unwind" = "xyes"],
-      [AC_DEFINE([HAVE_UNWIND], [1], [Have libunwind])])
-AM_CONDITIONAL(HAVE_UNWIND, test "x$have_unwind" = "xyes")
+EFL_CHECK_LIBUNWIND
 
 EINA_CONFIG([HAVE_ALLOCA_H], [test "x${ac_cv_working_alloca_h}" = "xyes"])
 EINA_CONFIG([SAFETY_CHECKS], [test "x${have_safety_checks}" = "xyes"])
