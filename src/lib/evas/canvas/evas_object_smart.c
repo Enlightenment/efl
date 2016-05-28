@@ -10,8 +10,6 @@ extern Eina_Hash* signals_hash_table;
 
 static Eina_Hash *_evas_smart_class_names_hash_table = NULL;
 
-typedef struct _Evas_Smart_Data      Evas_Smart_Data;
-
 struct _Evas_Smart_Data
 {
    struct {
