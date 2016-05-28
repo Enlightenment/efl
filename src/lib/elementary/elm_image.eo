@@ -6,19 +6,22 @@ enum Elm.Image.Scale_Type
 
      @since 1.18
    ]]
-   none,       [[Not scale the internal image]]
-   fill,       [[Scale the internal image so that it matches the object's area exactly.
-                 The image's aspect ratio might be changed.]]
-   fit_inside, [[Scale the internal image
-                 so that it fits inside the object's area
-                 while maintaining the aspect ratio.
-                 At least one of the dimensions of the image
-                 should be equal to the corresponding dimension of the object.]]
-   fit_outside [[Scale the internal image
-                 so that it covers the entire object area
-                 while maintaining the aspect ratio.
-                 At least one of the dimensions of the image
-                 should be equal to the corresponding dimension of the object.]]
+   fill,        [[Scale the internal image so that it matches 
+                  the object's area exactly.
+                  The image's aspect ratio might be changed.]]
+   fit_inside,  [[Scale the internal image
+                  so that it fits inside the object's area
+                  while maintaining the aspect ratio.
+                  At least one of the dimensions of the image
+                  should be equal to the corresponding dimension 
+                  of the object.]]
+   fit_outside, [[Scale the internal image
+                  so that it covers the entire object area
+                  while maintaining the aspect ratio.
+                  At least one of the dimensions of the image
+                  should be equal to the corresponding 
+                  dimension of the object.]]
+   none         [[Not scale the internal image]]
 }
 
 struct Elm.Image.Progress
