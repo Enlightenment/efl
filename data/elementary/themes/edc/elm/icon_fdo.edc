@@ -391,7 +391,7 @@ ICO2(CTX, "applications-system")
 ICO2(CTX, "applications-utilities")
 ICO2(CTX, "preferences-desktop")
 ICO2(CTX, "preferences-system")
-ICO2(CTX, "preferences-other")
+ICO1(CTX, "preferences-other", 128)
 // TODO applications-engineering
 // TODO preferences-desktop-peripherals
 // TODO preferences-desktop-personal
