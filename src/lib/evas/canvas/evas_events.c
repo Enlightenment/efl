@@ -12,7 +12,10 @@ _evas_event_object_list_in_get(Evas *eo_e, Eina_List *in,
 static Eina_List *
 evas_event_list_copy(Eina_List *list);
 
-
+static void
+_canvas_event_feed_mouse_move_internal(Eo *eo_e, Evas_Public_Data *e, int x, int y,
+                                       unsigned int timestamp, const void *data,
+                                       Efl_Pointer_Event_Data *parent_pe);
 
 static void
 _canvas_event_feed_multi_up_internal(Evas *eo_e, void *_pd, int d, int x, int y,
@@ -1027,8 +1030,8 @@ _evas_canvas_event_default_flags_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 static inline void
 _canvas_event_thaw_eval_internal(Eo *eo_e, Evas_Public_Data *e)
 {
-   evas_event_feed_mouse_move(eo_e, e->pointer.x, e->pointer.y,
-         e->last_timestamp, NULL);
+   _canvas_event_feed_mouse_move_internal(eo_e, e, e->pointer.x, e->pointer.y,
+                                          e->last_timestamp, NULL, NULL);
 }
 
 EAPI void
@@ -1328,7 +1331,7 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data,
         eina_list_free(ins);
      }
    if (e->pointer.inside)
-      evas_event_feed_mouse_move(eo_e, e->pointer.x, e->pointer.y, timestamp, data);
+     _canvas_event_feed_mouse_move_internal(eo_e, e, e->pointer.x, e->pointer.y, timestamp, data, pedata);
    if (ev.dev) eo_unref(ev.dev);
    EV_DEL(pe);
 
@@ -2101,7 +2104,7 @@ _canvas_event_feed_mouse_in_internal(Eo *eo_e, unsigned int timestamp, const voi
    /* and set up the new one */
    e->pointer.object.in = ins;
    _evas_post_event_callback_call(eo_e, e);
-   evas_event_feed_mouse_move(eo_e, e->pointer.x, e->pointer.y, timestamp, data);
+   _canvas_event_feed_mouse_move_internal(eo_e, e, e->pointer.x, e->pointer.y, timestamp, data, pedata);
    if (ev.dev) eo_unref(ev.dev);
    _evas_unwalk(e);
    EV_DEL(pe);
@@ -2943,11 +2946,12 @@ _feed_mouse_move_eval_internal(Eo *eo_obj, Evas_Object_Protected_Data *obj)
        ((!obj->precise_is_inside) || (evas_object_is_inside(eo_obj, obj,
                                                             evas->pointer.x,
                                                             evas->pointer.y))))
-     evas_event_feed_mouse_move(evas->evas,
-                                evas->pointer.x,
-                                evas->pointer.y,
-                                evas->last_timestamp,
-                                NULL);
+     {
+        _canvas_event_feed_mouse_move_internal(evas->evas, evas,
+                                               evas->pointer.x, evas->pointer.y,
+                                               evas->last_timestamp,
+                                               NULL, NULL);
+     }
 }
 
 EOLIAN void
