@@ -1625,6 +1625,19 @@ _elm_win_elm_widget_event(Eo *obj, Elm_Win_Data *_pd EINA_UNUSED, Evas_Object *s
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_evas_event_pointer_cb(void *data, const Eo_Event *ev)
+{
+   Eo *win = data;
+   Eo *evt = ev->info;
+
+   eo_event_callback_call(win, EFL_GFX_EVENT_POINTER, evt);
+   return EO_CALLBACK_CONTINUE;
+}
+
+EO_CALLBACKS_ARRAY_DEFINE(_elm_win_evas_forward_callbacks,
+                          { EVAS_CANVAS_EVENT_POINTER, _evas_event_pointer_cb })
+
 static void
 _deferred_ecore_evas_free(void *data)
 {
@@ -1972,6 +1985,8 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _elm_win_on_resize_obj_changed_size_hints,
                                        obj);
+   eo_event_callback_array_del(sd->evas, _elm_win_evas_forward_callbacks(), obj);
+
    evas_object_del(sd->box);
    evas_object_del(sd->edje);
 
@@ -4027,6 +4042,8 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_WINDOW);
    if (_elm_config->atspi_mode)
      elm_interface_atspi_window_created_signal_emit(obj);
+
+   eo_event_callback_array_add(sd->evas, _elm_win_evas_forward_callbacks(), obj);
 
    evas_object_show(sd->edje);
 

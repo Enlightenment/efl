@@ -49,15 +49,6 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event, Efl.Input.State)
             y: int;
          }
       }
-      /*
-      @property input_state {
-         [[Carries information about keyboard modifiers and locks
-           at the moment of this event (eg. Ctrl, Alt or Caps Lock, Num Lock).]]
-         values {
-            modifiers: Efl.Input.State*; [[Can be $null (no info about state).]]
-         }
-      }
-      */
       @property device {
          [[Pointing device that originated this event.]]
          values {
