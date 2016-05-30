@@ -1,8 +1,7 @@
-class Elm.Scroller.Internal.Part (Eo.Base, Efl.Container) // FIXME: (Elm.Layout.Internal.Part)
+class Elm.Scroller.Internal.Part (Elm.Layout.Internal.Part)
 {
-   data: Elm_Part_Data; // FIXME: null;
+   data: null;
    implements {
-      Eo.Base.destructor; // FIXME: remove
       Efl.Container.content.set;
       Efl.Container.content.get;
       Efl.Container.content_unset;

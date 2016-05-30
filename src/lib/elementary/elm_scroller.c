@@ -1414,19 +1414,10 @@ _elm_scroller_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
 
 /* Efl.Part begin */
 
-/* FIXME: Should be OVERRIDE, but... it doesn't work (buggy scrollers in
- * elm_test). Why? No idea! */
-#if 0
 ELM_PART_OVERRIDE(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
-#else
-ELM_PART_IMPLEMENT(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_SET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_GET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data, Elm_Part_Data)
-#endif
 #include "elm_scroller_internal_part.eo.c"
 
 /* Efl.Part end */
