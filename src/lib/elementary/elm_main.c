@@ -329,6 +329,11 @@ elm_init(int argc, char **argv)
    if (_elm_init_count > 1) return _elm_init_count;
    elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
+
+   efl_loop_args_add(ecore_main_loop_get(),
+                     argc - 1,
+                     (argc > 1) ? ((const char **)argv + 1) : NULL);
+
    _prefix_shutdown();
 
    system_handlers[0] =
