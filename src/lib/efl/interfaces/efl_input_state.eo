@@ -1,0 +1,27 @@
+interface Efl.Input.State ()
+{
+   eo_prefix: efl_input;
+   methods {
+      /* FIXME: legacy name was 'modifier_is_set' */
+      @property modifier_enabled {
+         [[Indicates whether a key modifier is on, such as Ctrl, Shift,...]]
+         get {}
+         keys {
+            name: string;
+         }
+         values {
+            is_set: bool; [[$true if the key modifier is pressed.]]
+         }
+      }
+      @property lock_enabled {
+         [[Indicates whether a key lock is on, such as NumLock, CapsLock, ...]]
+         get {}
+         keys {
+            name: string;
+         }
+         values {
+            is_set: bool; [[$true if the key lock is on.]]
+         }
+      }
+   }
+}

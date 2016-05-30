@@ -46,6 +46,8 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
            ev->event_flags = e->event_flags;
            ev->device = e->dev;
            ev->source = e->event_src;
+           ev->modifiers = e->modifiers;
+           ev->locks = e->locks;
            break;
         }
 
@@ -63,6 +65,8 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
            ev->event_flags = e->event_flags;
            ev->device = e->dev;
            ev->source = e->event_src;
+           ev->modifiers = e->modifiers;
+           ev->locks = e->locks;
            break;
         }
 
@@ -82,6 +86,8 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
            ev->event_flags = e->event_flags;
            ev->device = e->dev;
            ev->source = e->event_src;
+           ev->modifiers = e->modifiers;
+           ev->locks = e->locks;
            break;
         }
 
@@ -101,6 +107,8 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
            ev->event_flags = e->event_flags;
            ev->device = e->dev;
            ev->source = e->event_src;
+           ev->modifiers = e->modifiers;
+           ev->locks = e->locks;
            break;
         }
 
@@ -123,6 +131,8 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
            ev->event_flags = e->event_flags;
            ev->device = e->dev;
            ev->source = e->event_src;
+           ev->modifiers = e->modifiers;
+           ev->locks = e->locks;
            break;
         }
 
@@ -141,6 +151,8 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
            ev->timestamp = e->timestamp;
            ev->event_flags = e->event_flags;
            ev->device = e->dev;
+           ev->modifiers = e->modifiers;
+           ev->locks = e->locks;
            break;
         }
 
@@ -164,6 +176,8 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
            ev->timestamp = e->timestamp;
            ev->event_flags = e->event_flags;
            ev->device = e->dev;
+           ev->modifiers = e->modifiers;
+           ev->locks = e->locks;
            break;
         }
 
@@ -187,6 +201,8 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
            ev->timestamp = e->timestamp;
            ev->event_flags = e->event_flags;
            ev->device = e->dev;
+           ev->modifiers = e->modifiers;
+           ev->locks = e->locks;
            break;
         }
 
@@ -209,6 +225,8 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
            ev->timestamp = e->timestamp;
            ev->event_flags = e->event_flags;
            ev->device = e->dev;
+           ev->modifiers = e->modifiers;
+           ev->locks = e->locks;
            break;
         }
 
@@ -244,9 +262,9 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
            e->timestamp = ev->timestamp;
            e->event_flags = ev->event_flags;
            e->dev = ev->device;
-           e->modifiers = NULL; /* FIXME */
-           e->locks = NULL; /* FIXME */
            e->event_src = ev->source;
+           e->modifiers = ev->modifiers;
+           e->locks = ev->locks;
         }
         break;
 
@@ -267,8 +285,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
            e->event_flags = ev->event_flags;
            e->dev = ev->device;
            e->event_src = ev->source;
-           e->modifiers = NULL; /* FIXME */
-           e->locks = NULL; /* FIXME */
+           e->modifiers = ev->modifiers;
+           e->locks = ev->locks;
         }
         break;
 
@@ -291,8 +309,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
              e->event_src = ev->source;
-             e->modifiers = NULL; /* FIXME */
-             e->locks = NULL; /* FIXME */
+             e->modifiers = ev->modifiers;
+             e->locks = ev->locks;
           }
         else
           {
@@ -318,8 +336,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->timestamp = ev->timestamp;
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
-             e->modifiers = NULL; /* FIXME */
-             e->locks = NULL; /* FIXME */
+             e->modifiers = ev->modifiers;
+             e->locks = ev->locks;
           }
         break;
 
@@ -342,8 +360,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
              e->event_src = ev->source;
-             e->modifiers = NULL; /* FIXME */
-             e->locks = NULL; /* FIXME */
+             e->modifiers = ev->modifiers;
+             e->locks = ev->locks;
           }
         else
           {
@@ -369,8 +387,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->timestamp = ev->timestamp;
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
-             e->modifiers = NULL; /* FIXME */
-             e->locks = NULL; /* FIXME */
+             e->modifiers = ev->modifiers;
+             e->locks = ev->locks;
              break;
           }
         break;
@@ -397,8 +415,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
              e->event_src = ev->source;
-             e->modifiers = NULL; /* FIXME */
-             e->locks = NULL; /* FIXME */
+             e->modifiers = ev->modifiers;
+             e->locks = ev->locks;
           }
         else
           {
@@ -423,8 +441,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
              e->timestamp = ev->timestamp;
              e->event_flags = ev->event_flags;
              e->dev = ev->device;
-             e->modifiers = NULL; /* FIXME */
-             e->locks = NULL; /* FIXME */
+             e->modifiers = ev->modifiers;
+             e->locks = ev->locks;
           }
         break;
 
@@ -445,8 +463,8 @@ efl_pointer_event_legacy_info_get(const Efl_Pointer_Event *evt, Evas_Callback_Ty
            e->timestamp = ev->timestamp;
            e->event_flags = ev->event_flags;
            e->dev = ev->device;
-           e->modifiers = NULL; /* FIXME */
-           e->locks = NULL; /* FIXME */
+           e->modifiers = ev->modifiers;
+           e->locks = ev->locks;
            break;
         }
 

@@ -3191,11 +3191,13 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
    if (!ev) return EO_CALLBACK_CONTINUE;
 
    /* TODO:
-    * - pass event to the internal functions
-    * - implement legacy over eo instead of this
+    * - implement legacy over eo instead of this (hardcore)
     */
 
    ev->evas_done = EINA_TRUE;
+   ev->modifiers = &e->modifiers;
+   ev->locks = &e->locks;
+
    switch (ev->action)
      {
       case EFL_POINTER_ACTION_MOVE:

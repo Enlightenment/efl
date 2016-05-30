@@ -48,6 +48,9 @@ EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
 #include "interfaces/efl_ui_spin.eo.c"
 #include "interfaces/efl_ui_progress.eo.c"
 
+#include "interfaces/efl_event.eo.c"
+#include "interfaces/efl_input_state.eo.c"
+
 EAPI void
 __efl_internal_init(void)
 {

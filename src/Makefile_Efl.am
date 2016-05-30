@@ -40,7 +40,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_ui_spin.eo \
       lib/efl/interfaces/efl_ui_progress.eo \
       lib/efl/interfaces/efl_event.eo \
-      lib/efl/interfaces/efl_pointer_event.eo \
+      lib/efl/interfaces/efl_input_state.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
 
@@ -84,8 +84,6 @@ lib/efl/interfaces/efl_vpath_manager.c \
 lib/efl/interfaces/efl_vpath_core.c \
 lib/efl/interfaces/efl_vpath_file_core.c \
 lib/efl/interfaces/efl_input_device.c \
-lib/efl/interfaces/efl_event.c \
-lib/efl/interfaces/efl_pointer_event.c \
 $(NULL)
 
 lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA

@@ -5548,6 +5548,20 @@ _elm_win_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Win_Data *sd EINA_
    return name ? strdup(name) : NULL;
 }
 
+EOLIAN static Eina_Bool
+_elm_win_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Elm_Win_Data *pd, const char *name)
+{
+   const Evas_Modifier *m = evas_key_modifier_get(pd->evas);
+   return evas_key_modifier_is_set(m, name);
+}
+
+EOLIAN static Eina_Bool
+_elm_win_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Elm_Win_Data *pd, const char *name)
+{
+   const Evas_Lock *m = evas_key_lock_get(pd->evas);
+   return evas_key_lock_is_set(m, name);
+}
+
 #ifndef EFL_TEAMWORK_VERSION
 # define EFL_TEAMWORK_VERSION 2
 #endif

@@ -1,7 +1,7 @@
 import efl_orientation;
 import efl_event_types;
 
-class Efl.Pointer.Event (Eo.Base, Efl.Event)
+class Efl.Pointer.Event (Eo.Base, Efl.Event, Efl.Input.State)
 {
    [[Event data carried over with any pointer event (mouse, touch, ...)
 
@@ -131,5 +131,7 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event)
       Efl.Event.timestamp.get;
       Efl.Event.event_type.set;
       Efl.Event.event_type.get;
+      Efl.Input.State.modifier_enabled.get;
+      Efl.Input.State.lock_enabled.get;
    }
 }

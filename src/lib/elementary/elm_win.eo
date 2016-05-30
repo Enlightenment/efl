@@ -149,7 +149,8 @@ enum Elm.Illume_Command
 }
 
 class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
-               Elm.Interface.Atspi_Widget_Action, Efl.Pack)
+               Elm.Interface.Atspi_Widget_Action, Efl.Pack,
+               Efl.Input.State)
 {
    legacy_prefix: elm_win;
    eo_prefix: elm_obj_win;
@@ -1042,6 +1043,8 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
       Efl.Container.content_count;
       Efl.Pack.unpack;
       Efl.Pack.pack;
+      Efl.Input.State.modifier_enabled.get;
+      Efl.Input.State.lock_enabled.get;
    }
    constructors {
       .name;

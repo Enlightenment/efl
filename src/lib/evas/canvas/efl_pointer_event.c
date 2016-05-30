@@ -2,10 +2,10 @@
 # include <config.h>
 #endif
 
-#include <Efl.h>
+#include <Evas.h>
 
 #define EFL_INTERNAL_UNSTABLE
-#include "efl_common_internal.h"
+#include "interfaces/efl_common_internal.h"
 
 #define MY_CLASS EFL_POINTER_EVENT_CLASS
 
@@ -182,22 +182,6 @@ _efl_pointer_event_previous_position_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_
    if (y) *y = pd->prev.y;
 }
 
-
-/* FIXME: implement input state with eo*/
-
-/*
-EOLIAN static void
-_efl_pointer_event_input_state_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, Efl_Input_State *modifiers)
-{
-
-}
-EOLIAN static Efl_Input_State *
-_efl_pointer_event_input_state_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd)
-{
-
-}
-*/
-
 EOLIAN static void
 _efl_pointer_event_device_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, Efl_Input_Device *dev)
 {
@@ -318,7 +302,6 @@ _efl_pointer_event_touch_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, do
    if (angle) *angle = pd->angle;
 }
 
-
 EOLIAN static void
 _efl_pointer_event_touch_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, double r, double rx, double ry, double press, double angle)
 {
@@ -329,4 +312,18 @@ _efl_pointer_event_touch_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, do
    pd->angle = angle;
 }
 
-#include "interfaces/efl_pointer_event.eo.c"
+EOLIAN static Eina_Bool
+_efl_pointer_event_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, const char *name)
+{
+   if (!pd->modifiers) return EINA_FALSE;
+   return evas_key_modifier_is_set(pd->modifiers, name);
+}
+
+EOLIAN static Eina_Bool
+_efl_pointer_event_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, const char *name)
+{
+   if (!pd->locks) return EINA_FALSE;
+   return evas_key_lock_is_set(pd->locks, name);
+}
+
+#include "efl_pointer_event.eo.c"

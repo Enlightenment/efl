@@ -4327,8 +4327,8 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
     * root.{x,y}
     * root_window
     * event_window
-    * modifiers
     * same_screen
+    * modifiers (already passed to evas, no need to do anything)
     */
 
    evt = efl_pointer_event_instance_get(EFL_POINTER_EVENT_CLASS, e, (void **) &ev);
@@ -4385,8 +4385,8 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
     * root.{x,y}
     * root_window
     * event_window
-    * modifiers
     * same_screen
+    * modifiers (already passed to evas, no need to do anything)
     */
 
    evt = efl_pointer_event_instance_get(EFL_POINTER_EVENT_CLASS, e, (void **) &ev);
@@ -4423,8 +4423,7 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
     * root.{x,y}
     * root_window
     * event_window
-    * modifiers
-    * same_screen
+    * modifiers (already passed to evas, no need to do anything)
     */
 
    evt = efl_pointer_event_instance_get(EFL_POINTER_EVENT_CLASS, e, (void **) &ev);
@@ -4453,7 +4452,7 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
 
    /* Unused information:
     * event_window
-    * modifiers
+    * modifiers (already passed to evas, no need to do anything)
     */
 
    evt = efl_pointer_event_instance_get(EFL_POINTER_EVENT_CLASS, e, (void **) &ev);
