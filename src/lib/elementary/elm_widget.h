@@ -840,7 +840,7 @@ _elm_widget_sub_object_redirect_to_top(Evas_Object *obj, Evas_Object *sobj)
 {
    Eina_Bool ret = elm_widget_sub_object_del(obj, sobj);
    if (ret)
-      ret = elm_widget_sub_object_add(elm_widget_top_get(obj), sobj);
+     ret = elm_widget_sub_object_add(elm_widget_top_get(obj), sobj);
 
    return ret;
 }

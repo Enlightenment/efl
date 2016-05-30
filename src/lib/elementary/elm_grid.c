@@ -221,7 +221,7 @@ _elm_grid_clear(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool clear)
      {
         chld = evas_object_grid_children_get(wd->resize_obj);
         EINA_LIST_FREE(chld, o)
-           _elm_widget_sub_object_redirect_to_top(obj, o);
+          _elm_widget_sub_object_redirect_to_top(obj, o);
      }
 
    evas_object_grid_clear(wd->resize_obj, clear);
