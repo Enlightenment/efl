@@ -105,6 +105,7 @@ static const char *web_backend = NULL;
 static Fonts_Data fndata = {NULL, NULL, NULL, NULL, NULL, NULL, 0.0};
 static Evas_Object *web_backend_entry = NULL;
 static Evas_Object *icon_theme_list = NULL,*icon_theme_elm = NULL;
+static Evas_Object *icon_preview_frame;
 
 static void
 _font_styles_list_sel(void *data   EINA_UNUSED,
@@ -1535,6 +1536,45 @@ _theme_sel(void            *data EINA_UNUSED,
    }*/
 
 static void
+_icon_preview_icon_add(const char *icon, const char *theme)
+{
+   Evas_Object *ic;
+
+   if (!icon_preview_frame)
+   return;
+
+   ic = elm_icon_add(icon_preview_frame);
+   elm_image_aspect_fixed_set(ic, EINA_TRUE);
+   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(icon_preview_frame, ic);
+   evas_object_show(ic);
+
+   if (strcmp(theme, ELM_CONFIG_ICON_THEME_ELEMENTARY))
+     elm_image_file_set(ic, efreet_icon_path_find(theme, icon, 96), NULL);
+}
+
+
+static void
+_icon_preview_update(Evas_Object *win)
+{
+   const char **example_icon, *example_icons[] =
+   {
+      "folder",
+      "user-home",
+      "text-x-generic",
+      "system-run",
+      "preferences-system",
+      NULL,
+   };
+   const char *theme = evas_object_data_get(win, "icon_theme");
+
+   elm_box_clear(icon_preview_frame);
+   for (example_icon = example_icons; !!*example_icon; example_icon++)
+     _icon_preview_icon_add(*example_icon, theme);
+}
+
+static void
 _icon_elm_change(void *data       EINA_UNUSED,
           Evas_Object     *obj,
           void *event_info EINA_UNUSED)
@@ -1559,6 +1599,8 @@ _icon_elm_change(void *data       EINA_UNUSED,
         if (item)
           elm_list_item_selected_set(item, EINA_TRUE);
      }
+
+   _icon_preview_update(win);
 }
 
 static void
@@ -1582,6 +1624,8 @@ _icon_theme_sel(void *data, Evas_Object *obj,
 
    elm_check_state_set(icon_theme_elm, EINA_FALSE);
    evas_object_data_set(win, "icon_theme", theme);
+
+   _icon_preview_update(win);
 }
 
 static Eina_Bool
@@ -2332,6 +2376,14 @@ _status_config_icons(Evas_Object *win,
    elm_object_content_set(pd, fr);
    evas_object_show(fr);
 
+   bx = icon_preview_frame = elm_box_add(fr);
+   elm_box_homogeneous_set(bx, EINA_TRUE);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_object_content_set(fr, bx);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(bx);
+
    /////////////////////////////////////////////
    sp = elm_separator_add(win);
    elm_separator_horizontal_set(sp, EINA_TRUE);
@@ -2355,6 +2407,7 @@ _status_config_icons(Evas_Object *win,
    elm_object_content_set(pd, bt);
    evas_object_show(bt);
 
+   _icon_preview_update(win);
    evas_object_data_set(win, "icons", tb);
    elm_naviframe_item_simple_push(naviframe, tb);
 }
