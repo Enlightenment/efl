@@ -198,6 +198,7 @@ _item_free(Elm_Naviframe_Item_Data *it)
              elm_object_part_content_unset(VIEW(it), CONTENT_PART);
              evas_object_event_callback_del
                 (it->content, EVAS_CALLBACK_DEL, _item_content_del_cb);
+             evas_object_hide(it->content);
           }
      }
 }
