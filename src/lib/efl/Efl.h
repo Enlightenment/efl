@@ -129,6 +129,7 @@ static inline void efl_gfx_color16_type_set(Efl_Gfx_Color *color,
 #include "interfaces/efl_event_types.eot.h"
 #include "interfaces/efl_input_device.eo.h"
 #include "interfaces/efl_input_state.eo.h"
+#include "interfaces/efl_input_interface.eo.h"
 #include "interfaces/efl_event.eo.h"
 
 #else

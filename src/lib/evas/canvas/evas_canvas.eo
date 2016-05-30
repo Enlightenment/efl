@@ -1,7 +1,8 @@
 import evas_types;
 import efl_event_types;
 
-class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
+class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
+                   Efl.Input.Interface)
 {
    legacy_prefix: evas;
    data: Evas_Public_Data;
@@ -1327,6 +1328,5 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
       device,changed;
       axis,update;
       viewport,resize;
-      pointer: Efl.Pointer.Event; [[Generic pointer event (mouse, finger...)]]
    }
 }

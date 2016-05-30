@@ -40,6 +40,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_ui_spin.eo \
       lib/efl/interfaces/efl_ui_progress.eo \
       lib/efl/interfaces/efl_event.eo \
+      lib/efl/interfaces/efl_input_interface.eo \
       lib/efl/interfaces/efl_input_state.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)

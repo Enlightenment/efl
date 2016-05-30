@@ -4314,6 +4314,29 @@ _pointer_position_set(Efl_Pointer_Event_Data *ev, Ecore_Evas *ee, int x, int y, 
      EVENT_XY_SET(ev, y, ee->w + fh - x - 1, y, ee->w + fh - mx - 1, fx, fy);
 }
 
+static const Eo_Event_Description *
+_event_description_get(Efl_Pointer_Action action)
+{
+   switch (action)
+     {
+      case EFL_POINTER_ACTION_MOVE:
+        return EFL_EVENT_POINTER_MOVE;
+      case EFL_POINTER_ACTION_DOWN:
+        return EFL_EVENT_POINTER_DOWN;
+      case EFL_POINTER_ACTION_UP:
+        return EFL_EVENT_POINTER_UP;
+      case EFL_POINTER_ACTION_CANCEL:
+        return EFL_EVENT_POINTER_CANCEL;
+      case EFL_POINTER_ACTION_IN:
+        return EFL_EVENT_POINTER_IN;
+      case EFL_POINTER_ACTION_OUT:
+        return EFL_EVENT_POINTER_OUT;
+      case EFL_POINTER_ACTION_WHEEL:
+        return EFL_EVENT_POINTER_WHEEL;
+      default: return NULL;
+     }
+}
+
 static Eina_Bool
 _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_Pointer_Action action)
 {
@@ -4347,7 +4370,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
    ev->pressure = info->multi.pressure;
    ev->angle = info->multi.angle - ee->rotation;
 
-   eo_event_callback_call(e, EVAS_CANVAS_EVENT_POINTER, evt);
+   eo_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
    eo_unref(evt);
 
@@ -4403,7 +4426,7 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
    ev->pressure = info->multi.pressure;
    ev->angle = info->multi.angle - ee->rotation;
 
-   eo_event_callback_call(e, EVAS_CANVAS_EVENT_POINTER, evt);
+   eo_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
    eo_unref(evt);
 
@@ -4435,7 +4458,7 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
    ev->wheel.z = info->z;
    ev->wheel.dir = info->direction ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL;
 
-   eo_event_callback_call(e, EVAS_CANVAS_EVENT_POINTER, evt);
+   eo_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
    eo_unref(evt);
 
@@ -4462,7 +4485,7 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
    ev->timestamp = info->timestamp;
    _pointer_position_set(ev, ee, info->x, info->y, info->x, info->y);
 
-   eo_event_callback_call(e, EVAS_CANVAS_EVENT_POINTER, evt);
+   eo_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
    eo_unref(evt);
 

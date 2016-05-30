@@ -1631,12 +1631,18 @@ _evas_event_pointer_cb(void *data, const Eo_Event *ev)
    Eo *win = data;
    Eo *evt = ev->info;
 
-   eo_event_callback_call(win, EFL_GFX_EVENT_POINTER, evt);
+   eo_event_callback_call(win, ev->desc, evt);
    return EO_CALLBACK_CONTINUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(_elm_win_evas_forward_callbacks,
-                          { EVAS_CANVAS_EVENT_POINTER, _evas_event_pointer_cb })
+{ EFL_EVENT_POINTER_MOVE, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_DOWN, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_UP, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_IN, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_OUT, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_CANCEL, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_WHEEL, _evas_event_pointer_cb })
 
 static void
 _deferred_ecore_evas_free(void *data)

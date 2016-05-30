@@ -150,7 +150,7 @@ enum Elm.Illume_Command
 
 class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                Elm.Interface.Atspi_Widget_Action, Efl.Pack,
-               Efl.Input.State)
+               Efl.Input.State, Efl.Input.Interface)
 {
    legacy_prefix: elm_win;
    eo_prefix: elm_obj_win;

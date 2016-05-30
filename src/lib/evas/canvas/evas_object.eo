@@ -1,6 +1,7 @@
 import evas_types;
 
-abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator)
+abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
+                      Efl.Animator, Efl.Input.Interface)
 {
    legacy_prefix: evas_object;
    eo_prefix: evas_obj;
@@ -1247,6 +1248,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack, Ef
       Efl.Gfx.Stack.lower;
    }
    events {
+       /* FIXME: remove events from Efl.Input.Interface */
        mouse,in; [[Mouse In Event ]]
        mouse,out; [[Mouse Out Event ]]
        mouse,down; [[Mouse Button Down Event ]]

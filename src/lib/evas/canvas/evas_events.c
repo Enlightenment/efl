@@ -3190,10 +3190,6 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
 
    if (!ev) return EO_CALLBACK_CONTINUE;
 
-   /* TODO:
-    * - implement legacy over eo instead of this (hardcore)
-    */
-
    ev->evas_done = EINA_TRUE;
    ev->modifiers = &e->modifiers;
    ev->locks = &e->locks;
@@ -3272,14 +3268,23 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
    return EO_CALLBACK_CONTINUE;
 }
 
+EO_CALLBACKS_ARRAY_DEFINE(_evas_canvas_event_pointer_callbacks,
+{ EFL_EVENT_POINTER_MOVE, _evas_canvas_event_pointer_cb },
+{ EFL_EVENT_POINTER_DOWN, _evas_canvas_event_pointer_cb },
+{ EFL_EVENT_POINTER_UP, _evas_canvas_event_pointer_cb },
+{ EFL_EVENT_POINTER_IN, _evas_canvas_event_pointer_cb },
+{ EFL_EVENT_POINTER_OUT, _evas_canvas_event_pointer_cb },
+{ EFL_EVENT_POINTER_CANCEL, _evas_canvas_event_pointer_cb },
+{ EFL_EVENT_POINTER_WHEEL, _evas_canvas_event_pointer_cb })
+
 void
 _evas_canvas_event_init(Evas *eo_e, Evas_Public_Data *e)
 {
-   eo_event_callback_add(eo_e, EVAS_CANVAS_EVENT_POINTER, _evas_canvas_event_pointer_cb, e);
+   eo_event_callback_array_add(eo_e, _evas_canvas_event_pointer_callbacks(), e);
 }
 
 void
 _evas_canvas_event_shutdown(Evas *eo_e, Evas_Public_Data *e)
 {
-   eo_event_callback_del(eo_e, EVAS_CANVAS_EVENT_POINTER, _evas_canvas_event_pointer_cb, e);
+   eo_event_callback_array_del(eo_e, _evas_canvas_event_pointer_callbacks(), e);
 }

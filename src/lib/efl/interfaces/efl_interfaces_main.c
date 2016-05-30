@@ -50,6 +50,7 @@ EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
 
 #include "interfaces/efl_event.eo.c"
 #include "interfaces/efl_input_state.eo.c"
+#include "interfaces/efl_input_interface.eo.c"
 
 EAPI void
 __efl_internal_init(void)

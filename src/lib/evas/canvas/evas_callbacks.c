@@ -59,25 +59,28 @@ typedef struct
 } _eo_evas_object_cb_info;
 
 static inline void *
-_pointer_event_get(const _eo_evas_object_cb_info *info, const Eo_Event *event)
+_pointer_event_get(const _eo_evas_object_cb_info *info, const Eo_Event *event,
+                   const Eo_Event_Description **pdesc)
 {
    if (!info->data) return NULL;
 
    /* See also evas_events.c: _pointer_event_create() */
 
-#define EV_CASE(TYPE, Type) \
-   case EVAS_CALLBACK_ ## TYPE: return ((Evas_Event_ ## Type *) event->info)->reserved
+#define EV_CASE(TYPE, NEWTYPE, Type) \
+   case EVAS_CALLBACK_ ## TYPE: \
+     *pdesc = EFL_EVENT_POINTER_ ## NEWTYPE; \
+     return ((Evas_Event_ ## Type *) event->info)->reserved
    switch (info->type)
      {
-      EV_CASE(MOUSE_MOVE, Mouse_Move);
-      EV_CASE(MOUSE_OUT, Mouse_Out);
-      EV_CASE(MOUSE_IN, Mouse_In);
-      EV_CASE(MOUSE_DOWN, Mouse_Down);
-      EV_CASE(MOUSE_UP, Mouse_Up);
-      EV_CASE(MULTI_MOVE, Multi_Move);
-      EV_CASE(MULTI_DOWN, Multi_Down);
-      EV_CASE(MULTI_UP, Multi_Up);
-      EV_CASE(MOUSE_WHEEL, Mouse_Wheel);
+      EV_CASE(MOUSE_MOVE, MOVE, Mouse_Move);
+      EV_CASE(MOUSE_OUT, OUT, Mouse_Out);
+      EV_CASE(MOUSE_IN, IN, Mouse_In);
+      EV_CASE(MOUSE_DOWN, DOWN, Mouse_Down);
+      EV_CASE(MOUSE_UP, UP, Mouse_Up);
+      EV_CASE(MULTI_MOVE, MOVE, Multi_Move);
+      EV_CASE(MULTI_DOWN, DOWN, Multi_Down);
+      EV_CASE(MULTI_UP, UP, Multi_Up);
+      EV_CASE(MOUSE_WHEEL, WHEEL, Mouse_Wheel);
       default: return NULL;
      }
 #undef EV_CASE
@@ -88,12 +91,9 @@ static Eina_Bool
 _eo_evas_object_cb(void *data, const Eo_Event *event)
 {
    _eo_evas_object_cb_info *info = data;
-   void *pe = _pointer_event_get(info, event);
-   if (pe)
-     {
-        DBG("triggering eo pointer event!");
-        eo_event_callback_call(event->object, EFL_GFX_EVENT_POINTER, pe);
-     }
+   const Eo_Event_Description *desc;
+   void *pe = _pointer_event_get(info, event, &desc);
+   if (pe) eo_event_callback_call(event->object, desc, pe);
    if (info->func) info->func(info->data, evas_object_evas_get(event->object), event->object, event->info);
    return EINA_TRUE;
 }

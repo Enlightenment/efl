@@ -11,18 +11,9 @@ efl_pointer_event_legacy_info_set(Efl_Pointer_Event *evt, const void *event_info
    if (!ev || !event_info) return EINA_FALSE;
 
    /* FIXME/TODO:
-    *
-    * Some things that are not supported or should be eo-ified somehow
-    *
-    * 1. Lock
-    * 2. Modifiers
-    * 3. data
-    *
     * Some events definitely don't have all the info they could have. Need
     * to get it from ecore!
     */
-
-#warning Modifiers and locks not supported yet - very bad!
 
 #if defined(DEBUG)
 # define CHKACT(a) do { if (evdata->action != EFL_POINTER_ACTION_ ## a) abort(); } while (0)
