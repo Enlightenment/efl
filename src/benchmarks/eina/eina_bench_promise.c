@@ -334,6 +334,71 @@ eina_bench_promise_pointer_value_set_after_then_pooled(int request)
    eina_shutdown();
 }
 
+static void
+eina_bench_promise_pointer_value_set_before_then_non_alloc(int request)
+{
+   const char *tmp;
+   unsigned int j;
+   int i;
+
+   eina_init();
+
+   mempool = eina_mempool_add("chained_mempool", "", NULL, sizeof(struct value_type), 10);
+   assert(mempool != NULL);
+
+   for (j = 0; j != 200; ++j)
+      for (i = 0; i != request; ++i)
+        {
+           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type*));
+           Eina_Promise* promise = eina_promise_owner_promise_get(owner);
+
+           struct value_type v = {0,0,0,0};
+           *(struct value_type**)eina_promise_owner_buffer_get(owner) = &v;
+
+           eina_promise_then(promise, &pointer_cb, NULL, NULL);
+           eina_promise_owner_value_set(owner, NULL, &indirect_mempool_free);
+        }
+
+   /* Suppress warnings as we really don't want to do anything. */
+   (void) tmp;
+
+   eina_mempool_del(mempool);
+   
+   eina_shutdown();
+}
+
+static void
+eina_bench_promise_pointer_value_set_after_then_non_alloc(int request)
+{
+   const char *tmp;
+   unsigned int j;
+   int i;
+
+   eina_init();
+
+   mempool = eina_mempool_add("chained_mempool", "", NULL, sizeof(struct value_type), 10);
+   assert(mempool != NULL);
+
+   for (j = 0; j != 200; ++j)
+      for (i = 0; i != request; ++i)
+        {
+           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type*));
+           Eina_Promise* promise = eina_promise_owner_promise_get(owner);
+
+           struct value_type v = {0,0,0,0};
+           *(struct value_type**)eina_promise_owner_buffer_get(owner) = &v;
+
+           eina_promise_owner_value_set(owner, NULL, &indirect_mempool_free);
+           eina_promise_then(promise, &pointer_cb, NULL, NULL);
+        }
+
+   /* Suppress warnings as we really don't want to do anything. */
+   (void) tmp;
+
+   eina_mempool_del(mempool);
+   eina_shutdown();
+}
+
 void eina_bench_promise(Eina_Benchmark *bench)
 {
    eina_benchmark_register(bench, "promise synchronous then",
@@ -351,16 +416,22 @@ void eina_bench_promise(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "promise no copy value set before then",
                            EINA_BENCHMARK(
                               eina_bench_promise_no_copy_value_set_before_then), 100, 20100, 500);
-   eina_benchmark_register(bench, "promise pointer value set after then",
-                           EINA_BENCHMARK(
-                              eina_bench_promise_pointer_value_set_after_then), 100, 20100, 500);
-   eina_benchmark_register(bench, "promise pointer value set before then",
-                           EINA_BENCHMARK(
-                              eina_bench_promise_pointer_value_set_before_then), 100, 20100, 500);
    eina_benchmark_register(bench, "promise pointer value set after then mempool",
                            EINA_BENCHMARK(
                               eina_bench_promise_pointer_value_set_after_then_pooled), 100, 20100, 500);
    eina_benchmark_register(bench, "promise pointer value set before then mempool",
                            EINA_BENCHMARK(
                               eina_bench_promise_pointer_value_set_before_then_pooled), 100, 20100, 500);
+   eina_benchmark_register(bench, "promise pointer value set after then",
+                           EINA_BENCHMARK(
+                              eina_bench_promise_pointer_value_set_after_then), 100, 20100, 500);
+   eina_benchmark_register(bench, "promise pointer value set before then",
+                           EINA_BENCHMARK(
+                              eina_bench_promise_pointer_value_set_before_then), 100, 20100, 500);
+   eina_benchmark_register(bench, "promise pointer value set after then non alloc",
+                           EINA_BENCHMARK(
+                              eina_bench_promise_pointer_value_set_after_then_non_alloc), 100, 20100, 500);
+   eina_benchmark_register(bench, "promise pointer value set before then non alloc",
+                           EINA_BENCHMARK(
+                              eina_bench_promise_pointer_value_set_before_then_non_alloc), 100, 20100, 500);
 }
