@@ -32,6 +32,8 @@
 #include "eina_convert.h"
 #include "eina_main.h"
 
+#include <assert.h>
+
 #include <Eina.h>
 
 struct value_type
@@ -42,14 +44,14 @@ struct value_type
   int h;
 };
 
-void cb(void* data EINA_UNUSED, void* value)
+void cb(void* data EINA_UNUSED, void* value, Eina_Promise* promise EINA_UNUSED)
 {
   struct value_type* p = value;
   volatile int v = p->x * p->y * p->w * p->h;
   (void)v;
 }
 
-void pointer_cb(void* data EINA_UNUSED, void* value)
+void pointer_cb(void* data EINA_UNUSED, void* value, Eina_Promise* promise EINA_UNUSED)
 {
   struct value_type* p = *(struct value_type**)value;
   volatile int v = p->x * p->y * p->w * p->h;
@@ -274,7 +276,8 @@ eina_bench_promise_pointer_value_set_before_then_pooled(int request)
 
    eina_init();
 
-
+   mempool = eina_mempool_add("chained_mempool", "", NULL, sizeof(struct value_type), 10);
+   assert(mempool != NULL);
 
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
@@ -307,6 +310,9 @@ eina_bench_promise_pointer_value_set_after_then_pooled(int request)
 
    eina_init();
 
+   mempool = eina_mempool_add("chained_mempool", "", NULL, sizeof(struct value_type), 10);
+   assert(mempool != NULL);
+
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
         {
@@ -324,6 +330,7 @@ eina_bench_promise_pointer_value_set_after_then_pooled(int request)
    /* Suppress warnings as we really don't want to do anything. */
    (void) tmp;
 
+   eina_mempool_del(mempool);
    eina_shutdown();
 }
 
@@ -352,8 +359,8 @@ void eina_bench_promise(Eina_Benchmark *bench)
                               eina_bench_promise_pointer_value_set_before_then), 100, 20100, 500);
    eina_benchmark_register(bench, "promise pointer value set after then mempool",
                            EINA_BENCHMARK(
-                              eina_bench_promise_pointer_value_set_after_then), 100, 20100, 500);
+                              eina_bench_promise_pointer_value_set_after_then_pooled), 100, 20100, 500);
    eina_benchmark_register(bench, "promise pointer value set before then mempool",
                            EINA_BENCHMARK(
-                              eina_bench_promise_pointer_value_set_before_then), 100, 20100, 500);
+                              eina_bench_promise_pointer_value_set_before_then_pooled), 100, 20100, 500);
 }
