@@ -44,13 +44,20 @@ class Efl.Loop (Eo.Base)
 	    @in data: const(void)* @optional; [[The data to be given when the promise is done.]]
 	 }
 	 return: promise<void*>; [[The promise that will be triggered.]]
-
+      }
+      args_add {
+         [[Add a new set of arguments to the loop that makes an args event.]]
+         params {
+            argc: int; [[The number of strings in the argv array.]]
+            argv: const(char)**; [[The array of argument strings.]]
+         }
       }
    }
    events {
       idle,enter @restart; [[Event occurs once the main loop enters the idle state.]]
       idle,exit @restart; [[Event occurs once the main loop exits the idle state.]]
       idle @restart; [[Event occurs once the main loop is idler. Be carefull, this will spin your CPU high if you keep listening on this event.]]
+      args: Efl.Loop.Args; [[Event happens when args are provided to the loop by args_add().]]
       /* TODO: All of the legacy ecore events. (Ecore.h header) */
    }
    implements {

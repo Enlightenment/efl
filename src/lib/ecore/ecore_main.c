@@ -2839,6 +2839,29 @@ _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
+_efl_loop_args_job_cb(void *data, void *value EINA_UNUSED,
+                      Eina_Promise *promise EINA_UNUSED)
+{
+   Efl_Loop_Args *args = data;
+   Eo *obj = eo_parent_get(args);
+
+   eo_event_callback_call(obj, EFL_LOOP_EVENT_ARGS, args);
+   eo_unref(args); // FIXME: probably eo_del()
+}
+
+EOLIAN static void
+_efl_loop_args_add(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, int argc, const char **argv)
+{
+   Eina_Promise *job;
+   Efl_Loop_Args *args = eo_add(EFL_LOOP_ARGS_CLASS, obj);
+
+   if (!args) return;
+   efl_loop_args_set(args, argc, argv);
+   job = efl_loop_job(obj, args);
+   eina_promise_then(job, _efl_loop_args_job_cb, NULL, args);
+}
+
+static void
 _efl_loop_internal_cancel(Efl_Internal_Promise *p)
 {
    eina_promise_owner_error_set(p->promise, _promise_canceled);
