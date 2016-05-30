@@ -2163,7 +2163,7 @@ eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
                                                int          *quality,
                                                Eet_Image_Encoding *lossy)
 {
-   unsigned int iw, ih;
+   unsigned int iw = 0, ih = 0;
    int ialpha, icompress, iquality;
    Eet_Image_Encoding ilossy;
    const Eet_Colorspace *cspaces = NULL;
