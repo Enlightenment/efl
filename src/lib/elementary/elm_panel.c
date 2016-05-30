@@ -994,7 +994,7 @@ _elm_panel_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *part)
 
    evas_object_box_remove_all(sd->bx, EINA_FALSE);
    if (sd->scrollable)
-     elm_widget_sub_object_del(sd->scr_ly, sd->content);
+      _elm_widget_sub_object_redirect_to_top(sd->scr_ly, sd->content);
    sd->content = NULL;
 
    return ret;

@@ -834,7 +834,7 @@ _item_icon_unset(Elm_Popup_Item_Data *it)
    Evas_Object *icon = it->icon;
 
    if (!it->icon) return NULL;
-   elm_widget_sub_object_del(WIDGET(it), icon);
+   _elm_widget_sub_object_redirect_to_top(WIDGET(it), icon);
    evas_object_data_del(icon, "_popup_icon_parent_item");
    efl_content_unset(efl_part(VIEW(it), CONTENT_PART));
    elm_layout_signal_emit(VIEW(it), "elm,state,item,icon,hidden", "elm");

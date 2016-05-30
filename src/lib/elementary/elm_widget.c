@@ -1291,7 +1291,7 @@ _elm_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
           }
 
         ELM_WIDGET_DATA_GET(sobj, sdc);
-        sdc->parent_obj = elm_widget_top_get(obj);
+        sdc->parent_obj = NULL;
      }
 
    if (sd->resize_obj == sobj) sd->resize_obj = NULL;

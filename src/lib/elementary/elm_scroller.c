@@ -827,9 +827,9 @@ _elm_scroller_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
 
    ret = sd->content;
    if (sd->loop_h || sd->loop_v)
-     elm_widget_sub_object_del(obj, sd->contents);
+     _elm_widget_sub_object_redirect_to_top(obj, sd->contents);
    else
-     elm_widget_sub_object_del(obj, sd->content);
+     _elm_widget_sub_object_redirect_to_top(obj, sd->content);
    elm_interface_scrollable_content_set(obj, NULL);
    sd->content = NULL;
 

@@ -205,7 +205,7 @@ _elm_grid_unpack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   elm_widget_sub_object_del(obj, subobj);
+   _elm_widget_sub_object_redirect_to_top(obj, subobj);
    evas_object_grid_unpack(wd->resize_obj, subobj);
 }
 
@@ -221,7 +221,7 @@ _elm_grid_clear(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool clear)
      {
         chld = evas_object_grid_children_get(wd->resize_obj);
         EINA_LIST_FREE(chld, o)
-          elm_widget_sub_object_del(obj, o);
+           _elm_widget_sub_object_redirect_to_top(obj, o);
      }
 
    evas_object_grid_clear(wd->resize_obj, clear);

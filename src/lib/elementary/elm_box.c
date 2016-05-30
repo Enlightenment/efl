@@ -536,7 +536,7 @@ _elm_box_unpack(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *subobj)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (evas_object_box_remove(wd->resize_obj, subobj))
-     elm_widget_sub_object_del(obj, subobj);
+      _elm_widget_sub_object_redirect_to_top(obj, subobj);
 }
 
 EOLIAN static void
@@ -551,7 +551,7 @@ _elm_box_unpack_all(Eo *obj, Elm_Box_Data *pd)
    pd->delete_me = EINA_TRUE;
    bd = evas_object_smart_data_get(wd->resize_obj);
    EINA_LIST_FOREACH (bd->children, l, opt)
-     elm_widget_sub_object_del(obj, opt->obj);
+      _elm_widget_sub_object_redirect_to_top(obj, opt->obj);
    pd->delete_me = EINA_FALSE;
 
    /* EINA_FALSE means do not delete objects */

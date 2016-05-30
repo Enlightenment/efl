@@ -310,7 +310,7 @@ _efl_ui_box_efl_pack_unpack_all(Eo *obj, Efl_Ui_Box_Data *pd)
    pd->delete_me = EINA_TRUE;
    bd = evas_object_smart_data_get(wd->resize_obj);
    EINA_LIST_FOREACH(bd->children, l, opt)
-     elm_widget_sub_object_del(obj, opt->obj);
+      _elm_widget_sub_object_redirect_to_top(obj, opt->obj);
    pd->delete_me = EINA_FALSE;
 
    ret = evas_object_box_remove_all(wd->resize_obj, EINA_FALSE);
@@ -327,7 +327,7 @@ _efl_ui_box_efl_pack_unpack(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx *subobj)
 
    if (evas_object_box_remove(wd->resize_obj, subobj))
      {
-        ret = elm_widget_sub_object_del(obj, subobj);
+        ret = _elm_widget_sub_object_redirect_to_top(obj, subobj);
         _sizing_eval(obj, pd);
      }
 

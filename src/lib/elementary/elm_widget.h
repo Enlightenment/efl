@@ -835,6 +835,16 @@ EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
          }                                                      \
   } while (0)
 
+static inline Eina_Bool
+_elm_widget_sub_object_redirect_to_top(Evas_Object *obj, Evas_Object *sobj)
+{
+   Eina_Bool ret = elm_widget_sub_object_del(obj, sobj);
+   if (ret)
+      ret = elm_widget_sub_object_add(elm_widget_top_get(obj), sobj);
+
+   return ret;
+}
+
 /* to be used by INTERNAL classes on Elementary, so that the widgets
  * parsing script skips it */
 #define ELM_INTERNAL_SMART_SUBCLASS_NEW EVAS_SMART_SUBCLASS_NEW

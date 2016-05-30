@@ -1755,7 +1755,7 @@ _elm_toolbar_item_elm_widget_item_part_content_unset(Eo *eo_item EINA_UNUSED, El
      }
 
    elm_layout_content_unset(VIEW(item), "elm.swallow.object");
-   elm_widget_sub_object_del(obj, item->object);
+   _elm_widget_sub_object_redirect_to_top(obj, item->object);
    o = item->object;
    item->object = NULL;
    scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
@@ -2572,7 +2572,7 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item_Data *item)
      elm_layout_content_get(VIEW(item), "elm.swallow.icon");
    Eina_List *l;
 
-   elm_widget_sub_object_del(WIDGET(item), old_icon);
+   _elm_widget_sub_object_redirect_to_top(WIDGET(item), old_icon);
    elm_layout_content_set(VIEW(item), "elm.swallow.icon", item->icon);
    if (item->icon)
        elm_layout_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
@@ -2642,7 +2642,7 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj,
             (VIEW(item), "elm.swallow.icon_new");
         if (old_icon)
           {
-             elm_widget_sub_object_del(WIDGET(item), old_icon);
+             _elm_widget_sub_object_redirect_to_top(WIDGET(item), old_icon);
              evas_object_hide(old_icon);
           }
         elm_layout_content_set

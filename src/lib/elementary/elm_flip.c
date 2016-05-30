@@ -1768,7 +1768,7 @@ _flip_content_unset(Evas_Object *obj,
    if (!*cont) return NULL;
 
    content = *cont;
-   elm_widget_sub_object_del(obj, content);
+   _elm_widget_sub_object_redirect_to_top(obj, content);
 
    return content;
 }

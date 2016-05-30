@@ -333,7 +333,7 @@ _elm_table_unpack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   elm_widget_sub_object_del(obj, subobj);
+   _elm_widget_sub_object_redirect_to_top(obj, subobj);
    evas_object_table_unpack(wd->resize_obj, subobj);
 }
 
