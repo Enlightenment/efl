@@ -15,7 +15,10 @@
 #include "eio_test_common.h"
 
 
-#ifdef XATTR_TEST_DIR
+#ifndef XATTR_TEST_DIR
+#define DISABLE_XATTR_TEST
+#define XATTR_TEST_DIR ""
+#endif
 
 static const char *attribute[] =
   {
@@ -30,12 +33,6 @@ static const char *attr_data[] =
      "This file has extra attributes"
   };
 
-struct eina_iterator
-{
-  Eina_Iterator* success_iterator;
-  Eina_Iterator* failure_iterator;
-};
-
 int total_attributes = sizeof(attribute)/sizeof(attribute[0]);
 
 static Eina_Bool
@@ -47,8 +44,9 @@ _filter_cb(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_main_cb(void *data, const char *attr)
+_main_cb(void *data, void *v)
 {
+   const char* attr = v;
    int *num_of_attr = (int *)data;
    unsigned int i;
 
@@ -62,7 +60,7 @@ _main_cb(void *data, const char *attr)
 }
 
 static void
-_done_cb(void *data, void *value EINA_UNUSED)
+_done_cb(void *data, void *value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 
 {
    int *num_of_attr = (int *)data;
@@ -73,12 +71,13 @@ _done_cb(void *data, void *value EINA_UNUSED)
 }
 
 static void
-_done_get_cb(void *data EINA_UNUSED, struct eina_iterator* it)
+_done_get_cb(void *data EINA_UNUSED, void* v, Eina_Promise* promise EINA_UNUSED)
 {
+   Eina_Iterator** it = (Eina_Iterator**)v;
    int i = 0;
    Eio_Xattr_Data *get_data;
 
-   while (eina_iterator_next(it->success_iterator, (void**)&get_data))
+   while (eina_iterator_next((*it), (void**)&get_data))
      {
         fail_if(!get_data);
         fail_if(strcmp(get_data->data, attr_data[i]) != 0);
@@ -91,11 +90,12 @@ _done_get_cb(void *data EINA_UNUSED, struct eina_iterator* it)
 }
 
 static void
-_done_set_cb(void *data, struct eina_iterator* it)
+_done_set_cb(void *data, void* v, Eina_Promise* promise EINA_UNUSED)
 {
+   Eina_Iterator** it = (Eina_Iterator**)v;
    int *placeholder;
    int *num_of_attr = data;
-   while(eina_iterator_next(it->success_iterator, (void**)&placeholder))
+   while(eina_iterator_next((*it), (void**)&placeholder))
      *num_of_attr += 1;
 
    fail_if(*num_of_attr != total_attributes);
@@ -104,10 +104,10 @@ _done_set_cb(void *data, struct eina_iterator* it)
 }
 
 static void
-_error_cb(void *data EINA_UNUSED, Eina_Error *error)
+_error_cb(void *data EINA_UNUSED, Eina_Error error, Eina_Promise* promise EINA_UNUSED)
 
 {
-   fprintf(stderr, "Something has gone wrong:%s\n", strerror(*error));
+   fprintf(stderr, "Something has gone wrong:%s\n", eina_error_msg_get(error));
    abort();
 
    ecore_main_loop_quit();
@@ -127,6 +127,8 @@ START_TEST(eio_test_job_xattr_set)
    eina_init();
    eio_init();
 
+   fprintf(stderr, "eio_test_job_xattr_set\n"); fflush(stderr);
+
    job = eo_add(EIO_JOB_CLASS, NULL);
 
    test_file_path = get_full_path(XATTR_TEST_DIR, filename);
@@ -135,20 +137,20 @@ START_TEST(eio_test_job_xattr_set)
              S_IRWXU | S_IRWXG | S_IRWXO);
    fail_if(fd == 0);
 
-   attrib_promises = (Eina_Promise **)calloc(total_attributes + 1, sizeof(Eina_Promise*));
+   attrib_promises = (Eina_Promise**)calloc(total_attributes + 1, sizeof(Eina_Promise*));
    attrib_promises[total_attributes] = NULL;
 
    for (i = 0; i < sizeof(attribute) / sizeof(attribute[0]); ++i)
      {
-        eio_job_file_xattr_set(job, test_file_path, attribute[i],
-                                attr_data[i], strlen(attr_data[i]),
-                                EINA_XATTR_INSERT,
-                                &attrib_promises[i]);
+        attrib_promises[i] = eio_job_file_xattr_set
+          (job, test_file_path, attribute[i],
+           attr_data[i], strlen(attr_data[i]),
+           EINA_XATTR_INSERT);
 
         fail_if(num_of_attr != 0); // test asynchronous
      }
    eina_promise_then(eina_promise_all(eina_carray_iterator_new((void**)attrib_promises)),
-         (Eina_Promise_Cb)_done_set_cb, (Eina_Promise_Error_Cb)_error_cb, &num_of_attr);
+         &_done_set_cb, _error_cb, &num_of_attr);
 
    ecore_main_loop_begin();
 
@@ -156,25 +158,25 @@ START_TEST(eio_test_job_xattr_set)
 
    num_of_attr = 0;
 
-   attrib_promises = (Eina_Promise **)calloc(total_attributes + 1, sizeof(Eina_Promise*));
+   attrib_promises = (Eina_Promise**)calloc(total_attributes + 1, sizeof(Eina_Promise*));
    attrib_promises[total_attributes] = NULL;
 
    for (i = 0; i < sizeof(attribute) / sizeof(attribute[0]); ++i)
    {
-     eio_job_file_xattr_get(job, test_file_path, attribute[i], &attrib_promises[i]);
+     attrib_promises[i] = eio_job_file_xattr_get(job, test_file_path, attribute[i]);
    }
 
    eina_promise_then(eina_promise_all(eina_carray_iterator_new((void**)attrib_promises)),
-         (Eina_Promise_Cb)_done_get_cb, (Eina_Promise_Error_Cb)_error_cb, &num_of_attr);
+         _done_get_cb, _error_cb, &num_of_attr);
 
    ecore_main_loop_begin();
 
    num_of_attr = 0;
 
    eo_event_callback_add(job, EIO_JOB_EVENT_XATTR, _filter_cb, NULL);
-   eio_job_file_xattr(job, test_file_path, &list_promise);
-   eina_promise_progress_cb_add(list_promise, (Eina_Promise_Progress_Cb)_main_cb, &num_of_attr, NULL);
-   eina_promise_then(list_promise, (Eina_Promise_Cb)_done_cb, (Eina_Promise_Error_Cb)_error_cb, &num_of_attr);
+   list_promise = eio_job_file_xattr_list_get(job, test_file_path);
+   eina_promise_progress_cb_add(list_promise, _main_cb, &num_of_attr, NULL);
+   eina_promise_then(list_promise, _done_cb, _error_cb, &num_of_attr);
 
    fail_if(num_of_attr != 0);
 
@@ -192,13 +194,12 @@ START_TEST(eio_test_job_xattr_set)
 }
 END_TEST
 
-#endif
-
 void eio_test_job_xattr(TCase *tc)
 {
-#ifdef XATTR_TEST_DIR
+#ifndef DISABLE_XATTR_TEST
    tcase_add_test(tc, eio_test_job_xattr_set);
 #else
+   (void)eio_test_job_xattr_set;
    (void)tc;
 #endif
 }
