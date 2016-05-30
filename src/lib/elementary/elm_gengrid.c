@@ -1108,6 +1108,22 @@ _item_mouse_up_cb(void *data,
 
    if ((ev->flags == EVAS_BUTTON_NONE) && (sd->focused_item != eo_it))
      elm_object_item_focus_set(eo_it, EINA_TRUE);
+   else if (ev->flags == EVAS_BUTTON_NONE)
+     {
+        switch (_elm_config->focus_autoscroll_mode)
+          {
+           case ELM_FOCUS_AUTOSCROLL_MODE_SHOW:
+              elm_gengrid_item_show
+                 (eo_it, ELM_GENGRID_ITEM_SCROLLTO_IN);
+              break;
+           case ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN:
+              elm_gengrid_item_bring_in
+                 (eo_it, ELM_GENGRID_ITEM_SCROLLTO_IN);
+              break;
+           default:
+              break;
+          }
+     }
 
    if (sd->multi &&
        ((sd->multi_select_mode != ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL) ||
