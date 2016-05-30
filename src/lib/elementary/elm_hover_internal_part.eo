@@ -1,7 +1,8 @@
-class Elm.Hover.Internal.Part (Elm.Layout.Internal.Part)
+class Elm.Hover.Internal.Part (Eo.Base, Efl.Container)
 {
-   data: null;
+   data: Elm_Part_Data;
    implements {
+      Eo.Base.destructor;
       Efl.Container.content.set;
       Efl.Container.content.get;
       Efl.Container.content_unset;
