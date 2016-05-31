@@ -2902,11 +2902,9 @@ _efl_loop_job(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, const void *da
    Eina_Promise_Owner *promise;
 
    promise = eina_promise_default_add(sizeof (void*));
-   fprintf(stderr, "da promise: %p\n", promise);
    if (!promise) return NULL;
 
    j = _efl_internal_promise_new(promise, data);
-   fprintf(stderr, "da internal job: %p\n", j);
    if (!j) goto on_error;
 
    j->job_is = EINA_TRUE;
