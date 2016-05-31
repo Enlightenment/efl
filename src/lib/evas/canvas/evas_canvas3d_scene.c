@@ -282,7 +282,7 @@ _pick_data_texcoord_update(Evas_Canvas3D_Pick_Data *data,
 }
 
 
-static inline void
+static inline Eina_Bool
 _pick_data_mesh_add(Evas_Canvas3D_Pick_Data *data, const Evas_Ray3 *ray,
                     Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Node *node)
 {
@@ -333,6 +333,7 @@ _pick_data_mesh_add(Evas_Canvas3D_Pick_Data *data, const Evas_Ray3 *ray,
                          _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i0, i1, i2);
                        data->mesh = mesh;
                        data->node = node;
+                       return EINA_TRUE;
                     }
                }
           }
@@ -381,6 +382,7 @@ _pick_data_mesh_add(Evas_Canvas3D_Pick_Data *data, const Evas_Ray3 *ray,
                          _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i0, i1, i2);
                        data->mesh = mesh;
                        data->node = node;
+                       return EINA_TRUE;
                     }
                }
           }
@@ -524,6 +526,7 @@ _pick_data_mesh_add(Evas_Canvas3D_Pick_Data *data, const Evas_Ray3 *ray,
                         _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i, i + 1, i + 2);
                        data->mesh = mesh;
                        data->node = node;
+                       return EINA_TRUE;
                     }
                }
           }
@@ -544,10 +547,12 @@ _pick_data_mesh_add(Evas_Canvas3D_Pick_Data *data, const Evas_Ray3 *ray,
                          _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, 0, i, i + 1);
                        data->mesh = mesh;
                        data->node = node;
+                       return EINA_TRUE;
                     }
                }
           }
      }
+   return EINA_FALSE;
 }
 
 Eina_Bool
@@ -581,7 +586,8 @@ _node_pick(Evas_Canvas3D_Node *node, void *data)
         while (eina_iterator_next(itr, &ptr))
           {
              Evas_Canvas3D_Node_Mesh *nm = (Evas_Canvas3D_Node_Mesh *)ptr;
-             _pick_data_mesh_add(pick, &ray, nm->mesh, nm->frame, node);
+             if(_pick_data_mesh_add(pick, &ray, nm->mesh, nm->frame, node))
+               break;
           }
      }
 
