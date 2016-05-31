@@ -900,11 +900,7 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
    eina_stringshare_replace(&e->thumb_key, NULL);
 
    DBG("ethumb=%p, path=%s, key=%s", e, path ? path : "", key ? key : "");
-   if (path && access(path, R_OK))
-     {
-        ERR("couldn't access file \"%s\"", path);
-        return EINA_FALSE;
-     }
+   if (path && access(path, R_OK)) return EINA_FALSE;
 
    path = _ethumb_build_absolute_path(path, buf);
    eina_stringshare_replace(&e->src_hash, NULL);
@@ -1295,11 +1291,7 @@ _ethumb_plugin_generate(Ethumb *e)
    int i;
 
    extp = strrchr(e->src_path, '.');
-   if (!extp)
-     {
-        ERR("could not get extension for file \"%s\"", e->src_path);
-        return EINA_FALSE;
-     }
+   if (!extp) return EINA_FALSE;
 
    for (i = 0; extp[i] != '\0'; i++)
      ext[i] = tolower(extp[i + 1]);
@@ -1558,11 +1550,7 @@ _ethumb_image_load(Ethumb *e)
      evas_object_show(img);
 
    error = evas_object_image_load_error_get(img);
-   if (error != EVAS_LOAD_ERROR_NONE)
-     {
-        ERR("could not load image '%s': %d", e->src_path, error);
-        return 0;
-     }
+   if (error != EVAS_LOAD_ERROR_NONE) return 0;
 
    if (e->orientation != ETHUMB_THUMB_ORIENT_NONE &&
        e->orientation != ETHUMB_THUMB_ORIENT_ORIGINAL)
@@ -1638,11 +1626,8 @@ ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Ein
        e, finished_cb, data, free_data,
        e->src_path ? e->src_path : "", e->src_key ? e->src_key : "");
 
-   if (e->finished_idler)
-     {
-        ERR("thumbnail generation already in progress.");
-        return EINA_FALSE;
-     }
+   if (e->finished_idler) return EINA_FALSE;
+
    if (e->pdata)
      {
         e->plugin->thumb_cancel(e, e->pdata);
@@ -1670,8 +1655,6 @@ ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Ein
 
    if (!_ethumb_image_load(e))
      {
-        ERR("could not load input image: file=%s, key=%s",
-            e->src_path, e->src_key);
         ethumb_finished_callback_call(e, 0);
         return EINA_FALSE;
      }
@@ -1704,9 +1687,8 @@ ethumb_exists(Ethumb *e)
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(r_src, 0);
 
-   if (r_thumb && errno != ENOENT)
-     ERR("could not access file \"%s\": %s", e->thumb_path, strerror(errno));
-   else if (!r_thumb && thumb.st_mtime > src.st_mtime)
+   if ((!(r_thumb && errno != ENOENT)) &&
+       (!r_thumb && thumb.st_mtime > src.st_mtime))
      r = EINA_TRUE;
 
    return r;
