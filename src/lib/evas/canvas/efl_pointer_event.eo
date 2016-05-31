@@ -120,8 +120,6 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event, Efl.Input.State)
       Efl.Event.dup;
       Efl.Event.timestamp.set;
       Efl.Event.timestamp.get;
-      Efl.Event.event_type.set;
-      Efl.Event.event_type.get;
       Efl.Input.State.modifier_enabled.get;
       Efl.Input.State.lock_enabled.get;
    }

@@ -26,14 +26,6 @@ interface Efl.Event
             ms: double; [[Time in milliseconds when the event happened.]]
          }
       }
-      @property event_type {
-         [[The type of this event, as an Eo Event type.]]
-         set {}
-         get {}
-         values {
-            type: const(Eo.Event.Description)*;
-         }
-      }
       reset {
          [[Resets the internal data to 0 or default values.]]
       }

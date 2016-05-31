@@ -245,18 +245,6 @@ _efl_pointer_event_efl_event_timestamp_get(Eo *obj EINA_UNUSED, Efl_Pointer_Even
 }
 
 EOLIAN static void
-_efl_pointer_event_efl_event_event_type_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, const Eo_Event_Description *type)
-{
-   pd->event_desc = type;
-}
-
-EOLIAN static const Eo_Event_Description *
-_efl_pointer_event_efl_event_event_type_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd)
-{
-   return pd->event_desc;
-}
-
-EOLIAN static void
 _efl_pointer_event_wheel_direction_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, Efl_Orient dir)
 {
    pd->wheel.dir = dir;
