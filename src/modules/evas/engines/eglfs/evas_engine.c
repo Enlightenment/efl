@@ -1,5 +1,8 @@
 #include "config.h"
 #include "evas_engine.h"
+#include "../gl_common/evas_gl_define.h"
+#include "../software_generic/evas_native_common.h"
+
 #include <wayland-client.h>
 
 #ifdef HAVE_DLSYM
@@ -34,14 +37,6 @@ typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine
 {
    Render_Engine_GL_Generic generic;
-};
-
-typedef struct _Native Native;
-struct _Native
-{
-   Evas_Native_Surface ns;
-   struct wl_buffer *wl_buf;
-   void *egl_surface;
 };
 
 /* local function prototype types */
@@ -329,18 +324,12 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
    return 1;
 }
 
-static void _hwc_present_cb(void *user_data, struct ANativeWindow *window,
-                            struct ANativeWindowBuffer *buffer)
-{
-
-}
 
 static void *
 evgl_eng_native_window_create(void *data)
 {
    Render_Engine *re;
    Evas_Engine_Info_Eglfs *info;
-   struct ANativeWindow *native_window;
 
    re = (Render_Engine *)data;
    if (!re)
@@ -355,9 +344,8 @@ evgl_eng_native_window_create(void *data)
         ERR("Invalid Evas Engine Eglfs Info!");
         return NULL;
      }
-   EGLNativeWindowType win;
-   win = create_hwcomposernativewindow();
-   return (void *)win;
+   /* FIXME : eglfs has no native window ? */
+   return NULL;
 }
 
 static int
@@ -376,8 +364,6 @@ evgl_eng_native_window_destroy(void *data, void *native_window)
         ERR("Invalid native surface.");
         return 0;
      }
-
-   HWCNativeWindowDestroy(native_window);
 
    return 1;
 }
@@ -398,7 +384,7 @@ evgl_eng_window_surface_create(void *data, void *native_window)
    // Create resource surface for EGL
    surface = eglCreateWindowSurface(eng_get_ob(re)->egl.disp,
                                     eng_get_ob(re)->egl.config,
-                                    (EGLNativeWindowType)native_window,
+                                    NULL,
                                     NULL);
    if (!surface)
      {
@@ -579,6 +565,8 @@ _re_winfree(Render_Engine *re)
    evas_outbuf_unsurf(eng_get_ob(re));
 }
 
+
+
 static void
 _native_cb_bind(void *image)
 {
@@ -590,13 +578,12 @@ _native_cb_bind(void *image)
 
    if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
      {
-        if (n->egl_surface)
+        if (n->ns_data.wl_surface.surface)
           {
              if (glsym_glEGLImageTargetTexture2DOES)
                {
-                  glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
-                  if (eglGetError() != EGL_SUCCESS)
-                    ERR("glEGLImageTargetTexture2DOES() failed.");
+                  glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->ns_data.wl_surface.surface);
+                  GLERRV("glsym_glEGLImageTargetTexture2DOES");
                }
              else
                ERR("Try glEGLImageTargetTexture2DOES on EGL with no support");
@@ -617,6 +604,16 @@ _native_cb_unbind(void *image)
    if (!(img = image)) return;
    if (!(n = img->native.data)) return;
 
+   if (n->ns.type == EVAS_NATIVE_SURFACE_WL_DMABUF)
+     {
+        if (n->ns_data.wl_surface_dmabuf.image)
+          glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface_dmabuf.image);
+        n->ns_data.wl_surface_dmabuf.image = NULL;
+     }
+   else if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
+     {
+        //glBindTexture(GL_TEXTURE_2D, 0); //really need?
+     }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
      glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -633,19 +630,31 @@ _native_cb_free(void *image)
 
    if (!(img = image)) return;
    if (!(n = img->native.data)) return;
-   if (!img->native.shared) return;
+   if (!(img->native.shared)) return;
 
-   if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
+   if (n->ns.type == EVAS_NATIVE_SURFACE_WL_DMABUF)
      {
-        wlid = n->wl_buf;
+        wlid = n->ns_data.wl_surface_dmabuf.resource;
         eina_hash_del(img->native.shared->native_wl_hash, &wlid, img);
-        if (n->egl_surface)
+        if (n->ns_data.wl_surface.surface)
+          {
+             if (glsym_eglDestroyImage && n->ns_data.wl_surface_dmabuf.image)
+               {
+                  glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface_dmabuf.image);
+                  GLERRV("eglDestroyImage() failed.");
+               }
+          }
+     }
+   else if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
+     {
+        wlid = (void*)n->ns_data.wl_surface.wl_buf;
+        eina_hash_del(img->native.shared->native_wl_hash, &wlid, img);
+        if (n->ns_data.wl_surface.surface)
           {
              if (glsym_eglDestroyImage)
                {
-                  glsym_eglDestroyImage(img->native.disp, n->egl_surface);
-                  if (eglGetError() != EGL_SUCCESS)
-                    ERR("eglDestroyImage() failed.");
+                  glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface.surface);
+                  GLERRV("eglDestroyImage() failed.");
                }
              else
                ERR("Try eglDestroyImage on EGL with  no support");
@@ -698,7 +707,7 @@ eng_setup(Evas *evas, void *in)
    Render_Engine *re;
    Render_Engine_Swap_Mode swap_mode = MODE_FULL;
    const char *s = NULL;
-
+   printf("eng_setup\n");
    /* try to cast to our engine info structure */
    if (!(info = (Evas_Engine_Info_Eglfs *)in)) return 0;
 
@@ -776,6 +785,7 @@ eng_setup(Evas *evas, void *in)
         ob = evas_outbuf_new(info, epd->output.w, epd->output.h, swap_mode);
         if (!ob)
           {
+             printf("Can't create new outbuf\n");
              free(re);
              return 0;
           }
@@ -817,6 +827,8 @@ eng_setup(Evas *evas, void *in)
                merge_mode = MERGE_BOUNDING;
              else if ((!strcmp(s, "full")) || (!strcmp(s, "f")))
                merge_mode = MERGE_FULL;
+             else if ((!strcmp(s, "smart")) || (!strcmp(s, "s")))
+               merge_mode = MERGE_SMART;
           }
 
         evas_render_engine_software_generic_merge_mode_set(&re->generic.software, merge_mode);
@@ -1103,15 +1115,16 @@ eng_image_native_set(void *data, void *image, void *native)
                   attribs[2] = EGL_NONE;
 
                   memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
-                  glsym_eglQueryWaylandBufferWL(ob->egl.disp, wl_buf,
-                                                EGL_WAYLAND_Y_INVERTED_WL,
-                                                &yinvert);
+                  if (glsym_eglQueryWaylandBufferWL(ob->egl.disp, wl_buf,
+                                                    EGL_WAYLAND_Y_INVERTED_WL,
+                                                    &yinvert) == EGL_FALSE)
+                    yinvert = 1;
                   eina_hash_add(ob->gl_context->shared->native_wl_hash,
                                 &wlid, img);
 
-                  n->wl_buf = wl_buf;
+                  n->ns_data.wl_surface.wl_buf = wl_buf;
                   if (glsym_eglCreateImage)
-                    n->egl_surface = glsym_eglCreateImage(ob->egl.disp,
+                    n->ns_data.wl_surface.surface = glsym_eglCreateImage(ob->egl.disp,
                                                           NULL,
                                                           EGL_WAYLAND_BUFFER_WL,
                                                           wl_buf, attribs);
@@ -1125,7 +1138,7 @@ eng_image_native_set(void *data, void *image, void *native)
                        return NULL;
                     }
 
-                  if (!n->egl_surface)
+                  if (!n->ns_data.wl_surface.surface)
                     {
                        ERR("eglCreatePixmapSurface() for %p failed", wl_buf);
                        eina_hash_del(ob->gl_context->shared->native_wl_hash,
@@ -1161,10 +1174,12 @@ eng_image_native_set(void *data, void *image, void *native)
                   eina_hash_add(ob->gl_context->shared->native_tex_hash,
                                 &texid, img);
 
-                  n->egl_surface = 0;
+                  n->ns_data.opengl.surface = 0;
 
                   img->native.yinvert = 0;
                   img->native.loose = 0;
+                  img->native.disp = ob->egl.disp;
+                  img->native.shared = ob->gl_context->shared;
                   img->native.data = n;
                   img->native.func.bind = _native_cb_bind;
                   img->native.func.unbind = _native_cb_unbind;
@@ -1186,12 +1201,14 @@ eng_image_native_set(void *data, void *image, void *native)
 static int
 module_open(Evas_Module *em)
 {
+   printf("module eglfs open\n");
    /* check for valid evas module */
    if (!em) return 0;
-
+   printf("inherit gl_generic\n");
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "gl_generic")) return 0;
-
+   if (!_evas_module_engine_inherit(&pfunc, "gl_generic"))
+     return 0;
+   printf("gl_generic loaded \n");
    /* try to create eina logging domain */
    if (_evas_engine_eglfs_log_dom < 0)
      {
@@ -1217,8 +1234,6 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(output_free, &func, eng_);
    EVAS_API_OVERRIDE(output_dump, &func, eng_);
    EVAS_API_OVERRIDE(image_native_set, &func, eng_);
-
-   setenv("EGL_PLATFORM", "fbdev", 1);
 
    gl_symbols();
 

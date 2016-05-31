@@ -15,9 +15,6 @@
 # include <EGL/eglmesaext.h>
 # include <GLES2/gl2.h>
 # include <GLES2/gl2ext.h>
-# include <hwcomposer.h>
-# include <hardware/hardware.h>
-# include <hardware/hwcomposer.h>
 # include "../gl_generic/Evas_Engine_GL_Generic.h"
 
 extern int _evas_engine_eglfs_log_dom;

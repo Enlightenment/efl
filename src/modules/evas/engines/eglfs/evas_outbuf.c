@@ -1,113 +1,6 @@
 #include "evas_engine.h"
+#include "../gl_common/evas_gl_define.h"
 
-#include <hybris/hwcomposerwindow/hwcomposer.h>
-#include <hardware/hwcomposer.h>
-#include <hardware/hardware.h>
-#include <android-config.h>
-
-static hwc_layer_1_t *fblayer;
-static hwc_composer_device_1_t *hwcDevicePtr;
-static hwc_display_contents_1_t **mList;
-
-void present(void *user_data, struct ANativeWindow *window,
-	                                   struct ANativeWindowBuffer *buffer)
-{
-
-	int oldretire = mList[0]->retireFenceFd;
-	mList[0]->retireFenceFd = -1;
-	fblayer->handle = buffer->handle;
-	fblayer->acquireFenceFd = HWCNativeBufferGetFence(buffer);
-	fblayer->releaseFenceFd = -1;
-	int err = hwcDevicePtr->prepare(hwcDevicePtr, HWC_NUM_DISPLAY_TYPES, mList);
-	//assert(err == 0);
-
-	err = hwcDevicePtr->set(hwcDevicePtr, HWC_NUM_DISPLAY_TYPES, mList);
-	//assert(err == 0);
-	HWCNativeBufferSetFence(buffer, fblayer->releaseFenceFd);
-
-	if (oldretire != -1)
-	{
-		sync_wait(oldretire, -1);
-		close(oldretire);
-	}
-}
-
-
-EGLNativeWindowType create_hwcomposernativewindow(void)
-{
-	int err;
-	hw_module_t *hwcModule = 0;
-	hwcDevicePtr = 0;
-
-	err = hw_get_module(HWC_HARDWARE_MODULE_ID, (const hw_module_t **) &hwcModule);
-	//assert(err == 0);
-
-	err = hwc_open_1(hwcModule, &hwcDevicePtr);
-	//assert(err == 0);
-
-	hwcDevicePtr->blank(hwcDevicePtr, 0, 0);
-
-	uint32_t configs[5];
-	size_t numConfigs = 5;
-
-	err = hwcDevicePtr->getDisplayConfigs(hwcDevicePtr, 0, configs, &numConfigs);
-	//assert (err == 0);
-
-	int32_t attr_values[2];
-	uint32_t attributes[] = { HWC_DISPLAY_WIDTH, HWC_DISPLAY_HEIGHT, HWC_DISPLAY_NO_ATTRIBUTE };
-
-	hwcDevicePtr->getDisplayAttributes(hwcDevicePtr, 0,
-			configs[0], attributes, attr_values);
-
-	size_t size = sizeof(hwc_display_contents_1_t) + 2 * sizeof(hwc_layer_1_t);
-	hwc_display_contents_1_t *list = (hwc_display_contents_1_t *) malloc(size);
-	mList = (hwc_display_contents_1_t **) malloc(HWC_NUM_DISPLAY_TYPES * sizeof(hwc_display_contents_1_t *));
-	const hwc_rect_t r = { 0, 0, attr_values[0], attr_values[1] };
-
-	int counter = 0;
-	for (; counter < HWC_NUM_DISPLAY_TYPES; counter++)
-		mList[counter] = NULL;
-	// Assign buffer only to the first item, otherwise you get tearing
-	// if passed the same to multiple places
-	mList[0] = list;
-
-	fblayer = &list->hwLayers[0];
-	memset(fblayer, 0, sizeof(hwc_layer_1_t));
-	fblayer->compositionType = HWC_FRAMEBUFFER;
-	fblayer->hints = 0;
-	fblayer->flags = 0;
-	fblayer->handle = 0;
-	fblayer->transform = 0;
-	fblayer->blending = HWC_BLENDING_NONE;
-	fblayer->sourceCrop = r;
-	fblayer->displayFrame = r;
-	fblayer->visibleRegionScreen.numRects = 1;
-	fblayer->visibleRegionScreen.rects = &fblayer->displayFrame;
-	fblayer->acquireFenceFd = -1;
-	fblayer->releaseFenceFd = -1;
-	fblayer = &list->hwLayers[1];
-	memset(fblayer, 0, sizeof(hwc_layer_1_t));
-	fblayer->compositionType = HWC_FRAMEBUFFER_TARGET;
-	fblayer->hints = 0;
-	fblayer->flags = 0;
-	fblayer->handle = 0;
-	fblayer->transform = 0;
-	fblayer->blending = HWC_BLENDING_NONE;
-	fblayer->sourceCrop = r;
-	fblayer->displayFrame = r;
-	fblayer->visibleRegionScreen.numRects = 1;
-	fblayer->visibleRegionScreen.rects = &fblayer->displayFrame;
-	fblayer->acquireFenceFd = -1;
-	fblayer->releaseFenceFd = -1;
-
-	list->retireFenceFd = -1;
-	list->flags = HWC_GEOMETRY_CHANGED;
-	list->numHwLayers = 2;
-
-	EGLNativeWindowType win = NULL;
-   	win = (EGLNativeWindowType)HWCNativeWindowCreate(attr_values[0], attr_values[1], HAL_PIXEL_FORMAT_RGBA_8888, present, NULL);
-    return win;
-}
 
 /* local variables */
 static Outbuf *_evas_eglfs_window = NULL;
@@ -135,10 +28,6 @@ _evas_outbuf_make_current(void *data, void *doit)
      }
 
    return EINA_TRUE;
-}
-
-void _hwcomposer_present_cb(void *user_data, struct ANativeWindow *window, struct ANativeWindowBuffer *buffer)
-{
 }
 
 static Eina_Bool
@@ -173,84 +62,6 @@ _evas_outbuf_egl_setup(Outbuf *ob)
    else cfg_attr[n++] = 0;
    cfg_attr[n++] = EGL_NONE;
 
-   int err;
-   hw_module_t *hwcModule = 0;
-   hwc_composer_device_1_t *hwcDevicePtr = 0;
-
-   err = hw_get_module(HWC_HARDWARE_MODULE_ID, (const hw_module_t **) &hwcModule);
-   if (err != 0)
-     {
-        ERR("hw_get_module() fail. code=%d", err);
-        return EINA_FALSE;
-     }
-   err = hwc_open_1(hwcModule, &hwcDevicePtr);
-   if (err != 0)
-     {
-        ERR("hwc_open_1 fail. code=%d", err);
-        return EINA_FALSE;
-     }
-   hwcDevicePtr->blank(hwcDevicePtr, 0, 0);
-
-   uint32_t configs[5];
-   size_t numConfigs = 5;
-
-   err = hwcDevicePtr->getDisplayConfigs(hwcDevicePtr, 0, configs, &numConfigs);
-   if (err != 0)
-     {
-        ERR("getDisplayConfig. code=%d", err);
-        return EINA_FALSE;
-     }
-
-   int32_t attr_values[2];
-   uint32_t attributes[] = { HWC_DISPLAY_WIDTH, HWC_DISPLAY_HEIGHT, HWC_DISPLAY_NO_ATTRIBUTE };
-
-   hwcDevicePtr->getDisplayAttributes(hwcDevicePtr, 0,
-				      configs[0], attributes, attr_values);
-
-   DBG("width: %i height: %i\n", attr_values[0], attr_values[1]);
-
-   size_t size = sizeof(hwc_display_contents_1_t) + 2 * sizeof(hwc_layer_1_t);
-   hwc_display_contents_1_t *list = (hwc_display_contents_1_t *) malloc(size);
-   hwc_display_contents_1_t **mList = (hwc_display_contents_1_t **) malloc(HWC_NUM_DISPLAY_TYPES * sizeof(hwc_display_contents_1_t *));
-   const hwc_rect_t r = { 0, 0, attr_values[0], attr_values[1] };
-
-   int counter = 0;
-   for (; counter < HWC_NUM_DISPLAY_TYPES; counter++)
-     mList[counter] = NULL;
-   mList[0] = list;
-
-   hwc_layer_1_t *layer = &list->hwLayers[0];
-   memset(layer, 0, sizeof(hwc_layer_1_t));
-   layer->compositionType = HWC_FRAMEBUFFER;
-   layer->hints = 0;
-   layer->flags = 0;
-   layer->handle = 0;
-   layer->transform = 0;
-   layer->blending = HWC_BLENDING_NONE;
-   layer->sourceCrop = r;
-   layer->displayFrame = r;
-   layer->visibleRegionScreen.numRects = 1;
-   layer->visibleRegionScreen.rects = &layer->displayFrame;
-   layer->acquireFenceFd = -1;
-   layer->releaseFenceFd = -1;
-   layer = &list->hwLayers[1];
-   memset(layer, 0, sizeof(hwc_layer_1_t));
-   layer->compositionType = HWC_FRAMEBUFFER_TARGET;
-   layer->hints = 0;
-   layer->flags = 0;
-   layer->handle = 0;
-   layer->transform = 0;
-   layer->blending = HWC_BLENDING_NONE;
-   layer->sourceCrop = r;
-   layer->displayFrame = r;
-   layer->visibleRegionScreen.numRects = 1;
-   layer->visibleRegionScreen.rects = &layer->displayFrame;
-   layer->acquireFenceFd = -1;
-   layer->releaseFenceFd = -1;
-
-   list->retireFenceFd = -1;
-   list->flags = HWC_GEOMETRY_CHANGED;
-   list->numHwLayers = 2;
 
    ob->egl.disp = eglGetDisplay(NULL);
    if (ob->egl.disp  == EGL_NO_DISPLAY)
@@ -292,13 +103,30 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         return EINA_FALSE;
      }
 
-   // First is always best...
-   ob->egl.config = cfgs[0];
+   for (; i < ncfg; ++i)
+     {
+        EGLint format;
 
-   EGLNativeWindowType win = create_hwcomposernativewindow();
+        if (!eglGetConfigAttrib(ob->egl.disp, cfgs[i], EGL_NATIVE_VISUAL_ID,
+                                &format))
+          {
+             ERR("eglGetConfigAttrib() fail. code=%#x", eglGetError());
+             return EINA_FALSE;
+          }
+
+        DBG("Config Format: %d", format);
+        DBG("OB Format: %d", ob->info->info.format);
+
+        if (format == (int)ob->info->info.format)
+          {
+             ob->egl.config = cfgs[i];
+             break;
+          }
+     }
+
    ob->egl.surface[0] =
      eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
-                            (EGLNativeWindowType)win, NULL);
+                            NULL, NULL);
 
    if (ob->egl.surface[0] == EGL_NO_SURFACE)
      {
