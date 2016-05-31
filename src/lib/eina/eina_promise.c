@@ -167,14 +167,14 @@ _eina_promise_then_calls(_Eina_Promise_Default_Owner* promise)
      {
        promise->promise.then_callbacks = eina_inlist_remove(promise->promise.then_callbacks, EINA_INLIST_GET(callback));
        if (error)
-	 {
-	   if (callback->error_cb)
-	     (*callback->error_cb)(callback->data, promise->promise.error, &promise->promise.vtable);
-	 }
+         {
+            if (callback->error_cb)
+              (*callback->error_cb)(callback->data, promise->promise.error, &promise->promise.vtable);
+         }
        else if (callback->callback)
-	 {
-	   (*callback->callback)(callback->data, &promise->value[0], &promise->promise.vtable);
-	 }
+         {
+            (*callback->callback)(callback->data, &promise->value[0], &promise->promise.vtable);
+         }
        free(callback);
        _eina_promise_unref(&promise->promise);
      }
@@ -326,10 +326,6 @@ _eina_promise_finish(_Eina_Promise_Default_Owner* promise)
    if (!promise->promise.is_manual_then)
      {
         _eina_promise_then_calls(promise);
-     }
-   if(promise->promise.ref == 0)
-     {
-        _eina_promise_del(promise);
      }
 }
 
