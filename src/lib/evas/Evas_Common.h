@@ -342,17 +342,17 @@ typedef Efl_Input_Device_Sub_Class         Evas_Device_Subclass;
 #define EVAS_DEVICE_SUBCLASS_TRACKPOINT    EFL_INPUT_DEVICE_SUBCLASS_TRACKPOINT /**< A trackpoint style mouse @since 1.8 */
 #define EVAS_DEVICE_SUBCLASS_TRACKBALL     EFL_INPUT_DEVICE_SUBCLASS_TRACKBALL /**< A trackball style mouse @since 1.8 */
 
-typedef Efl_Pointer_Button_Flags           Evas_Button_Flags;
+typedef Efl_Pointer_Flags                  Evas_Button_Flags;
 
-#define EVAS_BUTTON_NONE                   EFL_POINTER_BUTTON_FLAGS_NONE
-#define EVAS_BUTTON_DOUBLE_CLICK           EFL_POINTER_BUTTON_FLAGS_DOUBLE_CLICK
-#define EVAS_BUTTON_TRIPLE_CLICK           EFL_POINTER_BUTTON_FLAGS_TRIPLE_CLICK
+#define EVAS_BUTTON_NONE                   EFL_POINTER_FLAGS_NONE
+#define EVAS_BUTTON_DOUBLE_CLICK           EFL_POINTER_FLAGS_DOUBLE_CLICK
+#define EVAS_BUTTON_TRIPLE_CLICK           EFL_POINTER_FLAGS_TRIPLE_CLICK
 
-typedef Efl_Pointer_Event_Flags            Evas_Event_Flags;
+typedef Efl_Event_Flags                    Evas_Event_Flags;
 
-#define EVAS_EVENT_FLAG_NONE               EFL_POINTER_EVENT_FLAGS_NONE
-#define EVAS_EVENT_FLAG_ON_HOLD            EFL_POINTER_EVENT_FLAGS_ON_HOLD
-#define EVAS_EVENT_FLAG_ON_SCROLL          EFL_POINTER_EVENT_FLAGS_ON_SCROLL
+#define EVAS_EVENT_FLAG_NONE               EFL_EVENT_FLAGS_NONE
+#define EVAS_EVENT_FLAG_ON_HOLD            EFL_EVENT_FLAGS_ON_HOLD
+#define EVAS_EVENT_FLAG_ON_SCROLL          EFL_EVENT_FLAGS_ON_SCROLL
 
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {

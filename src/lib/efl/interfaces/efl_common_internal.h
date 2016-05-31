@@ -13,7 +13,7 @@
 
 #include <Efl.h>
 
-typedef struct _Efl_Pointer_Event_Data  Efl_Pointer_Event_Data;
+typedef struct _Efl_Event_Pointer_Data  Efl_Event_Pointer_Data;
 typedef struct _Efl_Input_Device_Data   Efl_Input_Device_Data;
 typedef struct _Efl_Input_State_Data    Efl_Input_State_Data;
 
@@ -22,7 +22,7 @@ typedef struct _Evas_Modifier Evas_Modifier;
 typedef struct _Evas_Lock Evas_Lock;
 #endif
 
-struct _Efl_Pointer_Event_Data
+struct _Efl_Event_Pointer_Data
 {
    Eo             *eo;
    unsigned int    timestamp; /* FIXME: store as double? */
@@ -42,8 +42,8 @@ struct _Efl_Pointer_Event_Data
    Efl_Gfx                    *source; /* could it be ecore? */
    Efl_Input_Device           *device;
    Efl_Pointer_Action          action;
-   Efl_Pointer_Button_Flags    button_flags;
-   Efl_Pointer_Event_Flags     event_flags;
+   Efl_Pointer_Flags           button_flags;
+   Efl_Event_Flags             event_flags;
    void                       *data; /* evas data - whatever that is */
    const Eo_Event_Description *event_desc;
    Eina_Bool                   window_pos; /* true if positions are window-relative

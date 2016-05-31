@@ -100,7 +100,7 @@ _pointer_event_get(const _eo_evas_object_cb_info *info, const Eo_Event *event,
 }
 
 static void
-_event_flags_adjust(void *ev, const Efl_Pointer_Event_Data *pedata)
+_event_flags_adjust(void *ev, const Efl_Event_Pointer_Data *pedata)
 {
 #define EV_CASE(NEWTYPE, Type) \
    case EFL_POINTER_ACTION_ ## NEWTYPE: \
@@ -132,10 +132,10 @@ _eo_evas_object_cb(void *data, const Eo_Event *event)
    pe = _pointer_event_get(info, event, &desc);
    if (pe)
      {
-        Efl_Pointer_Event_Data *pedata;
-        Efl_Pointer_Event_Flags flags;
+        Efl_Event_Pointer_Data *pedata;
+        Efl_Event_Flags flags;
 
-        pedata = eo_data_scope_get(pe, EFL_POINTER_EVENT_CLASS);
+        pedata = eo_data_scope_get(pe, EFL_EVENT_POINTER_CLASS);
         flags = pedata->event_flags;
         eo_event_callback_call(event->object, desc, pe);
         if (flags != pedata->event_flags)

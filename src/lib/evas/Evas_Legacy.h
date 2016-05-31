@@ -439,12 +439,12 @@ EAPI void             evas_event_feed_mouse_out(Evas *obj, unsigned int timestam
 EAPI void             evas_event_feed_mouse_cancel(Evas *obj, unsigned int timestamp, const void *data);
 
 /* multi touch events - no doc */
-EAPI void             evas_event_input_multi_down(Evas *obj, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Efl_Pointer_Button_Flags flags, unsigned int timestamp, const void *data);
+EAPI void             evas_event_input_multi_down(Evas *obj, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
 EAPI void             evas_event_input_multi_move(Evas *obj, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, unsigned int timestamp, const void *data);
-EAPI void             evas_event_input_multi_up(Evas *obj, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Efl_Pointer_Button_Flags flags, unsigned int timestamp, const void *data);
-EAPI void             evas_event_feed_multi_down(Evas *obj, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Efl_Pointer_Button_Flags flags, unsigned int timestamp, const void *data);
+EAPI void             evas_event_input_multi_up(Evas *obj, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
+EAPI void             evas_event_feed_multi_down(Evas *obj, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
 EAPI void             evas_event_feed_multi_move(Evas *obj, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, unsigned int timestamp, const void *data);
-EAPI void             evas_event_feed_multi_up(Evas *obj, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Efl_Pointer_Button_Flags flags, unsigned int timestamp, const void *data);
+EAPI void             evas_event_feed_multi_up(Evas *obj, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
 
 /**
  * @brief Key down event feed.

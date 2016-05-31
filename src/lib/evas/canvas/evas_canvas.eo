@@ -115,7 +115,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
             ]]
          }
          values {
-            flags: Efl.Pointer.Event_Flags; [[The default flags to use.]]
+            flags: Efl.Event.Flags; [[The default flags to use.]]
          }
       }
       @property output_method {

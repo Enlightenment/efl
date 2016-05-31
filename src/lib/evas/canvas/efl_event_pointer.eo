@@ -1,7 +1,7 @@
 import efl_orientation;
 import efl_event_types;
 
-class Efl.Pointer.Event (Eo.Base, Efl.Event, Efl.Input.State)
+class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State)
 {
    [[Event data carried over with any pointer event (mouse, touch, ...)
 
@@ -100,7 +100,7 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event, Efl.Input.State)
       @property button_flags {
          [[Double or triple click information.]]
          values {
-            flags: Efl.Pointer.Button_Flags;
+            flags: Efl.Pointer.Flags;
          }
       }
       @property double_click {
@@ -124,7 +124,7 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event, Efl.Input.State)
       @property event_flags {
          [[Extra flags for this event, may be changed by the user.]]
          values {
-            flags: Efl.Pointer.Event_Flags;
+            flags: Efl.Event.Flags;
          }
       }
       @property on_hold {
@@ -157,7 +157,7 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event, Efl.Input.State)
             @in  owner: Eo.Base; [[The parent object.]]
             @out priv: void*; [[Pointer to the internal data of the object.]]
          }
-         return: own(Efl.Pointer.Event);
+         return: own(Efl.Event.Pointer);
       }
    }
    implements {

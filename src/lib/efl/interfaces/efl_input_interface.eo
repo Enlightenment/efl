@@ -6,12 +6,12 @@ interface Efl.Input.Interface ()
    ]]
    event_prefix: efl;
    events {
-      pointer,move: Efl.Pointer.Event;
-      pointer,down: Efl.Pointer.Event;
-      pointer,up: Efl.Pointer.Event;
-      pointer,cancel: Efl.Pointer.Event;
-      pointer,in: Efl.Pointer.Event;
-      pointer,out: Efl.Pointer.Event;
-      pointer,wheel: Efl.Pointer.Event;
+      pointer,move: Efl.Event.Pointer;
+      pointer,down: Efl.Event.Pointer;
+      pointer,up: Efl.Event.Pointer;
+      pointer,cancel: Efl.Event.Pointer;
+      pointer,in: Efl.Event.Pointer;
+      pointer,out: Efl.Event.Pointer;
+      pointer,wheel: Efl.Event.Pointer;
    }
 }

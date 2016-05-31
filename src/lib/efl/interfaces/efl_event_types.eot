@@ -18,7 +18,7 @@ enum Efl.Pointer.Action
    axis,   [[Joystick event.]]
 }
 
-enum Efl.Pointer.Button_Flags
+enum Efl.Pointer.Flags
 {
    /* Evas.Button_Flags */
    none = 0,                [[No extra mouse button data]]
@@ -26,7 +26,7 @@ enum Efl.Pointer.Button_Flags
    triple_click = (1 << 1), [[This mouse button press was the 3rd press of a triple click]]
 }
 
-enum Efl.Pointer.Event_Flags
+enum Efl.Event.Flags
 {
    /* Evas.Event_Flags */
    none = 0,             [[No fancy flags set]]
