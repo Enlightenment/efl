@@ -1,0 +1,90 @@
+enum Efl.Input.Device.Class
+{
+   [[General type of input device.
+
+     Legacy support since 1.8.
+
+     @since 1.18
+   ]]
+   none,     [[Not a device.]]
+   seat,     [[The user/seat (the user themselves).]]
+   keyboard, [[A regular keyboard, numberpad or attached buttons.]]
+   mouse,    [[A mouse, trackball or touchpad relative motion device.]]
+   touch,    [[A touchscreen with fingers or stylus.]]
+   pen,      [[A special pen device.]]
+   pointer,  [[A laser pointer, wii-style or "minority report" pointing device.]]
+   gamepad,  [[A gamepad controller or joystick.]]
+}
+
+enum Efl.Input.Device.Sub_Class
+{
+   [[Specific type of input device.
+
+     Legacy support since 1.8.
+
+     @since 1.18
+   ]]
+   none,        [[Not a device.]]
+   finger,      [[The normal flat of your finger.]]
+   fingernail,  [[A fingernail.]]
+   knuckle,     [[A Knuckle.]]
+   palm,        [[The palm of a users hand.]]
+   hand_size,   [[The side of your hand.]]
+   hand_flat,   [[The flat of your hand.]]
+   pen_tip,     [[The tip of a pen.]]
+   trackpad,    [[A trackpad style mouse.]]
+   trackpoint,  [[A trackpoint style mouse.]]
+   trackball,   [[A trackball style mouse.]]
+}
+
+
+/* This represents Evas_Device */
+/* FIXME: no parent, no children and no Evas */
+
+class Efl.Input.Device (Eo.Base)
+{
+   [[Represents a pointing device, such as a touch finger, a pen or a mouse.
+
+     @since 1.18
+   ]]
+   legacy_prefix: null;
+   methods {
+      /* FIXME: device_class makes compilation error because of class_get() */
+      @property device_type {
+         values {
+            klass: Efl.Input.Device.Class;
+         }
+      }
+      @property device_subtype {
+         values {
+            klass: Efl.Input.Device.Sub_Class;
+         }
+      }
+      @property source {
+         values {
+            src: Efl.Input.Device;
+         }
+      }
+      @property name {
+         values {
+            name: const(char)*;
+         }
+      }
+      @property description {
+         values {
+            desc: const(char)*;
+         }
+      }
+      @property parent {
+         /* set {} */
+         get {}
+         values {
+            parent: Efl.Input.Device;
+         }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+   }
+}

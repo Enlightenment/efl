@@ -1625,6 +1625,25 @@ _elm_win_elm_widget_event(Eo *obj, Elm_Win_Data *_pd EINA_UNUSED, Evas_Object *s
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_evas_event_pointer_cb(void *data, const Eo_Event *ev)
+{
+   Eo *win = data;
+   Eo *evt = ev->info;
+
+   eo_event_callback_call(win, ev->desc, evt);
+   return EO_CALLBACK_CONTINUE;
+}
+
+EO_CALLBACKS_ARRAY_DEFINE(_elm_win_evas_forward_callbacks,
+{ EFL_EVENT_POINTER_MOVE, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_DOWN, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_UP, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_IN, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_OUT, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_CANCEL, _evas_event_pointer_cb },
+{ EFL_EVENT_POINTER_WHEEL, _evas_event_pointer_cb })
+
 static void
 _deferred_ecore_evas_free(void *data)
 {
@@ -1972,6 +1991,8 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _elm_win_on_resize_obj_changed_size_hints,
                                        obj);
+   eo_event_callback_array_del(sd->evas, _elm_win_evas_forward_callbacks(), obj);
+
    evas_object_del(sd->box);
    evas_object_del(sd->edje);
 
@@ -4028,6 +4049,8 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    if (_elm_config->atspi_mode)
      elm_interface_atspi_window_created_signal_emit(obj);
 
+   eo_event_callback_array_add(sd->evas, _elm_win_evas_forward_callbacks(), obj);
+
    evas_object_show(sd->edje);
 
    if (type == ELM_WIN_FAKE)
@@ -5546,6 +5569,20 @@ _elm_win_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Win_Data *sd EINA_
    if (ret) return ret;
    const char *name = elm_win_title_get(obj);
    return name ? strdup(name) : NULL;
+}
+
+EOLIAN static Eina_Bool
+_elm_win_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Elm_Win_Data *pd, const char *name)
+{
+   const Evas_Modifier *m = evas_key_modifier_get(pd->evas);
+   return evas_key_modifier_is_set(m, name);
+}
+
+EOLIAN static Eina_Bool
+_elm_win_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Elm_Win_Data *pd, const char *name)
+{
+   const Evas_Lock *m = evas_key_lock_get(pd->evas);
+   return evas_key_lock_is_set(m, name);
 }
 
 #ifndef EFL_TEAMWORK_VERSION

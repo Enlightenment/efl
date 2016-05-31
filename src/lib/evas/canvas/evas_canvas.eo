@@ -1,6 +1,8 @@
 import evas_types;
+import efl_event_types;
 
-class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
+class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
+                   Efl.Input.Interface)
 {
    legacy_prefix: evas;
    data: Evas_Public_Data;
@@ -113,7 +115,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
             ]]
          }
          values {
-            flags: Evas.Event_Flags; [[The default flags to use.]]
+            flags: Efl.Event.Flags; [[The default flags to use.]]
          }
       }
       @property output_method {
@@ -409,8 +411,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
               canvas.
 
               When this function is called it will return a value of either
-              $false or $true, depending on if @.event_feed_mouse_in or
-              @.event_feed_mouse_out have been called to feed in a  mouse
+              $false or $true, depending on if event_feed_mouse_in or
+              event_feed_mouse_out have been called to feed in a  mouse
               enter event into the canvas.
 
               A return value of $true indicates the mouse is logically
@@ -503,8 +505,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
               any host system's pointing device abilities.
 
               A canvas by default begins with no mouse buttons being
-              pressed and only calls to @.event_feed_mouse_down
-              and @.event_feed_mouse_up will alter that.
+              pressed and only pointer move events can alter that.
 
               The least significant bit corresponds to the first mouse
               button (button 1) and the most significant bit corresponds
@@ -547,20 +548,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
             @in y: int; [[The vertical coordinate of the position.]]
          }
       }
-      event_feed_mouse_wheel {
-         [[Mouse wheel event feed.
-
-           This function will set some evas properties that is necessary
-           when the mouse wheel is scrolled up or down. It prepares
-           information to  be treated by the callback function.
-         ]]
-         params {
-            @in direction: int; [[The wheel mouse direction.]]
-            @in z: int; [[How much mouse wheel was scrolled up or down.]]
-            @in timestamp: uint; [[The timestamp of the mouse up event.]]
-            @in data: const(void)*; [[The data for canvas.]]
-         }
-      }
       key_lock_on {
          [[Enables or turns on programmatically the lock key with name
            $keyname.
@@ -573,22 +560,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
          ]]
          params {
             @in keyname: const(char)* @nonull; [[The name of the lock to enable.]]
-         }
-      }
-      event_feed_key_down {
-         [[Key down event feed.
-
-           This function will set some evas properties that is necessary
-           when a key is pressed. It prepares information to be treated
-           by the callback function.
-         ]]
-         params {
-            @in keyname: const(char)*; [[Name of the key.]]
-            @in key: const(char)*; [[The key pressed.]]
-            @in string: const(char)*; [[A string.]]
-            @in compose: const(char)*; [[The compose string.]]
-            @in timestamp: uint; [[Timestamp of the mouse up event.]]
-            @in data: const(void)*; [[Data for canvas.]]
          }
       }
       key_modifier_mask_get @const {
@@ -650,75 +621,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
             @in keyname: const(char)* @nonull; [[The name of the modifier to disable.]]
          }
       }
-      event_feed_hold {
-         [[Hold event feed.
-
-           This function makes the object to stop sending events.
-         ]]
-         params {
-            @in hold: int; [[The hold.]]
-            @in timestamp: uint; [[The timestamp of the mouse up event.]]
-            @in data: const(void)*; [[The data for canvas.]]
-         }
-      }
-      event_feed_mouse_move {
-         [[Mouse move event feed.
-
-           This function will set some evas properties that is necessary
-           when the mouse is moved from its last position. It prepares
-           information to be treated by the callback function.
-         ]]
-         params {
-            @in x: int; [[The horizontal position of the mouse pointer.]]
-            @in y: int; [[The vertical position of the mouse pointer.]]
-            @in timestamp: uint; [[The timestamp of the mouse up event.]]
-            @in data: const(void)*; [[The data for canvas.]]
-         }
-      }
-      event_feed_key_up {
-         [[Key up event feed.
-
-           This function will set some evas properties that is necessary
-           when a key is released. It prepares information to be treated
-           by the callback function.
-         ]]
-         params {
-            @in keyname: const(char)*; [[Name of the key.]]
-            @in key: const(char)*; [[The key released.]]
-            @in string: const(char)*; [[A string.]]
-            @in compose: const(char)*; [[Compose.]]
-            @in timestamp: uint; [[Timestamp of the mouse up event.]]
-            @in data: const(void)*; [[Data for canvas.]]
-         }
-      }
-      event_feed_mouse_out {
-         [[Mouse out event feed.
-
-           This function will set some evas properties that is necessar
-           when the mouse out event happens. It prepares information to
-           be treated by the callback function.
-         ]]
-         params {
-            @in timestamp: uint; [[Timestamp of the mouse up event.]]
-            @in data: const(void)*; [[The data for canvas.]]
-         }
-      }
-      event_input_multi_move {
-         params {
-            @in d: int;
-            @in x: int;
-            @in y: int;
-            @in rad: double;
-            @in radx: double;
-            @in rady: double;
-            @in pres: double;
-            @in ang: double;
-            @in fx: double;
-            @in fy: double;
-            @in timestamp: uint;
-            @in data: const(void)*;
-         }
-      }
       objects_at_xy_get @const {
          [[Retrieve a list of Evas objects lying over a given position in
            a canvas.
@@ -746,40 +648,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
                Boolean flag to include or not hidden objects in this
                calculation.
             ]]
-         }
-      }
-      event_input_multi_up {
-         params {
-            @in d: int;
-            @in x: int;
-            @in y: int;
-            @in rad: double;
-            @in radx: double;
-            @in rady: double;
-            @in pres: double;
-            @in ang: double;
-            @in fx: double;
-            @in fy: double;
-            @in flags: Evas.Button_Flags;
-            @in timestamp: uint;
-            @in data: const(void)*;
-         }
-      }
-      event_feed_multi_down {
-         params {
-            @in d: int;
-            @in x: int;
-            @in y: int;
-            @in rad: double;
-            @in radx: double;
-            @in rady: double;
-            @in pres: double;
-            @in ang: double;
-            @in fx: double;
-            @in fy: double;
-            @in flags: Evas.Button_Flags;
-            @in timestamp: uint;
-            @in data: const(void)*;
          }
       }
       render_async {
@@ -833,26 +701,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
       focus_out {
          [[Inform to the evas that it lost the focus.]]
       }
-      event_input_mouse_move {
-         [[Mouse move event feed from input.
-
-           Similar to the @.event_feed_mouse_move, this function will
-           inform Evas about mouse move events which were received by
-           the input system, relative to the 0,0 of the window, not to the
-           canvas 0,0. It will take care of doing any special transformation
-           like adding the framespace offset to the mouse event.
-
-           @since 1.8
-         ]]
-         params {
-            @in x: int; [[The horizontal position of the mouse pointer
-                          relative to the 0,0 of the window/surface.]]
-            @in y: int; [[The vertical position of the mouse pointer
-                          relative to the 0,0 of the window/surface.]]
-            @in timestamp: uint; [[The timestamp of the mouse move event.]]
-            @in data: const(void)*; [[The data for canvas.]]
-         }
-      }
       norender {
          [[Update the canvas internal objects but not triggering immediate
            renderization.
@@ -880,23 +728,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
          @endcode
          */
          return: uint; [[The number of touched point on the evas.]]
-      }
-      event_input_multi_down {
-         params {
-            @in d: int;
-            @in x: int;
-            @in y: int;
-            @in rad: double;
-            @in radx: double;
-            @in rady: double;
-            @in pres: double;
-            @in ang: double;
-            @in fx: double;
-            @in fy: double;
-            @in flags: Evas.Button_Flags;
-            @in timestamp: uint;
-            @in data: const(void)*;
-         }
       }
       nochange_pop {
          [[Pop the nochange flag down 1.
@@ -984,47 +815,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
          ]]
          params {
             @in keyname: const(char)* @nonull; [[The name of the modifier to enable.]]
-         }
-      }
-      event_feed_mouse_up {
-         [[Mouse up event feed.
-
-           This function will set some evas properties that is necessary
-           when the mouse button is released. It prepares information to
-           be treated by the callback function.
-         ]]
-         params {
-            @in b: int; [[The button number.]]
-            @in flags: Evas.Button_Flags; [[Evas button flags.]]
-            @in timestamp: uint; [[The timestamp of the mouse up event.]]
-            @in data: const(void)*; [[The data for canvas.]]
-         }
-      }
-      event_feed_mouse_down {
-         [[Mouse down event feed.
-
-           This function will set some evas properties that is necessary
-           when the mouse button is pressed. It prepares information to
-           be treated by the callback function.
-         ]]
-         params {
-            @in b: int; [[The button number.]]
-            @in flags: Evas.Button_Flags; [[Evas button flags.]]
-            @in timestamp: uint; [[The timestamp of the mouse up event.]]
-            @in data: const(void)*; [[The data for canvas.]]
-         }
-      }
-      event_refeed_event {
-         [[Re feed event.
-
-           This function re-feeds the event pointed by event_copy.
-
-           This function call evas_event_feed_* functions, so it can
-           cause havoc if not used wisely. Please use it responsibly.
-         ]]
-         params {
-            @in event_copy: void *; [[The event to refeed.]]
-            @in event_type: Evas.Callback_Type; [[Event type.]]
          }
       }
       font_available_list @const {
@@ -1197,22 +987,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
             @in x: Evas.Coord; [[The canvas x coordinate.]]
          }
       }
-      event_feed_multi_move {
-         params {
-            @in d: int;
-            @in x: int;
-            @in y: int;
-            @in rad: double;
-            @in radx: double;
-            @in rady: double;
-            @in pres: double;
-            @in ang: double;
-            @in fx: double;
-            @in fy: double;
-            @in timestamp: uint;
-            @in data: const(void)*;
-         }
-      }
       render_updates {
          [[Force immediate renderization of the given Evas canvas.
 
@@ -1380,18 +1154,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
            @.render_idle_flush might discard too.
          ]]
       }
-      event_feed_mouse_in {
-         [[Mouse in event feed.
-
-           This function will set some evas properties that is necessary
-           when the mouse in event happens. It prepares information to be
-           treated by the callback function.
-         ]]
-         params {
-            @in timestamp: uint; [[The timestamp of the mouse up event.]]
-            @in data: const(void)*; [[The data for canvas.]]
-         }
-      }
       object_top_in_rectangle_get @const {
          [[Retrieve the Evas object stacked at the top of a given
            rectangular region in a canvas
@@ -1435,23 +1197,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
          [[Force renderization of the given canvas.]]
 
       }
-      event_feed_multi_up {
-         params {
-            @in d: int;
-            @in x: int;
-            @in y: int;
-            @in rad: double;
-            @in radx: double;
-            @in rady: double;
-            @in pres: double;
-            @in ang: double;
-            @in fx: double;
-            @in fy: double;
-            @in flags: Evas.Button_Flags;
-            @in timestamp: uint;
-            @in data: const(void)*;
-         }
-      }
       font_path_prepend {
          [[Prepends a font path to the list of font paths used by the
            given evas.
@@ -1476,17 +1221,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
            contents, you have to add "damage" regions yourself (see
            @.damage_rectangle_add).
          ]]
-      }
-      event_feed_mouse_cancel {
-         [[Mouse cancel event feed.
-
-           This function will call @.event_feed_mouse_up when a
-           mouse cancel event happens.
-         ]]
-         params {
-            @in timestamp: uint; [[The timestamp of the mouse up event.]]
-            @in data: const(void)*; [[The data for canvas.]]
-         }
       }
       coord_screen_x_to_world @const {
          [[Convert/scale an output screen coordinate into canvas
@@ -1572,62 +1306,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator)
          return: int @warn_unused; [[The output/screen coordinate translated to output coordinates.]]
          params {
             @in y: Evas.Coord; [[The canvas y coordinate.]]
-         }
-      }
-      event_feed_key_down_with_keycode {
-         [[Key down event feed with keycode.
-
-           This function will set some evas properties that is necessary
-           when a key is pressed. It prepares information to be treated
-           by the callback function.
-
-           @since 1.10
-         ]]
-         params {
-            @in keyname: const(char)*; [[Name of the key.]]
-            @in key: const(char)*; [[The key released.]]
-            @in string: const(char)*; [[A string.]]
-            @in compose: const(char)*; [[Compose.]]
-            @in timestamp: uint; [[Timestamp of the mouse up event.]]
-            @in data: const(void)*; [[Data for canvas.]]
-            @in keycode: uint; [[Key scan code numeric value for canvas.]]
-         }
-      }
-      event_feed_key_up_with_keycode {
-         [[Key up event feed with keycode.
-
-           This function will set some evas properties that is necessary
-           when a key is released. It prepares information to be treated
-           by the callback function.
-
-           @since 1.10
-         ]]
-         params {
-            @in keyname: const(char)*; [[Name of the key.]]
-            @in key: const(char)*; [[The key released.]]
-            @in string: const(char)*; [[A string.]]
-            @in compose: const(char)*; [[Compose.]]
-            @in timestamp: uint; [[Timestamp of the mouse up event.]]
-            @in data: const(void)*; [[Data for canvas.]]
-            @in keycode: uint; [[Key scan code numeric value for canvas.]]
-         }
-      }
-      event_feed_axis_update {
-         [[Input device axis update event feed.
-
-           This function will set some evas properties that is necessary
-           when an e.g. stylus axis is updated. It prepares information
-           to be treated by the callback function.
-
-           @since 1.13
-         ]]
-         params {
-            @in timestamp: uint; [[Timestamp of the axis event.]]
-            @in device: int; [[System-provided device identifier.]]
-            @in toolid: int; [[Type of tool currently being used.]]
-            @in naxes: int; [[Number of elements in the \p axis array.]]
-            @in axis: const(Evas.Axis)*; [[Array containing the current value of all updated axes.]]
-            @in data: const(void)*; [[Data for canvas.]]
          }
       }
    }

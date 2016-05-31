@@ -366,6 +366,9 @@ extern Eo *_ecore_parent;
 #define ECORE_PARENT_CLASS ecore_parent_class_get()
 EAPI const Eo_Class *ecore_parent_class_get(void) EINA_CONST;
 
+// access to direct input cb
+#define ECORE_EVAS_INTERNAL
+
 #undef EAPI
 #define EAPI
 

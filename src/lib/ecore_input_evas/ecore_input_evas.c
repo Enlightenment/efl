@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#define ECORE_EVAS_INTERNAL
+
 #include <string.h>
 #include <stdlib.h>
 
@@ -22,6 +24,7 @@ struct _Ecore_Input_Window
    Ecore_Event_Multi_Move_Cb move_multi;
    Ecore_Event_Multi_Down_Cb down_multi;
    Ecore_Event_Multi_Up_Cb up_multi;
+   Ecore_Event_Direct_Input_Cb direct;
    int ignore_event;
 };
 
@@ -359,6 +362,16 @@ ecore_event_window_unregister(Ecore_Window id)
    eina_hash_del(_window_hash, &id, NULL);
 }
 
+EAPI void
+_ecore_event_window_direct_cb_set(Ecore_Window id, Ecore_Event_Direct_Input_Cb fptr)
+{
+   Ecore_Input_Window *lookup;
+
+   lookup = eina_hash_find(_window_hash, &id);
+   if (!lookup) return;
+   lookup->direct = fptr;
+}
+
 EAPI void *
 ecore_event_window_match(Ecore_Window id)
 {
@@ -399,23 +412,36 @@ _ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
    ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
    if (press == ECORE_DOWN)
-     evas_event_feed_key_down_with_keycode(lookup->evas,
-                                           e->keyname,
-                                           e->key,
-                                           e->string,
-                                           e->compose,
-                                           e->timestamp,
-                                           e->data,
-                                           e->keycode);
+     {
+        if (!lookup->direct ||
+            !lookup->direct(lookup->window, ECORE_EVENT_KEY_DOWN, e))
+          {
+             evas_event_feed_key_down_with_keycode(lookup->evas,
+                                                   e->keyname,
+                                                   e->key,
+                                                   e->string,
+                                                   e->compose,
+                                                   e->timestamp,
+                                                   e->data,
+                                                   e->keycode);
+          }
+     }
    else
-     evas_event_feed_key_up_with_keycode(lookup->evas,
-                                         e->keyname,
-                                         e->key,
-                                         e->string,
-                                         e->compose,
-                                         e->timestamp,
-                                         e->data,
-                                         e->keycode);
+     {
+        if (!lookup->direct ||
+            !lookup->direct(lookup->window, ECORE_EVENT_KEY_DOWN, e))
+          {
+             evas_event_feed_key_up_with_keycode(lookup->evas,
+                                                 e->keyname,
+                                                 e->key,
+                                                 e->string,
+                                                 e->compose,
+                                                 e->timestamp,
+                                                 e->data,
+                                                 e->keycode);
+          }
+     }
+
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -430,7 +456,11 @@ _ecore_event_evas_mouse_button_cancel(Ecore_Event_Mouse_Button *e)
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
 
    INF("ButtonEvent cancel, device(%d), button(%d)", e->multi.device, e->buttons);
-   evas_event_feed_mouse_cancel(lookup->evas, e->timestamp, NULL);
+   if (!lookup->direct ||
+       !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_BUTTON_CANCEL, e))
+     {
+        evas_event_feed_mouse_cancel(lookup->evas, e->timestamp, NULL);
+     }
 
    //the number of last event is small, simple check is ok.
    EINA_LIST_FOREACH(_last_events, l, eel)
@@ -494,47 +524,67 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
      {
         ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
         if (press == ECORE_DOWN)
-          evas_event_feed_mouse_down(lookup->evas, e->buttons, flags,
-                                     e->timestamp, NULL);
+          {
+             if (!lookup->direct ||
+                 !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_BUTTON_DOWN, e))
+               {
+                  evas_event_feed_mouse_down(lookup->evas, e->buttons, flags,
+                                             e->timestamp, NULL);
+               }
+          }
         else
-          evas_event_feed_mouse_up(lookup->evas, e->buttons, flags,
-                                   e->timestamp, NULL);
+          {
+             if (!lookup->direct ||
+                 !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_BUTTON_UP, e))
+               {
+                  evas_event_feed_mouse_up(lookup->evas, e->buttons, flags,
+                                           e->timestamp, NULL);
+               }
+          }
      }
    else
      {
         if (press == ECORE_DOWN)
           {
-             if (lookup->down_multi)
-                lookup->down_multi(lookup->window, e->multi.device,
-                                   e->x, e->y, e->multi.radius,
-                                   e->multi.radius_x, e->multi.radius_y,
-                                   e->multi.pressure, e->multi.angle,
-                                   e->multi.x, e->multi.y, flags,
-                                   e->timestamp);
-             else
-               evas_event_input_multi_down(lookup->evas, e->multi.device,
-                                           e->x, e->y, e->multi.radius,
-                                           e->multi.radius_x, e->multi.radius_y,
-                                           e->multi.pressure, e->multi.angle,
-                                           e->multi.x, e->multi.y, flags,
-                                           e->timestamp, NULL);
+             if (!lookup->direct ||
+                 !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_BUTTON_DOWN, e))
+               {
+                  if (lookup->down_multi)
+                    lookup->down_multi(lookup->window, e->multi.device,
+                                       e->x, e->y, e->multi.radius,
+                                       e->multi.radius_x, e->multi.radius_y,
+                                       e->multi.pressure, e->multi.angle,
+                                       e->multi.x, e->multi.y, flags,
+                                       e->timestamp);
+                  else
+                     evas_event_input_multi_down(lookup->evas, e->multi.device,
+                                                 e->x, e->y, e->multi.radius,
+                                                 e->multi.radius_x, e->multi.radius_y,
+                                                 e->multi.pressure, e->multi.angle,
+                                                 e->multi.x, e->multi.y, flags,
+                                                 e->timestamp, NULL);
+               }
           }
         else
           {
-             if (lookup->up_multi)
-                lookup->up_multi(lookup->window, e->multi.device,
-                                 e->x, e->y, e->multi.radius,
-                                 e->multi.radius_x, e->multi.radius_y,
-                                 e->multi.pressure, e->multi.angle,
-                                 e->multi.x, e->multi.y, flags,
-                                 e->timestamp);
-             else
-               evas_event_input_multi_up(lookup->evas, e->multi.device,
-                                         e->x, e->y, e->multi.radius,
-                                         e->multi.radius_x, e->multi.radius_y,
-                                         e->multi.pressure, e->multi.angle,
-                                         e->multi.x, e->multi.y, flags,
-                                         e->timestamp, NULL);
+             if (!lookup->direct ||
+                 !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_BUTTON_UP, e))
+               {
+                  if (lookup->up_multi)
+                    lookup->up_multi(lookup->window, e->multi.device,
+                                     e->x, e->y, e->multi.radius,
+                                     e->multi.radius_x, e->multi.radius_y,
+                                     e->multi.pressure, e->multi.angle,
+                                     e->multi.x, e->multi.y, flags,
+                                     e->timestamp);
+                  else
+                     evas_event_input_multi_up(lookup->evas, e->multi.device,
+                                               e->x, e->y, e->multi.radius,
+                                               e->multi.radius_x, e->multi.radius_y,
+                                               e->multi.pressure, e->multi.angle,
+                                               e->multi.x, e->multi.y, flags,
+                                               e->timestamp, NULL);
+               }
           }
      }
    return ECORE_CALLBACK_PASS_ON;
@@ -549,6 +599,9 @@ ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *
    e = event;
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
+   if (lookup->direct &&
+       lookup->direct(lookup->window, ECORE_EVENT_MOUSE_MOVE, e))
+     return ECORE_CALLBACK_PASS_ON;
    if (e->multi.device == 0)
      {
         _ecore_event_evas_push_mouse_move(e);
@@ -609,10 +662,18 @@ _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
    switch (io)
      {
       case ECORE_IN:
-         evas_event_feed_mouse_in(lookup->evas, e->timestamp, NULL);
+        if (!lookup->direct ||
+            !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_IN, e))
+          {
+             evas_event_feed_mouse_in(lookup->evas, e->timestamp, NULL);
+          }
          break;
       case ECORE_OUT:
-         evas_event_feed_mouse_out(lookup->evas, e->timestamp, NULL);
+        if (!lookup->direct ||
+            !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_OUT, e))
+          {
+             evas_event_feed_mouse_out(lookup->evas, e->timestamp, NULL);
+          }
          break;
       default:
          break;
@@ -644,7 +705,12 @@ ecore_event_evas_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
    ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
-   evas_event_feed_mouse_wheel(lookup->evas, e->direction, e->z, e->timestamp, NULL);
+   if (!lookup->direct ||
+       !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_WHEEL, e))
+     {
+        evas_event_feed_mouse_wheel(lookup->evas, e->direction, e->z, e->timestamp, NULL);
+     }
+
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -669,9 +735,14 @@ ecore_event_evas_axis_update(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    e = event;
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
-   evas_event_feed_axis_update(lookup->evas, e->timestamp, e->device,
-                               e->toolid, e->naxis,
-                               (Evas_Axis *)e->axis, NULL);
+   if (!lookup->direct ||
+       !lookup->direct(lookup->window, ECORE_EVENT_AXIS_UPDATE, e))
+     {
+        evas_event_feed_axis_update(lookup->evas, e->timestamp, e->device,
+                                    e->toolid, e->naxis,
+                                    (Evas_Axis *)e->axis, NULL);
+     }
+
    return ECORE_CALLBACK_PASS_ON;
 }
 

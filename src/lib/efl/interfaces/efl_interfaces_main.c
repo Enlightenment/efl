@@ -34,6 +34,7 @@ EAPI const Eo_Event_Description _EFL_GFX_CHANGED =
 EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
   EO_EVENT_DESCRIPTION("Graphics path changed");
 
+/* Packing & containers */
 #include "interfaces/efl_container.eo.c"
 #include "interfaces/efl_pack.eo.c"
 #include "interfaces/efl_pack_layout.eo.c"
@@ -46,6 +47,10 @@ EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
 #include "interfaces/efl_flipable.eo.c"
 #include "interfaces/efl_ui_spin.eo.c"
 #include "interfaces/efl_ui_progress.eo.c"
+
+#include "interfaces/efl_event.eo.c"
+#include "interfaces/efl_input_state.eo.c"
+#include "interfaces/efl_input_interface.eo.c"
 
 EAPI void
 __efl_internal_init(void)

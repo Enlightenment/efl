@@ -128,24 +128,6 @@ struct Evas.Map; [[An opaque handle to map points
                    \@ref evas_map_dup.
                  ]]
 
-enum Evas.Button_Flags {
-   [[Flags for Mouse Button events]]
-   legacy: Evas_Button;
-
-   none = 0, [[No extra mouse button data]]
-   double_click = (1 << 0), [[This mouse button press was the 2nd press of a double click]]
-   triple_click = (1 << 1) [[This mouse button press was the 3rd press of a triple click]]
-}
-
-enum Evas.Event_Flags {
-   [[Flags for Events]]
-   legacy: Evas_Event_Flag;
-
-   none = 0, [[No fancy flags set]]
-   on_hold = (1 << 0), [[This event is being delivered but should be put "on hold" until the on hold flag is unset. The event should be used for informational purposes and maybe some indications visually, but not actually perform anything]]
-   on_scroll = (1 << 1) [[This event flag indicates the event occurs while scrolling; for example, DOWN event occurs during scrolling; the event should be used for informational purposes and maybe some indications visually, but not actually perform anything]]
-}
-
 enum Evas.Touch_Point_State {
    [[State of Evas_Coord_Touch_Point]]
    legacy: Evas_Touch_Point;

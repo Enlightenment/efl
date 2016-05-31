@@ -1208,20 +1208,6 @@ struct _Evas_Font_Description
    Eina_Bool is_new : 1;
 };
 
-struct _Evas_Device
-{
-   DATA32 magic;
-   Evas *evas;
-   Evas_Device *parent;
-   Evas_Device *src;
-   Eina_List *children;
-   const char *name;
-   const char *desc;
-   int ref;
-   Evas_Device_Class clas;
-   Evas_Device_Subclass subclas;
-};
-
 struct _Evas_Object_Filter_Data
 {
    Eina_Stringshare    *name;
@@ -1895,6 +1881,9 @@ struct _Evas_Proxy_Render_Data
    Eina_Bool source_clip : 1;
 };
 
+void _evas_canvas_event_init(Evas *eo_e, Evas_Public_Data *e);
+void _evas_canvas_event_shutdown(Evas *eo_e, Evas_Public_Data *e);
+
 int evas_async_events_init(void);
 int evas_async_events_shutdown(void);
 int evas_async_target_del(const void *target);
@@ -1946,8 +1935,10 @@ void _evas_touch_point_remove(Evas *e, int id);
 
 void _evas_device_cleanup(Evas *e);
 Evas_Device *_evas_device_top_get(const Evas *e);
-void _evas_device_ref(Evas_Device *dev);
-void _evas_device_unref(Evas_Device *dev);
+
+/* legacy/eo events */
+Eina_Bool efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, const void *event_info, Evas_Callback_Type type);
+const void *efl_event_pointer_legacy_info_get(const Efl_Event_Pointer *evt, Evas_Callback_Type *ptype, Eina_Bool multi);
 
 Eina_Bool evas_vg_loader_svg(Evas_Object *vg, const Eina_File *f, const char *key EINA_UNUSED);
 

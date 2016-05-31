@@ -1377,6 +1377,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_backend_init)(Ecore_Evas
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
 
    return ee;
 }

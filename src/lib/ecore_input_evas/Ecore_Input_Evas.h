@@ -59,6 +59,11 @@ EAPI void      ecore_event_window_ignore_events(Ecore_Window id, int ignore_even
 
 EAPI void      ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers);
 
+#ifdef ECORE_EVAS_INTERNAL
+typedef Eina_Bool (*Ecore_Event_Direct_Input_Cb)(void *window, int type, const void *info);
+EAPI void      _ecore_event_window_direct_cb_set(Ecore_Window id, Ecore_Event_Direct_Input_Cb fptr);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

@@ -5,6 +5,8 @@
 # include "config.h"
 #endif
 
+#define ECORE_EVAS_INTERNAL
+
 #ifndef ELEMENTARY_H
 //#define LOGFNS 1
 #ifdef LOGFNS

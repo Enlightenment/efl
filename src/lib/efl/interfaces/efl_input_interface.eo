@@ -1,0 +1,17 @@
+interface Efl.Input.Interface ()
+{
+   [[An object implementing this interface can send pointer events.
+
+     Windows and canvas objects may send input events.
+   ]]
+   event_prefix: efl;
+   events {
+      pointer,move: Efl.Event.Pointer;
+      pointer,down: Efl.Event.Pointer;
+      pointer,up: Efl.Event.Pointer;
+      pointer,cancel: Efl.Event.Pointer;
+      pointer,in: Efl.Event.Pointer;
+      pointer,out: Efl.Event.Pointer;
+      pointer,wheel: Efl.Event.Pointer;
+   }
+}

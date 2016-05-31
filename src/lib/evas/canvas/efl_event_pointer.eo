@@ -1,0 +1,173 @@
+import efl_orientation;
+import efl_event_types;
+
+class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State)
+{
+   [[Event data carried over with any pointer event (mouse, touch, ...)
+
+     @since 1.18
+   ]]
+   methods {
+      @property action {
+         [[The action represented by this event.]]
+         values {
+            act: Efl.Pointer.Action;
+         }
+      }
+      @property button {
+         [[The mouse button that triggered the event.]]
+         values {
+            but: int; [[1 to 32, 0 if not a button event.]]
+         }
+      }
+      @property button_pressed {
+         [[Whether a mouse button is pressed at the moment of the event.]]
+         keys {
+            button: int;
+         }
+         values {
+            pressed: bool;
+         }
+      }
+      @property position {
+         [[Position where the event happened, relative to the window.]]
+         values {
+            x: int;
+            y: int;
+         }
+      }
+      @property position_precise  {
+         [[Position where the event happened, with subpixel precision
+
+           Note: Same value as @.position, relative to the window.
+         ]]
+         values {
+            x: double;
+            y: double;
+         }
+      }
+      @property previous_position {
+         [[Position of the previous event, valid for move events.
+
+           Relative to the window. May be equal to @.position.
+         ]]
+         values {
+            x: int;
+            y: int;
+         }
+      }
+      @property previous_position_precise {
+         [[Position of the previous event, with subpixel precision.
+
+           Valid for move events, may not be valid for other events.
+           Relative to the window. May be equal to @.position_precise.
+         ]]
+         values {
+            x: double;
+            y: double;
+         }
+      }
+      @property device {
+         [[Pointing device that originated this event.]]
+         values {
+            dev: Efl.Input.Device;
+         }
+      }
+      @property finger {
+         [[Finger ID in case of a multi touch event.]]
+         values {
+            id: int;
+         }
+      }
+      @property touch {
+         [[Touch information about a specific finger or pointer.]]
+         values {
+            radius: double;
+            rad_x: double;
+            rad_y: double;
+            pressure: double;
+            angle: double;
+         }
+      }
+      @property source {
+         [[The object where this event first originated, in case of
+           propagation or repetition of the event.
+         ]]
+         values {
+            src: Eo.Base; [[Source object: $Efl.Gfx]]
+         }
+      }
+      @property button_flags {
+         [[Double or triple click information.]]
+         values {
+            flags: Efl.Pointer.Flags;
+         }
+      }
+      @property double_click {
+         [[$true if @.button_flags indicates a double click (2nd press).
+
+           This is just a helper function around @.button_flags.
+         ]]
+         values {
+            val: bool;
+         }
+      }
+      @property triple_click {
+         [[$true if @.button_flags indicates a triple click (3rd press).
+
+           This is just a helper function around @.button_flags.
+         ]]
+         values {
+            val: bool;
+         }
+      }
+      @property event_flags {
+         [[Extra flags for this event, may be changed by the user.]]
+         values {
+            flags: Efl.Event.Flags;
+         }
+      }
+      @property on_hold {
+         [[$true if @.event_flags indicates the event is on hold.]]
+         values {
+            val: bool;
+         }
+      }
+      @property on_scroll {
+         [[$true if @.event_flags indicates the event happened while scrolling.]]
+         values {
+            val: bool;
+         }
+      }
+      @property wheel_direction {
+         values {
+            dir: Efl.Orient; [[Horizontal or Vertical only.]]
+         }
+      }
+      @property wheel_distance {
+         values {
+            dist: int;
+         }
+      }
+      instance_get @class {
+         [[Creates an instance of this events or returns a fresh one from
+           a memory pool.
+         ]]
+         params {
+            @in  owner: Eo.Base; [[The parent object.]]
+            @out priv: void*; [[Pointer to the internal data of the object.]]
+         }
+         return: own(Efl.Event.Pointer);
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      class.destructor;
+      Efl.Event.reset;
+      Efl.Event.dup;
+      Efl.Event.timestamp.set;
+      Efl.Event.timestamp.get;
+      Efl.Input.State.modifier_enabled.get;
+      Efl.Input.State.lock_enabled.get;
+   }
+}

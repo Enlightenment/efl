@@ -358,6 +358,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process, 
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process, 
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
 
    wdata->sync_handler = ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _ee_cb_sync_done, ee);
    ee_list = eina_list_append(ee_list, ee);

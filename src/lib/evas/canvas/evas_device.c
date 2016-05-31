@@ -1,66 +1,84 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#define EFL_INTERNAL_UNSTABLE
+#include "interfaces/efl_common_internal.h"
+
+/* WARNING: This API is not used across EFL, hard to test! */
+
+#ifdef DEBUG_UNTESTED_
+// booh
+#define SAFETY_CHECK(obj, klass, ...) \
+   do { MAGIC_CHECK(dev, Evas_Device, 1); \
+        return __VA_ARGS__; \
+        MAGIC_CHECK_END(); \
+   } while (0)
+
+#else
+#define SAFETY_CHECK(obj, klass, ...) \
+   do { if (!obj) return __VA_ARGS__; } while (0)
+#endif
+
+/* FIXME: Ideally no work besides calling the Efl_Input_Device API
+ * should be done here. But unfortunately, some knowledge of Evas is required
+ * here (callbacks and canvas private data).
+ */
+
+static Eina_Bool
+_del_cb(void *data, const Eo_Event *ev)
+{
+   Evas_Public_Data *e = data;
+
+   // can not be done in std destructor
+   e->devices = eina_list_remove(e->devices, ev->object);
+
+   return EO_CALLBACK_CONTINUE;
+}
+
 EAPI Evas_Device *
 evas_device_add(Evas *eo_e)
 {
+   Efl_Input_Device_Data *d;
+   Evas_Public_Data *e;
    Evas_Device *dev;
-   
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   dev = calloc(1, sizeof(Evas_Device));
-   if (!dev) return NULL;
-   dev->magic = MAGIC_DEV;
-   dev->evas = eo_e;
-   dev->ref = 1;
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+
+   SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
+
+   dev = eo_add(EFL_INPUT_DEVICE_CLASS, eo_e);
+
+   d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+   d->evas = eo_e;
+
+   e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    e->devices = eina_list_append(e->devices, dev);
+   eo_event_callback_add(dev, EO_EVENT_DEL, _del_cb, e);
+
    evas_event_callback_call(eo_e, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+
    return dev;
 }
 
 EAPI void
 evas_device_del(Evas_Device *dev)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return;
-   MAGIC_CHECK_END();
-   if (dev->ref == 1)
-     {
-        Evas_Device *dev2;
-        
-        EINA_LIST_FREE(dev->children, dev2)
-          {
-             dev2->parent = NULL;
-             evas_device_del(dev2);
-          }
-        if (dev->src)
-          {
-             _evas_device_unref(dev->src);
-             dev->src = NULL;
-          }
-        dev->parent = NULL;
-     }
-   _evas_device_unref(dev);
+   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
+
+   eo_unref(dev);
 }
 
 EAPI void
 evas_device_push(Evas *eo_e, Evas_Device *dev)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return;
-   MAGIC_CHECK_END();
+   SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS);
+   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
+
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e->cur_device)
      {
         e->cur_device = eina_array_new(4);
         if (!e->cur_device) return;
      }
-   dev->ref++;
+   eo_ref(dev);
    eina_array_push(e->cur_device, dev);
 }
 
@@ -68,28 +86,27 @@ EAPI void
 evas_device_pop(Evas *eo_e)
 {
    Evas_Device *dev;
-   
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+
+   SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS);
+
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    dev = eina_array_pop(e->cur_device);
-   if (dev) _evas_device_unref(dev);
+   if (dev) eo_unref(dev);
 }
 
 EAPI const Eina_List *
 evas_device_list(Evas *eo_e, const Evas_Device *dev)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
+   SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
+
    if (dev)
      {
-        MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-        return NULL;
-        MAGIC_CHECK_END();
+        SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS, NULL);
+
+        Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+        return d->children;
      }
-   if (dev) return dev->children;
+
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    return e->devices;
 }
@@ -97,141 +114,123 @@ evas_device_list(Evas *eo_e, const Evas_Device *dev)
 EAPI void
 evas_device_name_set(Evas_Device *dev, const char *name)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return;
-   MAGIC_CHECK_END();
-   eina_stringshare_replace(&(dev->name), name);
-   evas_event_callback_call(dev->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
+
+   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+
+   efl_input_device_name_set(dev, name);
+   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI const char *
 evas_device_name_get(const Evas_Device *dev)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return NULL;
-   MAGIC_CHECK_END();
-   return dev->name;
+   return efl_input_device_name_get(dev);
 }
 
 EAPI void
 evas_device_description_set(Evas_Device *dev, const char *desc)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return;
-   MAGIC_CHECK_END();
-   eina_stringshare_replace(&(dev->desc), desc);
-   evas_event_callback_call(dev->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
+
+   efl_input_device_description_set(dev, desc);
+
+   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI const char *
 evas_device_description_get(const Evas_Device *dev)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return NULL;
-   MAGIC_CHECK_END();
-   return dev->desc;
+   return efl_input_device_description_get(dev);
 }
 
 EAPI void
 evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return;
-   MAGIC_CHECK_END();
-   Evas_Public_Data *e = eo_data_scope_get(dev->evas, EVAS_CANVAS_CLASS);
+   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
+
+   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(d->evas, EVAS_CANVAS_CLASS);
    if (parent)
      {
-        MAGIC_CHECK(parent, Evas_Device, MAGIC_DEV);
-        return;
-        MAGIC_CHECK_END();
+        SAFETY_CHECK(parent, EFL_INPUT_DEVICE_CLASS);
      }
-   if (dev->parent == parent) return;
-   if (dev->parent)
-     dev->parent->children = eina_list_remove(dev->parent->children, dev);
+
+   /* FIXME: move this to Efl.Input.Device */
+   if (d->parent == parent) return;
+   if (d->parent)
+     {
+        Efl_Input_Device_Data *p = eo_data_scope_get(d->parent, EFL_INPUT_DEVICE_CLASS);
+        p->children = eina_list_remove(p->children, dev);
+     }
    else if (parent)
      e->devices = eina_list_remove(e->devices, dev);
-   dev->parent = parent;
+   d->parent = parent;
    if (parent)
-     parent->children = eina_list_append(parent->children, dev);
+     {
+        Efl_Input_Device_Data *p = eo_data_scope_get(parent, EFL_INPUT_DEVICE_CLASS);
+        p->children = eina_list_append(p->children, dev);
+     }
    else
      e->devices = eina_list_append(e->devices, dev);
    
-   evas_event_callback_call(dev->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI const Evas_Device *
 evas_device_parent_get(const Evas_Device *dev)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return NULL;
-   MAGIC_CHECK_END();
-   return dev->parent;
+   return efl_input_device_parent_get(dev);
 }
 
 EAPI void
 evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return;
-   MAGIC_CHECK_END();
-   dev->clas = clas;
-   evas_event_callback_call(dev->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
+
+   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+
+   efl_input_device_type_set(dev, clas);
+   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI Evas_Device_Class
 evas_device_class_get(const Evas_Device *dev)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return EVAS_DEVICE_CLASS_NONE;
-   MAGIC_CHECK_END();
-   return dev->clas;
+   return efl_input_device_type_get(dev);
 }
 
 EAPI void
 evas_device_subclass_set(Evas_Device *dev, Evas_Device_Subclass clas)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return;
-   MAGIC_CHECK_END();
-   dev->subclas = clas;
-   evas_event_callback_call(dev->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
+   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+
+   efl_input_device_subtype_set(dev, clas);
+   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI Evas_Device_Subclass
 evas_device_subclass_get(const Evas_Device *dev)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return EVAS_DEVICE_SUBCLASS_NONE;
-   MAGIC_CHECK_END();
-   return dev->subclas;
+   return efl_input_device_subtype_get(dev);
 }
 
 EAPI void
 evas_device_emulation_source_set(Evas_Device *dev, Evas_Device *src)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return;
-   MAGIC_CHECK_END();
-   if (src)
-     {
-        MAGIC_CHECK(src, Evas_Device, MAGIC_DEV);
-        return;
-        MAGIC_CHECK_END();
-     }
-   if (dev->src == src) return;
-   if (dev->src) _evas_device_unref(dev->src);
-   dev->src = src;
-   if (dev->src) dev->src->ref++;
-   evas_event_callback_call(dev->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
+   Efl_Input_Device_Data *d = eo_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+
+   efl_input_device_source_set(dev, src);
+   evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI const Evas_Device *
 evas_device_emulation_source_get(const Evas_Device *dev)
 {
-   MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
-   return NULL;
-   MAGIC_CHECK_END();
-   return dev->src;
+   return efl_input_device_source_get(dev);
 }
 
 void
@@ -243,7 +242,7 @@ _evas_device_cleanup(Evas *eo_e)
    if (e->cur_device)
      {
         while ((dev = eina_array_pop(e->cur_device)))
-          _evas_device_unref(dev);
+          eo_unref(dev);
         eina_array_free(e->cur_device);
         e->cur_device = NULL;
      }
@@ -264,21 +263,3 @@ _evas_device_top_get(const Evas *eo_e)
    if (num < 1) return NULL;
    return eina_array_data_get(e->cur_device, num - 1);
 }
-
-void
-_evas_device_ref(Evas_Device *dev)
-{
-   dev->ref++;
-}
-
-void
-_evas_device_unref(Evas_Device *dev)
-{
-   dev->ref--;
-   if (dev->ref > 0) return;
-   if (dev->name) eina_stringshare_del(dev->name);
-   if (dev->desc) eina_stringshare_del(dev->desc);
-   dev->magic = 0;
-   free(dev);
-}
-

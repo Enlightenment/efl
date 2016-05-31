@@ -1,0 +1,35 @@
+/* FIXME: Do we need this? Or just use the Eo Event Description as a type? */
+enum Efl.Pointer.Action
+{
+   [[Pointer event type.
+
+     @since 1.18
+   ]]
+   none,   [[Not a valid event.]]
+   move,   [[Mouse or equivalent pointer moved.]]
+   down,   [[Mouse button or equivalent pointer pressed down.
+             Always followed by up or cancel.]]
+   up,     [[Mouse button or equivalent pointer released. See also cancel.]]
+   cancel, [[Special event happening after a down if the up counterpart
+             can not happen (eg. another window forcibly stole the focus).]]
+   in,     [[Mouse or pointer entered the object.]]
+   out,    [[Mouse or pointer exited the object.]]
+   wheel,  [[Mouse wheel scroll, horizontally or vertically.]]
+   axis,   [[Joystick event.]]
+}
+
+enum Efl.Pointer.Flags
+{
+   /* Evas.Button_Flags */
+   none = 0,                [[No extra mouse button data]]
+   double_click = (1 << 0), [[This mouse button press was the 2nd press of a double click]]
+   triple_click = (1 << 1), [[This mouse button press was the 3rd press of a triple click]]
+}
+
+enum Efl.Event.Flags
+{
+   /* Evas.Event_Flags */
+   none = 0,             [[No fancy flags set]]
+   on_hold = (1 << 0),   [[This event is being delivered but should be put "on hold" until the on hold flag is unset. The event should be used for informational purposes and maybe some indications visually, but not actually perform anything]]
+   on_scroll = (1 << 1), [[This event flag indicates the event occurs while scrolling; for example, DOWN event occurs during scrolling; the event should be used for informational purposes and maybe some indications visually, but not actually perform anything]]
+}
