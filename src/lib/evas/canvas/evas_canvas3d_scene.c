@@ -599,6 +599,19 @@ static void _node_mesh_colors_free_cb(void *data)
    if (data) free(data);
 }
 
+static inline void
+_pick_data_init(Evas_Canvas3D_Pick_Data *data, Evas_Public_Data *e, Evas_Real x, Evas_Real y)
+{
+   data->x      = ((x * 2.0) / ((Evas_Real)e->viewport.w)) - 1.0;
+   data->y      = ((((Evas_Real)e->viewport.h - y - 1) * 2.0) / ((Evas_Real)e->viewport.h)) - 1.0;
+   data->picked = EINA_FALSE;
+   data->z      = 1.0;
+   data->node   = NULL;
+   data->mesh   = NULL;
+   data->s      = 0.0;
+   data->t      = 0.0;
+}
+
 EOLIAN static Eina_Bool
 _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
                     Evas_Canvas3D_Node **node, Evas_Canvas3D_Mesh **mesh,
@@ -620,15 +633,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
    pd_parent = eo_data_scope_get(obj, EVAS_CANVAS3D_OBJECT_CLASS);
    e = eo_data_scope_get(pd_parent->evas, EVAS_CANVAS_CLASS);
 
-   data.x      = ((x * 2.0) / ((Evas_Real)e->viewport.w)) - 1.0;
-   data.y      = ((((Evas_Real)e->viewport.h - y - 1) * 2.0) / ((Evas_Real)e->viewport.h)) - 1.0;
-   data.picked = EINA_FALSE;
-   data.z      = 1.0;
-   data.node   = NULL;
-   data.mesh   = NULL;
-   data.s      = 0.0;
-   data.t      = 0.0;
-
+   _pick_data_init(&data, e, x, y);
    px = round(x * pd->w / e->viewport.w);
    py = round((pd->h - (y * pd->h / e->viewport.h) - 1));
 
@@ -732,16 +737,13 @@ _evas_canvas3d_scene_exist(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Rea
    Evas_Canvas3D_Pick_Data data;
    Evas_Canvas3D_Node_Data *pd_camera_node;
    Evas_Canvas3D_Camera_Data *pd_camera;
+   Evas_Canvas3D_Object_Data *pd_parent;
+   Evas_Public_Data *e;
 
-   data.x      = ((x * 2.0) / (Evas_Real)pd->w) - 1.0;
-   data.y      = ((((Evas_Real)pd->h - y - 1.0) * 2.0) / ((Evas_Real)pd->h)) - 1.0;
+   pd_parent = eo_data_scope_get(obj, EVAS_CANVAS3D_OBJECT_CLASS);
+   e = eo_data_scope_get(pd_parent->evas, EVAS_CANVAS_CLASS);
 
-   data.picked = EINA_FALSE;
-   data.z      = 1.0;
-   data.node   = NULL;
-   data.mesh   = NULL;
-   data.s      = 0.0;
-   data.t      = 0.0;
+   _pick_data_init(&data, e, x, y);
 
    /* Update the scene graph. */
    evas_canvas3d_object_update((Eo *) obj);
