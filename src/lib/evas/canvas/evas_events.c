@@ -1295,6 +1295,7 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data,
           }
      }
    _evas_post_event_callback_call(eo_e, e);
+   EV_DEL(pe);
 
    eina_list_free(copy);
 
