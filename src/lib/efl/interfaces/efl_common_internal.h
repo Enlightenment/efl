@@ -14,8 +14,8 @@
 #include <Efl.h>
 
 typedef struct _Efl_Event_Pointer_Data  Efl_Event_Pointer_Data;
+typedef struct _Efl_Event_Key_Data      Efl_Event_Key_Data;
 typedef struct _Efl_Input_Device_Data   Efl_Input_Device_Data;
-typedef struct _Efl_Input_State_Data    Efl_Input_State_Data;
 
 #ifndef _EVAS_TYPES_EOT_H_
 typedef struct _Evas_Modifier Evas_Modifier;
@@ -52,6 +52,27 @@ struct _Efl_Event_Pointer_Data
    Evas_Lock                  *locks;
    void                       *legacy; /* DO NOT TOUCH (may contain the legacy event_info) */
    Eina_Bool                   evas_done; /* set by evas */
+};
+
+struct _Efl_Event_Key_Data
+{
+   Eo                *eo;
+   unsigned int       timestamp; /* FIXME: store as double? */
+
+   Eina_Bool          pressed; /* 1 = pressed/down, 0 = released/up */
+   Eina_Stringshare  *keyname;
+   Eina_Stringshare  *key;
+   Eina_Stringshare  *string;
+   Eina_Stringshare  *compose;
+   unsigned int       keycode;
+
+   void              *data;
+   Evas_Modifier     *modifiers;
+   Evas_Lock         *locks;
+   Efl_Event_Flags    event_flags;
+   Efl_Input_Device  *device;
+   void              *legacy; /* DO NOT TOUCH (may contain the legacy event_info) */
+   Eina_Bool          evas_done; /* set by evas */
 };
 
 struct _Efl_Input_Device_Data

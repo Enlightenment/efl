@@ -1,0 +1,32 @@
+import efl_event_types;
+
+interface Efl.Event.Input (Efl.Event)
+{
+   eo_prefix: efl_event;
+   methods {
+      @property device {
+         [[Input device that originated this event.]]
+         values {
+            dev: Efl.Input.Device;
+         }
+      }
+      @property event_flags {
+         [[Extra flags for this event, may be changed by the user.]]
+         values {
+            flags: Efl.Event.Flags;
+         }
+      }
+      @property on_hold {
+         [[$true if @.event_flags indicates the event is on hold.]]
+         values {
+            val: bool;
+         }
+      }
+      @property on_scroll {
+         [[$true if @.event_flags indicates the event happened while scrolling.]]
+         values {
+            val: bool;
+         }
+      }
+   }
+}

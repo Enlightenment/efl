@@ -13,7 +13,7 @@
 /* Pointer Event
  *
  * This is a storage class only, should not require ANY knowledge about
- * Ecore, Evas or anything else.
+ * Ecore, Evas or anything else. Note: locks & modifiers require evas. :(
  *
  * This is intended to replace Ecore and Evas structs for mouse events.
  *
@@ -207,14 +207,14 @@ _efl_event_pointer_previous_position_precise_get(Eo *obj EINA_UNUSED, Efl_Event_
 }
 
 EOLIAN static void
-_efl_event_pointer_device_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Efl_Input_Device *dev)
+_efl_event_pointer_efl_event_input_device_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Efl_Input_Device *dev)
 {
    /* ref? */
    pd->device = dev;
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_event_pointer_device_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
+_efl_event_pointer_efl_event_input_device_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
 {
    return pd->device;
 }
@@ -245,13 +245,13 @@ _efl_event_pointer_button_flags_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data 
 }
 
 EOLIAN static void
-_efl_event_pointer_event_flags_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Efl_Event_Flags flags)
+_efl_event_pointer_efl_event_input_event_flags_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Efl_Event_Flags flags)
 {
    pd->event_flags = flags;
 }
 
 EOLIAN static Efl_Event_Flags
-_efl_event_pointer_event_flags_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
+_efl_event_pointer_efl_event_input_event_flags_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
 {
    return pd->event_flags;
 }
@@ -369,7 +369,7 @@ _efl_event_pointer_triple_click_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data 
 }
 
 EOLIAN static void
-_efl_event_pointer_on_hold_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Eina_Bool val)
+_efl_event_pointer_efl_event_input_on_hold_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Eina_Bool val)
 {
    if (val)
      pd->event_flags |= EFL_EVENT_FLAGS_ON_HOLD;
@@ -378,13 +378,13 @@ _efl_event_pointer_on_hold_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, 
 }
 
 EOLIAN static Eina_Bool
-_efl_event_pointer_on_hold_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
+_efl_event_pointer_efl_event_input_on_hold_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
 {
    return !!(pd->event_flags & EFL_EVENT_FLAGS_ON_HOLD);
 }
 
 EOLIAN static void
-_efl_event_pointer_on_scroll_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Eina_Bool val)
+_efl_event_pointer_efl_event_input_on_scroll_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Eina_Bool val)
 {
    if (val)
      pd->event_flags |= EFL_EVENT_FLAGS_ON_SCROLL;
@@ -393,7 +393,7 @@ _efl_event_pointer_on_scroll_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd
 }
 
 EOLIAN static Eina_Bool
-_efl_event_pointer_on_scroll_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
+_efl_event_pointer_efl_event_input_on_scroll_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
 {
    return !!(pd->event_flags & EFL_EVENT_FLAGS_ON_SCROLL);
 }

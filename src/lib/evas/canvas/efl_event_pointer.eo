@@ -1,7 +1,7 @@
 import efl_orientation;
 import efl_event_types;
 
-class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State)
+class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State, Efl.Event.Input)
 {
    [[Event data carried over with any pointer event (mouse, touch, ...)
 
@@ -67,12 +67,6 @@ class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State)
             y: double;
          }
       }
-      @property device {
-         [[Pointing device that originated this event.]]
-         values {
-            dev: Efl.Input.Device;
-         }
-      }
       @property finger {
          [[Finger ID in case of a multi touch event.]]
          values {
@@ -121,24 +115,6 @@ class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State)
             val: bool;
          }
       }
-      @property event_flags {
-         [[Extra flags for this event, may be changed by the user.]]
-         values {
-            flags: Efl.Event.Flags;
-         }
-      }
-      @property on_hold {
-         [[$true if @.event_flags indicates the event is on hold.]]
-         values {
-            val: bool;
-         }
-      }
-      @property on_scroll {
-         [[$true if @.event_flags indicates the event happened while scrolling.]]
-         values {
-            val: bool;
-         }
-      }
       @property wheel_direction {
          values {
             dir: Efl.Orient; [[Horizontal or Vertical only.]]
@@ -167,6 +143,14 @@ class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State)
       Efl.Event.dup;
       Efl.Event.timestamp.set;
       Efl.Event.timestamp.get;
+      Efl.Event.Input.event_flags.set;
+      Efl.Event.Input.event_flags.get;
+      Efl.Event.Input.on_hold.set;
+      Efl.Event.Input.on_hold.get;
+      Efl.Event.Input.on_scroll.set;
+      Efl.Event.Input.on_scroll.get;
+      Efl.Event.Input.device.set;
+      Efl.Event.Input.device.get;
       Efl.Input.State.modifier_enabled.get;
       Efl.Input.State.lock_enabled.get;
    }

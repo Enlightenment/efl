@@ -300,4 +300,6 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/efl_vg_gradient_linear.eo.h"
 #include "canvas/efl_vg_gradient_radial.eo.h"
 
+#include "canvas/efl_event_input.eo.h"
 #include "canvas/efl_event_pointer.eo.h"
+#include "canvas/efl_event_key.eo.h"

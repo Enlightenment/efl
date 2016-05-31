@@ -1,0 +1,71 @@
+class Efl.Event.Key (Eo.Base, Efl.Event, Efl.Input.State, Efl.Event.Input)
+{
+   [[Represents a single key event from a keyboard or similar device.
+
+     @since 1.18
+   ]]
+   methods {
+      @property pressed {
+         [[$true if the key is down, $false if it is released.]]
+         values {
+            val: bool;
+         }
+      }
+      @property key_name {
+         [[Name string of the key.]]
+         values {
+            val: string;
+         }
+      }
+      @property key {
+         [[Logical key.
+
+           Eg. Shift + 1 = exclamation
+         ]]
+         values {
+            val: string;
+         }
+      }
+      @property string {
+         [[A UTF8 string if this keystroke has produced a visible string to be
+           added.
+         ]]
+         values {
+            val: string;
+         }
+      }
+      @property compose {
+         [[A UTF8 string if this keystroke has modified a string in the middle
+           of being composed.
+
+           Note: This string replaces the previous one
+         ]]
+         values {
+            val: string;
+         }
+      }
+      @property key_code {
+         [[Key scan code numeric value.]]
+         values {
+            val: int;
+         }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Efl.Event.reset;
+      Efl.Event.dup;
+      Efl.Event.timestamp.set;
+      Efl.Event.timestamp.get;
+      Efl.Event.Input.event_flags.set;
+      Efl.Event.Input.event_flags.get;
+      Efl.Event.Input.on_hold.set;
+      Efl.Event.Input.on_hold.get;
+      Efl.Event.Input.on_scroll.set;
+      Efl.Event.Input.on_scroll.get;
+      Efl.Event.Input.device.set;
+      Efl.Event.Input.device.get;
+      Efl.Input.State.modifier_enabled.get;
+      Efl.Input.State.lock_enabled.get;
+   }
+}

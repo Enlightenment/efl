@@ -43,6 +43,8 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_surface_wayland.eo \
 	lib/evas/canvas/evas_filter.eo \
 	lib/evas/canvas/evas_smart_clipped.eo \
+	lib/evas/canvas/efl_event_input.eo \
+	lib/evas/canvas/efl_event_key.eo \
 	lib/evas/canvas/efl_event_pointer.eo \
 	$(NULL)
 
@@ -198,6 +200,8 @@ lib/evas/canvas/efl_canvas_surface.c \
 lib/evas/canvas/efl_canvas_surface_tbm.c \
 lib/evas/canvas/efl_canvas_surface_x11.c \
 lib/evas/canvas/efl_canvas_surface_wayland.c \
+lib/evas/canvas/efl_event_input.c \
+lib/evas/canvas/efl_event_key.c \
 lib/evas/canvas/efl_event_pointer.c \
 $(NULL)
 
