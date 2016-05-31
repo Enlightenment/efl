@@ -97,17 +97,46 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event, Efl.Input.State)
             src: Eo.Base; [[Source object: $Efl.Gfx]]
          }
       }
-      /* FIXME: why not double_click() and triple_click() */
       @property button_flags {
          [[Double or triple click information.]]
          values {
             flags: Efl.Pointer.Button_Flags;
          }
       }
+      @property double_click {
+         [[$true if @.button_flags indicates a double click (2nd press).
+
+           This is just a helper function around @.button_flags.
+         ]]
+         values {
+            val: bool;
+         }
+      }
+      @property triple_click {
+         [[$true if @.button_flags indicates a triple click (3rd press).
+
+           This is just a helper function around @.button_flags.
+         ]]
+         values {
+            val: bool;
+         }
+      }
       @property event_flags {
          [[Extra flags for this event, may be changed by the user.]]
          values {
             flags: Efl.Pointer.Event_Flags;
+         }
+      }
+      @property on_hold {
+         [[$true if @.event_flags indicates the event is on hold.]]
+         values {
+            val: bool;
+         }
+      }
+      @property on_scroll {
+         [[$true if @.event_flags indicates the event happened while scrolling.]]
+         values {
+            val: bool;
          }
       }
       @property wheel_direction {

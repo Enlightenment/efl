@@ -338,4 +338,64 @@ _efl_pointer_event_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Poi
    return evas_key_lock_is_set(pd->locks, name);
 }
 
+EOLIAN static Eina_Bool
+_efl_pointer_event_double_click_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, Eina_Bool val)
+{
+   if (val)
+     pd->button_flags |= EFL_POINTER_BUTTON_FLAGS_DOUBLE_CLICK;
+   else
+     pd->button_flags &= ~EFL_POINTER_BUTTON_FLAGS_DOUBLE_CLICK;
+}
+
+EOLIAN static Eina_Bool
+_efl_pointer_event_double_click_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd)
+{
+   return !!(pd->button_flags & EFL_POINTER_BUTTON_FLAGS_DOUBLE_CLICK);
+}
+
+EOLIAN static Eina_Bool
+_efl_pointer_event_triple_click_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, Eina_Bool val)
+{
+   if (val)
+     pd->button_flags |= EFL_POINTER_BUTTON_FLAGS_TRIPLE_CLICK;
+   else
+     pd->button_flags &= ~EFL_POINTER_BUTTON_FLAGS_TRIPLE_CLICK;
+}
+
+EOLIAN static Eina_Bool
+_efl_pointer_event_triple_click_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd)
+{
+   return !!(pd->button_flags & EFL_POINTER_BUTTON_FLAGS_TRIPLE_CLICK);
+}
+
+EOLIAN static void
+_efl_pointer_event_on_hold_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, Eina_Bool val)
+{
+   if (val)
+     pd->event_flags |= EFL_POINTER_EVENT_FLAGS_ON_HOLD;
+   else
+     pd->event_flags &= ~EFL_POINTER_EVENT_FLAGS_ON_HOLD;
+}
+
+EOLIAN static Eina_Bool
+_efl_pointer_event_on_hold_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd)
+{
+   return !!(pd->event_flags & EFL_POINTER_EVENT_FLAGS_ON_HOLD);
+}
+
+EOLIAN static void
+_efl_pointer_event_on_scroll_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, Eina_Bool val)
+{
+   if (val)
+     pd->event_flags |= EFL_POINTER_EVENT_FLAGS_ON_SCROLL;
+   else
+     pd->event_flags &= ~EFL_POINTER_EVENT_FLAGS_ON_SCROLL;
+}
+
+EOLIAN static Eina_Bool
+_efl_pointer_event_on_scroll_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd)
+{
+   return !!(pd->event_flags & EFL_POINTER_EVENT_FLAGS_ON_SCROLL);
+}
+
 #include "efl_pointer_event.eo.c"
