@@ -7,12 +7,12 @@ interface Elm.Interface.Atspi.Text.Editable ()
             return: bool;
          }
          values {
-            string: const(char)*;
+            string: string;
          }
       }
       insert @protected {
          params {
-            @in string: const(char)*;
+            @in string: string;
             @in position: int;
          }
          return: bool;

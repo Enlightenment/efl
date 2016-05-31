@@ -19,7 +19,7 @@ class Evas.Textblock (Evas.Object)
             [[Get the markup of the object.]]
          }
          values {
-            text: const(char)*; [[The markup text to use.]]
+            text: string; [[The markup text to use.]]
          }
       }
       @property valign {
@@ -68,7 +68,7 @@ class Evas.Textblock (Evas.Object)
             ]]
          }
          values {
-            delim: const(char)*; [[A null terminated string of delimiters, e.g ",|" or $null if empty.]]
+            delim: string; [[A null terminated string of delimiters, e.g ",|" or $null if empty.]]
          }
       }
       @property replace_char {
@@ -76,7 +76,7 @@ class Evas.Textblock (Evas.Object)
             [[Set the "replacement character" to use for the given textblock object.]]
          }
          values {
-            ch: const(char)*; [[The charset name.]]
+            ch: string; [[The charset name.]]
          }
       }
       @property legacy_newline {
@@ -208,7 +208,7 @@ class Evas.Textblock (Evas.Object)
 
           Returns $null if no replacement character is in use.
         ]]
-        return: const(char)*; [[Replacement character or $null.]]
+        return: string; [[Replacement character or $null.]]
       }
       style_user_pop {
          [[Del the from the top of the user style stack.
@@ -236,7 +236,7 @@ class Evas.Textblock (Evas.Object)
          legacy: evas_textblock_node_format_list_get;
          return: const(list<Evas.Object>);
          params {
-            @in anchor: const(char)*;
+            @in anchor: string;
          }
       }
       style_user_peek @const {

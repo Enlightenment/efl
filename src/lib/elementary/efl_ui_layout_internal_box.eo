@@ -12,7 +12,7 @@ class Efl.Ui.Layout_Internal.Box (Eo.Base, Efl.Pack.Linear)
          values {
             layout: Eo.Base;
             pack: Eo.Base;
-            part: const(char)*;
+            part: string;
          }
       }
    }

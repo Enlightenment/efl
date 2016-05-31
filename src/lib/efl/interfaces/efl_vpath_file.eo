@@ -21,7 +21,7 @@ class Efl.Vpath.File (Eo.Base)
          set {}
          get {}
          values {
-             path: const(char)*; [[ The input virtual path to a file ]]
+             path: string; [[ The input virtual path to a file ]]
          }
       }
       @property result {
@@ -29,7 +29,7 @@ class Efl.Vpath.File (Eo.Base)
          set {}
          get {}
          values {
-             path: const(char)*; [[ The resulting destination file ]]
+             path: string; [[ The resulting destination file ]]
          }
       }
       do {

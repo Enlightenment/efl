@@ -13,16 +13,16 @@ class Efl.Vpath.Core (Eo.Base, Efl.Vpath)
       meta_set {
          [[ A Meta key is a mapping from a virtual path to a real one ]]
          params {
-            key: const(char)*; [[ The magic path key being looked up ]]
-            path: const(char)*; [[ The real path the key maps to ]]
+            key: string; [[ The magic path key being looked up ]]
+            path: string; [[ The real path the key maps to ]]
          }
       }
       meta_get {
          [[ This returns the real path set for a Meta key, or NULL if not ]]
          params {
-            key: const(char)*; [[ The magic path key being looked up ]]
+            key: string; [[ The magic path key being looked up ]]
          }
-         return: const(char)*;
+         return: string;
       }
    }
    implements {

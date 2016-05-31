@@ -33,7 +33,7 @@ class Elm.Segment_Control (Elm.Layout)
            with function elm_object_item_text_set. If no label
            was passed as argument, it will return $NULL.]]
 
-         return: const(char)*; [[The label of the item at $index.]]
+         return: string; [[The label of the item at $index.]]
          params {
             @in idx: int; [[The index of the segment item.]]
          }
@@ -58,7 +58,7 @@ class Elm.Segment_Control (Elm.Layout)
          return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
-            @in label: const(char)* @optional; [[The label of the item.]]
+            @in label: string @optional; [[The label of the item.]]
             @in idx: int; [[Item position. Value should be between 0 and items count.]]
          }
       }
@@ -116,7 +116,7 @@ class Elm.Segment_Control (Elm.Layout)
          return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
-            @in label: const(char)* @optional; [[The label of the item.  Note that, NULL is different from empty string "".]]
+            @in label: string @optional; [[The label of the item.  Note that, NULL is different from empty string "".]]
          }
       }
       item_icon_get @const {

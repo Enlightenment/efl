@@ -36,7 +36,7 @@ class Elm.Index.Item(Elm.Widget.Item, Elm.Interface.Atspi_Widget_Action)
         }
       letter_get @const {
            [[Get the letter (string) set on a given index widget item.]]
-            return: const (char)*; [[The letter string set on $item]]
+            return: string; [[The letter string set on $item]]
         }
    }
    implements {

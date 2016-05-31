@@ -10,7 +10,7 @@ class Object_Impl (Base) {
          get {
          }
          keys {
-            part: const(char)*;
+            part: string;
          }
          values {
             value: own(list<int>);
@@ -47,7 +47,7 @@ class Object_Impl (Base) {
          [[comment foo]]
          params {
             @in a: int;
-            @in b: const(char)*;
+            @in b: string;
          }
       }
       pure_foo3 @virtual_pure {

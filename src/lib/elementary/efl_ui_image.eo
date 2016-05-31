@@ -125,7 +125,7 @@ class Efl.Ui.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interfa
             ]]
          }
          values {
-            name: const(char)*; [[The icon name]]
+            name: string; [[The icon name]]
          }
       }
    }

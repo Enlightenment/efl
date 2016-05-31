@@ -336,7 +336,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             ]]
          }
          values {
-            icon_name: const(char)*; [[The icon name to set.]]
+            icon_name: string; [[The icon name to set.]]
          }
       }
       @property withdrawn {
@@ -363,7 +363,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             ]]
          }
          values {
-            role: const(char)*; [[The role to set.]]
+            role: string; [[The role to set.]]
          }
       }
       @property size_step {
@@ -400,7 +400,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             [[Get the style set for the focus highlight object.]]
          }
          values {
-            style: const(char)* @nullable; [[The style or $null if none.]]
+            style: string @nullable; [[The style or $null if none.]]
          }
       }
       @property borderless {
@@ -446,7 +446,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
               @since 1.8
             ]]
             values {
-               profiles: const(char)**; [[The string array of available profiles.]]
+               profiles: string*; [[The string array of available profiles.]]
                count: uint; [[The number of members in profiles.]]
             }
          }
@@ -490,7 +490,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             ]]
          }
          values {
-            title: const(char)*; [[The title.]]
+            title: string; [[The title.]]
          }
       }
       @property alpha {
@@ -658,7 +658,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             ]]
          }
          values {
-            profile: const(char)*; [[The string value of a window profile.]]
+            profile: string; [[The string value of a window profile.]]
          }
       }
       @property shaped {
@@ -828,7 +828,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             [[Can only be used at creation time, within \@ref eo_add.]]
          }
          values {
-            name: const(char)* @nullable;
+            name: string @nullable;
          }
       }
       @property type { /* FIXME: before finalize */
@@ -894,7 +894,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          [[Create a socket to provide the service for Plug widget.]]
          return: bool;
          params {
-            @in svcname: const(char)*; [[The name of the service to be advertised.
+            @in svcname: string; [[The name of the service to be advertised.
                                          Eensure that it is unique (when combined with
                                          $svcnum) otherwise creation may fail.]]
             @in svcnum: int; [[A number (any value, 0 being the common default) to
@@ -960,7 +960,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
 
          return: bool;
          params {
-            @in key: const(char)*; [[This string is the keyname to grab.]]
+            @in key: string; [[This string is the keyname to grab.]]
             @in modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
             @in not_modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
             @in proirity: int; [[This is for the priority of keygrab. Currently this feature is not supported.]]
@@ -974,7 +974,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          ]]
          return: bool;
          params {
-            @in key: const(char)*; [[This string is the keyname to grab.]]
+            @in key: string; [[This string is the keyname to grab.]]
             @in modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
             @in not_modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
          }
@@ -984,7 +984,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
            @since 1.18
          ]]
          params {
-            @in uri: const(char)*; [[This is the uri to notify with]]
+            @in uri: string; [[This is the uri to notify with]]
          }
       }
       teamwork_uri_show {
@@ -995,7 +995,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
            @since 1.18
          ]]
          params {
-            @in uri: const(char)*; [[This is the uri to notify with]]
+            @in uri: string; [[This is the uri to notify with]]
          }
       }
       teamwork_uri_hide {
@@ -1013,7 +1013,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
            @since 1.18
          ]]
          params {
-            @in uri: const(char)*; [[This is the uri to open]]
+            @in uri: string; [[This is the uri to open]]
          }
       }
    }

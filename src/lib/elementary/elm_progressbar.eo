@@ -32,7 +32,7 @@ class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
 
            @since 1.8]]
          params {
-            @in part: const(char)*; [[The partname to which val have to set]]
+            @in part: string; [[The partname to which val have to set]]
             @in val: double; [[The progress value (must be between $0.0 and 1.0)]]
          }
       }
@@ -42,7 +42,7 @@ class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
            @since 1.8]]
          return: double; [[The value of the progressbar]]
          params {
-            @in part: const(char)*; [[The part name of the progress bar]]
+            @in part: string; [[The part name of the progress bar]]
          }
       }
       pulse {

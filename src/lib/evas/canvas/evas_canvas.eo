@@ -559,7 +559,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
               @.key_lock_off.
          ]]
          params {
-            @in keyname: const(char)* @nonull; [[The name of the lock to enable.]]
+            @in keyname: string @nonull; [[The name of the lock to enable.]]
          }
       }
       key_modifier_mask_get @const {
@@ -580,7 +580,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
             modifier for canvas $e.
          ]]
          params {
-            @in keyname: const(char)* @nonull; [[The name of the modifier key to create the mask for.]]
+            @in keyname: string @nonull; [[The name of the modifier key to create the mask for.]]
          }
       }
       key_modifier_add {
@@ -603,7 +603,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
            "Control", "Alt", "Meta", "Hyper", "Super".
          ]]
          params {
-            @in keyname: const(char)* @nonull; [[
+            @in keyname: string @nonull; [[
                The name of the modifier key to add to the list of
                Evas modifiers.
             ]]
@@ -618,7 +618,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
            \@ref evas_key_modifier_is_set.
          ]]
          params {
-            @in keyname: const(char)* @nonull; [[The name of the modifier to disable.]]
+            @in keyname: string @nonull; [[The name of the modifier to disable.]]
          }
       }
       objects_at_xy_get @const {
@@ -749,7 +749,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
             See also @.key_lock_on.
          ]]
          params {
-            @in keyname: const(char)* @nonull; [[The name of the lock to disable.]]
+            @in keyname: string @nonull; [[The name of the lock to disable.]]
          }
       }
       nochange_push {
@@ -814,7 +814,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
            See also @.key_modifier_off.
          ]]
          params {
-            @in keyname: const(char)* @nonull; [[The name of the modifier to enable.]]
+            @in keyname: string @nonull; [[The name of the modifier to enable.]]
          }
       }
       font_available_list @const {
@@ -824,7 +824,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
            fontconfig support, and the paths provided at runtime as
            explained in \@ref Evas_Font_Path_Group.
          ]]
-         return: list<const(char) *> @warn_unused; [[
+         return: list<string> @warn_unused; [[
             A newly allocated list of strings. Do not change the
             strings. Be sure to call \@ref evas_font_available_list_free
             after you're done.
@@ -855,7 +855,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
             $null.
          ]]
          params {
-            @in name: const(char)*; [[The given name.]]
+            @in name: string; [[The given name.]]
          }
       }
       font_path_append {
@@ -863,7 +863,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
            given evas.
          ]]
          params {
-            @in path: const(char)* @nonull; [[The new font path.]]
+            @in path: string @nonull; [[The new font path.]]
          }
       }
       touch_point_list_nth_id_get {
@@ -930,7 +930,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
            canvas $e.
          ]]
          params {
-            @in keyname: const(char)* @nonull; [[The name of the key to remove from the locks list.]]
+            @in keyname: string @nonull; [[The name of the key to remove from the locks list.]]
          }
       }
       damage_rectangle_add {
@@ -953,7 +953,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
       }
       font_path_list @const {
          [[Retrieves the list of font paths used by the given evas.]]
-         return: const(list<const(char) *>) @warn_unused; [[The list of font paths used.]]
+         return: const(list<string>) @warn_unused; [[The list of font paths used.]]
       }
       image_cache_reload {
          [[Reload the image cache.
@@ -1054,7 +1054,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
            See also @.key_modifier_add.
          ]]
          params {
-            @in keyname: const(char)* @nonull; [[The name of the key to remove from the modifiers list.]]
+            @in keyname: string @nonull; [[The name of the key to remove from the modifiers list.]]
          }
       }
       touch_point_list_nth_state_get {
@@ -1202,7 +1202,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
            given evas.
          ]]
          params {
-            @in path: const(char)* @nonull; [[The new font path.]]
+            @in path: string @nonull; [[The new font path.]]
          }
       }
       obscured_clear {
@@ -1270,7 +1270,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
            "Num_Lock", "Scroll_Lock".
          ]]
          params {
-            @in keyname: const(char)* @nonull; [[The name of the key to add to the locks list.]]
+            @in keyname: string @nonull; [[The name of the key to add to the locks list.]]
          }
       }
       render_idle_flush {

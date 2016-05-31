@@ -1,6 +1,6 @@
 struct Named {
     field: int;
-    something: const(char)*;
+    something: string;
 }
 
 struct Another {

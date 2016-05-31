@@ -187,7 +187,7 @@ class Elm.Genlist.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     decorate_it_type: const(char)*; [[Name of the item's decorate mode.]]
+                     decorate_it_type: string; [[Name of the item's decorate mode.]]
                 }
            }
            @property flip {
@@ -362,7 +362,7 @@ class Elm.Genlist.Item(Elm.Widget.Item)
                   item's all property.
                 ]]
                 params {
-                     @in parts: const (char) *; [[The name of item's part.]]
+                     @in parts: string; [[The name of item's part.]]
                      @in itf: Elm.Genlist.Item.Field_Type; [[The type of item's part type.]]
                 }
            }
@@ -413,7 +413,7 @@ class Elm.Genlist.Item(Elm.Widget.Item)
                   deactivated from that item.
                 ]]
                 params {
-                     @in decorate_it_type: const(char)*; [[Mode name.]]
+                     @in decorate_it_type: string; [[Mode name.]]
                      @in decorate_it_set: bool; [[Boolean to define set or unset mode.]]
                 }
            }

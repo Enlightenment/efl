@@ -64,7 +64,7 @@ class Elm.Actionslider (Elm.Layout, Evas.Selectable_Interface)
       @property selected_label {
          get {
             [[Get actionslider selected label.]]
-            return: const(char)*; [[Selected label]]
+            return: string; [[Selected label]]
          }
       }
    }

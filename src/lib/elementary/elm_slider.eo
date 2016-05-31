@@ -39,7 +39,7 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
             ]]
          }
          values {
-            indicator: const(char)* @nullable; [[The format string for the indicator display.]]
+            indicator: string @nullable; [[The format string for the indicator display.]]
          }
       }
       @property indicator_show {

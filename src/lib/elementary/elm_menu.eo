@@ -48,8 +48,8 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm.Interface.Atspi.Select
          return: Elm.Widget.Item; [[The new menu item.]]
          params {
             @in parent: Elm.Widget.Item @optional; [[The parent menu item (optional).]]
-            @in icon: const(char)* @optional; [[An icon display on the item. The icon will be destroyed by the menu.]]
-            @in label: const(char)*; [[The label of the item.]]
+            @in icon: string @optional; [[An icon display on the item. The icon will be destroyed by the menu.]]
+            @in label: string; [[The label of the item.]]
             @in func: Evas_Smart_Cb @optional; [[Function called when the user select the item.]]
             @in data: const(void)* @optional; [[Data sent by the callback.]]
          }

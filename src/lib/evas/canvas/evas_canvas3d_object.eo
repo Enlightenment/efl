@@ -52,14 +52,14 @@ class Evas.Canvas3D.Object (Eo.Base, Evas.Common_Interface)
       callback_register @virtual_pure {
          [[Pure virtual register samrt callback function.]]
          params {
-           @in event: const(char)*; [[Event type.]]
+           @in event: string; [[Event type.]]
            @in data: const(void)*;  [[User data.]]
          }
       }
       callback_unregister @virtual_pure {
          [[Pure virtual unregister smart callback function.]]
          params {
-           @in event: const(char)*; [[Event type.]]
+           @in event: string; [[Event type.]]
          }
       }
    }

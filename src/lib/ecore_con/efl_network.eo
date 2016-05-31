@@ -49,7 +49,7 @@ abstract Efl.Network (Eo.Base) {
              legacy: null;
          }
          values {
-            ip: const(char)*; [[The IP address]]
+            ip: string; [[The IP address]]
          }
       }
       @property uptime {
@@ -168,7 +168,7 @@ abstract Efl.Network (Eo.Base) {
            parameter.
          ]]
          params {
-            name: const(char)* @nonull; [[IP address or server name to translate.]]
+            name: string @nonull; [[IP address or server name to translate.]]
             done_cb: Ecore_Con_Dns_Cb; [[Callback to notify when done.]]
             data: const(void)*; [[User data to be given to done_cb.]]
          }
@@ -178,7 +178,7 @@ abstract Efl.Network (Eo.Base) {
    events {
         data,received: Ecore.Con.Event_Data.Received; [[Data received on connection]]
         connection,upgraded;
-        connection,error: const(char) *; [[Error received on connection]]
+        connection,error: string; [[Error received on connection]]
    }
 }
 

@@ -24,7 +24,7 @@ mixin Elm.Interface.Atspi_Image ()
          set {
          }
          values {
-            description: const(char)*;
+            description: string;
          }
       }
       @property locale @protected {
@@ -32,7 +32,7 @@ mixin Elm.Interface.Atspi_Image ()
             [[Gets locale of the image description.]]
          }
          values {
-            locale: const(char)*;
+            locale: string;
          }
       }
    }

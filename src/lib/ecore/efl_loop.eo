@@ -49,7 +49,7 @@ class Efl.Loop (Eo.Base)
          [[Add a new set of arguments to the loop that makes an args event.]]
          params {
             argc: int; [[The number of strings in the argv array.]]
-            argv: const(char)**; [[The array of argument strings.]]
+            argv: string*; [[The array of argument strings.]]
          }
       }
    }

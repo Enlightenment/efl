@@ -50,7 +50,7 @@ interface Elm.Interface.Fileselector ()
             [[Get the currently selected item's (full) path, in the given file the given file selector widget]]
          }
          values {
-            path: const(char)*;
+            path: string;
          }
       }
       @property thumbnail_size {
@@ -117,7 +117,7 @@ interface Elm.Interface.Fileselector ()
             [[Get the parent directory's path that a given file selector selector widget will display contents from]]
          }
          values {
-            path: const(char)*;
+            path: string;
          }
       }
       @property mode {
@@ -147,7 +147,7 @@ interface Elm.Interface.Fileselector ()
             [[Get a list of selected paths in the fileselector.]]
          }
          values {
-            ret: const(list<const(char)*>);
+            ret: const(list<string>);
          }
       }
       @property current_name {
@@ -156,7 +156,7 @@ interface Elm.Interface.Fileselector ()
          get {
          }
          values {
-            name: const(char)*;
+            name: string;
          }
       }
       custom_filter_append {
@@ -164,7 +164,7 @@ interface Elm.Interface.Fileselector ()
          params {
             @in func: Elm_Fileselector_Filter_Func; [[function]]
             @in data: void *;
-            @in filter_name: const(char)*;
+            @in filter_name: string;
          }
          return: bool;
       }
@@ -174,8 +174,8 @@ interface Elm.Interface.Fileselector ()
       mime_types_filter_append {
          [[Append mime type based filter into filter list]]
          params {
-            @in mime_types: const(char)*;
-            @in filter_name: const(char)*;
+            @in mime_types: string;
+            @in filter_name: string;
          }
          return: bool;
       }

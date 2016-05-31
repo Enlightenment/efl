@@ -58,7 +58,7 @@ class Ecore.Exe (Eo.Base, Efl.Control)
                   legacy: null;
              }
              values {
-                  exe_cmd: const(char) *; [[The command to execute.]]
+                  exe_cmd: string; [[The command to execute.]]
                   flags: Ecore.Exe_Flags; [[The execution flags.]]
              }
         }

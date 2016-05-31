@@ -110,7 +110,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
             */
          }
          values {
-            type: const(char)*; [[The type of the object.]]
+            type: string; [[The type of the object.]]
          }
       }
       @property size_hint_min {
@@ -614,7 +614,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
             */
          }
          values {
-            name: const(char)*; [[The given name.]]
+            name: string; [[The given name.]]
          }
       }
       @property scale {
@@ -1065,7 +1065,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
 
          return: bool @warn_unused; [[$true if the call succeeded, $false otherwise.]]
          params {
-            @in keyname: const(char)* @nonull; [[The key to request events for.]]
+            @in keyname: string @nonull; [[The key to request events for.]]
             @in modifiers: Evas.Modifier_Mask; [[A mask of modifiers that must be
                                                 present to trigger the event.]]
             @in not_modifiers: Evas.Modifier_Mask; [[A mask of modifiers that must
@@ -1092,7 +1092,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
          ]]
          return: bool @warn_unused;
          params {
-            @in type: const(char)* @nonull; [[The name (type) of the smart class to check for.]]
+            @in type: string @nonull; [[The name (type) of the smart class to check for.]]
          }
       }
       name_child_find @const {
@@ -1112,7 +1112,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
          return: Evas.Object @warn_unused; [[The Evas object with the given name
                                                on success, Otherwise $null.]]
          params {
-            @in name: const(char)*; [[The given name.]]
+            @in name: string; [[The given name.]]
             @in recurse: int; [[
                Set to the number of child levels to recurse (0 == don't
                recurse, 1 == only look at the children of $obj or their
@@ -1138,7 +1138,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
          See the full example @ref Example_Evas_Events "here".
          */
          params {
-            @in keyname: const(char)* @nonull; [[he key the grab is set for.]]
+            @in keyname: string @nonull; [[he key the grab is set for.]]
             @in modifiers: Evas.Modifier_Mask; [[A mask of modifiers that must be
                                                  present to trigger the event.]]
             @in not_modifiers: Evas.Modifier_Mask; [[A mask of modifiers that mus
@@ -1182,7 +1182,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
          return: bool @warn_unused; [[$true if $obj or any of its parents
                                       is of type $type, $false otherwise.]]
          params {
-            @in type: const(char)* @nonull; [[The type (name string) to check for. Must be the name.]]
+            @in type: string @nonull; [[The type (name string) to check for. Must be the name.]]
          }
       }
       @property no_render {

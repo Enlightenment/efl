@@ -13,7 +13,7 @@ class Elm.Naviframe.Item(Elm.Widget.Item)
                  [[Set an item style.]]
              }
              values {
-                 style: const (char) * @nullable; [[The current item style name. $null would be default]]
+                 style: string @nullable; [[The current item style name. $null would be default]]
              }
         }
       pop_to {

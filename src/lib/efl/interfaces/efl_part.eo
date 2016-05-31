@@ -38,7 +38,7 @@ interface Efl.Part
            The returned object is valid for only a single function call.
          ]]
          params {
-            name: const(char)*; [[The part name.]]
+            name: string; [[The part name.]]
          }
          return: Eo.Base; [[A (proxy) object, valid for a single call.]]
       }

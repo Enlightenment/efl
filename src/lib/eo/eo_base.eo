@@ -2,7 +2,7 @@ import eina_types;
 
 struct Eo.Event.Description {
     [[This struct holds the description of a specific event.]]
-    name: const(char) *; [[name of the event.]]
+    name: string; [[name of the event.]]
     unfreezable: bool; [[Eina_True if the event cannot be frozen.]]
     legacy_is: bool; [[Internal use: if is a legacy event.]]
     restart: bool; [[Eina_True if when the event is triggered again from a callback, it should start from where it was]]
@@ -88,7 +88,7 @@ abstract Eo.Base ()
          get {
          }
          values {
-           name: const(char)* @nullable; [[the name]]
+           name: string @nullable; [[the name]]
          }
       }
       @property comment {
@@ -103,7 +103,7 @@ abstract Eo.Base ()
          get {
          }
          values {
-           comment: const(char)* @nullable; [[the comment]]
+           comment: string @nullable; [[the comment]]
          }
       }
       @property event_global_freeze_count @class {
@@ -177,7 +177,7 @@ abstract Eo.Base ()
            the search will match any object of that class.
          ]]
          params {
-            @in search: const(char)*; [[the name search string]]
+            @in search: string; [[the name search string]]
          }
          return: Eo.Base; [[the first object found]]
       }
@@ -207,7 +207,7 @@ abstract Eo.Base ()
            The user is in charge of freeing the data.
          ]]
          keys {
-            key: const(char) *; [[the key associated with the data]]
+            key: string; [[the key associated with the data]]
          }
          set {
             values {
@@ -232,7 +232,7 @@ abstract Eo.Base ()
            are shared and can store only one thing
          ]]
          keys {
-            key: const(char) *; [[the key associated with the object ref]]
+            key: string; [[the key associated with the object ref]]
          }
          set {
             values {
@@ -256,7 +256,7 @@ abstract Eo.Base ()
            are shared and can store only one thing
          ]]
          keys {
-            key: const(char)*; [[the key associated with the value]]
+            key: string; [[the key associated with the value]]
          }
          values {
             value: generic_value *; [[the value to set]]

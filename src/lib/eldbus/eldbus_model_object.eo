@@ -11,10 +11,10 @@ class Eldbus.Model.Object (Eo.Base, Efl.Model) {
               @since 1.16]]
             params {
                 @in type: int; [[The connection type]]
-                @in address: const(char)*; [[Remote address of DBus]]
+                @in address: string; [[Remote address of DBus]]
                 @in private_: bool; [[Non shared DBus connection]]
-                @in bus: const(char)*; [[DBus Name or unique-id]]
-                @in path: const(char)*; [[DBus path]]
+                @in bus: string; [[DBus Name or unique-id]]
+                @in path: string; [[DBus path]]
             }
         }
         connection_constructor {
@@ -23,8 +23,8 @@ class Eldbus.Model.Object (Eo.Base, Efl.Model) {
               @since 1.16]]
             params {
                 @in connection: Eldbus.Connection*; [[Eldbus connection]]
-                @in bus: const(char)*; [[DBus Name or unique-id]]
-                @in path: const(char)*; [[DBus path]]
+                @in bus: string; [[DBus Name or unique-id]]
+                @in path: string; [[DBus path]]
             }
         }
     @property type {
@@ -36,7 +36,7 @@ class Eldbus.Model.Object (Eo.Base, Efl.Model) {
     @property address {
             [[Remote address of DBus]]
             values {
-                address: const(char)*; [[Address]]
+                address: string; [[Address]]
             }
         }
     @property private {
@@ -48,13 +48,13 @@ class Eldbus.Model.Object (Eo.Base, Efl.Model) {
     @property bus {
             [[DBus Name or unique-id]]
             values {
-                bus: const(char)*; [[DBus name]]
+                bus: string; [[DBus name]]
             }
         }
     @property path {
             [[DBus path]]
             values {
-                path: const(char)*; [[DBus path]]
+                path: string; [[DBus path]]
             }
         }
     }

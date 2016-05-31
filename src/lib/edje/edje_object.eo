@@ -52,7 +52,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
               @since 1.1.0]]
          }
          values {
-            language: const(char)*; [[The language value]]
+            language: string; [[The language value]]
           }
       }
       @property animation {
@@ -194,7 +194,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
               \@ref evas_textblock_cursor_paragraph_first]]
          }
          values {
-            part: const(char)*; [[The part name]]
+            part: string; [[The part name]]
             cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
@@ -204,7 +204,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
               \@ref evas_textblock_cursor_line_char_last]]
          }
          values {
-            part: const(char)*; [[The part name]]
+            part: string; [[The part name]]
             cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
@@ -224,10 +224,10 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
             return: bool; [[$true, on success or $false, on error]]
          }
          keys {
-            text_class: const(char)*; [[The text class name]]
+            text_class: string; [[The text class name]]
          }
          values {
-            font: const(char)*; [[Font name]]
+            font: string; [[Font name]]
             size: Evas.Font.Size; [[Font Size]]
          }
       }
@@ -240,7 +240,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
             return: bool; [[True on success, false on error.]]
          }
          values {
-            part: const(char)*; [[The part containing the object.]]
+            part: string; [[The part containing the object.]]
             cur: Edje.Cursor; [[The cursor to adjust.]]
             x: Evas.Coord; [[X Coordinate.]]
             y: Evas.Coord; [[Y Coordinate.]]
@@ -252,7 +252,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
               \@ref evas_textblock_cursor_paragraph_last]]
          }
          values {
-            part: const(char)*; [[The part name]]
+            part: string; [[The part name]]
             cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
@@ -268,8 +268,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
             return: bool; [[$true on success, $false otherwise]]
          }
          values {
-            part: const(char)*; [[The part name]]
-            text: const(char)*; [[The text string]]
+            part: string; [[The part name]]
+            text: string; [[The text string]]
          }
       }
       @property item_provider {
@@ -290,7 +290,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
               \@ref evas_textblock_cursor_line_char_first]]
          }
          values {
-            part: const(char)*; [[The part name]]
+            part: string; [[The part name]]
             cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
@@ -356,7 +356,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
       access_part_iterate {
          [[Iterate over all accessibility-enabled part names.]]
          legacy: null;
-         return: free(own(iterator<const(char)*>), eina_iterator_free);
+         return: free(own(iterator<string>), eina_iterator_free);
       }
       @property load_error {
          get {
@@ -429,7 +429,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          return: Edje.External.Param_Type; [[#EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value
                                              from #Edje_External_Param_Type on success.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @out param: const(char); [[the parameter name to use.]]
          }
       }
@@ -441,18 +441,18 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            selection, functions such as edje_object_part_text_select_all() and
            edje_object_part_text_select_none() are not affected.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in allow: bool; [[true to enable, false otherwise]]
          }
       }
       part_state_get @const {
          [[Returns the state of the Edje part.]]
 
-         return: const(char)*; [[The part state:
+         return: string; [[The part state:
                                  "default" for the default state
                                  "" for other states]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @out val_ret: double;
          }
       }
@@ -469,7 +469,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: void *; [[The same data pointer if successful, or $null otherwise]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in func: Edje.Markup_Filter_Cb; [[The function callback to remove]]
             @in data: void *; [[The data passed to the callback function]]
          }
@@ -487,7 +487,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in dx: double; [[The x step amount]]
             @in dy: double; [[The y step amount]]
          }
@@ -500,7 +500,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            See also @.part_drag_step_set()]]
            return: bool;
          params {
-            @in part: const(char)*; [[The part]]
+            @in part: string; [[The part]]
             @out dx: double; [[The x step increment pointer]]
             @out dy: double; [[The y step increment pointer]]
          }
@@ -514,13 +514,13 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
          return: void *; [[The input method context (Ecore_IMF_Context *) in entry]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_select_begin @const {
          [[Starts selecting at current cursor position]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_style_user_peek @const {
@@ -529,9 +529,9 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            This function returns the style associated with the textblock part.
 
            @since 1.2.0]]
-         return: const(char)*; [[The text string]]
+         return: string; [[The text string]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       signal_callback_del {
@@ -549,8 +549,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          legacy: null;
          return: void *; [[The data pointer]]
          params {
-            @in emission: const(char)*; [[The emission string.]]
-            @in source: const(char)*; [[The source string.]]
+            @in emission: string; [[The emission string.]]
+            @in source: string; [[The source string.]]
             @in func: Edje.Signal_Cb; [[The callback function.]]
             @in data: void *; [[The callback function.]]
          }
@@ -561,7 +561,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[The edje cursor to advance]]
          }
       }
@@ -573,8 +573,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
-            @in style: const(char)*; [[The style to set (textblock conventions).]]
+            @in part: string; [[The part name]]
+            @in style: string; [[The style to set (textblock conventions).]]
          }
       }
       part_text_append {
@@ -586,8 +586,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.1]]
 
          params {
-            @in part: const(char)*; [[The part name]]
-            @in text: const(char)*; [[The text string]]
+            @in part: string; [[The part name]]
+            @in text: string; [[The text string]]
          }
       }
       part_geometry_get @const {
@@ -605,7 +605,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            pointers' pointed variables be set to zero.]]
          return: bool;
          params {
-            @in part: const(char)*; [[The Edje part's name]]
+            @in part: string; [[The Edje part's name]]
             @out x: Evas.Coord; [[A pointer to a variable where to store the part's x
                                   coordinate]]
             @out y: Evas.Coord; [[A pointer to a variable where to store the part's y
@@ -623,7 +623,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            @since 1.2.0]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_item_geometry_get @const {
@@ -633,8 +633,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            rectangles.]]
          return: bool; [[1 if item exists, 0 if not]]
          params {
-            @in part: const(char)*; [[The part name]]
-            @in item: const(char)*; [[The item name]]
+            @in part: string; [[The part name]]
+            @in item: string; [[The item name]]
             @out cx: Evas.Coord; [[Item x return (relative to entry part)]]
             @out cy: Evas.Coord; [[Item y return (relative to entry part)]]
             @out cw: Evas.Coord; [[Item width return]]
@@ -644,7 +644,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
       part_text_select_abort @const {
          [[Aborts any selection action on a part.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       text_insert_filter_callback_del_full {
@@ -658,7 +658,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: void *; [[The same data pointer if successful, or $null otherwise]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in func: Edje.Text.Filter_Cb; [[The function callback to remove]]
             @in data: void *; [[The data passed to the callback function]]
          }
@@ -669,7 +669,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_input_panel_imdata_set {
@@ -682,7 +682,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in data: const(void)*; [[The specific data to be set to the input panel.]]
             @in len: int; [[the length of data, in bytes, to send to the input panel]]
          }
@@ -692,7 +692,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            @since 1.2.0]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in data: void *; [[The specific data to be got from the input panel]]
             @in len: int *; [[The length of data]]
          }
@@ -704,15 +704,15 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            cursor position.]]
 
          params {
-            @in part: const(char)*; [[The part name]]
-            @in text: const(char)*; [[The text string]]
+            @in part: string; [[The part name]]
+            @in text: string; [[The text string]]
          }
       }
       part_text_cursor_copy {
          [[Copy the cursor to another cursor.]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in src: Edje.Cursor; [[the cursor to copy from]]
             @in dst: Edje.Cursor; [[the cursor to copy to]]
          }
@@ -765,7 +765,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in dx: double; [[The x value]]
             @in dy: double; [[The y value]]
          }
@@ -781,7 +781,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            Gets the drag location values.]]
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @out dx: double; [[The X value pointer]]
             @out dy: double; [[The Y value pointer]]
          }
@@ -799,7 +799,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.1.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[The cursor to move]]
             @in pos: int; [[the position of the cursor]]
          }
@@ -810,7 +810,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.1.0]]
          return: int; [[The cursor position]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[The cursor to get the position]]
          }
       }
@@ -832,7 +832,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: char *; [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[The cursor to use]]
          }
       }
@@ -847,7 +847,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.1]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in layout: Edje.Input_Panel.Layout; [[layout type]]
          }
       }
@@ -859,7 +859,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.1]]
          return: Edje.Input_Panel.Layout; [[Layout type of the input panel]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_input_panel_language_set {
@@ -870,7 +870,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in lang: Edje.Input_Panel.Lang; [[the language to be set to the input panel.]]
          }
       }
@@ -882,7 +882,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
          return: Edje.Input_Panel.Lang; [[input panel language type]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_external_object_get @const {
@@ -901,7 +901,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          return: Evas.Object; [[The externally created object, or $null if there is none or
                                   part is not an external.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_external_content_get @const {
@@ -911,7 +911,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            code providing the EXTERNAL.]]
          return: Evas.Object;
          params {
-            @in part: const(char)*; [[The name of the part holding the EXTERNAL]]
+            @in part: string; [[The name of the part holding the EXTERNAL]]
             @out content: const(char); [[A string identifying which content from the EXTERNAL to get]]
          }
       }
@@ -939,7 +939,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.1.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in enabled: bool; [[If true, the input panel is appeared when entry is clicked or has a focus]]
          }
       }
@@ -950,13 +950,13 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.1.0]]
          return: bool; [[true if it supports or false otherwise]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_select_extend @const {
          [[Extends the current selection to the current cursor position]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_anchor_geometry_get @const {
@@ -967,8 +967,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          return: const(list<const(Evas.Textblock_Rectangle)*>); [[The list of anchor rects (const Evas_Textblock_Rectangle
                                                                   *), do not modify! Geometry is relative to entry part.]]
          params {
-            @in part: const(char)*; [[The part name]]
-            @in anchor: const(char)*; [[The anchor name]]
+            @in part: string; [[The part name]]
+            @in anchor: string; [[The anchor name]]
          }
       }
       part_text_cursor_down {
@@ -976,7 +976,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
@@ -993,7 +993,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in dx: double; [[The x page step increment]]
             @in dy: double; [[The y page step increment]]
          }
@@ -1006,7 +1006,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            See also @.part_drag_page_set()]]
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @out dx: double; [[The dx page increment pointer]]
             @out dy: double; [[The dy page increment pointer]]
          }
@@ -1032,8 +1032,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
             * @endcode
             */
          params {
-            @in emission: const(char)*; [[The signal's "emission" string]]
-            @in source: const(char)*; [[The signal's "source" string]]
+            @in emission: string; [[The signal's "emission" string]]
+            @in source: string; [[The signal's "source" string]]
          }
       }
       part_text_input_panel_layout_variation_set {
@@ -1047,7 +1047,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.8]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in variation: int; [[layout variation type]]
          }
       }
@@ -1059,7 +1059,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.8]]
          return: int; [[Layout variation type of the input panel]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       message_send {
@@ -1090,7 +1090,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            This function sets the selection text to be none.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_object_get @const {
@@ -1113,7 +1113,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          return: const(Evas.Object); [[A pointer to the Evas object implementing the given part,
                                         or $null on failure (e.g. the given part doesn't exist)]]
          params {
-            @in part: const(char)*; [[The Edje part's name]]
+            @in part: string; [[The Edje part's name]]
          }
       }
       part_drag_size_set {
@@ -1128,7 +1128,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in dw: double; [[The drag width]]
             @in dh: double; [[The drag height]]
          }
@@ -1141,7 +1141,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            See also @.part_drag_size_set()]]
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @out dw: double; [[The drag width pointer]]
             @out dh: double; [[The drag height pointer]]
          }
@@ -1156,7 +1156,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: void *; [[The user data pointer if successful, or $null otherwise]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in func: Edje.Text.Filter_Cb; [[The function callback to remove]]
          }
       }
@@ -1172,7 +1172,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
                                   #EDJE_DRAG_DIR_Y: Dragable in Y direction
                                   #EDJE_DRAG_DIR_XY: Dragable in X & Y directions]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_unescaped_set {
@@ -1185,8 +1185,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
-            @in text_to_escape: const(char)*; [[The text string]]
+            @in part: string; [[The part name]]
+            @in text_to_escape: string; [[The text string]]
          }
       }
       part_text_unescaped_get @const {
@@ -1201,7 +1201,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          return: char *; [[The  allocated text string without escaping, or $null on
                            problems.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       signal_callback_add {
@@ -1258,8 +1258,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
             */
 
          params {
-            @in emission: const(char)*; [[The signal's "emission" string]]
-            @in source: const(char)*; [[The signal's "source" string]]
+            @in emission: string; [[The signal's "emission" string]]
+            @in source: string; [[The signal's "source" string]]
             @in func: Edje.Signal_Cb; [[The callback function to be executed when the signal is
                                         emitted.]]
             @in data: void *; [[A pointer to data to pass in to func.]]
@@ -1270,7 +1270,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            This function selects all text of the object of the part.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_input_panel_return_key_disabled_set {
@@ -1279,7 +1279,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in disabled: bool; [[The state]]
          }
       }
@@ -1289,7 +1289,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
          return: bool; [[true if it should be disabled]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_autocapital_type_set {
@@ -1298,7 +1298,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.1.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in autocapital_type: Edje.Text.Autocapital_Type; [[The type of autocapitalization]]
          }
       }
@@ -1308,7 +1308,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.1.0]]
          return: Edje.Text.Autocapital_Type; [[The autocapitalization type]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_prediction_allow_set {
@@ -1317,7 +1317,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in prediction: bool; [[If true, the prediction feature is allowed.]]
          }
       }
@@ -1327,7 +1327,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
          return: bool; [[true if prediction feature is allowed.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       data_get @const {
@@ -1363,9 +1363,9 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
             *  }
             * @endcode
             */
-         return: const(char)*; [[The data's value string. Must not be freed.]]
+         return: string; [[The data's value string. Must not be freed.]]
          params {
-            @in key: const(char)*; [[The data field's key string]]
+            @in key: string; [[The data field's key string]]
          }
       }
       text_markup_filter_callback_add {
@@ -1395,7 +1395,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in func: Edje.Markup_Filter_Cb; [[The callback function that will act as markup filter]]
             @in data: void *; [[User provided data to pass to the filter function]]
          }
@@ -1427,7 +1427,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            @since 1.2.0]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_input_panel_return_key_type_set {
@@ -1438,7 +1438,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in return_key_type: Edje.Input_Panel.Return_Key_Type; [[The type of "return" key on the input panel]]
          }
       }
@@ -1450,7 +1450,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
          return: Edje.Input_Panel.Return_Key_Type; [[The type of "return" key on the input panel]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_external_param_set {
@@ -1474,7 +1474,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool; [[$true if everything went fine, $false on errors.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in param: const(Edje.External.Param)*; [[the parameter details, including its name, type and
                                                       actual value. This pointer should be valid, and the
                                                       parameter must exist in
@@ -1501,7 +1501,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
                          are filled with information, $false on errors and
                          param member values are not set or valid.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @out param: Edje.External.Param; [[the parameter details. It is used as both input and
                                                output variable. This pointer should be valid, and the
                                                parameter must exist in
@@ -1566,7 +1566,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in dx: double; [[The x step]]
             @in dy: double; [[The y step]]
          }
@@ -1576,8 +1576,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool; [[$true on success, $false otherwise]]
          params {
-            @in part: const(char)*; [[The part name]]
-            @in text: const(char)*; [[The text string]]
+            @in part: string; [[The part name]]
+            @in text: string; [[The text string]]
          }
       }
       part_text_get @const {
@@ -1586,9 +1586,9 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            This function returns the text associated to the object part.
 
            See also @.part_text_set().]]
-         return: const(char)*; [[The text string]]
+         return: string; [[The text string]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_input_panel_show_on_demand_set {
@@ -1598,7 +1598,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.9.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in ondemand: bool; [[If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.)]]
          }
       }
@@ -1608,7 +1608,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.9.0]]
          return: bool; [[$true if the input panel will be shown in case of only Mouse up event.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_input_hint_set {
@@ -1617,7 +1617,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.12.0]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in input_hints: Edje.Input_Hints; [[input hints]]
          }
       }
@@ -1627,7 +1627,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.12.0]]
          return: Edje.Input_Hints; [[The value of input hint]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_selection_get @const {
@@ -1636,9 +1636,9 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            This function returns selection text of the object part.
 
            See also @.part_text_select_all() and @.part_text_select_none()]]
-         return: const(char)*; [[The text string]]
+         return: string; [[The text string]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_text_cursor_is_format_get @const {
@@ -1647,7 +1647,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool; [[true if it's true, false otherwise.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[The cursor to adjust.]]
          }
       }
@@ -1663,7 +1663,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            @since 1.17]]
          params {
-            @in text_class: const(char)*; [[The color class to be deleted.]]
+            @in text_class: string; [[The color class to be deleted.]]
          }
       }
       @property color_class {
@@ -1703,7 +1703,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
                             values are zeroed.]]
          }
          keys {
-            color_class: const(char)*;
+            color_class: string;
          }
          values {
             r: int; [[Object Red value]]
@@ -1724,9 +1724,9 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          [[Gets the description of an object color class.
 
            This function gets the description of a color class in use by an object.]]
-         return: const(char)*; [[The description of the target color class or $null if not found]]
+         return: string; [[The description of the target color class or $null if not found]]
          params {
-            @in color_class: const(char)*;
+            @in color_class: string;
          }
       }
       color_class_clear @const {
@@ -1748,7 +1748,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            Deleting the color class will emit the signal "color_class,del"
            for the given Edje object.]]
          params {
-            @in color_class: const(char)*; [[The color class to be deleted.]]
+            @in color_class: string; [[The color class to be deleted.]]
          }
       }
       @property size_class {
@@ -1773,7 +1773,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
             return: bool; [[$true, on success or $false, on error]]
          }
          keys {
-            size_class: const(char)*; [[The size class name]]
+            size_class: string; [[The size class name]]
          }
          values {
             minw: int; [[The min width]]
@@ -1794,7 +1794,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            @since 1.17]]
          params {
-            @in size_class: const(char)*;
+            @in size_class: string;
          }
       }
       part_drag_step {
@@ -1809,7 +1809,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in dx: double; [[The x step]]
             @in dy: double; [[The y step]]
          }
@@ -1819,7 +1819,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
@@ -1827,7 +1827,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          [[Returns the cursor geometry of the part relative to the edje
            object.]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @out x: Evas.Coord; [[Cursor X position]]
             @out y: Evas.Coord; [[Cursor Y position]]
             @out w: Evas.Coord; [[Cursor width]]
@@ -1838,9 +1838,9 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          [[Return a list of char anchor names.
 
            This function returns a list of char anchor names.]]
-         return: const(list<const(char)*>); [[The list of anchors (const char *), do not modify!]]
+         return: const(list<string>); [[The list of anchors (const char *), do not modify!]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       text_insert_filter_callback_add {
@@ -1874,7 +1874,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            and @.text_markup_filter_callback_add]]
 
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in func: Edje.Text.Filter_Cb; [[The callback function that will act as filter]]
             @in data: void *; [[User provided data to pass to the filter function]]
          }
@@ -1887,7 +1887,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            @since 1.2.0]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       part_exists @const {
@@ -1902,7 +1902,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          return: bool; [[$true, if the Edje part exists in obj's group or
                          $false, otherwise (and on errors)]]
          params {
-            @in part: const(char)*; [[The part's name to check for existence in obj's
+            @in part: string; [[The part's name to check for existence in obj's
                                       group]]
          }
       }
@@ -1918,7 +1918,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: void *; [[The user data pointer if successful, or $null otherwise]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in func: Edje.Markup_Filter_Cb; [[The function callback to remove]]
          }
       }
@@ -1928,7 +1928,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @ evas_textblock_cursor_format_is_visible_get]]
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[The cursor to adjust.]]
          }
       }
@@ -1940,8 +1940,8 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            @since 1.2.0]]
          params {
-            @in part: const(char)*; [[The part name]]
-            @in text: const(char)*; [[The text string]]
+            @in part: string; [[The part name]]
+            @in text: string; [[The text string]]
          }
       }
       part_text_cursor_prev {
@@ -1950,7 +1950,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          return: bool;
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
@@ -1958,9 +1958,9 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          [[Return a list of char item names.
 
            This function returns a list of char item names.]]
-         return: const(list<const(char)*>); [[The list of items (const char *), do not modify!]]
+         return: const(list<string>); [[The list of items (const char *), do not modify!]]
          params {
-            @in part: const(char)*; [[The part name]]
+            @in part: string; [[The part name]]
          }
       }
       @property transition_duration_factor {

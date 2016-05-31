@@ -20,8 +20,8 @@ enum Elm.Atspi_Text.Clip_Type
 
 struct Elm.Atspi_Text.Attribute
 {
-   name:  const(char)*;
-   value: const(char)*;
+   name:  string;
+   value: string;
 }
 
 struct Elm.Atspi_Text.Range
@@ -33,7 +33,7 @@ struct Elm.Atspi_Text.Range
 
 struct Elm.Atspi_Text.Change_Info
 {
-   content: const(char)*;
+   content: string;
    inserted: bool;
    pos: size;
    len: size;
@@ -96,7 +96,7 @@ interface Elm.Interface.Atspi.Text ()
             return: bool;
          }
          keys {
-            name: const(char)* @nonull; [[text attribute name]]
+            name: string @nonull; [[text attribute name]]
             start_offset: int * @nonull; [[Position in text from which given attribute is set.]]
             end_offset: int *; [[Position in text to which given attribute is set.]]
          }

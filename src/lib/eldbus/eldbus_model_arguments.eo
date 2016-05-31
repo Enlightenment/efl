@@ -10,7 +10,7 @@ class Eldbus.Model.Arguments (Eo.Base, Efl.Model) {
             @since 1.16]]
             params {
                 @in proxy: Eldbus.Proxy*; [[Eldbus proxy]]
-                @in name: const(char)*; [[Name]]
+                @in name: string; [[Name]]
                 @in arguments: const(list<Eldbus.Introspection.Argument *>); [[The introspected arguments]]
             }
         }
@@ -18,7 +18,7 @@ class Eldbus.Model.Arguments (Eo.Base, Efl.Model) {
             [[Name of the argument]]
             get {}
             values {
-                name: const(char)*; [[Argument name]]
+                name: string; [[Argument name]]
             }
         }
     }

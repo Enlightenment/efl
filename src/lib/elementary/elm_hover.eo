@@ -47,7 +47,7 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface, Elm.Interface.Atspi_Widge
 
            See also \@ref elm_object_part_content_set.
          ]]
-         return: const(char)*;
+         return: string;
          params {
             @in pref_axis: Elm.Hover.Axis; [[The preferred orientation axis
                                              for the hover object to use]]

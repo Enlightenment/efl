@@ -60,8 +60,8 @@ class Evas.Canvas3D.Texture (Evas.Canvas3D.Object, Evas.Common_Interface)
          [[Set the data of the given texture from file.]]
 
          params {
-            @in file: const(char)*; [[Path to the image file.]]
-            @in key: const(char)*; [[Key in the image file.]]
+            @in file: string; [[Path to the image file.]]
+            @in key: string; [[Key in the image file.]]
          }
       }
 

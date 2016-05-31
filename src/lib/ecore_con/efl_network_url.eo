@@ -10,7 +10,7 @@ class Efl.Network.Url (Eo.Base) {
          get {
          }
          values {
-            url: const(char) *; [[The URL]]
+            url: string; [[The URL]]
          }
       }
    }

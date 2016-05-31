@@ -44,7 +44,7 @@ class Elm.Web (Elm.Widget)
             [[Return current useragent of elm_web object.]]
          }
          values {
-            user_agent: const(char)*; [[String for useragent.]]
+            user_agent: string; [[String for useragent.]]
          }
       }
       @property url @virtual_pure {
@@ -64,7 +64,7 @@ class Elm.Web (Elm.Widget)
             ]]
          }
          values {
-            url: const(char)*; [[The URL to set.]]
+            url: string; [[The URL to set.]]
          }
       }
       @property bg_color @virtual_pure {
@@ -338,7 +338,7 @@ class Elm.Web (Elm.Widget)
               The string returned must be freed by the user when it's done
               with it.
             ]]
-            return: own(const(char)*) @warn_unused; [[A newly allocated string, or
+            return: own(string) @warn_unused; [[A newly allocated string, or
                                                       $null if nothing is selected
                                                       or an error occurred.]]
          }
@@ -350,7 +350,7 @@ class Elm.Web (Elm.Widget)
               The returned string must not be freed and is guaranteed to be
               stringshared.
             ]]
-            return: free(own(const(char)*), eina_stringshare_del) @warn_unused; [[
+            return: free(own(string), eina_stringshare_del) @warn_unused; [[
                A stringshared internal string with the current title, or $null on
                failure.
             ]]
@@ -390,9 +390,9 @@ class Elm.Web (Elm.Widget)
          ]]
          return: bool;
          params {
-            @in html: const(char)*; [[HTML data to load.]]
-            @in base_url: const(char)* @optional; [[Base URL used for relative paths to external objects (optional).]]
-            @in unreachable_url: const(char)* @optional; [[URL that could not be reached (optional).]]
+            @in html: string; [[HTML data to load.]]
+            @in base_url: string @optional; [[Base URL used for relative paths to external objects (optional).]]
+            @in unreachable_url: string @optional; [[URL that could not be reached (optional).]]
          }
       }
       text_search @const @virtual_pure {
@@ -400,7 +400,7 @@ class Elm.Web (Elm.Widget)
          return: bool; [[$true if the given string was found, $false if not
                          or failure.]]
          params {
-            @in string: const(char)*; [[String to search.]]
+            @in string: string; [[String to search.]]
             @in case_sensitive: bool; [[If search should be case sensitive or not.]]
             @in forward: bool; [[If search is from cursor and on or backwards.]]
             @in wrap: bool; [[If search should wrap at the end.]]
@@ -441,7 +441,7 @@ class Elm.Web (Elm.Widget)
          [[Marks matches of the given string in a document.]]
          return: uint; [[Number of matched $string.]]
          params {
-            @in string: const(char)*; [[String to match.]]
+            @in string: string; [[String to match.]]
             @in case_sensitive: bool; [[If match should be case sensitive or not.]]
             @in highlight: bool; [[If matches should be highlighted.]]
             @in limit: uint; [[Maximum amount of matches, or zero to unlimited.]]

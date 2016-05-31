@@ -30,8 +30,8 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
             [[Set custom theme elements for the scroller]]
          }
          values {
-            klass: const(char)*;
-            group: const(char)*;
+            klass: string;
+            group: string;
          }
       }
       page_scroll_limit_set @const {

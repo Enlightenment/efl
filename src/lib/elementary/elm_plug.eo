@@ -23,7 +23,7 @@ class Elm.Plug (Elm.Widget, Evas.Clickable_Interface)
          [[Connect a plug widget to service provided by socket image.]]
          return: bool; [[$true on success, $false on error.]]
          params {
-            @in svcname: const(char)*; [[The service name to connect to set up by the socket.]]
+            @in svcname: string; [[The service name to connect to set up by the socket.]]
             @in svcnum: int; [[The service number to connect to (set up by socket).]]
             @in svcsys: bool; [[Boolean to set if the service is a system one or not (set up by socket).]]
          }

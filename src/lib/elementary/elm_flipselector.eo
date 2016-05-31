@@ -76,7 +76,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
          ]]
          return: Elm.Widget.Item;
          params {
-            @in label: const(char)*; [[The (text) label of the new item.]]
+            @in label: string; [[The (text) label of the new item.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience callback function to take place when
             item is selected.]]
             @in data: void * @optional; [[Data passed to $func, above.]]
@@ -107,7 +107,7 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
          ]]
          return: Elm.Widget.Item;
          params {
-            @in label: const(char)*; [[The (text) label of the new item.]]
+            @in label: string; [[The (text) label of the new item.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience callback function to take place when
             item is selected.]]
             @in data: const(void)* @optional; [[Data passed to $func, above.]]

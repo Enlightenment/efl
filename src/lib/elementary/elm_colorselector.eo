@@ -51,7 +51,7 @@ class Elm.Colorselector (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
             ]]
          }
          values {
-            palette_name: const(char)*; [[Name of palette]]
+            palette_name: string; [[Name of palette]]
          }
       }
       @property mode {

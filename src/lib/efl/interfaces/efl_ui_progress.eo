@@ -55,7 +55,7 @@ interface Efl.Ui.Progress {
          get {
          }
          values {
-            units: const(char)* @nullable; [[The format string for $obj's units label]]
+            units: string @nullable; [[The format string for $obj's units label]]
          }
       }
    }

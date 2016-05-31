@@ -31,8 +31,8 @@ interface Efl.Gfx.Filter
             ]]
          }
          values {
-            code: const(char)*; [[The Lua program source code.]]
-            name: const(char)* @optional; [[An optional name for this filter.]]
+            code: string; [[The Lua program source code.]]
+            name: string @optional; [[An optional name for this filter.]]
          }
       }
       @property filter_state {
@@ -49,9 +49,9 @@ interface Efl.Gfx.Filter
          get {}
          set {}
          values {
-            cur_state: const(char)*;
+            cur_state: string;
             cur_val: double;
-            next_state: const(char)* @optional;
+            next_state: string @optional;
             next_val: double @optional;
             pos: double @optional;
          }
@@ -82,7 +82,7 @@ interface Efl.Gfx.Filter
          set {}
          get {}
          keys {
-            name: const(char)*; [[Buffer name as used in the program.]]
+            name: string; [[Buffer name as used in the program.]]
          }
          values {
             source: Efl.Gfx; [[Object to use as a source of pixels.]]
@@ -100,10 +100,10 @@ interface Efl.Gfx.Filter
            This can be used to pass in tables.
          ]]
          keys {
-            name: const(char)*; [[Name of the global variable]]
+            name: string; [[Name of the global variable]]
          }
          values {
-            value: const(char)*; [[String value to use as data]]
+            value: string; [[String value to use as data]]
             execute: bool(false); [[If $true, execute 'name = value']]
          }
       }

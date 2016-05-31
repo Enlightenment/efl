@@ -24,7 +24,7 @@ abstract Efl.VG (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
             ]]
          }
          values {
-            name: const(char) *;
+            name: string;
          }
       }
       @property transformation {

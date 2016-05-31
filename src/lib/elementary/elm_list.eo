@@ -227,7 +227,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
          return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
             @in before: Elm.Widget.Item; [[The list item to insert before.]]
-            @in label: const(char)*; [[The label of the list item.]]
+            @in label: string; [[The label of the list item.]]
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in end: Evas.Object @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
@@ -274,7 +274,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
          return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
             @in after: Elm.Widget.Item; [[The list item to insert after.]]
-            @in label: const(char)*; [[The label of the list item.]]
+            @in label: string; [[The label of the list item.]]
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in end: Evas.Object @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
@@ -344,7 +344,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
 
          return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
-            @in label: const(char)*; [[The label of the list item.]]
+            @in label: string; [[The label of the list item.]]
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in end: Evas.Object @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
@@ -375,7 +375,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
 
          return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
-            @in label: const(char)*; [[The label of the list item.]]
+            @in label: string; [[The label of the list item.]]
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in end: Evas.Object @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
@@ -413,7 +413,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
 
          return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
-            @in label: const(char)*; [[The label of the list item.]]
+            @in label: string; [[The label of the list item.]]
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in end: Evas.Object @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]

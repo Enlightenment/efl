@@ -11,7 +11,7 @@ class Elm.View.List (Eo.Base)
              params {
                  @in genlist: Evas.Object; [[Genlist object]]
                  @in item_type: Elm.Genlist.Item.Type; [[Item type]]
-                 @in item_style: const(char)*; [[The current item style name. $null would be default.]]
+                 @in item_style: string; [[The current item style name. $null would be default.]]
              }
         }
         evas_object_get {
@@ -29,8 +29,8 @@ class Elm.View.List (Eo.Base)
                @since 1.11
              ]]
              params {
-                 @in property: const(char)*; [[Property name]]
-                 @in part: const(char)*; [[Edje's theme part]]
+                 @in property: string; [[Property name]]
+                 @in part: string; [[Edje's theme part]]
              }
         }
         model_set {

@@ -16,8 +16,8 @@ struct Elm.Toolbar.Item.State
      State of a Elm_Toolbar_Item.
      Can be created with elm_toolbar_item_state_add() and removed with elm_toolbar_item_state_del().
    ]]
-   label: const(char)*;
-   icon_str: const(char)*;
+   label: string;
+   icon_str: string;
    icon: Evas.Object;
    func: Evas_Smart_Cb ;
    data: const(void)*;
@@ -111,7 +111,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     icon: const(char)*; [[A string with icon name or the
+                     icon: string; [[A string with icon name or the
                                            absolute path of an image file.]]
                 }
            }
@@ -197,8 +197,8 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                 params {
                      @in img: const (void) *; [[The binary data that will be used as an image.]]
                      @in size: size; [[The size of binary data $img.]]
-                     @in format: const (char) *; [[Optional format of $img to pass to the image loader.]]
-                     @in key: const (char) *; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
+                     @in format: string; [[Optional format of $img to pass to the image loader.]]
+                     @in key: string; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
                 }
                 return: bool;
            }
@@ -209,8 +209,8 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                   elm_toolbar_item_icon_set().
                 ]]
                 params {
-                     @in file: const (char) *; [[The file that contains the image.]]
-                     @in key: const (char) *; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
+                     @in file: string; [[The file that contains the image.]]
+                     @in key: string; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
                 }
                 return: bool;
            }
@@ -226,8 +226,8 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                   @.state_del.
                 ]]
                 params {
-                     @in icon: const (char) *; [[A string with icon name or the absolute path of an image file.]]
-                     @in label: const (char) *; [[The label of the new state.]]
+                     @in icon: string; [[A string with icon name or the absolute path of an image file.]]
+                     @in label: string; [[The label of the new state.]]
                      @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked when this state is selected.]]
                      @in data: const (void) * @optional; [[The data to associate with the state.]]
                 }

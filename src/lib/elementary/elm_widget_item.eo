@@ -34,7 +34,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                 set {
                 }
                 values {
-                     style: const (char)*; [[the theme style used/to use (default, transparent, ...)]]
+                     style: string; [[the theme style used/to use (default, transparent, ...)]]
                 }
            }
            @property cursor {
@@ -54,7 +54,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                 set {
                 }
                 values {
-                     cursor: const (char) *; [[the cursor type's name]]
+                     cursor: string; [[the cursor type's name]]
                 }
            }
            @property cursor_style {
@@ -73,7 +73,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                 set {
                 }
                 values {
-                     style: const (char) *; [[the theme style to use/in use (e.g. $"default", $"transparent", etc)]]
+                     style: string; [[the theme style to use/in use (e.g. $"default", $"transparent", etc)]]
                 }
            }
            @property cursor_engine_only {
@@ -105,7 +105,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                 set {
                 }
                 keys {
-                     part: const (char) * @nullable; [[The content part name  (NULL for the default content)]]
+                     part: string @nullable; [[The content part name  (NULL for the default content)]]
                 }
                 values {
                      content: Evas.Object; [[The content of the object item]]
@@ -120,10 +120,10 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                 set {
                 }
                 keys {
-                     part: const (char) * @nullable; [[The text part name (NULL for the default label)]]
+                     part: string @nullable; [[The text part name (NULL for the default label)]]
                 }
                 values {
-                     label: const (char) *; [[Text of the label]]
+                     label: string; [[Text of the label]]
                 }
            }
            @property part_text_custom @protected {
@@ -136,10 +136,10 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                      legacy: null;
                 }
                 keys {
-                     part: const (char) *;
+                     part: string;
                 }
                 values {
-                     label: const (char) *;
+                     label: string;
                 }
            }
            @property focus {
@@ -163,7 +163,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                 set {
                 }
                 values {
-                     style: const (char) *; [[The style of object item]]
+                     style: string; [[The style of object item]]
                 }
            }
            @property disabled {
@@ -222,14 +222,14 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
 
                   See: elm_object_tooltip_text_set() for more details.]]
                 params {
-                     text: const (char) *; [[The text to set in the content.]]
+                     text: string; [[The text to set in the content.]]
                 }
            }
            tooltip_translatable_text_set @protected {
                 [[Set widget item tooltip as a text string]]
                 legacy: null;
                 params {
-                     text: const (char) *;
+                     text: string;
                 }
            }
            tooltip_unset {
@@ -258,7 +258,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
 
                   Note: Elementary object items may have many contents]]
                 params {
-                     part: const (char) *; [[The content part name to unset (NULL for the default content)]]
+                     part: string; [[The content part name to unset (NULL for the default content)]]
                 }
                 return: Evas.Object;
            }
@@ -275,8 +275,8 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
 
                   @since 1.8]]
                 params {
-                     emission: const (char) *; [[The signal's name.]]
-                     source: const (char) *; [[The signal's source.]]
+                     emission: string; [[The signal's name.]]
+                     source: string; [[The signal's source.]]
                      func: Elm_Object_Item_Signal_Cb; [[The callback function to be executed when the signal is emitted.]]
                      data: void *; [[A pointer to data to pass to the callback function.]]
                 }
@@ -295,8 +295,8 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
 
                   @since 1.8]]
                 params {
-                     emission: const (char) *; [[The signal's name.]]
-                     source: const (char) *; [[The signal's source.]]
+                     emission: string; [[The signal's name.]]
+                     source: string; [[The signal's source.]]
                      func: Elm_Object_Item_Signal_Cb; [[The callback function to be executed when the signal is emitted.]]
                 }
                 return: void*; [[The data pointer of the signal callback or $NULL, on errors.]]
@@ -308,14 +308,14 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                   edje program can respond to a signal by specifying matching
                   'signal' and 'source' fields.]]
                 params {
-                     emission: const (char) *; [[The signal's name.]]
-                     source: const (char) *; [[The signal's source.]]
+                     emission: string; [[The signal's name.]]
+                     source: string; [[The signal's source.]]
                 }
            }
            access_info_set {
                 [[Set the text to read out when in accessibility mode]]
                 params {
-                     txt: const (char) *; [[The text that describes the widget to people with poor or no vision]]
+                     txt: string; [[The text that describes the widget to people with poor or no vision]]
                 }
            }
            access_object_get @const {
@@ -341,9 +341,9 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
 
                   @since 1.8]]
                 params {
-                     part: const (char) *; [[The name of the part to set]]
-                     domain: const (char) *; [[The translation domain to use]]
-                     label: const (char) *; [[The original, non-translated text to set]]
+                     part: string; [[The name of the part to set]]
+                     domain: string; [[The translation domain to use]]
+                     label: string; [[The original, non-translated text to set]]
                 }
            }
            translatable_part_text_get @const {
@@ -355,9 +355,9 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
 
                   @since 1.8]]
                 params {
-                     part: const (char) *; [[The name of the part that was set]]
+                     part: string; [[The name of the part that was set]]
                 }
-                return: const (char)*; [[The original, untranslated string]]
+                return: string; [[The original, untranslated string]]
            }
            translate @protected {
                 [[Query translate]]
@@ -378,8 +378,8 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
 
                   @since 1.8]]
                 params {
-                     part: const (char) *; [[The part name of the translatable text]]
-                     domain: const (char) *; [[The translation domain to use]]
+                     part: string; [[The part name of the translatable text]]
+                     domain: string; [[The translation domain to use]]
                      translatable: bool; [[$true, the part text will be translated internally. $false, otherwise.]]
                 }
            }

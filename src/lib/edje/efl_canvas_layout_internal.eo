@@ -8,7 +8,7 @@ interface Efl.Canvas.Layout_Internal ()
          values {
             ed: void*;
             rp: void*;
-            part: const(char)*;
+            part: string;
          }
       }
    }

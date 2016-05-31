@@ -112,7 +112,7 @@ class Elm.Spinner (Elm.Layout, Efl.Ui.Spin,
          get {
          }
          values {
-            fmt: const(char)* @nullable; [[The format string for the label display.]]
+            fmt: string @nullable; [[The format string for the label display.]]
          }
       }
       special_value_add {
@@ -137,7 +137,7 @@ class Elm.Spinner (Elm.Layout, Efl.Ui.Spin,
          */
          params {
             @in value: double; [[The value to be replaced.]]
-            @in label: const(char)*; [[The label to be used.]]
+            @in label: string; [[The label to be used.]]
 
          }
       }

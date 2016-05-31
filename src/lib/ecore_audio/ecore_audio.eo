@@ -28,7 +28,7 @@ class Ecore.Audio (Eo.Base)
          get {
          }
          values {
-            name: const(char)*; [[Name]]
+            name: string; [[Name]]
          }
       }
       @property paused {
@@ -74,7 +74,7 @@ class Ecore.Audio (Eo.Base)
          get {
          }
          values {
-            source: const(char)*; [[the source to set to (i.e. file, URL, device)]]
+            source: string; [[the source to set to (i.e. file, URL, device)]]
          }
       }
       @property format @virtual_pure {

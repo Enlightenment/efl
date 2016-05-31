@@ -36,7 +36,7 @@ class Elm.Systray (Eo.Base)
             [[Get the id of the Status Notifier Item.]]
          }
          values {
-            id: const(char)* @nullable;
+            id: string @nullable;
          }
       }
       @property category {
@@ -58,7 +58,7 @@ class Elm.Systray (Eo.Base)
             [[Get the path to the icon's theme currently in use.]]
          }
          values {
-            icon_theme_path: const(char)* @nullable;
+            icon_theme_path: string @nullable;
          }
       }
       @property menu {
@@ -80,7 +80,7 @@ class Elm.Systray (Eo.Base)
             [[Get the name of the attention icon used by the Status Notifier Item.]]
          }
          values {
-            att_icon_name: const(char)* @nullable;
+            att_icon_name: string @nullable;
          }
       }
       @property status {
@@ -102,7 +102,7 @@ class Elm.Systray (Eo.Base)
             [[Get the name of the icon used by the Status Notifier Item.]]
          }
          values {
-            icon_name: const(char)* @nullable;
+            icon_name: string @nullable;
          }
       }
       @property title {
@@ -113,7 +113,7 @@ class Elm.Systray (Eo.Base)
             [[Get the title of the Status Notifier Item.]]
          }
          values {
-            title: const(char)* @nullable;
+            title: string @nullable;
          }
       }
       register {

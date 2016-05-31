@@ -121,9 +121,9 @@ class Test.Object (Eo.Base) {
        }
        method_array_of_strings_check {
            params {
-               @in a_in: array<const(char) *>;
+               @in a_in: array<string>;
            }
-           return: array<const(char) *>;
+           return: array<string>;
        }
        method_array_of_ints_check {
            params {
@@ -174,9 +174,9 @@ class Test.Object (Eo.Base) {
        }
        method_list_of_strings_check {
            params {
-               @in l_in: list<const(char) *>;
+               @in l_in: list<string>;
            }
-           return: list<const(char) *>;
+           return: list<string>;
        }
        method_list_of_ints_check {
            params {
@@ -216,9 +216,9 @@ class Test.Object (Eo.Base) {
        }
        method_accessor_of_strings_check {
            params {
-               @in a_in: accessor<const(char) *>;
+               @in a_in: accessor<string>;
            }
-           return: accessor<const(char) *>;
+           return: accessor<string>;
        }
        method_accessor_of_ints_check {
            params {
@@ -258,9 +258,9 @@ class Test.Object (Eo.Base) {
        }
        method_iterator_of_strings_check {
            params {
-               @in i_in: iterator<const(char) *>;
+               @in i_in: iterator<string>;
            }
-           return: iterator<const(char) *>;
+           return: iterator<string>;
        }
        method_iterator_of_ints_check {
            params {
@@ -340,7 +340,7 @@ class Test.Object (Eo.Base) {
    events {
       test;
       test,structarg: Test.Struct_Ex;
-      test,stringarg: const(char)*;
+      test,stringarg: string;
       repeated,event,name;
    }
 }

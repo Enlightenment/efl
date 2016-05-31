@@ -88,7 +88,7 @@ class Elm.Multibuttonentry (Elm.Layout)
 
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {
-            @in label: const(char)*; [[The label of new item]]
+            @in label: string; [[The label of new item]]
             @in func: Evas_Smart_Cb @optional; [[The callback function to be invoked when this item is pressed.]]
             @in data: void * @optional; [[The pointer to the data to be attached]]
          }
@@ -116,7 +116,7 @@ class Elm.Multibuttonentry (Elm.Layout)
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {
             @in before: Elm.Widget.Item; [[The item before which to add it]]
-            @in label: const(char)*; [[The label of new item]]
+            @in label: string; [[The label of new item]]
             @in func: Evas_Smart_Cb @optional; [[The callback function to be invoked when this item is pressed.]]
             @in data: void * @optional; [[The pointer to the data to be attached]]
          }
@@ -128,7 +128,7 @@ class Elm.Multibuttonentry (Elm.Layout)
 
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {
-            @in label: const(char)*; [[The label of new item]]
+            @in label: string; [[The label of new item]]
             @in func: Evas_Smart_Cb @optional; [[The callback function to be invoked when this item is pressed.]]
             @in data: void * @optional; [[The pointer to the data to be attached]]
          }
@@ -167,7 +167,7 @@ class Elm.Multibuttonentry (Elm.Layout)
          return: Elm.Widget.Item; [[A handle to the item added or NULL if not possible]]
          params {
             @in after: Elm.Widget.Item; [[The item after which to add it]]
-            @in label: const(char)*; [[The label of new item]]
+            @in label: string; [[The label of new item]]
             @in func: Evas_Smart_Cb @optional; [[The callback function to be invoked when this item is pressed.]]
             @in data: void * @optional; [[The pointer to the data to be attached]]
          }

@@ -20,7 +20,7 @@ class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection)
                 ]]
              }
              values {
-                 icon: const (char)*; [[The name of icon object.]]
+                 icon: string; [[The name of icon object.]]
              }
         }
         @property selected {

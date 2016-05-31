@@ -197,7 +197,7 @@ class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
            If parameter is $null, no search
            will be done on instance descriptions.]]
          params {
-            @in name: const(char)* @nonull; [[name of desired callback, must not be $null.  The
+            @in name: string @nonull; [[name of desired callback, must not be $null.  The
             search have a special case for name being the same
             pointer as registered with Evas_Smart_Cb_Description, one
             can use it to avoid excessive use of strcmp().]]

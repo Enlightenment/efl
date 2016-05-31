@@ -4,7 +4,7 @@ class Efl.VG.Container (Efl.VG)
    methods {
       child_get {
          params {
-            @in name: const(char)*;
+            @in name: string;
          }
          return: Efl.VG;
       }

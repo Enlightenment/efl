@@ -67,12 +67,12 @@ class Efl.Input.Device (Eo.Base)
       }
       @property name {
          values {
-            name: const(char)*;
+            name: string;
          }
       }
       @property description {
          values {
-            desc: const(char)*;
+            desc: string;
          }
       }
       @property parent {

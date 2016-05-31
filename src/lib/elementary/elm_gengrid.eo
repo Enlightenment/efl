@@ -516,8 +516,8 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
                Pointer to item to start search from. If $null, search will
                be started from the first item of the gengrid.
             ]]
-            @in part_name: const(char) *; [[Name of the TEXT part of gengrid item to search string in.]]
-            @in pattern: const(char) *; [[The search pattern.]]
+            @in part_name: string; [[Name of the TEXT part of gengrid item to search string in.]]
+            @in pattern: string; [[The search pattern.]]
             @in flags: Elm.Glob.Match_Flags; [[Search flags.]]
          }
       }

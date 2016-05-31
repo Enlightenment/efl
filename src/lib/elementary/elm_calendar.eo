@@ -169,7 +169,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
          get {
          }
          values {
-            weekdays: const(char)**; [[Array of seven strings to be used as weekday names.
+            weekdays: string*; [[Array of seven strings to be used as weekday names.
             Warning: It must have 7 elements, or it will access invalid memory.
             Warning: The strings must be $null terminated ('@\0').]]
          }
@@ -324,7 +324,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
             */
          return: Elm.Calendar.Mark *; [[The newly added calendar mark]]
          params {
-            @in mark_type: const(char)*; [[A string used to define the type of mark. It will be
+            @in mark_type: string; [[A string used to define the type of mark. It will be
             emitted to the theme, that should display a related modification on these
             days representation.]]
             @in mark_time: Efl.Time *; [[A time struct to represent the date of inclusion of the

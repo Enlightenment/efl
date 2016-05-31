@@ -194,7 +194,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
             [[Get the user agent used by the map object.]]
          }
          values {
-            user_agent: const(char)*; [[The user agent to be used by the map.]]
+            user_agent: string; [[The user agent to be used by the map.]]
          }
       }
       @property zoom_max {
@@ -303,12 +303,12 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
          ]]
          params {
             @in type: Elm.Map.Source_Type; [[Source type.]]
-            @in source_name: const(char)*; [[The source to be used.]]
+            @in source_name: string; [[The source to be used.]]
          }
       }
       source_get @const {
          [[Get the name of currently used source for a specific type.]]
-         return: const(char)*; [[The name of the source in use.]]
+         return: string; [[The name of the source in use.]]
          params {
             @in type: Elm.Map.Source_Type; [[Source type.]]
          }
@@ -430,7 +430,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
 
            At least available sources of name type are "Nominatim".
          ]]
-         return: const(char)**; [[The char pointer array of source names.]]
+         return: string*; [[The char pointer array of source names.]]
          params {
             @in type: Elm.Map.Source_Type; [[Source type.]]
          }
@@ -491,7 +491,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
          ]]
          return: Elm_Map_Name *; [[A #Elm_Map_Name handle for this coordinate.]]
          params {
-            @in address: const(char)* @optional; [[The address.]]
+            @in address: string @optional; [[The address.]]
             @in lon: double; [[The longitude.]]
             @in lat: double; [[The latitude.]]
             @in name_cb: Elm_Map_Name_Cb @optional; [[The callback function.]]
@@ -506,7 +506,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            @since 1.8
          ]]
          params {
-            @in address: const(char)*; [[The address.]]
+            @in address: string; [[The address.]]
             @in name_cb: Elm_Map_Name_List_Cb @optional; [[The callback function.]]
             @in data: void * @optional; [[The user callback data.]]
          }

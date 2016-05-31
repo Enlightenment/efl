@@ -68,7 +68,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          get {
          }
          values {
-            style: const(char)*; [[The name of the focus highlight style.]]
+            style: string; [[The name of the focus highlight style.]]
          }
       }
       @property tree_unfocusable {
@@ -152,7 +152,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          get {
          }
          values {
-            style: const(char)*;
+            style: string;
          }
       }
       @property scale {
@@ -232,7 +232,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          get {
          }
          values {
-            txt: const(char)* @nullable;
+            txt: string @nullable;
          }
       }
       @property drag_lock_x {
@@ -276,9 +276,9 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          }
          values {
             edj: Evas.Object;
-            wname: const(char)*;
-            welement: const(char)*;
-            wstyle: const(char)*;
+            wname: string;
+            welement: string;
+            wstyle: string;
          }
       }
       @property hover_object {
@@ -307,8 +307,8 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          set {
          }
          values {
-            part: const(char)*;
-            domain: const(char)*;
+            part: string;
+            domain: string;
             translatable: bool;
          }
       }
@@ -331,9 +331,9 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          set {
          }
          values {
-            part: const(char)*;
-            domain: const(char)*;
-            label: const(char)*;
+            part: string;
+            domain: string;
+            label: string;
          }
       }
       @property scrollable_children {
@@ -451,10 +451,10 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          get {
          }
          keys {
-            part: const(char)*;
+            part: string;
          }
          values {
-            label: const(char)*;
+            label: string;
          }
       }
       newest_focus_order_get @const {
@@ -522,10 +522,10 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          }
       }
       part_text_translate {
-         return: const(char)*;
+         return: string;
          params {
-            @in part: const(char)*;
-            @in text: const(char)*;
+            @in part: string;
+            @in text: string;
          }
       }
       focus_highlight_geometry_get @const {
@@ -636,8 +636,8 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       }
       signal_callback_add {
          params {
-            @in emission: const(char)*;
-            @in source: const(char)*;
+            @in emission: string;
+            @in source: string;
             @in func: Edje.Signal_Cb;
             @in data: void *;
          }
@@ -649,7 +649,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       name_find @const {
          return: Evas.Object;
          params {
-            @in name: const(char)*;
+            @in name: string;
             @in recurse: int;
          }
       }
@@ -706,9 +706,9 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          }
       }
       translatable_part_text_get @const {
-         return: const(char)*;
+         return: string;
          params {
-            @in part: const(char)*;
+            @in part: string;
          }
       }
       focus_restore {
@@ -778,15 +778,15 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       signal_callback_del {
          return: void *;
          params {
-            @in emission: const(char)*;
-            @in source: const(char)*;
+            @in emission: string;
+            @in source: string;
             @in func: Edje.Signal_Cb;
          }
       }
       signal_emit {
          params {
-            @in emission: const(char)*;
-            @in source: const(char)*;
+            @in emission: string;
+            @in source: string;
          }
       }
       disable {

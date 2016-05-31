@@ -15,13 +15,13 @@ struct Eio.Filter.Direct.Data
 
 struct Eio.Filter.Name.Data
 {
-  file: const(char)*;
+  file: string;
   filter: bool;
 }
 
 struct Eio.Xattr.Data
 {
-  data: const(char)*;
+  data: string;
   size: uint;
 }
 
@@ -34,15 +34,15 @@ class Eio.Job (Eo.Base)
     file_ls {
       [[Lists entries in a given path.]]
       params {
-        @in path: const(char)*;
+        @in path: string;
       }
-      return: promise<int, const(char)*>;
+      return: promise<int, string>;
     }
 
     file_direct_ls {
       [[Lists entries in a given path with more information.]]
       params {
-        @in path: const(char)*;
+        @in path: string;
       }
       return: promise<int, const(Eina_File_Direct_Info)*>;
     }
@@ -50,7 +50,7 @@ class Eio.Job (Eo.Base)
     file_stat_ls {
       [[Lists entries in a given path with stat information.]]
       params {
-        @in path: const(char)*;
+        @in path: string;
       }
       return: promise<int, const(Eina_File_Direct_Info)*>;
     }
@@ -58,7 +58,7 @@ class Eio.Job (Eo.Base)
     dir_stat_ls {
       [[Recursively list the directory content and its sub content.]]
       params {
-        @in path: const(char)*;
+        @in path: string;
       }
       return: promise<int, const(Eina_File_Direct_Info)*>;
     }
@@ -66,7 +66,7 @@ class Eio.Job (Eo.Base)
     dir_direct_ls {
       [[Recursively list the directory content and its sub content.]]
       params {
-        @in path: const(char)*;
+        @in path: string;
       }
       return: promise<int, const(Eina_File_Direct_Info)*>;
     }
@@ -74,7 +74,7 @@ class Eio.Job (Eo.Base)
     file_direct_stat {
       [[Get stat info on a given file/directory.]]
       params {
-        @in path: const(char)*;
+        @in path: string;
       }
       return: promise<Eina_Stat>;
     }
@@ -83,10 +83,10 @@ class Eio.Job (Eo.Base)
     @property file_xattr_list {
       [[Lists all extended attributes asynchronously.]]
       keys {
-         path: const(char)*;
+         path: string;
       }
       get {
-         return: promise<int, const(char)*>;
+         return: promise<int, string>;
       }
     }
 
@@ -94,8 +94,8 @@ class Eio.Job (Eo.Base)
       [[Retrieves or sets information of a given extended attribute.]]
       set {
          values {
-            attribute: const(char)*;
-            xattr_data: const(char)*;
+            attribute: string;
+            xattr_data: string;
             xattr_size: uint;
             flags: Eina.Xattr.Flags;
          }
@@ -103,13 +103,13 @@ class Eio.Job (Eo.Base)
       }
       get {
          keys {
-            path: const(char)*;
-            attribute: const(char)*;
+            path: string;
+            attribute: string;
          }
          return: promise<Eio.Xattr.Data>;
       }
       keys {
-         path: const(char)*;
+         path: string;
       }
     }
 
@@ -119,7 +119,7 @@ class Eio.Job (Eo.Base)
 
       The fulfilled value in the promise will be the Eina.File*.]]
       params {
-        @in path: const(char)*;
+        @in path: string;
         @in shared: bool;
       }
       return: promise<Eina.File*>;

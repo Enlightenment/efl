@@ -296,7 +296,7 @@ class Evas.Box (Evas.Smart.Clipped)
          return: int @warn_unused; [[The numerical ID of the given property or $-1, on
                                      errors.]]
          params {
-            @in name: const(char)* @nonull; [[The name string of the option being searched, for
+            @in name: string @nonull; [[The name string of the option being searched, for
                                               its ID.]]
          }
       }
@@ -442,7 +442,7 @@ class Evas.Box (Evas.Smart.Clipped)
            function. They'd have to implement it and set it to be the
            _Evas_Object_Box_Api.property_name_get smart class function of the
            box, which is originally set to $null.]]
-         return: const(char)* @warn_unused; [[The name of the given property or $null, on errors.]]
+         return: string @warn_unused; [[The name of the given property or $null, on errors.]]
          params {
             @in property: int; [[The numerical identifier of the option being searched,
                                  for its name.]]

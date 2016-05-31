@@ -3,8 +3,8 @@ import eina_types;
 struct Eio.Sentry.Event
 {
   [[Wraps the data about a monitor event on a file.]]
-  trigger: const(char)*; [[The cause of the event.]]
-  source: const(char)*; [[The original monitored path.]]
+  trigger: string; [[The cause of the event.]]
+  source: string; [[The original monitored path.]]
 }
 
 class Eio.Sentry (Eo.Base)
@@ -15,14 +15,14 @@ class Eio.Sentry (Eo.Base)
     add {
       [[Adds a new path to the list of monitored paths.]]
       params {
-        @in path: const(char)*;
+        @in path: string;
       }
       return : bool;
     }
     del {
       [[Removes the given path from the monitored list.]]
       params {
-        @in path: const(char)*;
+        @in path: string;
       }
     }
   }

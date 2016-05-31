@@ -391,7 +391,7 @@ mixin Efl.Gfx.Shape
       }
       append_svg_path {
         params {
-          @in svg_path_data: const(char)*;
+          @in svg_path_data: string;
         }
       }
       interpolate {

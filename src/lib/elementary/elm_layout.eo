@@ -13,8 +13,8 @@ struct Elm.Layout_Part_Alias_Description
      and their equivalents. This list must be set on the "_smart_set_user()" function of inheriting widgets,
      so that part aliasing is handled automatically for them.
    ]]
-   alias: const(char)*; [[Alternate name for a given (real) part. Calls receiving this string as a part name will be translated to the string at Elm.Layout_Part_Proxies_Description::real_part]]
-   real_part: const(char)*; [[Target part name for the alias set on Elm.Layout_Part_Proxies_Description::real_part. An example of usage would be "default" on that field, with "elm.content.swallow" on this one]]
+   alias: string; [[Alternate name for a given (real) part. Calls receiving this string as a part name will be translated to the string at Elm.Layout_Part_Proxies_Description::real_part]]
+   real_part: string; [[Target part name for the alias set on Elm.Layout_Part_Proxies_Description::real_part. An example of usage would be "default" on that field, with "elm.content.swallow" on this one]]
 }
 
 class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
@@ -58,9 +58,9 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
             return: bool;
          }
          values {
-            klass: const(char)*; [[The class of the group.]]
-            group: const(char)*; [[The group.]]
-            style: const(char)*; [[The style to used.]]
+            klass: string; [[The class of the group.]]
+            group: string; [[The group.]]
+            style: string; [[The style to used.]]
          }
       }
       @property text_aliases @protected {
@@ -109,7 +109,7 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
          return: bool; [[$true on success or $false on failure, that may be
                          part not exists or it did not had a cursor set.]]
          params {
-            @in part_name: const(char)*; [[A part from loaded edje group.]]
+            @in part_name: string; [[A part from loaded edje group.]]
             @in engine_only: bool; [[If cursors should be just provided by
                                      the engine ($true) or should also search
                                      on widget's theme as well ($false)]]
@@ -120,7 +120,7 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
          return: bool; [[Whenever the cursor is just provided by engine
                          or also from theme.]]
          params {
-            @in part_name: const(char)*; [[A part from loaded edje group.]]
+            @in part_name: string; [[A part from loaded edje group.]]
          }
       }
       freeze {
@@ -177,18 +177,18 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
          return: bool; [[True on success or false on failure, that may be
                          part not exists or it did not had a cursor set.]]
          params {
-            @in part_name: const(char)*; [[A part from loaded edje group.]]
-            @in style: const(char)*; [[The theme style to use (default,
+            @in part_name: string; [[A part from loaded edje group.]]
+            @in style: string; [[The theme style to use (default,
                                        transparent, ...).]]
          }
       }
       part_cursor_style_get @const {
          [[Get a specific cursor style for an edje part.]]
-         return: const(char)*; [[The theme style in use, defaults to "default".
+         return: string; [[The theme style in use, defaults to "default".
                                  If the object does not have a cursor set,
                                  then $null is returned.]]
          params {
-            @in part_name: const(char)*; [[A part from loaded edje group.]]
+            @in part_name: string; [[A part from loaded edje group.]]
          }
       }
       @property text {
@@ -200,10 +200,10 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
             [[Get the text set in the given part.]]
          }
          keys {
-            part: const(char)* @nullable; [[The TEXT part where to set the text.]]
+            part: string @nullable; [[The TEXT part where to set the text.]]
          }
          values {
-            text: const(char)* @nullable; [[The text to set.]]
+            text: string @nullable; [[The text to set.]]
          }
       }
       signal_callback_add {
@@ -215,8 +215,8 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
            the emission or source strings.
          ]]
          params {
-            @in emission: const(char)*; [[The signal's name string.]]
-            @in source: const(char)*; [[The signal's source string.]]
+            @in emission: string; [[The signal's name string.]]
+            @in source: string; [[The signal's source string.]]
             @in func: Edje.Signal_Cb; [[The callback function to be executed
                                         when the signal is emitted.]]
             @in data: void * @optional; [[A pointer to data to pass in to the
@@ -228,15 +228,15 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
          return: bool; [[$true on success or $false on failure, that may be
                          part not exists or it has "mouse_events: 0".]]
          params {
-            @in part_name: const(char)*; [[A part from loaded edje group.]]
-            @in cursor: const(char)*; [[Cursor name to use, see Elementary_Cursor.h.]]
+            @in part_name: string; [[A part from loaded edje group.]]
+            @in cursor: string; [[Cursor name to use, see Elementary_Cursor.h.]]
          }
       }
       part_cursor_get @const {
          [[Get the cursor to be shown when mouse is over an edje part.]]
-         return: const(char)*;
+         return: string;
          params {
-            @in part_name: const(char)*; [[A part from loaded edje group.]]
+            @in part_name: string; [[A part from loaded edje group.]]
          }
       }
       sub_object_add_enable {
@@ -265,9 +265,9 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
          }
          @endcode
          */
-         return: const(char)*; [[The edje data string.]]
+         return: string; [[The edje data string.]]
          params {
-            @in key: const(char)*; [[The data key.]]
+            @in key: string; [[The data key.]]
          }
       }
       signal_callback_del {
@@ -282,8 +282,8 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
          return: void *; [[The data pointer of the signal callback (passed on
                            @.signal_callback_add) or $null on errors.]]
          params {
-            @in emission: const(char)*; [[The signal's name string.]]
-            @in source: const(char)*; [[The signal's source string.]]
+            @in emission: string; [[The signal's name string.]]
+            @in source: string; [[The signal's source string.]]
             @in func: Edje.Signal_Cb; [[The callback function being executed
                                         when the signal was emitted.]]
          }
@@ -311,15 +311,15 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
            'source' fields.
          ]]
          params {
-            @in emission: const(char)*; [[The signal's name string.]]
-            @in source: const(char)*; [[The signal's source string.]]
+            @in emission: string; [[The signal's name string.]]
+            @in source: string; [[The signal's source string.]]
          }
       }
       part_cursor_unset {
          [[Unsets a cursor previously set with @.part_cursor_set.]]
          return: bool;
          params {
-            @in part_name: const(char)*; [[A part from loaded edje group,
+            @in part_name: string; [[A part from loaded edje group,
                                            that had a cursor set wit
                                            @.part_cursor_set.]]
          }

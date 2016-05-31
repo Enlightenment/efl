@@ -102,7 +102,7 @@ interface Efl.Gfx {
             return: bool;
          }
          keys {
-            part: const (char)*; [[The part you are interested in.]]
+            part: string; [[The part you are interested in.]]
          }
          values {
             r: int; [[The red component of the given color.]]

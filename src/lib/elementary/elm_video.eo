@@ -94,7 +94,7 @@ class Elm.Video (Elm.Layout, Efl.File, Elm.Interface.Atspi_Widget_Action)
 
               Note: Don't change or free the string returned by this function.
             ]]
-            return: const(char)*; [[A string containing the title.]]
+            return: string; [[A string containing the title.]]
          }
       }
       play {

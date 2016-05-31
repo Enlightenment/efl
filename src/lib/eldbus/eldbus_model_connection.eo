@@ -8,7 +8,7 @@ class Eldbus.Model.Connection (Eo.Base, Efl.Model) {
               @since 1.16]]
             params {
                 @in type: int; [[The connection type]]
-                @in address: const(char)*; [[Remote address of DBus]]
+                @in address: string; [[Remote address of DBus]]
                 @in private_: bool; [[Non shared dbus connection]]
             }
         }
@@ -21,7 +21,7 @@ class Eldbus.Model.Connection (Eo.Base, Efl.Model) {
     @property address {
             [[Remote DBus address]]
             values {
-                address: const(char)*; [[Address]]
+                address: string; [[Address]]
             }
         }
     @property private {

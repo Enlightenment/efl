@@ -28,7 +28,7 @@ class Elm.App.Server (Eo.Base)
          get {
          }
          values {
-            ret: const(char)*;
+            ret: string;
          }
       }
       @property package {
@@ -56,7 +56,7 @@ class Elm.App.Server (Eo.Base)
          [[Class constructor of elm_app_server]]
          legacy: null;
          params {
-            @in packageid: const(char)*; [[package of application]]
+            @in packageid: string; [[package of application]]
             @in create_view_cb: Elm_App_Server_Create_View_Cb; [[callback to be called when user wants to open some application view]]
          }
       }
@@ -66,7 +66,7 @@ class Elm.App.Server (Eo.Base)
       view_check {
          [[If view id is available and unique, return the full DBus object path of view]]
          params {
-            @in id: const(char)*; [[view identifier]]
+            @in id: string; [[view identifier]]
          }
          return: bool; [[true if id is valid or false if not]]
       }
@@ -82,7 +82,7 @@ class Elm.App.Server (Eo.Base)
       title_set {
          [[Set a title to application.]]
          params {
-            @in title: const(char)* @nullable; [[title of application]]
+            @in title: string @nullable; [[title of application]]
          }
       }
       title_get {

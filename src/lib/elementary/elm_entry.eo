@@ -303,7 +303,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
             [[Get the style that the hover should use.]]
          }
          values {
-            style: const(char)* @nullable; [[The style to use for the underlying hover.]]
+            style: string @nullable; [[The style to use for the underlying hover.]]
          }
       }
       @property single_line {
@@ -643,7 +643,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
               or modified in any way. If the $entry object is deleted or its
               contents are changed, the returned pointer should be considered invalid.
             ]]
-            return: const(char)*;
+            return: string;
          }
       }
       @property cursor_is_visible_format {
@@ -735,7 +735,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
            @since 1.7
          ]]
          params {
-            @in style: const(char)*; [[The style user to push.]]
+            @in style: string; [[The style user to push.]]
          }
       }
       item_provider_remove {
@@ -756,7 +756,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
 
            @since 1.7
          ]]
-         return: const(char)*;
+         return: string;
       }
       context_menu_clear {
          [[This clears and frees the items in a entry's contextual (longpress)
@@ -785,7 +785,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
            See also @.markup_filter_append.
          ]]
          params {
-            @in entry: const(char)*; [[The text to insert.]]
+            @in entry: string; [[The text to insert.]]
          }
       }
       input_panel_imdata_set {
@@ -899,7 +899,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
            See also @.markup_filter_append.
          ]]
          params {
-            @in str: const(char)*; [[The text to be appended.]]
+            @in str: string; [[The text to be appended.]]
          }
       }
       context_menu_item_add {
@@ -915,8 +915,8 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
            perform any action they deem necessary.
          ]]
          params {
-            @in label: const(char)* @optional; [[The item's text label.]]
-            @in icon_file: const(char)* @optional; [[The item's icon file.]]
+            @in label: string @optional; [[The item's text label.]]
+            @in icon_file: string @optional; [[The item's icon file.]]
             @in icon_type: Elm.Icon.Type; [[The item's icon type.]]
             @in func: Evas_Smart_Cb @optional; [[The callback to execute when the item is clicked.]]
             @in data: const(void)* @optional; [[The data to associate with the item for related functions.]]

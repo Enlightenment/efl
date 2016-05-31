@@ -91,7 +91,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          return: bool; [[$true, on success, $false otherwise]]
          params {
-            @in name: const(char)*; [[The name of the item (as declared in the prefs collection)]]
+            @in name: string; [[The name of the item (as declared in the prefs collection)]]
             @in value: const(generic_value)*; [[The value to set on the item. It should be typed as the item expects, preferably, or a conversion will take place]]
          }
       }
@@ -104,7 +104,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          return: bool; [[$true, on success, $false otherwise]]
 
          params {
-            @in name: const(char)*; [[The name of the item (as declared in the prefs collection) to get value from]]
+            @in name: string; [[The name of the item (as declared in the prefs collection) to get value from]]
             @out value: generic_value; [[Where to store the value of the item. It will be overwritten and setup with the type the item is bound to]]
          }
       }
@@ -121,7 +121,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          return: const(Evas.Object); [[A valid widget handle, on success, or $NULL, otherwise]]
          params {
-            @in name: const(char)*; [[The name of the item (as declared in the prefs collection) to get object from]]
+            @in name: string; [[The name of the item (as declared in the prefs collection) to get object from]]
          }
       }
       item_disabled_set {
@@ -130,7 +130,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
            @since 1.8]]
 
          params {
-            @in name: const(char)*; [[The name of the item (as declared in the prefs collection) to act on]]
+            @in name: string; [[The name of the item (as declared in the prefs collection) to act on]]
             @in disabled: bool; [[$true, to make it disabled, $false otherwise]]
          }
       }
@@ -140,7 +140,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
            @since 1.8]]
          return: bool; [[$true, if it is disabled, $false otherwise]]
          params {
-            @in name: const(char)*; [[The name of the item (as declared in the prefs collection) to get disabled state from]]
+            @in name: string; [[The name of the item (as declared in the prefs collection) to get disabled state from]]
          }
       }
       item_swallow {
@@ -150,7 +150,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          return: bool; [[$true, on success, $false otherwise]]
          params {
-            @in name: const(char)*; [[the name of the SWALLOW item (as declared in the prefs collection)]]
+            @in name: string; [[the name of the SWALLOW item (as declared in the prefs collection)]]
             @in child: Evas.Object; [[The object to occupy the item]]
          }
       }
@@ -164,7 +164,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
            @since 1.8]]
 
          params {
-            @in name: const(char)*; [[The name of the item (as declared in the prefs collection) to act on]]
+            @in name: string; [[The name of the item (as declared in the prefs collection) to act on]]
             @in editable: bool; [[$true, to make it editable, $false otherwise]]
          }
       }
@@ -174,7 +174,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
            @since 1.8]]
          return: bool; [[$true, if it is editable, $false otherwise]]
          params {
-            @in name: const(char)*; [[The name of the item (as declared in the prefs collection) to get editable state from]]
+            @in name: string; [[The name of the item (as declared in the prefs collection) to get editable state from]]
          }
       }
       item_unswallow {
@@ -184,7 +184,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          return: Evas.Object; [[The unswallowed object, or NULL on errors]]
          params {
-            @in name: const(char)*; [[the name of the SWALLOW item (as declared in the prefs collection)]]
+            @in name: string; [[the name of the SWALLOW item (as declared in the prefs collection)]]
          }
       }
       item_visible_set {
@@ -197,7 +197,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
            @since 1.8]]
 
          params {
-            @in name: const(char)*; [[The name of the item (as declared in the prefs collection) to change visibility of]]
+            @in name: string; [[The name of the item (as declared in the prefs collection) to change visibility of]]
             @in visible: bool; [[$true, to make it visible, $false otherwise]]
          }
       }
@@ -207,7 +207,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
            @since 1.8]]
          return: bool; [[$true, if it is visible, $false otherwise]]
          params {
-            @in name: const(char)*; [[The name of the item (as declared in the prefs collection) to get visibility state from]]
+            @in name: string; [[The name of the item (as declared in the prefs collection) to get visibility state from]]
          }
       }
    }

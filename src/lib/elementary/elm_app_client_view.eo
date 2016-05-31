@@ -44,7 +44,7 @@ class Elm.App.Client.View (Eo.Base)
       }
       path_set {
         params {
-            path: const(char) *;
+            path: string;
         }
       }
       @property path {
@@ -60,7 +60,7 @@ class Elm.App.Client.View (Eo.Base)
             [[Get application package]]
          }
          values {
-            ret: const(char)*; [[Package of application]]
+            ret: string; [[Package of application]]
          }
       }
       @property icon {
@@ -68,7 +68,7 @@ class Elm.App.Client.View (Eo.Base)
             [[Get icon path of view]]
          }
          values {
-            ret: const(char)*; [[icon path of view]]
+            ret: string; [[icon path of view]]
          }
       }
       @property progress {
@@ -86,7 +86,7 @@ class Elm.App.Client.View (Eo.Base)
             [[Get title of view]]
          }
          values {
-            ret: const(char)*; [[title of view]]
+            ret: string; [[title of view]]
          }
       }
       pause {

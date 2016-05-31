@@ -28,7 +28,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
          set {
          }
          values {
-            name: const (char) *; [[The name of the eet stream.]]
+            name: string; [[The name of the eet stream.]]
             func: Ecore_Con_Eet_Data_Cb; [[The callback function.]]
             data: const (void) *; [[The data (if any) that should be
                                     passed to callback function.]]
@@ -40,7 +40,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
          set {
          }
          values {
-            name: const (char) *; [[The name of the eet stream.]]
+            name: string; [[The name of the eet stream.]]
             func: Ecore_Con_Eet_Raw_Data_Cb; [[The callback function.]]
             data: const (void) *; [[The data (if any) that should be
                                     passed to callback function.]]
@@ -49,13 +49,13 @@ class Ecore.Con.Eet.Base (Eo.Base) {
       data_callback_del {
          [[Function to delete the @.data_callback.]]
          params {
-            name: const (char) *; [[The name of the eet stream.]]
+            name: string; [[The name of the eet stream.]]
          }
       }
       raw_data_callback_del {
          [[Function to delete the @.raw_data_callback.]]
          params {
-            name: const (char) *; [[The name of the eet stream.]]
+            name: string; [[The name of the eet stream.]]
          }
       }
       register {
@@ -63,7 +63,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
            ecore_con_eet object.]]
          legacy: ecore_con_eet;
          params {
-            name: const (char) *; [[The name of the eet stream.]]
+            name: string; [[The name of the eet stream.]]
             edd: Eet.Data.Descriptor *; [[The Eet.Data.Descriptor that
                                           is to be registered.]]
          }
@@ -73,7 +73,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
          params {
             reply: Ecore.Con.Reply *; [[Contains the ecore_con_eet object
                                         to which the data has to be sent.]]
-            name: const (char) *; [[The name of the eet stream.]]
+            name: string; [[The name of the eet stream.]]
             value: void *; [[Actual data]]
          }
       }
@@ -82,8 +82,8 @@ class Ecore.Con.Eet.Base (Eo.Base) {
          params {
             reply: Ecore.Con.Reply *; [[Contains the ecore_con_eet object
                                         to which the data has to be sent.]]
-            protocol_name: const (char) *; [[The name of the eet stream.]]
-            section: const (char) *; [[Name of section in the eet descriptor.]]
+            protocol_name: string; [[The name of the eet stream.]]
+            section: string; [[Name of section in the eet descriptor.]]
             value: void *; [[The value of the section.]]
             length: uint; [[The length of the data that is being sent.]]
          }

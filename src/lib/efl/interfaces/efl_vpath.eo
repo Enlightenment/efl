@@ -23,7 +23,7 @@ interface Efl.Vpath
       fetch {
          [[ Fetch a new Vpath File object from the Vpath system ]]
          params {
-            path: const(char)*; [[ The input virtual file path to fetch ]]
+            path: string; [[ The input virtual file path to fetch ]]
          }
          return: own(Efl.Vpath.File); [[ An object representing the file ]]
       }

@@ -14,7 +14,7 @@ class Efl.Network.Server (Efl.Network) {
          get {
          }
          values {
-            name: const(char) *; [[The name of the server.]]
+            name: string; [[The name of the server.]]
          }
       }
       @property client_limit {

@@ -99,7 +99,7 @@ class Elm.Datetime (Elm.Layout)
             [[Get the datetime format.]]
          }
          values {
-            fmt: const(char)* @nullable; [[The datetime format.]]
+            fmt: string @nullable; [[The datetime format.]]
          }
       }
       field_limit_set {

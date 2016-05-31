@@ -12,7 +12,7 @@ class Efl.Ui.Layout_Internal.Table (Eo.Base, Efl.Pack.Grid)
          values {
             layout: Eo.Base;
             pack: Eo.Base;
-            part: const(char)*;
+            part: string;
          }
       }
    }

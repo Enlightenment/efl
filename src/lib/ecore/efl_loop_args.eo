@@ -6,7 +6,7 @@ class Efl.Loop.Args (Eo.Base)
          [[Add a new set of arguments to the loop that makes an args event.]]
          params {
             argc: int; [[The number of strings in the argv array.]]
-            argv: const(char)**; [[The array of argument strings.]]
+            argv: string*; [[The array of argument strings.]]
          }
       }
       arg_num_get {
@@ -16,7 +16,7 @@ class Efl.Loop.Args (Eo.Base)
          params {
             num: int; [[The argument number to get.]]
          }
-         return: const(char)*; [[The argument string.]]
+         return: string; [[The argument string.]]
       }
    }
    implements {

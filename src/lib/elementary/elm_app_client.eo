@@ -19,14 +19,14 @@ class Elm.App.Client (Eo.Base)
             [[Return the application package.]]
          }
          values {
-            ret: const(char)*; [[application package]]
+            ret: string; [[application package]]
          }
       }
       constructor {
          [[Class constructor of elm_app_client.]]
          legacy: null;
          params {
-            @in package: const(char)*; [[Package of application]]
+            @in package: string; [[Package of application]]
          }
       }
       view_all_close {

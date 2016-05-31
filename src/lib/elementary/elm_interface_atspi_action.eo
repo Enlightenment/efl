@@ -8,7 +8,7 @@ mixin Elm.Interface.Atspi_Action ()
             [[Gets action name for given id]]
          }
          values {
-            name: const(char)*;
+            name: string;
          }
          keys {
             id: int;
@@ -19,7 +19,7 @@ mixin Elm.Interface.Atspi_Action ()
             [[Gets localized action name for given id]]
          }
          values {
-            name: const(char)*;
+            name: string;
          }
          keys {
             id: int;
@@ -34,7 +34,7 @@ mixin Elm.Interface.Atspi_Action ()
             return: bool;
          }
          values {
-            description: const(char)*;
+            description: string;
          }
          keys {
             id: int;

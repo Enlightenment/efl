@@ -11,7 +11,7 @@ interface Efl.Container (Efl.Gfx)
             content: Efl.Gfx;
          }
          values {
-            name: const(char)*;
+            name: string;
          }
       }
       @property content {

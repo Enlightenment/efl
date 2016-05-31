@@ -28,7 +28,7 @@ interface Efl.Text.Properties {
             ]]
          }
          values {
-            font: const(char) *; [[The font family name or filename.]]
+            font: string; [[The font family name or filename.]]
             size: Efl_Font_Size; [[The font size, in points.]]
          }
       }
@@ -51,7 +51,7 @@ interface Efl.Text.Properties {
             ]]
          }
          values {
-            font_source: const(char)*; [[The font file's path.]]
+            font_source: string; [[The font file's path.]]
          }
       }
    }

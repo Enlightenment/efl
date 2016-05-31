@@ -11,7 +11,7 @@ interface Elm.Interface.Atspi.Value ()
          }
          values {
             value: double; [[Value of widget casted to floating point number.]]
-            text: const(char)*; [[string describing value in given context eg. small, enough]]
+            text: string; [[string describing value in given context eg. small, enough]]
          }
       }
       @property range @protected {
@@ -21,7 +21,7 @@ interface Elm.Interface.Atspi.Value ()
          values {
             lower_limit: double;
             upper_limit: double;
-            description: const(char)*;
+            description: string;
          }
       }
       @property increment @protected {

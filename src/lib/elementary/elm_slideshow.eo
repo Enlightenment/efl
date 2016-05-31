@@ -57,7 +57,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
             [[Get the current slide layout in use for a given slideshow widget.]]
          }
          values {
-            layout: const(char)*; [[The new layout's name string.]]
+            layout: string; [[The new layout's name string.]]
          }
       }
       @property transition {
@@ -76,7 +76,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
             ]]
          }
          values {
-            transition: const(char)* @nullable; [[The new transition's name string.]]
+            transition: string @nullable; [[The new transition's name string.]]
          }
       }
       @property loop {
@@ -173,7 +173,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
               is valid and has not internally changed its list for some
               reason, so make a copy if you need it around.
             ]]
-            return: const(list<const(char)*>); [[
+            return: const(list<string>); [[
                The list of transitions (list of stringshared strings
                as data).
             ]]
@@ -220,7 +220,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
               like to use them out of this call's context, you'd better
               \@ref eina_stringshare_ref them.
             ]]
-            return: const(list<const(char)*>); [[
+            return: const(list<string>); [[
                The list of layouts (list of stringshared strings as data)
             ]]
          }

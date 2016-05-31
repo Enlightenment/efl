@@ -28,9 +28,9 @@ interface Elm.Sys_Notify_Interface
          params {
             @in replaces_id: uint; [[Notification ID that this notification replaces.
                                      The value 0 means a new notification.]]
-            @in icon: const(char) *; [[The optional program icon of the calling application]]
-            @in summary: const(char) *; [[The summary text briefly describing the notification]]
-            @in body: const(char) * @optional; [[The optional detailed body text. Can be empty]]
+            @in icon: string; [[The optional program icon of the calling application]]
+            @in summary: string; [[The summary text briefly describing the notification]]
+            @in body: string @optional; [[The optional detailed body text. Can be empty]]
             @in urgency: Elm.Sys_Notify.Urgency; [[The urgency level]]
             @in timeout: int; [[Timeout display in milliseconds]]
             @in cb: Elm_Sys_Notify_Send_Cb; [[Callback used to retrieve the notification id
@@ -46,9 +46,9 @@ interface Elm.Sys_Notify_Interface
          ]]
 
          params {
-            @in icon: const(char) *; [[The optional program icon of the calling application]]
-            @in summary: const(char) *; [[The summary text briefly describing the notification]]
-            @in body: const(char) *; [[The optional detailed body text. Can be empty]]
+            @in icon: string; [[The optional program icon of the calling application]]
+            @in summary: string; [[The summary text briefly describing the notification]]
+            @in body: string; [[The optional detailed body text. Can be empty]]
          }
       }
       close @const {

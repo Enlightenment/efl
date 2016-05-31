@@ -28,7 +28,7 @@ class Elm.App.Server.View (Eo.Base)
          get {
          }
          values {
-            icon: const(char)*;
+            icon: string;
          }
       }
       @property title {
@@ -37,7 +37,7 @@ class Elm.App.Server.View (Eo.Base)
          get {
          }
          values {
-            title: const(char)* @nullable;
+            title: string @nullable;
          }
       }
       @property window {
@@ -53,7 +53,7 @@ class Elm.App.Server.View (Eo.Base)
          get {
          }
          values {
-            ret: const(char) *;
+            ret: string;
          }
       }
       @property state {
@@ -67,7 +67,7 @@ class Elm.App.Server.View (Eo.Base)
          get {
          }
          values {
-            ret: const(char)*;
+            ret: string;
          }
       }
       @property pixels {

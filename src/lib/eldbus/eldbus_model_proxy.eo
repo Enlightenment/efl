@@ -17,7 +17,7 @@ class Eldbus.Model.Proxy (Eo.Base, Efl.Model) {
             [[Proxy name]]
             get {}
             values {
-                name: const(char)*; [[Proxy name]]
+                name: string; [[Proxy name]]
             }
         }
     }

@@ -100,7 +100,7 @@ class Elm.Index (Elm.Layout, Efl.Orientation,
 
          return: Elm.Widget.Item; [[A handle to the item added or $NULL, on errors]]
          params {
-            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in letter: string; [[Letter under which the item should be indexed]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is selected.]]
             @in data: const(void)* @optional; [[The item data to set for the index's item]]
          }
@@ -127,7 +127,7 @@ class Elm.Index (Elm.Layout, Efl.Orientation,
          return: Elm.Widget.Item; [[A handle to the item added or $NULL, on errors]]
          params {
             @in after: Elm.Widget.Item; [[The index item to insert after.]]
-            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in letter: string; [[Letter under which the item should be indexed]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
             @in data: const(void)* @optional; [[The item data to set for the index's item]]
          }
@@ -156,7 +156,7 @@ class Elm.Index (Elm.Layout, Efl.Orientation,
          return: Elm.Widget.Item; [[A handle to the item added or $NULL, on errors]]
          params {
             @in before: Elm.Widget.Item; [[The index item to insert after.]]
-            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in letter: string; [[Letter under which the item should be indexed]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
             @in data: const(void)* @optional; [[The item data to set for the index's item]]
          }
@@ -173,7 +173,7 @@ class Elm.Index (Elm.Layout, Efl.Orientation,
 
          return: Elm.Widget.Item; [[A handle to the item added or $NULL, on errors]]
          params {
-            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in letter: string; [[Letter under which the item should be indexed]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is selected.]]
             @in data: const(void)* @optional; [[The item data to set for the index's item]]
          }
@@ -198,7 +198,7 @@ class Elm.Index (Elm.Layout, Efl.Orientation,
 
          return: Elm.Widget.Item; [[A handle to the item added or $NULL, on errors]]
          params {
-            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in letter: string; [[Letter under which the item should be indexed]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
             @in data: const(void)* @optional; [[The item data to set for the index's item]]
             @in cmp_func: Eina_Compare_Cb; [[The comparing function to be used to sort index items by index item handles]]
