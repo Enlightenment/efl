@@ -2857,7 +2857,7 @@ _efl_loop_args_add(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, int argc, const char 
 
    if (!args) return;
    efl_loop_args_set(args, argc, argv);
-   job = efl_loop_job(obj, args);
+   job = efl_loop_job(obj, NULL);
    eina_promise_then(job, _efl_loop_args_job_cb, NULL, args);
 }
 
