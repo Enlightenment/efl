@@ -302,5 +302,6 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #ifdef EFL_EO_API_SUPPORT
 #include "canvas/efl_event_input.eo.h"
 #include "canvas/efl_event_pointer.eo.h"
-#endif /* EFL_EO_API_SUPPORT */
 #include "canvas/efl_event_key.eo.h"
+#include "canvas/efl_event_hold.eo.h"
+#endif /* EFL_EO_API_SUPPORT */

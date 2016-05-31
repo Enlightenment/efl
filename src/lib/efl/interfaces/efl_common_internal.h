@@ -16,6 +16,7 @@
 typedef struct _Efl_Event_Pointer_Data  Efl_Event_Pointer_Data;
 typedef struct _Efl_Event_Key_Data      Efl_Event_Key_Data;
 typedef struct _Efl_Input_Device_Data   Efl_Input_Device_Data;
+typedef struct _Efl_Event_Hold_Data     Efl_Event_Hold_Data;
 
 #ifndef _EVAS_TYPES_EOT_H_
 typedef struct _Evas_Modifier Evas_Modifier;
@@ -88,6 +89,16 @@ struct _Efl_Input_Device_Data
    Eina_Stringshare *desc;
    Efl_Input_Device_Class klass;
    Efl_Input_Device_Sub_Class subclass;
+};
+
+struct _Efl_Event_Hold_Data
+{
+   Eo               *eo;
+   double            timestamp;
+   Efl_Input_Device *device;
+   void             *data;
+   Eina_Bool         hold : 1;
+   Eina_Bool         evas_done : 1; /* set by evas */
 };
 
 #endif

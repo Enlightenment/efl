@@ -1,0 +1,24 @@
+class Efl.Event.Hold (Eo.Base, Efl.Event.Input)
+{
+   [[Event data sent when inputs are put on hold or resumed.]]
+   methods {
+      @property hold {
+         [[$true if inputs are now on hold.]]
+         values {
+            val: bool;
+         }
+      }
+      @property device {
+         [[Input device that is now on hold or resumed.]]
+         values {
+            dev: Efl.Input.Device;
+         }
+      }
+      /* FIXME: does not expose event_flags - is it necessary? */
+   }
+   implements {
+      Eo.Base.constructor;
+      Efl.Event.timestamp.get;
+      Efl.Event.timestamp.set;
+   }
+}

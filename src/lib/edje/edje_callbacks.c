@@ -6,7 +6,7 @@
 static void
 _edje_hold_signal_cb(void *data, const Eo_Event *event)
 {
-   Evas_Event_Hold *ev;
+   Efl_Event_Hold *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
@@ -14,7 +14,7 @@ _edje_hold_signal_cb(void *data, const Eo_Event *event)
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return;
-   if (ev->hold)
+   if (efl_event_hold_get(ev))
      _edje_emit(ed, "hold,on", rp->part->name);
    else
      _edje_emit(ed, "hold,off", rp->part->name);
@@ -430,7 +430,7 @@ _edje_pending_timer_cb(void *data)
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(edje_callbacks,
-                          { EFL_CANVAS_OBJECT_EVENT_HOLD, _edje_hold_signal_cb },
+                          { EFL_EVENT_HOLD, _edje_hold_signal_cb },
                           { EFL_EVENT_POINTER_IN, _edje_mouse_in_signal_cb },
                           { EFL_EVENT_POINTER_OUT, _edje_mouse_out_signal_cb },
                           { EFL_EVENT_POINTER_DOWN, _edje_mouse_down_signal_cb },

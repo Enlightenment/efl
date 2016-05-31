@@ -83,6 +83,7 @@ _efl_event_create(Efl_Event *evt, Evas_Callback_Type type, void *ev,
       EV_CASE(MOUSE_WHEEL, Mouse_Wheel, POINTER, pointer);
       EV_CASE(KEY_DOWN, Key_Down, KEY, key);
       EV_CASE(KEY_UP, Key_Up, KEY, key);
+      EV_CASE(HOLD, Hold, HOLD, hold);
 
       default:
         DBG("Support for event type %d not implemented yet.", type);
@@ -597,25 +598,28 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
 }
 
 static void
-_evas_event_source_hold_events(Evas_Object *eo_obj, Evas *eo_e EINA_UNUSED, void *ev, int event_id)
+_evas_event_source_hold_events(Evas_Object *eo_obj, Evas *eo_e EINA_UNUSED, void *ev,
+                               int event_id, Efl_Event_Hold *parent_he)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
    Evas_Object_Protected_Data *src = eo_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *child;
+   Efl_Event_Hold *he = NULL;
+   Evas_Object *eo_child;
+   Eina_List *l;
 
    if (obj->layer->evas->is_frozen) return;
 
-   Eina_List *l;
-   Evas_Object *child_eo;
-   Evas_Object_Protected_Data *child;
-   EINA_LIST_FOREACH(src->proxy->src_event_in, l, child_eo)
+   EINA_LIST_FOREACH(src->proxy->src_event_in, l, eo_child)
      {
         if (src->delete_me) return;
-        child = eo_data_scope_get(child_eo, EFL_CANVAS_OBJECT_CLASS);
-        evas_object_event_callback_call(child_eo, child, EVAS_CALLBACK_HOLD, ev,
-                                        event_id, NULL, NULL);
+        child = eo_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
+        EV_CALL(eo_child, child, EVAS_CALLBACK_HOLD, ev, event_id, he, parent_he);
         if (src->layer->evas->delete_me) break;
      }
+
+   EV_DEL(he);
 }
 
 static void
@@ -2904,6 +2908,7 @@ EAPI void
 evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *data)
 {
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Efl_Event_Hold *he = NULL;
    Eina_List *l, *copy;
    Evas_Event_Hold ev;
    Evas_Object *eo_obj;
@@ -2929,10 +2934,9 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
         Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
         if ( !evas_event_freezes_through(eo_obj, obj))
           {
-             evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_HOLD,
-                                             &ev, event_id, NULL, NULL);
+             EV_CALL(eo_obj, obj, EVAS_CALLBACK_HOLD, &ev, event_id, he, NULL);
              if ((obj->proxy->is_proxy) && (obj->proxy->src_events))
-               _evas_event_source_hold_events(eo_obj, eo_e, &ev, event_id);
+               _evas_event_source_hold_events(eo_obj, eo_e, &ev, event_id, he);
           }
         if (e->delete_me || e->is_frozen) break;
      }
@@ -2941,6 +2945,8 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
    if (ev.dev) eo_unref(ev.dev);
    _evas_unwalk(e);
    _evas_object_event_new();
+
+   EV_DEL(he);
 }
 
 void
@@ -3352,6 +3358,7 @@ _evas_canvas_event_key_cb(void *data, const Eo_Event *event)
    ev->evas_done = EINA_TRUE;
 }
 
+// note: "hold" event comes from above (elm), not below (ecore)
 EO_CALLBACKS_ARRAY_DEFINE(_evas_canvas_event_pointer_callbacks,
 { EFL_EVENT_POINTER_MOVE, _evas_canvas_event_pointer_cb },
 { EFL_EVENT_POINTER_DOWN, _evas_canvas_event_pointer_cb },

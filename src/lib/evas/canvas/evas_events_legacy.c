@@ -260,3 +260,24 @@ efl_event_key_legacy_info_set(Efl_Event_Key *evt, const void *event_info, Evas_C
 
    return EINA_TRUE;
 }
+
+Eina_Bool
+efl_event_hold_legacy_info_set(Efl_Event_Hold *evt, const void *event_info, Evas_Callback_Type type)
+{
+   Efl_Event_Hold_Data *ev = eo_data_scope_get(evt, EFL_EVENT_HOLD_CLASS);
+   const Evas_Event_Hold *e = event_info;
+
+   if (!ev || !event_info) return EINA_FALSE;
+
+   if (type != EVAS_CALLBACK_HOLD)
+     {
+        ERR("invalid event type %d", type);
+        return EINA_FALSE;
+     }
+
+   ev->timestamp = e->timestamp;
+   ev->device = e->dev;
+   ev->hold = !!e->hold;
+
+   return EINA_TRUE;
+}

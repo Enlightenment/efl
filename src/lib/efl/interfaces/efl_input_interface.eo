@@ -15,5 +15,6 @@ interface Efl.Input.Interface ()
       pointer,wheel: Efl.Event.Pointer;
       key,down: Efl.Event.Key;
       key,up: Efl.Event.Key;
+      hold: Efl.Event.Hold; [[All input events are on hold or resumed.]]
    }
 }
