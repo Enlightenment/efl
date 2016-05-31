@@ -3207,7 +3207,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
              _canvas_event_feed_multi_move_internal(eo_e, e, ev->finger, ev->cur.x, ev->cur.y,
                                                     ev->radius, ev->radius_x, ev->radius_y,
                                                     ev->pressure, ev->angle,
-                                                    ev->cur.xsub, ev->cur.ysub,
+                                                    ev->cur.x, ev->cur.y,
                                                     ev->timestamp, ev->data, ev);
           }
         break;
@@ -3222,7 +3222,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
              _canvas_event_feed_multi_down_internal(eo_e, e, ev->finger, ev->cur.x, ev->cur.y,
                                                     ev->radius, ev->radius_x, ev->radius_y,
                                                     ev->pressure, ev->angle,
-                                                    ev->cur.xsub, ev->cur.ysub, ev->button_flags,
+                                                    ev->cur.x, ev->cur.y, ev->button_flags,
                                                     ev->timestamp, ev->data, ev);
           }
         break;
@@ -3237,7 +3237,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
              _canvas_event_feed_multi_up_internal(eo_e, e, ev->finger, ev->cur.x, ev->cur.y,
                                                   ev->radius, ev->radius_x, ev->radius_y,
                                                   ev->pressure, ev->angle,
-                                                  ev->cur.xsub, ev->cur.ysub, ev->button_flags,
+                                                  ev->cur.x, ev->cur.y, ev->button_flags,
                                                   ev->timestamp, ev->data, ev);
           }
         break;

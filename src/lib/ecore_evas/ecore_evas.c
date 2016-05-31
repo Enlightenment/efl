@@ -4291,27 +4291,24 @@ ecore_evas_psl1ght_new(const char* name, int w, int h)
  *  3. let evas send legacy & eo events to the objects
  */
 
-#define EVENT_XY_SET(EV, X, Y, MX, MY, FX, FY) do { \
-   EV->cur.x = (X) - (FX); EV->cur.xsub = (MX) - (FX); \
-   EV->cur.y = (Y) - (FY); EV->cur.ysub = (MY) - (FY); \
+#define EVENT_XY_SET(EV, MX, MY, FX, FY) do { \
+   EV->cur.x = (MX) - (FX); EV->cur.y = (MY) - (FY); \
    } while (0)
 
 static inline void
-_pointer_position_set(Efl_Pointer_Event_Data *ev, Ecore_Evas *ee, int x, int y, double mx, double my)
+_pointer_position_set(Efl_Pointer_Event_Data *ev, Ecore_Evas *ee, double mx, double my)
 {
    int fx, fy, fw, fh;
 
    evas_output_framespace_get(ee->evas, &fx, &fy, &fw, &fh);
    if (ee->rotation == 0)
-     EVENT_XY_SET(ev, x, y, mx, my, fx, fy);
+     EVENT_XY_SET(ev, mx, my, fx, fy);
    else if (ee->rotation == 90)
-     EVENT_XY_SET(ev, ee->h + fw - y - 1, x, ee->h + fw - my - 1, mx, fx, fy);
+     EVENT_XY_SET(ev, ee->h + fw - my - 1, mx, fx, fy);
    else if (ee->rotation == 180)
-     EVENT_XY_SET(ev, ee->w + fw - x - 1, ee->h + fh - y - 1,
-                  ee->w + fw - mx - 1, ee->h + fh - my - 1,
-                  fx, fy);
+     EVENT_XY_SET(ev, ee->w + fw - mx - 1, ee->h + fh - my - 1, fx, fy);
    else if (ee->rotation == 270)
-     EVENT_XY_SET(ev, y, ee->w + fh - x - 1, y, ee->w + fh - mx - 1, fx, fy);
+     EVENT_XY_SET(ev, my, ee->w + fh - mx - 1, fx, fy);
 }
 
 static const Eo_Event_Description *
@@ -4363,7 +4360,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
    if (info->triple_click) ev->button_flags |= EFL_POINTER_BUTTON_FLAGS_TRIPLE_CLICK;
    ev->timestamp = info->timestamp;
    ev->finger = info->multi.device;
-   _pointer_position_set(ev, ee, info->x, info->y, info->multi.x, info->multi.y);
+   _pointer_position_set(ev, ee, info->multi.x, info->multi.y);
    ev->radius = info->multi.radius;
    ev->radius_x = info->multi.radius_x;
    ev->radius_y = info->multi.radius_y;
@@ -4418,7 +4415,7 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
    ev->action = EFL_POINTER_ACTION_MOVE;
    ev->timestamp = info->timestamp;
    ev->finger = info->multi.device;
-   _pointer_position_set(ev, ee, info->x, info->y, info->multi.x, info->multi.y);
+   _pointer_position_set(ev, ee, info->multi.x, info->multi.y);
 
    ev->radius = info->multi.radius;
    ev->radius_x = info->multi.radius_x;
@@ -4454,7 +4451,7 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
 
    ev->action = EFL_POINTER_ACTION_WHEEL;
    ev->timestamp = info->timestamp;
-   _pointer_position_set(ev, ee, info->x, info->y, info->x, info->y);
+   _pointer_position_set(ev, ee, info->x, info->y);
    ev->wheel.z = info->z;
    ev->wheel.dir = info->direction ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL;
 
@@ -4483,7 +4480,7 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
 
    ev->action = action;
    ev->timestamp = info->timestamp;
-   _pointer_position_set(ev, ee, info->x, info->y, info->x, info->y);
+   _pointer_position_set(ev, ee, info->x, info->y);
 
    eo_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;

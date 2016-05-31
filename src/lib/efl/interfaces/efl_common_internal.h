@@ -33,8 +33,7 @@ struct _Efl_Pointer_Event_Data
    double          pressure;
    double          angle;
    struct {
-      int          x, y;
-      double       xsub, ysub; // couldn't we just cast from double to int?
+      double       x, y;
    } cur, prev;
    struct {
       Efl_Orient   dir;

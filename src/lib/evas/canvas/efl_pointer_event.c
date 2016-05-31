@@ -151,32 +151,56 @@ _efl_pointer_event_button_pressed_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Dat
 }
 
 EOLIAN static void
-_efl_pointer_event_position_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int x, int y, double xsub, double ysub)
+_efl_pointer_event_position_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int x, int y)
 {
-   pd->cur.x = x;
-   pd->cur.y = y;
-   pd->cur.xsub = xsub;
-   pd->cur.ysub = ysub;
+   pd->cur.x = (double) x;
+   pd->cur.y = (double) y;
 }
 
 EOLIAN static void
-_efl_pointer_event_position_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int *x, int *y, double *xsub, double *ysub)
+_efl_pointer_event_position_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int *x, int *y)
+{
+   if (x) *x = (int) pd->cur.x;
+   if (y) *y = (int) pd->cur.y;
+}
+
+EOLIAN static void
+_efl_pointer_event_position_precise_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, double x, double y)
+{
+   pd->cur.x = x;
+   pd->cur.y = y;
+}
+
+EOLIAN static void
+_efl_pointer_event_position_precise_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, double *x, double *y)
 {
    if (x) *x = pd->cur.x;
    if (y) *y = pd->cur.y;
-   if (xsub) *xsub = pd->cur.xsub;
-   if (ysub) *ysub = pd->cur.ysub;
 }
 
 EOLIAN static void
 _efl_pointer_event_previous_position_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int x, int y)
+{
+   pd->prev.x = (double) x;
+   pd->prev.y = (double) y;
+}
+
+EOLIAN static void
+_efl_pointer_event_previous_position_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int *x, int *y)
+{
+   if (x) *x = (int) pd->prev.x;
+   if (y) *y = (int) pd->prev.y;
+}
+
+EOLIAN static void
+_efl_pointer_event_previous_position_precise_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, double x, double y)
 {
    pd->prev.x = x;
    pd->prev.y = y;
 }
 
 EOLIAN static void
-_efl_pointer_event_previous_position_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, int *x, int *y)
+_efl_pointer_event_previous_position_precise_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, double *x, double *y)
 {
    if (x) *x = pd->prev.x;
    if (y) *y = pd->prev.y;

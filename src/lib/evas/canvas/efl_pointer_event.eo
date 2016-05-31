@@ -29,14 +29,21 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event, Efl.Input.State)
             pressed: bool;
          }
       }
-      /* FIXME: output vs. canvas position??? */
       @property position {
          [[Position where the event happened, relative to the window.]]
          values {
             x: int;
             y: int;
-            xsub: double;
-            ysub: double;
+         }
+      }
+      @property position_precise  {
+         [[Position where the event happened, with subpixel precision
+
+           Note: Same value as @.position, relative to the window.
+         ]]
+         values {
+            x: double;
+            y: double;
          }
       }
       @property previous_position {
@@ -47,6 +54,17 @@ class Efl.Pointer.Event (Eo.Base, Efl.Event, Efl.Input.State)
          values {
             x: int;
             y: int;
+         }
+      }
+      @property previous_position_precise {
+         [[Position of the previous event, with subpixel precision.
+
+           Valid for move events, may not be valid for other events.
+           Relative to the window. May be equal to @.position_precise.
+         ]]
+         values {
+            x: double;
+            y: double;
          }
       }
       @property device {
