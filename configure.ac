@@ -1651,6 +1651,17 @@ AC_ARG_ENABLE([ecore_wayland],
    ],
    [want_ecore_wayland="no"])
 
+AC_ARG_ENABLE([ecore_drm],
+   [AS_HELP_STRING([--enable-ecore-drm],[enable legacy Ecore_Drm support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_ecore_drm="yes"
+    else
+       want_ecore_drm="no"
+    fi
+   ],
+   [want_ecore_drm="no"])
+
 ### Default values
 
 if test "${have_windows}" = "yes"; then
@@ -2098,7 +2109,7 @@ AC_ARG_ENABLE([drm],
       fi
       want_drm="yes"
     else
-       want_drm="no"
+      want_drm="no"
     fi
    ],
    [want_drm="no"])
@@ -3511,7 +3522,7 @@ AM_CONDITIONAL([HAVE_EEZE_TIZEN], [test "x${want_tizen}" = "xyes"])
 
 #### Ecore_Drm
 have_libinput_new="no"
-EFL_LIB_START_OPTIONAL([Ecore_Drm], [test "${want_drm}" = "yes"])
+EFL_LIB_START_OPTIONAL([Ecore_Drm], [test "${want_ecore_drm}" = "yes"])
 
 ### Additional options to configure
 SUID_CFLAGS=-fPIE
@@ -5796,6 +5807,8 @@ echo "Ecore_File......: yes"
 echo "Ecore_IMF.......: yes (${features_ecore_imf})"
 echo "Ecore_X.........: ${with_x11} (${features_ecore_x})"
 echo "Ecore_SDL.......: $want_sdl"
+echo "Ecore_Drm.......: $want_ecore_drm"
+echo "Ecore_Drm2......: $want_drm"
 echo "Ecore_Wayland...: $want_ecore_wayland"
 echo "Ecore_Wl2.......: $want_wayland"
 echo "IVI-Shell.......: $want_wayland_ivi_shell"

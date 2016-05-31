@@ -30,6 +30,8 @@
 #  endif // ifdef __GNUC__
 # endif // ifdef _MSC_VER
 
+# warning The Ecore_Drm library has been deprecated. Please use the Ecore_Drm2 library
+
 # ifdef __cplusplus
 extern "C" {
 # endif
