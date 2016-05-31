@@ -972,7 +972,7 @@ _efl_ui_image_smart_download_done(void *data, Elm_Url *url, Eina_Binbuf *downloa
    sd->remote = NULL;
    if (!ret)
      {
-        Elm_Image_Error err = { 0, EINA_TRUE };
+        Efl_Ui_Image_Error err = { 0, EINA_TRUE };
 
         free(sd->remote_data);
         sd->remote_data = NULL;
@@ -997,7 +997,7 @@ _efl_ui_image_smart_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int er
 {
    Eo *obj = data;
    Efl_Ui_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
-   Elm_Image_Error err = { error, EINA_FALSE };
+   Efl_Ui_Image_Error err = { error, EINA_FALSE };
 
    eo_event_callback_call(obj, EFL_UI_IMAGE_EVENT_DOWNLOAD_ERROR, &err);
 
@@ -1009,7 +1009,7 @@ static void
 _efl_ui_image_smart_download_progress(void *data, Elm_Url *url EINA_UNUSED, double now, double total)
 {
    Eo *obj = data;
-   Elm_Image_Progress progress;
+   Efl_Ui_Image_Progress progress;
 
    progress.now = now;
    progress.total = total;

@@ -4,7 +4,7 @@
  * @{
  */
 
-#include "elm_image.eo.h"
+#include "efl_ui_image.eo.h"
 
 /**
  * @}

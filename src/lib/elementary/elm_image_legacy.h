@@ -10,6 +10,8 @@
  */
 EAPI Evas_Object     *elm_image_add(Evas_Object *parent);
 
+typedef Evas_Object Elm_Image;
+
 /**
  * Set the file that will be used as the image's source.
  *
@@ -629,4 +631,4 @@ EAPI void elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
  */
 EAPI Eina_Bool elm_image_aspect_fixed_get(const Evas_Object *obj);
 
-#include "elm_image.eo.legacy.h"
+#include "efl_ui_image.eo.legacy.h"
