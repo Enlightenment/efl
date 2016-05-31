@@ -1614,7 +1614,7 @@ _emile_jpeg_data(Emile_Image *image,
    struct
    {
       unsigned int x, y, w, h;
-   } opts_region;
+   } opts_region = {0, 0, 0, 0};
    volatile int degree = 0;
    volatile Eina_Bool change_wh = EINA_FALSE;
    Eina_Bool line_done = EINA_FALSE;
