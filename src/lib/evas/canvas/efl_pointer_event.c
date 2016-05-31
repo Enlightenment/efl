@@ -338,7 +338,7 @@ _efl_pointer_event_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Poi
    return evas_key_lock_is_set(pd->locks, name);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _efl_pointer_event_double_click_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, Eina_Bool val)
 {
    if (val)
@@ -353,7 +353,7 @@ _efl_pointer_event_double_click_get(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data 
    return !!(pd->button_flags & EFL_POINTER_BUTTON_FLAGS_DOUBLE_CLICK);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _efl_pointer_event_triple_click_set(Eo *obj EINA_UNUSED, Efl_Pointer_Event_Data *pd, Eina_Bool val)
 {
    if (val)

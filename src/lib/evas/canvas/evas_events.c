@@ -94,10 +94,37 @@ _pointer_event_create(Evas_Callback_Type type, void *ev,
    return evt;
 }
 
+static inline void
+_pointer_event_flags_adjust(Efl_Pointer_Event_Data *pedata,
+                            Evas_Callback_Type type, const void *ev)
+{
+#define EV_CASE(TYPE, Type) \
+   case EVAS_CALLBACK_ ## TYPE: \
+     pedata->event_flags = ((Evas_Event_ ## Type *) ev)->event_flags; \
+     break;
+
+   switch (type)
+     {
+      EV_CASE(MOUSE_MOVE, Mouse_Move);
+      EV_CASE(MOUSE_OUT, Mouse_Out);
+      EV_CASE(MOUSE_IN, Mouse_In);
+      EV_CASE(MOUSE_DOWN, Mouse_Down);
+      EV_CASE(MOUSE_UP, Mouse_Up);
+      EV_CASE(MULTI_MOVE, Multi_Move);
+      EV_CASE(MULTI_DOWN, Multi_Down);
+      EV_CASE(MULTI_UP, Multi_Up);
+      EV_CASE(MOUSE_WHEEL, Mouse_Wheel);
+      default: break;
+     }
+
+#undef EV_CASE
+}
+
 #define EV_CALL(_eo_obj, _obj, _typ, _ev, _id, _pe) do { \
    if (!_pe) _pe = _pointer_event_create(_typ, _ev, parent_pe, & _pe ## data); \
    else efl_pointer_event_legacy_info_set(_pe, _ev, _typ); \
    evas_object_event_callback_call(_eo_obj, _obj, _typ, _ev, _id); \
+   _pointer_event_flags_adjust(_pe ## data, _typ, _ev); \
    } while (0)
 #define EV_RESET(a) do { if (a) efl_event_reset(a); } while (0)
 #define EV_DEL(a) do { if (a) { eo_unref(a); } a = NULL; } while (0)
