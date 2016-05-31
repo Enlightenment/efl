@@ -6,7 +6,7 @@ enum Elm.Icon.Type
    standard
 }
 
-class Elm.Icon (Elm.Image)
+class Elm.Icon (Efl.Ui.Image)
 {
    legacy_prefix: elm_icon;
    eo_prefix: elm_obj_icon;

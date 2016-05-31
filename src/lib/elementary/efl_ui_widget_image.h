@@ -12,11 +12,11 @@
 typedef struct _Async_Open_Data Async_Open_Data;
 typedef enum
   {
-     ELM_IMAGE_PRELOAD_ENABLED,
-     ELM_IMAGE_PRELOADING,
-     ELM_IMAGE_PRELOADED,
-     ELM_IMAGE_PRELOAD_DISABLED
-  } Elm_Image_Preload_Status;
+     EFL_UI_IMAGE_PRELOAD_ENABLED,
+     EFL_UI_IMAGE_PRELOADING,
+     EFL_UI_IMAGE_PRELOADED,
+     EFL_UI_IMAGE_PRELOAD_DISABLED
+  } Efl_Ui_Image_Preload_Status;
 
 /**
  * @addtogroup Widget
@@ -40,8 +40,8 @@ typedef enum
 /**
  * Base widget smart data extended with image instance data.
  */
-typedef struct _Elm_Image_Data Elm_Image_Data;
-struct _Elm_Image_Data
+typedef struct _Efl_Ui_Image_Data Efl_Ui_Image_Data;
+struct _Efl_Ui_Image_Data
 {
    Evas_Object          *hit_rect;
    Evas_Object          *img;
@@ -73,8 +73,8 @@ struct _Elm_Image_Data
       Eina_Spinlock      lck;
    } async;
 
-   Elm_Image_Preload_Status preload_status;
-   Elm_Image_Scale_Type scale_type;
+   Efl_Ui_Image_Preload_Status preload_status;
+   Efl_Ui_Image_Scale_Type scale_type;
 
    const char           *stdicon;
 
@@ -106,11 +106,11 @@ struct _Elm_Image_Data
  * @}
  */
 
-#define ELM_IMAGE_DATA_GET(o, sd) \
-  Elm_Image_Data * sd = eo_data_scope_get(o, ELM_IMAGE_CLASS)
+#define EFL_UI_IMAGE_DATA_GET(o, sd) \
+  Efl_Ui_Image_Data * sd = eo_data_scope_get(o, EFL_UI_IMAGE_CLASS)
 
-#define ELM_IMAGE_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_IMAGE_DATA_GET(o, ptr);                        \
+#define EFL_UI_IMAGE_DATA_GET_OR_RETURN(o, ptr)         \
+  EFL_UI_IMAGE_DATA_GET(o, ptr);                        \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        CRI("No widget data for object %p (%s)",      \
@@ -118,8 +118,8 @@ struct _Elm_Image_Data
        return;                                       \
     }
 
-#define ELM_IMAGE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_IMAGE_DATA_GET(o, ptr);                         \
+#define EFL_UI_IMAGE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  EFL_UI_IMAGE_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
        CRI("No widget data for object %p (%s)",       \
@@ -127,8 +127,8 @@ struct _Elm_Image_Data
        return val;                                    \
     }
 
-#define ELM_IMAGE_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_IMAGE_CLASS))) \
+#define EFL_UI_IMAGE_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), EFL_UI_IMAGE_CLASS))) \
     return
 
 #endif

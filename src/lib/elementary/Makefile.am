@@ -44,7 +44,7 @@ elm_eolian_files = \
 	elm_hover.eo \
 	elm_hoversel.eo \
 	elm_icon.eo \
-	elm_image.eo \
+	efl_ui_image.eo \
 	elm_index.eo \
 	elm_interface_atspi_accessible.eo \
 	elm_interface_atspi_action.eo \
@@ -191,7 +191,7 @@ includesunstable_HEADERS = \
 	elm_widget_hover.h \
 	elm_widget_hoversel.h \
 	elm_widget_icon.h \
-	elm_widget_image.h \
+	efl_ui_widget_image.h \
 	elm_widget_index.h \
 	elm_widget_inwin.h \
 	elm_widget_label.h \
@@ -553,7 +553,7 @@ libelementary_la_SOURCES = \
 	elm_grid.c \
 	elm_hover.c \
 	elm_icon.c \
-	elm_image.c \
+	efl_ui_image.c \
 	elm_index.c \
 	elm_interface_atspi_accessible.c \
 	elm_interface_atspi_action.c \

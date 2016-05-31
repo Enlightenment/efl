@@ -8,7 +8,7 @@
 
 #include "elm_priv.h"
 #include "elm_widget_icon.h"
-#include "elm_widget_image.h"
+#include "efl_ui_widget_image.h"
 
 #define NON_EXISTING (void *)-1
 
@@ -298,7 +298,7 @@ static void
 _edje_signals_free(Elm_Icon_Data *sd)
 {
    Edje_Signal_Data *esd;
-   Elm_Image_Data *id = eo_data_scope_get(sd->obj, ELM_IMAGE_CLASS);
+   Efl_Ui_Image_Data *id = eo_data_scope_get(sd->obj, EFL_UI_IMAGE_CLASS);
 
    EINA_LIST_FREE(sd->edje_signals, esd)
      {
@@ -316,7 +316,7 @@ _elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const 
 {
    Evas_Object *pclip;
 
-   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_IMAGE_CLASS);
+   Efl_Ui_Image_Data *id = eo_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
@@ -527,7 +527,7 @@ _elm_icon_signal_emit(Evas_Object *obj,
                       const char *source)
 {
 
-   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_IMAGE_CLASS);
+   Efl_Ui_Image_Data *id = eo_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
 
    if (!id->edje) return;
 
@@ -545,7 +545,7 @@ _elm_icon_signal_callback_add(Evas_Object *obj,
    Edje_Signal_Data *esd;
 
    ELM_ICON_DATA_GET(obj, sd);
-   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_IMAGE_CLASS);
+   Efl_Ui_Image_Data *id = eo_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
 
    if (!id->edje) return;
 
@@ -576,7 +576,7 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
    Eina_List *l;
 
    ELM_ICON_DATA_GET(obj, sd);
-   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_IMAGE_CLASS);
+   Efl_Ui_Image_Data *id = eo_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
 
    if (!id->edje) return NULL;
 

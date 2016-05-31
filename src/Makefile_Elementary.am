@@ -39,7 +39,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_hover.eo \
 	lib/elementary/elm_hoversel.eo \
 	lib/elementary/elm_icon.eo \
-	lib/elementary/elm_image.eo \
+	lib/elementary/efl_ui_image.eo \
 	lib/elementary/elm_index.eo \
 	lib/elementary/elm_interface_atspi_accessible.eo \
 	lib/elementary/elm_interface_atspi_action.eo \
@@ -219,7 +219,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_hover.h \
 	lib/elementary/elm_widget_hoversel.h \
 	lib/elementary/elm_widget_icon.h \
-	lib/elementary/elm_widget_image.h \
+	lib/elementary/efl_ui_widget_image.h \
 	lib/elementary/elm_widget_index.h \
 	lib/elementary/elm_widget_inwin.h \
 	lib/elementary/elm_widget_label.h \
@@ -584,7 +584,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_grid.c \
 	lib/elementary/elm_hover.c \
 	lib/elementary/elm_icon.c \
-	lib/elementary/elm_image.c \
+	lib/elementary/efl_ui_image.c \
 	lib/elementary/elm_index.c \
 	lib/elementary/elm_interface_atspi_accessible.c \
 	lib/elementary/elm_interface_atspi_action.c \

@@ -1,6 +1,6 @@
 import evas_image;
 
-enum Elm.Image.Scale_Type
+enum Efl.Ui.Image.Scale_Type
 {
    [[Enumeration that defines scale types for the object's internal image.
 
@@ -24,7 +24,7 @@ enum Elm.Image.Scale_Type
    none         [[Not scale the internal image]]
 }
 
-struct Elm.Image.Progress
+struct Efl.Ui.Image.Progress
 {
    [[
      Structure associated with smart callback 'download,progress'.
@@ -34,7 +34,7 @@ struct Elm.Image.Progress
    total: double;
 }
 
-struct Elm.Image.Error
+struct Efl.Ui.Image.Error
 {
    [[
      Structure associated with smart callback 'download,progress'.
@@ -44,14 +44,12 @@ struct Elm.Image.Error
    open_error: bool;
 }
 
-class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
+class Efl.Ui.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
                  Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View, 
                  Elm.Interface.Atspi_Image, Elm.Interface.Atspi_Widget_Action,
                  Edje.Object, Efl.Orientation, Efl.Flipable)
 {
-   legacy_prefix: elm_image;
-   eo_prefix: elm_obj_image;
-   event_prefix: elm_image;
+   event_prefix: efl_ui_image;
    methods {
       @property scale_type {
          [[Control how the internal image is scaled.
@@ -62,7 +60,7 @@ class Elm.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
          get {
          }
          values {
-            scale_type: Elm.Image.Scale_Type;
+            scale_type: Efl.Ui.Image.Scale_Type;
          }
       }
       @property scalable {
