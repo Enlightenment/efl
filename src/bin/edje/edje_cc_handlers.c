@@ -2035,6 +2035,7 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
         switch (ep2->action)
           {
            case EDJE_ACTION_TYPE_STATE_SET:
+           case EDJE_ACTION_TYPE_SIGNAL_EMIT:
            case EDJE_ACTION_TYPE_DRAG_VAL_SET:
            case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
            case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
