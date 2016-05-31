@@ -4069,6 +4069,7 @@ _elm_map_evas_object_smart_add(Eo *obj, Elm_Map_Data *priv)
    elm_interface_scrollable_objects_set(obj, edje, priv->hit_rect);
    elm_interface_scrollable_wheel_disabled_set(obj, EINA_TRUE);
    elm_interface_scrollable_bounce_allow_set(obj, _elm_config->thumbscroll_bounce_enable, _elm_config->thumbscroll_bounce_enable);
+   elm_interface_scrollable_single_direction_set(obj, ELM_SCROLLER_SINGLE_DIRECTION_NONE);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints_cb, obj);
