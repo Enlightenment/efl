@@ -619,10 +619,6 @@ BUILT_SOURCES += \
 $(evas_software_generic_eolian_c) \
 $(evas_software_generic_eolian_h)
 
-CLEANFILES += \
-$(evas_software_generic_eolian_c) \
-$(evas_software_generic_eolian_h)
-
 ### Engines
 
 if EVAS_STATIC_BUILD_SOFTWARE_GENERIC
@@ -830,10 +826,6 @@ evas_gl_generic_eolian_h = $(evas_gl_generic_eolian_files:%.eo=%.eo.h) \
 BUILT_SOURCES += \
                  $(evas_gl_generic_eolian_c) \
                  $(evas_gl_generic_eolian_h)
-
-CLEANFILES += \
-              $(evas_gl_generic_eolian_c) \
-              $(evas_gl_generic_eolian_h)
 
 EXTRA_DIST += $(evas_gl_generic_eolian_files)
 

@@ -1119,7 +1119,6 @@ elm_web_none_eolian_files = modules/elementary/web/none/elm_web_none.eo
 elm_web_none_eolian_c = $(elm_web_none_eolian_files:%.eo=%.eo.c)
 elm_web_none_eolian_h = $(elm_web_none_eolian_files:%.eo=%.eo.h)
 
-CLEANFILES += $(elm_web_none_eolian_c) $(elm_web_none_eolian_h)
 EXTRA_DIST += $(elm_web_none_eolian_files)
 BUILT_SOURCES += $(elm_web_none_eolian_c) $(elm_web_none_eolian_h)
 

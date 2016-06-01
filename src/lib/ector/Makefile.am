@@ -62,10 +62,6 @@ BUILT_SOURCES = \
 	$(ector_eolian_c) \
 	$(ector_eolian_h)
 
-CLEANFILES = \
-	$(ector_eolian_c) \
-	$(ector_eolian_h)
-
 ectoreolianfilesdir = $(datadir)/eolian/include/ector-@VMAJ@
 ectoreolianfiles_DATA = $(ector_eolian_files) $(ector_eolian_type_files)
 

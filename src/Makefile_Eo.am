@@ -14,10 +14,6 @@ BUILT_SOURCES += \
                  $(eo_eolian_c) \
                  $(eo_eolian_h)
 
-CLEANFILES += \
-              $(eo_eolian_c) \
-              $(eo_eolian_h)
-
 lib_LTLIBRARIES += lib/eo/libeo.la
 
 installed_eomainheadersdir = $(includedir)/eo-@VMAJ@
