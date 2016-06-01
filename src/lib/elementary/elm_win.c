@@ -4929,15 +4929,6 @@ _win_rotate(Evas_Object *obj, Elm_Win_Data *sd, int rotation, Eina_Bool resize)
      (obj, ELM_WIN_EVENT_ROTATION_CHANGED, NULL);
 }
 
-EOLIAN static int
-_elm_win_screen_rotation_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   //TODO: query to wm about device's rotation
-   (void)sd;
-
-   return 0;
-}
-
 EOLIAN static void
 _elm_win_wm_available_rotations_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const int *rotations, unsigned int count)
 {
@@ -5076,9 +5067,24 @@ _elm_win_screen_constrain_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_screen_dpi_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *xdpi, int *ydpi)
+_elm_win_efl_screen_size_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *w, int *h)
+{
+   ecore_evas_screen_geometry_get(sd->ee, NULL, NULL, w, h);
+}
+
+EOLIAN static void
+_elm_win_efl_screen_dpi_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *xdpi, int *ydpi)
 {
    ecore_evas_screen_dpi_get(sd->ee, xdpi, ydpi);
+}
+
+EOLIAN static int
+_elm_win_efl_screen_rotation_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
+{
+   //TODO: query to wm about device's rotation
+   (void)sd;
+
+   return 0;
 }
 
 EOLIAN static void
@@ -6219,6 +6225,15 @@ elm_win_screen_position_get(const Evas_Object *obj, int *x, int *y)
 
    if (x) *x = sd->screen.x;
    if (y) *y = sd->screen.y;
+}
+
+EAPI void
+elm_win_efl_screen_dpi_get(const Evas_Object *obj, int *xdpi, int *ydpi)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   ecore_evas_screen_dpi_get(sd->ee, xdpi, ydpi);
 }
 
 #include "elm_win.eo.c"

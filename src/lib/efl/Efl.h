@@ -80,6 +80,8 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_spin.eo.h"
 #include "interfaces/efl_ui_progress.eo.h"
 
+#include "interfaces/efl_screen.eo.h"
+
 #define EFL_ORIENT_0   EFL_ORIENT_UP
 #define EFL_ORIENT_90  EFL_ORIENT_RIGHT
 #define EFL_ORIENT_180 EFL_ORIENT_DOWN

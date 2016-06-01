@@ -697,3 +697,18 @@ EAPI void elm_win_screen_position_get(const Evas_Object *obj, int *x, int *y);
  * @ingroup Elm_Win
  */
 EAPI void elm_win_screen_size_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
+
+/**
+ * @brief Get screen dpi for the screen that a window is on.
+ *
+ * @param[out] xdpi Pointer to value to store return horizontal dpi. May be
+ * @c null.
+ * @param[out] ydpi Pointer to value to store return vertical dpi. May be
+ * @c null.
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_screen_dpi_get(const Evas_Object *obj, int *xdpi, int *ydpi);
+

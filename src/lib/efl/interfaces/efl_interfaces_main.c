@@ -28,6 +28,8 @@
 
 #include "interfaces/efl_vpath.eo.c"
 
+#include "interfaces/efl_screen.eo.c"
+
 EAPI const Eo_Event_Description _EFL_GFX_CHANGED =
   EO_EVENT_DESCRIPTION("Graphics changed");
 

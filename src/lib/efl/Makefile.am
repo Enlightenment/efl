@@ -36,6 +36,7 @@ interfaces/efl_vpath_core.eo \
 interfaces/efl_vpath_file_core.eo \
 interfaces/efl_ui_spin.eo \
 interfaces/efl_ui_progress.eo \
+interfaces/efl_screen.eo \
 $(efl_eolian_legacy_files) \
 $(NULL)
 

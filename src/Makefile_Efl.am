@@ -42,6 +42,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_event.eo \
       lib/efl/interfaces/efl_input_interface.eo \
       lib/efl/interfaces/efl_input_state.eo \
+      lib/efl/interfaces/efl_screen.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
 
