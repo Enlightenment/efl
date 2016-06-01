@@ -675,3 +675,25 @@ EAPI Eina_Bool elm_win_wm_rotation_supported_get(const Evas_Object *obj);
  */
 EAPI int elm_win_wm_rotation_preferred_rotation_get(const Evas_Object *obj);
 
+
+/**
+ * @brief Get the screen position of a window.
+ *
+ * @param[out] x The int to store the x coordinate to.
+ * @param[out] y The int to store the y coordinate to.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_screen_position_get(const Evas_Object *obj, int *x, int *y);
+
+/**
+ * @brief Get screen geometry details for the screen that a window is on.
+ *
+ * @param[out] x Where to return the horizontal offset value. May be @c null.
+ * @param[out] y Where to return the vertical offset value. May be @c null.
+ * @param[out] w Where to return the width value. May be @c null.
+ * @param[out] h Where to return the height value. May be @c null.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_screen_size_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);

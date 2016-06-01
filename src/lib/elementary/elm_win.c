@@ -5057,13 +5057,6 @@ _elm_win_indicator_type_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED)
    return ELM_WIN_INDICATOR_TYPE_UNKNOWN;
 }
 
-EOLIAN static void
-_elm_win_screen_position_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *x, int *y)
-{
-   if (x) *x = sd->screen.x;
-   if (y) *y = sd->screen.y;
-}
-
 EOLIAN static Eina_Bool
 _elm_win_focus_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
@@ -5080,12 +5073,6 @@ EOLIAN static Eina_Bool
 _elm_win_screen_constrain_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
    return sd->constrain;
-}
-
-EOLIAN static void
-_elm_win_screen_size_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *x, int *y, int *w, int *h)
-{
-   ecore_evas_screen_geometry_get(sd->ee, x, y, w, h);
 }
 
 EOLIAN static void
@@ -6213,6 +6200,25 @@ elm_win_wm_rotation_preferred_rotation_set(Evas_Object *obj, int rotation)
 {
    ELM_WIN_CHECK(obj);
    elm_win_wm_preferred_rotation_set(obj, rotation);
+}
+
+EAPI void
+elm_win_screen_size_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   ecore_evas_screen_geometry_get(sd->ee, x, y, w, h);
+}
+
+EAPI void
+elm_win_screen_position_get(const Evas_Object *obj, int *x, int *y)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   if (x) *x = sd->screen.x;
+   if (y) *y = sd->screen.y;
 }
 
 #include "elm_win.eo.c"

@@ -737,30 +737,10 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             skip: bool; [[The skip flag state ($true if it is to be skipped).]]
          }
       }
-      @property screen_position {
-         get {
-            [[Get the screen position of a window.]]
-         }
-         values {
-            x: int; [[The int to store the x coordinate to.]]
-            y: int; [[The int to store the y coordinate to.]]
-         }
-      }
       @property focus {
          get {
             [[Get whether a window has focus.]]
             return: bool;
-         }
-      }
-      @property screen_size {
-         get {
-            [[Get screen geometry details for the screen that a window is on.]]
-         }
-         values {
-            x: int; [[Where to return the horizontal offset value. May be $null.]]
-            y: int; [[Where to return the vertical offset value. May be $null.]]
-            w: int; [[Where to return the width value. May be $null.]]
-            h: int; [[Where to return the height value. May be $null.]]
          }
       }
       @property main_menu {
