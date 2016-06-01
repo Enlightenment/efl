@@ -880,6 +880,10 @@ _elm_win_mouse_in(Ecore_Evas *ee)
    if (!sd) return;
 
    if (sd->resizing) sd->resizing = EINA_FALSE;
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+#endif
 }
 
 static void
