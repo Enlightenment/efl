@@ -2,9 +2,6 @@
 #include "evas_private.h"
 #include "evas_engine.h"
 
-/* When other buffer managers are supported this will become
- * #ifdef HAVE_DRM_FOR_WAYLAND_SHM
- */
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -23,8 +20,6 @@
       }                            \
    } while (0)
 
-static drm_intel_bufmgr *buffer_manager;
-
 static Eina_Bool dmabuf_totally_hosed;
 
 static int drm_fd = -1;
@@ -32,15 +27,30 @@ static int drm_fd = -1;
 typedef struct _Dmabuf_Surface Dmabuf_Surface;
 
 typedef struct _Dmabuf_Buffer Dmabuf_Buffer;
+typedef struct _Buffer_Handle Buffer_Handle;
+typedef struct _Buffer_Manager Buffer_Manager;
+struct _Buffer_Manager
+{
+   Buffer_Handle *(*alloc)(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd);
+   void *(*map)(Dmabuf_Buffer *buf);
+   void (*unmap)(Dmabuf_Buffer *buf);
+   void (*discard)(Dmabuf_Buffer *buf);
+   void *priv;
+};
+
+Buffer_Manager *buffer_manager = NULL;
+
 struct _Dmabuf_Buffer
 {
+   Buffer_Manager *bm;
    Dmabuf_Surface *surface;
    struct wl_buffer *wl_buffer;
    int w, h;
    int age;
    unsigned long stride;
-   drm_intel_bo *bo;
+   Buffer_Handle *bh;
    int fd;
+   void *mapping;
 
    int index;
    Eina_Bool locked : 1;
@@ -78,17 +88,72 @@ drm_intel_bo *(*sym_drm_intel_bo_alloc_tiled)(drm_intel_bufmgr *mgr, const char 
 void (*sym_drm_intel_bo_unreference)(drm_intel_bo *bo) = NULL;
 int (*sym_drmPrimeHandleToFD)(int fd, uint32_t handle, uint32_t flags, int *prime_fd);
 
-static drm_intel_bufmgr *
-_get_buffer_manager(void)
+static Buffer_Handle *
+_intel_alloc(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd)
 {
-   int fd;
-   void *drm_intel_lib;
-   Eina_Bool fail = EINA_FALSE;
+   uint32_t tile = I915_TILING_NONE;
+   drm_intel_bo *out;
 
-   if (buffer_manager) return buffer_manager;
+   out = sym_drm_intel_bo_alloc_tiled(self->priv, name, w, h, 4, &tile,
+                                       stride, 0);
+
+   if (!out) return NULL;
+
+   if (tile != I915_TILING_NONE) goto err;
+   /* First try to allocate an mmapable buffer with O_RDWR,
+    * if that fails retry unmappable - if the compositor is
+    * using GL it won't need to mmap the buffer and this can
+    * work - otherwise it'll reject this buffer and we'll
+    * have to fall back to shm rendering.
+    */
+   if (sym_drmPrimeHandleToFD(drm_fd, out->handle,
+                              DRM_CLOEXEC | O_RDWR, fd) != 0)
+     if (sym_drmPrimeHandleToFD(drm_fd, out->handle,
+                                DRM_CLOEXEC, fd) != 0) goto err;
+
+   return (Buffer_Handle *)out;
+
+err:
+   sym_drm_intel_bo_unreference(out);
+   return NULL;
+}
+
+static void *
+_intel_map(Dmabuf_Buffer *buf)
+{
+   drm_intel_bo *bo;
+
+   bo = (drm_intel_bo *)buf->bh;
+   if (sym_drm_intel_gem_bo_map_gtt(bo) != 0) return NULL;
+   return bo->virtual;
+}
+
+static void
+_intel_unmap(Dmabuf_Buffer *buf)
+{
+   drm_intel_bo *bo;
+
+   bo = (drm_intel_bo *)buf->bh;
+   sym_drm_intel_gem_bo_unmap_gtt(bo);
+}
+
+static void
+_intel_discard(Dmabuf_Buffer *buf)
+{
+   drm_intel_bo *bo;
+
+   bo = (drm_intel_bo *)buf->bh;
+   sym_drm_intel_bo_unreference(bo);
+}
+
+static Eina_Bool
+_intel_buffer_manager_setup(int fd)
+{
+   Eina_Bool fail = EINA_FALSE;
+   void *drm_intel_lib;
 
    drm_intel_lib = dlopen("libdrm_intel.so", RTLD_LAZY | RTLD_GLOBAL);
-   if (!drm_intel_lib) goto err_dlopen;
+   if (!drm_intel_lib) return EINA_FALSE;
 
    SYM(drm_intel_lib, drm_intel_bufmgr_gem_init);
    SYM(drm_intel_lib, drm_intel_gem_bo_unmap_gtt);
@@ -97,22 +162,48 @@ _get_buffer_manager(void)
    SYM(drm_intel_lib, drm_intel_bo_unreference);
    SYM(drm_intel_lib, drmPrimeHandleToFD);
 
-   if (fail) goto err_dlsym;
+   if (fail) goto err;
+
+   buffer_manager->priv = sym_drm_intel_bufmgr_gem_init(fd, 32);
+   if (!buffer_manager->priv) goto err;
+
+   buffer_manager->alloc = _intel_alloc;
+   buffer_manager->map = _intel_map;
+   buffer_manager->unmap = _intel_unmap;
+   buffer_manager->discard = _intel_discard;
+
+   return EINA_TRUE;
+
+err:
+   dlclose(drm_intel_lib);
+   return EINA_FALSE;
+}
+
+static Buffer_Manager *
+_buffer_manager_get(void)
+{
+   int fd;
+   Eina_Bool success = EINA_FALSE;
+
+   if (buffer_manager) return buffer_manager;
+
+   buffer_manager = calloc(1, sizeof(Buffer_Manager));
+   if (!buffer_manager) goto err_alloc;
 
    fd = open("/dev/dri/renderD128", O_RDWR);
-   if (fd < 0) goto err_dlsym;
+   if (fd < 0) goto err_drm;
 
-   buffer_manager = sym_drm_intel_bufmgr_gem_init(fd, 32);
-   if (!buffer_manager) goto err_bufmgr;
+   success = _intel_buffer_manager_setup(fd);
+   if (!success) goto err_bm;
 
    drm_fd = fd;
    return buffer_manager;
 
-err_bufmgr:
+err_bm:
    close(fd);
-err_dlsym:
-   dlclose(drm_intel_lib);
-err_dlopen:
+err_drm:
+   free(buffer_manager);
+err_alloc:
    dmabuf_totally_hosed = EINA_TRUE;
    return NULL;
 }
@@ -219,7 +310,8 @@ static const struct zwp_linux_buffer_params_v1_listener params_listener =
 static void
 _evas_dmabuf_buffer_unlock(Dmabuf_Buffer *b)
 {
-   sym_drm_intel_gem_bo_unmap_gtt(b->bo);
+   b->bm->unmap(b);
+   b->mapping = NULL;
    b->locked = EINA_FALSE;
 }
 
@@ -232,7 +324,7 @@ _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
         b->surface = NULL;
         return;
      }
-   sym_drm_intel_bo_unreference(b->bo);
+   b->bm->discard(b);
    if (b->wl_buffer) wl_buffer_destroy(b->wl_buffer);
    b->wl_buffer = NULL;
    free(b);
@@ -267,6 +359,7 @@ _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
 {
    Dmabuf_Surface *surface;
    Dmabuf_Buffer *b;
+   void *ptr;
 
    surface = s->surf.dmabuf;
    b = surface->current;
@@ -277,13 +370,15 @@ _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
     */
    if (w) *w = b->stride / 4;
    if (h) *h = b->h;
-   if (b->locked) return b->bo->virtual;
+   if (b->locked) return b->mapping;
 
-   if (sym_drm_intel_gem_bo_map_gtt(b->bo) != 0)
+   ptr = b->bm->map(b);
+   if (!ptr)
      return NULL;
 
+   b->mapping = ptr;
    b->locked = EINA_TRUE;
-   return b->bo->virtual;
+   return b->mapping;
 }
 
 static Dmabuf_Buffer *
@@ -372,31 +467,25 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
 {
    Dmabuf_Buffer *out;
    struct zwp_linux_buffer_params_v1 *dp;
-   drm_intel_bufmgr *mgr = _get_buffer_manager();
-   uint32_t tile = I915_TILING_NONE;
+   Buffer_Manager *bm = _buffer_manager_get();
    uint32_t flags = ZWP_LINUX_BUFFER_PARAMS_V1_FLAGS_Y_INVERT;
 
-   if (!mgr) return NULL;
+   if (!bm) return NULL;
 
    out = calloc(1, sizeof(Dmabuf_Buffer));
    if (!out) return NULL;
 
+   out->bm = bm;
+
    out->surface = s;
-   out->bo = sym_drm_intel_bo_alloc_tiled(mgr, "name", w, h, 4, &tile,
-                                          &out->stride, 0);
+   out->bh = bm->alloc(bm, "name", w, h, &out->stride, &out->fd);
+   if (!out->bh)
+   {
+      free(out);
+      return NULL;
+   }
    out->w = w;
    out->h = h;
-   if (tile != I915_TILING_NONE) goto err;
-   /* First try to allocate an mmapable buffer with O_RDWR,
-    * if that fails retry unmappable - if the compositor is
-    * using GL it won't need to mmap the buffer and this can
-    * work - otherwise it'll reject this buffer and we'll
-    * have to fall back to shm rendering.
-    */
-   if (sym_drmPrimeHandleToFD(drm_fd, out->bo->handle,
-                              DRM_CLOEXEC | O_RDWR, &out->fd) != 0)
-     if (sym_drmPrimeHandleToFD(drm_fd, out->bo->handle,
-                                DRM_CLOEXEC, &out->fd) != 0) goto err;
 
    out->pending = EINA_TRUE;
    dp = zwp_linux_dmabuf_v1_create_params(out->surface->dmabuf);
@@ -405,9 +494,6 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    zwp_linux_buffer_params_v1_create(dp, out->w, out->h,
                                      DRM_FORMAT_ARGB8888, flags);
    return out;
-err:
-   _evas_dmabuf_buffer_destroy(out);
-   return NULL;
 }
 
 static void
@@ -438,7 +524,7 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    if (dmabuf_totally_hosed) return EINA_FALSE;
 
    if (!s->info->info.wl_dmabuf) return EINA_FALSE;
-   if (!_get_buffer_manager()) return EINA_FALSE;
+   if (!_buffer_manager_get()) return EINA_FALSE;
 
    if (!(s->surf.dmabuf = calloc(1, sizeof(Dmabuf_Surface)))) goto err;
    surf = s->surf.dmabuf;
