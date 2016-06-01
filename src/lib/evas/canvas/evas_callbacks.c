@@ -71,53 +71,33 @@ typedef struct
 
 
 static inline void *
-_pointer_event_get(const _eo_evas_object_cb_info *info, const Eo_Event *event,
-                   const Eo_Event_Description **pdesc)
+_efl_event_get(const _eo_evas_object_cb_info *info, const Eo_Event *event,
+               const Eo_Event_Description **pdesc, Efl_Event_Flags **pflags)
 {
    if (!info->data) return NULL;
 
    /* See also evas_events.c: _pointer_event_create() */
 
 #define EV_CASE(TYPE, NEWTYPE, Type) \
-   case EVAS_CALLBACK_ ## TYPE: \
-     *pdesc = EFL_EVENT_POINTER_ ## NEWTYPE; \
-     return ((Evas_Event_ ## Type *) event->info)->reserved
+      case EVAS_CALLBACK_ ## TYPE: \
+        *pdesc = EFL_EVENT_ ## NEWTYPE; \
+        *pflags = &((Evas_Event_ ## Type *) event->info)->event_flags; \
+        return ((Evas_Event_ ## Type *) event->info)->reserved
    switch (info->type)
      {
-      EV_CASE(MOUSE_MOVE, MOVE, Mouse_Move);
-      EV_CASE(MOUSE_OUT, OUT, Mouse_Out);
-      EV_CASE(MOUSE_IN, IN, Mouse_In);
-      EV_CASE(MOUSE_DOWN, DOWN, Mouse_Down);
-      EV_CASE(MOUSE_UP, UP, Mouse_Up);
-      EV_CASE(MULTI_MOVE, MOVE, Multi_Move);
-      EV_CASE(MULTI_DOWN, DOWN, Multi_Down);
-      EV_CASE(MULTI_UP, UP, Multi_Up);
-      EV_CASE(MOUSE_WHEEL, WHEEL, Mouse_Wheel);
+      EV_CASE(MOUSE_MOVE,  POINTER_MOVE,  Mouse_Move);
+      EV_CASE(MOUSE_OUT,   POINTER_OUT,   Mouse_Out);
+      EV_CASE(MOUSE_IN,    POINTER_IN,    Mouse_In);
+      EV_CASE(MOUSE_DOWN , POINTER_DOWN,  Mouse_Down);
+      EV_CASE(MOUSE_UP,    POINTER_UP,    Mouse_Up);
+      EV_CASE(MULTI_MOVE,  POINTER_MOVE,  Multi_Move);
+      EV_CASE(MULTI_DOWN,  POINTER_DOWN,  Multi_Down);
+      EV_CASE(MULTI_UP,    POINTER_UP,    Multi_Up);
+      EV_CASE(MOUSE_WHEEL, POINTER_WHEEL, Mouse_Wheel);
+      EV_CASE(KEY_DOWN,    KEY_DOWN,      Key_Down);
+      EV_CASE(KEY_UP,      KEY_UP,        Key_Up);
       default: return NULL;
      }
-#undef EV_CASE
-
-}
-
-static void
-_event_flags_adjust(void *ev, const Efl_Event_Pointer_Data *pedata)
-{
-#define EV_CASE(NEWTYPE, Type) \
-   case EFL_POINTER_ACTION_ ## NEWTYPE: \
-     ((Evas_Event_ ## Type *) ev)->event_flags = pedata->event_flags; \
-     break;
-
-   switch (pedata->action)
-     {
-      EV_CASE(MOVE, Mouse_Move);
-      EV_CASE(OUT, Mouse_Out);
-      EV_CASE(IN, Mouse_In);
-      EV_CASE(DOWN, Mouse_Down);
-      EV_CASE(UP, Mouse_Up);
-      EV_CASE(WHEEL, Mouse_Wheel);
-      default: break;
-     }
-
 #undef EV_CASE
 }
 
@@ -127,19 +107,16 @@ _eo_evas_object_cb(void *data, const Eo_Event *event)
    _eo_evas_object_cb_info *info = data;
    const Eo_Event_Description *desc;
    Evas *evas = evas_object_evas_get(event->object);
+   Efl_Event_Flags *pflags;
    void *pe;
 
-   pe = _pointer_event_get(info, event, &desc);
+   pe = _efl_event_get(info, event, &desc, &pflags);
    if (pe)
      {
-        Efl_Event_Pointer_Data *pedata;
-        Efl_Event_Flags flags;
-
-        pedata = eo_data_scope_get(pe, EFL_EVENT_POINTER_CLASS);
-        flags = pedata->event_flags;
+        Efl_Event_Flags flags = efl_event_flags_get(pe);
         eo_event_callback_call(event->object, desc, pe);
-        if (flags != pedata->event_flags)
-          _event_flags_adjust(event->info, pedata);
+        // write changes to event_flags back to the legacy struct
+        *pflags = flags;
      }
    if (info->func)
      {

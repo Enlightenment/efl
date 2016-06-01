@@ -1940,6 +1940,7 @@ Evas_Device *_evas_device_top_get(const Evas *e);
 /* legacy/eo events */
 Eina_Bool efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, const void *event_info, Evas_Callback_Type type);
 const void *efl_event_pointer_legacy_info_get(const Efl_Event_Pointer *evt, Evas_Callback_Type *ptype, Eina_Bool multi);
+Eina_Bool efl_event_key_legacy_info_set(Efl_Event_Key *evt, const void *event_info, Evas_Callback_Type type);
 
 Eina_Bool evas_vg_loader_svg(Evas_Object *vg, const Eina_File *f, const char *key EINA_UNUSED);
 

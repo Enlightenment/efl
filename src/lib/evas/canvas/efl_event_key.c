@@ -116,7 +116,6 @@ _efl_event_key_efl_event_dup(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd)
         pd2->keyname   = eina_stringshare_add(pd->keyname);
         pd2->string    = eina_stringshare_add(pd->string);
         pd2->compose   = eina_stringshare_add(pd->compose);
-        pd2->legacy    = NULL;
         pd2->evas_done = 0;
      }
 
