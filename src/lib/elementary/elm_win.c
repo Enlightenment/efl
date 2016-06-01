@@ -4290,22 +4290,6 @@ _elm_win_title_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_icon_name_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *icon_name)
-{
-   if (!icon_name) return;
-   eina_stringshare_replace(&(sd->icon_name), icon_name);
-#ifdef HAVE_ELEMENTARY_X
-   _elm_win_xwin_update(sd);
-#endif
-}
-
-EOLIAN static const char*
-_elm_win_icon_name_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   return sd->icon_name;
-}
-
-EOLIAN static void
 _elm_win_role_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *role)
 {
    if (!role) return;
@@ -6234,6 +6218,28 @@ elm_win_efl_screen_dpi_get(const Evas_Object *obj, int *xdpi, int *ydpi)
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
    ecore_evas_screen_dpi_get(sd->ee, xdpi, ydpi);
+}
+
+EAPI void
+elm_win_icon_name_set(Evas_Object *obj, const char *icon_name)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   if (!icon_name) return;
+   eina_stringshare_replace(&(sd->icon_name), icon_name);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(sd);
+#endif
+}
+
+EAPI const char*
+elm_win_icon_name_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) NULL;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
+
+   return sd->icon_name;
 }
 
 #include "elm_win.eo.c"

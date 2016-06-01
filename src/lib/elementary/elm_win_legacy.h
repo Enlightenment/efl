@@ -712,3 +712,25 @@ EAPI void elm_win_screen_size_get(const Evas_Object *obj, int *x, int *y, int *w
  */
 EAPI void elm_win_screen_dpi_get(const Evas_Object *obj, int *xdpi, int *ydpi);
 
+/**
+ * @brief Set the icon name of the window.
+ *
+ * @param[in] icon_name The icon name to set.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_icon_name_set(Evas_Object *obj, const char *icon_name);
+
+/**
+ * @brief Get the icon name of the window.
+ *
+ * The returned string is an internal one and should not be freed or modified.
+ * It will also be invalid if a new icon name is set or if the window is
+ * destroyed.
+ *
+ * @return The icon name to set.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI const char *elm_win_icon_name_get(const Evas_Object *obj);
+

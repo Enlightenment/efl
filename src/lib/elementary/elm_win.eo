@@ -1,9 +1,5 @@
 /* FIXME: Shouldn't be here. */
 type Ecore_Evas: __undefined_type;
-type Ecore_X_Window: __undefined_type;
-type Ecore_Wl2_Window: __undefined_type;
-type Ecore_Cocoa_Window: __undefined_type;
-type Ecore_Win32_Window: __undefined_type;
 type Ecore_Window: __undefined_type;
 
 enum Elm.Win.Type
@@ -230,6 +226,104 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             return: bool;
          }
       }
+      @property screen_constrain {
+         set {
+            [[Constrain the maximum width and height of a window to the
+              width and height of its screen.
+
+              When $constrain is $true, $obj will never resize larger than
+              the screen.
+            ]]
+         }
+         get {
+            [[Get the constraints on the maximum width and height of a
+              window relative to the width and height of its screen.
+
+              When this function returns $true, $obj will never resize
+              larger than the screen.
+            ]]
+         }
+         values {
+            constrain: bool; [[$true to restrict the window's maximum size.]]
+         }
+      }
+      @property focus_highlight_style {
+         set {
+            [[Set the style for the focus highlight on this window.
+
+              Sets the style to use for theming the highlight of focused
+              objects on the given window. If $style is NULL, the default
+              will be used.
+            ]]
+         }
+         get {
+            [[Get the style set for the focus highlight object.]]
+         }
+         values {
+            style: string @nullable; [[The style or $null if none.]]
+         }
+      }
+      @property focus_highlight_enabled {
+         set {
+            [[Set the enabled status for the focus highlight in a window.
+
+              This function will enable or disable the focus highlight only
+              for the given window, regardless of the global setting for it.
+            ]]
+         }
+         get {
+            [[Get the enabled value of the focus highlight for this window.]]
+         }
+         values {
+            enabled: bool; [[The enabled value for the highlight.]]
+         }
+      }
+      @property focus_highlight_animate {
+         set {
+            [[Set the animate status for the focus highlight for this window.
+
+              This function will enable or disable the animation of focus
+              highlight only for the given window, regardless of the
+              global setting for it.
+            ]]
+         }
+         get {
+            [[Get the animate value of the focus highlight for this window.]]
+         }
+         values {
+            animate: bool; [[The enabled value for the highlight animation.]]
+         }
+      }
+      @property prop_focus_skip {
+         set {
+            [[Set the window to be skipped by keyboard focus.
+
+              This sets the window to be skipped by normal keyboard input.
+              This means a window manager will be asked to not focus this
+              window as well as omit it from things like the taskbar, pager,
+              "alt-tab" list etc. etc.
+
+              Call this and enable it on a window BEFORE you show it for
+              the first time, otherwise it may have no effect.
+
+              Use this for windows that have only output information or
+              might only be interacted with by the mouse or fingers, and
+              never for typing input. Be careful that this may have
+              side-effects like making the window non-accessible in
+              some cases unless the window is specially handled. Use
+              this with care.
+            ]]
+         }
+         values {
+            skip: bool; [[The skip flag state ($true if it is to be skipped).]]
+         }
+      }
+      @property focus {
+         get {
+            [[Get whether a window has focus.]]
+            return: bool;
+         }
+      }
       @property autodel {
          set {
             [[Set the window's autodel state.
@@ -280,6 +374,43 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                               itself when closed.]]
          }
       }
+      @property icon_object {
+         set {
+            [[Set a window object's icon.
+
+              This sets an image to be used as the icon for the given
+              window, in the window manager decoration part. The exact
+              pixel dimensions of the object (not object size) will be
+              used, and the image pixels will be used as-is when this
+              function is called. If the image object has been updated,
+              then call this function again to source the image pixels
+              and put them on the window's icon. Note that only Evas
+              image objects are allowed.
+            ]]
+            /* FIXME-doc
+            Example of usage:
+            @code
+            icon = evas_object_image_add(evas_object_evas_get(elm_window));
+            evas_object_image_file_set(icon, "/path/to/the/icon", NULL);
+            elm_win_icon_object_set(elm_window, icon);
+            evas_object_show(icon);
+            @endcode
+            */
+            values {
+               icon: Evas.Object @nullable; [[The Evas image object to use for an icon.]]
+            }
+         }
+         get {
+            [[Get the icon object used for the window.
+
+              The object returns is the one marked by @.icon_object.set as
+              the object to use for the window icon.
+            ]]
+            values {
+               icon: const(Evas.Object) @nullable; [[The Evas image object to use for an icon.]]
+            }
+         }
+      }
       @property iconified {
          set {
             [[Set the iconified state of a window.]]
@@ -311,22 +442,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          values {
             modal: bool; [[If true, the window is modal.]]
-         }
-      }
-      @property icon_name {
-         set {
-            [[Set the icon name of the window.]]
-         }
-         get {
-            [[Get the icon name of the window.
-
-              The returned string is an internal one and should not be
-              freed or modified. It will also be invalid if a new icon
-              name is set or if the window is destroyed.
-            ]]
-         }
-         values {
-            icon_name: string; [[The icon name to set.]]
          }
       }
       @property withdrawn {
@@ -377,22 +492,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             h: int; [[The stepping height (0 disables).]]
          }
       }
-      @property focus_highlight_style {
-         set {
-            [[Set the style for the focus highlight on this window.
-
-              Sets the style to use for theming the highlight of focused
-              objects on the given window. If $style is NULL, the default
-              will be used.
-            ]]
-         }
-         get {
-            [[Get the style set for the focus highlight object.]]
-         }
-         values {
-            style: string @nullable; [[The style or $null if none.]]
-         }
-      }
       @property borderless {
          set {
             [[Set the borderless state of a window.
@@ -406,27 +505,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          values {
             borderless: bool; [[If true, the window is borderless.]]
-         }
-      }
-      @property screen_constrain {
-         set {
-            [[Constrain the maximum width and height of a window to the
-              width and height of its screen.
-
-              When $constrain is $true, $obj will never resize larger than
-              the screen.
-            ]]
-         }
-         get {
-            [[Get the constraints on the maximum width and height of a
-              window relative to the width and height of its screen.
-
-              When this function returns $true, $obj will never resize
-              larger than the screen.
-            ]]
-         }
-         values {
-            constrain: bool; [[$true to restrict the window's maximum size.]]
          }
       }
       @property available_profiles {
@@ -450,21 +528,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                count: uint; [[The number of members in profiles.]]
             }
             return: bool;
-         }
-      }
-      @property focus_highlight_enabled {
-         set {
-            [[Set the enabled status for the focus highlight in a window.
-
-              This function will enable or disable the focus highlight only
-              for the given window, regardless of the global setting for it.
-            ]]
-         }
-         get {
-            [[Get the enabled value of the focus highlight for this window.]]
-         }
-         values {
-            enabled: bool; [[The enabled value for the highlight.]]
          }
       }
       @property title {
@@ -521,43 +584,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             urgent: bool; [[If true, the window is urgent.]]
          }
       }
-      @property icon_object {
-         set {
-            [[Set a window object's icon.
-
-              This sets an image to be used as the icon for the given
-              window, in the window manager decoration part. The exact
-              pixel dimensions of the object (not object size) will be
-              used, and the image pixels will be used as-is when this
-              function is called. If the image object has been updated,
-              then call this function again to source the image pixels
-              and put them on the window's icon. Note that only Evas
-              image objects are allowed.
-            ]]
-            /* FIXME-doc
-            Example of usage:
-            @code
-            icon = evas_object_image_add(evas_object_evas_get(elm_window));
-            evas_object_image_file_set(icon, "/path/to/the/icon", NULL);
-            elm_win_icon_object_set(elm_window, icon);
-            evas_object_show(icon);
-            @endcode
-            */
-            values {
-               icon: Evas.Object @nullable; [[The Evas image object to use for an icon.]]
-            }
-         }
-         get {
-            [[Get the icon object used for the window.
-
-              The object returns is the one marked by @.icon_object.set as
-              the object to use for the window icon.
-            ]]
-            values {
-               icon: const(Evas.Object) @nullable; [[The Evas image object to use for an icon.]]
-            }
-         }
-      }
       @property sticky {
          set {
             [[Set the sticky state of the window.
@@ -572,22 +598,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          values {
             sticky: bool; [[If true, the window's sticky state is enabled.]]
-         }
-      }
-      @property focus_highlight_animate {
-         set {
-            [[Set the animate status for the focus highlight for this window.
-
-              This function will enable or disable the animation of focus
-              highlight only for the given window, regardless of the
-              global setting for it.
-            ]]
-         }
-         get {
-            [[Get the animate value of the focus highlight for this window.]]
-         }
-         values {
-            animate: bool; [[The enabled value for the highlight animation.]]
          }
       }
       @property aspect {
@@ -701,36 +711,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          values {
             w: int; [[The base width.]]
             h: int; [[The base height.]]
-         }
-      }
-      @property prop_focus_skip {
-         set {
-            [[Set the window to be skipped by keyboard focus.
-
-              This sets the window to be skipped by normal keyboard input.
-              This means a window manager will be asked to not focus this
-              window as well as omit it from things like the taskbar, pager,
-              "alt-tab" list etc. etc.
-
-              Call this and enable it on a window BEFORE you show it for
-              the first time, otherwise it may have no effect.
-
-              Use this for windows that have only output information or
-              might only be interacted with by the mouse or fingers, and
-              never for typing input. Be careful that this may have
-              side-effects like making the window non-accessible in
-              some cases unless the window is specially handled. Use
-              this with care.
-            ]]
-         }
-         values {
-            skip: bool; [[The skip flag state ($true if it is to be skipped).]]
-         }
-      }
-      @property focus {
-         get {
-            [[Get whether a window has focus.]]
-            return: bool;
          }
       }
       @property main_menu {
