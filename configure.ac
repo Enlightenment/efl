@@ -4902,9 +4902,12 @@ fi
 
 ### Check availability
 
+## Generic player
+EMOTION_GENERIC_PLAYER([GENERIC_VLC], [yes], [libvlc >= 2.0 eina >= 1.1.99 ecore >= 1.7.99])
+EFL_ADD_FEATURE([EMOTION], [generic_vlc], [${with_generic_vlc}])
+
 EFL_LIB_END([Emotion])
 #### End of Emotion
-
 
 #### Ethumb
 EFL_LIB_START([Ethumb])
