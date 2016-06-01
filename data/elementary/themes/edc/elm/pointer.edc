@@ -33,6 +33,7 @@ group { name: "elm/pointer/base/default";
          description {
             state: "default" 0.0;
             visible: 0;
+            fixed: 1 1;
             rel1 {
                /* the hotspot will scale with the cursor here */
                to: "base";
