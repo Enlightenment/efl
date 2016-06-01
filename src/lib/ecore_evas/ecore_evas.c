@@ -4538,7 +4538,7 @@ _direct_key_updown_cb(Ecore_Evas *ee, const Ecore_Event_Key *info, Eina_Bool dow
      eo_event_callback_call(e, EFL_EVENT_KEY_UP, evt);
 
    processed = ev->evas_done;
-   eo_unref(evt);
+   eo_del(evt);
 
    return processed;
 }

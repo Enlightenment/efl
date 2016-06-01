@@ -375,7 +375,6 @@ struct _Evas_Event_Mouse_Down /** Mouse button press event */
    Evas_Event_Flags  event_flags;
    Evas_Device      *dev;
    Evas_Object      *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
-   void            *reserved; /**< Reserved field for internal use only. @since 1.18 */
 };
 
 struct _Evas_Event_Mouse_Up /** Mouse button release event */
@@ -394,7 +393,6 @@ struct _Evas_Event_Mouse_Up /** Mouse button release event */
    Evas_Event_Flags  event_flags;
    Evas_Device      *dev;
    Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
-   void            *reserved; /**< Reserved field for internal use only. @since 1.18 */
 };
 
 struct _Evas_Event_Mouse_In /** Mouse enter event */
@@ -411,7 +409,6 @@ struct _Evas_Event_Mouse_In /** Mouse enter event */
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
    Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
-   void            *reserved; /**< Reserved field for internal use only. @since 1.18 */
 };
 
 struct _Evas_Event_Mouse_Out /** Mouse leave event */
@@ -428,7 +425,6 @@ struct _Evas_Event_Mouse_Out /** Mouse leave event */
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
    Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
-   void            *reserved; /**< Reserved field for internal use only. @since 1.18 */
 };
 
 struct _Evas_Event_Mouse_Move /** Mouse move event */
@@ -445,7 +441,6 @@ struct _Evas_Event_Mouse_Move /** Mouse move event */
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
    Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
-   void            *reserved; /**< Reserved field for internal use only. @since 1.18 */
 };
 
 struct _Evas_Event_Mouse_Wheel /** Wheel event */
@@ -462,7 +457,6 @@ struct _Evas_Event_Mouse_Wheel /** Wheel event */
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
-   void            *reserved; /**< Reserved field for internal use only. @since 1.18 */
 };
 
 struct _Evas_Event_Multi_Down /** Multi button press event */
@@ -482,7 +476,6 @@ struct _Evas_Event_Multi_Down /** Multi button press event */
    unsigned int               timestamp;
    Evas_Event_Flags           event_flags;
    Evas_Device               *dev;
-   void                      *reserved; /**< Reserved field for internal use only. @since 1.18 */
 };
 
 struct _Evas_Event_Multi_Up /** Multi button release event */
@@ -502,7 +495,6 @@ struct _Evas_Event_Multi_Up /** Multi button release event */
    unsigned int               timestamp;
    Evas_Event_Flags           event_flags;
    Evas_Device               *dev;
-   void                      *reserved; /**< Reserved field for internal use only. @since 1.18 */
 };
 
 struct _Evas_Event_Multi_Move /** Multi button down event */
@@ -519,7 +511,6 @@ struct _Evas_Event_Multi_Move /** Multi button down event */
    unsigned int            timestamp;
    Evas_Event_Flags        event_flags;
    Evas_Device            *dev;
-   void                   *reserved; /**< Reserved field for internal use only. @since 1.18 */
 };
 
 struct _Evas_Event_Key_Down /** Key press event */
@@ -537,7 +528,6 @@ struct _Evas_Event_Key_Down /** Key press event */
    Evas_Device     *dev;
 
    unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
-   void            *reserved; /**< Reserved field for internal use only. @since 1.18 */
 };
 
 struct _Evas_Event_Key_Up /** Key release event */
@@ -555,7 +545,6 @@ struct _Evas_Event_Key_Up /** Key release event */
    Evas_Device     *dev;
 
    unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
-   void            *reserved; /**< Reserved field for internal use only. @since 1.18 */
 };
 
 struct _Evas_Event_Render_Post /** Send when the frame rendering is done @since 1.8 */

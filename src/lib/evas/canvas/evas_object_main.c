@@ -755,12 +755,12 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
         if ((obj->layer) && (obj->layer->evas))
           obj->layer->evas->focused = NULL;
         _evas_object_event_new();
-        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_OUT, NULL, _evas_event_counter);
+        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_OUT, NULL, _evas_event_counter, NULL, NULL);
         if ((obj->layer) && (obj->layer->evas))
           _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
      }
    _evas_object_event_new();
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_DEL, NULL, _evas_event_counter);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_DEL, NULL, _evas_event_counter, NULL, NULL);
    if ((obj->layer) && (obj->layer->evas))
      _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
    if ((obj->mouse_grabbed > 0) && (obj->layer) && (obj->layer->evas))
@@ -819,7 +819,7 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    evas_object_map_set(eo_obj, NULL);
    if (obj->is_smart) evas_object_smart_del(eo_obj);
    _evas_object_event_new();
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FREE, NULL, _evas_event_counter);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FREE, NULL, _evas_event_counter, NULL, NULL);
    if ((obj->layer) && (obj->layer->evas))
      _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
    evas_object_smart_cleanup(eo_obj);

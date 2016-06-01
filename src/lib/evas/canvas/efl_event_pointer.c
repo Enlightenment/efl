@@ -85,7 +85,6 @@ _efl_event_pointer_eo_base_constructor(Eo *obj, Efl_Event_Pointer_Data *pd EINA_
 EOLIAN static void
 _efl_event_pointer_efl_event_reset(Eo *obj, Efl_Event_Pointer_Data *pd)
 {
-   free(pd->legacy);
    memset(pd, 0, sizeof(*pd));
    pd->eo = obj;
    pd->wheel.dir = EFL_ORIENT_VERTICAL;

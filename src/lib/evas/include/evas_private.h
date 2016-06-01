@@ -1536,7 +1536,7 @@ void evas_object_clip_across_check(Evas_Object *obj, Evas_Object_Protected_Data 
 void evas_object_clip_across_clippees_check(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_mapped_clip_across_mark(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info);
-void evas_object_event_callback_call(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Callback_Type type, void *event_info, int event_id);
+void evas_object_event_callback_call(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Callback_Type type, void *event_info, int event_id, const Eo_Event_Description *eo_event_desc, Efl_Event *eo_event_info);
 Eina_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
 int evas_mem_free(int mem_required);
 int evas_mem_degrade(int mem_required);
@@ -1938,9 +1938,8 @@ void _evas_device_cleanup(Evas *e);
 Evas_Device *_evas_device_top_get(const Evas *e);
 
 /* legacy/eo events */
-Eina_Bool efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, const void *event_info, Evas_Callback_Type type);
-const void *efl_event_pointer_legacy_info_get(const Efl_Event_Pointer *evt, Evas_Callback_Type *ptype, Eina_Bool multi);
-Eina_Bool efl_event_key_legacy_info_set(Efl_Event_Key *evt, const void *event_info, Evas_Callback_Type type);
+Eina_Bool efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, void *event_info, Evas_Callback_Type type);
+Eina_Bool efl_event_key_legacy_info_set(Efl_Event_Key *evt, void *event_info, Evas_Callback_Type type);
 
 Eina_Bool evas_vg_loader_svg(Evas_Object *vg, const Eina_File *f, const char *key EINA_UNUSED);
 

@@ -5,7 +5,7 @@
 #include "interfaces/efl_common_internal.h"
 
 Eina_Bool
-efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, const void *event_info, Evas_Callback_Type type)
+efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, void *event_info, Evas_Callback_Type type)
 {
    Efl_Event_Pointer_Data *ev = eo_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
    if (!ev || !event_info) return EINA_FALSE;
@@ -209,240 +209,54 @@ efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, const void *event_info
    return EINA_TRUE;
 }
 
-const void *
-efl_event_pointer_legacy_info_get(const Efl_Event_Pointer *evt, Evas_Callback_Type *ptype, Eina_Bool multi)
+Eina_Bool
+efl_event_key_legacy_info_set(Efl_Event_Key *evt, void *event_info, Evas_Callback_Type type)
 {
-   Efl_Event_Pointer_Data *ev = eo_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
-   if (!ev) return NULL;
+   Efl_Event_Key_Data *ev = eo_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
+   if (!ev || !event_info) return EINA_FALSE;
 
-   switch (ev->action)
+   switch (type)
      {
-      case EFL_POINTER_ACTION_IN:
+      case EVAS_CALLBACK_KEY_DOWN:
         {
-           Evas_Event_Mouse_In *e = calloc(1, sizeof(*e));
-           if (ptype) *ptype = EVAS_CALLBACK_MOUSE_IN;
-           ev->legacy = e;
-           e->reserved = ev->eo;
-
-           e->buttons = ev->pressed_buttons;
-           e->canvas.x = ev->cur.x;
-           e->canvas.y = ev->cur.y;
-           e->output.x = ev->cur.x;
-           e->output.y = ev->cur.y;
-           e->data = ev->data;
-           e->timestamp = ev->timestamp;
-           e->event_flags = ev->event_flags;
-           e->dev = ev->device;
-           e->event_src = ev->source;
-           e->modifiers = ev->modifiers;
-           e->locks = ev->locks;
+           const Evas_Event_Key_Down *e = event_info;
+           ev->timestamp = e->timestamp;
+           ev->pressed = EINA_TRUE;
+           eina_stringshare_replace(&ev->keyname, e->keyname);
+           eina_stringshare_replace(&ev->key, e->key);
+           eina_stringshare_replace(&ev->string, e->string);
+           eina_stringshare_replace(&ev->compose, e->compose);
+           ev->keycode = e->keycode;
+           ev->data = e->data;
+           ev->modifiers = e->modifiers;
+           ev->locks = e->locks;
+           ev->event_flags = e->event_flags;
+           ev->device = e->dev;
+           break;
         }
-        break;
 
-      case EFL_POINTER_ACTION_OUT:
+      case EVAS_CALLBACK_KEY_UP:
         {
-           Evas_Event_Mouse_Out *e = calloc(1, sizeof(*e));
-           if (ptype) *ptype = EVAS_CALLBACK_MOUSE_OUT;
-           ev->legacy = e;
-           e->reserved = ev->eo;
-
-           e->buttons = ev->pressed_buttons;
-           e->canvas.x = ev->cur.x;
-           e->canvas.y = ev->cur.y;
-           e->output.x = ev->cur.x;
-           e->output.y = ev->cur.y;
-           e->data = ev->data;
-           e->timestamp = ev->timestamp;
-           e->event_flags = ev->event_flags;
-           e->dev = ev->device;
-           e->event_src = ev->source;
-           e->modifiers = ev->modifiers;
-           e->locks = ev->locks;
-        }
-        break;
-
-      case EFL_POINTER_ACTION_DOWN:
-        if (!ev->finger || !multi)
-          {
-             Evas_Event_Mouse_Down *e = calloc(1, sizeof(*e));
-             if (ptype) *ptype = EVAS_CALLBACK_MOUSE_DOWN;
-             ev->legacy = e;
-             e->reserved = ev->eo;
-
-             e->button = ev->button;
-             e->canvas.x = ev->cur.x;
-             e->canvas.y = ev->cur.y;
-             e->output.x = ev->cur.x;
-             e->output.y = ev->cur.y;
-             e->data = ev->data;
-             e->flags = ev->button_flags;
-             e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
-             e->dev = ev->device;
-             e->event_src = ev->source;
-             e->modifiers = ev->modifiers;
-             e->locks = ev->locks;
-          }
-        else
-          {
-             Evas_Event_Multi_Down *e = calloc(1, sizeof(*e));
-             if (ptype) *ptype = EVAS_CALLBACK_MULTI_DOWN;
-             ev->legacy = e;
-             e->reserved = ev->eo;
-
-             e->device = ev->finger;
-             e->radius = ev->radius;
-             e->radius_x = ev->radius_x;
-             e->radius_y = ev->radius_y;
-             e->pressure = ev->pressure;
-             e->angle = ev->angle;
-             e->canvas.x = ev->cur.x;
-             e->canvas.y = ev->cur.y;
-             e->canvas.xsub = ev->cur.x;
-             e->canvas.ysub = ev->cur.y;
-             e->output.x = ev->cur.x;
-             e->output.y = ev->cur.y;
-             e->data = ev->data;
-             e->flags = ev->button_flags;
-             e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
-             e->dev = ev->device;
-             e->modifiers = ev->modifiers;
-             e->locks = ev->locks;
-          }
-        break;
-
-      case EFL_POINTER_ACTION_UP:
-        if (!ev->finger || !multi)
-          {
-             Evas_Event_Mouse_Up *e = calloc(1, sizeof(*e));
-             if (ptype) *ptype = EVAS_CALLBACK_MOUSE_UP;
-             ev->legacy = e;
-             e->reserved = ev->eo;
-
-             e->button = ev->button;
-             e->canvas.x = ev->cur.x;
-             e->canvas.y = ev->cur.y;
-             e->output.x = ev->cur.x;
-             e->output.y = ev->cur.y;
-             e->data = ev->data;
-             e->flags = ev->button_flags;
-             e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
-             e->dev = ev->device;
-             e->event_src = ev->source;
-             e->modifiers = ev->modifiers;
-             e->locks = ev->locks;
-          }
-        else
-          {
-             Evas_Event_Multi_Down *e = calloc(1, sizeof(*e));
-             if (ptype) *ptype = EVAS_CALLBACK_MULTI_UP;
-             ev->legacy = e;
-             e->reserved = ev->eo;
-
-             e->device = ev->finger;
-             e->radius = ev->radius;
-             e->radius_x = ev->radius_x;
-             e->radius_y = ev->radius_y;
-             e->pressure = ev->pressure;
-             e->angle = ev->angle;
-             e->canvas.x = ev->cur.x;
-             e->canvas.y = ev->cur.y;
-             e->canvas.xsub = ev->cur.x;
-             e->canvas.ysub = ev->cur.y;
-             e->output.x = ev->cur.x;
-             e->output.y = ev->cur.y;
-             e->data = ev->data;
-             e->flags = ev->button_flags;
-             e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
-             e->dev = ev->device;
-             e->modifiers = ev->modifiers;
-             e->locks = ev->locks;
-             break;
-          }
-        break;
-
-      case EFL_POINTER_ACTION_MOVE:
-        if (!ev->finger || !multi)
-          {
-             Evas_Event_Mouse_Move *e = calloc(1, sizeof(*e));
-             if (ptype) *ptype = EVAS_CALLBACK_MOUSE_MOVE;
-             ev->legacy = e;
-             e->reserved = ev->eo;
-
-             e->buttons = ev->pressed_buttons;
-             e->cur.canvas.x = ev->cur.x;
-             e->cur.canvas.y = ev->cur.y;
-             e->cur.output.x = ev->cur.x;
-             e->cur.output.y = ev->cur.y;
-             e->prev.canvas.x = ev->prev.x;
-             e->prev.canvas.y = ev->prev.y;
-             e->prev.output.x = ev->prev.x;
-             e->prev.output.y = ev->prev.y;
-             e->data = ev->data;
-             e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
-             e->dev = ev->device;
-             e->event_src = ev->source;
-             e->modifiers = ev->modifiers;
-             e->locks = ev->locks;
-          }
-        else
-          {
-             Evas_Event_Multi_Move *e = calloc(1, sizeof(*e));
-             if (ptype) *ptype = EVAS_CALLBACK_MULTI_MOVE;
-             ev->legacy = e;
-             e->reserved = ev->eo;
-
-             e->device = ev->finger;
-             e->radius = ev->radius;
-             e->radius_x = ev->radius_x;
-             e->radius_y = ev->radius_y;
-             e->pressure = ev->pressure;
-             e->angle = ev->angle;
-             e->cur.canvas.x = ev->cur.x;
-             e->cur.canvas.y = ev->cur.y;
-             e->cur.canvas.xsub = ev->cur.x;
-             e->cur.canvas.ysub = ev->cur.y;
-             e->cur.output.x = ev->cur.x;
-             e->cur.output.y = ev->cur.y;
-             e->data = ev->data;
-             e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
-             e->dev = ev->device;
-             e->modifiers = ev->modifiers;
-             e->locks = ev->locks;
-          }
-        break;
-
-      case EFL_POINTER_ACTION_WHEEL:
-        {
-           Evas_Event_Mouse_Wheel *e = calloc(1, sizeof(*e));
-           if (ptype) *ptype = EVAS_CALLBACK_MOUSE_WHEEL;
-           ev->legacy = e;
-           e->reserved = ev->eo;
-
-           e->direction = (ev->wheel.dir == EFL_ORIENT_VERTICAL);
-           e->z = ev->wheel.z;
-           e->canvas.x = ev->cur.x;
-           e->canvas.y = ev->cur.y;
-           e->output.x = ev->cur.x;
-           e->output.y = ev->cur.y;
-           e->data = ev->data;
-           e->timestamp = ev->timestamp;
-           e->event_flags = ev->event_flags;
-           e->dev = ev->device;
-           e->modifiers = ev->modifiers;
-           e->locks = ev->locks;
+           const Evas_Event_Key_Up *e = event_info;
+           ev->timestamp = e->timestamp;
+           ev->pressed = EINA_FALSE;
+           eina_stringshare_replace(&ev->keyname, e->keyname);
+           eina_stringshare_replace(&ev->key, e->key);
+           eina_stringshare_replace(&ev->string, e->string);
+           eina_stringshare_replace(&ev->compose, e->compose);
+           ev->keycode = e->keycode;
+           ev->data = e->data;
+           ev->modifiers = e->modifiers;
+           ev->locks = e->locks;
+           ev->event_flags = e->event_flags;
+           ev->device = e->dev;
            break;
         }
 
       default:
-        ERR("invalid event type %d", ev->action);
-        return NULL;
+        ERR("invalid event type %d", type);
+        return EINA_FALSE;
      }
 
-   return ev->legacy;
+   return EINA_TRUE;
 }

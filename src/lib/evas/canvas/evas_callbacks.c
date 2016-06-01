@@ -69,61 +69,12 @@ typedef struct
    Evas_Callback_Type type;
 } _eo_evas_cb_info;
 
-
-static inline void *
-_efl_event_get(const _eo_evas_object_cb_info *info, const Eo_Event *event,
-               const Eo_Event_Description **pdesc, Efl_Event_Flags **pflags)
-{
-   if (!info->data) return NULL;
-
-   /* See also evas_events.c: _pointer_event_create() */
-
-#define EV_CASE(TYPE, NEWTYPE, Type) \
-      case EVAS_CALLBACK_ ## TYPE: \
-        *pdesc = EFL_EVENT_ ## NEWTYPE; \
-        *pflags = &((Evas_Event_ ## Type *) event->info)->event_flags; \
-        return ((Evas_Event_ ## Type *) event->info)->reserved
-   switch (info->type)
-     {
-      EV_CASE(MOUSE_MOVE,  POINTER_MOVE,  Mouse_Move);
-      EV_CASE(MOUSE_OUT,   POINTER_OUT,   Mouse_Out);
-      EV_CASE(MOUSE_IN,    POINTER_IN,    Mouse_In);
-      EV_CASE(MOUSE_DOWN , POINTER_DOWN,  Mouse_Down);
-      EV_CASE(MOUSE_UP,    POINTER_UP,    Mouse_Up);
-      EV_CASE(MULTI_MOVE,  POINTER_MOVE,  Multi_Move);
-      EV_CASE(MULTI_DOWN,  POINTER_DOWN,  Multi_Down);
-      EV_CASE(MULTI_UP,    POINTER_UP,    Multi_Up);
-      EV_CASE(MOUSE_WHEEL, POINTER_WHEEL, Mouse_Wheel);
-      EV_CASE(KEY_DOWN,    KEY_DOWN,      Key_Down);
-      EV_CASE(KEY_UP,      KEY_UP,        Key_Up);
-      default: return NULL;
-     }
-#undef EV_CASE
-}
-
 static Eina_Bool
 _eo_evas_object_cb(void *data, const Eo_Event *event)
 {
    _eo_evas_object_cb_info *info = data;
-   const Eo_Event_Description *desc;
    Evas *evas = evas_object_evas_get(event->object);
-   Efl_Event_Flags *pflags;
-   void *pe;
-
-   pe = _efl_event_get(info, event, &desc, &pflags);
-   if (pe)
-     {
-        Efl_Event_Flags flags = efl_event_flags_get(pe);
-        eo_event_callback_call(event->object, desc, pe);
-        // write changes to event_flags back to the legacy struct
-        *pflags = flags;
-     }
-   if (info->func)
-     {
-        info->func(info->data, evas, event->object, event->info);
-        // if event_flags changed, pe will be fixed in evas_events.c
-     }
-
+   if (info->func) info->func(info->data, evas, event->object, event->info);
    return EINA_TRUE;
 }
 
@@ -228,7 +179,9 @@ evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 }
 
 void
-evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Callback_Type type, void *event_info, int event_id)
+evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
+                                Evas_Callback_Type type, void *event_info, int event_id,
+                                const Eo_Event_Description *eo_event_desc, Efl_Event *eo_event_info)
 {
    /* MEM OK */
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
@@ -269,6 +222,10 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
                      ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
                 }
               obj->last_mouse_down_counter = e->last_mouse_down_counter;
+              if (eo_event_info)
+                {
+                   efl_event_pointer_button_flags_set(eo_event_info, ev->flags);
+                }
               break;
            }
       case EVAS_CALLBACK_MOUSE_UP:
@@ -282,23 +239,62 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
                      ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
                 }
               obj->last_mouse_up_counter = e->last_mouse_up_counter;
+              if (eo_event_info)
+                {
+                   efl_event_pointer_button_flags_set(eo_event_info, ev->flags);
+                }
               break;
            }
       default:
          break;
      }
 
+   /* new input events */
+   if (eo_event_desc)
+     {
+        Efl_Event_Flags *pevflags = NULL;
+
+#define EV_CASE(TYPE, NEWTYPE, Type) \
+   case EVAS_CALLBACK_ ## TYPE: \
+   pevflags = &(((Evas_Event_ ## Type *) event_info)->event_flags); \
+   break
+        switch (type)
+          {
+           EV_CASE(MOUSE_MOVE,  POINTER_MOVE,  Mouse_Move);
+           EV_CASE(MOUSE_OUT,   POINTER_OUT,   Mouse_Out);
+           EV_CASE(MOUSE_IN,    POINTER_IN,    Mouse_In);
+           EV_CASE(MOUSE_DOWN , POINTER_DOWN,  Mouse_Down);
+           EV_CASE(MOUSE_UP,    POINTER_UP,    Mouse_Up);
+           EV_CASE(MULTI_MOVE,  POINTER_MOVE,  Multi_Move);
+           EV_CASE(MULTI_DOWN,  POINTER_DOWN,  Multi_Down);
+           EV_CASE(MULTI_UP,    POINTER_UP,    Multi_Up);
+           EV_CASE(MOUSE_WHEEL, POINTER_WHEEL, Mouse_Wheel);
+           EV_CASE(KEY_DOWN,    KEY_DOWN,      Key_Down);
+           EV_CASE(KEY_UP,      KEY_UP,        Key_Up);
+           default: break;
+          }
+#undef EV_CASE
+
+        eo_event_callback_call(eo_obj, eo_event_desc, eo_event_info);
+        if (pevflags) *pevflags = efl_event_flags_get(eo_event_info);
+     }
+
+   /* legacy callbacks - relying on Evas.Object events */
    eo_event_callback_call(eo_obj, _legacy_evas_callback_table[type], event_info);
 
    if (type == EVAS_CALLBACK_MOUSE_DOWN)
      {
         Evas_Event_Mouse_Down *ev = event_info;
         ev->flags = flags;
+        if (eo_event_info)
+          efl_event_pointer_button_flags_set(eo_event_info, ev->flags);
      }
    else if (type == EVAS_CALLBACK_MOUSE_UP)
      {
         Evas_Event_Mouse_Up *ev = event_info;
         ev->flags = flags;
+        if (eo_event_info)
+          efl_event_pointer_button_flags_set(eo_event_info, ev->flags);
      }
 
  nothing_here:
@@ -308,7 +304,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
               (type <= EVAS_CALLBACK_KEY_UP))
           {
              Evas_Object_Protected_Data *smart_parent = eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_CLASS);
-             evas_object_event_callback_call(obj->smart.parent, smart_parent, type, event_info, event_id);
+             evas_object_event_callback_call(obj->smart.parent, smart_parent, type, event_info, event_id, eo_event_desc, eo_event_info);
           }
      }
    _evas_unwalk(e);
