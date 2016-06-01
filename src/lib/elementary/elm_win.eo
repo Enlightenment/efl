@@ -503,6 +503,46 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             modal: Elm.Win.Modal_Mode; [[The mode of a window, one of #Elm_Win_Modal_Mode.]]
          }
       }
+      @property noblank {
+         set {
+            [[Set the noblank property of a window.
+
+              The "noblank" property is a way to request the display on
+              which the windowis shown does not blank, screensave or
+              otherwise hide or obscure the window. It is intended for
+              uses such as media playback on a television where a user
+              may not want to be interrupted by an idle screen. The
+              noblank property may have no effect if the window is
+              iconified/minimized or hidden.
+
+              @since 1.11
+            ]]
+         }
+         get {
+            [[Get the noblank property of a window.
+
+              @since 1.11
+            ]]
+         }
+         values {
+            noblank: bool; [[If true, the window is set to noblank.]]
+         }
+      }
+      @property borderless {
+         set {
+            [[Set the borderless state of a window.
+
+              This function requests the Window Manager to not draw any
+              decoration around the window.
+            ]]
+         }
+         get {
+            [[Get the borderless state of a window.]]
+         }
+         values {
+            borderless: bool; [[If true, the window is borderless.]]
+         }
+      }
       @property role {
          set {
             [[Set the role of the window.]]
@@ -517,6 +557,29 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          values {
             role: string; [[The role to set.]]
+         }
+      }
+      @property name {
+         [[The window name.
+
+           The meaning of name depends on the underlying windowing system.
+
+           The window name is a constructing property that need to be set at
+           creation within \@ref eo_add.
+
+           Note: Once set, it can NOT be modified afterward.
+         ]]
+         /* FIXME-doc
+         Example:
+         @code
+         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_name_set(ELM_WIN_BASIC));
+         @endcode
+         */
+         set {
+            [[Can only be used at creation time, within \@ref eo_add.]]
+         }
+         values {
+            name: string @nullable;
          }
       }
       @property size_step {
@@ -538,21 +601,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          values {
             w: int; [[The stepping width (0 disables).]]
             h: int; [[The stepping height (0 disables).]]
-         }
-      }
-      @property borderless {
-         set {
-            [[Set the borderless state of a window.
-
-              This function requests the Window Manager to not draw any
-              decoration around the window.
-            ]]
-         }
-         get {
-            [[Get the borderless state of a window.]]
-         }
-         values {
-            borderless: bool; [[If true, the window is borderless.]]
          }
       }
       @property available_profiles {
@@ -578,22 +626,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             return: bool;
          }
       }
-      @property title {
-         set {
-            [[Set the title of the window.]]
-         }
-         get {
-            [[Get the title of the window.
-
-              The returned string is an internal one and should not be
-              freed or modified. It will also be invalid if a new title
-              is set or if the window is destroyed.
-            ]]
-         }
-         values {
-            title: string; [[The title.]]
-         }
-      }
       @property alpha {
          set {
             [[Set the alpha channel state of a window.
@@ -602,9 +634,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
               enabled possibly making parts of the window completely or
               partially transparent. This is also subject to the underlying
               system supporting it, like for example, running under a
-              compositing manager. If no compositing is available, enabling
-              this option will instead fallback to using shaped windows,
-              with @.shaped.set.
+              compositing manager.
 
               Note: Alpha window can be enabled automatically by window
               theme style's property. If "alpha" data.item is "1" or
@@ -671,26 +701,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             profile: string; [[The string value of a window profile.]]
          }
       }
-      @property shaped {
-         set {
-            [[Set the shaped state of a window.
-
-              Shaped windows, when supported, will render the parts of the
-              window that has no content, transparent.
-
-              If $shaped is false, then it is strongly advised to have some
-              background object or cover the entire window in any other way,
-              or the parts of the canvas that have no data will show
-              framebuffer artifacts.
-            ]]
-         }
-         get {
-            [[Get the shaped state of a window.]]
-         }
-         values {
-            shaped: bool; [[If $true, the window is shaped.]]
-         }
-      }
       @property size_base {
          set {
             [[Set the base window size used with stepping calculation
@@ -745,29 +755,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             return: Evas.Object; [[The inlined image object or $null if none exists.]]
          }
       }
-      @property name {
-         [[The window name.
-
-           The meaning of name depends on the underlying windowing system.
-
-           The window name is a constructing property that need to be set at
-           creation within \@ref eo_add.
-
-           Note: Once set, it can NOT be modified afterward.
-         ]]
-         /* FIXME-doc
-         Example:
-         @code
-         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_name_set(ELM_WIN_BASIC));
-         @endcode
-         */
-         set {
-            [[Can only be used at creation time, within \@ref eo_add.]]
-         }
-         values {
-            name: string @nullable;
-         }
-      }
       @property type { /* FIXME: before finalize */
          [[The type of the window.
 
@@ -792,31 +779,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          values {
             type: Elm.Win.Type(Elm.Win.Type.unknown);
-         }
-      }
-      @property noblank {
-         set {
-            [[Set the noblank property of a window.
-
-              The "noblank" property is a way to request the display on
-              which the windowis shown does not blank, screensave or
-              otherwise hide or obscure the window. It is intended for
-              uses such as media playback on a television where a user
-              may not want to be interrupted by an idle screen. The
-              noblank property may have no effect if the window is
-              iconified/minimized or hidden.
-
-              @since 1.11
-            ]]
-         }
-         get {
-            [[Get the noblank property of a window.
-
-              @since 1.11
-            ]]
-         }
-         values {
-            noblank: bool; [[If true, the window is set to noblank.]]
          }
       }
       @property fake_canvas @protected {

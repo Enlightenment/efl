@@ -806,3 +806,49 @@ EAPI void elm_win_modal_set(Evas_Object *obj, Eina_Bool modal);
  */
 EAPI Eina_Bool elm_win_modal_get(const Evas_Object *obj);
 
+/**
+ * @brief Set the shaped state of a window.
+ *
+ * Shaped windows, when supported, will render the parts of the window that has
+ * no content, transparent.
+ *
+ * If @c shaped is false, then it is strongly advised to have some background
+ * object or cover the entire window in any other way, or the parts of the
+ * canvas that have no data will show framebuffer artifacts.
+ *
+ * @param[in] shaped If @c true, the window is shaped.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped);
+
+/**
+ * @brief Get the shaped state of a window.
+ *
+ * @return If @c true, the window is shaped.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_shaped_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the title of the window.
+ *
+ * @param[in] title The title.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_title_set(Evas_Object *obj, const char *title);
+
+/**
+ * @brief Get the title of the window.
+ *
+ * The returned string is an internal one and should not be freed or modified.
+ * It will also be invalid if a new title is set or if the window is destroyed.
+ *
+ * @return The title.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI const char *elm_win_title_get(const Evas_Object *obj);
+
