@@ -1,5 +1,5 @@
 /*
- * gcc -o theme_example_02 theme_example_02.c `pkg-config --cflags --libs elememntaru`
+ * gcc -o theme_example_02 theme_example_02.c `pkg-config --cflags --libs elementary`
  */
 #include <Elementary.h>
 
