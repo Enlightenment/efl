@@ -144,6 +144,22 @@ enum Elm.Illume_Command
    close [[Closes the currently active window]]
 }
 
+enum Elm.Win.Modal_Mode
+{
+   [[Defines the mode of a modal window]]
+
+   none, [[The window is not modal window.]]
+   modal [[The window is modal window.]]
+}
+
+enum Elm.Win.Urgent_Mode
+{
+   [[Defines the mode of a urgent window.]]
+
+   none,  [[The window is not a urgent window.]]
+   urgent [[The window is a urgent window.]]
+}
+
 class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                Elm.Interface.Atspi_Widget_Action, Efl.Pack,
                Efl.Input.State, Efl.Input.Interface, Efl.Screen)
@@ -433,26 +449,58 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             maximized: bool; [[If true, the window is maximized.]]
          }
       }
+      @property fullscreen {
+         set {
+            [[Set the fullscreen state of a window.]]
+         }
+         get {
+            [[Get the fullscreen state of a window.]]
+         }
+         values {
+            fullscreen: bool; [[If $true, the window is fullscreen.]]
+         }
+      }
+      @property sticky {
+         set {
+            [[Set the sticky state of the window.
+
+              Hints the Window Manager that the window in $obj should be
+              left fixed at its position even when the virtual desktop
+              it's on moves or changes.
+            ]]
+         }
+         get {
+            [[Get the sticky state of the window.]]
+         }
+         values {
+            sticky: bool; [[If true, the window's sticky state is enabled.]]
+         }
+      }
+      @property urgent {
+         set {
+            [[Set the urgent state of a window.]]
+            legacy: null;
+         }
+         get {
+            [[Get the urgent state of a window.]]
+            legacy: null;
+         }
+         values {
+            urgent: Elm.Win.Urgent_Mode;
+                [[The mode of a urgent window, one of #Elm_Win_Urgent_Mode.]]
+         }
+      }
       @property modal {
          set {
             [[Set the modal state of a window.]]
+            legacy: null;
          }
          get {
             [[Get the modal state of a window.]]
+            legacy: null;
          }
          values {
-            modal: bool; [[If true, the window is modal.]]
-         }
-      }
-      @property withdrawn {
-         set {
-            [[Set the withdrawn state of a window.]]
-         }
-         get {
-            [[Get the withdrawn state of a window.]]
-         }
-         values {
-            withdrawn: bool; [[If true, the window is withdrawn.]]
+            modal: Elm.Win.Modal_Mode; [[The mode of a window, one of #Elm_Win_Modal_Mode.]]
          }
       }
       @property role {
@@ -573,33 +621,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                            $false otherwise.]]
          }
       }
-      @property urgent {
-         set {
-            [[Set the urgent state of a window.]]
-         }
-         get {
-            [[Get the urgent state of a window.]]
-         }
-         values {
-            urgent: bool; [[If true, the window is urgent.]]
-         }
-      }
-      @property sticky {
-         set {
-            [[Set the sticky state of the window.
-
-              Hints the Window Manager that the window in $obj should be
-              left fixed at its position even when the virtual desktop
-              it's on moves or changes.
-            ]]
-         }
-         get {
-            [[Get the sticky state of the window.]]
-         }
-         values {
-            sticky: bool; [[If true, the window's sticky state is enabled.]]
-         }
-      }
       @property aspect {
          set {
             [[Set the aspect ratio of a window.]]
@@ -610,17 +631,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          values {
             aspect: double; [[If 0, the window has no aspect limits,
                               otherwise it is width divided by height.]]
-         }
-      }
-      @property demand_attention {
-         set {
-            [[Set the demand_attention state of a window.]]
-         }
-         get {
-            [[Get the demand_attention state of a window.]]
-         }
-         values {
-            demand_attention: bool; [[If true, the window is demand_attention.]]
          }
       }
       @property layer {
@@ -679,17 +689,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          values {
             shaped: bool; [[If $true, the window is shaped.]]
-         }
-      }
-      @property fullscreen {
-         set {
-            [[Set the fullscreen state of a window.]]
-         }
-         get {
-            [[Get the fullscreen state of a window.]]
-         }
-         values {
-            fullscreen: bool; [[If $true, the window is fullscreen.]]
          }
       }
       @property size_base {

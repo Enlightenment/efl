@@ -734,3 +734,75 @@ EAPI void elm_win_icon_name_set(Evas_Object *obj, const char *icon_name);
  */
 EAPI const char *elm_win_icon_name_get(const Evas_Object *obj);
 
+/**
+ * @brief Set the withdrawn state of a window.
+ *
+ * @param[in] withdrawn If true, the window is withdrawn.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_withdrawn_set(Evas_Object *obj, Eina_Bool withdrawn);
+
+/**
+ * @brief Get the withdrawn state of a window.
+ *
+ * @return If true, the window is withdrawn.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_withdrawn_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the urgent state of a window.
+ *
+ * @param[in] urgent If true, the window is urgent.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_urgent_set(Evas_Object *obj, Eina_Bool urgent);
+
+/**
+ * @brief Get the urgent state of a window.
+ *
+ * @return If true, the window is urgent.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_urgent_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the demand_attention state of a window.
+ *
+ * @param[in] demand_attention If true, the window is demand_attention.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_demand_attention_set(Evas_Object *obj, Eina_Bool demand_attention);
+
+/**
+ * @brief Get the demand_attention state of a window.
+ *
+ * @return If true, the window is demand_attention.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_demand_attention_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the modal state of a window.
+ *
+ * @param[in] modal If true, the window is modal.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_modal_set(Evas_Object *obj, Eina_Bool modal);
+
+/**
+ * @brief Get the modal state of a window.
+ *
+ * @return If true, the window is modal.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_modal_get(const Evas_Object *obj);
+

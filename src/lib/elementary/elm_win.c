@@ -4588,22 +4588,6 @@ _elm_win_iconified_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_withdrawn_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool withdrawn)
-{
-//   sd->withdrawn = withdrawn;
-   TRAP(sd, withdrawn_set, withdrawn);
-#ifdef HAVE_ELEMENTARY_X
-   _elm_win_xwin_update(sd);
-#endif
-}
-
-EOLIAN static Eina_Bool
-_elm_win_withdrawn_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   return sd->withdrawn;
-}
-
-EOLIAN static void
 _elm_win_available_profiles_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char **profiles, unsigned int count)
 {
    Eina_Bool found = EINA_FALSE;
@@ -4710,67 +4694,57 @@ _elm_win_profile_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_urgent_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool urgent)
+_elm_win_urgent_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Elm_Win_Urgent_Mode urgent)
 {
-   if (sd->urgent == urgent)
-     return;
-   sd->urgent = urgent;
-   TRAP(sd, urgent_set, urgent);
+   Eina_Bool urgent_tmp = !!urgent;
+
+   if (sd->urgent == urgent_tmp) return;
+   
+   sd->urgent = urgent_tmp;
+   TRAP(sd, urgent_set, urgent_tmp);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Win_Urgent_Mode
 _elm_win_urgent_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
-   return sd->urgent;
+   if (sd->urgent) return ELM_WIN_URGENT_MODE_URGENT;
+   return ELM_WIN_URGENT_MODE_NONE;
 }
 
 EOLIAN static void
-_elm_win_demand_attention_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool demand_attention)
+_elm_win_modal_set(Eo *obj, Elm_Win_Data *sd, Elm_Win_Modal_Mode modal)
 {
-   sd->demand_attention = demand_attention;
-   TRAP(sd, demand_attention_set, demand_attention);
-#ifdef HAVE_ELEMENTARY_X
-   _elm_win_xwin_update(sd);
-#endif
-}
+   Eina_Bool modal_tmp = !!modal;
 
-EOLIAN static Eina_Bool
-_elm_win_demand_attention_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   return sd->demand_attention;
-}
-
-EOLIAN static void
-_elm_win_modal_set(Eo *obj, Elm_Win_Data *sd, Eina_Bool modal)
-{
    if (sd->modal_count) return;
 
    const Eina_List *l;
    Evas_Object *current;
 
-   if ((modal) && (!sd->modal) && (evas_object_visible_get(obj)))
+   if ((modal_tmp) && (!sd->modal) && (evas_object_visible_get(obj)))
      {
        INCREMENT_MODALITY()
      }
-   else if ((!modal) && (sd->modal) && (evas_object_visible_get(obj)))
+   else if ((!modal_tmp) && (sd->modal) && (evas_object_visible_get(obj)))
      {
        DECREMENT_MODALITY()
      }
 
-   sd->modal = modal;
-   TRAP(sd, modal_set, modal);
+   sd->modal = modal_tmp;
+   TRAP(sd, modal_set, modal_tmp);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Win_Modal_Mode
 _elm_win_modal_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
-   return sd->modal;
+   if (sd->modal) return ELM_WIN_MODAL_MODE_MODAL;
+   return ELM_WIN_MODAL_MODE_NONE;
 }
 
 EOLIAN static void
@@ -6240,6 +6214,110 @@ elm_win_icon_name_get(const Evas_Object *obj)
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
 
    return sd->icon_name;
+}
+
+EAPI void
+elm_win_withdrawn_set(Evas_Object *obj, Eina_Bool withdrawn)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+//   sd->withdrawn = withdrawn;
+   TRAP(sd, withdrawn_set, withdrawn);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(sd);
+#endif
+}
+
+EAPI Eina_Bool
+elm_win_withdrawn_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
+
+   return sd->withdrawn;
+}
+
+EAPI void
+elm_win_urgent_set(Evas_Object *obj, Eina_Bool urgent)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   if (sd->urgent == urgent)
+     return;
+   sd->urgent = urgent;
+   TRAP(sd, urgent_set, urgent);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(sd);
+#endif
+}
+
+EAPI Eina_Bool
+elm_win_urgent_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
+
+   return sd->urgent;
+}
+
+EAPI void
+elm_win_demand_attention_set(Evas_Object *obj, Eina_Bool demand_attention)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   sd->demand_attention = demand_attention;
+   TRAP(sd, demand_attention_set, demand_attention);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(sd);
+#endif
+}
+
+EAPI Eina_Bool
+elm_win_demand_attention_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
+
+   return sd->demand_attention;
+}
+
+EAPI void
+elm_win_modal_set(Evas_Object *obj, Eina_Bool modal)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   if (sd->modal_count) return;
+
+   const Eina_List *l;
+   Evas_Object *current;
+
+   if ((modal) && (!sd->modal) && (evas_object_visible_get(obj)))
+     {
+       INCREMENT_MODALITY()
+     }
+   else if ((!modal) && (sd->modal) && (evas_object_visible_get(obj)))
+     {
+       DECREMENT_MODALITY()
+     }
+
+   sd->modal = modal;
+   TRAP(sd, modal_set, modal);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(sd);
+#endif
+}
+
+EAPI Eina_Bool
+elm_win_modal_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
+
+   return sd->modal;
 }
 
 #include "elm_win.eo.c"
