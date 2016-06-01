@@ -2846,7 +2846,7 @@ _efl_loop_args_job_cb(void *data, void *value EINA_UNUSED,
    Eo *obj = eo_parent_get(args);
 
    eo_event_callback_call(obj, EFL_LOOP_EVENT_ARGS, args);
-   eo_unref(args); // FIXME: probably eo_del()
+   eo_del(args);
 }
 
 EOLIAN static void
