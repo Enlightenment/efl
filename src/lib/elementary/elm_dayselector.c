@@ -175,7 +175,7 @@ _item_del_cb(void *data,
              elm_layout_signal_emit(obj, buf, "elm");
 
              VIEW(it) = NULL;
-             eo_unref(EO_OBJ(it));
+             eo_del(EO_OBJ(it));
 
              elm_layout_sizing_eval(obj);
              break;
@@ -261,7 +261,7 @@ _elm_dayselector_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item
         int_ret = efl_content_set(efl_part(eo_super(obj, MY_CLASS), buf), content);
         if (!int_ret)
           {
-             eo_unref(eo_it);
+             eo_del(eo_it);
              return EINA_FALSE;
           }
 
@@ -337,7 +337,7 @@ _elm_dayselector_content_unset(Eo *obj, Elm_Dayselector_Data *sd, const char *it
    elm_layout_signal_emit(obj, buf, "elm");
 
    VIEW(it) = NULL;
-   eo_unref(EO_OBJ(it));
+   eo_del(EO_OBJ(it));
 
    elm_layout_sizing_eval(obj);
 
@@ -444,7 +444,7 @@ _elm_dayselector_evas_object_smart_del(Eo *obj, Elm_Dayselector_Data *sd)
      {
         sd->items = eina_list_remove(sd->items, it);
         eina_stringshare_del(it->day_style);
-        eo_unref(EO_OBJ(it));
+        eo_del(EO_OBJ(it));
      }
 
    /* handles freeing sd */

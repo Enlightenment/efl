@@ -2833,7 +2833,7 @@ _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
 
    eina_promise_owner_value_set(t->promise, &t->data, NULL);
 
-   eo_unref(t->u.timer);
+   eo_del(t->u.timer);
 
    return EO_CALLBACK_CONTINUE;
 }
@@ -2876,7 +2876,7 @@ _efl_loop_job_cancel(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
    if (j->job_is)
      ecore_job_del(j->u.job);
    else
-     eo_unref(j->u.timer);
+     eo_del(j->u.timer);
    _efl_loop_internal_cancel(j);
 }
 

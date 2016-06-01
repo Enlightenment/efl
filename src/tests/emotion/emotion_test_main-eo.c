@@ -97,7 +97,7 @@ main_signal_exit(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_
    EINA_LIST_FREE(video_objs, o)
      {
         emotion_object_last_position_save(o);
-        eo_unref(o);
+        eo_del(o);
      }
    return EINA_TRUE;
 }

@@ -378,11 +378,11 @@ START_TEST(eo_composite_tests)
    fail_if(!eo_composite_part_is(obj2));
 
    /* Check that a deletion of a child detaches from the parent. */
-   eo_unref(obj2);
+   eo_del(obj2);
    fail_if(!eo_composite_attach(obj3, obj));
 
    /* Check that a deletion of the parent detaches the child. */
-   eo_unref(obj3);
+   eo_del(obj3);
    fail_if(eo_composite_part_is(obj));
 
    eo_unref(obj);
@@ -582,9 +582,9 @@ START_TEST(eo_refs)
    ck_assert_int_eq(eo_ref_get(obj2), 1);
    ck_assert_int_eq(eo_ref_get(obj3), 1);
 
-   eo_unref(obj);
-   eo_unref(obj2);
-   eo_unref(obj3);
+   eo_del(obj);
+   eo_del(obj2);
+   eo_del(obj3);
 
    /* Just check it doesn't seg atm. */
    obj = eo_add(SIMPLE_CLASS, NULL);
@@ -596,7 +596,7 @@ START_TEST(eo_refs)
    obj2 = eo_add(SIMPLE_CLASS, obj);
    eo_unref(obj2);
    eo_ref(obj2);
-   eo_unref(obj2);
+   eo_del(obj2);
    eo_unref(obj);
 
    eo_shutdown();
@@ -811,6 +811,7 @@ START_TEST(eo_magic_checks)
 
         eo_ref((Eo *) buf);
         eo_unref((Eo *) buf);
+        eo_del((Eo *) buf);
 
         eo_isa((Eo *) buf, SIMPLE_CLASS);
         eo_isa(obj, (Eo_Class *) buf);
@@ -1125,7 +1126,7 @@ START_TEST(eo_del_intercept)
    fail_if(!obj);
    fail_if(!eo_isa(obj, klass));
    eo_del_intercept_set(obj, _del_intercept);
-   eo_unref(obj);
+   eo_del(obj);
    fail_if(!intercepted);
    fail_if(eo_isa(obj, klass));
 
@@ -1185,7 +1186,7 @@ START_TEST(eo_name)
    objtmp = eo_name_find(obj, "*mple:joe");
    fail_if(objtmp != obj2);
 
-   eo_unref(obj);
+   eo_del(obj);
 
    eo_shutdown();
 }
@@ -1215,7 +1216,7 @@ START_TEST(eo_comment)
    comment = eo_comment_get(obj);
    fail_if(NULL != comment);
 
-   eo_unref(obj);
+   eo_del(obj);
 
    eo_shutdown();
 }
@@ -1232,7 +1233,7 @@ START_TEST(eo_rec_interface)
    objtmp = eo_provider_find(obj2, SEARCHABLE_CLASS);
    fail_if(objtmp != s);
 
-   eo_unref(obj);
+   eo_del(obj);
 
    eo_shutdown();
 }

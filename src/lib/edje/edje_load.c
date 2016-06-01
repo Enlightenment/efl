@@ -257,7 +257,7 @@ edje_file_collection_list(const char *file)
    lst = edje_mmap_collection_list(f);
 
    eina_file_close(f);
-   eo_unref(file_obj);
+   eo_del(file_obj);
    return lst;
 }
 

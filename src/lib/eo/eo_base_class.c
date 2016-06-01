@@ -465,6 +465,19 @@ _eo_base_comment_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
 }
 
 EOLIAN static void
+_eo_base_del(const Eo *obj, Eo_Base_Data *pd EINA_UNUSED)
+{
+   if (eo_parent_get((Eo *) obj))
+     {
+        eo_parent_set((Eo *) obj, NULL);
+     }
+   else
+     {
+        eo_unref(obj);
+     }
+}
+
+EOLIAN static void
 _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
 {
    if (pd->parent == parent_id)
@@ -1433,6 +1446,7 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
 
    if (pd->parent)
      {
+        ERR("Object '%p' still has a parent at the time of destruction.", obj);
         eo_parent_set(obj, NULL);
      }
 

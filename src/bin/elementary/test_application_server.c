@@ -45,7 +45,7 @@ _close_cb(void *data, const Eo_Event *event)
    App_View_Context *ctx = data;
    if (ctx->win)
      evas_object_del(ctx->win);
-   eo_unref(event->object);
+   eo_del(event->object);
    return EINA_TRUE;
 }
 

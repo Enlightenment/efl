@@ -200,14 +200,14 @@ _edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const ch
    int_ret = efl_file_set(eo_super(obj, MY_CLASS), file, group);
    if (!int_ret)
      {
-        eo_unref(file_obj);
+        eo_del(file_obj);
         return ret;
      }
 
    eed->program_scripts = eina_hash_int32_new((Eina_Free_Cb)_edje_edit_program_script_free);
 
    ef = eet_open(file, EET_FILE_MODE_READ);
-   eo_unref(file_obj);
+   eo_del(file_obj);
 
    snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%i",
             eed->base->collection->id);

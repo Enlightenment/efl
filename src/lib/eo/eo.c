@@ -718,7 +718,7 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 
         /* We have two refs at this point. */
         _eo_unref(obj);
-        _eo_unref(obj);
+        eo_del((Eo *) obj->header.id);
         return NULL;
      }
    else if (eo_id != _eo_obj_id_get(obj))
@@ -776,7 +776,7 @@ _eo_add_internal_end(Eo *eo_id, Eo *finalized_id)
 
 cleanup:
    _eo_unref(obj);
-   _eo_unref(obj);
+   eo_del((Eo *) obj->header.id);
    return NULL;
 }
 

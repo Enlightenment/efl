@@ -24,8 +24,8 @@ static Eina_Bool _play_finished(void *data EINA_UNUSED, const Eo_Event *event)
   printf("Done: %s\n", name);
 
   ecore_audio_obj_in_output_get(event->object, &out);
-  eo_unref(event->object);
-  eo_unref(out);
+  eo_del(event->object);
+  eo_del(out);
 
   ecore_main_loop_quit();
 
@@ -54,7 +54,7 @@ main(int argc, char *argv[])
    ret = ecore_audio_obj_source_set(in, argv[1]);
    if (!ret) {
      printf("Could not set %s as input\n", argv[1]);
-     eo_unref(in);
+     eo_del(in);
      return 1;
    }
 
@@ -64,16 +64,16 @@ main(int argc, char *argv[])
    ret = ecore_audio_obj_source_set(out, argv[2]);
    if (!ret) {
      printf("Could not set %s as output\n", argv[2]);
-     eo_unref(in);
-     eo_unref(out);
+     eo_del(in);
+     eo_del(out);
      return 1;
    }
 
    ret = ecore_audio_obj_out_input_attach(out, in);
    if (!ret) {
      printf("Could not attach input\n");
-     eo_unref(out);
-     eo_unref(in);
+     eo_del(out);
+     eo_del(in);
      return 1;
    }
 

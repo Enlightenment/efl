@@ -742,7 +742,7 @@ ecore_con_eet_client_new(Ecore_Con_Server *server)
 EAPI void
 ecore_con_eet_server_free(Ecore_Con_Eet *r)
 {
-   eo_unref(r);
+   eo_del(r);
 }
 
 EAPI void

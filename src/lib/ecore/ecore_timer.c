@@ -172,7 +172,7 @@ _ecore_timer_legacy_tick(void *data, const Eo_Event *event)
    legacy->inside_call = 1;
    if (!_ecore_call_task_cb(legacy->func, (void*)legacy->data) ||
        legacy->delete_me)
-     eo_unref(event->object);
+     eo_del(event->object);
 
    return EO_CALLBACK_CONTINUE;
 }
@@ -239,7 +239,7 @@ ecore_timer_del(Ecore_Timer *timer)
    if (legacy->inside_call)
      legacy->delete_me = EINA_TRUE;
    else
-     eo_unref(timer);
+     eo_del(timer);
 
    return data;
 }
@@ -484,10 +484,10 @@ _efl_timer_shutdown(void)
    Efl_Timer_Data *timer;
 
    EINA_INLIST_FREE(timers, timer)
-     eo_unref(timer->object);
+     eo_del(timer->object);
 
    EINA_INLIST_FREE(suspended, timer)
-     eo_unref(timer->object);
+     eo_del(timer->object);
 
    timer_current = NULL;
 }

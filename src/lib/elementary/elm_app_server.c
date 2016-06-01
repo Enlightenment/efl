@@ -46,7 +46,7 @@ _view_append(Elm_App_Server_Data *data, Elm_App_Server_View *view)
    if (eina_hash_find(data->views, view_id))
      {
         ERR("%p already have a view with id=%s", data->pkg, view_id);
-        eo_unref(view);
+        eo_del(view);
         return EINA_FALSE;
      }
 
@@ -434,7 +434,7 @@ _elm_app_server_eo_base_destructor(Eo *obj, Elm_App_Server_Data *data)
      {
         //do not modify hash when iterating
         eo_event_callback_del(view, EO_EVENT_DEL, _view_del_cb, data);
-        eo_unref(view);
+        eo_del(view);
      }
    eina_iterator_free(iter);
    eina_hash_free(data->views);

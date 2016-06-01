@@ -83,8 +83,8 @@ START_TEST(ecore_test_ecore_audio_obj_pulse)
    ecore_main_loop_begin();
    fail_if(pulse_context_failed);
 
-   eo_unref(out);
-   eo_unref(in);
+   eo_del(out);
+   eo_del(in);
 }
 END_TEST
 #endif
@@ -100,7 +100,7 @@ static Eina_Bool
 _idle_del(void *data)
 {
    Eo *in = data;
-   eo_unref(in);
+   eo_del(in);
    ecore_idler_add(_quit, NULL);
 
    return EINA_FALSE;
@@ -218,8 +218,8 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
 
    ecore_main_loop_begin();
 
-   eo_unref(in);
-   eo_unref(out);
+   eo_del(in);
+   eo_del(out);
 
    //TODO: Compare and fail
    ecore_file_remove(TESTS_BUILD_DIR"/tmp.wav");
@@ -308,8 +308,8 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
 
    ecore_main_loop_begin();
 
-   eo_unref(in);
-   eo_unref(out);
+   eo_del(in);
+   eo_del(out);
 
    //TODO: Compare and fail
    ecore_file_remove(TESTS_BUILD_DIR"/tmp.wav");
@@ -361,20 +361,20 @@ START_TEST(ecore_test_ecore_audio_obj_in_out)
   fail_if(eina_list_count(in3) != 2);
   fail_if(eina_list_data_get(in3) != in);
 
-  eo_unref(in2);
+  eo_del(in2);
 
   in3 = ecore_audio_obj_out_inputs_get(out);
 
   fail_if(eina_list_count(in3) != 1);
   fail_if(eina_list_data_get(in3) != in);
 
-  eo_unref(out);
+  eo_del(out);
 
   out2 = ecore_audio_obj_in_output_get(in);
 
   fail_if(out2);
 
-  eo_unref(in);
+  eo_del(in);
 }
 END_TEST
 
@@ -433,8 +433,8 @@ START_TEST(ecore_test_ecore_audio_obj_vio)
 
   ecore_main_loop_begin();
 
-  eo_unref(out);
-  eo_unref(in);
+  eo_del(out);
+  eo_del(in);
 }
 END_TEST
 
@@ -533,7 +533,7 @@ START_TEST(ecore_test_ecore_audio_obj_in)
       fail_if(buf[i] != 0x00);
   }
 
-  eo_unref(in);
+  eo_del(in);
 }
 END_TEST
 
@@ -581,7 +581,7 @@ START_TEST(ecore_test_ecore_audio_obj)
     volume = ecore_audio_obj_volume_get(obj);
     fail_if(volume != 0.5);
 
-    eo_unref(obj);
+    eo_del(obj);
   }
 
 }

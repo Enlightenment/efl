@@ -90,7 +90,7 @@ static void
 _filter_buffer_backing_free(Evas_Filter_Buffer *fb)
 {
    if (!fb || !fb->buffer) return;
-   eo_unref(fb->buffer);
+   eo_del(fb->buffer);
    fb->buffer = NULL;
 }
 

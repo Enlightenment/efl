@@ -575,7 +575,7 @@ _elm_hoversel_evas_object_smart_del(Eo *obj, Elm_Hoversel_Data *sd)
      {
         ELM_HOVERSEL_ITEM_DATA_GET(eo_item, it);
         ELM_SAFE_FREE(VIEW(it), evas_object_del);
-        eo_unref(eo_item);
+        eo_del(eo_item);
      }
    elm_hoversel_hover_parent_set(obj, NULL);
 

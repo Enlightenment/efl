@@ -4082,7 +4082,7 @@ _internal_elm_gengrid_clear(Evas_Object *obj,
              if (next) itn = ELM_GEN_ITEM_FROM_INLIST(next);
              if (itn) itn->walking++;  /* prevent early death of subitem */
              it->del_cb(it);
-             eo_unref(EO_OBJ(it));
+             eo_del(EO_OBJ(it));
              if (itn) itn->walking--;
           }
      }
@@ -4154,7 +4154,7 @@ _item_select(Elm_Gen_Item *it)
         if ((!it->walking) && (it->generation < sd->generation))
           {
              it->del_cb(it);
-             eo_unref(eo_it);
+             eo_del(eo_it);
              sd->last_selected_item = NULL;
           }
      }

@@ -374,7 +374,7 @@ ecore_con_url_free(Ecore_Con_Url *url_obj)
 
    eo_event_callback_array_del(url_obj, efl_network_url_event_table_callbacks(), NULL);
 
-   eo_unref(url_obj);
+   eo_del(url_obj);
 }
 
 static void

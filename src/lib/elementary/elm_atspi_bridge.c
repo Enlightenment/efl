@@ -4460,7 +4460,7 @@ _elm_atspi_bridge_shutdown(void)
 {
    if (_init_count)
      {
-        eo_unref(_instance);
+        eo_del(_instance);
         _init_count = 0;
      }
 }

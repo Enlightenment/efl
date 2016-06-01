@@ -705,7 +705,7 @@ START_TEST(edje_test_table_eoapi)
    fail_if(!efl_pack_clear(proxy));
    fail_if(efl_content_count(efl_part(obj, "table2")) != 1);
    fail_if(efl_content_count(proxy) != 4);
-   eo_unref(proxy);
+   eo_del(proxy);
 
    EDJE_TEST_FREE_EVAS();
 }

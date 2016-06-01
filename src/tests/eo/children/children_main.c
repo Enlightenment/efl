@@ -40,7 +40,7 @@ main(int argc, char *argv[])
 
    eina_iterator_free(iter);
 
-   eo_unref(child2);
+   eo_del(child2);
 
    iter = eo_children_iterator_new(parent);
    fail_if(!iter);
@@ -52,7 +52,7 @@ main(int argc, char *argv[])
    eina_iterator_free(iter);
 
 
-   eo_unref(child1);
+   eo_del(child1);
 
    iter = eo_children_iterator_new(parent);
    fail_if(!iter);
@@ -62,7 +62,7 @@ main(int argc, char *argv[])
    eina_iterator_free(iter);
 
 
-   eo_unref(child3);
+   eo_del(child3);
 
    iter = eo_children_iterator_new(parent);
    fail_if(iter);

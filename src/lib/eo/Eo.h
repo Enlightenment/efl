@@ -861,6 +861,7 @@ EAPI int eo_ref_get(const Eo *obj);
  * 
  * @see eo_del_intercept_get()
  * @see eo_unref()
+ * @see eo_del()
  */
 EAPI void eo_del_intercept_set(Eo *obj, Eo_Del_Intercept del_intercept_func);
 

@@ -735,7 +735,7 @@ evas_object_del(Evas_Object *eo_obj)
    evas_object_hide(eo_obj);
    obj->eo_del_called = EINA_TRUE;
 
-   eo_unref(eo_obj);
+   eo_del(eo_obj);
 }
 
 EOLIAN static void

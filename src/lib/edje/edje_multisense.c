@@ -10,7 +10,7 @@ static Eina_Bool outfail = EINA_FALSE;
 static Eina_Bool
 _play_finished(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   eo_unref(event->object);
+   eo_del(event->object);
 
    return EINA_TRUE;
 }
@@ -19,7 +19,7 @@ static Eina_Bool
 _out_fail(void *data EINA_UNUSED, const Eo_Event *event)
 {
    outfail = EINA_TRUE;
-   eo_unref(event->object);
+   eo_del(event->object);
    out = NULL;
    return EINA_TRUE;
 }
@@ -219,14 +219,14 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
 #elif HAVE_PULSE
                   ERR("Could not create multisense audio out (pulse)");
 #endif
-                  eo_unref(in);
+                  eo_del(in);
                   return EINA_FALSE;
                }
              ret = ecore_audio_obj_out_input_attach(out, in);
              if (!ret)
                {
                   ERR("Could not attach input");
-                  eo_unref(in);
+                  eo_del(in);
                   return EINA_FALSE;
                }
           }
@@ -289,7 +289,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
              if (!ret)
                {
                   ERR("Could not attach input");
-                  eo_unref(in);
+                  eo_del(in);
                   return EINA_FALSE;
                }
           }
@@ -337,7 +337,7 @@ _edje_multisense_shutdown(void)
    if (out)
      {
         // XXX: this causes an abort inside of pa!!!!!
-        //eo_unref(out);
+        //eo_del(out);
         out = NULL;
         outs = 0;
      }

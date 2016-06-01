@@ -643,7 +643,7 @@ _elm_slideshow_clear(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
    sd->current = NULL;
 
    EINA_LIST_FOREACH_SAFE(sd->items, itr, itr2, eo_item)
-      eo_unref(eo_item);
+      eo_del(eo_item);
 }
 
 EOLIAN static const Eina_List*

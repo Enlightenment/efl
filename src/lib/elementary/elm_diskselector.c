@@ -1131,7 +1131,7 @@ _round_item_del(Elm_Diskselector_Data *sd EINA_UNUSED,
                 Elm_Diskselector_Item_Data *it)
 {
    if (!it) return;
-   eo_unref(EO_OBJ(it));
+   eo_del(EO_OBJ(it));
 }
 
 static void
@@ -1362,28 +1362,28 @@ _elm_diskselector_evas_object_smart_del(Eo *obj, Elm_Diskselector_Data *sd)
    if (sd->last)
      {
         evas_object_del(sd->VIEW(last));
-        eo_unref(EO_OBJ(sd->last));
+        eo_del(EO_OBJ(sd->last));
         sd->last = NULL;
      }
 
    if (sd->s_last)
      {
         evas_object_del(sd->VIEW(s_last));
-        eo_unref(EO_OBJ(sd->s_last));
+        eo_del(EO_OBJ(sd->s_last));
         sd->s_last = NULL;
      }
 
    if (sd->second)
      {
         evas_object_del(sd->VIEW(second));
-        eo_unref(EO_OBJ(sd->second));
+        eo_del(EO_OBJ(sd->second));
         sd->second = NULL;
      }
 
    if (sd->first)
      {
         evas_object_del(sd->VIEW(first));
-        eo_unref(EO_OBJ(sd->first));
+        eo_del(EO_OBJ(sd->first));
         sd->first = NULL;
      }
 
@@ -1392,7 +1392,7 @@ _elm_diskselector_evas_object_smart_del(Eo *obj, Elm_Diskselector_Data *sd)
         if (it)
           {
              evas_object_del(VIEW(it));
-             eo_unref(EO_OBJ(it));
+             eo_del(EO_OBJ(it));
           }
      }
    sd->under_items = eina_list_free(sd->under_items);
@@ -1402,14 +1402,14 @@ _elm_diskselector_evas_object_smart_del(Eo *obj, Elm_Diskselector_Data *sd)
         if (it)
           {
              evas_object_del(VIEW(it));
-             eo_unref(EO_OBJ(it));
+             eo_del(EO_OBJ(it));
           }
      }
    sd->over_items = eina_list_free(sd->over_items);
 
    EINA_LIST_FOREACH_SAFE(sd->items, l, l2, it)
      {
-        eo_unref(EO_OBJ(it));
+        eo_del(EO_OBJ(it));
      }
    sd->items = eina_list_free(sd->items);
    sd->r_items = eina_list_free(sd->r_items);
@@ -1636,7 +1636,7 @@ _elm_diskselector_clear(Eo *obj, Elm_Diskselector_Data *sd)
    sd->selected_item = NULL;
    EINA_LIST_FREE(sd->items, it)
      {
-        eo_unref(EO_OBJ(it));
+        eo_del(EO_OBJ(it));
      }
 
    _round_items_del(sd);
