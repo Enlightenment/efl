@@ -193,7 +193,7 @@ EAPI int ecore_cocoa_init(void);
 
 /**
  * Shuts the Ecore_Cocoa library down
- * @return How many times Ecore_Cocoa has been initted
+ * @return How many times Ecore_Cocoa has been shut down
  */
 EAPI int ecore_cocoa_shutdown(void);
 
