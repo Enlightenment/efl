@@ -7,7 +7,7 @@
 #define ELM_PART_HOOK
 
 #define ELM_PART_REF(obj, pd) do { if (!(pd->temp++)) eo_ref(obj); } while(0)
-#define ELM_PART_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) eo_unref(obj); } } while(0)
+#define ELM_PART_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) eo_del(obj); } } while(0)
 #define ELM_PART_RETURN_VAL(a) do { ELM_PART_HOOK; typeof(a) _ret = a; ELM_PART_UNREF(obj, pd); return _ret; } while(0)
 #define ELM_PART_RETURN_VOID do { ELM_PART_HOOK; ELM_PART_UNREF(obj, pd); return; } while(0)
 #define ELM_PART_CALL(a) ({ ELM_PART_REF(obj, pd); a; })

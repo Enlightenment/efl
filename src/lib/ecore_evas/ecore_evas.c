@@ -4369,7 +4369,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
 
    eo_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   eo_unref(evt);
+   eo_del(evt);
 
    return processed;
 }
@@ -4425,7 +4425,7 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
 
    eo_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   eo_unref(evt);
+   eo_del(evt);
 
    return processed;
 }
@@ -4457,7 +4457,7 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
 
    eo_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   eo_unref(evt);
+   eo_del(evt);
 
    return processed;
 }
@@ -4484,7 +4484,7 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
 
    eo_event_callback_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   eo_unref(evt);
+   eo_del(evt);
 
    return processed;
 }

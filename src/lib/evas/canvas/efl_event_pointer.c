@@ -37,7 +37,7 @@ _del_hook(Eo *evt)
    else
      {
         eo_del_intercept_set(evt, NULL);
-        eo_unref(evt);
+        eo_del(evt);
      }
 }
 
