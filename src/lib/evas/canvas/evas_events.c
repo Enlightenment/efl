@@ -2681,6 +2681,7 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
                }
              if (g->delete_me) continue;
              if (!g->object) continue;
+             if (!g->is_active) continue;
              if (((e->modifiers.mask & g->modifiers) ||
                   (g->modifiers == e->modifiers.mask)) &&
                  (!strcmp(keyname, g->keyname)))
@@ -2786,6 +2787,7 @@ _canvas_event_feed_key_up_internal(Eo *eo_e,
                }
              if (g->delete_me) continue;
              if (!g->object) continue;
+             if (!g->is_active) continue;
              if (((e->modifiers.mask & g->modifiers) ||
                   (g->modifiers == e->modifiers.mask)) &&
                  (!(e->modifiers.mask & g->not_modifiers)) &&

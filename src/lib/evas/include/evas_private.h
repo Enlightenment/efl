@@ -649,6 +649,7 @@ struct _Evas_Key_Grab
    Eina_Bool           exclusive : 1;
    Eina_Bool           just_added : 1;
    Eina_Bool           delete_me : 1;
+   Eina_Bool           is_active : 1;
 };
 
 struct _Evas_Intercept_Func

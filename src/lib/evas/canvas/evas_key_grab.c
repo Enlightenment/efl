@@ -8,13 +8,29 @@
 /* modifiers/not_modifers they use */
 
 static Evas_Key_Grab *evas_key_grab_new  (Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive);
-static Evas_Key_Grab *evas_key_grab_find (Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive);
+static Evas_Key_Grab *evas_key_grab_find (Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 
 static Evas_Key_Grab *
 evas_key_grab_new(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
 {
    /* MEM OK */
+   Eina_List *l;
    Evas_Key_Grab *g;
+   Eina_Bool have_exclusion = EINA_FALSE;
+
+   EINA_LIST_FOREACH(obj->layer->evas->grabs, l, g)
+     {
+        if ((g->modifiers == modifiers) &&
+            (g->not_modifiers == not_modifiers) &&
+            (!strcmp(g->keyname, keyname)) &&
+            (g->exclusive))
+          {
+             have_exclusion = EINA_TRUE;
+             break;
+          }
+     }
+
+   if (have_exclusion && exclusive) return NULL;
 
    g = evas_mem_calloc(sizeof(Evas_Key_Grab));
    if (!g) return NULL;
@@ -25,6 +41,7 @@ evas_key_grab_new(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const ch
    g->keyname = strdup(keyname);
    if (obj->layer->evas->walking_grabs)
      g->just_added = EINA_TRUE;
+   g->is_active = EINA_TRUE;
    if (!g->keyname)
      {
         if (!evas_mem_free(strlen(keyname) + 1))
@@ -39,13 +56,29 @@ evas_key_grab_new(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const ch
              return NULL;
           }
      }
+
+   if (exclusive)
+     {
+        Evas_Key_Grab *ge;
+        EINA_LIST_FOREACH(obj->layer->evas->grabs, l, ge)
+          {
+             if ((ge->modifiers == modifiers) &&
+                 (ge->not_modifiers == not_modifiers) &&
+                 (!strcmp(ge->keyname, keyname)))
+               {
+                  ge->is_active = EINA_FALSE;
+               }
+          }
+     }
+   if (have_exclusion) g->is_active = EINA_FALSE;
+
    obj->grabs = eina_list_append(obj->grabs, g);
    obj->layer->evas->grabs = eina_list_append(obj->layer->evas->grabs, g);
    return g;
 }
 
 static Evas_Key_Grab *
-evas_key_grab_find(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
+evas_key_grab_find(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
 {
    /* MEM OK */
    Eina_List *l;
@@ -57,7 +90,7 @@ evas_key_grab_find(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const c
             (g->not_modifiers == not_modifiers) &&
             (!strcmp(g->keyname, keyname)))
           {
-             if ((exclusive) ||  (eo_obj == g->object)) return g;
+             if (eo_obj == g->object) return g;
           }
      }
    return NULL;
@@ -97,7 +130,7 @@ evas_key_grab_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const c
    /* MEM OK */
    Evas_Key_Grab *g;
 
-   g = evas_key_grab_find(eo_obj, obj, keyname, modifiers, not_modifiers, 0);
+   g = evas_key_grab_find(eo_obj, obj, keyname, modifiers, not_modifiers);
    if (!g) return;
    Evas_Object_Protected_Data *g_object = eo_data_scope_get(g->object, EVAS_OBJECT_CLASS);
    g_object->grabs = eina_list_remove(g_object->grabs, g);
@@ -115,12 +148,6 @@ _evas_object_key_grab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *k
    Evas_Key_Grab *g;
 
    if (((modifiers == not_modifiers) && (modifiers != 0)) || (!keyname)) return EINA_FALSE;
-   if (exclusive)
-     {
-        g = evas_key_grab_find(eo_obj, obj, keyname, modifiers, not_modifiers,
-                               exclusive);
-        if (g) return EINA_FALSE;
-     }
    g = evas_key_grab_new(eo_obj, obj, keyname, modifiers, not_modifiers, exclusive);
    return ((!g) ? EINA_FALSE : EINA_TRUE);
 }
@@ -130,9 +157,10 @@ _evas_object_key_ungrab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char 
 {
    /* MEM OK */
    Evas_Key_Grab *g;
+   Eina_List *l;
 
    if (!keyname) return;
-   g = evas_key_grab_find(eo_obj, obj, keyname, modifiers, not_modifiers, 0);
+   g = evas_key_grab_find(eo_obj, obj, keyname, modifiers, not_modifiers);
    if (!g) return;
    Evas_Object_Protected_Data *g_object = eo_data_scope_get(g->object, EVAS_OBJECT_CLASS);
    if (g_object->layer->evas->walking_grabs)
@@ -144,6 +172,21 @@ _evas_object_key_ungrab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char 
           }
      }
    else
-     evas_key_grab_free(g->object, g_object, keyname, modifiers, not_modifiers);
-}
+     {
+        if (g->exclusive)
+          {
+             Evas_Key_Grab *ge;
+             EINA_LIST_FOREACH(obj->layer->evas->grabs, l, ge)
+               {
+                  if ((ge->modifiers == modifiers) &&
+                     (ge->not_modifiers == not_modifiers) &&
+                     (!strcmp(ge->keyname, keyname)))
+                    {
+                       if (!ge->is_active) ge->is_active = EINA_TRUE;
+                    }
+               }
+          }
 
+        evas_key_grab_free(g->object, g_object, keyname, modifiers, not_modifiers);
+     }
+}
