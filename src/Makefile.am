@@ -164,17 +164,6 @@ clean-local:
 	find . -type f -name '*.gcno' -delete
 	find . -type f -name '*.gcda' -delete
 	find . -type f -name check-results.xml -delete
-	make -C lib/evil clean
-	make -C lib/eina clean
-	make -C lib/eet clean
-	make -C lib/emile clean
-	make -C lib/eo clean
-	make -C lib/efl clean
-	make -C lib/ector clean
-	make -C lib/ecore clean
-	make -C lib/edje clean
-	make -C lib/eio clean
-	make -C lib/elementary clean
 
 install-exec-hook:
 	$(MKDIR_P) $(DESTDIR)$(libdir)
