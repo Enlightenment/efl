@@ -13,5 +13,7 @@ interface Efl.Input.Interface ()
       pointer,in: Efl.Event.Pointer;
       pointer,out: Efl.Event.Pointer;
       pointer,wheel: Efl.Event.Pointer;
+      key,down: Efl.Event.Key;
+      key,up: Efl.Event.Key;
    }
 }

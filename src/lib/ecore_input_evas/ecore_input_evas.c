@@ -429,7 +429,7 @@ _ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
    else
      {
         if (!lookup->direct ||
-            !lookup->direct(lookup->window, ECORE_EVENT_KEY_DOWN, e))
+            !lookup->direct(lookup->window, ECORE_EVENT_KEY_UP, e))
           {
              evas_event_feed_key_up_with_keycode(lookup->evas,
                                                  e->keyname,
