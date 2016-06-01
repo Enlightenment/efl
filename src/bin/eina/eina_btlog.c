@@ -277,7 +277,6 @@ _translation_function_detect(const Translation_Desc *desc)
          if (p)
            {
               ret = pclose(p);
-              ret = WEXITSTATUS(ret);
               if (ret == 0)
                 {
                    _translate = d->func;
