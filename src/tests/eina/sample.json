@@ -1,0 +1,41 @@
+{
+   "gpx": {
+      "@xmlns": "http://www.topografix.com/GPX/1/1",
+      "@creator": "OpenStreetMap routing service",
+      "@version": 1.1,
+      "@schemaLocation": "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd",
+      "metadata": {
+         "link": {
+            "@href": "http://tile.openstreetmap.nl/~lambertus/routing/index.html",
+            "text": "OpenStreetMap routing service"
+         },
+         "time": "2011-05-18T03:33:03+02:00",
+         "visible": true,
+         "hidden": false,
+         "parent": null
+      },
+      "trk": {
+         "name": "Route",
+         "trkseg": {
+            "trkpt": [
+               {
+                  "@lon": 5.62373,
+                  "@lat": 53.01
+               },
+               {
+                  "@lon": 5.62359,
+                  "@lat": 53.0e+10
+               },
+               {
+                  "@lon": -5.62336,
+                  "@lat": 53.01024
+               },
+               {
+                  "@lon": 5.62314,
+                  "@lat": 53.010303
+               }
+            ]
+         }
+      }
+   }
+}

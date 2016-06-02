@@ -315,6 +315,7 @@ tests/eina/eina_test_strbuf.c \
 tests/eina/eina_test_str.c \
 tests/eina/eina_test_quadtree.c \
 tests/eina/eina_test_simple_xml_parser.c \
+tests/eina/eina_test_simple_json_parser.c \
 tests/eina/eina_test_value.c \
 tests/eina/eina_test_cow.c \
 tests/eina/eina_test_barrier.c \

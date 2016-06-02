@@ -60,6 +60,7 @@ static const Efl_Test_Case etc[] = {
    { "QuadTree", eina_test_quadtree },
    { "Sched", eina_test_sched },
    { "Simple Xml Parser", eina_test_simple_xml_parser},
+   { "Simple Json Parser", eina_test_simple_json_parser},
    { "Value", eina_test_value },
    { "COW", eina_test_cow },
    // Disabling Eina_Model test
