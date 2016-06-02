@@ -253,6 +253,7 @@ extern "C" {
 #include <eina_unicode.h>
 #include <eina_quadtree.h>
 #include <eina_simple_xml_parser.h>
+#include <eina_simple_json_parser.h>
 #include <eina_lock.h>
 #include <eina_prefix.h>
 #include <eina_refcount.h>

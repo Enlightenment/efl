@@ -1,0 +1,32 @@
+{
+  "board": {
+    "site": "http://linuxfr.org/",
+    "post": [
+       {
+         "id": 3211,
+         "login": "houplaboom",
+         "message": "Is this an XML test?"
+       },
+       {
+         "id": 3212,
+         "login": "fredx",
+         "message": "I'm seeing bald people."
+       },
+       {
+         "id": 3213,
+         "login": "NedFlanders",
+         "message": "Don't call him!"
+       },
+       {
+         "id": 3214,
+         "login": "Single",
+         "message": "I'm not bald!"
+       },
+       {
+         "id": 3215,
+         "login": "ngc891",
+         "message": "It was an XML test."
+       }
+    ]
+  }
+}

@@ -48,6 +48,7 @@ eina_stringshare_01.c \
 eina_tmpstr_01.c \
 eina_tiler_01.c \
 eina_simple_xml_parser_01.c \
+eina_simple_json_parser_01.c \
 eina_value_01.c \
 eina_value_02.c \
 eina_value_03.c \
@@ -94,6 +95,7 @@ eina_stringshare_01 \
 eina_tmpstr_01 \
 eina_magic_01 \
 eina_simple_xml_parser_01 \
+eina_simple_json_parser_01 \
 eina_value_01 \
 eina_value_02 \
 eina_value_03 \

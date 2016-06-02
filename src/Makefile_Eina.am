@@ -71,6 +71,7 @@ lib/eina/eina_ustrbuf.h \
 lib/eina/eina_unicode.h \
 lib/eina/eina_quadtree.h \
 lib/eina/eina_simple_xml_parser.h \
+lib/eina/eina_simple_json_parser.h \
 lib/eina/eina_lock.h \
 lib/eina/eina_prefix.h \
 lib/eina/eina_refcount.h \
@@ -147,6 +148,7 @@ lib/eina/eina_safety_checks.c \
 lib/eina/eina_sched.c \
 lib/eina/eina_share_common.c \
 lib/eina/eina_simple_xml_parser.c \
+lib/eina/eina_simple_json_parser.c \
 lib/eina/eina_str.c \
 lib/eina/eina_strbuf.c \
 lib/eina/eina_strbuf_common.c \
