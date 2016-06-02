@@ -4805,6 +4805,7 @@ edje_edit_part_item_append(Evas_Object *obj, const char *part, const char *item_
    return EINA_TRUE;
 }
 
+/* deprecated */
 EAPI Eina_Bool
 edje_edit_part_item_insert_before(Evas_Object *obj, const char *part, const char *item_name, const char *item_before, const char *source_group)
 {
@@ -4842,6 +4843,32 @@ edje_edit_part_item_insert_before(Evas_Object *obj, const char *part, const char
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_part_item_insert_before_index(Evas_Object *obj, const char *part, const char *item_name, unsigned int index, const char *source_group)
+{
+   Edje_Part *ep;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   /* check if a source group is exists. */
+   if (!eina_hash_find(ed->file->collection, source_group))
+     return EINA_FALSE;
+
+   _edje_edit_part_item_insert(ep, index, item_name, source_group);
+
+   return EINA_TRUE;
+}
+
+/* deprecated */
 EAPI Eina_Bool
 edje_edit_part_item_insert_after(Evas_Object *obj, const char *part, const char *item_name, const char *item_after, const char *source_group)
 {
@@ -4881,6 +4908,32 @@ edje_edit_part_item_insert_after(Evas_Object *obj, const char *part, const char 
 }
 
 EAPI Eina_Bool
+edje_edit_part_item_insert_after_index(Evas_Object *obj, const char *part, const char *item_name, unsigned int index, const char *source_group)
+{
+   Edje_Part *ep;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   /* check if a source group is exists. */
+   if (!eina_hash_find(ed->file->collection, source_group))
+     return EINA_FALSE;
+
+   _edje_edit_part_item_insert(ep, index, item_name, source_group);
+
+   return EINA_TRUE;
+}
+
+/* deprecated */
+EAPI Eina_Bool
 edje_edit_part_item_insert_at(Evas_Object *obj, const char *part, const char *item_name, const char *source_group, unsigned int place)
 {
    Edje_Part *ep;
@@ -4914,6 +4967,7 @@ edje_edit_part_item_insert_at(Evas_Object *obj, const char *part, const char *it
    return EINA_TRUE;
 }
 
+/* deprecated */
 EAPI Eina_Bool
 edje_edit_part_item_move_below(Evas_Object *obj, const char *part, const char *item_name)
 {
@@ -4953,6 +5007,31 @@ edje_edit_part_item_move_below(Evas_Object *obj, const char *part, const char *i
 }
 
 EAPI Eina_Bool
+edje_edit_part_item_move_below_index(Evas_Object *obj, const char *part, unsigned int index)
+{
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   item = ep->items[index - 1];
+   ep->items[index - 1] = ep->items[index];
+   ep->items[index] = item;
+
+   return EINA_TRUE;
+}
+
+/* deprecated */
+EAPI Eina_Bool
 edje_edit_part_item_move_above(Evas_Object *obj, const char *part, const char *item_name)
 {
    Edje_Part *ep;
@@ -4990,6 +5069,31 @@ edje_edit_part_item_move_above(Evas_Object *obj, const char *part, const char *i
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_part_item_move_above_index(Evas_Object *obj, const char *part, unsigned int index)
+{
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   item = ep->items[index + 1];
+   ep->items[index + 1] = ep->items[index];
+   ep->items[index] = item;
+
+   return EINA_TRUE;
+}
+
+/* deprecated */
 EAPI Eina_List *
 edje_edit_part_items_list_get(Evas_Object *obj, const char *part)
 {
@@ -5011,6 +5115,24 @@ edje_edit_part_items_list_get(Evas_Object *obj, const char *part)
    return items_list;
 }
 
+EAPI int
+edje_edit_part_items_count_get(Evas_Object *obj, const char *part)
+{
+   Edje_Part *ep;
+
+   GET_RP_OR_RETURN(-1);
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return -1;
+
+   ep = rp->part;
+   if (!ed->file) return -1;
+
+   return  ep->items_count;
+}
+
+/* deprecated */
 EAPI Eina_Bool
 edje_edit_part_item_del(Evas_Object *obj, const char *part, const char *name)
 {
@@ -5069,6 +5191,53 @@ edje_edit_part_item_del(Evas_Object *obj, const char *part, const char *name)
 }
 
 EAPI Eina_Bool
+edje_edit_part_item_index_del(Evas_Object *obj, const char *part, unsigned int index)
+{
+   Edje_Part *ep;
+   Edje_Pack_Element *item;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+   ep = rp->part;
+   if (!ed->file) return EINA_FALSE;
+
+   item = ep->items[index];
+   {
+      Edje_Pack_Element **tmp;
+      _edje_if_string_free(ed, &item->name);
+      --ep->items_count;
+
+      while (index < ep->items_count)
+        {
+           ep->items[index] = ep->items[index + 1];
+           index++;
+        }
+
+      if (ep->items_count != 0)
+        {
+           tmp = realloc(ep->items, sizeof(Edje_Pack_Element *) * ep->items_count);
+           if (!tmp)
+             {
+                free(item);
+                return EINA_FALSE;
+             }
+           ep->items = tmp;
+        }
+      else
+        ep->items = NULL;
+   }
+
+   GET_EED_OR_RETURN(EINA_FALSE);
+   _edje_edit_flag_script_dirty(eed, EINA_TRUE);
+
+   return EINA_TRUE;
+}
+
+/* deprecated */
+EAPI Eina_Bool
 edje_edit_part_item_source_set(Evas_Object *obj, const char *part, const char *item_name, const char *source_group)
 {
    Edje_Part *ep;
@@ -5106,6 +5275,32 @@ edje_edit_part_item_source_set(Evas_Object *obj, const char *part, const char *i
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_part_item_index_source_set(Evas_Object *obj, const char *part, unsigned int index, const char *source_group)
+{
+   Edje_Part *ep;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   /* check if a source group is exists. */
+   if (!eina_hash_find(ed->file->collection, source_group))
+     return EINA_FALSE;
+
+   ep->items[index]->source = eina_stringshare_add(source_group);
+
+   return EINA_TRUE;
+}
+
+EINA_DEPRECATED
 EAPI const char *
 edje_edit_part_item_source_get(Evas_Object *obj, const char *part, const char *item_name)
 {
@@ -5138,6 +5333,26 @@ edje_edit_part_item_source_get(Evas_Object *obj, const char *part, const char *i
    return eina_stringshare_add(item->source);
 }
 
+EAPI const char *
+edje_edit_part_item_index_source_get(Evas_Object *obj, const char *part, unsigned int index)
+{
+   Edje_Part *ep;
+
+   GET_RP_OR_RETURN(NULL);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return NULL;
+
+   ep = rp->part;
+
+   if (!ed->file) return NULL;
+
+   return eina_stringshare_add(ep->items[index]->source);
+}
+
+/* deprecated */
 #define FUNC_PART_ITEM_INT(Class, Value, Min)                                                                    \
   EAPI int                                                                                                       \
   edje_edit_part_item_##Class##_##Value##_get(Evas_Object * obj, const char *part, const char *item_name)        \
@@ -5198,6 +5413,49 @@ FUNC_PART_ITEM_INT(prefer, h, 0);
 FUNC_PART_ITEM_INT(spread, w, 0);
 FUNC_PART_ITEM_INT(spread, h, 0);
 
+#define FUNC_PART_ITEM_INDEX_INT(Class, Value, Min)                                                                 \
+  EAPI int                                                                                                          \
+  edje_edit_part_item_index_##Class##_##Value##_get(Evas_Object * obj, const char *part, unsigned int index)        \
+  {                                                                                                                 \
+     Edje_Part *ep;                                                                                                 \
+     if ((!obj) || (!part))                                                                                         \
+       return Min;                                                                                                  \
+     GET_RP_OR_RETURN(Min);                                                                                         \
+     ep = rp->part;                                                                                                 \
+     if (index >= ep->items_count)                                                                                  \
+       return Min;                                                                                                  \
+     return ep->items[index]->Class.Value;                                                                          \
+  }                                                                                                                 \
+  EAPI Eina_Bool                                                                                                    \
+  edje_edit_part_item_index_##Class##_##Value##_set(Evas_Object * obj, const char *part, unsigned int index, int v) \
+  {                                                                                                                 \
+     Edje_Part *ep;                                                                                                 \
+     if ((!obj) || (!part))                                                                                         \
+       return EINA_FALSE;                                                                                           \
+     if (v < Min) return EINA_FALSE;                                                                                \
+     GET_RP_OR_RETURN(EINA_FALSE);                                                                                  \
+     ep = rp->part;                                                                                                 \
+     if ((rp->part->type != EDJE_PART_TYPE_BOX) &&                                                                  \
+         (rp->part->type != EDJE_PART_TYPE_TABLE))                                                                  \
+       return EINA_FALSE;                                                                                           \
+     if (index >= ep->items_count)                                                                                  \
+       return Min;                                                                                                  \
+     ep->items[index]->Class.Value = v;                                                                             \
+     return EINA_TRUE;                                                                                              \
+  }
+
+FUNC_PART_ITEM_INDEX_INT(min, w, 0);
+FUNC_PART_ITEM_INDEX_INT(min, h, 0);
+FUNC_PART_ITEM_INDEX_INT(max, w, -1);
+FUNC_PART_ITEM_INDEX_INT(max, h, -1);
+FUNC_PART_ITEM_INDEX_INT(aspect, w, 0);
+FUNC_PART_ITEM_INDEX_INT(aspect, h, 0);
+FUNC_PART_ITEM_INDEX_INT(prefer, w, 0);
+FUNC_PART_ITEM_INDEX_INT(prefer, h, 0);
+FUNC_PART_ITEM_INDEX_INT(spread, w, 0);
+FUNC_PART_ITEM_INDEX_INT(spread, h, 0);
+
+/* deprecated */
 EAPI Edje_Aspect_Control
 edje_edit_part_item_aspect_mode_get(Evas_Object *obj, const char *part, const char *item_name)
 {
@@ -5224,6 +5482,7 @@ edje_edit_part_item_aspect_mode_get(Evas_Object *obj, const char *part, const ch
    return item->aspect.mode;
 }
 
+/* deprecated */
 EAPI Eina_Bool
 edje_edit_part_item_aspect_mode_set(Evas_Object *obj, const char *part, const char *item_name, Edje_Aspect_Control mode)
 {
@@ -5257,6 +5516,48 @@ edje_edit_part_item_aspect_mode_set(Evas_Object *obj, const char *part, const ch
    return EINA_TRUE;
 }
 
+EAPI Edje_Aspect_Control
+edje_edit_part_item_index_aspect_mode_get(Evas_Object *obj, const char *part, unsigned int index)
+{
+   Edje_Part *ep;
+
+   if ((!obj) || (!part))
+     return EDJE_ASPECT_CONTROL_NONE;
+
+   GET_RP_OR_RETURN(EDJE_ASPECT_CONTROL_NONE);
+
+   ep = rp->part;
+   if (index >= ep->items_count)
+     return EDJE_ASPECT_CONTROL_NONE;
+
+   return ep->items[index]->aspect.mode;
+}
+
+EAPI Eina_Bool
+edje_edit_part_item_index_aspect_mode_set(Evas_Object *obj, const char *part, unsigned int index, Edje_Aspect_Control mode)
+{
+   Edje_Part *ep;
+
+   if ((!obj) || (!part))
+     return EINA_FALSE;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (index >= ep->items_count)
+     return EINA_FALSE;
+
+   ep->items[index]->aspect.mode = mode;
+
+   return EINA_TRUE;
+}
+
+/* deprecated */
 EAPI Eina_Bool
 edje_edit_part_item_padding_get(Evas_Object *obj, const char *part, const char *item_name, int *l, int *r, int *t, int *b)
 {
@@ -5288,6 +5589,7 @@ edje_edit_part_item_padding_get(Evas_Object *obj, const char *part, const char *
    return EINA_TRUE;
 }
 
+/* deprecated */
 EAPI Eina_Bool
 edje_edit_part_item_padding_set(Evas_Object *obj, const char *part, const char *item_name, int l, int r, int t, int b)
 {
@@ -5323,6 +5625,49 @@ edje_edit_part_item_padding_set(Evas_Object *obj, const char *part, const char *
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_part_item_index_padding_get(Evas_Object *obj, const char *part, unsigned int index, int *l, int *r, int *t, int *b)
+{
+   Edje_Part *ep;
+
+   if ((!obj) || (!part))
+     return EINA_FALSE;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   ep = rp->part;
+   if (l) *l = ep->items[index]->padding.l;
+   if (t) *t = ep->items[index]->padding.t;
+   if (r) *r = ep->items[index]->padding.r;
+   if (b) *b = ep->items[index]->padding.b;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_part_item_index_padding_set(Evas_Object *obj, const char *part, unsigned int index, int l, int r, int t, int b)
+{
+   Edje_Part *ep;
+
+   if ((!obj) || (!part))
+     return EINA_FALSE;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   ep = rp->part;
+   if (l > -1) ep->items[index]->padding.l = l;
+   else return EINA_FALSE;
+   if (t > -1) ep->items[index]->padding.t = t;
+   else return EINA_FALSE;
+   if (r > -1) ep->items[index]->padding.r = r;
+   else return EINA_FALSE;
+   if (b > -1) ep->items[index]->padding.b = b;
+   else return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+/* deprecated */
 #define FUNC_PART_ITEM_DOUBLE(Name, Value, Min, Max)                                                     \
   EAPI double                                                                                            \
   edje_edit_part_item_##Name##_get(Evas_Object * obj, const char *part, const char *item_name)           \
@@ -5380,6 +5725,42 @@ FUNC_PART_ITEM_DOUBLE(weight_y, weight.y, 0.0, 99999.990);
 
 #undef FUNC_PART_ITEM_DOUBLE
 
+#define FUNC_PART_ITEM_INDEX_DOUBLE(Name, Value, Min, Max)                                                  \
+  EAPI double                                                                                               \
+  edje_edit_part_item_index_##Name##_get(Evas_Object * obj, const char *part, unsigned int index)           \
+  {                                                                                                         \
+     Edje_Part *ep;                                                                                         \
+     if ((!obj) || (!part))                                                                                 \
+       return 0.0;                                                                                          \
+     GET_RP_OR_RETURN(0.0);                                                                                 \
+     ep = rp->part;                                                                                         \
+     return TO_DOUBLE(ep->items[index]->Value);                                                             \
+  }                                                                                                         \
+  EAPI Eina_Bool                                                                                            \
+  edje_edit_part_item_index_##Name##_set(Evas_Object * obj, const char *part, unsigned int index, double v) \
+  {                                                                                                         \
+     Edje_Part *ep;                                                                                         \
+     if ((!obj) || (!part))                                                                                 \
+       return EINA_FALSE;                                                                                   \
+     if ((v < Min) || (v > Max))                                                                            \
+       return EINA_FALSE;                                                                                   \
+     GET_RP_OR_RETURN(EINA_FALSE);                                                                          \
+     ep = rp->part;                                                                                         \
+     if ((rp->part->type != EDJE_PART_TYPE_BOX) &&                                                          \
+         (rp->part->type != EDJE_PART_TYPE_TABLE))                                                          \
+       return EINA_FALSE;                                                                                   \
+     ep->items[index]->Value = FROM_DOUBLE(v);                                                              \
+     return EINA_TRUE;                                                                                      \
+  }
+
+FUNC_PART_ITEM_INDEX_DOUBLE(align_x, align.x, -1.0, 1.0);
+FUNC_PART_ITEM_INDEX_DOUBLE(align_y, align.y, -1.0, 1.0);
+FUNC_PART_ITEM_INDEX_DOUBLE(weight_x, weight.x, 0.0, 99999.990);
+FUNC_PART_ITEM_INDEX_DOUBLE(weight_y, weight.y, 0.0, 99999.990);
+
+#undef FUNC_PART_ITEM_INDEX_DOUBLE
+
+/* deprecated */
 EAPI Eina_Bool
 edje_edit_part_item_position_get(Evas_Object *obj, const char *part, const char *item_name, unsigned short *col, unsigned short *row)
 {
@@ -5404,6 +5785,7 @@ edje_edit_part_item_position_get(Evas_Object *obj, const char *part, const char 
    return EINA_TRUE;
 }
 
+/* deprecated */
 EAPI Eina_Bool
 edje_edit_part_item_position_set(Evas_Object *obj, const char *part, const char *item_name, unsigned short col, unsigned short row)
 {
@@ -5480,6 +5862,33 @@ FUNC_PART_ITEM_USHORT(position, row)
 
 #undef FUNC_PART_ITEM_USHORT
 
+#define FUNC_PART_ITEM_INDEX_USHORT(CLASS, VALUE) \
+EAPI unsigned short \
+edje_edit_part_item_index_##CLASS##_##VALUE##_get(Evas_Object *obj, const char *part, unsigned int index) \
+{ \
+   Edje_Part *ep; \
+   GET_RP_OR_RETURN(0); \
+   ep = rp->part; \
+   if (ep->type != EDJE_PART_TYPE_TABLE) return 0; \
+   return ep->items[index]->VALUE; \
+} \
+EAPI Eina_Bool \
+edje_edit_part_item_index_##CLASS##_##VALUE##_set(Evas_Object *obj, const char *part, unsigned int index, unsigned short new_val) \
+{ \
+   Edje_Part *ep; \
+   GET_RP_OR_RETURN(EINA_FALSE); \
+   ep = rp->part; \
+   if (ep->type != EDJE_PART_TYPE_TABLE) return EINA_FALSE; \
+   ep->items[index]->VALUE = new_val; \
+   return EINA_TRUE; \
+}
+
+FUNC_PART_ITEM_INDEX_USHORT(position, col)
+FUNC_PART_ITEM_INDEX_USHORT(position, row)
+
+#undef FUNC_PART_ITEM_INDEX_USHORT
+
+/* deprecated */
 EAPI void
 edje_edit_part_item_span_get(Evas_Object *obj, const char *part, const char *item_name, unsigned char *col, unsigned char *row)
 {
@@ -5504,6 +5913,7 @@ edje_edit_part_item_span_get(Evas_Object *obj, const char *part, const char *ite
    return;
 }
 
+/* deprecated */
 EAPI Eina_Bool
 edje_edit_part_item_span_set(Evas_Object *obj, const char *part, const char *item_name, unsigned char col, unsigned char row)
 {
@@ -5580,6 +5990,32 @@ FUNC_PART_ITEM_USHORT(span, col, colspan)
 FUNC_PART_ITEM_USHORT(span, row, rowspan)
 
 #undef FUNC_PART_ITEM_USHORT
+
+#define FUNC_PART_ITEM_INDEX_USHORT(CLASS, VALUE, MEMBER) \
+EAPI unsigned short \
+edje_edit_part_item_index_##CLASS##_##VALUE##_get(Evas_Object *obj, const char *part, unsigned int index) \
+{ \
+   Edje_Part *ep; \
+   GET_RP_OR_RETURN(0); \
+   ep = rp->part; \
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return EINA_FALSE; \
+   return  ep->items[index]->MEMBER; \
+} \
+EAPI Eina_Bool \
+edje_edit_part_item_index_##CLASS##_##VALUE##_set(Evas_Object *obj, const char *part, unsigned int index, unsigned short new_val) \
+{ \
+   Edje_Part *ep; \
+   GET_RP_OR_RETURN(EINA_FALSE); \
+   ep = rp->part; \
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return EINA_FALSE; \
+   ep->items[index]->MEMBER = new_val; \
+   return EINA_TRUE; \
+}
+
+FUNC_PART_ITEM_INDEX_USHORT(span, col, colspan)
+FUNC_PART_ITEM_INDEX_USHORT(span, row, rowspan)
+
+#undef FUNC_PART_ITEM_INDEX_USHORT
 
 /*********************/
 /*  PART STATES API  */
