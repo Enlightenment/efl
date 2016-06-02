@@ -52,7 +52,7 @@ class Evas.Canvas3D.Texture (Evas.Canvas3D.Object, Evas.Common_Interface)
             @in color_format: Evas_Colorspace; [[Color format of the texture.]]
             @in w: int; [[Width of the data.]]
             @in h: int; [[Height of the data.]]
-            @in data: const(void)*; [[Pointer to the data.]]
+            @in data: const(void_ptr); [[Pointer to the data.]]
          }
       }
 

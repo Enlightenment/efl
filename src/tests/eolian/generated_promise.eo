@@ -14,12 +14,12 @@ class Generated_Promise (Eo.Base)
       method_multiple_args_1 {
          params {
             @inout promise1: promise<int>;
-            @in data: void*;
+            @in data: void_ptr;
          }
       }
       method_multiple_args_2 {
          params {
-            @in data: void*;
+            @in data: void_ptr;
             @inout promise1: promise<int>;
          }
       }

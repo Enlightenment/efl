@@ -76,7 +76,7 @@ class Elm.Diskselector.Item(Elm.Widget.Item)
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;
-                   const(void)* data;
+                   const(void_ptr) data;
                    }
                    }*/
       }

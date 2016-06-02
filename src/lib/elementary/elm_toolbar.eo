@@ -226,7 +226,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
             @in icon: string @optional; [[A string with icon name or the absolute path of an image file.]]
             @in label: string; [[The label of the item.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
-            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       item_insert_after {
@@ -260,7 +260,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
             @in icon: string @optional; [[A string with icon name or the absolute path of an image file.]]
             @in label: string; [[The label of the item.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
-            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       item_append {
@@ -293,7 +293,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
             @in icon: string @optional; [[A string with icon name or the absolute path of an image file.]]
             @in label: string; [[The label of the item.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
-            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       items_count @const {
@@ -330,7 +330,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
             @in icon: string @optional; [[A string with icon name or the absolute path of an image file.]]
             @in label: string; [[The label of the item.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
-            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       item_find_by_label @const {

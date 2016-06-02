@@ -119,7 +119,7 @@ class Ecore.Audio.In (Ecore.Audio)
          ]]
          return: ssize; [[The amount of samples written to buf]]
          params {
-            @in buf: void *; [[The buffer to read into]]
+            @in buf: void_ptr; [[The buffer to read into]]
             @in len: size; [[The amount of samples to read]]
          }
       }
@@ -130,7 +130,7 @@ class Ecore.Audio.In (Ecore.Audio)
          ]]
          return: ssize; [[The amount of samples written to buf]]
          params {
-            @in buf: void *; [[The buffer to read into]]
+            @in buf: void_ptr; [[The buffer to read into]]
             @in len: size; [[The amount of samples to read]]
          }
       }

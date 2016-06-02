@@ -17,7 +17,7 @@ class Ecore.Animator (Eo.Base)
          params {
             @in runtime: double; [[Animation runtime in seconds.]]
             @in func: Ecore_Timeline_Cb; [[Animation callback function.]]
-            @in data: const(void)*; [[Private data passed to callback functions.]]
+            @in data: const(void_ptr); [[Private data passed to callback functions.]]
          }
       }
       constructor {
@@ -25,7 +25,7 @@ class Ecore.Animator (Eo.Base)
          legacy: null;
          params {
             @in func: Ecore_Task_Cb; [[Animation callback function.]]
-            @in data: const(void)*; [[Private data passed to callback functions.]]
+            @in data: const(void_ptr); [[Private data passed to callback functions.]]
          }
       }
    }

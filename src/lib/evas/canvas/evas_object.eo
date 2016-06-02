@@ -915,7 +915,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
       @property smart_data {
          get {
             [[Retrieve user data stored on a given smart object.]]
-            return: void * @warn_unused; [[A pointer to data or $null.]]
+            return: void_ptr @warn_unused; [[A pointer to data or $null.]]
          }
       }
       @property smart_clipped_clipper {

@@ -300,7 +300,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          }
          values {
             func: region_hook_func_type @nullable;
-            data: void * @optional;
+            data: void_ptr @optional;
          }
       }
       @property domain_part_text_translatable {
@@ -562,14 +562,14 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          params {
             @in source: Evas.Object;
             @in type: Evas.Callback_Type;
-            @in event_info: void *;
+            @in event_info: void_ptr;
          }
          return: bool;
       }
       event_callback_add {
          params {
             @in func: Elm_Event_Cb;
-            @in data: const(void)* @optional;
+            @in data: const(void_ptr) @optional;
          }
       }
       access {
@@ -585,10 +585,10 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          }
       }
       event_callback_del {
-         return: void *;
+         return: void_ptr;
          params {
             @in func: Elm_Event_Cb;
-            @in data: const(void)* @nullable;
+            @in data: const(void_ptr) @nullable;
          }
       }
       on_focus {
@@ -630,7 +630,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          return: bool;
          params {
             @in type: Evas.Callback_Type;
-            @in event_info: void *;
+            @in event_info: void_ptr;
             @in event_flags: Efl.Event.Flags *;
          }
       }
@@ -639,7 +639,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
             @in emission: string;
             @in source: string;
             @in func: Edje.Signal_Cb;
-            @in data: void *;
+            @in data: void_ptr;
          }
       }
       focus_next_manager_is {
@@ -776,7 +776,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
          }
       }
       signal_callback_del {
-         return: void *;
+         return: void_ptr;
          params {
             @in emission: string;
             @in source: string;

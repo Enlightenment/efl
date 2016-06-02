@@ -40,7 +40,7 @@ class Elm.App.Client (Eo.Base)
          params {
             @in args: generic_value * @optional; [[an array of.]]
             @in view_open_cb: Elm_App_Client_Open_View_Cb @optional; [[callback to be called when view open]]
-            @in data: const(void)* @optional; [[callback user data]]
+            @in data: const(void_ptr) @optional; [[callback user data]]
          }
          return: Elm_App_Client_Pending *; [[handler to cancel the view opening if it takes to long ]]
       }

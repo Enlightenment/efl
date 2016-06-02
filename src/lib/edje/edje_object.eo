@@ -185,7 +185,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          }
          values {
             func: Edje.Text.Change_Cb; [[The callback function to handle the text change]]
-            data: void *; [[The data associated to the callback function.]]
+            data: void_ptr; [[The data associated to the callback function.]]
          }
       }
       @property part_text_cursor_begin {
@@ -281,7 +281,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          }
          values {
             func: Edje.Item_Provider_Cb; [[The function to call (or $null to disable) to get item objects]]
-            data: void *; [[The data pointer to pass to the func callback]]
+            data: void_ptr; [[The data pointer to pass to the func callback]]
          }
       }
       @property part_text_cursor_line_begin {
@@ -310,7 +310,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          }
          values {
             func: Edje.Message_Handler_Cb; [[The function to handle messages  coming from obj]]
-            data: void *; [[Auxiliary data to be passed to func]]
+            data: void_ptr; [[Auxiliary data to be passed to func]]
          }
       }
       @property size_min {
@@ -467,11 +467,11 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            @since 1.2.0]]
 
-         return: void *; [[The same data pointer if successful, or $null otherwise]]
+         return: void_ptr; [[The same data pointer if successful, or $null otherwise]]
          params {
             @in part: string; [[The part name]]
             @in func: Edje.Markup_Filter_Cb; [[The function callback to remove]]
-            @in data: void *; [[The data passed to the callback function]]
+            @in data: void_ptr; [[The data passed to the callback function]]
          }
       }
       part_drag_step_set {
@@ -512,7 +512,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            otherwise, the returned pointer is an Ecore_IMF
 
            @since 1.2.0]]
-         return: void *; [[The input method context (Ecore_IMF_Context *) in entry]]
+         return: void_ptr; [[The input method context (Ecore_IMF_Context *) in entry]]
          params {
             @in part: string; [[The part name]]
          }
@@ -547,12 +547,12 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            \@ref edje_object_signal_callback_del_full().]]
 
          legacy: null;
-         return: void *; [[The data pointer]]
+         return: void_ptr; [[The data pointer]]
          params {
             @in emission: string; [[The emission string.]]
             @in source: string; [[The source string.]]
             @in func: Edje.Signal_Cb; [[The callback function.]]
-            @in data: void *; [[The callback function.]]
+            @in data: void_ptr; [[The callback function.]]
          }
       }
       part_text_cursor_next {
@@ -656,11 +656,11 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            See also @.text_insert_filter_callback_add and @.text_insert_filter_callback_del]]
 
-         return: void *; [[The same data pointer if successful, or $null otherwise]]
+         return: void_ptr; [[The same data pointer if successful, or $null otherwise]]
          params {
             @in part: string; [[The part name]]
             @in func: Edje.Text.Filter_Cb; [[The function callback to remove]]
-            @in data: void *; [[The data passed to the callback function]]
+            @in data: void_ptr; [[The data passed to the callback function]]
          }
       }
       part_text_style_user_pop {
@@ -683,7 +683,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
          params {
             @in part: string; [[The part name]]
-            @in data: const(void)*; [[The specific data to be set to the input panel.]]
+            @in data: const(void_ptr); [[The specific data to be set to the input panel.]]
             @in len: int; [[the length of data, in bytes, to send to the input panel]]
          }
       }
@@ -693,7 +693,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
            @since 1.2.0]]
          params {
             @in part: string; [[The part name]]
-            @in data: void *; [[The specific data to be got from the input panel]]
+            @in data: void_ptr; [[The specific data to be got from the input panel]]
             @in len: int *; [[The length of data]]
          }
       }
@@ -1082,7 +1082,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          params {
             @in type: Edje.Message_Type; [[The type of message to send to obj]]
             @in id: int; [[A identification number for the message to be sent]]
-            @in msg: void *; [[The message's body, a struct depending on type]]
+            @in msg: void_ptr; [[The message's body, a struct depending on type]]
          }
       }
       part_text_select_none @const {
@@ -1154,7 +1154,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            See also @.text_insert_filter_callback_add and @.text_insert_filter_callback_del_full]]
 
-         return: void *; [[The user data pointer if successful, or $null otherwise]]
+         return: void_ptr; [[The user data pointer if successful, or $null otherwise]]
          params {
             @in part: string; [[The part name]]
             @in func: Edje.Text.Filter_Cb; [[The function callback to remove]]
@@ -1262,7 +1262,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
             @in source: string; [[The signal's "source" string]]
             @in func: Edje.Signal_Cb; [[The callback function to be executed when the signal is
                                         emitted.]]
-            @in data: void *; [[A pointer to data to pass in to func.]]
+            @in data: void_ptr; [[A pointer to data to pass in to func.]]
          }
       }
       part_text_select_all @const {
@@ -1397,7 +1397,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          params {
             @in part: string; [[The part name]]
             @in func: Edje.Markup_Filter_Cb; [[The callback function that will act as markup filter]]
-            @in data: void *; [[User provided data to pass to the filter function]]
+            @in data: void_ptr; [[User provided data to pass to the filter function]]
          }
       }
       message_signal_process {
@@ -1876,7 +1876,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
          params {
             @in part: string; [[The part name]]
             @in func: Edje.Text.Filter_Cb; [[The callback function that will act as filter]]
-            @in data: void *; [[User provided data to pass to the filter function]]
+            @in data: void_ptr; [[User provided data to pass to the filter function]]
          }
       }
       part_text_input_panel_show @const {
@@ -1916,7 +1916,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            @since 1.2.0]]
 
-         return: void *; [[The user data pointer if successful, or $null otherwise]]
+         return: void_ptr; [[The user data pointer if successful, or $null otherwise]]
          params {
             @in part: string; [[The part name]]
             @in func: Edje.Markup_Filter_Cb; [[The function callback to remove]]

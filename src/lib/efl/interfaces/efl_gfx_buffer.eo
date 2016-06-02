@@ -141,7 +141,7 @@ interface Efl.Gfx.Buffer ()
                                                         argb8888 by default.]]
             @out stride: int @optional; [[Returns the length in bytes of a mapped line]]
          }
-         return: void* @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
+         return: void_ptr @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
       }
       buffer_unmap {
          [[Unmap a region of this buffer, and update the internal data if needed.
@@ -149,7 +149,7 @@ interface Efl.Gfx.Buffer ()
            EFL will update the internal image if the map had write access.
          ]]
          params {
-            @in data: void*; [[Data pointer returned by a previous call to map]]
+            @in data: void_ptr; [[Data pointer returned by a previous call to map]]
             @in length: int; [[Must be the same as returned by map.]]
          }
          return: bool; [[This will return $false in case of failure (invalid
@@ -174,7 +174,7 @@ interface Efl.Gfx.Buffer ()
            internally.
          ]]
          params {
-            @in pixels: void* @nullable; [[If $null, allocates an empty buffer]]
+            @in pixels: void_ptr @nullable; [[If $null, allocates an empty buffer]]
             @in width: int;
             @in height: int;
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
@@ -200,7 +200,7 @@ interface Efl.Gfx.Buffer ()
            $pixels should not be the return value of @.buffer_data_get.
          ]]
          params {
-            @in pixels: const(void)* @nullable; [[If $null, allocates an empty buffer]]
+            @in pixels: const(void_ptr) @nullable; [[If $null, allocates an empty buffer]]
             @in width: int;
             @in height: int;
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
@@ -217,7 +217,7 @@ interface Efl.Gfx.Buffer ()
            Note: This is different from the legacy API data, which is now
            replaced by map/unmap.
          ]]
-         return: void* @warn_unused;
+         return: void_ptr @warn_unused;
       }
       /* Note: border, span and buffer flags not imported from ector buffer */
    }

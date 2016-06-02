@@ -219,7 +219,7 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
             @in source: string; [[The signal's source string.]]
             @in func: Edje.Signal_Cb; [[The callback function to be executed
                                         when the signal is emitted.]]
-            @in data: void * @optional; [[A pointer to data to pass in to the
+            @in data: void_ptr @optional; [[A pointer to data to pass in to the
                                           callback function.]]
          }
       }
@@ -279,7 +279,7 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File)
            previous call to @.signal_callback_add. The data pointer that
            was passed to this call will be returned.
          ]]
-         return: void *; [[The data pointer of the signal callback (passed on
+         return: void_ptr; [[The data pointer of the signal callback (passed on
                            @.signal_callback_add) or $null on errors.]]
          params {
             @in emission: string; [[The signal's name string.]]

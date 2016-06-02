@@ -187,7 +187,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
             [[Returns the pointer attached by @.data_attach.set.]]
          }
          values {
-            data: void *; [[The attached pointer.]]
+            data: void_ptr; [[The attached pointer.]]
          }
       }
       @property font_hinting {

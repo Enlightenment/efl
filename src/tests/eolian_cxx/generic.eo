@@ -26,7 +26,7 @@ class Generic (Eo.Base)
       required_ctor_b {
          params {
             @in cb: Ecore_Cb;
-            @in data: void*;
+            @in data: void_ptr;
          }
       }
       optional_ctor_a {
@@ -37,7 +37,7 @@ class Generic (Eo.Base)
       optional_ctor_b {
          params {
             @in cb: Ecore_Cb;
-            @in data: void*;
+            @in data: void_ptr;
          }
       }
       call_req_ctor_b_callback {

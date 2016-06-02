@@ -231,7 +231,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in end: Evas.Object @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
-            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       go {
@@ -278,7 +278,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in end: Evas.Object @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
-            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       at_xy_item_get @const {
@@ -348,7 +348,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in end: Evas.Object @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
-            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       item_prepend {
@@ -379,7 +379,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in end: Evas.Object @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
-            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       clear {
@@ -417,7 +417,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
             @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in end: Evas.Object @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
-            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related callbacks.]]
             @in cmp_func: Eina_Compare_Cb; [[The comparing function to be used to sort list
                                              items by #Elm.Widget.Item item handles. This function will
                                              receive two items and compare them, returning a non-negative integer

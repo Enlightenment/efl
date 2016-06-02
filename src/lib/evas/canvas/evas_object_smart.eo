@@ -77,7 +77,7 @@ class Evas.Object.Smart (Evas.Object, Evas.Signal_Interface)
               See also @.data.get.]]
          }
          values {
-            data: void *; [[A pointer to user data.]]
+            data: void_ptr; [[A pointer to user data.]]
          }
       }
       @property members {

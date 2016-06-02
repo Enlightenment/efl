@@ -111,7 +111,7 @@ class Ecore.Audio (Eo.Base)
               vio: Ecore.Audio.Vio *; [[the @Ecore.Audio.Vio struct with
                                         the function callbacks
                                       ]]
-              data: void *; [[user data to pass to the VIO functions]]
+              data: void_ptr; [[user data to pass to the VIO functions]]
               free_func: eo_key_data_free_func; [[this function takes care to
                                                   clean up $data when he VIO is
                                                   destroyed. NULL means do

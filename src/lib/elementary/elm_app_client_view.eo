@@ -93,21 +93,21 @@ class Elm.App.Client.View (Eo.Base)
          [[Pause view]]
          params {
             @in cb: Elm_App_Client_View_Cb @optional; [[callback to be called when view was paused ]]
-            @in data: const(void)* @optional; [[callback user data]]
+            @in data: const(void_ptr) @optional; [[callback user data]]
          }
       }
       resume {
          [[Resume view]]
          params {
             @in cb: Elm_App_Client_View_Cb @optional; [[callback to be called when view was resumed]]
-            @in data: const(void)* @optional; [[callback user data]]
+            @in data: const(void_ptr) @optional; [[callback user data]]
          }
       }
       close {
          [[Close view]]
          params {
             @in cb: Elm_App_Client_View_Cb @optional; [[callback to be called when view was closed]]
-            @in data: const(void)* @optional; [[callback user data]]
+            @in data: const(void_ptr) @optional; [[callback user data]]
          }
       }
    }

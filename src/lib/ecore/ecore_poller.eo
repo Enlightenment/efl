@@ -35,7 +35,7 @@ class Ecore.Poller (Eo.Base)
             for the poller.]]
             @in interval: int; [[The tick interval; must be a power of 2 and <= 32768.]]
             @in func: Ecore_Task_Cb; [[Ecore poller callback function.]]
-            @in data: const(void)*; [[Private data passed to callback function.]]
+            @in data: const(void_ptr); [[Private data passed to callback function.]]
          }
       }
       @property interval {

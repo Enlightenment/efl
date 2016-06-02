@@ -343,14 +343,14 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
             @in tlon: double; [[The destination longitude.]]
             @in tlat: double; [[The destination latitude.]]
             @in route_cb: Elm_Map_Route_Cb @optional; [[The route to be traced.]]
-            @in data: void * @optional; [[A pointer of user data.]]
+            @in data: void_ptr @optional; [[A pointer of user data.]]
          }
       }
       track_add {
          [[Add a track on the map.]]
          return: Evas.Object; [[The route object. This is an elm object of type Route.]]
          params {
-            @in emap: void *; [[The emap route object.]]
+            @in emap: void_ptr; [[The emap route object.]]
          }
       }
       region_to_canvas_convert @const {
@@ -495,7 +495,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
             @in lon: double; [[The longitude.]]
             @in lat: double; [[The latitude.]]
             @in name_cb: Elm_Map_Name_Cb @optional; [[The callback function.]]
-            @in data: void * @optional; [[The user callback data.]]
+            @in data: void_ptr @optional; [[The user callback data.]]
          }
       }
       name_search @const {
@@ -508,7 +508,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
          params {
             @in address: string; [[The address.]]
             @in name_cb: Elm_Map_Name_List_Cb @optional; [[The callback function.]]
-            @in data: void * @optional; [[The user callback data.]]
+            @in data: void_ptr @optional; [[The user callback data.]]
          }
       }
       region_bring_in {

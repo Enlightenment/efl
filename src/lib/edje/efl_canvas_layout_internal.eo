@@ -6,8 +6,8 @@ interface Efl.Canvas.Layout_Internal ()
       @property real_part @protected {
          set {}
          values {
-            ed: void*;
-            rp: void*;
+            ed: void_ptr;
+            rp: void_ptr;
             part: string;
          }
       }

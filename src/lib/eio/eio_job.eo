@@ -3,7 +3,7 @@ import eina_types;
 struct Eio.Data
 {
   [[A structure to handle arbitrary data to be sent over Promises.]]
-  data: void *;
+  data: void_ptr;
   size: uint;
 }
 

@@ -276,7 +276,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
          return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
             @in itc: const(Elm_Slideshow_Item_Class)*; [[The item class for the item.]]
-            @in data: const(void)*; [[The item's data.]]
+            @in data: const(void_ptr); [[The item's data.]]
          }
       }
       item_sorted_insert {
@@ -294,7 +294,7 @@ class Elm.Slideshow (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
                                       on success, or $null on errors.]]
          params {
             @in itc: const(Elm_Slideshow_Item_Class)*; [[The item class for the item.]]
-            @in data: const(void)*; [[The item's data.]]
+            @in data: const(void_ptr); [[The item's data.]]
             @in func: Eina_Compare_Cb; [[The comparing function to be used to sort the slideshow
                                          items by #Elm_Slideshow_Item_Class item handles.]]
          }

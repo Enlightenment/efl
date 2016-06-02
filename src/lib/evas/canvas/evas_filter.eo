@@ -31,8 +31,8 @@ mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
          ]]
          return: bool; [[Indicates success from the object render function.]]
          params {
-            filter: void*; [[Evas_Filter_Context]]
-            drawctx: void*;
+            filter: void_ptr; [[Evas_Filter_Context]]
+            drawctx: void_ptr;
             l: int;
             r: int;
             t: int;
@@ -54,7 +54,7 @@ mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
             ]]
          }
          values {
-            buffer: void*;
+            buffer: void_ptr;
          }
       }
    }

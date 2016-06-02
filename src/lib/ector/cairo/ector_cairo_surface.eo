@@ -1,4 +1,4 @@
-type @extern cairo_t: void *;
+type @extern cairo_t: void_ptr;
 
 class Ector.Cairo.Surface (Eo.Base, Ector.Surface)
 {
@@ -19,7 +19,7 @@ class Ector.Cairo.Surface (Eo.Base, Ector.Surface)
 	 }
       }
       symbol_get {
-         return: void * @warn_unused;
+         return: void_ptr @warn_unused;
          params {
             @in name: string;
          }

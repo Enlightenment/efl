@@ -20,7 +20,7 @@ class Eio.Model (Eo.Base, Efl.Model)
           ]]
           params {
              filter_cb: Eio_Filter_Direct_Cb; [[Filter callback]]
-             userdata: void *; [[User's private data]]
+             userdata: void_ptr; [[User's private data]]
           }
        }
        path_set {

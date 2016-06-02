@@ -35,7 +35,7 @@ interface Elm.Sys_Notify_Interface
             @in timeout: int; [[Timeout display in milliseconds]]
             @in cb: Elm_Sys_Notify_Send_Cb; [[Callback used to retrieve the notification id
                                               returned by the Notification Server]]
-            @in cb_data: const(void) * @optional; [[Optional context data]]
+            @in cb_data: const(void_ptr) @optional; [[Optional context data]]
          }
       }
       simple_send @const {

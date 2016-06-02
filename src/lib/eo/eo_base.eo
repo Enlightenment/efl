@@ -12,7 +12,7 @@ struct Eo.Event {
      [[Parameter passed in event callbacks holding extra event parameters]]
      object: Eo.Base; [[The object the event was called on.]]
      desc: const(Eo.Event.Description) *; [[The event description.]]
-     info: void *; [[Extra event information passed by the event caller.]]
+     info: void_ptr; [[Extra event information passed by the event caller.]]
 }
 
 type Eo.Event_Cb: __builtin_event_cb; [[An event callback prototype.
@@ -220,12 +220,12 @@ abstract Eo.Base ()
          }
          set {
             values {
-               data: const(void) *; [[the data to set]]
+               data: const(void_ptr); [[the data to set]]
             }
          }
          get {
             values {
-               data: void *; [[the data to set]]
+               data: void_ptr; [[the data to set]]
             }
          }
       }
@@ -306,7 +306,7 @@ abstract Eo.Base ()
             @in desc: const(Eo.Event.Description)*; [[The description of the event to listen to]]
             @in priority: Eo.Callback_Priority; [[The priority of the callback]]
             @in cb: Eo.Event_Cb; [[the callback to call]]
-            @in data: const(void)*; [[additional data to pass to the callback]]
+            @in data: const(void_ptr); [[additional data to pass to the callback]]
          }
       }
       event_callback_del {
@@ -315,7 +315,7 @@ abstract Eo.Base ()
          params {
             @in desc: const(Eo.Event.Description)*; [[The description of the event to listen to]]
             @in func: Eo.Event_Cb; [[the callback to delete]]
-            @in user_data: const(void)*; [[The data to compare]]
+            @in user_data: const(void_ptr); [[The data to compare]]
          }
       }
       event_callback_array_priority_add {
@@ -328,7 +328,7 @@ abstract Eo.Base ()
          params {
             @in array: const(Eo.Callback_Array_Item)*; [[an #Eo_Callback_Array_Item of events to listen to]]
             @in priority: Eo.Callback_Priority; [[The priority of the callback]]
-            @in data: const(void)*; [[additional data to pass to the callback]]
+            @in data: const(void_ptr); [[additional data to pass to the callback]]
          }
       }
       event_callback_array_del {
@@ -338,14 +338,14 @@ abstract Eo.Base ()
          return: bool; [[Return true when the callback has been successfully removed.]]
          params {
             @in array: const(Eo.Callback_Array_Item)*; [[an #Eo_Callback_Array_Item of events to listen to]]
-            @in user_data: const(void)*; [[The data to compare]]
+            @in user_data: const(void_ptr); [[The data to compare]]
          }
       }
       event_callback_call {
          [[Call the callbacks for an event of an object.]]
          params {
             @in desc: const(Eo.Event.Description)*; [[The description of the event to call]]
-            @in event_info: void *; [[Extra event info to pass to the callbacks]]
+            @in event_info: void_ptr; [[Extra event info to pass to the callbacks]]
          }
          return: bool; [[$true if one of the callbacks aborted the call,
                          $false otherwise

@@ -74,7 +74,7 @@ class Evas.Box (Evas.Smart.Clipped)
          }
          values {
             cb: Evas_Object_Box_Layout @nonull; [[The new layout function to set on $o.]]
-            data: const(void)*; [[Data pointer to be passed to $cb.]]
+            data: const(void_ptr); [[Data pointer to be passed to $cb.]]
             free_data: Eina_Free_Cb; [[Function to free $data, if need be.]]
          }
       }
@@ -128,7 +128,7 @@ class Evas.Box (Evas.Smart.Clipped)
            functions.]]
          params {
               priv: Evas_Object_Box_Data *;
-              data: void *;
+              data: void_ptr;
          }
       }
       layout_vertical {
@@ -139,7 +139,7 @@ class Evas.Box (Evas.Smart.Clipped)
            behaviour can be derived from that function's documentation.]]
          params {
               priv: Evas_Object_Box_Data *;
-              data: void *;
+              data: void_ptr;
          }
       }
       layout_homogeneous_max_size_horizontal {
@@ -185,7 +185,7 @@ class Evas.Box (Evas.Smart.Clipped)
            (respecting the max hint on the child's height).]]
          params {
               priv: Evas_Object_Box_Data *;
-              data: void *;
+              data: void_ptr;
          }
 
       }
@@ -205,7 +205,7 @@ class Evas.Box (Evas.Smart.Clipped)
            behaviour can be derived from that function's documentation.]]
          params {
               priv: Evas_Object_Box_Data *;
-              data: void *;
+              data: void_ptr;
          }
       }
       internal_option_free {
@@ -491,7 +491,7 @@ class Evas.Box (Evas.Smart.Clipped)
            (respecting the maximum size hint on the child's height).]]
          params {
             @in priv: Evas_Object_Box_Data *;
-            @in data: void *;
+            @in data: void_ptr;
          }
       }
       internal_option_new {
@@ -512,7 +512,7 @@ class Evas.Box (Evas.Smart.Clipped)
            documentation.]]
          params {
             @in priv: Evas_Object_Box_Data *;
-            @in data: void *;
+            @in data: void_ptr;
          }
       }
       internal_insert_after {
@@ -594,7 +594,7 @@ class Evas.Box (Evas.Smart.Clipped)
            same applies to the vertical axis.]]
          params {
             @in priv: Evas_Object_Box_Data *;
-            @in data: void *;
+            @in data: void_ptr;
          }
       }
       layout_homogeneous_vertical {
@@ -606,7 +606,7 @@ class Evas.Box (Evas.Smart.Clipped)
            of its behaviour can be derived from that function's documentation.]]
          params {
               priv: Evas_Object_Box_Data *;
-              data: void *;
+              data: void_ptr;
          }
       }
       layout_flow_horizontal {
@@ -645,7 +645,7 @@ class Evas.Box (Evas.Smart.Clipped)
            height required by a child object in the actual row.]]
          params {
               priv: Evas_Object_Box_Data *;
-              data: void *;
+              data: void_ptr;
          }
       }
       count {

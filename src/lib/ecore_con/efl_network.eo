@@ -149,7 +149,7 @@ abstract Efl.Network (Eo.Base) {
          legacy: null;
 
          params {
-            data: const(void)*; [[The given data]]
+            data: const(void_ptr); [[The given data]]
             size: int; [[Length of the data, in bytes.]]
          }
          return: int; [[The number of bytes sent. 0 will be returned if there
@@ -170,7 +170,7 @@ abstract Efl.Network (Eo.Base) {
          params {
             name: string @nonull; [[IP address or server name to translate.]]
             done_cb: Ecore_Con_Dns_Cb; [[Callback to notify when done.]]
-            data: const(void)*; [[User data to be given to done_cb.]]
+            data: const(void_ptr); [[User data to be given to done_cb.]]
          }
          return: bool; [[true if the request did not fail to be set up, false otherwise.]]
       }
@@ -184,7 +184,7 @@ abstract Efl.Network (Eo.Base) {
 
 /* FIXME: Should actually be a binbuf. */
 struct Ecore.Con.Event_Data.Received {
-    data: void *; [[The data that got sent.]]
+    data: void_ptr; [[The data that got sent.]]
     size: int; [[The length of the data sent.]]
 }
 

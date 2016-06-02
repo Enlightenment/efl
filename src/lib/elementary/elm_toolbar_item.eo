@@ -20,7 +20,7 @@ struct Elm.Toolbar.Item.State
    icon_str: string;
    icon: Evas.Object;
    func: Evas_Smart_Cb ;
-   data: const(void)*;
+   data: const(void_ptr);
 }
 
 class Elm.Toolbar.Item(Elm.Widget.Item)
@@ -185,7 +185,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;
-                   const(void)* data;
+                   const(void_ptr) data;
                    }
                    }*/
            icon_memfile_set {
@@ -195,7 +195,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                   @.icon.set.
                 ]]
                 params {
-                     @in img: const (void) *; [[The binary data that will be used as an image.]]
+                     @in img: const(void_ptr); [[The binary data that will be used as an image.]]
                      @in size: size; [[The size of binary data $img.]]
                      @in format: string; [[Optional format of $img to pass to the image loader.]]
                      @in key: string; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
@@ -229,7 +229,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      @in icon: string; [[A string with icon name or the absolute path of an image file.]]
                      @in label: string; [[The label of the new state.]]
                      @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked when this state is selected.]]
-                     @in data: const (void) * @optional; [[The data to associate with the state.]]
+                     @in data: const(void_ptr) @optional; [[The data to associate with the state.]]
                 }
                 return: Elm.Toolbar.Item.State *; [[The toolbar item state, or $null upon failure.]]
            }

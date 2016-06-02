@@ -109,7 +109,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             idx: Elm.Gesture.Type; [[The gesture you want to track state of.]]
             cb_type: Elm.Gesture.State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
             cb: Elm_Gesture_Event_Cb; [[The callback itself.]]
-            data: void * @optional; [[Custom data to be passed.]]
+            data: void_ptr @optional; [[Custom data to be passed.]]
          }
       }
       attach {
@@ -130,7 +130,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             @in idx: Elm.Gesture.Type; [[The gesture you want to track state of.]]
             @in cb_type: Elm.Gesture.State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
             @in cb: Elm_Gesture_Event_Cb; [[The callback itself.]]
-            @in data: void * @nullable; [[Custom callback data.]]
+            @in data: void_ptr @nullable; [[Custom callback data.]]
          }
       }
       cb_add {
@@ -148,7 +148,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             @in idx: Elm.Gesture.Type; [[The gesture you want to track state of.]]
             @in cb_type: Elm.Gesture.State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
             @in cb: Elm_Gesture_Event_Cb; [[The callback itself.]]
-            @in data: void * @optional; [[Custom data to be passed.]]
+            @in data: void_ptr @optional; [[Custom data to be passed.]]
          }
       }
    }

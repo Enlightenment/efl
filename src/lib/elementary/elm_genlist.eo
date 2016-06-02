@@ -346,12 +346,12 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
          return: Elm.Widget.Item;
          params {
             @in itc: const(Elm.Genlist.Item.Class)*; [[The item class for the item.]]
-            @in data: const(void)*; [[The item data.]]
+            @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in before_it: Elm.Widget.Item; [[The item to place this new one before.]]
             @in type: Elm.Genlist.Item.Type; [[Item type.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when the item is selected.]]
-            @in func_data: const(void)* @optional; [[Data passed to $func above.]]
+            @in func_data: const(void_ptr) @optional; [[Data passed to $func above.]]
          }
       }
       realized_items_update {
@@ -374,12 +374,12 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
          return: Elm.Widget.Item;
          params {
             @in itc: const(Elm.Genlist.Item.Class)*; [[The item class for the item.]]
-            @in data: const(void)*; [[The item data.]]
+            @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in after_it: Elm.Widget.Item; [[The item to place this new one after.]]
             @in type: Elm.Genlist.Item.Type; [[Item type.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when the item is selected.]]
-            @in func_data: const(void)* @optional; [[Data passed to $func above.]]
+            @in func_data: const(void_ptr) @optional; [[Data passed to $func above.]]
          }
       }
       at_xy_item_get @const {
@@ -415,7 +415,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
             ]]
          }
          values {
-            key: void *; [[Filter key]]
+            key: void_ptr; [[Filter key]]
          }
       }
       filter_iterator_new {
@@ -452,11 +452,11 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
          return: Elm.Widget.Item;
          params {
             @in itc: const(Elm.Genlist.Item.Class)*; [[The item class for the item.]]
-            @in data: const(void)*; [[The item data.]]
+            @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in type: Elm.Genlist.Item.Type; [[Item type.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when the item is selected.]]
-            @in func_data: const(void)* @optional; [[Data passed to $func above.]]
+            @in func_data: const(void_ptr) @optional; [[Data passed to $func above.]]
          }
       }
       clear {
@@ -474,11 +474,11 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
          return: Elm.Widget.Item;
          params {
             @in itc: const(Elm.Genlist.Item.Class)*; [[The item class for the item.]]
-            @in data: const(void)*; [[The item data.]]
+            @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in type: Elm.Genlist.Item.Type; [[Item type.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when the item is selected.]]
-            @in func_data: const(void)* @optional; [[Data passed to $func above.]]
+            @in func_data: const(void_ptr) @optional; [[Data passed to $func above.]]
          }
       }
       item_sorted_insert {
@@ -491,12 +491,12 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
          return: Elm.Widget.Item;
          params {
             @in itc: const(Elm.Genlist.Item.Class)*; [[The item class for the item.]]
-            @in data: const(void)*; [[The item data.]]
+            @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in type: Elm.Genlist.Item.Type; [[Item type.]]
             @in comp: Eina_Compare_Cb; [[The function called for the sort.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when the item is selected.]]
-            @in func_data: const(void)* @optional; [[Data passed to $func above.]]
+            @in func_data: const(void_ptr) @optional; [[Data passed to $func above.]]
          }
       }
       search_by_text_item_get {

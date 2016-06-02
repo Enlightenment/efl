@@ -278,7 +278,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                      emission: string; [[The signal's name.]]
                      source: string; [[The signal's source.]]
                      func: Elm_Object_Item_Signal_Cb; [[The callback function to be executed when the signal is emitted.]]
-                     data: void *; [[A pointer to data to pass to the callback function.]]
+                     data: void_ptr; [[A pointer to data to pass to the callback function.]]
                 }
            }
            signal_callback_del {
@@ -299,7 +299,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                      source: string; [[The signal's source.]]
                      func: Elm_Object_Item_Signal_Cb; [[The callback function to be executed when the signal is emitted.]]
                 }
-                return: void*; [[The data pointer of the signal callback or $NULL, on errors.]]
+                return: void_ptr; [[The data pointer of the signal callback or $NULL, on errors.]]
            }
            signal_emit {
                 [[Send a signal to the edje object of the widget item.
@@ -463,7 +463,7 @@ class Elm.Widget.Item(Eo.Base, Elm.Interface.Atspi_Accessible,
                   See: elm_object_tooltip_content_cb_set() for more details.]]
                 params {
                      func: Elm_Tooltip_Item_Content_Cb @nullable; [[the function used to create the tooltip contents.]]
-                     data: const (void) * @optional; [[what to provide to $func as callback data/context.]]
+                     data: const(void_ptr) @optional; [[what to provide to $func as callback data/context.]]
                      del_cb: Evas_Smart_Cb @optional; [[called when data is not needed anymore, either when another callback replaces $func, the tooltip is unset with @.tooltip_unset or the owner $item dies. This callback receives as the first parameter the given $data, and $event_info is the item.]]
 
                 }

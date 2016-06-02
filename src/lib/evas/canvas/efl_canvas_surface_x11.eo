@@ -1,7 +1,7 @@
 struct Efl.Canvas.Surface.X11_Pixmap
 {
    [[The type used by @Efl.Canvas.Surface.native_buffer.]]
-   visual: void *; [[X11 Visual for this Pixmap.]]
+   visual: void_ptr; [[X11 Visual for this Pixmap.]]
    pixmap: ulong;  [[X11 Pixmap ID.]]
 }
 
@@ -15,7 +15,7 @@ class Efl.Canvas.Surface.X11 (Efl.Canvas.Surface)
          get {}
          set { return: bool; }
          values {
-            visual: void *; [[X11 Visual for this Pixmap.]]
+            visual: void_ptr; [[X11 Visual for this Pixmap.]]
             pixmap: ulong;  [[X11 Pixmap ID.]]
          }
       }

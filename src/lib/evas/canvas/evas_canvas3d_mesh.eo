@@ -22,7 +22,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
             @in frame: int; [[The number of the key frame.]]
             @in attrib: Evas.Canvas3D.Vertex_Attrib; [[Vertex attribute ID.]]
             @in stride: int; [[Stride to go to the next vertex (in bytes).]]
-            @in data: const(void)*; [[Pointer to the vertex data buffer.]]
+            @in data: const(void_ptr); [[Pointer to the vertex data buffer.]]
          }
       }
 
@@ -39,7 +39,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
             @in frame: int; [[The number of the key frame.]]
             @in attrib: Evas.Canvas3D.Vertex_Attrib; [[Vertex attribute ID.]]
             @in stride: int; [[Stride to go to the next vertex (in bytes).]]
-            @in data: const(void)*; [[Pointer to the vertex data buffer.]]
+            @in data: const(void_ptr); [[Pointer to the vertex data buffer.]]
          }
       }
 
@@ -52,7 +52,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
            original buffer will be returned. Otherwise, the returned pointer
            can differ every time calling this function.
          ]]
-         return: void *; [[Starting address of the mapped vertex buffer.]]
+         return: void_ptr; [[Starting address of the mapped vertex buffer.]]
          params {
             @in frame: int; [[The number of the key frame.]]
             @in attrib: Evas.Canvas3D.Vertex_Attrib; [[Vertex attribute ID.]]
@@ -95,7 +95,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
          params {
             @in format: Evas.Canvas3D.Index_Format; [[Vertex index data format.]]
             @in count: int; [[Vertex index count.]]
-            @in indices: const(void)*; [[Pointer to the index data.]]
+            @in indices: const(void_ptr); [[Pointer to the index data.]]
          }
       }
 
@@ -122,7 +122,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
          params {
             @in format: Evas.Canvas3D.Index_Format; [[Vertex index data format.]]
             @in count: int; [[Vertex index count.]]
-            @in indices: const(void)*; [[Pointer to the index data.]]
+            @in indices: const(void_ptr); [[Pointer to the index data.]]
          }
       }
 
@@ -155,7 +155,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
            be returned, otherwise, the returned pointer may differ every
            time you call this function.
          ]]
-         return: void *; [[Pointer to the mapped buffer.]]
+         return: void_ptr; [[Pointer to the mapped buffer.]]
       }
 
       index_data_unmap {

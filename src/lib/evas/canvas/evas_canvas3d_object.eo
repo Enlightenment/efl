@@ -53,7 +53,7 @@ class Evas.Canvas3D.Object (Eo.Base, Evas.Common_Interface)
          [[Pure virtual register samrt callback function.]]
          params {
            @in event: string; [[Event type.]]
-           @in data: const(void)*;  [[User data.]]
+           @in data: const(void_ptr);  [[User data.]]
          }
       }
       callback_unregister @virtual_pure {

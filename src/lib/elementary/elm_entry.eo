@@ -603,7 +603,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
               IMPORTANT: Many functions may change (i.e delete and create a new one)
               the internal input method context. Do NOT cache the returned object.
             ]]
-            return: void *;
+            return: void_ptr;
          }
       }
       @property cursor_is_format {
@@ -679,7 +679,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
            This prepends the given callback.]]
          params {
             @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void * @optional; [[The data passed to $func.]]
+            @in data: void_ptr @optional; [[The data passed to $func.]]
          }
       }
       input_panel_show {
@@ -746,7 +746,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
          ]]
          params {
             @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void * @optional; [[The data passed to $func.]]
+            @in data: void_ptr @optional; [[The data passed to $func.]]
          }
       }
       text_style_user_peek @const {
@@ -796,7 +796,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
            The size and format of data are defined by the input panel.
          ]]
          params {
-            @in data: const(void)*; [[The specific data to be set to the input panel.]]
+            @in data: const(void_ptr); [[The specific data to be set to the input panel.]]
             @in len: int; [[The length of data, in bytes, to send to the input panel.]]
          }
       }
@@ -851,7 +851,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
          ]]
          params {
             @in func: Elm_Entry_Filter_Cb; [[The filter function to remove.]]
-            @in data: void * @optional; [[The user data passed when adding the function.]]
+            @in data: void_ptr @optional; [[The user data passed when adding the function.]]
          }
       }
       item_provider_append {
@@ -868,7 +868,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
          ]]
          params {
             @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void * @optional; [[The data passed to $func.]]
+            @in data: void_ptr @optional; [[The data passed to $func.]]
          }
       }
       markup_filter_append {
@@ -885,7 +885,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
          ]]
          params {
             @in func: Elm_Entry_Filter_Cb; [[The function to use as text filter.]]
-            @in data: void * @optional; [[User data to pass to $func.]]
+            @in data: void_ptr @optional; [[User data to pass to $func.]]
          }
       }
       entry_append {
@@ -919,7 +919,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
             @in icon_file: string @optional; [[The item's icon file.]]
             @in icon_type: Elm.Icon.Type; [[The item's icon type.]]
             @in func: Evas_Smart_Cb @optional; [[The callback to execute when the item is clicked.]]
-            @in data: const(void)* @optional; [[The data to associate with the item for related functions.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related functions.]]
          }
       }
       markup_filter_prepend {
@@ -928,7 +928,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
            Prepend the given callback to the list.]]
          params {
             @in func: Elm_Entry_Filter_Cb; [[The function to use as text filter.]]
-            @in data: void * @optional; [[User data to pass to $func.]]
+            @in data: void_ptr @optional; [[User data to pass to $func.]]
          }
       }
    }

@@ -329,7 +329,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          [[Register accessibility event listener]]
          params {
               @in cb: Eo_Event_Cb; [[callback]]
-              @in data: void*; [[data]]
+              @in data: void_ptr; [[data]]
          }
          return: Elm.Atspi.Event.Handler*; [[Event handler]]
       }
@@ -343,7 +343,7 @@ mixin Elm.Interface.Atspi_Accessible ()
          params {
             @in accessible: Elm.Interface.Atspi_Accessible; [[Accessibility object.]]
             @in event: const(Eo.Event.Description)*; [[Accessibility event type.]]
-            @in event_info: void*; [[Accessibility event details.]]
+            @in event_info: void_ptr; [[Accessibility event details.]]
          }
       }
       @property translation_domain {

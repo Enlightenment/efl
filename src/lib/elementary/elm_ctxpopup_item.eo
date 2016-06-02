@@ -34,7 +34,7 @@ class Elm.Ctxpopup.Item(Elm.Widget.Item)
       init {
          params {
             func: Evas_Smart_Cb @nullable;
-            data: const(void) * @optional;
+            data: const(void_ptr) @optional;
          }
       }
    }

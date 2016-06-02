@@ -84,7 +84,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             @in icon_file: string @optional; [[An image file path on disk to use for the icon or standard icon name (NULL if not desired)]]
             @in icon_type: Elm.Icon.Type; [[The icon type if relevant]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function to call when this item is selected. The last parameter $event_info of $func is the selected item pointer.]]
-            @in data: const(void)* @optional; [[Data to pass to item-related functions]]
+            @in data: const(void_ptr) @optional; [[Data to pass to item-related functions]]
          }
       }
    }

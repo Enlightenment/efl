@@ -30,7 +30,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
          values {
             name: string; [[The name of the eet stream.]]
             func: Ecore_Con_Eet_Data_Cb; [[The callback function.]]
-            data: const (void) *; [[The data (if any) that should be
+            data: const(void_ptr); [[The data (if any) that should be
                                     passed to callback function.]]
          }
       }
@@ -42,7 +42,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
          values {
             name: string; [[The name of the eet stream.]]
             func: Ecore_Con_Eet_Raw_Data_Cb; [[The callback function.]]
-            data: const (void) *; [[The data (if any) that should be
+            data: const(void_ptr); [[The data (if any) that should be
                                     passed to callback function.]]
          }
       }
@@ -74,7 +74,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
             reply: Ecore.Con.Reply *; [[Contains the ecore_con_eet object
                                         to which the data has to be sent.]]
             name: string; [[The name of the eet stream.]]
-            value: void *; [[Actual data]]
+            value: void_ptr; [[Actual data]]
          }
       }
       raw_send {
@@ -84,7 +84,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
                                         to which the data has to be sent.]]
             protocol_name: string; [[The name of the eet stream.]]
             section: string; [[Name of section in the eet descriptor.]]
-            value: void *; [[The value of the section.]]
+            value: void_ptr; [[The value of the section.]]
             length: uint; [[The length of the data that is being sent.]]
          }
       }

@@ -22,7 +22,7 @@ mixin Efl.Canvas.Surface (Evas.Image)
              return: bool @warn_unused;
           }
           values {
-             buffer: void*; [[The external buffer, depends on its type.]]
+             buffer: void_ptr; [[The external buffer, depends on its type.]]
           }
       }
    }

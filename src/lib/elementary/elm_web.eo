@@ -201,7 +201,7 @@ class Elm.Web (Elm.Widget)
          }
          values {
             func: Elm_Web_Console_Message; [[The callback function to be used.]]
-            data: void *; [[User data.]]
+            data: void_ptr; [[User data.]]
          }
       }
       @property window_create_hook {
@@ -217,7 +217,7 @@ class Elm.Web (Elm.Widget)
          }
          values {
             func: Elm_Web_Window_Open @nullable; [[The hook function to be called when a window is requested.]]
-            data: void * @optional; [[User data.]]
+            data: void_ptr @optional; [[User data.]]
          }
       }
       @property dialog_file_selector_hook {
@@ -232,7 +232,7 @@ class Elm.Web (Elm.Widget)
          }
          values {
             func: Elm_Web_Dialog_File_Selector @nullable; [[The callback function to be used.]]
-            data: void * @optional; [[User data.]]
+            data: void_ptr @optional; [[User data.]]
          }
       }
       @property dialog_confirm_hook {
@@ -246,7 +246,7 @@ class Elm.Web (Elm.Widget)
          }
          values {
             func: Elm_Web_Dialog_Confirm @nullable; [[The callback function to be used.]]
-            data: void * @optional; [[User data.]]
+            data: void_ptr @optional; [[User data.]]
          }
       }
       @property popup_selected {
@@ -275,7 +275,7 @@ class Elm.Web (Elm.Widget)
          }
          values {
             func: Elm_Web_Dialog_Prompt @nullable; [[The callback function to be used.]]
-            data: void * @optional; [[User data.]]
+            data: void_ptr @optional; [[User data.]]
          }
       }
       @property dialog_alert_hook {
@@ -289,7 +289,7 @@ class Elm.Web (Elm.Widget)
          }
          values {
             func: Elm_Web_Dialog_Alert @nullable; [[callback function to be used.]]
-            data: void * @optional; [[User data.]]
+            data: void_ptr @optional; [[User data.]]
          }
       }
       @property forward_possible {

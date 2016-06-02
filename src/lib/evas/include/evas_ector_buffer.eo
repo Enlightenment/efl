@@ -10,7 +10,7 @@ interface Evas.Ector.Buffer
          set { [[This Buffer will hold a reference to the evas image struct.]] }
          values {
             evas: Evas.Canvas; [[The current Evas.]]
-            image: void *; [[The engine-specific image struct.]]
+            image: void_ptr; [[The engine-specific image struct.]]
          }
       }
    }

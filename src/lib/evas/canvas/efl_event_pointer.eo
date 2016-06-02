@@ -131,7 +131,7 @@ class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State, Efl.Event.Input)
          ]]
          params {
             @in  owner: Eo.Base; [[The parent object.]]
-            @out priv: void*; [[Pointer to the internal data of the object.]]
+            @out priv: void_ptr; [[Pointer to the internal data of the object.]]
          }
          return: own(Efl.Event.Pointer);
       }

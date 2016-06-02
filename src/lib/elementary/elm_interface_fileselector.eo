@@ -163,7 +163,7 @@ interface Elm.Interface.Fileselector ()
          [[Append custom filter into filter list]]
          params {
             @in func: Elm_Fileselector_Filter_Func; [[function]]
-            @in data: void *;
+            @in data: void_ptr;
             @in filter_name: string;
          }
          return: bool;

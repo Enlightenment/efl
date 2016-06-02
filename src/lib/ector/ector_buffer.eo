@@ -61,19 +61,19 @@ mixin Ector.Buffer
                                               map should try to convert the data into a new buffer]]
             @out stride: uint @optional; [[Returns the length in bytes of a mapped line]]
          }
-         return: void* @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
+         return: void_ptr @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
       }
       unmap @virtual_pure {
          [[Unmap a region of this buffer, and upload data to the GPU (if needed).]]
          params {
-            @in data: void*; [[Data pointer returned by a previous call to map]]
+            @in data: void_ptr; [[Data pointer returned by a previous call to map]]
             @in length: uint; [[Must be the same as returned by map.]]
          }
       }
       pixels_set @virtual_pure {
          [[Set the source pixels for this buffer, or allocate a new memory region]]
          params {
-            @in pixels: void*; [[If $null, allocates an empty buffer]]
+            @in pixels: void_ptr; [[If $null, allocates an empty buffer]]
             @in width: int; [[Buffer width]]
             @in height: int; [[Buffer height]]
             @in stride: int; [[Can be 0]]

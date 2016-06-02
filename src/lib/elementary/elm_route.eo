@@ -8,7 +8,7 @@ class Elm.Route (Elm.Widget)
             [[No description supplied by the EAPI.]]
          }
          values {
-            emap: void *;
+            emap: void_ptr;
          }
       }
       @property longitude_min_max {

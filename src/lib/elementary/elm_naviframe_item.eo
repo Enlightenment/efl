@@ -70,7 +70,7 @@ class Elm.Naviframe.Item(Elm.Widget.Item)
             ]]
             params {
                   @in func: Elm_Naviframe_Item_Pop_Cb @nullable; [[The callback function.]]
-                  @in data: void * @optional; [[Data to be passed to func call.]]
+                  @in data: void_ptr @optional; [[Data to be passed to func call.]]
             }
         }
    }
