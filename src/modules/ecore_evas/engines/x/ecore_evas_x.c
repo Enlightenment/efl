@@ -1272,7 +1272,7 @@ _feed_cancel_out(const Ecore_X_Event_Mouse_Out *e, Eina_Bool cancel)
    if (cancel)
      {
         Ecore_Event_Mouse_Button ev = {
-           .event_window = (Ecore_Window) e->event_win,
+           .event_window = (Ecore_Window) e->win, /* not event_win */
            .modifiers = e->modifiers,
            .timestamp = e->time,
            .window = (Ecore_Window) e->win,
@@ -1283,7 +1283,7 @@ _feed_cancel_out(const Ecore_X_Event_Mouse_Out *e, Eina_Bool cancel)
      }
 
    Ecore_Event_Mouse_IO io = {
-      .event_window = (Ecore_Window) e->event_win,
+      .event_window = (Ecore_Window) e->win, /* not event_win */
       .modifiers = e->modifiers,
       .timestamp = e->time,
       .window = (Ecore_Window) e->win,
@@ -1380,7 +1380,7 @@ _ecore_evas_x_event_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    if (!ee->in)
      {
         Ecore_Event_Mouse_IO io = {
-           .event_window = (Ecore_Window) e->event_win,
+           .event_window = (Ecore_Window) e->win, /* not event_win! */
            .modifiers = e->modifiers,
            .timestamp = e->time,
            .window = (Ecore_Window) e->win,
