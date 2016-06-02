@@ -366,6 +366,7 @@ emotiongenericplayers_PROGRAMS += generic/emotion/vlc/vlc
 generic_emotion_vlc_vlc_SOURCES = generic/emotion/vlc/emotion_generic_vlc.c
 generic_emotion_vlc_vlc_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/emotion/generic \
+-I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
