@@ -4732,21 +4732,6 @@ _elm_win_efl_gfx_size_hint_step_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *
    if (h) *h = sd->size_step_h;
 }
 
-EOLIAN static void
-_elm_win_layer_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int layer)
-{
-   TRAP(sd, layer_set, layer);
-#ifdef HAVE_ELEMENTARY_X
-   _elm_win_xwin_update(sd);
-#endif
-}
-
-EOLIAN static int
-_elm_win_layer_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   return ecore_evas_layer_get(sd->ee);
-}
-
 EAPI void
 elm_win_norender_push(Evas_Object *obj)
 {
@@ -5034,12 +5019,6 @@ _elm_win_keygrab_unset(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *key, E
    (void)key;
 #endif
    return ret;
-}
-
-EOLIAN static Evas_Object*
-_elm_win_inlined_image_object_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   return sd->img_obj;
 }
 
 EOLIAN static void
@@ -6367,6 +6346,36 @@ elm_win_profile_get(const Evas_Object *obj)
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
 
    return sd->profile.name;
+}
+
+EAPI void
+elm_win_layer_set(Evas_Object *obj, int layer)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   TRAP(sd, layer_set, layer);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(sd);
+#endif
+}
+
+EAPI int
+elm_win_layer_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) 0;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, 0);
+
+   return ecore_evas_layer_get(sd->ee);
+}
+
+EAPI Evas_Object*
+elm_win_inlined_image_object_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) NULL;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
+
+   return sd->img_obj;
 }
 
 #include "elm_win.eo.c"

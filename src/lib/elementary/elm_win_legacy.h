@@ -960,3 +960,43 @@ EAPI void elm_win_profile_set(Evas_Object *obj, const char *profile);
  */
 EAPI const char *elm_win_profile_get(const Evas_Object *obj);
 
+/**
+ * @brief Set the layer of the window.
+ *
+ * What this means exactly will depend on the underlying engine used.
+ *
+ * In the case of X11 backed engines, the value in @c layer has the following
+ * meanings - less than 3 means that the window will be placed below all
+ * others, more than 5 means that the window will be placed above all others,
+ * and anything else means that the window will be placed in the default layer.
+ *
+ * @param[in] layer The layer of the window.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_layer_set(Evas_Object *obj, int layer);
+
+/**
+ * @brief Get the layer of the window.
+ *
+ * @return The layer of the window.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI int elm_win_layer_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the inlined image object handle
+ *
+ * When you create a window with elm_win_add() of type #ELM_WIN_INLINED_IMAGE,
+ * then the window is in fact an evas image object inlined in the parent
+ * canvas. You can get this object (be careful to not manipulate it as it is
+ * under control of elementary), and use it to do things like get pixel data,
+ * save the image to a file, etc.
+ *
+ * @return The inlined image object or @c null if none exists.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Evas_Object *elm_win_inlined_image_object_get(const Evas_Object *obj);
+
