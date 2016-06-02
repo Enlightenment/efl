@@ -1189,20 +1189,20 @@ static Edje_External_Param_Type
 _parse_external_param_type(char *token)
 {
    Eina_Bool num, point;
-   char *begin;
+   char *s;
 
    if (param_had_quote(0))
      return EDJE_EXTERNAL_PARAM_TYPE_STRING;
 
    num = EINA_TRUE;
    point = EINA_FALSE;
-   begin = token;
+   s = token;
 
-   while (*token)
+   while (*s)
      {
-        if ((*token < '0') || (*token > '9'))
+        if ((*s < '0') || (*s > '9'))
           {
-             if ((!point) && (*token == '.'))
+             if ((!point) && (*s == '.'))
                {
                   point = EINA_TRUE;
                }
@@ -1212,7 +1212,7 @@ _parse_external_param_type(char *token)
                   break;
                }
           }
-        token++;
+        s++;
      }
 
    if (num)
@@ -1224,7 +1224,7 @@ _parse_external_param_type(char *token)
      }
    else
      {
-        if (!strcmp(begin, "true") || !strcmp(begin, "false"))
+        if (!strcmp(token, "true") || !strcmp(token, "false"))
           return EDJE_EXTERNAL_PARAM_TYPE_BOOL;
         else
           return EDJE_EXTERNAL_PARAM_TYPE_CHOICE;
