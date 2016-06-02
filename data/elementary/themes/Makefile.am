@@ -1,4 +1,5 @@
 EDJE_CC_ELM_FLAGS = \
+@ELM_EDJE_DEFINES@ \
 -id $(top_srcdir)/data/elementary/themes/img \
 -id $(top_srcdir)/data/elementary/themes/fdo \
 -fd $(top_srcdir)/data/elementary/themes/fnt \

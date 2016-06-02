@@ -5516,6 +5516,17 @@ AC_SUBST([ELEMENTARYJS_CXXFLAGS])
 EFL_LIB_END_OPTIONAL([ELEMENTARY_JS])
 #### End of Efl_Js
 
+ELM_EDJE_DEFINES=""
+AC_ARG_ENABLE([cancel-ok],
+              [AS_HELP_STRING([--enable-cancel-ok],[Enable ordering of cancel and ok buttons to be cancel first, then ok instead of ok then cancel. @<:@default=disabled@:>@])],
+              [
+                if test "x${enableval}" = "xyes" ; then
+                    ELM_EDJE_DEFINES="$ELM_EDJE_DEFINES -DELM_CANCEL_OK=1"
+                fi
+              ],[])
+AC_SUBST(ELM_EDJE_DEFINES)
+
+
 ## Disable warning for OS that have a specifc configuration
 case "$host_os" in
    mingw*|cygwin*)

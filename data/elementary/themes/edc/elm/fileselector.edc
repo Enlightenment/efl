@@ -54,8 +54,12 @@ group { name: "elm/fileselector/base/default";
             }
          }
       }
+#ifdef ELM_CANCEL_OK
       swallow { "elm.swallow.ok";
-         description { state: "default" 0.0;
+#else
+      swallow { "elm.swallow.cancel";
+#endif
+         desc { "default";
             align: 1.0 1.0;
             fixed: 1 1;
             rel1.relative: 1.0 1.0;
@@ -64,17 +68,29 @@ group { name: "elm/fileselector/base/default";
             rel2.offset: -4 -4;
          }
       }
+#ifdef ELM_CANCEL_OK
       swallow { "elm.swallow.cancel";
+#else
+      swallow { "elm.swallow.ok";
+#endif
          desc { "default";
             align: 1.0 0.5;
             fixed: 1 0;
             rel1 {
+#ifdef ELM_CANCEL_OK
                to: "elm.swallow.ok";
+#else
+               to: "elm.swallow.cancel";
+#endif
                relative: 0.0 0.0;
                offset: -4 0;
             }
             rel2 {
+#ifdef ELM_CANCEL_OK
                to: "elm.swallow.ok";
+#else
+               to: "elm.swallow.cancel";
+#endif
                relative: 0.0 1.0;
                offset: -4 -1;
             }
