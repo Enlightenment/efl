@@ -3695,7 +3695,7 @@ EFL_INTERNAL_DEPEND_PKG([ELPUT], [eeze])
 EFL_INTERNAL_DEPEND_PKG([ELPUT], [eo])
 EFL_INTERNAL_DEPEND_PKG([ELPUT], [eina])
 
-EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 0.6.0 xkbcommon >= 0.3.0])
+EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 0.6.0 xkbcommon >= 0.3.0 libudev])
 
 EFL_OPTIONAL_DEPEND_PKG([ELPUT], [${want_systemd}], [SYSTEMD], [libsystemd])
 EFL_ADD_FEATURE([ELPUT], [systemd-logind], [${want_systemd}])
