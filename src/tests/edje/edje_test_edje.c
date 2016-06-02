@@ -664,7 +664,7 @@ START_TEST(edje_test_table_eoapi)
      for (k = 0; k < 2; k++)
        {
           i = l*2 + k;
-          sobjs[i] = eo_add(EVAS_RECTANGLE_CLASS, evas);
+          sobjs[i] = eo_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
           fail_if(!sobjs[i]);
           efl_pack_grid(efl_part(obj, "table"), sobjs[i], k, l + 2, 1, 1);
        }

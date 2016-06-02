@@ -24,7 +24,7 @@
  *
  * @{
  */
-#include "canvas/evas_rectangle.eo.h"
+#include "canvas/efl_canvas_rectangle.eo.h"
 /**
  * @}
  */

@@ -1,0 +1,6 @@
+class Efl.Canvas.Rectangle (Evas.Object)
+{
+   implements {
+      Eo.Base.constructor;
+   }
+}

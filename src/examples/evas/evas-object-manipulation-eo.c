@@ -174,7 +174,7 @@ main(void)
 
    /* Creating object with Eo.
     * Object must be deleted explixitly at the end of program.*/
-   d.bg = eo_add(EVAS_RECTANGLE_CLASS, d.canvas);
+   d.bg = eo_add(EFL_CANVAS_RECTANGLE_CLASS, d.canvas);
 
    /* Eo-styled way to perform actions on an object*/
    evas_obj_name_set(d.bg, "background rectangle");
@@ -235,7 +235,7 @@ main(void)
    /* solid white clipper (note that it's the default color for a
     * rectangle) - it won't change clippees' colors, then (multiplying
     * by 255) */
-   d.clipper = eo_add(EVAS_RECTANGLE_CLASS, d.canvas);
+   d.clipper = eo_add(EFL_CANVAS_RECTANGLE_CLASS, d.canvas);
 
    efl_gfx_position_set(d.clipper, WIDTH / 4, HEIGHT / 4);
    efl_gfx_size_set(d.clipper, WIDTH / 2, HEIGHT / 2);

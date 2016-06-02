@@ -233,7 +233,7 @@ main(void)
    _scene_setup(&data);
 
    /* Add a background rectangle objects. */
-   background = eo_add(EVAS_RECTANGLE_CLASS, evas);
+   background = eo_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 0, 0, 0, 255);
    efl_gfx_size_set(background, WIDTH, HEIGHT);
    efl_gfx_visible_set(background, EINA_TRUE);

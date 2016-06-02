@@ -1831,7 +1831,7 @@ EAPI void *evas_object_intercept_focus_set_callback_del(Evas_Object *obj, Evas_O
  */
 EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-#include "canvas/evas_rectangle.eo.legacy.h"
+#include "canvas/efl_canvas_rectangle.eo.legacy.h"
 
 /**
  * @}
