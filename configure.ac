@@ -5409,6 +5409,8 @@ EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${build_ecore_evas_win32}], [eco
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_drm}], [ecore_drm2])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${build_ecore_evas_wayland}], [ecore_wl2])
 
+EFL_OPTIONAL_DEPEND_PKG([ELEMENTARY], [${want_wayland}], [WAYLAND], [wayland-client])
+
 dnl Special case deps for ecore_drm
 if test "${want_drm}" = "yes"; then
   EFL_DEPEND_PKG([ELEMENTARY], [DRM], [libdrm])
