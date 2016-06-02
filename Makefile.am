@@ -509,12 +509,9 @@ clean-local:
 	rm -f ./src/lib/eet/Makefile
 	rm -f ./src/lib/ecore/Makefile
 	rm -f ./src/lib/efl/Makefile
-	rm -f ./src/lib/efl/Efl_Config.h
 	rm -f ./src/lib/eina/Makefile
-	rm -f ./src/lib/eina/eina_config.h
 	rm -f ./src/lib/eio/Makefile
 	rm -f ./src/lib/elementary/Makefile
-	rm -f ./src/lib/elementary/Elementary.h
 	rm -f ./src/lib/ector/Makefile
 	rm -rf ./src/lib/ector/static_libs/rg_etc/.deps/
 	rm -f ./src/lib/evil/Makefile
