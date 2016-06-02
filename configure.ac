@@ -4996,7 +4996,7 @@ fi
 ### Check availability
 
 ## Generic player
-EMOTION_GENERIC_PLAYER([GENERIC_VLC], [yes], [libvlc >= 2.0])
+EFL_DEPEND_PKG([GENERIC_VLC], [VLC], [libvlc >= 2.0])
 EFL_INTERNAL_DEPEND_PKG([GENERIC_VLC], [eina])
 EFL_INTERNAL_DEPEND_PKG([GENERIC_VLC], [ecore])
 EFL_ADD_FEATURE([EMOTION], [generic_vlc], [${with_generic_vlc}])
