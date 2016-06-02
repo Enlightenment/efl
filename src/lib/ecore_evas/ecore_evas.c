@@ -3359,8 +3359,8 @@ _ecore_evas_idle_timeout_update(Ecore_Evas *ee)
      ecore_timer_add(IDLE_FLUSH_TIME, _ecore_evas_cb_idle_flush, ee);
 }
 
-EAPI void
-_ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
+static void
+_ecore_evas_mouse_move_process_internal(Ecore_Evas *ee, int x, int y, unsigned int timestamp, Eina_Bool feed)
 {
    int fx, fy, fw, fh;
    ee->mouse.x = x;
@@ -3388,6 +3388,7 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timest
                            y - fx - ee->prop.cursor.hot.x,
                            ee->w + fh - x - fy - 1 - ee->prop.cursor.hot.y);
      }
+   if (!feed) return;
    if (ee->rotation == 0)
      evas_event_input_mouse_move(ee->evas, x, y, timestamp, NULL);
    else if (ee->rotation == 90)
@@ -3396,6 +3397,12 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timest
      evas_event_input_mouse_move(ee->evas, ee->w + fw - x - 1, ee->h + fh - y - 1, timestamp, NULL);
    else if (ee->rotation == 270)
      evas_event_input_mouse_move(ee->evas, y, ee->w + fh - x - 1, timestamp, NULL);
+}
+
+EAPI void
+_ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
+{
+   _ecore_evas_mouse_move_process_internal(ee, x, y, timestamp, EINA_TRUE);
 }
 
 EAPI void
@@ -4399,6 +4406,8 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
    Efl_Event_Pointer *evt;
    Evas *e = ee->evas;
    Eina_Bool processed;
+
+   _ecore_evas_mouse_move_process_internal(ee, info->x, info->y, info->timestamp, EINA_FALSE);
 
    /* Unused information:
     * same_screen
