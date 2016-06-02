@@ -10,6 +10,10 @@
 #include <intel_bufmgr.h>
 #include <i915_drm.h>
 
+#include <exynos_drm.h>
+#include <exynos_drmif.h>
+#include <sys/mman.h>
+
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 
 #define SYM(lib, xx)               \
@@ -87,6 +91,11 @@ int (*sym_drm_intel_gem_bo_map_gtt)(drm_intel_bo *bo) = NULL;
 drm_intel_bo *(*sym_drm_intel_bo_alloc_tiled)(drm_intel_bufmgr *mgr, const char *name, int x, int y, int cpp, uint32_t *tile, unsigned long *pitch, unsigned long flags) = NULL;
 void (*sym_drm_intel_bo_unreference)(drm_intel_bo *bo) = NULL;
 int (*sym_drmPrimeHandleToFD)(int fd, uint32_t handle, uint32_t flags, int *prime_fd);
+
+struct exynos_device *(*sym_exynos_device_create)(int fd) = NULL;
+struct exynos_bo *(*sym_exynos_bo_create)(struct exynos_device *dev, size_t size, uint32_t flags) = NULL;
+void *(*sym_exynos_bo_map)(struct exynos_bo *bo) = NULL;
+void (*sym_exynos_bo_destroy)(struct exynos_bo *bo) = NULL;
 
 static Buffer_Handle *
 _intel_alloc(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd)
@@ -179,6 +188,95 @@ err:
    return EINA_FALSE;
 }
 
+static Buffer_Handle *
+_exynos_alloc(Buffer_Manager *self, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, int32_t *fd)
+{
+   size_t size = w * h * 4;
+   struct exynos_bo *out;
+
+   *stride = w * 4;
+   out = sym_exynos_bo_create(self->priv, size, 0);
+   if (!out) return NULL;
+   /* First try to allocate an mmapable buffer with O_RDWR,
+    * if that fails retry unmappable - if the compositor is
+    * using GL it won't need to mmap the buffer and this can
+    * work - otherwise it'll reject this buffer and we'll
+    * have to fall back to shm rendering.
+    */
+   if (sym_drmPrimeHandleToFD(drm_fd, out->handle,
+                              DRM_CLOEXEC | O_RDWR, fd) != 0)
+     if (sym_drmPrimeHandleToFD(drm_fd, out->handle,
+                                DRM_CLOEXEC, fd) != 0) goto err;
+
+   return (Buffer_Handle *)out;
+
+err:
+   sym_exynos_bo_destroy(out);
+   return NULL;
+}
+
+static void *
+_exynos_map(Dmabuf_Buffer *buf)
+{
+   struct exynos_bo *bo;
+   void *ptr;
+
+   bo = (struct exynos_bo *)buf->bh;
+   ptr = mmap(0, bo->size, PROT_READ | PROT_WRITE, MAP_SHARED, buf->fd, 0);
+   if (ptr == MAP_FAILED) return NULL;
+   return ptr;
+}
+
+static void
+_exynos_unmap(Dmabuf_Buffer *buf)
+{
+   struct exynos_bo *bo;
+
+   bo = (struct exynos_bo *)buf->bh;
+   munmap(buf->mapping, bo->size);
+}
+
+static void
+_exynos_discard(Dmabuf_Buffer *buf)
+{
+   struct exynos_bo *bo;
+
+   bo = (struct exynos_bo *)buf->bh;
+   sym_exynos_bo_destroy(bo);
+}
+
+static Eina_Bool
+_exynos_buffer_manager_setup(int fd)
+{
+   Eina_Bool fail = EINA_FALSE;
+   void *drm_exynos_lib;
+
+   drm_exynos_lib = dlopen("libdrm_exynos.so", RTLD_LAZY | RTLD_GLOBAL);
+   if (!drm_exynos_lib) return EINA_FALSE;
+
+   SYM(drm_exynos_lib, exynos_device_create);
+   SYM(drm_exynos_lib, exynos_bo_create);
+   SYM(drm_exynos_lib, exynos_bo_map);
+   SYM(drm_exynos_lib, exynos_bo_destroy);
+   SYM(drm_exynos_lib, drmPrimeHandleToFD);
+
+   if (fail) goto err;
+
+   buffer_manager->priv = sym_exynos_device_create(fd);
+   if (!buffer_manager->priv) goto err;
+
+   buffer_manager->alloc = _exynos_alloc;
+   buffer_manager->map = _exynos_map;
+   buffer_manager->unmap = _exynos_unmap;
+   buffer_manager->discard = _exynos_discard;
+
+   return EINA_TRUE;
+
+err:
+   dlclose(drm_exynos_lib);
+   return EINA_FALSE;
+}
+
 static Buffer_Manager *
 _buffer_manager_get(void)
 {
@@ -194,6 +292,7 @@ _buffer_manager_get(void)
    if (fd < 0) goto err_drm;
 
    success = _intel_buffer_manager_setup(fd);
+   if (!success) success = _exynos_buffer_manager_setup(fd);
    if (!success) goto err_bm;
 
    drm_fd = fd;
