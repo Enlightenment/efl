@@ -614,9 +614,9 @@ eina_promise_all(Eina_Iterator* it)
    last = internal_it->data.promises + internal_it->data.num_promises;
    for (;cur_promise != last; ++cur_promise)
      {
+        eina_promise_ref(*cur_promise); // We need to keep the value alive until this promise is freed
         eina_promise_then(*cur_promise, (Eina_Promise_Cb)&_eina_promise_all_compose_then_cb,
                           (Eina_Promise_Error_Cb)&_eina_promise_all_compose_error_then_cb, promise);
-        eina_promise_ref(*cur_promise); // We need to keep the value alive until this promise is freed
      }
 
    return &promise->promise.vtable;
