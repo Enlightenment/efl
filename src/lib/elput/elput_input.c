@@ -312,9 +312,10 @@ static void
 _elput_input_init_thread(void *data, Ecore_Thread *eth EINA_UNUSED)
 {
    Elput_Manager *manager = data;
-   struct udev *udev;
+   void *udev = NULL;
 
-   udev = udev_new();
+   udev = eeze_udev_get();
+   if (!udev) return;
 
    manager->input.lib =
      libinput_udev_create_context(&_input_interface, manager, udev);
@@ -323,7 +324,6 @@ _elput_input_init_thread(void *data, Ecore_Thread *eth EINA_UNUSED)
         ERR("libinput could not create udev context");
         return;
      }
-   udev_unref(udev);
 
    if (libinput_udev_assign_seat(manager->input.lib, manager->seat))
      {
