@@ -2412,7 +2412,8 @@ generic_evas_pdf_evas_image_loader_pdf_CXXFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/generic/evas/common \
 @POPPLER_CFLAGS@
-generic_evas_pdf_evas_image_loader_pdf_LDADD = @POPPLER_LIBS@ @USE_EINA_INTERNAL_LIBS@ @SHM_LIBS@
+generic_evas_pdf_evas_image_loader_pdf_LDADD = @USE_EINA_LIBS@ @POPPLER_LIBS@ @SHM_LIBS@
+generic_evas_pdf_evas_image_loader_pdf_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 EFL_INSTALL_EXEC_HOOK += \
 ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ppt; \
@@ -2446,7 +2447,8 @@ generic_evas_ps_evas_image_loader_ps_SOURCES = \
 generic/evas/ps/main.c \
 generic/evas/common/shmfile.c \
 generic/evas/common/timeout.c
-generic_evas_ps_evas_image_loader_ps_LDADD = @SPECTRE_LIBS@ @USE_EINA_INTERNAL_LIBS@ @SHM_LIBS@
+generic_evas_ps_evas_image_loader_ps_LDADD = @USE_EINA_LIBS@ @SPECTRE_LIBS@ @SHM_LIBS@
+generic_evas_ps_evas_image_loader_ps_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 generic_evas_ps_evas_image_loader_ps_CFLAGS = \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
@@ -2462,7 +2464,8 @@ generic_evas_raw_evas_image_loader_raw_SOURCES = \
 generic/evas/raw/main.c \
 generic/evas/common/shmfile.c \
 generic/evas/common/timeout.c
-generic_evas_raw_evas_image_loader_raw_LDADD = @SHM_LIBS@ @USE_EINA_INTERNAL_LIBS@ @LIBRAW_LIBS@ -lm
+generic_evas_raw_evas_image_loader_raw_LDADD = @USE_EINA_LIBS@ @SHM_LIBS@ @LIBRAW_LIBS@ -lm
+generic_evas_raw_evas_image_loader_raw_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 generic_evas_raw_evas_image_loader_raw_CFLAGS = \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
@@ -2505,7 +2508,8 @@ generic_evas_svg_evas_image_loader_svg_CFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/generic/evas/common \
 @RSVG_CFLAGS@
-generic_evas_svg_evas_image_loader_svg_LDADD = @RSVG_LIBS@ @USE_EINA_INTERNAL_LIBS@ @SHM_LIBS@ -lm
+generic_evas_svg_evas_image_loader_svg_LDADD = @USE_EINA_LIBS@ @RSVG_LIBS@ @SHM_LIBS@ -lm
+generic_evas_svg_evas_image_loader_svg_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 EFL_INSTALL_EXEC_HOOK += \
 ln -sf evas_image_loader.svg $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.svgz; \
@@ -2526,7 +2530,7 @@ generic_evas_xcf_evas_image_loader_xcf_CFLAGS = \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/generic/evas/common
-generic_evas_xcf_evas_image_loader_xcf_LDADD = @USE_EINA_INTERNAL_LIBS@ @SHM_LIBS@ -lm -lz
-
+generic_evas_xcf_evas_image_loader_xcf_LDADD = @USE_EINA_LIBS@ @SHM_LIBS@ -lm -lz
+generic_evas_xcf_evas_image_loader_xcf_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 EFL_INSTALL_EXEC_HOOK += \
 ln -sf evas_image_loader.xcf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.xcf.gz;
