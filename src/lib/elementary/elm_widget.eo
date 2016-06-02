@@ -850,6 +850,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
+      Eo.Base.provider_find;
       Evas.Object.Smart.hide;
       Evas.Object.Smart.calculate;
       Evas.Object.Smart.clip_unset;

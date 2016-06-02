@@ -454,6 +454,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     on_translate : 1; /**< This is true when any types of elm translate function is being called. */
    Eina_Bool                     on_create : 1; /**< This is true when the widget is on creation(general widget constructor). */
    Eina_Bool                     on_destroy: 1; /**< This is true when the widget is on destruction(general widget destructor). */
+   Eina_Bool                     provider_lookup : 1; /**< This is true when eo_provider_find is currently walking the tree */
 } Elm_Widget_Smart_Data;
 
 /**

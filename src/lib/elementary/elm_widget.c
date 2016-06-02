@@ -6029,5 +6029,22 @@ _elm_widget_item_elm_interface_atspi_component_alpha_get(Eo *obj EINA_UNUSED, El
    return (double)alpha / 255.0;
 }
 
+EOLIAN static Eo_Base *
+_elm_widget_eo_base_provider_find(Eo *obj, Elm_Widget_Smart_Data *pd, const Eo_Base *klass)
+{
+   Eo_Base *lookup = NULL;
+
+   if (pd->provider_lookup) return NULL;
+   pd->provider_lookup = EINA_TRUE;
+
+   lookup = eo_provider_find(pd->parent_obj, klass);
+   if (!lookup) lookup = eo_provider_find(eo_super(obj, MY_CLASS), klass);
+
+   pd->provider_lookup = EINA_FALSE;
+
+   return lookup;
+}
+
+
 #include "elm_widget_item.eo.c"
 #include "elm_widget.eo.c"
