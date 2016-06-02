@@ -250,12 +250,14 @@ evas_fb_outbuf_fb_new_region_for_update(Outbuf *buf, int x, int y, int w, int h,
      }
    else
      {
-	RGBA_Image *im;
+        RGBA_Image *im;
 
-	*cx = 0; *cy = 0; *cw = w; *ch = h;
-	im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
+        *cx = 0; *cy = 0; *cw = w; *ch = h;
+        im = (RGBA_Image *) evas_cache_image_empty(evas_common_image_cache_get());
         im->cache_entry.flags.alpha = 1;
-        im = (RGBA_Image *) evas_cache_image_size_set(&im->cache_entry, w, h);
+        im->cache_entry.w = w;
+        im->cache_entry.h = w;
+        evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 
         return im;
      }
