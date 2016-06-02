@@ -4627,44 +4627,6 @@ _elm_win_available_profiles_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, char ***p
 }
 
 EOLIAN static void
-_elm_win_profile_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *profile)
-{
-   /* check to see if a given profile is present in an available profiles */
-   if ((profile) && (sd->profile.available_list))
-     {
-        Eina_Bool found = EINA_FALSE;
-        unsigned int i;
-        for (i = 0; i < sd->profile.count; i++)
-          {
-             if (!strcmp(profile,
-                         sd->profile.available_list[i]))
-               {
-                  found = EINA_TRUE;
-                  break;
-               }
-          }
-        if (!found) return;
-     }
-
-   if (ecore_evas_window_profile_supported_get(sd->ee))
-     {
-        if (!profile) _elm_win_profile_del(sd);
-        ecore_evas_window_profile_set(sd->ee, profile);
-     }
-   else
-     {
-        if (_internal_elm_win_profile_set(sd, profile))
-          _elm_win_profile_update(sd);
-     }
-}
-
-EOLIAN static const char*
-_elm_win_profile_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   return sd->profile.name;
-}
-
-EOLIAN static void
 _elm_win_urgent_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Elm_Win_Urgent_Mode urgent)
 {
    Eina_Bool urgent_tmp = !!urgent;
@@ -5021,43 +4983,6 @@ _elm_win_prop_focus_skip_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool sk
 {
    sd->skip_focus = skip;
    TRAP(sd, focus_skip_set, skip);
-}
-
-EOLIAN static void
-_elm_win_illume_command_send(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Elm_Illume_Command command, void *params)
-{
-   (void) params;
-
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     {
-        switch (command)
-          {
-           case ELM_ILLUME_COMMAND_FOCUS_BACK:
-             ecore_x_e_illume_focus_back_send(sd->x.xwin);
-             break;
-
-           case ELM_ILLUME_COMMAND_FOCUS_FORWARD:
-             ecore_x_e_illume_focus_forward_send(sd->x.xwin);
-             break;
-
-           case ELM_ILLUME_COMMAND_FOCUS_HOME:
-             ecore_x_e_illume_focus_home_send(sd->x.xwin);
-             break;
-
-           case ELM_ILLUME_COMMAND_CLOSE:
-             ecore_x_e_illume_close_send(sd->x.xwin);
-             break;
-
-           default:
-             break;
-          }
-     }
-#else
-   (void)sd;
-   (void)command;
-#endif
 }
 
 EOLIAN static Eina_Bool
@@ -6358,6 +6283,90 @@ EAPI void
 elm_win_size_step_get(const Evas_Object *obj, int *w, int *h)
 {
    efl_gfx_size_hint_step_get(obj, w, h);
+}
+
+EAPI void
+elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *params)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   (void) params;
+
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     {
+        switch (command)
+          {
+           case ELM_ILLUME_COMMAND_FOCUS_BACK:
+             ecore_x_e_illume_focus_back_send(sd->x.xwin);
+             break;
+
+           case ELM_ILLUME_COMMAND_FOCUS_FORWARD:
+             ecore_x_e_illume_focus_forward_send(sd->x.xwin);
+             break;
+
+           case ELM_ILLUME_COMMAND_FOCUS_HOME:
+             ecore_x_e_illume_focus_home_send(sd->x.xwin);
+             break;
+
+           case ELM_ILLUME_COMMAND_CLOSE:
+             ecore_x_e_illume_close_send(sd->x.xwin);
+             break;
+
+           default:
+             break;
+          }
+     }
+#else
+   (void)sd;
+   (void)command;
+#endif
+}
+
+EAPI void
+elm_win_profile_set(Evas_Object *obj, const char *profile)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   /* check to see if a given profile is present in an available profiles */
+   if ((profile) && (sd->profile.available_list))
+     {
+        Eina_Bool found = EINA_FALSE;
+        unsigned int i;
+        for (i = 0; i < sd->profile.count; i++)
+          {
+             if (!strcmp(profile,
+                         sd->profile.available_list[i]))
+               {
+                  found = EINA_TRUE;
+                  break;
+               }
+          }
+        if (!found) return;
+     }
+
+   if (ecore_evas_window_profile_supported_get(sd->ee))
+     {
+        if (!profile) _elm_win_profile_del(sd);
+        ecore_evas_window_profile_set(sd->ee, profile);
+     }
+   else
+     {
+        if (_internal_elm_win_profile_set(sd, profile))
+          _elm_win_profile_update(sd);
+     }
+}
+
+EAPI const char*
+elm_win_profile_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) NULL;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
+
+   return sd->profile.name;
 }
 
 #include "elm_win.eo.c"

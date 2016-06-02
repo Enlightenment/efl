@@ -130,20 +130,6 @@ enum Elm.Win.Keygrab_Mode
                                     window]]
 }
 
-enum Elm.Illume_Command
-{
-   [[Available commands that can be sent to the Illume manager.
-
-     When running under an Illume session, a window may send commands to the
-     Illume manager to perform different actions.
-   ]]
-
-   focus_back, [[Reverts focus to the previous window]]
-   focus_forward, [[Sends focus to the next window in the list]]
-   focus_home, [[Hides all windows to show the Home screen]]
-   close [[Closes the currently active window]]
-}
-
 enum Elm.Win.Modal_Mode
 {
    [[Defines the mode of a modal window]]
@@ -583,6 +569,32 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             name: string @nullable;
          }
       }
+      @property type { /* FIXME: before finalize */
+         [[The type of the window.
+
+           It is a hint of how the Window Manager should handle it.
+
+           The window type is a constructing property that need to be set at
+           creation within \@ref eo_add.
+
+           Note: Once set, it can NOT be modified afterward.
+         ]]
+         /* FIXME-doc
+         Example:
+         @code
+         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_type_set(ELM_WIN_BASIC));
+         @endcode
+         */
+         set {
+            [[Can only be used at creation time, within \@ref eo_add.]]
+         }
+         get {
+            [[If the object is not window object, return #ELM_WIN_UNKNOWN.]]
+         }
+         values {
+            type: Elm.Win.Type(Elm.Win.Type.unknown);
+         }
+      }
       @property available_profiles {
          set {
             [[Set the array of available profiles to a window.
@@ -664,23 +676,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             layer: int; [[The layer of the window.]]
          }
       }
-      @property profile {
-         set {
-            [[Set the profile of a window.
-
-              @since 1.8
-            ]]
-         }
-         get {
-            [[Get the profile of a window.
-
-              @since 1.8
-            ]]
-         }
-         values {
-            profile: string; [[The string value of a window profile.]]
-         }
-      }
       @property main_menu {
          get {
             [[Get the Main Menu of a window.]]
@@ -714,32 +709,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             return: Evas.Object; [[The inlined image object or $null if none exists.]]
          }
       }
-      @property type { /* FIXME: before finalize */
-         [[The type of the window.
-
-           It is a hint of how the Window Manager should handle it.
-
-           The window type is a constructing property that need to be set at
-           creation within \@ref eo_add.
-
-           Note: Once set, it can NOT be modified afterward.
-         ]]
-         /* FIXME-doc
-         Example:
-         @code
-         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_type_set(ELM_WIN_BASIC));
-         @endcode
-         */
-         set {
-            [[Can only be used at creation time, within \@ref eo_add.]]
-         }
-         get {
-            [[If the object is not window object, return #ELM_WIN_UNKNOWN.]]
-         }
-         values {
-            type: Elm.Win.Type(Elm.Win.Type.unknown);
-         }
-      }
       @property fake_canvas @protected {
            set {
                 [[Internal. Used to completent the fake window type.]]
@@ -762,21 +731,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                                 system-wide service all users can connect to,
                                 otherwise the service is private to the user
                                 id that created the service.]]
-         }
-      }
-      illume_command_send {
-         [[Send a command to the windowing environment
-
-           This is intended to work in touchscreen or small screen device
-           environments where there is a more simplistic window management
-           policy in place. This uses the window object indicated to select
-           which part of the environment to control (the part that this
-           window lives in), and provides a command and an optional
-           parameter structure (use NULL for this if not needed).
-         ]]
-         params {
-            @in command: Elm.Illume_Command; [[The command to send.]]
-            @in params: void * @optional; [[Optional parameters for the command.]]
          }
       }
       activate {

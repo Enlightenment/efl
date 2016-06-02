@@ -32,6 +32,25 @@ typedef enum
 } Elm_Win_Indicator_Opacity_Mode;
 
 /**
+ * @brief Available commands that can be sent to the Illume manager.
+ *
+ * When running under an Illume session, a window may send commands to the
+ * Illume manager to perform different actions.
+ *
+ * @ingroup Elm
+ */
+typedef enum
+{
+  ELM_ILLUME_COMMAND_FOCUS_BACK = 0, /** Reverts focus to the previous window
+                                      */
+  ELM_ILLUME_COMMAND_FOCUS_FORWARD, /** Sends focus to the next window in the
+                                     * list */
+  ELM_ILLUME_COMMAND_FOCUS_HOME, /** Hides all windows to show the Home screen
+                                  */
+  ELM_ILLUME_COMMAND_CLOSE /** Closes the currently active window */
+} Elm_Illume_Command;
+
+/**
  * Adds a window object. If this is the first window created, pass NULL as
  * @p parent.
  *
@@ -903,4 +922,41 @@ EAPI void elm_win_size_step_set(Evas_Object *obj, int w, int h);
  * @ingroup Elm_Win
  */
 EAPI void elm_win_size_step_get(const Evas_Object *obj, int *w, int *h);
+
+/**
+ * @brief Send a command to the windowing environment
+ *
+ * This is intended to work in touchscreen or small screen device environments
+ * where there is a more simplistic window management policy in place. This
+ * uses the window object indicated to select which part of the environment to
+ * control (the part that this window lives in), and provides a command and an
+ * optional parameter structure (use NULL for this if not needed).
+ *
+ * @param[in] params Optional parameters for the command.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *params);
+
+/**
+ * @brief Set the profile of a window.
+ *
+ * @param[in] profile The string value of a window profile.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_profile_set(Evas_Object *obj, const char *profile);
+
+/**
+ * @brief Get the profile of a window.
+ *
+ * @return The string value of a window profile.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Win
+ */
+EAPI const char *elm_win_profile_get(const Evas_Object *obj);
 
