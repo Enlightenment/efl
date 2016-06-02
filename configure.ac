@@ -2807,6 +2807,99 @@ EFL_ADD_FEATURE([EVAS], [tile-rotate])
 EFL_ADD_FEATURE([EVAS], [dither-mask], [${build_evas_dither_mask}])
 EFL_ADD_FEATURE([EVAS], [hyphen])
 
+#### Generic backend
+
+### Option to turn on generic loader for evas
+want_poppler="no"
+want_spectre="no"
+want_libraw="no"
+want_rsvg="no"
+
+AC_ARG_ENABLE([poppler],
+   [AC_HELP_STRING([--enable-poppler], [enable poppler support  @<:@default==disabled@:>@])],
+   [want_poppler=$enableval])
+
+AC_ARG_ENABLE([spectre],
+   [AC_HELP_STRING([--enable-spectre], [enable spectre support  @<:@default==disabled@:>@])],
+   [want_spectre=$enableval])
+
+AC_ARG_ENABLE([libraw],
+   [AC_HELP_STRING([--enable-libraw], [enable libraw support  @<:@default==disabled@:>@])],
+   [want_libraw=$enableval])
+
+AC_ARG_ENABLE([librsvg],
+   [AC_HELP_STRING([--enable-librsvg], [enable svg support  @<:@default==disabled@:>@])],
+   [want_rsvg=$enableval])
+
+have_poppler="no"
+have_spectre="no"
+have_raw="no"
+have_rsvg="no"
+
+### Check needed dependency for each generic loader
+if test "x${want_poppler}" = "xyes"; then
+      PKG_CHECK_EXISTS([poppler >= 0.12 poppler < 0.20],
+      [
+       poppler_pc="poppler >= 0.12 poppler < 0.20"
+       have_poppler="yes"
+      ],
+      [have_poppler="no"])
+
+   if test "x${have_poppler}" = "xno" ; then
+      PKG_CHECK_EXISTS([poppler >= 0.20 poppler < 0.31],
+         [
+          poppler_pc="poppler >= 0.20 poppler < 0.31"
+          AC_DEFINE(HAVE_POPPLER_020, 1, [Have poppler 0.20])
+          have_poppler="yes"
+         ],
+         [have_poppler="no"])
+   fi
+
+   if test "x${have_poppler}" = "xno" ; then
+      PKG_CHECK_EXISTS([poppler >= 0.31],
+         [
+          poppler_pc="poppler >= 0.31"
+          AC_DEFINE(HAVE_POPPLER_031, 1, [Have poppler 0.31])
+          have_poppler="yes"
+         ],
+         [have_poppler="no"])
+   fi
+
+   if test "x${have_poppler}" = "xyes" ; then
+      PKG_CHECK_MODULES([POPPLER], [${poppler_pc}],
+         [have_poppler="yes"])
+   fi
+fi
+
+if test "x${want_spectre}" = "xyes"; then
+   PKG_CHECK_MODULES([SPECTRE], [libspectre], [have_spectre="yes"])
+fi
+
+if test "x${want_libraw}" = "xyes"; then
+   PKG_CHECK_MODULES([LIBRAW], [libraw], [have_raw="yes"])
+fi
+
+if test "x${want_librsvg}" = "xyes"; then
+   PKG_CHECK_MODULES([RSVG],  [librsvg-2.0 >= 2.14.0 cairo >= 1.0.0], [have_rsvg="yes"])
+   PKG_CHECK_MODULES(
+      [SVG_2_36], [librsvg-2.0 >= 2.36.0 cairo >= 1.0.0],
+      [
+       have_rsvg_2_36="yes"
+       AC_DEFINE(HAVE_SVG_2_36, 1, [Have librsvg >= 2.36])
+      ],
+      [have_rsvg_2_36="no"])
+fi
+
+AM_CONDITIONAL([HAVE_POPPLER], [test "x${have_poppler}" = "xyes"])
+AM_CONDITIONAL([HAVE_SPECTRE], [test "x${have_spectre}" = "xyes"])
+AM_CONDITIONAL([HAVE_LIBRAW], [test "x${have_raw}" = "xyes"])
+AM_CONDITIONAL([HAVE_RSVG], [test "x${have_rsvg}" = "xyes"])
+
+EFL_ADD_FEATURE([EVAS_LOADER], [poppler], [${want_poppler}])
+EFL_ADD_FEATURE([EVAS_LOADER], [spectre], [${want_spectre}])
+EFL_ADD_FEATURE([EVAS_LOADER], [raw], [${want_libraw}])
+EFL_ADD_FEATURE([EVAS_LOADER], [rsvg], [${want_rsvg}])
+
 EFL_LIB_END([Evas])
 #### End of Evas
 
@@ -4902,9 +4995,12 @@ fi
 
 ### Check availability
 
+## Generic player
+EMOTION_GENERIC_PLAYER([GENERIC_VLC], [yes], [libvlc >= 2.0 eina >= 1.1.99 ecore >= 1.7.99])
+EFL_ADD_FEATURE([EMOTION], [generic_vlc], [${with_generic_vlc}])
+
 EFL_LIB_END([Emotion])
 #### End of Emotion
-
 
 #### Ethumb
 EFL_LIB_START([Ethumb])

@@ -2377,3 +2377,156 @@ if HAVE_CXX11
 evas_eolian_cxx_hh = $(evas_eolian_pub_files:%.eo=%.eo.hh)
 evas_eolian_cxx_impl = $(evas_eolian_pub_files:%.eo=%.eo.impl.hh)
 endif
+
+EXTRA_DIST += \
+generic/evas/common/shmfile.c \
+generic/evas/common/shmfile.h \
+generic/evas/common/timeout.c \
+generic/evas/common/timeout.h
+
+evasgenericloadersdir = \
+$(libdir)/evas/utils
+
+evasgenericloaders_PROGRAMS =
+evasgenericloaders_SCRIPT =
+
+### Libreoffice converter to pdf
+EXTRA_DIST += generic/evas/pdf/evas_generic_pdf_loader.libreoffice
+
+if HAVE_POPPLER
+
+evasgenericloaders_SCRIPT += generic/evas/pdf/evas_generic_pdf_loader.libreoffice
+evasgenericloaders_PROGRAMS += generic/evas/pdf/evas_image_loader.pdf
+
+generic_evas_pdf_evas_image_loader_pdf_SOURCES = \
+generic/evas/pdf/main.cpp \
+generic/evas/common/shmfile.c \
+generic/evas/common/timeout.c
+generic_evas_pdf_evas_image_loader_pdf_CFLAGS = \
+-I$(top_srcdir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/generic/evas/common \
+@POPPLER_CFLAGS@
+generic_evas_pdf_evas_image_loader_pdf_CXXFLAGS = \
+-I$(top_srcdir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/generic/evas/common \
+@POPPLER_CFLAGS@
+generic_evas_pdf_evas_image_loader_pdf_LDADD = @POPPLER_LIBS@ @USE_EINA_INTERNAL_LIBS@ @SHM_LIBS@
+
+EFL_INSTALL_EXEC_HOOK += \
+ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ppt; \
+ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.pptx; \
+ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.odp; \
+ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.xls; \
+ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.xlsx; \
+ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ods; \
+ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.doc; \
+ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.docx; \
+ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.odt; \
+ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rtf; \
+ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.ppt; \
+ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.pptx; \
+ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.odp; \
+ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.xls; \
+ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.xlsx; \
+ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.ods; \
+ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.doc; \
+ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.docx; \
+ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.odt; \
+ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.rtf;
+
+endif
+
+if HAVE_SPECTRE
+
+evasgenericloaders_PROGRAMS += generic/evas/ps/evas_image_loader.ps
+
+generic_evas_ps_evas_image_loader_ps_SOURCES = \
+generic/evas/ps/main.c \
+generic/evas/common/shmfile.c \
+generic/evas/common/timeout.c
+generic_evas_ps_evas_image_loader_ps_LDADD = @SPECTRE_LIBS@ @USE_EINA_INTERNAL_LIBS@ @SHM_LIBS@
+generic_evas_ps_evas_image_loader_ps_CFLAGS = \
+-I$(top_srcdir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/generic/evas/common
+
+endif
+
+if HAVE_LIBRAW
+
+evasgenericloaders_PROGRAMS += generic/evas/raw/evas_image_loader.raw
+
+generic_evas_raw_evas_image_loader_raw_SOURCES = \
+generic/evas/raw/main.c \
+generic/evas/common/shmfile.c \
+generic/evas/common/timeout.c
+generic_evas_raw_evas_image_loader_raw_LDADD = @SHM_LIBS@ @USE_EINA_INTERNAL_LIBS@ @LIBRAW_LIBS@ -lm
+generic_evas_raw_evas_image_loader_raw_CFLAGS = \
+-I$(top_srcdir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/generic/evas/common \
+@LIBRAW_CFLAGS@
+
+EFL_INSTALL_EXEC_HOOK += \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.arw; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.cr2; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.crw; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.dcr; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.dng; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.k25; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.kdc; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.erf; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.mrw; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.nef; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.nrf; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.nrw; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.orf; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rw2; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.pef; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.raf; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.sr2; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.srf; \
+ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.x3f;
+
+endif
+
+if HAVE_RSVG
+
+evasgenericloaders_PROGRAMS += generic/evas/svg/evas_image_loader.svg
+
+generic_evas_svg_evas_image_loader_svg_SOURCES = \
+generic/evas/svg/main.c \
+generic/evas/common/shmfile.c \
+generic/evas/common/timeout.c
+generic_evas_svg_evas_image_loader_svg_CFLAGS = \
+-I$(top_srcdir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/generic/evas/common \
+@RSVG_CFLAGS@
+generic_evas_svg_evas_image_loader_svg_LDADD = @RSVG_LIBS@ @USE_EINA_INTERNAL_LIBS@ @SHM_LIBS@ -lm
+
+EFL_INSTALL_EXEC_HOOK += \
+ln -sf evas_image_loader.svg $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.svgz; \
+ln -sf evas_image_loader.svg $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.svg.gz;
+
+endif
+
+EXTRA_DIST += generic/evas/xcf/common.h
+
+evasgenericloaders_PROGRAMS += generic/evas/xcf/evas_image_loader.xcf
+
+generic_evas_xcf_evas_image_loader_xcf_SOURCES = \
+generic/evas/xcf/main.c \
+generic/evas/xcf/pixelfuncs.c \
+generic/evas/common/shmfile.c \
+generic/evas/common/timeout.c
+generic_evas_xcf_evas_image_loader_xcf_CFLAGS = \
+-I$(top_srcdir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/generic/evas/common
+generic_evas_xcf_evas_image_loader_xcf_LDADD = @USE_EINA_INTERNAL_LIBS@ @SHM_LIBS@ -lm -lz
+
+EFL_INSTALL_EXEC_HOOK += \
+ln -sf evas_image_loader.xcf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.xcf.gz;

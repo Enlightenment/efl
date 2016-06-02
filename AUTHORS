@@ -149,6 +149,25 @@ Michelle Legrand <legrand.michelle@outlook.com>
 Romain Perier <romain.perier@openwide.fr>
 Subodh Kumar <s7158.kumar@samsung.com>
 
+Evas Generic Loaders
+--------------------
+
+The Rasterman (Carsten Haitzler) <raster@rasterman.com>
+Christian Kreibich <cK@whoop.org>
+Vincent Torri <vtorri at univ-evry dot fr>
+Michael Bouchaud <michael.bouchaud@gmail.com>
+Fanina "cippp" Cristian <fancris3@gmail.com>
+Cedric BAIL <cedric.bail@free.fr>
+Jérémy Zurcher <jeremy@asynk.ch>
+Stefan Schmidt <stefan@datenfreihafen.org>
+Daniel Juyung Seo <seojuyung2@gmail.com>
+Doug Newgard <scimmia22@outlook.com>
+Mike Blumenkrantz <michael.blumenkrantz@gmail.com>
+Alex-P. Natsios <drakevr@linuxteam.teilar.gr>
+Jihoon Kim <imfine98@gmail.com>
+Samuel F. Baggen <thanatermesis.elive@gmail.com>
+Sebastian Dransfeld <sd@tango.flipp.net>
+
 Ecore
 -----
 
@@ -343,6 +362,27 @@ Sohyun Kim <anna1014.kim@samsung.com>
 Leandro Dorileo <dorileo@profusion.mobi>
 Michael Bouchaud (yoz) <yoz@efl.so>
 Aymeric Dumaz <aymeric.dumaz@gmail.com>
+
+Emotion Generic VLC
+---
+Cedric Bail <cedric.bail@free.fr>
+Hugo Camboulive <hugo.camboulive@zodiacaerospace.com>
+Leandro Dorileo <dorileo@profusion.mobi>
+Pierre Le Magourou <pierre.lemagourou@openwide.fr>
+Rafael Antognolli <antognolli@profusion.mobi>
+Sohyun Kim <anna1014.kim@samsung.com>
+Carsten Haitzler (Rasterman) <raster@rasterman.com>
+Davide Andreoli <dave@gurumeditation.it>
+Gustavo Sverzut Barbieri <barbieri@gmail.com>
+Stefan Schmidt <s.schmidt@samsung.com>
+Bruno Dilly <bdilly@profusion.mobi>
+ChunEon Park <hermet@hermet.pe.kr>
+Daniel Juyung Seo <juyung.seo@samsung.com>
+Doug Newgard <scimmia22@outlook.com>
+Jerome Pinot <ngc891@gmail.com>
+Mike Blumenkrantz <zmike@samsung.com>
+Sebastian Dransfeld <sd@tango.flipp.net>
+Vincent Torri <vincent.torri@gmail.com>
 
 Ethumb
 ------

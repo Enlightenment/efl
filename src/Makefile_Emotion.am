@@ -354,3 +354,24 @@ CLEANFILES += $(generated_emotion_js_bindings)
 GENERATED_JS_BINDINGS += $(generated_emotion_js_bindings)
 
 endif
+
+emotiongenericplayersdir = \
+$(libdir)/emotion/generic_players/$(MODULE_ARCH)
+
+emotiongenericplayers_PROGRAMS =
+
+if HAVE_GENERIC_VLC
+
+emotiongenericplayers_PROGRAMS += generic/emotion/vlc/vlc
+generic_emotion_vlc_vlc_SOURCES = generic/emotion/vlc/emotion_generic_vlc.c
+generic_emotion_vlc_vlc_CPPFLAGS = \
+-I$(top_srcdir)/src/modules/emotion/generic \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DEMOTION_GENERIC_PLAYERS_DIR=\"$(libdir)/emotion/generic_players/$(MODULE_ARCH)\" \
+@GENERIC_VLC_CFLAGS@
+generic_emotion_vlc_vlc_LDADD = @GENERIC_VLC_LIBS@
+
+endif
