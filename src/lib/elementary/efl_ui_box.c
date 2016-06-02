@@ -567,13 +567,13 @@ _efl_ui_box_efl_pack_linear_pack_direction_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl
 {
    switch (dir)
      {
-      //case EFL_ORIENT_UP:
+      case EFL_ORIENT_UP:
       case EFL_ORIENT_DOWN:
         pd->orient = EFL_ORIENT_DOWN;
         break;
 
       case EFL_ORIENT_RIGHT:
-        //case EFL_ORIENT_LEFT:
+      case EFL_ORIENT_LEFT:
       default:
         pd->orient = EFL_ORIENT_RIGHT;
         break;
