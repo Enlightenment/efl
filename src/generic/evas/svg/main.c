@@ -73,6 +73,7 @@ _svg_init(const char *file)
    if (!evas_image_load_file_is_svg(file)) return 0;
 
    rsvg = rsvg_handle_new_from_file(file, NULL);
+   if (!rsvg) return 0;
 
    return 1;
 }
