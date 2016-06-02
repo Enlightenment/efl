@@ -852,3 +852,55 @@ EAPI void elm_win_title_set(Evas_Object *obj, const char *title);
  */
 EAPI const char *elm_win_title_get(const Evas_Object *obj);
 
+/**
+ * @brief Set the base window size used with stepping calculation
+ *
+ * Base size + stepping is what is calculated for window sizing restrictions.
+ *
+ * @param[in] w The base width.
+ * @param[in] h The base height.
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_size_base_set(Evas_Object *obj, int w, int h);
+
+/**
+ * @brief Get the base size of a window.
+ *
+ * @param[out] w The base width.
+ * @param[out] h The base height.
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_size_base_get(const Evas_Object *obj, int *w, int *h);
+
+/**
+ * @brief Set the window stepping used with sizing calculation.
+ *
+ * Base size + stepping is what is calculated for window sizing restrictions.
+ *
+ * @param[in] w The stepping width (0 disables).
+ * @param[in] h The stepping height (0 disables).
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_size_step_set(Evas_Object *obj, int w, int h);
+
+/**
+ * @brief Get the stepping of a window.
+ *
+ * @param[out] w The stepping width (0 disables).
+ * @param[out] h The stepping height (0 disables).
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_size_step_get(const Evas_Object *obj, int *w, int *h);
+

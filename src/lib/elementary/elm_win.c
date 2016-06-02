@@ -4735,7 +4735,7 @@ _elm_win_aspect_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_size_base_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int w, int h)
+_elm_win_efl_gfx_size_hint_base_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int w, int h)
 {
    sd->size_base_w = w;
    sd->size_base_h = h;
@@ -4746,14 +4746,14 @@ _elm_win_size_base_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int w, int h)
 }
 
 EOLIAN static void
-_elm_win_size_base_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *w, int *h)
+_elm_win_efl_gfx_size_hint_base_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *w, int *h)
 {
    if (w) *w = sd->size_base_w;
    if (h) *h = sd->size_base_h;
 }
 
 EOLIAN static void
-_elm_win_size_step_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int w, int h)
+_elm_win_efl_gfx_size_hint_step_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int w, int h)
 {
    sd->size_step_w = w;
    sd->size_step_h = h;
@@ -4764,7 +4764,7 @@ _elm_win_size_step_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int w, int h)
 }
 
 EOLIAN static void
-_elm_win_size_step_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *w, int *h)
+_elm_win_efl_gfx_size_hint_step_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, int *w, int *h)
 {
    if (w) *w = sd->size_step_w;
    if (h) *h = sd->size_step_h;
@@ -6334,6 +6334,30 @@ elm_win_title_get(const Evas_Object *obj)
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
 
    return sd->title;
+}
+
+EAPI void
+elm_win_size_base_set(Evas_Object *obj, int w, int h)
+{
+   efl_gfx_size_hint_base_set(obj, w, h);
+}
+
+EAPI void
+elm_win_size_base_get(const Evas_Object *obj, int *w, int *h)
+{
+   efl_gfx_size_hint_base_get(obj, w, h);
+}
+
+EAPI void
+elm_win_size_step_set(Evas_Object *obj, int w, int h)
+{
+   efl_gfx_size_hint_step_set(obj, w, h);
+}
+
+EAPI void
+elm_win_size_step_get(const Evas_Object *obj, int *w, int *h)
+{
+   efl_gfx_size_hint_step_get(obj, w, h);
 }
 
 #include "elm_win.eo.c"

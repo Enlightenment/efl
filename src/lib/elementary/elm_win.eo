@@ -162,7 +162,8 @@ enum Elm.Win.Urgent_Mode
 
 class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                Elm.Interface.Atspi_Widget_Action, Efl.Pack,
-               Efl.Input.State, Efl.Input.Interface, Efl.Screen)
+               Efl.Input.State, Efl.Input.Interface, Efl.Screen,
+               Efl.Gfx.Size.Hint)
 {
    legacy_prefix: elm_win;
    eo_prefix: elm_obj_win;
@@ -582,27 +583,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             name: string @nullable;
          }
       }
-      @property size_step {
-         set {
-            [[Set the window stepping used with sizing calculation.
-
-              Base size + stepping is what is calculated for window sizing
-              restrictions.
-
-              @since 1.7
-            ]]
-         }
-         get {
-            [[Get the stepping of a window.
-
-              @since 1.7
-            ]]
-         }
-         values {
-            w: int; [[The stepping width (0 disables).]]
-            h: int; [[The stepping height (0 disables).]]
-         }
-      }
       @property available_profiles {
          set {
             [[Set the array of available profiles to a window.
@@ -699,27 +679,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          values {
             profile: string; [[The string value of a window profile.]]
-         }
-      }
-      @property size_base {
-         set {
-            [[Set the base window size used with stepping calculation
-
-              Base size + stepping is what is calculated for window sizing
-              restrictions.
-
-              @since 1.7
-            ]]
-         }
-         get {
-            [[Get the base size of a window.
-
-              @since 1.7
-            ]]
-         }
-         values {
-            w: int; [[The base width.]]
-            h: int; [[The base height.]]
          }
       }
       @property main_menu {
@@ -947,6 +906,10 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
       Efl.Screen.dpi.get;
       Efl.Screen.rotation.get;
       Efl.Screen.size.get;
+      Efl.Gfx.Size.Hint.base.set;
+      Efl.Gfx.Size.Hint.base.get;
+      Efl.Gfx.Size.Hint.step.set;
+      Efl.Gfx.Size.Hint.step.get;
    }
    constructors {
       .name;

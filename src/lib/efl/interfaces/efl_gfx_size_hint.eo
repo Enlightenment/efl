@@ -1,0 +1,42 @@
+interface Efl.Gfx.Size.Hint {
+   methods {
+      @property base {
+         set {
+            [[Set the hint for an object's base size used with stepping calculation
+
+              Base size + stepping is what is calculated for object sizing
+              restrictions.
+
+            ]]
+         }
+         get {
+            [[Get the base size of an object.
+
+            ]]
+         }
+         values {
+            w: int; [[The base width.]]
+            h: int; [[The base height.]]
+         }
+      }
+      @property step {
+         set {
+            [[Set the hint for an object stepping used with sizing calculation.
+
+              Base size + stepping is what is calculated for object sizing
+              restrictions.
+
+            ]]
+         }
+         get {
+            [[Get the stepping of an object.
+
+            ]]
+         }
+         values {
+            w: int; [[The stepping width (0 disables).]]
+            h: int; [[The stepping height (0 disables).]]
+         }
+      }
+   }
+}
