@@ -125,24 +125,16 @@ class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State, Efl.Event.Input)
             dist: int;
          }
       }
-      instance_get @class {
-         [[Creates an instance of this events or returns a fresh one from
-           a memory pool.
-         ]]
-         params {
-            @in  owner: Eo.Base; [[The parent object.]]
-            @out priv: void_ptr; [[Pointer to the internal data of the object.]]
-         }
-         return: own(Efl.Event.Pointer);
-      }
    }
    implements {
       Eo.Base.constructor;
       class.destructor;
+      Efl.Event.instance_get;
       Efl.Event.reset;
       Efl.Event.dup;
       Efl.Event.timestamp.set;
       Efl.Event.timestamp.get;
+      Efl.Event.Input.fake.get;
       Efl.Event.Input.event_flags.set;
       Efl.Event.Input.event_flags.get;
       Efl.Event.Input.on_hold.set;

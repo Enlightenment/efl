@@ -3,6 +3,7 @@
 #endif
 
 #define ECORE_EVAS_INTERNAL
+#define EFL_EVENT_PROTECTED
 
 #include <stdlib.h>
 #include <string.h>
@@ -4358,7 +4359,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
     * modifiers (already passed to evas, no need to do anything)
     */
 
-   evt = efl_event_pointer_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
+   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
    if (!evt) return EINA_FALSE;
 
    ev->action = action;
@@ -4418,7 +4419,7 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
     * modifiers (already passed to evas, no need to do anything)
     */
 
-   evt = efl_event_pointer_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
+   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
    if (!evt) return EINA_FALSE;
 
    ev->action = EFL_POINTER_ACTION_MOVE;
@@ -4455,7 +4456,7 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
     * modifiers (already passed to evas, no need to do anything)
     */
 
-   evt = efl_event_pointer_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
+   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
    if (!evt) return EINA_FALSE;
 
    ev->action = EFL_POINTER_ACTION_WHEEL;
@@ -4484,7 +4485,7 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
     * modifiers (already passed to evas, no need to do anything)
     */
 
-   evt = efl_event_pointer_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
+   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, e, (void **) &ev);
    if (!evt) return EINA_FALSE;
 
    ev->action = action;
@@ -4526,9 +4527,8 @@ _direct_key_updown_cb(Ecore_Evas *ee, const Ecore_Event_Key *info, Eina_Bool dow
     * modifiers (already passed to evas, no need to do anything)
     */
 
-   evt = eo_add(EFL_EVENT_KEY_CLASS, e);
-   ev = eo_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
-   if (!ev) return EINA_FALSE;
+   evt = efl_event_instance_get(EFL_EVENT_KEY_CLASS, e, (void **) &ev);
+   if (!evt || !ev) return EINA_FALSE;
 
    ev->timestamp = info->timestamp;
    ev->pressed = down;

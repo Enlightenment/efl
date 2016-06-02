@@ -1,3 +1,5 @@
+#define EFL_EVENT_PROTECTED
+
 #include "evas_common_private.h"
 #include "evas_private.h"
 
@@ -104,7 +106,7 @@ _efl_event_create(Efl_Event *evt, Evas_Callback_Type type, void *ev,
 
 #define EV_CASE(TYPE, Type, OBJTYP, objtyp) \
    case EVAS_CALLBACK_ ## TYPE: \
-     if (!evt) evt = eo_add(EFL_EVENT_ ## OBJTYP ## _CLASS, parentev); \
+     if (!evt) evt = efl_event_instance_get(EFL_EVENT_ ## OBJTYP ## _CLASS, parentev, NULL); \
      efl_event_ ## objtyp ## _legacy_info_set(evt, ev, type); \
      if (pflags) *pflags = &(((Evas_Event_ ## Type *) ev)->event_flags); \
      break;
@@ -122,6 +124,7 @@ _efl_event_create(Efl_Event *evt, Evas_Callback_Type type, void *ev,
       EV_CASE(MOUSE_WHEEL, Mouse_Wheel, POINTER, pointer);
       EV_CASE(KEY_DOWN, Key_Down, KEY, key);
       EV_CASE(KEY_UP, Key_Up, KEY, key);
+
       default:
         DBG("Support for event type %d not implemented yet.", type);
         break;

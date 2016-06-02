@@ -38,6 +38,7 @@ extern "C" {
 /* Add here all the required ifdef for any @protected method */
 #ifdef EFL_EFL_BUILD
 # define EFL_PACK_LAYOUT_PROTECTED
+# define EFL_EVENT_PROTECTED
 #endif
 
 /**

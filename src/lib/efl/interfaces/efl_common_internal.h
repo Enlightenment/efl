@@ -50,7 +50,9 @@ struct _Efl_Event_Pointer_Data
                                               (see input vs. feed: this is "input") */
    Evas_Modifier              *modifiers;
    Evas_Lock                  *locks;
-   Eina_Bool                   evas_done; /* set by evas */
+   Eina_Bool                   evas_done : 1; /* set by evas */
+   Eina_Bool                   fake : 1;
+   Eina_Bool                   win_fed : 1;
 };
 
 struct _Efl_Event_Key_Data
@@ -70,7 +72,9 @@ struct _Efl_Event_Key_Data
    Evas_Lock         *locks;
    Efl_Event_Flags    event_flags;
    Efl_Input_Device  *device;
-   Eina_Bool          evas_done; /* set by evas */
+   Eina_Bool          evas_done : 1; /* set by evas */
+   Eina_Bool          fake : 1;
+   Eina_Bool          win_fed : 1;
 };
 
 struct _Efl_Input_Device_Data

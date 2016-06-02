@@ -17,6 +17,9 @@
 
 #include "../evas/canvas/evas_box.eo.h"
 
+#define EFL_INTERNAL_UNSTABLE
+#include "interfaces/efl_common_internal.h"
+
 #define MY_CLASS ELM_WIN_CLASS
 
 #define MY_CLASS_NAME "Elm_Win"
@@ -1629,11 +1632,36 @@ _elm_win_elm_widget_event(Eo *obj, Elm_Win_Data *_pd EINA_UNUSED, Evas_Object *s
    return EINA_TRUE;
 }
 
+/* forward events sent to evas to the window */
+static Eina_Bool
+_evas_event_key_cb(void *data, const Eo_Event *ev)
+{
+   Eo *win = data;
+   Eo *evt = ev->info;
+   Efl_Event_Key_Data *evdata;
+
+   evdata = eo_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
+   if (!evdata || evdata->win_fed)
+     return EO_CALLBACK_CONTINUE;
+
+   // evas_callbacks will send the event to the focussed object (ie. this win)
+   if (evas_focus_get(evas_object_evas_get(win)) == win)
+     return EO_CALLBACK_CONTINUE;
+
+   eo_event_callback_call(win, ev->desc, evt);
+   return EO_CALLBACK_CONTINUE;
+}
+
 static Eina_Bool
 _evas_event_pointer_cb(void *data, const Eo_Event *ev)
 {
    Eo *win = data;
    Eo *evt = ev->info;
+   Efl_Event_Pointer_Data *evdata;
+
+   evdata = eo_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   if (!evdata || evdata->win_fed)
+     return EO_CALLBACK_CONTINUE;
 
    eo_event_callback_call(win, ev->desc, evt);
    return EO_CALLBACK_CONTINUE;
@@ -1646,7 +1674,63 @@ EO_CALLBACKS_ARRAY_DEFINE(_elm_win_evas_forward_callbacks,
 { EFL_EVENT_POINTER_IN, _evas_event_pointer_cb },
 { EFL_EVENT_POINTER_OUT, _evas_event_pointer_cb },
 { EFL_EVENT_POINTER_CANCEL, _evas_event_pointer_cb },
-{ EFL_EVENT_POINTER_WHEEL, _evas_event_pointer_cb })
+{ EFL_EVENT_POINTER_WHEEL, _evas_event_pointer_cb },
+{ EFL_EVENT_KEY_DOWN, _evas_event_key_cb },
+{ EFL_EVENT_KEY_UP, _evas_event_key_cb })
+
+/* feed events from the window to evas - for fake inputs */
+static Eina_Bool
+_evas_event_key_feed_fake_cb(void *data, const Eo_Event *ev)
+{
+   Eo *evas = data;
+   Efl_Event *evt = ev->info;
+   Efl_Event_Key_Data *evdata;
+
+   if (!efl_event_fake_get(evt))
+     return EO_CALLBACK_CONTINUE;
+
+   evdata = eo_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
+   if (!evdata || evdata->win_fed)
+     return EO_CALLBACK_CONTINUE;
+   evdata->win_fed = EINA_TRUE;
+
+   eo_event_callback_call(evas, ev->desc, evt);
+   evdata->win_fed = EINA_FALSE;
+   evdata->evas_done = EINA_FALSE;
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_evas_event_pointer_feed_fake_cb(void *data, const Eo_Event *ev)
+{
+   Eo *evas = data;
+   Efl_Event *evt = ev->info;
+   Efl_Event_Pointer_Data *evdata;
+
+   if (!efl_event_fake_get(evt))
+     return EO_CALLBACK_CONTINUE;
+
+   evdata = eo_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   if (!evdata || evdata->win_fed)
+     return EO_CALLBACK_CONTINUE;
+   evdata->win_fed = EINA_TRUE;
+
+   eo_event_callback_call(evas, ev->desc, evt);
+   evdata->win_fed = EINA_FALSE;
+   evdata->evas_done = EINA_FALSE;
+   return EO_CALLBACK_CONTINUE;
+}
+
+EO_CALLBACKS_ARRAY_DEFINE(_elm_win_evas_feed_fake_callbacks,
+{ EFL_EVENT_POINTER_MOVE, _evas_event_pointer_feed_fake_cb },
+{ EFL_EVENT_POINTER_DOWN, _evas_event_pointer_feed_fake_cb },
+{ EFL_EVENT_POINTER_UP, _evas_event_pointer_feed_fake_cb },
+{ EFL_EVENT_POINTER_IN, _evas_event_pointer_feed_fake_cb },
+{ EFL_EVENT_POINTER_OUT, _evas_event_pointer_feed_fake_cb },
+{ EFL_EVENT_POINTER_CANCEL, _evas_event_pointer_feed_fake_cb },
+{ EFL_EVENT_POINTER_WHEEL, _evas_event_pointer_feed_fake_cb },
+{ EFL_EVENT_KEY_DOWN, _evas_event_key_feed_fake_cb },
+{ EFL_EVENT_KEY_UP, _evas_event_key_feed_fake_cb })
 
 static void
 _deferred_ecore_evas_free(void *data)
@@ -1996,6 +2080,7 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
                                        _elm_win_on_resize_obj_changed_size_hints,
                                        obj);
    eo_event_callback_array_del(sd->evas, _elm_win_evas_forward_callbacks(), obj);
+   eo_event_callback_array_del(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
 
    evas_object_del(sd->box);
    evas_object_del(sd->edje);
@@ -4054,6 +4139,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
      elm_interface_atspi_window_created_signal_emit(obj);
 
    eo_event_callback_array_add(sd->evas, _elm_win_evas_forward_callbacks(), obj);
+   eo_event_callback_array_add(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
 
    evas_object_show(sd->edje);
 

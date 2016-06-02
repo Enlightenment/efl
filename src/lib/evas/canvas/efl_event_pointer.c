@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#define EFL_EVENT_PROTECTED
+
 #include <Evas.h>
 
 #define EFL_INTERNAL_UNSTABLE
@@ -42,9 +44,10 @@ _del_hook(Eo *evt)
 }
 
 EOLIAN static Efl_Event_Pointer *
-_efl_event_pointer_instance_get(Eo_Class *klass EINA_UNUSED, void *pd EINA_UNUSED,
-                                Eo *owner, void **priv)
+_efl_event_pointer_efl_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_UNUSED,
+                                          Eo *owner, void **priv)
 {
+   Efl_Event_Pointer_Data *ev;
    Efl_Event_Pointer *evt;
 
    if (s_cached_event)
@@ -60,8 +63,9 @@ _efl_event_pointer_instance_get(Eo_Class *klass EINA_UNUSED, void *pd EINA_UNUSE
         eo_del_intercept_set(evt, _del_hook);
      }
 
-   if (priv)
-     *priv = eo_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   ev = eo_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
+   ev->fake = EINA_FALSE;
+   if (priv) *priv = ev;
 
    return evt;
 }
@@ -70,7 +74,7 @@ EOLIAN static void
 _efl_event_pointer_class_destructor(Eo_Class *klass EINA_UNUSED)
 {
    // this is a strange situation...
-   eo_unref(s_cached_event);
+   eo_del(s_cached_event);
    s_cached_event = NULL;
 }
 
@@ -85,23 +89,28 @@ _efl_event_pointer_eo_base_constructor(Eo *obj, Efl_Event_Pointer_Data *pd EINA_
 EOLIAN static void
 _efl_event_pointer_efl_event_reset(Eo *obj, Efl_Event_Pointer_Data *pd)
 {
+   Eina_Bool fake = pd->fake;
    memset(pd, 0, sizeof(*pd));
    pd->eo = obj;
    pd->wheel.dir = EFL_ORIENT_VERTICAL;
+   pd->fake = fake;
 }
 
 EOLIAN static Efl_Event *
-_efl_event_pointer_efl_event_dup(Eo *obj, Efl_Event_Pointer_Data *pd)
+_efl_event_pointer_efl_event_dup(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
 {
    Efl_Event_Pointer_Data *ev;
    Efl_Event_Pointer *evt;
 
-   evt = _efl_event_pointer_instance_get((Eo_Class *) EFL_EVENT_POINTER_CLASS,
-                                         NULL, obj, (void **) &ev);
+   // no parent
+   evt = efl_event_instance_get(EFL_EVENT_POINTER_CLASS, NULL, (void **) &ev);
    if (!evt) return NULL;
 
    memcpy(ev, pd, sizeof(*ev));
    ev->eo = evt;
+   ev->evas_done = 0;
+   ev->win_fed = 0;
+   ev->fake = 1;
 
    return evt;
 }
@@ -395,6 +404,13 @@ EOLIAN static Eina_Bool
 _efl_event_pointer_efl_event_input_on_scroll_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
 {
    return !!(pd->event_flags & EFL_EVENT_FLAGS_ON_SCROLL);
+}
+
+EOLIAN static Eina_Bool
+_efl_event_pointer_efl_event_input_fake_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
+{
+   // read-only
+   return pd->fake;
 }
 
 #include "efl_event_pointer.eo.c"

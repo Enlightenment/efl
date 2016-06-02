@@ -2,12 +2,70 @@
 # include <config.h>
 #endif
 
+#define EFL_EVENT_PROTECTED
+
 #include <Evas.h>
 
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"
 
 #define MY_CLASS EFL_EVENT_KEY_CLASS
+
+static Efl_Event_Key *s_cached_event = NULL;
+
+static void
+_del_hook(Eo *evt)
+{
+   if (!s_cached_event)
+     {
+        if (eo_parent_get(evt))
+          {
+             eo_ref(evt);
+             eo_parent_set(evt, NULL);
+          }
+        s_cached_event = evt;
+     }
+   else
+     {
+        eo_del_intercept_set(evt, NULL);
+        eo_del(evt);
+     }
+}
+
+EOLIAN static Efl_Event_Key *
+_efl_event_key_efl_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_UNUSED,
+                                      Eo *owner, void **priv)
+{
+   Efl_Event_Key_Data *ev;
+   Efl_Event_Key *evt;
+
+   if (s_cached_event)
+     {
+        evt = s_cached_event;
+        s_cached_event = NULL;
+        efl_event_reset(evt);
+        eo_parent_set(evt, owner);
+     }
+   else
+     {
+        evt = eo_add(EFL_EVENT_KEY_CLASS, owner);
+        eo_del_intercept_set(evt, _del_hook);
+     }
+
+   ev = eo_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
+   ev->fake = EINA_FALSE;
+   if (priv) *priv = ev;
+
+   return evt;
+}
+
+EOLIAN static void
+_efl_event_key_class_destructor(Eo_Class *klass EINA_UNUSED)
+{
+   // this is a strange situation...
+   eo_del(s_cached_event);
+   s_cached_event = NULL;
+}
 
 EOLIAN static Eo_Base *
 _efl_event_key_eo_base_constructor(Eo *obj, Efl_Event_Key_Data *pd EINA_UNUSED)
@@ -98,28 +156,30 @@ _efl_event_key_efl_event_reset(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd)
    eina_stringshare_del(pd->compose);
    memset(pd, 0, sizeof(*pd));
    pd->eo = obj;
+   pd->fake = EINA_TRUE;
 }
 
 EOLIAN static Efl_Event *
 _efl_event_key_efl_event_dup(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd)
 {
-   Efl_Event_Key_Data *pd2;
-   Efl_Event *ev;
+   Efl_Event_Key_Data *ev;
+   Efl_Event_Key *evt;
 
-   ev = eo_add(MY_CLASS, NULL); // no parent
-   pd2 = eo_data_scope_get(ev, MY_CLASS);
-   if (pd2)
-     {
-        memcpy(pd2, pd, sizeof(*pd));
-        pd2->eo        = ev;
-        pd2->key       = eina_stringshare_add(pd->key);
-        pd2->keyname   = eina_stringshare_add(pd->keyname);
-        pd2->string    = eina_stringshare_add(pd->string);
-        pd2->compose   = eina_stringshare_add(pd->compose);
-        pd2->evas_done = 0;
-     }
+   // no parent
+   evt = efl_event_instance_get(EFL_EVENT_KEY_CLASS, NULL, (void **) &ev);
+   if (!evt || !ev) return NULL;
 
-   return ev;
+   memcpy(ev, pd, sizeof(*ev));
+   ev->eo        = evt;
+   ev->key       = eina_stringshare_add(pd->key);
+   ev->keyname   = eina_stringshare_add(pd->keyname);
+   ev->string    = eina_stringshare_add(pd->string);
+   ev->compose   = eina_stringshare_add(pd->compose);
+   ev->evas_done = 0;
+   ev->win_fed   = 0;
+   ev->fake      = 1;
+
+   return evt;
 }
 
 EOLIAN static void
@@ -200,6 +260,12 @@ _efl_event_key_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Event_K
 {
    if (!pd->locks) return EINA_FALSE;
    return evas_key_lock_is_set(pd->locks, name);
+}
+
+EOLIAN static Eina_Bool
+_efl_event_key_efl_event_input_fake_get(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd)
+{
+   return pd->fake;
 }
 
 #include "efl_event_key.eo.c"

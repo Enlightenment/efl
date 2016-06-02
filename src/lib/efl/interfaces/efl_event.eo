@@ -33,5 +33,12 @@ interface Efl.Event
          [[Creates a copy of this event.]]
          return: own(Efl.Event);
       }
+      instance_get @class @protected {
+         params {
+            @in owner: Eo.Base;
+            @out priv: void*;
+         }
+         return: Efl.Event;
+      }
    }
 }

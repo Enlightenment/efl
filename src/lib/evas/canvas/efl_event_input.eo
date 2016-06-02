@@ -28,5 +28,12 @@ interface Efl.Event.Input (Efl.Event)
             val: bool;
          }
       }
+      @property fake {
+         [[$true if the event was fake, not triggered by real hardware.]]
+         get {}
+         values {
+            val: bool;
+         }
+      }
    }
 }
