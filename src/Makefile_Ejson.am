@@ -33,3 +33,32 @@ lib_ejson_libejson_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EJSON_CFLAGS@ @E
 lib_ejson_libejson_la_LIBADD = @EJSON_LIBS@ @EFL_LIBS@
 lib_ejson_libejson_la_DEPENDENCIES = @EJSON_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
 lib_ejson_libejson_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/ejson/ejson_suite
+TESTS += tests/ejson/ejson_suite
+
+tests_ejson_ejson_suite_SOURCES = \
+tests/ejson/ejson_suite.c \
+tests/ejson/ejson_test_ejson_model.c \
+tests/ejson/ejson_suite.h \
+tests/ejson/ejson_test_ejson_model.h
+
+tests_ejson_ejson_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ejson\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ejson\" \
+@CHECK_CFLAGS@ \
+@ECORE_FILE_CFLAGS@ \
+@EJSON_CFLAGS@ @EFL_CFLAGS@
+
+tests_ejson_ejson_suite_LDADD = \
+@CHECK_LIBS@ \
+@USE_EJSON_LIBS@ \
+@USE_ECORE_FILE_LIBS@ \
+@USE_EFL_LIBS@
+
+tests_ejson_ejson_suite_DEPENDENCIES = \
+@USE_EJSON_INTERNAL_LIBS@
+
+endif
