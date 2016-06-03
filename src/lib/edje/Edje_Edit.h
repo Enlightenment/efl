@@ -2507,6 +2507,31 @@ EAPI Eina_Bool edje_edit_part_item_del(Evas_Object *obj, const char *part, const
 EAPI Eina_Bool
 edje_edit_part_item_index_del(Evas_Object *obj, const char *part, unsigned int index);
 
+/** Set name for item from table or box items.
+ *
+ * @param obj Object being edited.
+ * @param part Part to change item's source. This part should have BOX or TABLE type.
+ * @param index Index of item
+ * @param name New item name.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_part_item_index_name_set(Evas_Object *obj, const char *part, unsigned int index, const char *name);
+
+/** Get name for item from table or box items.
+ *
+ * @param obj Object being edited.
+ * @param part Part to return item's source. This part should have BOX or TABLE type.
+ * @param index Index of item.
+ *
+ * @return name of the given item.
+ * @since 1.18
+ */
+EAPI const char *
+edje_edit_part_item_index_name_get(Evas_Object *obj, const char *part, unsigned int index);
+
 /** Set source for item from table or box items.
  *
  * @param obj Object being edited.
