@@ -71,7 +71,7 @@ _promise_then(void *data, void *value)
 }
 
 static void
-_promise_error(void *data, const Eina_Error *err)
+_promise_error(void *data, const Eina_Error err)
 {
 }
 

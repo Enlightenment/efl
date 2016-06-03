@@ -16,8 +16,9 @@
 static int prop_count = 0;
 
 static void
-promise_then_prop_c(Eo* obj, void* data)
+promise_then_prop_c(void* priv_obj, void* data)
 {
+   Eo* obj = priv_obj;
    Eina_Value * property_value;
    const Eina_Array *properties_list;
    Eina_Array_Iterator a_it;
@@ -46,14 +47,14 @@ promise_then_prop_c(Eo* obj, void* data)
 }
 
 static void
-error_cb(void* data EINA_UNUSED, const Eina_Error *error EINA_UNUSED)
+error_cb(void* data EINA_UNUSED, Eina_Error error EINA_UNUSED)
 {
    printf(" ERROR\n");
    ecore_main_loop_quit();
 }
 
 static void
-promise_then_a(Eo* obj EINA_UNUSED, void* data)
+promise_then_a(void* priv_obj EINA_UNUSED, void* data)
 {
    const Eina_Array *properties_list;
    Eina_Array_Iterator a_it;
@@ -95,7 +96,7 @@ promise_then_a(Eo* obj EINA_UNUSED, void* data)
      ecore_main_loop_quit();
 }
 static void
-promise_then(Eo* obj EINA_UNUSED, void* data)
+promise_then(void* obj EINA_UNUSED, void* data)
 {
    Eina_Accessor *accessor;
    unsigned int* count;
@@ -109,12 +110,13 @@ promise_then(Eo* obj EINA_UNUSED, void* data)
         return;
      }
 
-   eina_iterator_next(iterator, (void **)&count);
+   if(eina_iterator_next(iterator, (void **)&count))
+     {
+        printf("efl_model_loaded count %d\n", (int)*count); fflush(stdout);
+        printf("efl_model_loaded accessor %p\n", accessor); fflush(stdout);
 
-   printf("efl_model_loaded count %d\n", (int)*count); fflush(stdout);
-   printf("efl_model_loaded accessor %p\n", accessor); fflush(stdout);
-
-   promise_then_a(NULL, accessor);
+        promise_then_a(NULL, accessor);
+     }
 }
 
 int

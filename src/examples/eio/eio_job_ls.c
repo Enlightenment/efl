@@ -21,7 +21,6 @@ void done_cb(void *data, void *value EINA_UNUSED)
 void error_cb(void *data, Eina_Error error)
 {
     Eio_Job *job = data;
-    EINA_SAFETY_ON_NULL_RETURN(error);
     const char *msg = eina_error_msg_get(error);
     printf("%s error: %s\n", __FUNCTION__, msg);
     ecore_main_loop_quit();

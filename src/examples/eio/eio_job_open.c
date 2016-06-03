@@ -9,7 +9,7 @@
 #include <Eio.h>
 #include <Ecore.h>
 
-void error_cb(void *data, Eina_Error error, Eina_Promise* promise EINA_UNUSED)
+void error_cb(void *data, Eina_Error error)
 {
     EINA_SAFETY_ON_NULL_RETURN(data);
 
@@ -19,7 +19,7 @@ void error_cb(void *data, Eina_Error error, Eina_Promise* promise EINA_UNUSED)
     ecore_main_loop_quit();
 }
 
-void done_closing_cb(void* data EINA_UNUSED, void *value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+void done_closing_cb(void* data EINA_UNUSED, void *value EINA_UNUSED)
 {
     printf("%s closed file.\n", __FUNCTION__);
 
@@ -34,7 +34,7 @@ void closing_job(Eio_Job *job, Eina_File *file)
     eina_promise_then(promise, &done_closing_cb, &error_cb, job);
 }
 
-void done_open_cb(void *data, void* value, Eina_Promise* promise)
+void done_open_cb(void *data, void* value)
 {
     EINA_SAFETY_ON_NULL_RETURN(data);
     EINA_SAFETY_ON_NULL_RETURN(value);

@@ -11,7 +11,6 @@
 
 void error_cb(void *data, Eina_Error error)
 {
-    EINA_SAFETY_ON_NULL_RETURN(error);
     EINA_SAFETY_ON_NULL_RETURN(data);
 
     const char *msg = eina_error_msg_get(error);
