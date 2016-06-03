@@ -1,6 +1,8 @@
 #ifndef ELM_CODE_H_
 # define ELM_CODE_H_
 
+#ifdef EFL_BETA_API_SUPPORT
+
 #include "elm_code_common.h"
 #include "elm_code_line.h"
 #include "elm_code_text.h"
@@ -107,5 +109,7 @@ EAPI void elm_code_callback_fire(Elm_Code *code, const Eo_Event_Description *sig
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* EFL_BETA_API_SUPPORT */
 
 #endif /* ELM_CODE_H_ */
