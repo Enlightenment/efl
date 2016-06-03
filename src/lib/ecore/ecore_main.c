@@ -2821,7 +2821,7 @@ _efl_loop_job_cb(void *data)
 {
    Efl_Internal_Promise *j = data;
 
-   eina_promise_owner_value_set(j->promise, &j->data, NULL);
+   eina_promise_owner_value_set(j->promise, j->data, NULL);
 
    free(j);
 }
@@ -2831,7 +2831,7 @@ _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Efl_Internal_Promise *t = data;
 
-   eina_promise_owner_value_set(t->promise, &t->data, NULL);
+   eina_promise_owner_value_set(t->promise, t->data, NULL);
 
    eo_del(t->u.timer);
 
@@ -2902,7 +2902,7 @@ _efl_loop_job(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, const void *da
    Efl_Internal_Promise *j;
    Eina_Promise_Owner *promise;
 
-   promise = eina_promise_default_add(sizeof (void*));
+   promise = eina_promise_add();
    if (!promise) return NULL;
 
    j = _efl_internal_promise_new(promise, data);
@@ -2940,7 +2940,7 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const voi
    Efl_Internal_Promise *t;
    Eina_Promise_Owner *promise;
 
-   promise = eina_promise_default_add(sizeof (void*));
+   promise = eina_promise_add();
    if (!promise) return NULL;
 
    t = _efl_internal_promise_new(promise, data);

@@ -318,7 +318,7 @@ _eio_job_file_direct_ls(Eo *obj,
       Eio_Job_Data *pd,
       const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_default_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
    _job_direct_ls_helper(&eio_file_direct_ls, obj, pd, path, promise);
    return eina_promise_owner_promise_get(promise);
 }
@@ -328,7 +328,7 @@ _eio_job_file_stat_ls(Eo *obj,
       Eio_Job_Data *pd,
       const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_default_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
    _job_direct_ls_helper(&eio_file_stat_ls, obj, pd, path, promise);
    return eina_promise_owner_promise_get(promise);
 }
@@ -338,7 +338,7 @@ _eio_job_dir_stat_ls(Eo *obj,
       Eio_Job_Data *pd,
       const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_default_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
    _job_direct_ls_helper(&eio_dir_stat_ls, obj, pd, path, promise);
    return eina_promise_owner_promise_get(promise);
 }
@@ -348,7 +348,7 @@ _eio_job_dir_direct_ls(Eo *obj,
                        Eio_Job_Data *pd,
                        const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_default_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
    // Had to add the cast as dir_direct differs in the filter callback constness of one of
    // its arguments.
    _job_direct_ls_helper((Eio_Job_Direct_Ls_Func)&eio_dir_direct_ls, obj, pd, path, promise);
@@ -360,7 +360,7 @@ _eio_job_file_ls(Eo *obj,
       Eio_Job_Data *pd,
       const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_default_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
    Eina_Promise* p = eina_promise_owner_promise_get(promise);
@@ -403,7 +403,7 @@ _eio_job_file_direct_stat(Eo *obj,
                           Eio_Job_Data *pd,
                           const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_default_add(sizeof(Eina_Stat));
+   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(Eina_Stat));
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
    Eina_Promise* p = eina_promise_owner_promise_get(promise);
@@ -430,7 +430,7 @@ _eio_job_file_xattr_list_get(Eo *obj,
                     Eio_Job_Data *pd,
                     const char *path)
 {
-   Eina_Promise_Owner *promise = eina_promise_default_add(sizeof(int));
+   Eina_Promise_Owner *promise = eina_promise_value_add(sizeof(int));
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
    Eina_Promise* p = eina_promise_owner_promise_get(promise);
@@ -461,7 +461,7 @@ _eio_job_file_xattr_set(Eo *obj,
                         unsigned int xattr_size,
                         Eina_Xattr_Flags flags)
 {
-   Eina_Promise_Owner* promise = eina_promise_default_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
    Eina_Promise* p = eina_promise_owner_promise_get(promise);
@@ -492,7 +492,7 @@ _eio_job_file_xattr_get(Eo *obj,
                         const char *path,
                         const char *attribute)
 {
-   Eina_Promise_Owner* promise = eina_promise_default_add(sizeof(Eio_Xattr_Data));
+   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(Eio_Xattr_Data));
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
    Eina_Promise* p = eina_promise_owner_promise_get(promise);
@@ -513,24 +513,13 @@ _eio_job_file_xattr_get(Eo *obj,
    return p;
 }
 
-/* Eina_File mapping and handling. */
-static void
-_eina_file_close(void* file)
-{
-   eina_file_close(*(Eina_File**)file);
-}
-
 static void
 _file_open_open_cb(void *data, Eio_File *handler EINA_UNUSED, Eina_File *file)
 {
    Job_Closure *operation = data;
    EINA_SAFETY_ON_NULL_RETURN(operation);
    EINA_SAFETY_ON_NULL_RETURN(operation->promise);
-   // FIXME On promise composition, a successfully open file would leak open
-   //       another promise in the composition fails as there is no free/close
-   //       function. Calling eina_file_close blocks on a lock_take call on a
-   //       field of the Eina_File file.
-   eina_promise_owner_value_set(operation->promise, &file, &_eina_file_close);
+   eina_promise_owner_value_set(operation->promise, file, (Eina_Promise_Free_Cb)&eina_file_close);
 
    _job_closure_del(operation);
 }
@@ -541,7 +530,7 @@ _eio_job_file_open(Eo *obj,
                    const char *path,
                    Eina_Bool shared)
 {
-   Eina_Promise_Owner* promise = eina_promise_default_add(sizeof(Eina_File*));
+   Eina_Promise_Owner* promise = eina_promise_add();
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
    Eina_Promise* p = eina_promise_owner_promise_get(promise);
@@ -564,8 +553,7 @@ _file_close_done_cb(void *data, Eio_File *handler EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(data);
    Job_Closure *operation = data;
-   Eina_Bool result = EINA_TRUE;
-   eina_promise_owner_value_set(operation->promise, &result, NULL);
+   eina_promise_owner_value_set(operation->promise, NULL, NULL);
 
    _job_closure_del(operation);
 }

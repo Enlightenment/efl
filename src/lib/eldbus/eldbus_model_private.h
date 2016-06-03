@@ -23,8 +23,6 @@ struct _Eldbus_Property_Promise
   Eina_Promise_Owner* promise;
 };
 
-void _accessor_free(void *data);
-
 /* logging support */
 extern int eldbus_model_log_dom;
 

@@ -107,13 +107,6 @@ typedef void*(*Eina_Promise_Buffer_Get_Cb)(Eina_Promise* promise);
 #define EINA_FUNC_PROMISE_BUFFER_GET(Function) ((Eina_Promise_Buffer_Get_Cb)Function)
 
 /*
- * @brief Function callback type for promise's release_value_ownership function override
- */
-typedef void*(*Eina_Promise_Release_Value_Ownership_Cb)(Eina_Promise* promise);
-
-#define EINA_FUNC_PROMISE_RELEASE_VALUE_OWNERSHIP(Function) ((Eina_Promise_Release_Value_Ownership_Cb)Function)
-
-/*
  * @brief Function callback type for promise's value_size_get function override
  */
 typedef size_t(*Eina_Promise_Value_Size_Get_Cb)(Eina_Promise const* promise);
@@ -201,7 +194,6 @@ struct _Eina_Promise
   Eina_Promise_Unref_Cb unref;
   Eina_Promise_Value_Size_Get_Cb value_size_get;
   Eina_Promise_Buffer_Get_Cb buffer_get;
-  Eina_Promise_Release_Value_Ownership_Cb release_value_ownership;
 #define EINA_MAGIC_PROMISE 0x07932A5B
   EINA_MAGIC;
 };
@@ -302,15 +294,6 @@ EAPI void* eina_promise_value_get(Eina_Promise const* promise);
  * @return Buffer pointer
  */
 EAPI void* eina_promise_buffer_get(Eina_Promise* promise);
-
-/*
- * @brief Returns the pointer to the value and releases ownership of
- * the value by the promise.
- * 
- * @param promise The promise for which to release value ownership
- * @return Pointer to value
- */
-EAPI void* eina_promise_release_value_ownership(Eina_Promise* promise);
 
 /*
  * @brief Returns the pointer to the buffer that holds the value.
@@ -485,7 +468,24 @@ typedef void(*Eina_Promise_Default_Cancel_Cb)(void* data, Eina_Promise_Owner* pr
  * @param value_size Size of value-type that Eina_Promise will hold
  * @return @Eina_Promise_Owner just instantiated
  */
-EAPI Eina_Promise_Owner* eina_promise_default_add(int value_size);
+EAPI Eina_Promise_Owner* eina_promise_value_add(int value_size);
+
+/*
+ * @brief Creates a @Eina_Promise_Owner
+ *
+ * Create a @Eina_Promise_Owner for a pointer-type. Which is a promise
+ * with ownership of the pointer when its value is set.  The Promise
+ * itself, returned by eina_promise_owner_promise_get, represents the
+ * asynchronicity of the value itself and is used solely to get the
+ * value and to handle users of the asynchronous value. That's why
+ * Promises have a reference count while Promise Owners do not, the
+ * eina_promise_owner_value_set must be done only once, and
+ * consequently, has a unique ownership of the owner lifetime, while
+ * the promise can be queried and used by multiple users.
+ *
+ * @return @Eina_Promise_Owner just instantiated
+ */
+EAPI Eina_Promise_Owner* eina_promise_add();
 
 /*
  * @brief Adds a cancel callback to be called when the promise is
@@ -532,7 +532,12 @@ EAPI extern Eina_Error EINA_ERROR_PROMISE_CANCEL;
  * @internal
  */
 #define _EINA_PROMISE_BEFORE_HOOK(PromiseValue, Ret, ...)               \
-  Eina_Promise_Owner* const __eo_promise = eina_promise_default_add(sizeof(PromiseValue)); \
+  Eina_Promise_Owner* const __eo_promise = eina_promise_value_add(sizeof(PromiseValue)); \
+  typedef Ret (*_Eo_Promise_func_t_)(Eo*, void *obj_data, ##__VA_ARGS__); \
+  _Eo_Promise_func_t_ const _eo_promise_func_ = (_Eo_Promise_func_t_)_func_;
+
+#define _EINA_PROMISE_POINTER_BEFORE_HOOK(PromiseValue, Ret, ...)               \
+  Eina_Promise_Owner* const __eo_promise = eina_promise_add();          \
   typedef Ret (*_Eo_Promise_func_t_)(Eo*, void *obj_data, ##__VA_ARGS__); \
   _Eo_Promise_func_t_ const _eo_promise_func_ = (_Eo_Promise_func_t_)_func_;
 

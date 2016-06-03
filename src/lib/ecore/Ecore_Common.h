@@ -3098,7 +3098,7 @@ typedef void(*Ecore_Thread_Promise_Cb)(const void* data, Eina_Promise_Owner* pro
  */
 EAPI Ecore_Thread* ecore_thread_promise_run(Ecore_Thread_Promise_Cb func_heavy,
                                             Ecore_Thread_Promise_Cb func_cancel,
-                                            const void* data, size_t value_size,
+                                            const void* data,
                                             Eina_Promise** promise);
 
 #endif

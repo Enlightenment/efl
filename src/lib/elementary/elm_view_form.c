@@ -46,8 +46,10 @@ struct _Elm_View_Form_Promise
 
 
 static void
-_efl_promise_then_widget(Elm_View_Form_Widget *w, Eina_Value *value, Eina_Promise* promise EINA_UNUSED)
+_efl_promise_then_widget(void* data, void* v, Eina_Promise* promise EINA_UNUSED)
 {
+    Elm_View_Form_Widget *w = data;
+    Eina_Value *value = v;
     w->widget_obj_set_cb(w->widget_obj, value, w->widget_propname);
 }
 
@@ -57,13 +59,15 @@ _efl_promise_error_widget(void *data EINA_UNUSED, Eina_Error err EINA_UNUSED, Ei
 }
 
 static void
-_efl_model_promise_then_cb(Elm_View_Form_Promise *p, Eina_Value *value, Eina_Promise* promise EINA_UNUSED)
+_efl_model_promise_then_cb(void* data, void* v, Eina_Promise* promise EINA_UNUSED)
 {
-   EINA_SAFETY_ON_NULL_RETURN(p);
-
+   Elm_View_Form_Promise *p = data;
+   Eina_Value *value = v;
    Elm_View_Form_Data *priv = p->priv;
    Elm_View_Form_Widget *w = NULL;
    Eina_List *l = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN(p);
 
    EINA_LIST_FOREACH(priv->widgets, l, w)
      {
@@ -78,8 +82,9 @@ _efl_model_promise_then_cb(Elm_View_Form_Promise *p, Eina_Value *value, Eina_Pro
 }
 
 static void
-_efl_model_promise_error_cb(Elm_View_Form_Promise *p, Eina_Error error EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+_efl_model_promise_error_cb(void* data, Eina_Error error EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 {
+   Elm_View_Form_Promise *p = data;
    EINA_SAFETY_ON_NULL_RETURN(p);
 
    eina_stringshare_del(p->property_name);
@@ -110,8 +115,8 @@ _efl_model_properties_change_cb(void *data, const Eo_Event *event)
         p->property_name = eina_stringshare_add(prop);
         p->priv = priv;
         efl_model_property_get(priv->model_obj, prop, &promise);
-        eina_promise_then(promise, (Eina_Promise_Cb)&_efl_model_promise_then_cb,
-                    (Eina_Promise_Error_Cb)&_efl_model_promise_error_cb, p);
+        eina_promise_then(promise, &_efl_model_promise_then_cb,
+                          &_efl_model_promise_error_cb, p);
      }
 
    return EINA_TRUE;
@@ -130,7 +135,7 @@ _update_model_properties(Elm_View_Form_Data *priv)
    EINA_LIST_FOREACH(priv->widgets, l, w)
      {
         efl_model_property_get(priv->model_obj, w->widget_propname, &promise);
-        eina_promise_then(promise, (Eina_Promise_Cb)&_efl_promise_then_widget, &_efl_promise_error_widget, w);
+        eina_promise_then(promise, &_efl_promise_then_widget, &_efl_promise_error_widget, w);
      }
 }
 
@@ -239,8 +244,8 @@ _elm_view_widget_add(Elm_View_Form_Data *priv, const char *propname, Evas_Object
    if (priv->model_obj != NULL)
      {
          efl_model_property_get(priv->model_obj, w->widget_propname, &promise);
-         eina_promise_then(promise, (Eina_Promise_Cb)&_efl_promise_then_widget,
-                         &_efl_promise_error_widget, priv);
+         eina_promise_then(promise, &_efl_promise_then_widget,
+                           &_efl_promise_error_widget, priv);
      }
    return EINA_TRUE;
 }

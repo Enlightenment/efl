@@ -22,13 +22,6 @@ static void _eldbus_model_object_introspect_nodes(Eldbus_Model_Object_Data *, co
 static char *_eldbus_model_object_concatenate_path(const char *, const char *);
 static void _eldbus_model_object_create_children(Eldbus_Model_Object_Data *, Eldbus_Object *, Eina_List *);
 
-void
-_accessor_free(void *data)
-{
-  Eina_Accessor **ac = data;
-  eina_accessor_free(*ac);
-}
-
 static Eo_Base*
 _eldbus_model_object_eo_base_constructor(Eo *obj, Eldbus_Model_Object_Data *pd)
 {
@@ -190,7 +183,7 @@ _eldbus_model_object_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
    if (pd->is_listed)
      {
         Eina_Accessor* ac = efl_model_list_slice(pd->children_list, start, count);
-        eina_promise_owner_value_set(promise, &ac, &_accessor_free);
+        eina_promise_owner_value_set(promise, ac, (Eina_Promise_Free_Cb)&eina_accessor_free);
         return;
      }
 
@@ -437,7 +430,7 @@ _eldbus_model_object_introspect_cb(void *data,
         EINA_LIST_FOREACH(pd->children_promises, i, p)
           {
             Eina_Accessor* ac = efl_model_list_slice(pd->children_list, p->start, p->count);
-            eina_promise_owner_value_set(p->promise, &ac, &_accessor_free);
+            eina_promise_owner_value_set(p->promise, ac, (Eina_Promise_Free_Cb)&eina_accessor_free);
             free(p);
           }
         eina_list_free(pd->children_promises);

@@ -233,7 +233,7 @@ _eldbus_model_proxy_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
      }
 
    Eina_Accessor *ac = efl_model_list_slice(pd->children_list, start, count);
-   eina_promise_owner_value_set(promise, &ac, (Eina_Promise_Free_Cb)&_accessor_free);
+   eina_promise_owner_value_set(promise, ac, (Eina_Promise_Free_Cb)&eina_accessor_free);
 }
 
 static void

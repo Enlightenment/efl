@@ -67,7 +67,7 @@ eina_bench_promise_sync_then(int request)
 
    eina_init();
 
-   Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type));
+   Eina_Promise_Owner* owner = eina_promise_value_add(sizeof(struct value_type));
    Eina_Promise* promise = eina_promise_owner_promise_get(owner);
    eina_promise_ref(promise);
 
@@ -101,7 +101,7 @@ eina_bench_promise_copy_value_set_after_then(int request)
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
         {
-           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type));
+           Eina_Promise_Owner* owner = eina_promise_value_add(sizeof(struct value_type));
            Eina_Promise* promise = eina_promise_owner_promise_get(owner);
 
            eina_promise_then(promise, &cb, NULL, NULL);
@@ -126,7 +126,7 @@ eina_bench_promise_no_copy_value_set_after_then(int request)
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
         {
-           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type));
+           Eina_Promise_Owner* owner = eina_promise_value_add(sizeof(struct value_type));
            Eina_Promise* promise = eina_promise_owner_promise_get(owner);
            struct value_type* v = eina_promise_owner_buffer_get(owner);
 
@@ -154,7 +154,7 @@ eina_bench_promise_no_copy_value_set_before_then(int request)
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
         {
-           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type));
+           Eina_Promise_Owner* owner = eina_promise_value_add(sizeof(struct value_type));
            Eina_Promise* promise = eina_promise_owner_promise_get(owner);
            struct value_type* v = eina_promise_owner_buffer_get(owner);
 
@@ -184,7 +184,7 @@ eina_bench_promise_copy_value_set_before_then(int request)
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
         {
-           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type));
+           Eina_Promise_Owner* owner = eina_promise_value_add(sizeof(struct value_type));
            Eina_Promise* promise = eina_promise_owner_promise_get(owner);
 
            eina_promise_then(promise, &cb, NULL, NULL);
@@ -214,15 +214,14 @@ eina_bench_promise_pointer_value_set_before_then(int request)
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
         {
-           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type*));
+           Eina_Promise_Owner* owner = eina_promise_add();
            Eina_Promise* promise = eina_promise_owner_promise_get(owner);
 
-           struct value_type* p = *(struct value_type**)eina_promise_owner_buffer_get(owner)
-             = malloc(sizeof(struct value_type));
+           struct value_type* p = malloc(sizeof(struct value_type));
            p->x = p->y = p->w = p->h = 0;
 
            eina_promise_then(promise, &pointer_cb, NULL, NULL);
-           eina_promise_owner_value_set(owner, NULL, &indirect_free);
+           eina_promise_owner_value_set(owner, p, &indirect_free);
         }
 
    /* Suppress warnings as we really don't want to do anything. */
@@ -243,14 +242,13 @@ eina_bench_promise_pointer_value_set_after_then(int request)
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
         {
-           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type*));
+           Eina_Promise_Owner* owner = eina_promise_add();
            Eina_Promise* promise = eina_promise_owner_promise_get(owner);
 
-           struct value_type* p = *(struct value_type**)eina_promise_owner_buffer_get(owner)
-             = malloc(sizeof(struct value_type));
+           struct value_type* p = malloc(sizeof(struct value_type));
            p->x = p->y = p->w = p->h = 0;
 
-           eina_promise_owner_value_set(owner, NULL, &indirect_free);
+           eina_promise_owner_value_set(owner, p, &indirect_free);
            eina_promise_then(promise, &pointer_cb, NULL, NULL);
         }
 
@@ -282,15 +280,14 @@ eina_bench_promise_pointer_value_set_before_then_pooled(int request)
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
         {
-           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type*));
+           Eina_Promise_Owner* owner = eina_promise_add();
            Eina_Promise* promise = eina_promise_owner_promise_get(owner);
 
-           struct value_type* p = *(struct value_type**)eina_promise_owner_buffer_get(owner)
-             = eina_mempool_malloc(mempool, sizeof(struct value_type));
+           struct value_type* p = eina_mempool_malloc(mempool, sizeof(struct value_type));
            p->x = p->y = p->w = p->h = 0;
 
            eina_promise_then(promise, &pointer_cb, NULL, NULL);
-           eina_promise_owner_value_set(owner, NULL, &indirect_mempool_free);
+           eina_promise_owner_value_set(owner, p, &indirect_mempool_free);
         }
 
    /* Suppress warnings as we really don't want to do anything. */
@@ -316,14 +313,13 @@ eina_bench_promise_pointer_value_set_after_then_pooled(int request)
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
         {
-           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type*));
+           Eina_Promise_Owner* owner = eina_promise_add();
            Eina_Promise* promise = eina_promise_owner_promise_get(owner);
 
-           struct value_type* p = *(struct value_type**)eina_promise_owner_buffer_get(owner)
-             = eina_mempool_malloc(mempool, sizeof(struct value_type));
+           struct value_type* p = eina_mempool_malloc(mempool, sizeof(struct value_type));
            p->x = p->y = p->w = p->h = 0;
 
-           eina_promise_owner_value_set(owner, NULL, &indirect_mempool_free);
+           eina_promise_owner_value_set(owner, p, &indirect_mempool_free);
            eina_promise_then(promise, &pointer_cb, NULL, NULL);
         }
 
@@ -349,14 +345,13 @@ eina_bench_promise_pointer_value_set_before_then_non_alloc(int request)
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
         {
-           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type*));
+           Eina_Promise_Owner* owner = eina_promise_add();
            Eina_Promise* promise = eina_promise_owner_promise_get(owner);
 
            struct value_type v = {0,0,0,0};
-           *(struct value_type**)eina_promise_owner_buffer_get(owner) = &v;
 
            eina_promise_then(promise, &pointer_cb, NULL, NULL);
-           eina_promise_owner_value_set(owner, NULL, &indirect_mempool_free);
+           eina_promise_owner_value_set(owner, &v, NULL);
         }
 
    /* Suppress warnings as we really don't want to do anything. */
@@ -382,13 +377,12 @@ eina_bench_promise_pointer_value_set_after_then_non_alloc(int request)
    for (j = 0; j != 200; ++j)
       for (i = 0; i != request; ++i)
         {
-           Eina_Promise_Owner* owner = eina_promise_default_add(sizeof(struct value_type*));
+           Eina_Promise_Owner* owner = eina_promise_add();
            Eina_Promise* promise = eina_promise_owner_promise_get(owner);
 
            struct value_type v = {0,0,0,0};
-           *(struct value_type**)eina_promise_owner_buffer_get(owner) = &v;
 
-           eina_promise_owner_value_set(owner, NULL, &indirect_mempool_free);
+           eina_promise_owner_value_set(owner, &v, NULL);
            eina_promise_then(promise, &pointer_cb, NULL, NULL);
         }
 

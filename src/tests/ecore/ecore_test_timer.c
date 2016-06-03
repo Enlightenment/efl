@@ -179,7 +179,7 @@ static void
 _ecore_promise_quit(void *data, void *value, Eina_Promise* promise EINA_UNUSED)
 {
    Eina_Bool *bob = data;
-   double *start = *(double**)value;
+   double *start = value;
    double delta = ecore_loop_time_get() - *start;
 
    fail_if(delta - 0.2 > 0.01);

@@ -15,21 +15,23 @@
 #include "eldbus_suite.h"
 
 static void
-_promise_then_quit_cb(void **data , void **value, Eina_Promise* promise EINA_UNUSED)
+_promise_then_quit_cb(void *data , void *value, Eina_Promise* promise EINA_UNUSED)
 {
-   *data = *value;
+   *(void**)data = value;
    ecore_main_loop_quit();
 }
 
 static void
-_promise_then_quit_u_cb(unsigned *data , unsigned *value, Eina_Promise* promise EINA_UNUSED)
+_promise_then_quit_u_cb(void *data , void *value, Eina_Promise* promise EINA_UNUSED)
 {
-   *data = *value;
+   unsigned *lhs = data;
+   unsigned *rhs = value;
+   *lhs = *rhs;
    ecore_main_loop_quit();
 }
 
 static void
-_promise_then_cp(Eina_Value *data , void *value, Eina_Promise* promise EINA_UNUSED)
+_promise_then_cp(void *data , void *value, Eina_Promise* promise EINA_UNUSED)
 {
    eina_value_copy(value, data);
    ecore_main_loop_quit();
@@ -73,7 +75,7 @@ void *
 efl_model_promise_then(Eina_Promise *promise)
 {
    void *data = NULL;
-   eina_promise_then(promise, (Eina_Promise_Cb)&_promise_then_quit_cb, &_error_then_cb, &data);
+   eina_promise_then(promise, &_promise_then_quit_cb, &_error_then_cb, &data);
    ecore_main_loop_begin();
    return data;
 }
@@ -89,7 +91,7 @@ int
 efl_model_promise_then_u(Eina_Promise *promise)
 {
    unsigned i = 0;
-   eina_promise_then(promise, (Eina_Promise_Cb)&_promise_then_quit_u_cb, &_error_then_cb, &i);
+   eina_promise_then(promise, &_promise_then_quit_u_cb, &_error_then_cb, &i);
    ecore_main_loop_begin();
    return i;
 }
@@ -407,7 +409,7 @@ check_efl_model_property_int_eq(Efl_Model *efl_model, const char *property, int 
    efl_model_property_get(efl_model, property, &promise);
    ck_assert_ptr_ne(NULL, promise);
 
-   eina_promise_then(promise, (Eina_Promise_Cb)&_promise_then_cp, &_error_then_cb, &property_value);
+   eina_promise_then(promise, &_promise_then_cp, &_error_then_cb, &property_value);
    ecore_main_loop_begin();
 
    const Eina_Value_Type *property_type = eina_value_type_get(&property_value);
@@ -429,7 +431,7 @@ check_efl_model_property_int_set(Efl_Model *efl_model, const char *property, int
    eina_value_set(&eina_value, value);
    efl_model_property_set(efl_model, property, &eina_value, &promise);
 
-   eina_promise_then(promise, (Eina_Promise_Cb)&_promise_then_cp, &_error_then_cb, &value_ret);
+   eina_promise_then(promise, &_promise_then_cp, &_error_then_cb, &value_ret);
    ecore_main_loop_begin();
 
    const Eina_Value_Type *property_type = eina_value_type_get(&value_ret);

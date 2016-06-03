@@ -79,6 +79,7 @@ struct _Eina_Promise_Default
    Eina_Bool is_cancelled : 1;
    Eina_Bool is_manual_then : 1;
    Eina_Bool is_first_then : 1;
+   Eina_Bool is_pointer : 1;
 };
 
 struct _Eina_Promise_Default_Owner
@@ -93,7 +94,6 @@ struct _Eina_Promise_Default_Owner
 
 struct _Eina_Promise_Iterator
 {
-   Eina_Iterator* success_iterator;
    struct _Eina_Promise_Success_Iterator
    {
       Eina_Iterator success_iterator_impl;
@@ -173,7 +173,14 @@ _eina_promise_then_calls(_Eina_Promise_Default_Owner* promise)
          }
        else if (callback->callback)
          {
-            (*callback->callback)(callback->data, &promise->value[0], &promise->promise.vtable);
+            if(promise->promise.is_pointer)
+              {
+                 char* buffer = promise->value;
+                 void** p = (void**)buffer;
+                 (*callback->callback)(callback->data, *p, &promise->promise.vtable);
+              }
+            else
+              (*callback->callback)(callback->data, &promise->value[0], &promise->promise.vtable);
          }
        free(callback);
        _eina_promise_unref(&promise->promise);
@@ -211,7 +218,16 @@ _eina_promise_del(_Eina_Promise_Default_Owner* promise)
      }
 
    if (promise->promise.value_free_cb)
-     promise->promise.value_free_cb((void*)&promise->value[0]);
+     {
+        if(promise->promise.is_pointer)
+          {
+             char* buffer = promise->value;
+             void** p = (void**)buffer;
+             promise->promise.value_free_cb(*p);
+          }
+        else
+          promise->promise.value_free_cb((void*)&promise->value[0]);
+     }
 
    _eina_promise_free_callback_list(&promise->promise.progress_callbacks,
                                     &_eina_promise_free_progress_callback_node);
@@ -224,6 +240,14 @@ static void *
 _eina_promise_owner_buffer_get(_Eina_Promise_Default_Owner* promise)
 {
    return &promise->value[0];
+}
+
+static void *
+_eina_promise_owner_pointer_buffer_get(_Eina_Promise_Default_Owner* promise)
+{
+   char* buffer = promise->value;
+   void** p = (void**)buffer;
+   return *p;
 }
 
 static void *
@@ -248,13 +272,14 @@ _eina_promise_value_get(_Eina_Promise_Default const* p)
 }
 
 static void *
-_eina_promise_release_value_ownership(_Eina_Promise_Default* p)
+_eina_promise_pointer_value_get(_Eina_Promise_Default const* p)
 {
-   _Eina_Promise_Default_Owner* promise = EINA_PROMISE_GET_OWNER(p);
+   _Eina_Promise_Default_Owner const* promise = EINA_PROMISE_GET_OWNER(p);
    if (p->has_finished && !p->has_errored)
      {
-       p->value_free_cb = NULL;
-       return (void*)&promise->value[0];
+        char const* buffer = promise->value;
+        void** p = (void**)buffer;
+        return *p;
      }
    else
      {
@@ -272,6 +297,16 @@ _eina_promise_owner_value_set(_Eina_Promise_Default_Owner* promise, const void* 
 
    promise->promise.value_free_cb = free;
 
+   _eina_promise_finish(promise);
+}
+
+static void
+_eina_promise_owner_pointer_value_set(_Eina_Promise_Default_Owner* promise, const void* data, Eina_Promise_Free_Cb free)
+{
+   char* buffer = promise->value;
+   void** p = (void**)buffer;
+   *p = (void*)data;
+   promise->promise.value_free_cb = free;
    _eina_promise_finish(promise);
 }
 
@@ -485,7 +520,7 @@ _eina_promise_owner_progress_notify(_Eina_Promise_Default_Owner* promise, Eina_P
 }
 
 Eina_Promise_Owner *
-eina_promise_default_add(int value_size)
+eina_promise_value_add(int value_size)
 {
    _Eina_Promise_Default_Owner* p;
 
@@ -501,9 +536,8 @@ eina_promise_default_add(int value_size)
    p->promise.vtable.unref = EINA_FUNC_PROMISE_UNREF(_eina_promise_unref);
    p->promise.vtable.value_size_get = EINA_FUNC_PROMISE_VALUE_SIZE_GET(_eina_promise_value_size_get);
    p->promise.vtable.buffer_get = EINA_FUNC_PROMISE_BUFFER_GET(_eina_promise_buffer_get);
-   p->promise.vtable.release_value_ownership = EINA_FUNC_PROMISE_RELEASE_VALUE_OWNERSHIP(_eina_promise_release_value_ownership);
    p->promise.has_finished = p->promise.has_errored =
-     p->promise.is_cancelled = p->promise.is_manual_then = EINA_FALSE;
+     p->promise.is_cancelled = p->promise.is_manual_then = p->promise.is_pointer = EINA_FALSE;
    p->promise.is_first_then = EINA_TRUE;
    p->promise.ref = 1;
    memset(&p->promise.then_callbacks, 0, sizeof(p->promise.then_callbacks));
@@ -518,6 +552,49 @@ eina_promise_default_add(int value_size)
    p->owner_vtable.value_set = EINA_FUNC_PROMISE_OWNER_VALUE_SET(_eina_promise_owner_value_set);
    p->owner_vtable.error_set = EINA_FUNC_PROMISE_OWNER_ERROR_SET(_eina_promise_owner_error_set);
    p->owner_vtable.buffer_get = EINA_FUNC_PROMISE_OWNER_BUFFER_GET(_eina_promise_owner_buffer_get);
+   p->owner_vtable.value_size_get = EINA_FUNC_PROMISE_OWNER_VALUE_SIZE_GET(_eina_promise_owner_value_size_get);
+   p->owner_vtable.promise_get = EINA_FUNC_PROMISE_OWNER_PROMISE_GET(_eina_promise_owner_promise_get);
+   p->owner_vtable.pending_is = EINA_FUNC_PROMISE_OWNER_PENDING_IS(_eina_promise_owner_pending_is);
+   p->owner_vtable.cancelled_is = EINA_FUNC_PROMISE_OWNER_CANCELLED_IS(_eina_promise_owner_cancelled_is);
+   p->owner_vtable.progress = EINA_FUNC_PROMISE_OWNER_PROGRESS(_eina_promise_owner_progress);
+   p->owner_vtable.progress_notify = EINA_FUNC_PROMISE_OWNER_PROGRESS_NOTIFY(_eina_promise_owner_progress_notify);
+
+   return &p->owner_vtable;
+}
+
+EAPI Eina_Promise_Owner *
+eina_promise_add()
+{
+   _Eina_Promise_Default_Owner* p;
+
+   p = malloc(sizeof(_Eina_Promise_Default_Owner) + sizeof(void*));
+   p->promise.vtable.version = EINA_PROMISE_VERSION;
+   p->promise.vtable.then = EINA_FUNC_PROMISE_THEN(_eina_promise_then);
+   p->promise.vtable.value_get = EINA_FUNC_PROMISE_VALUE_GET(_eina_promise_pointer_value_get);
+   p->promise.vtable.error_get = EINA_FUNC_PROMISE_ERROR_GET(_eina_promise_error_get);
+   p->promise.vtable.pending_is = EINA_FUNC_PROMISE_PENDING_IS(_eina_promise_pending_is);
+   p->promise.vtable.progress_cb_add = EINA_FUNC_PROMISE_PROGRESS_CB_ADD(_eina_promise_progress_cb_add);
+   p->promise.vtable.cancel = EINA_FUNC_PROMISE_CANCEL(_eina_promise_cancel);
+   p->promise.vtable.ref = EINA_FUNC_PROMISE_REF(_eina_promise_ref);
+   p->promise.vtable.unref = EINA_FUNC_PROMISE_UNREF(_eina_promise_unref);
+   p->promise.vtable.value_size_get = EINA_FUNC_PROMISE_VALUE_SIZE_GET(_eina_promise_value_size_get);
+   p->promise.vtable.buffer_get = EINA_FUNC_PROMISE_BUFFER_GET(_eina_promise_buffer_get);
+   p->promise.has_finished = p->promise.has_errored =
+     p->promise.is_cancelled = p->promise.is_manual_then = EINA_FALSE;
+   p->promise.is_first_then = p->promise.is_pointer = EINA_TRUE;
+   p->promise.ref = 1;
+   memset(&p->promise.then_callbacks, 0, sizeof(p->promise.then_callbacks));
+   memset(&p->promise.progress_callbacks, 0, sizeof(p->promise.progress_callbacks));
+   memset(&p->promise.progress_notify_callbacks, 0, sizeof(p->promise.progress_notify_callbacks));
+   memset(&p->promise.cancel_callbacks, 0, sizeof(p->promise.cancel_callbacks));
+   p->promise.value_size = 0;
+   p->promise.value_free_cb = NULL;
+   p->promise.error = 0;
+
+   p->owner_vtable.version = EINA_PROMISE_VERSION;
+   p->owner_vtable.value_set = EINA_FUNC_PROMISE_OWNER_VALUE_SET(_eina_promise_owner_pointer_value_set);
+   p->owner_vtable.error_set = EINA_FUNC_PROMISE_OWNER_ERROR_SET(_eina_promise_owner_error_set);
+   p->owner_vtable.buffer_get = EINA_FUNC_PROMISE_OWNER_BUFFER_GET(_eina_promise_owner_pointer_buffer_get);
    p->owner_vtable.value_size_get = EINA_FUNC_PROMISE_OWNER_VALUE_SIZE_GET(_eina_promise_owner_value_size_get);
    p->owner_vtable.promise_get = EINA_FUNC_PROMISE_OWNER_PROMISE_GET(_eina_promise_owner_promise_get);
    p->owner_vtable.pending_is = EINA_FUNC_PROMISE_OWNER_PENDING_IS(_eina_promise_owner_pending_is);
@@ -575,8 +652,6 @@ _eina_promise_all_free(_Eina_Promise_Iterator* value)
 {
    unsigned i = 0;
 
-   eina_iterator_free(value->success_iterator);
-
    for (;i != value->data.num_promises; ++i)
      {
         eina_promise_unref(value->data.promises[i]);
@@ -602,8 +677,8 @@ eina_promise_all(Eina_Iterator* it)
    eina_iterator_free(it);
 
    promise = (_Eina_Promise_Default_Owner*)
-     eina_promise_default_add(sizeof(_Eina_Promise_Iterator) +
-                              sizeof(_Eina_Promise_Default_Owner*)*eina_array_count_get(promises));
+     eina_promise_value_add(sizeof(_Eina_Promise_Iterator) +
+                            sizeof(_Eina_Promise_Default_Owner*)*eina_array_count_get(promises));
    internal_it = (_Eina_Promise_Iterator*)&promise->value[0];
    _eina_promise_iterator_setup(internal_it, promises);
    eina_array_free(promises);
@@ -655,7 +730,6 @@ _eina_promise_iterator_setup(_Eina_Promise_Iterator* it, Eina_Array* promises_ar
 {
    Eina_Promise** promises;
 
-   it->success_iterator = &it->data.success_iterator_impl;
    it->data.num_promises = eina_array_count_get(promises_array);
    it->data.promise_index = 0;
    it->data.promises_finished = 0;
@@ -695,7 +769,7 @@ eina_promise_progress_notification(Eina_Promise_Owner* promise)
 {
   Eina_Promise_Owner* owner;
 
-  owner = eina_promise_default_add(0);
+  owner = eina_promise_value_add(0);
 
   eina_promise_owner_progress_notify(promise, &_eina_promise_progress_notify_fulfilled, owner,
                                      &_eina_promise_progress_notify_failed);
@@ -768,8 +842,8 @@ eina_promise_race(Eina_Iterator* it)
 
    num_promises = eina_array_count_get(promises);
    promise = (_Eina_Promise_Default_Owner*)
-     eina_promise_default_add(sizeof(_Eina_Promise_Race_Value_Type) +
-                              sizeof(struct _Eina_Promise_Race_Information)*num_promises);
+     eina_promise_value_add(sizeof(_Eina_Promise_Race_Value_Type) +
+                            sizeof(struct _Eina_Promise_Race_Information)*num_promises);
    value = eina_promise_owner_buffer_get((Eina_Promise_Owner*)promise);
    value->value = NULL;
    value->promise_index = -1;
@@ -866,12 +940,6 @@ EAPI void *
 eina_promise_buffer_get(Eina_Promise* promise)
 {
    return promise->buffer_get(promise);
-}
-
-EAPI void *
-eina_promise_release_value_ownership(Eina_Promise* promise)
-{
-   return promise->release_value_ownership(promise);
 }
 
 EAPI size_t

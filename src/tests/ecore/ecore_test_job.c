@@ -10,7 +10,7 @@ _ecore_promise_quit(void *data, void *value, Eina_Promise* promise EINA_UNUSED)
 {
    Eina_Bool *bob = data;
 
-   fail_if(data != *(Eina_Bool**)value);
+   fail_if(data != value);
    *bob = EINA_TRUE;
    ecore_main_loop_quit();
 }
@@ -18,12 +18,10 @@ _ecore_promise_quit(void *data, void *value, Eina_Promise* promise EINA_UNUSED)
 START_TEST(ecore_test_job_promise)
 {
    Eina_Bool bob = EINA_FALSE;
-   Eina_Promise *job = NULL;
 
    ecore_init();
 
-   job = efl_loop_job(ecore_main_loop_get(), &bob);
-   eina_promise_then(job, &_ecore_promise_quit, NULL, &bob);
+   eina_promise_then(efl_loop_job(ecore_main_loop_get(), &bob), &_ecore_promise_quit, NULL, &bob);
 
    ecore_main_loop_begin();
 

@@ -136,7 +136,8 @@ _eldbus_model_arguments_efl_model_property_set(Eo *obj EINA_UNUSED,
 
    eina_value_flush(prop_value);
    eina_value_copy(value, prop_value);
-   eina_promise_owner_value_set(promise, prop_value, NULL);
+   eina_value_copy(value, eina_promise_owner_buffer_get(promise));
+   eina_promise_owner_value_set(promise, NULL, (Eina_Promise_Free_Cb)&eina_value_flush);
 }
 
 static void

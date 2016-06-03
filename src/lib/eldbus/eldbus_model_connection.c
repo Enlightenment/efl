@@ -149,7 +149,7 @@ _eldbus_model_connection_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
    if (pd->is_listed)
      {
         Eina_Accessor *ac = efl_model_list_slice(pd->children_list, start, count);
-        eina_promise_owner_value_set(promise, &ac, (Eina_Promise_Free_Cb)&_accessor_free);
+        eina_promise_owner_value_set(promise, ac, (Eina_Promise_Free_Cb)&eina_accessor_free);
         return;
      }
 
@@ -338,7 +338,7 @@ _eldbus_model_connection_names_list_cb(void *data,
    EINA_LIST_FOREACH(pd->children_promises, i, p)
      {
         Eina_Accessor *ac = efl_model_list_slice(pd->children_list, p->start, p->count);
-        eina_promise_owner_value_set(p->promise, &ac, (Eina_Promise_Free_Cb)&_accessor_free);
+        eina_promise_owner_value_set(p->promise, ac, (Eina_Promise_Free_Cb)&eina_accessor_free);
         free(p);
      }
    eina_list_free(pd->children_promises);

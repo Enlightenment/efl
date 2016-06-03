@@ -197,22 +197,17 @@ static size_t _ecore_promise_value_size_get(Eina_Promise const* promise)
    _Ecore_Thread_Promise_Owner* v = ECORE_PROMISE_GET_OWNER(promise);
    return v->eina_promise->value_size_get(v->eina_promise);
 }
-static void* _ecore_promise_release_value_ownership(Eina_Promise* promise)
-{
-   _Ecore_Thread_Promise_Owner* v = ECORE_PROMISE_GET_OWNER(promise);
-   return v->eina_promise->release_value_ownership(v->eina_promise);
-}
 
 Ecore_Thread* ecore_thread_promise_run(Ecore_Thread_Promise_Cb func_blocking,
                                        Ecore_Thread_Promise_Cb func_cancel,
-                                       const void* data, size_t value_size,
+                                       const void* data,
                                        Eina_Promise** promise)
 {
    _Ecore_Thread_Promise_Owner* priv;
 
    priv = malloc(sizeof(_Ecore_Thread_Promise_Owner));
 
-   priv->eina_owner = eina_promise_default_add(value_size);
+   priv->eina_owner = eina_promise_add();
 
    priv->owner_vtable.version = EINA_PROMISE_VERSION;
    priv->owner_vtable.value_set = EINA_FUNC_PROMISE_OWNER_VALUE_SET(&_ecore_promise_owner_value_set);
@@ -235,8 +230,6 @@ Ecore_Thread* ecore_thread_promise_run(Ecore_Thread_Promise_Cb func_blocking,
    priv->promise_vtable.unref = EINA_FUNC_PROMISE_UNREF(&_ecore_promise_unref);
    priv->promise_vtable.value_size_get = EINA_FUNC_PROMISE_VALUE_SIZE_GET(&_ecore_promise_value_size_get);
    priv->promise_vtable.buffer_get = EINA_FUNC_PROMISE_BUFFER_GET(&_ecore_promise_buffer_get);
-   priv->promise_vtable.release_value_ownership = EINA_FUNC_PROMISE_RELEASE_VALUE_OWNERSHIP
-     (&_ecore_promise_release_value_ownership);
    
    priv->thread_callback_data.data = data;
    priv->thread_callback_data.func_blocking = func_blocking;

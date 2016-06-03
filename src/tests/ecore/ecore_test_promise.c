@@ -22,7 +22,7 @@ START_TEST(ecore_test_promise)
 
    ecore_init();
 
-   ecore_thread_promise_run(&promised_thread, NULL, NULL, 0, &promise);
+   ecore_thread_promise_run(&promised_thread, NULL, NULL, &promise);
    eina_promise_then(promise, &promise_callback, NULL, NULL);
 
    ecore_main_loop_begin();
@@ -48,7 +48,7 @@ START_TEST(ecore_test_promise_error)
 
    ecore_init();
 
-   ecore_thread_promise_run(&promise_error_thread, NULL, NULL, 0, &promise);
+   ecore_thread_promise_run(&promise_error_thread, NULL, NULL, &promise);
    eina_promise_then(promise, NULL, &promise_error_callback, NULL);
 
    ecore_main_loop_begin();
@@ -64,7 +64,7 @@ START_TEST(ecore_test_promise_all)
 
    ecore_init();
 
-   ecore_thread_promise_run(&promised_thread, NULL, NULL, 0, &first[0]);
+   ecore_thread_promise_run(&promised_thread, NULL, NULL, &first[0]);
    promise = eina_promise_all(eina_carray_iterator_new((void**)&first[0]));
    eina_promise_then(promise, &promise_callback, NULL, NULL);
 
@@ -89,7 +89,7 @@ START_TEST(ecore_test_promise_all_then_then)
 
    int i = 0;
 
-   ecore_thread_promise_run(&promised_thread, NULL, NULL, 0, &first[0]);
+   ecore_thread_promise_run(&promised_thread, NULL, NULL, &first[0]);
    eina_promise_then(first[0], &promise_callback2, NULL, &i);
    promise = eina_promise_all(eina_carray_iterator_new((void**)&first[0]));
    eina_promise_then(promise, &promise_callback2, NULL, &i);
@@ -126,7 +126,7 @@ static void _ecore_test_promise_then_after_thread_finished_main_cb()
    eina_lock_new(&data.lock);
    eina_condition_new(&data.cond, &data.lock);
 
-   thread = ecore_thread_promise_run((Ecore_Thread_Promise_Cb)&promised_exit_thread, NULL, &data, 0, &promise);
+   thread = ecore_thread_promise_run((Ecore_Thread_Promise_Cb)&promised_exit_thread, NULL, &data, &promise);
 
    eina_lock_take(&data.lock);
    while(!data.var)
@@ -161,7 +161,7 @@ static void _ecore_test_promise_then_after_thread_finished_all_main_cb()
    eina_lock_new(&data.lock);
    eina_condition_new(&data.cond, &data.lock);
 
-   thread = ecore_thread_promise_run((Ecore_Thread_Promise_Cb)&promised_exit_thread, NULL, &data, 0, &first[0]);
+   thread = ecore_thread_promise_run((Ecore_Thread_Promise_Cb)&promised_exit_thread, NULL, &data, &first[0]);
    promise = eina_promise_all(eina_carray_iterator_new((void**)&first[0]));
 
    eina_lock_take(&data.lock);
@@ -186,19 +186,19 @@ START_TEST(ecore_test_promise_then_after_thread_finished_all)
 }
 END_TEST
 
-void promised_block_thread(const void* data EINA_UNUSED, Eina_Promise_Owner* promise, Ecore_Thread* thread EINA_UNUSED)
-{
-   struct timespec v = {.tv_sec = 1, .tv_nsec = 0}, rem;
-   if(nanosleep(&v, &rem) == -1 && errno == EINTR)
-     do
-       {
-         v = rem;
-       }
-     while(nanosleep(&v, &rem) == -1 && errno == EINTR);
+/* void promised_block_thread(const void* data EINA_UNUSED, Eina_Promise_Owner* promise, Ecore_Thread* thread EINA_UNUSED) */
+/* { */
+/*    struct timespec v = {.tv_sec = 1, .tv_nsec = 0}, rem; */
+/*    if(nanosleep(&v, &rem) == -1 && errno == EINTR) */
+/*      do */
+/*        { */
+/*          v = rem; */
+/*        } */
+/*      while(nanosleep(&v, &rem) == -1 && errno == EINTR); */
 
-  int r = 10;
-  eina_promise_owner_value_set(promise, &r, NULL);
-}
+/*   int r = 10; */
+/*   eina_promise_owner_value_set(promise, &r, NULL); */
+/* } */
 
 static void
 _ecore_test_promise_normal_lifetime_cb(void* data EINA_UNUSED, void* value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
@@ -219,7 +219,7 @@ START_TEST(ecore_test_promise_normal_lifetime)
    
    ecore_init();
 
-   promise_owner = eina_promise_default_add(0);
+   promise_owner = eina_promise_value_add(0);
 
    promise = eina_promise_owner_promise_get(promise_owner);
 
@@ -240,7 +240,7 @@ START_TEST(ecore_test_promise_normal_lifetime_all)
    
    ecore_init();
 
-   promise_owner = eina_promise_default_add(0);
+   promise_owner = eina_promise_value_add(0);
    first[0] = eina_promise_owner_promise_get(promise_owner);
    promise = eina_promise_all(eina_carray_iterator_new((void**)&first[0]));
    
@@ -266,7 +266,7 @@ START_TEST(ecore_test_promise_immediate_set_lifetime)
    
    ecore_init();
 
-   owner = eina_promise_default_add(0);
+   owner = eina_promise_value_add(0);
    promise = eina_promise_owner_promise_get(owner);
 
    eina_promise_owner_value_set(owner, NULL, NULL);
@@ -286,7 +286,7 @@ START_TEST(ecore_test_promise_immediate_set_lifetime_all)
 
    ecore_init();
 
-   owner = eina_promise_default_add(0);
+   owner = eina_promise_value_add(0);
    first[0] = eina_promise_owner_promise_get(owner);
    promise = eina_promise_all(eina_carray_iterator_new((void**)&first[0]));
 
@@ -343,7 +343,7 @@ START_TEST(ecore_test_promise_cancel_promise)
    eina_lock_new(&v.lock);
    eina_condition_new(&v.condvar, &v.lock);
 
-   ecore_thread_promise_run(&promise_cancel_thread, &_cancel_callback, &v, 0, &promise);
+   ecore_thread_promise_run(&promise_cancel_thread, &_cancel_callback, &v, &promise);
    eina_promise_then(promise, NULL, &_cancel_promise_callback, NULL);
 
    eina_promise_cancel(promise);
@@ -376,7 +376,7 @@ START_TEST(ecore_test_promise_progress_promise)
 
    ecore_init();
 
-   ecore_thread_promise_run(&promise_progress_thread, NULL, NULL, 0, &promise);
+   ecore_thread_promise_run(&promise_progress_thread, NULL, NULL, &promise);
 
    eina_promise_progress_cb_add(promise, &_progress_callback, NULL, NULL);
 
