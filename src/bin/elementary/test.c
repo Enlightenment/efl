@@ -29,6 +29,7 @@ void test_box_align(void *data, Evas_Object *obj, void *event_info);
 void test_ui_box(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
 void test_cnp(void *data, Evas_Object *obj, void *event_info);
+void test_events(void *data, Evas_Object *obj, void *event_info);
 void test_transit(void *data, Evas_Object *obj, void *event_info);
 void test_transit_blend(void *data, Evas_Object *obj, void *event_info);
 void test_transit_chain(void *data, Evas_Object *obj, void *event_info);
@@ -598,6 +599,9 @@ add_tests:
    ADD_TEST(NULL, "New Containers", "Ui.Box", test_ui_box);
    ADD_TEST(NULL, "New Containers", "Ui.Grid", test_ui_grid);
    ADD_TEST(NULL, "New Containers", "Ui.Grid Linear", test_ui_grid_linear);
+
+   //------------------------------//
+   ADD_TEST(NULL, "New Events", "Event Refeed", test_events);
 
    //------------------------------//
    ADD_TEST(NULL, "Entries", "Entry", test_entry);
