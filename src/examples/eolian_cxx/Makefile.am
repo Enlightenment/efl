@@ -25,12 +25,12 @@ AM_CXXFLAGS = \
 	-I$(top_builddir)/src/lib/emile \
 	-I$(top_srcdir)/src/lib/eo \
 	-I$(top_builddir)/src/lib/eo \
-	-I$(top_srcdir)/src/bindings/eo_cxx \
-	-I$(top_builddir)/src/bindings/eo_cxx \
-	-I$(top_srcdir)/src/bindings/eina_cxx \
-	-I$(top_builddir)/src/bindings/eina_cxx \
-	-I$(top_srcdir)/src/bindings/ecore_cxx \
-	-I$(top_builddir)/src/bindings/ecore_cxx \
+	-I$(top_srcdir)/src/bindings/cxx/eo_cxx \
+	-I$(top_builddir)/src/bindings/cxx/eo_cxx \
+	-I$(top_srcdir)/src/bindings/cxx/eina_cxx \
+	-I$(top_builddir)/src/bindings/cxx/eina_cxx \
+	-I$(top_srcdir)/src/bindings/cxx/ecore_cxx \
+	-I$(top_builddir)/src/bindings/cxx/ecore_cxx \
 	-I$(top_srcdir)/src/lib/evas/ \
 	-I$(top_builddir)/src/lib/evas/ \
 	-I$(top_srcdir)/src/lib/evas/common \
@@ -89,9 +89,7 @@ IMPL = \
 	colourable.c \
 	colourable_cxx.cc \
 	colourablesquare.c \
-	colourablesquare_cxx.cc \
-	colourable_stub.c \
-	colourablesquare_stub.c
+	colourablesquare_cxx.cc
 
 SRCS = \
 	eolian_cxx_simple_01.cc \
@@ -116,10 +114,8 @@ eolian_cxx_simple_01.$(OBJEXT): $(GENERATED)
 
 eolian_cxx_simple_01_cxx_impl_SOURCES = \
 	eolian_cxx_simple_01.cc \
-	colourable_stub.c \
-	colourable_stub.h \
-	colourablesquare_stub.c \
-	colourablesquare_stub.h \
+	colourable.c \
+	colourablesquare.c \
 	colourable_cxx.cc \
 	colourablesquare_cxx.cc
 eolian_cxx_simple_01_cxx_impl.$(OBJEXT): $(GENERATED)
