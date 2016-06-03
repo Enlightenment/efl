@@ -60,7 +60,7 @@ _main_cb(void *data, void *v)
 }
 
 static void
-_done_cb(void *data, void *value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+_done_cb(void *data, void *value EINA_UNUSED)
 
 {
    int *num_of_attr = (int *)data;
@@ -71,7 +71,7 @@ _done_cb(void *data, void *value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 }
 
 static void
-_done_get_cb(void *data EINA_UNUSED, void* v, Eina_Promise* promise EINA_UNUSED)
+_done_get_cb(void *data EINA_UNUSED, void* v)
 {
    Eina_Iterator** it = (Eina_Iterator**)v;
    int i = 0;
@@ -90,7 +90,7 @@ _done_get_cb(void *data EINA_UNUSED, void* v, Eina_Promise* promise EINA_UNUSED)
 }
 
 static void
-_done_set_cb(void *data, void* v, Eina_Promise* promise EINA_UNUSED)
+_done_set_cb(void *data, void* v)
 {
    Eina_Iterator** it = (Eina_Iterator**)v;
    int *placeholder;
@@ -104,7 +104,7 @@ _done_set_cb(void *data, void* v, Eina_Promise* promise EINA_UNUSED)
 }
 
 static void
-_error_cb(void *data EINA_UNUSED, Eina_Error error, Eina_Promise* promise EINA_UNUSED)
+_error_cb(void *data EINA_UNUSED, Eina_Error error)
 
 {
    fprintf(stderr, "Something has gone wrong:%s\n", eina_error_msg_get(error));
