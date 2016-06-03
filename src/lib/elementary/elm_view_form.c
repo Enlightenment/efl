@@ -46,7 +46,7 @@ struct _Elm_View_Form_Promise
 
 
 static void
-_efl_promise_then_widget(void* data, void* v, Eina_Promise* promise EINA_UNUSED)
+_efl_promise_then_widget(void* data, void* v)
 {
     Elm_View_Form_Widget *w = data;
     Eina_Value *value = v;
@@ -54,12 +54,12 @@ _efl_promise_then_widget(void* data, void* v, Eina_Promise* promise EINA_UNUSED)
 }
 
 static void
-_efl_promise_error_widget(void *data EINA_UNUSED, Eina_Error err EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+_efl_promise_error_widget(void *data EINA_UNUSED, Eina_Error err EINA_UNUSED)
 {
 }
 
 static void
-_efl_model_promise_then_cb(void* data, void* v, Eina_Promise* promise EINA_UNUSED)
+_efl_model_promise_then_cb(void* data, void* v)
 {
    Elm_View_Form_Promise *p = data;
    Eina_Value *value = v;
@@ -82,7 +82,7 @@ _efl_model_promise_then_cb(void* data, void* v, Eina_Promise* promise EINA_UNUSE
 }
 
 static void
-_efl_model_promise_error_cb(void* data, Eina_Error error EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+_efl_model_promise_error_cb(void* data, Eina_Error error EINA_UNUSED)
 {
    Elm_View_Form_Promise *p = data;
    EINA_SAFETY_ON_NULL_RETURN(p);

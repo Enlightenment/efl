@@ -47,7 +47,7 @@ static void _ecore_promise_ref_update(_Ecore_Thread_Promise_Owner* p)
     }
 }
 
-static void _ecore_promise_thread_release_ref(void* data, void* value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+static void _ecore_promise_thread_release_ref(void* data, void* value EINA_UNUSED)
 {
    _Ecore_Thread_Promise_Owner* p = data;
    p->ref_count -= p->then_count;

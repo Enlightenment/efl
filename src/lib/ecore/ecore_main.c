@@ -2839,8 +2839,7 @@ _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 static void
-_efl_loop_args_job_cb(void *data, void *value EINA_UNUSED,
-                      Eina_Promise *promise EINA_UNUSED)
+_efl_loop_args_job_cb(void *data, void *value EINA_UNUSED)
 {
    Efl_Loop_Args *args = data;
    Eo *obj = eo_parent_get(args);

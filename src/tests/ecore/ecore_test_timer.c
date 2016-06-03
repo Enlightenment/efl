@@ -176,7 +176,7 @@ START_TEST(ecore_test_timers)
 END_TEST
 
 static void
-_ecore_promise_quit(void *data, void *value, Eina_Promise* promise EINA_UNUSED)
+_ecore_promise_quit(void *data, void *value)
 {
    Eina_Bool *bob = data;
    double *start = value;

@@ -169,7 +169,7 @@ _eina_promise_then_calls(_Eina_Promise_Default_Owner* promise)
        if (error)
          {
             if (callback->error_cb)
-              (*callback->error_cb)(callback->data, promise->promise.error, &promise->promise.vtable);
+              (*callback->error_cb)(callback->data, promise->promise.error);
          }
        else if (callback->callback)
          {
@@ -177,10 +177,10 @@ _eina_promise_then_calls(_Eina_Promise_Default_Owner* promise)
               {
                  char* buffer = promise->value;
                  void** p = (void**)buffer;
-                 (*callback->callback)(callback->data, *p, &promise->promise.vtable);
+                 (*callback->callback)(callback->data, *p);
               }
             else
-              (*callback->callback)(callback->data, &promise->value[0], &promise->promise.vtable);
+              (*callback->callback)(callback->data, &promise->value[0]);
          }
        free(callback);
        _eina_promise_unref(&promise->promise);

@@ -29,12 +29,12 @@ typedef void(*Eina_Promise_Progress_Notify_Cb)(void* data, Eina_Promise_Owner* p
 /*
  * @brief Function callback type for when using eina_promise_then
  */
-typedef void(*Eina_Promise_Cb)(void* data, void* value, Eina_Promise* promise);
+typedef void(*Eina_Promise_Cb)(void* data, void* value);
 
 /*
  * @brief Function callback type for when using eina_promise_then
  */
-typedef void(*Eina_Promise_Error_Cb)(void* data, Eina_Error error, Eina_Promise* promise);
+typedef void(*Eina_Promise_Error_Cb)(void* data, Eina_Error error);
 
 /*
  * @brief Function callback type for progress information

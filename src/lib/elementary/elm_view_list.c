@@ -93,7 +93,7 @@ _item_del(void *data, Evas_Object *obj EINA_UNUSED)
 }
 
 static void
-_property_get_cb(void* data, void* v, Eina_Promise* promise EINA_UNUSED)
+_property_get_cb(void* data, void* v)
 {
     View_List_ValueItem *vitem = data;
     Eina_Value *value = v;
@@ -105,7 +105,7 @@ _property_get_cb(void* data, void* v, Eina_Promise* promise EINA_UNUSED)
 }
 
 static void
-_property_get_error_cb(void* data, Eina_Error err EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+_property_get_error_cb(void* data, Eina_Error err EINA_UNUSED)
 {
     View_List_ValueItem *vitem = data;
     eina_stringshare_del(vitem->part);
@@ -305,7 +305,7 @@ _efl_model_properties_change_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_efl_model_load_children_then(void * data, void* value, Eina_Promise* promise EINA_UNUSED)
+_efl_model_load_children_then(void * data, void* value)
 {
    View_List_ItemData *pdata = data;
    Eina_Accessor *accessor = value;

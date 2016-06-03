@@ -31,7 +31,7 @@ _filter_direct_cb(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_main_direct_cb(void *data, const Eina_File_Direct_Info *info, Eina_Promise* promise EINA_UNUSED)
+_main_direct_cb(void *data, const Eina_File_Direct_Info *info)
 {
    int *number_of_listed_files = (int *)data;
 
@@ -53,7 +53,7 @@ _filter_cb(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 static void
-_main_cb(void *data, const char *file, Eina_Promise* promise EINA_UNUSED)
+_main_cb(void *data, const char *file)
 {
    int *number_of_listed_files = (int *)data;
 
@@ -62,7 +62,7 @@ _main_cb(void *data, const char *file, Eina_Promise* promise EINA_UNUSED)
 }
 
 static void
-_done_cb(void *data, void* value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+_done_cb(void *data, void* value EINA_UNUSED)
 {
    int *number_of_listed_files = (int *)data;
    fail_if((*number_of_listed_files) != test_count);
@@ -71,7 +71,7 @@ _done_cb(void *data, void* value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
 }
 
 static void
-_error_cb(void *data EINA_UNUSED, Eina_Error error, Eina_Promise* promise EINA_UNUSED)
+_error_cb(void *data EINA_UNUSED, Eina_Error error)
 {
    const char *msg = eina_error_msg_get(error);
    EINA_LOG_ERR("error: %s", msg);
@@ -79,7 +79,7 @@ _error_cb(void *data EINA_UNUSED, Eina_Error error, Eina_Promise* promise EINA_U
 }
 
 static void
-_open_done_cb(void *data, void *file_value, Eina_Promise* promise EINA_UNUSED)
+_open_done_cb(void *data, void *file_value)
 {
    Eina_Bool *opened = (Eina_Bool *)data;
    *opened = EINA_TRUE;
@@ -89,7 +89,7 @@ _open_done_cb(void *data, void *file_value, Eina_Promise* promise EINA_UNUSED)
 }
 
 static void
-_stat_done_cb(void *data, void *value, Eina_Promise* promise EINA_UNUSED)
+_stat_done_cb(void *data, void *value)
 {
    Eina_Stat const* stat = value;
    Eina_Bool *is_dir = data;
@@ -284,4 +284,4 @@ eio_test_job(TCase *tc)
     tcase_add_test(tc, eio_job_test_file_direct_stat);
     tcase_add_test(tc, eio_job_test_open);
 }
-;
+

@@ -11,7 +11,7 @@ void promised_thread(const void* data EINA_UNUSED, Eina_Promise_Owner* promise, 
   eina_promise_owner_value_set(promise, NULL, NULL);
 }
 
-void promise_callback(void* data EINA_UNUSED, void* value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+void promise_callback(void* data EINA_UNUSED, void* value EINA_UNUSED)
 {
   ecore_main_loop_quit();
 }
@@ -36,7 +36,7 @@ void promise_error_thread(const void* data EINA_UNUSED, Eina_Promise_Owner* prom
   eina_promise_owner_error_set(promise, EINA_ERROR_OUT_OF_MEMORY);
 }
 
-void promise_error_callback(void* data EINA_UNUSED, Eina_Error error, Eina_Promise* promise EINA_UNUSED)
+void promise_error_callback(void* data EINA_UNUSED, Eina_Error error)
 {
   ck_assert(error == EINA_ERROR_OUT_OF_MEMORY);
   ecore_main_loop_quit();
@@ -74,7 +74,7 @@ START_TEST(ecore_test_promise_all)
 }
 END_TEST
 
-void promise_callback2(void* data, void* value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+void promise_callback2(void* data, void* value EINA_UNUSED)
 {
   if(++(*(int*)data) == 2)
     ecore_main_loop_quit();
@@ -186,22 +186,8 @@ START_TEST(ecore_test_promise_then_after_thread_finished_all)
 }
 END_TEST
 
-/* void promised_block_thread(const void* data EINA_UNUSED, Eina_Promise_Owner* promise, Ecore_Thread* thread EINA_UNUSED) */
-/* { */
-/*    struct timespec v = {.tv_sec = 1, .tv_nsec = 0}, rem; */
-/*    if(nanosleep(&v, &rem) == -1 && errno == EINTR) */
-/*      do */
-/*        { */
-/*          v = rem; */
-/*        } */
-/*      while(nanosleep(&v, &rem) == -1 && errno == EINTR); */
-
-/*   int r = 10; */
-/*   eina_promise_owner_value_set(promise, &r, NULL); */
-/* } */
-
 static void
-_ecore_test_promise_normal_lifetime_cb(void* data EINA_UNUSED, void* value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+_ecore_test_promise_normal_lifetime_cb(void* data EINA_UNUSED, void* value EINA_UNUSED)
 {
   ecore_main_loop_quit();
 }
@@ -254,7 +240,7 @@ START_TEST(ecore_test_promise_normal_lifetime_all)
 END_TEST
 
 static void
-_ecore_test_promise_immediate_set_lifetime_cb(void* data EINA_UNUSED, void* value EINA_UNUSED, Eina_Promise* promise EINA_UNUSED)
+_ecore_test_promise_immediate_set_lifetime_cb(void* data EINA_UNUSED, void* value EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
@@ -327,7 +313,7 @@ static void _cancel_callback(const void* data, Eina_Promise_Owner* promise EINA_
   eina_lock_release(&v->lock);
 }
 
-static void _cancel_promise_callback(void* data EINA_UNUSED, Eina_Error value, Eina_Promise* promise EINA_UNUSED)
+static void _cancel_promise_callback(void* data EINA_UNUSED, Eina_Error value)
 {
   ck_assert(value == EINA_ERROR_PROMISE_CANCEL);
   ecore_main_loop_quit();
