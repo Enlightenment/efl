@@ -84,7 +84,7 @@ static Ecore_Thread *timer_thread = NULL;
 static volatile int timer_event_is_busy = 0;
 
 static void
-_tick_send(char val)
+_tick_send(signed char val)
 {
    DBG("_tick_send(%i)", val);
    if (pipe_write(timer_fd_write, &val, 1) != 1)
@@ -111,7 +111,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
    fd_set rfds, wfds, exfds;
    struct timeval tv;
    unsigned int t;
-   char tick = 0;
+   signed char tick = 0;
    double t0, d;
    int ret;
 
