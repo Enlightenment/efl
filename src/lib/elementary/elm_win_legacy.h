@@ -281,21 +281,6 @@ EAPI Ecore_Win32_Window *elm_win_win32_window_get(const Evas_Object *obj);
 EAPI void                  elm_win_wm_rotation_preferred_rotation_set(Evas_Object *obj, int rotation);
 
 /**
- * Get the Ecore_Window of an Evas_Object
- *
- * When Elementary is using a Wayland engine, this function will return the surface id of the elm window's surface.
- *
- * @param obj The window object
- * @return The Ecore_Window of an Evas_Object
- *
- * @ingroup Elm_Win
- * @since 1.8
- * @note Unless you are getting the window id for the purpose of communicating between client<->compositor over dbus,
- * this is definitely not the function you are looking for.
- */
-EAPI Ecore_Window          elm_win_window_id_get(const Evas_Object *obj);
-
-/**
  * @brief Add @c subobj as a resize object of window @c obj.
  *
  * Setting an object as a resize object of the window means that the @c subobj
@@ -374,20 +359,6 @@ EAPI Ecore_Win32_Window *elm_win_win32_window_get(const Evas_Object *obj);
  * @ingroup Elm_Win
  */
 EAPI Ecore_Cocoa_Window *elm_win_cocoa_window_get(const Evas_Object *obj);
-
-/**
- * @brief Get the Ecore_Window of an Evas_Object
- *
- * When Elementary is using a Wayland engine, this function will return the
- * surface id of the elm window's surface.
- *
- * @return The Ecore_Window of an Evas_Object.
- *
- * @since 1.8
- *
- * @ingroup Elm_Win
- */
-EAPI Ecore_Window elm_win_window_id_get(const Evas_Object *obj);
 
 /**
  * @brief Get the trap data associated with a window.
@@ -999,4 +970,37 @@ EAPI int elm_win_layer_get(const Evas_Object *obj);
  * @ingroup Elm_Win
  */
 EAPI Evas_Object *elm_win_inlined_image_object_get(const Evas_Object *obj);
+
+/**
+ * @brief Internal. Used to completent the fake window type.
+ *
+ * @param[in] oee
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_fake_canvas_set(Evas_Object *obj, Ecore_Evas *oee);
+
+/**
+ * Get the Ecore_Window of an Evas_Object
+ *
+ * When Elementary is using a Wayland engine, this function will return the surface id of the elm window's surface.
+ *
+ * @param obj The window object
+ * @return The Ecore_Window of an Evas_Object
+ *
+ * @ingroup Elm_Win
+ * @since 1.8
+ * @note Unless you are getting the window id for the purpose of communicating between client<->compositor over dbus,
+ * this is definitely not the function you are looking for.
+ */
+EAPI Ecore_Window          elm_win_window_id_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the Main Menu of a window.
+ *
+ * @return The Main Menu of the window ($null on error).
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Evas_Object *elm_win_main_menu_get(Evas_Object *obj);
 

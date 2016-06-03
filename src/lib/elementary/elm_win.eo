@@ -655,33 +655,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                               otherwise it is width divided by height.]]
          }
       }
-      @property main_menu {
-         get {
-            [[Get the Main Menu of a window.]]
-            return: Evas.Object; [[The Main Menu of the window ($null on error).]]
-         }
-      }
-      @property window_id {
-         get {
-            [[Get the Ecore_Window of an Evas_Object
-
-              When Elementary is using a Wayland engine, this function
-              will return the surface id of the elm window's surface.
-
-              @since 1.8
-            ]]
-            return: Ecore_Window; [[The Ecore_Window of an Evas_Object.]]
-            legacy: null;
-         }
-      }
-      @property fake_canvas @protected {
-           set {
-                [[Internal. Used to completent the fake window type.]]
-           }
-           values {
-                oee: Ecore_Evas *;
-           }
-      }
       socket_listen {
          [[Create a socket to provide the service for Plug widget.]]
          return: bool;

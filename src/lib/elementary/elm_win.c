@@ -3438,7 +3438,7 @@ elm_win_add(Evas_Object *parent,
 EAPI Evas_Object *
 elm_win_fake_add(Ecore_Evas *ee)
 {
-   return eo_add(MY_CLASS, NULL, elm_obj_win_fake_canvas_set(eo_self, ee), elm_obj_win_name_set(eo_self, NULL), elm_obj_win_type_set(eo_self, ELM_WIN_FAKE));
+   return eo_add(MY_CLASS, NULL, elm_win_fake_canvas_set(eo_self, ee), elm_obj_win_name_set(eo_self, NULL), elm_obj_win_type_set(eo_self, ELM_WIN_FAKE));
 }
 
 static void
@@ -4173,12 +4173,6 @@ _elm_win_eo_base_constructor(Eo *obj, Elm_Win_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_win_fake_canvas_set(Eo *obj EINA_UNUSED, Elm_Win_Data *pd, Ecore_Evas *oee)
-{
-   pd->ee = oee;
-}
-
-EOLIAN static void
 _elm_win_type_set(Eo *obj, Elm_Win_Data *sd, Elm_Win_Type type)
 {
    if (eo_finalized_get(obj))
@@ -4579,36 +4573,6 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
         edje_object_signal_emit(sd->edje, "elm,action,show_menu", "elm");
         evas_object_show(sd->main_menu);
      }
-}
-
-EOLIAN static Evas_Object *
-_elm_win_main_menu_get(Eo *obj, Elm_Win_Data *sd)
-{
-#ifdef HAVE_ELEMENTARY_X
-   Eina_Bool use_dbus = EINA_FALSE;
-#endif
-
-   if (sd->main_menu) goto end;
-
-   sd->main_menu = elm_menu_add(obj);
-   _elm_menu_menu_bar_set(sd->main_menu, EINA_TRUE);
-
-#ifdef HAVE_ELEMENTARY_X
-   if (!_elm_config->disable_external_menu && sd->x.xwin) use_dbus = EINA_TRUE;
-#endif
-
-#ifdef HAVE_ELEMENTARY_X
-   if (use_dbus && _elm_dbus_menu_register(sd->main_menu))
-     {
-        _elm_dbus_menu_app_menu_register(sd->x.xwin, sd->main_menu,
-                                         _dbus_menu_set, obj);
-     }
-   else
-#endif
-     _dbus_menu_set(EINA_FALSE, obj);
-
-end:
-   return sd->main_menu;
 }
 
 EOLIAN static void
@@ -5268,67 +5232,6 @@ elm_win_floating_mode_get(const Evas_Object *obj)
    return sd->floating;
 }
 
-EOLIAN static Ecore_Window
-_elm_win_window_id_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
-{
-   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
-
-   if ((engine_name &&
-        ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
-         (!strcmp(engine_name, ELM_WAYLAND_EGL)))))
-     {
-#if HAVE_ELEMENTARY_WL2
-        if (sd->wl.win)
-          return (Ecore_Window)ecore_wl2_window_id_get(sd->wl.win);
-        if (sd->parent)
-          {
-             Ecore_Wl2_Window *parent;
-
-             parent = elm_win_wl_window_get(sd->parent);
-             if (parent)
-               return (Ecore_Window)ecore_wl2_window_id_get(parent);
-             return 0;
-          }
-#endif
-     }
-   else if ((engine_name &&
-             ((!strcmp(engine_name, ELM_SOFTWARE_X11)) ||
-              (!strcmp(engine_name, ELM_OPENGL_X11)))))
-     {
-#ifdef HAVE_ELEMENTARY_X
-        _internal_elm_win_xwindow_get(sd);
-        if (sd->x.xwin) return (Ecore_Window)sd->x.xwin;
-        if (sd->parent) return (Ecore_Window)elm_win_xwindow_get(sd->parent);
-#endif
-     }
-   else if (engine_name &&
-            ((!strcmp(engine_name, ELM_OPENGL_COCOA)) ||
-             (!strcmp(engine_name, "gl_cocoa"))))
-     {
-#ifdef HAVE_ELEMENTARY_COCOA
-        if (sd->cocoa.win) return (Ecore_Window)(sd->cocoa.win);
-        if (sd->parent)
-          {
-             Ecore_Cocoa_Window *pwin;
-             pwin = elm_win_cocoa_window_get(sd->parent);
-             return (Ecore_Window)pwin;
-          }
-#endif
-     }
-   else if ((engine_name &&
-             ((!strcmp(engine_name, ELM_SOFTWARE_WIN32)) ||
-              (!strcmp(engine_name, ELM_SOFTWARE_DDRAW)))))
-     {
-#ifdef HAVE_ELEMENTARY_WIN32
-        _internal_elm_win_win32window_get(sd);
-        if (sd->win32.win) return (Ecore_Window)sd->win32.win;
-        if (sd->parent) return (Ecore_Window)elm_win_win32_window_get(sd->parent);
-#endif
-     }
-
-   return 0;
-}
-
 void
 _elm_win_focus_highlight_in_theme_update(Evas_Object *obj, Eina_Bool in_theme)
 {
@@ -5373,23 +5276,6 @@ _elm_win_focus_auto_hide(Evas_Object *obj)
         if (!((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled)))
           _elm_win_focus_highlight_shutdown(sd);
      }
-}
-
-EAPI Ecore_Window
-elm_win_window_id_get(const Evas_Object *obj)
-{
-   if (!obj) return 0;
-
-   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
-     {
-        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-        return ecore_evas_window_get(ee);
-     }
-
-   ELM_WIN_CHECK(obj) 0;
-   Ecore_Window ret = 0;
-   ret = elm_obj_win_window_id_get((Eo *) obj);
-   return ret;
 }
 
 static Eina_Bool
@@ -6462,6 +6348,127 @@ elm_win_inlined_image_object_get(const Evas_Object *obj)
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
 
    return sd->img_obj;
+}
+
+static Ecore_Window
+_elm_win_window_id_get(Elm_Win_Data *sd)
+{
+   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
+
+   if ((engine_name &&
+        ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
+         (!strcmp(engine_name, ELM_WAYLAND_EGL)))))
+     {
+#if HAVE_ELEMENTARY_WL2
+        if (sd->wl.win)
+          return (Ecore_Window)ecore_wl2_window_id_get(sd->wl.win);
+        if (sd->parent)
+          {
+             Ecore_Wl2_Window *parent;
+
+             parent = elm_win_wl_window_get(sd->parent);
+             if (parent)
+               return (Ecore_Window)ecore_wl2_window_id_get(parent);
+             return 0;
+          }
+#endif
+     }
+   else if ((engine_name &&
+             ((!strcmp(engine_name, ELM_SOFTWARE_X11)) ||
+              (!strcmp(engine_name, ELM_OPENGL_X11)))))
+     {
+#ifdef HAVE_ELEMENTARY_X
+        _internal_elm_win_xwindow_get(sd);
+        if (sd->x.xwin) return (Ecore_Window)sd->x.xwin;
+        if (sd->parent) return (Ecore_Window)elm_win_xwindow_get(sd->parent);
+#endif
+     }
+   else if (engine_name &&
+            ((!strcmp(engine_name, ELM_OPENGL_COCOA)) ||
+             (!strcmp(engine_name, "gl_cocoa"))))
+     {
+#ifdef HAVE_ELEMENTARY_COCOA
+        if (sd->cocoa.win) return (Ecore_Window)(sd->cocoa.win);
+        if (sd->parent)
+          {
+             Ecore_Cocoa_Window *pwin;
+             pwin = elm_win_cocoa_window_get(sd->parent);
+             return (Ecore_Window)pwin;
+          }
+#endif
+     }
+   else if ((engine_name &&
+             ((!strcmp(engine_name, ELM_SOFTWARE_WIN32)) ||
+              (!strcmp(engine_name, ELM_SOFTWARE_DDRAW)))))
+     {
+#ifdef HAVE_ELEMENTARY_WIN32
+        _internal_elm_win_win32window_get(sd);
+        if (sd->win32.win) return (Ecore_Window)sd->win32.win;
+        if (sd->parent) return (Ecore_Window)elm_win_win32_window_get(sd->parent);
+#endif
+     }
+
+   return 0;
+}
+
+EAPI Ecore_Window
+elm_win_window_id_get(const Evas_Object *obj)
+{
+   if (!obj) return 0;
+
+   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
+     {
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        return ecore_evas_window_get(ee);
+     }
+
+   ELM_WIN_CHECK(obj) 0;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, 0);
+   Ecore_Window ret = 0;
+   ret = _elm_win_window_id_get(sd);
+   return ret;
+}
+
+EAPI void
+elm_win_fake_canvas_set(Evas_Object *obj, Ecore_Evas *oee)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   sd->ee = oee;
+}
+
+EAPI Evas_Object *
+elm_win_main_menu_get(Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) NULL;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
+
+#ifdef HAVE_ELEMENTARY_X
+   Eina_Bool use_dbus = EINA_FALSE;
+#endif
+
+   if (sd->main_menu) goto end;
+
+   sd->main_menu = elm_menu_add(obj);
+   _elm_menu_menu_bar_set(sd->main_menu, EINA_TRUE);
+
+#ifdef HAVE_ELEMENTARY_X
+   if (!_elm_config->disable_external_menu && sd->x.xwin) use_dbus = EINA_TRUE;
+#endif
+
+#ifdef HAVE_ELEMENTARY_X
+   if (use_dbus && _elm_dbus_menu_register(sd->main_menu))
+     {
+        _elm_dbus_menu_app_menu_register(sd->x.xwin, sd->main_menu,
+                                         _dbus_menu_set, obj);
+     }
+   else
+#endif
+     _dbus_menu_set(EINA_FALSE, obj);
+
+end:
+   return sd->main_menu;
 }
 
 #include "elm_win.eo.c"
