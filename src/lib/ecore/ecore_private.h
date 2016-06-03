@@ -150,14 +150,14 @@ EAPI void _ecore_magic_fail(const void *d,
 
 void         _ecore_time_init(void);
 
-void        *_efl_timer_del(Ecore_Timer *timer);
-void         _efl_timer_shutdown(void);
-void         _efl_timer_enable_new(void);
-double       _efl_timer_next_get(void);
-void         _efl_timer_expired_timers_call(double when);
-int          _efl_timers_exists(void);
+void        *_efl_loop_timer_del(Ecore_Timer *timer);
+void         _efl_loop_timer_shutdown(void);
+void         _efl_loop_timer_enable_new(void);
+double       _efl_loop_timer_next_get(void);
+void         _efl_loop_timer_expired_timers_call(double when);
+int          _efl_loop_timers_exists(void);
 
-int          _efl_timer_expired_call(double when);
+int          _efl_loop_timer_expired_call(double when);
 
 Ecore_Factorized_Idle *_ecore_factorized_idle_add(const Eo_Callback_Array_Item*desc,
                                                   Ecore_Task_Cb func,

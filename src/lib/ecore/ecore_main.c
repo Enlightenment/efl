@@ -460,7 +460,7 @@ _ecore_main_uv_poll_cb(uv_poll_t* handle, int status, int events)
   _ecore_signal_received_process();
   _ecore_event_call();
   _ecore_main_fd_handlers_cleanup();
-  _efl_timer_expired_timers_call(_ecore_time_loop_time);
+  _efl_loop_timer_expired_timers_call(_ecore_time_loop_time);
 }
 
 static int
@@ -704,7 +704,7 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
    if (!ecore_idling && !_ecore_glib_idle_enterer_called)
      {
         _ecore_time_loop_time = ecore_time_get();
-        _efl_timer_expired_timers_call(_ecore_time_loop_time);
+        _efl_loop_timer_expired_timers_call(_ecore_time_loop_time);
 
         _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
@@ -722,10 +722,10 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
         /* only set idling state in dispatch */
          if (ecore_idling && !_ecore_idler_exist(_mainloop_singleton) && !_ecore_event_exist())
            {
-              if (_efl_timers_exists())
+              if (_efl_loop_timers_exists())
                 {
                    int r = -1;
-                   double t = _efl_timer_next_get();
+                   double t = _efl_loop_timer_next_get();
                    if (timer_fd >= 0 && t > 0.0)
                      {
                         struct itimerspec ts;
@@ -821,8 +821,8 @@ _ecore_main_gsource_check(GSource *source EINA_UNUSED)
      ret = TRUE;
 
    /* check timers after updating loop time */
-   if (!ret && _efl_timers_exists())
-     ret = (0.0 == _efl_timer_next_get());
+   if (!ret && _efl_loop_timers_exists())
+     ret = (0.0 == _efl_loop_timer_next_get());
 
    in_main_loop--;
 
@@ -839,11 +839,11 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
    double next_time;
 
    _ecore_time_loop_time = ecore_time_get();
-   _efl_timer_enable_new();
-   next_time = _efl_timer_next_get();
+   _efl_loop_timer_enable_new();
+   next_time = _efl_loop_timer_next_get();
 
    events_ready = _ecore_event_exist();
-   timers_ready = _efl_timers_exists() && (0.0 == next_time);
+   timers_ready = _efl_loop_timers_exists() && (0.0 == next_time);
    idlers_ready = _ecore_idler_exist(_mainloop_singleton);
 
    in_main_loop++;
@@ -886,7 +886,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
         _ecore_event_call();
         _ecore_main_fd_handlers_cleanup();
 
-        _efl_timer_expired_timers_call(_ecore_time_loop_time);
+        _efl_loop_timer_expired_timers_call(_ecore_time_loop_time);
 
         _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
@@ -1019,7 +1019,7 @@ _ecore_main_loop_uv_check(uv_check_t* handle EINA_UNUSED)
        _ecore_signal_received_process();
        _ecore_event_call();
        _ecore_main_fd_handlers_cleanup();
-       _efl_timer_expired_timers_call(_ecore_time_loop_time);
+       _efl_loop_timer_expired_timers_call(_ecore_time_loop_time);
      }
    while(fd_handlers_to_call);
 quit:
@@ -2110,7 +2110,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
        t = -1;
 
        _ecore_time_loop_time = ecore_time_get();
-       _efl_timer_enable_new();
+       _efl_loop_timer_enable_new();
 
        goto done;
      }
@@ -2118,10 +2118,10 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
    assert(!fd_handlers_to_call);
 
    _ecore_time_loop_time = ecore_time_get();
-   _efl_timer_enable_new();
-   if (_efl_timers_exists() || t >= 0)
+   _efl_loop_timer_enable_new();
+   if (_efl_loop_timers_exists() || t >= 0)
      {
-       double t1 = _efl_timer_next_get();
+       double t1 = _efl_loop_timer_next_get();
        if(t < 0 || (t1 >= 0 && t1 < t)) t = t1;
        DBG("Should awake after %f", t);
        
@@ -2181,7 +2181,7 @@ _ecore_main_loop_spin_no_timers(void)
           if (action != SPIN_MORE) return action;
           /* if an idler has added a timer then we need to go through
            * the start of the spin cycle again to handle cases properly */
-          if (_efl_timers_exists()) return SPIN_RESTART;
+          if (_efl_loop_timers_exists()) return SPIN_RESTART;
        }
      /* just contiune handling events etc. */
      return LOOP_CONTINUE;
@@ -2199,7 +2199,7 @@ _ecore_main_loop_spin_timers(void)
           /* if next timer expires now or in the past - stop spinning and
            * continue the mainloop walk as our "select" timeout has
            * expired now */
-          if (_efl_timer_next_get() <= 0.0) return LOOP_CONTINUE;
+          if (_efl_loop_timer_next_get() <= 0.0) return LOOP_CONTINUE;
        }
      /* just contiune handling events etc. */
      return LOOP_CONTINUE;
@@ -2227,7 +2227,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 
    in_main_loop++;
    /* expire any timers */
-   _efl_timer_expired_timers_call(_ecore_time_loop_time);
+   _efl_loop_timer_expired_timers_call(_ecore_time_loop_time);
 
    /* process signals into events .... */
    _ecore_signal_received_process();
@@ -2241,7 +2241,7 @@ _ecore_main_loop_iterate_internal(int once_only)
         /* now quickly poll to see which input fd's are active */
         _ecore_main_select(0.0);
         /* allow newly queued timers to expire from now on */
-        _efl_timer_enable_new();
+        _efl_loop_timer_enable_new();
         /* go straight to processing the events we had queued */
         goto process_all;
      }
@@ -2254,7 +2254,7 @@ _ecore_main_loop_iterate_internal(int once_only)
          * merged together */
         if (_ecore_main_select(0.0) | _ecore_signal_count_get())
           {
-             _efl_timer_enable_new();
+             _efl_loop_timer_enable_new();
              goto process_all;
           }
      }
@@ -2274,7 +2274,7 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (_ecore_event_exist())
      {
         _ecore_main_select(0.0);
-        _efl_timer_enable_new();
+        _efl_loop_timer_enable_new();
         goto process_all;
      }
 
@@ -2283,7 +2283,7 @@ _ecore_main_loop_iterate_internal(int once_only)
         /* in once_only mode enter idle here instead and then return */
         _ecore_idle_enterer_call(_mainloop_singleton);
         _ecore_throttle();
-        _efl_timer_enable_new();
+        _efl_loop_timer_enable_new();
         goto done;
      }
 
@@ -2292,17 +2292,17 @@ _ecore_main_loop_iterate_internal(int once_only)
    /* start of the sleeping or looping section */
 start_loop: /*-*************************************************************/
    /* any timers re-added as a result of these are allowed to go */
-   _efl_timer_enable_new();
+   _efl_loop_timer_enable_new();
    /* if we have been asked to quit the mainloop then exit at this point */
    if (do_quit)
      {
-        _efl_timer_enable_new();
+        _efl_loop_timer_enable_new();
         goto done;
      }
    if (!_ecore_event_exist())
      {
         /* init flags */
-        next_time = _efl_timer_next_get();
+        next_time = _efl_loop_timer_next_get();
         /* no idlers */
         if (!_ecore_idler_exist(_mainloop_singleton))
           {
@@ -2807,7 +2807,7 @@ struct _Efl_Internal_Promise
 {
    union {
       Ecore_Job *job;
-      Efl_Timer *timer;
+      Efl_Loop_Timer *timer;
    } u;
    Eina_Promise_Owner *promise;
 
@@ -2930,7 +2930,7 @@ _efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(timeout,
-                          { EFL_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
+                          { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
                           { EO_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
 
 static Eina_Promise *
@@ -2946,8 +2946,8 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const voi
    if (!t) goto on_error;
 
    t->job_is = EINA_FALSE;
-   t->u.timer = eo_add(EFL_TIMER_CLASS, obj,
-                       efl_timer_interval_set(eo_self, time),
+   t->u.timer = eo_add(EFL_LOOP_TIMER_CLASS, obj,
+                       efl_loop_timer_interval_set(eo_self, time),
                        eo_event_callback_array_add(eo_self, timeout(), t));
 
    if (!t->u.timer) goto on_error;

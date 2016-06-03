@@ -23,7 +23,7 @@ extern "C" {
  * @{
  */
 
-#include "efl_timer.eo.h"
+#include "efl_loop_timer.eo.h"
 
 /**
  * @}
