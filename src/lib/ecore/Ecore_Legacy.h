@@ -77,6 +77,8 @@ EAPI double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
  * @{
  */
 
+typedef struct _Ecore_Animator Ecore_Animator;
+
 /**
  * @brief Add an animator to call @p func at every animation tick during main
  * loop execution.
@@ -171,8 +173,6 @@ EAPI void ecore_animator_freeze(Ecore_Animator *animator);
  * executed during main loop.
  */
 EAPI void ecore_animator_thaw(Ecore_Animator *animator);
-
-#include "ecore_animator.eo.legacy.h"
 
 /**
  * @}

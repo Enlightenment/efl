@@ -30,23 +30,12 @@
 
 #endif /* ! _WIN32 */
 
-#include <Eo.h>
-
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#define MY_CLASS ECORE_ANIMATOR_CLASS
-
-#define MY_CLASS_NAME "Ecore_Animator"
-
-#define ECORE_ANIMATOR_CHECK(obj)                       \
-  if (!eo_isa((obj), ECORE_ANIMATOR_CLASS)) \
-    return
-
-struct _Ecore_Animator_Data
+struct _Ecore_Animator
 {
    EINA_INLIST;
-   Ecore_Animator   *obj;
 
    Ecore_Task_Cb     func;
    void             *data;
@@ -60,13 +49,11 @@ struct _Ecore_Animator_Data
    Eina_Bool         just_added : 1;
 };
 
-typedef struct _Ecore_Animator_Data Ecore_Animator_Data;
-
 static Eina_Bool _do_tick(void);
 static Eina_Bool _ecore_animator_run(void *data);
 
 static int animators_delete_me = 0;
-static Ecore_Animator_Data *animators = NULL;
+static Ecore_Animator *animators = NULL;
 static double animators_frametime = 1.0 / 30.0;
 static unsigned int animators_suspended = 0;
 
@@ -281,7 +268,7 @@ _end_tick(void)
 static Eina_Bool
 _do_tick(void)
 {
-   Ecore_Animator_Data *animator;
+   Ecore_Animator *animator;
 
    EINA_INLIST_FOREACH(animators, animator)
      {
@@ -307,23 +294,19 @@ _do_tick(void)
      }
    if (animators_delete_me)
      {
-        Ecore_Animator_Data *l;
+        Ecore_Animator *l;
         for (l = animators; l; )
           {
              animator = l;
-             l = (Ecore_Animator_Data *)EINA_INLIST_GET(l)->next;
+             l = (Ecore_Animator  *)EINA_INLIST_GET(l)->next;
              if (animator->delete_me)
                {
                   if (animator->suspended) animators_suspended--;
-                  animators = (Ecore_Animator_Data *)
+                  animators = (Ecore_Animator *)
                     eina_inlist_remove(EINA_INLIST_GET(animators),
                                        EINA_INLIST_GET(animator));
 
-                  eo_parent_set(animator->obj, NULL);
-                  if (eo_destructed_is(animator->obj))
-                     eo_manual_free(animator->obj);
-                  else
-                     eo_manual_free_set(animator->obj, EINA_FALSE);
+                  free(animator);
 
                   animators_delete_me--;
                   if (animators_delete_me == 0) break;
@@ -338,48 +321,40 @@ _do_tick(void)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool
-_ecore_animator_add(Ecore_Animator *obj,
-                    Ecore_Animator_Data *animator,
-                    Ecore_Task_Cb func,
+static Ecore_Animator *
+_ecore_animator_add(Ecore_Task_Cb func,
                     const void   *data)
 {
-    if (EINA_UNLIKELY(!eina_main_loop_is()))
-      {
-         EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
-      }
+   Ecore_Animator *animator;
 
-   animator->obj = obj;
-   eo_manual_free_set(obj, EINA_TRUE);
+   if (EINA_UNLIKELY(!eina_main_loop_is()))
+     {
+        EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
+     }
 
    if (!func)
      {
-        ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
-        return EINA_FALSE;
+        ERR("callback function must be set up for an Ecore_Animator object.");
+        return NULL;
      }
+
+   animator = calloc(1, sizeof (Ecore_Animator));
+   if (!animator) return NULL;
 
    animator->func = func;
    animator->data = (void *)data;
    animator->just_added = EINA_TRUE;
-   animators = (Ecore_Animator_Data *)eina_inlist_append(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
+   animators = (Ecore_Animator *)eina_inlist_append(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
    _begin_tick();
-   return EINA_TRUE;
+
+   return animator;
 }
 
 EAPI Ecore_Animator *
 ecore_animator_add(Ecore_Task_Cb func,
                    const void   *data)
 {
-   Ecore_Animator *animator = NULL;
-
-   animator = eo_add(MY_CLASS, _ecore_parent, ecore_animator_constructor(eo_self, func, data));
-   return animator;
-}
-
-EOLIAN static void
-_ecore_animator_constructor(Eo *obj, Ecore_Animator_Data *animator, Ecore_Task_Cb func, const void *data)
-{
-   _ecore_animator_add(obj, animator, func, data);
+   return _ecore_animator_add(func, data);
 }
 
 EAPI Ecore_Animator *
@@ -388,22 +363,20 @@ ecore_animator_timeline_add(double            runtime,
                             const void       *data)
 {
    Ecore_Animator *animator;
-   animator = eo_add(MY_CLASS, _ecore_parent, ecore_animator_timeline_constructor(eo_self, runtime, func, data));
-   return animator;
-}
 
-EOLIAN static void
-_ecore_animator_timeline_constructor(Eo *obj, Ecore_Animator_Data *animator, double runtime, Ecore_Timeline_Cb func, const void *data)
-{
    if (runtime <= 0.0) runtime = 0.0;
 
-   if (!_ecore_animator_add(obj, animator, _ecore_animator_run, NULL)) return;
+   animator = _ecore_animator_add(_ecore_animator_run, NULL);
+   if (!animator)
+     return NULL;
 
-   animator->data = obj;
+   animator->data = animator;
    animator->run_func = func;
    animator->run_data = (void *)data;
    animator->start = ecore_loop_time_get();
    animator->run = runtime;
+
+   return animator;
 }
 
 static double
@@ -650,13 +623,12 @@ ecore_animator_pos_map(double        pos,
 }
 
 EAPI void *
-ecore_animator_del(Ecore_Animator *obj)
+ecore_animator_del(Ecore_Animator *animator)
 {
    void *data = NULL;
 
-   if (!obj) return NULL;
+   if (!animator) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Animator_Data *animator = eo_data_scope_get(obj, MY_CLASS);
 
    if (!animator) return NULL;
    if (animator->delete_me)
@@ -670,28 +642,9 @@ ecore_animator_del(Ecore_Animator *obj)
      data = animator->run_data;
    else
      data = animator->data;
+
  end:
    return data;
-}
-
-EOLIAN static void
-_ecore_animator_eo_base_destructor(Eo *obj, Ecore_Animator_Data *pd)
-{
-   pd->delete_me = EINA_TRUE;
-   animators_delete_me++;
-
-   eo_destructor(eo_super(obj, MY_CLASS));
-}
-
-EOLIAN static Eo *
-_ecore_animator_eo_base_finalize(Eo *obj, Ecore_Animator_Data *pd)
-{
-   if (!pd->func)
-     {
-        return NULL;
-     }
-
-   return eo_finalize(eo_super(obj, MY_CLASS));
 }
 
 EAPI void
@@ -715,14 +668,8 @@ ecore_animator_frametime_get(void)
 EAPI void
 ecore_animator_freeze(Ecore_Animator *animator)
 {
-   ECORE_ANIMATOR_CHECK(animator);
-   eo_event_freeze(animator);
-}
-
-EOLIAN static void
-_ecore_animator_eo_base_event_freeze(Eo *obj EINA_UNUSED, Ecore_Animator_Data *animator)
-{
    EINA_MAIN_LOOP_CHECK_RETURN;
+   if (!animator) return ;
    if (animator->delete_me) return ;
    if (!animator->suspended)
      {
@@ -735,15 +682,7 @@ _ecore_animator_eo_base_event_freeze(Eo *obj EINA_UNUSED, Ecore_Animator_Data *a
 EAPI void
 ecore_animator_thaw(Ecore_Animator *animator)
 {
-   ECORE_ANIMATOR_CHECK(animator);
-   eo_event_thaw(animator);
-}
-
-EOLIAN static void
-_ecore_animator_eo_base_event_thaw(Eo *obj EINA_UNUSED, Ecore_Animator_Data *animator)
-{
    EINA_MAIN_LOOP_CHECK_RETURN;
-
    if (animator->delete_me) return;
    if (animator->suspended)
      {
@@ -801,21 +740,17 @@ ecore_animator_custom_tick(void)
 void
 _ecore_animator_shutdown(void)
 {
+   Ecore_Animator *animator;
+
    _timer_tick_quit();
    _end_tick();
-   while (animators)
+
+   EINA_INLIST_FREE(animators, animator)
      {
-        Ecore_Animator_Data *animator;
-
-        animator = animators;
         if (animator->suspended) animators_suspended--;
-        animators = (Ecore_Animator_Data *)eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animators));
+        if (animator->delete_me) animators_delete_me--;
 
-        eo_parent_set(animator->obj, NULL);
-        if (eo_destructed_is(animator->obj))
-           eo_manual_free(animator->obj);
-        else
-           eo_manual_free_set(animator->obj, EINA_FALSE);
+        free(animator);
      }
 }
 
@@ -834,9 +769,7 @@ _ecore_animator_run_get(void)
 static Eina_Bool
 _ecore_animator_run(void *data)
 {
-   Ecore_Animator *obj = data;
-   Ecore_Animator_Data *animator = eo_data_scope_get(obj, MY_CLASS);
-
+   Ecore_Animator *animator = data;
    double pos = 0.0, t;
    Eina_Bool run_ret;
 
@@ -852,5 +785,3 @@ _ecore_animator_run(void *data)
    if (t >= (animator->start + animator->run)) run_ret = EINA_FALSE;
    return run_ret;
 }
-
-#include "ecore_animator.eo.c"

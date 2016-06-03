@@ -23,14 +23,14 @@ static Eina_Bool _anim_cb(void *data EINA_UNUSED, double pos)
 
 START_TEST(ecore_test_animators)
 {
-   Eo *animator;
+   Ecore_Animator *animator;
    double interval1 = 0.02;
    double interval2 = 0.01;
 
    fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
 
    ecore_animator_frametime_set(interval1);
-   animator = eo_add(ECORE_ANIMATOR_CLASS, NULL, ecore_animator_timeline_constructor(eo_self, 1, _anim_cb, &interval1));
+   animator = ecore_animator_timeline_add(1, _anim_cb, &interval1);
 
    fail_if(!animator);
 
@@ -38,7 +38,7 @@ START_TEST(ecore_test_animators)
 
    ecore_animator_frametime_set(interval2);
    prev = 0;
-   animator = eo_add(ECORE_ANIMATOR_CLASS, NULL, ecore_animator_timeline_constructor(eo_self, 1, _anim_cb, &interval2));
+   animator = ecore_animator_timeline_add(1, _anim_cb, &interval2);
    fail_if(!animator);
 
    ecore_main_loop_begin();

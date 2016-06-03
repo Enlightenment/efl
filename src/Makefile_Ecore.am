@@ -4,7 +4,6 @@
 ecore_eolian_files_legacy = \
 	lib/ecore/ecore_poller.eo \
 	lib/ecore/ecore_exe.eo \
-	lib/ecore/ecore_animator.eo \
 	lib/ecore/efl_timer.eo
 
 ecore_eolian_files = \

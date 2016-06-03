@@ -2648,9 +2648,6 @@ typedef Eina_Bool (*Ecore_Timeline_Cb)(void *data, double pos);
 /*
  * @since 1.8
  */
-typedef Eo Ecore_Animator; /**< A handle for animators */
-
-#define _ECORE_ANIMATOR_EO_CLASS_TYPE
 
 /**
  * @brief Set the animator call interval in seconds.

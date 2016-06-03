@@ -18,18 +18,6 @@ extern "C" {
  */
 
 /**
- * @ingroup Ecore_Animator_Group
- *
- * @{
- */
-
-#include "ecore_animator.eo.h"
-
-/**
- * @}
- */
-
-/**
  * @ingroup Ecore_Timer_Group
  *
  * @{
