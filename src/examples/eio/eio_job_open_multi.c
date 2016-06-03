@@ -9,12 +9,12 @@
 #include <Eio.h>
 #include <Ecore.h>
 
-void error_cb(void *data, Eina_Error *error)
+void error_cb(void *data, Eina_Error error)
 {
     EINA_SAFETY_ON_NULL_RETURN(error);
     EINA_SAFETY_ON_NULL_RETURN(data);
 
-    const char *msg = eina_error_msg_get(*error);
+    const char *msg = eina_error_msg_get(error);
     EINA_LOG_ERR("error: %s", msg);
 
     Eio_Job *job = data;
@@ -23,9 +23,11 @@ void error_cb(void *data, Eina_Error *error)
     ecore_main_loop_quit();
 }
 
-void done_closing_cb(void *data, Eina_Iterator **result EINA_UNUSED)
+void done_closing_cb(void *data, void* value EINA_UNUSED)
 {
     EINA_SAFETY_ON_NULL_RETURN(data);
+
+    Eina_Iterator* result = value;
 
     printf("%s closed file.\n", __FUNCTION__);
 
@@ -44,7 +46,7 @@ void closing_job(Eio_Job *job, Eina_File *file1, Eina_File *file2)
     eio_job_file_close(job, file1, &tasks[0]);
     eio_job_file_close(job, file2, &tasks[1]);
     promise = eina_promise_all(eina_carray_iterator_new((void**)&tasks[0]));
-    eina_promise_then(promise, (Eina_Promise_Cb)&done_closing_cb, (Eina_Promise_Error_Cb)&error_cb, job);
+    eina_promise_then(promise, &done_closing_cb, &error_cb, job);
 }
 
 void done_open_cb(void *data, Eina_Iterator **iterator)
@@ -74,8 +76,8 @@ void open_file(const char *path, const char *path2)
     Eina_Promise *tasks[3] = {NULL, NULL, NULL};
 
     Eio_Job *job = eo_add(EIO_JOB_CLASS, NULL);
-    eio_job_file_open(job, path, EINA_FALSE, &tasks[0]);
-    eio_job_file_open(job, path2, EINA_FALSE, &tasks[1]);
+    tasks[0] = eio_job_file_open(job, path, EINA_FALSE);
+    tasks[1] = eio_job_file_open(job, path2, EINA_FALSE);
     promise = eina_promise_all(eina_carray_iterator_new((void**)&tasks[0]));
     eina_promise_then(promise, (Eina_Promise_Cb)&done_open_cb, (Eina_Promise_Error_Cb)&error_cb, job);
 }

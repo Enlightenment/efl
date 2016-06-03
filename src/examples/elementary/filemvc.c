@@ -65,7 +65,7 @@ _promise_then(void *data, void *value)
    char *path;
    Eo *model;
 
-   eina_value_get((Eina_Value *)value, &path);
+   eina_value_get(value, &path);
    model = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, path));
    elm_view_list_model_set(priv->fileview, model);
 }

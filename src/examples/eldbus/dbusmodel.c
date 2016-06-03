@@ -15,21 +15,15 @@
 
 static int prop_count = 0;
 
-struct eina_iterator
-{
-  Eina_Iterator* success_iterator;
-  Eina_Iterator* failure_iterator;
-};
-
 static void
-promise_then_prop_c(Eo* obj, struct eina_iterator* it_struct)
+promise_then_prop_c(Eo* obj, void* data)
 {
    Eina_Value * property_value;
    const Eina_Array *properties_list;
    Eina_Array_Iterator a_it;
    char *property, *prop_str;
    const char *name;
-   Eina_Iterator* it = it_struct->success_iterator;
+   Eina_Iterator* it = data;
 
    name = eldbus_model_proxy_name_get(obj);
    properties_list = efl_model_properties_get(obj);
@@ -59,7 +53,7 @@ error_cb(void* data EINA_UNUSED, const Eina_Error *error EINA_UNUSED)
 }
 
 static void
-promise_then_a(Eo* obj EINA_UNUSED, Eina_Accessor **accessor)
+promise_then_a(Eo* obj EINA_UNUSED, void* data)
 {
    const Eina_Array *properties_list;
    Eina_Array_Iterator a_it;
@@ -68,8 +62,9 @@ promise_then_a(Eo* obj EINA_UNUSED, Eina_Accessor **accessor)
    char *property;
    Eo* child;
    int i = 0;
+   Eina_Accessor* accessor = data;
 
-   EINA_ACCESSOR_FOREACH(*accessor, i, child)
+   EINA_ACCESSOR_FOREACH(accessor, i, child)
      {
         properties_list = efl_model_properties_get(child);
         name = eldbus_model_proxy_name_get(child);
@@ -87,7 +82,7 @@ promise_then_a(Eo* obj EINA_UNUSED, Eina_Accessor **accessor)
                   efl_model_property_get(child, property, &promises[j]);
                }
              eina_promise_then(eina_promise_all(eina_carray_iterator_new((void **)promises)),
-                                                         (Eina_Promise_Cb)&promise_then_prop_c, &error_cb, child);
+                               &promise_then_prop_c, &error_cb, child);
              prop_count++;
           }
         else
@@ -100,14 +95,14 @@ promise_then_a(Eo* obj EINA_UNUSED, Eina_Accessor **accessor)
      ecore_main_loop_quit();
 }
 static void
-promise_then(Eo* obj EINA_UNUSED, struct eina_iterator* it_struct)
+promise_then(Eo* obj EINA_UNUSED, void* data)
 {
-   Eina_Accessor **accessor;
+   Eina_Accessor *accessor;
    unsigned int* count;
 
-   Eina_Iterator* iterator = it_struct->success_iterator;
+   Eina_Iterator* iterator = data;
 
-   if (!eina_iterator_next(iterator, (void **)&accessor))
+   if (!eina_iterator_next(iterator, (void**)&accessor))
      {
         printf("bye\n");
         ecore_main_loop_quit();
@@ -144,7 +139,7 @@ main(int argc, char **argv EINA_UNUSED)
    efl_model_children_count_get(root, &promises[1]);
 
    eina_promise_then(eina_promise_all(eina_carray_iterator_new((void **)promises)),
-                      (Eina_Promise_Cb)&promise_then, &error_cb, root);
+                     &promise_then, &error_cb, root);
 
    ecore_main_loop_begin();
 
