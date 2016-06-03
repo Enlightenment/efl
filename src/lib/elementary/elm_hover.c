@@ -400,10 +400,9 @@ _elm_hover_subs_del(Elm_Hover_Data *sd)
 }
 
 static Eina_Bool
-_elm_hover_content_set(Eo *obj, Elm_Hover_Data *pd, const char *swallow, Evas_Object *content)
+_elm_hover_content_set(Eo *obj, Elm_Hover_Data *sd, const char *swallow, Evas_Object *content)
 {
    Eina_Bool int_ret;
-   Elm_Hover_Data *sd = eo_data_scope_get(obj, MY_CLASS);
 
    if (!swallow) return EINA_FALSE;
 
