@@ -200,7 +200,8 @@ read_compressed_channel(const unsigned char *map, size_t length, size_t *positio
 {
    // FIXME: what does channel_length means, and why is it not used
    unsigned int i;
-   char headbyte, c;
+   signed char headbyte;
+   unsigned char c;
 
 #define CHECK_RET(Call)                                         \
    if (!Call) return READ_COMPRESSED_ERROR_FILE_READ_ERROR;	\
@@ -502,7 +503,7 @@ get_single_channel(PSD_Header *head,
 		   Eina_Bool compressed)
 {
    unsigned int i, bpc;
-   char headbyte;
+   signed char headbyte;
    int c;
    int pixels_count;
 
