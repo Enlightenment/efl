@@ -585,7 +585,7 @@ xcf_load_image_props(void)
              break;
            case PROP_COMPRESSION:
                {
-                  char compression;
+                  char compression = 0;
 
                   image->cp += xcf_read_int8(image->file, (DATA8 *)&compression, 1);
 
