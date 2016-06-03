@@ -155,7 +155,8 @@ pc/emotion.pc \
 pc/ethumb.pc \
 pc/ethumb_client.pc \
 pc/elocation.pc \
-pc/elementary.pc
+pc/elementary.pc \
+pc/ejson.pc
 
 if HAVE_CXX11
 pkgconfig_DATA += \

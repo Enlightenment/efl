@@ -5624,6 +5624,38 @@ AC_ARG_ENABLE([cancel-ok],
               ],[])
 AC_SUBST(ELM_EDJE_DEFINES)
 
+#### Ejson
+EFL_LIB_START([Ejson])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+## Compatibility layers
+
+### Checks for Libraries
+EFL_INTERNAL_DEPEND_PKG([EJSON], [eina])
+EFL_INTERNAL_DEPEND_PKG([EJSON], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EJSON], [eo])
+EFL_INTERNAL_DEPEND_PKG([EJSON], [efl])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END([Ejson])
+#### End of Ejson
+
 
 ## Disable warning for OS that have a specifc configuration
 case "$host_os" in
@@ -5764,6 +5796,7 @@ pc/elementary.pc
 pc/elementary-cxx.pc
 pc/elput.pc
 pc/ecore-drm2.pc
+pc/ejson.pc
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/ethumb.service
 $po_makefile_in
@@ -5944,6 +5977,7 @@ echo "Ethumb..........: yes"
 echo "Ethumb_Client...: yes"
 echo "Elua............: $have_elua"
 echo "Elementary......: yes (${features_elementary})"
+echo "Ejson...........: yes"
 echo 
 
 echo

@@ -1,0 +1,50 @@
+
+enum Ejson.Model.Type {
+    null,
+    boolean,
+    double,
+    int,
+    string,
+    object,
+    array
+}
+
+class Ejson.Model (Eo.Base, Efl.Model) {
+    [[Ejson model class]]
+
+    data: Ejson_Model_Data;
+    methods {
+        string_set {
+            [[Custom Ejson_Model constructor by stream.
+
+              ejson_model_constructor
+              @since 1.17]]
+            params {
+                @in stream: const(char)*; [[Json object type]]
+            }
+        }
+
+        @property type {
+            get {  }
+            set {  }
+            values {
+                type: Ejson.Model.Type;
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+        Efl.Model.properties.get;
+        Efl.Model.property_set;
+        Efl.Model.property_get;
+        Efl.Model.child_add;
+        Efl.Model.child_del;
+        Efl.Model.children_slice_get;
+        Efl.Model.children_count_get;
+    }
+    constructors {
+        .type;
+        .string_set;
+    }
+}

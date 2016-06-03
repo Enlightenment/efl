@@ -1,0 +1,18 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+modules=@libdir@/ejson
+module_arch=@MODULE_ARCH@
+datarootdir=@datarootdir@
+datadir=@datadir@
+eoincludedir=@datadir@/eolian/include
+eolian_flags=-I${pc_sysrootdir}${eoincludedir}/ejson-@VMAJ@
+
+Name: ejson
+Description: Ejson model class
+Requires.private: @requirements_pc_ejson@
+Version: @VERSION@
+Libs: -L${libdir} -lejson -lefl -leo -leina -ecore
+Libs.private: @requirements_libs_ejson@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-@VMAJ@ -I${includedir}/ejson-@VMAJ@
