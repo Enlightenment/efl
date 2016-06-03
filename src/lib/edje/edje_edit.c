@@ -5236,6 +5236,59 @@ edje_edit_part_item_index_del(Evas_Object *obj, const char *part, unsigned int i
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_part_item_index_name_set(Evas_Object *obj, const char *part, unsigned int index, const char *name)
+{
+   Edje_Part *ep;
+   unsigned int i;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+   if (rp->part->items_count < index)
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   /* check if a part with given name is exists. */
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, name)))
+          return EINA_FALSE;
+     }
+
+   eina_stringshare_del(ep->items[index]->name);
+   ep->items[index]->name = eina_stringshare_add(name);
+
+   return EINA_TRUE;
+}
+
+EAPI const char *
+edje_edit_part_item_index_name_get(Evas_Object *obj, const char *part, unsigned int index)
+{
+   Edje_Part *ep;
+
+   GET_RP_OR_RETURN(NULL);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return NULL;
+   if (rp->part->items_count < index)
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return NULL;
+
+   return eina_stringshare_add(ep->items[index]->name);
+}
+
 /* deprecated */
 EAPI Eina_Bool
 edje_edit_part_item_source_set(Evas_Object *obj, const char *part, const char *item_name, const char *source_group)
