@@ -2863,7 +2863,7 @@ _efl_loop_args_add(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, int argc, const char 
 static void
 _efl_loop_internal_cancel(Efl_Internal_Promise *p)
 {
-   eina_promise_owner_error_set(p->promise, _promise_canceled);
+   eina_promise_owner_error_set(p->promise, EINA_ERROR_PROMISE_CANCEL);
    free(p);
 }
 
