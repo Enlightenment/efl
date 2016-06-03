@@ -90,15 +90,14 @@ cairo/ector_cairo_software_surface.c \
 cairo/ector_cairo_surface.c
 
 # SW draw static lib
-draw_sources = \
+libector_la_SOURCES += \
 ../../static_libs/draw/draw_main_sse2.c \
 ../../static_libs/draw/draw_main.c \
 ../../static_libs/draw/draw_main_neon.c \
-static_libs/rg_etc/rg_etc1.c \
-static_libs/rg_etc/rg_etc2.c \
-static_libs/rg_etc/rg_etc1.h \
-static_libs/rg_etc/etc2_encoder.c \
-$(NULL)
+../../static_libs/rg_etc/rg_etc1.c \
+../../static_libs/rg_etc/rg_etc2.c \
+../../static_libs/rg_etc/rg_etc1.h \
+../../static_libs/rg_etc/etc2_encoder.c
 
 # And the default software backend
 libector_la_SOURCES += \
@@ -112,8 +111,7 @@ software/ector_software_surface.c \
 software/ector_software_buffer.c \
 ../../static_libs/freetype/sw_ft_math.c \
 ../../static_libs/freetype/sw_ft_raster.c \
-../../static_libs/freetype/sw_ft_stroker.c \
-$(draw_sources)
+../../static_libs/freetype/sw_ft_stroker.c
 
 # And now the gl backend
 libector_la_SOURCES += \
