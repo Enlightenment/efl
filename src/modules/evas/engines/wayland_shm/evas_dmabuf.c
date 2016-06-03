@@ -322,12 +322,28 @@ static const struct wl_buffer_listener buffer_listener =
 };
 
 static void
-_allocation_complete(Dmabuf_Buffer *b)
+_fallback(Dmabuf_Surface *s, int w, int h)
 {
-   Surface *s;
-   int w, h, num_buf;
    Eina_Bool recovered;
 
+   dmabuf_totally_hosed = EINA_TRUE;
+
+   /* Depending when things broke we may need this commit to get
+    * the frame callback to fire and keep the animator running
+    */
+   wl_surface_commit(s->wl_surface);
+
+   _evas_dmabuf_surface_destroy(s->surface);
+   recovered = _evas_surface_init(s->surface, w, h, s->nbuf);
+   if (recovered) return;
+
+   ERR("Fallback from dmabuf to shm attempted and failed.");
+   abort();
+}
+
+static void
+_allocation_complete(Dmabuf_Buffer *b)
+{
    b->pending = EINA_FALSE;
    if (!dmabuf_totally_hosed) return;
 
@@ -336,21 +352,7 @@ _allocation_complete(Dmabuf_Buffer *b)
    /* Something went wrong, better try to fall back to a different
     * buffer type...
     */
-   s = b->surface->surface;
-   w = b->w;
-   h = b->h;
-   num_buf = b->surface->nbuf;
-
-   /* Depending when things broke we may need this commit to get
-    * the frame callback to fire and keep the animator running
-    */
-   wl_surface_commit(b->surface->wl_surface);
-   _evas_dmabuf_surface_destroy(b->surface->surface);
-   recovered = _evas_surface_init(s, w, h, num_buf);
-   if (recovered) return;
-
-   ERR("Fallback from dmabuf to shm attempted and failed.");
-   abort();
+   _fallback(b->surface, b->w, b->h);
 }
 
 static void
@@ -417,6 +419,8 @@ _evas_dmabuf_buffer_unlock(Dmabuf_Buffer *b)
 static void
 _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
 {
+   if (!b) return;
+
    if (b->locked || b->busy || b->pending)
      {
         b->orphaned = EINA_TRUE;
@@ -432,6 +436,7 @@ _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
 static void
 _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_UNUSED)
 {
+   Dmabuf_Buffer *buf;
    Dmabuf_Surface *surface;
    int i;
 
@@ -449,7 +454,13 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
           }
 
         _evas_dmabuf_buffer_destroy(b);
-        surface->buffer[i] = _evas_dmabuf_buffer_init(surface, w, h);
+        buf = _evas_dmabuf_buffer_init(surface, w, h);
+        surface->buffer[i] = buf;
+        if (!buf)
+           {
+              _fallback(surface, w, h);
+              return;
+           }
      }
 }
 
@@ -581,6 +592,7 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    if (!out->bh)
    {
       free(out);
+      _fallback(s, w, h);
       return NULL;
    }
    out->w = w;
@@ -660,6 +672,6 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    return EINA_TRUE;
 
 err:
-   _evas_dmabuf_surface_destroy(s);
+   _fallback(surf, w, h);
    return EINA_FALSE;
 }
