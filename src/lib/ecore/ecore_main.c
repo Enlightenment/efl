@@ -2826,18 +2826,6 @@ _efl_loop_job_cb(void *data)
    free(j);
 }
 
-static Eina_Bool
-_efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
-{
-   Efl_Internal_Promise *t = data;
-
-   eina_promise_owner_value_set(t->promise, t->data, NULL);
-
-   eo_del(t->u.timer);
-
-   return EO_CALLBACK_CONTINUE;
-}
-
 static void
 _efl_loop_args_job_cb(void *data, void *value EINA_UNUSED)
 {
@@ -2860,6 +2848,37 @@ _efl_loop_args_add(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, int argc, const char 
    eina_promise_then(job, _efl_loop_args_job_cb, NULL, args);
 }
 
+static Eina_Bool _efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED);
+static Eina_Bool _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED);
+
+EO_CALLBACKS_ARRAY_DEFINE(timeout,
+                          { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
+                          { EO_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
+
+/* This event will be triggered when the main loop is destroyed and destroy its timers along */
+static void _efl_loop_internal_cancel(Efl_Internal_Promise *p);
+
+static Eina_Bool
+_efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED)
+{
+   _efl_loop_internal_cancel(data);
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
+{
+   Efl_Internal_Promise *t = data;
+
+   eina_promise_owner_value_set(t->promise, t->data, NULL);
+
+   eo_event_callback_array_del(t->u.timer, timeout(), t);
+   eo_del(t->u.timer);
+
+   return EO_CALLBACK_CONTINUE;
+}
+
 static void
 _efl_loop_internal_cancel(Efl_Internal_Promise *p)
 {
@@ -2875,9 +2894,14 @@ _efl_loop_job_cancel(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
    if (j->job_is)
      {
         ecore_job_del(j->u.job);
-        _efl_loop_internal_cancel(j);
      }
-   else eo_del(j->u.timer);
+   else
+     {
+        eo_event_callback_array_del(j->u.timer, timeout(), j);
+        eo_del(j->u.timer);
+     }
+
+   _efl_loop_internal_cancel(j);
 }
 
 static Efl_Internal_Promise *
@@ -2919,19 +2943,6 @@ _efl_loop_job(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, const void *da
 
    return NULL;
 }
-
-/* This event will be triggered when the main loop is destroyed and destroy its timers along */
-static Eina_Bool
-_efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED)
-{
-   _efl_loop_internal_cancel(data);
-
-   return EO_CALLBACK_CONTINUE;
-}
-
-EO_CALLBACKS_ARRAY_DEFINE(timeout,
-                          { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
-                          { EO_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
 
 static Eina_Promise *
 _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const void *data)
