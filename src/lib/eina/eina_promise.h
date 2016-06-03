@@ -528,6 +528,14 @@ EAPI extern Eina_Error EINA_ERROR_PROMISE_NO_NOTIFY;
  */
 EAPI extern Eina_Error EINA_ERROR_PROMISE_CANCEL;
 
+/**
+ * @var EINA_ERROR_PROMISE_NULL
+ *
+ * @brief The error identifier corresponding to when a promise function
+ * is called on a NULL promise
+ */
+EAPI extern Eina_Error EINA_ERROR_PROMISE_NULL;
+
 /*
  * @internal
  */

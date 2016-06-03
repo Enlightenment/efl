@@ -667,6 +667,8 @@ eina_promise_all(Eina_Iterator* it)
    Eina_Promise **cur_promise, **last;
    _Eina_Promise_Iterator* internal_it;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(it, NULL);
+   
    promises = eina_array_new(20);
 
    EINA_ITERATOR_FOREACH(it, current)
@@ -755,6 +757,7 @@ _eina_promise_progress_notify_fulfilled(void* data, Eina_Promise_Owner* p EINA_U
 
 EAPI Eina_Error EINA_ERROR_PROMISE_NO_NOTIFY;
 EAPI Eina_Error EINA_ERROR_PROMISE_CANCEL;
+EAPI Eina_Error EINA_ERROR_PROMISE_NULL;
 
 static void
 _eina_promise_progress_notify_failed(void* data)
@@ -831,6 +834,8 @@ eina_promise_race(Eina_Iterator* it)
    _Eina_Promise_Race_Value_Type *value;
    int num_promises;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(it, NULL);
+
    promises = eina_array_new(20);
 
    EINA_ITERATOR_FOREACH(it, current)
@@ -872,36 +877,65 @@ EAPI void
 eina_promise_then(Eina_Promise* promise, Eina_Promise_Cb callback,
 		  Eina_Promise_Error_Cb error_cb, void* data)
 {
-   promise->then(promise, callback, error_cb, data);
+   if(!promise)
+     {
+        error_cb(data, EINA_ERROR_PROMISE_NULL);
+        return;
+     }
+   else
+     promise->then(promise, callback, error_cb, data);
 }
+
+#define _EINA_PROMISE_NULL_CHECK(promise, v)    \
+  if(!promise)                                  \
+    {                                           \
+      eina_error_set(EINA_ERROR_PROMISE_NULL);  \
+      return v;                                 \
+    }
+#define EINA_MAGIC_CHECK_PROMISE(promise)               \
+  do if(!EINA_MAGIC_CHECK(promise, EINA_MAGIC_PROMISE))    \
+       {EINA_MAGIC_FAIL(promise, EINA_MAGIC_PROMISE);} while(0)
+#define EINA_MAGIC_CHECK_PROMISE_OWNER(promise)               \
+  do {if(!EINA_MAGIC_CHECK(promise, EINA_MAGIC_PROMISE_OWNER))  \
+      {EINA_MAGIC_FAIL(promise, EINA_MAGIC_PROMISE_OWNER);} } while(0)
 
 EAPI void
 eina_promise_owner_value_set(Eina_Promise_Owner* promise, const void* value, Eina_Promise_Free_Cb free)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, );
+   EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    promise->value_set(promise, value, free);
 }
 
 EAPI void
 eina_promise_owner_error_set(Eina_Promise_Owner* promise, Eina_Error error)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, );
+   EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    promise->error_set(promise, error);
 }
 
 EAPI void *
 eina_promise_value_get(Eina_Promise const* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, NULL);
+   EINA_MAGIC_CHECK_PROMISE(promise);
    return promise->value_get(promise);
 }
 
 EAPI Eina_Error
 eina_promise_error_get(Eina_Promise const* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, EINA_ERROR_PROMISE_NULL);
+   EINA_MAGIC_CHECK_PROMISE(promise);
    return promise->error_get(promise);
 }
 
 EAPI Eina_Bool
 eina_promise_pending_is(Eina_Promise const* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, EINA_FALSE);
+   EINA_MAGIC_CHECK_PROMISE(promise);
    return promise->pending_is(promise);
 }
 
@@ -909,66 +943,88 @@ EAPI void
 eina_promise_progress_cb_add(Eina_Promise* promise, Eina_Promise_Progress_Cb callback, void* data,
                              Eina_Promise_Free_Cb free_cb)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, );
+   EINA_MAGIC_CHECK_PROMISE(promise);
    promise->progress_cb_add(promise, callback, data, free_cb);
 }
 
 EAPI void
 eina_promise_cancel(Eina_Promise* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, );
+   EINA_MAGIC_CHECK_PROMISE(promise);
    promise->cancel(promise);
 }
 
 EAPI void
 eina_promise_ref(Eina_Promise* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, );
+   EINA_MAGIC_CHECK_PROMISE(promise);
    promise->ref(promise);
 }
 
 EAPI void
 eina_promise_unref(Eina_Promise* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, );
+   EINA_MAGIC_CHECK_PROMISE(promise);
    promise->unref(promise);
 }
 
 EAPI void *
 eina_promise_owner_buffer_get(Eina_Promise_Owner* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, NULL);
+   EINA_MAGIC_CHECK_PROMISE(promise);
    return promise->buffer_get(promise);
 }
 
 EAPI void *
 eina_promise_buffer_get(Eina_Promise* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, NULL);
+   EINA_MAGIC_CHECK_PROMISE(promise);
    return promise->buffer_get(promise);
 }
 
 EAPI size_t
 eina_promise_value_size_get(Eina_Promise const* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, 0);
+   EINA_MAGIC_CHECK_PROMISE(promise);
    return promise->value_size_get(promise);
 }
 
 EAPI Eina_Promise *
 eina_promise_owner_promise_get(Eina_Promise_Owner* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, NULL);
+   EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    return promise->promise_get(promise);
 }
 
 EAPI Eina_Bool
 eina_promise_owner_pending_is(Eina_Promise_Owner const* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, EINA_FALSE);
+   EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    return promise->pending_is(promise);
 }
 
 EAPI Eina_Bool
 eina_promise_owner_cancelled_is(Eina_Promise_Owner const* promise)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, EINA_FALSE);
+   EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    return promise->cancelled_is(promise);
 }
 
 EAPI void
 eina_promise_owner_progress(Eina_Promise_Owner const* promise, void* progress)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, );
+   EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    promise->progress(promise, progress);
 }
 
@@ -976,16 +1032,20 @@ EAPI void
 eina_promise_owner_progress_notify(Eina_Promise_Owner* promise, Eina_Promise_Progress_Notify_Cb progress_cb,
                                    void* data, Eina_Promise_Free_Cb free_cb)
 {
+   _EINA_PROMISE_NULL_CHECK(promise, );
+   EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    promise->progress_notify(promise, progress_cb, data, free_cb);
 }
 
 static const char EINA_ERROR_PROMISE_NO_NOTIFY_STR[] = "Out of memory";
 static const char EINA_ERROR_PROMISE_CANCEL_STR[] = "Promise cancelled";
+static const char EINA_ERROR_PROMISE_NULL_STR[] = "NULL promise";
 
 Eina_Bool eina_promise_init()
 {
    EINA_ERROR_PROMISE_NO_NOTIFY = eina_error_msg_static_register(EINA_ERROR_PROMISE_NO_NOTIFY_STR);
    EINA_ERROR_PROMISE_CANCEL = eina_error_msg_static_register(EINA_ERROR_PROMISE_CANCEL_STR);
+   EINA_ERROR_PROMISE_NULL = eina_error_msg_static_register(EINA_ERROR_PROMISE_NULL_STR);
 
    _eina_promise_log_dom = eina_log_domain_register("eina_promise",
                                                     EINA_LOG_COLOR_DEFAULT);
