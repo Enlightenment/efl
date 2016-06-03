@@ -20,8 +20,8 @@
 #define MY_CLASS_NAME "Elm_Hover"
 #define MY_CLASS_NAME_LEGACY "elm_hover"
 
-#define ELM_HOVER_PARTS_FOREACH unsigned int i; \
-  for (i = 0; i < sizeof(sd->subs) / sizeof(sd->subs[0]); i++)
+#define ELM_HOVER_PARTS_FOREACH                                         \
+  for (unsigned int i = 0; i < sizeof(sd->subs) / sizeof(sd->subs[0]); i++)
 
 #define _HOV_LEFT               (&(sd->subs[0]))
 #define _HOV_TOP_LEFT           (&(sd->subs[1]))
@@ -400,9 +400,10 @@ _elm_hover_subs_del(Elm_Hover_Data *sd)
 }
 
 static Eina_Bool
-_elm_hover_content_set(Eo *obj, Elm_Hover_Data *sd, const char *swallow, Evas_Object *content)
+_elm_hover_content_set(Eo *obj, Elm_Hover_Data *pd, const char *swallow, Evas_Object *content)
 {
    Eina_Bool int_ret;
+   Elm_Hover_Data *sd = eo_data_scope_get(obj, MY_CLASS);
 
    if (!swallow) return EINA_FALSE;
 
@@ -564,15 +565,13 @@ _hov_dismiss_cb(void *data,
 }
 
 EOLIAN static void
-_elm_hover_evas_object_smart_add(Eo *obj, Elm_Hover_Data *priv)
+_elm_hover_evas_object_smart_add(Eo *obj, Elm_Hover_Data *sd)
 {
-   unsigned int i;
-
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   for (i = 0; i < sizeof(priv->subs) / sizeof(priv->subs[0]); i++)
-     priv->subs[i].swallow = _content_aliases[i].alias;
+   ELM_HOVER_PARTS_FOREACH
+     sd->subs[i].swallow = _content_aliases[i].alias;
 
    if (!elm_layout_theme_set(obj, "hover", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
@@ -582,16 +581,16 @@ _elm_hover_evas_object_smart_add(Eo *obj, Elm_Hover_Data *priv)
    elm_layout_signal_callback_add
      (obj, "elm,action,hide,finished", "elm", _hov_hide_cb, obj);
 
-   priv->offset = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_pass_events_set(priv->offset, EINA_TRUE);
-   evas_object_color_set(priv->offset, 0, 0, 0, 0);
+   sd->offset = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_pass_events_set(sd->offset, EINA_TRUE);
+   evas_object_color_set(sd->offset, 0, 0, 0, 0);
 
-   priv->size = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_pass_events_set(priv->size, EINA_TRUE);
-   evas_object_color_set(priv->size, 0, 0, 0, 0);
+   sd->size = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_pass_events_set(sd->size, EINA_TRUE);
+   evas_object_color_set(sd->size, 0, 0, 0, 0);
 
-   elm_layout_content_set(obj, "elm.swallow.offset", priv->offset);
-   elm_layout_content_set(obj, "elm.swallow.size", priv->size);
+   elm_layout_content_set(obj, "elm.swallow.offset", sd->offset);
+   elm_layout_content_set(obj, "elm.swallow.size", sd->size);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 }

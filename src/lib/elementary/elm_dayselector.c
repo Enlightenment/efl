@@ -220,9 +220,10 @@ _item_find(const Evas_Object *obj,
 }
 
 static Eina_Bool
-_elm_dayselector_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item, Evas_Object *content)
+_elm_dayselector_content_set(Eo *obj, Elm_Dayselector_Data *pd, const char *item, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
+   Elm_Dayselector_Data *sd = eo_data_scope_get(obj, MY_CLASS);
 
    int day;
    char buf[1024];
