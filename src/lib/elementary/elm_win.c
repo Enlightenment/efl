@@ -6033,7 +6033,7 @@ elm_win_screen_position_get(const Evas_Object *obj, int *x, int *y)
 }
 
 EAPI void
-elm_win_efl_screen_dpi_get(const Evas_Object *obj, int *xdpi, int *ydpi)
+elm_win_screen_dpi_get(const Evas_Object *obj, int *xdpi, int *ydpi)
 {
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
