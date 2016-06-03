@@ -2874,10 +2874,11 @@ _efl_loop_job_cancel(void* data, Eina_Promise_Owner* promise EINA_UNUSED)
    Efl_Internal_Promise *j = data;
 
    if (j->job_is)
-     ecore_job_del(j->u.job);
-   else
-     eo_del(j->u.timer);
-   _efl_loop_internal_cancel(j);
+     {
+        ecore_job_del(j->u.job);
+        _efl_loop_internal_cancel(j);
+     }
+   else eo_del(j->u.timer);
 }
 
 static Efl_Internal_Promise *
