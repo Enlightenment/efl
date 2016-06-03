@@ -1,3 +1,4 @@
+type @extern Ecore_Cb: __undefined_type;
 type @extern Ecore_Task_Cb: __undefined_type;
 
 enum Ecore.Pos_Map
