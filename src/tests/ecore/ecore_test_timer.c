@@ -208,8 +208,43 @@ START_TEST(ecore_test_timeout)
 }
 END_TEST
 
+static void
+_ecore_promise_then(void *data EINA_UNUSED, void *value EINA_UNUSED)
+{
+   abort();
+}
+
+static void
+_ecore_promise_cancel(void *data, Eina_Error error)
+{
+   Eina_Bool *bob = data;
+
+   fail_if(error != EINA_ERROR_PROMISE_CANCEL);
+   *bob = EINA_TRUE;
+}
+
+START_TEST(ecore_test_timeout_cancel)
+{
+   Eina_Promise *timeout = NULL;
+   Eina_Bool bob = EINA_FALSE;
+   double start;
+
+   ecore_init();
+
+   start = ecore_time_get();
+   timeout = efl_loop_timeout(ecore_main_loop_get(), 0.2, &start);
+   eina_promise_then(timeout, &_ecore_promise_then, &_ecore_promise_cancel, &bob);
+   eina_promise_cancel(timeout);
+
+   fail_if(bob != EINA_TRUE);
+
+   ecore_shutdown();
+}
+END_TEST
+
 void ecore_test_timer(TCase *tc)
 {
   tcase_add_test(tc, ecore_test_timers);
   tcase_add_test(tc, ecore_test_timeout);
+  tcase_add_test(tc, ecore_test_timeout_cancel);
 }
