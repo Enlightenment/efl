@@ -1,8 +1,11 @@
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include "elementary_config.h"
 #endif
 
-#include "elm_code_suite.h"
+#define ELM_INTERNAL_API_ARGESFSDFEFC
+
+#include "elm_suite.h"
+#include "Elementary.h"
 
 START_TEST (elm_code_test_widget_text_tab_width)
 {
@@ -48,6 +51,7 @@ START_TEST (elm_code_test_widget_text_position)
 
    ck_assert_int_eq(2, elm_code_widget_line_text_position_for_column_get(widget, line, 9));
    ck_assert_int_eq(1, elm_code_widget_line_text_position_for_column_get(widget, line, 7));
+   elm_shutdown();
 }
 END_TEST
 
@@ -56,4 +60,3 @@ void elm_code_test_widget_text(TCase *tc)
    tcase_add_test(tc, elm_code_test_widget_text_tab_width);
    tcase_add_test(tc, elm_code_test_widget_text_position);
 }
-

@@ -1,8 +1,11 @@
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include "elementary_config.h"
 #endif
 
-#include "elm_code_suite.h"
+#define ELM_INTERNAL_API_ARGESFSDFEFC
+
+#include "elm_suite.h"
+#include "Elementary.h"
 #include "elm_code_parse.h"
 
 static int line_calls, file_calls;
@@ -25,6 +28,7 @@ START_TEST (elm_code_parse_hook_memory_test)
    line_calls = 0;
    file_calls = 0;
 
+   elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -35,6 +39,7 @@ START_TEST (elm_code_parse_hook_memory_test)
    ck_assert_int_eq(0, file_calls);
 
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
@@ -42,11 +47,12 @@ START_TEST (elm_code_parse_hook_file_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
-   char *path = TESTS_DIR "testfile.txt";
+   char *path = TESTS_SRC_DIR "testfile.txt";
 
    line_calls = 0;
    file_calls = 0;
 
+   elm_init(1, NULL);
    code = elm_code_create();
 
    elm_code_parser_add(code, _parser_line_callback, _parser_file_callback, NULL);
@@ -57,6 +63,7 @@ START_TEST (elm_code_parse_hook_file_test)
 
    elm_code_file_close(file);
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
@@ -66,6 +73,7 @@ START_TEST (elm_code_parse_todo_test)
    Elm_Code_File *file;
    Elm_Code_Line *line;
 
+   elm_init(1, NULL);
    elm_code_init();
 
    code = elm_code_create();
@@ -82,6 +90,7 @@ START_TEST (elm_code_parse_todo_test)
    elm_code_line_text_set(line, "TOFIX", 5);
    ck_assert_int_eq(ELM_CODE_STATUS_TYPE_DEFAULT, line->status);
    elm_code_shutdown();
+   elm_shutdown();
 }
 END_TEST
 
@@ -91,4 +100,3 @@ void elm_code_test_parse(TCase *tc)
    tcase_add_test(tc, elm_code_parse_hook_file_test);
    tcase_add_test(tc, elm_code_parse_todo_test);
 }
-

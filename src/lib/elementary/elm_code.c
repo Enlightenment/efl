@@ -1,11 +1,11 @@
 #ifdef HAVE_CONFIG
-# include "config.h"
+# include "elementary_config.h"
 #endif
 
 #include <Eo.h>
 #include <Evas.h>
 
-#include "Elm_Code.h"
+#include "Elementary.h"
 
 #include "elm_code_private.h"
 

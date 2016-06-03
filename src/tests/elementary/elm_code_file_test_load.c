@@ -1,16 +1,20 @@
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include "elementary_config.h"
 #endif
 
-#include "elm_code_suite.h"
+#define ELM_INTERNAL_API_ARGESFSDFEFC
+
+#include "elm_suite.h"
+#include "Elementary.h"
 
 START_TEST (elm_code_file_load)
 {
-   char *path = TESTS_DIR "testfile.txt";
+   char *path = TESTS_SRC_DIR "/testfile.txt";
    char real[EINA_PATH_MAX];
    Elm_Code_File *file;
    Elm_Code *code;
 
+   elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
    realpath(path, real);
@@ -19,51 +23,58 @@ START_TEST (elm_code_file_load)
    ck_assert_str_eq(real, elm_code_file_path_get(file));
    elm_code_file_close(file);
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
 START_TEST (elm_code_file_load_lines)
 {
-   char *path = TESTS_DIR "testfile.txt";
+   char *path = TESTS_SRC_DIR "/testfile.txt";
    Elm_Code_File *file;
    Elm_Code *code;
 
+   elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
    ck_assert_uint_eq(4, elm_code_file_lines_get(file));
    elm_code_file_close(file);
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
 START_TEST (elm_code_file_load_blank_lines)
 {
-   char *path = TESTS_DIR "testfile-withblanks.txt";
+   char *path = TESTS_SRC_DIR "/testfile-withblanks.txt";
    Elm_Code_File *file;
    Elm_Code *code;
 
+   elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
    ck_assert_uint_eq(8, elm_code_file_lines_get(file));
    elm_code_file_close(file);
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
 START_TEST (elm_code_file_load_windows)
 {
-   char *path = TESTS_DIR "testfile-windows.txt";
+   char *path = TESTS_SRC_DIR "/testfile-windows.txt";
    Elm_Code_File *file;
    Elm_Code *code;
 
+   elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
    ck_assert_uint_eq(4, elm_code_file_lines_get(file));
    elm_code_file_close(file);
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
@@ -81,10 +92,11 @@ static void _assert_line_content_eq(const char *content, Elm_Code_Line *line)
 
 START_TEST (elm_code_file_load_content)
 {
-   char *path = TESTS_DIR "testfile.txt";
+   char *path = TESTS_SRC_DIR "/testfile.txt";
    Elm_Code_File *file;
    Elm_Code *code;
 
+   elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
@@ -92,16 +104,18 @@ START_TEST (elm_code_file_load_content)
    _assert_line_content_eq("another line", elm_code_file_line_get(file, 4));
    elm_code_file_close(file);
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
 START_TEST (elm_code_file_line_ending_unix)
 {
-   char *path = TESTS_DIR "testfile.txt";
+   char *path = TESTS_SRC_DIR "/testfile.txt";
    Elm_Code_File *file;
    Elm_Code *code;
    short len;
 
+   elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
@@ -111,16 +125,18 @@ START_TEST (elm_code_file_line_ending_unix)
 
    elm_code_file_close(file);
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
 START_TEST (elm_code_file_line_ending_windows)
 {
-   char *path = TESTS_DIR "testfile-windows.txt";
+   char *path = TESTS_SRC_DIR "/testfile-windows.txt";
    Elm_Code_File *file;
    Elm_Code *code;
    short len;
 
+   elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
@@ -130,6 +146,7 @@ START_TEST (elm_code_file_line_ending_windows)
 
    elm_code_file_close(file);
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
@@ -143,4 +160,3 @@ void elm_code_file_test_load(TCase *tc)
    tcase_add_test(tc, elm_code_file_line_ending_unix);
    tcase_add_test(tc, elm_code_file_line_ending_windows);
 }
-

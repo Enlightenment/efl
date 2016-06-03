@@ -1,8 +1,8 @@
-#ifdef HAVE_CONFIG
-# include "config.h"
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
 #endif
 
-#include "Elm_Code.h"
+#include "Elementary.h"
 
 #include "elm_code_private.h"
 
@@ -319,4 +319,3 @@ EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int num
 {
    return eina_list_nth(file->lines, number - 1);
 }
-

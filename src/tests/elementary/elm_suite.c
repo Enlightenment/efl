@@ -71,6 +71,15 @@ static const Efl_Test_Case etc[] = {
   { "elm_slideshow", elm_test_slideshow},
   { "elm_spinner", elm_test_spinner},
   { "elm_plug", elm_test_plug},
+  { "file_load", elm_code_file_test_load },
+  { "file_memory", elm_code_file_test_memory },
+  { "parse", elm_code_test_parse },
+  { "text", elm_code_test_text },
+  { "basic", elm_code_test_basic },
+  { "widget", elm_code_test_widget },
+  { "widget_text", elm_code_test_widget_text },
+  { "widget_selection", elm_code_test_widget_selection },
+  { "widget_undo", elm_code_test_widget_undo },
   { NULL, NULL }
 };
 

@@ -1,12 +1,13 @@
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include "elementary_config.h"
 #endif
 
-#include "elm_code_suite.h"
+#define ELM_INTERNAL_API_ARGESFSDFEFC
 
+#include "elm_suite.h"
+#include "Elementary.h"
 #include "elm_code_widget_private.h"
-
-#include "widget/elm_code_widget_selection.h"
+#include "elm_code_widget_selection.h"
 
 START_TEST (elm_code_test_widget_selection_set)
 {
@@ -502,6 +503,7 @@ START_TEST (elm_code_test_widget_selection_select_line)
    selection = elm_code_widget_selection_text_get(widget);
    ck_assert_str_eq("line2", selection);
    free(selection);
+   elm_shutdown();
 }
 END_TEST
 
@@ -536,6 +538,7 @@ START_TEST (elm_code_test_widget_selection_select_word)
    selection = elm_code_widget_selection_text_get(widget);
    ck_assert_str_eq("stuff", selection);
    free(selection);
+   elm_shutdown();
 }
 END_TEST
 
@@ -574,6 +577,7 @@ START_TEST (elm_code_test_widget_selection_select_word_punctuation)
    selection = elm_code_widget_selection_text_get(widget);
    ck_assert_str_eq("mark", selection);
    free(selection);
+   elm_shutdown();
 }
 END_TEST
 
@@ -612,6 +616,7 @@ START_TEST (elm_code_test_widget_selection_select_word_symbols)
    selection = elm_code_widget_selection_text_get(widget);
    ck_assert_str_eq("braces", selection);
    free(selection);
+   elm_shutdown();
 }
 END_TEST
 
@@ -636,4 +641,3 @@ void elm_code_test_widget_selection(TCase *tc)
    tcase_add_test(tc, elm_code_test_widget_selection_select_word_punctuation);
    tcase_add_test(tc, elm_code_test_widget_selection_select_word_symbols);
 }
-

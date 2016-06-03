@@ -1,8 +1,11 @@
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include "elementary_config.h"
 #endif
 
-#include "elm_code_suite.h"
+#define ELM_INTERNAL_API_ARGESFSDFEFC
+
+#include "elm_suite.h"
+#include "Elementary.h"
 
 START_TEST (elm_code_line_create_test)
 {
@@ -10,6 +13,7 @@ START_TEST (elm_code_line_create_test)
    Elm_Code_File *file;
    Elm_Code_Line *line;
 
+   elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -19,6 +23,7 @@ START_TEST (elm_code_line_create_test)
    ck_assert(!!line);
 
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
@@ -28,6 +33,7 @@ START_TEST (elm_code_line_token_count_test)
    Elm_Code_File *file;
    Elm_Code_Line *line;
 
+   elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -41,6 +47,7 @@ START_TEST (elm_code_line_token_count_test)
    ck_assert_int_eq(0, eina_list_count(line->tokens));
 
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
@@ -50,6 +57,7 @@ START_TEST (elm_code_line_split_test)
    Elm_Code_File *file;
    Elm_Code_Line *line, *newline;
 
+   elm_init(1, NULL);
    code = elm_code_create();
    file = elm_code_file_new(code);
 
@@ -63,6 +71,7 @@ START_TEST (elm_code_line_split_test)
    newline = elm_code_file_line_get(file, 2);
    ck_assert_int_eq(5, line->length);
    ck_assert_int_eq(5, newline->length);
+   elm_shutdown();
 }
 END_TEST
 
@@ -72,4 +81,3 @@ void elm_code_test_line(TCase *tc)
    tcase_add_test(tc, elm_code_line_token_count_test);
    tcase_add_test(tc, elm_code_line_split_test);
 }
-

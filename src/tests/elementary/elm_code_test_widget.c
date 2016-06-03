@@ -1,10 +1,12 @@
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include "elementary_config.h"
 #endif
 
-#include "elm_code_suite.h"
+#define ELM_INTERNAL_API_ARGESFSDFEFC
 
-#include "widget/elm_code_widget.c"
+#include "elm_suite.h"
+#include "Elementary.h"
+#include "elm_code_widget.c"
 
 static void _assert_cell_type(Evas_Textgrid_Cell cell, Elm_Code_Token_Type type, int id)
 {
@@ -89,4 +91,3 @@ void elm_code_test_widget(TCase *tc)
    tcase_add_test(tc, elm_code_widget_construct);
    tcase_add_test(tc, elm_code_widget_construct_nocode);
 }
-

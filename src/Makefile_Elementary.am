@@ -135,6 +135,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_progressbar_internal_part.eo \
 	lib/elementary/elm_popup_internal_part.eo \
 	lib/elementary/elm_scroller_internal_part.eo \
+	lib/elementary/elm_code_widget.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -252,7 +253,16 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_thumb.h \
 	lib/elementary/elm_widget_toolbar.h \
 	lib/elementary/elm_widget_video.h \
-	lib/elementary/elm_widget_web.h
+	lib/elementary/elm_widget_web.h \
+	lib/elementary/elm_code.h \
+	lib/elementary/elm_code_widget_legacy.h \
+	lib/elementary/elm_code_widget_selection.h \
+	lib/elementary/elm_code_diff_widget.h \
+	lib/elementary/elm_code_common.h \
+	lib/elementary/elm_code_line.h \
+	lib/elementary/elm_code_text.h \
+	lib/elementary/elm_code_file.h \
+	lib/elementary/elm_code_parse.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 nodist_includesunstable_HEADERS = \
@@ -562,6 +572,16 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_check.c \
 	lib/elementary/elm_clock.c \
 	lib/elementary/elm_cnp.c \
+	lib/elementary/elm_code_line.c \
+	lib/elementary/elm_code_text.c \
+	lib/elementary/elm_code_file.c \
+	lib/elementary/elm_code_parse.c \
+	lib/elementary/elm_code_widget_selection.c \
+	lib/elementary/elm_code_widget.c \
+	lib/elementary/elm_code_diff_widget.c \
+	lib/elementary/elm_code.c \
+	lib/elementary/elm_code_private.h \
+	lib/elementary/elm_code_widget_private.h \
 	lib/elementary/elm_colorselector.c \
 	lib/elementary/elm_color_class.c \
 	lib/elementary/elc_combobox.c \
@@ -1214,6 +1234,11 @@ edje_external_elementary_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 edje_external_elementary_module_la_LIBTOOLFLAGS = --tag=disable-static
 
 ### Tests
+EXTRA_DIST += \
+tests/elementary/testfile.txt \
+tests/elementary/testfile-windows.txt \
+tests/elementary/testfile-withblanks.txt \
+tests/elementary/testdiff.diff
 
 if EFL_ENABLE_TESTS
 
@@ -1291,12 +1316,24 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_test_panes.c \
 	tests/elementary/elm_test_slideshow.c \
 	tests/elementary/elm_test_spinner.c \
-	tests/elementary/elm_test_plug.c
+	tests/elementary/elm_test_plug.c \
+	tests/elementary/elm_code_file_test_load.c \
+	tests/elementary/elm_code_file_test_memory.c \
+	tests/elementary/elm_code_test_basic.c \
+	tests/elementary/elm_code_test_line.c \
+	tests/elementary/elm_code_test_parse.c \
+	tests/elementary/elm_code_test_text.c \
+	tests/elementary/elm_code_test_widget.c \
+	tests/elementary/elm_code_test_widget_text.c \
+	tests/elementary/elm_code_test_widget_selection.c \
+	tests/elementary/elm_code_test_widget_undo.c
 
 tests_elementary_elm_suite_CPPFLAGS = \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
+	-DTESTS_SRC_DIR=\"${top_srcdir}/src/tests/elementary\" \
 	-DELM_IMAGE_DATA_DIR=\"${top_srcdir}/data/elementary\" \
 	-DELM_TEST_DATA_DIR=\"${abs_top_builddir}/data/elementary\" \
+	-DPACKAGE_DATA_DIR=\"${abs_top_builddir}/data/elementary\" \
 	-I$(top_srcdir)/src/lib/elementary \
 	-I$(top_builddir)/src/lib/elementary \
 	@CHECK_CFLAGS@ \
@@ -1339,4 +1376,7 @@ tests/elementary/elm_suite.h \
 tests/elementary/elm_test_helper.h \
 lib/elementary/Makefile.am \
 lib/elementary/Makefile.in \
-lib/elementary/Elementary.h.in
+lib/elementary/Elementary.h.in \
+lib/elementary/elm_code_widget_text.c \
+lib/elementary/elm_code_widget_undo.c
+

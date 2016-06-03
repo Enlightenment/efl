@@ -1,6 +1,7 @@
 import evas_types;
 import edje_types;
 import elm_interface_scrollable;
+import elm_general;
 
 struct @extern Elm_Code; /* The main interface currently defined in code */
 struct @extern Elm_Code_Line; /* Parts of the interface currently defined in code */

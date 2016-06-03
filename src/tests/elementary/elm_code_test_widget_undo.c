@@ -1,9 +1,11 @@
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include "elementary_config.h"
 #endif
 
-#include "elm_code_suite.h"
+#define ELM_INTERNAL_API_ARGESFSDFEFC
 
+#include "elm_suite.h"
+#include "Elementary.h"
 #include "elm_code_widget_private.h"
 
 START_TEST (elm_code_test_widget_undo_text_insert)
@@ -161,4 +163,3 @@ void elm_code_test_widget_undo(TCase *tc)
    tcase_add_test(tc, elm_code_test_widget_undo_newline);
    tcase_add_test(tc, elm_code_test_widget_undo_delete);
 }
-
