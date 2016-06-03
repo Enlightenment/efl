@@ -193,6 +193,7 @@ _eina_promise_cancel_calls(_Eina_Promise_Default_Owner* promise, Eina_Bool call_
 {
    _Eina_Promise_Cancel_Cb* callback;
 
+   _eina_promise_ref(&promise->promise);
    EINA_INLIST_FREE(promise->promise.cancel_callbacks, callback)
      {
         promise->promise.cancel_callbacks = eina_inlist_remove(promise->promise.cancel_callbacks, EINA_INLIST_GET(callback));
@@ -207,6 +208,7 @@ _eina_promise_cancel_calls(_Eina_Promise_Default_Owner* promise, Eina_Bool call_
      {
         _eina_promise_then_calls(promise);
      }
+   _eina_promise_unref(&promise->promise);
 }
 
 static void
