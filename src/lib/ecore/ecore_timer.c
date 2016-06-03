@@ -561,7 +561,8 @@ _efl_loop_timer_reschedule(Efl_Loop_Timer_Data *timer,
 {
    if (timer->frozen) return;
 
-   timers = eina_inlist_remove(timers, EINA_INLIST_GET(timer));
+   if (timers)
+     timers = eina_inlist_remove(timers, EINA_INLIST_GET(timer));
 
    /* if the timer would have gone off more than 15 seconds ago,
     * assume that the system hung and set the timer to go off
