@@ -10,6 +10,31 @@
  */
 EAPI Evas_Object     *elm_image_add(Evas_Object *parent);
 
+/** Structure associated with smart callback 'download,progress'.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Image
+ */
+typedef struct _Elm_Image_Progress
+{
+  double now;
+  double total;
+} Elm_Image_Progress;
+
+/** Structure associated with smart callback 'download,progress'.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Image
+ */
+typedef struct _Elm_Image_Error
+{
+  int status;
+  Eina_Bool open_error;
+} Elm_Image_Error;
+
+
 typedef Evas_Object Elm_Image;
 
 /**
