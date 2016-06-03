@@ -1,6 +1,3 @@
-import efl_orientation;
-
-/* FIXME: Efl.Pack.Linear */
 interface Efl.Pack.Linear (Efl.Pack)
 {
    [[API for containers ]]
@@ -83,14 +80,6 @@ interface Efl.Pack.Linear (Efl.Pack)
             index: int;
          }
          return: Efl.Gfx; [[The child item if it could be removed.]]
-      }
-      @property pack_direction {
-         [[Primary up/left/right/down orientation. Default is right.]]
-         set {}
-         get {}
-         values {
-            orient: Efl.Orient;
-         }
       }
    }
 }

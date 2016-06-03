@@ -1,22 +1,19 @@
-class Efl.Ui.Box (Elm.Widget, Efl.Pack.Linear, Efl.Pack.Layout)
+class Efl.Ui.Box (Elm.Widget, Efl.Pack.Linear, Efl.Pack.Layout,
+                  Efl.Orientation)
 {
    implements {
       Eo.Base.constructor;
-
-      // Smart obj
       Evas.Object.Smart.add;
       Evas.Object.Smart.del;
       Evas.Object.Smart.calculate;
-
-      // Focus
       Elm.Widget.focus_direction;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_next;
-
-      // Packing interfaces
       Efl.Container.content_iterate;
       Efl.Container.content_count;
+      Efl.Orientation.orientation.set;
+      Efl.Orientation.orientation.get;
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
@@ -33,10 +30,6 @@ class Efl.Ui.Box (Elm.Widget, Efl.Pack.Linear, Efl.Pack.Layout)
       Efl.Pack.Linear.pack_content_get;
       Efl.Pack.Linear.pack_unpack_at;
       Efl.Pack.Linear.pack_index_get;
-      Efl.Pack.Linear.pack_direction.set;
-      Efl.Pack.Linear.pack_direction.get;
-
-      // Custom layouts
       Efl.Pack.Layout.layout_update;
       Efl.Pack.Layout.layout_request;
       Efl.Pack.Layout.layout_engine.get;

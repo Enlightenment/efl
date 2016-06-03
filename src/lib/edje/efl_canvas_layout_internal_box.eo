@@ -1,4 +1,5 @@
-class Efl.Canvas.Layout_Internal.Box (Eo.Base, Efl.Canvas.Layout_Internal, Efl.Pack.Linear)
+class Efl.Canvas.Layout_Internal.Box (Eo.Base, Efl.Canvas.Layout_Internal, Efl.Pack.Linear,
+                                      Efl.Orientation)
 {
    [[Represents a Box created as part of a layout.
 
@@ -24,6 +25,6 @@ class Efl.Canvas.Layout_Internal.Box (Eo.Base, Efl.Canvas.Layout_Internal, Efl.P
       Efl.Pack.Linear.pack_content_get;
       Efl.Pack.Linear.pack_unpack_at;
       Efl.Pack.Linear.pack_index_get;
-      Efl.Pack.Linear.pack_direction.get;
+      Efl.Orientation.orientation.get;
    }
 }

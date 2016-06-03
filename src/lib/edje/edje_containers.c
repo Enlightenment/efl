@@ -319,7 +319,7 @@ _efl_canvas_layout_internal_box_efl_container_content_count(Eo *obj, Edje_Box_Da
 }
 
 EOLIAN static Efl_Orient
-_efl_canvas_layout_internal_box_efl_pack_linear_pack_direction_get(Eo *obj, Edje_Box_Data *pd)
+_efl_canvas_layout_internal_box_efl_orientation_orientation_get(Eo *obj, Edje_Box_Data *pd)
 {
    const Edje_Part_Description_Box *desc =
          (Edje_Part_Description_Box *) pd->rp->chosen_description;

@@ -563,7 +563,7 @@ _efl_ui_box_efl_container_content_iterate(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUS
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_linear_pack_direction_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Orient dir)
+_efl_ui_box_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Orient dir)
 {
    switch (dir)
      {
@@ -583,7 +583,7 @@ _efl_ui_box_efl_pack_linear_pack_direction_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl
 }
 
 EOLIAN static Efl_Orient
-_efl_ui_box_efl_pack_linear_pack_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd)
+_efl_ui_box_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd)
 {
    return pd->orient;
 }

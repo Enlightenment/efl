@@ -201,7 +201,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    vbox = eo_add(EFL_UI_BOX_CLASS, win);
    efl_pack_padding_set(vbox, 10, 10, EINA_TRUE);
-   efl_pack_direction_set(vbox, EFL_ORIENT_DOWN);
+   efl_orientation_set(vbox, EFL_ORIENT_DOWN);
    evas_object_size_hint_weight_set(vbox, 1, 1);
    evas_object_size_hint_padding_set(vbox, 5, 5, 5, 5);
    elm_win_resize_object_add(win, vbox);
@@ -228,7 +228,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    /* weights radio group */
    bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_pack_direction_set(eo_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
    evas_object_size_hint_align_set(bx, 0, -1);
    efl_pack(hbox, bx);
    efl_gfx_visible_set(bx, 1);
@@ -291,7 +291,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    /* requested size setter */
    bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_pack_direction_set(eo_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
    evas_object_size_hint_align_set(bx, 0.5, -1);
    evas_object_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -318,7 +318,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    /* inner box padding */
    bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_pack_direction_set(eo_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
    evas_object_size_hint_align_set(bx, 0, -1);
    evas_object_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -345,7 +345,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    /* outer margin */
    bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_pack_direction_set(eo_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
    evas_object_size_hint_align_set(bx, 0, -1);
    evas_object_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -372,7 +372,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    /* button margins */
    bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_pack_direction_set(eo_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
    evas_object_size_hint_align_set(bx, 0, -1);
    evas_object_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);
@@ -399,7 +399,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    /* ro info */
    bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_pack_direction_set(eo_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
    evas_object_size_hint_align_set(bx, 0, -1);
    evas_object_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);
@@ -536,7 +536,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    vbox = eo_add(EFL_UI_BOX_CLASS, win);
    efl_pack_padding_set(vbox, 10, 10, EINA_TRUE);
-   efl_pack_direction_set(vbox, EFL_ORIENT_DOWN);
+   efl_orientation_set(vbox, EFL_ORIENT_DOWN);
    evas_object_size_hint_weight_set(vbox, 1, 1);
    evas_object_size_hint_padding_set(vbox, 5, 5, 5, 5);
    elm_win_resize_object_add(win, vbox);
@@ -581,7 +581,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    /* ro info */
    bx = eo_add(EFL_UI_BOX_CLASS, win,
-               efl_pack_direction_set(eo_self, EFL_ORIENT_DOWN));
+               efl_orientation_set(eo_self, EFL_ORIENT_DOWN));
    evas_object_size_hint_align_set(bx, 0, -1);
    evas_object_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);
@@ -615,7 +615,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_gfx_visible_set(f, 1);
 
    efl_pack_grid_columns_set(grid, 4);
-   efl_pack_grid_directions_set(grid, EFL_ORIENT_RIGHT, EFL_ORIENT_DOWN);
+   efl_pack_grid_orientation_set(grid, EFL_ORIENT_RIGHT, EFL_ORIENT_DOWN);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_content_set(f, grid);
    evas_object_show(grid);

@@ -713,7 +713,7 @@ _efl_ui_grid_efl_pack_grid_grid_contents_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_linear_pack_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Orient orient)
+_efl_ui_grid_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Orient orient)
 {
    EINA_SAFETY_ON_FALSE_RETURN((orient % 90) == 0);
 
@@ -726,20 +726,20 @@ _efl_ui_grid_efl_pack_linear_pack_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, E
         if (!_horiz(pd->dir1))
           pd->dir2 = EFL_ORIENT_RIGHT;
         else
-           pd->dir2 = EFL_ORIENT_DOWN;
+          pd->dir2 = EFL_ORIENT_DOWN;
      }
 
    efl_pack_layout_request(obj);
 }
 
 EOLIAN static Efl_Orient
-_efl_ui_grid_efl_pack_linear_pack_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
+_efl_ui_grid_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
    return pd->dir1;
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_grid_grid_directions_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Orient primary, Efl_Orient secondary)
+_efl_ui_grid_efl_pack_grid_grid_orientation_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Orient primary, Efl_Orient secondary)
 {
    EINA_SAFETY_ON_FALSE_RETURN((primary % 90) == 0);
    EINA_SAFETY_ON_FALSE_RETURN((secondary % 90) == 0);
@@ -767,7 +767,7 @@ _efl_ui_grid_efl_pack_grid_grid_directions_set(Eo *obj, Efl_Ui_Grid_Data *pd, Ef
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_grid_grid_directions_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Efl_Orient *primary, Efl_Orient *secondary)
+_efl_ui_grid_efl_pack_grid_grid_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Efl_Orient *primary, Efl_Orient *secondary)
 {
    if (primary) *primary = pd->dir1;
    if (secondary) *secondary = pd->dir2;

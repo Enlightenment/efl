@@ -1,4 +1,5 @@
-class Efl.Ui.Layout_Internal.Box (Eo.Base, Efl.Pack.Linear)
+class Efl.Ui.Layout_Internal.Box (Eo.Base, Efl.Pack.Linear,
+                                  Efl.Orientation)
 {
    [[Represents a Box created as part of a layout.
 
@@ -21,6 +22,7 @@ class Efl.Ui.Layout_Internal.Box (Eo.Base, Efl.Pack.Linear)
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;
+      Efl.Orientation.orientation.get;
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
@@ -33,6 +35,5 @@ class Efl.Ui.Layout_Internal.Box (Eo.Base, Efl.Pack.Linear)
       Efl.Pack.Linear.pack_content_get;
       Efl.Pack.Linear.pack_unpack_at;
       Efl.Pack.Linear.pack_index_get;
-      Efl.Pack.Linear.pack_direction.get;
    }
 }
