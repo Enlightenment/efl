@@ -504,15 +504,19 @@ pkgbuild::
 
 clean-local:
 	rm -rf benchmark coverage
-	rm -f ./src/lib/emile/Makefile
-	rm -f ./src/lib/eo/Makefile
-	rm -f ./src/lib/eet/Makefile
-	rm -f ./src/lib/ecore/Makefile
-	rm -f ./src/lib/efl/Makefile
-	rm -f ./src/lib/eina/Makefile
-	rm -f ./src/lib/eio/Makefile
-	rm -f ./src/lib/elementary/Makefile
-	rm -f ./src/lib/ector/Makefile
-	rm -rf ./src/lib/ector/static_libs/rg_etc/.deps/
-	rm -f ./src/lib/evil/Makefile
-	rm -f ./src/lib/edje/Makefile
+
+DISTCLEANFILES= \
+./src/lib/emile/Makefile \
+./src/lib/eo/Makefile \
+./src/lib/eet/Makefile \
+./src/lib/ecore/Makefile \
+./src/lib/efl/Makefile \
+./src/lib/eina/Makefile \
+./src/lib/eio/Makefile \
+./src/lib/elementary/Makefile \
+./src/lib/ector/Makefile \
+./src/lib/evil/Makefile \
+./src/lib/edje/Makefile \
+./src/lib/efl/Efl_Config.h \
+./src/lib/eina/eina_config.h \
+./src/lib/elementary/Elementary.h
