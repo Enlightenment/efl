@@ -31,9 +31,10 @@ Eina_Bool            e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable
 void                 e3d_drawable_size_get(E3D_Drawable *drawable, int *w, int *h);
 GLuint               e3d_drawable_texture_id_get(E3D_Drawable *drawable);
 GLuint               e3d_drawable_texture_color_pick_id_get(E3D_Drawable *drawable);
-void               e3d_drawable_texture_pixel_color_get(GLuint tex EINA_UNUSED, int x, int y, Evas_Color *color, void *drawable);
+void                 e3d_drawable_texture_pixel_color_get(GLuint tex EINA_UNUSED, int x, int y, Evas_Color *color, void *drawable);
 GLenum               e3d_drawable_format_get(E3D_Drawable *drawable);
-
+void                 e3d_drawable_texture_rendered_pixels_get(GLuint tex EINA_UNUSED, int x, int y, int w, int h,
+                                                              void *drawable EINA_UNUSED, void *data);
 /* Renderer */
 E3D_Renderer        *e3d_renderer_new(void);
 void                 e3d_renderer_free(E3D_Renderer *renderer);

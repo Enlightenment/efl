@@ -1440,6 +1440,53 @@ e3d_drawable_texture_pixel_color_get(GLuint tex EINA_UNUSED, int x, int y,
 
    glBindFramebuffer(GL_FRAMEBUFFER, d->fbo);
 }
+
+void
+e3d_drawable_texture_rendered_pixels_get(GLuint tex EINA_UNUSED, int x, int y, int w, int h,
+                                         void *drawable EINA_UNUSED, void *data)
+{
+   DATA32 *buffer = (DATA32 *)data;
+   DATA32 *datarowup = NULL, *datarowlow = NULL;
+   DATA32 pixel;
+   int i, j, width = 0, up, bellow;
+
+   glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, (GLubyte *)buffer);
+
+  /*Due to returned pixels buffer filled as from the
+   bottom left of the screen going up to the top right*/
+   datarowup = malloc(w * sizeof(DATA32));
+   datarowlow = malloc(w * sizeof(DATA32));
+
+   if (!datarowup || !datarowlow)
+     {
+        ERR("Not enough memory");
+        return;
+     }
+   for (j = 0; j < h / 2; j++)
+     {
+        bellow = h * w - width;
+        up = w + width;
+
+        for (i = w; i >= 0; i--)
+          {
+             pixel = buffer[bellow];
+             datarowlow[i] = ((pixel & 0x000000ff) << 16) +
+                             ((pixel & 0x00ff0000) >> 16)  +
+                             ((pixel & 0xff00ff00));
+             pixel = buffer[up];
+             datarowup[i] = ((pixel & 0x000000ff) << 16) +
+                             ((pixel & 0x00ff0000) >> 16)  +
+                             ((pixel & 0xff00ff00));
+             bellow--;
+             up--;
+          }
+        memcpy(buffer + width, datarowlow, w * sizeof(DATA32));
+        width += w;
+        memcpy(buffer + (h * w - width), datarowup, w * sizeof(DATA32));
+     }
+   free(datarowup);
+   free(datarowlow);
+}
 #undef CHECK_LOD_DISTANCE
 #undef RENDER_MESH_NODE_ITERATE_BEGIN
 #undef RENDER_MESH_NODE_ITERATE_END

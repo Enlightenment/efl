@@ -1,4 +1,4 @@
-class Efl.Canvas.Scene3d (Evas.Image)
+class Efl.Canvas.Scene3d (Evas.Image, Efl.Gfx.Buffer)
 {
    [[A UI view for EFL Canvas 3D.]]
    data: null;
@@ -14,5 +14,9 @@ class Efl.Canvas.Scene3d (Evas.Image)
             scene: Evas.Canvas3D.Scene; [[3D scene.]]
          }
       }
+   }
+   implements {
+      Efl.Gfx.Buffer.buffer_map;
+      Efl.Gfx.Buffer.buffer_unmap;
    }
 }

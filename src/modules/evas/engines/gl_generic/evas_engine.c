@@ -2368,6 +2368,12 @@ eng_drawable_scene_render(void *data, void *drawable, void *scene_data)
 }
 
 static int
+eng_drawable_texture_target_id_get(void *drawable)
+{
+   return e3d_drawable_texture_id_get((E3D_Drawable *)drawable);
+}
+
+static int
 eng_drawable_texture_color_pick_id_get(void *drawable)
 {
    return e3d_drawable_texture_color_pick_id_get((E3D_Drawable *)drawable);
@@ -2397,6 +2403,12 @@ eng_drawable_scene_render_to_texture(void *data, void *drawable, void *scene_dat
    return e3d_drawable_scene_render_to_texture((E3D_Drawable *)drawable, renderer, scene_data);
 }
 
+static void
+eng_drawable_texture_rendered_pixels_get(GLuint tex EINA_UNUSED, int x, int y,
+                                         int w, int h, void *drawable EINA_UNUSED, void *data)
+{
+   e3d_drawable_texture_rendered_pixels_get(tex, x, y, w, h, drawable, data);
+}
 static void *
 eng_texture_new(void *data EINA_UNUSED, Eina_Bool use_atlas)
 {
@@ -2921,9 +2933,10 @@ module_open(Evas_Module *em)
    ORD(drawable_scene_render);
 
    ORD(drawable_texture_color_pick_id_get);
+   ORD(drawable_texture_target_id_get);
    ORD(drawable_texture_pixel_color_get);
    ORD(drawable_scene_render_to_texture);
-
+   ORD(drawable_texture_rendered_pixels_get);
    ORD(texture_new);
    ORD(texture_free);
    ORD(texture_size_get);

@@ -1464,11 +1464,12 @@ struct _Evas_Func
    void  (*drawable_free)                (void *data, void *drawable);
    void  (*drawable_size_get)            (void *data, void *drawable, int *w, int *h);
    void *(*image_drawable_set)           (void *data, void *image, void *drawable);
-
+   void (*drawable_texture_rendered_pixels_get) (unsigned int tex, int x, int y, int w, int h, void *drawable EINA_UNUSED, void *data);
    void  (*drawable_scene_render)        (void *data, void *drawable, void *scene_data);
    Eina_Bool (*drawable_scene_render_to_texture) (void *data, void *drawable, void *scene_data);
 
    int (*drawable_texture_color_pick_id_get) (void *drawable);
+   int (*drawable_texture_target_id_get) (void *drawable);
    void (*drawable_texture_pixel_color_get) (unsigned int tex EINA_UNUSED, int x, int y, Evas_Color *color, void *drawable);
 
    void *(*texture_new)                  (void *data, Eina_Bool use_atlas);

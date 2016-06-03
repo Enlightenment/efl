@@ -208,4 +208,77 @@ _evas_image_3d_unset(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data
    EINA_COW_WRITE_END(evas_object_3d_cow, obj->data_3d, data);
 }
 
+EOLIAN static void *
+_efl_canvas_scene3d_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
+                                            int *length EINA_UNUSED,
+                                            Efl_Gfx_Buffer_Access_Mode mode,
+                                            int x, int y, int w, int h,
+                                            Efl_Gfx_Colorspace cspace, int *stride EINA_UNUSED)
+{
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   Evas_Public_Data *e;
+   Evas_Canvas3D_Object_Data *pd_parent;
+   Evas_Canvas3D_Scene_Data *pd_scene;
+   int width = -1, height = -1, ntex = -1;
+   unsigned char *pixels = NULL;
+
+   if (!o->cur->scene)
+     {
+        ERR("invalid scene data");
+        return NULL;
+     }
+   if (mode & EFL_GFX_BUFFER_ACCESS_MODE_WRITE)
+     {
+        ERR("invalid map access mode");
+        return NULL;
+     }
+   if (cspace != EFL_GFX_COLORSPACE_ARGB8888)
+     {
+        ERR("invalid map colorspace. Only ARGB is supported");
+        return NULL;
+     }
+
+   pd_parent = eo_data_scope_get(o->cur->scene, EVAS_CANVAS3D_OBJECT_CLASS);
+   e = eo_data_scope_get(pd_parent->evas, EVAS_CANVAS_CLASS);
+   pd_scene = eo_data_scope_get(o->cur->scene, EVAS_CANVAS3D_SCENE_CLASS);
+
+   if (e->engine.func->drawable_size_get)
+      {
+         e->engine.func->drawable_size_get(e->engine.data.output,
+                                           pd_scene->surface, &width, &height);
+      }
+
+   if ((x < 0) || (y < 0) || ((x + w) > width) || ((y + h) > height))
+     {
+        ERR("Invalid map dimensions : %dx%d +%d,%d. Image is %dx%d.",
+            w, h, x, y, width, height);
+        return NULL;
+     }
+
+   if (e->engine.func->drawable_texture_target_id_get)
+     {
+        ntex = e->engine.func->drawable_texture_target_id_get(pd_scene->surface);
+
+        if (e->engine.func->drawable_texture_rendered_pixels_get)
+          {
+             pixels = malloc(w * h * sizeof(DATA32)); //four component texture
+             e->engine.func->drawable_texture_rendered_pixels_get(ntex, x, y, w, h,
+                                                                  pd_scene->surface, pixels);
+          }
+        else
+          return NULL;
+     }
+   else
+     return NULL;
+
+   return pixels;
+}
+EOLIAN static Eina_Bool
+_efl_canvas_scene3d_efl_gfx_buffer_buffer_unmap(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED,
+                                                void *data, int length EINA_UNUSED)
+{
+   free(data);
+   return EINA_TRUE;
+}
+
 #include "efl_canvas_scene3d.eo.c"
