@@ -278,6 +278,10 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
    ev->event_window = ev->window;
    ev->modifiers = 0; /* FIXME: keep modifier around. */
 
+   ev->multi.device = 0;
+   ev->multi.x = ev->x;
+   ev->multi.y = ev->y;
+
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 }
 
