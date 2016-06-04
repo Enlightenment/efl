@@ -538,6 +538,8 @@ eina_promise_value_add(int value_size)
    p->promise.vtable.unref = EINA_FUNC_PROMISE_UNREF(_eina_promise_unref);
    p->promise.vtable.value_size_get = EINA_FUNC_PROMISE_VALUE_SIZE_GET(_eina_promise_value_size_get);
    p->promise.vtable.buffer_get = EINA_FUNC_PROMISE_BUFFER_GET(_eina_promise_buffer_get);
+   EINA_MAGIC_SET(&p->promise.vtable, EINA_MAGIC_PROMISE);
+   
    p->promise.has_finished = p->promise.has_errored =
      p->promise.is_cancelled = p->promise.is_manual_then = p->promise.is_pointer = EINA_FALSE;
    p->promise.is_first_then = EINA_TRUE;
@@ -560,6 +562,7 @@ eina_promise_value_add(int value_size)
    p->owner_vtable.cancelled_is = EINA_FUNC_PROMISE_OWNER_CANCELLED_IS(_eina_promise_owner_cancelled_is);
    p->owner_vtable.progress = EINA_FUNC_PROMISE_OWNER_PROGRESS(_eina_promise_owner_progress);
    p->owner_vtable.progress_notify = EINA_FUNC_PROMISE_OWNER_PROGRESS_NOTIFY(_eina_promise_owner_progress_notify);
+   EINA_MAGIC_SET(&p->owner_vtable, EINA_MAGIC_PROMISE_OWNER);
 
    return &p->owner_vtable;
 }
@@ -581,6 +584,8 @@ eina_promise_add()
    p->promise.vtable.unref = EINA_FUNC_PROMISE_UNREF(_eina_promise_unref);
    p->promise.vtable.value_size_get = EINA_FUNC_PROMISE_VALUE_SIZE_GET(_eina_promise_value_size_get);
    p->promise.vtable.buffer_get = EINA_FUNC_PROMISE_BUFFER_GET(_eina_promise_buffer_get);
+   EINA_MAGIC_SET(&p->promise.vtable, EINA_MAGIC_PROMISE);
+
    p->promise.has_finished = p->promise.has_errored =
      p->promise.is_cancelled = p->promise.is_manual_then = EINA_FALSE;
    p->promise.is_first_then = p->promise.is_pointer = EINA_TRUE;
@@ -603,7 +608,8 @@ eina_promise_add()
    p->owner_vtable.cancelled_is = EINA_FUNC_PROMISE_OWNER_CANCELLED_IS(_eina_promise_owner_cancelled_is);
    p->owner_vtable.progress = EINA_FUNC_PROMISE_OWNER_PROGRESS(_eina_promise_owner_progress);
    p->owner_vtable.progress_notify = EINA_FUNC_PROMISE_OWNER_PROGRESS_NOTIFY(_eina_promise_owner_progress_notify);
-
+   EINA_MAGIC_SET(&p->owner_vtable, EINA_MAGIC_PROMISE_OWNER);
+   
    return &p->owner_vtable;
 }
 
@@ -881,7 +887,13 @@ eina_promise_then(Eina_Promise* promise, Eina_Promise_Cb callback,
 {
    if(!promise)
      {
-        error_cb(data, EINA_ERROR_PROMISE_NULL);
+        if(!error_cb)
+          {
+            ERR("eina_promise_the with NULL promise and no error callback.");
+            eina_error_set(EINA_ERROR_PROMISE_NULL);
+          }
+        else
+          error_cb(data, EINA_ERROR_PROMISE_NULL);
         return;
      }
    else
