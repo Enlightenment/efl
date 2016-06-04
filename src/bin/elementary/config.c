@@ -1545,13 +1545,12 @@ _icon_preview_icon_add(const char *icon, const char *theme)
 
    ic = elm_icon_add(icon_preview_frame);
    elm_image_aspect_fixed_set(ic, EINA_TRUE);
-   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_min_set(ic, 48, 48);
    elm_box_pack_end(icon_preview_frame, ic);
    evas_object_show(ic);
 
    if (strcmp(theme, ELM_CONFIG_ICON_THEME_ELEMENTARY))
-     elm_image_file_set(ic, efreet_icon_path_find(theme, icon, 96), NULL);
+     elm_image_file_set(ic, efreet_icon_path_find(theme, icon, 48), NULL);
 }
 
 
@@ -2310,7 +2309,7 @@ _status_config_icons(Evas_Object *win,
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(rc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_min_set(rc, 0, 200);
+   evas_object_size_hint_min_set(rc, 0, 130);
    elm_table_pack(tb, rc, 0, 1, 1, 1);
 
    /////////////////////////////////////////////
