@@ -2895,10 +2895,10 @@ AM_CONDITIONAL([HAVE_SPECTRE], [test "x${have_spectre}" = "xyes"])
 AM_CONDITIONAL([HAVE_LIBRAW], [test "x${have_raw}" = "xyes"])
 AM_CONDITIONAL([HAVE_RSVG], [test "x${have_rsvg}" = "xyes"])
 
-EFL_ADD_FEATURE([EVAS_LOADER], [poppler], [${want_poppler}])
-EFL_ADD_FEATURE([EVAS_LOADER], [spectre], [${want_spectre}])
-EFL_ADD_FEATURE([EVAS_LOADER], [raw], [${want_libraw}])
-EFL_ADD_FEATURE([EVAS_LOADER], [rsvg], [${want_rsvg}])
+EFL_ADD_FEATURE([EVAS_LOADER], [poppler], [${have_poppler}])
+EFL_ADD_FEATURE([EVAS_LOADER], [spectre], [${have_spectre}])
+EFL_ADD_FEATURE([EVAS_LOADER], [raw], [${have_raw}])
+EFL_ADD_FEATURE([EVAS_LOADER], [rsvg], [${have_rsvg}])
 
 EFL_LIB_END([Evas])
 #### End of Evas
