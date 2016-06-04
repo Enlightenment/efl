@@ -5280,7 +5280,7 @@ edje_edit_part_item_index_name_get(Evas_Object *obj, const char *part, unsigned 
        (rp->part->type != EDJE_PART_TYPE_TABLE))
      return NULL;
    if (rp->part->items_count < index)
-     return EINA_FALSE;
+     return NULL;
 
    ep = rp->part;
 
