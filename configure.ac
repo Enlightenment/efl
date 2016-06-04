@@ -1793,7 +1793,7 @@ AC_COMPILE_IFELSE(
 int i = isfinite(0);
        ]])],
    [
-    AC_DEFINE(HAVE_ISFINITE, 1, [Define to 1 if you have `isfinite', as a function or macro.])
+    AC_DEFINE(HAVE_ISFINITE, 1, [Define to 1 if you have 'isfinite', as a function or macro.])
     have_isfinite="yes"
    ],
    [have_isfinite="no"])
@@ -1857,7 +1857,7 @@ elif test "x${have_setjmp}" = "xyes"; then
    AC_DEFINE(USE_SETJMP, 1, [Define to 1 if you have setjmp/longjmp functions.])
    EFL_ADD_FEATURE([system], [coroutine], [setjmp])
 else
-   AC_MSG_ERROR([You don't have a working way to implement coroutine. Exiting...])
+   AC_MSG_ERROR([You do not have a working way to implement coroutine. Exiting...])
 fi
 
 ### Check availability
