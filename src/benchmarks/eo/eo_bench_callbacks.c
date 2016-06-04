@@ -50,7 +50,7 @@ bench_eo_callbacks_call(int request)
 
    const int len = EINA_C_ARRAY_LENGTH(distribution);
    int i, j;
-   Eo *obj[len] = { 0 };
+   Eo *obj[len];
    for (i = 0 ; i < len ; i++)
      {
         obj[i] = eo_add(SIMPLE_CLASS, NULL);
