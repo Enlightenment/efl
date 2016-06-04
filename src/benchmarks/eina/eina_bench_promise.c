@@ -44,16 +44,16 @@ struct value_type
   int h;
 };
 
-void cb(void* data EINA_UNUSED, void* value, Eina_Promise* promise EINA_UNUSED)
+void cb(void* data EINA_UNUSED, void* value)
 {
   struct value_type* p = value;
   volatile int v = p->x * p->y * p->w * p->h;
   (void)v;
 }
 
-void pointer_cb(void* data EINA_UNUSED, void* value, Eina_Promise* promise EINA_UNUSED)
+void pointer_cb(void* data EINA_UNUSED, void* value)
 {
-  struct value_type* p = *(struct value_type**)value;
+  struct value_type* p = value;
   volatile int v = p->x * p->y * p->w * p->h;
   (void)v;
 }
@@ -199,7 +199,7 @@ eina_bench_promise_copy_value_set_before_then(int request)
 
 static void indirect_free(void* p)
 {
-  free(*(void**)p);
+  free(p);
 }
 
 static void
