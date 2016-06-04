@@ -349,7 +349,7 @@ ecore_cocoa_screen_size_get(Ecore_Cocoa_Screen *screen EINA_UNUSED, int *w, int 
 
    if (w) *w = (int)pt.width;
    if (h) *h = (int)pt.height;
-   
+
    DBG("Screen size get : %dx%d", (int)pt.width, (int)pt.height);
 }
 
