@@ -990,7 +990,7 @@ EAPI void *
 eina_promise_owner_buffer_get(Eina_Promise_Owner* promise)
 {
    _EINA_PROMISE_NULL_CHECK(promise, NULL);
-   EINA_MAGIC_CHECK_PROMISE(promise);
+   EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    return promise->buffer_get(promise);
 }
 
