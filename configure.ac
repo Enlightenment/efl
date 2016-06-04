@@ -2809,27 +2809,51 @@ EFL_ADD_FEATURE([EVAS], [hyphen])
 
 #### Generic backend
 
-### Option to turn on generic loader for evas
-want_poppler="no"
-want_spectre="no"
-want_libraw="no"
-want_rsvg="no"
+### Options to turn off generic loaders for evas
 
 AC_ARG_ENABLE([poppler],
-   [AC_HELP_STRING([--enable-poppler], [enable poppler support  @<:@default==disabled@:>@])],
-   [want_poppler=$enableval])
+   [AS_HELP_STRING([--disable-poppler],[disable pdf support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_poppler="yes"
+    else
+       want_poppler="no"
+    fi
+   ],
+   [want_poppler="yes"])
 
 AC_ARG_ENABLE([spectre],
-   [AC_HELP_STRING([--enable-spectre], [enable spectre support  @<:@default==disabled@:>@])],
-   [want_spectre=$enableval])
+   [AS_HELP_STRING([--disable-spectre],[disable postscript support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_spectre="yes"
+    else
+       want_spectre="no"
+    fi
+   ],
+   [want_spectre="yes"])
 
 AC_ARG_ENABLE([libraw],
-   [AC_HELP_STRING([--enable-libraw], [enable libraw support  @<:@default==disabled@:>@])],
-   [want_libraw=$enableval])
+   [AS_HELP_STRING([--disable-libraw],[disable libraw support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_libraw="yes"
+    else
+       want_libraw="no"
+    fi
+   ],
+   [want_libraw="yes"])
 
 AC_ARG_ENABLE([librsvg],
-   [AC_HELP_STRING([--enable-librsvg], [enable svg support  @<:@default==disabled@:>@])],
-   [want_rsvg=$enableval])
+   [AS_HELP_STRING([--disable-librsvg],[disable svg support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_rsvg="yes"
+    else
+       want_rsvg="no"
+    fi
+   ],
+   [want_rsvg="yes"])
 
 have_poppler="no"
 have_spectre="no"
