@@ -508,7 +508,7 @@ ecore_cocoa_window_hide(Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if (![window->window isVisible])
+   if ([window->window isVisible])
      [window->window orderOut:NSApp];
 }
 
