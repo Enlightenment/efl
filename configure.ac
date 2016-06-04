@@ -2879,7 +2879,7 @@ if test "x${want_libraw}" = "xyes"; then
    PKG_CHECK_MODULES([LIBRAW], [libraw], [have_raw="yes"])
 fi
 
-if test "x${want_librsvg}" = "xyes"; then
+if test "x${want_rsvg}" = "xyes"; then
    PKG_CHECK_MODULES([RSVG],  [librsvg-2.0 >= 2.14.0 cairo >= 1.0.0], [have_rsvg="yes"])
    PKG_CHECK_MODULES(
       [SVG_2_36], [librsvg-2.0 >= 2.36.0 cairo >= 1.0.0],
