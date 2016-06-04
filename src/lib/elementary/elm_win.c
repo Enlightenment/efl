@@ -5546,12 +5546,6 @@ elm_win_cocoa_window_get(const Evas_Object *obj)
    ELM_WIN_CHECK(obj) NULL;
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
 
-   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
-   if (!engine_name) return NULL;
-   if (strcmp(engine_name, "gl_cocoa") != 0 &&
-       strcmp(engine_name, "opengl_cocoa") != 0)
-       return NULL;
-
    Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
    return _elm_ee_cocoa_win_get(ee);
 }
