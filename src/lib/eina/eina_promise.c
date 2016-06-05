@@ -409,7 +409,6 @@ _eina_promise_progress_cb_add(_Eina_Promise_Default* promise, Eina_Promise_Progr
    cb->data = data;
    cb->free = free_cb;
    promise->progress_callbacks = eina_inlist_append(promise->progress_callbacks, EINA_INLIST_GET(cb));
-
    EINA_INLIST_FOREACH(owner->promise.progress_notify_callbacks, notify_data)
      {
        (*notify_data->callback)(notify_data->data, &owner->owner_vtable);
@@ -759,6 +758,8 @@ static void
 _eina_promise_progress_notify_fulfilled(void* data, Eina_Promise_Owner* p EINA_UNUSED)
 {
   Eina_Promise_Owner* owner = data;
+  // Make sure the promise is alive after value_set until our cleanup cp is called
+  eina_promise_ref(eina_promise_owner_promise_get(owner));
   eina_promise_owner_value_set(owner, NULL, NULL);
 }
 
@@ -767,11 +768,13 @@ EAPI Eina_Error EINA_ERROR_PROMISE_CANCEL;
 EAPI Eina_Error EINA_ERROR_PROMISE_NULL;
 
 static void
-_eina_promise_progress_notify_failed(void* data)
+_eina_promise_progress_notify_finish(void* data)
 {
   Eina_Promise_Owner* owner = data;
   if(eina_promise_owner_pending_is(owner))
     eina_promise_owner_error_set(owner, EINA_ERROR_PROMISE_NO_NOTIFY);
+  else // Cleanup the ref we got from the fulfilled cb
+    eina_promise_unref(eina_promise_owner_promise_get(owner));
 }
 
 EAPI Eina_Promise*
@@ -782,7 +785,7 @@ eina_promise_progress_notification(Eina_Promise_Owner* promise)
   owner = eina_promise_value_add(0);
 
   eina_promise_owner_progress_notify(promise, &_eina_promise_progress_notify_fulfilled, owner,
-                                     &_eina_promise_progress_notify_failed);
+                                     &_eina_promise_progress_notify_finish);
 
   return eina_promise_owner_promise_get(owner);
 }

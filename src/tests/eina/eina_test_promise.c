@@ -231,6 +231,9 @@ START_TEST(eina_test_promise_progress)
 
    ck_assert(progress_ran);
 
+   eina_promise_unref(promise);
+   eina_promise_owner_value_set(owner, NULL, NULL);
+
    eina_shutdown();
 }
 END_TEST
@@ -258,6 +261,9 @@ START_TEST(eina_test_promise_progress_notify1)
 
    ck_assert(progress_notify_ran);
 
+   eina_promise_unref(promise);
+   eina_promise_owner_value_set(owner, NULL, NULL);
+
    eina_shutdown();
 }
 END_TEST
@@ -278,6 +284,8 @@ START_TEST(eina_test_promise_progress_notify2)
    eina_promise_then(promise, NULL, &_cancel_promise_callback, NULL); // never run
 
    ck_assert(progress_notify_ran);
+
+   eina_promise_owner_value_set(owner, NULL, NULL);
 
    eina_shutdown();
 }
@@ -314,6 +322,9 @@ START_TEST(eina_test_promise_progress_notify3)
    eina_promise_progress_cb_add(promise, &progress_callback, NULL, NULL); // never run
 
    ck_assert(progress_notify_ran);
+
+   eina_promise_unref(promise);
+   eina_promise_owner_value_set(owner, NULL, NULL);
 
    eina_shutdown();
 }
@@ -517,6 +528,9 @@ START_TEST(eina_test_pointer_promise_progress)
 
    ck_assert(progress_ran);
 
+   eina_promise_unref(promise);
+   eina_promise_owner_value_set(owner, NULL, NULL);
+
    eina_shutdown();
 }
 END_TEST
@@ -538,6 +552,9 @@ START_TEST(eina_test_pointer_promise_progress_notify1)
 
    ck_assert(progress_notify_ran);
 
+   eina_promise_unref(promise);
+   eina_promise_owner_value_set(owner, NULL, NULL);
+
    eina_shutdown();
 }
 END_TEST
@@ -558,6 +575,8 @@ START_TEST(eina_test_pointer_promise_progress_notify2)
    eina_promise_then(promise, NULL, &_cancel_promise_callback, NULL); // never run
 
    ck_assert(progress_notify_ran);
+
+   eina_promise_owner_value_set(owner, NULL, NULL);
 
    eina_shutdown();
 }
@@ -582,6 +601,9 @@ START_TEST(eina_test_pointer_promise_progress_notify3)
    eina_promise_progress_cb_add(promise, &progress_callback, NULL, NULL); // never run
 
    ck_assert(progress_notify_ran);
+
+   eina_promise_unref(promise);
+   eina_promise_owner_value_set(owner, NULL, NULL);
 
    eina_shutdown();
 }
