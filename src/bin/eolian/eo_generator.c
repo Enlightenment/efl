@@ -398,7 +398,8 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
                     {
                       promise_value_type = eolian_type_c_type_get(subtype);
                       is_pointer_promise = eolian_type_type_get(subtype) == EOLIAN_TYPE_POINTER
-                        || eolian_type_type_get(subtype) == EOLIAN_TYPE_COMPLEX;
+                        || eolian_type_type_get(subtype) == EOLIAN_TYPE_COMPLEX
+                        || eolian_type_type_get(subtype) == EOLIAN_TYPE_CLASS;
                     }
                   eina_strbuf_append_printf(impl_full_params, ", Eina_Promise_Owner *%s%s",
                          pname, is_empty && !dflt_value ?" EINA_UNUSED":"");
