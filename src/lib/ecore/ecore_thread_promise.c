@@ -41,9 +41,12 @@ static void _ecore_promise_ref_update(_Ecore_Thread_Promise_Owner* p)
   if(!p->ref_count)
     {
        p->eina_promise->unref(p->eina_promise);
+       if (!p->then_count) // Whether we still own the initial eina_promise ref
+         p->eina_promise->unref(p->eina_promise);
        p->eina_promise = NULL;
        p->eina_owner = NULL;
        p->thread_callback_data.thread = NULL;
+       free(p);
     }
 }
 
@@ -67,6 +70,10 @@ static void _ecore_promise_thread_end(void* data, Ecore_Thread* thread EINA_UNUS
    else
      {
         eina_promise_owner_default_manual_then_set(p->eina_owner, EINA_FALSE);
+        // This then will steal the ref to the eina_promise, working
+        // refcount-wise like a normal then on the thread promise.
+        p->ref_count++;
+        p->then_count++;
         eina_promise_then(p->eina_promise, &_ecore_promise_thread_release_ref,
                           (Eina_Promise_Error_Cb)&_ecore_promise_thread_release_ref, p);
      }
@@ -145,10 +152,7 @@ static void _ecore_promise_then(Eina_Promise* promise, Eina_Promise_Cb callback,
 {
    _Ecore_Thread_Promise_Owner* v = ECORE_PROMISE_GET_OWNER(promise);
    v->eina_promise->then(v->eina_promise, callback, error_cb, data);
-   if(v->then_count)
-     {
-        v->ref_count++;
-     }
+   v->ref_count++;
    v->then_count++;
 }
 static void* _ecore_promise_value_get(Eina_Promise const* promise)
@@ -219,6 +223,7 @@ Ecore_Thread* ecore_thread_promise_run(Ecore_Thread_Promise_Cb func_blocking,
    priv->owner_vtable.cancelled_is = EINA_FUNC_PROMISE_OWNER_CANCELLED_IS(&_ecore_promise_owner_cancelled_is);
    priv->owner_vtable.progress = EINA_FUNC_PROMISE_OWNER_PROGRESS(&_ecore_thread_promise_owner_progress);
    priv->owner_vtable.progress_notify = EINA_FUNC_PROMISE_OWNER_PROGRESS_NOTIFY(&_ecore_thread_promise_owner_progress_notify);
+   EINA_MAGIC_SET(&priv->owner_vtable, EINA_MAGIC_PROMISE_OWNER);
 
    priv->promise_vtable.then = EINA_FUNC_PROMISE_THEN(&_ecore_promise_then);
    priv->promise_vtable.value_get = EINA_FUNC_PROMISE_VALUE_GET(&_ecore_promise_value_get);
@@ -230,6 +235,7 @@ Ecore_Thread* ecore_thread_promise_run(Ecore_Thread_Promise_Cb func_blocking,
    priv->promise_vtable.unref = EINA_FUNC_PROMISE_UNREF(&_ecore_promise_unref);
    priv->promise_vtable.value_size_get = EINA_FUNC_PROMISE_VALUE_SIZE_GET(&_ecore_promise_value_size_get);
    priv->promise_vtable.buffer_get = EINA_FUNC_PROMISE_BUFFER_GET(&_ecore_promise_buffer_get);
+   EINA_MAGIC_SET(&priv->promise_vtable, EINA_MAGIC_PROMISE);
    
    priv->thread_callback_data.data = data;
    priv->thread_callback_data.func_blocking = func_blocking;
@@ -248,6 +254,6 @@ Ecore_Thread* ecore_thread_promise_run(Ecore_Thread_Promise_Cb func_blocking,
                                &_ecore_promise_thread_end, &_ecore_promise_thread_cancel, priv,
                                EINA_FALSE);
    if(promise)
-     *promise = priv->eina_promise;
+     *promise = &priv->promise_vtable;
    return priv->thread_callback_data.thread;
 }

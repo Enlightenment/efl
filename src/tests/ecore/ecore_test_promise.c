@@ -348,6 +348,8 @@ static void promise_progress_thread(const void* data EINA_UNUSED,
 {
   void* v = (void*)1;
   eina_promise_owner_progress(promise, v);
+  // Release the promise to avoid leaks
+  eina_promise_owner_value_set(promise, NULL, NULL);
 }
 
 static void _progress_callback(void* data EINA_UNUSED, void* value)
