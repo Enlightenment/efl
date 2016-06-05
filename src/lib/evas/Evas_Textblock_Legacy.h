@@ -146,7 +146,7 @@ typedef struct _Efl_Canvas_Text_Style             Evas_Textblock_Style;
  * @see evas_object_textblock_cursor_new
  *
  */
-typedef struct _Efl_Canvas_Text_Cursor            Evas_Textblock_Cursor;
+typedef Eo            Evas_Textblock_Cursor;
 
 /**
  * @typedef Evas_Object_Textblock_Node_Format
@@ -236,49 +236,6 @@ EAPI void                                     evas_textblock_style_set(Evas_Text
 EAPI const char                              *evas_textblock_style_get(const Evas_Textblock_Style *ts) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * Free the cursor and unassociate it from the object.
- * @note do not use it to free unassociated cursors.
- *
- * @param cur the cursor to free.
- * @return Returns no value.
- */
-EAPI void                                     evas_textblock_cursor_free(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Sets the cursor to the start of the first text node.
- *
- * @param cur the cursor to update.
- * @return Returns no value.
- */
-EAPI void                                     evas_textblock_cursor_paragraph_first(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * sets the cursor to the end of the last text node.
- *
- * @param cur the cursor to set.
- * @return Returns no value.
- */
-EAPI void                                     evas_textblock_cursor_paragraph_last(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Advances to the start of the next text node
- *
- * @param cur the cursor to update
- * @return @c EINA_TRUE if it managed to advance a paragraph, @c EINA_FALSE
- * otherwise.
- */
-EAPI Eina_Bool                                evas_textblock_cursor_paragraph_next(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Advances to the end of the previous text node
- *
- * @param cur the cursor to update
- * @return @c EINA_TRUE if it managed to advance a paragraph, @c EINA_FALSE
- * otherwise.
- */
-EAPI Eina_Bool                                evas_textblock_cursor_paragraph_prev(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
  * Returns the next format node (after n)
  *
  * @param n the current format node - not null.
@@ -366,86 +323,12 @@ EAPI Eina_Bool                                evas_textblock_cursor_format_prev(
 EAPI Eina_Bool                                evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
 /**
- * Advances 1 char forward.
- *
- * @param cur the cursor to advance.
- * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
- */
-EAPI Eina_Bool                                evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Advances 1 char backward.
- *
- * @param cur the cursor to advance.
- * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
- */
-EAPI Eina_Bool                                evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Moves the cursor to the start of the word under the cursor.
- *
- * @param cur the cursor to move.
- * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
- * @since 1.2
- */
-EAPI Eina_Bool                                evas_textblock_cursor_word_start(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Moves the cursor to the end of the word under the cursor.
- *
- * @param cur the cursor to move.
- * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
- * @since 1.2
- */
-EAPI Eina_Bool                                evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Go to the first char in the node the cursor is pointing on.
- *
- * @param cur the cursor to update.
- * @return Returns no value.
- */
-EAPI void                                     evas_textblock_cursor_paragraph_char_first(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Go to the last char in a text node.
- *
- * @param cur the cursor to update.
- * @return Returns no value.
- */
-EAPI void                                     evas_textblock_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Go to the start of the current line
- *
- * @param cur the cursor to update.
- * @return Returns no value.
- */
-EAPI void                                     evas_textblock_cursor_line_char_first(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
- * Go to the end of the current line.
- *
- * @param cur the cursor to update.
- * @return Returns no value.
- */
-EAPI void                                     evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
-
-/**
  * Return the current cursor pos.
  *
  * @param cur the cursor to take the position from.
  * @return the position or -1 on error
  */
 EAPI int                                      evas_textblock_cursor_pos_get(const Evas_Textblock_Cursor *cur) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
-
-/**
- * Set the cursor pos.
- *
- * @param cur the cursor to be set.
- * @param pos the pos to set.
- */
-EAPI void                                     evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos) EINA_ARG_NONNULL(1);
 
 /**
  * Go to the start of the line passed
@@ -455,47 +338,6 @@ EAPI void                                     evas_textblock_cursor_pos_set(Evas
  * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  */
 EAPI Eina_Bool                                evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line) EINA_ARG_NONNULL(1);
-
-/**
- * Compare two cursors.
- *
- * @param cur1 the first cursor.
- * @param cur2 the second cursor.
- * @return -1 if cur1 < cur2, 0 if cur1 == cur2 and 1 otherwise.
- */
-EAPI int                                      evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
-
-/**
- * Make cur_dest point to the same place as cur. Does not work if they don't
- * point to the same object.
- *
- * @param cur the source cursor.
- * @param cur_dest destination cursor.
- * @return Returns no value.
- */
-EAPI void                                     evas_textblock_cursor_copy(const Evas_Textblock_Cursor *cur, Evas_Textblock_Cursor *cur_dest) EINA_ARG_NONNULL(1, 2);
-
-/**
- * Adds text to the current cursor position and set the cursor to *before*
- * the start of the text just added.
- *
- * @param cur the cursor to where to add text at.
- * @param text the text to add.
- * @return Returns the len of the text added.
- * @see evas_textblock_cursor_text_prepend()
- */
-EAPI int                                      evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text) EINA_ARG_NONNULL(1, 2);
-
-/**
- * Adds text to the current cursor position and set the cursor to *after*
- * the start of the text just added.
- *
- * @param cur the cursor to where to add text at.
- * @param text the text to add.
- * @return Returns the len of the text added.
- * @see evas_textblock_cursor_text_append()
- */
-EAPI int                                      evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Adds format to the current cursor position. If the format being added is a
@@ -538,15 +380,6 @@ EAPI Eina_Bool                                evas_textblock_cursor_format_appen
  * @see evas_textblock_cursor_format_prepend()
  */
 EAPI Eina_Bool                                evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *format) EINA_ARG_NONNULL(1, 2);
-
-/**
- * Delete the character at the location of the cursor. If there's a format
- * pointing to this position, delete it as well.
- *
- * @param cur the cursor pointing to the current location.
- * @return Returns no value.
- */
-EAPI void                                     evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
 /**
  * Delete the range between cur1 and cur2.
@@ -701,16 +534,6 @@ EAPI int                                      evas_textblock_cursor_pen_geometry
 EAPI int                                      evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
 
 /**
- * Set the position of the cursor according to the X and Y coordinates.
- *
- * @param cur the cursor to set.
- * @param x coord to set by.
- * @param y coord to set by.
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- */
-EAPI Eina_Bool                                evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
-
-/**
  * Set the cursor position according to the y coord.
  *
  * @param cur the cur to be set.
@@ -755,6 +578,60 @@ EAPI Eina_Bool                                evas_textblock_cursor_format_item_
  * @return @c EINA_TRUE if true, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                                evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Advances the cursor one char backwards.
+ *
+ * @return @c true on success, @c false otherwise.
+ *
+ * @ingroup Efl_Canvas_Text_Cursor
+ */
+EAPI Eina_Bool evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *obj);
+
+/**
+ * @brief Advances the cursor one char forward.
+ *
+ * @return @c true on success, @c false otherwise.
+ *
+ * @ingroup Evas_Textblock_Cursor
+ */
+EAPI Eina_Bool evas_textblock_cursor_char_next(Evas_Textblock_Cursor *obj);
+
+/**
+ * @brief Advances to the start of the next text node
+ *
+ * @return @c true if managed to advance, @c false otherwise
+ *
+ * @ingroup Evas_Textblock_Cursor
+ */
+EAPI Eina_Bool evas_textblock_cursor_paragraph_next(Evas_Textblock_Cursor *obj);
+
+/**
+ * @brief Advances to the end of the previous text node
+ *
+ * @return @c true if managed to advance, @c false otherwise
+ *
+ * @ingroup Evas_Textblock_Cursor
+ */
+EAPI Eina_Bool evas_textblock_cursor_paragraph_prev(Evas_Textblock_Cursor *obj);
+
+/**
+ * @brief Moves the cursor to the start of the word under the cursor
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Evas_Textblock_Cursor
+ */
+EAPI Eina_Bool evas_textblock_cursor_word_start(Evas_Textblock_Cursor *obj);
+
+/**
+ * @brief Moves the cursor to the end of the word under the cursor
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Evas_Textblock_Cursor
+ */
+EAPI Eina_Bool evas_textblock_cursor_word_end(Evas_Textblock_Cursor *obj);
 
 /**
  * @}
@@ -939,6 +816,51 @@ EAPI void evas_textblock_node_format_remove_pair(Evas_Object *obj, Evas_Object_T
  */
 EAPI Eina_Bool evas_object_textblock_line_number_geometry_get(const Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
 
+/**
+ * Make cur_dest point to the same place as cur. Does not work if they don't
+ * point to the same object.
+ *
+ * @param cur the source cursor.
+ * @param cur_dest destination cursor.
+ * @return Returns no value.
+ */
+EAPI void                                     evas_textblock_cursor_copy(const Evas_Textblock_Cursor *cur, Evas_Textblock_Cursor *cur_dest);
+
+/**
+ *  Create a new cursor, associate it to the obj and init it to point
+ *  to the start of the textblock.
+ *
+ *  Association to the object means the cursor will be updated when
+ *  the object will change.
+ *
+ *  Note: if you need speed and you know what you are doing, it's
+ *  slightly faster to just allocate the cursor yourself and not
+ *  associate it. (only people developing the actual object, and
+ *  not users of the object).
+ *
+ *  @param obj The textblock to which the new cursor will associate.
+ *  @return Returns a new cursor associated with the given textblock object.
+ */
+EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_new(const Evas_Object *obj);
+
+/**
+ * @brief Sets the position of the cursor according to the X and Y coordinates.
+ *
+ * @param[in] y y coord to set by.
+ *
+ * @return @c true on success, @c false otherwise.
+ *
+ * @ingroup Efl_Canvas_Text_Cursor
+ */
+EAPI Eina_Bool evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *obj, Evas_Coord x, Evas_Coord y);
+
+EAPI int evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *_text);
+
+EAPI void evas_textblock_cursor_free(Evas_Textblock_Cursor *cur);
+
+EAPI int evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text);
+
+#include "canvas/efl_canvas_text_cursor.eo.legacy.h"
 #include "canvas/efl_canvas_text.eo.legacy.h"
 /**
  * @}
