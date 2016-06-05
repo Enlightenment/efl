@@ -437,9 +437,12 @@ end:
              if (EINA_LIKELY(func->func && func->src))
                {
                   call->eo_id = _eo_obj_id_get(emb_obj);
-                  call->obj = obj; /* FIXME-eo4: Hack, we retain the previous object so we unref it... */
+                  call->obj = _eo_ref(emb_obj);
                   call->func = func->func;
                   call->data = _eo_data_scope_get(emb_obj, func->src);
+
+                  /* We reffed it above, but no longer need/use it. */
+                  _eo_unref(obj);
 
                   return EINA_TRUE;
                }
