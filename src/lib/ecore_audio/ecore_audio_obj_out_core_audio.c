@@ -50,16 +50,6 @@ typedef struct
 #define MY_CLASS ECORE_AUDIO_OUT_CORE_AUDIO_CLASS
 #define MY_CLASS_NAME "Ecore_Audio_Out_Core_Audio"
 
-/*
- * Unused structure. Only here because of Eolian.
- * XXX Maybe it is possible to get rid of it.
- */
-typedef struct
-{
-   void *this_data_is_here_to_silent_warnings;
-} Ecore_Audio_Out_Core_Audio_Data;
-
-
 /*============================================================================*
  *                                 Helper API                                 *
  *============================================================================*/
@@ -216,14 +206,14 @@ _audio_io_proc_cb(AudioObjectID          obj_id         EINA_UNUSED,
  *============================================================================*/
 
 EOLIAN static void
-_ecore_audio_out_core_audio_ecore_audio_volume_set(Eo *obj, Ecore_Audio_Out_Core_Audio_Data *sd EINA_UNUSED, double volume)
+_ecore_audio_out_core_audio_ecore_audio_volume_set(Eo *obj, void *sd EINA_UNUSED, double volume)
 {
    // TODO Change volume of playing inputs
    ecore_audio_obj_volume_set(eo_super(obj, MY_CLASS), volume);
 }
 
 EOLIAN static Eina_Bool
-_ecore_audio_out_core_audio_ecore_audio_out_input_attach(Eo *obj, Ecore_Audio_Out_Core_Audio_Data *sd EINA_UNUSED, Eo *input)
+_ecore_audio_out_core_audio_ecore_audio_out_input_attach(Eo *obj, void *sd EINA_UNUSED, Eo *input)
 {
    Core_Audio_Helper *helper;
    UInt32 channels;
@@ -328,7 +318,7 @@ return_failure:
 }
 
 EOLIAN static Eina_Bool
-_ecore_audio_out_core_audio_ecore_audio_out_input_detach(Eo *obj, Ecore_Audio_Out_Core_Audio_Data *sd EINA_UNUSED, Eo *input)
+_ecore_audio_out_core_audio_ecore_audio_out_input_detach(Eo *obj, void *sd EINA_UNUSED, Eo *input)
 {
    Core_Audio_Helper *data;
    Eina_Bool ret;
