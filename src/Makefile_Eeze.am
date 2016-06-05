@@ -152,7 +152,7 @@ bin_eeze_eeze_scanner_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
 setuid_root_mode = a=rx,u+xs
 
-EFL_INSTALL_EXEC_HOOK+=@chmod $(setuid_root_mode) $(DESTDIR)$(bindir)/eeze_scanner$(EXEEXT) || true;
+EFL_INSTALL_EXEC_HOOK+=chmod $(setuid_root_mode) $(DESTDIR)$(bindir)/eeze_scanner$(EXEEXT) || true;
 
 
 ### Unit tests
