@@ -215,22 +215,32 @@ _ecore_evas_resize_common(Ecore_Evas *ee,
                           int         h,
                           Eina_Bool   resize_cocoa)
 {
-   if ((w == ee->w) && (h == ee->h)) return;
+   DBG("Ecore_Evas Resize %i %i, was %i %i (resize_cocoa: %s)",
+       w, h, ee->w, ee->h, resize_cocoa ? "yes" : "no");
+
    ee->req.w = w;
    ee->req.h = h;
-   ee->w = w;
-   ee->h = h;
 
-   DBG("Ecore_Evas Resize %d %d", w, h);
+   if ((ee->w != w) || (ee->h != h))
+     {
+        ee->w = w;
+        ee->h = h;
+        if (ee->prop.window && resize_cocoa)
+          ecore_cocoa_window_resize((Ecore_Cocoa_Window *)ee->prop.window, w, h);
 
-   if (resize_cocoa)
-     ecore_cocoa_window_resize((Ecore_Cocoa_Window *)ee->prop.window, w, h);
+        if (ECORE_EVAS_PORTRAIT(ee))
+          {
+             evas_output_size_set(ee->evas, ee->w, ee->h);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+          }
+        else
+          {
+             evas_output_size_set(ee->evas, ee->h, ee->w);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+          }
 
-   evas_output_size_set(ee->evas, ee->w, ee->h);
-   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+     }
 }
 
 static Eina_Bool
