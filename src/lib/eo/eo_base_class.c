@@ -1242,11 +1242,6 @@ _eo_base_composite_attach(Eo *parent_id, Eo_Base_Data *pd EINA_UNUSED, Eo *comp_
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
    EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
 
-   if (!eo_isa(parent_id, _eo_class_id_get(comp_obj->klass)))
-     {
-        return EINA_FALSE;
-     }
-
    Eo_Base_Data *comp_pd = eo_data_scope_get(comp_obj_id, EO_BASE_CLASS);
    /* Don't composite if we already have a composite object of this type */
      {

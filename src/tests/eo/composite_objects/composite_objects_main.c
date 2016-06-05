@@ -73,8 +73,6 @@ main(int argc, char *argv[])
    fail_if(!eo_composite_part_is(simple));
    fail_if(eo_composite_attach(obj, simple));
 
-   fail_if(eo_composite_attach(simple, obj));
-
    eo_unref(simple);
    eo_unref(obj);
 
