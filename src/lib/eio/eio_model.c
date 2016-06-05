@@ -26,13 +26,6 @@ _eio_stat_do(Eio_Model_Data *priv)
    priv->stat_file = eio_file_direct_stat(priv->path, _eio_stat_done_cb, _eio_error_cb, priv);
 }
 
-void
-_accessor_free(void *data)
-{
-  Eina_Accessor **ac = data;
-  eina_accessor_free(*ac);
-}
-
 /**
  *  Callbacks
  *  Property
@@ -415,7 +408,7 @@ _eio_main_children_load_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina
    Eio_Model_Data *priv = data;
    EINA_SAFETY_ON_NULL_RETURN(priv);
 
-   child = eo_add(MY_CLASS, NULL, eio_model_path_set(eo_self, info->path));
+   child = eo_add_ref(MY_CLASS, priv->obj, eio_model_path_set(eo_self, info->path));
    eina_spinlock_take(&priv->filter_lock);
    if (priv->filter_cb)
      eio_model_children_filter_set(child, priv->filter_cb, priv->filter_userdata);
@@ -441,7 +434,7 @@ _eio_done_children_load_cb(void *data, Eio_File *handler EINA_UNUSED)
      {
        Eina_Accessor* accessor = efl_model_list_slice(priv->children_list, p->start, p->count);
        if (accessor)
-         eina_promise_owner_value_set(p->promise, &accessor, &_accessor_free);
+         eina_promise_owner_value_set(p->promise, accessor, (Eina_Promise_Free_Cb)&eina_accessor_free);
        else
          eina_promise_owner_error_set(p->promise, EFL_MODEL_ERROR_NOT_FOUND);
        free(p);
@@ -467,7 +460,7 @@ static void
 _eio_model_children_filter_set(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eio_Filter_Direct_Cb filter_cb, void *data)
 {
    eina_spinlock_take(&priv->filter_lock);
-   
+
    priv->filter_cb = filter_cb;
    priv->filter_userdata = data;
 
@@ -530,6 +523,11 @@ _eio_model_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data *pri
     * children must be already loaded otherwise we do nothing
     * and parameter is set to NULL.
     */
+   if (!priv->path)
+     {
+        eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_INIT_FAILED);
+        return;
+     }
 
    if (!(priv->is_listed))
      {
@@ -555,7 +553,7 @@ _eio_model_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data *pri
 
    Eina_Accessor* accessor = efl_model_list_slice(priv->children_list, start, count);
    if (accessor)
-     eina_promise_owner_value_set(promise, &accessor, &_accessor_free);
+     eina_promise_owner_value_set(promise, accessor, (Eina_Promise_Free_Cb)&eina_accessor_free);
    else
      eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
 }

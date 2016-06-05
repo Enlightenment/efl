@@ -69,13 +69,13 @@ promise_then_count(void *data EINA_UNUSED, void *p)
 static void
 promise_then_accessor(void *data EINA_UNUSED, void* p)
 {
-  Eina_Accessor **accessor = (Eina_Accessor**)p;
+  Eina_Accessor *accessor = p;
   ck_assert_ptr_ne(accessor, NULL);
-  printf("efl_model_loaded accessor %p\n", *accessor); fflush(stdout);
+  printf("efl_model_loaded accessor %p\n", accessor); fflush(stdout);
 
   Eo* child;
   int i = 0;
-  EINA_ACCESSOR_FOREACH(*accessor, i, child)
+  EINA_ACCESSOR_FOREACH(accessor, i, child)
     {
       printf("efl_model_loaded child: %d pointer %p\n", i, child);
     }
