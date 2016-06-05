@@ -1809,7 +1809,7 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_obj_smart_add(eo_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
 
-   elm_layout_file_set(obj, PACKAGE_DATA_DIR "/themes/elm_code.edj", "elm_code/layout/default");
+   elm_layout_file_set(obj, PACKAGE_DATA_DIR "/themes/default.edj", "elm_code/layout/default");
 
    scroller = elm_scroller_add(obj);
    evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
