@@ -985,17 +985,344 @@ elementary/themes/snd/kbd-tap2.wav \
 elementary/themes/snd/kbd-tap3.wav \
 elementary/themes/snd/kbd-tap4.wav \
 elementary/themes/snd/kbd-tap5.wav \
-elementary/themes/snd/kbd-tap.wav \
-\
-elementary/themes/fdo/actions/128 \
-elementary/themes/fdo/categories/16 \
-elementary/themes/fdo/categories/128 \
-elementary/themes/fdo/emblems/96 \
-elementary/themes/fdo/places/16 \
-elementary/themes/fdo/places/128 \
-elementary/themes/fdo/status/128 \
-elementary/themes/fdo/devices/128 \
-elementary/themes/fdo/apps/64
+elementary/themes/snd/kbd-tap.wav
 
 
-EXTRA_DIST += $(elementary_themes_files)
+elementary_fdo_actions_128_files = \
+	elementary/themes/fdo/actions/128/application-exit.png \
+	elementary/themes/fdo/actions/128/call-start.png \
+	elementary/themes/fdo/actions/128/call-stop.png \
+	elementary/themes/fdo/actions/128/document-close.png \
+	elementary/themes/fdo/actions/128/document-export.png \
+	elementary/themes/fdo/actions/128/document-import.png \
+	elementary/themes/fdo/actions/128/document-new.png \
+	elementary/themes/fdo/actions/128/document-open.png \
+	elementary/themes/fdo/actions/128/document-page-setup.png \
+	elementary/themes/fdo/actions/128/document-print.png \
+	elementary/themes/fdo/actions/128/document-print-preview.png \
+	elementary/themes/fdo/actions/128/document-properties.png \
+	elementary/themes/fdo/actions/128/document-revert.png \
+	elementary/themes/fdo/actions/128/document-save-as.png \
+	elementary/themes/fdo/actions/128/document-save.png \
+	elementary/themes/fdo/actions/128/document-send.png \
+	elementary/themes/fdo/actions/128/edit-clear.png \
+	elementary/themes/fdo/actions/128/edit-copy.png \
+	elementary/themes/fdo/actions/128/edit-cut.png \
+	elementary/themes/fdo/actions/128/edit-delete.png \
+	elementary/themes/fdo/actions/128/edit-find.png \
+	elementary/themes/fdo/actions/128/edit-find-replace.png \
+	elementary/themes/fdo/actions/128/edit-paste.png \
+	elementary/themes/fdo/actions/128/edit-redo.png \
+	elementary/themes/fdo/actions/128/edit-select-all.png \
+	elementary/themes/fdo/actions/128/edit-undo.png \
+	elementary/themes/fdo/actions/128/folder-copy.png \
+	elementary/themes/fdo/actions/128/folder-move.png \
+	elementary/themes/fdo/actions/128/folder-new.png \
+	elementary/themes/fdo/actions/128/format-indent-less.png \
+	elementary/themes/fdo/actions/128/format-indent-more.png \
+	elementary/themes/fdo/actions/128/format-justify-center.png \
+	elementary/themes/fdo/actions/128/format-justify-fill.png \
+	elementary/themes/fdo/actions/128/format-justify-left.png \
+	elementary/themes/fdo/actions/128/format-justify-right.png \
+	elementary/themes/fdo/actions/128/format-text-bold.png \
+	elementary/themes/fdo/actions/128/format-text-direction-ltr.png \
+	elementary/themes/fdo/actions/128/format-text-direction-rtl.png \
+	elementary/themes/fdo/actions/128/format-text-italic.png \
+	elementary/themes/fdo/actions/128/format-text-strikethrough.png \
+	elementary/themes/fdo/actions/128/format-text-underline.png \
+	elementary/themes/fdo/actions/128/go-bottom.png \
+	elementary/themes/fdo/actions/128/go-down.png \
+	elementary/themes/fdo/actions/128/go-first.png \
+	elementary/themes/fdo/actions/128/go-home.png \
+	elementary/themes/fdo/actions/128/go-jump.png \
+	elementary/themes/fdo/actions/128/go-last.png \
+	elementary/themes/fdo/actions/128/go-next.png \
+	elementary/themes/fdo/actions/128/go-previous.png \
+	elementary/themes/fdo/actions/128/go-top.png \
+	elementary/themes/fdo/actions/128/go-up.png \
+	elementary/themes/fdo/actions/128/help-about.png \
+	elementary/themes/fdo/actions/128/help-contents.png \
+	elementary/themes/fdo/actions/128/insert-image.png \
+	elementary/themes/fdo/actions/128/insert-link.png \
+	elementary/themes/fdo/actions/128/insert-object.png \
+	elementary/themes/fdo/actions/128/insert-text.png \
+	elementary/themes/fdo/actions/128/list-add.png \
+	elementary/themes/fdo/actions/128/list-remove.png \
+	elementary/themes/fdo/actions/128/media-eject.png \
+	elementary/themes/fdo/actions/128/media-playback-pause.png \
+	elementary/themes/fdo/actions/128/media-playback-start.png \
+	elementary/themes/fdo/actions/128/media-playback-stop.png \
+	elementary/themes/fdo/actions/128/media-record.png \
+	elementary/themes/fdo/actions/128/media-seek-backward.png \
+	elementary/themes/fdo/actions/128/media-seek-forward.png \
+	elementary/themes/fdo/actions/128/media-skip-backward.png \
+	elementary/themes/fdo/actions/128/media-skip-forward.png \
+	elementary/themes/fdo/actions/128/object-flip-horizontal.png \
+	elementary/themes/fdo/actions/128/object-flip-vertical.png \
+	elementary/themes/fdo/actions/128/object-rotate-left.png \
+	elementary/themes/fdo/actions/128/object-rotate-right.png \
+	elementary/themes/fdo/actions/128/process-stop.png \
+	elementary/themes/fdo/actions/128/system-log-out.png \
+	elementary/themes/fdo/actions/128/system-reboot.png \
+	elementary/themes/fdo/actions/128/system-run.png \
+	elementary/themes/fdo/actions/128/system-search.png \
+	elementary/themes/fdo/actions/128/system-shutdown.png \
+	elementary/themes/fdo/actions/128/tools-check-spelling.png \
+	elementary/themes/fdo/actions/128/view-close.png \
+	elementary/themes/fdo/actions/128/view-fullscreen.png \
+	elementary/themes/fdo/actions/128/view-list-compact.png \
+	elementary/themes/fdo/actions/128/view-list-details.png \
+	elementary/themes/fdo/actions/128/view-list-icons.png \
+	elementary/themes/fdo/actions/128/view-refresh.png \
+	elementary/themes/fdo/actions/128/view-restore.png \
+	elementary/themes/fdo/actions/128/view-sort-ascending.png \
+	elementary/themes/fdo/actions/128/view-sort-descending.png \
+	elementary/themes/fdo/actions/128/window-close.png \
+	elementary/themes/fdo/actions/128/window-new.png \
+	elementary/themes/fdo/actions/128/zoom-fill.png \
+	elementary/themes/fdo/actions/128/zoom-fit-best.png \
+	elementary/themes/fdo/actions/128/zoom-fit.png \
+	elementary/themes/fdo/actions/128/zoom-in.png \
+	elementary/themes/fdo/actions/128/zoom-original.png \
+	elementary/themes/fdo/actions/128/zoom-out.png
+
+elementary_fdo_categories_16_files = \
+	elementary/themes/fdo/categories/16/applications-accessories.png \
+	elementary/themes/fdo/categories/16/applications-development.png \
+	elementary/themes/fdo/categories/16/applications-games.png \
+	elementary/themes/fdo/categories/16/applications-graphics.png \
+	elementary/themes/fdo/categories/16/applications-internet.png \
+	elementary/themes/fdo/categories/16/applications-multimedia.png \
+	elementary/themes/fdo/categories/16/applications-office.png \
+	elementary/themes/fdo/categories/16/applications-other.png \
+	elementary/themes/fdo/categories/16/applications-science.png \
+	elementary/themes/fdo/categories/16/applications-system.png \
+	elementary/themes/fdo/categories/16/applications-utilities.png \
+	elementary/themes/fdo/categories/16/preferences-desktop.png \
+	elementary/themes/fdo/categories/16/preferences-other.png \
+	elementary/themes/fdo/categories/16/preferences-system.png
+
+elementary_fdo_categories_128_files = \
+	elementary/themes/fdo/categories/128/applications-accessories.png \
+	elementary/themes/fdo/categories/128/applications-development.png \
+	elementary/themes/fdo/categories/128/applications-games.png \
+	elementary/themes/fdo/categories/128/applications-graphics.png \
+	elementary/themes/fdo/categories/128/applications-internet.png \
+	elementary/themes/fdo/categories/128/applications-multimedia.png \
+	elementary/themes/fdo/categories/128/applications-office.png \
+	elementary/themes/fdo/categories/128/applications-other.png \
+	elementary/themes/fdo/categories/128/applications-science.png \
+	elementary/themes/fdo/categories/128/applications-system.png \
+	elementary/themes/fdo/categories/128/applications-utilities.png \
+	elementary/themes/fdo/categories/128/preferences-desktop.png \
+	elementary/themes/fdo/categories/128/preferences-other.png \
+	elementary/themes/fdo/categories/128/preferences-system.png
+
+elementary_fdo_emblems_96_files = \
+	elementary/themes/fdo/emblems/96/emblem-default.png \
+	elementary/themes/fdo/emblems/96/emblem-downloads.png \
+	elementary/themes/fdo/emblems/96/emblem-favorite.png \
+	elementary/themes/fdo/emblems/96/emblem-important.png \
+	elementary/themes/fdo/emblems/96/emblem-readonly.png \
+	elementary/themes/fdo/emblems/96/emblem-shared.png \
+	elementary/themes/fdo/emblems/96/emblem-symbolic-link.png \
+	elementary/themes/fdo/emblems/96/emblem-synchronized.png \
+	elementary/themes/fdo/emblems/96/emblem-synchronizing.png \
+	elementary/themes/fdo/emblems/96/emblem-system.png \
+	elementary/themes/fdo/emblems/96/emblem-unreadable.png
+
+elementary_fdo_places_16_files = \
+	elementary/themes/fdo/places/16/folder-documents.png \
+	elementary/themes/fdo/places/16/folder-download.png \
+	elementary/themes/fdo/places/16/folder-home.png \
+	elementary/themes/fdo/places/16/folder-music.png \
+	elementary/themes/fdo/places/16/folder-open.png \
+	elementary/themes/fdo/places/16/folder-pictures.png \
+	elementary/themes/fdo/places/16/folder.png \
+	elementary/themes/fdo/places/16/folder-recent.png \
+	elementary/themes/fdo/places/16/folder-remote.png \
+	elementary/themes/fdo/places/16/folder-videos.png \
+	elementary/themes/fdo/places/16/network-server.png \
+	elementary/themes/fdo/places/16/network-workgroup.png \
+	elementary/themes/fdo/places/16/start-here.png \
+	elementary/themes/fdo/places/16/user-desktop.png
+
+elementary_fdo_places_128_files = \
+	elementary/themes/fdo/places/128/folder-documents.png \
+	elementary/themes/fdo/places/128/folder-download.png \
+	elementary/themes/fdo/places/128/folder-home.png \
+	elementary/themes/fdo/places/128/folder-music.png \
+	elementary/themes/fdo/places/128/folder-open.png \
+	elementary/themes/fdo/places/128/folder-pictures.png \
+	elementary/themes/fdo/places/128/folder.png \
+	elementary/themes/fdo/places/128/folder-publicshare.png \
+	elementary/themes/fdo/places/128/folder-recent.png \
+	elementary/themes/fdo/places/128/folder-remote.png \
+	elementary/themes/fdo/places/128/folder-templates.png \
+	elementary/themes/fdo/places/128/folder-videos.png \
+	elementary/themes/fdo/places/128/network-server.png \
+	elementary/themes/fdo/places/128/network-workgroup.png \
+	elementary/themes/fdo/places/128/start-here.png \
+	elementary/themes/fdo/places/128/user-bookmarks.png \
+	elementary/themes/fdo/places/128/user-desktop.png \
+	elementary/themes/fdo/places/128/user-home.png \
+	elementary/themes/fdo/places/128/user-trash.png
+
+elementary_fdo_status_128_files = \
+	elementary/themes/fdo/status/128/audio-volume-high.png \
+	elementary/themes/fdo/status/128/audio-volume-low.png \
+	elementary/themes/fdo/status/128/audio-volume-medium.png \
+	elementary/themes/fdo/status/128/audio-volume-muted.png \
+	elementary/themes/fdo/status/128/audio-volume.png \
+	elementary/themes/fdo/status/128/battery-caution-charging.png \
+	elementary/themes/fdo/status/128/battery-caution.png \
+	elementary/themes/fdo/status/128/battery-empty-charging.png \
+	elementary/themes/fdo/status/128/battery-empty.png \
+	elementary/themes/fdo/status/128/battery-full-charging.png \
+	elementary/themes/fdo/status/128/battery-full.png \
+	elementary/themes/fdo/status/128/battery-good-charging.png \
+	elementary/themes/fdo/status/128/battery-good.png \
+	elementary/themes/fdo/status/128/battery-low-charging.png \
+	elementary/themes/fdo/status/128/battery-low.png \
+	elementary/themes/fdo/status/128/bluetooth-active.png \
+	elementary/themes/fdo/status/128/bluetooth-disabled.png \
+	elementary/themes/fdo/status/128/changes-allow.png \
+	elementary/themes/fdo/status/128/changes-prevent.png \
+	elementary/themes/fdo/status/128/dialog-error.png \
+	elementary/themes/fdo/status/128/dialog-information.png \
+	elementary/themes/fdo/status/128/dialog-password.png \
+	elementary/themes/fdo/status/128/dialog-question.png \
+	elementary/themes/fdo/status/128/dialog-warning.png \
+	elementary/themes/fdo/status/128/mail-attachment.png \
+	elementary/themes/fdo/status/128/mail-read.png \
+	elementary/themes/fdo/status/128/mail-unread.png \
+	elementary/themes/fdo/status/128/media-playlist-repeat.png \
+	elementary/themes/fdo/status/128/media-playlist-shuffle.png \
+	elementary/themes/fdo/status/128/network-cellular-3g.png \
+	elementary/themes/fdo/status/128/network-cellular-4g.png \
+	elementary/themes/fdo/status/128/network-cellular-connected.png \
+	elementary/themes/fdo/status/128/network-cellular-edge.png \
+	elementary/themes/fdo/status/128/network-cellular-gprs.png \
+	elementary/themes/fdo/status/128/network-cellular-signal-acquiring.png \
+	elementary/themes/fdo/status/128/network-cellular-signal-excellent.png \
+	elementary/themes/fdo/status/128/network-cellular-signal-good.png \
+	elementary/themes/fdo/status/128/network-cellular-signal-none.png \
+	elementary/themes/fdo/status/128/network-cellular-signal-ok.png \
+	elementary/themes/fdo/status/128/network-cellular-signal-weak.png \
+	elementary/themes/fdo/status/128/network-cellular-umts.png \
+	elementary/themes/fdo/status/128/network-error.png \
+	elementary/themes/fdo/status/128/network-idle.png \
+	elementary/themes/fdo/status/128/network-offline.png \
+	elementary/themes/fdo/status/128/network-receive.png \
+	elementary/themes/fdo/status/128/network-transmit.png \
+	elementary/themes/fdo/status/128/network-transmit-receive.png \
+	elementary/themes/fdo/status/128/network-vpn-acquiring.png \
+	elementary/themes/fdo/status/128/network-vpn.png \
+	elementary/themes/fdo/status/128/network-wireless-acquiring.png \
+	elementary/themes/fdo/status/128/network-wireless-encrypted.png \
+	elementary/themes/fdo/status/128/network-wireless-signal-excellent.png \
+	elementary/themes/fdo/status/128/network-wireless-signal-good.png \
+	elementary/themes/fdo/status/128/network-wireless-signal-none.png \
+	elementary/themes/fdo/status/128/network-wireless-signal-ok.png \
+	elementary/themes/fdo/status/128/network-wireless-signal-weak.png \
+	elementary/themes/fdo/status/128/non-starred.png \
+	elementary/themes/fdo/status/128/printer-error.png \
+	elementary/themes/fdo/status/128/printer-printing.png \
+	elementary/themes/fdo/status/128/printer-warning.png \
+	elementary/themes/fdo/status/128/security-high.png \
+	elementary/themes/fdo/status/128/security-low.png \
+	elementary/themes/fdo/status/128/security-medium.png \
+	elementary/themes/fdo/status/128/software-update-available.png \
+	elementary/themes/fdo/status/128/software-update-urgent.png \
+	elementary/themes/fdo/status/128/starred.png \
+	elementary/themes/fdo/status/128/user-available.png \
+	elementary/themes/fdo/status/128/user-away.png \
+	elementary/themes/fdo/status/128/user-busy.png \
+	elementary/themes/fdo/status/128/user-idle.png \
+	elementary/themes/fdo/status/128/user-invisible.png \
+	elementary/themes/fdo/status/128/user-offline.png \
+	elementary/themes/fdo/status/128/weather-clear-night.png \
+	elementary/themes/fdo/status/128/weather-clear.png \
+	elementary/themes/fdo/status/128/weather-clouds-night.png \
+	elementary/themes/fdo/status/128/weather-clouds.png \
+	elementary/themes/fdo/status/128/weather-few-clouds-night.png \
+	elementary/themes/fdo/status/128/weather-few-clouds.png \
+	elementary/themes/fdo/status/128/weather-fog.png \
+	elementary/themes/fdo/status/128/weather-overcast.png \
+	elementary/themes/fdo/status/128/weather-severe-alert.png \
+	elementary/themes/fdo/status/128/weather-showers.png \
+	elementary/themes/fdo/status/128/weather-showers-scattered.png \
+	elementary/themes/fdo/status/128/weather-snow.png \
+	elementary/themes/fdo/status/128/weather-storm.png
+
+elementary_fdo_devices_128_files = \
+	elementary/themes/fdo/devices/128/audio-card.png \
+	elementary/themes/fdo/devices/128/audio-input-microphone.png \
+	elementary/themes/fdo/devices/128/battery.png \
+	elementary/themes/fdo/devices/128/camera-photo.png \
+	elementary/themes/fdo/devices/128/camera.png \
+	elementary/themes/fdo/devices/128/camera-web.png \
+	elementary/themes/fdo/devices/128/computer-laptop.png \
+	elementary/themes/fdo/devices/128/computer.png \
+	elementary/themes/fdo/devices/128/drive-harddisk-ieee1394.png \
+	elementary/themes/fdo/devices/128/drive-harddisk.png \
+	elementary/themes/fdo/devices/128/drive-harddisk-usb.png \
+	elementary/themes/fdo/devices/128/drive-optical.png \
+	elementary/themes/fdo/devices/128/drive-removable-media-ieee1394.png \
+	elementary/themes/fdo/devices/128/drive-removable-media.png \
+	elementary/themes/fdo/devices/128/drive-removable-media-usb.png \
+	elementary/themes/fdo/devices/128/input-gaming.png \
+	elementary/themes/fdo/devices/128/input-keyboard.png \
+	elementary/themes/fdo/devices/128/input-mouse.png \
+	elementary/themes/fdo/devices/128/input-tablet.png \
+	elementary/themes/fdo/devices/128/media-flash-cf.png \
+	elementary/themes/fdo/devices/128/media-flash-ms.png \
+	elementary/themes/fdo/devices/128/media-flash.png \
+	elementary/themes/fdo/devices/128/media-flash-sd.png \
+	elementary/themes/fdo/devices/128/media-flash-sm.png \
+	elementary/themes/fdo/devices/128/media-floppy.png \
+	elementary/themes/fdo/devices/128/media-memory.png \
+	elementary/themes/fdo/devices/128/media-optical-audio.png \
+	elementary/themes/fdo/devices/128/media-optical-bd.png \
+	elementary/themes/fdo/devices/128/media-optical-cd.png \
+	elementary/themes/fdo/devices/128/media-optical-dvd.png \
+	elementary/themes/fdo/devices/128/media-optical.png \
+	elementary/themes/fdo/devices/128/media-tape.png \
+	elementary/themes/fdo/devices/128/media-zip.png \
+	elementary/themes/fdo/devices/128/modem.png \
+	elementary/themes/fdo/devices/128/multimedia-player.png \
+	elementary/themes/fdo/devices/128/network-wired.png \
+	elementary/themes/fdo/devices/128/network-wireless.png \
+	elementary/themes/fdo/devices/128/pda.png \
+	elementary/themes/fdo/devices/128/phone.png \
+	elementary/themes/fdo/devices/128/printer.png \
+	elementary/themes/fdo/devices/128/processor.png \
+	elementary/themes/fdo/devices/128/scanner.png \
+	elementary/themes/fdo/devices/128/video-display.png
+
+elementary_fdo_apps_64_files = \
+	elementary/themes/fdo/apps/64/preferences-color.png \
+	elementary/themes/fdo/apps/64/preferences-desktop-display.png \
+	elementary/themes/fdo/apps/64/preferences-desktop-font.png \
+	elementary/themes/fdo/apps/64/preferences-desktop-keyboard.png \
+	elementary/themes/fdo/apps/64/preferences-desktop-locale.png \
+	elementary/themes/fdo/apps/64/preferences-desktop-multimedia.png \
+	elementary/themes/fdo/apps/64/preferences-desktop-screensaver.png \
+	elementary/themes/fdo/apps/64/preferences-desktop-theme.png \
+	elementary/themes/fdo/apps/64/preferences-desktop-wallpaper.png \
+	elementary/themes/fdo/apps/64/preferences-profile.png
+
+
+elementary_fdo_files = \
+	$(elementary_fdo_actions_128_files) \
+	$(elementary_fdo_categories_16_files) \
+	$(elementary_fdo_categories_128_files) \
+	$(elementary_fdo_emblems_96_files) \
+	$(elementary_fdo_places_16_files) \
+	$(elementary_fdo_places_128_files) \
+	$(elementary_fdo_status_128_files) \
+	$(elementary_fdo_devices_128_files) \
+	$(elementary_fdo_apps_64_files)
+
+
+EXTRA_DIST += $(elementary_themes_files) $(elementary_fdo_files)

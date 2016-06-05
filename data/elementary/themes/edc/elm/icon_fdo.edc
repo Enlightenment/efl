@@ -13,12 +13,13 @@
  * NOTE: icons marked with an empty comment are names that are not in the 
  *       FDO spec, so they are not really standard, but seems widly used.
  *
- * NOTE: if you add an new icon you must add it to:
- *     - this file (of course)
- *     - src/bin/elementary/test_icon.c (elementary_test -to "Icon Standard")
- *     - data/elementary/themes/Makefile.am (only for new dirs)
- *     - elm_icon documentation   ?????  really?
- *     - don't forget to run "make distcheck"
+ * NOTE: when you add a new icon you MUST add to:
+ *   - this file (of course)
+ *   - src/bin/elementary/test_icon.c (elementary_test -to "Icon Standard")
+ *   - data/elementary/themes/Makefile.am
+ *   - data/Makefile.am (only for new dirs)
+ *   - elm_icon documentation   ?????  really?
+ *   - don't forget to run "make distcheck"
  * 
  */
 
