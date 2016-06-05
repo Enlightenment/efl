@@ -280,7 +280,7 @@ _eina_promise_pointer_value_get(_Eina_Promise_Default const* p)
    if (p->has_finished && !p->has_errored)
      {
         char const* buffer = promise->value;
-        return (void**)buffer;
+        return *((void**)buffer);
      }
    else
      {
