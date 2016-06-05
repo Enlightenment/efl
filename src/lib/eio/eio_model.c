@@ -7,6 +7,7 @@
 #include <Efl.h>
 #include <Eina.h>
 #include <Ecore.h>
+#include <Ecore_File.h>
 #include <Eo.h>
 
 #include "eio_private.h"
@@ -330,9 +331,16 @@ _eio_model_efl_model_property_set(Eo *obj EINA_UNUSED,
      }
 
    dest = eina_value_to_string(value);
-   if (priv->path == NULL)
+   if (priv->path == NULL || !ecore_file_exists(priv->path))
      {
+        free(priv->path);
         priv->path = dest;
+
+        if (!ecore_file_exists(dest))
+          {
+             eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
+             return;
+          }
 
         INF("path '%s' with filename '%s'.", priv->path, basename(priv->path));
 
@@ -611,4 +619,24 @@ _eio_model_eo_base_destructor(Eo *obj , Eio_Model_Data *priv)
    eo_destructor(eo_super(obj, MY_CLASS));
 }
 
+
+static Eo *
+_eio_model_eo_base_parent_get(Eo *obj , Eio_Model_Data *priv)
+{
+   Eo *model = eo_parent_get(eo_super(obj, MY_CLASS));
+
+   if (model == NULL || !eo_isa(model, EFL_MODEL_INTERFACE))
+     {
+        char *path = ecore_file_dir_get(priv->path);
+        if (path != NULL && strcmp(priv->path, "/") != 0)
+          {
+             model = eo_add(MY_CLASS, NULL, eio_model_path_set(eo_self, path));
+          }
+        else
+          model = NULL;
+
+        free(path);
+     }
+   return model;
+}
 #include "eio_model.eo.c"

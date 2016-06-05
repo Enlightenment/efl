@@ -36,6 +36,7 @@ class Eio.Model (Eo.Base, Efl.Model)
     implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
+      Eo.Base.parent.get;
       Efl.Model.properties.get;
       Efl.Model.property_set;
       Efl.Model.property_get;
