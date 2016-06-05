@@ -2,7 +2,8 @@
 
 @interface EcoreCocoaWindow: NSWindow <NSWindowDelegate>
 {
-	void *ecore_window_data;
+   void *ecore_window_data;
+   int _live_resize;
 }
 
 @property (nonatomic, assign) void *ecore_window_data;

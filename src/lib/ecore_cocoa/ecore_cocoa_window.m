@@ -34,6 +34,8 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
    [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
 
+   _live_resize = 0;
+
    return self;
 }
 
@@ -72,28 +74,36 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
    Ecore_Cocoa_Event_Window_Resize_Request *event;
    NSSize size = self.frame.size;
 
-   event = malloc(sizeof(*event));
-   if (EINA_UNLIKELY(event == NULL))
-     {
-        CRI("Failed to allocate Ecore_Cocoa_Event_Window_Resize_Request");
-        return;
-     }
-   event->w = size.width;
-   event->h = size.height -
-      (([self isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
-   event->cocoa_window = [notif object];
-   ecore_event_add(ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST, event, NULL, NULL);
-
    /*
-    * During live resize, NSRunLoop blocks, and prevent the ecore_main_loop
-    * to be run.
-    * This, combined with the -pauseNSRunLoopMonitoring and
-    * -resumeNSRunLoopMonitoring methods invoked in
-    * -windowWillStartLiveResize and -windowDidEndLiveResize
-    * allow the ecore_main_loop to run withing NSRunLoop during the
-    * live resizing of a window.
+    * Only throw a resize event and manipulate the main loop when
+    * we are 100% sure we are in a live resize, and the main loop
+    * has already been paused!!
     */
-   ecore_main_loop_iterate();
+   if (_live_resize > 0)
+     {
+        event = malloc(sizeof(*event));
+        if (EINA_UNLIKELY(event == NULL))
+          {
+             CRI("Failed to allocate Ecore_Cocoa_Event_Window_Resize_Request");
+             return;
+          }
+        event->w = size.width;
+        event->h = size.height -
+           (([self isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
+        event->cocoa_window = [notif object];
+        ecore_event_add(ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST, event, NULL, NULL);
+
+        /*
+         * During live resize, NSRunLoop blocks, and prevent the ecore_main_loop
+         * to be run.
+         * This, combined with the -pauseNSRunLoopMonitoring and
+         * -resumeNSRunLoopMonitoring methods invoked in
+         * -windowWillStartLiveResize and -windowDidEndLiveResize
+         * allow the ecore_main_loop to run withing NSRunLoop during the
+         * live resizing of a window.
+         */
+        ecore_main_loop_iterate();
+     }
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
@@ -112,11 +122,15 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
 - (void) windowWillStartLiveResize:(NSNotification *) EINA_UNUSED notification
 {
+   /* Live resize must be set AFTER pausing the main loop */
    [NSApp pauseNSRunLoopMonitoring];
+   _live_resize++;
 }
 
 - (void) windowDidEndLiveResize:(NSNotification *) EINA_UNUSED notification
 {
+   /* Live resize must be clear BEFORE resuming the main loop */
+   _live_resize--;
    [NSApp resumeNSRunLoopMonitoring];
 }
 
