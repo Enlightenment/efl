@@ -96,6 +96,7 @@ elementary/themes/edc/elm/button.edc \
 elementary/themes/edc/elm/calendar.edc \
 elementary/themes/edc/elm/check.edc \
 elementary/themes/edc/elm/clock.edc \
+elementary/themes/edc/elm/code.edc \
 elementary/themes/edc/elm/colorsel.edc \
 elementary/themes/edc/elm/colorclass.edc \
 elementary/themes/edc/elm/conform.edc \
