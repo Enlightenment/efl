@@ -131,22 +131,17 @@ _stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    Eolian_Struct_Type_Field *sf;
    Eina_List *l;
+   const char *sp;
    eina_strbuf_append(buf, "struct ");
-   if (tp->name)
+   EINA_LIST_FOREACH(tp->namespaces, l, sp)
      {
-        Eina_List *m;
-        const char *sp;
-        EINA_LIST_FOREACH(tp->namespaces, m, sp)
-          {
-             eina_strbuf_append(buf, sp);
-             eina_strbuf_append_char(buf, '_');
-          }
-        eina_strbuf_append(buf, tp->name);
-        eina_strbuf_append_char(buf, ' ');
+        eina_strbuf_append(buf, sp);
+        eina_strbuf_append_char(buf, '_');
      }
+    eina_strbuf_append(buf, tp->name);
    if (tp->type == EOLIAN_TYPEDECL_STRUCT_OPAQUE)
      return;
-   eina_strbuf_append(buf, "{ ");
+   eina_strbuf_append(buf, " { ");
    EINA_LIST_FOREACH(tp->field_list, l, sf)
      {
         database_type_to_str(sf->type, buf, sf->name, sf->is_ref);
@@ -160,20 +155,15 @@ _etype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    Eolian_Enum_Type_Field *ef;
    Eina_List *l;
+   const char *sp;
    eina_strbuf_append(buf, "enum ");
-   if (tp->name)
+   EINA_LIST_FOREACH(tp->namespaces, l, sp)
      {
-        Eina_List *m;
-        const char *sp;
-        EINA_LIST_FOREACH(tp->namespaces, m, sp)
-          {
-             eina_strbuf_append(buf, sp);
-             eina_strbuf_append_char(buf, '_');
-          }
-        eina_strbuf_append(buf, tp->name);
-        eina_strbuf_append_char(buf, ' ');
+        eina_strbuf_append(buf, sp);
+        eina_strbuf_append_char(buf, '_');
      }
-   eina_strbuf_append(buf, "{ ");
+   eina_strbuf_append(buf, tp->name);
+   eina_strbuf_append(buf, " { ");
    EINA_LIST_FOREACH(tp->field_list, l, ef)
      {
         eina_strbuf_append(buf, ef->name);
