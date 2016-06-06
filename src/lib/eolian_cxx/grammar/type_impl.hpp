@@ -201,7 +201,7 @@ struct visitor_generate
           std::swap(pointers, pointee.pointers);
           pointers.erase(pointers.begin());
 
-          attributes::pointer_indirection reference {{{},{}}, true};
+          attributes::pointer_indirection reference {{attributes::qualifier_info::is_none,{}}, true};
           
           return as_generator(" ::std::unique_ptr<" << type).generate
             (sink, attributes::type_def{pointee, c_type}, *context)
@@ -213,7 +213,7 @@ struct visitor_generate
        {
          auto pointers = regular.pointers;
          if(is_out)
-           pointers.push_back({{{},{}}, true});
+           pointers.push_back({{attributes::qualifier_info::is_none,{}}, true});
          if(as_generator(*(string << "_") << string << (is_const(regular.base_qualifier)? " const" : ""))
             .generate(sink, std::make_tuple(regular.namespaces, regular.base_type), *context))
            return detail::generate_pointers(sink, pointers, *context
@@ -225,7 +225,7 @@ struct visitor_generate
    bool operator()(attributes::klass_name klass) const
    {
      if(is_out)
-       klass.pointers.push_back({{{}, {}}, true});
+       klass.pointers.push_back({{attributes::qualifier_info::is_none, {}}, true});
      if(as_generator(" " << *("::" << lower_case[string]) << "::" << string)
         .generate(sink, std::make_tuple(attributes::cpp_namespaces(klass.namespaces), klass.eolian_name), *context))
        return detail::generate_pointers(sink, klass.pointers, *context, false);
@@ -296,7 +296,7 @@ struct visitor_generate
           std::vector<attributes::pointer_indirection> pointers;
           pointers.swap(no_pointer_regular.pointers);
           if(is_out)
-            pointers.push_back({{{}, {}}, true});
+            pointers.push_back({{attributes::qualifier_info::is_none, {}}, true});
           return visitor_type{sink, context, c_type, false}(no_pointer_regular)
             && as_generator("<" << (type % ", ") << ">").generate(sink, complex.subtypes, *context)
             && detail::generate_pointers(sink, pointers, *context, false);
