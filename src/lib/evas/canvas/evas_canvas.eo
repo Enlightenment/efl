@@ -517,17 +517,18 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
             Example:
             @code
             extern Evas *evas;
-            int button_mask, i;
+            unsigned int button_mask;
+            int i;
 
             button_mask = evas_pointer_button_down_mask_get(evas);
             printf("Buttons currently pressed:\n");
             for (i = 0; i < 32; i++)
             {
-            if ((button_mask & (1 << i)) != 0) printf("Button %i\n", i + 1);
+            if ((button_mask & (1u << i)) != 0) printf("Button %i\n", i + 1);
             }
             @endcode
             */
-            return: int @warn_unused; [[A bitmask of the currently depressed buttons on the canvas.]]
+            return: uint @warn_unused; [[A bitmask of the currently depressed buttons on the canvas.]]
          }
       }
 

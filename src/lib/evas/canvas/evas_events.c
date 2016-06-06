@@ -1159,7 +1159,7 @@ _canvas_event_feed_mouse_down_internal(Eo *eo_e, int b, Evas_Button_Flags flags,
    INF("ButtonEvent:down time=%u x=%d y=%d button=%d downs=%d", timestamp, e->pointer.x, e->pointer.y, b, e->pointer.downs);
    if ((b < 1) || (b > 32)) return;
 
-   e->pointer.button |= (1 << (b - 1));
+   e->pointer.button |= (1u << (b - 1));
    e->pointer.downs++;
 
    if (e->is_frozen) return;
@@ -1384,7 +1384,7 @@ _canvas_event_feed_mouse_up_internal(Eo *eo_e, int b, Evas_Button_Flags flags,
    if ((b < 1) || (b > 32)) return;
    if (e->pointer.downs <= 0) return;
 
-   e->pointer.button &= ~(1 << (b - 1));
+   e->pointer.button &= ~(1u << (b - 1));
    e->pointer.downs--;
 
    if (e->is_frozen) return;
@@ -1496,7 +1496,7 @@ _canvas_event_feed_mouse_cancel_internal(Eo *eo_e, unsigned int timestamp, const
 
    for (i = 0; i < 32; i++)
      {
-        if ((e->pointer.button & (1 << i)))
+        if ((e->pointer.button & (1u << i)))
           _canvas_event_feed_mouse_up_internal(eo_e, i + 1, 0, timestamp, data, parent_pe);
      }
    EINA_LIST_FOREACH_SAFE(e->touch_points, l, ll, point)

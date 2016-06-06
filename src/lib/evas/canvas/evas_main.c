@@ -559,10 +559,10 @@ _evas_canvas_pointer_canvas_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Ev
    if (y) *y = e->pointer.y;
 }
 
-EOLIAN static int
+EOLIAN static unsigned int
 _evas_canvas_pointer_button_down_mask_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   return (int)e->pointer.button;
+   return e->pointer.button;
 }
 
 EOLIAN static Eina_Bool
