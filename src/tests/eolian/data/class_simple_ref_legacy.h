@@ -46,12 +46,13 @@ EAPI void evas_object_simple_b_set(Class_Simple *obj);
  *
  * @param[in,out] b
  * @param[out] c
+ * @param[in] d
  *
  * @return comment for method return
  *
  * @ingroup Class_Simple
  */
-EAPI char *evas_object_simple_foo(Class_Simple *obj, int a, char *b, double *c);
+EAPI char *evas_object_simple_foo(Class_Simple *obj, int a, char *b, double *c, int *d);
 EAPI int evas_object_simple_bar(Class_Simple *obj, int x);
 
 #endif

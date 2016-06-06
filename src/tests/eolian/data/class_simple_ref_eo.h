@@ -55,12 +55,13 @@ EOAPI void evas_obj_simple_b_set(Eo *obj);
  *
  * @param[in,out] b
  * @param[out] c
+ * @param[in] d
  *
  * @return comment for method return
  *
  * @ingroup Class_Simple
  */
-EOAPI char *evas_obj_simple_foo(Eo *obj, int a, char *b, double *c);
+EOAPI char *evas_obj_simple_foo(Eo *obj, int a, char *b, double *c, int *d);
 #endif
 
 EOAPI int evas_obj_simple_bar(Eo *obj, int x);

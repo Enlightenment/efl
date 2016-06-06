@@ -13,7 +13,7 @@ typedef Eo Struct;
 
 typedef struct _Named
 {
-  int field;
+  int *field;
   const char *something;
 } Named;
 

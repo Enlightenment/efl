@@ -158,6 +158,13 @@ eolian_typedecl_struct_field_type_get(const Eolian_Struct_Type_Field *fl)
    return fl->type;
 }
 
+EAPI Eina_Bool
+eolian_typedecl_struct_field_is_ref(const Eolian_Struct_Type_Field *fl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, EINA_FALSE);
+   return fl->is_ref;
+}
+
 EAPI Eina_Iterator *
 eolian_typedecl_enum_fields_get(const Eolian_Typedecl *tp)
 {
@@ -345,7 +352,7 @@ eolian_type_c_type_named_get(const Eolian_Type *tp, const char *name)
    Eina_Strbuf *buf;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    buf = eina_strbuf_new();
-   database_type_to_str(tp, buf, name);
+   database_type_to_str(tp, buf, name, EINA_FALSE);
    ret = eina_stringshare_add(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;

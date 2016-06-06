@@ -11,15 +11,15 @@ void _class_simple_b_set(Eo *obj, Evas_Simple_Data *pd);
 
 EOAPI EO_VOID_FUNC_BODY(evas_obj_simple_b_set);
 
-char * _class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, char *b, double *c);
+char * _class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, char *b, double *c, int *d);
 
-static char * __eolian_class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, char *b, double *c)
+static char * __eolian_class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, char *b, double *c, int *d)
 {
    if (c) *c = 1337.600000;
-   return _class_simple_foo(obj, pd, a, b, c);
+   return _class_simple_foo(obj, pd, a, b, c, d);
 }
 
-EOAPI EO_FUNC_BODYV(evas_obj_simple_foo, char *, NULL, EO_FUNC_CALL(a, b, c), int a, char *b, double *c);
+EOAPI EO_FUNC_BODYV(evas_obj_simple_foo, char *, NULL, EO_FUNC_CALL(a, b, c, d), int a, char *b, double *c, int *d);
 
 int _class_simple_bar(Eo *obj, Evas_Simple_Data *pd, int x);
 

@@ -184,7 +184,8 @@ typedef enum
 {
    EOLIAN_IN_PARAM = 0,
    EOLIAN_OUT_PARAM,
-   EOLIAN_INOUT_PARAM
+   EOLIAN_INOUT_PARAM,
+   EOLIAN_REF_PARAM
 } Eolian_Parameter_Dir;
 
 typedef enum
@@ -1447,6 +1448,16 @@ EAPI const Eolian_Documentation *eolian_typedecl_struct_field_documentation_get(
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_typedecl_struct_field_type_get(const Eolian_Struct_Type_Field *fl);
+
+/*
+ * @brief Check if a struct field is a reference.
+ *
+ * @param[in] fl the field.
+ * @return EINA_TRUE if it is, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_typedecl_struct_field_is_ref(const Eolian_Struct_Type_Field *fl);
 
 /*
  * @brief Get an iterator to all fields of an enum type.

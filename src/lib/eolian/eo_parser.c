@@ -502,9 +502,15 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    while (ls->t.token != '}')
      {
         const char *fname;
+        Eina_Bool is_ref = EINA_FALSE;
         Eolian_Struct_Type_Field *fdef;
         Eolian_Type *tp;
         int fline = ls->line_number, fcol = ls->column;
+        if (ls->t.kw == KW_at_ref)
+          {
+             is_ref = EINA_TRUE;
+             eo_lexer_get(ls);
+          }
         check(ls, TOK_VALUE);
         if (eina_hash_find(def->fields, ls->t.value.s))
           eo_lexer_syntax_error(ls, "double field definition");
@@ -518,6 +524,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         FILL_BASE(fdef->base, ls, fline, fcol);
         fdef->type = tp;
         fdef->name = eina_stringshare_ref(fname);
+        fdef->is_ref = is_ref;
         pop_type(ls);
         check_next(ls, ';');
         FILL_DOC(ls, fdef, doc);
@@ -1007,26 +1014,27 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
    Eolian_Function_Parameter *par = calloc(1, sizeof(Eolian_Function_Parameter));
    FILL_BASE(par->base, ls, ls->line_number, ls->column);
    *params = eina_list_append(*params, par);
-   if (allow_inout)
+   if (allow_inout && ls->t.kw == KW_at_in)
      {
-        if (ls->t.kw == KW_at_in)
-          {
-             par->param_dir = EOLIAN_IN_PARAM;
-             eo_lexer_get(ls);
-          }
-        else if (ls->t.kw == KW_at_out)
-          {
-             par->param_dir = EOLIAN_OUT_PARAM;
-             eo_lexer_get(ls);
-          }
-        else if (ls->t.kw == KW_at_inout)
-          {
-             par->param_dir = EOLIAN_INOUT_PARAM;
-             eo_lexer_get(ls);
-          }
-        else
-           par->param_dir = EOLIAN_IN_PARAM;
+        par->param_dir = EOLIAN_IN_PARAM;
+        eo_lexer_get(ls);
      }
+   else if (allow_inout && ls->t.kw == KW_at_out)
+     {
+        par->param_dir = EOLIAN_OUT_PARAM;
+        eo_lexer_get(ls);
+     }
+   else if (allow_inout && ls->t.kw == KW_at_inout)
+     {
+        par->param_dir = EOLIAN_INOUT_PARAM;
+        eo_lexer_get(ls);
+     }
+   else if (ls->t.kw == KW_at_ref)
+     {
+        par->param_dir = EOLIAN_REF_PARAM;
+        eo_lexer_get(ls);
+     }
+   else par->param_dir = EOLIAN_IN_PARAM;
    check(ls, TOK_VALUE);
    par->name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);

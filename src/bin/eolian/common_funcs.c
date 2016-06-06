@@ -129,3 +129,27 @@ _template_fill(Eina_Strbuf *buf, const char *templ, const Eolian_Class *class, c
         eina_strbuf_replace_all(buf, "@#CLASS", tmp_env.upper_classname);
      }
 }
+
+const char *
+_get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Dir pdir)
+{
+   switch (ftype)
+     {
+      case EOLIAN_PROP_GET:
+        if (pdir == EOLIAN_REF_PARAM)
+          return "**";
+        else
+          return "*";
+      case EOLIAN_PROP_SET:
+        if (pdir == EOLIAN_REF_PARAM)
+          return "*";
+        else
+          return "";
+      default:
+        if (pdir != EOLIAN_IN_PARAM)
+          return "*";
+        else
+          return "";
+     }
+   return "";
+}

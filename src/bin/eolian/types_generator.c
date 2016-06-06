@@ -71,8 +71,9 @@ _type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool use_legacy)
                 {
                    const Eolian_Type *type = eolian_typedecl_struct_field_type_get(member);
                    Eina_Stringshare *c_type = eolian_type_c_type_get(type);
-                   eina_strbuf_append_printf(buf, "  %s%s%s;",
-                         c_type, strchr(c_type, '*')?"":" ",
+                   Eina_Bool is_ref = eolian_typedecl_struct_field_is_ref(member);
+                   eina_strbuf_append_printf(buf, "  %s%s%s%s;",
+                         c_type, is_ref ? (strchr(c_type, '*') ? "*" : " *") : "", (is_ref || strchr(c_type, '*'))?"":" ",
                          eolian_typedecl_struct_field_name_get(member));
                    const Eolian_Documentation *fdoc
                        = eolian_typedecl_struct_field_documentation_get(member);

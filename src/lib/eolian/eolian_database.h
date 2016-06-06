@@ -232,6 +232,7 @@ struct _Eolian_Struct_Type_Field
    Eolian_Object     base;
    Eolian_Type      *type;
    Eolian_Documentation *doc;
+   Eina_Bool is_ref: 1;
 };
 
 struct _Eolian_Enum_Type_Field
@@ -300,7 +301,7 @@ void database_enum_add(Eolian_Typedecl *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedecl_del(Eolian_Typedecl *tp);
 
-void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name);
+void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name, Eina_Bool is_ref);
 void database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf, const char *name);
 
 /* expressions */

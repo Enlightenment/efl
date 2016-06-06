@@ -639,6 +639,10 @@ START_TEST(eolian_simple_parsing)
    v = eolian_expression_eval(expr, EOLIAN_MASK_FLOAT);
    fail_if(v.type != EOLIAN_EXPR_DOUBLE);
    fail_if(v.value.d != 1337.6);
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(eolian_parameter_direction_get(param) != EOLIAN_REF_PARAM);
+   fail_if(strcmp(eolian_type_name_get(eolian_parameter_type_get(param)), "int"));
+   fail_if(strcmp(eolian_parameter_name_get(param), "d"));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
 
@@ -680,10 +684,12 @@ START_TEST(eolian_struct)
    fail_if(strcmp(file, "struct.eo"));
    fail_if(!(field = eolian_typedecl_struct_field_get(tdl, "field")));
    fail_if(!(ftype = eolian_typedecl_struct_field_type_get(field)));
+   fail_if(!eolian_typedecl_struct_field_is_ref(field));
    fail_if(!(type_name = eolian_type_name_get(ftype)));
    fail_if(strcmp(type_name, "int"));
    fail_if(!(field = eolian_typedecl_struct_field_get(tdl, "something")));
    fail_if(!(ftype = eolian_typedecl_struct_field_type_get(field)));
+   fail_if(eolian_typedecl_struct_field_is_ref(field));
    fail_if(!(type_name = eolian_type_c_type_get(ftype)));
    fail_if(strcmp(type_name, "const char *"));
    eina_stringshare_del(type_name);

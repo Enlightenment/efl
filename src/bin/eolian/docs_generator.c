@@ -517,6 +517,7 @@ docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype,
         switch (dir)
           {
            case EOLIAN_IN_PARAM:
+           case EOLIAN_REF_PARAM:
              eina_strbuf_append(buf, " * @param[in] ");
              curl += sizeof(" * @param[in] ") - 1;
              break;

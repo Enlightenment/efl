@@ -41,7 +41,8 @@ ffi.cdef [[
     {
         EOLIAN_IN_PARAM = 0,
         EOLIAN_OUT_PARAM,
-        EOLIAN_INOUT_PARAM
+        EOLIAN_INOUT_PARAM,
+        EOLIAN_REF_PARAM
     } Eolian_Parameter_Dir;
 
     typedef enum
@@ -280,6 +281,7 @@ ffi.cdef [[
     const char *eolian_typedecl_struct_field_name_get(const Eolian_Struct_Type_Field *fl);
     const Eolian_Documentation *eolian_typedecl_struct_field_documentation_get(const Eolian_Struct_Type_Field *fl);
     const Eolian_Type *eolian_typedecl_struct_field_type_get(const Eolian_Struct_Type_Field *fl);
+    Eina_Bool eolian_typedecl_struct_field_is_ref(const Eolian_Struct_Type_Field *fl);
     Eina_Iterator *eolian_typedecl_enum_fields_get(const Eolian_Typedecl *tp);
     const Eolian_Enum_Type_Field *eolian_typedecl_enum_field_get(const Eolian_Typedecl *tp, const char *field);
     const char *eolian_typedecl_enum_field_name_get(const Eolian_Enum_Type_Field *fl);
@@ -485,6 +487,10 @@ ffi.metatype("Eolian_Struct_Type_Field", {
             local v = eolian.eolian_typedecl_struct_field_type_get(self)
             if v == nil then return nil end
             return v
+        end,
+
+        is_ref = function(self)
+            return eolian.eolian_typedecl_struct_field_is_ref(self) ~= 0
         end
     }
 })
@@ -815,7 +821,8 @@ M.Function = ffi.metatype("Eolian_Function", {
 M.parameter_dir = {
     IN    = 0,
     OUT   = 1,
-    INOUT = 2
+    INOUT = 2,
+    REF   = 3
 }
 
 ffi.metatype("Eolian_Function_Parameter", {
