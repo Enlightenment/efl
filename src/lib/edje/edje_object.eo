@@ -430,7 +430,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
                                              from #Edje_External_Param_Type on success.]]
          params {
             @in part: string; [[The part name]]
-            @out param: const(char); [[the parameter name to use.]]
+            @in param: string; [[the parameter name to use.]]
          }
       }
       part_text_select_allow_set @const {
@@ -830,7 +830,7 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            You must free the return (if not $null) after you are done with it.]]
 
-         return: char *; [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
+         return: string; [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
          params {
             @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[The cursor to use]]
@@ -904,15 +904,18 @@ class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
             @in part: string; [[The part name]]
          }
       }
-      part_external_content_get @const {
+      @property part_external_content {
          [[Get an object contained in an part of type EXTERNAL
 
            The content string must not be $null. Its actual value depends on the
            code providing the EXTERNAL.]]
-         return: Evas.Object;
-         params {
-            @in part: string; [[The name of the part holding the EXTERNAL]]
-            @out content: const(char); [[A string identifying which content from the EXTERNAL to get]]
+         get {}
+         keys {
+            part: string; [[The name of the part holding the EXTERNAL]]
+            content: string; [[A string identifying which content from the EXTERNAL to get]]
+         }
+         values {
+            v: Evas.Object;
          }
       }
       preload {
