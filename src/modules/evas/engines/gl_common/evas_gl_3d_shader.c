@@ -216,59 +216,6 @@ _shader_compile(GLuint shader, const char *src)
    return EINA_TRUE;
 }
 
-static inline Eina_Bool
-_program_build(E3D_Program *program, const char *vert_src, const char *frag_src)
-{
-   GLint ok = 0;
-
-   /* Create OpenGL vertex & fragment shader object. */
-   program->vert = glCreateShader(GL_VERTEX_SHADER);
-   program->frag = glCreateShader(GL_FRAGMENT_SHADER);
-
-   /* Commpile vertex shader. */
-   if (!_shader_compile(program->vert, vert_src))
-     {
-        ERR("Faield to compile vertex shader.");
-        return EINA_FALSE;
-     }
-
-   /* Compile fragment shader. */
-   if (!_shader_compile(program->frag, frag_src))
-     {
-        ERR("Failed to compile fragment shader.");
-        return EINA_FALSE;
-     }
-
-   /* Create OpenGL program object. */
-   program->prog = glCreateProgram();
-
-   /* Attach shaders. */
-   glAttachShader(program->prog, program->vert);
-   glAttachShader(program->prog, program->frag);
-
-   /* Link program. */
-   glLinkProgram(program->prog);
-
-   /* Check link status. */
-   glGetProgramiv(program->prog, GL_LINK_STATUS, &ok);
-
-   if (!ok)
-     {
-        GLchar   *log_str;
-        GLint     len = 0;
-        GLsizei   info_len;
-
-        glGetProgramiv(program->prog, GL_INFO_LOG_LENGTH, &len);
-        log_str = (GLchar *)malloc(len);
-        glGetProgramInfoLog(program->prog, len, &info_len, log_str);
-        ERR("Shader link failed.\n%s", log_str);
-        free(log_str);
-        return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
-}
-
 static inline void
 _program_vertex_attrib_bind(E3D_Program *program)
 {
@@ -303,6 +250,60 @@ _program_vertex_attrib_bind(E3D_Program *program)
 
    if (program->flags & E3D_SHADER_FLAG_VERTEX_TEXCOORD_BLEND)
      glBindAttribLocation(program->prog, index++, "aTexCoord1");
+}
+
+static inline Eina_Bool
+_program_build(E3D_Program *program, const char *vert_src, const char *frag_src)
+{
+   GLint ok = 0;
+
+   /* Create OpenGL vertex & fragment shader object. */
+   program->vert = glCreateShader(GL_VERTEX_SHADER);
+   program->frag = glCreateShader(GL_FRAGMENT_SHADER);
+
+   /* Commpile vertex shader. */
+   if (!_shader_compile(program->vert, vert_src))
+     {
+        ERR("Faield to compile vertex shader.");
+        return EINA_FALSE;
+     }
+
+   /* Compile fragment shader. */
+   if (!_shader_compile(program->frag, frag_src))
+     {
+        ERR("Failed to compile fragment shader.");
+        return EINA_FALSE;
+     }
+
+   /* Create OpenGL program object. */
+   program->prog = glCreateProgram();
+
+   /* Attach shaders. */
+   glAttachShader(program->prog, program->vert);
+   glAttachShader(program->prog, program->frag);
+
+   _program_vertex_attrib_bind(program);
+   /* Link program. */
+   glLinkProgram(program->prog);
+
+   /* Check link status. */
+   glGetProgramiv(program->prog, GL_LINK_STATUS, &ok);
+
+   if (!ok)
+     {
+        GLchar   *log_str;
+        GLint     len = 0;
+        GLsizei   info_len;
+
+        glGetProgramiv(program->prog, GL_INFO_LOG_LENGTH, &len);
+        log_str = (GLchar *)malloc(len);
+        glGetProgramInfoLog(program->prog, len, &info_len, log_str);
+        ERR("Shader link failed.\n%s", log_str);
+        free(log_str);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }
 
 static const char *uniform_names[] =
@@ -696,7 +697,6 @@ e3d_program_new(Evas_Canvas3D_Shader_Mode mode, E3D_Shader_Flag flags)
    if (! _program_build(program, vert.str, frag.str))
      goto error;
 
-   _program_vertex_attrib_bind(program);
    _program_uniform_init(program);
 
    _shader_string_fini(&vert);
