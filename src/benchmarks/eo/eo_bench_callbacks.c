@@ -7,7 +7,7 @@
 #include "class_simple.h"
 
 static Eina_Bool
-_cb(void *data EINA_UNUSED, const Eo_Event *event)
+_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    return EO_CALLBACK_CONTINUE;
 }
