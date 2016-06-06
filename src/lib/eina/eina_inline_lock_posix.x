@@ -169,6 +169,7 @@ static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
 {
    pthread_mutexattr_t attr;
+   Eina_Bool ok = EINA_FALSE;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    if (!_eina_threads_activated)
@@ -181,15 +182,16 @@ eina_lock_new(Eina_Lock *mutex)
       feature for sure with that change. */
 #ifdef EINA_HAVE_DEBUG_THREADS
    if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK) != 0)
-     return EINA_FALSE;
+     goto fail_release;
    memset(mutex, 0, sizeof(Eina_Lock));
 #endif
    if (pthread_mutex_init(&(mutex->mutex), &attr) != 0)
-     return EINA_FALSE;
+     goto fail_release;
 
+   ok = EINA_TRUE;
+fail_release:
    pthread_mutexattr_destroy(&attr);
-
-   return EINA_TRUE;
+   return ok;
 }
 
 static inline void
