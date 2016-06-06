@@ -303,7 +303,7 @@ static void promise_cancel_thread(const void* data, Eina_Promise_Owner* promise 
   eina_lock_release(&v->lock);
 }
 
-static void _cancel_callback(const void* data, Eina_Promise_Owner* promise EINA_UNUSED, Ecore_Thread* thread EINA_UNUSED)
+static void _cancel_callback(const void* data, Eina_Promise_Owner* promise, Ecore_Thread* thread EINA_UNUSED)
 {
   _condition_var* v = (void*)data;
   
@@ -311,6 +311,8 @@ static void _cancel_callback(const void* data, Eina_Promise_Owner* promise EINA_
   v->boolean = EINA_TRUE;
   eina_condition_broadcast(&v->condvar);
   eina_lock_release(&v->lock);
+
+  eina_promise_owner_value_set(promise, NULL, NULL);
 }
 
 static void _cancel_promise_callback(void* data EINA_UNUSED, Eina_Error value)

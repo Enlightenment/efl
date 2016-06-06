@@ -201,6 +201,14 @@ START_TEST(eina_test_promise_cancel_promise)
    eina_promise_cancel(promise);
 
    ck_assert(cancel_ran && ran);
+   ck_assert(eina_promise_owner_cancelled_is(owner));
+   ck_assert(!eina_promise_pending_is(promise));
+   ck_assert_int_eq(EINA_ERROR_PROMISE_CANCEL, eina_promise_error_get(promise));
+
+   // Finally free the owner
+   eina_promise_owner_value_set(owner, NULL, NULL);
+
+   ck_assert(ran);
 
    eina_shutdown();
 }
@@ -505,6 +513,14 @@ START_TEST(eina_test_pointer_promise_cancel_promise)
    eina_promise_cancel(promise);
 
    ck_assert(cancel_ran && ran);
+   ck_assert(eina_promise_owner_cancelled_is(owner));
+   ck_assert(!eina_promise_pending_is(promise));
+   ck_assert_int_eq(EINA_ERROR_PROMISE_CANCEL, eina_promise_error_get(promise));
+
+   // Free the owner
+   eina_promise_owner_value_set(owner, NULL, NULL);
+
+   ck_assert(ran);
 
    eina_shutdown();
 }

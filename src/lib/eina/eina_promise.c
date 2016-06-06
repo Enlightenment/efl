@@ -76,6 +76,7 @@ struct _Eina_Promise_Default
 
    Eina_Bool has_finished : 1;
    Eina_Bool has_errored : 1;
+   Eina_Bool can_be_deleted : 1;
    Eina_Bool is_cancelled : 1;
    Eina_Bool is_manual_then : 1;
    Eina_Bool is_first_then : 1;
@@ -359,6 +360,7 @@ static void
 _eina_promise_finish(_Eina_Promise_Default_Owner* promise)
 {
    promise->promise.has_finished = EINA_TRUE;
+   promise->promise.can_be_deleted = EINA_TRUE;
    if (!promise->promise.is_manual_then)
      {
         _eina_promise_then_calls(promise);
@@ -453,7 +455,7 @@ _eina_promise_ref(_Eina_Promise_Default* p)
 static void
 _eina_promise_unref(_Eina_Promise_Default* p)
 {
-   if (p->ref == 1 && p->has_finished)
+   if (p->ref <= 1 && p->has_finished && p->can_be_deleted)
      {
         _eina_promise_del(EINA_PROMISE_GET_OWNER(p));
      }
@@ -540,6 +542,7 @@ eina_promise_value_add(int value_size)
    
    p->promise.has_finished = p->promise.has_errored =
      p->promise.is_cancelled = p->promise.is_manual_then = p->promise.is_pointer = EINA_FALSE;
+   p->promise.can_be_deleted = EINA_FALSE;
    p->promise.is_first_then = EINA_TRUE;
    p->promise.ref = 1;
    memset(&p->promise.then_callbacks, 0, sizeof(p->promise.then_callbacks));
@@ -587,6 +590,7 @@ eina_promise_add()
    p->promise.has_finished = p->promise.has_errored =
      p->promise.is_cancelled = p->promise.is_manual_then = EINA_FALSE;
    p->promise.is_first_then = p->promise.is_pointer = EINA_TRUE;
+   p->promise.can_be_deleted = EINA_FALSE;
    p->promise.ref = 1;
    memset(&p->promise.then_callbacks, 0, sizeof(p->promise.then_callbacks));
    memset(&p->promise.progress_callbacks, 0, sizeof(p->promise.progress_callbacks));
