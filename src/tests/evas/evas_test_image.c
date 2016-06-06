@@ -749,7 +749,6 @@ START_TEST(evas_object_image_map_unmap)
    close(fd);
    if (efl_file_save(o, tmp, NULL, NULL))
      {
-        Efl_Gfx_Colorspace cs2;
         int w2, h2, stride2, len2;
         uint32_t *data2, *orig;
         int x, y;
@@ -757,7 +756,6 @@ START_TEST(evas_object_image_map_unmap)
         o2 = eo_add(EFL_CANVAS_IMAGE_CLASS, e);
         efl_file_set(o2, tmp, NULL);
         efl_gfx_view_size_get(o, &w2, &h2);
-        cs2 = efl_gfx_buffer_colorspace_get(o2);
 
         // unlink now to not leave any crap after failing the test
         unlink(tmp);
