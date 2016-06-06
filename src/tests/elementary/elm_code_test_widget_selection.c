@@ -339,6 +339,7 @@ START_TEST (elm_code_test_widget_selection_delete_twoline)
    Elm_Code_Widget *widget;
    Evas_Object *win;
    const char *text;
+   unsigned int length;
 
    elm_init(1, NULL);
    code = elm_code_create();
@@ -358,8 +359,8 @@ START_TEST (elm_code_test_widget_selection_delete_twoline)
    elm_code_widget_selection_delete(widget);
 
    line = elm_code_file_line_get(file, 1);
-   text = elm_code_line_text_get(line, NULL);
-   ck_assert_str_eq("teXT", text);
+   text = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("teXT", text, length);
    ck_assert_int_eq(1, elm_code_file_lines_get(file));
 
    elm_code_free(code);
@@ -411,6 +412,7 @@ START_TEST (elm_code_test_widget_selection_delete_multiline)
    Elm_Code_Widget *widget;
    Evas_Object *win;
    const char *text;
+   unsigned int length;
 
    elm_init(1, NULL);
    code = elm_code_create();
@@ -431,8 +433,8 @@ START_TEST (elm_code_test_widget_selection_delete_multiline)
    elm_code_widget_selection_delete(widget);
 
    line = elm_code_file_line_get(file, 1);
-   text = elm_code_line_text_get(line, NULL);
-   ck_assert_str_eq("teXT", text);
+   text = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("teXT", text, length);
    ck_assert_int_eq(1, elm_code_file_lines_get(file));
 
    elm_code_free(code);
@@ -448,6 +450,7 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
    Elm_Code_Widget *widget;
    Evas_Object *win;
    const char *text;
+   unsigned int length;
 
    elm_init(1, NULL);
    code = elm_code_create();
@@ -468,8 +471,8 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
    elm_code_widget_selection_delete(widget);
 
    line = elm_code_file_line_get(file, 1);
-   text = elm_code_line_text_get(line, NULL);
-   ck_assert_str_eq("teXT", text);
+   text = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("teXT", text, length);
    ck_assert_int_eq(1, elm_code_file_lines_get(file));
 
    elm_code_free(code);
