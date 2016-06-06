@@ -32,10 +32,10 @@
 
 #include "eina_debug.h"
 
-# include <pthread.h>
-# include <errno.h>
+#include <pthread.h>
+#include <errno.h>
 
-#ifdef EINA_HAVE_PTHREAD_AFFINITY
+#if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_PTHREAD_SETNAME)
 #ifndef __linux__
 #include <pthread_np.h>
 #define cpu_set_t cpuset_t
