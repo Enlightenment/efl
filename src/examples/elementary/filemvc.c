@@ -168,7 +168,7 @@ elm_main(int argc, char **argv)
    genlist = elm_genlist_add(win);
    priv.fileview = eo_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(eo_self, genlist, ELM_GENLIST_ITEM_NONE, "double_label"));
    elm_view_list_property_connect(priv.fileview, "filename", "elm.text");
-   elm_view_list_property_connect(priv.fileview, "size", "elm.text.sub");
+   elm_view_list_property_connect(priv.fileview, "mime_type", "elm.text.sub");
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, &priv);
    _widget_init(genlist);

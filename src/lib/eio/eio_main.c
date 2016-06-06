@@ -19,6 +19,8 @@
 #include "eio_private.h"
 #include "Eio.h"
 
+#include <Efreet_Mime.h>
+
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -315,6 +317,8 @@ eio_init(void)
 
    eio_monitor_init();
 
+   efreet_mime_init();
+
    eina_log_timing(_eio_log_dom_global,
 		   EINA_LOG_STATE_STOP,
 		   EINA_LOG_STATE_INIT);
@@ -359,6 +363,8 @@ eio_shutdown(void)
         if (!ecore_thread_wait(f->thread, 0.5))
           CRI("We couldn't terminate in less than 30s some pending IO. This can led to some crash.");
      }
+
+   efreet_mime_shutdown();
 
    eio_monitor_shutdown();
 

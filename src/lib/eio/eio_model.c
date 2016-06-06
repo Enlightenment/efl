@@ -9,6 +9,7 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 #include <Eo.h>
+#include <Efreet_Mime.h>
 
 #include "eio_private.h"
 #include "eio_model.h"
@@ -261,23 +262,33 @@ _eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, con
         return;
      }
 
-   if(!strcmp("filename", property))
+   if(strcmp(_eio_model_prop_names[EIO_MODEL_PROP_FILENAME], property) == 0)
      {
         value = basename(priv->path);
         property_name = EIO_MODEL_PROP_FILENAME;
      }
-   else if(!strcmp("path", property))
+   else if(strcmp(_eio_model_prop_names[EIO_MODEL_PROP_PATH], property) == 0)
      {
         value = priv->path;
         property_name = EIO_MODEL_PROP_PATH;
      }
-   else if(!strcmp("mtime", property))
+   else if(strcmp(_eio_model_prop_names[EIO_MODEL_PROP_MIME_TYPE], property) == 0)
+     {
+        value = efreet_mime_type_get(priv->path);
+        if (value == NULL)
+          {
+             eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
+             return;
+          }
+        property_name = EIO_MODEL_PROP_MIME_TYPE;
+     }
+   else if(strcmp(_eio_model_prop_names[EIO_MODEL_PROP_MTIME], property) == 0)
      property_name = EIO_MODEL_PROP_MTIME;
-   else if(!strcmp("is_dir", property))
+   else if(strcmp(_eio_model_prop_names[EIO_MODEL_PROP_IS_DIR], property) == 0)
      property_name = EIO_MODEL_PROP_IS_DIR;
-   else if(!strcmp("is_lnk", property))
+   else if(strcmp(_eio_model_prop_names[EIO_MODEL_PROP_IS_LNK], property) == 0)
      property_name = EIO_MODEL_PROP_IS_LNK;
-   else if(!strcmp("size", property))
+   else if(strcmp(_eio_model_prop_names[EIO_MODEL_PROP_SIZE], property) == 0)
      property_name = EIO_MODEL_PROP_SIZE;
    else
      {
@@ -289,6 +300,7 @@ _eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, con
      {
      case EIO_MODEL_PROP_FILENAME:
      case EIO_MODEL_PROP_PATH:
+     case EIO_MODEL_PROP_MIME_TYPE:
        {
           Eina_Value* v = eina_promise_owner_buffer_get(promise);
           eina_value_setup(v, EINA_VALUE_TYPE_STRING);

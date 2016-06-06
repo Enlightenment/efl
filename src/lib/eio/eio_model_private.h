@@ -1,7 +1,7 @@
 #ifndef _EIO_MODEL_PRIVATE_H
 #define _EIO_MODEL_PRIVATE_H
 
-#define PROP_LIST_SIZE 7
+#define PROP_LIST_SIZE 8
 
 typedef struct _Eio_Model_Data                 Eio_Model_Data;
 typedef struct _Eio_Model_Monitor_Data         Eio_Model_Monitor_Data;
@@ -21,6 +21,7 @@ typedef enum _Eio_Property_Name {
    EIO_MODEL_PROP_IS_DIR,
    EIO_MODEL_PROP_IS_LNK,
    EIO_MODEL_PROP_SIZE,
+   EIO_MODEL_PROP_MIME_TYPE,
    EIO_MODEL_PROP_LAST
 } _Eio_Property_Name;
 
@@ -31,7 +32,8 @@ static const char* _eio_model_prop_names[] =
    [EIO_MODEL_PROP_MTIME]     = "mtime",
    [EIO_MODEL_PROP_IS_DIR]    = "is_dir",
    [EIO_MODEL_PROP_IS_LNK]    = "is_lnk",
-   [EIO_MODEL_PROP_SIZE]      = "size"
+   [EIO_MODEL_PROP_SIZE]      = "size",
+   [EIO_MODEL_PROP_MIME_TYPE] = "mime_type"
 };
 
 typedef struct _Eio_Property_Promise _Eio_Property_Promise;
