@@ -33,17 +33,8 @@ double _ecore_xcb_double_click_time = 0.25;
  * Functions that start and shut down the Ecore X Library.
  */
 
-/**
- * Initialize the X display connection to the given display.
- *
- * @param   name Display target name.  If @c NULL, the default display is
- *               assumed.
- * @return  The number of times the library has been initialized without
- *          being shut down.  0 is returned if an error occurs.
- * @ingroup Ecore_X_Init_Group
- */
-EAPI int
-ecore_x_init(const char *name)
+static int
+_ecore_x_init(const char *name, Ecore_X_Display *display)
 {
    char *gl = NULL;
    uint32_t mask, list[1];
@@ -168,7 +159,7 @@ ecore_x_init(const char *name)
 #ifdef EVAS_FRAME_QUEUING
              if (_real_threads) _real_threads();
 #endif
-             _ecore_xcb_display = _real_display(name);
+             _ecore_xcb_display = display ? display : _real_display(name);
              if (!_ecore_xcb_display)
                {
                   ERR("Could not open Display via XLib");
@@ -286,6 +277,28 @@ ecore_x_init(const char *name)
      return _ecore_xcb_shutdown(EINA_TRUE);
 
    return _ecore_xcb_init_count;
+}
+
+/**
+ * Initialize the X display connection to the given display.
+ *
+ * @param   name Display target name.  If @c NULL, the default display is
+ *               assumed.
+ * @return  The number of times the library has been initialized without
+ *          being shut down.  0 is returned if an error occurs.
+ * @ingroup Ecore_X_Init_Group
+ */
+EAPI int
+ecore_x_init(const char *name)
+{
+   return _ecore_x_init(name, NULL);
+}
+
+EAPI int
+ecore_x_init_from_display(Ecore_X_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, 0);
+   return _ecore_x_init(NULL, display);
 }
 
 /**

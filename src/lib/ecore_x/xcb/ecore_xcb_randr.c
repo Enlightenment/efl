@@ -55,6 +55,11 @@
   _ECORE_X_RANDR_EDID_FOR_EACH_DESCRIPTOR_BLOCK(edid, block)                 \
   if ((block[0] == 0) && (block[1] == 0))
 
+#ifdef ECORE_XCB_RANDR
+# define RANDR_VALIDATE_ROOT(screen, root) \
+  ((screen = _ecore_xcb_randr_root_to_screen(root)) != -1)
+#endif
+
 /* local function prototypes */
 static Eina_Bool                                       _ecore_xcb_randr_output_validate(Ecore_X_Window       root,
                                                                                         Ecore_X_Randr_Output output);
@@ -189,8 +194,6 @@ _ecore_xcb_randr_root_validate(Ecore_X_Window root EINA_UNUSED)
 {
 #ifdef ECORE_XCB_RANDR
    Ecore_X_Randr_Screen scr = -1;
-# define RANDR_VALIDATE_ROOT(screen, root) \
-  ((screen == _ecore_xcb_randr_root_to_screen(root)) != -1)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -2601,8 +2604,6 @@ ecore_x_randr_screen_current_size_get(Ecore_X_Window root,
 #ifdef ECORE_XCB_RANDR
    Ecore_X_Randr_Screen scr = 0;
    xcb_screen_t *s;
-# define RANDR_VALIDATE_ROOT(screen, root) \
-  ((screen == _ecore_xcb_randr_root_to_screen(root)) != -1)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -2647,8 +2648,6 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root,
    Ecore_X_Randr_Screen scr;
    int wc = 0, hc = 0, w_mm_c = 0, h_mm_c = 0;
    int mw = 0, mh = 0, xw = 0, xh = 0;
-# define RANDR_VALIDATE_ROOT(screen, root) \
-  ((screen == _ecore_xcb_randr_root_to_screen(root)) != -1)
 #endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -4040,14 +4039,16 @@ _ecore_xcb_randr_12_output_name_get(Ecore_X_Window       root,
              uint8_t *nbuf;
 
              nbuf = xcb_randr_get_output_info_name(oreply);
-             nbuf += oreply->name_len;
 
              if (len) *len = oreply->name_len;
              if (oreply->name_len > 0)
                {
                   ret = malloc(oreply->name_len + 1);
                   if (ret)
-                    memcpy(ret, nbuf, oreply->name_len + 1);
+                    {
+                       memcpy(ret, nbuf, oreply->name_len + 1);
+                       ret[oreply->name_len] = '\0';
+                    }
                }
 
              free(oreply);
@@ -4083,14 +4084,16 @@ _ecore_xcb_randr_13_output_name_get(Ecore_X_Window       root,
              uint8_t *nbuf;
 
              nbuf = xcb_randr_get_output_info_name(oreply);
-             nbuf += oreply->name_len;
 
              if (len) *len = oreply->name_len;
              if (oreply->name_len > 0)
                {
                   ret = malloc(oreply->name_len + 1);
                   if (ret)
-                    memcpy(ret, nbuf, oreply->name_len + 1);
+                    {
+                       memcpy(ret, nbuf, oreply->name_len + 1);
+                       ret[oreply->name_len] = '\0';
+                    }
                }
 
              free(oreply);

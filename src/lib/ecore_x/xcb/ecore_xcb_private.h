@@ -75,7 +75,7 @@ extern int _ecore_xcb_log_dom;
 
 #define CHECK_XCB_CONN                              \
   {                                                 \
-     if (xcb_connection_has_error(_ecore_xcb_conn)) \
+     if (!_ecore_xcb_conn || xcb_connection_has_error(_ecore_xcb_conn)) \
        {                                            \
           DBG("XCB Connection Has Error !!");       \
           _ecore_xcb_io_error_handle(NULL);         \
