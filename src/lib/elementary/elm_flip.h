@@ -39,10 +39,10 @@
  */
 
 #ifdef EFL_EO_API_SUPPORT
-#include "elm_flip_eo.h"
+#include "efl_ui_flip.eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_flip_legacy.h"
+#include "efl_ui_flip_legacy.h"
 #endif
 /**
  * @}

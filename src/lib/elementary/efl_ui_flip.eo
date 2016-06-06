@@ -1,7 +1,7 @@
-enum Elm.Flip.Mode
+enum Efl.Ui.Flip.Mode
 {
    [[]]
-   legacy: elm_flip;
+   legacy: efl_ui_flip;
    rotate_y_center_axis,
    rotate_x_center_axis,
    rotate_xz_center_axis,
@@ -16,7 +16,7 @@ enum Elm.Flip.Mode
    page_down
 }
 
-enum Elm.Flip.Interaction
+enum Efl.Ui.Flip.Interaction
 {
    [[]]
    none,
@@ -25,19 +25,9 @@ enum Elm.Flip.Interaction
    page
 }
 
-enum Elm.Flip.Direction
-{
-   up = 0, [[Allows interaction with the top of the widget]]
-   down, [[Allows interaction with the bottom of the widget]]
-   left, [[Allows interaction with the left portion of the widget]]
-   right [[Allows interaction with the right portion of the widget]]
-}
-
-class Elm.Flip (Elm.Widget, Efl.Part)
+class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
 {
    legacy_prefix: elm_flip;
-   eo_prefix: elm_obj_flip;
-   event_prefix: elm_flip;
    methods {
       @property interaction {
          set {
@@ -64,7 +54,7 @@ class Elm.Flip (Elm.Widget, Efl.Part)
             [[Get the interactive flip mode.]]
          }
          values {
-            mode: Elm.Flip.Interaction; [[The interactive flip mode to use.]]
+            mode: Efl.Ui.Flip.Interaction; [[The interactive flip mode to use.]]
          }
       }
       @property front_visible {
@@ -93,16 +83,18 @@ class Elm.Flip (Elm.Widget, Efl.Part)
 
            See also @.interaction.set.
          ]]
+         legacy: null;
          params {
-            @in dir: Elm.Flip.Direction; [[The hit area to set.]]
+            @in dir: Efl.Orient; [[The hit area to set.]]
             @in hitsize: double; [[The amount of that dimension (0.0 to 1.0) to use.]]
          }
       }
       interaction_direction_hitsize_get {
          [[Get the amount of the flip that is sensitive to interactive flip.]]
          return: double; [[The size set for that direction.]]
+         legacy: null;
          params {
-            @in dir: Elm.Flip.Direction; [[The direction to check.]]
+            @in dir: Efl.Orient; [[The direction to check.]]
          }
       }
       interaction_direction_enabled_set {
@@ -117,16 +109,18 @@ class Elm.Flip (Elm.Widget, Efl.Part)
            @.interaction_direction_hitsize_set. By default, a minimum
            hit area will be created on the opposite edge of the flip.
          ]]
+         legacy: null;
          params {
-            @in dir: Elm.Flip.Direction; [[The direction to change.]]
+            @in dir: Efl.Orient; [[The direction to change.]]
             @in enabled: bool; [[If that direction is enabled or not.]]
          }
       }
       interaction_direction_enabled_get {
          [[Get the enabled state of that flip direction.]]
          return: bool; [[If that direction is enabled or not.]]
+         legacy: null;
          params {
-            @in dir: Elm.Flip.Direction; [[The direction to check.]]
+            @in dir: Efl.Orient; [[The direction to check.]]
          }
       }
       go {
@@ -174,7 +168,7 @@ class Elm.Flip (Elm.Widget, Efl.Part)
           * @image latex elm_flip.eps width=\textwidth
          */
          params {
-            @in mode: Elm.Flip.Mode; [[The mode type.]]
+            @in mode: Efl.Ui.Flip.Mode; [[The mode type.]]
          }
       }
       go_to {
@@ -224,7 +218,7 @@ class Elm.Flip (Elm.Widget, Efl.Part)
          params {
             @in front: bool; [[If $true, makes front visible, otherwise
                                makes back.]]
-            @in mode: Elm.Flip.Mode; [[The mode type.]]
+            @in mode: Efl.Ui.Flip.Mode; [[The mode type.]]
          }
       }
    }
@@ -240,7 +234,20 @@ class Elm.Flip (Elm.Widget, Efl.Part)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.sub_object_del;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
+      Efl.Container.content_remove;
       Efl.Part.part;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack.Linear.pack_begin;
+      Efl.Pack.Linear.pack_end;
+      Efl.Pack.Linear.pack_before;
+      Efl.Pack.Linear.pack_after;
+      Efl.Pack.Linear.pack_at;
+      Efl.Pack.Linear.pack_content_get;
+      Efl.Pack.Linear.pack_unpack_at;
+      Efl.Pack.Linear.pack_index_get;
    }
    events {
       animate,begin;

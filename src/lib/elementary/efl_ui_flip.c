@@ -6,15 +6,15 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_flip.h"
+#include "efl_ui_widget_flip.h"
 #include "elm_widget_container.h"
 
-#include "elm_flip_internal_part.eo.h"
+#include "efl_ui_flip_internal_part.eo.h"
 #include "elm_part_helper.h"
 
-#define MY_CLASS ELM_FLIP_CLASS
+#define MY_CLASS EFL_UI_FLIP_CLASS
 
-#define MY_CLASS_NAME "Elm_Flip"
+#define MY_CLASS_NAME "Efl_Ui_Flip"
 #define MY_CLASS_NAME_LEGACY "elm_flip"
 
 static const char SIG_ANIMATE_BEGIN[] = "animate,begin";
@@ -27,6 +27,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static Eina_Bool _flip(Evas_Object *obj);
 
+static void _update_front_back(Eo *obj, Efl_Ui_Flip_Data *sd);
+
 static void
 _slice_free(Slice *sl)
 {
@@ -35,7 +37,7 @@ _slice_free(Slice *sl)
 }
 
 static void
-_state_slices_clear(Elm_Flip_Data *sd)
+_state_slices_clear(Efl_Ui_Flip_Data *sd)
 {
    int i, j, num;
 
@@ -69,7 +71,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord maxw = -1, maxh = -1, maxw2 = -1, maxh2 = -1;
    int fingx = 0, fingy = 0;
 
-   ELM_FLIP_DATA_GET(obj, sd);
+   EFL_UI_FLIP_DATA_GET(obj, sd);
 
    if (sd->front.content)
      evas_object_size_hint_min_get(sd->front.content, &minw, &minh);
@@ -97,7 +99,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_elm_widget_theme_apply(Eo *obj, Elm_Flip_Data *sd EINA_UNUSED)
+_efl_ui_flip_elm_widget_theme_apply(Eo *obj, Efl_Ui_Flip_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
@@ -109,13 +111,13 @@ _elm_flip_elm_widget_theme_apply(Eo *obj, Elm_Flip_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EINA_UNUSED)
+_efl_ui_flip_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *_pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+_efl_ui_flip_elm_widget_focus_next(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
 
    /* attempt to cycle focus on in sub-items */
@@ -126,7 +128,7 @@ _elm_flip_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, Elm_Focu
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EINA_UNUSED)
+_efl_ui_flip_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *_pd EINA_UNUSED)
 {
    if (!elm_widget_can_focus_get(obj))
      return EINA_TRUE;
@@ -135,7 +137,7 @@ _elm_flip_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Flip_Da
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_elm_widget_focus_direction(Eo *obj, Elm_Flip_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
+_efl_ui_flip_elm_widget_focus_direction(Eo *obj, Efl_Ui_Flip_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
 {
    Eina_Bool ret;
 
@@ -167,7 +169,7 @@ _changed_size_hints_cb(void *data,
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_elm_widget_sub_object_add(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_flip_elm_widget_sub_object_add(Eo *obj, Efl_Ui_Flip_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -186,7 +188,7 @@ _elm_flip_elm_widget_sub_object_add(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, Eva
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_elm_widget_sub_object_del(Eo *obj, Elm_Flip_Data *sd, Evas_Object *sobj)
+_efl_ui_flip_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Flip_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -238,7 +240,7 @@ _slice_new(Evas_Object *container_obj,
 }
 
 static void
-_slice_apply(Elm_Flip_Data *sd,
+_slice_apply(Efl_Ui_Flip_Data *sd,
              Slice *sl,
              Evas_Coord x EINA_UNUSED,
              Evas_Coord y EINA_UNUSED,
@@ -295,7 +297,7 @@ _slice_apply(Elm_Flip_Data *sd,
 }
 
 static void
-_slice_3d(Elm_Flip_Data *sd EINA_UNUSED,
+_slice_3d(Efl_Ui_Flip_Data *sd EINA_UNUSED,
           Slice *sl,
           Evas_Coord x,
           Evas_Coord y,
@@ -323,7 +325,7 @@ _slice_3d(Elm_Flip_Data *sd EINA_UNUSED,
 }
 
 static void
-_slice_light(Elm_Flip_Data *sd EINA_UNUSED,
+_slice_light(Efl_Ui_Flip_Data *sd EINA_UNUSED,
              Slice *sl,
              Evas_Coord x,
              Evas_Coord y,
@@ -359,7 +361,7 @@ _slice_light(Elm_Flip_Data *sd EINA_UNUSED,
 }
 
 static void
-_slice_xyz(Elm_Flip_Data *sd EINA_UNUSED,
+_slice_xyz(Efl_Ui_Flip_Data *sd EINA_UNUSED,
            Slice *sl,
            double xx1,
            double yy1,
@@ -381,7 +383,7 @@ _slice_xyz(Elm_Flip_Data *sd EINA_UNUSED,
 }
 
 static void
-_slice_uv(Elm_Flip_Data *sd EINA_UNUSED,
+_slice_uv(Efl_Ui_Flip_Data *sd EINA_UNUSED,
           Slice *sl,
           double u1,
           double v1,
@@ -509,7 +511,7 @@ _slice_obj_vert_color_merge(Slice *s1,
 static int
 _state_update(Evas_Object *obj)
 {
-   Elm_Flip_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Flip_Data *sd = eo_data_scope_get(obj, MY_CLASS);
    Slice *sl;
    Vertex3 *tvo, *tvol;
    Evas_Object *front, *back;
@@ -871,7 +873,7 @@ _state_update(Evas_Object *obj)
 }
 
 static void
-_state_end(Elm_Flip_Data *sd)
+_state_end(Efl_Ui_Flip_Data *sd)
 {
    _state_slices_clear(sd);
 }
@@ -879,7 +881,7 @@ _state_end(Elm_Flip_Data *sd)
 static void
 _flip_show_hide(Evas_Object *obj)
 {
-   ELM_FLIP_DATA_GET(obj, sd);
+   EFL_UI_FLIP_DATA_GET(obj, sd);
    if (elm_flip_front_visible_get(obj))
      {
         if (sd->pageflip)
@@ -970,7 +972,7 @@ _flip_do(Evas_Object *obj,
    Evas_Coord cx, cy, px, py, foc;
    int lx, ly, lz, lr, lg, lb, lar, lag, lab;
 
-   ELM_FLIP_DATA_GET(obj, sd);
+   EFL_UI_FLIP_DATA_GET(obj, sd);
 
    mf = evas_map_new(4);
    evas_map_smooth_set(mf, EINA_FALSE);
@@ -1166,7 +1168,7 @@ _flip_do(Evas_Object *obj,
 static void
 _show_hide(Evas_Object *obj)
 {
-   ELM_FLIP_DATA_GET(obj, sd);
+   EFL_UI_FLIP_DATA_GET(obj, sd);
    Evas_Coord x, y, w, h;
    if (!sd) return;
 
@@ -1205,7 +1207,7 @@ _configure(Evas_Object *obj)
    Evas_Coord x, y, w, h;
    Evas_Coord fsize;
 
-   ELM_FLIP_DATA_GET(obj, sd);
+   EFL_UI_FLIP_DATA_GET(obj, sd);
    _show_hide(obj);
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    // FIXME: manual flip wont get fixed
@@ -1247,7 +1249,7 @@ _flip(Evas_Object *obj)
    double t;
    Evas_Coord w, h;
 
-   ELM_FLIP_DATA_GET(obj, sd);
+   EFL_UI_FLIP_DATA_GET(obj, sd);
 
    t = ecore_loop_time_get() - sd->start;
 
@@ -1335,7 +1337,10 @@ _flip(Evas_Object *obj)
           sd->state = sd->next_state;
         _configure(obj);
         _flip_show_hide(obj);
-        eo_event_callback_call(obj, ELM_FLIP_EVENT_ANIMATE_DONE, NULL);
+        eo_event_callback_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_DONE, NULL);
+
+        // update the new front and back object.
+        _update_front_back(obj, sd);
 
         return ECORE_CALLBACK_CANCEL;
      }
@@ -1372,7 +1377,7 @@ _animate(void *data)
 
 static double
 _pos_get(Evas_Object *obj,
-         Elm_Flip_Data *sd,
+         Efl_Ui_Flip_Data *sd,
          int *rev,
          Elm_Flip_Mode *m)
 {
@@ -1382,8 +1387,8 @@ _pos_get(Evas_Object *obj,
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    switch (sd->intmode)
      {
-      case ELM_FLIP_INTERACTION_ROTATE:
-      case ELM_FLIP_INTERACTION_CUBE:
+      case EFL_UI_FLIP_INTERACTION_ROTATE:
+      case EFL_UI_FLIP_INTERACTION_CUBE:
       {
          if (sd->dir == ELM_FLIP_DIRECTION_LEFT)
            {
@@ -1415,9 +1420,9 @@ _pos_get(Evas_Object *obj,
          if ((sd->dir == ELM_FLIP_DIRECTION_LEFT) ||
              (sd->dir == ELM_FLIP_DIRECTION_RIGHT))
            {
-              if (sd->intmode == ELM_FLIP_INTERACTION_ROTATE)
+              if (sd->intmode == EFL_UI_FLIP_INTERACTION_ROTATE)
                 *m = ELM_FLIP_ROTATE_Y_CENTER_AXIS;
-              else if (sd->intmode == ELM_FLIP_INTERACTION_CUBE)
+              else if (sd->intmode == EFL_UI_FLIP_INTERACTION_CUBE)
                 {
                    if (*rev)
                      *m = ELM_FLIP_CUBE_LEFT;
@@ -1427,9 +1432,9 @@ _pos_get(Evas_Object *obj,
            }
          else
            {
-              if (sd->intmode == ELM_FLIP_INTERACTION_ROTATE)
+              if (sd->intmode == EFL_UI_FLIP_INTERACTION_ROTATE)
                 *m = ELM_FLIP_ROTATE_X_CENTER_AXIS;
-              else if (sd->intmode == ELM_FLIP_INTERACTION_CUBE)
+              else if (sd->intmode == EFL_UI_FLIP_INTERACTION_CUBE)
                 {
                    if (*rev)
                      *m = ELM_FLIP_CUBE_UP;
@@ -1449,7 +1454,7 @@ static Eina_Bool
 _event_anim(void *data,
             double pos)
 {
-   Elm_Flip_Data *sd = data;
+   Efl_Ui_Flip_Data *sd = data;
    double p;
 
    p = ecore_animator_pos_map(pos, ECORE_POS_MAP_ACCELERATE, 0.0, 0.0);
@@ -1477,11 +1482,11 @@ _event_anim(void *data,
      }
    switch (sd->intmode)
      {
-      case ELM_FLIP_INTERACTION_NONE:
+      case EFL_UI_FLIP_INTERACTION_NONE:
         break;
 
-      case ELM_FLIP_INTERACTION_ROTATE:
-      case ELM_FLIP_INTERACTION_CUBE:
+      case EFL_UI_FLIP_INTERACTION_ROTATE:
+      case EFL_UI_FLIP_INTERACTION_CUBE:
           {
              Elm_Flip_Mode m = ELM_FLIP_ROTATE_X_CENTER_AXIS;
              int rev = 0;
@@ -1490,7 +1495,7 @@ _event_anim(void *data,
           }
         break;
 
-      case ELM_FLIP_INTERACTION_PAGE:
+      case EFL_UI_FLIP_INTERACTION_PAGE:
         sd->pageflip = EINA_TRUE;
         _configure(sd->obj);
         _state_update(sd->obj);
@@ -1517,7 +1522,7 @@ _event_anim(void *data,
    _configure(sd->obj);
    sd->animator = NULL;
    eo_event_callback_call
-     (sd->obj, ELM_FLIP_EVENT_ANIMATE_DONE, NULL);
+     (sd->obj, EFL_UI_FLIP_EVENT_ANIMATE_DONE, NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1527,20 +1532,20 @@ _update_job(void *data)
 {
    Elm_Flip_Mode m = ELM_FLIP_ROTATE_X_CENTER_AXIS;
    Evas_Object *obj = data;
-   Elm_Flip_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Flip_Data *sd = eo_data_scope_get(obj, MY_CLASS);
    int rev = 0;
    double p;
 
    sd->job = NULL;
    switch (sd->intmode)
      {
-      case ELM_FLIP_INTERACTION_ROTATE:
-      case ELM_FLIP_INTERACTION_CUBE:
+      case EFL_UI_FLIP_INTERACTION_ROTATE:
+      case EFL_UI_FLIP_INTERACTION_CUBE:
         p = _pos_get(obj, sd, &rev, &m);
         _flip_do(obj, p, m, 1, rev);
         break;
 
-      case ELM_FLIP_INTERACTION_PAGE:
+      case EFL_UI_FLIP_INTERACTION_PAGE:
         sd->pageflip = EINA_TRUE;
         _configure(obj);
         _state_update(obj);
@@ -1561,7 +1566,7 @@ _down_cb(void *data,
    Evas_Object *fl = data;
    Evas_Coord x, y, w, h;
 
-   ELM_FLIP_DATA_GET(fl, sd);
+   EFL_UI_FLIP_DATA_GET(fl, sd);
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
@@ -1588,7 +1593,7 @@ _up_cb(void *data,
    Evas_Coord x, y, w, h;
    double tm = 0.5;
 
-   ELM_FLIP_DATA_GET(fl, sd);
+   EFL_UI_FLIP_DATA_GET(fl, sd);
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
@@ -1646,7 +1651,7 @@ _move_cb(void *data,
    Evas_Object *fl = data;
    Evas_Coord x, y, w, h;
 
-   ELM_FLIP_DATA_GET(fl, sd);
+   EFL_UI_FLIP_DATA_GET(fl, sd);
    if (!sd->mouse_down) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    evas_object_geometry_get(data, &x, &y, &w, &h);
@@ -1688,7 +1693,7 @@ _move_cb(void *data,
              else return;
 
              sd->started = EINA_TRUE;
-             if (sd->intmode == ELM_FLIP_INTERACTION_PAGE)
+             if (sd->intmode == EFL_UI_FLIP_INTERACTION_PAGE)
                sd->pageflip = EINA_TRUE;
              _flip_show_hide(data);
              evas_smart_objects_calculate(evas_object_evas_get(data));
@@ -1703,7 +1708,7 @@ _move_cb(void *data,
              evas_smart_objects_calculate(evas_object_evas_get(data));
              _configure(fl);
              // FIXME: end hack
-             eo_event_callback_call(fl, ELM_FLIP_EVENT_ANIMATE_BEGIN, NULL);
+             eo_event_callback_call(fl, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
           }
         else return;
      }
@@ -1721,7 +1726,7 @@ _flip_content_set(Evas_Object *obj,
    int i;
    Evas_Object **cont;
 
-   ELM_FLIP_DATA_GET(obj, sd);
+   EFL_UI_FLIP_DATA_GET(obj, sd);
 
    cont = front ? &(sd->front.content) : &(sd->back.content);
 
@@ -1745,7 +1750,7 @@ _flip_content_set(Evas_Object *obj,
    _configure(obj);
    _sizing_eval(obj);
 
-   if (sd->intmode != ELM_FLIP_INTERACTION_NONE)
+   if (sd->intmode != EFL_UI_FLIP_INTERACTION_NONE)
      {
         for (i = 0; i < 4; i++)
           evas_object_raise(sd->event[i]);
@@ -1761,7 +1766,7 @@ _flip_content_unset(Evas_Object *obj,
    Evas_Object *content;
    Evas_Object **cont;
 
-   ELM_FLIP_DATA_GET(obj, sd);
+   EFL_UI_FLIP_DATA_GET(obj, sd);
 
    cont = front ? &(sd->front.content) : &(sd->back.content);
 
@@ -1774,7 +1779,7 @@ _flip_content_unset(Evas_Object *obj,
 }
 
 static Eina_Bool
-_elm_flip_content_set(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+_efl_ui_flip_content_set(Eo *obj, Efl_Ui_Flip_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    if (!part || !strcmp(part, "front"))
       return _flip_content_set(obj, content, EINA_TRUE);
@@ -1784,7 +1789,7 @@ _elm_flip_content_set(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, const char *part,
 }
 
 static Evas_Object*
-_elm_flip_content_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, const char *part)
+_efl_ui_flip_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, const char *part)
 {
    if (!part || !strcmp(part, "front"))
       return sd->front.content;
@@ -1794,7 +1799,7 @@ _elm_flip_content_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, const char *part)
 }
 
 static Evas_Object*
-_elm_flip_content_unset(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EINA_UNUSED, const char *part)
+_efl_ui_flip_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *_pd EINA_UNUSED, const char *part)
 {
    if (!part || !strcmp(part, "front"))
       return _flip_content_unset(obj, EINA_TRUE);
@@ -1804,7 +1809,7 @@ _elm_flip_content_unset(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EINA_UNUSED, con
 }
 
 EOLIAN static void
-_elm_flip_evas_object_smart_add(Eo *obj, Elm_Flip_Data *priv)
+_efl_ui_flip_evas_object_smart_add(Eo *obj, Efl_Ui_Flip_Data *priv)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -1839,7 +1844,7 @@ _elm_flip_evas_object_smart_add(Eo *obj, Elm_Flip_Data *priv)
 
    priv->state = EINA_TRUE;
    priv->next_state = EINA_TRUE;
-   priv->intmode = ELM_FLIP_INTERACTION_NONE;
+   priv->intmode = EFL_UI_FLIP_INTERACTION_NONE;
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -1847,7 +1852,7 @@ _elm_flip_evas_object_smart_add(Eo *obj, Elm_Flip_Data *priv)
 }
 
 EOLIAN static void
-_elm_flip_evas_object_smart_del(Eo *obj, Elm_Flip_Data *sd)
+_efl_ui_flip_evas_object_smart_del(Eo *obj, Efl_Ui_Flip_Data *sd)
 {
    ecore_animator_del(sd->animator);
    _state_slices_clear(sd);
@@ -1864,7 +1869,7 @@ elm_flip_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_flip_eo_base_constructor(Eo *obj, Elm_Flip_Data *sd)
+_efl_ui_flip_eo_base_constructor(Eo *obj, Efl_Ui_Flip_Data *sd)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
@@ -1877,7 +1882,7 @@ _elm_flip_eo_base_constructor(Eo *obj, Elm_Flip_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_front_visible_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd)
+_efl_ui_flip_front_visible_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
 {
    return sd->state;
 }
@@ -1895,7 +1900,7 @@ elm_flip_perspective_set(Evas_Object *obj,
 
 static void
 _internal_elm_flip_go_to(Evas_Object *obj,
-                Elm_Flip_Data *sd,
+                Efl_Ui_Flip_Data *sd,
                 Eina_Bool front,
                 Elm_Flip_Mode mode)
 {
@@ -1923,7 +1928,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
    evas_smart_objects_calculate(evas_object_evas_get(obj));
    _configure(obj);
    // FIXME: end hack
-   eo_event_callback_call(obj, ELM_FLIP_EVENT_ANIMATE_BEGIN, NULL);
+   eo_event_callback_call(obj, EFL_UI_FLIP_EVENT_ANIMATE_BEGIN, NULL);
 
    // set focus to the content object when flip go to is called
    if (elm_object_focus_get(obj))
@@ -1934,7 +1939,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_flip_go_to(Eo *obj, Elm_Flip_Data *sd, Eina_Bool front, Elm_Flip_Mode mode)
+_efl_ui_flip_go_to(Eo *obj, Efl_Ui_Flip_Data *sd, Eina_Bool front, Elm_Flip_Mode mode)
 {
    if (sd->next_state == front) return;
 
@@ -1942,13 +1947,13 @@ _elm_flip_go_to(Eo *obj, Elm_Flip_Data *sd, Eina_Bool front, Elm_Flip_Mode mode)
 }
 
 EOLIAN static void
-_elm_flip_go(Eo *obj, Elm_Flip_Data *sd, Elm_Flip_Mode mode)
+_efl_ui_flip_go(Eo *obj, Efl_Ui_Flip_Data *sd, Elm_Flip_Mode mode)
 {
    _internal_elm_flip_go_to(obj, sd, !sd->state, mode);
 }
 
 static void
-_event_rect_create(Eo *obj, Elm_Flip_Data *sd, int i)
+_event_rect_create(Eo *obj, Efl_Ui_Flip_Data *sd, int i)
 {
    Evas_Object *clip;
    Evas *e;
@@ -1973,7 +1978,7 @@ _event_rect_create(Eo *obj, Elm_Flip_Data *sd, int i)
 }
 
 EOLIAN static void
-_elm_flip_interaction_set(Eo *obj, Elm_Flip_Data *sd, Elm_Flip_Interaction mode)
+_efl_ui_flip_interaction_set(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Ui_Flip_Interaction mode)
 {
    int i;
 
@@ -1983,7 +1988,7 @@ _elm_flip_interaction_set(Eo *obj, Elm_Flip_Data *sd, Elm_Flip_Interaction mode)
 
    for (i = 0; i < 4; i++)
      {
-        if (sd->intmode == ELM_FLIP_INTERACTION_NONE)
+        if (sd->intmode == EFL_UI_FLIP_INTERACTION_NONE)
           ELM_SAFE_FREE(sd->event[i], evas_object_del);
         else if (sd->dir_enabled[i])
           {
@@ -1997,14 +2002,14 @@ _elm_flip_interaction_set(Eo *obj, Elm_Flip_Data *sd, Elm_Flip_Interaction mode)
    _configure(obj);
 }
 
-EOLIAN static Elm_Flip_Interaction
-_elm_flip_interaction_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd)
+EOLIAN static Efl_Ui_Flip_Interaction
+_efl_ui_flip_interaction_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
 {
    return sd->intmode;
 }
 
 EOLIAN static void
-_elm_flip_interaction_direction_enabled_set(Eo *obj, Elm_Flip_Data *sd, Elm_Flip_Direction dir, Eina_Bool enabled)
+_efl_ui_flip_interaction_direction_enabled_set(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Orient dir, Eina_Bool enabled)
 {
    int i = (int) dir;
    int area;
@@ -2013,7 +2018,7 @@ _elm_flip_interaction_direction_enabled_set(Eo *obj, Elm_Flip_Data *sd, Elm_Flip
    enabled = !!enabled;
    if (sd->dir_enabled[i] == enabled) return;
    sd->dir_enabled[i] = enabled;
-   if (sd->intmode == ELM_FLIP_INTERACTION_NONE) return;
+   if (sd->intmode == EFL_UI_FLIP_INTERACTION_NONE) return;
 
    area = (i & 0x2) | (i ^ 0x1); // up <-> down, left <-> right
    if (enabled && (sd->dir_hitsize[area] >= 0.0))
@@ -2027,13 +2032,13 @@ _elm_flip_interaction_direction_enabled_set(Eo *obj, Elm_Flip_Data *sd, Elm_Flip
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_interaction_direction_enabled_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, Elm_Flip_Direction dir)
+_efl_ui_flip_interaction_direction_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, Efl_Orient dir)
 {
    return sd->dir_enabled[(int) dir];
 }
 
 EOLIAN static void
-_elm_flip_interaction_direction_hitsize_set(Eo *obj, Elm_Flip_Data *sd, Elm_Flip_Direction dir, double hitsize)
+_efl_ui_flip_interaction_direction_hitsize_set(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Orient dir, double hitsize)
 {
    int i = (int) dir;
 
@@ -2055,28 +2060,254 @@ _elm_flip_interaction_direction_hitsize_set(Eo *obj, Elm_Flip_Data *sd, Elm_Flip
    _configure(obj);
 }
 
+static void
+_update_front_back(Eo *obj, Efl_Ui_Flip_Data *pd)
+{
+   int count, index;
+   Efl_Gfx *content;
+
+   count = eina_list_count(pd->content_list);
+   if (count <= 2) return;
+
+   // update the next state object
+   content = _flip_content_unset(obj, !pd->state);
+   evas_object_hide(content);
+   content = pd->state ? pd->front.content : pd->back.content;
+   index = eina_list_data_idx(pd->content_list, content);
+   index = (index == count-1) ? 0 : index + 1;
+   content = eina_list_nth(pd->content_list, index);
+   evas_object_show(content);
+   _flip_content_set(obj, content, !pd->state);
+}
+
+static void
+_content_added(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *content)
+{
+   evas_object_smart_member_add(content, obj);
+
+   if (!pd->front.content)
+     {
+        _flip_content_set(obj, content, EINA_TRUE);
+        return;
+     }
+   if (!pd->back.content)
+     {
+        _flip_content_set(obj, content, EINA_FALSE);
+        return;
+     }
+}
+
+static void
+_content_removed(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *content)
+{
+   Efl_Gfx *back_face, *cur_face, *face;
+   int index, count;
+   Eina_Bool state;
+
+   evas_object_smart_member_del(content);
+   // if its not the front or back object just return. 
+   if ((pd->front.content != content) ||
+       (pd->back.content != content))
+     return;
+
+   cur_face = pd->state ? pd->front.content : pd->back.content;
+   back_face = pd->state ? pd->back.content : pd->front.content;
+
+   if (cur_face == content)
+     {
+        face = back_face;
+        state = EINA_TRUE;
+     }
+   else
+     {
+        face = cur_face;
+        state = EINA_FALSE;
+     }
+
+   _flip_content_unset(obj, state);
+
+   count = eina_list_count(pd->content_list);
+   if (count == 1) return;
+
+   _flip_content_unset(obj, state);
+   index = eina_list_data_idx(pd->content_list, face);
+   index = (index == count-1) ? 0 : index + 1;
+   _flip_content_set(obj, eina_list_nth(pd->content_list, index), state);
+}
+
 EOLIAN static double
-_elm_flip_interaction_direction_hitsize_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, Elm_Flip_Direction dir)
+_efl_ui_flip_interaction_direction_hitsize_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, Efl_Orient dir)
 {
    int i = (int) dir;
 
    return sd->dir_hitsize[i];
 }
 
+EOLIAN static Eina_Iterator *
+_efl_ui_flip_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *pd)
+{
+   return eina_list_iterator_new(pd->content_list);
+}
+
+EOLIAN static int
+_efl_ui_flip_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *pd)
+{
+   return eina_list_count(pd->content_list);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_flip_efl_container_content_remove(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *content)
+{
+   pd->content_list = eina_list_remove(pd->content_list, content);
+   _content_removed(obj, pd, content);
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_flip_efl_pack_unpack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj)
+{
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
+   _content_removed(obj, pd, subobj);
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_flip_efl_pack_pack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj)
+{
+   pd->content_list = eina_list_append(pd->content_list, subobj);
+   _content_added(obj, pd, subobj);
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_flip_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj)
+{
+   pd->content_list = eina_list_prepend(pd->content_list, subobj);
+   _content_added(obj, pd, subobj);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_flip_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj)
+{
+   pd->content_list = eina_list_append(pd->content_list, subobj);
+   _content_added(obj, pd, subobj);
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_flip_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj, const Efl_Gfx *existing)
+{
+   pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
+   _content_added(obj, pd, subobj);
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_flip_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj, const Efl_Gfx *existing)
+{
+   pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
+   _content_added(obj, pd, subobj);
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_flip_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *subobj, int index)
+{
+   Efl_Gfx *existing = NULL;
+   existing = eina_list_nth(pd->content_list, index);
+   pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
+   _content_added(obj, pd, subobj);
+   return EINA_TRUE;
+}
+
+EOLIAN static Efl_Gfx *
+_efl_ui_flip_efl_pack_linear_pack_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *pd, int index)
+{
+   return eina_list_nth(pd->content_list, index);
+}
+
+EOLIAN static Efl_Gfx *
+_efl_ui_flip_efl_pack_linear_pack_unpack_at(Eo *obj, Efl_Ui_Flip_Data *pd, int index)
+{
+   Efl_Gfx *content = eina_list_nth(pd->content_list ,index);
+
+   pd->content_list = eina_list_remove(pd->content_list, content);
+   _content_removed(obj, pd, content);
+   return content;
+}
+
+EOLIAN static int
+_efl_ui_flip_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *pd, const Efl_Gfx *subobj)
+{
+   return eina_list_data_idx(pd->content_list, (void *)subobj);
+}
+
 static void
-_elm_flip_class_constructor(Eo_Class *klass)
+_efl_ui_flip_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+static Efl_Orient
+_to_efl_orientation(Elm_Flip_Direction dir)
+{
+   Efl_Orient res;
+   switch (dir)
+      {
+        case ELM_FLIP_DIRECTION_RIGHT:
+           res = EFL_ORIENT_RIGHT;
+           break;
+        case ELM_FLIP_DIRECTION_DOWN:
+           res = EFL_ORIENT_DOWN;
+           break;
+        case ELM_FLIP_DIRECTION_LEFT:
+           res = EFL_ORIENT_LEFT;
+           break;
+        default:
+           res = EFL_ORIENT_UP;
+           break;
+      }
+   return res;
+}
+
+EAPI void 
+elm_flip_interaction_direction_hitsize_set(Efl_Ui_Flip *obj, Elm_Flip_Direction dir, double hitsize)
+{
+   Efl_Orient orient = _to_efl_orientation(dir);
+   efl_ui_flip_interaction_direction_hitsize_set((Efl_Ui_Flip *)obj, orient, hitsize);
+}
+
+EAPI double 
+elm_flip_interaction_direction_hitsize_get(Efl_Ui_Flip *obj, Elm_Flip_Direction dir)
+{
+   Efl_Orient orient = _to_efl_orientation(dir);
+   return efl_ui_flip_interaction_direction_hitsize_get((Efl_Ui_Flip *)obj, orient);
+}
+
+EOAPI void 
+elm_flip_interaction_direction_enabled_set(Efl_Ui_Flip *obj, Elm_Flip_Direction dir, Eina_Bool enabled)
+{
+   Efl_Orient orient = _to_efl_orientation(dir);
+   efl_ui_flip_interaction_direction_enabled_set((Efl_Ui_Flip *)obj, orient, enabled);
+}
+
+EOAPI Eina_Bool 
+elm_flip_interaction_direction_enabled_get(Efl_Ui_Flip *obj, Elm_Flip_Direction dir)
+{
+   Efl_Orient orient = _to_efl_orientation(dir);
+   return efl_ui_flip_interaction_direction_enabled_get((Efl_Ui_Flip *)obj, orient);
+}
+
 /* Efl.Part begin */
 
-ELM_PART_IMPLEMENT(elm_flip, ELM_FLIP, Elm_Flip_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_SET(elm_flip, ELM_FLIP, Elm_Flip_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_GET(elm_flip, ELM_FLIP, Elm_Flip_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_flip, ELM_FLIP, Elm_Flip_Data, Elm_Part_Data)
-#include "elm_flip_internal_part.eo.c"
+ELM_PART_IMPLEMENT(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_SET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_GET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
+#include "efl_ui_flip_internal_part.eo.c"
 
 /* Efl.Part end */
 
-#include "elm_flip.eo.c"
+#include "efl_ui_flip.eo.c"

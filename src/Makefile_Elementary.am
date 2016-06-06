@@ -27,7 +27,8 @@ elm_public_eolian_files = \
 	lib/elementary/elm_fileselector.eo \
 	lib/elementary/elm_fileselector_button.eo \
 	lib/elementary/elm_fileselector_entry.eo \
-	lib/elementary/elm_flip.eo \
+	lib/elementary/efl_ui_flip.eo \
+	lib/elementary/efl_ui_flip_internal_part.eo \
 	lib/elementary/elm_flipselector.eo \
 	lib/elementary/elm_frame.eo \
 	lib/elementary/elm_gengrid.eo \
@@ -210,7 +211,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_fileselector.h \
 	lib/elementary/elm_widget_fileselector_button.h \
 	lib/elementary/elm_widget_fileselector_entry.h \
-	lib/elementary/elm_widget_flip.h \
+	lib/elementary/efl_ui_widget_flip.h \
 	lib/elementary/elm_widget_flipselector.h \
 	lib/elementary/elm_widget_frame.h \
 	lib/elementary/elm_widget_gengrid.h \
@@ -369,8 +370,8 @@ includesub_HEADERS = \
 	lib/elementary/elm_entry_legacy.h \
 	lib/elementary/elm_finger.h \
 	lib/elementary/elm_flip.h \
-	lib/elementary/elm_flip_eo.h \
-	lib/elementary/elm_flip_legacy.h \
+	lib/elementary/efl_ui_flip.eo.h \
+	lib/elementary/efl_ui_flip_legacy.h \
 	lib/elementary/elm_flipselector.h \
 	lib/elementary/elm_flipselector_eo.h \
 	lib/elementary/elm_flipselector_legacy.h \
@@ -592,7 +593,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_dbus_menu.c \
 	lib/elementary/elm_diskselector.c \
 	lib/elementary/elm_entry.c \
-	lib/elementary/elm_flip.c \
+	lib/elementary/efl_ui_flip.c \
 	lib/elementary/elm_flipselector.c \
 	lib/elementary/elm_font.c \
 	lib/elementary/elm_frame.c \

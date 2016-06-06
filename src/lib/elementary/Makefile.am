@@ -31,7 +31,8 @@ elm_eolian_files = \
 	elm_fileselector.eo \
 	elm_fileselector_button.eo \
 	elm_fileselector_entry.eo \
-	elm_flip.eo \
+	efl_ui_flip.eo \
+	efl_ui_flip_internal_part.eo \
 	elm_flipselector.eo \
 	elm_frame.eo \
 	elm_gengrid.eo \
@@ -181,7 +182,7 @@ includesunstable_HEADERS = \
 	elm_widget_fileselector.h \
 	elm_widget_fileselector_button.h \
 	elm_widget_fileselector_entry.h \
-	elm_widget_flip.h \
+	efl_ui_widget_flip.h \
 	elm_widget_flipselector.h \
 	elm_widget_frame.h \
 	elm_widget_gengrid.h \
@@ -329,8 +330,9 @@ includesub_HEADERS = \
 	elm_entry_legacy.h \
 	elm_finger.h \
 	elm_flip.h \
-	elm_flip_eo.h \
-	elm_flip_legacy.h \
+	efl_ui_flip_legacy.h\
+	efl_ui_flip.eo.h \
+	efl_ui_flip_internal_part.eo.h \
 	elm_flipselector.h \
 	elm_flipselector_eo.h \
 	elm_flipselector_legacy.h \
@@ -541,7 +543,7 @@ libelementary_la_SOURCES = \
 	elm_dbus_menu.c \
 	elm_diskselector.c \
 	elm_entry.c \
-	elm_flip.c \
+	efl_ui_flip.c \
 	elm_flipselector.c \
 	elm_font.c \
 	elm_frame.c \

@@ -1,5 +1,5 @@
-#ifndef ELM_WIDGET_FLIP_H
-#define ELM_WIDGET_FLIP_H
+#ifndef EFL_UI_WIDGET_FLIP_H
+#define EFL_UI_WIDGET_FLIP_H
 
 #include "Elementary.h"
 
@@ -25,8 +25,8 @@ typedef struct _Slice               Slice;
 /**
  * Base widget smart data extended with flip instance data.
  */
-typedef struct _Elm_Flip_Data Elm_Flip_Data;
-struct _Elm_Flip_Data
+typedef struct _Efl_Ui_Flip_Data Efl_Ui_Flip_Data;
+struct _Efl_Ui_Flip_Data
 {
    Evas_Object          *obj;
    Evas_Object          *clip;
@@ -36,11 +36,13 @@ struct _Elm_Flip_Data
       Evas_Object *content, *clip;
    } front, back;
 
+   Eina_List            *content_list;
+
    Ecore_Animator       *animator;
    double                start, len;
    Ecore_Job            *job;
    Evas_Coord            down_x, down_y, x, y, ox, oy, w, h;
-   Elm_Flip_Interaction  intmode;
+   Efl_Ui_Flip_Interaction  intmode;
    Elm_Flip_Mode         mode;
    int                   dir;
    double                dir_hitsize[4];
@@ -81,11 +83,11 @@ struct _Vertex3
  * @}
  */
 
-#define ELM_FLIP_DATA_GET(o, sd) \
-  Elm_Flip_Data * sd = eo_data_scope_get(o, ELM_FLIP_CLASS)
+#define EFL_UI_FLIP_DATA_GET(o, sd) \
+  Efl_Ui_Flip_Data * sd = eo_data_scope_get(o, EFL_UI_FLIP_CLASS)
 
-#define ELM_FLIP_DATA_GET_OR_RETURN(o, ptr)          \
-  ELM_FLIP_DATA_GET(o, ptr);                         \
+#define EFL_UI_FLIP_DATA_GET_OR_RETURN(o, ptr)          \
+  EFL_UI_FLIP_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        CRI("No widget data for object %p (%s)",      \
@@ -93,8 +95,8 @@ struct _Vertex3
        return;                                       \
     }
 
-#define ELM_FLIP_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_FLIP_DATA_GET(o, ptr);                         \
+#define EFL_UI_FLIP_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  EFL_UI_FLIP_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        CRI("No widget data for object %p (%s)",      \
@@ -103,7 +105,7 @@ struct _Vertex3
     }
 
 #define ELM_FLIP_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_FLIP_CLASS))) \
+  if (EINA_UNLIKELY(!eo_isa((obj), EFL_UI_FLIP_CLASS))) \
     return
 
 #endif
