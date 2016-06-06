@@ -3660,6 +3660,34 @@ EAPI Eina_Bool edje_edit_part_item_span_set(Evas_Object *obj, const char *part, 
  *
  * @param obj Object being edited.
  * @param part Part that contain item.
+ * @param item The name of the item.
+ * @param col new count of the columns spans.
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
+ * @since 1.16
+ */
+EINA_DEPRECATED
+EAPI Eina_Bool
+edje_edit_part_item_span_col_set(Evas_Object *obj, const char *part, const char *item, unsigned short col);
+
+/** Set the count of rows which this item will spans for use.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item The name of the item.
+ * @param row new count of the rows spans.
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise.
+ * @since 1.16
+ */
+EINA_DEPRECATED
+EAPI Eina_Bool
+edje_edit_part_item_span_row_set(Evas_Object *obj, const char *part, const char *item, unsigned short row);
+
+/** Set the count of columns which this item will spans for use.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
  * @param index Index of the item.
  * @param col new count of the columns spans.
  *
