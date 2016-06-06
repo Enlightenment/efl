@@ -418,6 +418,156 @@ private:
 };
 
 template <typename T>
+struct optional<T&>
+{
+   typedef optional<T&> _self_type; /**< Type for the optional class itself. */
+
+   /**
+    * @brief Create a disengaged object.
+    *
+    * This constructor creates a disengaged <tt>eina::optional</tt>
+    * object.
+    */
+   constexpr optional(std::nullptr_t) : pointer(nullptr)
+   {}
+
+   /**
+    * @brief Default constructor. Create a disengaged object.
+    */
+   constexpr optional() : pointer(nullptr)
+   {}
+
+   /**
+    * @brief Create an engaged object by moving @p other content.
+    * @param other R-value reference to the desired type.
+    *
+    * This constructor creates an <tt>eina::optional</tt> object in an
+    * engaged state. The contained value is initialized by moving
+    * @p other.
+    */
+   optional(T& other) : pointer(&other)
+   {
+   }
+
+   /**
+    * @brief Copy constructor. Create an object containing the same value as @p other and in the same state.
+    * @param other Constant reference to another <tt>eina::optional</tt> object that holds the same value type.
+    *
+    * This constructor creates an <tt>eina::optional</tt> object with
+    * the same engagement state of @p other. If @p other is engaged then
+    * the contained value of the newly created object is initialized by
+    * copying the contained value of @p other.
+    */
+   optional(_self_type const& other) = default;
+
+   /**
+    * @brief Assign new content to the object.
+    * @param other Constant reference to another <tt>eina::optional</tt> object that holds the same value type.
+    *
+    * This operator replaces the current content of the object. If
+    * @p other is engaged its contained value is copied to this object,
+    * making <tt>*this</tt> be considered engaged too. If @p other is
+    * disengaged <tt>*this</tt> is also made disengaged and its
+    * contained value, if any, is simple destroyed.
+    */
+   _self_type& operator=(_self_type const& other) = default;
+
+   /**
+    * @brief Disengage the object, destroying the current contained value, if any.
+    */
+   void disengage()
+   {
+      pointer = NULL;
+   }
+
+   /**
+    * @brief Convert to @c bool based on whether the object is engaged or not.
+    * @return @c true if the object is engaged, @c false otherwise.
+    */
+   explicit operator bool() const
+   {
+      return pointer;
+   }
+
+   /**
+    * @brief Convert to @c bool based on whether the object is engaged or not.
+    * @return @c true if the object is disengaged, @c false otherwise.
+    */
+   bool operator!() const
+   {
+      bool b ( *this );
+      return !b;
+   }
+
+   /**
+    * @brief Access member of the contained value.
+    * @return Pointer to the contained value, whose member will be accessed.
+    */
+   T* operator->()
+   {
+      assert(is_engaged());
+      return pointer;
+   }
+
+   /**
+    * @brief Access constant member of the contained value.
+    * @return Constant pointer to the contained value, whose member will be accessed.
+    */
+   T const* operator->() const
+   {
+      return pointer;
+   }
+
+   /**
+    * @brief Get the contained value.
+    * @return Reference to the contained value.
+    */
+   T& operator*() { return get(); }
+
+   /**
+    * @brief Get the contained value.
+    * @return Constant reference to the contained value.
+    */
+   T const& operator*() const { return get(); }
+
+   /**
+    * @brief Get the contained value.
+    * @return Reference to the contained value.
+    */
+   T& get() { return *this->operator->(); }
+
+   /**
+    * @brief Get the contained value.
+    * @return Constant reference to the contained value.
+    */
+   T const& get() const { return *this->operator->(); }
+
+   /**
+    * @brief Swap content with another <tt>eina::optional</tt> object.
+    * @param other Another <tt>eina::optional</tt> object.
+    */
+   void swap(optional<T>& other)
+   {
+      std::swap(pointer, other.pointer);
+   }
+
+   /**
+    * @brief Check if the object is engaged.
+    * @return @c true if the object is currently engaged, @c false otherwise.
+    */
+   bool is_engaged() const
+   {
+      return pointer;
+   }
+private:
+
+   /**
+    * Member variable for holding the contained value.
+    */
+   T* pointer;
+};
+    
+template <typename T>
 constexpr optional<typename std::decay<T>::type>
 make_optional(T&& value)
 {
