@@ -48,7 +48,7 @@ public:
    * @param iterator Handle to a native @c Eina_Iterator.
    *
    * This constructor creates an iterator that wraps the given native
-   * @c Eina_Iterator handle, providing an OOP interface to it.
+   * @c Eina_Iterator handle, providing a generic interface to it.
    *
    * @warning The created iterator object gains ownership of the handle
    * and will deallocate it at destruction time.
@@ -142,7 +142,7 @@ protected:
 
 /**
  * C++ wrappers to the native @c Eina_Iterator.
- * It provides an OOP interface to the @c Eina_Iterator functions, and
+ * It provides a generic interface to the @c Eina_Iterator functions, and
  * automatically take care of allocating a deallocating resources using
  * the RAII programming idiom.
  */
@@ -165,7 +165,7 @@ public:
    * @brief Creates a iterator wrapping the given native @c Eina_Iterator handle.
    *
    * This constructor creates an iterator that wraps the given native
-   * @c Eina_Iterator handle, providing an OOP interface to it.
+   * @c Eina_Iterator handle, providing a generic interface to it.
    */
   explicit iterator(Eina_Iterator* iterator_ = 0)
     : base_type(iterator_)
@@ -202,7 +202,7 @@ public:
    */
   self_type& operator++(int)
   {
-    return ++**this;
+    return ++*this;
   }
 
   /**
@@ -243,7 +243,7 @@ public:
    * @brief Creates a iterator wrapping the given native @c Eina_Iterator handle.
    *
    * This constructor creates an iterator that wraps the given native
-   * @c Eina_Iterator handle, providing an OOP interface to it.
+   * @c Eina_Iterator handle, providing a generic interface to it.
    */
   explicit iterator(Eina_Iterator* iterator_ = 0)
     : base_type(iterator_)
