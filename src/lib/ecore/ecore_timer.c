@@ -32,6 +32,7 @@ struct _Efl_Loop_Timer_Data
    unsigned char  just_added : 1;
    unsigned char  frozen : 1;
    unsigned char  initialized : 1;
+   unsigned char  noparent : 1;
 };
 
 typedef struct _Efl_Loop_Timer_Data Efl_Loop_Timer_Data;
@@ -460,6 +461,33 @@ _efl_loop_timer_util_delay(Efl_Loop_Timer_Data *timer,
 }
 
 EOLIAN static void
+_efl_loop_timer_eo_base_parent_set(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *pd, Eo_Base *parent)
+{
+   Eina_Inlist *first;
+
+   first = eina_inlist_first(EINA_INLIST_GET(pd));
+   if (first == timers)
+     timers = eina_inlist_remove(timers, EINA_INLIST_GET(pd));
+   else if (first == suspended)
+     suspended = eina_inlist_remove(suspended, EINA_INLIST_GET(pd));
+
+   eo_parent_set(eo_super(obj, EFL_LOOP_USER_CLASS), parent);
+
+   if (eo_parent_get(obj) != parent)
+     return ;
+
+   if (parent != NULL)
+     {
+        _efl_loop_timer_util_instanciate(pd);
+        pd->noparent = EINA_FALSE;
+     }
+   else
+     {
+        pd->noparent = EINA_TRUE;
+     }
+}
+
+EOLIAN static void
 _efl_loop_timer_eo_base_destructor(Eo *obj, Efl_Loop_Timer_Data *pd)
 {
    Eina_Inlist *first;
@@ -481,14 +509,6 @@ _efl_loop_timer_eo_base_destructor(Eo *obj, Efl_Loop_Timer_Data *pd)
 void
 _efl_loop_timer_shutdown(void)
 {
-   Efl_Loop_Timer_Data *timer;
-
-   EINA_INLIST_FREE(timers, timer)
-     eo_del(timer->object);
-
-   EINA_INLIST_FREE(suspended, timer)
-     eo_del(timer->object);
-
    timer_current = NULL;
 }
 
@@ -557,11 +577,11 @@ _efl_loop_timer_next_get(void)
 
 static inline void
 _efl_loop_timer_reschedule(Efl_Loop_Timer_Data *timer,
-                      double when)
+                           double when)
 {
    if (timer->frozen) return;
 
-   if (timers)
+   if (timers && !timer->noparent)
      timers = eina_inlist_remove(timers, EINA_INLIST_GET(timer));
 
    /* if the timer would have gone off more than 15 seconds ago,

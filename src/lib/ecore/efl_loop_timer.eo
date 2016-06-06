@@ -63,6 +63,7 @@ class Efl.Loop.Timer (Efl.Loop_User)
       Eo.Base.destructor;
       Eo.Base.finalize;
       Eo.Base.event_freeze;
+      Eo.Base.parent.set;
       /* XXX: can't document overridden methods
        * Pauses a running timer.
        *
