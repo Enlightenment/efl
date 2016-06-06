@@ -250,29 +250,13 @@ public:
       return to_string();
    }
 
+   CharT const* c_str() const noexcept { return data(); }
+
    template<typename Allocator>
    operator std::basic_string<CharT, Traits, Allocator>() const
    {
       return std::basic_string<CharT, Traits, Allocator>(_str, _len);
    }
-
-   // Modifiers:
-//    void clear() noexcept { _len = 0; }
-//
-//    void remove_prefix(size_type n) noexcept
-//    {
-//       if (n > _len)
-//         n = _len;
-//       _str += n;
-//       _len -= n;
-//    }
-//
-//    void remove_suffix(size_type n) noexcept
-//    {
-//       if (n > _len)
-//         n = _len;
-//       _len -= n;
-//    }
 
    void swap(basic_string_view<CharT, Traits>& s)
    {
