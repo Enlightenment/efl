@@ -406,7 +406,7 @@ _logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty)
 {
    Elput_Manager *em;
    int ret = 0;
-   char *s;
+   char *s = NULL;
 
    em = calloc(1, sizeof(Elput_Manager));
    if (!em) return EINA_FALSE;
@@ -421,6 +421,8 @@ _logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty)
         goto session_err;
      }
 
+   if (!em->sid) goto session_err;
+
    ret = sd_session_get_seat(em->sid, &s);
    if (ret < 0)
      {
@@ -428,7 +430,7 @@ _logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty)
         free(s);
         goto seat_err;
      }
-   else if ((seat) && (strcmp(seat, s)))
+   else if ((seat) && (s) && (strcmp(seat, s)))
      {
         ERR("Seat '%s' differs from session seat '%s'", seat, s);
         free(s);
