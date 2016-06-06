@@ -11,8 +11,9 @@
 #include <Eo.h>
 #include <Efreet_Mime.h>
 
+#include "Eio.h"
+
 #include "eio_private.h"
-#include "eio_model.h"
 #include "eio_model_private.h"
 
 #define MY_CLASS EIO_MODEL_CLASS

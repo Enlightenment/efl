@@ -8,7 +8,6 @@
 #include <Eio.h>
 #include <Ecore.h>
 #include <Efl.h>
-#include <eio_model.h>
 #include <stdio.h>
 
 #include <check.h>

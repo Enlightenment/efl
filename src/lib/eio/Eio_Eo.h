@@ -7,6 +7,7 @@ extern "C" {
 
 #include "eio_job.eo.h"
 #include "eio_sentry.eo.h"
+#include "eio_model.eo.h"
 
 #ifdef __cplusplus
 }

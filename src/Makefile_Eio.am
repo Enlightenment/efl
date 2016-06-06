@@ -45,8 +45,7 @@ lib/eio/eio_model.c \
 lib/eio/eio_model_private.h \
 lib/eio/eio_private.h \
 lib/eio/eio_job_private.h \
-lib/eio/eio_sentry_private.h \
-lib/eio/eio_model.h
+lib/eio/eio_sentry_private.h
 
 if HAVE_INOTIFY
 lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_inotify.c

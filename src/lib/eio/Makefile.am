@@ -37,8 +37,7 @@ eio_job.c \
 eio_sentry.c \
 eio_model.c \
 eio_model_private.h \
-eio_private.h \
-eio_model.h
+eio_private.h
 
 if HAVE_INOTIFY
 libeio_la_SOURCES += eio_monitor_inotify.c
