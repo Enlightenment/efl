@@ -51,8 +51,6 @@ void done_open_cb(void *data, void* value)
 
 void open_file(const char *path)
 {
-    Eina_Promise *promise;
-
     Eio_Job *job = eo_add(EIO_JOB_CLASS, NULL);
     eina_promise_then(eio_job_file_open(job, path, EINA_FALSE), &done_open_cb, &error_cb, job);
 
