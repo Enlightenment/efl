@@ -16,6 +16,7 @@ static const Efl_Test_Case etc[] = {
   {"Eio_Xattr", eio_test_xattr},
   {"Eio Job Xattr", eio_test_job_xattr},
 #endif
+  {"Eio_Map", eio_test_map},
   {NULL, NULL}
 };
 

@@ -11,5 +11,6 @@ void eio_test_file(TCase *tc);
 void eio_test_job(TCase *tc);
 void eio_test_job_xattr(TCase *tc);
 void eio_test_xattr(TCase *tc);
+void eio_test_map(TCase *tc);
 
 #endif /*  _EIO_SUITE_H */

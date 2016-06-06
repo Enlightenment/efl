@@ -88,6 +88,7 @@ tests/eio/eio_test_job_xattr.c \
 tests/eio/eio_test_xattr.c \
 tests/eio/eio_test_common.c \
 tests/eio/eio_test_common.h \
+tests/eio/eio_test_map.c \
 tests/eio/eio_suite.h
 
 tests_eio_eio_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
