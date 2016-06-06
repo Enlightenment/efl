@@ -35,7 +35,10 @@ template <typename T>
 struct _eina_value_traits_base;
 
 template <typename T>
-struct _eina_value_traits_aux;
+struct _eina_value_traits_aux
+{
+   typedef std::false_type is_specialized;
+};
 
 /**
  * @internal
@@ -44,6 +47,7 @@ template <typename T>
 struct _eina_value_traits_base
 {
   typedef T type;
+  typedef std::true_type is_specialized;
 
   static ::Eina_Value* create()
   {
@@ -335,7 +339,7 @@ public:
    * @param v Value to be stored.
    */
   template <typename T>
-  value(T v)
+  value(T v, typename std::enable_if<_eina_value_traits<T>::is_specialized::value>::type* = 0)
   {
     primitive_init(v);
   }
@@ -437,6 +441,9 @@ public:
   {
     eina_value_free(_raw);
   }
+
+  value(Eina_Value* raw)
+    : _raw(raw) {}
 
   /**
    * @brief Copy Constructor. Create an generic value storage holding the same value of @p other.
