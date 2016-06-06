@@ -7623,7 +7623,9 @@ edje_edit_state_map_light_get(Evas_Object *obj, const char *part, const char *st
 
    GET_PD_OR_RETURN(NULL);
 
-   erl = ed->table_parts[pd->map.id_light % ed->table_parts_size];
+   if (pd->map.id_light == -1) return NULL;
+
+   erl = ed->table_parts[pd->map.id_light];
    if (erl->part->name)
      return eina_stringshare_add(erl->part->name);
 
@@ -7637,7 +7639,9 @@ edje_edit_state_map_rotation_center_get(Evas_Object *obj, const char *part, cons
 
    GET_PD_OR_RETURN(NULL);
 
-   erl = ed->table_parts[pd->map.rot.id_center % ed->table_parts_size];
+   if (pd->map.rot.id_center == -1) return NULL;
+
+   erl = ed->table_parts[pd->map.rot.id_center];
    if (erl->part->name)
      return eina_stringshare_add(erl->part->name);
 
@@ -7738,9 +7742,9 @@ edje_edit_state_map_rotation_get(Evas_Object *obj, const char *part, const char 
 {
    GET_PD_OR_RETURN(EINA_FALSE);
 
-   *x = TO_DOUBLE(pd->map.rot.x);
-   *y = TO_DOUBLE(pd->map.rot.y);
-   *z = TO_DOUBLE(pd->map.rot.z);
+   if (x) *x = TO_DOUBLE(pd->map.rot.x);
+   if (y) *y = TO_DOUBLE(pd->map.rot.y);
+   if (z) *z = TO_DOUBLE(pd->map.rot.z);
 
    return EINA_TRUE;
 }
@@ -7786,10 +7790,14 @@ edje_edit_state_map_perspective_focal_get(Evas_Object *obj, const char *part, co
 EAPI Eina_Bool
 edje_edit_state_map_light_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part)
 {
-   if (!source_part) return EINA_FALSE;
+   int src_id = -1;
+
    GET_PD_OR_RETURN(EINA_FALSE);
 
-   pd->map.id_light = _edje_part_id_find(ed, source_part);
+   if (source_part)
+     src_id = _edje_part_id_find(ed, source_part);
+
+   pd->map.id_light = src_id;
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
@@ -7798,10 +7806,14 @@ edje_edit_state_map_light_set(Evas_Object *obj, const char *part, const char *st
 EAPI Eina_Bool
 edje_edit_state_map_rotation_center_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part)
 {
-   if (!source_part) return EINA_FALSE;
+   int src_id = -1;
+
    GET_PD_OR_RETURN(EINA_FALSE);
 
-   pd->map.rot.id_center = _edje_part_id_find(ed, source_part);
+   if (source_part)
+     src_id = _edje_part_id_find(ed, source_part);
+
+   pd->map.rot.id_center = src_id;
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
@@ -7898,7 +7910,9 @@ edje_edit_state_map_perspective_get(Evas_Object *obj, const char *part, const ch
 
    GET_PD_OR_RETURN(NULL);
 
-   erl = ed->table_parts[pd->map.id_persp % ed->table_parts_size];
+   if (pd->map.id_persp == -1) return NULL;
+
+   erl = ed->table_parts[pd->map.id_persp];
    if (erl->part->name)
      return eina_stringshare_add(erl->part->name);
 
@@ -7908,12 +7922,13 @@ edje_edit_state_map_perspective_get(Evas_Object *obj, const char *part, const ch
 EAPI Eina_Bool
 edje_edit_state_map_perspective_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source_part)
 {
-   int src_id;
+   int src_id = -1;
 
-   if (!source_part) return EINA_FALSE;
    GET_PD_OR_RETURN(EINA_FALSE);
 
-   src_id = _edje_part_id_find(ed, source_part);
+   if (source_part)
+     src_id = _edje_part_id_find(ed, source_part);
+
    pd->map.id_persp = src_id;
 
    edje_object_calc_force(obj);
