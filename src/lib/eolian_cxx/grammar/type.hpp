@@ -33,7 +33,7 @@ template <>
 struct attributes_needed<type_generator> : std::integral_constant<int, 1> {};  
 }
 
-type_generator const type;
+type_generator const type = {};
 
 } } }
 

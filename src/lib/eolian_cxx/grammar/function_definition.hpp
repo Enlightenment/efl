@@ -148,7 +148,7 @@ struct function_definition_terminal
   {
     return function_definition_generator{name};
   }
-} const function_definition;
+} const function_definition = {};
       
 } } }
 

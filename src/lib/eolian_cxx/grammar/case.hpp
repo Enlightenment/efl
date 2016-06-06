@@ -70,7 +70,7 @@ struct lower_case_directive
   {
     return lower_case_generator<G>{g};
   }
-} const lower_case;
+} const lower_case = {};
 
 struct upper_case_directive
 {
@@ -79,7 +79,7 @@ struct upper_case_directive
   {
     return upper_case_generator<G>{g};
   }
-} const upper_case;
+} const upper_case = {};
       
 } } }
 

@@ -50,7 +50,7 @@ struct namespaces_directive
   {
     return namespaces_generator<G>{g};
   }
-} const namespaces;
+} const namespaces = {};
 
 template <typename G>
 struct is_eager_generator<namespaces_generator<G>> : std::true_type {};

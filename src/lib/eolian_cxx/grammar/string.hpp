@@ -42,7 +42,7 @@ struct {
   {
     return literal_generator(literal);
   }
-} const lit;
+} const lit = {};
 
 // string
 struct string_generator
@@ -143,7 +143,7 @@ struct string_generator_terminal
   {
     return specific_string_generator{string};
   }
-} const string;
+} const string = {};
 
 struct string_replace_terminal
 {
@@ -151,7 +151,7 @@ struct string_replace_terminal
   {
     return string_replace_generator{from, to};
   }
-} const string_replace;
+} const string_replace = {};
       
 template <>
 struct is_generator<string_generator_terminal> : std::true_type {};

@@ -32,7 +32,7 @@ template <>
 struct attributes_needed<function_declaration_generator> : std::integral_constant<int, 1> {};
 }
       
-function_declaration_generator const function_declaration;
+function_declaration_generator const function_declaration = {};
       
 } } }
 

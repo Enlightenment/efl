@@ -105,7 +105,7 @@ template <>
 struct attributes_needed<base_class_definition_generator> : std::integral_constant<int, 1> {};
 }
       
-base_class_definition_generator const base_class_definition;
+base_class_definition_generator const base_class_definition = {};
       
 } } }
 

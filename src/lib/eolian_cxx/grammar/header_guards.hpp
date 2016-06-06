@@ -72,7 +72,7 @@ struct header_guards_directive
    }
 };
       
-header_guards_directive const header_guards;
+header_guards_directive const header_guards = {};
       
 } } }
 

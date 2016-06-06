@@ -40,7 +40,7 @@ template <>
 struct attributes_needed<converting_argument_generator> : std::integral_constant<int, 1> {};
 }
       
-converting_argument_generator const converting_argument;
+converting_argument_generator const converting_argument = {};
       
 } } }
 

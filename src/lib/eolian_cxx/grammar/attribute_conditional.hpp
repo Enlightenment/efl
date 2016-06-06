@@ -52,7 +52,7 @@ struct attribute_conditional_terminal
   {
     return {f};
   }
-} const attribute_conditional;
+} const attribute_conditional = {};
 
 namespace type_traits {
 template <typename F, typename G>

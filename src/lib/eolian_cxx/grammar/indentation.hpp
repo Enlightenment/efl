@@ -35,7 +35,7 @@ struct scope_tab_terminal
   {
      return scope_tab_generator(n);
   }
-} const scope_tab;
+} const scope_tab = {};
 
 template <>
 struct is_generator<scope_tab_terminal> : std::true_type {};

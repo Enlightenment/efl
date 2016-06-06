@@ -67,7 +67,7 @@ template <>
 struct attributes_needed<c_type_generator> : std::integral_constant<int, 1> {};
 }
       
-c_type_generator const c_type;
+c_type_generator const c_type = {};
       
 } } }
 

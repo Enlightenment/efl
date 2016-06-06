@@ -49,7 +49,7 @@ struct attribute_replace_terminal
   {
     return {f};
   }
-} const attribute_replace;
+} const attribute_replace = {};
 
 namespace type_traits {
 template <typename F, typename G>

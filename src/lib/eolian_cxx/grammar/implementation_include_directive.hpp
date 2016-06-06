@@ -32,7 +32,7 @@ template <>
 struct attributes_needed<implementation_include_directive_generator> : std::integral_constant<int, 1> {};
 }
       
-implementation_include_directive_generator const implementation_include_directive;
+implementation_include_directive_generator const implementation_include_directive = {};
       
 } } }
 

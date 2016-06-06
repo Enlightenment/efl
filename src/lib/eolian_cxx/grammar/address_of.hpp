@@ -67,7 +67,7 @@ template <>
 struct attributes_needed<address_of_generator> : std::integral_constant<int, 1> {};
 }
       
-address_of_generator const address_of;
+address_of_generator const address_of = {};
       
 } } }
 

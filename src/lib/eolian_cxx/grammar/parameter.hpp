@@ -54,7 +54,7 @@ template <>
 struct attributes_needed<parameter_type_generator> : std::integral_constant<int, 1> {};  
 }
 
-parameter_type_generator const parameter_type;
+parameter_type_generator const parameter_type = {};
 
 struct parameter_generator
 {
@@ -71,7 +71,7 @@ namespace type_traits {
 template <>
 struct attributes_needed<parameter_generator> : std::integral_constant<int, 1> {};  
 }
-parameter_generator const parameter;
+parameter_generator const parameter = {};
       
 } } }
 

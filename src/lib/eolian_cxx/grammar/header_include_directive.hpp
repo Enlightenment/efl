@@ -27,7 +27,7 @@ template <>
 struct attributes_needed<header_include_directive_generator> : std::integral_constant<int, 1> {};
 }
 
-header_include_directive_generator const header_include_directive;
+header_include_directive_generator const header_include_directive = {};
 
 } } }
 

@@ -17,7 +17,7 @@ struct eps_generator
 template <>
 struct is_eager_generator<eps_generator> : std::true_type {};
 
-eps_generator const eps;
+eps_generator const eps = {};
 
 } } }
 

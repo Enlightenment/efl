@@ -49,7 +49,7 @@ template <>
 struct attributes_needed<class_implementation_generator> : std::integral_constant<int, 1> {};
 }
       
-class_implementation_generator const class_implementation;
+class_implementation_generator const class_implementation = {};
       
 } } }
 
