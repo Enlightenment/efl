@@ -167,6 +167,19 @@ _efl_loop_fd_eo_base_constructor(Eo *obj, Efl_Loop_Fd_Data *pd)
 }
 
 static void
+_efl_loop_fd_eo_base_parent_set(Eo *obj, Efl_Loop_Fd_Data *pd, Eo_Base *parent)
+{
+   if (pd->handler) ecore_main_fd_handler_del(pd->handler);
+   pd->handler = NULL;
+
+   eo_parent_set(eo_super(obj, MY_CLASS), parent);
+
+   if (parent == NULL) return ;
+
+   _efl_loop_fd_reset(obj, pd);
+}
+
+static void
 _efl_loop_fd_eo_base_destructor(Eo *obj, Efl_Loop_Fd_Data *pd)
 {
    eo_destructor(eo_super(obj, MY_CLASS));
