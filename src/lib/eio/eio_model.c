@@ -453,10 +453,7 @@ _eio_done_children_load_cb(void *data, Eio_File *handler EINA_UNUSED)
    EINA_LIST_FOREACH(priv->children_promises, i, p)
      {
        Eina_Accessor* accessor = efl_model_list_slice(priv->children_list, p->start, p->count);
-       if (accessor)
-         eina_promise_owner_value_set(p->promise, accessor, (Eina_Promise_Free_Cb)&eina_accessor_free);
-       else
-         eina_promise_owner_error_set(p->promise, EFL_MODEL_ERROR_NOT_FOUND);
+       eina_promise_owner_value_set(p->promise, accessor, (Eina_Promise_Free_Cb)&eina_accessor_free);
        free(p);
      }
 
@@ -572,10 +569,7 @@ _eio_model_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data *pri
      }
 
    Eina_Accessor* accessor = efl_model_list_slice(priv->children_list, start, count);
-   if (accessor)
-     eina_promise_owner_value_set(promise, accessor, (Eina_Promise_Free_Cb)&eina_accessor_free);
-   else
-     eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
+   eina_promise_owner_value_set(promise, accessor, (Eina_Promise_Free_Cb)&eina_accessor_free);
 }
 
 
