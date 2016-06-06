@@ -24,6 +24,7 @@
 #include <eina_integer_sequence.hh>
 #include <eina_pp.hh>
 #include <eina_workarounds.hh>
+#include <eina_future.hh>
 
 /**
  * @page eina_cxx_main Eina C++ (BETA)
