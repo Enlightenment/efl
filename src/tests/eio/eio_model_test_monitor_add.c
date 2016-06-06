@@ -38,6 +38,7 @@ _children_removed_cb(void *data EINA_UNUSED, const Eo_Event* event)
         if(temp_filename && strcmp(filename, temp_filename) == 0)
              ecore_main_loop_quit();
         free(filename);
+        eina_promise_unref(promise);
      }
    return EINA_TRUE;
 }
@@ -59,6 +60,8 @@ _children_added_cb(void *data EINA_UNUSED, const Eo_Event* event)
         efl_model_child_del(event->object, evt->child);
      }
    free(filename);
+
+   eina_promise_unref(promise);
 
    return EINA_TRUE;
 }
