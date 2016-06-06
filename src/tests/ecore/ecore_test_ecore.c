@@ -310,6 +310,59 @@ START_TEST(ecore_test_efl_loop_fd)
 }
 END_TEST
 
+static Eina_Bool
+_eo_del_cb(void *data, const Eo_Event *ev EINA_UNUSED)
+{
+   Eina_Bool *dead = data;
+
+   *dead = EINA_TRUE;
+
+   return EINA_TRUE;
+}
+
+START_TEST(ecore_test_efl_loop_fd_lifecycle)
+{
+   Eina_Bool did = EINA_FALSE;
+   Eina_Bool dead = EINA_FALSE;
+   Eo *fd;
+   int comm[2];
+   int ret;
+
+   eo_init();
+
+   ret = ecore_init();
+   fail_if(ret < 1);
+
+   ret = pipe(comm);
+   fail_if(ret != 0);
+
+   fd = eo_add(EFL_LOOP_FD_CLASS, ecore_main_loop_get(),
+               efl_loop_fd_set(eo_self, comm[0]),
+               eo_event_callback_add(eo_self, EFL_LOOP_FD_EVENT_READ, _eo_read_cb, &did),
+               eo_event_callback_add(eo_self, EO_EVENT_DEL, _eo_del_cb, &dead));
+   eo_ref(fd);
+   fail_if(fd == NULL);
+
+   ret = write(comm[1], &did, 1);
+   fail_if(ret != 1);
+
+   ecore_main_loop_begin();
+
+   close(comm[0]);
+   close(comm[1]);
+
+   fail_if(did == EINA_FALSE);
+   fail_if(dead == EINA_TRUE);
+
+   ret = ecore_shutdown();
+
+   eo_del(fd);
+   fail_if(dead == EINA_FALSE);
+
+   eo_shutdown();
+}
+END_TEST
+
 START_TEST(ecore_test_ecore_main_loop_fd_handler_activate_modify)
 {
    Eina_Bool did = EINA_FALSE;
@@ -789,4 +842,5 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller);
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller_add_del);
    tcase_add_test(tc, ecore_test_efl_loop_fd);
+   tcase_add_test(tc, ecore_test_efl_loop_fd_lifecycle);
 }
