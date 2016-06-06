@@ -28,7 +28,7 @@ void error_cb(void *data, Eina_Error error)
     eo_unref(job);
 }
 
-void filter_cb(void *data, const Eo_Event *event)
+void filter_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
     Eio_Filter_Name_Data *event_info = event->info;
     static Eina_Bool should_filter = EINA_FALSE;
@@ -40,7 +40,7 @@ void filter_cb(void *data, const Eo_Event *event)
 }
 
 // Progress used to be the "Eio_Main_Cb" family of callbacks in the legacy API.
-void progress_cb(void *data, const char *filename)
+void progress_cb(void *data EINA_UNUSED, const char *filename)
 {
     EINA_SAFETY_ON_NULL_RETURN(filename);
     printf("%s listing filename: %s\n", __FUNCTION__, filename);

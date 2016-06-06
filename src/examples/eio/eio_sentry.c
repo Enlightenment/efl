@@ -11,7 +11,7 @@
 #include <Ecore.h>
 
 Eina_Bool
-sentry_cb(void *data, const Eo_Event *event)
+sentry_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
     Eio_Sentry_Event *event_info = event->info;
 
