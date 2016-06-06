@@ -307,9 +307,6 @@ ffi.cdef [[
 
     Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 
-    const char *eolian_type_c_type_named_get(const Eolian_Type *tp, const char *name);
-    const char *eolian_typedecl_c_type_named_get(const Eolian_Typedecl *tp, const char *name);
-
     const char *eolian_type_c_type_get(const Eolian_Type *tp);
     const char *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
 
@@ -585,12 +582,6 @@ M.Typedecl = ffi.metatype("Eolian_Typedecl", {
             return eolian.eolian_typedecl_is_extern(self) ~= 0
         end,
 
-        c_type_named_get = function(self, name)
-            local v = eolian.eolian_typedecl_c_type_named_get(self, name)
-            if v == nil then return nil end
-            return ffi_stringshare(v)
-        end,
-
         c_type_get = function(self)
             local v = eolian.eolian_typedecl_c_type_get(self)
             if v == nil then return nil end
@@ -669,12 +660,6 @@ M.Type = ffi.metatype("Eolian_Type", {
 
         is_const = function(self)
             return eolian.eolian_type_is_const(self) ~= 0
-        end,
-
-        c_type_named_get = function(self, name)
-            local v = eolian.eolian_type_c_type_named_get(self, name)
-            if v == nil then return nil end
-            return ffi_stringshare(v)
         end,
 
         c_type_get = function(self)

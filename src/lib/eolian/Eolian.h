@@ -1597,33 +1597,13 @@ EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Typedecl *
 EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 
 /*
- * @brief Get the full C type name of the given type declaration with a name.
- *
- * @param[in] tp the type declaration.
- * @param[in] name the name.
- * @return The C type name assuming @c tp is not NULL.
- *
- * Name is ignored for alias types and they're turned into C typedefs.
- *
- * Keep in mind that if @c name is NULL, the name won't be included.
- * Also, you're responsible for deleting the stringshare.
- *
- * @see eolian_typedecl_c_type_get
- * @see eolian_type_c_type_named_get
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_typedecl_c_type_named_get(const Eolian_Typedecl *tp, const char *name);
-
-/*
- * @brief Get the full C type name of the given type without a name.
+ * @brief Get the full C type name of the given type.
  *
  * @param[in] tp the type declaration.
  * @return The C type name assuming @c tp is not NULL.
  *
- * This behaves exactly like eolian_typedecl_c_type_named_get when name is NULL.
+ * You're responsible for deleting the stringshare.
  *
- * @see eolian_typedecl_c_type_named_get
  * @see eolian_type_c_type_get
  *
  * @ingroup Eolian
@@ -1770,31 +1750,13 @@ EAPI Eina_Bool eolian_type_is_own(const Eolian_Type *tp);
 EAPI Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
 
 /*
- * @brief Get the full C type name of the given type with a name.
- *
- * @param[in] tp the type.
- * @param[in] name the name.
- * @return The C type name assuming @c tp is not NULL.
- *
- * Keep in mind that if @c name is NULL, the name won't be included.
- * Also, you're responsible for deleting the stringshare.
- *
- * @see eolian_type_c_type_get
- * @see eolian_typedecl_c_type_named_get
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_type_c_type_named_get(const Eolian_Type *tp, const char *name);
-
-/*
- * @brief Get the full C type name of the given type without a name.
+ * @brief Get the full C type name of the given type.
  *
  * @param[in] tp the type.
  * @return The C type name assuming @c tp is not NULL.
  *
- * This behaves exactly like eolian_type_c_type_named_get when name is NULL.
+ * You're responsible for the stringshare.
  *
- * @see eolian_type_c_type_named_get
  * @see eolian_typedecl_c_type_get
  *
  * @ingroup Eolian

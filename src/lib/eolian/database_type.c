@@ -127,7 +127,7 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name, 
 }
 
 static void
-_stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf, const char *name)
+_stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    Eolian_Struct_Type_Field *sf;
    Eina_List *l;
@@ -145,7 +145,7 @@ _stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf, const char *name)
         eina_strbuf_append_char(buf, ' ');
      }
    if (tp->type == EOLIAN_TYPEDECL_STRUCT_OPAQUE)
-     goto append_name;
+     return;
    eina_strbuf_append(buf, "{ ");
    EINA_LIST_FOREACH(tp->field_list, l, sf)
      {
@@ -153,16 +153,10 @@ _stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf, const char *name)
         eina_strbuf_append(buf, "; ");
      }
    eina_strbuf_append(buf, "}");
-append_name:
-   if (name)
-     {
-        eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append(buf, name);
-     }
 }
 
 static void
-_etype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf, const char *name)
+_etype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    Eolian_Enum_Type_Field *ef;
    Eina_List *l;
@@ -197,11 +191,6 @@ _etype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf, const char *name)
           eina_strbuf_append(buf, ", ");
      }
    eina_strbuf_append(buf, " }");
-   if (name)
-     {
-        eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append(buf, name);
-     }
 }
 
 static void
@@ -239,7 +228,7 @@ _atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 }
 
 void
-database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf, const char *name)
+database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    switch (tp->type)
      {
@@ -247,11 +236,11 @@ database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf, const char
         _atype_to_str(tp, buf);
         break;
       case EOLIAN_TYPEDECL_ENUM:
-        _etype_to_str(tp, buf, name);
+        _etype_to_str(tp, buf);
         break;
       case EOLIAN_TYPEDECL_STRUCT:
       case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
-        _stype_to_str(tp, buf, name);
+        _stype_to_str(tp, buf);
         break;
       default:
         break;
