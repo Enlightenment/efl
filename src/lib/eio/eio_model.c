@@ -111,6 +111,11 @@ _eio_error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
           {
               eina_promise_owner_error_set(p->promise, EFL_MODEL_ERROR_UNKNOWN);
           }
+        eina_list_free(priv->property_promises);
+        priv->property_promises = NULL;
+
+        eio_file_cancel(priv->stat_file);
+        priv->stat_file = NULL;
      }
 }
 
