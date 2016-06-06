@@ -103,7 +103,7 @@ void eio_monitor_backend_init(void)
 {
    int fd;
 
-   if (_kqueue_fd > 0) return; // already initialized
+   if (_kqueue_fd != NULL) return; // already initialized
 
    fd = kqueue();
    if (fd < 0) return;
