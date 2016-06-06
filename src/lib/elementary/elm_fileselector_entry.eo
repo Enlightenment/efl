@@ -16,10 +16,11 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
       Elm.Layout.text.set;
       Elm.Layout.text.get;
       Elm.Layout.sizing_eval;
-      Elm.Interface.Fileselector.selected;
+      Elm.Interface.Fileselector.selected_model_get;
+      Elm.Interface.Fileselector.selected_model_set;
       Elm.Interface.Fileselector.folder_only;
       Elm.Interface.Fileselector.is_save;
-      Elm.Interface.Fileselector.path;
+      Elm.Interface.Fileselector.model;
       Elm.Interface.Fileselector.expandable;
       Efl.Part.part;
    }

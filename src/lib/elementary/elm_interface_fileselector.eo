@@ -41,18 +41,6 @@ interface Elm.Interface.Fileselector ()
             only: bool;
          }
       }
-      @property selected {
-         set {
-            [[Set, programmatically, the currently selected file/directory in the given file selector widget]]
-            return: bool;
-         }
-         get {
-            [[Get the currently selected item's (full) path, in the given file the given file selector widget]]
-         }
-         values {
-            path: string;
-         }
-      }
       @property thumbnail_size {
          set {
             [[Set the size for the thumbnail of the file selector widget's view.]]
@@ -109,15 +97,15 @@ interface Elm.Interface.Fileselector ()
             expand: bool;
          }
       }
-      @property path {
+      @property model {
          set {
             [[Set, programmatically, the directory that a given file selector widget will display contents from]]
          }
          get {
-            [[Get the parent directory's path that a given file selector selector widget will display contents from]]
+            [[Get the directory's model that a given file selector selector widget display contents from]]
          }
          values {
-            path: string;
+            model: Efl.Model;
          }
       }
       @property mode {
@@ -142,12 +130,12 @@ interface Elm.Interface.Fileselector ()
             is_save: bool;
          }
       }
-      @property selected_paths {
+      @property selected_models {
          get {
-            [[Get a list of selected paths in the fileselector.]]
+            [[Get a list of models selected in the fileselector.]]
          }
          values {
-            ret: const(list<string>);
+            ret: const(list<Efl.Model>);
          }
       }
       @property current_name {
@@ -158,6 +146,17 @@ interface Elm.Interface.Fileselector ()
          values {
             name: string;
          }
+      }
+      selected_model_set {
+         [[Set, programmatically, the currently selected file/directory in the given file selector widget]]
+         params {
+            @in model: Efl.Model; [[Model to be set]]
+            @inout promise: promise<Efl.Model>; [[Promise returning the recorded selected model or error]]
+         }
+      }
+      selected_model_get {
+         [[Get the currently selected item's model, in the given file the given file selector widget]]
+         return: Efl.Model;
       }
       custom_filter_append {
          [[Append custom filter into filter list]]

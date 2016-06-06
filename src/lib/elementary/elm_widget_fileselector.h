@@ -21,6 +21,8 @@
  */
 
 typedef struct _Elm_Fileselector_Filter Elm_Fileselector_Filter;
+typedef struct _Listing_Request Listing_Request;
+typedef struct _Elm_Fileselector_Item_Data Elm_Fileselector_Item_Data;
 
 /**
  * Base layout smart data extended with fileselector instance data.
@@ -42,29 +44,30 @@ struct _Elm_Fileselector_Data
    Evas_Object             *ok_button;
    Evas_Object             *cancel_button;
 
+   Eina_List               *files_item_data;
+
    Eina_List               *filter_list;
    Elm_Fileselector_Filter *current_filter;
 
    /* a list of selected paths. only for multi selection */
-   Eina_List               *paths;
+   Eina_List               *multi_selection;
+   Eina_List               *multi_selection_tmp;
 
    const char              *path;
-   const char              *prev_path;
-   const char              *selection;
+   Efl_Model               *model;
+   Efl_Model               *prev_model;
    Ecore_Idler             *populate_idler;
    Ecore_Idler             *path_entry_idler;
 
    const char              *path_separator;
    const char              *search_string;
 
-   Eio_File                *current;
-   Eio_Monitor             *monitor;
-   Eina_List               *handlers;
+   Listing_Request         *current_populate_lreq;
 
    Evas_Coord_Size          thumbnail_size;
 
    /* a sort method to decide orders of files/directories */
-   int                    (*sort_method)(const char *, const char *);
+   int                    (*sort_method)(const Elm_Fileselector_Item_Data *, const Elm_Fileselector_Item_Data *);
 
    Elm_Fileselector_Mode    mode;
    Elm_Fileselector_Sort    sort_type;
@@ -86,20 +89,38 @@ struct _Elm_Fileselector_Data
 struct sel_data
 {
    Evas_Object      *fs;
-   Eina_Stringshare *path;
-   Eina_Stringshare *selected;
+   Efl_Model        *model;
+   Efl_Model        *selected;
 };
 
-typedef struct _Listing_Request Listing_Request;
 struct _Listing_Request
 {
    Elm_Fileselector_Data *sd;
    Elm_Object_Item             *parent_it;
 
    Evas_Object                 *obj;
-   const char                  *path;
-   const char                  *selected;
+   Efl_Model                   *model;
+   Efl_Model                   *selected;
+   Eina_Stringshare            *path;
+   Eina_Stringshare            *selected_path;
+   int                          item_total;
+   int                          item_processed_count;
    Eina_Bool                    first : 1;
+   Eina_Bool                    valid : 1;
+};
+
+struct _Elm_Fileselector_Item_Data
+{
+   void                        *user_data;
+   Efl_Model                   *model;
+   Eina_Stringshare            *path;
+   Eina_Stringshare            *filename;
+   int64_t                      size;
+   double                       mtime;
+   Eina_Stringshare            *mime_type;
+   Efl_Model                   *parent_model;
+   const char                  *parent_path;
+   Eina_Bool                    is_dir : 1;
 };
 
 typedef enum {
