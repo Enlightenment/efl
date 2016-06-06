@@ -5,7 +5,7 @@
 #include <Eo.h>
 #include <Ecore.h>
 
-#include <callback.eo.hh>
+#include <a.eo.hh>
 
 #include "eolian_cxx_suite.h"
 
@@ -14,7 +14,7 @@ START_TEST(eolian_cxx_test_wrapper_size)
   efl::eo::eo_init init;
 
   ::efl::eo::concrete b(nullptr);
-  ::nonamespace::Callback c;
+  ::nonamespace::A c;
 
   fail_if(sizeof(b) != sizeof(Eo*));
   fail_if(sizeof(b) != sizeof(c));

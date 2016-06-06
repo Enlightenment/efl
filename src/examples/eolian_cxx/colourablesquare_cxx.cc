@@ -25,7 +25,6 @@ _colourablesquare_size_constructor(Eo *obj, ColourableSquare_Data *self, int siz
 {
    self->size = size;
    EINA_CXX_DOM_LOG_DBG(domain) << __func__ << " [ size = " << size << " ]" << std::endl;
-   eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 int

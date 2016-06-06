@@ -1,0 +1,220 @@
+class Name1.Name2.Type_Generation (Eo.Base)
+{
+   data: Type_Generation_Data;
+   methods {
+     // in void ptr
+     invoidptr {
+       params {
+         @in v: void*;
+       }
+     }
+     inint {
+       params {
+         @in v: int;
+       }
+     }
+     inintptr {
+       params {
+         @in v: int*;
+       }
+     }
+     inintptrown {
+       params {
+         @in v: own(int*);
+       }
+     }
+     inintptrownptr {
+       params {
+         @in v: own(int*)*;
+       }
+     }
+     inintptrownptrptr {
+       params {
+         @in v: own(int*)**;
+       }
+     }
+     inintptrptrownptr {
+       params {
+         @in v: own(int**)*;
+       }
+     }
+     inintptrownfree {
+       params {
+         @in v: free(own(int*), free);
+       }
+     }
+     instring {
+       params {
+         @in v: string;
+       }
+     }
+     /*
+     instringptr {
+       params {
+         @in v: string*;
+       }
+     }*/
+     instringown {
+       params {
+         @in v: own(string);
+       }
+     }
+     /* no sense
+     instringptrown {
+       params {
+         @in v: own(string*);
+       }
+     }
+     instringownptrown {
+       params {
+         @in v: own(own(string)*);
+       }
+     }*/
+     // return
+     returnvoidptr {
+        return: void*;
+     }
+     returnint {
+       return: int;
+     }
+     returnintptr {
+       return: int*;
+     }
+     returnintptrown {
+       return: own(int*);
+     }
+     returnintptrownptr {
+       return: own(int*)*;
+     }
+     returnintptrownptrptr {
+       return: own(int*)**;
+     }
+     returnintptrptrownptr {
+       return: own(int**)*;
+     }
+     returnintptrownfree {
+       params {
+         @in v: free(own(int*), free);
+       }
+     }
+     returnstring {
+       return: string;
+     }
+     returnstringptr {
+       return: string*;
+     }
+     returnstringown {
+       return: own(string);
+     }
+     returnstringownptr {
+       return: own(string*);
+     }
+
+     // out
+     outvoidptr {
+       params {
+         @out v: void*;
+       }
+     }
+     outint {
+       params {
+         @out v: int;
+       }
+     }
+     outintptr {
+       params {
+         @out v: int*;
+       }
+     }
+     outintptrown {
+       params {
+         @out v: own(int*);
+       }
+     }
+     outintptrownfree {
+       params {
+         @out v: free(own(int*), free);
+       }
+     }
+     inclassname {
+       params {
+         @in v: Name1.Name2.Type_Generation;
+       }
+     }
+     outclassname {
+       params {
+         @out v: Name1.Name2.Type_Generation;
+       }
+     }
+     inoutclassname {
+       params {
+         @inout v: Name1.Name2.Type_Generation;
+       }
+     }
+     optionalinvoidptr {
+       params {
+         @in v: void* @optional;
+       }
+     }
+     optionalinint {
+       params {
+         @in v: int @optional;
+       }
+     }
+     optionalinintptr {
+       params {
+         @in v: int* @optional;
+       }
+     }
+     optionalinintptrown {
+       params {
+         @in v: own(int*) @optional;
+       }
+     }
+     optionalinintptrownfree {
+       params {
+         @in v: free(own(int*), free) @optional;
+       }
+     }
+     optionaloutvoidptr {
+       params {
+         @out v: void* @optional;
+       }
+     }
+     optionaloutint {
+       params {
+         @out v: int @optional;
+       }
+     }
+     optionaloutintptr {
+       params {
+         @out v: int* @optional;
+       }
+     }
+     optionaloutintptrown {
+       params {
+         @out v: own(int*) @optional;
+       }
+     }
+     optionaloutintptrownfree {
+       params {
+         @out v: free(own(int*), free) @optional;
+       }
+     }
+     optionalinclassname {
+       params {
+         @in v: Name1.Name2.Type_Generation @optional;
+       }
+     }
+     optionaloutclassname {
+       params {
+         @out v: Name1.Name2.Type_Generation @optional;
+       }
+     }
+     optionalinoutclassname {
+       params {
+         @inout v: Name1.Name2.Type_Generation @optional;
+       }
+     }
+  }
+}

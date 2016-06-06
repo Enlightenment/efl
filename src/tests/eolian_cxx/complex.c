@@ -1,4 +1,9 @@
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <Eina.h>
 #include <Eo.h>
 
 struct Complex_Data {};

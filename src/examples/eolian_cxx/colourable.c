@@ -63,7 +63,6 @@ _ns_colourable_rgb_24bits_constructor(Eo *obj, Colourable_Data *self, int rgb)
    self->g = (rgb & 0x0000ff00) >> 8;
    self->b = rgb & 0x000000ff;
    DBG("_ns_colourable_rgb_24bits_constructor(0x%.6x)\n", (int)rgb);
-   eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 void

@@ -7,14 +7,14 @@
 
 #include "generic.eo.h"
 
+#include <check.h>
+
 struct _Generic_Data
 {
    int        req_ctor_a_val;
-   Ecore_Cb   req_ctor_b_cb;
-   void      *req_ctor_b_data;
+   int        req_ctor_b_val;
    int        opt_ctor_a_val;
-   Ecore_Cb   opt_ctor_b_cb;
-   void      *opt_ctor_b_data;
+   int        opt_ctor_b_val;
 };
 typedef struct _Generic_Data Generic_Data;
 
@@ -23,11 +23,7 @@ typedef struct _Generic_Data Generic_Data;
 static Eo *_generic_eo_base_constructor(Eo *obj, Generic_Data *pd)
 {
    pd->req_ctor_a_val = 0;
-   pd->req_ctor_b_cb = NULL;
-   pd->req_ctor_b_data = NULL;
    pd->opt_ctor_a_val = 0;
-   pd->opt_ctor_b_cb = NULL;
-   pd->opt_ctor_b_data = NULL;
    return eo_constructor(eo_super(obj, MY_CLASS));
 }
 
@@ -36,9 +32,9 @@ static void _generic_required_ctor_a(Eo *obj EINA_UNUSED, Generic_Data *pd, int 
    pd->req_ctor_a_val = value;
 }
 
-static void _generic_required_ctor_b(Eo *obj EINA_UNUSED, Generic_Data *pd EINA_UNUSED, Ecore_Cb cb, void *data)
+static void _generic_required_ctor_b(Eo *obj EINA_UNUSED, Generic_Data *pd EINA_UNUSED, int value)
 {
-   cb(data);
+   pd->req_ctor_b_val = value;
 }
 
 static void _generic_optional_ctor_a(Eo *obj EINA_UNUSED, Generic_Data *pd, int value)
@@ -46,9 +42,9 @@ static void _generic_optional_ctor_a(Eo *obj EINA_UNUSED, Generic_Data *pd, int 
    pd->opt_ctor_a_val = value;
 }
 
-static void _generic_optional_ctor_b(Eo *obj EINA_UNUSED, Generic_Data *pd EINA_UNUSED, Ecore_Cb cb, void *data)
+static void _generic_optional_ctor_b(Eo *obj EINA_UNUSED, Generic_Data *pd EINA_UNUSED, int value)
 {
-   cb(data);
+   pd->opt_ctor_b_val = value;
 }
 
 static int _generic_req_ctor_a_value_get(Eo *obj EINA_UNUSED, Generic_Data *pd)
@@ -56,21 +52,78 @@ static int _generic_req_ctor_a_value_get(Eo *obj EINA_UNUSED, Generic_Data *pd)
    return pd->req_ctor_a_val;
 }
 
+static int _generic_req_ctor_b_value_get(Eo *obj EINA_UNUSED, Generic_Data *pd)
+{
+   return pd->req_ctor_b_val;
+}
+
 static int _generic_opt_ctor_a_value_get(Eo *obj EINA_UNUSED, Generic_Data *pd)
 {
    return pd->opt_ctor_a_val;
 }
 
-static void _generic_call_req_ctor_b_callback(Eo *obj EINA_UNUSED, Generic_Data *pd)
+static int _generic_opt_ctor_b_value_get(Eo *obj EINA_UNUSED, Generic_Data *pd)
 {
-   if (pd->req_ctor_b_cb)
-     pd->req_ctor_b_cb(pd->req_ctor_b_data);
+   return pd->opt_ctor_b_val;
 }
 
-static void _generic_call_opt_ctor_b_callback(Eo *obj EINA_UNUSED, Generic_Data *pd)
+/* static void _generic_req_ctor_a_value_set(Eo *obj EINA_UNUSED, Generic_Data* pd EINA_UNUSED, int value EINA_UNUSED) */
+/* { */
+/* } */
+
+/* static void _generic_opt_ctor_a_value_set(Eo *obj EINA_UNUSED, Generic_Data* pd EINA_UNUSED, int value EINA_UNUSED) */
+/* { */
+/* } */
+
+static void _generic_out_required_ctor_a(Eo *obj EINA_UNUSED, Generic_Data* pd, int *value)
 {
-   if (pd->opt_ctor_b_cb)
-     pd->opt_ctor_b_cb(pd->opt_ctor_b_data);
+   *value = pd->req_ctor_a_val;
+}
+
+static void _generic_out_required_ctor_b(Eo *obj EINA_UNUSED, Generic_Data* pd, int *value)
+{
+   *value = pd->req_ctor_b_val;
+}
+
+static void _generic_out_optional_ctor_a(Eo *obj EINA_UNUSED, Generic_Data* pd, int *value)
+{
+   *value = pd->opt_ctor_a_val;
+}
+
+static void _generic_out_optional_ctor_b(Eo *obj EINA_UNUSED, Generic_Data* pd, int *value)
+{
+   *value = pd->opt_ctor_b_val;
+}
+
+static void _generic_call_event1(Eo *obj, Generic_Data* pd EINA_UNUSED)
+{
+  eo_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT1, NULL);
+}
+static void _generic_call_event2(Eo *obj, Generic_Data* pd EINA_UNUSED)
+{
+  eo_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT2, obj);
+}
+static void _generic_call_event3(Eo *obj, Generic_Data* pd EINA_UNUSED)
+{
+  int p = 42;
+  eo_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT3, &p);
+}
+static void _generic_call_event4(Eo *obj, Generic_Data* pd EINA_UNUSED)
+{
+  int i = 42;
+  Eina_List* p = eina_list_append(NULL, &i);
+  ck_assert(p != NULL);
+  eo_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT4, p);
+  eina_list_free(p);
+}
+static void _generic_call_event5(Eo *obj, Generic_Data* pd EINA_UNUSED)
+{
+  int i = 42;
+  Eina_List* p = eina_list_append(NULL, &i);
+
+  Generic_Event e = {.field1 = 42, .field2 = p};
+  eo_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT5, &e);
+  eina_list_free(p);
 }
 
 #include "generic.eo.c"

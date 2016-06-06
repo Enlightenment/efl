@@ -1,7 +1,6 @@
 class Ns.Colourable (Eo.Base)
 {
     [[Colourable class.]]
-    legacy_prefix: legacy;
     data: Colourable_Data;
     methods {
         rgb_24bits_constructor {

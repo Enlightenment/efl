@@ -1,4 +1,8 @@
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <Eo.h>
 
 #include "name_name.eo.h"

@@ -7,15 +7,15 @@ installed_eocxxheadersdir = $(includedir)/eo-cxx-@VMAJ@/
 nodist_installed_eocxxheaders_DATA = $(eo_eolian_cxx_hh) $(eo_eolian_cxx_impl)
 dist_installed_eocxxheaders_DATA = \
 bindings/cxx/eo_cxx/eo_concrete.hh \
-bindings/cxx/eo_cxx/eo_event.hh \
-bindings/cxx/eo_cxx/eo_init.hh \
-bindings/cxx/eo_cxx/eo_wref.hh \
-bindings/cxx/eo_cxx/eo_inherit.hh \
-bindings/cxx/eo_cxx/eo_ops.hh \
-bindings/cxx/eo_cxx/eo_private.hh \
-bindings/cxx/eo_cxx/eo_inherit_bindings.hh \
 bindings/cxx/eo_cxx/eo_cxx_interop.hh \
-bindings/cxx/eo_cxx/Eo.hh
+bindings/cxx/eo_cxx/eo_event.hh \
+bindings/cxx/eo_cxx/Eo.hh \
+bindings/cxx/eo_cxx/eo_inherit.hh \
+bindings/cxx/eo_cxx/eo_inherit_bindings.hh \
+bindings/cxx/eo_cxx/eo_init.hh \
+bindings/cxx/eo_cxx/eo_ops.hh \
+bindings/cxx/eo_cxx/eo_wref.hh \
+bindings/cxx/eo_cxx/eo_private.hh
 
 ### Elementary C++
 installed_elementarycxxmainheadersdir = $(includedir)/elementary-cxx-@VMAJ@/
@@ -138,6 +138,7 @@ bindings/cxx/eina_cxx/eina_accessor.hh       \
 bindings/cxx/eina_cxx/eina_array.hh \
 bindings/cxx/eina_cxx/eina_clone_allocators.hh       \
 bindings/cxx/eina_cxx/eina_error.hh     \
+bindings/cxx/eina_cxx/eina_future.hh \
 bindings/cxx/eina_cxx/eina_eo_concrete_fwd.hh     \
 bindings/cxx/eina_cxx/eina_fold.hh     \
 bindings/cxx/eina_cxx/eina_function.hh     \

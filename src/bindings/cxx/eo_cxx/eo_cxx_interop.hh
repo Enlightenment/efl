@@ -7,6 +7,7 @@
 #include <utility>
 #include <type_traits>
 #include <initializer_list>
+#include <future>
 
 #include <Eina.hh>
 #include <Eo.hh>
@@ -15,519 +16,537 @@
 
 namespace efl { namespace eolian {
 
-//// From C++ to C
-
-inline const char*
-to_c(std::string const& x)
-{
-   return x.c_str();
-}
-
-inline const char*
-to_c(eina::optional<std::string> const& x)
-{
-   if (!x)
-     return nullptr;
-   return x->c_str();
-}
-
-inline const char*
-to_c(eina::string_view const& x)
-{
-   return x.data();
-}
-
-inline const char*
-to_c(eina::optional<eina::string_view> const& x)
-{
-   if (!x)
-     return nullptr;
-   return x->data();
-}
-
-inline const char*
-to_c(efl::eina::stringshare const& x)
-{
-   return x.c_str();
-}
-
-inline const char*
-to_c(eina::optional<efl::eina::stringshare> const& x)
-{
-   if (!x)
-     return nullptr;
-   return x->c_str();
-}
-
-inline Eina_Bool
-to_c(bool x)
-{
-   return x ? EINA_TRUE : EINA_FALSE;
-}
-
-inline Eina_Bool*
-to_c(bool* x)
-{
-   static_assert(sizeof(bool) == sizeof(Eina_Bool), "");
-   return reinterpret_cast<Eina_Bool*>(x);
-}
-
-template <typename T>
-T to_c(T const& v, typename std::enable_if<!std::is_convertible<T*, ::efl::eo::concrete*>::value>::type* = 0)
-{
-   return v;
-}
-
-template <typename T>
-Eo* to_c(T const& v, typename std::enable_if<std::is_convertible<T*, ::efl::eo::concrete*>::value>::type* = 0)
-{
-   return v._eo_ptr();
-}
-
-template <typename T>
-Eo* to_c(eina::optional<T> const& v, typename std::enable_if<std::is_convertible<T*, ::efl::eo::concrete*>::value>::type* = 0)
-{
-   if (!v)
-     return nullptr;
-   return v->_eo_ptr();
-}
-
-template <typename T>
-Eo** to_c(T* v, typename std::enable_if<std::is_convertible<T*, ::efl::eo::concrete*>::value>::type* = 0)
-{
-   static_assert(sizeof(T) == sizeof(Eo*), "");
-   return static_cast<Eo**>(static_cast<void*>(v));
-}
-
-template <typename R, typename T>
-R to_native(T& v)
-{
-   static_assert(sizeof(T) == sizeof(R), "");
-   return v.native_handle();
-}
-
-template <typename R, typename T>
-R to_native(eina::optional<T>& v)
-{
-   static_assert(sizeof(T) == sizeof(R), "");
-   if (!v)
-     return nullptr;
-   return v->native_handle();
-}
-
-template <typename R, typename T>
-R to_native(T* v)
-{
-  static_assert(sizeof(T) == sizeof(typename std::remove_pointer<R>::type), "");
-  return static_cast<R>(static_cast<void*>(v));
-}
-
-    
-//// From C to C++
-
-template <typename T>
-struct tag {};
-
-template <typename T, typename U, typename O>
-T to_cxx(U object, O o);
-
-// XXX
-inline void*
-to_cxx(void *x, std::tuple<std::false_type>, tag<void*>)
-{
-   return x;
-}
-
-// XXX
-inline const void*
-to_cxx(const void *x, std::tuple<std::false_type>, tag<const void*>)
-{
-   return x;
-}
-
-template <typename T>
-inline T
-to_cxx(Eo* x, std::tuple<std::true_type>, tag<T>)
-{
-   return T(x);
-}
-
-template <typename T>
-inline T
-to_cxx(Eo* x, std::tuple<std::false_type>, tag<T>)
-{
-   return T(::eo_ref(x));
-}
-
-template <typename T>
-inline eina::optional<T>
-to_cxx(Eo* x, std::tuple<std::true_type>, tag<eina::optional<T> >)
-{
-   if (!x)
-     return nullptr;
-   return T(x);
-}
-
-template <typename T>
-inline eina::optional<T>
-to_cxx(Eo* x, std::tuple<std::false_type>, tag<eina::optional<T> >)
-{
-   if (!x)
-     return nullptr;
-   return T(::eo_ref(x));
-}
-
-template <typename T>
-inline T
-to_cxx(Eo** x, std::tuple<std::false_type>, tag<T>)
-{
-   static_assert(sizeof(Eo*) == sizeof(typename std::remove_pointer<T>::type), "");
-   return static_cast<T>((static_cast<void*>(x)));
-}
-
-#ifdef _EVAS_H
-template <typename T>
-Evas_Object_Textblock_Node_Format *
-to_cxx(Evas_Object_Textblock_Node_Format* x, std::tuple<std::false_type>, tag<T>)
-{
-   return x; // XXX
-}
-#endif
-
-inline bool
-to_cxx(Eina_Bool x, std::tuple<std::false_type>, tag<bool>)
-{
-   return !!x;
-}
-
-inline std::string
-to_cxx(const char* x, std::tuple<std::false_type>, tag<std::string>)
-{
-   return std::string(x);
-}
-
-inline eina::optional<std::string>
-to_cxx(const char* x, std::tuple<std::false_type>, tag<eina::optional<std::string> >)
-{
-   if (!x)
-     return nullptr;
-   return std::string(x);
-}
-
-inline eina::string_view
-to_cxx(const char* x, std::tuple<std::false_type>, tag<eina::string_view>)
-{
-   return eina::string_view(x);
-}
-
-inline eina::optional<eina::string_view>
-to_cxx(const char* x, std::tuple<std::false_type>, tag<eina::optional<eina::string_view> >)
-{
-   if (!x)
-     return nullptr;
-   return eina::string_view(x);
-}
-
 template <typename T, typename Enable = void>
-struct traits
-{
-   typedef T type;
-};
+struct in_traits { typedef T const& type; };
+template <typename T>
+struct in_traits<T, typename std::enable_if<eo::is_eolian_object<T>::value>::type> { typedef T type; };
+template <typename T>
+struct in_traits<T, typename std::enable_if<std::is_fundamental<T>::value>::type> { typedef T type; };
+template <>
+struct in_traits<eina::string_view> { typedef eina::string_view type; };
+template <>
+struct in_traits<eina::string_view const> { typedef eina::string_view const type; };
+template <typename T>
+struct in_traits<T&> { typedef T& type; };
+template <typename T>
+struct in_traits<T*> { typedef T* type; };
+template <typename T, typename D>
+struct in_traits<std::unique_ptr<T, D>> { typedef std::unique_ptr<T, D> type; };
 
 template <typename T>
-struct traits
- <T, typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>::type>
-{
-   typedef Eo* type;
-};
-
+struct in_traits<eina::range_list<T>> { typedef eina::range_list<T> type; };
 template <typename T>
-struct traits
- <T, typename std::enable_if<std::is_base_of<std::basic_string<char>, T>::value>::type>
-{
-   typedef const char* type;
-};
-
-template <typename T>
-struct traits
- <T, typename std::enable_if<std::is_base_of<::efl::eina::basic_string_view<char>, T>::value>::type>
-{
-   typedef const char* type;
-};
-
-template <typename T, typename ...Args>
-inline efl::eina::range_list<T const>
-to_cxx(const Eina_List* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_list<T> >)
-{
-   return efl::eina::range_list<T const> {x};
-}
-
-template <typename T, typename ...Args>
-inline eina::optional<efl::eina::range_list<T const> >
-to_cxx(const Eina_List* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::range_list<T> > >)
-{
-   if (!x)
-     return nullptr;
-   return efl::eina::range_list<T const> {x};
-}
-
-template <typename T, typename ...Args>
-inline efl::eina::range_list<T>
-to_cxx(Eina_List* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_list<T> >)
-{
-   return efl::eina::range_list<T>{x};
-}
-
-template <typename T, typename ...Args>
-inline eina::optional<efl::eina::range_list<T> >
-to_cxx(Eina_List* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::range_list<T> > >)
-{
-   if (!x)
-     return nullptr;
-   return efl::eina::range_list<T>{x};
-}
-
-template <typename T, typename ...Args>
-inline efl::eina::list<T>
-to_cxx(Eina_List* x, std::tuple<std::true_type, Args...>, tag< efl::eina::list<T> >)
-{
-   return efl::eina::list<T> {x};
-}
-
-template <typename T, typename ...Args>
-inline eina::optional<efl::eina::list<T> >
-to_cxx(Eina_List* x, std::tuple<std::true_type, Args...>, tag< eina::optional<efl::eina::list<T> > >)
-{
-   if (!x)
-     return nullptr;
-   return efl::eina::list<T> {x};
-}
-
-template <typename T, typename ...Args>
-inline efl::eina::range_array<T const>
-to_cxx(const Eina_Array* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_array<T> >)
-{
-   return efl::eina::range_array<T const> {x};
-}
-
-template <typename T, typename ...Args>
-inline eina::optional<efl::eina::range_array<T const> >
-to_cxx(const Eina_Array* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::range_array<T> > >)
-{
-   if (!x)
-     return nullptr;
-   return efl::eina::range_array<T const> {x};
-}
-
-template <typename T, typename ...Args>
-inline efl::eina::range_array<T>
-to_cxx(Eina_Array* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_array<T> >)
-{
-   return efl::eina::range_array<T>{x};
-}
-
-template <typename T, typename ...Args>
-inline eina::optional<efl::eina::range_array<T> >
-to_cxx(Eina_Array* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::range_array<T> > >)
-{
-   if (!x)
-     return nullptr;
-   return efl::eina::range_array<T>{x};
-}
-
-template <typename T, typename ...Args>
-inline efl::eina::array<T>
-to_cxx(Eina_Array* x, std::tuple<std::true_type, Args...>, tag< efl::eina::array<T> >)
-{
-   return efl::eina::array<T> {x};
-}
-
-template <typename T, typename ...Args>
-inline eina::optional<efl::eina::array<T> >
-to_cxx(Eina_Array* x, std::tuple<std::true_type, Args...>, tag< eina::optional<efl::eina::array<T> > >)
-{
-   if (!x)
-     return nullptr;
-   return efl::eina::array<T> {x};
-}
-
+struct in_traits<eina::range_array<T>> { typedef eina::range_array<T> type; };
     
-inline eina::stringshare
-to_cxx(Eina_Stringshare const* x, const std::false_type, tag<eina::stringshare>)
+template <typename T>
+struct out_traits { typedef T type; };
+template <typename T>
+struct out_traits<efl::eina::future<T>> { typedef efl::eina::future<T>& type; };
+
+template <typename T>
+struct inout_traits { typedef T type; };
+template <typename T>
+struct inout_traits<efl::eina::future<T>> { typedef efl::eina::future<T>& type; };
+
+namespace impl {
+
+template <typename From, typename To>
+struct tag
 {
-   return ::eina_stringshare_ref(x);
+  typedef To to;
+  typedef From from;
+};
+  
+template <typename To, typename From, typename Lhs, typename Rhs>
+void assign_out(Lhs& lhs, Rhs& rhs);
+  
+template <typename T>
+void assign_out_impl(T*& lhs, T& rhs, tag<T*, T>)
+{
+  *lhs = rhs;
 }
-
-inline eina::optional<eina::stringshare>
-to_cxx(Eina_Stringshare const* x, const std::false_type, tag<eina::optional<eina::stringshare> >)
+template <typename U, typename T>
+void assign_out_impl(std::unique_ptr<T, void(*)(const void*)>& lhs, U* rhs, tag<std::unique_ptr<T, void(*)(const void*)>&, U*>)
 {
-   if (!x)
-     return nullptr;
-   return eina::stringshare(::eina_stringshare_ref(x));
+  lhs.reset(rhs);
 }
-
-template <typename T, typename ...Args>
-inline efl::eina::accessor<T>
-to_cxx(Eina_Accessor* x, std::tuple<std::false_type, Args...>, tag< efl::eina::accessor<T> >)
+template <typename Tag>
+void assign_out_impl(bool& lhs, Eina_Bool rhs, Tag)
 {
-   return efl::eina::accessor<T>(x);
+  lhs = rhs;
 }
-
-template <typename T, typename ...Args>
-inline eina::optional<efl::eina::accessor<T> >
-to_cxx(Eina_Accessor* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::accessor<T> > >)
+template <typename T>
+void assign_out_impl(T& lhs, T& rhs, tag<T&, T>)
 {
-   if (!x)
-     return nullptr;
-   return efl::eina::accessor<T>(x);
+  lhs = rhs;
 }
-
-template <typename T, typename ...Args>
-inline efl::eina::iterator<T>
-to_cxx(Eina_Iterator* x, std::tuple<std::false_type, Args...>, tag< efl::eina::iterator<T> >)
+template <typename T>
+void assign_out_impl(T& lhs, Eo* rhs, tag<T&, Eo*>
+                     , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
 {
-   return efl::eina::iterator<T>(x);
+  lhs._reset(rhs);
 }
-
-template <typename T, typename ...Args>
-inline eina::optional<efl::eina::iterator<T> >
-to_cxx(Eina_Iterator* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::iterator<T> > >)
+template <typename T>
+void assign_out_impl(T& lhs, Eo const* rhs, tag<T&, Eo const*>
+                     , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
 {
-   if (!x)
-     return nullptr;
-   return efl::eina::iterator<T>(x);
+  lhs._reset(const_cast<Eo*>(rhs));
 }
-
-template <typename T, typename ...Args>
-T
-to_cxx(Eo const* x, std::tuple<std::false_type, Args...>, tag< T >
-       , typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>* = 0)
+template <typename T>
+void assign_out_impl(efl::eina::future<T>& /*v*/, Eina_Promise*, tag<efl::eina::future<T>&, Eina_Promise*>)
 {
-   // Workaround for erroneous constness
-   return T{ ::eo_ref(const_cast<Eo*>(x))};
 }
-
-template <typename T, typename ...Args>
-eina::optional<T>
-to_cxx(Eo const* x, std::tuple<std::false_type, Args...>, tag< eina::optional<T> >
-       , typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>* = 0)
+template <typename Tag>
+void assign_out_impl(efl::eina::string_view& view, const char* string, Tag)
 {
-   // Workaround for erroneous constness
-   if (!x)
-     return nullptr;
-   return T{ ::eo_ref(const_cast<Eo*>(x))};
+  view = {string};
 }
-
-template <typename T, typename ...Args>
-T
-to_cxx(Eo const* x, std::tuple<std::true_type, Args...>, tag< T >
-       , typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>* = 0)
+template <typename T, typename Rhs, typename U, typename O>
+void assign_out_impl(efl::eina::optional<T>& lhs, Rhs*& rhs, tag<efl::eina::optional<U>&, O>)
 {
-   // Workaround for erroneous constness
-   return T{const_cast<Eo*>(x)};
+  if(rhs)
+    assign_out<U, O>(*lhs, rhs);
+  else
+    lhs.disengage();
 }
-
-template <typename T, typename ...Args>
-eina::optional<T>
-to_cxx(Eo const* x, std::tuple<std::true_type, Args...>, tag< eina::optional<T> >
-       , typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>* = 0)
+template <typename T, typename Rhs, typename U, typename O>
+void assign_out_impl(efl::eina::optional<T>& lhs, Rhs& rhs, tag<efl::eina::optional<U>&, O>)
 {
-   // Workaround for erroneous constness
-   if (!x)
-     return nullptr;
-   return T{const_cast<Eo*>(x)};
+  assign_out<U, O>(*lhs, rhs);
 }
-
-template <typename T, typename U, typename O>
-T to_cxx(U object, O o)
+template <typename T, typename Rhs, typename U, typename O>
+void assign_out_impl(efl::eina::optional<T>& lhs, Rhs*& rhs, tag<efl::eina::optional<U>, O>)
 {
-   return to_cxx(object, o, tag<T>());
+  if(rhs)
+    assign_out<U, O>(*lhs, rhs);
+  else
+    lhs.disengage();
 }
-
-//// Callbacks
-
-template <typename F, typename R, typename V, typename... Args>
-R funcall(V* data, Args... args)
+template <typename T, typename Rhs, typename U, typename O>
+void assign_out_impl(efl::eina::optional<T>& lhs, Rhs& rhs, tag<efl::eina::optional<U>, O>)
 {
-   F const* f = static_cast<F const*>(data);
-   return (*f)(args...);
+  assign_out<U, O>(*lhs, rhs);
+}
+template <typename Tag>
+void assign_out_impl(eina::value& lhs, Eina_Value const& rhs, Tag)
+{
+  Eina_Value* v = eina_value_new(EINA_VALUE_TYPE_CHAR);
+  eina_value_flush(v);
+  eina_value_copy(&rhs, v);
+  lhs = {v};
+}
+template <typename T, typename Tag>
+void assign_out_impl(efl::eina::list<T>& lhs, Eina_List* rhs, Tag)
+{
+  lhs = efl::eina::list<T>{rhs};
+}
+}
+    
+template <typename To, typename From, typename Lhs, typename Rhs>
+void assign_out(Lhs& lhs, Rhs& rhs)
+{
+  return impl::assign_out_impl(lhs, rhs, impl::tag<To, From>{});
+}
+    
+namespace impl {
+
+template <typename T>
+T* convert_inout_impl(T& v, tag<T, T*>)
+{
+  return v;
+}
+template <typename T>
+T& convert_inout_impl(T& v, tag<T, T>)
+{
+  return v;
+}
+template <typename T>
+Eo* convert_inout_impl(T& v, tag<T, Eo*>
+                      , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
+{
+  return v._eo_ptr();
+}
+template <typename T>
+Eo const* convert_inout_impl(T v, tag<T, Eo const*>
+                            , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
+{
+  return v._eo_ptr();
+}
+template <typename T>
+Eina_Promise* convert_inout_impl(efl::eina::future<T>& /*v*/, tag<efl::eina::future<T>, Eina_Promise*>)
+{
+  return nullptr;
+}
+}
+    
+template <typename To, typename From, typename V>
+auto convert_inout(V& object) -> decltype(impl::convert_inout_impl(object, impl::tag<From, To>{}))
+{
+  return impl::convert_inout_impl(object, impl::tag<From, To>{});
+}
+    
+template <typename T, typename U, typename V>
+T convert_to_c(V&& object);
+    
+namespace impl {
+
+template <typename U, typename T>
+auto convert_to_c_impl
+(T&& v, tag<U, U>, typename std::enable_if<std::is_same<typename std::remove_reference<T>::type, U>::value>::type* =0) -> decltype(std::forward<T>(v))
+{
+  return std::forward<T>(v);
 }
 
 template <typename T>
-struct callback_result_type;
-
-template <typename R, typename... Args>
-struct callback_result_type<R(*)(Args...)>
+T const& convert_to_c_impl(T const& v, tag<T, T const&>)
 {
-   typedef R type;
-};
-
-template <typename R>
-struct callback_args_type;
-
-template <typename R, typename... Args>
-struct callback_args_type<R(*)(Args...)>
+  return v;
+}
+template <typename T>
+Eo* convert_to_c_impl(T v, tag<Eo*, T>
+                      , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
 {
-   typedef std::tuple<Args...> type;
-};
-
-template <typename C, typename F, typename R, typename V, typename... Args>
-C get_callback_impl(tag<std::tuple<V*, Args...> >)
+  return v._eo_ptr();
+}
+template <typename T>
+Eo const* convert_to_c_impl(T v, tag<Eo const*, T>
+                            , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
 {
-   static_assert(std::is_same<void, typename std::remove_cv<V>::type>::value,
-                 "First argument of callback should be void* or const void*");
-   return static_cast<C>(&eolian::funcall<F, R, V, Args...>);
+  return v._eo_ptr();
+}
+inline const char* convert_to_c_impl( ::efl::eina::string_view v, tag<const char*, ::efl::eina::string_view>)
+{
+  return v.c_str();
+}
+inline const char** convert_to_c_impl(efl::eina::string_view* /*view*/, tag<const char **, efl::eina::string_view*>)
+{
+  std::abort();
+}
+inline const char* convert_to_c_impl( std::string const& v, tag<const char*, std::string const&>)
+{
+  std::size_t len = v.size()+1;
+  char* buffer = static_cast<char*>(malloc(len));
+  std::memcpy(buffer, v.data(), len);
+  return buffer;
+}
+inline const char** convert_to_c_impl(std::string* /*view*/, tag<const char **, std::string*>)
+{
+  std::abort();
+}
+inline Eina_Value* convert_to_c_impl( ::efl::eina::value v, tag<Eina_Value*, in_traits<eina::value>::type>)
+{
+  Eina_Value* nv = eina_value_new(v.type_info());
+  eina_value_copy(v.native_handle(), nv);
+  return nv;
+}
+inline Eina_Value const* convert_to_c_impl( ::efl::eina::value v, tag<Eina_Value const*, in_traits<eina::value>::type>)
+{
+  Eina_Value* nv = eina_value_new(v.type_info());
+  eina_value_copy(v.native_handle(), nv);
+  return nv;
+}
+inline Eina_Bool convert_to_c_impl( bool b, tag<Eina_Bool, bool>)
+{
+  return b;
+}
+template <typename T>
+T convert_to_c_impl(efl::eina::optional<T> const& optional, tag<T, efl::eina::optional<T>const&>)
+{
+  return optional ? *optional : T{};
+}
+template <typename U, typename T>
+U convert_to_c_impl(efl::eina::optional<T> const& optional, tag<U, efl::eina::optional<T>const&>)
+{
+  return impl::convert_to_c_impl(optional ? *optional : T{}, tag<U, typename in_traits<T>::type>{});
+}
+template <typename T>
+Eina_List* convert_to_c_impl(efl::eina::range_list<T> range, tag<Eina_List *, efl::eina::range_list<T>>)
+{
+  return range.native_handle();
+}
+template <typename T>
+Eina_List const* convert_to_c_impl(efl::eina::range_list<T> range, tag<Eina_List const *, efl::eina::range_list<T>>)
+{
+  return range.native_handle();
+}
+template <typename T>
+Eina_List* convert_to_c_impl(efl::eina::list<T>const& c, tag<Eina_List *, efl::eina::list<T>const&>)
+{
+  return const_cast<Eina_List*>(c.native_handle());
+}
+template <typename T>
+Eina_List const* convert_to_c_impl(efl::eina::list<T>const& c, tag<Eina_List const *, efl::eina::list<T>const&>)
+{
+  return c.native_handle();
+}
+template <typename T>
+Eina_Array* convert_to_c_impl(efl::eina::range_array<T> range, tag<Eina_Array *, efl::eina::range_array<T>>)
+{
+  return range.native_handle();
+}
+template <typename T>
+Eina_Array const* convert_to_c_impl(efl::eina::range_array<T> range, tag<Eina_Array const *, efl::eina::range_array<T>>)
+{
+  return range.native_handle();
+}
+template <typename T>
+Eina_Array* convert_to_c_impl(efl::eina::array<T>const& c, tag<Eina_Array *, efl::eina::array<T>const&>)
+{
+  return c.native_handle();
+}
+template <typename T>
+Eina_Array const* convert_to_c_impl(efl::eina::array<T>const& c, tag<Eina_Array const *, efl::eina::array<T>const&>)
+{
+  return c.native_handle();
+}
+inline const char** convert_to_c_impl(efl::eina::string_view /*view*/, tag<char const **, efl::eina::string_view>)
+{
+  std::abort();
+}
+// inline const char* convert_to_c_impl(std::string const& x, tag<const char*, std::string>)
+// {
+//    return x.c_str();
+// }
+inline const char* convert_to_c_impl(efl::eina::stringshare x, tag<const char*, efl::eina::stringshare>)
+{
+   return x.c_str();
+}
+template <typename T>
+Eina_Promise* convert_to_c_impl(efl::eina::future<T> const&, tag<Eina_Promise*, efl::eina::future<T>const&>)
+{
+  std::abort();
+}
+template <typename T, typename U, typename Deleter>
+T* convert_to_c_impl(std::unique_ptr<U, Deleter>& v, tag<T*, std::unique_ptr<U, Deleter>>)
+{
+  return convert_to_c<T*, U*>(v.release());
 }
 
-template <typename C, typename F>
-C get_callback()
+template <typename T>
+Eina_Array** convert_to_c_impl(efl::eina::array<T>& c, tag<Eina_Array **, efl::eina::array<T>&>)
 {
-   return get_callback_impl<C, F, typename callback_result_type<C>::type>
-     (tag<typename callback_args_type<C>::type>());
+  std::abort();
+}
+template <typename T>
+Eina_Array** convert_to_c_impl(efl::eina::range_array<T>& c, tag<Eina_Array **, efl::eina::range_array<T>&>)
+{
+  std::abort();
+}
+}
+    
+template <typename T, typename U, typename V>
+T convert_to_c(V&& object)
+{
+  return impl::convert_to_c_impl(std::forward<V>(object), impl::tag<T, U>{});
+}
+namespace impl {
+template <typename T>
+struct is_range : std::false_type {};
+template <typename T>
+struct is_range<efl::eina::range_list<T>> : std::true_type {};
+template <typename T>
+struct is_range<efl::eina::range_array<T>> : std::true_type {};
+
+template <typename T>
+struct is_container : std::false_type {};
+template <typename T>
+struct is_container<efl::eina::list<T>> : std::true_type {};
+template <typename T>
+struct is_container<efl::eina::array<T>> : std::true_type {};
+    
+// event
+template <typename T>
+T convert_to_event(void* value, typename std::enable_if< eo::is_eolian_object<T>::value>::type* = 0)
+{
+  return T{::eo_ref(static_cast<Eo*>(value))};
+}
+template <typename T>
+T convert_to_event(void* value, typename std::enable_if< is_container<T>::value
+                   || is_range<T>::value>::type* = 0)
+{
+  return T{static_cast<typename T::native_handle_type>(value)};
+}
+template <typename T>
+T convert_to_event(void* value, typename std::enable_if< !std::is_pointer<T>::value
+                   && !is_container<T>::value && !is_range<T>::value
+                   && !eo::is_eolian_object<T>::value>::type* = 0)
+{
+  return *static_cast<T*>(value);
+}
+template <typename T>
+T convert_to_event(void* value, typename std::enable_if<std::is_same<T, bool>::value>::type* = 0)
+{
+  return *static_cast<Eina_Bool*>(value);
+}
+}
+template <typename T>
+T convert_to_event(void* value) { return impl::convert_to_event<T>(value); }
+namespace impl {
+    
+template <typename T>
+T convert_to_return(T value, tag<T, T>)
+{
+  return value;
+}
+template <typename T>
+T convert_to_return(Eo* value, tag<Eo*, T>, typename std::enable_if< eo::is_eolian_object<T>::value>::type* = 0)
+{
+  return T{value};
+}
+template <typename T>
+T convert_to_return(Eo const* value, tag<Eo const*, T>, typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
+{
+  return T{const_cast<Eo*>(value)};
+}
+template <typename T>
+eina::list<T> convert_to_return(Eina_List* value, tag<Eina_List*, eina::list<T>>)
+{
+  return eina::list<T>{value};
+}
+template <typename T>
+eina::list<T> convert_to_return(Eina_List const* value, tag<Eina_List const*, eina::list<T>>)
+{
+  return eina::list<T>{const_cast<Eina_List*>(value)};
+}
+template <typename T>
+eina::range_list<T> convert_to_return(Eina_List* value, tag<Eina_List*, eina::range_list<T>>)
+{
+  return eina::range_list<T>{value};
+}
+template <typename T>
+eina::range_list<T> convert_to_return(Eina_List const* value, tag<Eina_List const*, eina::range_list<T>>)
+{
+  return eina::range_list<T>{const_cast<Eina_List*>(value)};
+}
+template <typename T>
+eina::array<T> convert_to_return(Eina_Array* value, tag<Eina_Array*, eina::array<T>>)
+{
+  return eina::array<T>{value};
+}
+template <typename T>
+eina::array<T> convert_to_return(Eina_Array const* value, tag<Eina_Array const*, eina::array<T>>)
+{
+  return eina::array<T>{const_cast<Eina_Array*>(value)};
+}
+template <typename T>
+eina::range_array<T> convert_to_return(Eina_Array* value, tag<Eina_Array*, eina::range_array<T>>)
+{
+  return eina::range_array<T>{value};
+}
+template <typename T>
+eina::range_array<T> convert_to_return(Eina_Array const* value, tag<Eina_Array const*, eina::range_array<T>>)
+{
+  return eina::range_array<T>{const_cast<Eina_Array*>(value)};
+}
+ 
+template <typename T>
+eina::iterator<T> convert_to_return(Eina_Iterator* value, tag<Eina_Iterator*, eina::iterator<T>>)
+{
+  return eina::iterator<T>{value};
+}
+template <typename T>
+struct is_future : std::false_type {};
+template <typename T>
+struct is_future<efl::eina::future<T>> : std::true_type {};
+template <typename T>
+T convert_to_return(Eina_Promise* /*value*/, tag<Eina_Promise*, T>, typename std::enable_if<is_future<T>::value>::type* = 0)
+{
+  std::abort();
+  return {};
+}
+// Eina_Value*
+inline efl::eina::value convert_to_return(Eina_Value* value, tag<Eina_Value*, efl::eina::value>)
+{
+  return efl::eina::value{value};
+}
+template <typename T, typename U>
+T convert_to_return(U* value, tag<T, U*>, typename std::enable_if<is_range<T>::value || is_container<T>::value>::type* = 0)
+{
+  // const should be to the type if value is const
+  return T{const_cast<typename std::remove_const<U>::type*>(value)};
+}
+template <typename T>
+T convert_to_return(const char** /*value*/, tag<const char**, T>, typename std::enable_if<std::is_same<T, efl::eina::string_view*>::value>::type* = 0)
+{
+  std::abort();
+}
+inline eina::string_view convert_to_return(const char* value, tag<const char*, efl::eina::string_view>)
+{
+  return {value};
+}
+inline std::string convert_to_return(const char* value, tag<const char*, std::string>)
+{
+  return {value};
+}
+inline bool convert_to_return(Eina_Bool value, tag<Eina_Bool, bool>)
+{
+  return !!value;
+}
+template <typename T>
+std::unique_ptr<T, void(*)(const void*)> convert_to_return(T* value, tag<T*, std::unique_ptr<T, void(*)(const void*)>>)
+{
+  return std::unique_ptr<T, void(*)(const void*)>{value, (void(*)(const void*))&free};
+}
+template <typename T, typename U>
+std::unique_ptr<T, void(*)(const void*)> convert_to_return(U* value, tag<U*, std::unique_ptr<T, void(*)(const void*)>>)
+{
+  return std::unique_ptr<T, void(*)(const void*)>{convert_to_return(value, tag<U*, T*>{}), (void(*)(const void*))&free};
+}
 }
 
-template <typename F>
-Eina_Bool free_callback_callback(void* data, ::Eo_Event const*)
+template <typename T, typename U>
+T convert_to_return(U& object)
 {
-   delete static_cast<F*>(data);
-   return EO_CALLBACK_CONTINUE;
-}
-
-template <typename... Fs>
-inline
-void register_ev_del_free_callback(Eo* eoptr, Fs&&... fs)
-{
-   std::initializer_list<int const> const v {(fs.register_ev_del_free_callback(eoptr), 0)...};
-   (void) v; (void) eoptr;
-}
-
-template <typename F>
-inline
-std::vector<F>& get_static_callback_vector()
-{
-   static std::vector<F> vec;
-   return vec;
-}
-
-template <typename F>
-inline
-F* alloc_static_callback(F&& f)
-{
-   get_static_callback_vector<F>().push_back(std::forward<F>(f));
-   return &(get_static_callback_vector<F>().back());
+  return impl::convert_to_return(object, impl::tag<U, T>{});
 }
 
 /// Miscellaneous
+template <typename T, typename Enable = void>
+struct is_callable : std::false_type {};
+template <typename T>
+struct is_callable<T, decltype(std::declval<T>() ())> : std::true_type {};
 
-template <typename... Fs>
-inline
-void call_ctors(Eo* _obj_eo_self, Fs&&... fs)
+inline void do_eo_add(Eo*& object, efl::eo::concrete const& parent
+                      , Eo_Class const* klass)
 {
-   std::initializer_list<int const> const v {(fs(_obj_eo_self), 0)...};
-   (void) v;
-   (void) _obj_eo_self;
+  object = ::_eo_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
+  object = ::_eo_add_end(object, EINA_FALSE);
+}
+template <typename F>
+void do_eo_add(Eo*& object, efl::eo::concrete const& parent, Eo_Class const* klass, F f)
+{
+  object = ::_eo_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
+  f();
+  object = ::_eo_add_end(object, EINA_FALSE);
 }
 
+template <typename D, typename T>
+struct light_address_of_operator
+{
+  operator T* () const { return static_cast<T*>(static_cast<void*>(static_cast<D const*>(this)->p)); }
+};
+template <typename D, typename T>
+struct light_address_of_operator<D, T const>
+{
+  operator T const* () const { return static_cast<T const*>(static_cast<void const*>(static_cast<D const*>(this)->p)); }
+};
+    
+template <typename T, typename...Args>
+struct address_of_operator : light_address_of_operator<address_of_operator<T, Args...>, Args>...
+{
+  operator T* () { return p; };
+  address_of_operator(T* p) : p(p) {}
+  T* p;
+};
+
+template <typename T, typename...Args>
+struct address_of_operator<T const, Args...> : light_address_of_operator<address_of_operator<T const, Args...>, Args>...
+{
+  operator T const* () { return p; };
+  address_of_operator(T const* p) : p(p) {}
+  T const* p;
+};
+    
 } } // namespace efl { namespace eolian {
 
 #endif // EFL_EOLIAN_INTEROP_HH

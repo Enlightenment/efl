@@ -1,33 +1,19 @@
 import ecore_types;
 
+struct Callback_Event
+{
+  field1: int;
+  field2: list<int*>;
+}
+
 class Callback (Eo.Base)
 {
    data: Callback_Data;
-   methods {
-      onecallback {
-         params {
-           @in cb: Ecore_Cb;
-           @in data: void_ptr;
-         }
-      }
-      twocallback {
-         params {
-           @in cb: Ecore_Cb;
-           @in data: void_ptr;
-           @in cb2: Ecore_Cb;
-         }
-      }
-      test_global_callbacks @class {
-         params {
-           @in cb: Ecore_Cb;
-           @in data: void_ptr;
-         }
-      }
-   }
-   implements {
-      Eo.Base.constructor;
-   }
    events {
-     call_on_add;
+     prefix,event1;
+     prefix,event2: Callback;
+     prefix,event3: int;
+     prefix,event4: list<int*>;
+     prefix,event5: Callback_Event;
    }
 }

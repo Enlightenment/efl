@@ -8,11 +8,13 @@
 
 #include <Eo.h>
 #include <Ecore.h>
+#include "eo_concrete.hh"
+#include "eo_cxx_interop.hh"
 
 #include <functional>
 #include <memory>
 
-namespace efl { namespace eo {
+namespace efl { namespace eolian {
 
 typedef ::Eo_Callback_Priority callback_priority;
 namespace callback_priorities
@@ -121,30 +123,77 @@ signal_connection make_signal_connection(std::unique_ptr<F>& data, Eo* eo, ::Eo_
 
 namespace _detail {
 
-template <typename T, typename F>
-Eina_Bool really_call_event(T& wrapper, F& f, Eo_Event_Description const& desc, void *info
-                            , std::true_type)
+template <typename T, typename P, typename F>
+Eina_Bool really_call_event(T& wrapper, F& f, void *, std::true_type, std::true_type)
 {
-   f(wrapper, desc, info);
+   f(wrapper);
    return true;
 }
-template <typename T, typename F>
-Eina_Bool really_call_event(T& wrapper, F& f, Eo_Event_Description const& desc, void *info
-                            , std::false_type)
+template <typename T, typename P, typename F>
+Eina_Bool really_call_event(T& wrapper, F& f, void *info, std::true_type, std::false_type)
 {
-   return f(wrapper, desc, info);
+   f(wrapper, convert_to_event<P>(info));
+   return true;
+}
+template <typename T, typename P, typename F>
+Eina_Bool really_call_event(T& wrapper, F& f, void *, std::false_type, std::true_type)
+{
+   return f(wrapper);
+}
+template <typename T, typename P, typename F>
+Eina_Bool really_call_event(T& wrapper, F& f, void *info, std::false_type, std::false_type)
+{
+   return f(wrapper, convert_to_event<P>(info));
 }
 
+template <typename T, typename P, typename F, typename Enable = void>
+struct is_void;
+template <typename T, typename P, typename F>
+struct is_void<T, P, F, typename std::enable_if
+               <std::is_void<decltype(std::declval<F>()(std::declval<T>(), std::declval<P>()))>::value>::type>
+  : std::true_type {};
+template <typename T, typename P, typename F>
+struct is_void<T, P, F, typename std::enable_if
+               <!std::is_void<decltype(std::declval<F>()(std::declval<T>(), std::declval<P>()))>::value>::type>
+  : std::false_type {};
 template <typename T, typename F>
+struct is_void<T, void, F, typename std::enable_if
+               <std::is_void<decltype(std::declval<F>()(std::declval<T>()))>::value>::type>
+  : std::true_type {};
+template <typename T, typename F>
+struct is_void<T, void, F, typename std::enable_if
+               <!std::is_void<decltype(std::declval<F>()(std::declval<T>()))>::value>::type>
+  : std::false_type {};
+  
+template <typename T, typename P, typename F>
 Eina_Bool
 event_callback(void *data, ::Eo_Event const* event)
 {
    T wrapper(::eo_ref(event->object));
    F *f = static_cast<F*>(data);
-   return _detail::really_call_event(wrapper, *f, *event->desc, event->info
-                                     , std::is_void<decltype((*f)(wrapper, *event->desc, event->info))>());
+   return _detail::really_call_event<T, P>
+     (wrapper, *f, event->info, is_void<T, P, F>(), std::is_void<P>{});
+}
 }
 
+template <typename Event, typename Object, typename F>
+signal_connection event_add(Event event, Object object, F&& function)
+{
+  static_assert((eo::is_eolian_object<Object>::value), "Type is not an object");
+
+  typedef typename std::remove_reference<F>::type function_type;
+  std::unique_ptr<function_type> f(new function_type(std::forward<F>(function)));
+
+  ::eo_event_callback_priority_add
+      (object._eo_ptr(), event.description(), 0
+       , static_cast<Eo_Event_Cb>
+       (&_detail::event_callback<Object, typename Event::parameter_type, function_type>)
+       , f.get());
+  return make_signal_connection
+    (f, object._eo_ptr()
+     , static_cast<Eo_Event_Cb>
+     (&_detail::event_callback<Object, typename Event::parameter_type, function_type>)
+     , event.description());
 }
 
 } }

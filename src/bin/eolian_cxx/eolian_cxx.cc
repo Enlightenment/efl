@@ -21,12 +21,9 @@
 #include <Eina.hh>
 #include <Eolian_Cxx.hh>
 
-#include "convert.hh"
-#include "type_lookup.hh"
-
-#include "convert.hh"
-#include "eolian_wrappers.hh"
-#include "safe_strings.hh"
+#include "grammar/klass_def.hpp"
+#include "grammar/header.hpp"
+#include "grammar/impl_header.hpp"
 
 namespace eolian_cxx {
 
@@ -36,20 +33,6 @@ struct options_type
    std::vector<std::string> include_dirs;
    std::string in_file;
    std::string out_file;
-   std::string out_dir;
-   std::string classname;
-   bool recurse;
-   bool generate_all;
-
-   options_type()
-     : include_dirs()
-     , in_file()
-     , out_file()
-     , out_dir()
-     , classname()
-     , recurse(false)
-     , generate_all(false)
-   {}
 };
 
 efl::eina::log_domain domain("eolian_cxx");
@@ -57,28 +40,10 @@ efl::eina::log_domain domain("eolian_cxx");
 static bool
 opts_check(eolian_cxx::options_type const& opts)
 {
-   if (!opts.generate_all && opts.in_file.empty())
+   if (opts.in_file.empty())
      {
         EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
           << "Nothing to generate?" << std::endl;
-     }
-   else if (opts.generate_all && !opts.in_file.empty())
-     {
-        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-          << "Didn't expect to receive input files (" << opts.in_file
-          << ") with parameter -a."
-          << std::endl;
-     }
-   else if (opts.generate_all && !opts.out_file.empty())
-     {
-        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-          << "Can't use -a and -o together." << std::endl;
-     }
-   else if (opts.generate_all && opts.include_dirs.empty())
-     {
-        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-          << "Option -a requires at least one include directory (-I)."
-          << std::endl;
      }
    else
      {
@@ -87,39 +52,11 @@ opts_check(eolian_cxx::options_type const& opts)
    return false;
 }
 
-efl::eolian::eo_generator_options
-generator_options(const Eolian_Class& klass)
-{
-   efl::eolian::eo_generator_options gen_opts;
-   gen_opts.c_headers.push_back(class_base_file(klass) + ".h");
-
-   void *cur = NULL;
-   Eina_Iterator *inheritances = ::eolian_class_inherits_get(&klass);
-   EINA_ITERATOR_FOREACH(inheritances, cur)
-     {
-        const Eolian_Class *ext = ::eolian_class_get_by_name(static_cast<const char*>(cur));
-        std::string eo_parent_file = class_base_file(*ext);
-        if (!eo_parent_file.empty())
-          {
-             gen_opts.cxx_headers.push_back(eo_parent_file + ".hh");
-          }
-        else
-          {
-             EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-               << "Couldn't find source file for class '" << ext << "'"
-               << std::endl;
-          }
-     }
-   eina_iterator_free(inheritances);
-   return gen_opts;
-}
-
 static bool
-generate(const Eolian_Class& klass, eolian_cxx::options_type const& opts)
+generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts)
 {
-   efl::eolian::eo_class cls = eolian_cxx::convert_eolian_class(klass);
-   efl::eolian::eo_generator_options gen_opts = generator_options(klass);
-   std::string header_decl_file_name = opts.out_file.empty() ? (class_base_file(klass) + ".hh") : opts.out_file;
+   std::string header_decl_file_name = opts.out_file.empty()
+     ? (::eolian_class_file_get(klass) + std::string(".hh")) : opts.out_file;
 
    std::string header_impl_file_name = header_decl_file_name;
    std::size_t dot_pos = header_impl_file_name.rfind(".hh");
@@ -128,24 +65,101 @@ generate(const Eolian_Class& klass, eolian_cxx::options_type const& opts)
    else
      header_impl_file_name.insert(header_impl_file_name.size(), ".impl");
 
-   std::size_t slash_pos = header_decl_file_name.rfind('/');
-   gen_opts.header_decl_file_name = (slash_pos == std::string::npos) ?
-                                    header_decl_file_name :
-                                    header_decl_file_name.substr(slash_pos+1);
+   efl::eolian::grammar::attributes::klass_def klass_def(klass);
+   std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
 
-   slash_pos = header_impl_file_name.rfind('/');
-   gen_opts.header_impl_file_name = (slash_pos == std::string::npos) ?
-                                    header_impl_file_name :
-                                    header_impl_file_name.substr(slash_pos+1);
-
-   if (!opts.out_dir.empty())
+   std::set<std::string> c_headers;
+   std::set<std::string> cpp_headers;
+   c_headers.insert(eolian_class_file_get(klass) + std::string(".h"));
+        
+   std::function<void(efl::eolian::grammar::attributes::type_def const&)>
+     variant_function;
+   auto klass_name_function
+     = [&] (efl::eolian::grammar::attributes::klass_name const& name)
      {
-        header_decl_file_name = opts.out_dir + "/" + header_decl_file_name;
-        header_impl_file_name = opts.out_dir + "/" + header_impl_file_name;
-     }
+        Eolian_Class const* klass = get_klass(name);
+        assert(klass);
+        c_headers.insert(eolian_class_file_get(klass) + std::string(".h"));
+        cpp_headers.insert(eolian_class_file_get(klass) + std::string(".hh"));
+     };
+   auto complex_function
+     = [&] (efl::eolian::grammar::attributes::complex_type_def const& complex)
+     {
+       for(auto&& t : complex.subtypes)
+         {
+           variant_function(t);
+         }
+     };
+   variant_function = [&] (efl::eolian::grammar::attributes::type_def const& type)
+     {
+       if(efl::eolian::grammar::attributes::klass_name const*
+          name = efl::eolian::grammar::attributes::get<efl::eolian::grammar::attributes::klass_name>
+          (&type.original_type))
+         klass_name_function(*name);
+       else if(efl::eolian::grammar::attributes::complex_type_def const*
+              complex = efl::eolian::grammar::attributes::get<efl::eolian::grammar::attributes::complex_type_def>
+               (&type.original_type))
+         complex_function(*complex);
+     };
+
+   std::function<void(Eolian_Class const*)> klass_function
+     = [&] (Eolian_Class const* klass)
+     {
+       for(efl::eina::iterator<const char> inherit_iterator ( ::eolian_class_inherits_get(klass))
+             , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
+         {
+           Eolian_Class const* inherit = ::eolian_class_get_by_name(&*inherit_iterator);
+           c_headers.insert(eolian_class_file_get(inherit) + std::string(".h"));
+           cpp_headers.insert(eolian_class_file_get(inherit) + std::string(".hh"));
+
+           klass_function(inherit);
+         }
+
+       efl::eolian::grammar::attributes::klass_def klass_def(klass);
+       for(auto&& f : klass_def.functions)
+         {
+           variant_function(f.return_type);
+           for(auto&& p : f.parameters)
+             {
+               variant_function(p.type);
+             }
+         }
+       for(auto&& e : klass_def.events)
+         {
+           if(e.type)
+             variant_function(*e.type);
+         }
+     };
+   klass_function(klass);
+   
+   cpp_headers.erase(eolian_class_file_get(klass) + std::string(".hh"));
+   
+   std::string guard_name;
+   as_generator(*(efl::eolian::grammar::string << "_") << efl::eolian::grammar::string << "_EO_HH")
+     .generate(std::back_insert_iterator<std::string>(guard_name)
+               , std::make_tuple(klass_def.namespaces, klass_def.eolian_name)
+               , efl::eolian::grammar::context_null{});
+
+   std::tuple<std::string, std::set<std::string>&, std::set<std::string>&
+              , std::vector<efl::eolian::grammar::attributes::klass_def>&
+              , std::vector<efl::eolian::grammar::attributes::klass_def>&
+              , std::vector<efl::eolian::grammar::attributes::klass_def>&
+              , std::vector<efl::eolian::grammar::attributes::klass_def>&
+              > attributes
+   {guard_name, c_headers, cpp_headers, klasses, klasses, klasses, klasses};
+
    if(opts.out_file == "-")
      {
-        efl::eolian::generate(std::cout, std::cout, cls, gen_opts);
+        std::ostream_iterator<char> iterator(std::cout);
+
+        efl::eolian::grammar::class_header.generate(iterator, attributes, efl::eolian::grammar::context_null());
+        std::endl(std::cout);
+
+        efl::eolian::grammar::impl_header.generate(iterator, klasses, efl::eolian::grammar::context_null());
+
+        std::endl(std::cout);
+        std::flush(std::cout);
+        std::flush(std::cerr);
      }
    else
      {
@@ -167,10 +181,18 @@ generate(const Eolian_Class& klass, eolian_cxx::options_type const& opts)
              return false;
           }
 
-        efl::eolian::generate(header_decl, header_impl, cls, gen_opts);
+#if 1
+        efl::eolian::grammar::class_header.generate
+          (std::ostream_iterator<char>(header_decl), attributes, efl::eolian::grammar::context_null());
 
-        header_decl.close();
+        efl::eolian::grammar::impl_header.generate
+          (std::ostream_iterator<char>(header_impl), klasses, efl::eolian::grammar::context_null());
+#else
+        efl::eolian::generate(header_decl, header_impl, cls, gen_opts);
+#endif
+
         header_impl.close();
+        header_decl.close();
      }
    return true;
 }
@@ -179,34 +201,23 @@ static void
 run(options_type const& opts)
 {
    const Eolian_Class *klass = NULL;
-   if (!opts.classname.empty())
-     klass = class_from_name(opts.classname);
-   else if (!opts.in_file.empty())
-     klass = class_from_file(opts.in_file);
+   char* dup = strdup(opts.in_file.c_str());
+   char* base = basename(dup);
+   klass = ::eolian_class_get_by_file(base);
+   free(dup);
    if (klass)
      {
-        if (!generate(*klass, opts))
+        if (!generate(klass, opts))
           goto err;
      }
    else
      {
-        efl::eina::iterator<const Eolian_Class> it(class_list_all());
-        efl::eina::iterator<const Eolian_Class> end;
-        while (it != end)
-          {
-             Eolian_Class c = (*it);
-             if (!generate(c, opts))
-               {
-                  klass = &c;
-                  goto err;
-               }
-             ++it;
-          }
+        std::abort();
     }
    return;
  err:
    EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-     << "Error generating: " << class_name(*klass)
+     << "Error generating: " << ::eolian_class_name_get(klass)
      << std::endl;
    assert(false && "error generating class");
 }
@@ -228,20 +239,17 @@ database_load(options_type const& opts)
           << "Eolian failed parsing eot files";
         assert(false && "Error parsing eot files");
      }
-   if (!opts.in_file.empty())
+   if (opts.in_file.empty())
      {
-        if (!::eolian_file_parse(opts.in_file.c_str()))
-          {
-             EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-               << "Failed parsing: " << opts.in_file << ".";
-             assert(false && "Error parsing input file");
-          }
+       EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+         << "No input file.";
+       assert(false && "Error parsing input file");
      }
-   else if (!::eolian_all_eo_files_parse())
+   if (!::eolian_file_parse(opts.in_file.c_str()))
      {
-        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-          << "Eolian failed parsing input files";
-        assert(false && "Error parsing input files");
+       EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+         << "Failed parsing: " << opts.in_file << ".";
+       assert(false && "Error parsing input file");
      }
    if (!::eolian_database_validate(EINA_FALSE))
      {
@@ -299,11 +307,7 @@ opts_get(int argc, char **argv)
    const struct option long_options[] =
      {
        { "in",        required_argument, 0,  'I' },
-       { "out-dir",   required_argument, 0,  'D' },
        { "out-file",  required_argument, 0,  'o' },
-       { "class",     required_argument, 0,  'c' },
-       { "all",       no_argument,       0,  'a' },
-       { "recurse",   no_argument,       0,  'r' },
        { "version",   no_argument,       0,  'v' },
        { "help",      no_argument,       0,  'h' },
        { 0,           0,                 0,   0  }
@@ -317,28 +321,10 @@ opts_get(int argc, char **argv)
           {
              opts.include_dirs.push_back(optarg);
           }
-        else if (c == 'D')
-          {
-             _assert_not_dup("D", opts.out_dir);
-             opts.out_dir = optarg;
-          }
         else if (c == 'o')
           {
              _assert_not_dup("o", opts.out_file);
              opts.out_file = optarg;
-          }
-        else if (c == 'c')
-          {
-             _assert_not_dup("c", opts.classname);
-             opts.classname = optarg;
-          }
-        else if (c == 'a')
-          {
-             opts.generate_all = true;
-          }
-        else if (c == 'r')
-          {
-             opts.recurse = true;
           }
         else if (c == 'h')
           {

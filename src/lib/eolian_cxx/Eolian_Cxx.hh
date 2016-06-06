@@ -26,12 +26,4 @@ struct eolian_init
 
 } }
 
-#ifdef EFL_BETA_API_SUPPORT
-
-#include "eo_types.hh"
-#include "eo_validate.hh"
-#include "eo_generate.hh"
-
-#endif
-
 #endif // EOLIAN_CXX_LIB_HH

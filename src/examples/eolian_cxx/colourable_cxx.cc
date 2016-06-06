@@ -42,7 +42,6 @@ _colourable_rgb_24bits_constructor(Eo *obj, Colourable_Data *self, int rgb)
    self->r = (rgb & 0x00ff0000) >> 16;
    self->g = (rgb & 0x0000ff00) >> 8;
    self->b = rgb & 0x000000ff;
-   eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 void
