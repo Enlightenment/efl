@@ -10,7 +10,7 @@
 #include "elm_code_private.h"
 
 static int _elm_code_init = 0;
-int _elm_code_lib_log_dom = -1;
+EAPI int _elm_code_lib_log_dom = -1;
 
 EAPI const Eo_Event_Description ELM_CODE_EVENT_LINE_LOAD_DONE =
     EO_EVENT_DESCRIPTION("line,load,done");
