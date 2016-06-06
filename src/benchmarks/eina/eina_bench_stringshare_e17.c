@@ -46,7 +46,6 @@ struct _Eina_Stringshare_Test
    int (*shutdown)(void);
 };
 
-static const char *strings[30000];
 static Eina_Stringshare_Test eina_str = {
    "eina",
    eina_init,
