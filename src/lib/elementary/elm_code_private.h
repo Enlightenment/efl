@@ -1,7 +1,7 @@
 #ifndef ELM_CODE_PRIVATE_H
 # define ELM_CODE_PRIVATE_H
 
-int _elm_code_lib_log_dom;
+extern int _elm_code_lib_log_dom;
 
 #ifdef ERR
 # undef ERR

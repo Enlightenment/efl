@@ -6,6 +6,9 @@
 
 #include "elm_code_private.h"
 
+EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_DIFF = NULL;
+EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_TODO = NULL;
+
 struct _Elm_Code_Parser
 {
    void (*parse_line)(Elm_Code_Line *, void *);
