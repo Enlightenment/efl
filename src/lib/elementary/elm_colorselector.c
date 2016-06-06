@@ -1163,9 +1163,8 @@ _color_bars_add(Evas_Object *obj)
         snprintf(colorbar_s, sizeof(colorbar_s), "elm.colorbar_%d", i);
         edje_object_signal_callback_add
           (sd->cb_data[i]->colorbar, "drag", "*", _arrow_cb, sd->cb_data[i]);
-        edje_object_part_swallow
-          (sd->col_bars_area, colorbar_s, sd->cb_data[i]->colorbar);
-        elm_widget_sub_object_add(obj, sd->cb_data[i]->colorbar);
+        elm_object_part_content_set(sd->col_bars_area,
+                                    colorbar_s, sd->cb_data[i]->colorbar);
 
         /* load colorbar image */
         if (!sd->cb_data[i]->bar) sd->cb_data[i]->bar = edje_object_add(e);
@@ -1175,7 +1174,7 @@ _color_bars_add(Evas_Object *obj)
           (obj, sd->cb_data[i]->bar, "colorselector", "image", buf);
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.bar", sd->cb_data[i]->bar);
-        elm_widget_sub_object_add(obj, sd->cb_data[i]->bar);
+        elm_widget_sub_object_add(sd->col_bars_area, sd->cb_data[i]->bar);
 
         /* provide expanded touch area */
         if (!sd->cb_data[i]->touch_area) sd->cb_data[i]->touch_area = evas_object_rectangle_add(e);
@@ -1187,7 +1186,7 @@ _color_bars_add(Evas_Object *obj)
           (sd->cb_data[i]->touch_area, EVAS_CALLBACK_MOUSE_DOWN, _colorbar_down_cb, sd->cb_data[i]);
         evas_object_event_callback_add
           (sd->cb_data[i]->touch_area, EVAS_CALLBACK_MOUSE_MOVE, _colorbar_move_cb, sd->cb_data[i]);
-        elm_widget_sub_object_add(obj, sd->cb_data[i]->touch_area);
+        elm_widget_sub_object_add(sd->col_bars_area, sd->cb_data[i]->touch_area);
 
         // ACCESS
         if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
@@ -1204,7 +1203,7 @@ _color_bars_add(Evas_Object *obj)
                (sd->cb_data[i]->colorbar, "elm.bar_bg",
                sd->cb_data[i]->bg_rect);
 
-             elm_widget_sub_object_add(obj, sd->cb_data[i]->bg_rect);
+             elm_widget_sub_object_add(sd->col_bars_area, sd->cb_data[i]->bg_rect);
           }
         if (i == 3)
           {
@@ -1230,7 +1229,7 @@ _color_bars_add(Evas_Object *obj)
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.arrow_icon",
           sd->cb_data[i]->arrow);
-        elm_widget_sub_object_add(obj, sd->cb_data[i]->arrow);
+        elm_widget_sub_object_add(sd->col_bars_area, sd->cb_data[i]->arrow);
 
         if (i == 2)
           evas_object_color_set(sd->cb_data[i]->arrow, 0, 0, 0, 255);
@@ -1239,11 +1238,11 @@ _color_bars_add(Evas_Object *obj)
             (sd->cb_data[i]->arrow, sd->er, sd->eg, sd->eb, 255);
 
         /* load left button */
-        if (!sd->cb_data[i]->lbt) sd->cb_data[i]->lbt = elm_button_add(obj);
+        if (!sd->cb_data[i]->lbt) sd->cb_data[i]->lbt = elm_button_add(sd->col_bars_area);
         snprintf(buf, sizeof(buf), "colorselector/left/%s",
                  elm_widget_style_get(obj));
         elm_object_style_set(sd->cb_data[i]->lbt, buf);
-        elm_widget_sub_object_add(obj, sd->cb_data[i]->lbt);
+        elm_widget_sub_object_add(sd->col_bars_area, sd->cb_data[i]->lbt);
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.l_button", sd->cb_data[i]->lbt);
         eo_event_callback_add
@@ -1257,11 +1256,11 @@ _color_bars_add(Evas_Object *obj)
           (sd->cb_data[i]->lbt, EVAS_CLICKABLE_INTERFACE_EVENT_REPEATED, _button_repeat_cb, sd->cb_data[i]);
 
         /* load right button */
-        if (!sd->cb_data[i]->rbt) sd->cb_data[i]->rbt = elm_button_add(obj);
+        if (!sd->cb_data[i]->rbt) sd->cb_data[i]->rbt = elm_button_add(sd->col_bars_area);
         snprintf(buf, sizeof(buf), "colorselector/right/%s",
                  elm_widget_style_get(obj));
         elm_object_style_set(sd->cb_data[i]->rbt, buf);
-        elm_widget_sub_object_add(obj, sd->cb_data[i]->rbt);
+        elm_widget_sub_object_add(sd->col_bars_area, sd->cb_data[i]->rbt);
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.r_button", sd->cb_data[i]->rbt);
         eo_event_callback_add
@@ -1328,9 +1327,9 @@ _elm_colorselector_elm_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
      {
         if (!sd->col_bars_area) return EINA_FALSE;
 
-        elm_widget_theme_object_set
-          (obj, sd->col_bars_area, "colorselector", "bg",
-          elm_widget_style_get(obj));
+        if (!elm_layout_theme_set(sd->col_bars_area, "colorselector", "bg",
+                                  elm_widget_style_get(obj)))
+          CRI("Failed to set layout!");
 
         for (i = 0; i < 4; i++)
           {
@@ -1434,7 +1433,7 @@ _component_sizing_eval(Elm_Colorselector_Data *sd)
      }
 
    edje_object_size_min_restricted_calc
-     (sd->col_bars_area, &minw, &minh, minw, minh);
+     (elm_layout_edje_get(sd->col_bars_area), &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(sd->col_bars_area, minw, minh);
 }
 
@@ -1851,10 +1850,10 @@ _create_colorcomponents(Evas_Object *obj)
 {
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
    if (sd->col_bars_area) return;
-   sd->col_bars_area = edje_object_add(evas_object_evas_get(obj));
-   elm_widget_theme_object_set
-     (obj, sd->col_bars_area, "colorselector", "bg",
-     elm_widget_style_get(obj));
+   sd->col_bars_area = elm_layout_add(obj);
+   if (!elm_layout_theme_set
+       (sd->col_bars_area, "colorselector", "bg", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
    if (!elm_layout_content_set(obj, "elm.selector", sd->col_bars_area))
      elm_layout_content_set(obj, "selector", sd->col_bars_area);
    _hsl_to_rgb(sd);
@@ -2072,7 +2071,7 @@ _key_action_move(Evas_Object *obj, const char *params)
              snprintf(colorbar_s, sizeof(colorbar_s), "elm.colorbar_%d",
                       (sd->sel_color_type + 1));
              /*Append color type only if next color bar is available*/
-             if (edje_object_part_swallow_get(sd->col_bars_area, colorbar_s))
+             if (elm_object_part_content_get(sd->col_bars_area, colorbar_s))
                sd->sel_color_type = sd->sel_color_type + 1;
              else return EINA_FALSE;
           }
