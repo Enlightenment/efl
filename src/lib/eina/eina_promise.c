@@ -15,6 +15,19 @@ static int _eina_promise_log_dom = -1;
 #endif
 #define ERR(...) EINA_LOG_DOM_ERR(_eina_promise_log_dom, __VA_ARGS__)
 
+#define _EINA_PROMISE_NULL_CHECK(promise, v)    \
+  if(!promise)                                  \
+    {                                           \
+      eina_error_set(EINA_ERROR_PROMISE_NULL);  \
+      return v;                                 \
+    }
+#define EINA_MAGIC_CHECK_PROMISE(promise)               \
+  do if(!EINA_MAGIC_CHECK(promise, EINA_MAGIC_PROMISE))    \
+       {EINA_MAGIC_FAIL(promise, EINA_MAGIC_PROMISE);} while(0)
+#define EINA_MAGIC_CHECK_PROMISE_OWNER(promise)               \
+  do {if(!EINA_MAGIC_CHECK(promise, EINA_MAGIC_PROMISE_OWNER))  \
+      {EINA_MAGIC_FAIL(promise, EINA_MAGIC_PROMISE_OWNER);} } while(0)
+
 typedef struct _Eina_Promise_Then_Cb _Eina_Promise_Then_Cb;
 typedef struct _Eina_Promise_Progress_Cb _Eina_Promise_Progress_Cb;
 typedef struct _Eina_Promise_Cancel_Cb _Eina_Promise_Cancel_Cb;
@@ -632,9 +645,11 @@ eina_promise_owner_default_call_then(Eina_Promise_Owner* promise)
 }
 
 static void
-_eina_promise_all_compose_then_cb(_Eina_Promise_Default_Owner* promise, void* value EINA_UNUSED, Eina_Promise* promise_then EINA_UNUSED)
+_eina_promise_all_compose_then_cb(void *data, void* value EINA_UNUSED)
 {
+   _Eina_Promise_Default_Owner* promise = data;
    _Eina_Promise_Iterator* iterator;
+   EINA_MAGIC_CHECK_PROMISE_OWNER(&promise->owner_vtable);
 
    if (!promise->promise.has_finished)
      {
@@ -647,8 +662,10 @@ _eina_promise_all_compose_then_cb(_Eina_Promise_Default_Owner* promise, void* va
 }
 
 static void
-_eina_promise_all_compose_error_then_cb(_Eina_Promise_Default_Owner* promise, Eina_Error error, Eina_Promise* promise_then EINA_UNUSED)
+_eina_promise_all_compose_error_then_cb(void *data, Eina_Error error)
 {
+   _Eina_Promise_Default_Owner* promise = data;
+   EINA_MAGIC_CHECK_PROMISE_OWNER(&promise->owner_vtable);
    if (!promise->promise.has_finished)
      {
         promise->promise.has_finished = promise->promise.has_errored = EINA_TRUE;
@@ -693,7 +710,6 @@ eina_promise_all(Eina_Iterator* it)
                             sizeof(_Eina_Promise_Default_Owner*)*eina_array_count_get(promises));
    internal_it = (_Eina_Promise_Iterator*)&promise->value[0];
    _eina_promise_iterator_setup(internal_it, promises);
-   eina_array_free(promises);
 
    promise->promise.value_free_cb = (Eina_Promise_Free_Cb)&_eina_promise_all_free;
 
@@ -702,10 +718,11 @@ eina_promise_all(Eina_Iterator* it)
    for (;cur_promise != last; ++cur_promise)
      {
         eina_promise_ref(*cur_promise); // We need to keep the value alive until this promise is freed
-        eina_promise_then(*cur_promise, (Eina_Promise_Cb)&_eina_promise_all_compose_then_cb,
-                          (Eina_Promise_Error_Cb)&_eina_promise_all_compose_error_then_cb, promise);
+        eina_promise_then(*cur_promise, &_eina_promise_all_compose_then_cb,
+                          &_eina_promise_all_compose_error_then_cb, promise);
      }
 
+   eina_array_free(promises);
    return &promise->promise.vtable;
 }
 
@@ -806,8 +823,9 @@ _eina_promise_race_free(_Eina_Promise_Race_Value_Type* value)
 }
 
 static void
-_eina_promise_race_compose_then_cb(struct _Eina_Promise_Race_Information* info, void* value EINA_UNUSED, Eina_Promise* promise_then EINA_UNUSED)
+_eina_promise_race_compose_then_cb(void *data, void* value EINA_UNUSED)
 {
+   struct _Eina_Promise_Race_Information* info = data;
    _Eina_Promise_Default_Owner* race_promise;
    _Eina_Promise_Race_Value_Type *race_value;
 
@@ -823,8 +841,9 @@ _eina_promise_race_compose_then_cb(struct _Eina_Promise_Race_Information* info, 
 }
 
 static void
-_eina_promise_race_compose_error_then_cb(struct _Eina_Promise_Race_Information* info, Eina_Error error, Eina_Promise* promise_then EINA_UNUSED)
+_eina_promise_race_compose_error_then_cb(void *data, Eina_Error error)
 {
+   struct _Eina_Promise_Race_Information* info = data;
    _Eina_Promise_Default_Owner* race_promise;
    _Eina_Promise_Race_Value_Type *race_value;
 
@@ -876,9 +895,9 @@ eina_promise_race(Eina_Iterator* it)
      {
         cur_promise->promise = eina_array_data_get(promises, i);
         cur_promise->self = promise;
-        eina_promise_then(cur_promise->promise, (Eina_Promise_Cb)&_eina_promise_race_compose_then_cb,
-                          (Eina_Promise_Error_Cb)&_eina_promise_race_compose_error_then_cb, cur_promise);
         eina_promise_ref(cur_promise->promise); // We need to keep the value alive until this promise is freed
+        eina_promise_then(cur_promise->promise, &_eina_promise_race_compose_then_cb,
+                          &_eina_promise_race_compose_error_then_cb, cur_promise);
      }
 
    eina_array_free(promises);
@@ -905,19 +924,6 @@ eina_promise_then(Eina_Promise* promise, Eina_Promise_Cb callback,
    else
      promise->then(promise, callback, error_cb, data);
 }
-
-#define _EINA_PROMISE_NULL_CHECK(promise, v)    \
-  if(!promise)                                  \
-    {                                           \
-      eina_error_set(EINA_ERROR_PROMISE_NULL);  \
-      return v;                                 \
-    }
-#define EINA_MAGIC_CHECK_PROMISE(promise)               \
-  do if(!EINA_MAGIC_CHECK(promise, EINA_MAGIC_PROMISE))    \
-       {EINA_MAGIC_FAIL(promise, EINA_MAGIC_PROMISE);} while(0)
-#define EINA_MAGIC_CHECK_PROMISE_OWNER(promise)               \
-  do {if(!EINA_MAGIC_CHECK(promise, EINA_MAGIC_PROMISE_OWNER))  \
-      {EINA_MAGIC_FAIL(promise, EINA_MAGIC_PROMISE_OWNER);} } while(0)
 
 EAPI void
 eina_promise_owner_value_set(Eina_Promise_Owner* promise, const void* value, Eina_Promise_Free_Cb free)
