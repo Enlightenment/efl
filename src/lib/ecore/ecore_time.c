@@ -19,7 +19,8 @@
 #include "ecore_private.h"
 
 #if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
-static clockid_t _ecore_time_clock_id = -1;
+static clockid_t _ecore_time_clock_id;
+static Eina_Bool _ecore_time_got_clock_id = EINA_FALSE;
 #elif defined(__APPLE__) && defined(__MACH__)
 static double _ecore_time_clock_conversion = 1e-9;
 #endif
@@ -31,7 +32,7 @@ ecore_time_get(void)
 #if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME) 
    struct timespec t;
 
-   if (EINA_UNLIKELY(_ecore_time_clock_id < 0))
+   if (EINA_UNLIKELY(!_ecore_time_got_clock_id))
      return ecore_time_unix_get();
 
    if (EINA_UNLIKELY(clock_gettime(_ecore_time_clock_id, &t)))
@@ -88,22 +89,23 @@ _ecore_time_init(void)
 #if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
    struct timespec t;
 
-   if (_ecore_time_clock_id != -1) return;
+   if (_ecore_time_got_clock_id) return;
 
    if (!clock_gettime(CLOCK_MONOTONIC, &t))
      {
         _ecore_time_clock_id = CLOCK_MONOTONIC;
+        _ecore_time_got_clock_id = EINA_TRUE;
         DBG("using CLOCK_MONOTONIC.");
      }
    else if (!clock_gettime(CLOCK_REALTIME, &t))
      {
         /* may go backwards */
          _ecore_time_clock_id = CLOCK_REALTIME;
+         _ecore_time_got_clock_id = EINA_TRUE;
          WRN("CLOCK_MONOTONIC not available. Fallback to CLOCK_REALTIME.");
      }
    else
      {
-        _ecore_time_clock_id = -2;
         CRI("Cannot get a valid clock_gettime() clock id! "
              "Fallback to unix time.");
      }
