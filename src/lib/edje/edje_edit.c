@@ -8124,14 +8124,13 @@ edje_edit_state_text_style_set(Evas_Object *obj, const char *part, const char *s
    Edje_Part_Description_Text *txt;
 
    GET_PD_OR_RETURN(EINA_FALSE);
-   if (!style) return EINA_FALSE;
 
    if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
        (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
      return EINA_FALSE;
 
    txt = (Edje_Part_Description_Text *)pd;
-   txt->text.style.str = eina_stringshare_add(style);
+   _edje_if_string_replace(ed, &txt->text.style.str, style);
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
