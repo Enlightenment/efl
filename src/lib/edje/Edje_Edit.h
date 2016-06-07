@@ -5289,7 +5289,7 @@ EAPI Eina_Bool edje_edit_state_map_rotation_set(Evas_Object *obj, const char *pa
  * @return map.perspective.focal value of given part state.
  * @since 1.11
  **/
-EAPI Eina_Bool edje_edit_state_map_perspective_focal_get(Evas_Object *obj, const char *part, const char *state, double value);
+EAPI int edje_edit_state_map_perspective_focal_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 /** Set map.perspective.focal value of given part state.
  *
@@ -5314,7 +5314,7 @@ EAPI Eina_Bool edje_edit_state_map_perspective_focal_set(Evas_Object *obj, const
  * @return map.perspective.zplane value of given part state.
  * @since 1.11
  **/
-EAPI Eina_Bool edje_edit_state_map_perspective_zplane_get(Evas_Object *obj, const char *part, const char *state, double value);
+EAPI int edje_edit_state_map_perspective_zplane_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 /** Set map.perspective.zplane value of given part state.
  *
