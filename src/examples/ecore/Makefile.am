@@ -281,9 +281,6 @@ ecore_animator_example.c \
 ecore_buffer_example.c \
 ecore_buffer_consumer_example.c \
 ecore_buffer_provider_example.c \
-ecore_audio_custom.c \
-ecore_audio_playback.c \
-ecore_audio_to_ogg.c \
 ecore_client_bench.c \
 ecore_compose_get_example.c \
 ecore_con_client_example.c \
