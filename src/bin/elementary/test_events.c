@@ -65,8 +65,11 @@ _key_down(void *data, const Eo_Event *ev)
            efl_event_key_compose_get(ev->info));
    elm_object_text_set(td->text, str);
 
-   eo_del(td->evkeydown);
-   td->evkeydown = efl_event_dup(ev->info);
+   if (!efl_event_fake_get(ev->info))
+     {
+        eo_del(td->evkeydown);
+        td->evkeydown = efl_event_dup(ev->info);
+     }
 
    return 1;
 }
@@ -98,8 +101,11 @@ _key_up(void *data, const Eo_Event *ev)
 {
    testdata *td = data;
 
-   eo_del(td->evkeyup);
-   td->evkeyup = efl_event_dup(ev->info);
+   if (!efl_event_fake_get(ev->info))
+     {
+        eo_del(td->evkeyup);
+        td->evkeyup = efl_event_dup(ev->info);
+     }
 
    // FIXME: how to use efl_loop_timeout?
    // 1. I can't cancel it (it crashes)
