@@ -606,7 +606,7 @@ gears_init(GLData *gld)
    Evas_GL_API *gl = gld->glapi;
 
    const char *p;
-   char msg[512];
+   char msg[512] = {};
 
    gl->glEnable(GL_CULL_FACE);
    gl->glEnable(GL_DEPTH_TEST);
@@ -616,14 +616,14 @@ gears_init(GLData *gld)
    gl->glShaderSource(gld->vtx_shader, 1, &p, NULL);
    gl->glCompileShader(gld->vtx_shader);
    gl->glGetShaderInfoLog(gld->vtx_shader, sizeof msg, NULL, msg);
-   printf("vertex shader info: %s\n", msg);
+   printf("vertex shader info: %512s\n", msg);
 
    p = fragment_shader;
    gld->fgmt_shader = gl->glCreateShader(GL_FRAGMENT_SHADER);
    gl->glShaderSource(gld->fgmt_shader, 1, &p, NULL);
    gl->glCompileShader(gld->fgmt_shader);
    gl->glGetShaderInfoLog(gld->fgmt_shader, sizeof msg, NULL, msg);
-   printf("fragment shader info: %s\n", msg);
+   printf("fragment shader info: %512s\n", msg);
 
    gld->program = gl->glCreateProgram();
    gl->glAttachShader(gld->program, gld->vtx_shader);
@@ -633,7 +633,7 @@ gears_init(GLData *gld)
 
    gl->glLinkProgram(gld->program);
    gl->glGetProgramInfoLog(gld->program, sizeof msg, NULL, msg);
-   printf("info: %s\n", msg);
+   printf("info: %512s\n", msg);
 
    gl->glUseProgram(gld->program);
    gld->mvp_loc  = gl->glGetUniformLocation(gld->program, "mvp");
