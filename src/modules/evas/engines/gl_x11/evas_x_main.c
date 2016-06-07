@@ -866,6 +866,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
    /* detect GLES 3.x support */
    if (gles3_supported == -1)
      {
+        gles3_supported = EINA_FALSE;
         eglexts = eglQueryString(egl_disp, EGL_EXTENSIONS);
         if (eglexts && strstr(eglexts, "EGL_KHR_create_context"))
           {
