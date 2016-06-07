@@ -121,7 +121,7 @@ START_TEST (elm_win_autohide)
    elm_init(0, NULL);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   elm_obj_win_autohide_set(win, EINA_TRUE);
+   elm_win_autohide_set(win, EINA_TRUE);
    efl_gfx_visible_set(win, EINA_TRUE);
 
    Eina_Bool fail_flag = EINA_FALSE;
@@ -171,7 +171,7 @@ START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   elm_obj_win_autohide_set(win, EINA_TRUE);
+   elm_win_autohide_set(win, EINA_TRUE);
    efl_gfx_visible_set(win, EINA_TRUE);
 
    Eina_Bool fail_flag = EINA_FALSE;
