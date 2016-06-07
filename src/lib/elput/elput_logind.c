@@ -427,7 +427,7 @@ _logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty)
    if (ret < 0)
      {
         ERR("Failed to get session seat");
-        if (s) free(s);
+        free(s);
         goto seat_err;
      }
    else if ((seat) && (s) && (strcmp(seat, s)))
