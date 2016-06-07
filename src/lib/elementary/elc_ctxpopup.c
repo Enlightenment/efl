@@ -938,8 +938,7 @@ _bg_clicked_cb(void *data,
 {
    ELM_CTXPOPUP_DATA_GET(data, sd);
 
-   if (sd->auto_hide)
-     _hide_signals_emit(data, sd->dir);
+   _hide_signals_emit(data, sd->dir);
 }
 
 static void
