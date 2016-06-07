@@ -149,7 +149,7 @@ enum Elm.Win.Urgent_Mode
 class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                Elm.Interface.Atspi_Widget_Action, Efl.Pack,
                Efl.Input.State, Efl.Input.Interface, Efl.Screen,
-               Efl.Gfx.Size.Hint)
+               Efl.Gfx.Size.Hint, Efl.Text)
 {
    legacy_prefix: elm_win;
    eo_prefix: elm_obj_win;
@@ -802,6 +802,8 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
       Efl.Gfx.Size.Hint.base.get;
       Efl.Gfx.Size.Hint.step.set;
       Efl.Gfx.Size.Hint.step.get;
+      Efl.Text.text.set;
+      Efl.Text.text.get;
    }
    constructors {
       .name;
