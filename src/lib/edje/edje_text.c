@@ -58,6 +58,8 @@ _set_translated_string(Edje *ed, Edje_Real_Part *ep)
 
         bindtextdomain(p, curpath);
         setlocale(LC_ALL, curlocale);
+#else
+        (void) ed;
 #endif
      }
    return text;
