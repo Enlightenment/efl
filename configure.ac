@@ -2880,7 +2880,7 @@ if test "x${want_poppler}" = "xyes"; then
    fi
 
    if test "x${have_poppler}" = "xno" ; then
-      PKG_CHECK_EXISTS([poppler >= 0.31],
+      PKG_CHECK_EXISTS([poppler >= 0.31 poppler < 0.40],
          [
           poppler_pc="poppler >= 0.31"
           AC_DEFINE(HAVE_POPPLER_031, 1, [Have poppler 0.31])
