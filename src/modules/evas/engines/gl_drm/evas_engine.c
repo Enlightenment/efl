@@ -1316,11 +1316,11 @@ eng_image_native_set(void *data, void *image, void *native)
                }
              if ((n = calloc(1, sizeof(Native))))
                {
-                  struct dmabuf_attributes *a;
+                  struct dmabuf_attributes *a2;
 
-                  a = ns->data.wl_dmabuf.attr;
+                  a2 = ns->data.wl_dmabuf.attr;
                   memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
-                  memcpy(&n->ns_data.wl_surface_dmabuf.attr, a, sizeof(*a));
+                  memcpy(&n->ns_data.wl_surface_dmabuf.attr, a2, sizeof(*a2));
                   eina_hash_add(ob->gl_context->shared->native_wl_hash,
                                 &wlid, img);
 
