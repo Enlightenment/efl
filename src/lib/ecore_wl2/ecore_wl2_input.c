@@ -600,6 +600,10 @@ static const struct wl_pointer_listener _pointer_listener =
    _pointer_cb_motion,
    _pointer_cb_button,
    _pointer_cb_axis,
+   NULL, /* frame */
+   NULL, /* axis_source */
+   NULL, /* axis_stop */
+   NULL, /* axis_discrete */
 };
 
 static const struct wl_callback_listener _pointer_surface_listener =
