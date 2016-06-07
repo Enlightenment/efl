@@ -50,7 +50,6 @@ _ctxpopup_item_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 {
    printf("ctxpopup item selected: %s\n",
    elm_object_item_text_get(event_info));
-   elm_ctxpopup_dismiss(obj);
 }
 
 static Elm_Object_Item *
