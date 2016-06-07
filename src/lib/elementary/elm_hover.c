@@ -139,7 +139,7 @@ _elm_hover_left_space_calc(Elm_Hover_Data *sd,
    if (sd->parent)
      {
         evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
-        if (eo_isa(sd->parent, ELM_WIN_CLASS))
+        if (eo_isa(sd->parent, EFL_UI_WIN_CLASS))
           {
              x = 0;
              y = 0;
@@ -318,7 +318,7 @@ _elm_hover_elm_layout_sizing_eval(Eo *obj, Elm_Hover_Data *sd)
    if (sd->parent)
      {
         evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
-        if (eo_isa(sd->parent, ELM_WIN_CLASS))
+        if (eo_isa(sd->parent, EFL_UI_WIN_CLASS))
           {
              x = 0;
              y = 0;

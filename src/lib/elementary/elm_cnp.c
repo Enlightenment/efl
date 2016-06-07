@@ -366,7 +366,7 @@ _dropable_coords_adjust(Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
    if (elm_widget_is(dropable->obj))
      {
         win = elm_widget_top_get(dropable->obj);
-        if (win && eo_isa(win, ELM_WIN_CLASS))
+        if (win && eo_isa(win, EFL_UI_WIN_CLASS))
           {
              Evas_Coord x2, y2;
              int rot = elm_win_rotation_get(win);
@@ -1817,8 +1817,8 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
                   if (elm_widget_is(dragwidget))
                     {
                        Evas_Object *win = elm_widget_top_get(dragwidget);
-                       if (win && eo_isa(win, ELM_WIN_CLASS))
-                         eo_event_callback_del(win, ELM_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
+                       if (win && eo_isa(win, EFL_UI_WIN_CLASS))
+                         eo_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
                     }
                }
 
@@ -1883,7 +1883,7 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
              par = elm_widget_parent_widget_get(obj);
              if (par) top = elm_widget_top_get(par);
           }
-        if (top && (eo_isa(top, ELM_WIN_CLASS)))
+        if (top && (eo_isa(top, EFL_UI_WIN_CLASS)))
             xwin = elm_win_xwindow_get(top);
      }
    if (!xwin)
@@ -2271,10 +2271,10 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    if (elm_widget_is(obj))
      {
         Evas_Object *win = elm_widget_top_get(obj);
-        if (win && eo_isa(win, ELM_WIN_CLASS))
+        if (win && eo_isa(win, EFL_UI_WIN_CLASS))
           {
              elm_win_rotation_set(dragwin, elm_win_rotation_get(win));
-             eo_event_callback_add(win, ELM_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
+             eo_event_callback_add(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
           }
      }
 
@@ -3418,7 +3418,7 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
 
         top = elm_widget_top_get(obj);
         if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
-        if (top && (eo_isa(top, ELM_WIN_CLASS)))
+        if (top && (eo_isa(top, EFL_UI_WIN_CLASS)))
           parent = elm_win_wl_window_get(top);
      }
    if (!parent)
@@ -3913,7 +3913,7 @@ _wl_elm_widget_window_get(const Evas_Object *obj)
      {
         top = elm_widget_top_get(obj);
         if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
-        if (top && (eo_isa(top, ELM_WIN_CLASS)))
+        if (top && (eo_isa(top, EFL_UI_WIN_CLASS)))
             win = elm_win_wl_window_get(top);
      }
    if (!win)
@@ -3987,7 +3987,7 @@ _cocoa_elm_widget_cocoa_window_get(const Evas_Object *obj)
               par = elm_widget_parent_widget_get(obj);
               if (par) top = elm_widget_top_get(par);
            }
-         if ((top) && (eo_isa(top, ELM_WIN_CLASS)))
+         if ((top) && (eo_isa(top, EFL_UI_WIN_CLASS)))
            win = elm_win_cocoa_window_get(top);
      }
    if (!win)
@@ -4537,7 +4537,7 @@ _win32_elm_widget_window_get(const Evas_Object *obj)
              par = elm_widget_parent_widget_get(obj);
              if (par) top = elm_widget_top_get(par);
           }
-        if (top && (eo_isa(top, ELM_WIN_CLASS)))
+        if (top && (eo_isa(top, EFL_UI_WIN_CLASS)))
           win = elm_win_win32_window_get(top);
      }
 
@@ -5581,8 +5581,8 @@ elm_drag_cancel(Evas_Object *obj)
              if (elm_widget_is(dragwidget))
                {
                   Evas_Object *win = elm_widget_top_get(dragwidget);
-                  if (win && eo_isa(win, ELM_WIN_CLASS))
-                     eo_event_callback_del(win, ELM_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
+                  if (win && eo_isa(win, EFL_UI_WIN_CLASS))
+                     eo_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, dragwin);
                }
           }
         goto end;

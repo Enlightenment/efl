@@ -1,4 +1,4 @@
-#include "elm_win.eo.legacy.h"
+#include "efl_ui_win.eo.legacy.h"
 
 /**
  * @brief In some environments, like phones, you may have an indicator that
@@ -50,6 +50,54 @@ typedef enum
   ELM_ILLUME_COMMAND_CLOSE /** Closes the currently active window */
 } Elm_Illume_Command;
 
+typedef Efl_Ui_Win_Type       Elm_Win_Type;
+
+#define ELM_WIN_UNKNOWN         EFL_UI_WIN_UNKNOWN
+#define ELM_WIN_BASIC           EFL_UI_WIN_BASIC
+#define ELM_WIN_DIALOG_BASIC    EFL_UI_WIN_DIALOG_BASIC
+#define ELM_WIN_DESKTOP         EFL_UI_WIN_DESKTOP
+#define ELM_WIN_DOCK            EFL_UI_WIN_DOCK
+#define ELM_WIN_TOOLBAR         EFL_UI_WIN_TOOLBAR
+#define ELM_WIN_MENU            EFL_UI_WIN_MENU
+#define ELM_WIN_UTILITY         EFL_UI_WIN_UTILITY
+#define ELM_WIN_SPLASH          EFL_UI_WIN_SPLASH
+#define ELM_WIN_DROPDOWN_MENU   EFL_UI_WIN_DROPDOWN_MENU
+#define ELM_WIN_POPUP_MENU      EFL_UI_WIN_POPUP_MENU
+#define ELM_WIN_TOOLTIP         EFL_UI_WIN_TOOLTIP
+#define ELM_WIN_NOTIFICATION    EFL_UI_WIN_NOTIFICATION
+#define ELM_WIN_COMBO           EFL_UI_WIN_COMBO
+#define ELM_WIN_DND             EFL_UI_WIN_DND
+#define ELM_WIN_INLINED_IMAGE   EFL_UI_WIN_INLINED_IMAGE
+#define ELM_WIN_SOCKET_IMAGE    EFL_UI_WIN_SOCKET_IMAGE
+#define ELM_WIN_FAKE            EFL_UI_WIN_FAKE
+
+typedef Efl_Ui_Win_Keyboard_Mode        Elm_Win_Keyboard_Mode;
+
+#define ELM_WIN_KEYBOARD_UNKNOWN        EFL_UI_WIN_KEYBOARD_UNKNOWN
+#define ELM_WIN_KEYBOARD_OFF            EFL_UI_WIN_KEYBOARD_OFF
+#define ELM_WIN_KEYBOARD_ON             EFL_UI_WIN_KEYBOARD_ON
+#define ELM_WIN_KEYBOARD_ALPHA          EFL_UI_WIN_KEYBOARD_ALPHA
+#define ELM_WIN_KEYBOARD_NUMERIC        EFL_UI_WIN_KEYBOARD_NUMERIC
+#define ELM_WIN_KEYBOARD_PIN            EFL_UI_WIN_KEYBOARD_PIN
+#define ELM_WIN_KEYBOARD_PHONE_NUMBER   EFL_UI_WIN_KEYBOARD_PHONE_NUMBER
+#define ELM_WIN_KEYBOARD_HEX            EFL_UI_WIN_KEYBOARD_HEX
+#define ELM_WIN_KEYBOARD_TERMINAL       EFL_UI_WIN_KEYBOARD_TERMINAL
+#define ELM_WIN_KEYBOARD_PASSWORD       EFL_UI_WIN_KEYBOARD_PASSWORD
+#define ELM_WIN_KEYBOARD_IP             EFL_UI_WIN_KEYBOARD_IP
+#define ELM_WIN_KEYBOARD_HOST           EFL_UI_WIN_KEYBOARD_HOST
+#define ELM_WIN_KEYBOARD_FILE           EFL_UI_WIN_KEYBOARD_FILE
+#define ELM_WIN_KEYBOARD_URL            EFL_UI_WIN_KEYBOARD_URL
+#define ELM_WIN_KEYBOARD_KEYPAD         EFL_UI_WIN_KEYBOARD_KEYPAD
+#define ELM_WIN_KEYBOARD_J2ME           EFL_UI_WIN_KEYBOARD_J2ME
+
+typedef Efl_Ui_Win_Keygrab_Mode         Elm_Win_Keygrab_Mode;
+
+#define ELM_WIN_KEYGRAB_UNKNOWN              EFL_UI_WIN_KEYGRAB_UNKNOWN
+#define ELM_WIN_KEYGRAB_SHARED               EFL_UI_WIN_KEYGRAB_SHARED
+#define ELM_WIN_KEYGRAB_TOPMOST              EFL_UI_WIN_KEYGRAB_TOPMOST
+#define ELM_WIN_KEYGRAB_EXCLUSIVE            EFL_UI_WIN_KEYGRAB_EXCLUSIVE
+#define ELM_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE   EFL_UI_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE
+
 /**
  * Adds a window object. If this is the first window created, pass NULL as
  * @p parent.
@@ -67,6 +115,8 @@ typedef enum
  * @ingroup Elm_Win
  */
 EAPI Evas_Object          *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
+
+typedef Evas_Object Elm_Win;
 
 /**
  * Creates a fake window object using a pre-existing canvas.
@@ -1003,4 +1053,56 @@ EAPI Ecore_Window          elm_win_window_id_get(const Evas_Object *obj);
  * @ingroup Elm_Win
  */
 EAPI Evas_Object *elm_win_main_menu_get(Evas_Object *obj);
+
+/**
+ * @brief Sets the keyboard mode of the window.
+ *
+ * @param[in] mode The mode, one of #Elm_Win_Keyboard_Mode.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_keyboard_mode_set(Elm_Win *obj, Elm_Win_Keyboard_Mode mode);
+
+/**
+ * @brief Get the keyboard mode of the window.
+ *
+ * @return The mode, one of #Elm_Win_Keyboard_Mode.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Elm_Win_Keyboard_Mode elm_win_keyboard_mode_get(const Elm_Win *obj);
+
+/**
+ * @brief The type of the window.
+ *
+ * It is a hint of how the Window Manager should handle it.
+ *
+ * The window type is a constructing property that need to be set at creation
+ * within @ref eo_add.
+ *
+ * @note Once set, it can NOT be modified afterward.
+ *
+ * Can only be used at creation time, within @ref eo_add.
+ *
+ * @param[in] type
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_type_set(Elm_Win *obj, Elm_Win_Type type);
+
+/**
+ * @brief The type of the window.
+ *
+ * It is a hint of how the Window Manager should handle it.
+ *
+ * The window type is a constructing property that need to be set at creation
+ * within @ref eo_add.
+ *
+ * @note Once set, it can NOT be modified afterward.
+ *
+ * If the object is not window object, return #ELM_WIN_UNKNOWN.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Elm_Win_Type elm_win_type_get(const Elm_Win *obj);
 

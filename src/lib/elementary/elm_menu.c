@@ -119,7 +119,7 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
    evas_object_geometry_get(VIEW(parent_it), &x2, &y2, &w2, &h2);
    evas_object_geometry_get(parent_it->submenu.bx, &bx, &by, &bw, &bh);
    evas_object_geometry_get(sd->parent, &px, &py, &pw, &ph);
-   if (eo_isa(sd->parent, ELM_WIN_CLASS))
+   if (eo_isa(sd->parent, EFL_UI_WIN_CLASS))
      {
         px = 0;
         py = 0;
@@ -185,7 +185,7 @@ _sizing_eval(Evas_Object *obj)
 
    evas_object_geometry_get(sd->location, NULL, NULL, &w_p, &h_p);
    evas_object_geometry_get(sd->parent, &x2, &y2, &w2, &h2);
-   if (eo_isa(sd->parent, ELM_WIN_CLASS))
+   if (eo_isa(sd->parent, EFL_UI_WIN_CLASS))
      {
         x2 = 0;
         y2 = 0;

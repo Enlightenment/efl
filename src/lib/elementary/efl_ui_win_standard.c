@@ -10,10 +10,10 @@
 
 #include "elm_priv.h"
 
-#define MY_CLASS ELM_WIN_STANDARD_CLASS
+#define MY_CLASS EFL_UI_WIN_STANDARD_CLASS
 
 EOLIAN static Eo *
-_elm_win_standard_eo_base_finalize(Eo *obj, void *pd EINA_UNUSED)
+_efl_ui_win_standard_eo_base_finalize(Eo *obj, void *pd EINA_UNUSED)
 {
    obj = eo_finalize(eo_super(obj, MY_CLASS));
    if (!obj)
@@ -33,4 +33,4 @@ _elm_win_standard_eo_base_finalize(Eo *obj, void *pd EINA_UNUSED)
    return obj;
 }
 
-#include "elm_win_standard.eo.c"
+#include "efl_ui_win_standard.eo.c"

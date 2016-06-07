@@ -95,8 +95,8 @@ elm_public_eolian_files = \
 	lib/elementary/elm_view_form.eo \
 	lib/elementary/elm_web.eo \
 	lib/elementary/elm_widget.eo \
-	lib/elementary/elm_win.eo \
-	lib/elementary/elm_win_standard.eo \
+	lib/elementary/efl_ui_win.eo \
+	lib/elementary/efl_ui_win_standard.eo \
 	lib/elementary/elm_widget_item.eo \
 	lib/elementary/elm_color_item.eo \
 	lib/elementary/elm_dayselector_item.eo \
@@ -665,8 +665,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_view_form.c \
 	lib/elementary/elm_web2.c \
 	lib/elementary/elm_widget.c \
-	lib/elementary/elm_win.c \
-	lib/elementary/elm_win_standard.c \
+	lib/elementary/efl_ui_win.c \
+	lib/elementary/efl_ui_win_standard.c \
 	lib/elementary/elm_helper.c \
 	lib/elementary/els_box.c \
 	lib/elementary/els_cursor.c \

@@ -164,7 +164,7 @@ _elm_widget_focus_highlight_start(const Evas_Object *obj)
 {
    Evas_Object *top = elm_widget_top_get(obj);
 
-   if (top && eo_isa(top, ELM_WIN_CLASS))
+   if (top && eo_isa(top, EFL_UI_WIN_CLASS))
      _elm_win_focus_highlight_start(top);
 }
 
@@ -173,7 +173,7 @@ _elm_widget_focus_highlight_object_get(const Evas_Object *obj)
 {
    Evas_Object *top = elm_widget_top_get(obj);
 
-   if (top && eo_isa(top, ELM_WIN_CLASS))
+   if (top && eo_isa(top, EFL_UI_WIN_CLASS))
      return _elm_win_focus_highlight_object_get(top);
    return NULL;
 }
@@ -183,7 +183,7 @@ elm_widget_focus_highlight_enabled_get(const Evas_Object *obj)
 {
    const Evas_Object *win = elm_widget_top_get(obj);
 
-   if (win && eo_isa(win, ELM_WIN_CLASS))
+   if (win && eo_isa(win, EFL_UI_WIN_CLASS))
      return elm_win_focus_highlight_enabled_get(win);
    return EINA_FALSE;
 }
@@ -1546,7 +1546,7 @@ _elm_widget_highlight_in_theme_update(Eo *obj)
 {
    Evas_Object *top = elm_widget_top_get(obj);
 
-   if (top && eo_isa(top, ELM_WIN_CLASS))
+   if (top && eo_isa(top, EFL_UI_WIN_CLASS))
      {
         _elm_win_focus_highlight_in_theme_update(
            top, elm_widget_highlight_in_theme_get(obj));
@@ -3013,7 +3013,7 @@ void
 _elm_widget_focus_auto_show(Evas_Object *obj)
 {
    Evas_Object *top = elm_widget_top_get(obj);
-   if (top && eo_isa(top, ELM_WIN_CLASS)) _elm_win_focus_auto_show(top);
+   if (top && eo_isa(top, EFL_UI_WIN_CLASS)) _elm_win_focus_auto_show(top);
 }
 
 void
@@ -4004,7 +4004,7 @@ _elm_widget_focus_mouse_up_handle(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSE
    if (!obj) return;
    if (!_is_focusable(obj)) return;
    top = elm_widget_top_get(obj);
-   if (top && eo_isa(top, ELM_WIN_CLASS)) _elm_win_focus_auto_hide(top);
+   if (top && eo_isa(top, EFL_UI_WIN_CLASS)) _elm_win_focus_auto_hide(top);
    elm_widget_focus_steal(obj, NULL);
 }
 

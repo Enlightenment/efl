@@ -1,8 +1,5 @@
-/* FIXME: Shouldn't be here. */
-type Ecore_Evas: __undefined_type;
-type Ecore_Window: __undefined_type;
 
-enum Elm.Win.Type
+enum Efl.Ui.Win.Type
 {
    [[Defines the types of window that can be created
 
@@ -12,8 +9,7 @@ enum Elm.Win.Type
 
      Currently, only the X11 backed engines use them.
    ]]
-
-   legacy: elm_win;
+   legacy: efl_ui_win;
 
    unknown = -1,
    basic, [[A normal window. Indicates a normal, top-level window. Almost every
@@ -65,15 +61,14 @@ enum Elm.Win.Type
         ]]
 }
 
-enum Elm.Win.Keyboard_Mode
+enum Efl.Ui.Win.Keyboard_Mode
 {
    [[The different layouts that can be requested for the virtual keyboard.
 
      When the application window is being managed by Illume, it may request
      any of the following layouts for the virtual keyboard.
    ]]
-
-   legacy: elm_win_keyboard;
+   legacy: efl_ui_win_keyboard;
 
    unknown, [[Unknown keyboard state]]
    off, [[Request to deactivate the keyboard]]
@@ -93,10 +88,10 @@ enum Elm.Win.Keyboard_Mode
    j2me [[J2ME keyboard layout]]
 }
 
-enum Elm.Win.Indicator_Type
+enum Efl.Ui.Win.Indicator_Type
 {
    [[Defines the type indicator that can be shown]]
-   legacy: elm_win_indicator;
+   legacy: efl_ui_win_indicator;
 
    type_unknown, [[Unknown indicator type]]
    bg_opaque, [[The icon of indicator is opaque, the background of indicator is also opaque. 
@@ -111,12 +106,12 @@ enum Elm.Win.Indicator_Type
 
 /**
  */
-enum Elm.Win.Keygrab_Mode
+enum Efl.Ui.Win.Keygrab_Mode
 {
    [[Define the keygrab modes of window. A window may send commands to the
      Keyrouter according this mode, and perform different actions.]]
-   legacy: elm_win_keygrab;
 
+   legacy: efl_ui_win_keygrab;
    unknown = 0, [[Unknown keygrab mode]]
    shared = (1 << 8), [[Getting the grabbed-key together with the other client
                         windows]]
@@ -130,30 +125,32 @@ enum Elm.Win.Keygrab_Mode
                                     window]]
 }
 
-enum Elm.Win.Modal_Mode
+enum Efl.Ui.Win.Modal_Mode
 {
    [[Defines the mode of a modal window]]
+   legacy: efl_ui_win_modal;
 
    none, [[The window is not modal window.]]
    modal [[The window is modal window.]]
 }
 
-enum Elm.Win.Urgent_Mode
+enum Efl.Ui.Win.Urgent_Mode
 {
    [[Defines the mode of a urgent window.]]
+   legacy: efl_ui_win_urgent;
 
    none,  [[The window is not a urgent window.]]
    urgent [[The window is a urgent window.]]
 }
 
-class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
+class Efl.Ui.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                Elm.Interface.Atspi_Widget_Action, Efl.Pack,
                Efl.Input.State, Efl.Input.Interface, Efl.Screen,
-               Efl.Gfx.Size.Hint, Efl.Text)
+               Efl.Gfx.Size.Hint)
 {
    legacy_prefix: elm_win;
-   eo_prefix: elm_obj_win;
-   event_prefix: elm_win;
+   eo_prefix: efl_ui_win;
+   event_prefix: efl_ui_win;
    methods {
       @property indicator_enabled {
          set {
@@ -167,9 +164,11 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                But like TV, default is to disable the indicator.
 
                Sets the indicator enable of the window.]]
+            legacy: null;
          }
          get {
             [[Get the indicator enable of the window.]]
+            legacy: null;
          }
          values {
             enabled: bool; [[If true, the indicator is enabled,
@@ -179,12 +178,14 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
       @property indicator_type {
          set {
             [[Sets the indicator type of the window.]]
+            legacy: null;
          }
          get {
             [[Get the indicator type of the window.]]
+            legacy: null;
          }
          values {
-            type: Elm.Win.Indicator_Type; [[The type, one of #Elm_Win_Indicator_Type.]]
+            type: Efl.Ui.Win.Indicator_Type; [[The type, one of #Efl_Ui_Win_Indicator_Type.]]
          }
       }
       @property keyboard_mode {
@@ -195,7 +196,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             [[Get the keyboard mode of the window.]]
          }
          values {
-            mode: Elm.Win.Keyboard_Mode; [[The mode, one of #Elm_Win_Keyboard_Mode.]]
+            mode: Efl.Ui.Win.Keyboard_Mode; [[The mode, one of #Efl_Ui_Win_Keyboard_Mode.]]
          }
       }
       @property wm_available_rotations {
@@ -473,8 +474,8 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             legacy: null;
          }
          values {
-            urgent: Elm.Win.Urgent_Mode;
-                [[The mode of a urgent window, one of #Elm_Win_Urgent_Mode.]]
+            urgent: Efl.Ui.Win.Urgent_Mode;
+                [[The mode of a urgent window, one of #Efl_Ui_Win_Urgent_Mode.]]
          }
       }
       @property modal {
@@ -487,7 +488,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             legacy: null;
          }
          values {
-            modal: Elm.Win.Modal_Mode; [[The mode of a window, one of #Elm_Win_Modal_Mode.]]
+            modal: Efl.Ui.Win.Modal_Mode; [[The mode of a window, one of #Efl_Ui_Win_Modal_Mode.]]
          }
       }
       @property noblank {
@@ -564,13 +565,12 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          */
          set {
             [[Can only be used at creation time, within \@ref eo_add.]]
-            legacy: null;
          }
          values {
             name: string @nullable;
          }
       }
-      @property type {
+      @property type { /* FIXME: before finalize */
          [[The type of the window.
 
            It is a hint of how the Window Manager should handle it.
@@ -592,9 +592,10 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          get {
             [[If the object is not window object, return #ELM_WIN_UNKNOWN.]]
+            legacy: null;
          }
          values {
-            type: Elm.Win.Type(Elm.Win.Type.unknown);
+            type: Efl.Ui.Win.Type(Efl.Ui.Win.Type.unknown);
          }
       }
       @property available_profiles {
@@ -716,7 +717,7 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             @in modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
             @in not_modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
             @in proirity: int; [[This is for the priority of keygrab. Currently this feature is not supported.]]
-            @in grab_mode: Elm.Win.Keygrab_Mode; [[According to the grabmode, it can grab key differently.]]
+            @in grab_mode: Efl.Ui.Win.Keygrab_Mode; [[According to the grabmode, it can grab key differently.]]
          }
       }
       keygrab_unset {
@@ -804,8 +805,6 @@ class Elm.Win (Elm.Widget, Elm.Interface.Atspi.Window,
       Efl.Gfx.Size.Hint.base.get;
       Efl.Gfx.Size.Hint.step.set;
       Efl.Gfx.Size.Hint.step.get;
-      Efl.Text.text.set;
-      Efl.Text.text.get;
    }
    constructors {
       .name;

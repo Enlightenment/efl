@@ -952,8 +952,8 @@ _elm_conformant_evas_object_smart_del(Eo *obj, Elm_Conformant_Data *sd)
 
    evas_object_data_set(sd->win, "\377 elm,conformant", NULL);
 
-   eo_event_callback_del(sd->win, ELM_WIN_EVENT_INDICATOR_PROP_CHANGED, _on_indicator_mode_changed, obj);
-   eo_event_callback_del(sd->win, ELM_WIN_EVENT_ROTATION_CHANGED, _on_rotation_changed, obj);
+   eo_event_callback_del(sd->win, EFL_UI_WIN_EVENT_INDICATOR_PROP_CHANGED, _on_indicator_mode_changed, obj);
+   eo_event_callback_del(sd->win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _on_rotation_changed, obj);
 
    evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
@@ -1014,8 +1014,8 @@ _elm_conformant_eo_base_constructor(Eo *obj, Elm_Conformant_Data *sd)
    sd->rot = elm_win_rotation_get(sd->win);
    evas_object_data_set(sd->win, "\377 elm,conformant", obj);
 
-   eo_event_callback_add(sd->win, ELM_WIN_EVENT_INDICATOR_PROP_CHANGED, _on_indicator_mode_changed, obj);
-   eo_event_callback_add(sd->win, ELM_WIN_EVENT_ROTATION_CHANGED, _on_rotation_changed, obj);
+   eo_event_callback_add(sd->win, EFL_UI_WIN_EVENT_INDICATOR_PROP_CHANGED, _on_indicator_mode_changed, obj);
+   eo_event_callback_add(sd->win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _on_rotation_changed, obj);
 
    return obj;
 }

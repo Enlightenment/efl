@@ -4,7 +4,7 @@
  * @{
  */
 
-#include "elm_win.eo.h"
+#include "efl_ui_win.eo.h"
 
 /**
  * @}

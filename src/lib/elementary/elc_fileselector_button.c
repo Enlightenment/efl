@@ -138,7 +138,7 @@ _new_window_add(Elm_Fileselector_Button_Data *sd)
    elm_win_title_set(win, sd->window_title);
    elm_win_autodel_set(win, EINA_TRUE);
    eo_event_callback_add
-         (win, ELM_WIN_EVENT_DELETE_REQUEST, _selection_done, sd);
+         (win, EFL_UI_WIN_EVENT_DELETE_REQUEST, _selection_done, sd);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -152,7 +152,7 @@ _new_window_add(Elm_Fileselector_Button_Data *sd)
 static Evas_Object *
 _parent_win_get(Evas_Object *obj)
 {
-   while (!eo_isa(obj, ELM_WIN_CLASS))
+   while (!eo_isa(obj, EFL_UI_WIN_CLASS))
      obj = elm_object_parent_widget_get(obj);
 
    return obj;

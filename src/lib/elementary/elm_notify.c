@@ -131,7 +131,7 @@ _sizing_eval(Evas_Object *obj)
 
    if (!sd->parent) return;
    evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
-   if (eo_isa(sd->parent, ELM_WIN_CLASS))
+   if (eo_isa(sd->parent, EFL_UI_WIN_CLASS))
      {
         x = 0;
         y = 0;

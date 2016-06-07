@@ -1576,7 +1576,7 @@ _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_i
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
 
-   if (eo_isa(obj, ELM_WIN_CLASS))
+   if (eo_isa(obj, EFL_UI_WIN_CLASS))
      {
         x = 0;
         y = 0;
@@ -1592,7 +1592,7 @@ _elm_popup_elm_widget_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object
    Evas_Coord x, y, w, h;
    evas_object_geometry_get(parent, &x, &y, &w, &h);
 
-   if (eo_isa(parent, ELM_WIN_CLASS))
+   if (eo_isa(parent, EFL_UI_WIN_CLASS))
      {
         x = 0;
         y = 0;

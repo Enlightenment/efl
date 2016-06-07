@@ -1224,7 +1224,7 @@ _elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *ite
    if (!sd->editable) return EINA_FALSE;
 
    top = elm_widget_top_get(obj);
-   if (top && eo_isa(top, ELM_WIN_CLASS))
+   if (top && eo_isa(top, EFL_UI_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
    if (elm_widget_focus_get(obj))
@@ -1827,7 +1827,7 @@ _magnifier_move(void *data)
 
    // keep magnifier inside window
    top = elm_widget_top_get(data);
-   if (top && eo_isa(top, ELM_WIN_CLASS))
+   if (top && eo_isa(top, EFL_UI_WIN_CLASS))
      {
         Evas_Coord wh, ww;
         evas_object_geometry_get(top, NULL, NULL, &ww, &wh);
@@ -1994,7 +1994,7 @@ _mouse_up_cb(void *data,
              top = elm_widget_top_get(data);
              if (top)
                {
-                  if (eo_isa(top, ELM_WIN_CLASS))
+                  if (eo_isa(top, EFL_UI_WIN_CLASS))
                     top_is_win = EINA_TRUE;
 
                   if (top_is_win && sd->input_panel_enable && sd->input_panel_show_on_demand &&

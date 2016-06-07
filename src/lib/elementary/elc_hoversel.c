@@ -272,7 +272,7 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
      }
 
    evas_object_geometry_get(sd->hover_parent, &x, &y, &w, &h);
-   if (eo_isa(sd->hover_parent, ELM_WIN_CLASS))
+   if (eo_isa(sd->hover_parent, EFL_UI_WIN_CLASS))
      {
         x = 0;
         y = 0;

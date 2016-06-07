@@ -109,7 +109,7 @@ _elm_inwin_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 
    parent = eo_parent_get(obj);
 
-   if (parent && !eo_isa(parent, ELM_WIN_CLASS))
+   if (parent && !eo_isa(parent, EFL_UI_WIN_CLASS))
      {
         ERR("Failed");
         return NULL;

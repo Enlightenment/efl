@@ -102,8 +102,8 @@ elm_eolian_files = \
 	elm_view_form.eo \
 	elm_web.eo \
 	elm_widget.eo \
-	elm_win.eo \
-	elm_win_standard.eo \
+	efl_ui_win.eo \
+	efl_ui_win_standard.eo \
 	elm_widget_item.eo \
 	elm_color_item.eo \
 	elm_dayselector_item.eo \
@@ -616,8 +616,8 @@ libelementary_la_SOURCES = \
 	elm_view_form.c \
 	elm_web2.c \
 	elm_widget.c \
-	elm_win.c \
-	elm_win_standard.c \
+	efl_ui_win.c \
+	efl_ui_win_standard.c \
 	elm_helper.c \
 	els_box.c \
 	els_cursor.c \
