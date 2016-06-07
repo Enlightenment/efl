@@ -80,6 +80,42 @@ START_TEST(eina_test_promise_normal_lifetime_all)
 }
 END_TEST
 
+static void
+_eina_test_error_cb(void *data, Eina_Error error)
+{
+    *(int *)data = error;
+}
+
+START_TEST(eina_test_promise_error_set)
+{
+   Eina_Promise_Owner* promise_owner;
+   Eina_Promise* promise;
+   int ran = 0;
+   int error = 0xdeadbeef;
+
+   eina_init();
+
+   promise_owner = eina_promise_value_add(0);
+
+   promise = eina_promise_owner_promise_get(promise_owner);
+
+   eina_promise_ref(promise);
+
+   eina_promise_then(promise, NULL, &_eina_test_error_cb, &ran);
+
+   eina_promise_owner_error_set(promise_owner, error);
+
+   ck_assert(ran == error);
+   ck_assert_int_eq(error, eina_promise_error_get(promise));
+   ck_assert(!eina_promise_pending_is(promise));
+   ck_assert(!eina_promise_owner_cancelled_is(promise_owner));
+
+   eina_promise_unref(promise);
+
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(eina_test_promise_immediate_set_lifetime)
 {
    Eina_Promise_Owner* owner;
@@ -208,7 +244,95 @@ START_TEST(eina_test_promise_cancel_promise)
    // Finally free the owner
    eina_promise_owner_value_set(owner, NULL, NULL);
 
-   ck_assert(ran);
+   eina_shutdown();
+}
+END_TEST
+
+static void
+_cancel_then_callback(void *data, void *value EINA_UNUSED)
+{
+   *(int*)data = 1;
+}
+
+static void
+_cancel_error_callback(void *data, Eina_Error error EINA_UNUSED)
+{
+   *(int*)data = -1;
+}
+
+START_TEST(eina_test_promise_cancel_finished_promise)
+{
+   Eina_Bool cancel_ran = EINA_FALSE;
+   int ran = 0;
+   Eina_Promise_Owner* owner;
+   Eina_Promise* promise;
+
+   eina_init();
+
+   owner = eina_promise_value_add(0);
+   eina_promise_owner_default_cancel_cb_add(owner, &cancel_callback, &cancel_ran, NULL);
+
+   promise = eina_promise_owner_promise_get(owner);
+
+   eina_promise_then(promise, &_cancel_then_callback, &_cancel_error_callback, &ran);
+
+   eina_promise_ref(promise);
+   eina_promise_owner_value_set(owner, NULL, NULL);
+
+   ck_assert(!cancel_ran);
+   ck_assert_int_eq(1, ran);
+   ck_assert(!eina_promise_owner_cancelled_is(owner));
+   ck_assert(!eina_promise_pending_is(promise));
+   ck_assert_int_eq(0, eina_promise_error_get(promise));
+
+   eina_promise_cancel(promise);
+
+   // The conditions should not have been changed.
+   ck_assert(!cancel_ran);
+   ck_assert_int_eq(1, ran);
+   ck_assert(!eina_promise_owner_cancelled_is(owner));
+   ck_assert(!eina_promise_pending_is(promise));
+   ck_assert_int_eq(0, eina_promise_error_get(promise));
+
+   eina_promise_unref(promise);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_promise_double_cancel_promise)
+{
+   Eina_Bool ran = EINA_FALSE, cancel_ran = EINA_FALSE;
+   Eina_Promise_Owner* owner;
+   Eina_Promise* promise;
+
+   eina_init();
+
+   owner = eina_promise_value_add(0);
+   eina_promise_owner_default_cancel_cb_add(owner, &cancel_callback, &cancel_ran, NULL);
+
+   promise = eina_promise_owner_promise_get(owner);
+
+   eina_promise_then(promise, NULL, &_cancel_promise_callback, &ran);
+
+   eina_promise_cancel(promise);
+
+   ck_assert(cancel_ran && ran);
+   ck_assert(eina_promise_owner_cancelled_is(owner));
+   ck_assert(!eina_promise_pending_is(promise));
+   ck_assert_int_eq(EINA_ERROR_PROMISE_CANCEL, eina_promise_error_get(promise));
+
+   cancel_ran = EINA_FALSE;
+   ran = EINA_FALSE;
+
+   eina_promise_cancel(promise);
+
+   ck_assert(!cancel_ran && !ran);
+   ck_assert(eina_promise_owner_cancelled_is(owner));
+   ck_assert(!eina_promise_pending_is(promise));
+
+   // Finally free the owner
+   eina_promise_owner_value_set(owner, NULL, NULL);
 
    eina_shutdown();
 }
@@ -420,6 +544,36 @@ START_TEST(eina_test_pointer_promise_normal_lifetime_all)
 }
 END_TEST
 
+START_TEST(eina_test_pointer_promise_error_set)
+{
+   Eina_Promise_Owner* promise_owner;
+   Eina_Promise* promise;
+   int ran = 0;
+   int error = 0xdeadbeef;
+
+   eina_init();
+
+   promise_owner = eina_promise_add();
+
+   promise = eina_promise_owner_promise_get(promise_owner);
+
+   eina_promise_ref(promise);
+
+   eina_promise_then(promise, NULL, &_eina_test_error_cb, &ran);
+
+   eina_promise_owner_error_set(promise_owner, error);
+
+   ck_assert(ran == error);
+   ck_assert_int_eq(error, eina_promise_error_get(promise));
+   ck_assert(!eina_promise_pending_is(promise));
+   ck_assert(!eina_promise_owner_cancelled_is(promise_owner));
+
+   eina_promise_unref(promise);
+
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(eina_test_pointer_promise_immediate_set_lifetime)
 {
    Eina_Promise_Owner* owner;
@@ -525,6 +679,84 @@ START_TEST(eina_test_pointer_promise_cancel_promise)
    eina_shutdown();
 }
 END_TEST
+
+START_TEST(eina_test_pointer_promise_cancel_finished_promise)
+{
+   Eina_Bool cancel_ran = EINA_FALSE;
+   int ran = 0;
+   Eina_Promise_Owner* owner;
+   Eina_Promise* promise;
+
+   eina_init();
+
+   owner = eina_promise_add();
+   eina_promise_owner_default_cancel_cb_add(owner, &cancel_callback, &cancel_ran, NULL);
+
+   promise = eina_promise_owner_promise_get(owner);
+
+   eina_promise_then(promise, &_cancel_then_callback, &_cancel_error_callback, &ran);
+
+   eina_promise_ref(promise);
+   eina_promise_owner_value_set(owner, NULL, NULL);
+
+   ck_assert(!cancel_ran);
+   ck_assert_int_eq(1, ran);
+   ck_assert(!eina_promise_owner_cancelled_is(owner));
+   ck_assert(!eina_promise_pending_is(promise));
+   ck_assert_int_eq(0, eina_promise_error_get(promise));
+
+   eina_promise_cancel(promise);
+
+   // The conditions should not have been changed.
+   ck_assert(!cancel_ran);
+   ck_assert_int_eq(1, ran);
+   ck_assert(!eina_promise_owner_cancelled_is(owner));
+   ck_assert(!eina_promise_pending_is(promise));
+   ck_assert_int_eq(0, eina_promise_error_get(promise));
+
+   eina_promise_unref(promise);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_pointer_promise_double_cancel_promise)
+{
+   Eina_Bool ran = EINA_FALSE, cancel_ran = EINA_FALSE;
+   Eina_Promise_Owner* owner;
+   Eina_Promise* promise;
+
+   eina_init();
+
+   owner = eina_promise_add();
+   eina_promise_owner_default_cancel_cb_add(owner, &cancel_callback, &cancel_ran, NULL);
+
+   promise = eina_promise_owner_promise_get(owner);
+
+   eina_promise_then(promise, NULL, &_cancel_promise_callback, &ran);
+
+   eina_promise_cancel(promise);
+
+   ck_assert(cancel_ran && ran);
+   ck_assert(eina_promise_owner_cancelled_is(owner));
+   ck_assert(!eina_promise_pending_is(promise));
+   ck_assert_int_eq(EINA_ERROR_PROMISE_CANCEL, eina_promise_error_get(promise));
+
+   cancel_ran = EINA_FALSE;
+   ran = EINA_FALSE;
+
+   eina_promise_cancel(promise);
+
+   ck_assert(!cancel_ran && !ran);
+   ck_assert(eina_promise_owner_cancelled_is(owner));
+   ck_assert(!eina_promise_pending_is(promise));
+
+   // Finally free the owner
+   eina_promise_owner_value_set(owner, NULL, NULL);
+
+   eina_shutdown();
+}
+END_TEST 
 
 START_TEST(eina_test_pointer_promise_progress)
 {
@@ -668,10 +900,14 @@ eina_test_promise(TCase *tc)
 {
    tcase_add_test(tc, eina_test_promise_normal_lifetime);
    tcase_add_test(tc, eina_test_promise_normal_lifetime_all);
+   tcase_add_test(tc, eina_test_promise_error_set);
+   /* tcase_add_test(tc, eina_test_promise_error_set_all); */
    tcase_add_test(tc, eina_test_promise_immediate_set_lifetime);
    tcase_add_test(tc, eina_test_promise_immediate_set_lifetime_all);
    tcase_add_test(tc, eina_test_promise_values_all);
    tcase_add_test(tc, eina_test_promise_cancel_promise);
+   tcase_add_test(tc, eina_test_promise_cancel_finished_promise);
+   tcase_add_test(tc, eina_test_promise_double_cancel_promise);
    tcase_add_test(tc, eina_test_promise_progress);
    tcase_add_test(tc, eina_test_promise_progress_notify1);
    tcase_add_test(tc, eina_test_promise_progress_notify2);
@@ -681,10 +917,13 @@ eina_test_promise(TCase *tc)
    // pointer
    tcase_add_test(tc, eina_test_pointer_promise_normal_lifetime);
    tcase_add_test(tc, eina_test_pointer_promise_normal_lifetime_all);
+   tcase_add_test(tc, eina_test_pointer_promise_error_set);
    tcase_add_test(tc, eina_test_pointer_promise_immediate_set_lifetime);
    tcase_add_test(tc, eina_test_pointer_promise_immediate_set_lifetime_all);
    tcase_add_test(tc, eina_test_pointer_promise_values_all);
    tcase_add_test(tc, eina_test_pointer_promise_cancel_promise);
+   tcase_add_test(tc, eina_test_pointer_promise_cancel_finished_promise);
+   tcase_add_test(tc, eina_test_pointer_promise_double_cancel_promise);
    tcase_add_test(tc, eina_test_pointer_promise_progress);
    tcase_add_test(tc, eina_test_pointer_promise_progress_notify1);
    tcase_add_test(tc, eina_test_pointer_promise_progress_notify2);

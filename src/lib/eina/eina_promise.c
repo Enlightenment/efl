@@ -147,6 +147,14 @@ static void _eina_promise_free_progress_notify_callback_node(void* node)
    free(progress_notify_cb);
 }
 
+static void _eina_promise_free_cancel_callback_node(void *node)
+{
+    _Eina_Promise_Cancel_Cb *cancel_cb = node;
+    if (cancel_cb->free)
+      cancel_cb->free(cancel_cb->data);
+    free(cancel_cb);
+}
+
 static void _eina_promise_finish(_Eina_Promise_Default_Owner* promise);
 static void _eina_promise_ref(_Eina_Promise_Default* promise);
 static void _eina_promise_unref(_Eina_Promise_Default* promise);
@@ -249,6 +257,8 @@ _eina_promise_del(_Eina_Promise_Default_Owner* promise)
                                     &_eina_promise_free_progress_callback_node);
    _eina_promise_free_callback_list(&promise->promise.progress_notify_callbacks,
                                     &_eina_promise_free_progress_notify_callback_node);
+   _eina_promise_free_callback_list(&promise->promise.cancel_callbacks,
+                                    &_eina_promise_free_cancel_callback_node);
    free(promise);
 }
 
@@ -437,7 +447,7 @@ _eina_promise_cancel(_Eina_Promise_Default* promise)
 {
    _Eina_Promise_Default_Owner* owner = EINA_PROMISE_GET_OWNER(promise);
 
-   if (!owner->promise.is_cancelled)
+   if (!owner->promise.is_cancelled && !owner->promise.has_finished)
      {
         owner->promise.is_cancelled = EINA_TRUE;
         owner->promise.has_finished = EINA_TRUE;
