@@ -109,11 +109,16 @@ typedef enum
    ECORE_COCOA_CURSOR_RESIZE_UP_DOWN, /**< Resize up down cursor */
    ECORE_COCOA_CURSOR_IBEAM_VERTICAL, /**< IBeam vertical cursor */
 
-   __ECORE_COCOA_CURSOR_LAST, /**< Sentinel. DO NOT USE */
-
-   ECORE_COCOA_CURSOR_DEFAULT = ECORE_COCOA_CURSOR_ARROW /**< Default Cocoa cursor */
-
+   __ECORE_COCOA_CURSOR_LAST /**< Sentinel. DO NOT USE */
 } Ecore_Cocoa_Cursor;
+
+
+/**
+ * @def ECORE_COCOA_CURSOR_DEFAULT
+ * Defines the default Cocoa cursor, to be used when nothing
+ * is specified or as a fallback.
+ */
+#define ECORE_COCOA_CURSOR_DEFAULT ECORE_COCOA_CURSOR_ARROW
 
 
 /** Event triggered when a Cocoa window receives focus */
