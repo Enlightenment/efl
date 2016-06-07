@@ -1147,10 +1147,18 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
      }
 }
 
+static void
+_seat_cb_name(void *data EINA_UNUSED, struct wl_seat *seat EINA_UNUSED, const char *name EINA_UNUSED)
+{
+   /* NB: No-Op as we don't care about seat name right now.
+    *
+    * This will likely change as we hash out remaining multi-seat issues */
+}
+
 static const struct wl_seat_listener _seat_listener =
 {
    _seat_cb_capabilities,
-   NULL
+   _seat_cb_name,
 };
 
 static void
@@ -1253,7 +1261,7 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
    _ecore_wl2_input_cursor_setup(input);
 
    input->wl.seat =
-     wl_registry_bind(display->wl.registry, id, &wl_seat_interface, 1);
+     wl_registry_bind(display->wl.registry, id, &wl_seat_interface, 4);
 
    display->inputs =
      eina_inlist_append(display->inputs, EINA_INLIST_GET(input));
