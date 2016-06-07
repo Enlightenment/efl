@@ -340,11 +340,11 @@ elm_code_widget_selection_text_get(Evas_Object *widget)
 }
 
 static void
-_selection_loss_cb(void *data, Elm_Sel_Type selection EINA_UNUSED)
+_selection_loss_cb(void *data EINA_UNUSED, Elm_Sel_Type selection EINA_UNUSED)
 {
-   Elm_Code_Widget *widget;
+   /* Elm_Code_Widget *widget; */
 
-   widget = (Elm_Code_Widget *)data;
+   /* widget = (Elm_Code_Widget *)data; */
 // TODO we need to know whih selection we are clearing!
 //   elm_code_widget_selection_clear(widget);
 }
