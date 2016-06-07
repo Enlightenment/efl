@@ -4059,7 +4059,7 @@ _job_pb_cb(void *data)
 
         /* Pass to cocoa clipboard */
         type = _elm_sel_format_to_ecore_cocoa_cnp_type(sel->requestformat);
-        pbdata = ecore_cocoa_selection_clipboard_get(&pbdata_len, type, &get_type);
+        pbdata = ecore_cocoa_clipboard_get(&pbdata_len, type, &get_type);
 
         ddata.format = ELM_SEL_FORMAT_NONE;
         if (get_type & ECORE_COCOA_CNP_TYPE_STRING)
@@ -4123,7 +4123,7 @@ _cocoa_elm_cnp_selection_set(Ecore_Cocoa_Window *win,
         sel->selbuf[buflen] = 0;
         sel->buflen = buflen;
         type = _elm_sel_format_to_ecore_cocoa_cnp_type(format);
-        ecore_cocoa_selection_clipboard_set(selbuf, buflen, type);
+        ecore_cocoa_clipboard_set(selbuf, buflen, type);
      }
 
    return ok;
@@ -4160,7 +4160,7 @@ _cocoa_elm_cnp_selection_clear(Evas_Object  *obj       EINA_UNUSED,
    sel->loss_data = NULL;
    ELM_SAFE_FREE(sel->selbuf, free);
    sel->buflen = 0;
-   ecore_cocoa_selection_clipboard_clear();
+   ecore_cocoa_clipboard_clear();
 
    return EINA_TRUE;
 }

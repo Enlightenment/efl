@@ -10,9 +10,9 @@
 #import "ecore_cocoa_app.h"
 
 EAPI Eina_Bool
-ecore_cocoa_selection_clipboard_set(const void           *data,
-                                    int                   size,
-                                    Ecore_Cocoa_Cnp_Type  type)
+ecore_cocoa_clipboard_set(const void           *data,
+                          int                   size,
+                          Ecore_Cocoa_Cnp_Type  type)
 {
    NSMutableArray *objects;
    NSString *str = nil;
@@ -62,9 +62,9 @@ ecore_cocoa_selection_clipboard_set(const void           *data,
 
 
 EAPI void *
-ecore_cocoa_selection_clipboard_get(int                  *size,
-                                    Ecore_Cocoa_Cnp_Type  type,
-                                    Ecore_Cocoa_Cnp_Type *retrieved_types)
+ecore_cocoa_clipboard_get(int                  *size,
+                          Ecore_Cocoa_Cnp_Type  type,
+                          Ecore_Cocoa_Cnp_Type *retrieved_types)
 {
    NSMutableArray *classes;
    void *data;
@@ -167,7 +167,7 @@ fail:
 }
 
 EAPI void
-ecore_cocoa_selection_clipboard_clear(void)
+ecore_cocoa_clipboard_clear(void)
 {
    [[NSPasteboard generalPasteboard] clearContents];
 }

@@ -472,7 +472,7 @@ EAPI Ecore_Cocoa_Object *ecore_cocoa_window_get(const Ecore_Cocoa_Window *window
  * @param type
  * @return EINA_TRUE on success, EINA_FALSE on failure
  */
-EAPI Eina_Bool ecore_cocoa_selection_clipboard_set(const void *data,
+EAPI Eina_Bool ecore_cocoa_clipboard_set(const void *data,
                                                    int size,
                                                    Ecore_Cocoa_Cnp_Type type);
 
@@ -487,15 +487,15 @@ EAPI Eina_Bool ecore_cocoa_selection_clipboard_set(const void *data,
  * @c retrieved_types will contain ECORE_COCOA_CNP_TYPE_STRING and the data
  * will be a C string (char*) that must be freed after use.
  */
-EAPI void *ecore_cocoa_selection_clipboard_get(int *size,
-                                               Ecore_Cocoa_Cnp_Type type,
-                                               Ecore_Cocoa_Cnp_Type *retrieved_types)
+EAPI void *ecore_cocoa_clipboard_get(int *size,
+                                     Ecore_Cocoa_Cnp_Type type,
+                                     Ecore_Cocoa_Cnp_Type *retrieved_types)
    EINA_WARN_UNUSED_RESULT;
 
 /**
  * Deletes the contents of the Cocoa clipboard
  */
-EAPI void ecore_cocoa_selection_clipboard_clear(void);
+EAPI void ecore_cocoa_clipboard_clear(void);
 
 /**
  * Set the Cocoa cursor for a given Cocoa window
