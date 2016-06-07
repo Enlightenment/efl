@@ -860,6 +860,54 @@ EAPI void evas_textblock_cursor_free(Evas_Textblock_Cursor *cur);
 
 EAPI int evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text);
 
+/**
+ * @brief The "replacement character" to use for the given textblock object.
+ *
+ * @param[in] ch The charset name.
+ *
+ * @ingroup Efl_Canvas_Text
+ */
+EAPI void evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch);
+
+/**
+ * @brief The "replacement character" to use for the given textblock object.
+ *
+ * @return The charset name.
+ *
+ * @ingroup Efl_Canvas_Text
+ */
+EAPI const char *evas_object_textblock_replace_char_get(const Evas_Object *obj);
+
+/**
+ * @brief The vertical alignment of text within the textblock object as a
+ * whole.
+ *
+ * Normally alignment is 0.0 (top of object). Values given should be between
+ * 0.0 and 1.0 (1.0 bottom of object, 0.5 being vertically centered etc.).
+ *
+ * @param[in] align The alignment set for the object.
+ *
+ * @since 1.1
+ *
+ * @ingroup Efl_Canvas_Text
+ */
+EAPI void evas_object_textblock_valign_set(Evas_Object *obj, double align);
+
+/**
+ * @brief The vertical alignment of text within the textblock object as a
+ * whole.
+ *
+ * Normally alignment is 0.0 (top of object). Values given should be between
+ * 0.0 and 1.0 (1.0 bottom of object, 0.5 being vertically centered etc.).
+ *
+ * @return The alignment set for the object.
+ *
+ * @since 1.1
+ *
+ * @ingroup Efl_Canvas_Text
+ */
+EAPI double evas_object_textblock_valign_get(const Evas_Object *obj);
+
 #include "canvas/efl_canvas_text_cursor.eo.legacy.h"
 #include "canvas/efl_canvas_text.eo.legacy.h"
 /**

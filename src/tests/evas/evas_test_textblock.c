@@ -4058,7 +4058,7 @@ _test_check_annotation(Evas_Object *tb,
    evas_textblock_cursor_pos_set(end, end_pos);
 
    Eina_Iterator *it =
-      efl_canvas_text_annotation_in_range_get(tb, start, end);
+      efl_canvas_text_range_annotations_get(tb, start, end);
 
    evas_textblock_cursor_free(start);
    evas_textblock_cursor_free(end);
@@ -4277,51 +4277,34 @@ START_TEST(efl_canvas_text_style)
 {
    START_TB_TEST();
 
-   Eo *start, *end;
-
    Evas_Coord w;
    Evas_Coord bw;
    const char *buf;
 
-   buf =
-      "DEFAULT='font=Sans font_size=12 color=#fff wrap=word text_class=entry'"
-      "br='\n'"
-      "ps='ps'"
-      "tab='\t'";
+   buf = "DEFAULT='font=Sans font_size=12 color=#fff wrap=word'";
 
    efl_canvas_text_style_set(tb, buf);
    ck_assert_str_eq(efl_canvas_text_style_get(tb), buf);
 
-   buf =
-      "DEFAULT='font=Sans font_size=12 color=#fff'"
-      "c='color=#000'"
-      "ps='br'"
-      "tab='\t'";
+   buf = "font=Sans font_size=12 color=#fff";
 
    efl_canvas_text_style_set(tb, buf);
    ck_assert_str_eq(efl_canvas_text_style_get(tb), buf);
 
    efl_text_set(tb, "hello world");
-   start = evas_object_textblock_cursor_new(tb);
-   end = evas_object_textblock_cursor_new(tb);
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 4);
 
-   efl_canvas_text_annotation_insert(tb, start, end, "sz");
-   buf =
-      "DEFAULT='font=Sans font_size=12 color=#fff'";
+   buf = "font=Sans font_size=12 color=#fff";
    efl_canvas_text_style_set(tb, buf);
 
    evas_object_textblock_size_native_get(tb, &bw, NULL);
 
-   buf =
-      "DEFAULT='font=Sans font_size=16 color=#fff'";
+   buf = "font=Sans font_size=16 color=#fff";
    efl_canvas_text_style_set(tb, buf);
    evas_object_textblock_size_native_get(tb, &w, NULL);
    ck_assert_int_gt(w, bw);
 
    bw = w;
-   buf = "DEFAULT='left_margin=4 right_margin=4'";
+   buf = "left_margin=4 right_margin=4";
    efl_canvas_text_style_user_push(tb, buf);
    ck_assert_str_eq(efl_canvas_text_style_user_peek(tb), buf);
    evas_object_textblock_size_native_get(tb, &w, NULL);

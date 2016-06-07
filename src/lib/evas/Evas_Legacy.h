@@ -4496,7 +4496,7 @@ EAPI void evas_object_text_font_get(const Eo *obj, const char **font, Evas_Font_
  * @}
  */
 
-#include "Evas_Textblock_Legacy.h"
+#include "canvas/evas_textblock_legacy.h"
 
 /**
  * @ingroup Evas_Object_Grid

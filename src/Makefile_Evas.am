@@ -101,12 +101,12 @@ lib/evas/Evas.h \
 lib/evas/Evas_Common.h \
 lib/evas/Evas_Eo.h \
 lib/evas/Evas_Legacy.h \
-lib/evas/Evas_Textblock_Legacy.h \
 lib/evas/Evas_GL.h \
 lib/evas/Evas_Loader.h
 
 installed_evascanvasheadersdir = $(includedir)/evas-@VMAJ@/canvas
 nodist_installed_evascanvasheaders_DATA = $(evas_eolian_pub_h) $(evas_eolian_legacy_h)
+dist_installed_evascanvasheaders_DATA = lib/evas/canvas/evas_textblock_legacy.h
 noinst_DATA += $(evas_eolian_priv_h)
 
 noinst_HEADERS += \

@@ -4,21 +4,6 @@ class Efl.Canvas.Text (Evas.Object, Efl.Text)
 {
    legacy_prefix: evas_object_textblock;
    methods {
-      @property valign {
-         [[The vertical alignment of text within the textblock object as a whole.
-
-           Normally alignment is 0.0 (top of object). Values given should
-           be between 0.0 and 1.0 (1.0 bottom of object, 0.5 being
-           vertically centered etc.).
-
-           @since 1.1
-         ]]
-         set {}
-         get {}
-         values {
-            align: double; [[The alignment set for the object.]]
-         }
-      }
       @property bidi_delimiters {
          [[BiDi delimiters are used for in-paragraph separation of bidi
            segments. This is useful for example in recipients fields of
@@ -33,14 +18,6 @@ class Efl.Canvas.Text (Evas.Object, Efl.Text)
             delim: string; [[A null terminated string of delimiters, e.g ",|" or $null if empty.]]
          }
       }
-      @property replace_char {
-         [[The "replacement character" to use for the given textblock object.]]
-         set {}
-         get {}
-         values {
-            ch: string; [[The charset name.]]
-         }
-      }
       @property legacy_newline {
          [[When true, newline character will behave as a paragraph separator.
 
@@ -53,15 +30,27 @@ class Efl.Canvas.Text (Evas.Object, Efl.Text)
          }
       }
       @property style {
-         [[The text style of the object]]
+         [[The text style of the object.
+
+           $key is how you reference the style (for deletion or fetching). $NULL
+           as key indicates the style has the highest priority (default style).
+           The style priority is the order of creation, styles created first
+           are applied first with the exception of $NULL which is implicitly
+           first.
+
+           Set $style to $NULL to delete it.
+         ]]
          set {
             legacy: null;
          }
          get {
             legacy: null;
          }
+         keys {
+            key: string; [[The name to the style. $NULL is the default style]]
+         }
          values {
-            ts: string; [[The style.]]
+            style: string; [[The style.]]
          }
       }
       @property size_formatted {
@@ -127,42 +116,13 @@ class Efl.Canvas.Text (Evas.Object, Efl.Text)
             b: Evas.Coord;
          }
       }
-      style_user_pop {
-         [[Del the from the top of the user style stack.
-
-           See also @.style.get.
-
-           @since 1.2
-         ]]
-         legacy: null;
-      }
-      style_user_peek @const {
-         [[Get (don't remove) the style at the top of the user style stack.
-
-           See also @.style.get.
-
-           @since 1.2
-         ]]
-         legacy: null;
-         return: string; [[The style of the object.]]
-      }
-      style_user_push {
-         [[Push ts to the top of the user style stack.
-
-           FIXME: API is solid but currently only supports 1 style in the
-           stack.
-
-           The user style overrides the corresponding elements of the
-           regular style. This is the proper way to do theme overrides
-           in code.
-
-           See also @.style.set.
-
-           @since 1.2
-         ]]
-         legacy: null;
-         params {
-            @in style: string; [[The style to set.]]
+      @property is_empty {
+         [[Whether the object is empty (no text) or not]]
+         get {
+            legacy: null;
+         }
+         values {
+            is_empty: bool; [[$true if empty]]
          }
       }
       obstacle_add {
@@ -229,7 +189,7 @@ class Efl.Canvas.Text (Evas.Object, Efl.Text)
             format: string;
          }
       }
-      annotation_in_range_get {
+      range_annotations_get {
          [[Returns an iterator of all the handles in a range.
 
            @since 1.18
@@ -308,6 +268,30 @@ class Efl.Canvas.Text (Evas.Object, Efl.Text)
             @in start: Efl.Canvas.Text.Cursor; [[Range start position.]]
             @in end: Efl.Canvas.Text.Cursor; [[Range end position.]]
          }
+      }
+      range_text_get {
+         [[Returns the text in the range between $cur1 and $cur2.]]
+         legacy: null;
+         return: own(char*); [[The text in the given range.]]
+         params {
+            @in cur1: const(Efl.Canvas.Text.Cursor); [[Range start position.]]
+            @in cur2: const(Efl.Canvas.Text.Cursor); [[Range end position.]]
+         }
+      }
+      object_item_geometry_get {
+         [[Queries a given object item for its geometry
+
+           Note that the provided annotation should be an object item type.
+         ]]
+         legacy: null;
+         params {
+            @in an: const(Efl.Canvas.Text.Annotation)*; [[Given annotation to query]]
+            @out x: Evas.Coord;
+            @out y: Evas.Coord;
+            @out w: Evas.Coord;
+            @out h: Evas.Coord;
+         }
+         return: bool; [[$true if given annotation is an object item, $false otherwise]]
       }
    }
    implements {
