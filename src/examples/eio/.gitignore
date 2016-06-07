@@ -1,2 +1,6 @@
 /eio_file_copy
 /eio_file_ls
+/eio_job_ls
+/eio_job_open
+/eio_job_open_multi
+/eio_sentry
