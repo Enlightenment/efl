@@ -1424,7 +1424,7 @@ static void
 _on_text_activated_set_path_then_error(void *data, Eina_Error err EINA_UNUSED)
 {
    Evas_Object *fs = data;
-   Efl_Model *model = eo_key_data_get(fs, _text_activated_model_key);
+   /* Efl_Model *model = eo_key_data_get(fs, _text_activated_model_key); */
    Eina_Stringshare *str = eo_key_data_get(fs, _text_activated_path_key);
 
    // EVENTS: should not call legacy
