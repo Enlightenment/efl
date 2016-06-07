@@ -119,7 +119,7 @@ src/lib/elementary/elm_dbus_menu.c
 src/lib/elementary/elm_diskselector.c
 src/lib/elementary/elm_entry.c
 src/lib/elementary/elm_factory.c
-src/lib/elementary/elm_flip.c
+src/lib/elementary/efl_ui_flip.c
 src/lib/elementary/elm_flipselector.c
 src/lib/elementary/elm_font.c
 src/lib/elementary/elm_frame.c
