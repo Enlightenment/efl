@@ -275,6 +275,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
           }
 #undef EV_CASE
 
+        if (pevflags) efl_event_flags_set(eo_event_info, *pevflags);
         eo_event_callback_call(eo_obj, eo_event_desc, eo_event_info);
         if (pevflags) *pevflags = efl_event_flags_get(eo_event_info);
      }

@@ -2716,6 +2716,7 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
                }
           }
      }
+   if (!ke) EV_DEL(eo_event_info);
    if ((e->focused) && (!exclusive))
      {
         Evas_Object_Protected_Data *focused_obj = eo_data_scope_get(e->focused, EVAS_OBJECT_CLASS);
@@ -2736,6 +2737,8 @@ _canvas_event_feed_key_down_internal(Eo *eo_e,
         ke->modifiers = NULL;
         ke->locks = NULL;
      }
+   else
+     EV_DEL(eo_event_info);
 }
 
 static void
