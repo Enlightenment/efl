@@ -7760,7 +7760,7 @@ edje_edit_state_map_perspective_zplane_set(Evas_Object *obj, const char *part, c
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EAPI int
 edje_edit_state_map_perspective_zplane_get(Evas_Object *obj, const char *part, const char *state, double value)
 {
    GET_PD_OR_RETURN(EINA_FALSE);
@@ -7779,7 +7779,7 @@ edje_edit_state_map_perspective_focal_set(Evas_Object *obj, const char *part, co
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EAPI int
 edje_edit_state_map_perspective_focal_get(Evas_Object *obj, const char *part, const char *state, double value)
 {
    GET_PD_OR_RETURN(EINA_FALSE);
@@ -14868,18 +14868,6 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
         if (color_2)
           BUF_APPENDF(I5 "color2: %d %d %d %d;\n",
                       pd->color2.r, pd->color2.g, pd->color2.b, pd->color2.a);
-     }
-
-   if ((pd->persp.zplane != 0) || (pd->persp.focal != 1000))
-     {
-        BUF_APPEND(I5 "perspective {\n");
-
-        if (pd->persp.zplane != 0)
-          BUF_APPENDF(I6 "zplane: %d;\n", pd->persp.zplane);
-        if (pd->persp.focal != 1000)
-          BUF_APPENDF(I6 "focal: %d;\n", pd->persp.focal);
-
-        BUF_APPEND(I5 "}\n");
      }
 
    //Box
