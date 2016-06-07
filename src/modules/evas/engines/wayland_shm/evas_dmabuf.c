@@ -629,7 +629,7 @@ _evas_dmabuf_surface_destroy(Surface *s)
 Eina_Bool
 _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
 {
-   Dmabuf_Surface *surf;
+   Dmabuf_Surface *surf = NULL;
    int i = 0;
 
    if (dmabuf_totally_hosed) return EINA_FALSE;
@@ -672,6 +672,6 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    return EINA_TRUE;
 
 err:
-   _fallback(surf, w, h);
+   if (surf) _fallback(surf, w, h);
    return EINA_FALSE;
 }
