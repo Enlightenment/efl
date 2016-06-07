@@ -534,7 +534,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_win_legacy.h \
 	lib/elementary/elm_win_standard.h \
 	lib/elementary/elm_helper.h \
-	lib/elementary/efl_ui_box_private.h \
 	lib/elementary/elm_part_helper.h \
 	$(NULL)
 
@@ -676,6 +675,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_box.c \
 	lib/elementary/efl_ui_box_flow.c \
 	lib/elementary/efl_ui_box_layout.c \
+	lib/elementary/efl_ui_box_private.h \
 	lib/elementary/efl_ui_grid.c \
 	$(NULL)
 
