@@ -6,47 +6,6 @@
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"
 
-static const Eo_Event_Description *_efl_event_desc_table[EVAS_CALLBACK_LAST] =
-{
-   EFL_EVENT_POINTER_IN,
-   EFL_EVENT_POINTER_OUT,
-   EFL_EVENT_POINTER_DOWN,
-   EFL_EVENT_POINTER_UP,
-   EFL_EVENT_POINTER_MOVE,
-   EFL_EVENT_POINTER_WHEEL,
-   EFL_EVENT_POINTER_DOWN,
-   EFL_EVENT_POINTER_UP,
-   EFL_EVENT_POINTER_MOVE,
-   NULL, // EVAS_OBJECT_EVENT_FREE,
-   EFL_EVENT_KEY_DOWN,
-   EFL_EVENT_KEY_UP,
-   NULL, // EVAS_OBJECT_EVENT_FOCUS_IN,
-   NULL, // EVAS_OBJECT_EVENT_FOCUS_OUT,
-   NULL, // EVAS_OBJECT_EVENT_SHOW,
-   NULL, // EVAS_OBJECT_EVENT_HIDE,
-   NULL, // EVAS_OBJECT_EVENT_MOVE,
-   NULL, // EVAS_OBJECT_EVENT_RESIZE,
-   NULL, // EVAS_OBJECT_EVENT_RESTACK,
-   NULL, // EVAS_OBJECT_EVENT_DEL,
-   NULL, // EVAS_OBJECT_EVENT_HOLD,
-   NULL, // EVAS_OBJECT_EVENT_CHANGED_SIZE_HINTS,
-   NULL, // EVAS_OBJECT_EVENT_IMAGE_PRELOADED,
-   NULL, // EVAS_CANVAS_EVENT_FOCUS_IN,
-   NULL, // EVAS_CANVAS_EVENT_FOCUS_OUT,
-   NULL, // EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE,
-   NULL, // EVAS_CANVAS_EVENT_RENDER_FLUSH_POST,
-   NULL, // EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN,
-   NULL, // EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT,
-   NULL, // EVAS_OBJECT_EVENT_IMAGE_UNLOADED,
-   NULL, // EVAS_CANVAS_EVENT_RENDER_PRE,
-   NULL, // EVAS_CANVAS_EVENT_RENDER_POST,
-   NULL, // EVAS_OBJECT_EVENT_IMAGE_RESIZE,
-   NULL, // EVAS_CANVAS_EVENT_DEVICE_CHANGED,
-   NULL, // EVAS_CANVAS_EVENT_AXIS_UPDATE,
-   NULL, // EVAS_CANVAS_EVENT_VIEWPORT_RESIZE
-};
-
-
 static Eina_List *
 _evas_event_object_list_in_get(Evas *eo_e, Eina_List *in,
                                const Eina_Inlist *list, Evas_Object *stop,
@@ -135,11 +94,40 @@ _efl_event_create(Efl_Event *evt, Evas_Callback_Type type, void *ev,
    return evt;
 }
 
+static inline const Eo_Event_Description *
+_efl_event_desc_get(Evas_Callback_Type type)
+{
+   switch (type)
+     {
+      case EVAS_CALLBACK_MOUSE_IN:
+        return EFL_EVENT_POINTER_IN;
+      case EVAS_CALLBACK_MOUSE_OUT:
+        return EFL_EVENT_POINTER_OUT;
+      case EVAS_CALLBACK_MOUSE_DOWN:
+      case EVAS_CALLBACK_MULTI_DOWN:
+        return EFL_EVENT_POINTER_DOWN;
+      case EVAS_CALLBACK_MOUSE_UP:
+      case EVAS_CALLBACK_MULTI_UP:
+        return EFL_EVENT_POINTER_UP;
+      case EVAS_CALLBACK_MOUSE_MOVE:
+      case EVAS_CALLBACK_MULTI_MOVE:
+        return EFL_EVENT_POINTER_MOVE;
+      case EVAS_CALLBACK_MOUSE_WHEEL:
+        return EFL_EVENT_POINTER_WHEEL;
+      case EVAS_CALLBACK_KEY_DOWN:
+        return EFL_EVENT_KEY_DOWN;
+      case EVAS_CALLBACK_KEY_UP:
+        return EFL_EVENT_KEY_UP;
+      default:
+        return NULL;
+     }
+}
+
 #define EV_CALL(_eo_obj, _obj, _typ, _info, _id, _eoev, _parent_ev) do { \
    Efl_Event_Flags *_info_pflags = NULL; \
    _eoev = _efl_event_create(_eoev, _typ, _info, _parent_ev, &_info_pflags); \
    evas_object_event_callback_call(_eo_obj, _obj, _typ, _info, _id, \
-                                   _efl_event_desc_table[_typ], _eoev); \
+                                   _efl_event_desc_get(_typ), _eoev); \
    if (_info_pflags) *_info_pflags = efl_event_flags_get(_eoev); \
    } while (0)
 #define EV_RESET(a) do { if (a) efl_event_reset(a); } while (0)
