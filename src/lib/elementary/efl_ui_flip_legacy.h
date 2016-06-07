@@ -1,3 +1,4 @@
+#include "efl_ui_flip.eo.legacy.h"
 
 typedef Efl_Ui_Flip_Interaction       Elm_Flip_Interaction;
 
@@ -120,5 +121,3 @@ EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
  * @ingroup Elm_Flip
  */
 EAPI void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y);
-
-#include "efl_ui_flip.eo.legacy.h"
