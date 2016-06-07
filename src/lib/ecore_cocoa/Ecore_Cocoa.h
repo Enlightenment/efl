@@ -433,6 +433,10 @@ EAPI void ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
 
 /**
  * Set the content view of a Cocoa window
+ *
+ * Refer to Apple's documentation of the property 'contentView' of
+ * the NSWindow class for more details about the content view.
+ *
  * @param window The Cocoa window which internal view is to be set
  * @param view The NSView to be set as @c window content view
  */
