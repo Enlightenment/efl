@@ -21,9 +21,9 @@ static char * __eolian_class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, ch
 
 EOAPI EO_FUNC_BODYV(evas_obj_simple_foo, char *, NULL, EO_FUNC_CALL(a, b, c, d), int a, char *b, double *c, int *d);
 
-int _class_simple_bar(Eo *obj, Evas_Simple_Data *pd, int x);
+int * _class_simple_bar(Eo *obj, Evas_Simple_Data *pd, int x);
 
-EOAPI EO_FUNC_BODYV(evas_obj_simple_bar, int, 0, EO_FUNC_CALL(x), int x);
+EOAPI EO_FUNC_BODYV(evas_obj_simple_bar, int *, 0, EO_FUNC_CALL(x), int x);
 
 static const Eo_Op_Description _class_simple_op_desc[] = {
      EO_OP_FUNC(evas_obj_simple_a_set, _class_simple_a_set),

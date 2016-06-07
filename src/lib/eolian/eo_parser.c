@@ -972,7 +972,8 @@ typedef struct _Eo_Ret_Def
    Eolian_Type *type;
    Eolian_Documentation *doc;
    Eolian_Expression *default_ret_val;
-   Eina_Bool warn_unused:1;
+   Eina_Bool warn_unused: 1;
+   Eina_Bool is_ref: 1;
 } Eo_Ret_Def;
 
 static void
@@ -987,6 +988,7 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void)
    ret->doc = NULL;
    ret->default_ret_val = NULL;
    ret->warn_unused = EINA_FALSE;
+   ret->is_ref = EINA_FALSE;
    if (ls->t.token == '(')
      {
         int line = ls->line_number, col = ls->column;
@@ -996,11 +998,23 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void)
         ls->expr_mode = EINA_FALSE;
         check_match(ls, ')', '(', line, col);
      }
-   if (ls->t.kw == KW_at_warn_unused)
+   Eina_Bool has_warn_unused = EINA_FALSE, has_ref = EINA_FALSE;
+   for (;;) switch (ls->t.kw)
      {
+      case KW_at_warn_unused:
+        CASE_LOCK(ls, warn_unused, "warn_unused qualifier");
         ret->warn_unused = EINA_TRUE;
         eo_lexer_get(ls);
+        break;
+      case KW_at_ref:
+        CASE_LOCK(ls, ref, "ref qualifier");
+        ret->is_ref = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      default:
+        goto end;
      }
+end:
    check_next(ls, ';');
    FILL_DOC(ls, ret, doc);
 }
@@ -1175,6 +1189,7 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
              prop->get_return_doc = ret.doc;
              prop->get_ret_val = ret.default_ret_val;
              prop->get_return_warn_unused = ret.warn_unused;
+             prop->get_return_is_ref = ret.is_ref;
           }
         else
           {
@@ -1182,6 +1197,7 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
              prop->set_return_doc = ret.doc;
              prop->set_ret_val = ret.default_ret_val;
              prop->set_return_warn_unused = ret.warn_unused;
+             prop->set_return_is_ref = ret.is_ref;
           }
         break;
       case KW_legacy:
@@ -1388,6 +1404,7 @@ body:
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = ret.default_ret_val;
         meth->get_return_warn_unused = ret.warn_unused;
+        meth->get_return_is_ref = ret.is_ref;
         break;
       case KW_legacy:
         CASE_LOCK(ls, legacy, "legacy name")

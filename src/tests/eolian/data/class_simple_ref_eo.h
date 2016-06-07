@@ -64,7 +64,7 @@ EOAPI void evas_obj_simple_b_set(Eo *obj);
 EOAPI char *evas_obj_simple_foo(Eo *obj, int a, char *b, double *c, int *d);
 #endif
 
-EOAPI int evas_obj_simple_bar(Eo *obj, int x);
+EOAPI int *evas_obj_simple_bar(Eo *obj, int x);
 
 
 #endif

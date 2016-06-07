@@ -71,6 +71,7 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
 
    _class_func_env_create(class, eolian_function_name_get(func), ftype, &func_env);
    rettypet = eolian_function_return_type_get(func, ftype);
+   Eina_Bool add_rstar = eolian_function_return_is_ref(func, ftype);
    if (ftype == EOLIAN_PROP_GET && !rettypet)
      {
         itr = eolian_property_values_get(func, ftype);
@@ -143,7 +144,7 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
         eina_iterator_free(itr);
      }
 
-   if (rettypet) rettype = eolian_type_c_type_get(rettypet);
+   if (rettypet) rettype = _get_rettype(rettypet, add_rstar);
 
    eina_strbuf_replace_all(str_func, "@#rettype", rettype ? rettype : "void");
    if (!rettype || rettype[strlen(rettype) - 1] != '*')
@@ -317,6 +318,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    Eina_Strbuf *params_init = eina_strbuf_new(); /* init of variables to default */
 
    rettypet = eolian_function_return_type_get(funcid, ftype);
+   Eina_Bool add_rstar = eolian_function_return_is_ref(funcid, ftype);
    if (rettypet)
      {
         is_auto = EINA_FALSE; /* We block auto when the function has to return something */
@@ -448,7 +450,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         eina_iterator_free(itr);
      }
 
-   if (rettypet) rettype = eolian_type_c_type_get(rettypet);
+   if (rettypet) rettype = _get_rettype(rettypet, add_rstar);
 
    if (need_implementation)
      {

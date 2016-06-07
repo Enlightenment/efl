@@ -53,6 +53,6 @@ EAPI void evas_object_simple_b_set(Class_Simple *obj);
  * @ingroup Class_Simple
  */
 EAPI char *evas_object_simple_foo(Class_Simple *obj, int a, char *b, double *c, int *d);
-EAPI int evas_object_simple_bar(Class_Simple *obj, int x);
+EAPI int *evas_object_simple_bar(Class_Simple *obj, int x);
 
 #endif

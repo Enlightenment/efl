@@ -153,3 +153,14 @@ _get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Dir pdir)
      }
    return "";
 }
+
+Eina_Stringshare *
+_get_rettype(const Eolian_Type *tp, Eina_Bool add_star)
+{
+   Eina_Stringshare *rtp = eolian_type_c_type_get(tp);
+   if (!add_star || !rtp) return rtp;
+   char buf[1024];
+   snprintf(buf, sizeof(buf), "%s%s", rtp, (rtp[strlen(rtp) - 1] == '*') ? "*" : " *");
+   eina_stringshare_del(rtp);
+   return eina_stringshare_add(buf);
+}

@@ -969,6 +969,20 @@ EAPI const Eolian_Documentation *eolian_function_return_documentation_get(const 
 EAPI Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
+ * @brief Indicates if a function returns a ref (pointer).
+ *
+ * @param[in] function_id id of the function
+ * @param[in] ftype type of the function
+ * @return EINA_TRUE is ref return, EINA_FALSE otherwise.
+ *
+ * The type of the function is needed because a given function can represent a
+ * property, that can be set and get functions.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_function_return_is_ref(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+
+/*
  * @brief Indicates if a function object is const.
  *
  * @param[in] function_id id of the function
