@@ -1,3 +1,5 @@
+#define EFL_GFX_SIZE_HINT_PROTECTED
+
 #include "efl_ui_box_private.h"
 
 // FIXME: Aspect support is not implemented
@@ -10,8 +12,6 @@ struct _Item_Calc
    Evas_Object *obj;
    double weight[2];
    double align[2];
-   int min[2];
-   int req[2];
    int max[2];
    int pad[4];
    int want[2];
@@ -36,7 +36,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    Eina_Bool box_fill[2] = { EINA_FALSE, EINA_FALSE };
 
    evas_object_geometry_get(ui_box, &boxx, &boxy, &boxw, &boxh);
-   evas_object_size_hint_padding_get(ui_box, &boxl, &boxr, &boxt, &boxb);
+   efl_gfx_size_hint_margin_get(ui_box, &boxl, &boxr, &boxt, &boxb);
    scale = evas_object_scale_get(ui_box);
 
    // Box align: used if "item has max size and fill" or "no item has a weight"
@@ -72,33 +72,30 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         item = &items[id];
         o = item->obj = opt->obj;
 
-        evas_object_size_hint_weight_get(o, &item->weight[0], &item->weight[1]);
+        efl_gfx_size_hint_weight_get(o, &item->weight[0], &item->weight[1]);
+        efl_gfx_size_hint_align_get(o, &item->align[0], &item->align[1]);
+        efl_gfx_size_hint_margin_get(o, &item->pad[0], &item->pad[1], &item->pad[2], &item->pad[3]);
+        efl_gfx_size_hint_max_get(o, &item->max[0], &item->max[1]);
+        efl_gfx_size_hint_combined_min_get(o, &item->want[0], &item->want[1]);
+
         if (item->weight[0] < 0) item->weight[0] = 0;
         if (item->weight[1] < 0) item->weight[1] = 0;
 
-        evas_object_size_hint_align_get(o, &item->align[0], &item->align[1]);
         if (item->align[0] < 0) item->align[0] = -1;
         if (item->align[1] < 0) item->align[1] = -1;
         if (item->align[0] > 1) item->align[0] = 1;
         if (item->align[1] > 1) item->align[1] = 1;
 
-        evas_object_size_hint_padding_get(o, &item->pad[0], &item->pad[1], &item->pad[2], &item->pad[3]);
-        evas_object_size_hint_min_get(o, &item->min[0], &item->min[1]);
-        if (item->min[0] < 0) item->min[0] = 0;
-        if (item->min[1] < 0) item->min[1] = 0;
+        if (item->want[0] < 0) item->want[0] = 0;
+        if (item->want[1] < 0) item->want[1] = 0;
 
-        evas_object_size_hint_max_get(o, &item->max[0], &item->max[1]);
         if (item->max[0] <= 0) item->max[0] = INT_MAX;
         if (item->max[1] <= 0) item->max[1] = INT_MAX;
-        if (item->max[0] < item->min[0]) item->max[0] = item->min[0];
-        if (item->max[1] < item->min[1]) item->max[1] = item->min[1];
+        if (item->max[0] < item->want[0]) item->max[0] = item->want[0];
+        if (item->max[1] < item->want[1]) item->max[1] = item->want[1];
 
-        evas_object_size_hint_request_get(o, &item->req[0], &item->req[1]);
-        if (item->req[0] < 0) item->req[0] = 0;
-        if (item->req[1] < 0) item->req[1] = 0;
-
-        item->want[0] = MAX(item->req[0], item->min[0]) + item->pad[0] + item->pad[1];
-        item->want[1] = MAX(item->req[1], item->min[1]) + item->pad[2] + item->pad[3];
+        item->want[0] += item->pad[0] + item->pad[1];
+        item->want[1] += item->pad[2] + item->pad[3];
 
         weight[0] += item->weight[0];
         weight[1] += item->weight[1];
