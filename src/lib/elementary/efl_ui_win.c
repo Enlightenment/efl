@@ -5049,19 +5049,19 @@ _efl_ui_win_screen_constrain_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_efl_screen_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *w, int *h)
+_efl_ui_win_efl_screen_screen_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *w, int *h)
 {
    ecore_evas_screen_geometry_get(sd->ee, NULL, NULL, w, h);
 }
 
 EOLIAN static void
-_efl_ui_win_efl_screen_dpi_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *xdpi, int *ydpi)
+_efl_ui_win_efl_screen_screen_dpi_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *xdpi, int *ydpi)
 {
    ecore_evas_screen_dpi_get(sd->ee, xdpi, ydpi);
 }
 
 EOLIAN static int
-_efl_ui_win_efl_screen_rotation_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_screen_screen_rotation_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    //TODO: query to wm about device's rotation
    (void)sd;

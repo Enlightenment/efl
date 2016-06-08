@@ -2,7 +2,7 @@ import eina_types;
 
 interface Efl.Screen {
    methods {
-      @property size {
+      @property screen_size {
          get {
             [[Get screen geometry details for the screen that a window is on.]]
          }
@@ -11,7 +11,7 @@ interface Efl.Screen {
             h: int; [[Where to return the height value. May be $null.]]
          }
       }
-      @property rotation {
+      @property screen_rotation {
          get {
             [[Get the rotation of the screen.
 
@@ -23,7 +23,7 @@ interface Efl.Screen {
             rotation: int; [[The degree of the screen.]]
          }
       }
-      @property dpi {
+      @property screen_dpi {
          get {
             [[Get screen dpi for the screen that a window is on.
 

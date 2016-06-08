@@ -787,9 +787,9 @@ class Efl.Ui.Win (Elm.Widget, Elm.Interface.Atspi.Window,
       Efl.Pack.pack;
       Efl.Input.State.modifier_enabled.get;
       Efl.Input.State.lock_enabled.get;
-      Efl.Screen.dpi.get;
-      Efl.Screen.rotation.get;
-      Efl.Screen.size.get;
+      Efl.Screen.screen_dpi.get;
+      Efl.Screen.screen_rotation.get;
+      Efl.Screen.screen_size.get;
       Efl.Gfx.Size.Hint.hint_base.set;
       Efl.Gfx.Size.Hint.hint_base.get;
       Efl.Gfx.Size.Hint.hint_step.set;
