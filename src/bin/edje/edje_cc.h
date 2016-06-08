@@ -257,6 +257,9 @@ int get_param_index(char *str);
 void color_tree_root_free(void);
 void convert_color_code(char *str, int *r, int *g, int *b, int *a);
 
+Svg_Node* _svg_load(Eina_File *f, const char *key EINA_UNUSED);
+
+
 /* global vars */
 extern Eina_List             *ext_dirs;
 extern Eina_List             *img_dirs;

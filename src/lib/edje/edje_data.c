@@ -83,6 +83,414 @@ Eet_Data_Descriptor *_edje_edd_edje_map_colors_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_filter = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_filter_directory = NULL;
 
+Eet_Data_Descriptor *_edje_edd_edje_rect_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_circle_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_ellipse_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_gradient_stops_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_linear_gradient_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_radial_gradient_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_style_gradient_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_style_property_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_matrix3_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_doc_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_defs_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_g_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_arc_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_path_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_polygon_node = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_vg_node = NULL;
+
+#define FREE_DESCRIPTOR(eed)                      \
+  if (eed)                              \
+    {                                   \
+       eet_data_descriptor_free((eed)); \
+       (eed) = NULL;                    \
+    }
+
+
+static inline Eet_Data_Descriptor*
+_eet_for_rect_node(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Rect_Node);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Rect_Node, "x", x, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Rect_Node, "y", y, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Rect_Node, "w", w, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Rect_Node, "h", h, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Rect_Node, "rx", rx, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Rect_Node, "ry", ry, EET_T_DOUBLE);
+   return eet;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_circle_node(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Circle_Node);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Circle_Node, "cx", cx, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Circle_Node, "cy", cy, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Circle_Node, "r", r, EET_T_DOUBLE);
+   return eet;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_ellipse_node(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Ellipse_Node);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Ellipse_Node, "cx", cx, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Ellipse_Node, "cy", cy, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Ellipse_Node, "rx", rx, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Ellipse_Node, "ry", ry, EET_T_DOUBLE);
+   return eet;
+}
+
+
+static inline Eet_Data_Descriptor*
+_eet_for_gradient_stops(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Efl_Gfx_Gradient_Stop);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Efl_Gfx_Gradient_Stop, "offset", offset, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Efl_Gfx_Gradient_Stop, "r", r, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Efl_Gfx_Gradient_Stop, "g", g, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Efl_Gfx_Gradient_Stop, "b", b, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Efl_Gfx_Gradient_Stop, "a", a, EET_T_INT);
+   return eet;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_linear_gradient(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Linear_Gradient);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Linear_Gradient, "x1", x1, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Linear_Gradient, "y1", y1, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Linear_Gradient, "x2", x2, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Linear_Gradient, "y2", y2, EET_T_DOUBLE);
+   return eet;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_radial_gradient(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Radial_Gradient);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Radial_Gradient, "cx", cx, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Radial_Gradient, "cy", cy, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Radial_Gradient, "fx", fx, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Radial_Gradient, "fy", fy, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Radial_Gradient, "r", r, EET_T_DOUBLE);
+   return eet;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_style_gradient(void)
+{
+   Eet_Data_Descriptor_Class eetc;
+
+   if (_edje_edd_edje_style_gradient_node) return _edje_edd_edje_style_gradient_node;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Style_Gradient);
+   _edje_edd_edje_style_gradient_node = eet_data_descriptor_stream_new(&eetc);
+   _edje_edd_edje_gradient_stops_node = _eet_for_gradient_stops();
+   _edje_edd_edje_linear_gradient_node = _eet_for_linear_gradient();
+   _edje_edd_edje_radial_gradient_node = _eet_for_radial_gradient();
+
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_style_gradient_node, Svg_Style_Gradient, "type", type, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_style_gradient_node, Svg_Style_Gradient, "id", id, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_style_gradient_node, Svg_Style_Gradient, "spread", spread, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_style_gradient_node, Svg_Style_Gradient, "stops", stops, _edje_edd_edje_gradient_stops_node);
+   EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_style_gradient_node, Svg_Style_Gradient, "radial", radial, _edje_edd_edje_radial_gradient_node);
+   EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_style_gradient_node, Svg_Style_Gradient, "linear", linear, _edje_edd_edje_linear_gradient_node);
+
+   return _edje_edd_edje_style_gradient_node;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_style_property(void)
+{
+   Eet_Data_Descriptor *eet, *eet_gradient, *eet_dash;
+   Eet_Data_Descriptor_Class eetc, eetc_dash;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Style_Property);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   eet_gradient = _eet_for_style_gradient();
+
+   eet_dash = eet_data_descriptor_stream_new(&eetc_dash);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet_dash, Efl_Gfx_Dash, "length", length, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet_dash, Efl_Gfx_Dash, "gap", gap, EET_T_DOUBLE);
+
+   // for fill
+   EET_DATA_DESCRIPTOR_ADD_SUB(eet, Svg_Style_Property, "fill.gradient", fill.gradient, eet_gradient);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.fill_rule", fill.fill_rule, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.r", fill.r, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.g", fill.g, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.b", fill.b, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.a", fill.a, EET_T_INT);
+
+   // for stroke
+   EET_DATA_DESCRIPTOR_ADD_SUB(eet, Svg_Style_Property, "stroke.gradient", stroke.gradient, eet_gradient);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.scale", stroke.scale, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.width", stroke.width, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.centered", stroke.centered, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.r", stroke.r, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.g", stroke.g, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.b", stroke.b, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.a", stroke.a, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.cap", stroke.cap, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.join", stroke.join, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(eet, Svg_Style_Property, "stroke.dash", stroke.dash, eet_dash);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.dash_count", stroke.dash_count, EET_T_INT);
+
+   return eet;
+}
+
+static Eet_Data_Descriptor*
+_eet_for_eina_matrix3(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Eina_Matrix3);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Eina_Matrix3, "xx", xx, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Eina_Matrix3, "xy", xy, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Eina_Matrix3, "xz", xz, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Eina_Matrix3, "yx", yx, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Eina_Matrix3, "yy", yy, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Eina_Matrix3, "yz", yz, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Eina_Matrix3, "zx", zx, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Eina_Matrix3, "zy", zy, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Eina_Matrix3, "zz", zz, EET_T_DOUBLE);
+
+   return eet;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_doc_node(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Doc_Node);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Doc_Node, "width", width, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Doc_Node, "height", height, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Doc_Node, "vx", vx, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Doc_Node, "vy", vy, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Doc_Node, "vw", vw, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Doc_Node, "vh", vh, EET_T_DOUBLE);
+   return eet;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_defs_node(void)
+{
+   Eet_Data_Descriptor *eet, *eet_gradient;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Defs_Node);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   eet_gradient = _eet_for_style_gradient();
+
+   EET_DATA_DESCRIPTOR_ADD_LIST(eet, Svg_Defs_Node, "gradients", gradients, eet_gradient);
+   return eet;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_g_node(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_G_Node);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   return eet;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_arc_node(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Arc_Node);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   return eet;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_polygon_node(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Polygon_Node);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC_VAR_ARRAY(eet, Svg_Polygon_Node, "points", points, EET_T_DOUBLE);
+   return eet;
+}
+
+static inline Eet_Data_Descriptor*
+_eet_for_path_node(void)
+{
+   Eet_Data_Descriptor *eet;
+   Eet_Data_Descriptor_Class eetc;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Path_Node);
+   eet = eet_data_descriptor_stream_new(&eetc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Path_Node, "path", path, EET_T_STRING);
+   return eet;
+}
+
+struct
+{
+   Svg_Node_Type u;
+   const char       *name;
+} eet_mapping[] = {
+   { SVG_NODE_DOC, "doc" },
+   { SVG_NODE_G, "g" },
+   { SVG_NODE_DEFS, "defs" },
+   { SVG_NODE_ARC, "arc" },
+   { SVG_NODE_CIRCLE, "circle" },
+   { SVG_NODE_ELLIPSE, "ellipse" },
+   { SVG_NODE_POLYGON, "polygon" },
+   { SVG_NODE_RECT, "rect" },
+   { SVG_NODE_PATH, "path" },
+   { SVG_NODE_UNKNOWN, NULL }
+};
+
+static const char *
+/* union
+   type_get() */
+_union_type_get(const void *data,
+                Eina_Bool  *unknow)
+{
+   const Svg_Node_Type *u = data;
+   int i;
+
+   if (unknow)
+     *unknow = EINA_FALSE;
+
+   for (i = 0; eet_mapping[i].name != NULL; ++i)
+     if (*u == eet_mapping[i].u)
+       return eet_mapping[i].name;
+
+   if (unknow)
+     *unknow = EINA_TRUE;
+   return NULL;
+} /* _union_type_get */
+
+static Eina_Bool
+_union_type_set(const char *type,
+                void       *data,
+                Eina_Bool   unknow)
+{
+   Svg_Node_Type *u = data;
+   int i;
+
+   if (unknow)
+     return EINA_FALSE;
+
+   for (i = 0; eet_mapping[i].name != NULL; ++i)
+     if (strcmp(eet_mapping[i].name, type) == 0)
+       {
+          *u = eet_mapping[i].u;
+          return EINA_TRUE;
+       }
+   return EINA_FALSE;
+} /* _union_type_set */
+
+EAPI Eet_Data_Descriptor *
+_edje_svg_node_eet(void)
+{
+   Eet_Data_Descriptor *eet_union;
+   Eet_Data_Descriptor_Class eetc;
+
+   if (_edje_edd_edje_vg_node) return _edje_edd_edje_vg_node;
+
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc, Svg_Node);
+   _edje_edd_edje_vg_node = eet_data_descriptor_stream_new(&eetc);
+
+   eetc.version = EET_DATA_DESCRIPTOR_CLASS_VERSION;
+   eetc.func.type_get = _union_type_get;
+   eetc.func.type_set = _union_type_set;
+   eet_union = eet_data_descriptor_stream_new(&eetc);
+
+   _edje_edd_edje_doc_node = _eet_for_doc_node();
+   _edje_edd_edje_g_node = _eet_for_g_node();
+   _edje_edd_edje_defs_node = _eet_for_defs_node();
+   _edje_edd_edje_arc_node = _eet_for_arc_node();
+   _edje_edd_edje_circle_node = _eet_for_circle_node();
+   _edje_edd_edje_ellipse_node = _eet_for_ellipse_node();
+   _edje_edd_edje_rect_node = _eet_for_rect_node();
+   _edje_edd_edje_path_node = _eet_for_path_node();
+   _edje_edd_edje_polygon_node = _eet_for_polygon_node();
+   _edje_edd_edje_style_property_node = _eet_for_style_property();
+   _edje_edd_edje_matrix3_node = _eet_for_eina_matrix3();
+
+
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "doc", _edje_edd_edje_doc_node);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "g", _edje_edd_edje_g_node);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "defs", _edje_edd_edje_defs_node);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "arc", _edje_edd_edje_arc_node);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "circle", _edje_edd_edje_circle_node);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "ellipse", _edje_edd_edje_ellipse_node);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "rect", _edje_edd_edje_rect_node);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "path", _edje_edd_edje_path_node);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "polygon", _edje_edd_edje_polygon_node);
+
+   EET_DATA_DESCRIPTOR_ADD_UNION(_edje_edd_edje_vg_node, Svg_Node, "node", node, type, eet_union);
+
+
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_vg_node, Svg_Node, "child", child, _edje_edd_edje_vg_node);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_vg_node, Svg_Node, "id", id, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_vg_node, Svg_Node, "style", style, _edje_edd_edje_style_property_node);
+   EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_vg_node, Svg_Node, "transform", transform, _edje_edd_edje_matrix3_node);
+
+   return _edje_edd_edje_vg_node;
+}
+
+EAPI void 
+_edje_svg_node_destroy_eet(void)
+{
+   FREE_DESCRIPTOR(_edje_edd_edje_rect_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_circle_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_ellipse_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_gradient_stops_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_linear_gradient_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_radial_gradient_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_style_gradient_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_style_property_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_matrix3_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_doc_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_defs_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_g_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_arc_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_path_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_polygon_node);
+   FREE_DESCRIPTOR(_edje_edd_edje_vg_node);
+}
+
 /* allocate a description struct.
  * this initializes clip_to_id as this field will not be present in most
  * edje files.
@@ -308,6 +716,7 @@ _edje_edd_shutdown(void)
 
    FREED(_edje_edd_edje_file);
    FREED(_edje_edd_edje_part_collection);
+   _edje_svg_node_destroy_eet();
 }
 
 #define EDJE_DEFINE_POINTER_TYPE(Type, Name)                                                                                         \
