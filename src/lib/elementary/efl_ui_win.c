@@ -208,7 +208,8 @@ struct _Efl_Ui_Win_Data
 
    void *trap_data;
 
-   double       aspect;
+   double       aspect; /* defined as w/h or 0 */
+   int          aspect_w, aspect_h; /* used for the get API */
    int          size_base_w, size_base_h;
    int          size_step_w, size_step_h;
    int          norender;
@@ -4766,8 +4767,8 @@ _efl_ui_win_modal_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
    return EFL_UI_WIN_MODAL_NONE;
 }
 
-EOLIAN static void
-_efl_ui_win_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, double aspect)
+static void
+_win_aspect_set(Efl_Ui_Win_Data *sd, double aspect)
 {
    sd->aspect = aspect;
    TRAP(sd, aspect_set, aspect);
@@ -4776,10 +4777,29 @@ _efl_ui_win_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, double aspect)
 #endif
 }
 
-EOLIAN static double
-_efl_ui_win_aspect_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+static double
+_win_aspect_get(Efl_Ui_Win_Data *sd)
 {
    return sd->aspect;
+}
+
+EOLIAN static void
+_efl_ui_win_efl_gfx_size_hint_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
+                                         Efl_Gfx_Size_Hint_Aspect mode EINA_UNUSED, int w, int h)
+{
+   pd->aspect_w = w;
+   pd->aspect_h = h;
+   if (h) _win_aspect_set(pd, (double) w / (double) h);
+   else _win_aspect_set(pd, 0.0);
+}
+
+EOLIAN static void
+_efl_ui_win_efl_gfx_size_hint_aspect_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
+                                         Efl_Gfx_Size_Hint_Aspect *mode, int *w, int *h)
+{
+   if (mode) *mode = EFL_GFX_SIZE_HINT_ASPECT_NONE;
+   if (w) *w = pd->aspect_w;
+   if (h) *h = pd->aspect_h;
 }
 
 EOLIAN static void
@@ -6487,6 +6507,23 @@ elm_win_main_menu_get(Evas_Object *obj)
 
 end:
    return sd->main_menu;
+}
+
+EAPI void
+elm_win_aspect_set(Eo *obj, double aspect)
+{
+   if (aspect > DBL_EPSILON)
+     efl_gfx_size_hint_aspect_set(obj, EFL_GFX_SIZE_HINT_ASPECT_NONE, 1000 * aspect, 1000);
+   else
+     efl_gfx_size_hint_aspect_set(obj, EFL_GFX_SIZE_HINT_ASPECT_NONE, 0, 0);
+}
+
+EAPI double
+elm_win_aspect_get(const Eo *obj)
+{
+   ELM_WIN_CHECK(obj) 0.0;
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, 0.0);
+   return _win_aspect_get(sd);
 }
 
 #include "efl_ui_win.eo.c"

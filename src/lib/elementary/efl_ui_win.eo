@@ -647,18 +647,6 @@ class Efl.Ui.Win (Elm.Widget, Elm.Interface.Atspi.Window,
                            $false otherwise.]]
          }
       }
-      @property aspect {
-         set {
-            [[Set the aspect ratio of a window.]]
-         }
-         get {
-            [[Get the aspect ratio of a window.]]
-         }
-         values {
-            aspect: double; [[If 0, the window has no aspect limits,
-                              otherwise it is width divided by height.]]
-         }
-      }
       socket_listen {
          [[Create a socket to provide the service for Plug widget.]]
          return: bool;
@@ -806,6 +794,8 @@ class Efl.Ui.Win (Elm.Widget, Elm.Interface.Atspi.Window,
       Efl.Gfx.Size.Hint.base.get;
       Efl.Gfx.Size.Hint.step.set;
       Efl.Gfx.Size.Hint.step.get;
+      Efl.Gfx.Size.Hint.aspect.set;
+      Efl.Gfx.Size.Hint.aspect.get;
       Efl.Text.text.set;
       Efl.Text.text.get;
    }

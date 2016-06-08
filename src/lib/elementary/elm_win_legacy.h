@@ -1071,3 +1071,19 @@ EAPI void elm_win_keyboard_mode_set(Elm_Win *obj, Elm_Win_Keyboard_Mode mode);
  * @ingroup Elm_Win
  */
 EAPI Elm_Win_Keyboard_Mode elm_win_keyboard_mode_get(const Elm_Win *obj);
+
+/**
+ * @brief Set the aspect ratio of a window.
+ *
+ * @param[in] aspect If 0, the window has no aspect limits, otherwise it is
+ * width divided by height.
+ */
+EAPI void elm_win_aspect_set(Elm_Win *obj, double aspect);
+
+/**
+ * @brief Get the aspect ratio of a window.
+ *
+ * @return If 0, the window has no aspect limits, otherwise it is width divided
+ * by height.
+ */
+EAPI double elm_win_aspect_get(const Elm_Win *obj);
