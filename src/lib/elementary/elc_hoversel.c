@@ -448,13 +448,12 @@ _on_clicked(void *data, const Eo_Event *event EINA_UNUSED)
    return EINA_TRUE;
 }
 
-static void
-_on_parent_del(void *data,
-               Evas *e EINA_UNUSED,
-               Evas_Object *obj EINA_UNUSED,
-               void *event_info EINA_UNUSED)
+static Eina_Bool
+_on_parent_del(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    elm_hoversel_hover_parent_set(data, NULL);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -551,15 +550,14 @@ _on_move_resize(void * data,
    _resizing_eval(obj, sd);
 }
 
-static void
-_on_parent_resize(void *data,
-                  Evas *e EINA_UNUSED,
-                  Evas_Object *parent_obj EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+static Eina_Bool
+_on_parent_resize(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    Evas_Object *obj = (Evas_Object *)data;
    ELM_HOVERSEL_DATA_GET(obj, sd);
    _on_move_resize(sd, NULL, obj, NULL);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -645,24 +643,22 @@ _elm_hoversel_eo_base_destructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
    eo_destructor(eo_super(obj, MY_CLASS));
 }
 
+EO_CALLBACKS_ARRAY_DEFINE(_on_parent,
+                          { EO_EVENT_DEL, _on_parent_del },
+                          { EVAS_OBJECT_EVENT_RESIZE, _on_parent_resize });
+
 EOLIAN static void
 _elm_hoversel_hover_parent_set(Eo *obj, Elm_Hoversel_Data *sd, Evas_Object *parent)
 {
    if (sd->hover_parent)
      {
-        evas_object_event_callback_del_full
-          (sd->hover_parent, EVAS_CALLBACK_DEL, _on_parent_del, obj);
-        evas_object_event_callback_del_full
-          (sd->hover_parent, EVAS_CALLBACK_RESIZE, _on_parent_resize, obj);
+        eo_event_callback_array_del(sd->hover_parent, _on_parent(), obj);
      }
 
    sd->hover_parent = parent;
    if (sd->hover_parent)
      {
-        evas_object_event_callback_add
-          (sd->hover_parent, EVAS_CALLBACK_DEL, _on_parent_del, obj);
-        evas_object_event_callback_add
-          (sd->hover_parent, EVAS_CALLBACK_RESIZE, _on_parent_resize, obj);
+        eo_event_callback_array_add(sd->hover_parent, _on_parent(), obj);
      }
 }
 
