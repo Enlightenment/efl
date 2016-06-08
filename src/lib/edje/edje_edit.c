@@ -6326,6 +6326,11 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
    pd->map.backcull = EINA_FALSE;
    pd->map.persp_on = EINA_FALSE;
    pd->persp.zplane = EINA_FALSE;
+   pd->map.zoom.x = FROM_DOUBLE(1.0);
+   pd->map.zoom.y = FROM_DOUBLE(1.0);
+   pd->align_3d.x = FROM_DOUBLE(0.5);
+   pd->align_3d.y = FROM_DOUBLE(0.5);
+   pd->align_3d.z = FROM_DOUBLE(0.5);
    pd->persp.focal = 1000;
 
    if (rp->part->type == EDJE_PART_TYPE_TEXT
