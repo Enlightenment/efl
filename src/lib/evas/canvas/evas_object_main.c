@@ -1132,6 +1132,19 @@ _evas_object_efl_gfx_size_hint_hint_content_min_set(Eo *eo_obj, Evas_Object_Prot
 }
 
 EOLIAN static void
+_evas_object_efl_gfx_size_hint_hint_combined_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
+{
+   if ((!obj->size_hints) || obj->delete_me)
+     {
+        if (w) *w = 0;
+        if (h) *h = 0;
+        return;
+     }
+   if (w) *w = MAX(obj->size_hints->min.w, obj->size_hints->request.w);
+   if (h) *h = MAX(obj->size_hints->min.h, obj->size_hints->request.h);
+}
+
+EOLIAN static void
 _evas_object_efl_gfx_size_hint_hint_max_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
 {
    if ((!obj->size_hints) || obj->delete_me)

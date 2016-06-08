@@ -121,6 +121,22 @@ interface Efl.Gfx.Size.Hint
             h: int; [[Integer to use as the minimum height hint.]]
          }
       }
+      @property hint_combined_min {
+         [[Read-only minimum size combining both @.hint_content_min and
+           @.hint_request size hints.
+
+           @.hint_content_min is intended for mostly internal usage
+           and widget developers, and @.hint_request is intended to be
+           set from application side. @.hint_combined_min combines both values
+           by taking their repective maximum (in both width and height), and
+           is used internally to get an object's minimum size.
+         ]]
+         get {}
+         values {
+            w: int; [[Integer to use as the minimum width hint.]]
+            h: int; [[Integer to use as the minimum height hint.]]
+         }
+      }
       @property hint_margin {
          [[Hints for an object's margin or padding space.
 
