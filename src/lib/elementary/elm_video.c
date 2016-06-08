@@ -373,49 +373,49 @@ _elm_video_is_playing_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_video_is_seekable_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
+_elm_video_efl_player_seekable_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
 {
    return emotion_object_seekable_get(sd->emotion);
 }
 
 EOLIAN static Eina_Bool
-_elm_video_audio_mute_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
+_elm_video_efl_player_audio_mute_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
 {
    return emotion_object_audio_mute_get(sd->emotion);
 }
 
 EOLIAN static void
-_elm_video_audio_mute_set(Eo *obj EINA_UNUSED, Elm_Video_Data *sd, Eina_Bool mute)
+_elm_video_efl_player_audio_mute_set(Eo *obj EINA_UNUSED, Elm_Video_Data *sd, Eina_Bool mute)
 {
    emotion_object_audio_mute_set(sd->emotion, mute);
 }
 
 EOLIAN static double
-_elm_video_audio_level_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
+_elm_video_efl_player_audio_volume_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
 {
    return emotion_object_audio_volume_get(sd->emotion);
 }
 
 EOLIAN static void
-_elm_video_audio_level_set(Eo *obj EINA_UNUSED, Elm_Video_Data *sd, double volume)
+_elm_video_efl_player_audio_volume_set(Eo *obj EINA_UNUSED, Elm_Video_Data *sd, double volume)
 {
    emotion_object_audio_volume_set(sd->emotion, volume);
 }
 
 EOLIAN static double
-_elm_video_play_position_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
+_elm_video_efl_player_position_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
 {
    return emotion_object_position_get(sd->emotion);
 }
 
 EOLIAN static void
-_elm_video_play_position_set(Eo *obj EINA_UNUSED, Elm_Video_Data *sd, double position)
+_elm_video_efl_player_position_set(Eo *obj EINA_UNUSED, Elm_Video_Data *sd, double position)
 {
    emotion_object_position_set(sd->emotion, position);
 }
 
 EOLIAN static double
-_elm_video_play_length_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
+_elm_video_efl_player_length_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
 {
    return emotion_object_play_length_get(sd->emotion);
 }
@@ -480,5 +480,52 @@ elm_video_file_get(Eo *obj, const char **filename)
    efl_file_get((Eo *) obj, filename, NULL);
 }
 
+EAPI void
+elm_video_audio_level_set(Evas_Object *obj, double volume)
+{
+   efl_player_audio_volume_set(obj, volume);
+}
+
+EAPI double
+elm_video_audio_level_get(const Evas_Object *obj)
+{
+   return efl_player_audio_volume_get(obj);
+}
+
+EAPI void
+elm_video_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
+{
+   efl_player_audio_mute_set(obj, mute);
+}
+
+EAPI Eina_Bool
+elm_video_audio_mute_get(const Evas_Object *obj)
+{
+   return efl_player_audio_mute_get(obj);
+}
+
+EAPI double
+elm_video_play_length_get(const Evas_Object *obj)
+{
+   return efl_player_length_get(obj);
+}
+
+EAPI Eina_Bool
+elm_video_is_seekable_get(const Evas_Object *obj)
+{
+   return efl_player_seekable_get(obj);
+}
+
+EAPI void
+elm_video_play_position_set(Evas_Object *obj, double position)
+{
+   efl_player_position_set(obj, position);
+}
+
+EAPI double
+elm_video_play_position_get(const Evas_Object *obj)
+{
+   return efl_player_position_get(obj);
+}
 
 #include "elm_video.eo.c"

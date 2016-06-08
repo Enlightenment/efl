@@ -1,19 +1,9 @@
-class Elm.Video (Elm.Layout, Efl.File, Elm.Interface.Atspi_Widget_Action)
+class Elm.Video (Elm.Layout, Efl.File,
+                 Efl.Player, Elm.Interface.Atspi_Widget_Action)
 {
    legacy_prefix: elm_video;
    eo_prefix: elm_obj_video;
    methods {
-      @property audio_level {
-         set {
-            [[Set the audio level of an Elm_Video object.]]
-         }
-         get {
-            [[Get the audio level of the current video.]]
-         }
-         values {
-            volume: double; [[The audio level.]]
-         }
-      }
       @property remember_position {
          set {
             [[Set whether the object can remember the last played position.
@@ -33,31 +23,6 @@ class Elm.Video (Elm.Layout, Efl.File, Elm.Interface.Atspi_Widget_Action)
             remember: bool; [[The value.]]
          }
       }
-      @property play_position {
-         set {
-            [[Set the current position (in seconds) to be played in the
-              Elm_Video object.]]
-         }
-         get {
-            [[Get the current position (in seconds) being played in the
-              Elm_Video object.]]
-         }
-         values {
-            position: double; [[The time (in seconds) since the beginning of
-                                the media file.]]
-         }
-      }
-      @property audio_mute {
-         set {
-            [[Change the mute state of the Elm_Video object.]]
-         }
-         get {
-            [[Get whether audio is muted.]]
-         }
-         values {
-            mute: bool; [[The mute state.]]
-         }
-      }
       @property is_playing {
          get {
             [[Is the video actually playing.
@@ -68,22 +33,10 @@ class Elm.Video (Elm.Layout, Efl.File, Elm.Interface.Atspi_Widget_Action)
             return: bool;
          }
       }
-      @property play_length {
-         get {
-            [[Get the total playing time (in seconds) of the Elm_Video object.]]
-            return: double; [[The total duration (in seconds) of the media file.]]
-         }
-      }
       @property emotion {
          get {
             [[Get the underlying Emotion object.]]
             return: Evas.Object; [[the underlying Emotion object.]]
-         }
-      }
-      @property is_seekable {
-         get {
-            [[Is it possible to seek inside the video.]]
-            return: bool; [[true if is possible to seek inside the video.]]
          }
       }
       @property title {
@@ -112,6 +65,11 @@ class Elm.Video (Elm.Layout, Efl.File, Elm.Interface.Atspi_Widget_Action)
       Eo.Base.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
+      Efl.Player.audio_volume;
+      Efl.Player.audio_mute;
+      Efl.Player.position;
+      Efl.Player.seekable.get;
+      Efl.Player.length.get;
       Evas.Object.Smart.add;
       Evas.Object.Smart.del;
       Elm.Widget.focus_next_manager_is;

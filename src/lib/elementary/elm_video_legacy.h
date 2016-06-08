@@ -60,4 +60,79 @@ EAPI Eina_Bool elm_video_file_set(Eo *obj, const char *filename);
  */
 EAPI void elm_video_file_get(Eo *obj, const char **filename);
 
+/**
+ * @brief Set the audio level of an Elm_Video object.
+ *
+ * @param[in] volume The audio level.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI void elm_video_audio_level_set(Evas_Object *obj, double volume);
+
+/**
+ * @brief Get the audio level of the current video.
+ *
+ * @return The audio level.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI double elm_video_audio_level_get(const Evas_Object *obj);
+
+/**
+ * @brief Change the mute state of the Elm_Video object.
+ *
+ * @param[in] mute The mute state.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI void elm_video_audio_mute_set(Evas_Object *obj, Eina_Bool mute);
+
+/**
+ * @brief Get whether audio is muted.
+ *
+ * @return The mute state.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI Eina_Bool elm_video_audio_mute_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the total playing time (in seconds) of the Elm_Video object.
+ *
+ * @return The total duration (in seconds) of the media file.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI double elm_video_play_length_get(const Evas_Object *obj);
+
+/**
+ * @brief Is it possible to seek inside the video.
+ *
+ * @return true if is possible to seek inside the video.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI Eina_Bool elm_video_is_seekable_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the current position (in seconds) to be played in the Elm_Video
+ * object.
+ *
+ * @param[in] position The time (in seconds) since the beginning of the media
+ * file.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI void elm_video_play_position_set(Evas_Object *obj, double position);
+
+/**
+ * @brief Get the current position (in seconds) being played in the Elm_Video
+ * object.
+ *
+ * @return The time (in seconds) since the beginning of the media file.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI double elm_video_play_position_get(const Evas_Object *obj);
+
 #include "elm_video.eo.legacy.h"
