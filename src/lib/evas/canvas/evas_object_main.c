@@ -1,4 +1,5 @@
 #define EVAS_OBJECT_PROTECTED
+#define EFL_GFX_SIZE_HINT_PROTECTED
 
 #include "evas_common_private.h"
 #include "evas_private.h"
@@ -1104,7 +1105,7 @@ _evas_object_size_hint_display_mode_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Prot
 }
 
 EOLIAN static void
-_evas_object_size_hint_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
+_evas_object_efl_gfx_size_hint_hint_content_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1117,7 +1118,7 @@ _evas_object_size_hint_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Dat
 }
 
 EOLIAN static void
-_evas_object_size_hint_min_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
+_evas_object_efl_gfx_size_hint_hint_content_min_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
 {
    if (obj->delete_me)
      return;
@@ -1131,7 +1132,7 @@ _evas_object_size_hint_min_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas
 }
 
 EOLIAN static void
-_evas_object_size_hint_max_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
+_evas_object_efl_gfx_size_hint_hint_max_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1144,7 +1145,7 @@ _evas_object_size_hint_max_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Dat
 }
 
 EOLIAN static void
-_evas_object_size_hint_max_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
+_evas_object_efl_gfx_size_hint_hint_max_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
 {
    if (obj->delete_me)
      return;
@@ -1158,7 +1159,7 @@ _evas_object_size_hint_max_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas
 }
 
 EOLIAN static void
-_evas_object_size_hint_request_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
+_evas_object_efl_gfx_size_hint_hint_request_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1171,7 +1172,7 @@ _evas_object_size_hint_request_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected
 }
 
 EOLIAN static void
-_evas_object_size_hint_request_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
+_evas_object_efl_gfx_size_hint_hint_request_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
 {
    if (obj->delete_me)
      return;
@@ -1215,7 +1216,7 @@ _evas_object_efl_gfx_size_hint_aspect_set(Eo *eo_obj, Evas_Object_Protected_Data
 }
 
 EOLIAN static void
-_evas_object_size_hint_align_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, double *x, double *y)
+_evas_object_efl_gfx_size_hint_hint_align_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, double *x, double *y)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1228,7 +1229,7 @@ _evas_object_size_hint_align_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_D
 }
 
 EOLIAN static void
-_evas_object_size_hint_align_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double x, double y)
+_evas_object_efl_gfx_size_hint_hint_align_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double x, double y)
 {
    if (obj->delete_me)
      return;
@@ -1242,7 +1243,7 @@ _evas_object_size_hint_align_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, do
 }
 
 EOLIAN static void
-_evas_object_size_hint_weight_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, double *x, double *y)
+_evas_object_efl_gfx_size_hint_hint_weight_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, double *x, double *y)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1255,7 +1256,7 @@ _evas_object_size_hint_weight_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_
 }
 
 EOLIAN static void
-_evas_object_size_hint_weight_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double x, double y)
+_evas_object_efl_gfx_size_hint_hint_weight_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double x, double y)
 {
    if (obj->delete_me)
      return;
@@ -1269,7 +1270,7 @@ _evas_object_size_hint_weight_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, d
 }
 
 EOLIAN static void
-_evas_object_size_hint_padding_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
+_evas_object_efl_gfx_size_hint_hint_margin_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1286,7 +1287,7 @@ _evas_object_size_hint_padding_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected
 }
 
 EOLIAN static void
-_evas_object_size_hint_padding_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b)
+_evas_object_efl_gfx_size_hint_hint_margin_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b)
 {
    if (obj->delete_me)
      return;
@@ -1726,11 +1727,11 @@ _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EI
    efl_gfx_position_get(eo_obj, &x, &y);
    efl_gfx_size_get(eo_obj, &w, &h);
    scale = evas_obj_scale_get(eo_obj);
-   evas_obj_size_hint_min_get(eo_obj, &minw, &minh);
-   evas_obj_size_hint_max_get(eo_obj, &maxw, &maxh);
-   evas_obj_size_hint_request_get(eo_obj, &requestw, &requesth);
-   evas_obj_size_hint_align_get(eo_obj, &dblx, &dbly);
-   evas_obj_size_hint_weight_get(eo_obj, &dblw, &dblh);
+   efl_gfx_size_hint_content_min_get(eo_obj, &minw, &minh);
+   efl_gfx_size_hint_max_get(eo_obj, &maxw, &maxh);
+   efl_gfx_size_hint_request_get(eo_obj, &requestw, &requesth);
+   efl_gfx_size_hint_align_get(eo_obj, &dblx, &dbly);
+   efl_gfx_size_hint_weight_get(eo_obj, &dblw, &dblh);
    efl_gfx_color_get(eo_obj, &r, &g, &b, &a);
    focus = evas_obj_focus_get(eo_obj);
    m = evas_obj_pointer_mode_get(eo_obj);
@@ -2145,5 +2146,76 @@ evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *as
    efl_gfx_size_hint_aspect_get(obj, aspect, w, h);
 }
 
-#include "canvas/evas_object.eo.c"
+EAPI void
+evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
+{
+   efl_gfx_size_hint_max_set(obj, w, h);
+}
 
+EAPI void
+evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+{
+   efl_gfx_size_hint_max_get(obj, w, h);
+}
+
+EAPI void
+evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
+{
+   efl_gfx_size_hint_request_set(obj, w, h);
+}
+
+EAPI void
+evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+{
+   efl_gfx_size_hint_request_get(obj, w, h);
+}
+
+EAPI void
+evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
+{
+   efl_gfx_size_hint_content_min_set(obj, w, h);
+}
+
+EAPI void
+evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+{
+   efl_gfx_size_hint_content_min_get(obj, w, h);
+}
+
+EAPI void
+evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b)
+{
+   efl_gfx_size_hint_margin_set(obj, l, r, t, b);
+}
+
+EAPI void
+evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
+{
+   efl_gfx_size_hint_margin_get(obj, l, r, t, b);
+}
+
+EAPI void
+evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y)
+{
+   efl_gfx_size_hint_weight_set(obj, x, y);
+}
+
+EAPI void
+evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, double *y)
+{
+   efl_gfx_size_hint_weight_get(obj, x, y);
+}
+
+EAPI void
+evas_object_size_hint_align_set(Evas_Object *obj, double x, double y)
+{
+   efl_gfx_size_hint_align_set(obj, x, y);
+}
+
+EAPI void
+evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y)
+{
+   efl_gfx_size_hint_align_get(obj, x, y);
+}
+
+#include "canvas/evas_object.eo.c"

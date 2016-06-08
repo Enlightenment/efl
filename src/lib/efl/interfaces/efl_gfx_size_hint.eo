@@ -3,6 +3,7 @@ import efl_gfx_types;
 interface Efl.Gfx.Size.Hint
 {
    methods {
+      /* FIXME prefix hint_ */
       @property base {
          set {
             [[Set the hint for an object's base size used with stepping calculation
@@ -22,6 +23,7 @@ interface Efl.Gfx.Size.Hint
             h: int; [[The base height.]]
          }
       }
+      /* FIXME prefix hint_ */
       @property step {
          set {
             [[Set the hint for an object stepping used with sizing calculation.
@@ -41,6 +43,7 @@ interface Efl.Gfx.Size.Hint
             h: int; [[The stepping height (0 disables).]]
          }
       }
+      /* FIXME prefix hint_ */
       @property aspect {
          [[Defines the aspect ratio to respect when scaling this object.
 
@@ -80,5 +83,152 @@ interface Efl.Gfx.Size.Hint
             */
          }
       }
+      @property hint_max {
+         [[Hints on the object's maximum size.
+
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
+
+           The object container is in charge of fetching this property and
+           placing the object accordingly.
+
+           Values -1 will be treated as unset hint components, when
+           queried by managers.
+
+           Note: Smart objects (such as elementary) can have their own
+           size hint policy. So calling this API may or may not affect
+           the size of smart objects.
+         ]]
+         values {
+            w: int; [[Integer to use as the maximum width hint.]]
+            h: int; [[Integer to use as the maximum height hint.]]
+         }
+      }
+      @property hint_request {
+         [[Hints for the object's optimum size.
+
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
+
+           Values 0 will be treated as unset hint components, when
+           queried by managers.
+
+           Note: This property is meant to be set by applications and not by
+           EFL itself. Use this to request a specific size (treated as minimum
+           size).
+         ]]
+         values {
+            w: int; [[Integer to use as the preferred width hint.]]
+            h: int; [[Integer to use as the preferred height hint.]]
+         }
+      }
+      @property hint_content_min @protected {
+         [[Internal hints for an object's minimum size.
+
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
+
+           Values 0 will be treated as unset hint components, when
+           queried by managers.
+
+           Note: This property is internal and meant for widget developers to
+           define the absolute minimum size of the object. EFL itself sets
+           this size internally, so any change to it from an application
+           might be ignored. Use @.hint_request instead.
+         ]]
+         values {
+            w: int; [[Integer to use as the minimum width hint.]]
+            h: int; [[Integer to use as the minimum height hint.]]
+         }
+      }
+      @property hint_margin {
+         [[Hints for an object's margin or padding space.
+
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
+
+           The object container is in charge of fetching this property and
+           placing the object accordingly.
+
+           Note: Smart objects (such as elementary) can have their own
+           size hint policy. So calling this API may or may not affect
+           the size of smart objects.
+         ]]
+         /*
+         @image html padding-hints.png
+         @image rtf padding-hints.png
+         @image latex padding-hints.eps
+         */
+         values {
+            l: int; [[Integer to specify left padding.]]
+            r: int; [[Integer to specify right padding.]]
+            t: int; [[Integer to specify top padding.]]
+            b: int; [[Integer to specify bottom padding.]]
+         }
+      }
+      @property hint_weight {
+         [[Hints for an object's weight.
+
+           This is a hint on how a container object should resize a given
+           child within its area. Containers may adhere to the simpler
+           logic of just expanding the child object's dimensions to fit
+           its own (see the #EVAS_HINT_EXPAND helper weight macro) or
+           the complete one of taking each child's weight hint as real
+           weights to how much of its size to allocate for them in each
+           axis. A container is supposed to, after normalizing the
+           weights of its children (with weight  hints), distribut
+           the space it has to layout them by those factors -- most
+           weighted children get larger in this process than the least
+           ones.
+
+           Accepted values are zero or positive values. Some containers might
+           use this hint as a boolean, but some others might consider it as a
+           proportion, see documentation of each container.
+
+           Note: Default weight hint values are 0.0, for both axis.
+         ]]
+         values {
+            x: double; [[Non-negative double value to use as horizontal weight hint.]]
+            y: double; [[Non-negative double value to use as vertical weight hint.]]
+         }
+      }
+      @property hint_align {
+         [[Hints for an object's alignment.
+
+           These are hints on how to align an object inside the
+           boundaries of a container/manager. Accepted values are in
+           the 0.0 to 1.0 range, with the special value #EVAS_HINT_FILL
+           used to specify "justify" or "fill" by some users. In this
+           case, maximum size hints should be enforced with higher
+           priority, if they are set. Also, any padding hint set on
+           objects should add up to the alignment space on the final
+           scene composition.
+
+           See documentation of possible users: in Evas, they are the
+           \@ref Evas_Object_Box "box" and \@ref Evas_Object_Table "table"
+           smart objects.
+
+           For the horizontal component, 0.0 means to the left, 1.0
+           means to the right. Analogously, for the vertical component,
+           0.0 to the top, 1.0 means to the bottom.
+
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
+
+           Note: Default alignment hint values are 0.5, for both axes.
+         ]]
+         /*
+         @image html alignment-hints.png
+         @image rtf alignment-hints.png
+         @image latex alignment-hints.eps
+         */
+         values {
+            x: double; [[Double, ranging from 0.0 to 1.0 or with the special value
+                         #EVAS_HINT_FILL, to use as horizontal alignment hint.]]
+            y: double; [[Double, ranging from 0.0 to 1.0 or with the special value
+                         #EVAS_HINT_FILL, to use as vertical alignment hint.]]
+         }
+      }
+      /* FIXME: Also add hint_display_mode? */
    }
 }

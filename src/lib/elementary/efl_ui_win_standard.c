@@ -26,7 +26,7 @@ _efl_ui_win_standard_eo_base_finalize(Eo *obj, void *pd EINA_UNUSED)
         evas_object_del(obj);
         return NULL;
      }
-   evas_obj_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl_gfx_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_pack(obj, bg);
    efl_gfx_visible_set(bg, EINA_TRUE);
 

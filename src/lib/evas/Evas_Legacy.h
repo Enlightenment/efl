@@ -858,6 +858,250 @@ EAPI void evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 EAPI Eina_Bool evas_object_visible_get(const Evas_Object *obj);
 
 /**
+ * @brief Sets the hints for an object's maximum size.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should be
+ * used whenever appropriate.
+ *
+ * Values -1 will be treated as unset hint components, when queried by
+ * managers.
+ *
+ * @note Smart objects (such as elementary) can have their own size hint
+ * policy. So calling this API may or may not affect the size of smart objects.
+ *
+ * @param[in] w Integer to use as the maximum width hint.
+ * @param[in] h Integer to use as the maximum height hint.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+
+/**
+ * @brief Retrieves the hints for an object's maximum size.
+ *
+ * These are hints on the maximum sizes @c obj should have. This is not a size
+ * enforcement in any way, it's just a hint that should be used whenever
+ * appropriate.
+ *
+ * @note Use @c null pointers on the hint components you're not interested in:
+ * they'll be ignored by the function.
+ *
+ * @param[out] w Integer to use as the maximum width hint.
+ * @param[out] h Integer to use as the maximum height hint.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+
+/**
+ * @brief Sets the hints for an object's optimum size.
+ *
+ * This is not a size enforcement in any way, it's just a hint that hould be
+ * used whenever appropriate.
+ *
+ * Values 0 will be treated as unset hint components, when queried by managers.
+ *
+ * @note Smart objects(such as elementary) can have their own size hint policy.
+ * So calling this API may or may not affect the size of smart objects.
+ *
+ * @param[in] w Integer to use as the preferred width hint.
+ * @param[in] h Integer to use as the preferred height hint.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+
+/**
+ * @brief Retrieves the hints for an object's optimum size.
+ *
+ * These are hints on the optimum sizes @c obj should have. This is not a size
+ * enforcement in any way, it's just a hint that should be used whenever
+ * appropriate.
+ *
+ * @note Use @c null pointers on the hint components you're not interested in:
+ * they'll be ignored by the function.
+ *
+ * @param[out] w Integer to use as the preferred width hint.
+ * @param[out] h Integer to use as the preferred height hint.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+
+/**
+ * @brief Sets the hints for an object's minimum size.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should be
+ * used whenever appropriate.
+ *
+ * Values 0 will be treated as unset hint components, when queried by managers.
+ *
+ * @note Smart objects(such as elementary) can have their own size hint policy.
+ * So calling this API may or may not affect the size of smart objects.
+ *
+ * @param[in] w Integer to use as the minimum width hint.
+ * @param[in] h Integer to use as the minimum height hint.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+
+/**
+ * @brief Retrieves the hints for an object's minimum size.
+ *
+ * These are hints on the minimum sizes @c obj should have. This is not a size
+ * enforcement in any way, it's just a hint that should be used whenever
+ * appropriate.
+ *
+ * @note Use @c null pointers on the hint components you're not interested in:
+ * they'll be ignored by the function.
+ *
+ * @param[out] w Integer to use as the minimum width hint.
+ * @param[out] h Integer to use as the minimum height hint.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+
+/**
+ * @brief Sets the hints for an object's padding space.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should be
+ * used whenever appropriate.
+ *
+ * @note Smart objects(such as elementary) can have their own size hint policy.
+ * So calling this API may or may not affect the size of smart objects.
+ *
+ * @param[in] l Integer to specify left padding.
+ * @param[in] r Integer to specify right padding.
+ * @param[in] t Integer to specify top padding.
+ * @param[in] b Integer to specify bottom padding.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b);
+
+/**
+ * @brief Retrieves the hints for an object's padding space.
+ *
+ * Padding is extra space an object takes on each of its delimiting rectangle
+ * sides, in canvas units.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should be
+ * used whenever appropriate.
+ *
+ * @note Use @c null pointers on the hint components you're not interested in:
+ * they'll be ignored by the function.
+ *
+ * @param[out] l Integer to specify left padding.
+ * @param[out] r Integer to specify right padding.
+ * @param[out] t Integer to specify top padding.
+ * @param[out] b Integer to specify bottom padding.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b);
+
+/**
+ * @brief Sets the hints for an object's weight.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should be
+ * used whenever appropriate.
+ *
+ * This is a hint on how a container object should resize a given child within
+ * its area. Containers may adhere to the simpler logic of just expanding the
+ * child object's dimensions to fit its own (see the #EVAS_HINT_EXPAND helper
+ * weight macro) or the complete one of taking each child's weight hint as real
+ * weights to how much of its size to allocate for them in each axis. A
+ * container is supposed to, after normalizing the weights of its children
+ * (with weight  hints), distribut the space it has to layout them by those
+ * factors -- most weighted children get larger in this process than the least
+ * ones.
+ *
+ * @note Default weight hint values are 0.0, for both axis.
+ *
+ * @param[in] x Non-negative double value to use as horizontal weight hint.
+ * @param[in] y Non-negative double value to use as vertical weight hint.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y);
+
+/**
+ * @brief Retrieves the hints for an object's weight.
+ *
+ * Accepted values are zero or positive values. Some users might use this hint
+ * as a boolean, but some might consider it as a proportion, see documentation
+ * of possible users, which in Evas are the @ref Evas_Object_Box "box" and @ref
+ * Evas_Object_Table "table" smart objects.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should be
+ * used whenever appropriate.
+ *
+ * @note Use @c null pointers on the hint components you're not interested in:
+ * they'll be ignored by the function.
+ *
+ * @note If @c obj is invalid, then the hint components will be set with 0.0.
+ *
+ * @param[out] x Non-negative double value to use as horizontal weight hint.
+ * @param[out] y Non-negative double value to use as vertical weight hint.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, double *y);
+
+/**
+ * @brief Sets the hints for an object's alignment.
+ *
+ * These are hints on how to align an object inside the boundaries of a
+ * container/manager. Accepted values are in the 0.0 to 1.0 range, with the
+ * special value #EVAS_HINT_FILL used to specify "justify" or "fill" by some
+ * users. In this case, maximum size hints should be enforced with higher
+ * priority, if they are set. Also, any padding hint set on objects should add
+ * up to the alignment space on the final scene composition.
+ *
+ * See documentation of possible users: in Evas, they are the @ref
+ * Evas_Object_Box "box" and @ref Evas_Object_Table "table" smart objects.
+ *
+ * For the horizontal component, 0.0 means to the left, 1.0 means to the right.
+ * Analogously, for the vertical component, 0.0 to the top, 1.0 means to the
+ * bottom.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should be
+ * used whenever appropriate.
+ *
+ * @note Default alignment hint values are 0.5, for both axis.
+ *
+ * @param[in] x Double, ranging from 0.0 to 1.0 or with the special value
+ * #EVAS_HINT_FILL, to use as horizontal alignment hint.
+ * @param[in] y Double, ranging from 0.0 to 1.0 or with the special value
+ * #EVAS_HINT_FILL, to use as vertical alignment hint.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_align_set(Evas_Object *obj, double x, double y);
+
+/**
+ * @brief Retrieves the hints for on object's alignment.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should be
+ * used whenever appropriate.
+ *
+ * @note Use @c null pointers on the hint components you're not interested in:
+ * they'll be ignored by the function.
+ *
+ * @note If @c obj is invalid, then the hint components will be set with 0.5
+ *
+ * @param[out] x Double, ranging from 0.0 to 1.0 or with the special value
+ * #EVAS_HINT_FILL, to use as horizontal alignment hint.
+ * @param[out] y Double, ranging from 0.0 to 1.0 or with the special value
+ * #EVAS_HINT_FILL, to use as vertical alignment hint.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y);
+
+/**
  * @brief Sets the hints for an object's aspect ratio.
  *
  * This is not a size enforcement in any way, it's just a hint that should be

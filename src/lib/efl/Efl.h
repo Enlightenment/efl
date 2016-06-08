@@ -39,6 +39,7 @@ extern "C" {
 #ifdef EFL_EFL_BUILD
 # define EFL_PACK_LAYOUT_PROTECTED
 # define EFL_EVENT_PROTECTED
+# define EFL_GFX_SIZE_HINT_PROTECTED
 #endif
 
 /**
