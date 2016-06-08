@@ -244,7 +244,6 @@ typedef struct _Evas_Event_Multi_Move    Evas_Event_Multi_Move; /**< Event struc
 typedef struct _Evas_Event_Key_Down      Evas_Event_Key_Down; /**< Event structure for #EVAS_CALLBACK_KEY_DOWN event callbacks */
 typedef struct _Evas_Event_Key_Up        Evas_Event_Key_Up; /**< Event structure for #EVAS_CALLBACK_KEY_UP event callbacks */
 typedef struct _Evas_Event_Hold          Evas_Event_Hold; /**< Event structure for #EVAS_CALLBACK_HOLD event callbacks */
-typedef struct _Evas_Event_Render_Post   Evas_Event_Render_Post; /**< Event structure that may come with #EVAS_CALLBACK_RENDER_POST event callbacks @since 1.8 */
 typedef struct _Evas_Event_Axis_Update   Evas_Event_Axis_Update; /**< Event structure for #EVAS_CALLBACK_AXIS_UPDATE event callbacks @since 1.13 */
 
 /* Opaque types */
@@ -316,6 +315,8 @@ typedef enum _Evas_Engine_Render_Mode
    EVAS_RENDER_MODE_BLOCKING = 0, /**< The rendering is blocking mode*/
    EVAS_RENDER_MODE_NONBLOCKING = 1, /**< The rendering is non blocking mode*/
 } Evas_Engine_Render_Mode; /**< behaviour of the renderer*/
+
+typedef Efl_Gfx_Event_Render_Post          Evas_Event_Render_Post; /**< Event info sent after a frame was rendered. @since 1.18 */
 
 typedef Efl_Input_Device_Class             Evas_Device_Class;
 
@@ -545,11 +546,6 @@ struct _Evas_Event_Key_Up /** Key release event */
    Evas_Device     *dev;
 
    unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
-};
-
-struct _Evas_Event_Render_Post /** Send when the frame rendering is done @since 1.8 */
-{
-   Eina_List *updated_area; /**< A list of rectangle that were updated in the canvas */
 };
 
 struct _Evas_Event_Hold /** Hold change event */

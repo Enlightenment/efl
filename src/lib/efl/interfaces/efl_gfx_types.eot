@@ -168,3 +168,9 @@ enum Efl.Gfx.Change.Flag
    all     = -1   [[all property got changed]]
 }
 
+struct Efl.Gfx.Event.Render_Post
+{
+   [[Data sent along a "render,post" event, after a frame has been rendered.]]
+   updated_area: list <Eina.Rectangle>; [[A list of rectangles that were
+                                          updated in the canvas.]]
+}
