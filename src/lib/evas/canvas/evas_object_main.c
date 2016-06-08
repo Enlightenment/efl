@@ -1186,7 +1186,7 @@ _evas_object_efl_gfx_size_hint_hint_request_set(Eo *eo_obj, Evas_Object_Protecte
 }
 
 EOLIAN static void
-_evas_object_efl_gfx_size_hint_aspect_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect *aspect, Evas_Coord *w, Evas_Coord *h)
+_evas_object_efl_gfx_size_hint_hint_aspect_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect *aspect, Evas_Coord *w, Evas_Coord *h)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1201,7 +1201,7 @@ _evas_object_efl_gfx_size_hint_aspect_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Pr
 }
 
 EOLIAN static void
-_evas_object_efl_gfx_size_hint_aspect_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect aspect, Evas_Coord w, Evas_Coord h)
+_evas_object_efl_gfx_size_hint_hint_aspect_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect aspect, Evas_Coord w, Evas_Coord h)
 {
    if (obj->delete_me)
      return;

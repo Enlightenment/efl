@@ -790,12 +790,12 @@ class Efl.Ui.Win (Elm.Widget, Elm.Interface.Atspi.Window,
       Efl.Screen.dpi.get;
       Efl.Screen.rotation.get;
       Efl.Screen.size.get;
-      Efl.Gfx.Size.Hint.base.set;
-      Efl.Gfx.Size.Hint.base.get;
-      Efl.Gfx.Size.Hint.step.set;
-      Efl.Gfx.Size.Hint.step.get;
-      Efl.Gfx.Size.Hint.aspect.set;
-      Efl.Gfx.Size.Hint.aspect.get;
+      Efl.Gfx.Size.Hint.hint_base.set;
+      Efl.Gfx.Size.Hint.hint_base.get;
+      Efl.Gfx.Size.Hint.hint_step.set;
+      Efl.Gfx.Size.Hint.hint_step.get;
+      Efl.Gfx.Size.Hint.hint_aspect.set;
+      Efl.Gfx.Size.Hint.hint_aspect.get;
       Efl.Text.text.set;
       Efl.Text.text.get;
    }

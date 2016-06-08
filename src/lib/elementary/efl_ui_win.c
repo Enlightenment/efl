@@ -4784,8 +4784,8 @@ _win_aspect_get(Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
-                                         Efl_Gfx_Size_Hint_Aspect mode EINA_UNUSED, int w, int h)
+_efl_ui_win_efl_gfx_size_hint_hint_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
+                                              Efl_Gfx_Size_Hint_Aspect mode EINA_UNUSED, int w, int h)
 {
    pd->aspect_w = w;
    pd->aspect_h = h;
@@ -4794,8 +4794,8 @@ _efl_ui_win_efl_gfx_size_hint_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *p
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_aspect_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
-                                         Efl_Gfx_Size_Hint_Aspect *mode, int *w, int *h)
+_efl_ui_win_efl_gfx_size_hint_hint_aspect_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
+                                              Efl_Gfx_Size_Hint_Aspect *mode, int *w, int *h)
 {
    if (mode) *mode = EFL_GFX_SIZE_HINT_ASPECT_NONE;
    if (w) *w = pd->aspect_w;
@@ -4803,7 +4803,7 @@ _efl_ui_win_efl_gfx_size_hint_aspect_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *p
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_base_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int w, int h)
+_efl_ui_win_efl_gfx_size_hint_hint_base_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int w, int h)
 {
    sd->size_base_w = w;
    sd->size_base_h = h;
@@ -4814,14 +4814,14 @@ _efl_ui_win_efl_gfx_size_hint_base_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd,
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_base_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *w, int *h)
+_efl_ui_win_efl_gfx_size_hint_hint_base_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *w, int *h)
 {
    if (w) *w = sd->size_base_w;
    if (h) *h = sd->size_base_h;
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int w, int h)
+_efl_ui_win_efl_gfx_size_hint_hint_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int w, int h)
 {
    sd->size_step_w = w;
    sd->size_step_h = h;
@@ -4832,7 +4832,7 @@ _efl_ui_win_efl_gfx_size_hint_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd,
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_step_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *w, int *h)
+_efl_ui_win_efl_gfx_size_hint_hint_step_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *w, int *h)
 {
    if (w) *w = sd->size_step_w;
    if (h) *h = sd->size_step_h;

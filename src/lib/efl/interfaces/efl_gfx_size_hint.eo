@@ -3,48 +3,39 @@ import efl_gfx_types;
 interface Efl.Gfx.Size.Hint
 {
    methods {
-      /* FIXME prefix hint_ */
-      @property base {
-         set {
-            [[Set the hint for an object's base size used with stepping calculation
+      @property hint_base {
+         [[Base size for objects with sizing restrictions.
 
-              Base size + stepping is what is calculated for object sizing
-              restrictions.
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
 
-            ]]
-         }
-         get {
-            [[Get the base size of an object.
+           @.hint_base + N x @.hint_step is what is calculated for object
+           sizing restrictions.
 
-            ]]
-         }
+           See also @.hint_step.
+         ]]
          values {
             w: int; [[The base width.]]
             h: int; [[The base height.]]
          }
       }
-      /* FIXME prefix hint_ */
-      @property step {
-         set {
-            [[Set the hint for an object stepping used with sizing calculation.
+      @property hint_step {
+         [[Step size for objects with sizing restrictions.
 
-              Base size + stepping is what is calculated for object sizing
-              restrictions.
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
 
-            ]]
-         }
-         get {
-            [[Get the stepping of an object.
+           Set this to for an object to scale up by steps and not continuously.
 
-            ]]
-         }
+           @.hint_base + N x @.hint_step is what is calculated for object
+           sizing restrictions.
+         ]]
          values {
             w: int; [[The stepping width (0 disables).]]
             h: int; [[The stepping height (0 disables).]]
          }
       }
-      /* FIXME prefix hint_ */
-      @property aspect {
+      @property hint_aspect {
          [[Defines the aspect ratio to respect when scaling this object.
 
            The aspect ratio is defined as the width / height ratio of the
@@ -57,20 +48,9 @@ interface Efl.Gfx.Size.Hint
          ]]
          /*
          @image html any-policy.png
-         @image rtf any-policy.png
-         @image latex any-policy.eps
-
          @image html aspect-control-none-neither.png
-         @image rtf aspect-control-none-neither.png
-         @image latex aspect-control-none-neither.eps
-
          @image html aspect-control-both.png
-         @image rtf aspect-control-both.png
-         @image latex aspect-control-both.eps
-
          @image html aspect-control-horizontal.png
-         @image rtf aspect-control-horizontal.png
-         @image latex aspect-control-horizontal.eps
          */
          values {
             mode: Efl.Gfx.Size.Hint.Aspect; [[Mode of interpretation.]]
@@ -156,8 +136,6 @@ interface Efl.Gfx.Size.Hint
          ]]
          /*
          @image html padding-hints.png
-         @image rtf padding-hints.png
-         @image latex padding-hints.eps
          */
          values {
             l: int; [[Integer to specify left padding.]]
@@ -219,8 +197,6 @@ interface Efl.Gfx.Size.Hint
          ]]
          /*
          @image html alignment-hints.png
-         @image rtf alignment-hints.png
-         @image latex alignment-hints.eps
          */
          values {
             x: double; [[Double, ranging from 0.0 to 1.0 or with the special value
