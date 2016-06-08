@@ -498,6 +498,8 @@ includesub_HEADERS = \
 	elm_helper.h \
 	efl_ui_box_private.h \
 	efl_ui_grid_private.h \
+	efl_ui_text.h \
+	efl_ui_text.eo.h \
 	$(NULL)
 
 includesubdir = $(includedir)/elementary-@VMAJ@/
@@ -630,6 +632,7 @@ libelementary_la_SOURCES = \
 	efl_ui_box_layout.c \
 	efl_ui_grid.c \
 	efl_ui_grid_static.c \
+	efl_ui_text.c \
 	$(NULL)
 
 libelementary_la_CFLAGS = @ELEMENTARY_CFLAGS@

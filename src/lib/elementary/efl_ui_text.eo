@@ -1,0 +1,468 @@
+import elm_general;
+import elm_icon;
+import elm_entry;
+
+class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
+                 Elm.Interface.Atspi.Text, Elm.Interface.Atspi.Text.Editable, Efl.File,
+                 Evas.Selectable_Interface, Evas.Scrollable_Interface, Efl.Ui.Text.Interactive)
+{
+   methods {
+      @property scrollable {
+         set {
+            [[Enable or disable scrolling in entry
+
+              Normally the entry is not scrollable unless you enable it with this call.
+            ]]
+         }
+         get {
+            [[Get the scrollable state of the entry
+
+              Normally the entry is not scrollable. This gets the scrollable state
+              of the entry.
+            ]]
+         }
+         values {
+            scroll: bool; [[$true if it is to be scrollable, $false otherwise.]]
+         }
+      }
+      @property input_panel_show_on_demand {
+         set {
+            [[Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+              It doesn't request to show the input panel even though it has focus.
+
+              @since 1.9
+            ]]
+         }
+         get {
+            [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+
+              @since 1.9
+            ]]
+         }
+         values {
+            ondemand: bool; [[If true, the input panel will be shown in case of only Mouse up event.
+            (Focus event will be ignored.)
+            ]]
+         }
+      }
+      @property context_menu_disabled {
+         set {
+            [[This disables the entry's contextual (longpress) menu.]]
+         }
+         get {
+            [[This returns whether the entry's contextual (longpress) menu is
+              disabled.
+            ]]
+         }
+         values {
+            disabled: bool; [[If $true, the menu is disabled.]]
+         }
+      }
+      @property cnp_mode {
+         set {
+            [[Control pasting of text and images for the widget.
+
+              Normally the entry allows both text and images to be pasted.
+              By setting cnp_mode to be #ELM_CNP_MODE_NO_IMAGE, this prevents images from being copy or past.
+              By setting cnp_mode to be #ELM_CNP_MODE_PLAINTEXT, this remove all tags in text .
+
+              Note: This only changes the behaviour of text.
+            ]]
+         }
+         get {
+            [[Getting elm_entry text paste/drop mode.
+
+              Normally the entry allows both text and images to be pasted.
+              This gets the copy & paste mode of the entry.
+            ]]
+         }
+         values {
+            cnp_mode: Elm.Cnp_Mode; [[One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.]]
+         }
+      }
+      @property input_panel_language {
+         set {
+            [[Set the language mode of the input panel.
+
+              This API can be used if you want to show the alphabet keyboard mode.
+            ]]
+         }
+         get {
+            [[Get the language mode of the input panel.]]
+         }
+         values {
+            lang: Elm.Input.Panel.Lang; [[language to be set to the input panel.]]
+         }
+      }
+      @property selection_handler_disabled {
+         set {
+            [[This disabled the entry's selection handlers.]]
+         }
+         get {
+            [[This returns whether the entry's selection handlers are disabled.]]
+            legacy: null;
+         }
+         values {
+            disabled: bool; [[If $true, the selection handlers are disabled.]]
+         }
+      }
+      @property input_panel_layout_variation {
+         set {
+            [[Set the input panel layout variation of the entry
+
+              @since 1.8
+            ]]
+         }
+         get {
+            [[Get the input panel layout variation of the entry
+
+              @since 1.8
+            ]]
+         }
+         values {
+            variation: int; [[layout variation type.]]
+         }
+      }
+      @property autocapital_type {
+         set {
+            [[Set the autocapitalization type on the immodule.]]
+         }
+         get {
+            [[Get the autocapitalization type on the immodule.]]
+         }
+         values {
+            autocapital_type: Elm.Autocapital.Type; [[The type of autocapitalization.]]
+         }
+      }
+      @property editable {
+         set {
+            [[Sets if the entry is to be editable or not.
+
+              By default, entries are editable and when focused, any text input by the
+              user will be inserted at the current cursor position. But calling this
+              function with $editable as $false will prevent the user from
+              inputting text into the entry.
+
+              The only way to change the text of a non-editable entry is to use
+              \@ref elm_object_text_set, \@ref elm_entry_entry_insert and other related
+              functions.
+            ]]
+         }
+         get {
+            [[Get whether the entry is editable or not.]]
+         }
+         values {
+            editable: bool; [[If $true, user input will be inserted in the entry,
+            if not, the entry is read-only and no user input is allowed.]]
+         }
+      }
+      @property password {
+         set {
+            [[Sets the entry to password mode.
+
+              In password mode, entries are implicitly single line and the display of
+              any text in them is replaced with asterisks (*).
+            ]]
+         }
+         get {
+            [[Get whether the entry is set to password mode.]]
+         }
+         values {
+            password: bool; [[If true, password mode is enabled.]]
+         }
+      }
+      @property input_panel_return_key_disabled {
+         set {
+            [[Set the return key on the input panel to be disabled.]]
+         }
+         get {
+            [[Get whether the return key on the input panel should be disabled or not.]]
+         }
+         values {
+            disabled: bool; [[The state to put in in: $true for
+            disabled, $false for enabled.]]
+         }
+      }
+      @property prediction_allow {
+         set {
+            [[Set whether the entry should allow to use the text prediction.]]
+         }
+         get {
+            [[Get whether the entry should allow to use the text prediction.]]
+         }
+         values {
+            prediction: bool; [[Whether the entry should allow to use the text prediction.]]
+         }
+      }
+      @property input_hint {
+         set {
+            [[Sets the input hint which allows input methods to fine-tune their behavior.]]
+         }
+         get {
+            [[Gets the value of input hint.]]
+         }
+         values {
+            hints: Elm.Input.Hints; [[Input hint.]]
+         }
+      }
+      @property input_panel_layout {
+         set {
+            [[Set the input panel layout of the entry.]]
+         }
+         get {
+            [[Get the input panel layout of the entry.]]
+         }
+         values {
+            layout: Elm.Input.Panel.Layout(Elm.Input.Panel.Layout.invalid); [[layout type.]]
+         }
+      }
+      @property input_panel_return_key_type {
+         set {
+            [[Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
+
+              An input panel displays the string or icon associated with this type.
+            ]]
+         }
+         get {
+            [[Get the "return" key type.]]
+         }
+         values {
+            return_key_type: Elm.Input.Panel.Return_Key.Type; [[The type of "return" key on the input panel.]]
+         }
+      }
+      @property input_panel_enabled {
+         set {
+            [[Sets the attribute to show the input panel automatically.]]
+         }
+         get {
+            [[Get the attribute to show the input panel automatically.]]
+         }
+         values {
+            enabled: bool; [[If true, the input panel is appeared when entry is clicked or has a focus.]]
+         }
+      }
+      @property input_panel_return_key_autoenabled {
+         set {
+            [[Set whether the return key on the input panel is disabled automatically when entry has no text.
+
+              If $enabled is $true, The return key on input panel is disabled when the entry has no text.
+              The return key on the input panel is automatically enabled when the entry has text.
+              The default value is $false.
+            ]]
+         }
+         values {
+            enabled: bool; [[If $enabled is true, the return key is automatically disabled when the entry has no text.]]
+         }
+      }
+      @property imf_context {
+         get {
+            [[Returns the input method context of the entry.
+
+              This function exposes the internal input method context.
+
+              IMPORTANT: Many functions may change (i.e delete and create a new one)
+              the internal input method context. Do NOT cache the returned object.
+            ]]
+            return: void_ptr;
+         }
+      }
+      item_provider_prepend {
+         [[This prepends a custom item provider to the list for that entry
+
+           This prepends the given callback.]]
+         params {
+            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
+            @in data: void_ptr @optional; [[The data passed to $func.]]
+         }
+      }
+      input_panel_show {
+         [[Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types, and so on.
+
+           Note that input panel is shown or hidden automatically according to the focus state of entry widget.
+           This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false).
+         ]]
+      }
+      imf_context_reset {
+         [[Reset the input method context of the entry if needed.
+
+           This can be necessary in the case where modifying the buffer would confuse on-going input method behavior.
+           This will typically cause the Input Method Context to clear the preedit state.
+         ]]
+      }
+      selection_copy {
+         [[This executes a "copy" action on the selected text in the entry.]]
+      }
+      item_provider_remove {
+         [[This removes a custom item provider to the list for that entry
+
+           This removes the given callback. See @.item_provider_append for
+           more information
+         ]]
+         params {
+            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
+            @in data: void_ptr @optional; [[The data passed to $func.]]
+         }
+      }
+      context_menu_clear {
+         [[This clears and frees the items in a entry's contextual (longpress)
+           menu.
+
+           See also @.context_menu_item_add.
+         ]]
+      }
+      input_panel_imdata_set {
+         [[Set the input panel-specific data to deliver to the input panel.
+
+           This API is used by applications to deliver specific data to the input panel.
+           The data format MUST be negotiated by both application and the input panel.
+           The size and format of data are defined by the input panel.
+         ]]
+         params {
+            @in data: const(void_ptr); [[The specific data to be set to the input panel.]]
+            @in len: int; [[The length of data, in bytes, to send to the input panel.]]
+         }
+      }
+      input_panel_imdata_get @const {
+         [[Get the specific data of the current input panel.]]
+         params {
+            @out data: void; [[The specific data to be got from the input panel.]]
+            @out len: int; [[The length of data.]]
+         }
+      }
+      selection_paste {
+         [[This executes a "paste" action in the entry.]]
+      }
+      input_panel_hide {
+         [[Hide the input panel (virtual keyboard).
+
+           Note that input panel is shown or hidden automatically according to the focus state of entry widget.
+           This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false)
+         ]]
+      }
+      cursor_selection_end {
+         [[This ends a selection within the entry as though
+           the user had just released the mouse button while making a selection.]]
+      }
+      selection_cut {
+         [[This executes a "cut" action on the selected text in the entry.]]
+      }
+      item_provider_append {
+         [[This appends a custom item provider to the list for that entry
+
+           This appends the given callback. The list is walked from beginning to end
+           with each function called given the item href string in the text. If the
+           function returns an object handle other than $null (it should create an
+           object to do this), then this object is used to replace that item. If
+           not the next provider is called until one provides an item object, or the
+           default provider in entry does.
+
+           See also \@ref entry-items.
+         ]]
+         params {
+            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
+            @in data: void_ptr @optional; [[The data passed to $func.]]
+         }
+      }
+      context_menu_item_add {
+         [[This adds an item to the entry's contextual menu.
+
+           A longpress on an entry will make the contextual menu show up, if this
+           hasn't been disabled with @.context_menu_disabled.set.
+           By default, this menu provides a few options like enabling selection mode,
+           which is useful on embedded devices that need to be explicit about it,
+           and when a selection exists it also shows the copy and cut actions.
+
+           With this function, developers can add other options to this menu to
+           perform any action they deem necessary.
+         ]]
+         params {
+            @in label: string @optional; [[The item's text label.]]
+            @in icon_file: string @optional; [[The item's icon file.]]
+            @in icon_type: Elm.Icon.Type; [[The item's icon type.]]
+            @in func: Evas_Smart_Cb @optional; [[The callback to execute when the item is clicked.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related functions.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object.Smart.move;
+      Evas.Object.Smart.member_add;
+      Evas.Object.Smart.add;
+      Evas.Object.Smart.resize;
+      Evas.Object.Smart.del;
+      Evas.Object.Smart.show;
+      Evas.Object.Smart.hide;
+      Elm.Widget.activate;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.theme_apply;
+      Elm.Widget.on_focus;
+      Elm.Widget.on_focus_region;
+      Elm.Widget.disable;
+      Elm.Widget.sub_object_del;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Layout.theme_enable;
+      Elm.Layout.sizing_eval;
+      Elm.Layout.text.get;
+      Elm.Layout.signal_callback_add;
+      Elm.Layout.signal_callback_del;
+      Elm.Layout.signal_emit;
+      Elm.Layout.text.set;
+      Elm.Layout.content_aliases.get;
+      Elm.Interface_Scrollable.policy.set;
+      Elm.Interface_Scrollable.bounce_allow.set;
+      Elm.Interface.Atspi_Accessible.state_set.get;
+      Elm.Interface.Atspi_Accessible.name.get;
+      Elm.Interface.Atspi.Text.text.get;
+      Elm.Interface.Atspi.Text.string.get;
+      Elm.Interface.Atspi.Text.attribute.get;
+      Elm.Interface.Atspi.Text.attributes.get;
+      Elm.Interface.Atspi.Text.default_attributes.get;
+      Elm.Interface.Atspi.Text.caret_offset.get;
+      Elm.Interface.Atspi.Text.caret_offset.set;
+      Elm.Interface.Atspi.Text.character.get;
+      Elm.Interface.Atspi.Text.character_extents.get;
+      Elm.Interface.Atspi.Text.character_count.get;
+      Elm.Interface.Atspi.Text.offset_at_point.get;
+      Elm.Interface.Atspi.Text.bounded_ranges.get;
+      Elm.Interface.Atspi.Text.range_extents.get;
+      Elm.Interface.Atspi.Text.selection.get;
+      Elm.Interface.Atspi.Text.selections_count.get;
+      Elm.Interface.Atspi.Text.selection_add;
+      Elm.Interface.Atspi.Text.selection_remove;
+      Elm.Interface.Atspi.Text.selection.set;
+      Elm.Interface.Atspi.Text.Editable.content.set;
+      Elm.Interface.Atspi.Text.Editable.insert;
+      Elm.Interface.Atspi.Text.Editable.copy;
+      Elm.Interface.Atspi.Text.Editable.cut;
+      Elm.Interface.Atspi.Text.Editable.delete;
+      Elm.Interface.Atspi.Text.Editable.paste;
+      Efl.File.file.set;
+      Efl.File.file.get;
+   }
+   events {
+      activated;
+      changed;
+      changed,user;
+      validate;
+      context,open;
+      anchor,clicked;
+      rejected;
+      maxlength,reached;
+      preedit,changed;
+      press;
+      redo,request;
+      undo,request;
+      text,set,done;
+      aborted;
+      anchor,down;
+      anchor,hover,opened;
+      anchor,in;
+      anchor,out;
+      anchor,up;
+      cursor,changed;
+      cursor,changed,manual;
+   }
+
+}

@@ -139,6 +139,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_scroller_internal_part.eo \
 	lib/elementary/elm_code_widget.eo \
     lib/elementary/efl_ui_text_interactive.eo \
+	lib/elementary/efl_ui_text.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
@@ -693,6 +694,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_grid.c \
 	lib/elementary/efl_ui_grid_static.c \
 	lib/elementary/efl_ui_grid_private.h \
+	lib/elementary/efl_ui_text.c \
 	$(NULL)
 
 

@@ -285,6 +285,7 @@ void test_code_mirror(void *data, Evas_Object *obj, void *event_info);
 void test_code_log(void *data, Evas_Object *obj, void *event_info);
 void test_code_diff(void *data, Evas_Object *obj, void *event_info);
 void test_code_diff_inline(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_text(void *data, Evas_Object *obj, void *event_info);
 
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
@@ -630,6 +631,7 @@ add_tests:
    ADD_TEST(NULL, "Entries", "Entry Anchor", test_entry_anchor);
    ADD_TEST(NULL, "Entries", "Entry Anchor2", test_entry_anchor2);
    ADD_TEST(NULL, "Entries", "Entry Emoticon", test_entry_emoticon);
+   ADD_TEST(NULL, "Entries", "Efl UI Text", test_efl_ui_text);
 
    //------------------------------//
    ADD_TEST(NULL, "Advanced Entries", "Code Entry Markup", test_code_welcome);
@@ -912,7 +914,6 @@ add_tests:
 
    ADD_TEST(NULL, "Widgets Disable/Enable", "Box", test_box_disable);
    ADD_TEST(NULL, "Widgets Disable/Enable", "Layout", test_layout_disable);
-
 #undef ADD_TEST
 
    if (autorun)
