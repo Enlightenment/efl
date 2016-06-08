@@ -4173,6 +4173,24 @@ _efl_ui_win_eo_base_constructor(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
+_efl_ui_win_efl_text_text_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *title)
+{
+   if (!title) return;
+   eina_stringshare_replace(&(sd->title), title);
+   if (sd->ee)
+     TRAP(sd, title_set, sd->title);
+   if (sd->frame_obj)
+     edje_object_part_text_escaped_set
+       (sd->frame_obj, "elm.text.title", sd->title);
+}
+
+EOLIAN static const char*
+_efl_ui_win_efl_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return sd->title;
+}
+
+EOLIAN static void
 _efl_ui_win_type_set(Eo *obj, Efl_Ui_Win_Data *sd, Elm_Win_Type type)
 {
    if (eo_finalized_get(obj))
@@ -6185,25 +6203,13 @@ elm_win_shaped_get(const Evas_Object *obj)
 EAPI void
 elm_win_title_set(Evas_Object *obj, const char *title)
 {
-   ELM_WIN_CHECK(obj);
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
-
-   if (!title) return;
-   eina_stringshare_replace(&(sd->title), title);
-   if (sd->ee)
-     TRAP(sd, title_set, sd->title);
-   if (sd->frame_obj)
-     edje_object_part_text_escaped_set
-       (sd->frame_obj, "elm.text.title", sd->title);
+   efl_text_set(obj, title);
 }
 
 EAPI const char*
 elm_win_title_get(const Evas_Object *obj)
 {
-   ELM_WIN_CHECK(obj) NULL;
-   ELM_WIN_DATA_GET_OR_RETURN(obj, sd, NULL);
-
-   return sd->title;
+   return efl_text_get(obj);
 }
 
 EAPI void
