@@ -1,4 +1,7 @@
-interface Efl.Gfx.Size.Hint {
+import efl_gfx_types;
+
+interface Efl.Gfx.Size.Hint
+{
    methods {
       @property base {
          set {
@@ -36,6 +39,45 @@ interface Efl.Gfx.Size.Hint {
          values {
             w: int; [[The stepping width (0 disables).]]
             h: int; [[The stepping height (0 disables).]]
+         }
+      }
+      @property aspect {
+         [[Defines the aspect ratio to respect when scaling this object.
+
+           The aspect ratio is defined as the width / height ratio of the
+           object. Depending on the object and its container, this hint may
+           or may not be fully respected.
+
+           If any of the given aspect ratio terms are 0, the object's container
+           will ignore the aspect and scale this object to occupy the whole
+           available area, for any given policy.
+         ]]
+         /*
+         @image html any-policy.png
+         @image rtf any-policy.png
+         @image latex any-policy.eps
+
+         @image html aspect-control-none-neither.png
+         @image rtf aspect-control-none-neither.png
+         @image latex aspect-control-none-neither.eps
+
+         @image html aspect-control-both.png
+         @image rtf aspect-control-both.png
+         @image latex aspect-control-both.eps
+
+         @image html aspect-control-horizontal.png
+         @image rtf aspect-control-horizontal.png
+         @image latex aspect-control-horizontal.eps
+         */
+         values {
+            mode: Efl.Gfx.Size.Hint.Aspect; [[Mode of interpretation.]]
+            w: int;
+            h: int;
+
+            /* FIXME: do we want min/max like Edje instead??
+            min: double; [[Default: 0.0 (no preference).]]
+            max: double @optional; [[Default: 0.0, may be ignored.]]
+            */
          }
       }
    }

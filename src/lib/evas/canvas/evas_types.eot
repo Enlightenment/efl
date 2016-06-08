@@ -6,19 +6,6 @@ struct Evas.Native_Surface; [[A generic datatype for engine specific native surf
 
 type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
 type Evas.Coord: int; [[A type for coordinates]]
-enum Evas.Aspect_Control {
-   [[Aspect types/policies for scaling size hints, used for
-     evas_object_size_hint_aspect_set()]]
-   none = 0, [[Preference on scaling unset]]
-   neither = 1, [[Same effect as unset preference on scaling]]
-   horizontal = 2, [[Use all horizontal container space to place an object,
-                     using the given aspect]]
-   vertical = 3, [[Use all vertical container space to place an object, using
-                   the given aspect]]
-   both = 4 [[Use all horizontal and vertical container spaces to place an
-              object (never growing it out of those bounds), using the given
-              aspect]]
-}
 
 enum Evas.Render_Op {
    [[How the object should be rendered to output.]]

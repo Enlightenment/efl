@@ -1,7 +1,7 @@
 import evas_types;
 
 abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
-                      Efl.Animator, Efl.Input.Interface)
+                      Efl.Animator, Efl.Input.Interface, Efl.Gfx.Size.Hint)
 {
    legacy_prefix: evas_object;
    eo_prefix: evas_obj;
@@ -302,74 +302,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
          }
          values {
             map: const(Evas.Map)*; [[The map.]]
-         }
-      }
-      @property size_hint_aspect {
-         set {
-            [[Sets the hints for an object's aspect ratio.
-
-              This is not a size enforcement in any way, it's just a hint
-              that should be used whenever appropriate.
-
-              If any of the given aspect ratio terms are 0, the object's
-              container will ignore the aspect and scale $obj to occupy
-              the whole available area, for any given policy.
-
-              Note: Smart objects(such as elementary) can have their own
-              size hint policy. So calling this API may or may not affect
-              the size of smart objects.
-            ]]
-         }
-         get {
-            [[Retrieves the hints for an object's aspect ratio.
-
-              The different aspect ratio policies are documented in the
-              #Evas_Aspect_Control type. A container respecting these size
-              hints would resize its children accordingly to those policies.
-
-              For any policy, if any of the given aspect ratio terms are 0,
-              the object's container should ignore the aspect and scale $obj
-              to occupy the whole available area. If they are both positive
-              integers, that proportion will be respected, under each
-              scaling policy.
-
-              Note: Use $null pointers on the hint components you're not
-              interested in: they'll be ignored by the function.
-            ]]
-            /* FIXME-doc
-            These images illustrate some of the #Evas_Aspect_Control policies:
-
-            @image html any-policy.png
-            @image rtf any-policy.png
-            @image latex any-policy.eps
-
-            @image html aspect-control-none-neither.png
-            @image rtf aspect-control-none-neither.png
-            @image latex aspect-control-none-neither.eps
-
-            @image html aspect-control-both.png
-            @image rtf aspect-control-both.png
-            @image latex aspect-control-both.eps
-
-            @image html aspect-control-horizontal.png
-            @image rtf aspect-control-horizontal.png
-            @image latex aspect-control-horizontal.eps
-
-            This is not a size enforcement in any way, it's just a hint that
-            should be used whenever appropriate.
-            ---
-            Example:
-            @dontinclude evas-aspect-hints.c
-            @skip if (strcmp(ev->key, "c") == 0)
-            @until }
-
-            See the full @ref Example_Evas_Aspect_Hints "example".
-            */
-         }
-         values {
-            aspect: Evas.Aspect_Control; [[The policy/type of aspect ratio to apply to $obj.]]
-            w: Evas.Coord; [[Integer to use as aspect width ratio term.]]
-            h: Evas.Coord; [[Integer to use as aspect height ratio term.]]
          }
       }
       @property clip {
@@ -1246,6 +1178,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
       Efl.Gfx.Stack.stack_above;
       Efl.Gfx.Stack.raise;
       Efl.Gfx.Stack.lower;
+      Efl.Gfx.Size.Hint.aspect.set;
+      Efl.Gfx.Size.Hint.aspect.get;
    }
    events {
        /* FIXME: remove events from Efl.Input.Interface */

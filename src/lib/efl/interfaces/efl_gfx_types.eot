@@ -174,3 +174,22 @@ struct Efl.Gfx.Event.Render_Post
    updated_area: list <Eina.Rectangle>; [[A list of rectangles that were
                                           updated in the canvas.]]
 }
+
+enum Efl.Gfx.Size.Hint.Aspect
+{
+   [[Aspect types/policies for scaling size hints.
+
+     See also $Efl.Gfx.Size.Hint.aspect.
+   ]]
+
+   none = 0, [[No preference on either direction of the container
+               for aspect ratio control.]]
+   neither = 1, [[Same effect as disabling aspect ratio preference]]
+   horizontal = 2, [[Use all horizontal container space to place an object,
+                     using the given aspect.]]
+   vertical = 3, [[Use all vertical container space to place an object, using
+                   the given aspect.]]
+   both = 4 [[Use all horizontal and vertical container spaces to place an
+              object (never growing it out of those bounds), using the given
+              aspect.]]
+}

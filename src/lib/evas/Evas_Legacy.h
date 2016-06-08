@@ -858,6 +858,50 @@ EAPI void evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 EAPI Eina_Bool evas_object_visible_get(const Evas_Object *obj);
 
 /**
+ * @brief Sets the hints for an object's aspect ratio.
+ *
+ * This is not a size enforcement in any way, it's just a hint that should be
+ * used whenever appropriate.
+ *
+ * If any of the given aspect ratio terms are 0, the object's container will
+ * ignore the aspect and scale @c obj to occupy the whole available area, for
+ * any given policy.
+ *
+ * @note Smart objects(such as elementary) can have their own size hint policy.
+ * So calling this API may or may not affect the size of smart objects.
+ *
+ * @param[in] aspect The policy/type of aspect ratio to apply to @c obj.
+ * @param[in] w Integer to use as aspect width ratio term.
+ * @param[in] h Integer to use as aspect height ratio term.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h);
+
+/**
+ * @brief Retrieves the hints for an object's aspect ratio.
+ *
+ * The different aspect ratio policies are documented in the
+ * #Evas_Aspect_Control type. A container respecting these size hints would
+ * resize its children accordingly to those policies.
+ *
+ * For any policy, if any of the given aspect ratio terms are 0, the object's
+ * container should ignore the aspect and scale @c obj to occupy the whole
+ * available area. If they are both positive integers, that proportion will be
+ * respected, under each scaling policy.
+ *
+ * @note Use @c null pointers on the hint components you're not interested in:
+ * they'll be ignored by the function.
+ *
+ * @param[out] aspect The policy/type of aspect ratio to apply to @c obj.
+ * @param[out] w Integer to use as aspect width ratio term.
+ * @param[out] h Integer to use as aspect height ratio term.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h);
+
+/**
  *
  * Sets the layer of its canvas that the given object will be part of.
  *

@@ -355,6 +355,14 @@ typedef Efl_Event_Flags                    Evas_Event_Flags;
 #define EVAS_EVENT_FLAG_ON_HOLD            EFL_EVENT_FLAGS_ON_HOLD
 #define EVAS_EVENT_FLAG_ON_SCROLL          EFL_EVENT_FLAGS_ON_SCROLL
 
+typedef Efl_Gfx_Size_Hint_Aspect           Evas_Aspect_Control; /**< Aspect types/policies for scaling size hints, used for evas_object_size_hint_aspect_set */
+
+#define EVAS_ASPECT_CONTROL_NONE           EFL_GFX_SIZE_HINT_ASPECT_NONE
+#define EVAS_ASPECT_CONTROL_NEITHER        EFL_GFX_SIZE_HINT_ASPECT_NEITHER
+#define EVAS_ASPECT_CONTROL_HORIZONTAL     EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL
+#define EVAS_ASPECT_CONTROL_VERTICAL       EFL_GFX_SIZE_HINT_ASPECT_VERTICAL
+#define EVAS_ASPECT_CONTROL_BOTH           EFL_GFX_SIZE_HINT_ASPECT_BOTH
+
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
    int magic; /**< Magic number */

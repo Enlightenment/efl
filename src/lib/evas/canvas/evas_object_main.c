@@ -1185,7 +1185,7 @@ _evas_object_size_hint_request_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, 
 }
 
 EOLIAN static void
-_evas_object_size_hint_aspect_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h)
+_evas_object_efl_gfx_size_hint_aspect_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect *aspect, Evas_Coord *w, Evas_Coord *h)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1200,7 +1200,7 @@ _evas_object_size_hint_aspect_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_
 }
 
 EOLIAN static void
-_evas_object_size_hint_aspect_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h)
+_evas_object_efl_gfx_size_hint_aspect_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect aspect, Evas_Coord w, Evas_Coord h)
 {
    if (obj->delete_me)
      return;
@@ -2129,6 +2129,20 @@ _evas_object_legacy_ctor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    EINA_SAFETY_ON_FALSE_RETURN(!eo_finalized_get(eo_obj));
    obj->legacy = EINA_TRUE;
+}
+
+/* legacy */
+
+EAPI void
+evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h)
+{
+   efl_gfx_size_hint_aspect_set(obj, aspect, w, h);
+}
+
+EAPI void
+evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h)
+{
+   efl_gfx_size_hint_aspect_get(obj, aspect, w, h);
 }
 
 #include "canvas/evas_object.eo.c"
