@@ -1071,38 +1071,3 @@ EAPI void elm_win_keyboard_mode_set(Elm_Win *obj, Elm_Win_Keyboard_Mode mode);
  * @ingroup Elm_Win
  */
 EAPI Elm_Win_Keyboard_Mode elm_win_keyboard_mode_get(const Elm_Win *obj);
-
-/**
- * @brief The type of the window.
- *
- * It is a hint of how the Window Manager should handle it.
- *
- * The window type is a constructing property that need to be set at creation
- * within @ref eo_add.
- *
- * @note Once set, it can NOT be modified afterward.
- *
- * Can only be used at creation time, within @ref eo_add.
- *
- * @param[in] type
- *
- * @ingroup Elm_Win
- */
-EAPI void elm_win_type_set(Elm_Win *obj, Elm_Win_Type type);
-
-/**
- * @brief The type of the window.
- *
- * It is a hint of how the Window Manager should handle it.
- *
- * The window type is a constructing property that need to be set at creation
- * within @ref eo_add.
- *
- * @note Once set, it can NOT be modified afterward.
- *
- * If the object is not window object, return #ELM_WIN_UNKNOWN.
- *
- * @ingroup Elm_Win
- */
-EAPI Elm_Win_Type elm_win_type_get(const Elm_Win *obj);
-
