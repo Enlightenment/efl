@@ -107,72 +107,62 @@ _to_opacity(const char *str)
    return a;
 }
 
+#define _PARSE_TAG(Type, Short_Name, Tags_Array, Default)               \
+  static Type _to_##Short_Name(const char *str)                         \
+  {                                                                     \
+     unsigned int i;                                                    \
+                                                                        \
+     for (i = 0; i < sizeof (Tags_Array) / sizeof (Tags_Array[0]); i++) \
+       if (!strcmp(str, Tags_Array[i].tag))                             \
+         return Tags_Array[i].Short_Name;                               \
+     return Default;                                                    \
+  }
 /* parse the line cap used during stroking a path.
  * Value:    butt | round | square | inherit
  * Initial:    butt
  * https://www.w3.org/TR/SVG/painting.html
  */
-static inline Efl_Gfx_Cap
-_to_line_cap(const char *str)
-{
-   Efl_Gfx_Cap cap = EFL_GFX_CAP_LAST;
+static struct {
+   Efl_Gfx_Cap line_cap;
+   const char *tag;
+} line_cap_tags[] = {
+  { EFL_GFX_CAP_BUTT, "butt" },
+  { EFL_GFX_CAP_ROUND, "round" },
+  { EFL_GFX_CAP_SQUARE, "square" }
+};
 
-   if (!strcmp(str, "butt"))
-     {
-        cap = EFL_GFX_CAP_BUTT;
-     }
-   else if (!strcmp(str, "round"))
-     {
-        cap = EFL_GFX_CAP_ROUND;
-     }
-   else if (!strcmp(str, "square"))
-     {
-        cap = EFL_GFX_CAP_SQUARE;
-     }
-   return cap;
-}
+_PARSE_TAG(Efl_Gfx_Cap, line_cap, line_cap_tags, EFL_GFX_CAP_LAST);
 
 /* parse the line join used during stroking a path.
  * Value:   miter | round | bevel | inherit
  * Initial:    miter
  * https://www.w3.org/TR/SVG/painting.html
  */
-static inline Efl_Gfx_Join
-_to_line_join(const char *str)
-{
-   Efl_Gfx_Join join = EFL_GFX_JOIN_LAST;
+static struct {
+   Efl_Gfx_Join line_join;
+   const char *tag;
+} line_join_tags[] = {
+  { EFL_GFX_JOIN_MITER, "miter" },
+  { EFL_GFX_JOIN_ROUND, "round" },
+  { EFL_GFX_JOIN_BEVEL, "bevel" }
+};
 
-   if (!strcmp(str, "miter"))
-     {
-        join = EFL_GFX_JOIN_MITER;
-     }
-   else if (!strcmp(str, "round"))
-     {
-        join = EFL_GFX_JOIN_ROUND;
-     }
-   else if (!strcmp(str, "bevel"))
-     {
-        join = EFL_GFX_JOIN_BEVEL;
-     }
-   return join;
-}
+_PARSE_TAG(Efl_Gfx_Join, line_join, line_join_tags, EFL_GFX_JOIN_LAST);
 
 /* parse the fill rule used during filling a path.
  * Value:   nonzero | evenodd | inherit
  * Initial:    nonzero
  * https://www.w3.org/TR/SVG/painting.html
  */
-static inline Efl_Gfx_Fill_Rule
-_to_fill_rule(const char *str)
-{
-   Efl_Gfx_Fill_Rule rule = EFL_GFX_FILL_RULE_WINDING;
 
-   if (!strcmp(str, "evenodd"))
-     {
-        rule = EFL_GFX_FILL_RULE_ODD_EVEN;
-     }
-   return rule;
-}
+static struct {
+   Efl_Gfx_Fill_Rule fill_rule;
+   const char *tag;
+} fill_rule_tags[] = {
+  { EFL_GFX_FILL_RULE_ODD_EVEN, "evenodd" }
+};
+
+_PARSE_TAG(Efl_Gfx_Fill_Rule, fill_rule, fill_rule_tags, EFL_GFX_FILL_RULE_WINDING);
 
 /* parse the dash pattern used during stroking a path.
  * Value:   none | <dasharray> | inherit
@@ -223,7 +213,6 @@ static char *
 {
    char tmp[50];
    int i = 0;
-   char * id;
 
    url = _skip_space(url, NULL);
    if ((*url) == '(')
@@ -238,9 +227,8 @@ static char *
         ++url;
      }
    tmp[i] = '\0';
-   id = malloc(strlen(tmp));
-   strcpy(id, tmp);
-   return id;
+
+   return strdup(tmp);
 }
 
 static unsigned char
@@ -509,19 +497,6 @@ parse_length(const char *str, Svg_Length_Type *type)
    return value;
 }
 
-static 
-Efl_Gfx_Fill_Rule
-_parse_fill_rule(const char *str)
-{
-   Efl_Gfx_Fill_Rule fill = EFL_GFX_FILL_RULE_WINDING;
-
-   if (!strcmp(str, "evenodd"))
-     {
-        fill = EFL_GFX_FILL_RULE_ODD_EVEN;
-     }
-   return fill;
-}
-
 static Eina_Bool
 _attr_parse_svg_node(void *data, const char *key, const char *value)
 {
@@ -619,7 +594,7 @@ _handle_color_opacity_attr(Svg_Node* node, const char *value)
 static void
 _handle_fill_rule_attr(Svg_Node* node, const char *value)
 {
-   node->style->fill.fill_rule = _parse_fill_rule(value);
+   node->style->fill.fill_rule = _to_fill_rule(value);
 }
 
 static void
@@ -1084,33 +1059,23 @@ static const struct {
   TAG_DEF(switch)
 };
 
-static Factory_Method
-_find_group_factory(const char  *name)
-{
-   unsigned int i;
-   int sz = strlen(name);
+#define FIND_FACTORY(Short_Name, Tags_Array)                            \
+  static Factory_Method                                                 \
+  _find_##Short_Name##_factory(const char  *name)                       \
+  {                                                                     \
+     unsigned int i;                                                    \
+     int sz = strlen(name);                                             \
+                                                                        \
+     for (i = 0; i < sizeof (Tags_Array) / sizeof(Tags_Array[0]); i++)  \
+       if (group_tags[i].sz - 1 == sz && !strncmp(Tags_Array[i].tag, name, sz)) \
+         {                                                              \
+            return Tags_Array[i].tag_handler;                           \
+         }                                                              \
+     return NULL;                                                       \
+  }
 
-   for (i = 0; i < sizeof (group_tags) / sizeof(group_tags[0]); i++)
-     if (group_tags[i].sz - 1 == sz && !strncmp(group_tags[i].tag, name, sz))
-       {
-          return group_tags[i].tag_handler;
-       }
-   return NULL;
-}
-
-static Factory_Method
-_find_graphics_factory(const char  *name)
-{
-   unsigned int i;
-   int sz = strlen(name);
-
-   for (i = 0; i < sizeof (graphics_tags) / sizeof(graphics_tags[0]); i++)
-     if (graphics_tags[i].sz - 1 == sz && !strncmp(graphics_tags[i].tag, name, sz))
-       {
-          return graphics_tags[i].tag_handler;
-       }
-   return NULL;
-}
+FIND_FACTORY(group, group_tags);
+FIND_FACTORY(graphics, graphics_tags);
 
 static void
 _handle_radial_cx_attr(Svg_Radial_Gradient* radial, const char *value)
@@ -1388,24 +1353,35 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
 
 }
 
+#define POP_TAG(Tag)                            \
+  { #Tag, sizeof (#Tag) }
+
+static const struct {
+   const char *tag;
+   size_t sz;
+} pop_array[] = {
+  POP_TAG(g),
+  POP_TAG(svg),
+  POP_TAG(defs)
+};
+
 static void
 _evas_svg_loader_xml_close_parser(Evas_SVG_Loader *loader,
-                                  const char *content, unsigned int length EINA_UNUSED)
+                                  const char *content,
+                                  unsigned int length EINA_UNUSED)
 {
+   unsigned int i;
+
    content = _skip_space(content, NULL);
-   if (!strncmp(content, "g", 1))
-     {
-        eina_array_pop(loader->stack);
-     }
-   else if (!strncmp(content, "svg", 3))
-     {
-        eina_array_pop(loader->stack);
-     }
-   else if (!strncmp(content, "defs", 3))
-     {
-        eina_array_pop(loader->stack);
-     }
-   else if (!strncmp(content, "linearGradient", 13))
+
+   for (i = 0; i < sizeof (pop_array) / sizeof (pop_array[0]); i++)
+     if (!strncmp(content, pop_array[i].tag, pop_array[i].sz - 1))
+       {
+          eina_array_pop(loader->stack);
+          break ;
+       }
+
+   if (!strncmp(content, "linearGradient", 13))
      {
         //TODO
      }
