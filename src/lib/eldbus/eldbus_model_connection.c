@@ -114,10 +114,9 @@ _eldbus_model_connection_efl_model_property_get(Eo *obj EINA_UNUSED,
         pd->unique_name = strdup(unique_name);
      }
 
-   Eina_Value* v = eina_promise_owner_buffer_get(promise);
-   eina_value_setup(v, EINA_VALUE_TYPE_STRING);
+   Eina_Value* v = eina_value_new(EINA_VALUE_TYPE_STRING);
    eina_value_set(v, pd->unique_name);
-   eina_promise_owner_value_set(promise, NULL, (Eina_Promise_Free_Cb)&eina_value_flush);
+   eina_promise_owner_value_set(promise, v, (Eina_Promise_Free_Cb)&eina_value_free);
 }
 
 static Eo *
@@ -179,8 +178,9 @@ _eldbus_model_connection_efl_model_children_count_get(Eo *obj EINA_UNUSED,
 
    if (pd->is_listed)
      {
-        unsigned int c = eina_list_count(pd->children_list);
-        eina_promise_owner_value_set(promise, &c, NULL);
+        unsigned int *c = calloc(sizeof(unsigned int), 1);
+        *c = eina_list_count(pd->children_list);
+        eina_promise_owner_value_set(promise, c, free);
         return;
      }
 
@@ -346,8 +346,9 @@ _eldbus_model_connection_names_list_cb(void *data,
    Eina_Promise_Owner *ep;
    EINA_LIST_FOREACH(pd->count_promises, i, ep)
      {
-       unsigned c = eina_list_count(pd->children_list);
-       eina_promise_owner_value_set(ep, &c, NULL);
+       unsigned *c = calloc(sizeof(unsigned), 1);
+       *c = eina_list_count(pd->children_list);
+       eina_promise_owner_value_set(ep, c, free);
      }
    eina_list_free(pd->count_promises);
 }

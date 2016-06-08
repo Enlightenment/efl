@@ -41,7 +41,7 @@ _eio_stat_done_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *st
    Eina_List *l;
    EINA_LIST_FOREACH(priv->property_promises, l, p)
      {
-        Eina_Value* v = eina_promise_owner_buffer_get(p->promise);
+        Eina_Value* v = eina_value_new(EINA_VALUE_TYPE_CHAR);
         switch(p->property)
           {
           case EIO_MODEL_PROP_IS_DIR:
@@ -64,7 +64,7 @@ _eio_stat_done_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *st
             break;
           };
 
-        eina_promise_owner_value_set(p->promise, NULL, (Eina_Promise_Free_Cb)&eina_value_flush);
+        eina_promise_owner_value_set(p->promise, v, (Eina_Promise_Free_Cb)&eina_value_free);
         free(p);
      }
    eina_list_free(priv->property_promises);
@@ -308,10 +308,9 @@ _eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, con
      case EIO_MODEL_PROP_PATH:
      case EIO_MODEL_PROP_MIME_TYPE:
        {
-          Eina_Value* v = eina_promise_owner_buffer_get(promise);
-          eina_value_setup(v, EINA_VALUE_TYPE_STRING);
+          Eina_Value* v = eina_value_new(EINA_VALUE_TYPE_STRING);
           eina_value_set(v, value);
-          eina_promise_owner_value_set(promise, NULL, (Eina_Promise_Free_Cb)&eina_value_flush);
+          eina_promise_owner_value_set(promise, v, (Eina_Promise_Free_Cb)&eina_value_free);
        }
        break;
      default:
@@ -382,8 +381,9 @@ _eio_model_efl_model_property_set(Eo *obj EINA_UNUSED,
 static void
 _eio_model_efl_model_children_count_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eina_Promise_Owner *promise)
 {
-   unsigned int c = eina_list_count(priv->children_list);
-   eina_promise_owner_value_set(promise, &c, NULL);
+   unsigned int *c = calloc(sizeof(unsigned int), 1);
+   *c = eina_list_count(priv->children_list);
+   eina_promise_owner_value_set(promise, c, free);
 }
 
 static void

@@ -168,6 +168,8 @@ _free_xattr_data(Eio_Xattr_Data *value)
     EINA_SAFETY_ON_NULL_RETURN(value);
     if (value->data)
       free((void*)value->data);
+
+    free(value);
 }
 
 static void
@@ -179,13 +181,12 @@ _file_done_data_cb(void *data, Eio_File *handler EINA_UNUSED, const char *attr_d
    EINA_SAFETY_ON_NULL_RETURN(operation);
    EINA_SAFETY_ON_NULL_RETURN(operation->promise);
 
-   ret_data = eina_promise_owner_buffer_get(operation->promise);
-
+   ret_data = calloc(sizeof(Eio_Xattr_Data), 1);
    ret_data->data = calloc(sizeof(char), size + 1);
    strcpy((char*)ret_data->data, attr_data);
    ret_data->size = size;
 
-   eina_promise_owner_value_set(operation->promise, NULL, (Eina_Promise_Free_Cb)&_free_xattr_data);
+   eina_promise_owner_value_set(operation->promise, ret_data, (Eina_Promise_Free_Cb)&_free_xattr_data);
 
    _job_closure_del(operation);
 }
@@ -318,7 +319,7 @@ _eio_job_file_direct_ls(Eo *obj,
       Eio_Job_Data *pd,
       const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_add();
    _job_direct_ls_helper(&eio_file_direct_ls, obj, pd, path, promise);
    return eina_promise_owner_promise_get(promise);
 }
@@ -328,7 +329,7 @@ _eio_job_file_stat_ls(Eo *obj,
       Eio_Job_Data *pd,
       const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_add();
    _job_direct_ls_helper(&eio_file_stat_ls, obj, pd, path, promise);
    return eina_promise_owner_promise_get(promise);
 }
@@ -338,7 +339,7 @@ _eio_job_dir_stat_ls(Eo *obj,
       Eio_Job_Data *pd,
       const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_add();
    _job_direct_ls_helper(&eio_dir_stat_ls, obj, pd, path, promise);
    return eina_promise_owner_promise_get(promise);
 }
@@ -348,7 +349,7 @@ _eio_job_dir_direct_ls(Eo *obj,
                        Eio_Job_Data *pd,
                        const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_add();
    // Had to add the cast as dir_direct differs in the filter callback constness of one of
    // its arguments.
    _job_direct_ls_helper((Eio_Job_Direct_Ls_Func)&eio_dir_direct_ls, obj, pd, path, promise);
@@ -360,7 +361,7 @@ _eio_job_file_ls(Eo *obj,
       Eio_Job_Data *pd,
       const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_add();
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
    Eina_Promise* p = eina_promise_owner_promise_get(promise);
@@ -391,9 +392,10 @@ _file_stat_done_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_Stat *st
 
    EINA_SAFETY_ON_NULL_RETURN(operation);
    EINA_SAFETY_ON_NULL_RETURN(operation->promise);
+   Eina_Stat *my_stat = calloc(sizeof(Eina_Stat), 1);
 
-   // Placeholder value. We just want the callback to be called.
-   eina_promise_owner_value_set(operation->promise, stat, NULL);
+   *my_stat = *stat;
+   eina_promise_owner_value_set(operation->promise, my_stat, free);
 
    _job_closure_del(operation);
 }
@@ -403,7 +405,7 @@ _eio_job_file_direct_stat(Eo *obj,
                           Eio_Job_Data *pd,
                           const char *path)
 {
-   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(Eina_Stat));
+   Eina_Promise_Owner* promise = eina_promise_add();
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
    Eina_Promise* p = eina_promise_owner_promise_get(promise);
@@ -430,7 +432,7 @@ _eio_job_file_xattr_list_get(Eo *obj,
                     Eio_Job_Data *pd,
                     const char *path)
 {
-   Eina_Promise_Owner *promise = eina_promise_value_add(sizeof(int));
+   Eina_Promise_Owner *promise = eina_promise_add();
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
    Eina_Promise* p = eina_promise_owner_promise_get(promise);
@@ -461,7 +463,7 @@ _eio_job_file_xattr_set(Eo *obj,
                         unsigned int xattr_size,
                         Eina_Xattr_Flags flags)
 {
-   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(int));
+   Eina_Promise_Owner* promise = eina_promise_add();
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
    Eina_Promise* p = eina_promise_owner_promise_get(promise);
@@ -492,7 +494,7 @@ _eio_job_file_xattr_get(Eo *obj,
                         const char *path,
                         const char *attribute)
 {
-   Eina_Promise_Owner* promise = eina_promise_value_add(sizeof(Eio_Xattr_Data));
+   Eina_Promise_Owner* promise = eina_promise_add();
    Job_Closure *operation_data = _job_closure_create(obj, pd, promise);
 
    Eina_Promise* p = eina_promise_owner_promise_get(promise);

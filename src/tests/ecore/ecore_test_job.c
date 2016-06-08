@@ -21,7 +21,8 @@ START_TEST(ecore_test_job_promise)
 
    ecore_init();
 
-   eina_promise_then(efl_loop_job(ecore_main_loop_get(), &bob), &_ecore_promise_quit, NULL, &bob);
+   Eina_Promise *promise = efl_loop_job(ecore_main_loop_get(), &bob);
+   eina_promise_then(promise, &_ecore_promise_quit, NULL, &bob);
 
    ecore_main_loop_begin();
 

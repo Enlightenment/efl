@@ -67,7 +67,7 @@ eina_bench_promise_sync_then(int request)
 
    eina_init();
 
-   Eina_Promise_Owner* owner = eina_promise_value_add(sizeof(struct value_type));
+   Eina_Promise_Owner* owner = eina_promise_add();
    Eina_Promise* promise = eina_promise_owner_promise_get(owner);
    eina_promise_ref(promise);
 
@@ -84,116 +84,6 @@ eina_bench_promise_sync_then(int request)
    (void) tmp;
 
    eina_promise_unref(promise);
-   eina_shutdown();
-}
-
-static void
-eina_bench_promise_copy_value_set_after_then(int request)
-{
-   const char *tmp;
-   unsigned int j;
-   int i;
-
-   eina_init();
-
-   struct value_type const v = {0, 0, 0, 0};
-
-   for (j = 0; j != 200; ++j)
-      for (i = 0; i != request; ++i)
-        {
-           Eina_Promise_Owner* owner = eina_promise_value_add(sizeof(struct value_type));
-           Eina_Promise* promise = eina_promise_owner_promise_get(owner);
-
-           eina_promise_then(promise, &cb, NULL, NULL);
-           eina_promise_owner_value_set(owner, &v, NULL);
-        }
-
-   /* Suppress warnings as we really don't want to do anything. */
-   (void) tmp;
-
-   eina_shutdown();
-}
-
-static void
-eina_bench_promise_no_copy_value_set_after_then(int request)
-{
-   const char *tmp;
-   unsigned int j;
-   int i;
-
-   eina_init();
-
-   for (j = 0; j != 200; ++j)
-      for (i = 0; i != request; ++i)
-        {
-           Eina_Promise_Owner* owner = eina_promise_value_add(sizeof(struct value_type));
-           Eina_Promise* promise = eina_promise_owner_promise_get(owner);
-           struct value_type* v = eina_promise_owner_buffer_get(owner);
-
-           eina_promise_then(promise, &cb, NULL, NULL);
-
-           v->x = v->y = v-> w = v->h = 0;
-           eina_promise_owner_value_set(owner, NULL, NULL);
-        }
-
-   /* Suppress warnings as we really don't want to do anything. */
-   (void) tmp;
-
-   eina_shutdown();
-}
-
-static void
-eina_bench_promise_no_copy_value_set_before_then(int request)
-{
-   const char *tmp;
-   unsigned int j;
-   int i;
-
-   eina_init();
-
-   for (j = 0; j != 200; ++j)
-      for (i = 0; i != request; ++i)
-        {
-           Eina_Promise_Owner* owner = eina_promise_value_add(sizeof(struct value_type));
-           Eina_Promise* promise = eina_promise_owner_promise_get(owner);
-           struct value_type* v = eina_promise_owner_buffer_get(owner);
-
-           v->x = v->y = v-> w = v->h = 0;
-           eina_promise_owner_value_set(owner, NULL, NULL);
-
-           eina_promise_then(promise, &cb, NULL, NULL);
-        }
-
-   /* Suppress warnings as we really don't want to do anything. */
-   (void) tmp;
-
-   eina_shutdown();
-}
-
-static void
-eina_bench_promise_copy_value_set_before_then(int request)
-{
-   const char *tmp;
-   unsigned int j;
-   int i;
-
-   eina_init();
-
-   struct value_type const v = {0, 0, 0, 0};
-
-   for (j = 0; j != 200; ++j)
-      for (i = 0; i != request; ++i)
-        {
-           Eina_Promise_Owner* owner = eina_promise_value_add(sizeof(struct value_type));
-           Eina_Promise* promise = eina_promise_owner_promise_get(owner);
-
-           eina_promise_then(promise, &cb, NULL, NULL);
-           eina_promise_owner_value_set(owner, &v, NULL);
-        }
-
-   /* Suppress warnings as we really don't want to do anything. */
-   (void) tmp;
-
    eina_shutdown();
 }
 
@@ -398,18 +288,6 @@ void eina_bench_promise(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "promise synchronous then",
                            EINA_BENCHMARK(
                               eina_bench_promise_sync_then), 100, 20100, 500);
-   eina_benchmark_register(bench, "promise copy value set after then",
-                           EINA_BENCHMARK(
-                              eina_bench_promise_copy_value_set_after_then), 100, 20100, 500);
-   eina_benchmark_register(bench, "promise copy value set before then",
-                           EINA_BENCHMARK(
-                              eina_bench_promise_copy_value_set_before_then), 100, 20100, 500);
-   eina_benchmark_register(bench, "promise no copy value set after then",
-                           EINA_BENCHMARK(
-                              eina_bench_promise_no_copy_value_set_after_then), 100, 20100, 500);
-   eina_benchmark_register(bench, "promise no copy value set before then",
-                           EINA_BENCHMARK(
-                              eina_bench_promise_no_copy_value_set_before_then), 100, 20100, 500);
    eina_benchmark_register(bench, "promise pointer value set after then mempool",
                            EINA_BENCHMARK(
                               eina_bench_promise_pointer_value_set_after_then_pooled), 100, 20100, 500);

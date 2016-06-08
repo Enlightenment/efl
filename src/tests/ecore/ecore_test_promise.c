@@ -205,7 +205,7 @@ START_TEST(ecore_test_promise_normal_lifetime)
    
    ecore_init();
 
-   promise_owner = eina_promise_value_add(0);
+   promise_owner = eina_promise_add();
 
    promise = eina_promise_owner_promise_get(promise_owner);
 
@@ -226,7 +226,7 @@ START_TEST(ecore_test_promise_normal_lifetime_all)
    
    ecore_init();
 
-   promise_owner = eina_promise_value_add(0);
+   promise_owner = eina_promise_add();
    first[0] = eina_promise_owner_promise_get(promise_owner);
    promise = eina_promise_all(eina_carray_iterator_new((void**)&first[0]));
    
@@ -252,7 +252,7 @@ START_TEST(ecore_test_promise_immediate_set_lifetime)
    
    ecore_init();
 
-   owner = eina_promise_value_add(0);
+   owner = eina_promise_add();
    promise = eina_promise_owner_promise_get(owner);
 
    eina_promise_owner_value_set(owner, NULL, NULL);
@@ -272,7 +272,7 @@ START_TEST(ecore_test_promise_immediate_set_lifetime_all)
 
    ecore_init();
 
-   owner = eina_promise_value_add(0);
+   owner = eina_promise_add();
    first[0] = eina_promise_owner_promise_get(owner);
    promise = eina_promise_all(eina_carray_iterator_new((void**)&first[0]));
 

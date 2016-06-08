@@ -121,6 +121,7 @@ _eldbus_model_arguments_efl_model_property_set(Eo *obj EINA_UNUSED,
                                                     Eina_Promise_Owner *promise)
 {
    Eina_Value *prop_value;
+   Eina_Value *promise_value;
 
    ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(property, promise, EFL_MODEL_ERROR_INCORRECT_VALUE);
    ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(value, promise, EFL_MODEL_ERROR_INCORRECT_VALUE);
@@ -136,8 +137,10 @@ _eldbus_model_arguments_efl_model_property_set(Eo *obj EINA_UNUSED,
 
    eina_value_flush(prop_value);
    eina_value_copy(value, prop_value);
-   eina_value_copy(value, eina_promise_owner_buffer_get(promise));
-   eina_promise_owner_value_set(promise, NULL, (Eina_Promise_Free_Cb)&eina_value_flush);
+
+   promise_value = eina_value_new(eina_value_type_get(value));
+   eina_value_copy(value, promise_value);
+   eina_promise_owner_value_set(promise, promise_value, (Eina_Promise_Free_Cb)&eina_value_free);
 }
 
 static void
@@ -146,6 +149,7 @@ _eldbus_model_arguments_efl_model_property_get(Eo *obj EINA_UNUSED,
                                                     const char *property,
                                                     Eina_Promise_Owner *promise)
 {
+   Eina_Value *promise_value;
    EINA_SAFETY_ON_NULL_RETURN(promise);
 
    ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(property, promise, EFL_MODEL_ERROR_INCORRECT_VALUE);
@@ -159,8 +163,9 @@ _eldbus_model_arguments_efl_model_property_get(Eo *obj EINA_UNUSED,
    Eina_Bool ret = _eldbus_model_arguments_is_output_argument(pd, property);
    ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(ret, promise, EFL_MODEL_ERROR_PERMISSION_DENIED);
 
-   eina_value_copy(value, eina_promise_owner_buffer_get(promise));
-   eina_promise_owner_value_set(promise, NULL, (Eina_Promise_Free_Cb)&eina_value_flush);
+   promise_value = eina_value_new(eina_value_type_get(value));
+   eina_value_copy(value, promise_value);
+   eina_promise_owner_value_set(promise, promise_value, (Eina_Promise_Free_Cb)&eina_value_free);
 }
 
 static Eo *
@@ -191,8 +196,9 @@ _eldbus_model_arguments_efl_model_children_count_get(Eo *obj EINA_UNUSED,
                                                           Eldbus_Model_Arguments_Data *pd EINA_UNUSED,
                                                           Eina_Promise_Owner *promise)
 {
-   unsigned count = 0;
-   eina_promise_owner_value_set(promise, &count, NULL);
+   unsigned *count = malloc(sizeof(unsigned));
+   *count = 0;
+   eina_promise_owner_value_set(promise, count, free);
 }
 
 static const char *
