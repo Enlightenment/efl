@@ -1733,6 +1733,18 @@ EO_CALLBACKS_ARRAY_DEFINE(_elm_win_evas_feed_fake_callbacks,
 { EFL_EVENT_KEY_UP, _evas_event_key_feed_fake_cb })
 
 static void
+_elm_win_evas_render_post(void *data,
+                          Evas *e EINA_UNUSED,
+                          Evas_Object *obj EINA_UNUSED,
+                          void *event_info)
+{
+   Efl_Gfx_Event_Render_Post *ev = event_info;
+   Eo *win = data;
+
+   eo_event_callback_call(win, EFL_UI_WIN_EVENT_RENDER_POST, ev);
+}
+
+static void
 _deferred_ecore_evas_free(void *data)
 {
    ecore_evas_free(data);
@@ -2079,6 +2091,10 @@ _efl_ui_win_evas_object_smart_del(Eo *obj, Efl_Ui_Win_Data *sd)
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _elm_win_on_resize_obj_changed_size_hints,
                                        obj);
+
+   // TODO: optimize event forwarders with EO_EVENT_CALLBACK_ADD/DEL
+   evas_object_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_POST,
+                                       _elm_win_evas_render_post, obj);
    eo_event_callback_array_del(sd->evas, _elm_win_evas_forward_callbacks(), obj);
    eo_event_callback_array_del(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
 
@@ -4140,6 +4156,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 
    eo_event_callback_array_add(sd->evas, _elm_win_evas_forward_callbacks(), obj);
    eo_event_callback_array_add(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
+   evas_object_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_POST,
+                                  _elm_win_evas_render_post, obj);
 
    evas_object_show(sd->edje);
 
