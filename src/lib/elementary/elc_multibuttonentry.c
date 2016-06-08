@@ -1841,12 +1841,14 @@ _elm_multibuttonentry_item_selected_set(Eo *eo_item EINA_UNUSED,
 
 EOLIAN static Eina_Bool
 _elm_multibuttonentry_item_selected_get(Eo *eo_item,
-                                        Elm_Multibuttonentry_Item_Data *item EINA_UNUSED)
+                                        Elm_Multibuttonentry_Item_Data *item)
 {
-   //TODO : To be implemented.
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(WIDGET(item), sd, EINA_FALSE);
    if (!eo_item) return EINA_FALSE;
+   if (EO_OBJ(sd->selected_it) == eo_item)
+      return EINA_TRUE;
 
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 EOLIAN static void
