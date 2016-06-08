@@ -1,0 +1,53 @@
+struct Efl.Ui.Text.Interactive.Change_Info {
+   [[This structure includes all the information about content changes.
+
+     It's meant to be used to implement undo/redo.
+   ]]
+   content: string; [[The content added/removed]]
+   position: size; [[The position where it was added/removed]]
+   length: size; [[The length of content in characters (not bytes, actual unicode characters)]]
+   insert: bool; [[$true if the content was inserted, $false if removei]]
+   merge: bool; [[$true if can be merged with the previous one. Used for example with insertion when something is already selected]]
+}
+
+interface Efl.Ui.Text.Interactive ()
+{
+   [[This is an interface interactive text inputs should implement]]
+   methods {
+      @property selection_allowed {
+         [[Whether or not selection is allowed on this object]]
+         set {}
+         get {}
+         values {
+            allowed: bool; [[$true if enabled]]
+         }
+      }
+      @property selection_cursors {
+         [[The cursors used for selection handling.
+
+           If the cursors are equal (@Efl.Canvas.Text.Cursor.equal), there is
+           no selection.
+
+           You are allowed to retain and modify them. Modifying them modifies
+           the selection of the object.
+         ]]
+         get {}
+         values {
+            start: Efl.Canvas.Text.Cursor; [[The start of the selection]]
+            end: Efl.Canvas.Text.Cursor; [[The end of the selection]]
+         }
+      }
+      @property multiline {
+         [[Whether or not this textblock is allowed to be multiline]]
+         set {}
+         get {}
+         values {
+            enabled: bool; [[$true if enabled]]
+         }
+      }
+   }
+   events {
+      changed,user: Efl.Ui.Text.Interactive.Change_Info; [[The text object has changed due to user interaction]]
+      selection,changed; [[The selection on the object has changed. Query using @.selection_cursors]]
+   }
+}

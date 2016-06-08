@@ -138,6 +138,12 @@ elm_public_eolian_files = \
 	lib/elementary/elm_popup_internal_part.eo \
 	lib/elementary/elm_scroller_internal_part.eo \
 	lib/elementary/elm_code_widget.eo \
+    lib/elementary/efl_ui_text_interactive.eo \
+	$(NULL)
+
+# Private classes (not exposed or shipped)
+elm_private_eolian_files = \
+	lib/elementary/efl_ui_internal_text_interactive.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -156,14 +162,19 @@ elm_public_eolian_h = $(elm_public_eolian_files:%.eo=%.eo.h) \
         $(elm_public_eolian_files:%.eo=%.eo.legacy.h) \
         $(elm_eolian_type_files:%.eot=%.eot.h)
 
+elm_private_eolian_c = $(elm_private_eolian_files:%.eo=%.eo.c)
+elm_private_eolian_h = $(elm_private_eolian_files:%.eo=%.eo.h)
+
 elm_legacy_eolian_c = $(elm_legacy_eolian_files:%.eo=%.eo.c)
 elm_legacy_eolian_eo_h = $(elm_legacy_eolian_files:%.eo=%.eo.h)
 elm_legacy_eolian_legacy_h = $(elm_legacy_eolian_files:%.eo=%.eo.legacy.h)
 
 BUILT_SOURCES += \
 	$(elm_public_eolian_c) \
-	$(elm_legacy_eolian_c) \
 	$(elm_public_eolian_h) \
+	$(elm_private_eolian_c) \
+	$(elm_private_eolian_h) \
+	$(elm_legacy_eolian_c) \
 	$(elm_legacy_eolian_eo_h) \
 	$(elm_legacy_eolian_legacy_h)
 
@@ -366,6 +377,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_diskselector_eo.h \
 	lib/elementary/elm_diskselector_legacy.h \
 	lib/elementary/elm_entry.h \
+	lib/elementary/efl_ui_internal_text_interactive.h \
 	lib/elementary/elm_entry_common.h \
 	lib/elementary/elm_entry_eo.h \
 	lib/elementary/elm_entry_legacy.h \
@@ -594,6 +606,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_diskselector.c \
 	lib/elementary/elm_entry.c \
 	lib/elementary/efl_ui_flip.c \
+	lib/elementary/efl_ui_internal_text_interactive.c \
 	lib/elementary/elm_flipselector.c \
 	lib/elementary/elm_font.c \
 	lib/elementary/elm_frame.c \
