@@ -233,7 +233,7 @@ tests_eina_cxx_eina_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 tests_eina_cxx_eina_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@
 tests_eina_cxx_eina_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 tests/eina_cxx/simple.eo
 
 ### Tests for ecore

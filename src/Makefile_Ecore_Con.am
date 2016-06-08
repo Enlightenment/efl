@@ -23,7 +23,7 @@ ecoreconeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreconeolianfiles_DATA = \
                            $(ecore_con_eolian_files)
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
               ${ecoreconeolianfiles_DATA}
 
 lib_LTLIBRARIES += lib/ecore_con/libecore_con.la
@@ -54,7 +54,7 @@ static_libs/http-parser/http_parser.h \
 lib/ecore_con/ecore_con_private.h \
 lib/ecore_con/ecore_con_info.c
 
-EXTRA_DIST += lib/ecore_con/ecore_con_legacy.c
+EXTRA_DIST2 += lib/ecore_con/ecore_con_legacy.c
 
 if HAVE_WINDOWS
 lib_ecore_con_libecore_con_la_SOURCES += lib/ecore_con/ecore_con_local_win32.c
@@ -69,7 +69,7 @@ lib_ecore_con_libecore_con_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 lib_ecore_con_libecore_con_la_CPPFLAGS += -I$(top_srcdir)/src/static_libs/http-parser
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 tests/ecore_con/server.key \
 tests/ecore_con/server.pem \
 static_libs/http-parser/AUTHORS \

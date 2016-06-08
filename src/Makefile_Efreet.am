@@ -221,7 +221,7 @@ tests_efreet_efreet_suite_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
 
 endif
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 tests/efreet/data/entry \
 tests/efreet/data/entry.png \
 tests/efreet/data/long.ini \

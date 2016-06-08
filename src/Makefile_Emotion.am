@@ -15,7 +15,7 @@ emotioneolianfilesdir = $(datadir)/eolian/include/emotion-@VMAJ@
 emotioneolianfiles_DATA = \
                           $(emotion_eolian_files)
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
               ${emotioneolianfiles_DATA}
 
 lib_LTLIBRARIES += \
@@ -300,7 +300,7 @@ endif
 
 # Those probably should be in the if block, but then
 # "make distcheck" would not work
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 tests/emotion/data/bpause.png \
 tests/emotion/data/bplay.png \
 tests/emotion/data/bstop.png \

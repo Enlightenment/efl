@@ -357,7 +357,7 @@ tests_eina_module_dummy_la_LIBTOOLFLAGS = --tag=disable-static
 
 endif
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/eina/eina_strbuf_template_c.x \
 lib/eina/eina_binbuf_template_c.x \
 lib/eina/eina_inline_private.h \

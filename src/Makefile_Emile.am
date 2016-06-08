@@ -60,7 +60,7 @@ if ENABLE_LIBLZ4
 lib_emile_libemile_la_LIBADD += @LIBLZ4_LIBS@
 endif
 
-EXTRA_DIST += static_libs/lz4/README.md \
+EXTRA_DIST2 += static_libs/lz4/README.md \
 static_libs/lz4/LICENSE \
 static_libs/lz4/NEWS \
 static_libs/lz4/lz4.c \

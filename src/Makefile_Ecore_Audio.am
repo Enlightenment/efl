@@ -29,7 +29,7 @@ BUILT_SOURCES += \
 ecore_audioeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecore_audioeolianfiles_DATA = $(ecore_audio_eolian_files)
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
               ${ecore_audioeolianfiles_DATA}
 
 lib_LTLIBRARIES += lib/ecore_audio/libecore_audio.la

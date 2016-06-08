@@ -133,7 +133,7 @@ tests_eolian_eolian_suite.$(OBJEXT): $(EOLIAN_TESTS_EOS_GENERATED)
 
 endif
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 tests/eolian/data/object_impl_ref.c \
 tests/eolian/data/object_impl_add_ref.c \
 tests/eolian/data/typedef_ref.c \

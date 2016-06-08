@@ -64,7 +64,7 @@ BUILT_SOURCES += \
 ectoreolianfilesdir = $(datadir)/eolian/include/ector-@VMAJ@
 ectoreolianfiles_DATA = $(ector_eolian_files) $(ector_eolian_type_files)
 
-EXTRA_DIST += $(ectoreolianfiles_DATA) \
+EXTRA_DIST2 += $(ectoreolianfiles_DATA) \
 lib/ector/Makefile.am \
 lib/ector/Makefile.in \
 lib/ector/Ector.h \
@@ -195,7 +195,7 @@ tests_ector_ector_suite_DEPENDENCIES = @USE_ECTOR_INTERNAL_LIBS@
 
 endif
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/ector/ector_private.h \
 lib/ector/cairo/ector_cairo_private.h \
 lib/ector/software/ector_software_private.h \

@@ -62,7 +62,7 @@ modules/ethumb/emotion/template.edj: modules/ethumb/emotion/template.edc modules
 ethumbmoduleemotion_DATA = modules/ethumb/emotion/template.edj
 CLEANFILES += modules/ethumb/emotion/template.edj
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 modules/ethumb/emotion/template.edc \
 modules/ethumb/emotion/placeholder.png
 endif

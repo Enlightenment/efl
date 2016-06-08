@@ -12,7 +12,7 @@ eflnodedir = $(libdir)/node_modules
 eflnode_DATA = $(top_builddir)/src/lib/efl_js/efl.node
 
 CLEANFILES += ${eflnodedir_DATA}
-EXTRA_DIST += ${eflnodedir_DATA}
+EXTRA_DIST2 += ${eflnodedir_DATA}
 
 efljsmimedir = @XDG_DATA_HOME@/mime/packages
 efljsmime_DATA = bin/efl_js/efljslaunch.xml

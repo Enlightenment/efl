@@ -35,7 +35,7 @@ edjeeolianfiles_DATA = \
 
 noinst_DATA += $(edje_eolian_priv_c) $(edje_eolian_priv_h)
 
-EXTRA_DIST += lib/edje/Makefile.am \
+EXTRA_DIST2 += lib/edje/Makefile.am \
 	      lib/edje/Makefile.in \
               ${edjeeolianfiles_DATA} \
               $(edje_eolian_priv_files)
@@ -256,7 +256,7 @@ bin_edje_epp_epp_LDADD = lib/evil/libevil.la
 endif
 
 # TODO: why keep these?
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 bin/edje/edje_convert.h \
 bin/edje/edje_convert.c \
 bin/edje/edje_data_convert.c \

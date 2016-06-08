@@ -107,7 +107,7 @@ bin/evil/evil_test_realpath.h \
 bin/evil/evil_test_util.h
 
 
-#suite_SOURCES +=  bin/evil/memcpy_glibc_i686.S # see EXTRA_DIST below!
+#suite_SOURCES +=  bin/evil/memcpy_glibc_i686.S # see EXTRA_DIST2 below!
 
 bin_evil_evil_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EVIL_CFLAGS@
 bin_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ -lm
@@ -144,7 +144,7 @@ endif
 
 endif
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/evil/regex/regerror.ih \
 lib/evil/regex/engine.ih \
 lib/evil/regex/regcomp.ih \

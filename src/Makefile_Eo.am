@@ -42,7 +42,7 @@ eoeolianfiles_DATA = \
 					 $(eo_eolian_files) \
 					 lib/eo/eina_types.eot # We don't generate .c/.h on purpose
 
-EXTRA_DIST += lib/eo/Makefile.am \
+EXTRA_DIST2 += lib/eo/Makefile.am \
 	      lib/eo/Makefile.in \
               ${eoeolianfiles_DATA}
 
@@ -210,7 +210,7 @@ TESTS += tests/eo/test_signals
 endif
 
 
-EXTRA_DIST += tests/eo/eunit_tests.h lib/eo/eo_ptr_indirection.x
+EXTRA_DIST2 += tests/eo/eunit_tests.h lib/eo/eo_ptr_indirection.x
 
 if HAVE_JS
 

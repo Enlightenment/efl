@@ -60,6 +60,6 @@ bin_embryo_embryo_cc_LDADD = @USE_EMBRYO_LIBS@
 endif
 bin_embryo_embryo_cc_DEPENDENCIES = @USE_EMBRYO_INTERNAL_LIBS@
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 bin/embryo/embryo_cc_sc5.scp \
 bin/embryo/embryo_cc_sc7.scp

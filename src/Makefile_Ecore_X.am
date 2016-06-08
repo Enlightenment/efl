@@ -145,4 +145,4 @@ utils_ecore_makekeys_SOURCES = utils/ecore/makekeys.c
 utils_ecore_makekeys_CFLAGS = @ECORE_X_CFLAGS@
 
 endif
-EXTRA_DIST += utils/ecore/mkks.sh
+EXTRA_DIST2 += utils/ecore/mkks.sh

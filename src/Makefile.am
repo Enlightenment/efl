@@ -15,7 +15,7 @@ bin_SCRIPTS =
 noinst_PROGRAMS =
 check_PROGRAMS =
 TESTS =
-EXTRA_DIST =
+EXTRA_DIST2 =
 
 noinst_LTLIBRARIES =
 noinst_DATA =
@@ -159,6 +159,20 @@ install-examples:
 	   echo "Making install-examples in $$d"; \
 	   $(MAKE) $(AM_MAKEFLAGS) -C $$d install-examples || exit 1; \
 	done
+
+dist-hook:
+	@mkdir -p $(distdir)/tests/elua/data/apps $(distdir)/tests/eolian/data
+	@mkdir -p $(distdir)/tests/evas/images $(distdir)/tests/evas/meshes
+	@mkdir -p $(distdir)/tests/efreet/data $(distdir)/tests/edje/data
+	@mkdir -p $(distdir)/tests/emotion/data $(distdir)/tests/evas/meshes/md2
+	@mkdir -p $(distdir)/tests/evas/meshes/obj $(distdir)/tests/efreet/data/sub
+	@mkdir -p $(distdir)/scripts/eina $(distdir)/scripts/elua/modules
+	@mkdir -p $(distdir)/scripts/elua/core $(distdir)/scripts/elua/apps/docgen
+	@mkdir -p $(distdir)/lib/evas/common/evas_op_add $(distdir)/lib/evas/common/evas_op_copy
+	@mkdir -p $(distdir)/lib/evas/common/evas_op_mask $(distdir)/lib/evas/common/evas_op_mul
+	@mkdir -p $(distdir)/lib/evas/common/evas_op_sub $(distdir)/lib/evas/filters/blur
+	@mkdir -p $(distdir)/static_libs/http-parser/contrib $(distdir)/bindings/luajit/eina
+	for F in $(EXTRA_DIST2); do cp -f $(srcdir)/$$F $(distdir)/$$F; done
 
 clean-local:
 	find . -type f -name '*.gcno' -delete

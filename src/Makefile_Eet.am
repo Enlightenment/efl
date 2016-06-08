@@ -85,7 +85,7 @@ tests_eet_eet_suite_LDADD = @CHECK_LIBS@ @USE_EET_LIBS@
 tests_eet_eet_suite_DEPENDENCIES = @USE_EET_INTERNAL_LIBS@
 endif
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 tests/eet/cert.pem \
 tests/eet/key_enc_none.pem \
 tests/eet/key_enc.pem \

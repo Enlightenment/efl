@@ -88,7 +88,7 @@ BUILT_SOURCES += \
 evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
 evaseolianfiles_DATA = $(evas_eolian_files)
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
         $(evaseolianfiles_DATA) \
 	$(evas_eolian_internal_files)
 
@@ -205,7 +205,7 @@ lib/evas/canvas/efl_event_key.c \
 lib/evas/canvas/efl_event_pointer.c \
 $(NULL)
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/evas/canvas/render2/evas_render2_th_main.c \
 lib/evas/canvas/render2/region.c \
 lib/evas/canvas/render2/region.h
@@ -456,7 +456,7 @@ lib_evas_libevas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 # Linebreak
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 static_libs/libunibreak/LICENCE \
 static_libs/libunibreak/AUTHORS \
 static_libs/libunibreak/NEWS \
@@ -465,7 +465,7 @@ static_libs/libunibreak/ChangeLog
 
 # Engines
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/evas/common/evas_font_compress_draw.c \
 lib/evas/common/evas_map_image_internal.c \
 lib/evas/common/evas_map_image_core.c \
@@ -481,7 +481,7 @@ lib/evas/common/evas_scale_smooth_scaler_up.c
 
 # evas_op_add
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/evas/common/evas_op_add/op_add_color_.c \
 lib/evas/common/evas_op_add/op_add_color_i386.c \
 lib/evas/common/evas_op_add/op_add_mask_color_.c \
@@ -495,7 +495,7 @@ lib/evas/common/evas_op_add/op_add_pixel_mask_i386.c
 
 # evas_op_blend
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/evas/common/evas_op_blend/op_blend_color_.c \
 lib/evas/common/evas_op_blend/op_blend_color_i386.c \
 lib/evas/common/evas_op_blend/op_blend_color_neon.c \
@@ -519,7 +519,7 @@ lib/evas/common/evas_op_blend/op_blend_pixel_sse3.c
 
 # evas_op_copy
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/evas/common/evas_op_copy/op_copy_color_.c \
 lib/evas/common/evas_op_copy/op_copy_color_i386.c \
 lib/evas/common/evas_op_copy/op_copy_color_neon.c \
@@ -538,7 +538,7 @@ lib/evas/common/evas_op_copy/op_copy_pixel_mask_neon.c
 
 # evas_op_mask
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/evas/common/evas_op_mask/op_mask_color_.c \
 lib/evas/common/evas_op_mask/op_mask_color_i386.c \
 lib/evas/common/evas_op_mask/op_mask_mask_color_.c \
@@ -552,7 +552,7 @@ lib/evas/common/evas_op_mask/op_mask_pixel_mask_i386.c
 
 # evas_op_mul
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/evas/common/evas_op_mul/op_mul_color_.c \
 lib/evas/common/evas_op_mul/op_mul_color_i386.c \
 lib/evas/common/evas_op_mul/op_mul_mask_color_.c \
@@ -566,7 +566,7 @@ lib/evas/common/evas_op_mul/op_mul_pixel_mask_i386.c
 
 # evas_op_sub
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/evas/common/evas_op_sub/op_sub_color_.c \
 lib/evas/common/evas_op_sub/op_sub_color_i386.c \
 lib/evas/common/evas_op_sub/op_sub_mask_color_.c \
@@ -596,7 +596,7 @@ lib/evas/filters/evas_filter_transform.c \
 lib/evas/filters/evas_filter_utils.c \
 lib/evas/filters/evas_filter_private.h
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 lib/evas/filters/blur/blur_gaussian_alpha_.c \
 lib/evas/filters/blur/blur_gaussian_rgba_.c \
 lib/evas/filters/blur/blur_box_alpha_.c \
@@ -614,7 +614,7 @@ lib/evas/filters/blur/blur_box_rgba_neon.c
 evas_software_generic_eolian_files = \
 modules/evas/engines/software_generic/evas_ector_software_buffer.eo
 
-EXTRA_DIST += $(evas_software_generic_eolian_files)
+EXTRA_DIST2 += $(evas_software_generic_eolian_files)
 
 evas_software_generic_eolian_c = $(evas_software_generic_eolian_files:%.eo=%.eo.c)
 evas_software_generic_eolian_h = $(evas_software_generic_eolian_files:%.eo=%.eo.h)
@@ -771,7 +771,7 @@ modules/evas/engines/gl_common/shader/vertex.glsl \
 modules/evas/engines/gl_common/shader/include.glsl \
 $(NULL)
 
-EXTRA_DIST += $(EVAS_GL_SHADERS_GEN)
+EXTRA_DIST2 += $(EVAS_GL_SHADERS_GEN)
 
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x: $(EVAS_GL_SHADERS_GEN)
 	@echo "  SHADERS  $@"
@@ -799,7 +799,7 @@ modules/evas/engines/gl_common/shader_3d/post_processing_fxaa_vert.shd \
 modules/evas/engines/gl_common/shader_3d/post_processing_fxaa_frag.shd \
 $(NULL)
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh \
 $(GL_SHADERS_3D_GEN)
 
@@ -831,7 +831,7 @@ BUILT_SOURCES += \
                  $(evas_gl_generic_eolian_c) \
                  $(evas_gl_generic_eolian_h)
 
-EXTRA_DIST += $(evas_gl_generic_eolian_files)
+EXTRA_DIST2 += $(evas_gl_generic_eolian_files)
 
 #evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
 #evaseolianfiles_DATA += $(evas_gl_generic_eolian_files)
@@ -2127,7 +2127,7 @@ endif
 endif
 
 if BUILD_LOADER_TGV
-EXTRA_DIST += static_libs/rg_etc/README
+EXTRA_DIST2 += static_libs/rg_etc/README
 if EVAS_STATIC_BUILD_TGV
 lib_evas_libevas_la_SOURCES += \
 modules/evas/image_loaders/tgv/evas_image_load_tgv.c \
@@ -2282,7 +2282,7 @@ tests_evas_evas_suite_LDADD = @CHECK_LIBS@ @USE_EVAS_LIBS@ @USE_ECORE_EVAS_LIBS@
 tests_evas_evas_suite_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 endif
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 tests/evas/TestFont.eet \
 tests/evas/images/HM7Y9233-50.tgv \
 tests/evas/images/HM7Y9233.jpg \
@@ -2378,7 +2378,7 @@ evas_eolian_cxx_hh = $(evas_eolian_pub_files:%.eo=%.eo.hh)
 evas_eolian_cxx_impl = $(evas_eolian_pub_files:%.eo=%.eo.impl.hh)
 endif
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 generic/evas/common/shmfile.c \
 generic/evas/common/shmfile.h \
 generic/evas/common/timeout.c \
@@ -2391,7 +2391,7 @@ evasgenericloaders_PROGRAMS =
 evasgenericloaders_SCRIPT =
 
 ### Libreoffice converter to pdf
-EXTRA_DIST += generic/evas/pdf/evas_generic_pdf_loader.libreoffice
+EXTRA_DIST2 += generic/evas/pdf/evas_generic_pdf_loader.libreoffice
 
 if HAVE_POPPLER
 
@@ -2527,7 +2527,7 @@ ln -sf evas_image_loader.svg $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.sv
 
 endif
 
-EXTRA_DIST += generic/evas/xcf/common.h
+EXTRA_DIST2 += generic/evas/xcf/common.h
 
 evasgenericloaders_PROGRAMS += generic/evas/xcf/evas_image_loader.xcf
 

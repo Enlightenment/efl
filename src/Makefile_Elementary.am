@@ -172,7 +172,7 @@ elementaryeolianfiles_DATA = $(elm_public_eolian_files) $(elm_eolian_type_files)
 
 noinst_DATA += $(elm_legacy_eolian_eo_h)
 
-EXTRA_DIST += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files)
+EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files)
 
 lib_LTLIBRARIES += lib/elementary/libelementary.la
 
@@ -716,7 +716,7 @@ lib_elementary_libelementary_la_CPPFLAGS += \
 -DPOSIX_MISTAKE
 endif
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 	lib/elementary/elm_factory.h \
 	lib/elementary/elm_factory.c \
 	$(top_srcdir)/elm_intro.h.in
@@ -968,7 +968,7 @@ bin_elementary_elementary_run_LDFLAGS =
 endif
 endif
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 bin/elementary/test_factory.c
 
 ### Modules
@@ -1033,7 +1033,7 @@ modules_elementary_datetime_input_ctxpopup_module_la_LIBTOOLFLAGS = --tag=disabl
 moduleprefspkgdir = $(libdir)/elementary/modules/prefs/$(MODULE_ARCH)
 moduleprefspkg_LTLIBRARIES = modules/elementary/prefs/module.la
 
-EXTRA_DIST += modules/elementary/prefs/elm_prefs_swallow.edc
+EXTRA_DIST2 += modules/elementary/prefs/elm_prefs_swallow.edc
 
 prefs_filesdir = $(libdir)/elementary/modules/prefs/$(MODULE_ARCH)
 prefs_files_DATA = modules/elementary/prefs/elm_prefs_swallow.edj
@@ -1161,7 +1161,7 @@ elm_web_none_eolian_files = modules/elementary/web/none/elm_web_none.eo
 elm_web_none_eolian_c = $(elm_web_none_eolian_files:%.eo=%.eo.c)
 elm_web_none_eolian_h = $(elm_web_none_eolian_files:%.eo=%.eo.h)
 
-EXTRA_DIST += $(elm_web_none_eolian_files)
+EXTRA_DIST2 += $(elm_web_none_eolian_files)
 BUILT_SOURCES += $(elm_web_none_eolian_c) $(elm_web_none_eolian_h)
 
 modules_elementary_web_none_module_la_SOURCES = \
@@ -1255,7 +1255,7 @@ edje_external_elementary_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 edje_external_elementary_module_la_LIBTOOLFLAGS = --tag=disable-static
 
 ### Tests
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 tests/elementary/testfile.txt \
 tests/elementary/testfile-windows.txt \
 tests/elementary/testfile-withblanks.txt \
@@ -1392,7 +1392,7 @@ elementary_eolian_cxx_hh = $(elm_public_eolian_files:%.eo=%.eo.hh)
 elementary_eolian_cxx_impl = $(elm_public_eolian_files:%.eo=%.eo.impl.hh)
 endif
 
-EXTRA_DIST += \
+EXTRA_DIST2 += \
 tests/elementary/elm_suite.h \
 tests/elementary/elm_test_helper.h \
 lib/elementary/Makefile.am \
