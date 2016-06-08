@@ -10,68 +10,74 @@ namespace efl { namespace eolian { namespace grammar { namespace attributes {
 enum class qualifier_info {
   is_none
 , is_own = 1
-, is_const = 4
-, is_const_own
-, is_optional = 8
-, is_optional_own
-, is_optional_const
-, is_optional_const_own
+, is_const = 2
+, is_optional = 4
+, is_ref = 8
 };
+
+struct qualifier_bool
+{
+  qualifier_info v;
+  qualifier_bool(qualifier_info v)
+    : v(v) {}
+
+  typedef qualifier_info(qualifier_bool::*unspecified_bool_type)() const;
+  
+  operator unspecified_bool_type() const
+  {
+    return v != qualifier_info::is_none ? &qualifier_bool::operator qualifier_info : nullptr;
+  }
+  operator qualifier_info() const { return v; }
+};
+inline qualifier_bool operator|(qualifier_info lhs, qualifier_info rhs)
+{
+  return static_cast<qualifier_info>(static_cast<int>(lhs) | static_cast<int>(rhs));
+}
+inline qualifier_bool operator&(qualifier_info lhs, qualifier_info rhs)
+{
+  return static_cast<qualifier_info>(static_cast<int>(lhs) & static_cast<int>(rhs));
+}
+inline qualifier_info operator^(qualifier_info lhs, qualifier_info rhs)
+{
+  return static_cast<qualifier_info>(static_cast<int>(lhs) & ~static_cast<int>(rhs));
+}
+inline qualifier_info& operator|=(qualifier_info& lhs, qualifier_info rhs)
+{
+  lhs = static_cast<qualifier_info>(static_cast<int>(lhs) | static_cast<int>(rhs));
+  return lhs;
+}
+inline qualifier_info& operator&=(qualifier_info& lhs, qualifier_info rhs)
+{
+  lhs = static_cast<qualifier_info>(static_cast<int>(lhs) & static_cast<int>(rhs));
+  return lhs;
+}
+inline qualifier_info& operator^=(qualifier_info& lhs, qualifier_info rhs)
+{
+  lhs = static_cast<qualifier_info>(static_cast<int>(lhs) & ~static_cast<int>(rhs));
+  return lhs;
+}
+inline qualifier_bool operator|(qualifier_bool lhs, qualifier_info rhs)
+{
+  lhs.v |= rhs;
+  return lhs;
+}
+inline qualifier_bool operator&(qualifier_bool lhs, qualifier_info rhs)
+{
+  lhs.v &= rhs;
+  return lhs;
+}
+inline qualifier_bool operator^(qualifier_bool lhs, qualifier_info rhs)
+{
+  lhs.v ^= rhs;
+  return lhs;
+}
 
 inline qualifier_info qualifiers(Eolian_Type const* type)
 {
-  bool is_own = ::eolian_type_is_own(type);
-  bool is_const = ::eolian_type_is_const(type);
-  if(is_own && is_const)
-    return qualifier_info::is_const_own;
-  else if(is_own)
-    return qualifier_info::is_own;
-  else if(is_const)
-    return  qualifier_info::is_const;
-  else
-    return qualifier_info::is_none;
-}
-        
-inline bool is_own(qualifier_info i)
-{
-  switch(i)
-    {
-    case qualifier_info::is_own:
-    case qualifier_info::is_const_own:
-    case qualifier_info::is_optional_own:
-    case qualifier_info::is_optional_const_own:
-      return true;
-    default:
-      return false;
-    }
-}
-
-inline bool is_const(qualifier_info i)
-{
-  switch(i)
-    {
-    case qualifier_info::is_const:
-    case qualifier_info::is_const_own:
-    case qualifier_info::is_optional_const:
-    case qualifier_info::is_optional_const_own:
-      return true;
-    default:
-      return false;
-    }
-}
-        
-inline bool is_optional(qualifier_info i)
-{
-  switch(i)
-    {
-    case qualifier_info::is_optional:
-    case qualifier_info::is_optional_own:
-    case qualifier_info::is_optional_const:
-    case qualifier_info::is_optional_const_own:
-      return true;
-    default:
-      return false;
-    }
+  qualifier_info is_own = ::eolian_type_is_own(type) ? qualifier_info::is_own : qualifier_info::is_none;
+  qualifier_info is_const = ::eolian_type_is_const(type) ? qualifier_info::is_const : qualifier_info::is_none;
+  qualifier_info is_ref = ::eolian_type_is_ref(type) ? qualifier_info::is_ref : qualifier_info::is_none;
+  return is_own | is_const | is_ref;
 }
         
 struct qualifier_def
@@ -82,7 +88,29 @@ struct qualifier_def
    qualifier_def() : qualifier(qualifier_info::is_none) {}
    qualifier_def(qualifier_info info, std::string free_function)
      : qualifier(info), free_function(std::move(free_function)) {}
+
+  typedef qualifier_info(qualifier_bool::*unspecified_bool_type)() const;
+  operator unspecified_bool_type() const
+  {
+    return qualifier != qualifier_info::is_none ? &qualifier_bool::operator qualifier_info : nullptr;
+  }
 };
+
+inline qualifier_def operator|(qualifier_def lhs, qualifier_info rhs)
+{
+  lhs.qualifier = lhs.qualifier | rhs;
+  return lhs;
+}
+inline qualifier_def operator&(qualifier_def lhs, qualifier_info rhs)
+{
+  lhs.qualifier = lhs.qualifier & rhs;
+  return lhs;
+}
+inline qualifier_def operator^(qualifier_def lhs, qualifier_info rhs)
+{
+  lhs.qualifier = lhs.qualifier ^ rhs;
+  return lhs;
+}
 
 inline bool operator<(qualifier_def const& lhs, qualifier_def const& rhs)
 {
@@ -102,81 +130,8 @@ inline bool operator!=(qualifier_def const& lhs, qualifier_def const& rhs)
   return !(rhs == lhs);
 }
 
-inline void add_optional(qualifier_def& q)
-{
-  switch (q.qualifier)
-    {
-    case qualifier_info::is_none:
-      q.qualifier = qualifier_info::is_optional;
-      break;
-    case qualifier_info::is_own:
-      q.qualifier = qualifier_info::is_optional_own;
-      break;
-    case qualifier_info::is_const:
-      q.qualifier = qualifier_info::is_optional_const;
-      break;
-    case qualifier_info::is_const_own:
-      q.qualifier = qualifier_info::is_optional_const_own;
-      break;
-    default:
-      break;
-    }
 }
-inline void remove_optional(qualifier_def& q)
-{
-  switch (q.qualifier)
-    {
-    case qualifier_info::is_optional:
-      q.qualifier = qualifier_info::is_none;
-      break;
-    case qualifier_info::is_optional_own:
-      q.qualifier = qualifier_info::is_own;
-      break;
-    case qualifier_info::is_optional_const:
-      q.qualifier = qualifier_info::is_const;
-      break;
-    case qualifier_info::is_optional_const_own:
-      q.qualifier = qualifier_info::is_const_own;
-      break;
-    default:
-      break;
-    }
-}
-inline void remove_own(qualifier_def& q)
-{
-  switch (q.qualifier)
-    {
-    case qualifier_info::is_own:
-      q.qualifier = qualifier_info::is_none;
-      break;
-    case qualifier_info::is_const_own:
-      q.qualifier = qualifier_info::is_const;
-      break;
-    case qualifier_info::is_optional_own:
-      q.qualifier = qualifier_info::is_optional;
-      break;
-    case qualifier_info::is_optional_const_own:
-      q.qualifier = qualifier_info::is_optional_const;
-      break;
-    default:
-      break;
-    }
-}
-
-inline bool is_optional(qualifier_def const& i)
-{
-  return is_optional(i.qualifier);
-}
-inline bool is_own(qualifier_def const& i)
-{
-  return is_own(i.qualifier);
-}
-inline bool is_const(qualifier_def const& i)
-{
-  return is_const(i.qualifier);
-}
-        
-        
-} } } }
+using attributes::qualifier_info;
+} } }
 
 #endif

@@ -2,10 +2,26 @@ class Name1.Name2.Type_Generation (Eo.Base)
 {
    data: Type_Generation_Data;
    methods {
+     // inref
+     inrefint {
+       params {
+         @in v: ref(int);
+       }
+     }
+     inrefintown {
+       params {
+         @in v: own(ref(int));
+       }
+     }
+     inrefintownfree {
+       params {
+         @in v: free(own(ref(int)), free);
+       }
+     }
      // in void ptr
      invoidptr {
        params {
-         @in v: void*;
+         @in v: void_ptr;
        }
      }
      inint {
@@ -15,32 +31,17 @@ class Name1.Name2.Type_Generation (Eo.Base)
      }
      inintptr {
        params {
-         @in v: int*;
+         @in v: ref(int);
        }
      }
      inintptrown {
        params {
-         @in v: own(int*);
-       }
-     }
-     inintptrownptr {
-       params {
-         @in v: own(int*)*;
-       }
-     }
-     inintptrownptrptr {
-       params {
-         @in v: own(int*)**;
-       }
-     }
-     inintptrptrownptr {
-       params {
-         @in v: own(int**)*;
+         @in v: own(ref(int));
        }
      }
      inintptrownfree {
        params {
-         @in v: free(own(int*), free);
+         @in v: free(own(ref(int)), free);
        }
      }
      instring {
@@ -48,72 +49,58 @@ class Name1.Name2.Type_Generation (Eo.Base)
          @in v: string;
        }
      }
-     /*
      instringptr {
        params {
-         @in v: string*;
+         @in v: ref(string);
        }
-     }*/
+     }
      instringown {
        params {
          @in v: own(string);
        }
      }
-     /* no sense
      instringptrown {
        params {
-         @in v: own(string*);
+         @in v: own(ref(string));
        }
      }
-     instringownptrown {
-       params {
-         @in v: own(own(string)*);
-       }
-     }*/
      // return
+     returnrefint {
+       return: ref(int);
+     }
      returnvoidptr {
-        return: void*;
+        return: void_ptr;
      }
      returnint {
        return: int;
      }
      returnintptr {
-       return: int*;
+       return: ref(int);
      }
      returnintptrown {
-       return: own(int*);
-     }
-     returnintptrownptr {
-       return: own(int*)*;
-     }
-     returnintptrownptrptr {
-       return: own(int*)**;
-     }
-     returnintptrptrownptr {
-       return: own(int**)*;
+       return: own(ref(int));
      }
      returnintptrownfree {
        params {
-         @in v: free(own(int*), free);
+         @in v: free(own(ref(int)), free);
        }
      }
      returnstring {
        return: string;
      }
      returnstringptr {
-       return: string*;
+       return: ref(string);
      }
      returnstringown {
        return: own(string);
      }
      returnstringownptr {
-       return: own(string*);
+       return: own(ref(string));
      }
-
      // out
      outvoidptr {
        params {
-         @out v: void*;
+         @out v: void_ptr;
        }
      }
      outint {
@@ -123,17 +110,17 @@ class Name1.Name2.Type_Generation (Eo.Base)
      }
      outintptr {
        params {
-         @out v: int*;
+         @out v: ref(int);
        }
      }
      outintptrown {
        params {
-         @out v: own(int*);
+         @out v: own(ref(int));
        }
      }
      outintptrownfree {
        params {
-         @out v: free(own(int*), free);
+         @out v: free(own(ref(int)), free);
        }
      }
      inclassname {
@@ -153,7 +140,7 @@ class Name1.Name2.Type_Generation (Eo.Base)
      }
      optionalinvoidptr {
        params {
-         @in v: void* @optional;
+         @in v: void_ptr @optional;
        }
      }
      optionalinint {
@@ -163,22 +150,22 @@ class Name1.Name2.Type_Generation (Eo.Base)
      }
      optionalinintptr {
        params {
-         @in v: int* @optional;
+         @in v: ref(int) @optional;
        }
      }
      optionalinintptrown {
        params {
-         @in v: own(int*) @optional;
+         @in v: own(ref(int)) @optional;
        }
      }
      optionalinintptrownfree {
        params {
-         @in v: free(own(int*), free) @optional;
+         @in v: free(own(ref(int)), free) @optional;
        }
      }
      optionaloutvoidptr {
        params {
-         @out v: void* @optional;
+         @out v: void_ptr @optional;
        }
      }
      optionaloutint {
@@ -188,17 +175,17 @@ class Name1.Name2.Type_Generation (Eo.Base)
      }
      optionaloutintptr {
        params {
-         @out v: int* @optional;
+         @out v: ref(int) @optional;
        }
      }
      optionaloutintptrown {
        params {
-         @out v: own(int*) @optional;
+         @out v: own(ref(int)) @optional;
        }
      }
      optionaloutintptrownfree {
        params {
-         @out v: free(own(int*), free) @optional;
+         @out v: free(own(ref(int)), free) @optional;
        }
      }
      optionalinclassname {

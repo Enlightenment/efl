@@ -54,7 +54,7 @@ struct function_definition_generator
         return false;
      
       if(!as_generator
-         ("inline " << grammar::type << " " << string << "::" << string << "(" << (parameter % ", ") << ") const\n{\n")
+         ("inline " << grammar::type(true) << " " << string << "::" << string << "(" << (parameter % ", ") << ") const\n{\n")
          .generate(sink, std::make_tuple(f.return_type, _klass_name.eolian_name, escape_keyword(f.name), f.parameters), ctx))
         return false;
 
@@ -105,9 +105,19 @@ struct function_definition_generator
         attribute_conditional([] (attributes::parameter_def const& p) -> bool
                               { return p.direction != attributes::parameter_direction::in; })
         [
-          attribute_reorder<-1, 1, 2, 2>
-          (scope_tab << "::efl::eolian::assign_out<" << parameter_type << ", " << c_type
-           << ">(" << string << ", __out_param_" << string << ");\n")
+          attribute_reorder<-1, 1, 1, 2, 2>
+          (
+            scope_tab << "::efl::eolian::assign_out<" << parameter_type << ", " << c_type
+            <<
+            (
+             attribute_conditional([] (attributes::type_def const& type)
+             { return type.original_type.visit(attributes::get_qualifier_visitor{}) & qualifier_info::is_own; })
+             [
+               ", true"
+             ] | eps
+            )
+            << ">(" << string << ", __out_param_" << string << ");\n"
+           )
         ]
         | eps
         ;
@@ -116,7 +126,7 @@ struct function_definition_generator
       
       if(f.return_type != attributes::void_
          && !as_generator(scope_tab << "return ::efl::eolian::convert_to_return<"
-                          << type<< ">(__return_value);\n"
+                          << type(true) << ">(__return_value);\n"
                           ).generate(sink, f.return_type, ctx)) return false;
 
       if(!as_generator("}\n").generate(sink, attributes::unused, ctx))

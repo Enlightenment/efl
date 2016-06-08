@@ -9,52 +9,6 @@
 
 namespace efl { namespace eolian { namespace grammar {
 
-namespace detail {
-
-bool has_own(attributes::regular_type_def const& def)
-{
-  for(auto&& c : def.pointers)
-    if(is_own(c.qualifier))
-      return true;
-  return false;
-}
-  
-}
-      
-namespace detail {
-
-struct swap_pointers_visitor
-{
-  std::vector<attributes::pointer_indirection>* pointers;
-  typedef void result_type;
-  template <typename T>
-  void operator()(T& object) const
-  {
-     std::swap(*pointers, object.pointers);
-  }
-  void operator()(attributes::complex_type_def& complex) const
-  {
-    (*this)(complex.outer);
-  }
-};
-
-template <typename OutputIterator, typename Context>
-bool generate_pointers(OutputIterator sink, std::vector<attributes::pointer_indirection> const& pointers, Context const&
-                       , bool no_reference)
-{
-   for(auto first = pointers.rbegin()
-         , last = pointers.rend(); first != last; ++first)
-     {
-       if(std::next(first) == last && first->reference && !no_reference)
-         *sink++ = '&';
-       else
-         *sink++ = '*';
-     }
-   return true;
-}
-  
-}
-      
 template <typename T>
 T const* as_const_pointer(T* p) { return p; }
 
@@ -90,6 +44,7 @@ struct visitor_generate
    Context const* context;
    std::string c_type;
    bool is_out;
+   bool is_return;
 
    typedef visitor_generate<OutputIterator, Context> visitor_type;
    typedef bool result_type;
@@ -105,14 +60,8 @@ struct visitor_generate
       }
       const match_table[] =
         {
-           {"void_ptr", nullptr, [&]
-            {
-              std::vector<attributes::pointer_indirection> pointers = regular.pointers;
-              pointers.insert(pointers.begin(), {{}, false});
-              return attributes::regular_type_def{"void", regular.base_qualifier, pointers, {}};
-            }}
            // signed primitives
-           , {"byte", nullptr, [&] { return replace_base_type(regular, " char"); }}
+             {"byte", nullptr, [&] { return replace_base_type(regular, " char"); }}
            , {"llong", nullptr, [&] { return replace_base_type(regular, " long long"); }}
            , {"int8", nullptr, [&] { return replace_base_type(regular, " int8_t"); }}
            , {"int16", nullptr, [&] { return replace_base_type(regular, " int16_t"); }}
@@ -133,25 +82,42 @@ struct visitor_generate
            
            , {"ptrdiff", nullptr, [&] { return replace_base_type(regular, " ptrdiff_t"); }}
            , {"intptr", nullptr, [&] { return replace_base_type(regular, " intptr_t"); }}
-           , {"string", true, [&] { return replace_base_type(regular, " ::std::string"); }}
-           , {"string", false, [&] { return replace_base_type(regular, " ::efl::eina::string_view"); }}
+           , {"string", true, [&]
+              {
+                regular_type_def r = regular;
+                r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if(is_out || is_return)
+                  return replace_base_type(r, " ::std::string");
+                else return replace_base_type(r, " ::efl::eina::string_view");
+              }}
+           , {"string", false, [&]
+              {
+                regular_type_def r = regular;
+                r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                return replace_base_type(r, " ::efl::eina::string_view");
+              }}
            , {"generic_value", nullptr, [&]
-              { return regular_type_def{" ::efl::eina::value", regular.base_qualifier
-                                        , {regular.pointers.empty()
-                                           || (regular.pointers.size() == 1 && regular.pointers[0].reference)
-                                           ? regular.pointers
-                                           : std::vector<attributes::pointer_indirection>
-                                           {regular.pointers.begin(), std::prev(regular.pointers.end())}}
-                                        , {}};
+              { return regular_type_def{" ::efl::eina::value", regular.base_qualifier, {}};
               }}
         };
-
-      if(eina::optional<bool> b = call_match
+      if(regular.base_type == "void_ptr")
+        {
+          if(regular.base_qualifier & qualifier_info::is_ref)
+            throw std::runtime_error("ref of void_ptr is invalid");
+          return as_generator
+             (
+              lit("void") << (regular.base_qualifier & qualifier_info::is_const ? " const" : "")
+              << "*"
+              << (is_out ? "&" : "")
+             )
+             .generate(sink, attributes::unused, *context);
+        }
+      else if(eina::optional<bool> b = call_match
          (match_table
           , [&] (match const& m)
           {
             return (!m.name || *m.name == regular.base_type)
-            && (!m.has_own || *m.has_own == is_own(regular.base_qualifier))
+            && (!m.has_own || *m.has_own == (bool)(regular.base_qualifier & qualifier_info::is_own))
             ;
           }
           , [&] (attributes::type_def::variant_type const& v)
@@ -161,94 +127,83 @@ struct visitor_generate
         {
            return *b;
         }
-      else if(attributes::is_optional(regular.base_qualifier))
+      // in A @optional -> optional<A>
+      // in A& @optional -> optional<A&>
+      // in A& @optional -> optional<A&>
+      // in own(A&) @optional -> A*
+      //
+      // out A @optional -> optional<A&>
+      // out A& @optional -> optional<A&>
+      // out own(A&) @optional -> optional<A*&>
+      else if(regular.base_qualifier & qualifier_info::is_optional)
        {
-         if(regular.pointers.empty() || (regular.pointers.size() == 1 && regular.pointers[0].reference == true))
-           {
-             attributes::complex_type_def def
-             {attributes::regular_type_def{" ::efl::eina::optional", {}}};
-             attributes::regular_type_def no_optional_regular = regular;
-             attributes::remove_optional(no_optional_regular.base_qualifier);
-
-             def.subtypes.push_back({no_optional_regular, c_type});
-             return (*this)(def);
-           }
-         else
-           {
-             attributes::regular_type_def no_optional_regular = regular;
-             attributes::remove_optional(no_optional_regular.base_qualifier);
-             no_optional_regular.pointers[0].reference = 0;
-             return (*this)(no_optional_regular);
-           }
-       }
-     // else if(detail::has_own(regular) && !regular.pointers.empty())
-     //   {
-     //     attributes::complex_type_def def
-     //     {attributes::regular_type_def{" ::efl::eolian::own_ptr", attributes::qualifier_info::is_none, {}}};
-
-     //     attributes::complex_type_def tagged_def
-     //     {attributes::regular_type_def{" ::efl::eolian::own", attributes::qualifier_info::is_none, {}}};
-         
-     //     auto pointer_iterator = regular.pointers.begin()
-     //       , pointer_last = regular.pointers.end();
-
-     //     for(;pointer_iterator != pointer_last && !attributes::is_own(pointer_iterator->qualifier)
-     //           ;++pointer_iterator)
-     //       {
-     //         tagged_def.outer.pointers.push_back(*pointer_iterator);
-     //         tagged_def.outer.pointers.front().reference = false;
-     //       }
-
-     //     assert(attributes::is_own(pointer_iterator->qualifier));
-
-     //     attributes::regular_type_def base_type (regular);
-     //     base_type.pointers.clear();
-
-     //     for(;pointer_iterator != pointer_last; ++pointer_iterator)
-     //       {
-     //         base_type.pointers.insert(base_type.pointers.begin(), *pointer_iterator);
-     //         attributes::remove_own(base_type.pointers.back().qualifier);
-     //       }
-
-     //     tagged_def.subtypes.push_back({base_type, c_type});
-     //     def.subtypes.push_back({tagged_def, c_type});
-     //     return (*this)(def);
-     //   }
-     else if(detail::has_own(regular) && !regular.pointers.empty())
-       {
-          attributes::regular_type_def pointee = regular;
-          std::vector<attributes::pointer_indirection> pointers;
-          std::swap(pointers, pointee.pointers);
-          pointers.erase(pointers.begin());
-
-          attributes::pointer_indirection reference {{attributes::qualifier_info::is_none,{}}, true};
-          
-          return as_generator(" ::std::unique_ptr<" << type).generate
-            (sink, attributes::type_def{pointee, c_type}, *context)
-            && detail::generate_pointers(sink, pointers, *context, true)
-            && as_generator(", void(*)(const void*)>").generate(sink, attributes::unused, *context)
-            && (!is_out || detail::generate_pointers(sink, {reference}, *context, false));
-       }            
-     else
-       {
-         auto pointers = regular.pointers;
+         attributes::regular_type_def no_optional_regular = regular;
+         no_optional_regular.base_qualifier.qualifier ^= qualifier_info::is_optional;
          if(is_out)
-           pointers.push_back({{attributes::qualifier_info::is_none,{}}, true});
-         if(as_generator(*(string << "_") << string << (is_const(regular.base_qualifier)? " const" : ""))
-            .generate(sink, std::make_tuple(regular.namespaces, regular.base_type), *context))
-           return detail::generate_pointers(sink, pointers, *context
-                                            , regular.base_type == "void");
+           {
+             if(no_optional_regular.base_qualifier & qualifier_info::is_own)
+               {
+                 return as_generator(" ::efl::eina::optional<").generate(sink, attributes::unused, *context)
+                   && (*this)(no_optional_regular)
+                   && as_generator("&>").generate(sink, attributes::unused, *context);
+              }
+             else if(no_optional_regular.base_qualifier & qualifier_info::is_ref)
+               {
+                  no_optional_regular.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                  return (*this)(no_optional_regular)
+                    && as_generator("**").generate(sink, attributes::unused, *context);
+               }
+             else
+               return (*this)(no_optional_regular)
+                 && as_generator("*").generate(sink, attributes::unused, *context);
+           }
          else
-           return false;
+           {
+             // regular.base_qualifier & qualifier_info::is_ref
+             return as_generator(" ::efl::eina::optional<").generate(sink, attributes::unused, *context)
+               && (*this)(no_optional_regular)
+               && as_generator(">").generate(sink, attributes::unused, *context);
+           }
        }
+      else if((is_return || is_out) && regular.base_qualifier & qualifier_info::is_ref
+              && regular.base_qualifier & qualifier_info::is_own)
+        {
+          if(as_generator
+             (
+              " ::std::unique_ptr<"
+              << *(string << "_")
+              << string
+              << (regular.base_qualifier & qualifier_info::is_const ? " const" : "")
+              << ", ::efl::eina::malloc_deleter>"
+             )
+             .generate(sink, std::make_tuple(regular.namespaces, regular.base_type), *context))
+            return true;
+          else
+            return false;
+        }
+      else
+        {
+          if(as_generator
+             (
+              *(string << "_")
+              << string
+              << (regular.base_qualifier & qualifier_info::is_const
+                  || (regular.base_qualifier & qualifier_info::is_ref
+                      && !is_return && !is_out)
+                  ? " const" : "")
+              << (regular.base_qualifier & qualifier_info::is_ref? "&" : "")
+             )
+             .generate(sink, std::make_tuple(regular.namespaces, regular.base_type), *context))
+            return true;
+          else
+            return false;
+        }
    }
    bool operator()(attributes::klass_name klass) const
    {
-     if(is_out)
-       klass.pointers.push_back({{attributes::qualifier_info::is_none, {}}, true});
      if(as_generator(" " << *("::" << lower_case[string]) << "::" << string)
         .generate(sink, std::make_tuple(attributes::cpp_namespaces(klass.namespaces), klass.eolian_name), *context))
-       return detail::generate_pointers(sink, klass.pointers, *context, false);
+       return true;
      else
        return false;
    }
@@ -286,26 +241,25 @@ struct visitor_generate
          }}
         , {"hash", nullptr, nullptr
            , [&]
-           { regular_type_def r{"Eina_Hash", complex.outer.base_qualifier, complex.outer.pointers, {}};
-             r.pointers.push_back({{qualifier_info::is_none, {}}, false});
+           { regular_type_def r{"Eina_Hash*", complex.outer.base_qualifier, {}};
              return r;
            }}
         , {"promise", nullptr, nullptr, [&]
            {
              return replace_outer
-             (complex, regular_type_def{" ::efl::eina::future", complex.outer.base_qualifier, {}, {}});
+             (complex, regular_type_def{" ::efl::eina::future", complex.outer.base_qualifier, {}});
            }           
           }
         , {"iterator", nullptr, nullptr, [&]
            {
              return replace_outer
-             (complex, regular_type_def{" ::efl::eina::iterator", complex.outer.base_qualifier, {}, {}});
+             (complex, regular_type_def{" ::efl::eina::iterator", complex.outer.base_qualifier, {}});
            }           
           }
         , {"accessor", nullptr, nullptr, [&]
            {
              return replace_outer
-             (complex, regular_type_def{" ::efl::eina::accessor", complex.outer.base_qualifier, {}, {}});
+             (complex, regular_type_def{" ::efl::eina::accessor", complex.outer.base_qualifier, {}});
            }           
           }
       };
@@ -313,13 +267,14 @@ struct visitor_generate
       auto default_match = [&] (attributes::complex_type_def const& complex)
         {
           regular_type_def no_pointer_regular = complex.outer;
-          std::vector<attributes::pointer_indirection> pointers;
-          pointers.swap(no_pointer_regular.pointers);
-          if(is_out)
-            pointers.push_back({{attributes::qualifier_info::is_none, {}}, true});
+          // std::vector<attributes::pointer_indirection> pointers;
+          // pointers.swap(no_pointer_regular.pointers);
+          // if(is_out)
+          //   pointers.push_back({{attributes::qualifier_info::is_none, {}}, true});
           return visitor_type{sink, context, c_type, false}(no_pointer_regular)
             && as_generator("<" << (type % ", ") << ">").generate(sink, complex.subtypes, *context)
-            && detail::generate_pointers(sink, pointers, *context, false);
+          ;
+            // && detail::generate_pointers(sink, pointers, *context, false);
         };
        
       if(eina::optional<bool> b = call_match
@@ -327,8 +282,8 @@ struct visitor_generate
           , [&] (match const& m)
           {
             return (!m.name || *m.name == complex.outer.base_type)
-            && (!m.has_own || *m.has_own == is_own(complex.outer.base_qualifier))
-            && (!m.is_const || *m.is_const == is_const(complex.outer.base_qualifier));
+            && (!m.has_own || *m.has_own == bool(complex.outer.base_qualifier & qualifier_info::is_own))
+            && (!m.is_const || *m.is_const == bool(complex.outer.base_qualifier & qualifier_info::is_const));
           }
           , [&] (attributes::type_def::variant_type const& v)
           {

@@ -22,11 +22,15 @@ struct converting_argument_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& ctx) const
    {
+     attributes::qualifier_def qualifier = param.type.original_type.visit(attributes::get_qualifier_visitor{});
      return as_generator
        (
         attribute_reorder<1, -1, 2>
         (
-         " ::efl::eolian::convert_to_c<" << c_type << ", " << parameter_type << ">(" << string << ")"
+         " ::efl::eolian::convert_to_c<" << c_type << ", " << parameter_type
+         << (qualifier & qualifier_info::is_own
+             ? ", true" : "")
+         << ">(" << string << ")"
         )
        ).generate(sink, param, ctx);
    }

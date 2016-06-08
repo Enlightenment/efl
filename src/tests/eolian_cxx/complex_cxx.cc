@@ -37,18 +37,23 @@ struct test_param_type<void(T::*)(P), U>
    static_assert(std::is_same<P, U>::value, "Wrong type");
 };
 
-test_param_type<typeof( & nonamespace::Complex::inptrcont ), efl::eina::range_list<int>> inptrcont;
 test_param_type<typeof( & nonamespace::Complex::inclasscont ), efl::eina::range_list<eo::Base>> inclasscont;
-test_param_type<typeof( & nonamespace::Complex::inptrptrcont ), efl::eina::range_list<int*>> inptrptrcont;
-test_param_type<typeof( & nonamespace::Complex::inptrcontown ), efl::eina::list<int>const&> inptrcontown;
-test_param_type<typeof( & nonamespace::Complex::inptrptrcontown ), efl::eina::list<int*>const&> inptrptrcontown;
-test_param_type<typeof( & nonamespace::Complex::incontcont ), efl::eina::range_list<efl::eina::range_list<int>>> incontont;
+test_param_type<typeof( & nonamespace::Complex::incontcont ), efl::eina::range_list<efl::eina::range_list<int>>> incontcont;
 test_param_type<typeof( & nonamespace::Complex::incontcontown ), efl::eina::list<efl::eina::range_list<int>>const&> incontcontown;
 test_param_type<typeof( & nonamespace::Complex::incontowncontown ), efl::eina::list<efl::eina::list<int>>const&> incontowncontown;
 test_param_type<typeof( & nonamespace::Complex::incontowncont ), efl::eina::range_list<efl::eina::list<int>>> incontowncont;
 test_param_type<typeof( & nonamespace::Complex::instringcont ), efl::eina::range_list<efl::eina::string_view>> instringcont;
 test_param_type<typeof( & nonamespace::Complex::instringowncont ), efl::eina::range_list<efl::eina::string_view>> instringowncont;
 test_param_type<typeof( & nonamespace::Complex::instringcontown ), efl::eina::list<efl::eina::string_view>const&> instringcontown;
+
+test_param_type<typeof( & nonamespace::Complex::outclasscont ), efl::eina::range_list<eo::Base>&> outclasscont;
+test_param_type<typeof( & nonamespace::Complex::outcontcont ), efl::eina::range_list<efl::eina::range_list<int>>&> outcontcont;
+test_param_type<typeof( & nonamespace::Complex::outcontcontown ), efl::eina::list<efl::eina::range_list<int>>&> outcontcontown;
+test_param_type<typeof( & nonamespace::Complex::outcontowncontown ), efl::eina::list<efl::eina::list<int>>&> outcontowncontown;
+test_param_type<typeof( & nonamespace::Complex::outcontowncont ), efl::eina::range_list<efl::eina::list<int>>&> outcontowncont;
+test_param_type<typeof( & nonamespace::Complex::outstringcont ), efl::eina::range_list<efl::eina::string_view>&> outstringcont;
+test_param_type<typeof( & nonamespace::Complex::outstringowncont ), efl::eina::range_list<efl::eina::string_view>&> outstringowncont;
+test_param_type<typeof( & nonamespace::Complex::outstringcontown ), efl::eina::list<efl::eina::string_view>&> outstringcontown;
 
 test_param_type<typeof( & nonamespace::Complex::foo ), efl::eina::range_list<int>> foo;
 test_return_type<typeof( & nonamespace::Complex::bar ), efl::eina::range_array<int>> bar;

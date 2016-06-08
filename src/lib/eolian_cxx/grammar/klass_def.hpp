@@ -18,7 +18,15 @@
 #include <memory>
 #include <set>
 
-namespace efl { namespace eolian { namespace grammar { namespace attributes {
+namespace efl { namespace eolian { namespace grammar {
+
+namespace attributes {
+
+struct complex_type_def;
+  
+}
+
+namespace attributes {
 
 template <typename...Args, std::size_t I>
 bool lexicographical_compare_impl(std::tuple<Args...> const&
@@ -56,25 +64,6 @@ bool lexicographical_compare(std::tuple<T, U> const& lhs
           && std::get<1>(lhs) < std::get<1>(rhs));
 }
         
-struct pointer_indirection
-{
-   qualifier_def qualifier;
-   bool reference;
-};
-inline bool operator<(pointer_indirection const& lhs, pointer_indirection const& rhs)
-{
-  return lexicographical_compare(std::make_tuple(lhs.qualifier, lhs.reference)
-                                 , std::make_tuple(rhs.qualifier, rhs.reference));
-}
-inline bool operator==(pointer_indirection const& lhs, pointer_indirection const& rhs)
-{
-  return lhs.qualifier == rhs.qualifier && lhs.reference == rhs.reference;
-}
-inline bool operator!=(pointer_indirection const& lhs, pointer_indirection const& rhs)
-{
-  return !(lhs == rhs);
-}
-
 struct type_def;
 bool operator==(type_def const& rhs, type_def const& lhs);
 bool operator!=(type_def const& rhs, type_def const& lhs);
@@ -89,19 +78,16 @@ struct klass_name
    std::vector<std::string> namespaces;
    std::string eolian_name;
    qualifier_def base_qualifier;
-   std::vector<pointer_indirection> pointers;
    class_type type;
 
    klass_name(std::vector<std::string> namespaces
               , std::string eolian_name, qualifier_def base_qualifier
-              , std::vector<pointer_indirection> pointers
               , class_type type)
      : namespaces(namespaces), eolian_name(eolian_name), base_qualifier(base_qualifier)
-     , pointers(pointers), type(type) {}
-   klass_name(Eolian_Class const* klass, qualifier_def base_qualifier
-              , std::vector<pointer_indirection> pointers)
+     , type(type) {}
+   klass_name(Eolian_Class const* klass, qualifier_def base_qualifier)
      : eolian_name( ::eolian_class_name_get(klass))
-     , base_qualifier(base_qualifier), pointers(pointers)
+              , base_qualifier(base_qualifier)
    {
      for(efl::eina::iterator<const char> namespace_iterator ( ::eolian_class_namespaces_get(klass))
            , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
@@ -131,7 +117,7 @@ struct klass_name
 inline bool operator==(klass_name const& lhs, klass_name const& rhs)
 {
   return lhs.namespaces == rhs.namespaces && lhs.eolian_name == rhs.eolian_name
-    && lhs.base_qualifier == rhs.base_qualifier && lhs.pointers == rhs.pointers;
+    && lhs.base_qualifier == rhs.base_qualifier/* && lhs.pointers == rhs.pointers*/;
 }
 inline bool operator!=(klass_name const& lhs, klass_name const& rhs)
 {
@@ -142,14 +128,13 @@ inline bool operator<(klass_name const& lhs, klass_name const& rhs)
   typedef std::tuple<std::vector<std::string>const&
                      , std::string const&
                      , qualifier_def const&
-                     , std::vector<pointer_indirection> const&
                      , class_type
                      > tuple_type;
   return lexicographical_compare(tuple_type(lhs.namespaces, lhs.eolian_name
-                                            , lhs.base_qualifier, lhs.pointers
+                                            , lhs.base_qualifier
                                             , lhs.type)
                                  , tuple_type(rhs.namespaces, rhs.eolian_name
-                                              , rhs.base_qualifier, rhs.pointers
+                                              , rhs.base_qualifier
                                               , rhs.type));
 }
 
@@ -187,14 +172,12 @@ struct regular_type_def
 {
    std::string base_type;
    qualifier_def base_qualifier;
-   std::vector<pointer_indirection> pointers;
    std::vector<std::string> namespaces;
 };
 
 inline bool operator==(regular_type_def const& rhs, regular_type_def const& lhs)
 {
-  return rhs.base_type == lhs.base_type && rhs.base_qualifier == lhs.base_qualifier
-    && rhs.pointers == lhs.pointers;
+  return rhs.base_type == lhs.base_type && rhs.base_qualifier == lhs.base_qualifier;
 }
 inline bool operator!=(regular_type_def const& rhs, regular_type_def const& lhs)
 {
@@ -230,23 +213,23 @@ struct type_def
    {
      set(eolian_type);
    }
-   struct set_pointer_visitor
-   {
-      typedef void result_type;
-      std::vector<pointer_indirection> pointers;
-      template <typename T>
-      void operator()(T& v) const
-      {
-        v.pointers = pointers;
-      }
-      void operator()(complex_type_def& complex) const
-      {
-        (*this)(complex.outer);
-      }
-   };
    void set(Eolian_Type const* eolian_type);
 };
 
+struct get_qualifier_visitor
+{
+  typedef qualifier_def result_type;
+  template <typename T>
+  qualifier_def operator()(T const& object) const
+  {
+     return object.base_qualifier;
+  }
+  qualifier_def operator()(complex_type_def const& complex) const
+  {
+    return complex.outer.base_qualifier;
+  }
+};
+  
 inline bool operator==(type_def const& lhs, type_def const& rhs)
 {
   return lhs.original_type == rhs.original_type && lhs.c_type == rhs.c_type;
@@ -273,29 +256,17 @@ inline void type_def::set(Eolian_Type const* eolian_type)
          for(efl::eina::iterator<const char> namespace_iterator( ::eolian_type_namespaces_get(eolian_type))
                , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
            namespaces.push_back(&*namespace_iterator);
-         original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, {}, namespaces}};
+         original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces}};
        }
        break;
      case EOLIAN_TYPE_POINTER:
        {
-          std::vector<pointer_indirection> pointers
-          {{ {qualifiers(eolian_type), {}}, false }};
-          Eolian_Type const* base_type = eolian_type_base_type_get(eolian_type);
-          while(eolian_type_type_get(base_type) == EOLIAN_TYPE_POINTER)
-            {
-               pointers.push_back({{qualifiers(base_type), {}}});
-               base_type = eolian_type_base_type_get(base_type);
-            }
-
-          set(base_type);
-          original_type.visit(set_pointer_visitor{pointers});
-          c_type = ::eolian_type_c_type_get(eolian_type);
-          break;
+          throw std::runtime_error("");
        }
      case EOLIAN_TYPE_CLASS:
        {
           Eolian_Class const* klass = eolian_type_class_get(eolian_type);
-          original_type = klass_name(klass, {qualifiers(eolian_type), {}}, {});
+          original_type = klass_name(klass, {qualifiers(eolian_type), {}});
        }
        break;
      case EOLIAN_TYPE_COMPLEX:
@@ -329,7 +300,7 @@ struct add_optional_qualifier_visitor
   template <typename T>
   void operator()(T&  object) const
   {
-    add_optional(object.base_qualifier);
+    object.base_qualifier.qualifier |= qualifier_info::is_optional;
   }
   void operator()(complex_type_def& complex) const
   {
@@ -612,26 +583,34 @@ struct klass_def
          Eolian_Function_Type type = ::eolian_function_type_get(function);
          if(type == EOLIAN_PROPERTY)
            {
-             if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_GET)
-                && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
-               functions.push_back({function, EOLIAN_PROP_GET});
-             if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_SET)
-                && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
-               functions.push_back({function, EOLIAN_PROP_SET});
+             try {
+                if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_GET)
+                   && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
+                  functions.push_back({function, EOLIAN_PROP_GET});
+             } catch(std::exception const&) {}
+             try {
+                if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_SET)
+                   && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
+                  functions.push_back({function, EOLIAN_PROP_SET});
+             } catch(std::exception const&) {}
            }
          else
-           if(! ::eolian_function_is_legacy_only(function, type)
-              && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
-             functions.push_back({function, type});
+           try {
+             if(! ::eolian_function_is_legacy_only(function, type)
+                && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
+               functions.push_back({function, type});
+           } catch(std::exception const&) {}
        }
      for(efl::eina::iterator<Eolian_Function const> eolian_functions ( ::eolian_class_functions_get(klass, EOLIAN_METHOD))
        , functions_last; eolian_functions != functions_last; ++eolian_functions)
        {
-         Eolian_Function const* function = &*eolian_functions;
-         Eolian_Function_Type type = ::eolian_function_type_get(function);
-          if(! ::eolian_function_is_legacy_only(function, EOLIAN_METHOD)
-             && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
-            functions.push_back({function, EOLIAN_METHOD});
+         try {
+             Eolian_Function const* function = &*eolian_functions;
+             Eolian_Function_Type type = eolian_function_type_get(function);
+             if(! ::eolian_function_is_legacy_only(function, EOLIAN_METHOD)
+                && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
+               functions.push_back({function, EOLIAN_METHOD});
+         } catch(std::exception const&) {}
        }
      std::function<void(Eolian_Class const*)> inherit_algo = 
        [&] (Eolian_Class const* klass)
@@ -640,7 +619,7 @@ struct klass_def
                , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
            {
              Eolian_Class const* inherit = ::eolian_class_get_by_name(&*inherit_iterator);
-             inherits.insert({inherit, {}, {}});
+             inherits.insert({inherit, {}});
              inherit_algo(inherit);
            }
        };
@@ -665,7 +644,9 @@ struct klass_def
      for(efl::eina::iterator<Eolian_Event const> event_iterator( ::eolian_class_events_get(klass))
            , event_last; event_iterator != event_last; ++event_iterator)
        {
-         events.push_back(&*event_iterator);
+         try {
+           events.push_back(&*event_iterator);
+         } catch(std::exception const&) {}
        }
   }
 
@@ -673,7 +654,7 @@ struct klass_def
 
 inline klass_name get_klass_name(klass_def const& klass)
 {
-  return {klass.namespaces, klass.eolian_name, {qualifier_info::is_none, {}}, {}, klass.type};
+  return {klass.namespaces, klass.eolian_name, {qualifier_info::is_none, {}}, klass.type};
 }
 
 inline Eolian_Class const* get_klass(klass_name const& klass_name_)
@@ -703,6 +684,8 @@ struct is_tuple<attributes::parameter_def> : std::true_type {};
 template <>
 struct is_tuple<attributes::event_def> : std::true_type {};
   
-} } } }
+}
+
+} } }
 
 #endif

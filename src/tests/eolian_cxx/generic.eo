@@ -101,7 +101,7 @@ class Generic (Eo.Base)
      prefix,event1;
      prefix,event2: Generic;
      prefix,event3: int;
-     prefix,event4: list<int*>;
+     prefix,event4: list<int>;
      prefix,event5: Generic.Event;
    }
 }

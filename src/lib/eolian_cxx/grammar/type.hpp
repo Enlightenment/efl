@@ -12,29 +12,50 @@ struct visitor_generate;
       
 struct type_generator
 {
+   type_generator(bool is_return = false)
+     : is_return(is_return) {}
+  
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::type_def const& type, Context const& context) const
    {
-      return type.original_type.visit(visitor_generate<OutputIterator, Context>{sink, &context, type.c_type, false});
+      return type.original_type.visit(visitor_generate<OutputIterator, Context>{sink, &context, type.c_type, false, is_return});
    }
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
       return param.type.original_type.visit(visitor_generate<OutputIterator, Context>{sink, &context, param.c_type
-            , param.direction != attributes::parameter_direction::in});
+            , param.direction != attributes::parameter_direction::in, false});
    }
+
+   bool is_return;
 };
+
+struct type_terminal
+{
+  type_generator const operator()(bool is_return) const
+  {
+    return type_generator(is_return);
+  }
+} const type = {};
+
+type_generator const as_generator(type_terminal)
+{
+  return type_generator{};
+}
 
 template <>
 struct is_eager_generator<type_generator> : std::true_type {};
+template <>
+struct is_generator<type_terminal> : std::true_type {};
 
 namespace type_traits {
 template <>
 struct attributes_needed<type_generator> : std::integral_constant<int, 1> {};  
+template <>
+struct attributes_needed<type_terminal> : std::integral_constant<int, 1> {};  
 }
 
-type_generator const type = {};
-
+      
 } } }
 
 #endif

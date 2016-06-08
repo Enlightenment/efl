@@ -215,6 +215,7 @@ struct accessor<T, typename std::enable_if< ! std::is_base_of<::efl::eo::concret
   _self_type& operator=(_self_type const& other)
   {
     _base_type::operator=(other);
+    return *this;
   }
 
   /**

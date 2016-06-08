@@ -516,6 +516,12 @@ public:
     insert(end(), other.begin(), other.end());
   }
 
+  ptr_array(ptr_array<T, CloneAllocator>&& other)
+    : _base_type()
+  {
+    std::swap(other._impl._array, this->_impl._array);
+  }
+  
   /**
    * @brief Creates a copy of a @c ptr_array with a different clone allocator.
    * @param other Another @c ptr_array with a different clone allocator.
@@ -554,6 +560,13 @@ public:
     return *this;
   }
 
+  ptr_array<T, CloneAllocator>& operator=(ptr_array<T, CloneAllocator>&& other)
+  {
+    clear();
+    std::swap(other._impl._array, this->_impl._array);
+    return *this;
+  }
+  
   /**
    * @brief Remove all the elements of the array.
    */

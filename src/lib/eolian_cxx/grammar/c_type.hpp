@@ -17,7 +17,7 @@ struct c_type_visitor
     as_generator(" ::" << *(string << "_") << string << string << "*")
       .generate(std::back_insert_iterator<std::string>(n)
                 , std::make_tuple(name.namespaces, name.eolian_name
-                                  , std::string{is_const(name.base_qualifier) ? " const" : ""})
+                                  , std::string{name.base_qualifier & qualifier_info::is_const ? " const" : ""})
                 , context_null {});
     return n;
   }

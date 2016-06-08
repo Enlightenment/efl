@@ -7,20 +7,6 @@
 
 namespace efl { namespace eolian { namespace grammar {
 
-struct add_reference_visitor
-{
-   typedef void result_type;
-   template <typename T>
-   void operator()(T& object) const
-   {
-      object.pointers.insert(object.pointers.begin(), {{}, true});
-   }
-   void operator()(attributes::complex_type_def& complex) const
-   {
-     (*this)(complex.outer);
-   }
-};
-      
 struct parameter_type_generator
 {
    template <typename OutputIterator, typename Context>

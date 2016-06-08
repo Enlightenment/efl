@@ -25,6 +25,7 @@
 #include <eina_pp.hh>
 #include <eina_workarounds.hh>
 #include <eina_future.hh>
+#include <eina_deleter.hh>
 
 /**
  * @page eina_cxx_main Eina C++ (BETA)

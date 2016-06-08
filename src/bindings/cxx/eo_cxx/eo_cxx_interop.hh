@@ -39,35 +39,45 @@ template <typename T>
 struct in_traits<eina::range_array<T>> { typedef eina::range_array<T> type; };
     
 template <typename T>
-struct out_traits { typedef T type; };
+struct out_traits { typedef T& type; };
+template <typename T>
+struct out_traits<T*> { typedef T* type; };
+template <>
+struct out_traits<Eina_Hash*> { typedef Eina_Hash*& type; };
+template <typename T>
+struct out_traits<eina::optional<T&>> { typedef eina::optional<T&> type; };
+template <>
+struct out_traits<void*> { typedef void*& type; };
 template <typename T>
 struct out_traits<efl::eina::future<T>> { typedef efl::eina::future<T>& type; };
 
 template <typename T>
-struct inout_traits { typedef T type; };
+struct inout_traits { typedef T& type; };
 template <typename T>
 struct inout_traits<efl::eina::future<T>> { typedef efl::eina::future<T>& type; };
 
+template <typename To, typename From, bool Own = false, typename Lhs, typename Rhs>
+void assign_out(Lhs& lhs, Rhs& rhs);
+  
 namespace impl {
 
-template <typename From, typename To>
+template <typename From, typename To, bool Own = false>
 struct tag
 {
   typedef To to;
   typedef From from;
+  typedef std::integral_constant<bool, Own> own;
 };
   
-template <typename To, typename From, typename Lhs, typename Rhs>
-void assign_out(Lhs& lhs, Rhs& rhs);
-  
 template <typename T>
-void assign_out_impl(T*& lhs, T& rhs, tag<T*, T>)
+void assign_out_impl(T& lhs, T*& rhs, tag<T&, T*>)
 {
-  *lhs = rhs;
+  lhs = *rhs;
 }
-template <typename U, typename T>
-void assign_out_impl(std::unique_ptr<T, void(*)(const void*)>& lhs, U* rhs, tag<std::unique_ptr<T, void(*)(const void*)>&, U*>)
+template <typename U, typename T, typename D>
+void assign_out_impl(std::unique_ptr<T, D>& lhs, U* rhs, tag<std::unique_ptr<T, D>&, U*, true>)
 {
+  // with own
   lhs.reset(rhs);
 }
 template <typename Tag>
@@ -101,31 +111,23 @@ void assign_out_impl(efl::eina::string_view& view, const char* string, Tag)
 {
   view = {string};
 }
-template <typename T, typename Rhs, typename U, typename O>
-void assign_out_impl(efl::eina::optional<T>& lhs, Rhs*& rhs, tag<efl::eina::optional<U>&, O>)
+template <typename Tag>
+void assign_out_impl(efl::eina::string_view* view, const char* string, Tag)
 {
-  if(rhs)
-    assign_out<U, O>(*lhs, rhs);
-  else
-    lhs.disengage();
+  if(view)
+    *view = {string};
 }
-template <typename T, typename Rhs, typename U, typename O>
-void assign_out_impl(efl::eina::optional<T>& lhs, Rhs& rhs, tag<efl::eina::optional<U>&, O>)
+template <typename T>
+void assign_out_impl(T*& lhs, T& rhs, tag<T*, T>) // optional
 {
-  assign_out<U, O>(*lhs, rhs);
+  if(lhs)
+    *lhs = rhs;
 }
-template <typename T, typename Rhs, typename U, typename O>
-void assign_out_impl(efl::eina::optional<T>& lhs, Rhs*& rhs, tag<efl::eina::optional<U>, O>)
+template <typename T, typename Rhs, typename U, typename O, bool B>
+void assign_out_impl(efl::eina::optional<T>& lhs, Rhs& rhs, tag<efl::eina::optional<U&>, O, B>)
 {
-  if(rhs)
-    assign_out<U, O>(*lhs, rhs);
-  else
-    lhs.disengage();
-}
-template <typename T, typename Rhs, typename U, typename O>
-void assign_out_impl(efl::eina::optional<T>& lhs, Rhs& rhs, tag<efl::eina::optional<U>, O>)
-{
-  assign_out<U, O>(*lhs, rhs);
+  if(lhs)
+    assign_out<U&, O, true>(*lhs, rhs);
 }
 template <typename Tag>
 void assign_out_impl(eina::value& lhs, Eina_Value const& rhs, Tag)
@@ -135,17 +137,57 @@ void assign_out_impl(eina::value& lhs, Eina_Value const& rhs, Tag)
   eina_value_copy(&rhs, v);
   lhs = {v};
 }
-template <typename T, typename Tag>
-void assign_out_impl(efl::eina::list<T>& lhs, Eina_List* rhs, Tag)
+template <typename T>
+void assign_out_impl(efl::eina::list<T>& lhs, Eina_List* rhs, tag<efl::eina::list<T>&, Eina_List*, true>)
 {
   lhs = efl::eina::list<T>{rhs};
 }
+template <typename T>
+void assign_out_impl(efl::eina::range_list<T>& lhs, Eina_List* rhs, tag<efl::eina::range_list<T>&, Eina_List*>)
+{
+  lhs = efl::eina::range_list<T>{rhs};
+}
+template <typename T>
+void assign_out_impl(efl::eina::array<T>& lhs, Eina_Array* rhs, tag<efl::eina::array<T>&, Eina_Array*, true>)
+{
+  lhs = efl::eina::array<T>{rhs};
+}
+template <typename T>
+void assign_out_impl(efl::eina::range_array<T>& lhs, Eina_Array* rhs, tag<efl::eina::range_array<T>&, Eina_Array*>)
+{
+  lhs = efl::eina::range_array<T>{rhs};
+}
+inline void assign_out_impl(Eina_Hash*& lhs, Eina_Hash*& rhs, tag<Eina_Hash*&, Eina_Hash*, true>)
+{
+  lhs = rhs;
+}
+template <typename T>
+void assign_out_impl(efl::eina::iterator<T>& /*lhs*/, Eina_Iterator* /*rhs*/, tag<efl::eina::iterator<T>&, Eina_Iterator*>)
+{
+  // Must copy here
+  std::abort();
+}
+template <typename T>
+void assign_out_impl(efl::eina::iterator<T>& lhs, Eina_Iterator* rhs, tag<efl::eina::iterator<T>&, Eina_Iterator*, true>)
+{
+  lhs = efl::eina::iterator<T>{rhs};  
+}
+template <typename T>
+void assign_out_impl(efl::eina::accessor<T>& lhs, Eina_Accessor* rhs, tag<efl::eina::accessor<T>&, Eina_Accessor*>)
+{
+  lhs = efl::eina::accessor<T>{ ::eina_accessor_clone(rhs) };
+}
+template <typename T>
+void assign_out_impl(efl::eina::accessor<T>& lhs, Eina_Accessor* rhs, tag<efl::eina::accessor<T>&, Eina_Accessor*, true>)
+{
+  lhs = efl::eina::accessor<T>{rhs};  
+}
 }
     
-template <typename To, typename From, typename Lhs, typename Rhs>
+template <typename To, typename From, bool Own, typename Lhs, typename Rhs>
 void assign_out(Lhs& lhs, Rhs& rhs)
 {
-  return impl::assign_out_impl(lhs, rhs, impl::tag<To, From>{});
+  return impl::assign_out_impl(lhs, rhs, impl::tag<To, From, Own>{});
 }
     
 namespace impl {
@@ -185,7 +227,7 @@ auto convert_inout(V& object) -> decltype(impl::convert_inout_impl(object, impl:
   return impl::convert_inout_impl(object, impl::tag<From, To>{});
 }
     
-template <typename T, typename U, typename V>
+template <typename T, typename U, bool Own = false, typename V>
 T convert_to_c(V&& object);
     
 namespace impl {
@@ -198,6 +240,43 @@ auto convert_to_c_impl
 }
 
 template <typename T>
+T convert_to_c_impl(T& /*v*/, tag<T, T, true>)
+{
+  std::abort();
+}
+template <typename T>
+T* convert_to_c_impl(T& v, tag<T*, T&>)
+{
+  return &v;
+}
+template <typename T>
+T* convert_to_c_impl(T& v, tag<T*, T&, true>)
+{
+  std::abort();
+}
+template <typename T>
+T* convert_to_c_impl(T const& v, tag<T*, T const&>) // not own
+{
+  return const_cast<T*>(&v);
+}
+template <typename T>
+T* convert_to_c_impl(T const& v, tag<T*, T const&, true>) // with own
+{
+  T* r = static_cast<T*>(malloc(sizeof(T)));
+  *r = v;
+  return r;
+}
+template <typename T>
+T const* convert_to_c_impl(T& v, tag<T const*, T&>)
+{
+  return &v;
+}
+template <typename T>
+T const* convert_to_c_impl(T* v, tag<T const*, T*>)
+{
+  return v;
+}
+template <typename T>
 T const& convert_to_c_impl(T const& v, tag<T, T const&>)
 {
   return v;
@@ -209,14 +288,26 @@ Eo* convert_to_c_impl(T v, tag<Eo*, T>
   return v._eo_ptr();
 }
 template <typename T>
+Eo* convert_to_c_impl(T v, tag<Eo*, T, true>
+                      , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
+{
+  return ::eo_ref(v._eo_ptr());
+}
+template <typename T>
 Eo const* convert_to_c_impl(T v, tag<Eo const*, T>
                             , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
 {
-  return v._eo_ptr();
+  return const_cast<Eo const*>(v._eo_ptr());
 }
 inline const char* convert_to_c_impl( ::efl::eina::string_view v, tag<const char*, ::efl::eina::string_view>)
 {
   return v.c_str();
+}
+inline const char* convert_to_c_impl( ::efl::eina::string_view v, tag<const char*, ::efl::eina::string_view, true>)
+{
+  char* string = static_cast<char*>(malloc(v.size() + 1));
+  std::strcpy(string, v.c_str());
+  return string;
 }
 inline const char** convert_to_c_impl(efl::eina::string_view* /*view*/, tag<const char **, efl::eina::string_view*>)
 {
@@ -254,6 +345,18 @@ T convert_to_c_impl(efl::eina::optional<T> const& optional, tag<T, efl::eina::op
 {
   return optional ? *optional : T{};
 }
+template <typename T>
+T* convert_to_c_impl(efl::eina::optional<T const&>const& optional, tag<T*, efl::eina::optional<T const&>const&, true>)
+{
+  if(optional)
+    {
+      T* r = static_cast<T*>(malloc(sizeof(T)));
+      *r = *optional;
+      return r;
+    }
+  else
+    return nullptr;
+}
 template <typename U, typename T>
 U convert_to_c_impl(efl::eina::optional<T> const& optional, tag<U, efl::eina::optional<T>const&>)
 {
@@ -270,15 +373,16 @@ Eina_List const* convert_to_c_impl(efl::eina::range_list<T> range, tag<Eina_List
   return range.native_handle();
 }
 template <typename T>
-Eina_List* convert_to_c_impl(efl::eina::list<T>const& c, tag<Eina_List *, efl::eina::list<T>const&>)
+Eina_List* convert_to_c_impl(efl::eina::list<T>const& c, tag<Eina_List *, efl::eina::list<T>const&, true>)
 {
   return const_cast<Eina_List*>(c.native_handle());
 }
 template <typename T>
-Eina_List const* convert_to_c_impl(efl::eina::list<T>const& c, tag<Eina_List const *, efl::eina::list<T>const&>)
+Eina_List const* convert_to_c_impl(efl::eina::list<T>const& c, tag<Eina_List const *, efl::eina::list<T>const&, true>)
 {
   return c.native_handle();
 }
+
 template <typename T>
 Eina_Array* convert_to_c_impl(efl::eina::range_array<T> range, tag<Eina_Array *, efl::eina::range_array<T>>)
 {
@@ -290,23 +394,54 @@ Eina_Array const* convert_to_c_impl(efl::eina::range_array<T> range, tag<Eina_Ar
   return range.native_handle();
 }
 template <typename T>
-Eina_Array* convert_to_c_impl(efl::eina::array<T>const& c, tag<Eina_Array *, efl::eina::array<T>const&>)
+Eina_Array* convert_to_c_impl(efl::eina::array<T>const& c, tag<Eina_Array *, efl::eina::array<T>const&, true>)
+{
+  return const_cast<Eina_Array*>(c.native_handle());
+}
+template <typename T>
+Eina_Array const* convert_to_c_impl(efl::eina::array<T>const& c, tag<Eina_Array const *, efl::eina::array<T>const&, true>)
 {
   return c.native_handle();
 }
 template <typename T>
-Eina_Array const* convert_to_c_impl(efl::eina::array<T>const& c, tag<Eina_Array const *, efl::eina::array<T>const&>)
+Eina_Iterator* convert_to_c_impl(efl::eina::iterator<T>const& i, tag<Eina_Iterator *, efl::eina::iterator<T>const&>)
 {
-  return c.native_handle();
+  return const_cast<Eina_Iterator*>(i.native_handle());
+}
+template <typename T>
+Eina_Iterator const* convert_to_c_impl(efl::eina::iterator<T>const& i, tag<Eina_Iterator const*, efl::eina::iterator<T>const&>)
+{
+  return i.native_handle();
+}
+template <typename T>
+Eina_Iterator* convert_to_c_impl(efl::eina::iterator<T>const& /*i*/, tag<Eina_Iterator *, efl::eina::iterator<T>const&, true>)
+{
+  // Eina Iterator must be copied
+  std::abort();
+}
+template <typename T>
+Eina_Accessor* convert_to_c_impl(efl::eina::accessor<T>const& i, tag<Eina_Accessor *, efl::eina::accessor<T>const&>)
+{
+  return const_cast<Eina_Accessor*>(i.native_handle());
+}
+template <typename T>
+Eina_Accessor const* convert_to_c_impl(efl::eina::accessor<T>const& i, tag<Eina_Accessor const*, efl::eina::accessor<T>const&>)
+{
+  return i.native_handle();
+}
+template <typename T>
+Eina_Accessor* convert_to_c_impl(efl::eina::accessor<T>const& i, tag<Eina_Accessor *, efl::eina::accessor<T>const&, true>)
+{
+  return ::eina_accessor_clone(const_cast<Eina_Accessor*>(i.native_handle()));
 }
 inline const char** convert_to_c_impl(efl::eina::string_view /*view*/, tag<char const **, efl::eina::string_view>)
 {
   std::abort();
 }
-// inline const char* convert_to_c_impl(std::string const& x, tag<const char*, std::string>)
-// {
-//    return x.c_str();
-// }
+inline const char** convert_to_c_impl(efl::eina::string_view /*view*/, tag<char const **, efl::eina::string_view, true>)
+{
+  std::abort();
+}
 inline const char* convert_to_c_impl(efl::eina::stringshare x, tag<const char*, efl::eina::stringshare>)
 {
    return x.c_str();
@@ -321,7 +456,6 @@ T* convert_to_c_impl(std::unique_ptr<U, Deleter>& v, tag<T*, std::unique_ptr<U, 
 {
   return convert_to_c<T*, U*>(v.release());
 }
-
 template <typename T>
 Eina_Array** convert_to_c_impl(efl::eina::array<T>& /*c*/, tag<Eina_Array **, efl::eina::array<T>&>)
 {
@@ -334,10 +468,10 @@ Eina_Array** convert_to_c_impl(efl::eina::range_array<T>& /*c*/, tag<Eina_Array 
 }
 }
     
-template <typename T, typename U, typename V>
+template <typename T, typename U, bool Own, typename V>
 T convert_to_c(V&& object)
 {
-  return impl::convert_to_c_impl(std::forward<V>(object), impl::tag<T, U>{});
+  return impl::convert_to_c_impl(std::forward<V>(object), impl::tag<T, U, Own>{});
 }
 namespace impl {
 template <typename T>
@@ -387,6 +521,11 @@ template <typename T>
 T convert_to_return(T value, tag<T, T>)
 {
   return value;
+}
+template <typename T>
+T& convert_to_return(T* value, tag<T*, T&>)
+{
+  return *value;
 }
 template <typename T>
 T convert_to_return(Eo* value, tag<Eo*, T>, typename std::enable_if< eo::is_eolian_object<T>::value>::type* = 0)
@@ -479,23 +618,46 @@ inline eina::string_view convert_to_return(const char* value, tag<const char*, e
 {
   return {value};
 }
+inline eina::string_view convert_to_return(const char** value, tag<const char**, efl::eina::string_view>)
+{
+  return {*value};
+}
 inline std::string convert_to_return(const char* value, tag<const char*, std::string>)
 {
-  return {value};
+  if(value)
+    {
+       std::string r{value};
+       free((void*)value);
+       return r;
+    }
+  else
+    return {};
+}
+inline std::string convert_to_return(const char** value, tag<const char**, std::string>)
+{
+  if(value)
+    {
+       std::string r{*value};
+       free((void*)*value);
+       free((void*)value);
+       return r;
+    }
+  else
+    return {};
 }
 inline bool convert_to_return(Eina_Bool value, tag<Eina_Bool, bool>)
 {
   return !!value;
 }
-template <typename T>
-std::unique_ptr<T, void(*)(const void*)> convert_to_return(T* value, tag<T*, std::unique_ptr<T, void(*)(const void*)>>)
+template <typename T, typename D>
+std::unique_ptr<T, D> convert_to_return(T* value, tag<T*, std::unique_ptr<T, D>>)
 {
-  return std::unique_ptr<T, void(*)(const void*)>{value, (void(*)(const void*))&free};
+  return std::unique_ptr<T, D>{value, {}};
 }
-template <typename T, typename U>
-std::unique_ptr<T, void(*)(const void*)> convert_to_return(U* value, tag<U*, std::unique_ptr<T, void(*)(const void*)>>)
+template <typename T, typename U, typename D>
+std::unique_ptr<T, D> convert_to_return(U* value, tag<U*, std::unique_ptr<T, D>>)
 {
-  return std::unique_ptr<T, void(*)(const void*)>{convert_to_return(value, tag<U*, T*>{}), (void(*)(const void*))&free};
+  return std::unique_ptr<T, D>{convert_to_return(value, tag<U*, T*>{}), {}};
 }
 }
 

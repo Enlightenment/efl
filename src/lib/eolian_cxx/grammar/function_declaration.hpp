@@ -19,7 +19,7 @@ struct function_declaration_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     return as_generator
-      (grammar::type << " " << string << "(" << (parameter % ", ") << ") const;\n")
+      (grammar::type(true) << " " << string << "(" << (parameter % ", ") << ") const;\n")
       .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), context);
   }
 };

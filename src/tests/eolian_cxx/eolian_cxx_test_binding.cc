@@ -11,7 +11,7 @@
 
 START_TEST(eolian_cxx_test_binding_constructor_only_required)
 {
-  efl::eo::eo_init i;
+  efl::eo::eo_init init;
 
   nonamespace::Generic g
     (
@@ -54,65 +54,6 @@ START_TEST(eolian_cxx_test_type_generation)
   efl::eo::eo_init eo_init;
 
   name1::name2::Type_Generation g;
-
-  g.invoidptr(nullptr);
-  g.inint(42);
-  std::unique_ptr<int> i (new int(42));
-  g.inintptr(i.get());
-  {
-    int* p = (int*)malloc(sizeof(int));
-    *p = 42;
-    std::unique_ptr<int, void(*)(const void*)> inintptrown(p, (void(*)(const void*))&free);
-    g.inintptrown(std::move(inintptrown));
-  }
-  {
-    int** p = (int**)malloc(sizeof(int*));
-    *p = (int*)malloc(sizeof(int));
-    **p = 42;
-    std::unique_ptr<int*, void(*)(const void*)> inintptrownptr(p, (void(*)(const void*))&free);
-    g.inintptrownptr(std::move(inintptrownptr));
-  }
-  {
-    int*** p = (int***)malloc(sizeof(int**));
-    *p = (int**)malloc(sizeof(int*));
-    **p = (int*)malloc(sizeof(int));
-    ***p = 42;
-    std::unique_ptr<int**, void(*)(const void*)> inintptrownptrptr(p, (void(*)(const void*))&free);
-    g.inintptrownptrptr(std::move(inintptrownptrptr));
-  }
-  {
-    int*** p = (int***)malloc(sizeof(int**));
-    *p = (int**)malloc(sizeof(int*));
-    **p = (int*)malloc(sizeof(int));
-    ***p = 42;
-    std::unique_ptr<int**, void(*)(const void*)> inintptrptrownptr(p, (void(*)(const void*))&free);
-    g.inintptrptrownptr(std::move(inintptrptrownptr));
-  }
-  {
-    int* p = (int*)malloc(sizeof(int));
-    *p = 42;
-    std::unique_ptr<int, void(*)(const void*)> inintptrownfree(p, (void(*)(const void*))&free);
-    g.inintptrownfree(std::move(inintptrownfree));
-  }
-  g.instring("foobar");
-  // {
-  //   efl::eina::string_view v("foobar");
-  //   g.instringptr(&v);
-  // }
-  g.instringown("foobar");
-  // {
-  //   std::string v("foobar");
-  //   g.instringptrown(&v);
-  // }
-  // {
-  //   std::unique_ptr<efl::eina::string_view, void(*)(const void*)> v
-  //     ((efl::eina::string_view*)malloc(sizeof(string_view)), (void(*)(const void*))&free);
-  //   g.instringptrown(v);
-  // }
-  // {
-  //   std::string v("foobar");
-  //   g.instringptrown(&v);
-  // }
 }
 END_TEST
 
@@ -121,6 +62,101 @@ START_TEST(eolian_cxx_test_type_generation_in)
   efl::eo::eo_init i;
 
   name1::name2::Type_Generation g;
+
+  int v = 42;
+  g.inrefint(v);
+  g.inrefintown(42);
+  g.inrefintownfree(42);
+  g.invoidptr(nullptr);
+  g.inint(42);
+  g.inintptr(42);
+  g.inintptrown(42);
+  g.inintptrownfree(42);
+  g.instring("foobar");
+  g.instringown("foobar");
+}
+END_TEST
+
+START_TEST(eolian_cxx_test_type_generation_return)
+{
+  efl::eo::eo_init i;
+
+  name1::name2::Type_Generation g;
+
+  {
+    int&i = g.returnrefint();
+    ck_assert(i == 42);
+  }
+  {
+    int i = g.returnint();
+    ck_assert(i == 42);
+  }
+  {
+    void* p = g.returnvoidptr();
+    ck_assert(*(int*)p == 42);
+  }
+  {
+    int& p = g.returnintptr();
+    ck_assert(p == 42);
+  }
+  {
+    efl::eina::unique_malloc_ptr<int> p = g.returnintptrown();
+    ck_assert(*p == 42);
+  }
+  {
+    efl::eina::string_view string = g.returnstring();
+    ck_assert_str_eq(string.c_str(), "foobar");
+  }
+  {
+    std::string string = g.returnstring();
+    ck_assert_str_eq(string.c_str(), "foobar");
+  }
+}
+END_TEST
+
+START_TEST(eolian_cxx_test_type_generation_optional)
+{
+  efl::eo::eo_init init;
+
+  using efl::eina::optional;
+
+  name1::name2::Type_Generation g;
+
+  g.optionalinvoidptr(NULL);
+  g.optionalinvoidptr(&g);
+  g.optionalinvoidptr(nullptr);
+
+  int i = 42;
+  g.optionalinint(nullptr);
+  g.optionalinint(i);
+
+  g.optionalinintptr(i);
+  g.optionalinintptr(nullptr);
+
+  g.optionalinintptrown(i);
+  g.optionalinintptrown(nullptr);
+
+  g.optionalinintptrownfree(i);
+  g.optionalinintptrownfree(nullptr);
+  
+  i = 0;
+  g.optionaloutint(&i);
+  ck_assert(i == 42);
+  g.optionaloutint(nullptr);
+
+  i = 0;
+  int* j = nullptr;
+  g.optionaloutintptr(&j);
+  ck_assert(j != nullptr);
+  ck_assert(*j == 42);
+  g.optionaloutintptr(nullptr);
+
+  i = 0;
+  efl::eina::unique_malloc_ptr<int> k = nullptr;
+  g.optionaloutintptrown(k);
+  ck_assert(!!k);
+  ck_assert(*k == 42);
+  g.optionaloutintptrown(nullptr);
 }
 END_TEST
 
@@ -177,5 +213,7 @@ eolian_cxx_test_binding(TCase* tc)
    tcase_add_test(tc, eolian_cxx_test_binding_constructor_all_optionals);
    tcase_add_test(tc, eolian_cxx_test_type_generation);
    tcase_add_test(tc, eolian_cxx_test_type_generation_in);
+   tcase_add_test(tc, eolian_cxx_test_type_generation_return);
+   tcase_add_test(tc, eolian_cxx_test_type_generation_optional);
    tcase_add_test(tc, eolian_cxx_test_type_callback);
 }

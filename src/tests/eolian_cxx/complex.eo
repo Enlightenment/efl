@@ -30,22 +30,22 @@ class Complex (Eo.Base)
       }
       incontcont {
          params {
-           l: list<list<int*>>;
+           l: list<list<int>>;
          }
       }
       incontcontown {
          params {
-           l: own(list<list<int*>>);
+           l: own(list<list<int>>);
          }
       }
       incontowncontown {
          params {
-           l: own(list<own(list<int*>)>);
+           l: own(list<own(list<int>)>);
          }
       }
       incontowncont {
          params {
-           l: list<own(list<int*>)>;
+           l: list<own(list<int>)>;
          }
       }
       instringcont {
@@ -63,14 +63,140 @@ class Complex (Eo.Base)
            l: own(list<string>);
          }
       }
-
+      inarray {
+         params {
+           l: array<int>;
+         }
+      }
+      inarrayown {
+         params {
+           l: own(array<int>);
+         }
+      }
+      inhash {
+         params {
+           l: hash<int, int>;
+         }
+      }
+      inhashown {
+         params {
+           l: own(hash<int, int>);
+         }
+      }
+      initerator {
+         params {
+           l: iterator<int>;
+         }
+      }
+      initeratorown {
+         params {
+           l: own(iterator<int>);
+         }
+      }
+      inaccessor {
+         params {
+           l: accessor<int>;
+         }
+      }
+      inaccessorown {
+         params {
+           l: own(accessor<int>);
+         }
+      }
+      // out
+      outptrcont {
+         params {
+           @out l: list<int*>;
+         }
+      }
+      outclasscont {
+         params {
+           @out l: list<Eo.Base>;
+         }
+      }
+      outcontcont {
+         params {
+           @out l: list<list<int>>;
+         }
+      }
+      outcontcontown {
+         params {
+           @out l: own(list<list<int>>);
+         }
+      }
+      outcontowncontown {
+         params {
+           @out l: own(list<own(list<int>)>);
+         }
+      }
+      outcontowncont {
+         params {
+           @out l: list<own(list<int>)>;
+         }
+      }
+      outstringcont {
+         params {
+           @out l: list<string>;
+         }
+      }
+      outstringowncont {
+         params {
+           @out l: list<own(string)>;
+         }
+      }
+      outstringcontown {
+         params {
+           @out l: own(list<string>);
+         }
+      }
+      outarray {
+         params {
+           @out l: array<int>;
+         }
+      }
+      outarrayown {
+         params {
+           @out l: own(array<int>);
+         }
+      }
+      outhash {
+         params {
+           @out l: hash<int, int>;
+         }
+      }
+      outhashown {
+         params {
+           @out l: own(hash<int, int>);
+         }
+      }
+      outiterator {
+         params {
+           @out l: iterator<int>;
+         }
+      }
+      outiteratorown {
+         params {
+           @out l: own(iterator<int>);
+         }
+      }
+      outaccessor {
+         params {
+           @out l: accessor<int>;
+         }
+      }
+      outaccessorown {
+         params {
+           @out l: own(accessor<int>);
+         }
+      }
+      //
       foo {
          params {
-            l: list<int*>;
+            l: list<int>;
          }
       }
       bar {
-         return: array<int*>;
+         return: array<int>;
       }
       wrapper_r {
          return: Complex;
