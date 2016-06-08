@@ -64,6 +64,5 @@ void _class_env_create(const Eolian_Class *class, const char *over_classname, _e
 void _class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_Function_Type ftype EINA_UNUSED, _eolian_class_func_vars *env);
 
 const char *_get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Dir pdir);
-Eina_Stringshare *_get_rettype(const Eolian_Type *tp, Eina_Bool add_star);
 
 #endif

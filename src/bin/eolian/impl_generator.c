@@ -140,7 +140,6 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
 
    printf("Generation of function %s\n", func_name);
    const Eolian_Type *rettypet = eolian_function_return_type_get(foo, ftype);
-   Eina_Bool add_rstar = eolian_function_return_is_ref(foo, ftype);
    if (ftype == EOLIAN_PROP_GET && !rettypet)
      {
         Eina_Iterator *itr = eolian_property_values_get(foo, ftype);
@@ -183,7 +182,7 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
      }
 
    const char *rettype = NULL;
-   if (rettypet) rettype = _get_rettype(rettypet, add_rstar);
+   if (rettypet) rettype = eolian_type_c_type_get(rettypet);
 
    eina_strbuf_append_printf(buffer,
          "EOLIAN static %s\n%s(%sEo *obj, %s *pd%s%s)\n{\n%s\n}\n\n",

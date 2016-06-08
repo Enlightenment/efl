@@ -140,8 +140,6 @@ struct _Eolian_Function
    Eina_Bool set_empty :1;
    Eina_Bool get_return_warn_unused :1; /* also used for methods */
    Eina_Bool set_return_warn_unused :1;
-   Eina_Bool get_return_is_ref: 1;
-   Eina_Bool set_return_is_ref: 1;
    Eina_Bool get_only_legacy: 1;
    Eina_Bool set_only_legacy: 1;
    Eina_Bool is_class :1;
@@ -176,6 +174,7 @@ struct _Eolian_Type
    Eina_Stringshare *freefunc;
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
+   Eina_Bool is_ref    :1;
 };
 
 struct _Eolian_Typedecl
@@ -234,7 +233,6 @@ struct _Eolian_Struct_Type_Field
    Eolian_Object     base;
    Eolian_Type      *type;
    Eolian_Documentation *doc;
-   Eina_Bool is_ref: 1;
 };
 
 struct _Eolian_Enum_Type_Field
@@ -303,7 +301,7 @@ void database_enum_add(Eolian_Typedecl *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedecl_del(Eolian_Typedecl *tp);
 
-void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name, Eina_Bool is_ref);
+void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name);
 void database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf);
 
 /* expressions */

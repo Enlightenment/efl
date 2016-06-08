@@ -184,8 +184,7 @@ typedef enum
 {
    EOLIAN_IN_PARAM = 0,
    EOLIAN_OUT_PARAM,
-   EOLIAN_INOUT_PARAM,
-   EOLIAN_REF_PARAM
+   EOLIAN_INOUT_PARAM
 } Eolian_Parameter_Dir;
 
 typedef enum
@@ -969,20 +968,6 @@ EAPI const Eolian_Documentation *eolian_function_return_documentation_get(const 
 EAPI Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
- * @brief Indicates if a function returns a ref (pointer).
- *
- * @param[in] function_id id of the function
- * @param[in] ftype type of the function
- * @return EINA_TRUE is ref return, EINA_FALSE otherwise.
- *
- * The type of the function is needed because a given function can represent a
- * property, that can be set and get functions.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_function_return_is_ref(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
-
-/*
  * @brief Indicates if a function object is const.
  *
  * @param[in] function_id id of the function
@@ -1464,16 +1449,6 @@ EAPI const Eolian_Documentation *eolian_typedecl_struct_field_documentation_get(
 EAPI const Eolian_Type *eolian_typedecl_struct_field_type_get(const Eolian_Struct_Type_Field *fl);
 
 /*
- * @brief Check if a struct field is a reference.
- *
- * @param[in] fl the field.
- * @return EINA_TRUE if it is, EINA_FALSE otherwise.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_typedecl_struct_field_is_ref(const Eolian_Struct_Type_Field *fl);
-
-/*
  * @brief Get an iterator to all fields of an enum type.
  *
  * @param[in] tp the type declaration.
@@ -1762,6 +1737,16 @@ EAPI Eina_Bool eolian_type_is_own(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
+
+/*
+ * @brief Get whether the given type is a reference.
+ *
+ * @param[in] tp the type.
+ * @return EINA_TRUE when the type is marked ref, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_type_is_ref(const Eolian_Type *tp);
 
 /*
  * @brief Get the full C type name of the given type.

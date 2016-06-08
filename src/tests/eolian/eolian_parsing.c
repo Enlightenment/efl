@@ -606,7 +606,7 @@ START_TEST(eolian_simple_parsing)
    /* Method */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
    fail_if(!eolian_function_is_beta(fid));
-   fail_if(eolian_function_return_is_ref(fid, EOLIAN_METHOD));
+   fail_if(eolian_type_is_ref(eolian_function_return_type_get(fid, EOLIAN_METHOD)));
    /* Function return */
    tp = eolian_function_return_type_get(fid, EOLIAN_METHOD);
    fail_if(!tp);
@@ -641,8 +641,9 @@ START_TEST(eolian_simple_parsing)
    fail_if(v.type != EOLIAN_EXPR_DOUBLE);
    fail_if(v.value.d != 1337.6);
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
-   fail_if(eolian_parameter_direction_get(param) != EOLIAN_REF_PARAM);
+   fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
    fail_if(strcmp(eolian_type_name_get(eolian_parameter_type_get(param)), "int"));
+   fail_if(!eolian_type_is_ref(eolian_parameter_type_get(param)));
    fail_if(strcmp(eolian_parameter_name_get(param), "d"));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
@@ -652,7 +653,7 @@ START_TEST(eolian_simple_parsing)
    fail_if(!eolian_function_is_legacy_only(fid, EOLIAN_METHOD));
    fail_if(!eolian_function_is_c_only(fid));
    fail_if(eolian_function_is_beta(fid));
-   fail_if(!eolian_function_return_is_ref(fid, EOLIAN_METHOD));
+   fail_if(!eolian_type_is_ref(eolian_function_return_type_get(fid, EOLIAN_METHOD)));
 
    eolian_shutdown();
 }
@@ -686,12 +687,12 @@ START_TEST(eolian_struct)
    fail_if(strcmp(file, "struct.eo"));
    fail_if(!(field = eolian_typedecl_struct_field_get(tdl, "field")));
    fail_if(!(ftype = eolian_typedecl_struct_field_type_get(field)));
-   fail_if(!eolian_typedecl_struct_field_is_ref(field));
+   fail_if(!eolian_type_is_ref(ftype));
    fail_if(!(type_name = eolian_type_name_get(ftype)));
    fail_if(strcmp(type_name, "int"));
    fail_if(!(field = eolian_typedecl_struct_field_get(tdl, "something")));
    fail_if(!(ftype = eolian_typedecl_struct_field_type_get(field)));
-   fail_if(eolian_typedecl_struct_field_is_ref(field));
+   fail_if(eolian_type_is_ref(ftype));
    fail_if(!(type_name = eolian_type_c_type_get(ftype)));
    fail_if(strcmp(type_name, "const char *"));
    eina_stringshare_del(type_name);

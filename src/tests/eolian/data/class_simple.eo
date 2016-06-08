@@ -27,7 +27,7 @@ class Class_Simple {
             @in a: int; [[a]]
             @inout b: char;
             @out c: double (1337.6);
-            @ref d: int;
+            @in d: ref(int);
          }
          return: char * (null); [[comment for method return]]
       }
@@ -36,7 +36,7 @@ class Class_Simple {
          params {
             x: int;
          }
-         return: int @ref;
+         return: ref(int);
       }
    }
 }

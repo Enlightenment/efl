@@ -1,5 +1,5 @@
 struct Named {
-    @ref field: int;
+    field: ref(int);
     something: string;
 }
 

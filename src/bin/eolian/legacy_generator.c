@@ -55,7 +55,6 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
 
    _class_func_env_create(class, funcname, ftype, &func_env);
    rettypet = eolian_function_return_type_get(funcid, ftype);
-   Eina_Bool add_rstar = eolian_function_return_is_ref(funcid, ftype);
    if (ftype == EOLIAN_PROP_GET)
      {
         if (!rettypet)
@@ -150,7 +149,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
    if (!eina_strbuf_length_get(fparam)) eina_strbuf_append(fparam, "void");
    if (flags) eina_strbuf_append_printf(flags, ")");
 
-   if (rettypet) rettype = _get_rettype(rettypet, add_rstar);
+   if (rettypet) rettype = eolian_type_c_type_get(rettypet);
 
    eina_strbuf_replace_all(fbody, "@#params", eina_strbuf_string_get(fparam));
    eina_strbuf_reset(fparam);
@@ -198,8 +197,7 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
 
    _class_func_env_create(class, eolian_function_name_get(funcid), ftype, &func_env);
    rettypet = eolian_function_return_type_get(funcid, ftype);
-   Eina_Bool add_rstar = eolian_function_return_is_ref(funcid, ftype);
-   if (rettypet) rettype = _get_rettype(rettypet, add_rstar);
+   if (rettypet) rettype = eolian_type_c_type_get(rettypet);
    if (rettype && !strcmp(rettype, "void")) ret_is_void = EINA_TRUE;
    retname = "ret";
    if (ftype == EOLIAN_PROP_GET)
@@ -221,7 +219,7 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
 
    if (func_env.legacy_func[0] == '\0') goto end;
 
-   if (!rettype && rettypet) rettype = _get_rettype(rettypet, add_rstar);
+   if (!rettype && rettypet) rettype = eolian_type_c_type_get(rettypet);
 
    if (rettype && (!ret_is_void))
      eina_strbuf_append(fbody, tmpl_eapi_body);
