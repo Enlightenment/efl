@@ -325,6 +325,8 @@ typedef struct _Edje_Mo_Directory                    Edje_Mo_Directory;
 typedef struct _Edje_Gfx_Filter                      Edje_Gfx_Filter;
 typedef struct _Edje_Gfx_Filter_Directory            Edje_Gfx_Filter_Directory;
 typedef struct _Edje_Color_Tree_Node                 Edje_Color_Tree_Node;
+typedef struct _Edje_Vector_Directory_Entry          Edje_Vector_Directory_Entry;
+
 
 typedef struct _Edje_Vibration_Sample                Edje_Vibration_Sample;
 typedef struct _Edje_Vibration_Directory             Edje_Vibration_Directory;
@@ -365,6 +367,9 @@ typedef struct _Edje_Physics_Face                    Edje_Physics_Face;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
 typedef struct _Edje_Part_Limit                      Edje_Part_Limit;
+typedef struct _Edje_Part_Description_Vector         Edje_Part_Description_Vector;
+typedef struct _Edje_Part_Description_Spec_Svg       Edje_Part_Description_Spec_Svg;
+typedef struct _Edje_Real_Part_Vector                Edje_Real_Part_Vector;
 
 typedef struct _Edje Edje;
 typedef struct _Edje_Real_Part_Text Edje_Real_Part_Text;
@@ -632,6 +637,15 @@ struct _Edje_Image_Directory
 
    Edje_Image_Directory_Set *sets; /* an array of Edje_Image_Directory_Set */
    unsigned int sets_count;
+
+   Edje_Vector_Directory_Entry *vectors; /* an array of Edje_Image_Directory_Entry */
+   unsigned int vectors_count;
+};
+
+struct _Edje_Vector_Directory_Entry
+{
+   const char *entry; /* the nominal name of the vector image - if any */
+   int   id; /* the id no. of the image */
 };
 
 struct _Edje_Image_Directory_Entry
@@ -857,7 +871,8 @@ struct _Edje_Limit
       TYPE      MESH_NODE;        \
       TYPE      LIGHT;            \
       TYPE      CAMERA;           \
-      TYPE      SNAPSHOT;
+      TYPE      SNAPSHOT;         \
+      TYPE      VECTOR;
 
 struct _Edje_Part_Collection_Directory_Entry
 {
@@ -1522,6 +1537,12 @@ struct _Edje_Part_Description_Spec_Camera
    } orientation;
 };
 
+struct _Edje_Part_Description_Spec_Svg
+{
+   int            id; /* the svg id to use */
+   Eina_Bool      set; /* if vg condition it's content */
+};
+
 struct _Edje_Part_Description_Image
 {
    Edje_Part_Description_Common common;
@@ -1583,6 +1604,12 @@ struct _Edje_Part_Description_Camera
 {
    Edje_Part_Description_Common common;
    Edje_Part_Description_Spec_Camera camera;
+};
+
+struct _Edje_Part_Description_Vector
+{
+   Edje_Part_Description_Common common;
+   Edje_Part_Description_Spec_Svg vg;
 };
 
 /*----------*/
@@ -1908,6 +1935,16 @@ struct _Edje_Real_Part_Swallow
    } swallow_params; // 28 // FIXME: only if type SWALLOW
 };
 
+struct _Edje_Real_Part_Vector
+{
+   struct {
+     int svg_id;
+     double x, y, w, h;
+     Eina_Bool preserve_aspect;
+     Efl_VG *vg;
+   }cur, cache;
+};
+
 struct _Edje_Real_Part
 {
    Edje_Real_Part_State      param1; // 32
@@ -1930,6 +1967,7 @@ struct _Edje_Real_Part
       Edje_Real_Part_Text      *text;
       Edje_Real_Part_Container *container;
       Edje_Real_Part_Swallow   *swallow;
+      Edje_Real_Part_Vector    *vector;
    } typedata; // 4
    FLOAT_T                   description_pos; // 8
    Edje_Rectangle            req; // 16
@@ -2283,6 +2321,7 @@ EAPI extern Eina_Mempool *_emp_LIGHT;
 EAPI extern Eina_Mempool *_emp_CAMERA;
 EAPI extern Eina_Mempool *_emp_SNAPSHOT;
 EAPI extern Eina_Mempool *_emp_part;
+EAPI extern Eina_Mempool *_emp_VECTOR;
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2, FLOAT_T v3, FLOAT_T v4);
 
@@ -3190,6 +3229,8 @@ enum _Svg_Style_Type
 
 EAPI Eet_Data_Descriptor * _edje_svg_node_eet(void);
 void _edje_svg_node_destroy_eet(void);
+Efl_VG* _edje_create_vg_tree(Eet_File *ef, int svg_id, double width, double height,
+                             double *vx, double *vy, double *vw, double *vh);
 
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>

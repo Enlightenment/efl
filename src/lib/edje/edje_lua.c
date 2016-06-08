@@ -4982,6 +4982,7 @@ _edje_lua_open(lua_State *L)
    _edje_lua_new_const(L, "PART_TYPE_GRADIENT", EDJE_PART_TYPE_GRADIENT);
    _edje_lua_new_const(L, "PART_TYPE_GROUP", EDJE_PART_TYPE_GROUP);
    _edje_lua_new_const(L, "PART_TYPE_BOX", EDJE_PART_TYPE_BOX);
+   _edje_lua_new_const(L, "PART_TYPE_VECTOR", EDJE_PART_TYPE_VECTOR);
 
    _edje_lua_new_const(L, "TEXT_EFFECT_NONE", EDJE_TEXT_EFFECT_NONE);
    _edje_lua_new_const(L, "TEXT_EFFECT_PLAIN", EDJE_TEXT_EFFECT_PLAIN);

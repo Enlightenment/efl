@@ -234,6 +234,7 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
 	     CSP(BOX, ce);
 	     CSP(TABLE, ce);
 	     CSP(EXTERNAL, ce);
+       CSP(VECTOR, ce);
 	   default:
 	      count = &dummy;
 	      break;
@@ -258,6 +259,7 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
    CONVERT_EMN(TABLE, Edje_Part_Description_Table, ce);
    CONVERT_EMN(EXTERNAL, Edje_Part_Description_External, ce);
    CONVERT_EMN(part, Edje_Part, ce);
+   CONVERT_EMN(VECTOR, Edje_Part_Description_Vector, ce);
 
    /* Change structure layout */
    edc = calloc(1, sizeof (Edje_Part_Collection));
@@ -451,6 +453,7 @@ _edje_description_convert(int type,
 	 CONVERT_ALLOC_POOL(BOX, Box, box);
 	 CONVERT_ALLOC_POOL(TABLE, Table, table);
 	 CONVERT_ALLOC_POOL(EXTERNAL, External, external_params);
+   CONVERT_ALLOC_POOL(VECTOR, Vector, vector);
      }
 
    if (result)

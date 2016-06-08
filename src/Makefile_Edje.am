@@ -95,6 +95,7 @@ lib/edje/edje_var.c \
 lib/edje/edje_signal.c \
 lib/edje/edje_containers.c
 
+
 lib_edje_libedje_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 lib_edje_libedje_la_LIBADD = @EDJE_LIBS@
 lib_edje_libedje_la_DEPENDENCIES = @EDJE_INTERNAL_LIBS@

@@ -3137,6 +3137,12 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 
    if (ep->type == EDJE_PART_TYPE_RECTANGLE)
      rp->object = evas_object_rectangle_add(ed->base->evas);
+   else if (ep->type == EDJE_PART_TYPE_VECTOR)
+     {
+        rp->type = EDJE_PART_TYPE_VECTOR;
+        rp->typedata.vector = calloc(1, sizeof(Edje_Real_Part_Vector));
+        rp->object = evas_object_vg_add(ed->base->evas);
+     }
    else if (ep->type == EDJE_PART_TYPE_IMAGE || ep->type == EDJE_PART_TYPE_PROXY)
      rp->object = evas_object_image_add(ed->base->evas);
    else if (ep->type == EDJE_PART_TYPE_TEXT)
@@ -6240,6 +6246,7 @@ case EDJE_PART_TYPE_##Short:                                          \
         EDIT_ALLOC_POOL(BOX, Box, box);
         EDIT_ALLOC_POOL(TABLE, Table, table);
         EDIT_ALLOC_POOL(EXTERNAL, External, external_params);
+        EDIT_ALLOC_POOL(VECTOR, Vector, vector);
      }
 
    return pd;

@@ -699,6 +699,12 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        if (!rp->typedata.text) memerr = EINA_TRUE;
                        break;
 
+                     case EDJE_PART_TYPE_VECTOR:
+                       rp->type = EDJE_PART_TYPE_VECTOR;
+                       rp->typedata.vector = calloc(1, sizeof(Edje_Real_Part_Vector));
+                       if (!rp->typedata.vector) memerr = EINA_TRUE;
+                       break;
+
                      case EDJE_PART_TYPE_GROUP:
                      case EDJE_PART_TYPE_SWALLOW:
                      case EDJE_PART_TYPE_EXTERNAL:
@@ -742,6 +748,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                     {
                      case EDJE_PART_TYPE_RECTANGLE:
                        rp->object = evas_object_rectangle_add(ed->base->evas);
+                       break;
+
+                     case EDJE_PART_TYPE_VECTOR:
+                       rp->object = evas_object_vg_add(ed->base->evas);
                        break;
 
                      case EDJE_PART_TYPE_PROXY:
@@ -2297,5 +2307,116 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
    if (ed_parent)
      _edje_util_message_send(ed_parent, EDJE_QUEUE_SCRIPT,
                              EDJE_MESSAGE_SIGNAL, 0, &emsg);
+}
+
+// vg tree creation
+static void
+_apply_vg_property(Svg_Node *node, Efl_VG *vg)
+{
+   if (node->id)
+     evas_vg_node_name_set(vg, node->id);
+   if (node->style)
+     {
+        evas_vg_node_color_set(vg, node->style->fill.r, node->style->fill.g, node->style->fill.b, node->style->fill.a);
+        efl_gfx_shape_fill_rule_set(vg, node->style->fill.fill_rule);
+        evas_vg_shape_stroke_color_set(vg, node->style->stroke.r, node->style->stroke.g, node->style->stroke.b, node->style->stroke.a);
+        evas_vg_shape_stroke_width_set(vg, node->style->stroke.width);
+        evas_vg_shape_stroke_cap_set(vg, node->style->stroke.cap);
+        evas_vg_shape_stroke_join_set(vg, node->style->stroke.join);
+        evas_vg_shape_stroke_scale_set(vg, node->style->stroke.scale);
+     }
+}
+
+static void
+_create_vg_node(Svg_Node *node, Efl_VG *parent)
+{
+   Efl_VG *vg = NULL;
+   int i;
+   Svg_Node *child;
+   Eina_List *l;
+
+   switch (node->type)
+     {
+        case SVG_NODE_G:
+           {
+              vg = evas_vg_container_add(parent);
+              _apply_vg_property(node, vg);
+              EINA_LIST_FOREACH(node->child, l, child)
+                {
+                   _create_vg_node(child, vg);
+                }
+              return;
+           }
+           break;
+        case SVG_NODE_PATH:
+           vg = evas_vg_shape_add(parent);
+           evas_vg_shape_shape_append_svg_path(vg, node->node.path.path);
+           break;
+        case SVG_NODE_POLYGON:
+           vg = evas_vg_shape_add(parent);
+           for (i=0; i < node->node.polygon.points_count; i+=2)
+             {
+                if (!i)
+                  evas_vg_shape_shape_append_move_to(vg, node->node.polygon.points[i], node->node.polygon.points[i+1]);
+                evas_vg_shape_shape_append_line_to(vg, node->node.polygon.points[i], node->node.polygon.points[i+1]);
+             }
+           break;
+        case SVG_NODE_ELLIPSE:
+           vg = evas_vg_shape_add(parent);
+           evas_vg_shape_shape_append_circle(vg, node->node.ellipse.cx, node->node.ellipse.cy, node->node.ellipse.rx);
+           break;
+        case SVG_NODE_CIRCLE:
+           vg = evas_vg_shape_add(parent);
+           evas_vg_shape_shape_append_circle(vg, node->node.circle.cx, node->node.circle.cy, node->node.circle.r);
+           break;
+        case SVG_NODE_RECT:
+           vg = evas_vg_shape_add(parent);
+           evas_vg_shape_shape_append_rect(vg, node->node.rect.x, node->node.rect.y, node->node.rect.w, node->node.rect.h,
+                                           node->node.rect.rx, node->node.rect.ry);
+           break;
+       default:
+           break;
+     }
+   _apply_vg_property(node, vg);
+}
+
+Efl_VG*
+_edje_create_vg_tree(Eet_File *ef, int svg_id, double width, double height,
+                     double *vx, double *vy, double *vw, double *vh)
+{
+   double sx=1.0, sy=1.0;
+   Eina_Matrix3 matrix;
+   Efl_VG *root = NULL;
+   Svg_Node *child;
+   Eina_List *l;
+   Svg_Node *node;
+   char svg_key[20];
+   Eet_Data_Descriptor *svg_node_eet;
+
+   snprintf(svg_key, sizeof(svg_key), "edje/vectors/%i", svg_id);
+   svg_node_eet = _edje_svg_node_eet();
+   node = eet_data_read(ef, svg_node_eet, svg_key);
+
+   if (!node && (node->type != SVG_NODE_DOC)) return NULL;
+   if (node->node.doc.vw && node->node.doc.vh)
+     {
+        sx = width/node->node.doc.vw;
+        sy = height/node->node.doc.vh;
+        root = evas_vg_container_add(NULL);
+        eina_matrix3_identity(&matrix);
+        eina_matrix3_translate(&matrix, -node->node.doc.vx, -node->node.doc.vy);
+        eina_matrix3_scale(&matrix, sx, sy);
+        evas_vg_node_transformation_set(root, &matrix);
+     }
+
+   EINA_LIST_FOREACH(node->child, l, child)
+     {
+        _create_vg_node(child, root);
+     }
+   *vx = node->node.doc.vx;
+   *vy = node->node.doc.vy;
+   *vw = node->node.doc.vw;
+   *vh = node->node.doc.vh;
+   return root;
 }
 

@@ -208,6 +208,8 @@ part_type_name_get(Edje_Part_Type t)
          return "EXTERNAL";
       case EDJE_PART_TYPE_SPACER:
          return "SPACER";
+      case EDJE_PART_TYPE_VECTOR:
+         return "VECTOR";
 
       case EDJE_PART_TYPE_NONE:
       case EDJE_PART_TYPE_LAST:

@@ -411,6 +411,7 @@ case EDJE_PART_TYPE_##Short:                                          \
         EDIT_ALLOC_POOL_RTL(CAMERA, Camera, camera);
         EDIT_ALLOC_POOL_RTL(LIGHT, Light, light);
         EDIT_ALLOC_POOL_RTL(MESH_NODE, Mesh_Node, mesh_node);
+        EDIT_ALLOC_POOL_RTL(VECTOR, Vector, vector);
      }
 
    if (desc_rtl)
@@ -2872,6 +2873,7 @@ _edje_part_recalc_single(Edje *ed,
       case EDJE_PART_TYPE_GROUP:
       case EDJE_PART_TYPE_PROXY:
       case EDJE_PART_TYPE_SNAPSHOT:
+      case EDJE_PART_TYPE_VECTOR:
         break;
 
       case EDJE_PART_TYPE_LIGHT:
@@ -3162,6 +3164,7 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
            case EDJE_PART_TYPE_TABLE:
            case EDJE_PART_TYPE_PROXY:
            case EDJE_PART_TYPE_SNAPSHOT:
+           case EDJE_PART_TYPE_VECTOR:
              evas_object_image_source_set(ep->object, pp->object);
              break;
 
@@ -3250,6 +3253,194 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_NONE);
    else if (chosen_desc->image.border.no_fill == 2)
      evas_object_image_border_center_fill_set(ep->object, EVAS_BORDER_FILL_SOLID);
+}
+
+static void
+_edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_UNUSED, Edje_Part_Description_Vector *chosen_desc, FLOAT_T pos)
+{
+   int w, h;
+   int new_svg = 0;
+   Efl_VG *vg_tree, *root_vg;
+   double sx, sy, vx, vy, vw, vh;
+
+   evas_object_geometry_get(ep->object, NULL, NULL, &w, &h);
+
+   if( (w == 0) || (h == 0)) return;
+
+   root_vg = evas_object_vg_root_node_get(ep->object);
+
+   if (ep->param2)
+     {
+        Edje_Part_Description_Vector *next_state = (Edje_Part_Description_Vector *)ep->param2->description;
+        if (chosen_desc->vg.id != next_state->vg.id)
+          {
+             new_svg = next_state->vg.id;
+          }
+     }
+   if (new_svg) // animation with svg id change
+     {
+        Efl_VG *container;
+        if (ep->typedata.vector->cache.svg_id != new_svg)
+          {
+             //create it
+             vg_tree = _edje_create_vg_tree(ed->file->ef, new_svg, w, h, &vx, &vy, &vw, &vh);
+             if (vg_tree)
+               {
+                  //1. clear the cache
+                  if (ep->typedata.vector->cache.vg)
+                    {
+                       eo_unref(ep->typedata.vector->cache.vg);
+                       ep->typedata.vector->cache.vg = NULL;
+                       ep->typedata.vector->cache.svg_id = 0;
+                    }
+                  //2. update current
+                  ep->typedata.vector->cache.svg_id = new_svg;
+                  ep->typedata.vector->cache.x = vx;
+                  ep->typedata.vector->cache.y = vy;
+                  ep->typedata.vector->cache.w = vw;
+                  ep->typedata.vector->cache.h = vh;
+                  ep->typedata.vector->cache.vg = vg_tree;
+               }
+          }
+        // just do the interpolation
+        if (eo_parent_get(ep->typedata.vector->cur.vg))
+          {
+             // remove it from the hirarchy
+             eo_ref(ep->typedata.vector->cur.vg);
+             eo_parent_set(ep->typedata.vector->cur.vg, NULL);
+          }
+        // create a container
+        container = evas_vg_container_add(NULL);
+        // reset the matrix.
+        Eina_Matrix3 matrix;
+        sx = w/ep->typedata.vector->cur.w;
+        sy = h/ep->typedata.vector->cur.h;
+        // for current vg
+        eina_matrix3_identity(&matrix);
+        eina_matrix3_translate(&matrix, -ep->typedata.vector->cur.x, -ep->typedata.vector->cur.y);
+        eina_matrix3_scale(&matrix, sx, sy);
+        evas_vg_node_transformation_set(ep->typedata.vector->cur.vg, &matrix);
+        // for next vg
+        sx = w/ep->typedata.vector->cache.w;
+        sy = h/ep->typedata.vector->cache.h;
+        eina_matrix3_identity(&matrix);
+        eina_matrix3_translate(&matrix, -ep->typedata.vector->cache.x, -ep->typedata.vector->cache.y);
+        eina_matrix3_scale(&matrix, sx, sy);
+        evas_vg_node_transformation_set(ep->typedata.vector->cache.vg, &matrix);
+        // do the interpolation
+        if (evas_vg_node_interpolate(container, ep->typedata.vector->cur.vg, ep->typedata.vector->cache.vg, pos))
+          {
+             // can interpolate between two svg file
+             eo_parent_set(container, root_vg);
+          }
+        else
+          {
+             // can't interpolate between 2 shape
+             // keep the current vg tree
+             eo_parent_set(ep->typedata.vector->cur.vg, root_vg);
+             // delete the container
+             eo_unref(container);
+          }
+     }
+   else 
+     {
+        if (ep->typedata.vector->cur.svg_id == chosen_desc->vg.id) // no svg file change
+          {
+             Eina_Matrix3 matrix;
+             sx = w/ep->typedata.vector->cur.w;
+             sy = h/ep->typedata.vector->cur.h;
+             eina_matrix3_identity(&matrix);
+             eina_matrix3_translate(&matrix, -ep->typedata.vector->cur.x, -ep->typedata.vector->cur.y);
+             eina_matrix3_scale(&matrix, sx, sy);
+             evas_vg_node_transformation_set(ep->typedata.vector->cur.vg, &matrix);
+             return;
+          }
+        else
+          {
+             Eina_Matrix3 matrix;
+             // check in cache if the vg tree already exists
+             if (ep->typedata.vector->cache.svg_id == chosen_desc->vg.id)
+               {
+                  int id = ep->typedata.vector->cache.svg_id;
+                  int vx = ep->typedata.vector->cache.x;
+                  int vy = ep->typedata.vector->cache.y;
+                  int vw = ep->typedata.vector->cache.w;
+                  int vh = ep->typedata.vector->cache.h;
+                  Efl_VG *vg = ep->typedata.vector->cache.vg;
+
+                  //1. update the cache from current.
+                  ep->typedata.vector->cache.svg_id = ep->typedata.vector->cur.svg_id;
+                  ep->typedata.vector->cache.vg = ep->typedata.vector->cur.vg;
+                  ep->typedata.vector->cache.x = ep->typedata.vector->cur.x;
+                  ep->typedata.vector->cache.y = ep->typedata.vector->cur.y;
+                  ep->typedata.vector->cache.w = ep->typedata.vector->cur.w;
+                  ep->typedata.vector->cache.h = ep->typedata.vector->cur.h;
+                  eo_ref(ep->typedata.vector->cache.vg);
+                  eo_parent_set(ep->typedata.vector->cache.vg, NULL);
+
+                  //2. update the root node
+                  sx = w/vw;
+                  sy = h/vh;
+                  eina_matrix3_identity(&matrix);
+                  eina_matrix3_translate(&matrix, -vx, -vy);
+                  eina_matrix3_scale(&matrix, sx, sy);
+                  evas_vg_node_transformation_set(vg, &matrix);
+                  // update parent and ref
+                  eo_parent_set(vg, root_vg);
+
+                  //3.update the cur 
+                  ep->typedata.vector->cur.svg_id = id;
+                  ep->typedata.vector->cur.x = vx;
+                  ep->typedata.vector->cur.y = vy;
+                  ep->typedata.vector->cur.w = vw;
+                  ep->typedata.vector->cur.h = vh;
+                  ep->typedata.vector->cur.vg = vg;
+               }
+             else
+               {
+                  //create it
+                  vg_tree = _edje_create_vg_tree(ed->file->ef, chosen_desc->vg.id, w, h, &vx, &vy, &vw, &vh);
+                  if (vg_tree)
+                    {
+                      //1. clear the cache
+                      if (ep->typedata.vector->cache.vg)
+                        {
+                           eo_unref(ep->typedata.vector->cache.vg);
+                           ep->typedata.vector->cache.vg = NULL;
+                           ep->typedata.vector->cache.svg_id = 0;
+                        }
+                      // 2. move the current tree to cache
+                      if (ep->typedata.vector->cur.vg)
+                       {
+                          eo_ref(ep->typedata.vector->cur.vg);
+                          eo_parent_set(ep->typedata.vector->cur.vg, NULL);
+                          // copy to the cache.
+                          ep->typedata.vector->cache.svg_id = ep->typedata.vector->cur.svg_id;
+                          ep->typedata.vector->cache.vg = ep->typedata.vector->cur.vg;
+                          ep->typedata.vector->cache.x = ep->typedata.vector->cur.x;
+                          ep->typedata.vector->cache.y = ep->typedata.vector->cur.y;
+                          ep->typedata.vector->cache.w = ep->typedata.vector->cur.w;
+                          ep->typedata.vector->cache.h = ep->typedata.vector->cur.h;
+                       }
+                      //3. update current
+                      ep->typedata.vector->cur.svg_id = chosen_desc->vg.id;
+                      ep->typedata.vector->cur.x = vx;
+                      ep->typedata.vector->cur.y = vy;
+                      ep->typedata.vector->cur.w = vw;
+                      ep->typedata.vector->cur.h = vh;
+                      ep->typedata.vector->cur.vg = vg_tree;
+                      eo_parent_set(vg_tree, root_vg);
+                    }
+                  else
+                    {
+                       //1. clear current
+                       ep->typedata.vector->cur.svg_id = 0;
+                       eo_parent_set(ep->typedata.vector->cur.vg, NULL);
+                       ep->typedata.vector->cur.vg = NULL;
+                    }
+               }
+          }
+     }
 }
 
 static Edje_Real_Part *
@@ -4564,6 +4755,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            case EDJE_PART_TYPE_BOX:
            case EDJE_PART_TYPE_TABLE:
            case EDJE_PART_TYPE_SNAPSHOT:
+           case EDJE_PART_TYPE_VECTOR:
              evas_object_color_set(ep->object,
                                    (pf->color.r * pf->color.a) / 255,
                                    (pf->color.g * pf->color.a) / 255,
@@ -4871,6 +5063,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
            case EDJE_PART_TYPE_TEXTBLOCK:
              _edje_textblock_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text *)chosen_desc);
+             break;
+
+           case EDJE_PART_TYPE_VECTOR:
+             _edje_svg_recalc_apply(ed, ep, pf, (Edje_Part_Description_Vector *)chosen_desc, pos);
              break;
 
            case EDJE_PART_TYPE_EXTERNAL:

@@ -168,6 +168,13 @@ struct _Sound_Write
    int i;
 };
 
+struct _Vector_Write
+{
+   Eet_File *ef;
+   Svg_Node *root;
+   int i;
+};
+
 struct _Mo_Write
 {
    Eet_File *ef;
@@ -1223,6 +1230,41 @@ on_error:
    if (data) eina_file_map_free(f, data);
    eina_file_close(f);
    return EINA_FALSE;
+}
+
+static void
+data_write_vectors(Eet_File *ef, int *vector_num)
+{
+   int i;
+   Svg_Node *root;
+   Eet_Data_Descriptor *svg_node_eet;
+   Eina_List *ll;
+   char *s;
+   char buf[PATH_MAX];
+   char id_str[15];
+   Eina_File *f = NULL;
+   Edje_Vector_Directory_Entry *vector;
+
+   if (!((edje_file) && (edje_file->image_dir))) return;
+
+   svg_node_eet = _edje_svg_node_eet();
+
+   for (i = 0; i < (int)edje_file->image_dir->vectors_count; i++)
+     {
+        vector = &edje_file->image_dir->vectors[i];
+        EINA_LIST_FOREACH(img_dirs, ll, s)
+          {
+             snprintf(buf, sizeof(buf), "%s/%s", s, vector->entry);
+             f = eina_file_open(buf, EINA_FALSE);
+             if (!f) continue;
+             root = _svg_load(f, NULL);
+             snprintf(id_str, sizeof(id_str), "edje/vectors/%i", vector->id);
+             eet_data_write(ef, svg_node_eet, id_str, root, compress_mode);
+             *vector_num += 1;
+             eina_file_close(f);
+             break;
+          }
+     }
 }
 
 static void
@@ -2468,6 +2510,7 @@ data_write(void)
    int vibration_num = 0;
    int font_num = 0;
    int collection_num = 0;
+   int vector_num = 0;
    double t;
 
    if (!edje_file)
@@ -2522,6 +2565,8 @@ data_write(void)
    INF("fontmap: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_images(ef, &image_num);
    INF("images: %3.5f", ecore_time_get() - t); t = ecore_time_get();
+   data_write_vectors(ef, &vector_num);
+   INF("vectors: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_check_models(ef, &model_num);
    INF("models: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_fonts(ef, &font_num);

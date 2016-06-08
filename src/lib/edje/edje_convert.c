@@ -287,6 +287,7 @@ case EDJE_PART_TYPE_##Tp: \
              CSP(BOX, ce);
              CSP(TABLE, ce);
              CSP(EXTERNAL, ce);
+             CSP(VECTOR, ce);
 
            default:
              count = &dummy;
@@ -310,6 +311,7 @@ case EDJE_PART_TYPE_##Tp: \
    CONVERT_EMN(TABLE, Edje_Part_Description_Table, ce);
    CONVERT_EMN(EXTERNAL, Edje_Part_Description_External, ce);
    CONVERT_EMN(part, Edje_Part, ce);
+   CONVERT_EMN(VECTOR, Edje_Part_Description_Vector, ce);
 
    /* Change structure layout */
    edc = calloc(1, sizeof (Edje_Part_Collection));
@@ -494,6 +496,7 @@ case EDJE_PART_TYPE_##Short:                                                    
         CONVERT_ALLOC_POOL(BOX, Box, box);
         CONVERT_ALLOC_POOL(TABLE, Table, table);
         CONVERT_ALLOC_POOL(EXTERNAL, External, external_params);
+        CONVERT_ALLOC_POOL(VECTOR, Vector, vector);
      }
 
    *result = oed->common;
