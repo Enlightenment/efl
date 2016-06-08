@@ -111,8 +111,28 @@ struct visitor_generate
              pointers.insert(pointers.begin(), {{attributes::qualifier_info::is_none, {}}, false});
              return attributes::regular_type_def{"void", regular.base_qualifier, pointers, {}};
            }
-           , {"size", nullptr, [&] { return replace_base_type(regular, " ::std::size_t"); }}
+           // signed primitives
+           , {"byte", nullptr, [&] { return replace_base_type(regular, " char"); }}
+           , {"llong", nullptr, [&] { return replace_base_type(regular, " long long"); }}
+           , {"int8", nullptr, [&] { return replace_base_type(regular, " int8_t"); }}
+           , {"int16", nullptr, [&] { return replace_base_type(regular, " int16_t"); }}
+           , {"int32", nullptr, [&] { return replace_base_type(regular, " int32_t"); }}
+           , {"int64", nullptr, [&] { return replace_base_type(regular, " int64_t"); }}
+           , {"ssize", nullptr, [&] { return replace_base_type(regular, " ssize_t"); }}
+           // unsigned primitives
            , {"ubyte", nullptr, [&] { return replace_base_type(regular, " unsigned char"); }}
+           , {"ushort", nullptr, [&] { return replace_base_type(regular, " unsigned short"); }}
+           , {"uint", nullptr, [&] { return replace_base_type(regular, " unsigned int"); }}
+           , {"ulong", nullptr, [&] { return replace_base_type(regular, " unsigned long"); }}
+           , {"ullong", nullptr, [&] { return replace_base_type(regular, " unsigned long long"); }}
+           , {"uint8", nullptr, [&] { return replace_base_type(regular, " uint8_t"); }}
+           , {"uint16", nullptr, [&] { return replace_base_type(regular, " uint16_t"); }}
+           , {"uint32", nullptr, [&] { return replace_base_type(regular, " uint32_t"); }}
+           , {"uint64", nullptr, [&] { return replace_base_type(regular, " uint64_t"); }}
+           , {"size", nullptr, [&] { return replace_base_type(regular, " size_t"); }}
+           
+           , {"ptrdiff", nullptr, [&] { return replace_base_type(regular, " ptrdiff_t"); }}
+           , {"intptr", nullptr, [&] { return replace_base_type(regular, " intptr_t"); }}
            , {"string", true, [&] { return replace_base_type(regular, " ::std::string"); }}
            , {"string", false, [&] { return replace_base_type(regular, " ::efl::eina::string_view"); }}
            , {"generic_value", nullptr, [&]
