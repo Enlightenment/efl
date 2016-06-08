@@ -110,18 +110,6 @@ struct class_definition_generator
          scope_tab << "Eo* _eo_ptr() const { return *(Eo**)this; }\n"
         ).generate(sink, attributes::unused, context)) return false;
      
-     // operator ::ns::Class_Name() const;
-     // operator ::ns::Class_Name&();
-     // operator ::ns::Class_Name const&() const;
-     if(!as_generator
-        (
-            scope_tab << "operator " << *("::" << lower_case[string]) << "::" << string << "() const;\n"
-         << scope_tab << "operator " << *("::" << lower_case[string]) << "::" << string << "&();\n"
-         << scope_tab << "operator " << *("::" << lower_case[string]) << "::" << string << " const&() const;\n"
-         ).generate(sink, std::make_tuple(cpp_namespaces, cls.cxx_name, cpp_namespaces, cls.cxx_name
-                                          , cpp_namespaces, cls.cxx_name), context))
-       return false;
-
      if(!as_generator
         (
          *attribute_reorder<1, 2, 0, 1>

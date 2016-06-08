@@ -105,12 +105,12 @@ struct visitor_generate
       }
       const match_table[] =
         {
-           "void_ptr", nullptr, [&]
-           {
-             std::vector<attributes::pointer_indirection> pointers = regular.pointers;
-             pointers.insert(pointers.begin(), {{attributes::qualifier_info::is_none, {}}, false});
-             return attributes::regular_type_def{"void", regular.base_qualifier, pointers, {}};
-           }
+           {"void_ptr", nullptr, [&]
+            {
+              std::vector<attributes::pointer_indirection> pointers = regular.pointers;
+              pointers.insert(pointers.begin(), {{}, false});
+              return attributes::regular_type_def{"void", regular.base_qualifier, pointers, {}};
+            }}
            // signed primitives
            , {"byte", nullptr, [&] { return replace_base_type(regular, " char"); }}
            , {"llong", nullptr, [&] { return replace_base_type(regular, " long long"); }}
@@ -166,7 +166,7 @@ struct visitor_generate
          if(regular.pointers.empty() || (regular.pointers.size() == 1 && regular.pointers[0].reference == true))
            {
              attributes::complex_type_def def
-             {attributes::regular_type_def{" ::efl::eina::optional", attributes::qualifier_info::is_none, {}}};
+             {attributes::regular_type_def{" ::efl::eina::optional", {}}};
              attributes::regular_type_def no_optional_regular = regular;
              attributes::remove_optional(no_optional_regular.base_qualifier);
 

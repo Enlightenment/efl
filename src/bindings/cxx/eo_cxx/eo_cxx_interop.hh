@@ -323,12 +323,12 @@ T* convert_to_c_impl(std::unique_ptr<U, Deleter>& v, tag<T*, std::unique_ptr<U, 
 }
 
 template <typename T>
-Eina_Array** convert_to_c_impl(efl::eina::array<T>& c, tag<Eina_Array **, efl::eina::array<T>&>)
+Eina_Array** convert_to_c_impl(efl::eina::array<T>& /*c*/, tag<Eina_Array **, efl::eina::array<T>&>)
 {
   std::abort();
 }
 template <typename T>
-Eina_Array** convert_to_c_impl(efl::eina::range_array<T>& c, tag<Eina_Array **, efl::eina::range_array<T>&>)
+Eina_Array** convert_to_c_impl(efl::eina::range_array<T>& /*c*/, tag<Eina_Array **, efl::eina::range_array<T>&>)
 {
   std::abort();
 }

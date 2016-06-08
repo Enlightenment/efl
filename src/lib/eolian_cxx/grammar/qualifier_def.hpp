@@ -78,6 +78,10 @@ struct qualifier_def
 {
    qualifier_info qualifier;
    std::string free_function;
+
+   qualifier_def() : qualifier(qualifier_info::is_none) {}
+   qualifier_def(qualifier_info info, std::string free_function)
+     : qualifier(info), free_function(std::move(free_function)) {}
 };
 
 inline bool operator<(qualifier_def const& lhs, qualifier_def const& rhs)

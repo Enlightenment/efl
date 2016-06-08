@@ -279,11 +279,11 @@ inline void type_def::set(Eolian_Type const* eolian_type)
      case EOLIAN_TYPE_POINTER:
        {
           std::vector<pointer_indirection> pointers
-          {{ {qualifiers(eolian_type)}, false }};
+          {{ {qualifiers(eolian_type), {}}, false }};
           Eolian_Type const* base_type = eolian_type_base_type_get(eolian_type);
           while(eolian_type_type_get(base_type) == EOLIAN_TYPE_POINTER)
             {
-               pointers.push_back({qualifiers(base_type)});
+               pointers.push_back({{qualifiers(base_type), {}}});
                base_type = eolian_type_base_type_get(base_type);
             }
 
@@ -295,7 +295,7 @@ inline void type_def::set(Eolian_Type const* eolian_type)
      case EOLIAN_TYPE_CLASS:
        {
           Eolian_Class const* klass = eolian_type_class_get(eolian_type);
-          original_type = klass_name(klass, {qualifiers(eolian_type)}, {});
+          original_type = klass_name(klass, {qualifiers(eolian_type), {}}, {});
        }
        break;
      case EOLIAN_TYPE_COMPLEX:
@@ -636,7 +636,7 @@ struct klass_def
                , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
            {
              Eolian_Class const* inherit = ::eolian_class_get_by_name(&*inherit_iterator);
-             inherits.insert({inherit, {qualifier_info::is_none}, {}});
+             inherits.insert({inherit, {}, {}});
              inherit_algo(inherit);
            }
        };

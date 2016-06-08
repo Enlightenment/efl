@@ -13,7 +13,7 @@ struct add_reference_visitor
    template <typename T>
    void operator()(T& object) const
    {
-      object.pointers.insert(object.pointers.begin(), {{attributes::qualifier_info::is_none}, true});
+      object.pointers.insert(object.pointers.begin(), {{}, true});
    }
    void operator()(attributes::complex_type_def& complex) const
    {
