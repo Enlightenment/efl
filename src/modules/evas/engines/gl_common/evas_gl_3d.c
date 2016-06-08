@@ -1460,6 +1460,8 @@ e3d_drawable_texture_rendered_pixels_get(GLuint tex EINA_UNUSED, int x, int y, i
    if (!datarowup || !datarowlow)
      {
         ERR("Not enough memory");
+        if (datarowup) free(datarowup);
+        if (datarowlow) free(datarowlow);
         return;
      }
    for (j = 0; j < h / 2; j++)
@@ -1467,7 +1469,7 @@ e3d_drawable_texture_rendered_pixels_get(GLuint tex EINA_UNUSED, int x, int y, i
         bellow = h * w - width;
         up = w + width;
 
-        for (i = w; i >= 0; i--)
+        for (i = w - 1; i >= 0; i--)
           {
              pixel = buffer[bellow];
              datarowlow[i] = ((pixel & 0x000000ff) << 16) +
