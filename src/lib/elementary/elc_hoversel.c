@@ -551,6 +551,17 @@ _on_move_resize(void * data,
    _resizing_eval(obj, sd);
 }
 
+static void
+_on_parent_resize(void *data,
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *parent_obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
+{
+   Evas_Object *obj = (Evas_Object *)data;
+   ELM_HOVERSEL_DATA_GET(obj, sd);
+   _on_move_resize(sd, NULL, obj, NULL);
+}
+
 EOLIAN static void
 _elm_hoversel_evas_object_smart_add(Eo *obj, Elm_Hoversel_Data *priv)
 {
@@ -638,13 +649,21 @@ EOLIAN static void
 _elm_hoversel_hover_parent_set(Eo *obj, Elm_Hoversel_Data *sd, Evas_Object *parent)
 {
    if (sd->hover_parent)
-     evas_object_event_callback_del_full
-       (sd->hover_parent, EVAS_CALLBACK_DEL, _on_parent_del, obj);
+     {
+        evas_object_event_callback_del_full
+          (sd->hover_parent, EVAS_CALLBACK_DEL, _on_parent_del, obj);
+        evas_object_event_callback_del_full
+          (sd->hover_parent, EVAS_CALLBACK_RESIZE, _on_parent_resize, obj);
+     }
 
    sd->hover_parent = parent;
    if (sd->hover_parent)
-     evas_object_event_callback_add
-       (sd->hover_parent, EVAS_CALLBACK_DEL, _on_parent_del, obj);
+     {
+        evas_object_event_callback_add
+          (sd->hover_parent, EVAS_CALLBACK_DEL, _on_parent_del, obj);
+        evas_object_event_callback_add
+          (sd->hover_parent, EVAS_CALLBACK_RESIZE, _on_parent_resize, obj);
+     }
 }
 
 EOLIAN static Evas_Object*
