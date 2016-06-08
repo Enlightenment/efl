@@ -540,11 +540,6 @@ EAPI extern Eina_Error EINA_ERROR_PROMISE_NULL;
  * @internal
  */
 #define _EINA_PROMISE_BEFORE_HOOK(PromiseValue, Ret, ...)               \
-  Eina_Promise_Owner* const __eo_promise = eina_promise_value_add(sizeof(PromiseValue)); \
-  typedef Ret (*_Eo_Promise_func_t_)(Eo*, void *obj_data, ##__VA_ARGS__); \
-  _Eo_Promise_func_t_ const _eo_promise_func_ = (_Eo_Promise_func_t_)_func_;
-
-#define _EINA_PROMISE_POINTER_BEFORE_HOOK(PromiseValue, Ret, ...)               \
   Eina_Promise_Owner* const __eo_promise = eina_promise_add();          \
   typedef Ret (*_Eo_Promise_func_t_)(Eo*, void *obj_data, ##__VA_ARGS__); \
   _Eo_Promise_func_t_ const _eo_promise_func_ = (_Eo_Promise_func_t_)_func_;

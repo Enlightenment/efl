@@ -303,7 +303,6 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    Eina_Bool is_prop = (ftype == EOLIAN_PROP_GET || ftype == EOLIAN_PROP_SET);
 
    Eina_Bool has_promise = EINA_FALSE;
-   Eina_Bool is_pointer_promise = EINA_FALSE;
    const char* promise_param_name = NULL;
    const char* promise_value_type = NULL;
    Eina_Bool need_implementation = EINA_TRUE;
@@ -388,9 +387,6 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
                   if(eina_iterator_next(promise_values, (void**)&subtype))
                     {
                       promise_value_type = eolian_type_c_type_get(subtype);
-                      is_pointer_promise = eolian_type_type_get(subtype) == EOLIAN_TYPE_POINTER
-                        || eolian_type_type_get(subtype) == EOLIAN_TYPE_COMPLEX
-                        || eolian_type_type_get(subtype) == EOLIAN_TYPE_CLASS;
                     }
                   eina_strbuf_append_printf(impl_full_params, ", Eina_Promise_Owner *%s%s",
                          pname, is_empty && !dflt_value ?" EINA_UNUSED":"");
@@ -573,10 +569,9 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
           {
              eina_strbuf_append_printf(fbody,
                                        "#undef _EO_API_BEFORE_HOOK\n#undef _EO_API_AFTER_HOOK\n#undef _EO_API_CALL_HOOK\n"
-                                       "#define _EO_API_BEFORE_HOOK _EINA_PROMISE_%sBEFORE_HOOK(%s, %s%s)\n"
+                                       "#define _EO_API_BEFORE_HOOK _EINA_PROMISE_BEFORE_HOOK(%s, %s%s)\n"
                                        "#define _EO_API_AFTER_HOOK _EINA_PROMISE_AFTER_HOOK(%s)\n"
                                        "#define _EO_API_CALL_HOOK(x) _EINA_PROMISE_CALL_HOOK(EO_FUNC_CALL(%s))\n\n",
-                                       (is_pointer_promise? "POINTER_": ""),
                                        promise_value_type, !rettype ? "void" : rettype,
                                        eina_strbuf_string_get(impl_full_params),
                                        promise_param_name,
