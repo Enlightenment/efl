@@ -243,6 +243,9 @@ _eina_promise_del(_Eina_Promise_Default_Owner* promise)
                                     &_eina_promise_free_progress_notify_callback_node);
    _eina_promise_free_callback_list(&promise->promise.cancel_callbacks,
                                     &_eina_promise_free_cancel_callback_node);
+
+   EINA_MAGIC_SET(&promise->owner_vtable, 0xdeadbeef);
+   EINA_MAGIC_SET(&promise->promise.vtable, 0xbeefdead);
    free(promise);
 }
 
