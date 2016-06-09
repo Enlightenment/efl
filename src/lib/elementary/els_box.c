@@ -148,7 +148,7 @@ _smart_extents_non_homogeneous_calc(Evas_Object_Box_Data *priv, int w, int h, in
           rrw = &oh, rrh = &ow;
 
         evas_object_size_hint_padding_get(opt->obj, &pad_l, &pad_r, &pad_t, &pad_b);
-        evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
+        efl_gfx_size_hint_combined_min_get(opt->obj, &mnw, &mnh);
         mnw += pad_l + pad_r;
         mnh += pad_t + pad_b;
         if (*rminw < *rw) *rminw = *rw;
@@ -253,7 +253,7 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
              if (ay < 0) fh = 1;
 
              evas_object_size_hint_padding_get(opt->obj, &pad_l, &pad_r, &pad_t, &pad_b);
-             evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
+             efl_gfx_size_hint_combined_min_get(opt->obj, &mnw, &mnh);
              mnw += pad_l + pad_r;
              mnh += pad_t + pad_b;
              if (minh < mnh) minh = mnh;
@@ -370,7 +370,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
    _smart_extents_calculate(o, priv, w, h, expand, horizontal, homogeneous);
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
-   evas_object_size_hint_min_get(o, &minw, &minh);
+   efl_gfx_size_hint_combined_min_get(o, &minw, &minh);
    evas_object_box_align_get(o, &ax, &ay);
    /* if object size is less than min, apply align to trigger viewporting */
    if (w < minw)
@@ -413,7 +413,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
         evas_object_size_hint_align_get(obj, &ax, &ay);
         evas_object_size_hint_weight_get(obj, &wx, &wy);
         evas_object_size_hint_padding_get(obj, &pad_l, &pad_r, &pad_t, &pad_b);
-        evas_object_size_hint_min_get(obj, &mnw, &mnh);
+        efl_gfx_size_hint_combined_min_get(obj, &mnw, &mnh);
         mnw += pad_l + pad_r;
         mnh += pad_t + pad_b;
         evas_object_size_hint_max_get(obj, &mxw, &mxh);

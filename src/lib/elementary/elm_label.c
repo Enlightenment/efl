@@ -59,7 +59,7 @@ _recalc(void *data)
      {
         Evas_Coord ominw = -1;
 
-        evas_object_size_hint_min_get(data, &ominw, NULL);
+        efl_gfx_size_hint_combined_min_get(data, &ominw, NULL);
         minw = ominw;
      }
 

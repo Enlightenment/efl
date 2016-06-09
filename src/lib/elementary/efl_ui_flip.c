@@ -74,9 +74,9 @@ _sizing_eval(Evas_Object *obj)
    EFL_UI_FLIP_DATA_GET(obj, sd);
 
    if (sd->front.content)
-     evas_object_size_hint_min_get(sd->front.content, &minw, &minh);
+     efl_gfx_size_hint_combined_min_get(sd->front.content, &minw, &minh);
    if (sd->back.content)
-     evas_object_size_hint_min_get(sd->back.content, &minw2, &minh2);
+     efl_gfx_size_hint_combined_min_get(sd->back.content, &minw2, &minh2);
    if (sd->front.content)
      evas_object_size_hint_max_get(sd->front.content, &maxw, &maxh);
    if (sd->back.content)

@@ -45,7 +45,7 @@ _sizing_eval(Evas_Object *obj,
    Evas_Coord cminw = -1, cminh = -1;
 
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
-   evas_object_size_hint_min_get(obj, &cminw, &cminh);
+   efl_gfx_size_hint_combined_min_get(obj, &cminw, &cminh);
    if ((minw == cminw) && (minh == cminh)) return;
 
    evas_object_size_hint_min_set(obj, minw, minh);

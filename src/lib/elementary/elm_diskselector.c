@@ -305,7 +305,7 @@ _resize_cb(void *data EINA_UNUSED,
    if (sd->items)
      {
         Elm_Diskselector_Item_Data *it = sd->items->data;
-        evas_object_size_hint_min_get(VIEW(it), &mw, &mh);
+        efl_gfx_size_hint_combined_min_get(VIEW(it), &mw, &mh);
      }
    if (sd->minh < mh) sd->minh = mh;
    edje_object_size_min_restricted_calc

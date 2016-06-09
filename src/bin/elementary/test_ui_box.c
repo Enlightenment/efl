@@ -174,7 +174,7 @@ _custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
    EINA_ITERATOR_FOREACH(it, sobj)
      {
         int x, y, h, w, mw, mh;
-        evas_object_size_hint_min_get(sobj, &mw, &mh);
+        efl_gfx_size_hint_combined_min_get(sobj, &mw, &mh);
         x = (pw / count) * i;
         y = (ph / count) * i;
         w = mw;

@@ -116,7 +116,7 @@ _print_rect_stats(Evas_Object *rect)
    evas_object_size_hint_align_get(rect, &x, &y);
    fprintf(stdout, "\talign hints: h(%f), v(%f)\n", x, y);
 
-   evas_object_size_hint_min_get(rect, &w, &h);
+   efl_gfx_size_hint_combined_min_get(rect, &w, &h);
    fprintf(stdout, "\tmin. size hints: h(%d), v(%d)\n", w, h);
 
    evas_object_size_hint_max_get(rect, &w, &h);

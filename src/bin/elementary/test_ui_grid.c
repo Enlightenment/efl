@@ -173,7 +173,7 @@ _custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
           {
              int x, y, mw, mh;
 
-             evas_object_size_hint_min_get(item, &mw, &mh);
+             efl_gfx_size_hint_combined_min_get(item, &mw, &mh);
              x = gx + c * gw / cols + (cs * gw / cols - mw) / 2;
              y = gy + r * gh / rows + (rs * gh / rows - mh) / 2;
              efl_gfx_size_set(item, mw, mh);

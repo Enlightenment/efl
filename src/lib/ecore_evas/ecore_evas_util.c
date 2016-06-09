@@ -132,7 +132,7 @@ _ecore_evas_obj_callback_changed_size_hints(void *data, Evas *e EINA_UNUSED, Eva
    Ecore_Evas *ee = data;
    Evas_Coord w, h;
 
-   evas_object_size_hint_min_get(obj, &w, &h);
+   efl_gfx_size_hint_combined_min_get(obj, &w, &h);
    ecore_evas_size_min_set(ee, w, h);
 
    evas_object_size_hint_max_get(obj, &w, &h);

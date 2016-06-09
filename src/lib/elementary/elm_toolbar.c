@@ -369,7 +369,7 @@ _resize_job(void *data)
    sd->resize_job = NULL;
    elm_interface_scrollable_content_viewport_geometry_get
          (obj, NULL, NULL, &vw, &vh);
-   evas_object_size_hint_min_get(sd->bx, &mw, &mh);
+   efl_gfx_size_hint_combined_min_get(sd->bx, &mw, &mh);
    w = sd->minw_bx;
    h = sd->minh_bx;
 
@@ -1490,7 +1490,7 @@ _sizing_eval(Evas_Object *obj)
 
    evas_object_resize(wd->resize_obj, w, h);
 
-   evas_object_size_hint_min_get(sd->bx, &minw_bx, &minh_bx);
+   efl_gfx_size_hint_combined_min_get(sd->bx, &minw_bx, &minh_bx);
    elm_interface_scrollable_content_viewport_geometry_get
          (obj, NULL, NULL, &vw, &vh);
 

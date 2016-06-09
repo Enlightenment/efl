@@ -1424,7 +1424,7 @@ _edje_lua_object_get_size_hint_min(lua_State *L)
 {
    Edje_Lua_Evas_Object *obj = _edje_lua_checkudata(L, 1, &mObject);
    int w, h;
-   evas_object_size_hint_min_get(obj->eo, &w, &h);
+   efl_gfx_size_hint_combined_min_get(obj->eo, &w, &h);
    lua_createtable(L, 2, 0);
    lua_pushnumber(L, w);
    lua_rawseti(L, -2, 1);

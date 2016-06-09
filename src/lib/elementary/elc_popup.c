@@ -459,14 +459,14 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
         EINA_LIST_FOREACH(sd->items, elist, it)
           {
              _item_sizing_eval(it);
-             evas_object_size_hint_min_get(elm_layout_edje_get(VIEW(it)),
+             efl_gfx_size_hint_combined_min_get(elm_layout_edje_get(VIEW(it)),
                                            NULL, &minh_box);
              if (minh_box != -1) h_box += minh_box;
           }
         evas_object_size_hint_min_set(sd->spacer, 0, MIN(h_box, sd->max_sc_h));
         evas_object_size_hint_max_set(sd->spacer, -1, sd->max_sc_h);
 
-        evas_object_size_hint_min_get(sd->scr, &minw, &minh);
+        efl_gfx_size_hint_combined_min_get(sd->scr, &minw, &minh);
         evas_object_size_hint_max_get(sd->scr, &minw, &minh);
      }
    else if (sd->scroll && (sd->content || sd->text_content_obj))

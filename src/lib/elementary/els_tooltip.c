@@ -465,7 +465,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         evas_object_layer_set(tt->tooltip, ELM_OBJECT_LAYER_TOOLTIP);
      }
    TTDBG("*******RECALC\n");
-   evas_object_size_hint_min_get(tt->content, &ominw, &ominh);
+   efl_gfx_size_hint_combined_min_get(tt->content, &ominw, &ominh);
    edje_object_size_min_get(tt->tooltip, &eminw, &eminh);
 
    if (eminw && (ominw < eminw)) ominw = eminw;

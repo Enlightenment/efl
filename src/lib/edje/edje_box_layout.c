@@ -212,7 +212,7 @@ _edje_box_recalc_apply(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, Edje_Calc_Param
         evas_object_smart_calculate(ep->object);
      }
 #if 0 /* Why the hell do we affect part size after resize ??? */
-   evas_object_size_hint_min_get(ep->object, &min_w, &min_h);
+   efl_gfx_size_hint_combined_min_get(ep->object, &min_w, &min_h);
    if (chosen_desc->box.min.h && (p3->w < min_w))
      p3->w = min_w;
    if (chosen_desc->box.min.v && (p3->h < min_h))

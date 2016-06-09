@@ -1451,7 +1451,7 @@ _picker_sizing_eval(Evas_Object *obj)
 
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
 
-   evas_object_size_hint_min_get(sd->picker, &minw, &minh);
+   efl_gfx_size_hint_combined_min_get(sd->picker, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 }
 
@@ -1507,7 +1507,7 @@ _on_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
      {
         Evas_Coord w = 0, h = 0, minw = -1;
 
-        evas_object_size_hint_min_get(obj, &minw, NULL);
+        efl_gfx_size_hint_combined_min_get(obj, &minw, NULL);
         evas_object_geometry_get(obj, NULL, NULL, &w, &h);
         if ((w != sd->_w) && (w < minw))
           elm_layout_sizing_eval(obj);

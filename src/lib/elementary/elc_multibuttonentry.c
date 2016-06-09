@@ -207,7 +207,7 @@ _shrink_mode_set(Evas_Object *obj,
         if (sd->label && sd->label_packed)
           {
              elm_box_pack_end(sd->box, sd->label);
-             evas_object_size_hint_min_get(sd->label, &w_tmp, NULL);
+             efl_gfx_size_hint_combined_min_get(sd->label, &w_tmp, NULL);
              w -= w_tmp;
              w -= box_inner_item_width_padding;
           }
@@ -225,7 +225,7 @@ _shrink_mode_set(Evas_Object *obj,
              evas_object_show(VIEW(item));
              item->visible = EINA_TRUE;
 
-             evas_object_size_hint_min_get(VIEW(item), &item_w, NULL);
+             efl_gfx_size_hint_combined_min_get(VIEW(item), &item_w, NULL);
 
              w -= item_w;
              w -= box_inner_item_width_padding;
@@ -319,7 +319,7 @@ _view_update(Elm_Multibuttonentry_Data *sd)
 
    // update label
    if (sd->label)
-     evas_object_size_hint_min_get(sd->label, &width, &height);
+     efl_gfx_size_hint_combined_min_get(sd->label, &width, &height);
 
    if (sd->guide_text)
      {
@@ -783,7 +783,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
    evas_object_show(VIEW(item));
 
    evas_object_smart_calculate(VIEW(item));
-   evas_object_size_hint_min_get(VIEW(item), &minw, &minh);
+   efl_gfx_size_hint_combined_min_get(VIEW(item), &minw, &minh);
    evas_object_geometry_get(sd->box, NULL, NULL, &boxw, NULL);
 
    if (sd->w_box && minw > boxw)
@@ -1004,7 +1004,7 @@ _box_resize_cb(void *data,
              elm_layout_sizing_eval(VIEW(it));
              evas_object_smart_calculate(VIEW(it));
 
-             evas_object_size_hint_min_get(VIEW(it), &mnw, &mnh);
+             efl_gfx_size_hint_combined_min_get(VIEW(it), &mnw, &mnh);
 
              if (mnw > w - hpad)
                {
@@ -1284,14 +1284,14 @@ _box_min_size_calculate(Evas_Object *box,
    Evas_Object_Box_Option *opt;
 
    evas_object_geometry_get(box, NULL, NULL, &w, NULL);
-   evas_object_size_hint_min_get(box, &minw, NULL);
+   efl_gfx_size_hint_combined_min_get(box, &minw, NULL);
 
    if (!w) return EINA_FALSE;
 
    line_num = 1;
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
-        evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
+        efl_gfx_size_hint_combined_min_get(opt->obj, &mnw, &mnh);
 
         linew += mnw;
         if (lineh < mnh) lineh = mnh;
@@ -1330,7 +1330,7 @@ _box_layout_cb(Evas_Object *o,
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
-   evas_object_size_hint_min_get(o, &minw, &minh);
+   efl_gfx_size_hint_combined_min_get(o, &minw, &minh);
    evas_object_size_hint_align_get(o, &ax, &ay);
 
    rtl = elm_widget_mirrored_get(data);
@@ -1360,7 +1360,7 @@ _box_layout_cb(Evas_Object *o,
         obj = opt->obj;
         evas_object_size_hint_align_get(obj, &ax, &ay);
         evas_object_size_hint_weight_get(obj, &wx, &wy);
-        evas_object_size_hint_min_get(obj, &mnw, &mnh);
+        efl_gfx_size_hint_combined_min_get(obj, &mnw, &mnh);
 
         fw = fh = EINA_FALSE;
         if (ax == -1.0) {fw = 1; ax = 0.5; }

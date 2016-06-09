@@ -28,7 +28,7 @@ _sizing_eval(Evas_Object *obj)
    ELM_MAPBUF_DATA_GET(obj, sd);
    if (sd->content)
      {
-        evas_object_size_hint_min_get(sd->content, &minw, &minh);
+        efl_gfx_size_hint_combined_min_get(sd->content, &minw, &minh);
         evas_object_size_hint_max_get(sd->content, &maxw, &maxh);
      }
    evas_object_size_hint_min_set(obj, minw, minh);

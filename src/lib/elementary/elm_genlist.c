@@ -402,7 +402,7 @@ _item_content_realize(Elm_Gen_Item *it,
              if (eo_class_get(content) == ELM_LAYOUT_CLASS)
                {
                   Evas_Coord old_w, old_h, minw = 0, minh = 0;
-                  evas_object_size_hint_min_get(content, &old_w, &old_h);
+                  efl_gfx_size_hint_combined_min_get(content, &old_w, &old_h);
                   edje_object_size_min_calc(elm_layout_edje_get(content), &minw, &minh);
 
                   if (old_w > minw) minw = old_w;
@@ -868,7 +868,7 @@ _elm_genlist_elm_layout_sizing_eval(Eo *obj, Elm_Genlist_Data *sd)
 
    if (sd->on_sub_del) return;;
 
-   evas_object_size_hint_min_get(obj, &minw, NULL);
+   efl_gfx_size_hint_combined_min_get(obj, &minw, NULL);
    evas_object_size_hint_max_get(obj, &maxw, &maxh);
 
    edje_object_size_min_calc(wd->resize_obj, &vmw, &vmh);

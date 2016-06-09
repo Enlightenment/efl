@@ -247,7 +247,7 @@ _base_geometry_calc(Evas_Object *obj,
    if ((max_size.x > 0) && (base_size.x > max_size.x))
      base_size.x = max_size.x;
    //Limit to Min Size
-   evas_object_size_hint_min_get(obj, &min_size.x, &min_size.y);
+   efl_gfx_size_hint_combined_min_get(obj, &min_size.x, &min_size.y);
 
    if ((min_size.y > 0) && (base_size.y < min_size.y))
      base_size.y = min_size.y;

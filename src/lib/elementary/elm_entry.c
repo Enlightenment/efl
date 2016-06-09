@@ -1012,7 +1012,7 @@ _deferred_recalc_job(void *data)
      {
         Evas_Coord ominw = -1;
 
-        evas_object_size_hint_min_get(data, &ominw, NULL);
+        efl_gfx_size_hint_combined_min_get(data, &ominw, NULL);
         minw = ominw;
      }
 
@@ -1118,7 +1118,7 @@ _elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
                {
                   Evas_Coord ominw = -1;
 
-                  evas_object_size_hint_min_get(sd->entry_edje, &ominw, NULL);
+                  efl_gfx_size_hint_combined_min_get(sd->entry_edje, &ominw, NULL);
                   minw = ominw;
                }
              sd->ent_mw = minw;
@@ -1351,7 +1351,7 @@ _hoversel_position(Evas_Object *obj)
      edje_object_part_text_cursor_geometry_get
        (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
 
-   evas_object_size_hint_min_get(sd->hoversel, &mw, &mh);
+   efl_gfx_size_hint_combined_min_get(sd->hoversel, &mw, &mh);
    if (cx + mw > w)
      cx = w - mw;
    if (cy + mh > h)
@@ -2099,7 +2099,7 @@ _entry_changed_handle(void *data,
    /* Reset the size hints which are no more relevant. Keep the
     * height, this is a hack, but doesn't really matter cause we'll
     * re-eval in a moment. */
-   evas_object_size_hint_min_get(data, NULL, &minh);
+   efl_gfx_size_hint_combined_min_get(data, NULL, &minh);
    evas_object_size_hint_min_set(data, -1, minh);
 
    elm_layout_sizing_eval(data);

@@ -87,7 +87,7 @@ _sizing_eval(Evas_Object *obj)
 
    if (!wd) return;
    if (!wd->content) return;
-   evas_object_size_hint_min_get(wd->content, &minw, &minh);
+   efl_gfx_size_hint_combined_min_get(wd->content, &minw, &minh);
    evas_object_size_hint_max_get(wd->content, &maxw, &maxh);
    if (wd->maxmin)
      {

@@ -1474,7 +1474,7 @@ _icon_dup(Evas_Object *icon,
    evas_object_geometry_get(icon, NULL, NULL, &w, &h);
    if (w <= 0 || h <= 0)
      {
-        evas_object_size_hint_min_get(icon, &w, &h);
+        efl_gfx_size_hint_combined_min_get(icon, &w, &h);
         evas_object_size_hint_min_set(dupp, w, h);
      }
    else evas_object_resize(dupp, w, h);
@@ -1525,7 +1525,7 @@ _overlay_default_show(Overlay_Default *ovl)
      {
         disp = ovl->content;
         evas_object_geometry_get(disp, NULL, NULL, &w, &h);
-        if (w <= 0 || h <= 0) evas_object_size_hint_min_get(disp, &w, &h);
+        if (w <= 0 || h <= 0) efl_gfx_size_hint_combined_min_get(disp, &w, &h);
         ovl->w = w;
         ovl->h = h;
      }
@@ -1534,7 +1534,7 @@ _overlay_default_show(Overlay_Default *ovl)
         disp = ovl->clas_content;
 
         evas_object_geometry_get(disp, NULL, NULL, &w, &h);
-        if (w <= 0 || h <= 0) evas_object_size_hint_min_get(disp, &w, &h);
+        if (w <= 0 || h <= 0) efl_gfx_size_hint_combined_min_get(disp, &w, &h);
      }
    else
      {

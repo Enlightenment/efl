@@ -116,7 +116,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Box_Data *sd)
    if (sd->delete_me)
      return;
 
-   evas_object_size_hint_min_get(wd->resize_obj, &minw, &minh);
+   efl_gfx_size_hint_combined_min_get(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_max_get(wd->resize_obj, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);

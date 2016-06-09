@@ -241,7 +241,7 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
    if ((!sd->expanded) || (!sd->bx)) return;
 
    elm_box_recalculate(sd->bx);
-   evas_object_size_hint_min_get(sd->bx, &box_w, &box_h);
+   efl_gfx_size_hint_combined_min_get(sd->bx, &box_w, &box_h);
 
    max_size_str = elm_layout_data_get(sd->hover, "max_size");
    if (max_size_str)

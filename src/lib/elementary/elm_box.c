@@ -135,7 +135,7 @@ _sizing_eval(Evas_Object *obj)
    if (sd->delete_me)
      return;
 
-   evas_object_size_hint_min_get
+   efl_gfx_size_hint_combined_min_get
      (wd->resize_obj, &minw, &minh);
 
    evas_object_size_hint_max_get

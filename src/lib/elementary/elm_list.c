@@ -687,7 +687,7 @@ _elm_list_elm_layout_sizing_eval(Eo *obj, Elm_List_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_object_size_hint_min_get(sd->box, &minw, &minh);
+   efl_gfx_size_hint_combined_min_get(sd->box, &minw, &minh);
    evas_object_size_hint_max_get(sd->box, &maxw, &maxh);
    evas_object_size_hint_weight_get(sd->box, &xw, &yw);
 
@@ -844,13 +844,13 @@ _items_fix(Evas_Object *obj)
         if (it->deleted) continue;
         if (it->icon)
           {
-             evas_object_size_hint_min_get(it->icon, &mw, &mh);
+             efl_gfx_size_hint_combined_min_get(it->icon, &mw, &mh);
              if (mw > minw[0]) minw[0] = mw;
              if (mh > minh[0]) minh[0] = mh;
           }
         if (it->end)
           {
-             evas_object_size_hint_min_get(it->end, &mw, &mh);
+             efl_gfx_size_hint_combined_min_get(it->end, &mw, &mh);
              if (mw > minw[1]) minw[1] = mw;
              if (mh > minh[1]) minh[1] = mh;
           }

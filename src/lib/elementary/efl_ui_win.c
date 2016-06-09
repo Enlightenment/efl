@@ -799,7 +799,7 @@ _elm_win_obj_callback_changed_size_hints(void *data, Evas *e EINA_UNUSED, Evas_O
    ELM_WIN_DATA_GET(data, sd);
    Evas_Coord w, h;
 
-   evas_object_size_hint_min_get(obj, &w, &h);
+   efl_gfx_size_hint_combined_min_get(obj, &w, &h);
    TRAP(sd, size_min_set, w, h);
 
    evas_object_size_hint_max_get(obj, &w, &h);
@@ -2618,7 +2618,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    Evas_Coord w, h, minw, minh, maxw, maxh;
    double wx, wy;
 
-   evas_object_size_hint_min_get(sd->edje, &minw, &minh);
+   efl_gfx_size_hint_combined_min_get(sd->edje, &minw, &minh);
    if (minw < 1) minw = 1;
    if (minh < 1) minh = 1;
 
@@ -3506,7 +3506,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
         if (wx == 0.0) weight_x = 0;
         if (wy == 0.0) weight_y = 0;
 
-        evas_object_size_hint_min_get(child, &w, &h);
+        efl_gfx_size_hint_combined_min_get(child, &w, &h);
         if (w > minw) minw = w;
         if (h > minh) minh = h;
      }

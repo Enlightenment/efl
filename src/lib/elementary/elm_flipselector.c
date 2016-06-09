@@ -85,7 +85,7 @@ _elm_flipselector_elm_layout_sizing_eval(Eo *obj, Elm_Flipselector_Data *sd)
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 2, &minh);
-   evas_object_size_hint_min_get(obj, &w, &h);
+   efl_gfx_size_hint_combined_min_get(obj, &w, &h);
 
    if (sd->sentinel)
      {

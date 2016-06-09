@@ -168,7 +168,7 @@ _elm_hover_smart_content_location_get(Elm_Hover_Data *sd,
    Evas_Coord c_w = 0, c_h = 0, mid_w, mid_h;
    int max;
 
-   evas_object_size_hint_min_get(sd->smt_sub->obj, &c_w, &c_h);
+   efl_gfx_size_hint_combined_min_get(sd->smt_sub->obj, &c_w, &c_h);
    mid_w = c_w / 2;
    mid_h = c_h / 2;
 

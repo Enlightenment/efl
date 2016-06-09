@@ -799,7 +799,7 @@ _efl_ui_image_sizing_eval(Eo *obj)
    efl_gfx_view_size_get(obj, &w, &h);
 
    sd->scale = ts;
-   evas_object_size_hint_min_get(obj, &minw, &minh);
+   efl_gfx_size_hint_combined_min_get(obj, &minw, &minh);
 
    if (sd->no_scale)
      {
@@ -1077,7 +1077,7 @@ _efl_ui_image_edje_object_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *s
    if (sd->edje)
      edje_object_size_min_get(sd->img, w, h);
    else
-     evas_object_size_hint_min_get(sd->img, w, h);
+     efl_gfx_size_hint_combined_min_get(sd->img, w, h);
 }
 
 EOLIAN static void
@@ -1102,7 +1102,7 @@ _efl_ui_image_edje_object_size_min_calc(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *
    if (sd->edje)
      edje_object_size_min_calc(sd->img, w, h);
    else
-     evas_object_size_hint_min_get(sd->img, w, h);
+     efl_gfx_size_hint_combined_min_get(sd->img, w, h);
 }
 
 EOLIAN static void

@@ -588,7 +588,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw, minh, maxw, maxh;
    Evas_Coord w, h;
 
-   evas_object_size_hint_min_get(obj, &minw, &minh);
+   efl_gfx_size_hint_combined_min_get(obj, &minw, &minh);
    evas_object_size_hint_max_get(obj, &maxw, &maxh);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
 
@@ -618,7 +618,7 @@ _evas_object_box_layout_horizontal_weight_apply(Evas_Object_Box_Data *priv, Evas
           {
              int min_w;
 
-             evas_object_size_hint_min_get(o, &min_w, NULL);
+             efl_gfx_size_hint_combined_min_get(o, &min_w, NULL);
              evas_object_resize(o, min_w, h);
           }
         else
@@ -782,7 +782,7 @@ _evas_object_box_layout_vertical_weight_apply(Evas_Object_Box_Data *priv, Evas_O
           {
              int min_h;
 
-             evas_object_size_hint_min_get(o, NULL, &min_h);
+             efl_gfx_size_hint_combined_min_get(o, NULL, &min_h);
              evas_object_resize(o, w, min_h);
           }
         else
@@ -962,7 +962,7 @@ _evas_box_layout_homogeneous_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_
         evas_object_size_hint_padding_get
            (opt->obj, &padding_l, &padding_r, &padding_t, &padding_b);
         evas_object_size_hint_max_get(opt->obj, &max_w, &max_h);
-        evas_object_size_hint_min_get(opt->obj, &min_w, NULL);
+        efl_gfx_size_hint_combined_min_get(opt->obj, &min_w, NULL);
 
         _sizing_eval(opt->obj);
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
@@ -1026,7 +1026,7 @@ _evas_box_layout_homogeneous_vertical(Eo *o, Evas_Object_Box_Data *priv, Evas_Ob
         evas_object_size_hint_padding_get
            (opt->obj, &padding_l, &padding_r, &padding_t, &padding_b);
         evas_object_size_hint_max_get(opt->obj, &max_w, &max_h);
-        evas_object_size_hint_min_get(opt->obj, NULL, &min_h);
+        efl_gfx_size_hint_combined_min_get(opt->obj, NULL, &min_h);
 
         _sizing_eval(opt->obj);
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
@@ -1112,7 +1112,7 @@ _evas_box_layout_homogeneous_max_size_horizontal(Eo *o, Evas_Object_Box_Data *pr
         evas_object_size_hint_padding_get
            (opt->obj, &padding_l, &padding_r, &padding_t, &padding_b);
         evas_object_size_hint_max_get(opt->obj, &max_w, &max_h);
-        evas_object_size_hint_min_get(opt->obj, &min_w, NULL);
+        efl_gfx_size_hint_combined_min_get(opt->obj, &min_w, NULL);
 
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
 
@@ -1199,7 +1199,7 @@ _evas_box_layout_homogeneous_max_size_vertical(Eo *o, Evas_Object_Box_Data *priv
         evas_object_size_hint_padding_get
            (opt->obj, &padding_l, &padding_r, &padding_t, &padding_b);
         evas_object_size_hint_max_get(opt->obj, &max_w, &max_h);
-        evas_object_size_hint_min_get(opt->obj, NULL, &min_h);
+        efl_gfx_size_hint_combined_min_get(opt->obj, NULL, &min_h);
 
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
 
@@ -1610,7 +1610,7 @@ _evas_box_layout_stack(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Data *
         evas_object_size_hint_padding_get
            (child, &pad_l, &pad_r, &pad_t, &pad_b);
         evas_object_size_hint_max_get(child, &max_w, &max_h);
-        evas_object_size_hint_min_get(child, &min_w, &min_h);
+        efl_gfx_size_hint_combined_min_get(child, &min_w, &min_h);
 
         _sizing_eval(opt->obj);
         evas_object_geometry_get(child, NULL, NULL, &child_w, &child_h);
