@@ -640,11 +640,12 @@ EAPI Eolian_Function_Type eolian_function_type_get(const Eolian_Function *functi
  * @brief Returns the scope of a function
  *
  * @param[in] function_id Id of the function
+ * @param[in] ftype The type of function to get the scope for
  * @return the function scope
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *function_id);
+EAPI Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Returns the name of a function

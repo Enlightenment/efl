@@ -117,7 +117,8 @@ struct _Eolian_Function
        };
    };
    Eolian_Function_Type type;
-   Eolian_Object_Scope scope;
+   Eolian_Object_Scope get_scope;
+   Eolian_Object_Scope set_scope;
    Eolian_Type *get_ret_type;
    Eolian_Type *set_ret_type;
    Eolian_Expression *get_ret_val;

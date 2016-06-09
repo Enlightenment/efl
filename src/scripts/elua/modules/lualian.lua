@@ -626,14 +626,16 @@ local gen_contents = function(klass)
     -- first try properties
     local props = klass:functions_get(func_type.PROPERTY):to_array()
     for i, v in ipairs(props) do
-        if v:scope_get() == obj_scope.PUBLIC and not v:is_c_only() then
+        local gscope = v:scope_get(func_type.PROP_GET)
+        local sscope = v:scope_get(func_type.PROP_SET)
+        if (gscope == obj_scope.PUBLIC or sscope == obj_scope.PUBLIC) and not v:is_c_only() then
             local ftype  = v:type_get()
             local fread  = (ftype == func_type.PROPERTY or ftype == func_type.PROP_GET)
             local fwrite = (ftype == func_type.PROPERTY or ftype == func_type.PROP_SET)
-            if fwrite then
+            if fwrite and sscope == obj_scope.PUBLIC then
                 cnt[#cnt + 1] = Property(v, func_type.PROP_SET)
             end
-            if fread then
+            if fread and gscope == obj_scope.PUBLIC then
                 cnt[#cnt + 1] = Property(v, func_type.PROP_GET)
             end
         end
@@ -641,7 +643,7 @@ local gen_contents = function(klass)
     -- then methods
     local meths = klass:functions_get(func_type.METHOD):to_array()
     for i, v in ipairs(meths) do
-        if v:scope_get() == obj_scope.PUBLIC and not v:is_c_only() then
+        if v:scope_get(func_type.METHOD) == obj_scope.PUBLIC and not v:is_c_only() then
             cnt[#cnt + 1] = Method(v)
         end
     end

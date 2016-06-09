@@ -66,7 +66,7 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
    Eina_Bool var_as_ret = EINA_FALSE;
    const Eolian_Type *rettypet = NULL;
    const char *rettype = NULL;
-   Eolian_Object_Scope scope = eolian_function_scope_get(func);
+   Eolian_Object_Scope scope = eolian_function_scope_get(func, ftype);
    Eina_Bool is_prop = (ftype == EOLIAN_PROP_GET || ftype == EOLIAN_PROP_SET);
 
    _class_func_env_create(class, eolian_function_name_get(func), ftype, &func_env);

@@ -210,7 +210,7 @@ ffi.cdef [[
     Eina_Iterator *eolian_class_inherits_get(const Eolian_Class *klass);
     Eina_Iterator *eolian_class_functions_get(const Eolian_Class *klass, Eolian_Function_Type func_type);
     Eolian_Function_Type eolian_function_type_get(const Eolian_Function *function_id);
-    Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *function_id);
+    Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
     const char *eolian_function_name_get(const Eolian_Function *function_id);
     const char *eolian_function_full_c_name_get(const Eolian_Function *function_id, Eolian_Function_Type ftype, Eina_Bool use_legacy);
     const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
@@ -706,8 +706,8 @@ M.Function = ffi.metatype("Eolian_Function", {
             return tonumber(eolian.eolian_function_type_get(self))
         end,
 
-        scope_get = function(self)
-            return tonumber(eolian.eolian_function_scope_get(self))
+        scope_get = function(self, ftype)
+            return tonumber(eolian.eolian_function_scope_get(self, ftype))
         end,
 
         name_get = function(self)

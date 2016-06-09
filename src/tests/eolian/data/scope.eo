@@ -11,6 +11,8 @@ class Scope {
       @property c {
          get {
          }
+         set @protected {
+         }
       }
       foo {
       }

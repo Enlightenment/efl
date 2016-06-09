@@ -1123,7 +1123,8 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
    int line, col;
    Eina_Bool has_return = EINA_FALSE, has_legacy = EINA_FALSE,
              has_eo     = EINA_FALSE, has_keys   = EINA_FALSE,
-             has_values = EINA_FALSE;
+             has_values = EINA_FALSE, has_protected = EINA_FALSE,
+             has_virtual_pure = EINA_FALSE;
    Eina_Bool is_get = (ls->t.kw == KW_get);
    if (is_get)
      {
@@ -1144,12 +1145,24 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
           prop->type = EOLIAN_PROP_SET;
      }
    eo_lexer_get(ls);
-   if (ls->t.kw == KW_at_virtual_pure)
+   for (;;) switch (ls->t.kw)
      {
+      case KW_at_virtual_pure:
+        CASE_LOCK(ls, virtual_pure, "virtual_pure qualifier");
         if (is_get) prop->get_virtual_pure = EINA_TRUE;
         else prop->set_virtual_pure = EINA_TRUE;
         eo_lexer_get(ls);
+        break;
+      case KW_at_protected:
+        CASE_LOCK(ls, protected, "protected qualifier");
+        if (is_get) prop->get_scope = EOLIAN_SCOPE_PROTECTED;
+        else prop->set_scope = EOLIAN_SCOPE_PROTECTED;
+        eo_lexer_get(ls);
+        break;
+      default:
+        goto parse_accessor;
      }
+parse_accessor:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
@@ -1271,7 +1284,7 @@ parse_property(Eo_Lexer *ls)
      {
       case KW_at_protected:
         CASE_LOCK(ls, protected, "protected qualifier")
-        prop->scope = EOLIAN_SCOPE_PROTECTED;
+        prop->get_scope = prop->set_scope = EOLIAN_SCOPE_PROTECTED;
         eo_lexer_get(ls);
         break;
       case KW_at_class:
@@ -1351,7 +1364,7 @@ parse_method(Eo_Lexer *ls)
      {
       case KW_at_protected:
         CASE_LOCK(ls, protected, "protected qualifier")
-        meth->scope = EOLIAN_SCOPE_PROTECTED;
+        meth->get_scope = meth->set_scope = EOLIAN_SCOPE_PROTECTED;
         eo_lexer_get(ls);
         break;
       case KW_at_const:

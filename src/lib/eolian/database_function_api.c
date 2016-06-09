@@ -6,10 +6,15 @@
 #include "eolian_database.h"
 
 EAPI Eolian_Object_Scope
-eolian_function_scope_get(const Eolian_Function *fid)
+eolian_function_scope_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EOLIAN_SCOPE_PUBLIC);
-   return fid->scope;
+   switch (ftype)
+     {
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_scope; break;
+      case EOLIAN_PROP_SET: return fid->set_scope; break;
+      default: return EOLIAN_SCOPE_PUBLIC;
+     }
 }
 
 EAPI Eolian_Function_Type
