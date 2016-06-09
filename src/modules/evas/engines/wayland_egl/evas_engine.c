@@ -871,14 +871,14 @@ _native_cb_bind(void *image)
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_EVASGL)
      {
-        if (n->ns_data.evasgl.surface)
+        if (n->ns_data.evasgl.surface && glsym_evgl_native_surface_buffer_get)
           {
              Eina_Bool is_egl_image = EINA_FALSE;
              void *surface;
 
-             if (glsym_evgl_native_surface_buffer_get)
-               surface = glsym_evgl_native_surface_buffer_get(n->ns_data.evasgl.surface, &is_egl_image);
-
+             surface =
+               glsym_evgl_native_surface_buffer_get(n->ns_data.evasgl.surface,
+                                                    &is_egl_image);
              if (is_egl_image)
                {
                   if (glsym_glEGLImageTargetTexture2DOES)
