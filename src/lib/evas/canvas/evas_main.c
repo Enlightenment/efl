@@ -736,7 +736,7 @@ _image_data_unset(Evas_Object_Protected_Data *obj, Eina_List **list)
         FREE; \
         data->engine_data = NULL;\
      }
-   CHECK(EVAS_IMAGE_CLASS, Evas_Image_Data,
+   CHECK(EFL_CANVAS_IMAGE_INTERNAL_CLASS, Evas_Image_Data,
          ENFN->image_free(ENDT, data->engine_data))
    else CHECK(EVAS_VG_CLASS, Evas_VG_Data,
         obj->layer->evas->engine.func->ector_free(data->engine_data))
@@ -802,7 +802,7 @@ _image_data_regenerate(Evas_Object *eo_obj)
         STRUCT *data = eo_data_scope_get(eo_obj, TYPE);\
         REGEN; \
      }
-   CHECK(EVAS_IMAGE_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
+   CHECK(EFL_CANVAS_IMAGE_INTERNAL_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
    else CHECK(EFL_CANVAS_IMAGE_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
    else CHECK(EFL_CANVAS_SCENE3D_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
    //else CHECK(EVAS_VG_CLASS, Evas_VG_Data,)

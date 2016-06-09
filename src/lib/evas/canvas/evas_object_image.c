@@ -1,6 +1,6 @@
 #include "evas_image_private.h"
 
-#define MY_CLASS EVAS_IMAGE_CLASS
+#define MY_CLASS EFL_CANVAS_IMAGE_INTERNAL_CLASS
 #define MY_CLASS_NAME "Evas_Image"
 
 /* private magic number for image objects */
@@ -169,7 +169,7 @@ _init_cow(void)
 }
 
 EOLIAN static Eo *
-_evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
+_efl_canvas_image_internal_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Colorspace cspace;
@@ -199,7 +199,7 @@ _evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
 }
 
 EOLIAN static Eo *
-_evas_image_eo_base_finalize(Eo *eo_obj, Evas_Image_Data *o)
+_efl_canvas_image_internal_eo_base_finalize(Eo *eo_obj, Evas_Image_Data *o)
 {
    if (!o->filled_set)
      efl_gfx_fill_auto_set(eo_obj, EINA_TRUE);
@@ -429,7 +429,7 @@ _get_image_orient_from_orient_flip(Efl_Orient orient, Efl_Flip flip)
 }
 
 EOLIAN static void
-_evas_image_efl_orientation_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Orient dir)
+_efl_canvas_image_internal_efl_orientation_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Orient dir)
 {
    Evas_Image_Orient orient;
 
@@ -440,13 +440,13 @@ _evas_image_efl_orientation_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Ori
 }
 
 EOLIAN static Efl_Orient
-_evas_image_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->orient_value;
 }
 
 EOLIAN static void
-_evas_image_efl_flipable_flip_set(Eo *obj, Evas_Image_Data *o, Efl_Flip flip)
+_efl_canvas_image_internal_efl_flipable_flip_set(Eo *obj, Evas_Image_Data *o, Efl_Flip flip)
 {
    Evas_Image_Orient orient;
 
@@ -457,13 +457,13 @@ _evas_image_efl_flipable_flip_set(Eo *obj, Evas_Image_Data *o, Efl_Flip flip)
 }
 
 EOLIAN static Efl_Flip
-_evas_image_efl_flipable_flip_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_flipable_flip_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->flip_value;
 }
 
 EOLIAN static void
-_evas_image_eo_base_dbg_info_get(Eo *eo_obj, Evas_Image_Data *o, Eo_Dbg_Info *root)
+_efl_canvas_image_internal_eo_base_dbg_info_get(Eo *eo_obj, Evas_Image_Data *o, Eo_Dbg_Info *root)
 {
    eo_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
@@ -490,7 +490,7 @@ _evas_image_eo_base_dbg_info_get(Eo *eo_obj, Evas_Image_Data *o, Eo_Dbg_Info *ro
 }
 
 EOLIAN static void
-_evas_image_efl_image_border_set(Eo *eo_obj, Evas_Image_Data *o, int l, int r, int t, int b)
+_efl_canvas_image_internal_efl_image_border_set(Eo *eo_obj, Evas_Image_Data *o, int l, int r, int t, int b)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -517,7 +517,7 @@ _evas_image_efl_image_border_set(Eo *eo_obj, Evas_Image_Data *o, int l, int r, i
 }
 
 EOLIAN static void
-_evas_image_efl_image_border_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *l, int *r, int *t, int *b)
+_efl_canvas_image_internal_efl_image_border_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *l, int *r, int *t, int *b)
 {
    if (l) *l = o->cur->border.l;
    if (r) *r = o->cur->border.r;
@@ -526,7 +526,7 @@ _evas_image_efl_image_border_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int
 }
 
 EOLIAN static void
-_evas_image_efl_image_border_center_fill_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Gfx_Border_Fill_Mode _fill)
+_efl_canvas_image_internal_efl_image_border_center_fill_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Gfx_Border_Fill_Mode _fill)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Border_Fill_Mode fill = (Evas_Border_Fill_Mode) _fill;
@@ -542,13 +542,13 @@ _evas_image_efl_image_border_center_fill_set(Eo *eo_obj, Evas_Image_Data *o, Efl
 }
 
 EOLIAN static Efl_Gfx_Border_Fill_Mode
-_evas_image_efl_image_border_center_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_image_border_center_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return (Efl_Gfx_Border_Fill_Mode) o->cur->border.fill;
 }
 
 EOLIAN static void
-_evas_image_efl_gfx_fill_fill_auto_set(Eo *eo_obj, Evas_Image_Data* o, Eina_Bool setting)
+_efl_canvas_image_internal_efl_gfx_fill_fill_auto_set(Eo *eo_obj, Evas_Image_Data* o, Eina_Bool setting)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    setting = !!setting;
@@ -574,13 +574,13 @@ _evas_image_efl_gfx_fill_fill_auto_set(Eo *eo_obj, Evas_Image_Data* o, Eina_Bool
 }
 
 EOLIAN static Eina_Bool
-_evas_image_efl_gfx_fill_fill_auto_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_gfx_fill_fill_auto_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->filled;
 }
 
 EOLIAN static void
-_evas_image_efl_image_border_scale_set(Eo *eo_obj, Evas_Image_Data *o, double scale)
+_efl_canvas_image_internal_efl_image_border_scale_set(Eo *eo_obj, Evas_Image_Data *o, double scale)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -595,7 +595,7 @@ _evas_image_efl_image_border_scale_set(Eo *eo_obj, Evas_Image_Data *o, double sc
 }
 
 EOLIAN static double
-_evas_image_efl_image_border_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_image_border_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->cur->border.scale;
 }
@@ -631,7 +631,7 @@ _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
 }
 
 EOLIAN static void
-_evas_image_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o,
+_efl_canvas_image_internal_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o,
                                   int x, int y, int w, int h)
 {
    // Should (0,0,0,0) reset the filled flag to true?
@@ -641,7 +641,7 @@ _evas_image_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o,
 }
 
 EOLIAN static void
-_evas_image_efl_gfx_fill_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o,
+_efl_canvas_image_internal_efl_gfx_fill_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o,
                                   int *x, int *y, int *w, int *h)
 {
    if (x) *x = o->cur->fill.x;
@@ -651,7 +651,7 @@ _evas_image_efl_gfx_fill_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o,
 }
 
 EOLIAN static void
-_evas_image_efl_gfx_view_view_size_get(Eo *eo_obj, Evas_Image_Data *o, int *w, int *h)
+_efl_canvas_image_internal_efl_gfx_view_view_size_get(Eo *eo_obj, Evas_Image_Data *o, int *w, int *h)
 {
    int uvw, uvh;
    Evas_Object_Protected_Data *source = NULL;
@@ -693,7 +693,7 @@ _evas_image_efl_gfx_view_view_size_get(Eo *eo_obj, Evas_Image_Data *o, int *w, i
 }
 
 EOLIAN static void
-_evas_image_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
+_efl_canvas_image_internal_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Eina_Rectangle *r;
@@ -736,7 +736,7 @@ _evas_image_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Image_Data *o, int
 }
 
 EOLIAN static void
-_evas_image_efl_gfx_buffer_alpha_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool has_alpha)
+_efl_canvas_image_internal_efl_gfx_buffer_alpha_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool has_alpha)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -782,13 +782,13 @@ _evas_image_efl_gfx_buffer_alpha_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool h
 }
 
 EOLIAN static Eina_Bool
-_evas_image_efl_gfx_buffer_alpha_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_gfx_buffer_alpha_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->cur->has_alpha;
 }
 
 EOLIAN static void
-_evas_image_efl_image_smooth_scale_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool smooth_scale)
+_efl_canvas_image_internal_efl_image_smooth_scale_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool smooth_scale)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -805,20 +805,20 @@ _evas_image_efl_image_smooth_scale_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool
 }
 
 EOLIAN static Eina_Bool
-_evas_image_efl_image_smooth_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_image_smooth_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->cur->smooth_scale;
 }
 
 EOLIAN static double
-_evas_image_efl_image_ratio_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_image_ratio_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    if (!o->cur->image.h) return 1.0;
    return (double) o->cur->image.w / (double) o->cur->image.h;
 }
 
 EOLIAN static Eina_Bool
-_evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const char *flags)
+_efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const char *flags)
 {
    DATA32 *data = NULL;
    int quality = 80, compress = 9, ok = 0;
@@ -1002,7 +1002,7 @@ _evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file
 }
 
 EOLIAN static Efl_Gfx_Colorspace
-_evas_image_efl_gfx_buffer_colorspace_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_gfx_buffer_colorspace_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return (Efl_Gfx_Colorspace) o->cur->cspace;
 }
@@ -1016,7 +1016,7 @@ _on_image_native_surface_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_O
 Eina_Bool
 _evas_image_native_surface_set(Eo *eo_obj, Evas_Native_Surface *surf)
 {
-   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    evas_object_event_callback_del_full
@@ -1039,7 +1039,7 @@ Evas_Native_Surface *
 _evas_image_native_surface_get(const Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    Evas_Native_Surface *surf = NULL;
 
    if (ENFN->image_native_get)
@@ -1049,7 +1049,7 @@ _evas_image_native_surface_get(const Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_image_efl_image_scale_hint_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Image_Scale_Hint hint)
+_efl_canvas_image_internal_efl_image_scale_hint_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Image_Scale_Hint hint)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -1076,13 +1076,13 @@ _evas_image_efl_image_scale_hint_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Image_S
 }
 
 EOLIAN static Efl_Image_Scale_Hint
-_evas_image_efl_image_scale_hint_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_image_scale_hint_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->scale_hint;
 }
 
 EOLIAN static void
-_evas_image_efl_image_content_hint_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Image_Content_Hint hint)
+_efl_canvas_image_internal_efl_image_content_hint_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Image_Content_Hint hint)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -1109,7 +1109,7 @@ _evas_image_efl_image_content_hint_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Image
 }
 
 EOLIAN static Efl_Image_Content_Hint
-_evas_image_efl_image_content_hint_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_image_content_hint_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->content_hint;
 }
@@ -1365,7 +1365,7 @@ evas_object_image_init(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_image_eo_base_destructor(Eo *eo_obj, Evas_Image_Data *o EINA_UNUSED)
+_efl_canvas_image_internal_eo_base_destructor(Eo *eo_obj, Evas_Image_Data *o EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1380,7 +1380,7 @@ _evas_object_image_free(Evas_Object *obj)
 {
    Evas_Image_Data *o;
 
-   EINA_SAFETY_ON_FALSE_RETURN(eo_isa(obj, EVAS_IMAGE_CLASS));
+   EINA_SAFETY_ON_FALSE_RETURN(eo_isa(obj, MY_CLASS));
 
    o = eo_data_scope_get(obj, MY_CLASS);
 
@@ -1621,7 +1621,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
 }
 
 EOLIAN static void
-_evas_image_evas_filter_filter_dirty(Eo *eo_obj, Evas_Image_Data *o)
+_efl_canvas_image_internal_evas_filter_filter_dirty(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1630,24 +1630,24 @@ _evas_image_evas_filter_filter_dirty(Eo *eo_obj, Evas_Image_Data *o)
 }
 
 EOLIAN static Eina_Bool
-_evas_image_evas_filter_filter_input_alpha(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o EINA_UNUSED)
+_efl_canvas_image_internal_evas_filter_filter_input_alpha(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN static void
-_evas_image_efl_gfx_filter_filter_program_set(Eo *obj, Evas_Image_Data *pd,
-                                              const char *code, const char *name)
+_efl_canvas_image_internal_efl_gfx_filter_filter_program_set(Eo *obj, Evas_Image_Data *pd,
+                                                             const char *code, const char *name)
 {
    pd->has_filter = (code != NULL);
    efl_gfx_filter_program_set(eo_super(obj, MY_CLASS), code, name);
 }
 
 EOLIAN static Eina_Bool
-_evas_image_evas_filter_filter_input_render(Eo *eo_obj, Evas_Image_Data *o,
-                                            void *_filter, void *context,
-                                            int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
-                                            Eina_Bool do_async)
+_efl_canvas_image_internal_evas_filter_filter_input_render(Eo *eo_obj, Evas_Image_Data *o,
+                                                           void *_filter, void *context,
+                                                           int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
+                                                           Eina_Bool do_async)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Filter_Context *filter = _filter;
@@ -3276,7 +3276,7 @@ _evas_object_image_video_overlay_do(Evas_Object *eo_obj)
 void *
 _evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj)
 {
-   Evas_Image_Data *pd = eo_data_scope_get(eo, EVAS_IMAGE_CLASS);
+   Evas_Image_Data *pd = eo_data_scope_get(eo, MY_CLASS);
 
    if (pd->engine_data &&
        (pd->cur->image.w == obj->cur->geometry.w) &&
@@ -3301,41 +3301,6 @@ _evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj)
    return pd->engine_data;
 }
 
-/* FIXME: Temporarily allow efl_file_ APIs on Evas.Image.
- * They don't belong here, as only Efl.Canvas.Image should support them.
- * Elm.Image uses them, though, instead of using the legacy APIs...
- */
-
-EOLIAN static Eina_Bool
-_evas_image_efl_file_file_set(Eo *obj, Evas_Image_Data *pd EINA_UNUSED, const char *file, const char *key)
-{
-   DBG("efl_file_set shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
-   return _evas_image_file_set(obj, file, key);
-}
-
-EOLIAN static void
-_evas_image_efl_file_file_get(Eo *obj, Evas_Image_Data *pd EINA_UNUSED, const char **file, const char **key)
-{
-   DBG("efl_file_get shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
-   _evas_image_file_get(obj, file, key);
-}
-
-EOLIAN static Eina_Bool
-_evas_image_efl_file_mmap_set(Eo *obj, Evas_Image_Data *pd EINA_UNUSED, const Eina_File *f, const char *key)
-{
-   DBG("efl_file_mmap_set shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
-   return _evas_image_mmap_set(obj, f, key);
-}
-
-
-EOLIAN static void
-_evas_image_efl_file_mmap_get(Eo *obj, Evas_Image_Data *pd EINA_UNUSED, const Eina_File **f, const char **key)
-{
-   DBG("efl_file_mmap_get shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
-   _evas_image_mmap_get(obj, f, key);
-}
-
-
-#include "canvas/evas_image.eo.c"
+#include "canvas/efl_canvas_image_internal.eo.c"
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

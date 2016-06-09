@@ -1,50 +1,8 @@
-type @extern Evas_Object_Image_Pixels_Get_Cb: __undefined_type; /* FIXME: func pointers are not supported. */
-
-class Evas.Image (Evas.Object, Evas.Filter,
-                  Efl.Image, Efl.Gfx.Buffer, Efl.Gfx.Fill, Efl.Gfx.View, Efl.File,
-                  Efl.Orientation, Efl.Flipable)
+class Evas.Image (Efl.Canvas.Image.Internal, Efl.File)
 {
-   /* Legacy is implement inside Efl.Canvas.Image */
-   legacy_prefix: evas_object_image;
-   eo_prefix: null;
+   [[Internal class for legacy support of Evas Image.]]
+   data: null;
    implements {
-      Eo.Base.constructor;
-      Eo.Base.destructor;
-      Eo.Base.dbg_info_get;
-      Eo.Base.finalize;
-      Efl.File.save;
-      Efl.Orientation.orientation.get;
-      Efl.Orientation.orientation.set;
-      Efl.Flipable.flip.set;
-      Efl.Flipable.flip.get;
-      Efl.Image.smooth_scale.set;
-      Efl.Image.smooth_scale.get;
-      Efl.Image.ratio.get;
-      Efl.Image.border.get;
-      Efl.Image.border.set;
-      Efl.Image.border_scale.get;
-      Efl.Image.border_scale.set;
-      Efl.Image.border_center_fill.get;
-      Efl.Image.border_center_fill.set;
-      Efl.Image.scale_hint.get;
-      Efl.Image.scale_hint.set;
-      Efl.Image.content_hint.get;
-      Efl.Image.content_hint.set;
-      Efl.Gfx.Buffer.alpha.get;
-      Efl.Gfx.Buffer.alpha.set;
-      Efl.Gfx.Buffer.buffer_update_add;
-      Efl.Gfx.Buffer.colorspace.get;
-      Efl.Gfx.Fill.fill.set;
-      Efl.Gfx.Fill.fill.get;
-      Efl.Gfx.Fill.fill_auto.get;
-      Efl.Gfx.Fill.fill_auto.set;
-      Efl.Gfx.Filter.filter_program.set;
-      Efl.Gfx.View.view_size.get;
-      Evas.Filter.filter_input_alpha;
-      Evas.Filter.filter_input_render;
-      Evas.Filter.filter_dirty;
-
-      /* FIXME: Efl.File does not belong here */
       Efl.File.file.set;
       Efl.File.file.get;
       Efl.File.mmap.set;

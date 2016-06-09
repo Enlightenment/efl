@@ -69,7 +69,7 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
 
    source = eo_data_scope_get(pd->source, EVAS_OBJECT_CLASS);
 
-   is_image = eo_isa(pd->source, EVAS_IMAGE_CLASS);
+   is_image = eo_isa(pd->source, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy, Evas_Object_Proxy_Data, proxy_write)
      {

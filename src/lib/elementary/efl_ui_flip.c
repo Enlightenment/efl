@@ -940,7 +940,7 @@ _map_uv_set(Evas_Object *obj, Evas_Map *map)
    Evas_Coord x, y, w, h;
 
    // FIXME: only handles filled obj
-   if (eo_isa(obj, EVAS_IMAGE_CLASS) &&
+   if (eo_isa(obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS) &&
        !evas_object_image_source_get(obj))
      {
         int iw, ih;

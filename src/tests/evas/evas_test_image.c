@@ -645,7 +645,7 @@ START_TEST(evas_object_image_defaults)
    eo_del(o);
 
    /* test eo defaults */
-   o = eo_add(EVAS_IMAGE_CLASS, e);
+   o = eo_add(EFL_CANVAS_IMAGE_CLASS, e);
    fail_if(!efl_gfx_fill_auto_get(o));
    eo_del(o);
 

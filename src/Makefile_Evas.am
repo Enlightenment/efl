@@ -10,7 +10,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/evas_object_smart.eo \
 	lib/evas/canvas/evas_common_interface.eo \
 	lib/evas/canvas/evas_canvas.eo \
-	lib/evas/canvas/evas_image.eo \
+	lib/evas/canvas/efl_canvas_image_internal.eo \
 	lib/evas/canvas/evas_draggable_interface.eo \
 	lib/evas/canvas/evas_clickable_interface.eo \
 	lib/evas/canvas/evas_scrollable_interface.eo \
@@ -56,6 +56,7 @@ evas_eolian_legacy_files = \
 	lib/evas/canvas/evas_out.eo \
 	lib/evas/canvas/evas_text.eo \
 	lib/evas/canvas/evas_textgrid.eo \
+	lib/evas/canvas/evas_image.eo \
 	$(NULL)
 
 evas_eolian_priv_files = \

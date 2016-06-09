@@ -190,7 +190,7 @@ main(void)
    evas_object_event_callback_add(
      d.bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 
-   d.img = eo_add(EVAS_IMAGE_CLASS, d.canvas);
+   d.img = eo_add(EFL_CANVAS_IMAGE_CLASS, d.canvas);
 
    /* As soon as 'canvas' object is a parent for 'image' object,
     * 'canvas' keeps reference to 'image'.
@@ -216,7 +216,7 @@ main(void)
      }
 
    /* border on the image's clipper, here just to emphasize its position */
-   d.clipper_border = eo_add(EVAS_IMAGE_CLASS, d.canvas);
+   d.clipper_border = eo_add(EFL_CANVAS_IMAGE_CLASS, d.canvas);
    efl_file_set(d.clipper_border, border_img_path, NULL);
    err = efl_image_load_error_get(d.clipper_border);
 

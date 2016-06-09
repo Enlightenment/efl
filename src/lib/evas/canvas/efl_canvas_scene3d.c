@@ -7,7 +7,7 @@ EOLIAN static void
 _efl_canvas_scene3d_scene3d_set(Eo *eo_obj, void *pd EINA_UNUSED, Evas_Canvas3D_Scene *scene)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Image_Load_Opts lo;
 
    if (o->cur->scene == scene) return;
@@ -24,7 +24,7 @@ _efl_canvas_scene3d_scene3d_set(Eo *eo_obj, void *pd EINA_UNUSED, Evas_Canvas3D_
 EOLIAN static Evas_Canvas3D_Scene *
 _efl_canvas_scene3d_scene3d_get(Eo *eo_obj, void *pd EINA_UNUSED)
 {
-   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    return o->cur->scene;
 }
 
@@ -142,7 +142,7 @@ void
 _evas_image_3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Canvas3D_Scene_Data *pd_scene = eo_data_scope_get(scene,
                                                     EVAS_CANVAS3D_SCENE_CLASS);
    EINA_COW_WRITE_BEGIN(evas_object_3d_cow, obj->data_3d, Evas_Object_3D_Data,
@@ -215,7 +215,7 @@ _efl_canvas_scene3d_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
                                             int x, int y, int w, int h,
                                             Efl_Gfx_Colorspace cspace, int *stride EINA_UNUSED)
 {
-   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EVAS_IMAGE_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Public_Data *e;
    Evas_Canvas3D_Object_Data *pd_parent;
    Evas_Canvas3D_Scene_Data *pd_scene;

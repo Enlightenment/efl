@@ -244,7 +244,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
 
    int was_smart_child = 0;
 
-   if (eo_isa(eo_obj, EVAS_IMAGE_CLASS))
+   if (eo_isa(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
      _evas_object_image_free(eo_obj);
    evas_object_map_set(eo_obj, NULL);
    if (obj->map->prev.map) evas_map_free(obj->map->prev.map);
@@ -795,7 +795,7 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    /* FIXME: Proxies should listen to source death */
    EINA_LIST_FOREACH_SAFE(obj->proxy->proxies, l, l2, proxy)
      {
-        if (eo_isa(proxy, EVAS_IMAGE_CLASS))
+        if (eo_isa(proxy, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
           evas_object_image_source_unset(proxy);
         if (eo_isa(proxy, EFL_GFX_FILTER_INTERFACE))
           efl_gfx_filter_source_set(proxy, NULL, eo_obj);

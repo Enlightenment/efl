@@ -1871,7 +1871,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         ENFN->rectangle_draw(ENDT, ctx, proxy_write->surface, 0, 0, w, h, do_async);
         ENFN->context_free(ENDT, ctx);
 
-        if (eo_isa(eo_proxy, EVAS_IMAGE_CLASS))
+        if (eo_isa(eo_proxy, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
           source_clip = _evas_image_proxy_source_clip_get(eo_proxy);
 
         Evas_Proxy_Render_Data proxy_render_data = {
@@ -1927,7 +1927,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
 
    RD(level, "evas_render_mask_subrender(%p, prev: %p)\n", mask, prev_mask);
 
-   is_image = eo_isa(mask->object, EVAS_IMAGE_CLASS);
+   is_image = eo_isa(mask->object, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
    x = mask->cur->geometry.x;
    y = mask->cur->geometry.y;
