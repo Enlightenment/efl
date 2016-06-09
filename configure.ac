@@ -2862,7 +2862,7 @@ have_rsvg="no"
 
 ### Check needed dependency for each generic loader
 if test "x${want_poppler}" = "xyes"; then
-   PKG_CHECK_MODULES([POPPLER], [poppler >= 0.12 poppler < 0.40],
+   PKG_CHECK_MODULES([POPPLER], [poppler >= 0.12],
                      [have_poppler="yes"])
 
    PKG_CHECK_EXISTS([poppler >= 0.20],
