@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
-#: src/lib/elementary/elm_config.c:3719
+#: src/lib/elementary/elm_config.c:3735
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-05-05 11:03-0700\n"
+"POT-Creation-Date: 2016-06-09 13:33+0200\n"
 "PO-Revision-Date: 2014-04-18 13:35+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -239,24 +239,24 @@ msgstr "Resimler"
 msgid "Videos"
 msgstr "Videolar"
 
-#: src/lib/elementary/elc_fileselector.c:1473
+#: src/lib/elementary/elc_fileselector.c:1878
 msgid "Up"
 msgstr "Yukarı"
 
-#: src/lib/elementary/elc_fileselector.c:1487
+#: src/lib/elementary/elc_fileselector.c:1892
 msgid "Home"
 msgstr "Ev"
 
-#: src/lib/elementary/elc_fileselector.c:1506
+#: src/lib/elementary/elc_fileselector.c:1911
 msgid "Search"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:1728
-#: src/lib/elementary/elm_entry.c:1554 src/lib/elementary/elm_entry.c:1579
+#: src/lib/elementary/elc_fileselector.c:2113
+#: src/lib/elementary/elm_entry.c:1686 src/lib/elementary/elm_entry.c:1711
 msgid "Cancel"
 msgstr "İptal"
 
-#: src/lib/elementary/elc_fileselector.c:1739
+#: src/lib/elementary/elc_fileselector.c:2124
 msgid "OK"
 msgstr "Tamam"
 
@@ -272,24 +272,24 @@ msgstr "çoklu düğme giriş öğesi"
 msgid "multi button entry"
 msgstr "çoklu düğme girişi"
 
-#: src/lib/elementary/elc_naviframe.c:431
+#: src/lib/elementary/elc_naviframe.c:435
 msgid "Title"
 msgstr "Başlık"
 
-#: src/lib/elementary/elc_naviframe.c:982
-#: src/lib/elementary/elc_naviframe.c:1187
+#: src/lib/elementary/elc_naviframe.c:986
+#: src/lib/elementary/elc_naviframe.c:1191
 msgid "Back"
 msgstr "Geri"
 
-#: src/lib/elementary/elc_naviframe.c:1286
+#: src/lib/elementary/elc_naviframe.c:1290
 msgid "Next"
 msgstr "Sonraki"
 
-#: src/lib/elementary/elc_popup.c:301 src/lib/elementary/elc_popup.c:971
+#: src/lib/elementary/elc_popup.c:306 src/lib/elementary/elc_popup.c:976
 msgid "Popup Title"
 msgstr "Pencere başlığı"
 
-#: src/lib/elementary/elc_popup.c:311 src/lib/elementary/elc_popup.c:1047
+#: src/lib/elementary/elc_popup.c:316 src/lib/elementary/elc_popup.c:1052
 msgid "Popup Body Text"
 msgstr "Pencere gövde metni"
 
@@ -297,19 +297,19 @@ msgstr "Pencere gövde metni"
 msgid "Bubble"
 msgstr "Balon"
 
-#: src/lib/elementary/elm_button.c:67
+#: src/lib/elementary/elm_button.c:69
 msgid "Clicked"
 msgstr "Tıklanmış"
 
-#: src/lib/elementary/elm_button.c:276 src/lib/elementary/elm_check.c:212
-#: src/lib/elementary/elm_gengrid.c:1242 src/lib/elementary/elm_genlist.c:1712
-#: src/lib/elementary/elm_list.c:2172 src/lib/elementary/elm_radio.c:216
+#: src/lib/elementary/elm_button.c:278 src/lib/elementary/elm_check.c:212
+#: src/lib/elementary/elm_gengrid.c:1258 src/lib/elementary/elm_genlist.c:1712
+#: src/lib/elementary/elm_list.c:2176 src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:527
-#: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2375
+#: src/lib/elementary/elm_spinner.c:1014 src/lib/elementary/elm_toolbar.c:2378
 msgid "State: Disabled"
 msgstr "Durum: Kapalı"
 
-#: src/lib/elementary/elm_button.c:301
+#: src/lib/elementary/elm_button.c:303
 msgid "Button"
 msgstr "Düğme"
 
@@ -407,15 +407,15 @@ msgstr ""
 msgid "A:"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:1666
+#: src/lib/elementary/elm_colorselector.c:1665
 msgid "color selector palette item"
 msgstr "renk seçici paleti öğesi"
 
-#: src/lib/elementary/elm_config.c:3735
+#: src/lib/elementary/elm_config.c:3751
 msgid "default:LTR"
 msgstr "varsayılan:LTR"
 
-#: src/lib/elementary/elm_dayselector.c:407
+#: src/lib/elementary/elm_dayselector.c:410
 msgid "day selector item"
 msgstr "gün seçici ögesi"
 
@@ -423,35 +423,35 @@ msgstr "gün seçici ögesi"
 msgid "diskselector item"
 msgstr "disk seçici öğesi"
 
-#: src/lib/elementary/elm_entry.c:1541
+#: src/lib/elementary/elm_entry.c:1673
 msgid "Copy"
 msgstr "Kopyala"
 
-#: src/lib/elementary/elm_entry.c:1546
+#: src/lib/elementary/elm_entry.c:1678
 msgid "Cut"
 msgstr "Kes"
 
-#: src/lib/elementary/elm_entry.c:1550 src/lib/elementary/elm_entry.c:1573
+#: src/lib/elementary/elm_entry.c:1682 src/lib/elementary/elm_entry.c:1705
 msgid "Paste"
 msgstr "Yapıştır"
 
-#: src/lib/elementary/elm_entry.c:1566
+#: src/lib/elementary/elm_entry.c:1698
 msgid "Select"
 msgstr "Seç"
 
-#: src/lib/elementary/elm_entry.c:3615
+#: src/lib/elementary/elm_entry.c:3748
 msgid "Entry"
 msgstr "Girdi"
 
-#: src/lib/elementary/elm_gengrid.c:1272
+#: src/lib/elementary/elm_gengrid.c:1288
 msgid "Gengrid Item"
 msgstr "Izgara öğesi"
 
-#: src/lib/elementary/elm_index.c:96
+#: src/lib/elementary/elm_index.c:102
 msgid "Index"
 msgstr "Dizin"
 
-#: src/lib/elementary/elm_index.c:124
+#: src/lib/elementary/elm_index.c:130
 msgid "Index Item"
 msgstr "fihrist öğesi"
 
@@ -459,27 +459,27 @@ msgstr "fihrist öğesi"
 msgid "Label"
 msgstr "Etiket"
 
-#: src/lib/elementary/elm_panel.c:71
+#: src/lib/elementary/elm_panel.c:74
 msgid "state: opened"
 msgstr "durum: açık"
 
-#: src/lib/elementary/elm_panel.c:72
+#: src/lib/elementary/elm_panel.c:75
 msgid "state: closed"
 msgstr "durum: kapalı"
 
-#: src/lib/elementary/elm_panel.c:112
+#: src/lib/elementary/elm_panel.c:115
 msgid "A panel is open"
 msgstr ""
 
-#: src/lib/elementary/elm_panel.c:114
+#: src/lib/elementary/elm_panel.c:117
 msgid "Double tap to close panel menu"
 msgstr ""
 
-#: src/lib/elementary/elm_panel.c:166
+#: src/lib/elementary/elm_panel.c:169
 msgid "panel button"
 msgstr "panel düğmesi"
 
-#: src/lib/elementary/elm_progressbar.c:310
+#: src/lib/elementary/elm_progressbar.c:313
 msgid "progressbar"
 msgstr "ilerleme çubuğu"
 
@@ -488,7 +488,7 @@ msgid "Radio"
 msgstr "Radyo"
 
 #: src/lib/elementary/elm_segment_control.c:530
-#: src/lib/elementary/elm_toolbar.c:2377
+#: src/lib/elementary/elm_toolbar.c:2380
 msgid "State: Selected"
 msgstr "Durum: Seçili"
 
@@ -500,7 +500,7 @@ msgstr "Bölge: Seçilmedi"
 msgid "Segment Control Item"
 msgstr "Bölüm Kontrol Öğesi"
 
-#: src/lib/elementary/elm_slider.c:1188
+#: src/lib/elementary/elm_slider.c:1195
 msgid "slider"
 msgstr "kaydırıcı"
 
@@ -529,22 +529,22 @@ msgstr "değiştirici azaltma düğmesi"
 msgid "spinner text"
 msgstr "değiştirici"
 
-#: src/lib/elementary/elm_toolbar.c:1836 src/lib/elementary/elm_toolbar.c:2433
+#: src/lib/elementary/elm_toolbar.c:1835 src/lib/elementary/elm_toolbar.c:2436
 msgid "Selected"
 msgstr "Seçili"
 
-#: src/lib/elementary/elm_toolbar.c:2373
+#: src/lib/elementary/elm_toolbar.c:2376
 msgid "Separator"
 msgstr "Ayraç"
 
-#: src/lib/elementary/elm_toolbar.c:2379
+#: src/lib/elementary/elm_toolbar.c:2382
 msgid "Has menu"
 msgstr "menü"
 
-#: src/lib/elementary/elm_toolbar.c:2428
+#: src/lib/elementary/elm_toolbar.c:2431
 msgid "Unselected"
 msgstr "Seçili değil"
 
-#: src/lib/elementary/elm_toolbar.c:2445
+#: src/lib/elementary/elm_toolbar.c:2448
 msgid "Toolbar Item"
 msgstr "Araç Çubuğu Öğesi"
