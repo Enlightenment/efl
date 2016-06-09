@@ -915,7 +915,7 @@ _edje_recalc_do(Edje *ed)
         ed->recalc_hints = EINA_FALSE;
 
         edje_obj_size_min_calc(ed->obj, &w, &h);
-        efl_gfx_size_hint_content_min_set(ed->obj, w, h);
+        efl_gfx_size_hint_restricted_min_set(ed->obj, w, h);
      }
 
    if (!ed->collection) return;
@@ -2941,7 +2941,7 @@ _edje_part_recalc_single(Edje *ed,
 
         evas_obj_smart_need_recalculate_set(ep->object, 1);
         evas_obj_smart_calculate(ep->object);
-        efl_gfx_size_hint_content_min_get(ep->object, &lminw, &lminh);
+        efl_gfx_size_hint_restricted_min_get(ep->object, &lminw, &lminh);
         if (((Edje_Part_Description_Table *)chosen_desc)->table.min.h)
           {
              if (lminw > minw) minw = lminw;
@@ -2959,7 +2959,7 @@ _edje_part_recalc_single(Edje *ed,
 
         evas_obj_smart_need_recalculate_set(ep->object, 1);
         evas_obj_smart_calculate(ep->object);
-        efl_gfx_size_hint_content_min_get(ep->object, &lminw, &lminh);
+        efl_gfx_size_hint_restricted_min_get(ep->object, &lminw, &lminh);
         if (((Edje_Part_Description_Box *)chosen_desc)->box.min.h)
           {
              if (lminw > minw) minw = lminw;

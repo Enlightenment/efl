@@ -1105,7 +1105,7 @@ _evas_object_size_hint_display_mode_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Prot
 }
 
 EOLIAN static void
-_evas_object_efl_gfx_size_hint_hint_content_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
+_evas_object_efl_gfx_size_hint_hint_restricted_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
@@ -1118,7 +1118,7 @@ _evas_object_efl_gfx_size_hint_hint_content_min_get(Eo *eo_obj EINA_UNUSED, Evas
 }
 
 EOLIAN static void
-_evas_object_efl_gfx_size_hint_hint_content_min_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
+_evas_object_efl_gfx_size_hint_hint_restricted_min_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
 {
    if (obj->delete_me)
      return;
@@ -1740,7 +1740,7 @@ _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EI
    efl_gfx_position_get(eo_obj, &x, &y);
    efl_gfx_size_get(eo_obj, &w, &h);
    scale = evas_obj_scale_get(eo_obj);
-   efl_gfx_size_hint_content_min_get(eo_obj, &minw, &minh);
+   efl_gfx_size_hint_restricted_min_get(eo_obj, &minw, &minh);
    efl_gfx_size_hint_max_get(eo_obj, &maxw, &maxh);
    efl_gfx_size_hint_request_get(eo_obj, &requestw, &requesth);
    efl_gfx_size_hint_align_get(eo_obj, &dblx, &dbly);
@@ -2186,13 +2186,13 @@ evas_object_size_hint_request_get(const Evas_Object *obj, Evas_Coord *w, Evas_Co
 EAPI void
 evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
-   efl_gfx_size_hint_content_min_set(obj, w, h);
+   efl_gfx_size_hint_restricted_min_set(obj, w, h);
 }
 
 EAPI void
 evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
-   efl_gfx_size_hint_content_min_get(obj, w, h);
+   efl_gfx_size_hint_restricted_min_get(obj, w, h);
 }
 
 EAPI void

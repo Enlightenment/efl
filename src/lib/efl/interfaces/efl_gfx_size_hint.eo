@@ -102,7 +102,7 @@ interface Efl.Gfx.Size.Hint
             h: int; [[Integer to use as the preferred height hint.]]
          }
       }
-      @property hint_content_min @protected {
+      @property hint_restricted_min @protected {
          [[Internal hints for an object's minimum size.
 
            This is not a size enforcement in any way, it's just a hint
@@ -122,10 +122,10 @@ interface Efl.Gfx.Size.Hint
          }
       }
       @property hint_combined_min {
-         [[Read-only minimum size combining both @.hint_content_min and
+         [[Read-only minimum size combining both @.hint_restricted_min and
            @.hint_request size hints.
 
-           @.hint_content_min is intended for mostly internal usage
+           @.hint_restricted_min is intended for mostly internal usage
            and widget developers, and @.hint_request is intended to be
            set from application side. @.hint_combined_min combines both values
            by taking their repective maximum (in both width and height), and
