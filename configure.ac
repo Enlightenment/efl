@@ -2862,37 +2862,14 @@ have_rsvg="no"
 
 ### Check needed dependency for each generic loader
 if test "x${want_poppler}" = "xyes"; then
-      PKG_CHECK_EXISTS([poppler >= 0.12 poppler < 0.20],
-      [
-       poppler_pc="poppler >= 0.12 poppler < 0.20"
-       have_poppler="yes"
-      ],
-      [have_poppler="no"])
+   PKG_CHECK_MODULES([POPPLER], [poppler >= 0.12 poppler < 0.40],
+                     [have_poppler="yes"])
 
-   if test "x${have_poppler}" = "xno" ; then
-      PKG_CHECK_EXISTS([poppler >= 0.20 poppler < 0.31],
-         [
-          poppler_pc="poppler >= 0.20 poppler < 0.31"
-          AC_DEFINE(HAVE_POPPLER_020, 1, [Have poppler 0.20])
-          have_poppler="yes"
-         ],
-         [have_poppler="no"])
-   fi
+   PKG_CHECK_EXISTS([poppler >= 0.20],
+                    [AC_DEFINE(HAVE_POPPLER_020, 1, [Have poppler at least 0.20])])
 
-   if test "x${have_poppler}" = "xno" ; then
-      PKG_CHECK_EXISTS([poppler >= 0.31 poppler < 0.40],
-         [
-          poppler_pc="poppler >= 0.31"
-          AC_DEFINE(HAVE_POPPLER_031, 1, [Have poppler 0.31])
-          have_poppler="yes"
-         ],
-         [have_poppler="no"])
-   fi
-
-   if test "x${have_poppler}" = "xyes" ; then
-      PKG_CHECK_MODULES([POPPLER], [${poppler_pc}],
-         [have_poppler="yes"])
-   fi
+   PKG_CHECK_EXISTS([poppler >= 0.31],
+                    [AC_DEFINE(HAVE_POPPLER_031, 1, [Have poppler at least 0.31])])
 fi
 
 if test "x${want_spectre}" = "xyes"; then

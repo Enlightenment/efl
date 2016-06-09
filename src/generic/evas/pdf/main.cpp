@@ -161,7 +161,7 @@ void poppler_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
    if (!output_dev)
      return;
 
-#if defined(HAVE_POPPLER_020) || defined(HAVE_POPPLER_031)
+#ifdef HAVE_POPPLER_020
    output_dev->startDoc(pdfdoc);
 #else
    output_dev->startDoc(pdfdoc->getXRef());
@@ -174,7 +174,7 @@ void poppler_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
    output_dev->setVectorAntialias(EINA_TRUE);
 #endif
 
-#if defined(HAVE_POPPLER_020) || defined(HAVE_POPPLER_031)
+#ifdef HAVE_POPPLER_020
    page->displaySlice(output_dev, dpi, dpi, 
                       0, false, false,
                       0, 0, width, height,
