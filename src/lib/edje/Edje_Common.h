@@ -2338,6 +2338,18 @@ EAPI Eina_Bool edje_audio_channel_mute_get(Edje_Channel channel);
  * @since 1.10
  */
 EAPI const char *edje_object_part_object_name_get(const Evas_Object *obj);
+
+/**
+ * Create scene and root node which contains all 3D parts of edje object
+ * @param obj An edje part object
+ * @param root node to collect all 3D parts
+ * @param scene
+ * @return scene and root node which contains all 3D parts of edje object
+ * @note If this function returns @c EINA_FALSE, @p the scene or the root
+ * node wasn't made
+ * @since 1.18
+ */
+EAPI Eina_Bool edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene);
 /**
  * @}
  */

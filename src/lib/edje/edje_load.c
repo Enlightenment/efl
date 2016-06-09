@@ -2475,3 +2475,57 @@ _edje_dupe_vector_data(Edje *ed, int svg_id, double width, double height,
    data->h = vector->h;
 }
 
+EAPI Eina_Bool
+edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene)
+{
+   /* Use default value for state. */
+   unsigned int i;
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+
+   if (!ed)
+     {
+        ERR("Cannot get edje from object");
+        return EINA_FALSE;
+     }
+
+   if (*root_node == NULL)
+     *root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas,
+                                 evas_canvas3d_node_constructor(eo_self, EVAS_CANVAS3D_NODE_TYPE_NODE));
+
+   if (scene == NULL)
+     scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, ed->base->evas);
+
+   if ((*root_node == NULL) || (scene == NULL))
+     {
+        ERR("Cannot create scene and root node");
+        return EINA_FALSE;
+     }
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        rp = ed->table_parts[i];
+
+        if (rp->node)
+          {
+             evas_canvas3d_node_member_add(*root_node, rp->node);
+          }
+
+        if ((rp->part->type == EDJE_PART_TYPE_CAMERA))
+          {
+             Evas_Object *viewport;
+
+             evas_canvas3d_scene_camera_node_set(scene, rp->node);
+             evas_canvas3d_scene_root_node_set(scene, *root_node);
+             evas_canvas3d_scene_size_set(scene, ed->collection->scene_size.width, ed->collection->scene_size.height);
+             evas_canvas3d_scene_background_color_set(scene, 0, 0 ,0 ,0);
+
+             viewport = evas_object_image_source_get(rp->object);
+             efl_canvas_scene3d_set(viewport, scene);
+           }
+     }
+
+   return EINA_TRUE;
+}
