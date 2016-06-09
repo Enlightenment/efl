@@ -164,6 +164,8 @@ static struct {
 
 _PARSE_TAG(Efl_Gfx_Fill_Rule, fill_rule, fill_rule_tags, EFL_GFX_FILL_RULE_WINDING);
 
+#if 0
+// unused at the moment
 /* parse the dash pattern used during stroking a path.
  * Value:   none | <dasharray> | inherit
  * Initial:    none
@@ -207,6 +209,7 @@ _parse_dash_array(const char *str, Efl_Gfx_Dash** dash, int *length)
           }
      }
 }
+#endif
 
 static char *
  _id_from_url(const char *url)
@@ -1426,7 +1429,7 @@ EAPI Svg_Node *
 _svg_load(Eina_File *f, const char *key EINA_UNUSED)
 {
    Evas_SVG_Loader loader = {
-     NULL, NULL,NULL,0
+     NULL, NULL, NULL, NULL, 0, EINA_FALSE
    };
    const char *content;
    unsigned int length;
