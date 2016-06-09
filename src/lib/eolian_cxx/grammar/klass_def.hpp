@@ -470,7 +470,7 @@ struct function_def
        }
      c_name = eolian_function_full_c_name_get(function, type, EINA_FALSE);
      is_beta = eolian_function_is_beta(function);
-     is_protected = eolian_function_scope_get(function) == EOLIAN_SCOPE_PROTECTED;
+     is_protected = eolian_function_scope_get(function, type) == EOLIAN_SCOPE_PROTECTED;
   }
 };
 
@@ -610,23 +610,24 @@ struct klass_def
          if(type == EOLIAN_PROPERTY)
            {
              if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_GET)
-                && ::eolian_function_scope_get(function) != EOLIAN_SCOPE_PRIVATE)
+                && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
                functions.push_back({function, EOLIAN_PROP_GET});
              if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_SET)
-                && ::eolian_function_scope_get(function) != EOLIAN_SCOPE_PRIVATE)
+                && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
                functions.push_back({function, EOLIAN_PROP_SET});
            }
          else
            if(! ::eolian_function_is_legacy_only(function, type)
-              && ::eolian_function_scope_get(function) != EOLIAN_SCOPE_PRIVATE)
+              && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
              functions.push_back({function, type});
        }
      for(efl::eina::iterator<Eolian_Function const> eolian_functions ( ::eolian_class_functions_get(klass, EOLIAN_METHOD))
        , functions_last; eolian_functions != functions_last; ++eolian_functions)
        {
          Eolian_Function const* function = &*eolian_functions;
+         Eolian_Function_Type type = ::eolian_function_type_get(function);
           if(! ::eolian_function_is_legacy_only(function, EOLIAN_METHOD)
-             && ::eolian_function_scope_get(function) != EOLIAN_SCOPE_PRIVATE)
+             && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
             functions.push_back({function, EOLIAN_METHOD});
        }
      std::function<void(Eolian_Class const*)> inherit_algo = 
