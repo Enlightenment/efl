@@ -370,7 +370,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_entry_legacy.h \
 	lib/elementary/elm_finger.h \
 	lib/elementary/elm_flip.h \
-	lib/elementary/efl_ui_flip.eo.h \
+	lib/elementary/efl_ui_flip_eo.h \
 	lib/elementary/efl_ui_flip_legacy.h \
 	lib/elementary/elm_flipselector.h \
 	lib/elementary/elm_flipselector_eo.h \
