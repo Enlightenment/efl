@@ -27,6 +27,7 @@ struct _Edje_Drag_Items
 };
 
 void _edje_file_add(Edje *ed, const Eina_File *f);
+static void _edje_vector_data_free(Edje *ed);
 
 /* START - Nested part support */
 #define _edje_smart_nested_type "Evas_Smart_Nested"
@@ -1556,7 +1557,7 @@ _edje_file_del(Edje *ed)
    _edje_message_del(ed);
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);
-
+   _edje_vector_data_free(ed);
    if (!((ed->file) && (ed->collection)))
      {
         if (tev)
@@ -2380,43 +2381,97 @@ _create_vg_node(Svg_Node *node, Efl_VG *parent)
    _apply_vg_property(node, vg);
 }
 
-Efl_VG*
-_edje_create_vg_tree(Eet_File *ef, int svg_id, double width, double height,
-                     double *vx, double *vy, double *vw, double *vh)
+static void
+_edje_vector_data_free(Edje *ed)
 {
-   double sx=1.0, sy=1.0;
-   Eina_Matrix3 matrix;
-   Efl_VG *root = NULL;
-   Svg_Node *child;
+   Edje_Vector_Data *vector;
+
+   EINA_LIST_FREE(ed->vector_cache, vector)
+     {
+        if (vector->vg) eo_del(vector->vg);
+        free(vector);
+     }
+}
+
+Edje_Vector_Data *
+_edje_ref_vector_data(Edje *ed, int svg_id)
+{
    Eina_List *l;
-   Svg_Node *node;
+   Edje_Vector_Data *vector;
    char svg_key[20];
    Eet_Data_Descriptor *svg_node_eet;
+   Svg_Node *child;
+   Svg_Node *node;
+   Efl_VG *root = NULL;
+
+   // check in the cache
+   EINA_LIST_FOREACH(ed->vector_cache, l, vector)
+     {
+        if (vector->svg_id == svg_id)
+          return vector;
+     }
+
+   // create and put it in the cache.
+   vector = calloc(1, sizeof(Edje_Vector_Data));
+   vector->svg_id = svg_id;
 
    snprintf(svg_key, sizeof(svg_key), "edje/vectors/%i", svg_id);
    svg_node_eet = _edje_svg_node_eet();
-   node = eet_data_read(ef, svg_node_eet, svg_key);
+   node = eet_data_read(ed->file->ef, svg_node_eet, svg_key);
 
-   if (!node && (node->type != SVG_NODE_DOC)) return NULL;
-   if (node->node.doc.vw && node->node.doc.vh)
+   if (!node || (node->type != SVG_NODE_DOC))
      {
-        sx = width/node->node.doc.vw;
-        sy = height/node->node.doc.vh;
+        root = NULL;
+     }
+   else
+     {
         root = evas_vg_container_add(NULL);
+        EINA_LIST_FOREACH(node->child, l, child)
+          {
+             _create_vg_node(child, root);
+          }
+        vector->x = node->node.doc.vx;
+        vector->y = node->node.doc.vy;
+        vector->w = node->node.doc.vw;
+        vector->h = node->node.doc.vh;
+     }
+   vector->vg = root;
+   ed->vector_cache = eina_list_append(ed->vector_cache, vector);
+   return vector;
+}
+
+void
+_edje_dupe_vector_data(Edje *ed, int svg_id, double width, double height,
+                       Edje_Vector_Data *data)
+{
+   double sx=1.0, sy=1.0;
+   Edje_Vector_Data *vector;
+   Efl_VG *root;
+   Eina_Matrix3 matrix;
+
+   vector = _edje_ref_vector_data(ed, svg_id);
+   if (!vector->vg)
+     {
+        data->vg = NULL;
+     }
+
+   root = evas_vg_container_add(NULL);
+   efl_vg_dup(root, vector->vg);
+
+   if (vector->w && vector->h)
+     {
+        sx = width/vector->w;
+        sy = height/vector->h;
         eina_matrix3_identity(&matrix);
-        eina_matrix3_translate(&matrix, -node->node.doc.vx, -node->node.doc.vy);
+        eina_matrix3_translate(&matrix, -vector->x, -vector->y);
         eina_matrix3_scale(&matrix, sx, sy);
         evas_vg_node_transformation_set(root, &matrix);
      }
 
-   EINA_LIST_FOREACH(node->child, l, child)
-     {
-        _create_vg_node(child, root);
-     }
-   *vx = node->node.doc.vx;
-   *vy = node->node.doc.vy;
-   *vw = node->node.doc.vw;
-   *vh = node->node.doc.vh;
-   return root;
+   data->vg = root;
+   data->x = vector->x;
+   data->y = vector->y;
+   data->w = vector->w;
+   data->h = vector->h;
 }
 

@@ -3260,8 +3260,10 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
 {
    int w, h;
    int new_svg = 0;
-   Efl_VG *vg_tree, *root_vg;
-   double sx, sy, vx, vy, vw, vh;
+   Efl_VG *root_vg;
+   double sx, sy;
+   Eina_Matrix3 matrix;
+   Edje_Vector_Data *start, *end;
 
    evas_object_geometry_get(ep->object, NULL, NULL, &w, &h);
 
@@ -3279,74 +3281,42 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
      }
    if (new_svg) // animation with svg id change
      {
-        Efl_VG *container;
-        if (ep->typedata.vector->cache.svg_id != new_svg)
-          {
-             //create it
-             vg_tree = _edje_create_vg_tree(ed->file->ef, new_svg, w, h, &vx, &vy, &vw, &vh);
-             if (vg_tree)
-               {
-                  //1. clear the cache
-                  if (ep->typedata.vector->cache.vg)
-                    {
-                       eo_unref(ep->typedata.vector->cache.vg);
-                       ep->typedata.vector->cache.vg = NULL;
-                       ep->typedata.vector->cache.svg_id = 0;
-                    }
-                  //2. update current
-                  ep->typedata.vector->cache.svg_id = new_svg;
-                  ep->typedata.vector->cache.x = vx;
-                  ep->typedata.vector->cache.y = vy;
-                  ep->typedata.vector->cache.w = vw;
-                  ep->typedata.vector->cache.h = vh;
-                  ep->typedata.vector->cache.vg = vg_tree;
-               }
-          }
-        // just do the interpolation
-        if (eo_parent_get(ep->typedata.vector->cur.vg))
-          {
-             // remove it from the hirarchy
-             eo_ref(ep->typedata.vector->cur.vg);
-             eo_parent_set(ep->typedata.vector->cur.vg, NULL);
-          }
-        // create a container
-        container = evas_vg_container_add(NULL);
-        // reset the matrix.
-        Eina_Matrix3 matrix;
-        sx = w/ep->typedata.vector->cur.w;
-        sy = h/ep->typedata.vector->cur.h;
-        // for current vg
+        start = _edje_ref_vector_data(ed, chosen_desc->vg.id);
+        end = _edje_ref_vector_data(ed, new_svg);
+
+        // for start vector
+        sx = w/start->w;
+        sy = h/start->h;
         eina_matrix3_identity(&matrix);
-        eina_matrix3_translate(&matrix, -ep->typedata.vector->cur.x, -ep->typedata.vector->cur.y);
+        eina_matrix3_translate(&matrix, -start->x, -start->y);
         eina_matrix3_scale(&matrix, sx, sy);
-        evas_vg_node_transformation_set(ep->typedata.vector->cur.vg, &matrix);
-        // for next vg
-        sx = w/ep->typedata.vector->cache.w;
-        sy = h/ep->typedata.vector->cache.h;
+        evas_vg_node_transformation_set(start->vg, &matrix);
+
+        // for end vector
+        sx = w/end->w;
+        sy = h/end->h;
         eina_matrix3_identity(&matrix);
-        eina_matrix3_translate(&matrix, -ep->typedata.vector->cache.x, -ep->typedata.vector->cache.y);
+        eina_matrix3_translate(&matrix, -end->x, -end->y);
         eina_matrix3_scale(&matrix, sx, sy);
-        evas_vg_node_transformation_set(ep->typedata.vector->cache.vg, &matrix);
+        evas_vg_node_transformation_set(end->vg, &matrix);
+
         // do the interpolation
-        if (evas_vg_node_interpolate(container, ep->typedata.vector->cur.vg, ep->typedata.vector->cache.vg, pos))
+        if (!evas_vg_node_interpolate(ep->typedata.vector->cur.vg, start->vg, end->vg, pos))
           {
-             // can interpolate between two svg file
-             eo_parent_set(container, root_vg);
+             ERR(" Can't interpolate check the svg file \n");
           }
-        else
-          {
-             // can't interpolate between 2 shape
-             // keep the current vg tree
-             eo_parent_set(ep->typedata.vector->cur.vg, root_vg);
-             // delete the container
-             eo_unref(container);
-          }
+        // performance hack
+        // instead of duplicating the tree and applying the transformation
+        // i just updated the transformation matrix and reset it back to null.
+        // assumption is that the root vg will never have a transformation
+        eina_matrix3_identity(&matrix);
+        evas_vg_node_transformation_set(start->vg, &matrix);
+        evas_vg_node_transformation_set(end->vg, &matrix);
      }
    else 
      {
         if (ep->typedata.vector->cur.svg_id == chosen_desc->vg.id) // no svg file change
           {
-             Eina_Matrix3 matrix;
              sx = w/ep->typedata.vector->cur.w;
              sy = h/ep->typedata.vector->cur.h;
              eina_matrix3_identity(&matrix);
@@ -3357,88 +3327,12 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
           }
         else
           {
-             Eina_Matrix3 matrix;
-             // check in cache if the vg tree already exists
-             if (ep->typedata.vector->cache.svg_id == chosen_desc->vg.id)
-               {
-                  int id = ep->typedata.vector->cache.svg_id;
-                  int vx = ep->typedata.vector->cache.x;
-                  int vy = ep->typedata.vector->cache.y;
-                  int vw = ep->typedata.vector->cache.w;
-                  int vh = ep->typedata.vector->cache.h;
-                  Efl_VG *vg = ep->typedata.vector->cache.vg;
+             if (ep->typedata.vector->cur.vg)
+               eo_del(ep->typedata.vector->cur.vg);
 
-                  //1. update the cache from current.
-                  ep->typedata.vector->cache.svg_id = ep->typedata.vector->cur.svg_id;
-                  ep->typedata.vector->cache.vg = ep->typedata.vector->cur.vg;
-                  ep->typedata.vector->cache.x = ep->typedata.vector->cur.x;
-                  ep->typedata.vector->cache.y = ep->typedata.vector->cur.y;
-                  ep->typedata.vector->cache.w = ep->typedata.vector->cur.w;
-                  ep->typedata.vector->cache.h = ep->typedata.vector->cur.h;
-                  eo_ref(ep->typedata.vector->cache.vg);
-                  eo_parent_set(ep->typedata.vector->cache.vg, NULL);
+             _edje_dupe_vector_data(ed, chosen_desc->vg.id, w, h, &ep->typedata.vector->cur);
 
-                  //2. update the root node
-                  sx = w/vw;
-                  sy = h/vh;
-                  eina_matrix3_identity(&matrix);
-                  eina_matrix3_translate(&matrix, -vx, -vy);
-                  eina_matrix3_scale(&matrix, sx, sy);
-                  evas_vg_node_transformation_set(vg, &matrix);
-                  // update parent and ref
-                  eo_parent_set(vg, root_vg);
-
-                  //3.update the cur 
-                  ep->typedata.vector->cur.svg_id = id;
-                  ep->typedata.vector->cur.x = vx;
-                  ep->typedata.vector->cur.y = vy;
-                  ep->typedata.vector->cur.w = vw;
-                  ep->typedata.vector->cur.h = vh;
-                  ep->typedata.vector->cur.vg = vg;
-               }
-             else
-               {
-                  //create it
-                  vg_tree = _edje_create_vg_tree(ed->file->ef, chosen_desc->vg.id, w, h, &vx, &vy, &vw, &vh);
-                  if (vg_tree)
-                    {
-                      //1. clear the cache
-                      if (ep->typedata.vector->cache.vg)
-                        {
-                           eo_unref(ep->typedata.vector->cache.vg);
-                           ep->typedata.vector->cache.vg = NULL;
-                           ep->typedata.vector->cache.svg_id = 0;
-                        }
-                      // 2. move the current tree to cache
-                      if (ep->typedata.vector->cur.vg)
-                       {
-                          eo_ref(ep->typedata.vector->cur.vg);
-                          eo_parent_set(ep->typedata.vector->cur.vg, NULL);
-                          // copy to the cache.
-                          ep->typedata.vector->cache.svg_id = ep->typedata.vector->cur.svg_id;
-                          ep->typedata.vector->cache.vg = ep->typedata.vector->cur.vg;
-                          ep->typedata.vector->cache.x = ep->typedata.vector->cur.x;
-                          ep->typedata.vector->cache.y = ep->typedata.vector->cur.y;
-                          ep->typedata.vector->cache.w = ep->typedata.vector->cur.w;
-                          ep->typedata.vector->cache.h = ep->typedata.vector->cur.h;
-                       }
-                      //3. update current
-                      ep->typedata.vector->cur.svg_id = chosen_desc->vg.id;
-                      ep->typedata.vector->cur.x = vx;
-                      ep->typedata.vector->cur.y = vy;
-                      ep->typedata.vector->cur.w = vw;
-                      ep->typedata.vector->cur.h = vh;
-                      ep->typedata.vector->cur.vg = vg_tree;
-                      eo_parent_set(vg_tree, root_vg);
-                    }
-                  else
-                    {
-                       //1. clear current
-                       ep->typedata.vector->cur.svg_id = 0;
-                       eo_parent_set(ep->typedata.vector->cur.vg, NULL);
-                       ep->typedata.vector->cur.vg = NULL;
-                    }
-               }
+             eo_parent_set(ep->typedata.vector->cur.vg, root_vg);
           }
      }
 }

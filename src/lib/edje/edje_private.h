@@ -370,6 +370,7 @@ typedef struct _Edje_Part_Limit                      Edje_Part_Limit;
 typedef struct _Edje_Part_Description_Vector         Edje_Part_Description_Vector;
 typedef struct _Edje_Part_Description_Spec_Svg       Edje_Part_Description_Spec_Svg;
 typedef struct _Edje_Real_Part_Vector                Edje_Real_Part_Vector;
+typedef struct _Edje_Vector_Data                     Edje_Vector_Data;
 
 typedef struct _Edje Edje;
 typedef struct _Edje_Real_Part_Text Edje_Real_Part_Text;
@@ -1652,6 +1653,7 @@ struct _Edje
    Eina_List            *subobjs;
    Eina_List            *text_insert_filter_callbacks;
    Eina_List            *markup_filter_callbacks;
+   Eina_List            *vector_cache; /* list of Edje_Vector_Data */
 
    Eina_List            *groups;
 
@@ -1935,14 +1937,17 @@ struct _Edje_Real_Part_Swallow
    } swallow_params; // 28 // FIXME: only if type SWALLOW
 };
 
+struct _Edje_Vector_Data
+{
+   int svg_id;
+   double x, y, w, h;
+   Eina_Bool preserve_aspect;
+   Efl_VG *vg;
+};
+
 struct _Edje_Real_Part_Vector
 {
-   struct {
-     int svg_id;
-     double x, y, w, h;
-     Eina_Bool preserve_aspect;
-     Efl_VG *vg;
-   }cur, cache;
+   Edje_Vector_Data cur;
 };
 
 struct _Edje_Real_Part
@@ -3229,8 +3234,12 @@ enum _Svg_Style_Type
 
 EAPI Eet_Data_Descriptor * _edje_svg_node_eet(void);
 void _edje_svg_node_destroy_eet(void);
-Efl_VG* _edje_create_vg_tree(Eet_File *ef, int svg_id, double width, double height,
-                             double *vx, double *vy, double *vw, double *vh);
+
+void _edje_dupe_vector_data(Edje *ed, int svg_id, double width, double height,
+                            Edje_Vector_Data *data);
+
+Edje_Vector_Data * _edje_ref_vector_data(Edje *ed, int svg_id);
+
 
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>
