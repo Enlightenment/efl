@@ -105,6 +105,7 @@ EAPI int docs_prop_get(const Docs *obj);
 /**
  * @brief Method documentation.
  *
+ * @param[in] a Param documentation.
  * @param[out] b
  * @param[out] c Another param documentation.
  *

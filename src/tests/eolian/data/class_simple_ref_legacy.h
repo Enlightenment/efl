@@ -44,6 +44,7 @@ EAPI void evas_object_simple_b_set(Class_Simple *obj);
 /**
  * @brief comment foo
  *
+ * @param[in] a a
  * @param[in,out] b
  * @param[out] c
  * @param[in] d

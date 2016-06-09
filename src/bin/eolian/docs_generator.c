@@ -382,11 +382,6 @@ docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype,
    if (ftype == EOLIAN_METHOD)
      {
         itr = eolian_function_parameters_get(fid);
-        if (!itr || !eina_iterator_next(itr, (void**)&par))
-          {
-             eina_iterator_free(itr);
-             itr = NULL;
-          }
      }
    else
      {
@@ -399,7 +394,7 @@ docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype,
          }
      }
 
-   if (itr && !eina_iterator_next(itr, (void**)&par))
+   if (!itr || !eina_iterator_next(itr, (void**)&par))
      {
         eina_iterator_free(itr);
         itr = NULL;
