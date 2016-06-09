@@ -404,6 +404,7 @@ struct _Ecore_Wl2_Input
         unsigned int sym, key, time;
         double rate, delay;
         Eina_Bool enabled : 1;
+        Eina_Bool repeating : 1;
      } repeat;
 
    struct

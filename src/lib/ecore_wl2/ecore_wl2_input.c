@@ -780,6 +780,11 @@ _keyboard_cb_repeat(void *data)
 
    _ecore_wl2_input_key_send(input, input->focus.keyboard, input->repeat.sym, input->repeat.key + 8, WL_KEYBOARD_KEY_STATE_PRESSED,  input->repeat.time);
 
+   if (!input->repeat.repeating)
+     {
+        ecore_timer_interval_set(input->repeat.timer, input->repeat.rate);
+        input->repeat.repeating = EINA_TRUE;
+     }
    return ECORE_CALLBACK_RENEW;
 
 out:
@@ -841,9 +846,9 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
 
         if (!input->repeat.timer)
           {
+             input->repeat.repeating = EINA_FALSE;
              input->repeat.timer =
-               ecore_timer_add(input->repeat.rate, _keyboard_cb_repeat, input);
-             ecore_timer_delay(input->repeat.timer, input->repeat.delay);
+               ecore_timer_add(input->repeat.delay, _keyboard_cb_repeat, input);
           }
      }
 }
@@ -903,8 +908,8 @@ _keyboard_cb_repeat_setup(void *data, struct wl_keyboard *keyboard EINA_UNUSED, 
      }
 
    input->repeat.enabled = EINA_TRUE;
-   input->repeat.rate = (rate / 10000);
-   input->repeat.delay = (delay / 1000);
+   input->repeat.rate = (1.0 / rate);
+   input->repeat.delay = (delay / 1000.0);
 }
 
 static const struct wl_keyboard_listener _keyboard_listener =
