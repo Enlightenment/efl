@@ -4,8 +4,13 @@ interface Efl.Gfx {
    eo_prefix: efl_gfx;
    methods {
       @property position {
+         [[The 2D position of a canvas object.
+
+           The position is absolute, in pixels, relative to the top-left corner
+           of the window, within its border decorations (application space).
+         ]]
          set {
-            [[Move the given Evas object to the given location inside its
+            [[Moves the given Evas object to the given location inside its
               canvas' viewport.
             ]]
          }
@@ -18,13 +23,29 @@ interface Efl.Gfx {
          }
       }
       @property size {
+         [[The 2D size of a canvas object.]]
          set {
-            [[Changes the size of the given Evas object.]]
+            [[Changes the size of the given object.
+
+              Note that setting the actual size of an object might be the job
+              of its container, so this function might have no effect.
+              Look at $Efl.Gfx.Size.Hint instead, when manipulating
+              widgets.
+            ]]
          }
          get {
             [[Retrieves the (rectangular) size of the given Evas object.]]
          }
          values {
+            w: int;
+            h: int;
+         }
+      }
+      @property geometry {
+         [[Rectangular geometry that combines both position and size.]]
+         values {
+            x: int;
+            y: int;
             w: int;
             h: int;
          }

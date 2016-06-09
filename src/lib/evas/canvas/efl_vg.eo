@@ -118,6 +118,7 @@ abstract Efl.VG (Eo.Base, Efl.Gfx, Efl.Gfx.Stack)
       Efl.Gfx.size.get;
       Efl.Gfx.position.set;
       Efl.Gfx.position.get;
+      Efl.Gfx.geometry.get;
       Efl.Gfx.Stack.below.get;
       Efl.Gfx.Stack.above.get;
       Efl.Gfx.Stack.stack_below;

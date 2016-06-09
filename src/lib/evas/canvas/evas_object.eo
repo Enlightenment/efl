@@ -882,12 +882,14 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
       Evas.Common_Interface.evas.get;
       Efl.Gfx.visible.set;
       Efl.Gfx.visible.get;
-      Efl.Gfx.position.set;
-      Efl.Gfx.position.get;
       Efl.Gfx.color.set;
       Efl.Gfx.color.get;
       Efl.Gfx.color_part.set;
       Efl.Gfx.color_part.get;
+      Efl.Gfx.geometry.set;
+      Efl.Gfx.geometry.get;
+      Efl.Gfx.position.set;
+      Efl.Gfx.position.get;
       Efl.Gfx.size.set;
       Efl.Gfx.size.get;
       Efl.Gfx.Stack.layer.set;

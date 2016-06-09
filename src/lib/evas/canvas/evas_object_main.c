@@ -833,14 +833,21 @@ end:
    eo_destructor(eo_super(eo_obj, MY_CLASS));
 }
 
+EOLIAN static void
+_evas_object_efl_gfx_geometry_set(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED,
+                                  int x, int y, int w, int h)
+{
+   efl_gfx_position_set(obj, x, y);
+   efl_gfx_size_set(obj, w, h);
+}
+
 EAPI void
 evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   efl_gfx_position_set(eo_obj, x, y);
-   efl_gfx_size_set(eo_obj, w, h);
+   efl_gfx_geometry_set(eo_obj, x, y, w, h);
 }
 
 EAPI void
@@ -1020,6 +1027,14 @@ _evas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    evas_object_inform_call_resize(eo_obj);
 }
 
+EOLIAN void
+_evas_object_efl_gfx_geometry_get(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED,
+                                  int *x, int *y, int *w, int *h)
+{
+   efl_gfx_position_get(obj, x, y);
+   efl_gfx_size_get(obj, w, h);
+}
+
 EAPI void
 evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
@@ -1030,8 +1045,7 @@ evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y
    if (h) *h = 0;
    return;
    MAGIC_CHECK_END();
-   efl_gfx_position_get((Eo *)eo_obj, x, y);
-   efl_gfx_size_get((Eo *)eo_obj, w, h);
+   efl_gfx_geometry_get(eo_obj, x, y, w, h);
 }
 
 EOLIAN static void

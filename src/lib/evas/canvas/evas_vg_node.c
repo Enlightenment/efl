@@ -224,6 +224,14 @@ _efl_vg_efl_gfx_size_get(Eo *obj,
    if (h) *h = r.h;
 }
 
+EOLIAN static void
+_efl_vg_efl_gfx_geometry_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED,
+                             int *x, int *y, int *w, int *h)
+{
+   efl_gfx_position_get(obj, x, y);
+   efl_gfx_size_get(obj, w, h);
+}
+
 // Parent should be a container otherwise dismissing the stacking operation
 static Eina_Bool
 _efl_vg_parent_checked_get(Eo *obj,
