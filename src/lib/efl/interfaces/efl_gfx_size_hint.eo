@@ -84,6 +84,26 @@ interface Efl.Gfx.Size.Hint
             h: int; [[Integer to use as the maximum height hint.]]
          }
       }
+      @property hint_min {
+         [[Hints on the object's minimum size.
+
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate. The object container
+           is in charge of fetching this property and placing the object
+           accordingly.
+
+           Value 0 will be treated as unset hint components, when queried
+           by managers.
+
+           Note: This property is meant to be set by applications and not by
+           EFL itself. Use this to request a specific size (treated as minimum
+           size).
+         ]]
+         values {
+            w: int; [[Integer to use as the maximum width hint.]]
+            h: int; [[Integer to use as the maximum height hint.]]
+         }
+      }
       @property hint_request {
          [[Hints for the object's optimum size.
 
@@ -94,8 +114,8 @@ interface Efl.Gfx.Size.Hint
            queried by managers.
 
            Note: This property is meant to be set by applications and not by
-           EFL itself. Use this to request a specific size (treated as minimum
-           size).
+           EFL itself. Very few containers actually implement support for
+           this requested size, see @.hint_min instead.
          ]]
          values {
             w: int; [[Integer to use as the preferred width hint.]]
@@ -114,7 +134,7 @@ interface Efl.Gfx.Size.Hint
            Note: This property is internal and meant for widget developers to
            define the absolute minimum size of the object. EFL itself sets
            this size internally, so any change to it from an application
-           might be ignored. Use @.hint_request instead.
+           might be ignored. Use @.hint_min instead.
          ]]
          values {
             w: int; [[Integer to use as the minimum width hint.]]
@@ -123,10 +143,10 @@ interface Efl.Gfx.Size.Hint
       }
       @property hint_combined_min {
          [[Read-only minimum size combining both @.hint_restricted_min and
-           @.hint_request size hints.
+           @.hint_min size hints.
 
            @.hint_restricted_min is intended for mostly internal usage
-           and widget developers, and @.hint_request is intended to be
+           and widget developers, and @.hint_min is intended to be
            set from application side. @.hint_combined_min combines both values
            by taking their repective maximum (in both width and height), and
            is used internally to get an object's minimum size.

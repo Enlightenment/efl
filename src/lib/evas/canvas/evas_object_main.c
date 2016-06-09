@@ -1154,8 +1154,8 @@ _evas_object_efl_gfx_size_hint_hint_combined_min_get(Eo *eo_obj EINA_UNUSED, Eva
         if (h) *h = 0;
         return;
      }
-   if (w) *w = MAX(obj->size_hints->min.w, obj->size_hints->request.w);
-   if (h) *h = MAX(obj->size_hints->min.h, obj->size_hints->request.h);
+   if (w) *w = MAX(obj->size_hints->min.w, obj->size_hints->user_min.w);
+   if (h) *h = MAX(obj->size_hints->min.h, obj->size_hints->user_min.h);
 }
 
 EOLIAN static void
@@ -1208,6 +1208,33 @@ _evas_object_efl_gfx_size_hint_hint_request_set(Eo *eo_obj, Evas_Object_Protecte
    if ((obj->size_hints->request.w == w) && (obj->size_hints->request.h == h)) return;
    obj->size_hints->request.w = w;
    obj->size_hints->request.h = h;
+
+   evas_object_inform_call_changed_size_hints(eo_obj);
+}
+
+EOLIAN static void
+_evas_object_efl_gfx_size_hint_hint_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
+{
+   if ((!obj->size_hints) || obj->delete_me)
+     {
+        if (w) *w = 0;
+        if (h) *h = 0;
+        return;
+     }
+   if (w) *w = obj->size_hints->user_min.w;
+   if (h) *h = obj->size_hints->user_min.h;
+}
+
+EOLIAN static void
+_evas_object_efl_gfx_size_hint_hint_min_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
+{
+   if (obj->delete_me)
+     return;
+   evas_object_async_block(obj);
+   _evas_object_size_hint_alloc(eo_obj, obj);
+   if ((obj->size_hints->user_min.w == w) && (obj->size_hints->user_min.h == h)) return;
+   obj->size_hints->user_min.w = w;
+   obj->size_hints->user_min.h = h;
 
    evas_object_inform_call_changed_size_hints(eo_obj);
 }

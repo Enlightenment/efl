@@ -907,6 +907,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
       Efl.Gfx.Size.Hint.hint_combined_min.get;
       Efl.Gfx.Size.Hint.hint_restricted_min.set;
       Efl.Gfx.Size.Hint.hint_restricted_min.get;
+      Efl.Gfx.Size.Hint.hint_min.set;
+      Efl.Gfx.Size.Hint.hint_min.get;
       Efl.Gfx.Size.Hint.hint_max.set;
       Efl.Gfx.Size.Hint.hint_max.get;
       Efl.Gfx.Size.Hint.hint_margin.set;

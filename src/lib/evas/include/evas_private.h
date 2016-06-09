@@ -940,7 +940,7 @@ struct _Evas_Double_Pair
 
 struct _Evas_Size_Hints
 {
-   Evas_Size min, max, request;
+   Evas_Size min, max, user_min, request;
    Evas_Aspect aspect;
    Evas_Double_Pair align, weight;
    Evas_Border padding;
