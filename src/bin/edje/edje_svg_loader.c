@@ -1067,7 +1067,7 @@ static const struct {
      int sz = strlen(name);                                             \
                                                                         \
      for (i = 0; i < sizeof (Tags_Array) / sizeof(Tags_Array[0]); i++)  \
-       if (group_tags[i].sz - 1 == sz && !strncmp(Tags_Array[i].tag, name, sz)) \
+       if (Tags_Array[i].sz - 1 == sz && !strncmp(Tags_Array[i].tag, name, sz)) \
          {                                                              \
             return Tags_Array[i].tag_handler;                           \
          }                                                              \
