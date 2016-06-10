@@ -67,7 +67,7 @@ elm_code_shutdown(void)
 }
 
 EAPI Elm_Code *
-elm_code_create()
+elm_code_create(void)
 {
    Elm_Code *ret;
 

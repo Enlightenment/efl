@@ -78,7 +78,7 @@ EAPI int elm_code_shutdown(void);
  * @return an allocated Elm_Code that references the given file
  * @see elm_code_file_open()
  */
-EAPI Elm_Code *elm_code_create();
+EAPI Elm_Code *elm_code_create(void);
 
 /**
  * Free an Elm Code instance
