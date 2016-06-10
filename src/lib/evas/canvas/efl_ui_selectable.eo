@@ -1,5 +1,6 @@
-interface Evas.Selectable_Interface ()
+interface Efl.Ui.Selectable ()
 {
+   event_prefix: efl_ui;
    events {
       selected;
       unselected;

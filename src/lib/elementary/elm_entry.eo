@@ -116,7 +116,7 @@ enum Elm.Cnp_Mode
 
 class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                  Elm.Interface.Atspi.Text, Elm.Interface.Atspi.Text.Editable, Efl.File,
-                 Evas.Selectable_Interface, Efl.Ui.Scrollable)
+                 Efl.Ui.Selectable, Efl.Ui.Scrollable)
 {
    legacy_prefix: elm_entry;
    eo_prefix: elm_obj_entry;

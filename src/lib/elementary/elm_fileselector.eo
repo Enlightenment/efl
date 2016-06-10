@@ -1,6 +1,6 @@
 class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
                         Elm.Interface.Atspi_Widget_Action,
-                        Efl.Ui.Clickable, Evas.Selectable_Interface)
+                        Efl.Ui.Clickable, Efl.Ui.Selectable)
 {
    legacy_prefix: elm_fileselector;
    eo_prefix: elm_obj_fileselector;

@@ -1,5 +1,5 @@
 class Elm.Index (Elm.Layout, Efl.Orientation,
-                 Efl.Ui.Clickable, Evas.Selectable_Interface)
+                 Efl.Ui.Clickable, Efl.Ui.Selectable)
 {
    legacy_prefix: elm_index;
    eo_prefix: elm_obj_index;

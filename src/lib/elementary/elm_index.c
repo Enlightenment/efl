@@ -858,7 +858,7 @@ _on_mouse_up(void *data,
         eo_event_callback_call
           (data, EFL_UI_EVENT_CLICKED, eo_item);
         eo_event_callback_call
-          (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_item);
+          (data, EFL_UI_EVENT_SELECTED, eo_item);
         eo_id_item = eo_item;
         ELM_INDEX_ITEM_DATA_GET(eo_id_item, id_item);
         if (id_item->func)
@@ -1349,7 +1349,7 @@ _elm_index_item_selected_set(Eo *eo_it,
         eo_event_callback_call
           (obj, ELM_INDEX_EVENT_CHANGED, eo_it);
         eo_event_callback_call
-          (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it);
+          (obj, EFL_UI_EVENT_SELECTED, eo_it);
         ecore_timer_del(sd->delay);
         sd->delay = ecore_timer_add(sd->delay_change_time,
                                     _delay_change_cb, obj);

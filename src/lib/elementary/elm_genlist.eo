@@ -4,7 +4,7 @@ import elm_genlist_item;
 
 class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                    Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
-                   Evas.Selectable_Interface)
+                   Efl.Ui.Selectable)
 {
    legacy_prefix: elm_genlist;
    eo_prefix: elm_obj_genlist;

@@ -1500,7 +1500,7 @@ _paste_cb(void *data,
    ELM_ENTRY_DATA_GET(data, sd);
 
    eo_event_callback_call
-     (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_PASTE, NULL);
+     (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
 
    sd->selection_asked = EINA_TRUE;
 
@@ -1552,7 +1552,7 @@ _cut_cb(void *data,
    ELM_ENTRY_DATA_GET(data, sd);
 
    eo_event_callback_call
-     (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_CUT, NULL);
+     (data, EFL_UI_EVENT_SELECTION_CUT, NULL);
    /* Store it */
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
@@ -1575,7 +1575,7 @@ _copy_cb(void *data,
    ELM_ENTRY_DATA_GET(data, sd);
 
    eo_event_callback_call
-     (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_COPY, NULL);
+     (data, EFL_UI_EVENT_SELECTION_COPY, NULL);
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      {
@@ -2217,7 +2217,7 @@ _entry_selection_start_signal_cb(void *data,
         if (entry != data) elm_entry_select_none(entry);
      }
    eo_event_callback_call
-     (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_START, NULL);
+     (data, EFL_UI_EVENT_SELECTION_START, NULL);
 
    elm_object_focus_set(data, EINA_TRUE);
 }
@@ -2250,7 +2250,7 @@ _entry_selection_changed_signal_cb(void *data,
 
    sd->have_selection = EINA_TRUE;
    eo_event_callback_call
-     (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_CHANGED, NULL);
+     (data, EFL_UI_EVENT_SELECTION_CHANGED, NULL);
    _selection_store(ELM_SEL_TYPE_PRIMARY, data);
    _update_selection_handler(data);
    if (_elm_config->atspi_mode)
@@ -2269,7 +2269,7 @@ _entry_selection_cleared_signal_cb(void *data,
 
    sd->have_selection = EINA_FALSE;
    eo_event_callback_call
-     (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_CLEARED, NULL);
+     (data, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
    if (sd->cut_sel)
      {
         elm_cnp_selection_set
@@ -2301,7 +2301,7 @@ _entry_paste_request_signal_cb(void *data,
 
    if (!sd->editable) return;
    eo_event_callback_call
-     (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_PASTE, NULL);
+     (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
 
    top = elm_widget_top_get(data);
    if ((top) && (elm_win_window_id_get(top)))
@@ -4209,7 +4209,7 @@ _elm_entry_select_none(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
      }
    if (sd->have_selection)
      eo_event_callback_call
-       (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_CLEARED, NULL);
+       (obj, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
 
    sd->have_selection = EINA_FALSE;
    edje_object_part_text_select_none(sd->entry_edje, "elm.text");

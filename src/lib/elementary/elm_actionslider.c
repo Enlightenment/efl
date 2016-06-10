@@ -233,15 +233,15 @@ _button_animator(void *data)
         if ((!sd->final_position) &&
             (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
           eo_event_callback_call
-            (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)left);
+            (obj, EFL_UI_EVENT_SELECTED, (char *)left);
         else if ((sd->final_position == 0.5) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_CENTER))
           eo_event_callback_call
-            (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)center);
+            (obj, EFL_UI_EVENT_SELECTED, (char *)center);
         else if ((sd->final_position == 1) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
           eo_event_callback_call
-            (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)right);
+            (obj, EFL_UI_EVENT_SELECTED, (char *)right);
 
         sd->button_animator = NULL;
 
@@ -279,7 +279,7 @@ _drag_button_up_cb(void *data,
      {
         sd->final_position = 0;
         eo_event_callback_call
-          (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)left);
+          (obj, EFL_UI_EVENT_SELECTED, (char *)left);
 
         return;
      }
@@ -289,7 +289,7 @@ _drag_button_up_cb(void *data,
      {
         sd->final_position = 0.5;
         eo_event_callback_call
-          (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)center);
+          (obj, EFL_UI_EVENT_SELECTED, (char *)center);
 
         ecore_animator_del(sd->button_animator);
         sd->button_animator = ecore_animator_add(_button_animator, obj);
@@ -303,7 +303,7 @@ _drag_button_up_cb(void *data,
      {
         sd->final_position = 1;
         eo_event_callback_call
-          (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (char *)right);
+          (obj, EFL_UI_EVENT_SELECTED, (char *)right);
         return;
      }
 

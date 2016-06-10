@@ -1129,7 +1129,7 @@ _on_item_selected(void *data, const Eo_Event *event)
 
         // EVENTS: should not call legacy
         //eo_event_callback_call
-        //  (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (void *)it_data->model);
+        //  (data, EFL_UI_EVENT_SELECTED, (void *)it_data->model);
         evas_object_smart_callback_call(data, "selected", (void *)it_data->path);
      }
    else if (sd->multi && it_data->is_dir && sd->double_tap_navigation)
@@ -1371,7 +1371,7 @@ _text_activated_is_dir_then(void *data, void *value)
           {
              // EVENTS: should not call legacy
              //eo_event_callback_call
-             //  (fs, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (void *)model);
+             //  (fs, EFL_UI_EVENT_SELECTED, (void *)model);
              evas_object_smart_callback_call(fs, "selected", (void *) str);
           }
      }
@@ -1390,7 +1390,7 @@ _text_activated_is_dir_then(void *data, void *value)
                {
                   // EVENTS: should not call legacy
                   //eo_event_callback_call
-                  //  (fs, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (void *)model);
+                  //  (fs, EFL_UI_EVENT_SELECTED, (void *)model);
                   evas_object_smart_callback_call(fs, "selected", (void *) str);
                }
           }
@@ -1429,7 +1429,7 @@ _on_text_activated_set_path_then_error(void *data, Eina_Error err EINA_UNUSED)
 
    // EVENTS: should not call legacy
    //eo_event_callback_call
-   //  (fs, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (void *)model);
+   //  (fs, EFL_UI_EVENT_SELECTED, (void *)model);
    evas_object_smart_callback_call(fs, "selected", (void *)str);
 
    // EVENTS: should not call legacy
@@ -1586,9 +1586,9 @@ _files_list_add(Evas_Object *obj)
    elm_widget_mirrored_automatic_set(li, EINA_FALSE);
 
    eo_event_callback_add
-     (li, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, _on_item_selected, obj);
+     (li, EFL_UI_EVENT_SELECTED, _on_item_selected, obj);
    eo_event_callback_add
-     (li, EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, _on_item_unselected, obj);
+     (li, EFL_UI_EVENT_UNSELECTED, _on_item_unselected, obj);
    eo_event_callback_add
      (li, ELM_GENLIST_EVENT_ACTIVATED, _on_item_activated, obj);
    eo_event_callback_add
@@ -1623,9 +1623,9 @@ _files_grid_add(Evas_Object *obj)
    elm_gengrid_align_set(grid, 0.0, 0.0);
 
    eo_event_callback_add
-     (grid, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, _on_item_selected, obj);
+     (grid, EFL_UI_EVENT_SELECTED, _on_item_selected, obj);
    eo_event_callback_add
-     (grid, EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, _on_item_unselected, obj);
+     (grid, EFL_UI_EVENT_UNSELECTED, _on_item_unselected, obj);
    eo_event_callback_add
      (grid, ELM_GENGRID_EVENT_ACTIVATED, _on_item_activated, obj);
    eo_event_callback_add

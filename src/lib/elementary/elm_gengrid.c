@@ -513,7 +513,7 @@ _item_unselect(Elm_Gen_Item *it)
         it->selected = EINA_FALSE;
         sd->selected = eina_list_remove(sd->selected, eo_it);
         eo_event_callback_call
-          (WIDGET(it), EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, eo_it);
+          (WIDGET(it), EFL_UI_EVENT_UNSELECTED, eo_it);
         if (_elm_config->atspi_mode)
           elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
      }
@@ -4140,7 +4140,7 @@ _item_select(Elm_Gen_Item *it)
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), eo_it);
    if (it->generation == sd->generation)
      {
-        eo_event_callback_call(WIDGET(it), EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it);
+        eo_event_callback_call(WIDGET(it), EFL_UI_EVENT_SELECTED, eo_it);
         if (_elm_config->atspi_mode)
           elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
      }

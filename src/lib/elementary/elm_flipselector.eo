@@ -1,6 +1,6 @@
 class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
                         Elm.Interface.Atspi_Widget_Action,
-                        Evas.Selectable_Interface)
+                        Efl.Ui.Selectable)
 {
    legacy_prefix: elm_flipselector;
    eo_prefix: elm_obj_flipselector;

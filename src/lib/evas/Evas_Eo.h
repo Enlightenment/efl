@@ -5,7 +5,7 @@
 #include "canvas/efl_ui_draggable.eo.h"
 #include "canvas/efl_ui_clickable.eo.h"
 #include "canvas/efl_ui_scrollable.eo.h"
-#include "canvas/evas_selectable_interface.eo.h"
+#include "canvas/efl_ui_selectable.eo.h"
 #include "canvas/evas_zoomable_interface.eo.h"
 
 #include "canvas/evas_canvas.eo.h"

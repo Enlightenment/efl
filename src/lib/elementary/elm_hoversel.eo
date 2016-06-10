@@ -1,5 +1,5 @@
 import elm_icon;
-class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
+class Elm.Hoversel (Elm.Button, Efl.Ui.Selectable,
                     Efl.Ui.Clickable,
                     Elm.Interface.Atspi_Widget_Action)
 {
