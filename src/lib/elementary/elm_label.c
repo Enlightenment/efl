@@ -154,7 +154,7 @@ _label_slide_change(Evas_Object *obj)
           }
 
         Edje_Message_Float_Set *msg =
-          alloca(sizeof(Edje_Message_Float_Set) + (sizeof(double)));
+          alloca(sizeof(Edje_Message_Float_Set));
 
         msg->count = 1;
         msg->val[0] = sd->slide_duration;
