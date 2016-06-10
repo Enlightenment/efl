@@ -1,0 +1,8 @@
+class Efl.Ui.Grid.Static (Efl.Ui.Grid)
+{
+   data: null;
+   implements {
+      Eo.Base.constructor;
+      Efl.Pack.Layout.layout_do;
+   }
+}
