@@ -53,7 +53,7 @@ _eio_stat_done_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *st
             eina_value_set(v, eio_file_is_lnk(stat) ? EINA_TRUE : EINA_FALSE);
             break;
           case EIO_MODEL_PROP_MTIME:
-            eina_value_setup(v, EINA_VALUE_TYPE_TIMEVAL);
+            eina_value_setup(v, EINA_VALUE_TYPE_DOUBLE);
             eina_value_set(v, eio_file_mtime(stat));
             break;
           case EIO_MODEL_PROP_SIZE:
