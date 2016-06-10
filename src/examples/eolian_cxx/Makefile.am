@@ -117,6 +117,8 @@ eolian_cxx_simple_01_cxx_impl_SOURCES = \
 	colourable.c \
 	colourablesquare.c \
 	colourable_cxx.cc \
+	colourablesquare_stub.h \
+	colourable_stub.h \
 	colourablesquare_cxx.cc
 eolian_cxx_simple_01_cxx_impl.$(OBJEXT): $(GENERATED)
 
