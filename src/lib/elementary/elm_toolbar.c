@@ -2305,21 +2305,21 @@ static void
 _scroll_cb(Evas_Object *obj,
            void *data EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL, NULL);
+   eo_event_callback_call(obj, EFL_UI_EVENT_SCROLL, NULL);
 }
 
 static void
 _scroll_anim_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_START, NULL);
+   eo_event_callback_call(obj, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
 }
 
 static void
 _scroll_anim_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_STOP, NULL);
+   eo_event_callback_call(obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
 }
 
 static void
@@ -2329,14 +2329,14 @@ _scroll_drag_start_cb(Evas_Object *obj,
    ELM_TOOLBAR_DATA_GET(obj, sd);
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
-   eo_event_callback_call(obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_START, NULL);
+   eo_event_callback_call(obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_STOP, NULL);
+   eo_event_callback_call(obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
 }
 
 static void

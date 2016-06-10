@@ -4897,7 +4897,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
    ELM_ENTRY_DATA_GET(obj, sd);
    /* here we need to emit the signal that the elm_scroller would have done */
    eo_event_callback_call
-     (obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL, NULL);
+     (obj, EFL_UI_EVENT_SCROLL, NULL);
 
    if (sd->have_selection)
      _update_selection_handler(obj);

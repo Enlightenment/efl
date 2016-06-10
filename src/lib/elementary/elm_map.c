@@ -1284,7 +1284,7 @@ _scr_timeout_cb(void *data)
    _smooth_update(sd);
    sd->scr_timer = NULL;
    eo_event_callback_call
-     (sd->obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_STOP, NULL);
+     (sd->obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1298,11 +1298,11 @@ _scroll_cb(Evas_Object *obj,
    if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
    else
       eo_event_callback_call
-        (sd->obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_START, NULL);
+        (sd->obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
    sd->scr_timer = ecore_timer_add(0.25, _scr_timeout_cb, obj);
    eo_event_callback_call
-     (sd->obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL, NULL);
+     (sd->obj, EFL_UI_EVENT_SCROLL, NULL);
 }
 
 static void
@@ -1312,7 +1312,7 @@ _scroll_animate_start_cb(Evas_Object *obj,
    ELM_MAP_DATA_GET(obj, sd);
 
    eo_event_callback_call
-     (sd->obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_START, NULL);
+     (sd->obj, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
 }
 
 static void
@@ -1322,7 +1322,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
    ELM_MAP_DATA_GET(obj, sd);
 
    eo_event_callback_call
-     (sd->obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_STOP, NULL);
+     (sd->obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
 }
 
 static Eina_Bool

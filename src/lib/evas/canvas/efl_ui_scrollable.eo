@@ -1,5 +1,6 @@
-interface Evas.Scrollable_Interface ()
+interface Efl.Ui.Scrollable ()
 {
+   event_prefix: efl_ui;
    events {
       scroll;
       scroll,anim,start;

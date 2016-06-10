@@ -1316,7 +1316,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
         break;
      }
    eo_event_callback_call
-     (obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL, (void *) &event);
+     (obj, EFL_UI_EVENT_SCROLL, (void *) &event);
 }
 
 EOLIAN static Eina_Bool

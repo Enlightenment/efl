@@ -4,16 +4,9 @@
 
 #include "canvas/efl_ui_draggable.eo.h"
 #include "canvas/efl_ui_clickable.eo.h"
-#include "canvas/evas_scrollable_interface.eo.h"
+#include "canvas/efl_ui_scrollable.eo.h"
 #include "canvas/evas_selectable_interface.eo.h"
 #include "canvas/evas_zoomable_interface.eo.h"
-
-// Interface classes links
-#define EVAS_SMART_CLICKABLE_INTERFACE  EVAS_CLICKABLE_INTERFACE_INTERFACE
-#define EVAS_SMART_SCROLLABLE_INTERFACE EVAS_SCROLLABLE_INTERFACE_INTERFACE
-#define EVAS_SMART_DRAGGABLE_INTERFACE  EVAS_DRAGGABLE_INTERFACE_INTERFACE
-#define EVAS_SMART_SELECTABLE_INTERFACE EVAS_SELECTABLE_INTERFACE_INTERFACE
-#define EVAS_SMART_ZOOMABLE_INTERFACE   EVAS_ZOOMABLE_INTERFACE_INTERFACE
 
 #include "canvas/evas_canvas.eo.h"
 

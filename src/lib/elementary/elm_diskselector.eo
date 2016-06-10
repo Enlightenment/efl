@@ -1,6 +1,6 @@
 class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
                         Elm.Interface.Atspi_Widget_Action,
-                        Efl.Ui.Clickable, Evas.Scrollable_Interface,
+                        Efl.Ui.Clickable, Efl.Ui.Scrollable,
                         Evas.Selectable_Interface)
 {
    legacy_prefix: elm_diskselector;
