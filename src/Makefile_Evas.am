@@ -6,7 +6,6 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_polygon.eo \
 	lib/evas/canvas/efl_canvas_rectangle.eo \
 	lib/evas/canvas/evas_textblock.eo \
-	lib/evas/canvas/evas_signal_interface.eo \
 	lib/evas/canvas/evas_object_smart.eo \
 	lib/evas/canvas/evas_common_interface.eo \
 	lib/evas/canvas/evas_canvas.eo \

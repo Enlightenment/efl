@@ -1,4 +1,4 @@
-interface Evas.Scrollable_Interface (Evas.Signal_Interface)
+interface Evas.Scrollable_Interface ()
 {
    events {
       scroll;

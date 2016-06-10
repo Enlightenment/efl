@@ -1,4 +1,4 @@
-interface Evas.Selectable_Interface (Evas.Signal_Interface)
+interface Evas.Selectable_Interface ()
 {
    events {
       selected;
