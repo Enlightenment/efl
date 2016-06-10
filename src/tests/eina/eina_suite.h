@@ -71,5 +71,6 @@ void eina_test_quaternion(TCase *tc);
 void eina_test_vector(TCase *tc);
 void eina_test_promise(TCase *tc);
 void eina_test_bezier(TCase *tc);
+void eina_test_safepointer(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

@@ -79,6 +79,7 @@ static const Efl_Test_Case etc[] = {
 /*    { "Vector", eina_test_vector }, */
    { "Promise", eina_test_promise },
    /* { "Bezier", eina_test_bezier }, */
+   { "SafePointer", eina_test_safepointer },
    { NULL, NULL }
 };
 

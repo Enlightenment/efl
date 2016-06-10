@@ -328,7 +328,8 @@ tests/eina/eina_test_matrix.c \
 tests/eina/eina_test_quaternion.c \
 tests/eina/eina_test_vector.c \
 tests/eina/eina_test_promise.c \
-tests/eina/eina_test_bezier.c
+tests/eina/eina_test_bezier.c \
+tests/eina/eina_test_safepointer.c
 
 tests_eina_eina_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
