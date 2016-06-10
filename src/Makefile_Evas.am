@@ -14,7 +14,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_ui_clickable.eo \
 	lib/evas/canvas/efl_ui_scrollable.eo \
 	lib/evas/canvas/efl_ui_selectable.eo \
-	lib/evas/canvas/evas_zoomable_interface.eo \
+	lib/evas/canvas/efl_ui_zoomable.eo \
 	lib/evas/canvas/evas_canvas3d_camera.eo\
 	lib/evas/canvas/evas_canvas3d_texture.eo\
 	lib/evas/canvas/evas_canvas3d_material.eo\

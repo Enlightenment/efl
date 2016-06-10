@@ -1071,7 +1071,7 @@ _zoom_timeout_cb(void *data)
    _smooth_update(sd);
    sd->zoom_timer = NULL;
    eo_event_callback_call
-     (sd->obj, EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_STOP, NULL);
+     (sd->obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1133,7 +1133,7 @@ _zoom_do(Elm_Map_Data *sd,
      }
    else
       eo_event_callback_call
-        (sd->obj, EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_START, NULL);
+        (sd->obj, EFL_UI_EVENT_ZOOM_START, NULL);
 
    if (sd->obj)
      sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);

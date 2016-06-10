@@ -787,7 +787,7 @@ _zoom_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
         sd->no_smooth--;
         if (!sd->no_smooth) _smooth_update(data);
         eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
-        eo_event_callback_call(obj, EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_STOP, NULL);
+        eo_event_callback_call(obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
      }
 
    return EO_CALLBACK_CONTINUE;
@@ -1103,7 +1103,7 @@ _elm_photocam_zoom_reset(Eo *obj, Elm_Photocam_Data *sd)
         sd->no_smooth--;
         if (!sd->no_smooth) _smooth_update(obj);
         _zoom_do(obj, 1.0);
-        eo_event_callback_call(obj, EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_STOP, NULL);
+        eo_event_callback_call(obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
      }
 }
 
@@ -1966,12 +1966,12 @@ done:
    if (!sd->paused)
      {
         if (started)
-          eo_event_callback_call(obj, EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_START, NULL);
+          eo_event_callback_call(obj, EFL_UI_EVENT_ZOOM_START, NULL);
         if (!an)
-          eo_event_callback_call(obj, EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_STOP, NULL);
+          eo_event_callback_call(obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
      }
    if (zoom_changed)
-     eo_event_callback_call(obj, EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_CHANGE, NULL);
+     eo_event_callback_call(obj, EFL_UI_EVENT_ZOOM_CHANGE, NULL);
 }
 
 EOLIAN static double
