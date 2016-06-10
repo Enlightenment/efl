@@ -365,6 +365,9 @@ sphere-hunter
 benchmark3d_SOURCES = \
 	performance/performance.c \
 	performance/camera_light.c \
+	performance/tools_private.h \
+	performance/graphical_struct.h \
+	performance/Tools.h \
 	performance/graphical.c
 
 sphere_hunter_SOURCES = \
