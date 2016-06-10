@@ -856,7 +856,7 @@ _on_mouse_up(void *data,
    if (eo_item)
      {
         eo_event_callback_call
-          (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, eo_item);
+          (data, EFL_UI_EVENT_CLICKED, eo_item);
         eo_event_callback_call
           (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_item);
         eo_id_item = eo_item;

@@ -44,7 +44,7 @@ struct Efl.Ui.Image.Error
    open_error: bool;
 }
 
-class Efl.Ui.Image (Elm.Widget, Evas.Clickable_Interface, Evas.Draggable_Interface,
+class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Evas.Draggable_Interface,
                  Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View, 
                  Elm.Interface.Atspi_Image, Elm.Interface.Atspi_Widget_Action,
                  Edje.Object, Efl.Orientation, Efl.Flipable)

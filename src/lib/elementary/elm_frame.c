@@ -140,7 +140,7 @@ _on_frame_clicked(void *data,
         sd->anim = EINA_TRUE;
      }
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+     (data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 /* using deferred sizing evaluation, just like the parent */

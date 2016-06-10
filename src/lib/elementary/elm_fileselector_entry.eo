@@ -1,5 +1,5 @@
 class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
-                              Evas.Clickable_Interface, Evas.Selectable_Interface)
+                              Efl.Ui.Clickable, Evas.Selectable_Interface)
 {
    [[Not an EO API.]]
    event_prefix: elm_fileselector_entry;

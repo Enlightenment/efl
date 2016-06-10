@@ -114,7 +114,7 @@ enum Elm.Cnp_Mode
    plaintext, [[ copy & paste text without markup tag ]]
 }
 
-class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
+class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                  Elm.Interface.Atspi.Text, Elm.Interface.Atspi.Text.Editable, Efl.File,
                  Evas.Selectable_Interface, Evas.Scrollable_Interface)
 {

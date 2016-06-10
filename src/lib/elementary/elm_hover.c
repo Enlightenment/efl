@@ -552,13 +552,13 @@ _hov_dismiss_cb(void *data,
      {
         _hide_signals_emit(data);
         eo_event_callback_call
-          (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+          (data, EFL_UI_EVENT_CLICKED, NULL);
      }
    else
      {
         evas_object_hide(data);
         eo_event_callback_call
-          (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+          (data, EFL_UI_EVENT_CLICKED, NULL);
         eo_event_callback_call(data, ELM_HOVER_EVENT_DISMISSED, NULL);
      } // for backward compatibility
 }
@@ -603,7 +603,7 @@ _elm_hover_evas_object_smart_del(Eo *obj, Elm_Hover_Data *sd)
    if (evas_object_visible_get(obj))
      {
         eo_event_callback_call
-          (obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+          (obj, EFL_UI_EVENT_CLICKED, NULL);
         eo_event_callback_call(obj, ELM_HOVER_EVENT_DISMISSED, NULL);
      }
 

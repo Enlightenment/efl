@@ -428,7 +428,7 @@ _hover_dismissed_cb(void *data, const Eo_Event *event)
 {
    _menu_hide(data, event->object, event->info);
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+     (data, EFL_UI_EVENT_CLICKED, NULL);
    eo_event_callback_call(data, ELM_MENU_EVENT_DISMISSED, NULL);
 
    return EINA_TRUE;
@@ -763,13 +763,13 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
         if (menu_bar)
           {
              eo_event_callback_add
-               (item->submenu.hv, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
+               (item->submenu.hv, EFL_UI_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
              snprintf(style, sizeof(style), "main_menu_submenu//%s", elm_widget_style_get(obj));
              elm_object_style_set(item->submenu.hv, style);
           }
         else
           {
-             eo_event_callback_del(item->submenu.hv, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
+             eo_event_callback_del(item->submenu.hv, EFL_UI_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
              snprintf(style, sizeof(style), "submenu/%s", elm_widget_style_get(obj));
              elm_object_style_set(item->submenu.hv, style);
           }

@@ -1,4 +1,4 @@
-class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm.Interface.Atspi.Selection)
+class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Elm.Interface.Atspi.Selection)
 {
    legacy_prefix: elm_menu;
    eo_prefix: elm_obj_menu;

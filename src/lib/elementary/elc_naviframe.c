@@ -696,7 +696,7 @@ _item_title_prev_btn_unset(Elm_Naviframe_Item_Data *it)
    evas_object_event_callback_del
      (content, EVAS_CALLBACK_DEL, _item_title_prev_btn_del_cb);
    Eo* parent = eo_parent_get(content);
-   eo_event_callback_del(content, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_back_btn_clicked, parent);
+   eo_event_callback_del(content, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, parent);
    it->title_prev_btn = NULL;
    if (it->auto_pushed_btn) it->auto_pushed_btn = NULL;
    return content;
@@ -960,7 +960,7 @@ _on_item_back_btn_clicked(void *data, const Eo_Event *event)
       multiple times on some heavy environment. This callback del will
       prevent those scenario and guarantee only one clicked for it's own
       page. */
-   eo_event_callback_del(event->object, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_back_btn_clicked, data);
+   eo_event_callback_del(event->object, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, data);
    elm_naviframe_item_pop(data);
 
    return EINA_TRUE;
@@ -976,7 +976,7 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
 
    if (!btn) return NULL;
    eo_event_callback_add
-         (btn, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_back_btn_clicked, obj);
+         (btn, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, obj);
    snprintf
      (buf, sizeof(buf), "naviframe/back_btn/%s", elm_widget_style_get(obj));
    elm_object_style_set(btn, buf);
@@ -1494,7 +1494,7 @@ _key_action_top_item_get(Evas_Object *obj, const char *params EINA_UNUSED)
    ///Leave for compatibility.
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_item, it);
    if (it->title_prev_btn)
-     eo_event_callback_call(it->title_prev_btn, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+     eo_event_callback_call(it->title_prev_btn, EFL_UI_EVENT_CLICKED, NULL);
 
    return EINA_TRUE;
 }
@@ -1730,7 +1730,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
                      callback of the auto pushed button should be restored. */
                   if (it->auto_pushed_btn)
                     eo_event_callback_add
-                          (it->auto_pushed_btn, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_back_btn_clicked, obj);
+                          (it->auto_pushed_btn, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, obj);
                   it->popping = EINA_FALSE;
                }
              evas_object_unref(obj);

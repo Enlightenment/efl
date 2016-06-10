@@ -27,7 +27,7 @@ elm_prefs_button_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
    Evas_Object *obj = elm_button_add(prefs);
 
    eo_event_callback_add
-     (obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _item_changed_cb, cb);
+     (obj, EFL_UI_EVENT_CLICKED, _item_changed_cb, cb);
 
    return obj;
 }

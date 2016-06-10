@@ -70,7 +70,7 @@ _activate(Evas_Object *obj)
         if (!elm_widget_disabled_get(obj) &&
             !evas_object_freeze_events_get(obj))
           eo_event_callback_call
-            (obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+            (obj, EFL_UI_EVENT_CLICKED, NULL);
      }
 }
 
@@ -94,7 +94,7 @@ _elm_button_elm_widget_activate(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED, Elm_A
    if (evas_object_freeze_events_get(obj)) return EINA_FALSE;
 
    eo_event_callback_call
-     (obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+     (obj, EFL_UI_EVENT_CLICKED, NULL);
    elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
 
    return EINA_TRUE;
@@ -202,7 +202,7 @@ _autorepeat_send(void *data)
    ELM_BUTTON_DATA_GET_OR_RETURN_VAL(data, sd, ECORE_CALLBACK_CANCEL);
 
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_REPEATED, NULL);
+     (data, EFL_UI_EVENT_REPEATED, NULL);
    if (!sd->repeating)
      {
         sd->timer = NULL;
@@ -243,7 +243,7 @@ _on_pressed_signal(void *data,
      }
 
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_PRESSED, NULL);
+     (data, EFL_UI_EVENT_PRESSED, NULL);
 }
 
 static void
@@ -257,7 +257,7 @@ _on_unpressed_signal(void *data,
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->repeating = EINA_FALSE;
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_UNPRESSED, NULL);
+     (data, EFL_UI_EVENT_UNPRESSED, NULL);
 }
 
 static char *

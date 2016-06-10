@@ -79,7 +79,7 @@ _on_mouse_up(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (!wd->still_in) return;
 
-   eo_event_callback_call(data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+   eo_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static Eina_Bool
@@ -749,7 +749,7 @@ _efl_ui_image_elm_widget_theme_apply(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED)
 static Eina_Bool
 _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+   eo_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
    return EINA_TRUE;
 }
 

@@ -801,7 +801,7 @@ _long_press_cb(void *data)
    sd->long_timer = NULL;
    sd->longpressed = EINA_TRUE;
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_LONGPRESSED, NULL);
+     (data, EFL_UI_EVENT_LONGPRESSED, NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -821,7 +821,7 @@ _mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      eo_event_callback_call
-       (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, NULL);
+       (data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
    else
      eo_event_callback_call(data, ELM_PHOTOCAM_EVENT_PRESS, NULL);
    sd->longpressed = EINA_FALSE;
@@ -846,7 +846,7 @@ _mouse_up_cb(void *data,
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
    if (!sd->on_hold)
      eo_event_callback_call
-       (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+       (data, EFL_UI_EVENT_CLICKED, NULL);
    sd->on_hold = EINA_FALSE;
 }
 

@@ -897,7 +897,7 @@ _create_colorpicker(Evas_Object *obj)
         elm_object_style_set(sd->button, style);
         elm_object_text_set(sd->button, E_("Pick a color"));
         eo_event_callback_add
-              (sd->button, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _start_grab_pick_cb, obj);
+              (sd->button, EFL_UI_EVENT_CLICKED, _start_grab_pick_cb, obj);
         elm_box_pack_end(bx, sd->button);
         evas_object_show(sd->button);
      }
@@ -1246,14 +1246,14 @@ _color_bars_add(Evas_Object *obj)
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.l_button", sd->cb_data[i]->lbt);
         eo_event_callback_add
-          (sd->cb_data[i]->lbt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
+          (sd->cb_data[i]->lbt, EFL_UI_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
         elm_button_autorepeat_set(sd->cb_data[i]->lbt, EINA_TRUE);
         elm_button_autorepeat_initial_timeout_set
           (sd->cb_data[i]->lbt, _elm_config->longpress_timeout);
         elm_button_autorepeat_gap_timeout_set
           (sd->cb_data[i]->lbt, (1.0 / _elm_config->fps));
         eo_event_callback_add
-          (sd->cb_data[i]->lbt, EVAS_CLICKABLE_INTERFACE_EVENT_REPEATED, _button_repeat_cb, sd->cb_data[i]);
+          (sd->cb_data[i]->lbt, EFL_UI_EVENT_REPEATED, _button_repeat_cb, sd->cb_data[i]);
 
         /* load right button */
         if (!sd->cb_data[i]->rbt) sd->cb_data[i]->rbt = elm_button_add(sd->col_bars_area);
@@ -1264,14 +1264,14 @@ _color_bars_add(Evas_Object *obj)
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.r_button", sd->cb_data[i]->rbt);
         eo_event_callback_add
-          (sd->cb_data[i]->rbt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
+          (sd->cb_data[i]->rbt, EFL_UI_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
         elm_button_autorepeat_set(sd->cb_data[i]->rbt, EINA_TRUE);
         elm_button_autorepeat_initial_timeout_set
           (sd->cb_data[i]->rbt, _elm_config->longpress_timeout);
         elm_button_autorepeat_gap_timeout_set
           (sd->cb_data[i]->rbt, (1.0 / _elm_config->fps));
         eo_event_callback_add
-          (sd->cb_data[i]->rbt, EVAS_CLICKABLE_INTERFACE_EVENT_REPEATED, _button_repeat_cb, sd->cb_data[i]);
+          (sd->cb_data[i]->rbt, EFL_UI_EVENT_REPEATED, _button_repeat_cb, sd->cb_data[i]);
      }
 }
 

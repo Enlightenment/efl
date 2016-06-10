@@ -1877,7 +1877,7 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Up"));
    eo_event_callback_add
-     (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_dir_up, obj);
+     (bt, EFL_UI_EVENT_CLICKED, _on_dir_up, obj);
 
    priv->up_button = bt;
    elm_object_style_set(priv->up_button, buf);
@@ -1891,7 +1891,7 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Home"));
    eo_event_callback_add
-     (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _home, obj);
+     (bt, EFL_UI_EVENT_CLICKED, _home, obj);
 
    priv->home_button = bt;
    elm_object_style_set(priv->home_button, buf);
@@ -2112,8 +2112,7 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
         elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
         elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Cancel"));
 
-        eo_event_callback_add
-          (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _canc, obj);
+        eo_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _canc, obj);
 
         sd->cancel_button = bt;
         elm_object_part_content_set(obj, "elm.swallow.cancel", sd->cancel_button);
@@ -2123,8 +2122,7 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
         elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
         elm_object_domain_translatable_text_set(bt, PACKAGE, N_("OK"));
 
-        eo_event_callback_add
-          (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _ok, obj);
+        eo_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _ok, obj);
 
         sd->ok_button = bt;
         elm_object_part_content_set(obj, "elm.swallow.ok", sd->ok_button);

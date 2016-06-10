@@ -216,7 +216,7 @@ _mouse_up(void *data,
    ELM_SAFE_FREE(sd->long_press_timer, ecore_timer_del);
 
    if (!sd->drag_started)
-     eo_event_callback_call(data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+     eo_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static void

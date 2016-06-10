@@ -1910,7 +1910,7 @@ _long_press_cb(void *data)
 
    sd->longpress_timer = NULL;
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_LONGPRESSED, NULL);
+     (data, EFL_UI_EVENT_LONGPRESSED, NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2526,7 +2526,7 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
 
    eo_event_callback_call(obj, ELM_ENTRY_EVENT_ANCHOR_HOVER_OPENED, &ei);
    eo_event_callback_add
-     (sd->anchor_hover.hover, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _anchor_hover_clicked_cb, obj);
+     (sd->anchor_hover.hover, EFL_UI_EVENT_CLICKED, _anchor_hover_clicked_cb, obj);
 
    /* FIXME: Should just check if there's any callback registered to
     * the smart events instead.  This is used to determine if anyone
@@ -2651,7 +2651,7 @@ _entry_mouse_clicked_signal_cb(void *data,
                                const char *source EINA_UNUSED)
 {
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+     (data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static void
@@ -2661,7 +2661,7 @@ _entry_mouse_double_signal_cb(void *data,
                               const char *source EINA_UNUSED)
 {
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, NULL);
+     (data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
 }
 
 static void
@@ -2671,7 +2671,7 @@ _entry_mouse_triple_signal_cb(void *data,
                               const char *source EINA_UNUSED)
 {
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_TRIPLE, NULL);
+     (data, EFL_UI_EVENT_CLICKED_TRIPLE, NULL);
 }
 
 static Evas_Object *
@@ -5313,7 +5313,7 @@ _elm_entry_elm_widget_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Elm_Act
        !evas_object_freeze_events_get(obj))
      {
         eo_event_callback_call
-          (obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+          (obj, EFL_UI_EVENT_CLICKED, NULL);
         if (sd->editable && sd->input_panel_enable)
           edje_object_part_text_input_panel_show(sd->entry_edje, "elm.text");
      }

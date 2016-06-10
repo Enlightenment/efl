@@ -62,7 +62,7 @@ _mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     eo_event_callback_call(obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, NULL);
+     eo_event_callback_call(obj, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
    else
      eo_event_callback_call(obj, ELM_THUMB_EVENT_PRESS, NULL);
 }
@@ -81,7 +81,7 @@ _mouse_up_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (!sd->on_hold)
-     eo_event_callback_call(obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+     eo_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
 
    sd->on_hold = EINA_FALSE;
 }

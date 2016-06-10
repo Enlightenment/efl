@@ -1,6 +1,6 @@
 import elm_icon;
 class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
-                    Evas.Clickable_Interface,
+                    Efl.Ui.Clickable,
                     Elm.Interface.Atspi_Widget_Action)
 {
    legacy_prefix: elm_hoversel;

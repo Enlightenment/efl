@@ -234,8 +234,8 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_pack(bx, o);
    evas_object_show(o);
 
-   eo_event_callback_add(td->button, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _clicked_button1, td);
-   eo_event_callback_add(bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _clicked_button2, td);
+   eo_event_callback_add(td->button, EFL_UI_EVENT_CLICKED, _clicked_button1, td);
+   eo_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _clicked_button2, td);
    eo_event_callback_add(win, EO_EVENT_DEL, _win_del, td);
    eo_event_callback_array_add(o, rect_pointer_callbacks(), td);
    eo_event_callback_array_add(win, win_key_callbacks(), td);

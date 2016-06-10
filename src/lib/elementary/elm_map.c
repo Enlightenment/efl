@@ -1332,7 +1332,7 @@ _long_press_cb(void *data)
 
    sd->long_timer = NULL;
    eo_event_callback_call
-     (sd->obj, EVAS_CLICKABLE_INTERFACE_EVENT_LONGPRESSED, &sd->ev);
+     (sd->obj, EFL_UI_EVENT_LONGPRESSED, &sd->ev);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1352,7 +1352,7 @@ _mouse_down_cb(void *data,
 
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      eo_event_callback_call
-       (sd->obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, ev);
+       (sd->obj, EFL_UI_EVENT_CLICKED_DOUBLE, ev);
    else
      eo_event_callback_call
        (sd->obj, ELM_MAP_EVENT_PRESS, ev);
@@ -1383,7 +1383,7 @@ _mouse_up_cb(void *data,
 
    if (!sd->on_hold)
    eo_event_callback_call
-     (sd->obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, ev);
+     (sd->obj, EFL_UI_EVENT_CLICKED, ev);
    sd->on_hold = EINA_FALSE;
 }
 

@@ -1,5 +1,5 @@
 class Elm.Panes (Elm.Layout, Efl.Orientation,
-                 Evas.Clickable_Interface)
+                 Efl.Ui.Clickable)
 {
    legacy_prefix: elm_panes;
    eo_prefix: elm_obj_panes;

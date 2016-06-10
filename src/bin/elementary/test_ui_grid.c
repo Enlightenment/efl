@@ -511,7 +511,7 @@ append_cb(void *data, const Eo_Event *ev EINA_UNUSED)
    Eo *grid = data;
    Eo *o = elm_button_add(grid);
    elm_object_text_set(o, btn_text("appended"));
-   eo_event_callback_add(o, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, remove_cb, NULL);
+   eo_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
    elm_object_tooltip_text_set(o, "Click to unpack");
    efl_pack_end(grid, o);
    efl_gfx_visible_set(o, 1);
@@ -567,7 +567,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    o = elm_button_add(win);
    elm_object_content_set(o, ico);
    elm_object_text_set(o, "Append");
-   eo_event_callback_add(o, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, append_cb, grid);
+   eo_event_callback_add(o, EFL_UI_EVENT_CLICKED, append_cb, grid);
    efl_pack(hbox, o);
    efl_gfx_visible_set(o, 1);
 
@@ -576,7 +576,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    o = elm_button_add(win);
    elm_object_content_set(o, ico);
    elm_object_text_set(o, "Clear");
-   eo_event_callback_add(o, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, clear_cb, grid);
+   eo_event_callback_add(o, EFL_UI_EVENT_CLICKED, clear_cb, grid);
    efl_pack(hbox, o);
    efl_gfx_visible_set(o, 1);
 
@@ -624,19 +624,19 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    o = elm_button_add(win);
    elm_object_text_set(o, btn_text(NULL));
-   eo_event_callback_add(o, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, remove_cb, NULL);
+   eo_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
    efl_pack(grid, o);
    efl_gfx_visible_set(o, 1);
 
    o = elm_button_add(win);
    elm_object_text_set(o, btn_text(NULL));
-   eo_event_callback_add(o, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, remove_cb, NULL);
+   eo_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
    efl_pack(grid, o);
    efl_gfx_visible_set(o, 1);
 
    o = elm_button_add(win);
    elm_object_text_set(o, btn_text(NULL));
-   eo_event_callback_add(o, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, remove_cb, NULL);
+   eo_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
    efl_pack(grid, o);
    efl_gfx_visible_set(o, 1);
 

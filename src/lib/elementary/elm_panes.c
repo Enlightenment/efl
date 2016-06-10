@@ -141,7 +141,7 @@ _on_clicked(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   eo_event_callback_call(data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+   eo_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static void
@@ -175,7 +175,7 @@ _on_unpressed(void *data,
 
    if (sd->double_clicked)
      {
-        eo_event_callback_call(data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, NULL);
+        eo_event_callback_call(data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
         sd->double_clicked = EINA_FALSE;
      }
 }

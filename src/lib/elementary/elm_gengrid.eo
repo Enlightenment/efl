@@ -8,7 +8,7 @@ enum Elm.Gengrid.Reorder_Type
 }
 
 class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
-                   Evas.Clickable_Interface, Elm.Interface.Atspi_Widget_Action,
+                   Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action,
                    Elm.Interface.Atspi.Selection)
 {
    legacy_prefix: elm_gengrid;

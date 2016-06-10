@@ -1813,7 +1813,7 @@ _mouse_clicked_cb(Elm_Toolbar_Item_Data *it,
    if (button == 1)
      {
         /* regular left click event */
-        eo_event_callback_call(WIDGET(it), EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, EO_OBJ(it));
+        eo_event_callback_call(WIDGET(it), EFL_UI_EVENT_CLICKED, EO_OBJ(it));
         return;
      }
    snprintf(buf, sizeof(buf), "elm,action,click,%d", button);
@@ -2205,7 +2205,7 @@ _long_press_cb(void *data)
    if (sd->reorder_mode)
      _item_reorder_start(it);
 
-   eo_event_callback_call(WIDGET(it), EVAS_CLICKABLE_INTERFACE_EVENT_LONGPRESSED, EO_OBJ(it));
+   eo_event_callback_call(WIDGET(it), EFL_UI_EVENT_LONGPRESSED, EO_OBJ(it));
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2238,7 +2238,7 @@ _mouse_down_cb(Elm_Toolbar_Item_Data *it,
 
    if (ev->button != 1) return;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     eo_event_callback_call(WIDGET(it), EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, EO_OBJ(it));
+     eo_event_callback_call(WIDGET(it), EFL_UI_EVENT_CLICKED_DOUBLE, EO_OBJ(it));
    sd->mouse_down = EINA_TRUE;
    sd->long_press = EINA_FALSE;
    if (sd->long_timer)

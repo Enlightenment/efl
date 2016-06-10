@@ -71,7 +71,7 @@ enum Elm.Map.Route_Method
 
 class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
                Elm.Interface.Atspi_Widget_Action,
-               Evas.Clickable_Interface)
+               Efl.Ui.Clickable)
 {
    legacy_prefix: elm_map;
    eo_prefix: elm_obj_map;

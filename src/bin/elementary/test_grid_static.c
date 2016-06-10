@@ -147,7 +147,7 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Next API function");
-   eo_event_callback_add(bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _api_bt_clicked, api);
+   eo_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _api_bt_clicked, api);
    efl_pack_grid(gd, bt, 30, 0, 40, 10);
    elm_object_disabled_set(bt, api->state == API_STATE_LAST);
    efl_gfx_visible_set(bt, 1);
@@ -176,7 +176,7 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Change");
    efl_pack_grid(gd, bt, 40, 40, 20, 20);
-   eo_event_callback_add(bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _ch_grid, gd);
+   eo_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _ch_grid, gd);
    efl_gfx_visible_set(bt, 1);
 
    rc = eo_add(EFL_CANVAS_RECTANGLE_CLASS, win);

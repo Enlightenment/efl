@@ -1,4 +1,4 @@
-class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_Interface)
+class Elm.Photo (Elm.Widget, Efl.File, Efl.Ui.Clickable, Evas.Draggable_Interface)
 {
    legacy_prefix: elm_photo;
    eo_prefix: elm_obj_photo;

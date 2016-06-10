@@ -1,5 +1,6 @@
-interface Evas.Clickable_Interface ()
+interface Efl.Ui.Clickable ()
 {
+   event_prefix: efl_ui;
    events {
       clicked;
       clicked,double;

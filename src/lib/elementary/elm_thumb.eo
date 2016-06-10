@@ -1,5 +1,5 @@
 
-class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface,
+class Elm.Thumb (Elm.Layout, Efl.File, Efl.Ui.Clickable,
                  Evas.Draggable_Interface)
 {
    legacy_prefix: elm_thumb;

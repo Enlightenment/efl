@@ -1,4 +1,4 @@
-class Elm.Plug (Elm.Widget, Evas.Clickable_Interface)
+class Elm.Plug (Elm.Widget, Efl.Ui.Clickable)
 {
    legacy_prefix: elm_plug;
    eo_prefix: elm_obj_plug;

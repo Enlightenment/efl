@@ -12,7 +12,7 @@ enum Elm.Photocam.Zoom_Mode
 
 class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
                     Elm.Interface.Atspi_Widget_Action, Efl.File,
-                    Evas.Clickable_Interface, Evas.Scrollable_Interface,
+                    Efl.Ui.Clickable, Evas.Scrollable_Interface,
                     Evas.Zoomable_Interface)
 {
    legacy_prefix: elm_photocam;

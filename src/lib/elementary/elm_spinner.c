@@ -57,9 +57,9 @@ static const Elm_Action key_actions[] = {
 };
 
 EO_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
-   { EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _inc_dec_button_clicked_cb},
-   { EVAS_CLICKABLE_INTERFACE_EVENT_PRESSED, _inc_dec_button_pressed_cb},
-   { EVAS_CLICKABLE_INTERFACE_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb},
+   { EFL_UI_EVENT_CLICKED, _inc_dec_button_clicked_cb},
+   { EFL_UI_EVENT_PRESSED, _inc_dec_button_pressed_cb},
+   { EFL_UI_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb},
    { EVAS_OBJECT_EVENT_MOUSE_MOVE, _inc_dec_button_mouse_move_cb }
 );
 
@@ -1195,7 +1195,7 @@ _elm_spinner_evas_object_smart_add(Eo *obj, Elm_Spinner_Data *priv)
         elm_object_style_set(priv->text_button, "spinner/default");
 
         eo_event_callback_add
-          (priv->text_button, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _text_button_clicked_cb, obj);
+          (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
 
         elm_layout_content_set(obj, "elm.swallow.text_button", priv->text_button);
         elm_widget_sub_object_add(obj, priv->text_button);

@@ -239,8 +239,7 @@ _elm_fileselector_button_evas_object_smart_add(Eo *obj, Elm_Fileselector_Button_
 
    elm_widget_mirrored_automatic_set(obj, EINA_FALSE);
 
-   eo_event_callback_add
-         (obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _button_clicked, priv);
+   eo_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _button_clicked, priv);
 
    elm_obj_widget_theme_apply(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);

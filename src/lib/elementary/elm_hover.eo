@@ -7,7 +7,7 @@ enum Elm.Hover.Axis
    both [[ELM_HOVER_AXIS_BOTH -- both.]]
 }
 
-class Elm.Hover (Elm.Layout, Evas.Clickable_Interface, Elm.Interface.Atspi_Widget_Action)
+class Elm.Hover (Elm.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action)
 {
    legacy_prefix: elm_hover;
    eo_prefix: elm_obj_hover;

@@ -278,7 +278,7 @@ _elm_combobox_evas_object_smart_add(Eo *obj, Elm_Combobox_Data *sd EINA_UNUSED)
 
    elm_widget_mirrored_automatic_set(obj, EINA_FALSE);
 
-   eo_event_callback_add(obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_clicked, obj);
+   eo_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _on_clicked, obj);
 
    //What are you doing here?
    elm_obj_widget_theme_apply(obj);
@@ -349,7 +349,7 @@ _mbe_item_added(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(mbe_callbacks,
-       { EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _mbe_clicked_cb },
+       { EFL_UI_EVENT_CLICKED, _mbe_clicked_cb },
        { ELM_WIDGET_EVENT_FOCUSED, _mbe_focused_cb },
        { ELM_WIDGET_EVENT_UNFOCUSED, _mbe_unfocused_cb },
        { ELM_MULTIBUTTONENTRY_EVENT_ITEM_ADDED , _mbe_item_added });
@@ -443,7 +443,7 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    elm_object_style_set(sd->hover, buf);
 
    eo_event_callback_add
-     (sd->hover, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_hover_clicked, obj);
+     (sd->hover, EFL_UI_EVENT_CLICKED, _on_hover_clicked, obj);
    elm_layout_signal_callback_add
      (sd->hover, "elm,action,hide,finished", "elm", _hover_end_finished, obj);
 
@@ -563,7 +563,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
      elm_combobox_hover_begin(obj);
    else
      {
-        eo_event_callback_call(sd->genlist, EVAS_CLICKABLE_INTERFACE_EVENT_PRESSED, sd->item);
+        eo_event_callback_call(sd->genlist, EFL_UI_EVENT_PRESSED, sd->item);
         elm_entry_cursor_end_set(sd->entry);
      }
    return EINA_TRUE;

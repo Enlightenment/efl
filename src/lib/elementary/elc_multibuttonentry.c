@@ -58,7 +58,7 @@ EO_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_MULTIBUTTONENTRY_EVENT_CHANGED, _entry_changed_cb },
    { ELM_WIDGET_EVENT_FOCUSED, _entry_focus_in_cb },
    { ELM_WIDGET_EVENT_UNFOCUSED, _entry_focus_out_cb },
-   { EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _entry_clicked_cb }
+   { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
 );
 
 EOLIAN static Eina_Bool
@@ -969,7 +969,7 @@ _mouse_clicked_signal_cb(void *data EINA_UNUSED,
                          const char *emission EINA_UNUSED,
                          const char *source EINA_UNUSED)
 {
-   eo_event_callback_call(obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+   eo_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static void

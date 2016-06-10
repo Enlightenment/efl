@@ -1,4 +1,4 @@
-class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
+class Elm.Frame (Elm.Layout, Efl.Ui.Clickable)
 {
    legacy_prefix: elm_frame;
    eo_prefix: elm_obj_frame;

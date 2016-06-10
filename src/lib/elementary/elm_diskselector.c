@@ -612,7 +612,7 @@ _item_click_cb(void *data,
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
    eo_event_callback_call
-     (WIDGET(it), EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, eo_it);
+     (WIDGET(it), EFL_UI_EVENT_CLICKED, eo_it);
 }
 
 static char *

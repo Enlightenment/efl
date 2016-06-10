@@ -159,7 +159,7 @@ _field_clicked_cb(void *data, const Eo_Event *event)
 
    diskselector = elm_diskselector_add(elm_widget_top_get(ctx_mod->mod_data.base));
    eo_event_callback_add
-     (diskselector, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _diskselector_cb, NULL);
+     (diskselector, EFL_UI_EVENT_CLICKED, _diskselector_cb, NULL);
    elm_object_style_set(diskselector, buf);
    elm_object_content_set(ctx_mod->ctxpopup, diskselector);
 
@@ -310,7 +310,7 @@ field_create(Elm_Datetime_Module_Data *module_data, Elm_Datetime_Field_Type  fie
      {
         field_obj = elm_button_add(ctx_mod->mod_data.base);
         eo_event_callback_add
-          (field_obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _ampm_clicked_cb, ctx_mod);
+          (field_obj, EFL_UI_EVENT_CLICKED, _ampm_clicked_cb, ctx_mod);
      }
    else
      {
@@ -320,7 +320,7 @@ field_create(Elm_Datetime_Module_Data *module_data, Elm_Datetime_Field_Type  fie
         elm_entry_input_panel_enabled_set(field_obj, EINA_FALSE);
         elm_entry_context_menu_disabled_set(field_obj, EINA_TRUE);
         eo_event_callback_add
-          (field_obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _field_clicked_cb, ctx_mod);
+          (field_obj, EFL_UI_EVENT_CLICKED, _field_clicked_cb, ctx_mod);
      }
    evas_object_data_set(field_obj, "_field_type", (void *)field_type);
 

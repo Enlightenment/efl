@@ -411,7 +411,7 @@ _activate(Evas_Object *obj)
    elm_object_style_set(sd->hover, buf);
 
    eo_event_callback_add
-     (sd->hover, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_hover_clicked, obj);
+     (sd->hover, EFL_UI_EVENT_CLICKED, _on_hover_clicked, obj);
    elm_layout_signal_callback_add
      (sd->hover, "elm,action,hide,finished", "elm", _hover_end_finished, obj);
    elm_hover_target_set(sd->hover, obj);
@@ -566,7 +566,7 @@ _elm_hoversel_evas_object_smart_add(Eo *obj, Elm_Hoversel_Data *priv)
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   eo_event_callback_add(obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_clicked, obj);
+   eo_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _on_clicked, obj);
 
    //What are you doing here?
    elm_obj_widget_theme_apply(obj);
@@ -800,7 +800,7 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
 
     evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
     evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    eo_event_callback_add(bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_clicked, item);
+    eo_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_item_clicked, item);
     eo_event_callback_add(bt, ELM_WIDGET_EVENT_FOCUSED, _item_focused_cb, item);
     eo_event_callback_add(bt, ELM_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, item);
 

@@ -680,7 +680,7 @@ _long_press_cb(void *data)
      return ECORE_CALLBACK_CANCEL;
    sd->longpressed = EINA_TRUE;
    eo_event_callback_call
-     (WIDGET(it), EVAS_CLICKABLE_INTERFACE_EVENT_LONGPRESSED, EO_OBJ(it));
+     (WIDGET(it), EFL_UI_EVENT_LONGPRESSED, EO_OBJ(it));
 
    if (sd->reorder_mode)
      {
@@ -776,11 +776,11 @@ _item_mouse_down_cb(void *data,
    it->highlight_cb(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
-        eo_event_callback_call(WIDGET(it), EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, EO_OBJ(it));
+        eo_event_callback_call(WIDGET(it), EFL_UI_EVENT_CLICKED_DOUBLE, EO_OBJ(it));
         eo_event_callback_call(WIDGET(it), ELM_GENGRID_EVENT_ACTIVATED, EO_OBJ(it));
      }
 
-   eo_event_callback_call(WIDGET(it), EVAS_CLICKABLE_INTERFACE_EVENT_PRESSED, EO_OBJ(it));
+   eo_event_callback_call(WIDGET(it), EFL_UI_EVENT_PRESSED, EO_OBJ(it));
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    if (it->realized)
      it->long_timer = ecore_timer_add
@@ -1041,7 +1041,7 @@ _item_mouse_up_cb(void *data,
         if (dy < 0) dy = -dy;
         if ((dx < 5) && (dy < 5))
           eo_event_callback_call
-            (WIDGET(it), EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_RIGHT, EO_OBJ(it));
+            (WIDGET(it), EFL_UI_EVENT_CLICKED_RIGHT, EO_OBJ(it));
         return;
      }
 

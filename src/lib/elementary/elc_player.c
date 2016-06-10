@@ -535,7 +535,7 @@ _player_button_add(Evas_Object *obj,
             elm_widget_style_get(obj));
    elm_object_style_set(bt, buf);
    eo_event_callback_add
-            (bt, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, func, obj);
+            (bt, EFL_UI_EVENT_CLICKED, func, obj);
    snprintf(buf, sizeof(buf), "elm.swallow.media_player.%s", name);
    if (!elm_layout_content_set(obj, buf, bt))
      {
