@@ -45,6 +45,12 @@ _efl_ui_grid_static_efl_pack_layout_layout_do(Eo_Class *klass EINA_UNUSED,
    wl = w;
    hl = h;
    mirror = elm_widget_mirrored_get(obj);
+
+   if (!gd->req_cols || !gd->req_rows)
+     {
+        WRN("Grid.Static size must be set before using! Default to 100x100.");
+        efl_pack_grid_size_set(obj, 100, 100);
+     }
    vwl = gd->req_cols;
    vhl = gd->req_rows;
 

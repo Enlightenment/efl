@@ -41,7 +41,7 @@ set_api_state(api_data *api)
          break;
 
       case GRID_UNPACK: /* 1 */
-         elm_grid_unpack(dt->grid, dt->child);
+         efl_pack_unpack(dt->grid, dt->child);
          eo_del(dt->child);
          break;
 
@@ -113,8 +113,18 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                 efl_ui_win_autodel_set(eo_self, EINA_TRUE),
                 eo_event_callback_add(eo_self, EO_EVENT_DEL, _win_del, api));
 
-   gd = eo_add(EFL_UI_GRID_STATIC_CLASS, win,
-               efl_gfx_size_hint_weight_set(eo_self, 1, 1));
+   static int run_count = 0;
+   if (((run_count++) % 2) == 0)
+     {
+        gd = eo_add(EFL_UI_GRID_STATIC_CLASS, win,
+                    efl_gfx_size_hint_weight_set(eo_self, 1, 1));
+     }
+   else
+     {
+        gd = eo_add(EFL_UI_GRID_CLASS, win,
+                    efl_gfx_size_hint_weight_set(eo_self, 1, 1),
+                    efl_pack_layout_engine_set(eo_self, EFL_UI_GRID_STATIC_CLASS, NULL));
+     }
    efl_pack(win, gd);
    api->data.grid = gd;
    efl_gfx_visible_set(gd, 1);
