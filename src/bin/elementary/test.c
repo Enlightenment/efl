@@ -239,6 +239,7 @@ void test_win_socket(void *data, Evas_Object *obj, void *event_info);
 void test_win_plug(void *data, Evas_Object *obj, void *event_info);
 void test_win_wm_rotation(void *data, Evas_Object *obj, void *event_info);
 void test_grid(void *data, Evas_Object *obj, void *event_info);
+void test_grid_static(void *data, Evas_Object *obj, void *event_info);
 void test_glview_simple(void *data, Evas_Object *obj, void *event_info);
 void test_glview(void *data, Evas_Object *obj, void *event_info);
 void test_glview_manygears(void *data, Evas_Object *obj, void *event_info);
@@ -599,6 +600,7 @@ add_tests:
    ADD_TEST(NULL, "New Containers", "Ui.Box", test_ui_box);
    ADD_TEST(NULL, "New Containers", "Ui.Grid", test_ui_grid);
    ADD_TEST(NULL, "New Containers", "Ui.Grid Linear", test_ui_grid_linear);
+   ADD_TEST(NULL, "New Containers", "Ui.Grid.Static", test_grid_static);
 
    //------------------------------//
    ADD_TEST(NULL, "New Events", "Event Refeed", test_events);
