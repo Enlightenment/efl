@@ -572,7 +572,7 @@ _item_mouse_move_cb(void *data,
    if ((it->dragging) && (it->down))
      {
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
-        eo_event_callback_call(WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG, eo_it);
+        eo_event_callback_call(WIDGET(it), EFL_UI_EVENT_DRAG, eo_it);
         return;
      }
 
@@ -625,13 +625,13 @@ _item_mouse_move_cb(void *data,
 
         if (!elm_widget_mirrored_get(WIDGET(it)))
           {
-             left_drag = EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_LEFT;
-             right_drag = EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_RIGHT;
+             left_drag = EFL_UI_EVENT_DRAG_START_LEFT;
+             right_drag = EFL_UI_EVENT_DRAG_START_RIGHT;
           }
         else
           {
-             left_drag = EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_RIGHT;
-             right_drag = EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_LEFT;
+             left_drag = EFL_UI_EVENT_DRAG_START_RIGHT;
+             right_drag = EFL_UI_EVENT_DRAG_START_LEFT;
           }
 
         it->dragging = 1;
@@ -646,7 +646,7 @@ _item_mouse_move_cb(void *data,
           {
              if (ady > adx)
                eo_event_callback_call
-                     (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_UP, eo_it);
+                     (WIDGET(it), EFL_UI_EVENT_DRAG_START_UP, eo_it);
              else
                {
                   if (dx < 0)
@@ -657,7 +657,7 @@ _item_mouse_move_cb(void *data,
           {
              if (ady > adx)
                eo_event_callback_call
-                 (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_DOWN, eo_it);
+                 (WIDGET(it), EFL_UI_EVENT_DRAG_START_DOWN, eo_it);
              else
                {
                   if (dx < 0)
@@ -1060,7 +1060,7 @@ _item_mouse_up_cb(void *data,
      {
         it->dragging = EINA_FALSE;
         eo_event_callback_call
-          (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_STOP, eo_it);
+          (WIDGET(it), EFL_UI_EVENT_DRAG_STOP, eo_it);
         dragged = EINA_TRUE;
      }
 

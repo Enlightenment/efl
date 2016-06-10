@@ -3864,7 +3864,7 @@ _item_mouse_move_cb(void *data,
           }
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         eo_event_callback_call
-          (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG, eo_it);
+          (WIDGET(it), EFL_UI_EVENT_DRAG, eo_it);
         return;
      }
    if ((!it->down) || (sd->longpressed))
@@ -3941,30 +3941,30 @@ _item_mouse_move_cb(void *data,
           {
              if (ady > adx)
                eo_event_callback_call
-                 (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_UP, eo_it);
+                 (WIDGET(it), EFL_UI_EVENT_DRAG_START_UP, eo_it);
              else
                {
                   if (dx < 0)
                     eo_event_callback_call
-                      (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_LEFT, eo_it);
+                      (WIDGET(it), EFL_UI_EVENT_DRAG_START_LEFT, eo_it);
                   else
                     eo_event_callback_call
-                      (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_RIGHT, eo_it);
+                      (WIDGET(it), EFL_UI_EVENT_DRAG_START_RIGHT, eo_it);
                }
           }
         else
           {
              if (ady > adx)
                eo_event_callback_call
-                 (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_DOWN, eo_it);
+                 (WIDGET(it), EFL_UI_EVENT_DRAG_START_DOWN, eo_it);
              else
                {
                   if (dx < 0)
                     eo_event_callback_call
-                      (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_LEFT, eo_it);
+                      (WIDGET(it), EFL_UI_EVENT_DRAG_START_LEFT, eo_it);
                   else
                     eo_event_callback_call
-                      (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START_RIGHT, eo_it);
+                      (WIDGET(it), EFL_UI_EVENT_DRAG_START_RIGHT, eo_it);
                }
           }
      }
@@ -4157,7 +4157,7 @@ _item_multi_down_cb(void *data,
      {
         it->dragging = EINA_FALSE;
         eo_event_callback_call
-              (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_STOP, EO_OBJ(it));
+              (WIDGET(it), EFL_UI_EVENT_DRAG_STOP, EO_OBJ(it));
      }
    ELM_SAFE_FREE(it->item->swipe_timer, ecore_timer_del);
    if (sd->on_hold)
@@ -4878,7 +4878,7 @@ _item_mouse_up_cb(void *data,
      {
         it->dragging = EINA_FALSE;
         eo_event_callback_call
-              (WIDGET(it), EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_STOP, EO_OBJ(it));
+              (WIDGET(it), EFL_UI_EVENT_DRAG_STOP, EO_OBJ(it));
         dragged = 1;
      }
    ELM_SAFE_FREE(it->item->swipe_timer, ecore_timer_del);

@@ -10,7 +10,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/evas_common_interface.eo \
 	lib/evas/canvas/evas_canvas.eo \
 	lib/evas/canvas/efl_canvas_image_internal.eo \
-	lib/evas/canvas/evas_draggable_interface.eo \
+	lib/evas/canvas/efl_ui_draggable.eo \
 	lib/evas/canvas/efl_ui_clickable.eo \
 	lib/evas/canvas/evas_scrollable_interface.eo \
 	lib/evas/canvas/evas_selectable_interface.eo \

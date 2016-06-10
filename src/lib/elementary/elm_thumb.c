@@ -654,7 +654,7 @@ elm_thumb_ethumb_client_connected_get(void)
 }
 
 EOLIAN static void
-_elm_thumb_evas_draggable_interface_drag_target_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bool edit)
+_elm_thumb_efl_ui_draggable_drag_target_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bool edit)
 {
    edit = !!edit;
    if (sd->edit == edit) return;
@@ -677,7 +677,7 @@ _elm_thumb_evas_draggable_interface_drag_target_set(Eo *obj, Elm_Thumb_Data *sd,
 }
 
 EOLIAN static Eina_Bool
-_elm_thumb_evas_draggable_interface_drag_target_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
+_elm_thumb_efl_ui_draggable_drag_target_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
 {
    return sd->edit;
 }
@@ -704,14 +704,14 @@ elm_thumb_file_get(const Eo *obj, const char **file, const char **key)
 EAPI Eina_Bool
 elm_thumb_editable_set(Evas_Object *obj, Eina_Bool edit)
 {
-   evas_draggable_interface_drag_target_set(obj, edit);
+   efl_ui_draggable_drag_target_set(obj, edit);
    return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 elm_thumb_editable_get(const Evas_Object *obj)
 {
-   return evas_draggable_interface_drag_target_get(obj);
+   return efl_ui_draggable_drag_target_get(obj);
 }
 
 EAPI void

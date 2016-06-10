@@ -1,6 +1,6 @@
 
 class Elm.Thumb (Elm.Layout, Efl.File, Efl.Ui.Clickable,
-                 Evas.Draggable_Interface)
+                 Efl.Ui.Draggable)
 {
    legacy_prefix: elm_thumb;
    eo_prefix: elm_obj_thumb;
@@ -14,8 +14,8 @@ class Elm.Thumb (Elm.Layout, Efl.File, Efl.Ui.Clickable,
       Evas.Object.Smart.add;
       Evas.Object.Smart.del;
       Evas.Object.Smart.show;
-      Evas.Draggable_Interface.drag_target.set;
-      Evas.Draggable_Interface.drag_target.get;
+      Efl.Ui.Draggable.drag_target.set;
+      Efl.Ui.Draggable.drag_target.get;
    }
    events {
       generate,error;

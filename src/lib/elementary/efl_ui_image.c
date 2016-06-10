@@ -1250,7 +1250,7 @@ _efl_ui_image_efl_flipable_flip_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
  * Turns on editing through drag and drop and copy and paste.
  */
 EOLIAN static void
-_efl_ui_image_evas_draggable_interface_drag_target_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool edit)
+_efl_ui_image_efl_ui_draggable_drag_target_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool edit)
 {
    if (sd->edje)
      {
@@ -1281,7 +1281,7 @@ _efl_ui_image_evas_draggable_interface_drag_target_set(Eo *obj, Efl_Ui_Image_Dat
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_evas_draggable_interface_drag_target_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_ui_draggable_drag_target_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->edit;
 }
@@ -1711,13 +1711,13 @@ elm_image_smooth_get(const Evas_Object *obj)
 EAPI void
 elm_image_editable_set(Evas_Object *obj, Eina_Bool edit)
 {
-   evas_draggable_interface_drag_target_set(obj, edit);
+   efl_ui_draggable_drag_target_set(obj, edit);
 }
 
 EAPI Eina_Bool
 elm_image_editable_get(const Evas_Object *obj)
 {
-   return evas_draggable_interface_drag_target_get(obj);
+   return efl_ui_draggable_drag_target_get(obj);
 }
 
 EAPI Eina_Bool

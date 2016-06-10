@@ -1,14 +1,16 @@
-interface Evas.Draggable_Interface ()
+interface Efl.Ui.Draggable ()
 {
+   event_prefix: efl_ui;
    methods {
         @property drag_target {
              [[Contrtol whether the object's content is changed by drag and drop.
 
-               If $drag_target is true, the object can be target of dragging object and 
-               the content of this object can be changed into dragging content.
-               For example, If object deals with image and $drag_target is true, user can drag
-               new image and drop it into this object. 
-               And then this object's image can be changed into new image.]]
+               If $drag_target is true, the object can be target of dragging
+               object and the content of this object can be changed into
+               dragging content. For example, If object deals with image and
+               $drag_target is true, user can drag new image and drop it into
+               this object. And then this object's image can be changed into
+               new image.]]
              set {
              }
              get {
@@ -18,7 +20,7 @@ interface Evas.Draggable_Interface ()
              }
         }
    }
-   
+
    events {
       drag;
       drag,start;

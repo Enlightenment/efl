@@ -109,7 +109,7 @@ _drag_done_cb(void *unused EINA_UNUSED,
    ELM_PHOTO_DATA_GET(obj, sd);
 
    elm_object_scroll_freeze_pop(obj);
-   eo_event_callback_call(obj, EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_END, NULL);
+   eo_event_callback_call(obj, EFL_UI_EVENT_DRAG_END, NULL);
    sd->drag_started = EINA_FALSE;
 }
 
@@ -174,7 +174,7 @@ _long_press_cb(void *obj)
           {
              elm_object_scroll_freeze_push(obj);
              eo_event_callback_call
-               (obj, EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START, NULL);
+               (obj, EFL_UI_EVENT_DRAG_START, NULL);
              sd->drag_started = EINA_TRUE;
           }
      }
