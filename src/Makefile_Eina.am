@@ -98,7 +98,8 @@ lib/eina/eina_vector.h \
 lib/eina/eina_inline_vector.x \
 lib/eina/eina_promise.h \
 lib/eina/eina_bezier.h \
-lib/eina/eina_safepointer.h
+lib/eina/eina_safepointer.h \
+lib/eina/eina_inline_safepointer.x
 
 lib_eina_libeina_la_SOURCES = \
 lib/eina/eina_abi.c \
