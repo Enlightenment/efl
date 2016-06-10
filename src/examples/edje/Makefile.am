@@ -85,6 +85,9 @@ red.png \
 test.png \
 Vera.ttf \
 duck.wav \
+en_IN/domain_name.po \
+hi_IN/domain_name.po \
+ta_IN/domain_name.mo \
 Makefile.examples
 
 SRCS = \
