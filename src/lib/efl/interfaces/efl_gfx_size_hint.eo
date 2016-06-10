@@ -122,7 +122,7 @@ interface Efl.Gfx.Size.Hint
             h: int; [[Integer to use as the preferred height hint.]]
          }
       }
-      @property hint_restricted_min @protected {
+      @property hint_restricted_min {
          [[Internal hints for an object's minimum size.
 
            This is not a size enforcement in any way, it's just a hint
@@ -136,6 +136,8 @@ interface Efl.Gfx.Size.Hint
            this size internally, so any change to it from an application
            might be ignored. Use @.hint_min instead.
          ]]
+         set @protected {}
+         get {}
          values {
             w: int; [[Integer to use as the minimum width hint.]]
             h: int; [[Integer to use as the minimum height hint.]]
