@@ -2,7 +2,6 @@
 # error You shall not include this header directly
 #endif
 
-#include "canvas/evas_signal_interface.eo.h"
 #include "canvas/evas_draggable_interface.eo.h"
 #include "canvas/evas_clickable_interface.eo.h"
 #include "canvas/evas_scrollable_interface.eo.h"
@@ -10,7 +9,6 @@
 #include "canvas/evas_zoomable_interface.eo.h"
 
 // Interface classes links
-#define EVAS_SMART_SIGNAL_INTERFACE     EVAS_SIGNAL_INTERFACE_INTERFACE
 #define EVAS_SMART_CLICKABLE_INTERFACE  EVAS_CLICKABLE_INTERFACE_INTERFACE
 #define EVAS_SMART_SCROLLABLE_INTERFACE EVAS_SCROLLABLE_INTERFACE_INTERFACE
 #define EVAS_SMART_DRAGGABLE_INTERFACE  EVAS_DRAGGABLE_INTERFACE_INTERFACE
