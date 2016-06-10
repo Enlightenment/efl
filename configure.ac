@@ -463,6 +463,8 @@ AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
 
 AC_CHECK_SIZEOF([uintptr_t])
+EINA_SIZEOF_UINTPTR_T=$ac_cv_sizeof_uintptr_t
+AC_SUBST([EINA_SIZEOF_UINTPTR_T])
 
 AC_CHECK_TYPES([siginfo_t], [], [],
    [[

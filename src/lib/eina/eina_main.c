@@ -155,6 +155,7 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
    S(thread_queue);
    S(rbtree);
    S(promise);
+   S(safepointer);
 /* no model for now
    S(model);
  */
@@ -202,7 +203,8 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(cpu),
    S(thread_queue),
    S(rbtree),
-   S(promise)
+   S(promise),
+   S(safepointer)
 /* no model for now
    S(model)
  */

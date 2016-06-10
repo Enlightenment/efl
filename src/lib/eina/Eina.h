@@ -270,6 +270,7 @@ extern "C" {
 #include <eina_quaternion.h>
 #include <eina_promise.h>
 #include <eina_bezier.h>
+#include <eina_safepointer.h>
 
 #undef EAPI
 #define EAPI
