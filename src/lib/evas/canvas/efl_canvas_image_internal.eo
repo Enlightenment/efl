@@ -1,4 +1,4 @@
-abstract Efl.Canvas.Image.Internal (Evas.Object, Evas.Filter,
+abstract Efl.Canvas.Image.Internal (Evas.Object, Efl.Canvas.Filter.Internal,
                                     Efl.Image, Efl.Gfx.Buffer,
                                     Efl.Gfx.Fill, Efl.Gfx.View,
                                     Efl.Orientation, Efl.Flipable,
@@ -38,8 +38,8 @@ abstract Efl.Canvas.Image.Internal (Evas.Object, Evas.Filter,
       Efl.Gfx.Fill.fill_auto.set;
       Efl.Gfx.Filter.filter_program.set;
       Efl.Gfx.View.view_size.get;
-      Evas.Filter.filter_input_alpha;
-      Evas.Filter.filter_input_render;
-      Evas.Filter.filter_dirty;
+      Efl.Canvas.Filter.Internal.filter_input_alpha;
+      Efl.Canvas.Filter.Internal.filter_input_render;
+      Efl.Canvas.Filter.Internal.filter_dirty;
    }
 }

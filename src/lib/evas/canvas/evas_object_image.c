@@ -1621,7 +1621,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_evas_filter_filter_dirty(Eo *eo_obj, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_canvas_filter_internal_filter_dirty(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1630,7 +1630,7 @@ _efl_canvas_image_internal_evas_filter_filter_dirty(Eo *eo_obj, Evas_Image_Data 
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_image_internal_evas_filter_filter_input_alpha(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o EINA_UNUSED)
+_efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_alpha(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -1644,7 +1644,7 @@ _efl_canvas_image_internal_efl_gfx_filter_filter_program_set(Eo *obj, Evas_Image
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_image_internal_evas_filter_filter_input_render(Eo *eo_obj, Evas_Image_Data *o,
+_efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(Eo *eo_obj, Evas_Image_Data *o,
                                                            void *_filter, void *context,
                                                            int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
                                                            Eina_Bool do_async)

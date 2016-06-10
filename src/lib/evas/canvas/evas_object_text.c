@@ -1,10 +1,10 @@
-#define EVAS_FILTER_PROTECTED
+#define EFL_CANVAS_FILTER_INTERNAL_PROTECTED
 
 #include "evas_common_private.h" /* Includes evas_bidi_utils stuff. */
 #include "evas_private.h"
 
 #include "../efl/interfaces/efl_gfx_filter.eo.h"
-#include "evas_filter.eo.h"
+#include "efl_canvas_filter_internal.eo.h"
 #include "evas_filter.h"
 
 #define MY_CLASS EVAS_TEXT_CLASS
@@ -1663,7 +1663,7 @@ evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
 /* ugly binding between evas_fitler_mixin.c and this object */
 
 EOLIAN static void
-_evas_text_evas_filter_filter_dirty(Eo *eo_obj, Evas_Text_Data *o)
+_evas_text_efl_canvas_filter_internal_filter_dirty(Eo *eo_obj, Evas_Text_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1674,13 +1674,13 @@ _evas_text_evas_filter_filter_dirty(Eo *eo_obj, Evas_Text_Data *o)
 }
 
 EOLIAN static Eina_Bool
-_evas_text_evas_filter_filter_input_alpha(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o EINA_UNUSED)
+_evas_text_efl_canvas_filter_internal_filter_input_alpha(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_evas_text_evas_filter_filter_input_render(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o,
+_evas_text_efl_canvas_filter_internal_filter_input_render(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o,
                                            void *_filter, void *drawctx,
                                            int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
                                            Eina_Bool do_async)

@@ -41,7 +41,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_surface_tbm.eo \
 	lib/evas/canvas/efl_canvas_surface_x11.eo \
 	lib/evas/canvas/efl_canvas_surface_wayland.eo \
-	lib/evas/canvas/evas_filter.eo \
+	lib/evas/canvas/efl_canvas_filter_internal.eo \
 	lib/evas/canvas/evas_smart_clipped.eo \
 	lib/evas/canvas/efl_event_input.eo \
 	lib/evas/canvas/efl_event_key.eo \

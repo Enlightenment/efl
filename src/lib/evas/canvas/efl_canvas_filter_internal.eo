@@ -1,8 +1,9 @@
-mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
+mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Eo.Base)
 {
    [[Evas internal implementation of filters.]]
 
    eo_prefix: evas;
+   data: Evas_Filter_Data;
 
    methods {
       @property filter_changed @protected {
@@ -22,11 +23,11 @@ mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
          }
       }
       filter_input_alpha @protected @virtual_pure {
-         [[Called by Evas.Filter to determine whether the input is alpha or rgba.]]
+         [[Called by Efl.Canvas.Filter.Internal to determine whether the input is alpha or rgba.]]
          return: bool;
       }
       filter_input_render @protected @virtual_pure {
-         [[Called by Evas.Filter when the parent class must render the input.
+         [[Called by Efl.Canvas.Filter.Internal when the parent class must render the input.
          ;
          ]]
          return: bool; [[Indicates success from the object render function.]]

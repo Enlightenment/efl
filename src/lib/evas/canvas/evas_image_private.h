@@ -5,7 +5,7 @@
  * new efl_canvas classes (image, snapshot, proxy, ...)
  */
 
-#define EVAS_FILTER_PROTECTED
+#define EFL_CANVAS_FILTER_INTERNAL_PROTECTED
 #define EVAS_OBJECT_PROTECTED
 
 #include "evas_common_private.h"
@@ -26,7 +26,7 @@
 #include "../common/evas_convert_yuv.h"
 
 #include "canvas/evas_image.eo.h"
-#include "evas_filter.eo.h"
+#include "canvas/efl_canvas_filter_internal.eo.h"
 #include "evas_filter.h"
 
 /* private struct for rectangle object internal data */
