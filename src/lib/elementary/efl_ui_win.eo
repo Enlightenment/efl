@@ -593,7 +593,6 @@ class Efl.Ui.Win (Elm.Widget, Elm.Interface.Atspi.Window,
          }
          get {
             [[If the object is not window object, return #ELM_WIN_UNKNOWN.]]
-            legacy: null;
          }
          values {
             type: Efl.Ui.Win.Type(Efl.Ui.Win.Type.unknown);
