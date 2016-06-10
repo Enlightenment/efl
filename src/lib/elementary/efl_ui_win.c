@@ -4237,6 +4237,12 @@ _efl_ui_win_name_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *name)
    sd->name = eina_stringshare_add(name);
 }
 
+EOLIAN static const char *
+_efl_ui_win_name_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return sd->name;
+}
+
 EOLIAN static void
 _efl_ui_win_noblank_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, Eina_Bool noblank)
 {

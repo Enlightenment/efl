@@ -567,6 +567,7 @@ class Efl.Ui.Win (Elm.Widget, Elm.Interface.Atspi.Window,
             [[Can only be used at creation time, within \@ref eo_add.]]
             legacy: null;
          }
+         get {}
          values {
             name: string @nullable;
          }
