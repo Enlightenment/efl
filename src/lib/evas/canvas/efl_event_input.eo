@@ -16,13 +16,13 @@ interface Efl.Event.Input (Efl.Event)
             flags: Efl.Event.Flags;
          }
       }
-      @property on_hold {
+      @property processed {
          [[$true if @.event_flags indicates the event is on hold.]]
          values {
             val: bool;
          }
       }
-      @property on_scroll {
+      @property scrolling {
          [[$true if @.event_flags indicates the event happened while scrolling.]]
          values {
             val: bool;

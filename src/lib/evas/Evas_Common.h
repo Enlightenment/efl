@@ -352,8 +352,8 @@ typedef Efl_Pointer_Flags                  Evas_Button_Flags;
 typedef Efl_Event_Flags                    Evas_Event_Flags;
 
 #define EVAS_EVENT_FLAG_NONE               EFL_EVENT_FLAGS_NONE
-#define EVAS_EVENT_FLAG_ON_HOLD            EFL_EVENT_FLAGS_ON_HOLD
-#define EVAS_EVENT_FLAG_ON_SCROLL          EFL_EVENT_FLAGS_ON_SCROLL
+#define EVAS_EVENT_FLAG_ON_HOLD            EFL_EVENT_FLAGS_PROCESSED
+#define EVAS_EVENT_FLAG_ON_SCROLL          EFL_EVENT_FLAGS_SCROLLING
 
 typedef Efl_Gfx_Size_Hint_Aspect           Evas_Aspect_Control; /**< Aspect types/policies for scaling size hints, used for evas_object_size_hint_aspect_set */
 

@@ -377,33 +377,33 @@ _efl_event_pointer_triple_click_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data 
 }
 
 EOLIAN static void
-_efl_event_pointer_efl_event_input_on_hold_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Eina_Bool val)
+_efl_event_pointer_efl_event_input_processed_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Eina_Bool val)
 {
    if (val)
-     pd->event_flags |= EFL_EVENT_FLAGS_ON_HOLD;
+     pd->event_flags |= EFL_EVENT_FLAGS_PROCESSED;
    else
-     pd->event_flags &= ~EFL_EVENT_FLAGS_ON_HOLD;
+     pd->event_flags &= ~EFL_EVENT_FLAGS_PROCESSED;
 }
 
 EOLIAN static Eina_Bool
-_efl_event_pointer_efl_event_input_on_hold_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
+_efl_event_pointer_efl_event_input_processed_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
 {
-   return !!(pd->event_flags & EFL_EVENT_FLAGS_ON_HOLD);
+   return !!(pd->event_flags & EFL_EVENT_FLAGS_PROCESSED);
 }
 
 EOLIAN static void
-_efl_event_pointer_efl_event_input_on_scroll_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Eina_Bool val)
+_efl_event_pointer_efl_event_input_scrolling_set(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd, Eina_Bool val)
 {
    if (val)
-     pd->event_flags |= EFL_EVENT_FLAGS_ON_SCROLL;
+     pd->event_flags |= EFL_EVENT_FLAGS_SCROLLING;
    else
-     pd->event_flags &= ~EFL_EVENT_FLAGS_ON_SCROLL;
+     pd->event_flags &= ~EFL_EVENT_FLAGS_SCROLLING;
 }
 
 EOLIAN static Eina_Bool
-_efl_event_pointer_efl_event_input_on_scroll_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
+_efl_event_pointer_efl_event_input_scrolling_get(Eo *obj EINA_UNUSED, Efl_Event_Pointer_Data *pd)
 {
-   return !!(pd->event_flags & EFL_EVENT_FLAGS_ON_SCROLL);
+   return !!(pd->event_flags & EFL_EVENT_FLAGS_SCROLLING);
 }
 
 EOLIAN static Eina_Bool

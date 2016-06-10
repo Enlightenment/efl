@@ -30,6 +30,14 @@ enum Efl.Event.Flags
 {
    /* Evas.Event_Flags */
    none = 0,             [[No fancy flags set]]
-   on_hold = (1 << 0),   [[This event is being delivered but should be put "on hold" until the on hold flag is unset. The event should be used for informational purposes and maybe some indications visually, but not actually perform anything]]
-   on_scroll = (1 << 1), [[This event flag indicates the event occurs while scrolling; for example, DOWN event occurs during scrolling; the event should be used for informational purposes and maybe some indications visually, but not actually perform anything]]
+   processed = (1 << 0), [[This event is being delivered and has been processed,
+                           so it should be put "on hold" until the flag is unset.
+                           The event should be used for informational purposes
+                           and maybe some indications visually, but not
+                           actually perform anything.]]
+   scrolling = (1 << 1), [[This event flag indicates the event occurs while
+                           scrolling; for example, DOWN event occurs during
+                           scrolling. The event should be used for informational
+                           purposes and maybe some indications visually, but not
+                           actually perform anything.]]
 }
