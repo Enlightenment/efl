@@ -302,11 +302,11 @@ inline void type_def::set(Eolian_Type const* eolian_type)
        {
          complex_type_def complex
           {{::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, {}}, {}};
-         for(efl::eina::iterator<Eolian_Type const> type_iterator( ::eolian_type_subtypes_get(eolian_type))
-               , type_last; type_iterator != type_last; ++type_iterator)
+         Eolian_Type const* stp = eolian_type_base_type_get(eolian_type);
+         while (stp)
            {
-             Eolian_Type const* type = &*type_iterator;
-             complex.subtypes.push_back({type});
+              complex.subtypes.push_back({stp});
+              stp = eolian_type_next_type_get(stp);
            }
          original_type = complex;
        }

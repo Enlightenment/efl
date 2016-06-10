@@ -10,11 +10,9 @@ database_type_del(Eolian_Type *tp)
 {
    if (!tp) return;
    const char *sp;
-   Eolian_Type *stp;
    if (tp->base.file) eina_stringshare_del(tp->base.file);
-   if (tp->subtypes) EINA_LIST_FREE(tp->subtypes, stp)
-     database_type_del(stp);
    database_type_del(tp->base_type);
+   database_type_del(tp->next_type);
    if (tp->name) eina_stringshare_del(tp->name);
    if (tp->full_name) eina_stringshare_del(tp->full_name);
    if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)

@@ -379,15 +379,9 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
              if(!has_promise && !strcmp(ptype, "Eina_Promise *") &&
                 (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) && pdir == EOLIAN_INOUT_PARAM)
                {
-                  Eina_Iterator* promise_values;
                   has_promise = EINA_TRUE;
                   promise_param_name = eina_stringshare_add(pname);
-                  promise_values = eolian_type_subtypes_get(ptypet);
-                  Eolian_Type* subtype;
-                  if(eina_iterator_next(promise_values, (void**)&subtype))
-                    {
-                      promise_value_type = eolian_type_c_type_get(subtype);
-                    }
+                  promise_value_type = eolian_type_c_type_get(eolian_type_base_type_get(ptypet));
                   eina_strbuf_append_printf(impl_full_params, ", Eina_Promise_Owner *%s%s",
                          pname, is_empty && !dflt_value ?" EINA_UNUSED":"");
                   eina_strbuf_append_printf(params, "__eo_promise");

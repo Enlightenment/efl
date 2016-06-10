@@ -207,9 +207,8 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
              result = "efl::eina::js::make_complex_tag<" + result;
 
              bool has_subtypes = false;
-             auto subtypes = eolian_type_subtypes_get(btp);
-             const Eolian_Type *subtype;
-             EINA_ITERATOR_FOREACH(subtypes, subtype)
+             const Eolian_Type *subtype = eolian_type_base_type_get(btp);
+             while (subtype)
                {
                  auto t = _eolian_type_cpp_type_named_get(subtype, caller_class_prefix, need_name_getter);
                  auto k = type_class_name(subtype);
@@ -223,6 +222,7 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
                       result += ", " + t + ", ::efl::eina::js::nonclass_cls_name_getter";
                    }
                  has_subtypes = true;
+                 subtype = eolian_type_next_type_get(subtype);
                }
 
              if (!has_subtypes)

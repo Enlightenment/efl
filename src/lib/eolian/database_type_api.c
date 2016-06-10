@@ -105,17 +105,6 @@ eolian_typedecl_type_get(const Eolian_Typedecl *tp)
 }
 
 EAPI Eina_Iterator *
-eolian_type_subtypes_get(const Eolian_Type *tp)
-{
-   Eolian_Type_Type tpt;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   tpt = tp->type;
-   if ((tpt != EOLIAN_TYPE_COMPLEX) || !tp->subtypes)
-     return NULL;
-   return eina_list_iterator_new(tp->subtypes);
-}
-
-EAPI Eina_Iterator *
 eolian_typedecl_struct_fields_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
@@ -260,6 +249,13 @@ eolian_type_base_type_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    return tp->base_type;
+}
+
+EAPI const Eolian_Type *
+eolian_type_next_type_get(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   return tp->next_type;
 }
 
 EAPI const Eolian_Typedecl *

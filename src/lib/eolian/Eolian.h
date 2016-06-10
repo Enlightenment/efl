@@ -1652,16 +1652,6 @@ EAPI Eina_Stringshare *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
 EAPI Eolian_Type_Type eolian_type_type_get(const Eolian_Type *tp);
 
 /*
- * @brief Get an iterator to all subtypes of a type.
- *
- * @param[in] tp the type.
- * @return the iterator when @c tp is a complex type.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_type_subtypes_get(const Eolian_Type *tp);
-
-/*
  * @brief Get the filename of a type.
  *
  * @param[in] tp the type.
@@ -1672,14 +1662,31 @@ EAPI Eina_Iterator *eolian_type_subtypes_get(const Eolian_Type *tp);
 EAPI Eina_Stringshare *eolian_type_file_get(const Eolian_Type *tp);
 
 /*
- * @brief Get the base type of a pointer type.
+ * @brief Get the base type of a type.
+ *
+ * For pointers, this is the type before the star and for complex types,
+ * this is the first inner type.
  *
  * @param[in] tp the type.
- * @return the base type when @c tp is a pointer, NULL otherwise.
+ * @return the base type or NULL.
  *
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_type_base_type_get(const Eolian_Type *tp);
+
+/*
+ * @brief Get the next inner type of a complex type.
+ *
+ * The inner types of a complex type form a chain. Therefore, you first retrieve
+ * the first one via eolian_type_base_type_get and then get the next one via
+ * this API function called on the first inner type if necessary.
+ *
+ * @param[in] tp the type.
+ * @return the next type or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Type *eolian_type_next_type_get(const Eolian_Type *tp);
 
 /*
  * @brief Get the declaration a regular type points to.
