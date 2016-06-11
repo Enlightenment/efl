@@ -925,7 +925,7 @@ endif
 
 if BUILD_QUICKLAUNCH
 bin_elementary_elementary_quicklaunch_SOURCES = bin/elementary/quicklaunch.c
-bin_elementary_elementary_quicklaunch_LDADD = @USE_ELEMENTARY_LIBS@
+bin_elementary_elementary_quicklaunch_LDADD = @USE_ELEMENTARY_LIBS@ @requirements_libs_elm@
 bin_elementary_elementary_quicklaunch_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 bin_elementary_elementary_quicklaunch_CPPFLAGS = \
 -I$(top_srcdir) \
@@ -947,7 +947,7 @@ bin_elementary_elementary_run_CPPFLAGS = -I$(top_srcdir) \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\"
 
 bin_elementary_elementary_run_SOURCES = bin/elementary/run.c
-bin_elementary_elementary_run_LDADD =
+bin_elementary_elementary_run_LDADD = @requirements_libs_elm@
 bin_elementary_elementary_run_LDFLAGS =
 endif
 endif

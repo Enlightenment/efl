@@ -16,5 +16,5 @@ Name: elementary
 Description: Enlightenment Widgets library
 Requires.private: @requirements_pc_elementary@
 Version: @VERSION@
-Libs: -L${libdir} -lelementary -lefl -leina -lpthread -leet -levas -lecore -lecore_evas -lecore_file -lecore_input -ledje -leo -lethumb_client -lemotion -lecore_imf -lecore_con -leldbus -lefreet -lefreet_mime -lefreet_trash -leio @requirements_public_libs_elementary@ @requirements_public_libs_eina@ @requirements_libs_eina@
+Libs: -L${libdir} -lelementary -lefl -leina -lpthread -leet -levas -lecore -lecore_evas -lecore_file -lecore_input -ledje -leo -lethumb_client -lemotion -lecore_imf -lecore_con -leldbus -lefreet -lefreet_mime -lefreet_trash -leio @requirements_public_libs_elementary@ @requirements_public_libs_eina@ @requirements_libs_eina@ @requirements_libs_elm@
 Cflags: -I${includedir}/elementary-@VMAJ@

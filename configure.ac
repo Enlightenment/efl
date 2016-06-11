@@ -5479,7 +5479,7 @@ case "$host_os" in
       AC_CHECK_LIB([socket], [connect],
          [
           have_socket="yes"
-          requirement_elm_libs="-lsocket ${requirement_elm_libs}"
+          requirements_libs_elm="-lsocket ${requirements_libs_elm}"
          ],
          [have_socket="no"])
       ;;
@@ -5490,6 +5490,8 @@ case "$host_os" in
       have_socket="yes"
       ;;
 esac
+
+AC_SUBST([requirements_libs_elm])
 
 AM_CONDITIONAL([BUILD_RUN], [test "x$have_socket" = "xyes"])
 
