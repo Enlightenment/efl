@@ -269,6 +269,7 @@ START_TEST(eina_test_pointer_promise_manual_then)
    eina_promise_owner_default_manual_then_set(promise_owner, EINA_TRUE);
 
    promise = eina_promise_owner_promise_get(promise_owner);
+   eina_promise_ref(promise);
 
    eina_promise_then(promise, &_eina_test_promise_cb, NULL, &ran);
 
@@ -277,6 +278,7 @@ START_TEST(eina_test_pointer_promise_manual_then)
    ck_assert(!ran);
 
    eina_promise_owner_default_call_then(promise_owner);
+   eina_promise_unref(promise);
 
    ck_assert(ran);
 
@@ -685,7 +687,7 @@ END_TEST
 void
 eina_test_promise(TCase *tc)
 {
-  /* // pointer */
+   // pointer
    tcase_add_test(tc, eina_test_pointer_promise_normal_lifetime);
    tcase_add_test(tc, eina_test_pointer_promise_normal_lifetime_all);
    tcase_add_test(tc, eina_test_pointer_promise_error_set);

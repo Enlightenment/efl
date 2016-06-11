@@ -27,6 +27,9 @@ static int _eina_promise_log_dom = -1;
 #define EINA_MAGIC_CHECK_PROMISE_OWNER(promise)               \
   do {if(!EINA_MAGIC_CHECK(promise, EINA_MAGIC_PROMISE_OWNER))  \
       {EINA_MAGIC_FAIL(promise, EINA_MAGIC_PROMISE_OWNER);} } while(0)
+#define EINA_PROMISE_SAFE_GET_OR_RETURN(x, y, v)                        \
+  x = eina_safepointer_get((Eina_Safepointer const*)y);                 \
+  if(!x) return v
 
 typedef struct _Eina_Promise_Then_Cb _Eina_Promise_Then_Cb;
 typedef struct _Eina_Promise_Progress_Cb _Eina_Promise_Progress_Cb;
@@ -75,7 +78,7 @@ struct _Eina_Promise_Owner_Progress_Notify_Data
 
 struct _Eina_Promise_Default
 {
-   Eina_Promise vtable;
+   Eina_Promise_VTable vtable;
    Eina_Error error;
    size_t value_size;
 
@@ -84,6 +87,7 @@ struct _Eina_Promise_Default
    Eina_Inlist *cancel_callbacks;
    Eina_Inlist *progress_notify_callbacks;
    Eina_Promise_Free_Cb value_free_cb;
+   Eina_Promise* promise_pointer;
 
    int ref;
 
@@ -97,9 +101,9 @@ struct _Eina_Promise_Default
 
 struct _Eina_Promise_Default_Owner
 {
-   Eina_Promise_Owner owner_vtable;
+   Eina_Promise_Owner_VTable owner_vtable;
    _Eina_Promise_Default promise;
-
+   Eina_Promise_Owner* owner_pointer;
    void* pointer_value;
 };
 
@@ -290,7 +294,7 @@ _eina_promise_then(_Eina_Promise_Default* p, Eina_Promise_Cb callback,
 
    EINA_INLIST_FOREACH(promise->promise.progress_notify_callbacks, notify_data)
      {
-        (*notify_data->callback)(notify_data->data, &promise->owner_vtable);
+        (*notify_data->callback)(notify_data->data, promise->owner_pointer);
      }
    _eina_promise_free_callback_list(&promise->promise.progress_notify_callbacks, &free);
    
@@ -372,7 +376,7 @@ _eina_promise_progress_cb_add(_Eina_Promise_Default* promise, Eina_Promise_Progr
    promise->progress_callbacks = eina_inlist_append(promise->progress_callbacks, EINA_INLIST_GET(cb));
    EINA_INLIST_FOREACH(owner->promise.progress_notify_callbacks, notify_data)
      {
-       (*notify_data->callback)(notify_data->data, &owner->owner_vtable);
+       (*notify_data->callback)(notify_data->data, owner->owner_pointer);
      }
    _eina_promise_free_callback_list(&owner->promise.progress_notify_callbacks,
                                     &_eina_promise_free_progress_notify_callback_node);
@@ -417,18 +421,16 @@ _eina_promise_ref_get(_Eina_Promise_Default* p)
 static Eina_Promise *
 _eina_promise_owner_promise_get(_Eina_Promise_Default_Owner* p)
 {
-   return &p->promise.vtable;
+   return p->promise.promise_pointer;
 }
 
-void
+EAPI void
 eina_promise_owner_default_cancel_cb_add(Eina_Promise_Owner* p,
 					 Eina_Promise_Default_Cancel_Cb callback, void* data,
 					 Eina_Promise_Free_Cb free_cb)
 {
-   _Eina_Promise_Default_Owner *promise;
+   _Eina_Promise_Default_Owner* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, p, );
    _Eina_Promise_Cancel_Cb *cb;
-
-   promise = (_Eina_Promise_Default_Owner *)p;
 
    cb = malloc(sizeof(struct _Eina_Promise_Cancel_Cb));
 
@@ -486,6 +488,7 @@ static void eina_promise_add_internal(_Eina_Promise_Default_Owner* p)
 
    p->promise.is_first_then = EINA_TRUE;
    p->promise.ref = 1;
+   p->promise.promise_pointer = eina_promise_override(&p->promise.vtable);
 
    p->owner_vtable.version = EINA_PROMISE_VERSION;
    p->owner_vtable.value_set = EINA_FUNC_PROMISE_OWNER_VALUE_SET(_eina_promise_owner_value_set);
@@ -496,6 +499,7 @@ static void eina_promise_add_internal(_Eina_Promise_Default_Owner* p)
    p->owner_vtable.progress = EINA_FUNC_PROMISE_OWNER_PROGRESS(_eina_promise_owner_progress);
    p->owner_vtable.progress_notify = EINA_FUNC_PROMISE_OWNER_PROGRESS_NOTIFY(_eina_promise_owner_progress_notify);
    EINA_MAGIC_SET(&p->owner_vtable, EINA_MAGIC_PROMISE_OWNER);
+   p->owner_pointer = eina_promise_owner_override(&p->owner_vtable);
 }
 
 EAPI Eina_Promise_Owner *
@@ -504,25 +508,28 @@ eina_promise_add()
    _Eina_Promise_Default_Owner* p;
    p = calloc(sizeof(_Eina_Promise_Default_Owner), 1);
    eina_promise_add_internal(p);   
-   return &p->owner_vtable;
+   return p->owner_pointer;
 }
 
-void
+EAPI void
 eina_promise_owner_default_manual_then_set(Eina_Promise_Owner* owner, Eina_Bool is_manual)
 {
-   _Eina_Promise_Default_Owner* p = (_Eina_Promise_Default_Owner*)owner;
+   _Eina_Promise_Default_Owner* EINA_PROMISE_SAFE_GET_OR_RETURN(p, owner, );
+   EINA_MAGIC_CHECK_PROMISE_OWNER(&p->owner_vtable);
 
    p->promise.is_manual_then = is_manual;
 }
 
-void
-eina_promise_owner_default_call_then(Eina_Promise_Owner* promise)
+EAPI void
+eina_promise_owner_default_call_then(Eina_Promise_Owner* owner)
 {
-   _Eina_Promise_Default_Owner* owner = (_Eina_Promise_Default_Owner*)promise;
+   _Eina_Promise_Default_Owner* EINA_PROMISE_SAFE_GET_OR_RETURN(p, owner, );
+   EINA_MAGIC_CHECK_PROMISE_OWNER(&p->owner_vtable);
 
-   _eina_promise_then_calls(owner);
+   _eina_promise_then_calls(p);
 }
 
+// eina_promise_all implementation
 static void
 _eina_promise_all_compose_then_cb(void *data, void* value EINA_UNUSED)
 {
@@ -538,7 +545,7 @@ _eina_promise_all_compose_then_cb(void *data, void* value EINA_UNUSED)
              _eina_promise_finish(promise);
           }
      }
-   eina_promise_unref(&promise->promise.vtable);
+   eina_promise_unref(promise->promise.promise_pointer);
 }
 
 static void
@@ -553,7 +560,7 @@ _eina_promise_all_compose_error_then_cb(void *data, Eina_Error error)
         promise->promise.error = error;
         _eina_promise_finish(promise);
      }
-   eina_promise_unref(&promise->promise.vtable);
+   eina_promise_unref(promise->promise.promise_pointer);
 }
 
 static void
@@ -572,6 +579,7 @@ _eina_promise_all_free(_Eina_Promise_Iterator* value)
 Eina_Promise *
 eina_promise_all(Eina_Iterator* it)
 {
+   Eina_Promise_Owner *safe_promise;
    _Eina_Promise_Default_Owner *promise;
    Eina_Promise* current;
    Eina_Array* promises;
@@ -589,13 +597,11 @@ eina_promise_all(Eina_Iterator* it)
 
    eina_iterator_free(it);
 
-   promise = (_Eina_Promise_Default_Owner*)eina_promise_add();
-   internal_it = malloc(sizeof(_Eina_Promise_Iterator) +
-                        sizeof(_Eina_Promise_Default_Owner*) * eina_array_count_get(promises));
+   promise = eina_safepointer_get((Eina_Safepointer*)(safe_promise = eina_promise_add()));
+   internal_it = promise->pointer_value = malloc(sizeof(_Eina_Promise_Iterator) +
+                                                 sizeof(_Eina_Promise_Default_Owner*) * eina_array_count_get(promises));
 
    promise->promise.value_free_cb = (Eina_Promise_Free_Cb)&_eina_promise_all_free;
-
-   promise->pointer_value = (void*)internal_it;
 
    _eina_promise_iterator_setup(internal_it, promises);
 
@@ -605,13 +611,13 @@ eina_promise_all(Eina_Iterator* it)
      {
         eina_promise_ref(*cur_promise); // We need to keep the value alive until this promise is freed
         // We need to keep the all promise alive while there are callbacks registered to it
-        eina_promise_ref(&promise->promise.vtable);
+        eina_promise_ref(promise->promise.promise_pointer);
         eina_promise_then(*cur_promise, &_eina_promise_all_compose_then_cb,
                           &_eina_promise_all_compose_error_then_cb, promise);
      }
 
    eina_array_free(promises);
-   return &promise->promise.vtable;
+   return promise->promise.promise_pointer;
 }
 
 static Eina_Bool
@@ -686,19 +692,6 @@ _eina_promise_progress_notify_finish(void* data)
     eina_promise_unref(eina_promise_owner_promise_get(owner));
 }
 
-EAPI Eina_Promise*
-eina_promise_progress_notification(Eina_Promise_Owner* promise)
-{
-  Eina_Promise_Owner* owner;
-
-  owner = eina_promise_add();
-
-  eina_promise_owner_progress_notify(promise, &_eina_promise_progress_notify_fulfilled, owner,
-                                     &_eina_promise_progress_notify_finish);
-
-  return eina_promise_owner_promise_get(owner);
-}
-
 // Race implementation
 static void _eina_promise_race_unref(_Eina_Promise_Race* p)
 {
@@ -721,8 +714,8 @@ _eina_promise_race_compose_then_cb(void *data, void* value EINA_UNUSED)
    _Eina_Promise_Race* race_promise = info->self;
 
    if (!race_promise->promise_default.promise.has_finished)
-     eina_promise_owner_value_set(&race_promise->promise_default.owner_vtable, value, NULL);
-   eina_promise_unref(&race_promise->promise_default.promise.vtable);
+     eina_promise_owner_value_set(race_promise->promise_default.owner_pointer, value, NULL);
+   eina_promise_unref(race_promise->promise_default.promise.promise_pointer);
 }
 
 static void
@@ -732,8 +725,8 @@ _eina_promise_race_compose_error_then_cb(void *data, Eina_Error error)
    _Eina_Promise_Race* race_promise = info->self;
 
    if (!race_promise->promise_default.promise.has_finished)
-     eina_promise_owner_error_set(&race_promise->promise_default.owner_vtable, error);
-   eina_promise_unref(&race_promise->promise_default.promise.vtable);
+     eina_promise_owner_error_set(race_promise->promise_default.owner_pointer, error);
+   eina_promise_unref(race_promise->promise_default.promise.promise_pointer);
 }
 
 Eina_Promise *
@@ -771,21 +764,52 @@ eina_promise_race(Eina_Iterator* it)
         cur_promise->self = promise;
         eina_promise_ref(cur_promise->promise); // We need to keep the value alive until this promise is freed
         // We need to keep the all promise alive while there are callbacks registered to it
-        eina_promise_ref(&promise->promise_default.promise.vtable);
+        eina_promise_ref(promise->promise_default.promise.promise_pointer);
         eina_promise_then(cur_promise->promise, &_eina_promise_race_compose_then_cb,
                           &_eina_promise_race_compose_error_then_cb, cur_promise);
      }
 
    eina_array_free(promises);
-   return &promise->promise_default.promise.vtable;
+   return promise->promise_default.promise.promise_pointer;
 }
 
 // API functions
+EAPI Eina_Promise_Owner* eina_promise_owner_override(Eina_Promise_Owner_VTable* owner)
+{
+   _EINA_PROMISE_NULL_CHECK(owner, NULL);
+   EINA_MAGIC_CHECK_PROMISE_OWNER(owner);
+   Eina_Safepointer const* p = eina_safepointer_register(owner);
+   return (Eina_Promise_Owner*)p;
+}
+
+EAPI Eina_Promise* eina_promise_override(Eina_Promise_VTable* promise)
+{
+   _EINA_PROMISE_NULL_CHECK(promise, NULL);
+   EINA_MAGIC_CHECK_PROMISE(promise);
+   Eina_Safepointer const* p = eina_safepointer_register(promise);
+   return (Eina_Promise*)p;
+}
+
+EAPI Eina_Promise*
+eina_promise_progress_notification(Eina_Promise_Owner* safe_promise)
+{
+  Eina_Promise_Owner_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, NULL);
+  Eina_Promise_Owner* owner;
+
+  owner = eina_promise_add();
+
+  eina_promise_owner_progress_notify(safe_promise, &_eina_promise_progress_notify_fulfilled, owner,
+                                     &_eina_promise_progress_notify_finish);
+
+  return eina_promise_owner_promise_get(owner);
+}
+
 EAPI void
-eina_promise_then(Eina_Promise* promise, Eina_Promise_Cb callback,
+eina_promise_then(Eina_Promise* safe_promise, Eina_Promise_Cb callback,
 		  Eina_Promise_Error_Cb error_cb, void* data)
 {
-   if(!promise)
+   Eina_Promise_VTable* promise = eina_safepointer_get((void*)safe_promise);
+   if(!safe_promise || !promise)
      {
         if(!error_cb)
           {
@@ -801,122 +825,137 @@ eina_promise_then(Eina_Promise* promise, Eina_Promise_Cb callback,
 }
 
 EAPI void
-eina_promise_owner_value_set(Eina_Promise_Owner* promise, const void* value, Eina_Promise_Free_Cb free)
+eina_promise_owner_value_set(Eina_Promise_Owner* safe_promise, const void* value, Eina_Promise_Free_Cb free)
 {
+   Eina_Promise_Owner_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, );
    _EINA_PROMISE_NULL_CHECK(promise, );
    EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    promise->value_set(promise, value, free);
 }
 
 EAPI void
-eina_promise_owner_error_set(Eina_Promise_Owner* promise, Eina_Error error)
+eina_promise_owner_error_set(Eina_Promise_Owner* safe_promise, Eina_Error error)
 {
+   Eina_Promise_Owner_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, );
    _EINA_PROMISE_NULL_CHECK(promise, );
    EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    promise->error_set(promise, error);
 }
 
 EAPI void *
-eina_promise_value_get(Eina_Promise const* promise)
+eina_promise_value_get(Eina_Promise const* safe_promise)
 {
+   Eina_Promise_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, NULL);
    _EINA_PROMISE_NULL_CHECK(promise, NULL);
    EINA_MAGIC_CHECK_PROMISE(promise);
    return promise->value_get(promise);
 }
 
 EAPI Eina_Error
-eina_promise_error_get(Eina_Promise const* promise)
+eina_promise_error_get(Eina_Promise const* safe_promise)
 {
+   Eina_Promise_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, 0);
    _EINA_PROMISE_NULL_CHECK(promise, EINA_ERROR_PROMISE_NULL);
    EINA_MAGIC_CHECK_PROMISE(promise);
    return promise->error_get(promise);
 }
 
 EAPI Eina_Bool
-eina_promise_pending_is(Eina_Promise const* promise)
+eina_promise_pending_is(Eina_Promise const* safe_promise)
 {
+   Eina_Promise_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, EINA_FALSE);
    _EINA_PROMISE_NULL_CHECK(promise, EINA_FALSE);
    EINA_MAGIC_CHECK_PROMISE(promise);
    return promise->pending_is(promise);
 }
 
 EAPI void
-eina_promise_progress_cb_add(Eina_Promise* promise, Eina_Promise_Progress_Cb callback, void* data,
+eina_promise_progress_cb_add(Eina_Promise* safe_promise, Eina_Promise_Progress_Cb callback, void* data,
                              Eina_Promise_Free_Cb free_cb)
 {
+   Eina_Promise_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, );
    _EINA_PROMISE_NULL_CHECK(promise, );
    EINA_MAGIC_CHECK_PROMISE(promise);
    promise->progress_cb_add(promise, callback, data, free_cb);
 }
 
 EAPI void
-eina_promise_cancel(Eina_Promise* promise)
+eina_promise_cancel(Eina_Promise* safe_promise)
 {
+   Eina_Promise_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, );
    _EINA_PROMISE_NULL_CHECK(promise, );
    EINA_MAGIC_CHECK_PROMISE(promise);
    promise->cancel(promise);
 }
 
 EAPI void
-eina_promise_ref(Eina_Promise* promise)
+eina_promise_ref(Eina_Promise* safe_promise)
 {
+   Eina_Promise_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, );
    _EINA_PROMISE_NULL_CHECK(promise, );
    EINA_MAGIC_CHECK_PROMISE(promise);
    promise->ref(promise);
 }
 
 EAPI void
-eina_promise_unref(Eina_Promise* promise)
+eina_promise_unref(Eina_Promise* safe_promise)
 {
+   Eina_Promise_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, );
    _EINA_PROMISE_NULL_CHECK(promise, );
    EINA_MAGIC_CHECK_PROMISE(promise);
    promise->unref(promise);
 }
 
 EAPI int
-eina_promise_ref_get(Eina_Promise* promise)
+eina_promise_ref_get(Eina_Promise* safe_promise)
 {
+   Eina_Promise_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, 0);
    _EINA_PROMISE_NULL_CHECK(promise, 0);
    EINA_MAGIC_CHECK_PROMISE(promise);
    return promise->ref_get(promise);
 }
 
 EAPI Eina_Promise *
-eina_promise_owner_promise_get(Eina_Promise_Owner* promise)
+eina_promise_owner_promise_get(Eina_Promise_Owner* safe_promise)
 {
+   Eina_Promise_Owner_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, NULL);
    _EINA_PROMISE_NULL_CHECK(promise, NULL);
    EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    return promise->promise_get(promise);
 }
 
 EAPI Eina_Bool
-eina_promise_owner_pending_is(Eina_Promise_Owner const* promise)
+eina_promise_owner_pending_is(Eina_Promise_Owner const* safe_promise)
 {
+   Eina_Promise_Owner_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, EINA_FALSE);
    _EINA_PROMISE_NULL_CHECK(promise, EINA_FALSE);
    EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    return promise->pending_is(promise);
 }
 
 EAPI Eina_Bool
-eina_promise_owner_cancelled_is(Eina_Promise_Owner const* promise)
+eina_promise_owner_cancelled_is(Eina_Promise_Owner const* safe_promise)
 {
+   Eina_Promise_Owner_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, EINA_FALSE);
    _EINA_PROMISE_NULL_CHECK(promise, EINA_FALSE);
    EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    return promise->cancelled_is(promise);
 }
 
 EAPI void
-eina_promise_owner_progress(Eina_Promise_Owner const* promise, void* progress)
+eina_promise_owner_progress(Eina_Promise_Owner const* safe_promise, void* progress)
 {
+   Eina_Promise_Owner_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, );
    _EINA_PROMISE_NULL_CHECK(promise, );
    EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    promise->progress(promise, progress);
 }
 
 EAPI void
-eina_promise_owner_progress_notify(Eina_Promise_Owner* promise, Eina_Promise_Progress_Notify_Cb progress_cb,
+eina_promise_owner_progress_notify(Eina_Promise_Owner* safe_promise, Eina_Promise_Progress_Notify_Cb progress_cb,
                                    void* data, Eina_Promise_Free_Cb free_cb)
 {
+   Eina_Promise_Owner_VTable* EINA_PROMISE_SAFE_GET_OR_RETURN(promise, safe_promise, );
    _EINA_PROMISE_NULL_CHECK(promise, );
    EINA_MAGIC_CHECK_PROMISE_OWNER(promise);
    promise->progress_notify(promise, progress_cb, data, free_cb);
