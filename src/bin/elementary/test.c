@@ -279,6 +279,13 @@ void test_layout_disable(void *data, Evas_Object *obj, void *event_info);
 
 void test_colorclass(void *data, Evas_Object *obj, void *event_info);
 
+void test_code_welcome(void *data, Evas_Object *obj, void *event_info);
+void test_code_editor(void *data, Evas_Object *obj, void *event_info);
+void test_code_mirror(void *data, Evas_Object *obj, void *event_info);
+void test_code_log(void *data, Evas_Object *obj, void *event_info);
+void test_code_diff(void *data, Evas_Object *obj, void *event_info);
+void test_code_diff_inline(void *data, Evas_Object *obj, void *event_info);
+
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
 Eina_List *tests;
@@ -623,6 +630,14 @@ add_tests:
    ADD_TEST(NULL, "Entries", "Entry Anchor", test_entry_anchor);
    ADD_TEST(NULL, "Entries", "Entry Anchor2", test_entry_anchor2);
    ADD_TEST(NULL, "Entries", "Entry Emoticon", test_entry_emoticon);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Advanced Entries", "Code Entry Markup", test_code_welcome);
+   ADD_TEST(NULL, "Advanced Entries", "Code Editor", test_code_editor);
+   ADD_TEST(NULL, "Advanced Entries", "Mirrored Editor", test_code_mirror);
+   ADD_TEST(NULL, "Advanced Entries", "Logger", test_code_log);
+   ADD_TEST(NULL, "Advanced Entries", "Diff Comparison", test_code_diff);
+   ADD_TEST(NULL, "Advanced Entries", "Diff Inline", test_code_diff_inline);
 
    //------------------------------//
    ADD_TEST(NULL, "Buttons", "Button", test_button);

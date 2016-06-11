@@ -727,8 +727,7 @@ bin_PROGRAMS += \
 bin/elementary/elementary_test \
 bin/elementary/elementary_config \
 bin/elementary/elementary_codegen \
-bin/elementary/elm_prefs_cc \
-bin/elementary/elementary_code
+bin/elementary/elm_prefs_cc
 
 if BUILD_QUICKLAUNCH
 bin_PROGRAMS += \
@@ -756,6 +755,7 @@ bin/elementary/test_calendar.c \
 bin/elementary/test_check.c \
 bin/elementary/test_clock.c \
 bin/elementary/test_cnp.c \
+bin/elementary/test_code.c \
 bin/elementary/test_colorselector.c \
 bin/elementary/test_colorclass.c \
 bin/elementary/test_combobox.c \
@@ -866,22 +866,6 @@ bin_elementary_elementary_test_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/elementary\" \
-@ELEMENTARY_CFLAGS@
-
-bin_elementary_elementary_code_SOURCES = \
-bin/elementary/elm_code_test_main.c \
-bin/elementary/elm_code_test_private.h
-bin_elementary_elementary_code_LDADD = @USE_ELEMENTARY_LIBS@
-bin_elementary_elementary_code_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
-bin_elementary_elementary_code_CPPFLAGS = \
--I$(top_srcdir) \
--I$(top_srcdir)/src/lib/elementary \
--I$(top_builddir)/src/lib/elementary \
--I$(top_srcdir)/src/bin/elementary \
--DPACKAGE_BIN_DIR=\"$(bindir)\" \
--DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/elementary\" \
--DLOCALE_DIR=\"$(localedir)\" \
 @ELEMENTARY_CFLAGS@
 
 bin_elementary_elementary_config_SOURCES = bin/elementary/config.c
