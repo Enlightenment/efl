@@ -224,7 +224,7 @@ _file_direct_ls_main_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_Fi
 }
 
 static void
-_ls_direct_notify_start(void* data, Eina_Promise_Owner *promise)
+_ls_direct_notify_start(void* data, Eina_Promise_Owner *promise EINA_UNUSED)
 {
    Job_Closure *operation_data = (Job_Closure*)data;
    char* path = operation_data->delayed_arg;
@@ -236,8 +236,6 @@ _ls_direct_notify_start(void* data, Eina_Promise_Owner *promise)
          _file_error_cb,
          operation_data);
    operation_data->file = handle;
-
-   promise->progress_notify = NULL;
 }
 
 static void
@@ -251,7 +249,7 @@ _free_notify_start_data(void *data)
 }
 
 static void
-_ls_notify_start(void *data, Eina_Promise_Owner* promise)
+_ls_notify_start(void *data, Eina_Promise_Owner* promise EINA_UNUSED)
 {
    Job_Closure *operation_data = (Job_Closure*)data;
    char* path = operation_data->delayed_arg;
@@ -263,12 +261,10 @@ _ls_notify_start(void *data, Eina_Promise_Owner* promise)
          _file_error_cb,
          operation_data);
    operation_data->file = handle;
-
-   promise->progress_notify = NULL; // Don't ever think about calling me again...
 }
 
 static void
-_xattr_notify_start(void *data, Eina_Promise_Owner *promise)
+_xattr_notify_start(void *data, Eina_Promise_Owner *promise EINA_UNUSED)
 {
    Job_Closure *operation_data = (Job_Closure*)data;
    char* path = operation_data->delayed_arg;
@@ -280,8 +276,6 @@ _xattr_notify_start(void *data, Eina_Promise_Owner *promise)
          _file_error_cb,
          operation_data);
    operation_data->file = handle;
-
-   promise->progress_notify = NULL; // Don't ever think about calling me again...
 }
 
 static void
