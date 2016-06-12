@@ -1121,9 +1121,12 @@ elementary_fdo_categories_128_files = \
 
 elementary_fdo_emblems_96_files = \
 	elementary/themes/fdo/emblems/96/emblem-default.png \
+	elementary/themes/fdo/emblems/96/emblem-documents.png \
 	elementary/themes/fdo/emblems/96/emblem-downloads.png \
 	elementary/themes/fdo/emblems/96/emblem-favorite.png \
 	elementary/themes/fdo/emblems/96/emblem-important.png \
+	elementary/themes/fdo/emblems/96/emblem-mail.png \
+	elementary/themes/fdo/emblems/96/emblem-photos.png \
 	elementary/themes/fdo/emblems/96/emblem-readonly.png \
 	elementary/themes/fdo/emblems/96/emblem-shared.png \
 	elementary/themes/fdo/emblems/96/emblem-symbolic-link.png \

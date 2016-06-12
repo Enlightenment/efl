@@ -89,9 +89,12 @@ ICO2(CTX, "start-here")
 ////  emblems  ////////////////////////////////////////////////////////////////
 #define CTX "emblems"
 ICO1(CTX, "emblem-default", 96)
+ICO1(CTX, "emblem-documents", 96)
 ICO1(CTX, "emblem-downloads", 96)
 ICO1(CTX, "emblem-favorite", 96)
 ICO1(CTX, "emblem-important", 96)
+ICO1(CTX, "emblem-mail", 96)
+ICO1(CTX, "emblem-photos", 96)
 ICO1(CTX, "emblem-readonly", 96)
 ICO1(CTX, "emblem-shared", 96)
 ICO1(CTX, "emblem-symbolic-link", 96)
@@ -99,9 +102,6 @@ ICO1(CTX, "emblem-unreadable", 96)
 ICO1(CTX, "emblem-system", 96)
 ICO1(CTX, "emblem-synchronized", 96)
 ICO1(CTX, "emblem-synchronizing", 96) /* */
-// TODO emblem-documents
-// TODO emblem-mail
-// TODO emblem-photos
 #undef CTX
 
 
