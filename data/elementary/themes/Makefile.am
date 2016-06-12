@@ -1346,6 +1346,100 @@ elementary_fdo_apps_64_files = \
 	elementary/themes/fdo/apps/64/preferences-desktop-wallpaper.png \
 	elementary/themes/fdo/apps/64/preferences-profile.png
 
+elementary_fdo_intl_128_files = \
+	elementary/themes/fdo/intl/128/flag-ad.png \
+	elementary/themes/fdo/intl/128/flag-af.png \
+	elementary/themes/fdo/intl/128/flag-al.png \
+	elementary/themes/fdo/intl/128/flag-am.png \
+	elementary/themes/fdo/intl/128/flag-ar.png \
+	elementary/themes/fdo/intl/128/flag-at.png \
+	elementary/themes/fdo/intl/128/flag-au.png \
+	elementary/themes/fdo/intl/128/flag-az.png \
+	elementary/themes/fdo/intl/128/flag-ba.png \
+	elementary/themes/fdo/intl/128/flag-bd.png \
+	elementary/themes/fdo/intl/128/flag-be.png \
+	elementary/themes/fdo/intl/128/flag-bg.png \
+	elementary/themes/fdo/intl/128/flag-br.png \
+	elementary/themes/fdo/intl/128/flag-bt.png \
+	elementary/themes/fdo/intl/128/flag-bw.png \
+	elementary/themes/fdo/intl/128/flag-by.png \
+	elementary/themes/fdo/intl/128/flag-ca.png \
+	elementary/themes/fdo/intl/128/flag-cd.png \
+	elementary/themes/fdo/intl/128/flag-ch.png \
+	elementary/themes/fdo/intl/128/flag-cm.png \
+	elementary/themes/fdo/intl/128/flag-cn.png \
+	elementary/themes/fdo/intl/128/flag-cz.png \
+	elementary/themes/fdo/intl/128/flag-de.png \
+	elementary/themes/fdo/intl/128/flag-dk.png \
+	elementary/themes/fdo/intl/128/flag-ee.png \
+	elementary/themes/fdo/intl/128/flag-es.png \
+	elementary/themes/fdo/intl/128/flag-et.png \
+	elementary/themes/fdo/intl/128/flag-fi.png \
+	elementary/themes/fdo/intl/128/flag-fo.png \
+	elementary/themes/fdo/intl/128/flag-fr.png \
+	elementary/themes/fdo/intl/128/flag-gb.png \
+	elementary/themes/fdo/intl/128/flag-ge.png \
+	elementary/themes/fdo/intl/128/flag-gh.png \
+	elementary/themes/fdo/intl/128/flag-gn.png \
+	elementary/themes/fdo/intl/128/flag-gr.png \
+	elementary/themes/fdo/intl/128/flag-hr.png \
+	elementary/themes/fdo/intl/128/flag-hu.png \
+	elementary/themes/fdo/intl/128/flag-ie.png \
+	elementary/themes/fdo/intl/128/flag-il.png \
+	elementary/themes/fdo/intl/128/flag-in.png \
+	elementary/themes/fdo/intl/128/flag-iq.png \
+	elementary/themes/fdo/intl/128/flag-ir.png \
+	elementary/themes/fdo/intl/128/flag-is.png \
+	elementary/themes/fdo/intl/128/flag-it.png \
+	elementary/themes/fdo/intl/128/flag-jp.png \
+	elementary/themes/fdo/intl/128/flag-ke.png \
+	elementary/themes/fdo/intl/128/flag-kg.png \
+	elementary/themes/fdo/intl/128/flag-kh.png \
+	elementary/themes/fdo/intl/128/flag-kr.png \
+	elementary/themes/fdo/intl/128/flag-ku.png \
+	elementary/themes/fdo/intl/128/flag-kz.png \
+	elementary/themes/fdo/intl/128/flag-la.png \
+	elementary/themes/fdo/intl/128/flag-lk.png \
+	elementary/themes/fdo/intl/128/flag-lt.png \
+	elementary/themes/fdo/intl/128/flag-lv.png \
+	elementary/themes/fdo/intl/128/flag-ma.png \
+	elementary/themes/fdo/intl/128/flag-md.png \
+	elementary/themes/fdo/intl/128/flag-me.png \
+	elementary/themes/fdo/intl/128/flag-mk.png \
+	elementary/themes/fdo/intl/128/flag-ml.png \
+	elementary/themes/fdo/intl/128/flag-mm.png \
+	elementary/themes/fdo/intl/128/flag-mn.png \
+	elementary/themes/fdo/intl/128/flag-mt.png \
+	elementary/themes/fdo/intl/128/flag-mv.png \
+	elementary/themes/fdo/intl/128/flag-my.png \
+	elementary/themes/fdo/intl/128/flag-ng.png \
+	elementary/themes/fdo/intl/128/flag-nl.png \
+	elementary/themes/fdo/intl/128/flag-no.png \
+	elementary/themes/fdo/intl/128/flag-np.png \
+	elementary/themes/fdo/intl/128/flag-ph.png \
+	elementary/themes/fdo/intl/128/flag-pk.png \
+	elementary/themes/fdo/intl/128/flag-pl.png \
+	elementary/themes/fdo/intl/128/flag-pt.png \
+	elementary/themes/fdo/intl/128/flag-ro.png \
+	elementary/themes/fdo/intl/128/flag-rs.png \
+	elementary/themes/fdo/intl/128/flag-ru.png \
+	elementary/themes/fdo/intl/128/flag-se.png \
+	elementary/themes/fdo/intl/128/flag-si.png \
+	elementary/themes/fdo/intl/128/flag-sk.png \
+	elementary/themes/fdo/intl/128/flag-sn.png \
+	elementary/themes/fdo/intl/128/flag-sy.png \
+	elementary/themes/fdo/intl/128/flag-th.png \
+	elementary/themes/fdo/intl/128/flag-tj.png \
+	elementary/themes/fdo/intl/128/flag-tm.png \
+	elementary/themes/fdo/intl/128/flag-tr.png \
+	elementary/themes/fdo/intl/128/flag-tw.png \
+	elementary/themes/fdo/intl/128/flag-tz.png \
+	elementary/themes/fdo/intl/128/flag-ua.png \
+	elementary/themes/fdo/intl/128/flag-us.png \
+	elementary/themes/fdo/intl/128/flag-uz.png \
+	elementary/themes/fdo/intl/128/flag-vn.png \
+	elementary/themes/fdo/intl/128/flag-za.png
+
 
 elementary_fdo_files = \
 	$(elementary_fdo_actions_128_files) \
@@ -1356,7 +1450,8 @@ elementary_fdo_files = \
 	$(elementary_fdo_places_128_files) \
 	$(elementary_fdo_status_128_files) \
 	$(elementary_fdo_devices_128_files) \
-	$(elementary_fdo_apps_64_files)
+	$(elementary_fdo_apps_64_files) \
+	$(elementary_fdo_intl_128_files)
 
 
 EXTRA_DIST += $(elementary_themes_files) $(elementary_fdo_files)

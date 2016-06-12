@@ -177,6 +177,9 @@ elementaryfdo_devices_128_DATA = $(elementary_fdo_devices_128_files)
 elementaryfdo_apps_64dir = $(datadir)/icons/Enlightenment-X/apps/64
 elementaryfdo_apps_64_DATA = $(elementary_fdo_apps_64_files)
 
+elementaryfdo_intl_128dir = $(datadir)/icons/Enlightenment-X/intl/128
+elementaryfdo_intl_128_DATA = $(elementary_fdo_intl_128_files)
+
 # edje_externals
 
 elementaryedje_externalsdir = $(datadir)/elementary/edje_externals

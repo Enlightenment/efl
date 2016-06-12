@@ -61,7 +61,17 @@
    }  }  }  }
 
 
-
+// Flag icon
+#define FLAG(Cat, Name)                                     \
+   group { name: "elm/icon/"##Name##"/default";             \
+      min: 16 16;                                           \
+      images.image: ##Cat##"/128/"##Name##".png" COMP;      \
+      parts {                                               \
+         part { name: "base";                               \
+            desc {                                          \
+               image.normal: ##Cat##"/128/"##Name##".png";  \
+               aspect_preference: SOURCE;                   \
+   }  }  }  }
 
 
 ////  places  /////////////////////////////////////////////////////////////////
@@ -479,8 +489,100 @@ ICO1(CTX, "network-wireless", 128)
 
 
 ////  international  //////////////////////////////////////////////////////////
-#define CTX "international"
-// TODO flag-aa (The flag for the country with the ISO 3166 country code AA)
+// Country flags, ISO 3166-1 alpha-2 country code (flag-aa)
+#define CTX "intl"
+FLAG(CTX, "flag-ad")
+FLAG(CTX, "flag-af")
+FLAG(CTX, "flag-al")
+FLAG(CTX, "flag-am")
+FLAG(CTX, "flag-ar")
+FLAG(CTX, "flag-at")
+FLAG(CTX, "flag-au")
+FLAG(CTX, "flag-az")
+FLAG(CTX, "flag-ba")
+FLAG(CTX, "flag-bd")
+FLAG(CTX, "flag-be")
+FLAG(CTX, "flag-bg")
+FLAG(CTX, "flag-br")
+FLAG(CTX, "flag-bt")
+FLAG(CTX, "flag-bw")
+FLAG(CTX, "flag-by")
+FLAG(CTX, "flag-ca")
+FLAG(CTX, "flag-cd")
+FLAG(CTX, "flag-ch")
+FLAG(CTX, "flag-cm")
+FLAG(CTX, "flag-cn")
+FLAG(CTX, "flag-cz")
+FLAG(CTX, "flag-de")
+FLAG(CTX, "flag-dk")
+FLAG(CTX, "flag-ee")
+FLAG(CTX, "flag-es")
+FLAG(CTX, "flag-et")
+FLAG(CTX, "flag-fi")
+FLAG(CTX, "flag-fo")
+FLAG(CTX, "flag-fr")
+FLAG(CTX, "flag-gb")
+FLAG(CTX, "flag-ge")
+FLAG(CTX, "flag-gh")
+FLAG(CTX, "flag-gn")
+FLAG(CTX, "flag-gr")
+FLAG(CTX, "flag-hr")
+FLAG(CTX, "flag-hu")
+FLAG(CTX, "flag-ie")
+FLAG(CTX, "flag-il")
+FLAG(CTX, "flag-in")
+FLAG(CTX, "flag-iq")
+FLAG(CTX, "flag-ir")
+FLAG(CTX, "flag-is")
+FLAG(CTX, "flag-it")
+FLAG(CTX, "flag-jp")
+FLAG(CTX, "flag-ke")
+FLAG(CTX, "flag-kg")
+FLAG(CTX, "flag-kh")
+FLAG(CTX, "flag-kr")
+FLAG(CTX, "flag-ku")
+FLAG(CTX, "flag-kz")
+FLAG(CTX, "flag-la")
+FLAG(CTX, "flag-lk")
+FLAG(CTX, "flag-lt")
+FLAG(CTX, "flag-lv")
+FLAG(CTX, "flag-ma")
+FLAG(CTX, "flag-md")
+FLAG(CTX, "flag-me")
+FLAG(CTX, "flag-mk")
+FLAG(CTX, "flag-ml")
+FLAG(CTX, "flag-mm")
+FLAG(CTX, "flag-mn")
+FLAG(CTX, "flag-mt")
+FLAG(CTX, "flag-mv")
+FLAG(CTX, "flag-my")
+FLAG(CTX, "flag-ng")
+FLAG(CTX, "flag-nl")
+FLAG(CTX, "flag-no")
+FLAG(CTX, "flag-np")
+FLAG(CTX, "flag-ph")
+FLAG(CTX, "flag-pk")
+FLAG(CTX, "flag-pl")
+FLAG(CTX, "flag-pt")
+FLAG(CTX, "flag-ro")
+FLAG(CTX, "flag-rs")
+FLAG(CTX, "flag-ru")
+FLAG(CTX, "flag-se")
+FLAG(CTX, "flag-si")
+FLAG(CTX, "flag-sk")
+FLAG(CTX, "flag-sn")
+FLAG(CTX, "flag-sy")
+FLAG(CTX, "flag-th")
+FLAG(CTX, "flag-tj")
+FLAG(CTX, "flag-tm")
+FLAG(CTX, "flag-tr")
+FLAG(CTX, "flag-tw")
+FLAG(CTX, "flag-tz")
+FLAG(CTX, "flag-ua")
+FLAG(CTX, "flag-us")
+FLAG(CTX, "flag-uz")
+FLAG(CTX, "flag-vn")
+FLAG(CTX, "flag-za")
 #undef CTX
 
 
@@ -492,4 +594,5 @@ ICO1(CTX, "network-wireless", 128)
 
 #undef ICO1
 #undef ICO2
+#undef FLAG
 
