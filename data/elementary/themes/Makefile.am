@@ -990,14 +990,18 @@ elementary/themes/snd/kbd-tap.wav
 
 
 elementary_fdo_actions_128_files = \
+	elementary/themes/fdo/actions/128/address-book-new.png \
 	elementary/themes/fdo/actions/128/application-exit.png \
+	elementary/themes/fdo/actions/128/appointment-new.png \
 	elementary/themes/fdo/actions/128/call-start.png \
 	elementary/themes/fdo/actions/128/call-stop.png \
+	elementary/themes/fdo/actions/128/contact-new.png \
 	elementary/themes/fdo/actions/128/document-close.png \
 	elementary/themes/fdo/actions/128/document-export.png \
 	elementary/themes/fdo/actions/128/document-import.png \
 	elementary/themes/fdo/actions/128/document-new.png \
 	elementary/themes/fdo/actions/128/document-open.png \
+	elementary/themes/fdo/actions/128/document-open-recent.png \
 	elementary/themes/fdo/actions/128/document-page-setup.png \
 	elementary/themes/fdo/actions/128/document-print.png \
 	elementary/themes/fdo/actions/128/document-print-preview.png \
@@ -1043,12 +1047,24 @@ elementary_fdo_actions_128_files = \
 	elementary/themes/fdo/actions/128/go-up.png \
 	elementary/themes/fdo/actions/128/help-about.png \
 	elementary/themes/fdo/actions/128/help-contents.png \
+	elementary/themes/fdo/actions/128/help-faq.png \
 	elementary/themes/fdo/actions/128/insert-image.png \
 	elementary/themes/fdo/actions/128/insert-link.png \
 	elementary/themes/fdo/actions/128/insert-object.png \
 	elementary/themes/fdo/actions/128/insert-text.png \
 	elementary/themes/fdo/actions/128/list-add.png \
 	elementary/themes/fdo/actions/128/list-remove.png \
+	elementary/themes/fdo/actions/128/mail-forward.png \
+	elementary/themes/fdo/actions/128/mail-mark-important.png \
+	elementary/themes/fdo/actions/128/mail-mark-junk.png \
+	elementary/themes/fdo/actions/128/mail-mark-notjunk.png \
+	elementary/themes/fdo/actions/128/mail-mark-read.png \
+	elementary/themes/fdo/actions/128/mail-mark-unread.png \
+	elementary/themes/fdo/actions/128/mail-message-new.png \
+	elementary/themes/fdo/actions/128/mail-reply-all.png \
+	elementary/themes/fdo/actions/128/mail-reply-sender.png \
+	elementary/themes/fdo/actions/128/mail-send.png \
+	elementary/themes/fdo/actions/128/mail-send-receive.png \
 	elementary/themes/fdo/actions/128/media-eject.png \
 	elementary/themes/fdo/actions/128/media-playback-pause.png \
 	elementary/themes/fdo/actions/128/media-playback-start.png \
@@ -1063,6 +1079,7 @@ elementary_fdo_actions_128_files = \
 	elementary/themes/fdo/actions/128/object-rotate-left.png \
 	elementary/themes/fdo/actions/128/object-rotate-right.png \
 	elementary/themes/fdo/actions/128/process-stop.png \
+	elementary/themes/fdo/actions/128/system-lock-screen.png \
 	elementary/themes/fdo/actions/128/system-log-out.png \
 	elementary/themes/fdo/actions/128/system-reboot.png \
 	elementary/themes/fdo/actions/128/system-run.png \

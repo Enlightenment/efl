@@ -107,14 +107,14 @@ ICO1(CTX, "emblem-synchronizing", 96) /* */
 
 ////  actions  ////////////////////////////////////////////////////////////////
 #define CTX "actions"
-// TODO address-book-new
-// TODO appointment-new
-// TODO contact-new
+ICO1(CTX, "address-book-new", 128)
 ICO1(CTX, "application-exit", 128)
+ICO1(CTX, "appointment-new", 128)
 ICO1(CTX, "call-start", 128)
 ICO1(CTX, "call-stop", 128)
+ICO1(CTX, "contact-new", 128)
 ICO1(CTX, "document-open", 128)
-// ICO1(CTX, "document-open-recent", 128)
+ICO1(CTX, "document-open-recent", 128)
 ICO1(CTX, "document-page-setup", 128)
 ICO1(CTX, "document-properties", 128)
 ICO1(CTX, "document-save", 128)
@@ -175,17 +175,17 @@ ICO1(CTX, "insert-text", 128)
 ICO1(CTX, "list-add", 128)
 ICO1(CTX, "list-remove", 128)
 
-// TODO mail-forward
-// TODO mail-mark-important
-// TODO mail-mark-junk
-// TODO mail-mark-notjunk
-// TODO mail-mark-read
-// TODO mail-mark-unread
-// TODO mail-message-new
-// TODO mail-reply-all
-// TODO mail-reply-sender
-// TODO mail-send
-// TODO mail-send-receive
+ICO1(CTX, "mail-forward", 128)
+ICO1(CTX, "mail-mark-important", 128)
+ICO1(CTX, "mail-mark-junk", 128)
+ICO1(CTX, "mail-mark-notjunk", 128)
+ICO1(CTX, "mail-mark-read", 128)
+ICO1(CTX, "mail-mark-unread", 128)
+ICO1(CTX, "mail-message-new", 128)
+ICO1(CTX, "mail-reply-all", 128)
+ICO1(CTX, "mail-reply-sender", 128)
+ICO1(CTX, "mail-send", 128)
+ICO1(CTX, "mail-send-receive", 128)
 
 ICO1(CTX, "media-eject", 128)
 ICO1(CTX, "media-playback-pause", 128)
@@ -222,13 +222,13 @@ ICO1(CTX, "window-new", 128)
 ICO1(CTX, "system-run", 128)
 ICO1(CTX, "system-shutdown", 128)
 ICO1(CTX, "system-reboot", 128)
+ICO1(CTX, "system-lock-screen", 128)
 ICO1(CTX, "system-log-out", 128)
 ICO1(CTX, "system-search", 128)
-// TODO system-lock-screen
 
 ICO1(CTX, "help-about", 128)
 ICO1(CTX, "help-contents", 128)
-// TODO help-faq
+ICO1(CTX, "help-faq", 128)
 
 ICO1(CTX, "zoom-in", 128)
 ICO1(CTX, "zoom-out", 128)
