@@ -1155,6 +1155,7 @@ elementary_fdo_emblems_96_files = \
 elementary_fdo_places_16_files = \
 	elementary/themes/fdo/places/16/folder-documents.png \
 	elementary/themes/fdo/places/16/folder-download.png \
+	elementary/themes/fdo/places/16/folder-drag-accept.png \
 	elementary/themes/fdo/places/16/folder-home.png \
 	elementary/themes/fdo/places/16/folder-music.png \
 	elementary/themes/fdo/places/16/folder-open.png \
@@ -1163,6 +1164,7 @@ elementary_fdo_places_16_files = \
 	elementary/themes/fdo/places/16/folder-recent.png \
 	elementary/themes/fdo/places/16/folder-remote.png \
 	elementary/themes/fdo/places/16/folder-videos.png \
+	elementary/themes/fdo/places/16/folder-visiting.png \
 	elementary/themes/fdo/places/16/network-server.png \
 	elementary/themes/fdo/places/16/network-workgroup.png \
 	elementary/themes/fdo/places/16/start-here.png \
@@ -1170,6 +1172,7 @@ elementary_fdo_places_16_files = \
 
 elementary_fdo_places_128_files = \
 	elementary/themes/fdo/places/128/folder-documents.png \
+	elementary/themes/fdo/places/128/folder-drag-accept.png \
 	elementary/themes/fdo/places/128/folder-download.png \
 	elementary/themes/fdo/places/128/folder-home.png \
 	elementary/themes/fdo/places/128/folder-music.png \
@@ -1181,6 +1184,7 @@ elementary_fdo_places_128_files = \
 	elementary/themes/fdo/places/128/folder-remote.png \
 	elementary/themes/fdo/places/128/folder-templates.png \
 	elementary/themes/fdo/places/128/folder-videos.png \
+	elementary/themes/fdo/places/128/folder-visiting.png \
 	elementary/themes/fdo/places/128/network-server.png \
 	elementary/themes/fdo/places/128/network-workgroup.png \
 	elementary/themes/fdo/places/128/start-here.png \
@@ -1190,6 +1194,8 @@ elementary_fdo_places_128_files = \
 	elementary/themes/fdo/places/128/user-trash.png
 
 elementary_fdo_status_128_files = \
+	elementary/themes/fdo/status/128/appointment-missed.png \
+	elementary/themes/fdo/status/128/appointment-soon.png \
 	elementary/themes/fdo/status/128/audio-volume-high.png \
 	elementary/themes/fdo/status/128/audio-volume-low.png \
 	elementary/themes/fdo/status/128/audio-volume-medium.png \
@@ -1216,7 +1222,10 @@ elementary_fdo_status_128_files = \
 	elementary/themes/fdo/status/128/dialog-warning.png \
 	elementary/themes/fdo/status/128/mail-attachment.png \
 	elementary/themes/fdo/status/128/mail-read.png \
+	elementary/themes/fdo/status/128/mail-replied.png \
 	elementary/themes/fdo/status/128/mail-unread.png \
+	elementary/themes/fdo/status/128/mail-signed.png \
+	elementary/themes/fdo/status/128/mail-signed-verified.png \
 	elementary/themes/fdo/status/128/media-playlist-repeat.png \
 	elementary/themes/fdo/status/128/media-playlist-shuffle.png \
 	elementary/themes/fdo/status/128/network-cellular-3g.png \
@@ -1255,6 +1264,8 @@ elementary_fdo_status_128_files = \
 	elementary/themes/fdo/status/128/security-medium.png \
 	elementary/themes/fdo/status/128/software-update-available.png \
 	elementary/themes/fdo/status/128/software-update-urgent.png \
+	elementary/themes/fdo/status/128/task-due.png \
+	elementary/themes/fdo/status/128/task-past-due.png \
 	elementary/themes/fdo/status/128/starred.png \
 	elementary/themes/fdo/status/128/user-available.png \
 	elementary/themes/fdo/status/128/user-away.png \
@@ -1262,6 +1273,7 @@ elementary_fdo_status_128_files = \
 	elementary/themes/fdo/status/128/user-idle.png \
 	elementary/themes/fdo/status/128/user-invisible.png \
 	elementary/themes/fdo/status/128/user-offline.png \
+	elementary/themes/fdo/status/128/user-trash-full.png \
 	elementary/themes/fdo/status/128/weather-clear-night.png \
 	elementary/themes/fdo/status/128/weather-clear.png \
 	elementary/themes/fdo/status/128/weather-clouds-night.png \

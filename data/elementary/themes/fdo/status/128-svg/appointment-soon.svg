@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg3027"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="appointment-soon.svg">
+  <defs
+     id="defs3029">
+    <linearGradient
+       id="StandardGradient-13"
+       gradientTransform="matrix(0.9984539,0,0,0.9984539,-0.0459776,0.05767558)"
+       x1="10.710332"
+       y1="1.9963325"
+       x2="10.710332"
+       y2="18.974037"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         style="stop-color:#000000;stop-opacity:0.86274511;"
+         offset="0"
+         id="stop3277-7" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0.47058824;"
+         offset="1"
+         id="stop3279-4" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.135131"
+     inkscape:cx="-4.0746601"
+     inkscape:cy="94.604684"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="true"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2984"
+       empspacing="8"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       spacingx="4px"
+       spacingy="4px" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3032">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-924.36218)" />
+  <g
+     transform="matrix(6.8283434,0,0,6.8283434,10.39521,7.888222)"
+     style="fill:#3399ff"
+     id="g4-5" />
+  <path
+     sodipodi:type="arc"
+     style="opacity:0.45;fill:#3399ff;fill-opacity:1;stroke:none;display:inline"
+     id="path3066-2"
+     sodipodi:cx="11"
+     sodipodi:cy="11"
+     sodipodi:rx="6"
+     sodipodi:ry="6"
+     d="m 5,11 a 6,6 0 1 1 6,6 l 0,-6 z"
+     sodipodi:start="3.1415927"
+     sodipodi:end="7.8539816"
+     transform="matrix(-7,0,0,-7,142,141)" />
+  <path
+     style="fill:#3399ff;fill-opacity:1;stroke:none;display:inline"
+     d="M 65,8 C 34.072054,8 9,33.072054 9,64 9,94.927946 34.072054,120 65,120 95.927946,120 121,94.927946 121,64 121,33.072054 95.927946,8 65,8 z m 0,14 c 23.195963,0 42,18.804037 42,42 0,23.195963 -18.804037,42 -42,42 C 41.804037,106 23,87.195963 23,64 23,40.804037 41.804037,22 65,22 z m 0,7 c -3.878,0 -7,3.122 -7,7 l 0,28 c 0,3.878 3.122,7 7,7 l 28,0 c 3.878,0 7,-3.122 7,-7 0,-3.878 -3.122,-7 -7,-7 l -21,0 0,-21 c 0,-3.878 -3.122,-7 -7,-7 z"
+     id="path3057-9"
+     inkscape:connector-curvature="0" />
+</svg>

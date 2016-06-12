@@ -71,6 +71,7 @@ ICO1(CTX, "user-bookmarks", 128)
 ICO2(CTX, "user-desktop")
 ICO1(CTX, "user-trash", 128)
 ICO2(CTX, "folder")
+ICO2(CTX, "folder-drag-accept") /* spec have this icon in the Status category */
 ICO2(CTX, "folder-remote")
 ICO2(CTX, "folder-open") /* */
 ICO2(CTX, "folder-home") /* */
@@ -80,6 +81,7 @@ ICO2(CTX, "folder-documents") /* */
 ICO2(CTX, "folder-pictures") /* */
 ICO2(CTX, "folder-music") /* */
 ICO2(CTX, "folder-videos") /* */
+ICO2(CTX, "folder-visiting") /* spec have this icon in the Status category */
 ICO2(CTX, "network-server")
 ICO2(CTX, "network-workgroup")
 ICO2(CTX, "start-here")
@@ -242,6 +244,8 @@ ICO1(CTX, "zoom-fit-best", 128)
 
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
+ICO1(CTX, "appointment-missed", 128)
+ICO1(CTX, "appointment-soon", 128)
 ICO1(CTX, "audio-volume-high", 128)
 ICO1(CTX, "audio-volume-low", 128)
 ICO1(CTX, "audio-volume-medium", 128)
@@ -268,6 +272,12 @@ ICO1(CTX, "dialog-question", 128)
 ICO1(CTX, "dialog-warning", 128)
 ICO1(CTX, "media-playlist-repeat", 128)
 ICO1(CTX, "media-playlist-shuffle", 128)
+ICO1(CTX, "mail-attachment", 128)
+ICO1(CTX, "mail-unread", 128)
+ICO1(CTX, "mail-read", 128)
+ICO1(CTX, "mail-replied", 128)
+ICO1(CTX, "mail-signed", 128)
+ICO1(CTX, "mail-signed-verified", 128)
 ICO1(CTX, "network-cellular-3g", 128) /* */
 ICO1(CTX, "network-cellular-4g", 128) /* */
 ICO1(CTX, "network-cellular-edge", 128) /* */
@@ -303,12 +313,15 @@ ICO1(CTX, "security-medium", 128)
 ICO1(CTX, "security-low", 128)
 ICO1(CTX, "software-update-available", 128)
 ICO1(CTX, "software-update-urgent", 128)
+ICO1(CTX, "task-due", 128)
+ICO1(CTX, "task-past-due", 128)
 ICO1(CTX, "user-available", 128)
 ICO1(CTX, "user-away", 128)
 ICO1(CTX, "user-busy", 128) /* */
 ICO1(CTX, "user-invisible", 128) /* */
 ICO1(CTX, "user-idle", 128)
 ICO1(CTX, "user-offline", 128)
+ICO1(CTX, "user-trash-full", 128) /* */
 ICO1(CTX, "weather-clear-night", 128)
 ICO1(CTX, "weather-clear", 128)
 ICO1(CTX, "weather-clouds-night", 128) /* */
@@ -322,25 +335,14 @@ ICO1(CTX, "weather-showers-scattered", 128)
 ICO1(CTX, "weather-showers", 128)
 ICO1(CTX, "weather-snow", 128)
 ICO1(CTX, "weather-storm", 128)
-ICO1(CTX, "mail-attachment", 128)
-ICO1(CTX, "mail-unread", 128)
-ICO1(CTX, "mail-read", 128)
-// TODO mail-replied
-// TODO mail-signed
-// TODO mail-signed-verified
-// TODO appointment-missed
-// TODO appointment-soon
-// TODO folder-drag-accept
-// TODO folder-visiting
 // TODO image-loading
 // TODO image-missing
 // TODO sync-error
 // TODO sync-synchronizing
-// TODO task-due
-// TODO task-past-due
-// TODO user-trash-full
 ICO1(CTX, "starred", 128) /* */
 ICO1(CTX, "non-starred", 128) /* */
+// folder-visiting  /* in the Places category */
+// folder-drag-accept /* in the Places category */
 #undef CTX
 
 
