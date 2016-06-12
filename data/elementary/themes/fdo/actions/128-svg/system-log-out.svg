@@ -7,7 +7,6 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="128"
@@ -31,28 +30,7 @@
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs3029">
-    <linearGradient
-       x1="29.826593"
-       y1="51.954468"
-       x2="65.693901"
-       y2="51.954468"
-       id="linearGradient3034"
-       xlink:href="#linearGradient4081"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0,-1,-1,0,161.89831,27.389831)" />
-    <linearGradient
-       id="linearGradient4081">
-      <stop
-         id="stop4083"
-         style="stop-color:#aaaaaa;stop-opacity:1"
-         offset="0" />
-      <stop
-         id="stop4085"
-         style="stop-color:#f0f0f0;stop-opacity:1"
-         offset="1" />
-    </linearGradient>
-  </defs>
+     id="defs3029" />
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -61,14 +39,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="10.47871"
-     inkscape:cy="78.451778"
+     inkscape:cx="35.260986"
+     inkscape:cy="72.463462"
      inkscape:document-units="px"
      inkscape:current-layer="svg3027"
      showgrid="true"
      inkscape:window-width="1680"
-     inkscape:window-height="979"
-     inkscape:window-x="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:showpageshadow="false"
@@ -84,8 +62,8 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       spacingx="4px"
-       spacingy="4px"
+       spacingx="8px"
+       spacingy="8px"
        dotted="false" />
     <sodipodi:guide
        orientation="0,1"
@@ -105,15 +83,9 @@
        id="guide3005" />
   </sodipodi:namedview>
   <path
-     inkscape:connector-curvature="0"
-     style="color:#000000;fill:#3399ff;fill-opacity:1;stroke:none;stroke-width:6;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-     d="m 106.5418,85.755833 c -0.19045,-3.199135 -2.67709,-6.124735 -5.80372,-6.828228 -3.126635,-0.703493 -6.626721,0.875093 -8.169056,3.684352 C 82.235617,100.50994 59.582797,106.56882 41.684811,96.235419 23.786824,85.902013 17.727944,63.249192 28.061349,45.351207 38.394756,27.453221 61.047576,21.394338 78.945562,31.727745 c 5.664679,3.270504 10.352959,7.958782 13.623462,13.623462 0.975484,1.691856 2.641436,2.971723 4.52753,3.478273 1.886093,0.506551 3.969096,0.233546 5.660956,-0.741938 1.69186,-0.975484 2.97172,-2.641434 3.47828,-4.527527 0.50655,-1.886094 0.23354,-3.969102 -0.74194,-5.660958 C 100.9156,29.969294 94.327474,23.381171 86.397712,18.802922 61.523996,4.442076 29.497373,13.025341 15.136524,37.899057 0.77568372,62.772772 9.3589437,94.799395 34.232661,109.16024 59.106377,123.52109 91.133,114.93782 105.49385,90.064107 c 0.77238,-1.28665 1.14307,-2.810614 1.04795,-4.308274 z"
-     id="rect4223"
-     sodipodi:nodetypes="cscssscssscssscc" />
-  <path
-     d="m 105.7152,81.380299 0,-10.448724 -33.920836,0 0,-13.127295 33.920836,0 0,-10.448723 22.71194,16.922866 z"
-     id="path3771"
-     style="fill:#3399ff;fill-opacity:1;stroke:none;display:inline"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="cccccccc" />
+     style="fill:#3399ff;fill-opacity:1;fill-rule:nonzero;stroke:none;display:inline"
+     d="m 112.0093,67.995131 c 0,2.215915 -1.78393,3.999846 -3.99985,3.999846 l -39.998465,0 c -2.215914,0 -3.999848,-1.783931 -3.999848,-3.999846 l 0,-7.999693 c 0,-2.215915 1.783934,-3.999847 3.999848,-3.999847 l 39.998465,0 c 2.21592,0 3.99985,1.783932 3.99985,3.999847 l 0,7.999693 z m -10.74959,11.99954 C 94.670848,98.64018 76.903846,111.99337 56.011452,111.99337 c -26.494992,0 -47.9981655,-21.503102 -47.9981655,-47.998085 0,-26.494984 21.5031735,-47.99816 47.9981655,-47.99816 20.892394,0 38.659396,13.353256 45.248258,31.998773 l -17.749314,0 C 77.971885,38.445968 67.83859,31.996512 56.011452,31.996512 c -17.663328,0 -31.998772,14.33545 -31.998772,31.998773 0,17.663322 14.335444,31.998773 31.998772,31.998773 11.827138,0 21.960433,-6.449457 27.498944,-15.999387 l 17.749314,0 z"
+     id="path2401"
+     inkscape:transform-center-x="-3.9998454"
+     inkscape:connector-curvature="0" />
 </svg>

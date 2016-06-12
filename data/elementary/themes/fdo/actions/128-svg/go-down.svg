@@ -14,7 +14,7 @@
    id="svg3027"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="go-bottom.svg"
+   sodipodi:docname="go-down.svg"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <metadata
@@ -25,7 +25,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -39,16 +39,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.959798"
-     inkscape:cx="86.96211"
-     inkscape:cy="54.968792"
+     inkscape:cx="19.306565"
+     inkscape:cy="84.246192"
      inkscape:document-units="px"
      inkscape:current-layer="svg3027"
      showgrid="true"
-     inkscape:window-width="1013"
-     inkscape:window-height="847"
-     inkscape:window-x="1932"
-     inkscape:window-y="20"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
      inkscape:showpageshadow="false"
      borderlayer="false"
      showguides="true"
@@ -62,8 +62,8 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       spacingx="4px"
-       spacingy="4px"
+       spacingx="8px"
+       spacingy="8px"
        dotted="false" />
     <sodipodi:guide
        orientation="0,1"
@@ -84,7 +84,7 @@
   </sodipodi:namedview>
   <path
      style="fill:#3399ff;fill-opacity:1;stroke:none;display:inline"
-     d="m 42.677699,16.105467 0,34.675104 -19.593117,0 40.936823,64.435089 40.936825,-64.435089 -19.39113,0 0,-34.675104 z"
+     d="m 48.015716,16.010765 0,40.000929 -24.931134,0 40.936823,59.203966 40.936825,-59.203966 -24.926844,0 0,-40.000929 z"
      id="Symbol"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="cccccccc" />

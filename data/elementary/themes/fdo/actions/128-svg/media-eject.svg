@@ -7,6 +7,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="128"
@@ -14,7 +15,7 @@
    id="svg3027"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="media-playback-stop.svg"
+   sodipodi:docname="media-eject.svg"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <metadata
@@ -25,12 +26,40 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs3029" />
+     id="defs3029">
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#StandardGradient"
+       id="linearGradient3003"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0023447,0,0,0.9976608,11.984375,-0.028195)"
+       x1="6.9680371"
+       y1="3.0226958"
+       x2="6.9680371"
+       y2="13.05007" />
+    <linearGradient
+       id="StandardGradient"
+       gradientTransform="scale(1.0023447,0.9976608)"
+       x1="6.9680371"
+       y1="3.0226958"
+       x2="6.9680371"
+       y2="13.05007"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop3284"
+         offset="0"
+         style="stop-color:#000000;stop-opacity:0.86274511;" />
+      <stop
+         id="stop3286"
+         offset="1"
+         style="stop-color:#000000;stop-opacity:0.47058824;" />
+    </linearGradient>
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -38,17 +67,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="132.34061"
-     inkscape:cy="84.4795"
+     inkscape:zoom="4"
+     inkscape:cx="30.565621"
+     inkscape:cy="65.385732"
      inkscape:document-units="px"
      inkscape:current-layer="svg3027"
      showgrid="true"
-     inkscape:window-width="1013"
-     inkscape:window-height="847"
-     inkscape:window-x="1932"
-     inkscape:window-y="-22"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
      inkscape:showpageshadow="false"
      borderlayer="false"
      showguides="true"
@@ -62,8 +91,8 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       spacingx="4px"
-       spacingy="4px"
+       spacingx="8px"
+       spacingy="8px"
        dotted="false" />
     <sodipodi:guide
        orientation="0,1"
@@ -83,8 +112,9 @@
        id="guide3005" />
   </sodipodi:namedview>
   <path
-     style="color:#000000;fill:#3399ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-     d="m 63.59348,32.014585 a 2.8060267,1.9968184 0 0 0 -2.064851,1.001138 l -29.220782,36.04105 a 2.8060267,1.9968184 0 0 0 -0.375427,0.93857 2.8060267,1.9968184 0 0 0 2.815707,2.064851 l 58.441562,0 a 2.8060267,1.9968184 0 0 0 2.440279,-3.003421 L 66.409188,33.015723 A 2.8060267,1.9968184 0 0 0 63.59348,32.014585 z M 35.936981,80.069316 c -2.218526,0 -4.004561,1.786035 -4.004561,4.004561 l 0,8.009122 c 0,2.218526 1.786035,4.004561 4.004561,4.004561 l 56.063855,0 c 2.218526,0 4.004561,-1.786035 4.004561,-4.004561 l 0,-8.009122 c 0,-2.218526 -1.786035,-4.004561 -4.004561,-4.004561 l -56.063855,0 z"
-     id="rect3156"
+     id="Symbol"
+     style="fill:#3399ff;fill-opacity:1;stroke:none;display:inline"
+     d="m 23.93456,72.154344 40.066359,-48.154361 40.273451,48.154361 -80.33981,0 z m 0.12494,15.792084 80.08958,0 0,16.017892 -80.08958,0 0,-16.017892 z"
+     sodipodi:nodetypes="ccccccccc"
      inkscape:connector-curvature="0" />
 </svg>
