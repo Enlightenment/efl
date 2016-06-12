@@ -409,7 +409,7 @@ ICO1(CTX, "battery", 128)
 ICO1(CTX, "camera", 128)
 ICO1(CTX, "camera-photo", 128)
 ICO1(CTX, "camera-web", 128)
-// TODO camera-video
+ICO1(CTX, "camera-video", 128)
 ICO1(CTX, "drive-harddisk", 128)
 ICO1(CTX, "drive-harddisk-ieee1394", 128)
 ICO1(CTX, "drive-harddisk-usb", 128)

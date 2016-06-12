@@ -1283,6 +1283,7 @@ elementary_fdo_devices_128_files = \
 	elementary/themes/fdo/devices/128/camera-photo.png \
 	elementary/themes/fdo/devices/128/camera.png \
 	elementary/themes/fdo/devices/128/camera-web.png \
+	elementary/themes/fdo/devices/128/camera-video.png \
 	elementary/themes/fdo/devices/128/computer-laptop.png \
 	elementary/themes/fdo/devices/128/computer.png \
 	elementary/themes/fdo/devices/128/drive-harddisk-ieee1394.png \
