@@ -107,11 +107,13 @@ struct _Native
 };
 
 EAPI void *_evas_native_tbm_surface_image_set(void *data, void *image, void *native);
+EAPI int _evas_native_tbm_surface_stride_get(void *data, void *native);
 EAPI int _evas_native_tbm_init(void);
 EAPI void _evas_native_tbm_shutdown(void);
 
 void *_evas_native_dmabuf_surface_image_set(void *image, void *native);
 
 typedef void *(*Evas_Native_Tbm_Surface_Image_Set_Call)(void *data, void *image, void *native);
+typedef int (*Evas_Native_Tbm_Surface_Stride_Get_Call)(void *data, void *native);
 
 #endif //_EVAS_NATIVE_COMMON_H

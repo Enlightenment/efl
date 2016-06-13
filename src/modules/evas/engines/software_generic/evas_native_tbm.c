@@ -66,6 +66,7 @@ typedef struct _tbm_surface_info
 /* returns 0 on success */
 static int (*sym_tbm_surface_map) (tbm_surface_h surface, int opt, tbm_surface_info_s *info) = NULL;
 static int (*sym_tbm_surface_unmap) (tbm_surface_h surface) = NULL;
+static int (*sym_tbm_surface_get_info) (tbm_surface_h surface, tbm_surface_info_s *info) = NULL;
 
 EAPI int
 _evas_native_tbm_init(void)
@@ -100,6 +101,7 @@ _evas_native_tbm_init(void)
              fail = 0;
              SYM(tbm_lib, tbm_surface_map);
              SYM(tbm_lib, tbm_surface_unmap);
+             SYM(tbm_lib, tbm_surface_get_info);
              if (fail)
                {
                   dlclose(tbm_lib);
@@ -171,18 +173,18 @@ _evas_video_i420(unsigned char *evas_data, const unsigned char *source_data, uns
 
    rows = (const unsigned char **)evas_data;
 
-   stride_y = EVAS_ROUND_UP_4(w);
-   stride_uv = EVAS_ROUND_UP_8(w) / 2;
+   stride_y = w;
+   stride_uv = w / 2;
 
    for (i = 0; i < rh; i++)
      rows[i] = &source_data[i * stride_y];
 
-   for (j = 0; j < (rh / 2); j++, i++)
+   for (j = 0; j < ((rh + 1) / 2); j++, i++)
      rows[i] = &source_data[h * stride_y + j * stride_uv];
 
    for (j = 0; j < (rh / 2); j++, i++)
      rows[i] = &source_data[h * stride_y +
-                            (rh / 2) * stride_uv +
+                            ((rh + 1) / 2) * stride_uv +
                             j * stride_uv];
 }
 
@@ -245,16 +247,39 @@ _native_free_cb(void *image)
    Native *n = im->native.data;
 
    if (!im) return;
+
    im->native.data        = NULL;
    im->native.func.bind   = NULL;
    im->native.func.unbind = NULL;
    im->native.func.free   = NULL;
-   im->image.data         = NULL;
 
    free(n);
 
    _evas_native_tbm_shutdown();
 }
+
+EAPI int
+_evas_native_tbm_surface_stride_get(void *data EINA_UNUSED, void *native)
+{
+   Evas_Native_Surface *ns = native;
+   tbm_surface_info_s info;
+   int stride;
+
+   if (!ns)
+     return -1;
+
+   if (!_evas_native_tbm_init())
+     {
+        ERR("Could not initialize TBM!");
+        return -1;
+     }
+
+   if (sym_tbm_surface_get_info(ns->data.tbm.buffer, &info))
+     return -1;
+
+   stride = info.planes[0].stride;
+   return stride;
+ }
 
 EAPI void *
 _evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *native)
@@ -277,13 +302,13 @@ _evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *na
           return NULL;
 
         tbm_surf = ns->data.tbm.buffer;
-
+/*
         if (!_evas_native_tbm_init())
           {
              ERR("Could not initialize TBM!");
              return NULL;
           }
-
+*/
         n = calloc(1, sizeof(Native));
         if (!n) return NULL;
 
@@ -318,17 +343,17 @@ _evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *na
               /* borrowing code from emotion here */
            case TBM_FORMAT_YVU420: /* EVAS_COLORSPACE_YCBCR422P601_PL */
               evas_cache_image_colorspace(&im->cache_entry, EVAS_COLORSPACE_YCBCR422P601_PL);
-              _evas_video_yv12(im->cs.data, pixels_data, w, h, h);
+              _evas_video_yv12(im->cs.data, pixels_data, stride, h, h);
               evas_common_image_colorspace_dirty(im);
               break;
            case TBM_FORMAT_YUV420: /* EVAS_COLORSPACE_YCBCR422P601_PL */
               evas_cache_image_colorspace(&im->cache_entry, EVAS_COLORSPACE_YCBCR422P601_PL);
-              _evas_video_i420(im->cs.data, pixels_data, w, h, h);
+              _evas_video_i420(im->cs.data, pixels_data, stride, h, h);
               evas_common_image_colorspace_dirty(im);
               break;
            case TBM_FORMAT_NV12: /* EVAS_COLORSPACE_YCBCR420NV12601_PL */
               evas_cache_image_colorspace(&im->cache_entry, EVAS_COLORSPACE_YCBCR420NV12601_PL);
-              _evas_video_nv12(im->cs.data, pixels_data, w, h, h);
+              _evas_video_nv12(im->cs.data, pixels_data, stride, h, h);
               evas_common_image_colorspace_dirty(im);
               break;
               /* Not planning to handle those in software */

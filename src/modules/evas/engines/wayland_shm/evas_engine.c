@@ -17,7 +17,8 @@ int _evas_engine_way_shm_log_dom = -1;
 /* evas function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
-Evas_Native_Tbm_Surface_Image_Set_Call  glsym_evas_native_tbm_surface_image_set = NULL;
+Evas_Native_Tbm_Surface_Image_Set_Call  glsym__evas_native_tbm_surface_image_set = NULL;
+Evas_Native_Tbm_Surface_Stride_Get_Call  glsym__evas_native_tbm_surface_stride_get = NULL;
 
 /* engine structure data */
 typedef struct _Render_Engine Render_Engine;
@@ -90,7 +91,8 @@ _symbols(void)
    glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
 
    // Get function pointer to native_common that is now provided through the link of SW_Generic.
-   LINK2GENERIC(evas_native_tbm_surface_image_set);
+   LINK2GENERIC(_evas_native_tbm_surface_image_set);
+   LINK2GENERIC(_evas_native_tbm_surface_stride_get);
 
    done = 1;
 }
@@ -260,6 +262,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
    Evas_Native_Surface *ns = native;
    Image_Entry *ie = image;
    RGBA_Image *im = image, *im2;
+   int stride;
 
    if (!im || !ns) return im;
 
@@ -284,6 +287,13 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
                                                ie->w, ie->h,
                                                ns->data.x11.visual, 1,
                                                EVAS_COLORSPACE_ARGB8888);
+   else if (ns->type == EVAS_NATIVE_SURFACE_TBM)
+     {
+        stride = glsym__evas_native_tbm_surface_stride_get(NULL, ns);
+        im2 = evas_cache_image_copied_data(evas_common_image_cache_get(),
+                                   stride, ie->h, NULL, ie->flags.alpha,
+                                   EVAS_COLORSPACE_ARGB8888);
+     }
    else
      im2 = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
                                                ie->w, ie->h,
@@ -305,7 +315,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
    im = im2;
 
    if (ns->type == EVAS_NATIVE_SURFACE_TBM)
-      return glsym_evas_native_tbm_surface_image_set(NULL, im, ns);
+      return glsym__evas_native_tbm_surface_image_set(NULL, im, ns);
 
    return im;
 }
