@@ -379,18 +379,18 @@ start:
 
    if (bind(svr->fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      {
-        ERR("Local socket '%s' bind failed: %s", buf, strerror(errno));
+        DBG("Local socket '%s' bind failed: %s", buf, strerror(errno));
         if ((((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER) ||
              ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)) &&
             (connect(svr->fd, (struct sockaddr *)&socket_unix,
                      socket_unix_len) < 0))
           {
-             ERR("Local socket '%s' connect test failed: %s", buf, strerror(errno));
+             DBG("Local socket '%s' connect test failed: %s", buf, strerror(errno));
              if (unlink(buf) >= 0)
                goto start;
              else
                {
-                  ERR("Local socket '%s' removal failed: %s", buf, strerror(errno));
+                  DBG("Local socket '%s' removal failed: %s", buf, strerror(errno));
                   goto error_fd;
                }
           }

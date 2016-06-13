@@ -432,7 +432,7 @@ ecore_con_local_listen(Ecore_Con_Server *obj)
                                NULL);
    if (svr->pipe == INVALID_HANDLE_VALUE)
      {
-        ERR("Creation of the named pipe '%s' failed", svr->path);
+        DBG("Creation of the named pipe '%s' failed", svr->path);
         goto free_path;
      }
 

@@ -1966,7 +1966,7 @@ svr_try_connect_plain(Ecore_Con_Server *obj)
      {
         /* we lost our server! */
         ecore_con_event_server_error(obj, strerror(so_err));
-        ERR("Connection lost: %s", strerror(so_err));
+        DBG("Connection lost: %s", strerror(so_err));
         _ecore_con_server_kill(obj);
         return ECORE_CON_DISCONNECTED;
      }
@@ -2223,7 +2223,7 @@ _ecore_con_cl_handler(void *data,
 #endif
         if (ecore_con_ssl_server_init(obj))
           {
-             ERR("ssl handshaking failed!");
+             DBG("ssl handshaking failed!");
              svr->handshaking = EINA_FALSE;
           }
         else if (!svr->ssl_state)
@@ -2418,7 +2418,7 @@ _ecore_con_svr_cl_handler(void *data,
      {
         if (ecore_con_ssl_client_init(obj))
           {
-             ERR("ssl handshaking failed!");
+             DBG("ssl handshaking failed!");
              _ecore_con_client_kill(obj);
              return ECORE_CALLBACK_RENEW;
           }
