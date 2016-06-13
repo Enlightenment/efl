@@ -8,19 +8,19 @@
 #include <unistd.h>
 #include <libgen.h>
 
-#include <GlobalParams.h>
-#include <PDFDoc.h>
-#include <ErrorCodes.h>
-#include <Page.h>
-#include <SplashOutputDev.h>
-#include <splash/SplashBitmap.h>
-
 #include <Eina.h>
+
+#include <poppler-global.h>
+#include <poppler-rectangle.h>
+#include <poppler-document.h>
+#include <poppler-page.h>
+#include <poppler-page-renderer.h>
 
 #include "shmfile.h"
 #include "timeout.h"
 
-#define DATA32  unsigned int
+#define DATA32 unsigned int
+typedef char RGB24[3];
 
 //#define PDF_DBG
 
@@ -30,11 +30,12 @@
 #define D(fmt, args...)
 #endif
 
+using namespace poppler;
 
-PDFDoc *pdfdoc;
 bool locked = false;
 
-::Page *page;
+document *doc;
+page *doc_page;
 int width = 0, height = 0;
 int crop_width = 0, crop_height = 0;
 void *data = NULL;
@@ -44,9 +45,7 @@ double dpi = -1.0;
 
 Eina_Bool poppler_init(const char *file, int page_nbr, int size_w, int size_h)
 {
-   Object obj;
    double w, h, cw, ch;
-   int rot;
 
    if (!file || !*file)
      return EINA_FALSE;
@@ -54,55 +53,36 @@ Eina_Bool poppler_init(const char *file, int page_nbr, int size_w, int size_h)
    if (page_nbr < 0)
      return EINA_FALSE;
 
-   if (!(globalParams = new GlobalParams()))
+   if (!eina_init())
      return EINA_FALSE;
 
-   if (!eina_init())
-     goto del_global_param;
 
-#ifndef HAVE_POPPLER_031
-   if (globalParams->getAntialias())
-     globalParams->setAntialias((char *)"yes");
-   if (globalParams->getVectorAntialias())
-     globalParams->setVectorAntialias((char *)"yes");
-#endif
+   doc = document::load_from_file(file);
 
-   pdfdoc = new PDFDoc(new GooString(file), NULL);
-   if (!pdfdoc)
-     goto del_global_param;
+   if (!doc)
+     return EINA_FALSE;
 
-   if (!pdfdoc->isOk() || (pdfdoc->getErrorCode() == errEncrypted))
-     goto del_pdfdoc;
-
-   if (page_nbr >= pdfdoc->getNumPages())
+   if (page_nbr >= doc->pages())
      goto del_pdfdoc;
 
    /* load the page */
 
-   page = pdfdoc->getCatalog()->getPage(page_nbr + 1);
-   if (!page || !page->isOk())
+   doc_page = doc->create_page(page_nbr + 1);
+   if (!doc_page)
      goto del_pdfdoc;
 
-   w = page->getMediaWidth();
-   h = page->getMediaHeight();
-   cw = page->getCropWidth();
-   ch = page->getCropHeight();
-   rot = page->getRotate();
+   w = doc_page->page_rect(page_box_enum::media_box).width();
+   h = doc_page->page_rect(page_box_enum::media_box).height();
+   cw = doc_page->page_rect().width();
+   ch = doc_page->page_rect().height();
+
    if (cw > w) cw = w;
    if (ch > h) ch = h;
-   if ((rot == 90) || (rot == 270))
-     {
-        double t;
-        // swap width & height
-        t = w; w = h; h = t;
-        // swap crop width & height
-        t = cw; cw = ch; ch = t;
-     }
-   
+
    if ((size_w > 0) || (size_h > 0))
      {
         double w2 = cw, h2 = ch;
-        
+
         w2 = size_w;
         h2 = (size_w * ch) / cw;
         if (h2 > size_h)
@@ -114,7 +94,7 @@ Eina_Bool poppler_init(const char *file, int page_nbr, int size_w, int size_h)
         if (w2 > h2) dpi = (w2 * DEF_DPI) / cw;
         else dpi = (h2 * DEF_DPI) / ch;
      }
-   
+
    if (dpi > 0.0)
      {
         cw = (cw * dpi) / DEF_DPI;
@@ -130,77 +110,78 @@ Eina_Bool poppler_init(const char *file, int page_nbr, int size_w, int size_h)
    return EINA_TRUE;
 
  del_pdfdoc:
-   delete pdfdoc;
- del_global_param:
-   delete globalParams;
+   delete doc;
 
    return EINA_FALSE;
 }
 
 void poppler_shutdown()
 {
-   delete pdfdoc;
+   delete doc;
    eina_shutdown();
-   delete globalParams;
 }
+
 
 void poppler_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
 {
-   SplashOutputDev *output_dev;
-   SplashColor      white;
-   SplashColorPtr   color_ptr;
-   DATA32          *src, *dst;
-   int              y;
-
-   white[0] = 255;
-   white[1] = 255;
-   white[2] = 255;
-   white[3] = 255;
-
-   output_dev = new SplashOutputDev(splashModeXBGR8, 4, gFalse, white);
-   if (!output_dev)
-     return;
-
-#ifdef HAVE_POPPLER_020
-   output_dev->startDoc(pdfdoc);
-#else
-   output_dev->startDoc(pdfdoc->getXRef());
-#endif
+   page_renderer *renderer;
+   image out;
+   DATA32 *dst;
+   int y, x;
 
    if (dpi <= 0.0) dpi = DEF_DPI;
 
-#ifdef HAVE_POPPLER_031
-   output_dev->setFontAntialias(EINA_TRUE);
-   output_dev->setVectorAntialias(EINA_TRUE);
-#endif
+   renderer = new page_renderer();
 
-#ifdef HAVE_POPPLER_020
-   page->displaySlice(output_dev, dpi, dpi, 
-                      0, false, false,
-                      0, 0, width, height,
-                      false, NULL, NULL);
-#else
-   page->displaySlice(output_dev, dpi, dpi, 
-                      0, false, false,
-                      0, 0, width, height,
-                      false, pdfdoc->getCatalog());
-#endif
-   color_ptr = output_dev->getBitmap()->getDataPtr();
+   renderer->set_render_hint(page_renderer::render_hint::text_antialiasing, 1);
+   renderer->set_render_hint(page_renderer::render_hint::antialiasing, 1);
+
+   out = renderer->render_page(doc_page, dpi, dpi,
+                               0, 0, width, height,
+                               rotate_0);
 
    shm_alloc(crop_width * crop_height * sizeof(DATA32));
-   if (!shm_addr) goto del_outpput_dev;
+   if (!shm_addr) goto end;
    data = shm_addr;
-   src = (DATA32 *)color_ptr;
    dst = (DATA32 *)data;
-   for (y = 0; y < crop_height; y++)
-     {
-        memcpy(dst, src, crop_width * sizeof(DATA32));
-        src += width;
-        dst += crop_width;
-     }
 
- del_outpput_dev:
-   delete output_dev;
+#define IMAGE_PIXEL_ITERATOR \
+   for (y = 0; y < crop_height; y++) \
+     for (x = 0; x < crop_width; x++)
+
+   if (out.format() == image::format_mono)
+     {
+        //FIXME no idea what this format is like
+     }
+   if (out.format() == image::format_rgb24)
+     {
+        RGB24 *src;
+        src = (RGB24*) out.data();
+        IMAGE_PIXEL_ITERATOR
+          {
+             DATA32 d = 0xFF000000;
+             int pos = x+y*crop_width;
+             d |= src[pos][0] >> 8;
+             d |= src[pos][1] >> 16;
+             d |= src[pos][2] >> 24;
+             dst[pos] =  d;
+          }
+      }
+    else if (out.format() == image::format_argb32)
+      {
+         DATA32 *src;
+
+         src = (DATA32*) out.data();
+         IMAGE_PIXEL_ITERATOR
+           {
+              int pos = x+y*crop_width;
+
+              dst[pos] = src[pos];
+           }
+      }
+
+ end:
+   delete renderer;
 }
 
 int
