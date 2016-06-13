@@ -1,5 +1,8 @@
 #include "edje_private.h"
 
+#define EFL_INTERNAL_UNSTABLE
+#include "interfaces/efl_common_internal.h"
+
 static Eina_Bool
 _edje_hold_signal_cb(void *data, const Eo_Event *event)
 {
@@ -54,11 +57,11 @@ _edje_focus_out_signal_cb(void *data, const Eo_Event *event)
 static Eina_Bool
 _edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
 {
-   Evas_Event_Mouse_In *ev;
+   Efl_Event_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = event->info;
+   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)
@@ -75,11 +78,11 @@ _edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
 static Eina_Bool
 _edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
 {
-   Evas_Event_Mouse_Out *ev;
+   Efl_Event_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = event->info;
+   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)
@@ -96,13 +99,13 @@ _edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
 static Eina_Bool
 _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
 {
-   Evas_Event_Mouse_Down *ev;
+   Efl_Event_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
    char buf[256];
    int ignored;
 
-   ev = event->info;
+   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
@@ -114,9 +117,9 @@ _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
 
    if ((!ev->event_flags) || (!ignored))
      {
-        if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
+        if (ev->event_flags & EVAS_BUTTON_TRIPLE_CLICK)
           snprintf(buf, sizeof(buf), "mouse,down,%i,triple", ev->button);
-        else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
+        else if (ev->event_flags & EVAS_BUTTON_DOUBLE_CLICK)
           snprintf(buf, sizeof(buf), "mouse,down,%i,double", ev->button);
         else
           snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
@@ -138,9 +141,9 @@ _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
         if (rp->drag->down.count == 0)
           {
              if (rp->part->dragable.x)
-               rp->drag->down.x = ev->canvas.x;
+               rp->drag->down.x = ev->cur.x;
              if (rp->part->dragable.y)
-               rp->drag->down.y = ev->canvas.y;
+               rp->drag->down.y = ev->cur.y;
              rp->drag->threshold_x = EINA_FALSE;
              rp->drag->threshold_y = EINA_FALSE;
              rp->drag->threshold_started_x = EINA_TRUE;
@@ -167,13 +170,13 @@ _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
 static Eina_Bool
 _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
 {
-   Evas_Event_Mouse_Up *ev;
+   Efl_Event_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
    char buf[256];
    int ignored;
 
-   ev = event->info;
+   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
@@ -242,12 +245,12 @@ _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
 static Eina_Bool
 _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
 {
-   Evas_Event_Mouse_Move *ev;
+   Efl_Event_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
    int ignored;
 
-   ev = event->info;
+   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
@@ -271,10 +274,10 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
              Evas_Coord x, y, w, h;
 
              evas_object_geometry_get(event->object, &x, &y, &w, &h);
-             if ((ev->cur.canvas.x < x) || (ev->cur.canvas.y < y) ||
-                 (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
+             if ((ev->cur.x < x) || (ev->cur.y < y) ||
+                 (ev->cur.x >= (x + w)) || (ev->cur.y >= (y + h)))
                {
-                  if ((ev->buttons) && ((!ev->event_flags) || (!ignored)))
+                  if ((ev->pressed_buttons) && ((!ev->event_flags) || (!ignored)))
                     _edje_emit(ed, "mouse,pressed,out", rp->part->name);
 
                   rp->still_in = EINA_FALSE;
@@ -288,10 +291,10 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
              Evas_Coord x, y, w, h;
 
              evas_object_geometry_get(event->object, &x, &y, &w, &h);
-             if ((ev->cur.canvas.x >= x) && (ev->cur.canvas.y >= y) &&
-                 (ev->cur.canvas.x < (x + w)) && (ev->cur.canvas.y < (y + h)))
+             if ((ev->cur.x >= x) && (ev->cur.y >= y) &&
+                 (ev->cur.x < (x + w)) && (ev->cur.y < (y + h)))
                {
-                  if ((ev->buttons) && ((!ev->event_flags) || (!ignored)))
+                  if ((ev->pressed_buttons) && ((!ev->event_flags) || (!ignored)))
                     _edje_emit(ed, "mouse,pressed,in", rp->part->name);
 
                   rp->still_in = EINA_TRUE;
@@ -304,9 +307,9 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
         if (rp->drag->down.count > 0)
           {
              if (rp->part->dragable.x)
-               rp->drag->tmp.x = ev->cur.canvas.x - rp->drag->down.x;
+               rp->drag->tmp.x = ev->cur.x - rp->drag->down.x;
              if (rp->part->dragable.y)
-               rp->drag->tmp.y = ev->cur.canvas.y - rp->drag->down.y;
+               rp->drag->tmp.y = ev->cur.y - rp->drag->down.y;
              ed->recalc_call = EINA_TRUE;
              ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
@@ -351,19 +354,21 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
 static Eina_Bool
 _edje_mouse_wheel_signal_cb(void *data, const Eo_Event *event)
 {
-   Evas_Event_Mouse_Wheel *ev;
+   Efl_Event_Pointer_Data *ev;
    Edje *ed;
    Edje_Real_Part *rp;
    char buf[256];
 
-   ev = event->info;
+   ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)
      {
         if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))
           {
-             snprintf(buf, sizeof(buf), "mouse,wheel,%i,%i", ev->direction, (ev->z < 0) ? (-1) : (1));
+             snprintf(buf, sizeof(buf), "mouse,wheel,%i,%i",
+                      ev->wheel.dir == EFL_ORIENT_HORIZONTAL ? 1 : 0,
+                      (ev->wheel.z < 0) ? (-1) : (1));
              _edje_emit(ed, buf, rp->part->name);
           }
 
@@ -446,12 +451,12 @@ _edje_pending_timer_cb(void *data)
 
 EO_CALLBACKS_ARRAY_DEFINE(edje_callbacks,
                           { EVAS_OBJECT_EVENT_HOLD, _edje_hold_signal_cb },
-                          { EVAS_OBJECT_EVENT_MOUSE_IN, _edje_mouse_in_signal_cb },
-                          { EVAS_OBJECT_EVENT_MOUSE_OUT, _edje_mouse_out_signal_cb },
-                          { EVAS_OBJECT_EVENT_MOUSE_DOWN, _edje_mouse_down_signal_cb },
-                          { EVAS_OBJECT_EVENT_MOUSE_UP, _edje_mouse_up_signal_cb },
-                          { EVAS_OBJECT_EVENT_MOUSE_MOVE, _edje_mouse_move_signal_cb },
-                          { EVAS_OBJECT_EVENT_MOUSE_WHEEL, _edje_mouse_wheel_signal_cb });
+                          { EFL_EVENT_POINTER_IN, _edje_mouse_in_signal_cb },
+                          { EFL_EVENT_POINTER_OUT, _edje_mouse_out_signal_cb },
+                          { EFL_EVENT_POINTER_DOWN, _edje_mouse_down_signal_cb },
+                          { EFL_EVENT_POINTER_UP, _edje_mouse_up_signal_cb },
+                          { EFL_EVENT_POINTER_MOVE, _edje_mouse_move_signal_cb },
+                          { EFL_EVENT_POINTER_WHEEL, _edje_mouse_wheel_signal_cb });
 
 EO_CALLBACKS_ARRAY_DEFINE(edje_focus_callbacks,
                           { EVAS_OBJECT_EVENT_FOCUS_IN, _edje_focus_in_signal_cb },
