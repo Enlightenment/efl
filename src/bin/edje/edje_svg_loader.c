@@ -60,10 +60,7 @@ _skip_space(const char *str, const char *end)
 static inline char *
 _copy_id(const char* str)
 {
-   char *id = malloc(strlen(str));
-
-   strcpy(id, str);
-   return id;
+   return strdup(str);
 }
 
 static const char *
@@ -677,7 +674,7 @@ _attr_parse_g_node(void *data, const char *key, const char *value)
 
    if (!strcmp(key, "style"))
      {
-        return _attr_style_node(node->style, value);
+        return _attr_style_node(node, value);
      }
    else if (!strcmp(key, "transform"))
      {
@@ -763,7 +760,7 @@ _attr_parse_path_node(void *data, const char *key, const char *value)
      }
    else if (!strcmp(key, "style"))
      {
-        _attr_style_node(node->style, value);
+        _attr_style_node(node, value);
      }
    else if (!strcmp(key, "id"))
      {
@@ -821,7 +818,7 @@ _attr_parse_circle_node(void *data, const char *key, const char *value)
 
    if (!strcmp(key, "style"))
      {
-        _attr_style_node(node->style, value);
+        _attr_style_node(node, value);
      }
    else if (!strcmp(key, "id"))
      {
@@ -884,7 +881,7 @@ _attr_parse_ellipse_node(void *data, const char *key, const char *value)
      }
    else if (!strcmp(key, "style"))
      {
-        _attr_style_node(node->style, value);
+        _attr_style_node(node, value);
      }
    else
      {
@@ -948,7 +945,7 @@ _attr_parse_polygon_node(void *data, const char *key, const char *value)
      }
    else if (!strcmp(key, "style"))
      {
-        _attr_style_node(node->style, value);
+        _attr_style_node(node, value);
      }
    else if (!strcmp(key, "id"))
      {
@@ -1013,7 +1010,7 @@ _attr_parse_rect_node(void *data, const char *key, const char *value)
      }
    else if (!strcmp(key, "style"))
      {
-        _attr_style_node(node->style, value);
+        _attr_style_node(node, value);
      }
    else
      {
