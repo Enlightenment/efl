@@ -828,5 +828,6 @@ class Efl.Ui.Win (Elm.Widget, Elm.Interface.Atspi.Window,
       object,focus,out;
       render,pre;
       render,post: Efl.Gfx.Event.Render_Post;
+      device,changed;
    }
 }
