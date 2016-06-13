@@ -123,7 +123,7 @@ _selection_done_path(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    evas_object_smart_callback_call(sd->obj, "file,chosen", (void *) path);
 
    // EVENTS: code above should not be needed
-   Eo_Event e = {0,};
+   Eo_Event e = { NULL, NULL, NULL };
    if (path)
       e.info = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, path));
    _selection_done(data, &e);

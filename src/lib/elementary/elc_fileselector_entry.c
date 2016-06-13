@@ -108,7 +108,7 @@ _FILE_CHOSEN_fwd_path(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
 {
    const char *path = event_info;
 
-   Eo_Event e = {0,};
+   Eo_Event e = { NULL, NULL, NULL };
    if (path)
      e.info = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, path));
    _FILE_CHOSEN_fwd(data, &e);
