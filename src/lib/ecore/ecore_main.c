@@ -11,13 +11,9 @@
 # endif
 #endif
 
-#ifdef __SUNPRO_C
-# include <ieeefp.h>
-# include <string.h>
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <math.h>
 #include <sys/types.h>
@@ -27,6 +23,10 @@
 
 #ifdef HAVE_SYSTEMD
 # include <systemd/sd-daemon.h>
+#endif
+
+#ifdef HAVE_IEEEFP_H
+# include <ieeefp.h> /* for Solaris */
 #endif
 
 #ifdef _MSC_VER

@@ -7,8 +7,8 @@
 #include <errno.h>
 #include <math.h>
 
-#ifdef __SUNPRO_C
-# include <ieeefp.h>
+#ifdef HAVE_IEEEFP_H
+# include <ieeefp.h> /* for Solaris */
 #endif
 
 #ifdef HAVE_ISFINITE

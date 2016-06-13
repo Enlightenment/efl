@@ -1750,6 +1750,7 @@ sys/prctl.h \
 sys/resource.h \
 sys/timerfd.h \
 sys/un.h \
+ieeefp.h \
 ],[],[],
 [
  #ifdef HAVE_SYS_SOCKET_H
