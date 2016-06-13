@@ -2023,6 +2023,19 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
 //   close(sc->tmpo_fd);
 }
 
+typedef struct
+{
+   char *exe;
+   Script_Write *sc;
+} Pending_Script_Write;
+
+#define PENDING_COMMANDS_MAX 8
+
+static int pending_write_commands = 0;
+static Eina_List *pending_script_writes = NULL;
+
+static void data_write_script_queue(Script_Write *sc, const char *exeline);
+
 static void
 data_thread_script_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
@@ -2045,6 +2058,20 @@ data_scripts_exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *ev
 
    if (!ev->exe) return ECORE_CALLBACK_RENEW;
    if (ecore_exe_data_get(ev->exe) != sc) return ECORE_CALLBACK_RENEW;
+   pending_write_commands--;
+   if (pending_write_commands < PENDING_COMMANDS_MAX)
+     {
+        if (pending_script_writes)
+          {
+             Pending_Script_Write *pend = pending_script_writes->data;
+
+             pending_script_writes = eina_list_remove_list
+               (pending_script_writes, pending_script_writes);
+             data_write_script_queue(pend->sc, pend->exe);
+             free(pend->exe);
+             free(pend);
+          }
+     }
    if (ev->exit_code != 0)
      {
         error_and_abort(sc->ef, "Compiling script code not clean.");
@@ -2061,6 +2088,41 @@ data_scripts_exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *ev
      }
    if (pending_threads <= 0) ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+data_write_script_queue(Script_Write *sc, const char *exeline)
+{
+   if (pending_write_commands >= PENDING_COMMANDS_MAX)
+     {
+        Pending_Script_Write *pend = malloc(sizeof(Pending_Script_Write));
+        if (pend)
+          {
+             pend->sc = sc;
+             pend->exe = strdup(exeline);
+             if (!pend->exe)
+               {
+                  error_and_abort(sc->ef,
+                                  "Unable to allocate mem pending string.");
+                  free(pend);
+                  return;
+               }
+             pending_script_writes = eina_list_append(pending_script_writes,
+                                                      pend);
+          }
+        else
+          error_and_abort(sc->ef,
+                          "Unable to allocate mem for pending script.");
+     }
+   else
+     {
+        pending_threads++;
+        sc->exe = ecore_exe_run(exeline, sc);
+        if (!sc->exe) error_and_abort(sc->ef, "Unable to fork off embryo_cc.");
+        ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+                                data_scripts_exe_del_cb, sc);
+        pending_write_commands++;
+     }
 }
 
 static void
@@ -2098,6 +2160,7 @@ data_write_scripts(Eet_File *ef)
        }
 #undef BIN_EXT
 
+   fprintf(stderr, ".................... SCRIPT\n");
    for (i = 0, l = codes; l; l = eina_list_next(l), i++)
      {
 	Code *cd = eina_list_data_get(l);
@@ -2128,10 +2191,7 @@ data_write_scripts(Eet_File *ef)
         snprintf(buf, sizeof(buf),
                  "%s -i %s -o %s %s", embryo_cc_path, inc_path,
                  sc->tmpo, sc->tmpn);
-        pending_threads++;
-        sc->exe = ecore_exe_run(buf, sc);
-        ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                data_scripts_exe_del_cb, sc);
+        data_write_script_queue(sc, buf);
      }
 }
 
