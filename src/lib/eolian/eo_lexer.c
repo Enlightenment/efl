@@ -154,8 +154,9 @@ static void next_line(Eo_Lexer *ls)
        next_char(ls);
        ls->stream_line = ls->stream;
      }
-   if (++ls->line_number >= INT_MAX)
+   if (++ls->iline_number >= INT_MAX)
      eo_lexer_syntax_error(ls, "chunk has too many lines");
+   ls->line_number = ls->iline_number;
    ls->icolumn = ls->column = 0;
 }
 
@@ -833,10 +834,15 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
       case '[':
         {
            int dline = ls->line_number, dcol = ls->column;
+           const char *sline = ls->stream_line;
            next_char(ls);
            if (ls->current != '[') return '[';
            next_char(ls);
            read_doc(ls, tok, dline, dcol);
+           ls->column = dcol + 1;
+           /* doc is the only potentially multiline token */
+           ls->line_number = dline;
+           ls->stream_line = sline;
            return TOK_DOC;
         }
       case '\0':
@@ -845,11 +851,13 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         next_char(ls);
         if (!ls->expr_mode || (ls->current != '=')) return '=';
         next_char(ls);
+        --ls->column;
         return TOK_EQ;
       case '!':
         next_char(ls);
         if (!ls->expr_mode || (ls->current != '=')) return '!';
         next_char(ls);
+        --ls->column;
         return TOK_NQ;
       case '>':
         next_char(ls);
@@ -857,11 +865,13 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         if (ls->current == '=')
           {
              next_char(ls);
+             --ls->column;
              return TOK_GE;
           }
         else if (ls->current == '>')
           {
              next_char(ls);
+             --ls->column;
              return TOK_RSH;
           }
         return '>';
@@ -871,11 +881,13 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         if (ls->current == '=')
           {
              next_char(ls);
+             --ls->column;
              return TOK_LE;
           }
         else if (ls->current == '<')
           {
              next_char(ls);
+             --ls->column;
              return TOK_LSH;
           }
         return '<';
@@ -883,47 +895,62 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         next_char(ls);
         if (!ls->expr_mode || (ls->current != '&')) return '&';
         next_char(ls);
+        --ls->column;
         return TOK_AND;
       case '|':
         next_char(ls);
         if (!ls->expr_mode || (ls->current != '|')) return '|';
         next_char(ls);
+        --ls->column;
         return TOK_OR;
       case '"':
-        if (!ls->expr_mode)
-          {
-             next_char(ls);
-             return '"';
-          }
-        read_string(ls, tok);
-        return TOK_STRING;
+        {
+           int dcol = ls->column;
+           if (!ls->expr_mode)
+             {
+                next_char(ls);
+                return '"';
+             }
+           /* strings are not multiline for now at least */
+           read_string(ls, tok);
+           ls->column = dcol + 1;
+           return TOK_STRING;
+        }
       case '\'':
-        next_char(ls);
-        if (!ls->expr_mode) return '\'';
-        if (ls->current == '\\')
-          {
-             next_char(ls);
-             eina_strbuf_reset(ls->buff);
-             read_escape(ls);
-             tok->value.c = (char)*eina_strbuf_string_get(ls->buff);
-          }
-        else
-          {
-             tok->value.c = ls->current;
-             next_char(ls);
-          }
-        if (ls->current != '\'')
-          eo_lexer_lex_error(ls, "unfinished character", TOK_CHAR);
-        next_char(ls);
-        return TOK_CHAR;
+        {
+           int dcol = ls->column;
+           next_char(ls);
+           if (!ls->expr_mode) return '\'';
+           if (ls->current == '\\')
+             {
+                next_char(ls);
+                eina_strbuf_reset(ls->buff);
+                read_escape(ls);
+                tok->value.c = (char)*eina_strbuf_string_get(ls->buff);
+             }
+           else
+             {
+                tok->value.c = ls->current;
+                next_char(ls);
+             }
+           if (ls->current != '\'')
+             eo_lexer_lex_error(ls, "unfinished character", TOK_CHAR);
+           next_char(ls);
+           ls->column = dcol + 1;
+           return TOK_CHAR;
+        }
       case '.':
-        next_char(ls);
-        if (!ls->expr_mode) return '.';
-        if (!isdigit(ls->current)) return '.';
-        eina_strbuf_reset(ls->buff);
-        eina_strbuf_append_char(ls->buff, '.');
-        read_number(ls, tok);
-        return TOK_NUMBER;
+        {
+           int dcol = ls->column;
+           next_char(ls);
+           if (!ls->expr_mode) return '.';
+           if (!isdigit(ls->current)) return '.';
+           eina_strbuf_reset(ls->buff);
+           eina_strbuf_append_char(ls->buff, '.');
+           read_number(ls, tok);
+           ls->column = dcol + 1;
+           return TOK_NUMBER;
+        }
       default:
         {
            if (isspace(ls->current))
@@ -934,8 +961,10 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
              }
            else if (ls->expr_mode && isdigit(ls->current))
              {
+                int col = ls->column;
                 eina_strbuf_reset(ls->buff);
                 read_number(ls, tok);
+                ls->column = col + 1;
                 return TOK_NUMBER;
              }
            if (ls->current && (isalnum(ls->current)
@@ -998,7 +1027,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    ls->stream_line     = ls->stream;
    ls->source          = eina_stringshare_add(source);
    ls->filename        = get_filename(ls);
-   ls->line_number     = 1;
+   ls->iline_number    = ls->line_number = 1;
    ls->icolumn         = ls->column = -1;
    ls->decpoint        = '.';
    next_char(ls);

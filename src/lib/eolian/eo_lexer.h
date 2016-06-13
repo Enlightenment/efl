@@ -136,8 +136,8 @@ typedef struct _Eo_Lexer
     * it points to the beginning of it after the lexing is done, icolumn is
     * token unaware, always pointing to current column */
    int          column, icolumn;
-   /* the current line number */
-   int          line_number;
+   /* the current line number, token aware and unaware */
+   int          line_number, iline_number;
    /* t: "normal" - token to lex into, "lookahead" - a lookahead token, used
     * to look one token past "t", when we need to check for a token after the
     * current one and use it in a conditional without consuming the current
