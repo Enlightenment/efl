@@ -290,9 +290,9 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
    else if (ns->type == EVAS_NATIVE_SURFACE_TBM)
      {
         stride = glsym__evas_native_tbm_surface_stride_get(NULL, ns);
-        im2 = evas_cache_image_copied_data(evas_common_image_cache_get(),
-                                   stride, ie->h, NULL, ie->flags.alpha,
-                                   EVAS_COLORSPACE_ARGB8888);
+        im2 = (RGBA_Image *)evas_cache_image_copied_data(evas_common_image_cache_get(),
+                                                         stride, ie->h, NULL, ie->flags.alpha,
+                                                         EVAS_COLORSPACE_ARGB8888);
      }
    else
      im2 = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
