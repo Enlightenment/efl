@@ -45,6 +45,7 @@ AM_CXXFLAGS = \
 
 LDADD = \
 @ELEMENTARY_LDFLAGS@ \
+-lm \
 $(top_builddir)/src/lib/eina/libeina.la \
 $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/eet/libeet.la \
