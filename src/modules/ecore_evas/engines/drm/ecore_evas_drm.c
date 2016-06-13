@@ -764,13 +764,12 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
    ecore_evas_data_set(ee, "device", edata->dev);
 
    _ecore_evas_register(ee);
-   ecore_evas_input_event_register(ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas,
                                (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   /* _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb); */
+   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
 
    ecore_drm2_output_crtc_size_get(edata->output, &mw, &mh);
 
@@ -900,13 +899,12 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
    ecore_evas_data_set(ee, "device", edata->dev);
 
    _ecore_evas_register(ee);
-   ecore_evas_input_event_register(ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas,
                                (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   /* _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb); */
+   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
 
    ecore_drm2_output_crtc_size_get(edata->output, &mw, &mh);
 
