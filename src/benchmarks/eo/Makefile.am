@@ -25,7 +25,8 @@ eo_bench_eo_add.c
 eo_bench_LDADD = \
 $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/eina/libeina.la \
-@EO_LDFLAGS@
+@EO_LDFLAGS@ \
+-lpthread
 
 clean-local:
 	rm -rf *.gcno ..\#..\#src\#*.gcov *.gcda
