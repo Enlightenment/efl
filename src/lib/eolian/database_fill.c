@@ -30,7 +30,7 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
    else
      return EINA_TRUE;
    if (strchr(imstr, '.'))
-     return EINA_FALSE;
+     return EINA_TRUE;
    impl->klass = cl;
    *foo_id = (Eolian_Function*)eolian_class_function_get_by_name(cl, imstr,
                                                                  ftype);
