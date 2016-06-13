@@ -2388,14 +2388,14 @@ evasgenericloadersdir = \
 $(libdir)/evas/utils
 
 evasgenericloaders_PROGRAMS =
-evasgenericloaders_SCRIPT =
+evasgenericloaders_SCRIPTS =
 
 ### Libreoffice converter to pdf
 EXTRA_DIST2 += generic/evas/pdf/evas_generic_pdf_loader.libreoffice
 
 if HAVE_POPPLER
 
-evasgenericloaders_SCRIPT += generic/evas/pdf/evas_generic_pdf_loader.libreoffice
+evasgenericloaders_SCRIPTS += generic/evas/pdf/evas_generic_pdf_loader.libreoffice
 evasgenericloaders_PROGRAMS += generic/evas/pdf/evas_image_loader.pdf
 
 generic_evas_pdf_evas_image_loader_pdf_SOURCES = \
