@@ -1757,6 +1757,52 @@ _elm_win_evas_render_pre(void *data,
 }
 
 static void
+_elm_win_evas_focus_in(void *data,
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
+{
+   Eo *win = data;
+
+   eo_event_callback_call(win, EFL_UI_WIN_EVENT_FOCUS_IN, NULL);
+}
+
+static void
+_elm_win_evas_focus_out(void *data,
+                        Evas *e EINA_UNUSED,
+                        Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
+{
+   Eo *win = data;
+
+   eo_event_callback_call(win, EFL_UI_WIN_EVENT_FOCUS_OUT, NULL);
+}
+
+static void
+_elm_win_evas_object_focus_in(void *data,
+                              Evas *e EINA_UNUSED,
+                              Evas_Object *obj EINA_UNUSED,
+                              void *event_info)
+{
+   Eo *object = event_info;
+   Eo *win = data;
+
+   eo_event_callback_call(win, EFL_UI_WIN_EVENT_OBJECT_FOCUS_IN, object);
+}
+
+static void
+_elm_win_evas_object_focus_out(void *data,
+                               Evas *e EINA_UNUSED,
+                               Evas_Object *obj EINA_UNUSED,
+                               void *event_info)
+{
+   Eo *object = event_info;
+   Eo *win = data;
+
+   eo_event_callback_call(win, EFL_UI_WIN_EVENT_OBJECT_FOCUS_OUT, object);
+}
+
+static void
 _deferred_ecore_evas_free(void *data)
 {
    ecore_evas_free(data);
@@ -2109,6 +2155,14 @@ _efl_ui_win_evas_object_smart_del(Eo *obj, Efl_Ui_Win_Data *sd)
                                        _elm_win_evas_render_post, obj);
    evas_object_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_PRE,
                                        _elm_win_evas_render_pre, obj);
+   evas_object_event_callback_del_full(sd->evas, EVAS_CALLBACK_FOCUS_IN,
+                                       _elm_win_evas_focus_in, obj);
+   evas_object_event_callback_del_full(sd->evas, EVAS_CALLBACK_FOCUS_OUT,
+                                       _elm_win_evas_focus_out, obj);
+   evas_object_event_callback_del_full(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
+                                       _elm_win_evas_object_focus_in, obj);
+   evas_object_event_callback_del_full(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
+                                       _elm_win_evas_object_focus_out, obj);
    eo_event_callback_array_del(sd->evas, _elm_win_evas_forward_callbacks(), obj);
    eo_event_callback_array_del(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
 
@@ -4175,6 +4229,14 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
                                   _elm_win_evas_render_post, obj);
    evas_object_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_PRE,
                                   _elm_win_evas_render_pre, obj);
+   evas_object_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_IN,
+                                  _elm_win_evas_focus_in, obj);
+   evas_object_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_OUT,
+                                  _elm_win_evas_focus_out, obj);
+   evas_object_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
+                                  _elm_win_evas_object_focus_in, obj);
+   evas_object_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
+                                  _elm_win_evas_object_focus_out, obj);
 
    evas_object_show(sd->edje);
 
