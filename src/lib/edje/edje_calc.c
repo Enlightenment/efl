@@ -3572,9 +3572,11 @@ static Eina_Bool
 _map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
                    Edje_Calc_Params_Map *pmap, FLOAT_T pos)
 {
-   Edje_Map_Color *col, *col2, *col3;
-   int i, j, idx = 0;
-   Eina_Bool matched = EINA_FALSE;
+   Edje_Map_Color *col = NULL, *col2 = NULL, *col3;
+   int i, j;
+
+   unsigned char col1_r = 255, col1_g = 255, col1_b = 255, col1_a = 255;
+   unsigned char col2_r = 255, col2_g = 255, col2_b = 255, col2_a = 255;
 
    if ((p1->map->colors_count > 0) || (p2->map->colors_count > 0))
      {
@@ -3582,59 +3584,50 @@ _map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
 
         pmap->colors = (Edje_Map_Color **)malloc(sizeof(Edje_Map_Color *) * (int)pmap->colors_count);
 
-        for (i = 0; i < (int)p1->map->colors_count; i++)
+        /* create all Map Color structs at first
+           to make sure we won't get SIGSEV later on cleanup. */
+        for (i = 0; i < (int)pmap->colors_count; i++)
           {
-             col = p1->map->colors[i];
              col3 = malloc(sizeof(Edje_Map_Color));
-             col3->idx = col->idx;
+             col3->idx = i; /* we don't care about index position anyway */
 
+             /* find color with idx from first */
+             for (j = 0; j < (int)p1->map->colors_count; j++)
+               {
+                  col = p1->map->colors[j];
+                  if (col3->idx == col->idx)
+                    {
+                       col1_r = col->r;
+                       col1_g = col->g;
+                       col1_b = col->b;
+                       col1_a = col->a;
+                       break;
+                    }
+               }
+             /* find color from idx from second */
              for (j = 0; j < (int)p2->map->colors_count; j++)
                {
                   col2 = p2->map->colors[j];
-                  if (col->idx != col2->idx) continue;
-                  col3->r = INTP(col->r, col2->r, pos);
-                  col3->g = INTP(col->g, col2->g, pos);
-                  col3->b = INTP(col->b, col2->b, pos);
-                  col3->a = INTP(col->a, col2->a, pos);
-                  pmap->colors[idx] = col3;
-                  matched = EINA_TRUE;
-                  break;
+                  if (col3->idx == col2->idx)
+                    {
+                       col2_r = col2->r;
+                       col2_g = col2->g;
+                       col2_b = col2->b;
+                       col2_a = col2->a;
+                       break;
+                    }
                }
-             if (!matched)
-               {
-                  col3->r = INTP(col->r, 255, pos);
-                  col3->g = INTP(col->g, 255, pos);
-                  col3->b = INTP(col->b, 255, pos);
-                  col3->a = INTP(col->a, 255, pos);
-                  pmap->colors[idx] = col3;
-               }
-             idx++;
-             matched = EINA_FALSE;
-          }
-        for (i = 0; i < (int)p2->map->colors_count; i++)
-          {
-             col = p2->map->colors[i];
 
-             for (j = 0; j < (int)p1->map->colors_count; j++)
-               {
-                  col2 = p1->map->colors[j];
-                  if (col->idx != col2->idx) continue;
-                  matched = EINA_TRUE;
-                  break;
-               }
-             if (!matched)
-               {
-                  col3 = malloc(sizeof(Edje_Map_Color));
-                  col3->idx = col->idx;
-                  col3->r = INTP(255, col->r, pos);
-                  col3->g = INTP(255, col->g, pos);
-                  col3->b = INTP(255, col->b, pos);
-                  col3->a = INTP(255, col->a, pos);
-                  pmap->colors[idx] = col3;
-               }
-             idx++;
-             matched = EINA_FALSE;
+             /* interpolate!
+                if color didn't existed, then there are default 255 values */
+             col3->r = INTP(col1_r, col2_r, pos);
+             col3->g = INTP(col1_g, col2_g, pos);
+             col3->b = INTP(col1_b, col2_b, pos);
+             col3->a = INTP(col1_a, col2_a, pos);
+
+             pmap->colors[i] = col3;
           }
+
         return EINA_TRUE;
      }
 
