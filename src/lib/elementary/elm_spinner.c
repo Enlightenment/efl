@@ -60,7 +60,7 @@ EO_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
    { EFL_UI_EVENT_CLICKED, _inc_dec_button_clicked_cb},
    { EFL_UI_EVENT_PRESSED, _inc_dec_button_pressed_cb},
    { EFL_UI_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb},
-   { EVAS_OBJECT_EVENT_MOUSE_MOVE, _inc_dec_button_mouse_move_cb }
+   { EFL_EVENT_POINTER_MOVE, _inc_dec_button_mouse_move_cb }
 );
 
 static void _access_increment_decrement_info_say(Evas_Object *obj,
@@ -893,10 +893,10 @@ _text_button_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 static Eina_Bool
 _inc_dec_button_mouse_move_cb(void *data, const Eo_Event *event)
 {
-   Evas_Event_Mouse_Move *ev = event->info;
+   Efl_Event_Pointer *ev = event->info;
    ELM_SPINNER_DATA_GET(data, sd);
 
-   if ((ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) && sd->longpress_timer)
+   if (efl_event_processed_get(ev) && sd->longpress_timer)
      {
         ecore_timer_del(sd->longpress_timer);
         sd->longpress_timer = NULL;
