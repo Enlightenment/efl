@@ -5193,4 +5193,133 @@ EAPI Evas_Out *evas_out_add(Evas *e);
  */
 EAPI void evas_output_del(Evas_Out *evo);
 
+/**
+ * @brief Sets the output framespace size of the render engine of the given
+ * evas.
+ *
+ * The framespace size is used in the Wayland engines to denote space in the
+ * viewport which is occupied by the window frame. This is mainly used in
+ * ecore_evas to draw borders.
+ *
+ * The units used for @c w and @c h depend on the engine used by the evas.
+ *
+ * @param[in] x The left coordinate in output units, usually pixels.
+ * @param[in] y The top coordinate in output units, usually pixels.
+ * @param[in] w The width in output units, usually pixels.
+ * @param[in] h The height in output units, usually pixels.
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI void evas_output_framespace_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+
+/**
+ * @brief Get the render engine's output framespace coordinates in canvas
+ * units.
+ *
+ * @param[out] x The left coordinate in output units, usually pixels.
+ * @param[out] y The top coordinate in output units, usually pixels.
+ * @param[out] w The width in output units, usually pixels.
+ * @param[out] h The height in output units, usually pixels.
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI void evas_output_framespace_get(const Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+
+/**
+ * @brief Sets the output viewport of the given evas in evas units.
+ *
+ * The output viewport is the area of the evas that will be visible to the
+ * viewer.	The viewport will be stretched to fit the output target of the evas
+ * when rendering is performed.
+ *
+ * @note The coordinate values do not have to map 1-to-1 with the output
+ * target. However, it is generally advised that it is done for ease of use.
+ *
+ * @param[in] x The top-left corner x value of the viewport.
+ * @param[in] y The top-left corner y value of the viewport.
+ * @param[in] w The width of the viewport.	Must be greater than 0.
+ * @param[in] h The height of the viewport.  Must be greater than 0.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI void evas_output_viewport_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+
+/**
+ * @brief Get the render engine's output viewport coordinates in canvas units.
+ *
+ * Calling this function writes the current canvas output viewport size and
+ * location values into the variables pointed to by @c x, @c y, @c w and @c h.
+ *	On success the variables have the output location and size values written
+ * to them in canvas units. Any of @c x, @c y, @c w or @c h that are @c null
+ * will not be written to. If @c e is invalid, the results are undefined.
+ *
+ * @param[out] x The top-left corner x value of the viewport.
+ * @param[out] y The top-left corner y value of the viewport.
+ * @param[out] w The width of the viewport.  Must be greater than 0.
+ * @param[out] h The height of the viewport.  Must be greater than 0.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI void evas_output_viewport_get(const Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+
+/**
+ * @brief Sets the output engine for the given evas.
+ *
+ * Once the output engine for an evas is set, any attempt to change it	will be
+ * ignored. The value for @c render_method can be found using @ref
+ * evas_render_method_lookup.
+ *
+ * @note it is mandatory that one calls @ref evas_init before setting the
+ * output method.
+ *
+ * @param[in] render_method The numeric engine value to use.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI void evas_output_method_set(Evas *e, int render_method);
+
+/**
+ * @brief Retrieves the number of the output engine used for the given evas.
+ *
+ * @return The numeric engine value to use.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI int evas_output_method_get(const Evas *e);
+
+/**
+ * @brief Sets the output size of the render engine of the given evas.
+ *
+ * The evas will render to a rectangle of the given size once this function is
+ * called.	The output size is independent of the viewport size. The viewport
+ * will be stretched to fill the given rectangle.
+ *
+ * The units used for @c w and @c h depend on the engine used by the evas.
+ *
+ * @param[in] w The width in output units, usually pixels.
+ * @param[in] h The height in output units, usually pixels.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI void evas_output_size_set(Evas *e, int w, int h);
+
+/**
+ * @brief Retrieve the output size of the render engine of the given evas.
+ *
+ * The output size is given in whatever the output units are for the engine.
+ *
+ * If either @c w or @c h is @c null, then it is ignored.  If @c e is invalid,
+ * the returned results are undefined.
+ *
+ * @param[out] w The width in output units, usually pixels.
+ * @param[out] h The height in output units, usually pixels.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI void evas_output_size_get(const Evas *e, int *w, int *h);
+
 #include "canvas/evas_out.eo.legacy.h"

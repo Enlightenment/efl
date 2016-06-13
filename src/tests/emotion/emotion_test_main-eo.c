@@ -84,7 +84,7 @@ main_resize(Ecore_Evas *ee)
 {
    Evas_Coord w, h;
 
-   evas_canvas_output_viewport_get(ecore_evas_get(ee), NULL, NULL, &w, &h);
+   evas_output_viewport_get(ecore_evas_get(ee), NULL, NULL, &w, &h);
    bg_resize(w, h);
 }
 

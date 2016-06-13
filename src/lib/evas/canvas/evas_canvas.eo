@@ -7,76 +7,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
    legacy_prefix: evas;
    data: Evas_Public_Data;
    methods {
-      @property output_framespace {
-         set {
-            [[Sets the output framespace size of the render engine of the
-              given evas.
-
-              The framespace size is used in the Wayland engines to denote
-              space in the viewport which is occupied by the window
-              frame. This is mainly used in ecore_evas to draw borders.
-
-              The units used for $w and $h depend on the engine used by the
-              evas.
-
-              @since 1.1
-            ]]
-         }
-         get {
-            [[Get the render engine's output framespace coordinates in
-              canvas units.
-
-              @since 1.1
-            ]]
-         }
-         values {
-            x: Evas.Coord; [[The left coordinate in output units, usually pixels.]]
-            y: Evas.Coord; [[The top coordinate in output units, usually pixels.]]
-            w: Evas.Coord; [[The width in output units, usually pixels.]]
-            h: Evas.Coord; [[The height in output units, usually pixels.]]
-         }
-      }
-      @property output_viewport {
-         set {
-            [[Sets the output viewport of the given evas in evas units.
-
-              The output viewport is the area of the evas that will be
-              visible to the viewer.  The viewport will be stretched to
-              fit the output target of the evas when rendering is performed.
-
-              Note: The coordinate values do not have to map 1-to-1 with
-              the output target. However, it is generally advised that it
-              is done for ease of use.
-            ]]
-         }
-         get {
-            [[Get the render engine's output viewport coordinates in
-              canvas units.
-
-              Calling this function writes the current canvas output
-              viewport size and location values into the variables pointed
-              to by $x, $y, $w and $h.  On success the variables have the
-              output location and size values written to them in canvas
-              units. Any of $x, $y, $w or $h that are $null will not be
-              written to. If $e is invalid, the results are undefined.
-            ]]
-            /* FIXME-doc
-            Example:
-            @code
-            extern Evas *evas;
-            Evas_Coord x, y, width, height;
-
-            evas_output_viewport_get(evas, &x, &y, &w, &h);
-            @endcode
-            */
-         }
-         values {
-            x: Evas.Coord; [[The top-left corner x value of the viewport.]]
-            y: Evas.Coord; [[The top-left corner y value of the viewport.]]
-            w: Evas.Coord; [[The width of the viewport.  Must be greater than 0.]]
-            h: Evas.Coord; [[The height of the viewport.  Must be greater than 0.]]
-         }
-      }
       @property image_cache {
          set {
             [[Set the image cache.
@@ -118,27 +48,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
             flags: Efl.Event.Flags; [[The default flags to use.]]
          }
       }
-      @property output_method {
-         set {
-            [[Sets the output engine for the given evas.
-
-              Once the output engine for an evas is set, any attempt to
-              change it  will be ignored. The value for $render_method can
-              be found using \@ref evas_render_method_lookup.
-
-              Note: it is mandatory that one calls \@ref evas_init before
-              setting the output method.
-            ]]
-         }
-         get {
-            [[Retrieves the number of the output engine used for the given
-              evas.
-            ]]
-         }
-         values {
-            render_method: int; [[The numeric engine value to use.]]
-         }
-      }
       @property font_cache {
          set {
             [[Changes the size of font cache of the given evas.]]
@@ -148,35 +57,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
          }
          values {
             size: int; [[The size in bytes.]]
-         }
-      }
-      @property output_size {
-         set {
-            [[Sets the output size of the render engine of the given evas.
-
-              The evas will render to a rectangle of the given size once
-              this function is called.  The output size is independent of
-              the viewport size. The viewport will be stretched to fill
-              the given rectangle.
-
-              The units used for $w and $h depend on the engine used by the
-              evas.
-            ]]
-         }
-         get {
-            [[Retrieve the output size of the render engine of the given
-              evas.
-
-              The output size is given in whatever the output units are for
-              the engine.
-
-              If either $w or $h is $null, then it is ignored.  If $e is
-              invalid, the returned results are undefined.
-            ]]
-         }
-         values {
-            w: int; [[The width in output units, usually pixels.]]
-            h: int; [[The height in output units, usually pixels.]]
          }
       }
       @property data_attach {
