@@ -118,7 +118,7 @@ bg_setup(void)
    efl_gfx_stack_layer_set(o_bg, -999);
    efl_gfx_visible_set(o_bg, EINA_TRUE);
    evas_obj_focus_set(o_bg, EINA_TRUE);
-   eo_event_callback_add(o_bg, EVAS_OBJECT_EVENT_KEY_DOWN, bg_key_down, NULL);
+   eo_event_callback_add(o_bg, EFL_EVENT_KEY_DOWN, bg_key_down, NULL);
 }
 
 static void
@@ -134,51 +134,54 @@ broadcast_event(Emotion_Event ev)
 static Eina_Bool
 bg_key_down(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Evas_Event_Key_Down *ev = event->info;
+   Efl_Event_Key *ev = event->info;
    Eina_List *l;
    Evas_Object *o;
+   const char *keyname = efl_event_key_name_get(ev);
 
-   if      (!strcmp(ev->keyname, "Escape"))
+   if (!keyname) return EO_CALLBACK_CONTINUE;
+
+   if      (!strcmp(keyname, "Escape"))
      ecore_main_loop_quit();
-   else if (!strcmp(ev->keyname, "Up"))
+   else if (!strcmp(keyname, "Up"))
      broadcast_event(EMOTION_EVENT_UP);
-   else if (!strcmp(ev->keyname, "Down"))
+   else if (!strcmp(keyname, "Down"))
      broadcast_event(EMOTION_EVENT_DOWN);
-   else if (!strcmp(ev->keyname, "Left"))
+   else if (!strcmp(keyname, "Left"))
      broadcast_event(EMOTION_EVENT_LEFT);
-   else if (!strcmp(ev->keyname, "Right"))
+   else if (!strcmp(keyname, "Right"))
      broadcast_event(EMOTION_EVENT_RIGHT);
-   else if (!strcmp(ev->keyname, "Return"))
+   else if (!strcmp(keyname, "Return"))
      broadcast_event(EMOTION_EVENT_SELECT);
-   else if (!strcmp(ev->keyname, "m"))
+   else if (!strcmp(keyname, "m"))
      broadcast_event(EMOTION_EVENT_MENU1);
-   else if (!strcmp(ev->keyname, "Prior"))
+   else if (!strcmp(keyname, "Prior"))
      broadcast_event(EMOTION_EVENT_PREV);
-   else if (!strcmp(ev->keyname, "Next"))
+   else if (!strcmp(keyname, "Next"))
      broadcast_event(EMOTION_EVENT_NEXT);
-   else if (!strcmp(ev->keyname, "0"))
+   else if (!strcmp(keyname, "0"))
      broadcast_event(EMOTION_EVENT_0);
-   else if (!strcmp(ev->keyname, "1"))
+   else if (!strcmp(keyname, "1"))
      broadcast_event(EMOTION_EVENT_1);
-   else if (!strcmp(ev->keyname, "2"))
+   else if (!strcmp(keyname, "2"))
      broadcast_event(EMOTION_EVENT_2);
-   else if (!strcmp(ev->keyname, "3"))
+   else if (!strcmp(keyname, "3"))
      broadcast_event(EMOTION_EVENT_3);
-   else if (!strcmp(ev->keyname, "4"))
+   else if (!strcmp(keyname, "4"))
      broadcast_event(EMOTION_EVENT_4);
-   else if (!strcmp(ev->keyname, "5"))
+   else if (!strcmp(keyname, "5"))
      broadcast_event(EMOTION_EVENT_5);
-   else if (!strcmp(ev->keyname, "6"))
+   else if (!strcmp(keyname, "6"))
      broadcast_event(EMOTION_EVENT_6);
-   else if (!strcmp(ev->keyname, "7"))
+   else if (!strcmp(keyname, "7"))
      broadcast_event(EMOTION_EVENT_7);
-   else if (!strcmp(ev->keyname, "8"))
+   else if (!strcmp(keyname, "8"))
      broadcast_event(EMOTION_EVENT_8);
-   else if (!strcmp(ev->keyname, "9"))
+   else if (!strcmp(keyname, "9"))
      broadcast_event(EMOTION_EVENT_9);
-   else if (!strcmp(ev->keyname, "-"))
+   else if (!strcmp(keyname, "-"))
      broadcast_event(EMOTION_EVENT_10);
-   else if (!strcmp(ev->keyname, "v"))
+   else if (!strcmp(keyname, "v"))
      {
         EINA_LIST_FOREACH(video_objs, l, o)
           {
@@ -188,7 +191,7 @@ bg_key_down(void *data EINA_UNUSED, const Eo_Event *event)
                emotion_object_video_mute_set(o, EINA_TRUE);
           }
      }
-   else if (!strcmp(ev->keyname, "a"))
+   else if (!strcmp(keyname, "a"))
      {
         EINA_LIST_FOREACH(video_objs, l, o)
           {
@@ -204,7 +207,7 @@ bg_key_down(void *data EINA_UNUSED, const Eo_Event *event)
               }
           }
      }
-   else if (!strcmp(ev->keyname, "i"))
+   else if (!strcmp(keyname, "i"))
      {
         EINA_LIST_FOREACH(video_objs, l, o)
           {
@@ -214,21 +217,21 @@ bg_key_down(void *data EINA_UNUSED, const Eo_Event *event)
              printf("seekable: %i\n", emotion_object_seekable_get(o));
           }
      }
-   else if (!strcmp(ev->keyname, "f"))
+   else if (!strcmp(keyname, "f"))
      {
        if (!ecore_evas_fullscreen_get(ecore_evas))
          ecore_evas_fullscreen_set(ecore_evas, EINA_TRUE);
        else
          ecore_evas_fullscreen_set(ecore_evas, EINA_FALSE);
      }
-   else if (!strcmp(ev->keyname, "d"))
+   else if (!strcmp(keyname, "d"))
      {
         if (!ecore_evas_avoid_damage_get(ecore_evas))
           ecore_evas_avoid_damage_set(ecore_evas, EINA_TRUE);
         else
           ecore_evas_avoid_damage_set(ecore_evas, EINA_FALSE);
      }
-   else if (!strcmp(ev->keyname, "s"))
+   else if (!strcmp(keyname, "s"))
      {
         if (!ecore_evas_shaped_get(ecore_evas))
           {
@@ -241,14 +244,14 @@ bg_key_down(void *data EINA_UNUSED, const Eo_Event *event)
              evas_object_show(o_bg);
           }
      }
-   else if (!strcmp(ev->keyname, "b"))
+   else if (!strcmp(keyname, "b"))
      {
         if (!ecore_evas_borderless_get(ecore_evas))
           ecore_evas_borderless_set(ecore_evas, EINA_TRUE);
         else
           ecore_evas_borderless_set(ecore_evas, EINA_FALSE);
      }
-   else if (!strcmp(ev->keyname, "q"))
+   else if (!strcmp(keyname, "q"))
      {
         ecore_main_loop_quit();
         while (video_objs)
@@ -259,7 +262,7 @@ bg_key_down(void *data EINA_UNUSED, const Eo_Event *event)
              printf("done\n");
           }
      }
-   else if (!strcmp(ev->keyname, "z"))
+   else if (!strcmp(keyname, "z"))
      {
         vis = (vis + 1) % EMOTION_VIS_LAST;
         printf("new visualization: %d\n", vis);
@@ -283,7 +286,7 @@ bg_key_down(void *data EINA_UNUSED, const Eo_Event *event)
      }
    else
      {
-        printf("UNHANDLED: %s\n", ev->keyname);
+        printf("UNHANDLED: %s\n", keyname);
      }
 
    return EINA_TRUE;
