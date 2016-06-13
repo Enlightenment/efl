@@ -2160,7 +2160,6 @@ data_write_scripts(Eet_File *ef)
        }
 #undef BIN_EXT
 
-   fprintf(stderr, ".................... SCRIPT\n");
    for (i = 0, l = codes; l; l = eina_list_next(l), i++)
      {
 	Code *cd = eina_list_data_get(l);
