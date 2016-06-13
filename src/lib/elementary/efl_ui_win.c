@@ -1746,6 +1746,17 @@ _elm_win_evas_render_post(void *data,
 }
 
 static void
+_elm_win_evas_render_pre(void *data,
+                          Evas *e EINA_UNUSED,
+                          Evas_Object *obj EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
+{
+   Eo *win = data;
+
+   eo_event_callback_call(win, EFL_UI_WIN_EVENT_RENDER_PRE, NULL);
+}
+
+static void
 _deferred_ecore_evas_free(void *data)
 {
    ecore_evas_free(data);
@@ -2096,6 +2107,8 @@ _efl_ui_win_evas_object_smart_del(Eo *obj, Efl_Ui_Win_Data *sd)
    // TODO: optimize event forwarders with EO_EVENT_CALLBACK_ADD/DEL
    evas_object_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_POST,
                                        _elm_win_evas_render_post, obj);
+   evas_object_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_PRE,
+                                       _elm_win_evas_render_pre, obj);
    eo_event_callback_array_del(sd->evas, _elm_win_evas_forward_callbacks(), obj);
    eo_event_callback_array_del(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
 
@@ -4155,10 +4168,13 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    if (_elm_config->atspi_mode)
      elm_interface_atspi_window_created_signal_emit(obj);
 
+   // TODO: optimize event forwarders with EO_EVENT_CALLBACK_ADD/DEL
    eo_event_callback_array_add(sd->evas, _elm_win_evas_forward_callbacks(), obj);
    eo_event_callback_array_add(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
    evas_object_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_POST,
                                   _elm_win_evas_render_post, obj);
+   evas_object_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_PRE,
+                                  _elm_win_evas_render_pre, obj);
 
    evas_object_show(sd->edje);
 

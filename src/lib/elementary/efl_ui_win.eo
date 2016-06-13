@@ -822,6 +822,7 @@ class Efl.Ui.Win (Elm.Widget, Elm.Interface.Atspi.Window,
       wm,rotation,changed;
       theme,changed;
       elm,action,block_menu;
+      render,pre;
       render,post: Efl.Gfx.Event.Render_Post;
    }
 }
