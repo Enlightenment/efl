@@ -3135,6 +3135,135 @@ EFL_LIB_END([Ecore_File])
 #### End of Ecore_File
 
 
+#### Eeze
+have_libmount_new="no"
+have_libmount_old="no"
+have_eeze_mount="no"
+
+EFL_LIB_START_OPTIONAL([Eeze], [test "x${build_libeeze}" = "xyes"])
+
+### Additional options to configure
+AC_ARG_WITH([mount],
+  [AS_HELP_STRING([--with-mount], [specify mount bin @<:@default=detect@:>@])],
+  [with_eeze_mount=$withval], [with_eeze_mount="detect"])
+AC_ARG_WITH([umount],
+  [AS_HELP_STRING([--with-umount], [specify umount bin @<:@default=detect@:>@])],
+  [with_eeze_umount=$withval], [with_eeze_umount="detect"])
+AC_ARG_WITH([eject],
+  [AS_HELP_STRING([--with-eject], [specify eject bin @<:@default=detect@:>@])],
+  [with_eeze_eject=$withval], [with_eeze_eject="detect"])
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EEZE], [eina])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [eo])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [efl])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore-file])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore-con])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [eet])
+EFL_INTERNAL_DEPEND_PKG([EEZE], [emile])
+
+EFL_DEPEND_PKG([EEZE], [UDEV], [libudev >= 148])
+
+AC_ARG_ENABLE([libmount],
+   [AS_HELP_STRING([--disable-libmount],[disable libmount support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_libmount="yes"
+    else
+       want_libmount="no"
+       CFOPT_WARNING="xyes"
+    fi
+   ],
+   [want_libmount="yes"])
+
+EFL_OPTIONAL_DEPEND_PKG([EEZE], [${want_libmount}],
+   [EEZE_MOUNT], [mount >= 2.18.0])
+EFL_ADD_FEATURE([EEZE], [libmount], [${have_eeze_mount}])
+
+PKG_CHECK_EXISTS([libudev < 199],
+                 [have_libudev_old="yes"],
+                 [have_libudev_old="no"])
+AC_MSG_CHECKING([Use old libudev API (before 199)])
+AC_MSG_RESULT([${have_libudev_old}])
+
+PKG_CHECK_EXISTS([mount < 2.19.0],
+                 [have_libmount_old="yes"],
+                 [have_libmount_old="no"])
+AC_MSG_CHECKING([Use old libmount API (before 2.19.0)])
+AC_MSG_RESULT([${have_libmount_old}])
+
+PKG_CHECK_EXISTS([mount == 2.19.0],
+                 [have_libmount_219="yes"],
+                 [have_libmount_219="no"])
+AC_MSG_CHECKING([Use libmount 2.19.0 API])
+AC_MSG_RESULT([${have_libmount_219}])
+
+PKG_CHECK_EXISTS([mount > 2.19.0],
+                 [have_libmount_new="yes"],
+                 [have_libmount_new="no"])
+AC_MSG_CHECKING([Use new libmount API (newer than 2.19.0)])
+AC_MSG_RESULT([${have_libmount_new}])
+
+if test "x${have_libudev_old}" = "xyes"; then
+  AC_DEFINE_UNQUOTED([OLD_LIBUDEV], [1], [using older version of libudev])
+fi
+
+if test "x${have_libmount_old}" = "xyes"; then
+  AC_DEFINE_UNQUOTED([OLD_LIBMOUNT], [1], [using first version of libmount])
+fi
+
+## modules
+if test "${want_tizen}"  = "yes"; then
+  PKG_CHECK_MODULES([TIZEN_SENSOR], [capi-system-sensor >= 0.1.17])
+fi
+EFL_ADD_FEATURE([EEZE], [tizen])
+
+EFL_EVAL_PKGS([EEZE])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Checks for binaries
+if test "x$with_eeze_mount" = "xdetect"; then
+  AC_PATH_PROG([with_eeze_mount], [mount], [])
+fi
+AC_DEFINE_UNQUOTED([EEZE_MOUNT_BIN], ["$with_eeze_mount"], [mount bin to use])
+
+if test "x$with_eeze_umount" = "xdetect";then
+  AC_PATH_PROG([with_eeze_umount], [umount], [])
+fi
+AC_DEFINE_UNQUOTED([EEZE_UNMOUNT_BIN], ["$with_eeze_umount"], [umount bin to use])
+
+if test "x$with_eeze_eject" = "xdetect";then
+  AC_PATH_PROG([with_eeze_eject], [eject], [])
+fi
+AC_DEFINE_UNQUOTED([EEZE_EJECT_BIN], ["$with_eeze_eject"], [eject bin to use])
+
+EFL_LIB_END_OPTIONAL([Eeze])
+
+AM_CONDITIONAL([EEZE_LIBMOUNT_AFTER_219],
+               [test "x${have_libmount_new}" = "xyes"])
+AM_CONDITIONAL([EEZE_LIBMOUNT_BEFORE_219],
+               [test "x${have_libmount_old}" = "xyes"])
+AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test "x${have_eeze_mount}" = "xyes"])
+AM_CONDITIONAL([HAVE_EEZE_TIZEN], [test "x${want_tizen}" = "xyes"])
+#### End of Eeze
+
+
 #### Ecore_Input
 EFL_LIB_START([Ecore_Input])
 
@@ -3152,6 +3281,8 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [efl])
 EFL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [eina])
+
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_INPUT], [${efl_lib_optional_eeze}], [eeze])
 
 ### Checks for header files
 
@@ -3485,134 +3616,6 @@ EFL_EVAL_PKGS([ELDBUS])
 EFL_LIB_END([Eldbus])
 #### End of Eldbus
 
-
-#### Eeze
-have_libmount_new="no"
-have_libmount_old="no"
-have_eeze_mount="no"
-
-EFL_LIB_START_OPTIONAL([Eeze], [test "x${build_libeeze}" = "xyes"])
-
-### Additional options to configure
-AC_ARG_WITH([mount],
-  [AS_HELP_STRING([--with-mount], [specify mount bin @<:@default=detect@:>@])],
-  [with_eeze_mount=$withval], [with_eeze_mount="detect"])
-AC_ARG_WITH([umount],
-  [AS_HELP_STRING([--with-umount], [specify umount bin @<:@default=detect@:>@])],
-  [with_eeze_umount=$withval], [with_eeze_umount="detect"])
-AC_ARG_WITH([eject],
-  [AS_HELP_STRING([--with-eject], [specify eject bin @<:@default=detect@:>@])],
-  [with_eeze_eject=$withval], [with_eeze_eject="detect"])
-
-### Default values
-
-### Checks for programs
-
-### Checks for libraries
-EFL_INTERNAL_DEPEND_PKG([EEZE], [eina])
-EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore])
-EFL_INTERNAL_DEPEND_PKG([EEZE], [eo])
-EFL_INTERNAL_DEPEND_PKG([EEZE], [efl])
-EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore-file])
-EFL_INTERNAL_DEPEND_PKG([EEZE], [ecore-con])
-EFL_INTERNAL_DEPEND_PKG([EEZE], [eet])
-EFL_INTERNAL_DEPEND_PKG([EEZE], [emile])
-
-EFL_DEPEND_PKG([EEZE], [UDEV], [libudev >= 148])
-
-AC_ARG_ENABLE([libmount],
-   [AS_HELP_STRING([--disable-libmount],[disable libmount support. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_libmount="yes"
-    else
-       want_libmount="no"
-       CFOPT_WARNING="xyes"
-    fi
-   ],
-   [want_libmount="yes"])
-
-EFL_OPTIONAL_DEPEND_PKG([EEZE], [${want_libmount}],
-   [EEZE_MOUNT], [mount >= 2.18.0])
-EFL_ADD_FEATURE([EEZE], [libmount], [${have_eeze_mount}])
-
-PKG_CHECK_EXISTS([libudev < 199],
-                 [have_libudev_old="yes"],
-                 [have_libudev_old="no"])
-AC_MSG_CHECKING([Use old libudev API (before 199)])
-AC_MSG_RESULT([${have_libudev_old}])
-
-PKG_CHECK_EXISTS([mount < 2.19.0],
-                 [have_libmount_old="yes"],
-                 [have_libmount_old="no"])
-AC_MSG_CHECKING([Use old libmount API (before 2.19.0)])
-AC_MSG_RESULT([${have_libmount_old}])
-
-PKG_CHECK_EXISTS([mount == 2.19.0],
-                 [have_libmount_219="yes"],
-                 [have_libmount_219="no"])
-AC_MSG_CHECKING([Use libmount 2.19.0 API])
-AC_MSG_RESULT([${have_libmount_219}])
-
-PKG_CHECK_EXISTS([mount > 2.19.0],
-                 [have_libmount_new="yes"],
-                 [have_libmount_new="no"])
-AC_MSG_CHECKING([Use new libmount API (newer than 2.19.0)])
-AC_MSG_RESULT([${have_libmount_new}])
-
-if test "x${have_libudev_old}" = "xyes"; then
-  AC_DEFINE_UNQUOTED([OLD_LIBUDEV], [1], [using older version of libudev])
-fi
-
-if test "x${have_libmount_old}" = "xyes"; then
-  AC_DEFINE_UNQUOTED([OLD_LIBMOUNT], [1], [using first version of libmount])
-fi
-
-## modules
-if test "${want_tizen}"  = "yes"; then
-  PKG_CHECK_MODULES([TIZEN_SENSOR], [capi-system-sensor >= 0.1.17])
-fi
-EFL_ADD_FEATURE([EEZE], [tizen])
-
-EFL_EVAL_PKGS([EEZE])
-
-### Checks for header files
-
-### Checks for types
-
-### Checks for structures
-
-### Checks for compiler characteristics
-
-### Checks for linker characteristics
-
-### Checks for library functions
-
-### Checks for binaries
-if test "x$with_eeze_mount" = "xdetect"; then
-  AC_PATH_PROG([with_eeze_mount], [mount], [])
-fi
-AC_DEFINE_UNQUOTED([EEZE_MOUNT_BIN], ["$with_eeze_mount"], [mount bin to use])
-
-if test "x$with_eeze_umount" = "xdetect";then
-  AC_PATH_PROG([with_eeze_umount], [umount], [])
-fi
-AC_DEFINE_UNQUOTED([EEZE_UNMOUNT_BIN], ["$with_eeze_umount"], [umount bin to use])
-
-if test "x$with_eeze_eject" = "xdetect";then
-  AC_PATH_PROG([with_eeze_eject], [eject], [])
-fi
-AC_DEFINE_UNQUOTED([EEZE_EJECT_BIN], ["$with_eeze_eject"], [eject bin to use])
-
-EFL_LIB_END_OPTIONAL([Eeze])
-
-AM_CONDITIONAL([EEZE_LIBMOUNT_AFTER_219],
-               [test "x${have_libmount_new}" = "xyes"])
-AM_CONDITIONAL([EEZE_LIBMOUNT_BEFORE_219],
-               [test "x${have_libmount_old}" = "xyes"])
-AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test "x${have_eeze_mount}" = "xyes"])
-AM_CONDITIONAL([HAVE_EEZE_TIZEN], [test "x${want_tizen}" = "xyes"])
-#### End of Eeze
 
 
 #### Ecore_Drm

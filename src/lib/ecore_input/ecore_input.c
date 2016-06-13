@@ -24,6 +24,7 @@ EAPI int ECORE_EVENT_MOUSE_IN = 0;
 EAPI int ECORE_EVENT_MOUSE_OUT = 0;
 EAPI int ECORE_EVENT_AXIS_UPDATE = 0;
 EAPI int ECORE_EVENT_MOUSE_BUTTON_CANCEL = 0;
+EAPI int ECORE_EVENT_JOYSTICK = 0;
 
 static int _ecore_event_init_count = 0;
 
@@ -56,6 +57,9 @@ ecore_event_init(void)
    ECORE_EVENT_MOUSE_OUT = ecore_event_type_new();
    ECORE_EVENT_AXIS_UPDATE = ecore_event_type_new();
    ECORE_EVENT_MOUSE_BUTTON_CANCEL = ecore_event_type_new();
+   ECORE_EVENT_JOYSTICK = ecore_event_type_new();
+
+   ecore_input_joystick_init();
 
    return _ecore_event_init_count;
 }
@@ -76,6 +80,8 @@ ecore_event_shutdown(void)
    ECORE_EVENT_MOUSE_OUT = 0;
    ECORE_EVENT_AXIS_UPDATE = 0;
    ECORE_EVENT_MOUSE_BUTTON_CANCEL = 0;
+   ECORE_EVENT_JOYSTICK = 0;
+   ecore_input_joystick_shutdown();
    eina_log_domain_unregister(_ecore_input_log_dom);
    _ecore_input_log_dom = -1;
    ecore_shutdown();

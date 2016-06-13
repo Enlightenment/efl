@@ -34,4 +34,6 @@ extern int _ecore_input_log_dom;
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_ecore_input_log_dom, __VA_ARGS__)
 
+int ecore_input_joystick_init(void);
+int ecore_input_joystick_shutdown(void);
 #endif
