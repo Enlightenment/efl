@@ -1541,25 +1541,24 @@ _anchor_clicked(void *data, const Eo_Event *event)
 static Eina_Bool
 _files_key_down(void *data, const Eo_Event *event)
 {
-     Evas_Event_Key_Down *ev = event->info;
+     Efl_Event_Key *ev = event->info;
      Evas_Object *par, *searchbar;
+     const char *string, *key;
 
      par = data;
      searchbar = evas_object_data_get(par, "search");
 
      if (!searchbar) return EINA_TRUE;
 
-     if (((ev->string) && *(ev->string) &&
-               (isalpha(*ev->string) ||
-                isdigit(*ev->string))))
+     key = efl_event_key_get(ev);
+     string = efl_event_key_string_get(ev);
+     if (string && *(string) && (isalpha(*string) || isdigit(*string)))
        {
 
-          elm_entry_entry_append(searchbar, ev->string);
-          ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+          elm_entry_entry_append(searchbar, string);
+          efl_event_processed_set(ev, EINA_TRUE);
        }
-     else if (ev->string &&
-              *(ev->string) &&
-              !strcmp(ev->key, "BackSpace"))
+     else if (key && *(key) && !strcmp(key, "BackSpace"))
        {
           char buf[PATH_MAX];
           const char *en;
@@ -1569,7 +1568,7 @@ _files_key_down(void *data, const Eo_Event *event)
                memmove(buf, en, strlen(en) -1);
                buf[strlen(en) -1] = '\0';
                elm_entry_entry_set(searchbar, buf);
-               ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+               efl_event_processed_set(ev, EINA_TRUE);
             }
        }
 
@@ -1600,7 +1599,7 @@ _files_list_add(Evas_Object *obj)
    eo_event_callback_add
      (li, ELM_GENLIST_EVENT_CONTRACTED, _on_list_contracted, obj);
    eo_event_callback_add
-     (li, EVAS_OBJECT_EVENT_KEY_DOWN, _files_key_down, obj);
+     (li, EFL_EVENT_KEY_DOWN, _files_key_down, obj);
 
    return li;
 }
@@ -1629,7 +1628,7 @@ _files_grid_add(Evas_Object *obj)
    eo_event_callback_add
      (grid, ELM_GENGRID_EVENT_ACTIVATED, _on_item_activated, obj);
    eo_event_callback_add
-     (grid, EVAS_OBJECT_EVENT_KEY_DOWN, _files_key_down, obj);
+     (grid, EFL_EVENT_KEY_DOWN, _files_key_down, obj);
 
    return grid;
 }
