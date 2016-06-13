@@ -1630,6 +1630,7 @@ _config_user_load(void)
 
    _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s",
                           _elm_profile);
+   ecore_file_mkpath(buf);
    if (_eio_config_monitor) eio_monitor_del(_eio_config_monitor);
    _eio_config_monitor = eio_monitor_add(buf);
 
