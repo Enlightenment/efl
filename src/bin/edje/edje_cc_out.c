@@ -1235,7 +1235,7 @@ on_error:
 static void
 data_write_vectors(Eet_File *ef, int *vector_num)
 {
-   int i;
+   unsigned int i;
    Svg_Node *root;
    Eet_Data_Descriptor *svg_node_eet;
    Eina_List *ll;
@@ -1249,8 +1249,11 @@ data_write_vectors(Eet_File *ef, int *vector_num)
 
    svg_node_eet = _edje_svg_node_eet();
 
-   for (i = 0; i < (int)edje_file->image_dir->vectors_count; i++)
+   for (i = 0; i < edje_file->image_dir->vectors_count; i++)
      {
+        if (!beta)
+          error_and_abort(ef, "Vector part are currently a beta feature, please enable them by running edje_cc with -beta.");
+
         vector = &edje_file->image_dir->vectors[i];
         EINA_LIST_FOREACH(img_dirs, ll, s)
           {

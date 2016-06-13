@@ -42,6 +42,7 @@ int        threads = 0;
 int        annotate = 0;
 int        no_etc1 = 0;
 int        no_etc2 = 0;
+int        beta = 0;
 
 static void
 _edje_cc_log_cb(const Eina_Log_Domain *d,
@@ -310,6 +311,10 @@ main(int argc, char **argv)
 	     depfile = argv[i];
 	     unlink(depfile);
 	  }
+        else if (!strcmp(argv[i], "-beta"))
+          {
+             beta = 1;
+          }
 	else if (!file_in)
 	  file_in = argv[i];
 	else if (!file_out)

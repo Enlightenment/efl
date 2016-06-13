@@ -306,6 +306,7 @@ extern int                    threads;
 extern int                    annotate;
 extern Eina_Bool current_group_inherit;
 extern Eina_List             *color_tree_root;
+extern int                    beta;
 
 extern int had_quote;
 
