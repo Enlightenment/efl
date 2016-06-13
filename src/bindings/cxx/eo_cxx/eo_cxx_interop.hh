@@ -442,7 +442,12 @@ eina::range_array<T> convert_to_return(Eina_Array const* value, tag<Eina_Array c
 template <typename T>
 eina::iterator<T> convert_to_return(Eina_Iterator* value, tag<Eina_Iterator*, eina::iterator<T>>)
 {
-  return eina::iterator<T>{value};
+  return eina::iterator<T>{ value };
+}
+template <typename T>
+eina::accessor<T> convert_to_return(Eina_Accessor* value, tag<Eina_Accessor*, eina::accessor<T>>)
+{
+  return eina::accessor<T>{ value };
 }
 template <typename T>
 struct is_future : std::false_type {};
