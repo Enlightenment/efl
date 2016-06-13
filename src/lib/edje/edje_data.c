@@ -238,6 +238,7 @@ _eet_for_style_property(void)
    eet = eet_data_descriptor_stream_new(&eetc);
    eet_gradient = _eet_for_style_gradient();
 
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eetc_dash, Efl_Gfx_Dash);
    eet_dash = eet_data_descriptor_stream_new(&eetc_dash);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet_dash, Efl_Gfx_Dash, "length", length, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet_dash, Efl_Gfx_Dash, "gap", gap, EET_T_DOUBLE);
