@@ -22,10 +22,6 @@
 #define EFL_BETA_API_SUPPORT 1
 #endif
 
-#ifndef EFL_EO_API_SUPPORT
-#define EFL_EO_API_SUPPORT 1
-#endif
-
 #include <Eo.h>
 #include <Efl.h>
 #include <Evas.h>

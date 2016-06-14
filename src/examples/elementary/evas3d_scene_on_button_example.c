@@ -6,7 +6,6 @@
 * gcc -o evas3d_scene_on_button_example evas3d_scene_on_button_example.c -g `pkg-config --libs --cflags evas ecore eo elementary`
 */
 
-#define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 
 #define WIDTH 500
