@@ -40,6 +40,7 @@ include Makefile_Evas.am
 include Makefile_Ecore_Con.am
 include Makefile_Ecore_Ipc.am
 include Makefile_Ecore_File.am
+include Makefile_Eeze.am
 include Makefile_Ecore_Input.am
 include Makefile_Ecore_Input_Evas.am
 include Makefile_Ecore_Cocoa.am
@@ -53,7 +54,6 @@ include Makefile_Ecore_X.am
 include Makefile_Ecore_IMF.am
 include Makefile_Ecore_IMF_Evas.am
 include Makefile_Eldbus.am
-include Makefile_Eeze.am
 include Makefile_Elput.am
 include Makefile_Ecore_Drm.am
 include Makefile_Ecore_Drm2.am
