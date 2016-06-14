@@ -532,13 +532,16 @@ struct event_def
 {
   eina::optional<type_def> type;
   std::string name, c_name;
+  bool beta, protect;
 
-  event_def(type_def type, std::string name, std::string c_name)
-    : type(type), name(name), c_name(c_name) {}
+  event_def(type_def type, std::string name, std::string c_name, bool beta, bool protect)
+    : type(type), name(name), c_name(c_name), beta(beta), protect(protect) {}
   event_def(Eolian_Event const* event)
     : type( ::eolian_event_type_get(event) ? ::eolian_event_type_get(event) : eina::optional<type_def>{})
     , name( ::eolian_event_name_get(event))
-    , c_name( ::eolian_event_c_name_get(event)) {}
+    , c_name( ::eolian_event_c_name_get(event))
+    , beta( ::eolian_event_is_beta(event))
+    , protect( ::eolian_event_scope_get(event) == EOLIAN_SCOPE_PROTECTED){}
 };
 
 template <>

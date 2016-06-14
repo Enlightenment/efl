@@ -110,21 +110,44 @@ struct class_definition_generator
          scope_tab << "Eo* _eo_ptr() const { return *(Eo**)this; }\n"
         ).generate(sink, attributes::unused, context)) return false;
      
-     if(!as_generator
-        (
-         *attribute_reorder<1, 2, 0, 1>
-         ((scope_tab << "static struct " << string_replace(',', '_') << "_event\n"
-           << scope_tab << "{\n"
-           << scope_tab << scope_tab << "static Eo_Event_Description const* description()\n"
-           << scope_tab << scope_tab << "{ return " << string << "; }\n"
-           << scope_tab << scope_tab << "typedef "
-           << (attribute_conditional([] (eina::optional<attributes::type_def> t) { return !!t; })
-               [attribute_replace([] (eina::optional<attributes::type_def> t) { return *t; }) [type]]
-               | "void")
-           << " parameter_type;\n"
-           << scope_tab << "} const " << string_replace(',', '_') << "_event;\n"
-        ))).generate(sink, cls.events, context))
-       return false;
+     for (auto&& e : cls.events)
+       {
+          if (e.beta)
+            {
+               suffix = "BETA";
+               if(!as_generator
+                     ("#ifdef " << *(string << "_") << string << "_" << string << "\n")
+                     .generate(sink, std::make_tuple(cls.namespaces, cls.eolian_name, suffix), add_upper_case_context(context)))
+                 return false;
+            }
+          if (e.protect)
+            {
+               suffix = "PROTECTED";
+               if(!as_generator
+                     ("#ifdef " << *(string << "_") << string << "_" << string << "\n")
+                     .generate(sink, std::make_tuple(cls.namespaces, cls.eolian_name, suffix), add_upper_case_context(context)))
+                 return false;
+            }
+          if(!as_generator
+             (
+              *attribute_reorder<1, 2, 0, 1>
+              ((scope_tab << "static struct " << string_replace(',', '_') << "_event\n"
+                << scope_tab << "{\n"
+                << scope_tab << scope_tab << "static Eo_Event_Description const* description()\n"
+                << scope_tab << scope_tab << "{ return " << string << "; }\n"
+                << scope_tab << scope_tab << "typedef "
+                << (attribute_conditional([] (eina::optional<attributes::type_def> t) { return !!t; })
+                    [attribute_replace([] (eina::optional<attributes::type_def> t) { return *t; }) [type]]
+                    | "void")
+                << " parameter_type;\n"
+                << scope_tab << "} const " << string_replace(',', '_') << "_event;\n"
+             ))).generate(sink, std::vector<attributes::event_def>{e}, context))
+            return false;
+          if (e.beta && !as_generator("#endif\n").generate(sink, attributes::unused, context))
+            return false;
+          if (e.protect && !as_generator("#endif\n").generate(sink, attributes::unused, context))
+            return false;
+       }
      
      // /// @cond LOCAL
      if(!as_generator(scope_tab << "/// @cond LOCAL\n").generate(sink, attributes::unused, context)) return false;
