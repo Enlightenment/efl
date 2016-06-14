@@ -48,6 +48,7 @@ typedef struct
 void _elm_code_widget_cell_size_get(Elm_Code_Widget *widget, Evas_Coord *width, Evas_Coord *height);
 
 void _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text, int length);
+void _elm_code_widget_text_at_cursor_insert_no_undo(Elm_Code_Widget *widget, const char *text, int length);
 
 void _elm_code_widget_newline(Elm_Code_Widget *widget);
 

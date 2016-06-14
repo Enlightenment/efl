@@ -1043,7 +1043,7 @@ _elm_code_widget_change_free(Elm_Code_Widget_Change_Info *info)
 }
 
 void
-_elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text, int length)
+_elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *text, int length, Eina_Bool undo)
 {
    Elm_Code *code;
    Elm_Code_Line *line;
@@ -1071,9 +1071,24 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
    elm_obj_code_widget_cursor_position_set(widget, col + col_width, row);
    eo_event_callback_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
-   change = _elm_code_widget_change_create(col, row, col + col_width - 1, row, text, length, EINA_TRUE);
-   _elm_code_widget_undo_change_add(widget, change);
-   _elm_code_widget_change_free(change);
+   if (undo)
+     {
+        change = _elm_code_widget_change_create(col, row, col + col_width - 1, row, text, length, EINA_TRUE);
+        _elm_code_widget_undo_change_add(widget, change);
+        _elm_code_widget_change_free(change);
+     }
+}
+
+void
+_elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text, int length)
+{
+   _elm_code_widget_text_at_cursor_insert_do(widget, text, length, EINA_TRUE);
+}
+
+void
+_elm_code_widget_text_at_cursor_insert_no_undo(Elm_Code_Widget *widget, const char *text, int length)
+{
+   _elm_code_widget_text_at_cursor_insert_do(widget, text, length, EINA_FALSE);
 }
 
 static void
