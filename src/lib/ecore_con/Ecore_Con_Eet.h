@@ -84,7 +84,7 @@ typedef Eina_Bool (*Ecore_Con_Eet_Server_Cb)(void *data, Ecore_Con_Reply *reply,
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Ecore_Con_Eet_Legacy.h"
 #endif
-#ifdef EFL_EO_API_SUPPORT
+#ifdef EFL_BETA_API_SUPPORT
 #include "Ecore_Con_Eet_Eo.h"
 #endif
 

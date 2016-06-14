@@ -268,7 +268,7 @@ typedef void (*Ecore_Con_Dns_Cb)(const char *canonname,
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Ecore_Con_Legacy.h"
 #endif
-#ifdef EFL_EO_API_SUPPORT
+#ifdef EFL_BETA_API_SUPPORT
 #include "Ecore_Con_Eo.h"
 #endif
 
@@ -362,7 +362,7 @@ typedef struct _Ecore_Con_Event_Server_Write Ecore_Con_Event_Server_Write;
  */
 typedef struct _Ecore_Con_Event_Proxy_Bind Ecore_Con_Event_Proxy_Bind;
 
-#ifdef EFL_EO_API_SUPPORT
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @typedef Efl_Network_Event_Url_Data
  * Used as the @p data param for the corresponding event
@@ -386,7 +386,7 @@ typedef struct _Ecore_Con_Event_Url_Data Ecore_Con_Event_Url_Data;
  */
 typedef struct _Ecore_Con_Event_Url_Complete Ecore_Con_Event_Url_Complete;
 
-#ifdef EFL_EO_API_SUPPORT
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @typedef Efl_Network_Event_Url_Complete
  * Used as the @p data param for the corresponding event
@@ -403,7 +403,7 @@ typedef struct _Ecore_Con_Event_Url_Complete Efl_Network_Event_Url_Complete;
  */
 typedef struct _Ecore_Con_Event_Url_Progress Ecore_Con_Event_Url_Progress;
 
-#ifdef EFL_EO_API_SUPPORT
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @typedef Efl_Network_Event_Url_Progress
  * Used as the @p data param for the corresponding event
@@ -544,7 +544,7 @@ struct _Ecore_Con_Event_Proxy_Bind
    int port;                 /**< the proxy-bound port */
 };
 
-#ifdef EFL_EO_API_SUPPORT
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @struct _Efl_Network_Event_Url_Data
  * Used as the @p data param for the @ref EFL_NETWORK_EVENT_URL_DATA event
