@@ -55,7 +55,7 @@ typedef struct _Eio_Model_Data _Eio_Model_Data;
 struct _Eio_Model_Data
 {
    Eo *obj;
-   char *path;
+   Eina_Stringshare *path;
    Eina_Array *properties_name;
    Eina_Bool is_listed : 1;
    Eina_Bool is_listing : 1;
