@@ -1666,10 +1666,16 @@ _resource_created_then(void *data, void *values)
        !_iterator_next_value_get(value_itt, &dir) ||
        !_iterator_next_value_get(value_itt, &size) ||
        !_iterator_next_value_get(value_itt, &mtime) ||
-       !_iterator_next_value_get(value_itt, &mime_type) ||
-       !_filter_child(sd, path, filename, dir, mime_type))
+       !_iterator_next_value_get(value_itt, &mime_type))
      {
         ERR("missing Efl.Model data");
+        eo_unref(it_data->model);
+        free(it_data);
+        goto end;
+     }
+
+   if (!_filter_child(sd, path, filename, dir, mime_type))
+     {
         eo_unref(it_data->model);
         free(it_data);
         goto end;
