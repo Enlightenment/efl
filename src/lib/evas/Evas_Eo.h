@@ -2,6 +2,7 @@
 # error You shall not include this header directly
 #endif
 
+#ifdef EFL_EO_API_SUPPORT
 #include "canvas/efl_ui_draggable.eo.h"
 #include "canvas/efl_ui_clickable.eo.h"
 #include "canvas/efl_ui_scrollable.eo.h"
@@ -65,7 +66,9 @@
 #include "canvas/evas_common_interface.eo.h"
 
 #include "canvas/evas_object.eo.h"
+#endif /* EFL_EO_API_SUPPORT */
 
+#ifdef EFL_BETA_API_SUPPORT
  /**
  * @defgroup Evas_3D Evas 3D Extensions
  *
@@ -270,12 +273,17 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 
 #include "canvas/evas_canvas3d_scene.eo.h"
 
+#include "canvas/efl_canvas_scene3d.eo.h"
+#endif /* EFL_BETA_API_SUPPORT */
+
+#ifdef EFL_EO_API_SUPPORT
 #include "canvas/efl_canvas_image_internal.eo.h"
 #include "canvas/efl_canvas_image.eo.h"
 #include "canvas/efl_canvas_snapshot.eo.h"
 #include "canvas/efl_canvas_proxy.eo.h"
-#include "canvas/efl_canvas_scene3d.eo.h"
+#endif /* EFL_EO_API_SUPPORT */
 
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @ingroup Evas_Object_VG
  *
@@ -292,7 +300,10 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/efl_vg_gradient.eo.h"
 #include "canvas/efl_vg_gradient_linear.eo.h"
 #include "canvas/efl_vg_gradient_radial.eo.h"
+#endif /* EFL_BETA_API_SUPPORT */
 
+#ifdef EFL_EO_API_SUPPORT
 #include "canvas/efl_event_input.eo.h"
 #include "canvas/efl_event_pointer.eo.h"
+#endif /* EFL_EO_API_SUPPORT */
 #include "canvas/efl_event_key.eo.h"
