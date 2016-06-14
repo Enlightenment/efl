@@ -103,7 +103,7 @@ _evas_vg_eo_base_destructor(Eo *eo_obj, Evas_VG_Data *pd)
    if (pd->engine_data)
      obj->layer->evas->engine.func->ector_free(pd->engine_data);
 
-   eo_event_callback_del(e, EVAS_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd);
+   eo_event_callback_del(e, EFL_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd);
 
    eo_unref(pd->root);
    pd->root = NULL;
@@ -138,7 +138,7 @@ _evas_vg_eo_base_finalize(Eo *obj, Evas_VG_Data *pd)
 
    // TODO: If we start to have to many Evas_Object_VG per canvas, it may be nice
    // to actually have one event per canvas and one array per canvas to.
-   eo_event_callback_add(e, EVAS_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd);
+   eo_event_callback_add(e, EFL_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd);
 
    return obj;
 }

@@ -3,6 +3,7 @@
 
 evas_eolian_pub_files = \
 	lib/evas/canvas/evas_object.eo \
+	lib/evas/canvas/efl_canvas.eo \
 	lib/evas/canvas/efl_canvas_polygon.eo \
 	lib/evas/canvas/efl_canvas_rectangle.eo \
 	lib/evas/canvas/evas_textblock.eo \

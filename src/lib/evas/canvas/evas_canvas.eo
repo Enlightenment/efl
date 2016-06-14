@@ -1,7 +1,7 @@
 import evas_types;
 import efl_event_types;
 
-class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
+class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
                    Efl.Input.Interface)
 {
    legacy_prefix: evas;
@@ -1198,16 +1198,9 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Animator,
       Evas.Common_Interface.evas.get;
    }
    events {
-      focus,in;
-      focus,out;
-      object,focus,in;
-      object,focus,out;
-      render,pre;
-      render,post;
-      render,flush,pre;
-      render,flush,post;
-      device,changed;
-      axis,update;
-      viewport,resize;
+      render,flush,pre @beta;
+      render,flush,post @beta;
+      axis,update @beta;
+      viewport,resize @beta;
    }
 }

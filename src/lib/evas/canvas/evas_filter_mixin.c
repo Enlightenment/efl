@@ -267,7 +267,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                     {
                        // Post render callback is not required anymore
                        Evas *e = obj->layer->evas->evas;
-                       eo_event_callback_del(e, EVAS_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
+                       eo_event_callback_del(e, EFL_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
                        pd->has_cb = EINA_FALSE;
                     }
 
@@ -327,7 +327,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         if (do_async && !pd->has_cb)
           {
              Evas *e = obj->layer->evas->evas;
-             eo_event_callback_add(e, EVAS_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
+             eo_event_callback_add(e, EFL_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
              pd->has_cb = EINA_TRUE;
           }
         evas_filter_context_post_run_callback_set(filter, _filter_cb, eo_obj);
@@ -629,7 +629,7 @@ finish:
    if (pd->has_cb)
      {
         Evas *e = obj->layer->evas->evas;
-        eo_event_callback_del(e, EVAS_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
+        eo_event_callback_del(e, EFL_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
      }
    SLKD(pd->lck);
 

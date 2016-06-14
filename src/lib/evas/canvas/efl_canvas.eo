@@ -1,0 +1,13 @@
+interface Efl.Canvas ()
+{
+   [[Common interface for Window and some internal classes in EFL.]]
+   events {
+      focus,in;
+      focus,out;
+      object,focus,in: Efl.Gfx;
+      object,focus,out: Efl.Gfx;
+      render,pre;
+      render,post;
+      device,changed: Efl.Input.Device;
+   }
+}
