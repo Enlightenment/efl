@@ -643,7 +643,7 @@ init_video_object(const char *module_filename, const char *filename)
    if (!fd) exit(1);
 
    oe = eo_add(EDJE_OBJECT_CLASS, evas);
-   eo_event_callback_add(oe, EVAS_OBJECT_EVENT_FREE, _oe_free_cb, fd);
+   eo_event_callback_add(oe, EO_EVENT_DEL, _oe_free_cb, fd);
    eo_key_data_set(oe, "frame_data", fd);
    efl_file_set(oe, theme_file, reflex ? "video_controller/reflex" : "video_controller");
    edje_object_part_swallow(oe, "video_swallow", o);

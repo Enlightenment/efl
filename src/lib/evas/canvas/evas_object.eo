@@ -928,7 +928,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
        multi,down @beta; [[Mouse-touch Down Event ]]
        multi,up @beta; [[Mouse-touch Up Event ]]
        multi,move @beta; [[Multi-touch Move Event ]]
-       free; [[Object Being Freed (Called after Del) ]]
+       free @beta; [[Object Being Freed (Called after Del) ]]
        key,down @beta; [[Key Press Event ]]
        key,up @beta; [[Key Release Event ]]
        focus,in; [[Focus In Event ]]

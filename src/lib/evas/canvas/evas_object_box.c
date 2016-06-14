@@ -169,7 +169,7 @@ _evas_object_box_option_new(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUS
 
 static const Eo_Callback_Array_Item evas_object_box_callbacks[] = {
   { EVAS_OBJECT_EVENT_RESIZE, _on_child_resize },
-  { EVAS_OBJECT_EVENT_FREE, _on_child_del },
+  { EO_EVENT_DEL, _on_child_del },
   { EVAS_OBJECT_EVENT_CHANGED_SIZE_HINTS, _on_child_hints_changed },
   { NULL, NULL }
 };
