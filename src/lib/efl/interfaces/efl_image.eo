@@ -159,4 +159,10 @@ interface Efl.Image ()
          }
       }
    }
+   events {
+      preload; [[Image data has been preloaded.]]
+      resize;  [[Image was resized (its pixel data).]]
+      unload;  [[Image data has been unloaded (by some mechanism in
+                   EFL that threw out the original image data).]]
+   }
 }

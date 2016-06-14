@@ -2,6 +2,7 @@ import efl_gfx_types;
 
 interface Efl.Gfx.Size.Hint
 {
+   event_prefix: efl_gfx;
    methods {
       @property hint_base {
          [[Base size for objects with sizing restrictions.
@@ -244,5 +245,8 @@ interface Efl.Gfx.Size.Hint
          }
       }
       /* FIXME: Also add hint_display_mode? */
+   }
+   events {
+      change,size,hints; [[Object size hints changed.]]
    }
 }

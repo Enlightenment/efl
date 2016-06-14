@@ -106,7 +106,7 @@ _propagate_event(void *data, const Eo_Event *event);
 
 EO_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
                           { EVAS_OBJECT_EVENT_DEL, _on_sub_obj_del },
-                          { EVAS_OBJECT_EVENT_HIDE, _on_sub_obj_hide });
+                          { EFL_GFX_EVENT_HIDE, _on_sub_obj_hide });
 EO_CALLBACKS_ARRAY_DEFINE(efl_subitems_callbacks,
                           { EVAS_OBJECT_EVENT_DEL, _on_sub_obj_del });
 EO_CALLBACKS_ARRAY_DEFINE(focus_callbacks,
@@ -4429,10 +4429,10 @@ static Eina_Bool
 _track_obj_view_del(void *data, const Eo_Event *event);
 
 EO_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
-                          { EVAS_OBJECT_EVENT_RESIZE, _track_obj_view_update },
-                          { EVAS_OBJECT_EVENT_MOVE, _track_obj_view_update },
-                          { EVAS_OBJECT_EVENT_SHOW, _track_obj_view_update },
-                          { EVAS_OBJECT_EVENT_HIDE, _track_obj_view_update },
+                          { EFL_GFX_EVENT_RESIZE, _track_obj_view_update },
+                          { EFL_GFX_EVENT_MOVE, _track_obj_view_update },
+                          { EFL_GFX_EVENT_SHOW, _track_obj_view_update },
+                          { EFL_GFX_EVENT_HIDE, _track_obj_view_update },
                           { EVAS_OBJECT_EVENT_DEL, _track_obj_view_del });
 
 static Eina_Bool

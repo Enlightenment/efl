@@ -265,7 +265,7 @@ _on_child_hints_changed(void *data, const Eo_Event *event EINA_UNUSED)
 
 static const Eo_Callback_Array_Item evas_object_table_callbacks[] = {
   { EVAS_OBJECT_EVENT_DEL, _on_child_del },
-  { EVAS_OBJECT_EVENT_CHANGED_SIZE_HINTS, _on_child_hints_changed },
+  { EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed },
   { NULL, NULL }
 };
 

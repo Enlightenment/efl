@@ -933,18 +933,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
        key,up @beta; [[Key Release Event ]]
        focus,in; [[Focus In Event ]]
        focus,out; [[Focus Out Event ]]
-       show; [[Show Event ]]
-       hide; [[Hide Event ]]
-       move; [[Move Event ]]
-       resize; [[Resize Event ]]
-       restack; [[Restack Event ]]
        del; [[Object Being Deleted (called before Free) ]]
        hold; [[Events go on/off hold ]]
-       changed,size,hints; [[Size hints changed event ]]
-       /* FIXME: move to image */
-       image,preloaded; [[Image has been preloaded ]]
-       image,resize; [[Image resize ]]
-       image,unloaded; [[Image data has been unloaded (by some mechanism in
-                         Evas that throw out original image data)]]
    }
 }

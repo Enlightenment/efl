@@ -645,7 +645,7 @@ _elm_hoversel_eo_base_destructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
 
 EO_CALLBACKS_ARRAY_DEFINE(_on_parent,
                           { EO_EVENT_DEL, _on_parent_del },
-                          { EVAS_OBJECT_EVENT_RESIZE, _on_parent_resize });
+                          { EFL_GFX_EVENT_RESIZE, _on_parent_resize });
 
 EOLIAN static void
 _elm_hoversel_hover_parent_set(Eo *obj, Elm_Hoversel_Data *sd, Evas_Object *parent)

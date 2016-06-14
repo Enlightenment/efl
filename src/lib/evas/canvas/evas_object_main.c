@@ -114,7 +114,7 @@ _check_event_catcher_add(void *data, const Eo_Event *event)
              INF("Registering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }
-        else if (array[i].desc == EVAS_OBJECT_EVENT_MOVE)
+        else if (array[i].desc == EFL_GFX_EVENT_MOVE)
           {
              obj->move_ref++;
           }
@@ -140,7 +140,7 @@ _check_event_catcher_del(void *data, const Eo_Event *event)
              INF("Unregistering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }
-        else if (array[i].desc == EVAS_OBJECT_EVENT_MOVE)
+        else if (array[i].desc == EFL_GFX_EVENT_MOVE)
           {
              obj->move_ref--;
           }

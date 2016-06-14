@@ -1,4 +1,5 @@
 interface Efl.Gfx.Stack {
+   event_prefix: efl_gfx;
    methods {
       @property layer {
          set {
@@ -121,5 +122,8 @@ interface Efl.Gfx.Stack {
            See also @.stack_above(), @.stack_below() and @.raise() ]]
 
       }
+   }
+   events {
+      restack; [[Object stacking was changed.]]
    }
 }
