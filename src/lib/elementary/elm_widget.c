@@ -12,6 +12,10 @@
 #include "elm_widget_container.h"
 #include "elm_interface_scrollable.h"
 
+/* FIXME: remove this when we don't rely on evas event structs anymore */
+#define EFL_INTERNAL_UNSTABLE
+#include "interfaces/efl_common_internal.h"
+
 #define MY_CLASS ELM_WIDGET_CLASS
 
 #define MY_CLASS_NAME "Elm_Widget"
@@ -106,9 +110,9 @@ EO_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
 EO_CALLBACKS_ARRAY_DEFINE(efl_subitems_callbacks,
                           { EVAS_OBJECT_EVENT_DEL, _on_sub_obj_del });
 EO_CALLBACKS_ARRAY_DEFINE(focus_callbacks,
-                          { EVAS_OBJECT_EVENT_KEY_DOWN, _propagate_event },
-                          { EVAS_OBJECT_EVENT_KEY_UP, _propagate_event },
-                          { EVAS_OBJECT_EVENT_MOUSE_WHEEL, _propagate_event });
+                          { EFL_EVENT_KEY_DOWN, _propagate_event },
+                          { EFL_EVENT_KEY_UP, _propagate_event },
+                          { EFL_EVENT_POINTER_WHEEL, _propagate_event });
 
 static inline void
 _callbacks_add(Eo *widget, void *data)
@@ -710,30 +714,74 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
    Eo *obj = event->object;
    INTERNAL_ENTRY EO_CALLBACK_CONTINUE;
    Evas_Callback_Type type;
-   Evas_Event_Flags *event_flags = NULL;
+   Evas_Event_Flags *event_flags;
+   union {
+      Evas_Event_Key_Down down;
+      Evas_Event_Key_Up up;
+      Evas_Event_Mouse_Move move;
+   } event_info = {};
 
-   if (event->desc == EVAS_OBJECT_EVENT_KEY_DOWN)
+   /* FIXME: Avoid this translation to evas struct and use pointer/key events
+    * in all of elementary widgets */
+   if (event->desc == EFL_EVENT_KEY_DOWN)
      {
-        Evas_Event_Key_Down *ev = event->info;
-        event_flags = &(ev->event_flags);
+        Efl_Event_Key_Data *ev = eo_data_scope_get(event->info, EFL_EVENT_KEY_CLASS);
+        if (!ev) return EO_CALLBACK_CONTINUE;
+        event_info.down.timestamp = ev->timestamp;
+        event_info.down.keyname = (char*) ev->keyname;
+        event_info.down.key = ev->key;
+        event_info.down.string = ev->string;
+        event_info.down.compose = ev->compose;
+        event_info.down.keycode = ev->keycode;
+        event_info.down.data = ev->data;
+        event_info.down.modifiers = ev->modifiers;
+        event_info.down.locks = ev->locks;
+        event_info.down.event_flags = ev->event_flags;
+        event_info.down.dev = ev->device;
         type = EVAS_CALLBACK_KEY_DOWN;
+        event_flags = &event_info.down.event_flags;
      }
-   else if (event->desc == EVAS_OBJECT_EVENT_KEY_UP)
+   else if (event->desc == EFL_EVENT_KEY_UP)
      {
-        Evas_Event_Key_Up *ev = event->info;
-        event_flags = &(ev->event_flags);
+        Efl_Event_Key_Data *ev = eo_data_scope_get(event->info, EFL_EVENT_KEY_CLASS);
+        if (!ev) return EO_CALLBACK_CONTINUE;
+        event_info.up.timestamp = ev->timestamp;
+        event_info.up.keyname = (char*) ev->keyname;
+        event_info.up.key = ev->key;
+        event_info.up.string = ev->string;
+        event_info.up.compose = ev->compose;
+        event_info.up.keycode = ev->keycode;
+        event_info.up.data = ev->data;
+        event_info.up.modifiers = ev->modifiers;
+        event_info.up.locks = ev->locks;
+        event_info.up.event_flags = ev->event_flags;
+        event_info.up.dev = ev->device;
         type = EVAS_CALLBACK_KEY_UP;
+        event_flags = &event_info.up.event_flags;
      }
-   else if (event->desc == EVAS_OBJECT_EVENT_MOUSE_WHEEL)
+   else if (event->desc == EFL_EVENT_POINTER_WHEEL)
      {
-        Evas_Event_Mouse_Wheel *ev = event->info;
-        event_flags = &(ev->event_flags);
-        type = EVAS_CALLBACK_MOUSE_WHEEL;
+        Efl_Event_Pointer_Data *ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
+        if (!ev) return EO_CALLBACK_CONTINUE;
+        event_info.move.buttons = ev->pressed_buttons;
+        event_info.move.cur.canvas.x = ev->cur.x;
+        event_info.move.cur.canvas.y = ev->cur.y;
+        event_info.move.prev.canvas.x = ev->prev.x;
+        event_info.move.prev.canvas.y = ev->prev.y;
+        event_info.move.data = ev->data;
+        event_info.move.timestamp = ev->timestamp;
+        event_info.move.event_flags = ev->event_flags;
+        event_info.move.dev = ev->device;
+        event_info.move.event_src = ev->source;
+        event_info.move.modifiers = ev->modifiers;
+        event_info.move.locks = ev->locks;
+        type = EVAS_CALLBACK_MOUSE_MOVE;
+        event_flags = &event_info.move.event_flags;
      }
    else
      return EO_CALLBACK_CONTINUE;
 
-   elm_widget_event_propagate(obj, type, event->info, event_flags);
+   elm_widget_event_propagate(obj, type, &event_info, event_flags);
 
    return EO_CALLBACK_CONTINUE;
 }

@@ -5,7 +5,7 @@
 #include "interfaces/efl_common_internal.h"
 
 Eina_Bool
-efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, void *event_info, Evas_Callback_Type type)
+efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, const void *event_info, Evas_Callback_Type type)
 {
    Efl_Event_Pointer_Data *ev = eo_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
    if (!ev || !event_info) return EINA_FALSE;
@@ -210,7 +210,7 @@ efl_event_pointer_legacy_info_set(Efl_Event_Pointer *evt, void *event_info, Evas
 }
 
 Eina_Bool
-efl_event_key_legacy_info_set(Efl_Event_Key *evt, void *event_info, Evas_Callback_Type type)
+efl_event_key_legacy_info_set(Efl_Event_Key *evt, const void *event_info, Evas_Callback_Type type)
 {
    Efl_Event_Key_Data *ev = eo_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
    if (!ev || !event_info) return EINA_FALSE;
