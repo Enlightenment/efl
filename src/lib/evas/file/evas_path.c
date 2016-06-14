@@ -104,6 +104,9 @@ evas_file_path_list(char *path, const char *match, int match_case)
 #ifdef FNM_CASEFOLD
    if (!match_case)
      flags |= FNM_CASEFOLD;
+#elif defined FNM_IGNORECASE
+   if (!match_case)
+     flags |= FNM_IGNORECASE;
 #else
 /*#warning "Your libc does not provide case-insensitive matching!"*/
 #endif
