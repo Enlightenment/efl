@@ -5,6 +5,9 @@
 #include <Eo.h>
 #include <Ecore.h>
 
+#define GENERIC_BETA
+#define GENERIC_PROTECTED
+
 #include "generic.eo.h"
 
 #include <check.h>
@@ -125,5 +128,13 @@ static void _generic_call_event5(Eo *obj, Generic_Data* pd EINA_UNUSED)
   eo_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT5, &e);
   eina_list_free(p);
 }
-
+static void _generic_protected_method1(Eo *obj EINA_UNUSED, Generic_Data* pd EINA_UNUSED)
+{
+}
+static void _generic_protected_beta_method1(Eo *obj EINA_UNUSED, Generic_Data* pd EINA_UNUSED)
+{
+}
+static void _generic_beta_method1(Eo *obj EINA_UNUSED, Generic_Data* pd EINA_UNUSED)
+{
+}
 #include "generic.eo.c"

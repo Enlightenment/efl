@@ -87,6 +87,13 @@ class Generic (Eo.Base)
       }
       call_event5 {
       }
+
+      protected_method1 @protected {
+      }
+      beta_method1 @beta {
+      }
+      protected_beta_method1 @protected @beta {
+      }
    }
    constructors {
       .required_ctor_a;
@@ -103,5 +110,8 @@ class Generic (Eo.Base)
      prefix,event3: int;
      prefix,event4: list<int>;
      prefix,event5: Generic.Event;
+     protected,event1 @protected;
+     beta,event1 @beta;
+     protected,beta,event1 @beta @protected;
    }
 }
