@@ -57,7 +57,7 @@ struct attribute_conditional_terminal
 namespace type_traits {
 template <typename F, typename G>
 struct attributes_needed<functional_attribute_conditional_generator<F, G>>
-  : std::conditional<attributes_needed<G>::value
+  : std::conditional<(attributes_needed<G>::value >= 1)
                      , attributes_needed<G>
                      , std::integral_constant<int, 1>>::type {};  
 template <typename F>
