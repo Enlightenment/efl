@@ -324,21 +324,46 @@ static const struct wl_buffer_listener buffer_listener =
 static void
 _fallback(Dmabuf_Surface *s, int w, int h)
 {
+   Evas_Public_Data *epd;
+   Dmabuf_Buffer *b;
+   Surface *surf = s->surface;
    Eina_Bool recovered;
+   unsigned char *new_data, *old_data;
+   int y;
 
    dmabuf_totally_hosed = EINA_TRUE;
+   recovered = _evas_surface_init(surf, w, h, s->nbuf);
+   if (!recovered)
+     {
+        ERR("Fallback from dmabuf to shm attempted and failed.");
+        abort();
+     }
 
-   /* Depending when things broke we may need this commit to get
-    * the frame callback to fire and keep the animator running
+   /* Since a buffer may have been filled before we realized we can't
+    * display it, we need to make sure any async render on it is finished,
+    * then copy the contents into one of the newly allocated shm buffers
     */
-   wl_surface_commit(s->wl_surface);
 
-   _evas_dmabuf_surface_destroy(s->surface);
-   recovered = _evas_surface_init(s->surface, w, h, s->nbuf);
-   if (recovered) return;
+   b = s->pre;
+   if (!b) b = s->current;
+   if (!b) goto out;
 
-   ERR("Fallback from dmabuf to shm attempted and failed.");
-   abort();
+   if (!b->mapping) b->mapping = b->bm->map(b);
+   if (!b->mapping) goto out;
+
+   epd = eo_data_scope_get(surf->info->evas, EVAS_CANVAS_CLASS);
+   while (epd && epd->rendering) evas_async_events_process_blocking();
+
+   old_data = b->mapping;
+   surf->funcs.assign(surf);
+   new_data = surf->funcs.data_get(surf, NULL, NULL);
+   for (y = 0; y < h; y++)
+     memcpy(new_data + y * w * 4, old_data + y * b->stride, w * 4);
+   surf->funcs.post(surf, NULL, 0);
+   b->bm->unmap(b);
+
+out:
+   _internal_evas_dmabuf_surface_destroy(s);
 }
 
 static void
@@ -616,6 +641,7 @@ _internal_evas_dmabuf_surface_destroy(Dmabuf_Surface *surface)
       _evas_dmabuf_buffer_destroy(surface->buffer[i]);
 
    free(surface->buffer);
+   free(surface);
 }
 
 static void

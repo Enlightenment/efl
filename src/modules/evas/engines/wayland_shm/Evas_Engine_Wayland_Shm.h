@@ -27,6 +27,7 @@ struct _Evas_Engine_Info_Wayland_Shm
 
    /* non-blocking or blocking mode */
    Evas_Engine_Render_Mode render_mode;
+   Evas *evas;
 };
 
 #endif
