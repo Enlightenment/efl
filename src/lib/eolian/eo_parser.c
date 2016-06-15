@@ -1855,7 +1855,6 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
      {
       case EOLIAN_CLASS_REGULAR:
       case EOLIAN_CLASS_ABSTRACT:
-#if 0
         if (dep->type != EOLIAN_CLASS_REGULAR && dep->type != EOLIAN_CLASS_ABSTRACT)
           {
              char ebuf[PATH_MAX];
@@ -1864,11 +1863,9 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
                       ls->tmp.kls->full_name, iname);
              eo_lexer_syntax_error(ls, ebuf);
           }
-#endif
         break;
       case EOLIAN_CLASS_MIXIN:
       case EOLIAN_CLASS_INTERFACE:
-#if 0
         if (dep->type != EOLIAN_CLASS_MIXIN && dep->type != EOLIAN_CLASS_INTERFACE)
           {
              char ebuf[PATH_MAX];
@@ -1877,7 +1874,6 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
                       ls->tmp.kls->full_name, iname);
              eo_lexer_syntax_error(ls, ebuf);
           }
-#endif
         break;
       default:
         break;

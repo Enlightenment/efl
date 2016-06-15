@@ -1,4 +1,4 @@
-class Efl.Canvas.Surface.Wayland (Efl.Canvas.Surface)
+class Efl.Canvas.Surface.Wayland (Eo.Base, Efl.Canvas.Surface)
 {
    [[Native Wayland surface for Efl canvas]]
 

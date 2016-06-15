@@ -171,6 +171,7 @@ typedef void (*Eo_Del_Intercept) (Eo *obj_id);
 
 #include "eo_override.eo.h"
 #include "eo_base.eo.h"
+#include "eo_interface.eo.h"
 #define EO_CLASS EO_BASE_CLASS
 
 /**
