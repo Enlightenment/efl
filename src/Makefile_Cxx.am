@@ -29,6 +29,9 @@ lib/elementary/Elementary.hh: $(elementary_eolian_cxx_hh)
 	@echo @ECHO_E@ "#ifndef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/elementary/Elementary.hh
 	@echo @ECHO_E@ "#define EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/elementary/Elementary.hh
 	@echo @ECHO_E@ "#endif\n" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#ifndef EFL_EO_API_SUPPORT" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#define EFL_EO_API_SUPPORT" >> $(top_builddir)/src/lib/elementary/Elementary.hh
+	@echo @ECHO_E@ "#endif\n" >> $(top_builddir)/src/lib/elementary/Elementary.hh
 	@echo @ECHO_E@ "#ifndef ELM_INTERNAL_API_ARGESFSDFEFC" >> $(top_builddir)/src/lib/elementary/Elementary.hh
 	@echo @ECHO_E@ "#define ELM_INTERNAL_API_ARGESFSDFEFC" >> $(top_builddir)/src/lib/elementary/Elementary.hh
 	@echo @ECHO_E@ "#endif\n" >> $(top_builddir)/src/lib/elementary/Elementary.hh
