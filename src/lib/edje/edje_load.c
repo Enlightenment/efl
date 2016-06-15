@@ -2513,7 +2513,7 @@ edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene)
              evas_canvas3d_node_member_add(*root_node, rp->node);
           }
 
-        if ((rp->part->type == EDJE_PART_TYPE_CAMERA))
+        if (rp->part->type == EDJE_PART_TYPE_CAMERA)
           {
              Evas_Object *viewport;
 
