@@ -5824,15 +5824,6 @@ cmakeconfig/ElementaryConfig.cmake
 
 AC_OUTPUT
 
-#### Work around bug in automake check macro
-## yes it is hugly, but no choice here for now.
-$SED -i "s/am__is_gnu_make = test -n '\$(MAKEFILE_LIST)' && test -n '\$(MAKELEVEL)'/ifdef MAKEFILE_LIST\nifdef MAKELEVEL\nam__is_gnu_make = true\nelse\nam__is_gnu_make = false\nendif\nelse\nam__is_gnu_make = false\nendif/" src/Makefile
-
-if test -f $srcdir/config.status; then
-   TO="$SED -i \"s/am__is_gnu_make = test -n '\\\\\$(MAKEFILE_LIST)' \&\& test -n '\\\\\$(MAKELEVEL)'/ifdef MAKEFILE_LIST\\\nifdef MAKELEVEL\\\nam__is_gnu_make = true\\\nelse\\\nam__is_gnu_make = false\\\nendif\\\nelse\\\nam__is_gnu_make = false\\\nendif/\" src/Makefile\nas_fn_exit 0"
-   $SED -i "s|as_fn_exit 0|$TO|" $srcdir/config.status
-fi
-
 #### Info
 
 EFL_ADD_FEATURE([EO], [eo-id], [${want_eo_id}])
