@@ -234,7 +234,6 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
    Eina_Iterator *itr;
    Eolian_Class *cl;
    Eo_Lexer *ls;
-   const char *dep;
 
    if (eina_hash_find(_parsedeos, filename))
      return EINA_TRUE;
@@ -297,20 +296,6 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
           database_function_constructor_add((Eolian_Function*)ctor_func, ctor->klass);
      }
    eina_iterator_free(itr);
-
-   /* parse deferred eos (doc dependencies) */
-   itr = eina_hash_iterator_data_new(_defereos);
-   EINA_ITERATOR_FOREACH(itr, dep)
-     {
-        if (!eina_hash_find(_parsingeos, dep) && !eolian_file_parse(dep))
-          {
-             eina_iterator_free(itr);
-             eina_hash_free_buckets(_defereos);
-             goto error;
-          }
-     }
-   eina_iterator_free(itr);
-   eina_hash_free_buckets(_defereos);
 
 done:
    eina_hash_set(_parsedeos, filename, (void *)EINA_TRUE);

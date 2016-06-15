@@ -288,8 +288,8 @@ database_object_class_fill(const char *class_name, const Eolian_Class **cl)
    return found;
 }
 
-EAPI Eina_Bool
-eolian_file_parse(const char *filepath)
+static Eina_Bool
+_eolian_file_parse_nodep(const char *filepath)
 {
    Eina_Bool is_eo;
    const char *eopath;
@@ -309,6 +309,28 @@ eolian_file_parse(const char *filepath)
         return ret;
      }
    return eo_parser_database_fill(eopath, !is_eo);
+}
+
+EAPI Eina_Bool
+eolian_file_parse(const char *filepath)
+{
+   const char *dep;
+   if (!_eolian_file_parse_nodep(filepath))
+     return EINA_FALSE;
+   /* parse doc dependencies (deferred eo files) */
+   Eina_Iterator *itr = eina_hash_iterator_data_new(_defereos);
+   EINA_ITERATOR_FOREACH(itr, dep)
+     {
+        if (!_eolian_file_parse_nodep(dep))
+          {
+             eina_iterator_free(itr);
+             eina_hash_free_buckets(_defereos);
+             return EINA_FALSE;
+          }
+     }
+   eina_iterator_free(itr);
+   eina_hash_free_buckets(_defereos);
+   return EINA_TRUE;
 }
 
 static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
