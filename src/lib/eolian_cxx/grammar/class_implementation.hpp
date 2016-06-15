@@ -39,11 +39,11 @@ struct class_implementation_generator
          << namespaces
          [
           *function_definition(get_klass_name(cls))
-          << base_class_name << "::operator " << class_name << "() const { return *static_cast< "
+          << "inline " << base_class_name << "::operator " << class_name << "() const { return *static_cast< "
             << class_name << " const*>(static_cast<void const*>(this)); }\n"
-          << base_class_name << "::operator " << class_name << "&() { return *static_cast< "
+          << "inline " << base_class_name << "::operator " << class_name << "&() { return *static_cast< "
             << class_name << "*>(static_cast<void*>(this)); }\n"
-          << base_class_name << "::operator " << class_name << " const&() const { return *static_cast< "
+          << "inline " << base_class_name << "::operator " << class_name << " const&() const { return *static_cast< "
             << class_name << " const*>(static_cast<void const*>(this)); }\n"
          ]
          << "}\n\n"
