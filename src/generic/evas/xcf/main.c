@@ -49,6 +49,10 @@
 #include "shmfile.h"
 #include "timeout.h"
 
+#ifdef _WIN32
+# include <winsock2.h> /* for ntohl() */
+#endif
+
 #define FREE(X) { free(X); X = NULL; }
 
 #define TILE_WIDTH   64

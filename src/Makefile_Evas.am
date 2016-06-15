@@ -2541,6 +2541,7 @@ generic/evas/xcf/pixelfuncs.c \
 generic/evas/common/shmfile.c \
 generic/evas/common/timeout.c
 generic_evas_xcf_evas_image_loader_xcf_CFLAGS = \
+@EVAS_CFLAGS@ \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \

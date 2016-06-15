@@ -10,7 +10,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <math.h>
-#include <netinet/in.h>
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
 #include <time.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
