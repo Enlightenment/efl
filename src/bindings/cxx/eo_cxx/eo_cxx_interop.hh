@@ -250,7 +250,7 @@ T* convert_to_c_impl(T& v, tag<T*, T&>)
   return &v;
 }
 template <typename T>
-T* convert_to_c_impl(T& v, tag<T*, T&, true>)
+T* convert_to_c_impl(T& /*v*/, tag<T*, T&, true>)
 {
   std::abort();
 }
