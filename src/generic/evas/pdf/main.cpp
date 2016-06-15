@@ -71,8 +71,8 @@ Eina_Bool poppler_init(const char *file, int page_nbr, int size_w, int size_h)
    if (!doc_page)
      goto del_pdfdoc;
 
-   w = doc_page->page_rect(page_box_enum::media_box).width();
-   h = doc_page->page_rect(page_box_enum::media_box).height();
+   w = doc_page->page_rect(media_box).width();
+   h = doc_page->page_rect(media_box).height();
    cw = doc_page->page_rect().width();
    ch = doc_page->page_rect().height();
 
@@ -133,8 +133,8 @@ void poppler_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
 
    renderer = new page_renderer();
 
-   renderer->set_render_hint(page_renderer::render_hint::text_antialiasing, 1);
-   renderer->set_render_hint(page_renderer::render_hint::antialiasing, 1);
+   renderer->set_render_hint(page_renderer::text_antialiasing, 1);
+   renderer->set_render_hint(page_renderer::antialiasing, 1);
 
    out = renderer->render_page(doc_page, dpi, dpi,
                                0, 0, width, height,
