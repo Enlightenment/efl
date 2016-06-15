@@ -248,6 +248,9 @@ _eina_promise_del(_Eina_Promise_Default_Owner* promise)
    _eina_promise_free_callback_list(&promise->promise.cancel_callbacks,
                                     &_eina_promise_free_cancel_callback_node);
 
+   eina_safepointer_unregister((Eina_Safepointer const*)promise->owner_pointer);
+   eina_safepointer_unregister((Eina_Safepointer const*)promise->promise.promise_pointer);
+
    EINA_MAGIC_SET(&promise->owner_vtable, 0xdeadbeef);
    EINA_MAGIC_SET(&promise->promise.vtable, 0xbeefdead);
    free(promise);
@@ -693,17 +696,17 @@ _eina_promise_progress_notify_finish(void* data)
 }
 
 // Race implementation
-static void _eina_promise_race_unref(_Eina_Promise_Race* p)
+static void _eina_promise_race_unref(_Eina_Promise_Default* promise)
 {
+   _Eina_Promise_Race* p = (void*)EINA_PROMISE_GET_OWNER(promise);
    unsigned i;
-   if (--p->promise_default.promise.ref <= 0 && p->promise_default.promise.has_finished
-       && p->promise_default.promise.can_be_deleted)
+   if (--p->promise_default.promise.ref <= 0 && p->promise_default.promise.can_be_deleted)
      {
        for(i = 0; i != p->num_promises; ++i)
          {
            eina_promise_unref(p->promises[i].promise);
          }
-        _eina_promise_del(EINA_PROMISE_GET_OWNER(&p->promise_default));
+        _eina_promise_del(&p->promise_default);
      }
 }
 
