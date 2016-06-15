@@ -41,7 +41,7 @@ _filter_cb(void *data, Eio_File *handler EINA_UNUSED, void *map, size_t length)
 }
 
 static void
-_map_cb(void *data, Eio_File *handler EINA_UNUSED, void *map, size_t length)
+_map_cb(void *datai EINA_UNUSED, Eio_File *handler EINA_UNUSED, void *map EINA_UNUSED, size_t length EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
