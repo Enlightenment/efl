@@ -776,7 +776,7 @@ EXTRA_DIST2 += $(EVAS_GL_SHADERS_GEN)
 
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x: $(EVAS_GL_SHADERS_GEN)
 	@echo "  SHADERS  $@"
-	@dash $(srcdir)/modules/evas/engines/gl_common/shader/gen_shaders.sh
+	@sh $(srcdir)/modules/evas/engines/gl_common/shader/gen_shaders.sh
 
 # NOTE: order here should be equal with modes in file Evas_Eo.h
 GL_SHADERS_3D_GEN = \
@@ -806,7 +806,7 @@ $(GL_SHADERS_3D_GEN)
 
 modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
 	@echo "  SHADERS  $@"
-	@dash $^
+	@sh $^
 
 
 GL_GENERIC_SOURCES = \
