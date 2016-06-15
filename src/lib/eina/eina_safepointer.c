@@ -75,7 +75,7 @@ _eina_safepointer_calloc(int number, size_t size)
      * MEM_PAGE_SIZE;
 
    header = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
-                 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+                 MAP_PRIVATE | MAP_ANON, -1, 0);
    if (header == MAP_FAILED)
      {
         ERR("mmap of Eina_Safepointer table region failed.");
