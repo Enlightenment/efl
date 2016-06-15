@@ -134,7 +134,7 @@ gl/shader/include.glsl
 
 gl/shader/ector_gl_shaders.x: $(ECTOR_GL_SHADERS_GEN)
 	@echo "  SHADERS  $@"
-	@dash $(srcdir)/gl/shader/gen_shaders.sh
+	@sh $(srcdir)/gl/shader/gen_shaders.sh
 
 libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/ector \
