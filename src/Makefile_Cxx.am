@@ -135,6 +135,7 @@ dist_installed_einacxxheaders_DATA = \
 bindings/cxx/eina_cxx/eina_accessor.hh       \
 bindings/cxx/eina_cxx/eina_array.hh \
 bindings/cxx/eina_cxx/eina_clone_allocators.hh       \
+bindings/cxx/eina_cxx/eina_deleter.hh     \
 bindings/cxx/eina_cxx/eina_error.hh     \
 bindings/cxx/eina_cxx/eina_future.hh \
 bindings/cxx/eina_cxx/eina_eo_concrete_fwd.hh     \
