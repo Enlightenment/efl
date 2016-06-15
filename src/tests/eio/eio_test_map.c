@@ -56,20 +56,21 @@ _error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
 START_TEST(eio_test_map_simple)
 {
    int fd;
-   char *file = strdup("/tmp/eio_map_example.txt");
+   const char *file = "eio_map_exampleXXXXXX.txt";
    const char *data = "This is the data to save in file";
    Eio_File *ef;
+   Eina_Tmpstr *file_path;
 
    ecore_init();
    eina_init();
    eio_init();
 
-   fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG);
-   fail_if(fd == 0);
+   fd = eina_file_mkstemp(file, &file_path);
+   fail_if(fd < 0);
    fail_if(write(fd, data, strlen(data)) != (ssize_t)strlen(data));
    close(fd);
 
-   ef = eio_file_open(file, EINA_FALSE, _open_cb, _error_cb, NULL);
+   ef = eio_file_open(file_path, EINA_FALSE, _open_cb, _error_cb, NULL);
    ecore_main_loop_begin();
    fail_if(!ef);
 
@@ -87,6 +88,7 @@ START_TEST(eio_test_map_simple)
    ecore_main_loop_begin();
    fail_if(!ef);
 
+   eina_tmpstr_del(file_path);
    eio_shutdown();
    eina_shutdown();
    ecore_shutdown();
