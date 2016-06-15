@@ -48,6 +48,10 @@ public:
        : _str(c_str), _len(Traits::length(c_str))
    {}
 
+   basic_string_view(std::nullptr_t)
+       : _str(NULL), _len(0)
+   {}
+
 //    basic_string_view(CharT const* c_str, size_type len) noexcept
 //      : _str(c_str), _len(len)
 //    {}
