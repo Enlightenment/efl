@@ -235,6 +235,15 @@ ecore_timer_del(Ecore_Timer *timer)
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
    legacy = eo_key_data_get(timer, "_legacy");
+   // If legacy == NULL, this means double free or something
+   if (legacy == NULL)
+     {
+        // Just in case it is an Eo timer, but not a legacy one.
+        ERR("You are trying to destroy a timer which seems dead already.");
+        eo_unref(timer);
+        return NULL;
+     }
+
    data = (void*) legacy->data;
 
    if (legacy->inside_call)
