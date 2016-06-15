@@ -2316,10 +2316,36 @@ AC_ARG_ENABLE([ecore-buffer],
    [want_ecore_buffer="no"])
 
 # Image Loaders
+case "$host_os" in
+   cegcc*|mingw32ce*)
+      AC_MSG_ERROR([ceGCC compiler is not supported anymore. Exiting...])
+   ;;
+   mingw*)
+      want_generic="no"
+      want_poppler="no"
+      want_spectre="no"
+      want_libraw="no"
+      want_rsvg="no"
+   ;;
+   cygwin*)
+      want_generic="no"
+      want_poppler="no"
+      want_spectre="no"
+      want_libraw="no"
+      want_rsvg="no"
+   ;;
+   *)
+      want_generic="static"
+      want_poppler="yes"
+      want_spectre="yes"
+      want_libraw="yes"
+      want_rsvg="yes"
+   ;;
+esac
 
 ARG_ENABLE_EVAS_IMAGE_LOADER(BMP, static)
 ARG_ENABLE_EVAS_IMAGE_LOADER(Eet, static)
-ARG_ENABLE_EVAS_IMAGE_LOADER(Generic, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(Generic, [${want_generic}])
 ARG_ENABLE_EVAS_IMAGE_LOADER(Gif, yes)
 ARG_ENABLE_EVAS_IMAGE_LOADER(ICO, static)
 ARG_ENABLE_EVAS_IMAGE_LOADER(JPEG, static)
@@ -2813,7 +2839,6 @@ EFL_ADD_FEATURE([EVAS], [hyphen])
 #### Generic backend
 
 ### Options to turn off generic loaders for evas
-
 AC_ARG_ENABLE([poppler],
    [AS_HELP_STRING([--disable-poppler],[disable pdf support. @<:@default=enabled@:>@])],
    [
@@ -2822,8 +2847,7 @@ AC_ARG_ENABLE([poppler],
     else
        want_poppler="no"
     fi
-   ],
-   [want_poppler="yes"])
+   ])
 
 AC_ARG_ENABLE([spectre],
    [AS_HELP_STRING([--disable-spectre],[disable postscript support. @<:@default=enabled@:>@])],
@@ -2833,8 +2857,7 @@ AC_ARG_ENABLE([spectre],
     else
        want_spectre="no"
     fi
-   ],
-   [want_spectre="yes"])
+   ])
 
 AC_ARG_ENABLE([libraw],
    [AS_HELP_STRING([--disable-libraw],[disable libraw support. @<:@default=enabled@:>@])],
@@ -2844,8 +2867,7 @@ AC_ARG_ENABLE([libraw],
     else
        want_libraw="no"
     fi
-   ],
-   [want_libraw="yes"])
+   ])
 
 AC_ARG_ENABLE([librsvg],
    [AS_HELP_STRING([--disable-librsvg],[disable svg support. @<:@default=enabled@:>@])],
@@ -2855,8 +2877,7 @@ AC_ARG_ENABLE([librsvg],
     else
        want_rsvg="no"
     fi
-   ],
-   [want_rsvg="yes"])
+   ])
 
 have_poppler="no"
 have_spectre="no"
