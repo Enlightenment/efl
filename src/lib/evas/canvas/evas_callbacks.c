@@ -16,45 +16,57 @@ extern Eina_Hash* signals_hash_table;
 /**
  * Evas events descriptions for Eo.
  */
-static const Eo_Event_Description *_legacy_evas_callback_table[EVAS_CALLBACK_LAST] =
-{
-   EVAS_OBJECT_EVENT_MOUSE_IN,
-   EVAS_OBJECT_EVENT_MOUSE_OUT,
-   EVAS_OBJECT_EVENT_MOUSE_DOWN,
-   EVAS_OBJECT_EVENT_MOUSE_UP,
-   EVAS_OBJECT_EVENT_MOUSE_MOVE,
-   EVAS_OBJECT_EVENT_MOUSE_WHEEL,
-   EVAS_OBJECT_EVENT_MULTI_DOWN,
-   EVAS_OBJECT_EVENT_MULTI_UP,
-   EVAS_OBJECT_EVENT_MULTI_MOVE,
-   EVAS_OBJECT_EVENT_FREE,
-   EVAS_OBJECT_EVENT_KEY_DOWN,
-   EVAS_OBJECT_EVENT_KEY_UP,
-   EVAS_OBJECT_EVENT_FOCUS_IN,
-   EVAS_OBJECT_EVENT_FOCUS_OUT,
-   EFL_GFX_EVENT_SHOW,
-   EFL_GFX_EVENT_HIDE,
-   EFL_GFX_EVENT_MOVE,
-   EFL_GFX_EVENT_RESIZE,
-   EFL_GFX_EVENT_RESTACK,
-   EVAS_OBJECT_EVENT_DEL,
-   EVAS_OBJECT_EVENT_HOLD,
-   EFL_GFX_EVENT_CHANGE_SIZE_HINTS,
-   EFL_IMAGE_EVENT_PRELOAD,
-   EFL_CANVAS_EVENT_FOCUS_IN,
-   EFL_CANVAS_EVENT_FOCUS_OUT,
-   EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE,
-   EVAS_CANVAS_EVENT_RENDER_FLUSH_POST,
-   EFL_CANVAS_EVENT_OBJECT_FOCUS_IN,
-   EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT,
-   EFL_IMAGE_EVENT_UNLOAD,
-   EFL_CANVAS_EVENT_RENDER_PRE,
-   EFL_CANVAS_EVENT_RENDER_POST,
-   EFL_IMAGE_EVENT_RESIZE,
-   EFL_CANVAS_EVENT_DEVICE_CHANGED,
-   EVAS_CANVAS_EVENT_AXIS_UPDATE,
-   EVAS_CANVAS_EVENT_VIEWPORT_RESIZE
-};
+#define DEFINE_EVAS_CALLBACKS(LAST, ...)                                 \
+  static const Eo_Event_Description *_legacy_evas_callback_table(unsigned int index) \
+  {                                                                     \
+     static const Eo_Event_Description *internals[LAST] = { NULL };       \
+                                                                        \
+     if (internals[0] == NULL)                                          \
+       {                                                                \
+          memcpy(internals,                                             \
+                 ((const Eo_Event_Description*[]) { __VA_ARGS__ }),            \
+                 sizeof ((const Eo_Event_Description *[]) { __VA_ARGS__ }));    \
+       }                                                                \
+     return internals[index];                                           \
+  }
+
+DEFINE_EVAS_CALLBACKS(EVAS_CALLBACK_LAST,
+                      EVAS_OBJECT_EVENT_MOUSE_IN,
+                      EVAS_OBJECT_EVENT_MOUSE_OUT,
+                      EVAS_OBJECT_EVENT_MOUSE_DOWN,
+                      EVAS_OBJECT_EVENT_MOUSE_UP,
+                      EVAS_OBJECT_EVENT_MOUSE_MOVE,
+                      EVAS_OBJECT_EVENT_MOUSE_WHEEL,
+                      EVAS_OBJECT_EVENT_MULTI_DOWN,
+                      EVAS_OBJECT_EVENT_MULTI_UP,
+                      EVAS_OBJECT_EVENT_MULTI_MOVE,
+                      EVAS_OBJECT_EVENT_FREE,
+                      EVAS_OBJECT_EVENT_KEY_DOWN,
+                      EVAS_OBJECT_EVENT_KEY_UP,
+                      EVAS_OBJECT_EVENT_FOCUS_IN,
+                      EVAS_OBJECT_EVENT_FOCUS_OUT,
+                      EFL_GFX_EVENT_SHOW,
+                      EFL_GFX_EVENT_HIDE,
+                      EFL_GFX_EVENT_MOVE,
+                      EFL_GFX_EVENT_RESIZE,
+                      EFL_GFX_EVENT_RESTACK,
+                      EVAS_OBJECT_EVENT_DEL,
+                      EVAS_OBJECT_EVENT_HOLD,
+                      EFL_GFX_EVENT_CHANGE_SIZE_HINTS,
+                      EFL_IMAGE_EVENT_PRELOAD,
+                      EFL_CANVAS_EVENT_FOCUS_IN,
+                      EFL_CANVAS_EVENT_FOCUS_OUT,
+                      EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE,
+                      EVAS_CANVAS_EVENT_RENDER_FLUSH_POST,
+                      EFL_CANVAS_EVENT_OBJECT_FOCUS_IN,
+                      EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT,
+                      EFL_IMAGE_EVENT_UNLOAD,
+                      EFL_CANVAS_EVENT_RENDER_PRE,
+                      EFL_CANVAS_EVENT_RENDER_POST,
+                      EFL_IMAGE_EVENT_RESIZE,
+                      EFL_CANVAS_EVENT_DEVICE_CHANGED,
+                      EVAS_CANVAS_EVENT_AXIS_UPDATE,
+                      EVAS_CANVAS_EVENT_VIEWPORT_RESIZE );
 
 typedef struct
 {
@@ -135,7 +147,7 @@ evas_object_event_callback_all_del(Evas_Object *eo_obj)
    if (!obj->callbacks) return;
    EINA_INLIST_FOREACH_SAFE(obj->callbacks, itr, info)
      {
-        eo_event_callback_del(eo_obj, _legacy_evas_callback_table[info->type], _eo_evas_object_cb, info);
+        eo_event_callback_del(eo_obj, _legacy_evas_callback_table(info->type), _eo_evas_object_cb, info);
 
         obj->callbacks =
            eina_inlist_remove(obj->callbacks, EINA_INLIST_GET(info));
@@ -161,7 +173,7 @@ evas_event_callback_all_del(Evas *eo_e)
 
    EINA_INLIST_FOREACH_SAFE(e->callbacks, itr, info)
      {
-        eo_event_callback_del(eo_e, _legacy_evas_callback_table[info->type], _eo_evas_cb, info);
+        eo_event_callback_del(eo_e, _legacy_evas_callback_table(info->type), _eo_evas_cb, info);
 
         e->callbacks =
            eina_inlist_remove(e->callbacks, EINA_INLIST_GET(info));
@@ -178,7 +190,7 @@ evas_event_callback_cleanup(Evas *eo_e)
 void
 evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 {
-   eo_event_callback_call(eo_e, _legacy_evas_callback_table[type], event_info);
+   eo_event_callback_call(eo_e, _legacy_evas_callback_table(type), event_info);
 }
 
 void
@@ -284,7 +296,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
      }
 
    /* legacy callbacks - relying on Evas.Object events */
-   eo_event_callback_call(eo_obj, _legacy_evas_callback_table[type], event_info);
+   eo_event_callback_call(eo_obj, _legacy_evas_callback_table(type), event_info);
 
    if (type == EVAS_CALLBACK_MOUSE_DOWN)
      {
@@ -338,7 +350,7 @@ evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type 
    cb_info->data = (void *)data;
    cb_info->type = type;
 
-   const Eo_Event_Description *desc = _legacy_evas_callback_table[type];
+   const Eo_Event_Description *desc = _legacy_evas_callback_table(type);
    eo_event_callback_priority_add(eo_obj, desc, priority, _eo_evas_object_cb, cb_info);
 
    obj->callbacks =
@@ -365,7 +377,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
         if ((info->func == func) && (info->type == type))
           {
              void *tmp = info->data;
-             eo_event_callback_del(eo_obj, _legacy_evas_callback_table[type], _eo_evas_object_cb, info);
+             eo_event_callback_del(eo_obj, _legacy_evas_callback_table(type), _eo_evas_object_cb, info);
 
              obj->callbacks =
                 eina_inlist_remove(obj->callbacks, EINA_INLIST_GET(info));
@@ -396,7 +408,7 @@ evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type
         if ((info->func == func) && (info->type == type) && info->data == data)
           {
              void *tmp = info->data;
-             eo_event_callback_del(eo_obj, _legacy_evas_callback_table[type], _eo_evas_object_cb, info);
+             eo_event_callback_del(eo_obj, _legacy_evas_callback_table(type), _eo_evas_object_cb, info);
 
              obj->callbacks =
                 eina_inlist_remove(obj->callbacks, EINA_INLIST_GET(info));
@@ -430,7 +442,7 @@ evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callb
    cb_info->data = (void *)data;
    cb_info->type = type;
 
-   const Eo_Event_Description *desc = _legacy_evas_callback_table[type];
+   const Eo_Event_Description *desc = _legacy_evas_callback_table(type);
    eo_event_callback_priority_add(eo_e, desc, priority, _eo_evas_cb, cb_info);
 
    e->callbacks = eina_inlist_append(e->callbacks, EINA_INLIST_GET(cb_info));
@@ -456,7 +468,7 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
         if ((info->func == func) && (info->type == type))
           {
              void *tmp = info->data;
-             eo_event_callback_del(eo_e, _legacy_evas_callback_table[type], _eo_evas_cb, info);
+             eo_event_callback_del(eo_e, _legacy_evas_callback_table(type), _eo_evas_cb, info);
 
              e->callbacks =
                 eina_inlist_remove(e->callbacks, EINA_INLIST_GET(info));
@@ -487,7 +499,7 @@ evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb 
         if ((info->func == func) && (info->type == type) && (info->data == data))
           {
              void *tmp = info->data;
-             eo_event_callback_del(eo_e, _legacy_evas_callback_table[type], _eo_evas_cb, info);
+             eo_event_callback_del(eo_e, _legacy_evas_callback_table(type), _eo_evas_cb, info);
 
              e->callbacks =
                 eina_inlist_remove(e->callbacks, EINA_INLIST_GET(info));
