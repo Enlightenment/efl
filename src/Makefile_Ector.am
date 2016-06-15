@@ -145,7 +145,7 @@ lib/ector/gl/shader/include.glsl
 
 lib/ector/gl/shader/ector_gl_shaders.x: $(ECTOR_GL_SHADERS_GEN)
 	@echo "  SHADERS  $@"
-	@bash $(srcdir)/lib/ector/gl/shader/gen_shaders.sh
+	@sh $(srcdir)/lib/ector/gl/shader/gen_shaders.sh
 
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/ector \
