@@ -9217,6 +9217,7 @@ edje_edit_image_set_del(Evas_Object *obj, const char *name)
 {
    Edje_Image_Directory_Set *de = NULL, *de_last = NULL;
    Edje_Image_Directory_Set_Entry *dim = NULL;
+   Eet_File *eetf;
    unsigned int i, j, k;
    Eina_List *used;
    Eina_Iterator *it;
@@ -9252,6 +9253,14 @@ edje_edit_image_set_del(Evas_Object *obj, const char *name)
 
    --ed->file->image_dir->sets_count;
 
+   /* open the eet file */
+   eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
+   if (!eetf)
+     {
+        ERR("Unable to open \"%s\" for writing output", ed->path);
+        return EINA_FALSE;
+     }
+
    if (de_last->id != de->id)
      {
         Edje_Part *part;
@@ -9286,12 +9295,19 @@ edje_edit_image_set_del(Evas_Object *obj, const char *name)
                          }
                     }
                }
+             if (!_edje_edit_collection_save(eetf, pce->ref))
+               {
+                  eet_close(eetf);
+                  return EINA_FALSE;
+               }
           }
         eina_iterator_free(it);
      }
    ed->file->image_dir->sets = realloc(ed->file->image_dir->sets,
                                           sizeof(Edje_Image_Directory_Set_Entry) *
                                           ed->file->image_dir->sets_count);
+
+   eet_close(eetf);
 
    return EINA_TRUE;
 }
@@ -9651,6 +9667,7 @@ edje_edit_image_replace(Evas_Object *obj, const char *name, const char *new_name
    Eina_Iterator *it;
    Edje_Part_Collection_Directory_Entry *pce;
    Edje_Part *part;
+   Eet_File *eetf;
    Edje_Part_Description_Image *part_desc_image;
    unsigned int i, j, k;
    int image_id, new_image_id;
@@ -9663,6 +9680,14 @@ edje_edit_image_replace(Evas_Object *obj, const char *name, const char *new_name
      return EINA_FALSE;
 
    it = eina_hash_iterator_data_new(ed->file->collection);
+
+   /* open the eet file */
+   eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
+   if (!eetf)
+     {
+        ERR("Unable to open \"%s\" for writing output", ed->path);
+        return EINA_FALSE;
+     }
 
    EINA_ITERATOR_FOREACH(it, pce)
      {
@@ -9687,9 +9712,16 @@ edje_edit_image_replace(Evas_Object *obj, const char *name, const char *new_name
                            part_desc_image->image.id = new_image_id;
                     }
                }
+             if (!_edje_edit_collection_save(eetf, pce->ref))
+               {
+                  eet_close(eetf);
+                  return EINA_FALSE;
+               }
           }
      }
    eina_iterator_free(it);
+
+   eet_close(eetf);
 
    return EINA_TRUE;
 }
@@ -9945,6 +9977,11 @@ edje_edit_image_del(Evas_Object *obj, const char *name)
                                    part_desc_image->image.id = de->id;
                             }
                        }
+                  }
+                if (!_edje_edit_collection_save(eetf, pce->ref))
+                  {
+                     eet_close(eetf);
+                     return EINA_FALSE;
                   }
              }
            eina_iterator_free(it);
