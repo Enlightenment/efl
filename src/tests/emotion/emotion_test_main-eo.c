@@ -597,7 +597,7 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
      }
 }
 
-static const Eo_Callback_Array_Item emotion_object_test_callbacks[] = {
+EO_CALLBACKS_ARRAY_DEFINE(emotion_object_test_callbacks,
        { EMOTION_OBJECT_EVENT_FRAME_DECODE, video_obj_frame_decode_cb },
        { EMOTION_OBJECT_EVENT_FRAME_RESIZE, video_obj_frame_resize_cb },
        { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, video_obj_length_change_cb },
@@ -608,9 +608,8 @@ static const Eo_Callback_Array_Item emotion_object_test_callbacks[] = {
        { EMOTION_OBJECT_EVENT_PROGRESS_CHANGE, video_obj_progress_cb },
        { EMOTION_OBJECT_EVENT_REF_CHANGE, video_obj_ref_cb },
        { EMOTION_OBJECT_EVENT_BUTTON_NUM_CHANGE, video_obj_button_num_cb },
-       { EMOTION_OBJECT_EVENT_BUTTON_CHANGE, video_obj_button_cb },
-       { NULL, NULL }
-};
+       { EMOTION_OBJECT_EVENT_BUTTON_CHANGE, video_obj_button_cb }
+);
 
 static void
 init_video_object(const char *module_filename, const char *filename)
@@ -653,7 +652,7 @@ init_video_object(const char *module_filename, const char *filename)
    edje_obj_size_min_calc(oe, &w, &h);
    efl_gfx_size_set(oe, w, h);
 
-   eo_event_callback_array_add(o, emotion_object_test_callbacks, oe);
+   eo_event_callback_array_add(o, emotion_object_test_callbacks(), oe);
 
    edje_obj_signal_callback_add(oe, "video_control", "play", video_obj_signal_play_cb, o);
    edje_obj_signal_callback_add(oe, "video_control", "pause", video_obj_signal_pause_cb, o);

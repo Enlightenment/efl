@@ -151,42 +151,43 @@ Eina_Bool
 _eo_signals_cb_added_deled(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *callback_array = event->info;
+   const Eo_Callback_Array_Item *(*callback_data)(void) = data;
 
-   fail_if((callback_array != data) &&
-         (callback_array->func != _eo_signals_cb_added_deled));
+   fail_if((callback_data() != callback_array) &&
+           (callback_array->func != _eo_signals_cb_added_deled));
 
    return EO_CALLBACK_CONTINUE;
 }
 
+EO_CALLBACKS_ARRAY_DEFINE(_eo_signals_callbacks,
+{ EV_A_CHANGED, _eo_signals_a_changed_cb },
+{ EV_A_CHANGED, _eo_signals_a_changed_cb2 },
+{ EV_A_CHANGED, _eo_signals_a_changed_never },
+{ EO_EVENT_DEL, _eo_signals_eo_del_cb });
+
 START_TEST(eo_signals)
 {
    eo_init();
-   static const Eo_Callback_Array_Item callbacks[] = {
-          { EV_A_CHANGED, _eo_signals_a_changed_cb },
-          { EV_A_CHANGED, _eo_signals_a_changed_cb2 },
-          { EV_A_CHANGED, _eo_signals_a_changed_never },
-          { EO_EVENT_DEL, _eo_signals_eo_del_cb },
-          { NULL, NULL }
-   };
+
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    Eina_Bool r;
 
-   eo_event_callback_add(obj, EO_EVENT_CALLBACK_ADD, _eo_signals_cb_added_deled, callbacks);
-   r = eo_event_callback_add(obj, EO_EVENT_CALLBACK_DEL, _eo_signals_cb_added_deled, callbacks);
+   eo_event_callback_add(obj, EO_EVENT_CALLBACK_ADD, _eo_signals_cb_added_deled, &_eo_signals_callbacks);
+   r = eo_event_callback_add(obj, EO_EVENT_CALLBACK_DEL, _eo_signals_cb_added_deled, &_eo_signals_callbacks);
    fail_if(!r);
-   eo_event_callback_array_priority_add(obj, callbacks, -100, (void *) 1);
-   eo_event_callback_array_add(obj, callbacks, (void *) 3);
-   r = eo_event_callback_array_priority_add(obj, callbacks, -50, (void *) 2);
+   eo_event_callback_array_priority_add(obj, _eo_signals_callbacks(), -100, (void *) 1);
+   eo_event_callback_array_add(obj, _eo_signals_callbacks(), (void *) 3);
+   r = eo_event_callback_array_priority_add(obj, _eo_signals_callbacks(), -50, (void *) 2);
    fail_if(!r);
    simple_a_set(obj, 1);
    ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
 
-   eo_event_callback_array_del(obj, callbacks, (void *) 1);
-   eo_event_callback_array_del(obj, callbacks, (void *) 2);
-   r = eo_event_callback_array_del(obj, callbacks, (void *) 3);
+   eo_event_callback_array_del(obj, _eo_signals_callbacks(), (void *) 1);
+   eo_event_callback_array_del(obj, _eo_signals_callbacks(), (void *) 2);
+   r = eo_event_callback_array_del(obj, _eo_signals_callbacks(), (void *) 3);
    fail_if(!r);
    /* Try to delete something that doesn't exist. */
-   r = eo_event_callback_array_del(obj, callbacks, (void *) 4);
+   r = eo_event_callback_array_del(obj, _eo_signals_callbacks(), (void *) 4);
    fail_if(r);
    _eo_signals_cb_flag = 0;
    simple_a_set(obj, 1);
