@@ -376,7 +376,7 @@ _parse_transformation_matrix(const char *value)
 {
    unsigned int i;
    double points[8];
-   int sz, pt_count = 0;
+   int pt_count = 0;
    double sx, sy;
    Matrix_State state = SVG_MATRIX_UNKNOWN;
    Eina_Matrix3 *matrix = calloc(1, sizeof(Eina_Matrix3));
@@ -391,9 +391,8 @@ _parse_transformation_matrix(const char *value)
              ++str;
              continue;
           }
-        sz = end - str;
         for (i = 0; i < sizeof (matrix_tags) / sizeof(matrix_tags[0]); i++)
-          if (matrix_tags[i].sz - 1 == sz && !strncmp(matrix_tags[i].tag, str, sz))
+          if (!strncmp(matrix_tags[i].tag, str, matrix_tags[i].sz -1))
             {
                state = matrix_tags[i].state;
                str += (matrix_tags[i].sz -1);
@@ -436,12 +435,12 @@ _parse_transformation_matrix(const char *value)
           {
              if (pt_count == 1)
                {
-                  eina_matrix3_rotate(matrix, points[0]);
+                  eina_matrix3_rotate(matrix, points[0] * (M_PI/180.0));
                }
              else if (pt_count == 3)
                {
                   eina_matrix3_translate(matrix, points[1], points[2]);
-                  eina_matrix3_rotate(matrix, points[0]);
+                  eina_matrix3_rotate(matrix, points[0] * (M_PI/180.0));
                   eina_matrix3_translate(matrix, -points[1], -points[2]);
                }
              else
