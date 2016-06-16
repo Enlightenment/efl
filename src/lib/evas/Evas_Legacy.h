@@ -686,9 +686,55 @@ EAPI void             evas_object_del(Evas_Object *obj) EINA_ARG_NONNULL(1);
  *
  * @return The type of the object.
  *
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group_Basic
  */
 EAPI const char      *evas_object_type_get(const Evas_Object *obj);
+
+/**
+ * @brief Sets the name of the given Evas object to the given name.
+ *
+ * There might be occasions where one would like to name his/her objects.
+ *
+ * @param[in] name The given name.
+ *
+ * @ingroup Evas_Object_Group_Basic
+ */
+EAPI void evas_object_name_set(Evas_Object *obj, const char *name);
+
+/**
+ * @brief Retrieves the name of the given Evas object.
+ *
+ * Return: The name of the object or @c null, if no name has been given to it.
+ *
+ * @return The given name.
+ *
+ * @ingroup Evas_Object_Group_Basic
+ */
+EAPI const char *evas_object_name_get(const Evas_Object *obj);
+
+/**
+ * @brief Retrieves the object from children of the given object with the given
+ * name.
+ *
+ * This looks for the evas object given a name by @ref evas_object_name_set,
+ * but it ONLY looks at the children of the object *p obj, and will only
+ * recurse into those children if @c recurse is greater than 0. If the name is
+ * not unique within immediate children (or the whole child tree) then it is
+ * not defined which child object will be returned. If @c recurse is set to -1
+ * then it will recurse without limit.
+ *
+ * @param[in] name The given name.
+ * @param[in] recurse Set to the number of child levels to recurse (0 == don't
+ * recurse, 1 == only look at the children of @c obj or their immediate
+ * children, but no further etc.).
+ *
+ * @return The Evas object with the given name on success, Otherwise @c null.
+ *
+ * @since 1.2
+ *
+ * @ingroup Evas_Object_Group_Basic
+ */
+EAPI Evas_Object *evas_object_name_child_find(const Evas_Object *obj, const char *name, int recurse) EINA_WARN_UNUSED_RESULT;
 
 /**
  * Retrieves the position and (rectangular) size of the given Evas

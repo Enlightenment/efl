@@ -1,9 +1,12 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-EOLIAN void
-_evas_object_name_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *name)
+EAPI void
+evas_object_name_set(Evas_Object *eo_obj, const char *name)
 {
+   Evas_Object_Protected_Data *obj = eo_isa(eo_obj, EVAS_OBJECT_CLASS) ?
+            eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS) : NULL;
+   if (!obj) return;
    if (obj->name)
      {
         if (obj->layer && obj->layer->evas && obj->layer->evas->name_hash)
@@ -19,9 +22,12 @@ _evas_object_name_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *n
      }
 }
 
-EOLIAN const char *
-_evas_object_name_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+EAPI const char *
+evas_object_name_get(const Evas_Object *eo_obj)
 {
+   Evas_Object_Protected_Data *obj = eo_isa(eo_obj, EVAS_OBJECT_CLASS) ?
+            eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS) : NULL;
+   if (!obj) return NULL;
    return obj->name;
 }
 
@@ -54,8 +60,8 @@ _priv_evas_object_name_child_find(const Evas_Object *eo_obj, const char *name, i
    return NULL;
 }
 
-EOLIAN Evas_Object *
-_evas_object_name_child_find(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, const char *name, int recurse)
+EAPI Evas_Object *
+evas_object_name_child_find(const Evas_Object *eo_obj, const char *name, int recurse)
 {
    return (!name ?  NULL : _priv_evas_object_name_child_find(eo_obj, name, recurse));
 }

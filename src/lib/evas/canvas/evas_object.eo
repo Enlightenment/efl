@@ -275,41 +275,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
                             not ($false).]]
          }
       }
-      @property name {
-         set {
-            [[Sets the name of the given Evas object to the given name.
-
-              There might be occasions where one would like to name his/her
-              objects.
-            ]]
-            /* FIXME-doc
-            Example:
-            @dontinclude evas-events.c
-            @skip d.bg = evas_object_rectangle_add(d.canvas);
-            @until evas_object_name_set(d.bg, "our dear rectangle");
-
-            See the full @ref Example_Evas_Events "example".
-            */
-         }
-         get {
-            [[Retrieves the name of the given Evas object.
-
-              Return: The name of the object or $null, if no name has been
-              given to it.
-            ]]
-            /* FIXME-doc
-            Example:
-            @dontinclude evas-events.c
-            @skip fprintf(stdout, "An object got focused: %s\n",
-            @until evas_focus_get
-
-            See the full @ref Example_Evas_Events "example".
-            */
-         }
-         values {
-            name: string; [[The given name.]]
-         }
-      }
       @property scale {
          set {
             [[Sets the scaling factor for an Evas object. Does not affect
@@ -724,31 +689,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
          return: bool @warn_unused;
          params {
             @in type: string @nonull; [[The name (type) of the smart class to check for.]]
-         }
-      }
-      name_child_find @const {
-         [[Retrieves the object from children of the given object with the
-           given name.
-
-           This looks for the evas object given a name by @.name.set, but
-           it ONLY looks at the children of the object *p obj, and will
-           only recurse into those children if $recurse is greater than 0.
-           If the name is not unique within immediate children (or the whole
-           child tree) then it is not defined which child object will be
-           returned. If $recurse is set to -1 then it will recurse without
-           limit.
-
-           @since 1.2
-         ]]
-         return: Evas.Object @warn_unused; [[The Evas object with the given name
-                                               on success, Otherwise $null.]]
-         params {
-            @in name: string; [[The given name.]]
-            @in recurse: int; [[
-               Set to the number of child levels to recurse (0 == don't
-               recurse, 1 == only look at the children of $obj or their
-               immediate children, but no further etc.).
-            ]]
          }
       }
       key_ungrab {
