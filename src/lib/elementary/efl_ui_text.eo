@@ -2,9 +2,9 @@ import elm_general;
 import elm_icon;
 import elm_entry;
 
-class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
+class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                  Elm.Interface.Atspi.Text, Elm.Interface.Atspi.Text.Editable, Efl.File,
-                 Evas.Selectable_Interface, Evas.Scrollable_Interface, Efl.Ui.Text.Interactive)
+                 Efl.Ui.Selectable, Efl.Ui.Scrollable, Efl.Ui.Text.Interactive)
 {
    methods {
       @property scrollable {

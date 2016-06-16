@@ -1323,7 +1323,7 @@ _efl_ui_text_elm_widget_on_focus(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item 
    if (!sd->editable) return EINA_FALSE;
 
    top = elm_widget_top_get(obj);
-   if (top && eo_isa(top, ELM_WIN_CLASS))
+   if (top && eo_isa(top, EFL_UI_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
    if (elm_widget_focus_get(obj))
@@ -1608,7 +1608,7 @@ _paste_cb(Eo *obj)
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    eo_event_callback_call
-     (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_PASTE, NULL);
+     (obj, EFL_UI_EVENT_SELECTION_PASTE, NULL);
 
    sd->selection_asked = EINA_TRUE;
 
@@ -1672,7 +1672,7 @@ _cut_cb(Eo *obj)
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    eo_event_callback_call
-     (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_CUT, NULL);
+     (obj, EFL_UI_EVENT_SELECTION_CUT, NULL);
    /* Store it */
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
@@ -1702,7 +1702,7 @@ _copy_cb(Eo *obj)
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    eo_event_callback_call
-     (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_COPY, NULL);
+     (obj, EFL_UI_EVENT_SELECTION_COPY, NULL);
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      {
@@ -1962,7 +1962,7 @@ _magnifier_move(void *data)
 
    // keep magnifier inside window
    top = elm_widget_top_get(data);
-   if (top && eo_isa(top, ELM_WIN_CLASS))
+   if (top && eo_isa(top, EFL_UI_WIN_CLASS))
      {
         Evas_Coord wh, ww;
         evas_object_geometry_get(top, NULL, NULL, &ww, &wh);
@@ -2045,7 +2045,7 @@ _long_press_cb(void *data)
 
    sd->longpress_timer = NULL;
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_LONGPRESSED, NULL);
+     (data, EFL_UI_EVENT_LONGPRESSED, NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2160,7 +2160,7 @@ _mouse_up_cb(void *data,
              top = elm_widget_top_get(data);
              if (top)
                {
-                  if (eo_isa(top, ELM_WIN_CLASS))
+                  if (eo_isa(top, EFL_UI_WIN_CLASS))
                     top_is_win = EINA_TRUE;
 
                   if (top_is_win && sd->input_panel_enable && sd->input_panel_show_on_demand &&
@@ -2385,7 +2385,7 @@ _entry_selection_start_signal_cb(void *data,
         if (entry != data) _efl_ui_text_select_none(entry, sd);
      }
    eo_event_callback_call
-     (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_START, NULL);
+     (data, EFL_UI_EVENT_SELECTION_START, NULL);
 
    elm_object_focus_set(data, EINA_TRUE);
 }
@@ -2421,7 +2421,7 @@ _entry_selection_changed_signal_cb(void *data,
 
    sd->have_selection = EINA_TRUE;
    eo_event_callback_call
-     (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_CHANGED, NULL);
+     (data, EFL_UI_EVENT_SELECTION_CHANGED, NULL);
    _selection_store(ELM_SEL_TYPE_PRIMARY, data);
    _update_selection_handler(data);
    if (_elm_config->atspi_mode)
@@ -2440,7 +2440,7 @@ _entry_selection_cleared_signal_cb(void *data,
 
    sd->have_selection = EINA_FALSE;
    eo_event_callback_call
-     (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_CLEARED, NULL);
+     (data, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
    if (sd->cut_sel)
      {
         elm_cnp_selection_set
@@ -2472,7 +2472,7 @@ _entry_paste_request_signal_cb(void *data,
 
    if (!sd->editable) return;
    eo_event_callback_call
-     (data, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_PASTE, NULL);
+     (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
 
    top = elm_widget_top_get(data);
    if ((top) && (elm_win_window_id_get(top)))
@@ -2698,7 +2698,7 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
 
    eo_event_callback_call(obj, EFL_UI_TEXT_EVENT_ANCHOR_HOVER_OPENED, &ei);
    eo_event_callback_add
-     (sd->anchor_hover.hover, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _anchor_hover_clicked_cb, obj);
+     (sd->anchor_hover.hover, EFL_UI_EVENT_CLICKED, _anchor_hover_clicked_cb, obj);
 
    /* FIXME: Should just check if there's any callback registered to
     * the smart events instead.  This is used to determine if anyone
@@ -2823,7 +2823,7 @@ _entry_mouse_clicked_signal_cb(void *data,
                                const char *source EINA_UNUSED)
 {
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+     (data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static void
@@ -2833,7 +2833,7 @@ _entry_mouse_double_signal_cb(void *data,
                               const char *source EINA_UNUSED)
 {
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, NULL);
+     (data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
 }
 
 static void
@@ -2843,7 +2843,7 @@ _entry_mouse_triple_signal_cb(void *data,
                               const char *source EINA_UNUSED)
 {
    eo_event_callback_call
-     (data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_TRIPLE, NULL);
+     (data, EFL_UI_EVENT_CLICKED_TRIPLE, NULL);
 }
 
 static Evas_Object *
@@ -4230,7 +4230,7 @@ _efl_ui_text_select_none(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
      }
    if (sd->have_selection)
      eo_event_callback_call
-       (obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_CLEARED, NULL);
+       (obj, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
 
    sd->have_selection = EINA_FALSE;
    edje_object_part_text_select_none(sd->entry_edje, "elm.text");
@@ -4467,7 +4467,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
    EFL_UI_TEXT_DATA_GET(obj, sd);
    /* here we need to emit the signal that the elm_scroller would have done */
    eo_event_callback_call
-     (obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL, NULL);
+     (obj, EFL_UI_EVENT_SCROLL, NULL);
 
    if (sd->have_selection)
      _update_selection_handler(obj);
@@ -4813,7 +4813,7 @@ _efl_ui_text_elm_widget_activate(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, Elm
        !evas_object_freeze_events_get(obj))
      {
         eo_event_callback_call
-          (obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
+          (obj, EFL_UI_EVENT_CLICKED, NULL);
         if (sd->editable && sd->input_panel_enable)
           edje_object_part_text_input_panel_show(sd->entry_edje, "elm.text");
      }
