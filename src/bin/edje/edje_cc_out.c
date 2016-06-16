@@ -1240,15 +1240,14 @@ data_write_vectors(Eet_File *ef, int *vector_num)
    Eet_Data_Descriptor *svg_node_eet;
    Eina_List *ll;
    char *s;
-   char buf[PATH_MAX];
-   char id_str[15];
    Eina_File *f = NULL;
    Edje_Vector_Directory_Entry *vector;
+   Eina_Strbuf *buf;
 
    if (!((edje_file) && (edje_file->image_dir))) return;
 
    svg_node_eet = _edje_svg_node_eet();
-
+   buf = eina_strbuf_new();
    for (i = 0; i < edje_file->image_dir->vectors_count; i++)
      {
         if (!beta)
@@ -1257,17 +1256,21 @@ data_write_vectors(Eet_File *ef, int *vector_num)
         vector = &edje_file->image_dir->vectors[i];
         EINA_LIST_FOREACH(img_dirs, ll, s)
           {
-             snprintf(buf, sizeof(buf), "%s/%s", s, vector->entry);
-             f = eina_file_open(buf, EINA_FALSE);
+             eina_strbuf_reset(buf);
+             eina_strbuf_append_printf(buf, "%s/%s", s, vector->entry);
+             f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
              if (!f) continue;
              root = _svg_load(f, NULL);
-             snprintf(id_str, sizeof(id_str), "edje/vectors/%i", vector->id);
-             eet_data_write(ef, svg_node_eet, id_str, root, compress_mode);
+             eina_strbuf_reset(buf);
+             eina_strbuf_append_printf(buf, "edje/vectors/%i", vector->id);
+             eet_data_write(ef, svg_node_eet, eina_strbuf_string_get(buf), root, compress_mode);
              *vector_num += 1;
              eina_file_close(f);
              break;
           }
      }
+   eina_strbuf_free(buf);
+
 }
 
 static void
