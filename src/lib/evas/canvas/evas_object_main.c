@@ -1788,7 +1788,7 @@ _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EI
    efl_gfx_size_hint_align_get(eo_obj, &dblx, &dbly);
    efl_gfx_size_hint_weight_get(eo_obj, &dblw, &dblh);
    efl_gfx_color_get(eo_obj, &r, &g, &b, &a);
-   focus = evas_obj_focus_get(eo_obj);
+   focus = evas_object_focus_get(eo_obj);
    m = evas_obj_pointer_mode_get(eo_obj);
    pass_event = evas_obj_pass_events_get(eo_obj);
    repeat_event = evas_obj_repeat_events_get(eo_obj);

@@ -185,7 +185,7 @@ main(void)
                efl_gfx_size_set(d.bg, WIDTH, HEIGHT);
    /* covers full canvas */
                efl_gfx_visible_set(d.bg, EINA_TRUE);
-   evas_obj_focus_set(d.bg, EINA_TRUE);
+   evas_object_focus_set(d.bg, EINA_TRUE);
 
    evas_object_event_callback_add(
      d.bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);

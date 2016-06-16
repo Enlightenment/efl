@@ -296,42 +296,21 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
                              default size.]]
          }
       }
-      @property focus {
+      @property key_focus {
+         [[Indicates that this object is the keyboard event receiver on
+           its canvas.
+
+           Changing focus only affects where (key) input events go.
+           There can be only one object focused at any time. If $focus
+           is $true, $obj will be set as the currently focused object
+           and it will receive all keyboard events that are not
+           exclusive key grabs on other objects.
+         ]]
          set {
-            [[Sets or unsets a given object as the currently focused one on
-              its canvas.
-
-              Changing focus only affects where (key) input events go.
-              There can be only one object focused at any time. If $focus
-              is $true, $obj will be set as the currently focused object
-              and it will receive all keyboard events that are not
-              exclusive key grabs on other objects.
-
-              See also @.key_grab, @.key_ungrab.
-            ]]
-            /* FIXME-doc
-            Example:
-            @dontinclude evas-events.c
-            @skip evas_object_focus_set
-            @until evas_object_focus_set
-
-            See the full example @ref Example_Evas_Events "here".
-            */
+            legacy: evas_object_focus_set;
          }
          get {
-            [[Retrieve whether an object has the focus.
-
-              If the passed object is the currently focused one, $true is
-              returned. $false is returned, otherwise.
-            ]]
-            /* FIXME-doc
-            Example:
-            @dontinclude evas-events.c
-            @skip And again
-            @until something is bad
-
-            See the full example @ref Example_Evas_Events "here".
-            */
+            legacy: evas_object_focus_get;
          }
          values {
             focus: bool; [[$true when set as focused or $false otherwise.]]
@@ -628,7 +607,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
            Warning: Providing impossible modifier sets creates undefined
            behavior.
 
-           See also @.key_ungrab, @.focus.get, @.focus.set,
+           See also @.key_ungrab, @.key_focus.get, @.key_focus.set,
            \@ref evas_focus_get, \@ref evas_key_modifier_add.
          ]]
          /* FIXME-doc
@@ -678,7 +657,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
            Removes a key grab on $obj if $keyname, $modifiers, and
            $not_modifiers match.
 
-           See also @.key_grab, @.focus.get, @.focus.set,
+           See also @.key_grab, @.key_focus.get, @.key_focus.set,
            \@ref evas_focus_get.
          ]]
          /* FIXME-doc

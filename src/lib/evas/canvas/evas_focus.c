@@ -8,7 +8,7 @@
 /* public calls */
 
 EOLIAN void
-_evas_object_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool focus)
+_evas_object_key_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool focus)
 {
 
    int event_id = 0;
@@ -24,7 +24,7 @@ _evas_object_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool fo
    if (focus)
      {
         if (obj->layer->evas->focused)
-	  evas_obj_focus_set(obj->layer->evas->focused, 0);
+          evas_object_focus_set(obj->layer->evas->focused, 0);
 	
         if (obj->layer->evas->focused) goto end;
         obj->focused = 1;
@@ -47,7 +47,7 @@ _evas_object_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool fo
 }
 
 EOLIAN Eina_Bool
-_evas_object_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_evas_object_key_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->focused;
 }

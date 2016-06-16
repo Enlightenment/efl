@@ -117,7 +117,7 @@ bg_setup(void)
    efl_gfx_size_set(o_bg, startw, starth);
    efl_gfx_stack_layer_set(o_bg, -999);
    efl_gfx_visible_set(o_bg, EINA_TRUE);
-   evas_obj_focus_set(o_bg, EINA_TRUE);
+   evas_object_focus_set(o_bg, EINA_TRUE);
    eo_event_callback_add(o_bg, EFL_EVENT_KEY_DOWN, bg_key_down, NULL);
 }
 
