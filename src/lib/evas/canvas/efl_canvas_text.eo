@@ -1,0 +1,306 @@
+struct Efl.Canvas.Text.Style;
+
+class Efl.Canvas.Text (Evas.Object, Efl.Text)
+{
+   legacy_prefix: evas_object_textblock;
+   methods {
+      @property bidi_delimiters {
+         [[BiDi delimiters are used for in-paragraph separation of bidi
+           segments. This is useful for example in recipients fields of
+           e-mail clients where bidi oddities can occur when mixing RTL
+           and LTR.
+
+           @since 1.1
+         ]]
+         set {}
+         get {}
+         values {
+            delim: string; [[A null terminated string of delimiters, e.g ",|" or $null if empty.]]
+         }
+      }
+      @property legacy_newline {
+         [[When true, newline character will behave as a paragraph separator.
+
+           @since 1.1
+         ]]
+         set {}
+         get {}
+         values {
+            mode: bool; [[$true for legacy mode, $false otherwise.]]
+         }
+      }
+      @property style {
+         [[The text style of the object.
+
+           $key is how you reference the style (for deletion or fetching). $NULL
+           as key indicates the style has the highest priority (default style).
+           The style priority is the order of creation, styles created first
+           are applied first with the exception of $NULL which is implicitly
+           first.
+
+           Set $style to $NULL to delete it.
+         ]]
+         set {
+            legacy: null;
+         }
+         get {
+            legacy: null;
+         }
+         keys {
+            key: string; [[The name to the style. $NULL is the default style]]
+         }
+         values {
+            style: string; [[The style.]]
+         }
+      }
+      @property size_formatted {
+         [[The formatted width and height.
+
+           This calculates the actual size after restricting the
+           textblock to the current size of the object.
+
+           The main difference between this and @.size_native.get
+           is that the "native" function does not wrapping into account
+           it just calculates the real width of the object if it was
+           placed on an infinite canvas, while this function gives the
+           size after wrapping according to the size restrictions of the
+           object.
+
+           For example for a textblock containing the text:
+           "You shall not pass!" with no margins or padding and assuming
+           a monospace font and a size of 7x10 char widths (for simplicity)
+           has a native size of 19x1 and a formatted size of 5x4.
+         ]]
+         get {}
+         values {
+            w: Evas.Coord; [[The width of the object.]]
+            h: Evas.Coord; [[The height of the object.]]
+         }
+      }
+      @property cursor {
+         [[The object's main cursor.]]
+         get {
+            return: Efl.Canvas.Text.Cursor;
+         }
+      }
+      @property size_native {
+         [[The native width and height.
+
+           This calculates the actual size without taking account the
+           current size of the object.
+
+           The main difference between this and @.size_formatted.get
+           is that the "native" function does not take wrapping into
+           account it just calculates the real width of the object if
+           it was placed on an infinite canvas, while the "formatted"
+           function gives the size after  wrapping text according to
+           the size restrictions of the object.
+
+           For example for a textblock containing the text:
+           "You shall not pass!" with no margins or padding and assuming
+           a monospace font and a size of 7x10 char widths (for simplicity)
+           has a native size of 19x1 and a formatted size of 5x4.
+         ]]
+         get {}
+         values {
+            w: Evas.Coord; [[The width returned.]]
+            h: Evas.Coord; [[The height returned.]]
+         }
+      }
+      @property style_insets {
+         get {}
+         values {
+            l: Evas.Coord;
+            r: Evas.Coord;
+            t: Evas.Coord;
+            b: Evas.Coord;
+         }
+      }
+      @property is_empty {
+         [[Whether the object is empty (no text) or not]]
+         get {
+            legacy: null;
+         }
+         values {
+            is_empty: bool; [[$true if empty]]
+         }
+      }
+      obstacle_add {
+         [[Add obstacle evas object $eo_obs to be observed during layout
+           of text.
+
+           The textblock does the layout of the text according to the
+           position of the obstacle.
+
+           @since 1.15
+         ]]
+         params {
+            @in eo_obs: Evas.Object;
+         }
+         return: bool; [[$true on success, $false otherwise.]]
+      }
+      obstacle_del {
+         [[Removes $eo_obs from observation during text layout.
+
+           @since 1.15
+         ]]
+         params {
+            @in eo_obs: Evas.Object;
+         }
+         return: bool; [[$true on success, $false otherwise.]]
+      }
+      obstacles_update {
+         [[Triggers for relayout due to obstacles' state change.
+
+           The obstacles alone don't affect the layout, until this is
+           called. Use this after doing changes (moving, positioning etc.)
+           in the obstacles that you  would like to be considered in the
+           layout.
+
+           For example: if you have just repositioned the obstacles to
+           differrent coordinates relative to the textblock, you need to
+           call this so it will consider this new state and will relayout
+           the text.
+
+           @since 1.15
+         ]]
+      }
+      @property annotation {
+         [[A new format for $annotation.
+
+           This will replace the format applied by $annotation with $format.
+           Assumes that $annotation is a handle for an existing annotation,
+           i.e. one that was added using @.annotation_insert to this object.
+           Otherwise, this will fail and return $false.
+
+           @since 1.18
+         ]]
+         set {
+            legacy: null;
+            return: bool; [[$true on success, $false otherwise.]]
+         }
+         get {
+            legacy: null;
+         }
+         keys {
+            annotation: Efl.Canvas.Text.Annotation *;
+         }
+         values {
+            format: string;
+         }
+      }
+      range_annotations_get {
+         [[Returns an iterator of all the handles in a range.
+
+           @since 1.18
+         ]]
+         legacy: null;
+         params {
+              @in start: const(Efl.Canvas.Text.Cursor);
+              @in end:   const(Efl.Canvas.Text.Cursor);
+         }
+         return: free(own(iterator<Efl.Canvas.Text.Annotation *>),
+                 eina_iterator_free); [[Handle of the Annotation]]
+      }
+      annotation_del {
+         [[Deletes $annotation.
+
+           All formats applied by $annotations will be removed and it will be
+           deleted.
+         ]]
+         legacy: null;
+         params {
+            @in annotation: Efl.Canvas.Text.Annotation *;
+         }
+         return: bool; [[$true on success, $false otherwise.]]
+      }
+      annotation_insert {
+         [[Inserts an annotation format in a specified range [$start, $end - 1].
+
+           This will add both opening and closing formats for the given
+           $format.
+           Returns a handle to manipulate the inserted annotation.
+
+           @since 1.18
+         ]]
+         legacy: null;
+         params {
+              @in start: Efl.Canvas.Text.Cursor;
+              @in end:   Efl.Canvas.Text.Cursor;
+              @in format: string;
+         }
+         return: Efl.Canvas.Text.Annotation *;
+      }
+      range_geometry_get {
+         [[Get the geometry of a range.  The geometry is the geometry in
+           which rectangles in middle lines of range are merged into one big
+           rectangle.
+
+           @since 1.13
+         ]]
+         legacy: null;
+         params {
+             @in cur1: const(Efl.Canvas.Text.Cursor);
+             @in cur2: const(Efl.Canvas.Text.Cursor);
+         }
+         return: free(own(iterator<Eina.Rectangle>),
+                         eina_iterator_free);
+      }
+      range_delete {
+         [[Deletes the range between given cursors.]]
+         legacy: null;
+         params {
+            @in cur1: Efl.Canvas.Text.Cursor; [[Range start position.]]
+            @in cur2: Efl.Canvas.Text.Cursor; [[Range end position.]]
+         }
+      }
+      visible_range_get {
+         [[Returns the currently visible range.
+
+           The given $start and $end cursor act like an out-variables here,
+           as these are set to the positions of the start and the end of the
+           visible range in the text, respectively.
+
+           @since 1.1.
+         ]]
+         return: bool; [[$true on success, $false otherwise.]]
+         params {
+            @in start: Efl.Canvas.Text.Cursor; [[Range start position.]]
+            @in end: Efl.Canvas.Text.Cursor; [[Range end position.]]
+         }
+      }
+      range_text_get {
+         [[Returns the text in the range between $cur1 and $cur2.]]
+         legacy: null;
+         return: own(char*); [[The text in the given range.]]
+         params {
+            @in cur1: const(Efl.Canvas.Text.Cursor); [[Range start position.]]
+            @in cur2: const(Efl.Canvas.Text.Cursor); [[Range end position.]]
+         }
+      }
+      object_item_geometry_get {
+         [[Queries a given object item for its geometry
+
+           Note that the provided annotation should be an object item type.
+         ]]
+         legacy: null;
+         params {
+            @in an: const(Efl.Canvas.Text.Annotation)*; [[Given annotation to query]]
+            @out x: Evas.Coord;
+            @out y: Evas.Coord;
+            @out w: Evas.Coord;
+            @out h: Evas.Coord;
+         }
+         return: bool; [[$true if given annotation is an object item, $false otherwise]]
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Eo.Base.dbg_info_get;
+      Evas.Object.paragraph_direction.set;
+      Evas.Object.paragraph_direction.get;
+      Efl.Text.text.set;
+      Efl.Text.text.get;
+   }
+}

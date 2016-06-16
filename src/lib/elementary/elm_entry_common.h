@@ -1,3 +1,6 @@
+#ifndef ELM_ENTRY_COMMON_H_
+#define ELM_ENTRY_COMMON_H_
+
 /**
  * @addtogroup Elm_Entry
  *
@@ -257,3 +260,4 @@ EAPI void                         elm_entry_context_menu_item_icon_get(const Elm
 /**
  * @}
  */
+#endif //ELM_ENTRY_COMMON_H_

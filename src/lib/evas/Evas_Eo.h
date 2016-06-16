@@ -22,11 +22,12 @@
  */
 
 /**
- * @ingroup Evas_Object_Textblock
+ * @ingroup Efl_Canvas_Text
  *
  * @{
  */
-#include "canvas/evas_textblock.eo.h"
+#include "canvas/efl_canvas_text_cursor.eo.h"
+#include "canvas/efl_canvas_text.eo.h"
 /**
  * @}
  */

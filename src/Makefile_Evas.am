@@ -5,7 +5,8 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/evas_object.eo \
 	lib/evas/canvas/efl_canvas_polygon.eo \
 	lib/evas/canvas/efl_canvas_rectangle.eo \
-	lib/evas/canvas/evas_textblock.eo \
+	lib/evas/canvas/efl_canvas_text.eo \
+	lib/evas/canvas/efl_canvas_text_cursor.eo \
 	lib/evas/canvas/evas_object_smart.eo \
 	lib/evas/canvas/evas_common_interface.eo \
 	lib/evas/canvas/evas_canvas.eo \
@@ -105,6 +106,7 @@ lib/evas/Evas_Loader.h
 
 installed_evascanvasheadersdir = $(includedir)/evas-@VMAJ@/canvas
 nodist_installed_evascanvasheaders_DATA = $(evas_eolian_pub_h) $(evas_eolian_legacy_h)
+dist_installed_evascanvasheaders_DATA = lib/evas/canvas/evas_textblock_legacy.h
 noinst_DATA += $(evas_eolian_priv_h)
 
 noinst_HEADERS += \
