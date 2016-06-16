@@ -2310,21 +2310,130 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
                              EDJE_MESSAGE_SIGNAL, 0, &emsg);
 }
 
+static Efl_VG *
+_apply_gradient_property(Efl_VG *parent, Svg_Style_Gradient *g)
+{
+   Efl_VG *grad_obj = NULL;
+   Efl_Gfx_Gradient_Stop *stops, *stop;
+   int stop_count = 0;
+   Eina_List *l;
+
+   if (g->type == SVG_LINEAR_GRADIENT)
+     {
+        grad_obj = eo_add(EFL_VG_GRADIENT_LINEAR_CLASS, parent);
+        evas_vg_gradient_linear_start_set(grad_obj, g->linear->x1, g->linear->y1);
+        evas_vg_gradient_linear_end_set(grad_obj, g->linear->x2, g->linear->y2);
+     }
+   else if (g->type == SVG_RADIAL_GRADIENT)
+     {
+        grad_obj = eo_add(EFL_VG_GRADIENT_RADIAL_CLASS, parent);
+        evas_vg_gradient_radial_center_set(grad_obj, g->radial->cx, g->radial->cy);
+        evas_vg_gradient_radial_radius_set(grad_obj, g->radial->r);
+        evas_vg_gradient_radial_focal_set(grad_obj, g->radial->fx, g->radial->fy);
+     }
+   else
+     {
+        // not a known gradient
+        return NULL;
+     }
+   // apply common prperty
+   evas_vg_gradient_spread_set(grad_obj, g->spread);
+   // update the stops
+   stop_count = eina_list_count(g->stops);
+   if (stop_count)
+     {
+        stops = calloc(stop_count, sizeof(Efl_Gfx_Gradient_Stop));
+        EINA_LIST_FOREACH(g->stops, l, stop)
+          {
+             stops->r = stop->r;
+             stops->g = stop->g;
+             stops->b = stop->b;
+             stops->a = stop->a;
+             stops->offset = stop->offset;
+          }
+        evas_vg_gradient_stop_set(grad_obj, stops, stop_count);
+        free(stops);
+     }
+   return grad_obj;
+}
+
 // vg tree creation
 static void
 _apply_vg_property(Svg_Node *node, Efl_VG *vg)
 {
+   Svg_Style_Property *style = node->style;
+
+   // update the vg name
    if (node->id)
      evas_vg_node_name_set(vg, node->id);
-   if (node->style)
+
+   // apply the transformation
+   if (node->transform)
+     evas_vg_node_transformation_set(vg, node->transform);
+
+   if (node->type == SVG_NODE_G) return;
+
+   // apply the fill style property
+   efl_gfx_shape_fill_rule_set(vg, style->fill.fill_rule);
+   // if fill property is NULL then do nothing
+   if (style->fill.paint.none)
      {
-        evas_vg_node_color_set(vg, node->style->fill.r, node->style->fill.g, node->style->fill.b, node->style->fill.a);
-        efl_gfx_shape_fill_rule_set(vg, node->style->fill.fill_rule);
-        evas_vg_shape_stroke_color_set(vg, node->style->stroke.r, node->style->stroke.g, node->style->stroke.b, node->style->stroke.a);
-        evas_vg_shape_stroke_width_set(vg, node->style->stroke.width);
-        evas_vg_shape_stroke_cap_set(vg, node->style->stroke.cap);
-        evas_vg_shape_stroke_join_set(vg, node->style->stroke.join);
-        evas_vg_shape_stroke_scale_set(vg, node->style->stroke.scale);
+        //do nothing
+     }
+   else if (style->fill.gradient)
+     {
+        // if the fill has gradient then apply.
+        evas_vg_shape_fill_set(vg, _apply_gradient_property(vg, style->fill.gradient));
+     }
+   else if (style->fill.paint.url)
+     {
+        // apply the color pointed by url
+        // TODO
+     }
+   else if (style->fill.paint.cur_color)
+     {
+        // apply the current style color
+        evas_vg_node_color_set(vg, style->r, style->g,
+                               style->b, style->fill.opacity);
+     }
+   else
+     {
+        // apply the fill color
+        evas_vg_node_color_set(vg, style->fill.paint.r, style->fill.paint.g,
+                               style->fill.paint.b, style->fill.opacity);
+     }
+
+   // apply the stroke style property
+   evas_vg_shape_stroke_width_set(vg, style->stroke.width);
+   evas_vg_shape_stroke_cap_set(vg, style->stroke.cap);
+   evas_vg_shape_stroke_join_set(vg, style->stroke.join);
+   evas_vg_shape_stroke_scale_set(vg, style->stroke.scale);
+   // if stroke property is NULL then do nothing
+   if (style->stroke.paint.none)
+     {
+        //do nothing
+     }
+   else if (style->stroke.gradient)
+     {
+        // if the fill has gradient then apply.
+        evas_vg_shape_stroke_fill_set(vg, _apply_gradient_property(vg, style->stroke.gradient));
+     }
+   else if (style->stroke.paint.url)
+     {
+        // apply the color pointed by url
+        // TODO
+     }
+   else if (style->stroke.paint.cur_color)
+     {
+        // apply the current style color
+        evas_vg_shape_stroke_color_set(vg, style->r, style->g,
+                                       style->b, style->stroke.opacity);
+     }
+   else
+     {
+        // apply the stroke color
+        evas_vg_shape_stroke_color_set(vg, style->stroke.paint.r, style->stroke.paint.g,
+                                       style->stroke.paint.b, style->stroke.opacity);
      }
 }
 

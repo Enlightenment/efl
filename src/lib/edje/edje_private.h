@@ -3033,6 +3033,7 @@ typedef enum   _Svg_Gradient_Type   Svg_Gradient_Type;
 typedef struct _Svg_Style_Gradient  Svg_Style_Gradient;
 typedef struct _Svg_Linear_Gradient Svg_Linear_Gradient;
 typedef struct _Svg_Radial_Gradient Svg_Radial_Gradient;
+typedef struct _Svg_Paint           Svg_Paint;
 
 enum _Svg_Node_Type
 {
@@ -3163,37 +3164,47 @@ struct _Svg_Style_Gradient
    Svg_Linear_Gradient *linear;
 };
 
+struct _Svg_Paint
+{
+   int        r;
+   int        g;
+   int        b;
+   Eina_Bool  none;
+   Eina_Bool  cur_color;
+   char      *url;
+};
 
 struct _Svg_Style_Fill
 {
+   Svg_Paint            paint;
+   int                  opacity;
    Svg_Style_Gradient  *gradient;
-   Efl_Gfx_Fill_Rule   fill_rule;
-   int r;
-   int g;
-   int b;
-   int a;
+   Efl_Gfx_Fill_Rule    fill_rule;
 };
 
 struct _Svg_Style_Stroke
 {
+   Svg_Paint            paint;
+   int                  opacity;
    Svg_Style_Gradient  *gradient;
-   double scale;
-   double width;
-   double centered;
-   int r;
-   int g;
-   int b;
-   int a;
-   Efl_Gfx_Cap cap;
-   Efl_Gfx_Join join;
-   Efl_Gfx_Dash *dash;
-   int dash_count;
+   double               scale;
+   double               width;
+   double               centered;
+   Efl_Gfx_Cap          cap;
+   Efl_Gfx_Join         join;
+   Efl_Gfx_Dash        *dash;
+   int                  dash_count;
 };
 
 struct _Svg_Style_Property
 {
    Svg_Style_Fill     fill;
    Svg_Style_Stroke   stroke;
+   // the color property indirectly 
+   // used by fill and stroke
+   int                r;
+   int                g;
+   int                b;
 };
 
 struct _Svg_Node

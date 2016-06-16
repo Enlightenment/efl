@@ -522,49 +522,50 @@ _attr_parse_svg_node(void *data, const char *key, const char *value)
    return EINA_TRUE;
 }
 
+//https://www.w3.org/TR/SVGTiny12/painting.html#SpecifyingPaint
+static void
+_handle_paint_attr(Svg_Paint* paint, const char *value)
+{
+   if (!strcmp(value, "none"))
+     {
+        // no paint property
+        paint->none = EINA_TRUE;
+        return;
+     }
+   paint->none = EINA_FALSE;
+   if (!strcmp(value, "currentColor"))
+     {
+        paint->cur_color = EINA_TRUE;
+        return;
+     }
+   _to_color(value, &paint->r, &paint->g, &paint->b, &paint->url);
+}
+
 static void
 _handle_color_attr(Svg_Node* node, const char *value)
 {
    Svg_Style_Property *style = node->style;
-   char *use = NULL;
-
-   _to_color(value, &style->fill.r, &style->fill.g, &style->fill.b, &use);
-   if (use)
-     {
-        // update the gradient field
-     }
+   _to_color(value, &style->r, &style->g, &style->b, NULL);
 }
 
 static void
 _handle_fill_attr(Svg_Node* node, const char *value)
 {
    Svg_Style_Property *style = node->style;
-   char *use = NULL;
-
-   _to_color(value, &style->fill.r, &style->fill.g, &style->fill.b, &use);
-   if (use)
-     {
-        // update the gradient field
-     }
+   _handle_paint_attr(&style->fill.paint, value);
 }
 
 static void
 _handle_stroke_attr(Svg_Node* node, const char *value)
 {
    Svg_Style_Property *style = node->style;
-   char *use = NULL;
-
-   _to_color(value, &style->stroke.r, &style->stroke.g, &style->stroke.b, &use);
-   if (use)
-     {
-        // update the gradient field
-     }
+   _handle_paint_attr(&style->stroke.paint, value);
 }
 
 static void
 _handle_stroke_opacity_attr(Svg_Node* node, const char *value)
 {
-   node->style->stroke.a = _to_opacity(value);
+   node->style->stroke.opacity = _to_opacity(value);
 }
 
 static void
@@ -586,12 +587,6 @@ _handle_stroke_linejoin_attr(Svg_Node* node, const char *value)
 }
 
 static void
-_handle_color_opacity_attr(Svg_Node* node, const char *value)
-{
-   node->style->fill.a = _to_opacity(value);
-}
-
-static void
 _handle_fill_rule_attr(Svg_Node* node, const char *value)
 {
    node->style->fill.fill_rule = _to_fill_rule(value);
@@ -600,7 +595,7 @@ _handle_fill_rule_attr(Svg_Node* node, const char *value)
 static void
 _handle_fill_opacity_attr(Svg_Node* node, const char *value)
 {
-   node->style->fill.a = _to_opacity(value);
+   node->style->fill.opacity = _to_opacity(value);
 }
 
 static void
@@ -621,7 +616,6 @@ static const struct {
    Style_Method tag_handler;;
 } style_tags[] = {
   STYLE_DEF(color, color),
-  STYLE_DEF(color-opacity, color_opacity),
   STYLE_DEF(fill, fill),
   STYLE_DEF(fill-rule, fill_rule),
   STYLE_DEF(fill-opacity, fill_opacity),
@@ -695,12 +689,29 @@ _create_node(Svg_Node *parent, Svg_Node_Type type)
 
    // default fill property
    node->style = calloc(1, sizeof(Svg_Style_Property));
-   node->style->fill.a = 255;
+
+   // update the default value of stroke and fill
+   //https://www.w3.org/TR/SVGTiny12/painting.html#SpecifyingPaint
+   // default fill color is black
+   node->style->fill.paint.r = 0;
+   node->style->fill.paint.g = 0;
+   node->style->fill.paint.b = 0;
+   node->style->fill.paint.none = EINA_FALSE;
+   // default fill opacity is 1
+   node->style->fill.opacity = 255;
+
+   // default fill rule is nonzero
    node->style->fill.fill_rule = EFL_GFX_FILL_RULE_WINDING;
 
-   //default stroke property
+   // default stroke is none
+   node->style->stroke.paint.none = EINA_TRUE;
+   // default stroke opacity is 1
+   node->style->stroke.opacity = 255;
+   // default stroke width is 1
+   node->style->stroke.width = 1;
+   // default line cap is butt
    node->style->stroke.cap = EFL_GFX_CAP_BUTT;
-   node->style->stroke.join = EFL_GFX_JOIN_MITER;
+   // default line join is miter
    node->style->stroke.join = EFL_GFX_JOIN_MITER;
    node->style->stroke.scale = 1.0;
 
@@ -755,8 +766,7 @@ _attr_parse_path_node(void *data, const char *key, const char *value)
 
    if (!strcmp(key, "d"))
      {
-        path->path = malloc(strlen(value));
-        strcpy(path->path, value);
+        path->path = strdup(value);
      }
    else if (!strcmp(key, "style"))
      {
