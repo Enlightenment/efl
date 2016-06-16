@@ -329,6 +329,26 @@ _efl_uri_manager_eo_base_constructor(Eo *obj, Efl_Uri_Manager_Data *pd)
    return obj;
 }
 
+static void
+_efl_uri_manager_eo_base_destructor(Eo *obj EINA_UNUSED, Efl_Uri_Manager_Data *pd)
+{
+   eo_destructor(eo_super(obj, EFL_URI_MANAGER_CLASS));
+
+   eina_hash_free(pd->mappers);
+   eo_wref_del(pd->def, &pd->def);
+}
+
+EAPI void
+efl_uri_manager_default_set(Efl_Uri_Manager *obj, Efl_Uri_Mapper *def)
+{
+   Efl_Uri_Manager_Data *pd;
+
+   pd = obj ? eo_data_scope_get(obj, EFL_URI_MANAGER_CLASS) : NULL;
+   if (!pd) return ;
+
+   eo_wref_add(def, &pd->def);
+}
+
 #include "efl_uri_manager.eo.c"
 
 #include "efl_uri_mapper.eo.c"

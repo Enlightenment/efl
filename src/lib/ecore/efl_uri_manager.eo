@@ -63,5 +63,6 @@ class Efl.Uri.Manager (Efl.Loop_User)
    }
    implements {
       Eo.Base.constructor;
+      Eo.Base.destructor;
    }
 }

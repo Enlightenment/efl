@@ -151,6 +151,9 @@ EAPI void _ecore_magic_fail(const void *d,
                             const char *fname);
 EAPI void ecore_loop_arguments_send(int argc, const char **argv);
 
+
+EAPI void efl_uri_manager_default_set(Efl_Uri_Manager *obj, Efl_Uri_Mapper *def);
+
 void         _ecore_time_init(void);
 
 void        *_efl_loop_timer_del(Ecore_Timer *timer);
