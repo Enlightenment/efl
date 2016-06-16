@@ -63,6 +63,10 @@ START_TEST(evas_mask_test_setget)
 {
    Evas *e = _setup_evas();
    Evas_Object *obj = NULL, *mask = NULL;
+   const Eina_List *list, *l;
+   Eina_Iterator *it;
+   Evas_Object *o;
+   int i;
 
    obj = evas_object_text_add(e);
    fail_if(evas_object_clip_get(obj) != NULL);
@@ -70,6 +74,25 @@ START_TEST(evas_mask_test_setget)
    mask = evas_object_image_filled_add(e);
    evas_object_clip_set(obj, mask);
    fail_if(evas_object_clip_get(obj) != mask);
+
+   list = evas_object_clipees_get(mask);
+   i = 0;
+   EINA_LIST_FOREACH(list, l, o)
+     {
+        if (!i) fail_if(o != obj);
+        i++;
+     }
+   fail_if(i != 1);
+
+   it = evas_obj_clipees_get(mask);
+   i = 0;
+   EINA_ITERATOR_FOREACH(it, o)
+     {
+        if (!i) fail_if(o != obj);
+        i++;
+     }
+   fail_if(i != 1);
+   eina_iterator_free(it);
 
    evas_object_clip_unset(obj);
    fail_if(evas_object_clip_get(obj) != NULL);
