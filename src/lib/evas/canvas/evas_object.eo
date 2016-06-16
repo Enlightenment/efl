@@ -8,7 +8,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
    event_prefix: evas_object;
    data: Evas_Object_Protected_Data;
    methods {
-      legacy_ctor @protected {
+      legacy_ctor @protected @beta {
           [[Internal function. Do not use.]]
       }
       @property type @protected {
@@ -691,6 +691,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
       }
    }
    constructors {
+      .legacy_ctor;
       .type;
    }
    implements {
