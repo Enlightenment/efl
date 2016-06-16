@@ -1,9 +1,6 @@
 type @extern Evas.Load_Error: int; /* FIXME: Need to migrate emile. */
 struct @extern Evas.Video_Surface; /* FIXME: The structure is full of the unsupported func pointers. */
 
-/* FIXME: Unsupported annonymous structures inside */
-struct Evas.Native_Surface; [[A generic datatype for engine specific native surface information]]
-
 type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
 type Evas.Coord: int; [[A type for coordinates]]
 

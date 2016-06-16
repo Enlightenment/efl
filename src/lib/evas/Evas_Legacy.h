@@ -3199,7 +3199,7 @@ typedef enum _Evas_Native_Surface_Type
  *
  * @see evas_object_image_native_surface_set()
  */
-struct _Evas_Native_Surface
+typedef struct _Evas_Native_Surface
 {
    int                      version; /**< Current Native Surface Version. Use EVAS_NATIVE_SURFACE_VERSION */
    Evas_Native_Surface_Type type; /**< Surface type. @see Evas_Native_Surface_Type */
@@ -3236,7 +3236,7 @@ struct _Evas_Native_Surface
          void *surface; /**< evas gl surface to use @since 1.14 */
       } evasgl; /**< Set this struct fields if surface data is Evas GL based. @since 1.14 */
    } data; /**< Choose one union data according to your surface. */
-};
+} Evas_Native_Surface;
 
 /**
  * Set the native surface of a given image of the canvas
