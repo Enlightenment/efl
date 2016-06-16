@@ -133,6 +133,10 @@ EAPI struct dirent *readdir(DIR *dir);
 #endif /* __cplusplus */
 
 
+#undef EAPI
+#define EAPI
+
+
 
 /**
  * @}

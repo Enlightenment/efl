@@ -148,5 +148,8 @@ EAPI int   munmap(void  *addr,
 #endif
 
 
+#include <evil_macro_pop.h>
+
+
 #endif /* __EVIL_SYS_MMAN_H__ */
 
