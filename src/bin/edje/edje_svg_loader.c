@@ -260,14 +260,15 @@ _to_color(const char *str, int *r, int *g, int *b, char** ref)
 
    if (len == 4 && str[0] == '#')
      {
+        // case for "#456" should be interprete as "#445566"
         if (isxdigit(str[1]) &&
             isxdigit(str[2]) &&
             isxdigit(str[3]))
           {
-             char tmp[2] = { '\0', '\0' };
-             tmp[0] = str[1]; *r = strtol(tmp, NULL, 16);
-             tmp[0] = str[2]; *g = strtol(tmp, NULL, 16);
-             tmp[0] = str[3]; *b = strtol(tmp, NULL, 16);
+             char tmp[3] = { '\0', '\0', '\0' };
+             tmp[0] = str[1]; tmp[1] = str[1]; *r = strtol(tmp, NULL, 16);
+             tmp[0] = str[2]; tmp[1] = str[2]; *g = strtol(tmp, NULL, 16);
+             tmp[0] = str[3]; tmp[1] = str[3]; *b = strtol(tmp, NULL, 16);
           }
      }
    else if (len == 7 && str[0] == '#')
