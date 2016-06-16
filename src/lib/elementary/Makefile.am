@@ -333,7 +333,6 @@ includesub_HEADERS = \
 	elm_flip.h \
 	efl_ui_flip_legacy.h\
 	efl_ui_flip_eo.h \
-	efl_ui_flip_internal_part_eo.h \
 	elm_flipselector.h \
 	elm_flipselector_eo.h \
 	elm_flipselector_legacy.h \
