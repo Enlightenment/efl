@@ -7,6 +7,19 @@ class Evas.Smart.Clipped (Evas.Object.Smart)
    eo_prefix: evas_obj_smart_clipped;
    data: Evas_Object_Smart_Clipped_Data;
 
+   methods {
+      @property smart_clipped_clipper {
+         get {
+            [[Get the clipper object for the given clipped smart object.
+
+              Use this function if you want to change any of this clipper's
+              properties, like colors.
+            ]]
+            return: Evas.Object @warn_unused;
+         }
+      }
+   }
+
    implements {
       Eo.Base.constructor;
       Evas.Object.Smart.hide;

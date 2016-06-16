@@ -467,16 +467,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
                                 $false otherwise.]]
          }
       }
-      @property smart_clipped_clipper {
-         get {
-            [[Get the clipper object for the given clipped smart object.
-
-              Use this function if you want to change any of this clipper's
-              properties, like colors.
-            ]]
-            return: Evas.Object @warn_unused;
-         }
-      }
       @property clipees {
          get {
             [[Return a list of objects currently clipped by $obj.
