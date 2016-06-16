@@ -1403,6 +1403,65 @@ EAPI void evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip
  */
 EAPI const Eina_List *evas_object_clipees_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
+/** How the object should be rendered to output.
+ *
+ * @ingroup Evas
+ */
+typedef enum
+{
+  EVAS_RENDER_BLEND = 0, /** Default render operation: d = d*(1-sa) + s. The
+                          * object will be merged onto the bottom objects using
+                          * simple alpha compositing (a over b). */
+  EVAS_RENDER_BLEND_REL = 1, /** DEPRECATED. d = d*(1 - sa) + s*da */
+  EVAS_RENDER_COPY = 2, /** Copy mode, d = s. The object's pixels will replace
+                         * everything that was below, effectively hiding them.
+                         */
+  EVAS_RENDER_COPY_REL = 3, /** DEPRECATED. d = s*da */
+  EVAS_RENDER_ADD = 4, /** DEPRECATED. d = d + s */
+  EVAS_RENDER_ADD_REL = 5, /** DEPRECATED. d = d + s*da */
+  EVAS_RENDER_SUB = 6, /** DEPRECATED. d = d - s */
+  EVAS_RENDER_SUB_REL = 7, /** DEPRECATED. d = d - s*da */
+  EVAS_RENDER_TINT = 8, /** DEPRECATED. d = d*s + d*(1 - sa) + s*(1 - da) */
+  EVAS_RENDER_TINT_REL = 9, /** DEPRECATED. d = d*(1 - sa + s) */
+  EVAS_RENDER_MASK = 10, /** DEPRECATED. d = d*sa. For masking support, please
+                          * use Evas.Object.clip_set or EDC "clip_to" instead.
+                          */
+  EVAS_RENDER_MUL = 11 /** DEPRECATED. d = d*s */
+} Evas_Render_Op;
+
+/**
+ * @brief Sets the render mode to be used for compositing the Evas object.
+ *
+ * Note that only copy and blend modes are actually supported: -
+ * @ref Evas_Render_Op.EVAS_RENDER_BLEND means the object will be merged on top
+ * of objects below it using simple alpha compositing. -
+ * @ref Evas_Render_Op.EVAS_RENDER_COPY means this object's pixels will replace
+ * everything that is below, making this object opaque.
+ *
+ * Please do not assume that @ref Evas_Render_Op.EVAS_RENDER_COPY mode can be
+ * used to "poke" holes in a window (to see through it), as only the compositor
+ * can ensure that. Copy mode should only be used with otherwise opaque
+ * widgets, or inside non-window surfaces (eg. a transparent background inside
+ * an Ecore.Evas.Buffer).
+ *
+ * @param[in] render_op One of the Evas_Render_Op values. Only blend (default)
+ * and copy modes are supported.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_render_op_set(Evas_Object *obj, Evas_Render_Op render_op);
+
+/**
+ * @brief Retrieves the current value of the operation used for rendering the
+ * Evas object.
+ *
+ * @return One of the Evas_Render_Op values. Only blend (default) and copy
+ * modes are supported.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI Evas_Render_Op evas_object_render_op_get(const Evas_Object *obj);
+
 /**
  * @brief Get the "static clipper" hint flag for a given Evas object.
  *

@@ -4,24 +4,6 @@ struct @extern Evas.Video_Surface; /* FIXME: The structure is full of the unsupp
 type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
 type Evas.Coord: int; [[A type for coordinates]]
 
-enum Evas.Render_Op {
-   [[How the object should be rendered to output.]]
-   legacy: Evas_Render;
-
-   blend = 0,     [[Default render operation: d = d*(1-sa) + s. The object will be merged onto the bottom objects using simple alpha compositing (a over b).]]
-   blend_rel = 1, [[DEPRECATED. d = d*(1 - sa) + s*da]]
-   copy = 2,      [[Copy mode, d = s. The object's pixels will replace everything that was below, effectively hiding them.]]
-   copy_rel = 3,  [[DEPRECATED. d = s*da]]
-   add = 4,       [[DEPRECATED. d = d + s]]
-   add_rel = 5,   [[DEPRECATED. d = d + s*da]]
-   sub = 6,       [[DEPRECATED. d = d - s]]
-   sub_rel = 7,   [[DEPRECATED. d = d - s*da]]
-   tint = 8,      [[DEPRECATED. d = d*s + d*(1 - sa) + s*(1 - da)]]
-   tint_rel = 9,  [[DEPRECATED. d = d*(1 - sa + s)]]
-   mask = 10,     [[DEPRECATED. d = d*sa. For masking support, please use Evas.Object.clip_set or EDC "clip_to" instead.]]
-   mul = 11       [[DEPRECATED. d = d*s]]
-}
-
 enum Evas.Object_Pointer_Mode {
    [[How the mouse pointer should be handled by Evas.
 

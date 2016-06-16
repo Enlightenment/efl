@@ -46,31 +46,28 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
          }
       }
       @property render_op {
+         [[Render mode to be used for compositing the Evas object.
+
+           Only two modes are supported:
+           - @Efl.Gfx.Render_Op.blend means the object will be merged on
+           top of objects below it using simple alpha compositing.
+           - @Efl.Gfx.Render_Op.copy means this object's pixels will replace
+           everything that is below, making this object opaque.
+
+           Please do not assume that @Efl.Gfx.Render_Op.copy mode can be
+           used to "poke" holes in a window (to see through it), as only the
+           compositor can ensure that. Copy mode should only be used with
+           otherwise opaque widgets, or inside non-window surfaces (eg. a
+           transparent background inside a buffer canvas).
+         ]]
          set {
-            [[Sets the render mode to be used for compositing the Evas object.
-
-              Note that only copy and blend modes are actually supported:
-              - @Evas.Render_Op.blend means the object will be merged on top of
-                objects below it using simple alpha compositing.
-              - @Evas.Render_Op.copy means this object's pixels will replace
-                everything that is below, making this object opaque.
-
-              Please do not assume that @Evas.Render_Op.copy mode can be used
-              to "poke" holes in a window (to see through it), as only the
-              compositor can ensure that. Copy mode should only be used with
-              otherwise opaque widgets, or inside non-window surfaces (eg. a
-              transparent background inside an Ecore.Evas.Buffer).
-            ]]
+            legacy: null;
          }
          get {
-            [[Retrieves the current value of the operation used for
-              rendering the Evas object.
-            ]]
+            legacy: null;
          }
          values {
-            render_op: Evas.Render_Op; [[One of the Evas_Render_Op values.
-                                         Only blend (default) and copy modes
-                                         are supported.]]
+            render_op: Efl.Gfx.Render_Op; [[Blend or copy.]]
          }
       }
       @property freeze_events {

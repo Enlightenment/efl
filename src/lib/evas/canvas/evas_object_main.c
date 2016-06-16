@@ -1728,10 +1728,10 @@ _evas_object_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
    return obj->cur->scale;
 }
 
-EOLIAN static void
-_evas_object_render_op_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Render_Op render_op)
+static void
+_render_op_set(Evas_Object_Protected_Data *obj, Evas_Render_Op render_op)
 {
-   if (obj->delete_me) return;
+   if (!obj || obj->delete_me) return;
    if (obj->cur->render_op == render_op) return;
 
    evas_object_async_block(obj);
@@ -1741,14 +1741,32 @@ _evas_object_render_op_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ren
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
-   evas_object_change(eo_obj, obj);
+   evas_object_change(obj->object, obj);
 }
 
-EOLIAN static Evas_Render_Op
+EOLIAN static void
+_evas_object_render_op_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Efl_Gfx_Render_Op rop)
+{
+   _render_op_set(obj, _gfx_to_evas_render_op(rop));
+}
+
+EAPI void
+evas_object_render_op_set(Evas_Object *eo_obj, Evas_Render_Op render_op)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+   _render_op_set(obj, render_op);
+}
+
+EOLIAN static Efl_Gfx_Render_Op
 _evas_object_render_op_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   if (obj->delete_me) return EVAS_RENDER_BLEND;
-   return obj->cur->render_op;
+   return _evas_to_gfx_render_op(obj->cur->render_op);
+}
+
+EAPI Evas_Render_Op
+evas_object_render_op_get(const Evas_Object *eo_obj)
+{
+   return _gfx_to_evas_render_op(evas_obj_render_op_get(eo_obj));
 }
 
 EOLIAN static void
