@@ -1648,6 +1648,7 @@ _selection_store(Elm_Sel_Type seltype,
 {
    char *sel;
    Efl_Canvas_Text_Cursor *start, *end;
+   Elm_Sel_Format format = ELM_SEL_FORMAT_TEXT;
 
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
@@ -1657,7 +1658,7 @@ _selection_store(Elm_Sel_Type seltype,
    if ((!sel) || (!sel[0])) return;  /* avoid deleting our own selection */
 
    elm_cnp_selection_set
-     (obj, seltype, sd->cnp_mode, sel, strlen(sel));
+     (obj, seltype, format, sel, strlen(sel));
    elm_cnp_selection_loss_callback_set(obj, seltype, _selection_clear, obj);
    if (seltype == ELM_SEL_TYPE_CLIPBOARD)
      eina_stringshare_replace(&sd->cut_sel, sel);
