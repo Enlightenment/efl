@@ -296,25 +296,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
                              default size.]]
          }
       }
-      @property static_clip {
-         set {
-            [[Set a hint flag on the given Evas object that it's used as a
-              "static clipper".
-
-              This is a hint to Evas that this object is used as a big
-              static clipper and shouldn't be moved with children and
-              otherwise considered specially. The default value for new
-              objects is $false.
-            ]]
-         }
-         get {
-            [[Get the "static clipper" hint flag for a given Evas object.]]
-         }
-         values {
-            is_static_clip: bool; [[$true if it's to be used as a static
-                                    clipper, $false otherwise.]]
-         }
-      }
       @property focus {
          set {
             [[Sets or unsets a given object as the currently focused one on

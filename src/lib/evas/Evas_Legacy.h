@@ -1366,6 +1366,30 @@ EAPI void evas_object_stack_above(Evas_Object *obj, Evas_Object *above) EINA_ARG
  */
 EAPI void evas_object_lower(Evas_Object *obj);
 
+/**
+ * @brief Set a hint flag on the given Evas object that it's used as a "static
+ * clipper".
+ *
+ * This is a hint to Evas that this object is used as a big static clipper and
+ * shouldn't be moved with children and otherwise considered specially. The
+ * default value for new objects is @c false.
+ *
+ * @param[in] is_static_clip @c true if it's to be used as a static clipper,
+ * @c false otherwise.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip);
+
+/**
+ * @brief Get the "static clipper" hint flag for a given Evas object.
+ *
+ * @return @c true if it's to be used as a static clipper, @c false otherwise.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI Eina_Bool evas_object_static_clip_get(const Evas_Object *obj);
+
 #include "canvas/evas_common_interface.eo.legacy.h"
 #include "canvas/evas_object.eo.legacy.h"
 

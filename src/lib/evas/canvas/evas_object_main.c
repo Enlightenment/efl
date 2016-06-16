@@ -1778,7 +1778,7 @@ _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EI
 
    visible = efl_gfx_visible_get(eo_obj);
    layer = efl_gfx_stack_layer_get(eo_obj);
-   name = evas_obj_name_get(eo_obj);
+   name = eo_name_get(eo_obj); // evas_object_name_get(eo_obj);
    efl_gfx_position_get(eo_obj, &x, &y);
    efl_gfx_size_get(eo_obj, &w, &h);
    scale = evas_obj_scale_get(eo_obj);
@@ -2095,19 +2095,6 @@ _evas_object_precise_is_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected
    return obj->precise_is_inside;
 }
 
-EOLIAN static void
-_evas_object_static_clip_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Bool is_static_clip)
-{
-   evas_object_async_block(obj);
-   obj->is_static_clip = is_static_clip;
-}
-
-EOLIAN static Eina_Bool
-_evas_object_static_clip_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
-{
-   return obj->is_static_clip;
-}
-
 static void
 _is_frame_flag_set(Evas_Object_Protected_Data *obj, Eina_Bool is_frame)
 {
@@ -2190,10 +2177,24 @@ _evas_object_legacy_ctor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 EAPI const char *
 evas_object_type_get(const Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_isa(eo_obj, EVAS_OBJECT_CLASS) ?
-            eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS) : NULL;
-   if (!obj || obj->delete_me) return "";
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, NULL);
+   if (obj->delete_me) return "";
    return obj->type;
+}
+
+EAPI void
+evas_object_static_clip_set(Evas_Object *eo_obj, Eina_Bool is_static_clip)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+   evas_object_async_block(obj);
+   obj->is_static_clip = is_static_clip;
+}
+
+EAPI Eina_Bool
+evas_object_static_clip_get(const Evas_Object *eo_obj)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
+   return obj->is_static_clip;
 }
 
 EAPI void
