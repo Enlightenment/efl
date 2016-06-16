@@ -164,13 +164,11 @@ _progress_change_cb(void *data EINA_UNUSED, const Eo_Event *ev)
    return EINA_TRUE;
 }
 
-static const Eo_Callback_Array_Item emotion_object_example_callbacks[] = {
+EO_CALLBACKS_ARRAY_DEFINE(emotion_object_example_callbacks,
        { EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb },
        { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, _length_change_cb },
        { EMOTION_OBJECT_EVENT_POSITION_UPDATE, _position_update_cb },
-       { EMOTION_OBJECT_EVENT_PROGRESS_CHANGE, _progress_change_cb },
-       { NULL, NULL }
-};
+       { EMOTION_OBJECT_EVENT_PROGRESS_CHANGE, _progress_change_cb });
 
 int
 main(int argc, const char *argv[])
@@ -221,7 +219,7 @@ main(int argc, const char *argv[])
    evas_object_resize(em, WIDTH, HEIGHT);
    evas_object_show(em);
 
-   eo_event_callback_array_add(em, emotion_object_example_callbacks, NULL);
+   eo_event_callback_array_add(em, emotion_object_example_callbacks(), NULL);
 
    evas_object_event_callback_add(bg, EVAS_CALLBACK_KEY_DOWN, _on_key_down, em);
    evas_object_focus_set(bg, EINA_TRUE);
