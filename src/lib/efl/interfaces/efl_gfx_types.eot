@@ -193,3 +193,14 @@ enum Efl.Gfx.Size.Hint.Aspect
               object (never growing it out of those bounds), using the given
               aspect.]]
 }
+
+enum Efl.Image.Load.Error
+{
+   none = 0,                       [[No error on load]]
+   generic = 1,                    [[A non-specific error occurred]]
+   does_not_exist = 2,             [[File (or file path) does not exist]]
+   permission_denied = 3,          [[Permission denied to an existing file (or path)]]
+   resource_allocation_failed = 4, [[Allocation of resources failure prevented load]]
+   corrupt_file = 5,               [[File corrupt (but was detected as a known format)]]
+   unknown_format = 6              [[File is not a known format]]
+}

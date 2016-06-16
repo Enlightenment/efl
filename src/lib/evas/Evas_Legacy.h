@@ -3759,6 +3759,8 @@ EAPI void evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down
  */
 EAPI int evas_object_image_load_scale_down_get(const Evas_Object *obj);
 
+typedef Efl_Image_Load_Error Evas_Load_Error;
+
 /**
  * @brief Retrieves a number representing any error that occurred during the
  * last loading of the given image object's source image.

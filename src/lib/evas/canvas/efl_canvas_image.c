@@ -119,7 +119,7 @@ _evas_image_load_error_get(const Eo *eo_obj)
 {
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
-   return (Efl_Image_Load_Error) o->load_error;
+   return o->load_error;
 }
 
 EOLIAN static Efl_Image_Load_Error

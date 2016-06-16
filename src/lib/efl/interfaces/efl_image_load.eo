@@ -1,16 +1,6 @@
-/* FIXME: maybe add error code for "currently running" or "pending" ? */
-enum Efl.Image.Load.Error
-{
-   none = 0,                       [[No error on load]]
-   generic = 1,                    [[A non-specific error occurred]]
-   does_not_exist = 2,             [[File (or file path) does not exist]]
-   permission_denied = 3,          [[Permission denied to an existing file (or path)]]
-   resource_allocation_failed = 4, [[Allocation of resources failure prevented load]]
-   corrupt_file = 5,               [[File corrupt (but was detected as a known format)]]
-   unknown_format = 6              [[File is not a known format]]
-}
+import efl_gfx_types;
 
-/* FIXME: state or status??? */
+/*
 enum Efl.Image.Load.State
 {
    none = 0,      [[Not loading any image.]]
@@ -20,8 +10,8 @@ enum Efl.Image.Load.State
    error = 4,     [[Image load has failed. Call @Efl.Image.Load.load_error.get to know why.]]
    cancelled = 5  [[Image load has been cancelled.]]
 }
+*/
 
-/* FIXME: Efl.Image.Load */
 interface Efl.Image.Load ()
 {
    [[Common APIs for all loadable 2D images.]]
@@ -43,6 +33,7 @@ interface Efl.Image.Load ()
            will be kept in memory.
          ]]
       }
+      /*
       @property load_state {
          get {
             [[Queries information on the current state of load of the image.
@@ -55,6 +46,7 @@ interface Efl.Image.Load ()
             state: Efl.Image.Load.State;
          }
       }
+      */
       @property load_size {
          [[The load size of an image.
 
@@ -178,9 +170,6 @@ interface Efl.Image.Load ()
             div: int; [[The scale down dividing factor.]]
          }
       }
-      /* FIXME: do we want this? or only rely on the events?
-       * what if preload is currently running?
-       */
       @property load_error {
          get {
             [[Retrieves a number representing any error that occurred during
