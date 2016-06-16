@@ -1382,6 +1382,28 @@ EAPI void evas_object_lower(Evas_Object *obj);
 EAPI void evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip);
 
 /**
+ * @brief Return a list of objects currently clipped by @c obj.
+ *
+ * This returns the internal list handle that contains all objects clipped by
+ * the object @c obj. If none are clipped by it, the call returns @c null. This
+ * list is only valid until the clip list is changed and should be fetched
+ * again with another call to this function if any objects being clipped by
+ * this object are unclipped, clipped by a new object, deleted or get the
+ * clipper deleted. These operations will invalidate the list returned, so it
+ * should not be used anymore after that point. Any use of the list after this
+ * may have undefined results, possibly leading to crashes. The object @c obj
+ * must be a valid Evas_Object.
+ *
+ * See also @ref evas_object_clip_set, @ref evas_object_clip_unset and
+ * @ref evas_object_clip_get.
+ *
+ * @return A list of objects being clipped by @c obj.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI const Eina_List *evas_object_clipees_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Get the "static clipper" hint flag for a given Evas object.
  *
  * @return @c true if it's to be used as a static clipper, @c false otherwise.

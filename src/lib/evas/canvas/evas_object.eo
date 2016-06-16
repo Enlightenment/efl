@@ -481,29 +481,12 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
               invalidate the list returned, so it should not be used
               anymore after that point. Any use of the list after this
               may have undefined results, possibly leading to crashes.
-              The object $obj must be a valid Evas_Object.
 
-              See also @.clip.set, @.clip_unset and @.clip.get.
+              See also @.clip and @.clip_unset.
             ]]
-            /* FIXME-doc
-            Example:
-            @code
-            extern Evas_Object *obj;
-            Evas_Object *clipper;
-
-            clipper = evas_object_clip_get(obj);
-            if (clipper)
-            {
-            Eina_List *clippees, *l;
-            Evas_Object *obj_tmp;
-
-            clippees = evas_object_clipees_get(clipper);
-            printf("Clipper clips %i objects\n", eina_list_count(clippees));
-            EINA_LIST_FOREACH(clippees, l, obj_tmp)
-            evas_object_show(obj_tmp);
-            }
-            @endcode */
-            return: const(list<Evas.Object>) @warn_unused; [[A list of objects being clipped by $obj.]]
+            legacy: null;
+            return: iterator<Evas.Object> @warn_unused; [[An iterator over the
+                                             list of objects clipped by $obj.]]
          }
       }
       @property render_parent @protected {

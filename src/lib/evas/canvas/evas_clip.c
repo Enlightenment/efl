@@ -514,20 +514,75 @@ _evas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev
      }
 }
 
-EOLIAN Eina_List *
-_evas_object_clipees_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+EAPI const Eina_List *
+evas_object_clipees_get(const Evas_Object *eo_obj)
 {
    const Evas_Object_Protected_Data *tmp;
    Eina_List *l;
    Eina_List *answer = NULL;
 
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, NULL);
    obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
 
    EINA_LIST_FOREACH(obj->clip.clipees, l, tmp)
-     answer = eina_list_append(answer, tmp);
+     answer = eina_list_append(answer, tmp->object);
 
    obj->clip.cache_clipees_answer = answer;
    return answer;
+}
+
+typedef struct
+{
+   Eina_Iterator  iterator;
+   Eina_List     *list;
+   Eina_Iterator *real_iterator;
+   Evas_Object   *object;
+} Clipee_Iterator;
+
+static Eina_Bool
+_clipee_iterator_next(Clipee_Iterator *it, void **data)
+{
+   Evas_Object_Protected_Data *sub;
+
+   if (!eina_iterator_next(it->real_iterator, (void **) &sub))
+     return EINA_FALSE;
+
+   if (data) *data = sub ? sub->object : NULL;
+   return EINA_TRUE;
+}
+
+static void *
+_clipee_iterator_get_container(Clipee_Iterator *it)
+{
+   return it->object;
+}
+
+static void
+_clipee_iterator_free(Clipee_Iterator *it)
+{
+   eina_iterator_free(it->real_iterator);
+   free(it);
+}
+
+EOLIAN Eina_Iterator *
+_evas_object_clipees_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   Clipee_Iterator *it;
+
+   it = calloc(1, sizeof(*it));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->list = obj->clip.clipees;
+   it->real_iterator = eina_list_iterator_new(it->list);
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_clipee_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_clipee_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_clipee_iterator_free);
+   it->object = eo_obj;
+
+   return &it->iterator;
 }
 
 EOLIAN Eina_Bool

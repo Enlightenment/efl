@@ -1,3 +1,5 @@
+#define EVAS_OBJECT_BETA
+
 #include "evas_image_private.h"
 #include "evas_image.eo.h"
 
