@@ -277,10 +277,31 @@ START_TEST(efl_io_manager_test_open)
 }
 END_TEST
 
+START_TEST(efl_io_instantiated)
+{
+   Efl_Io_Manager *manager;
+
+   ecore_init();
+
+   fail_if(eo_provider_find(ecore_main_loop_get(), EFL_IO_MANAGER_CLASS) != NULL);
+
+   eio_init();
+
+   manager = eo_provider_find(ecore_main_loop_get(), EFL_IO_MANAGER_CLASS);
+   fail_if(manager == NULL);
+   fail_if(!eo_isa(manager, EFL_IO_MANAGER_CLASS));
+
+   eio_shutdown();
+
+   ecore_shutdown();
+}
+END_TEST
+
 void
 eio_test_job(TCase *tc)
 {
     tcase_add_test(tc, efl_io_manager_test_ls_funcs);
     tcase_add_test(tc, efl_io_manager_test_file_direct_stat);
     tcase_add_test(tc, efl_io_manager_test_open);
+    tcase_add_test(tc, efl_io_instantiated);
 }

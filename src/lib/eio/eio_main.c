@@ -56,6 +56,7 @@ static Eina_Spinlock memory_pool_lock;
 static Eina_Lock memory_pool_mutex;
 static Eina_Condition memory_pool_cond;
 static Eina_Bool memory_pool_suspended = 1;
+static Efl_Io_Manager *io_manager = NULL;
 
 static void *
 _eio_pool_malloc(Eio_Alloc_Pool *pool)
@@ -317,9 +318,12 @@ eio_init(void)
 
    efreet_mime_init();
 
+   io_manager = eo_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
+   efl_loop_register(ecore_main_loop_get(), EFL_IO_MANAGER_CLASS, io_manager);
+
    eina_log_timing(_eio_log_dom_global,
-		   EINA_LOG_STATE_STOP,
-		   EINA_LOG_STATE_INIT);
+                   EINA_LOG_STATE_STOP,
+                   EINA_LOG_STATE_INIT);
 
    return _eio_init_count;
 
@@ -352,6 +356,9 @@ eio_shutdown(void)
    eina_log_timing(_eio_log_dom_global,
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
+
+   eo_del(io_manager);
+   io_manager = NULL;
 
    EINA_LIST_FOREACH(tracked_thread, l, f)
      ecore_thread_cancel(f->thread);
