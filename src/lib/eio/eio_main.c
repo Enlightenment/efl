@@ -57,6 +57,10 @@ static Eina_Lock memory_pool_mutex;
 static Eina_Condition memory_pool_cond;
 static Eina_Bool memory_pool_suspended = 1;
 static Efl_Io_Manager *io_manager = NULL;
+static Efl_Uri_Mapper *file_mapper = NULL;
+
+// Internal API from ecore to only be used here
+EAPI void efl_uri_manager_default_set(Efl_Uri_Manager *obj, Efl_Uri_Mapper *def);
 
 static void *
 _eio_pool_malloc(Eio_Alloc_Pool *pool)
@@ -274,6 +278,8 @@ eio_file_unregister(Eio_File *common)
 EAPI int
 eio_init(void)
 {
+   Efl_Uri_Manager *uri_manager;
+
    if (++_eio_init_count != 1)
      return _eio_init_count;
 
@@ -321,6 +327,12 @@ eio_init(void)
    io_manager = eo_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
    efl_loop_register(ecore_main_loop_get(), EFL_IO_MANAGER_CLASS, io_manager);
 
+   // Add default URI mapper for file (serving also "file://").
+   file_mapper = eo_add(EFL_URI_MAPPER_FILE_CLASS, io_manager);
+   uri_manager = eo_provider_find(ecore_main_loop_get(), EFL_URI_MANAGER_CLASS);
+   efl_uri_manager_register_mapper(uri_manager, "file", file_mapper);
+   efl_uri_manager_default_set(uri_manager, file_mapper);
+
    eina_log_timing(_eio_log_dom_global,
                    EINA_LOG_STATE_STOP,
                    EINA_LOG_STATE_INIT);
@@ -357,6 +369,11 @@ eio_shutdown(void)
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
 
+   // Right now URI manager does hold a reference on the file_mapper
+   // We need to unregister it to be able to properly delete it.
+   efl_uri_manager_unregister_mapper(eo_provider_find(ecore_main_loop_get(), EFL_URI_MANAGER_CLASS),
+                                     "file", file_mapper);
+   eo_del(file_mapper);
    eo_del(io_manager);
    io_manager = NULL;
 
