@@ -36,7 +36,7 @@ _evas_object_smart_move_children_relative(Eo *eo_obj, Evas_Object_Protected_Data
 }
 
 static EOLIAN Evas_Object *
-_evas_object_smart_clipped_smart_clipped_clipper_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Smart_Clipped_Data *obj)
+_evas_smart_clipped_smart_clipped_clipper_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Smart_Clipped_Data *obj)
 {
    return obj->clipper;
 }

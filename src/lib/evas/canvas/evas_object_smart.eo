@@ -304,8 +304,6 @@ class Evas.Object.Smart (Evas.Object)
       class.constructor;
       class.destructor;
       Eo.Base.constructor;
-      Evas.Object.smart_type_check_ptr;
-      Evas.Object.smart_type_check;
       Evas.Object.paragraph_direction.set;
       Evas.Object.paragraph_direction.get;
    }

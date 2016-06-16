@@ -4969,6 +4969,41 @@ EAPI const void       *evas_object_smart_interface_get(const Evas_Object *obj, c
 EAPI void             *evas_object_smart_interface_data_get(const Evas_Object *obj, const Evas_Smart_Interface *iface);
 
 /**
+ * @brief Checks whether a given smart object or any of its smart object
+ * parents is of a given smart class.
+ *
+ * If @c obj is not a smart object, this call will fail immediately.
+ *
+ * This function supports Eo and legacy inheritance mechanisms. However, it is
+ * recommended to use @ref eo_isa instead if your object is using Eo from top
+ * to bottom.
+ *
+ * The checks use smart classes names and string comparison. There is a version
+ * of this same check using pointer comparison, since a smart class' name is a
+ * single string in Evas.
+ *
+ * See also @ref evas_object_smart_type_check_ptr.
+ *
+ * @param[in] type The name (type) of the smart class to check for.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI Eina_Bool evas_object_smart_type_check(const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2);
+
+/**
+ * @brief Checks whether a given smart object or any of its smart object
+ * parents is of a given smart class, using pointer comparison.
+ *
+ * @param[in] type The type (name string) to check for. Must be the name.
+ *
+ * @return @c true if @c obj or any of its parents is of type @c type, @c false
+ * otherwise.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI Eina_Bool evas_object_smart_type_check_ptr(const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2);
+
+/**
  * This gets the internal counter that counts the number of smart calculations
  *
  * @param e The canvas to get the calculate counter from

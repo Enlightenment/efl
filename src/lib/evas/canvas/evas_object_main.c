@@ -2135,18 +2135,6 @@ _evas_object_render_parent_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Dat
    return obj->smart.parent;
 }
 
-EOLIAN static Eina_Bool
-_evas_object_smart_type_check(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, const char *type EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_evas_object_smart_type_check_ptr(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, const char *type EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 EOLIAN static void
 _evas_object_paragraph_direction_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_BiDi_Direction dir EINA_UNUSED)
 {

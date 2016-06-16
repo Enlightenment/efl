@@ -346,15 +346,14 @@ _evas_object_smart_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, E
    evas_object_mapped_clip_across_mark(eo_obj, obj);
 }
 
-EOLIAN static Eina_Bool
-_evas_object_smart_evas_object_smart_type_check(const Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, const char *type)
+EAPI Eina_Bool
+evas_object_smart_type_check(const Evas_Object *eo_obj, const char *type)
 {
    const Evas_Smart_Class *sc;
    Eo_Class *klass;
    Eina_Bool type_check = EINA_FALSE;
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   if (!obj) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
 
    klass = eina_hash_find(_evas_smart_class_names_hash_table, type);
    if (klass) type_check = eo_isa(eo_obj, klass);
@@ -376,15 +375,14 @@ _evas_object_smart_evas_object_smart_type_check(const Eo *eo_obj, Evas_Smart_Dat
    return type_check;
 }
 
-EOLIAN static Eina_Bool
-_evas_object_smart_evas_object_smart_type_check_ptr(const Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, const char* type)
+EAPI Eina_Bool
+evas_object_smart_type_check_ptr(const Eo *eo_obj, const char* type)
 {
    Eo_Class *klass;
    const Evas_Smart_Class *sc;
    Eina_Bool type_check = EINA_FALSE;
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   if (!obj) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
 
    klass = eina_hash_find(_evas_smart_class_names_hash_table, type);
    if (klass) type_check = eo_isa(eo_obj, klass);

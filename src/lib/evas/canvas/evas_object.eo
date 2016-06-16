@@ -614,27 +614,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
                                    receiving the $keyname events.]]
          }
       }
-      smart_type_check @const {
-         [[Checks whether a given smart object or any of its smart object
-           parents is of a given smart class.
-
-           If $obj is not a smart object, this call will fail immediately.
-
-           This function supports Eo and legacy inheritance mechanisms.
-           However, it is recommended to use \@ref eo_isa instead if your
-           object is using Eo from top to bottom.
-
-           The checks use smart classes names and string comparison. There
-           is a version of this same check using pointer comparison, since
-           a smart class' name is a single string in Evas.
-
-           See also @.smart_type_check_ptr.
-         ]]
-         return: bool @warn_unused;
-         params {
-            @in type: string @nonull; [[The name (type) of the smart class to check for.]]
-         }
-      }
       key_ungrab {
          [[Removes the grab on $keyname key events by $obj.
 
@@ -688,16 +667,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
          params {
             @in dx: Evas.Coord; [[Horizontal offset (delta).]]
             @in dy: Evas.Coord; [[Vertical offset (delta).]]
-         }
-      }
-      smart_type_check_ptr @const {
-         [[Checks whether a given smart object or any of its smart object
-           parents is of a given smart class, using pointer comparison.
-         ]]
-         return: bool @warn_unused; [[$true if $obj or any of its parents
-                                      is of type $type, $false otherwise.]]
-         params {
-            @in type: string @nonull; [[The type (name string) to check for. Must be the name.]]
          }
       }
       @property no_render {
