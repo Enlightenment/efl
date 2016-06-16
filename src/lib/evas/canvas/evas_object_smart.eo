@@ -299,6 +299,23 @@ class Evas.Object.Smart (Evas.Object)
          }
          legacy: null;
       }
+      move_children_relative {
+         [[Moves all children objects of a given smart object relative to a
+           given offset.
+
+           This will make each of $obj object's children to move, from where
+           they before, with those delta values (offsets) on both directions.
+
+           Note: This is most useful on custom smart $move functions.
+
+           Note: Clipped smart objects already make use of this function on
+           their $move smart function definition.
+         ]]
+         params {
+            @in dx: Evas.Coord; [[Horizontal offset (delta).]]
+            @in dy: Evas.Coord; [[Vertical offset (delta).]]
+         }
+      }
    }
    implements {
       class.constructor;
