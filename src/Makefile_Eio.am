@@ -6,8 +6,12 @@ eio_eolian_files = \
         lib/eio/efl_io_manager.eo \
         lib/eio/eio_sentry.eo
 
-eio_eolian_h =  $(eio_eolian_files:%.eo=%.eo.h)
-eio_eolian_c =  $(eio_eolian_files:%.eo=%.eo.c)
+eio_eolian_files_private = \
+	lib/eio/efl_uri_mapper_file.eo \
+	$(eio_eolian_files)
+
+eio_eolian_h =  $(eio_eolian_files_private:%.eo=%.eo.h)
+eio_eolian_c =  $(eio_eolian_files_private:%.eo=%.eo.c)
 
 BUILT_SOURCES += $(eio_eolian_c) $(eio_eolian_h)
 
@@ -42,6 +46,7 @@ lib/eio/eio_monitor_poll.c \
 lib/eio/eio_single.c \
 lib/eio/eio_xattr.c \
 lib/eio/eio_model.c \
+lib/eio/efl_uri_mapper_file.c \
 lib/eio/eio_model_private.h \
 lib/eio/eio_private.h \
 lib/eio/eio_sentry_private.h

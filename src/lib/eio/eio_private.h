@@ -55,6 +55,8 @@
 
 #include "Eio.h"
 
+#include "efl_uri_mapper_file.eo.h"
+
 #ifdef _WIN32
 typedef struct __stat64 _eio_stat_t;
 #define _eio_stat(p, b) _stat64(p, b)

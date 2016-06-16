@@ -1,0 +1,6 @@
+class Efl.Uri.Mapper.File (Eo.Base, Efl.Uri.Mapper)
+{
+   implements {
+      Efl.Uri.Mapper.fetch;
+   }
+}
