@@ -8456,7 +8456,10 @@ edje_edit_state_text_style_get(Evas_Object *obj, const char *part, const char *s
      return NULL;
 
    txt = (Edje_Part_Description_Text *)pd;
-   return eina_stringshare_add(txt->text.style.str);
+   if (txt->text.style.str)
+     return eina_stringshare_add(txt->text.style.str);
+   else
+     return NULL;
 }
 
 EAPI Eina_Bool
