@@ -2,6 +2,8 @@
 # include "config.h"
 #endif
 
+#define EVAS_OBJECT_PROTECTED
+
 #include <Evas.h>
 #include <Ecore.h>
 

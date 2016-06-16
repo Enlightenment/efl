@@ -5,6 +5,10 @@
 # include <config.h>
 #endif
 
+#ifndef EVAS_OBJECT_PROTECTED
+# define EVAS_OBJECT_PROTECTED
+#endif
+
 #include "Evas.h"
 #include "Eet.h"
 

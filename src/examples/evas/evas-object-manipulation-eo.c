@@ -209,10 +209,8 @@ main(void)
         efl_gfx_position_set(d.img, 0, 0);
         efl_gfx_size_set(d.img, WIDTH, HEIGHT);
         efl_gfx_visible_set(d.img, EINA_TRUE);
-
-        const char *type = NULL;
-        type = evas_obj_type_get(d.img);
-        fprintf(stdout, "Image object added, type is: %s\n", type);
+        fprintf(stdout, "Image object added, class name is: %s\n",
+                eo_class_name_get(d.img));
      }
 
    /* border on the image's clipper, here just to emphasize its position */

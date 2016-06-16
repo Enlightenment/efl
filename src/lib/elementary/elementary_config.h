@@ -8,4 +8,4 @@
  */
 
 #define ELM_CONFIG_ICON_THEME_ELEMENTARY "_Elementary_Icon_Theme"
-
+#define EVAS_OBJECT_PROTECTED

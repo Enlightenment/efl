@@ -11,31 +11,10 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
       legacy_ctor @protected {
           [[Internal function. Do not use.]]
       }
-      @property type {
+      @property type @protected {
          set {
-            [[Sets the type of the given Evas object.]]
+            [[Sets the legacy type name of this Evas object.]]
             legacy: null;
-         }
-         get {
-            [[Retrieves the type of the given Evas object.
-
-              For Evas' builtin types, the return strings will be one of
-              "rectangle", "line", "polygon", "text", "textblock" or "image".
-
-              For Evas smart objects (see \@ref Evas_Smart_Group), the name
-              of the smart class itself is returned on this call. For the
-              built-in smart objects, these names are "EvasObjectSmartClipped"
-              for the clipped smart object, "Evas_Object_Box" for the box
-              object and "Evas_Object_Table for the table object.
-            ]]
-            /* FIXME-doc
-            Example:
-            @dontinclude evas-object-manipulation.c
-            @skip d.img = evas_object_image_filled_add(d.canvas);
-            @until border on the
-
-            See the full @ref Example_Evas_Object_Manipulation "example".
-            */
          }
          values {
             type: string; [[The type of the object.]]
@@ -874,6 +853,9 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
             enable: bool; [[Enable "no-render" mode.]]
          }
       }
+   }
+   constructors {
+      .type;
    }
    implements {
       Eo.Base.constructor;

@@ -2071,16 +2071,14 @@ _evas_canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
    return in;
 }
 
-EOLIAN static const char *
-_evas_object_type_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
-{
-   if (obj->delete_me) return "";
-   return obj->type;
-}
-
 EOLIAN static void
-_evas_object_type_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const char *type)
+_evas_object_type_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *type)
 {
+   if (eo_finalized_get(eo_obj))
+     {
+        ERR("This function is only allowed during construction.");
+        return;
+     }
    obj->type = type; // Store it as the top type of this class
 }
 
@@ -2188,6 +2186,15 @@ _evas_object_legacy_ctor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 /* legacy */
+
+EAPI const char *
+evas_object_type_get(const Evas_Object *eo_obj)
+{
+   Evas_Object_Protected_Data *obj = eo_isa(eo_obj, EVAS_OBJECT_CLASS) ?
+            eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS) : NULL;
+   if (!obj || obj->delete_me) return "";
+   return obj->type;
+}
 
 EAPI void
 evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h)

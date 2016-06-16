@@ -673,6 +673,24 @@ EAPI int              evas_object_ref_get(const Evas_Object *obj);
 EAPI void             evas_object_del(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
+ * @brief Retrieves the type of the given Evas object.
+ *
+ * For Evas' builtin types, the return strings will be one of "rectangle",
+ * "line", "polygon", "text", "textblock" or "image".
+ *
+ * For Evas smart objects (see @ref Evas_Smart_Group), the name of the smart
+ * class itself is returned on this call. For the built-in smart objects, these
+ * names are "EvasObjectSmartClipped" for the clipped smart object,
+ * "Evas_Object_Box" for the box object and "Evas_Object_Table for the table
+ * object.
+ *
+ * @return The type of the object.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI const char      *evas_object_type_get(const Evas_Object *obj);
+
+/**
  * Retrieves the position and (rectangular) size of the given Evas
  * object.
  *

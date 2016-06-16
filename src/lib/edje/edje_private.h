@@ -39,6 +39,8 @@
 # include <Evil.h>
 #endif
 
+#define EVAS_OBJECT_PROTECTED
+
 #include <Eina.h>
 #include <Eet.h>
 #include <Eo.h>
