@@ -234,19 +234,23 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (ep->typedata.text->font) font = ep->typedata.text->font;
    if (ep->typedata.text->size > 0) size = ep->typedata.text->size;
 
-   if (ep->typedata.text->text_source)
+   if (chosen_desc->text.id_text_source >= 0)
      {
         Edje_Part_Description_Text *et;
         Edje_Real_Part *rp2;
+        ep->typedata.text->text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
 
         et = _edje_real_part_text_text_source_description_get(ep, &rp2);
         text = edje_string_get(&(et->text.text));
         if (rp2->typedata.text->text) text = rp2->typedata.text->text;
      }
-   if (ep->typedata.text->source)
+
+   if (chosen_desc->text.id_source >= 0)
      {
         Edje_Part_Description_Text *et;
         Edje_Real_Part *rp2;
+
+        ep->typedata.text->source =  ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
 
         et = _edje_real_part_text_source_description_get(ep, &rp2);
         font = edje_string_get(&(et->text.font));
