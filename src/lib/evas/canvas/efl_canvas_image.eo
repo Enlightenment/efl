@@ -1,4 +1,6 @@
-class Efl.Canvas.Image (Evas.Image, Efl.Gfx.Buffer, Efl.Image.Load, Efl.Image.Animated)
+class Efl.Canvas.Image (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer,
+                        Efl.Image.Load, Efl.Image.Animated,
+                        Efl.File)
 {
    [[Low-level Image object.
 

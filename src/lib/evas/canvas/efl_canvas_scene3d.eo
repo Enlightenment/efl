@@ -1,4 +1,4 @@
-class Efl.Canvas.Scene3d (Evas.Image, Efl.Gfx.Buffer)
+class Efl.Canvas.Scene3d (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer)
 {
    [[A UI view for EFL Canvas 3D.]]
    data: null;
