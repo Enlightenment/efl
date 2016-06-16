@@ -1973,17 +1973,10 @@ _evas_box_option_property_vget(const Eo *o EINA_UNUSED, Evas_Object_Box_Data *_p
    return EINA_FALSE;
 }
 
-EOLIAN static void*
-_evas_box_evas_object_smart_data_get(Eo *obj EINA_UNUSED, Evas_Object_Box_Data *_pd)
-{
-   return (void *)_pd;
-}
-
 EOLIAN static void
 _evas_box_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
-
 
 #include "canvas/evas_box.eo.c"

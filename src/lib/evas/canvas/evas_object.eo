@@ -467,12 +467,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
                                 $false otherwise.]]
          }
       }
-      @property smart_data {
-         get {
-            [[Retrieve user data stored on a given smart object.]]
-            return: void_ptr @warn_unused; [[A pointer to data or $null.]]
-         }
-      }
       @property smart_clipped_clipper {
          get {
             [[Get the clipper object for the given clipped smart object.

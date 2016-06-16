@@ -2135,12 +2135,6 @@ _evas_object_render_parent_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Dat
    return obj->smart.parent;
 }
 
-EOLIAN static void *
-_evas_object_smart_data_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
-{
-   return NULL;
-}
-
 EOLIAN static Eina_Bool
 _evas_object_smart_type_check(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, const char *type EINA_UNUSED)
 {

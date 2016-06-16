@@ -587,7 +587,7 @@ MAGIC_CHECK_FAILED(o, t, m)
 
 // helper function for legacy EAPI implementations
 #define EVAS_OBJ_GET_OR_RETURN(o, ...) ({ \
-   Evas_Object_Protected_Data *_obj = eo_isa(eo_obj, EVAS_OBJECT_CLASS) ? \
+   Evas_Object_Protected_Data *_obj = eo_isa(o, EVAS_OBJECT_CLASS) ? \
      eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS) : NULL; \
    if (!_obj) { MAGIC_CHECK_FAILED(o,0,0) return __VA_ARGS__; } \
    _obj; })

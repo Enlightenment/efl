@@ -6,6 +6,11 @@
 #define MY_CLASS_NAME "Evas_Smart"
 #define MY_CLASS_NAME_LEGACY "Evas_Object_Smart"
 
+#define EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, ...) \
+   Evas_Smart_Data *o = eo_isa(eo_obj, EVAS_OBJECT_SMART_CLASS) ? \
+     eo_data_scope_get(eo_obj, EVAS_OBJECT_SMART_CLASS) : NULL; \
+   do { if (!o) { MAGIC_CHECK_FAILED(eo_obj,0,MAGIC_SMART) return __VA_ARGS__; } } while (0)
+
 extern Eina_Hash* signals_hash_table;
 
 static Eina_Hash *_evas_smart_class_names_hash_table = NULL;
@@ -123,8 +128,8 @@ _evas_object_smart_data_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o, void *da
    eo_data_ref(eo_obj, NULL);
 }
 
-EOLIAN static void *
-_evas_object_smart_evas_object_smart_data_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+EOLIAN void *
+_evas_object_smart_data_get(Evas_Object *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
    return o->data;
 }
