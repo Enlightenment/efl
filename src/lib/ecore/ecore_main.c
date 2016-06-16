@@ -2807,6 +2807,16 @@ _efl_loop_eo_base_constructor(Eo *obj, Efl_Loop_Data *pd)
    return obj;
 }
 
+EOLIAN static Eo_Base *
+_efl_loop_eo_base_finalize(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   // Every loop object once build as an URI manager
+   // Wondering if it should be available earlier.
+   eo_add(EFL_URI_MANAGER_CLASS, obj);
+
+   return obj;
+}
+
 EOLIAN static void
 _efl_loop_eo_base_destructor(Eo *obj, Efl_Loop_Data *pd)
 {
