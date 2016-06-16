@@ -72,6 +72,7 @@ _udev_seat_create(Elput_Manager *em, const char *name)
 
    eseat = calloc(1, sizeof(Elput_Seat));
    if (!eseat) return NULL;
+
    eseat->manager = em;
 
    eseat->name = eina_stringshare_add(name);
@@ -102,10 +103,15 @@ _udev_seat_named_get(Elput_Manager *em, const char *name)
    Elput_Seat *eseat;
    Eina_List *l;
 
+   if (!name) name = "seat0";
+
    EINA_LIST_FOREACH(em->input.seats, l, eseat)
      if (!strcmp(eseat->name, name)) return eseat;
 
-   return _udev_seat_create(em, name);
+   eseat = _udev_seat_create(em, name);
+   if (!eseat) return NULL;
+
+   return eseat;
 }
 
 static Elput_Seat *
