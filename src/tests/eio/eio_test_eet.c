@@ -53,8 +53,8 @@ _read_done_cb(void *data, Eio_File *handler EINA_UNUSED, void *read_data,
 static void
 _error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
 {
-   fail();
    fprintf(stderr, "Error:%s\n", strerror(error));
+   fail();
    ecore_main_loop_quit();
 }
 
@@ -68,16 +68,16 @@ _eet_error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, Eet_Error e
 START_TEST(eio_test_eet_cipher_decipher)
 {
    int ret;
-   char *file = strdup("/tmp/eio_eet_example_XXXXXX");
-   const char *data = "This is the data to save in file";
+   char *data = "This is the data to save in file";
    const char *key = "This is a secret key";
    Eio_File *ef;
+   Eina_Tmpstr *file;
 
    ecore_init();
    eet_init();
    eio_init();
 
-   ret = mkstemp(file);
+   ret = eina_file_mkstemp("eio_eet_example_XXXXXX", &file);
    fail_if(ret == -1);
 
    ef = eio_eet_open(file, EET_FILE_MODE_WRITE, _open_cb, _error_cb, NULL);
@@ -106,6 +106,7 @@ START_TEST(eio_test_eet_cipher_decipher)
    ecore_main_loop_begin();
    fail_if(!ef);
 
+   eina_tmpstr_del(file);
    eio_shutdown();
    eet_shutdown();
    ecore_shutdown();
@@ -161,10 +162,10 @@ _data_read_done_cb(void *data, Eio_File *handler EINA_UNUSED, void *decoded)
 START_TEST(eio_test_eet_data_cipher_decipher)
 {
    int ret;
-   char *file = strdup("/tmp/eio_eet_example_XXXXXX");
    const char *key = "This is a secret key";
    Eio_File *ef;
    Test_Struct *tc;
+   Eina_Tmpstr *file;
 
    ecore_init();
    eet_init();
@@ -173,7 +174,7 @@ START_TEST(eio_test_eet_data_cipher_decipher)
    _test_struct_descriptor_init();
    tc = _test_struct_new();
 
-   ret = mkstemp(file);
+   ret = eina_file_mkstemp("eio_eet_example_XXXXXX", &file);
    fail_if(ret == -1);
 
    ef = eio_eet_open(file, EET_FILE_MODE_WRITE, _open_cb, _error_cb, NULL);
@@ -202,6 +203,7 @@ START_TEST(eio_test_eet_data_cipher_decipher)
    ecore_main_loop_begin();
    fail_if(!ef);
 
+   eina_tmpstr_del(file);
    eio_shutdown();
    eet_shutdown();
    ecore_shutdown();
