@@ -8734,9 +8734,7 @@ edje_edit_state_text_text_source_get(Evas_Object *obj, const char *part, const c
 EAPI Eina_Bool
 edje_edit_state_text_text_source_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source)
 {
-   Edje_Part_Description_Common *spd;
-   Edje_Part_Description_Text *txt, *source_txt;
-   const char *text_source;
+   Edje_Part_Description_Text *txt;
    int id_text_source;
 
    GET_PD_OR_RETURN(EINA_FALSE);
@@ -8747,16 +8745,12 @@ edje_edit_state_text_text_source_set(Evas_Object *obj, const char *part, const c
 
    if (source)
      {
-        spd = _edje_part_description_find_byname(eed, source, state, value);
-        if (!spd) return EINA_FALSE;
         txt = (Edje_Part_Description_Text *)pd;
-        source_txt = (Edje_Part_Description_Text *)spd;
 
         id_text_source = _edje_part_id_find(ed, source);
         txt->text.id_text_source = id_text_source;
 
-        text_source = source_txt->text.text.str;
-        _edje_if_string_replace(ed, &txt->text.text.str, text_source);
+        txt->text.text.str = eina_stringshare_add(NULL);
         txt->text.text.id = 0;
      }
    else
@@ -8793,7 +8787,6 @@ edje_edit_state_text_source_get(Evas_Object *obj, const char *part, const char *
 EAPI Eina_Bool
 edje_edit_state_text_source_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source)
 {
-   Edje_Part_Description_Common *spd;
    Edje_Part_Description_Text *txt;
    int id_source;
 
@@ -8805,8 +8798,6 @@ edje_edit_state_text_source_set(Evas_Object *obj, const char *part, const char *
 
    if (source)
      {
-        spd = _edje_part_description_find_byname(eed, source, state, value);
-        if (!spd) return EINA_FALSE;
         txt = (Edje_Part_Description_Text *)pd;
 
         id_source = _edje_part_id_find(ed, source);
