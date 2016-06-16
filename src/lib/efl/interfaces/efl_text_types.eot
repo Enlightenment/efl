@@ -1,0 +1,7 @@
+enum Efl.Text.Bidirectional_Type {
+   natural = 0,
+   neutral = 0,
+   ltr,
+   rtl,
+   inherit
+}

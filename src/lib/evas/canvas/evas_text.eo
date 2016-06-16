@@ -179,7 +179,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.I
             [[Retrieves the direction of the text currently being displayed in the
             text object.]]
 
-            return: Evas.BiDi_Direction;
+            return: Efl.Text.Bidirectional_Type;
          }
       }
       @property ascent {

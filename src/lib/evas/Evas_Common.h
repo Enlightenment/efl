@@ -363,6 +363,14 @@ typedef Efl_Gfx_Size_Hint_Aspect           Evas_Aspect_Control; /**< Aspect type
 #define EVAS_ASPECT_CONTROL_VERTICAL       EFL_GFX_SIZE_HINT_ASPECT_VERTICAL
 #define EVAS_ASPECT_CONTROL_BOTH           EFL_GFX_SIZE_HINT_ASPECT_BOTH
 
+typedef Efl_Text_Bidirectional_Type        Evas_BiDi_Direction;
+
+#define EVAS_BIDI_DIRECTION_NATURAL        EFL_TEXT_BIDIRECTIONAL_TYPE_NATURAL
+#define EVAS_BIDI_DIRECTION_NEUTRAL        EFL_TEXT_BIDIRECTIONAL_TYPE_NEUTRAL
+#define EVAS_BIDI_DIRECTION_LTR            EFL_TEXT_BIDIRECTIONAL_TYPE_LTR
+#define EVAS_BIDI_DIRECTION_RTL            EFL_TEXT_BIDIRECTIONAL_TYPE_RTL
+#define EVAS_BIDI_DIRECTION_INHERIT        EFL_TEXT_BIDIRECTIONAL_TYPE_INHERIT
+
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
    int magic; /**< Magic number */

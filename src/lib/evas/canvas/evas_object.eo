@@ -1,4 +1,5 @@
 import evas_types;
+import efl_text_types;
 
 abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
                       Efl.Animator, Efl.Input.Interface, Efl.Gfx.Size.Hint)
@@ -526,15 +527,12 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
       }
       @property paragraph_direction {
          [[This handles text paragraph direction of the given object.
-           Even if the given object is not textblock or text, its smart child objects
-           can inherit the paragraph direction from the given object.
-           The default paragraph direction is @Evas.BiDi_Direction.inherit.]]
-         set {
-         }
-         get {
-         }
+           Even if the given object is not textblock or text, its smart child
+           objects can inherit the paragraph direction from the given object.
+           The default paragraph direction is $inherit.
+         ]]
          values {
-            dir: Evas.BiDi_Direction; [[Paragraph direction for the given object.]]
+            dir: Efl.Text.Bidirectional_Type; [[Paragraph direction for the given object.]]
          }
       }
       clipees_has @const {

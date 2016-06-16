@@ -38,16 +38,6 @@ enum Evas.Display_Mode {
                      mode]]
 }
 
-enum Evas.BiDi_Direction {
-   /* BiDi exposed stuff */
-   /*FIXME: document */
-   natural = 0,
-   neutral = 0,
-   ltr,
-   rtl,
-   inherit
-}
-
 enum Evas.Text_Style_Type {
    [[Types of styles to be applied on text objects. The
      EVAS_TEXT_STYLE_SHADOW_DIRECTION_* ones are to be ORed together with
