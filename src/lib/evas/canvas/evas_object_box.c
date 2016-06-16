@@ -167,17 +167,16 @@ _evas_object_box_option_new(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUS
    return opt;
 }
 
-static const Eo_Callback_Array_Item evas_object_box_callbacks[] = {
+EO_CALLBACKS_ARRAY_DEFINE(evas_object_box_callbacks,
   { EFL_GFX_EVENT_RESIZE, _on_child_resize },
   { EO_EVENT_DEL, _on_child_del },
-  { EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed },
-  { NULL, NULL }
-};
+  { EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
+);
 
 static void
 _evas_object_box_child_callbacks_unregister(Evas_Object *obj, Evas_Object *parent)
 {
-   eo_event_callback_array_del(obj, evas_object_box_callbacks, parent);
+   eo_event_callback_array_del(obj, evas_object_box_callbacks(), parent);
 }
 
 static Evas_Object_Box_Option *
@@ -185,7 +184,7 @@ _evas_object_box_option_callbacks_register(Evas_Object *o, Evas_Object_Box_Data 
 {
    Evas_Object *obj = opt->obj;
 
-   eo_event_callback_array_add(obj, evas_object_box_callbacks, o);
+   eo_event_callback_array_add(obj, evas_object_box_callbacks(), o);
 
    return opt;
 }

@@ -263,22 +263,21 @@ _on_child_hints_changed(void *data, const Eo_Event *event EINA_UNUSED)
    return EO_CALLBACK_CONTINUE;
 }
 
-static const Eo_Callback_Array_Item evas_object_table_callbacks[] = {
+EO_CALLBACKS_ARRAY_DEFINE(evas_object_table_callbacks,
   { EVAS_OBJECT_EVENT_DEL, _on_child_del },
-  { EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed },
-  { NULL, NULL }
-};
+  { EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
+);
 
 static void
 _evas_object_table_child_connect(Evas_Object *o, Evas_Object *child)
 {
-   eo_event_callback_array_add(child, evas_object_table_callbacks, o);
+   eo_event_callback_array_add(child, evas_object_table_callbacks(), o);
 }
 
 static void
 _evas_object_table_child_disconnect(Evas_Object *o, Evas_Object *child)
 {
-   eo_event_callback_array_del(child, evas_object_table_callbacks, o);
+   eo_event_callback_array_del(child, evas_object_table_callbacks(), o);
 }
 
 static void
