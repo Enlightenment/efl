@@ -2746,9 +2746,14 @@ _efl_loop_quit(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static Eo_Base *
-_efl_loop_eo_base_provider_find(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const Eo_Base *klass)
+_efl_loop_eo_base_provider_find(Eo *obj, Efl_Loop_Data *pd, const Eo_Base *klass)
 {
+   Eo_Base *r;
+
    if (klass == EFL_LOOP_CLASS) return obj;
+
+   r = eina_hash_find(pd->providers, &klass);
+   if (r) return r;
 
    return eo_provider_find(eo_super(obj, EFL_LOOP_CLASS), klass);
 }
@@ -2792,10 +2797,22 @@ EO_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
 EOLIAN static Eo_Base *
 _efl_loop_eo_base_constructor(Eo *obj, Efl_Loop_Data *pd)
 {
-   eo_constructor(eo_super(obj, EFL_LOOP_CLASS));
+   obj = eo_constructor(eo_super(obj, EFL_LOOP_CLASS));
+   if (!obj) return NULL;
+
    eo_event_callback_array_add(obj, event_catcher_watch(), pd);
 
+   pd->providers = eina_hash_pointer_new((void*) eo_unref);
+
    return obj;
+}
+
+EOLIAN static void
+_efl_loop_eo_base_destructor(Eo *obj, Efl_Loop_Data *pd)
+{
+   eo_destructor(eo_super(obj, EFL_LOOP_CLASS));
+
+   eina_hash_free(pd->providers);
 }
 
 typedef struct _Efl_Internal_Promise Efl_Internal_Promise;
@@ -2962,6 +2979,23 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const voi
    free(t);
 
    return NULL;
+}
+
+static Eina_Bool
+_efl_loop_register(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Eo_Class *klass, const Eo_Base *provider)
+{
+   // The passed object does not provide that said class.
+   if (!eo_isa(provider, klass)) return EINA_FALSE;
+
+   // Note: I would prefer to use eo_xref here, but I can't figure a nice way to
+   // call eo_xunref on hash destruction.
+   return eina_hash_add(pd->providers, &klass, eo_ref(provider));
+}
+
+static Eina_Bool
+_efl_loop_unregister(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Eo_Class *klass, const Eo_Base *provider)
+{
+   return eina_hash_del(pd->providers, &klass, provider);
 }
 
 #include "efl_loop.eo.c"

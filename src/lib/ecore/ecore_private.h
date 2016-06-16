@@ -82,6 +82,8 @@ typedef struct _Ecore_Factorized_Idle Ecore_Factorized_Idle;
 typedef struct _Efl_Loop_Data Efl_Loop_Data;
 struct _Efl_Loop_Data
 {
+   Eina_Hash *providers;
+
    int idlers;
 };
 
