@@ -2453,6 +2453,7 @@ _edje_dupe_vector_data(Edje *ed, int svg_id, double width, double height,
    if (!vector->vg)
      {
         data->vg = NULL;
+        return;
      }
 
    root = evas_vg_container_add(NULL);
