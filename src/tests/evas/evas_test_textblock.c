@@ -4273,50 +4273,6 @@ START_TEST(evas_textblock_annotation)
 }
 END_TEST;
 
-START_TEST(efl_canvas_text_style)
-{
-   START_TB_TEST();
-
-   Evas_Coord w;
-   Evas_Coord bw;
-   const char *buf;
-
-   buf = "DEFAULT='font=Sans font_size=12 color=#fff wrap=word'";
-
-   efl_canvas_text_style_set(tb, buf);
-   ck_assert_str_eq(efl_canvas_text_style_get(tb), buf);
-
-   buf = "font=Sans font_size=12 color=#fff";
-
-   efl_canvas_text_style_set(tb, buf);
-   ck_assert_str_eq(efl_canvas_text_style_get(tb), buf);
-
-   efl_text_set(tb, "hello world");
-
-   buf = "font=Sans font_size=12 color=#fff";
-   efl_canvas_text_style_set(tb, buf);
-
-   evas_object_textblock_size_native_get(tb, &bw, NULL);
-
-   buf = "font=Sans font_size=16 color=#fff";
-   efl_canvas_text_style_set(tb, buf);
-   evas_object_textblock_size_native_get(tb, &w, NULL);
-   ck_assert_int_gt(w, bw);
-
-   bw = w;
-   buf = "left_margin=4 right_margin=4";
-   efl_canvas_text_style_user_push(tb, buf);
-   ck_assert_str_eq(efl_canvas_text_style_user_peek(tb), buf);
-   evas_object_textblock_size_native_get(tb, &w, NULL);
-   ck_assert_int_gt(w, bw);
-   efl_canvas_text_style_user_pop(tb);
-   evas_object_textblock_size_native_get(tb, &w, NULL);
-   ck_assert_int_eq(w, bw);
-
-   END_TB_TEST();
-}
-END_TEST;
-
 START_TEST(efl_canvas_text_cursor)
 {
    START_TB_TEST();
@@ -4377,7 +4333,6 @@ void evas_test_textblock(TCase *tc)
 #endif
    tcase_add_test(tc, evas_textblock_text_iface);
    tcase_add_test(tc, evas_textblock_annotation);
-   tcase_add_test(tc, efl_canvas_text_style);
    tcase_add_test(tc, efl_canvas_text_cursor);
 }
 
