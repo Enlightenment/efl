@@ -25,26 +25,33 @@
 
 #include <Eo.h>
 #include "Eio.h"
-#include "eio_job_private.h"
 
-typedef Eio_File* (*Eio_Job_Direct_Ls_Func)(const char *path, Eio_Filter_Direct_Cb, Eio_Main_Direct_Cb, Eio_Done_Cb, Eio_Error_Cb, const void *data);
+typedef struct _Efl_Io_Manager_Data Efl_Io_Manager_Data;
+
+struct _Efl_Io_Manager_Data
+{
+   Eo *object;
+   Eina_List *operations;
+};
+
+typedef Eio_File* (*Efl_Io_Manager_Direct_Ls_Func)(const char *path, Eio_Filter_Direct_Cb, Eio_Main_Direct_Cb, Eio_Done_Cb, Eio_Error_Cb, const void *data);
 
 typedef struct _Job_Closure Job_Closure;
 struct _Job_Closure
 {
    Eo *object;
-   Eio_Job_Data *pdata;
+   Efl_Io_Manager_Data *pdata;
    Eina_Promise_Owner *promise;
    Eio_File *file;
    Eina_Bool delete_me;
    void *delayed_arg;
-   Eio_Job_Direct_Ls_Func direct_func;  // Used when dispatching direct ls funcs.
+   Efl_Io_Manager_Direct_Ls_Func direct_func;  // Used when dispatching direct ls funcs.
 };
 
 /* Helper functions */
 
 static Job_Closure *
-_job_closure_create(Eo *obj, Eio_Job_Data *pdata, Eina_Promise_Owner *owner)
+_job_closure_create(Eo *obj, Efl_Io_Manager_Data *pdata, Eina_Promise_Owner *owner)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, NULL);
@@ -75,7 +82,7 @@ static void
 _job_closure_del(Job_Closure *closure)
 {
    EINA_SAFETY_ON_NULL_RETURN(closure);
-   Eio_Job_Data *pdata = closure->pdata;
+   Efl_Io_Manager_Data *pdata = closure->pdata;
    if (pdata)
      pdata->operations = eina_list_remove(pdata->operations, closure);
 
@@ -129,13 +136,13 @@ _file_ls_filter_cb_helper(const Eo_Event_Description *event, void *data, const c
 static Eina_Bool
 _file_ls_filter_xattr_cb(void *data, Eio_File *handler EINA_UNUSED, const char *file)
 {
-   return _file_ls_filter_cb_helper(EIO_JOB_EVENT_XATTR, data, file);
+   return _file_ls_filter_cb_helper(EFL_IO_MANAGER_EVENT_XATTR, data, file);
 }
 
 static Eina_Bool
 _file_ls_filter_named_cb(void *data, Eio_File *handler EINA_UNUSED, const char *file)
 {
-   return _file_ls_filter_cb_helper(EIO_JOB_EVENT_FILTER_NAME, data, file);
+   return _file_ls_filter_cb_helper(EFL_IO_MANAGER_EVENT_FILTER_NAME, data, file);
 }
 
 static void
@@ -206,7 +213,7 @@ _file_direct_ls_filter_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_F
    event_info.info = info;
    event_info.filter = EINA_FALSE;
 
-   eo_event_callback_call(operation->pdata->object, EIO_JOB_EVENT_FILTER_DIRECT, &event_info);
+   eo_event_callback_call(operation->pdata->object, EFL_IO_MANAGER_EVENT_FILTER_DIRECT, &event_info);
 
    Eina_Bool filter = event_info.filter;
 
@@ -279,9 +286,9 @@ _xattr_notify_start(void *data, Eina_Promise_Owner *promise EINA_UNUSED)
 }
 
 static void
-_job_direct_ls_helper(Eio_Job_Direct_Ls_Func ls_func,
+_job_direct_ls_helper(Efl_Io_Manager_Direct_Ls_Func ls_func,
       Eo* obj,
-      Eio_Job_Data *pd,
+      Efl_Io_Manager_Data *pd,
       const char *path,
       Eina_Promise_Owner *promise)
 {
@@ -309,8 +316,8 @@ _job_direct_ls_helper(Eio_Job_Direct_Ls_Func ls_func,
 /* Method implementations */
 
 static Eina_Promise*
-_eio_job_file_direct_ls(Eo *obj,
-      Eio_Job_Data *pd,
+_efl_io_manager_file_direct_ls(Eo *obj,
+      Efl_Io_Manager_Data *pd,
       const char *path)
 {
    Eina_Promise_Owner* promise = eina_promise_add();
@@ -319,8 +326,8 @@ _eio_job_file_direct_ls(Eo *obj,
 }
 
 static Eina_Promise*
-_eio_job_file_stat_ls(Eo *obj,
-      Eio_Job_Data *pd,
+_efl_io_manager_file_stat_ls(Eo *obj,
+      Efl_Io_Manager_Data *pd,
       const char *path)
 {
    Eina_Promise_Owner* promise = eina_promise_add();
@@ -329,8 +336,8 @@ _eio_job_file_stat_ls(Eo *obj,
 }
 
 static Eina_Promise*
-_eio_job_dir_stat_ls(Eo *obj,
-      Eio_Job_Data *pd,
+_efl_io_manager_dir_stat_ls(Eo *obj,
+      Efl_Io_Manager_Data *pd,
       const char *path)
 {
    Eina_Promise_Owner* promise = eina_promise_add();
@@ -339,20 +346,20 @@ _eio_job_dir_stat_ls(Eo *obj,
 }
 
 static Eina_Promise*
-_eio_job_dir_direct_ls(Eo *obj,
-                       Eio_Job_Data *pd,
+_efl_io_manager_dir_direct_ls(Eo *obj,
+                       Efl_Io_Manager_Data *pd,
                        const char *path)
 {
    Eina_Promise_Owner* promise = eina_promise_add();
    // Had to add the cast as dir_direct differs in the filter callback constness of one of
    // its arguments.
-   _job_direct_ls_helper((Eio_Job_Direct_Ls_Func)&eio_dir_direct_ls, obj, pd, path, promise);
+   _job_direct_ls_helper((Efl_Io_Manager_Direct_Ls_Func)&eio_dir_direct_ls, obj, pd, path, promise);
    return eina_promise_owner_promise_get(promise);
 }
 
 static Eina_Promise*
-_eio_job_file_ls(Eo *obj,
-      Eio_Job_Data *pd,
+_efl_io_manager_file_ls(Eo *obj,
+      Efl_Io_Manager_Data *pd,
       const char *path)
 {
    Eina_Promise_Owner* promise = eina_promise_add();
@@ -395,8 +402,8 @@ _file_stat_done_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_Stat *st
 }
 
 static Eina_Promise*
-_eio_job_file_direct_stat(Eo *obj,
-                          Eio_Job_Data *pd,
+_efl_io_manager_file_direct_stat(Eo *obj,
+                          Efl_Io_Manager_Data *pd,
                           const char *path)
 {
    Eina_Promise_Owner* promise = eina_promise_add();
@@ -422,8 +429,8 @@ _eio_job_file_direct_stat(Eo *obj,
 /* eXtended attribute manipulation */
 
 static Eina_Promise*
-_eio_job_file_xattr_list_get(Eo *obj,
-                    Eio_Job_Data *pd,
+_efl_io_manager_file_xattr_list_get(Eo *obj,
+                    Efl_Io_Manager_Data *pd,
                     const char *path)
 {
    Eina_Promise_Owner *promise = eina_promise_add();
@@ -449,8 +456,8 @@ _eio_job_file_xattr_list_get(Eo *obj,
 }
 
 static Eina_Promise*
-_eio_job_file_xattr_set(Eo *obj,
-                        Eio_Job_Data *pd,
+_efl_io_manager_file_xattr_set(Eo *obj,
+                        Efl_Io_Manager_Data *pd,
                         const char *path,
                         const char *attribute,
                         const char *xattr_data,
@@ -483,8 +490,8 @@ _eio_job_file_xattr_set(Eo *obj,
 }
 
 static Eina_Promise*
-_eio_job_file_xattr_get(Eo *obj,
-                        Eio_Job_Data *pd,
+_efl_io_manager_file_xattr_get(Eo *obj,
+                        Efl_Io_Manager_Data *pd,
                         const char *path,
                         const char *attribute)
 {
@@ -521,8 +528,8 @@ _file_open_open_cb(void *data, Eio_File *handler EINA_UNUSED, Eina_File *file)
 }
 
 static Eina_Promise*
-_eio_job_file_open(Eo *obj,
-                   Eio_Job_Data *pd,
+_efl_io_manager_file_open(Eo *obj,
+                   Efl_Io_Manager_Data *pd,
                    const char *path,
                    Eina_Bool shared)
 {
@@ -555,8 +562,8 @@ _file_close_done_cb(void *data, Eio_File *handler EINA_UNUSED)
 }
 
 static void
-_eio_job_file_close(Eo *obj,
-                         Eio_Job_Data *pd,
+_efl_io_manager_file_close(Eo *obj,
+                         Efl_Io_Manager_Data *pd,
                          Eina_File *file,
                          Eina_Promise_Owner *promise)
 {
@@ -573,9 +580,9 @@ _eio_job_file_close(Eo *obj,
 }
 
 static Eo_Base*
-_eio_job_eo_base_constructor(Eo *obj, Eio_Job_Data *pd EINA_UNUSED)
+_efl_io_manager_eo_base_constructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNUSED)
 {
-   obj = eo_constructor(eo_super(obj, EIO_JOB_CLASS));
+   obj = eo_constructor(eo_super(obj, EFL_IO_MANAGER_CLASS));
 
    pd->object = obj;
    pd->operations = NULL;
@@ -584,9 +591,11 @@ _eio_job_eo_base_constructor(Eo *obj, Eio_Job_Data *pd EINA_UNUSED)
 }
 
 static void
-_eio_job_eo_base_destructor(Eo *obj, Eio_Job_Data *pd EINA_UNUSED)
+_efl_io_manager_eo_base_destructor(Eo *obj, Efl_Io_Manager_Data *pd EINA_UNUSED)
 {
-   eo_destructor(eo_super(obj, EIO_JOB_CLASS));
+   eo_destructor(eo_super(obj, EFL_IO_MANAGER_CLASS));
+
+   // FIXME: cancel all pending promise
 }
 
-#include "eio_job.eo.c"
+#include "efl_io_manager.eo.c"

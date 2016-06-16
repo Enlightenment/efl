@@ -3,7 +3,7 @@
 
 eio_eolian_files = \
         lib/eio/eio_model.eo \
-        lib/eio/eio_job.eo \
+        lib/eio/efl_io_manager.eo \
         lib/eio/eio_sentry.eo
 
 eio_eolian_h =  $(eio_eolian_files:%.eo=%.eo.h)
@@ -33,7 +33,7 @@ lib_eio_libeio_la_SOURCES = \
 lib/eio/eio_dir.c \
 lib/eio/eio_eet.c \
 lib/eio/eio_file.c \
-lib/eio/eio_job.c \
+lib/eio/efl_io_manager.c \
 lib/eio/eio_sentry.c \
 lib/eio/eio_main.c \
 lib/eio/eio_map.c \
@@ -44,7 +44,6 @@ lib/eio/eio_xattr.c \
 lib/eio/eio_model.c \
 lib/eio/eio_model_private.h \
 lib/eio/eio_private.h \
-lib/eio/eio_job_private.h \
 lib/eio/eio_sentry_private.h
 
 if HAVE_INOTIFY
@@ -83,8 +82,8 @@ tests/eio/eio_model_test_monitor_add.c \
 tests/eio/eio_test_monitor.c \
 tests/eio/eio_test_sentry.c \
 tests/eio/eio_test_file.c \
-tests/eio/eio_test_job.c \
-tests/eio/eio_test_job_xattr.c \
+tests/eio/eio_test_manager.c \
+tests/eio/eio_test_manager_xattr.c \
 tests/eio/eio_test_xattr.c \
 tests/eio/eio_test_common.c \
 tests/eio/eio_test_common.h \

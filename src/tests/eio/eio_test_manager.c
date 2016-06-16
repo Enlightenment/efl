@@ -101,10 +101,10 @@ _stat_done_cb(void *data, void *value)
    ecore_main_loop_quit();
 }
 
-typedef Eina_Promise* (*Eio_Job_Test_Stat_Ls_Func)(Eo *job, const char *path);
+typedef Eina_Promise* (*Efl_Io_Manager_Test_Stat_Ls_Func)(Eo *job, const char *path);
 
 static void
-_do_ls_test(Eio_Job_Test_Stat_Ls_Func ls_func,
+_do_ls_test(Efl_Io_Manager_Test_Stat_Ls_Func ls_func,
       const Eo_Event_Description *event,
       Eo_Event_Cb filter_cb,
       Eina_Promise_Progress_Cb progress_cb,
@@ -113,7 +113,7 @@ _do_ls_test(Eio_Job_Test_Stat_Ls_Func ls_func,
 {
    int main_files = 0;
 
-   Eio_Job *job = eo_add(EIO_JOB_CLASS, NULL);
+   Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
    Eina_Promise *promise = NULL;
 
    eo_event_callback_add(job, event, filter_cb, NULL);
@@ -130,19 +130,19 @@ _do_ls_test(Eio_Job_Test_Stat_Ls_Func ls_func,
 }
 
 static void
-_do_direct_ls_test(Eio_Job_Test_Stat_Ls_Func ls_func,
+_do_direct_ls_test(Efl_Io_Manager_Test_Stat_Ls_Func ls_func,
       int expected_test_count,
       const char *test_dirname)
 {
    _do_ls_test(ls_func,
-               EIO_JOB_EVENT_FILTER_DIRECT,
+               EFL_IO_MANAGER_EVENT_FILTER_DIRECT,
                (Eo_Event_Cb)&_filter_direct_cb,
                (Eina_Promise_Progress_Cb)&_main_direct_cb,
                expected_test_count,
                test_dirname);
 }
 
-START_TEST(eio_job_test_file_direct_stat)
+START_TEST(efl_io_manager_test_file_direct_stat)
 {
    Eina_Bool is_dir;
    int ret;
@@ -160,17 +160,17 @@ START_TEST(eio_job_test_file_direct_stat)
    Eina_Tmpstr *nested_dirname = create_test_dirs(test_dirname);
    Eina_Tmpstr *nested_filename = get_full_path(test_dirname, files[3]);
 
-   Eio_Job *job = eo_add(EIO_JOB_CLASS, NULL);
+   Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
    Eina_Promise *promise = NULL;
    // Start testing
    is_dir = EINA_TRUE;
 
-   promise = eio_job_file_direct_stat(job, nested_dirname);
+   promise = efl_io_manager_file_direct_stat(job, nested_dirname);
    eina_promise_then(promise, &_stat_done_cb, &_error_cb, &is_dir);
    ecore_main_loop_begin();
 
    is_dir = EINA_FALSE;
-   promise = eio_job_file_direct_stat(job, nested_filename);
+   promise = efl_io_manager_file_direct_stat(job, nested_filename);
    eina_promise_then(promise, &_stat_done_cb, &_error_cb, &is_dir);
    ecore_main_loop_begin();
    eo_unref(job);
@@ -188,7 +188,7 @@ START_TEST(eio_job_test_file_direct_stat)
 }
 END_TEST
 
-START_TEST(eio_job_test_ls_funcs)
+START_TEST(efl_io_manager_test_ls_funcs)
 {
    int ret;
 
@@ -207,20 +207,20 @@ START_TEST(eio_job_test_ls_funcs)
 
    // Start testing
 
-   _do_ls_test(&eio_job_file_ls,
-         EIO_JOB_EVENT_FILTER_NAME,
+   _do_ls_test(&efl_io_manager_file_ls,
+         EFL_IO_MANAGER_EVENT_FILTER_NAME,
          (Eo_Event_Cb)&_filter_cb,
          (Eina_Promise_Progress_Cb)&_main_cb,
          5,
          test_dirname);
 
-   _do_direct_ls_test(&eio_job_file_stat_ls, 5, test_dirname);
+   _do_direct_ls_test(&efl_io_manager_file_stat_ls, 5, test_dirname);
 
-   _do_direct_ls_test(&eio_job_file_direct_ls, 5, test_dirname);
+   _do_direct_ls_test(&efl_io_manager_file_direct_ls, 5, test_dirname);
 
-   _do_direct_ls_test(&eio_job_dir_stat_ls, 8, test_dirname);
+   _do_direct_ls_test(&efl_io_manager_dir_stat_ls, 8, test_dirname);
 
-   _do_direct_ls_test(&eio_job_dir_direct_ls, 8, test_dirname);
+   _do_direct_ls_test(&efl_io_manager_dir_direct_ls, 8, test_dirname);
 
    // Cleanup
    fail_if(!ecore_file_recursive_rm(test_dirname));
@@ -235,7 +235,7 @@ START_TEST(eio_job_test_ls_funcs)
 }
 END_TEST
 
-START_TEST(eio_job_test_open)
+START_TEST(efl_io_manager_test_open)
 {
    Eina_Bool opened_file;
    int ret;
@@ -254,10 +254,10 @@ START_TEST(eio_job_test_open)
    Eina_Tmpstr *nested_filename = get_full_path(test_dirname, files[3]);
 
    opened_file = EINA_FALSE;
-   Eio_Job *job = eo_add(EIO_JOB_CLASS, NULL);
+   Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
    Eina_Promise *promise = NULL;
 
-   promise = eio_job_file_open(job, nested_filename, EINA_FALSE);
+   promise = efl_io_manager_file_open(job, nested_filename, EINA_FALSE);
    eina_promise_then(promise, &_open_done_cb, &_error_cb, &opened_file);
    ecore_main_loop_begin();
    eo_unref(job);
@@ -268,7 +268,7 @@ START_TEST(eio_job_test_open)
 
    eina_tmpstr_del(nested_dirname);
    eina_tmpstr_del(test_dirname);
-   
+
    eio_shutdown();
    eina_tmpstr_del(nested_filename);
    ecore_file_shutdown();
@@ -280,8 +280,7 @@ END_TEST
 void
 eio_test_job(TCase *tc)
 {
-    tcase_add_test(tc, eio_job_test_ls_funcs);
-    tcase_add_test(tc, eio_job_test_file_direct_stat);
-    tcase_add_test(tc, eio_job_test_open);
+    tcase_add_test(tc, efl_io_manager_test_ls_funcs);
+    tcase_add_test(tc, efl_io_manager_test_file_direct_stat);
+    tcase_add_test(tc, efl_io_manager_test_open);
 }
-

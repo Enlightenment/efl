@@ -129,7 +129,7 @@ START_TEST(eio_test_job_xattr_set)
 
    fprintf(stderr, "eio_test_job_xattr_set\n"); fflush(stderr);
 
-   job = eo_add(EIO_JOB_CLASS, NULL);
+   job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
 
    test_file_path = get_full_path(XATTR_TEST_DIR, filename);
    fd = open(test_file_path,
@@ -142,7 +142,7 @@ START_TEST(eio_test_job_xattr_set)
 
    for (i = 0; i < sizeof(attribute) / sizeof(attribute[0]); ++i)
      {
-        attrib_promises[i] = eio_job_file_xattr_set
+        attrib_promises[i] = efl_io_manager_file_xattr_set
           (job, test_file_path, attribute[i],
            attr_data[i], strlen(attr_data[i]),
            EINA_XATTR_INSERT);
@@ -163,7 +163,7 @@ START_TEST(eio_test_job_xattr_set)
 
    for (i = 0; i < sizeof(attribute) / sizeof(attribute[0]); ++i)
    {
-     attrib_promises[i] = eio_job_file_xattr_get(job, test_file_path, attribute[i]);
+     attrib_promises[i] = efl_io_manager_file_xattr_get(job, test_file_path, attribute[i]);
    }
 
    eina_promise_then(eina_promise_all(eina_carray_iterator_new((void**)attrib_promises)),
@@ -173,8 +173,8 @@ START_TEST(eio_test_job_xattr_set)
 
    num_of_attr = 0;
 
-   eo_event_callback_add(job, EIO_JOB_EVENT_XATTR, _filter_cb, NULL);
-   list_promise = eio_job_file_xattr_list_get(job, test_file_path);
+   eo_event_callback_add(job, EFL_IO_MANAGER_EVENT_XATTR, _filter_cb, NULL);
+   list_promise = efl_io_manager_file_xattr_list_get(job, test_file_path);
    eina_promise_progress_cb_add(list_promise, _main_cb, &num_of_attr, NULL);
    eina_promise_then(list_promise, _done_cb, _error_cb, &num_of_attr);
 

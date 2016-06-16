@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "eio_job.eo.h"
+#include "efl_io_manager.eo.h"
 #include "eio_sentry.eo.h"
 #include "eio_model.eo.h"
 

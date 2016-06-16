@@ -7,6 +7,8 @@ struct Eio.Data
   size: uint;
 }
 
+// FIXME: all events should be Eo objects not data if we want to modify them
+
 struct Eio.Filter.Direct.Data
 {
   info: const(Eina.File.Direct.Info)*;
@@ -25,7 +27,9 @@ struct Eio.Xattr.Data
   size: uint;
 }
 
-class Eio.Job (Eo.Base)
+// FIXME: We should send list of stuff in progress not single item, callback cost is to high
+
+class Efl.Io.Manager (Eo.Base)
 {
   [[Class representing an asynchronous file operation.]]
 
