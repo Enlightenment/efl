@@ -9,8 +9,6 @@
 #include "canvas/efl_ui_selectable.eo.h"
 #include "canvas/efl_ui_zoomable.eo.h"
 
-#include "canvas/efl_canvas.eo.h"
-
 #include "canvas/evas_canvas.eo.h"
 
 /**

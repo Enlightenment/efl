@@ -874,5 +874,4 @@ evas_output_viewport_get(const Evas *eo_e, Evas_Coord *x, Evas_Coord *y, Evas_Co
    if (h) *h = e->viewport.h;
 }
 
-#include "canvas/efl_canvas.eo.c"
 #include "canvas/evas_canvas.eo.c"

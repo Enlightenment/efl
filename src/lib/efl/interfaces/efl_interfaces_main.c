@@ -27,6 +27,7 @@
 #include "interfaces/efl_gfx_filter.eo.c"
 
 #include "interfaces/efl_gfx_size_hint.eo.c"
+#include "interfaces/efl_canvas.eo.c"
 
 #include "interfaces/efl_vpath.eo.c"
 
