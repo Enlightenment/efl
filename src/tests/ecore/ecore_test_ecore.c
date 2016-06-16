@@ -820,6 +820,34 @@ START_TEST(ecore_test_ecore_main_loop_poller_add_del)
 }
 END_TEST
 
+START_TEST(ecore_test_efl_loop_register)
+{
+   Eo_Base *t, *n;
+
+   ecore_init();
+
+   t = eo_provider_find(ecore_main_loop_get(), EFL_LOOP_CLASS);
+   fail_if(!eo_isa(t, EFL_LOOP_CLASS));
+
+   t = eo_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
+   fail_if(t != NULL);
+
+   n = eo_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get());
+   efl_loop_register(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS, n);
+
+   t = eo_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
+   fail_if(!eo_isa(t, EFL_LOOP_TIMER_CLASS));
+   fail_if(t != n);
+
+   efl_loop_unregister(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS, n);
+
+   t = eo_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
+   fail_if(t != NULL);
+
+   ecore_shutdown();
+}
+END_TEST
+
 void ecore_test_ecore(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_init);
@@ -839,4 +867,5 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller_add_del);
    tcase_add_test(tc, ecore_test_efl_loop_fd);
    tcase_add_test(tc, ecore_test_efl_loop_fd_lifecycle);
+   tcase_add_test(tc, ecore_test_efl_loop_register);
 }
