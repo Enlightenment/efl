@@ -2326,6 +2326,7 @@ case "$host_os" in
       want_spectre="no"
       want_libraw="no"
       want_rsvg="no"
+      want_xcf="no"
    ;;
    cygwin*)
       want_generic="no"
@@ -2333,6 +2334,7 @@ case "$host_os" in
       want_spectre="no"
       want_libraw="no"
       want_rsvg="no"
+      want_xcf="no"
    ;;
    *)
       want_generic="static"
@@ -2340,6 +2342,7 @@ case "$host_os" in
       want_spectre="yes"
       want_libraw="yes"
       want_rsvg="yes"
+      want_xcf="yes"
    ;;
 esac
 
@@ -2879,6 +2882,16 @@ AC_ARG_ENABLE([librsvg],
     fi
    ])
 
+AC_ARG_ENABLE([xcf],
+   [AS_HELP_STRING([--disable-xcf],[disable xcf support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_xcf="yes"
+    else
+       want_xcf="no"
+    fi
+   ])
+
 have_poppler="no"
 have_spectre="no"
 have_raw="no"
@@ -2912,11 +2925,13 @@ AM_CONDITIONAL([HAVE_POPPLER], [test "x${have_poppler}" = "xyes"])
 AM_CONDITIONAL([HAVE_SPECTRE], [test "x${have_spectre}" = "xyes"])
 AM_CONDITIONAL([HAVE_LIBRAW], [test "x${have_raw}" = "xyes"])
 AM_CONDITIONAL([HAVE_RSVG], [test "x${have_rsvg}" = "xyes"])
+AM_CONDITIONAL([HAVE_XCF], [test "x${want_xcf}" = "xyes"])
 
 EFL_ADD_FEATURE([EVAS_LOADER], [poppler], [${have_poppler}])
 EFL_ADD_FEATURE([EVAS_LOADER], [spectre], [${have_spectre}])
 EFL_ADD_FEATURE([EVAS_LOADER], [raw], [${have_raw}])
 EFL_ADD_FEATURE([EVAS_LOADER], [rsvg], [${have_rsvg}])
+EFL_ADD_FEATURE([EVAS_LOADER], [xcf], [${want_xcf}])
 
 EFL_LIB_END([Evas])
 #### End of Evas

@@ -2532,6 +2532,8 @@ endif
 
 EXTRA_DIST2 += generic/evas/xcf/common.h
 
+if HAVE_XCF
+
 evasgenericloaders_PROGRAMS += generic/evas/xcf/evas_image_loader.xcf
 
 generic_evas_xcf_evas_image_loader_xcf_SOURCES = \
@@ -2550,3 +2552,5 @@ generic_evas_xcf_evas_image_loader_xcf_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 EFL_INSTALL_EXEC_HOOK += \
 mkdir -p $(DESTDIR)$(libdir)/evas/utils; \
 ln -sf evas_image_loader.xcf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.xcf.gz;
+
+endif
