@@ -630,7 +630,7 @@ _elm_hoversel_eo_base_constructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
    evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
-   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PUSH_BUTTON);
 
    return obj;

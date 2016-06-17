@@ -5086,6 +5086,95 @@ EAPI Eina_Bool evas_object_smart_type_check(const Evas_Object *obj, const char *
  */
 EAPI Eina_Bool evas_object_smart_type_check_ptr(const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2);
 
+/**
+ * @brief Set an smart object instance's smart callbacks descriptions.
+ *
+ * These descriptions are hints to be used by introspection and are not
+ * enforced in any way.
+ *
+ * It will not be checked if instance callbacks descriptions have the same name
+ * as respective possibly registered in the smart object class. Both are kept
+ * in different arrays and users of
+ * evas_object_smart_callbacks_descriptions_get() should handle this case as
+ * they wish.
+ *
+ * @note Because @c descriptions must be @c null terminated, and because a
+ * @c null name makes little sense, too, Evas_Smart_Cb_Description.name must
+ * not be @c null.
+ *
+ * @note While instance callbacks descriptions are possible, they are not
+ * recommended. Use class callbacks descriptions instead as they make you smart
+ * object user's life simpler and will use less memory, as descriptions and
+ * arrays will be shared among all instances.
+ *
+ * @param[in] descriptions @c null terminated array with
+ * @ref Evas_Smart_Cb_Description descriptions. Array elements won't be
+ * modified at run time, but references to them and their contents will be
+ * made, so this array should be kept alive during the whole object's lifetime.
+ *
+ * @return @c true on success, @c false on failure.
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI Eina_Bool evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_Cb_Description *descriptions);
+
+/**
+ * @brief Retrieve an smart object's know smart callback descriptions (both
+ * instance and class ones).
+ *
+ * This call searches for registered callback descriptions for both instance
+ * and class of the given smart object. These arrays will be sorted by
+ * Evas_Smart_Cb_Description.name and also @c null terminated, so both
+ * class_count and instance_count can be ignored, if the caller wishes so. The
+ * terminator @c null is not counted in these values.
+ *
+ * @note If just class descriptions are of interest, try
+ * evas_smart_callbacks_descriptions_get() instead.
+ *
+ * @note Use @c null pointers on the descriptions/counters you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @ref evas_smart_callbacks_descriptions_get().
+ *
+ * @param[out] class_descriptions Where to store class callbacks descriptions
+ * array, if any is known. If no descriptions are known, @c null is returned.
+ * @param[out] class_count Returns how many class callbacks descriptions are
+ * known.
+ * @param[out] instance_descriptions Where to store instance callbacks
+ * descriptions array, if any is known. If no descriptions are known, @c null
+ * is returned.
+ * @param[out] instance_count Returns how many instance callbacks descriptions
+ * are known.
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI void evas_object_smart_callbacks_descriptions_get(const Evas_Object *obj, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count);
+
+/**
+ * @brief Find callback description for callback called name or @c null if not
+ * found.
+ *
+ * If parameter is @c null, no search will be done on instance descriptions.
+ *
+ * @param[in] name name of desired callback, must not be @c null.  The search
+ * have a special case for name being the same pointer as registered with
+ * Evas_Smart_Cb_Description, one can use it to avoid excessive use of
+ * strcmp().
+ * @param[out] class_description pointer to return class description or @c null
+ * if not found. If parameter is @c null, no search will be done on class
+ * descriptions.
+ * @param[out] instance_description pointer to return instance description.
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI void evas_object_smart_callback_description_find(const Evas_Object *obj, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description) EINA_ARG_NONNULL(2);
+
+/**
+ * @brief Get the @ref Evas_Smart from which @c obj smart object was created.
+ *
+ * @return the @ref Evas_Smart handle or @c null, on errors.
+ */
+EAPI Evas_Smart *evas_object_smart_smart_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * This gets the internal counter that counts the number of smart calculations

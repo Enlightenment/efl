@@ -838,9 +838,10 @@ evas_object_smart_callback_call(Evas_Object *eo_obj, const char *event, void *ev
    eo_event_callback_call(eo_obj, eo_desc, event_info);
 }
 
-EOLIAN static Eina_Bool
-_evas_object_smart_callbacks_descriptions_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o, const Evas_Smart_Cb_Description *descriptions)
+EAPI Eina_Bool
+evas_object_smart_callbacks_descriptions_set(Eo *eo_obj, const Evas_Smart_Cb_Description *descriptions)
 {
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, EINA_FALSE);
    const Evas_Smart_Cb_Description *d;
    unsigned int i, count = 0;
 
@@ -864,9 +865,10 @@ _evas_object_smart_callbacks_descriptions_set(Eo *eo_obj EINA_UNUSED, Evas_Smart
    return EINA_TRUE;
 }
 
-EOLIAN static void
-_evas_object_smart_callbacks_descriptions_get(const Eo *eo_obj, Evas_Smart_Data *o, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count)
+EAPI void
+evas_object_smart_callbacks_descriptions_get(const Eo *eo_obj, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count)
 {
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
    if (class_descriptions) *class_descriptions = NULL;
    if (class_count) *class_count = 0;
 
@@ -882,9 +884,10 @@ _evas_object_smart_callbacks_descriptions_get(const Eo *eo_obj, Evas_Smart_Data 
      *instance_count = o->callbacks_descriptions.size;
 }
 
-EOLIAN static void
-_evas_object_smart_callback_description_find(const Eo *eo_obj, Evas_Smart_Data *o, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description)
+EAPI void
+evas_object_smart_callback_description_find(const Eo *eo_obj, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description)
 {
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
 
    if (!name)
      {
@@ -1268,7 +1271,7 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
           }
 
         evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
-        evas_obj_smart_data_set(eo_obj, NULL);
+        evas_object_smart_data_set(eo_obj, NULL);
      }
 
    obj->smart.parent = NULL;

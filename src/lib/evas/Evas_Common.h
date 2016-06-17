@@ -3577,13 +3577,6 @@ EAPI Eina_Bool                         evas_smart_class_inherit_full(Evas_Smart_
 EAPI int                               evas_smart_usage_get(const Evas_Smart *s);
 
 /**
- * @brief Get the @ref Evas_Smart from which @c obj smart object was created.
- *
- * @return the @ref Evas_Smart handle or @c null, on errors.
- */
-EAPI Evas_Smart                       *evas_object_smart_smart_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
-
-/**
  * @def evas_smart_class_inherit
  * Easy to use version of evas_smart_class_inherit_full().
  *

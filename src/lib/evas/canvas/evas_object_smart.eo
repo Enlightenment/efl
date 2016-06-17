@@ -1,7 +1,3 @@
-/* XXX: Putting the next two as externs because this interface will hopefully
-   be removed for efl 2.0, so no need to bother. */
-struct @extern Evas.Smart.Cb_Description;
-
 class Evas.Object.Smart (Evas.Object)
 {
    legacy_prefix: evas_object_smart;
@@ -112,68 +108,6 @@ class Evas.Object.Smart (Evas.Object)
          set { legacy: null; }
          values { hide: bool; }
       }
-      callbacks_descriptions_set {
-         [[Set an smart object instance's smart callbacks descriptions.
-
-           These descriptions are hints to be used by introspection and are
-           not enforced in any way.
-
-           It will not be checked if instance callbacks descriptions have the
-           same name as respective possibly registered in the smart object
-           class. Both are kept in different arrays and users of
-           evas_object_smart_callbacks_descriptions_get() should handle this
-           case as they wish.
-
-           Note: Becase $descriptions must be $null terminated, and
-           because a $null name makes little sense, too,
-           Evas_Smart_Cb_Description.name must not be $null.
-
-           Note: While instance callbacks descriptions are possible, they are
-           not recommended. Use class callbacks descriptions
-           instead as they make you smart object user's life simpler and
-           will use less memory, as descriptions and arrays will be
-           shared among all instances.]]
-
-         return: bool; [[$true on success, $false on failure.]]
-         params {
-            @in descriptions: const(Evas.Smart.Cb_Description)*; [[$null terminated array with
-            @Evas.Smart.Cb_Description descriptions. Array elements won't be
-            modified at run time, but references to them and their contents
-            will be made, so this array should be kept alive during the whole
-            object's lifetime.]]
-         }
-      }
-      callbacks_descriptions_get @const {
-         [[Retrieve an smart object's know smart callback descriptions (both
-           instance and class ones).
-
-           This call searches for registered callback descriptions for both
-           instance and class of the given smart object. These arrays will be
-           sorted by Evas_Smart_Cb_Description.name and also $null
-           terminated, so both class_count and instance_count can be
-           ignored, if the caller wishes so. The terminator $null is not
-           counted in these values.
-
-           Note: If just class descriptions are of interest, try
-           evas_smart_callbacks_descriptions_get() instead.
-
-           Note: Use $null pointers on the descriptions/counters you're not
-           interested in: they'll be ignored by the function.
-
-           \@ref evas_smart_callbacks_descriptions_get().]]
-         params {
-            @out class_descriptions: const(Evas.Smart.Cb_Description)**; [[Where to store class callbacks
-            descriptions array, if any is known. If no descriptions are
-            known, $null is returned.]]
-            @out class_count: uint; [[Returns how many class callbacks descriptions
-            are known.]]
-            @out instance_descriptions: const(Evas.Smart.Cb_Description)**; [[Where to store instance callbacks
-            descriptions array, if any is known. If no descriptions are
-            known, $null is returned.]]
-            @out instance_count: uint; [[Returns how many instance callbacks
-            descriptions are known.]]
-         }
-      }
       iterator_new @const {
          [[Retrieves an iterator of the member objects of a given Evas smart object.
 
@@ -182,23 +116,6 @@ class Evas.Object.Smart (Evas.Object)
            @since 1.8]]
          return: free(own(iterator<Evas.Object>), eina_iterator_free)
             @warn_unused; [[Returns the iterator of the member objects of $obj.]]
-      }
-      callback_description_find @const {
-         [[Find callback description for callback called name
-           or $null if not found.
-
-           If parameter is $null, no search
-           will be done on instance descriptions.]]
-         params {
-            @in name: string @nonull; [[name of desired callback, must not be $null.  The
-            search have a special case for name being the same
-            pointer as registered with Evas_Smart_Cb_Description, one
-            can use it to avoid excessive use of strcmp().]]
-            @out class_description: const(Evas.Smart.Cb_Description)*; [[pointer to return class description or
-            $null if not found. If parameter is $null, no search will
-            be done on class descriptions.]]
-            @out instance_description: const(Evas.Smart.Cb_Description)*; [[pointer to return instance description.]]
-         }
       }
       hide {
          [[No description supplied by the EAPI.]]

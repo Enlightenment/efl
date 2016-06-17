@@ -4288,7 +4288,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 
    eo_constructor(eo_super(obj, MY_CLASS));
    evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
-   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    if (getenv("ELM_FIRST_FRAME"))
      evas_event_callback_add(ecore_evas_get(tmp_sd.ee), EVAS_CALLBACK_RENDER_POST,

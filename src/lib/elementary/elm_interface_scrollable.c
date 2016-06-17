@@ -235,7 +235,7 @@ _elm_pan_eo_base_constructor(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_PAN_CLASS));
    evas_obj_type_set(obj, MY_PAN_CLASS_NAME_LEGACY);
-   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    return obj;
 }

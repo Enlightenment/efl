@@ -5822,7 +5822,7 @@ _elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
    sd->on_create = EINA_TRUE;
    obj = eo_constructor(eo_super(obj, MY_CLASS));
    evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
-   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    parent = eo_parent_get(obj);
    elm_obj_widget_parent_set(obj, parent);
    sd->on_create = EINA_FALSE;
