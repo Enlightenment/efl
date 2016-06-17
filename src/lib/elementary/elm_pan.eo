@@ -1,4 +1,4 @@
-class Elm.Pan (Evas.Smart.Clipped)
+class Elm.Pan (Efl.Canvas.Object.Internal.Smart.Clipped)
 {
    legacy_prefix: elm_pan;
    eo_prefix: elm_obj_pan;

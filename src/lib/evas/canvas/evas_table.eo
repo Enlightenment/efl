@@ -9,7 +9,7 @@ enum Evas.Object_Table.Homogeneous_Mode {
      item = 2
 }
 
-class Evas.Table (Evas.Smart.Clipped)
+class Evas.Table (Efl.Canvas.Object.Internal.Smart.Clipped)
 {
    legacy_prefix: evas_object_table;
    eo_prefix: evas_obj_table;

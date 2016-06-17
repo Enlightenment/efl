@@ -1,6 +1,6 @@
 import edje_types;
 
-class Edje.Object (Evas.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
+class Edje.Object (Efl.Canvas.Object.Internal.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
 {
    legacy_prefix: edje_object;
    eo_prefix: edje_obj;

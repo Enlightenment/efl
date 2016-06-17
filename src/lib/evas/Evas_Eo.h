@@ -57,7 +57,7 @@
  *
  * @{
  */
-#include "canvas/evas_smart_clipped.eo.h"
+#include "canvas/efl_canvas_object_internal_smart_clipped.eo.h"
 /**
  * @}
  */

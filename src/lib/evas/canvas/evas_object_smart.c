@@ -691,8 +691,8 @@ _evas_object_smart_smart_no_render_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSE
    Evas_Object_Smart_Clipped_Data *cso;
    Evas_Object *cso_clipper;
 
-   if (eo_isa(eo_obj, EVAS_SMART_CLIPPED_CLASS))
-     cso = eo_data_scope_get(eo_obj, EVAS_SMART_CLIPPED_CLASS);
+   if (eo_isa(eo_obj, EFL_CANVAS_OBJECT_INTERNAL_SMART_CLIPPED_CLASS))
+     cso = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_INTERNAL_SMART_CLIPPED_CLASS);
    else
      cso = evas_object_smart_data_get(eo_obj);
    cso_clipper = cso ? cso->clipper : NULL;

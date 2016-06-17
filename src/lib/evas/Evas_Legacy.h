@@ -5192,6 +5192,16 @@ EAPI void evas_object_smart_data_set(Evas_Object *obj, void *data);
 EAPI void *evas_object_smart_data_get(const Evas_Object *obj);
 
 /**
+ * @brief Get the clipper object for the given clipped smart object.
+ *
+ * Use this function if you want to change any of this clipper's properties,
+ * like colors.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI Evas_Object *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Retrieves the list of the member objects of a given Evas smart
  * object.
  *
@@ -5254,7 +5264,7 @@ EAPI int          evas_smart_objects_calculate_count_get(const Evas *e);
  */
 EAPI Evas_Object            *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
-#include "canvas/evas_smart_clipped.eo.legacy.h"
+#include "canvas/efl_canvas_object_internal_smart_clipped.eo.legacy.h"
 
 /**
  * @}

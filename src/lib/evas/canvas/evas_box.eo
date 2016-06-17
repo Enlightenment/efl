@@ -4,7 +4,7 @@ type @extern Evas_Object_Box_Layout: __undefined_type; /* FIXME: Function pointe
 type @extern Eina_Free_Cb: __undefined_type; /* FIXME: Function pointers are not supported  */
 type @extern va_list: __undefined_type; /* FIXME: va_list is not supported */
 
-class Evas.Box (Evas.Smart.Clipped)
+class Evas.Box (Efl.Canvas.Object.Internal.Smart.Clipped)
 {
    legacy_prefix: evas_object_box;
    eo_prefix: evas_obj_box;

@@ -31,7 +31,7 @@ _edje_object_eo_base_constructor(Eo *obj, Edje *ed)
    Evas *e;
    void *tmp;
 
-   ed->base = eo_data_ref(obj, EVAS_SMART_CLIPPED_CLASS);
+   ed->base = eo_data_ref(obj, EFL_CANVAS_OBJECT_INTERNAL_SMART_CLIPPED_CLASS);
    ed->duration_scale = 1.0;
 
    obj = eo_constructor(eo_super(obj, MY_CLASS));
