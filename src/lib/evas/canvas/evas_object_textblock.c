@@ -9767,7 +9767,6 @@ _cursor_text_append(Eo *eo_obj, Efl_Canvas_Text_Cursor_Data *cur, const char *_t
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Efl_Canvas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    evas_object_async_block(obj);
-   text = eina_unicode_utf8_to_unicode(_text, &len);
    orig_text = text = eina_unicode_utf8_to_unicode(_text, &len);
    Efl_Canvas_Text_Cursor_Data *ocur = eo_data_scope_get(o->cursor, EFL_CANVAS_TEXT_CURSOR_CLASS);
 
