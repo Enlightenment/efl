@@ -92,6 +92,125 @@ interface Efl.Canvas ()
            all smart objects in the canvas.
          ]]
       }
+      objects_at_xy_get @const {
+         [[Retrieve a list of objects lying over a given position in
+           a canvas.
+
+           This function will traverse all the layers of the given canvas,
+           from top to bottom, querying for objects with areas covering the
+           given position. The user can remove from query objects which are
+           hidden and/or which are set to pass events.
+
+           Warning: This function will skip objects parented by smart
+           objects, acting only on the ones at the "top level", with
+           regard to object parenting.
+         ]]
+         return: free(own(iterator<Efl.Gfx>), eina_iterator_free) @warn_unused; [[
+            The list of objects that are over the given position in $e.
+         ]]
+         params {
+            @in x: int; [[The horizontal coordinate of the position.]]
+            @in y: int; [[The vertical coordinate of the position.]]
+            @in include_pass_events_objects: bool; [[
+               Boolean flag to include or not objects which pass events
+               in this calculation.
+            ]]
+            @in include_hidden_objects: bool; [[
+               Boolean flag to include or not hidden objects in this
+               calculation.
+            ]]
+         }
+      }
+      object_top_at_xy_get @const {
+         [[Retrieve the object stacked at the top of a given position
+           in a canvas.
+
+           This function will traverse all the layers of the given canvas,
+           from top to bottom, querying for objects with areas covering the
+           given position. The user can remove from the query
+           objects which are hidden and/or which are set to pass events.
+
+           Warning: This function will skip objects parented by smart
+           objects, acting only on the ones at the "top level", with
+           regard to object parenting.
+         ]]
+         return: Efl.Gfx @warn_unused; [[The Evas object that is over all other objects at the given position.]]
+         params {
+            @in x: int; [[The horizontal coordinate of the position.]]
+            @in y: int; [[The vertical coordinate of the position.]]
+            @in include_pass_events_objects: bool; [[
+               Boolean flag to include or not objects which pass events
+               in this calculation.
+            ]]
+            @in include_hidden_objects: bool; [[
+               Boolean flag to include or not hidden objects in this
+               calculation.
+            ]]
+         }
+      }
+      objects_in_rectangle_get @const {
+         [[Retrieve a list of objects lying over a given
+           rectangular region in a canvas.
+
+           This function will traverse all the layers of the given canvas,
+           from top to bottom, querying for objects with areas overlapping
+           with the given rectangular region inside $e. The user can remove
+           from the query objects which are hidden and/or which are set to
+           pass events.
+
+           Warning: This function will skip objects parented by smart
+           objects, acting only on the ones at the "top level", with
+           regard to object parenting.
+         ]]
+         return: free(own(iterator<Efl.Gfx>), eina_iterator_free) @warn_unused;
+         params {
+            @in x: int;
+            @in y: int;
+            @in w: int;
+            @in h: int;
+            @in include_pass_events_objects: bool;
+            @in include_hidden_objects: bool;
+         }
+      }
+      object_top_in_rectangle_get @const {
+         [[Retrieve the Evas object stacked at the top of a given
+           rectangular region in a canvas
+
+           This function will traverse all the layers of the given canvas,
+           from top to bottom, querying for objects with areas overlapping
+           with the given rectangular region inside $e. The user can remove
+           from the query objects which are hidden and/or which are set to
+           pass events.
+
+           Warning: This function will skip objects parented by smart
+           objects, acting only on the ones at the "top level", with
+           regard to object parenting.
+         ]]
+         return: Efl.Gfx @warn_unused; [[
+            The object that is over all other objects at the given
+            rectangular region.
+         ]]
+         params {
+            @in x: int; [[
+               The top left corner's horizontal coordinate for the
+               rectangular region.
+            ]]
+            @in y: int; [[
+               The top left corner's vertical coordinate for the
+               rectangular region.
+            ]]
+            @in w: int; [[The width of the rectangular region.]]
+            @in h: int; [[The height of the rectangular region.]]
+            @in include_pass_events_objects: bool; [[
+               Boolean flag to include or not objects which pass events
+               in this calculation.
+            ]]
+            @in include_hidden_objects: bool; [[
+               Boolean flag to include or not hidden objects in this
+               calculation.
+            ]]
+         }
+      }
    }
    events {
       focus,in;
