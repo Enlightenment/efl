@@ -273,7 +273,7 @@ EOLIAN static Eo *
 _evas_grid_eo_base_constructor(Eo *obj, Evas_Grid_Data *class_data EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_smart_attach(obj, _evas_object_grid_smart_class_new());
+   evas_object_smart_attach(obj, _evas_object_grid_smart_class_new());
 
    return obj;
 //   return evas_object_smart_add(evas, _evas_object_grid_smart_class_new());

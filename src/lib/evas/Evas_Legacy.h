@@ -5086,6 +5086,7 @@ EAPI Eina_Bool evas_object_smart_type_check(const Evas_Object *obj, const char *
  */
 EAPI Eina_Bool evas_object_smart_type_check_ptr(const Evas_Object *obj, const char *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2);
 
+
 /**
  * This gets the internal counter that counts the number of smart calculations
  *

@@ -1,6 +1,5 @@
 /* XXX: Putting the next two as externs because this interface will hopefully
    be removed for efl 2.0, so no need to bother. */
-struct @extern Evas.Smart;
 struct @extern Evas.Smart.Cb_Description;
 
 class Evas.Object.Smart (Evas.Object)
@@ -94,13 +93,6 @@ class Evas.Object.Smart (Evas.Object)
 
               @since 1.7]]
             return: list<Evas.Object> @warn_unused; [[Returns the list of the member objects of $obj.]]
-         }
-      }
-      @property smart {
-         get {
-            [[Get the @Evas.Smart from which $obj smart object was created.]]
-
-            return: Evas.Smart * @warn_unused; [[the @Evas.Smart handle or $null, on errors.]]
          }
       }
       show {
@@ -290,13 +282,6 @@ class Evas.Object.Smart (Evas.Object)
       }
       del {
          [[Deletes a smart object.]]
-         legacy: null;
-      }
-      attach {
-         [[Attach a given smart data to a given smart object.]]
-         params {
-            @in s: Evas.Smart *;
-         }
          legacy: null;
       }
       move_children_relative {

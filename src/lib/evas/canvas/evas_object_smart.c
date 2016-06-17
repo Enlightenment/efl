@@ -194,10 +194,10 @@ evas_object_smart_interface_data_get(const Evas_Object *eo_obj,
    return NULL;
 }
 
-EOLIAN static Evas_Smart*
-_evas_object_smart_smart_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o EINA_UNUSED)
+EAPI Evas_Smart*
+evas_object_smart_smart_get(const Evas_Object_Smart *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, NULL);
    return obj->smart.smart;
 }
 
@@ -574,7 +574,7 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
    return NULL;
    MAGIC_CHECK_END();
    eo_obj = eo_add(EVAS_OBJECT_SMART_CLASS, eo_e);
-   evas_obj_smart_attach(eo_obj, s);
+   evas_object_smart_attach(eo_obj, s);
    return eo_obj;
 }
 
@@ -701,14 +701,12 @@ _evas_object_smart_smart_no_render_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSE
      }
 }
 
-EOLIAN static void
-_evas_object_smart_attach(Eo *eo_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Smart *s)
+void
+evas_object_smart_attach(Evas_Object *eo_obj, Evas_Smart *s)
 {
-   MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
-   return;
-   MAGIC_CHECK_END();
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
    unsigned int i;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+
    obj->smart.smart = s;
    obj->type = s->smart_class->name;
    evas_object_smart_use(s);
