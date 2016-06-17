@@ -371,6 +371,12 @@ typedef Efl_Text_Bidirectional_Type        Evas_BiDi_Direction;
 #define EVAS_BIDI_DIRECTION_RTL            EFL_TEXT_BIDIRECTIONAL_TYPE_RTL
 #define EVAS_BIDI_DIRECTION_INHERIT        EFL_TEXT_BIDIRECTIONAL_TYPE_INHERIT
 
+typedef Efl_Event_Object_Pointer_Mode      Evas_Object_Pointer_Mode;
+
+#define EVAS_OBJECT_POINTER_MODE_AUTOGRAB EFL_EVENT_OBJECT_POINTER_MODE_AUTO_GRAB
+#define EVAS_OBJECT_POINTER_MODE_NOGRAB   EFL_EVENT_OBJECT_POINTER_MODE_NO_GRAB
+#define EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN EFL_EVENT_OBJECT_POINTER_MODE_NO_GRAB_NO_REPEAT_UPDOWN
+
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
    int magic; /**< Magic number */

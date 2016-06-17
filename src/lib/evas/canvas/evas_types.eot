@@ -4,30 +4,6 @@ struct @extern Evas.Video_Surface; /* FIXME: The structure is full of the unsupp
 type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
 type Evas.Coord: int; [[A type for coordinates]]
 
-enum Evas.Object_Pointer_Mode {
-   [[How the mouse pointer should be handled by Evas.
-
-     In the mode #EVAS_OBJECT_POINTER_MODE_AUTOGRAB, when a mouse button
-     is pressed down over an object and held, with the mouse pointer
-     being moved outside of it, the pointer still behaves as being bound
-     to that object, albeit out of its drawing region. When the button
-     is released, the event will be fed to the object, that may check if
-     the final position is over it or not and do something about it.
-
-     In the mode #EVAS_OBJECT_POINTER_MODE_NOGRAB, the pointer will
-     always be bound to the object right below it.
-   ]]
-   autograb, [[default, X11-like]]
-   nograb, [[pointer always bound to the object right below it]]
-   nograb_no_repeat_updown [[useful on object with "repeat events" enabled,
-                             where mouse/touch up and down events WONT be
-                             repeated to objects and these objects wont be
-                             auto-grabbed.
-
-                             @since 1.2
-                           ]]
-}
-
 enum Evas.Display_Mode {
    none = 0, [[Default mode]]
    compress = 1, [[Use this mode when you want to give compress display mode

@@ -15,7 +15,7 @@ enum Efl.Pointer.Action
    in,     [[Mouse or pointer entered the object.]]
    out,    [[Mouse or pointer exited the object.]]
    wheel,  [[Mouse wheel scroll, horizontally or vertically.]]
-   axis,   [[Joystick event.]]
+   axis,   [[Axis event (pen, stick, ...).]]
 }
 
 enum Efl.Pointer.Flags
@@ -40,4 +40,28 @@ enum Efl.Event.Flags
                            scrolling. The event should be used for informational
                            purposes and maybe some indications visually, but not
                            actually perform anything.]]
+}
+
+enum Efl.Event.Object_Pointer_Mode {
+   [[How the mouse pointer should be handled by EFL.
+
+     In the mode $autograb, when a mouse button is pressed down over an
+     object and held down, with the mouse pointer being moved outside of it,
+     the pointer still behaves as being bound to that object, albeit out
+     of its drawing region. When the button is released, the event will
+     be fed to the object, that may check if the final position is over it
+     or not and do something about it.
+
+     In the mode $nograb, the pointer will always be bound to the object
+     right below it.
+   ]]
+   auto_grab, [[Default, X11-like.]]
+   no_grab,   [[Pointer always bound to the object right below it.]]
+   no_grab_no_repeat_updown [[Useful on object with "repeat events" enabled,
+                              where mouse/touch up and down events WON'T be
+                              repeated to objects and these objects wont be
+                              auto-grabbed.
+
+                              @since 1.2
+                            ]]
 }

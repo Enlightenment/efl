@@ -22,28 +22,24 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
          }
       }
       @property pointer_mode {
-         set {
-            [[Set pointer behavior.
+         [[Low-level pointer behaviour.
 
-              This function has direct effect on event callbacks related to
-              mouse.
+           This function has a direct effect on event callbacks related to
+           pointers (mouse, ...).
 
-              If $setting is EVAS_OBJECT_POINTER_MODE_AUTOGRAB, then when
-              mouse is down at this object, events will be restricted to
-              it as source, mouse moves, for example, will be emitted even
-              if outside this object area.
+           If the value is @Efl.Event.Object_Pointer_Mode.auto_grab (default),
+           then when mouse is pressed down over this object, events will be
+           restricted to it as source, mouse moves, for example, will be
+           emitted even when the pointer goes outside this objects
+           geometry.
 
-              If $setting is EVAS_OBJECT_POINTER_MODE_NOGRAB, then events
-              will be emitted just when inside this object area.
+           If the value is @Efl.Event.Object_Pointer_Mode.no_grab, then events
+           will be emitted just when inside this object area.
 
-              The default value is EVAS_OBJECT_POINTER_MODE_AUTOGRAB.
-            ]]
-         }
-         get {
-            [[Determine how pointer will behave.]]
-         }
+           The default value is @Efl.Event.Object_Pointer_Mode.auto_grab.
+         ]]
          values {
-            pointer_mode: Evas.Object_Pointer_Mode; [[Desired behavior.]]
+            pointer_mode: Efl.Event.Object_Pointer_Mode;
          }
       }
       @property render_op {
