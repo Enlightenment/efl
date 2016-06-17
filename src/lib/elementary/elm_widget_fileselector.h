@@ -76,6 +76,7 @@ struct _Elm_Fileselector_Data
    Eina_Bool                expand : 1;
    Eina_Bool                double_tap_navigation : 1;
    Eina_Bool                multi : 1;
+   Eina_Bool                monitoring : 1;
 
    /* this flag is only for multi selection.
     * If this flag is set to @c EINA_TRUE, it means directory is selected

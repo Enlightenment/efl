@@ -74,12 +74,27 @@ _model_free_eo_cb(void *data)
 }
 
 static void
+_monitoring_start(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, Efl_Model *model)
+{
+   sd->monitoring = EINA_TRUE;
+   eo_event_callback_add(model, EFL_MODEL_EVENT_CHILD_ADDED, _resource_created, fs);
+   eo_event_callback_add(model, EFL_MODEL_EVENT_CHILD_REMOVED, _resource_deleted, fs);
+}
+
+static void
+_monitoring_stop(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, Efl_Model *model)
+{
+   sd->monitoring = EINA_FALSE;
+   eo_event_callback_del(model, EFL_MODEL_EVENT_CHILD_ADDED, _resource_created, fs);
+   eo_event_callback_del(model, EFL_MODEL_EVENT_CHILD_REMOVED, _resource_deleted, fs);
+}
+
+static void
 _elm_fileselector_replace_model(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, Efl_Model *model, const char *path)
 {
    if (sd->model)
      {
-        eo_event_callback_del(sd->model, EFL_MODEL_EVENT_CHILD_ADDED, _resource_created, fs);
-        eo_event_callback_del(sd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _resource_deleted, fs);
+        _monitoring_stop(fs, sd, sd->model);
         eo_unref(sd->model);
      }
 
@@ -87,8 +102,7 @@ _elm_fileselector_replace_model(Elm_Fileselector *fs, Elm_Fileselector_Data *sd,
      {
         sd->model = model ? eo_ref(model) : NULL;
         eina_stringshare_replace(&sd->path, path);
-        eo_event_callback_add(sd->model, EFL_MODEL_EVENT_CHILD_ADDED, _resource_created, fs);
-        eo_event_callback_add(sd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _resource_deleted, fs);
+        _monitoring_start(fs, sd, sd->model);
         /* TODO: sub directory should be monitored for expand mode */
      }
    else
@@ -902,6 +916,9 @@ _populate(Evas_Object *obj,
         sd->current_populate_lreq = NULL;
      }
 
+   if (sd->model)
+     _monitoring_stop(obj, sd, sd->model);
+
    lreq = calloc(1, sizeof (Listing_Request));
    if (!lreq) return;
 
@@ -1660,6 +1677,9 @@ _resource_created_then(void *data, void *values)
 
    ELM_FILESELECTOR_DATA_GET(obj, sd);
 
+   if (!sd || !sd->monitoring || sd->model != it_data->parent_model)
+     goto cancel;
+
    if (!_iterator_next_value_get(value_itt, &path) ||
        !_iterator_next_value_get(value_itt, &filename) ||
        !path || !filename ||
@@ -1669,25 +1689,17 @@ _resource_created_then(void *data, void *values)
        !_iterator_next_value_get(value_itt, &mime_type))
      {
         ERR("missing Efl.Model data");
-        eo_unref(it_data->model);
-        free(it_data);
-        goto end;
+        goto cancel;
      }
 
    if (!_filter_child(sd, path, filename, dir, mime_type))
-     {
-        eo_unref(it_data->model);
-        free(it_data);
-        goto end;
-     }
+     goto cancel;
 
    it_data->path = eina_stringshare_add(path);
    it_data->filename = eina_stringshare_add(filename);
    it_data->size = size;
    it_data->mtime = mtime;
    it_data->mime_type = eina_stringshare_add(mime_type);
-   it_data->parent_model = eo_ref(sd->model);
-   it_data->parent_path = eina_stringshare_add(sd->path);
    it_data->is_dir = dir;
 
    if (dir)
@@ -1710,8 +1722,15 @@ _resource_created_then(void *data, void *values)
                                     it_data,
                                     _file_grid_cmp, NULL, NULL);
 
-end:
    eo_unref(obj);
+   return;
+
+cancel:
+   eo_unref(obj);
+   eo_unref(it_data->model);
+   eo_unref(it_data->parent_model);
+   eina_stringshare_add(it_data->parent_path);
+   free(it_data);
 }
 
 static Eina_Bool
@@ -1726,7 +1745,7 @@ _resource_created(void *data, const Eo_Event *event)
 
    ELM_FILESELECTOR_DATA_GET(fs, sd);
 
-   if (sd->model != event->object)
+   if (!sd || !sd->monitoring || sd->model != event->object)
      return ECORE_CALLBACK_PASS_ON;
 
    it_data = calloc(1, sizeof(Elm_Fileselector_Item_Data));
@@ -1735,6 +1754,8 @@ _resource_created(void *data, const Eo_Event *event)
 
    it_data->model = eo_ref(child);
    it_data->user_data = eo_ref(fs);
+   it_data->parent_model = eo_ref(sd->model);
+   it_data->parent_path = eina_stringshare_add(sd->path);
 
    promises[0] = efl_model_property_get(child, "path");
    promises[1] = efl_model_property_get(child, "filename");
@@ -1762,7 +1783,7 @@ _resource_deleted(void *data, const Eo_Event *event)
 
    ELM_FILESELECTOR_DATA_GET(obj, sd);
 
-   if (sd->model != event->object)
+   if (!sd || !sd->monitoring || sd->model != event->object)
      return ECORE_CALLBACK_PASS_ON;
 
    if (sd->mode == ELM_FILESELECTOR_LIST)
@@ -1989,6 +2010,9 @@ _elm_fileselector_efl_canvas_group_group_del(Eo *obj, Elm_Fileselector_Data *sd)
    if (sd->current_populate_lreq)
      sd->current_populate_lreq->valid = EINA_FALSE;
    sd->current_populate_lreq = NULL;
+
+   if (sd->model)
+     _monitoring_stop(obj, sd, sd->model);
 
    EINA_LIST_FREE(sd->filter_list, filter)
      {
