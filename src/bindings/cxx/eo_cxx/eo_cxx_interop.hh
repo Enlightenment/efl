@@ -40,6 +40,8 @@ struct in_traits<eina::range_array<T>> { typedef eina::range_array<T> type; };
     
 template <typename T>
 struct out_traits { typedef T& type; };
+template <>
+struct out_traits<void> { typedef void* type; };
 template <typename T>
 struct out_traits<T*> { typedef T* type; };
 template <>
@@ -53,6 +55,8 @@ struct out_traits<efl::eina::future<T>> { typedef efl::eina::future<T>& type; };
 
 template <typename T>
 struct inout_traits { typedef T& type; };
+template <>
+struct inout_traits<void> { typedef void* type; };
 template <typename T>
 struct inout_traits<efl::eina::future<T>> { typedef efl::eina::future<T>& type; };
 
@@ -73,6 +77,14 @@ template <typename T>
 void assign_out_impl(T& lhs, T*& rhs, tag<T&, T*>)
 {
   lhs = *rhs;
+}
+inline void assign_out_impl(void*&, void*&, tag<void*, void*>)
+{
+  std::abort(); // out parameter of void type?
+}
+inline void assign_out_impl(void*&, void*&, tag<void*, void>)
+{
+  // do nothing, it is an inout parameter of void
 }
 template <typename U, typename T, typename D>
 void assign_out_impl(std::unique_ptr<T, D>& lhs, U* rhs, tag<std::unique_ptr<T, D>&, U*, true>)
@@ -194,6 +206,10 @@ namespace impl {
 
 template <typename T>
 T* convert_inout_impl(T& v, tag<T, T*>)
+{
+  return v;
+}
+inline void* convert_inout_impl(void* v, tag<void, void>)
 {
   return v;
 }

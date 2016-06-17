@@ -63,13 +63,21 @@ struct function_definition_generator
                               { return p.direction == attributes::parameter_direction::out; })
         [
           attribute_reorder<1, 2>
-          (scope_tab << c_type << " __out_param_" << string << " = {};\n")
+          (scope_tab <<
+           (attribute_conditional([] (attributes::type_def const& p) -> bool
+                                 { return p != attributes::void_; })
+            [c_type] | "void*")
+           << " __out_param_" << string << " = {};\n")
         ]
         | attribute_conditional([] (attributes::parameter_def const& p) -> bool
                                 { return p.direction == attributes::parameter_direction::inout; })
         [
           attribute_reorder<1, 2, 1, 1, 2>
-          (scope_tab << c_type << " __out_param_" << string << " = ::efl::eolian::convert_inout<" << c_type
+          (scope_tab <<
+           (attribute_conditional([] (attributes::type_def const& p) -> bool
+                                 { return p != attributes::void_; })
+            [c_type] | "void*")
+           << " __out_param_" << string << " = ::efl::eolian::convert_inout<" << c_type
            << ", " << type << ">(" << string << ");\n")
         ]
         | eps
