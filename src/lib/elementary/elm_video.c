@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#define EO_BASE_BETA
 #include <Emotion.h>
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
@@ -267,6 +268,7 @@ _elm_video_evas_object_smart_add(Eo *obj, Elm_Video_Data *priv)
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, NULL);
+   eo_composite_attach(obj, priv->emotion);
 
    priv->timer = ecore_timer_add(20.0, _suspend_cb, obj);
 }
@@ -370,54 +372,6 @@ EOLIAN static Eina_Bool
 _elm_video_is_playing_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
 {
    return emotion_object_play_get(sd->emotion);
-}
-
-EOLIAN static Eina_Bool
-_elm_video_efl_player_seekable_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
-{
-   return emotion_object_seekable_get(sd->emotion);
-}
-
-EOLIAN static Eina_Bool
-_elm_video_efl_player_audio_mute_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
-{
-   return emotion_object_audio_mute_get(sd->emotion);
-}
-
-EOLIAN static void
-_elm_video_efl_player_audio_mute_set(Eo *obj EINA_UNUSED, Elm_Video_Data *sd, Eina_Bool mute)
-{
-   emotion_object_audio_mute_set(sd->emotion, mute);
-}
-
-EOLIAN static double
-_elm_video_efl_player_audio_volume_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
-{
-   return emotion_object_audio_volume_get(sd->emotion);
-}
-
-EOLIAN static void
-_elm_video_efl_player_audio_volume_set(Eo *obj EINA_UNUSED, Elm_Video_Data *sd, double volume)
-{
-   emotion_object_audio_volume_set(sd->emotion, volume);
-}
-
-EOLIAN static double
-_elm_video_efl_player_position_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
-{
-   return emotion_object_position_get(sd->emotion);
-}
-
-EOLIAN static void
-_elm_video_efl_player_position_set(Eo *obj EINA_UNUSED, Elm_Video_Data *sd, double position)
-{
-   emotion_object_position_set(sd->emotion, position);
-}
-
-EOLIAN static double
-_elm_video_efl_player_length_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
-{
-   return emotion_object_play_length_get(sd->emotion);
 }
 
 EOLIAN static const char*

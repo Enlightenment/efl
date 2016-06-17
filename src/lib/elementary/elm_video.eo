@@ -65,11 +65,6 @@ class Elm.Video (Elm.Layout, Efl.File,
       Eo.Base.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
-      Efl.Player.audio_volume;
-      Efl.Player.audio_mute;
-      Efl.Player.position;
-      Efl.Player.seekable.get;
-      Efl.Player.length.get;
       Evas.Object.Smart.add;
       Evas.Object.Smart.del;
       Elm.Widget.focus_next_manager_is;
