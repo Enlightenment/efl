@@ -63,11 +63,11 @@ START_TEST(property_get)
 {
    // Signal properties always have output direction
    Eina_Promise *promise;
-   efl_model_property_get(pong_signal, ARGUMENT_A, &promise);
+   promise = efl_model_property_get(pong_signal, ARGUMENT_A);
    efl_model_promise_then(promise);
 
    // Nonexistent property must return ERROR
-   efl_model_property_get(pong_signal, "nonexistent", &promise);
+   promise = efl_model_property_get(pong_signal, "nonexistent");
    check_efl_model_promise_error(promise, &EFL_MODEL_ERROR_NOT_FOUND);
 }
 END_TEST
@@ -97,7 +97,7 @@ END_TEST
 START_TEST(children_slice_get)
 {
    Eina_Promise *promise;
-   efl_model_children_slice_get(pong_signal, 1, 1, &promise);
+   promise = efl_model_children_slice_get(pong_signal, 1, 1);
    check_efl_model_promise_error(promise, &EFL_MODEL_ERROR_NOT_SUPPORTED);
 }
 END_TEST

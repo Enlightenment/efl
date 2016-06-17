@@ -69,7 +69,8 @@ START_TEST(property_get)
 
    // Write-only property returns error
    Eina_Promise *promise;
-   efl_model_property_get(fake_server_proxy, FAKE_SERVER_WRITEONLY_PROPERTY, &promise);
+   promise = efl_model_property_get(fake_server_proxy, FAKE_SERVER_WRITEONLY_PROPERTY);
+   (void)promise;
    //ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 
    _teardown();
@@ -160,7 +161,7 @@ START_TEST(child_del)
    // Tests that it is not possible to delete children
    Eina_Promise *promise;
    unsigned int expected_children_count = 0;
-   efl_model_children_count_get(fake_server_proxy, &promise);
+   promise = efl_model_children_count_get(fake_server_proxy);
    expected_children_count = efl_model_promise_then_u(promise);
    ck_assert_msg(expected_children_count, "There must be at least 1 child to test");
 
@@ -169,7 +170,7 @@ START_TEST(child_del)
    efl_model_child_del(fake_server_proxy, child);
 
    unsigned int actual_children_count = 0;
-   efl_model_children_count_get(fake_server_proxy, &promise);
+   promise = efl_model_children_count_get(fake_server_proxy);
    actual_children_count = efl_model_promise_then_u(promise);
 
    ck_assert_int_le(expected_children_count, actual_children_count);

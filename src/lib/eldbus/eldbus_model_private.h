@@ -26,13 +26,13 @@ struct _Eldbus_Property_Promise
 /* logging support */
 extern int eldbus_model_log_dom;
 
-#define ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(exp, promise, err)       \
+#define ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(exp, promise, err, v)    \
   do                                                                    \
     {                                                                   \
       if (EINA_UNLIKELY(!(exp)))                                        \
         {                                                               \
             eina_promise_owner_error_set(promise, err);                 \
-            return;                                                     \
+            return v;                                                   \
         }                                                               \
     }                                                                   \
   while(0)

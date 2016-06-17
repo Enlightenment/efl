@@ -836,12 +836,12 @@ _process_children_cb(void *data, void *values)
                   it_data->model = eo_ref(child);
                   it_data->user_data = lreq;
 
-                  efl_model_property_get(child, "path", &promises[0]);
-                  efl_model_property_get(child, "filename", &promises[1]);
-                  efl_model_property_get(child, "is_dir", &promises[2]);
-                  efl_model_property_get(child, "size", &promises[3]);
-                  efl_model_property_get(child, "mtime", &promises[4]);
-                  efl_model_property_get(child, "mime_type", &promises[5]);
+                  promises[0] = efl_model_property_get(child, "path");
+                  promises[1] = efl_model_property_get(child, "filename");
+                  promises[2] = efl_model_property_get(child, "is_dir");
+                  promises[3] = efl_model_property_get(child, "size");
+                  promises[4] = efl_model_property_get(child, "mtime");
+                  promises[5] = efl_model_property_get(child, "mime_type");
 
                   promise_all = eina_promise_all(eina_carray_iterator_new((void**)promises));
                   ++(lreq->item_total);
@@ -928,10 +928,10 @@ _populate(Evas_Object *obj,
 
    Eina_Promise *promises[4] = {NULL,};
    Eina_Promise *promise_all = NULL;
-   efl_model_property_get(model, "path", &promises[0]);
-   efl_model_children_slice_get(model, 0, 0, &promises[1]);
+   promises[0] = efl_model_property_get(model, "path");
+   promises[1] = efl_model_children_slice_get(model, 0, 0);
    if (selected)
-     efl_model_property_get(selected, "path", &promises[2]);
+     promises[2] = efl_model_property_get(selected, "path");
 
    promise_all = eina_promise_all(eina_carray_iterator_new((void**)&promises[0]));
    eina_promise_then(promise_all, _process_children_cb, _process_children_error_cb, lreq);
@@ -1415,7 +1415,7 @@ _on_text_activated_set_path_then(void *data, void *value EINA_UNUSED)
 
    if (!sd->model) return ;
 
-   efl_model_property_get(sd->model, "is_dir", &promise);
+   promise = efl_model_property_get(sd->model, "is_dir");
    eina_promise_then
      (promise, _text_activated_is_dir_then, _text_activated_is_dir_then_error, data);
 }
@@ -1736,12 +1736,12 @@ _resource_created(void *data, const Eo_Event *event)
    it_data->model = eo_ref(child);
    it_data->user_data = eo_ref(fs);
 
-   efl_model_property_get(child, "path", &promises[0]);
-   efl_model_property_get(child, "filename", &promises[1]);
-   efl_model_property_get(child, "is_dir", &promises[2]);
-   efl_model_property_get(child, "size", &promises[3]);
-   efl_model_property_get(child, "mtime", &promises[4]);
-   efl_model_property_get(child, "mime_type", &promises[5]);
+   promises[0] = efl_model_property_get(child, "path");
+   promises[1] = efl_model_property_get(child, "filename");
+   promises[2] = efl_model_property_get(child, "is_dir");
+   promises[3] = efl_model_property_get(child, "size");
+   promises[4] = efl_model_property_get(child, "mtime");
+   promises[5] = efl_model_property_get(child, "mime_type");
 
 
    promise_all = eina_promise_all(eina_carray_iterator_new((void**)promises));
@@ -2502,7 +2502,7 @@ _elm_fileselector_elm_interface_fileselector_selected_model_set(Eo *obj, Elm_Fil
           eina_promise_owner_error_set(promise_owner, ELM_FILESELECTOR_ERROR_INVALID_MODEL);
         return;
      }
-   efl_model_property_get(model, "is_dir", &promise);
+   promise = efl_model_property_get(model, "is_dir");
 
    eo_key_obj_set(obj, _selected_model_set_model_key, model);
    if (promise_owner)

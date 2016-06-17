@@ -65,14 +65,14 @@ START_TEST(property_get)
 {
    // Input only property returns error
    Eina_Promise *promise;
-   efl_model_property_get(method, ARGUMENT_A, &promise);
+   promise = efl_model_property_get(method, ARGUMENT_A);
    check_efl_model_promise_error(promise, NULL);
 
-   efl_model_property_get(method, ARGUMENT_RESULT, &promise);
+   promise = efl_model_property_get(method, ARGUMENT_RESULT);
    efl_model_promise_then(promise);
 
    // Nonexistent property returns error
-   efl_model_property_get(method, "nonexistent", &promise);
+   promise = efl_model_property_get(method, "nonexistent");
    check_efl_model_promise_error(promise, NULL);
 }
 END_TEST
@@ -102,7 +102,7 @@ END_TEST
 START_TEST(children_slice_get)
 {
    Eina_Promise *promise;
-   efl_model_children_slice_get(method, 1, 1, &promise);
+   promise = efl_model_children_slice_get(method, 1, 1);
    check_efl_model_promise_error(promise, &EFL_MODEL_ERROR_NOT_SUPPORTED);
 }
 END_TEST

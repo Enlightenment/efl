@@ -288,18 +288,20 @@ _eio_model_efl_model_properties_get(Eo *obj EINA_UNUSED, Eio_Model_Data *_pd)
 /**
  * Property Get
  */
-static void
-_eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, const char *property, Eina_Promise_Owner *promise)
+static Eina_Promise*
+_eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, const char *property)
 {
    _Eio_Property_Name property_name;
    const char* value = NULL;
-
-   EINA_SAFETY_ON_NULL_RETURN(priv);
+   Eina_Promise_Owner *promise = eina_promise_add();
+   Eina_Promise *rpromise = eina_promise_owner_promise_get(promise);
+   
+   EINA_SAFETY_ON_NULL_RETURN_VAL(priv, rpromise);
 
    if (property == NULL)
      {
         eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
-        return;
+        return rpromise;
      }
 
    if(strcmp(_eio_model_prop_names[EIO_MODEL_PROP_FILENAME], property) == 0)
@@ -321,7 +323,7 @@ _eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, con
         if (value == NULL)
           {
              eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
-             return;
+             return rpromise;
           }
         property_name = EIO_MODEL_PROP_MIME_TYPE;
      }
@@ -336,7 +338,7 @@ _eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, con
    else
      {
         eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
-        return;
+        return rpromise;
      }
 
    switch(property_name)
@@ -362,6 +364,7 @@ _eio_model_efl_model_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, con
        }
        break;
      }
+   return rpromise;
 }
 
 /**
@@ -417,12 +420,15 @@ _eio_model_efl_model_property_set(Eo *obj EINA_UNUSED,
 /**
  * Children Count Get
  */
-static void
-_eio_model_efl_model_children_count_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eina_Promise_Owner *promise)
+static Eina_Promise*
+_eio_model_efl_model_children_count_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv)
 {
+   Eina_Promise_Owner *promise = eina_promise_add();
+   Eina_Promise* rpromise = eina_promise_owner_promise_get(promise);
    unsigned int *c = calloc(sizeof(unsigned int), 1);
    *c = eina_list_count(priv->children_list);
    eina_promise_owner_value_set(promise, c, free);
+   return rpromise;
 }
 
 static void
@@ -596,10 +602,12 @@ _eio_model_efl_model_child_del(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eo *ch
 /**
  * Children Slice Get
  */
-static void
+static Eina_Promise*
 _eio_model_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv,
-                                             unsigned start, unsigned count, Eina_Promise_Owner *promise)
+                                             unsigned int start, unsigned int count)
 {
+   Eina_Promise_Owner *promise = eina_promise_add();
+   Eina_Promise* rpromise = eina_promise_owner_promise_get(promise);
    /**
     * children must be already loaded otherwise we do nothing
     * and parameter is set to NULL.
@@ -607,7 +615,7 @@ _eio_model_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data *pri
    if (!priv->path)
      {
         eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_INIT_FAILED);
-        return;
+        return rpromise;
      }
 
    if (!(priv->is_listed))
@@ -627,11 +635,12 @@ _eio_model_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data *pri
                              _eio_main_children_load_cb, _eio_done_children_load_cb,
                              _eio_error_children_load_cb, priv);
          }
-       return;
+       return rpromise;
      }
 
    Eina_Accessor* accessor = efl_model_list_slice(priv->children_list, start, count);
    eina_promise_owner_value_set(promise, accessor, (Eina_Promise_Free_Cb)&eina_accessor_free);
+   return rpromise;
 }
 
 

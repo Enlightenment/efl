@@ -114,7 +114,7 @@ _efl_model_properties_change_cb(void *data, const Eo_Event *event)
         p = calloc(1, sizeof(Elm_View_Form_Promise));
         p->property_name = eina_stringshare_add(prop);
         p->priv = priv;
-        efl_model_property_get(priv->model_obj, prop, &promise);
+        promise = efl_model_property_get(priv->model_obj, prop);
         eina_promise_then(promise, &_efl_model_promise_then_cb,
                           &_efl_model_promise_error_cb, p);
      }
@@ -134,7 +134,7 @@ _update_model_properties(Elm_View_Form_Data *priv)
 
    EINA_LIST_FOREACH(priv->widgets, l, w)
      {
-        efl_model_property_get(priv->model_obj, w->widget_propname, &promise);
+        promise = efl_model_property_get(priv->model_obj, w->widget_propname);
         eina_promise_then(promise, &_efl_promise_then_widget, &_efl_promise_error_widget, w);
      }
 }
@@ -243,7 +243,7 @@ _elm_view_widget_add(Elm_View_Form_Data *priv, const char *propname, Evas_Object
 
    if (priv->model_obj != NULL)
      {
-         efl_model_property_get(priv->model_obj, w->widget_propname, &promise);
+         promise = efl_model_property_get(priv->model_obj, w->widget_propname);
          eina_promise_then(promise, &_efl_promise_then_widget,
                            &_efl_promise_error_widget, priv);
      }

@@ -152,7 +152,7 @@ _item_get_value(View_List_ItemData *idata, const char *part)
          vitem->part = eina_stringshare_add(part);
          vitem->item = idata->item;
          idata->values = eina_list_append(idata->values, vitem);
-         efl_model_property_get(idata->model, prop, &promise);
+         promise = efl_model_property_get(idata->model, prop);
          eina_promise_then(promise, &_property_get_cb,
                            &_property_get_error_cb, vitem);
      }
@@ -339,7 +339,7 @@ _efl_model_load_children(View_List_ItemData *pdata)
 {
    Eina_Promise *promise;
 
-   efl_model_children_slice_get(pdata->model, 0, 0, &promise);
+   promise = efl_model_children_slice_get(pdata->model, 0, 0);
    eina_promise_then(promise, &_efl_model_load_children_then, NULL, pdata);
 }
 

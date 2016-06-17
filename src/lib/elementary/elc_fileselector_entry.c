@@ -92,7 +92,7 @@ _FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
 
    if (!model) return EINA_TRUE;
 
-   efl_model_property_get(model, "path", &promise);
+   promise = efl_model_property_get(model, "path");
    eina_promise_then(promise, _file_chosen_path_then, NULL, data);
 
    // EVENTS: should not call legacy
@@ -509,7 +509,7 @@ _elm_fileselector_entry_elm_interface_fileselector_model_set(Eo *obj EINA_UNUSED
    Eina_Promise *p = NULL;
    elm_interface_fileselector_model_set(sd->button, model);
 
-   efl_model_property_get(model, "path", &p);
+   p = efl_model_property_get(model, "path");
    eina_promise_then(p, _fs_entry_model_path_get_then, NULL, sd);
 }
 

@@ -109,7 +109,7 @@ efl_model_nth_child_get(Efl_Model *efl_model, unsigned int n)
 {
    Eina_Accessor *accessor;
    Eina_Promise *promise;
-   efl_model_children_slice_get(efl_model, n, 1, &promise);
+   promise = efl_model_children_slice_get(efl_model, n, 1);
    eina_promise_ref(promise);
    ck_assert_ptr_ne(NULL, promise);
 
@@ -150,7 +150,7 @@ void
 check_property(Eo *object, const char *property_name, const char *expected_value)
 {
    Eina_Promise *promise;
-   efl_model_property_get(object, property_name, &promise);
+   promise = efl_model_property_get(object, property_name);
    ck_assert_ptr_ne(NULL, promise);
    Eina_Value  *value = efl_model_promise_then(promise);
    char *actual_value;
@@ -186,7 +186,7 @@ check_efl_model_children_count_eq(Efl_Model *efl_model, unsigned int expected_ch
 {
    unsigned int actual_children_count;
    Eina_Promise *promise;
-   efl_model_children_count_get(efl_model, &promise);
+   promise = efl_model_children_count_get(efl_model);
    actual_children_count = efl_model_promise_then_u(promise);
    ck_assert_int_eq(expected_children_count, actual_children_count);
 }
@@ -196,7 +196,7 @@ check_efl_model_children_count_ge(Efl_Model *efl_model, unsigned int minimum_chi
 {
    unsigned int actual_children_count;
    Eina_Promise *promise;
-   efl_model_children_count_get(efl_model, &promise);
+   promise = efl_model_children_count_get(efl_model);
    actual_children_count = efl_model_promise_then_u(promise);
    ck_assert_int_ge(actual_children_count, minimum_children_count);
 }
@@ -207,12 +207,12 @@ check_efl_model_children_slice_get(Efl_Model *efl_model)
    unsigned count;
    Eina_Promise *promise;
    Eina_Accessor *accessor;
-   efl_model_children_count_get(efl_model, &promise);
+   promise = efl_model_children_count_get(efl_model);
    count = efl_model_promise_then_u(promise);
    ck_assert_msg(count, "There must be at least 1 child to test");
 
    // Test slice all
-   efl_model_children_slice_get(efl_model, 0, 0, &promise);
+   promise = efl_model_children_slice_get(efl_model, 0, 0);
    eina_promise_ref(promise);
    accessor = efl_model_promise_then(promise);
    ck_assert_ptr_ne(NULL, accessor);
@@ -235,7 +235,7 @@ check_efl_model_children_slice_get(Efl_Model *efl_model)
 
    // Test slice first child
    Eo *child = NULL;
-   efl_model_children_slice_get(efl_model, 1, 1, &promise);
+   promise = efl_model_children_slice_get(efl_model, 1, 1);
    eina_promise_ref(promise);
    accessor = efl_model_promise_then(promise);
    ck_assert_ptr_ne(NULL, accessor);
@@ -248,7 +248,7 @@ check_efl_model_children_slice_get(Efl_Model *efl_model)
    eina_promise_unref(promise);
 
    // Test slice last child
-   efl_model_children_slice_get(efl_model, count, 1, &promise);
+   promise = efl_model_children_slice_get(efl_model, count, 1);
    eina_promise_ref(promise);
    accessor = efl_model_promise_then(promise);
    ck_assert_ptr_ne(NULL, accessor);
@@ -261,7 +261,7 @@ check_efl_model_children_slice_get(Efl_Model *efl_model)
    eina_promise_unref(promise);
 
    // Test slice nonexistent element
-   efl_model_children_slice_get(efl_model, count + 1, 1, &promise);
+   promise = efl_model_children_slice_get(efl_model, count + 1, 1);
    eina_promise_ref(promise);
    ck_assert_ptr_ne(NULL, promise);
    accessor = efl_model_promise_then(promise);
@@ -300,7 +300,7 @@ START_TEST(proxy)
 
    Eina_Accessor *accessor = NULL;
    Eina_Promise *promise = NULL;
-   efl_model_children_slice_get(root, 0, 0, &promise);
+   promise = efl_model_children_slice_get(root, 0, 0);
    eina_promise_ref(promise);
    ck_assert_ptr_ne(NULL, promise);
 
@@ -335,7 +335,7 @@ eldbus_model_proxy_from_object_get(Eldbus_Model_Object *object, const char *inte
 {
    Eina_Accessor *accessor;
    Eina_Promise *promise = NULL;
-   efl_model_children_slice_get(object, 0, 0, &promise);
+   promise = efl_model_children_slice_get(object, 0, 0);
    ck_assert_ptr_ne(NULL, promise);
    eina_promise_ref(promise);
    accessor = efl_model_promise_then(promise);
@@ -363,7 +363,7 @@ _eldbus_model_arguments_from_proxy_get(Eldbus_Model_Proxy *proxy, const char *me
 {
    Eina_Accessor *accessor;
    Eina_Promise *promise = NULL;
-   efl_model_children_slice_get(proxy, 0, 0, &promise);
+   promise = efl_model_children_slice_get(proxy, 0, 0);
    ck_assert_ptr_ne(NULL, promise);
    eina_promise_ref(promise);
    accessor = efl_model_promise_then(promise);
@@ -406,7 +406,7 @@ check_efl_model_property_int_eq(Efl_Model *efl_model, const char *property, int 
 {
    Eina_Value property_value;
    Eina_Promise *promise;
-   efl_model_property_get(efl_model, property, &promise);
+   promise = efl_model_property_get(efl_model, property);
    ck_assert_ptr_ne(NULL, promise);
 
    eina_promise_then(promise, &_promise_then_cp, &_error_then_cb, &property_value);

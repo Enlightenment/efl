@@ -97,7 +97,7 @@ _selection_done(void *data, const Eo_Event *event)
         if (sd->fsd.model)
           eo_unref(sd->fsd.model);
         sd->fsd.model = eo_ref(model);
-        efl_model_property_get(model, "path", &promise);
+        promise = efl_model_property_get(model, "path");
         eina_promise_then(promise, _replace_path_then, _replace_path_then_error, sd);
      }
 
@@ -357,7 +357,7 @@ _elm_fileselector_button_elm_interface_fileselector_model_set(Eo *obj EINA_UNUSE
      {
         Eina_Promise *promise = NULL;
         sd->fsd.model = eo_ref(model);
-        efl_model_property_get(model, "path", &promise);
+        promise = efl_model_property_get(model, "path");
         eina_promise_then(promise, _replace_path_then, _replace_path_then_error, sd);
      }
    else

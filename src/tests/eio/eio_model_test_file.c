@@ -121,23 +121,23 @@ START_TEST(eio_model_test_test_file)
 
    Eina_Promise *promise;
 
-   efl_model_property_get(filemodel, "filename", &promise);
+   promise = efl_model_property_get(filemodel, "filename");
    eina_promise_then(promise, &promise_then_value, &error_promise_then, NULL);
    ecore_main_loop_begin();
 
-   efl_model_property_get(filemodel, "size", &promise);
+   promise = efl_model_property_get(filemodel, "size");
    eina_promise_then(promise, &promise_then_value, &error_promise_then, NULL);
    ecore_main_loop_begin();
 
-   efl_model_property_get(filemodel, "mtime", &promise);
+   promise = efl_model_property_get(filemodel, "mtime");
    eina_promise_then(promise, &promise_then_value, &error_promise_then, NULL);
    ecore_main_loop_begin();
 
-   efl_model_children_slice_get(filemodel, 0, 0, &promise);
+   promise = efl_model_children_slice_get(filemodel, 0, 0);
    eina_promise_then(promise, &promise_then_accessor, &error_promise_then, NULL);
    ecore_main_loop_begin();
 
-   efl_model_children_count_get(filemodel, &promise);
+   promise = efl_model_children_count_get(filemodel);
    eina_promise_then(promise, &promise_then_count, &error_promise_then, NULL);
    ecore_main_loop_begin();
 

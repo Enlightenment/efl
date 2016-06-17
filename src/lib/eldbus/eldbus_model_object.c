@@ -120,38 +120,39 @@ _eldbus_model_object_efl_model_property_set(Eo *obj EINA_UNUSED,
                                          const Eina_Value *value EINA_UNUSED,
                                          Eina_Promise_Owner *promise)
 {
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET((strcmp(property, UNIQUE_NAME_PROPERTY) == 0), promise, EFL_MODEL_ERROR_NOT_FOUND);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET((strcmp(property, UNIQUE_NAME_PROPERTY) == 0), promise, EFL_MODEL_ERROR_NOT_FOUND, );
    eina_promise_owner_error_set(promise, EFL_MODEL_ERROR_READ_ONLY);
 }
 
-static void
+static Eina_Promise*
 _eldbus_model_object_efl_model_property_get(Eo *obj EINA_UNUSED,
                                          Eldbus_Model_Object_Data *pd,
-                                         const char *property,
-                                         Eina_Promise_Owner *promise)
+                                         const char *property)
 {
-   EINA_SAFETY_ON_NULL_RETURN(promise);
+   Eina_Promise_Owner *promise = eina_promise_add();
+   Eina_Promise *rpromise = eina_promise_owner_promise_get(promise);
 
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(property, promise, EFL_MODEL_ERROR_INCORRECT_VALUE);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(property, promise, EFL_MODEL_ERROR_INCORRECT_VALUE, rpromise);
    DBG("(%p): property=%s", obj, property);
 
    if (!pd->connection)
      _eldbus_model_object_connect(pd);
 
-   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET((strcmp(property, UNIQUE_NAME_PROPERTY) == 0), promise, EFL_MODEL_ERROR_NOT_FOUND);
+   ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET((strcmp(property, UNIQUE_NAME_PROPERTY) == 0), promise, EFL_MODEL_ERROR_NOT_FOUND, rpromise);
 
    if (pd->unique_name == NULL)
      {
         const char *unique_name;
 
         unique_name = eldbus_connection_unique_name_get(pd->connection);
-        ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(unique_name, promise, EFL_MODEL_ERROR_NOT_FOUND);
+        ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(unique_name, promise, EFL_MODEL_ERROR_NOT_FOUND, rpromise);
         pd->unique_name = strdup(unique_name);
      }
 
    Eina_Value* v = eina_value_new(EINA_VALUE_TYPE_STRING);
    eina_value_set(v, pd->unique_name);
    eina_promise_owner_value_set(promise, v, (Eina_Promise_Free_Cb)&eina_value_free);
+   return eina_promise_owner_promise_get(promise);
 }
 
 static Eo *
@@ -167,14 +168,15 @@ _eldbus_model_object_efl_model_child_del(Eo *obj EINA_UNUSED,
 {
 }
 
-static void
+static Eina_Promise*
 _eldbus_model_object_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
                                                        Eldbus_Model_Object_Data *pd,
                                                        unsigned start,
-                                                       unsigned count,
-                                                       Eina_Promise_Owner *promise)
+                                                       unsigned count)
 {
    _Eldbus_Children_Slice_Promise* p;
+   Eina_Promise_Owner *promise = eina_promise_add();
+   Eina_Promise *rpromise = eina_promise_owner_promise_get(promise);
 
    if (!pd->connection)
      _eldbus_model_object_connect(pd);
@@ -183,11 +185,11 @@ _eldbus_model_object_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
      {
         Eina_Accessor* ac = efl_model_list_slice(pd->children_list, start, count);
         eina_promise_owner_value_set(promise, ac, (Eina_Promise_Free_Cb)&eina_accessor_free);
-        return;
+        return eina_promise_owner_promise_get(promise);
      }
 
    p = calloc(1, sizeof(struct _Eldbus_Children_Slice_Promise));
-   EINA_SAFETY_ON_NULL_RETURN(p);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(p, rpromise);
    p->promise = promise;
    p->start = start;
    p->count = count;
@@ -195,13 +197,14 @@ _eldbus_model_object_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
    pd->children_promises = eina_list_prepend(pd->children_promises, p);
    if (pd->pending_list == NULL)
      _eldbus_model_object_introspect(pd, pd->bus, pd->path);
+   return rpromise;
 }
 
-static void
+static Eina_Promise*
 _eldbus_model_object_efl_model_children_count_get(Eo *obj EINA_UNUSED,
-                                               Eldbus_Model_Object_Data *pd,
-                                               Eina_Promise_Owner *promise)
+                                               Eldbus_Model_Object_Data *pd)
 {
+   Eina_Promise_Owner *promise = eina_promise_add();
    if (!pd->connection)
      _eldbus_model_object_connect(pd);
 
@@ -210,12 +213,13 @@ _eldbus_model_object_efl_model_children_count_get(Eo *obj EINA_UNUSED,
         unsigned int *c = calloc(sizeof(unsigned int), 1);
         *c = eina_list_count(pd->children_list);
         eina_promise_owner_value_set(promise, c, free);
-        return;
+        return eina_promise_owner_promise_get(promise);
      }
 
    pd->count_promises = eina_list_prepend(pd->count_promises, promise);
    if (pd->pending_list == NULL)
      _eldbus_model_object_introspect(pd, pd->bus, pd->path);
+   return eina_promise_owner_promise_get(promise);
 }
 
 static const char *

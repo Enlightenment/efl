@@ -44,12 +44,12 @@ END_TEST
 START_TEST(property_get)
 {
    Eina_Promise *promise;
-   efl_model_property_get(connection, UNIQUE_NAME_PROPERTY, &promise);
+   promise = efl_model_property_get(connection, UNIQUE_NAME_PROPERTY);
    efl_model_promise_then(promise);
 
    // Nonexistent property must raise ERROR
    promise = NULL;
-   efl_model_property_get(connection, "nonexistent", &promise);
+   promise = efl_model_property_get(connection, "nonexistent");
    check_efl_model_promise_error(promise, &EFL_MODEL_ERROR_NOT_FOUND);
 }
 END_TEST
@@ -105,7 +105,7 @@ START_TEST(child_del)
 {
    unsigned int expected_children_count = 0;
    Eina_Promise *promise;
-   efl_model_children_count_get(connection, &promise);
+   promise = efl_model_children_count_get(connection);
    ck_assert_ptr_ne(NULL, promise);
    expected_children_count = efl_model_promise_then_u(promise);
 
@@ -113,7 +113,7 @@ START_TEST(child_del)
    efl_model_child_del(connection, child);
 
    unsigned int actual_children_count = 0;
-   efl_model_children_count_get(connection, &promise);
+   promise = efl_model_children_count_get(connection);
    actual_children_count = efl_model_promise_then_u(promise);
 
    ck_assert_int_le(expected_children_count, actual_children_count);

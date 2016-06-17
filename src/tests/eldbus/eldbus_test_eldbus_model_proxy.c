@@ -45,7 +45,7 @@ START_TEST(property_get)
 {
    // Nonexistent property must return ERROR
    Eina_Promise *promise;
-   efl_model_property_get(dbus_proxy, "nonexistent", &promise);
+   promise = efl_model_property_get(dbus_proxy, "nonexistent");
    check_efl_model_promise_error(promise, &EFL_MODEL_ERROR_NOT_FOUND);
 }
 END_TEST
@@ -95,7 +95,7 @@ START_TEST(child_del)
 {
    unsigned int expected_children_count = 0;
    Eina_Promise *promise;
-   efl_model_children_count_get(dbus_proxy, &promise);
+   promise = efl_model_children_count_get(dbus_proxy);
    ck_assert_ptr_ne(NULL, promise);
    expected_children_count = efl_model_promise_then_u(promise);
 
@@ -103,7 +103,7 @@ START_TEST(child_del)
    efl_model_child_del(dbus_proxy, child);
 
    unsigned int actual_children_count = 0;
-   efl_model_children_count_get(dbus_proxy, &promise);
+   promise = efl_model_children_count_get(dbus_proxy);
    actual_children_count = efl_model_promise_then_u(promise);
 
    ck_assert_int_le(expected_children_count, actual_children_count);

@@ -62,8 +62,8 @@ interface Efl.Model ()
            ]]
            params {
                @in property: string; [[Property name]]
-               @inout value: promise<generic_value>; [[Promise of the value that was got]]
            }
+           return: promise<generic_value>; [[Promise of the value that was got]]
         }
         children_slice_get {
                [[Get children slice OR full range.
@@ -96,8 +96,8 @@ interface Efl.Model ()
                                count are 0 slice is ignored.]]
                 @in count: uint; [[Range size. If count and start are 0 slice is
                                ignored.]]
-                @inout promise: promise<accessor<list<Eo.Base> > >; [[Promise of the children]]
             }
+            return: promise<accessor<Eo.Base> >; [[Promise of the children]]
          }
          children_count_get {
                 [[Get children count.
@@ -112,9 +112,7 @@ interface Efl.Model ()
 
                   @since 1.14
                 ]]
-            params {
-                @inout promise: promise<uint>;
-            }
+            return: promise<uint>;
          }
          child_add {
             [[Add a new child.
