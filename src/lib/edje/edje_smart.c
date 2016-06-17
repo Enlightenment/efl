@@ -31,7 +31,7 @@ _edje_object_eo_base_constructor(Eo *obj, Edje *ed)
    Evas *e;
    void *tmp;
 
-   ed->base = eo_data_ref(obj, EFL_CANVAS_OBJECT_INTERNAL_SMART_CLIPPED_CLASS);
+   ed->base = eo_data_ref(obj, EFL_CANVAS_GROUP_CLIPPED_CLASS);
    ed->duration_scale = 1.0;
 
    obj = eo_constructor(eo_super(obj, MY_CLASS));
@@ -109,13 +109,13 @@ _edje_size_class_free(void *data)
 
 /* Private Routines */
 EOLIAN static void
-_edje_object_evas_object_smart_smart_add(Eo *obj, Edje *ed)
+_edje_object_efl_canvas_group_group_add(Eo *obj, Edje *ed)
 {
    Evas *tev = evas_object_evas_get(obj);
 
    evas_event_freeze(tev);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
 
    ed->is_rtl = EINA_FALSE;
    ed->have_objects = EINA_TRUE;
@@ -147,7 +147,7 @@ _edje_object_evas_object_smart_smart_add(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_evas_object_smart_smart_del(Eo *obj, Edje *ed)
+_edje_object_efl_canvas_group_group_del(Eo *obj, Edje *ed)
 {
    _edje_block_violate(ed);
    ed->delete_me = 1;
@@ -170,7 +170,7 @@ _edje_object_evas_object_smart_smart_del(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_evas_object_smart_smart_move(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord x, Evas_Coord y)
+_edje_object_efl_canvas_group_group_move(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord x, Evas_Coord y)
 {
    unsigned int i;
 
@@ -260,7 +260,7 @@ _edje_limit_get(Edje *ed, Edje_Limit **limits, unsigned int length, Evas_Coord s
 }
 
 EOLIAN static void
-_edje_object_evas_object_smart_smart_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord w, Evas_Coord h)
+_edje_object_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord w, Evas_Coord h)
 {
    if ((w == ed->w) && (h == ed->h)) return;
    if (ed->collection)
@@ -291,12 +291,12 @@ _edje_object_evas_object_smart_smart_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_
 }
 
 EOLIAN static void
-_edje_object_evas_object_smart_smart_show(Eo *obj, Edje *ed)
+_edje_object_efl_canvas_group_group_show(Eo *obj, Edje *ed)
 {
    Eina_List *l;
    Edje *edg;
 
-   evas_obj_smart_show(eo_super(obj, MY_CLASS));
+   efl_canvas_group_show(eo_super(obj, MY_CLASS));
    if (evas_object_visible_get(obj)) return;
    if (_edje_lua_script_only(ed))
      {
@@ -319,12 +319,12 @@ _edje_object_evas_object_smart_smart_show(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_evas_object_smart_smart_hide(Eo *obj, Edje *ed)
+_edje_object_efl_canvas_group_group_hide(Eo *obj, Edje *ed)
 {
    Eina_List *l;
    Edje *edg;
 
-   evas_obj_smart_hide(eo_super(obj, MY_CLASS));
+   efl_canvas_group_hide(eo_super(obj, MY_CLASS));
    if (!evas_object_visible_get(obj)) return;
    if (_edje_lua_script_only(ed))
      {
@@ -337,20 +337,20 @@ _edje_object_evas_object_smart_smart_hide(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_evas_object_smart_smart_no_render_set(Eo *obj, Edje *ed, Eina_Bool hide)
+_edje_object_efl_canvas_group_group_no_render_set(Eo *obj, Edje *ed, Eina_Bool hide)
 {
    Eina_List *l;
    Edje *edg;
 
-   evas_obj_smart_no_render_set(eo_super(obj, MY_CLASS), hide);
+   efl_canvas_group_no_render_set(eo_super(obj, MY_CLASS), hide);
    if (evas_obj_no_render_get(obj) == hide) return;
 
    EINA_LIST_FOREACH(ed->groups, l, edg)
-     if (edg != ed) evas_obj_smart_no_render_set(edg->obj, hide);
+     if (edg != ed) efl_canvas_group_no_render_set(edg->obj, hide);
 }
 
 EOLIAN static void
-_edje_object_evas_object_smart_smart_calculate(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Edje *ed)
 {
    _edje_recalc_do(ed);
 }
@@ -474,7 +474,7 @@ _edje_object_evas_object_paragraph_direction_set(Eo *obj, Edje *ed, Evas_BiDi_Di
    /* Make it dirty to recalculate edje.
       It needs to move text objects according to new paragraph direction */
    ed->dirty = EINA_TRUE;
-   evas_obj_smart_need_recalculate_set(obj, 1);
+   efl_canvas_group_need_recalculate_set(obj, 1);
 }
 
 #include "edje_object.eo.c"

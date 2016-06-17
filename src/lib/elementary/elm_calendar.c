@@ -1343,7 +1343,7 @@ _elm_calendar_elm_widget_event(Eo *obj, Elm_Calendar_Data *sd EINA_UNUSED, Evas_
 }
 
 EOLIAN static void
-_elm_calendar_evas_object_smart_smart_calculate(Eo *obj, Elm_Calendar_Data *_pd EINA_UNUSED)
+_elm_calendar_efl_canvas_group_group_calculate(Eo *obj, Elm_Calendar_Data *_pd EINA_UNUSED)
 {
    elm_layout_freeze(obj);
 
@@ -1370,14 +1370,14 @@ _style_changed(void *data,
 }
 
 EOLIAN static void
-_elm_calendar_evas_object_smart_smart_add(Eo *obj, Elm_Calendar_Data *priv)
+_elm_calendar_efl_canvas_group_group_add(Eo *obj, Elm_Calendar_Data *priv)
 {
    time_t current_time;
    int t;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->first_interval = 0.85;
@@ -1437,7 +1437,7 @@ _elm_calendar_evas_object_smart_smart_add(Eo *obj, Elm_Calendar_Data *priv)
 }
 
 EOLIAN static void
-_elm_calendar_evas_object_smart_smart_del(Eo *obj, Elm_Calendar_Data *sd)
+_elm_calendar_efl_canvas_group_group_del(Eo *obj, Elm_Calendar_Data *sd)
 {
    int i;
    Elm_Calendar_Mark *mark;
@@ -1457,7 +1457,7 @@ _elm_calendar_evas_object_smart_smart_del(Eo *obj, Elm_Calendar_Data *sd)
    for (i = 0; i < ELM_DAY_LAST; i++)
      eina_stringshare_del(sd->weekdays[i]);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_calendar_smart_focus_next_enable = EINA_FALSE;

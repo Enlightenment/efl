@@ -72,9 +72,9 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Elm.Interface.Atspi.Selection)
       class.constructor;
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Evas.Object.Smart.smart_show;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
+      Efl.Canvas.Group.group_show;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
       Elm.Widget.widget_parent;
       Elm.Widget.theme_apply;
       Elm.Widget.translate;

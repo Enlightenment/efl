@@ -1583,7 +1583,7 @@ void evas_object_smart_member_lower(Evas_Object *member);
 void evas_object_smart_member_stack_above(Evas_Object *member, Evas_Object *other);
 void evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *other);
 const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
-void _evas_object_smart_smart_members_all_del(Evas_Object *obj);
+void _efl_canvas_group_group_members_all_del(Evas_Object *obj);
 void evas_call_smarts_calculate(Evas *e);
 void evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 void evas_object_smart_need_bounding_box_update(Evas_Object *eo_obj, Evas_Smart_Data *o, Evas_Object_Protected_Data *obj);

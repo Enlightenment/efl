@@ -71,11 +71,11 @@ _on_state_changed(void *data,
 }
 
 EOLIAN static void
-_efl_ui_nstate_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Nstate_Data *pd)
+_efl_ui_nstate_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Nstate_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    pd->state = 0;
@@ -90,9 +90,9 @@ _efl_ui_nstate_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Nstate_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_nstate_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
+_efl_ui_nstate_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
 {
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static int

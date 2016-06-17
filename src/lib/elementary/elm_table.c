@@ -163,7 +163,7 @@ _elm_table_elm_widget_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, Evas_Object
 }
 
 EOLIAN static void
-_elm_table_evas_object_smart_smart_add(Eo *obj, void *_pd EINA_UNUSED)
+_elm_table_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
 {
    Evas_Object *table;
 
@@ -175,7 +175,7 @@ _elm_table_evas_object_smart_smart_add(Eo *obj, void *_pd EINA_UNUSED)
    evas_object_event_callback_add
      (table, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_FALSE);
@@ -184,7 +184,7 @@ _elm_table_evas_object_smart_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_table_evas_object_smart_smart_del(Eo *obj, void *_pd EINA_UNUSED)
+_elm_table_efl_canvas_group_group_del(Eo *obj, void *_pd EINA_UNUSED)
 {
    Eina_List *l;
    Evas_Object *child;
@@ -207,7 +207,7 @@ _elm_table_evas_object_smart_smart_del(Eo *obj, void *_pd EINA_UNUSED)
           }
      }
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -407,7 +407,7 @@ _elm_table_class_constructor(Eo_Class *klass)
 }
 
 EOLIAN void
-_elm_table_evas_object_smart_smart_calculate(Eo *obj, void *pd EINA_UNUSED)
+_elm_table_efl_canvas_group_group_calculate(Eo *obj, void *pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

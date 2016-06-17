@@ -248,11 +248,11 @@ _elm_video_check(Evas_Object *video)
 }
 
 EOLIAN static void
-_elm_video_evas_object_smart_smart_add(Eo *obj, Elm_Video_Data *priv)
+_elm_video_efl_canvas_group_group_add(Eo *obj, Elm_Video_Data *priv)
 {
    _elm_emotion_init();
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
@@ -274,12 +274,12 @@ _elm_video_evas_object_smart_smart_add(Eo *obj, Elm_Video_Data *priv)
 }
 
 EOLIAN static void
-_elm_video_evas_object_smart_smart_del(Eo *obj, Elm_Video_Data *sd)
+_elm_video_efl_canvas_group_group_del(Eo *obj, Elm_Video_Data *sd)
 {
    ecore_timer_del(sd->timer);
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

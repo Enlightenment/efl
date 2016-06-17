@@ -1,7 +1,7 @@
 class Elm.Web.None (Elm.Web)
 {
    implements {
-      Evas.Object.Smart.smart_add;
+      Efl.Canvas.Group.group_add;
       Elm.Web.tab_propagate.get;
       Elm.Web.tab_propagate.set;
       Elm.Web.webkit_view.get;

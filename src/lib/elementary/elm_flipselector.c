@@ -604,9 +604,9 @@ _signal_val_change_stop(void *data,
 }
 
 EOLIAN static void
-_elm_flipselector_evas_object_smart_smart_add(Eo *obj, Elm_Flipselector_Data *priv)
+_elm_flipselector_efl_canvas_group_group_add(Eo *obj, Elm_Flipselector_Data *priv)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -631,7 +631,7 @@ _elm_flipselector_evas_object_smart_smart_add(Eo *obj, Elm_Flipselector_Data *pr
 }
 
 EOLIAN static void
-_elm_flipselector_evas_object_smart_smart_del(Eo *obj, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_canvas_group_group_del(Eo *obj, Elm_Flipselector_Data *sd)
 {
    sd->deleting = EINA_TRUE;
 
@@ -642,7 +642,7 @@ _elm_flipselector_evas_object_smart_smart_del(Eo *obj, Elm_Flipselector_Data *sd
 
    ecore_timer_del(sd->spin);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

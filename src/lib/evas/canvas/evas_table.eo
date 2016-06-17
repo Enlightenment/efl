@@ -9,7 +9,7 @@ enum Evas.Object_Table.Homogeneous_Mode {
      item = 2
 }
 
-class Evas.Table (Efl.Canvas.Object.Internal.Smart.Clipped)
+class Evas.Table (Efl.Canvas.Group.Clipped)
 {
    legacy_prefix: evas_object_table;
    eo_prefix: evas_obj_table;
@@ -216,9 +216,9 @@ class Evas.Table (Efl.Canvas.Object.Internal.Smart.Clipped)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
-      Evas.Object.Smart.smart_calculate;
-      Evas.Object.Smart.smart_resize;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Canvas.Group.group_resize;
    }
 }

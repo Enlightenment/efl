@@ -7,7 +7,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_rectangle.eo \
 	lib/evas/canvas/efl_canvas_text.eo \
 	lib/evas/canvas/efl_canvas_text_cursor.eo \
-	lib/evas/canvas/evas_object_smart.eo \
+	lib/evas/canvas/efl_canvas_group.eo \
 	lib/evas/canvas/evas_common_interface.eo \
 	lib/evas/canvas/evas_canvas.eo \
 	lib/evas/canvas/efl_canvas_image_internal.eo \
@@ -42,7 +42,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_surface_x11.eo \
 	lib/evas/canvas/efl_canvas_surface_wayland.eo \
 	lib/evas/canvas/efl_canvas_filter_internal.eo \
-	lib/evas/canvas/efl_canvas_object_internal_smart_clipped.eo \
+	lib/evas/canvas/efl_canvas_group_clipped.eo \
 	lib/evas/canvas/efl_event_input.eo \
 	lib/evas/canvas/efl_event_key.eo \
 	lib/evas/canvas/efl_event_pointer.eo \

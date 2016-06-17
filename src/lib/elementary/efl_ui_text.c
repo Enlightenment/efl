@@ -3717,13 +3717,13 @@ _end_handler_mouse_move_cb(void *data,
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Text_Data *priv)
+_efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
 {
    Eo *text_obj;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->entry_edje = wd->resize_obj;
@@ -3926,7 +3926,7 @@ _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Item_Provider *ip;
@@ -3995,13 +3995,13 @@ _efl_ui_text_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Text_Data *sd)
         evas_object_del(sd->end_handler);
      }
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_smart_move(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord x, Evas_Coord y)
+_efl_ui_text_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
 
    evas_object_move(sd->hit_rect, x, y);
 
@@ -4012,9 +4012,9 @@ _efl_ui_text_evas_object_smart_smart_move(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Co
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_smart_resize(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord w, Evas_Coord h)
+_efl_ui_text_efl_canvas_group_group_resize(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
 
    evas_object_resize(sd->hit_rect, w, h);
    if (sd->have_selection)
@@ -4022,27 +4022,27 @@ _efl_ui_text_evas_object_smart_smart_resize(Eo *obj, Efl_Ui_Text_Data *sd, Evas_
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_smart_show(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_efl_canvas_group_group_show(Eo *obj, Efl_Ui_Text_Data *sd)
 {
-   evas_obj_smart_show(eo_super(obj, MY_CLASS));
+   efl_canvas_group_show(eo_super(obj, MY_CLASS));
 
    if (sd->have_selection)
      _update_selection_handler(obj);
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_smart_hide(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_efl_canvas_group_group_hide(Eo *obj, Efl_Ui_Text_Data *sd)
 {
-   evas_obj_smart_hide(eo_super(obj, MY_CLASS));
+   efl_canvas_group_hide(eo_super(obj, MY_CLASS));
 
    if (sd->have_selection)
      _hide_selection_handler(obj);
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_smart_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *member)
+_efl_ui_text_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *member)
 {
-   evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
+   efl_canvas_group_member_add(eo_super(obj, MY_CLASS), member);
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);

@@ -573,9 +573,9 @@ _efl_ui_image_drag_n_drop_cb(void *elm_obj,
 }
 
 EOLIAN static void
-_efl_ui_image_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Image_Data *priv)
+_efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
@@ -612,7 +612,7 @@ _efl_ui_image_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Image_Data *priv)
 }
 
 EOLIAN static void
-_efl_ui_image_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    ecore_timer_del(sd->anim_timer);
    evas_object_del(sd->img);
@@ -628,7 +628,7 @@ _efl_ui_image_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Image_Data *sd)
           {
              ERR("Async open thread timed out during cancellation.");
              // skipping all other data free to avoid crashes (this leaks)
-             evas_obj_smart_del(eo_super(obj, MY_CLASS));
+             efl_canvas_group_del(eo_super(obj, MY_CLASS));
              return;
           }
         sd->async.th = NULL;
@@ -639,13 +639,13 @@ _efl_ui_image_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Image_Data *sd)
    eina_stringshare_del(sd->async.file);
    eina_stringshare_del(sd->async.key);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_efl_ui_image_evas_object_smart_smart_move(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord x, Evas_Coord y)
+_efl_ui_image_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
 
    if ((sd->img_x == x) && (sd->img_y == y)) return;
    sd->img_x = x;
@@ -656,9 +656,9 @@ _efl_ui_image_evas_object_smart_smart_move(Eo *obj, Efl_Ui_Image_Data *sd, Evas_
 }
 
 EOLIAN static void
-_efl_ui_image_evas_object_smart_smart_resize(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord w, Evas_Coord h)
+_efl_ui_image_efl_canvas_group_group_resize(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
 
    if ((sd->img_w == w) && (sd->img_h == h)) return;
 
@@ -670,12 +670,12 @@ _efl_ui_image_evas_object_smart_smart_resize(Eo *obj, Efl_Ui_Image_Data *sd, Eva
 }
 
 EOLIAN static void
-_efl_ui_image_evas_object_smart_smart_show(Eo *obj, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_canvas_group_group_show(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    sd->show = EINA_TRUE;
    if (sd->preload_status == EFL_UI_IMAGE_PRELOADING) return;
 
-   evas_obj_smart_show(eo_super(obj, MY_CLASS));
+   efl_canvas_group_show(eo_super(obj, MY_CLASS));
 
    evas_object_show(sd->img);
 
@@ -683,9 +683,9 @@ _efl_ui_image_evas_object_smart_smart_show(Eo *obj, Efl_Ui_Image_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_image_evas_object_smart_smart_hide(Eo *obj, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_canvas_group_group_hide(Eo *obj, Efl_Ui_Image_Data *sd)
 {
-   evas_obj_smart_hide(eo_super(obj, MY_CLASS));
+   efl_canvas_group_hide(eo_super(obj, MY_CLASS));
 
    sd->show = EINA_FALSE;
    evas_object_hide(sd->img);
@@ -694,18 +694,18 @@ _efl_ui_image_evas_object_smart_smart_hide(Eo *obj, Efl_Ui_Image_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_image_evas_object_smart_smart_member_add(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *member)
+_efl_ui_image_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *member)
 {
-   evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
+   efl_canvas_group_member_add(eo_super(obj, MY_CLASS), member);
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
 }
 
 EOLIAN static void
-_efl_ui_image_evas_object_smart_smart_color_set(Eo *obj, Efl_Ui_Image_Data *sd, int r, int g, int b, int a)
+_efl_ui_image_efl_canvas_group_group_color_set(Eo *obj, Efl_Ui_Image_Data *sd, int r, int g, int b, int a)
 {
-   evas_obj_smart_color_set(eo_super(obj, MY_CLASS), r, g, b, a);
+   efl_canvas_group_color_set(eo_super(obj, MY_CLASS), r, g, b, a);
 
    evas_object_color_set(sd->hit_rect, 0, 0, 0, 0);
    evas_object_color_set(sd->img, r, g, b, a);
@@ -713,18 +713,18 @@ _efl_ui_image_evas_object_smart_smart_color_set(Eo *obj, Efl_Ui_Image_Data *sd, 
 }
 
 EOLIAN static void
-_efl_ui_image_evas_object_smart_smart_clip_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *clip)
+_efl_ui_image_efl_canvas_group_group_clip_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *clip)
 {
-   evas_obj_smart_clip_set(eo_super(obj, MY_CLASS), clip);
+   efl_canvas_group_clip_set(eo_super(obj, MY_CLASS), clip);
 
    evas_object_clip_set(sd->img, clip);
    if (sd->prev_img) evas_object_clip_set(sd->prev_img, clip);
 }
 
 EOLIAN static void
-_efl_ui_image_evas_object_smart_smart_clip_unset(Eo *obj, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_canvas_group_group_clip_unset(Eo *obj, Efl_Ui_Image_Data *sd)
 {
-   evas_obj_smart_clip_unset(eo_super(obj, MY_CLASS));
+   efl_canvas_group_clip_unset(eo_super(obj, MY_CLASS));
 
    evas_object_clip_unset(sd->img);
    if (sd->prev_img) evas_object_clip_unset(sd->prev_img);

@@ -108,7 +108,7 @@ _elm_fileselector_smart_del_do(Elm_Fileselector *fs, Elm_Fileselector_Data *sd)
    free(ecore_idler_del(sd->populate_idler));
    ecore_idler_del(sd->path_entry_idler);
 
-   evas_obj_smart_del(eo_super(sd->obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(sd->obj, MY_CLASS));
 }
 
 static void
@@ -1848,13 +1848,13 @@ _preedit_cb(void *data, const Eo_Event *event)
 }
 
 EOLIAN static void
-_elm_fileselector_evas_object_smart_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
+_elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *priv)
 {
    Evas_Object *ic, *bt, *en, *pb;
    const char *data;
    char buf[1024];
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
@@ -1982,7 +1982,7 @@ _elm_fileselector_evas_object_smart_smart_add(Eo *obj, Elm_Fileselector_Data *pr
 }
 
 EOLIAN static void
-_elm_fileselector_evas_object_smart_smart_del(Eo *obj, Elm_Fileselector_Data *sd)
+_elm_fileselector_efl_canvas_group_group_del(Eo *obj, Elm_Fileselector_Data *sd)
 {
    Elm_Fileselector_Filter *filter;
 

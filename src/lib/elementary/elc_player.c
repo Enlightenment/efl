@@ -646,11 +646,11 @@ end:
 
 
 EOLIAN static void
-_elm_player_evas_object_smart_smart_add(Eo *obj, Elm_Player_Data *priv)
+_elm_player_efl_canvas_group_group_add(Eo *obj, Elm_Player_Data *priv)
 {
    char buf[256];
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "player", "base", elm_widget_style_get(obj)))
@@ -709,9 +709,9 @@ _elm_player_evas_object_smart_smart_add(Eo *obj, Elm_Player_Data *priv)
 }
 
 EOLIAN static void
-_elm_player_evas_object_smart_smart_del(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
+_elm_player_efl_canvas_group_group_del(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
 {
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

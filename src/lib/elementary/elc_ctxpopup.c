@@ -1079,11 +1079,11 @@ _elm_ctxpopup_elm_widget_disable(Eo *obj, Elm_Ctxpopup_Data *sd)
 }
 
 EOLIAN static void
-_elm_ctxpopup_evas_object_smart_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
+_elm_ctxpopup_efl_canvas_group_group_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -1134,7 +1134,7 @@ _elm_ctxpopup_evas_object_smart_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 }
 
 EOLIAN static void
-_elm_ctxpopup_evas_object_smart_smart_del(Eo *obj, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_efl_canvas_group_group_del(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Elm_Object_Item *it;
 
@@ -1149,7 +1149,7 @@ _elm_ctxpopup_evas_object_smart_smart_del(Eo *obj, Elm_Ctxpopup_Data *sd)
    EINA_LIST_FREE(sd->items, it)
      eo_del(it);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

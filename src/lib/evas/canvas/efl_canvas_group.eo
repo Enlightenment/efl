@@ -1,0 +1,190 @@
+class Efl.Canvas.Group (Evas.Object)
+{
+   [[A group object is a container of other canvas objects. Its children
+     move along their parent, are often clipped with a common clipper.
+     This is part of the legacy smart object concept.
+
+     A group is not necessarily a container (see $Efl.Container), in the
+     sense that a standard widget may not have any empty slots for content,
+     but is still a group of low-level canvas objects (clipper, raw objects,
+     etc...).
+   ]]
+   legacy_prefix: evas_object_smart;
+   data: Evas_Smart_Data;
+   methods {
+      @property group_need_recalculate {
+         [[Indicates that the group's layout need to be recalculated.
+
+           If this flag is set, then the @.group_calculate function will
+           be called, during rendering phase of the canvas. After that,
+           this flag will be automatically unset.
+
+           Note: just setting this flag will not make the canvas' whole scene
+           dirty, by itself, and evas_render() will have no effect. To
+           force that, use @.group_change, that will also call this function
+           automatically, with $true as parameter.
+
+           See also @.group_calculate.
+         ]]
+         set {
+            legacy: evas_object_smart_need_recalculate_set;
+         }
+         get {
+            legacy: evas_object_smart_need_recalculate_get;
+         }
+         values {
+            value: bool;
+         }
+      }
+      group_change {
+         [[Marks the object as dirty.
+
+           This also forcefully marks the given object as needing
+           recalculation. As an effect, on the next rendering cycle its
+           @.group_calculate method will be called.
+         ]]
+         legacy: evas_object_smart_changed;
+      }
+      group_children_move {
+         [[Move all children of this object using relative coordinates.
+
+           This will make each children move, from where they before, by
+           a certain delta (offsets) in both directions.
+
+           Note: Clipped smart objects already make use of this function on
+           their $move smart function definition.
+         ]]
+         params {
+            @in dx: int; [[Horizontal offset (delta).]]
+            @in dy: int; [[Vertical offset (delta).]]
+         }
+         legacy: evas_object_smart_move_children_relative;
+      }
+      group_calculate {
+         [[Triggers an immediate recalculation of this object's geometry.
+
+           This will also reset the flag @.group_need_recalculate.
+         ]]
+         legacy: evas_object_smart_calculate;
+      }
+      group_children_iterate @const {
+         [[Returns an iterator over the children of this object, that are
+           canvas objects.
+
+           This returns the list of "smart" children. This might be different
+           from both the $Eo.Base children list as well as the $Efl.Container
+           content list.
+         ]]
+         return: free(own(iterator<Efl.Gfx>), eina_iterator_free);
+         legacy: evas_object_smart_iterator_new;
+      }
+      @property group_clip {
+         set {
+            [[No description supplied by the EAPI.]]
+            legacy: null;
+         }
+         values {
+            clip: Evas.Object;
+         }
+      }
+      @property group_color {
+         set {
+            [[No description supplied by the EAPI.]]
+            legacy: null;
+         }
+         values {
+            r: int;
+            g: int;
+            b: int;
+            a: int;
+         }
+      }
+      group_show {
+         [[No description supplied by the EAPI.]]
+         legacy: null;
+      }
+      group_move {
+         [[No description supplied by the EAPI.]]
+         legacy: null;
+         params {
+            @in x: Evas.Coord;
+            @in y: Evas.Coord;
+         }
+      }
+      @property group_no_render {
+         [[Propagates the value of no-render to the smart children.]]
+         set { legacy: null; }
+         values { hide: bool; }
+      }
+      group_hide {
+         [[No description supplied by the EAPI.]]
+         legacy: null;
+      }
+      group_add {
+         [[Instantiates a new smart object described by $s.
+
+           This is the function one should use when defining the public
+           function adding an instance of the new smart object to a given
+           canvas. It will take care of setting all of its internals to work
+           as they should, if the user set things properly, as seem on the
+           #EVAS_SMART_SUBCLASS_NEW, for example.]]
+         legacy: null;
+      }
+      group_member_add {
+         [[Set an Evas object as a member of a given smart object.
+
+           Members will automatically be stacked and layered together with the
+           smart object. The various stacking functions will operate on
+           members relative to the other members instead of the entire canvas,
+           since they now live on an exclusive layer (see
+           evas_object_stack_above(), for more details).
+
+           Any $smart_obj object's specific implementation of the
+           $member_add() smart function will take place too, naturally.
+
+           See also @.group_member_del.]]
+
+         params {
+            @in sub_obj: Evas.Object @nonull; [[The member object.]]
+         }
+         legacy: null;
+      }
+      group_resize {
+         [[No description supplied by the EAPI.]]
+         legacy: null;
+         params {
+            @in w: Evas.Coord;
+            @in h: Evas.Coord;
+         }
+      }
+      group_clip_unset {
+         [[No description supplied by the EAPI.]]
+         legacy: null;
+      }
+      group_member_del {
+         [[Removes a member object from a given smart object.
+
+           This removes a member object from a smart object, if it was added
+           to any. The object will still be on the canvas, but no longer
+           associated with whichever smart object it was associated with.
+
+           See also @.group_member_add for more details.]]
+
+         params {
+            @in sub_obj: Evas.Object; [[the member object.]]
+         }
+         legacy: null;
+      }
+      group_del {
+         [[Deletes a smart object.]]
+         legacy: null;
+      }
+   }
+   implements {
+      class.constructor;
+      class.destructor;
+      Eo.Base.constructor;
+      Evas.Object.paragraph_direction.set;
+      Evas.Object.paragraph_direction.get;
+   }
+}

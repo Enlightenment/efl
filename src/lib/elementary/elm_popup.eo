@@ -167,8 +167,8 @@ class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.smart_del;
-      Evas.Object.Smart.smart_add;
+      Efl.Canvas.Group.group_del;
+      Efl.Canvas.Group.group_add;
       Elm.Widget.focus_direction;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.theme_apply;

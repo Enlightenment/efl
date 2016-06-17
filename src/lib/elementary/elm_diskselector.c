@@ -1269,7 +1269,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
 }
 
 EOLIAN static void
-_elm_diskselector_evas_object_smart_smart_add(Eo *obj, Elm_Diskselector_Data *priv)
+_elm_diskselector_efl_canvas_group_group_add(Eo *obj, Elm_Diskselector_Data *priv)
 {
    Evas *evas;
    Evas_Object *blank, *edje;
@@ -1282,7 +1282,7 @@ _elm_diskselector_evas_object_smart_smart_add(Eo *obj, Elm_Diskselector_Data *pr
    edje = edje_object_add(evas);
    elm_widget_resize_object_set(obj, edje, EINA_TRUE);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
 
    elm_widget_theme_object_set
      (obj, edje, "diskselector", "base", elm_widget_style_get(obj));
@@ -1345,7 +1345,7 @@ _elm_diskselector_evas_object_smart_smart_add(Eo *obj, Elm_Diskselector_Data *pr
 }
 
 EOLIAN static void
-_elm_diskselector_evas_object_smart_smart_del(Eo *obj, Elm_Diskselector_Data *sd)
+_elm_diskselector_efl_canvas_group_group_del(Eo *obj, Elm_Diskselector_Data *sd)
 {
    Elm_Diskselector_Item_Data *it;
    Eina_List *l, *l2;
@@ -1417,29 +1417,29 @@ _elm_diskselector_evas_object_smart_smart_del(Eo *obj, Elm_Diskselector_Data *sd
    ELM_SAFE_FREE(sd->scroller_move_idle_enterer, ecore_idle_enterer_del);
    ELM_SAFE_FREE(sd->string_check_idle_enterer, ecore_idle_enterer_del);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_elm_diskselector_evas_object_smart_smart_move(Eo *obj, Elm_Diskselector_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_diskselector_efl_canvas_group_group_move(Eo *obj, Elm_Diskselector_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
 
    evas_object_move(sd->hit_rect, x, y);
 }
 
 EOLIAN static void
-_elm_diskselector_evas_object_smart_smart_resize(Eo *obj, Elm_Diskselector_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_diskselector_efl_canvas_group_group_resize(Eo *obj, Elm_Diskselector_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
 
    evas_object_resize(sd->hit_rect, w, h);
 }
 
 EOLIAN static void
-_elm_diskselector_evas_object_smart_smart_member_add(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *member)
+_elm_diskselector_efl_canvas_group_group_member_add(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *member)
 {
-   evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
+   efl_canvas_group_member_add(eo_super(obj, MY_CLASS), member);
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);

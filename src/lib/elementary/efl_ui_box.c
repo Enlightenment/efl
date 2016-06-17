@@ -189,7 +189,7 @@ _efl_ui_box_efl_pack_layout_layout_engine_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Da
 }
 
 EOLIAN static void
-_efl_ui_box_evas_object_smart_smart_calculate(Eo *obj, Efl_Ui_Box_Data *pd)
+_efl_ui_box_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Box_Data *pd)
 {
    if (pd->recalc) return;
 
@@ -201,7 +201,7 @@ _efl_ui_box_evas_object_smart_smart_calculate(Eo *obj, Efl_Ui_Box_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_box_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED)
+_efl_ui_box_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED)
 {
    Evas *e = evas_object_evas_get(obj);
 
@@ -212,7 +212,7 @@ _efl_ui_box_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSE
    evas_object_event_callback_add(wd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    eo_event_callback_add(wd->resize_obj, EVAS_BOX_EVENT_CHILD_ADDED, _child_added_cb_proxy, obj);
@@ -226,7 +226,7 @@ _efl_ui_box_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static void
-_efl_ui_box_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Box_Data *sd)
+_efl_ui_box_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Box_Data *sd)
 {
    Eina_List *l;
    Evas_Object *child;
@@ -250,7 +250,7 @@ _efl_ui_box_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Box_Data *sd)
           }
      }
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eo *

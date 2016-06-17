@@ -165,7 +165,7 @@ _table_size_hints_changed(void *data, Evas *e EINA_UNUSED,
 static void _custom_table_calc(Eo *obj, Custom_Table_Data *pd);
 
 static const Eo_Op_Description custom_table_op_desc[] = {
-   EO_OP_CLASS_FUNC_OVERRIDE(evas_obj_smart_calculate, _custom_table_calc),
+   EO_OP_CLASS_FUNC_OVERRIDE(efl_canvas_group_calculate, _custom_table_calc),
 };
 
 static const Eo_Class_Description custom_table_class_desc = {
@@ -221,11 +221,11 @@ _efl_ui_grid_efl_pack_layout_layout_do(Eo *klass EINA_UNUSED,
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_calculate(eo_super(wd->resize_obj, CUSTOM_TABLE_CLASS));
+   efl_canvas_group_calculate(eo_super(wd->resize_obj, CUSTOM_TABLE_CLASS));
 }
 
 EOLIAN void
-_efl_ui_grid_evas_object_smart_smart_calculate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
+_efl_ui_grid_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -233,7 +233,7 @@ _efl_ui_grid_evas_object_smart_smart_calculate(Eo *obj, Efl_Ui_Grid_Data *pd EIN
 }
 
 EOLIAN static void
-_efl_ui_grid_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Grid_Data *pd)
+_efl_ui_grid_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
    Custom_Table_Data *custom;
    Evas_Object *table;
@@ -253,7 +253,7 @@ _efl_ui_grid_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Grid_Data *pd)
    evas_object_event_callback_add
          (table, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _table_size_hints_changed, obj);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_FALSE);
@@ -262,7 +262,7 @@ _efl_ui_grid_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Grid_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_grid_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
+_efl_ui_grid_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 {
    Eina_List *l;
    Evas_Object *child;
@@ -285,7 +285,7 @@ _efl_ui_grid_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUS
           }
      }
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eo *

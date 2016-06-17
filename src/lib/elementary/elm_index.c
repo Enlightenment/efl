@@ -1032,14 +1032,14 @@ _sort_cb(const void *d1, const void *d2)
 
 
 EOLIAN static void
-_elm_index_evas_object_smart_smart_add(Eo *obj, Elm_Index_Data *priv)
+_elm_index_efl_canvas_group_group_add(Eo *obj, Elm_Index_Data *priv)
 {
    Evas_Object *o;
    Evas_Coord minw = 0, minh = 0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -1110,7 +1110,7 @@ _elm_index_evas_object_smart_smart_add(Eo *obj, Elm_Index_Data *priv)
 }
 
 EOLIAN static void
-_elm_index_evas_object_smart_smart_del(Eo *obj, Elm_Index_Data *sd)
+_elm_index_efl_canvas_group_group_del(Eo *obj, Elm_Index_Data *sd)
 {
    Elm_Index_Omit *o;
 
@@ -1122,7 +1122,7 @@ _elm_index_evas_object_smart_smart_del(Eo *obj, Elm_Index_Data *sd)
 
    ecore_timer_del(sd->delay);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_index_smart_focus_next_enable = EINA_FALSE;

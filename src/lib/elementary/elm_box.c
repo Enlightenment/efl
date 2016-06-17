@@ -371,7 +371,7 @@ _transition_layout_animation_exec(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_box_evas_object_smart_smart_calculate(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
+_elm_box_efl_canvas_group_group_calculate(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -379,7 +379,7 @@ _elm_box_evas_object_smart_smart_calculate(Eo *obj, Elm_Box_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static void
-_elm_box_evas_object_smart_smart_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
+_elm_box_efl_canvas_group_group_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    elm_widget_resize_object_set(obj,
@@ -393,7 +393,7 @@ _elm_box_evas_object_smart_smart_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _on_size_hints_changed, obj);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    eo_event_callback_add
@@ -406,7 +406,7 @@ _elm_box_evas_object_smart_smart_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_box_evas_object_smart_smart_del(Eo *obj, Elm_Box_Data *sd)
+_elm_box_efl_canvas_group_group_del(Eo *obj, Elm_Box_Data *sd)
 {
    Eina_List *l;
    Evas_Object *child;
@@ -430,7 +430,7 @@ _elm_box_evas_object_smart_smart_del(Eo *obj, Elm_Box_Data *sd)
           }
      }
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

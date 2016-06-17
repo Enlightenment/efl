@@ -564,9 +564,9 @@ _hov_dismiss_cb(void *data,
 }
 
 EOLIAN static void
-_elm_hover_evas_object_smart_smart_add(Eo *obj, Elm_Hover_Data *sd)
+_elm_hover_efl_canvas_group_group_add(Eo *obj, Elm_Hover_Data *sd)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    ELM_HOVER_PARTS_FOREACH
@@ -595,7 +595,7 @@ _elm_hover_evas_object_smart_smart_add(Eo *obj, Elm_Hover_Data *sd)
 }
 
 EOLIAN static void
-_elm_hover_evas_object_smart_smart_del(Eo *obj, Elm_Hover_Data *sd)
+_elm_hover_efl_canvas_group_group_del(Eo *obj, Elm_Hover_Data *sd)
 {
 
    sd->on_del = EINA_TRUE;
@@ -612,39 +612,39 @@ _elm_hover_evas_object_smart_smart_del(Eo *obj, Elm_Hover_Data *sd)
    _elm_hover_parent_detach(obj);
    sd->parent = NULL;
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_elm_hover_evas_object_smart_smart_move(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+_elm_hover_efl_canvas_group_group_move(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
-   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
 
    elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
-_elm_hover_evas_object_smart_smart_resize(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_elm_hover_efl_canvas_group_group_resize(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
-   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
 
    elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
-_elm_hover_evas_object_smart_smart_show(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
+_elm_hover_efl_canvas_group_group_show(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
-   evas_obj_smart_show(eo_super(obj, MY_CLASS));
+   efl_canvas_group_show(eo_super(obj, MY_CLASS));
 
    _hov_show_do(obj);
 }
 
 EOLIAN static void
-_elm_hover_evas_object_smart_smart_hide(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
+_elm_hover_efl_canvas_group_group_hide(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
    const char *dismissstr;
 
-   evas_obj_smart_hide(eo_super(obj, MY_CLASS));
+   efl_canvas_group_hide(eo_super(obj, MY_CLASS));
 
    // for backward compatibility
    dismissstr = elm_layout_data_get(obj, "dismiss");

@@ -758,7 +758,7 @@ _on_size_evaluate_signal(void *data,
 }
 
 EOLIAN static void
-_elm_layout_evas_object_smart_smart_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+_elm_layout_efl_canvas_group_group_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
 {
    Evas_Object *edje;
 
@@ -768,7 +768,7 @@ _elm_layout_evas_object_smart_smart_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje, EINA_TRUE);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -779,7 +779,7 @@ _elm_layout_evas_object_smart_smart_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA
 }
 
 EOLIAN static void
-_elm_layout_evas_object_smart_smart_del(Eo *obj, Elm_Layout_Smart_Data *sd)
+_elm_layout_efl_canvas_group_group_del(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    Elm_Layout_Sub_Object_Data *sub_d;
    Elm_Layout_Sub_Object_Cursor *pc;
@@ -831,13 +831,13 @@ _elm_layout_evas_object_smart_smart_del(Eo *obj, Elm_Layout_Smart_Data *sd)
 
    sd->destructed_is = EINA_TRUE;
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 /* rewrite or extend this one on your derived class as to suit your
  * needs */
 EOLIAN static void
-_elm_layout_evas_object_smart_smart_calculate(Eo *obj, Elm_Layout_Smart_Data *sd)
+_elm_layout_efl_canvas_group_group_calculate(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    if (sd->needs_size_calc)
      {

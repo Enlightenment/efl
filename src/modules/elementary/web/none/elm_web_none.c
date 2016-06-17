@@ -44,7 +44,7 @@ _elm_web_none_elm_web_tab_propagate_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *
 }
 
 EOLIAN static void
-_elm_web_none_evas_object_smart_smart_add(Eo *obj, Elm_Web_None_Data *_pd EINA_UNUSED)
+_elm_web_none_efl_canvas_group_group_add(Eo *obj, Elm_Web_None_Data *_pd EINA_UNUSED)
 {
    Evas_Object *resize_obj;
 
@@ -52,7 +52,7 @@ _elm_web_none_evas_object_smart_smart_add(Eo *obj, Elm_Web_None_Data *_pd EINA_U
    elm_object_text_set(resize_obj, "WebKit not supported!");
    elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 }
 

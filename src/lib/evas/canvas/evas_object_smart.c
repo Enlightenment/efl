@@ -1,14 +1,14 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define MY_CLASS EVAS_OBJECT_SMART_CLASS
+#define MY_CLASS EFL_CANVAS_GROUP_CLASS
 
 #define MY_CLASS_NAME "Evas_Smart"
 #define MY_CLASS_NAME_LEGACY "Evas_Object_Smart"
 
 #define EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, ...) \
-   Evas_Smart_Data *o = eo_isa(eo_obj, EVAS_OBJECT_SMART_CLASS) ? \
-     eo_data_scope_get(eo_obj, EVAS_OBJECT_SMART_CLASS) : NULL; \
+   Evas_Smart_Data *o = eo_isa(eo_obj, EFL_CANVAS_GROUP_CLASS) ? \
+     eo_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLASS) : NULL; \
    do { if (!o) { MAGIC_CHECK_FAILED(eo_obj,0,MAGIC_SMART) return __VA_ARGS__; } } while (0)
 
 extern Eina_Hash* signals_hash_table;
@@ -88,7 +88,7 @@ static void evas_object_smart_render_post(Evas_Object *eo_obj,
 static unsigned int evas_object_smart_id_get(Evas_Object *eo_obj);
 static unsigned int evas_object_smart_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_smart_engine_data_get(Evas_Object *eo_obj);
-static void _evas_object_smart_smart_paragraph_direction_set_internal(Eo *eo_obj,
+static void _efl_canvas_group_group_paragraph_direction_set_internal(Eo *eo_obj,
                                                                 Evas_BiDi_Direction dir);
 
 static const Evas_Object_Func object_func =
@@ -147,7 +147,7 @@ evas_object_smart_interface_get(const Evas_Object *eo_obj,
    return NULL;
    MAGIC_CHECK_END();
 
-   if (!eo_isa(eo_obj, EVAS_OBJECT_SMART_CLASS)) return NULL;
+   if (!eo_isa(eo_obj, EFL_CANVAS_GROUP_CLASS)) return NULL;
 
    s = evas_object_smart_smart_get(eo_obj);
    if (!s) return NULL;
@@ -197,7 +197,7 @@ evas_object_smart_interface_data_get(const Evas_Object *eo_obj,
 }
 
 EAPI Evas_Smart*
-evas_object_smart_smart_get(const Evas_Object_Smart *eo_obj)
+evas_object_smart_smart_get(const Efl_Canvas_Group *eo_obj)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, NULL);
    return obj->smart.smart;
@@ -209,11 +209,11 @@ evas_object_smart_member_add(Evas_Object *eo_obj, Evas_Object *smart_obj)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   evas_obj_smart_member_add(smart_obj, eo_obj);
+   efl_canvas_group_member_add(smart_obj, eo_obj);
 }
 
 EOLIAN static void
-_evas_object_smart_smart_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Object *eo_obj)
+_efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Object *eo_obj)
 {
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -272,13 +272,13 @@ _evas_object_smart_smart_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Obje
 
    if (obj->is_smart)
      {
-        member_o = eo_data_scope_get(eo_obj, EVAS_OBJECT_SMART_CLASS);
+        member_o = eo_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLASS);
 
         if ((member_o->inherit_paragraph_direction) &&
             (member_o->paragraph_direction != o->paragraph_direction))
           {
              member_o->paragraph_direction = o->paragraph_direction;
-             _evas_object_smart_smart_paragraph_direction_set_internal(eo_obj, o->paragraph_direction);
+             _efl_canvas_group_group_paragraph_direction_set_internal(eo_obj, o->paragraph_direction);
           }
      }
 
@@ -300,11 +300,11 @@ evas_object_smart_member_del(Evas_Object *eo_obj)
    if (!obj->smart.parent) return;
    Evas_Object *smart_obj = obj->smart.parent;
 
-   evas_obj_smart_member_del(smart_obj, eo_obj);
+   efl_canvas_group_member_del(smart_obj, eo_obj);
 }
 
 EOLIAN static void
-_evas_object_smart_smart_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Object *eo_obj)
+_efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Smart_Data *member_o;
@@ -332,13 +332,13 @@ _evas_object_smart_smart_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNU
 
    if (obj->is_smart)
      {
-        member_o = eo_data_scope_get(eo_obj, EVAS_OBJECT_SMART_CLASS);
+        member_o = eo_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLASS);
 
         if ((member_o->inherit_paragraph_direction) &&
             (member_o->paragraph_direction != EVAS_BIDI_DIRECTION_NEUTRAL))
           {
              member_o->paragraph_direction = EVAS_BIDI_DIRECTION_NEUTRAL;
-             _evas_object_smart_smart_paragraph_direction_set_internal(eo_obj, EVAS_BIDI_DIRECTION_NEUTRAL);
+             _efl_canvas_group_group_paragraph_direction_set_internal(eo_obj, EVAS_BIDI_DIRECTION_NEUTRAL);
           }
      }
 
@@ -413,7 +413,7 @@ evas_smart_legacy_type_register(const char *type, const Eo_Class *klass)
 }
 
 static Eina_Bool
-_evas_object_smart_smart_iterator_next(Evas_Object_Smart_Iterator *it, void **data)
+_efl_canvas_group_group_iterator_next(Evas_Object_Smart_Iterator *it, void **data)
 {
    Evas_Object *eo;
 
@@ -428,13 +428,13 @@ _evas_object_smart_smart_iterator_next(Evas_Object_Smart_Iterator *it, void **da
 }
 
 static Evas_Object *
-_evas_object_smart_smart_iterator_get_container(Evas_Object_Smart_Iterator *it)
+_efl_canvas_group_group_iterator_get_container(Evas_Object_Smart_Iterator *it)
 {
    return it->parent;
 }
 
 static void
-_evas_object_smart_smart_iterator_free(Evas_Object_Smart_Iterator *it)
+_efl_canvas_group_group_iterator_free(Evas_Object_Smart_Iterator *it)
 {
    eo_unref(it->parent);
    free(it);
@@ -442,7 +442,7 @@ _evas_object_smart_smart_iterator_free(Evas_Object_Smart_Iterator *it)
 
 // Should we have an eo_children_iterator_new API and just inherit from it ?
 EOLIAN static Eina_Iterator*
-_evas_object_smart_smart_iterator_new(const Eo *eo_obj, Evas_Smart_Data *priv)
+_efl_canvas_group_group_children_iterate(const Eo *eo_obj, Evas_Smart_Data *priv)
 {
    Evas_Object_Smart_Iterator *it;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -457,9 +457,9 @@ _evas_object_smart_smart_iterator_new(const Eo *eo_obj, Evas_Smart_Data *priv)
    it->parent = eo_ref(eo_obj);
    it->current = priv->contained;
 
-   it->iterator.next = FUNC_ITERATOR_NEXT(_evas_object_smart_smart_iterator_next);
-   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_evas_object_smart_smart_iterator_get_container);
-   it->iterator.free = FUNC_ITERATOR_FREE(_evas_object_smart_smart_iterator_free);
+   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_canvas_group_group_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_efl_canvas_group_group_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_efl_canvas_group_group_iterator_free);
 
    return &it->iterator;
 }
@@ -489,7 +489,7 @@ evas_object_smart_members_get_direct(const Evas_Object *eo_obj)
 }
 
 void
-_evas_object_smart_smart_members_all_del(Evas_Object *eo_obj)
+_efl_canvas_group_group_members_all_del(Evas_Object *eo_obj)
 {
    Evas_Smart_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    Evas_Object_Protected_Data *memobj;
@@ -576,13 +576,13 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   eo_obj = eo_add(EVAS_OBJECT_SMART_CLASS, eo_e);
+   eo_obj = eo_add(EFL_CANVAS_GROUP_CLASS, eo_e);
    evas_object_smart_attach(eo_obj, s);
    return eo_obj;
 }
 
 EOLIAN static Eo *
-_evas_object_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data EINA_UNUSED)
+_efl_canvas_group_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data EINA_UNUSED)
 {
    Evas_Smart_Data *smart;
 
@@ -594,13 +594,13 @@ _evas_object_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data E
    evas_object_smart_init(eo_obj);
 
    evas_obj_type_set(eo_obj, MY_CLASS_NAME_LEGACY);
-   evas_obj_smart_add(eo_obj);
+   efl_canvas_group_add(eo_obj);
 
    return eo_obj;
 }
 
 EOLIAN static void
-_evas_object_smart_smart_add(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
+_efl_canvas_group_group_add(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -610,12 +610,12 @@ _evas_object_smart_smart_add(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 EOLIAN static void
-_evas_object_smart_smart_del(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o EINA_UNUSED)
+_efl_canvas_group_group_del(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o EINA_UNUSED)
 {
 }
 
 EOLIAN static void
-_evas_object_smart_smart_resize(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_efl_canvas_group_group_resize(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -625,7 +625,7 @@ _evas_object_smart_smart_resize(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas
 }
 
 EOLIAN static void
-_evas_object_smart_smart_move(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+_efl_canvas_group_group_move(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -635,7 +635,7 @@ _evas_object_smart_smart_move(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_C
 }
 
 EOLIAN static void
-_evas_object_smart_smart_show(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
+_efl_canvas_group_group_show(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -645,7 +645,7 @@ _evas_object_smart_smart_show(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 EOLIAN static void
-_evas_object_smart_smart_hide(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
+_efl_canvas_group_group_hide(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -655,7 +655,7 @@ _evas_object_smart_smart_hide(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 EOLIAN static void
-_evas_object_smart_smart_color_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, int r, int g, int b, int a)
+_efl_canvas_group_group_color_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, int r, int g, int b, int a)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -665,7 +665,7 @@ _evas_object_smart_smart_color_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, i
 }
 
 EOLIAN static void
-_evas_object_smart_smart_clip_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Object *clip)
+_efl_canvas_group_group_clip_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Object *clip)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -675,7 +675,7 @@ _evas_object_smart_smart_clip_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Ev
 }
 
 EOLIAN static void
-_evas_object_smart_smart_clip_unset(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
+_efl_canvas_group_group_clip_unset(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -685,14 +685,14 @@ _evas_object_smart_smart_clip_unset(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 EOLIAN static void
-_evas_object_smart_smart_no_render_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Eina_Bool hide)
+_efl_canvas_group_group_no_render_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Eina_Bool hide)
 {
    Evas_Object_Protected_Data *obj2;
    Evas_Object_Smart_Clipped_Data *cso;
    Evas_Object *cso_clipper;
 
-   if (eo_isa(eo_obj, EFL_CANVAS_OBJECT_INTERNAL_SMART_CLIPPED_CLASS))
-     cso = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_INTERNAL_SMART_CLIPPED_CLASS);
+   if (eo_isa(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS))
+     cso = eo_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS);
    else
      cso = evas_object_smart_data_get(eo_obj);
    cso_clipper = cso ? cso->clipper : NULL;
@@ -732,7 +732,7 @@ evas_object_smart_attach(Evas_Object *eo_obj, Evas_Smart *s)
           }
      }
 
-   evas_obj_smart_add(eo_obj);
+   efl_canvas_group_add(eo_obj);
 }
 
 EAPI void
@@ -910,7 +910,7 @@ evas_object_smart_callback_description_find(const Eo *eo_obj, const char *name, 
 }
 
 EOLIAN static void
-_evas_object_smart_smart_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool value)
+_efl_canvas_group_group_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool value)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -940,13 +940,13 @@ _evas_object_smart_smart_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Ei
 }
 
 EOLIAN static Eina_Bool
-_evas_object_smart_smart_need_recalculate_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+_efl_canvas_group_group_need_recalculate_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
    return o->need_recalculate;
 }
 
 EOLIAN static void
-_evas_object_smart_smart_calculate(Eo *eo_obj, Evas_Smart_Data *o)
+_efl_canvas_group_group_calculate(Eo *eo_obj, Evas_Smart_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1004,7 +1004,7 @@ evas_call_smarts_calculate(Evas *eo_e)
 	     if (obj->smart.smart && obj->smart.smart->smart_class->calculate)
                obj->smart.smart->smart_class->calculate(obj->object);
              else
-               evas_obj_smart_calculate(obj->object);
+               efl_canvas_group_calculate(obj->object);
           }
      }
 
@@ -1022,12 +1022,12 @@ evas_call_smarts_calculate(Evas *eo_e)
 }
 
 EOLIAN static void
-_evas_object_smart_smart_changed(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
+_efl_canvas_group_group_change(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    evas_object_change(eo_obj, obj);
-   evas_obj_smart_need_recalculate_set(eo_obj, 1);
+   efl_canvas_group_need_recalculate_set(eo_obj, 1);
 }
 
 Eina_Bool
@@ -1073,7 +1073,7 @@ evas_object_smart_del(Evas_Object *eo_obj)
    if (s && s->smart_class->del)
       s->smart_class->del(eo_obj);
    else
-      evas_obj_smart_del(eo_obj);
+      efl_canvas_group_del(eo_obj);
    if (obj->smart.parent) evas_object_smart_member_del(eo_obj);
 
    if (s)
@@ -1513,20 +1513,20 @@ static void *evas_object_smart_engine_data_get(Evas_Object *eo_obj)
 }
 
 static void
-_evas_object_smart_class_constructor(Eo_Class *klass EINA_UNUSED)
+_efl_canvas_group_class_constructor(Eo_Class *klass EINA_UNUSED)
 {
    _evas_smart_class_names_hash_table = eina_hash_string_small_new(NULL);
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 static void
-_evas_object_smart_class_destructor(Eo_Class *klass EINA_UNUSED)
+_efl_canvas_group_class_destructor(Eo_Class *klass EINA_UNUSED)
 {
    eina_hash_free(_evas_smart_class_names_hash_table);
 }
 
 static void
-_evas_object_smart_smart_paragraph_direction_set_internal(Eo *eo_obj,
+_efl_canvas_group_group_paragraph_direction_set_internal(Eo *eo_obj,
                                                     Evas_BiDi_Direction dir)
 {
    Evas_Object_Protected_Data *o;
@@ -1538,20 +1538,20 @@ _evas_object_smart_smart_paragraph_direction_set_internal(Eo *eo_obj,
 
         if (o->is_smart)
           {
-             member_o = eo_data_scope_get(o->object, EVAS_OBJECT_SMART_CLASS);
+             member_o = eo_data_scope_get(o->object, EFL_CANVAS_GROUP_CLASS);
 
              if ((member_o->inherit_paragraph_direction) &&
                  (member_o->paragraph_direction != dir))
                {
                   member_o->paragraph_direction = dir;
-                  _evas_object_smart_smart_paragraph_direction_set_internal(o->object, dir);
+                  _efl_canvas_group_group_paragraph_direction_set_internal(o->object, dir);
                }
           }
      }
 }
 
 EOLIAN static void
-_evas_object_smart_evas_object_paragraph_direction_set(Eo *eo_obj, Evas_Smart_Data *o, Evas_BiDi_Direction dir)
+_efl_canvas_group_evas_object_paragraph_direction_set(Eo *eo_obj, Evas_Smart_Data *o, Evas_BiDi_Direction dir)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Smart_Data *parent;
@@ -1567,7 +1567,7 @@ _evas_object_smart_evas_object_paragraph_direction_set(Eo *eo_obj, Evas_Smart_Da
 
         if (obj->smart.parent)
           {
-             parent = eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_SMART_CLASS);
+             parent = eo_data_scope_get(obj->smart.parent, EFL_CANVAS_GROUP_CLASS);
 
              if (parent)
                parent_dir = parent->paragraph_direction;
@@ -1586,13 +1586,13 @@ _evas_object_smart_evas_object_paragraph_direction_set(Eo *eo_obj, Evas_Smart_Da
         evas_object_change(eo_obj, obj);
      }
 
-   _evas_object_smart_smart_paragraph_direction_set_internal(eo_obj, o->paragraph_direction);
+   _efl_canvas_group_group_paragraph_direction_set_internal(eo_obj, o->paragraph_direction);
 }
 
 EOLIAN static Evas_BiDi_Direction
-_evas_object_smart_evas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+_efl_canvas_group_evas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
    return o->paragraph_direction;
 }
 
-#include "canvas/evas_object_smart.eo.c"
+#include "canvas/efl_canvas_group.eo.c"

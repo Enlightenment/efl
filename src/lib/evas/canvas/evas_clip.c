@@ -279,7 +279,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
      }
    if (obj->is_smart)
      {
-        evas_obj_smart_clip_set(eo_obj, eo_clip);
+        efl_canvas_group_clip_set(eo_obj, eo_clip);
      }
    if (obj->cur->clipper)
      {
@@ -413,7 +413,7 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    if (evas_object_intercept_call_clip_unset(eo_obj, obj)) return;
    if (obj->is_smart)
      {
-        evas_obj_smart_clip_unset(eo_obj);
+        efl_canvas_group_clip_unset(eo_obj);
      }
    if (obj->cur->clipper)
      {
@@ -596,7 +596,7 @@ _evas_object_no_render_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Boo
 {
    obj->no_render = enable;
    if (obj->is_smart)
-     evas_obj_smart_no_render_set(eo_obj, enable);
+     efl_canvas_group_no_render_set(eo_obj, enable);
 }
 
 EOLIAN Eina_Bool

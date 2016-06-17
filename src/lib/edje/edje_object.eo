@@ -1,6 +1,6 @@
 import edje_types;
 
-class Edje.Object (Efl.Canvas.Object.Internal.Smart.Clipped, Efl.File, Efl.Container, Efl.Part)
+class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
 {
    legacy_prefix: edje_object;
    eo_prefix: edje_obj;
@@ -1991,14 +1991,14 @@ class Edje.Object (Efl.Canvas.Object.Internal.Smart.Clipped, Efl.File, Efl.Conta
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
       Evas.Object.paragraph_direction.set;
-      Evas.Object.Smart.smart_hide;
-      Evas.Object.Smart.smart_calculate;
-      Evas.Object.Smart.smart_show;
-      Evas.Object.Smart.smart_move;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
-      Evas.Object.Smart.smart_resize;
-      Evas.Object.Smart.smart_no_render.set;
+      Efl.Canvas.Group.group_hide;
+      Efl.Canvas.Group.group_show;
+      Efl.Canvas.Group.group_move;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
+      Efl.Canvas.Group.group_resize;
+      Efl.Canvas.Group.group_no_render.set;
+      Efl.Canvas.Group.group_calculate;
       Efl.File.file.set;
       Efl.File.file.get;
       Efl.File.mmap.set;

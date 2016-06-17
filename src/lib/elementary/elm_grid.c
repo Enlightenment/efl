@@ -116,7 +116,7 @@ _elm_grid_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_grid_evas_object_smart_smart_add(Eo *obj, void *_pd EINA_UNUSED)
+_elm_grid_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Object *grid;
@@ -127,7 +127,7 @@ _elm_grid_evas_object_smart_smart_add(Eo *obj, void *_pd EINA_UNUSED)
    elm_widget_resize_object_set(obj, grid, EINA_TRUE);
    evas_object_grid_size_set(wd->resize_obj, 100, 100);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -135,7 +135,7 @@ _elm_grid_evas_object_smart_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_grid_evas_object_smart_smart_del(Eo *obj, void *_pd EINA_UNUSED)
+_elm_grid_efl_canvas_group_group_del(Eo *obj, void *_pd EINA_UNUSED)
 {
    Eina_List *l;
    Evas_Object *child;
@@ -154,7 +154,7 @@ _elm_grid_evas_object_smart_smart_del(Eo *obj, void *_pd EINA_UNUSED)
           }
      }
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

@@ -1817,11 +1817,11 @@ _elm_code_widget_cursor_position_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *
 }
 
 EOLIAN static void
-_elm_code_widget_evas_object_smart_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
+_elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Evas_Object *background, *gridrows, *scroller;
 
-   evas_obj_smart_add(eo_super(obj, ELM_CODE_WIDGET_CLASS));
+   efl_canvas_group_add(eo_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
 
    elm_layout_theme_set(obj, "code", "layout", "default");

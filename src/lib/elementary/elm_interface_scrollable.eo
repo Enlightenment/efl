@@ -42,7 +42,7 @@ enum Elm.Scroller.Movement_Block
 }
 
 
-mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Evas.Object.Smart)
+mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
 {
    eo_prefix: elm_interface_scrollable;
    data: Elm_Scrollable_Smart_Interface_Data;
@@ -662,8 +662,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Evas.Object.Smart)
    }
    implements {
       class.constructor;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
    }
    events {
       changed;

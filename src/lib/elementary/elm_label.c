@@ -365,11 +365,11 @@ _on_slide_end(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_label_evas_object_smart_smart_add(Eo *obj, Elm_Label_Data *priv)
+_elm_label_efl_canvas_group_group_add(Eo *obj, Elm_Label_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
 
    elm_widget_sub_object_parent_add(obj);
 

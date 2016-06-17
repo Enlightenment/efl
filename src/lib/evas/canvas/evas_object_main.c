@@ -903,7 +903,7 @@ _evas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
    if (obj->is_smart)
      {
-        evas_obj_smart_move(eo_obj, x, y);
+        efl_canvas_group_move(eo_obj, x, y);
      }
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -986,7 +986,7 @@ _evas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
    if (obj->is_smart)
      {
-        evas_obj_smart_resize(eo_obj, w, h);
+        efl_canvas_group_resize(eo_obj, w, h);
      }
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -1401,7 +1401,7 @@ _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (evas_object_intercept_call_show(eo_obj, obj)) return;
    if (obj->is_smart)
      {
-        evas_obj_smart_show(eo_obj);
+        efl_canvas_group_show(eo_obj);
      }
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
@@ -1450,7 +1450,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
   if (evas_object_intercept_call_hide(eo_obj, obj)) return;
    if (obj->is_smart)
      {
-        evas_obj_smart_hide(eo_obj);
+        efl_canvas_group_hide(eo_obj);
      }
  
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -1604,7 +1604,7 @@ _evas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    if (evas_object_intercept_call_color_set(eo_obj, obj, r, g, b, a)) return;
    if (obj->is_smart)
      {
-        evas_obj_smart_color_set(eo_obj, r, g, b, a);
+        efl_canvas_group_color_set(eo_obj, r, g, b, a);
      }
    if ((obj->cur->color.r == r) &&
        (obj->cur->color.g == g) &&

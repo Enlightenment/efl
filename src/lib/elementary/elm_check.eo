@@ -24,7 +24,7 @@ class Elm.Check (Efl.Ui.Nstate, Elm.Interface.Atspi_Widget_Action)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.smart_add;
+      Efl.Canvas.Group.group_add;
       Elm.Widget.activate;
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;

@@ -89,10 +89,10 @@ _on_resize(void *data,
 }
 
 EOLIAN static void
-_elm_bg_evas_object_smart_smart_add(Eo *obj, Elm_Bg_Data *priv)
+_elm_bg_efl_canvas_group_group_add(Eo *obj, Elm_Bg_Data *priv)
 {
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 

@@ -54,8 +54,8 @@ class Elm.Grid (Elm.Widget)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
       Elm.Widget.focus_direction;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;

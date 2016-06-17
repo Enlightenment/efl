@@ -884,7 +884,7 @@ _evas_object_table_smart_calculate_regular(Evas_Object *o, Evas_Table_Data *priv
 }
 
 EOLIAN static void
-_evas_table_evas_object_smart_smart_add(Eo *obj, Evas_Table_Data *priv)
+_evas_table_efl_canvas_group_group_add(Eo *obj, Evas_Table_Data *priv)
 {
    priv->pad.h = 0;
    priv->pad.v = 0;
@@ -898,11 +898,11 @@ _evas_table_evas_object_smart_smart_add(Eo *obj, Evas_Table_Data *priv)
    priv->expand_h = 0;
    priv->expand_v = 0;
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_evas_table_evas_object_smart_smart_del(Eo *obj, Evas_Table_Data *priv)
+_evas_table_efl_canvas_group_group_del(Eo *obj, Evas_Table_Data *priv)
 {
    Eina_List *l;
 
@@ -922,11 +922,11 @@ _evas_table_evas_object_smart_smart_del(Eo *obj, Evas_Table_Data *priv)
         priv->cache = NULL;
      }
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_evas_table_evas_object_smart_smart_resize(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_evas_table_efl_canvas_group_group_resize(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord ow, oh;
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
@@ -935,7 +935,7 @@ _evas_table_evas_object_smart_smart_resize(Eo *obj, Evas_Table_Data *_pd EINA_UN
 }
 
 EOLIAN static void
-_evas_table_evas_object_smart_smart_calculate(Eo *o, Evas_Table_Data *priv)
+_evas_table_efl_canvas_group_group_calculate(Eo *o, Evas_Table_Data *priv)
 {
    Evas *e;
 
@@ -1402,7 +1402,7 @@ _evas_table_mirrored_set(Eo *o, Evas_Table_Data *priv, Eina_Bool mirrored)
    if (priv->is_mirrored != mirrored)
      {
         priv->is_mirrored = mirrored;
-        evas_obj_smart_calculate(o);
+        efl_canvas_group_calculate(o);
      }
 }
 

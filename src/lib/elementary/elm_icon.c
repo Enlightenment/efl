@@ -490,16 +490,16 @@ _elm_icon_thumb_resize_cb(void *data,
 }
 
 EOLIAN static void
-_elm_icon_evas_object_smart_smart_add(Eo *obj, Elm_Icon_Data *priv)
+_elm_icon_efl_canvas_group_group_add(Eo *obj, Elm_Icon_Data *priv)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->thumb.request = NULL;
 }
 
 EOLIAN static void
-_elm_icon_evas_object_smart_smart_del(Eo *obj, Elm_Icon_Data *sd)
+_elm_icon_efl_canvas_group_group_del(Eo *obj, Elm_Icon_Data *sd)
 {
    eina_stringshare_del(sd->stdicon);
 
@@ -517,7 +517,7 @@ _elm_icon_evas_object_smart_smart_del(Eo *obj, Elm_Icon_Data *sd)
 
    _edje_signals_free(sd);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 /* WARNING: to be deprecated */

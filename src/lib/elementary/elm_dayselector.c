@@ -415,9 +415,9 @@ _items_create(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_dayselector_evas_object_smart_smart_add(Eo *obj, Elm_Dayselector_Data *priv)
+_elm_dayselector_efl_canvas_group_group_add(Eo *obj, Elm_Dayselector_Data *priv)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "dayselector", "base",
@@ -436,7 +436,7 @@ _elm_dayselector_evas_object_smart_smart_add(Eo *obj, Elm_Dayselector_Data *priv
 }
 
 EOLIAN static void
-_elm_dayselector_evas_object_smart_smart_del(Eo *obj, Elm_Dayselector_Data *sd)
+_elm_dayselector_efl_canvas_group_group_del(Eo *obj, Elm_Dayselector_Data *sd)
 {
    Elm_Dayselector_Item_Data *it;
 
@@ -448,7 +448,7 @@ _elm_dayselector_evas_object_smart_smart_del(Eo *obj, Elm_Dayselector_Data *sd)
      }
 
    /* handles freeing sd */
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

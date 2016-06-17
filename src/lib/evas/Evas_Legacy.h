@@ -5210,8 +5210,8 @@ EAPI Evas_Object *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) 
  *
  * This function will return @c null when a non-smart object is passed.
  *
- * See also @ref Evas.Object.Smart.smart_member_add,
- * @ref Evas.Object.Smart.smart_member_del and @ref evas_object_smart_iterator_new.
+ * See also @ref Efl.Canvas.Group.group_member_add,
+ * @ref Efl.Canvas.Group.group_member_del and @ref evas_object_smart_iterator_new.
  *
  * @return Returns the list of the member objects of @c obj.
  *
@@ -5220,6 +5220,110 @@ EAPI Evas_Object *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) 
  * @ingroup Evas_Object_Smart
  */
 EAPI Eina_List *evas_object_smart_members_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Set or unset the flag signalling that a given smart object needs to
+ * get recalculated.
+ *
+ * If this flag is set, then the @c calculate() smart function of @c obj will
+ * be called, if one is provided, during rendering phase of Evas (see
+ * evas_render()), after which this flag will be automatically unset.
+ *
+ * If that smart function is not provided for the given object, this flag will
+ * be left unchanged.
+ *
+ * @note just setting this flag will not make the canvas' whole scene dirty, by
+ * itself, and evas_render() will have no effect. To force that, use
+ * evas_object_smart_changed(), that will also call this function
+ * automatically, with @c true as parameter.
+ *
+ * See also @ref evas_object_smart_need_recalculate_get,
+ * @ref evas_object_smart_calculate and @ref evas_smart_objects_calculate().
+ *
+ * @param[in] value whether one wants to set ($true) or to unset ($false) the
+ * flag.
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI void evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value);
+
+/**
+ * @brief Get the value of the flag signalling that a given smart object needs
+ * to get recalculated.
+ *
+ * @note this flag will be unset during the rendering phase, when the
+ * @c calculate() smart function is called, if one is provided. If it's not
+ * provided, then the flag will be left unchanged after the rendering phase.
+ *
+ * See also @ref evas_object_smart_need_recalculate_set, for more details.
+ *
+ * @return whether one wants to set ($true) or to unset ($false) the flag.
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI Eina_Bool evas_object_smart_need_recalculate_get(const Evas_Object *obj);
+
+/**
+ * @brief Retrieves an iterator of the member objects of a given Evas smart
+ * object.
+ *
+ * See also @ref Efl.Canvas.Group.group_member_add and
+ * @ref Efl.Canvas.Group.group_member_del
+ *
+ * @return Returns the iterator of the member objects of @c obj.
+ *
+ * @since 1.8
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI Eina_Iterator *evas_object_smart_iterator_new(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Call the calculate() smart function immediately on a given smart
+ * object.
+ *
+ * This will force immediate calculations (see #Evas_Smart_Class) needed for
+ * renderization of this object and, besides, unset the flag on it telling it
+ * needs recalculation for the next rendering phase.
+ *
+ * See also @ref evas_object_smart_need_recalculate_set
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI void evas_object_smart_calculate(Evas_Object *obj);
+
+/**
+ * @brief Mark smart object as changed, dirty.
+ *
+ * This will flag the given object as needing recalculation, forcefully. As an
+ * effect, on the next rendering cycle its calculate() (see #Evas_Smart_Class)
+ * smart function will be called.
+ *
+ * See also @ref evas_object_smart_need_recalculate_set and
+ * @ref evas_object_smart_calculate.
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI void evas_object_smart_changed(Evas_Object *obj);
+
+/**
+ * @brief Moves all children objects of a given smart object relative to a
+ * given offset.
+ *
+ * This will make each of @c obj object's children to move, from where they
+ * before, with those delta values (offsets) on both directions.
+ *
+ * @note This is most useful on custom smart @c move functions.
+ *
+ * @note Clipped smart objects already make use of this function on their
+ * @c move smart function definition.
+ *
+ * @param[in] dx Horizontal offset (delta).
+ * @param[in] dy Vertical offset (delta).
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy);
 
 /**
  * This gets the internal counter that counts the number of smart calculations
@@ -5239,7 +5343,7 @@ EAPI Eina_List *evas_object_smart_members_get(const Evas_Object *obj) EINA_WARN_
  */
 EAPI int          evas_smart_objects_calculate_count_get(const Evas *e);
 
-#include "canvas/evas_object_smart.eo.legacy.h"
+#include "canvas/efl_canvas_group.eo.legacy.h"
 
 /**
  * @}
@@ -5264,7 +5368,7 @@ EAPI int          evas_smart_objects_calculate_count_get(const Evas *e);
  */
 EAPI Evas_Object            *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
-#include "canvas/efl_canvas_object_internal_smart_clipped.eo.legacy.h"
+#include "canvas/efl_canvas_group_clipped.eo.legacy.h"
 
 /**
  * @}

@@ -2807,7 +2807,7 @@ _elm_toolbar_action_down_cb(void *data,
 }
 
 EOLIAN static void
-_elm_toolbar_evas_object_smart_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
+_elm_toolbar_efl_canvas_group_group_add(Eo *obj, Elm_Toolbar_Data *priv)
 {
    Evas_Object *edje;
 
@@ -2816,7 +2816,7 @@ _elm_toolbar_evas_object_smart_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje, EINA_TRUE);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
 
    elm_widget_theme_object_set
      (obj, edje, "toolbar", "base", elm_widget_style_get(obj));
@@ -2909,7 +2909,7 @@ _elm_toolbar_evas_object_smart_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
 }
 
 EOLIAN static void
-_elm_toolbar_evas_object_smart_smart_del(Eo *obj, Elm_Toolbar_Data *sd)
+_elm_toolbar_efl_canvas_group_group_del(Eo *obj, Elm_Toolbar_Data *sd)
 {
    Elm_Toolbar_Item_Data *it, *next;
 
@@ -2928,29 +2928,29 @@ _elm_toolbar_evas_object_smart_smart_del(Eo *obj, Elm_Toolbar_Data *sd)
    if (sd->more_item) elm_wdg_item_del(EO_OBJ(sd->more_item));
    ecore_timer_del(sd->long_timer);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_elm_toolbar_evas_object_smart_smart_move(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_toolbar_efl_canvas_group_group_move(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
 
    evas_object_move(sd->hit_rect, x, y);
 }
 
 EOLIAN static void
-_elm_toolbar_evas_object_smart_smart_resize(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_toolbar_efl_canvas_group_group_resize(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
 
    evas_object_resize(sd->hit_rect, w, h);
 }
 
 EOLIAN static void
-_elm_toolbar_evas_object_smart_smart_member_add(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *member)
+_elm_toolbar_efl_canvas_group_group_member_add(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *member)
 {
-   evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
+   efl_canvas_group_member_add(eo_super(obj, MY_CLASS), member);
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
@@ -4118,7 +4118,7 @@ _elm_toolbar_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN void
-_elm_toolbar_evas_object_smart_smart_calculate(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED)
+_elm_toolbar_efl_canvas_group_group_calculate(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED)
 {
    _sizing_eval(obj);
 }

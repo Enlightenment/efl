@@ -917,9 +917,9 @@ _on_prop_change(void *data,
 #endif
 
 EOLIAN static void
-_elm_conformant_evas_object_smart_smart_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
+_elm_conformant_efl_canvas_group_group_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -938,7 +938,7 @@ _elm_conformant_evas_object_smart_smart_add(Eo *obj, Elm_Conformant_Data *_pd EI
 }
 
 EOLIAN static void
-_elm_conformant_evas_object_smart_smart_del(Eo *obj, Elm_Conformant_Data *sd)
+_elm_conformant_efl_canvas_group_group_del(Eo *obj, Elm_Conformant_Data *sd)
 {
 #ifdef HAVE_ELEMENTARY_X
    ecore_event_handler_del(sd->prop_hdl);
@@ -955,7 +955,7 @@ _elm_conformant_evas_object_smart_smart_del(Eo *obj, Elm_Conformant_Data *sd)
    eo_event_callback_del(sd->win, EFL_UI_WIN_EVENT_INDICATOR_PROP_CHANGED, _on_indicator_mode_changed, obj);
    eo_event_callback_del(sd->win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _on_rotation_changed, obj);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

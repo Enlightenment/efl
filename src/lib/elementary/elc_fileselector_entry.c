@@ -317,9 +317,9 @@ _elm_fileselector_entry_content_unset(Eo *obj, Elm_Fileselector_Entry_Data *sd, 
 }
 
 EOLIAN static void
-_elm_fileselector_entry_evas_object_smart_smart_add(Eo *obj, Elm_Fileselector_Entry_Data *priv)
+_elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Entry_Data *priv)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->button = elm_fileselector_button_add(obj);
@@ -377,11 +377,11 @@ _elm_fileselector_entry_evas_object_smart_smart_add(Eo *obj, Elm_Fileselector_En
 }
 
 EOLIAN static void
-_elm_fileselector_entry_evas_object_smart_smart_del(Eo *obj, Elm_Fileselector_Entry_Data *sd)
+_elm_fileselector_entry_efl_canvas_group_group_del(Eo *obj, Elm_Fileselector_Entry_Data *sd)
 {
    free(sd->path);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

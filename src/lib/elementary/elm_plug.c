@@ -107,13 +107,13 @@ _on_mouse_up(void *data,
 }
 
 EOLIAN static void
-_elm_plug_evas_object_smart_smart_add(Eo *obj, void *sd EINA_UNUSED)
+_elm_plug_efl_canvas_group_group_add(Eo *obj, void *sd EINA_UNUSED)
 {
    Evas_Object *p_obj;
    Ecore_Evas *ee;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));

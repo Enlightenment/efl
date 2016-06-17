@@ -290,11 +290,11 @@ _on_check_toggle(void *data,
 }
 
 EOLIAN static void
-_elm_check_evas_object_smart_smart_add(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
+_elm_check_efl_canvas_group_group_add(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "check", "base", elm_widget_style_get(obj)))

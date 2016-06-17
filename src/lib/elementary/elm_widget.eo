@@ -21,7 +21,7 @@ struct Elm.Tooltip;
 struct Elm.Cursor;
 struct @extern Elm.Theme;
 
-abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi_Component)
+abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi_Component)
 {
    legacy_prefix: elm_widget;
    eo_prefix: elm_obj_widget;
@@ -37,7 +37,7 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
            the focus from this object, passing it back to the previous element in the
            focus chain list.
 
-           Warning: Only visible object can get a focus. Call @Evas.Object.Smart.smart_show
+           Warning: Only visible object can get a focus. Call @Efl.Canvas.Group.group_show
            before calling this API, if you want to give a focus to the evas object.]]
          set {
            [[$true set the focus to the object,
@@ -851,19 +851,19 @@ abstract Elm.Widget (Evas.Object.Smart, Elm.Interface.Atspi_Accessible, Elm.Inte
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
       Eo.Base.provider_find;
-      Evas.Object.Smart.smart_hide;
-      Evas.Object.Smart.smart_calculate;
-      Evas.Object.Smart.smart_clip_unset;
-      Evas.Object.Smart.smart_show;
-      Evas.Object.Smart.smart_color.set;
-      Evas.Object.Smart.smart_move;
-      Evas.Object.Smart.smart_member_del;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
-      Evas.Object.Smart.smart_clip.set;
-      Evas.Object.Smart.smart_member_add;
-      Evas.Object.Smart.smart_resize;
-      Evas.Object.Smart.smart_no_render.set;
+      Efl.Canvas.Group.group_hide;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Canvas.Group.group_clip_unset;
+      Efl.Canvas.Group.group_show;
+      Efl.Canvas.Group.group_color.set;
+      Efl.Canvas.Group.group_move;
+      Efl.Canvas.Group.group_member_del;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
+      Efl.Canvas.Group.group_clip.set;
+      Efl.Canvas.Group.group_member_add;
+      Efl.Canvas.Group.group_resize;
+      Efl.Canvas.Group.group_no_render.set;
       Elm.Interface.Atspi_Accessible.name.get;
       Elm.Interface.Atspi_Accessible.state_set.get;
       Elm.Interface.Atspi_Accessible.children.get;

@@ -2387,13 +2387,13 @@ _elm_list_elm_widget_focus_next(Eo *obj, Elm_List_Data *sd, Elm_Focus_Direction 
 }
 
 EOLIAN static void
-_elm_list_evas_object_smart_smart_add(Eo *obj, Elm_List_Data *priv)
+_elm_list_efl_canvas_group_group_add(Eo *obj, Elm_List_Data *priv)
 {
    Evas_Coord minw, minh;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
@@ -2453,7 +2453,7 @@ _elm_list_evas_object_smart_smart_add(Eo *obj, Elm_List_Data *priv)
 }
 
 EOLIAN static void
-_elm_list_evas_object_smart_smart_del(Eo *obj, Elm_List_Data *sd)
+_elm_list_efl_canvas_group_group_del(Eo *obj, Elm_List_Data *sd)
 {
    const Eina_List *l;
    Elm_Object_Item *eo_it;
@@ -2499,29 +2499,29 @@ _elm_list_evas_object_smart_smart_del(Eo *obj, Elm_List_Data *sd)
 
    sd->selected = eina_list_free(sd->selected);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_elm_list_evas_object_smart_smart_move(Eo *obj, Elm_List_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_list_efl_canvas_group_group_move(Eo *obj, Elm_List_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
 
    evas_object_move(sd->hit_rect, x, y);
 }
 
 EOLIAN static void
-_elm_list_evas_object_smart_smart_resize(Eo *obj, Elm_List_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_list_efl_canvas_group_group_resize(Eo *obj, Elm_List_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
 
    evas_object_resize(sd->hit_rect, w, h);
 }
 
 EOLIAN static void
-_elm_list_evas_object_smart_smart_member_add(Eo *obj, Elm_List_Data *sd, Evas_Object *member)
+_elm_list_efl_canvas_group_group_member_add(Eo *obj, Elm_List_Data *sd, Evas_Object *member)
 {
-   evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
+   efl_canvas_group_member_add(eo_super(obj, MY_CLASS), member);
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);

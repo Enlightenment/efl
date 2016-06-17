@@ -1558,11 +1558,11 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_multibuttonentry_evas_object_smart_smart_add(Eo *obj, Elm_Multibuttonentry_Data *priv)
+_elm_multibuttonentry_efl_canvas_group_group_add(Eo *obj, Elm_Multibuttonentry_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -1588,7 +1588,7 @@ _elm_multibuttonentry_evas_object_smart_smart_add(Eo *obj, Elm_Multibuttonentry_
 }
 
 EOLIAN static void
-_elm_multibuttonentry_evas_object_smart_smart_del(Eo *obj, Elm_Multibuttonentry_Data *sd)
+_elm_multibuttonentry_efl_canvas_group_group_del(Eo *obj, Elm_Multibuttonentry_Data *sd)
 {
    Elm_Object_Item *eo_item;
    Elm_Multibuttonentry_Item_Filter *_item_filter = NULL;
@@ -1611,7 +1611,7 @@ _elm_multibuttonentry_evas_object_smart_smart_del(Eo *obj, Elm_Multibuttonentry_
    EINA_LIST_FREE(sd->filter_list, _item_filter)
      _filter_free(_item_filter);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_multibuttonentry_smart_focus_next_enable = EINA_FALSE;

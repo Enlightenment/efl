@@ -6,8 +6,8 @@ class Elm.Conformant (Elm.Layout)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
       Elm.Widget.widget_parent.set;
       Elm.Widget.theme_apply;
       Elm.Layout.content_aliases.get;

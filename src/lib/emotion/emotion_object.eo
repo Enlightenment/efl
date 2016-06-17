@@ -1,4 +1,4 @@
-class Emotion.Object (Evas.Object.Smart, Efl.File, Efl.Player, Efl.Image, Efl.Image.Load) {
+class Emotion.Object (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.Image.Load) {
    legacy_prefix: emotion_object;
    eo_prefix: emotion_obj;
    event_prefix: emotion_object;
@@ -54,15 +54,15 @@ class Emotion.Object (Evas.Object.Smart, Efl.File, Efl.Player, Efl.Image, Efl.Im
    }
    implements {
         Eo.Base.constructor;
-        Evas.Object.Smart.smart_add;
-        Evas.Object.Smart.smart_del;
-        Evas.Object.Smart.smart_move;
-        Evas.Object.Smart.smart_resize;
-        Evas.Object.Smart.smart_show;
-        Evas.Object.Smart.smart_hide;
-        Evas.Object.Smart.smart_color.set;
-        Evas.Object.Smart.smart_clip.set;
-        Evas.Object.Smart.smart_clip_unset;
+        Efl.Canvas.Group.group_add;
+        Efl.Canvas.Group.group_del;
+        Efl.Canvas.Group.group_move;
+        Efl.Canvas.Group.group_resize;
+        Efl.Canvas.Group.group_show;
+        Efl.Canvas.Group.group_hide;
+        Efl.Canvas.Group.group_color.set;
+        Efl.Canvas.Group.group_clip.set;
+        Efl.Canvas.Group.group_clip_unset;
         Efl.File.file.set;
         Efl.File.file.get;
         Efl.Player.play.set;

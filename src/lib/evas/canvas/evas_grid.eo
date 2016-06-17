@@ -1,4 +1,4 @@
-class Evas.Grid (Efl.Canvas.Object.Internal.Smart.Clipped)
+class Evas.Grid (Efl.Canvas.Group.Clipped)
 {
    legacy_prefix: evas_object_grid;
    eo_prefix: evas_obj_grid;

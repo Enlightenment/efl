@@ -561,9 +561,9 @@ _on_parent_resize(void *data, const Eo_Event *ev EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_hoversel_evas_object_smart_smart_add(Eo *obj, Elm_Hoversel_Data *priv)
+_elm_hoversel_efl_canvas_group_group_add(Eo *obj, Elm_Hoversel_Data *priv)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    eo_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _on_clicked, obj);
@@ -576,7 +576,7 @@ _elm_hoversel_evas_object_smart_smart_add(Eo *obj, Elm_Hoversel_Data *priv)
 }
 
 EOLIAN static void
-_elm_hoversel_evas_object_smart_smart_del(Eo *obj, Elm_Hoversel_Data *sd)
+_elm_hoversel_efl_canvas_group_group_del(Eo *obj, Elm_Hoversel_Data *sd)
 {
    Elm_Object_Item *eo_item;
 
@@ -588,20 +588,20 @@ _elm_hoversel_evas_object_smart_smart_del(Eo *obj, Elm_Hoversel_Data *sd)
      }
    elm_hoversel_hover_parent_set(obj, NULL);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_elm_hoversel_evas_object_smart_smart_show(Eo *obj, Elm_Hoversel_Data *sd)
+_elm_hoversel_efl_canvas_group_group_show(Eo *obj, Elm_Hoversel_Data *sd)
 {
-   evas_obj_smart_show(eo_super(obj, MY_CLASS));
+   efl_canvas_group_show(eo_super(obj, MY_CLASS));
    evas_object_show(sd->hover);
 }
 
 EOLIAN static void
-_elm_hoversel_evas_object_smart_smart_hide(Eo *obj, Elm_Hoversel_Data *sd)
+_elm_hoversel_efl_canvas_group_group_hide(Eo *obj, Elm_Hoversel_Data *sd)
 {
-   evas_obj_smart_hide(eo_super(obj, MY_CLASS));
+   efl_canvas_group_hide(eo_super(obj, MY_CLASS));
    evas_object_hide(sd->hover);
 }
 

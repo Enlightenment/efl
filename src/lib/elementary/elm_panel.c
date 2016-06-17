@@ -1001,11 +1001,11 @@ _elm_panel_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *part)
 }
 
 EOLIAN static void
-_elm_panel_evas_object_smart_smart_add(Eo *obj, Elm_Panel_Data *priv)
+_elm_panel_efl_canvas_group_group_add(Eo *obj, Elm_Panel_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
@@ -1049,7 +1049,7 @@ _elm_panel_evas_object_smart_smart_add(Eo *obj, Elm_Panel_Data *priv)
 }
 
 EOLIAN static void
-_elm_panel_evas_object_smart_smart_del(Eo *obj, Elm_Panel_Data *sd)
+_elm_panel_efl_canvas_group_group_del(Eo *obj, Elm_Panel_Data *sd)
 {
    Evas_Object *child;
    Eina_List *l;
@@ -1072,13 +1072,13 @@ _elm_panel_evas_object_smart_smart_del(Eo *obj, Elm_Panel_Data *sd)
           }
      }
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_elm_panel_evas_object_smart_smart_move(Eo *obj, Elm_Panel_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_panel_efl_canvas_group_group_move(Eo *obj, Elm_Panel_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
 
    evas_object_move(sd->hit_rect, x, y);
 }
@@ -1101,9 +1101,9 @@ _elm_panel_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_panel_evas_object_smart_smart_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_panel_efl_canvas_group_group_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
 
    if (!sd->scrollable) return;
 
@@ -1131,9 +1131,9 @@ _elm_panel_evas_object_smart_smart_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coor
 }
 
 EOLIAN static void
-_elm_panel_evas_object_smart_smart_member_add(Eo *obj, Elm_Panel_Data *sd, Evas_Object *member)
+_elm_panel_efl_canvas_group_group_member_add(Eo *obj, Elm_Panel_Data *sd, Evas_Object *member)
 {
-   evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
+   efl_canvas_group_member_add(eo_super(obj, MY_CLASS), member);
 
    if (sd->hit_rect) evas_object_raise(sd->hit_rect);
 }

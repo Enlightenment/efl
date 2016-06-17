@@ -1861,11 +1861,11 @@ _create_colorcomponents(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_colorselector_evas_object_smart_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
+_elm_colorselector_efl_canvas_group_group_add(Eo *obj, Elm_Colorselector_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -1901,7 +1901,7 @@ _elm_colorselector_evas_object_smart_smart_add(Eo *obj, Elm_Colorselector_Data *
 }
 
 EOLIAN static void
-_elm_colorselector_evas_object_smart_smart_del(Eo *obj, Elm_Colorselector_Data *sd)
+_elm_colorselector_efl_canvas_group_group_del(Eo *obj, Elm_Colorselector_Data *sd)
 {
    int i = 0;
    void *tmp[4];
@@ -1922,7 +1922,7 @@ _elm_colorselector_evas_object_smart_smart_del(Eo *obj, Elm_Colorselector_Data *
    /* This cb_data are used during the destruction process of base.del */
    for (i = 0; i < 4; i++)
      tmp[i] = sd->cb_data[i];
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
    for (i = 0; i < 4; i++)
      free(tmp[i]);
 }

@@ -650,11 +650,11 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_clock_evas_object_smart_smart_add(Eo *obj, Elm_Clock_Data *priv)
+_elm_clock_efl_canvas_group_group_add(Eo *obj, Elm_Clock_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->cur.ampm = -1;
@@ -688,7 +688,7 @@ _elm_clock_evas_object_smart_smart_add(Eo *obj, Elm_Clock_Data *priv)
 }
 
 EOLIAN static void
-_elm_clock_evas_object_smart_smart_del(Eo *obj, Elm_Clock_Data *sd)
+_elm_clock_efl_canvas_group_group_del(Eo *obj, Elm_Clock_Data *sd)
 {
 
    ecore_timer_del(sd->ticker);
@@ -696,7 +696,7 @@ _elm_clock_evas_object_smart_smart_del(Eo *obj, Elm_Clock_Data *sd)
 
    /* NB: digits are killed for being sub objects, automatically */
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_clock_smart_focus_next_enable = EINA_FALSE;

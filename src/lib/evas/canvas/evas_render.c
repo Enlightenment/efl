@@ -1079,7 +1079,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
             (current->cur->visible) &&
             (!current->delete_me) &&
             (current->cur->cache.clip.visible) &&
-            (!eo_isa(eo_current, EVAS_OBJECT_SMART_CLASS)))
+            (!eo_isa(eo_current, EFL_CANVAS_GROUP_CLASS)))
           {
              Eina_Bool included = EINA_FALSE;
 

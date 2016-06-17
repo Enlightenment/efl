@@ -1809,9 +1809,9 @@ _efl_ui_flip_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static void
-_efl_ui_flip_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Flip_Data *priv)
+_efl_ui_flip_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Flip_Data *priv)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->clip = evas_object_rectangle_add(evas_object_evas_get(obj));
@@ -1852,12 +1852,12 @@ _efl_ui_flip_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Flip_Data *priv)
 }
 
 EOLIAN static void
-_efl_ui_flip_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Flip_Data *sd)
+_efl_ui_flip_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Flip_Data *sd)
 {
    ecore_animator_del(sd->animator);
    _state_slices_clear(sd);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

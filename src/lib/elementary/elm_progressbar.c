@@ -279,11 +279,11 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_progressbar_evas_object_smart_smart_add(Eo *obj, Elm_Progressbar_Data *priv)
+_elm_progressbar_efl_canvas_group_group_add(Eo *obj, Elm_Progressbar_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->orientation = EFL_ORIENT_RIGHT;
@@ -318,7 +318,7 @@ _elm_progressbar_evas_object_smart_smart_add(Eo *obj, Elm_Progressbar_Data *priv
 }
 
 EOLIAN static void
-_elm_progressbar_evas_object_smart_smart_del(Eo *obj, Elm_Progressbar_Data *sd)
+_elm_progressbar_efl_canvas_group_group_del(Eo *obj, Elm_Progressbar_Data *sd)
 {
    Elm_Progress_Status *progress_obj;
 
@@ -332,7 +332,7 @@ _elm_progressbar_evas_object_smart_smart_del(Eo *obj, Elm_Progressbar_Data *sd)
            }
       }
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*

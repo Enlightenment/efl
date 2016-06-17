@@ -234,7 +234,7 @@ _items_remove(Elm_Popup_Data *sd)
 }
 
 EOLIAN static void
-_elm_popup_evas_object_smart_smart_del(Eo *obj, Elm_Popup_Data *sd)
+_elm_popup_efl_canvas_group_group_del(Eo *obj, Elm_Popup_Data *sd)
 {
    unsigned int i;
 
@@ -277,7 +277,7 @@ _elm_popup_evas_object_smart_smart_del(Eo *obj, Elm_Popup_Data *sd)
    ELM_SAFE_FREE(sd->content, evas_object_del);
    ELM_SAFE_FREE(sd->title_text, eina_stringshare_del);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 static void
@@ -1504,11 +1504,11 @@ _elm_popup_elm_widget_event(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, Evas_Objec
 }
 
 EOLIAN static void
-_elm_popup_evas_object_smart_smart_add(Eo *obj, Elm_Popup_Data *priv)
+_elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
 {
    char style[1024];
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));

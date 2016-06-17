@@ -6,8 +6,8 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.smart_del;
-      Evas.Object.Smart.smart_add;
+      Efl.Canvas.Group.group_del;
+      Efl.Canvas.Group.group_add;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;

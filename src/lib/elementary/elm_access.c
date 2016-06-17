@@ -35,9 +35,9 @@ static Evas_Object * _elm_access_add(Evas_Object *parent);
 static void _access_object_unregister(Evas_Object *obj);
 
 EOLIAN static void
-_elm_access_evas_object_smart_smart_add(Eo *obj, void *_pd EINA_UNUSED)
+_elm_access_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 }
 

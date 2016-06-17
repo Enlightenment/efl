@@ -6,9 +6,9 @@ class Elm.Map.Pan (Elm.Pan)
    implements {
       class.constructor;
       Eo.Base.destructor;
-      Evas.Object.Smart.smart_calculate;
-      Evas.Object.Smart.smart_move;
-      Evas.Object.Smart.smart_resize;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Canvas.Group.group_move;
+      Efl.Canvas.Group.group_resize;
       Elm.Pan.content_size.get;
       Elm.Pan.pos;
       Elm.Pan.pos_min.get;

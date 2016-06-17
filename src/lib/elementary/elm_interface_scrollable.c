@@ -104,23 +104,23 @@ _elm_pan_update(Elm_Pan_Smart_Data *psd)
 }
 
 EOLIAN static void
-_elm_pan_evas_object_smart_smart_add(Eo *obj, Elm_Pan_Smart_Data *priv)
+_elm_pan_efl_canvas_group_group_add(Eo *obj, Elm_Pan_Smart_Data *priv)
 {
-   evas_obj_smart_add(eo_super(obj, MY_PAN_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_PAN_CLASS));
 
    priv->self = obj;
 }
 
 EOLIAN static void
-_elm_pan_evas_object_smart_smart_del(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
+_elm_pan_efl_canvas_group_group_del(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
    _elm_pan_content_set(obj, NULL);
 
-   evas_obj_smart_del(eo_super(obj, MY_PAN_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_PAN_CLASS));
 }
 
 EOLIAN static void
-_elm_pan_evas_object_smart_smart_move(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord x, Evas_Coord y)
+_elm_pan_efl_canvas_group_group_move(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord x, Evas_Coord y)
 {
    psd->x = x;
    psd->y = y;
@@ -129,7 +129,7 @@ _elm_pan_evas_object_smart_smart_move(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *p
 }
 
 EOLIAN static void
-_elm_pan_evas_object_smart_smart_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord w, Evas_Coord h)
+_elm_pan_efl_canvas_group_group_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord w, Evas_Coord h)
 {
    psd->w = w;
    psd->h = h;
@@ -139,18 +139,18 @@ _elm_pan_evas_object_smart_smart_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data 
 }
 
 EOLIAN static void
-_elm_pan_evas_object_smart_smart_show(Eo *obj, Elm_Pan_Smart_Data *psd)
+_elm_pan_efl_canvas_group_group_show(Eo *obj, Elm_Pan_Smart_Data *psd)
 {
-   evas_obj_smart_show(eo_super(obj, MY_PAN_CLASS));
+   efl_canvas_group_show(eo_super(obj, MY_PAN_CLASS));
 
    if (psd->content)
      evas_object_show(psd->content);
 }
 
 EOLIAN static void
-_elm_pan_evas_object_smart_smart_hide(Eo *obj, Elm_Pan_Smart_Data *psd)
+_elm_pan_efl_canvas_group_group_hide(Eo *obj, Elm_Pan_Smart_Data *psd)
 {
-   evas_obj_smart_hide(eo_super(obj, MY_PAN_CLASS));
+   efl_canvas_group_hide(eo_super(obj, MY_PAN_CLASS));
 
    if (psd->content)
      evas_object_hide(psd->content);
@@ -4485,7 +4485,7 @@ _elm_interface_scrollable_loop_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Int
 }
 
 EOLIAN static void
-_elm_interface_scrollable_evas_object_smart_smart_add(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid)
+_elm_interface_scrollable_efl_canvas_group_group_add(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid)
 {
    memset(sid, 0, sizeof(*sid));
 
@@ -4518,14 +4518,14 @@ _elm_interface_scrollable_evas_object_smart_smart_add(Eo *obj, Elm_Scrollable_Sm
 
    _elm_scroll_scroll_bar_reset(sid);
 
-   evas_obj_smart_add(eo_super(obj, MY_SCROLLABLE_INTERFACE));
+   efl_canvas_group_add(eo_super(obj, MY_SCROLLABLE_INTERFACE));
 }
 
 EOLIAN static void
-_elm_interface_scrollable_evas_object_smart_smart_del(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid)
+_elm_interface_scrollable_efl_canvas_group_group_del(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid)
 {
 
-   evas_obj_smart_del(eo_super(obj, MY_SCROLLABLE_INTERFACE));
+   efl_canvas_group_del(eo_super(obj, MY_SCROLLABLE_INTERFACE));
 
    elm_interface_scrollable_content_set(obj, NULL);
    if (!sid->extern_pan) evas_object_del(sid->pan_obj);

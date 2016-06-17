@@ -3,9 +3,9 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack.Grid, Efl.Pack.Layout,
 {
    implements {
       Eo.Base.constructor;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
-      Evas.Object.Smart.smart_calculate;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
+      Efl.Canvas.Group.group_calculate;
       Elm.Widget.focus_direction;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;

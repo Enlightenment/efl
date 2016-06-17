@@ -3734,9 +3734,9 @@ _elm_gesture_layer_elm_widget_disable(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_
 }
 
 EOLIAN static void
-_elm_gesture_layer_evas_object_smart_smart_add(Eo *obj, Elm_Gesture_Layer_Data *priv)
+_elm_gesture_layer_efl_canvas_group_group_add(Eo *obj, Elm_Gesture_Layer_Data *priv)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->line_min_length =
@@ -3767,7 +3767,7 @@ _elm_gesture_layer_evas_object_smart_smart_add(Eo *obj, Elm_Gesture_Layer_Data *
 static void _cbs_clean(Elm_Gesture_Layer_Data *sd, Elm_Gesture_Type idx, Elm_Gesture_State cb_type);
 
 EOLIAN static void
-_elm_gesture_layer_evas_object_smart_smart_del(Eo *obj, Elm_Gesture_Layer_Data *sd)
+_elm_gesture_layer_efl_canvas_group_group_del(Eo *obj, Elm_Gesture_Layer_Data *sd)
 {
    Pointer_Event *data;
    int i;
@@ -3810,7 +3810,7 @@ _elm_gesture_layer_evas_object_smart_smart_del(Eo *obj, Elm_Gesture_Layer_Data *
    if (!elm_widget_disabled_get(obj))
      _callbacks_unregister(obj);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

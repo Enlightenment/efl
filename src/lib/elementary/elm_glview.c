@@ -86,9 +86,9 @@ _glview_update_surface(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_glview_evas_object_smart_smart_resize(Eo *obj, Elm_Glview_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_glview_efl_canvas_group_group_resize(Eo *obj, Elm_Glview_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
 
    sd->resized = EINA_TRUE;
 
@@ -220,7 +220,7 @@ _set_render_policy_callback(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_glview_evas_object_smart_smart_add(Eo *obj, Elm_Glview_Data *priv EINA_UNUSED)
+_elm_glview_efl_canvas_group_group_add(Eo *obj, Elm_Glview_Data *priv EINA_UNUSED)
 {
    Evas_Object *img;
 
@@ -231,7 +231,7 @@ _elm_glview_evas_object_smart_smart_add(Eo *obj, Elm_Glview_Data *priv EINA_UNUS
    elm_widget_resize_object_set(obj, img, EINA_TRUE);
    evas_object_image_size_set(img, 1, 1);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
 }
 
 static void
@@ -287,7 +287,7 @@ _elm_glview_constructor(Eo *obj, Elm_Glview_Data *priv)
 }
 
 EOLIAN static void
-_elm_glview_evas_object_smart_smart_del(Eo *obj, Elm_Glview_Data *sd)
+_elm_glview_efl_canvas_group_group_del(Eo *obj, Elm_Glview_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -315,7 +315,7 @@ _elm_glview_evas_object_smart_smart_del(Eo *obj, Elm_Glview_Data *sd)
    if (sd->config) evas_gl_config_free(sd->config);
    if (sd->evasgl) evas_gl_free(sd->evasgl);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Bool

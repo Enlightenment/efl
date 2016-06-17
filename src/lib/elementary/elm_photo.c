@@ -243,11 +243,11 @@ _on_thumb_done(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_photo_evas_object_smart_smart_add(Eo *obj, Elm_Photo_Data *priv)
+_elm_photo_efl_canvas_group_group_add(Eo *obj, Elm_Photo_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -287,11 +287,11 @@ _elm_photo_evas_object_smart_smart_add(Eo *obj, Elm_Photo_Data *priv)
 }
 
 EOLIAN static void
-_elm_photo_evas_object_smart_smart_del(Eo *obj, Elm_Photo_Data *sd)
+_elm_photo_efl_canvas_group_group_del(Eo *obj, Elm_Photo_Data *sd)
 {
    ecore_timer_del(sd->long_press_timer);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

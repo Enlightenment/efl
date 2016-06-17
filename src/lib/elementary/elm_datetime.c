@@ -796,12 +796,12 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_datetime_evas_object_smart_smart_add(Eo *obj, Elm_Datetime_Data *priv)
+_elm_datetime_efl_canvas_group_group_add(Eo *obj, Elm_Datetime_Data *priv)
 {
    Datetime_Field *field;
    int idx;
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    // module - initialise module for datetime
@@ -862,7 +862,7 @@ _elm_datetime_evas_object_smart_smart_add(Eo *obj, Elm_Datetime_Data *priv)
 }
 
 EOLIAN static void
-_elm_datetime_evas_object_smart_smart_del(Eo *obj, Elm_Datetime_Data *sd)
+_elm_datetime_efl_canvas_group_group_del(Eo *obj, Elm_Datetime_Data *sd)
 {
    Datetime_Field *tmp;
    unsigned int idx;
@@ -877,7 +877,7 @@ _elm_datetime_evas_object_smart_smart_del(Eo *obj, Elm_Datetime_Data *sd)
    if ((dt_mod) && (dt_mod->obj_unhook))
      dt_mod->obj_unhook(sd->mod_data);  // module - unhook
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

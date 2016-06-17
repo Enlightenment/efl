@@ -60,10 +60,10 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.smart_move;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_member_add;
-      Evas.Object.Smart.smart_resize;
+      Efl.Canvas.Group.group_move;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_member_add;
+      Efl.Canvas.Group.group_resize;
       Elm.Widget.theme_apply;
       Elm.Widget.activate;
       Elm.Widget.focus_next_manager_is;

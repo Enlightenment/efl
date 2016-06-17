@@ -1,4 +1,4 @@
-class Elm.Pan (Efl.Canvas.Object.Internal.Smart.Clipped)
+class Elm.Pan (Efl.Canvas.Group.Clipped)
 {
    legacy_prefix: elm_pan;
    eo_prefix: elm_obj_pan;
@@ -53,12 +53,12 @@ class Elm.Pan (Efl.Canvas.Object.Internal.Smart.Clipped)
    implements {
       Eo.Base.constructor;
       class.constructor;
-      Evas.Object.Smart.smart_hide;
-      Evas.Object.Smart.smart_show;
-      Evas.Object.Smart.smart_move;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
-      Evas.Object.Smart.smart_resize;
+      Efl.Canvas.Group.group_hide;
+      Efl.Canvas.Group.group_show;
+      Efl.Canvas.Group.group_move;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
+      Efl.Canvas.Group.group_resize;
    }
    events {
       changed;

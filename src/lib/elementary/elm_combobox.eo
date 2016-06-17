@@ -55,11 +55,11 @@ class Elm.Combobox (Elm.Button, Efl.Ui.Selectable,
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.smart_hide;
-      Evas.Object.Smart.smart_show;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
-      Evas.Object.Smart.smart_resize;
+      Efl.Canvas.Group.group_hide;
+      Efl.Canvas.Group.group_show;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
+      Efl.Canvas.Group.group_resize;
       Elm.Widget.part_text.set;
       Elm.Widget.part_text.get;
       Elm.Widget.theme_apply;

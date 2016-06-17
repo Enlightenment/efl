@@ -41,8 +41,8 @@ class Elm.Route (Elm.Widget)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;
    }
 

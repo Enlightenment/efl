@@ -2939,8 +2939,8 @@ _edje_part_recalc_single(Edje *ed,
      {
         Evas_Coord lminw = 0, lminh = 0;
 
-        evas_obj_smart_need_recalculate_set(ep->object, 1);
-        evas_obj_smart_calculate(ep->object);
+        efl_canvas_group_need_recalculate_set(ep->object, 1);
+        efl_canvas_group_calculate(ep->object);
         efl_gfx_size_hint_restricted_min_get(ep->object, &lminw, &lminh);
         if (((Edje_Part_Description_Table *)chosen_desc)->table.min.h)
           {
@@ -2957,8 +2957,8 @@ _edje_part_recalc_single(Edje *ed,
      {
         Evas_Coord lminw = 0, lminh = 0;
 
-        evas_obj_smart_need_recalculate_set(ep->object, 1);
-        evas_obj_smart_calculate(ep->object);
+        efl_canvas_group_need_recalculate_set(ep->object, 1);
+        efl_canvas_group_calculate(ep->object);
         efl_gfx_size_hint_restricted_min_get(ep->object, &lminw, &lminh);
         if (((Edje_Part_Description_Box *)chosen_desc)->box.min.h)
           {
@@ -3124,8 +3124,8 @@ _edje_table_recalc_apply(Edje *ed EINA_UNUSED,
    evas_obj_table_padding_set(ep->object, chosen_desc->table.padding.x, chosen_desc->table.padding.y);
    if (evas_object_smart_need_recalculate_get(ep->object))
      {
-        evas_obj_smart_need_recalculate_set(ep->object, 0);
-        evas_obj_smart_calculate(ep->object);
+        efl_canvas_group_need_recalculate_set(ep->object, 0);
+        efl_canvas_group_calculate(ep->object);
      }
 }
 

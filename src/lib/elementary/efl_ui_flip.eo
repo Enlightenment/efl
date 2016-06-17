@@ -225,8 +225,8 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
       Elm.Widget.focus_direction;
       Elm.Widget.sub_object_add;
       Elm.Widget.theme_apply;

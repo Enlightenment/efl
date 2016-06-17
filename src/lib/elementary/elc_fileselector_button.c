@@ -218,11 +218,11 @@ _button_clicked(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_fileselector_button_evas_object_smart_smart_add(Eo *obj, Elm_Fileselector_Button_Data *priv)
+_elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Button_Data *priv)
 {
    const char *path;
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
@@ -246,7 +246,7 @@ _elm_fileselector_button_evas_object_smart_smart_add(Eo *obj, Elm_Fileselector_B
 }
 
 EOLIAN static void
-_elm_fileselector_button_evas_object_smart_smart_del(Eo *obj, Elm_Fileselector_Button_Data *sd)
+_elm_fileselector_button_efl_canvas_group_group_del(Eo *obj, Elm_Fileselector_Button_Data *sd)
 {
    if (sd->fsd.model)
      eo_unref(sd->fsd.model);
@@ -256,7 +256,7 @@ _elm_fileselector_button_evas_object_smart_smart_del(Eo *obj, Elm_Fileselector_B
      eo_unref(sd->fsd.selection);
    evas_object_del(sd->fsw);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Bool

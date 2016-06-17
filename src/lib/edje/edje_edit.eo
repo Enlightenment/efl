@@ -10,7 +10,7 @@ class Edje.Edit (Edje.Object)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Evas.Object.Smart.smart_del;
+      Efl.Canvas.Group.group_del;
       Efl.File.file.set;
    }
 }

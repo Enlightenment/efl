@@ -148,11 +148,11 @@ _edje_edit_data_clean(Edje_Edit *eed)
 }
 
 EOLIAN static void
-_edje_edit_evas_object_smart_smart_del(Eo *obj, Edje_Edit *eed)
+_edje_edit_efl_canvas_group_group_del(Eo *obj, Edje_Edit *eed)
 {
    _edje_edit_data_clean(eed);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 static void

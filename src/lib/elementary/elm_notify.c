@@ -226,11 +226,11 @@ _block_area_clicked_cb(void *data,
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_smart_resize(Eo *obj, Elm_Notify_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_notify_efl_canvas_group_group_resize(Eo *obj, Elm_Notify_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord x, y;
 
-   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
 
    if (!sd->parent && sd->content)
      {
@@ -240,11 +240,11 @@ _elm_notify_evas_object_smart_smart_resize(Eo *obj, Elm_Notify_Data *sd, Evas_Co
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_smart_move(Eo *obj, Elm_Notify_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_notify_efl_canvas_group_group_move(Eo *obj, Elm_Notify_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    Evas_Coord w, h;
 
-   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
 
    if (!sd->parent && sd->content)
      {
@@ -282,11 +282,11 @@ _timer_init(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_smart_show(Eo *obj, Elm_Notify_Data *sd)
+_elm_notify_efl_canvas_group_group_show(Eo *obj, Elm_Notify_Data *sd)
 {
    sd->had_hidden = EINA_FALSE;
    sd->in_timeout = EINA_FALSE;
-   evas_obj_smart_show(eo_super(obj, MY_CLASS));
+   efl_canvas_group_show(eo_super(obj, MY_CLASS));
 
    evas_object_show(sd->notify);
    if (!sd->allow_events) evas_object_show(sd->block_events);
@@ -295,7 +295,7 @@ _elm_notify_evas_object_smart_smart_show(Eo *obj, Elm_Notify_Data *sd)
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_smart_hide(Eo *obj, Elm_Notify_Data *sd)
+_elm_notify_efl_canvas_group_group_hide(Eo *obj, Elm_Notify_Data *sd)
 {
    const char *hide_signal;
 
@@ -310,7 +310,7 @@ _elm_notify_evas_object_smart_smart_hide(Eo *obj, Elm_Notify_Data *sd)
      }
    else //for backport supporting: edc without emitting hide finished signal
      {
-        evas_obj_smart_hide(eo_super(obj, MY_CLASS));
+        efl_canvas_group_hide(eo_super(obj, MY_CLASS));
         evas_object_hide(sd->notify);
         if (sd->allow_events) evas_object_hide(sd->block_events);
      }
@@ -447,14 +447,14 @@ _hide_finished_cb(void *data,
    sd->had_hidden = EINA_TRUE;
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
-   evas_obj_smart_hide(eo_super(data, MY_CLASS));
+   efl_canvas_group_hide(eo_super(data, MY_CLASS));
    eo_event_callback_call(data, ELM_NOTIFY_EVENT_DISMISSED, NULL);
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_smart_add(Eo *obj, Elm_Notify_Data *priv)
+_elm_notify_efl_canvas_group_group_add(Eo *obj, Elm_Notify_Data *priv)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->allow_events = EINA_TRUE;
@@ -470,7 +470,7 @@ _elm_notify_evas_object_smart_smart_add(Eo *obj, Elm_Notify_Data *priv)
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_smart_del(Eo *obj, Elm_Notify_Data *sd)
+_elm_notify_efl_canvas_group_group_del(Eo *obj, Elm_Notify_Data *sd)
 {
    edje_object_signal_callback_del_full
       (sd->notify, "elm,action,hide,finished", "elm", _hide_finished_cb, obj);
@@ -479,7 +479,7 @@ _elm_notify_evas_object_smart_smart_del(Eo *obj, Elm_Notify_Data *sd)
    ecore_timer_del(sd->timer);
 
    ELM_SAFE_FREE(sd->notify, evas_object_del);
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *

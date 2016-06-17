@@ -65,8 +65,8 @@ class Elm.Video (Elm.Layout, Efl.File,
       Eo.Base.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
-      Evas.Object.Smart.smart_add;
-      Evas.Object.Smart.smart_del;
+      Efl.Canvas.Group.group_add;
+      Efl.Canvas.Group.group_del;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.event;

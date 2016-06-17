@@ -556,7 +556,7 @@ _unblock_menu(void *_sd, const Eo_Event *event EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_menu_evas_object_smart_smart_show(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_efl_canvas_group_group_show(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    evas_object_show(sd->hv);
 }
@@ -672,9 +672,9 @@ _item_submenu_obj_create(Elm_Menu_Item_Data *item)
 }
 
 EOLIAN static void
-_elm_menu_evas_object_smart_smart_add(Eo *obj, Elm_Menu_Data *priv)
+_elm_menu_efl_canvas_group_group_add(Eo *obj, Elm_Menu_Data *priv)
 {
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -701,7 +701,7 @@ _elm_menu_evas_object_smart_smart_add(Eo *obj, Elm_Menu_Data *priv)
 }
 
 EOLIAN static void
-_elm_menu_evas_object_smart_smart_del(Eo *obj, Elm_Menu_Data *sd)
+_elm_menu_efl_canvas_group_group_del(Eo *obj, Elm_Menu_Data *sd)
 {
    Elm_Object_Item *eo_item;
 
@@ -721,7 +721,7 @@ _elm_menu_evas_object_smart_smart_del(Eo *obj, Elm_Menu_Data *sd)
    evas_object_del(sd->hv);
    evas_object_del(sd->location);
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 void

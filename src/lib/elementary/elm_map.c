@@ -3861,7 +3861,7 @@ _elm_map_pan_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Elm_Map_Pan_Data *psd
 }
 
 EOLIAN static void
-_elm_map_pan_evas_object_smart_smart_resize(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord w EINA_UNUSED, Evas_Coord h EINA_UNUSED)
+_elm_map_pan_efl_canvas_group_group_resize(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord w EINA_UNUSED, Evas_Coord h EINA_UNUSED)
 {
    _sizing_eval(psd->wsd->obj);
    elm_map_zoom_mode_set(psd->wobj, psd->wsd->mode);
@@ -3869,7 +3869,7 @@ _elm_map_pan_evas_object_smart_smart_resize(Eo *obj, Elm_Map_Pan_Data *psd, Evas
 }
 
 EOLIAN static void
-_elm_map_pan_evas_object_smart_smart_calculate(Eo *obj, Elm_Map_Pan_Data *psd)
+_elm_map_pan_efl_canvas_group_group_calculate(Eo *obj, Elm_Map_Pan_Data *psd)
 {
    Evas_Coord w, h;
 
@@ -3883,7 +3883,7 @@ _elm_map_pan_evas_object_smart_smart_calculate(Eo *obj, Elm_Map_Pan_Data *psd)
 }
 
 EOLIAN static void
-_elm_map_pan_evas_object_smart_smart_move(Eo *obj, Elm_Map_Pan_Data *_pd EINA_UNUSED, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
+_elm_map_pan_efl_canvas_group_group_move(Eo *obj, Elm_Map_Pan_Data *_pd EINA_UNUSED, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
 {
    evas_object_smart_changed(obj);
 }
@@ -4032,7 +4032,7 @@ _elm_map_elm_widget_event(Eo *obj, Elm_Map_Data *sd EINA_UNUSED, Evas_Object *sr
 }
 
 EOLIAN static void
-_elm_map_evas_object_smart_smart_add(Eo *obj, Elm_Map_Data *priv)
+_elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
 {
    Evas_Coord minw, minh;
    Elm_Map_Pan_Data *pan_data;
@@ -4043,7 +4043,7 @@ _elm_map_evas_object_smart_smart_add(Eo *obj, Elm_Map_Data *priv)
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje, EINA_TRUE);
 
-   evas_obj_smart_add(eo_super(obj, MY_CLASS));
+   efl_canvas_group_add(eo_super(obj, MY_CLASS));
 
    elm_widget_theme_object_set
      (obj, edje, "map", "base", elm_widget_style_get(obj));
@@ -4141,7 +4141,7 @@ _elm_map_evas_object_smart_smart_add(Eo *obj, Elm_Map_Data *priv)
 }
 
 EOLIAN static void
-_elm_map_evas_object_smart_smart_del(Eo *obj, Elm_Map_Data *sd)
+_elm_map_efl_canvas_group_group_del(Eo *obj, Elm_Map_Data *sd)
 {
    Elm_Map_Route *r;
    Elm_Map_Name *na;
@@ -4197,29 +4197,29 @@ _elm_map_evas_object_smart_smart_del(Eo *obj, Elm_Map_Data *sd)
    evas_object_del(sd->pan_obj);
    sd->pan_obj = NULL;
 
-   evas_obj_smart_del(eo_super(obj, MY_CLASS));
+   efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_elm_map_evas_object_smart_smart_move(Eo *obj, Elm_Map_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_map_efl_canvas_group_group_move(Eo *obj, Elm_Map_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
+   efl_canvas_group_move(eo_super(obj, MY_CLASS), x, y);
 
    evas_object_move(sd->hit_rect, x, y);
 }
 
 EOLIAN static void
-_elm_map_evas_object_smart_smart_resize(Eo *obj, Elm_Map_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_map_efl_canvas_group_group_resize(Eo *obj, Elm_Map_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
+   efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
 
    evas_object_resize(sd->hit_rect, w, h);
 }
 
 EOLIAN static void
-_elm_map_evas_object_smart_smart_member_add(Eo *obj, Elm_Map_Data *sd, Evas_Object *member)
+_elm_map_efl_canvas_group_group_member_add(Eo *obj, Elm_Map_Data *sd, Evas_Object *member)
 {
-   evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
+   efl_canvas_group_member_add(eo_super(obj, MY_CLASS), member);
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
