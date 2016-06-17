@@ -177,7 +177,7 @@ main(void)
    d.bg = eo_add(EFL_CANVAS_RECTANGLE_CLASS, d.canvas);
 
    /* Eo-styled way to perform actions on an object*/
-   evas_obj_name_set(d.bg, "background rectangle");
+   evas_object_name_set(d.bg, "background rectangle");
    efl_gfx_color_set(d.bg, 255, 255, 255, 255);
    /* white bg */
                efl_gfx_position_set(d.bg, 0, 0);
