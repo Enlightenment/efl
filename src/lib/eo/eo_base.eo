@@ -375,7 +375,7 @@ abstract Eo.Base ()
          [[Get an iterator on all childrens]]
          return: free(own(iterator<Eo.Base>), eina_iterator_free) @warn_unused;
       }
-      composite_attach @beta {
+      composite_attach {
            [[Make an object a composite object of another.
 
              The class of comp_obj must be part of the extensions of the class of the parent.
@@ -389,7 +389,7 @@ abstract Eo.Base ()
            }
            return: bool; [[$true if successful. $false otherwise.]]
       }
-      composite_detach @beta {
+      composite_detach {
            [[Detach a composite object from another object.
 
              This functions also sets the parent of comp_obj to $null.
@@ -401,7 +401,7 @@ abstract Eo.Base ()
            }
            return: bool; [[$true if successful. $false otherwise.]]
       }
-      composite_part_is @beta {
+      composite_part_is {
            [[Check if an object is part of a composite object.
 
              See @.composite_attach, @.composite_part_is.
