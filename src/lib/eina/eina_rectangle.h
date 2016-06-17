@@ -49,8 +49,8 @@
  */
 typedef struct _Eina_Rectangle
 {
-   int x; /**< top-left x co-ordinate of rectangle */
-   int y; /**< top-left y co-ordinate of rectangle */
+   int x; /**< top-left x coordinate of rectangle */
+   int y; /**< top-left y coordinate of rectangle */
    int w; /**< width of rectangle */
    int h; /**< height of rectangle */
 } Eina_Rectangle;
