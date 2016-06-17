@@ -464,9 +464,10 @@ _evas_object_smart_iterator_new(const Eo *eo_obj, Evas_Smart_Data *priv)
    return &it->iterator;
 }
 
-EOLIAN static Eina_List*
-_evas_object_smart_members_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+EAPI Eina_List*
+evas_object_smart_members_get(const Evas_Object *eo_obj)
 {
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, NULL);
    Eina_List *members = NULL;
    Eina_Inlist *member;
 

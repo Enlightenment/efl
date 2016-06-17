@@ -62,21 +62,6 @@ class Evas.Object.Smart (Evas.Object)
             a: int;
          }
       }
-      @property members {
-         get {
-            [[Retrieves the list of the member objects of a given Evas smart object.
-
-              The returned list should be freed with $eina_list_free() when you
-              no longer need it.
-
-              This function will return $null when a non-smart object is passed.
-
-              See also @.member_add, @.member_del and @.iterator_new.
-
-              @since 1.7]]
-            return: list<Evas.Object> @warn_unused; [[Returns the list of the member objects of $obj.]]
-         }
-      }
       show {
          [[No description supplied by the EAPI.]]
          legacy: null;

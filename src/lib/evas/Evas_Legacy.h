@@ -5192,6 +5192,26 @@ EAPI void evas_object_smart_data_set(Evas_Object *obj, void *data);
 EAPI void *evas_object_smart_data_get(const Evas_Object *obj);
 
 /**
+ * @brief Retrieves the list of the member objects of a given Evas smart
+ * object.
+ *
+ * The returned list should be freed with @c eina_list_free() when you no
+ * longer need it.
+ *
+ * This function will return @c null when a non-smart object is passed.
+ *
+ * See also @ref Evas.Object.Smart.member_add,
+ * @ref Evas.Object.Smart.member_del and @ref evas_object_smart_iterator_new.
+ *
+ * @return Returns the list of the member objects of @c obj.
+ *
+ * @since 1.7
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI Eina_List *evas_object_smart_members_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
+/**
  * This gets the internal counter that counts the number of smart calculations
  *
  * @param e The canvas to get the calculate counter from
