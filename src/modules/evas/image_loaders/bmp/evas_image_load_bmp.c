@@ -525,7 +525,11 @@ evas_image_load_file_data_bmp(void *loader_data,
      }
 
    row_size = ceil((double)(image_w * header.bit_count) / 32) * 4;
-   if (image_size != row_size * header.height)
+
+   //If the file is not downloaded perfactly, image_size can be smaller (row_size * header.height).
+   //in this case, image_size should be filesize-offset size.
+
+   if (image_size > row_size * header.height)
      image_size = row_size * header.height;
 
    if (header.bit_count < 16)
