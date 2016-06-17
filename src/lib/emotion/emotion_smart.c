@@ -1829,7 +1829,7 @@ _pixels_get(void *data, Evas_Object *obj)
 /*******************************************/
 
 EOLIAN static void
-_emotion_object_evas_object_smart_add(Evas_Object *obj, Emotion_Object_Data *sd)
+_emotion_object_evas_object_smart_smart_add(Evas_Object *obj, Emotion_Object_Data *sd)
 {
    unsigned int *pixel;
 
@@ -1864,7 +1864,7 @@ _emotion_object_evas_object_smart_add(Evas_Object *obj, Emotion_Object_Data *sd)
 }
 
 EOLIAN static void
-_emotion_object_evas_object_smart_del(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
+_emotion_object_evas_object_smart_smart_del(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
    if (!sd) return;
    if (sd->engine_instance)
@@ -1895,7 +1895,7 @@ _emotion_object_evas_object_smart_del(Evas_Object *obj EINA_UNUSED, Emotion_Obje
 }
 
 EOLIAN static void
-_emotion_object_evas_object_smart_move(Evas_Object *obj, Emotion_Object_Data *sd, Evas_Coord x, Evas_Coord y)
+_emotion_object_evas_object_smart_smart_move(Evas_Object *obj, Emotion_Object_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    int w, h;
 
@@ -1905,14 +1905,14 @@ _emotion_object_evas_object_smart_move(Evas_Object *obj, Emotion_Object_Data *sd
 }
 
 EOLIAN static void
-_emotion_object_evas_object_smart_resize(Evas_Object *obj, Emotion_Object_Data *sd, Evas_Coord w, Evas_Coord h)
+_emotion_object_evas_object_smart_smart_resize(Evas_Object *obj, Emotion_Object_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    _emotion_object_aspect_border_apply(obj, sd, w, h);
    evas_object_resize(sd->bg, w, h);
 }
 
 EOLIAN static void
-_emotion_object_evas_object_smart_show(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
+_emotion_object_evas_object_smart_smart_show(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
    int a;
 
@@ -1924,7 +1924,7 @@ _emotion_object_evas_object_smart_show(Evas_Object *obj EINA_UNUSED, Emotion_Obj
 }
 
 EOLIAN static void
-_emotion_object_evas_object_smart_hide(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
+_emotion_object_evas_object_smart_smart_hide(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
    evas_object_hide(sd->obj);
    if (sd->crop.clipper) evas_object_hide(sd->crop.clipper);
@@ -1932,14 +1932,14 @@ _emotion_object_evas_object_smart_hide(Evas_Object *obj EINA_UNUSED, Emotion_Obj
 }
 
 EOLIAN static void
-_emotion_object_evas_object_smart_color_set(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd, int r, int g, int b, int a)
+_emotion_object_evas_object_smart_smart_color_set(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd, int r, int g, int b, int a)
 {
    evas_object_color_set(sd->obj, r, g, b, a);
    evas_object_color_set(sd->crop.clipper, r, g, b, a);
 }
 
 EOLIAN static void
-_emotion_object_evas_object_smart_clip_set(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd, Evas_Object * clip)
+_emotion_object_evas_object_smart_smart_clip_set(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd, Evas_Object * clip)
 {
    if (sd->crop.clipper) evas_object_clip_set(sd->crop.clipper, clip);
    else evas_object_clip_set(sd->obj, clip);
@@ -1947,7 +1947,7 @@ _emotion_object_evas_object_smart_clip_set(Evas_Object *obj EINA_UNUSED, Emotion
 }
 
 EOLIAN static void
-_emotion_object_evas_object_smart_clip_unset(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
+_emotion_object_evas_object_smart_smart_clip_unset(Evas_Object *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
    if (sd->crop.clipper) evas_object_clip_unset(sd->crop.clipper);
    else evas_object_clip_unset(sd->obj);

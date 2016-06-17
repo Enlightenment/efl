@@ -171,9 +171,9 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.calculate;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
+      Evas.Object.Smart.smart_calculate;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
       Elm.Widget.theme_apply;
       Elm.Widget.activate;
       Elm.Widget.focus_next_manager_is;

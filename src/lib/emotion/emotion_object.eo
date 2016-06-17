@@ -54,15 +54,15 @@ class Emotion.Object (Evas.Object.Smart, Efl.File, Efl.Player, Efl.Image, Efl.Im
    }
    implements {
         Eo.Base.constructor;
-        Evas.Object.Smart.add;
-        Evas.Object.Smart.del;
-        Evas.Object.Smart.move;
-        Evas.Object.Smart.resize;
-        Evas.Object.Smart.show;
-        Evas.Object.Smart.hide;
-        Evas.Object.Smart.color.set;
-        Evas.Object.Smart.clip.set;
-        Evas.Object.Smart.clip_unset;
+        Evas.Object.Smart.smart_add;
+        Evas.Object.Smart.smart_del;
+        Evas.Object.Smart.smart_move;
+        Evas.Object.Smart.smart_resize;
+        Evas.Object.Smart.smart_show;
+        Evas.Object.Smart.smart_hide;
+        Evas.Object.Smart.smart_color.set;
+        Evas.Object.Smart.smart_clip.set;
+        Evas.Object.Smart.smart_clip_unset;
         Efl.File.file.set;
         Efl.File.file.get;
         Efl.Player.play.set;

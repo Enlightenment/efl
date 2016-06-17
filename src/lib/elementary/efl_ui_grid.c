@@ -225,7 +225,7 @@ _efl_ui_grid_efl_pack_layout_layout_do(Eo *klass EINA_UNUSED,
 }
 
 EOLIAN void
-_efl_ui_grid_evas_object_smart_calculate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
+_efl_ui_grid_evas_object_smart_smart_calculate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -233,7 +233,7 @@ _efl_ui_grid_evas_object_smart_calculate(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUS
 }
 
 EOLIAN static void
-_efl_ui_grid_evas_object_smart_add(Eo *obj, Efl_Ui_Grid_Data *pd)
+_efl_ui_grid_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
    Custom_Table_Data *custom;
    Evas_Object *table;
@@ -262,7 +262,7 @@ _efl_ui_grid_evas_object_smart_add(Eo *obj, Efl_Ui_Grid_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_grid_evas_object_smart_del(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
+_efl_ui_grid_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 {
    Eina_List *l;
    Evas_Object *child;

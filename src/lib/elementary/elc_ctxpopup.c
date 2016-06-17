@@ -1079,7 +1079,7 @@ _elm_ctxpopup_elm_widget_disable(Eo *obj, Elm_Ctxpopup_Data *sd)
 }
 
 EOLIAN static void
-_elm_ctxpopup_evas_object_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
+_elm_ctxpopup_evas_object_smart_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1134,7 +1134,7 @@ _elm_ctxpopup_evas_object_smart_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 }
 
 EOLIAN static void
-_elm_ctxpopup_evas_object_smart_del(Eo *obj, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_evas_object_smart_smart_del(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Elm_Object_Item *it;
 

@@ -86,7 +86,7 @@ _glview_update_surface(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_glview_evas_object_smart_resize(Eo *obj, Elm_Glview_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_glview_evas_object_smart_smart_resize(Eo *obj, Elm_Glview_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
@@ -220,7 +220,7 @@ _set_render_policy_callback(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_glview_evas_object_smart_add(Eo *obj, Elm_Glview_Data *priv EINA_UNUSED)
+_elm_glview_evas_object_smart_smart_add(Eo *obj, Elm_Glview_Data *priv EINA_UNUSED)
 {
    Evas_Object *img;
 
@@ -287,7 +287,7 @@ _elm_glview_constructor(Eo *obj, Elm_Glview_Data *priv)
 }
 
 EOLIAN static void
-_elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
+_elm_glview_evas_object_smart_smart_del(Eo *obj, Elm_Glview_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

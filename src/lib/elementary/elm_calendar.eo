@@ -383,9 +383,9 @@ class Elm.Calendar (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.calculate;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
+      Evas.Object.Smart.smart_calculate;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;

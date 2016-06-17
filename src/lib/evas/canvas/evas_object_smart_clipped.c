@@ -13,7 +13,7 @@
   if (!ptr) return;
 
 EOLIAN void
-_evas_object_smart_move_children_relative(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_Coord dx, Evas_Coord dy)
+_evas_object_smart_smart_move_children_relative(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_Coord dx, Evas_Coord dy)
 {
 
    const Eina_Inlist *lst;
@@ -67,7 +67,7 @@ evas_object_smart_clipped_smart_add(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_smart_clipped_evas_object_smart_add(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
+_evas_smart_clipped_evas_object_smart_smart_add(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_add(eo_obj);
 }
@@ -84,7 +84,7 @@ evas_object_smart_clipped_smart_del(Evas_Object *eo_obj)
         evas_object_del(clipper);
      }
 
-   _evas_object_smart_members_all_del(eo_obj);
+   _evas_object_smart_smart_members_all_del(eo_obj);
 
    /* If it's a legacy smart object, we should free the cso. */
    if (!eo_isa(eo_obj, MY_CLASS))
@@ -94,7 +94,7 @@ evas_object_smart_clipped_smart_del(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_smart_clipped_evas_object_smart_del(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
+_evas_smart_clipped_evas_object_smart_smart_del(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_del(eo_obj);
 }
@@ -109,7 +109,7 @@ evas_object_smart_clipped_smart_move(Evas_Object *eo_obj, Evas_Coord x, Evas_Coo
 }
 
 EOLIAN static void
-_evas_smart_clipped_evas_object_smart_move(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+_evas_smart_clipped_evas_object_smart_smart_move(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
    evas_object_smart_clipped_smart_move(eo_obj, x, y);
 }
@@ -123,7 +123,7 @@ evas_object_smart_clipped_smart_show(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_smart_clipped_evas_object_smart_show(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
+_evas_smart_clipped_evas_object_smart_smart_show(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_show(eo_obj);
 }
@@ -136,7 +136,7 @@ evas_object_smart_clipped_smart_hide(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_smart_clipped_evas_object_smart_hide(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
+_evas_smart_clipped_evas_object_smart_smart_hide(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_hide(eo_obj);
 }
@@ -149,7 +149,7 @@ evas_object_smart_clipped_smart_color_set(Evas_Object *eo_obj, int r, int g, int
 }
 
 EOLIAN static void
-_evas_smart_clipped_evas_object_smart_color_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, int r, int g, int b, int a)
+_evas_smart_clipped_evas_object_smart_smart_color_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, int r, int g, int b, int a)
 {
    evas_object_smart_clipped_smart_color_set(eo_obj, r, g, b, a);
 }
@@ -162,7 +162,7 @@ evas_object_smart_clipped_smart_clip_set(Evas_Object *eo_obj, Evas_Object *clip)
 }
 
 EOLIAN static void
-_evas_smart_clipped_evas_object_smart_clip_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *clip)
+_evas_smart_clipped_evas_object_smart_smart_clip_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *clip)
 {
    evas_object_smart_clipped_smart_clip_set(eo_obj, clip);
 }
@@ -175,7 +175,7 @@ evas_object_smart_clipped_smart_clip_unset(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_smart_clipped_evas_object_smart_clip_unset(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
+_evas_smart_clipped_evas_object_smart_smart_clip_unset(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_clip_unset(eo_obj);
 }
@@ -192,7 +192,7 @@ evas_object_smart_clipped_smart_member_add(Evas_Object *eo_obj, Evas_Object *mem
 }
 
 EOLIAN static void
-_evas_smart_clipped_evas_object_smart_member_add(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *member)
+_evas_smart_clipped_evas_object_smart_smart_member_add(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *member)
 {
    evas_obj_smart_member_add(eo_super(eo_obj, MY_CLASS), member);
    evas_object_smart_clipped_smart_member_add(eo_obj, member);
@@ -210,7 +210,7 @@ evas_object_smart_clipped_smart_member_del(Evas_Object *eo_obj, Evas_Object *mem
 }
 
 EOLIAN static void
-_evas_smart_clipped_evas_object_smart_member_del(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *member)
+_evas_smart_clipped_evas_object_smart_smart_member_del(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *member)
 {
    evas_object_smart_clipped_smart_member_del(eo_obj, member);
    evas_obj_smart_member_del(eo_super(eo_obj, MY_CLASS), member);

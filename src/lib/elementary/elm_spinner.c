@@ -1154,7 +1154,7 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
 }
 
 EOLIAN static void
-_elm_spinner_evas_object_smart_add(Eo *obj, Elm_Spinner_Data *priv)
+_elm_spinner_evas_object_smart_smart_add(Eo *obj, Elm_Spinner_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    ELM_SPINNER_DATA_GET(obj, sd);
@@ -1237,7 +1237,7 @@ _elm_spinner_evas_object_smart_add(Eo *obj, Elm_Spinner_Data *priv)
 }
 
 EOLIAN static void
-_elm_spinner_evas_object_smart_del(Eo *obj, Elm_Spinner_Data *sd)
+_elm_spinner_evas_object_smart_smart_del(Eo *obj, Elm_Spinner_Data *sd)
 {
    Elm_Spinner_Special_Value *sv;
 

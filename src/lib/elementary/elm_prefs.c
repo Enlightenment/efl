@@ -46,7 +46,7 @@ static Eina_Bool _prefs_item_widget_value_from_self(Elm_Prefs_Item_Node *,
                                                     Eina_Bool);
 
 EOLIAN static void
-_elm_prefs_evas_object_smart_add(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
+_elm_prefs_evas_object_smart_smart_add(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -447,7 +447,7 @@ _elm_prefs_data_cbs_del(Eo *obj)
 }
 
 EOLIAN static void
-_elm_prefs_evas_object_smart_del(Eo *obj, Elm_Prefs_Data *sd)
+_elm_prefs_evas_object_smart_smart_del(Eo *obj, Elm_Prefs_Data *sd)
 {
    sd->delete_me = EINA_TRUE;
 

@@ -858,7 +858,7 @@ _elm_scroller_content_viewport_resize_cb(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_scroller_evas_object_smart_add(Eo *obj, Elm_Scroller_Data *priv)
+_elm_scroller_evas_object_smart_smart_add(Eo *obj, Elm_Scroller_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord minw, minh;
@@ -915,7 +915,7 @@ _elm_scroller_evas_object_smart_add(Eo *obj, Elm_Scroller_Data *priv)
 }
 
 EOLIAN static void
-_elm_scroller_evas_object_smart_move(Eo *obj, Elm_Scroller_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_scroller_evas_object_smart_smart_move(Eo *obj, Elm_Scroller_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
 
@@ -923,7 +923,7 @@ _elm_scroller_evas_object_smart_move(Eo *obj, Elm_Scroller_Data *sd, Evas_Coord 
 }
 
 EOLIAN static void
-_elm_scroller_evas_object_smart_resize(Eo *obj, Elm_Scroller_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_scroller_evas_object_smart_smart_resize(Eo *obj, Elm_Scroller_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
@@ -931,7 +931,7 @@ _elm_scroller_evas_object_smart_resize(Eo *obj, Elm_Scroller_Data *sd, Evas_Coor
 }
 
 EOLIAN static void
-_elm_scroller_evas_object_smart_member_add(Eo *obj, Elm_Scroller_Data *sd, Evas_Object *member)
+_elm_scroller_evas_object_smart_smart_member_add(Eo *obj, Elm_Scroller_Data *sd, Evas_Object *member)
 {
    evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
 

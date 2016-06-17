@@ -3717,7 +3717,7 @@ _end_handler_mouse_move_cb(void *data,
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_add(Eo *obj, Efl_Ui_Text_Data *priv)
+_efl_ui_text_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Text_Data *priv)
 {
    Eo *text_obj;
 
@@ -3926,7 +3926,7 @@ _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_del(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Item_Provider *ip;
@@ -3999,7 +3999,7 @@ _efl_ui_text_evas_object_smart_del(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_move(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord x, Evas_Coord y)
+_efl_ui_text_evas_object_smart_smart_move(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
 
@@ -4012,7 +4012,7 @@ _efl_ui_text_evas_object_smart_move(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord x,
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_resize(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord w, Evas_Coord h)
+_efl_ui_text_evas_object_smart_smart_resize(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
@@ -4022,7 +4022,7 @@ _efl_ui_text_evas_object_smart_resize(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord 
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_show(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_evas_object_smart_smart_show(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    evas_obj_smart_show(eo_super(obj, MY_CLASS));
 
@@ -4031,7 +4031,7 @@ _efl_ui_text_evas_object_smart_show(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_hide(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_evas_object_smart_smart_hide(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    evas_obj_smart_hide(eo_super(obj, MY_CLASS));
 
@@ -4040,7 +4040,7 @@ _efl_ui_text_evas_object_smart_hide(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_evas_object_smart_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *member)
+_efl_ui_text_evas_object_smart_smart_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *member)
 {
    evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
 

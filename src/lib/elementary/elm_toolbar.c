@@ -2807,7 +2807,7 @@ _elm_toolbar_action_down_cb(void *data,
 }
 
 EOLIAN static void
-_elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
+_elm_toolbar_evas_object_smart_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
 {
    Evas_Object *edje;
 
@@ -2909,7 +2909,7 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
 }
 
 EOLIAN static void
-_elm_toolbar_evas_object_smart_del(Eo *obj, Elm_Toolbar_Data *sd)
+_elm_toolbar_evas_object_smart_smart_del(Eo *obj, Elm_Toolbar_Data *sd)
 {
    Elm_Toolbar_Item_Data *it, *next;
 
@@ -2932,7 +2932,7 @@ _elm_toolbar_evas_object_smart_del(Eo *obj, Elm_Toolbar_Data *sd)
 }
 
 EOLIAN static void
-_elm_toolbar_evas_object_smart_move(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_toolbar_evas_object_smart_smart_move(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
 
@@ -2940,7 +2940,7 @@ _elm_toolbar_evas_object_smart_move(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord x,
 }
 
 EOLIAN static void
-_elm_toolbar_evas_object_smart_resize(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_toolbar_evas_object_smart_smart_resize(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
@@ -2948,7 +2948,7 @@ _elm_toolbar_evas_object_smart_resize(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord 
 }
 
 EOLIAN static void
-_elm_toolbar_evas_object_smart_member_add(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *member)
+_elm_toolbar_evas_object_smart_smart_member_add(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *member)
 {
    evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
 
@@ -4118,7 +4118,7 @@ _elm_toolbar_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN void
-_elm_toolbar_evas_object_smart_calculate(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED)
+_elm_toolbar_evas_object_smart_smart_calculate(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED)
 {
    _sizing_eval(obj);
 }

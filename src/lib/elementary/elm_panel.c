@@ -1001,7 +1001,7 @@ _elm_panel_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *part)
 }
 
 EOLIAN static void
-_elm_panel_evas_object_smart_add(Eo *obj, Elm_Panel_Data *priv)
+_elm_panel_evas_object_smart_smart_add(Eo *obj, Elm_Panel_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1049,7 +1049,7 @@ _elm_panel_evas_object_smart_add(Eo *obj, Elm_Panel_Data *priv)
 }
 
 EOLIAN static void
-_elm_panel_evas_object_smart_del(Eo *obj, Elm_Panel_Data *sd)
+_elm_panel_evas_object_smart_smart_del(Eo *obj, Elm_Panel_Data *sd)
 {
    Evas_Object *child;
    Eina_List *l;
@@ -1076,7 +1076,7 @@ _elm_panel_evas_object_smart_del(Eo *obj, Elm_Panel_Data *sd)
 }
 
 EOLIAN static void
-_elm_panel_evas_object_smart_move(Eo *obj, Elm_Panel_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_panel_evas_object_smart_smart_move(Eo *obj, Elm_Panel_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
 
@@ -1101,7 +1101,7 @@ _elm_panel_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_panel_evas_object_smart_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_panel_evas_object_smart_smart_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
@@ -1131,7 +1131,7 @@ _elm_panel_evas_object_smart_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, E
 }
 
 EOLIAN static void
-_elm_panel_evas_object_smart_member_add(Eo *obj, Elm_Panel_Data *sd, Evas_Object *member)
+_elm_panel_evas_object_smart_smart_member_add(Eo *obj, Elm_Panel_Data *sd, Evas_Object *member)
 {
    evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
 

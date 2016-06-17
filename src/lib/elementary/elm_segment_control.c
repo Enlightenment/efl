@@ -608,7 +608,7 @@ _elm_segment_control_item_eo_base_constructor(Eo *obj, Elm_Segment_Control_Item_
 }
 
 EOLIAN static void
-_elm_segment_control_evas_object_smart_add(Eo *obj, Elm_Segment_Control_Data *sd)
+_elm_segment_control_evas_object_smart_smart_add(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    sd->obj = obj;
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
@@ -627,7 +627,7 @@ _elm_segment_control_evas_object_smart_add(Eo *obj, Elm_Segment_Control_Data *sd
 }
 
 EOLIAN static void
-_elm_segment_control_evas_object_smart_del(Eo *obj, Elm_Segment_Control_Data *sd)
+_elm_segment_control_evas_object_smart_smart_del(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    Elm_Object_Item *eo_it;
 

@@ -234,7 +234,7 @@ _items_remove(Elm_Popup_Data *sd)
 }
 
 EOLIAN static void
-_elm_popup_evas_object_smart_del(Eo *obj, Elm_Popup_Data *sd)
+_elm_popup_evas_object_smart_smart_del(Eo *obj, Elm_Popup_Data *sd)
 {
    unsigned int i;
 
@@ -1504,7 +1504,7 @@ _elm_popup_elm_widget_event(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, Evas_Objec
 }
 
 EOLIAN static void
-_elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
+_elm_popup_evas_object_smart_smart_add(Eo *obj, Elm_Popup_Data *priv)
 {
    char style[1024];
 

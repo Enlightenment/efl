@@ -365,7 +365,7 @@ _on_slide_end(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_label_evas_object_smart_add(Eo *obj, Elm_Label_Data *priv)
+_elm_label_evas_object_smart_smart_add(Eo *obj, Elm_Label_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

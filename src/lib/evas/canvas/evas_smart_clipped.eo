@@ -1,4 +1,4 @@
-/* XXX: It's Evas.Smart.Clipped and not Evas.Object.Smart.Clipped because of
+/* XXX: It's Evas.Smart.Clipped and not Evas.Object.Smart.smart_Clipped because of
    clashes with legacy. Not edaling with it too much because it'll be deprecated
    soon anyway. */
 class Evas.Smart.Clipped (Evas.Object.Smart)
@@ -22,15 +22,15 @@ class Evas.Smart.Clipped (Evas.Object.Smart)
 
    implements {
       Eo.Base.constructor;
-      Evas.Object.Smart.hide;
-      Evas.Object.Smart.clip.set;
-      Evas.Object.Smart.clip_unset;
-      Evas.Object.Smart.show;
-      Evas.Object.Smart.color.set;
-      Evas.Object.Smart.move;
-      Evas.Object.Smart.member_del;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
-      Evas.Object.Smart.member_add;
+      Evas.Object.Smart.smart_hide;
+      Evas.Object.Smart.smart_clip.set;
+      Evas.Object.Smart.smart_clip_unset;
+      Evas.Object.Smart.smart_show;
+      Evas.Object.Smart.smart_color.set;
+      Evas.Object.Smart.smart_move;
+      Evas.Object.Smart.smart_member_del;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
+      Evas.Object.Smart.smart_member_add;
    }
 }

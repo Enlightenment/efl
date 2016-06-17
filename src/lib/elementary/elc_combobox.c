@@ -271,7 +271,7 @@ _on_clicked(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_combobox_evas_object_smart_add(Eo *obj, Elm_Combobox_Data *sd EINA_UNUSED)
+_elm_combobox_evas_object_smart_smart_add(Eo *obj, Elm_Combobox_Data *sd EINA_UNUSED)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -285,21 +285,21 @@ _elm_combobox_evas_object_smart_add(Eo *obj, Elm_Combobox_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_combobox_evas_object_smart_del(Eo *obj, Elm_Combobox_Data *sd)
+_elm_combobox_evas_object_smart_smart_del(Eo *obj, Elm_Combobox_Data *sd)
 {
    sd->hover_parent = NULL;
    evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_elm_combobox_evas_object_smart_show(Eo *obj, Elm_Combobox_Data *sd)
+_elm_combobox_evas_object_smart_smart_show(Eo *obj, Elm_Combobox_Data *sd)
 {
    evas_obj_smart_show(eo_super(obj, MY_CLASS));
    if (sd->expanded) evas_object_show(sd->hover);
 }
 
 EOLIAN static void
-_elm_combobox_evas_object_smart_hide(Eo *obj, Elm_Combobox_Data *sd)
+_elm_combobox_evas_object_smart_smart_hide(Eo *obj, Elm_Combobox_Data *sd)
 {
    evas_obj_smart_hide(eo_super(obj, MY_CLASS));
    if (sd->hover) evas_object_hide(sd->hover);
@@ -630,7 +630,7 @@ _elm_combobox_elm_widget_part_text_get(Eo *obj EINA_UNUSED, Elm_Combobox_Data *p
 }
 
 EOLIAN static void
-_elm_combobox_evas_object_smart_resize(Eo *obj, Elm_Combobox_Data *pd,
+_elm_combobox_evas_object_smart_smart_resize(Eo *obj, Elm_Combobox_Data *pd,
                                        Evas_Coord w, Evas_Coord h)
 {
    evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);

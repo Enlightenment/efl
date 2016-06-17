@@ -145,7 +145,7 @@ _on_frame_clicked(void *data,
 
 /* using deferred sizing evaluation, just like the parent */
 EOLIAN static void
-_elm_frame_evas_object_smart_calculate(Eo *obj, Elm_Frame_Data *sd)
+_elm_frame_evas_object_smart_smart_calculate(Eo *obj, Elm_Frame_Data *sd)
 {
    ELM_LAYOUT_DATA_GET(obj, ld);
 
@@ -158,7 +158,7 @@ _elm_frame_evas_object_smart_calculate(Eo *obj, Elm_Frame_Data *sd)
 }
 
 EOLIAN static void
-_elm_frame_evas_object_smart_add(Eo *obj, Elm_Frame_Data *_pd EINA_UNUSED)
+_elm_frame_evas_object_smart_smart_add(Eo *obj, Elm_Frame_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

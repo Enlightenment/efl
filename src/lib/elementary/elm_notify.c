@@ -226,7 +226,7 @@ _block_area_clicked_cb(void *data,
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_resize(Eo *obj, Elm_Notify_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_notify_evas_object_smart_smart_resize(Eo *obj, Elm_Notify_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord x, y;
 
@@ -240,7 +240,7 @@ _elm_notify_evas_object_smart_resize(Eo *obj, Elm_Notify_Data *sd, Evas_Coord w,
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_move(Eo *obj, Elm_Notify_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_notify_evas_object_smart_smart_move(Eo *obj, Elm_Notify_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    Evas_Coord w, h;
 
@@ -282,7 +282,7 @@ _timer_init(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_show(Eo *obj, Elm_Notify_Data *sd)
+_elm_notify_evas_object_smart_smart_show(Eo *obj, Elm_Notify_Data *sd)
 {
    sd->had_hidden = EINA_FALSE;
    sd->in_timeout = EINA_FALSE;
@@ -295,7 +295,7 @@ _elm_notify_evas_object_smart_show(Eo *obj, Elm_Notify_Data *sd)
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_hide(Eo *obj, Elm_Notify_Data *sd)
+_elm_notify_evas_object_smart_smart_hide(Eo *obj, Elm_Notify_Data *sd)
 {
    const char *hide_signal;
 
@@ -452,7 +452,7 @@ _hide_finished_cb(void *data,
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_add(Eo *obj, Elm_Notify_Data *priv)
+_elm_notify_evas_object_smart_smart_add(Eo *obj, Elm_Notify_Data *priv)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -470,7 +470,7 @@ _elm_notify_evas_object_smart_add(Eo *obj, Elm_Notify_Data *priv)
 }
 
 EOLIAN static void
-_elm_notify_evas_object_smart_del(Eo *obj, Elm_Notify_Data *sd)
+_elm_notify_evas_object_smart_smart_del(Eo *obj, Elm_Notify_Data *sd)
 {
    edje_object_signal_callback_del_full
       (sd->notify, "elm,action,hide,finished", "elm", _hide_finished_cb, obj);

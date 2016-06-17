@@ -758,7 +758,7 @@ _on_size_evaluate_signal(void *data,
 }
 
 EOLIAN static void
-_elm_layout_evas_object_smart_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+_elm_layout_evas_object_smart_smart_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
 {
    Evas_Object *edje;
 
@@ -779,7 +779,7 @@ _elm_layout_evas_object_smart_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static void
-_elm_layout_evas_object_smart_del(Eo *obj, Elm_Layout_Smart_Data *sd)
+_elm_layout_evas_object_smart_smart_del(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    Elm_Layout_Sub_Object_Data *sub_d;
    Elm_Layout_Sub_Object_Cursor *pc;
@@ -837,7 +837,7 @@ _elm_layout_evas_object_smart_del(Eo *obj, Elm_Layout_Smart_Data *sd)
 /* rewrite or extend this one on your derived class as to suit your
  * needs */
 EOLIAN static void
-_elm_layout_evas_object_smart_calculate(Eo *obj, Elm_Layout_Smart_Data *sd)
+_elm_layout_evas_object_smart_smart_calculate(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    if (sd->needs_size_calc)
      {

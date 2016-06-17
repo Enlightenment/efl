@@ -796,7 +796,7 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_datetime_evas_object_smart_add(Eo *obj, Elm_Datetime_Data *priv)
+_elm_datetime_evas_object_smart_smart_add(Eo *obj, Elm_Datetime_Data *priv)
 {
    Datetime_Field *field;
    int idx;
@@ -862,7 +862,7 @@ _elm_datetime_evas_object_smart_add(Eo *obj, Elm_Datetime_Data *priv)
 }
 
 EOLIAN static void
-_elm_datetime_evas_object_smart_del(Eo *obj, Elm_Datetime_Data *sd)
+_elm_datetime_evas_object_smart_smart_del(Eo *obj, Elm_Datetime_Data *sd)
 {
    Datetime_Field *tmp;
    unsigned int idx;

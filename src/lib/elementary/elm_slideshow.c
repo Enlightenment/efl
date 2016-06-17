@@ -319,7 +319,7 @@ _elm_slideshow_item_eo_base_destructor(Eo *eo_item, Elm_Slideshow_Item_Data *ite
 }
 
 EOLIAN static void
-_elm_slideshow_evas_object_smart_add(Eo *obj, Elm_Slideshow_Data *priv)
+_elm_slideshow_evas_object_smart_smart_add(Eo *obj, Elm_Slideshow_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -363,7 +363,7 @@ _elm_slideshow_evas_object_smart_add(Eo *obj, Elm_Slideshow_Data *priv)
 }
 
 EOLIAN static void
-_elm_slideshow_evas_object_smart_del(Eo *obj, Elm_Slideshow_Data *sd)
+_elm_slideshow_evas_object_smart_smart_del(Eo *obj, Elm_Slideshow_Data *sd)
 {
    const char *layout;
 

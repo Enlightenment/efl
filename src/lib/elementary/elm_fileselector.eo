@@ -34,8 +34,8 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
       class.constructor;
       class.destructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_direction;

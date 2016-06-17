@@ -763,12 +763,12 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       class.constructor;
       Eo.Base.constructor;
       Eo.Base.finalize;
-      Evas.Object.Smart.hide;
-      Evas.Object.Smart.show;
-      Evas.Object.Smart.move;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
-      Evas.Object.Smart.resize;
+      Evas.Object.Smart.smart_hide;
+      Evas.Object.Smart.smart_show;
+      Evas.Object.Smart.smart_move;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
+      Evas.Object.Smart.smart_resize;
       Elm.Widget.focus_direction;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;

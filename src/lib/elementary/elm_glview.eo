@@ -184,9 +184,9 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
    implements {
       class.constructor;
       Eo.Base.finalize;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
-      Evas.Object.Smart.resize;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
+      Evas.Object.Smart.smart_resize;
       Elm.Widget.on_focus;
       Efl.Gfx.View.view_size.get;
       Efl.Gfx.View.view_size.set;

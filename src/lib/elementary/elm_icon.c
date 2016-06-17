@@ -490,7 +490,7 @@ _elm_icon_thumb_resize_cb(void *data,
 }
 
 EOLIAN static void
-_elm_icon_evas_object_smart_add(Eo *obj, Elm_Icon_Data *priv)
+_elm_icon_evas_object_smart_smart_add(Eo *obj, Elm_Icon_Data *priv)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -499,7 +499,7 @@ _elm_icon_evas_object_smart_add(Eo *obj, Elm_Icon_Data *priv)
 }
 
 EOLIAN static void
-_elm_icon_evas_object_smart_del(Eo *obj, Elm_Icon_Data *sd)
+_elm_icon_evas_object_smart_smart_del(Eo *obj, Elm_Icon_Data *sd)
 {
    eina_stringshare_del(sd->stdicon);
 

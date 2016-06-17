@@ -7,7 +7,7 @@ class Elm.Access (Elm.Widget)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.add;
+      Evas.Object.Smart.smart_add;
       Elm.Widget.activate;
       Elm.Widget.on_focus;
    }

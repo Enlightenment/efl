@@ -281,7 +281,7 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_button_evas_object_smart_add(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
+_elm_button_evas_object_smart_smart_add(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

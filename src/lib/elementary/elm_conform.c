@@ -917,7 +917,7 @@ _on_prop_change(void *data,
 #endif
 
 EOLIAN static void
-_elm_conformant_evas_object_smart_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
+_elm_conformant_evas_object_smart_smart_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -938,7 +938,7 @@ _elm_conformant_evas_object_smart_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNU
 }
 
 EOLIAN static void
-_elm_conformant_evas_object_smart_del(Eo *obj, Elm_Conformant_Data *sd)
+_elm_conformant_evas_object_smart_smart_del(Eo *obj, Elm_Conformant_Data *sd)
 {
 #ifdef HAVE_ELEMENTARY_X
    ecore_event_handler_del(sd->prop_hdl);

@@ -5200,8 +5200,8 @@ EAPI void *evas_object_smart_data_get(const Evas_Object *obj);
  *
  * This function will return @c null when a non-smart object is passed.
  *
- * See also @ref Evas.Object.Smart.member_add,
- * @ref Evas.Object.Smart.member_del and @ref evas_object_smart_iterator_new.
+ * See also @ref Evas.Object.Smart.smart_member_add,
+ * @ref Evas.Object.Smart.smart_member_del and @ref evas_object_smart_iterator_new.
  *
  * @return Returns the list of the member objects of @c obj.
  *

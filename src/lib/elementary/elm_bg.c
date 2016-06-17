@@ -89,7 +89,7 @@ _on_resize(void *data,
 }
 
 EOLIAN static void
-_elm_bg_evas_object_smart_add(Eo *obj, Elm_Bg_Data *priv)
+_elm_bg_evas_object_smart_smart_add(Eo *obj, Elm_Bg_Data *priv)
 {
 
    evas_obj_smart_add(eo_super(obj, MY_CLASS));

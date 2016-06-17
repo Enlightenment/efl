@@ -1072,7 +1072,7 @@ _min_max_set(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_slider_evas_object_smart_calculate(Eo *obj, Elm_Slider_Data *sd)
+_elm_slider_evas_object_smart_smart_calculate(Eo *obj, Elm_Slider_Data *sd)
 {
    elm_layout_freeze(obj);
 
@@ -1137,7 +1137,7 @@ _on_show(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_slider_evas_object_smart_add(Eo *obj, Elm_Slider_Data *priv)
+_elm_slider_evas_object_smart_smart_add(Eo *obj, Elm_Slider_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1202,7 +1202,7 @@ _elm_slider_evas_object_smart_add(Eo *obj, Elm_Slider_Data *priv)
 }
 
 EOLIAN static void
-_elm_slider_evas_object_smart_del(Eo *obj, Elm_Slider_Data *sd)
+_elm_slider_evas_object_smart_smart_del(Eo *obj, Elm_Slider_Data *sd)
 {
    eina_stringshare_del(sd->indicator);
    eina_stringshare_del(sd->units);

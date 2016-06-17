@@ -189,7 +189,7 @@ _efl_ui_box_efl_pack_layout_layout_engine_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Da
 }
 
 EOLIAN static void
-_efl_ui_box_evas_object_smart_calculate(Eo *obj, Efl_Ui_Box_Data *pd)
+_efl_ui_box_evas_object_smart_smart_calculate(Eo *obj, Efl_Ui_Box_Data *pd)
 {
    if (pd->recalc) return;
 
@@ -201,7 +201,7 @@ _efl_ui_box_evas_object_smart_calculate(Eo *obj, Efl_Ui_Box_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_box_evas_object_smart_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED)
+_efl_ui_box_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED)
 {
    Evas *e = evas_object_evas_get(obj);
 
@@ -226,7 +226,7 @@ _efl_ui_box_evas_object_smart_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_box_evas_object_smart_del(Eo *obj, Efl_Ui_Box_Data *sd)
+_efl_ui_box_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Box_Data *sd)
 {
    Eina_List *l;
    Evas_Object *child;

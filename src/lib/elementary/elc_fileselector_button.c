@@ -218,7 +218,7 @@ _button_clicked(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_fileselector_button_evas_object_smart_add(Eo *obj, Elm_Fileselector_Button_Data *priv)
+_elm_fileselector_button_evas_object_smart_smart_add(Eo *obj, Elm_Fileselector_Button_Data *priv)
 {
    const char *path;
 
@@ -246,7 +246,7 @@ _elm_fileselector_button_evas_object_smart_add(Eo *obj, Elm_Fileselector_Button_
 }
 
 EOLIAN static void
-_elm_fileselector_button_evas_object_smart_del(Eo *obj, Elm_Fileselector_Button_Data *sd)
+_elm_fileselector_button_evas_object_smart_smart_del(Eo *obj, Elm_Fileselector_Button_Data *sd)
 {
    if (sd->fsd.model)
      eo_unref(sd->fsd.model);

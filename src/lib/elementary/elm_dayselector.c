@@ -415,7 +415,7 @@ _items_create(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_dayselector_evas_object_smart_add(Eo *obj, Elm_Dayselector_Data *priv)
+_elm_dayselector_evas_object_smart_smart_add(Eo *obj, Elm_Dayselector_Data *priv)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -436,7 +436,7 @@ _elm_dayselector_evas_object_smart_add(Eo *obj, Elm_Dayselector_Data *priv)
 }
 
 EOLIAN static void
-_elm_dayselector_evas_object_smart_del(Eo *obj, Elm_Dayselector_Data *sd)
+_elm_dayselector_evas_object_smart_smart_del(Eo *obj, Elm_Dayselector_Data *sd)
 {
    Elm_Dayselector_Item_Data *it;
 

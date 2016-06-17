@@ -44,7 +44,7 @@ _elm_web_none_elm_web_tab_propagate_set(Eo *obj EINA_UNUSED, Elm_Web_None_Data *
 }
 
 EOLIAN static void
-_elm_web_none_evas_object_smart_add(Eo *obj, Elm_Web_None_Data *_pd EINA_UNUSED)
+_elm_web_none_evas_object_smart_smart_add(Eo *obj, Elm_Web_None_Data *_pd EINA_UNUSED)
 {
    Evas_Object *resize_obj;
 

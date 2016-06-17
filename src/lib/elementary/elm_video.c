@@ -248,7 +248,7 @@ _elm_video_check(Evas_Object *video)
 }
 
 EOLIAN static void
-_elm_video_evas_object_smart_add(Eo *obj, Elm_Video_Data *priv)
+_elm_video_evas_object_smart_smart_add(Eo *obj, Elm_Video_Data *priv)
 {
    _elm_emotion_init();
 
@@ -274,7 +274,7 @@ _elm_video_evas_object_smart_add(Eo *obj, Elm_Video_Data *priv)
 }
 
 EOLIAN static void
-_elm_video_evas_object_smart_del(Eo *obj, Elm_Video_Data *sd)
+_elm_video_evas_object_smart_smart_del(Eo *obj, Elm_Video_Data *sd)
 {
    ecore_timer_del(sd->timer);
    if (sd->remember) emotion_object_last_position_save(sd->emotion);

@@ -33,8 +33,8 @@ class Efl.Ui.Nstate(Elm.Button)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
       Elm.Widget.theme_apply;
       Elm.Widget.event;
    }

@@ -3594,7 +3594,7 @@ _end_handler_mouse_move_cb(void *data,
 }
 
 EOLIAN static void
-_elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
+_elm_entry_evas_object_smart_smart_add(Eo *obj, Elm_Entry_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -3785,7 +3785,7 @@ _create_selection_handlers(Evas_Object *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_evas_object_smart_del(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_evas_object_smart_smart_del(Eo *obj, Elm_Entry_Data *sd)
 {
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Item_Provider *ip;
@@ -3858,7 +3858,7 @@ _elm_entry_evas_object_smart_del(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_evas_object_smart_move(Eo *obj, Elm_Entry_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_entry_evas_object_smart_smart_move(Eo *obj, Elm_Entry_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
 
@@ -3871,7 +3871,7 @@ _elm_entry_evas_object_smart_move(Eo *obj, Elm_Entry_Data *sd, Evas_Coord x, Eva
 }
 
 EOLIAN static void
-_elm_entry_evas_object_smart_resize(Eo *obj, Elm_Entry_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_entry_evas_object_smart_smart_resize(Eo *obj, Elm_Entry_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
@@ -3881,7 +3881,7 @@ _elm_entry_evas_object_smart_resize(Eo *obj, Elm_Entry_Data *sd, Evas_Coord w, E
 }
 
 EOLIAN static void
-_elm_entry_evas_object_smart_show(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_evas_object_smart_smart_show(Eo *obj, Elm_Entry_Data *sd)
 {
    evas_obj_smart_show(eo_super(obj, MY_CLASS));
 
@@ -3890,7 +3890,7 @@ _elm_entry_evas_object_smart_show(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_evas_object_smart_hide(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_evas_object_smart_smart_hide(Eo *obj, Elm_Entry_Data *sd)
 {
    evas_obj_smart_hide(eo_super(obj, MY_CLASS));
 
@@ -3899,7 +3899,7 @@ _elm_entry_evas_object_smart_hide(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_evas_object_smart_member_add(Eo *obj, Elm_Entry_Data *sd, Evas_Object *member)
+_elm_entry_evas_object_smart_smart_member_add(Eo *obj, Elm_Entry_Data *sd, Evas_Object *member)
 {
    evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
 

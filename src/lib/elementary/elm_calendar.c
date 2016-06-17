@@ -1343,7 +1343,7 @@ _elm_calendar_elm_widget_event(Eo *obj, Elm_Calendar_Data *sd EINA_UNUSED, Evas_
 }
 
 EOLIAN static void
-_elm_calendar_evas_object_smart_calculate(Eo *obj, Elm_Calendar_Data *_pd EINA_UNUSED)
+_elm_calendar_evas_object_smart_smart_calculate(Eo *obj, Elm_Calendar_Data *_pd EINA_UNUSED)
 {
    elm_layout_freeze(obj);
 
@@ -1370,7 +1370,7 @@ _style_changed(void *data,
 }
 
 EOLIAN static void
-_elm_calendar_evas_object_smart_add(Eo *obj, Elm_Calendar_Data *priv)
+_elm_calendar_evas_object_smart_smart_add(Eo *obj, Elm_Calendar_Data *priv)
 {
    time_t current_time;
    int t;
@@ -1437,7 +1437,7 @@ _elm_calendar_evas_object_smart_add(Eo *obj, Elm_Calendar_Data *priv)
 }
 
 EOLIAN static void
-_elm_calendar_evas_object_smart_del(Eo *obj, Elm_Calendar_Data *sd)
+_elm_calendar_evas_object_smart_smart_del(Eo *obj, Elm_Calendar_Data *sd)
 {
    int i;
    Elm_Calendar_Mark *mark;

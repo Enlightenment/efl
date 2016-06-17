@@ -935,13 +935,13 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.move;
-      Evas.Object.Smart.member_add;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.resize;
-      Evas.Object.Smart.del;
-      Evas.Object.Smart.show;
-      Evas.Object.Smart.hide;
+      Evas.Object.Smart.smart_move;
+      Evas.Object.Smart.smart_member_add;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_resize;
+      Evas.Object.Smart.smart_del;
+      Evas.Object.Smart.smart_show;
+      Evas.Object.Smart.smart_hide;
       Elm.Widget.activate;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;

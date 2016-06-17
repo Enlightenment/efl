@@ -88,7 +88,7 @@ static void evas_object_smart_render_post(Evas_Object *eo_obj,
 static unsigned int evas_object_smart_id_get(Evas_Object *eo_obj);
 static unsigned int evas_object_smart_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_smart_engine_data_get(Evas_Object *eo_obj);
-static void _evas_object_smart_paragraph_direction_set_internal(Eo *eo_obj,
+static void _evas_object_smart_smart_paragraph_direction_set_internal(Eo *eo_obj,
                                                                 Evas_BiDi_Direction dir);
 
 static const Evas_Object_Func object_func =
@@ -213,7 +213,7 @@ evas_object_smart_member_add(Evas_Object *eo_obj, Evas_Object *smart_obj)
 }
 
 EOLIAN static void
-_evas_object_smart_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Object *eo_obj)
+_evas_object_smart_smart_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Object *eo_obj)
 {
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -278,7 +278,7 @@ _evas_object_smart_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Object *eo
             (member_o->paragraph_direction != o->paragraph_direction))
           {
              member_o->paragraph_direction = o->paragraph_direction;
-             _evas_object_smart_paragraph_direction_set_internal(eo_obj, o->paragraph_direction);
+             _evas_object_smart_smart_paragraph_direction_set_internal(eo_obj, o->paragraph_direction);
           }
      }
 
@@ -304,7 +304,7 @@ evas_object_smart_member_del(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_object_smart_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Object *eo_obj)
+_evas_object_smart_smart_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Smart_Data *member_o;
@@ -338,7 +338,7 @@ _evas_object_smart_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, E
             (member_o->paragraph_direction != EVAS_BIDI_DIRECTION_NEUTRAL))
           {
              member_o->paragraph_direction = EVAS_BIDI_DIRECTION_NEUTRAL;
-             _evas_object_smart_paragraph_direction_set_internal(eo_obj, EVAS_BIDI_DIRECTION_NEUTRAL);
+             _evas_object_smart_smart_paragraph_direction_set_internal(eo_obj, EVAS_BIDI_DIRECTION_NEUTRAL);
           }
      }
 
@@ -413,7 +413,7 @@ evas_smart_legacy_type_register(const char *type, const Eo_Class *klass)
 }
 
 static Eina_Bool
-_evas_object_smart_iterator_next(Evas_Object_Smart_Iterator *it, void **data)
+_evas_object_smart_smart_iterator_next(Evas_Object_Smart_Iterator *it, void **data)
 {
    Evas_Object *eo;
 
@@ -428,13 +428,13 @@ _evas_object_smart_iterator_next(Evas_Object_Smart_Iterator *it, void **data)
 }
 
 static Evas_Object *
-_evas_object_smart_iterator_get_container(Evas_Object_Smart_Iterator *it)
+_evas_object_smart_smart_iterator_get_container(Evas_Object_Smart_Iterator *it)
 {
    return it->parent;
 }
 
 static void
-_evas_object_smart_iterator_free(Evas_Object_Smart_Iterator *it)
+_evas_object_smart_smart_iterator_free(Evas_Object_Smart_Iterator *it)
 {
    eo_unref(it->parent);
    free(it);
@@ -442,7 +442,7 @@ _evas_object_smart_iterator_free(Evas_Object_Smart_Iterator *it)
 
 // Should we have an eo_children_iterator_new API and just inherit from it ?
 EOLIAN static Eina_Iterator*
-_evas_object_smart_iterator_new(const Eo *eo_obj, Evas_Smart_Data *priv)
+_evas_object_smart_smart_iterator_new(const Eo *eo_obj, Evas_Smart_Data *priv)
 {
    Evas_Object_Smart_Iterator *it;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -457,9 +457,9 @@ _evas_object_smart_iterator_new(const Eo *eo_obj, Evas_Smart_Data *priv)
    it->parent = eo_ref(eo_obj);
    it->current = priv->contained;
 
-   it->iterator.next = FUNC_ITERATOR_NEXT(_evas_object_smart_iterator_next);
-   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_evas_object_smart_iterator_get_container);
-   it->iterator.free = FUNC_ITERATOR_FREE(_evas_object_smart_iterator_free);
+   it->iterator.next = FUNC_ITERATOR_NEXT(_evas_object_smart_smart_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_evas_object_smart_smart_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_evas_object_smart_smart_iterator_free);
 
    return &it->iterator;
 }
@@ -489,7 +489,7 @@ evas_object_smart_members_get_direct(const Evas_Object *eo_obj)
 }
 
 void
-_evas_object_smart_members_all_del(Evas_Object *eo_obj)
+_evas_object_smart_smart_members_all_del(Evas_Object *eo_obj)
 {
    Evas_Smart_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    Evas_Object_Protected_Data *memobj;
@@ -600,7 +600,7 @@ _evas_object_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data E
 }
 
 EOLIAN static void
-_evas_object_smart_add(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
+_evas_object_smart_smart_add(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -610,12 +610,12 @@ _evas_object_smart_add(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 EOLIAN static void
-_evas_object_smart_del(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o EINA_UNUSED)
+_evas_object_smart_smart_del(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o EINA_UNUSED)
 {
 }
 
 EOLIAN static void
-_evas_object_smart_resize(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_evas_object_smart_smart_resize(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -625,7 +625,7 @@ _evas_object_smart_resize(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Coord
 }
 
 EOLIAN static void
-_evas_object_smart_move(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+_evas_object_smart_smart_move(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -635,7 +635,7 @@ _evas_object_smart_move(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Coord x
 }
 
 EOLIAN static void
-_evas_object_smart_show(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
+_evas_object_smart_smart_show(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -645,7 +645,7 @@ _evas_object_smart_show(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 EOLIAN static void
-_evas_object_smart_hide(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
+_evas_object_smart_smart_hide(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -655,7 +655,7 @@ _evas_object_smart_hide(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 EOLIAN static void
-_evas_object_smart_color_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, int r, int g, int b, int a)
+_evas_object_smart_smart_color_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, int r, int g, int b, int a)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -665,7 +665,7 @@ _evas_object_smart_color_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, int r, 
 }
 
 EOLIAN static void
-_evas_object_smart_clip_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Object *clip)
+_evas_object_smart_smart_clip_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Object *clip)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -675,7 +675,7 @@ _evas_object_smart_clip_set(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, Evas_Obj
 }
 
 EOLIAN static void
-_evas_object_smart_clip_unset(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
+_evas_object_smart_smart_clip_unset(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {
    // If this function is reached, so we do nothing except trying to call
    // the function of the legacy smart class.
@@ -910,7 +910,7 @@ evas_object_smart_callback_description_find(const Eo *eo_obj, const char *name, 
 }
 
 EOLIAN static void
-_evas_object_smart_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool value)
+_evas_object_smart_smart_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool value)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -940,13 +940,13 @@ _evas_object_smart_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Boo
 }
 
 EOLIAN static Eina_Bool
-_evas_object_smart_need_recalculate_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+_evas_object_smart_smart_need_recalculate_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
    return o->need_recalculate;
 }
 
 EOLIAN static void
-_evas_object_smart_calculate(Eo *eo_obj, Evas_Smart_Data *o)
+_evas_object_smart_smart_calculate(Eo *eo_obj, Evas_Smart_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1022,7 +1022,7 @@ evas_call_smarts_calculate(Evas *eo_e)
 }
 
 EOLIAN static void
-_evas_object_smart_changed(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
+_evas_object_smart_smart_changed(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -1526,7 +1526,7 @@ _evas_object_smart_class_destructor(Eo_Class *klass EINA_UNUSED)
 }
 
 static void
-_evas_object_smart_paragraph_direction_set_internal(Eo *eo_obj,
+_evas_object_smart_smart_paragraph_direction_set_internal(Eo *eo_obj,
                                                     Evas_BiDi_Direction dir)
 {
    Evas_Object_Protected_Data *o;
@@ -1544,7 +1544,7 @@ _evas_object_smart_paragraph_direction_set_internal(Eo *eo_obj,
                  (member_o->paragraph_direction != dir))
                {
                   member_o->paragraph_direction = dir;
-                  _evas_object_smart_paragraph_direction_set_internal(o->object, dir);
+                  _evas_object_smart_smart_paragraph_direction_set_internal(o->object, dir);
                }
           }
      }
@@ -1590,7 +1590,7 @@ _evas_object_smart_evas_object_paragraph_direction_set(Eo *eo_obj, Evas_Smart_Da
         evas_object_change(eo_obj, obj);
      }
 
-   _evas_object_smart_paragraph_direction_set_internal(eo_obj, o->paragraph_direction);
+   _evas_object_smart_smart_paragraph_direction_set_internal(eo_obj, o->paragraph_direction);
 }
 
 EOLIAN static Evas_BiDi_Direction

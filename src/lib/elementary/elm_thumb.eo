@@ -10,10 +10,10 @@ class Elm.Thumb (Elm.Layout, Efl.File, Efl.Ui.Clickable,
       Eo.Base.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
-      Evas.Object.Smart.hide;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
-      Evas.Object.Smart.show;
+      Evas.Object.Smart.smart_hide;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
+      Evas.Object.Smart.smart_show;
       Efl.Ui.Draggable.drag_target.set;
       Efl.Ui.Draggable.drag_target.get;
    }

@@ -453,7 +453,7 @@ _thumb_show(Elm_Thumb_Data *sd)
 }
 
 EOLIAN static void
-_elm_thumb_evas_object_smart_show(Eo *obj, Elm_Thumb_Data *sd)
+_elm_thumb_evas_object_smart_smart_show(Eo *obj, Elm_Thumb_Data *sd)
 {
    evas_obj_smart_show(eo_super(obj, MY_CLASS));
 
@@ -461,7 +461,7 @@ _elm_thumb_evas_object_smart_show(Eo *obj, Elm_Thumb_Data *sd)
 }
 
 EOLIAN static void
-_elm_thumb_evas_object_smart_hide(Eo *obj, Elm_Thumb_Data *sd)
+_elm_thumb_evas_object_smart_smart_hide(Eo *obj, Elm_Thumb_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -524,7 +524,7 @@ elm_need_ethumb(void)
 }
 
 EOLIAN static void
-_elm_thumb_evas_object_smart_add(Eo *obj, Elm_Thumb_Data *_pd EINA_UNUSED)
+_elm_thumb_evas_object_smart_smart_add(Eo *obj, Elm_Thumb_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -543,7 +543,7 @@ _elm_thumb_evas_object_smart_add(Eo *obj, Elm_Thumb_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_thumb_evas_object_smart_del(Eo *obj, Elm_Thumb_Data *sd)
+_elm_thumb_evas_object_smart_smart_del(Eo *obj, Elm_Thumb_Data *sd)
 {
    if (sd->thumb.request)
      {

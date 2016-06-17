@@ -189,11 +189,11 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.move;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
-      Evas.Object.Smart.member_add;
-      Evas.Object.Smart.resize;
+      Evas.Object.Smart.smart_move;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
+      Evas.Object.Smart.smart_member_add;
+      Evas.Object.Smart.smart_resize;
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
       Elm.Widget.event;

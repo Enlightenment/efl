@@ -662,8 +662,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Evas.Object.Smart)
    }
    implements {
       class.constructor;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
    }
    events {
       changed;

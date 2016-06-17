@@ -1861,7 +1861,7 @@ _create_colorcomponents(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_colorselector_evas_object_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
+_elm_colorselector_evas_object_smart_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1901,7 +1901,7 @@ _elm_colorselector_evas_object_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
 }
 
 EOLIAN static void
-_elm_colorselector_evas_object_smart_del(Eo *obj, Elm_Colorselector_Data *sd)
+_elm_colorselector_evas_object_smart_smart_del(Eo *obj, Elm_Colorselector_Data *sd)
 {
    int i = 0;
    void *tmp[4];

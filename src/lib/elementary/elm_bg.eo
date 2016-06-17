@@ -96,7 +96,7 @@ class Elm.Bg (Elm.Layout, Efl.File)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.add;
+      Evas.Object.Smart.smart_add;
       Elm.Layout.content_aliases.get;
       Elm.Layout.sizing_eval;
       Efl.File.file.set;

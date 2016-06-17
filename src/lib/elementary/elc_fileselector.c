@@ -1848,7 +1848,7 @@ _preedit_cb(void *data, const Eo_Event *event)
 }
 
 EOLIAN static void
-_elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
+_elm_fileselector_evas_object_smart_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
 {
    Evas_Object *ic, *bt, *en, *pb;
    const char *data;
@@ -1982,7 +1982,7 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
 }
 
 EOLIAN static void
-_elm_fileselector_evas_object_smart_del(Eo *obj, Elm_Fileselector_Data *sd)
+_elm_fileselector_evas_object_smart_smart_del(Eo *obj, Elm_Fileselector_Data *sd)
 {
    Elm_Fileselector_Filter *filter;
 

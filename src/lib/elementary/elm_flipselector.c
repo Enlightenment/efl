@@ -604,7 +604,7 @@ _signal_val_change_stop(void *data,
 }
 
 EOLIAN static void
-_elm_flipselector_evas_object_smart_add(Eo *obj, Elm_Flipselector_Data *priv)
+_elm_flipselector_evas_object_smart_smart_add(Eo *obj, Elm_Flipselector_Data *priv)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -631,7 +631,7 @@ _elm_flipselector_evas_object_smart_add(Eo *obj, Elm_Flipselector_Data *priv)
 }
 
 EOLIAN static void
-_elm_flipselector_evas_object_smart_del(Eo *obj, Elm_Flipselector_Data *sd)
+_elm_flipselector_evas_object_smart_smart_del(Eo *obj, Elm_Flipselector_Data *sd)
 {
    sd->deleting = EINA_TRUE;
 

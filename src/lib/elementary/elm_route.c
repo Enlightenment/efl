@@ -134,7 +134,7 @@ _update_lon_lat_min_max(Evas_Object *obj,
 #endif
 
 EOLIAN static void
-_elm_route_evas_object_smart_add(Eo *obj, Elm_Route_Data *priv)
+_elm_route_evas_object_smart_smart_add(Eo *obj, Elm_Route_Data *priv)
 {
 
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
@@ -159,7 +159,7 @@ _elm_route_evas_object_smart_add(Eo *obj, Elm_Route_Data *priv)
 }
 
 EOLIAN static void
-_elm_route_evas_object_smart_del(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
+_elm_route_evas_object_smart_smart_del(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
 {
    _clear_route(obj);
 

@@ -79,12 +79,12 @@ class Elm.Notify (Elm.Widget, Efl.Container, Efl.Part)
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.hide;
-      Evas.Object.Smart.show;
-      Evas.Object.Smart.move;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
-      Evas.Object.Smart.resize;
+      Evas.Object.Smart.smart_hide;
+      Evas.Object.Smart.smart_show;
+      Evas.Object.Smart.smart_move;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
+      Evas.Object.Smart.smart_resize;
       Elm.Widget.focus_direction;
       Elm.Widget.widget_parent;
       Elm.Widget.theme_apply;

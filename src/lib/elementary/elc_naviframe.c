@@ -1389,7 +1389,7 @@ _elm_naviframe_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Naviframe_Dat
 }
 
 EOLIAN static void
-_elm_naviframe_evas_object_smart_add(Eo *obj, Elm_Naviframe_Data *priv)
+_elm_naviframe_evas_object_smart_smart_add(Eo *obj, Elm_Naviframe_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1446,7 +1446,7 @@ _deferred(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_naviframe_evas_object_smart_del(Eo *obj, Elm_Naviframe_Data *sd)
+_elm_naviframe_evas_object_smart_smart_del(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item_Data *it;
    Elm_Naviframe_Op *nfo;
@@ -1472,7 +1472,7 @@ _elm_naviframe_evas_object_smart_del(Eo *obj, Elm_Naviframe_Data *sd)
 
 //Show only the top item view
 EOLIAN static void
-_elm_naviframe_evas_object_smart_show(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED)
+_elm_naviframe_evas_object_smart_smart_show(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED)
 {
    Elm_Object_Item *eo_top;
 

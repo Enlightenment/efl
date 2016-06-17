@@ -384,7 +384,7 @@ _evas_box_internal_remove_at(Eo *o, Evas_Object_Box_Data *priv, unsigned int pos
 }
 
 EOLIAN static void
-_evas_box_evas_object_smart_add(Eo *o, Evas_Object_Box_Data *priv)
+_evas_box_evas_object_smart_smart_add(Eo *o, Evas_Object_Box_Data *priv)
 {
    evas_obj_smart_add(eo_super(o, MY_CLASS));
    
@@ -401,7 +401,7 @@ _evas_box_evas_object_smart_add(Eo *o, Evas_Object_Box_Data *priv)
 }
 
 EOLIAN static void
-_evas_box_evas_object_smart_del(Eo *o, Evas_Object_Box_Data *priv)
+_evas_box_evas_object_smart_smart_del(Eo *o, Evas_Object_Box_Data *priv)
 {
    Eina_List *l;
 
@@ -422,7 +422,7 @@ _evas_box_evas_object_smart_del(Eo *o, Evas_Object_Box_Data *priv)
 }
 
 EOLIAN static void
-_evas_box_evas_object_smart_resize(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_evas_box_evas_object_smart_smart_resize(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord ow, oh;
    evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
@@ -431,7 +431,7 @@ _evas_box_evas_object_smart_resize(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED,
 }
 
 EOLIAN static void
-_evas_box_evas_object_smart_calculate(Eo *o, Evas_Object_Box_Data *priv)
+_evas_box_evas_object_smart_smart_calculate(Eo *o, Evas_Object_Box_Data *priv)
 {
    if (priv->layout.cb)
        {

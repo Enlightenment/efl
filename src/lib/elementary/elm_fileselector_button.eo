@@ -3,8 +3,8 @@ class Elm.Fileselector_Button (Elm.Button, Elm.Interface.Fileselector)
    event_prefix: elm_fileselector_button;
    implements {
       Eo.Base.constructor;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
       Elm.Widget.theme_apply;
       Elm.Button.admits_autorepeat.get;
       Elm.Interface.Fileselector.selected_models.get;

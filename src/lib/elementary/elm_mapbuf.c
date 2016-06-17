@@ -156,7 +156,7 @@ _mapbuf_auto_smooth(Evas_Object *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_object_smart_move(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_mapbuf_evas_object_smart_smart_move(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
 
@@ -166,7 +166,7 @@ _elm_mapbuf_evas_object_smart_move(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord x, E
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_object_smart_resize(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_mapbuf_evas_object_smart_smart_resize(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
@@ -176,7 +176,7 @@ _elm_mapbuf_evas_object_smart_resize(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord w,
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_object_smart_show(Eo *obj, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_evas_object_smart_smart_show(Eo *obj, Elm_Mapbuf_Data *sd)
 {
    evas_obj_smart_show(eo_super(obj, MY_CLASS));
 
@@ -185,7 +185,7 @@ _elm_mapbuf_evas_object_smart_show(Eo *obj, Elm_Mapbuf_Data *sd)
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_object_smart_hide(Eo *obj, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_evas_object_smart_smart_hide(Eo *obj, Elm_Mapbuf_Data *sd)
 {
    evas_obj_smart_hide(eo_super(obj, MY_CLASS));
 
@@ -264,7 +264,7 @@ _elm_mapbuf_efl_container_content_unset(Eo *obj, Elm_Mapbuf_Data *sd)
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_object_smart_del(Eo *obj, Elm_Mapbuf_Data *priv)
+_elm_mapbuf_evas_object_smart_smart_del(Eo *obj, Elm_Mapbuf_Data *priv)
 {
    ELM_SAFE_FREE(priv->idler, ecore_idler_del);
    ELM_SAFE_FREE(priv->map, evas_map_free);
@@ -273,7 +273,7 @@ _elm_mapbuf_evas_object_smart_del(Eo *obj, Elm_Mapbuf_Data *priv)
 }
 
 EOLIAN static void
-_elm_mapbuf_evas_object_smart_add(Eo *obj, Elm_Mapbuf_Data *priv)
+_elm_mapbuf_evas_object_smart_smart_add(Eo *obj, Elm_Mapbuf_Data *priv)
 {
    Evas_Object *rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    int i;

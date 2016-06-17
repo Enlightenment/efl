@@ -526,11 +526,11 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Evas.Object.Smart.member_add;
-      Evas.Object.Smart.move;
-      Evas.Object.Smart.add;
-      Evas.Object.Smart.del;
-      Evas.Object.Smart.resize;
+      Evas.Object.Smart.smart_member_add;
+      Evas.Object.Smart.smart_move;
+      Evas.Object.Smart.smart_add;
+      Evas.Object.Smart.smart_del;
+      Evas.Object.Smart.smart_resize;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.sub_object_add;

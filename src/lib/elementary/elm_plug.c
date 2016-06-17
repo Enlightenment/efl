@@ -107,7 +107,7 @@ _on_mouse_up(void *data,
 }
 
 EOLIAN static void
-_elm_plug_evas_object_smart_add(Eo *obj, void *sd EINA_UNUSED)
+_elm_plug_evas_object_smart_smart_add(Eo *obj, void *sd EINA_UNUSED)
 {
    Evas_Object *p_obj;
    Ecore_Evas *ee;

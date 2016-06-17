@@ -174,7 +174,7 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_bubble_evas_object_smart_add(Eo *obj, Elm_Bubble_Data *priv)
+_elm_bubble_evas_object_smart_smart_add(Eo *obj, Elm_Bubble_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

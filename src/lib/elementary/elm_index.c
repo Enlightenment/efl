@@ -1032,7 +1032,7 @@ _sort_cb(const void *d1, const void *d2)
 
 
 EOLIAN static void
-_elm_index_evas_object_smart_add(Eo *obj, Elm_Index_Data *priv)
+_elm_index_evas_object_smart_smart_add(Eo *obj, Elm_Index_Data *priv)
 {
    Evas_Object *o;
    Evas_Coord minw = 0, minh = 0;
@@ -1110,7 +1110,7 @@ _elm_index_evas_object_smart_add(Eo *obj, Elm_Index_Data *priv)
 }
 
 EOLIAN static void
-_elm_index_evas_object_smart_del(Eo *obj, Elm_Index_Data *sd)
+_elm_index_evas_object_smart_smart_del(Eo *obj, Elm_Index_Data *sd)
 {
    Elm_Index_Omit *o;
 

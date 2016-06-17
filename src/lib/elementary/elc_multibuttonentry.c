@@ -1558,7 +1558,7 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_multibuttonentry_evas_object_smart_add(Eo *obj, Elm_Multibuttonentry_Data *priv)
+_elm_multibuttonentry_evas_object_smart_smart_add(Eo *obj, Elm_Multibuttonentry_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1588,7 +1588,7 @@ _elm_multibuttonentry_evas_object_smart_add(Eo *obj, Elm_Multibuttonentry_Data *
 }
 
 EOLIAN static void
-_elm_multibuttonentry_evas_object_smart_del(Eo *obj, Elm_Multibuttonentry_Data *sd)
+_elm_multibuttonentry_evas_object_smart_smart_del(Eo *obj, Elm_Multibuttonentry_Data *sd)
 {
    Elm_Object_Item *eo_item;
    Elm_Multibuttonentry_Item_Filter *_item_filter = NULL;

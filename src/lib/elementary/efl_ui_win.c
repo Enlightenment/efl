@@ -2060,7 +2060,7 @@ _deferred_ecore_evas_free(void *data)
 }
 
 EOLIAN static void
-_efl_ui_win_evas_object_smart_show(Eo *obj, Efl_Ui_Win_Data *sd)
+_efl_ui_win_evas_object_smart_smart_show(Eo *obj, Efl_Ui_Win_Data *sd)
 {
    if (sd->modal_count) return;
    const Eina_List *l;
@@ -2103,7 +2103,7 @@ _efl_ui_win_evas_object_smart_show(Eo *obj, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_evas_object_smart_hide(Eo *obj, Efl_Ui_Win_Data *sd)
+_efl_ui_win_evas_object_smart_smart_hide(Eo *obj, Efl_Ui_Win_Data *sd)
 {
    if (sd->modal_count) return;
    const Eina_List *l;
@@ -2458,7 +2458,7 @@ _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj)
 }
 
 EOLIAN static void
-_efl_ui_win_evas_object_smart_del(Eo *obj, Efl_Ui_Win_Data *sd)
+_efl_ui_win_evas_object_smart_smart_del(Eo *obj, Efl_Ui_Win_Data *sd)
 {
    const Eina_List *l;
    Evas_Object *current;
@@ -2612,7 +2612,7 @@ _elm_win_obj_intercept_show(void *data,
 }
 
 EOLIAN static void
-_efl_ui_win_evas_object_smart_move(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord x, Evas_Coord y)
+_efl_ui_win_evas_object_smart_smart_move(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    if (sd->img_obj)
      {
@@ -2655,7 +2655,7 @@ _efl_ui_win_evas_object_smart_move(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord x, E
 }
 
 EOLIAN static void
-_efl_ui_win_evas_object_smart_resize(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord w, Evas_Coord h)
+_efl_ui_win_evas_object_smart_smart_resize(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    if (sd->img_obj)
      {
@@ -3802,7 +3802,7 @@ _elm_win_on_icon_del(void *data,
 }
 
 EOLIAN static void
-_efl_ui_win_evas_object_smart_add(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED)
+_efl_ui_win_evas_object_smart_smart_add(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
 

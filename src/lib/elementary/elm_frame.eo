@@ -51,8 +51,8 @@ class Elm.Frame (Elm.Layout, Efl.Ui.Clickable)
    implements {
       Eo.Base.constructor;
       class.constructor;
-      Evas.Object.Smart.calculate;
-      Evas.Object.Smart.add;
+      Evas.Object.Smart.smart_calculate;
+      Evas.Object.Smart.smart_add;
       Elm.Widget.focus_direction;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;

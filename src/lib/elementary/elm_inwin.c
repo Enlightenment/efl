@@ -66,7 +66,7 @@ _elm_inwin_elm_widget_focus_next(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Elm
 }
 
 EOLIAN static void
-_elm_inwin_evas_object_smart_add(Eo *obj, void *_pd EINA_UNUSED)
+_elm_inwin_evas_object_smart_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);

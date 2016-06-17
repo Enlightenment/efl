@@ -317,7 +317,7 @@ _elm_fileselector_entry_content_unset(Eo *obj, Elm_Fileselector_Entry_Data *sd, 
 }
 
 EOLIAN static void
-_elm_fileselector_entry_evas_object_smart_add(Eo *obj, Elm_Fileselector_Entry_Data *priv)
+_elm_fileselector_entry_evas_object_smart_smart_add(Eo *obj, Elm_Fileselector_Entry_Data *priv)
 {
    evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -377,7 +377,7 @@ _elm_fileselector_entry_evas_object_smart_add(Eo *obj, Elm_Fileselector_Entry_Da
 }
 
 EOLIAN static void
-_elm_fileselector_entry_evas_object_smart_del(Eo *obj, Elm_Fileselector_Entry_Data *sd)
+_elm_fileselector_entry_evas_object_smart_smart_del(Eo *obj, Elm_Fileselector_Entry_Data *sd)
 {
    free(sd->path);
 

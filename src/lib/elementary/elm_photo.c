@@ -243,7 +243,7 @@ _on_thumb_done(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_photo_evas_object_smart_add(Eo *obj, Elm_Photo_Data *priv)
+_elm_photo_evas_object_smart_smart_add(Eo *obj, Elm_Photo_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -287,7 +287,7 @@ _elm_photo_evas_object_smart_add(Eo *obj, Elm_Photo_Data *priv)
 }
 
 EOLIAN static void
-_elm_photo_evas_object_smart_del(Eo *obj, Elm_Photo_Data *sd)
+_elm_photo_evas_object_smart_smart_del(Eo *obj, Elm_Photo_Data *sd)
 {
    ecore_timer_del(sd->long_press_timer);
 

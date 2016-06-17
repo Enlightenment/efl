@@ -6,10 +6,10 @@ class Elm.Genlist.Pan (Elm.Pan)
    implements {
       class.constructor;
       Eo.Base.destructor;
-      Evas.Object.Smart.calculate;
-      Evas.Object.Smart.move;
-      Evas.Object.Smart.del;
-      Evas.Object.Smart.resize;
+      Evas.Object.Smart.smart_calculate;
+      Evas.Object.Smart.smart_move;
+      Evas.Object.Smart.smart_del;
+      Evas.Object.Smart.smart_resize;
       Elm.Pan.content_size.get;
       Elm.Pan.pos;
       Elm.Pan.pos_min.get;

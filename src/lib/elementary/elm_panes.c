@@ -262,7 +262,7 @@ _on_resize(void *data,
 }
 
 EOLIAN static void
-_elm_panes_evas_object_smart_add(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
+_elm_panes_evas_object_smart_smart_add(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    ELM_PANES_DATA_GET(obj, sd);

@@ -1269,7 +1269,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
 }
 
 EOLIAN static void
-_elm_diskselector_evas_object_smart_add(Eo *obj, Elm_Diskselector_Data *priv)
+_elm_diskselector_evas_object_smart_smart_add(Eo *obj, Elm_Diskselector_Data *priv)
 {
    Evas *evas;
    Evas_Object *blank, *edje;
@@ -1345,7 +1345,7 @@ _elm_diskselector_evas_object_smart_add(Eo *obj, Elm_Diskselector_Data *priv)
 }
 
 EOLIAN static void
-_elm_diskselector_evas_object_smart_del(Eo *obj, Elm_Diskselector_Data *sd)
+_elm_diskselector_evas_object_smart_smart_del(Eo *obj, Elm_Diskselector_Data *sd)
 {
    Elm_Diskselector_Item_Data *it;
    Eina_List *l, *l2;
@@ -1421,7 +1421,7 @@ _elm_diskselector_evas_object_smart_del(Eo *obj, Elm_Diskselector_Data *sd)
 }
 
 EOLIAN static void
-_elm_diskselector_evas_object_smart_move(Eo *obj, Elm_Diskselector_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_diskselector_evas_object_smart_smart_move(Eo *obj, Elm_Diskselector_Data *sd, Evas_Coord x, Evas_Coord y)
 {
    evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
 
@@ -1429,7 +1429,7 @@ _elm_diskselector_evas_object_smart_move(Eo *obj, Elm_Diskselector_Data *sd, Eva
 }
 
 EOLIAN static void
-_elm_diskselector_evas_object_smart_resize(Eo *obj, Elm_Diskselector_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_diskselector_evas_object_smart_smart_resize(Eo *obj, Elm_Diskselector_Data *sd, Evas_Coord w, Evas_Coord h)
 {
    evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
@@ -1437,7 +1437,7 @@ _elm_diskselector_evas_object_smart_resize(Eo *obj, Elm_Diskselector_Data *sd, E
 }
 
 EOLIAN static void
-_elm_diskselector_evas_object_smart_member_add(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *member)
+_elm_diskselector_evas_object_smart_smart_member_add(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *member)
 {
    evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
 
