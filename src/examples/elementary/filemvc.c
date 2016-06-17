@@ -84,7 +84,7 @@ _tree_selected_cb(void *data, const Eo_Event *event)
 
    printf("TREE selected model\n");
 
-   efl_model_property_get(child, "path", &promise);
+   promise= efl_model_property_get(child, "path");
    eina_promise_then(promise, &_promise_then, &_promise_error, priv);
    return EINA_TRUE;
 }

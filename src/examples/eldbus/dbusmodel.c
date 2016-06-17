@@ -80,7 +80,7 @@ promise_then_a(void* priv_obj EINA_UNUSED, void* data)
              unsigned j = 0;
              EINA_ARRAY_ITER_NEXT(properties_list, j, property, a_it)
                {
-                  efl_model_property_get(child, property, &promises[j]);
+                  promises[j] = efl_model_property_get(child, property);
                }
              eina_promise_then(eina_promise_all(eina_carray_iterator_new((void **)promises)),
                                &promise_then_prop_c, &error_cb, child);
@@ -137,8 +137,8 @@ main(int argc, char **argv EINA_UNUSED)
    root = eo_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eo_self, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, bus, path));
 
    Eina_Promise *promises[] = { NULL, NULL, NULL};
-   efl_model_children_slice_get(root, 0, 0, &promises[0]);
-   efl_model_children_count_get(root, &promises[1]);
+   promises[0] = efl_model_children_slice_get(root, 0, 0);
+   promises[1] = efl_model_children_count_get(root);
 
    eina_promise_then(eina_promise_all(eina_carray_iterator_new((void **)promises)),
                      &promise_then, &error_cb, root);
