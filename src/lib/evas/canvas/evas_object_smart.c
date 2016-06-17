@@ -120,17 +120,19 @@ static const Evas_Object_Func object_func =
 
 
 /* public funcs */
-EOLIAN static void
-_evas_object_smart_data_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o, void *data)
+EAPI void
+evas_object_smart_data_set(Evas_Object *eo_obj, void *data)
 {
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
    if (o->data) eo_data_unref(eo_obj, o->data);
    o->data = data;
    eo_data_ref(eo_obj, NULL);
 }
 
-EOLIAN void *
-_evas_object_smart_data_get(Evas_Object *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+EAPI void *
+evas_object_smart_data_get(const Evas_Object *eo_obj)
 {
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, NULL);
    return o->data;
 }
 

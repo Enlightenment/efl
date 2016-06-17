@@ -5177,6 +5177,21 @@ EAPI void evas_object_smart_callback_description_find(const Evas_Object *obj, co
 EAPI Evas_Smart *evas_object_smart_smart_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Store a pointer to user data for a given smart object.
+ *
+ * This data is stored independently of the one set by evas_object_data_set(),
+ * naturally.
+ *
+ * See also @ref evas_object_smart_data_get.
+ *
+ * @param[in] data A pointer to user data.
+ *
+ * @ingroup Evas_Object_Smart
+ */
+EAPI void evas_object_smart_data_set(Evas_Object *obj, void *data);
+EAPI void *evas_object_smart_data_get(const Evas_Object *obj);
+
+/**
  * This gets the internal counter that counts the number of smart calculations
  *
  * @param e The canvas to get the calculate counter from

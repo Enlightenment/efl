@@ -62,20 +62,6 @@ class Evas.Object.Smart (Evas.Object)
             a: int;
          }
       }
-      @property data {
-         get {}
-         set {
-            [[Store a pointer to user data for a given smart object.
-
-              This data is stored independently of the one set by
-              evas_object_data_set(), naturally.
-
-              See also @.data.get.]]
-         }
-         values {
-            data: void_ptr; [[A pointer to user data.]]
-         }
-      }
       @property members {
          get {
             [[Retrieves the list of the member objects of a given Evas smart object.
