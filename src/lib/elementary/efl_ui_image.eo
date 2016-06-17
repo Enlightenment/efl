@@ -1,5 +1,3 @@
-import evas_image;
-
 enum Efl.Ui.Image.Scale_Type
 {
    [[Enumeration that defines scale types for the object's internal image.
