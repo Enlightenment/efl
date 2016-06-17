@@ -1,6 +1,98 @@
 interface Efl.Canvas ()
 {
    [[Common interface for Window and some internal classes in EFL.]]
+   methods {
+      @property pointer_canvas_xy {
+         get {
+            [[This function returns the current known pointer coordinates
+
+              This function returns the current known canvas unit
+              coordinates of the mouse pointer and sets the contents of
+              the Evas_Coords pointed to by $x and $y to contain these
+              coordinates. If $e is not a valid canvas the results of
+              this function are undefined.
+            ]]
+         }
+         values {
+            x: int; [[The pointer to hold the return value of pointer's x position.]]
+            y: int; [[The pointer to hold the return value of pointer's y position.]]
+         }
+      }
+      @property pointer_inside {
+         get {
+            [[Returns whether the mouse pointer is logically inside the
+              canvas.
+
+              When this function is called it will return a value of either
+              $false or $true, depending on if event_feed_mouse_in or
+              event_feed_mouse_out have been called to feed in a  mouse
+              enter event into the canvas.
+
+              A return value of $true indicates the mouse is logically
+              inside the canvas, and $false implies it is logically
+              outside the canvas.
+
+              A canvas begins with the mouse being assumed outside ($false).
+
+              If $e is not a valid canvas, the return value is undefined.
+            ]]
+            return: bool @warn_unused;
+         }
+      }
+      @property image_max_size {
+         get {
+            [[Get the maximum image size evas can possibly handle.
+
+              This function returns the largest image or surface size that
+              evas can handle in pixels, and if there is one, returns $true.
+              It returns $false if no extra constraint on maximum image
+              size exists. You still should check the return values of
+              $maxw and $maxh as there may still be a limit, just a
+              much higher one.
+
+            ]]
+            return: bool;
+         }
+         values {
+            maxw: int; [[Pointer to hold the return value in pixels of the maximum width.]]
+            maxh: int; [[Pointer to hold the return value in pixels of the maximum height.]]
+         }
+      }
+      @property image_cache {
+         set {
+            [[Set the image cache.
+
+              This function sets the image cache of canvas in bytes.
+            ]]
+         }
+         get {
+            [[Get the image cache.
+
+              This function returns the image cache size of canvas in bytes.
+            ]]
+         }
+         values {
+            size: int; [[The cache size.]]
+         }
+      }
+      @property font_cache {
+         set {
+            [[Changes the size of font cache of the given evas.]]
+         }
+         get {
+            [[Get the size of font cache of the given evas in bytes.]]
+         }
+         values {
+            size: int; [[The size in bytes.]]
+         }
+      }
+      smart_objects_calculate {
+         [[Call user-provided $calculate smart functions and unset the
+           flag signalling that the object needs to get recalculated to
+           all smart objects in the canvas.
+         ]]
+      }
+   }
    events {
       focus,in;
       focus,out;
