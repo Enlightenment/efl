@@ -334,7 +334,7 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
    Efl_Ui_Internal_Text_Interactive_Data *en = eo_data_scope_get(obj, MY_CLASS);
    Ecore_IMF_Event_Delete_Surrounding *ev = event_info;
    Evas_Textblock_Cursor *del_start, *del_end;
-   Efl_Ui_Text_Interactive_Change_Info info = {0};
+   Efl_Ui_Text_Interactive_Change_Info info = { NULL, 0, 0, 0, 0 };
    int cursor_pos;
    int start, end;
 
@@ -584,7 +584,7 @@ _range_del_emit(Evas_Object *obj, Efl_Canvas_Text_Cursor *cur1, Efl_Canvas_Text_
 {
    size_t start, end;
    char *tmp;
-   Efl_Ui_Text_Interactive_Change_Info info = {0};
+   Efl_Ui_Text_Interactive_Change_Info info = { NULL, 0, 0, 0, 0 };
 
    start = evas_textblock_cursor_pos_get(cur1);
    end = evas_textblock_cursor_pos_get(cur2);
@@ -615,7 +615,7 @@ _sel_range_del_emit(Evas_Object *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 static void
 _delete_emit(Evas_Textblock_Cursor *c, Efl_Ui_Internal_Text_Interactive_Data *en EINA_UNUSED, size_t pos)
 {
-   Efl_Ui_Text_Interactive_Change_Info info = {0};
+   Efl_Ui_Text_Interactive_Change_Info info = { NULL, 0, 0, 0, 0 };
    Eina_Unicode content[2];
    content[0] = efl_canvas_text_cursor_content_get(c);
    content[1] = 0;
@@ -1002,7 +1002,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
           }
         if (string)
           {
-             Efl_Ui_Text_Interactive_Change_Info info = {0};
+             Efl_Ui_Text_Interactive_Change_Info info = { NULL, 0, 0, 0, 0 };
              if (en->have_selection)
                {
                   _sel_range_del_emit(obj, en);
