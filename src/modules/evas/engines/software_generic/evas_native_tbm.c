@@ -293,7 +293,7 @@ _evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *na
    if (ns)
      {
         void *pixels_data;
-        int w, h, stride;
+        int h, stride;
         tbm_format format;
         tbm_surface_info_s info;
         Native *n;
@@ -318,7 +318,6 @@ _evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *na
              return im;
           }
 
-        w = info.width;
         h = info.height;
         stride = info.planes[0].stride;
         format = info.format;
