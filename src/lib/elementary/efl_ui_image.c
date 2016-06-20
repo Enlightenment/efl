@@ -875,12 +875,14 @@ elm_image_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_efl_ui_image_eo_base_constructor(Eo *obj, Efl_Ui_Image_Data *_pd EINA_UNUSED)
+_efl_ui_image_eo_base_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
    evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
+
+   pd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FIT_INSIDE;
 
    return obj;
 }
