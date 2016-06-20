@@ -184,7 +184,7 @@ elementaryeolianfiles_DATA = $(elm_public_eolian_files) $(elm_eolian_type_files)
 
 noinst_DATA += $(elm_legacy_eolian_eo_h)
 
-EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files)
+EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files) $(elm_private_eolian_files)
 
 lib_LTLIBRARIES += lib/elementary/libelementary.la
 
