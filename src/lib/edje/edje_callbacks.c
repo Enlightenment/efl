@@ -117,9 +117,9 @@ _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
 
    if ((!ev->event_flags) || (!ignored))
      {
-        if (ev->event_flags & EVAS_BUTTON_TRIPLE_CLICK)
+        if (ev->button_flags & EVAS_BUTTON_TRIPLE_CLICK)
           snprintf(buf, sizeof(buf), "mouse,down,%i,triple", ev->button);
-        else if (ev->event_flags & EVAS_BUTTON_DOUBLE_CLICK)
+        else if (ev->button_flags & EVAS_BUTTON_DOUBLE_CLICK)
           snprintf(buf, sizeof(buf), "mouse,down,%i,double", ev->button);
         else
           snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
