@@ -5763,7 +5763,7 @@ EOLIAN Eina_Bool
 _edje_object_part_text_hide_visible_password(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
    if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
