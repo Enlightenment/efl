@@ -4,7 +4,7 @@
 #include "evas_image.eo.h"
 
 #define EVAS_IMAGE_API(_o, ...) do { \
-   if (EINA_UNLIKELY(!eo_isa(_o, EVAS_IMAGE_CLASS))) { \
+   if (EINA_UNLIKELY(!eo_isa(_o, EFL_CANVAS_IMAGE_INTERNAL_CLASS))) { \
       EINA_SAFETY_ERROR("object is not an image!"); \
       return __VA_ARGS__; \
    } } while (0)
