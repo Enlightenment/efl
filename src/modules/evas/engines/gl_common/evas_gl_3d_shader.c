@@ -207,7 +207,8 @@ _shader_compile(GLuint shader, const char *src)
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
         log_str = (GLchar *)malloc(len);
         glGetShaderInfoLog(shader, len, &info_len, log_str);
-        ERR("Shader compilation failed.\n%s", log_str);
+        ERR("Shader compilation failed: %s", log_str);
+        DBG("Shader source was:\n%s", src);
         free(log_str);
 
         return EINA_FALSE;
