@@ -130,6 +130,14 @@ _eo_signals_a_changed_cb2(void *_data EINA_UNUSED, const Eo_Event *event EINA_UN
 }
 
 static void
+_eo_signals_a_changed_within_cb(void *_data EINA_UNUSED, const Eo_Event *event)
+{
+   int a = 3;
+   eo_event_callback_call(event->object, EV_A_CHANGED, &a);
+   _eo_signals_cb_flag = 0x8;
+}
+
+static void
 _eo_signals_a_changed_never(void *_data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    /* This one should never be called. */
@@ -211,6 +219,7 @@ START_TEST(eo_signals)
         /* Call Eo event with legacy and non-legacy callbacks. */
         _eo_signals_cb_current = 0;
         eo_event_callback_priority_add(obj, EV_A_CHANGED2, -1000, _eo_signals_a_changed_never, (void *) 1);
+        eo_event_callback_priority_add(obj, EV_A_CHANGED2, 0, _eo_signals_a_changed_within_cb, NULL);
         eo_event_callback_priority_add(obj, EV_A_CHANGED, -100, _eo_signals_a_changed_cb, (void *) 1);
         eo_event_callback_add(obj, a_desc, _eo_signals_a_changed_cb2, NULL);
         simple_a_set(obj, 1);
@@ -219,6 +228,9 @@ START_TEST(eo_signals)
         /* We don't need this one anymore. */
         r = eo_event_callback_del(obj, EV_A_CHANGED2, _eo_signals_a_changed_never, (void *) 1);
         fail_if(!r);
+        r = eo_event_callback_del(obj, a_desc, _eo_signals_a_changed_cb2, NULL);
+        fail_if(!r);
+        eo_event_callback_add(obj, EV_A_CHANGED, _eo_signals_a_changed_cb2, NULL);
 
         /* Call legacy event with legacy and non-legacy callbacks. */
         int a = 3;
@@ -226,6 +238,13 @@ START_TEST(eo_signals)
         _eo_signals_cb_flag = 0;
         eo_event_callback_call(obj, a_desc, &a);
         ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
+
+        /* Stop event within event. */
+        _eo_signals_cb_current = 0;
+        _eo_signals_cb_flag = 0;
+        fail_if(!eo_event_callback_call(obj, EV_A_CHANGED2, &a));
+        ck_assert_int_eq(_eo_signals_cb_flag, 0x8);
+        fail_if(!r);
      }
    eo_unref(obj);
 
