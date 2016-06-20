@@ -803,11 +803,12 @@ $(NULL)
 
 EXTRA_DIST2 += \
 modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh \
+modules/evas/engines/gl_common/shader_3d/include.shd \
 $(GL_SHADERS_3D_GEN)
 
-modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
+modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN) modules/evas/engines/gl_common/shader_3d/include.shd
 	@echo "  SHADERS  $@"
-	@sh $^
+	@sh $(srcdir)/modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
 
 
 GL_GENERIC_SOURCES = \
@@ -831,7 +832,9 @@ evas_gl_generic_eolian_h = $(evas_gl_generic_eolian_files:%.eo=%.eo.h) \
 
 BUILT_SOURCES += \
                  $(evas_gl_generic_eolian_c) \
-                 $(evas_gl_generic_eolian_h)
+                 $(evas_gl_generic_eolian_h) \
+                 modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x \
+                 modules/evas/engines/gl_common/shader/evas_gl_shaders.x
 
 EXTRA_DIST2 += $(evas_gl_generic_eolian_files)
 
