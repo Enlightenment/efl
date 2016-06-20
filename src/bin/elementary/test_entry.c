@@ -2818,6 +2818,70 @@ test_entry_emoticon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+password_entry_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   printf("Password : %s\n", elm_entry_entry_get(obj));
+}
+
+static void
+show_password_check_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = (Evas_Object *)data;
+   Eina_Bool state = elm_check_state_get(obj);
+
+   if (state)
+     {
+        printf(" * Show Password...\n");
+        elm_object_text_set(obj, "Hide Password");
+        elm_entry_password_set(en, EINA_FALSE);
+     }
+   else
+     {
+        printf(" * Hide Password...\n");
+        elm_object_text_set(obj, "Show Password");
+        elm_entry_password_set(en, EINA_TRUE);
+     }
+}
+
+void
+test_entry_password(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *en, *ck;
+
+   edje_password_show_last_set(EINA_TRUE);
+   edje_password_show_last_timeout_set(-1);
+
+   win = elm_win_util_standard_add("entry", "Entry");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   en = elm_entry_add(bx);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_entry_password_set(en, EINA_TRUE);
+   elm_object_part_text_set(en, "elm.guide", "Enter Your Password");
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, en);
+   evas_object_show(en);
+
+   evas_object_smart_callback_add(en, "changed", password_entry_changed_cb, NULL);
+
+   ck = elm_check_add(bx);
+   elm_object_text_set(ck, "Show Password");
+   evas_object_smart_callback_add(ck, "changed", show_password_check_changed_cb, en);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   evas_object_resize(win, 300, 100);
+   evas_object_show(win);
+}
+
+static void
 my_efl_ui_text_bt_5(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;

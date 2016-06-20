@@ -851,6 +851,8 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
+   edje_obj_part_text_hide_visible_password(sd->entry_edje, "elm.text");
+
    edje_object_mirrored_set
      (wd->resize_obj, elm_widget_mirrored_get(obj));
 

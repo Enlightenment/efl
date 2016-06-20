@@ -1442,9 +1442,10 @@ _delete_emit(Edje *ed, Evas_Textblock_Cursor *c, Entry *en, size_t pos,
                    info, _free_entry_change_info);
 }
 
-static void
+Eina_Bool
 _edje_entry_hide_visible_password(Edje *ed, Edje_Real_Part *rp)
 {
+   Eina_Bool int_ret = EINA_FALSE;
    const Evas_Object_Textblock_Node_Format *node;
    node = evas_textblock_node_format_first_get(rp->object);
    for (; node; node = evas_textblock_node_format_next_get(node))
@@ -1457,11 +1458,14 @@ _edje_entry_hide_visible_password(Edje *ed, Edje_Real_Part *rp)
                   evas_textblock_node_format_remove_pair(rp->object,
                                                          (Evas_Object_Textblock_Node_Format *)node);
                   _edje_emit(ed, "entry,changed", rp->part->name);
+                  int_ret = EINA_TRUE;
                   break;
                }
           }
      }
    _edje_entry_real_part_configure(ed, rp);
+
+   return int_ret;
 }
 
 static Eina_Bool
@@ -1999,9 +2003,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                              info, _free_entry_change_info);
              _edje_emit(ed, "cursor,changed", rp->part->name);
              cursor_changed = EINA_TRUE;
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
           }
         _edje_emit(ed, "entry,key,enter", rp->part->name);
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else
      {

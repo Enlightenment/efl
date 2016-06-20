@@ -5759,6 +5759,28 @@ _edje_real_part_text_text_source_description_get(Edje_Real_Part *ep, Edje_Real_P
    return et;
 }
 
+EOLIAN Eina_Bool
+_edje_object_part_text_hide_visible_password(Eo *obj, Edje *ed, const char *part)
+{
+   Edje_Real_Part *rp;
+   Eina_Bool int_ret;
+
+   if ((!ed) || (!part)) return EINA_FALSE;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return EINA_FALSE;
+   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return EINA_FALSE;
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text))
+     {
+        return EINA_FALSE;
+     }
+
+   if (rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD)
+     int_ret = _edje_entry_hide_visible_password(ed, rp);
+
+   return int_ret;
+}
+
 Edje_Real_Part *
 _edje_real_part_recursive_get(Edje **ed, const char *part)
 {

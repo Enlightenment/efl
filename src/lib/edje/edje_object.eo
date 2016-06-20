@@ -1985,6 +1985,15 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             scale: double; [[The transition duration factor]]
          }
       }
+      part_text_hide_visible_password {
+         [[Hide visible last character for password mode.
+
+           @since 1.18.0]]
+         params {
+            @in part: const(char)*; [[The part name]]
+	 }
+         return: bool; [[$true if the visible character is hidden. $false if there is no visible character or the object is not set for password mode.]]
+      }
    }
    implements {
       Eo.Base.constructor;
