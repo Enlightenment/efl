@@ -4238,13 +4238,9 @@ START_TEST(evas_textblock_annotation)
    _test_check_annotation(tb, 3, 3, _COMP_PARAMS("color=#fff"));
    /* Old API */
    evas_textblock_cursor_pos_set(cur, 5);
-   evas_textblock_cursor_text_append(cur, "a");
-   _test_check_annotation(tb, 0, 0, _COMP_PARAMS("color=#fff"));
-   _test_check_annotation(tb, 5, 5, _COMP_PARAMS());
-   /* New API */
    efl_canvas_text_cursor_text_insert(cur, "a");
    _test_check_annotation(tb, 0, 0, _COMP_PARAMS("color=#fff"));
-   _test_check_annotation(tb, 5, 5, _COMP_PARAMS("color=#fff"));
+   _test_check_annotation(tb, 5, 5, _COMP_PARAMS());
 
    /* Specific case with PS */
    efl_text_set(tb, "hello\nworld");
@@ -4252,7 +4248,7 @@ START_TEST(evas_textblock_annotation)
    evas_textblock_cursor_pos_set(end, 5);
    efl_canvas_text_annotation_insert(tb, start, end, "color=#fff");
    _test_check_annotation(tb, 4, 4, _COMP_PARAMS("color=#fff"));
-   evas_textblock_cursor_pos_set(cur, 5);
+   evas_textblock_cursor_pos_set(cur, 4);
    /* Cursor position is now: hello|\nworld */
    efl_canvas_text_cursor_text_insert(cur, "a");
    _test_check_annotation(tb, 0, 0, _COMP_PARAMS("color=#fff"));
