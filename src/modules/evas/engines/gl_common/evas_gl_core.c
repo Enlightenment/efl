@@ -2608,12 +2608,6 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
      }
    else
      {
-        Eina_Bool use_extension = EINA_FALSE;
-#ifdef GL_GLES
-        if ((ctx->version == EVAS_GL_GLES_1_X) && (gles1_funcs))
-          use_extension = EINA_TRUE;
-#endif
-
         // Direct Rendering
         if (_evgl_direct_renderable(rsc, sfc))
           {
@@ -2621,7 +2615,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
              // Create FBO if it hasn't been created
              if (!ctx->surface_fbo)
-               _framebuffer_create(&ctx->surface_fbo, use_extension);
+               _framebuffer_create(&ctx->surface_fbo, ctx->version);
 
              if (ctx->version == EVAS_GL_GLES_3_X)
                {
@@ -2728,7 +2722,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
              // Create FBO if it hasn't been created
              if (!ctx->surface_fbo)
-               _framebuffer_create(&ctx->surface_fbo, use_extension);
+               _framebuffer_create(&ctx->surface_fbo, ctx->version);
 
              // Attach fbo and the buffers
              if ((rsc->current_ctx != ctx) || (ctx->current_sfc != sfc) || (rsc->direct.rendered))
