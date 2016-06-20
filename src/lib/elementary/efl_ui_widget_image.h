@@ -86,8 +86,6 @@ struct _Efl_Ui_Image_Data
 
    Eina_Bool             aspect_fixed : 1;
    Eina_Bool             fill_inside : 1;
-   Eina_Bool             resize_down : 1;
-   Eina_Bool             resize_up : 1;
    Eina_Bool             no_scale : 1;
    Eina_Bool             smooth : 1;
    Eina_Bool             show : 1;

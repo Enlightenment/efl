@@ -595,8 +595,6 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
 
    priv->smooth = EINA_TRUE;
    priv->fill_inside = EINA_TRUE;
-   priv->resize_up = EINA_TRUE;
-   priv->resize_down = EINA_TRUE;
    priv->aspect_fixed = EINA_TRUE;
    priv->load_size = 0;
    priv->scale = 1.0;
@@ -787,6 +785,7 @@ _efl_ui_image_sizing_eval(Eo *obj)
 
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
+   _efl_ui_image_internal_sizing_eval(obj, sd);
    efl_image_smooth_scale_set(obj, sd->smooth);
 
    if (sd->no_scale)
@@ -805,12 +804,12 @@ _efl_ui_image_sizing_eval(Eo *obj)
      {
         maxw = minw = w;
         maxh = minh = h;
-        if ((sd->scale > 1.0) && (sd->resize_up))
+        if ((sd->scale > 1.0) && (sd->scale_up))
           {
              maxw = minw = w * sd->scale;
              maxh = minh = h * sd->scale;
           }
-        else if ((sd->scale < 1.0) && (sd->resize_down))
+        else if ((sd->scale < 1.0) && (sd->scale_down))
           {
              maxw = minw = w * sd->scale;
              maxh = minh = h * sd->scale;
@@ -818,12 +817,12 @@ _efl_ui_image_sizing_eval(Eo *obj)
      }
    else
      {
-        if (!sd->resize_down)
+        if (!sd->scale_down)
           {
              minw = w * sd->scale;
              minh = h * sd->scale;
           }
-        if (!sd->resize_up)
+        if (!sd->scale_up)
           {
              maxw = w * sd->scale;
              maxh = h * sd->scale;
@@ -1165,7 +1164,7 @@ _efl_ui_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data 
    else
      evas_object_image_size_get(sd->img, &tw, &th);
 
-   if ((sd->resize_up) || (sd->resize_down))
+   if ((sd->scale_up) || (sd->scale_down))
      evas_object_geometry_get(sd->img, NULL, NULL, &cw, &ch);
 
    tw = tw > cw ? tw : cw;
@@ -1938,22 +1937,22 @@ elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
 }
 
 EAPI void
-elm_image_resize_down_set(Evas_Object *obj, Eina_Bool resize_down)
+elm_image_scale_down_set(Evas_Object *obj, Eina_Bool scale_down)
 {
    EFL_UI_IMAGE_CHECK(obj);
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
-   resize_down = !!resize_down;
+   scale_down = !!scale_down;
 
-   if (sd->scale_down == resize_down) return;
+   if (sd->scale_down == scale_down) return;
 
-   sd->scale_down = resize_down;
+   sd->scale_down = scale_down;
 
    _efl_ui_image_internal_sizing_eval(obj, sd);
 }
 
 EAPI Eina_Bool
-elm_image_resize_down_get(const Evas_Object *obj)
+elm_image_scale_down_get(const Evas_Object *obj)
 {
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
    EFL_UI_IMAGE_DATA_GET(obj, sd);
@@ -1961,22 +1960,22 @@ elm_image_resize_down_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_image_resize_up_set(Evas_Object *obj, Eina_Bool resize_up)
+elm_image_scale_up_set(Evas_Object *obj, Eina_Bool scale_up)
 {
    EFL_UI_IMAGE_CHECK(obj);
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
-   resize_up = !!resize_up;
+   scale_up = !!scale_up;
 
-   if (sd->scale_up == resize_up) return;
+   if (sd->scale_up == scale_up) return;
 
-   sd->scale_up = resize_up;
+   sd->scale_up = scale_up;
 
    _efl_ui_image_internal_sizing_eval(obj, sd);
 }
 
 EAPI Eina_Bool
-elm_image_resize_up_get(const Evas_Object *obj)
+elm_image_scale_up_get(const Evas_Object *obj)
 {
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
    EFL_UI_IMAGE_DATA_GET(obj, sd);
@@ -2016,7 +2015,7 @@ elm_image_resizable_set(Evas_Object *obj, Eina_Bool up, Eina_Bool down)
    sd->scale_up = !!up;
    sd->scale_down = !!down;
 
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 }
 
 EAPI void
@@ -2047,7 +2046,7 @@ elm_image_fill_inside_set(Evas_Object *obj, Eina_Bool fill_inside)
    else
      sd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FILL;
 
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 }
 
 EAPI Eina_Bool
@@ -2076,7 +2075,7 @@ elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
    else
      sd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FILL;
 
-   _efl_ui_image_internal_sizing_eval(obj, sd);
+   _efl_ui_image_sizing_eval(obj);
 }
 
 EAPI Eina_Bool
