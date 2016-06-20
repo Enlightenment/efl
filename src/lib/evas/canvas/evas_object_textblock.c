@@ -489,7 +489,6 @@ struct _Efl_Canvas_Text_Cursor
 };
 
 typedef struct _Efl_Canvas_Text_Cursor Efl_Canvas_Text_Cursor_Data;
-typedef Eo Efl_Canvas_Text_Cursor;
 
 struct _Efl_Canvas_Text_Annotation
 {
