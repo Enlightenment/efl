@@ -9870,7 +9870,6 @@ _efl_canvas_text_cursor_text_insert(Eo *cur_obj,
       Efl_Canvas_Text_Cursor_Data *cur, const char *_text)
 {
    int len = _efl_canvas_text_cursor_text_append(cur, _text);
-   cur->pos += len;
    eo_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
    return len;
 }
@@ -13526,12 +13525,6 @@ _efl_canvas_text_cursor_text_append(Efl_Canvas_Text_Cursor_Data *cur,
    const char *off = text;
    int len = 0;
 
-   /* We make use of prepending the cursor, but this needs to return the current
-    * position's cursor, so we use a temporary one. */
-   Efl_Canvas_Text_Cursor_Data cur2;
-   _evas_textblock_cursor_init(&cur2, cur->obj);
-   _evas_textblock_cursor_copy(&cur2, cur);
-
    Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
 
@@ -13553,8 +13546,8 @@ _efl_canvas_text_cursor_text_append(Efl_Canvas_Text_Cursor_Data *cur,
 
         if (format)
           {
-             len += _prepend_text_run2(&cur2, text, off);
-             if (_evas_textblock_cursor_format_prepend(&cur2, format))
+             len += _prepend_text_run2(cur, text, off);
+             if (_evas_textblock_cursor_format_prepend(cur, format))
                {
                   len++;
                }
@@ -13562,7 +13555,7 @@ _efl_canvas_text_cursor_text_append(Efl_Canvas_Text_Cursor_Data *cur,
           }
           off += n;
      }
-   len += _prepend_text_run2(&cur2, text, off);
+   len += _prepend_text_run2(cur, text, off);
    return len;
 }
 
@@ -13570,11 +13563,8 @@ EOLIAN static void
 _efl_canvas_text_efl_text_text_set(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED,
       const char *text)
 {
-   Efl_Canvas_Text_Cursor_Data cur;
-
    evas_object_textblock_text_markup_set(eo_obj, "");
-   _evas_textblock_cursor_init(&cur, eo_obj);
-   _efl_canvas_text_cursor_text_append(&cur, text);
+   efl_canvas_text_cursor_text_insert(o->cursor, text);
 }
 
 EOLIAN static const char *
