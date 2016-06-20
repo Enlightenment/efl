@@ -5760,7 +5760,7 @@ _edje_real_part_text_text_source_description_get(Edje_Real_Part *ep, Edje_Real_P
 }
 
 EOLIAN Eina_Bool
-_edje_object_part_text_hide_visible_password(Eo *obj, Edje *ed, const char *part)
+_edje_object_part_text_hide_visible_password(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
    Eina_Bool int_ret;
