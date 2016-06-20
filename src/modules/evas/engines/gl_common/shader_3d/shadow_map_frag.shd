@@ -8,16 +8,12 @@ FRAGMENT_SHADER_USE_ALPHA_TEST_GLES
 #ifdef DIFFUSE_TEXTURE
 uniform sampler2D  uTextureDiffuse0;
 uniform mat3 uTextureMatrixTransformDiffuse0;
-vec3 Tex0CoordDiffuse =
-   vec3(vTexCoord, 1.0) * uTextureMatrixTransformDiffuse0;
 #endif //DIFFUSE_TEXTURE
 
 #ifdef DIFFUSE_TEXTURE_BLEND
 uniform sampler2D  uTextureDiffuse1;
 uniform float      uTextureDiffuseWeight;
 uniform mat3 uTextureMatrixTransformDiffuse1;
-vec3 Tex1CoordDiffuse =
-   vec3(vTexCoord, 1.0) * uTextureMatrixTransformDiffuse1;
 #endif //DIFFUSE_TEXTURE_BLEND
 
 #endif //DIFFUSE
@@ -34,12 +30,14 @@ void main() {
 #ifdef ALPHA_TEST_ENABLED
 
 #ifdef DIFFUSE_TEXTURE_BLEND
+   vec3 Tex1CoordDiffuse = vec3(vTexCoord, 1.0) * uTextureMatrixTransformDiffuse1;
    color = (texture2D(uTextureDiffuse0, vec2(Tex0CoordDiffuse)) *
    uTextureDiffuseWeight + texture2D(uTextureDiffuse1, vec2(Tex1CoordDiffuse)) *
    (1.0 - uTextureDiffuseWeight));
 #else
 
 #ifdef DIFFUSE_TEXTURE
+   vec3 Tex0CoordDiffuse = vec3(vTexCoord, 1.0) * uTextureMatrixTransformDiffuse0;
    color = texture2D(uTextureDiffuse0, vec2(Tex0CoordDiffuse));
 #else
    color = vec4(1);

@@ -13,15 +13,11 @@ define(`FRAGMENT_SHADER_USE_TEXTURE', `
 #ifdef $1_TEXTURE
 uniform sampler2D  uTexture$2`0';
 uniform mat3 uTextureMatrixTransform$2`0';
-vec3 Tex0Coord$2 =
-   vec3(vTexCoord, 1.0) * uTextureMatrixTransform$2`0';
 #endif //$1_TEXTURE
 #ifdef $1_TEXTURE_BLEND
 uniform sampler2D  uTexture$2`1';
 uniform float      uTexture$2Weight;
 uniform mat3 uTextureMatrixTransform$2`1';
-vec3 Tex1Coord$2 =
-   vec3(vTexCoord, 1.0) * uTextureMatrixTransform$2`1';
 #endif //$1_TEXTURE_BLEND')
 
 define(`FRAGMENT_SHADER_USE_FOG', `
@@ -79,11 +75,13 @@ varying   float    vLightDist;
 
 define(`FRAGMENT_SHADER_TEXTURE_BLEND', `
 #ifdef  $1_TEXTURE_BLEND
+   vec3 Tex0Coord$2 = vec3(vTexCoord, 1.0) * uTextureMatrixTransform$2`1';
    color = mix(texture2D(uTexture$2`1', vec2(Tex1Coord$2)),
                texture2D(uTexture$2`0', vec2(Tex0Coord$2)), uTexture$2Weight);
    color *= uMaterial$2;
 #else
 #ifdef  $1_TEXTURE
+   vec3 Tex0Coord$2 = vec3(vTexCoord, 1.0) * uTextureMatrixTransform$2`0';
    color = texture2D(uTexture$2`0', vec2(Tex0Coord$2)) * uMaterial$2;
 #else
    color = uMaterial$2;
