@@ -565,7 +565,7 @@ _efl_canvas_image_internal_efl_gfx_fill_fill_auto_set(Eo *eo_obj, Evas_Image_Dat
         Evas_Coord w, h;
 
         efl_gfx_geometry_get(eo_obj, NULL, NULL, &w, &h);
-        efl_gfx_fill_set(eo_obj, 0, 0, w, h);
+        _evas_image_fill_set(eo_obj, o, 0, 0, w, h);
 
         evas_object_event_callback_add(eo_obj, EVAS_CALLBACK_RESIZE,
                                        evas_object_image_filled_resize_listener,
@@ -3150,12 +3150,13 @@ _evas_image_data_convert_internal(Evas_Image_Data *o, void *data, Evas_Colorspac
 static void
 evas_object_image_filled_resize_listener(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *einfo EINA_UNUSED)
 {
+   Evas_Image_Data *o = eo_data_scope_get(obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Coord w, h;
 
    efl_gfx_geometry_get(obj, NULL, NULL, &w, &h);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   efl_gfx_fill_set(obj, 0, 0, w, h);
+   _evas_image_fill_set(obj, o, 0, 0, w, h);
 }
 
 Eina_Bool
