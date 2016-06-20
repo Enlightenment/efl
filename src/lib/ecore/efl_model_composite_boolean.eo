@@ -1,0 +1,34 @@
+class Efl.Model.Composite.Boolean (Efl.Object, Efl.Model)
+{
+   methods {
+      @property composite_model {
+         set {
+         }
+         get {
+         }
+         values {
+           model: Efl.Model;
+         }
+      }
+      property_add {
+         params {
+            @in name: string;
+            @in initial_value: bool;
+         }
+      }
+   }
+   implements {
+      Efl.Object.destructor;
+      Efl.Model.properties { get; }
+      Efl.Model.property_get;
+      Efl.Model.property_set;
+      Efl.Model.children_slice_get;
+      Efl.Model.children_count_get;
+      Efl.Model.child_add;
+      Efl.Model.child_del;
+   }
+   constructors {
+      .composite_model;
+      .property_add @optional;
+   }
+}

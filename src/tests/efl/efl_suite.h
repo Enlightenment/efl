@@ -22,5 +22,6 @@
 #include <check.h>
 
 void efl_test_case_model_container(TCase *tc);
+void efl_test_case_model_composite_boolean(TCase *tc);
 
 #endif /* EFL_SUITE_H_ */
