@@ -29,23 +29,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
    data: Elm_Widget_Smart_Data;
    methods {
       @property focus {
-         [[Whether an Elementary object has the focus or not.
-
-           Note that when you set focus to this object, if it can handle focus,
-           it will take the focus away from the one who had it previously and will,
-           for now on, be the one receiving input events. Unsetting focus will remove
-           the focus from this object, passing it back to the previous element in the
-           focus chain list.
-
-           Warning: Only visible object can get a focus. Call @Efl.Canvas.Group.group_show
-           before calling this API, if you want to give a focus to the evas object.]]
          set {
-           [[$true set the focus to the object,
-             $false unset the focus to the object.]]
          }
          get {
-            [[Return $true if the object is focused,
-              and $false if not (and on errors).]]
          }
          values {
             focus: bool;
