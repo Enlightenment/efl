@@ -617,6 +617,14 @@ _eina_file_map_lines_iterator_free(Eina_Lines_Iterator *it)
    free(it);
 }
 
+static Eina_Iterator*
+_eina_file_map_lines_iterator_clone(Eina_Lines_Iterator *it)
+{
+   Eina_Lines_Iterator* new = (void*)eina_file_map_lines(it->fp);
+   new->current = it->current;
+   return (void*)new;
+}
+
 EAPI Eina_Iterator *
 eina_file_map_lines(Eina_File *file)
 {
@@ -654,6 +662,7 @@ eina_file_map_lines(Eina_File *file)
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_file_map_lines_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_file_map_lines_iterator_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_map_lines_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(_eina_file_map_lines_iterator_clone);
 
    return &it->iterator;
 }

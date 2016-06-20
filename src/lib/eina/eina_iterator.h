@@ -150,6 +150,12 @@ typedef void                (*Eina_Iterator_Free_Callback)(Eina_Iterator *it);
 typedef Eina_Bool           (*Eina_Iterator_Lock_Callback)(Eina_Iterator *it);
 
 /**
+ * @typedef Eina_Iterator_Clone_Callback
+ * Type for a callback that will clone the iterator.
+ */
+typedef Eina_Iterator*      (*Eina_Iterator_Clone_Callback)(Eina_Iterator *it);
+
+/**
  * @struct _Eina_Iterator
  * structure of an iterator
  *
@@ -157,7 +163,7 @@ typedef Eina_Bool           (*Eina_Iterator_Lock_Callback)(Eina_Iterator *it);
  */
 struct _Eina_Iterator
 {
-#define EINA_ITERATOR_VERSION 1
+#define EINA_ITERATOR_VERSION 2
    int                                  version; /**< Version of the Iterator API. */
 
    Eina_Iterator_Next_Callback          next          EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT; /**< Callback called when a next element is requested. */
@@ -166,6 +172,7 @@ struct _Eina_Iterator
 
    Eina_Iterator_Lock_Callback          lock          EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is locked. */
    Eina_Iterator_Lock_Callback          unlock        EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is unlocked. */
+   Eina_Iterator_Clone_Callback         clone         EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is unlocked. */
 
 #define EINA_MAGIC_ITERATOR 0x98761233
    EINA_MAGIC
@@ -194,6 +201,12 @@ struct _Eina_Iterator
  * Helper macro to cast @p Function to a Eina_Iterator_Lock_Callback.
  */
 #define FUNC_ITERATOR_LOCK(Function)          ((Eina_Iterator_Lock_Callback)Function)
+
+/**
+ * @def FUNC_ITERATOR_CLONE(Function)
+ * Helper macro to cast @p Function to a Eina_Iterator_Clone_Callback.
+ */
+#define FUNC_ITERATOR_CLONE(Function)          ((Eina_Iterator_Clone_Callback)Function)
 
 
 /**
@@ -267,6 +280,15 @@ EAPI void eina_iterator_foreach(Eina_Iterator *iterator,
  * @warning None of the existing eina data structures are lockable.
  */
 EAPI Eina_Bool eina_iterator_lock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Clones the iterator
+ *
+ * @param iterator The iterator.
+ * @return Another iterator
+ *
+ */
+EAPI Eina_Iterator* eina_iterator_clone(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Unlock the container of the iterator.

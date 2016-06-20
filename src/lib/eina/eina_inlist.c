@@ -101,6 +101,14 @@ eina_inlist_iterator_free(Eina_Iterator_Inlist *it)
    free(it);
 }
 
+static Eina_Iterator*
+eina_inlist_iterator_clone(Eina_Iterator_Inlist *it)
+{
+   Eina_Iterator_Inlist* new = (void*)eina_inlist_iterator_new(it->head);
+   new->current = it->current;
+   return (void*)new;
+}
+
 static Eina_Bool
 eina_inlist_accessor_get_at(Eina_Accessor_Inlist *it,
                             unsigned int idx,
@@ -864,6 +872,7 @@ eina_inlist_iterator_new(const Eina_Inlist *list)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
       eina_inlist_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_inlist_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(eina_inlist_iterator_clone);
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 

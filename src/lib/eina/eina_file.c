@@ -184,6 +184,11 @@ _eina_file_ls_iterator_free(Eina_File_Iterator *it)
    free(it);
 }
 
+_eina_file_ls_iterator_clone(Eina_File_Iterator *it)
+{
+  return eina_file_ls(it->dir);
+}
+
 typedef struct _Eina_File_Direct_Iterator Eina_File_Direct_Iterator;
 struct _Eina_File_Direct_Iterator
 {
@@ -283,6 +288,12 @@ _eina_file_direct_ls_iterator_free(Eina_File_Direct_Iterator *it)
    free(it);
 }
 
+static Eina_Iterator*
+_eina_file_direct_ls_iterator_clone(Eina_File_Direct_Iterator *it)
+{
+   return eina_file_direct_ls(it->dir);
+}
+
 static Eina_Bool
 _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 {
@@ -298,6 +309,12 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
      }
 
    return EINA_TRUE;
+}
+
+static Eina_Iterator*
+_eina_file_stat_ls_iterator_clone(Eina_File_Direct_Iterator *it)
+{
+   return eina_file_stat_ls(it->dir);
 }
 #endif
 
@@ -642,6 +659,7 @@ eina_file_ls(const char *dir)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_file_ls_iterator_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_ls_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(_eina_file_ls_iterator_clone);
 
    return &it->iterator;
 #else
@@ -702,6 +720,7 @@ eina_file_direct_ls(const char *dir)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_file_direct_ls_iterator_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_direct_ls_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(_eina_file_direct_ls_iterator_clone);
 
    return &it->iterator;
 #else
@@ -762,6 +781,7 @@ eina_file_stat_ls(const char *dir)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_file_direct_ls_iterator_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_direct_ls_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(_eina_file_stat_ls_iterator_clone);
 
    return &it->iterator;
 #else

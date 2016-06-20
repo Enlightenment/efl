@@ -249,6 +249,26 @@ _eina_inarray_iterator_free(Eina_Iterator_Inarray *it)
    MAGIC_FREE(it);
 }
 
+static Eina_Iterator*
+_eina_inarray_iterator_clone(Eina_Iterator_Inarray *it)
+{
+   Eina_Iterator_Inarray* new;
+   EINA_MAGIC_CHECK_INARRAY_ITERATOR(it, NULL);
+   new = (void*)eina_inarray_iterator_new(it->array);
+   new->pos = it->pos;
+   return (void*)new;
+}
+
+static Eina_Iterator*
+_eina_inarray_iterator_reversed_clone(Eina_Iterator_Inarray *it)
+{
+   Eina_Iterator_Inarray* new;
+   EINA_MAGIC_CHECK_INARRAY_ITERATOR(it, NULL);
+   new = (void*)eina_inarray_iterator_reversed_new(it->array);
+   new->pos = it->pos;
+   return (void*)new;
+}
+
 static Eina_Bool
 _eina_inarray_accessor_get_at(Eina_Accessor_Inarray *it, unsigned int pos, void **data)
 {
@@ -754,6 +774,7 @@ eina_inarray_iterator_new(const Eina_Inarray *array)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER
      (_eina_inarray_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_inarray_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(_eina_inarray_iterator_clone);
 
    return &it->iterator;
 }
@@ -779,6 +800,7 @@ eina_inarray_iterator_reversed_new(const Eina_Inarray *array)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER
      (_eina_inarray_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_inarray_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(_eina_inarray_iterator_reversed_clone);
 
    return &it->iterator;
 }
