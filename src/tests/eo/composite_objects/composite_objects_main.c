@@ -2,8 +2,6 @@
 # include <config.h>
 #endif
 
-#define EO_BASE_BETA
-
 #include "Eo.h"
 #include "composite_objects_simple.h"
 #include "composite_objects_comp.h"

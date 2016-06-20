@@ -1,8 +1,6 @@
 #ifndef EO_PTR_INDIRECTION_H
 #define EO_PTR_INDIRECTION_H
 
-#define EO_BASE_BETA
-
 #include "Eo.h"
 #include "eo_private.h"
 

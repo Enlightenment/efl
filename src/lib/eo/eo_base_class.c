@@ -5,8 +5,6 @@
 #include <Eina.h>
 #include <fnmatch.h>
 
-#define EO_BASE_BETA
-
 #include "Eo.h"
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
