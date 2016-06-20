@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -1448,6 +1450,49 @@ EOLIAN static void
 _elm_access_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+static Eina_Bool
+_access_atspi_action_do(Evas_Object *obj, const char *params)
+{
+   Eina_Bool ret;
+
+   ret = EINA_FALSE;
+   if (!strcmp(params, "highlight"))
+      ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_HIGHLIGHT, NULL);
+   else if (!strcmp(params, "unhighlight"))
+      ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_UNHIGHLIGHT, NULL);
+   else if (!strcmp(params, "highlight,next"))
+      ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_HIGHLIGHT_NEXT, NULL);
+   else if (!strcmp(params, "highlight,prev"))
+      ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_HIGHLIGHT_PREV, NULL);
+   else if (!strcmp(params, "activate"))
+      ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_ACTIVATE, NULL);
+   else if (!strcmp(params, "value,up"))
+      ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_UP, NULL);
+   else if (!strcmp(params, "value,down"))
+      ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_DOWN, NULL);
+   else if (!strcmp(params, "read"))
+      ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_READ, NULL);
+
+   return ret;
+}
+
+EOLIAN const Elm_Atspi_Action *
+_elm_access_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+{
+   static Elm_Atspi_Action atspi_actions[] = {
+          { "highlight", NULL, "highlight", _access_atspi_action_do},
+          { "unhighlight", NULL, "unhighlight", _access_atspi_action_do},
+          { "highlight,next", NULL, "highlight,next", _access_atspi_action_do},
+          { "highlight,next", NULL, "highlight,prev", _access_atspi_action_do},
+          { "activate", NULL, "activate", _access_atspi_action_do},
+          { "value,up", NULL, "value,up", _access_atspi_action_do},
+          { "value,down", NULL, "value,down", _access_atspi_action_do},
+          { "read", NULL, "read", _access_atspi_action_do},
+          { NULL, NULL, NULL, NULL }
+   };
+   return &atspi_actions[0];
 }
 
 #include "elm_access.eo.c"
