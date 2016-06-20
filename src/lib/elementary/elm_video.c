@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#define EO_BASE_BETA
 #include <Emotion.h>
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED

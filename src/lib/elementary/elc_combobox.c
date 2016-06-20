@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#define EO_BASE_BETA
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
