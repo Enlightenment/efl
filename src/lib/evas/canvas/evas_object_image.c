@@ -564,8 +564,8 @@ _efl_canvas_image_internal_efl_gfx_fill_fill_auto_set(Eo *eo_obj, Evas_Image_Dat
      {
         Evas_Coord w, h;
 
-        evas_object_geometry_get(eo_obj, NULL, NULL, &w, &h);
-        evas_object_image_fill_set(eo_obj, 0, 0, w, h);
+        efl_gfx_geometry_get(eo_obj, NULL, NULL, &w, &h);
+        efl_gfx_fill_set(eo_obj, 0, 0, w, h);
 
         evas_object_event_callback_add(eo_obj, EVAS_CALLBACK_RESIZE,
                                        evas_object_image_filled_resize_listener,
@@ -777,7 +777,7 @@ _efl_canvas_image_internal_efl_gfx_buffer_alpha_set(Eo *eo_obj, Evas_Image_Data 
           }
         o->written = EINA_TRUE;
      }
-   evas_object_image_data_update_add(eo_obj, 0, 0, o->cur->image.w, o->cur->image.h);
+   efl_gfx_buffer_update_add(eo_obj, 0, 0, o->cur->image.w, o->cur->image.h);
    EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
 }
 
@@ -3152,10 +3152,10 @@ evas_object_image_filled_resize_listener(void *data EINA_UNUSED, Evas *e EINA_UN
 {
    Evas_Coord w, h;
 
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   efl_gfx_geometry_get(obj, NULL, NULL, &w, &h);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   evas_object_image_fill_set(obj, 0, 0, w, h);
+   efl_gfx_fill_set(obj, 0, 0, w, h);
 }
 
 Eina_Bool
