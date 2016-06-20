@@ -17,36 +17,33 @@ typedef struct {
    Eo *timer;
 } testdata;
 
-static Eina_Bool
+static void
 _pointer_down(void *data, const Eo_Event *ev)
 {
    testdata *td = data;
    td->down = 1;
    eo_del(td->evdown);
    td->evdown = efl_event_dup(ev->info);
-   return 1;
 }
 
-static Eina_Bool
+static void
 _pointer_move(void *data, const Eo_Event *ev)
 {
    testdata *td = data;
    eo_del(td->evmove);
    td->evmove = efl_event_dup(ev->info);
-   return 1;
 }
 
-static Eina_Bool
+static void
 _pointer_up(void *data, const Eo_Event *ev)
 {
    testdata *td = data;
    td->down = 0;
    eo_del(td->evup);
    td->evup = efl_event_dup(ev->info);
-   return 1;
 }
 
-static Eina_Bool
+static void
 _key_down(void *data, const Eo_Event *ev)
 {
    testdata *td = data;
@@ -70,8 +67,6 @@ _key_down(void *data, const Eo_Event *ev)
         eo_del(td->evkeydown);
         td->evkeydown = efl_event_dup(ev->info);
      }
-
-   return 1;
 }
 
 #if 0
@@ -96,7 +91,7 @@ _ecore_timeout_cb(void *data)
 
 #endif
 
-static Eina_Bool
+static void
 _key_up(void *data, const Eo_Event *ev)
 {
    testdata *td = data;
@@ -115,11 +110,9 @@ _key_up(void *data, const Eo_Event *ev)
 
    if (td->timer) eo_del(td->timer);
    td->timer = ecore_timer_add(0.5, _ecore_timeout_cb, td);
-
-   return 1;
 }
 
-static Eina_Bool
+static void
 _clicked_button1(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    testdata *td = data;
@@ -131,11 +124,9 @@ _clicked_button1(void *data, const Eo_Event *ev EINA_UNUSED)
    td->id++;
    sprintf(buf, "Button was clicked %d time%s", td->id, td->id > 1 ? "s" : "");
    elm_object_text_set(txt, buf);
-
-   return 1;
 }
 
-static Eina_Bool
+static void
 _clicked_button2(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    testdata *td = data;
@@ -166,16 +157,13 @@ _clicked_button2(void *data, const Eo_Event *ev EINA_UNUSED)
         td->evkeydown = NULL;
         td->evkeyup = NULL;
      }
-
-   return 1;
 }
 
-static Eina_Bool
+static void
 _win_del(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    testdata *td = data;
    free(td);
-   return 1;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(rect_pointer_callbacks,

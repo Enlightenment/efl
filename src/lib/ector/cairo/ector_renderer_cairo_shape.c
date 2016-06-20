@@ -75,15 +75,13 @@ struct _Ector_Renderer_Cairo_Shape_Data
    cairo_path_t *path;
 };
 
-static Eina_Bool
+static void
 _ector_renderer_cairo_shape_path_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Ector_Renderer_Cairo_Shape_Data *pd = data;
 
    if (pd->path) cairo_path_destroy(pd->path);
    pd->path = NULL;
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool

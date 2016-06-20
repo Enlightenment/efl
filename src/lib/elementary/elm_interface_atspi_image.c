@@ -8,12 +8,10 @@
 #include "elm_widget.h"
 #include "elm_priv.h"
 
-static Eina_Bool
+static void
 _free_desc_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    eina_stringshare_del(data);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static const char*

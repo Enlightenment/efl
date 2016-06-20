@@ -23,26 +23,22 @@ _efl_ui_box_list_data_get(const Eina_List *list)
    return opt->obj;
 }
 
-static Eina_Bool
+static void
 _child_added_cb_proxy(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
    Evas_Object_Box_Option *opt = event->info;
 
    eo_event_callback_call(box, EFL_CONTAINER_EVENT_CONTENT_ADDED, opt->obj);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _child_removed_cb_proxy(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
    Evas_Object *child = event->info;
 
    eo_event_callback_call(box, EFL_CONTAINER_EVENT_CONTENT_REMOVED, child);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool

@@ -80,7 +80,7 @@ _evas_vg_root_node_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd)
    return pd->root;
 }
 
-static Eina_Bool
+static void
 _cleanup_reference(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_VG_Data *pd = data;
@@ -89,8 +89,6 @@ _cleanup_reference(void *data, const Eo_Event *event EINA_UNUSED)
    /* unref all renderer and may also destroy them async */
    while ((renderer = eina_array_pop(&pd->cleanup)))
      eo_unref(renderer);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 void

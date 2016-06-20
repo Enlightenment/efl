@@ -765,7 +765,7 @@ _zoom_do(Evas_Object *obj,
    return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _zoom_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    double t;
@@ -789,8 +789,6 @@ _zoom_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
         eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
         eo_event_callback_call(obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
@@ -1034,7 +1032,7 @@ _elm_photocam_elm_widget_event(Eo *obj, Elm_Photocam_Data *_pd EINA_UNUSED, Evas
    return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _bounce_eval(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *obj = data;
@@ -1070,7 +1068,7 @@ _bounce_eval(void *data, const Eo_Event *event EINA_UNUSED)
 
    _zoom_do(obj, 1.0 - (1.0 - tt));
 
-   return EO_CALLBACK_CONTINUE;
+   return;
 
  on_end:
    sd->g_layer_zoom.imx = 0;
@@ -1080,7 +1078,6 @@ _bounce_eval(void *data, const Eo_Event *event EINA_UNUSED)
    elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
 
    eo_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -1954,7 +1951,9 @@ done:
         // FIXME: If one day we do support partial animator in photocam, this would require change
         Eo_Event event = {};
         event.object = evas_object_evas_get(obj);
-        if (!_zoom_anim_cb(obj, &event))
+        _zoom_anim_cb(obj, &event);
+        // FIXME: Unhandled.
+        if (0)
           {
              _elm_photocam_bounce_reset(obj, sd);
              an = 0;

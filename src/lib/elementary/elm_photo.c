@@ -234,12 +234,10 @@ _elm_photo_internal_image_follow(Evas_Object *obj)
      (img, EVAS_CALLBACK_RESIZE, _icon_move_resize_cb, obj);
 }
 
-static Eina_Bool
+static void
 _on_thumb_done(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _elm_photo_internal_image_follow(data);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void

@@ -5,7 +5,7 @@
 #include <Ecore.h>
 #include "ecore_suite.h"
 
-static Eina_Bool
+static void
 _cb_args1(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Efl_Loop_Args *args = event->info;
@@ -22,7 +22,6 @@ _cb_args1(void *data EINA_UNUSED, const Eo_Event *event)
    fail_if(!!strcmp(efl_loop_args_arg_get(args, 6), "g"));
    fail_if(!!strcmp(efl_loop_args_arg_get(args, 7), "h"));
    ecore_main_loop_quit();
-   return EO_CALLBACK_CONTINUE;
 }
 
 START_TEST(ecore_test_args1)
@@ -41,7 +40,7 @@ START_TEST(ecore_test_args1)
 }
 END_TEST
 
-static Eina_Bool
+static void
 _cb_args2(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Efl_Loop_Args *args = event->info;
@@ -51,7 +50,6 @@ _cb_args2(void *data EINA_UNUSED, const Eo_Event *event)
    fail_if(n != 1);
    fail_if(!!strcmp(efl_loop_args_arg_get(args, 0), "hello world"));
    ecore_main_loop_quit();
-   return EO_CALLBACK_CONTINUE;
 }
 
 START_TEST(ecore_test_args2)
@@ -70,7 +68,7 @@ START_TEST(ecore_test_args2)
 }
 END_TEST
 
-static Eina_Bool
+static void
 _cb_args3(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Efl_Loop_Args *args = event->info;
@@ -79,7 +77,6 @@ _cb_args3(void *data EINA_UNUSED, const Eo_Event *event)
    n = efl_loop_args_arg_num_get(args);
    fail_if(n != 0);
    ecore_main_loop_quit();
-   return EO_CALLBACK_CONTINUE;
 }
 
 START_TEST(ecore_test_args3)
@@ -93,7 +90,7 @@ START_TEST(ecore_test_args3)
 }
 END_TEST
 
-static Eina_Bool
+static void
 _cb_args4(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Efl_Loop_Args *args = event->info;
@@ -105,7 +102,6 @@ _cb_args4(void *data EINA_UNUSED, const Eo_Event *event)
    fail_if(!!strcmp(efl_loop_args_arg_get(args, 1), "xxxxx"));
    fail_if(!!strcmp(efl_loop_args_arg_get(args, 2), "y"));
    ecore_main_loop_quit();
-   return EO_CALLBACK_CONTINUE;
 }
 
 START_TEST(ecore_test_args4)

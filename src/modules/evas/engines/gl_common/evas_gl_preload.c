@@ -299,14 +299,12 @@ evas_gl_preload_render_relax(evas_gl_make_current_cb make_current, void *engine_
    evas_gl_preload_render_lock(make_current, engine_data);
 }
 
-static Eina_Bool
+static void
 _evas_gl_preload_target_die(void *data, const Eo_Event *event)
 {
    Evas_GL_Texture *tex = data;
 
    evas_gl_preload_target_unregister(tex, event->object);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 void

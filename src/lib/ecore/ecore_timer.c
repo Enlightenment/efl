@@ -74,7 +74,7 @@ ecore_timer_precision_set(double value)
    precision = value;
 }
 
-static Eina_Bool
+static void
 _check_timer_event_catcher_add(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *array = event->info;
@@ -85,18 +85,16 @@ _check_timer_event_catcher_add(void *data, const Eo_Event *event)
      {
         if (array[i].desc == EFL_LOOP_TIMER_EVENT_TICK)
           {
-             if (timer->listening++ > 0) return EO_CALLBACK_CONTINUE;
+             if (timer->listening++ > 0) return;
              _efl_loop_timer_util_instanciate(timer);
              // No need to walk more than once per array as you can not del
              // a partial array
-             return EO_CALLBACK_CONTINUE;
+             return;
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _check_timer_event_catcher_del(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *array = event->info;
@@ -107,13 +105,11 @@ _check_timer_event_catcher_del(void *data, const Eo_Event *event)
      {
         if (array[i].desc == EFL_LOOP_TIMER_EVENT_TICK)
           {
-             if ((--timer->listening) > 0) return EO_CALLBACK_CONTINUE;
+             if ((--timer->listening) > 0) return;
              _efl_loop_timer_util_instanciate(timer);
-             return EO_CALLBACK_CONTINUE;
+             return;
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(timer_watch,
@@ -155,17 +151,15 @@ struct _Ecore_Timer_Legacy
    Eina_Bool delete_me : 1;
 };
 
-static Eina_Bool
+static void
 _ecore_timer_legacy_del(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Ecore_Timer_Legacy *legacy = data;
 
    free(legacy);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _ecore_timer_legacy_tick(void *data, const Eo_Event *event)
 {
    Ecore_Timer_Legacy *legacy = data;
@@ -174,8 +168,6 @@ _ecore_timer_legacy_tick(void *data, const Eo_Event *event)
    if (!_ecore_call_task_cb(legacy->func, (void*)legacy->data) ||
        legacy->delete_me)
      eo_del(event->object);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(legacy_timer,

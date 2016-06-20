@@ -194,14 +194,12 @@ _item_signal_emit_cb(void *data,
    eina_stringshare_replace(&it->day_style, emission);
 }
 
-static Eina_Bool
+static void
 _item_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Dayselector_Item_Data *it = data;
 
    eo_event_callback_call(WIDGET(it), EFL_UI_CHECK_EVENT_CHANGED, (void *)it->day);
-
-   return EINA_TRUE;
 }
 
 static Elm_Dayselector_Item_Data *

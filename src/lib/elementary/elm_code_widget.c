@@ -448,7 +448,7 @@ _elm_code_widget_fill(Elm_Code_Widget *widget)
    _elm_code_widget_fill_range(widget, 1, elm_code_file_lines_get(pd->code->file), NULL);
 }
 
-static Eina_Bool
+static void
 _elm_code_widget_line_cb(void *data, const Eo_Event *event)
 {
    Elm_Code_Line *line;
@@ -458,11 +458,9 @@ _elm_code_widget_line_cb(void *data, const Eo_Event *event)
    widget = (Elm_Code_Widget *)data;
 
    _elm_code_widget_refresh(widget, line);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _elm_code_widget_file_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
@@ -470,10 +468,9 @@ _elm_code_widget_file_cb(void *data, const Eo_Event *event EINA_UNUSED)
    widget = (Elm_Code_Widget *)data;
 
    _elm_code_widget_fill(widget);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _elm_code_widget_selection_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
@@ -481,10 +478,9 @@ _elm_code_widget_selection_cb(void *data, const Eo_Event *event EINA_UNUSED)
    widget = (Elm_Code_Widget *)data;
 
    _elm_code_widget_refresh(widget, NULL);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _elm_code_widget_selection_clear_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
@@ -492,7 +488,6 @@ _elm_code_widget_selection_clear_cb(void *data, const Eo_Event *event EINA_UNUSE
    widget = (Elm_Code_Widget *)data;
 
    _elm_code_widget_fill(widget);
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void

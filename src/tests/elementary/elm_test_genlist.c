@@ -80,17 +80,15 @@ START_TEST(elm_atspi_children_get2)
 }
 END_TEST
 
-static Eina_Bool
+static void
 _children_changed_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    if (event->desc != ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED)
-     return EINA_TRUE;
+     return;
 
    ev_data = *(Elm_Atspi_Event_Children_Changed_Data*)event->info;
    current = event->object;
    counter++;
-
-   return EINA_TRUE;
 }
 
 START_TEST(elm_atspi_children_events_add)

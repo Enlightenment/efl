@@ -1658,7 +1658,7 @@ _efl_ui_win_elm_widget_event(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Evas_Obj
 }
 
 /* forward events sent to evas to the window */
-static Eina_Bool
+static void
 _evas_event_key_cb(void *data, const Eo_Event *ev)
 {
    Eo *win = data;
@@ -1667,17 +1667,16 @@ _evas_event_key_cb(void *data, const Eo_Event *ev)
 
    evdata = eo_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
    if (!evdata || evdata->win_fed)
-     return EO_CALLBACK_CONTINUE;
+     return;
 
    // evas_callbacks will send the event to the focussed object (ie. this win)
    if (evas_focus_get(evas_object_evas_get(win)) == win)
-     return EO_CALLBACK_CONTINUE;
+     return;
 
    eo_event_callback_call(win, ev->desc, evt);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _evas_event_pointer_cb(void *data, const Eo_Event *ev)
 {
    Eo *win = data;
@@ -1686,14 +1685,13 @@ _evas_event_pointer_cb(void *data, const Eo_Event *ev)
 
    evdata = eo_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
    if (!evdata || evdata->win_fed)
-     return EO_CALLBACK_CONTINUE;
+     return;
 
    eo_event_callback_call(win, ev->desc, evt);
-   return EO_CALLBACK_CONTINUE;
 }
 
 /* feed events from the window to evas - for fake inputs */
-static Eina_Bool
+static void
 _evas_event_key_feed_fake_cb(void *data, const Eo_Event *ev)
 {
    Eo *evas = data;
@@ -1701,20 +1699,19 @@ _evas_event_key_feed_fake_cb(void *data, const Eo_Event *ev)
    Efl_Event_Key_Data *evdata;
 
    if (!efl_event_fake_get(evt))
-     return EO_CALLBACK_CONTINUE;
+     return;
 
    evdata = eo_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
    if (!evdata || evdata->win_fed)
-     return EO_CALLBACK_CONTINUE;
+     return;
    evdata->win_fed = EINA_TRUE;
 
    eo_event_callback_call(evas, ev->desc, evt);
    evdata->win_fed = EINA_FALSE;
    evdata->evas_done = EINA_FALSE;
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _evas_event_pointer_feed_fake_cb(void *data, const Eo_Event *ev)
 {
    Eo *evas = data;
@@ -1722,17 +1719,16 @@ _evas_event_pointer_feed_fake_cb(void *data, const Eo_Event *ev)
    Efl_Event_Pointer_Data *evdata;
 
    if (!efl_event_fake_get(evt))
-     return EO_CALLBACK_CONTINUE;
+     return;
 
    evdata = eo_data_scope_get(evt, EFL_EVENT_POINTER_CLASS);
    if (!evdata || evdata->win_fed)
-     return EO_CALLBACK_CONTINUE;
+     return;
    evdata->win_fed = EINA_TRUE;
 
    eo_event_callback_call(evas, ev->desc, evt);
    evdata->win_fed = EINA_FALSE;
    evdata->evas_done = EINA_FALSE;
-   return EO_CALLBACK_CONTINUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(_elm_win_evas_feed_fake_callbacks,
@@ -1830,7 +1826,7 @@ _elm_win_evas_device_changed(void *data,
    eo_event_callback_call(win, EFL_CANVAS_EVENT_DEVICE_CHANGED, device);
 }
 
-static Eina_Bool
+static void
 _win_event_add_cb(void *data, const Eo_Event *ev)
 {
    const Eo_Callback_Array_Item *array = ev->info;
@@ -1937,11 +1933,9 @@ _win_event_add_cb(void *data, const Eo_Event *ev)
                                               _elm_win_evas_device_changed, win);
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _win_event_del_cb(void *data, const Eo_Event *ev)
 {
    const Eo_Callback_Array_Item *array = ev->info;
@@ -2048,8 +2042,6 @@ _win_event_del_cb(void *data, const Eo_Event *ev)
                                               _elm_win_evas_device_changed, win);
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -5720,7 +5712,7 @@ _elm_win_focus_auto_hide(Evas_Object *obj)
      }
 }
 
-static Eina_Bool
+static void
 _on_atspi_bus_connected(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *win;
@@ -5749,7 +5741,6 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSE
         else
           elm_interface_atspi_window_deactivated_signal_emit(win);
      }
-   return EINA_TRUE;
 }
 
 EOLIAN static void

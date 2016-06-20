@@ -161,23 +161,27 @@ ecore_con_url_pipeline_get(void)
 
 extern Ecore_Con_Socks *_ecore_con_proxy_global;
 
-static Eina_Bool
+static void
 _efl_network_url_event_complete_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Ecore_Con_Event_Url_Complete *e, *f = event->info;
 
    e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
-   if (!e) return EO_CALLBACK_STOP;
+   if (!e)
+     {
+        eo_event_callback_stop(event->object);
+        return;
+     }
 
    e->status = f->status;
    e->url_con = f->url_con;
    ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e,
                    (Ecore_End_Cb)_ecore_con_event_url_free, event->object);
 
-   return EO_CALLBACK_STOP;
+   eo_event_callback_stop(event->object);
 }
 
-static Eina_Bool
+static void
 _efl_network_url_event_data_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Ecore_Con_Event_Url_Data *e;
@@ -185,24 +189,22 @@ _efl_network_url_event_data_cb(void *data EINA_UNUSED, const Eo_Event *event)
 
    e = malloc(sizeof(Ecore_Con_Event_Url_Data) + sizeof(unsigned char) * f->size);
 
-   if (!e) return EO_CALLBACK_CONTINUE;
+   if (!e) return;
 
    e->url_con = f->url_con;
    e->size = f->size;
    memcpy(e->data, f->data, f->size);
    ecore_event_add(ECORE_CON_EVENT_URL_DATA, e,
                    (Ecore_End_Cb)_ecore_con_event_url_free, event->object);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _efl_network_url_event_progress_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Ecore_Con_Event_Url_Progress *e, *f = event->info;
 
    e = malloc(sizeof(Ecore_Con_Event_Url_Progress));
-   if (!e) return EO_CALLBACK_CONTINUE;
+   if (!e) return;
 
    e->url_con = f->url_con;
    e->down.total = f->down.total;
@@ -211,8 +213,6 @@ _efl_network_url_event_progress_cb(void *data EINA_UNUSED, const Eo_Event *event
    e->up.now = f->up.now;
    ecore_event_add(ECORE_CON_EVENT_URL_PROGRESS, e,
                    (Ecore_End_Cb)_ecore_con_event_url_free, event->object);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(efl_network_url_event_table_callbacks,

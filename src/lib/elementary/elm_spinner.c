@@ -41,13 +41,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static Eina_Bool _key_action_spin(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_toggle(Evas_Object *obj, const char *params);
 
-static Eina_Bool
+static void
 _inc_dec_button_clicked_cb(void *data, const Eo_Event *event);
-static Eina_Bool
+static void
 _inc_dec_button_pressed_cb(void *data, const Eo_Event *event);
-static Eina_Bool
+static void
 _inc_dec_button_unpressed_cb(void *data, const Eo_Event *event);
-static Eina_Bool
+static void
 _inc_dec_button_mouse_move_cb(void *data, const Eo_Event *event);
 
 static const Elm_Action key_actions[] = {
@@ -412,12 +412,10 @@ _entry_value_apply(Evas_Object *obj)
                                             _delay_change_timer_cb, obj);
 }
 
-static Eina_Bool
+static void
 _entry_activated_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _entry_value_apply(data);
-
-   return EINA_TRUE;
 }
 
 static int
@@ -832,7 +830,7 @@ _button_inc_dec_stop_cb(void *data,
    _spin_stop(data);
 }
 
-static Eina_Bool
+static void
 _inc_dec_button_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
@@ -844,11 +842,9 @@ _inc_dec_button_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
    if (sd->entry_visible) _entry_value_apply(data);
    if (_elm_config->access_mode)
      _access_increment_decrement_info_say(data, EINA_TRUE);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _inc_dec_button_pressed_cb(void *data, const Eo_Event *event)
 {
    ELM_SPINNER_DATA_GET(data, sd);
@@ -862,11 +858,9 @@ _inc_dec_button_pressed_cb(void *data, const Eo_Event *event)
                             _val_inc_dec_start, data);
 
    if (sd->entry_visible) _entry_value_apply(data);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _inc_dec_button_unpressed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
@@ -878,19 +872,15 @@ _inc_dec_button_unpressed_cb(void *data, const Eo_Event *event EINA_UNUSED)
      }
 
    _spin_stop(data);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _text_button_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _toggle_entry(data);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _inc_dec_button_mouse_move_cb(void *data, const Eo_Event *event)
 {
    Efl_Event_Pointer *ev = event->info;
@@ -901,8 +891,6 @@ _inc_dec_button_mouse_move_cb(void *data, const Eo_Event *event)
         ecore_timer_del(sd->longpress_timer);
         sd->longpress_timer = NULL;
      }
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void

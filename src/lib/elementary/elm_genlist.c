@@ -2011,7 +2011,7 @@ _item_realize(Elm_Gen_Item *it,
    edje_object_message_signal_process(VIEW(it));
 }
 
-static Eina_Bool
+static void
 _tree_effect_animator_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    int in = 0;
@@ -2167,8 +2167,6 @@ _tree_effect_animator_cb(void *data, const Eo_Event *event EINA_UNUSED)
         _item_tree_effect_finish(sd);
         _elm_genlist_tree_effect_stop(sd);
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void

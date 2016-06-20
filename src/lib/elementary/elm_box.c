@@ -29,24 +29,20 @@ _elm_box_list_data_get(const Eina_List *list)
    return opt->obj;
 }
 
-static Eina_Bool
+static void
 _child_added_cb_proxy(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
    Evas_Object_Box_Option *opt = event->info;
    eo_event_callback_call(box, ELM_BOX_EVENT_CHILD_ADDED, opt->obj);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _child_removed_cb_proxy(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
    Evas_Object *child = event->info;
    eo_event_callback_call(box, ELM_BOX_EVENT_CHILD_REMOVED, child);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -193,7 +189,7 @@ _transition_animation(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool
+static void
 _transition_layout_child_added(void *data, const Eo_Event *event)
 {
    Transition_Animation_Data *tad;
@@ -201,16 +197,14 @@ _transition_layout_child_added(void *data, const Eo_Event *event)
    Elm_Box_Transition *layout_data = data;
 
    tad = calloc(1, sizeof(Transition_Animation_Data));
-   if (!tad) return EINA_TRUE;
+   if (!tad) return;
 
    tad->obj = opt->obj;
    layout_data->objs = eina_list_append(layout_data->objs, tad);
    layout_data->recalculate = EINA_TRUE;
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _transition_layout_child_removed(void *data, const Eo_Event *event)
 {
    Eina_List *l;
@@ -227,8 +221,6 @@ _transition_layout_child_removed(void *data, const Eo_Event *event)
              break;
           }
      }
-
-   return EINA_TRUE;
 }
 
 static void

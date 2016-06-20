@@ -352,7 +352,7 @@ _land_indicator_connect_cb(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool
+static void
 _land_indicator_disconnected(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *conform = data;
@@ -361,10 +361,9 @@ _land_indicator_disconnected(void *data, const Eo_Event *event EINA_UNUSED)
 
    sd->land_indi_timer = ecore_timer_add(ELM_CONFORM_INDICATOR_TIME,
                                          _land_indicator_connect_cb, conform);
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _port_indicator_disconnected(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *conform = data;
@@ -373,7 +372,6 @@ _port_indicator_disconnected(void *data, const Eo_Event *event EINA_UNUSED)
 
    sd->port_indi_timer = ecore_timer_add(ELM_CONFORM_INDICATOR_TIME,
                                          _port_indicator_connect_cb, conform);
-   return EINA_TRUE;
 }
 
 static Evas_Object *
@@ -510,7 +508,7 @@ _indicator_opacity_set(Evas_Object *conformant, Elm_Win_Indicator_Opacity_Mode i
    //TODO: opacity change
 }
 
-static Eina_Bool
+static void
 _on_indicator_mode_changed(void *data, const Eo_Event *event)
 {
    Evas_Object *conformant = data;
@@ -527,10 +525,9 @@ _on_indicator_mode_changed(void *data, const Eo_Event *event)
      _indicator_mode_set(conformant, indmode);
    if (ind_o_mode != sd->ind_o_mode)
      _indicator_opacity_set(conformant, ind_o_mode);
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _on_rotation_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    int rot = 0;
@@ -542,12 +539,12 @@ _on_rotation_changed(void *data, const Eo_Event *event EINA_UNUSED)
 
    rot = elm_win_rotation_get(win);
 
-   if (rot == sd->rot) return EINA_TRUE;
+   if (rot == sd->rot) return;
 
    sd->rot = rot;
    old_indi = elm_layout_content_unset(conformant, INDICATOR_PART);
    /* this means ELM_WIN_INDICATOR_SHOW never be set.we don't need to change indicator type*/
-   if (!old_indi) return EINA_TRUE;
+   if (!old_indi) return;
    evas_object_hide(old_indi);
 
    if ((rot == 90) || (rot == 270))
@@ -555,7 +552,7 @@ _on_rotation_changed(void *data, const Eo_Event *event EINA_UNUSED)
         if (!sd->landscape_indicator)
           sd->landscape_indicator = _create_landscape_indicator(conformant);
 
-        if (!sd->landscape_indicator) return EINA_TRUE;
+        if (!sd->landscape_indicator) return;
 
         evas_object_show(sd->landscape_indicator);
         evas_object_data_set(sd->landscape_indicator, CONFORMANT_KEY, (void *) (intptr_t) rot);
@@ -566,13 +563,12 @@ _on_rotation_changed(void *data, const Eo_Event *event EINA_UNUSED)
         if (!sd->portrait_indicator)
           sd->portrait_indicator = _create_portrait_indicator(conformant);
 
-        if (!sd->portrait_indicator) return EINA_TRUE;
+        if (!sd->portrait_indicator) return;
 
         evas_object_show(sd->portrait_indicator);
         evas_object_data_set(sd->portrait_indicator, CONFORMANT_KEY, (void *) (intptr_t) rot);
         elm_layout_content_set(conformant, INDICATOR_PART, sd->portrait_indicator);
      }
-   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool

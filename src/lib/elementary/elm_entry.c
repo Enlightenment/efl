@@ -302,7 +302,7 @@ _validate(Evas_Object *obj)
    vc.text = edje_object_part_text_get(sd->entry_edje, "elm.text");
    res = eo_event_callback_call(obj, ELM_ENTRY_EVENT_VALIDATE, (void *)&vc);
    buf = eina_strbuf_new();
-   eina_strbuf_append_printf(buf, "validation,%s,%s", vc.signal, res == EO_CALLBACK_STOP ? "fail" : "pass");
+   eina_strbuf_append_printf(buf, "validation,%s,%s", vc.signal, res == EINA_FALSE ? "fail" : "pass");
    edje_object_signal_emit(sd->scr_edje, eina_strbuf_string_get(buf), "elm");
    eina_tmpstr_del(vc.signal);
    eina_strbuf_free(buf);
@@ -1371,7 +1371,7 @@ _hover_del_job(void *data)
    sd->hov_deljob = NULL;
 }
 
-static Eina_Bool
+static void
 _hover_dismissed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
@@ -1390,8 +1390,6 @@ _hover_dismissed_cb(void *data, const Eo_Event *event EINA_UNUSED)
    elm_widget_scroll_freeze_pop(data);
    ecore_job_del(sd->hov_deljob);
    sd->hov_deljob = ecore_job_add(_hover_del_job, data);
-
-   return EINA_TRUE;
 }
 
 static void
@@ -2460,12 +2458,10 @@ _anchor_hover_del_cb(void *data,
      (sd->anchor_hover.hover, EVAS_CALLBACK_DEL, _anchor_hover_del_cb, obj);
 }
 
-static Eina_Bool
+static void
 _anchor_hover_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_entry_anchor_hover_end(data);
-
-   return EINA_TRUE;
 }
 
 static void
@@ -3929,7 +3925,7 @@ elm_entry_add(Evas_Object *parent)
    return obj;
 }
 
-static Eina_Bool
+static void
 _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    const Eo_Callback_Array_Item *event = ev->info;
@@ -3937,10 +3933,9 @@ _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
    ELM_ENTRY_DATA_GET(ev->object, sd);
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
      sd->validators++;
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _cb_deleted(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    const Eo_Callback_Array_Item *event = ev->info;
@@ -3948,7 +3943,7 @@ _cb_deleted(void *data EINA_UNUSED, const Eo_Event *ev)
    ELM_ENTRY_DATA_GET(ev->object, sd);
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
      sd->validators--;
-   return EO_CALLBACK_CONTINUE;
+   return;
 
 }
 

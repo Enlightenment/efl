@@ -10,7 +10,7 @@
 #include <Eio.h>
 #include <Ecore.h>
 
-Eina_Bool
+void
 sentry_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
     Eio_Sentry_Event *event_info = event->info;
@@ -20,7 +20,7 @@ sentry_cb(void *data EINA_UNUSED, const Eo_Event *event)
 
     ecore_main_loop_quit();
 
-    return EINA_FALSE;
+    eo_event_callback_stop(event->object);
 }
 
 void

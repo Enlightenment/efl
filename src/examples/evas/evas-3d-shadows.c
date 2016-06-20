@@ -88,7 +88,7 @@ typedef struct _Scene_Data
    Eina_Bool   init;
 } Scene_Data;
 
-Eina_Bool
+void
 _cb_clicked(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Eina_List *meshes = NULL, *l;
@@ -112,11 +112,9 @@ _cb_clicked(void *data EINA_UNUSED, const Eo_Event *event)
           }
         choosed_node = (Evas_Canvas3D_Node *)event->info;
      }
-
-   return EINA_TRUE;
 }
 
-Eina_Bool
+void
 _cb_collision(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Eina_List *meshes = NULL, *l;
@@ -126,8 +124,6 @@ _cb_collision(void *data EINA_UNUSED, const Eo_Event *event)
      {
         evas_canvas3d_mesh_shader_mode_set(m, EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
      }
-
-   return EINA_TRUE;
 }
 
 static void

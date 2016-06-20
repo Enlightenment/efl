@@ -109,7 +109,7 @@ _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
    return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _on_hover_clicked(void *data, const Eo_Event *event)
 {
    const char *dismissstr;
@@ -118,8 +118,6 @@ _on_hover_clicked(void *data, const Eo_Event *event)
 
    if (!dismissstr || strcmp(dismissstr, "on"))
      elm_hoversel_hover_end(data); // for backward compatibility
-
-   return EINA_TRUE;
 }
 
 static void
@@ -153,7 +151,7 @@ _auto_update(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
      }
 }
 
-static Eina_Bool
+static void
 _on_item_clicked(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *item = data;
@@ -168,28 +166,22 @@ _on_item_clicked(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
    evas_object_event_callback_add(sd->hover, EVAS_CALLBACK_DEL, _auto_update, item);
 
    elm_hoversel_hover_end(obj2);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _item_focused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
    eo_event_callback_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _item_unfocused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
    eo_event_callback_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
-
-   return EINA_TRUE;
 }
 
 static void
@@ -440,20 +432,16 @@ _activate(Evas_Object *obj)
    evas_object_show(sd->hover);
 }
 
-static Eina_Bool
+static void
 _on_clicked(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _activate(data);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _on_parent_del(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    elm_hoversel_hover_parent_set(data, NULL);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -550,14 +538,12 @@ _on_move_resize(void * data,
    _resizing_eval(obj, sd);
 }
 
-static Eina_Bool
+static void
 _on_parent_resize(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    Evas_Object *obj = (Evas_Object *)data;
    ELM_HOVERSEL_DATA_GET(obj, sd);
    _on_move_resize(sd, NULL, obj, NULL);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void

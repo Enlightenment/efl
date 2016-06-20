@@ -127,7 +127,7 @@ _colorclass_select(void *data, Evas_Object *obj EINA_UNUSED, const char *sig, co
                                cc->current->color[cc->num].b, cc->current->color[cc->num].a);
 }
 
-static Eina_Bool
+static void
 _colorclass_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Colorclass_UI *cc = data;
@@ -148,16 +148,19 @@ _colorclass_changed(void *data, const Eo_Event *event EINA_UNUSED)
    _colorclass_cc_update(cc, cc->num);
    cc->change_reset = 0;
    cc->changed = 1;
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _colorclass_reset(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Colorclass_UI *cc = data;
    Colorclass color;
 
-   if (!cc->current) return EINA_FALSE;
+   if (!cc->current)
+     {
+        eo_event_callback_stop(event->object);
+        return;
+     }
    //if (cc->winid && remote_iface)
      //{
         //Eldbus_Message *msg;
@@ -167,7 +170,8 @@ _colorclass_reset(void *data, const Eo_Event *event EINA_UNUSED)
         //eldbus_message_arguments_append(msg, "s", cc->current->name);
         //eldbus_service_signal_send(remote_iface, msg);
         //cc->change_reset = 1;
-        //return EINA_FALSE;
+        //eo_event_callback_stop(event->object);
+        //return;
      //}
    edje_color_class_del(cc->current->name);
    edje_color_class_get(cc->current->name,
@@ -186,10 +190,9 @@ _colorclass_reset(void *data, const Eo_Event *event EINA_UNUSED)
    _colorclass_cc_update(cc, 0);
    _colorclass_cc_update(cc, 1);
    _colorclass_cc_update(cc, 2);
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _colorclass_activate(void *data, const Eo_Event *event)
 {
    Colorclass_UI *cc = data;
@@ -226,7 +229,6 @@ _colorclass_activate(void *data, const Eo_Event *event)
    elm_colorselector_color_set(cc->cs, cc->current->color[0].r, cc->current->color[0].g,
                                cc->current->color[0].b, cc->current->color[0].a);
    elm_layout_signal_emit(cc->ly, "elm,colors,show", "elm");
-   return EINA_TRUE;
 }
 
 static void

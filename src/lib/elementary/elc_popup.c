@@ -49,13 +49,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 static void _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
-static Eina_Bool
-_block_clicked_cb(void *data, const Eo_Event *event);
-static Eina_Bool
-_timeout_cb(void *data, const Eo_Event *event);
+static void _block_clicked_cb(void *data, const Eo_Event *event);
+static void _timeout_cb(void *data, const Eo_Event *event);
 
-static Eina_Bool
-_hide_effect_finished_cb(void *data, const Eo_Event *event);
+static void _hide_effect_finished_cb(void *data, const Eo_Event *event);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -104,29 +101,23 @@ _visuals_set(Evas_Object *obj)
    edje_object_message_signal_process(elm_layout_edje_get(sd->main_layout));
 }
 
-static Eina_Bool
+static void
 _block_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    eo_event_callback_call(data, ELM_POPUP_EVENT_BLOCK_CLICKED, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    evas_object_hide(data);
    eo_event_callback_call(data, ELM_POPUP_EVENT_TIMEOUT, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _hide_effect_finished_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    eo_event_callback_call(data, ELM_POPUP_EVENT_DISMISSED, NULL);
-
-   return EINA_TRUE;
 }
 
 
@@ -895,24 +886,20 @@ _elm_popup_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Popup_Ite
    elm_layout_signal_emit(VIEW(it), emission, source);
 }
 
-static Eina_Bool
+static void
 _item_focused_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 
    eo_event_callback_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_FOCUSED, EO_OBJ(it));
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _item_unfocused_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 
    eo_event_callback_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
-
-   return EINA_TRUE;
 }
 
 EOLIAN static Eo *

@@ -46,7 +46,7 @@ _filter_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const Eina_Fil
    return EINA_FALSE;
 }
 
-static Eina_Bool
+static void
 _list_selected_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
@@ -55,7 +55,6 @@ _list_selected_cb(void *data EINA_UNUSED, const Eo_Event *event)
 
    printf("LIST selected model\n");
    elm_view_form_model_set(priv->formview, child);
-   return EINA_TRUE;
 }
 
 static void
@@ -75,7 +74,7 @@ _promise_error(void *data, const Eina_Error err)
 {
 }
 
-static Eina_Bool
+static void
 _tree_selected_cb(void *data, const Eo_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
@@ -86,7 +85,6 @@ _tree_selected_cb(void *data, const Eo_Event *event)
 
    promise= efl_model_property_get(child, "path");
    eina_promise_then(promise, &_promise_then, &_promise_error, priv);
-   return EINA_TRUE;
 }
 
 static void

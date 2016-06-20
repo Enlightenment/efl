@@ -97,12 +97,10 @@ _elm_frame_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Frame_Data *_pd E
      }
 }
 
-static Eina_Bool
+static void
 _recalc(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
-
-   return EINA_TRUE;
 }
 
 static void

@@ -10,7 +10,7 @@ static const char *names[] =
      "bub3", "sh3",
 };
 
-static Eina_Bool
+static void
 _anim_tick(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Evas_Object *bub, *sh;
@@ -49,7 +49,6 @@ _anim_tick(void *data EINA_UNUSED, const Eo_Event *event)
         evas_object_move(sh, x, y);
         evas_object_resize(sh, w, h);
      }
-   return ECORE_CALLBACK_RENEW;
 }
 
 void

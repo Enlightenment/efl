@@ -42,7 +42,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static Eina_Bool _on_item_back_btn_clicked(void *data, const Eo_Event *event);
+static void _on_item_back_btn_clicked(void *data, const Eo_Event *event);
 
 static Eina_Bool _key_action_top_item_get(Evas_Object *obj, const char *params);
 
@@ -953,7 +953,7 @@ _elm_naviframe_elm_layout_sizing_eval(Eo *obj, Elm_Naviframe_Data *sd)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-static Eina_Bool
+static void
 _on_item_back_btn_clicked(void *data, const Eo_Event *event)
 {
    /* Since edje has the event queue, clicked event could be happened
@@ -962,8 +962,6 @@ _on_item_back_btn_clicked(void *data, const Eo_Event *event)
       page. */
    eo_event_callback_del(event->object, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, data);
    elm_naviframe_item_pop(data);
-
-   return EINA_TRUE;
 }
 
 static Evas_Object *
@@ -1415,7 +1413,7 @@ _send_signal(Elm_Naviframe_Item_Data *it, const char *sig)
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
 }
 
-static Eina_Bool
+static void
 _deferred(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Naviframe_Data *nfd = data;
@@ -1442,7 +1440,6 @@ _deferred(void *data, const Eo_Event *event EINA_UNUSED)
      }
 
    eo_event_callback_del(nfd->obj, EFL_EVENT_ANIMATOR_TICK, _deferred, nfd);
-   return EO_CALLBACK_CONTINUE;
 }
 
 EOLIAN static void

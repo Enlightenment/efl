@@ -64,11 +64,11 @@ _error_then_cb(void* data EINA_UNUSED, Eina_Error error)
    ecore_main_loop_quit();
 }
 
-static Eina_Bool
+static void
 _eo_event_quit_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    ecore_main_loop_quit();
-   return EINA_FALSE;
+   eo_event_callback_stop(event->object);
 }
 
 void *

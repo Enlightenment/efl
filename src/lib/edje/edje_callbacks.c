@@ -3,7 +3,7 @@
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"
 
-static Eina_Bool
+static void
 _edje_hold_signal_cb(void *data, const Eo_Event *event)
 {
    Evas_Event_Hold *ev;
@@ -13,16 +13,14 @@ _edje_hold_signal_cb(void *data, const Eo_Event *event)
    ev = event->info;
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
-   if (!rp) return EO_CALLBACK_CONTINUE;
+   if (!rp) return;
    if (ev->hold)
      _edje_emit(ed, "hold,on", rp->part->name);
    else
      _edje_emit(ed, "hold,off", rp->part->name);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _edje_focus_in_signal_cb(void *data, const Eo_Event *event)
 {
    Edje *ed;
@@ -31,14 +29,12 @@ _edje_focus_in_signal_cb(void *data, const Eo_Event *event)
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if ((!rp) || (!ed))
-     return EO_CALLBACK_CONTINUE;
+     return;
 
    _edje_emit(ed, "focus,part,in", rp->part->name);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _edje_focus_out_signal_cb(void *data, const Eo_Event *event)
 {
    Edje *ed;
@@ -47,14 +43,12 @@ _edje_focus_out_signal_cb(void *data, const Eo_Event *event)
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
    if ((!rp) || (!ed))
-     return EO_CALLBACK_CONTINUE;
+     return;
 
    _edje_emit(ed, "focus,part,out", rp->part->name);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
 {
    Efl_Event_Pointer_Data *ev;
@@ -71,11 +65,9 @@ _edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
 
         ev->event_flags |= rp->part->mask_flags;
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
 {
    Efl_Event_Pointer_Data *ev;
@@ -92,11 +84,9 @@ _edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
 
         ev->event_flags |= rp->part->mask_flags;
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
 {
    Efl_Event_Pointer_Data *ev;
@@ -108,7 +98,7 @@ _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
    ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
-   if (!rp) return EO_CALLBACK_CONTINUE;
+   if (!rp) return;
 
    ignored = rp->part->ignore_flags & ev->event_flags;
 
@@ -163,11 +153,9 @@ _edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
    _edje_unref(ed);
 
    ev->event_flags |= rp->part->mask_flags;
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
 {
    Efl_Event_Pointer_Data *ev;
@@ -179,7 +167,7 @@ _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
    ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
-   if (!rp) return EO_CALLBACK_CONTINUE;
+   if (!rp) return;
 
    ignored = rp->part->ignore_flags & ev->event_flags;
 
@@ -238,11 +226,9 @@ _edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
    _edje_unref(ed);
 
    ev->event_flags |= rp->part->mask_flags;
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
 {
    Efl_Event_Pointer_Data *ev;
@@ -253,7 +239,7 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
    ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
    ed = data;
    rp = evas_object_data_get(event->object, "real_part");
-   if (!rp) return EO_CALLBACK_CONTINUE;
+   if (!rp) return;
    if (rp->part->dragable.event_id >= 0)
      {
         rp = ed->table_parts[rp->part->dragable.event_id % ed->table_parts_size];
@@ -347,11 +333,9 @@ _edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
    _edje_util_thaw(ed);
 
    ev->event_flags |= rp->part->mask_flags;
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _edje_mouse_wheel_signal_cb(void *data, const Eo_Event *event)
 {
    Efl_Event_Pointer_Data *ev;
@@ -374,11 +358,9 @@ _edje_mouse_wheel_signal_cb(void *data, const Eo_Event *event)
 
         ev->event_flags |= rp->part->mask_flags;
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-Eina_Bool
+void
 _edje_timer_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    double t;
@@ -433,8 +415,6 @@ break_prog:
    _edje_unblock(ed);
    _edje_util_thaw(ed);
    _edje_unref(ed);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 Eina_Bool

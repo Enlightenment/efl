@@ -59,13 +59,13 @@ _elm_scroll_wanted_coordinates_update(Elm_Scrollable_Smart_Interface_Data *sid,
                                       Evas_Coord x,
                                       Evas_Coord y);
 
-static Eina_Bool _elm_scroll_hold_animator(void *data, const Eo_Event *event);
-static Eina_Bool _elm_scroll_on_hold_animator(void *data, const Eo_Event *event);
-static Eina_Bool _elm_scroll_scroll_to_y_animator(void *data, const Eo_Event *event);
-static Eina_Bool _elm_scroll_scroll_to_x_animator(void *data, const Eo_Event *event);
-static Eina_Bool _elm_scroll_bounce_y_animator(void *data, const Eo_Event *event);
-static Eina_Bool _elm_scroll_bounce_x_animator(void *data, const Eo_Event *event);
-static Eina_Bool _elm_scroll_momentum_animator(void *data, const Eo_Event *event);
+static void _elm_scroll_hold_animator(void *data, const Eo_Event *event);
+static void _elm_scroll_on_hold_animator(void *data, const Eo_Event *event);
+static void _elm_scroll_scroll_to_y_animator(void *data, const Eo_Event *event);
+static void _elm_scroll_scroll_to_x_animator(void *data, const Eo_Event *event);
+static void _elm_scroll_bounce_y_animator(void *data, const Eo_Event *event);
+static void _elm_scroll_bounce_x_animator(void *data, const Eo_Event *event);
+static void _elm_scroll_momentum_animator(void *data, const Eo_Event *event);
 
 static double
 _round(double value, int pos)
@@ -1301,10 +1301,10 @@ _elm_scroll_momentum_end(Elm_Scrollable_Smart_Interface_Data *sid)
      }
 }
 
-static Eina_Bool
+static void
 _elm_scroll_bounce_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(data, sid, EINA_FALSE);
+   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(data, sid);
    Evas_Coord x, y, dx, w, odx, ed, md;
    double t, p, dt, pd, r;
 
@@ -1353,13 +1353,12 @@ _elm_scroll_bounce_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
              ELM_ANIMATOR_CONNECT(sid->obj, sid->down.bounce_x_animator, _elm_scroll_bounce_x_animator, sid->obj);
           }
      }
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _elm_scroll_bounce_y_animator(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(data, sid, EINA_FALSE);
+   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(data, sid);
    Evas_Coord x, y, dy, h, ody, ed, md;
    double t, p, dt, pd, r;
 
@@ -1408,8 +1407,6 @@ _elm_scroll_bounce_y_animator(void *data, const Eo_Event *event EINA_UNUSED)
              ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.bounce_y_animator, _elm_scroll_bounce_y_animator, sid->obj);
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -2085,7 +2082,7 @@ _paging_is_enabled(Elm_Scrollable_Smart_Interface_Data *sid)
    return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _elm_scroll_momentum_animator(void *data, const Eo_Event *event EINA_UNUSED)
 {
    double t, at, dt, p, r;
@@ -2096,7 +2093,7 @@ _elm_scroll_momentum_animator(void *data, const Eo_Event *event EINA_UNUSED)
    if (!sid->pan_obj)
      {
         ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.momentum_animator, _elm_scroll_momentum_animator, sid);
-        return EO_CALLBACK_CONTINUE;
+        return;
      }
 
    t = ecore_loop_time_get();
@@ -2166,8 +2163,6 @@ _elm_scroll_momentum_animator(void *data, const Eo_Event *event EINA_UNUSED)
                _elm_scroll_wanted_region_set(sid->obj);
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static Evas_Coord
@@ -2264,7 +2259,7 @@ _elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid,
    return y;
 }
 
-static Eina_Bool
+static void
 _elm_scroll_scroll_to_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
@@ -2295,14 +2290,13 @@ _elm_scroll_scroll_to_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
      }
    elm_interface_scrollable_content_pos_set(sid->obj, px, py, EINA_TRUE);
    _elm_scroll_wanted_coordinates_update(sid, px, py);
-   return EO_CALLBACK_CONTINUE;
+   return;
 
  on_end:
    ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _elm_scroll_scroll_to_y_animator(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
@@ -2334,11 +2328,10 @@ _elm_scroll_scroll_to_y_animator(void *data, const Eo_Event *event EINA_UNUSED)
    elm_interface_scrollable_content_pos_set(sid->obj, px, py, EINA_TRUE);
    _elm_scroll_wanted_coordinates_update(sid, px, py);
 
-   return EO_CALLBACK_CONTINUE;
+   return;
 
  on_end:
    ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -3097,7 +3090,7 @@ _elm_scroll_hold_enterer(void *data)
    return EINA_FALSE;
 }
 
-static Eina_Bool
+static void
 _elm_scroll_hold_animator(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
@@ -3105,10 +3098,9 @@ _elm_scroll_hold_animator(void *data, const Eo_Event *event EINA_UNUSED)
    ecore_idle_enterer_del(sid->down.hold_enterer);
    sid->down.hold_enterer =
      ecore_idle_enterer_before_add(_elm_scroll_hold_enterer, sid);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _elm_scroll_on_hold_animator(void *data, const Eo_Event *event EINA_UNUSED)
 {
    double t, td;
@@ -3154,8 +3146,6 @@ _elm_scroll_on_hold_animator(void *data, const Eo_Event *event EINA_UNUSED)
         elm_interface_scrollable_content_pos_set(sid->obj, x, y, EINA_TRUE);
      }
    sid->down.onhold_tlast = t;
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -3815,13 +3805,13 @@ _elm_scroll_pan_resized_cb(void *data,
 }
 
 /* even external pan objects get this */
-static Eina_Bool
+static void
 _elm_scroll_pan_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Coord w = 0, h = 0;
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
-   if (!sid->pan_obj) return EINA_TRUE;
+   if (!sid->pan_obj) return;
 
    elm_obj_pan_content_size_get(sid->pan_obj, &w, &h);
    if ((w != sid->content_info.w) || (h != sid->content_info.h))
@@ -3835,8 +3825,6 @@ _elm_scroll_pan_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
         sid->content_info.resized = EINA_TRUE;
         _elm_scroll_wanted_region_set(sid->obj);
      }
-
-   return EINA_TRUE;
 }
 
 static void

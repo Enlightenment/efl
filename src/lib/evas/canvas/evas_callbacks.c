@@ -84,21 +84,19 @@ typedef struct
    Evas_Callback_Type type;
 } _eo_evas_cb_info;
 
-static Eina_Bool
+static void
 _eo_evas_object_cb(void *data, const Eo_Event *event)
 {
    _eo_evas_object_cb_info *info = data;
    Evas *evas = evas_object_evas_get(event->object);
    if (info->func) info->func(info->data, evas, event->object, event->info);
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _eo_evas_cb(void *data, const Eo_Event *event)
 {
    _eo_evas_cb_info *info = data;
    if (info->func) info->func(info->data, event->object, event->info);
-   return EINA_TRUE;
 }
 
 void

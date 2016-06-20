@@ -252,20 +252,18 @@ _test_time_cb(void *data)
    return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _test_death_cb(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    Eina_Bool *die = data;
 
    *die = EINA_TRUE;
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _test_run_cb(void *data, const Eo_Event *ev EINA_UNUSED)
 {
-   return _test_time_cb(data);
+   _test_time_cb(data);
 }
 
 START_TEST(ecore_test_timer_lifecycle)

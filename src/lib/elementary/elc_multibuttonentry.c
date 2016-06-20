@@ -45,14 +45,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static Eina_Bool
-_entry_changed_cb(void *data, const Eo_Event *event);
-static Eina_Bool
-_entry_focus_in_cb(void *data, const Eo_Event *event);
-static Eina_Bool
-_entry_focus_out_cb(void *data, const Eo_Event *event);
-static Eina_Bool
-_entry_clicked_cb(void *data, const Eo_Event *event);
+static void _entry_changed_cb(void *data, const Eo_Event *event);
+static void _entry_focus_in_cb(void *data, const Eo_Event *event);
+static void _entry_focus_out_cb(void *data, const Eo_Event *event);
+static void _entry_clicked_cb(void *data, const Eo_Event *event);
 
 EO_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_MULTIBUTTONENTRY_EVENT_CHANGED, _entry_changed_cb },
@@ -1039,23 +1035,21 @@ _entry_resize_cb(void *data,
      elm_widget_show_region_set(sd->entry, en_x, en_y, en_w, en_h, EINA_TRUE);
 }
 
-static Eina_Bool
+static void
 _entry_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    const char *str;
 
    str = elm_object_text_get(sd->entry);
    sd->n_str = str ? strlen(str) : 0;
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _entry_focus_in_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Multibuttonentry_Item_Data *item = NULL;
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
    if (sd->selected_it)
      {
@@ -1063,32 +1057,26 @@ _entry_focus_in_cb(void *data, const Eo_Event *event EINA_UNUSED)
         elm_object_focus_set(sd->entry, EINA_FALSE);
         elm_object_focus_set(VIEW(item), EINA_TRUE);
      }
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _entry_focus_out_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    const char *str;
 
    str = elm_object_text_get(sd->entry);
    if (str && str[0])
      _item_new(sd, str, MULTIBUTTONENTRY_POS_END, NULL, NULL, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _entry_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
    _current_item_state_change(sd->parent, MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT);
    elm_object_focus_set(sd->entry, EINA_TRUE);
-
-   return EINA_TRUE;
 }
 
 static void

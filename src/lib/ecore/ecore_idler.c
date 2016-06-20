@@ -20,15 +20,13 @@ struct _Ecore_Factorized_Idle
    Eina_Bool     delete_me : 1;
 };
 
-Eina_Bool
+void
 _ecore_factorized_idle_event_del(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _ecore_factorized_idle_del(data);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-Eina_Bool
+void
 _ecore_factorized_idle_process(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Ecore_Factorized_Idle *idler = data;
@@ -41,8 +39,6 @@ _ecore_factorized_idle_process(void *data, const Eo_Event *event EINA_UNUSED)
    if (idler->delete_me &&
        idler->references == 0)
      _ecore_factorized_idle_del(idler);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 void *

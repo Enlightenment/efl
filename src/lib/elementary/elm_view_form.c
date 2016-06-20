@@ -91,7 +91,7 @@ _efl_model_promise_error_cb(void* data, Eina_Error error EINA_UNUSED)
    free(p);
 }
 
-static Eina_Bool
+static void
 _efl_model_properties_change_cb(void *data, const Eo_Event *event)
 {
    const Efl_Model_Property_Event *evt = event->info;
@@ -102,11 +102,11 @@ _efl_model_properties_change_cb(void *data, const Eo_Event *event)
    Elm_View_Form_Promise *p = NULL;
    Eina_Array_Iterator it;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(priv, EINA_TRUE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(evt, EINA_TRUE);
+   EINA_SAFETY_ON_NULL_RETURN(priv);
+   EINA_SAFETY_ON_NULL_RETURN(evt);
 
    if (!evt->changed_properties)
-     return EINA_TRUE;
+     return;
 
    //update all widgets with this property
    EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
@@ -118,8 +118,6 @@ _efl_model_properties_change_cb(void *data, const Eo_Event *event)
         eina_promise_then(promise, &_efl_model_promise_then_cb,
                           &_efl_model_promise_error_cb, p);
      }
-
-   return EINA_TRUE;
 }
 
 static void

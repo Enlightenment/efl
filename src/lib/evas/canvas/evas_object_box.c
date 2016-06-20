@@ -109,17 +109,15 @@ _evas_object_box_accessor_free(Evas_Object_Box_Accessor *it)
    free(it);
 }
 
-static Eina_Bool
+static void
 _on_child_resize(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *box = data;
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(box, priv, EO_CALLBACK_CONTINUE);
+   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(box, priv);
    if (!priv->layouting) evas_object_smart_changed(box);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _on_child_del(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
@@ -129,21 +127,17 @@ _on_child_del(void *data, const Eo_Event *event)
    if (!ret)
      ERR("child removal failed");
    evas_object_smart_changed(box);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _on_child_hints_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *box = data;
-   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(box, priv, EO_CALLBACK_CONTINUE);
+   EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(box, priv);
 // XXX: this breaks box repacking in elementary. widgets DEPEND on being able
 // to change their hints evenr WHILE being laid out. so comment this out.
 //   if (!priv->layouting)
      evas_object_smart_changed(box);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void

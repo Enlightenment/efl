@@ -9,13 +9,12 @@
 
 static int cb_count = 0;
 
-static Eina_Bool
+static void
 _null_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _a_changed_cb(void *data, const Eo_Event *event)
 {
    int new_a = *((int *) event->info);
@@ -27,22 +26,23 @@ _a_changed_cb(void *data, const Eo_Event *event)
    eo_event_callback_del(event->object, EV_A_CHANGED, _null_cb, (void *) 23423);
 
    /* Stop as we reached the 3rd one. */
-   return (cb_count != 3);
+   if (cb_count == 3)
+      eo_event_callback_stop(event->object);
 }
 
 static Eina_Bool inside = EINA_FALSE;
 static int called = 0;
 
-static Eina_Bool
+static void
 _restart_1_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    fprintf(stderr, "restart 1 inside: %i\n", inside);
    fail_if(!inside);
    called++;
-   return EINA_FALSE;
+   eo_event_callback_stop(event->object);
 }
 
-static Eina_Bool
+static void
 _restart_2_cb(void *data, const Eo_Event *event)
 {
    fprintf(stderr, "restart 2 inside: %i\n", inside);
@@ -55,7 +55,7 @@ _restart_2_cb(void *data, const Eo_Event *event)
    called++;
 
    fprintf(stderr, "restart 2 exit inside: %i (%i)\n", inside, called);
-   return EINA_FALSE;
+   eo_event_callback_stop(event->object);
 }
 
 int

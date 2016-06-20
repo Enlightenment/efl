@@ -3161,7 +3161,7 @@ _ecore_evas_animator_fallback(void *data)
    return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _check_animator_event_catcher_add(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *array = event->info;
@@ -3172,7 +3172,7 @@ _check_animator_event_catcher_add(void *data, const Eo_Event *event)
      {
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {
-             if (ee->anim_count++ > 0) return EO_CALLBACK_CONTINUE;
+             if (ee->anim_count++ > 0) return;
              INF("Setting up animator for %p from '%s' with title '%s'.", ee->evas, ee->driver, ee->prop.title);
 
              if (ee->engine.func->fn_animator_register &&
@@ -3190,14 +3190,12 @@ _check_animator_event_catcher_add(void *data, const Eo_Event *event)
 
              // No need to walk more than once per array as you can not del
              // a partial array
-             return EO_CALLBACK_CONTINUE;
+             return;
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _check_animator_event_catcher_del(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *array = event->info;
@@ -3208,7 +3206,7 @@ _check_animator_event_catcher_del(void *data, const Eo_Event *event)
      {
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {
-             if ((--ee->anim_count) > 0) return EO_CALLBACK_CONTINUE;
+             if ((--ee->anim_count) > 0) return;
 
              INF("Unsetting up animator for %p from '%s' titled '%s'.", ee->evas, ee->driver, ee->prop.title);
              if (ee->engine.func->fn_animator_register &&
@@ -3224,11 +3222,9 @@ _check_animator_event_catcher_del(void *data, const Eo_Event *event)
                   ecore_animator_del(ee->anim);
                   ee->anim = NULL;
                }
-             return EO_CALLBACK_CONTINUE;
+             return;
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(animator_watch,

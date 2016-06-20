@@ -90,7 +90,7 @@ _elm_combobox_elm_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
    return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _on_hover_clicked(void *data, const Eo_Event *event)
 {
    const char *dismissstr;
@@ -99,8 +99,6 @@ _on_hover_clicked(void *data, const Eo_Event *event)
 
    if (!dismissstr || strcmp(dismissstr, "on"))
      elm_combobox_hover_end(data); // for backward compatibility
-
-   return EINA_TRUE;
 }
 
 static void
@@ -213,7 +211,7 @@ _on_item_pressed(void *data , Evas_Object *obj EINA_UNUSED, void *event)
    eo_event_callback_call(data, ELM_COMBOBOX_EVENT_ITEM_PRESSED, event);
 }
 
-static Eina_Bool
+static void
 _gl_filter_finished_cb(void *data, const Eo_Event *event)
 {
    char buf[1024];
@@ -224,7 +222,7 @@ _gl_filter_finished_cb(void *data, const Eo_Event *event)
    if (sd->first_filter)
      {
         sd->first_filter = EINA_FALSE;
-        return EINA_TRUE;
+        return;
      }
 
    eo_event_callback_call(data, ELM_COMBOBOX_EVENT_FILTER_DONE, event->info);
@@ -243,30 +241,25 @@ _gl_filter_finished_cb(void *data, const Eo_Event *event)
         elm_layout_signal_emit(sd->hover, buf, "elm");
         edje_object_message_signal_process(elm_layout_edje_get(sd->hover));
      }
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _on_aborted(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_COMBOBOX_DATA_GET(data, sd);
    if (sd->expanded) elm_combobox_hover_end(data);
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _on_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    eo_event_callback_call(data, ELM_ENTRY_EVENT_CHANGED, NULL);
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _on_clicked(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_combobox_hover_begin(data);
-   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -317,34 +310,30 @@ _elm_combobox_multiple_selection_get(Eo *obj EINA_UNUSED, Elm_Combobox_Data *pd)
    return pd->multiple_selection;
 }
 
-static Eina_Bool
+static void
 _mbe_clicked_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    //Unset the multibuttonentry to contracted mode of single line
    elm_multibuttonentry_expanded_set(event->object, EINA_TRUE);
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _mbe_focused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _mbe_unfocused_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    //Set the multibuttonentry to contracted mode of single line
    elm_multibuttonentry_expanded_set(event->object, EINA_FALSE);
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _mbe_item_added(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_COMBOBOX_DATA_GET(data, sd);
    elm_genlist_filter_set(sd->genlist, NULL);
-   return EINA_TRUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(mbe_callbacks,

@@ -17,12 +17,10 @@
 static Eina_List *filenames = NULL;
 static Eina_List *curfile = NULL;
 
-static Eina_Bool
+static void
 _playback_started_cb(void *data EINA_UNUSED, const Eo_Event *ev EINA_UNUSED)
 {
     printf("Emotion object started playback.\n");
-
-    return EINA_TRUE;
 }
 
 static Evas_Object *
@@ -107,48 +105,38 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *
      }
 }
 
-static Eina_Bool
+static void
 _frame_decode_cb(void *data EINA_UNUSED, const Eo_Event *ev EINA_UNUSED)
 {
    // fprintf(stderr, "smartcb: frame_decode\n");
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _length_change_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    fprintf(stderr, "smartcb: length_change: %0.3f\n", emotion_object_play_length_get(ev->object));
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _position_update_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    fprintf(stderr, "smartcb: position_update: %0.3f\n", emotion_object_position_get(ev->object));
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _progress_change_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    fprintf(stderr, "smartcb: progress_change: %0.3f, %s\n",
 	   emotion_object_progress_status_get(ev->object),
 	   emotion_object_progress_info_get(ev->object));
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _frame_resize_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    int w, h;
    emotion_object_size_get(ev->object, &w, &h);
    fprintf(stderr, "smartcb: frame_resize: %dx%d\n", w, h);
-
-   return EINA_TRUE;
 }
 
 static void /* adjust canvas' contents on resizes */

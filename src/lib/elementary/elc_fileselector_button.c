@@ -84,7 +84,7 @@ _replace_path_then_error(void *data, Eina_Error err EINA_UNUSED)
    eina_stringshare_replace(&sd->fsd.path, NULL);
 }
 
-static Eina_Bool
+static void
 _selection_done(void *data, const Eo_Event *event)
 {
    Elm_Fileselector_Button_Data *sd = data;
@@ -109,8 +109,6 @@ _selection_done(void *data, const Eo_Event *event)
    // EVENTS: should not call legacy
    //eo_event_callback_call
    //  (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, (void *)model);
-
-   return EINA_TRUE;
 }
 
 
@@ -209,12 +207,10 @@ _activate(Elm_Fileselector_Button_Data *sd)
      }
 }
 
-static Eina_Bool
+static void
 _button_clicked(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _activate(data);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void

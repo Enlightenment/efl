@@ -163,8 +163,8 @@ Ecore_Factorized_Idle *_ecore_factorized_idle_add(const Eo_Callback_Array_Item*d
                                                   Ecore_Task_Cb func,
                                                   const void   *data);
 void        *_ecore_factorized_idle_del(Ecore_Idler *idler);
-Eina_Bool    _ecore_factorized_idle_process(void *data, const Eo_Event *event);
-Eina_Bool    _ecore_factorized_idle_event_del(void *data, const Eo_Event *event);
+void    _ecore_factorized_idle_process(void *data, const Eo_Event *event);
+void    _ecore_factorized_idle_event_del(void *data, const Eo_Event *event);
 
 void         _ecore_idler_all_call(Eo *loop);
 int          _ecore_idler_exist(Eo *loop);

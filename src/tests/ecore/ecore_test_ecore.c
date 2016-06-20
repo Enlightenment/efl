@@ -267,15 +267,13 @@ START_TEST(ecore_test_ecore_main_loop_fd_handler)
 }
 END_TEST
 
-static Eina_Bool
+static void
 _eo_read_cb(void *data, const Eo_Event *info EINA_UNUSED)
 {
    Eina_Bool *did = data;
 
    *did = EINA_TRUE;
    ecore_main_loop_quit();
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 START_TEST(ecore_test_efl_loop_fd)
@@ -310,14 +308,12 @@ START_TEST(ecore_test_efl_loop_fd)
 }
 END_TEST
 
-static Eina_Bool
+static void
 _eo_del_cb(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    Eina_Bool *dead = data;
 
    *dead = EINA_TRUE;
-
-   return EINA_TRUE;
 }
 
 START_TEST(ecore_test_efl_loop_fd_lifecycle)

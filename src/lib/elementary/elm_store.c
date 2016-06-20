@@ -223,32 +223,30 @@ _store_item_eval(void *data)
      }
 }
 
-static Eina_Bool
+static void
 _store_genlist_item_realized(void *data, const Eo_Event *event)
 {
    Elm_Store *st = data;
    Elm_Object_Item *gli = event->info;
    Elm_Store_Item *sti = elm_object_item_data_get(gli);
-   if (!sti) return EINA_TRUE;
+   if (!sti) return;
    st->realized_count++;
    sti->live = EINA_TRUE;
    ecore_job_del(sti->eval_job);
    sti->eval_job = ecore_job_add(_store_item_eval, sti);
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _store_genlist_item_unrealized(void *data, const Eo_Event *event)
 {
    Elm_Store *st = data;
    Elm_Object_Item *gli = event->info;
    Elm_Store_Item *sti = elm_object_item_data_get(gli);
-   if (!sti) return EINA_TRUE;
+   if (!sti) return;
    st->realized_count--;
    sti->live = EINA_FALSE;
    ecore_job_del(sti->eval_job);
    sti->eval_job = ecore_job_add(_store_item_eval, sti);
-   return EINA_TRUE;
 }
 
 static const Elm_Store_Item_Mapping *

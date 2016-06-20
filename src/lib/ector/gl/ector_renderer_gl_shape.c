@@ -20,15 +20,13 @@ struct _Ector_Renderer_GL_Shape_Data
    GLshort *vertex;
 };
 
-static Eina_Bool
+static void
 _ector_renderer_gl_shape_path_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Ector_Renderer_GL_Shape_Data *pd = data;
 
    free(pd->vertex);
    pd->vertex = NULL;
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool

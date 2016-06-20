@@ -28,17 +28,17 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 
-static Eina_Bool
+static void
 _on_open_done(void *data, const Eo_Event *event);
-static Eina_Bool
+static void
 _on_playback_started(void *data, const Eo_Event *event);
-static Eina_Bool
+static void
 _on_playback_finished(void *data, const Eo_Event *event);
-static Eina_Bool
+static void
 _on_aspect_ratio_updated(void *data, const Eo_Event *event);
-static Eina_Bool
+static void
 _on_title_changed(void *data, const Eo_Event *event);
-static Eina_Bool
+static void
 _on_audio_level_changed(void *data, const Eo_Event *event);
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
@@ -158,42 +158,36 @@ _on_size_hints_changed(void *data EINA_UNUSED,
    elm_layout_sizing_eval(obj);
 }
 
-static Eina_Bool
+static void
 _on_open_done(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,video,open", "elm");
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _on_playback_started(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,video,play", "elm");
 
-   return EINA_TRUE;
+   return;
 
 }
 
-static Eina_Bool
+static void
 _on_playback_finished(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_VIDEO_DATA_GET(data, sd);
    emotion_object_play_set(sd->emotion, EINA_FALSE);
    elm_layout_signal_emit(data, "elm,video,end", "elm");
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _on_aspect_ratio_updated(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _on_title_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    const char *title;
@@ -203,16 +197,12 @@ _on_title_changed(void *data, const Eo_Event *event EINA_UNUSED)
    title = emotion_object_title_get(sd->emotion);
    elm_layout_text_set(data, "elm,title", title);
    elm_layout_signal_emit(data, "elm,video,title", "elm");
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _on_audio_level_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    (void)data;
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool

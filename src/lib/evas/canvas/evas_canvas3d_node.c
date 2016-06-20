@@ -50,7 +50,7 @@ _generate_unic_color_key(Evas_Color *color, Evas_Color *bg_color, Evas_Canvas3D_
    return eina_stringshare_printf("%p %p", node, mesh);
 }
 
-static Eina_Bool
+static void
 _evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event)
 {
    Eina_List *collision_list = NULL, *l = NULL;
@@ -72,18 +72,24 @@ _evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event
              if (box_intersection_box(&pd_target->aabb, &pd->aabb))
                ret = eo_event_callback_call(target_node, eo_desc, n);
           }
-        return ret;
+        if (!ret)
+          {
+             /* XXX: Putting it like this because that's how the logic was,
+              * but it seems absolutely wrong that it only checks the last
+              * and decides based on that. */
+             eo_event_callback_stop(event->object);
+          }
      }
-   return ret;
 }
-static Eina_Bool
+static void
 _evas_canvas3d_node_private_callback_clicked(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Eina_Bool ret = EINA_FALSE;
    const Eo_Event_Description *eo_desc = eo_base_legacy_only_event_description_get("clicked");
    ret = eo_event_callback_call((Eo *)event->info, eo_desc, event->info);
 
-   return ret;
+   if (!ret)
+      eo_event_callback_stop(event->object);
 }
 
 static inline Evas_Canvas3D_Node_Mesh *

@@ -11,7 +11,7 @@
 
 #include "ecore_suite.h"
 
-static Eina_Bool _failed_cb(void *data, const Eo_Event *event EINA_UNUSED)
+static void _failed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
   Eina_Bool *pulse_context_failed = data;
 
@@ -21,22 +21,16 @@ static Eina_Bool _failed_cb(void *data, const Eo_Event *event EINA_UNUSED)
        *pulse_context_failed = (pa_check == 0);
     }
   ecore_main_loop_quit();
-
-  return EINA_TRUE;
 }
 
-static Eina_Bool _finished_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
+static void _finished_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
   ecore_main_loop_quit();
-
-  return EINA_TRUE;
 }
 
-static Eina_Bool _looped_cb(void *data EINA_UNUSED, const Eo_Event *event)
+static void _looped_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
   ecore_audio_obj_in_looped_set(event->object, EINA_FALSE);
-
-  return EINA_TRUE;
 }
 
 #ifdef HAVE_PULSE

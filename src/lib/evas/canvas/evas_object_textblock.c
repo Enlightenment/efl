@@ -7583,7 +7583,7 @@ _obstacle_find(Efl_Canvas_Text_Data *obj, Eo *eo_obs)
    return NULL;
 }
 
-Eina_Bool
+void
 _obstacle_del_cb(void *data, const Eo_Event *event)
 {
    Eo *eo_obj = data;
@@ -7600,8 +7600,6 @@ _obstacle_del_cb(void *data, const Eo_Event *event)
    free(obs);
    _evas_textblock_changed(obj, data);
    obj->obstacle_changed = EINA_TRUE;
-
-   return EINA_TRUE;
 }
 
 static void

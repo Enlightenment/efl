@@ -104,11 +104,10 @@ static Eina_Bool _modify_attrib_file(void *data)
 
 /////// helper functions
 
-static Eina_Bool _check_event_path(void *data, const Eo_Event *event)
+static void _check_event_path(void *data, const Eo_Event *event)
 {
    Eio_Sentry_Event *event_info = event->info;
    ck_assert_str_eq((const char*)data, event_info->trigger);
-   return EINA_TRUE;
 }
 
 static Eina_Tmpstr *_common_init()
@@ -220,11 +219,9 @@ END_TEST
 
 static void _target_notified_cb(void *data, const Eo_Event *event)
 {
-   if (_check_event_path(data, event))
-     {
-        _cancel_timeout();
-        ecore_main_loop_quit();
-     }
+   _check_event_path(data, event);
+   _cancel_timeout();
+   ecore_main_loop_quit();
 }
 
 

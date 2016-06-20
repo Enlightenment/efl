@@ -92,7 +92,7 @@ _efl_loop_fd_fd_file_get(Eo *obj EINA_UNUSED, Efl_Loop_Fd_Data *pd)
    return pd->file ? pd->fd : -1;
 }
 
-static Eina_Bool
+static void
 _check_fd_event_catcher_add(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *array = event->info;
@@ -117,11 +117,9 @@ _check_fd_event_catcher_add(void *data, const Eo_Event *event)
              _efl_loop_fd_reset(event->object, fd);
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _check_fd_event_catcher_del(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *array = event->info;
@@ -146,8 +144,6 @@ _check_fd_event_catcher_del(void *data, const Eo_Event *event)
              _efl_loop_fd_reset(event->object, fd);
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(fd_watch,

@@ -95,13 +95,12 @@ mismatch:
    return EINA_FALSE;
 }
 
-static Eina_Bool
+static void
 _item_changed_cb(void *data, const Eo_Event *event)
 {
    Elm_Prefs_Item_Changed_Cb prefs_it_changed_cb = data;
 
    prefs_it_changed_cb(event->object);
-   return EINA_TRUE;
 }
 
 static void

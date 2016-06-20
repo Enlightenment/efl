@@ -213,7 +213,7 @@ _evas_object_clip_mask_unset(Evas_Object_Protected_Data *obj)
 extern const char *o_rect_type;
 extern const char *o_image_type;
 
-static Eina_Bool _clipper_del_cb(void *data, const Eo_Event *event);
+static void _clipper_del_cb(void *data, const Eo_Event *event);
 
 EOLIAN void
 _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
@@ -477,13 +477,13 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    evas_object_clip_across_check(eo_obj, obj);
 }
 
-static Eina_Bool
+static void
 _clipper_del_cb(void *data, const Eo_Event *event)
 {
    Evas_Object *eo_obj = data;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
-   if (!obj) return EO_CALLBACK_CONTINUE;
+   if (!obj) return;
 
    _evas_object_clip_unset(eo_obj, obj);
    if (obj->prev->clipper && (obj->prev->clipper->object == event->object))
@@ -493,8 +493,6 @@ _clipper_del_cb(void *data, const Eo_Event *event)
           state_write->clipper = NULL;
         EINA_COW_STATE_WRITE_END(obj, state_write, prev);
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 void

@@ -23,7 +23,7 @@ static void _append_line(Elm_Code_File *file, const char *line)
    elm_code_file_line_append(file, line, length, NULL);
 }
 
-static Eina_Bool
+static void
 _elm_code_test_line_clicked_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Elm_Code_Line *line;
@@ -31,10 +31,9 @@ _elm_code_test_line_clicked_cb(void *data EINA_UNUSED, const Eo_Event *event)
    line = (Elm_Code_Line *)event->info;
 
    printf("CLICKED line %d\n", line->number);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _elm_code_test_line_done_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Elm_Code_Line *line;
@@ -46,7 +45,7 @@ _elm_code_test_line_done_cb(void *data EINA_UNUSED, const Eo_Event *event)
    else if (line->number == 4)
      line->status = ELM_CODE_STATUS_TYPE_ERROR;
 
-   return EO_CALLBACK_STOP;
+   eo_event_callback_stop(event->object);
 }
 
 static Evas_Object *

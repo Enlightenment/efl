@@ -21,7 +21,7 @@ struct _pair
   Eo *parent, *child;
 };
 
-static Eina_Bool
+static void
 _children_removed_cb(void *data EINA_UNUSED, const Eo_Event* event)
 {
    fprintf(stderr, __FILE__ ":%d %s\n", __LINE__, __func__);
@@ -39,10 +39,9 @@ _children_removed_cb(void *data EINA_UNUSED, const Eo_Event* event)
         free(filename);
         eina_promise_unref(promise);
      }
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _children_added_cb(void *data EINA_UNUSED, const Eo_Event* event)
 {
    fprintf(stderr, __FILE__ ":%d %s\n", __LINE__, __func__);
@@ -61,8 +60,6 @@ _children_added_cb(void *data EINA_UNUSED, const Eo_Event* event)
    free(filename);
 
    eina_promise_unref(promise);
-
-   return EINA_TRUE;
 }
 
 static void

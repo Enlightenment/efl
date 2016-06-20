@@ -18,7 +18,7 @@ typedef enum {
    TWO
 } Weight_Mode;
 
-static Eina_Bool
+static void
 weights_cb(void *data, const Eo_Event *event)
 {
    Weight_Mode mode = elm_radio_state_value_get(event->object);
@@ -58,92 +58,81 @@ weights_cb(void *data, const Eo_Event *event)
           efl_gfx_size_hint_weight_set(objects[i], 0, 0);
         break;
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 user_min_slider_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    efl_gfx_size_hint_min_set(objects[3], val, val);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 padding_slider_cb(void *data, const Eo_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    efl_pack_padding_set(data, val, val, EINA_TRUE);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 margin_slider_cb(void *data, const Eo_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    efl_gfx_size_hint_margin_set(data, val, val, val, val);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 alignh_slider_cb(void *data, const Eo_Event *event)
 {
    double av, val;
    val = elm_slider_value_get(event->object);
    efl_pack_align_get(data, NULL, &av);
    efl_pack_align_set(data, val, av);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 alignv_slider_cb(void *data, const Eo_Event *event)
 {
    double ah, val;
    val = elm_slider_value_get(event->object);
    efl_pack_align_get(data, &ah, NULL);
    efl_pack_align_set(data, ah, val);
-   return EO_CALLBACK_CONTINUE;
 }
 
 static Efl_Ui_Box_Flow_Params s_flow_params = { 0, 0 };
 static Eina_Bool flow = EINA_FALSE;
 
-static Eina_Bool
+static void
 flow_check_cb(void *data, const Eo_Event *event)
 {
    flow = elm_check_selected_get(event->object);
    efl_pack_layout_engine_set(data, flow ? EFL_UI_BOX_FLOW_CLASS : NULL, &s_flow_params);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 horiz_check_cb(void *data, const Eo_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
    efl_orientation_set(data, chk ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 homo_check_cb(void *data, const Eo_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
    s_flow_params.homogenous = chk;
    efl_pack_layout_engine_set(data, flow ? EFL_UI_BOX_FLOW_CLASS : NULL, &s_flow_params);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 max_size_check_cb(void *data, const Eo_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
    s_flow_params.max_size = chk;
    efl_pack_layout_engine_set(data, flow ? EFL_UI_BOX_FLOW_CLASS : NULL, &s_flow_params);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 left_check_cb(void *data, const Eo_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
@@ -155,7 +144,6 @@ left_check_cb(void *data, const Eo_Event *event)
      {
         efl_pack_align_set(data, 0.5, 0.5);
      }
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -197,12 +185,11 @@ static const Eo_Class_Description custom_engine_class_desc = {
 
 EO_DEFINE_CLASS(_test_ui_box_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_LAYOUT_INTERFACE, NULL)
 
-static Eina_Bool
+static void
 custom_check_cb(void *data, const Eo_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
    efl_pack_layout_engine_set(data, chk ? _test_ui_box_custom_engine_class_get() : NULL, NULL);
-   return EO_CALLBACK_CONTINUE;
 }
 
 void

@@ -39,25 +39,23 @@ _window_create(App_View_Context *ctx)
    evas_object_show(ctx->win);
 }
 
-static Eina_Bool
+static void
 _close_cb(void *data, const Eo_Event *event)
 {
    App_View_Context *ctx = data;
    if (ctx->win)
      evas_object_del(ctx->win);
    eo_del(event->object);
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _pause_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    App_View_Context *ctx = data;
    _text_update(ctx, "paused");
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _resume_cb(void *data, const Eo_Event *event)
 {
    App_View_Context *ctx = data;
@@ -70,10 +68,9 @@ _resume_cb(void *data, const Eo_Event *event)
      }
 
    _text_update(ctx, "alive");
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _view_del_cb(void *data, const Eo_Event *event)
 {
    App_View_Context *ctx = data;
@@ -83,7 +80,6 @@ _view_del_cb(void *data, const Eo_Event *event)
    elm_app_server_view_window_set(event->object, NULL);
    eina_stringshare_del(ctx->view_name);
    free(ctx);
-   return EINA_TRUE;
 }
 
 static Elm_App_Server_View *
@@ -120,7 +116,7 @@ _create_view_cb(Elm_App_Server *app_server, const Eina_Value *args EINA_UNUSED, 
    return view;
 }
 
-static Eina_Bool
+static void
 _terminate_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    const char *title = NULL;
@@ -131,7 +127,6 @@ _terminate_cb(void *data EINA_UNUSED, const Eo_Event *event)
 
    printf("Closing: %s\n", title);
    eo_unref(event->object);
-   return EINA_TRUE;
 }
 
 Elm_App_Server *
@@ -167,12 +162,11 @@ test_application_server_common(const char *pkg)
    return server;
 }
 
-static Eina_Bool
+static void
 _server_del_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_App_Server **server = data;
    *server = NULL;
-   return EINA_TRUE;
 }
 
 void

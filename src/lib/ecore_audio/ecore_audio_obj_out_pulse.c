@@ -88,7 +88,7 @@ static void _write_cb(pa_stream *stream, size_t len, void *data)
     }
 }
 
-static Eina_Bool _update_samplerate_cb(void *data EINA_UNUSED, const Eo_Event *event)
+static void _update_samplerate_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
   pa_stream *stream = NULL;
   int samplerate = 0;
@@ -100,8 +100,6 @@ static Eina_Bool _update_samplerate_cb(void *data EINA_UNUSED, const Eo_Event *e
   stream = eo_key_data_get(event->object, "pulse_data");
 
   pa_operation_unref(pa_stream_update_sample_rate(stream, samplerate * speed, NULL, NULL));
-
-  return EINA_TRUE;
 }
 
 static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
@@ -146,14 +144,12 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   return ret;
 }
 
-static Eina_Bool _delayed_attach_cb(void *data, const Eo_Event *event)
+static void _delayed_attach_cb(void *data, const Eo_Event *event)
 {
   Eo *in = data;
   eo_event_callback_del(event->object, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, _delayed_attach_cb, in);
 
   _input_attach_internal(event->object, in);
-
-  return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool

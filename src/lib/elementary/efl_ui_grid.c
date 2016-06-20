@@ -7,7 +7,7 @@
 
 typedef struct _Custom_Table_Data Custom_Table_Data;
 
-static Eina_Bool _subobj_del_cb(void *data, const Eo_Event *event);
+static void _subobj_del_cb(void *data, const Eo_Event *event);
 static void _item_remove(Efl_Ui_Grid *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx *subobj);
 
 struct _Custom_Table_Data
@@ -336,7 +336,7 @@ _efl_ui_grid_efl_pack_pack_padding_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED
    if (v) *v = pd->pad.v;
 }
 
-static Eina_Bool
+static void
 _subobj_del_cb(void *data, const Eo_Event *event)
 {
    Efl_Ui_Grid *obj = data;
@@ -347,8 +347,6 @@ _subobj_del_cb(void *data, const Eo_Event *event)
 
    if (!elm_widget_sub_object_del(obj, event->object))
      WRN("failed to remove child from its parent");
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool

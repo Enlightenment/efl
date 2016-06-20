@@ -3238,7 +3238,7 @@ _evas_canvas_event_down_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
    return e->pointer.downs;
 }
 
-static Eina_Bool
+static void
 _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
 {
    Efl_Event_Pointer_Data *ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
@@ -3246,7 +3246,7 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
    Evas *eo_e = event->object;
    int dir;
 
-   if (!ev) return EO_CALLBACK_CONTINUE;
+   if (!ev) return;
 
    ev->evas_done = EINA_TRUE;
    ev->modifiers = &e->modifiers;
@@ -3322,11 +3322,9 @@ _evas_canvas_event_pointer_cb(void *data, const Eo_Event *event)
         ev->evas_done = EINA_FALSE;
         break;
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _evas_canvas_event_key_cb(void *data, const Eo_Event *event)
 {
    Efl_Event_Key *evt = event->info;
@@ -3334,7 +3332,7 @@ _evas_canvas_event_key_cb(void *data, const Eo_Event *event)
    Efl_Event_Key_Data *ev;
 
    ev = eo_data_scope_get(evt, EFL_EVENT_KEY_CLASS);
-   if (!ev) return EO_CALLBACK_CONTINUE;
+   if (!ev) return;
 
    if (ev->pressed)
      {
@@ -3352,7 +3350,6 @@ _evas_canvas_event_key_cb(void *data, const Eo_Event *event)
      }
 
    ev->evas_done = EINA_TRUE;
-   return EO_CALLBACK_CONTINUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(_evas_canvas_event_pointer_callbacks,

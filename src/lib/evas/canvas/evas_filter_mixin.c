@@ -72,7 +72,7 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
    evas_filter_context_destroy(ctx);
 }
 
-static Eina_Bool
+static void
 _render_post_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Eo *eo_obj = data;
@@ -91,8 +91,6 @@ _render_post_cb(void *data, const Eo_Event *event EINA_UNUSED)
         _filter_end_sync(task->ctx, obj, pd, task->success);
         free(task);
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void

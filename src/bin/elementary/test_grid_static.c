@@ -64,7 +64,7 @@ set_api_state(api_data *api)
      }
 }
 
-static Eina_Bool
+static void
 _api_bt_clicked(void *data, const Eo_Event *ev)
 {  /* Will add here a SWITCH command containing code to modify test-object */
    /* in accordance a->state value. */
@@ -77,10 +77,9 @@ _api_bt_clicked(void *data, const Eo_Event *ev)
    sprintf(str, "Next API function (%u)", a->state);
    elm_object_text_set(ev->object, str);
    elm_object_disabled_set(ev->object, a->state == API_STATE_LAST);
-   return 1;
 }
 
-static Eina_Bool
+static void
 _ch_grid(void *data, const Eo_Event *ev)
 {
    Eo *gd = data;
@@ -91,14 +90,12 @@ _ch_grid(void *data, const Eo_Event *ev)
    //elm_grid_pack_set(obj, x - 1, y - 1, w + 2, h + 2);
    efl_pack_grid_position_get(gd, ev->object, &x, &y, &w, &h);
    efl_pack_grid(gd, ev->object, x - 1, y - 1, w + 2, h + 2);
-   return 1;
 }
 
-static Eina_Bool
+static void
 _win_del(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    free(data);
-   return 1;
 }
 
 void

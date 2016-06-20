@@ -2753,7 +2753,7 @@ _efl_loop_eo_base_provider_find(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const Eo
    return eo_provider_find(eo_super(obj, EFL_LOOP_CLASS), klass);
 }
 
-static Eina_Bool
+static void
 _check_event_catcher_add(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *array = event->info;
@@ -2767,11 +2767,9 @@ _check_event_catcher_add(void *data, const Eo_Event *event)
              ++pd->idlers;
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _check_event_catcher_del(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *array = event->info;
@@ -2785,8 +2783,6 @@ _check_event_catcher_del(void *data, const Eo_Event *event)
              --pd->idlers;
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
@@ -2848,8 +2844,8 @@ _efl_loop_args_add(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, int argc, const char 
    eina_promise_then(job, _efl_loop_args_job_cb, NULL, args);
 }
 
-static Eina_Bool _efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED);
-static Eina_Bool _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED);
+static void _efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED);
+static void _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED);
 
 EO_CALLBACKS_ARRAY_DEFINE(timeout,
                           { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
@@ -2858,15 +2854,13 @@ EO_CALLBACKS_ARRAY_DEFINE(timeout,
 /* This event will be triggered when the main loop is destroyed and destroy its timers along */
 static void _efl_loop_internal_cancel(Efl_Internal_Promise *p);
 
-static Eina_Bool
+static void
 _efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _efl_loop_internal_cancel(data);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Efl_Internal_Promise *t = data;
@@ -2875,8 +2869,6 @@ _efl_loop_timeout_cb(void *data, const Eo_Event *event EINA_UNUSED)
 
    eo_event_callback_array_del(t->u.timer, timeout(), t);
    eo_del(t->u.timer);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void

@@ -6,10 +6,9 @@
 #include "eo_bench.h"
 #include "class_simple.h"
 
-static Eina_Bool
+static void
 _cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
-   return EO_CALLBACK_CONTINUE;
 }
 
 

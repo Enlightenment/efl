@@ -35,12 +35,12 @@ static const char *attr_data[] =
 
 int total_attributes = sizeof(attribute)/sizeof(attribute[0]);
 
-static Eina_Bool
+static void
 _filter_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Eio_Filter_Name_Data *event_info = event->info;
 
-   return event_info->filter = EINA_TRUE;
+   event_info->filter = EINA_TRUE;
 }
 
 static void

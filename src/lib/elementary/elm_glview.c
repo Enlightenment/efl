@@ -109,11 +109,11 @@ _elm_glview_efl_canvas_group_group_resize(Eo *obj, Elm_Glview_Data *sd, Evas_Coo
      }
 }
 
-static Eina_Bool
+static void
 _render_cb(void *obj, const Eo_Event *event EINA_UNUSED)
 {
    ELM_GLVIEW_DATA_GET(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, );
 
    evas_object_render_op_set(wd->resize_obj, evas_object_render_op_get(obj));
 
@@ -151,7 +151,7 @@ _render_cb(void *obj, const Eo_Event *event EINA_UNUSED)
    // Depending on the policy return true or false
    if (sd->render_policy == ELM_GLVIEW_RENDER_POLICY_ON_DEMAND)
      {
-        return EINA_TRUE;
+        return;
      }
    else if (sd->render_policy == ELM_GLVIEW_RENDER_POLICY_ALWAYS)
      {
@@ -164,7 +164,7 @@ _render_cb(void *obj, const Eo_Event *event EINA_UNUSED)
         goto on_error;
      }
 
-   return EINA_TRUE;
+   return;
 
  on_error:
    eo_event_callback_del(ecore_main_loop_get(),
@@ -172,7 +172,6 @@ _render_cb(void *obj, const Eo_Event *event EINA_UNUSED)
                          _render_cb,
                          obj);
    sd->render_idle_enterer = 0;
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -318,7 +317,7 @@ _elm_glview_efl_canvas_group_group_del(Eo *obj, Elm_Glview_Data *sd)
    efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
 
-static Eina_Bool
+static void
 _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    const Eo_Callback_Array_Item *event = ev->info;
@@ -333,8 +332,6 @@ _cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
      {
         _set_render_policy_callback(ev->object);
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 EAPI Evas_Object *

@@ -14,12 +14,10 @@
 #define WIDTH  (320)
 #define HEIGHT (240)
 
-static Eina_Bool
+static void
 _playback_started_cb(void *data EINA_UNUSED, const Eo_Event *ev EINA_UNUSED)
 {
     printf("Emotion object started playback.\n");
-
-    return EINA_TRUE;
 }
 
 int

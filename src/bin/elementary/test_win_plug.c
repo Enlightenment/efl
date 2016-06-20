@@ -143,11 +143,11 @@ create_handles(Evas_Object *obj)
      }
 }
 
-static Eina_Bool
+static void
 _notify_end(void *data EINA_UNUSED, const Eo_Event *event)
 {
    eo_del(event->object);
-   return EINA_FALSE;
+   eo_event_callback_stop(event->object);
 }
 
 static inline void

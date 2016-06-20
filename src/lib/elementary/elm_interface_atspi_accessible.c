@@ -414,7 +414,7 @@ elm_atspi_relation_clone(const Elm_Atspi_Relation *relation)
    return ret;
 }
 
-static Eina_Bool
+static void
 _on_rel_obj_del(void *data, const Eo_Event *event)
 {
    Elm_Atspi_Relation_Set *set = data;
@@ -435,7 +435,6 @@ _on_rel_obj_del(void *data, const Eo_Event *event)
              free(rel);
           }
      }
-   return EINA_TRUE;
 }
 
 EAPI Eina_Bool

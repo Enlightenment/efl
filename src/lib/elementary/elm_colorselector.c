@@ -634,7 +634,7 @@ _colors_set(Evas_Object *obj,
    eo_event_callback_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED, NULL);
 }
 
-static Eina_Bool
+static void
 _spinner_changed_cb(void *data, const Eo_Event *event)
 {
    Elm_Colorselector_Data *sd = data;
@@ -664,8 +664,6 @@ _spinner_changed_cb(void *data, const Eo_Event *event)
      }
    evas_object_data_del(event->object, "_changed");
    eo_event_callback_call(parent, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
-
-   return EINA_TRUE;
 }
 
 #ifdef HAVE_ELEMENTARY_X
@@ -694,7 +692,7 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
    return xwin;
 }
 
-static Eina_Bool
+static void
 _start_grab_pick_cb(void *data, const Eo_Event *event)
 {
    Evas_Object *o = data;
@@ -709,8 +707,6 @@ _start_grab_pick_cb(void *data, const Eo_Event *event)
 
    ecore_x_keyboard_grab(sd->grab.xroot);
    ecore_x_pointer_grab(sd->grab.xroot);
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -1011,7 +1007,7 @@ _colorbar_move_cb(void *data,
    _colorbar_arrow_set(cb_data, ev->cur.canvas.x);
 }
 
-static Eina_Bool
+static void
 _button_clicked_cb(void *data, const Eo_Event *event)
 {
    Color_Bar_Data *cb_data = data;
@@ -1052,11 +1048,9 @@ _button_clicked_cb(void *data, const Eo_Event *event)
    _update_hsla_from_colorbar(cb_data->parent, cb_data->color_type, x);
    sd->sel_color_type = cb_data->color_type;
    sd->focused = ELM_COLORSELECTOR_COMPONENTS;
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _button_repeat_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Color_Bar_Data *cb_data = data;
@@ -1073,8 +1067,6 @@ _button_repeat_cb(void *data, const Eo_Event *event EINA_UNUSED)
 
    edje_object_part_drag_value_set(cb_data->colorbar, "elm.arrow", x, y);
    _update_hsla_from_colorbar(cb_data->parent, cb_data->color_type, x);
-
-   return EINA_TRUE;
 }
 
 static void

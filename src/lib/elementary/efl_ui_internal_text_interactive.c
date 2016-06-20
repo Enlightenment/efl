@@ -500,14 +500,12 @@ _entry_selection_get(Efl_Ui_Internal_Text_Interactive *obj, Efl_Ui_Internal_Text
    return en->selection;
 }
 
-static Eina_Bool
+static void
 _sel_cursor_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Efl_Canvas_Text_Cursor *obj = data;
 
    eo_event_callback_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void

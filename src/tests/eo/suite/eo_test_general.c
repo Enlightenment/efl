@@ -113,39 +113,36 @@ END_TEST
 static int _eo_signals_cb_current = 0;
 static int _eo_signals_cb_flag = 0;
 
-static Eina_Bool
+static void
 _eo_signals_a_changed_cb(void *_data, const Eo_Event *event EINA_UNUSED)
 {
    int data = (intptr_t) _data;
    _eo_signals_cb_current++;
    ck_assert_int_eq(data, _eo_signals_cb_current);
    _eo_signals_cb_flag |= 0x1;
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _eo_signals_a_changed_cb2(void *_data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    _eo_signals_cb_flag |= 0x2;
-   return EO_CALLBACK_STOP;
+   eo_event_callback_stop(event->object);
 }
 
-static Eina_Bool
+static void
 _eo_signals_a_changed_never(void *_data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    /* This one should never be called. */
    fail_if(1);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _eo_signals_eo_del_cb(void *_data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    _eo_signals_cb_flag |= 0x4;
-   return EO_CALLBACK_CONTINUE;
 }
 
-Eina_Bool
+void
 _eo_signals_cb_added_deled(void *data, const Eo_Event *event)
 {
    const Eo_Callback_Array_Item *callback_array = event->info;
@@ -153,8 +150,6 @@ _eo_signals_cb_added_deled(void *data, const Eo_Event *event)
 
    fail_if((callback_data() != callback_array) &&
            (callback_array->func != _eo_signals_cb_added_deled));
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(_eo_signals_callbacks,

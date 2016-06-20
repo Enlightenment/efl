@@ -423,15 +423,13 @@ _menu_hide(void *data,
      }
 }
 
-static Eina_Bool
+static void
 _hover_dismissed_cb(void *data, const Eo_Event *event)
 {
    _menu_hide(data, event->object, event->info);
    eo_event_callback_call
      (data, EFL_UI_EVENT_CLICKED, NULL);
    eo_event_callback_call(data, ELM_MENU_EVENT_DISMISSED, NULL);
-
-   return EINA_TRUE;
 }
 
 static void
@@ -520,7 +518,7 @@ _menu_item_inactivate_cb(void *data,
      elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(item), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
 }
 
-static Eina_Bool
+static void
 _block_menu(void *_sd, const Eo_Event *event EINA_UNUSED)
 {
    const Eina_List *l;
@@ -534,11 +532,9 @@ _block_menu(void *_sd, const Eo_Event *event EINA_UNUSED)
         current->blocked = EINA_TRUE;
         elm_object_item_disabled_set(eo_current, EINA_TRUE);
      }
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _unblock_menu(void *_sd, const Eo_Event *event EINA_UNUSED)
 {
    const Eina_List *l;
@@ -551,8 +547,6 @@ _unblock_menu(void *_sd, const Eo_Event *event EINA_UNUSED)
         elm_object_item_disabled_set(eo_current, !current->was_enabled);
         current->blocked = EINA_FALSE;
      }
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void

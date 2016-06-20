@@ -7,21 +7,18 @@ static Eo *out = NULL;
 static int outs = 0;
 static Eina_Bool outfail = EINA_FALSE;
 
-static Eina_Bool
+static void
 _play_finished(void *data EINA_UNUSED, const Eo_Event *event)
 {
    eo_del(event->object);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _out_fail(void *data EINA_UNUSED, const Eo_Event *event)
 {
    outfail = EINA_TRUE;
    eo_del(event->object);
    out = NULL;
-   return EINA_TRUE;
 }
 
 struct _edje_multisense_eet_data

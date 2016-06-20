@@ -48,12 +48,12 @@ struct _View_List_ValueItem
 };
 
 static void _efl_model_load_children(View_List_ItemData *);
-static Eina_Bool _efl_model_children_count_change_cb(void *, const Eo_Event *event);
-static Eina_Bool _efl_model_properties_change_cb(void *, const Eo_Event *event);
+static void _efl_model_children_count_change_cb(void *, const Eo_Event *event);
+static void _efl_model_properties_change_cb(void *, const Eo_Event *event);
 
-static Eina_Bool _expand_request_cb(void *data EINA_UNUSED, const Eo_Event *event);
-static Eina_Bool _contract_request_cb(void *data EINA_UNUSED, const Eo_Event *event);
-static Eina_Bool _contracted_cb(void *data EINA_UNUSED, const Eo_Event *event);
+static void _expand_request_cb(void *data EINA_UNUSED, const Eo_Event *event);
+static void _contract_request_cb(void *data EINA_UNUSED, const Eo_Event *event);
+static void _contracted_cb(void *data EINA_UNUSED, const Eo_Event *event);
 
 /* --- Genlist Callbacks --- */
 EO_CALLBACKS_ARRAY_DEFINE(model_callbacks,
@@ -241,22 +241,20 @@ _item_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
    return text;
 }
 
-static Eina_Bool
+static void
 _expand_request_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Elm_Object_Item *item = event->info;
    View_List_ItemData *idata = elm_object_item_data_get(item);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(idata, EINA_TRUE);
+   EINA_SAFETY_ON_NULL_RETURN(idata);
 
    eo_event_callback_array_add(idata->model, model_callbacks(), idata);
 
    _efl_model_load_children(idata);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _contract_request_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Elm_Object_Item *item = event->info;
@@ -264,15 +262,13 @@ _contract_request_cb(void *data EINA_UNUSED, const Eo_Event *event)
 
    eo_event_callback_array_del(idata->model, model_callbacks(), idata);
    elm_genlist_item_expanded_set(item, EINA_FALSE);
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _contracted_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Elm_Object_Item *glit = event->info;
    elm_genlist_item_subitems_clear(glit);
-   return EINA_TRUE;
 }
 
 static void
@@ -289,19 +285,17 @@ _genlist_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_
 }
 
 /* --- Efl_Model Callbacks --- */
-static Eina_Bool
+static void
 _efl_model_properties_change_cb(void *data, const Eo_Event *event)
 {
    View_List_ItemData *idata = data;
    Efl_Model_Property_Event *evt = event->info;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(idata, EINA_TRUE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(evt, EINA_TRUE);
+   EINA_SAFETY_ON_NULL_RETURN(idata);
+   EINA_SAFETY_ON_NULL_RETURN(evt);
 
    if (idata->item)
      elm_genlist_item_update(idata->item);
-
-   return EINA_TRUE;
 }
 
 static void
@@ -343,19 +337,17 @@ _efl_model_load_children(View_List_ItemData *pdata)
    eina_promise_then(promise, &_efl_model_load_children_then, NULL, pdata);
 }
 
-static Eina_Bool
+static void
 _efl_model_children_count_change_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    View_List_ItemData *idata = data;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(idata, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(idata->priv, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(idata->priv->genlist, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN(idata);
+   EINA_SAFETY_ON_NULL_RETURN(idata->priv);
+   EINA_SAFETY_ON_NULL_RETURN(idata->priv->genlist);
 
    elm_genlist_item_subitems_clear(idata->item);
 
    _efl_model_load_children(idata);
-
-   return EINA_TRUE;
 }
 
 static void

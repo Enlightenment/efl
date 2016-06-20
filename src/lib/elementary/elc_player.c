@@ -60,20 +60,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    { NULL, NULL }
 };
 
-static Eina_Bool
-_update_frame(void *data, const Eo_Event *event);
-static Eina_Bool
-_update_slider(void *data, const Eo_Event *event);
-static Eina_Bool
-_play_started(void *data, const Eo_Event *event);
-static Eina_Bool
-_play_finished(void *data, const Eo_Event *event);
-static Eina_Bool
-_update_position(void *data, const Eo_Event *event);
-static Eina_Bool
-_drag_start(void *data, const Eo_Event *event);
-static Eina_Bool
-_drag_stop(void *data, const Eo_Event *event);
+static void _update_frame(void *data, const Eo_Event *event);
+static void _update_slider(void *data, const Eo_Event *event);
+static void _play_started(void *data, const Eo_Event *event);
+static void _play_finished(void *data, const Eo_Event *event);
+static void _update_position(void *data, const Eo_Event *event);
+static void _drag_start(void *data, const Eo_Event *event);
+static void _drag_stop(void *data, const Eo_Event *event);
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_play(Evas_Object *obj, const char *params);
@@ -244,14 +237,14 @@ _elm_player_elm_layout_sizing_eval(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
    evas_object_size_hint_min_set(obj, w, h);
 }
 
-static Eina_Bool
+static void
 _update_slider(void *data, const Eo_Event *event EINA_UNUSED)
 {
    double pos, length;
    Eina_Bool seekable;
 
    ELM_PLAYER_DATA_GET(data, sd);
-   if (!sd) return EINA_TRUE;
+   if (!sd) return;
 
    seekable = elm_video_is_seekable_get(sd->video);
    length = elm_video_play_length_get(sd->video);
@@ -263,21 +256,17 @@ _update_slider(void *data, const Eo_Event *event EINA_UNUSED)
    if ((elm_slider_value_get(sd->slider) != pos) &&
        (!sd->dragging))
      elm_slider_value_set(sd->slider, pos);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _update_frame(void *data, const Eo_Event *event)
 {
    ELM_PLAYER_DATA_GET(data, sd);
-   if (!sd) return EINA_TRUE;
+   if (!sd) return;
    _update_slider(data, event);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _update_position(void *data, const Eo_Event *event EINA_UNUSED)
 {
    double pos;
@@ -286,29 +275,23 @@ _update_position(void *data, const Eo_Event *event EINA_UNUSED)
    pos = elm_slider_value_get(sd->slider);
    if (pos != elm_video_play_position_get(sd->video))
      elm_video_play_position_set(sd->video, pos);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _drag_start(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
    sd->dragging = EINA_TRUE;
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _drag_stop(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
    sd->dragging = EINA_FALSE;
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _update_volume(void *data, const Eo_Event *event EINA_UNUSED)
 {
    double vol;
@@ -317,11 +300,9 @@ _update_volume(void *data, const Eo_Event *event EINA_UNUSED)
    vol = elm_slider_value_get(sd->vslider) / 100.0;
    if (vol != elm_video_audio_level_get(sd->video))
      elm_video_audio_level_set(sd->video, vol);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _forward(void *data, const Eo_Event *event EINA_UNUSED)
 {
    double pos, length;
@@ -335,29 +316,23 @@ _forward(void *data, const Eo_Event *event EINA_UNUSED)
 
    elm_layout_signal_emit(data, "elm,button,forward", "elm");
    eo_event_callback_call(data, ELM_PLAYER_EVENT_FORWARD_CLICKED, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _info(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,info", "elm");
    eo_event_callback_call(data, ELM_PLAYER_EVENT_INFO_CLICKED, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _next(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,next", "elm");
    eo_event_callback_call(data, ELM_PLAYER_EVENT_NEXT_CLICKED, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _pause(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
@@ -365,11 +340,9 @@ _pause(void *data, const Eo_Event *event EINA_UNUSED)
    elm_layout_signal_emit(data, "elm,player,pause", "elm");
    elm_video_pause(sd->video);
    eo_event_callback_call(data, ELM_PLAYER_EVENT_PAUSE_CLICKED, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _play(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
@@ -377,20 +350,16 @@ _play(void *data, const Eo_Event *event EINA_UNUSED)
    elm_layout_signal_emit(data, "elm,player,play", "elm");
    elm_video_play(sd->video);
    eo_event_callback_call(data, ELM_PLAYER_EVENT_PLAY_CLICKED, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _prev(void *data, const Eo_Event *event EINA_UNUSED)
 {
    eo_event_callback_call(data, ELM_PLAYER_EVENT_PREV_CLICKED, NULL);
    elm_layout_signal_emit(data, "elm,button,prev", "elm");
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _rewind(void *data, const Eo_Event *event EINA_UNUSED)
 {
    double pos;
@@ -403,20 +372,16 @@ _rewind(void *data, const Eo_Event *event EINA_UNUSED)
 
    elm_layout_signal_emit(data, "elm,button,rewind", "elm");
    eo_event_callback_call(data, ELM_PLAYER_EVENT_REWIND_CLICKED, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _stop(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,stop", "elm");
    eo_event_callback_call(data, ELM_PLAYER_EVENT_QUALITY_CLICKED, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _eject(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
@@ -424,8 +389,6 @@ _eject(void *data, const Eo_Event *event EINA_UNUSED)
    elm_layout_signal_emit(data, "elm,button,eject", "elm");
    emotion_object_eject(elm_video_emotion_get(sd->video));
    eo_event_callback_call(data, ELM_PLAYER_EVENT_EJECT_CLICKED, NULL);
-
-   return EINA_TRUE;
 }
 
 static void
@@ -445,40 +408,32 @@ _mute_toggle(Evas_Object *obj)
      }
 }
 
-static Eina_Bool
+static void
 _volume(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,volume", "elm");
    _mute_toggle(data);
    eo_event_callback_call(data, ELM_PLAYER_EVENT_VOLUME_CLICKED, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _mute(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,mute", "elm");
    _mute_toggle(data);
    eo_event_callback_call(data, ELM_PLAYER_EVENT_MUTE_CLICKED, NULL);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _play_started(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,player,play", "elm");
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _play_finished(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,player,pause", "elm");
-
-   return EINA_TRUE;
 }
 
 static void

@@ -32,7 +32,7 @@ EO_DEFINE_CLASS(_test_ui_grid_custom_engine_class_get, &custom_engine_class_desc
 
 #define CUSTOM_ENGINE_CLASS _test_ui_grid_custom_engine_class_get()
 
-static Eina_Bool
+static void
 weights_cb(void *data, const Eo_Event *event)
 {
    Weight_Mode mode = elm_radio_state_value_get(event->object);
@@ -75,45 +75,39 @@ weights_cb(void *data, const Eo_Event *event)
         efl_pack_layout_engine_set(grid, CUSTOM_ENGINE_CLASS, NULL);
         break;
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 user_min_slider_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    for (int i = 0; i < 6; i++)
      efl_gfx_size_hint_min_set(objects[i], val, val);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 padding_slider_cb(void *data, const Eo_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    efl_pack_padding_set(data, val, val, EINA_TRUE);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 margin_slider_cb(void *data, const Eo_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    efl_gfx_size_hint_margin_set(data, val, val, val, val);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 btnmargins_slider_cb(void *data, const Eo_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    for (int i = 1; i < 7; i++)
      efl_gfx_size_hint_margin_set(data, val, val, val, val);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 layout_updated_cb(void *data, const Eo_Event *event)
 {
    Elm_Label *o = data;
@@ -124,11 +118,9 @@ layout_updated_cb(void *data, const Eo_Event *event)
    count = efl_content_count(event->object);
    sprintf(buf, "%d items (%dx%d)", count, cols, rows);
    elm_object_text_set(o, buf);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 child_evt_cb(void *data, const Eo_Event *event)
 {
    Elm_Label *o = data;
@@ -142,8 +134,6 @@ child_evt_cb(void *data, const Eo_Event *event)
    else
      sprintf(buf, "unpack %d,%d %dx%d", col, row, colspan, rowspan);
    elm_object_text_set(o, buf);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -498,14 +488,13 @@ btn_text(const char *str)
    return buf;
 }
 
-static Eina_Bool
+static void
 remove_cb(void *data EINA_UNUSED, const Eo_Event *ev)
 {
    eo_del(ev->object);
-   return 1;
 }
 
-static Eina_Bool
+static void
 append_cb(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    Eo *grid = data;
@@ -515,15 +504,13 @@ append_cb(void *data, const Eo_Event *ev EINA_UNUSED)
    elm_object_tooltip_text_set(o, "Click to unpack");
    efl_pack_end(grid, o);
    efl_gfx_visible_set(o, 1);
-   return 1;
 }
 
-static Eina_Bool
+static void
 clear_cb(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    Eo *grid = data;
    efl_pack_clear(grid);
-   return 1;
 }
 
 void

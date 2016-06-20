@@ -97,11 +97,11 @@ _elm_scrollable_is(const Evas_Object *obj)
       eo_isa(obj, ELM_INTERFACE_SCROLLABLE_MIXIN);
 }
 
-static Eina_Bool
+static void
 _on_sub_obj_del(void *data, const Eo_Event *event);
-static Eina_Bool
+static void
 _on_sub_obj_hide(void *data, const Eo_Event *event);
-static Eina_Bool
+static void
 _propagate_event(void *data, const Eo_Event *event);
 
 EO_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
@@ -244,14 +244,13 @@ _parents_unfocus(Evas_Object *obj)
      }
 }
 
-static Eina_Bool
+static void
 _on_sub_obj_hide(void *data EINA_UNUSED, const Eo_Event *event)
 {
    elm_widget_focus_hide_handle(event->object);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _on_sub_obj_del(void *data, const Eo_Event *event)
 {
    ELM_WIDGET_DATA_GET(data, sd);
@@ -274,8 +273,6 @@ _on_sub_obj_del(void *data, const Eo_Event *event)
         if (!elm_widget_sub_object_del(sd->obj, event->object))
           ERR("failed to remove sub object %p from %p\n", event->object, sd->obj);
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
@@ -708,11 +705,11 @@ _propagate_y_drag_lock(Evas_Object *obj,
      }
 }
 
-static Eina_Bool
+static void
 _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Eo *obj = event->object;
-   INTERNAL_ENTRY EO_CALLBACK_CONTINUE;
+   INTERNAL_ENTRY;
    Evas_Callback_Type type;
    Evas_Event_Flags *event_flags;
    union {
@@ -726,7 +723,7 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
    if (event->desc == EFL_EVENT_KEY_DOWN)
      {
         Efl_Event_Key_Data *ev = eo_data_scope_get(event->info, EFL_EVENT_KEY_CLASS);
-        if (!ev) return EO_CALLBACK_CONTINUE;
+        if (!ev) return;
         event_info.down.timestamp = ev->timestamp;
         event_info.down.keyname = (char*) ev->keyname;
         event_info.down.key = ev->key;
@@ -744,7 +741,7 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
    else if (event->desc == EFL_EVENT_KEY_UP)
      {
         Efl_Event_Key_Data *ev = eo_data_scope_get(event->info, EFL_EVENT_KEY_CLASS);
-        if (!ev) return EO_CALLBACK_CONTINUE;
+        if (!ev) return;
         event_info.up.timestamp = ev->timestamp;
         event_info.up.keyname = (char*) ev->keyname;
         event_info.up.key = ev->key;
@@ -762,7 +759,7 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
    else if (event->desc == EFL_EVENT_POINTER_WHEEL)
      {
         Efl_Event_Pointer_Data *ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
-        if (!ev) return EO_CALLBACK_CONTINUE;
+        if (!ev) return;
         event_info.move.buttons = ev->pressed_buttons;
         event_info.move.cur.canvas.x = ev->cur.x;
         event_info.move.cur.canvas.y = ev->cur.y;
@@ -779,11 +776,9 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
         event_flags = &event_info.move.event_flags;
      }
    else
-     return EO_CALLBACK_CONTINUE;
+     return;
 
    elm_widget_event_propagate(obj, type, &event_info, event_flags);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 /**
@@ -4417,15 +4412,14 @@ _track_obj_update(Evas_Object *track, Evas_Object *obj)
    else evas_object_hide(track);
 }
 
-static Eina_Bool
+static void
 _track_obj_view_update(void *data, const Eo_Event *event)
 {
    Elm_Widget_Item_Data *item = data;
    _track_obj_update(item->track_obj, event->object);
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _track_obj_view_del(void *data, const Eo_Event *event);
 
 EO_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
@@ -4435,7 +4429,7 @@ EO_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
                           { EFL_GFX_EVENT_HIDE, _track_obj_view_update },
                           { EVAS_OBJECT_EVENT_DEL, _track_obj_view_del });
 
-static Eina_Bool
+static void
 _track_obj_view_del(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Widget_Item_Data *item = data;
@@ -4447,8 +4441,6 @@ _track_obj_view_del(void *data, const Eo_Event *event EINA_UNUSED)
                                   _track_obj_del);
    evas_object_del(item->track_obj);
    item->track_obj = NULL;
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -4498,14 +4490,13 @@ _elm_widget_item_signal_callback_list_get(Elm_Widget_Item_Data *item, Eina_List 
 
 #define ERR_NOT_SUPPORTED(item, method)  ERR("%s does not support %s API.", elm_widget_type_get(item->widget), method);
 
-static Eina_Bool
+static void
 _eo_del_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Elm_Widget_Item_Data *item = eo_data_scope_get(event->object, ELM_WIDGET_ITEM_CLASS);
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_TRUE);
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    if (item->del_func)
       item->del_func((void *) WIDGET_ITEM_DATA_GET(event->object), item->widget, item->eo_obj);
-   return EINA_TRUE;
 }
 
 /**

@@ -243,24 +243,20 @@ _evas_object_table_option_del(Evas_Object *o)
    return evas_object_data_del(o, EVAS_OBJECT_TABLE_OPTION_KEY);
 }
 
-static Eina_Bool
+static void
 _on_child_del(void *data, const Eo_Event *event)
 {
    Evas_Object *table = data;
    evas_object_table_unpack(table, event->object);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _on_child_hints_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *table = data;
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(table, priv, EO_CALLBACK_CONTINUE);
+   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(table, priv);
    _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(table);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(evas_object_table_callbacks,

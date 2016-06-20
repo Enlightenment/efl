@@ -80,7 +80,7 @@ _resize_movie(struct _emotion_plugin *_plugin)
    emotion_object_audio_mute_set(_plugin->video, 1);
 }
 
-static Eina_Bool
+static void
 _frame_decode_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    struct _emotion_plugin *_plugin = data;
@@ -90,18 +90,16 @@ _frame_decode_cb(void *data, const Eo_Event *event EINA_UNUSED)
    else
      _frame_grab_single(data);
 
-   return EINA_TRUE;
+   return;
  }
 
-static Eina_Bool
+static void
 _frame_resized_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _resize_movie(data);
-
-   return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _video_stopped_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    struct _emotion_plugin *_plugin = data;
@@ -111,8 +109,6 @@ _video_stopped_cb(void *data, const Eo_Event *event EINA_UNUSED)
    _plugin->ptotal = 0;
    _plugin->first = EINA_FALSE;
    _plugin->total_time = _plugin->tmp_time;
-
-   return EINA_TRUE;
 }
 
 static void

@@ -24,15 +24,13 @@
  * here (callbacks and canvas private data).
  */
 
-static Eina_Bool
+static void
 _del_cb(void *data, const Eo_Event *ev)
 {
    Evas_Public_Data *e = data;
 
    // can not be done in std destructor
    e->devices = eina_list_remove(e->devices, ev->object);
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 EAPI Evas_Device *

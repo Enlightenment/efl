@@ -63,12 +63,11 @@ struct _Evas_Object_Smart_Iterator
    Evas_Object *parent;
 };
 
-static Eina_Bool
+static void
 _eo_evas_smart_cb(void *data, const Eo_Event *event)
 {
    _eo_evas_smart_cb_info *info = data;
    if (info->func) info->func(info->data, event->object, event->info);
-   return EINA_TRUE;
 }
 
 /* private methods for smart objects */

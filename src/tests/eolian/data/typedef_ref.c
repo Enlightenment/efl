@@ -19,7 +19,7 @@ typedef Evas_Coord Evas_Coord2;
 
 typedef Evas_Coord2 Evas_Coord3;
 
-typedef Eina_Bool (*Event)(void *data, const Eo_Event *event);
+typedef void (*Event)(void *data, const Eo_Event *event);
 
 typedef enum
 {

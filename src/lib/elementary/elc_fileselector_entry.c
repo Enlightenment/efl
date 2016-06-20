@@ -46,12 +46,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
 #undef ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS
 
 #define SIG_FWD(name, event)                                                      \
-  static Eina_Bool                                                               \
+  static void                                                               \
   _##name##_fwd(void *data, const Eo_Event *ev EINA_UNUSED)                                          \
   {                                                                         \
      eo_event_callback_call(data, event, ev->info);          \
-                                                                      \
-     return EINA_TRUE;                                                \
   }
 SIG_FWD(CHANGED, ELM_FILESELECTOR_ENTRY_EVENT_CHANGED)
 SIG_FWD(PRESS, ELM_FILESELECTOR_ENTRY_EVENT_PRESS)
@@ -84,13 +82,13 @@ _file_chosen_path_then(void *data, void *v)
    free(s);
 }
 
-static Eina_Bool
+static void
 _FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
 {
    Efl_Model *model = event->info;
    Eina_Promise *promise = NULL;
 
-   if (!model) return EINA_TRUE;
+   if (!model) return;
 
    promise = efl_model_property_get(model, "path");
    eina_promise_then(promise, _file_chosen_path_then, NULL, data);
@@ -98,8 +96,6 @@ _FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
    // EVENTS: should not call legacy
    //eo_event_callback_call
    //  (data, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, event->info);
-
-   return EINA_TRUE;
 }
 
 // EVENTS: should not need this function
@@ -114,7 +110,7 @@ _FILE_CHOSEN_fwd_path(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
    _FILE_CHOSEN_fwd(data, &e);
 }
 
-static Eina_Bool
+static void
 _ACTIVATED_fwd(void *data, const Eo_Event *event)
 {
    const char *file;
@@ -138,8 +134,6 @@ _ACTIVATED_fwd(void *data, const Eo_Event *event)
 
    eo_event_callback_call
      (data, ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event->info);
-
-   return EINA_TRUE;
 }
 
 static void

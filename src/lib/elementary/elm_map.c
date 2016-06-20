@@ -1145,7 +1145,7 @@ _zoom_do(Elm_Map_Data *sd,
    evas_object_smart_changed(sd->pan_obj);
 }
 
-static Eina_Bool
+static void
 _zoom_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_MAP_DATA_GET(data, sd);
@@ -1162,10 +1162,9 @@ _zoom_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
         sd->ani.zoom_cnt--;
         _zoom_do(sd, sd->ani.zoom);
      }
-   return EO_CALLBACK_CONTINUE;
 }
 
-static Eina_Bool
+static void
 _zoom_bring_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_MAP_DATA_GET(data, sd);
@@ -1199,8 +1198,6 @@ _zoom_bring_anim_cb(void *data, const Eo_Event *event EINA_UNUSED)
              sd->ani.region_cnt--;
           }
      }
-
-   return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
