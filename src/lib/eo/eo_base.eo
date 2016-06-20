@@ -347,8 +347,8 @@ abstract Eo.Base ()
             @in desc: const(Eo.Event.Description)*; [[The description of the event to call]]
             @in event_info: void_ptr; [[Extra event info to pass to the callbacks]]
          }
-         return: bool; [[$true if one of the callbacks aborted the call,
-                         $false otherwise
+         return: bool; [[$false if one of the callbacks aborted the call,
+                         $true otherwise
                        ]]
       }
       event_callback_forwarder_add {
