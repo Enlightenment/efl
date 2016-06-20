@@ -38,6 +38,7 @@ struct _Efl_Model_Children_Event
 typedef struct _Efl_Model_Children_Event Efl_Model_Children_Event;
 
 #include "interfaces/efl_model.eo.h"
+#include "interfaces/efl_model_composite_boolean.eo.h"
 
 EAPI int efl_model_init(void);
 

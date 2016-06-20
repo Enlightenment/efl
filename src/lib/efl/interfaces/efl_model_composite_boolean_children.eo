@@ -1,0 +1,12 @@
+class Efl.Model.Composite.Boolean.Children (Eo.Base, Efl.Model)
+{
+   implements {
+      Efl.Model.properties.get;
+      Efl.Model.property_get;
+      Efl.Model.property_set;
+      Efl.Model.children_slice_get;
+      Efl.Model.children_count_get;
+      Efl.Model.child_add;
+      Efl.Model.child_del;
+   }
+}
