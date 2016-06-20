@@ -351,6 +351,15 @@ abstract Eo.Base ()
                          $true otherwise
                        ]]
       }
+      event_callback_stop {
+         [[Stop the current callback call.
+
+           This stops the current callback call. Any other callbacks for the
+           current event will not be called. This is useful when you want to
+           filter out events. You just add higher priority events and call this
+           on certain conditions to block a certain event.
+         ]]
+      }
       event_callback_forwarder_add {
          [[Add an event callback forwarder for an event and an object.]]
          params {

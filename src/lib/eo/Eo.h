@@ -1048,20 +1048,6 @@ EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const
 #define EO_CALLBACK_PRIORITY_AFTER 100
 
 /**
- * @def EO_CALLBACK_STOP
- * Stop calling callbacks for the even of which the callback was called for.
- * @see EO_CALLBACK_CONTINUE
- */
-#define EO_CALLBACK_STOP EINA_FALSE
-
-/**
- * @def EO_CALLBACK_CONTINUE
- * Continue calling callbacks for the even of which the callback was called for.
- * @see EO_CALLBACK_STOP
- */
-#define EO_CALLBACK_CONTINUE EINA_TRUE
-
-/**
  * Helper for creating global callback arrays.
  * The problem is on windows where you can't declare a static array with
  * external symbols in it, because the addresses are only known at runtime.

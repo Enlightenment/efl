@@ -35,6 +35,7 @@ typedef struct
    unsigned short             walking_list;
    unsigned short             event_freeze_count;
    Eina_Bool                  deletions_waiting : 1;
+   Eina_Bool                  callback_stopped : 1;
 } Eo_Base_Data;
 
 typedef enum {
@@ -1042,6 +1043,7 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
             const Eo_Event_Description *desc,
             void *event_info)
 {
+   Eina_Bool callback_already_stopped = pd->callback_stopped;
    Eina_Bool ret = EINA_TRUE;
    Eo_Callback_Description *cb;
    Eo_Current_Callback_Description *lookup = NULL;
@@ -1100,8 +1102,9 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
 
                        // Handle nested restart of walking list
                        if (lookup) lookup->current = cb->next;
+                       it->func((void *) cb->func_data, &ev);
                        /* Abort callback calling if the func says so. */
-                       if (!it->func((void *) cb->func_data, &ev))
+                       if (pd->callback_stopped)
                          {
                             ret = EINA_FALSE;
                             goto end;
@@ -1122,8 +1125,9 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
 
                   // Handle nested restart of walking list
                   if (lookup) lookup->current = cb->next;
+                  cb->items.item.func((void *) cb->func_data, &ev);
                   /* Abort callback calling if the func says so. */
-                  if (!cb->items.item.func((void *) cb->func_data, &ev))
+                  if (pd->callback_stopped)
                     {
                        ret = EINA_FALSE;
                        goto end;
@@ -1147,10 +1151,18 @@ end:
    pd->walking_list--;
    _eo_callbacks_clear(pd);
 
+   pd->callback_stopped = callback_already_stopped;
+
    return ret;
 }
 
-static Eina_Bool
+EOLIAN static void
+_eo_base_event_callback_stop(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
+{
+   pd->callback_stopped = EINA_TRUE;
+}
+
+static void
 _eo_event_forwarder_callback(void *data, const Eo_Event *event)
 {
    Eo *new_obj = (Eo *) data;
@@ -1158,7 +1170,10 @@ _eo_event_forwarder_callback(void *data, const Eo_Event *event)
 
    ret = eo_event_callback_call(new_obj, event->desc, event->info);
 
-   return ret;
+   if (!ret)
+     {
+        eo_event_callback_stop(event->object);
+     }
 }
 
 /* FIXME: Change default priority? Maybe call later? */
