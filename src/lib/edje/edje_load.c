@@ -2473,7 +2473,10 @@ _create_vg_node(Svg_Node *node, Efl_VG *parent)
            break;
         case SVG_NODE_ELLIPSE:
            vg = evas_vg_shape_add(parent);
-           evas_vg_shape_shape_append_circle(vg, node->node.ellipse.cx, node->node.ellipse.cy, node->node.ellipse.rx);
+           evas_vg_shape_shape_append_arc(vg, node->node.ellipse.cx - node->node.ellipse.rx,
+                                          node->node.ellipse.cy - node->node.ellipse.ry,
+                                          2*node->node.ellipse.rx, 2*node->node.ellipse.ry, 0, 360);
+           evas_vg_shape_shape_append_close(vg);
            break;
         case SVG_NODE_CIRCLE:
            vg = evas_vg_shape_add(parent);
