@@ -142,6 +142,17 @@ eina_array_iterator_free(Eina_Iterator_Array *it)
    MAGIC_FREE(it);
 }
 
+static Eina_Iterator*
+eina_array_iterator_clone(Eina_Iterator_Array *it)
+{
+   Eina_Iterator_Array* new;
+   EINA_MAGIC_CHECK_ARRAY_ITERATOR(it, NULL);
+
+   new = (void*)eina_array_iterator_new(it->array);
+   new->index = it->index;
+   return (void*)new;
+}
+
 static Eina_Bool
 eina_array_accessor_get_at(Eina_Accessor_Array *it,
                            unsigned int idx,
@@ -410,6 +421,7 @@ eina_array_iterator_new(const Eina_Array *array)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          eina_array_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_array_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(eina_array_iterator_clone);
 
    return &it->iterator;
 }

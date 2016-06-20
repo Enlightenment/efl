@@ -164,6 +164,15 @@ _eina_xattr_ls_iterator_free(Eina_Xattr_Iterator *it)
    free(it->attr);
    free(it);
 }
+
+static Eina_Iterator*
+_eina_xattr_ls_iterator_clone(Eina_Xattr_Iterator *it)
+{
+   Eina_Xattr_Iterator* new;
+   new = (void*)eina_xattr_value_fd_ls(it->fd);
+   new->offset = it->offset;
+   return (void*)new;
+}
 #endif
 
 /**
@@ -216,6 +225,7 @@ eina_xattr_value_fd_ls(int fd)
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_xattr_value_ls_fd_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_xattr_ls_iterator_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_xattr_ls_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(_eina_xattr_ls_iterator_clone);
 
    return &it->iterator;
 #else
@@ -252,6 +262,7 @@ eina_xattr_fd_ls(int fd)
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_xattr_ls_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_xattr_ls_iterator_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_xattr_ls_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(_eina_xattr_ls_iterator_clone);
 
    return &it->iterator;
 #else
@@ -288,6 +299,7 @@ eina_xattr_ls(const char *file)
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_xattr_ls_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_xattr_ls_iterator_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_xattr_ls_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(_eina_xattr_ls_iterator_clone);
 
    return &it->iterator;
 #else

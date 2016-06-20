@@ -752,6 +752,17 @@ _eina_matrixsparse_iterator_free(Eina_Matrixsparse_Iterator *it)
    free(it);
 }
 
+static Eina_Iterator*
+_eina_matrixsparse_iterator_clone(Eina_Matrixsparse_Iterator *it)
+{
+   Eina_Matrixsparse_Iterator* new;
+   EINA_MAGIC_CHECK_MATRIXSPARSE_ITERATOR(it, NULL);
+   new = (void*)eina_matrixsparse_iterator_new(it->m);
+   new->ref.row = it->ref.row;
+   new->ref.col = it->ref.col;
+   return (void*)new;
+}
+
 static Eina_Bool
 _eina_matrixsparse_iterator_complete_next(
    Eina_Matrixsparse_Iterator_Complete *it,
@@ -816,6 +827,25 @@ _eina_matrixsparse_iterator_complete_free(
    EINA_MAGIC_SET(it,            EINA_MAGIC_NONE);
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_NONE);
    free(it);
+}
+
+static Eina_Iterator*
+_eina_matrixsparse_iterator_complete_clone(
+   Eina_Matrixsparse_Iterator_Complete *it)
+{
+   Eina_Matrixsparse_Iterator_Complete* new;
+   EINA_MAGIC_CHECK_MATRIXSPARSE_ITERATOR(it, NULL);
+
+   new = (void*)eina_matrixsparse_iterator_complete_new(it->m);
+   new->ref.row = it->ref.row;
+   new->ref.col = it->ref.col;
+
+   new->idx.row = it->idx.row;
+   new->idx.col = it->idx.col;
+
+   new->dummy.row = it->dummy.row;
+   new->dummy.col = it->dummy.col;
+   return (void*)new;
 }
 
 
@@ -1372,6 +1402,7 @@ eina_matrixsparse_iterator_new(const Eina_Matrixsparse *m)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_matrixsparse_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_matrixsparse_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(_eina_matrixsparse_iterator_clone);
    return &it->iterator;
 }
 
@@ -1409,5 +1440,7 @@ eina_matrixsparse_iterator_complete_new(const Eina_Matrixsparse *m)
          _eina_matrixsparse_iterator_complete_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(
          _eina_matrixsparse_iterator_complete_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(
+         _eina_matrixsparse_iterator_complete_clone);
    return &it->iterator;
 }

@@ -324,6 +324,28 @@ eina_list_iterator_free(Eina_Iterator_List *it)
    MAGIC_FREE(it);
 }
 
+static Eina_Iterator*
+eina_list_iterator_clone(Eina_Iterator_List *it)
+{
+   Eina_Iterator_List* new;
+   EINA_MAGIC_CHECK_LIST_ITERATOR(it, NULL);
+
+   new = (void*)eina_list_iterator_new(it->head);
+   new->current = it->current;
+   return (void*)new;
+}
+
+static Eina_Iterator*
+eina_list_iterator_reversed_clone(Eina_Iterator_List *it)
+{
+   Eina_Iterator_List* new;
+   EINA_MAGIC_CHECK_LIST_ITERATOR(it, NULL);
+
+   new = (void*)eina_list_iterator_reversed_new(it->head);
+   new->current = it->current;
+   return (void*)new;
+}
+
 static Eina_Bool
 eina_list_accessor_get_at(Eina_Accessor_List *it, unsigned int idx, void **data)
 {
@@ -1534,6 +1556,7 @@ eina_list_iterator_new(const Eina_List *list)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
       eina_list_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_list_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(eina_list_iterator_clone);
 
    return &it->iterator;
 }
@@ -1557,6 +1580,7 @@ eina_list_iterator_reversed_new(const Eina_List *list)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
       eina_list_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_list_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(eina_list_iterator_reversed_clone);
 
    return &it->iterator;
 }

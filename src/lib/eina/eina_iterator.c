@@ -164,6 +164,18 @@ eina_iterator_lock(Eina_Iterator *iterator)
    return EINA_TRUE;
 }
 
+EAPI Eina_Iterator*
+eina_iterator_clone(Eina_Iterator *iterator)
+{
+   EINA_MAGIC_CHECK_ITERATOR(iterator);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iterator, NULL);
+
+   if (iterator->version >= 2 && iterator->clone)
+     return iterator->clone(iterator);
+   else
+     return NULL;
+}
+
 EAPI Eina_Bool
 eina_iterator_unlock(Eina_Iterator *iterator)
 {
@@ -208,6 +220,14 @@ eina_carray_iterator_free(Eina_Iterator_CArray *it)
   free(it);
 }
 
+static Eina_Iterator*
+eina_carray_iterator_clone(Eina_Iterator_CArray *it)
+{
+  Eina_Iterator_CArray* new = eina_carray_iterator_new((void**)it->array);
+  new->current = it->current;
+  return new;
+}
+
 EAPI Eina_Iterator*
 eina_carray_iterator_new(void** array)
 {
@@ -225,6 +245,7 @@ eina_carray_iterator_new(void** array)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
       eina_carray_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(eina_carray_iterator_free);
+   it->iterator.clone = FUNC_ITERATOR_CLONE(eina_carray_iterator_clone);
 
    return &it->iterator;
 }
