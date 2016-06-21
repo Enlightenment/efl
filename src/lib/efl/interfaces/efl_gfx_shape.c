@@ -521,12 +521,23 @@ _efl_gfx_shape_append_scubic_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    double current_ctrl_x = 0, current_ctrl_y = 0;
 
    current_x = pd->current.x;
-   current_y = pd->current.x;
+   current_y = pd->current.y;
    current_ctrl_x = pd->current_ctrl.x;
    current_ctrl_y = pd->current_ctrl.y;
-
-   ctrl_x0 = 2 * current_x - current_ctrl_x;
-   ctrl_y0 = 2 * current_y - current_ctrl_y;
+   // if previous command is cubic then use reflection point of current control point
+   // as the first control point
+   if ((pd->commands_count > 1) && 
+       (pd->commands[pd->commands_count-2] == EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO))
+     {
+        ctrl_x0 = 2 * current_x - current_ctrl_x;
+        ctrl_y0 = 2 * current_y - current_ctrl_y;
+     }
+   else
+     {
+        // use currnt point as the 1st control point
+        ctrl_x0 = current_x;
+        ctrl_y0 = current_y;
+     }
 
    _efl_gfx_shape_append_cubic_to(obj, pd, ctrl_x0, ctrl_y0,
                                   ctrl_x, ctrl_y, x, y);
@@ -563,7 +574,7 @@ _efl_gfx_shape_append_squadratic_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    double current_ctrl_x = 0, current_ctrl_y = 0;
 
    current_x = pd->current.x;
-   current_y = pd->current.x;
+   current_y = pd->current.y;
    current_ctrl_x = pd->current_ctrl.x;
    current_ctrl_y = pd->current_ctrl.y;
 
@@ -1208,7 +1219,6 @@ _efl_gfx_path_parse_pair_to(const char *content, char **end,
              x += *current_x;
              y += *current_y;
           }
-
         func(obj, pd, x, y);
         content = *end;
 
@@ -1355,8 +1365,9 @@ _efl_gfx_path_parse_quad_to(const char *content, char **end,
           {
              x += *current_x;
              y += *current_y;
+             ctrl_x0 += *current_x;
+             ctrl_y0 += *current_y;
           }
-
         func(obj, pd, x, y, ctrl_x0, ctrl_y0);
         content = *end;
 
