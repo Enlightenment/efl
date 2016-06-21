@@ -62,8 +62,6 @@
  * @}
  */
 
-#include "canvas/evas_common_interface.eo.h"
-
 #include "canvas/efl_canvas_object.eo.h"
 #endif /* EFL_EO_API_SUPPORT */
 

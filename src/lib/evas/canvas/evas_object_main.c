@@ -151,16 +151,18 @@ EOLIAN static Eo *
 _efl_canvas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Eo *parent = NULL;
+   Evas *evas;
 
    eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
    efl_canvas_object_type_set(eo_obj, MY_CLASS_NAME);
    eo_manual_free_set(eo_obj, EINA_TRUE);
 
    parent = eo_parent_get(eo_obj);
+   evas = evas_object_evas_get(parent);
 
-   if (!obj || !_init_cow() || !eo_isa(parent, EVAS_COMMON_INTERFACE_INTERFACE))
+   if (!obj || !_init_cow() || !evas)
      {
-        ERR("Failed");
+        ERR("Failed to create a canvas object (evas: %p)", evas);
         return NULL;
      }
 
@@ -173,7 +175,7 @@ _efl_canvas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *o
    obj->data_3d = eina_cow_alloc(evas_object_3d_cow);
    obj->mask = eina_cow_alloc(evas_object_mask_cow);
 
-   evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
+   evas_object_inject(eo_obj, obj, evas);
 
    eo_event_callback_array_add(eo_obj, event_catcher_watch(), obj);
 
@@ -1912,11 +1914,15 @@ _efl_canvas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *
      }
 }
 
-EOLIAN static Evas *
-_efl_canvas_object_evas_common_interface_evas_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+EOLIAN static Eo *
+_efl_canvas_object_eo_base_provider_find(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const Eo_Class *klass)
 {
-   if ((obj->delete_me) || (!obj->layer)) return NULL;
-   return obj->layer->evas->evas;
+   if (klass == EVAS_CANVAS_CLASS)
+     {
+        if ((obj->delete_me) || (!obj->layer)) return NULL;
+        return obj->layer->evas->evas;
+     }
+   return eo_provider_find(eo_super(eo_obj, MY_CLASS), klass);
 }
 
 EOLIAN Evas_Object*
@@ -2166,6 +2172,7 @@ _efl_canvas_object_legacy_ctor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    obj->legacy = EINA_TRUE;
 }
 
+
 /* legacy */
 
 EAPI const char *
@@ -2273,6 +2280,12 @@ EAPI void
 evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y)
 {
    efl_gfx_size_hint_align_get(obj, x, y);
+}
+
+EAPI Evas *
+evas_object_evas_get(const Eo *eo_obj)
+{
+   return eo_provider_find((Eo *) eo_obj, EVAS_CANVAS_CLASS);
 }
 
 #include "canvas/efl_canvas_object.eo.c"

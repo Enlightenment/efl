@@ -366,7 +366,7 @@ START_TEST(edje_test_swallows)
    ck_assert_ptr_eq(eo_parent_get(o1), ly);
 
    edje_object_part_unswallow(ly, o1);
-   ck_assert_ptr_eq(eo_parent_get(o1), evas_common_evas_get(o1));
+   ck_assert_ptr_eq(eo_parent_get(o1), evas_object_evas_get(o1));
 
    fail_if(!edje_object_part_swallow(ly, "swallow", o1));
    ck_assert_ptr_eq(eo_parent_get(o1), ly);
@@ -375,7 +375,7 @@ START_TEST(edje_test_swallows)
    fail_if(!edje_object_part_swallow(ly, "swallow", o2));
    ck_assert_ptr_eq(eo_parent_get(o2), ly);
    /* o1 is deleted at this point. */
-   ck_assert_ptr_eq(eo_parent_get(o1), evas_common_evas_get(o1));
+   ck_assert_ptr_eq(eo_parent_get(o1), evas_object_evas_get(o1));
 
    EDJE_TEST_FREE_EVAS();
 }
@@ -397,7 +397,7 @@ START_TEST(edje_test_swallows_eoapi)
    ck_assert_ptr_eq(eo_parent_get(o1), ly);
 
    efl_content_remove(ly, o1);
-   ck_assert_ptr_eq(eo_parent_get(o1), evas_common_evas_get(o1));
+   ck_assert_ptr_eq(eo_parent_get(o1), evas_object_evas_get(o1));
 
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));
    ck_assert_ptr_eq(eo_parent_get(o1), ly);
@@ -406,7 +406,7 @@ START_TEST(edje_test_swallows_eoapi)
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o2));
    ck_assert_ptr_eq(eo_parent_get(o2), ly);
    /* o1 is deleted at this point. */
-   ck_assert_ptr_eq(eo_parent_get(o1), evas_common_evas_get(o1));
+   ck_assert_ptr_eq(eo_parent_get(o1), evas_object_evas_get(o1));
 
    EDJE_TEST_FREE_EVAS();
 }

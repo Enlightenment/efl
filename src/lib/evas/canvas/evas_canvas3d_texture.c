@@ -54,7 +54,7 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
 {
    /* Code taken from _proxy_subrender() in file evas_object_image.c */
    Eo *evas = NULL;
-   evas = evas_common_evas_get(obj);
+   evas = evas_object_evas_get(obj);
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
    Evas_Canvas3D_Texture_Data *pd = eo_data_scope_get(obj, MY_CLASS);
    Evas_Object_Protected_Data *source;
@@ -165,7 +165,7 @@ _texture_fini(Evas_Canvas3D_Texture *obj)
    void *data = NULL;
    Evas_Canvas3D_Material_Data *material = NULL;
 
-   evas = evas_common_evas_get(obj);
+   evas = evas_object_evas_get(obj);
    Evas_Canvas3D_Texture_Data *pd = eo_data_scope_get(obj, MY_CLASS);
 
    if (pd->engine_data)
@@ -224,7 +224,7 @@ _evas_canvas3d_texture_evas_canvas3d_object_update_notify(Eo *obj, Evas_Canvas3D
    if (pd->source)
      {
         Eo *evas = NULL;
-        evas = evas_common_evas_get(obj);
+        evas = evas_object_evas_get(obj);
         Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
         Evas_Object_Protected_Data *src = eo_data_scope_get(pd->source, EFL_CANVAS_OBJECT_CLASS);
 
@@ -343,7 +343,7 @@ _evas_canvas3d_texture_data_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd,
 {
    Eo *evas = NULL;
    void *image = NULL;
-   evas = evas_common_evas_get(obj);
+   evas = evas_object_evas_get(obj);
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
    if (!pd->engine_data && e->engine.func->texture_new)
@@ -378,7 +378,7 @@ _evas_canvas3d_texture_file_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, const c
    Eo *evas = NULL;
    void *image;
 
-   evas = evas_common_evas_get(obj);
+   evas = evas_object_evas_get(obj);
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
    if (!pd->engine_data && e->engine.func->texture_new)
@@ -406,7 +406,7 @@ EAPI void
 _evas_canvas3d_texture_source_set(Eo *obj , Evas_Canvas3D_Texture_Data *pd, Evas_Object *source)
 {
    Eo *evas = NULL;
-   evas = evas_common_evas_get(obj);
+   evas = evas_object_evas_get(obj);
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
    Evas_Object_Protected_Data *src;
 
@@ -483,7 +483,7 @@ _evas_canvas3d_texture_color_format_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D
 {
    Evas_Colorspace format = -1;
    Eo *evas = NULL;
-   evas = evas_common_evas_get(obj);
+   evas = evas_object_evas_get(obj);
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
    if (e->engine.func->image_colorspace_get &&
@@ -502,7 +502,7 @@ EOLIAN static void
 _evas_canvas3d_texture_size_get(const Eo *obj, Evas_Canvas3D_Texture_Data *pd, int *w, int *h)
 {
    Eo *evas = NULL;
-   evas = evas_common_evas_get(obj);
+   evas = evas_object_evas_get(obj);
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (e->engine.func->texture_size_get)
      {
@@ -515,7 +515,7 @@ EOLIAN static void
 _evas_canvas3d_texture_wrap_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, Evas_Canvas3D_Wrap_Mode s, Evas_Canvas3D_Wrap_Mode t)
 {
    Eo *evas = NULL;
-   evas = evas_common_evas_get(obj);
+   evas = evas_object_evas_get(obj);
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (e->engine.func->texture_wrap_set)
      {
@@ -529,7 +529,7 @@ EOLIAN static void
 _evas_canvas3d_texture_wrap_get(Eo *obj, Evas_Canvas3D_Texture_Data *pd, Evas_Canvas3D_Wrap_Mode *s, Evas_Canvas3D_Wrap_Mode *t)
 {
    Eo *evas = NULL;
-   evas = evas_common_evas_get(obj);
+   evas = evas_object_evas_get(obj);
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (e->engine.func->texture_wrap_set)
      {
@@ -542,7 +542,7 @@ EOLIAN static void
 _evas_canvas3d_texture_filter_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, Evas_Canvas3D_Texture_Filter min, Evas_Canvas3D_Texture_Filter mag)
 {
    Eo *evas = NULL;
-   evas = evas_common_evas_get(obj);
+   evas = evas_object_evas_get(obj);
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (e->engine.func->texture_filter_set)
      {
@@ -556,7 +556,7 @@ EOLIAN static void
 _evas_canvas3d_texture_filter_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd, Evas_Canvas3D_Texture_Filter *min, Evas_Canvas3D_Texture_Filter *mag)
 {
    Eo *evas = NULL;
-   evas = evas_common_evas_get(obj);
+   evas = evas_object_evas_get(obj);
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (e->engine.func->texture_filter_get)
      {

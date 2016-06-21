@@ -17,9 +17,11 @@ _evas_canvas3d_object_eo_base_constructor(Eo *obj, Evas_Canvas3D_Object_Data *pd
 }
 
 EOLIAN static Evas *
- _evas_canvas3d_object_evas_common_interface_evas_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Object_Data *pd)
+ _evas_canvas3d_object_eo_base_provider_find(Eo *obj, Evas_Canvas3D_Object_Data *pd, const Eo_Class *klass)
 {
-   return pd->evas;
+   if (klass == EVAS_CANVAS_CLASS)
+     return pd->evas;
+   return eo_provider_find(eo_super(obj, MY_CLASS), klass);
 }
 
 EOLIAN static void

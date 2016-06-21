@@ -1,7 +1,7 @@
 import eina_types;
 import evas_types;
 
-class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
+class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Efl.File)
 {
    data: Evas_Canvas3D_Mesh_Data;
 

@@ -1,8 +1,7 @@
 import evas_types;
 import efl_event_types;
 
-class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
-                   Efl.Input.Interface)
+class Evas.Canvas (Eo.Base, Efl.Canvas, Efl.Animator, Efl.Input.Interface)
 {
    legacy_prefix: evas;
    data: Evas_Public_Data;
@@ -1195,7 +1194,7 @@ class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
       Eo.Base.destructor;
       Eo.Base.event_thaw;
       Eo.Base.event_freeze;
-      Evas.Common_Interface.evas.get;
+      Eo.Base.provider_find;
    }
    events {
       render,flush,pre @beta;

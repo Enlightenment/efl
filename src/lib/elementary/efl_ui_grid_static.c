@@ -35,7 +35,7 @@ _efl_ui_grid_static_efl_pack_layout_layout_do(Eo_Class *klass EINA_UNUSED,
    gd = eo_data_scope_get(obj, EFL_UI_GRID_CLASS);
    if (!gd->items) return;
 
-   e = evas_common_evas_get(obj);
+   e = evas_object_evas_get(obj);
    eo_event_freeze(e);
 
    efl_gfx_position_get(obj, &x, &y);

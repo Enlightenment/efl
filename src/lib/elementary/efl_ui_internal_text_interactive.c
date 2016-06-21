@@ -1299,7 +1299,7 @@ _efl_ui_internal_text_interactive_eo_base_finalize(Eo *obj, Efl_Ui_Internal_Text
      {
         const char *ctx_id;
         const Ecore_IMF_Context_Info *ctx_info;
-        Evas *evas = evas_common_evas_get(obj);
+        Evas *evas = evas_object_evas_get(obj);
         // _need_imf();
 
         en->commit_cancel = EINA_FALSE;

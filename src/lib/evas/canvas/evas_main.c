@@ -586,10 +586,13 @@ evas_data_argb_unpremul(unsigned int *data, unsigned int len)
    evas_common_convert_argb_unpremul(data, len);
 }
 
-EOLIAN static Evas *
-_evas_canvas_evas_common_interface_evas_get(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED)
+EOLIAN static Eo *
+_evas_canvas_eo_base_provider_find(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED,
+                                   const Eo_Class *klass)
 {
-   return (Evas *)eo_e;
+   if (klass == EVAS_CANVAS_CLASS)
+     return eo_e;
+   return eo_provider_find(eo_super(eo_e, MY_CLASS), klass);
 }
 
 Ector_Surface *

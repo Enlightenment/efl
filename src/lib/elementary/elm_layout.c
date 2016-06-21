@@ -667,7 +667,7 @@ _eo_unparent_helper(Eo *child, Eo *parent)
 {
    if (eo_parent_get(child) == parent)
      {
-        eo_parent_set(child, evas_common_evas_get(parent));
+        eo_parent_set(child, evas_object_evas_get(parent));
      }
 }
 

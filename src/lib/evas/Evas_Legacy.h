@@ -1471,8 +1471,15 @@ EAPI Evas_Render_Op evas_object_render_op_get(const Evas_Object *obj);
  */
 EAPI Eina_Bool evas_object_static_clip_get(const Evas_Object *obj);
 
-#include "canvas/evas_common_interface.eo.legacy.h"
 #include "canvas/efl_canvas_object.eo.legacy.h"
+
+/**
+ * @brief Get the Evas to which this object belongs to
+ *
+ * The object may be an evas object, an elementary object or window, or an
+ * evas 3D / VG object.
+ */
+EAPI Evas *evas_object_evas_get(const Eo *obj);
 
 /**
  * @}

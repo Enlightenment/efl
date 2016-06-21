@@ -1,9 +1,8 @@
 import evas_types;
 import efl_text_types;
 
-abstract Efl.Canvas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx,
-                            Efl.Gfx.Stack, Efl.Animator, Efl.Input.Interface,
-                            Efl.Gfx.Size.Hint)
+abstract Efl.Canvas.Object (Eo.Base, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
+                            Efl.Input.Interface, Efl.Gfx.Size.Hint)
 {
    legacy_prefix: evas_object;
    data: Evas_Object_Protected_Data;
@@ -671,7 +670,7 @@ abstract Efl.Canvas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx,
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
-      Evas.Common_Interface.evas.get;
+      Eo.Base.provider_find;
       Efl.Gfx.visible.set;
       Efl.Gfx.visible.get;
       Efl.Gfx.color.set;

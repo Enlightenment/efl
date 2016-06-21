@@ -42,7 +42,7 @@ START_TEST(elm_layout_swallows)
    ck_assert_ptr_eq(eo_parent_get(bt), ly);
 
    bt = efl_content_unset(efl_part(ly, "element1"));
-   ck_assert_ptr_eq(eo_parent_get(bt), evas_common_evas_get(bt));
+   ck_assert_ptr_eq(eo_parent_get(bt), evas_object_evas_get(bt));
 
    fail_if(!efl_content_set(efl_part(ly, "element1"), bt));
    ck_assert_ptr_eq(eo_parent_get(bt), ly);
@@ -51,7 +51,7 @@ START_TEST(elm_layout_swallows)
    fail_if(!efl_content_set(efl_part(ly, "element1"), bt2));
    ck_assert_ptr_eq(eo_parent_get(bt2), ly);
    /* bt is deleted at this point. */
-   ck_assert_ptr_eq(eo_parent_get(bt), evas_common_evas_get(bt));
+   ck_assert_ptr_eq(eo_parent_get(bt), evas_object_evas_get(bt));
 
    elm_shutdown();
 }
