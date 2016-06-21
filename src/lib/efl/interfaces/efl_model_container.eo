@@ -1,0 +1,68 @@
+import eina_types;
+
+class Efl.Model.Container (Eo.Base, Efl.Model)
+{
+   [[
+     Class used to create data models from Eina containers.
+
+     Each container supplied represent a series of property values, each item
+     being the property value for a child object (@Efl.Model.Container.Item).
+
+     The data in the given containers are copied and stored internally.
+
+     Several containers can be supplied, and the number of allocated children is
+     based on the container with the biggest size.
+     As illustrated above:
+
+                                |‾‾‾‾‾||‾‾‾‾‾||‾‾‾‾‾||‾‾‾‾‾|  <br/>
+     cont1, property: "code" ->  ["A"]  ["B"]  ["C"]  ["D"]   <br/>
+     cont2, property: "day"  ->  [ 8 ]  [ 24]  [ 14]          <br/>
+                                |_____||_____||_____||_____|  <br/>
+                                   |      |      |      |     <br/>
+                                child1 child2 child3 child4   <br/>
+   ]]
+   methods {
+      child_property_value_type_get {
+         [[Get the type of the given property.]]
+         params {
+            name: string; [[Property name]]
+         }
+         return: const(Eina.Value.Type)*; [[Property type]]
+      }
+      child_property_values_get {
+         [[Get the values for the given property.]]
+         params {
+            name: string; [[Property name]]
+         }
+         return: free(own(iterator<void_ptr>), eina_iterator_free) @warn_unused;
+         [[The currently wrapped values]]
+      }
+      child_property_add {
+         [[Add the given property to child objects and supply the values.
+
+           Each item will represent the value of the given property in the
+           respective child within the data model.
+
+           New children objects are allocated as necessary.
+
+           Value type is required for compatibility with the @Efl.Model API.]]
+         params {
+            name: string; [[Property name]]
+            type: const(Eina.Value.Type)*; [[Property type]]
+            values: own(iterator<const(void_ptr)>); [[Values to be added]]
+         }
+         return: bool; [[$true on success, $false otherwise]]
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Efl.Model.properties.get;
+      Efl.Model.property_set;
+      Efl.Model.property_get;
+      Efl.Model.child_add;
+      Efl.Model.child_del;
+      Efl.Model.children_slice_get;
+      Efl.Model.children_count_get;
+   }
+}

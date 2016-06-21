@@ -27,6 +27,9 @@ interfaces/efl_gfx_gradient_radial.eo \
 interfaces/efl_gfx_filter.eo \
 interfaces/efl_gfx_size_hint.eo \
 interfaces/efl_model.eo \
+interfaces/efl_model_item.eo \
+interfaces/efl_model_container.eo \
+interfaces/efl_model_container_item.eo \
 interfaces/efl_animator.eo \
 interfaces/efl_orientation.eo \
 interfaces/efl_flipable.eo \
@@ -64,6 +67,9 @@ lib_LTLIBRARIES = libefl.la
 libefl_la_SOURCES = \
 interfaces/efl_interfaces_main.c \
 interfaces/efl_model_common.c \
+interfaces/efl_model_item.c \
+interfaces/efl_model_container.c \
+interfaces/efl_model_container_item.c \
 interfaces/efl_gfx_shape.c \
 interfaces/efl_vpath_file.c \
 interfaces/efl_vpath_manager.c \

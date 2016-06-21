@@ -27,6 +27,9 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_filter.eo \
       lib/efl/interfaces/efl_gfx_size_hint.eo \
       lib/efl/interfaces/efl_model.eo \
+      lib/efl/interfaces/efl_model_item.eo \
+      lib/efl/interfaces/efl_model_container.eo \
+      lib/efl/interfaces/efl_model_container_item.eo \
       lib/efl/interfaces/efl_animator.eo \
       lib/efl/interfaces/efl_orientation.eo \
       lib/efl/interfaces/efl_flipable.eo \
@@ -76,6 +79,7 @@ EXTRA_DIST2 += \
       lib/efl/Makefile.am \
       lib/efl/Makefile.in \
       lib/efl/interfaces/efl_common_internal.h \
+      lib/efl/interfaces/efl_model_private.h \
       $(efl_eolian_files) \
       $(efl_eolian_type_files)
 
@@ -87,6 +91,9 @@ lib_LTLIBRARIES += lib/efl/libefl.la
 lib_efl_libefl_la_SOURCES = \
 lib/efl/interfaces/efl_interfaces_main.c \
 lib/efl/interfaces/efl_model_common.c \
+lib/efl/interfaces/efl_model_item.c \
+lib/efl/interfaces/efl_model_container.c \
+lib/efl/interfaces/efl_model_container_item.c \
 lib/efl/interfaces/efl_gfx_shape.c \
 lib/efl/interfaces/efl_vpath_file.c \
 lib/efl/interfaces/efl_vpath_manager.c \
@@ -157,4 +164,27 @@ bin/efl/efl_debug_common.h
 bin_efl_efl_debug_CPPFLAGS = -I$(top_builddir)/src/bin/efl @EINA_CFLAGS@ @ECORE_CFLAGS@ @ECORE_CON_CFLAGS@
 bin_efl_efl_debug_LDADD = @EFL_LIBS@ @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
 bin_efl_efl_debug_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
+
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/efl/efl_suite
+TESTS += tests/efl/efl_suite
+
+tests_efl_efl_suite_SOURCES = \
+tests/efl/efl_suite.c \
+tests/efl/efl_test_model_container.c \
+tests/efl/efl_suite.h
+
+tests_efl_efl_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/efl\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/efl\" \
+@CHECK_CFLAGS@ \
+@ECORE_CFLAGS@ \
+@EFL_CFLAGS@
+
+tests_efl_efl_suite_LDADD = @CHECK_LIBS@ @USE_EFL_LIBS@  @USE_ECORE_LIBS@
+tests_efl_efl_suite_DEPENDENCIES = @USE_EFL_INTERNAL_LIBS@
+
+endif
 

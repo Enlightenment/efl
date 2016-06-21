@@ -40,3 +40,4 @@ enum @extern Eina.Xattr.Flags {
   created [[This will only succeed if the extended attribute wasn't previously set]]
 }
 
+struct @extern Eina.Value.Type;

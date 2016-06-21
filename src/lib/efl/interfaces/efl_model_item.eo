@@ -1,0 +1,26 @@
+import eina_types;
+
+class Efl.Model.Item (Eo.Base, Efl.Model)
+{
+   [[
+     Generic model that allows any property to be manually set.
+     Also children of the same type can be added and deleted.
+
+     Intended to be used in scenarios where the user needs a manually defined
+     data model, like in tests.
+
+     It does not model anything in particular and does not affect anything else
+     in the system.
+   ]]
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Efl.Model.properties.get;
+      Efl.Model.property_set;
+      Efl.Model.property_get;
+      Efl.Model.child_add;
+      Efl.Model.child_del;
+      Efl.Model.children_slice_get;
+      Efl.Model.children_count_get;
+   }
+}

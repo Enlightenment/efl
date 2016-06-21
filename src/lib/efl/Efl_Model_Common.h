@@ -10,6 +10,7 @@ EAPI extern Eina_Error EFL_MODEL_ERROR_READ_ONLY;
 EAPI extern Eina_Error EFL_MODEL_ERROR_INIT_FAILED;
 EAPI extern Eina_Error EFL_MODEL_ERROR_INCORRECT_VALUE;
 EAPI extern Eina_Error EFL_MODEL_ERROR_PERMISSION_DENIED;
+EAPI extern Eina_Error EFL_MODEL_ERROR_INVALID_OBJECT;
 
 /**
  * @struct _Efl_Model_Children_Event
@@ -38,6 +39,9 @@ struct _Efl_Model_Children_Event
 typedef struct _Efl_Model_Children_Event Efl_Model_Children_Event;
 
 #include "interfaces/efl_model.eo.h"
+#include "interfaces/efl_model_container.eo.h"
+#include "interfaces/efl_model_container_item.eo.h"
+#include "interfaces/efl_model_item.eo.h"
 
 EAPI int efl_model_init(void);
 

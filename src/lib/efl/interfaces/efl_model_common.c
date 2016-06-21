@@ -12,6 +12,7 @@ EAPI Eina_Error EFL_MODEL_ERROR_READ_ONLY = 0;
 EAPI Eina_Error EFL_MODEL_ERROR_INIT_FAILED = 0;
 EAPI Eina_Error EFL_MODEL_ERROR_PERMISSION_DENIED = 0;
 EAPI Eina_Error EFL_MODEL_ERROR_INCORRECT_VALUE = 0;
+EAPI Eina_Error EFL_MODEL_ERROR_INVALID_OBJECT = 0;
 
 static const char EFL_MODEL_ERROR_UNKNOWN_STR[]           = "Unknown Error";
 static const char EFL_MODEL_ERROR_NOT_SUPPORTED_STR[]     = "Operation not supported";
@@ -20,6 +21,8 @@ static const char EFL_MODEL_ERROR_READ_ONLY_STR[]         = "Value read only";
 static const char EFL_MODEL_ERROR_INIT_FAILED_STR[]       = "Init failed";
 static const char EFL_MODEL_ERROR_PERMISSION_DENIED_STR[] = "Permission denied";
 static const char EFL_MODEL_ERROR_INCORRECT_VALUE_STR[]   = "Incorrect value";
+static const char EFL_MODEL_ERROR_INVALID_OBJECT_STR[]    = "Object is invalid";
+
 
 EAPI int
 efl_model_init()
@@ -44,6 +47,9 @@ efl_model_init()
 
    EFL_MODEL_ERROR_PERMISSION_DENIED = eina_error_msg_static_register(
                    EFL_MODEL_ERROR_PERMISSION_DENIED_STR);
+
+   EFL_MODEL_ERROR_INVALID_OBJECT = eina_error_msg_static_register(
+                   EFL_MODEL_ERROR_INVALID_OBJECT_STR);
 
    return EINA_TRUE;
 }
