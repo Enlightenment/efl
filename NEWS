@@ -1,6 +1,19 @@
 ==========
-EFL 1.17.1
+EFL 1.17.2
 ==========
+
+Changes since 1.17.1:
+---------------------
+
+Fixes:
+
+   * evas: gif loader - fix out of bounds access on cmap of invalid pixels
+   * evas - gif loader - handle missing colormap
+   * evas sw render: cutout rects may be used in multiple threads (T3348)
+   * eina hash - fix stringshare key comparison function (T3638)
+   * efl - fix many bounds over/underflow where we use int for ptr cmp (T3638)
+   * examples: evas: add all needed files to SOURCES to make sure they are distributed
+   * ecore_x: fix emission of ECORE_X_EVENT_XKB_NEWKBD_NOTIFY
 
 Changes since 1.17.0:
 ---------------------
