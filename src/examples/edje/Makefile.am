@@ -50,7 +50,8 @@ box_example.edc \
 embryo_tween_anim.edc \
 embryo_set_state_anim.edc \
 bezier-transition-example.edc \
-textblock-hyphen.edc
+textblock-hyphen.edc \
+svg.edc
 
 DIST_EDCS = $(EDCS)
 
@@ -85,6 +86,22 @@ red.png \
 test.png \
 Vera.ttf \
 duck.wav \
+dst.svg \
+atom.svg \
+bojo.svg \
+bzrfeed.svg \
+yinyang.svg \
+ubuntu.svg \
+duke.svg \
+cartman.svg \
+ibm.svg \
+hg0.svg \
+fsm.svg \
+osa.svg \
+wikimedia.svg \
+scion.svg \
+eee.svg \
+google.svg \
 en_IN/domain_name.po \
 hi_IN/domain_name.po \
 ta_IN/domain_name.mo \
@@ -111,7 +128,8 @@ signals2.c \
 edje-swallow2.c \
 edje-multisense.c \
 edje-edit-part-box.c \
-edje-textblock-hyphenation.c
+edje-textblock-hyphenation.c \
+svg-test.c
 
 EXTRA_DIST = $(DIST_EDCS) $(DATA_FILES)
 
@@ -181,7 +199,8 @@ edje-basic2 \
 signals2 \
 edje-swallow2 \
 edje-edit-part-box \
-edje-textblock-hyphenation
+edje-textblock-hyphenation \
+svg-test
 
 if ENABLE_MULTISENSE
 EXTRA_PROGRAMS += edje-multisense
