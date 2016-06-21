@@ -1091,9 +1091,10 @@ _scene_setup(Scene_Data *data)
    evas_canvas3d_node_member_add(data->root_node, data->mesh_node_snake);
 
    for (i = 0; i < 4; i++)
+     {
         evas_canvas3d_node_member_add(data->root_node, data->mesh_node_wall[i]);
         evas_canvas3d_node_member_add(data->root_node, data->mesh_node_column[i]);
-
+     }
    for (i = 0; i < 10; i++)
         evas_canvas3d_node_member_add(data->root_node, data->mesh_node_level[i]);
 }
