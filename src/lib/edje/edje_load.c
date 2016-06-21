@@ -2438,10 +2438,24 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg)
 }
 
 static void
+_add_polyline(Efl_VG *vg, double *array, int size, Eina_Bool polygon)
+{
+   int i;
+
+   if (size < 2) return;
+
+   evas_vg_shape_shape_append_move_to(vg, array[0], array[1]);
+   for (i=2; i < size; i+=2)
+     evas_vg_shape_shape_append_line_to(vg, array[i], array[i+1]);
+
+   if (polygon)
+     evas_vg_shape_shape_append_close(vg);
+}
+
+static void
 _create_vg_node(Svg_Node *node, Efl_VG *parent)
 {
    Efl_VG *vg = NULL;
-   int i;
    Svg_Node *child;
    Eina_List *l;
 
@@ -2464,12 +2478,10 @@ _create_vg_node(Svg_Node *node, Efl_VG *parent)
            break;
         case SVG_NODE_POLYGON:
            vg = evas_vg_shape_add(parent);
-           for (i=0; i < node->node.polygon.points_count; i+=2)
-             {
-                if (!i)
-                  evas_vg_shape_shape_append_move_to(vg, node->node.polygon.points[i], node->node.polygon.points[i+1]);
-                evas_vg_shape_shape_append_line_to(vg, node->node.polygon.points[i], node->node.polygon.points[i+1]);
-             }
+           _add_polyline(vg, node->node.polygon.points, node->node.polygon.points_count, EINA_TRUE);
+           break;
+        case SVG_NODE_POLYLINE:
+           _add_polyline(vg, node->node.polygon.points, node->node.polygon.points_count, EINA_FALSE);
            break;
         case SVG_NODE_ELLIPSE:
            vg = evas_vg_shape_add(parent);

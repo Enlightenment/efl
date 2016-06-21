@@ -978,6 +978,16 @@ _create_polygon_node(Svg_Node *parent, const char *buf, unsigned buflen)
    return node;
 }
 
+static Svg_Node *
+_create_polyline_node(Svg_Node *parent, const char *buf, unsigned buflen)
+{
+   Svg_Node *node = _create_node(parent, SVG_NODE_POLYLINE);
+
+   eina_simple_xml_attributes_parse(buf, buflen,
+                                    _attr_parse_polygon_node, node);
+   return node;
+}
+
 #define RECT_DEF(Name, Field)       \
   { #Name, sizeof (#Name), offsetof(Svg_Rect_Node, Field)}
 
@@ -1055,7 +1065,8 @@ static const struct {
   TAG_DEF(ellipse),
   TAG_DEF(path),
   TAG_DEF(polygon),
-  TAG_DEF(rect)
+  TAG_DEF(rect),
+  TAG_DEF(polyline),
 };
 
 static const struct {

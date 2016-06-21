@@ -387,6 +387,7 @@ struct
    { SVG_NODE_CIRCLE, "circle" },
    { SVG_NODE_ELLIPSE, "ellipse" },
    { SVG_NODE_POLYGON, "polygon" },
+   { SVG_NODE_POLYLINE, "polygon" },
    { SVG_NODE_RECT, "rect" },
    { SVG_NODE_PATH, "path" },
    { SVG_NODE_UNKNOWN, NULL }
