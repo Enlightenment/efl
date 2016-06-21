@@ -22,6 +22,7 @@ noinst_DATA =
 noinst_HEADERS =
 
 GENERATED_JS_BINDINGS =
+GENERATED_LUA_BINDINGS =
 
 EFL_INSTALL_EXEC_HOOK=
 
@@ -178,6 +179,8 @@ clean-local:
 	find . -type f -name '*.gcno' -delete
 	find . -type f -name '*.gcda' -delete
 	find . -type f -name check-results.xml -delete
+	rm -f $(GENERATED_JS_BINDINGS)
+	rm -f $(GENERATED_LUA_BINDINGS)
 
 install-exec-hook:
 	$(MKDIR_P) $(DESTDIR)$(libdir)

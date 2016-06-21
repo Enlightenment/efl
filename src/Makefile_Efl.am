@@ -116,7 +116,7 @@ efl_eolian_lua = $(efl_eolian_files:%.eo=%.eo.lua)
 
 generated_efl_lua_all = $(efl_eolian_lua)
 
-CLEANFILES += $(generated_efl_lua_all)
+GENERATED_LUA_BINDINGS += $(generated_efl_lua_all)
 
 installed_eflluadir = $(datadir)/elua/modules/efl
 nodist_installed_efllua_DATA = $(generated_efl_lua_all)
@@ -126,8 +126,6 @@ endif
 if HAVE_JS
 
 generated_efl_js_bindings = $(efl_eolian_files:%.eo=%.eo.js.cc)
-
-CLEANFILES += $(generated_efl_js_bindings)
 
 GENERATED_JS_BINDINGS += $(generated_efl_js_bindings)
 endif

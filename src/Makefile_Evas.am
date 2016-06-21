@@ -2351,7 +2351,7 @@ evas_eolian_lua = $(evas_eolian_pub_files:%.eo=%.eo.lua)
 
 generated_evas_lua_all = $(evas_eolian_lua)
 
-CLEANFILES += $(generated_evas_lua_all)
+GENERATED_LUA_BINDINGS += $(generated_evas_lua_all)
 
 installed_evasluadir = $(datadir)/elua/modules/evas
 nodist_installed_evaslua_DATA = $(generated_evas_lua_all)
@@ -2369,8 +2369,6 @@ dist_installed_evasfilters_DATA = $(evas_filters_lua)
 if HAVE_JS
 
 generated_evas_js_bindings = $(evas_eolian_pub_files:%.eo=%.eo.js.cc)
-
-CLEANFILES += $(generated_evas_js_bindings)
 
 GENERATED_JS_BINDINGS += $(generated_evas_js_bindings)
 

@@ -272,7 +272,7 @@ ecore_eolian_lua = $(ecore_eolian_files:%.eo=%.eo.lua)
 
 generated_ecore_lua_all = $(ecore_eolian_lua)
 
-CLEANFILES += $(generated_ecore_lua_all)
+GENERATED_LUA_BINDINGS += $(generated_ecore_lua_all)
 
 installed_ecoreluadir = $(datadir)/elua/modules/ecore
 nodist_installed_ecorelua_DATA = $(generated_ecore_lua_all)
@@ -282,8 +282,6 @@ endif
 if HAVE_JS
 
 generated_ecore_js_bindings = $(ecore_eolian_files:%.eo=%.eo.js.cc)
-
-CLEANFILES += $(generated_ecore_js_bindings)
 
 GENERATED_JS_BINDINGS += $(generated_ecore_js_bindings)
 

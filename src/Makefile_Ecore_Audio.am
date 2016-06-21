@@ -93,7 +93,7 @@ ecore_audio_eolian_lua = $(ecore_audio_eolian_files:%.eo=%.eo.lua)
 
 generated_ecore_audio_lua_all = $(ecore_audio_eolian_lua)
 
-CLEANFILES += $(generated_ecore_audio_lua_all)
+GENERATED_LUA_BINDINGS += $(generated_ecore_audio_lua_all)
 
 installed_ecoreaudioluadir = $(datadir)/elua/modules/ecore_audio
 nodist_installed_ecoreaudiolua_DATA = $(generated_ecore_audio_lua_all)
@@ -103,8 +103,6 @@ endif
 if HAVE_JS
 
 generated_ecore_audio_js_bindings = $(ecore_audio_eolian_files:%.eo=%.eo.js.cc)
-
-CLEANFILES += $(generated_ecore_audio_js_bindings)
 
 GENERATED_JS_BINDINGS += $(generated_ecore_audio_js_bindings)
 

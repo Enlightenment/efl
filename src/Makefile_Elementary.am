@@ -1369,7 +1369,7 @@ elementary_eolian_lua = $(elm_public_eolian_files:%.eo=%.eo.lua)
 
 generated_elementary_lua_all = $(elementary_eolian_lua)
 
-CLEANFILES += $(generated_elementary_lua_all)
+GENERATED_LUA_BINDINGS += $(generated_elementary_lua_all)
 
 installed_elementaryluadir = $(datadir)/elua/modules/elementary
 nodist_installed_elementarylua_DATA = $(generated_elementary_lua_all)
@@ -1380,7 +1380,6 @@ if HAVE_JS
 
 generated_elementary_js_bindings = $(elm_public_eolian_files:%.eo=%.eo.js.cc)
 
-CLEANFILES += $(generated_elementary_js_bindings)
 
 GENERATED_JS_BINDINGS += $(generated_elementary_js_bindings)
 

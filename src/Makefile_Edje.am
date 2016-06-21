@@ -333,7 +333,7 @@ edje_eolian_lua = $(edje_eolian_files:%.eo=%.eo.lua)
 
 generated_edje_lua_all = $(edje_eolian_lua)
 
-CLEANFILES += $(generated_edje_lua_all)
+GENERATED_LUA_BINDINGS += $(generated_edje_lua_all)
 
 installed_edjeluadir = $(datadir)/elua/modules/edje
 nodist_installed_edjelua_DATA = $(generated_edje_lua_all)
@@ -343,8 +343,6 @@ endif
 if HAVE_JS
 
 generated_edje_js_bindings = $(edje_eolian_files:%.eo=%.eo.js.cc)
-
-CLEANFILES += $(generated_edje_js_bindings)
 
 GENERATED_JS_BINDINGS += $(generated_edje_js_bindings)
 
