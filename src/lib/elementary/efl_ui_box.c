@@ -254,7 +254,7 @@ _efl_ui_box_eo_base_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
 {
    elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_SKIPPED);
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, MY_CLASS_NAME);
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 

@@ -890,7 +890,7 @@ err_body:
 }
 
 static void
-_ephysics_body_evas_obj_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_ephysics_body_efl_canvas_object_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    EPhysics_Body *body = (EPhysics_Body *) data;
 
@@ -1214,7 +1214,7 @@ _ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord 
 }
 
 static void
-_ephysics_body_evas_obj_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_ephysics_body_efl_canvas_object_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    EPhysics_Body *body = (EPhysics_Body *) data;
    int w, h;
@@ -1329,9 +1329,9 @@ _ephysics_body_del(EPhysics_Body *body)
    if (body->evas_obj)
      {
         evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_DEL,
-                                       _ephysics_body_evas_obj_del_cb);
+                                       _ephysics_body_efl_canvas_object_del_cb);
         evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_RESIZE,
-                                       _ephysics_body_evas_obj_resize_cb);
+                                       _ephysics_body_efl_canvas_object_resize_cb);
 
         if (body->faces_slices)
           evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_RESTACK,
@@ -1372,7 +1372,7 @@ _ephysics_body_del(EPhysics_Body *body)
 }
 
 static void
-_ephysics_body_evas_obj_map_apply(EPhysics_Body *body, Evas_Map *map, Evas_Object *obj, Eina_Bool bfc, Eina_Bool update_cw)
+_ephysics_body_efl_canvas_object_map_apply(EPhysics_Body *body, Evas_Map *map, Evas_Object *obj, Eina_Bool bfc, Eina_Bool update_cw)
 {
    EPhysics_Camera *camera = ephysics_world_camera_get(body->world);
 
@@ -1504,7 +1504,7 @@ _ephysics_cylinder_face_objs_update(EPhysics_Body *body)
         evas_map_util_quat_rotate(map, quat.x(), -quat.y(), quat.z(), -quat.w(),
                                   bx, by, z);
 
-        _ephysics_body_evas_obj_map_apply(body, map, obj, EINA_TRUE,
+        _ephysics_body_efl_canvas_object_map_apply(body, map, obj, EINA_TRUE,
                                           EINA_FALSE);
      }
 }
@@ -1624,7 +1624,7 @@ _ephysics_box_face_objs_update(EPhysics_Body *body)
 
         evas_map_util_quat_rotate(map, quat.x(), -quat.y(), quat.z(), -quat.w(),
                                   x, y, z);
-        _ephysics_body_evas_obj_map_apply(body, map, obj, EINA_TRUE,
+        _ephysics_body_efl_canvas_object_map_apply(body, map, obj, EINA_TRUE,
                                           EINA_FALSE);
      }
 }
@@ -1680,7 +1680,7 @@ _ephysics_body_evas_object_update(EPhysics_Body *body, Evas_Object *evas_obj)
    evas_map_util_quat_rotate(map, quat.x(), -quat.y(), quat.z(), -quat.w(),
                              bx, by, z);
 
-   _ephysics_body_evas_obj_map_apply(body, map, evas_obj,
+   _ephysics_body_efl_canvas_object_map_apply(body, map, evas_obj,
                                      body->back_face_culling, EINA_TRUE);
 }
 
@@ -3392,9 +3392,9 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
      {
         evas_object_map_enable_set(body->evas_obj, EINA_FALSE);
         evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_DEL,
-                                       _ephysics_body_evas_obj_del_cb);
+                                       _ephysics_body_efl_canvas_object_del_cb);
         evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_RESIZE,
-                                       _ephysics_body_evas_obj_resize_cb);
+                                       _ephysics_body_efl_canvas_object_resize_cb);
         if (body->default_face)
           {
              evas_object_event_callback_del(body->evas_obj,
@@ -3406,7 +3406,7 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
 
    body->evas_obj = evas_obj;
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_DEL,
-                                  _ephysics_body_evas_obj_del_cb, body);
+                                  _ephysics_body_efl_canvas_object_del_cb, body);
 
    if (body->soft_body)
      {
@@ -3430,7 +3430,7 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
    _ephysics_body_geometry_set(body, obj_x, obj_y, bz, obj_w, obj_h, bd, rate);
    ephysics_world_lock_release(body->world);
    evas_object_event_callback_add(body->evas_obj, EVAS_CALLBACK_RESIZE,
-                                  _ephysics_body_evas_obj_resize_cb, body);
+                                  _ephysics_body_efl_canvas_object_resize_cb, body);
 }
 
 EAPI Evas_Object *
@@ -3450,9 +3450,9 @@ ephysics_body_evas_object_unset(EPhysics_Body *body)
    if (obj)
      {
         evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
-                                       _ephysics_body_evas_obj_del_cb);
+                                       _ephysics_body_efl_canvas_object_del_cb);
         evas_object_event_callback_del(obj, EVAS_CALLBACK_RESIZE,
-                                       _ephysics_body_evas_obj_resize_cb);
+                                       _ephysics_body_efl_canvas_object_resize_cb);
         evas_object_map_enable_set(obj, EINA_FALSE);
      }
 
@@ -5162,7 +5162,7 @@ _ephysics_body_soft_sphere_face_evas_object_set(EPhysics_Body *body, EPhysics_Bo
    _ephysics_body_geometry_set(body, obj_x, obj_y, bz, obj_w, obj_h, bd, rate);
    ephysics_world_lock_release(body->world);
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESIZE,
-                                  _ephysics_body_evas_obj_resize_cb, body);
+                                  _ephysics_body_efl_canvas_object_resize_cb, body);
 
    DBG("Soft sphere's face evas object set.");
 }

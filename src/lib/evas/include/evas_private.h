@@ -5,8 +5,8 @@
 # include <config.h>
 #endif
 
-#ifndef EVAS_OBJECT_PROTECTED
-# define EVAS_OBJECT_PROTECTED
+#ifndef EFL_CANVAS_OBJECT_PROTECTED
+# define EFL_CANVAS_OBJECT_PROTECTED
 #endif
 
 #include "Evas.h"
@@ -587,8 +587,8 @@ MAGIC_CHECK_FAILED(o, t, m)
 
 // helper function for legacy EAPI implementations
 #define EVAS_OBJ_GET_OR_RETURN(o, ...) ({ \
-   Evas_Object_Protected_Data *_obj = eo_isa(o, EVAS_OBJECT_CLASS) ? \
-     eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS) : NULL; \
+   Evas_Object_Protected_Data *_obj = eo_isa(o, EFL_CANVAS_OBJECT_CLASS) ? \
+     eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS) : NULL; \
    if (!_obj) { MAGIC_CHECK_FAILED(o,0,0) return __VA_ARGS__; } \
    _obj; })
 
@@ -601,7 +601,7 @@ MAGIC_CHECK_FAILED(o, t, m)
 /* DEBUG mode: fail, but normally just ERR(). This also returns if NULL. */
 #ifdef DEBUG
 #define EVAS_OBJECT_LEGACY_API(_eo, ...) \
-   do { Evas_Object_Protected_Data *_o = eo_data_scope_get(_eo, EVAS_OBJECT_CLASS); \
+   do { Evas_Object_Protected_Data *_o = eo_data_scope_get(_eo, EFL_CANVAS_OBJECT_CLASS); \
       if (EINA_UNLIKELY(!_o)) return __VA_ARGS__; \
       if (EINA_UNLIKELY(!_o->legacy)) { \
          char buf[1024]; snprintf(buf, sizeof(buf), "Calling legacy API on EO object '%s' is not permitted!", eo_class_name_get(_o->object)); \
@@ -610,7 +610,7 @@ MAGIC_CHECK_FAILED(o, t, m)
    } } while (0)
 #else
 #define EVAS_OBJECT_LEGACY_API(_eo, ...) \
-   do { Evas_Object_Protected_Data *_o = eo_data_scope_get(_eo, EVAS_OBJECT_CLASS); \
+   do { Evas_Object_Protected_Data *_o = eo_data_scope_get(_eo, EFL_CANVAS_OBJECT_CLASS); \
       if (EINA_UNLIKELY(!_o)) return __VA_ARGS__; \
       if (EINA_UNLIKELY(!_o->legacy)) { \
          char buf[1024]; snprintf(buf, sizeof(buf), "Calling legacy API on EO object '%s' is not permitted!", eo_class_name_get(_o->object)); \
@@ -1696,7 +1696,7 @@ void _above_get(Eo *obj, void *_pd, va_list *list);
 void _below_get(Eo *obj, void *_pd, va_list *list);
 void _smart_move_children_relative(Eo *obj, void *_pd, va_list *list);
 void _smart_clipped_clipper_get(Eo *obj, void *_pd, va_list *list);
-void _evas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev);
+void _efl_canvas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev);
 
 void _canvas_event_default_flags_set(Eo *e, void *_pd, va_list *list);
 void _canvas_event_default_flags_get(Eo *e, void *_pd, va_list *list);

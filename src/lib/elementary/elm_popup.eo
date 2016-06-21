@@ -153,7 +153,7 @@ class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
          return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
             @in label: string; [[The Label of the new item.]]
-            @in icon: Evas.Object @optional; [[Icon to be set on new item.]]
+            @in icon: Efl.Canvas.Object @optional; [[Icon to be set on new item.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when item selected.]]
             @in data: const(void_ptr) @optional; [[Data passed to $func above.]]
          }

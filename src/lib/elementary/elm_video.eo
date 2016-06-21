@@ -36,7 +36,7 @@ class Elm.Video (Elm.Layout, Efl.File,
       @property emotion {
          get {
             [[Get the underlying Emotion object.]]
-            return: Evas.Object; [[the underlying Emotion object.]]
+            return: Efl.Canvas.Object; [[the underlying Emotion object.]]
          }
       }
       @property title {

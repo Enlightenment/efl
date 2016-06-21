@@ -105,10 +105,10 @@ static void
 _propagate_event(void *data, const Eo_Event *event);
 
 EO_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
-                          { EVAS_OBJECT_EVENT_DEL, _on_sub_obj_del },
+                          { EFL_CANVAS_OBJECT_EVENT_DEL, _on_sub_obj_del },
                           { EFL_GFX_EVENT_HIDE, _on_sub_obj_hide });
 EO_CALLBACKS_ARRAY_DEFINE(efl_subitems_callbacks,
-                          { EVAS_OBJECT_EVENT_DEL, _on_sub_obj_del });
+                          { EFL_CANVAS_OBJECT_EVENT_DEL, _on_sub_obj_del });
 EO_CALLBACKS_ARRAY_DEFINE(focus_callbacks,
                           { EFL_EVENT_KEY_DOWN, _propagate_event },
                           { EFL_EVENT_KEY_UP, _propagate_event },
@@ -574,7 +574,7 @@ _elm_widget_efl_canvas_group_group_no_render_set(Eo *obj, Elm_Widget_Smart_Data 
    EINA_ITERATOR_FOREACH(it, o)
      {
        if (evas_object_data_get(o, "_elm_leaveme")) continue;
-       evas_obj_no_render_set(o, hide);
+       efl_canvas_object_no_render_set(o, hide);
      }
    eina_iterator_free(it);
 }
@@ -626,7 +626,7 @@ _elm_widget_efl_canvas_group_group_member_add(Eo *obj, Elm_Widget_Smart_Data *_p
    evas_object_color_get(obj, &r, &g, &b, &a);
    evas_object_color_set(child, r, g, b, a);
 
-   evas_obj_no_render_set(child, evas_obj_no_render_get(obj));
+   efl_canvas_object_no_render_set(child, efl_canvas_object_no_render_get(obj));
    evas_object_clip_set(child, evas_object_clip_get(obj));
 
    if (evas_object_visible_get(obj))
@@ -4427,7 +4427,7 @@ EO_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
                           { EFL_GFX_EVENT_MOVE, _track_obj_view_update },
                           { EFL_GFX_EVENT_SHOW, _track_obj_view_update },
                           { EFL_GFX_EVENT_HIDE, _track_obj_view_update },
-                          { EVAS_OBJECT_EVENT_DEL, _track_obj_view_del });
+                          { EFL_CANVAS_OBJECT_EVENT_DEL, _track_obj_view_del });
 
 static void
 _track_obj_view_del(void *data, const Eo_Event *event EINA_UNUSED)
@@ -5812,7 +5812,7 @@ _elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 
    sd->on_create = EINA_TRUE;
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    parent = eo_parent_get(obj);
    elm_obj_widget_parent_set(obj, parent);

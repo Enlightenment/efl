@@ -6,7 +6,7 @@
 EOLIAN static void
 _efl_canvas_scene3d_scene3d_set(Eo *eo_obj, void *pd EINA_UNUSED, Evas_Canvas3D_Scene *scene)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Image_Load_Opts lo;
 
@@ -141,7 +141,7 @@ _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj,
 void
 _evas_image_3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Canvas3D_Scene_Data *pd_scene = eo_data_scope_get(scene,
                                                     EVAS_CANVAS3D_SCENE_CLASS);

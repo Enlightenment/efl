@@ -1516,7 +1516,7 @@ _elua_text_class(lua_State *L) // Stack usage [-(6|8), +(7|9), emv]
 
 //-------------
 static void
-_elua_evas_obj_free(void *obj)
+_elua_efl_canvas_object_free(void *obj)
 {
    Edje_Lua_Evas_Object *elo = obj;
 
@@ -1559,7 +1559,7 @@ _elua_polish_evas_object(Edje *ed, Edje_Lua_Evas_Object *elo)
 static int
 _elua_edje(lua_State *L) // Stack usage [-7, +8, em]
 {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_edje_meta, _elua_evas_obj_free)
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_edje_meta, _elua_efl_canvas_object_free)
    // Stack usage [-7, +8, em]
    elo->evas_obj = edje_object_add(evas_object_evas_get(ed->obj));
    _edje_subobj_register(ed, elo->evas_obj);
@@ -1582,7 +1582,7 @@ _elua_edje(lua_State *L) // Stack usage [-7, +8, em]
 static int
 _elua_image(lua_State *L) // Stack usage [-7, +8, em]
 {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_image_meta, _elua_evas_obj_free)
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_image_meta, _elua_efl_canvas_object_free)
    // Stack usage [-7, +8, em]
    elo->evas_obj = evas_object_image_filled_add(evas_object_evas_get(ed->obj));
    _elua_polish_evas_object(ed, elo);
@@ -1604,7 +1604,7 @@ _elua_image(lua_State *L) // Stack usage [-7, +8, em]
 static int
 _elua_line(lua_State *L) // Stack usage [-7, +8, em]
 {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_line_meta, _elua_evas_obj_free)
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_line_meta, _elua_efl_canvas_object_free)
    // Stack usage [-7, +8, em]
    elo->evas_obj = evas_object_line_add(evas_object_evas_get(ed->obj));
    _elua_polish_evas_object(ed, elo);
@@ -1656,7 +1656,7 @@ _elua_map(lua_State *L) // Stack usage [-7, +8, emv]
 static int
 _elua_polygon(lua_State *L) // Stack usage [-7, +8, em]
 {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_polygon_meta, _elua_evas_obj_free)
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_polygon_meta, _elua_efl_canvas_object_free)
    // Stack usage [-7, +8, em]
    elo->evas_obj = evas_object_polygon_add(evas_object_evas_get(ed->obj));
    _elua_polish_evas_object(ed, elo);
@@ -1676,7 +1676,7 @@ _elua_polygon(lua_State *L) // Stack usage [-7, +8, em]
 static int
 _elua_rect(lua_State *L) // Stack usage [-7, +8, em]
 {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_meta, _elua_evas_obj_free)
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_meta, _elua_efl_canvas_object_free)
    // Stack usage [-7, +8, em]
    elo->evas_obj = evas_object_rectangle_add(evas_object_evas_get(ed->obj));
    _elua_polish_evas_object(ed, elo);
@@ -1698,7 +1698,7 @@ _elua_rect(lua_State *L) // Stack usage [-7, +8, em]
 static int
 _elua_text(lua_State *L) // Stack usage [-7, +8, em]
 {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_text_meta, _elua_evas_obj_free)
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_text_meta, _elua_efl_canvas_object_free)
    // Stack usage [-7, +8, em]
    elo->evas_obj = evas_object_text_add(evas_object_evas_get(ed->obj));
    _elua_polish_evas_object(ed, elo);
@@ -1708,7 +1708,7 @@ _elua_text(lua_State *L) // Stack usage [-7, +8, em]
 /* XXX: disabled until there are enough textblock functions implemented to make it actually useful
    _elua_textblock(lua_State *L)                               // Stack usage [-7, +8, em]
    {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_textblock_meta, _elua_evas_obj_free)
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_textblock_meta, _elua_efl_canvas_object_free)
                                                             // Stack usage [-7, +8, em]
    elo->evas_obj = evas_object_textblock_add(evas_object_evas_get(ed->obj));
    _elua_polish_evas_object(ed, elo);

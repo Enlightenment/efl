@@ -139,7 +139,7 @@ class Elm.Box (Elm.Widget)
               You must free this list with eina_list_free() once you are done with it.
 
             ]]
-            return: free(own(list<Evas.Object>), eina_list_free) @warn_unused;
+            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused;
          }
       }
       pack_end {
@@ -160,7 +160,7 @@ class Elm.Box (Elm.Widget)
          ]]
 
          params {
-            @in subobj: Evas.Object; [[The object to add to the box]]
+            @in subobj: Efl.Canvas.Object; [[The object to add to the box]]
          }
       }
       unpack_all {
@@ -188,7 +188,7 @@ class Elm.Box (Elm.Widget)
          ]]
 
          params {
-            @in subobj: Evas.Object; [[The object to unpack]]
+            @in subobj: Efl.Canvas.Object; [[The object to unpack]]
          }
       }
       pack_after {
@@ -209,8 +209,8 @@ class Elm.Box (Elm.Widget)
          ]]
 
          params {
-            @in subobj: Evas.Object; [[The object to add to the box]]
-            @in after: Evas.Object; [[The object after which to add it]]
+            @in subobj: Efl.Canvas.Object; [[The object to add to the box]]
+            @in after: Efl.Canvas.Object; [[The object after which to add it]]
          }
       }
       pack_start {
@@ -232,7 +232,7 @@ class Elm.Box (Elm.Widget)
          ]]
 
          params {
-            @in subobj: Evas.Object; [[The object to add to the box]]
+            @in subobj: Efl.Canvas.Object; [[The object to add to the box]]
          }
       }
       recalculate {
@@ -265,8 +265,8 @@ class Elm.Box (Elm.Widget)
          ]]
 
          params {
-            @in subobj: Evas.Object; [[The object to add to the box]]
-            @in before: Evas.Object; [[The object before which to add it]]
+            @in subobj: Efl.Canvas.Object; [[The object to add to the box]]
+            @in before: Efl.Canvas.Object; [[The object before which to add it]]
          }
       }
       clear {

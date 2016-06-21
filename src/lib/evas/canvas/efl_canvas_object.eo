@@ -1,12 +1,11 @@
 import evas_types;
 import efl_text_types;
 
-abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
-                      Efl.Animator, Efl.Input.Interface, Efl.Gfx.Size.Hint)
+abstract Efl.Canvas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx,
+                            Efl.Gfx.Stack, Efl.Animator, Efl.Input.Interface,
+                            Efl.Gfx.Size.Hint)
 {
    legacy_prefix: evas_object;
-   eo_prefix: evas_obj;
-   event_prefix: evas_object;
    data: Evas_Object_Protected_Data;
    methods {
       legacy_ctor @protected @beta {
@@ -238,7 +237,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
             */
          }
          values {
-            clip: Evas.Object @nonull; [[The object to clip $obj by.]]
+            clip: Efl.Canvas.Object @nonull; [[The object to clip $obj by.]]
          }
       }
       @property repeat_events {
@@ -479,7 +478,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
               See also @.clip and @.clip_unset.
             ]]
             legacy: null;
-            return: iterator<Evas.Object> @warn_unused; [[An iterator over the
+            return: iterator<Efl.Canvas.Object> @warn_unused; [[An iterator over the
                                              list of objects clipped by $obj.]]
          }
       }
@@ -496,7 +495,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx, Efl.Gfx.Stack,
             legacy: evas_object_smart_parent_get;
          }
          values {
-            parent: Evas.Object; [[The parent smart object of $obj or $null.]]
+            parent: Efl.Canvas.Object; [[The parent smart object of $obj or $null.]]
          }
       }
       /* FIXME: is this really necessary? */

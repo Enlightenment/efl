@@ -100,7 +100,7 @@ _efl_canvas_polygon_eo_base_constructor(Eo *eo_obj, Efl_Canvas_Polygon_Data *cla
 EOLIAN static void
 _efl_canvas_polygon_point_add(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Efl_Canvas_Polygon_Data *o = _pd;
    Efl_Canvas_Polygon_Point *p;
    Evas_Coord min_x, max_x, min_y, max_y;
@@ -207,7 +207,7 @@ _efl_canvas_polygon_point_add(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd, Evas_Coo
 EOLIAN static void
 _efl_canvas_polygon_points_clear(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Efl_Canvas_Polygon_Data *o = _pd;
    void *list_data;
    int is, was;
@@ -252,7 +252,7 @@ _efl_canvas_polygon_points_clear(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd)
 static void
 evas_object_polygon_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
@@ -262,7 +262,7 @@ evas_object_polygon_init(Evas_Object *eo_obj)
 EOLIAN static void
 _efl_canvas_polygon_eo_base_destructor(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd EINA_UNUSED)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    evas_object_polygon_free(eo_obj, obj, obj->private_data);
    eo_destructor(eo_super(eo_obj, MY_CLASS));

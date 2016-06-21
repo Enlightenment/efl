@@ -18,7 +18,7 @@ struct Elm.Toolbar.Item.State
    ]]
    label: string;
    icon_str: string;
-   icon: Evas.Object;
+   icon: Efl.Canvas.Object;
    func: Evas_Smart_Cb ;
    data: const(void_ptr);
 }
@@ -122,7 +122,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     obj: Evas.Object; [[The base Edje object associated with $it.]]
+                     obj: Efl.Canvas.Object; [[The base Edje object associated with $it.]]
                 }
            }
            @property icon_object {
@@ -133,7 +133,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     obj: Evas.Object; [[The icon object.]]
+                     obj: Efl.Canvas.Object; [[The icon object.]]
                 }
            }
            @property separator {
@@ -162,7 +162,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     menu: Evas.Object; [[Item's menu object or $null on failure.]]
+                     menu: Efl.Canvas.Object; [[Item's menu object or $null on failure.]]
                 }
            }
            @property state {

@@ -898,7 +898,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
            Note: Almost all swallow rules apply: you should not move, resize,
            hide, show, set the color or clipper of such part. It's a bit
            more restrictive as one must  never delete this object!]]
-         return: Evas.Object; [[The externally created object, or $null if there is none or
+         return: Efl.Canvas.Object; [[The externally created object, or $null if there is none or
                                   part is not an external.]]
          params {
             @in part: string; [[The part name]]
@@ -915,7 +915,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             content: string; [[A string identifying which content from the EXTERNAL to get]]
          }
          values {
-            v: Evas.Object;
+            v: Efl.Canvas.Object;
          }
       }
       preload {
@@ -1113,7 +1113,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
            Note: If the type of Edje part is GROUP, SWALLOW or EXTERNAL,
            returned handle by this function will indicate nothing or transparent
            rectangle for events. Use $.part_swallow_get() in that case.]]
-         return: const(Evas.Object); [[A pointer to the Evas object implementing the given part,
+         return: const(Efl.Canvas.Object); [[A pointer to the Evas object implementing the given part,
                                         or $null on failure (e.g. the given part doesn't exist)]]
          params {
             @in part: string; [[The Edje part's name]]
@@ -1999,7 +1999,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
-      Evas.Object.paragraph_direction.set;
+      Efl.Canvas.Object.paragraph_direction.set;
       Efl.Canvas.Group.group_hide;
       Efl.Canvas.Group.group_show;
       Efl.Canvas.Group.group_move;

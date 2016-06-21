@@ -57,7 +57,7 @@ class Elm.Radio (Elm.Check, Elm.Interface.Atspi_Widget_Action)
       @property selected_object {
          get {
             [[Get the selected radio object.]]
-            return: Evas.Object; [[The selected radio object]]
+            return: Efl.Canvas.Object; [[The selected radio object]]
          }
       }
       group_add {

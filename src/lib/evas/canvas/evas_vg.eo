@@ -1,4 +1,4 @@
-class Evas.VG (Evas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
+class Evas.VG (Efl.Canvas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
 {
    legacy_prefix: evas_object_vg;
    eo_prefix: evas_obj_vg;

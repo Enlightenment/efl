@@ -136,7 +136,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
          get {
          }
          values {
-            parent: Evas.Object; [[The parent of the menu objects.]]
+            parent: Efl.Canvas.Object; [[The parent of the menu objects.]]
          }
       }
       @property standard_priority {

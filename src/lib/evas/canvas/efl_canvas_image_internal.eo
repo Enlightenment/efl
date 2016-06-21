@@ -1,4 +1,4 @@
-abstract Efl.Canvas.Image.Internal (Evas.Object, Efl.Canvas.Filter.Internal,
+abstract Efl.Canvas.Image.Internal (Efl.Canvas.Object, Efl.Canvas.Filter.Internal,
                                     Efl.Image, Efl.Gfx.Buffer,
                                     Efl.Gfx.Fill, Efl.Gfx.View,
                                     Efl.Orientation, Efl.Flipable,

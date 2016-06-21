@@ -13,9 +13,9 @@ class Efl.Canvas.Proxy (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer)
 
            The proxy object will mirror the rendering contents of a given
            source object in its drawing region, without affecting that
-           source in any way. The source must be another valid @Evas.Object.
+           source in any way. The source must be another valid @Efl.Canvas.Object.
            Other effects may be applied to the proxy, such as a map (see
-           @Evas.Object.map) to create a reflection of the original object
+           @Efl.Canvas.Object.map) to create a reflection of the original object
            (for example).
 
            Any existing source object will be removed after this call.
@@ -30,7 +30,7 @@ class Efl.Canvas.Proxy (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer)
          }
          get {}
          values {
-            src: Evas.Object @nonull; [[Source object to use for the proxy.]]
+            src: Efl.Canvas.Object @nonull; [[Source object to use for the proxy.]]
          }
       }
       @property source_clip {

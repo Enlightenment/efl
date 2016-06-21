@@ -30,7 +30,7 @@ class Elm.Hoversel (Elm.Button, Efl.Ui.Selectable,
          get {
          }
          values {
-            parent: Evas.Object @nullable; [[The parent to use]]
+            parent: Efl.Canvas.Object @nullable; [[The parent to use]]
          }
       }
       @property expanded {

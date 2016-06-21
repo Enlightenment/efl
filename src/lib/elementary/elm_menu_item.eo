@@ -69,7 +69,7 @@ class Elm.Menu.Item(Elm.Widget.Item, Elm.Interface.Atspi.Selection)
 
                Warning: Don't manipulate this object!
              ]]
-             return: Evas.Object; [[The base Edje object containing the
+             return: Efl.Canvas.Object; [[The base Edje object containing the
                                      swallowed content associated with the item.]]
         }
    }

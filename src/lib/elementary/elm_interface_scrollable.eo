@@ -382,7 +382,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          set {
          }
          values {
-            pan: Evas.Object @nullable;
+            pan: Efl.Canvas.Object @nullable;
          }
       }
       @property page_change_cb {
@@ -467,7 +467,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          set {
          }
          values {
-            content: Evas.Object @nullable;
+            content: Efl.Canvas.Object @nullable;
          }
       }
       @property edge_left_cb {
@@ -522,8 +522,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          set {
          }
          values {
-            edje_object: Evas.Object;
-            hit_rectangle: Evas.Object;
+            edje_object: Efl.Canvas.Object;
+            hit_rectangle: Efl.Canvas.Object;
          }
       }
       @property last_page {

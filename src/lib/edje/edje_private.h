@@ -39,7 +39,7 @@
 # include <Evil.h>
 #endif
 
-#define EVAS_OBJECT_PROTECTED
+#define EFL_CANVAS_OBJECT_PROTECTED
 
 #include <Eina.h>
 #include <Eet.h>

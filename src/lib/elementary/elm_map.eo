@@ -348,7 +348,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
       }
       track_add {
          [[Add a track on the map.]]
-         return: Evas.Object; [[The route object. This is an elm object of type Route.]]
+         return: Efl.Canvas.Object; [[The route object. This is an elm object of type Route.]]
          params {
             @in emap: void_ptr; [[The emap route object.]]
          }
@@ -547,7 +547,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
       track_remove {
          [[Remove a track from the map.]]
          params {
-            @in route: Evas.Object; [[The track to remove.]]
+            @in route: Efl.Canvas.Object; [[The track to remove.]]
          }
       }
       overlay_route_add {

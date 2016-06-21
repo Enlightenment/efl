@@ -50,7 +50,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
               list, but these removals won't be reflected on it.
 
               @since 1.1]]
-            return: free(own(list<Evas.Object>), eina_list_free) @warn_unused;
+            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused;
          }
       }
       accessor_new @const {
@@ -59,7 +59,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
            Note: Do not remove or delete objects while walking the list.
 
            @since 1.1]]
-         return: free(own(accessor<Evas.Object>), eina_accessor_free)
+         return: free(own(accessor<Efl.Canvas.Object>), eina_accessor_free)
             @warn_unused;
       }
       clear {
@@ -77,7 +77,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
            Note: Do not remove or delete objects while walking the list.
 
            @since 1.1]]
-         return: free(own(iterator<Evas.Object>), eina_iterator_free)
+         return: free(own(iterator<Efl.Canvas.Object>), eina_iterator_free)
             @warn_unused;
       }
       add_to {
@@ -87,7 +87,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
 
            @since 1.1]]
 
-         return: Evas.Object @warn_unused;
+         return: Efl.Canvas.Object @warn_unused;
       }
       unpack {
          [[Remove child from grid.
@@ -100,7 +100,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
 
          return: bool; [[1 on success, 0 on failure.]]
          params {
-            @in child: Evas.Object @nonull;
+            @in child: Efl.Canvas.Object @nonull;
          }
       }
       pack_get @const {
@@ -112,7 +112,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
            @since 1.1]]
          return: bool; [[1 on success, 0 on failure.]]
          params {
-            @in child: Evas.Object; [[The grid child to query for coordinates.]]
+            @in child: Efl.Canvas.Object; [[The grid child to query for coordinates.]]
             @out x: int; [[The pointer to where the x coordinate will be returned.]]
             @out y: int; [[The pointer to where the y coordinate will be returned.]]
             @out w: int; [[The pointer to where the width will be returned.]]
@@ -126,7 +126,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
 
          return: bool; [[1 on success, 0 on failure.]]
          params {
-            @in child: Evas.Object @nonull; [[The child object to add.]]
+            @in child: Efl.Canvas.Object @nonull; [[The child object to add.]]
             @in x: int; [[The virtual x coordinate of the child.]]
             @in y: int; [[The virtual y coordinate of the child.]]
             @in w: int; [[The virtual width of the child.]]

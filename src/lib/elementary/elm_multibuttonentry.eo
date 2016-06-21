@@ -71,7 +71,7 @@ class Elm.Multibuttonentry (Elm.Layout)
          get {
             [[Get the entry of the multibuttonentry object]]
 
-            return: Evas.Object; [[The entry object, or NULL if none]]
+            return: Efl.Canvas.Object; [[The entry object, or NULL if none]]
          }
       }
       @property selected_item {

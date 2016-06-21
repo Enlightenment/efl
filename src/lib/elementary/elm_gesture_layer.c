@@ -3825,7 +3825,7 @@ EOLIAN static Eo *
 _elm_gesture_layer_eo_base_constructor(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
 }

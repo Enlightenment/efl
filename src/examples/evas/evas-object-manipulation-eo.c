@@ -126,15 +126,15 @@ _on_keydown(void        *data EINA_UNUSED,
         fprintf(stdout, "Toggling clipping ");
 
         Evas_Object *clip = NULL;
-        clip = evas_obj_clip_get(d.img);
+        clip = efl_canvas_object_clip_get(d.img);
         if (clip == d.clipper)
           {
-             evas_obj_clip_unset(d.img);
+             efl_canvas_object_clip_unset(d.img);
              fprintf(stdout, "off\n");
           }
         else
           {
-             evas_obj_clip_set(d.img, d.clipper);
+             efl_canvas_object_clip_set(d.img, d.clipper);
              fprintf(stdout, "on\n");
           }
         return;
@@ -239,7 +239,7 @@ main(void)
    efl_gfx_size_set(d.clipper, WIDTH / 2, HEIGHT / 2);
    efl_gfx_visible_set(d.clipper, EINA_TRUE);
 
-   evas_obj_clip_set(d.img, d.clipper);
+   efl_canvas_object_clip_set(d.img, d.clipper);
 
    fprintf(stdout, "%s", commands);
 

@@ -2352,7 +2352,7 @@ _filter_program_buffers_set(Evas_Filter_Program *pgm)
                   Evas_Filter_Proxy_Binding *bind = tup->data;
                   Evas_Object_Protected_Data *obj;
 
-                  obj = eo_data_scope_get(bind->eo_source, EVAS_OBJECT_CLASS);
+                  obj = eo_data_scope_get(bind->eo_source, EFL_CANVAS_OBJECT_CLASS);
                   buf->w = obj->cur->geometry.w;
                   buf->h = obj->cur->geometry.h;
                }
@@ -2874,7 +2874,7 @@ _buffers_update(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm)
              fb->source_name = eina_stringshare_ref(pb->name);
              fb->ctx->has_proxies = EINA_TRUE;
 
-             source = eo_data_scope_get(fb->source, EVAS_OBJECT_CLASS);
+             source = eo_data_scope_get(fb->source, EFL_CANVAS_OBJECT_CLASS);
              if ((source->cur->geometry.w != buf->w) ||
                  (source->cur->geometry.h != buf->h))
                pgm->changed = EINA_TRUE;

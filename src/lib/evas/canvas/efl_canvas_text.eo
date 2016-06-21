@@ -1,6 +1,6 @@
 struct Efl.Canvas.Text.Style;
 
-class Efl.Canvas.Text (Evas.Object, Efl.Text)
+class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
 {
    legacy_prefix: evas_object_textblock;
    methods {
@@ -135,7 +135,7 @@ class Efl.Canvas.Text (Evas.Object, Efl.Text)
            @since 1.15
          ]]
          params {
-            @in eo_obs: Evas.Object;
+            @in eo_obs: Efl.Canvas.Object;
          }
          return: bool; [[$true on success, $false otherwise.]]
       }
@@ -145,7 +145,7 @@ class Efl.Canvas.Text (Evas.Object, Efl.Text)
            @since 1.15
          ]]
          params {
-            @in eo_obs: Evas.Object;
+            @in eo_obs: Efl.Canvas.Object;
          }
          return: bool; [[$true on success, $false otherwise.]]
       }
@@ -298,8 +298,8 @@ class Efl.Canvas.Text (Evas.Object, Efl.Text)
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
-      Evas.Object.paragraph_direction.set;
-      Evas.Object.paragraph_direction.get;
+      Efl.Canvas.Object.paragraph_direction.set;
+      Efl.Canvas.Object.paragraph_direction.get;
       Efl.Text.text.set;
       Efl.Text.text.get;
    }

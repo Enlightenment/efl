@@ -6532,8 +6532,8 @@ _edje_real_part_swallow(Edje *ed,
    else
      evas_object_pass_events_set(obj_swallow, 1);
    _edje_callbacks_focus_add(rp->typedata.swallow->swallowed_object, ed, rp);
-   evas_obj_anti_alias_set(obj_swallow, rp->part->anti_alias);
-   evas_obj_precise_is_inside_set(obj_swallow, rp->part->precise_is_inside);
+   efl_canvas_object_anti_alias_set(obj_swallow, rp->part->anti_alias);
+   efl_canvas_object_precise_is_inside_set(obj_swallow, rp->part->precise_is_inside);
 
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;

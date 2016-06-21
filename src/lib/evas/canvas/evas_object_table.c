@@ -260,7 +260,7 @@ _on_child_hints_changed(void *data, const Eo_Event *event EINA_UNUSED)
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(evas_object_table_callbacks,
-  { EVAS_OBJECT_EVENT_DEL, _on_child_del },
+  { EFL_CANVAS_OBJECT_EVENT_DEL, _on_child_del },
   { EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
 );
 
@@ -967,7 +967,7 @@ EOLIAN static Eo *
 _evas_table_eo_base_constructor(Eo *obj, Evas_Table_Data *class_data EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
 }

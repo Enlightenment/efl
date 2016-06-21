@@ -492,7 +492,7 @@ EAPI Eina_Bool edje_object_part_table_col_row_size_get(const Edje_Object *obj, c
  * @param[in] col The column of the child to get
  * @param[in] row The row of the child to get
  *
- * @return The child Evas.Object
+ * @return The child Efl.Canvas.Object
  *
  * @ingroup Edje_Object
  */

@@ -181,15 +181,15 @@ START_TEST(edje_test_masking)
 
    /* check value of no_render flag as seen from evas land */
    sub = edje_object_part_object_get(obj, "mask");
-   fail_if(!evas_obj_no_render_get(sub));
+   fail_if(!efl_canvas_object_no_render_get(sub));
 
    /* check that text has a clip (based on description.clip_to) */
    sub = edje_object_part_object_get(obj, "text");
-   fail_if(!evas_obj_clip_get(sub));
+   fail_if(!efl_canvas_object_clip_get(sub));
 
    /* test description.clip_to override */
    sub = edje_object_part_object_get(obj, "noclip");
-   clip2 = evas_obj_clip_get(sub);
+   clip2 = efl_canvas_object_clip_get(sub);
    fail_if(clip != clip2);
 
    EDJE_TEST_FREE_EVAS();
@@ -212,13 +212,13 @@ START_TEST(edje_test_filters)
 
    /* check value of no_render flag as seen from evas land */
    sub = edje_object_part_object_get(obj, "mask");
-   fail_if(!evas_obj_no_render_get(sub));
+   fail_if(!efl_canvas_object_no_render_get(sub));
 
    /* check no_render inheritance */
    sub = edje_object_part_object_get(obj, "mask2");
-   fail_if(evas_obj_no_render_get(sub));
+   fail_if(efl_canvas_object_no_render_get(sub));
    sub = edje_object_part_object_get(obj, "mask3");
-   fail_if(!evas_obj_no_render_get(sub));
+   fail_if(!efl_canvas_object_no_render_get(sub));
 
    /* text part: check filter status */
    text = edje_object_part_object_get(obj, "text");

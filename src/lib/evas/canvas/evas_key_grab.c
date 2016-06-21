@@ -132,7 +132,7 @@ evas_key_grab_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const c
 
    g = evas_key_grab_find(eo_obj, obj, keyname, modifiers, not_modifiers);
    if (!g) return;
-   Evas_Object_Protected_Data *g_object = eo_data_scope_get(g->object, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *g_object = eo_data_scope_get(g->object, EFL_CANVAS_OBJECT_CLASS);
    g_object->grabs = eina_list_remove(g_object->grabs, g);
    obj->layer->evas->grabs = eina_list_remove(obj->layer->evas->grabs, g);
    if (g->keyname) free(g->keyname);
@@ -142,7 +142,7 @@ evas_key_grab_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const c
 /* public calls */
 
 EOLIAN Eina_Bool
-_evas_object_key_grab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
+_efl_canvas_object_key_grab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
 {
    /* MEM OK */
    Evas_Key_Grab *g;
@@ -153,7 +153,7 @@ _evas_object_key_grab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *k
 }
 
 EOLIAN void
-_evas_object_key_ungrab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
+_efl_canvas_object_key_ungrab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
 {
    /* MEM OK */
    Evas_Key_Grab *g;
@@ -162,7 +162,7 @@ _evas_object_key_ungrab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char 
    if (!keyname) return;
    g = evas_key_grab_find(eo_obj, obj, keyname, modifiers, not_modifiers);
    if (!g) return;
-   Evas_Object_Protected_Data *g_object = eo_data_scope_get(g->object, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *g_object = eo_data_scope_get(g->object, EFL_CANVAS_OBJECT_CLASS);
    if (g_object->layer->evas->walking_grabs)
      {
         if (!g->delete_me)

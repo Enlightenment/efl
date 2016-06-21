@@ -9,7 +9,7 @@ _efl_ui_grid_static_eo_base_constructor(Eo *obj, void *pd EINA_UNUSED)
    Efl_Ui_Grid_Data *gd;
 
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, MY_CLASS_NAME);
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
    gd = eo_data_scope_get(obj, EFL_UI_GRID_CLASS);

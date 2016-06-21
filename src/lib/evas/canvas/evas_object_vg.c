@@ -97,7 +97,7 @@ _evas_vg_eo_base_destructor(Eo *eo_obj, Evas_VG_Data *pd)
    Evas_Object_Protected_Data *obj;
    Evas *e = evas_object_evas_get(eo_obj);
 
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (pd->engine_data)
      obj->layer->evas->engine.func->ector_free(pd->engine_data);
 
@@ -111,7 +111,7 @@ _evas_vg_eo_base_destructor(Eo *eo_obj, Evas_VG_Data *pd)
 Eo *
 _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
 

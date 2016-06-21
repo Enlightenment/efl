@@ -57,7 +57,7 @@ class Elm.Segment_Control (Elm.Layout)
 
          return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
-            @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
+            @in icon: Efl.Canvas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in label: string @optional; [[The label of the item.]]
             @in idx: int; [[Item position. Value should be between 0 and items count.]]
          }
@@ -115,7 +115,7 @@ class Elm.Segment_Control (Elm.Layout)
 
          return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
-            @in icon: Evas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
+            @in icon: Efl.Canvas.Object @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
             @in label: string @optional; [[The label of the item.  Note that, NULL is different from empty string "".]]
          }
       }
@@ -126,7 +126,7 @@ class Elm.Segment_Control (Elm.Layout)
            it was created, with function elm_segment_control_item_add(), or later
            with function elm_object_item_part_content_set(). If no icon
            was passed as argument, it will return $NULL.]]
-         return: Evas.Object; [[The left side icon associated to the item at $index.]]
+         return: Efl.Canvas.Object; [[The left side icon associated to the item at $index.]]
          params {
             @in idx: int; [[The index of the segment item.]]
          }

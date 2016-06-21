@@ -1424,7 +1424,7 @@ typedef enum
   EVAS_RENDER_TINT = 8, /** DEPRECATED. d = d*s + d*(1 - sa) + s*(1 - da) */
   EVAS_RENDER_TINT_REL = 9, /** DEPRECATED. d = d*(1 - sa + s) */
   EVAS_RENDER_MASK = 10, /** DEPRECATED. d = d*sa. For masking support, please
-                          * use Evas.Object.clip_set or EDC "clip_to" instead.
+                          * use Efl.Canvas.Object.clip_set or EDC "clip_to" instead.
                           */
   EVAS_RENDER_MUL = 11 /** DEPRECATED. d = d*s */
 } Evas_Render_Op;
@@ -1472,7 +1472,7 @@ EAPI Evas_Render_Op evas_object_render_op_get(const Evas_Object *obj);
 EAPI Eina_Bool evas_object_static_clip_get(const Evas_Object *obj);
 
 #include "canvas/evas_common_interface.eo.legacy.h"
-#include "canvas/evas_object.eo.legacy.h"
+#include "canvas/efl_canvas_object.eo.legacy.h"
 
 /**
  * @}

@@ -178,7 +178,7 @@ evas_object_mapped_clip_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_D
         if (obj->smart.parent)
           {
              Evas_Object_Protected_Data *smart_parent_obj =
-                eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_CLASS);
+                eo_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
              evas_object_child_map_across_mark
                 (eo_obj, obj, smart_parent_obj->map->cur.map_parent, 0, NULL);
           }
@@ -189,7 +189,7 @@ evas_object_mapped_clip_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_D
 }
 
 static void
-_evas_object_clip_mask_unset(Evas_Object_Protected_Data *obj)
+_efl_canvas_object_clip_mask_unset(Evas_Object_Protected_Data *obj)
 {
    if (!obj || !obj->mask->is_mask) return;
    if (obj->clip.clipees) return;
@@ -216,7 +216,7 @@ extern const char *o_image_type;
 static void _clipper_del_cb(void *data, const Eo_Event *event);
 
 EOLIAN void
-_evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
+_efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
 {
    Evas_Object_Protected_Data *clip;
    Evas_Public_Data *e;
@@ -233,7 +233,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
 
    evas_object_async_block(obj);
 
-   clip = eo_data_scope_get(eo_clip, EVAS_OBJECT_CLASS);
+   clip = eo_data_scope_get(eo_clip, EFL_CANVAS_OBJECT_CLASS);
    if (obj->cur->clipper && obj->cur->clipper->object == eo_clip) return;
    if (eo_obj == eo_clip)
      {
@@ -318,7 +318,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
                     }
                }
 
-             _evas_object_clip_mask_unset(obj->cur->clipper);
+             _efl_canvas_object_clip_mask_unset(obj->cur->clipper);
           }
         evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
         evas_object_change(eo_obj, obj);
@@ -395,7 +395,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
 }
 
 EOLIAN Evas_Object *
-_evas_object_clip_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_clip_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if (obj->cur->clipper)
      return obj->cur->clipper->object;
@@ -403,7 +403,7 @@ _evas_object_clip_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 }
 
 EOLIAN void
-_evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (!obj->cur->clipper) return;
    evas_object_async_block(obj);
@@ -448,7 +448,7 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
                     }
                }
 
-             _evas_object_clip_mask_unset(obj->cur->clipper);
+             _efl_canvas_object_clip_mask_unset(obj->cur->clipper);
           }
 	evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
 
@@ -481,11 +481,11 @@ static void
 _clipper_del_cb(void *data, const Eo_Event *event)
 {
    Evas_Object *eo_obj = data;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (!obj) return;
 
-   _evas_object_clip_unset(eo_obj, obj);
+   _efl_canvas_object_clip_unset(eo_obj, obj);
    if (obj->prev->clipper && (obj->prev->clipper->object == event->object))
      {
         // not removing cb since it's the del cb... it can't be called again!
@@ -496,7 +496,7 @@ _clipper_del_cb(void *data, const Eo_Event *event)
 }
 
 void
-_evas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev)
+_efl_canvas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev)
 {
    if (obj->prev->clipper)
      {
@@ -563,7 +563,7 @@ _clipee_iterator_free(Clipee_Iterator *it)
 }
 
 EOLIAN Eina_Iterator *
-_evas_object_clipees_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_clipees_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Clipee_Iterator *it;
 
@@ -584,13 +584,13 @@ _evas_object_clipees_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 EOLIAN Eina_Bool
-_evas_object_clipees_has(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_clipees_has(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return (obj->clip.clipees ? EINA_TRUE : EINA_FALSE);
 }
 
 EOLIAN void
-_evas_object_no_render_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool enable)
+_efl_canvas_object_no_render_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool enable)
 {
    obj->no_render = enable;
    if (obj->is_smart)
@@ -598,7 +598,7 @@ _evas_object_no_render_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Boo
 }
 
 EOLIAN Eina_Bool
-_evas_object_no_render_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_no_render_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->no_render;
 }

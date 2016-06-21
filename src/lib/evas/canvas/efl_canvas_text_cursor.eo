@@ -17,7 +17,7 @@ class Efl.Canvas.Text.Cursor (Eo.Base)
             legacy: null;
          }
          values {
-            tb: const(Evas.Object); [[The text object]] /* XXX: It should be textblock only. */
+            tb: const(Efl.Canvas.Object); [[The text object]] /* XXX: It should be textblock only. */
          }
       }
       @property position {

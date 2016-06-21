@@ -4,8 +4,8 @@
 EAPI void
 evas_object_name_set(Evas_Object *eo_obj, const char *name)
 {
-   Evas_Object_Protected_Data *obj = eo_isa(eo_obj, EVAS_OBJECT_CLASS) ?
-            eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS) : NULL;
+   Evas_Object_Protected_Data *obj = eo_isa(eo_obj, EFL_CANVAS_OBJECT_CLASS) ?
+            eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS) : NULL;
    if (!obj) return;
    if (obj->name)
      {
@@ -25,8 +25,8 @@ evas_object_name_set(Evas_Object *eo_obj, const char *name)
 EAPI const char *
 evas_object_name_get(const Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_isa(eo_obj, EVAS_OBJECT_CLASS) ?
-            eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS) : NULL;
+   Evas_Object_Protected_Data *obj = eo_isa(eo_obj, EFL_CANVAS_OBJECT_CLASS) ?
+            eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS) : NULL;
    if (!obj) return NULL;
    return obj->name;
 }

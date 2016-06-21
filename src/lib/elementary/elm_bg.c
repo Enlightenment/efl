@@ -123,7 +123,7 @@ _elm_bg_eo_base_constructor(Eo *obj, Elm_Bg_Data *_pd EINA_UNUSED)
 {
    elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_DISABLED);
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
 }

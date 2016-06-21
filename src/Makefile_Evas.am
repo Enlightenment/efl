@@ -2,7 +2,7 @@
 ### Library
 
 evas_eolian_pub_files = \
-	lib/evas/canvas/evas_object.eo \
+	lib/evas/canvas/efl_canvas_object.eo \
 	lib/evas/canvas/efl_canvas_polygon.eo \
 	lib/evas/canvas/efl_canvas_rectangle.eo \
 	lib/evas/canvas/efl_canvas_text.eo \

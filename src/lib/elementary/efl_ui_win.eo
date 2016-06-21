@@ -47,7 +47,7 @@ enum Efl.Ui.Win.Type
                     just like any other object would be, and do other things
                     like applying \@ref Evas_Map effects to it. This is the only
                     type of window that requires the parent parameter of
-                    \@ref elm_win_add to be a valid @Evas.Object.]]
+                    \@ref elm_win_add to be a valid @Efl.Canvas.Object.]]
    socket_image, [[The window is rendered onto an image buffer and can be shown
                    other process's plug image object. No actual window is
                    created for this type, instead the window and all of its
@@ -401,7 +401,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             @endcode
             */
             values {
-               icon: Evas.Object @nullable; [[The Evas image object to use for an icon.]]
+               icon: Efl.Canvas.Object @nullable; [[The Evas image object to use for an icon.]]
             }
          }
          get {
@@ -411,7 +411,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
               the object to use for the window icon.
             ]]
             values {
-               icon: const(Evas.Object) @nullable; [[The Evas image object to use for an icon.]]
+               icon: const(Efl.Canvas.Object) @nullable; [[The Evas image object to use for an icon.]]
             }
          }
       }

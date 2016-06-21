@@ -1,4 +1,4 @@
-class Evas.Text (Evas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.Internal)
+class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.Internal)
 {
    legacy_prefix: evas_object_text;
    eo_prefix: evas_obj_text;
@@ -232,10 +232,10 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.I
          }
       }
       char_pos_get @const {
-         [[Retrieve position and dimension information of a character within a text @Evas.Object
+         [[Retrieve position and dimension information of a character within a text @Efl.Canvas.Object
 
          This function is used to obtain the X, Y, width and height of the character
-         located at $pos within the @Evas.Object $obj. $obj must be a text object
+         located at $pos within the @Efl.Canvas.Object $obj. $obj must be a text object
          Any of the $Evas_Coord parameters ($cx, $cy, $cw, $ch) may be $NULL in which case no value will be assigned to that
          parameter.]]
 
@@ -264,7 +264,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.I
       Efl.Canvas.Filter.Internal.filter_input_alpha;
       Efl.Canvas.Filter.Internal.filter_input_render;
       Efl.Canvas.Filter.Internal.filter_dirty;
-      Evas.Object.paragraph_direction.set;
-      Evas.Object.paragraph_direction.get;
+      Efl.Canvas.Object.paragraph_direction.set;
+      Efl.Canvas.Object.paragraph_direction.get;
    }
 }

@@ -59,7 +59,7 @@ _evas_object_associate_del(Evas_Object *obj)
 /* Interceptors Callbacks */
 
 static void
-_ecore_evas_obj_intercept_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+_ecore_evas_object_intercept_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Ecore_Evas *ee = data;
    // FIXME: account for frame
@@ -68,33 +68,33 @@ _ecore_evas_obj_intercept_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_
 }
 
 static void
-_ecore_evas_obj_intercept_raise(void *data, Evas_Object *obj EINA_UNUSED)
+_ecore_evas_object_intercept_raise(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    ecore_evas_raise(ee);
 }
 
 static void
-_ecore_evas_obj_intercept_lower(void *data, Evas_Object *obj EINA_UNUSED)
+_ecore_evas_object_intercept_lower(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    ecore_evas_lower(ee);
 }
 
 static void
-_ecore_evas_obj_intercept_stack_above(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *above EINA_UNUSED)
+_ecore_evas_object_intercept_stack_above(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *above EINA_UNUSED)
 {
    INF("TODO: %s", __FUNCTION__);
 }
 
 static void
-_ecore_evas_obj_intercept_stack_below(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *below EINA_UNUSED)
+_ecore_evas_object_intercept_stack_below(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *below EINA_UNUSED)
 {
    INF("TODO: %s", __FUNCTION__);
 }
 
 static void
-_ecore_evas_obj_intercept_layer_set(void *data, Evas_Object *obj EINA_UNUSED, int l)
+_ecore_evas_object_intercept_layer_set(void *data, Evas_Object *obj EINA_UNUSED, int l)
 {
    Ecore_Evas *ee = data;
    ecore_evas_layer_set(ee, l);
@@ -103,21 +103,21 @@ _ecore_evas_obj_intercept_layer_set(void *data, Evas_Object *obj EINA_UNUSED, in
 /* Event Callbacks */
 
 static void
-_ecore_evas_obj_callback_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_ecore_evas_object_callback_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    ecore_evas_show(ee);
 }
 
 static void
-_ecore_evas_obj_callback_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_ecore_evas_object_callback_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    ecore_evas_hide(ee);
 }
 
 static void
-_ecore_evas_obj_callback_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_ecore_evas_object_callback_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Evas_Coord ow, oh;
@@ -127,7 +127,7 @@ _ecore_evas_obj_callback_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
 }
 
 static void
-_ecore_evas_obj_callback_changed_size_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_ecore_evas_object_callback_changed_size_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Evas_Coord w, h;
@@ -142,7 +142,7 @@ _ecore_evas_obj_callback_changed_size_hints(void *data, Evas *e EINA_UNUSED, Eva
 }
 
 static void
-_ecore_evas_obj_callback_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_ecore_evas_object_callback_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    _ecore_evas_object_dissociate(ee, obj);
@@ -150,7 +150,7 @@ _ecore_evas_obj_callback_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, 
 }
 
 static void
-_ecore_evas_obj_callback_del_dissociate(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_ecore_evas_object_callback_del_dissociate(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    _ecore_evas_object_dissociate(ee, obj);
@@ -293,41 +293,41 @@ _ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object
 {
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_SHOW,
-      _ecore_evas_obj_callback_show, ee);
+      _ecore_evas_object_callback_show, ee);
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_HIDE,
-      _ecore_evas_obj_callback_hide, ee);
+      _ecore_evas_object_callback_hide, ee);
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESIZE,
-      _ecore_evas_obj_callback_resize, ee);
+      _ecore_evas_object_callback_resize, ee);
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-      _ecore_evas_obj_callback_changed_size_hints, ee);
+      _ecore_evas_object_callback_changed_size_hints, ee);
    if (flags & ECORE_EVAS_OBJECT_ASSOCIATE_DEL)
      evas_object_event_callback_add
-       (obj, EVAS_CALLBACK_DEL, _ecore_evas_obj_callback_del, ee);
+       (obj, EVAS_CALLBACK_DEL, _ecore_evas_object_callback_del, ee);
    else
      evas_object_event_callback_add
-       (obj, EVAS_CALLBACK_DEL, _ecore_evas_obj_callback_del_dissociate, ee);
+       (obj, EVAS_CALLBACK_DEL, _ecore_evas_object_callback_del_dissociate, ee);
 
    evas_object_intercept_move_callback_add
-     (obj, _ecore_evas_obj_intercept_move, ee);
+     (obj, _ecore_evas_object_intercept_move, ee);
 
    if (flags & ECORE_EVAS_OBJECT_ASSOCIATE_STACK)
      {
         evas_object_intercept_raise_callback_add
-          (obj, _ecore_evas_obj_intercept_raise, ee);
+          (obj, _ecore_evas_object_intercept_raise, ee);
         evas_object_intercept_lower_callback_add
-          (obj, _ecore_evas_obj_intercept_lower, ee);
+          (obj, _ecore_evas_object_intercept_lower, ee);
         evas_object_intercept_stack_above_callback_add
-          (obj, _ecore_evas_obj_intercept_stack_above, ee);
+          (obj, _ecore_evas_object_intercept_stack_above, ee);
         evas_object_intercept_stack_below_callback_add
-          (obj, _ecore_evas_obj_intercept_stack_below, ee);
+          (obj, _ecore_evas_object_intercept_stack_below, ee);
      }
 
    if (flags & ECORE_EVAS_OBJECT_ASSOCIATE_LAYER)
      evas_object_intercept_layer_set_callback_add
-       (obj, _ecore_evas_obj_intercept_layer_set, ee);
+       (obj, _ecore_evas_object_intercept_layer_set, ee);
 
    if (flags & ECORE_EVAS_OBJECT_ASSOCIATE_DEL)
      {
@@ -346,35 +346,35 @@ _ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
 {
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_SHOW,
-      _ecore_evas_obj_callback_show, ee);
+      _ecore_evas_object_callback_show, ee);
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_HIDE,
-      _ecore_evas_obj_callback_hide, ee);
+      _ecore_evas_object_callback_hide, ee);
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_RESIZE,
-      _ecore_evas_obj_callback_resize, ee);
+      _ecore_evas_object_callback_resize, ee);
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-      _ecore_evas_obj_callback_changed_size_hints, ee);
+      _ecore_evas_object_callback_changed_size_hints, ee);
    evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_DEL, _ecore_evas_obj_callback_del, ee);
+     (obj, EVAS_CALLBACK_DEL, _ecore_evas_object_callback_del, ee);
    evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_DEL, _ecore_evas_obj_callback_del_dissociate, ee);
+     (obj, EVAS_CALLBACK_DEL, _ecore_evas_object_callback_del_dissociate, ee);
 
    evas_object_intercept_move_callback_del
-     (obj, _ecore_evas_obj_intercept_move);
+     (obj, _ecore_evas_object_intercept_move);
 
    evas_object_intercept_raise_callback_del
-     (obj, _ecore_evas_obj_intercept_raise);
+     (obj, _ecore_evas_object_intercept_raise);
    evas_object_intercept_lower_callback_del
-     (obj, _ecore_evas_obj_intercept_lower);
+     (obj, _ecore_evas_object_intercept_lower);
    evas_object_intercept_stack_above_callback_del
-     (obj, _ecore_evas_obj_intercept_stack_above);
+     (obj, _ecore_evas_object_intercept_stack_above);
    evas_object_intercept_stack_below_callback_del
-     (obj, _ecore_evas_obj_intercept_stack_below);
+     (obj, _ecore_evas_object_intercept_stack_below);
 
    evas_object_intercept_layer_set_callback_del
-     (obj, _ecore_evas_obj_intercept_layer_set);
+     (obj, _ecore_evas_object_intercept_layer_set);
 
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {

@@ -159,12 +159,12 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
               the list of objects. The previous list will be deleted and this list
               will be managed by elementary. After it is set, don't modify it.]]
             values {
-               objs: list<Evas.Object>; [[Chain of objects to pass focus]]
+               objs: list<Efl.Canvas.Object>; [[Chain of objects to pass focus]]
             }
          }
          get {
             values {
-               objs: const(list<Evas.Object>); [[Chain of objects]]
+               objs: const(list<Efl.Canvas.Object>); [[Chain of objects]]
             }
          }
       }
@@ -209,7 +209,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             legacy: elm_widget_parent_get; /* Needed because we don't do duplication removal for legacy names. */
          }
          values {
-            parent: Evas.Object @nullable;
+            parent: Efl.Canvas.Object @nullable;
          }
       }
       @property access_info {
@@ -261,7 +261,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             return: bool;
          }
          values {
-            edj: Evas.Object;
+            edj: Efl.Canvas.Object;
             wname: string;
             welement: string;
             wstyle: string;
@@ -271,7 +271,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          set {
          }
          values {
-            sobj: Evas.Object @nullable;
+            sobj: Efl.Canvas.Object @nullable;
          }
       }
       @property display_mode {
@@ -309,7 +309,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          set {
          }
          values {
-            sobj: Evas.Object @nullable;
+            sobj: Efl.Canvas.Object @nullable;
             sub_obj: bool;
          }
       }
@@ -327,7 +327,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             [[Function to operate on a given widget's scrollabe children when necessary.
 
               Warning: free the returned list with eina_list_free().]]
-            return: free(own(list<Evas.Object>), eina_list_free) @warn_unused;
+            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused;
          }
       }
       @property scroll_hold {
@@ -373,7 +373,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       @property top {
          get {
-            return: Evas.Object;
+            return: Efl.Canvas.Object;
          }
       }
       @property focus_order {
@@ -388,7 +388,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       @property can_focus_child_list {
          get {
-            return: free(own(list<Evas.Object>), eina_list_free) @warn_unused;
+            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused;
          }
       }
       @property focused_item {
@@ -407,7 +407,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       @property parent_widget {
          get @virtual_pure {
-            return: Evas.Object;
+            return: Efl.Canvas.Object;
             legacy: null;
          }
       }
@@ -419,7 +419,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       @property focused_object {
          [[Current focused object in object tree.]]
          get {
-            return: Evas.Object; [[Current focused or $null, if there is no focused object.]]
+            return: Efl.Canvas.Object; [[Current focused or $null, if there is no focused object.]]
          }
       }
       @property parent2 {
@@ -428,7 +428,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          get {
          }
          values {
-            parent: Evas.Object @nullable;
+            parent: Efl.Canvas.Object @nullable;
          }
       }
       @property part_text {
@@ -444,7 +444,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
       }
       newest_focus_order_get @const {
-         return: Evas.Object;
+         return: Efl.Canvas.Object;
          params {
             @out newest_focus_order: uint;
             @in can_focus_only: bool;
@@ -462,7 +462,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
 
            @since 1.8]]
          params {
-            @in next: Evas.Object @nullable; [[Focus next object]]
+            @in next: Efl.Canvas.Object @nullable; [[Focus next object]]
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
@@ -470,7 +470,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          [[Get the next object with specific focus direction.
 
            @since 1.8]]
-         return: Evas.Object; [[Focus next object]]
+         return: Efl.Canvas.Object; [[Focus next object]]
          params {
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
@@ -503,8 +503,8 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
 
            Note: On focus cycle, only will be evaluated children of this container.]]
          params {
-            @in child: Evas.Object; [[The child to be added in custom chain.]]
-            @in relative_child: Evas.Object @optional; [[The relative object to position the child.]]
+            @in child: Efl.Canvas.Object; [[The child to be added in custom chain.]]
+            @in relative_child: Efl.Canvas.Object @optional; [[The relative object to position the child.]]
          }
       }
       part_text_translate {
@@ -535,7 +535,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          [['Virtual' function handling sub objects being added.]]
          return: bool;
          params {
-            @in sobj: Evas.Object;
+            @in sobj: Efl.Canvas.Object;
          }
       }
       focus_direction_manager_is {
@@ -546,7 +546,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       event {
          [['Virtual' function handling input events on the widget.]]
          params {
-            @in source: Evas.Object;
+            @in source: Efl.Canvas.Object;
             @in type: Evas.Callback_Type;
             @in event_info: void_ptr;
          }
@@ -604,9 +604,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       focus_direction @virtual_pure {
          [['Virtual' function handling passing focus to sub-objects given a direction, in degrees.]]
          params {
-            @in base: const(Evas.Object);
+            @in base: const(Efl.Canvas.Object);
             @in degree: double;
-            @out direction: Evas.Object;
+            @out direction: Efl.Canvas.Object;
             @out direction_item: Elm.Widget.Item;
             @out weight: double;
          }
@@ -633,7 +633,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          return: bool;
       }
       name_find @const {
-         return: Evas.Object;
+         return: Efl.Canvas.Object;
          params {
             @in name: string;
             @in recurse: int;
@@ -642,11 +642,11 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       focus_list_direction_get @const {
          return: bool;
          params {
-            @in base: const(Evas.Object);
+            @in base: const(Efl.Canvas.Object);
             @in items: const(list<Eo.Base>);
             @in list_data_get: list_data_get_func_type;
             @in degree: double;
-            @out direction: Evas.Object;
+            @out direction: Efl.Canvas.Object;
             @out direction_item: Elm.Widget.Item;
             @out weight: double;
          }
@@ -687,7 +687,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          return: bool;
          params {
             @in dir: Elm.Focus_Direction;
-            @out next: Evas.Object;
+            @out next: Efl.Canvas.Object;
             @out next_item: Elm.Widget.Item;
          }
       }
@@ -729,7 +729,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          [['Virtual' function handling passing focus to sub-objects.]]
          params {
             @in dir: Elm.Focus_Direction;
-            @out next: Evas.Object;
+            @out next: Efl.Canvas.Object;
             @out next_item: Elm.Widget.Item;
          }
          return: bool;
@@ -740,7 +740,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             @in items: const(list<Eo.Base>);
             @in list_data_get: list_data_get_func_type;
             @in dir: Elm.Focus_Direction;
-            @out next: Evas.Object;
+            @out next: Efl.Canvas.Object;
             @out next_item: Elm.Widget.Item;
          }
       }
@@ -754,9 +754,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       focus_direction_get @const {
          return: bool;
          params {
-            @in base: const(Evas.Object);
+            @in base: const(Efl.Canvas.Object);
             @in degree: double;
-            @out direction: Evas.Object;
+            @out direction: Efl.Canvas.Object;
             @out direction_item: Elm.Widget.Item;
             @out weight: double;
          }
@@ -783,7 +783,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          [['Virtual' function handling sub objects being removed.]]
          return: bool;
          params {
-            @in sobj: Evas.Object;
+            @in sobj: Efl.Canvas.Object;
          }
       }
       tooltip_add {
@@ -803,8 +803,8 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
 
            Note: On focus cycle, only will be evaluated children of this container.]]
          params {
-            @in child: Evas.Object; [[The child to be added in custom chain.]]
-            @in relative_child: Evas.Object @optional; [[The relative object to position the child.]]
+            @in child: Efl.Canvas.Object; [[The child to be added in custom chain.]]
+            @in relative_child: Efl.Canvas.Object @optional; [[The relative object to position the child.]]
          }
       }
       @property focus_move_policy {

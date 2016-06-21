@@ -460,7 +460,7 @@ _evas_box_eo_base_constructor(Eo *obj, Evas_Object_Box_Data *class_data EINA_UNU
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
-   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
    return obj;
 }

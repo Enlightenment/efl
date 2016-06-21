@@ -113,7 +113,7 @@ _evas_line_xy_set(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord x1, Evas_Coord y1,
    return;
    MAGIC_CHECK_END();
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if ((x1 == (obj->cur->geometry.x + o->cur.x1)) &&
        (y1 == (obj->cur->geometry.y + o->cur.y1)) &&
@@ -197,7 +197,7 @@ _evas_line_xy_get(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord *x1, Evas_Coord *y
    const Evas_Line_Data *o = _pd;
 
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (x1) *x1 = obj->cur->geometry.x + o->cur.x1;
    if (y1) *y1 = obj->cur->geometry.y + o->cur.y1;
    if (x2) *x2 = obj->cur->geometry.x + o->cur.x2;
@@ -208,7 +208,7 @@ _evas_line_xy_get(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord *x1, Evas_Coord *y
 static void
 evas_object_line_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->private_data = eo_data_ref(eo_obj, MY_CLASS);

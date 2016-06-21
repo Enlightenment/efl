@@ -35,7 +35,7 @@ _edje_object_eo_base_constructor(Eo *obj, Edje *ed)
    ed->duration_scale = 1.0;
 
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    _edje_lib_ref();
 
    parent = eo_parent_get(obj);
@@ -343,7 +343,7 @@ _edje_object_efl_canvas_group_group_no_render_set(Eo *obj, Edje *ed, Eina_Bool h
    Edje *edg;
 
    efl_canvas_group_no_render_set(eo_super(obj, MY_CLASS), hide);
-   if (evas_obj_no_render_get(obj) == hide) return;
+   if (efl_canvas_object_no_render_get(obj) == hide) return;
 
    EINA_LIST_FOREACH(ed->groups, l, edg)
      if (edg != ed) efl_canvas_group_no_render_set(edg->obj, hide);
@@ -467,9 +467,9 @@ edje_object_file_get(const Edje_Object *obj, const char **file, const char **gro
 }
 
 EOLIAN static void
-_edje_object_evas_object_paragraph_direction_set(Eo *obj, Edje *ed, Evas_BiDi_Direction dir)
+_edje_object_efl_canvas_object_paragraph_direction_set(Eo *obj, Edje *ed, Evas_BiDi_Direction dir)
 {
-   evas_obj_paragraph_direction_set(eo_super(obj, MY_CLASS), dir);
+   efl_canvas_object_paragraph_direction_set(eo_super(obj, MY_CLASS), dir);
 
    /* Make it dirty to recalculate edje.
       It needs to move text objects according to new paragraph direction */

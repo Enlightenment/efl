@@ -400,7 +400,7 @@ EAPI Ecore_Wl2_Window *elm_win_wl_window_get(const Evas_Object *obj);
 EAPI Ecore_Win32_Window *elm_win_win32_window_get(const Evas_Object *obj);
 
 /**
- * @brief Get the Ecore_Cocoa_Window of an Evas.Object.
+ * @brief Get the Ecore_Cocoa_Window of an Efl.Canvas.Object.
  *
  * @return The Ecore_Cocoa_Window of @c obj.
  *

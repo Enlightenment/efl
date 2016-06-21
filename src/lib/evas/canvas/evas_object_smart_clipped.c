@@ -66,7 +66,7 @@ evas_object_smart_clipped_smart_add(Evas_Object *eo_obj)
    evas_object_resize(cso->clipper, 200000, 200000);
    evas_object_pass_events_set(cso->clipper, 1);
    evas_object_hide(cso->clipper); /* show when have something clipped to it */
-   evas_obj_no_render_set(cso->clipper, 1);
+   efl_canvas_object_no_render_set(cso->clipper, 1);
 
    evas_object_smart_data_set(eo_obj, cso);
 }

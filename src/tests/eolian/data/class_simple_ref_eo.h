@@ -33,7 +33,7 @@ EWAPI const Eo_Class *class_simple_class_get(void);
  *
  * @ingroup Class_Simple
  */
-EOAPI Eina_Bool evas_obj_simple_a_set(Eo *obj, int value);
+EOAPI Eina_Bool efl_canvas_object_simple_a_set(Eo *obj, int value);
 #endif
 
 #ifdef CLASS_SIMPLE_BETA
@@ -44,10 +44,10 @@ EOAPI Eina_Bool evas_obj_simple_a_set(Eo *obj, int value);
  *
  * @ingroup Class_Simple
  */
-EOAPI int evas_obj_simple_a_get(const Eo *obj);
+EOAPI int efl_canvas_object_simple_a_get(const Eo *obj);
 #endif
 
-EOAPI void evas_obj_simple_b_set(Eo *obj);
+EOAPI void efl_canvas_object_simple_b_set(Eo *obj);
 
 #ifdef CLASS_SIMPLE_BETA
 /**
@@ -62,10 +62,10 @@ EOAPI void evas_obj_simple_b_set(Eo *obj);
  *
  * @ingroup Class_Simple
  */
-EOAPI char *evas_obj_simple_foo(Eo *obj, int a, char *b, double *c, int *d);
+EOAPI char *efl_canvas_object_simple_foo(Eo *obj, int a, char *b, double *c, int *d);
 #endif
 
-EOAPI int *evas_obj_simple_bar(Eo *obj, int x);
+EOAPI int *efl_canvas_object_simple_bar(Eo *obj, int x);
 
 
 #endif

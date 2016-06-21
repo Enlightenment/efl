@@ -53,7 +53,7 @@ class Elm.List.Item(Elm.Widget.Item)
                      ]]
                 }
                 values {
-                     obj: Evas.Object; [[The base Edje object associated with the item.]]
+                     obj: Efl.Canvas.Object; [[The base Edje object associated with the item.]]
                 }
            }
            @property prev {

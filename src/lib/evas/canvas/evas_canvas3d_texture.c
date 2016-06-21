@@ -20,7 +20,7 @@ _texture_proxy_set(Evas_Canvas3D_Texture *texture, Evas_Object *eo_src, Evas_Obj
 static inline void
 _texture_proxy_unset(Evas_Canvas3D_Texture_Data *texture)
 {
-   Evas_Object_Protected_Data *src = eo_data_scope_get(texture->source, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *src = eo_data_scope_get(texture->source, EFL_CANVAS_OBJECT_CLASS);
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_src);
      {
@@ -67,7 +67,7 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
 
    // TODO: replace this function by evas_render_proxy_subrender (as appropriate)
 
-   source = eo_data_scope_get(pd->source, EVAS_OBJECT_CLASS);
+   source = eo_data_scope_get(pd->source, EFL_CANVAS_OBJECT_CLASS);
 
    is_image = eo_isa(pd->source, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
@@ -226,7 +226,7 @@ _evas_canvas3d_texture_evas_canvas3d_object_update_notify(Eo *obj, Evas_Canvas3D
         Eo *evas = NULL;
         evas = evas_common_evas_get(obj);
         Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
-        Evas_Object_Protected_Data *src = eo_data_scope_get(pd->source, EVAS_OBJECT_CLASS);
+        Evas_Object_Protected_Data *src = eo_data_scope_get(pd->source, EFL_CANVAS_OBJECT_CLASS);
 
         if (pd->engine_data == NULL)
           {
@@ -424,7 +424,7 @@ _evas_canvas3d_texture_source_set(Eo *obj , Evas_Canvas3D_Texture_Data *pd, Evas
         return;
      }
 
-   src = eo_data_scope_get(source, EVAS_OBJECT_CLASS);
+   src = eo_data_scope_get(source, EFL_CANVAS_OBJECT_CLASS);
 
    if (src->delete_me)
      {
@@ -452,7 +452,7 @@ _evas_canvas3d_texture_source_visible_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Tex
    if (pd->source == NULL)
      return;
 
-   src_obj = eo_data_scope_get(pd->source, EVAS_OBJECT_CLASS);
+   src_obj = eo_data_scope_get(pd->source, EFL_CANVAS_OBJECT_CLASS);
 
    if (src_obj->proxy->src_invisible == !visible)
      return;
@@ -474,7 +474,7 @@ _evas_canvas3d_texture_source_visible_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Tex
    if (pd->source == NULL)
      return EINA_FALSE;
 
-   src_obj = eo_data_scope_get(pd->source, EVAS_OBJECT_CLASS);
+   src_obj = eo_data_scope_get(pd->source, EFL_CANVAS_OBJECT_CLASS);
    return !src_obj->proxy->src_invisible;
 }
 

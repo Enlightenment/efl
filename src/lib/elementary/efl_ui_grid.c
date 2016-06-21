@@ -292,7 +292,7 @@ EOLIAN static Eo *
 _efl_ui_grid_eo_base_constructor(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, MY_CLASS_NAME);
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
    pd->dir1 = EFL_ORIENT_RIGHT;

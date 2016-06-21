@@ -2,7 +2,7 @@
 # include "config.h"
 #endif
 
-#define EVAS_OBJECT_PROTECTED
+#define EFL_CANVAS_OBJECT_PROTECTED
 
 #include <Evas.h>
 #include <Ecore.h>
@@ -246,7 +246,7 @@ EOLIAN static Eo *
 _emotion_object_eo_base_constructor(Eo *obj, Emotion_Object_Data *pd EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, E_OBJ_NAME);
+   efl_canvas_object_type_set(obj, E_OBJ_NAME);
 
    return obj;
 }

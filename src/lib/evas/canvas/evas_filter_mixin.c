@@ -76,7 +76,7 @@ static void
 _render_post_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Eo *eo_obj = data;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Filter_Data *pd = eo_data_scope_get(eo_obj, MY_CLASS);
    Eina_List *post_data;
    Evas_Filter_Post_Render_Data *task;
@@ -97,7 +97,7 @@ static void
 _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
 {
    Eo *eo_obj = data;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Filter_Data *pd = eo_data_scope_get(eo_obj, MY_CLASS);
    Evas_Filter_Post_Render_Data *post_data;
 
@@ -122,8 +122,8 @@ _filter_source_hash_free_cb(void *data)
    Evas_Object_Protected_Data *proxy, *source;
    Evas_Filter_Data *pd;
 
-   proxy = eo_data_scope_get(pb->eo_proxy, EVAS_OBJECT_CLASS);
-   source = eo_data_scope_get(pb->eo_source, EVAS_OBJECT_CLASS);
+   proxy = eo_data_scope_get(pb->eo_proxy, EFL_CANVAS_OBJECT_CLASS);
+   source = eo_data_scope_get(pb->eo_source, EFL_CANVAS_OBJECT_CLASS);
 
    if (source)
      {
@@ -249,7 +249,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                   iter = eina_hash_iterator_data_new(pd->data->sources);
                   EINA_ITERATOR_FOREACH(iter, pb)
                     {
-                       source = eo_data_scope_get(pb->eo_source, EVAS_OBJECT_CLASS);
+                       source = eo_data_scope_get(pb->eo_source, EFL_CANVAS_OBJECT_CLASS);
                        if (source->changed)
                          {
                             redraw = EINA_TRUE;
@@ -355,7 +355,7 @@ EOLIAN static void
 _efl_canvas_filter_internal_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
                                                               const char *code, const char *name)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Filter_Program *pgm = NULL;
    Evas_Object_Filter_Data *fcow;
    Eina_Bool alpha;
@@ -409,13 +409,13 @@ EOLIAN static void
 _efl_canvas_filter_internal_efl_gfx_filter_filter_source_set(Eo *eo_obj, Evas_Filter_Data *pd,
                                                              const char *name, Efl_Gfx *eo_source)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Filter_Proxy_Binding *pb, *pb_old = NULL;
    Evas_Object_Protected_Data *source = NULL;
    Evas_Object_Filter_Data *fcow = NULL;
 
    if (eo_source)
-     source = eo_data_scope_get(eo_source, EVAS_OBJECT_CLASS);
+     source = eo_data_scope_get(eo_source, EFL_CANVAS_OBJECT_CLASS);
 
    evas_object_async_block(obj);
    if (!name)
@@ -503,7 +503,7 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_state_set(Eo *eo_obj, Evas_Fil
                                                             const char *next_state, double next_val,
                                                             double pos)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    evas_object_async_block(obj);
    if ((cur_state != pd->data->state.cur.name) || (cur_val != pd->data->state.cur.value) ||
@@ -596,7 +596,7 @@ _efl_canvas_filter_internal_eo_base_constructor(Eo *eo_obj, Evas_Filter_Data *pd
 EOLIAN static void
 _efl_canvas_filter_internal_eo_base_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Filter_Data_Binding *db;
    Eina_Inlist *il;
 

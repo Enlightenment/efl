@@ -17,7 +17,7 @@ class Elm.View.Form (Eo.Base)
              ]]
              params {
                  @in propname: string; [[Property name]]
-                 @in evas: Evas.Object; [[Evas widget]]
+                 @in evas: Efl.Canvas.Object; [[Evas widget]]
              }
         }
     }

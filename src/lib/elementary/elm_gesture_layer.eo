@@ -121,7 +121,7 @@ class Elm.Gesture_Layer (Elm.Widget)
          ]]
          return: bool; [[$true on success, $false otherwise.]]
          params {
-            @in target: Evas.Object; [[The object to attach.]]
+            @in target: Efl.Canvas.Object; [[The object to attach.]]
          }
       }
       cb_del {

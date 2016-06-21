@@ -553,7 +553,7 @@ START_TEST(eolian_simple_parsing)
    fail_if(eolian_class_type_get(class) != EOLIAN_CLASS_REGULAR);
    fail_if(eolian_class_inherits_get(class) != NULL);
    fail_if(strcmp(eolian_class_legacy_prefix_get(class), "evas_object_simple"));
-   fail_if(strcmp(eolian_class_eo_prefix_get(class), "evas_obj_simple"));
+   fail_if(strcmp(eolian_class_eo_prefix_get(class), "efl_canvas_object_simple"));
    fail_if(strcmp(eolian_class_data_type_get(class), "Evas_Simple_Data"));
 
    /* c get func */

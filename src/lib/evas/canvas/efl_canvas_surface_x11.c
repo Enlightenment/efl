@@ -14,7 +14,7 @@ _efl_canvas_surface_x11_eo_base_constructor(Eo *eo, Efl_Canvas_Surface_X11_Data 
    Evas_Object_Protected_Data *obj;
 
    eo = eo_constructor(eo_super(eo, MY_CLASS));
-   obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
+   obj = eo_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return NULL;
 
    if (!ENFN->image_native_init(ENDT, EVAS_NATIVE_SURFACE_X11))
@@ -34,7 +34,7 @@ _efl_canvas_surface_x11_eo_base_destructor(Eo *eo, Efl_Canvas_Surface_X11_Data *
 {
    Evas_Object_Protected_Data *obj;
 
-   obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
+   obj = eo_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
 
    ENFN->image_native_shutdown(ENDT, EVAS_NATIVE_SURFACE_X11);
    eo_data_unref(eo, pd->base);

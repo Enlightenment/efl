@@ -682,7 +682,7 @@ _image_data_regenerate(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj;
 
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 #define CHECK(TYPE, STRUCT, REGEN) \
    if (eo_isa(eo_obj, TYPE))\

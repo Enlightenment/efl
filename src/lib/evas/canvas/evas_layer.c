@@ -149,8 +149,8 @@ evas_layer_del(Evas_Layer *lay)
 static void
 _evas_object_layer_set_child(Evas_Object *eo_obj, Evas_Object *par, short l)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   Evas_Object_Protected_Data *par_obj = eo_data_scope_get(par, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *par_obj = eo_data_scope_get(par, EFL_CANVAS_OBJECT_CLASS);
 
    if (obj->delete_me) return;
    if (obj->cur->layer == l) return;
@@ -185,7 +185,7 @@ evas_object_layer_set(Evas_Object *obj, short l)
 }
 
 EOLIAN void
-_evas_object_efl_gfx_stack_layer_set(Eo *eo_obj,
+_efl_canvas_object_efl_gfx_stack_layer_set(Eo *eo_obj,
                                      Evas_Object_Protected_Data *obj,
                                      short l)
 {
@@ -251,12 +251,12 @@ evas_object_layer_get(const Evas_Object *obj)
 }
 
 EOLIAN short
-_evas_object_efl_gfx_stack_layer_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_object_efl_gfx_stack_layer_get(Eo *eo_obj EINA_UNUSED,
                                      Evas_Object_Protected_Data *obj)
 {
    if (obj->smart.parent)
      {
-        Evas_Object_Protected_Data *smart_parent_obj = eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_CLASS);
+        Evas_Object_Protected_Data *smart_parent_obj = eo_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
         return smart_parent_obj->cur->layer;
      }
    return obj->cur->layer;

@@ -1,6 +1,6 @@
 import evas_types;
 
-class Evas.Line (Evas.Object)
+class Evas.Line (Efl.Canvas.Object)
 {
    legacy_prefix: evas_object_line;
    eo_prefix: evas_obj_line;

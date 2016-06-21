@@ -84,7 +84,7 @@ START_TEST(evas_mask_test_setget)
      }
    fail_if(i != 1);
 
-   it = evas_obj_clipees_get(mask);
+   it = efl_canvas_object_clipees_get(mask);
    i = 0;
    EINA_ITERATOR_FOREACH(it, o)
      {

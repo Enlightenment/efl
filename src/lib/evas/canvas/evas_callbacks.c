@@ -1,4 +1,4 @@
-#define EVAS_OBJECT_BETA
+#define EFL_CANVAS_OBJECT_BETA
 #define EVAS_CANVAS_BETA
 
 #include "evas_common_private.h"
@@ -31,27 +31,27 @@ extern Eina_Hash* signals_hash_table;
   }
 
 DEFINE_EVAS_CALLBACKS(EVAS_CALLBACK_LAST,
-                      EVAS_OBJECT_EVENT_MOUSE_IN,
-                      EVAS_OBJECT_EVENT_MOUSE_OUT,
-                      EVAS_OBJECT_EVENT_MOUSE_DOWN,
-                      EVAS_OBJECT_EVENT_MOUSE_UP,
-                      EVAS_OBJECT_EVENT_MOUSE_MOVE,
-                      EVAS_OBJECT_EVENT_MOUSE_WHEEL,
-                      EVAS_OBJECT_EVENT_MULTI_DOWN,
-                      EVAS_OBJECT_EVENT_MULTI_UP,
-                      EVAS_OBJECT_EVENT_MULTI_MOVE,
-                      EVAS_OBJECT_EVENT_FREE,
-                      EVAS_OBJECT_EVENT_KEY_DOWN,
-                      EVAS_OBJECT_EVENT_KEY_UP,
-                      EVAS_OBJECT_EVENT_FOCUS_IN,
-                      EVAS_OBJECT_EVENT_FOCUS_OUT,
+                      EFL_CANVAS_OBJECT_EVENT_MOUSE_IN,
+                      EFL_CANVAS_OBJECT_EVENT_MOUSE_OUT,
+                      EFL_CANVAS_OBJECT_EVENT_MOUSE_DOWN,
+                      EFL_CANVAS_OBJECT_EVENT_MOUSE_UP,
+                      EFL_CANVAS_OBJECT_EVENT_MOUSE_MOVE,
+                      EFL_CANVAS_OBJECT_EVENT_MOUSE_WHEEL,
+                      EFL_CANVAS_OBJECT_EVENT_MULTI_DOWN,
+                      EFL_CANVAS_OBJECT_EVENT_MULTI_UP,
+                      EFL_CANVAS_OBJECT_EVENT_MULTI_MOVE,
+                      EFL_CANVAS_OBJECT_EVENT_FREE,
+                      EFL_CANVAS_OBJECT_EVENT_KEY_DOWN,
+                      EFL_CANVAS_OBJECT_EVENT_KEY_UP,
+                      EFL_CANVAS_OBJECT_EVENT_FOCUS_IN,
+                      EFL_CANVAS_OBJECT_EVENT_FOCUS_OUT,
                       EFL_GFX_EVENT_SHOW,
                       EFL_GFX_EVENT_HIDE,
                       EFL_GFX_EVENT_MOVE,
                       EFL_GFX_EVENT_RESIZE,
                       EFL_GFX_EVENT_RESTACK,
-                      EVAS_OBJECT_EVENT_DEL,
-                      EVAS_OBJECT_EVENT_HOLD,
+                      EFL_CANVAS_OBJECT_EVENT_DEL,
+                      EFL_CANVAS_OBJECT_EVENT_HOLD,
                       EFL_GFX_EVENT_CHANGE_SIZE_HINTS,
                       EFL_IMAGE_EVENT_PRELOAD,
                       EFL_CANVAS_EVENT_FOCUS_IN,
@@ -139,7 +139,7 @@ evas_object_event_callback_all_del(Evas_Object *eo_obj)
 {
    _eo_evas_object_cb_info *info;
    Eina_Inlist *itr;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (!obj) return;
    if (!obj->callbacks) return;
@@ -293,7 +293,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         if (pevflags) *pevflags = efl_event_flags_get(eo_event_info);
      }
 
-   /* legacy callbacks - relying on Evas.Object events */
+   /* legacy callbacks - relying on Efl.Canvas.Object events */
    eo_event_callback_call(eo_obj, _legacy_evas_callback_table(type), event_info);
 
    if (type == EVAS_CALLBACK_MOUSE_DOWN)
@@ -317,7 +317,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
               (type <= EVAS_CALLBACK_KEY_UP))
           {
-             Evas_Object_Protected_Data *smart_parent = eo_data_scope_get(obj->smart.parent, EVAS_OBJECT_CLASS);
+             Evas_Object_Protected_Data *smart_parent = eo_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
              evas_object_event_callback_call(obj->smart.parent, smart_parent, type, event_info, event_id, eo_event_desc, eo_event_info);
           }
      }
@@ -334,7 +334,7 @@ evas_object_event_callback_add(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 EAPI void
 evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Object_Event_Cb func, const void *data)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -363,7 +363,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (!obj) return NULL;
    if (!func) return NULL;
@@ -394,7 +394,7 @@ evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (!obj) return NULL;
    if (!func) return NULL;

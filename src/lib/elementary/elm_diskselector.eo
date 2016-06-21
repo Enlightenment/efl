@@ -179,7 +179,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
          return: Elm.Widget.Item;
          params {
             @in label: string; [[The label of the diskselector item.]]
-            @in icon: Evas.Object @optional; [[The icon object to use at left side of the item. An
+            @in icon: Efl.Canvas.Object @optional; [[The icon object to use at left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). ]]
             @in func: Evas_Smart_Cb @optional; [[The function to call when the item is selected.]]

@@ -113,7 +113,7 @@ _efl_canvas_rectangle_eo_base_constructor(Eo *eo_obj, Efl_Canvas_Rectangle_Data 
 static void
 evas_object_rectangle_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->private_data = eo_data_ref(eo_obj, MY_CLASS);

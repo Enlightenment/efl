@@ -381,7 +381,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             ]]
          }
          values {
-            parent: Evas.Object @nullable; [[The object to use as parent for the hover.]]
+            parent: Efl.Canvas.Object @nullable; [[The object to use as parent for the hover.]]
          }
       }
       @property prediction_allow {
@@ -574,7 +574,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               change the internal textblock object). This applies to all cursors
               returned from textblock calls, and all the other derivative values.
             ]]
-            return: Evas.Object;
+            return: Efl.Canvas.Object;
          }
       }
       @property cursor_geometry {

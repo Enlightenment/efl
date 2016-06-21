@@ -151,7 +151,7 @@ class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
             In this example the $event_info is exactly a pointer to that
             focused rectangle. See the full @ref Example_Evas_Events "example".
             */
-            return: Evas.Object @warn_unused; [[The object that has focus
+            return: Efl.Canvas.Object @warn_unused; [[The object that has focus
                                                   or $null if there is not one.]]
          }
       }
@@ -171,7 +171,7 @@ class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
               \@ref evas_object_layer_set, \@ref evas_object_below_get,
               \@ref evas_object_above_get.
             ]]
-            return: Evas.Object @warn_unused; [[A pointer to the highest object
+            return: Efl.Canvas.Object @warn_unused; [[A pointer to the highest object
                                                   on it (if any) or $null otherwise.]]
          }
       }
@@ -350,7 +350,7 @@ class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
               See also \@ref evas_object_layer_get, \@ref evas_object_layer_set,
               \@ref evas_object_below_get, \@ref evas_object_below_set.
             ]]
-            return: Evas.Object @warn_unused; [[
+            return: Efl.Canvas.Object @warn_unused; [[
                A pointer to the lowest object on it, if any, or $null
                otherwise.
             ]]
@@ -422,9 +422,9 @@ class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
            It will not append to the list pass events as hidden objects.
            Call eina_list_free on the returned list after usage.
          ]]
-         return: list<Evas.Object> @warn_unused;
+         return: list<Efl.Canvas.Object> @warn_unused;
          params {
-            @in stop: Evas.Object; [[An Evas Object where to stop searching.]]
+            @in stop: Efl.Canvas.Object; [[An Evas Object where to stop searching.]]
             @in x: int; [[The horizontal coordinate of the position.]]
             @in y: int; [[The vertical coordinate of the position.]]
          }
@@ -515,7 +515,7 @@ class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
            objects, acting only on the ones at the "top level", with
            regard to object parenting.
          ]]
-         return: list<Evas.Object> @warn_unused; [[
+         return: list<Efl.Canvas.Object> @warn_unused; [[
             The list of Evas objects that are over the given position in $e.
          ]]
          params {
@@ -671,7 +671,7 @@ class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
            objects, acting only on the ones at the "top level", with
            regard to object parenting.
          ]]
-         return: Evas.Object @warn_unused; [[The Evas object that is over all other objects at the given position.]]
+         return: Efl.Canvas.Object @warn_unused; [[The Evas object that is over all other objects at the given position.]]
          params {
             @in x: Evas.Coord; [[The horizontal coordinate of the position.]]
             @in y: Evas.Coord; [[The vertical coordinate of the position.]]
@@ -712,7 +712,7 @@ class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
          ]]
       }
       objects_in_rectangle_get @const {
-         return: list<Evas.Object> @warn_unused;
+         return: list<Efl.Canvas.Object> @warn_unused;
          params {
             @in x: Evas.Coord;
             @in y: Evas.Coord;
@@ -731,7 +731,7 @@ class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
            name is returned is undefined, so only use this if you can
            ensure the object name is unique.
          ]]
-         return: Evas.Object @warn_unused; [[
+         return: Efl.Canvas.Object @warn_unused; [[
             If successful, the Evas object with the given name. Otherwise,
             $null.
          ]]
@@ -1049,7 +1049,7 @@ class Evas.Canvas (Eo.Base, Efl.Canvas, Evas.Common_Interface, Efl.Animator,
            objects, acting only on the ones at the "top level", with
            regard to object parenting.
          ]]
-         return: Evas.Object @warn_unused; [[
+         return: Efl.Canvas.Object @warn_unused; [[
             The Evas object that is over all other objects at the given
             rectangular region.
          ]]

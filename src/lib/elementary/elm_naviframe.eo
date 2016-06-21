@@ -73,7 +73,7 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
            is complete.
           ]]
 
-         return: Evas.Object; [[$NULL or the content object(if the elm_naviframe_content_preserve_on_pop_get is true).]]
+         return: Efl.Canvas.Object; [[$NULL or the content object(if the elm_naviframe_content_preserve_on_pop_get is true).]]
       }
       item_insert_before {
          [[Insert a new item into the naviframe before item $before.
@@ -85,9 +85,9 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
          params {
             @in before: Elm.Widget.Item; [[The naviframe item to insert before.]]
             @in title_label: string @optional; [[The label in the title area. The name of the title label part is "elm.text.title"]]
-            @in prev_btn: Evas.Object @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
-            @in next_btn: Evas.Object @nullable; [[The button to go to the next item. Or It could be just an extra function button. The name of the next_btn part is "elm.swallow.next_btn"]]
-            @in content: Evas.Object; [[The main content object. The name of content part is "elm.swallow.content"]]
+            @in prev_btn: Efl.Canvas.Object @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
+            @in next_btn: Efl.Canvas.Object @nullable; [[The button to go to the next item. Or It could be just an extra function button. The name of the next_btn part is "elm.swallow.next_btn"]]
+            @in content: Efl.Canvas.Object; [[The main content object. The name of content part is "elm.swallow.content"]]
             @in item_style: string @nullable; [[The current item style name. $NULL would be default.]]
          }
       }
@@ -106,9 +106,9 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
          return: Elm.Widget.Item; [[The created item or $NULL upon failure.]]
          params {
             @in title_label: string @optional; [[The label in the title area. The name of the title label part is "elm.text.title"]]
-            @in prev_btn: Evas.Object @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
-            @in next_btn: Evas.Object @nullable; [[The button to go to the next item. Or It could be just an extra function button. The name of the next_btn part is "elm.swallow.next_btn"]]
-            @in content: Evas.Object; [[The main content object. The name of content part is "elm.swallow.content"]]
+            @in prev_btn: Efl.Canvas.Object @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
+            @in next_btn: Efl.Canvas.Object @nullable; [[The button to go to the next item. Or It could be just an extra function button. The name of the next_btn part is "elm.swallow.next_btn"]]
+            @in content: Efl.Canvas.Object; [[The main content object. The name of content part is "elm.swallow.content"]]
             @in item_style: string @nullable; [[The current item style name. $NULL would be default.]]
          }
       }
@@ -116,7 +116,7 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
          [[Simple version of item_promote.]]
 
          params {
-            @in content: Evas.Object;
+            @in content: Efl.Canvas.Object;
          }
       }
       item_insert_after {
@@ -132,9 +132,9 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
          params {
             @in after: Elm.Widget.Item; [[The naviframe item to insert after.]]
             @in title_label: string @optional; [[The label in the title area. The name of the title label part is "elm.text.title"]]
-            @in prev_btn: Evas.Object @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
-            @in next_btn: Evas.Object @nullable; [[The button to go to the next item. Or It could be just an extra function button. The name of the next_btn part is "elm.swallow.next_btn"]]
-            @in content: Evas.Object; [[The main content object. The name of content part is "elm.swallow.content"]]
+            @in prev_btn: Efl.Canvas.Object @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
+            @in next_btn: Efl.Canvas.Object @nullable; [[The button to go to the next item. Or It could be just an extra function button. The name of the next_btn part is "elm.swallow.next_btn"]]
+            @in content: Efl.Canvas.Object; [[The main content object. The name of content part is "elm.swallow.content"]]
             @in item_style: string @nullable; [[The current item style name. $NULL would be default.]]
          }
       }

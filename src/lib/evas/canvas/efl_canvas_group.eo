@@ -1,4 +1,4 @@
-class Efl.Canvas.Group (Evas.Object)
+class Efl.Canvas.Group (Efl.Canvas.Object)
 {
    [[A group object is a container of other canvas objects. Its children
      move along their parent, are often clipped with a common clipper.
@@ -84,7 +84,7 @@ class Efl.Canvas.Group (Evas.Object)
             legacy: null;
          }
          values {
-            clip: Evas.Object;
+            clip: Efl.Canvas.Object;
          }
       }
       @property group_color {
@@ -145,7 +145,7 @@ class Efl.Canvas.Group (Evas.Object)
            See also @.group_member_del.]]
 
          params {
-            @in sub_obj: Evas.Object @nonull; [[The member object.]]
+            @in sub_obj: Efl.Canvas.Object @nonull; [[The member object.]]
          }
          legacy: null;
       }
@@ -171,7 +171,7 @@ class Efl.Canvas.Group (Evas.Object)
            See also @.group_member_add for more details.]]
 
          params {
-            @in sub_obj: Evas.Object; [[the member object.]]
+            @in sub_obj: Efl.Canvas.Object; [[the member object.]]
          }
          legacy: null;
       }
@@ -184,7 +184,7 @@ class Efl.Canvas.Group (Evas.Object)
       class.constructor;
       class.destructor;
       Eo.Base.constructor;
-      Evas.Object.paragraph_direction.set;
-      Evas.Object.paragraph_direction.get;
+      Efl.Canvas.Object.paragraph_direction.set;
+      Efl.Canvas.Object.paragraph_direction.get;
    }
 }

@@ -58,7 +58,7 @@ _efl_vg_root_node_eo_base_parent_set(Eo *obj,
    else
      {
         pd->parent = parent;
-        pd->data = parent ? eo_data_scope_get(parent, EVAS_OBJECT_CLASS) : NULL;
+        pd->data = parent ? eo_data_scope_get(parent, EFL_CANVAS_OBJECT_CLASS) : NULL;
      }
 }
 

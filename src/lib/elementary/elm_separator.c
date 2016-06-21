@@ -98,7 +98,7 @@ EOLIAN static Eo *
 _elm_separator_eo_base_constructor(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SEPARATOR);
 
    return obj;

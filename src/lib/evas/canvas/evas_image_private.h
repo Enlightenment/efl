@@ -6,7 +6,7 @@
  */
 
 #define EFL_CANVAS_FILTER_INTERNAL_PROTECTED
-#define EVAS_OBJECT_PROTECTED
+#define EFL_CANVAS_OBJECT_PROTECTED
 
 #include "evas_common_private.h"
 

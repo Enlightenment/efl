@@ -35,7 +35,7 @@ EOLIAN static Eo_Base *
 _efl_ui_nstate_eo_base_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
-   evas_obj_type_set(obj, MY_CLASS_NAME);
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    //TODO: Add ATSPI call here
 

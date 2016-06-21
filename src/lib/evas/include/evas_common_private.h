@@ -55,8 +55,8 @@
 # include <Eet.h>
 #endif
 
-#ifndef EVAS_OBJECT_PROTECTED
-# define EVAS_OBJECT_PROTECTED
+#ifndef EFL_CANVAS_OBJECT_PROTECTED
+# define EFL_CANVAS_OBJECT_PROTECTED
 #endif
 
 #include "Evas.h"
