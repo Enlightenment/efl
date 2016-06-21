@@ -750,6 +750,8 @@ _ecore_animator_shutdown(void)
         if (animator->suspended) animators_suspended--;
         if (animator->delete_me) animators_delete_me--;
 
+        animators = (Ecore_Animator *) eina_inlist_remove
+              (EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
         free(animator);
      }
 }
