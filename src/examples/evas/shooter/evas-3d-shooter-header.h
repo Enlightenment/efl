@@ -5,6 +5,7 @@
 #else
 #define PACKAGE_EXAMPLES_DIR "."
 #define EFL_BETA_API_SUPPORT
+#define EFL_EO_API_SUPPORT
 #endif
 
 #include <stdio.h>

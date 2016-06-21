@@ -8,8 +8,12 @@
  * @endverbatim
  */
 
-#define EFL_EO_API_SUPPORT
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
 #define EFL_BETA_API_SUPPORT
+#define EFL_EO_API_SUPPORT
+#endif
 
 #include <Eo.h>
 #include <Evas.h>
