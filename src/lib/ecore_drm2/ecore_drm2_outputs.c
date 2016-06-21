@@ -964,7 +964,11 @@ ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled)
    if (output->enabled)
      ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_ON);
    else
-     ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_OFF);
+     {
+        ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_OFF);
+        output->current = NULL;
+        output->next = NULL;
+     }
 
    _output_event_send(output);
 }

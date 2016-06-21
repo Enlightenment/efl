@@ -225,6 +225,8 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output, void *data)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(output->current_mode, -1);
 
+   if (!output->enabled) return -1;
+
    if (output->next)
      WRN("Fb reused too soon, tearing may be visible");
 

@@ -9,12 +9,19 @@
 #endif
 
 static Eina_Bool
-_cb_session_active(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_cb_session_active(void *data, int type EINA_UNUSED, void *event)
 {
+   Eina_List *l;
+   Ecore_Drm2_Device *device;
+   Ecore_Drm2_Output *output;
    Elput_Event_Session_Active *ev;
    Ecore_Drm2_Event_Activate *ea;
 
    ev = event;
+   device = data;
+
+   EINA_LIST_FOREACH(device->outputs, l, output)
+     ecore_drm2_output_enabled_set(output, ev->active);
 
    ea = calloc(1, sizeof(Ecore_Drm2_Event_Activate));
    if (!ea) return ECORE_CALLBACK_RENEW;
