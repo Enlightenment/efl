@@ -5,6 +5,7 @@
 #include "elm_test_helper.h"
 
 void elm_test_init(TCase *tc);
+void elm_test_config(TCase *tc);
 void elm_test_check(TCase *tc);
 void elm_test_colorselector(TCase *tc);
 void elm_test_entry(TCase *tc);

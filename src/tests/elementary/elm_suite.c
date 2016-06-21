@@ -8,6 +8,7 @@
 
 static const Efl_Test_Case etc[] = {
   { "Elementary", elm_test_init },
+  { "elm_config", elm_test_config },
   { "elm_check", elm_test_check },
   { "elm_colorselector", elm_test_colorselector },
   { "elm_entry", elm_test_entry},

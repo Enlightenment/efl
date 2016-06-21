@@ -1,0 +1,119 @@
+mixin Efl.Config (Eo.Interface)
+{
+   [[A generic configuration interface, that holds key-value pairs.]]
+   data: null;
+   methods {
+      /* FIXME: make this a property -- @own is a problem */
+      /*
+      @property config @virtual_pure {
+         [[Holds a generic value under a given key.
+
+           Most common value types are: string, int, uint, bool, double.
+         ]]
+         keys {
+            name: string;
+         }
+         values {
+            val: const(generic_value)*;
+         }
+         get {
+            return: free(own(generic_value *), eina_value_free);
+         }
+      }
+      */
+      config_set @virtual_pure {
+         params {
+            name: string;
+            val: const(generic_value)*;
+         }
+         return: bool; [[$false in case of error: value type was invalid, the
+                         config can't be changed, config does not exist...]]
+      }
+      config_get @virtual_pure @const {
+         params {
+            name: string;
+         }
+         return: free(own(generic_value *), eina_value_free);
+      }
+      config_list_get @virtual_pure @const {
+         [[Returns a list of generic values under a given key.]]
+         params {
+            @in name: string;
+         }
+         return: free(own(iterator<generic_value*>), eina_iterator_free);
+      }
+      @property config_bool {
+         [[Helper for boolean properties (most useful in C).]]
+         keys {
+            name: string;
+         }
+         values {
+            val: bool;
+         }
+         get {}
+         set { return: bool; }
+      }
+      @property config_int {
+         [[Helper for int properties (most useful in C).]]
+         keys {
+            name: string;
+         }
+         values {
+            val: int;
+         }
+         get {}
+         set { return: bool; }
+      }
+      @property config_uint {
+         [[Helper for unsigned int properties (most useful in C).]]
+         keys {
+            name: string;
+         }
+         values {
+            val: uint;
+         }
+         get {}
+         set { return: bool; }
+      }
+      @property config_double {
+         [[Helper for double properties (most useful in C).]]
+         keys {
+            name: string;
+         }
+         values {
+            val: double;
+         }
+         get {}
+         set { return: bool; }
+      }
+      @property config_string {
+         [[Helper for string properties (most useful in C).]]
+         keys {
+            name: string;
+         }
+         values {
+            val: string;
+         }
+         set { return: bool; }
+      }
+      config_string_get {
+         [[Helper for string properties (most useful in C).]]
+         params {
+            name: string;
+         }
+         return: stringshare;
+      }
+      config_global_get @class {
+         [[Get a handle on the main configuration.]]
+         return: Efl.Config;
+      }
+   }
+}
+
+/* NOTES:
+ - Elm_Color_Class list -> no need to return the struct, only the name matters
+                           but also provide func to get desc from name
+ - Elm_Color_Overlay -> see with Jee-Yong and his color patch (common intf)
+ - elm_config_font_overlay_set -> ?
+ - what else?
+*/

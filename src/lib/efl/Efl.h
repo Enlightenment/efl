@@ -68,6 +68,7 @@ typedef struct tm Efl_Time;
 typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 
 /* Interfaces */
+#include "interfaces/efl_config.eo.h"
 #include "interfaces/efl_control.eo.h"
 #include "interfaces/efl_file.eo.h"
 #include "interfaces/efl_image.eo.h"
@@ -139,6 +140,10 @@ static inline void efl_gfx_color16_type_set(Efl_Gfx_Color *color,
 #include "interfaces/efl_input_state.eo.h"
 #include "interfaces/efl_input_interface.eo.h"
 #include "interfaces/efl_event.eo.h"
+
+#ifdef EFL_EFL_BUILD
+EAPI void __efl_internal_elm_config_set(Efl_Config *cfg);
+#endif
 
 #else
 

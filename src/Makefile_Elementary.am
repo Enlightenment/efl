@@ -146,6 +146,7 @@ elm_public_eolian_files = \
 # Private classes (not exposed or shipped)
 elm_private_eolian_files = \
 	lib/elementary/efl_ui_internal_text_interactive.eo \
+	lib/elementary/efl_config_internal.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -1338,6 +1339,7 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_test_slideshow.c \
 	tests/elementary/elm_test_spinner.c \
 	tests/elementary/elm_test_plug.c \
+	tests/elementary/elm_test_config.c \
 	tests/elementary/elm_code_file_test_load.c \
 	tests/elementary/elm_code_file_test_memory.c \
 	tests/elementary/elm_code_test_basic.c \

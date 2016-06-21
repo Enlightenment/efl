@@ -6073,6 +6073,9 @@ _elm_widget_eo_base_provider_find(Eo *obj, Elm_Widget_Smart_Data *pd, const Eo_B
 {
    Eo_Base *lookup = NULL;
 
+   if (klass == EFL_CONFIG_MIXIN)
+     return _efl_config_obj;
+
    if (pd->provider_lookup) return NULL;
    pd->provider_lookup = EINA_TRUE;
 

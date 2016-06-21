@@ -6,9 +6,13 @@
 #include "elm_priv.h"
 #include <pwd.h>
 
+#include "efl_config_internal.eo.h"
+
 EAPI int ELM_EVENT_CONFIG_ALL_CHANGED = 0;
+EAPI void __efl_internal_elm_config_set(Efl_Config *cfg);
 
 Elm_Config *_elm_config = NULL;
+Efl_Config *_efl_config_obj = NULL;
 static char *_elm_profile = NULL;
 static Eet_Data_Descriptor *_config_edd = NULL;
 static Eet_Data_Descriptor *_config_font_overlay_edd = NULL;
@@ -1678,6 +1682,8 @@ _config_system_load(void)
 static void
 _config_load(void)
 {
+   _efl_config_obj = eo_add(EFL_CONFIG_INTERNAL_CLASS, NULL);
+   __efl_internal_elm_config_set(_efl_config_obj);
    _elm_config = _config_user_load();
    if (_elm_config)
      {
@@ -4236,6 +4242,8 @@ _elm_config_profile_set(const char *profile)
 void
 _elm_config_shutdown(void)
 {
+   ELM_SAFE_FREE(_efl_config_obj, eo_del);
+   __efl_internal_elm_config_set(NULL);
    ELM_SAFE_FREE(_elm_config, _config_free);
    ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
@@ -4247,3 +4255,261 @@ _elm_config_shutdown(void)
 
    ELM_SAFE_FREE(_elm_key_bindings, eina_hash_free);
 }
+
+
+/* Efl.Config implementation */
+
+typedef const char * cstring;
+
+static inline Eina_Bool
+_eina_value_to_int(const Eina_Value *val, int *i)
+{
+   Eina_Value *ival = eina_value_new(EINA_VALUE_TYPE_INT);
+   Eina_Bool ret = EINA_TRUE;
+   if (!eina_value_convert(val, ival))
+     ret = EINA_FALSE;
+   else
+     ret = eina_value_get(ival, i);
+   eina_value_free(ival);
+   return ret;
+}
+
+static inline Eina_Bool
+_eina_value_to_cstring(const Eina_Value *val, cstring *s)
+{
+   Eina_Value *sval = eina_value_new(EINA_VALUE_TYPE_STRING);
+   Eina_Bool ret = EINA_TRUE;
+   if (!eina_value_convert(val, sval))
+     ret = EINA_FALSE;
+   else
+     ret = eina_value_get(sval, s);
+   eina_value_free(sval);
+   return ret;
+}
+
+EOLIAN static Eina_Bool
+_efl_config_internal_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
+                                           const char *name, const Eina_Value *val)
+{
+   if (!name) return EINA_FALSE;
+   // TODO: if (!val) reset to default
+
+#define CONFIG_SET(opt, primityp, valtyp, alttyp) do { \
+   if (!strcmp(name, #opt)) \
+     { \
+        primityp v = 0; \
+        alttyp alt = 0; \
+        const Eina_Value_Type *typ = EINA_VALUE_TYPE_ ## valtyp; \
+        if (eina_value_type_get(val) == typ)  \
+          { \
+             if (!eina_value_get(val, &v)) return EINA_FALSE; \
+          } \
+        else if (_eina_value_to_ ## alttyp(val, &alt)) \
+          { \
+             v = alt; \
+          } \
+        else \
+          { \
+             ERR("Invalid value type for config '%s' (got %s wanted %s)", \
+                 name, eina_value_type_name_get(eina_value_type_get(val)), \
+                 eina_value_type_name_get(EINA_VALUE_TYPE_ ## valtyp)); \
+             return EINA_FALSE; \
+          } \
+        elm_config_ ## opt ## _set(v); \
+        return EINA_TRUE; \
+     } \
+   } while (0)
+
+#define CONFIG_SETB(opt) CONFIG_SET(opt, Eina_Bool, UCHAR, int)
+#define CONFIG_SETI(opt) CONFIG_SET(opt, int, INT, int)
+#define CONFIG_SETU(opt) CONFIG_SET(opt, unsigned int, UINT, int)
+#define CONFIG_SETD(opt) CONFIG_SET(opt, double, DOUBLE, int)
+#define CONFIG_SETS(opt) CONFIG_SET(opt, const char *, STRING, cstring)
+
+   CONFIG_SETB(scroll_bounce_enabled);
+   CONFIG_SETD(scroll_bounce_friction);
+   CONFIG_SETD(scroll_page_scroll_friction);
+   CONFIG_SETB(context_menu_disabled);
+   CONFIG_SETD(scroll_bring_in_scroll_friction);
+   CONFIG_SETD(scroll_zoom_friction);
+   CONFIG_SETB(scroll_thumbscroll_enabled);
+   CONFIG_SETU(scroll_thumbscroll_threshold);
+   CONFIG_SETU(scroll_thumbscroll_hold_threshold);
+   CONFIG_SETD(scroll_thumbscroll_momentum_threshold);
+   CONFIG_SETU(scroll_thumbscroll_flick_distance_tolerance);
+   CONFIG_SETD(scroll_thumbscroll_friction);
+   CONFIG_SETD(scroll_thumbscroll_min_friction);
+   CONFIG_SETD(scroll_thumbscroll_friction_standard);
+   CONFIG_SETD(scroll_thumbscroll_border_friction);
+   CONFIG_SETD(scroll_thumbscroll_sensitivity_friction);
+   CONFIG_SETB(scroll_thumbscroll_smooth_start);
+   CONFIG_SETB(scroll_animation_disable);
+   CONFIG_SETD(scroll_accel_factor);
+   CONFIG_SETD(scroll_thumbscroll_smooth_amount);
+   CONFIG_SETD(scroll_thumbscroll_smooth_time_window);
+   CONFIG_SETD(scroll_thumbscroll_acceleration_threshold);
+   CONFIG_SETD(scroll_thumbscroll_acceleration_time_limit);
+   CONFIG_SETD(scroll_thumbscroll_acceleration_weight);
+   //focus_autoscroll_mode Elm_Focus_Autoscroll_Mode mode);
+   //slider_indicator_visible_mode Elm_Slider_Indicator_Visible_Mode mode);
+   CONFIG_SETD(longpress_timeout);
+   //softcursor_mode Elm_Softcursor_Mode mode);
+   CONFIG_SETD(tooltip_delay);
+   CONFIG_SETB(cursor_engine_only);
+   CONFIG_SETD(scale);
+   CONFIG_SETS(icon_theme);
+   CONFIG_SETB(password_show_last);
+   CONFIG_SETD(password_show_last_timeout);
+   CONFIG_SETS(preferred_engine);
+   CONFIG_SETS(accel_preference);
+   //font_overlay const char *text_class, const char *font, Evas_Font_Size size);
+   CONFIG_SETB(access);
+   CONFIG_SETB(selection_unfocused_clear);
+   //elm_config.h:EAPI void             elm_config_font_overlay_unset(const char *text_class);
+   CONFIG_SETI(font_hint_type);
+   CONFIG_SETI(finger_size);
+   CONFIG_SETI(cache_flush_interval);
+   CONFIG_SETB(cache_flush_enabled);
+   CONFIG_SETI(cache_font_cache_size);
+   CONFIG_SETI(cache_image_cache_size);
+   CONFIG_SETI(cache_edje_file_cache_size);
+   CONFIG_SETI(cache_edje_collection_cache_size);
+   CONFIG_SETB(vsync);
+   CONFIG_SETB(accel_preference_override);
+   CONFIG_SETB(focus_highlight_enabled);
+   CONFIG_SETB(focus_highlight_animate);
+   CONFIG_SETB(focus_highlight_clip_disabled);
+   //focus_move_policy Elm_Focus_Move_Policy policy);
+   CONFIG_SETB(item_select_on_focus_disabled);
+   CONFIG_SETB(first_item_focus_on_first_focusin);
+   CONFIG_SETB(mirrored);
+   CONFIG_SETB(clouseau_enabled);
+   CONFIG_SETD(glayer_long_tap_start_timeout);
+   CONFIG_SETD(glayer_double_tap_timeout);
+   //color_overlay const char *color_class,
+   //elm_config.h:EAPI void      elm_config_color_overlay_unset(const char *color_class);
+   CONFIG_SETB(magnifier_enable);
+   CONFIG_SETD(magnifier_scale);
+   //audio_mute Edje_Channel channel,);
+   CONFIG_SETB(window_auto_focus_enable);
+   CONFIG_SETB(window_auto_focus_animate);
+   CONFIG_SETB(popup_scrollable);
+   CONFIG_SETB(atspi_mode);
+   CONFIG_SETD(transition_duration_factor);
+   CONFIG_SETS(web_backend);
+
+   ERR("Config '%s' does not exist", name);
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Value *
+_efl_config_internal_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
+                                           const char *name)
+{
+   Eina_Value *val = NULL;
+
+   if (!name) return NULL;
+
+   // NOTE: returning INT instead of UINT for unsigned int types
+
+#define CONFIG_GET(opt, primityp, valtyp) do { \
+   if (!strcmp(name, #opt)) \
+     { \
+        val = eina_value_new(EINA_VALUE_TYPE_ ## valtyp); \
+        eina_value_set(val, elm_config_ ## opt ## _get()); \
+        return val; \
+     } \
+   } while (0)
+
+#define CONFIG_GETB(opt) CONFIG_GET(opt, Eina_Bool, UCHAR)
+#define CONFIG_GETI(opt) CONFIG_GET(opt, int, INT)
+#define CONFIG_GETU(opt) CONFIG_GET(opt, int, INT)
+#define CONFIG_GETD(opt) CONFIG_GET(opt, double, DOUBLE)
+#define CONFIG_GETS(opt) CONFIG_GET(opt, const char *, STRING)
+
+   CONFIG_GETB(scroll_bounce_enabled);
+   CONFIG_GETD(scroll_bounce_friction);
+   CONFIG_GETD(scroll_page_scroll_friction);
+   CONFIG_GETB(context_menu_disabled);
+   CONFIG_GETD(scroll_bring_in_scroll_friction);
+   CONFIG_GETD(scroll_zoom_friction);
+   CONFIG_GETB(scroll_thumbscroll_enabled);
+   CONFIG_GETU(scroll_thumbscroll_threshold);
+   CONFIG_GETU(scroll_thumbscroll_hold_threshold);
+   CONFIG_GETD(scroll_thumbscroll_momentum_threshold);
+   CONFIG_GETU(scroll_thumbscroll_flick_distance_tolerance);
+   CONFIG_GETD(scroll_thumbscroll_friction);
+   CONFIG_GETD(scroll_thumbscroll_min_friction);
+   CONFIG_GETD(scroll_thumbscroll_friction_standard);
+   CONFIG_GETD(scroll_thumbscroll_border_friction);
+   CONFIG_GETD(scroll_thumbscroll_sensitivity_friction);
+   CONFIG_GETB(scroll_thumbscroll_smooth_start);
+   CONFIG_GETB(scroll_animation_disable);
+   CONFIG_GETD(scroll_accel_factor);
+   CONFIG_GETD(scroll_thumbscroll_smooth_amount);
+   CONFIG_GETD(scroll_thumbscroll_smooth_time_window);
+   CONFIG_GETD(scroll_thumbscroll_acceleration_threshold);
+   CONFIG_GETD(scroll_thumbscroll_acceleration_time_limit);
+   CONFIG_GETD(scroll_thumbscroll_acceleration_weight);
+   //focus_autoscroll_mode
+   //slider_indicator_visible_mode
+   CONFIG_GETD(longpress_timeout);
+   //softcursor_mode
+   CONFIG_GETD(tooltip_delay);
+   CONFIG_GETB(cursor_engine_only);
+   CONFIG_GETD(scale);
+   CONFIG_GETS(icon_theme);
+   CONFIG_GETB(password_show_last);
+   CONFIG_GETD(password_show_last_timeout);
+   CONFIG_GETS(preferred_engine);
+   CONFIG_GETS(accel_preference);
+   //font_overlay
+   CONFIG_GETB(access);
+   CONFIG_GETB(selection_unfocused_clear);
+   //elm_config_font_overlay_unset
+   //CONFIG_GETI(font_hint_type); // this has no get!
+   CONFIG_GETI(finger_size);
+   CONFIG_GETI(cache_flush_interval);
+   CONFIG_GETB(cache_flush_enabled);
+   CONFIG_GETI(cache_font_cache_size);
+   CONFIG_GETI(cache_image_cache_size);
+   CONFIG_GETI(cache_edje_file_cache_size);
+   CONFIG_GETI(cache_edje_collection_cache_size);
+   CONFIG_GETB(vsync);
+   CONFIG_GETB(accel_preference_override);
+   CONFIG_GETB(focus_highlight_enabled);
+   CONFIG_GETB(focus_highlight_animate);
+   CONFIG_GETB(focus_highlight_clip_disabled);
+   //focus_move_policy
+   CONFIG_GETB(item_select_on_focus_disabled);
+   CONFIG_GETB(first_item_focus_on_first_focusin);
+   CONFIG_GETB(mirrored);
+   CONFIG_GETB(clouseau_enabled);
+   CONFIG_GETD(glayer_long_tap_start_timeout);
+   CONFIG_GETD(glayer_double_tap_timeout);
+   //color_overlay
+   //color_overlay_unset
+   CONFIG_GETB(magnifier_enable);
+   CONFIG_GETD(magnifier_scale);
+   //audio_mute
+   CONFIG_GETB(window_auto_focus_enable);
+   CONFIG_GETB(window_auto_focus_animate);
+   CONFIG_GETB(popup_scrollable);
+   CONFIG_GETB(atspi_mode);
+   CONFIG_GETD(transition_duration_factor);
+   CONFIG_GETS(web_backend);
+
+   ERR("Config '%s' does not exist", name);
+   return NULL;
+}
+
+EOLIAN static Eina_Iterator *
+_efl_config_internal_efl_config_config_list_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
+                                                const char *name)
+{
+   // Not implemented: none of the elm_config functions returns a list of primitive types
+   (void) name;
+   return NULL;
+}
+
+#include "efl_config_internal.eo.c"

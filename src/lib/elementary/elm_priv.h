@@ -567,6 +567,7 @@ Eina_Bool _elm_config_accel_preference_parse(const char *pref, Eina_Stringshare 
 
 extern char *_elm_appname;
 extern Elm_Config *_elm_config;
+extern Efl_Config *_efl_config_obj;
 extern const char *_elm_data_dir;
 extern const char *_elm_lib_dir;
 extern int _elm_log_dom;
