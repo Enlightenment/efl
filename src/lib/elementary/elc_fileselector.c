@@ -1697,7 +1697,7 @@ cancel:
    eo_unref(obj);
    eo_unref(it_data->model);
    eo_unref(it_data->parent_model);
-   eina_stringshare_add(it_data->parent_path);
+   eina_stringshare_del(it_data->parent_path);
    free(it_data);
 }
 
