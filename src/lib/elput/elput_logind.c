@@ -17,6 +17,11 @@ _logind_session_active_send(Elput_Manager *em, Eina_Bool active)
 {
    Elput_Event_Session_Active *ev;
 
+   if (active)
+     _elput_input_enable(em);
+   else
+     _elput_input_disable(em);
+
    ev = calloc(1, sizeof(Elput_Event_Session_Active));
    if (!ev) return;
 

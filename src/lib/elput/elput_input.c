@@ -339,6 +339,33 @@ _elput_input_init_thread(void *data, Ecore_Thread *eth EINA_UNUSED)
      }
 }
 
+void
+_elput_input_enable(Elput_Manager *manager)
+{
+   if (!manager->input.hdlr)
+     {
+        manager->input.hdlr =
+          ecore_main_fd_handler_add(libinput_get_fd(manager->input.lib),
+                                    ECORE_FD_READ, _cb_input_dispatch,
+                                    &manager->input, NULL, NULL);
+     }
+
+   if (manager->input.suspended)
+     {
+        if (libinput_resume(manager->input.lib) != 0) return;
+        manager->input.suspended = EINA_FALSE;
+        _process_events(&manager->input);
+     }
+}
+
+void
+_elput_input_disable(Elput_Manager *manager)
+{
+   libinput_suspend(manager->input.lib);
+   _process_events(&manager->input);
+   manager->input.suspended = EINA_TRUE;
+}
+
 EAPI Eina_Bool
 elput_input_init(Elput_Manager *manager)
 {

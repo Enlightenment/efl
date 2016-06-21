@@ -264,7 +264,8 @@ typedef struct _Elput_Async_Open
    int flags;
 } Elput_Async_Open;
 
-void _elput_input_window_update(Elput_Manager *manager);
+void _elput_input_enable(Elput_Manager *manager);
+void _elput_input_disable(Elput_Manager *manager);
 
 int _evdev_event_process(struct libinput_event *event);
 Elput_Device *_evdev_device_create(Elput_Seat *seat, struct libinput_device *device);
