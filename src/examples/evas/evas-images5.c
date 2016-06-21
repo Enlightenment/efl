@@ -14,9 +14,8 @@
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
-#endif
-
 #define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
