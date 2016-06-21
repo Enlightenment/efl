@@ -342,7 +342,7 @@ _edje_real_part_free(Edje *ed, Edje_Real_Part *rp)
    if ((rp->type == EDJE_RP_TYPE_SWALLOW) && (rp->typedata.swallow)
        && (rp->typedata.swallow->swallowed_object))
      {
-        eo_parent_set(rp->typedata.swallow->swallowed_object, evas_common_evas_get(ed->obj));
+        eo_parent_set(rp->typedata.swallow->swallowed_object, evas_object_evas_get(ed->obj));
         evas_object_smart_member_del(rp->typedata.swallow->swallowed_object);
         evas_object_event_callback_del(rp->typedata.swallow->swallowed_object,
                                        EVAS_CALLBACK_FREE, _edje_object_part_swallow_free_cb);
