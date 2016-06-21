@@ -73,6 +73,9 @@ EDCS += $(PHYSICS_EDCS)
 endif
 DIST_EDCS += $(PHYSICS_EDCS)
 
+# Support for SVG
+EDJE_CC_FLAGS += -beta
+
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $(MO_DIR) $< $(builddir)/$(@F)
 
