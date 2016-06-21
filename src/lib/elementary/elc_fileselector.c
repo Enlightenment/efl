@@ -66,6 +66,10 @@ static void _resource_created(void *, const Eo_Event *);
 static void _resource_deleted(void *, const Eo_Event *);
 static void _listing_request_cleanup(Listing_Request *);
 
+EO_CALLBACKS_ARRAY_DEFINE(monitoring_callbacks,
+                          { EFL_MODEL_EVENT_CHILD_ADDED, _resource_created },
+                          { EFL_MODEL_EVENT_CHILD_REMOVED, _resource_deleted });
+
 static void
 _model_free_eo_cb(void *data)
 {
@@ -77,16 +81,14 @@ static void
 _monitoring_start(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, Efl_Model *model)
 {
    sd->monitoring = EINA_TRUE;
-   eo_event_callback_add(model, EFL_MODEL_EVENT_CHILD_ADDED, _resource_created, fs);
-   eo_event_callback_add(model, EFL_MODEL_EVENT_CHILD_REMOVED, _resource_deleted, fs);
+   eo_event_callback_array_add(model, monitoring_callbacks(), fs);
 }
 
 static void
 _monitoring_stop(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, Efl_Model *model)
 {
    sd->monitoring = EINA_FALSE;
-   eo_event_callback_del(model, EFL_MODEL_EVENT_CHILD_ADDED, _resource_created, fs);
-   eo_event_callback_del(model, EFL_MODEL_EVENT_CHILD_REMOVED, _resource_deleted, fs);
+   eo_event_callback_array_del(model, monitoring_callbacks(), fs);
 }
 
 static void
