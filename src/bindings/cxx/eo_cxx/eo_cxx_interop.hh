@@ -26,6 +26,10 @@ template <>
 struct in_traits<eina::string_view> { typedef eina::string_view type; };
 template <>
 struct in_traits<eina::string_view const> { typedef eina::string_view const type; };
+template <>
+struct in_traits<eina::stringshare> { typedef eina::stringshare type; };
+template <>
+struct in_traits<eina::stringshare const> { typedef eina::stringshare const type; };
 template <typename T>
 struct in_traits<T&> { typedef T& type; };
 template <typename T>
@@ -128,6 +132,11 @@ void assign_out_impl(efl::eina::string_view* view, const char* string, Tag)
 {
   if(view)
     *view = {string};
+}
+template <typename Tag>
+void assign_out_impl(efl::eina::stringshare& to, const char* from, Tag)
+{
+  to = {from};
 }
 template <typename T>
 void assign_out_impl(T*& lhs, T& rhs, tag<T*, T>) // optional
@@ -462,6 +471,10 @@ inline const char* convert_to_c_impl(efl::eina::stringshare x, tag<const char*, 
 {
    return x.c_str();
 }
+inline const char* convert_to_c_impl(efl::eina::stringshare x, tag<const char*, efl::eina::stringshare, true>)
+{
+   return eina_stringshare_ref(x.c_str());
+}
 template <typename T>
 Eina_Promise* convert_to_c_impl(efl::eina::future<T> const&, tag<Eina_Promise*, efl::eina::future<T>const&>)
 {
@@ -624,6 +637,10 @@ T convert_to_return(U* value, tag<T, U*>, typename std::enable_if<is_range<T>::v
 {
   // const should be to the type if value is const
   return T{const_cast<typename std::remove_const<U>::type*>(value)};
+}
+inline eina::stringshare convert_to_return(const Eina_Stringshare* value, tag<const char*, efl::eina::stringshare>)
+{
+  return efl::eina::stringshare(value);
 }
 template <typename T>
 T convert_to_return(const char** /*value*/, tag<const char**, T>, typename std::enable_if<std::is_same<T, efl::eina::string_view*>::value>::type* = 0)

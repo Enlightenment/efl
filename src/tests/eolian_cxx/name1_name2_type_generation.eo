@@ -64,6 +64,16 @@ class Name1.Name2.Type_Generation (Eo.Base)
          @in v: own(ref(string));
        }
      }
+     instringshare {
+       params {
+         @in v: stringshare;
+       }
+     }
+     instringshareown {
+       params {
+         @in v: own(stringshare);
+       }
+     }
      // return
      returnrefint {
        return: ref(int);
@@ -97,6 +107,12 @@ class Name1.Name2.Type_Generation (Eo.Base)
      returnstringownptr {
        return: own(ref(string));
      }
+     returnstringshare {
+        return: stringshare;
+     }
+     returnstringshareown {
+        return: own(stringshare);
+     }
      // out
      outvoidptr {
        params {
@@ -123,6 +139,17 @@ class Name1.Name2.Type_Generation (Eo.Base)
          @out v: free(own(ref(int)), free);
        }
      }
+     outstringshare {
+       params {
+         @out v: stringshare;
+       }
+     }
+     outstringshareown {
+       params {
+         @out v: own(stringshare);
+       }
+     }
+     // classname
      inclassname {
        params {
          @in v: Name1.Name2.Type_Generation;

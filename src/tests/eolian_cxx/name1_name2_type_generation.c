@@ -88,6 +88,20 @@ void _name1_name2_type_generation_instringptr(Eo *obj EINA_UNUSED, Type_Generati
 {
   ck_assert_str_eq(*v, "foobar");
 }
+
+void _name1_name2_type_generation_instringshare(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, const char *v EINA_UNUSED)
+{
+  ck_assert_str_eq(v, "foobar");
+  ck_assert(eina_stringshare_add(v) == v);
+  eina_stringshare_del(v);
+}
+
+void _name1_name2_type_generation_instringshareown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, const char * v EINA_UNUSED)
+{
+  ck_assert_str_eq(v, "foobar");
+  eina_stringshare_del(v);
+}
+
 void _name1_name2_type_generation_instringptrown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, const char * *v)
 {
   ck_assert_str_eq(*v, "foobar");
@@ -165,6 +179,16 @@ const char * * _name1_name2_type_generation_returnstringptr(Eo *obj EINA_UNUSED,
   return &foobar;
 }
 
+Eina_Stringshare* _name1_name2_type_generation_returnstringshare(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
+{
+  return eina_stringshare_add("foobar");
+}
+
+Eina_Stringshare* _name1_name2_type_generation_returnstringshareown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
+{
+  return eina_stringshare_add("foobar");
+}
+
 const char * _name1_name2_type_generation_returnstringown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
 {
   const char foobar[] = "foobar";
@@ -202,6 +226,16 @@ void _name1_name2_type_generation_outintptrown(Eo *obj EINA_UNUSED, Type_Generat
 
 void _name1_name2_type_generation_outintptrownfree(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int **v EINA_UNUSED)
 {
+}
+
+void _name1_name2_type_generation_outstringshare(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, Eina_Stringshare** v)
+{
+  *v = eina_stringshare_add("foobar");
+}
+
+void _name1_name2_type_generation_outstringshareown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, Eina_Stringshare** v)
+{
+  *v = eina_stringshare_add("foobar");
 }
 
 void _name1_name2_type_generation_inclassname(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, Name1_Name2_Type_Generation *v EINA_UNUSED)
