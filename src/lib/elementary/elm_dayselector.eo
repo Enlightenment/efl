@@ -122,7 +122,7 @@ class Elm.Dayselector (Elm.Layout)
 
            @since 1.8
          ]]
-         return: own(list<own(Eina_Stringshare *)>) @warn_unused; [[A list of seven strings to be used as weekday names.]]
+         return: own(list<own(stringshare)>) @warn_unused; [[A list of seven strings to be used as weekday names.]]
       }
       day_selected_set {
          [[Set the state of given Dayselector_Day.

@@ -14,7 +14,7 @@ class Complex_Type {
          params {
             buf: own(char*);
          }
-         return: own(list<Eina.Stringshare*>); [[comment for method return]]
+         return: own(list<stringshare>); [[comment for method return]]
       }
    }
 }

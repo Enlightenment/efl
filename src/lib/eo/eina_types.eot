@@ -1,5 +1,4 @@
 /* FIXME: Move to Eina when we decide they are handled properly. */
-type @extern Eina.Stringshare: const(char) *;
 struct @extern Eina.Rectangle {
     x: int;
     y: int;

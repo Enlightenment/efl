@@ -52,7 +52,7 @@ class Elm.App.Client.View (Eo.Base)
             [[Get DBus path of view]]
          }
          values {
-            ret: Eina.Stringshare *; [[DBus path of view]]
+            ret: stringshare; [[DBus path of view]]
          }
       }
       @property package {

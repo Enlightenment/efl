@@ -13,7 +13,7 @@ class Elm.App.Server (Eo.Base)
          get {
          }
          values {
-            icon: Eina.Stringshare *; [[title of icon]]
+            icon: stringshare; [[title of icon]]
          }
       }
       @property views {
@@ -35,7 +35,7 @@ class Elm.App.Server (Eo.Base)
          get {
          }
          values {
-            ret: Eina.Stringshare *;
+            ret: stringshare;
          }
       }
       @property pixels {
@@ -87,7 +87,7 @@ class Elm.App.Server (Eo.Base)
       }
       title_get {
          [[Get title of application]]
-         return: Eina.Stringshare *; [[title of application]]
+         return: stringshare; [[title of application]]
       }
       save {
          [[Save the state of all views]]

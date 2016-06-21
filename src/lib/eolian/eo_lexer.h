@@ -52,7 +52,7 @@ enum Tokens
     \
     KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), \
     KW(promise), \
-    KW(generic_value), KW(string), \
+    KW(generic_value), KW(string), KW(stringshare), \
     \
     KW(void_ptr), \
     KW(__builtin_event_cb), \
