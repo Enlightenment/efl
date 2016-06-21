@@ -48,7 +48,7 @@ _outbuf_tick_source_set(Outbuf *ob)
 }
 
 static void
-_outbuf_tick_schedule(int fd EINA_UNUSED, void *data)
+_outbuf_tick_schedule(int fd, void *data)
 {
    if (!ticking) return;
 
