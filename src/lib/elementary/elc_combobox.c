@@ -460,6 +460,7 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    elm_genlist_homogeneous_set(gl, EINA_TRUE);
    elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
    elm_table_pack(sd->tbl, gl, 0, 0, 1, 1);
+   elm_object_style_set(gl, buf);
 
    // This is the entry object that will take over the entry call
    sd->entry = entry = eo_add(ELM_ENTRY_CLASS, obj);
@@ -473,6 +474,7 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    evas_object_show(entry);
 
    elm_object_part_content_set(obj, "elm.swallow.content", entry);
+   elm_object_style_set(entry, buf);
 
    eo_composite_attach(obj, gl);
    eo_composite_attach(obj, entry);
