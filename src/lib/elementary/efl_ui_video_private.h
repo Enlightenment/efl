@@ -1,5 +1,5 @@
-#ifndef ELM_WIDGET_VIDEO_H
-#define ELM_WIDGET_VIDEO_H
+#ifndef EFL_UI_VIDEO_PRIV_H
+#define EFL_UI_VIDEO_PRIV_H
 
 #include "Elementary.h"
 
@@ -23,8 +23,8 @@
 /**
  * Base layout smart data extended with video instance data.
  */
-typedef struct _Elm_Video_Data Elm_Video_Data;
-struct _Elm_Video_Data
+typedef struct _Efl_Ui_Video_Data Efl_Ui_Video_Data;
+struct _Efl_Ui_Video_Data
 {
    Evas_Object          *emotion;
    Ecore_Timer          *timer;
@@ -37,11 +37,11 @@ struct _Elm_Video_Data
  * @}
  */
 
-#define ELM_VIDEO_DATA_GET(o, sd) \
-  Elm_Video_Data * sd = eo_data_scope_get(o, ELM_VIDEO_CLASS)
+#define EFL_UI_VIDEO_DATA_GET(o, sd) \
+  Efl_Ui_Video_Data * sd = eo_data_scope_get(o, EFL_UI_VIDEO_CLASS)
 
-#define ELM_VIDEO_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_VIDEO_DATA_GET(o, ptr);                        \
+#define EFL_UI_VIDEO_DATA_GET_OR_RETURN(o, ptr)         \
+  EFL_UI_VIDEO_DATA_GET(o, ptr);                        \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        CRI("No widget data for object %p (%s)",      \
@@ -49,8 +49,8 @@ struct _Elm_Video_Data
        return;                                       \
     }
 
-#define ELM_VIDEO_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_VIDEO_DATA_GET(o, ptr);                         \
+#define EFL_UI_VIDEO_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  EFL_UI_VIDEO_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
        CRI("No widget data for object %p (%s)",       \
@@ -58,8 +58,8 @@ struct _Elm_Video_Data
        return val;                                    \
     }
 
-#define ELM_VIDEO_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_VIDEO_CLASS))) \
+#define EFL_UI_VIDEO_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), EFL_UI_VIDEO_CLASS))) \
     return
 
 #endif

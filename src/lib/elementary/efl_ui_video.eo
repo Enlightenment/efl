@@ -1,8 +1,7 @@
-class Elm.Video (Elm.Layout, Efl.File,
+class Efl.Ui.Video (Elm.Layout, Efl.File,
                  Efl.Player, Elm.Interface.Atspi_Widget_Action)
 {
    legacy_prefix: elm_video;
-   eo_prefix: elm_obj_video;
    methods {
       @property remember_position {
          set {

@@ -90,7 +90,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_systray.eo \
 	lib/elementary/elm_thumb.eo \
 	lib/elementary/elm_toolbar.eo \
-	lib/elementary/elm_video.eo \
+	lib/elementary/efl_ui_video.eo \
 	lib/elementary/elm_view_list.eo \
 	lib/elementary/elm_view_form.eo \
 	lib/elementary/elm_web.eo \
@@ -267,7 +267,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_table.h \
 	lib/elementary/elm_widget_thumb.h \
 	lib/elementary/elm_widget_toolbar.h \
-	lib/elementary/elm_widget_video.h \
+	lib/elementary/efl_ui_video_private.h \
 	lib/elementary/elm_widget_web.h \
 	lib/elementary/elm_code.h \
 	lib/elementary/elm_code_widget_legacy.h \
@@ -534,9 +534,9 @@ includesub_HEADERS = \
 	lib/elementary/elm_toolbar_legacy.h \
 	lib/elementary/elm_tooltip.h \
 	lib/elementary/elm_transit.h \
-	lib/elementary/elm_video.h \
-	lib/elementary/elm_video_eo.h \
-	lib/elementary/elm_video_legacy.h \
+	lib/elementary/efl_ui_video.h \
+	lib/elementary/efl_ui_video_eo.h \
+	lib/elementary/efl_ui_video_legacy.h \
 	lib/elementary/elm_view_list.h \
 	lib/elementary/elm_view_form.h \
 	lib/elementary/elm_web.h \
@@ -676,7 +676,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_transit.c \
 	lib/elementary/elm_util.c \
 	lib/elementary/elm_url.c \
-	lib/elementary/elm_video.c \
+	lib/elementary/efl_ui_video.c \
 	lib/elementary/elm_view_list.c \
 	lib/elementary/elm_view_form.c \
 	lib/elementary/elm_web2.c \

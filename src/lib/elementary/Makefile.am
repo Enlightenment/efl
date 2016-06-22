@@ -97,7 +97,7 @@ elm_eolian_files = \
 	elm_table.eo \
 	elm_thumb.eo \
 	elm_toolbar.eo \
-	elm_video.eo \
+	efl_ui_video.eo \
 	elm_view_list.eo \
 	elm_view_form.eo \
 	elm_web.eo \
@@ -225,7 +225,7 @@ includesunstable_HEADERS = \
 	elm_widget_table.h \
 	elm_widget_thumb.h \
 	elm_widget_toolbar.h \
-	elm_widget_video.h \
+	efl_ui_video_private.h \
 	elm_widget_web.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
@@ -480,9 +480,9 @@ includesub_HEADERS = \
 	elm_toolbar_legacy.h \
 	elm_tooltip.h \
 	elm_transit.h \
-	elm_video.h \
-	elm_video_eo.h \
-	elm_video_legacy.h \
+	efl_ui_video.h \
+	efl_ui_video_eo.h \
+	efl_ui_video_legacy.h \
 	elm_view_list.h \
 	elm_view_form.h \
 	elm_web.h \
@@ -614,7 +614,7 @@ libelementary_la_SOURCES = \
 	elm_transit.c \
 	elm_util.c \
 	elm_url.c \
-	elm_video.c \
+	efl_ui_video.c \
 	elm_view_list.c \
 	elm_view_form.c \
 	elm_web2.c \

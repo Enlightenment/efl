@@ -9,16 +9,16 @@
 
 #include <Elementary.h>
 
-#include "elm_priv.h"
 #include "elm_widget_layout.h"
-#include "elm_widget_video.h"
+#include "efl_ui_video_private.h"
+#include "elm_priv.h"
 
 /* TODO: add buffering support to Emotion and display buffering
  * progress in the theme when needed */
 
-#define MY_CLASS ELM_VIDEO_CLASS
+#define MY_CLASS EFL_UI_VIDEO_CLASS
 
-#define MY_CLASS_NAME "Elm_Video"
+#define MY_CLASS_NAME "Efl_Ui_Video"
 #define MY_CLASS_NAME_LEGACY "elm_video"
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -109,7 +109,7 @@ _key_action_play(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_video_elm_widget_event(Eo *obj, Elm_Video_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_efl_ui_video_elm_widget_event(Eo *obj, Efl_Ui_Video_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
    Evas_Event_Key_Down *ev = event_info;
@@ -128,7 +128,7 @@ _elm_video_elm_widget_event(Eo *obj, Elm_Video_Data *_pd EINA_UNUSED, Evas_Objec
 }
 
 EOLIAN static void
-_elm_video_elm_layout_sizing_eval(Eo *obj, Elm_Video_Data *sd)
+_efl_ui_video_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Video_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -176,7 +176,7 @@ _on_playback_started(void *data, const Eo_Event *event EINA_UNUSED)
 static void
 _on_playback_finished(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   ELM_VIDEO_DATA_GET(data, sd);
+   EFL_UI_VIDEO_DATA_GET(data, sd);
    emotion_object_play_set(sd->emotion, EINA_FALSE);
    elm_layout_signal_emit(data, "elm,video,end", "elm");
 }
@@ -192,7 +192,7 @@ _on_title_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    const char *title;
 
-   ELM_VIDEO_DATA_GET(data, sd);
+   EFL_UI_VIDEO_DATA_GET(data, sd);
 
    title = emotion_object_title_get(sd->emotion);
    elm_layout_text_set(data, "elm,title", title);
@@ -210,7 +210,7 @@ _suspend_cb(void *data)
 {
    double interval;
 
-   ELM_VIDEO_DATA_GET(data, sd);
+   EFL_UI_VIDEO_DATA_GET(data, sd);
 
    interval = ecore_timer_interval_get(sd->timer);
    if (interval <= 20)
@@ -232,12 +232,12 @@ _suspend_cb(void *data)
 Eina_Bool
 _elm_video_check(Evas_Object *video)
 {
-   ELM_VIDEO_CHECK(video) EINA_FALSE;
+   EFL_UI_VIDEO_CHECK(video) EINA_FALSE;
    return EINA_TRUE;
 }
 
 EOLIAN static void
-_elm_video_efl_canvas_group_group_add(Eo *obj, Elm_Video_Data *priv)
+_efl_ui_video_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Video_Data *priv)
 {
    _elm_emotion_init();
 
@@ -263,7 +263,7 @@ _elm_video_efl_canvas_group_group_add(Eo *obj, Elm_Video_Data *priv)
 }
 
 EOLIAN static void
-_elm_video_efl_canvas_group_group_del(Eo *obj, Elm_Video_Data *sd)
+_efl_ui_video_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Video_Data *sd)
 {
    ecore_timer_del(sd->timer);
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
@@ -280,7 +280,7 @@ elm_video_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_video_eo_base_constructor(Eo *obj, Elm_Video_Data *_pd EINA_UNUSED)
+_efl_ui_video_eo_base_constructor(Eo *obj, Efl_Ui_Video_Data *_pd EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -291,7 +291,7 @@ _elm_video_eo_base_constructor(Eo *obj, Elm_Video_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_video_efl_file_file_set(Eo *obj, Elm_Video_Data *sd, const char *filename, const char *key EINA_UNUSED)
+_efl_ui_video_efl_file_file_set(Eo *obj, Efl_Ui_Video_Data *sd, const char *filename, const char *key EINA_UNUSED)
 {
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
    sd->stop = EINA_FALSE;
@@ -306,20 +306,20 @@ _elm_video_efl_file_file_set(Eo *obj, Elm_Video_Data *sd, const char *filename, 
 }
 
 EOLIAN static void
-_elm_video_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd EINA_UNUSED, const char **filename, const char **key EINA_UNUSED)
+_efl_ui_video_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd EINA_UNUSED, const char **filename, const char **key EINA_UNUSED)
 {
    if (filename)
      *filename = emotion_object_file_get(sd->emotion);
 }
 
 EOLIAN static Evas_Object*
-_elm_video_emotion_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
+_efl_ui_video_emotion_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return sd->emotion;
 }
 
 EOLIAN static void
-_elm_video_play(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
+_efl_ui_video_play(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    if (emotion_object_play_get(sd->emotion)) return;
 
@@ -333,7 +333,7 @@ _elm_video_play(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
  * hibernate after a while without activity.
  */
 EOLIAN static void
-_elm_video_pause(Eo *obj, Elm_Video_Data *sd)
+_efl_ui_video_pause(Eo *obj, Efl_Ui_Video_Data *sd)
 {
    if (!emotion_object_play_get(sd->emotion)) return;
 
@@ -345,7 +345,7 @@ _elm_video_pause(Eo *obj, Elm_Video_Data *sd)
 /* FIXME: stop should go into hibernate state directly.
  */
 EOLIAN static void
-_elm_video_stop(Eo *obj, Elm_Video_Data *sd)
+_efl_ui_video_stop(Eo *obj, Efl_Ui_Video_Data *sd)
 {
    if (!emotion_object_play_get(sd->emotion) && sd->stop) return;
 
@@ -358,49 +358,49 @@ _elm_video_stop(Eo *obj, Elm_Video_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_video_is_playing_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
+_efl_ui_video_is_playing_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return emotion_object_play_get(sd->emotion);
 }
 
 EOLIAN static const char*
-_elm_video_title_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
+_efl_ui_video_title_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return emotion_object_title_get(sd->emotion);
 }
 
 EOLIAN static void
-_elm_video_remember_position_set(Eo *obj EINA_UNUSED, Elm_Video_Data *sd, Eina_Bool remember)
+_efl_ui_video_remember_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd, Eina_Bool remember)
 {
    sd->remember = remember;
 }
 
 EOLIAN static Eina_Bool
-_elm_video_remember_position_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
+_efl_ui_video_remember_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return sd->remember;
 }
 
 EOLIAN static Eina_Bool
-_elm_video_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Video_Data *_pd EINA_UNUSED)
+_efl_ui_video_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *_pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
-_elm_video_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Video_Data *_pd EINA_UNUSED)
+_efl_ui_video_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *_pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN static void
-_elm_video_class_constructor(Eo_Class *klass)
+_efl_ui_video_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 EOLIAN const Elm_Atspi_Action *
-_elm_video_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Video_Data *pd EINA_UNUSED)
+_efl_ui_video_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *pd EINA_UNUSED)
 {
    static Elm_Atspi_Action atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},
@@ -471,4 +471,4 @@ elm_video_play_position_get(const Evas_Object *obj)
    return efl_player_position_get(obj);
 }
 
-#include "elm_video.eo.c"
+#include "efl_ui_video.eo.c"

@@ -1,8 +1,8 @@
 /**
- * @defgroup Elm_Video Video
+ * @defgroup Efl_Ui_Video Video
  * @ingroup Elementary
  *
- * @addtogroup Elm_Video
+ * @addtogroup Efl_Ui_Video
  * @{
  *
  * @image html video_inheritance_tree.png
@@ -14,17 +14,17 @@
  * Elementary comes with two object that help design application that need
  * to display video.
  *
- * The first one, Elm_Video, display a video by using Emotion.
+ * The first one, Efl_Ui_Video, display a video by using Emotion.
  * It embeds the video inside an Edje object, so you can do some
  * animation depending on the video state change. It also implements a
  * resource management policy to remove this burden from the application.
  *
  * The second one,
- * Elm_Player is a video player that need to be linked with an Elm_Video.
+ * Elm_Player is a video player that need to be linked with an Efl_Ui_Video.
  * It take care of updating its content according to Emotion event and provide a
  * way to theme itself. It also automatically raises the priority of the
- * linked Elm_Video so it will use the video decoder, if available. It also
- * activates the "remember" function on the linked Elm_Video object.
+ * linked Efl_Ui_Video so it will use the video decoder, if available. It also
+ * activates the "remember" function on the linked Efl_Ui_Video object.
  *
  * Both widgets inherit from the @ref Layout one, so that all the
  * functions acting on it also work for video objects.
@@ -55,10 +55,10 @@
  */
 
 #ifdef EFL_EO_API_SUPPORT
-#include "elm_video_eo.h"
+#include "efl_ui_video_eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_video_legacy.h"
+#include "efl_ui_video_legacy.h"
 #endif
 /**
  * @}

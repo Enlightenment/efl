@@ -135,4 +135,4 @@ EAPI void elm_video_play_position_set(Evas_Object *obj, double position);
  */
 EAPI double elm_video_play_position_get(const Evas_Object *obj);
 
-#include "elm_video.eo.legacy.h"
+#include "efl_ui_video.eo.legacy.h"
