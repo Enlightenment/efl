@@ -87,9 +87,45 @@ START_TEST(elm_layout_edje_attach)
 }
 END_TEST
 
+START_TEST(elm_layout_model_connect)
+{
+   char buf[PATH_MAX];
+   Evas_Object *win, *ly;
+   Efl_Model_Item *model;
+   Eina_Value v;
+   const char *part_text;
+   const char text_value[] = "A random string for elm_layout_model_connect test";
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
+
+   ly = eo_add(ELM_LAYOUT_CLASS, win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   elm_layout_file_set(ly, buf, "layout");
+   evas_object_show(ly);
+
+   model = eo_add(EFL_MODEL_ITEM_CLASS, win);
+   ck_assert(!!eina_value_setup(&v, EINA_VALUE_TYPE_STRING));
+   ck_assert(!!eina_value_set(&v, text_value));
+   efl_model_property_set(model, "text_property", &v, NULL);
+
+   efl_ui_model_connect(ly, "text", "text_property");
+   efl_ui_view_model_set(ly, model);
+
+   ecore_main_loop_iterate_may_block(EINA_TRUE);
+
+   part_text = elm_layout_text_get(ly, "text");
+
+   ck_assert_str_eq(part_text, text_value);
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_layout(TCase *tc)
 {
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_layout_swallows);
    tcase_add_test(tc, elm_layout_edje_attach);
+   tcase_add_test(tc, elm_layout_model_connect);
 }
