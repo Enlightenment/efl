@@ -779,8 +779,10 @@ get_type_str = function(tp)
         return wrap_type_attrs(tp, tp:full_name_get())
     elseif tpt == tps.COMPLEX then
         local stypes = {}
-        for stp in tp:subtypes_get() do
+        local stp = tp:base_type_get()
+        while stp do
             stypes[#stypes + 1] = get_type_str(stp)
+            stp = stp:next_type_get()
         end
         return wrap_type_attrs(tp, tp:full_name_get() .. "<"
             .. table.concat(stypes, ", ") .. ">")
@@ -970,6 +972,17 @@ local gen_cparam = function(par, out)
     return tstr .. par:name_get()
 end
 
+local get_func_csig_part = function(cn, tp)
+    if not tp then
+        return "void " .. cn
+    end
+    local ctp = tp:c_type_get()
+    if ctp:sub(#ctp) == "*" then
+        return ctp .. cn
+    end
+    return ctp .. " " .. cn
+end
+
 local gen_func_csig = function(f, ftype)
     ftype = ftype or eolian.function_type.METHOD
     assert(ftype ~= eolian.function_type.PROPERTY)
@@ -984,7 +997,7 @@ local gen_func_csig = function(f, ftype)
 
     if f:type_get() == eolian.function_type.METHOD then
         local pars = f:parameters_get():to_array()
-        local cnrt = rtype and rtype:c_type_named_get(cn) or ("void " .. cn)
+        local cnrt = get_func_csig_part(cn, rtype)
         for i = 1, #pars do
             pars[i] = gen_cparam(pars[i])
         end
@@ -996,7 +1009,7 @@ local gen_func_csig = function(f, ftype)
     local vals = f:property_values_get(ftype):to_array()
 
     if ftype == eolian.function_type.PROP_SET then
-        local cnrt = rtype and rtype:c_type_named_get(cn) or ("void " .. cn)
+        local cnrt = get_func_csig_part(cn, rtype)
         local pars = {}
         for i, par in ipairs(keys) do
             pars[#pars + 1] = gen_cparam(par)
@@ -1012,13 +1025,13 @@ local gen_func_csig = function(f, ftype)
     local cnrt
     if not rtype then
         if #vals == 1 then
-            cnrt = vals[1]:type_get():c_type_named_get(cn)
+            cnrt = get_func_csig_part(cn, vals[1]:type_get())
             table.remove(vals, 1)
         else
-            cnrt = "void " .. cn
+            cnrt = get_func_csig_part(cn)
         end
     else
-        cnrt = rtype:c_type_named_get(cn)
+        cnrt = get_func_csig_part(cn, rtype)
     end
     local pars = {}
     for i, par in ipairs(keys) do
@@ -1031,16 +1044,25 @@ local gen_func_csig = function(f, ftype)
     return cnrt .. "(" .. table.concat(pars, ", ") .. ");"
 end
 
-local gen_func_namesig = function(fn, cl, buf)
-    if fn:type_get() ~= eolian.function_type.METHOD then
+local gen_func_namesig = function(fn, cl, buf, isprop, isget, isset)
+    if isprop then
         buf[#buf + 1] = "@property "
     end
     buf[#buf + 1] = cl:full_name_get()
     buf[#buf + 1] = "."
     buf[#buf + 1] = fn:name_get()
     buf[#buf + 1] = " "
-    if fn:scope_get() == eolian.object_scope.PROTECTED then
-        buf[#buf + 1] = "@protected "
+    local ftt = eolian.function_type
+    local obs = eolian.object_scope
+    if not isprop then
+        if fn:scope_get(ftt.METHOD) == obs.PROTECTED then
+            buf[#buf + 1] = "@protected "
+        end
+    elseif isget and isset then
+        if fn:scope_get(ftt.PROP_GET) == obs.PROTECTED and
+           fn:scope_get(ftt.PROP_SET) == obs.PROTECTED then
+            buf[#buf + 1] = "@protected "
+        end
     end
     if fn:is_class() then
         buf[#buf + 1] = "@class "
@@ -1105,7 +1127,7 @@ end
 
 local gen_method_sig = function(fn, cl)
     local buf = {}
-    gen_func_namesig(fn, cl, buf)
+    gen_func_namesig(fn, cl, buf, false, false, false)
     if fn:is_virtual_pure(eolian.function_type.METHOD) then
         buf[#buf + 1] = "@virtual_pure "
     end
@@ -1155,11 +1177,12 @@ end
 
 local gen_prop_sig = function(fn, cl)
     local buf = {}
-    gen_func_namesig(fn, cl, buf)
     local fnt = fn:type_get()
     local ftt = eolian.function_type
+    local obs = eolian.object_scope
     local isget = (fnt == ftt.PROPERTY or fnt == ftt.PROP_GET)
     local isset = (fnt == ftt.PROPERTY or fnt == ftt.PROP_SET)
+    gen_func_namesig(fn, cl, buf, true, isget, isset)
 
     local gvirt = fn:is_virtual_pure(ftt.PROP_GET)
     local svirt = fn:is_virtual_pure(ftt.PROP_SET)
@@ -1181,7 +1204,12 @@ local gen_prop_sig = function(fn, cl)
     buf[#buf + 1] = "{\n"
 
     if isget then
-        buf[#buf + 1] = "    get {"
+        buf[#buf + 1] = "    get "
+        if fn:scope_get(ftt.PROP_GET) == obs.PROTECTED and
+           fn:scope_get(ftt.PROP_SET) ~= obs.PROTECTED then
+            buf[#buf + 1] = "@protected "
+        end
+        buf[#buf + 1] = "{"
         if (#gkeys == 0 or keys_same) and (#gvals == 0 or vals_same) and
            (not grtt or grtt == srtt) then
             buf[#buf + 1] = "}\n"
@@ -1197,7 +1225,12 @@ local gen_prop_sig = function(fn, cl)
     end
 
     if isset then
-        buf[#buf + 1] = "    set {"
+        buf[#buf + 1] = "    set "
+        if fn:scope_get(ftt.PROP_SET) == obs.PROTECTED and
+           fn:scope_get(ftt.PROP_GET) ~= obs.PROTECTED then
+            buf[#buf + 1] = "@protected "
+        end
+        buf[#buf + 1] = "{"
         if (#skeys == 0 or keys_same) and (#svals == 0 or vals_same) and
            (not srtt or grtt == srtt) then
             buf[#buf + 1] = "}\n"
@@ -1215,14 +1248,6 @@ local gen_prop_sig = function(fn, cl)
     if keys_same then gen_prop_keyvals(gkeys, "keys", buf, 0) end
     if vals_same then gen_prop_keyvals(gvals, "values", buf, 0) end
 
-    buf[#buf + 1] = "}"
-    return table.concat(buf)
-end
-
-local get_property_sig = function(fn, cl)
-    local buf = {}
-    gen_func_namesig(fn, cl, buf)
-    buf[#buf + 1] = "{"
     buf[#buf + 1] = "}"
     return table.concat(buf)
 end
