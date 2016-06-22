@@ -47,7 +47,10 @@ vec4 fragmentNormalMap()
    vec3  normal;
    vec4  color;
    vec4 fragcolor;
+
+   vec3 Tex0CoordNormal = vec3(vTexCoord, 1.0) * uTextureMatrixTransformNormal0;
 #ifdef NORMAL_TEXTURE_BLEND
+   vec3 Tex1CoordNormal = vec3(vTexCoord, 1.0) * uTextureMatrixTransformNormal1;
    normal = texture2D(uTextureNormal0, vec2(Tex0CoordNormal)).rgb * uTextureNormalWeight / texture2D(uTextureNormal0, vec2(Tex0CoordNormal)).a;
    normal += texture2D(uTextureNormal1, vec2(Tex1CoordNormal)).rgb / texture2D(uTextureNormal1, vec2(Tex1CoordNormal)).a *
    (1.0 - uTextureNormalWeight);
