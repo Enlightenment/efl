@@ -908,7 +908,7 @@ _elm_win_mouse_in(Ecore_Evas *ee)
    _elm_win_throttle_ok = EINA_TRUE;
    if (sd->resizing) sd->resizing = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_WL2
-   if (sd->wl.win)
+   if (sd->wl.win && (!sd->frame_obj))
      ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 #endif
 }
@@ -3374,6 +3374,19 @@ static struct _resize_info _border_corner[4] =
 #endif
 
 static void
+_elm_win_frame_obj_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+#ifdef HAVE_ELEMENTARY_WL2
+   Efl_Ui_Win_Data *sd = data;
+
+   if (sd->wl.win)
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
+#else
+   (void)data;
+#endif
+}
+
+static void
 _elm_win_frame_obj_move(void *data,
                         Evas *e EINA_UNUSED,
                         Evas_Object *obj EINA_UNUSED,
@@ -3646,6 +3659,8 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
    edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon",
                             sd->icon);
 
+   evas_object_event_callback_add
+     (sd->frame_obj, EVAS_CALLBACK_MOUSE_IN, _elm_win_frame_obj_mouse_in, sd);
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
    evas_object_event_callback_add
