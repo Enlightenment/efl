@@ -41,6 +41,7 @@ struct _Efl_Ui_Text_Data
    Evas_Object                          *start_handler;
    Evas_Object                          *end_handler;
    Ecore_Job                            *deferred_recalc_job;
+   Ecore_Job                            *deferred_decoration_job;
    Ecore_Timer                          *longpress_timer;
    Ecore_Timer                          *delay_write;
    /* for deferred appending */
@@ -103,6 +104,9 @@ struct _Efl_Ui_Text_Data
    Eina_Bool                             auto_return_key : 1;
    Eina_Bool                             have_selection : 1;
    Eina_Bool                             deferred_cur : 1;
+   Eina_Bool                             deferred_decoration_selection : 1;
+   Eina_Bool                             deferred_decoration_cursor : 1;
+   Eina_Bool                             deferred_decoration_anchor : 1;
    Eina_Bool                             context_menu : 1;
    Eina_Bool                             long_pressed : 1;
    Eina_Bool                             cur_changed : 1;
@@ -122,6 +126,7 @@ struct _Efl_Ui_Text_Data
    Eina_Bool                             scroll : 1;
    Eina_Bool                             input_panel_show_on_demand : 1;
    Eina_Bool                             anchors_updated : 1;
+   Eina_Bool                             test_bit : 1;
 };
 
 struct _Anchor
@@ -3742,6 +3747,7 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
    efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
+   priv->test_bit = EINA_TRUE;
    priv->entry_edje = wd->resize_obj;
 
    priv->cnp_mode = ELM_CNP_MODE_PLAINTEXT;
@@ -3945,6 +3951,7 @@ _efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Item_Provider *ip;
    Elm_Entry_Markup_Filter *tf;
+   Eo *text_obj;
 
    if (sd->delay_write)
      {
@@ -3974,6 +3981,7 @@ _efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
    eina_stringshare_del(sd->cut_sel);
    eina_stringshare_del(sd->text);
    ecore_job_del(sd->deferred_recalc_job);
+   ecore_job_del(sd->deferred_decoration_job);
    if (sd->append_text_idler)
      {
         ecore_idler_del(sd->append_text_idler);
@@ -4008,6 +4016,16 @@ _efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
         evas_object_del(sd->start_handler);
         evas_object_del(sd->end_handler);
      }
+
+   text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   eo_event_callback_del(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
+         _efl_ui_text_changed_cb, obj);
+   eo_event_callback_del(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
+         _efl_ui_text_selection_changed_cb, obj);
+   eo_event_callback_del(efl_canvas_text_cursor_get(text_obj), EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED,
+         _efl_ui_text_cursor_changed_cb, obj);
+   evas_object_event_callback_del_full(sd->entry_edje, EVAS_CALLBACK_MOVE,
+         _efl_ui_text_move_cb, obj);
 
    efl_canvas_group_del(eo_super(obj, MY_CLASS));
 }
@@ -4108,6 +4126,13 @@ _efl_ui_text_eo_base_constructor(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
    efl_ui_text_interactive_editable_set(obj, EINA_FALSE);
 
    return obj;
+}
+
+EOLIAN static void
+_efl_ui_text_eo_base_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd)
+{
+   ecore_job_del(pd->deferred_decoration_job);
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -5513,6 +5538,8 @@ _update_text_cursors(Eo *obj)
    Eina_Bool bidi_cursor;
 
    EFL_UI_TEXT_DATA_GET(obj, sd);
+   if (!sd->deferred_decoration_cursor) return;
+   sd->deferred_decoration_cursor = EINA_FALSE;
 
    Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
 
@@ -5560,6 +5587,9 @@ _update_text_selection(Eo *obj, Eo *text_obj)
    const char *file;
 
    EFL_UI_TEXT_DATA_GET(obj, sd);
+
+   if (!sd->deferred_decoration_selection) return;
+   sd->deferred_decoration_selection = EINA_FALSE;
 
    _decoration_calc_offset(sd, &x, &y);
 
@@ -5836,10 +5866,13 @@ static void
 _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
 {
    Eina_List *l, *ll, *range = NULL;
-   Evas_Coord x, y, w, h;
+   Evas_Coord x, y;
    Evas_Object *smart, *clip;
    Efl_Ui_Text_Rectangle *rect;
    Anchor *an;
+
+   if (!sd->deferred_decoration_anchor) return;
+   sd->deferred_decoration_anchor = EINA_FALSE;
 
    _anchors_create(o, sd);
 
@@ -5848,8 +5881,7 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
 
    smart = evas_object_smart_parent_get(o);
    clip = evas_object_clip_get(o);
-   x = y = w = h = -1;
-   evas_object_geometry_get(o, &x, &y, &w, &h);
+   _decoration_calc_offset(sd, &x, &y);
    EINA_LIST_FOREACH(sd->anchors, l, an)
      {
         // for item anchors
@@ -5919,28 +5951,60 @@ _update_decorations(Eo *obj)
 }
 
 static void
+_deferred_decoration_job(void *data)
+{
+   EFL_UI_TEXT_DATA_GET(data, sd);
+
+   sd->deferred_decoration_job = NULL;
+   _update_decorations(data);
+}
+
+static void
+_decoration_defer(Eo *obj)
+{
+   EFL_UI_TEXT_DATA_GET(obj, sd);
+   ecore_job_del(sd->deferred_decoration_job);
+   sd->deferred_decoration_job =
+      ecore_job_add(_deferred_decoration_job, obj);
+}
+
+static void
+_decoration_defer_all(Eo *obj)
+{
+   EFL_UI_TEXT_DATA_GET(obj, sd);
+   sd->deferred_decoration_anchor = EINA_TRUE;
+   sd->deferred_decoration_cursor = EINA_TRUE;
+   sd->deferred_decoration_selection = EINA_TRUE;
+   _decoration_defer(obj);
+}
+
+static void
 _efl_ui_text_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   _update_decorations(data);
+   _decoration_defer_all(data);
 }
 
 static void
 _efl_ui_text_cursor_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   _update_text_cursors(data);
+   EFL_UI_TEXT_DATA_GET(data, sd);
+   sd->deferred_decoration_cursor = EINA_TRUE;
+   _decoration_defer(data);
 }
 
 static void
 _efl_ui_text_selection_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   _update_text_selection(data, event->object);
+   EFL_UI_TEXT_DATA_GET(data, sd);
+   sd->deferred_decoration_selection = EINA_TRUE;
+   _decoration_defer(data);
 }
 
 static void
 _efl_ui_text_move_cb(void *data, Evas *e EINA_UNUSED,
       Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   _update_decorations(data);
+   _decoration_defer_all(data);
 }
 
 #if 0
