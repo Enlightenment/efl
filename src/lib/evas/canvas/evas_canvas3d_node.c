@@ -501,7 +501,9 @@ node_aabb_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
    Eina_List *current;
    Evas_Canvas3D_Node *datanode;
    const Eo_Event_Description *eo_desc = NULL;
-
+   if (pd->type != EVAS_CANVAS3D_NODE_TYPE_MESH &&
+       pd->type != EVAS_CANVAS3D_NODE_TYPE_NODE)
+     return EINA_TRUE;
    _update_node_shapes(node);
    EINA_LIST_FOREACH(pd->members, current, datanode)
      {
