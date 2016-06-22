@@ -378,12 +378,14 @@ _evas_box_internal_remove_at(Eo *o, Evas_Object_Box_Data *priv, unsigned int pos
 }
 
 EOLIAN static void
-_evas_box_efl_canvas_group_group_add(Eo *o, Evas_Object_Box_Data *priv)
+_evas_box_efl_canvas_group_group_add(Eo *eo_obj, Evas_Object_Box_Data *priv)
 {
-   efl_canvas_group_add(eo_super(o, MY_CLASS));
+   Evas_Object_Smart_Clipped_Data *cso;
+
+   efl_canvas_group_add(eo_super(eo_obj, MY_CLASS));
    
    evas_object_event_callback_add
-     (o, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_hints_changed, o);
+     (eo_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_hints_changed, eo_obj);
    priv->children = NULL;
    priv->align.h = 0.5;
    priv->align.v = 0.5;
@@ -392,6 +394,12 @@ _evas_box_efl_canvas_group_group_add(Eo *o, Evas_Object_Box_Data *priv)
    priv->layout.cb = evas_object_box_layout_horizontal;
    priv->layout.data = NULL;
    priv->layout.free_data = NULL;
+
+   // make sure evas box smart data is fully initialized and set (for legacy)
+   // this assumes only box and smart clipped access the smart data
+   cso = eo_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS);
+   priv->base = *cso;
+   evas_object_smart_data_set(eo_obj, priv);
 }
 
 EOLIAN static void
