@@ -5428,6 +5428,14 @@ _efl_ui_text_elm_interface_atspi_accessible_name_get(Eo *obj, Efl_Ui_Text_Data *
    return ret ? strdup(ret) : NULL;
 }
 
+EOLIAN static Efl_Canvas_Text_Cursor *
+_efl_ui_text_cursor_new(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED)
+{
+   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   return eo_add(EFL_CANVAS_TEXT_CURSOR_CLASS, (Eo *) obj,
+         efl_canvas_text_cursor_text_object_set(eo_self, text_obj));
+}
+
 static inline Eo *
 _decoration_create(Efl_Ui_Text_Data *sd, const char *file,
       const char *source, Eina_Bool above)

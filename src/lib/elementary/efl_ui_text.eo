@@ -361,6 +361,10 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             @in data: const(void_ptr) @optional; [[The data to associate with the item for related functions.]]
          }
       }
+      cursor_new {
+         [[Creates and returns a new cursor for the text.]]
+         return: Efl.Canvas.Text.Cursor;
+      }
    }
    implements {
       class.constructor;
