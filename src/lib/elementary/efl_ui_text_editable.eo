@@ -1,0 +1,7 @@
+class Efl.Ui.Text.Editable (Efl.Ui.Text)
+{
+   data: null;
+   implements {
+      Eo.Base.constructor;
+   }
+}

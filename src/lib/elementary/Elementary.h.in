@@ -278,6 +278,7 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_win_standard.eo.h>
 # include <efl_ui_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
+# include <efl_ui_text_editable.eo.h>
 #endif
 
 /* include deprecated calls last of all */

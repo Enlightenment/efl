@@ -104,7 +104,7 @@ struct _Efl_Ui_Text_Data
    Eina_Bool                             can_write : 1;
    Eina_Bool                             auto_save : 1;
    Eina_Bool                             password : 1;
-   Eina_Bool                             editable : 1;
+   Eina_Bool                             editable : 1; // FIXME: This is redundant because of text interactive and should be removed
    Eina_Bool                             disabled : 1;
    Eina_Bool                             h_bounce : 1;
    Eina_Bool                             v_bounce : 1;
@@ -4086,6 +4086,7 @@ _efl_ui_text_eo_base_constructor(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ENTRY);
    eo_event_callback_add(obj, EO_EVENT_CALLBACK_ADD, _cb_added, NULL);
    eo_event_callback_add(obj, EO_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
+   efl_ui_text_interactive_editable_set(obj, EINA_FALSE);
 
    return obj;
 }
@@ -4183,8 +4184,9 @@ _efl_ui_text_entry_insert(Eo *obj, Efl_Ui_Text_Data *sd, const char *entry)
 }
 
 EOLIAN static void
-_efl_ui_text_editable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool editable)
+_efl_ui_text_efl_ui_text_interactive_editable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool editable)
 {
+   efl_ui_text_interactive_editable_set(eo_super(obj, MY_CLASS), editable);
    if (sd->editable == editable) return;
    sd->editable = editable;
    elm_obj_widget_theme_apply(obj);
@@ -4203,12 +4205,6 @@ _efl_ui_text_editable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool editable)
                             _dnd_pos_cb, NULL,
                             _dnd_drop_cb, NULL);
      }
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_text_editable_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
-{
-   return sd->editable;
 }
 
 static void
@@ -5416,7 +5412,7 @@ _efl_ui_text_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Text_D
    Elm_Atspi_State_Set ret;
    ret = elm_interface_atspi_accessible_state_set_get(eo_super(obj, EFL_UI_TEXT_CLASS));
 
-   if (efl_ui_text_editable_get(obj))
+   if (efl_ui_text_interactive_editable_get(obj))
      STATE_TYPE_SET(ret, ELM_ATSPI_STATE_EDITABLE);
 
    return ret;
@@ -5637,3 +5633,16 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, ELM_LAYOUT, Efl_Ui_Text_
 
 #include "efl_ui_text.eo.c"
 
+#undef MY_CLASS
+#define MY_CLASS EFL_UI_TEXT_EDITABLE_CLASS
+
+EOLIAN static Eo *
+_efl_ui_text_editable_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   efl_ui_text_interactive_editable_set(obj, EINA_TRUE);
+
+   return obj;
+}
+
+#include "efl_ui_text_editable.eo.c"

@@ -10,5 +10,6 @@ class Efl.Ui.Internal.Text.Interactive (Efl.Canvas.Text, Efl.Ui.Text.Interactive
       Efl.Ui.Text.Interactive.selection_allowed;
       Efl.Ui.Text.Interactive.selection_cursors.get;
       Efl.Ui.Text.Interactive.multiline;
+      Efl.Ui.Text.Interactive.editable;
    }
 }

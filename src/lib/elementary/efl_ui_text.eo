@@ -134,28 +134,6 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             autocapital_type: Elm.Autocapital.Type; [[The type of autocapitalization.]]
          }
       }
-      @property editable {
-         set {
-            [[Sets if the entry is to be editable or not.
-
-              By default, entries are editable and when focused, any text input by the
-              user will be inserted at the current cursor position. But calling this
-              function with $editable as $false will prevent the user from
-              inputting text into the entry.
-
-              The only way to change the text of a non-editable entry is to use
-              \@ref elm_object_text_set, \@ref elm_entry_entry_insert and other related
-              functions.
-            ]]
-         }
-         get {
-            [[Get whether the entry is editable or not.]]
-         }
-         values {
-            editable: bool; [[If $true, user input will be inserted in the entry,
-            if not, the entry is read-only and no user input is allowed.]]
-         }
-      }
       @property password {
          set {
             [[Sets the entry to password mode.
@@ -440,6 +418,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Interface.Atspi.Text.Editable.paste;
       Efl.File.file.set;
       Efl.File.file.get;
+      Efl.Ui.Text.Interactive.editable.set;
    }
    events {
       activated;

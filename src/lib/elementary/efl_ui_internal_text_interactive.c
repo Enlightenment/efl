@@ -21,6 +21,7 @@ typedef struct _Efl_Ui_Internal_Text_Interactive_Data
    Eina_Bool              selecting : 1;
    Eina_Bool              have_selection : 1;
    Eina_Bool              select_allow : 1;
+   Eina_Bool              editable : 1;
    Eina_Bool              had_sel : 1;
    Eina_Bool              input_panel_enable : 1;
    Eina_Bool              prediction_allow : 1;
@@ -709,6 +710,10 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    Efl_Ui_Internal_Text_Interactive_Data *en = eo_data_scope_get(obj, MY_CLASS);
+
+   /* FIXME: Maybe allow selctions to happen even when not editable. */
+   if (!en->editable) return;
+
    cur = efl_canvas_text_cursor_get(obj);
    old_cur_pos = evas_textblock_cursor_pos_get(cur);
 
@@ -1272,6 +1277,7 @@ _efl_ui_internal_text_interactive_eo_base_constructor(Eo *obj, Efl_Ui_Internal_T
 {
    en->select_allow = EINA_TRUE;
    en->multiline = EINA_TRUE;
+   en->editable = EINA_TRUE;
    return eo_constructor(eo_super(obj, MY_CLASS));
 }
 
@@ -1391,6 +1397,17 @@ _efl_ui_internal_text_interactive_efl_ui_text_interactive_multiline_get(Eo *obj 
    return pd->multiline;
 }
 
+EOLIAN static void
+_efl_ui_internal_text_interactive_efl_ui_text_interactive_editable_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd, Eina_Bool editable)
+{
+   sd->editable = editable;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_internal_text_interactive_efl_ui_text_interactive_editable_get(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
+{
+   return sd->editable;
+}
 
 #include "efl_ui_internal_text_interactive.eo.c"
 #include "efl_ui_text_interactive.eo.c"

@@ -45,6 +45,21 @@ interface Efl.Ui.Text.Interactive ()
             enabled: bool; [[$true if enabled]]
          }
       }
+      @property editable {
+         [[Whether the entry is editable.
+
+           By default text interactives are editable. However, setting this
+           property to $false will make it so key input will be disregarded.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            editable: bool; [[If $true, user input will be inserted in the entry,
+            if not, the entry is read-only and no user input is allowed.]]
+         }
+      }
    }
    events {
       changed,user: Efl.Ui.Text.Interactive.Change_Info; [[The text object has changed due to user interaction]]

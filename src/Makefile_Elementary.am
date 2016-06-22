@@ -140,6 +140,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_code_widget.eo \
     lib/elementary/efl_ui_text_interactive.eo \
 	lib/elementary/efl_ui_text.eo \
+	lib/elementary/efl_ui_text_editable.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
