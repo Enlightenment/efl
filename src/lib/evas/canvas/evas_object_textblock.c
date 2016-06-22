@@ -7064,6 +7064,7 @@ evas_object_textblock_text_markup_set(Eo *eo_obj, const char *text)
             EINA_INLIST_GET(o->text_nodes),
             EINA_INLIST_GET(co->node)));
 
+   eo_event_freeze(o->cursor);
    evas_textblock_cursor_paragraph_first(o->cursor);
 
    evas_object_textblock_text_markup_prepend(o->cursor, text);
@@ -7074,8 +7075,19 @@ evas_object_textblock_text_markup_set(Eo *eo_obj, const char *text)
 
         evas_textblock_cursor_paragraph_first(o->cursor);
         EINA_LIST_FOREACH(o->cursors, l, data)
-           evas_textblock_cursor_paragraph_first(data);
+          {
+             eo_event_freeze(data);
+             evas_textblock_cursor_paragraph_first(data);
+          }
+
+        EINA_LIST_FOREACH(o->cursors, l, data)
+          {
+             eo_event_thaw(data);
+             eo_event_callback_call(data, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+          }
      }
+   eo_event_thaw(o->cursor);
+   eo_event_callback_call(o->cursor, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 
     o->markup_text = text;
 }
