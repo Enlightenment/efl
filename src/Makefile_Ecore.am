@@ -8,7 +8,6 @@ ecore_eolian_files_legacy = \
 
 ecore_eolian_files = \
 	lib/ecore/efl_loop.eo \
-        lib/ecore/efl_loop_args.eo \
 	lib/ecore/efl_loop_user.eo \
 	lib/ecore/efl_loop_fd.eo \
 	lib/ecore/ecore_parent.eo \
@@ -60,7 +59,6 @@ lib/ecore/ecore_idle_exiter.c \
 lib/ecore/ecore_idler.c \
 lib/ecore/ecore_job.c \
 lib/ecore/ecore_main.c \
-lib/ecore/efl_loop_args.c \
 lib/ecore/efl_loop_user.c \
 lib/ecore/efl_loop_fd.c \
 lib/ecore/ecore_pipe.c \

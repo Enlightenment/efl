@@ -50,8 +50,6 @@ extern "C" {
 
 #include "efl_loop.eo.h"
 
-#include "efl_loop_args.eo.h"
-
 #include "efl_loop_user.eo.h"
 
 #include "efl_loop_fd.eo.h"

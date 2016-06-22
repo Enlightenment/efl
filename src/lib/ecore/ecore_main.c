@@ -2840,25 +2840,50 @@ _efl_loop_job_cb(void *data)
 }
 
 static void
-_efl_loop_args_job_cb(void *data, void *value EINA_UNUSED)
+_efl_loop_arguments_cleanup(Eina_Array *arga)
 {
-   Efl_Loop_Args *args = data;
-   Eo *obj = eo_parent_get(args);
+   Eina_Stringshare *s;
 
-   eo_event_callback_call(obj, EFL_LOOP_EVENT_ARGS, args);
-   eo_del(args);
+   while ((s = eina_array_pop(arga)))
+     eina_stringshare_del(s);
+   eina_array_free(arga);
 }
 
-EOLIAN static void
-_efl_loop_args_add(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, int argc, const char **argv)
+static void
+_efl_loop_arguments_send(void *data, void *value EINA_UNUSED)
+{
+   Efl_Loop_Arguments arge;
+   Eina_Array *arga = data;
+
+   arge.argv = arga;
+
+   eo_event_callback_call(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, &arge);
+
+   _efl_loop_arguments_cleanup(arga);
+}
+
+static void
+_efl_loop_arguments_cancel(void *data, Eina_Error err EINA_UNUSED)
+{
+   _efl_loop_arguments_cleanup(data);
+}
+
+// It doesn't make sense to send those argument to any other mainloop
+// As it also doesn't make sense to allow anyone to override this, so
+// should be internal for sure, not even protected.
+EAPI void
+ecore_loop_arguments_send(int argc, const char **argv)
 {
    Eina_Promise *job;
-   Efl_Loop_Args *args = eo_add(EFL_LOOP_ARGS_CLASS, obj);
+   Eina_Array *arga;
+   int i = 0;
 
-   if (!args) return;
-   efl_loop_args_set(args, argc, argv);
-   job = efl_loop_job(obj, NULL);
-   eina_promise_then(job, _efl_loop_args_job_cb, NULL, args);
+   arga = eina_array_new(argc);
+   for (i = 0; i < argc; i++)
+     eina_array_push(arga, eina_stringshare_add(argv[i]));
+
+   job = efl_loop_job(ecore_main_loop_get(), NULL);
+   eina_promise_then(job, _efl_loop_arguments_send, _efl_loop_arguments_cancel, arga);
 }
 
 static void _efl_loop_timeout_force_cancel_cb(void *data, const Eo_Event *event EINA_UNUSED);

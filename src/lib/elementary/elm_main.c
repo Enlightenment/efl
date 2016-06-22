@@ -322,6 +322,9 @@ _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA
    return ECORE_CALLBACK_PASS_ON;
 }
 
+// To be used here only, do not copy that anywhere else for now.
+EAPI void ecore_loop_arguments_send(int argc, const char **argv);
+
 EAPI int
 elm_init(int argc, char **argv)
 {
@@ -330,9 +333,8 @@ elm_init(int argc, char **argv)
    elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
 
-   efl_loop_args_add(ecore_main_loop_get(),
-                     argc - 1,
-                     (argc > 1) ? ((const char **)argv + 1) : NULL);
+   ecore_loop_arguments_send(argc - 1,
+                             (argc > 1) ? ((const char **)argv + 1) : NULL);
 
    _prefix_shutdown();
 
