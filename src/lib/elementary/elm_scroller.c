@@ -450,6 +450,10 @@ _elm_scroller_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Scroller_Data *sd, 
           return ret;
      }
 
+   if (!(elm_widget_can_focus_get(obj)) &&
+       !(elm_widget_can_focus_get(cur)))
+      return EINA_FALSE;
+
    /* Return */
    *next = (Evas_Object *)obj;
 

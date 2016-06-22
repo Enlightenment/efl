@@ -165,6 +165,7 @@ void test_scroller(void *data, Evas_Object *obj, void *event_info);
 void test_scroller2(void *data, Evas_Object *obj, void *event_info);
 void test_scroller3(void *data, Evas_Object *obj, void *event_info);
 void test_scroller4(void *data, Evas_Object *obj, void *event_info);
+void test_scroller5(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
 void test_index(void *data, Evas_Object *obj, void *event_info);
 void test_index2(void *data, Evas_Object *obj, void *event_info);
@@ -803,6 +804,7 @@ add_tests:
    ADD_TEST(NULL, "Scroller", "Scroller 2", test_scroller2);
    ADD_TEST(NULL, "Scroller", "Scroller 3", test_scroller3);
    ADD_TEST(NULL, "Scroller", "Page Scroller", test_scroller4);
+   ADD_TEST(NULL, "Scroller", "Scroller on Popup", test_scroller5);
 
    //------------------------------//
    // FIXME: add frame test

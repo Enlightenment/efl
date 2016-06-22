@@ -728,3 +728,103 @@ test_scroller4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_resize(win, 400, 550);
    evas_object_show(win);
 }
+
+static void
+_popup_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   evas_object_del(data);
+}
+
+static void
+_block_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   evas_object_del(obj);
+}
+
+static void
+_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+   Evas_Object *popup, *scr, *lbl, *btn, *rect, *tbl;
+
+   popup = elm_popup_add(win);
+   elm_object_part_text_set(popup, "title,text", "Scroller on Popup");
+   evas_object_smart_callback_add(popup, "block,clicked",
+                                  _block_clicked_cb, NULL);
+
+   tbl = elm_table_add(popup);
+   elm_object_content_set(popup, tbl);
+   evas_object_show(tbl);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(popup));
+   evas_object_size_hint_min_set(rect, 200, 50);
+   elm_table_pack(tbl, rect, 0, 0, 1, 1);
+
+   scr = elm_scroller_add(popup);
+   elm_object_focus_allow_set(scr, EINA_FALSE);
+   evas_object_size_hint_weight_set(scr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(scr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(scr);
+
+   lbl = elm_label_add(scr);
+   elm_object_text_set(lbl,
+                       "Do you want close the popup?<br>"
+                       "Please select cancel button<br><br>"
+                       "Do you wnat close the popup?<br>"
+                       "Please select cancel button");
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(scr, lbl);
+   evas_object_show(lbl);
+
+   elm_table_pack(tbl, scr, 0, 0, 1, 1);
+
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "Cancel");
+   elm_object_part_content_set(popup, "button1", btn);
+   evas_object_smart_callback_add(btn, "clicked", _popup_btn_clicked_cb, popup);
+   evas_object_show(btn);
+
+   evas_object_show(popup);
+   elm_object_focus_set(btn, EINA_TRUE);
+}
+
+static void
+_focused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   printf("focused");
+}
+
+void
+test_scroller5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *btn;
+
+   win = elm_win_util_standard_add("Scroller on Popup", "Scroller on Popup");
+   elm_win_autodel_set(win, EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   btn = elm_button_add(bx);
+   elm_object_text_set(btn, "Button 1");
+   evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, win);
+   evas_object_smart_callback_add(btn, "focused", _focused_cb, NULL);
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(bx);
+   elm_object_text_set(btn, "Button 2");
+   evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, win);
+   evas_object_smart_callback_add(btn, "focused", _focused_cb, NULL);
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+
+   elm_object_focus_set(btn, EINA_TRUE);
+
+   evas_object_resize(win, 400, 550);
+   evas_object_show(win);
+}
