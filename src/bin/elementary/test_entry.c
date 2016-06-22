@@ -2940,6 +2940,7 @@ void
 test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx2, *bx3, *bt, *en, *ck;
+   Efl_Canvas_Text_Cursor *cur;
 
    win = elm_win_util_standard_add("entry", "Entry");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -2954,6 +2955,9 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 //   elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    efl_text_set(en, "Hello world!\nGoodbye world!\n"
          "Another line\nAnd another line\nYet another line!");
+   cur = efl_ui_text_cursor_new(en);
+   efl_canvas_text_cursor_position_set(cur, 2);
+   efl_canvas_text_cursor_object_item_insert(cur, "size=32x32 href=emoticon");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, en);

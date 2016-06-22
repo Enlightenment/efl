@@ -22,6 +22,8 @@
 
 typedef struct _Efl_Ui_Text_Data        Efl_Ui_Text_Data;
 typedef struct _Efl_Ui_Text_Rectangle   Efl_Ui_Text_Rectangle;
+typedef struct _Anchor                  Anchor;
+typedef struct _Item_Obj                Item_Obj;
 
 /**
  * Base widget smart data extended with entry instance data.
@@ -54,7 +56,11 @@ struct _Efl_Ui_Text_Data
    Evas_Coord                            last_w, ent_mw, ent_mh;
    Evas_Coord                            downx, downy;
    Evas_Coord                            ox, oy;
+   Eina_List                            *anchors;
+   Eina_List                            *anchorlist;
+   Eina_List                            *itemlist;
    Eina_List                            *items; /** context menu item list */
+   Item_Obj                             *item_objs;
    Eina_List                            *item_providers;
    Eina_List                            *markup_filters;
    Ecore_Job                            *hov_deljob;
@@ -115,6 +121,24 @@ struct _Efl_Ui_Text_Data
    Eina_Bool                             changed : 1;
    Eina_Bool                             scroll : 1;
    Eina_Bool                             input_panel_show_on_demand : 1;
+   Eina_Bool                             anchors_updated : 1;
+};
+
+struct _Anchor
+{
+   Eo                    *obj;
+   char                  *name;
+   Efl_Canvas_Text_Annotation *annotation;
+   Eina_List             *sel;
+   Eina_Bool              item : 1;
+};
+
+struct _Item_Obj
+{
+   EINA_INLIST;
+   Anchor                *an;
+   char                  *name;
+   Evas_Object           *obj;
 };
 
 #define EFL_UI_TEXT_DATA_GET(o, sd) \
@@ -2843,10 +2867,7 @@ _entry_mouse_triple_signal_cb(void *data,
 }
 
 static Evas_Object *
-_item_get(void *data,
-          Evas_Object *edje EINA_UNUSED,
-          const char *part EINA_UNUSED,
-          const char *item)
+_item_get(void *data, const char *item)
 {
    Eina_List *l;
    Evas_Object *o;
@@ -3769,8 +3790,6 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
    evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
 
    elm_interface_scrollable_objects_set(obj, priv->entry_edje, priv->hit_rect);
-
-   edje_object_item_provider_set(priv->entry_edje, _item_get, obj);
 
    edje_object_text_markup_filter_callback_add
      (priv->entry_edje, "elm.text", _markup_filter_cb, obj);
@@ -5594,6 +5613,301 @@ _update_text_selection(Eo *obj, Eo *text_obj)
 }
 
 static void
+_item_obj_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Item_Obj *io = data;
+   Anchor *an = io->an;
+
+   if (!an)
+     {
+        ERR("Failed to free item object struct. Anchor is NULL!");
+        return;
+     }
+
+   EFL_UI_TEXT_DATA_GET(an->obj, sd);
+   sd->item_objs = (Item_Obj *)eina_inlist_remove(EINA_INLIST_GET(sd->item_objs),
+                                                  EINA_INLIST_GET(io));
+   io->an = NULL;
+   free(io->name);
+   free(io);
+}
+
+static Evas_Object *
+_item_obj_get(Anchor *an, Evas_Object *o, Evas_Object *smart, Evas_Object *clip)
+{
+   Item_Obj *io;
+   Eo *obj = an->obj;
+   Evas_Object *item_obj;
+
+   EFL_UI_TEXT_DATA_GET(obj, sd);
+
+   EINA_INLIST_FOREACH(sd->item_objs, io)
+     {
+        if (!io->an && io->name && !strcmp(an->name, io->name))
+          {
+             io->an = an;
+             return io->obj;
+          }
+     }
+
+   io = calloc(1, sizeof(Item_Obj));
+
+   item_obj = _item_get(obj, an->name);
+   evas_object_event_callback_add(item_obj, EVAS_CALLBACK_DEL, _item_obj_del_cb, io);
+   evas_object_smart_member_add(item_obj, smart);
+   evas_object_stack_above(item_obj, o);
+   evas_object_clip_set(item_obj, clip);
+   evas_object_pass_events_set(item_obj, EINA_TRUE);
+   evas_object_show(item_obj);
+
+   io->an = an;
+   io->name = strdup(an->name);
+   io->obj = item_obj;
+   sd->item_objs = (Item_Obj *)eina_inlist_append(EINA_INLIST_GET(sd->item_objs),
+                                                  EINA_INLIST_GET(io));
+
+   return io->obj;
+}
+
+static void
+_unused_item_objs_free(Efl_Ui_Text_Data *sd)
+{
+   Item_Obj *io;
+   Eina_Inlist *l;
+
+   EINA_INLIST_FOREACH_SAFE(sd->item_objs, l, io)
+     {
+        if (!io->an)
+          {
+             if (io->obj)
+               {
+                  evas_object_event_callback_del_full(io->obj, EVAS_CALLBACK_DEL, _item_obj_del_cb, io);
+                  evas_object_del(io->obj);
+               }
+
+             sd->item_objs = (Item_Obj *)eina_inlist_remove(EINA_INLIST_GET(sd->item_objs),
+                                                            EINA_INLIST_GET(io));
+             free(io->name);
+             free(io);
+          }
+     }
+}
+
+static void
+_anchors_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Text_Data *sd)
+{
+   Item_Obj *io;
+
+   while (sd->anchorlist)
+     {
+        free(sd->anchorlist->data);
+        sd->anchorlist = eina_list_remove_list(sd->anchorlist, sd->anchorlist);
+     }
+   while (sd->itemlist)
+     {
+        free(sd->itemlist->data);
+        sd->itemlist = eina_list_remove_list(sd->itemlist, sd->itemlist);
+     }
+   while (sd->anchors)
+     {
+        Anchor *an = sd->anchors->data;
+
+        while (an->sel)
+          {
+             Efl_Ui_Text_Rectangle *sel = an->sel->data;
+             if (sel->obj_bg) evas_object_del(sel->obj_bg);
+             if (!an->item && sel->obj) evas_object_del(sel->obj);
+             free(sel);
+             an->sel = eina_list_remove_list(an->sel, an->sel);
+          }
+        free(an->name);
+        free(an);
+        sd->anchors = eina_list_remove_list(sd->anchors, sd->anchors);
+     }
+
+   EINA_INLIST_FOREACH(sd->item_objs, io)
+      io->an = NULL;
+}
+
+static Efl_Canvas_Text_Annotation *
+_anchor_next_get(Eo *obj, Eina_Iterator *it,
+      Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   Efl_Canvas_Text_Annotation *an;
+   EINA_ITERATOR_FOREACH(it, an)
+     {
+        if (efl_canvas_text_object_item_geometry_get(obj, an,
+              x, y, w, h))
+           return an;
+     }
+   return NULL;
+}
+
+static char *
+_anchor_format_parse(const char *item)
+{
+   const char *start, *end;
+   char *tmp;
+   size_t len;
+
+   start = strchr(item, '=');
+   if (!start) return NULL;
+
+   start++; /* Advance after the '=' */
+   /* If we can find a quote as the first non-space char,
+    * our new delimiter is a quote, not a space. */
+   while (*start == ' ')
+     start++;
+
+   if (*start == '\'')
+     {
+        start++;
+        end = strchr(start, '\'');
+        while ((end) && (end > start) && (end[-1] == '\\'))
+          end = strchr(end + 1, '\'');
+     }
+   else
+     {
+        end = strchr(start, ' ');
+        while ((end) && (end > start) && (end[-1] == '\\'))
+          end = strchr(end + 1, ' ');
+     }
+
+   /* Null terminate before the spaces */
+   if (end) len = end - start;
+   else len = strlen(start);
+
+   tmp = malloc(len + 1);
+   strncpy(tmp, start, len);
+   tmp[len] = '\0';
+
+   return tmp;
+}
+
+/* Recreates the anchors in the text. */
+static void
+_anchors_create(Eo *obj, Efl_Ui_Text_Data *sd)
+{
+   Eina_Iterator *it;
+   Anchor *an = NULL;
+   Efl_Canvas_Text_Cursor *start, *end;
+   Evas_Coord x, y, w, h;
+   Efl_Canvas_Text_Annotation *item;
+
+   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   _anchors_clear(obj, sd);
+
+   start =  eo_add(EFL_CANVAS_TEXT_CURSOR_CLASS, obj,
+         efl_canvas_text_cursor_text_object_set(eo_self, text_obj));
+   end =  eo_add(EFL_CANVAS_TEXT_CURSOR_CLASS, obj,
+         efl_canvas_text_cursor_text_object_set(eo_self, text_obj));
+
+   /* Retrieve all annotations in the text. */
+   efl_canvas_text_cursor_paragraph_first(start);
+   efl_canvas_text_cursor_paragraph_last(end);
+
+   it = efl_canvas_text_range_annotations_get(obj, start, end);
+   eo_del(start);
+   eo_del(end);
+
+   /* Add 'item' type of annotations. */
+   while ((item = _anchor_next_get(obj, it, &x, &y, &w, &h)))
+     {
+        const char *p;
+        const char *item_str = efl_canvas_text_annotation_get(obj, item);
+        an = calloc(1, sizeof(Anchor));
+        if (!an)
+           break;
+
+        an->obj = obj;
+        an->annotation = item;
+        an->item = EINA_TRUE;
+        p = strstr(item_str, "href=");
+        if (p)
+          {
+             an->name = _anchor_format_parse(p);
+          }
+        sd->anchors = eina_list_append(sd->anchors, an);
+     }
+   eina_iterator_free(it);
+}
+
+static void
+_anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
+{
+   Eina_List *l, *ll, *range = NULL;
+   Evas_Coord x, y, w, h;
+   Evas_Object *smart, *clip;
+   Efl_Ui_Text_Rectangle *rect;
+   Anchor *an;
+
+   _anchors_create(o, sd);
+
+   /* Better not to update anchors outside the view port. */
+   if (sd->anchors_updated) return;
+
+   smart = evas_object_smart_parent_get(o);
+   clip = evas_object_clip_get(o);
+   x = y = w = h = -1;
+   evas_object_geometry_get(o, &x, &y, &w, &h);
+   EINA_LIST_FOREACH(sd->anchors, l, an)
+     {
+        // for item anchors
+        if (an->item)
+          {
+             Evas_Object *ob;
+
+             if (!an->sel)
+               {
+                  rect = calloc(1, sizeof(Efl_Ui_Text_Rectangle));
+                  an->sel = eina_list_append(an->sel, rect);
+
+                  ob = _item_obj_get(an, o, smart, clip);
+                  rect->obj = ob;
+               }
+          }
+        EINA_LIST_FOREACH(an->sel, ll, rect)
+          {
+             if (an->item)
+               {
+                  Evas_Coord cx, cy, cw, ch;
+
+                  efl_canvas_text_object_item_geometry_get(an->obj,
+                           an->annotation, &cx, &cy, &cw, &ch);
+                  evas_object_move(rect->obj, x + cx, y + cy);
+                  evas_object_resize(rect->obj, cw, ch);
+               }
+             else
+               {
+                  Evas_Textblock_Rectangle *r;
+
+                  r = range->data;
+                  rect->rect = *r;
+                  if (rect->obj_bg)
+                    {
+                       evas_object_move(rect->obj_bg, x + r->x, y + r->y);
+                       evas_object_resize(rect->obj_bg, r->w, r->h);
+                    }
+                  if (rect->obj)
+                    {
+                       evas_object_move(rect->obj, x + r->x, y + r->y);
+                       evas_object_resize(rect->obj, r->w, r->h);
+                    }
+                  if (rect->obj)
+                    {
+                       evas_object_move(rect->obj, x + r->x, y + r->y);
+                       evas_object_resize(rect->obj, r->w, r->h);
+                    }
+                  range = eina_list_remove_list(range, range);
+                  free(r);
+               }
+          }
+     }
+
+   _unused_item_objs_free(sd);
+}
+
+static void
 _update_decorations(Eo *obj)
 {
    EFL_UI_TEXT_DATA_GET(obj, sd);
@@ -5601,6 +5915,7 @@ _update_decorations(Eo *obj)
 
    _update_text_cursors(obj);
    _update_text_selection(obj, text_obj);
+   _anchors_update(obj, sd);
 }
 
 static void
