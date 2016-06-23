@@ -815,7 +815,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             [[Returns the widget's focus move policy.]]
          }
          values {
-            policy: Elm.Focus.Move_Policy; [[Object's focus move policy.]]
+            policy: Efl.Ui.Focus.Move_Policy; [[Object's focus move policy.]]
          }
       }
 	  @property focus_move_policy_automatic {

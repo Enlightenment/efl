@@ -38,6 +38,13 @@ START_TEST (elm_config_eoapi)
    fail_if(!eina_streq(efl_config_string_get(cfg, #opt), val)); \
    } while (0)
 
+#define CONFIG_CHKE(opt, ival, sval) do { \
+   elm_config_ ## opt ## _set(ival); \
+   fail_if(!eina_streq(efl_config_string_get(cfg, #opt), sval)); \
+   fail_if(!efl_config_string_set(cfg, #opt, sval)); \
+   fail_if(!eina_streq(efl_config_string_get(cfg, #opt), sval)); \
+   } while (0)
+
    CONFIG_CHKB(scroll_bounce_enabled, !old);
    CONFIG_CHKD(scroll_bounce_friction, 0);
    CONFIG_CHKD(scroll_page_scroll_friction, 0);
@@ -62,10 +69,10 @@ START_TEST (elm_config_eoapi)
    CONFIG_CHKD(scroll_thumbscroll_acceleration_threshold, 0);
    CONFIG_CHKD(scroll_thumbscroll_acceleration_time_limit, 0);
    CONFIG_CHKD(scroll_thumbscroll_acceleration_weight, 0);
-   //focus_autoscroll_mode
-   //slider_indicator_visible_mode
+   CONFIG_CHKE(focus_autoscroll_mode, EFL_UI_FOCUS_AUTOSCROLL_MODE_NONE, "none");
+   CONFIG_CHKE(slider_indicator_visible_mode, EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS, "always");
    CONFIG_CHKD(longpress_timeout, 0);
-   //softcursor_mode
+   CONFIG_CHKE(softcursor_mode, EFL_UI_SOFTCURSOR_MODE_ON, "on");
    CONFIG_CHKD(tooltip_delay, 0);
    CONFIG_CHKB(cursor_engine_only, 0);
    CONFIG_CHKD(scale, 0);
@@ -91,7 +98,7 @@ START_TEST (elm_config_eoapi)
    CONFIG_CHKB(focus_highlight_enabled, !old);
    CONFIG_CHKB(focus_highlight_animate, 0);
    CONFIG_CHKB(focus_highlight_clip_disabled, !old);
-   //focus_move_policy
+   CONFIG_CHKE(focus_move_policy, EFL_UI_FOCUS_MOVE_POLICY_IN, "in");
    CONFIG_CHKB(item_select_on_focus_disabled, !old);
    CONFIG_CHKB(first_item_focus_on_first_focusin, 0);
    CONFIG_CHKB(mirrored, 0);

@@ -4264,8 +4264,16 @@ typedef const char * cstring;
 static inline Eina_Bool
 _eina_value_to_int(const Eina_Value *val, int *i)
 {
-   Eina_Value *ival = eina_value_new(EINA_VALUE_TYPE_INT);
-   Eina_Bool ret = EINA_TRUE;
+   Eina_Value *ival;
+   Eina_Bool ret;
+
+   if (eina_value_type_get(val) == EINA_VALUE_TYPE_INT)
+     {
+        eina_value_get(val, i);
+        return EINA_TRUE;
+     }
+
+   ival = eina_value_new(EINA_VALUE_TYPE_INT);
    if (!eina_value_convert(val, ival))
      ret = EINA_FALSE;
    else
@@ -4286,6 +4294,43 @@ _eina_value_to_cstring(const Eina_Value *val, cstring *s)
    eina_value_free(sval);
    return ret;
 }
+
+static const struct {
+   Efl_Ui_Focus_Autoscroll_Mode  val;
+   const char                   *str;
+} _enum_map_focus_autoscroll_mode[] = {
+{ EFL_UI_FOCUS_AUTOSCROLL_MODE_SHOW, "show" },
+{ EFL_UI_FOCUS_AUTOSCROLL_MODE_NONE, "none" },
+{ EFL_UI_FOCUS_AUTOSCROLL_MODE_BRING_IN, "bring_in" }
+};
+
+static const struct {
+   Efl_Ui_Softcursor_Mode  val;
+   const char             *str;
+} _enum_map_softcursor_mode[] = {
+{ EFL_UI_SOFTCURSOR_MODE_AUTO, "auto" },
+{ EFL_UI_SOFTCURSOR_MODE_ON, "on" },
+{ EFL_UI_SOFTCURSOR_MODE_OFF, "off" }
+};
+
+static const struct {
+   Efl_Ui_Slider_Indicator_Visible_Mode  val;
+   const char                           *str;
+} _enum_map_slider_indicator_visible_mode[] = {
+{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT, "default" },
+{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS, "always" },
+{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS, "on_focus" },
+{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_NONE, "none" },
+};
+
+static const struct {
+   Efl_Ui_Focus_Move_Policy  val;
+   const char               *str;
+} _enum_map_focus_move_policy[] = {
+{ EFL_UI_FOCUS_MOVE_POLICY_CLICK, "click" },
+{ EFL_UI_FOCUS_MOVE_POLICY_IN, "in" },
+{ EFL_UI_FOCUS_MOVE_POLICY_KEY_ONLY, "key_only" }
+};
 
 EOLIAN static Eina_Bool
 _efl_config_internal_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
@@ -4326,6 +4371,35 @@ _efl_config_internal_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_U
 #define CONFIG_SETD(opt) CONFIG_SET(opt, double, DOUBLE, int)
 #define CONFIG_SETS(opt) CONFIG_SET(opt, const char *, STRING, cstring)
 
+#define CONFIG_SETE(opt) do { \
+   if (!strcmp(name, #opt)) \
+     { \
+        int v = -1; \
+        if (eina_value_type_get(val) == EINA_VALUE_TYPE_STRING) \
+          { \
+             const char *str; \
+             eina_value_get(val, &str); \
+             for (unsigned i = 0; i < (sizeof(_enum_map_ ## opt) / sizeof(_enum_map_ ## opt[0])); i++) \
+               { \
+                 if (eina_streq(_enum_map_ ## opt[i].str, str)) { v = _enum_map_ ## opt[i].val; break; } \
+               } \
+             if (v == -1) \
+               { \
+                 ERR("Invalid value for config '%s' (got '%s')", #opt, str); \
+                 return EINA_FALSE; \
+               } \
+          } \
+        else if (!_eina_value_to_int(val, &v)) \
+          { \
+             ERR("Invalid value type for config '%s' (got %s wanted int or string)", \
+                 name, eina_value_type_name_get(eina_value_type_get(val))); \
+             return EINA_FALSE; \
+          } \
+        elm_config_ ## opt ## _set(v); \
+        return EINA_TRUE; \
+     } \
+   } while (0)
+
    CONFIG_SETB(scroll_bounce_enabled);
    CONFIG_SETD(scroll_bounce_friction);
    CONFIG_SETD(scroll_page_scroll_friction);
@@ -4350,10 +4424,10 @@ _efl_config_internal_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_U
    CONFIG_SETD(scroll_thumbscroll_acceleration_threshold);
    CONFIG_SETD(scroll_thumbscroll_acceleration_time_limit);
    CONFIG_SETD(scroll_thumbscroll_acceleration_weight);
-   //focus_autoscroll_mode Elm_Focus_Autoscroll_Mode mode);
-   //slider_indicator_visible_mode Elm_Slider_Indicator_Visible_Mode mode);
+   CONFIG_SETE(focus_autoscroll_mode);
+   CONFIG_SETE(slider_indicator_visible_mode);
    CONFIG_SETD(longpress_timeout);
-   //softcursor_mode Elm_Softcursor_Mode mode);
+   CONFIG_SETE(softcursor_mode);
    CONFIG_SETD(tooltip_delay);
    CONFIG_SETB(cursor_engine_only);
    CONFIG_SETD(scale);
@@ -4379,7 +4453,7 @@ _efl_config_internal_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_U
    CONFIG_SETB(focus_highlight_enabled);
    CONFIG_SETB(focus_highlight_animate);
    CONFIG_SETB(focus_highlight_clip_disabled);
-   //focus_move_policy Elm_Focus_Move_Policy policy);
+   CONFIG_SETE(focus_move_policy);
    CONFIG_SETB(item_select_on_focus_disabled);
    CONFIG_SETB(first_item_focus_on_first_focusin);
    CONFIG_SETB(mirrored);
@@ -4427,6 +4501,18 @@ _efl_config_internal_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd 
 #define CONFIG_GETD(opt) CONFIG_GET(opt, double, DOUBLE)
 #define CONFIG_GETS(opt) CONFIG_GET(opt, const char *, STRING)
 
+#define CONFIG_GETE(opt) do { \
+   if (!strcmp(name, #opt)) \
+     { \
+        int v = elm_config_ ## opt ## _get(); \
+        if ((v < 0) || (v > (int)(sizeof(_enum_map_ ## opt) / sizeof(_enum_map_ ## opt[0])))) \
+          v = 0; \
+        val = eina_value_new(EINA_VALUE_TYPE_STRING); \
+        eina_value_set(val, _enum_map_ ## opt[v].str); \
+        return val; \
+     } \
+   } while (0)
+
    CONFIG_GETB(scroll_bounce_enabled);
    CONFIG_GETD(scroll_bounce_friction);
    CONFIG_GETD(scroll_page_scroll_friction);
@@ -4451,10 +4537,10 @@ _efl_config_internal_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd 
    CONFIG_GETD(scroll_thumbscroll_acceleration_threshold);
    CONFIG_GETD(scroll_thumbscroll_acceleration_time_limit);
    CONFIG_GETD(scroll_thumbscroll_acceleration_weight);
-   //focus_autoscroll_mode
-   //slider_indicator_visible_mode
+   CONFIG_GETE(focus_autoscroll_mode);
+   CONFIG_GETE(slider_indicator_visible_mode);
    CONFIG_GETD(longpress_timeout);
-   //softcursor_mode
+   CONFIG_GETE(softcursor_mode);
    CONFIG_GETD(tooltip_delay);
    CONFIG_GETB(cursor_engine_only);
    CONFIG_GETD(scale);
@@ -4480,7 +4566,7 @@ _efl_config_internal_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd 
    CONFIG_GETB(focus_highlight_enabled);
    CONFIG_GETB(focus_highlight_animate);
    CONFIG_GETB(focus_highlight_clip_disabled);
-   //focus_move_policy
+   CONFIG_GETE(focus_move_policy);
    CONFIG_GETB(item_select_on_focus_disabled);
    CONFIG_GETB(first_item_focus_on_first_focusin);
    CONFIG_GETB(mirrored);
