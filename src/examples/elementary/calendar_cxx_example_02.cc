@@ -18,11 +18,6 @@ elm_main (int argc, char *argv[])
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   const char *weekdays[] =
-     {
-       "S", "M", "T", "W", "T", "F", "S"
-     };
-
    efl::ui::win::Standard win;
    //win.title_set("Calendar Layout Formatting Example");
    win.autohide_set(true);
