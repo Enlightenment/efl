@@ -581,6 +581,8 @@ _item_scroll(Elm_Genlist_Data *sd)
    dw = it->item->block->w;
    dh = oh;
 
+   if (dw < 1) return;
+
    switch (sd->scroll_to_type)
      {
       case ELM_GENLIST_ITEM_SCROLLTO_TOP:
@@ -6946,6 +6948,19 @@ _elm_genlist_item_coordinates_calc(Elm_Gen_Item *it,
              it->item->show_me = EINA_TRUE;
              return EINA_FALSE;
           }
+     }
+   if (it->item->block->w < 1)
+     {
+        sd->check_scroll = EINA_TRUE;
+        sd->show_item = it;
+        sd->bring_in = bring_in;
+        sd->scroll_to_type = type;
+        it->item->show_me = EINA_TRUE;
+
+        ecore_job_del(sd->calc_job);
+        sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+
+        return EINA_FALSE;
      }
    if (sd->show_item)
      {
