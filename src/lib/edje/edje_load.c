@@ -2545,6 +2545,7 @@ _edje_ref_vector_data(Edje *ed, int svg_id)
 
    if (!node || (node->type != SVG_NODE_DOC))
      {
+        ERR("Failed to read Data from Eet for svg : %d", svg_id);
         root = NULL;
      }
    else

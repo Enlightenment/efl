@@ -1243,6 +1243,7 @@ data_write_vectors(Eet_File *ef, int *vector_num)
    Eina_File *f = NULL;
    Edje_Vector_Directory_Entry *vector;
    Eina_Strbuf *buf;
+   Eina_Bool found = EINA_FALSE;
 
    if (!((edje_file) && (edje_file->image_dir))) return;
 
@@ -1261,13 +1262,20 @@ data_write_vectors(Eet_File *ef, int *vector_num)
              f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
              if (!f) continue;
              root = _svg_load(f, NULL);
+             if(!root)
+               error_and_abort(ef, "Failed to parse svg : %s", vector->entry);
              eina_strbuf_reset(buf);
              eina_strbuf_append_printf(buf, "edje/vectors/%i", vector->id);
-             eet_data_write(ef, svg_node_eet, eina_strbuf_string_get(buf), root, compress_mode);
+             if(!eet_data_write(ef, svg_node_eet, eina_strbuf_string_get(buf), root, compress_mode))
+               error_and_abort(ef, "Failed to write data in Eet for svg :%s", vector->entry);
              *vector_num += 1;
              eina_file_close(f);
+             found = EINA_TRUE;
              break;
           }
+        if (!found)
+          error_and_abort(ef, "Unable to find the svg :%s", vector->entry);
+        found = EINA_FALSE;
      }
    eina_strbuf_free(buf);
 
