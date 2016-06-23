@@ -169,7 +169,7 @@ src/lib/elementary/elm_thumb.c
 src/lib/elementary/elm_toolbar.c
 src/lib/elementary/elm_transit.c
 src/lib/elementary/elm_util.c
-src/lib/elementary/elm_video.c
+src/lib/elementary/efl_ui_video.c
 src/lib/elementary/elm_web2.c
 src/lib/elementary/elm_widget.c
 src/lib/elementary/efl_ui_win.c
