@@ -1680,11 +1680,18 @@ _config_system_load(void)
 }
 
 static void
+_efl_config_obj_del(Eo *obj EINA_UNUSED)
+{
+   ERR("You can not delete the global configuration object!");
+}
+
+static void
 _config_load(void)
 {
    _efl_config_obj = eo_add(EFL_CONFIG_GLOBAL_CLASS, NULL);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
+   eo_del_intercept_set(_efl_config_obj, _efl_config_obj_del);
    _elm_config = _config_user_load();
    if (_elm_config)
      {
@@ -4243,6 +4250,7 @@ _elm_config_profile_set(const char *profile)
 void
 _elm_config_shutdown(void)
 {
+   eo_del_intercept_set(_efl_config_obj, NULL);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_INTERFACE, NULL);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, NULL);
    ELM_SAFE_FREE(_efl_config_obj, eo_del);
