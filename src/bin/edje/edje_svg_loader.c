@@ -742,7 +742,8 @@ static Svg_Node *
 _create_defs_node(Svg_Node *parent EINA_UNUSED, const char *buf EINA_UNUSED, unsigned buflen EINA_UNUSED)
 {
    Svg_Node *node = _create_node(NULL, SVG_NODE_DEFS);
-
+   eina_simple_xml_attributes_parse(buf, buflen,
+                                    NULL, node);
    return node;
 }
 
@@ -1067,6 +1068,180 @@ _create_rect_node(Svg_Node *parent, const char *buf, unsigned buflen)
    return node;
 }
 
+static char *
+_id_from_href(const char *href)
+{
+   href = _skip_space(href, NULL);
+   if ((*href) == '#')
+     href++;
+   return strdup(href);
+}
+
+static Svg_Node*
+_get_defs_node(Svg_Node *node)
+{
+   if (!node) return NULL;
+
+   while (node->parent != NULL)
+     {
+        node = node->parent;
+     }
+
+   if (node->type == SVG_NODE_DOC)
+     return node->node.doc.defs;
+
+   return NULL;
+}
+
+static Svg_Node*
+_find_child_by_id(Svg_Node *node, char *id)
+{
+   Eina_List *l;
+   Svg_Node *child;
+
+   if (!node) return NULL;
+
+   EINA_LIST_FOREACH(node->child, l, child)
+     {
+        if ((child->id != NULL) && !strcmp(child->id, id))
+          return child;
+     }
+   return NULL;
+}
+
+static Svg_Style_Gradient *
+_clone_gradient(Svg_Style_Gradient *from)
+{
+   Svg_Style_Gradient *grad;
+
+   if (!from) return NULL;
+
+   grad= calloc(1, sizeof(Svg_Style_Gradient));
+   grad->type = from->type;
+   grad->id = _copy_id(from->id);
+   grad->spread = from->spread;
+   grad->stops = eina_list_clone(from->stops);
+   if (grad->type == SVG_LINEAR_GRADIENT)
+     {
+        grad->linear = calloc(1, sizeof(Svg_Linear_Gradient));
+        grad->linear->x1 = from->linear->x1;
+        grad->linear->y1 = from->linear->y1;
+        grad->linear->x2 = from->linear->x2;
+        grad->linear->y1 = from->linear->y2;
+     }
+   else if (grad->type == SVG_RADIAL_GRADIENT)
+     {
+        grad->radial = calloc(1, sizeof(Svg_Radial_Gradient));
+        grad->radial->cx = from->radial->cx;
+        grad->radial->cy = from->radial->cy;
+        grad->radial->fx = from->radial->fx;
+        grad->radial->fy = from->radial->fy;
+        grad->radial->r = from->radial->r;
+     }
+
+   return grad;
+}
+
+static void
+_copy_attribute(Svg_Node *to, Svg_Node *from)
+{
+   // copy matrix attribute
+   if (from->transform)
+     {
+        to->transform = calloc(1, sizeof(Eina_Matrix3));
+        eina_matrix3_copy(to->transform, from->transform);
+     }
+   // copy style attribute;
+   memcpy(to->style, from->style, sizeof(Svg_Style_Property));
+   // copy gradient
+   to->style->fill.gradient = _clone_gradient(from->style->fill.gradient);
+   to->style->stroke.gradient = _clone_gradient(from->style->stroke.gradient);
+
+   // copy node attribute
+   switch (from->type)
+     {
+        case SVG_NODE_CIRCLE:
+           to->node.circle.cx = from->node.circle.cx;
+           to->node.circle.cy = from->node.circle.cy;
+           to->node.circle.r = from->node.circle.r;
+           break;
+        case SVG_NODE_ELLIPSE:
+           to->node.ellipse.cx = from->node.ellipse.cx;
+           to->node.ellipse.cy = from->node.ellipse.cy;
+           to->node.ellipse.rx = from->node.ellipse.rx;
+           to->node.ellipse.ry = from->node.ellipse.ry;
+           break;
+        case SVG_NODE_RECT:
+           to->node.rect.x = from->node.rect.x;
+           to->node.rect.y = from->node.rect.y;
+           to->node.rect.w = from->node.rect.w;
+           to->node.rect.h = from->node.rect.h;
+           to->node.rect.rx = from->node.rect.rx;
+           to->node.rect.ry = from->node.rect.ry;
+           break;
+        case SVG_NODE_PATH:
+           to->node.path.path = strdup(from->node.path.path);
+           break;
+        case SVG_NODE_POLYGON:
+           to->node.polygon.points_count = from->node.polygon.points_count;
+           to->node.polygon.points = calloc(to->node.polygon.points_count, sizeof(double));
+           break;
+        default:
+           break;
+     }
+
+}
+
+static void
+_clone_node(Svg_Node *from, Svg_Node *parent)
+{
+   Svg_Node *new_node;
+   Eina_List *l;
+   Svg_Node *child;
+
+   if (!from) return;
+
+   new_node = _create_node(parent, from->type);
+   _copy_attribute(new_node, from);
+
+   EINA_LIST_FOREACH(from->child, l, child)
+     {
+         _clone_node(child, new_node);
+     }
+
+}
+
+static Eina_Bool
+_attr_parse_use_node(void *data, const char *key, const char *value)
+{
+   Svg_Node *defs, *node_from, *node = data;
+   char *id;
+
+   if (!strcmp(key, "xlink:href"))
+     {
+        id = _id_from_href(value);
+        defs = _get_defs_node(node);
+        node_from = _find_child_by_id(defs, id);
+        _clone_node(node_from, node);
+        free(id);
+     }
+   else
+     {
+        _attr_parse_g_node(data, key, value);
+     }
+   return EINA_TRUE;
+}
+
+static Svg_Node *
+_create_use_node(Svg_Node *parent, const char *buf, unsigned buflen)
+{
+   Svg_Node *node = _create_node(parent, SVG_NODE_G);
+
+   eina_simple_xml_attributes_parse(buf, buflen,
+                                    _attr_parse_use_node, node);
+   return node;
+}
+
 #define TAG_DEF(Name)                                   \
   { #Name, sizeof (#Name), _create_##Name##_node }
 
@@ -1075,6 +1250,7 @@ static const struct {
    int sz;
    Factory_Method tag_handler;
 } graphics_tags[] = {
+  TAG_DEF(use),
   TAG_DEF(circle),
   TAG_DEF(ellipse),
   TAG_DEF(path),
@@ -1331,9 +1507,17 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
    loader->level++;
    attrs = eina_simple_xml_tag_attributes_find(content, length);
 
-   // find out the tag name starting from content till sz length
+   if (!attrs)
+     {
+        // parse the empty tag
+        attrs = content;
+        while ((attrs != NULL) && *attrs != '>')
+          attrs++;
+     }
+
    if (attrs)
      {
+        // find out the tag name starting from content till sz length
         sz = attrs - content;
         attrs_length = length - sz;
         while ((sz > 0) && (isspace(content[sz - 1])))
@@ -1360,7 +1544,10 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
         eina_array_push(loader->stack, node);
 
         if (node->type == SVG_NODE_DEFS)
+        {
+          loader->doc->node.doc.defs = node;
           loader->def = node;
+        }
      }
    else if ((method = _find_graphics_factory(tag_name)))
      {
@@ -1371,7 +1558,7 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
      {
         Svg_Style_Gradient *gradient;
         gradient = gradient_method(attrs, attrs_length);
-        if (loader->def)
+        if (loader->doc->node.doc.defs)
           {
              loader->def->node.defs.gradients = eina_list_append(loader->def->node.defs.gradients, gradient);
           }

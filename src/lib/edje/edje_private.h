@@ -3084,6 +3084,7 @@ struct _Svg_Doc_Node
    double vy;
    double vw;
    double vh;
+   Svg_Node *defs;
 };
 
 struct _Svg_G_Node
