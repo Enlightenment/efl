@@ -13,7 +13,7 @@ START_TEST (elm_config_eoapi)
 {
    elm_init(1, NULL);
 
-   Eo *cfg = efl_config_global_get(EFL_CONFIG_MIXIN);
+   Eo *cfg = eo_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
 #define CONFIG_CHK(opt, typ, val) do { \
@@ -26,7 +26,6 @@ START_TEST (elm_config_eoapi)
 
 #define CONFIG_CHKB(opt, val) CONFIG_CHK(opt, bool, val)
 #define CONFIG_CHKI(opt, val) CONFIG_CHK(opt, int, val)
-#define CONFIG_CHKU(opt, val) CONFIG_CHK(opt, uint, val)
 #define CONFIG_CHKD(opt, val) CONFIG_CHK(opt, double, val)
 
    // note: leaks badly
@@ -52,10 +51,10 @@ START_TEST (elm_config_eoapi)
    CONFIG_CHKD(scroll_bring_in_scroll_friction, 0);
    CONFIG_CHKD(scroll_zoom_friction, 0);
    CONFIG_CHKB(scroll_thumbscroll_enabled, !old);
-   CONFIG_CHKU(scroll_thumbscroll_threshold, 0);
-   CONFIG_CHKU(scroll_thumbscroll_hold_threshold, 0);
+   CONFIG_CHKI(scroll_thumbscroll_threshold, 0);
+   CONFIG_CHKI(scroll_thumbscroll_hold_threshold, 0);
    CONFIG_CHKD(scroll_thumbscroll_momentum_threshold, 0);
-   CONFIG_CHKU(scroll_thumbscroll_flick_distance_tolerance, 0);
+   CONFIG_CHKI(scroll_thumbscroll_flick_distance_tolerance, 0);
    CONFIG_CHKD(scroll_thumbscroll_friction, 0);
    CONFIG_CHKD(scroll_thumbscroll_min_friction, 0);
    CONFIG_CHKD(scroll_thumbscroll_friction_standard, 0);

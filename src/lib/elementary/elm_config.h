@@ -2129,6 +2129,105 @@ EAPI void elm_config_web_backend_set(const char *backend);
  */
 EAPI const char *elm_config_web_backend_get(void);
 
+
+/* new efl.config interface helpers in C */
+
+#ifdef EFL_EO_API_SUPPORT
+
+static inline Eina_Bool
+efl_config_bool_set(Efl_Config *obj, const char * name, Eina_Bool val)
+{
+   Eina_Value *v = eina_value_new(EINA_VALUE_TYPE_UCHAR);
+   Eina_Bool b;
+   eina_value_set(v, val);
+   b = efl_config_set(obj, name, v);
+   eina_value_free(v);
+   return b;
+}
+
+static inline Eina_Bool
+efl_config_bool_get(const Efl_Config *obj, const char * name)
+{
+   Eina_Value *v = efl_config_get(obj, name);
+   Eina_Bool b = 0;
+   if (eina_value_type_get(v) == EINA_VALUE_TYPE_UCHAR)
+     eina_value_get(v, &b);
+   eina_value_free(v);
+   return b;
+}
+
+static inline Eina_Bool
+efl_config_int_set(Efl_Config *obj, const char * name, int val)
+{
+   Eina_Value *v = eina_value_new(EINA_VALUE_TYPE_INT);
+   Eina_Bool b;
+   eina_value_set(v, val);
+   b = efl_config_set(obj, name, v);
+   eina_value_free(v);
+   return b;
+}
+
+static inline int
+efl_config_int_get(const Efl_Config *obj, const char * name)
+{
+   Eina_Value *v = efl_config_get(obj, name);
+   int b = 0;
+   if (eina_value_type_get(v) == EINA_VALUE_TYPE_INT)
+     eina_value_get(v, &b);
+   eina_value_free(v);
+   return b;
+}
+
+static inline Eina_Bool
+efl_config_double_set(Efl_Config *obj, const char * name, double val)
+{
+   Eina_Value *v = eina_value_new(EINA_VALUE_TYPE_DOUBLE);
+   Eina_Bool b;
+   eina_value_set(v, val);
+   b = efl_config_set(obj, name, v);
+   eina_value_free(v);
+   return b;
+}
+
+static inline double
+efl_config_double_get(const Efl_Config *obj, const char * name)
+{
+   Eina_Value *v = efl_config_get(obj, name);
+   double b = 0;
+   if (eina_value_type_get(v) == EINA_VALUE_TYPE_DOUBLE)
+     eina_value_get(v, &b);
+   eina_value_free(v);
+   return b;
+}
+
+static inline Eina_Bool
+efl_config_string_set(Efl_Config *obj, const char *name, const char *val)
+{
+   Eina_Value *v = eina_value_new(EINA_VALUE_TYPE_STRING);
+   Eina_Bool b;
+   eina_value_set(v, val);
+   b = efl_config_set(obj, name, v);
+   eina_value_free(v);
+   return b;
+}
+
+static inline Eina_Stringshare *
+efl_config_string_get(const Efl_Config *obj, const char *name)
+{
+   Eina_Value *v = efl_config_get(obj, name);
+   Eina_Stringshare *s = 0;
+   if (eina_value_type_get(v) == EINA_VALUE_TYPE_STRING)
+     {
+        const char *b = 0;
+        eina_value_get(v, &b);
+        s = eina_stringshare_add(b);
+     }
+   eina_value_free(v);
+   return s;
+}
+
+#endif
+
 /**
  * @}
  */

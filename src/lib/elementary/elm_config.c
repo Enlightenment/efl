@@ -1683,7 +1683,7 @@ static void
 _config_load(void)
 {
    _efl_config_obj = eo_add(EFL_CONFIG_INTERNAL_CLASS, NULL);
-   __efl_internal_elm_config_set(_efl_config_obj);
+   efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
    _elm_config = _config_user_load();
    if (_elm_config)
      {
@@ -4243,7 +4243,7 @@ void
 _elm_config_shutdown(void)
 {
    ELM_SAFE_FREE(_efl_config_obj, eo_del);
-   __efl_internal_elm_config_set(NULL);
+   efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_INTERFACE, NULL);
    ELM_SAFE_FREE(_elm_config, _config_free);
    ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
@@ -4367,7 +4367,6 @@ _efl_config_internal_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_U
 
 #define CONFIG_SETB(opt) CONFIG_SET(opt, Eina_Bool, UCHAR, int)
 #define CONFIG_SETI(opt) CONFIG_SET(opt, int, INT, int)
-#define CONFIG_SETU(opt) CONFIG_SET(opt, unsigned int, UINT, int)
 #define CONFIG_SETD(opt) CONFIG_SET(opt, double, DOUBLE, int)
 #define CONFIG_SETS(opt) CONFIG_SET(opt, const char *, STRING, cstring)
 
@@ -4407,10 +4406,10 @@ _efl_config_internal_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_U
    CONFIG_SETD(scroll_bring_in_scroll_friction);
    CONFIG_SETD(scroll_zoom_friction);
    CONFIG_SETB(scroll_thumbscroll_enabled);
-   CONFIG_SETU(scroll_thumbscroll_threshold);
-   CONFIG_SETU(scroll_thumbscroll_hold_threshold);
+   CONFIG_SETI(scroll_thumbscroll_threshold);
+   CONFIG_SETI(scroll_thumbscroll_hold_threshold);
    CONFIG_SETD(scroll_thumbscroll_momentum_threshold);
-   CONFIG_SETU(scroll_thumbscroll_flick_distance_tolerance);
+   CONFIG_SETI(scroll_thumbscroll_flick_distance_tolerance);
    CONFIG_SETD(scroll_thumbscroll_friction);
    CONFIG_SETD(scroll_thumbscroll_min_friction);
    CONFIG_SETD(scroll_thumbscroll_friction_standard);
@@ -4497,7 +4496,6 @@ _efl_config_internal_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd 
 
 #define CONFIG_GETB(opt) CONFIG_GET(opt, Eina_Bool, UCHAR)
 #define CONFIG_GETI(opt) CONFIG_GET(opt, int, INT)
-#define CONFIG_GETU(opt) CONFIG_GET(opt, int, INT)
 #define CONFIG_GETD(opt) CONFIG_GET(opt, double, DOUBLE)
 #define CONFIG_GETS(opt) CONFIG_GET(opt, const char *, STRING)
 
@@ -4520,10 +4518,10 @@ _efl_config_internal_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd 
    CONFIG_GETD(scroll_bring_in_scroll_friction);
    CONFIG_GETD(scroll_zoom_friction);
    CONFIG_GETB(scroll_thumbscroll_enabled);
-   CONFIG_GETU(scroll_thumbscroll_threshold);
-   CONFIG_GETU(scroll_thumbscroll_hold_threshold);
+   CONFIG_GETI(scroll_thumbscroll_threshold);
+   CONFIG_GETI(scroll_thumbscroll_hold_threshold);
    CONFIG_GETD(scroll_thumbscroll_momentum_threshold);
-   CONFIG_GETU(scroll_thumbscroll_flick_distance_tolerance);
+   CONFIG_GETI(scroll_thumbscroll_flick_distance_tolerance);
    CONFIG_GETD(scroll_thumbscroll_friction);
    CONFIG_GETD(scroll_thumbscroll_min_friction);
    CONFIG_GETD(scroll_thumbscroll_friction_standard);

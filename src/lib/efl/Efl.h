@@ -141,10 +141,6 @@ static inline void efl_gfx_color16_type_set(Efl_Gfx_Color *color,
 #include "interfaces/efl_input_interface.eo.h"
 #include "interfaces/efl_event.eo.h"
 
-#ifdef EFL_EFL_BUILD
-EAPI void __efl_internal_elm_config_set(Efl_Config *cfg);
-#endif
-
 #else
 
 #ifndef EFL_NOLEGACY_API_SUPPORT

@@ -83,7 +83,6 @@ lib_LTLIBRARIES += lib/efl/libefl.la
 
 lib_efl_libefl_la_SOURCES = \
 lib/efl/interfaces/efl_interfaces_main.c \
-lib/efl/interfaces/efl_config.c \
 lib/efl/interfaces/efl_model_common.c \
 lib/efl/interfaces/efl_gfx_shape.c \
 lib/efl/interfaces/efl_vpath_file.c \
