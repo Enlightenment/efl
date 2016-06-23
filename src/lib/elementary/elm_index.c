@@ -219,7 +219,7 @@ _index_box_auto_fill(Evas_Object *obj,
    Eina_Bool rtl;
    Elm_Object_Item *eo_item;
    Elm_Index_Item_Data *head = NULL, *last_it = NULL;
-   Evas_Coord mw, mh, ih;
+   Evas_Coord mw, mh, iw, ih;
    Evas_Object *o;
    Elm_Index_Omit *om;
    const char *style = elm_widget_style_get(obj);
@@ -229,7 +229,7 @@ _index_box_auto_fill(Evas_Object *obj,
    if (sd->level_active[level]) return;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   evas_object_geometry_get(wd->resize_obj, NULL, NULL, NULL, &ih);
+   evas_object_geometry_get(wd->resize_obj, NULL, NULL, &iw, &ih);
 
    rtl = elm_widget_mirrored_get(obj);
 
@@ -247,10 +247,24 @@ _index_box_auto_fill(Evas_Object *obj,
    if (sd->omit_enabled)
      {
         o = edje_object_add(evas_object_evas_get(obj));
-        elm_widget_theme_object_set
-           (obj, o, "index", "item/vertical", style);
+        if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+          {
+             elm_widget_theme_object_set
+                (obj, o, "index", "item/horizontal", style);
 
-        edje_object_size_min_restricted_calc(o, NULL, &mh, 0, 0);
+             edje_object_size_min_restricted_calc(o, &mw, NULL, 0, 0);
+             if (mw != 0)
+                max_num_of_items = iw / mw;
+          }
+        else
+          {
+             elm_widget_theme_object_set
+                (obj, o, "index", "item/vertical", style);
+
+             edje_object_size_min_restricted_calc(o, NULL, &mh, 0, 0);
+             if (mh != 0)
+                max_num_of_items = ih / mh;
+          }
 
         evas_object_del(o);
 
@@ -260,8 +274,6 @@ _index_box_auto_fill(Evas_Object *obj,
              if (it->level == level && it->priority == sd->show_group) num_of_items++;
           }
 
-        if (mh != 0)
-          max_num_of_items = ih / mh;
         if (sd->group_num)
           max_num_of_items -= (sd->group_num + sd->default_num - 1);
 
@@ -1654,8 +1666,6 @@ _elm_index_delay_change_time_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 EOLIAN static void
 _elm_index_omit_enabled_set(Eo *obj, Elm_Index_Data *sd, Eina_Bool enabled)
 {
-   if (sd->orientation == EFL_ORIENT_HORIZONTAL) return;
-
    enabled = !!enabled;
    if (sd->omit_enabled == enabled) return;
    sd->omit_enabled = enabled;
