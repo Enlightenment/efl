@@ -142,11 +142,34 @@ START_TEST (elm_config_eoapi)
           fail(channels[i].name);
      }
 
+
+
    elm_shutdown();
 }
 END_TEST
 
+START_TEST (elm_config_win)
+{
+   elm_init(1, NULL);
+
+   Eo *cfg = eo_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
+   fail_if(!cfg);
+
+   Eo *win = eo_add(EFL_UI_WIN_CLASS, NULL);
+   Eo *cfg2 = eo_provider_find(win, EFL_CONFIG_INTERFACE);
+   fail_if(cfg != cfg2);
+
+   elm_config_cache_flush_interval_set(42);
+   fail_if(efl_config_int_get(win, "cache_flush_interval") != 42);
+
+   eo_del(win);
+   elm_shutdown();
+}
+END_TEST
+
+
 void elm_test_config(TCase *tc)
 {
- tcase_add_test(tc, elm_config_eoapi);
+   tcase_add_test(tc, elm_config_eoapi);
+   tcase_add_test(tc, elm_config_win);
 }

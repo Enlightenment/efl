@@ -4568,6 +4568,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    if (_elm_config->atspi_mode)
      elm_interface_atspi_window_created_signal_emit(obj);
 
+   // attach config API
+   eo_composite_attach(obj, eo_provider_find(ecore_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS));
+
    eo_event_callback_array_add(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
    eo_event_callback_add(obj, EO_EVENT_CALLBACK_ADD, _win_event_add_cb, sd);
    eo_event_callback_add(obj, EO_EVENT_CALLBACK_DEL, _win_event_del_cb, sd);
