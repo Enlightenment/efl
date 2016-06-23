@@ -563,6 +563,8 @@ Elm_Url *_elm_url_download(const char *url, Elm_Url_Done done_cb, Elm_Url_Cancel
 void _elm_url_cancel(Elm_Url *r);
 const char *_elm_url_get(Elm_Url *r);
 
+Eina_Bool _elm_config_accel_preference_parse(const char *pref, Eina_Stringshare **accel, int *gl_depth, int *gl_stencil, int *gl_msaa);
+
 extern char *_elm_appname;
 extern Elm_Config *_elm_config;
 extern const char *_elm_data_dir;

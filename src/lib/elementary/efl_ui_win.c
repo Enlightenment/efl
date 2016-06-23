@@ -188,6 +188,7 @@ struct _Efl_Ui_Win_Data
    const char  *icon_name;
    const char  *role;
    Eina_Stringshare *name;
+   Eina_Stringshare *accel_pref;
 
    Evas_Object *main_menu;
 
@@ -2538,6 +2539,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    eina_stringshare_del(sd->icon_name);
    eina_stringshare_del(sd->role);
    eina_stringshare_del(sd->name);
+   eina_stringshare_del(sd->accel_pref);
    evas_object_del(sd->icon);
    evas_object_del(sd->main_menu);
 
@@ -3920,13 +3922,19 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
 }
 
 static Eina_Bool
-_accel_is_gl(void)
+_accel_is_gl(const char *accel)
 {
    const char *env = NULL;
    const char *str = NULL;
 
+   /* current elm config */
    if (_elm_config->accel) str = _elm_config->accel;
    if (_elm_accel_preference) str = _elm_accel_preference;
+
+   /* constructor function */
+   if (accel) str = accel;
+
+   /* global overrides */
    if ((_elm_config->accel_override) && (_elm_config->accel))
      str = _elm_config->accel;
    env = getenv("ELM_ACCEL");
@@ -3952,6 +3960,10 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    Evas *e;
    const Eina_List *l;
    const char *fontpath, *engine = NULL, *enginelist[32], *disp;
+   int gl_depth = _elm_config->gl_depth;
+   int gl_stencil = _elm_config->gl_stencil;
+   int gl_msaa = _elm_config->gl_msaa;
+   Eina_Stringshare *accel = NULL;
    int i, p = 0;
 
    Efl_Ui_Win_Data tmp_sd;
@@ -3960,6 +3972,12 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 
    /* just to store some data while trying out to create a canvas */
    memset(&tmp_sd, 0, sizeof(Efl_Ui_Win_Data));
+
+   if (sd->accel_pref)
+     {
+        _elm_config_accel_preference_parse(sd->accel_pref, &accel, &gl_depth,
+                                           &gl_stencil, &gl_msaa);
+     }
 
    switch (type)
      {
@@ -4011,7 +4029,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #ifdef HAVE_ELEMENTARY_X
         else if ((disp) && (!strcmp(disp, "x11")))
           {
-             if (_accel_is_gl())
+             if (_accel_is_gl(accel))
                {
                   enginelist[p++] = ELM_OPENGL_X11;
                   enginelist[p++] = ELM_SOFTWARE_X11;
@@ -4027,7 +4045,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #ifdef HAVE_ELEMENTARY_WL2
         else if ((disp) && (!strcmp(disp, "wl")))
           {
-             if (_accel_is_gl())
+             if (_accel_is_gl(accel))
                {
                   enginelist[p++] = ELM_WAYLAND_EGL;
                   enginelist[p++] = ELM_WAYLAND_SHM;
@@ -4051,7 +4069,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #ifdef HAVE_ELEMENTARY_SDL
         else if ((disp) && (!strcmp(disp, "sdl")))
           {
-             if (_accel_is_gl())
+             if (_accel_is_gl(accel))
                {
                   enginelist[p++] = ELM_OPENGL_SDL;
                   enginelist[p++] = ELM_SOFTWARE_SDL;
@@ -4093,7 +4111,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         else if (!_elm_preferred_engine &&
                  getenv("DISPLAY") && !getenv("ELM_ENGINE"))
           {
-             if (_accel_is_gl())
+             if (_accel_is_gl(accel))
                {
                   enginelist[p++] = ELM_OPENGL_X11;
                   enginelist[p++] = ELM_SOFTWARE_X11;
@@ -4109,7 +4127,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         else if (!_elm_preferred_engine &&
                  getenv("WAYLAND_DISPLAY") && !getenv("ELM_ENGINE"))
           {
-             if (_accel_is_gl())
+             if (_accel_is_gl(accel))
                {
                   enginelist[p++] = ELM_WAYLAND_EGL;
                   enginelist[p++] = ELM_WAYLAND_SHM;
@@ -4123,7 +4141,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #endif
         else
           {
-             if (_accel_is_gl())
+             if (_accel_is_gl(accel))
                {
 // add all engines with selected engine first - if any
                   if (ENGINE_GET())
@@ -4172,8 +4190,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
                     enginelist[p++] = elm_config_preferred_engine_get();
 // add check _elm_gl_preference whether "none" or not
                   else if (_elm_config->engine &&
-                           elm_config_accel_preference_get() &&
-                           !strcmp(elm_config_accel_preference_get(),"none"))
+                           ((elm_config_accel_preference_get() &&
+                             !strcmp(elm_config_accel_preference_get(), "none"))
+                            || (accel && !strcmp(accel, "none"))))
                     enginelist[p++] = _elm_config->engine;
 // add all engines with gl/accelerated ones first - only engines compiled
 #ifdef HAVE_ELEMENTARY_X
@@ -4230,20 +4249,20 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
                        opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_VSYNC;
                        opt[opt_i++] = 1;
                     }
-                  if (_elm_config->gl_depth)
+                  if (gl_depth)
                     {
                        opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_GL_DEPTH;
-                       opt[opt_i++] = _elm_config->gl_depth;
+                       opt[opt_i++] = gl_depth;
                     }
-                  if (_elm_config->gl_stencil)
+                  if (gl_stencil)
                     {
                        opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_GL_STENCIL;
-                       opt[opt_i++] = _elm_config->gl_stencil;
+                       opt[opt_i++] = gl_stencil;
                     }
-                  if (_elm_config->gl_msaa)
+                  if (gl_msaa)
                     {
                        opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_GL_MSAA;
-                       opt[opt_i++] = _elm_config->gl_msaa;
+                       opt[opt_i++] = gl_msaa;
                     }
                   opt[opt_i] = 0;
                   if (opt_i > 0)
@@ -4287,11 +4306,15 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         break;
      }
 
+   eina_stringshare_del(accel);
    if (!tmp_sd.ee)
      {
         ERR("Cannot create window.");
         return NULL;
      }
+
+   if (!sd->accel_pref)
+     eina_stringshare_replace(&sd->accel_pref, elm_config_accel_preference_get());
 
    eo_parent_set(obj, ecore_evas_get(tmp_sd.ee));
 
@@ -4630,6 +4653,23 @@ EOLIAN static const char *
 _efl_ui_win_name_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->name;
+}
+
+EOLIAN static void
+_efl_ui_win_accel_preference_set(Eo *obj, Efl_Ui_Win_Data *pd, const char *accel)
+{
+   if (eo_finalized_get(obj))
+     {
+        ERR("This function is only allowed during construction.");
+        return;
+     }
+   eina_stringshare_replace(&pd->accel_pref, accel);
+}
+
+EOLIAN static const char *
+_efl_ui_win_accel_preference_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
+{
+   return pd->accel_pref;
 }
 
 EOLIAN static void

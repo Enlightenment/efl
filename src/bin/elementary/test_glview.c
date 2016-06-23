@@ -617,13 +617,14 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    Evas_Object *win, *bx, *bt, *gl, *lb;
    Ecore_Animator *ani;
    GLData *gld = NULL;
-   const char *accel;
 
    // alloc a data struct to hold our relevant gl info in
    if (!(gld = calloc(1, sizeof(GLData)))) return;
    gldata_init(gld);
 
+#if 0
    // add a Z-depth buffer to the window and try to use GL
+   Eina_Stringshare *accel;
    accel = eina_stringshare_add(elm_config_accel_preference_get());
    elm_config_accel_preference_set("gl:depth");
 
@@ -634,6 +635,12 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    // restore previous accel preference
    elm_config_accel_preference_set(accel);
    eina_stringshare_del(accel);
+#else
+   win = eo_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
+                efl_ui_win_name_set(eo_self, "glview"),
+                efl_text_set(eo_self, "GLView"),
+                efl_ui_win_accel_preference_set(eo_self, "gl:depth"));
+#endif
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

@@ -4039,85 +4039,105 @@ elm_config_accel_preference_get(void)
    return _elm_config->accel;
 }
 
+Eina_Bool
+_elm_config_accel_preference_parse(const char *pref, Eina_Stringshare **accel,
+                                   int *gl_depth, int *gl_stencil, int *gl_msaa)
+{
+   Eina_Bool is_hw_accel = EINA_FALSE;
+   unsigned int tokens = 0, i;
+   char **arr;
+
+   /* Accel preference's string has the window surface configuration as a hw accel, depth, stencil and msaa.
+    * The string format is   "{HW Accel}:depth{value}:stencil{value}:msaa{msaa string}"
+    * Especially, msaa string is related Evas GL MSAA enum value(low, mid, high)
+    * so msaa string has four types as msaa, msaa_low, msaa_mid, msaa_high
+    * For instance, "opengl:depth24:stencil8:msaa_high".
+    * It means that using hw accelation, window surface depth buffer's size is 24, stencil buffer's size 8 and msaa bits is the highest.
+    * The other use-case is  "opengl:depth24".
+    * It measn that using hw accelation, depth buffer size is 24. stencil and msaa are not used.
+    * The simple case is  "opengl:depth:stencil:msaa".
+    * It means that depth, stencil and msaa are setted by pre-defined value(depth:24, stencil:8, msaa:low)
+    */
+
+   DBG("accel preference's string: %s", pref);
+
+   /* split GL items (hw accel, gl depth, gl stencil, gl msaa */
+   arr = eina_str_split_full(pref, ":", 0, &tokens);
+   for (i = 0; arr && arr[i]; i++)
+     {
+        if ((!strcasecmp(arr[i], "gl")) ||
+            (!strcasecmp(arr[i], "opengl")) ||
+            (!strcasecmp(arr[i], "3d")) ||
+            (!strcasecmp(arr[i], "hw")) ||
+            (!strcasecmp(arr[i], "accel")) ||
+            (!strcasecmp(arr[i], "hardware"))
+            )
+          {
+             eina_stringshare_replace(accel, arr[i]);
+             is_hw_accel = EINA_TRUE;
+             *gl_depth = 0;
+             *gl_stencil = 0;
+             *gl_msaa = 0;
+          }
+        else if (!strncmp(arr[i], "depth", 5))
+          {
+             char *value_str = arr[i] + 5;
+             if ((value_str) && (isdigit(*value_str)))
+               *gl_depth = atoi(value_str);
+             else
+               *gl_depth = 24;
+          }
+        else if (!strncmp(arr[i], "stencil", 7))
+          {
+             char *value_str = arr[i] + 7;
+             if ((value_str) && (isdigit(*value_str)))
+               *gl_stencil = atoi(value_str);
+             else
+               *gl_stencil = 8;
+          }
+        else if (!strncmp(arr[i], "msaa_low", 8))
+          *gl_msaa = 1;             // 1 means msaa low
+        else if (!strncmp(arr[i], "msaa_mid", 8))
+          *gl_msaa = 2;             // 2 means msaa mid
+        else if (!strncmp(arr[i], "msaa_high", 9))
+          *gl_msaa = 4;             // 4 means msaa high
+        else if (!strncmp(arr[i], "msaa", 4))
+          *gl_msaa = 1;            // 1 means msaa low
+     }
+
+   DBG("accel: %s", *accel);
+   DBG("gl depth: %d", *gl_depth);
+   DBG("gl stencil: %d", *gl_stencil);
+   DBG("gl msaa: %d", *gl_msaa);
+   free(arr[0]);
+   free(arr);
+
+   return is_hw_accel;
+}
+
 EAPI void
 elm_config_accel_preference_set(const char *pref)
 {
    if (pref)
      {
-        Eina_Bool is_hw_accel = EINA_FALSE;
-        unsigned int tokens = 0, i;
-        char **arr;
+        Eina_Bool hw;
 
-        /* Accel preference's string has the window surface configuration as a hw accel, depth, stencil and msaa.
-         * The string format is   "{HW Accel}:depth{value}:stencil{value}:msaa{msaa string}"
-         * Especially, msaa string is related Evas GL MSAA enum value(low, mid, high)
-         * so msaa string has four types as msaa, msaa_low, msaa_mid, msaa_high
-         * For instance, "opengl:depth24:stencil8:msaa_high".
-         * It means that using hw accelation, window surface depth buffer's size is 24, stencil buffer's size 8 and msaa bits is the highest.
-         * The other use-case is  "opengl:depth24".
-         * It measn that using hw accelation, depth buffer size is 24. stencil and msaa are not used.
-         * The simple case is  "opengl:depth:stencil:msaa".
-         * It means that depth, stencil and msaa are setted by pre-defined value(depth:24, stencil:8, msaa:low)
-         */
-
-        DBG("accel preference's string: %s",pref);
         /* full string */
         eina_stringshare_replace(&(_elm_gl_preference), pref);
         ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
         ELM_SAFE_FREE(_elm_config->accel, eina_stringshare_del);
 
-        /* split GL items (hw accel, gl depth, gl stencil, gl msaa */
-        arr = eina_str_split_full(pref, ":", 0, &tokens);
-        for (i = 0; arr && arr[i]; i++)
+        hw = _elm_config_accel_preference_parse(pref, &_elm_config->accel,
+                                                &_elm_config->gl_depth,
+                                                &_elm_config->gl_stencil,
+                                                &_elm_config->gl_msaa);
+
+        if (hw)
           {
-             if ((!strcasecmp(arr[i], "gl")) ||
-                 (!strcasecmp(arr[i], "opengl")) ||
-                 (!strcasecmp(arr[i], "3d")) ||
-                 (!strcasecmp(arr[i], "hw")) ||
-                 (!strcasecmp(arr[i], "accel")) ||
-                 (!strcasecmp(arr[i], "hardware"))
-                 )
-               {
-                  eina_stringshare_replace(&(_elm_accel_preference), arr[i]);
-                  eina_stringshare_replace(&(_elm_config->accel), arr[i]);
-                  is_hw_accel = EINA_TRUE;
-               }
-             else if (!strncmp(arr[i], "depth", 5))
-               {
-                  char *value_str = arr[i] + 5;
-                  if ((value_str) && (isdigit(*value_str)))
-                    _elm_config->gl_depth = atoi(value_str);
-                  else
-                    _elm_config->gl_depth = 24;
-               }
-             else if (!strncmp(arr[i], "stencil", 7))
-               {
-                  char *value_str = arr[i] + 7;
-                  if ((value_str) && (isdigit(*value_str)))
-                    _elm_config->gl_stencil = atoi(value_str);
-                  else
-                    _elm_config->gl_stencil = 8;
-               }
-             else if (!strncmp(arr[i], "msaa_low", 8))
-               _elm_config->gl_msaa = 1;             // 1 means msaa low
-             else if (!strncmp(arr[i], "msaa_mid", 8))
-               _elm_config->gl_msaa = 2;             // 2 means msaa mid
-             else if (!strncmp(arr[i], "msaa_high", 9))
-               _elm_config->gl_msaa = 4;             // 4 means msaa high
-             else if (!strncmp(arr[i], "msaa", 4))
-               _elm_config->gl_msaa = 1;            // 1 means msaa low
+             eina_stringshare_replace(&(_elm_accel_preference), _elm_config->accel);
           }
-
-        DBG("accel: %s", _elm_accel_preference);
-        DBG("gl depth: %d", _elm_config->gl_depth);
-        DBG("gl stencil: %d", _elm_config->gl_stencil);
-        DBG("gl msaa: %d", _elm_config->gl_msaa);
-        free(arr[0]);
-        free(arr);
-
-        if (is_hw_accel == EINA_FALSE)
+        else
           {
-             ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
              ELM_SAFE_FREE(_elm_config->accel, eina_stringshare_del);
           }
      }
