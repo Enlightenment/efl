@@ -108,13 +108,39 @@ START_TEST (elm_config_eoapi)
    //color_overlay_unset
    CONFIG_CHKB(magnifier_enable, 0);
    CONFIG_CHKD(magnifier_scale, 0);
-   //audio_mute
    CONFIG_CHKB(window_auto_focus_enable, 0);
    CONFIG_CHKB(window_auto_focus_animate, 0);
    CONFIG_CHKB(popup_scrollable, 0);
    CONFIG_CHKB(atspi_mode, 0);
    CONFIG_CHKD(transition_duration_factor, 0);
    CONFIG_CHKS(web_backend, old); // no value change (requires web support)
+
+   static const struct {
+      Edje_Channel chan;
+      const char  *name;
+   } channels[] = {
+   { EDJE_CHANNEL_EFFECT, "audio_mute_effect" },
+   { EDJE_CHANNEL_BACKGROUND, "audio_mute_background" },
+   { EDJE_CHANNEL_MUSIC, "audio_mute_music" },
+   { EDJE_CHANNEL_FOREGROUND, "audio_mute_foreground" },
+   { EDJE_CHANNEL_INTERFACE, "audio_mute_interface" },
+   { EDJE_CHANNEL_INPUT, "audio_mute_input" },
+   { EDJE_CHANNEL_ALERT, "audio_mute_alert" },
+   { EDJE_CHANNEL_ALL, "audio_mute_all" },
+   { EDJE_CHANNEL_ALL, "audio_mute" },
+   };
+
+   for (unsigned i = 0; i < (sizeof(channels) / sizeof(channels[0])); i++)
+     {
+        Eina_Bool b = elm_config_audio_mute_get(channels[i].chan);
+        if (b != efl_config_bool_get(cfg, channels[i].name))
+          fail(channels[i].name);
+        efl_config_bool_set(cfg, channels[i].name, !b);
+        if(efl_config_bool_get(cfg, channels[i].name) != !b)
+          fail(channels[i].name);
+        if(elm_config_audio_mute_get(channels[i].chan) != !b)
+          fail(channels[i].name);
+     }
 
    elm_shutdown();
 }

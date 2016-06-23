@@ -4295,6 +4295,36 @@ _eina_value_to_cstring(const Eina_Value *val, cstring *s)
    return ret;
 }
 
+static inline Eina_Bool
+_edje_channel_get(const char *channel, Edje_Channel *chan)
+{
+
+   if (!*channel)
+     *chan = EDJE_CHANNEL_ALL;
+   else
+     {
+        if (!strcmp("_effect", channel))
+          *chan = EDJE_CHANNEL_EFFECT;
+        else if (!strcmp("_background", channel))
+          *chan = EDJE_CHANNEL_BACKGROUND;
+        else if (!strcmp("_music", channel))
+          *chan = EDJE_CHANNEL_MUSIC;
+        else if (!strcmp("_foreground", channel))
+          *chan = EDJE_CHANNEL_FOREGROUND;
+        else if (!strcmp("_interface", channel))
+          *chan = EDJE_CHANNEL_INTERFACE;
+        else if (!strcmp("_input", channel))
+          *chan = EDJE_CHANNEL_INPUT;
+        else if (!strcmp("_alert", channel))
+          *chan = EDJE_CHANNEL_ALERT;
+        else if (!strcmp("_all", channel))
+          *chan = EDJE_CHANNEL_ALL;
+        else
+          return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 static const struct {
    Efl_Ui_Focus_Autoscroll_Mode  val;
    const char                   *str;
@@ -4463,13 +4493,33 @@ _efl_config_internal_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_U
    //elm_config.h:EAPI void      elm_config_color_overlay_unset(const char *color_class);
    CONFIG_SETB(magnifier_enable);
    CONFIG_SETD(magnifier_scale);
-   //audio_mute Edje_Channel channel,);
    CONFIG_SETB(window_auto_focus_enable);
    CONFIG_SETB(window_auto_focus_animate);
    CONFIG_SETB(popup_scrollable);
    CONFIG_SETB(atspi_mode);
    CONFIG_SETD(transition_duration_factor);
    CONFIG_SETS(web_backend);
+
+   const size_t len = sizeof("audio_mute") - 1;
+   if (!strncmp(name, "audio_mute", len))
+     {
+        const char *channel = name + len;
+        Edje_Channel chan;
+        int v;
+        if (!_eina_value_to_int(val, &v))
+          {
+             ERR("Invalid value type for config '%s' (got %s wanted int)",
+                 name, eina_value_type_name_get(eina_value_type_get(val)));
+             return EINA_FALSE;
+          }
+        if (!_edje_channel_get(channel, &chan))
+          {
+             ERR("Unknown audio channel '%s'", channel);
+             return EINA_FALSE;
+          }
+        elm_config_audio_mute_set(chan, !!v);
+        return EINA_TRUE;
+     }
 
    ERR("Config '%s' does not exist", name);
    return EINA_FALSE;
@@ -4575,13 +4625,29 @@ _efl_config_internal_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd 
    //color_overlay_unset
    CONFIG_GETB(magnifier_enable);
    CONFIG_GETD(magnifier_scale);
-   //audio_mute
    CONFIG_GETB(window_auto_focus_enable);
    CONFIG_GETB(window_auto_focus_animate);
    CONFIG_GETB(popup_scrollable);
    CONFIG_GETB(atspi_mode);
    CONFIG_GETD(transition_duration_factor);
    CONFIG_GETS(web_backend);
+
+   const size_t len = sizeof("audio_mute") - 1;
+   if (!strncmp(name, "audio_mute", len))
+     {
+        const char *channel = name + len;
+        Edje_Channel chan;
+        Eina_Bool b;
+        if (!_edje_channel_get(channel, &chan))
+          {
+             ERR("Unknown audio channel '%s'", channel);
+             return NULL;
+          }
+        val = eina_value_new(EINA_VALUE_TYPE_UCHAR);
+        b = edje_audio_channel_mute_get(chan);
+        eina_value_set(val, b);
+        return val;
+     }
 
    ERR("Config '%s' does not exist", name);
    return NULL;
