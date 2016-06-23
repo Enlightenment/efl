@@ -69,7 +69,7 @@ collections {
          SVG_PART("bg1", "vg1", 0.0, 0.0, .25, .25,"dst.svg")
          SVG_PART("bg2", "vg2", 0.25, 0.0, .5, .25,"atom.svg")
          SVG_PART("bg3", "vg3", 0.5, 0.0, .75, .25,"bojo.svg")
-         SVG_PART("bg4", "vg4", 0.75, 0.0, 1.0, .25,"bzrfreed.svg")
+         SVG_PART("bg4", "vg4", 0.75, 0.0, 1.0, .25,"bzrfeed.svg")
          SVG_PART("bg5", "vg5", 0.0, 0.25, .25, .5,"yinyang.svg")
          SVG_PART("bg6", "vg6", 0.25, 0.25, .5, .5,"ubuntu.svg")
          SVG_PART("bg7", "vg7", 0.5, 0.25, .75, .5,"duke.svg")
