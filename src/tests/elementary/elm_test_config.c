@@ -142,8 +142,6 @@ START_TEST (elm_config_eoapi)
           fail(channels[i].name);
      }
 
-
-
    elm_shutdown();
 }
 END_TEST
@@ -167,9 +165,74 @@ START_TEST (elm_config_win)
 }
 END_TEST
 
+static inline Eina_Bool
+_eina_list_string_has(const Eina_List *list, const char *str)
+{
+   const char *s;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(list, l, s)
+     if (eina_streq(str, s))
+       return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+START_TEST (elm_config_profiles)
+{
+   elm_init(1, NULL);
+
+   // this only tests some of the profile APIs. we're not going to mess with
+   // the global config during make check :)
+
+   Eo *cfg = eo_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
+   fail_if(!cfg);
+
+   for (int hidden = 0; hidden <= 1; hidden++)
+     {
+        Eina_List *list;
+        Eina_Iterator *it;
+        const char *prof;
+        int cnt = 0;
+
+        list = (!hidden) ? elm_config_profile_list_get()
+                         : elm_config_profile_list_full_get();
+        it = efl_config_profile_iterate(cfg, hidden);
+        EINA_ITERATOR_FOREACH(it, prof)
+          {
+             fail_if(!_eina_list_string_has(list, prof));
+             cnt++;
+          }
+        fail_if(cnt != eina_list_count(list));
+        elm_config_profile_list_free(list);
+        eina_iterator_free(it);
+     }
+
+   const char *dir, *profile;
+   Eina_Stringshare *str;
+
+   profile = elm_config_profile_get();
+   dir = elm_config_profile_dir_get(elm_config_profile_get(), EINA_TRUE);
+   str = efl_config_profile_dir_get(cfg, profile, EINA_TRUE);
+   fail_if(!eina_streq(dir, str));
+   elm_config_profile_dir_free(dir);
+   eina_stringshare_del(str);
+
+   dir = elm_config_profile_dir_get(elm_config_profile_get(), EINA_FALSE);
+   str = efl_config_profile_dir_get(cfg, profile, EINA_FALSE);
+   fail_if(!eina_streq(dir, str));
+   elm_config_profile_dir_free(dir);
+   eina_stringshare_del(str);
+
+   fail_if(!elm_config_profile_exists(profile));
+
+   elm_shutdown();
+}
+END_TEST
 
 void elm_test_config(TCase *tc)
 {
    tcase_add_test(tc, elm_config_eoapi);
    tcase_add_test(tc, elm_config_win);
+   tcase_add_test(tc, elm_config_profiles);
 }
