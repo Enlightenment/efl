@@ -1819,7 +1819,8 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    efl_canvas_group_add(eo_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
 
-   elm_layout_theme_set(obj, "code", "layout", "default");
+   if (!elm_layout_theme_set(obj, "code", "layout", "default"))
+     CRI("Failed to set layout!");
 
    scroller = elm_scroller_add(obj);
    evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
