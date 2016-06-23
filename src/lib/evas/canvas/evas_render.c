@@ -1227,7 +1227,7 @@ _proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *p
                                 obj->cur->cache.clip.y + off_y,
                                 obj->cur->cache.clip.w, obj->cur->cache.clip.h);
         ENFN->context_clip_get(ENDT, ctx, NULL, NULL, &cw, &ch);
-        return (cw && ch);
+        return ((cw > 0) && (ch > 0));
      }
 
    if (!obj || !obj->cur->clipper) return EINA_TRUE;
@@ -1237,7 +1237,7 @@ _proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *p
    clip = &clipper->cur->geometry;
    ENFN->context_clip_clip(ENDT, ctx, clip->x + off_x, clip->y + off_y, clip->w, clip->h);
    ENFN->context_clip_get(ENDT, ctx, NULL, NULL, &cw, &ch);
-   if (!cw || !ch) return EINA_FALSE;
+   if ((cw <= 0) || (ch <= 0)) return EINA_FALSE;
 
    /* stop if we found the source object's clipper */
    if (clipper == proxy_render_data->src_obj->cur->clipper) return EINA_TRUE;
