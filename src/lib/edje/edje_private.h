@@ -3029,8 +3029,11 @@ typedef struct _Svg_Rect_Node Svg_Rect_Node;
 typedef struct _Svg_Path_Node Svg_Path_Node;
 typedef struct _Svg_Style_Property Svg_Style_Property;
 
-typedef struct  _Svg_Style_Stroke Svg_Style_Stroke;
-typedef struct  _Svg_Style_Fill Svg_Style_Fill;
+typedef struct  _Svg_Style_Stroke   Svg_Style_Stroke;
+typedef struct  _Svg_Style_Fill     Svg_Style_Fill;
+typedef enum    _Svg_Fill_Flags     Svg_Fill_Flags;
+typedef enum    _Svg_Stroke_Flags   Svg_Stroke_Flags;
+
 
 typedef enum   _Svg_Gradient_Type   Svg_Gradient_Type;
 typedef struct _Svg_Style_Gradient  Svg_Style_Gradient;
@@ -3177,8 +3180,29 @@ struct _Svg_Paint
    char      *url;
 };
 
+enum _Svg_Fill_Flags
+{
+   SVG_FILL_FLAGS_PAINT     = 0x1,
+   SVG_FILL_FLAGS_OPACITY   = 0x2,
+   SVG_FILL_FLAGS_GRADIENT  = 0x4,
+   SVG_FILL_FLAGS_FILL_RULE = 0x8
+};
+
+enum _Svg_Stroke_Flags
+{
+   SVG_STROKE_FLAGS_PAINT    = 0x1,
+   SVG_STROKE_FLAGS_OPACITY  = 0x2,
+   SVG_STROKE_FLAGS_GRADIENT = 0x4,
+   SVG_STROKE_FLAGS_SCALE    = 0x8,
+   SVG_STROKE_FLAGS_WIDTH    = 0x10,
+   SVG_STROKE_FLAGS_CAP      = 0x20,
+   SVG_STROKE_FLAGS_JOIN     = 0x40,
+   SVG_STROKE_FLAGS_DASH     = 0x80,
+};
+
 struct _Svg_Style_Fill
 {
+   Svg_Fill_Flags       flags;
    Svg_Paint            paint;
    int                  opacity;
    Svg_Style_Gradient  *gradient;
@@ -3187,6 +3211,7 @@ struct _Svg_Style_Fill
 
 struct _Svg_Style_Stroke
 {
+   Svg_Stroke_Flags     flags;
    Svg_Paint            paint;
    int                  opacity;
    Svg_Style_Gradient  *gradient;

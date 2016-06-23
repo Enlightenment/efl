@@ -247,6 +247,7 @@ _eet_for_style_property(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "g", g, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "b", b, EET_T_INT);
    // for fill
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.flags", fill.flags, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_SUB(eet, Svg_Style_Property, "fill.gradient", fill.gradient, eet_gradient);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.paint.r", fill.paint.r, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.paint.g", fill.paint.g, EET_T_INT);
@@ -258,6 +259,7 @@ _eet_for_style_property(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.fill_rule", fill.fill_rule, EET_T_INT);
 
    // for stroke
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.flags", stroke.flags, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_SUB(eet, Svg_Style_Property, "stroke.gradient", stroke.gradient, eet_gradient);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.paint.r", stroke.paint.r, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "stroke.paint.g", stroke.paint.g, EET_T_INT);

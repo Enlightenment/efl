@@ -60,6 +60,8 @@ _skip_space(const char *str, const char *end)
 static inline char *
 _copy_id(const char* str)
 {
+   if (str == NULL) return NULL;
+
    return strdup(str);
 }
 
@@ -552,6 +554,7 @@ static void
 _handle_fill_attr(Svg_Node* node, const char *value)
 {
    Svg_Style_Property *style = node->style;
+   style->fill.flags |= SVG_FILL_FLAGS_PAINT;
    _handle_paint_attr(&style->fill.paint, value);
 }
 
@@ -559,42 +562,49 @@ static void
 _handle_stroke_attr(Svg_Node* node, const char *value)
 {
    Svg_Style_Property *style = node->style;
+   style->stroke.flags |= SVG_STROKE_FLAGS_PAINT;
    _handle_paint_attr(&style->stroke.paint, value);
 }
 
 static void
 _handle_stroke_opacity_attr(Svg_Node* node, const char *value)
 {
+   node->style->stroke.flags |= SVG_STROKE_FLAGS_OPACITY;
    node->style->stroke.opacity = _to_opacity(value);
 }
 
 static void
 _handle_stroke_width_attr(Svg_Node* node, const char *value)
 {
+   node->style->stroke.flags |= SVG_STROKE_FLAGS_WIDTH;
    node->style->stroke.width = _to_double(value);
 }
 
 static void
 _handle_stroke_linecap_attr(Svg_Node* node, const char *value)
 {
+   node->style->stroke.flags |= SVG_STROKE_FLAGS_CAP;
    node->style->stroke.cap = _to_line_cap(value);
 }
 
 static void
 _handle_stroke_linejoin_attr(Svg_Node* node, const char *value)
 {
+   node->style->stroke.flags |= SVG_STROKE_FLAGS_JOIN;
    node->style->stroke.join = _to_line_join(value);
 }
 
 static void
 _handle_fill_rule_attr(Svg_Node* node, const char *value)
 {
+   node->style->fill.flags |= SVG_FILL_FLAGS_FILL_RULE;
    node->style->fill.fill_rule = _to_fill_rule(value);
 }
 
 static void
 _handle_fill_opacity_attr(Svg_Node* node, const char *value)
 {
+   node->style->fill.flags |= SVG_FILL_FLAGS_OPACITY;
    node->style->fill.opacity = _to_opacity(value);
 }
 
@@ -677,6 +687,10 @@ _attr_parse_g_node(void *data, const char *key, const char *value)
    else if (!strcmp(key, "id"))
      {
         node->id = _copy_id(value);
+     }
+   else
+     {
+        _parse_style_attr(node, key, value);
      }
    return EINA_TRUE;
 }
@@ -1443,6 +1457,72 @@ _evas_svg_loader_parser(void *data, Eina_Simple_XML_Type type,
    return EINA_TRUE;
 }
 
+static void
+_inherit_style(Svg_Style_Property *child, Svg_Style_Property *parent)
+{
+   if (parent == NULL)
+     return;
+   // inherit the property of parent if not present in child. 
+   // fill
+   if (!(child->fill.flags & SVG_FILL_FLAGS_PAINT))
+     {
+        child->fill.paint.r = parent->fill.paint.r;
+        child->fill.paint.g = parent->fill.paint.g;
+        child->fill.paint.b = parent->fill.paint.b;
+        child->fill.paint.none = parent->fill.paint.none;
+        child->fill.paint.cur_color = parent->fill.paint.cur_color;
+        child->fill.paint.url = _copy_id(parent->fill.paint.url);
+     }
+   if (!(child->fill.flags & SVG_FILL_FLAGS_OPACITY))
+     {
+        child->fill.opacity = parent->fill.opacity;
+     }
+   if (!(child->fill.flags & SVG_FILL_FLAGS_FILL_RULE))
+     {
+        child->fill.fill_rule = parent->fill.fill_rule;
+     }
+   // stroke
+   if (!(child->stroke.flags & SVG_STROKE_FLAGS_PAINT))
+     {
+        child->stroke.paint.r = parent->stroke.paint.r;
+        child->stroke.paint.g = parent->stroke.paint.g;
+        child->stroke.paint.b = parent->stroke.paint.b;
+        child->stroke.paint.none = parent->stroke.paint.none;
+        child->stroke.paint.cur_color = parent->stroke.paint.cur_color;
+        child->stroke.paint.url = _copy_id(parent->stroke.paint.url);
+     }
+   if (!(child->stroke.flags & SVG_STROKE_FLAGS_OPACITY))
+     {
+        child->stroke.opacity = parent->stroke.opacity;
+     }
+   if (!(child->stroke.flags & SVG_STROKE_FLAGS_WIDTH))
+     {
+        child->stroke.width = parent->stroke.width;
+     }
+   if (!(child->stroke.flags & SVG_STROKE_FLAGS_CAP))
+     {
+        child->stroke.cap = parent->stroke.cap;
+     }
+   if (!(child->stroke.flags & SVG_STROKE_FLAGS_JOIN))
+     {
+        child->stroke.join = parent->stroke.join;
+     }
+}
+
+void
+_update_style(Svg_Node *node, Svg_Style_Property *parent_style)
+{
+   Eina_List *l;
+   Svg_Node *child;
+
+   _inherit_style(node->style, parent_style);
+
+   EINA_LIST_FOREACH(node->child, l, child)
+     {
+        _update_style(child, node->style);
+     }
+}
+
 EAPI Svg_Node *
 _svg_load(Eina_File *f, const char *key EINA_UNUSED)
 {
@@ -1465,5 +1545,9 @@ _svg_load(Eina_File *f, const char *key EINA_UNUSED)
        eina_array_free(loader.stack);
        eina_file_map_free(f, (void*) content);
      }
+
+   if (loader.doc)
+     _update_style(loader.doc, NULL);
+
    return loader.doc;
 }
