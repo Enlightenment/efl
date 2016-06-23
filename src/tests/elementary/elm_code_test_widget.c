@@ -6,6 +6,24 @@
 
 #include "elm_suite.h"
 #include "Elementary.h"
+
+#include "elm_priv.h"
+
+#undef CRI
+#define CRI(...) do { } while (0);
+
+#undef ERR
+#define ERR(...) do { } while (0);
+
+#undef WRN
+#define WRN(...) do { } while (0);
+
+#undef INF
+#define INF(...) do { } while (0);
+
+#undef DBG
+#define DBG(...) do { } while (0);
+
 #include "elm_code_widget.c"
 
 static void _assert_cell_type(Evas_Textgrid_Cell cell, Elm_Code_Token_Type type, int id)
