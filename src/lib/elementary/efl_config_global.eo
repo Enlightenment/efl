@@ -1,0 +1,113 @@
+class Efl.Config.Global (Eo.Base, Efl.Config)
+{
+   [[This class is a singleton representing the global configuration for the
+     running application.
+   ]]
+   data: null;
+   eo_prefix: efl_config;
+   methods {
+      save @protected {
+         [[Saves Elementary configuration to disk.
+
+           This function will take effect (does I/O) immediately. Use it when
+           you want to save all configuration changes at once. The current
+           configuration set will get saved onto the current profile
+           configuration file.
+
+           If $profile is $null, this will flush all settings to all
+           applications running on the same profile.
+
+           If $profile is not $null, this will take the current in-memory
+           config and write it out to the named $profile. This will not
+           change profile for the application or make other processes switch
+           profile.
+         ]]
+         params {
+            profile: string @optional; [[The profile name.]]
+         }
+         return: bool;
+      }
+      @property profile {
+         [[The profile for the running application.
+
+           Profiles are pre-set options that affect the whole look-and-feel of
+           Elementary-based applications. There are, for example, profiles
+           aimed at desktop computer applications and others aimed at mobile,
+           touchscreen-based ones. You most probably don't want to use the
+           functions in this group unless you're writing an elementary
+           configuration manager.
+
+           This gets or sets the global profile that is applied to all
+           Elementary applications.
+         ]]
+         values {
+            profile: string;
+         }
+      }
+      profile_iterate {
+         [[Returns the list of available profiles.]]
+         params {
+            hidden: bool @optional; [[If $true, gets the full list of profiles,
+                                      including those stored in hidden files.]]
+         }
+         return: free(own(iterator<string>), eina_iterator_free);
+      }
+      profile_exists {
+         [[Returns whether a profile exists or not.]]
+         params {
+            profile: string;
+         }
+         return: bool;
+      }
+      profile_dir_get {
+         [[Returns the directory where a profile is stored.]]
+         params {
+            profile: string;
+            is_user: bool; [[$true to lookup for a user profile or $false for
+                             a system one.]]
+         }
+         return: own(stringshare);
+      }
+      profile_derived_add @protected {
+         [[Add a new profile of the given name to be derived from the current
+           profile.
+
+           This creates a new profile of name $profile that will be derived
+           from the currently used profile using the modification commands
+           encoded in the $options string.
+
+           At this point it is not expected that anyone would generally use
+           this API except if you are a destktop environment and so the user
+           base of this API will be enlightenment itself.
+
+           @since 1.17
+         ]]
+         params {
+            profile: string; [[The new profile's name.]]
+            options: string; [[Derive options detailing how to modify.]]
+         }
+      }
+      profile_derived_del @protected {
+         [[Deletes a profile that is derived from the current one.
+
+           This deletes a derived profile added by @.profile_derived_add.
+           This will delete the profile of the given name $profile that is
+           derived from the current profile.
+
+           At this point it is not expected that anyone would generally use
+           this API except if you are a destktop environment and so the user
+           base of this API will be enlightenment itself.
+
+           @since 1.17
+         ]]
+         params {
+            profile: string; [[The name of the profile that is to be deleted.]]
+         }
+      }
+   }
+   implements {
+      Efl.Config.config_set;
+      Efl.Config.config_get;
+      Efl.Config.config_list_get;
+   }
+}

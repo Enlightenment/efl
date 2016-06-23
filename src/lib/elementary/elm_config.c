@@ -6,7 +6,7 @@
 #include "elm_priv.h"
 #include <pwd.h>
 
-#include "efl_config_internal.eo.h"
+#include "efl_config_global.eo.h"
 
 EAPI int ELM_EVENT_CONFIG_ALL_CHANGED = 0;
 EAPI void __efl_internal_elm_config_set(Efl_Config *cfg);
@@ -1682,8 +1682,9 @@ _config_system_load(void)
 static void
 _config_load(void)
 {
-   _efl_config_obj = eo_add(EFL_CONFIG_INTERNAL_CLASS, NULL);
+   _efl_config_obj = eo_add(EFL_CONFIG_GLOBAL_CLASS, NULL);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
+   efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
    _elm_config = _config_user_load();
    if (_elm_config)
      {
@@ -4242,8 +4243,9 @@ _elm_config_profile_set(const char *profile)
 void
 _elm_config_shutdown(void)
 {
-   ELM_SAFE_FREE(_efl_config_obj, eo_del);
    efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_INTERFACE, NULL);
+   efl_loop_register(ecore_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, NULL);
+   ELM_SAFE_FREE(_efl_config_obj, eo_del);
    ELM_SAFE_FREE(_elm_config, _config_free);
    ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
@@ -4363,8 +4365,8 @@ static const struct {
 };
 
 EOLIAN static Eina_Bool
-_efl_config_internal_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
-                                           const char *name, const Eina_Value *val)
+_efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
+                                         const char *name, const Eina_Value *val)
 {
    if (!name) return EINA_FALSE;
    // TODO: if (!val) reset to default
@@ -4526,7 +4528,7 @@ _efl_config_internal_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_U
 }
 
 EOLIAN static Eina_Value *
-_efl_config_internal_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
+_efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
                                            const char *name)
 {
    Eina_Value *val = NULL;
@@ -4654,12 +4656,121 @@ _efl_config_internal_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd 
 }
 
 EOLIAN static Eina_Iterator *
-_efl_config_internal_efl_config_config_list_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
-                                                const char *name)
+_efl_config_global_efl_config_config_list_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
+                                              const char *name)
 {
    // Not implemented: none of the elm_config functions returns a list of primitive types
    (void) name;
    return NULL;
 }
 
-#include "efl_config_internal.eo.c"
+EOLIAN static void
+_efl_config_global_profile_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, const char *profile)
+{
+   elm_config_profile_set(profile);
+}
+
+EOLIAN static const char *
+_efl_config_global_profile_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
+{
+   return elm_config_profile_get();
+}
+
+EOLIAN static Eina_Bool
+_efl_config_global_save(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, const char *profile)
+{
+   return _elm_config_save(_elm_config, profile);
+}
+
+typedef struct
+{
+   Eina_Iterator  iterator;
+   Eina_List     *list;
+   Eina_Iterator *real_iterator;
+   Eo            *object;
+} Profile_Iterator;
+
+static Eina_Bool
+_profile_iterator_next(Profile_Iterator *it, void **data)
+{
+   Efl_Gfx *sub;
+
+   if (!it->object) return EINA_FALSE;
+   if (!eina_iterator_next(it->real_iterator, (void **) &sub))
+     return EINA_FALSE;
+
+   if (data) *data = sub;
+   return EINA_TRUE;
+}
+
+static Eo *
+_profile_iterator_get_container(Profile_Iterator *it)
+{
+   return it->object;
+}
+
+static void
+_profile_iterator_free(Profile_Iterator *it)
+{
+   eina_iterator_free(it->real_iterator);
+   elm_config_profile_list_free(it->list);
+   free(it);
+}
+
+EOLIAN static Eina_Iterator *
+_efl_config_global_profile_iterate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Eina_Bool hidden)
+{
+   Profile_Iterator *it;
+   Eina_List *list;
+
+   list = _elm_config_profiles_list(!hidden);
+   if (!list) return NULL;
+
+   it = calloc(1, sizeof(*it));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->list = list;
+   it->real_iterator = eina_list_iterator_new(it->list);
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_profile_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_profile_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_profile_iterator_free);
+   eo_wref_add(obj, &it->object);
+
+   return &it->iterator;
+}
+
+EOLIAN static Eina_Bool
+_efl_config_global_profile_exists(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, const char *profile)
+{
+   return elm_config_profile_exists(profile);
+}
+
+EOLIAN static Eina_Stringshare *
+_efl_config_global_profile_dir_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, const char *profile, Eina_Bool is_user)
+{
+   Eina_Stringshare *str;
+   const char *dir;
+
+   dir = elm_config_profile_dir_get(profile, is_user);
+   str = eina_stringshare_add(dir);
+   elm_config_profile_dir_free(dir);
+
+   return str;
+}
+
+EOLIAN static void
+_efl_config_global_profile_derived_add(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, const char *profile, const char *options)
+{
+   elm_config_profile_derived_add(profile, options);
+}
+
+EOLIAN static void
+_efl_config_global_profile_derived_del(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, const char *profile)
+{
+   elm_config_profile_derived_del(profile);
+}
+
+#include "efl_config_global.eo.c"

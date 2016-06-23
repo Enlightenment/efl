@@ -269,6 +269,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_win_standard.h>
 
 #ifdef EFL_EO_API_SUPPORT
+# include <efl_config_global.eo.h>
 # include <efl_ui_box.eo.h>
 # include <efl_ui_box_flow.eo.h>
 # include <efl_ui_grid.eo.h>
