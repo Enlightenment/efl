@@ -25,9 +25,9 @@ endif
 EXTRA_PROGRAMS = \
 eio_file_ls \
 eio_file_copy \
-eio_job_open \
-eio_job_open_multi \
-eio_job_ls \
+efl_io_manager_open \
+efl_io_manager_open_multi \
+efl_io_manager_ls \
 eio_sentry
 
 EIO_EXAMPLES_LDADD = \
@@ -48,16 +48,16 @@ eio_file_copy_SOURCES = eio_file_copy.c
 eio_file_copy_LDADD = \
 $(EIO_EXAMPLES_LDADD)
 
-eio_job_open_SOURCES = eio_job_open.c
-eio_job_open_LDADD = \
+efl_io_manager_open_SOURCES = efl_io_manager_open.c
+efl_io_manager_open_LDADD = \
 $(EIO_EXAMPLES_LDADD)
 
-eio_job_open_multi_SOURCES = eio_job_open_multi.c
-eio_job_open_multi_LDADD = \
+efl_io_manager_open_multi_SOURCES = efl_io_manager_open_multi.c
+efl_io_manager_open_multi_LDADD = \
 $(EIO_EXAMPLES_LDADD)
 
-eio_job_ls_SOURCES = eio_job_ls.c
-eio_job_ls_LDADD = \
+efl_io_manager_ls_SOURCES = efl_io_manager_ls.c
+efl_io_manager_ls_LDADD = \
 $(EIO_EXAMPLES_LDADD)
 
 eio_sentry_SOURCES = eio_sentry.c
@@ -67,9 +67,9 @@ $(EIO_EXAMPLES_LDADD)
 SRCS = \
 eio_file_ls.c \
 eio_file_copy.c \
-eio_job_open.c \
-eio_job_open_multi.c \
-eio_job_ls.c \
+efl_io_manager_open.c \
+efl_io_manager_open_multi.c \
+efl_io_manager_ls.c \
 eio_sentry.c
 
 DATA_FILES = Makefile.examples

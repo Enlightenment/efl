@@ -26,11 +26,11 @@ void done_closing_cb(void* data EINA_UNUSED, void *value EINA_UNUSED)
     ecore_main_loop_quit();
 }
 
-void closing_job(Eio_Job *job, Eina_File *file)
+void closing_job(Efl_Io_Manager *job, Eina_File *file)
 {
     Eina_Promise *promise = NULL;
     printf("%s Will close the file...\n", __FUNCTION__);
-    eio_job_file_close(job, file, &promise);
+    efl_io_manager_file_close(job, file, &promise);
     eina_promise_then(promise, &done_closing_cb, &error_cb, job);
 }
 
@@ -41,7 +41,7 @@ void done_open_cb(void *data, void* value)
 
     Eina_File *file = eina_file_dup(value);
 
-    Eio_Job *job = data;
+    Efl_Io_Manager *job = data;
 
     const char *name = eina_file_filename_get(file);
     printf("%s opened file %s\n", __FUNCTION__, name);
@@ -51,8 +51,8 @@ void done_open_cb(void *data, void* value)
 
 void open_file(const char *path)
 {
-    Eio_Job *job = eo_add(EIO_JOB_CLASS, NULL);
-    eina_promise_then(eio_job_file_open(job, path, EINA_FALSE), &done_open_cb, &error_cb, job);
+    Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
+    eina_promise_then(efl_io_manager_file_open(job, path, EINA_FALSE), &done_open_cb, &error_cb, job);
 
     eo_unref(job);
 }

@@ -12,7 +12,7 @@
 
 void done_cb(void *data, void *value EINA_UNUSED)
 {
-    Eio_Job *job = data;
+    Efl_Io_Manager *job = data;
     printf("%s done listing files.\n", __FUNCTION__);
     ecore_main_loop_quit();
     eo_unref(job);
@@ -20,7 +20,7 @@ void done_cb(void *data, void *value EINA_UNUSED)
 
 void error_cb(void *data, Eina_Error error)
 {
-    Eio_Job *job = data;
+    Efl_Io_Manager *job = data;
     const char *msg = eina_error_msg_get(error);
     printf("%s error: %s\n", __FUNCTION__, msg);
     ecore_main_loop_quit();
@@ -51,9 +51,9 @@ void list_files(void *data)
     Eina_Promise *promise;
     const char *path = data;
 
-    Eio_Job *job = eo_add(EIO_JOB_CLASS, NULL);
-    eo_event_callback_add(job, EIO_JOB_EVENT_FILTER_NAME, (Eo_Event_Cb)&filter_cb, NULL);
-    promise = eio_job_file_ls(job, path);
+    Efl_Io_Manager *job = eo_add(EFL_IO_MANAGER_CLASS, NULL);
+    eo_event_callback_add(job, EFL_IO_MANAGER_EVENT_FILTER_NAME, (Eo_Event_Cb)&filter_cb, NULL);
+    promise = efl_io_manager_file_ls(job, path);
     eina_promise_progress_cb_add(promise, (Eina_Promise_Progress_Cb)&progress_cb, NULL, NULL);
     eina_promise_then(promise, &done_cb, &error_cb, job);
 }
