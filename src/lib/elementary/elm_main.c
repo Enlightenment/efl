@@ -18,6 +18,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "ecore_internal.h"
 
 #define SEMI_BROKEN_QUICKLAUNCH 1
 
@@ -321,9 +322,6 @@ _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA
 
    return ECORE_CALLBACK_PASS_ON;
 }
-
-// To be used here only, do not copy that anywhere else for now.
-EAPI void ecore_loop_arguments_send(int argc, const char **argv);
 
 EAPI int
 elm_init(int argc, char **argv)

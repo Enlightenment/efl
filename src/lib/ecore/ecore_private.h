@@ -3,6 +3,8 @@
 
 #include <assert.h>
 
+#include "ecore_internal.h"
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -149,7 +151,6 @@ EAPI void _ecore_magic_fail(const void *d,
                             Ecore_Magic m,
                             Ecore_Magic req_m,
                             const char *fname);
-EAPI void ecore_loop_arguments_send(int argc, const char **argv);
 
 void         _ecore_time_init(void);
 

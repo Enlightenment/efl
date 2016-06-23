@@ -70,7 +70,8 @@ lib/ecore/ecore_thread_promise.c \
 lib/ecore/ecore_throttle.c \
 lib/ecore/ecore_exe.c \
 lib/ecore/ecore_exe_private.h \
-lib/ecore/ecore_private.h
+lib/ecore/ecore_private.h \
+lib/ecore/ecore_internal.h
 
 if HAVE_WIN32
 lib_ecore_libecore_la_SOURCES += lib/ecore/ecore_exe_win32.c

@@ -4,8 +4,7 @@
 
 #include <Ecore.h>
 #include "ecore_suite.h"
-
-EAPI void ecore_loop_arguments_send(int argc, const char **argv);
+#include "ecore_private.h"
 
 static const char *args[] = {
   "a", "b", "c", "d", "e", "f", "g", "h"
