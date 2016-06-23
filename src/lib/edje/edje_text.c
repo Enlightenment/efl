@@ -333,28 +333,22 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
         if (ep->part->scale) efl_canvas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
-        efl_text_properties_font_set(ep->object, font, size);
         efl_text_set(ep->object, text);
-
+        /* the fit shoult not depend on font size, because it give the differet
+         * size calculation. As base font size for calculate fit size I take
+         * 10 (ten), because this value used for calculate fit by Y below */
+        efl_text_properties_font_set(ep->object, font, 10);
         part_get_geometry(ep, &tw, &th);
-        /* Find the wanted font size */
-        if ((tw != sw) && (size > 0) && (tw != 0))
+
+        size = (10 * sw) / tw;
+        efl_text_properties_font_set(ep->object, font, size);
+        part_get_geometry(ep, &tw, &th);
+        while ((tw > sw) && (size > 1))
           {
-             size = (size * sw) / tw;
-
-             if (inlined_font) efl_text_properties_font_source_set(ep->object, ed->path);
-             else efl_text_properties_font_source_set(ep->object, NULL);
-
-             if (ep->part->scale) efl_canvas_object_scale_set(ep->object, TO_DOUBLE(sc));
-
+             size--;
              efl_text_properties_font_set(ep->object, font, size);
-
              part_get_geometry(ep, &tw, &th);
           }
-
-        /* FIXME: This should possibly be replaced by more proper handling,
-         * but it's still way better than what was here before. */
-        if (tw > sw) size--;
      }
    if (chosen_desc->text.fit_y && (ep->typedata.text->cache.in_str && eina_stringshare_strlen(ep->typedata.text->cache.in_str) > 0))
      {
