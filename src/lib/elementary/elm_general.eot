@@ -200,7 +200,7 @@ enum Elm.Focus.Region.Show_Mode
    item, [[As an item.]]
 }
 
-enum Elm.Focus.Move_Policy
+enum Efl.Ui.Focus.Move_Policy
 {
    [[Focus Movement Policy.
      @since 1.10]]
@@ -252,11 +252,10 @@ enum Elm.Prefs.Item_Type
    swallow [[swallow type, bound to an empty 'spot' on the UI meant to receive and display external content]]
 }
 
-
-enum Elm.Slider.Indicator_Visible_Mode
+enum Efl.Ui.Slider.Indicator_Visible_Mode
 {
-   [[
-     Slider's indicator visiblity mode.
+   [[Slider's indicator visiblity mode.
+
      @since 1.13
    ]]
    default,   [[show indicator on mouse down or change in slider value]]
@@ -265,4 +264,24 @@ enum Elm.Slider.Indicator_Visible_Mode
    none       [[Never show the indicator ]]
 }
 
+enum Efl.Ui.Focus.Autoscroll_Mode
+{
+   [[Focus Autoscroll Mode
 
+     @since 1.10
+   ]]
+   show,    [[Directly show the focused region or item automatically.]]
+   none,    [[Do not show the focused region or item automatically.]]
+   bring_in [[Bring in the focused region or item automatically which might invole the scrolling.]]
+}
+
+enum Efl.Ui.Softcursor_Mode
+{
+   [[Software cursor mode.
+
+     @since 1.7
+   ]]
+   auto, [[Auto-detect if a software cursor should be used (default).]]
+   on,   [[Always use a softcursor.]]
+   off   [[Never use a softcursor.]]
+}

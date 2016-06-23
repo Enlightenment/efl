@@ -129,7 +129,7 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
             [[Get the visible mode of indicator.]]
          }
          values {
-            indicator_visible_mode: Elm.Slider.Indicator_Visible_Mode; [[The indicator visible mode.]]
+            indicator_visible_mode: Efl.Ui.Slider.Indicator_Visible_Mode; [[The indicator visible mode.]]
          }
       }
       @property indicator_format_function {

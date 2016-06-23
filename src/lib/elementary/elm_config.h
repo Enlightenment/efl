@@ -793,19 +793,6 @@ EAPI double       elm_config_scroll_thumbscroll_acceleration_weight_get(void);
 EAPI void         elm_config_scroll_thumbscroll_acceleration_weight_set(double weight);
 
 /**
- * Focus Autoscroll Mode
- *
- * @since 1.10
- * @ingroup Elm_Focus
- */
-typedef enum
-{
-   ELM_FOCUS_AUTOSCROLL_MODE_SHOW, /**< directly show the focused region or item automatically */
-   ELM_FOCUS_AUTOSCROLL_MODE_NONE, /**< do not show the focused region or item automatically */
-   ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN /**< bring_in the focused region or item automatically which might invole the scrolling */
-} Elm_Focus_Autoscroll_Mode;
-
-/**
  * Get focus auto scroll mode.
  *
  * When a region or an item is focused and it resides inside any scroller,
@@ -880,13 +867,6 @@ EAPI double       elm_config_longpress_timeout_get(void);
  * @ingroup Longpress
  */
 EAPI void         elm_config_longpress_timeout_set(double longpress_timeout);
-
-typedef enum _Elm_Softcursor_Mode
-{
-   ELM_SOFTCURSOR_MODE_AUTO, /**< Auto-detect if a software cursor should be used (default) */
-   ELM_SOFTCURSOR_MODE_ON, /**< Always use a softcursor */
-   ELM_SOFTCURSOR_MODE_OFF /**< Never use a softcursor */
-} Elm_Softcursor_Mode; /**< @since 1.7 */
 
 /**
  * Set the mode used for software provided mouse cursors inline in the window
