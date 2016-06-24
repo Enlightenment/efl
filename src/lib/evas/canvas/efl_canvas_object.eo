@@ -724,7 +724,7 @@ abstract Efl.Canvas.Object (Eo.Base, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
        key,up @beta; [[Key Release Event ]]
        focus,in; [[Focus In Event ]]
        focus,out; [[Focus Out Event ]]
-       del; [[Object Being Deleted (called before Free) ]]
+       del @beta; [[Object Being Deleted (called before Free) ]]
        hold; [[Events go on/off hold ]]
    }
 }

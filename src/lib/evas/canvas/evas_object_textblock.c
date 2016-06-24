@@ -61,6 +61,9 @@
  * @subsection textblock_layout The layout system
  * @todo write @ref textblock_layout
  */
+
+#define EFL_CANVAS_OBJECT_BETA
+
 #include "evas_common_private.h"
 #include "evas_private.h"
 

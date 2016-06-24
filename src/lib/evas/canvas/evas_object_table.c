@@ -1,3 +1,5 @@
+#define EFL_CANVAS_OBJECT_BETA
+
 #include "evas_common_private.h"
 #include "evas_private.h"
 #include <errno.h>

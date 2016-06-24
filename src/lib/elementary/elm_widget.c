@@ -6,6 +6,8 @@
 #define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
+#define EFL_CANVAS_OBJECT_BETA
+
 #include <Elementary.h>
 
 #include "elm_priv.h"
