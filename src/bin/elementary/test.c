@@ -1036,9 +1036,9 @@ efl_main(void *data EINA_UNUSED,
    /* if called with a single argument try to autorun a test with
     * the same name as the given param
     * ex:  elementary_test "Box Vert 2" */
-   if (eina_array_count(arge->argv) == 2)
+   if (eina_array_count(arge->argv) == 1)
      {
-        if (!strcmp(eina_array_data_get(arge->argv, 1), "--help"))
+        if (!strcmp(eina_array_data_get(arge->argv, 0), "--help"))
           {
              printf("Usages:\n"
                     "$ elementary_test\n"
@@ -1046,19 +1046,20 @@ efl_main(void *data EINA_UNUSED,
                     "$ elementary_test -to [TEST_NAME]\n\n"
                     "Examples:\n"
                     "$ elementary_test -to Button\n\n");
-             return;
+             efl_loop_quit(ev->object, 1);
+             return ;
           }
-        autorun = eina_array_data_get(arge->argv, 1);
+        autorun = eina_array_data_get(arge->argv, 0);
      }
-   else if (eina_array_count(arge->argv) == 3)
+   else if (eina_array_count(arge->argv) == 2)
      {
         /* Just a workaround to make the shot module more
          * useful with elementary test. */
-        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--test-win-only")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 1), "-to")))
+        if ((!strcmp(eina_array_data_get(arge->argv, 0), "--test-win-only")) ||
+            (!strcmp(eina_array_data_get(arge->argv, 0), "-to")))
           {
              test_win_only = EINA_TRUE;
-             autorun = eina_array_data_get(arge->argv, 2);
+             autorun = eina_array_data_get(arge->argv, 1);
           }
      }
 

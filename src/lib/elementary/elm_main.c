@@ -1124,11 +1124,12 @@ elm_quicklaunch_fork(int    argc,
 
    if (qre_main)
      {
+        int ret = 0;
+
         eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
-        elm_run();
+        ret = efl_loop_begin(ecore_main_loop_get());
         elm_shutdown();
-        // FIXME: get value back from the main loop quit ?
-        exit(0);
+        exit(ret);
      }
    else
      {
@@ -1173,7 +1174,7 @@ elm_quicklaunch_fallback(int    argc,
    return ret;
 }
 
-EAPI Eina_Bool
+EAPI int
 efl_quicklaunch_fallback(int    argc,
                          char **argv)
 {
@@ -1184,12 +1185,10 @@ efl_quicklaunch_fallback(int    argc,
    if (efl_quicklaunch_prepare(argc, argv, getcwd(cwd, sizeof(cwd))))
      {
         eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
-        elm_run();
-        // FIXME: get value back from the main loop quit ?
-        return EINA_TRUE;
+        return efl_loop_begin(ecore_main_loop_get());
      }
 
-   return EINA_FALSE;
+   return 255;
 }
 
 EAPI char *
