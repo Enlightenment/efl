@@ -1036,8 +1036,18 @@ evas_object_smart_changed_get(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *o2;
    Eina_Bool has_map = EINA_FALSE;
 
-   if (!evas_object_is_visible(eo_obj, obj) &&
-       !evas_object_was_visible(eo_obj, obj))
+   /* If object is invisible, it's meaningless to figure out changed state
+      for rendering. */
+
+   //a. Object itself visibility
+   if (obj->no_render || !(obj->prev->visible && obj->cur->visible) ||
+       ((obj->prev->color.a == 0) && (obj->cur->color.a == 0)))
+     return EINA_FALSE;
+
+   //b. Object clipper visibility
+   if (!(obj->prev->clipper->cur->visible && obj->cur->clipper->cur->visible) ||
+       ((obj->prev->clipper->cur->color.a == 0) &&
+        (obj->prev->clipper->prev->color.a == 0)))
      return EINA_FALSE;
 
    if (!obj->clip.clipees)
