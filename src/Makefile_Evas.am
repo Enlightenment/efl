@@ -727,7 +727,6 @@ modules_evas_engines_fb_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
-if BUILD_ENGINE_GL_COMMON
 GL_COMMON_SOURCES = \
 modules/evas/engines/gl_common/evas_gl_private.h \
 modules/evas/engines/gl_common/evas_gl_common.h \
@@ -753,7 +752,6 @@ modules/evas/engines/gl_common/evas_gl_api_gles1.c \
 modules/evas/engines/gl_common/evas_gl_api_gles3_def.h \
 modules/evas/engines/gl_common/evas_gl_api_ext.c \
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x \
-modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x \
 $(NULL)
 
 # 3D
@@ -762,7 +760,9 @@ modules/evas/engines/gl_common/evas_gl_3d_common.h \
 modules/evas/engines/gl_common/evas_gl_3d_private.h \
 modules/evas/engines/gl_common/evas_gl_3d.c \
 modules/evas/engines/gl_common/evas_gl_3d_renderer.c \
-modules/evas/engines/gl_common/evas_gl_3d_shader.c
+modules/evas/engines/gl_common/evas_gl_3d_shader.c \
+modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x \
+$(NULL)
 
 EVAS_GL_SHADERS_GEN = \
 modules/evas/engines/gl_common/shader/gen_shaders.sh \
@@ -773,9 +773,11 @@ $(NULL)
 
 EXTRA_DIST2 += $(EVAS_GL_SHADERS_GEN)
 
-modules/evas/engines/gl_common/shader/evas_gl_shaders.x: $(EVAS_GL_SHADERS_GEN)
+modules/evas/engines/gl_common/shader/evas_gl_shaders.x: $(EVAS_GL_SHADERS_GEN) $(top_srcdir)/src/modules/evas/engines/gl_common/shader/gen_shaders.sh
 	@echo "  SHADERS  $@"
-	@sh $(srcdir)/modules/evas/engines/gl_common/shader/gen_shaders.sh
+	@sh $(top_srcdir)/src/modules/evas/engines/gl_common/shader/gen_shaders.sh
+
+modules/evas/engines/gl_common/evas_gl_shader.c: modules/evas/engines/gl_common/shader/evas_gl_shaders.x
 
 # NOTE: order here should be equal with modes in file Evas_Eo.h
 GL_SHADERS_3D_GEN = \
@@ -804,9 +806,11 @@ modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh \
 modules/evas/engines/gl_common/shader_3d/include.shd \
 $(GL_SHADERS_3D_GEN)
 
-modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN) modules/evas/engines/gl_common/shader_3d/include.shd
+modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: $(top_srcdir)/src/modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN) $(top_srcdir)/src/modules/evas/engines/gl_common/shader_3d/include.shd
 	@echo "  SHADERS  $@"
-	@sh $(srcdir)/modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
+	@sh $(top_srcdir)/src/modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
+
+modules/evas/engines/gl_common/evas_gl_3d_shader.c: modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x
 
 
 GL_GENERIC_SOURCES = \
@@ -831,8 +835,7 @@ evas_gl_generic_eolian_h = $(evas_gl_generic_eolian_files:%.eo=%.eo.h) \
 BUILT_SOURCES += \
                  $(evas_gl_generic_eolian_c) \
                  $(evas_gl_generic_eolian_h) \
-                 modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x \
-                 modules/evas/engines/gl_common/shader/evas_gl_shaders.x
+                 $(NULL)
 
 EXTRA_DIST2 += $(evas_gl_generic_eolian_files)
 
@@ -840,6 +843,7 @@ EXTRA_DIST2 += $(evas_gl_generic_eolian_files)
 #evaseolianfiles_DATA += $(evas_gl_generic_eolian_files)
 
 
+if BUILD_ENGINE_GL_COMMON
 if EVAS_STATIC_BUILD_GL_COMMON
 lib_evas_libevas_la_SOURCES += $(GL_COMMON_SOURCES) $(GL_GENERIC_SOURCES)
 lib_evas_libevas_la_LIBADD += @evas_engine_gl_common_libs@
