@@ -2589,8 +2589,8 @@ _edje_dupe_vector_data(Edje *ed, int svg_id, double width, double height,
         sx = width/vector->w;
         sy = height/vector->h;
         eina_matrix3_identity(&matrix);
-        eina_matrix3_translate(&matrix, -vector->x, -vector->y);
         eina_matrix3_scale(&matrix, sx, sy);
+        eina_matrix3_translate(&matrix, -vector->x, -vector->y);
         evas_vg_node_transformation_set(root, &matrix);
      }
 

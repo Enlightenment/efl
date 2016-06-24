@@ -3288,16 +3288,16 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
         sx = w/start->w;
         sy = h/start->h;
         eina_matrix3_identity(&matrix);
-        eina_matrix3_translate(&matrix, -start->x, -start->y);
         eina_matrix3_scale(&matrix, sx, sy);
+        eina_matrix3_translate(&matrix, -start->x, -start->y);
         evas_vg_node_transformation_set(start->vg, &matrix);
 
         // for end vector
         sx = w/end->w;
         sy = h/end->h;
         eina_matrix3_identity(&matrix);
-        eina_matrix3_translate(&matrix, -end->x, -end->y);
         eina_matrix3_scale(&matrix, sx, sy);
+        eina_matrix3_translate(&matrix, -end->x, -end->y);
         evas_vg_node_transformation_set(end->vg, &matrix);
 
         // do the interpolation
@@ -3320,8 +3320,8 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
              sx = w/ep->typedata.vector->cur.w;
              sy = h/ep->typedata.vector->cur.h;
              eina_matrix3_identity(&matrix);
-             eina_matrix3_translate(&matrix, -ep->typedata.vector->cur.x, -ep->typedata.vector->cur.y);
              eina_matrix3_scale(&matrix, sx, sy);
+             eina_matrix3_translate(&matrix, -ep->typedata.vector->cur.x, -ep->typedata.vector->cur.y);
              evas_vg_node_transformation_set(ep->typedata.vector->cur.vg, &matrix);
              return;
           }
