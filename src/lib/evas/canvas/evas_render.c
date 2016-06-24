@@ -1245,8 +1245,8 @@ _proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *p
    /* recurse to the clipper itself.
     * origin of clipper's clipper won't be transformed to derivative space. */
    return _proxy_context_clip(evas, ctx, proxy_render_data, clipper,
-                              (off_x - proxy_render_data->src_obj->cur->geometry.x),
-                              (off_y - proxy_render_data->src_obj->cur->geometry.y));
+                              -proxy_render_data->src_obj->cur->geometry.x,
+                              -proxy_render_data->src_obj->cur->geometry.y);
 }
 
 static void
