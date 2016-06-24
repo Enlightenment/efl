@@ -71,12 +71,14 @@ extern EAPI double _elm_startup_time;
 
 #ifndef ELM_LIB_QUICKLAUNCH
 #define ELM_MAIN() int main(int argc, char **argv) { int ret; _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); ret = elm_main(argc, argv); elm_shutdown(); return ret; } /**< macro to be used after the elm_main() function */
+#define EFL_MAIN() int main(int argc, char **argv) { int ret = 0; _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL); elm_run(); elm_shutdown(); return ret; }
 #else
 /** @deprecated macro to be used after the elm_main() function.
  * Do not define ELM_LIB_QUICKLAUNCH
  * Compile your programs with -fpie and -pie -rdynamic instead, to generate a single binary (linkable executable).
  */
 #define ELM_MAIN() int main(int argc, char **argv) { int ret; _elm_startup_time = ecore_time_unix_get(); ret = elm_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret; }
+#define EFL_MAIN() int main(int argc, char **argv) { int ret = 0; _elm_startup_time = ecore_time_unix_get(); efl_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret; }
 #endif
 
 /**************************************************************************/
@@ -212,6 +214,11 @@ EAPI Eina_Bool elm_quicklaunch_prepare(int argc, char **argv, const char *cwd);
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
+EAPI Eina_Bool efl_quicklaunch_prepare(int argc, char **argv, const char *cwd);
+
+/**
+ * Exposed symbol used only by macros and should not be used by apps
+ */
 EAPI Eina_Bool elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (*postfork_func) (void *data), void *postfork_data);
 
 /**
@@ -223,6 +230,12 @@ EAPI void      elm_quicklaunch_cleanup(void);
  * Exposed symbol used only by macros and should not be used by apps
  */
 EAPI int       elm_quicklaunch_fallback(int argc, char **argv);
+
+/**
+ * Exposed symbol used only by macros and should not be used by apps
+ */
+EAPI Eina_Bool efl_quicklaunch_fallback(int argc, char **argv);
+
 
 /**
  * Exposed symbol used only by macros and should not be used by apps

@@ -151,7 +151,10 @@ handle_run(int fd, unsigned long bytes)
           }
      }
 #endif
-   elm_quicklaunch_prepare(argc, argv, cwd);
+   // Try new form before trying old form
+   if (!efl_quicklaunch_prepare(argc, argv, cwd))
+     elm_quicklaunch_prepare(argc, argv, cwd);
+
    elm_quicklaunch_fork(argc, argv, cwd, post_fork, NULL);
    elm_quicklaunch_cleanup();
 }

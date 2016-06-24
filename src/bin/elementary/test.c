@@ -998,17 +998,32 @@ colorclass_list_cb(void)
    return ret;
 }
 
+static void
+_main_loop_death(void *data EINA_UNUSED,
+                 const Eo_Event *ev EINA_UNUSED)
+{
+   struct elm_test *t;
+
+   EINA_LIST_FREE(tests, t)
+     free(t);
+
+   eina_log_domain_unregister(_log_domain);
+}
+
 /* this is your elementary main function - it MUST be called IMMEDIATELY
  * after elm_init() and MUST be passed argc and argv, and MUST be called
- * elm_main and not be static - must be a visible symbol with EAPI_MAIN infront */
-EAPI_MAIN int
-elm_main(int argc, char **argv)
+ * efl_main and not be static - must be a visible symbol with EAPI_MAIN infront */
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Eo_Event *ev)
 {
+   Efl_Loop_Arguments *arge = ev->info;
    Eina_Bool test_win_only = EINA_FALSE;
    char *autorun = NULL;
-   struct elm_test *t = NULL;
 
    _log_domain = eina_log_domain_register("elementary_test", NULL);
+
+   eo_event_callback_add(ev->object, EO_EVENT_DEL, _main_loop_death, NULL);
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
@@ -1016,14 +1031,14 @@ elm_main(int argc, char **argv)
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
    elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
    elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
-   elm_app_info_set(elm_main, "elementary", "images/logo.png");
+   elm_app_info_set(efl_main, "elementary", "images/logo.png");
 
    /* if called with a single argument try to autorun a test with
     * the same name as the given param
     * ex:  elementary_test "Box Vert 2" */
-   if (argc == 2)
+   if (eina_array_count(arge->argv) == 2)
      {
-        if (!strcmp(argv[1], "--help"))
+        if (!strcmp(eina_array_data_get(arge->argv, 1), "--help"))
           {
              printf("Usages:\n"
                     "$ elementary_test\n"
@@ -1031,19 +1046,19 @@ elm_main(int argc, char **argv)
                     "$ elementary_test -to [TEST_NAME]\n\n"
                     "Examples:\n"
                     "$ elementary_test -to Button\n\n");
-             goto end;
+             return;
           }
-        autorun = argv[1];
+        autorun = eina_array_data_get(arge->argv, 1);
      }
-   else if (argc == 3)
+   else if (eina_array_count(arge->argv) == 3)
      {
         /* Just a workaround to make the shot module more
          * useful with elementary test. */
-        if ((!strcmp(argv[1], "--test-win-only")) ||
-            (!strcmp(argv[1], "-to")))
+        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--test-win-only")) ||
+            (!strcmp(eina_array_data_get(arge->argv, 1), "-to")))
           {
              test_win_only = EINA_TRUE;
-             autorun = argv[2];
+             autorun = eina_array_data_get(arge->argv, 2);
           }
      }
 
@@ -1051,18 +1066,9 @@ elm_main(int argc, char **argv)
    elm_color_class_list_cb_set(colorclass_list_cb);
    /* put here any init specific to this app like parsing args etc. */
    my_win_main(autorun, test_win_only); /* create main window */
-   elm_run(); /* and run the program now and handle all events etc. */
-   /* if the mainloop that elm_run() runs exist - we exit the app */
 
-   EINA_LIST_FREE(tests, t)
-     free(t);
-
-end:
-   eina_log_domain_unregister(_log_domain);
-
-   /* exit code */
-   return 0;
+   /* FIXME: Hum, no exit code anywhere anymore ? */
 }
 /* all elementary apps should use this. but it should be placed right after
- * elm_main() */
-ELM_MAIN()
+ * efl_main() */
+EFL_MAIN()

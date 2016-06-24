@@ -842,6 +842,8 @@ static void *qr_handle = NULL;
 #endif
 static int (*qr_main)(int    argc,
                       char **argv) = NULL;
+static void (*qre_main)(void *data,
+                        const Eo_Event *ev) = NULL;
 
 EAPI Eina_Bool
 elm_quicklaunch_prepare(int    argc,
@@ -933,6 +935,94 @@ elm_quicklaunch_prepare(int    argc,
 }
 
 EAPI Eina_Bool
+efl_quicklaunch_prepare(int    argc,
+                        char **argv,
+                        const char *cwd)
+{
+#ifdef HAVE_FORK
+   char *exe, *exe2, *p;
+   char *exename;
+
+   if (argc <= 0 || argv == NULL) return EINA_FALSE;
+
+   exe = elm_quicklaunch_exe_path_get(argv[0], cwd);
+   if (!exe)
+     {
+        ERR("requested quicklaunch binary '%s' does not exist\n", argv[0]);
+        return EINA_FALSE;
+     }
+
+   exe2 = malloc(strlen(exe) + 1 + 7 + strlen(LIBEXT));
+   strcpy(exe2, exe);
+   p = strrchr(exe2, '/');
+   if (p) p++;
+   else p = exe2;
+   exename = alloca(strlen(p) + 1);
+   strcpy(exename, p);
+   *p = 0;
+   strcat(p, "../lib/");
+   strcat(p, exename);
+   strcat(p, LIBEXT);
+   if (access(exe2, R_OK | X_OK) != 0)
+     ELM_SAFE_FREE(exe2, free);
+   /* Try linking to executable first. Works with PIE files. */
+   qr_handle = dlopen(exe, RTLD_NOW | RTLD_GLOBAL);
+   if (qr_handle)
+     {
+        INF("dlopen('%s') = %p", exe, qr_handle);
+        qre_main = dlsym(qr_handle, "efl_main");
+        if (qre_main)
+          {
+             INF("dlsym(%p, 'elm_main') = %p", qr_handle, qre_main);
+             free(exe2);
+             free(exe);
+             return EINA_TRUE;
+          }
+        dlclose(qr_handle);
+        qr_handle = NULL;
+     }
+
+   if (!exe2)
+     {
+        WRN("not quicklauncher capable: '%s'", exe);
+        free(exe);
+        return EINA_FALSE;
+     }
+   free(exe);
+
+   /* Open companion .so file.
+    * Support for legacy quicklaunch apps with separate library.
+    */
+   qr_handle = dlopen(exe2, RTLD_NOW | RTLD_GLOBAL);
+   if (!qr_handle)
+     {
+        fprintf(stderr, "dlerr: %s\n", dlerror());
+        WRN("dlopen('%s') failed: %s", exe2, dlerror());
+        free(exe2);
+        return EINA_FALSE;
+     }
+   INF("dlopen('%s') = %p", exe2, qr_handle);
+   qre_main = dlsym(qr_handle, "efl_main");
+   INF("dlsym(%p, 'elm_main') = %p", qr_handle, qre_main);
+   if (!qre_main)
+     {
+        WRN("not quicklauncher capable: no efl_main in '%s'", exe2);
+        dlclose(qr_handle);
+        qr_handle = NULL;
+        free(exe2);
+        return EINA_FALSE;
+     }
+   free(exe2);
+   return EINA_TRUE;
+#else
+   (void)argc;
+   (void)argv;
+   (void)cwd;
+   return EINA_FALSE;
+#endif
+}
+
+EAPI Eina_Bool
 elm_quicklaunch_fork(int    argc,
                      char **argv,
                      char  *cwd,
@@ -943,7 +1033,7 @@ elm_quicklaunch_fork(int    argc,
    pid_t child;
    int ret;
 
-   if (!qr_main)
+   if (!qr_main && !qre_main)
      {
         int i;
         char **args;
@@ -1031,8 +1121,20 @@ elm_quicklaunch_fork(int    argc,
    ecore_app_args_set(argc, (const char **)argv);
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
      _elm_atspi_bridge_init();
-   ret = qr_main(argc, argv);
-   exit(ret);
+
+   if (qre_main)
+     {
+        eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
+        elm_run();
+        elm_shutdown();
+        // FIXME: get value back from the main loop quit ?
+        exit(0);
+     }
+   else
+     {
+        ret = qr_main(argc, argv);
+        exit(ret);
+     }
    return EINA_TRUE;
 #else
    return EINA_FALSE;
@@ -1069,6 +1171,25 @@ elm_quicklaunch_fallback(int    argc,
    ret = qr_main(argc, argv);
    exit(ret);
    return ret;
+}
+
+EAPI Eina_Bool
+efl_quicklaunch_fallback(int    argc,
+                         char **argv)
+{
+   /* int ret; */
+   char cwd[PATH_MAX];
+   elm_quicklaunch_init(argc, argv);
+   elm_quicklaunch_sub_init(argc, argv);
+   if (efl_quicklaunch_prepare(argc, argv, getcwd(cwd, sizeof(cwd))))
+     {
+        eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
+        elm_run();
+        // FIXME: get value back from the main loop quit ?
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
 }
 
 EAPI char *
