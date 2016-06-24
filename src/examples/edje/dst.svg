@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" >
-  <g transform="translate(25,25)">
+  <g transform="translate(50,50)">
     <path d="M38,-1h12v2h-12zM-38-1h-12v2h12z"/>
     <path d="M40,-1h8v2h-8zM-40-1h-8v2h8z" transform="rotate(30)"/>
     <path d="M40,-1h8v2h-8zM-40-1h-8v2h8z" transform="rotate(60)"/>
