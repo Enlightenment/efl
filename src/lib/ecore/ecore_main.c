@@ -273,6 +273,7 @@ static int _ecore_main_win32_select(int             nfds,
 static void _ecore_main_win32_handlers_cleanup(void);
 #endif
 
+static unsigned char _ecore_exit_code = 0;
 static int in_main_loop = 0;
 static int do_quit = 0;
 static Ecore_Fd_Handler *fd_handlers = NULL;
@@ -2733,16 +2734,18 @@ EOLIAN static int _efl_loop_iterate_may_block(Eo *obj EINA_UNUSED, Efl_Loop_Data
    return ecore_main_loop_iterate_may_block(may_block);
 }
 
-EOLIAN static void
+EOLIAN static unsigned char
 _efl_loop_begin(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
 {
    ecore_main_loop_begin();
+   return _ecore_exit_code;
 }
 
 EOLIAN static void
-_efl_loop_quit(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+_efl_loop_quit(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, unsigned char exit_code)
 {
    ecore_main_loop_quit();
+   _ecore_exit_code = exit_code;
 }
 
 EOLIAN static Eo_Base *

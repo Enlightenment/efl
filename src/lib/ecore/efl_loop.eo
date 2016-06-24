@@ -29,10 +29,14 @@ class Efl.Loop (Eo.Base)
       }
       begin {
          [[Runs the application main loop.]]
+	 return: ubyte; [[Value set by quit()]]
       }
       quit {
          [[Quits the main loop once all the events currently on the queue have
          been processed.]]
+	 params {
+	    @in exit_code: ubyte; [[Returned value by begin()]]
+	 }
       }
       job {
          [[Will execute that promise in the near future.]]
