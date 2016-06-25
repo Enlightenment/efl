@@ -465,37 +465,6 @@ EAPI Ecore_Cocoa_Object *ecore_cocoa_window_get(const Ecore_Cocoa_Window *window
    EINA_ARG_NONNULL(1)
    EINA_WARN_UNUSED_RESULT;
 
-/**
- * Set the clipboard of Cocoa (NSPasteboard)
- * @param data The contents to be set in the clipboard
- * @param size The size in bytes of @c data
- * @param type
- * @return EINA_TRUE on success, EINA_FALSE on failure
- */
-EAPI Eina_Bool ecore_cocoa_clipboard_set(const void *data,
-                                                   int size,
-                                                   Ecore_Cocoa_Cnp_Type type);
-
-/**
- * Get the contents of the Cocoa clipboard
- * @param size Pointer used to retrieve the size of the received contents
- * @param type The type of object to retrieve from the clipboard
- * @param retrieved_types The types of objects retrieved from the clipboard
- * @return The data retrieved from the clipboard. NULL on failure
- *
- * If @c type was ECORE_COCOA_CNP_TYPE_STRING or ECORE_COCOA_CNP_TYPE_MARKUP,
- * @c retrieved_types will contain ECORE_COCOA_CNP_TYPE_STRING and the data
- * will be a C string (char*) that must be freed after use.
- */
-EAPI void *ecore_cocoa_clipboard_get(int *size,
-                                     Ecore_Cocoa_Cnp_Type type,
-                                     Ecore_Cocoa_Cnp_Type *retrieved_types)
-   EINA_WARN_UNUSED_RESULT;
-
-/**
- * Deletes the contents of the Cocoa clipboard
- */
-EAPI void ecore_cocoa_clipboard_clear(void);
 
 /**
  * Set the Cocoa cursor for a given Cocoa window
@@ -514,6 +483,48 @@ EAPI void ecore_cocoa_window_cursor_set(Ecore_Cocoa_Window *win,
  */
 EAPI void ecore_cocoa_window_cursor_show(Ecore_Cocoa_Window *win, Eina_Bool show);
    EINA_ARG_NONNULL(1);
+
+
+
+/*
+ * The clipboard API is still BETA
+ */
+
+#ifdef EFL_BETA_API_SUPPORT
+
+/*
+ * Set the clipboard of Cocoa (NSPasteboard)
+ * @param data The contents to be set in the clipboard
+ * @param size The size in bytes of @c data
+ * @param type
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ */
+EAPI Eina_Bool ecore_cocoa_clipboard_set(const void *data,
+                                                   int size,
+                                                   Ecore_Cocoa_Cnp_Type type);
+
+/*
+ * Get the contents of the Cocoa clipboard
+ * @param size Pointer used to retrieve the size of the received contents
+ * @param type The type of object to retrieve from the clipboard
+ * @param retrieved_types The types of objects retrieved from the clipboard
+ * @return The data retrieved from the clipboard. NULL on failure
+ *
+ * If @c type was ECORE_COCOA_CNP_TYPE_STRING or ECORE_COCOA_CNP_TYPE_MARKUP,
+ * @c retrieved_types will contain ECORE_COCOA_CNP_TYPE_STRING and the data
+ * will be a C string (char*) that must be freed after use.
+ */
+EAPI void *ecore_cocoa_clipboard_get(int *size,
+                                     Ecore_Cocoa_Cnp_Type type,
+                                     Ecore_Cocoa_Cnp_Type *retrieved_types)
+   EINA_WARN_UNUSED_RESULT;
+
+/*
+ * Deletes the contents of the Cocoa clipboard
+ */
+EAPI void ecore_cocoa_clipboard_clear(void);
+
+#endif /* EFL_BETA_API_SUPPORT */
 
 #ifdef __cplusplus
 }
