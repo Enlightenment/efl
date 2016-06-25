@@ -102,3 +102,4 @@ collections {
          SVG_PROGRAM("bg16", "vg16")
       }
    }
+}
