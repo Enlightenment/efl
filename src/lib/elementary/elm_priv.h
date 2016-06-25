@@ -13,11 +13,6 @@
 #include <Ecore_Drm2.h>
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
-/* Ecore_Cocoa is still in Beta. In Elementary, we know what we are
- * doing, so let's silent the disclaimer... */
-# ifndef ECORE_COCOA_WIP_GNSIDNQI
-#  define ECORE_COCOA_WIP_GNSIDNQI
-#endif
 # include <Ecore_Cocoa.h>
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
