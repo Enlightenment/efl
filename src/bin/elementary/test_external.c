@@ -180,3 +180,25 @@ test_external_video(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_resize(win, 320, 400);
    evas_object_show(win);
 }
+
+void
+test_external_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *ly;
+   char buf[PATH_MAX];
+
+   win = elm_win_util_standard_add("ext_icon", "Edje External Icon");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   ly = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/test_external.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "external/icon");
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, ly);
+   evas_object_show(ly);
+
+   elm_layout_signal_emit(ly, "elm_test,animations,start", "elm_test");
+
+   evas_object_resize(win, 320, 400);
+   evas_object_show(win);
+}

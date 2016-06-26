@@ -1028,4 +1028,153 @@ embryo script and from C code.";
          }
       }
    }
+   group { name: "external/icon";
+      parts {
+         COMMON_EXTERNAL_UNDER
+         part { name: "icon_1"; type: EXTERNAL;
+            source: "elm/icon";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               align: 0.0 0.0;
+               min: 64 64;
+               max: 64 64;
+               fixed: 1 1;
+               params {
+                  string: "icon" "apps";
+                  bool: "smooth" 1;
+               }
+               map {
+                  on: 1;
+                  smooth: 1;
+                  rotation.center: "icon_1";
+               }
+            }
+            description { state: "rotate" 0.0;
+               inherit: "default" 0.0;
+               map.rotation.z: 360.0;
+            }
+         }
+         part { name: "icon_3_bg"; type: RECT;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               color: 255 0 0 127;
+               rel1.relative: 0.0 0.5;
+               rel2.relative: 0.5 1.0;
+            }
+            description { state: "anim" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.5 0.5;
+               rel2.relative: 0.5 0.5;
+            }
+         }
+         part { name: "icon_3"; type: EXTERNAL;
+            source: "elm/icon";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel.to: "icon_3_bg";
+               params {
+                  string: "icon" "refresh";
+                  bool: "scale up" 0;
+                  bool: "scale down" 0;
+               }
+            }
+         }
+         part { name: "info3"; type: TEXT;
+            description { state: "default" 0.0;
+               clip_to: "clip";
+               rel1.relative: 0.0 0.9;
+               text {
+                  text: "ScaleUp:0 ScaleDown:0";
+                  size: 10;
+                  align: 0.0 1.0;
+               }
+            }
+         }
+         part { name: "icon_2"; type: EXTERNAL;
+            source: "elm/icon";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1.relative: 0.9 0.9;
+               align: 0.0 0.0;
+               params {
+                  string: "icon" "clock";
+                  bool: "scale up" 1;
+                  bool: "scale down" 1;
+               }
+            }
+            description { state: "anim" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.2 0.2;
+            }
+         }
+         part { name: "info2"; type: TEXT;
+            description { state: "default" 0.0;
+               clip_to: "clip";
+               rel1.relative: 0.5 0.9;
+               text {
+                  align: 1.0 1.0;
+                  text: "ScaleUp:1 ScaleDown:1";
+                  size: 10;
+               }
+            }
+         }
+         part { name: "icon_4"; type: EXTERNAL;
+            source: "elm/icon";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1.relative: 0.5 0.0;
+               rel2.relative: 1.0 0.5;
+               params {
+                  string: "icon" "starred";
+               }
+            }
+         }
+         COMMON_EXTERNAL_OVER
+      }
+
+      programs {
+         COMMON_EXTERNAL_PROGRAM
+         program { signal: "elm_test,animations,start"; source: "elm_test";
+            after: "rotate_icon1";
+            after: "animate_icon2";
+            after: "animate_icon3";
+         }
+         program { name: "rotate_icon1";
+            action: STATE_SET "rotate" 0.0;
+            target: "icon_1";
+            transition: LINEAR 2.0;
+            after: "loop_rotate";
+         }
+         program { name: "loop_rotate";
+            action: STATE_SET "default" 0.0;
+            target: "icon_1";
+            after: "rotate_icon1";
+         }
+         program { name: "animate_icon2";
+            action: STATE_SET "anim" 0.0;
+            transition: ACCELERATE 4.0;
+            target: "icon_2";
+            after: "loop_animate";
+         }
+         program { name: "loop_animate";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 4.0;
+            target: "icon_2";
+            after: "animate_icon2";
+         }
+         program { name: "animate_icon3";
+            action: STATE_SET "anim" 0.0;
+            transition: ACCELERATE 4.0;
+            target: "icon_3_bg";
+            after: "loop_animate3";
+         }
+         program { name: "loop_animate3";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 4.0;
+            target: "icon_3_bg";
+            after: "animate_icon3";
+         }
+
+      }
+   }
 }

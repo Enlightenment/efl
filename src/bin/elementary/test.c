@@ -262,6 +262,7 @@ void test_external_slider(void *data, Evas_Object *obj, void *event_info);
 void test_external_scroller(void *data, Evas_Object *obj, void *event_info);
 void test_external_pbar(void *data, Evas_Object *obj, void *event_info);
 void test_external_video(void *data, Evas_Object *obj, void *event_info);
+void test_external_icon(void *data, Evas_Object *obj, void *event_info);
 void test_config(void *data, Evas_Object *obj, void *event_info);
 void test_video(void *data, Evas_Object *obj, void *event_info);
 void test_eio(void *data, Evas_Object *obj, void *event_info);
@@ -677,6 +678,7 @@ add_tests:
    ADD_TEST(NULL, "Edje External", "ExtScroller", test_external_scroller);
    ADD_TEST(NULL, "Edje External", "ExtSlider", test_external_slider);
    ADD_TEST(NULL, "Edje External", "ExtVideo", test_external_video);
+   ADD_TEST(NULL, "Edje External", "ExtIcon", test_external_icon);
 
    //------------------------------//
    ADD_TEST(NULL, "Toolbars", "Toolbar", test_toolbar);
