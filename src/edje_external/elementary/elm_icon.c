@@ -20,7 +20,6 @@ typedef struct _Elm_Params_Icon
    const char *icon;
 } Elm_Params_Icon;
 
-static Elm_Params_Icon *param_icon;
 
 static void
 external_icon_state_set(void *data EINA_UNUSED, Evas_Object *obj,
@@ -30,6 +29,7 @@ external_icon_state_set(void *data EINA_UNUSED, Evas_Object *obj,
    const Elm_Params_Icon *p;
    Evas_Object *edje;
    const char *file;
+   Eina_Bool param;
 
    if (to_params) p = to_params;
    else if (from_params) p = from_params;
@@ -38,46 +38,39 @@ external_icon_state_set(void *data EINA_UNUSED, Evas_Object *obj,
    if (p->file)
      {
         elm_image_file_set(obj, p->file, NULL);
-        param_icon->file = p->file;
      }
    if (p->smooth_exists)
      {
         elm_image_smooth_set(obj, p->smooth);
-        param_icon->smooth = p->smooth;
      }
    if (p->no_scale_exists)
      {
         elm_image_no_scale_set(obj, p->no_scale);
-        param_icon->no_scale = p->no_scale;
      }
    if (p->scale_up_exists && p->scale_down_exists)
      {
         elm_image_resizable_set(obj, p->scale_up, p->scale_down);
-        param_icon->scale_up = p->scale_up;
-        param_icon->scale_down = p->scale_down;
      }
    else if (p->scale_up_exists || p->scale_down_exists)
      {
         if (p->scale_up_exists)
           {
-             elm_image_resizable_set(obj, p->scale_up, param_icon->scale_down);
-             param_icon->scale_up = p->scale_up;
+             elm_image_resizable_get(obj, NULL, &param);
+             elm_image_resizable_set(obj, p->scale_up, param);
           }
         else
           {
-             elm_image_resizable_set(obj, param_icon->scale_up, p->scale_down);
-             param_icon->scale_down = p->scale_down;
+             elm_image_resizable_get(obj, &param, NULL);
+             elm_image_resizable_set(obj, param, p->scale_down);
           }
      }
    if (p->fill_outside_exists)
      {
         elm_image_fill_outside_set(obj, p->fill_outside);
-        param_icon->fill_outside = p->fill_outside;
      }
    if (p->prescale_size_exists)
      {
         elm_image_prescale_set(obj, p->prescale_size);
-        param_icon->prescale_size = p->prescale_size;
      }
    if (p->icon)
      {
@@ -103,55 +96,49 @@ external_icon_param_set(void *data EINA_UNUSED, Evas_Object *obj,
 {
    Evas_Object *edje;
    const char *file;
+   Eina_Bool p;
 
    if (!strcmp(param->name, "file")
        && param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
      {
-        Eina_Bool ret = elm_image_file_set(obj, param->s, NULL);
-        if (ret)
-          param_icon->file = param->s;
-        return ret;
+        return elm_image_file_set(obj, param->s, NULL);
      }
    else if (!strcmp(param->name, "smooth")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
         elm_image_smooth_set(obj, param->i);
-        param_icon->smooth = param->i;
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "no scale")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
         elm_image_no_scale_set(obj, param->i);
-        param_icon->no_scale = param->i;
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "scale up")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
-        elm_image_resizable_set(obj, param->i, param_icon->scale_down);
-        param_icon->scale_up = param->i;
+        elm_image_resizable_get(obj, NULL, &p);
+        elm_image_resizable_set(obj, param->i, p);
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "scale down")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
-        elm_image_resizable_set(obj, param_icon->scale_up, param->i);
-        param_icon->scale_down = param->i;
+        elm_image_resizable_get(obj, &p, NULL);
+        elm_image_resizable_set(obj, p, param->i);
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "fill outside")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
         elm_image_fill_outside_set(obj, param->i);
-        param_icon->fill_outside = param->i;
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "prescale")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_INT)
      {
         elm_image_prescale_set(obj, param->i);
-        param_icon->prescale_size = param->i;
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "icon"))
@@ -183,49 +170,50 @@ external_icon_param_set(void *data EINA_UNUSED, Evas_Object *obj,
 
 static Eina_Bool
 external_icon_param_get(void *data EINA_UNUSED,
-                        const Evas_Object *obj EINA_UNUSED,
+                        const Evas_Object *obj,
                         Edje_External_Param *param)
 {
+
    if (!strcmp(param->name, "file")
        && param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
      {
-        param->s = param_icon->file;
+        elm_image_file_get(obj, &param->s, NULL);
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "smooth")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
-        param->i = param_icon->smooth;
+        param->i = elm_image_smooth_get(obj);
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "no scale")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
-        param->i = param_icon->no_scale;
+        param->i = elm_image_no_scale_get(obj);
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "scale up")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
-        param->i = param_icon->scale_up;
+        elm_image_resizable_get(obj, NULL, (Eina_Bool *)(&param->i));
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "scale down")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
-        param->i = param_icon->scale_down;
+        elm_image_resizable_get(obj, (Eina_Bool *)(&param->i), NULL);
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "fill outside")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
-        param->i = param_icon->fill_outside;
+        param->i = elm_image_fill_outside_get(obj);
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "prescale")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_INT)
      {
-        param->i = param_icon->prescale_size;
+        param->i = elm_image_prescale_get(obj);
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "icon"))
@@ -247,9 +235,8 @@ external_icon_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    Elm_Params_Icon *mem;
    Edje_External_Param *param;
    const Eina_List *l;
-   param_icon = calloc(1, sizeof(Elm_Params_Icon));
    mem = ELM_NEW(Elm_Params_Icon);
-   if (!mem)
+   if (EINA_UNLIKELY(!mem))
      return NULL;
 
    EINA_LIST_FOREACH(params, l, param)
@@ -311,10 +298,6 @@ external_icon_params_free(void *params)
 
    if (mem->file)
      eina_stringshare_del(mem->file);
-
-   if (param_icon->file)
-     eina_stringshare_del(param_icon->file);
-   free(param_icon);
 
    if (mem->icon)
      eina_stringshare_del(mem->icon);
