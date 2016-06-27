@@ -514,6 +514,7 @@ _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    if (!window) return;
 
    window->input = input;
+   input->focus.prev_pointer = NULL;
    input->focus.pointer = window;
 
    _ecore_wl2_input_mouse_in_send(input, window);
@@ -536,6 +537,7 @@ _pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    if (!input) return;
 
    input->display->serial = serial;
+   input->focus.prev_pointer = input->focus.pointer;
    input->focus.pointer = NULL;
 
    /* trap for a surface that was just destroyed */

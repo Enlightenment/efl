@@ -370,6 +370,7 @@ struct _Ecore_Wl2_Input
    struct
      {
         Ecore_Wl2_Window *pointer;
+        Ecore_Wl2_Window *prev_pointer;
         Ecore_Wl2_Window *keyboard;
         Ecore_Wl2_Window *touch;
      } focus;

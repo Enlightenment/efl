@@ -147,6 +147,8 @@ data_source_event_emit(Ecore_Wl2_Input *input, int event)
 
    if (input->focus.pointer)
      ev->win = input->focus.pointer->id;
+   else if (input->focus.prev_pointer)
+     ev->win = input->focus.prev_pointer->id;
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
@@ -360,6 +362,8 @@ _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
 
    if (input->focus.pointer)
      ev->win = input->focus.pointer->id;
+   else if (input->focus.prev_pointer)
+     ev->win = input->focus.prev_pointer->id;
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
@@ -381,6 +385,8 @@ _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, uint32_t serial)
 
    if (input->focus.pointer)
      ev->win = input->focus.pointer->id;
+   else if (input->focus.prev_pointer)
+     ev->win = input->focus.prev_pointer->id;
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
@@ -405,6 +411,8 @@ _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input)
      {
         if (input->focus.pointer)
           ev->win = input->focus.pointer->id;
+        else if (input->focus.prev_pointer)
+          ev->win = input->focus.prev_pointer->id;
         if (input->focus.keyboard)
           ev->source = input->focus.keyboard->id;
 
@@ -562,6 +570,8 @@ ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input)
 
    if (input->focus.pointer)
      ev->win = input->focus.pointer->id;
+   else if (input->focus.prev_pointer)
+     ev->win = input->focus.prev_pointer->id;
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
