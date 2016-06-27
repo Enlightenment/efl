@@ -1841,13 +1841,13 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         uvw = source->cur->geometry.w;
         uvh = source->cur->geometry.h;
         /* check source_clip since we skip proxy_subrender here */
-        if (o->proxy_src_clip)
+        if (o->proxy_src_clip && source->cur->clipper)
           {
              ENFN->context_clip_clip(ENDT, context,
-                                     source->cur->cache.clip.x + x,
-                                     source->cur->cache.clip.y + y,
-                                     source->cur->cache.clip.w,
-                                     source->cur->cache.clip.h);
+                                     source->cur->clipper->cur->cache.clip.x + x,
+                                     source->cur->clipper->cur->cache.clip.y + y,
+                                     source->cur->clipper->cur->cache.clip.w,
+                                     source->cur->clipper->cur->cache.clip.h);
           }
      }
    else
