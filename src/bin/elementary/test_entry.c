@@ -687,7 +687,7 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 static void
 my_pop_close_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-  Evas_Object *btn, *pop, *en;
+  Evas_Object *pop, *en;
   pop = data;
   en = elm_object_parent_widget_get(pop);
   elm_object_text_set(en, "This is very long text,"
