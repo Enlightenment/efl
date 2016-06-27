@@ -2955,6 +2955,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 //   elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    efl_text_set(en, "Hello world!\nGoodbye world!\n"
          "Another line\nAnd another line\nYet another line!");
+   efl_ui_text_interactive_editable_set(en, EINA_TRUE);
    cur = efl_ui_text_cursor_new(en);
    efl_canvas_text_cursor_position_set(cur, 2);
    efl_canvas_text_cursor_object_item_insert(cur, "size=32x32 href=emoticon");
