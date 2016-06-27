@@ -774,8 +774,10 @@ $(NULL)
 EXTRA_DIST2 += $(EVAS_GL_SHADERS_GEN)
 
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x: $(EVAS_GL_SHADERS_GEN) $(top_srcdir)/src/modules/evas/engines/gl_common/shader/gen_shaders.sh
-	@echo "  SHADERS  $@"
-	@sh $(top_srcdir)/src/modules/evas/engines/gl_common/shader/gen_shaders.sh
+	@if [ "x$(EFL_SHD_REGEN)" = "x1" ] ; then \
+	  echo "  SHADERS  $@" ; \
+	  sh $(top_srcdir)/src/modules/evas/engines/gl_common/shader/gen_shaders.sh ; \
+	fi
 
 modules/evas/engines/gl_common/evas_gl_shader.c: modules/evas/engines/gl_common/shader/evas_gl_shaders.x
 
@@ -807,8 +809,10 @@ modules/evas/engines/gl_common/shader_3d/include.shd \
 $(GL_SHADERS_3D_GEN)
 
 modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: $(top_srcdir)/src/modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN) $(top_srcdir)/src/modules/evas/engines/gl_common/shader_3d/include.shd
-	@echo "  SHADERS  $@"
-	@sh $(top_srcdir)/src/modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
+	@if [ "x$(EFL_SHD_REGEN)" = "x1" ] ; then \
+	  echo "  SHADERS  $@" ; \
+	  sh $(top_srcdir)/src/modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN) ; \
+	fi
 
 modules/evas/engines/gl_common/evas_gl_3d_shader.c: modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x
 
