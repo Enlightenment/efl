@@ -116,6 +116,7 @@ _label_slide_change(Evas_Object *obj)
         tb = edje_object_part_object_get(wd->resize_obj, "elm.text");
         evas_object_textblock_size_native_get(tb, &tb_w, NULL);
         evas_object_geometry_get(wd->resize_obj, NULL, NULL, &w, NULL);
+        if (w <= 0) return;
 
         if (sd->ellipsis)
           {
