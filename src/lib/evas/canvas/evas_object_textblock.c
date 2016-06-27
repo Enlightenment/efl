@@ -9006,19 +9006,17 @@ _evas_textblock_node_format_remove_matching(Efl_Canvas_Text_Data *o,
                        if (_FORMAT_IS_CLOSER_OF(
                                 fnode->orig_format, fstr + 1, fstr_len - 1))
                          {
-                            Eina_Bool have_annotation = !!fmt->annotation;
+                            Efl_Canvas_Text_Annotation *an = fmt->annotation;
 
                             fnode = eina_list_data_get(i);
                             formats = eina_list_remove_list(formats, i);
                             _evas_textblock_node_format_remove(o, fnode, 0);
                             _evas_textblock_node_format_remove(o, fmt, 0);
 
-                            /* Only matching format nodes may be the result
-                             * of an annotation. */
-                            if (have_annotation)
+                            if (an)
                               {
                                  _evas_textblock_annotation_remove(
-                                       o, fmt->annotation, EINA_FALSE);
+                                       o, an, EINA_FALSE);
                               }
                             break;
                          }
