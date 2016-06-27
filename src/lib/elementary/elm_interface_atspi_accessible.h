@@ -79,6 +79,15 @@ EAPI Elm_Atspi_Relation_Set elm_atspi_relation_set_clone(const Elm_Atspi_Relatio
    } while(0); }
 
 /**
+ * Emits ATSPI 'BoundsChanged' dbus signal.
+ */
+#define elm_interface_atspi_accessible_bounds_changed_signal_emit(obj, x, y, width, height) \
+   do { \
+         Elm_Atspi_Event_Geometry_Changed_Data evinfo = { x, y, width, height }; \
+         elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_BOUNDS_CHANGED, (void*)&evinfo); \
+   } while(0);
+
+/**
  * Emits ATSPI 'PropertyChanged' dbus signal for 'Name' property.
  */
 #define elm_interface_atspi_accessible_name_changed_signal_emit(obj) \

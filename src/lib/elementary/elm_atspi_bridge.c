@@ -116,6 +116,7 @@ static int _init_count = 0;
 
 // Object Event handlers
 static void _state_changed_signal_send(void *data, const Eo_Event *event);
+static void _bounds_changed_signal_send(void *data, const Eo_Event *event);
 static void _property_changed_signal_send(void *data, const Eo_Event *event);
 static void _children_changed_signal_send(void *data, const Eo_Event *event);
 static void _window_signal_send(void *data, const Eo_Event *event);
@@ -150,6 +151,7 @@ typedef struct {
 static const Elm_Atspi_Bridge_Event_Handler event_handlers[] = {
    { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED, _children_changed_signal_send},
    { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, _property_changed_signal_send},
+   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_BOUNDS_CHANGED, _bounds_changed_signal_send},
    { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_STATE_CHANGED, _state_changed_signal_send},
    { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_VISIBLE_DATA_CHANGED, _visible_data_changed_signal_send},
    { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_ACTIVE_DESCENDANT_CHANGED, _active_descendant_changed_signal_send},
@@ -234,7 +236,7 @@ enum _Atspi_Window_Signals
 
 static const Eldbus_Signal _event_obj_signals[] = {
    [ATSPI_OBJECT_EVENT_PROPERTY_CHANGED] = {"PropertyChange", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
-   [ATSPI_OBJECT_EVENT_BOUNDS_CHANGED] = {"BoundsChange", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
+   [ATSPI_OBJECT_EVENT_BOUNDS_CHANGED] = {"BoundsChanged", ELDBUS_ARGS({"siiv(iiii)", NULL}), 0},
    [ATSPI_OBJECT_EVENT_LINK_SELECTED] = {"LinkSelected", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_OBJECT_EVENT_STATE_CHANGED] = {"StateChanged", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_OBJECT_EVENT_CHILDREN_CHANGED] = {"ChildrenChanged", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
@@ -3718,6 +3720,8 @@ _set_broadcast_flag(const char *event, Eo *bridge)
           STATE_TYPE_SET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_ACTIVE_DESCENDANT_CHANGED);
         else if (!strcmp(tokens[1], "SelectionChanged"))
           STATE_TYPE_SET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_SELECTION_CHANGED);
+        else if (!strcmp(tokens[1], "BoundsChanged"))
+          STATE_TYPE_SET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_BOUNDS_CHANGED);
      }
    else if (!strcmp(tokens[0], "Window"))
      {
@@ -3823,6 +3827,16 @@ _state_changed_signal_send(void *data, const Eo_Event *event)
 
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
                        &_event_obj_signals[ATSPI_OBJECT_EVENT_STATE_CHANGED], type_desc, state_data->new_value, 0, NULL);
+}
+
+static void
+_bounds_changed_signal_send(void *data, const Eo_Event *event)
+{
+   Elm_Atspi_Event_Geometry_Changed_Data *geo_data = event->info;
+
+   _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
+                       &_event_obj_signals[ATSPI_OBJECT_EVENT_BOUNDS_CHANGED], "", 0, 0, "(iiii)",
+                       geo_data->x, geo_data->y, geo_data->width, geo_data->height);
 }
 
 static void

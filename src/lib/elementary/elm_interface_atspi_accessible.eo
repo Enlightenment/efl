@@ -202,6 +202,14 @@ struct Elm.Atspi.Event.State_Changed.Data
    new_value: bool;
 }
 
+struct Elm.Atspi.Event.Geometry_Changed.Data
+{
+   x: int;
+   y: int;
+   width: int;
+   height: int;
+}
+
 struct Elm.Atspi.Event.Children_Changed.Data
 {
    is_added: bool;
@@ -430,6 +438,7 @@ mixin Elm.Interface.Atspi_Accessible ()
       property,changed: string;
       children,changed: Elm.Atspi.Event.Children_Changed.Data;
       state,changed: Elm.Atspi.Event.State_Changed.Data;
+      bounds,changed: Elm.Atspi.Event.Geometry_Changed.Data;
       visible,data,changed;
       active,descendant,changed;
       added;
