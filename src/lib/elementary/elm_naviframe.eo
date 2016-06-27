@@ -1,4 +1,4 @@
-class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
+class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Edje.Object)
 {
    legacy_prefix: elm_naviframe;
    eo_prefix: elm_obj_naviframe;
@@ -145,6 +145,7 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_show;
       Efl.Canvas.Group.group_add;
+      Edje.Object.signal_emit;
       Elm.Widget.focus_direction;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
@@ -155,7 +156,6 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.event;
       Elm.Layout.text.set;
       Elm.Layout.text.get;
-      Elm.Layout.signal_emit;
       Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Widget_Action.elm_actions.get;
       Efl.Part.part;

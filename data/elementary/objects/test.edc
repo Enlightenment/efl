@@ -816,3 +816,21 @@ group { name: "page_layout";
       }
    }
 }
+   group { "layout_edje";
+      parts {
+         rect { "red";
+            desc {
+               color_class: "red";
+            }
+         }
+         rect { "blue";
+            desc { "default";
+            }
+            desc { "changed";
+               color: 0 0 255 255;
+               link.base: "change" "test";
+            }
+         }
+      }
+   }
+}

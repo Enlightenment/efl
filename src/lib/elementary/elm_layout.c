@@ -766,6 +766,7 @@ _elm_layout_efl_canvas_group_group_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_
 
    /* has to be there *before* parent's smart_add() */
    edje = edje_object_add(evas_object_evas_get(obj));
+   eo_composite_attach(obj, edje);
    elm_widget_resize_object_set(obj, edje, EINA_TRUE);
 
    efl_canvas_group_add(eo_super(obj, MY_CLASS));
@@ -909,20 +910,24 @@ _elm_layout_theme_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *klass, con
    return _elm_layout_theme_internal(obj, sd);
 }
 
-EOLIAN static void
-_elm_layout_signal_emit(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *emission, const char *source)
+EAPI void
+elm_layout_signal_emit(Evas_Object *obj, const char *emission, const char *source)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   edje_obj_signal_emit(obj, emission, source);
+}
 
-   edje_object_signal_emit(wd->resize_obj, emission, source);
+EAPI void
+elm_layout_signal_callback_add(Evas_Object *obj,
+                               const char *emission, const char *source,
+                               Edje_Signal_Cb func_cb, void *data)
+{
+   edje_obj_signal_callback_add(obj, emission, source, func_cb, data);
 }
 
 EOLIAN static void
-_elm_layout_signal_callback_add(Eo *obj, Elm_Layout_Smart_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+_elm_layout_edje_object_signal_callback_add(Eo *obj, Elm_Layout_Smart_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
    Edje_Signal_Data *esd;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    esd = ELM_NEW(Edje_Signal_Data);
    if (!esd) return;
@@ -935,18 +940,23 @@ _elm_layout_signal_callback_add(Eo *obj, Elm_Layout_Smart_Data *sd, const char *
    sd->edje_signals = eina_list_append(sd->edje_signals, esd);
 
    edje_object_signal_callback_add
-     (wd->resize_obj, emission, source,
-     _edje_signal_callback, esd);
+     (eo_super(obj, MY_CLASS), emission, source, _edje_signal_callback, esd);
 }
 
-EOLIAN static void*
-_elm_layout_signal_callback_del(Eo *obj, Elm_Layout_Smart_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb)
+EAPI void *
+elm_layout_signal_callback_del(Evas_Object *obj,
+                               const char *emission, const char *source,
+                               Edje_Signal_Cb func_cb)
 {
-   Edje_Signal_Data *esd = NULL;
-   void *data = NULL;
-   Eina_List *l;
+   return edje_obj_signal_callback_del(obj, emission, source, func_cb, NULL);
+}
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+EOLIAN static void *
+_elm_layout_edje_object_signal_callback_del(Eo *obj, Elm_Layout_Smart_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data EINA_UNUSED)
+{
+   Edje_Signal_Data *esd;
+   Eina_List *l;
+   void *data_ptr;
 
    EINA_LIST_FOREACH(sd->edje_signals, l, esd)
      {
@@ -956,16 +966,13 @@ _elm_layout_signal_callback_del(Eo *obj, Elm_Layout_Smart_Data *sd, const char *
              sd->edje_signals = eina_list_remove_list(sd->edje_signals, l);
              eina_stringshare_del(esd->emission);
              eina_stringshare_del(esd->source);
-             data = esd->data;
+             data_ptr = esd->data;
 
-             edje_object_signal_callback_del_full
-               (wd->resize_obj, emission, source,
-               _edje_signal_callback, esd);
-
+             edje_obj_signal_callback_del
+               (obj, emission, source, _edje_signal_callback, esd);
              free(esd);
 
-             return data; /* stop at 1st match */
-
+             return data_ptr; /* stop at 1st match */
           }
      }
 
@@ -1647,12 +1654,10 @@ _elm_layout_edje_get(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
    return wd->resize_obj;
 }
 
-EOLIAN static const char*
-_elm_layout_data_get(const Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *key)
+EAPI const char *
+elm_layout_data_get(const Evas_Object *obj, const char *key)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-
-   return edje_object_data_get(wd->resize_obj, key);
+   return edje_obj_data_get(obj, key);
 }
 
 /* layout's sizing evaluation is deferred. evaluation requests are
@@ -1678,30 +1683,36 @@ _elm_layout_sizing_restricted_eval(Eo *obj, Elm_Layout_Smart_Data *sd, Eina_Bool
    evas_object_smart_changed(obj);
 }
 
-EOLIAN static int
-_elm_layout_freeze(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+EAPI int
+elm_layout_freeze(Evas_Object *obj)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 1);
-   ELM_LAYOUT_DATA_GET(obj, sd);
+   return edje_obj_freeze(obj);
+}
 
+EOLIAN static int
+_elm_layout_edje_object_freeze(Eo *obj, Elm_Layout_Smart_Data *sd)
+{
    if ((sd->frozen)++ != 0) return sd->frozen;
 
-   edje_object_freeze(wd->resize_obj);
+   edje_obj_freeze(eo_super(obj, MY_CLASS));
 
    return 1;
 }
 
-EOLIAN static int
-_elm_layout_thaw(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+EAPI int
+elm_layout_thaw(Evas_Object *obj)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
-   ELM_LAYOUT_DATA_GET(obj, sd);
+   return edje_obj_thaw(obj);
+}
 
+EOLIAN static int
+_elm_layout_edje_object_thaw(Eo *obj, Elm_Layout_Smart_Data *sd)
+{
    if (--(sd->frozen) != 0) return sd->frozen;
 
-   edje_object_thaw(wd->resize_obj);
+   edje_obj_thaw(eo_super(obj, MY_CLASS));
 
-   elm_obj_layout_sizing_eval(obj);
+   _elm_layout_sizing_eval(obj, sd);
 
    return 0;
 }

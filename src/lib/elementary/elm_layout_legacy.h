@@ -241,4 +241,105 @@ EAPI Evas_Object *elm_layout_table_unpack(Evas_Object *obj, const char *part, Ev
  */
 EAPI Eina_Bool elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear);
 
+/**
+ * @brief Get the edje data from the given layout.
+ *
+ * This function fetches data specified inside the edje theme of this layout.
+ * This function return NULL if data is not found.
+ *
+ * In EDC this comes from a data block within the group block that @c obj was
+ * loaded from.
+ *
+ * @param[in] key The data key.
+ *
+ * @return The edje data string.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI const char *elm_layout_data_get(const Elm_Layout *obj, const char *key);
+
+/**
+ * @brief Send a (Edje) signal to a given layout widget's underlying Edje
+ * object.
+ *
+ * This function sends a signal to the underlying Edje object of @c obj. An
+ * Edje program on that Edje object's definition can respond to a signal by
+ * specifying matching 'signal' and 'source' fields.
+ *
+ * @param[in] emission The signal's name string.
+ * @param[in] source The signal's source string.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI void elm_layout_signal_emit(Elm_Layout *obj, const char *emission, const char *source);
+
+/**
+ * @brief Add a callback for a (Edje) signal emitted by a layout widget's
+ * underlying Edje object.
+ *
+ * This function connects a callback function to a signal emitted by the
+ * underlying Edje object of @c obj. Globs are accepted in either the emission
+ * or source strings.
+ *
+ * @param[in] emission The signal's name string.
+ * @param[in] source The signal's source string.
+ * @param[in] func The callback function to be executed when the signal is
+ * emitted.
+ * @param[in] data A pointer to data to pass in to the callback function.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI void elm_layout_signal_callback_add(Elm_Layout *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+
+/**
+ * @brief Remove a signal-triggered callback from a given layout widget.
+ *
+ * This function removes the last callback attached to a signal emitted by the
+ * undelying Edje object of @c obj, with parameters @c emission, @c source and
+ * @c func matching exactly those passed to a previous call to
+ * @ref elm_layout_signal_callback_add. The data pointer that was passed to
+ * this call will be returned.
+ *
+ * @param[in] emission The signal's name string.
+ * @param[in] source The signal's source string.
+ * @param[in] func The callback function being executed when the signal was
+ * emitted.
+ *
+ * @return The data pointer of the signal callback (passed on
+ * @ref elm_layout_signal_callback_add) or @c null on errors.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI void *elm_layout_signal_callback_del(Elm_Layout *obj, const char *emission, const char *source, Edje_Signal_Cb func);
+
+/**
+ * @brief Freezes the Elementary layout object.
+ *
+ * This function puts all changes on hold. Successive freezes will nest,
+ * requiring an equal number of thaws.
+ *
+ * See also @ref elm_layout_thaw.
+ *
+ * @return The frozen state or 0 on error.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI int elm_layout_freeze(Elm_Layout *obj);
+
+/**
+ * @brief Thaws the Elementary object.
+ *
+ * This function thaws the given Edje object and the Elementary sizing calc.
+ *
+ * @note If sucessives freezes were done, an equal number of thaws will be
+ * required.
+ *
+ * See also @ref elm_layout_freeze.
+ *
+ * @return The frozen state or 0 if the object is not frozen or on error.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI int elm_layout_thaw(Elm_Layout *obj);
+
 #include "elm_layout.eo.legacy.h"
