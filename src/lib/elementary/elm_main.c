@@ -1124,8 +1124,6 @@ elm_quicklaunch_fork(int    argc,
 
    if (qre_main)
      {
-        int ret = 0;
-
         eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
         ret = efl_loop_begin(ecore_main_loop_get());
         elm_shutdown();
