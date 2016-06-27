@@ -20,8 +20,8 @@ class Efl.Loop (Eo.Base)
          queue.]]
       }
       iterate_may_block {
-      	 [[Runs a single iteration of the main loop to process everything on the
-      	 queue with block/non-blocking status.]]
+         [[Runs a single iteration of the main loop to process everything on the
+           queue with block/non-blocking status.]]
          return: int;
          params {
             may_block: int; [[A flag if the main loop has a possibility of blocking.]]
@@ -29,45 +29,45 @@ class Efl.Loop (Eo.Base)
       }
       begin {
          [[Runs the application main loop.]]
-	 return: ubyte; [[Value set by quit()]]
+         return: ubyte; [[Value set by quit()]]
       }
       quit {
          [[Quits the main loop once all the events currently on the queue have
          been processed.]]
-	 params {
-	    @in exit_code: ubyte; [[Returned value by begin()]]
-	 }
+         params {
+            @in exit_code: ubyte; [[Returned value by begin()]]
+         }
       }
       job {
          [[Will execute that promise in the near future.]]
          params {
-	    @in data: const(void_ptr) @optional; [[The data to be given when the promise is done.]]
-	 }
-	 return: promise<void_ptr>; [[The promise that will be triggered.]]
+            @in data: const(void_ptr) @optional; [[The data to be given when the promise is done.]]
+         }
+         return: promise<void_ptr>; [[The promise that will be triggered.]]
       }
       timeout {
          [[Will trigger this promise when the specified timeout occur.]]
-	 params {
-	    @in time: double; [[The time from now in second that the main loop will wait before triggering it.]]
-	    @in data: const(void_ptr) @optional; [[The data to be given when the promise is done.]]
-	 }
-	 return: promise<void_ptr>; [[The promise that will be triggered.]]
+         params {
+            @in time: double; [[The time from now in second that the main loop will wait before triggering it.]]
+            @in data: const(void_ptr) @optional; [[The data to be given when the promise is done.]]
+         }
+         return: promise<void_ptr>; [[The promise that will be triggered.]]
       }
       register {
          [[Will register a manager of a specific class to be answered by eo.provider_find.]]
-	 params {
-	    @in klass: const(Eo.Class); [[The class provided by the registered provider.]]
-	    @in provider: const(Eo.Base); [[The provider for the newly registered class that has to provide that said Eo.Class.]]
-	 }
-	 return: bool; [[true if successfully register, false otherwise.]]
+         params {
+            @in klass: const(Eo.Class); [[The class provided by the registered provider.]]
+            @in provider: const(Eo.Base); [[The provider for the newly registered class that has to provide that said Eo.Class.]]
+         }
+         return: bool; [[true if successfully register, false otherwise.]]
       }
       unregister {
          [[Will unregister a manager of a specific class that was previously registered and answered by eo.provider_find.]]
-	 params {
-	    @in klass: const(Eo.Class); [[The class provided by the provider to unregister for.]]
-	    @in provider: const(Eo.Base); [[The provider for the registered class to unregister.]]
-	 }
-	 return: bool; [[true if successfully unregistered, false otherwise.]]
+         params {
+            @in klass: const(Eo.Class); [[The class provided by the provider to unregister for.]]
+            @in provider: const(Eo.Base); [[The provider for the registered class to unregister.]]
+         }
+         return: bool; [[true if successfully unregistered, false otherwise.]]
       }
    }
    events {
