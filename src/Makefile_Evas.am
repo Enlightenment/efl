@@ -775,7 +775,7 @@ EXTRA_DIST2 += $(EVAS_GL_SHADERS_GEN)
 
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x: $(EVAS_GL_SHADERS_GEN) $(top_srcdir)/src/modules/evas/engines/gl_common/shader/gen_shaders.sh
 	@echo "  SHADERS  $@"
-	@sh $(top_srcdir)/src/modules/evas/engines/gl_common/shader/gen_shaders.sh $(top_builddir)/src/modules/evas/engines/gl_common/shader/evas_gl_shaders.x
+	@sh $(top_srcdir)/src/modules/evas/engines/gl_common/shader/gen_shaders.sh
 
 modules/evas/engines/gl_common/evas_gl_shader.c: modules/evas/engines/gl_common/shader/evas_gl_shaders.x
 
@@ -808,7 +808,7 @@ $(GL_SHADERS_3D_GEN)
 
 modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: $(top_srcdir)/src/modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN) $(top_srcdir)/src/modules/evas/engines/gl_common/shader_3d/include.shd
 	@echo "  SHADERS  $@"
-	@sh $(top_srcdir)/src/modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(top_builddir)/src/modules/evas/engines/gl_common/shader_3d/evas_3d_shaders.x $(GL_SHADERS_3D_GEN)
+	@sh $(top_srcdir)/src/modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
 
 modules/evas/engines/gl_common/evas_gl_3d_shader.c: modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x
 

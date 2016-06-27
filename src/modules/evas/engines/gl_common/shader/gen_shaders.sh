@@ -2,7 +2,10 @@
 
 # This script will generate a C file containing all the shaders used by Evas
 
-OUTPUT=$1
+DIR=`dirname $0`
+cd $DIR/../../../../../
+
+OUTPUT="$DIR/evas_gl_shaders.x"
 
 # Skip generation during make distcheck
 if [ "${top_distdir}" != "" ] ; then exit 0; fi
@@ -17,8 +20,6 @@ then
   touch "$OUTPUT"
   exit 0
 fi
-
-echo $DIR
 
 exec 1<&-
 exec 1>"$OUTPUT"
