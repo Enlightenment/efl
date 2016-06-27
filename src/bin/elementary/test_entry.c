@@ -685,6 +685,44 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 }
 
 static void
+my_pop_close_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+  Evas_Object *btn, *pop, *en;
+  pop = data;
+  en = elm_object_parent_widget_get(pop);
+  elm_object_text_set(en, "This is very long text,"
+                      " it is longer than width of this page."
+                      " So if scroller is moved to next page,"
+                      " that is bug when you click under button"
+                      " and then click this entry text");
+  elm_entry_cursor_end_set(en);
+
+  evas_object_del(pop);
+}
+
+static void
+my_pop_bt_clr(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *pop, *btn, *en;
+   en = data;
+   elm_object_text_set(en, "");
+   elm_entry_cursor_end_set(en);
+
+   pop = elm_popup_add(en);
+   elm_object_text_set(pop, "If you click confirm, "
+                       "set long text to entry "
+                       "and delete popup obj");
+
+   btn = elm_button_add(pop);
+   elm_object_text_set(btn, "Confirm");
+   evas_object_smart_callback_add(btn, "clicked", my_pop_close_cb, pop);
+   elm_object_part_content_set(pop, "button1", btn);
+
+   evas_object_show(btn);
+   evas_object_show(pop);
+}
+
+static void
 my_en_bt_clr(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
@@ -722,7 +760,11 @@ test_entry_on_page_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 
    en = elm_entry_add(ly);
    elm_object_part_text_set(en, "guide", "Entry area");
-   elm_object_text_set(en, "This is very long text, it is longer than width of this page. So if scroller is moved to next page, that is bug when you click under button and then click this entry text");
+  elm_object_text_set(en, "This is very long text,"
+                      " it is longer than width of this page."
+                      " So if scroller is moved to next page,"
+                      " that is bug when you click under button"
+                      " and then click this entry text");
    elm_object_part_content_set(ly, "element1", en);
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_single_line_set(en, EINA_TRUE);
@@ -732,6 +774,13 @@ test_entry_on_page_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    elm_object_text_set(btn, "Click this and then click entry");
    elm_object_part_content_set(ly, "element2", btn);
    evas_object_smart_callback_add(btn, "clicked", my_en_bt_clr, en);
+   evas_object_show(btn);
+   elm_object_focus_set(btn, EINA_TRUE);
+
+   btn = elm_button_add(ly);
+   elm_object_text_set(btn, "Click this and close popup");
+   elm_object_part_content_set(ly, "element3", btn);
+   evas_object_smart_callback_add(btn, "clicked", my_pop_bt_clr, en);
    evas_object_show(btn);
    elm_object_focus_set(btn, EINA_TRUE);
 
