@@ -1151,7 +1151,7 @@ tgv_file_check_and_add(Eet_File *ef, Edje_Image_Directory_Entry *img, int *image
    Image_Write *iw = NULL;
    Eina_List *li;
    const char *s;
-   Eina_File *f;
+   Eina_File *f = NULL;
    void *data;
 
    EINA_LIST_FOREACH(img_dirs, li, s)
