@@ -1439,9 +1439,9 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    /* If we are a composite object, detach children */
      {
         EO_OBJ_POINTER_RETURN(obj, obj_data);
-        Eina_List *itr;
+        Eina_List *itr, *next;
         Eo *emb_obj_id;
-        EINA_LIST_FOREACH(obj_data->composite_objects, itr, emb_obj_id)
+        EINA_LIST_FOREACH_SAFE(obj_data->composite_objects, itr, next, emb_obj_id)
           {
              eo_composite_detach(obj, emb_obj_id);
           }
