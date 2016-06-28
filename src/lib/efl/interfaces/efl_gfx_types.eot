@@ -26,22 +26,6 @@ enum Efl.Gfx.Render_Op {
   last
 }
 
-enum Efl.Gfx.Color_Type {
-  bits8,     [[Color is encoded in the top 8 bits of the unsigned short as a unsigned char.]]
-  bits16,    [[Color is encoded in the 16 bits as an unsigned short.]]
-  last
-}
-
-struct Efl.Gfx.Color {
-  [[Define an RGBA color.]]
-  r: ushort; [[The red component.]]
-  g: ushort; [[The green component.]]
-  b: ushort; [[The blue component.]]
-  a: ushort; [[The alpha component.]]
-
-  type: Efl.Gfx.Color_Type; [[Defines whether the color is 8-bit or 16-bit encoded.]]
-}
-
 enum Efl.Gfx.Path.Command_Type {
   [[These values determine how the points are interpreted in a stream of points.
     @since 1.14

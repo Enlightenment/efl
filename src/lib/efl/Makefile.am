@@ -82,9 +82,6 @@ Efl_Model_Common.h \
 Efl.h
 
 installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces
-dist_installed_eflinterfaces_DATA = \
-	interfaces/efl_gfx.x
-
 nodist_installed_eflinterfaces_DATA = \
 	$(efl_eolian_files_h) \
 	$(efl_eolian_legacy_files_h)
