@@ -173,6 +173,15 @@ enum Edje.Message_Type {
 
 struct Edje.Perspective; [[Perspective info for maps inside edje objects]]
 
+enum Edje.Color_Class.Mode {
+   [[Selector to access one color among the colors belonging to a color class.
+
+     @since 1.18]]
+   color = 0, [[The default color. For instance, the color of the text itself.]]
+   color2, [[The 2nd color. For instance, the outline of the text.]]
+   color3 [[The 3rd color. For instance, the shadow of the text.]]
+}
+
 /* FIXME-cb: Ignore cb types that should be fixed. */
 type Edje.Signal_Cb: __undefined_type;
 type Edje.Markup_Filter_Cb: __undefined_type;

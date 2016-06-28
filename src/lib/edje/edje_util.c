@@ -618,6 +618,148 @@ _edje_object_thaw(Eo *obj EINA_UNUSED, Edje *ed)
    return _edje_util_thaw(ed);
 }
 
+static Eina_Bool
+_edje_color_class_set_internal(Eina_Hash *hash, const char *color_class, Edje_Color_Class_Mode mode, int r, int g, int b, int a, Eina_Bool *need_update)
+{
+   Edje_Color_Class *cc;
+
+   if (!color_class)
+     return EINA_FALSE;
+
+   if (r < 0) r = 0;
+   else if (r > 255)
+     r = 255;
+   if (g < 0) g = 0;
+   else if (g > 255)
+     g = 255;
+   if (b < 0) b = 0;
+   else if (b > 255)
+     b = 255;
+   if (a < 0) a = 0;
+   else if (a > 255)
+     a = 255;
+
+   cc = eina_hash_find(hash, color_class);
+   if (cc)
+     {
+        switch (mode)
+          {
+           case EDJE_COLOR_CLASS_MODE_COLOR:
+             if ((cc->r == r) && (cc->g == g) &&
+                 (cc->b == b) && (cc->a == a))
+               {
+                  *need_update = EINA_FALSE;
+                  return EINA_TRUE;
+               }
+             break;
+
+           case EDJE_COLOR_CLASS_MODE_COLOR2:
+             if ((cc->r2 == r) && (cc->g2 == g) &&
+                 (cc->b2 == b) && (cc->a2 == a))
+               {
+                  *need_update = EINA_FALSE;
+                  return EINA_TRUE;
+               }
+             break;
+
+           case EDJE_COLOR_CLASS_MODE_COLOR3:
+             if ((cc->r3 == r) && (cc->g3 == g) &&
+                 (cc->b3 == b) && (cc->a3 == a))
+               {
+                  *need_update = EINA_FALSE;
+                  return EINA_TRUE;
+               }
+             break;
+
+           default:
+             return EINA_FALSE;
+          }
+     }
+   else
+     {
+        cc = calloc(1, sizeof(Edje_Color_Class));
+        if (!cc) return EINA_FALSE;
+
+        cc->name = eina_stringshare_add(color_class);
+        if (!cc->name)
+          {
+             free(cc);
+             return EINA_FALSE;
+          }
+
+        eina_hash_direct_add(hash, cc->name, cc);
+     }
+
+   switch (mode)
+     {
+      case EDJE_COLOR_CLASS_MODE_COLOR:
+        cc->r = r;
+        cc->g = g;
+        cc->b = b;
+        cc->a = a;
+        break;
+
+      case EDJE_COLOR_CLASS_MODE_COLOR2:
+        cc->r2 = r;
+        cc->g2 = g;
+        cc->b2 = b;
+        cc->a2 = a;
+        break;
+
+      case EDJE_COLOR_CLASS_MODE_COLOR3:
+        cc->r3 = r;
+        cc->g3 = g;
+        cc->b3 = b;
+        cc->a3 = a;
+        break;
+    }
+
+   *need_update = EINA_TRUE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_edje_color_class_get_internal(Edje_Color_Class *cc, Edje_Color_Class_Mode mode, int *r, int *g, int *b, int *a)
+{
+   if (cc)
+     {
+        switch (mode)
+          {
+           case EDJE_COLOR_CLASS_MODE_COLOR:
+             if (r) *r = cc->r;
+             if (g) *g = cc->g;
+             if (b) *b = cc->b;
+             if (a) *a = cc->a;
+             break;
+
+           case EDJE_COLOR_CLASS_MODE_COLOR2:
+             if (r) *r = cc->r2;
+             if (g) *g = cc->g2;
+             if (b) *b = cc->b2;
+             if (a) *a = cc->a2;
+             break;
+
+           case EDJE_COLOR_CLASS_MODE_COLOR3:
+             if (r) *r = cc->r3;
+             if (g) *g = cc->g3;
+             if (b) *b = cc->b3;
+             if (a) *a = cc->a3;
+             break;
+          }
+        return EINA_TRUE;
+     }
+   else
+     {
+        if (r) *r = 0;
+        if (g) *g = 0;
+        if (b) *b = 0;
+        if (a) *a = 0;
+
+        return EINA_FALSE;
+     }
+}
+
 static void
 _edje_color_class_apply(const char *color_class, const char *parent)
 {
@@ -654,65 +796,45 @@ _edje_color_class_apply(const char *color_class, const char *parent)
 EAPI Eina_Bool
 edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
-   Edje_Color_Class *cc;
+   Eina_Bool int_ret;
 
-   if (!color_class) return EINA_FALSE;
+   int_ret = edje_obj_global_color_class_set(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR, r, g, b, a);
+   int_ret &= edje_obj_global_color_class_set(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR2, r2, g2, b2, a2);
+   int_ret &= edje_obj_global_color_class_set(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR3, r3, g3, b3, a3);
 
-   cc = eina_hash_find(_edje_color_class_hash, color_class);
-   if (!cc)
-     {
-        cc = calloc(1, sizeof(Edje_Color_Class));
-        if (!cc) return EINA_FALSE;
-        cc->name = eina_stringshare_add(color_class);
-        if (!cc->name)
-          {
-             free(cc);
-             return EINA_FALSE;
-          }
-        if (!_edje_color_class_hash)
-          _edje_color_class_hash = eina_hash_string_superfast_new(NULL);
-        eina_hash_add(_edje_color_class_hash, color_class, cc);
-     }
+   return int_ret;
+}
 
-   if (r < 0) r = 0;
-   else if (r > 255)
-     r = 255;
-   if (g < 0) g = 0;
-   else if (g > 255)
-     g = 255;
-   if (b < 0) b = 0;
-   else if (b > 255)
-     b = 255;
-   if (a < 0) a = 0;
-   else if (a > 255)
-     a = 255;
-   if ((cc->r == r) && (cc->g == g) &&
-       (cc->b == b) && (cc->a == a) &&
-       (cc->r2 == r2) && (cc->g2 == g2) &&
-       (cc->b2 == b2) && (cc->a2 == a2) &&
-       (cc->r3 == r3) && (cc->g3 == g3) &&
-       (cc->b3 == b3) && (cc->a3 == a3))
-     return EINA_TRUE;
-   cc->r = r;
-   cc->g = g;
-   cc->b = b;
-   cc->a = a;
-   cc->r2 = r2;
-   cc->g2 = g2;
-   cc->b2 = b2;
-   cc->a2 = a2;
-   cc->r3 = r3;
-   cc->g3 = g3;
-   cc->b3 = b3;
-   cc->a3 = a3;
+EOLIAN Eina_Bool
+_edje_object_global_color_class_set(Eo_Class *klass EINA_UNUSED, void *pd EINA_UNUSED,
+                                    const char *color_class, Edje_Color_Class_Mode mode, int r, int g, int b, int a)
+{
+   Eina_Bool int_ret;
+   Eina_Bool need_update = EINA_FALSE;
 
-   _edje_color_class_apply(color_class, color_class);
+   int_ret = _edje_color_class_set_internal(_edje_color_class_hash, color_class, mode, r, g, b, a, &need_update);
 
-   return EINA_TRUE;
+   if ((int_ret) && (need_update))
+     _edje_color_class_apply(color_class, color_class);
+
+   return int_ret;
 }
 
 EAPI Eina_Bool
 edje_color_class_get(const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
+{
+   Eina_Bool int_ret;
+
+   int_ret = edje_obj_global_color_class_get(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR, r, g, b, a);
+   int_ret &= edje_obj_global_color_class_get(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR2, r2, g2, b2, a2);
+   int_ret &= edje_obj_global_color_class_get(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR3, r3, g3, b3, a3);
+
+   return int_ret;
+}
+
+EOLIAN Eina_Bool
+_edje_object_global_color_class_get(Eo_Class *klass EINA_UNUSED, void *pd EINA_UNUSED,
+                                    const char *color_class, Edje_Color_Class_Mode mode, int *r, int *g, int *b, int *a)
 {
    Edje_Color_Class *cc;
 
@@ -721,30 +843,7 @@ edje_color_class_get(const char *color_class, int *r, int *g, int *b, int *a, in
    else
      cc = eina_hash_find(_edje_color_class_hash, color_class);
 
-   if (cc)
-     {
-#define X(C)              if (C) \
-    *C = cc->C
-#define S(_r, _g, _b, _a) X(_r); X(_g); X(_b); X(_a)
-        S(r, g, b, a);
-        S(r2, g2, b2, a2);
-        S(r3, g3, b3, a3);
-#undef S
-#undef X
-        return EINA_TRUE;
-     }
-   else
-     {
-#define X(C)              if (C) \
-    *C = 0
-#define S(_r, _g, _b, _a) X(_r); X(_g); X(_b); X(_a)
-        S(r, g, b, a);
-        S(r2, g2, b2, a2);
-        S(r3, g3, b3, a3);
-#undef S
-#undef X
-        return EINA_FALSE;
-     }
+   return _edje_color_class_get_internal(cc, mode, r, g, b, a);
 }
 
 EAPI void
@@ -890,122 +989,77 @@ _edje_color_class_list_foreach(const Eina_Hash *hash EINA_UNUSED, const void *ke
    return EINA_TRUE;
 }
 
-EOLIAN Eina_Bool
-_edje_object_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
+EAPI Eina_Bool
+edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
-   Edje_Color_Class *cc;
-   unsigned int i;
+   Eina_Bool int_ret;
 
-   if ((!ed) || (!color_class)) return EINA_FALSE;
-   if (r < 0) r = 0;
-   else if (r > 255)
-     r = 255;
-   if (g < 0) g = 0;
-   else if (g > 255)
-     g = 255;
-   if (b < 0) b = 0;
-   else if (b > 255)
-     b = 255;
-   if (a < 0) a = 0;
-   else if (a > 255)
-     a = 255;
-   cc = eina_hash_find(ed->color_classes, color_class);
-   if (cc)
-     {
-        if ((cc->r == r) && (cc->g == g) &&
-            (cc->b == b) && (cc->a == a) &&
-            (cc->r2 == r2) && (cc->g2 == g2) &&
-            (cc->b2 == b2) && (cc->a2 == a2) &&
-            (cc->r3 == r3) && (cc->g3 == g3) &&
-            (cc->b3 == b3) && (cc->a3 == a3))
-          {
-             return EINA_TRUE;
-          }
-        goto update_color_class;
-     }
+   int_ret = edje_obj_color_class_set(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR, r, g, b, a);
+   int_ret &= edje_obj_color_class_set(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR2, r2, g2, b2, a2);
+   int_ret &= edje_obj_color_class_set(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR3, r3, g3, b3, a3);
 
-   color_class = eina_stringshare_add(color_class);
-   if (!color_class) return EINA_FALSE;
-   cc = malloc(sizeof(Edje_Color_Class));
-   if (!cc)
-     {
-        eina_stringshare_del(color_class);
-        return EINA_FALSE;
-     }
-   cc->name = color_class;
-   cc->desc = NULL;
-   eina_hash_direct_add(ed->color_classes, cc->name, cc);
-update_color_class:
-   cc->r = r;
-   cc->g = g;
-   cc->b = b;
-   cc->a = a;
-   cc->r2 = r2;
-   cc->g2 = g2;
-   cc->b2 = b2;
-   cc->a2 = a2;
-   cc->r3 = r3;
-   cc->g3 = g3;
-   cc->b3 = b3;
-   cc->a3 = a3;
-   ed->dirty = EINA_TRUE;
-   ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-   ed->all_part_change = EINA_TRUE;
-#endif
-
-   for (i = 0; i < ed->table_parts_size; i++)
-     {
-        Edje_Real_Part *rp;
-
-        rp = ed->table_parts[i];
-        if ((rp->part->type == EDJE_PART_TYPE_GROUP) &&
-            ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
-             (rp->typedata.swallow)) &&
-            (rp->typedata.swallow->swallowed_object))
-          edje_object_color_class_set(rp->typedata.swallow->swallowed_object,
-                                      color_class,
-                                      r, g, b, a, r2, g2, b2, a2, r3, g3, b3,
-                                      a3);
-     }
-
-   _edje_recalc(ed);
-   _edje_emit(ed, "color_class,set", color_class);
-
-   return EINA_TRUE;
+   return int_ret;
 }
 
 EOLIAN Eina_Bool
-_edje_object_color_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
+_edje_object_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Edje_Color_Class_Mode mode, int r, int g, int b, int a)
 {
-   Edje_Color_Class *cc = _edje_color_class_find(ed, color_class);
+   Eina_Bool int_ret;
+   Eina_Bool need_update;
 
-   if (cc)
+   int_ret = _edje_color_class_set_internal(ed->color_classes, color_class, mode, r, g, b, a, &need_update);
+
+   if ((int_ret) && (need_update))
      {
-#define X(C)              if (C) \
-    *C = cc->C
-#define S(_r, _g, _b, _a) X(_r); X(_g); X(_b); X(_a)
-        S(r, g, b, a);
-        S(r2, g2, b2, a2);
-        S(r3, g3, b3, a3);
-#undef S
-#undef X
-        return EINA_TRUE;
+        Edje_Real_Part *rp;
+        unsigned int i;
+
+        ed->dirty = EINA_TRUE;
+        ed->recalc_call = EINA_TRUE;
+#ifdef EDJE_CALC_CACHE
+        ed->all_part_change = EINA_TRUE;
+#endif
+        for (i = 0; i < ed->table_parts_size; i++)
+          {
+             rp = ed->table_parts[i];
+             if ((rp->part->type == EDJE_PART_TYPE_GROUP) &&
+                 ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+                  (rp->typedata.swallow)) &&
+                 (rp->typedata.swallow->swallowed_object))
+               edje_obj_color_class_set(rp->typedata.swallow->swallowed_object,
+                                        color_class, mode, r, g, b, a);
+          }
+
+        _edje_recalc(ed);
+        _edje_emit(ed, "color_class,set", color_class);
      }
+
+   return int_ret;
+}
+
+EAPI Eina_Bool
+edje_object_color_class_get(const Evas_Object *obj, const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
+{
+   Eina_Bool int_ret;
+
+   int_ret = edje_obj_color_class_get(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR, r, g, b, a);
+   int_ret &= edje_obj_color_class_get(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR2, r2, g2, b2, a2);
+   int_ret &= edje_obj_color_class_get(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR3, r3, g3, b3, a3);
+
+   return int_ret;
+}
+
+EOLIAN Eina_Bool
+_edje_object_color_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Edje_Color_Class_Mode mode, int *r, int *g, int *b, int *a)
+{
+   Edje_Color_Class *cc;
+
+   if (!color_class)
+     cc = NULL;
    else
-     {
-#define X(C)              if (C) \
-    *C = 0
-#define S(_r, _g, _b, _a) X(_r); X(_g); X(_b); X(_a)
-        S(r, g, b, a);
-        S(r2, g2, b2, a2);
-        S(r3, g3, b3, a3);
-#undef S
-#undef X
-        return EINA_FALSE;
-     }
+     cc = _edje_color_class_find(ed, color_class);
 
-   return EINA_FALSE;
+   return _edje_color_class_get_internal(cc, mode, r, g, b, a);
 }
 
 EOLIAN Eina_Stringshare *

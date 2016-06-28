@@ -512,5 +512,71 @@ EAPI Evas_Object *edje_object_part_table_child_get(const Edje_Object *obj, const
  */
 EAPI Eina_Bool edje_object_part_table_clear(Edje_Object *obj, const char *part, Eina_Bool clear);
 
+/**
+ * @brief Sets the object color class.
+ *
+ * This function sets the color values for an object level color class. This
+ * will cause all edje parts in the specified object that have the specified
+ * color class to have their colors multiplied by these values.
+ *
+ * The first color is the object, the second is the text outline, and the third
+ * is the text shadow. (Note that the second two only apply to text parts).
+ *
+ * Setting color emits a signal "color_class,set" with source being the given
+ * color.
+ *
+ * @note unlike Evas, Edje colors are not pre-multiplied. That is,
+ * half-transparent white is 255 255 255 128.
+ *
+ * @param[in] color_class The name of color class
+ * @param[in] r Object Red value
+ * @param[in] g Object Green value
+ * @param[in] b Object Blue value
+ * @param[in] a Object Alpha value
+ * @param[in] r2 Outline Red value
+ * @param[in] g2 Outline Green value
+ * @param[in] b2 Outline Blue value
+ * @param[in] a2 Outline Alpha value
+ * @param[in] r3 Shadow Red value
+ * @param[in] g3 Shadow Green value
+ * @param[in] b3 Shadow Blue value
+ * @param[in] a3 Shadow Alpha value
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_color_class_set(Evas_Object *obj, const char * color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
+
+/**
+ * @brief Gets the object color class.
+ *
+ * This function gets the color values for an object level color class. If no
+ * explicit object color is set, then global values will be used.
+ *
+ * The first color is the object, the second is the text outline, and the third
+ * is the text shadow. (Note that the second two only apply to text parts).
+ *
+ * @note unlike Evas, Edje colors are not pre-multiplied. That is,
+ * half-transparent white is 255 255 255 128.
+ *
+ * @param[in] color_class The name of color class
+ * @param[out] r Object Red value
+ * @param[out] g Object Green value
+ * @param[out] b Object Blue value
+ * @param[out] a Object Alpha value
+ * @param[out] r2 Outline Red value
+ * @param[out] g2 Outline Green value
+ * @param[out] b2 Outline Blue value
+ * @param[out] a2 Outline Alpha value
+ * @param[out] r3 Shadow Red value
+ * @param[out] g3 Shadow Green value
+ * @param[out] b3 Shadow Blue value
+ * @param[out] a3 Shadow Alpha value
+ *
+ * @return true if found or false if not found and all values are zeroed.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_color_class_get(const Evas_Object *obj, const char * color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
+
 #include "edje_object.eo.legacy.h"
 #include "edje_edit.eo.legacy.h"

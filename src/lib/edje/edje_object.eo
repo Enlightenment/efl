@@ -1669,6 +1669,52 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
             @in text_class: string; [[The color class to be deleted.]]
          }
       }
+      @property global_color_class @class {
+         set {
+            [[Set Edje color class.
+
+              This function sets the color values for a process level color
+              class.  This will cause all edje parts in the current process that
+              have the specified color class to have their colors multiplied by
+              these values.  (Object level color classes set by
+              edje_object_color_class_set() will override the values set by this
+              function).
+
+              Setting color emits a signal "color_class,set" with source being
+              the given color class in all objects.
+
+              Note: unlike Evas, Edje colors are not pre-multiplied. That is,
+              half-transparent white is 255 255 255 128.]]
+            legacy: null;
+            return: bool; [[true on sucess, false on failure.]]
+         }
+         get {
+            [[Get Edje color class.
+
+              This function gets the color values for a process level color
+              class. This value is the globally set and not per-object, that is,
+              the value that would be used by objects if they did not override with
+              @.color_class.set().
+
+              See also, @.global_color_class.set()
+
+              Note: unlike Evas, Edje colors are not pre-multiplied. That is,
+              half-transparent white is 255 255 255 128.]]
+            legacy: null;
+            return: bool; [[true if found or false if not found and all values
+                            are zeored.]]
+         }
+         keys {
+            color_class: string; [[The name of color class]]
+            mode: Edje.Color_Class.Mode;
+         }
+         values {
+            r: int; [[Object Red value]]
+            g: int; [[Object Green value]]
+            b: int; [[Object Blue value]]
+            a: int; [[Object Alpha value]]
+         }
+      }
       @property color_class {
          set {
             [[Sets the object color class.
@@ -1685,8 +1731,9 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               Setting color emits a signal "color_class,set" with source being
               the given color.
 
-              Note: unlike Evas, Edje colors are  not pre-multiplied. That is,
+              Note: unlike Evas, Edje colors are not pre-multiplied. That is,
               half-transparent white is 255 255 255 128.]]
+            legacy: null;
             return: bool;
          }
          get {
@@ -1700,27 +1747,21 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
               the third is the text shadow. (Note that the second two only apply
               to text parts).
 
-              Note: unlike Evas, Edje colors are  not pre-multiplied. That is,
+              Note: unlike Evas, Edje colors are not pre-multiplied. That is,
               half-transparent white is 255 255 255 128.]]
+            legacy: null;
             return: bool; [[true if found or false if not found and all
                             values are zeroed.]]
          }
          keys {
-            color_class: string;
+            color_class: string; [[The name of color class]]
+            mode: Edje.Color_Class.Mode;
          }
          values {
             r: int; [[Object Red value]]
             g: int; [[Object Green value]]
             b: int; [[Object Blue value]]
             a: int; [[Object Alpha value]]
-            r2: int; [[Outline Red value]]
-            g2: int; [[Outline Green value]]
-            b2: int; [[Outline Blue value]]
-            a2: int; [[Outline Alpha value]]
-            r3: int; [[Shadow Red value]]
-            g3: int; [[Shadow Green value]]
-            b3: int; [[Shadow Blue value]]
-            a3: int; [[Shadow Alpha value]]
          }
       }
       color_class_description_get @const {
