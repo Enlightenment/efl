@@ -12,13 +12,28 @@ mixin Efl.Gfx.Map (Eo.Interface, Eo.Base)
      Each map point may carry a multiplier color. If properly
      calculated, these can do shading effects on the object, producing
      3D effects.
+
+     At the moment of writing, maps can only have 4 points (no more, no less).
+     Usually, it will be necessary to update the map points (start afresh with
+     @.map_populate) whenever the object geometry changes.
+
+     Note: For now this mixin is only compatible with $Efl.Canvas.Object and
+     shouldn't be used anywhere else.
+
+     Note: There are a few differences with legacy $Evas_Map:
+      - A map is now a property of an object, rather than a separate entity.
+      - @.map_move_sync is enabled by default
+      - @.map_populate will be called automatically if another map function
+        is called while the object has no map info.
    ]]
    data: null;
    methods {
       @property map_enable @virtual_pure {
          [[Whether map transformation is enabled on this object.
 
-           The default map enable state is off ($false).
+           The default map enable state is off ($false). The other
+           properties and methods in this class have no effect until
+           this property is enabled.
          ]]
          set {
             [[Enable or disable the use of map for this object. On
@@ -26,7 +41,6 @@ mixin Efl.Gfx.Map (Eo.Interface, Eo.Base)
               geometry will change (position and size) to reflect the
               map geometry set.
             ]]
-            legacy: evas_object_map_enable_set;
          }
          get {
             legacy: evas_object_map_enable_get;
@@ -35,7 +49,293 @@ mixin Efl.Gfx.Map (Eo.Interface, Eo.Base)
             enabled: bool; [[Enabled state.]]
          }
       }
+      @property map_clockwise {
+         [[Clockwise state of a map (read-only).
+
+           This determines if the output points (X and Y. Z is not used) are
+           clockwise or counter-clockwise. This can be used for "back-face culling". This
+           is where you hide objects that "face away" from you. In this case objects
+           that are not clockwise.
+         ]]
+         get {}
+         values {
+            cw: bool; [[$true if CW, $false if CCW.]]
+         }
+      }
+      @property map_smooth {
+         [[Smoothing state for map rendering.
+
+           This sets smoothing for map rendering. If the object is a type that has
+           its own smoothing settings, then both the smooth settings for this object
+           and the map must be turned off. By default smooth maps are enabled.
+         ]]
+         values {
+            smooth: bool; [[$true by default.]]
+         }
+      }
+      @property map_alpha {
+         [[Alpha flag for map rendering.
+
+           This sets alpha flag for map rendering. If the object is a type that has
+           its own alpha settings, then this will take precedence. Only image objects
+           have this currently ($Efl.Canvas.Image and its friends).
+           Setting this off stops alpha blending of the map area, and is
+           useful if you know the object and/or all sub-objects is 100% solid.
+         ]]
+         values {
+            alpha: bool; [[$true by default.]]
+         }
+      }
+      @property map_point_coord {
+         [[Map point's coordinate.
+
+           This sets/gets the fixed point's coordinate in the map. Note that points
+           describe the outline of a quadrangle and are ordered either clockwise
+           or counter-clockwise. It is suggested to keep your quadrangles concave and
+           non-complex, though these polygon modes may work, they may not render
+           a desired set of output. The quadrangle will use points 0 and 1 , 1 and 2,
+           2 and 3, and 3 and 0 to describe the edges of the quadrangle.
+
+           The X and Y and Z coordinates are in canvas units. Z is optional and may
+           or may not be honored in drawing. Z is a hint and does not affect the
+           X and Y rendered coordinates. It may be used for calculating fills with
+           perspective correct rendering.
+
+           Remember all coordinates are canvas global ones like with move and resize
+           in the canvas.
+         ]]
+         keys {
+            idx: int; [[ID of the point, from 0 to 3 (included).]]
+         }
+         values {
+            x: double; [[Point X Coordinate.]]
+            y: double; [[Point Y Coordinate.]]
+            z: double; [[Point Z Coordinate hint (pre-perspective transform).]]
+         }
+      }
+      @property map_point_image_uv {
+         [[Map point's U and V texture source point.
+
+           This sets/gets the U and V coordinates for the point. This determines which
+           coordinate in the source image is mapped to the given point, much like
+           OpenGL and textures. Notes that these points do select the pixel, but
+           are double floating point values to allow for accuracy and sub-pixel
+           selection.
+         ]]
+         keys {
+            idx: int; [[ID of the point, from 0 to 3 (included).]]
+         }
+         values {
+            u: double; [[X coordinate within the image/texture source.]]
+            v: double; [[Y coordinate within the image/texture source.]]
+         }
+      }
+      @property map_color {
+         [[Color of a vertex in the map.
+
+           This sets the color of the vertex in the map. Colors will be linearly
+           interpolated between vertex points through the map. Color will multiply
+           the "texture" pixels (like GL_MODULATE in OpenGL). The default color of
+           a vertex in a map is white solid (255, 255, 255, 255) which means it will
+           have no affect on modifying the texture pixels.
+
+           The color values must be premultiplied (ie. $a >= {$r, $g, $b}).
+         ]]
+         keys {
+            idx: int; [[ID of the point, from 0 to 3 (included).
+                        -1 can be used to set the color for all points,
+                        but it is invalid for get().]]
+         }
+         values {
+            r: int; [[Red (0 - 255)]]
+            g: int; [[Green (0 - 255)]]
+            b: int; [[Blue (0 - 255)]]
+            a: int; [[Alpha (0 - 255)]]
+         }
+      }
+      @property map_move_sync {
+         [[Status of object move synchronization for map rendering.
+
+           If the flag is set as enabled, the map will be moved as the object
+           is moved.
+         ]]
+         values {
+            enable: bool; [[$true by default.]]
+         }
+      }
+      @property map_point_z {
+         [[Value of Z coordinate of point $idx.
+
+           Useful to call @.map_populate without changing Z.
+         ]]
+         get {}
+         keys {
+            idx: int;
+         }
+         values {
+            z: double;
+         }
+      }
+      map_populate {
+         [[Populate source and destination map points to match this object.
+         ]]
+         params {
+            z: double @optional; [[Point Z coordinate (pre-perpective transform),
+                                   used for all 4 points. 0 by default.]]
+         }
+         return: bool; [[$false in case of error.]]
+      }
+      map_populate_manual {
+         [[Populate source and destination map points to match given geometry.
+
+           Similar to @.map_populate, this call takes raw values instead of
+           querying this object's unmapped geometry. The given size will be
+           used to calculate destination points (@.map_point_coord) and set the
+           image uv (@.map_point_image_uv).
+         ]]
+         params {
+            x: double;
+            y: double;
+            w: double;
+            h: double;
+            z: double @optional; [[Point Z coordinate (pre-perpective transform),
+                                   used for all 4 points. 0 by default.]]
+         }
+         return: bool; [[$false in case of error.]]
+      }
+      map_rotate {
+         [[Change the map to apply the given rotation.
+
+           This rotates the indicated map's coordinates around the center coordinate
+           given by $cx and $cy as the rotation center. The points will have their
+           X and Y coordinates rotated clockwise by $degrees degrees (360.0 is a
+           full rotation). Negative values for degrees will rotate counter-clockwise
+           by that amount. All coordinates are canvas global coordinates.
+         ]]
+         params {
+            degrees: double; [[CCW rotation in degrees.]]
+            cx: double; [[X coordinate of the rotation center.]]
+            cy: double; [[Y coordinate of the rotation center.]]
+         }
+         return: bool; [[$false in case of error.]]
+      }
+      map_zoom {
+         [[Change the map to apply the given zooming.
+
+           Like evas_map_util_rotate(), this zooms the points of the map from a center
+           point. That center is defined by $cx and $cy. The $zoomx and $zoomy
+           parameters specify how much to zoom in the X and Y direction respectively.
+           A value of 1.0 means "don't zoom". 2.0 means "double the size". 0.5 is
+           "half the size" etc. All coordinates are canvas global coordinates.
+         ]]
+         params {
+            zoomx: double;
+            zoomy: double;
+            cx: double; [[X coordinate of the center point.]]
+            cy: double; [[Y coordinate of the center point.]]
+         }
+         return: bool; [[$false in case of error.]]
+      }
+      map_rotate_3d {
+         [[Rotate the map around 3 axes in 3D
+
+           This will rotate not just around the "Z" axis as in evas_map_util_rotate()
+           (which is a convenience call for those only wanting 2D). This will rotate
+           around the X, Y and Z axes. The Z axis points "into" the screen with low
+           values at the screen and higher values further away. The X axis runs from
+           left to right on the screen and the Y axis from top to bottom. Like with
+           evas_map_util_rotate() you provide a center point to rotate around (in 3D).
+         ]]
+         params {
+            dx: double; [[Rotation in degrees around X axis (0 to 360).]]
+            dy: double; [[Rotation in degrees around Y axis (0 to 360).]]
+            dz: double; [[Rotation in degrees around Z axis (0 to 360).]]
+            cx: double; [[Rotation's center X position.]]
+            cy: double; [[Rotation's center Y position.]]
+            cz: double; [[Rotation's center Z position.]]
+         }
+         return: bool; [[$false in case of error.]]
+      }
+      map_quat_rotate {
+         [[Rotate the map in 3D using a unit quaternion.
+
+           This will rotate in 3D using a unit quaternion. Like with
+           evas_map_util_3d_rotate() you provide a center point
+           to rotate around (in 3D).
+         ]]
+         params {
+            qx: double; [[the x component of the imaginary part of the quaternion.]]
+            qy: double; [[the y component of the imaginary part of the quaternion.]]
+            qz: double; [[the z component of the imaginary part of the quaternion.]]
+            qw: double; [[the w component of the real part of the quaternion.]]
+            cx: double; [[rotation's center x.]]
+            cy: double; [[rotation's center y.]]
+            cz: double; [[rotation's center z.]]
+         }
+         return: bool; [[$false in case of error.]]
+      }
+      map_lightning_3d {
+         [[Perform lighting calculations on the given Map
+
+           This is used to apply lighting calculations (from a single light source)
+           to a given map. The R, G and B values of each vertex will be modified to
+           reflect the lighting based on the light point coordinates, the light
+           color and the ambient color, and at what angle the map is facing the
+           light source. A surface should have its points be declared in a
+           clockwise fashion if the face is "facing" towards you (as opposed to
+           away from you) as faces have a "logical" side for lighting.
+         ]]
+         params {
+            lx: double; [[X coordinate in space of light point.]]
+            ly: double; [[Y coordinate in space of light point.]]
+            lz: double; [[Z coordinate in space of light point.]]
+            lr: int; [[light red value (0 - 255).]]
+            lg: int; [[light green value (0 - 255).]]
+            lb: int; [[light blue value (0 - 255).]]
+            ar: int; [[ambient color red value (0 - 255).]]
+            ag: int; [[ambient color green value (0 - 255).]]
+            ab: int; [[ambient color blue value (0 - 255).]]
+         }
+         return: bool; [[$false in case of error.]]
+      }
+      map_perspective_3d {
+         [[Apply a perspective transform to the map
+
+           This applies a given perspective (3D) to the map coordinates. X, Y and Z
+           values are used. The px and py points specify the "infinite distance" point
+           in the 3D conversion (where all lines converge to like when artists draw
+           3D by hand). The $z0 value specifies the z value at which there is a 1:1
+           mapping between spatial coordinates and screen coordinates. Any points
+           on this z value will not have their X and Y values modified in the transform.
+           Those further away (Z value higher) will shrink into the distance, and
+           those less than this value will expand and become bigger. The $foc value
+           determines the "focal length" of the camera. This is in reality the distance
+           between the camera lens plane itself (at or closer than this rendering
+           results are undefined) and the "z0" z value. This allows for some "depth"
+           control and $foc must be greater than 0.
+         ]]
+         params {
+            px: double; [[The perspective distance X coordinate]]
+            py: double; [[The perspective distance Y coordinate]]
+            z0: double; [[The "0" z plane value]]
+            foc: double; [[The focal distance]]
+         }
+         return: bool; [[$false in case of error.]]
+      }
+      map_dup {
+         [[Duplicate the map information from another object.]]
+         params {
+            other: const(Efl.Gfx.Map);
+         }
+         return: bool; [[$false in case of error.]]
+      }
    }
    implements {
    }
 }
+
+
+// Porting notes:
+
+// Skipped APIs:
+// evas_map_util_object_move_sync_{set,get}

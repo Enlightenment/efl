@@ -6590,4 +6590,21 @@ EAPI void evas_object_map_set(Evas_Object *obj, const Evas_Map *map);
  */
 EAPI const Evas_Map *evas_object_map_get(const Evas_Object *obj);
 
+/**
+ * @brief Enable or disable the map that is set.
+ *
+ * Enable or disable the use of map for the object @c obj. On enable, the
+ * object geometry will be saved, and the new geometry will change (position
+ * and size) to reflect the map geometry set.
+ *
+ * If the object doesn't have a map set (with @ref evas_object_map_set), the
+ * initial geometry will be undefined. It is advised to always set a map to the
+ * object first, and then call this function to enable its use.
+ *
+ * @param[in] enabled Enabled state.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled);
+
 #include "canvas/efl_gfx_map.eo.legacy.h"

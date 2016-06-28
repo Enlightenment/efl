@@ -145,7 +145,7 @@ evas_object_map_move_sync(Evas_Object *eo_obj)
 }
 
 static inline Evas_Map *
-_evas_map_new(int count)
+_evas_map_new(int count, Eina_Bool sync)
 {
    int i;
    int alloc;
@@ -158,6 +158,7 @@ _evas_map_new(int count)
 
    m = calloc(1, sizeof(Evas_Map) + (alloc * sizeof(Evas_Map_Point)));
    if (!m) return NULL;
+   m->move_sync.enabled = sync;
    m->count = count;
    m->persp.foc = 0;
    m->alpha = 1;
@@ -194,7 +195,7 @@ _evas_map_copy(Evas_Map *dst, const Evas_Map *src)
 static inline Evas_Map *
 _evas_map_dup(const Evas_Map *orig)
 {
-   Evas_Map *copy = _evas_map_new(orig->count);
+   Evas_Map *copy = _evas_map_new(orig->count, EINA_FALSE);
    if (!copy) return NULL;
    memcpy(copy->points, orig->points, orig->count * sizeof(Evas_Map_Point));
    copy->smooth = orig->smooth;
@@ -229,7 +230,7 @@ _evas_map_free(Evas_Object *eo_obj, Evas_Map *m)
 /* util functions for manipulating maps, so you don't need to know the math */
 /****************************************************************************/
 static inline void
-_evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord y, const Evas_Coord w, const Evas_Coord h, const Evas_Coord z)
+_evas_map_util_points_populate(Evas_Map *m, const double x, const double y, const double w, const double h, const double z)
 {
    Evas_Map_Point *p = m->points;
    int i;
@@ -463,10 +464,10 @@ _evas_object_map_parent_check(Evas_Object *eo_parent)
    return EINA_TRUE;
 }
 
-EOLIAN void
-_efl_canvas_object_efl_gfx_map_map_enable_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool enabled)
+static void
+_map_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+                    Eina_Bool enabled, Eina_Bool default_move_sync)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Eina_Bool pchange = EINA_FALSE;
 
    enabled = !!enabled;
@@ -483,7 +484,7 @@ _efl_canvas_object_efl_gfx_map_map_enable_set(Eo *eo_obj, void *_pd EINA_UNUSED,
         if (!obj->map->cur.map)
           {
              EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
-               map_write->cur.map = _evas_map_new(4);
+               map_write->cur.map = _evas_map_new(4, default_move_sync);
              EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
           }
         evas_object_mapped_clip_across_mark(eo_obj, obj);
@@ -531,6 +532,22 @@ _efl_canvas_object_efl_gfx_map_map_enable_set(Eo *eo_obj, void *_pd EINA_UNUSED,
         if (_evas_object_map_parent_check(obj->smart.parent))
           evas_object_update_bounding_box(eo_obj, obj, NULL);
      }
+}
+
+EOLIAN void
+_efl_canvas_object_efl_gfx_map_map_enable_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool enabled)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+
+   _map_map_enable_set(eo_obj, obj, enabled, EINA_TRUE);
+}
+
+EAPI void
+evas_object_map_enable_set(Efl_Gfx_Map *eo_obj, Eina_Bool enabled)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+
+   _map_map_enable_set(eo_obj, obj, enabled, EINA_FALSE);
 }
 
 EOLIAN Eina_Bool
@@ -652,7 +669,7 @@ evas_map_new(int count)
         return NULL;
      }
 
-   return _evas_map_new(count);
+   return _evas_map_new(count, EINA_FALSE);
 }
 
 EAPI void
@@ -750,8 +767,23 @@ evas_map_count_get(const Evas_Map *m)
    return m->count;
 }
 
+static inline void
+_map_point_coord_set(Evas_Map *m, int idx, double x, double y, double z)
+{
+   Evas_Map_Point *p;
+
+   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < m->count));
+
+   p = m->points + idx;
+   p->x = p->px = x;
+   p->y = p->py = y;
+   p->z = z;
+}
+
 /* FIXME: coordinates should be float/double for accuracy.
-   Rotation center position will be flickered by rounding problem. */
+   Rotation center position will be flickered by rounding problem.
+   Now fixed in EO APIs.
+ */
 EAPI void
 evas_map_point_coord_set(Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z)
 {
@@ -759,35 +791,37 @@ evas_map_point_coord_set(Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_
    return;
    MAGIC_CHECK_END();
 
-   Evas_Map_Point *p;
+   _map_point_coord_set(m, idx, x, y, z);
+}
 
-   if (idx >= m->count) return;
+static inline void
+_map_point_coord_get(const Evas_Map *m, int idx, double *x, double *y, double *z)
+{
+   const Evas_Map_Point *p;
+
+   EINA_SAFETY_ON_FALSE_GOTO(m && (idx >= 0) && (idx < m->count), error);
+
    p = m->points + idx;
-   p->x = p->px = x;
-   p->y = p->py = y;
-   p->z = z;
+   if (x) *x = p->x;
+   if (y) *y = p->y;
+   if (z) *z = p->z;
+   return;
+
+error:
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (z) *z = 0;
 }
 
 EAPI void
 evas_map_point_coord_get(const Evas_Map *m, int idx, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z)
 {
-   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
-   goto error;
-   MAGIC_CHECK_END();
+   double dx, dy, dz;
 
-   const Evas_Map_Point *p;
-
-   if (idx >= m->count) goto error;
-   p = m->points + idx;
-   if (x) *x = lround(p->x);
-   if (y) *y = lround(p->y);
-   if (z) *z = lround(p->z);
-   return;
-
- error:
-   if (x) *x = 0;
-   if (y) *y = 0;
-   if (z) *z = 0;
+   _map_point_coord_get(m, idx, &dx, &dy, &dz);
+   if (x) *x = lround(dx);
+   if (y) *y = lround(dy);
+   if (z) *z = lround(dz);
 }
 
 EAPI void
@@ -799,7 +833,7 @@ evas_map_point_image_uv_set(Evas_Map *m, int idx, double u, double v)
 
    Evas_Map_Point *p;
 
-   if (idx >= m->count) return;
+   if ((idx < 0) || (idx >= m->count)) return;
    p = m->points + idx;
    p->u = u;
    p->v = v;
@@ -814,7 +848,7 @@ evas_map_point_image_uv_get(const Evas_Map *m, int idx, double *u, double *v)
 
    const Evas_Map_Point *p;
 
-   if (idx >= m->count) goto error;
+   if ((idx < 0) || (idx >= m->count)) goto error;
    p = m->points + idx;
    if (u) *u = p->u;
    if (v) *v = p->v;
@@ -834,7 +868,7 @@ evas_map_point_color_set(Evas_Map *m, int idx, int r, int g, int b, int a)
 
    Evas_Map_Point *p;
 
-   if (idx >= m->count) return;
+   if ((idx < 0) || (idx >= m->count)) return;
    p = m->points + idx;
    p->r = r;
    p->g = g;
@@ -851,12 +885,18 @@ evas_map_point_color_get(const Evas_Map *m, int idx, int *r, int *g, int *b, int
 
    const Evas_Map_Point *p;
 
-   if (idx >= m->count) return;
+   if ((idx < 0) || (idx >= m->count)) goto error;
    p = m->points + idx;
    if (r) *r = p->r;
    if (g) *g = p->g;
    if (b) *b = p->b;
    if (a) *a = p->a;
+
+error:
+   if (r) *r = 255;
+   if (g) *g = 255;
+   if (b) *b = 255;
+   if (a) *a = 255;
 }
 
 EAPI void
@@ -938,13 +978,9 @@ evas_map_util_points_color_set(Evas_Map *m, int r, int g, int b, int a)
      }
 }
 
-EAPI void
-evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
+static void
+_map_util_rotate(Evas_Map *m, double degrees, double cx, double cy)
 {
-   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
-   return;
-   MAGIC_CHECK_END();
-
    double r = (degrees * M_PI) / 180.0;
    Evas_Map_Point *p, *p_end;
 
@@ -969,12 +1005,18 @@ evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
 }
 
 EAPI void
-evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_Coord cy)
+evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
    return;
    MAGIC_CHECK_END();
 
+   _map_util_rotate(m, degrees, (double) cx, (double) cy);
+}
+
+static void
+_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, double cx, double cy)
+{
    Evas_Map_Point *p, *p_end;
 
    p = m->points;
@@ -987,8 +1029,8 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
         x = p->x - cx;
         y = p->y - cy;
 
-        x = (((double)x) * zoomx);
-        y = (((double)y) * zoomy);
+        x *= zoomx;
+        y *= zoomy;
 
         p->px = p->x = x + cx;
         p->py = p->y = y + cy;
@@ -996,13 +1038,19 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
 }
 
 EAPI void
-evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
-                        Evas_Coord cx, Evas_Coord cy, Evas_Coord cz)
+evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_Coord cy)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
    return;
    MAGIC_CHECK_END();
 
+   _map_util_zoom(m, zoomx, zoomy, (double) cx, (double) cy);
+}
+
+static void
+_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
+                    double cx, double cy, double cz)
+{
    double rz = (dz * M_PI) / 180.0;
    double rx = (dx * M_PI) / 180.0;
    double ry = (dy * M_PI) / 180.0;
@@ -1050,6 +1098,17 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
 }
 
 EAPI void
+evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
+                        Evas_Coord cx, Evas_Coord cy, Evas_Coord cz)
+{
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
+   _map_util_3d_rotate(m, dx, dy, dz, (double) cx, (double) cy, (double) cz);
+}
+
+EAPI void
 evas_map_util_quat_rotate(Evas_Map *m, double qx, double qy, double qz,
                           double qw, double cx, double cy, double cz)
 {
@@ -1090,15 +1149,11 @@ evas_map_util_quat_rotate(Evas_Map *m, double qx, double qy, double qz,
      }
 }
 
-EAPI void
-evas_map_util_3d_lighting(Evas_Map *m,
-                          Evas_Coord lx, Evas_Coord ly, Evas_Coord lz,
-                          int lr, int lg, int lb, int ar, int ag, int ab)
+static void
+_map_util_3d_lighting(Evas_Map *m,
+                      double lx, double ly, double lz,
+                      int lr, int lg, int lb, int ar, int ag, int ab)
 {
-   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
-   return;
-   MAGIC_CHECK_END();
-
    int i;
 
    for (i = 0; i < m->count; i++)
@@ -1170,14 +1225,21 @@ evas_map_util_3d_lighting(Evas_Map *m,
 }
 
 EAPI void
-evas_map_util_3d_perspective(Evas_Map *m,
-                             Evas_Coord px, Evas_Coord py,
-                             Evas_Coord z0, Evas_Coord foc)
+evas_map_util_3d_lighting(Evas_Map *m,
+                          Evas_Coord lx, Evas_Coord ly, Evas_Coord lz,
+                          int lr, int lg, int lb, int ar, int ag, int ab)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
    return;
    MAGIC_CHECK_END();
 
+   _map_util_3d_lighting(m, (double) lx, (double) ly, (double)
+                         lz, lr, lg, lb, ar, ag, ab);
+}
+
+static void
+_map_util_3d_perspective(Evas_Map *m, double px, double py, double z0, double foc)
+{
    Evas_Map_Point *p, *p_end;
 
    p = m->points;
@@ -1208,6 +1270,18 @@ evas_map_util_3d_perspective(Evas_Map *m,
         p->x = px + x;
         p->y = py + y;
      }
+}
+
+EAPI void
+evas_map_util_3d_perspective(Evas_Map *m,
+                             Evas_Coord px, Evas_Coord py,
+                             Evas_Coord z0, Evas_Coord foc)
+{
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
+   _map_util_3d_perspective(m, (double) px, (double) py, (double) z0, (double) foc);
 }
 
 EAPI Eina_Bool
@@ -1363,6 +1437,357 @@ evas_map_object_move_diff_set(Evas_Map *m,
 
    m->move_sync.diff_x += diff_x;
    m->move_sync.diff_y += diff_y;
+}
+
+
+/* Efl.Gfx.Map implementation - relies on legacy for now */
+// note: cur vs. prev is not handled
+
+#define MAP_OBJ_CHANGE() do { \
+   _evas_map_calc_map_geometry(eo_obj); \
+   evas_object_change(eo_obj, obj); \
+   obj->changed_map = EINA_TRUE; \
+   } while (0)
+
+#define MAP_POPULATE_DEFAULT(m, z) \
+   _evas_map_util_points_populate(m, obj->cur->geometry.x, obj->cur->geometry.y, \
+                                  obj->cur->geometry.w, obj->cur->geometry.h, z)
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_clockwise_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   return evas_map_util_clockwise_get((Evas_Map *) evas_object_map_get(eo_obj));
+}
+
+EOLIAN static void
+_efl_gfx_map_map_smooth_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool smooth)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map)
+     {
+        if (smooth) return;
+        if (!efl_gfx_map_populate(eo_obj, 0))
+          return;
+     }
+
+   m = (Evas_Map *) obj->map->cur.map;
+   m->smooth = smooth;
+   MAP_OBJ_CHANGE();
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_smooth_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   const Evas_Map *om = evas_object_map_get(eo_obj);
+   return om ? om->smooth : EINA_TRUE;
+}
+
+EOLIAN static void
+_efl_gfx_map_map_alpha_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool alpha)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map)
+     {
+        if (alpha) return;
+        if (!efl_gfx_map_populate(eo_obj, 0))
+          return;
+     }
+
+   m = (Evas_Map *) obj->map->cur.map;
+   m->alpha = alpha;
+   MAP_OBJ_CHANGE();
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_alpha_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   const Evas_Map *om = evas_object_map_get(eo_obj);
+   return om ? om->alpha : EINA_TRUE;
+}
+
+EOLIAN static void
+_efl_gfx_map_map_point_coord_set(Eo *eo_obj, void *_pd EINA_UNUSED, int idx, double x, double y, double z)
+{
+   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < 4));
+
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map && !efl_gfx_map_populate(eo_obj, 0))
+     return;
+
+   m = (Evas_Map *) obj->map->cur.map;
+   _map_point_coord_set(m, idx, x, y, z);
+   MAP_OBJ_CHANGE();
+}
+
+EOLIAN static void
+_efl_gfx_map_map_point_coord_get(Eo *eo_obj, void *_pd EINA_UNUSED, int idx, double *x, double *y, double *z)
+{
+   const Evas_Map *om = evas_object_map_get(eo_obj);
+   _map_point_coord_get(om, idx, x, y, z);
+}
+
+EOLIAN static void
+_efl_gfx_map_map_point_image_uv_set(Eo *eo_obj, void *_pd EINA_UNUSED, int idx, double u, double v)
+{
+   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < 4));
+
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map && !efl_gfx_map_populate(eo_obj, 0))
+     return;
+
+   m = (Evas_Map *) obj->map->cur.map;
+   evas_map_point_image_uv_set(m, idx, u, v);
+   MAP_OBJ_CHANGE();
+}
+
+EOLIAN static void
+_efl_gfx_map_map_point_image_uv_get(Eo *eo_obj, void *_pd EINA_UNUSED, int idx, double *u, double *v)
+{
+   const Evas_Map *om = evas_object_map_get(eo_obj);
+
+   evas_map_point_image_uv_get(om, idx, u, v);
+}
+
+EOLIAN static void
+_efl_gfx_map_map_color_set(Eo *eo_obj, void *_pd EINA_UNUSED, int idx, int r, int g, int b, int a)
+{
+   EINA_SAFETY_ON_FALSE_RETURN((idx >= -1) && (idx < 4));
+
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map && !efl_gfx_map_populate(eo_obj, 0))
+     return;
+
+   m = (Evas_Map *) obj->map->cur.map;
+   if (idx == -1)
+     evas_map_util_points_color_set(m, r, g, b, a);
+   else
+     evas_map_point_color_set(m, idx, r, g, b, a);
+   MAP_OBJ_CHANGE();
+}
+
+EOLIAN static void
+_efl_gfx_map_map_color_get(Eo *eo_obj, void *_pd EINA_UNUSED, int idx, int *r, int *g, int *b, int *a)
+{
+   const Evas_Map *om = evas_object_map_get(eo_obj);
+
+   evas_map_point_color_get(om, idx, r, g, b, a);
+}
+
+EOLIAN static void
+_efl_gfx_map_map_move_sync_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool enable)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map)
+     {
+        if (enable) return;
+        if (!efl_gfx_map_populate(eo_obj, 0))
+          return;
+     }
+
+   m = (Evas_Map *) obj->map->cur.map;
+   m->move_sync.enabled = enable;
+   MAP_OBJ_CHANGE();
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_move_sync_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   const Evas_Map *om = evas_object_map_get(eo_obj);
+
+   return om ? om->move_sync.enabled : EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_populate(Eo *eo_obj, void *_pd EINA_UNUSED, double z)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map)
+     {
+        m = _evas_map_new(4, EINA_TRUE);
+        if (!m) return EINA_FALSE;
+        MAP_POPULATE_DEFAULT(m, z);
+        evas_object_map_set(eo_obj, m);
+        evas_map_free(m);
+     }
+   else
+     {
+        m = (Evas_Map *) obj->map->cur.map;
+        MAP_POPULATE_DEFAULT(m, z);
+        MAP_OBJ_CHANGE();
+     }
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_populate_manual(Eo *eo_obj, void *_pd EINA_UNUSED, double x, double y, double w, double h, double z)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map)
+     {
+        m = _evas_map_new(4, EINA_TRUE);
+        if (!m) return EINA_FALSE;
+        _evas_map_util_points_populate(m, x, y, w, h, z);
+        evas_object_map_set(eo_obj, m);
+        evas_map_free(m);
+     }
+   else
+     {
+        m = (Evas_Map *) obj->map->cur.map;
+        _evas_map_util_points_populate(m, x, y, w, h, z);
+        MAP_OBJ_CHANGE();
+     }
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_rotate(Eo *eo_obj, void *_pd EINA_UNUSED, double degrees, double cx, double cy)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map)
+     {
+        if (!efl_gfx_map_populate(eo_obj, 0))
+          return EINA_FALSE;
+     }
+
+   m = (Evas_Map *) obj->map->cur.map;
+   _map_util_rotate(m, degrees, cx, cy);
+   MAP_OBJ_CHANGE();
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_zoom(Eo *eo_obj, void *_pd EINA_UNUSED, double zoomx, double zoomy, double cx, double cy)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map)
+     {
+        if (!efl_gfx_map_populate(eo_obj, 0))
+          return EINA_FALSE;
+     }
+
+   m = (Evas_Map *) obj->map->cur.map;
+   _map_util_zoom(m, zoomx, zoomy, cx, cy);
+   MAP_OBJ_CHANGE();
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_rotate_3d(Eo *eo_obj, void *_pd EINA_UNUSED, double dx, double dy, double dz, double cx, double cy, double cz)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map)
+     {
+        if (!efl_gfx_map_populate(eo_obj, 0))
+          return EINA_FALSE;
+     }
+
+   m = (Evas_Map *) obj->map->cur.map;
+   _map_util_3d_rotate(m, dx, dy, dz, cx, cy, cz);
+   MAP_OBJ_CHANGE();
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_quat_rotate(Eo *eo_obj, void *_pd EINA_UNUSED, double qx, double qy, double qz, double qw, double cx, double cy, double cz)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map)
+     {
+        if (!efl_gfx_map_populate(eo_obj, 0))
+          return EINA_FALSE;
+     }
+
+   m = (Evas_Map *) obj->map->cur.map;
+   evas_map_util_quat_rotate(m, qx, qy, qz, qw, cx, cy, cz);
+   MAP_OBJ_CHANGE();
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_lightning_3d(Eo *eo_obj, void *_pd EINA_UNUSED, double lx, double ly, double lz, int lr, int lg, int lb, int ar, int ag, int ab)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map)
+     {
+        if (!efl_gfx_map_populate(eo_obj, 0))
+          return EINA_FALSE;
+     }
+
+   m = (Evas_Map *) obj->map->cur.map;
+   _map_util_3d_lighting(m, lx, ly, lz, lr, lg, lb, ar, ag, ab);
+   MAP_OBJ_CHANGE();
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_perspective_3d(Eo *eo_obj, void *_pd EINA_UNUSED, double px, double py, double z0, double foc)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
+   Evas_Map *m;
+
+   if (!obj->map->cur.map)
+     {
+        if (!efl_gfx_map_populate(eo_obj, 0))
+          return EINA_FALSE;
+     }
+
+   m = (Evas_Map *) obj->map->cur.map;
+   _map_util_3d_perspective(m, px, py, z0, foc);
+   MAP_OBJ_CHANGE();
+
+   return EINA_TRUE;
+}
+
+EOLIAN static double
+_efl_gfx_map_map_point_z_get(Eo *eo_obj, void *_pd EINA_UNUSED, int idx)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, 0.0);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((idx >= 0) && (idx < 4), 0.0);
+
+   const Evas_Map *m = obj->map->cur.map;
+   const Evas_Map_Point *p = m ? (m->points + idx) : NULL;
+
+   return p ? p->z : 0.0;
+}
+
+EOLIAN static Eina_Bool
+_efl_gfx_map_map_dup(Eo *eo_obj, void *_pd EINA_UNUSED, const Efl_Gfx_Map *other)
+{
+   evas_object_map_set(eo_obj, evas_object_map_get(other));
+   return EINA_TRUE;
 }
 
 #include "canvas/efl_gfx_map.eo.c"
