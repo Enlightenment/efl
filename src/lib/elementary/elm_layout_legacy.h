@@ -256,7 +256,7 @@ EAPI Eina_Bool elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_B
  *
  * @ingroup Elm_Layout
  */
-EAPI const char *elm_layout_data_get(const Elm_Layout *obj, const char *key);
+EAPI const char *elm_layout_data_get(const Evas_Object *obj, const char *key);
 
 /**
  * @brief Send a (Edje) signal to a given layout widget's underlying Edje
@@ -271,7 +271,7 @@ EAPI const char *elm_layout_data_get(const Elm_Layout *obj, const char *key);
  *
  * @ingroup Elm_Layout
  */
-EAPI void elm_layout_signal_emit(Elm_Layout *obj, const char *emission, const char *source);
+EAPI void elm_layout_signal_emit(Evas_Object *obj, const char *emission, const char *source);
 
 /**
  * @brief Add a callback for a (Edje) signal emitted by a layout widget's
@@ -289,7 +289,7 @@ EAPI void elm_layout_signal_emit(Elm_Layout *obj, const char *emission, const ch
  *
  * @ingroup Elm_Layout
  */
-EAPI void elm_layout_signal_callback_add(Elm_Layout *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+EAPI void elm_layout_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
 /**
  * @brief Remove a signal-triggered callback from a given layout widget.
@@ -310,7 +310,7 @@ EAPI void elm_layout_signal_callback_add(Elm_Layout *obj, const char *emission, 
  *
  * @ingroup Elm_Layout
  */
-EAPI void *elm_layout_signal_callback_del(Elm_Layout *obj, const char *emission, const char *source, Edje_Signal_Cb func);
+EAPI void *elm_layout_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
 
 /**
  * @brief Freezes the Elementary layout object.
@@ -324,7 +324,7 @@ EAPI void *elm_layout_signal_callback_del(Elm_Layout *obj, const char *emission,
  *
  * @ingroup Elm_Layout
  */
-EAPI int elm_layout_freeze(Elm_Layout *obj);
+EAPI int elm_layout_freeze(Evas_Object *obj);
 
 /**
  * @brief Thaws the Elementary object.
@@ -340,6 +340,6 @@ EAPI int elm_layout_freeze(Elm_Layout *obj);
  *
  * @ingroup Elm_Layout
  */
-EAPI int elm_layout_thaw(Elm_Layout *obj);
+EAPI int elm_layout_thaw(Evas_Object *obj);
 
 #include "elm_layout.eo.legacy.h"
