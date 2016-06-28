@@ -5570,7 +5570,6 @@ _update_text_cursors(Eo *obj)
      {
         if (bidi_cursor)
           {
-             evas_object_image_fill_set(sd->cursor_bidi, 0, 0, ww, hh / 2);
              evas_object_move(sd->cursor_bidi, x + xx2, y + yy2 + (hh / 2));
              evas_object_resize(sd->cursor, ww, hh / 2);
              evas_object_resize(sd->cursor_bidi, ww, hh / 2);
