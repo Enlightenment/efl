@@ -287,7 +287,7 @@ START_TEST(ecore_test_timer_lifecycle)
 
    ecore_shutdown();
 
-   fail_if(re == EINA_TRUE &&! rl == EINA_TRUE);
+   fail_if(re == EINA_TRUE && rl == EINA_TRUE);
    fail_if(dl == EINA_FALSE);
    fail_if(de == EINA_TRUE);
 
