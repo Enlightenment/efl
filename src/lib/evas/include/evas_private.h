@@ -1207,11 +1207,10 @@ struct _Evas_Font_Alias
 struct _Evas_Font_Description
 {
    int ref;
-   /* We assume everywhere this is stringshared */
-   const char *name;
-   const char *fallbacks;
-   const char *lang;
-   const char *style;
+   Eina_Stringshare *name;
+   Eina_Stringshare *fallbacks;
+   Eina_Stringshare *lang;
+   Eina_Stringshare *style;
 
    Evas_Font_Slant slant;
    Evas_Font_Weight weight;
