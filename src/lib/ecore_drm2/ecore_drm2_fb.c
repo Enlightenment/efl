@@ -4,8 +4,8 @@ static Eina_Bool
 _fb2_create(Ecore_Drm2_Fb *fb)
 {
    struct drm_mode_fb_cmd2 cmd;
-   uint32_t hdls[4], pitches[4], offsets[4];
-   uint64_t modifiers[4];
+   uint32_t hdls[4] = { 0 }, pitches[4] = { 0 }, offsets[4] = { 0 };
+   uint64_t modifiers[4] = { 0 };
 
    hdls[0] = fb->hdl;
    pitches[0] = fb->stride;
