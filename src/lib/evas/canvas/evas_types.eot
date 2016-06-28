@@ -54,12 +54,6 @@ enum Evas.Font.Hinting_Flags {
    bytecode [[Bytecode font hinting]]
 }
 
-struct Evas.Map; [[An opaque handle to map points
-
-                   See \@ref evas_map_new, \@ref evas_map_free,
-                   \@ref evas_map_dup.
-                 ]]
-
 enum Evas.Touch_Point_State {
    [[State of Evas_Coord_Touch_Point]]
    legacy: Evas_Touch_Point;
