@@ -266,6 +266,7 @@ static void _efl_ui_text_select_all(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd);
 static void _efl_ui_text_anchor_hover_end(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd);
 static void _efl_ui_text_anchor_hover_parent_set(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *parent);
 static const char* _efl_ui_text_selection_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd);
+static void _edje_signal_emit(Efl_Ui_Text_Data *obj, const char *sig, const char *src);
 
 static Mod_Api *
 _module_find(Evas_Object *obj EINA_UNUSED)
@@ -1363,7 +1364,7 @@ _efl_ui_text_elm_widget_on_focus(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item 
         evas_object_focus_set(sw, EINA_TRUE);
 
 #endif
-        edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
+        _edje_signal_emit(sd, "elm,action,focus", "elm");
         if (sd->scroll)
           edje_object_signal_emit(sd->scr_edje, "elm,action,focus", "elm");
 
@@ -1378,7 +1379,7 @@ _efl_ui_text_elm_widget_on_focus(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item 
      }
    else
      {
-        edje_object_signal_emit(sd->entry_edje, "elm,action,unfocus", "elm");
+        _edje_signal_emit(sd, "elm,action,unfocus", "elm");
         if (sd->scroll)
           edje_object_signal_emit(sd->scr_edje, "elm,action,unfocus", "elm");
 #if 0
@@ -5480,6 +5481,14 @@ _efl_ui_text_cursor_new(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED)
          efl_canvas_text_cursor_text_object_set(eo_self, text_obj));
 }
 
+static void
+_edje_signal_emit(Efl_Ui_Text_Data *sd, const char *sig, const char *src)
+{
+   edje_object_signal_emit(sd->entry_edje, sig, src);
+   edje_object_signal_emit(sd->cursor, sig, src);
+   edje_object_signal_emit(sd->cursor_bidi, sig, src);
+}
+
 static inline Eo *
 _decoration_create(Efl_Ui_Text_Data *sd, const char *file,
       const char *source, Eina_Bool above)
@@ -5995,7 +6004,29 @@ _efl_ui_text_cursor_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 static void
 _efl_ui_text_selection_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   EFL_UI_TEXT_DATA_GET(data, sd);
+   Eo *obj = data;
+   Eo *start, *end;
+   char *text;
+   EFL_UI_TEXT_DATA_GET(obj, sd);
+
+   efl_ui_text_interactive_selection_cursors_get(obj, &start, &end);
+
+   text = efl_canvas_text_range_text_get(obj, start, end);
+   if (!text || (text[0] == '\0'))
+     {
+        _edje_signal_emit(sd, "selection,cleared", "elm.text");
+        sd->have_selection = EINA_FALSE;
+     }
+   else
+     {
+        if (!sd->have_selection)
+          {
+             _edje_signal_emit(sd, "selection,start", "elm.text");
+          }
+        _edje_signal_emit(sd, "selection,changed", "elm.text");
+        sd->have_selection = EINA_TRUE;
+        free(text);
+     }
    sd->deferred_decoration_selection = EINA_TRUE;
    _decoration_defer(data);
 }
