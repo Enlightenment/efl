@@ -164,12 +164,13 @@ ecore_wl_input_ungrab(Ecore_Wl_Input *input)
 
    if (!input) return;
 
-   if ((input->grab) && (input->grab_button))
+   if ((input->grab) && (input->grab_button) && (input->grab_count))
      _ecore_wl_input_mouse_up_send(input, input->grab, 0, input->grab_button,
                                    input->grab_timestamp);
 
    input->grab = NULL;
    input->grab_button = 0;
+   input->grab_count = 0;
 }
 
 /* NB: This function should be called just before shell move and shell resize
@@ -622,8 +623,8 @@ _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer EINA_UN
           _ecore_wl_input_mouse_up_send(input, input->pointer_focus,
                                         0, button, timestamp);
 
-        input->grab_count--;
-        if ((input->grab) && (input->grab_button == button) && 
+        if (input->grab_count) input->grab_count--;
+        if ((input->grab) && (input->grab_button == button) &&
             (!state) && (!input->grab_count))
           ecore_wl_input_ungrab(input);
      }
@@ -1168,8 +1169,8 @@ _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsi
    input->display->serial = serial;
 
    _ecore_wl_input_mouse_up_send(input, input->touch_focus, id, BTN_LEFT, timestamp);
-   input->grab_count--;
-   if ((input->grab) && (input->grab_button == BTN_LEFT) && 
+   if (input->grab_count) input->grab_count--;
+   if ((input->grab) && (input->grab_button == BTN_LEFT) &&
        (!input->grab_count))
      ecore_wl_input_ungrab(input);
 }
