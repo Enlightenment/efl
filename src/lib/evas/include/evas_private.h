@@ -1211,6 +1211,7 @@ struct _Evas_Font_Description
    const char *name;
    const char *fallbacks;
    const char *lang;
+   const char *style;
 
    Evas_Font_Slant slant;
    Evas_Font_Weight weight;
