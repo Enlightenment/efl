@@ -464,8 +464,9 @@ _evas_object_map_parent_check(Evas_Object *eo_parent)
 }
 
 EOLIAN void
-_efl_canvas_object_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool enabled)
+_efl_canvas_object_efl_gfx_map_map_enable_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool enabled)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Eina_Bool pchange = EINA_FALSE;
 
    enabled = !!enabled;
@@ -533,14 +534,17 @@ _efl_canvas_object_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, E
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_map_enable_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_map_map_enable_get(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    return obj->map->cur.usemap;
 }
 
-EOLIAN void
-_efl_canvas_object_map_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, const Evas_Map *map)
+EAPI void
+evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
 {
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+
    evas_object_async_block(obj);
    if ((!map) || (map->count < 4))
      {
@@ -630,9 +634,11 @@ _efl_canvas_object_map_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, const Ev
    _evas_map_calc_map_geometry(eo_obj);
 }
 
-EOLIAN Evas_Map *
-_efl_canvas_object_map_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+EAPI const Evas_Map *
+evas_object_map_get(const Evas_Object *eo_obj)
 {
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN((Eo *) eo_obj, NULL);
+
    evas_object_async_block(obj);
    return obj->map->cur.map;
 }
@@ -1358,3 +1364,5 @@ evas_map_object_move_diff_set(Evas_Map *m,
    m->move_sync.diff_x += diff_x;
    m->move_sync.diff_y += diff_y;
 }
+
+#include "canvas/efl_gfx_map.eo.c"

@@ -5015,8 +5015,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              else map_obj = mo;
              if (map_obj)
                {
-                  efl_canvas_object_map_set(map_obj, map);
-                  efl_canvas_object_map_enable_set(map_obj, EINA_TRUE);
+                  evas_object_map_set(map_obj, map);
+                  evas_object_map_enable_set(map_obj, EINA_TRUE);
                }
           }
         else
@@ -5027,8 +5027,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                {
                   if (ep->nested_smart) /* Cancel map of smart obj holding nested parts */
                     {
-                       efl_canvas_object_map_enable_set(ep->nested_smart, EINA_FALSE);
-                       efl_canvas_object_map_set(ep->nested_smart, NULL);
+                       evas_object_map_enable_set(ep->nested_smart, EINA_FALSE);
+                       evas_object_map_set(ep->nested_smart, NULL);
                     }
                   else
                     {
@@ -5038,8 +5038,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 #endif
                             if (mo)
                               {
-                                 efl_canvas_object_map_enable_set(mo, 0);
-                                 efl_canvas_object_map_set(mo, NULL);
+                                 evas_object_map_enable_set(mo, 0);
+                                 evas_object_map_set(mo, NULL);
                               }
 #ifdef HAVE_EPHYSICS
                          }

@@ -2,7 +2,8 @@ import evas_types;
 import efl_text_types;
 
 abstract Efl.Canvas.Object (Eo.Base, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
-                            Efl.Input.Interface, Efl.Gfx.Size.Hint)
+                            Efl.Input.Interface, Efl.Gfx.Size.Hint,
+                            Efl.Gfx.Map)
 {
    legacy_prefix: evas_object;
    data: Evas_Object_Protected_Data;
@@ -93,73 +94,6 @@ abstract Efl.Canvas.Object (Eo.Base, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          values {
             freeze: bool; [[Pass when $obj is to freeze events ($true)
                             or not ($false).]]
-         }
-      }
-      @property map {
-         set {
-            [[Set current object transformation map.
-
-              This sets the map on a given object. It is copied from the
-              $map pointer, so there is no need to keep the $map object if
-              you don't need it anymore.
-
-              A map is a set of 4 points which have canvas x, y coordinates
-              per point, with an optional z point value as a hint for
-              perspective correction, if it is available. As well each
-              point has u and v coordinates. These are like "texture
-              coordinates" in OpenGL in that they define a point in the
-              source image that is mapped to that map vertex/point. The u
-              corresponds to the x coordinate of this mapped point and v,
-              the y coordinate. Note that these coordinates describe a
-              bounding region to sample.
-
-              Note: The map points a uv coordinates match the image geometry.
-              If the $map parameter is $null, the stored map will be freed
-              and geometry prior to enabling/setting a map will be restored.
-            ]]
-            /* FIXME-doc
-              If you have a 200x100 source
-              image and want to display it at 200x100 with proper pixel
-              precision, then do:
-
-            @code
-            Evas_Map *m = evas_map_new(4);
-            evas_map_point_coord_set(m, 0,   0,   0, 0);
-            evas_map_point_coord_set(m, 1, 200,   0, 0);
-            evas_map_point_coord_set(m, 2, 200, 100, 0);
-            evas_map_point_coord_set(m, 3,   0, 100, 0);
-            evas_map_point_image_uv_set(m, 0,   0,   0);
-            evas_map_point_image_uv_set(m, 1, 200,   0);
-            evas_map_point_image_uv_set(m, 2, 200, 100);
-            evas_map_point_image_uv_set(m, 3,   0, 100);
-            evas_object_map_set(obj, m);
-            evas_map_free(m);
-            @endcode
-            */
-         }
-         get {
-            [[Get current object transformation map.
-
-              This returns the current internal map set on the indicated
-              object. It is intended for read-only access and is only
-              valid as long as the object is not deleted or the map on
-              the object is not changed. 
-            ]]
-            /* FIXME-doc
-              If you wish to modify the map
-              and set it back do the following:
-
-            @code
-            const Evas_Map *m = evas_object_map_get(obj);
-            Evas_Map *m2 = evas_map_dup(m);
-            evas_map_util_rotate(m2, 30.0, 0, 0);
-            evas_object_map_set(obj, m2);
-            evas_map_free(m2);
-            @endcode
-            */
-         }
-         values {
-            map: const(Evas.Map)*; [[The map.]]
          }
       }
       @property clip {
@@ -317,33 +251,6 @@ abstract Efl.Canvas.Object (Eo.Base, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          }
          values {
             is_frame: bool;
-         }
-      }
-      @property map_enable {
-         set {
-            [[Enable or disable the map that is set.
-
-              Enable or disable the use of map for the object $obj. On
-              enable, the object geometry will be saved, and the new
-              geometry will change (position and size) to reflect the
-              map geometry set.
-
-              If the object doesn't have a map set (with
-              \@ref evas_object_map_set), the initial geometry will be
-              undefined. It is advised to always set a map to the object
-              first, and then call this function to enable its use.
-            ]]
-         }
-         get {
-            [[Get the map enabled state
-
-              This returns the currently enabled state of the map on the
-              object indicated. The default map enable state is off. You
-              can enable and disable it with @.map_enable.set.
-            ]]
-         }
-         values {
-            enabled: bool; [[Enabled state.]]
          }
       }
       @property precise_is_inside {
@@ -708,6 +615,8 @@ abstract Efl.Canvas.Object (Eo.Base, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Gfx.Size.Hint.hint_request.get;
       Efl.Gfx.Size.Hint.hint_weight.set;
       Efl.Gfx.Size.Hint.hint_weight.get;
+      Efl.Gfx.Map.map_enable.set;
+      Efl.Gfx.Map.map_enable.get;
    }
    events {
        mouse,in @beta; [[Mouse In Event ]]

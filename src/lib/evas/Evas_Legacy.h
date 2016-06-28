@@ -5718,3 +5718,42 @@ EAPI void evas_output_size_set(Evas *e, int w, int h);
 EAPI void evas_output_size_get(const Evas *e, int *w, int *h);
 
 #include "canvas/evas_out.eo.legacy.h"
+
+/**
+ * @brief Set current object transformation map.
+ *
+ * This sets the map on a given object. It is copied from the @c map pointer,
+ * so there is no need to keep the @c map object if you don't need it anymore.
+ *
+ * A map is a set of 4 points which have canvas x, y coordinates per point,
+ * with an optional z point value as a hint for perspective correction, if it
+ * is available. As well each point has u and v coordinates. These are like
+ * "texture coordinates" in OpenGL in that they define a point in the source
+ * image that is mapped to that map vertex/point. The u corresponds to the x
+ * coordinate of this mapped point and v, the y coordinate. Note that these
+ * coordinates describe a bounding region to sample.
+ *
+ * @note The map points a uv coordinates match the image geometry. If the
+ * @c map parameter is @c null, the stored map will be freed and geometry prior
+ * to enabling/setting a map will be restored.
+ *
+ * @param[in] map The map.
+ *
+ * @ingroup Efl_Canvas_Object
+ */
+EAPI void evas_object_map_set(Evas_Object *obj, const Evas_Map *map);
+
+/**
+ * @brief Get current object transformation map.
+ *
+ * This returns the current internal map set on the indicated object. It is
+ * intended for read-only access and is only valid as long as the object is not
+ * deleted or the map on the object is not changed.
+ *
+ * @return The map.
+ *
+ * @ingroup Efl_Canvas_Object
+ */
+EAPI const Evas_Map *evas_object_map_get(const Evas_Object *obj);
+
+#include "canvas/efl_gfx_map.eo.legacy.h"

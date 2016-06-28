@@ -1,0 +1,41 @@
+mixin Efl.Gfx.Map (Eo.Interface, Eo.Base)
+{
+   [[Texture UV mapping for all objects (rotation, perspective, 3d, ...).
+
+     Evas allows different transformations to be applied to all kinds of
+     objects. These are applied by means of UV mapping.
+
+     With UV mapping, one maps points in the source object to a 3D space
+     positioning at target. This allows rotation, perspective, scale and
+     lots of other effects, depending on the map that is used.
+
+     Each map point may carry a multiplier color. If properly
+     calculated, these can do shading effects on the object, producing
+     3D effects.
+   ]]
+   data: null;
+   methods {
+      @property map_enable @virtual_pure {
+         [[Whether map transformation is enabled on this object.
+
+           The default map enable state is off ($false).
+         ]]
+         set {
+            [[Enable or disable the use of map for this object. On
+              enable, the object geometry will be saved, and the new
+              geometry will change (position and size) to reflect the
+              map geometry set.
+            ]]
+            legacy: evas_object_map_enable_set;
+         }
+         get {
+            legacy: evas_object_map_enable_get;
+         }
+         values {
+            enabled: bool; [[Enabled state.]]
+         }
+      }
+   }
+   implements {
+   }
+}

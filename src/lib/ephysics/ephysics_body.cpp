@@ -1372,7 +1372,7 @@ _ephysics_body_del(EPhysics_Body *body)
 }
 
 static void
-_ephysics_body_efl_canvas_object_map_apply(EPhysics_Body *body, Evas_Map *map, Evas_Object *obj, Eina_Bool bfc, Eina_Bool update_cw)
+_ephysics_body_evas_object_map_apply(EPhysics_Body *body, Evas_Map *map, Evas_Object *obj, Eina_Bool bfc, Eina_Bool update_cw)
 {
    EPhysics_Camera *camera = ephysics_world_camera_get(body->world);
 
@@ -1504,7 +1504,7 @@ _ephysics_cylinder_face_objs_update(EPhysics_Body *body)
         evas_map_util_quat_rotate(map, quat.x(), -quat.y(), quat.z(), -quat.w(),
                                   bx, by, z);
 
-        _ephysics_body_efl_canvas_object_map_apply(body, map, obj, EINA_TRUE,
+        _ephysics_body_evas_object_map_apply(body, map, obj, EINA_TRUE,
                                           EINA_FALSE);
      }
 }
@@ -1624,7 +1624,7 @@ _ephysics_box_face_objs_update(EPhysics_Body *body)
 
         evas_map_util_quat_rotate(map, quat.x(), -quat.y(), quat.z(), -quat.w(),
                                   x, y, z);
-        _ephysics_body_efl_canvas_object_map_apply(body, map, obj, EINA_TRUE,
+        _ephysics_body_evas_object_map_apply(body, map, obj, EINA_TRUE,
                                           EINA_FALSE);
      }
 }
@@ -1680,7 +1680,7 @@ _ephysics_body_evas_object_update(EPhysics_Body *body, Evas_Object *evas_obj)
    evas_map_util_quat_rotate(map, quat.x(), -quat.y(), quat.z(), -quat.w(),
                              bx, by, z);
 
-   _ephysics_body_efl_canvas_object_map_apply(body, map, evas_obj,
+   _ephysics_body_evas_object_map_apply(body, map, evas_obj,
                                      body->back_face_culling, EINA_TRUE);
 }
 
