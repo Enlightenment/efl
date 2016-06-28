@@ -193,7 +193,7 @@ START_TEST (elm_config_profiles)
         Eina_List *list;
         Eina_Iterator *it;
         const char *prof;
-        int cnt = 0;
+        unsigned int cnt = 0;
 
         list = (!hidden) ? elm_config_profile_list_get()
                          : elm_config_profile_list_full_get();
