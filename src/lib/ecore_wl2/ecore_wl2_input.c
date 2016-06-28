@@ -476,12 +476,13 @@ _ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned
 void
 _ecore_wl2_input_ungrab(Ecore_Wl2_Input *input)
 {
-   if ((input->grab.window) && (input->grab.button))
+   if ((input->grab.window) && (input->grab.button) && (input->grab.count))
      _ecore_wl2_input_mouse_up_send(input, input->grab.window, 0,
                                     input->grab.button, input->grab.timestamp);
 
    input->grab.window = NULL;
    input->grab.button = 0;
+   input->grab.count = 0;
 }
 
 static void
@@ -590,7 +591,8 @@ _pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
 
    if (state == WL_POINTER_BUTTON_STATE_PRESSED)
      {
-        if ((input->focus.pointer) && (!input->grab.window))
+        if ((input->focus.pointer) &&
+            (!input->grab.window) && (!input->grab.count))
           {
              _ecore_wl2_input_grab(input, input->focus.pointer, button);
              input->grab.timestamp = timestamp;
@@ -599,14 +601,19 @@ _pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
         if (input->focus.pointer)
           _ecore_wl2_input_mouse_down_send(input, input->focus.pointer,
                                            0, button, timestamp);
+
+        input->grab.count++;
      }
    else
      {
-        if ((input->grab.window) && (input->grab.button == button))
-          _ecore_wl2_input_ungrab(input);
-        else if (input->focus.pointer)
+        if (input->focus.pointer)
           _ecore_wl2_input_mouse_up_send(input, input->focus.pointer,
                                          0, button, timestamp);
+
+        if (input->grab.count) input->grab.count--;
+        if ((input->grab.window) && (input->grab.button == button) &&
+            (!input->grab.count))
+          _ecore_wl2_input_ungrab(input);
      }
 }
 
@@ -990,11 +997,13 @@ _touch_cb_up(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial
    input->timestamp = timestamp;
    input->display->serial = serial;
 
-   if ((input->grab.window) && (input->grab.button == BTN_LEFT))
+   _ecore_wl2_input_mouse_up_send(input, input->focus.touch, id,
+                                  BTN_LEFT, timestamp);
+
+   if (input->grab.count) input->grab.count--;
+   if ((input->grab.window) && (input->grab.button == BTN_LEFT) &&
+       (!input->grab.count))
      _ecore_wl2_input_ungrab(input);
-   else
-     _ecore_wl2_input_mouse_up_send(input, input->focus.touch, id,
-                                    BTN_LEFT, timestamp);
 }
 
 static void
