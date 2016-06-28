@@ -166,7 +166,7 @@ START_TEST (elm_config_win)
 END_TEST
 
 static inline Eina_Bool
-_eina_list_string_has(const Eina_List *list, const char *str)
+_eina_list_string_has(Eina_List *list, const char *str)
 {
    const char *s;
    Eina_List *l;
