@@ -3211,7 +3211,7 @@ _wl_elm_dnd_init(void)
    ecore_event_handler_add(ECORE_WL2_EVENT_SELECTION_DATA_READY,
                            _wl_dnd_receive, &wl_cnp_selection);
 
-   ecore_event_handler_add(ECORE_WL2_EVENT_DND_END,
+   ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_END,
                            _wl_dnd_end, &wl_cnp_selection);
 
    return EINA_TRUE;
@@ -3667,7 +3667,7 @@ _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
 static Eina_Bool
 _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   Ecore_Wl2_Event_Dnd_End *ev;
+   Ecore_Wl2_Event_Data_Source_End *ev;
    Ecore_Wl2_Window *win;
 
    cnp_debug("In\n");
