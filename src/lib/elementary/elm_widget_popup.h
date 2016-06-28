@@ -48,7 +48,6 @@ struct _Elm_Popup_Data
    Action_Area_Data     *buttons[ELM_POPUP_ACTION_BUTTON_MAX];
    Elm_Wrap_Type         content_text_wrap_type;
    unsigned int          last_button_number;
-   Evas_Coord            max_sc_w;
    Evas_Coord            max_sc_h;
 
    Eina_Bool             visible : 1;
