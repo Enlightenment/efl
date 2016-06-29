@@ -146,7 +146,7 @@ enum Efl.Ui.Win.Urgent_Mode
 class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
                Elm.Interface.Atspi_Widget_Action, Efl.Pack,
                Efl.Input.State, Efl.Input.Interface, Efl.Screen,
-               Efl.Gfx.Size.Hint, Efl.Text, Efl.Config)
+               Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global)
 {
    legacy_prefix: elm_win;
    eo_prefix: efl_ui_win;
