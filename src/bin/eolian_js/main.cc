@@ -154,7 +154,11 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
           {"iterator", "Eina_Iterator"},
           {"hash", "Eina_Hash"},
           {"list", "Eina_List"},
-          {"promise", "Eina_Promise"}
+          {"promise", "Eina_Promise"},
+          {"string", "const char*"},
+          {"void_ptr", "void *"},
+          {"stringshare", "Eina_Stringshare*"}
+
         };
 
         std::string type_name = eolian_type_name_get(tp);
@@ -163,10 +167,42 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
           type_name = it->second;
         result += type_name;
 
+        if (tpt == EOLIAN_TYPE_CLASS || tpt == EOLIAN_TYPE_COMPLEX)
+            result += "*"; // Implied pointer
+
         auto tpd = eolian_type_typedecl_get(tp);
         if (tpd && eolian_typedecl_type_get(tpd) == EOLIAN_TYPEDECL_STRUCT)
           {
              result = "efl::eina::js::make_struct_tag<" + result + ">";
+          }
+
+        if (tpt == EOLIAN_TYPE_COMPLEX)
+          {
+             result = "efl::eina::js::make_complex_tag<" + result;
+
+             bool has_subtypes = false;
+             const Eolian_Type *subtype = eolian_type_base_type_get(tp);
+             while (subtype)
+               {
+                 auto t = _eolian_type_cpp_type_named_get(subtype, caller_class_prefix, need_name_getter);
+                 auto k = type_class_name(subtype);
+                 if (!k.empty())
+                   {
+                      result += ", " + t + ", " + _class_name_getter(caller_class_prefix, k);
+                      need_name_getter.insert(k);
+                   }
+                 else
+                   {
+                      result += ", " + t + ", ::efl::eina::js::nonclass_cls_name_getter";
+                   }
+                 has_subtypes = true;
+                 subtype = eolian_type_next_type_get(subtype);
+               }
+
+             if (!has_subtypes)
+               throw eolian::js::incomplete_complex_type_error("Incomplete complex type");
+
+             result += ">";
           }
      }
    else if (tpt == EOLIAN_TYPE_VOID)
@@ -175,7 +211,6 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
      {
         auto btp = eolian_type_base_type_get(tp);
         result += _eolian_type_cpp_type_named_get(btp, caller_class_prefix, need_name_getter);
-
         const auto base_is_const = eolian_type_is_const(btp);
 
         Eolian_Type_Type btpt = EOLIAN_TYPE_UNKNOWN_TYPE;
@@ -200,35 +235,6 @@ _eolian_type_cpp_type_named_get(const Eolian_Type *tp, std::string const& caller
                 result += ' ';
              result += '*';
              if (is_const) result += " const";
-          }
-
-        if (btpt == EOLIAN_TYPE_COMPLEX)
-          {
-             result = "efl::eina::js::make_complex_tag<" + result;
-
-             bool has_subtypes = false;
-             const Eolian_Type *subtype = eolian_type_base_type_get(btp);
-             while (subtype)
-               {
-                 auto t = _eolian_type_cpp_type_named_get(subtype, caller_class_prefix, need_name_getter);
-                 auto k = type_class_name(subtype);
-                 if (!k.empty())
-                   {
-                      result += ", " + t + ", " + _class_name_getter(caller_class_prefix, k);
-                      need_name_getter.insert(k);
-                   }
-                 else
-                   {
-                      result += ", " + t + ", ::efl::eina::js::nonclass_cls_name_getter";
-                   }
-                 has_subtypes = true;
-                 subtype = eolian_type_next_type_get(subtype);
-               }
-
-             if (!has_subtypes)
-               throw eolian::js::incomplete_complex_type_error("Incomplete complex type");
-
-             result += ">";
           }
      }
    else
@@ -286,6 +292,51 @@ _function_return_is_missing(Eolian_Function const* func, Eolian_Function_Type fu
    return !type;
 }
 
+bool
+_type_is_generatable(const Eolian_Type *tp, bool add_pointer)
+{
+   std::string c_type = eolian_type_c_type_get(tp);
+
+   if (add_pointer)
+       c_type += " *";
+
+   return c_type.find("void *") == std::string::npos;
+}
+
+bool
+_function_belongs_to(const Eolian_Function *function, std::string klass)
+{
+   const Eolian_Class *cl = eolian_function_class_get(function);
+   const std::string name = cl ? eolian_class_full_name_get(cl) : "";
+   return name.find(klass) == 0;
+}
+
+bool
+_function_is_generatable(const Eolian_Function *function, Eolian_Function_Type ftp)
+{
+   const auto key_params = _eolian_function_keys_get(function, ftp);
+   const auto parameters = _eolian_function_parameters_get(function, ftp);
+   std::vector<const ::Eolian_Function_Parameter*> full_params;
+
+   full_params.insert(std::end(full_params), std::begin(key_params), std::end(key_params));
+   full_params.insert(std::end(full_params), std::begin(parameters), std::end(parameters));
+
+   for (auto parameter : full_params)
+     {
+        auto tp = ::eolian_parameter_type_get(parameter);
+        bool add_pointer = eolian_parameter_direction_get(parameter) != EOLIAN_IN_PARAM;
+        if (!_type_is_generatable(tp, add_pointer))
+          return false;
+
+        if (eolian_type_is_ref(tp) && _function_belongs_to(function, "Eo.Base"))
+          return false;
+     }
+
+   auto rtp = ::eolian_function_return_type_get(function, ftp);
+
+   return rtp ? _type_is_generatable(rtp, false) : true;
+}
+
 void separate_functions(Eolian_Class const* klass, Eolian_Function_Type t, bool ignore_constructors,
                         std::vector<Eolian_Function const*>& constructor_functions,
                         std::vector<Eolian_Function const*>& normal_functions)
@@ -295,7 +346,7 @@ void separate_functions(Eolian_Class const* klass, Eolian_Function_Type t, bool 
    for(; first != last; ++first)
      {
         Eolian_Function const* function = &*first;
-        if(eolian_function_scope_get(function) == EOLIAN_SCOPE_PUBLIC)
+        if(eolian_function_scope_get(function, t) == EOLIAN_SCOPE_PUBLIC)
           {
              EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << ::eolian_function_full_c_name_get(function, t, EINA_FALSE);
              if(strcmp("elm_obj_entry_input_panel_imdata_get", ::eolian_function_full_c_name_get(function, t, EINA_FALSE)) != 0 &&
@@ -604,6 +655,9 @@ int main(int argc, char** argv)
         , last; first != last; ++first)
      {
         std::stringstream ss;
+        bool should_reject_ref = file_basename == "eo_base.eo";
+        bool has_ref_field = false;
+
         auto tpd = &*first;
         if (!tpd || ::eolian_typedecl_type_get(tpd) == EOLIAN_TYPEDECL_STRUCT_OPAQUE)
           continue;
@@ -631,6 +685,11 @@ int main(int argc, char** argv)
                {
                   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Could not get struct field name";
                   continue;
+               }
+             if (should_reject_ref && eolian_type_is_ref(field_type))
+               {
+                  has_ref_field = true;
+                  break;
                }
              std::string field_type_tag_name;
              try
@@ -660,6 +719,9 @@ int main(int argc, char** argv)
              ss << "        static_cast<v8::AccessorGetterCallback>(&::efl::eo::js::get_struct_member<" << struct_c_name << ", decltype(" << member_ref << "), &" << member_ref << ", " << k << ">),\n";
              ss << "        static_cast<v8::AccessorSetterCallback>(&::efl::eo::js::set_struct_member<" << struct_c_name << ", " << field_type_tag_name << ", decltype(" << member_ref << "), &" << member_ref << ", " << k << ">));\n";
           }
+
+        if (should_reject_ref && has_ref_field)
+          continue;
         ss << "    };\n";
         ss << "    auto to_export = ::efl::eo::js::get_namespace({";
         bool comma = false;
@@ -717,6 +779,8 @@ int main(int argc, char** argv)
        // generate function registration
        for (const auto function_type : function_types)
          {
+           if (eolian_function_scope_get(function, function_type) != EOLIAN_SCOPE_PUBLIC || !_function_is_generatable(function, function_type))
+             continue; // Some properties may have public 'get' but protected 'set'.
            try
              {
                std::string member_name;
@@ -919,6 +983,11 @@ int main(int argc, char** argv)
 
                     // Write function to functions stream
                     functions_ss << ss.str();
+                 }
+               else
+                 {
+                        EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Duplicate member function found in class: " <<
+                            eolian_class_full_name_get(klass) << ": '" << member_name << "'";
                  }
              }
            catch(eolian::js::incomplete_complex_type_error const& e)
