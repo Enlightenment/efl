@@ -1300,8 +1300,6 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
          (wd->resize_obj, part, text))
      return EINA_FALSE;
 
-   if (!text) return EINA_TRUE;
-
    if (!sub_d)
      {
         sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
