@@ -54,7 +54,7 @@ inline v8::Local<v8::Value> get_event_info<void>(void*, v8::Isolate* isolate, co
 }
 
 template <typename T>
-inline Eina_Bool event_callback(void* data, Eo_Event const* eo_event)
+inline void event_callback(void* data, Eo_Event const* eo_event)
 {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope handle_scope(isolate);
@@ -67,8 +67,6 @@ inline Eina_Bool event_callback(void* data, Eo_Event const* eo_event)
     get_event_info<T>(eo_event->info, isolate, event->event_info->class_name)
   };
   event->function.handle()->Call(eina::js::compatibility_global(), 2, call_args);
-  
-  return EO_CALLBACK_CONTINUE;
 }
 
 inline eina::js::compatibility_return_type on_event(eina::js::compatibility_callback_info_type args)
