@@ -2713,7 +2713,8 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
 
 Eo *_mainloop_singleton = NULL;
 
-EAPI Eo *ecore_main_loop_get(void)
+EOLIAN static Efl_Loop *
+_efl_loop_main_get(Eo_Class *klass EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    if (!_mainloop_singleton)
      {
@@ -2721,6 +2722,12 @@ EAPI Eo *ecore_main_loop_get(void)
      }
 
    return _mainloop_singleton;
+}
+
+EAPI Eo *
+ecore_main_loop_get(void)
+{
+   return efl_loop_main_get(EFL_LOOP_CLASS);
 }
 
 EOLIAN static void

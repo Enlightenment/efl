@@ -15,6 +15,13 @@ class Efl.Loop (Eo.Base)
    provide them if you need to.
    ]]
    methods {
+      @property main @class {
+         [[Points to the main loop instance of the application.]]
+         get {}
+         values {
+            main_loop: Efl.Loop;
+         }
+      }
       iterate {
          [[Runs a single iteration of the main loop to process everything on the
          queue.]]
