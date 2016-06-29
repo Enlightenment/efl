@@ -198,13 +198,22 @@ _atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    eina_strbuf_append(buf, "typedef ");
 
-   if (tp->base_type->type == EOLIAN_TYPE_REGULAR &&
-       !strcmp(tp->base_type->name, "__builtin_event_cb"))
+   if (tp->base_type->type == EOLIAN_TYPE_REGULAR)
      {
-        eina_strbuf_append(buf, "void (*");
-        _append_name(tp, buf);
-        eina_strbuf_append(buf, ")(void *data, const Eo_Event *event)");
-        return;
+        if (!strcmp(tp->base_type->name, "__builtin_event_cb"))
+          {
+             eina_strbuf_append(buf, "void (*");
+             _append_name(tp, buf);
+             eina_strbuf_append(buf, ")(void *data, const Eo_Event *event)");
+             return;
+          }
+        if (!strcmp(tp->base_type->name, "__builtin_free_cb"))
+          {
+             eina_strbuf_append(buf, "void (*");
+             _append_name(tp, buf);
+             eina_strbuf_append(buf, ")(void *data)");
+             return;
+          }
      }
 
    Eina_Strbuf *fulln = eina_strbuf_new();

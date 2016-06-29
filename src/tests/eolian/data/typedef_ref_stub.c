@@ -13,5 +13,7 @@ typedef Evas_Coord2 Evas_Coord3;
 
 typedef void (*Event)(void *data, const Eo_Event *event);
 
+typedef void (*Free)(void *data);
+
 
 #endif

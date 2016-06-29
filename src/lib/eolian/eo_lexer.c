@@ -81,6 +81,7 @@ static const char * const ctypes[] =
    "void *",
 
    "Eo_Event_Cb",
+   "Eina_Free_Cb",
 };
 
 #undef KW
