@@ -47,7 +47,6 @@ class Efl.Input.Device (Efl.Object)
 
      @since 1.18
    ]]
-   legacy_prefix: null;
    methods {
       /* FIXME: device_class makes compilation error because of class_get() */
       @property device_type {
