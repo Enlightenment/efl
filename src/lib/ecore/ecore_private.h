@@ -365,6 +365,7 @@ GENERIC_ALLOC_FREE_HEADER(Ecore_Win32_Handler, ecore_win32_handler);
 
 extern Eo *_mainloop_singleton;
 extern Eo *_ecore_parent;
+extern Efl_Version _app_efl_version;
 #define ECORE_PARENT_CLASS ecore_parent_class_get()
 EAPI const Eo_Class *ecore_parent_class_get(void) EINA_CONST;
 

@@ -1,3 +1,5 @@
+import efl_types;
+
 struct Efl.Loop.Arguments {
    argv: const(array<const(stringshare)>);
 }
@@ -20,6 +22,26 @@ class Efl.Loop (Eo.Base)
          get {}
          values {
             main_loop: Efl.Loop;
+         }
+      }
+      @property app_efl_version {
+         [[Indicates the version of EFL with which this application was compiled.
+
+           This might differ from @.efl_version.
+         ]]
+         get {}
+         values {
+            version: const(Efl.Version)*;
+         }
+      }
+      @property efl_version {
+         [[Indicates the currently running version of EFL.
+
+           This might differ from @.app_efl_version.
+         ]]
+         get {}
+         values {
+            version: const(Efl.Version)*;
          }
       }
       iterate {

@@ -3033,4 +3033,44 @@ _efl_loop_unregister(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Eo_Class *kla
    return eina_hash_del(pd->providers, &klass, provider);
 }
 
+Efl_Version _app_efl_version = { 0, 0, 0, 0, NULL, NULL };
+
+EWAPI void
+efl_build_version_set(int vmaj, int vmin, int vmic, int revision,
+                      const char *flavor, const char *build_id)
+{
+   // note: EFL has not been initialized yet at this point (ie. no eina call)
+   _app_efl_version.major = vmaj;
+   _app_efl_version.minor = vmin;
+   _app_efl_version.micro = vmic;
+   _app_efl_version.revision = revision;
+   free((char *) _app_efl_version.flavor);
+   free((char *) _app_efl_version.build_id);
+   _app_efl_version.flavor = flavor ? strdup(flavor) : NULL;
+   _app_efl_version.build_id = build_id ? strdup(build_id) : NULL;
+}
+
+EOLIAN static const Efl_Version *
+_efl_loop_app_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   return &_app_efl_version;
+}
+
+EOLIAN static const Efl_Version *
+_efl_loop_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   /* vanilla EFL: flavor = NULL */
+   static const Efl_Version version = {
+      .major = VMAJ,
+      .minor = VMIN,
+      .micro = VMIC,
+      .revision = VREV,
+      .build_id = EFL_BUILD_ID,
+      .flavor = NULL
+   };
+
+   return &version;
+}
+
+
 #include "efl_loop.eo.c"

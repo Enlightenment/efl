@@ -18,3 +18,23 @@ struct @extern Efl.Time
    tm_yday: int;  [[Days in year.[0-365] ]]
    tm_isdst: int; [[DST. [-1/0/1] ]]
 }
+
+struct Efl.Version
+{
+   [[This type describes the version of EFL with an optional variant.
+
+     This may be used to query the current running version of EFL. Or it can
+     be passed by applications at startup time to inform EFL of the version
+     a certain application was built for.
+
+     @since 1.18
+   ]]
+
+   major: int; [[Major component of the version (>= 1).]]
+   minor: int; [[Minor component of the version (>= 0).]]
+   micro: int; [[Micro component of the version (>= 0).]]
+   revision: int; [[Revision component of the version (>= 0).]]
+   flavor: string; [[Special version string for this build of EFL, $null for
+                     vanilla (upstream) EFL. Contains $EFL_VERSION_FLAVOR.]]
+   build_id: string; [[Contains $EFL_BUILD_ID.]]
+}

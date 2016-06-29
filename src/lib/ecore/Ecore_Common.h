@@ -51,6 +51,13 @@ EAPI int ecore_init(void);
 EAPI int ecore_shutdown(void);
 
 /**
+ * @brief Inform EFL of the version this application was built for.
+ *
+ * This is transparently called from $EFL_MAIN().
+ */
+EWAPI void efl_build_version_set(int vmaj, int vmin, int vmic, int revision, const char *flavor, const char *build_id);
+
+/**
  * @}
  */
 
