@@ -194,6 +194,16 @@ evas_map_aa_SOURCES = evas-map-aa.c
 evas_map_aa_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_map_aa_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_map_utils-eo
+evas_map_utils_eo_SOURCES = evas-map-utils-eo.c
+evas_map_utils_eo_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_map_utils_eo_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
+EXTRA_PROGRAMS += evas_map_aa_eo
+evas_map_aa_eo_SOURCES = evas-map-aa-eo.c
+evas_map_aa_eo_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_map_aa_eo_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_table
 evas_table_SOURCES = evas-table.c
 evas_table_LDADD = $(ECORE_EVAS_COMMON_LDADD)

@@ -16,6 +16,7 @@
 /evas_text
 /evas_aspect_hints
 /evas_map_utils
+/evas_map_utils_eo
 /evas_table
 /evas_multi_touch
 /evas_3d_cube
@@ -37,6 +38,7 @@
 /saved_Sonic_EET.eet
 /evas_3d_blending
 /evas_map_aa
+/evas_map_aa_eo
 /evas_3d_mmap
 /evas_3d_shadows
 /evas_3d_parallax_occlusion
