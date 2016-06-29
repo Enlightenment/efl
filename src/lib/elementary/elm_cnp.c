@@ -3469,10 +3469,13 @@ _wl_dnd_enter(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    doaccept = EINA_FALSE;
    for (i = 0; i < ev->num_types; i++)
      {
-        doaccept |= _wl_drops_accept(ev->types[i]);
-        if (doaccept)
-          wl_data_offer_accept(ev->offer, ev->serial, ev->types[i]);
+        if (_wl_drops_accept(ev->types[i]))
+          {
+             doaccept = EINA_TRUE;
+             wl_data_offer_accept(ev->offer, ev->serial, ev->types[i]);
+          }
      }
+
    if (!doaccept)
      wl_data_offer_accept(ev->offer, ev->serial, NULL);
 
