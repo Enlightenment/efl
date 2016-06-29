@@ -10,7 +10,6 @@ interface Efl.Event
 
      @since 1.18
    ]]
-   legacy_prefix: null;
    methods {
       @property timestamp {
          [[The time at which an event was generated.
