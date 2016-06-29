@@ -167,6 +167,12 @@ typedef enum _Efl_Object_Op_Type Efl_Object_Op_Type;
  */
 typedef void (*Efl_Del_Intercept) (Eo *obj_id);
 
+/**
+ * @typedef Efl_Future
+ * The type of Efl Future used in asynchronous operation, the read side of a promise.
+ */
+typedef Eo Efl_Future;
+
 #include "efl_object_override.eo.h"
 #include "efl_object.eo.h"
 #include "efl_interface.eo.h"
@@ -1321,9 +1327,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
  * @}
  */
 
-/**
- * @}
- */
+#include "efl_future.h"
 
 /**
  * @}

@@ -1862,6 +1862,7 @@ efl_object_init(void)
                                 EO_FREED_EINA_MAGIC_STR);
    eina_magic_string_static_set(EO_CLASS_EINA_MAGIC,
                                 EO_CLASS_EINA_MAGIC_STR);
+   efl_future_init();
 
 #ifndef _WIN32
    _ops_storage = eina_hash_pointer_new(NULL);
@@ -1922,6 +1923,8 @@ efl_object_shutdown(void)
                    EINA_LOG_STATE_SHUTDOWN);
 
    _efl_add_fallback_shutdown();
+
+   efl_future_shutdown();
 
    for (i = 0 ; i < _eo_classes_last_id ; i++, cls_itr--)
      {
