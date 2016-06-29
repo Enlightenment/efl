@@ -240,7 +240,7 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
         if (source->input->drag.source)
           {
              if (source->input->display->wl.data_device_manager_version >=
-               WL_DATA_OFFER_FINISH_SINCE_VERSION)
+                 WL_DATA_OFFER_FINISH_SINCE_VERSION)
                wl_data_offer_finish(source->offer);
           }
         close(ecore_main_fd_handler_fd_get(source->fdh));
@@ -283,8 +283,9 @@ _selection_data_receive(Ecore_Wl2_Dnd_Source *source, const char *type)
    wl_data_offer_receive(source->offer, type, p[1]);
    close(p[1]);
 
-   source->fdh = ecore_main_fd_handler_file_add(p[0], ECORE_FD_READ | ECORE_FD_ERROR,
-     _selection_data_read, source, NULL, NULL);
+   source->fdh =
+     ecore_main_fd_handler_file_add(p[0], ECORE_FD_READ | ECORE_FD_ERROR,
+                                    _selection_data_read, source, NULL, NULL);
 }
 
 void
@@ -316,7 +317,8 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
    if (offer)
      {
         input->drag.source = wl_data_offer_get_user_data(offer);
-        input->drag.source->dnd_action = WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE;
+        input->drag.source->dnd_action =
+          WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE;
         num = (input->drag.source->types.size / sizeof(char *));
         types = input->drag.source->types.data;
         if (input->display->wl.data_device_manager_version >=
