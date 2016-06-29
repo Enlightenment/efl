@@ -69,16 +69,42 @@ typedef Eina_Bool             (*Elm_Event_Cb)(void *data, Evas_Object *obj, Evas
 
 extern EAPI double _elm_startup_time;
 
+#ifdef EFL_VERSION_MICRO
+# define _EFL_VERSION_MICRO EFL_VERSION_MICRO
+#else
+# define _EFL_VERSION_MICRO 0
+#endif
+
+#ifdef EFL_VERSION_REVISION
+# define _EFL_VERSION_REVISION EFL_VERSION_REVISION
+#else
+# define _EFL_VERSION_REVISION 0
+#endif
+
+#ifdef EFL_VERSION_FLAVOR
+# define _EFL_VERSION_FLAVOR EFL_VERSION_FLAVOR
+#else
+# define _EFL_VERSION_FLAVOR NULL
+#endif
+
+#ifdef EFL_BUILD_ID
+# define _EFL_BUILD_ID EFL_BUILD_ID
+#else
+# define _EFL_BUILD_ID NULL
+#endif
+
+#define _EFL_APP_VERSION_SET() do { if (efl_build_version_set) efl_build_version_set(EFL_VERSION_MAJOR, EFL_VERSION_MINOR, _EFL_VERSION_MICRO, _EFL_VERSION_REVISION, _EFL_VERSION_FLAVOR, _EFL_BUILD_ID); } while (0)
+
 #ifndef ELM_LIB_QUICKLAUNCH
-#define ELM_MAIN() int main(int argc, char **argv) { int ret; _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); ret = elm_main(argc, argv); elm_shutdown(); return ret; } /**< macro to be used after the elm_main() function */
-#define EFL_MAIN() int main(int argc, char **argv) { int ret = 0; _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL); ret = efl_loop_begin(ecore_main_loop_get()); elm_shutdown(); return ret; }
+#define ELM_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); ret = elm_main(argc, argv); elm_shutdown(); return ret; } /**< macro to be used after the elm_main() function */
+#define EFL_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); eo_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL); ret = efl_loop_begin(ecore_main_loop_get()); elm_shutdown(); return ret; }
 #else
 /** @deprecated macro to be used after the elm_main() function.
  * Do not define ELM_LIB_QUICKLAUNCH
  * Compile your programs with -fpie and -pie -rdynamic instead, to generate a single binary (linkable executable).
  */
-#define ELM_MAIN() int main(int argc, char **argv) { int ret; _elm_startup_time = ecore_time_unix_get(); ret = elm_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret; }
-#define EFL_MAIN() int main(int argc, char **argv) { int ret = 0; _elm_startup_time = ecore_time_unix_get(); ret = efl_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret; }
+#define ELM_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); ret = elm_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret; }
+#define EFL_MAIN() int main(int argc, char **argv) { int ret; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); ret = efl_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret; }
 #endif
 
 /**************************************************************************/
