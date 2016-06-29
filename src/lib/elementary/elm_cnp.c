@@ -411,7 +411,7 @@ _dnd_types_to_format(const char **types, int ntypes)
 }
 
 static Eina_Bool
-_drag_cancel_animate(void *data EINA_UNUSED, double pos)
+_drag_cancel_animate(void *data, double pos)
 {  /* Animation to "move back" drag-window */
    if (pos >= 0.99)
      {
@@ -3701,7 +3701,6 @@ _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
              /* No animation drop was committed */
              evas_object_del(dragwin);
           }
-
         dragwin = NULL;  /* if not freed here, free in end of anim */
      }
 
