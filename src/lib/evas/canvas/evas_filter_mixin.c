@@ -361,9 +361,8 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_F
    Eina_Bool alpha;
 
    if (!pd) return;
-   if ((pd->data->code == code) && (!name || (pd->data->name == name))) return;
-   if (pd->data->code && code && !strcmp(code, pd->data->code) &&
-       pd->data->name && name && !strcmp(name, pd->data->name)) return;
+   if (eina_streq(pd->data->code, code) && eina_streq(pd->data->name, name))
+     return;
 
    evas_object_async_block(obj);
    fcow = FCOW_BEGIN(pd);

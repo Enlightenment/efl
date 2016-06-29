@@ -6608,3 +6608,19 @@ EAPI const Evas_Map *evas_object_map_get(const Evas_Object *obj);
 EAPI void evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled);
 
 #include "canvas/efl_gfx_map.eo.legacy.h"
+
+/**
+ * @brief Apply an evas filter program on this text object.
+ *
+ * Note: the preferred method for filters is to edit EDC styles, rather than
+ * calling this API directly.
+ */
+EAPI void evas_object_text_filter_program_set(Evas_Object *obj, const char *code) EINA_DEPRECATED;
+
+/**
+ * @brief Set a named source object for an evas filter program.
+ *
+ * Note: the preferred method for filters is to edit EDC styles, rather than
+ * calling this API directly.
+ */
+EAPI void evas_object_text_filter_source_set(Evas_Object *obj, const char *name, Evas_Object *source) EINA_DEPRECATED;

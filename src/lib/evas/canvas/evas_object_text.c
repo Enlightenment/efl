@@ -2340,12 +2340,14 @@ _evas_text_efl_gfx_filter_filter_program_set(Eo *obj, Evas_Text_Data *pd EINA_UN
    efl_gfx_filter_program_set(eo_super(obj, MY_CLASS), code, name);
 }
 
+/* deprecated */
 EAPI void
-evas_object_text_filter_program_set(Evas_Object *obj, const char *code, const char *name)
+evas_object_text_filter_program_set(Evas_Object *obj, const char *code)
 {
-   efl_gfx_filter_program_set(obj, code, name);
+   efl_gfx_filter_program_set(obj, code, NULL);
 }
 
+/* deprecated */
 EAPI void
 evas_object_text_filter_source_set(Evas_Object *obj, const char *name, Evas_Object *source)
 {
