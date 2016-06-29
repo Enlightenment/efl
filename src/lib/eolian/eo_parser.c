@@ -887,7 +887,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
              _fill_name(eina_stringshare_ref(ls->t.value.s), &def->full_name,
                         &def->name, &def->namespaces);
              eo_lexer_get(ls);
-             if (tpid >= KW_accessor && tpid <= KW_promise)
+             if (tpid >= KW_accessor && tpid <= KW_future)
                {
                   int bline = ls->line_number, bcol = ls->column;
                   def->type = EOLIAN_TYPE_COMPLEX;
@@ -900,7 +900,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
                        def->base_type->next_type = parse_type(ls, EINA_FALSE, EINA_FALSE);
                        pop_type(ls);
                     }
-                  else if(tpid == KW_promise && test_next(ls, ','))
+                  else if((tpid == KW_promise || tpid == KW_future) && test_next(ls, ','))
                     {
                        def->base_type->next_type = parse_type(ls, EINA_FALSE, EINA_FALSE);
                        pop_type(ls);
