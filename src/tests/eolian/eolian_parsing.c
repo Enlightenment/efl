@@ -410,7 +410,8 @@ START_TEST(eolian_typedef)
    fail_if(!eina_iterator_next(iter, (void**)&tdl));
    /* not generated undefined type, skip */
    fail_if(!eina_iterator_next(iter, (void**)&tdl));
-   /* event type, tested by generation tests */
+   /* event type and free cb, tested by generation tests */
+   fail_if(!eina_iterator_next(iter, (void**)&tdl));
    fail_if(!eina_iterator_next(iter, (void**)&tdl));
    fail_if(eina_iterator_next(iter, (void**)&tdl));
 

@@ -21,6 +21,8 @@ typedef Evas_Coord2 Evas_Coord3;
 
 typedef void (*Event)(void *data, const Efl_Event *event);
 
+typedef void (*Free)(void *data);
+
 typedef enum
 {
   BAR_FIRST_ITEM = 0,
