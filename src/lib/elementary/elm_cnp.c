@@ -3617,7 +3617,6 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Dnd_Drop *ev;
    Ecore_Wl2_Window *win;
-   Ecore_Wl2_Input *input;
    Dropable *drop;
    Eina_List *l;
 
@@ -3626,7 +3625,6 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    savedtypes.x = ev->x;
    savedtypes.y = ev->y;
 
-   input = ecore_wl2_window_input_get(win);
    EINA_LIST_FOREACH(drops, l, drop)
      {
         if (drop->last.in)
@@ -3639,13 +3637,14 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
                                             &wl_cnp_selection);
 
              win = _wl_elm_widget_window_get(drop->obj);
-             ecore_wl2_dnd_drag_get(input, drop->last.type);
+             ecore_wl2_dnd_drag_get(ecore_wl2_window_input_get(win),
+                                    drop->last.type);
              return ECORE_CALLBACK_PASS_ON;
           }
      }
 
    win = ecore_wl2_display_window_find(_elm_wl_display, ev->win);
-   ecore_wl2_dnd_drag_end(input);
+   ecore_wl2_dnd_drag_end(ecore_wl2_window_input_get(win));
    return ECORE_CALLBACK_PASS_ON;
 }
 
