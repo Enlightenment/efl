@@ -112,12 +112,15 @@ tests_eolian_eolian_suite_SOURCES = \
 tests/eolian/eolian_parsing.c \
 tests/eolian/eolian_generation.c \
 tests/eolian/eolian_generated_promise.c \
+tests/eolian/eolian_generated_future.c \
 tests/eolian/eolian_suite.c \
 tests/eolian/eolian_suite.h
 
 tests/eolian/tests_eolian_eolian_suite-eolian_generated_promise.$(OBJEXT): tests/eolian/generated_promise.eo.h tests/eolian/generated_promise.eo.c
+tests/eolian/tests_eolian_eolian_suite-eolian_generated_future.$(OBJEXT): tests/eolian/generated_future.eo.h tests/eolian/generated_future.eo.c
 
 CLEANFILES += tests/eolian/generated_promise.eo.h tests/eolian/generated_promise.eo.c
+CLEANFILES += tests/eolian/generated_future.eo.h tests/eolian/generated_future.eo.c
 
 tests_eolian_eolian_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/tests/eolian \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian\" \
@@ -148,4 +151,5 @@ tests/eolian/data/import_types_ref.h \
 tests/eolian/data/docs_ref.h \
 tests/eolian/data/docs_ref_legacy.h \
 tests/eolian/generated_promise.eo \
+tests/eolian/generated_future.eo \
 $(EOLIAN_TESTS_EOS)
