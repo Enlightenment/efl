@@ -174,6 +174,12 @@ typedef enum _Eo_Op_Type Eo_Op_Type;
  */
 typedef void (*Eo_Del_Intercept) (Eo *obj_id);
 
+/**
+ * @typedef Efl_Future
+ * The type of Efl Future used in asynchronous operation, the read side of a promise.
+ */
+typedef Eo Efl_Future;
+
 #include "eo_override.eo.h"
 #include "eo_base.eo.h"
 #include "eo_interface.eo.h"
@@ -1130,9 +1136,7 @@ EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const
  * @}
  */
 
-/**
- * @}
- */
+#include "efl_future.h"
 
 /**
  * @}

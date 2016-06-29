@@ -359,4 +359,7 @@ _eo_unref(_Eo_Object *obj)
      }
 }
 
+Eina_Bool efl_future_init(void);
+Eina_Bool efl_future_shutdown(void);
+
 #endif
