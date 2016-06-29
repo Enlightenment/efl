@@ -848,6 +848,35 @@ START_TEST(ecore_test_efl_loop_register)
 }
 END_TEST
 
+START_TEST(ecore_test_efl_app_version)
+{
+   Efl_Version *ver;
+   Eo *loop;
+
+   ecore_init();
+
+   loop = efl_loop_main_get(EFL_LOOP_CLASS);
+   fail_if(!eo_isa(loop, EFL_LOOP_CLASS));
+
+   efl_build_version_set(EFL_VERSION_MAJOR, EFL_VERSION_MINOR, 0, 0, NULL, EFL_BUILD_ID);
+   ver = efl_loop_app_efl_version_get(loop);
+   fail_if(!ver);
+   fail_if(ver->major != EFL_VERSION_MAJOR);
+   fail_if(ver->minor != EFL_VERSION_MINOR);
+   fail_if(ver->micro != 0);
+   fail_if(ver->revision != 0);
+   fail_if(ver->flavor);
+   fail_if(!eina_streq(ver->build_id, EFL_BUILD_ID));
+
+   ver = efl_loop_efl_version_get(loop);
+   fail_if(!ver);
+   fail_if(ver->major != EFL_VERSION_MAJOR);
+   fail_if(ver->minor != EFL_VERSION_MINOR);
+
+   ecore_shutdown();
+}
+END_TEST
+
 void ecore_test_ecore(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_init);
@@ -868,4 +897,5 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_efl_loop_fd);
    tcase_add_test(tc, ecore_test_efl_loop_fd_lifecycle);
    tcase_add_test(tc, ecore_test_efl_loop_register);
+   tcase_add_test(tc, ecore_test_efl_app_version);
 }
