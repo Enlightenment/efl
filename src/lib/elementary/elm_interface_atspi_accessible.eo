@@ -232,38 +232,39 @@ type Elm.Atspi.Relation_Set: list<Elm.Atspi.Relation *>;
 
 mixin Elm.Interface.Atspi_Accessible ()
 {
+   [[ATSPI accessible mixin]]
    eo_prefix: elm_interface_atspi_accessible;
    data: Elm_Interface_Atspi_Accessible_Data;
    methods {
       @property localized_role_name @protected {
+         [[Gets an localized string describing ATSPI widget role name.]]
          get {
-            [[Gets an localized string describing ATSPI widget role name.]]
          }
          values {
-            localized_name: string;
+            localized_name: string; [[Localized widget role name]]
          }
       }
       @property name {
+         [[String describing ATSPI widget role name. Should be free by a user.]]
          get {
-            [[Gets an string describing ATSPI widget role name.  Should be free by a user.]]
          }
          set {
          }
          values {
-            name: char*; [[obj name]]
+            name: char*; [[Obj name]]
          }
       }
       @property relation_set @protected {
+         [[Gets an string describing ATSPI widget role name. Lists and elements Should be free by a user.]]
          get {
-            [[Gets an string describing ATSPI widget role name. Lists and elements Should be free by a user.]]
          }
          values {
             relations: Elm.Atspi.Relation_Set;
          }
       }
       @property role {
+         [[The role of the widget in ATSPI Accessibility domain.]]
          get {
-            [[Gets the role of the widget in ATSPI Accessibility domain.]]
          }
          set {
          }
@@ -272,62 +273,60 @@ mixin Elm.Interface.Atspi_Accessible ()
          }
       }
       @property children @protected {
+         [[Gets widget's accessible children.]]
          get {
-            [[Gets widget's accessible children.]]
          }
          values {
             children: free(own(list<Elm.Interface.Atspi_Accessible>), eina_list_free);
          }
       }
       @property role_name @protected {
+         [[Gets human-readable string indentifying widget accessibility role.]]
          get {
-            [[Gets human-readable string indentifying widget accessibility role.]]
          }
          values {
             role_name: string;
          }
       }
       @property attributes @protected {
+         [[Gets key-value pairs indentifying widget extra attributes. Must be free by a user.]]
          get {
-            [[Gets key-value pairs indentifying widget extra attributes. Must be free by a user.]]
          }
          values {
             attributes: free(own(list<own(Elm.Atspi.Attribute *)>), elm_atspi_attributes_list_free);
          }
       }
       @property index_in_parent @protected {
+         [[Gets index of the child in parent's children list.]]
          get {
-            [[Gets index of the child in parent's children list.]]
          }
          values {
             idx: int;
          }
       }
       @property description {
+         [[Widget contextual information.]]
          get {
-            [[Gets widget contextual information.]]
          }
          set {
-            [[Sets contextual information about widget.]]
          }
          values {
-            description: string;
+            description: string; [[Widget contextual information]]
          }
       }
       @property parent {
+         [[Widget accessible parent.]]
          get {
-            [[Gets widget accessible parent.]]
          }
          set {
-            [[Sets widget accessible parent.]]
          }
          values {
             parent: Elm.Interface.Atspi_Accessible;
          }
       }
       @property state_set @protected {
+         [[Gets set describing widget accessible states.]]
          get {
-            [[Gets set describing widget accessible states.]]
          }
          values {
             states: Elm.Atspi.State_Set;
@@ -355,35 +354,32 @@ mixin Elm.Interface.Atspi_Accessible ()
          }
       }
       @property translation_domain {
+         [[Sets the translation domain of "name" and "description"
+           properties.
+
+           Translation domain should be set if application wants to support i18n
+           for accessibily "name" and "description" properties.
+
+           When translation domain is set values of "name" and "description"
+           properties will be translated with dgettext function using
+           current translation domain as "domainname" parameter.
+
+           It is application developer responsibility to ensure that
+           translation files are loaded and binded to translation domain
+           when accessibility is enabled.]]
          get {
-            [[Gets the translation domain of "name" and "description"
-              properties.]]
          }
          set {
-            [[Sets the translation domain of "name" and "description"
-              properties.
-
-              Translation domain should be set if application wants to support i18n
-              for accessibily "name" and "description" properties.
-
-              When translation domain is set values of "name" and "description"
-              properties will be translated with dgettext function using
-              current translation domain as "domainname" parameter.
-
-              It is application developer responsibility to ensure that
-              translation files are loaded and binded to translation domain
-              when accessibility is enabled.]]
          }
          values {
-            domain: string; [[ translation domain ]]
+            domain: string; [[Translation domain]]
          }
       }
       @property type {
+           [[Type of accessibility object]]
            get {
-                [[Get type of accessibility object]]
            }
            set {
-                [[Set type of accessibility object]]
            }
            values {
                type: Elm.Atspi.Type;
