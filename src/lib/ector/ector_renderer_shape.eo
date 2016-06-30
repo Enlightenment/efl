@@ -2,6 +2,7 @@ import ector_renderer;
 
 mixin Ector.Renderer.Shape (Efl.Gfx.Shape)
 {
+   [[Ector shape renderer mixin]]
    eo_prefix: ector_renderer_shape;
    methods {
       @property fill {

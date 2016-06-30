@@ -1,5 +1,6 @@
 mixin Ector.Renderer.Gradient.Linear (Efl.Gfx.Gradient.Linear)
 {
+   [[Ector gradient linear renderer mixin]]
    eo_prefix: ector_renderer_gradient_linear;
    implements {
       Efl.Gfx.Gradient.Linear.start.set;

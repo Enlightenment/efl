@@ -1,5 +1,6 @@
 mixin Ector.Renderer.Gradient.Radial (Efl.Gfx.Gradient.Radial)
 {
+   [[Ector gradient radial renderer mixin]]
    eo_prefix: ector_renderer_gradient_radial;
    implements {
       Efl.Gfx.Gradient.Radial.center.set;
