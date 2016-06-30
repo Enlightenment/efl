@@ -12675,6 +12675,7 @@ evas_object_textblock_free(Evas_Object *eo_obj)
        _dicts_hyphen_detach(eo_obj);
     }
 #endif
+  if (o->utf8) free(o->utf8);
 }
 
 static void
