@@ -449,7 +449,11 @@ _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source)
    if (!source) return;
    if (source->fdh)
      {
-        close(ecore_main_fd_handler_fd_get(source->fdh));
+        int fd;
+
+        fd = ecore_main_fd_handler_fd_get(source->fdh);
+        if (fd >= 0)
+          close(ecore_main_fd_handler_fd_get(source->fdh));
         ecore_main_fd_handler_del(source->fdh);
      }
    wl_data_offer_destroy(source->offer);
