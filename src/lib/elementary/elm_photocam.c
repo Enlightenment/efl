@@ -420,7 +420,7 @@ _elm_photocam_pan_eo_base_destructor(Eo *obj, Elm_Photocam_Pan_Data *psd)
    eo_destructor(eo_super(obj, MY_PAN_CLASS));
 }
 
-static void
+EOLIAN static void
 _elm_photocam_pan_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
