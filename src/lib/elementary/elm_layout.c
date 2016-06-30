@@ -1296,6 +1296,8 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
         sub_d = NULL;
      }
 
+   if (!text) return EINA_TRUE;
+
    if (!edje_object_part_text_escaped_set
          (wd->resize_obj, part, text))
      return EINA_FALSE;
