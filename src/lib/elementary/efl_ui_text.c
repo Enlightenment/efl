@@ -6024,8 +6024,8 @@ _efl_ui_text_selection_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
           }
         _edje_signal_emit(sd, "selection,changed", "elm.text");
         sd->have_selection = EINA_TRUE;
-        free(text);
      }
+   if (text) free(text);
    sd->deferred_decoration_selection = EINA_TRUE;
    _decoration_defer(data);
 }
