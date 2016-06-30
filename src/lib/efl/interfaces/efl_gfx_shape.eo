@@ -5,35 +5,27 @@ mixin Efl.Gfx.Shape
 {
    methods {
       @property stroke_scale {
-         set {
-            [[Sets the stroke scale to be used for stroking the path.
-              the scale property will be used along with stroke width property.
+         [[The stroke scale to be used for stroking the path. Will be used along
+           with stroke width property.
 
-              @since 1.14
-            ]]
+           @since 1.14
+         ]]
+         set {
          }
          get {
-            [[Get the stroke scaling factor used for stroking this path.
-
-              @since 1.14
-            ]]
          }
          values {
-            s: double; [[stroke scale value]]
+            s: double; [[Stroke scale value]]
          }
       }
       @property stroke_color {
-         set {
-            [[Sets the color to be used for stroking the path.
+         [[The color to be used for stroking the path.
 
-              @since 1.14
-            ]]
+           @since 1.14
+         ]]
+         set {
          }
          get {
-            [[Gets the color used for stroking the path.
-
-              @since 1.14
-            ]]
          }
          values {
             r: int; [[The red component of the given color.]]
@@ -43,39 +35,33 @@ mixin Efl.Gfx.Shape
          }
       }
       @property stroke_width {
-         set {
-            [[Sets the stroke width to be used for stroking the path.
+         [[The stroke width to be used for stroking the path.
 
-              @since 1.14
-            ]]
+           @since 1.14
+         ]]
+         set {
          }
          get {
-            [[Gets the stroke width to be used for stroking the path.
-
-              @since 1.14
-            ]]
          }
          values {
-            w: double; [[stroke width to be used]]
+            w: double; [[Stroke width to be used]]
          }
       }
       @property stroke_location {
+         [[Not Implemented]]
          set {
-            [[Not Implemented]]
          }
          get {
-            [[Not Implemented]]
          }
          values {
             centered: double;
          }
       }
       @property stroke_dash {
+         [[Not Implemented]]
          set {
-            [[Not Implemented]]
          }
          get {
-            [[Not Implemented]]
          }
          values {
             dash: const(Efl.Gfx.Dash) *;
@@ -83,61 +69,48 @@ mixin Efl.Gfx.Shape
          }
       }
       @property stroke_cap {
+         [[The cap style to be used for stroking the path.
+           The cap will be used for capping the end point of a
+           open subpath.
+
+           See also \@ref Efl_Gfx_Cap.
+
+           @since 1.14
+         ]]
          set {
-            [[Sets the cap style to be used for stroking the path.
-              The cap will be used for capping the end point of a 
-              open subpath.
-
-              See also \@ref Efl_Gfx_Cap.
-
-              @since 1.14
-            ]]
          }
          get {
-            [[Gets the cap style used for stroking path.
-
-              @since 1.14
-            ]]
          }
          values {
-            c: Efl.Gfx.Cap; [[cap style to use, default is EFL_GFX_CAP_BUTT]]
+            c: Efl.Gfx.Cap; [[Cap style to use, default is EFL_GFX_CAP_BUTT]]
          }
       }
       @property stroke_join {
+         [[The join style to be used for stroking the path.
+           The join style will be used for joining the two line segment
+           while stroking the path.
+
+           See also \@ref Efl_Gfx_Join.
+
+           @since 1.14
+         ]]
          set {
-            [[Sets the join style to be used for stroking the path.
-              The join style will be used for joining the two line segment
-              while stroking the path.
-
-              See also \@ref Efl_Gfx_Join.
-
-              @since 1.14
-            ]]
          }
          get {
-            [[
-              Gets the join style used for stroking path.
-
-              @since 1.14
-            ]]
          }
          values {
-            j: Efl.Gfx.Join; [[join style to use, default is EFL_GFX_JOIN_MITER]]
+            j: Efl.Gfx.Join; [[Join style to use, default is EFL_GFX_JOIN_MITER]]
          }
       }
       @property fill_rule {
-         set {
-            [[Sets the fill rule of the given shape object.
-              $EFL_GFX_FILL_RULE_WINDING, or $EFL_GFX_FILL_RULE_ODD_EVEN.
+         [[The fill rule of the given shape object.
+           $EFL_GFX_FILL_RULE_WINDING, or $EFL_GFX_FILL_RULE_ODD_EVEN.
 
-              @since 1.14
-            ]]
+           @since 1.14
+         ]]
+         set {
          }
          get {
-            [[Retrieves the fill rule for the given shape object.
-
-              @since 1.14
-            ]]
          }
          values {
             fill_rule: Efl.Gfx.Fill.Rule; [[The current fill rule of the shape object.
@@ -145,24 +118,20 @@ mixin Efl.Gfx.Shape
          }
       }
       @property path {
+         [[Set the list of commands and points to be used to create the
+           content of shape.
+
+           See \@ref efl_gfx_path interface for how to create a command list.
+
+           @since 1.14
+         ]]
          set {
-            [[Set the list of commands and points to be used to create the
-              content of shape.
-
-              See \@ref efl_gfx_path interface for how to create a command list.
-
-              @since 1.14
-            ]]
          }
          get {
-            [[Gets the command and points list
-
-              @since 1.14
-            ]]
          }
          values {
-            op: const(Efl.Gfx.Path.Command_Type) *; [[command list]]
-            points: const(double) *; [[point list]]
+            op: const(Efl.Gfx.Path.Command_Type) *; [[Command list]]
+            points: const(double) *; [[Point list]]
          }
       }
       @property path_length {
@@ -190,10 +159,10 @@ mixin Efl.Gfx.Shape
         }
       }
       dup {
-          [[Copy the shape data from the object specified .
+        [[Copy the shape data from the object specified .
 
-            @since 1.14
-          ]]
+          @since 1.14
+        ]]
         params {
           @in dup_from: const(Eo.Base); [[Shape object from where data will be copied.]]
         }
