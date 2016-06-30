@@ -1,13 +1,16 @@
 mixin Ector.GL.Buffer.Base (Ector.Buffer)
 {
+   [[Ector GL buffer base class]]
    methods {
       @property texture {
+         [[GL texture ID]]
          get {}
          values {
             texid: int; [[GL texture ID]]
          }
       }
       @property fbo {
+         [[Framebuffer object ID]]
          get {}
          values {
             fboid: int; [[GL framebuffer ID, 0 if there is no FBO]]
@@ -38,8 +41,8 @@ mixin Ector.GL.Buffer.Base (Ector.Buffer)
       attach @protected {
          [[Attach to an existing texture (or FBO). Used from child classes.]]
          params {
-            texid: int;
-            fboid: int;
+            texid: int; [[GL texture ID]]
+            fboid: int; [[Framebuffer object ID]]
             cspace: Efl.Gfx.Colorspace;
             imw: int;
             imh: int;
