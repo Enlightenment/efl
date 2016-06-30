@@ -717,7 +717,7 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
    union {
       Evas_Event_Key_Down down;
       Evas_Event_Key_Up up;
-      Evas_Event_Mouse_Move move;
+      Evas_Event_Mouse_Wheel wheel;
    } event_info = {};
 
    /* FIXME: Avoid this translation to evas struct and use pointer/key events
@@ -762,20 +762,20 @@ _propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
      {
         Efl_Event_Pointer_Data *ev = eo_data_scope_get(event->info, EFL_EVENT_POINTER_CLASS);
         if (!ev) return;
-        event_info.move.buttons = ev->pressed_buttons;
-        event_info.move.cur.canvas.x = ev->cur.x;
-        event_info.move.cur.canvas.y = ev->cur.y;
-        event_info.move.prev.canvas.x = ev->prev.x;
-        event_info.move.prev.canvas.y = ev->prev.y;
-        event_info.move.data = ev->data;
-        event_info.move.timestamp = ev->timestamp;
-        event_info.move.event_flags = ev->event_flags;
-        event_info.move.dev = ev->device;
-        event_info.move.event_src = ev->source;
-        event_info.move.modifiers = ev->modifiers;
-        event_info.move.locks = ev->locks;
-        type = EVAS_CALLBACK_MOUSE_MOVE;
-        event_flags = &event_info.move.event_flags;
+        event_info.wheel.direction = (ev->wheel.dir != EFL_ORIENT_HORIZONTAL) ? 1 : 0;
+        event_info.wheel.z = ev->wheel.z;
+        event_info.wheel.output.x = ev->cur.x;
+        event_info.wheel.output.y = ev->cur.y;
+        event_info.wheel.canvas.x = ev->cur.x;
+        event_info.wheel.canvas.y = ev->cur.y;
+        event_info.wheel.data = ev->data;
+        event_info.wheel.modifiers = ev->modifiers;
+        event_info.wheel.locks = ev->locks;
+        event_info.wheel.timestamp = ev->timestamp;
+        event_info.wheel.event_flags = ev->event_flags;
+        event_info.wheel.dev = ev->device;
+        type = EVAS_CALLBACK_MOUSE_WHEEL;
+        event_flags = &event_info.wheel.event_flags;
      }
    else
      return;
