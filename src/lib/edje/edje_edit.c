@@ -3689,15 +3689,6 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
    /* unset clipping */
    if (!clip_to)
      {
-        if (rp->part->clip_to_id >= 0)
-          {
-             clip = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
-
-             evas_object_pointer_mode_set(clip->object,
-                                          EVAS_OBJECT_POINTER_MODE_AUTOGRAB);
-             evas_object_clip_unset(rp->object);
-          }
-
         evas_object_clip_set(rp->object, ed->base->clipper);
         if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
             (rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
@@ -3724,9 +3715,6 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
 
    rp->part->clip_to_id = clip->part->id;
 
-   evas_object_pass_events_set(clip->object, 1);
-   evas_object_pointer_mode_set(clip->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
-   evas_object_clip_set(rp->object, clip->object);
    if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
        (rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
      evas_object_clip_set(rp->typedata.swallow->swallowed_object, clip->object);
