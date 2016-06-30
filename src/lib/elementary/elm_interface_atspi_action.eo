@@ -1,36 +1,36 @@
 mixin Elm.Interface.Atspi_Action ()
 {
+   [[ATSPI action mixin]]
    eo_prefix: elm_interface_atspi_action;
    data: null;
    methods {
       @property name @protected @virtual_pure {
+         [[Gets action name for given id]]
          get {
-            [[Gets action name for given id]]
          }
          values {
-            name: string;
+            name: string; [[Action name]]
          }
          keys {
             id: int;
          }
       }
       @property localized_name @protected {
+         [[Gets localized action name for given id]]
          get {
-            [[Gets localized action name for given id]]
          }
          values {
-            name: string;
+            name: string; [[Localized name]]
          }
          keys {
             id: int;
          }
       }
       @property description @protected @virtual_pure {
+         [[Action description for given id]]
          get {
-            [[Gets action description for given id]]
          }
          set {
-            [[Sets action description for given id]]
             return: bool;
          }
          values {
@@ -41,8 +41,8 @@ mixin Elm.Interface.Atspi_Action ()
          }
       }
       @property actions @protected {
+         [[Get list of available widget actions]]
          get @virtual_pure {
-            [[Get list of available widget actions]]
          }
          values {
             actions: list<Elm_Atspi_Action>; [[contains statically allocated strings]]
