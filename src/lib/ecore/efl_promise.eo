@@ -1,0 +1,44 @@
+import eina_types;
+
+class Efl.Promise (Efl.Loop_User)
+{
+   methods {
+      @property progress {
+         set {
+         }
+         values {
+            p: void_ptr;
+	 }
+      }
+      @property future {
+         get {
+	    [[The returned future is optional and if no then/chain_then are registered before it goes back to run in the main loop, it will be destroyed.]]
+         }
+         values {
+            f: future<void_ptr>;
+         }
+      }
+      @property value {
+         set {
+	 }
+	 values {
+	    v: void_ptr;
+	    free_cb: __builtin_free_cb;
+	 }
+      }
+      failed {
+         params {
+	    @in err: Eina.Error;
+         }
+      }
+   }
+   events {
+      future,set: future<void_ptr>; [[This event is triggered whenever a future is fully set to receive all events and that the user of it do not hold any more reference on it.]]
+      future,progress,set: future<void_ptr>; [[This event is triggered whenever a future has a progress callback registered and the user does not hold any more reference on it.]]
+      future,none; [[This event is triggered whenever there is no more future connected to the promise.]]
+   }
+   implements {
+      Eo.Base.destructor;
+      Eo.Base.constructor;
+   }
+}
