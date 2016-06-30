@@ -519,6 +519,7 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 {
    Ecore_Drm2_Output *output;
    int i = 0;
+   char *name = NULL;
 
    if (w) *w = 0;
 
@@ -560,10 +561,12 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
         break;
      }
 
-   output->name = eina_stringshare_add(_output_name_get(conn));
+   name = _output_name_get(conn);
+   output->name = eina_stringshare_add(name);
    output->make = eina_stringshare_add("unknown");
    output->model = eina_stringshare_add("unknown");
    output->serial = eina_stringshare_add("unknown");
+   free(name);
 
    output->pipe = i;
    output->crtc_id = res->crtcs[i];
