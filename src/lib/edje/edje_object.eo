@@ -830,7 +830,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part)
 
            You must free the return (if not $null) after you are done with it.]]
 
-         return: string; [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
+         return: own(char *); [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
          params {
             @in part: string; [[The part name]]
             @in cur: Edje.Cursor; [[The cursor to use]]
