@@ -1,55 +1,56 @@
 mixin Elm.Interface.Atspi_Component ()
 {
+   [[ATSPI component mixin]]
    eo_prefix: elm_interface_atspi_component;
    data: null;
    methods {
       @property size @protected {
+         [[Size of accessible widget.]]
          set {
-            [[Sets size of accessible widget.]]
             return: bool;
          }
          get {
-            [[Gets size of accessible widget.]]
          }
          values {
-            w: int;
-            h: int;
+            w: int; [[Width of the widget]]
+            h: int; [[Height of the widget]]
          }
       }
       @property layer @protected {
+         [[Evas layer of accessible widget.]]
          get {
-            [[Sets evas layer of accessible widget.]]
          }
          values {
             layer: int;
          }
       }
       @property alpha @protected {
+         [[Gets alpha of accessible widget.]]
          get {
-            [[Gets alpha of accessible widget.]]
          }
          values {
-            alpha: double; [[alpha value in [0, 1] range.]]
+            alpha: double; [[Alpha value in [0, 1] range.]]
          }
       }
       @property z_order @protected {
+         [[Gets the depth at which the component is shown in relation to other
+           components in the same container.]]
          get {
-            [[Gets the depth at which the component is shown in relation to other components in the same container.]]
          }
          values {
             z_order: int;
          }
       }
       @property extents @protected {
+         [[Geometry of accessible widget.]]
          get {
-            [[Gets geometry of accessible widget.]]
          }
          set {
-            [[Sets geometry of accessible widget.]]
             return: bool;
          }
          keys {
-            screen_coords: bool; [[If true x and y values will be relative to screen origin, otherwise relative to canvas]]
+            screen_coords: bool; [[If true x and y values will be relative to
+                                   screen origin, otherwise relative to canvas]]
          }
          values {
             x: int;
@@ -59,15 +60,15 @@ mixin Elm.Interface.Atspi_Component ()
          }
       }
       @property position @protected {
+         [[Position of accessible widget.]]
          set {
-            [[Sets position of accessible widget.]]
             return: bool;
          }
          get {
-            [[Gets position of accessible widget.]]
          }
          keys {
-            screen_coords: bool; [[If true x and y values will be relative to screen origin, otherwise relative to canvas]]
+            screen_coords: bool; [[If true x and y values will be relative to
+                                   screen origin, otherwise relative to canvas]]
          }
          values {
             x: int;
@@ -76,7 +77,8 @@ mixin Elm.Interface.Atspi_Component ()
       }
       contains @protected {
          params {
-            screen_coords: bool; [[If true x and y values will be relative to screen origin, otherwise relative to canvas]]
+            screen_coords: bool; [[If true x and y values will be relative to
+                                   screen origin, otherwise relative to canvas]]
             @in x: int;
             @in y: int;
          }
@@ -85,13 +87,14 @@ mixin Elm.Interface.Atspi_Component ()
       focus_grab @protected {
          [[Focuses accessible widget.]]
 
-         return: bool; [[true if focus grab focus has successed, false otherwise.]]
+         return: bool; [[$true if focus grab focus succeed, $false otherwise.]]
 
       }
       accessible_at_point_get @protected {
          [[Gets top component object occupying space at given coordinates.]]
          params {
-            screen_coords: bool; [[If true x and y values will be relative to screen origin, otherwise relative to canvas]]
+            screen_coords: bool; [[If $true x and y values will be relative to
+                                   screen origin, otherwise relative to canvas]]
             @in x: int;
             @in y: int;
          }
