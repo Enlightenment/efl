@@ -3,6 +3,7 @@ import efl_gfx_types;
 
 mixin Efl.Gfx.Shape
 {
+   [[EFL graphics shape object interface]]
    methods {
       @property stroke_scale {
          [[The stroke scale to be used for stroking the path. Will be used along
@@ -48,7 +49,7 @@ mixin Efl.Gfx.Shape
          }
       }
       @property stroke_location {
-         [[Not Implemented]]
+         [[Not implemented]]
          set {
          }
          get {
@@ -58,7 +59,7 @@ mixin Efl.Gfx.Shape
          }
       }
       @property stroke_dash {
-         [[Not Implemented]]
+         [[Not implemented]]
          set {
          }
          get {
@@ -143,23 +144,25 @@ mixin Efl.Gfx.Shape
         }
       }
       @property current {
+        [[Current point coordinates]]
         get {
         }
         values {
-          x: double;
-          y: double;
+          x: double; [[X co-ordinate of the current point.]]
+          y: double; [[Y co-ordinate of the current point.]]
         }
       }
       @property current_ctrl {
+        [[Current control point coordinates]]
         get {
         }
         values {
-          x: double;
-          y: double;
+          x: double; [[X co-ordinate of control point.]]
+          y: double; [[Y co-ordinate of control point.]]
         }
       }
       dup {
-        [[Copy the shape data from the object specified .
+        [[Copy the shape data from the object specified.
 
           @since 1.14
         ]]
@@ -196,7 +199,7 @@ mixin Efl.Gfx.Shape
         }
       }
       append_line_to {
-        [[Adds a straight line from the current position to the given endPoint.
+        [[Adds a straight line from the current position to the given end point.
           After the line is drawn, the current position is updated to be at the
           end point of the line.
 
