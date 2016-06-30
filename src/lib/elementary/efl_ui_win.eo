@@ -853,10 +853,6 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Efl.Canvas.pointer_canvas_xy.get;
       Efl.Canvas.pointer_inside.get;
       Efl.Canvas.image_max_size.get;
-      Efl.Canvas.image_cache.get;
-      Efl.Canvas.image_cache.set;
-      Efl.Canvas.font_cache.get;
-      Efl.Canvas.font_cache.set;
       Efl.Canvas.smart_objects_calculate;
       Efl.Canvas.objects_at_xy_get;
       Efl.Canvas.object_top_at_xy_get;

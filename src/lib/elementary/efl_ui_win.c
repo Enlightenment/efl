@@ -2162,30 +2162,6 @@ _efl_ui_win_efl_canvas_image_max_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *
 }
 
 EOLIAN static void
-_efl_ui_win_efl_canvas_image_cache_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int size)
-{
-   evas_image_cache_set(sd->evas, size);
-}
-
-EOLIAN static int
-_efl_ui_win_efl_canvas_image_cache_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
-{
-   return evas_image_cache_get(sd->evas);
-}
-
-EOLIAN static void
-_efl_ui_win_efl_canvas_font_cache_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int size)
-{
-   evas_font_cache_set(sd->evas, size);
-}
-
-EOLIAN static int
-_efl_ui_win_efl_canvas_font_cache_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
-{
-   return evas_font_cache_get(sd->evas);
-}
-
-EOLIAN static void
 _efl_ui_win_efl_canvas_smart_objects_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    evas_smart_objects_calculate(sd->evas);

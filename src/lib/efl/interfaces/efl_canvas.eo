@@ -58,34 +58,6 @@ interface Efl.Canvas ()
             maxh: int; [[Pointer to hold the return value in pixels of the maximum height.]]
          }
       }
-      @property image_cache {
-         set {
-            [[Set the image cache.
-
-              This function sets the image cache of canvas in bytes.
-            ]]
-         }
-         get {
-            [[Get the image cache.
-
-              This function returns the image cache size of canvas in bytes.
-            ]]
-         }
-         values {
-            size: int; [[The cache size.]]
-         }
-      }
-      @property font_cache {
-         set {
-            [[Changes the size of font cache of the given evas.]]
-         }
-         get {
-            [[Get the size of font cache of the given evas in bytes.]]
-         }
-         values {
-            size: int; [[The size in bytes.]]
-         }
-      }
       smart_objects_calculate {
          [[Call user-provided $calculate smart functions and unset the
            flag signalling that the object needs to get recalculated to
