@@ -39,14 +39,15 @@ struct _Buffer_Manager
    void *(*map)(Dmabuf_Buffer *buf);
    void (*unmap)(Dmabuf_Buffer *buf);
    void (*discard)(Dmabuf_Buffer *buf);
+   void (*manager_destroy)(void);
    void *priv;
+   void *dl_handle;
 };
 
 Buffer_Manager *buffer_manager = NULL;
 
 struct _Dmabuf_Buffer
 {
-   Buffer_Manager *bm;
    Dmabuf_Surface *surface;
    struct wl_buffer *wl_buffer;
    int w, h;
@@ -90,12 +91,14 @@ int (*sym_drm_intel_gem_bo_unmap_gtt)(drm_intel_bo *bo) = NULL;
 int (*sym_drm_intel_gem_bo_map_gtt)(drm_intel_bo *bo) = NULL;
 drm_intel_bo *(*sym_drm_intel_bo_alloc_tiled)(drm_intel_bufmgr *mgr, const char *name, int x, int y, int cpp, uint32_t *tile, unsigned long *pitch, unsigned long flags) = NULL;
 void (*sym_drm_intel_bo_unreference)(drm_intel_bo *bo) = NULL;
-int (*sym_drmPrimeHandleToFD)(int fd, uint32_t handle, uint32_t flags, int *prime_fd);
+int (*sym_drmPrimeHandleToFD)(int fd, uint32_t handle, uint32_t flags, int *prime_fd) = NULL;
+void (*sym_drm_intel_bufmgr_destroy)(drm_intel_bufmgr *) = NULL;
 
 struct exynos_device *(*sym_exynos_device_create)(int fd) = NULL;
 struct exynos_bo *(*sym_exynos_bo_create)(struct exynos_device *dev, size_t size, uint32_t flags) = NULL;
 void *(*sym_exynos_bo_map)(struct exynos_bo *bo) = NULL;
 void (*sym_exynos_bo_destroy)(struct exynos_bo *bo) = NULL;
+void (*sym_exynos_device_destroy)(struct exynos_device *) = NULL;
 
 static Buffer_Handle *
 _intel_alloc(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd)
@@ -155,6 +158,12 @@ _intel_discard(Dmabuf_Buffer *buf)
    sym_drm_intel_bo_unreference(bo);
 }
 
+static void
+_intel_manager_destroy()
+{
+   sym_drm_intel_bufmgr_destroy(buffer_manager->priv);
+}
+
 static Eina_Bool
 _intel_buffer_manager_setup(int fd)
 {
@@ -169,6 +178,7 @@ _intel_buffer_manager_setup(int fd)
    SYM(drm_intel_lib, drm_intel_gem_bo_map_gtt);
    SYM(drm_intel_lib, drm_intel_bo_alloc_tiled);
    SYM(drm_intel_lib, drm_intel_bo_unreference);
+   SYM(drm_intel_lib, drm_intel_bufmgr_destroy);
    SYM(drm_intel_lib, drmPrimeHandleToFD);
 
    if (fail) goto err;
@@ -180,6 +190,8 @@ _intel_buffer_manager_setup(int fd)
    buffer_manager->map = _intel_map;
    buffer_manager->unmap = _intel_unmap;
    buffer_manager->discard = _intel_discard;
+   buffer_manager->manager_destroy = _intel_manager_destroy;
+   buffer_manager->dl_handle = drm_intel_lib;
 
    return EINA_TRUE;
 
@@ -245,6 +257,12 @@ _exynos_discard(Dmabuf_Buffer *buf)
    sym_exynos_bo_destroy(bo);
 }
 
+static void
+_exynos_manager_destroy()
+{
+   sym_exynos_device_destroy(buffer_manager->priv);
+}
+
 static Eina_Bool
 _exynos_buffer_manager_setup(int fd)
 {
@@ -258,6 +276,7 @@ _exynos_buffer_manager_setup(int fd)
    SYM(drm_exynos_lib, exynos_bo_create);
    SYM(drm_exynos_lib, exynos_bo_map);
    SYM(drm_exynos_lib, exynos_bo_destroy);
+   SYM(drm_exynos_lib, exynos_device_destroy);
    SYM(drm_exynos_lib, drmPrimeHandleToFD);
 
    if (fail) goto err;
@@ -269,7 +288,8 @@ _exynos_buffer_manager_setup(int fd)
    buffer_manager->map = _exynos_map;
    buffer_manager->unmap = _exynos_unmap;
    buffer_manager->discard = _exynos_discard;
-
+   buffer_manager->manager_destroy = _exynos_manager_destroy;
+   buffer_manager->dl_handle = drm_exynos_lib;
    return EINA_TRUE;
 
 err:
@@ -305,6 +325,17 @@ err_drm:
 err_alloc:
    dmabuf_totally_hosed = EINA_TRUE;
    return NULL;
+}
+
+static void
+_buffer_manager_destroy(void)
+{
+   if (!buffer_manager) return;
+
+   if (buffer_manager->manager_destroy) buffer_manager->manager_destroy();
+   free(buffer_manager);
+   buffer_manager = NULL;
+   close(drm_fd);
 }
 
 static void
@@ -348,7 +379,7 @@ _fallback(Dmabuf_Surface *s, int w, int h)
    if (!b) b = s->current;
    if (!b) goto out;
 
-   if (!b->mapping) b->mapping = b->bm->map(b);
+   if (!b->mapping) b->mapping = buffer_manager->map(b);
    if (!b->mapping) goto out;
 
    epd = eo_data_scope_get(surf->info->evas, EVAS_CANVAS_CLASS);
@@ -360,10 +391,11 @@ _fallback(Dmabuf_Surface *s, int w, int h)
    for (y = 0; y < h; y++)
      memcpy(new_data + y * w * 4, old_data + y * b->stride, w * 4);
    surf->funcs.post(surf, NULL, 0);
-   b->bm->unmap(b);
+   buffer_manager->unmap(b);
 
 out:
    _internal_evas_dmabuf_surface_destroy(s);
+   _buffer_manager_destroy();
 }
 
 static void
@@ -436,7 +468,7 @@ static const struct zwp_linux_buffer_params_v1_listener params_listener =
 static void
 _evas_dmabuf_buffer_unlock(Dmabuf_Buffer *b)
 {
-   b->bm->unmap(b);
+   buffer_manager->unmap(b);
    b->mapping = NULL;
    b->locked = EINA_FALSE;
 }
@@ -452,7 +484,9 @@ _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
         b->surface = NULL;
         return;
      }
-   b->bm->discard(b);
+   /* The buffer manager may have been destroyed already if we're
+    * doing fallback */
+   if (buffer_manager) buffer_manager->discard(b);
    if (b->wl_buffer) wl_buffer_destroy(b->wl_buffer);
    b->wl_buffer = NULL;
    free(b);
@@ -507,7 +541,7 @@ _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
    if (h) *h = b->h;
    if (b->locked) return b->mapping;
 
-   ptr = b->bm->map(b);
+   ptr = buffer_manager->map(b);
    if (!ptr)
      return NULL;
 
@@ -609,8 +643,6 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
 
    out = calloc(1, sizeof(Dmabuf_Buffer));
    if (!out) return NULL;
-
-   out->bm = bm;
 
    out->surface = s;
    out->bh = bm->alloc(bm, "name", w, h, &out->stride, &out->fd);
