@@ -44,6 +44,7 @@ enum Elm.Scroller.Movement_Block
 
 mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
 {
+   [[Elm scrollable mixin]]
    eo_prefix: elm_interface_scrollable;
    data: Elm_Scrollable_Smart_Interface_Data;
    methods {
