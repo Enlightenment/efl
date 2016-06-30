@@ -313,6 +313,13 @@ eolian_type_class_get(const Eolian_Type *tp)
    return eolian_class_get_by_name(tp->full_name);
 }
 
+EAPI size_t
+eolian_type_array_size_get(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, 0);
+   return tp->static_size;
+}
+
 EAPI Eina_Bool
 eolian_type_is_own(const Eolian_Type *tp)
 {

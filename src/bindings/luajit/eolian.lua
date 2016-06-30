@@ -76,6 +76,8 @@ ffi.cdef [[
         EOLIAN_TYPE_COMPLEX,
         EOLIAN_TYPE_POINTER,
         EOLIAN_TYPE_CLASS,
+        EOLIAN_TYPE_STATIC_ARRAY,
+        EOLIAN_TYPE_TERMINATED_ARRAY,
         EOLIAN_TYPE_UNDEFINED
     } Eolian_Type_Type;
 
@@ -300,6 +302,7 @@ ffi.cdef [[
     const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Typedecl *tp);
 
     const Eolian_Class *eolian_type_class_get(const Eolian_Type *tp);
+    size_t eolian_type_array_size_get(const Eolian_Type *tp);
     Eina_Bool eolian_type_is_own(const Eolian_Type *tp);
     Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
     Eina_Bool eolian_type_is_ref(const Eolian_Type *tp);
@@ -448,13 +451,15 @@ M.declaration_type = {
 }
 
 M.type_type = {
-    UNKNOWN       = 0,
-    VOID          = 1,
-    REGULAR       = 2,
-    COMPLEX       = 3,
-    POINTER       = 4,
-    CLASS         = 5,
-    UNDEFINED     = 6
+    UNKNOWN          = 0,
+    VOID             = 1,
+    REGULAR          = 2,
+    COMPLEX          = 3,
+    POINTER          = 4,
+    CLASS            = 5,
+    STATIC_ARRAY     = 6,
+    TERMINATED_ARRAY = 7,
+    UNDEFINED        = 8
 }
 
 M.typedecl_type = {
@@ -648,6 +653,10 @@ M.Type = ffi.metatype("Eolian_Type", {
             local v = eolian.eolian_type_class_get(self)
             if v == nil then return nil end
             return v
+        end,
+
+        array_size_get = function(self)
+            return tonumber(eolian.eolian_type_array_size_get(self))
         end,
 
         is_own = function(self)

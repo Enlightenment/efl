@@ -101,9 +101,10 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      eina_strbuf_append(buf, "__undefined_type");
    else
      {
+        /* handles arrays and pointers as they all serialize to pointers */
         Eolian_Type *btp = tp->base_type;
         database_type_to_str(tp->base_type, buf, NULL);
-        if (btp->type != EOLIAN_TYPE_POINTER || btp->is_const)
+        if (eina_strbuf_string_get(buf)[eina_strbuf_length_get(buf) - 1] != '*')
            eina_strbuf_append_char(buf, ' ');
         eina_strbuf_append_char(buf, '*');
         if (tp->is_const) eina_strbuf_append(buf, " const");

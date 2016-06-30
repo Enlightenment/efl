@@ -220,6 +220,8 @@ typedef enum
    EOLIAN_TYPE_COMPLEX,
    EOLIAN_TYPE_POINTER,
    EOLIAN_TYPE_CLASS,
+   EOLIAN_TYPE_STATIC_ARRAY,
+   EOLIAN_TYPE_TERMINATED_ARRAY,
    EOLIAN_TYPE_UNDEFINED
 } Eolian_Type_Type;
 
@@ -1725,6 +1727,16 @@ EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Type *tp);
+
+/*
+ * @brief Get the size of an EOLIAN_TYPE_STATIC_ARRAY.
+ *
+ * @param[in] tp the type.
+ * @return the size or 0.
+ *
+ * @ingroup Eolian
+ */
+EAPI size_t eolian_type_array_size_get(const Eolian_Type *tp);
 
 /*
  * @brief Get whether the given type is owned.

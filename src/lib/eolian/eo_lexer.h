@@ -50,6 +50,8 @@ enum Tokens
     \
     KW(void), \
     \
+    KW(static_array), KW(terminated_array), \
+    \
     KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), \
     KW(promise), \
     KW(generic_value), KW(string), KW(stringshare), \

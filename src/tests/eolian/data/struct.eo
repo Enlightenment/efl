@@ -1,6 +1,8 @@
 struct Named {
     field: ref(int);
     something: string;
+    arr: static_array<int, 16>;
+    tarr: terminated_array<string>;
 }
 
 struct Another {

@@ -72,6 +72,8 @@ static const char * const ctypes[] =
 
    "void",
 
+   NULL, NULL, /* array types */
+
    "Eina_Accessor", "Eina_Array", "Eina_Iterator", "Eina_Hash", "Eina_List",
    "Eina_Promise",
    "Eina_Value", "const char *", "Eina_Stringshare *",
@@ -943,7 +945,6 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         {
            int dcol = ls->column;
            next_char(ls);
-           if (!ls->expr_mode) return '.';
            if (!isdigit(ls->current)) return '.';
            eina_strbuf_reset(ls->buff);
            eina_strbuf_append_char(ls->buff, '.');
@@ -959,7 +960,7 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
                 next_char(ls);
                 continue;
              }
-           else if (ls->expr_mode && isdigit(ls->current))
+           else if (isdigit(ls->current))
              {
                 int col = ls->column;
                 eina_strbuf_reset(ls->buff);

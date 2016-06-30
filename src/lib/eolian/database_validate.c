@@ -242,6 +242,8 @@ _validate_type(const Validator *vs, const Eolian_Type *tp)
            return _validate_typedecl(vs, tpp);
         }
       case EOLIAN_TYPE_POINTER:
+      case EOLIAN_TYPE_STATIC_ARRAY:
+      case EOLIAN_TYPE_TERMINATED_ARRAY:
         return _validate_type(vs, tp->base_type);
       case EOLIAN_TYPE_CLASS:
         {

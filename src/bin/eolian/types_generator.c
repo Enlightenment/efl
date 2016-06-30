@@ -70,10 +70,23 @@ _type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool use_legacy)
               EINA_ITERATOR_FOREACH(members, member)
                 {
                    const Eolian_Type *type = eolian_typedecl_struct_field_type_get(member);
-                   Eina_Stringshare *c_type = eolian_type_c_type_get(type);
-                   eina_strbuf_append_printf(buf, "  %s%s%s;",
-                         c_type, strchr(c_type, '*')?"":" ",
-                         eolian_typedecl_struct_field_name_get(member));
+                   Eina_Stringshare *c_type = NULL;
+                   if (eolian_type_type_get(type) == EOLIAN_TYPE_STATIC_ARRAY)
+                     {
+                        c_type = eolian_type_c_type_get(eolian_type_base_type_get(type));
+                        eina_strbuf_append_printf(buf, "  %s%s%s[%zu];",
+                           c_type, strchr(c_type, '*')?"":" ",
+                           eolian_typedecl_struct_field_name_get(member),
+                           eolian_type_array_size_get(type));
+                     }
+                   else
+                     {
+                        c_type = eolian_type_c_type_get(type);
+                        eina_strbuf_append_printf(buf, "  %s%s%s;",
+                           c_type, strchr(c_type, '*')?"":" ",
+                           eolian_typedecl_struct_field_name_get(member));
+                     }
+                   eina_stringshare_del(c_type);
                    const Eolian_Documentation *fdoc
                        = eolian_typedecl_struct_field_documentation_get(member);
                    if (fdoc)
