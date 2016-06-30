@@ -13926,24 +13926,23 @@ _textblock_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
         eina_strbuf_append_length(buf, item, itlen);
      }
 
-   format = eina_strbuf_string_steal(buf);
-   if (!format || (format[0] == '\0'))
+   format = eina_strbuf_string_get(buf);
+   if (format && (format[0] != '\0'))
      {
-        return NULL;
+        ret = calloc(1, sizeof(Efl_Canvas_Text_Annotation));
+        ret->obj = eo_obj;
+
+        o->annotations = (Efl_Canvas_Text_Annotation *)
+           eina_inlist_append(EINA_INLIST_GET(o->annotations),
+                 EINA_INLIST_GET(ret));
+
+
+        _textblock_annotation_set(eo_obj, o, ret, start, end, format, is_item);
+        ret->is_item = is_item;
+        _evas_textblock_changed(o, eo_obj);
      }
 
-   ret = calloc(1, sizeof(Efl_Canvas_Text_Annotation));
-   ret->obj = eo_obj;
-
-   o->annotations = (Efl_Canvas_Text_Annotation *)
-      eina_inlist_append(EINA_INLIST_GET(o->annotations),
-            EINA_INLIST_GET(ret));
-
-
-   _textblock_annotation_set(eo_obj, o, ret, start, end, format, is_item);
-   ret->is_item = is_item;
-
-   _evas_textblock_changed(o, eo_obj);
+   eina_strbuf_free(buf);
 
    return ret;
 }
