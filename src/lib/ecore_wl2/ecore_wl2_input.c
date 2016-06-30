@@ -250,8 +250,11 @@ _ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
    ev->multi.root.x = input->pointer.sx;
    ev->multi.root.y = input->pointer.sy;
 
-   ev->window = window->id;
-   ev->event_window = window->id;
+   if (window)
+     {
+        ev->window = window->id;
+        ev->event_window = window->id;
+     }
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
 
