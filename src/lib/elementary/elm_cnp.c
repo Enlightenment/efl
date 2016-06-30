@@ -2697,9 +2697,9 @@ _wl_data_preparer_uri(Wl_Cnp_Selection *sel, Elm_Selection_Data *ddata, Ecore_Wl
    cnp_debug("In\n");
 
    drop = eo_key_data_get(sel->requestwidget, "__elm_dropable");
-   if (drop)
-     type = drop->last.type;
-   if (!strcmp(type, "text/uri-list"))
+   if (drop) type = drop->last.type;
+
+   if ((type) && (!strcmp(type, "text/uri-list")))
      {
         int num_files = 0;
         char **files = NULL;
