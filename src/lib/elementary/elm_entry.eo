@@ -628,7 +628,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               Only the text is returned, any format that may exist will not be part
               of the return value. You must free the string when done with \@ref free.
             ]]
-            return: own(string) @warn_unused;
+            return: own(char *) @warn_unused;
          }
       }
       @property selection {
@@ -803,7 +803,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       input_panel_imdata_get @const {
          [[Get the specific data of the current input panel.]]
          params {
-            @in data: void_ptr; [[The specific data to be got from the input panel.]]
+            @out data: void; [[The specific data to be got from the input panel.]]
             @out len: int; [[The length of data.]]
          }
       }

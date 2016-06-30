@@ -4373,7 +4373,7 @@ _elm_entry_cursor_is_visible_format_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EOLIAN static const char*
+EOLIAN static char*
 _elm_entry_cursor_content_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return edje_object_part_text_cursor_content_get
