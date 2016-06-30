@@ -1,11 +1,12 @@
 mixin Elm.Interface.Atspi_Image ()
 {
+   [[ATSPI image mixin]]
    eo_prefix: elm_interface_atspi_image;
    data: null;
    methods {
       @property extents @protected {
+         [[Gets an image extents.]]
          get @virtual_pure {
-            [[Gets an image extents.]]
          }
          keys {
             screen_coords: bool;
@@ -18,21 +19,21 @@ mixin Elm.Interface.Atspi_Image ()
          }
       }
       @property description @protected {
+         [[Textual description of image]]
          get {
-            [[Gets textual description of image]]
          }
          set {
          }
          values {
-            description: string;
+            description: string; [[Textual image description]]
          }
       }
       @property locale @protected {
+         [[Gets locale of the image description.]]
          get {
-            [[Gets locale of the image description.]]
          }
          values {
-            locale: string;
+            locale: string; [[Locale of description]]
          }
       }
    }
