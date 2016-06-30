@@ -695,7 +695,6 @@ connect_err:
    eina_hash_free(ewd->globals);
    free(ewd->name);
    free(ewd);
-   return NULL;
 
    if (hash_create)
      {
