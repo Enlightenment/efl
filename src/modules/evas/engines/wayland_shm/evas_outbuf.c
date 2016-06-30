@@ -559,7 +559,6 @@ _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
    if (!(src = update->image.data)) return;
 
    bpp = depth / 8;
-   if (bpp <= 0) return;
 
    /* check for valid desination data */
    if (!(dst = ob->surface->funcs.data_get(ob->surface, &ww, &hh)))
