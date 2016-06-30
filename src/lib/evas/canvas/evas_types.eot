@@ -4,16 +4,6 @@ struct @extern Evas.Video_Surface; /* FIXME: The structure is full of the unsupp
 type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
 type Evas.Coord: int; [[A type for coordinates]]
 
-enum Evas.Display_Mode {
-   none = 0, [[Default mode]]
-   compress = 1, [[Use this mode when you want to give compress display mode
-                   hint to an object]]
-   expand = 2, [[Use this mode when you want to give expand display mode hint
-                 to an object]]
-   dont_change = 3 [[Use this mode when an object should not change its display
-                     mode]]
-}
-
 enum Evas.Text_Style_Type {
    [[Types of styles to be applied on text objects. The
      EVAS_TEXT_STYLE_SHADOW_DIRECTION_* ones are to be ORed together with

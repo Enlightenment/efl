@@ -188,3 +188,14 @@ enum Efl.Image.Load.Error
    corrupt_file = 5,               [[File corrupt (but was detected as a known format)]]
    unknown_format = 6              [[File is not a known format]]
 }
+
+enum Efl.Gfx.Size.Hint.Mode {
+   [[Display mode size hint.]]
+   none = 0, [[Default mode]]
+   compress = 1, [[Use this mode when you want to give compress display mode
+                   hint to an object]]
+   expand = 2, [[Use this mode when you want to give expand display mode hint
+                 to an object]]
+   dont_change = 3 [[Use this mode when an object should not change its display
+                     mode]]
+}

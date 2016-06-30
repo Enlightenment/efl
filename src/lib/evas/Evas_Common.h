@@ -364,6 +364,13 @@ typedef Efl_Gfx_Size_Hint_Aspect           Evas_Aspect_Control; /**< Aspect type
 #define EVAS_ASPECT_CONTROL_VERTICAL       EFL_GFX_SIZE_HINT_ASPECT_VERTICAL
 #define EVAS_ASPECT_CONTROL_BOTH           EFL_GFX_SIZE_HINT_ASPECT_BOTH
 
+typedef Efl_Gfx_Size_Hint_Mode             Evas_Display_Mode;
+
+#define EVAS_DISPLAY_MODE_NONE             EFL_GFX_SIZE_HINT_MODE_NONE
+#define EVAS_DISPLAY_MODE_COMPRESS         EFL_GFX_SIZE_HINT_MODE_COMPRESS
+#define EVAS_DISPLAY_MODE_EXPAND           EFL_GFX_SIZE_HINT_MODE_EXPAND
+#define EVAS_DISPLAY_MODE_DONT_CHANGE      EFL_GFX_SIZE_HINT_MODE_DONT_CHANGE
+
 typedef Efl_Text_Bidirectional_Type        Evas_BiDi_Direction;
 
 #define EVAS_BIDI_DIRECTION_NATURAL        EFL_TEXT_BIDIRECTIONAL_TYPE_NATURAL

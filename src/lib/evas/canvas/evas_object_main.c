@@ -1094,7 +1094,7 @@ _evas_object_size_hint_alloc(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protec
 }
 
 EOLIAN static Evas_Display_Mode
-_efl_canvas_object_size_hint_display_mode_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_size_hint_hint_display_mode_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if (!obj) return EVAS_DISPLAY_MODE_NONE;
    if ((!obj->size_hints) || obj->delete_me)
@@ -1103,7 +1103,7 @@ _efl_canvas_object_size_hint_display_mode_get(Eo *eo_obj EINA_UNUSED, Evas_Objec
 }
 
 EOLIAN static void
-_efl_canvas_object_size_hint_display_mode_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Display_Mode dispmode)
+_efl_canvas_object_efl_gfx_size_hint_hint_display_mode_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Display_Mode dispmode)
 {
    if (!obj) return;
    if (obj->delete_me) return;
@@ -2286,6 +2286,18 @@ EAPI Evas *
 evas_object_evas_get(const Eo *eo_obj)
 {
    return eo_provider_find((Eo *) eo_obj, EVAS_CANVAS_CLASS);
+}
+
+EAPI void
+evas_object_size_hint_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
+{
+   efl_gfx_size_hint_display_mode_set(obj, dispmode);
+}
+
+EAPI Evas_Display_Mode
+evas_object_size_hint_display_mode_get(const Evas_Object *obj)
+{
+   return efl_gfx_size_hint_display_mode_get(obj);
 }
 
 #include "canvas/efl_canvas_object.eo.c"

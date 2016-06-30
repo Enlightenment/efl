@@ -244,7 +244,22 @@ interface Efl.Gfx.Size.Hint
                          #EVAS_HINT_FILL, to use as vertical alignment hint.]]
          }
       }
-      /* FIXME: Also add hint_display_mode? */
+      @property hint_display_mode {
+         [[A hint for an object's display mode.
+
+           These are hints on the display mode $obj. This is not a size
+           enforcement in any way, it's just a hint that can be used
+           whenever appropriate. This mode can be used object's display
+           mode like commpress or expand.
+
+           This is not a size enforcement in any way, it's just a hint
+           that can be used whenever appropriate. Very few widgets implement
+           support for this hint for now.
+         ]]
+         values {
+            dispmode: Efl.Gfx.Size.Hint.Mode; [[Display mode hint.]]
+         }
+      }
    }
    events {
       change,size,hints; [[Object size hints changed.]]

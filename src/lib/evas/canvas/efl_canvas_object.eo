@@ -404,28 +404,6 @@ abstract Efl.Canvas.Object (Eo.Base, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
             parent: Efl.Canvas.Object; [[The parent smart object of $obj or $null.]]
          }
       }
-      /* FIXME: is this really necessary? */
-      @property size_hint_display_mode {
-         get {
-            [[Retrieves the hints for an object's display mode
-
-              These are hints on the display mode $obj. This is not a size
-              enforcement in any way, it's just a hint that can be used
-              whenever appropriate. This mode can be used object's display
-              mode like commpress or expand.
-            ]]
-         }
-         set {
-            [[Sets the hints for an object's disply mode,
-
-              This is not a size enforcement in any way, it's just a hint
-              that can be used whenever appropriate.
-            ]]
-         }
-         values {
-            dispmode: Evas.Display_Mode; [[Display mode hint.]]
-         }
-      }
       @property paragraph_direction {
          [[This handles text paragraph direction of the given object.
            Even if the given object is not textblock or text, its smart child
@@ -603,6 +581,8 @@ abstract Efl.Canvas.Object (Eo.Base, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Gfx.Size.Hint.hint_align.set;
       Efl.Gfx.Size.Hint.hint_align.get;
       Efl.Gfx.Size.Hint.hint_combined_min.get;
+      Efl.Gfx.Size.Hint.hint_display_mode.set;
+      Efl.Gfx.Size.Hint.hint_display_mode.get;
       Efl.Gfx.Size.Hint.hint_restricted_min.set;
       Efl.Gfx.Size.Hint.hint_restricted_min.get;
       Efl.Gfx.Size.Hint.hint_min.set;

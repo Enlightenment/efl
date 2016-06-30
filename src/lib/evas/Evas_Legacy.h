@@ -1210,6 +1210,31 @@ EAPI void evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control
 EAPI void evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h);
 
 /**
+ * @brief Sets the hints for an object's disply mode,
+ *
+ * This is not a size enforcement in any way, it's just a hint that can be used
+ * whenever appropriate.
+ *
+ * @param[in] dispmode Display mode hint.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_size_hint_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
+
+/**
+ * @brief Retrieves the hints for an object's display mode
+ *
+ * These are hints on the display mode @c obj. This is not a size enforcement
+ * in any way, it's just a hint that can be used whenever appropriate. This
+ * mode can be used object's display mode like commpress or expand.
+ *
+ * @return Display mode hint.
+ *
+ * @ingroup Evas_Objects
+ */
+EAPI Evas_Display_Mode evas_object_size_hint_display_mode_get(const Evas_Object *obj);
+
+/**
  *
  * Sets the layer of its canvas that the given object will be part of.
  *

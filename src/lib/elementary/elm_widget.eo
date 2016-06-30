@@ -278,7 +278,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          set {
          }
          values {
-            dispmode: Evas.Display_Mode;
+            dispmode: Efl.Gfx.Size.Hint.Mode;
          }
       }
       @property on_show_region_hook {
