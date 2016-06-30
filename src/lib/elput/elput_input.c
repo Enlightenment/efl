@@ -40,8 +40,10 @@ _cb_open_restricted(const char *path, int flags, void *data)
         avail = select(p[0] + 1, &rfds, &wfds, &exfds, t);
         if (avail > 0)
           {
-             read(p[0], &fd, sizeof(int));
-             ret = fd;
+             if (read(p[0], &fd, sizeof(int)) < 1)
+               ret = -1;
+             else
+               ret = fd;
              break;
           }
         if (avail < 0) break;
