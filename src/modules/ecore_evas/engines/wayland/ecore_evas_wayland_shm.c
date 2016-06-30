@@ -604,7 +604,7 @@ _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
         if (ECORE_EVAS_PORTRAIT(ee))
           ecore_wl2_window_resize(wdata->win, ee->w, ee->h, location);
         else
-          ecore_wl2_window_resize(wdata->win, ee->w, ee->h, location);
+          ecore_wl2_window_resize(wdata->win, ee->h, ee->w, location);
      }
 }
 
