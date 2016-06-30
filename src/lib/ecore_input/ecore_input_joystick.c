@@ -189,6 +189,7 @@ _fd_handler_cb(void* userData, Ecore_Fd_Handler* fdHandler)
    ssize_t len;
 
    fd = ecore_main_fd_handler_fd_get(fdHandler);
+   if (fd < 0) return ECORE_CALLBACK_RENEW;
 
    len = read(fd, &event, sizeof(event));
    if (len == -1) return ECORE_CALLBACK_RENEW;
@@ -300,7 +301,7 @@ register_failed:
 static void
 _joystick_unregister(const char *syspath)
 {
-   int   fd;
+   int fd;
    Eina_List *l, *l2;
    Joystick_Info *ji;
 
@@ -309,6 +310,8 @@ _joystick_unregister(const char *syspath)
         if (syspath == ji->system_path)
           {
              fd = ecore_main_fd_handler_fd_get(ji->fd_handler);
+             if (fd < 0) continue;
+
              close(fd);
              ecore_main_fd_handler_del(ji->fd_handler);
              joystick_list = eina_list_remove(joystick_list, ji);
