@@ -443,7 +443,8 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
              if ((!einfo->info.wl_surface) || (einfo->info.wl_surface != surf))
                {
                   einfo->info.wl_surface = surf;
-                  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+                  if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+                    ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
                   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
                }
           }
@@ -482,7 +483,10 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
    if (einfo)
      {
         einfo->info.wl_surface = NULL;
-        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
+          }
      }
 
    if (wdata->win) 
