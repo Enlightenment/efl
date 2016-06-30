@@ -223,13 +223,15 @@ _selection_data_ready_cb_free(void *data EINA_UNUSED, void *event)
 static Eina_Bool
 _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
 {
-   int len;
+   int len, fd;
    char buffer[PATH_MAX];
    Ecore_Wl2_Dnd_Source *source = data;
    Ecore_Wl2_Event_Selection_Data_Ready *event;
    Eina_Bool ret;
 
-   len = read(ecore_main_fd_handler_fd_get(fdh), buffer, sizeof buffer);
+   fd = ecore_main_fd_handler_fd_get(fdh);
+   if (fd >= 0)
+     len = read(fd, buffer, sizeof buffer);
 
    event = calloc(1, sizeof(Ecore_Wl2_Event_Selection_Data_Ready));
    if (!event) return ECORE_CALLBACK_CANCEL;
@@ -243,7 +245,9 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
                  WL_DATA_OFFER_FINISH_SINCE_VERSION)
                wl_data_offer_finish(source->offer);
           }
-        close(ecore_main_fd_handler_fd_get(source->fdh));
+
+        fd = ecore_main_fd_handler_fd_get(source->fdh);
+        if (fd >= 0) close(fd);
         ecore_main_fd_handler_del(source->fdh);
         source->fdh = NULL;
 
