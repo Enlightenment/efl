@@ -2764,8 +2764,12 @@ _edje_part_recalc_single(Edje *ed,
         fixedh = EINA_TRUE;
      }
    if (fixedw || fixedh)
-     ERR("file %s, group %s has a non-fixed part '%s'. You should add 'fixed: %d %d'. But in order to optimize the edje calc, we add it automatically.",ed->path, ed->group, ep->part->name, fixedw, fixedh);
-
+     {
+        INF("file %s, group %s has a non-fixed part '%s'. You should add "
+            "'fixed: %d %d'. But in order to optimize the edje calc, we "
+            "add it automatically.", ed->path, ed->group, ep->part->name,
+            fixedw, fixedh);
+     }
 
    /* colors */
    if (ep->part->type != EDJE_PART_TYPE_SPACER)
