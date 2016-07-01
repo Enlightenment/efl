@@ -212,19 +212,18 @@ START_TEST (elm_config_profiles)
    Eina_Stringshare *str;
 
    profile = elm_config_profile_get();
-   dir = elm_config_profile_dir_get(elm_config_profile_get(), EINA_TRUE);
+   fail_if(!profile);
+   dir = elm_config_profile_dir_get(profile, EINA_TRUE);
    str = efl_config_profile_dir_get(cfg, profile, EINA_TRUE);
    fail_if(!eina_streq(dir, str));
    elm_config_profile_dir_free(dir);
    eina_stringshare_del(str);
 
-   dir = elm_config_profile_dir_get(elm_config_profile_get(), EINA_FALSE);
+   dir = elm_config_profile_dir_get(profile, EINA_FALSE);
    str = efl_config_profile_dir_get(cfg, profile, EINA_FALSE);
    fail_if(!eina_streq(dir, str));
    elm_config_profile_dir_free(dir);
    eina_stringshare_del(str);
-
-   fail_if(!elm_config_profile_exists(profile));
 
    elm_shutdown();
 }
