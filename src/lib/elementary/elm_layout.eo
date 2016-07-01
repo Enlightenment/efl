@@ -17,7 +17,8 @@ struct Elm.Layout_Part_Alias_Description
    real_part: string; [[Target part name for the alias set on Elm.Layout_Part_Proxies_Description::real_part. An example of usage would be "default" on that field, with "elm.content.swallow" on this one]]
 }
 
-class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File, Edje.Object)
+class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File, Edje.Object,
+                         Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Model.Factory.Connect)
 {
    legacy_prefix: elm_layout;
    eo_prefix: elm_obj_layout;
@@ -256,6 +257,10 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File, Edje.Object)
       Edje.Object.thaw;
       Edje.Object.signal_callback_add;
       Edje.Object.signal_callback_del;
+      Efl.Ui.View.model.set;
+      Efl.Ui.View.model.get;
+      Efl.Ui.Model.Connect.connect;
+      Efl.Ui.Model.Factory.Connect.connect;
    }
    events {
       theme,changed;

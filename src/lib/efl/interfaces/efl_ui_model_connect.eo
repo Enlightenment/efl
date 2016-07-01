@@ -1,0 +1,11 @@
+interface Efl.Ui.Model.Connect
+{
+   methods {
+      connect {
+         params {
+            name: string;
+            property: string;
+         }
+      }
+   }
+}

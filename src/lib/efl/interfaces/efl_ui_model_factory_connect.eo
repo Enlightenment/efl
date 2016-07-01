@@ -1,0 +1,11 @@
+interface Efl.Ui.Model.Factory.Connect
+{
+   methods {
+      connect {
+         params {
+            name: string;
+            factory: Efl.Ui.Factory;
+         }
+      }
+   }
+}

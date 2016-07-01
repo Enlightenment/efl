@@ -78,6 +78,8 @@ struct _Efl_Ui_Image_Data
 
    const char           *stdicon;
 
+   Efl_Model            *model;
+   Eina_Stringshare     *prop_con;
 
    struct {
       int       requested_size;

@@ -39,6 +39,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static Eina_Bool _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file, const Eina_File *f, const char *key);
 static void _efl_ui_image_sizing_eval(Eo *obj);
+static void _efl_ui_image_model_properties_changed_cb(void *data, const Eo_Event *event);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
@@ -634,6 +635,14 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
              return;
           }
         sd->async.th = NULL;
+     }
+
+   if (sd->model)
+     {
+         eo_event_callback_del(sd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                         _efl_ui_image_model_properties_changed_cb, obj);
+         eo_unref(sd->model);
+         sd->model = NULL;
      }
 
    _async_open_data_free(sd->async.done);
@@ -1686,6 +1695,108 @@ EOLIAN static const char*
 _efl_ui_image_icon_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->stdicon;
+}
+
+static void
+_prop_promise_error_cb(void* data EINA_UNUSED, Eina_Error err EINA_UNUSED)
+{
+
+}
+
+static void
+_prop_promise_then_cb(void* data, void* v)
+{
+   Eo *obj = data;
+   Eina_Value *value = v;
+   char *text;
+
+   const Eina_Value_Type *vtype = eina_value_type_get(value);
+
+   if (vtype == EINA_VALUE_TYPE_STRING || vtype == EINA_VALUE_TYPE_STRINGSHARE)
+     {
+         eina_value_get(value, &text);
+         elm_image_file_set(obj, text, NULL);
+     }
+   else
+     {
+         text = eina_value_to_string(value);
+         elm_image_file_set(obj, text, NULL);
+         free(text);
+     }
+}
+
+static void
+_efl_ui_image_model_properties_changed_cb(void *data, const Eo_Event *event)
+{
+   Efl_Model_Property_Event *evt = event->info;
+   EFL_UI_IMAGE_DATA_GET(data, pd);
+
+   if (!evt->changed_properties)
+     return;
+
+   if (pd->model && pd->prop_con)
+     {
+         Eina_Promise *promise;
+         Eina_Array_Iterator it;
+         const char *prop;
+         unsigned int i;
+
+         EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
+           {
+               if (!strcmp(pd->prop_con, prop))
+                 {
+                     promise = efl_model_property_get(pd->model, pd->prop_con);
+                     eina_promise_then(promise, &_prop_promise_then_cb, &_prop_promise_error_cb, data);
+                     return;
+                 }
+           }
+     }
+}
+
+EOLIAN static void
+_efl_ui_image_efl_ui_view_model_set(Eo *obj, Efl_Ui_Image_Data *pd, Efl_Model *model)
+{
+   if (pd->model)
+     {
+         eo_event_callback_del(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                         _efl_ui_image_model_properties_changed_cb, obj);
+         eo_unref(pd->model);
+         pd->model = NULL;
+     }
+
+   if (model)
+     {
+         pd->model = model;
+         eo_ref(pd->model);
+         eo_event_callback_add(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                         _efl_ui_image_model_properties_changed_cb, obj);
+     }
+
+   if (pd->prop_con && pd->model)
+     {
+         Eina_Promise *promise = efl_model_property_get(pd->model, pd->prop_con);
+         eina_promise_then(promise, &_prop_promise_then_cb,
+                           &_prop_promise_error_cb, obj);
+     }
+}
+
+EOLIAN static Efl_Model *
+_efl_ui_image_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   return pd->model;
+}
+
+EOLIAN static void
+_efl_ui_image_efl_ui_model_connect_connect(Eo *obj, Efl_Ui_Image_Data *pd, const char *name EINA_UNUSED, const char *property)
+{
+   eina_stringshare_replace(&pd->prop_con, property);
+
+   if (pd->model && pd->prop_con)
+     {
+         Eina_Promise *promise = efl_model_property_get(pd->model, pd->prop_con);
+         eina_promise_then(promise, &_prop_promise_then_cb,
+                           &_prop_promise_error_cb, obj);
+     }
 }
 
 EAPI void
