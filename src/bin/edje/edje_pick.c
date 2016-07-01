@@ -661,10 +661,17 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
 }
 
 static int
-_id_cmp(const void *d1, const void *d2)
+_old_id_cmp(const void *d1, const void *d2)
 {
    /* Find currect ID struct */
    return (((Edje_Pick_Data *) d1)->id.old_id - ((intptr_t) d2));
+}
+
+static int
+_new_id_cmp(const void *d1, const void *d2)
+{
+   /* Find currect ID struct */
+   return (((Edje_Pick_Data *) d1)->id.new_id - ((intptr_t) d2));
 }
 
 static int
@@ -673,7 +680,7 @@ _edje_pick_new_id_get(Eina_List *id_list, int id, Eina_Bool set_used)
    if (id >= 0)
      {
         Edje_Pick_Data *p_id = eina_list_search_unsorted(id_list,
-                                                         _id_cmp,
+                                                         _old_id_cmp,
                                                          (void *) (intptr_t) id);
 
 
@@ -690,127 +697,111 @@ _edje_pick_new_id_get(Eina_List *id_list, int id, Eina_Bool set_used)
 }
 
 static int
-_edje_pick_images_add(Edje_File *edf, Edje_File *o)
+_edje_pick_image_new_id_get(Eina_List *id_list, int id)
 {
-   char buf[1024];
-   int size;
-   unsigned int k;
-   void *data;
+   if (id >= 0)
+     {
+        Edje_Pick_Data *p_id = eina_list_search_unsorted(id_list,
+                                                         _old_id_cmp,
+                                                         (void *) (intptr_t) id);
+        if (p_id) return p_id->id.new_id;
+     }
+
+   return -1;
+}
+
+static int
+_edje_pick_image_old_id_get(Eina_List *id_list, int id)
+{
+   if (id >= 0)
+     {
+        Edje_Pick_Data *p_id = eina_list_search_unsorted(id_list,
+                                                         _new_id_cmp,
+                                                         (void *) (intptr_t) id);
+        if (p_id) return p_id->id.old_id;
+     }
+
+   return -1;
+}
+
+static int
+_edje_pick_images_copy(Edje_File *edf, Edje_File *o)
+{
+   int old_id;
    Eina_Bool status = EDJE_PICK_NO_ERROR;
-   static int current_img_id = 0;
+   Eina_List *l;
+   Edje_Pick_Data *image, *set;
 
    if (edf->image_dir)
      {
-        if (!o->image_dir)  /* First time only */
-          o->image_dir = calloc(1, sizeof(*(o->image_dir)));
-
-        for (k = 0; k < edf->image_dir->entries_count; k++)
-          {  /* Copy Images */
-             Edje_Image_Directory_Entry *img = &edf->image_dir->entries[k];
-
-             snprintf(buf, sizeof(buf), "edje/images/%i", img->id);
-             VERBOSE(EINA_LOG_INFO("Trying to read <%s>\n", img->entry));
-             data = eet_read(edf->ef, buf, &size);
-             if (size)
-               {  /* Advance image ID and register this in imagelist */
-                  Edje_Pick_Data *image = malloc(sizeof(*image));
-
-                  image->filename = eina_stringshare_add(img->entry);
-                  image->data = data;
-                  image->size = size;
-                  image->entry = (void *) img;  /* for output file image dir */
-                  image->id.old_id = img->id;
-                  img->id = image->id.new_id = current_img_id;
-                  image->id.used = EINA_FALSE;
-
-                  VERBOSE(EINA_LOG_INFO("Read image <%s> data <%p> size <%d>\n",
-                           buf, image->data, image->size));
-
-                  current_img_id++;
-                  context.current_file->imagelist = eina_list_append(
-                        context.current_file->imagelist, image);
-               }
-             else
-               {
-                  if (img->entry)
-                    {
-                       EINA_LOG_ERR("Image <%s> was not found in <%s> file.\n",
-                             img->entry , context.current_file->name);
-                       status = EDJE_PICK_IMAGE_NOT_FOUND;
-                    }
-                  else
-                    {
-                       EINA_LOG_ERR("Image entry <%s> was not found in <%s> file.\n", buf , context.current_file->name);
-                       status = EDJE_PICK_IMAGE_NOT_FOUND;
-                    }
-                  /* Should that really be freed? Or is some other handling needed? */
-                  free(data);
-               }
-          }
-
         if (edf->image_dir->entries)
           {  /* Copy image dir entries of current file */
-             Edje_Image_Directory_Entry *entries;
-             
-             k = o->image_dir->entries_count; /* save current entries count */
-             o->image_dir->entries_count += edf->image_dir->entries_count;
+             Edje_Image_Directory_Entry *entries = NULL;
 
-             /* alloc mem first time  or  re-allocate again (bigger array) */
-             entries = realloc(o->image_dir->entries,
-                               o->image_dir->entries_count *
-                               sizeof(Edje_Image_Directory_Entry));
-             if (!entries)
+             EINA_LIST_FOREACH(context.current_file->imagelist, l, image)
                {
-                  EINA_LOG_ERR("Out of memory in realloc()");
-                  return EDJE_PICK_IMAGE_NOT_FOUND;
+                  if (image->id.used)
+                    {
+                       o->image_dir->entries_count += 1;
+
+                       /* alloc mem first time  or  re-allocate again (bigger array) */
+                       entries = realloc(entries,
+                                         o->image_dir->entries_count *
+                                         sizeof(Edje_Image_Directory_Entry));
+                       if (!entries)
+                         {
+                            EINA_LOG_ERR("Out of memory in realloc()");
+                            return EDJE_PICK_IMAGE_NOT_FOUND;
+                         }
+                       o->image_dir->entries = entries;
+
+                       old_id = _edje_pick_image_old_id_get(
+                         context.current_file->imagelist, o->image_dir->entries_count - 1);
+                       /* Concatinate current file entries to re-allocaed array */
+                       memcpy(&o->image_dir->entries[o->image_dir->entries_count - 1],
+                              &edf->image_dir->entries[old_id],
+                              sizeof(Edje_Image_Directory_Entry));
+                       o->image_dir->entries[o->image_dir->entries_count - 1].id = image->id.new_id;
+                    }
                }
-             o->image_dir->entries = entries;
-             
-             /* Concatinate current file entries to re-allocaed array */
-             memcpy(&o->image_dir->entries[k], edf->image_dir->entries,
-                   edf->image_dir->entries_count *
-                   sizeof(Edje_Image_Directory_Entry));
           }
 
         if (edf->image_dir->sets)
           {  /* Copy image dir sets of current file */
              Edje_Image_Directory_Set *sets;
-             
-             k = o->image_dir->sets_count;      /* save current sets count */
-             o->image_dir->sets_count += edf->image_dir->sets_count;
-             /* alloc mem first time  or  re-allocate again (bigger array) */
-             sets = realloc(o->image_dir->sets,
-                            o->image_dir->sets_count *
-                            sizeof(Edje_Image_Directory_Set));
-             if (!sets)
+
+             EINA_LIST_FOREACH(context.current_file->imagesetlist, l, set)
                {
-                  EINA_LOG_ERR("Out of memory in realloc()");
-                  return EDJE_PICK_IMAGE_NOT_FOUND;
-               }
-             o->image_dir->sets = sets;
+                  if (set->id.used)
+                    {
+                       Eina_List *l;
+                       Edje_Image_Directory_Set_Entry *e;
 
-             /* Concatinate current file sets to re-allocaed array */
-             memcpy(&o->image_dir->sets[k], edf->image_dir->sets,
-                   edf->image_dir->sets_count *
-                   sizeof(Edje_Image_Directory_Set));
+                       o->image_dir->sets_count += 1;
+                       /* alloc mem first time  or  re-allocate again (bigger array) */
+                       sets = realloc(o->image_dir->sets,
+                                      o->image_dir->sets_count *
+                                      sizeof(Edje_Image_Directory_Set));
+                       if (!sets)
+                         {
+                            EINA_LOG_ERR("Out of memory in realloc()");
+                            return EDJE_PICK_IMAGE_NOT_FOUND;
+                         }
+                       o->image_dir->sets = sets;
 
-             for (; k < o->image_dir->sets_count; k++)
-               {  /* Fix IDs in sets to new assigned IDs of entries */
-                  Eina_List *l;
-                  Edje_Image_Directory_Set_Entry *e;
-                  Edje_Pick_Data *set = calloc(1, sizeof(*set));
-                  set->id.old_id = o->image_dir->sets[k].id;
-                  set->id.new_id = k;
+                       old_id = _edje_pick_image_old_id_get(
+                         context.current_file->imagesetlist, o->image_dir->sets_count - 1);
+                       /* Concatinate current file sets to re-allocaed array */
+                       memcpy(&o->image_dir->sets[o->image_dir->sets_count - 1],
+                              &edf->image_dir->sets[old_id],
+                              sizeof(Edje_Image_Directory_Set));
+                       o->image_dir->sets[o->image_dir->sets_count - 1].id = set->id.new_id;
 
-                  /* Save IDs in set-list, used in Desc update later */
-                  context.current_file->imagesetlist = eina_list_append(
-                        context.current_file->imagesetlist, set);
-
-                  o->image_dir->sets[k].id = k;  /* Fix new sets IDs */
-                  EINA_LIST_FOREACH(o->image_dir->sets[k].entries, l, e)
-                     e->id = _edje_pick_new_id_get(
+                       EINA_LIST_FOREACH(o->image_dir->sets[o->image_dir->sets_count - 1].entries, l, e)
+                         e->id = _edje_pick_image_new_id_get(
                            context.current_file->imagelist,
-                           e->id, EINA_FALSE);
+                           e->id);
+                    }
                }
           }
      }
@@ -1070,33 +1061,116 @@ _edje_pick_color_class_update(Edje_File *o, Edje_File *edf)
      o->color_classes = eina_list_append(o->color_classes, cc);
 }
 
+static int
+_edje_pick_image_entry_add(int id, Edje_File *edf, Edje_File *o)
+{
+   char buf[1024];
+   int size;
+   void *data;
+   static int current_img_id = -1;
+
+   int new_id = _edje_pick_image_new_id_get(context.current_file->imagelist, id);
+   if (new_id >= 0) return new_id;
+
+   if (edf->image_dir)
+     {
+        if (!o->image_dir)  /* First time only */
+          o->image_dir = calloc(1, sizeof(*(o->image_dir)));
+
+        if (edf->image_dir->entries)
+          { /* Copy Images */
+             Edje_Image_Directory_Entry *img = &edf->image_dir->entries[id];
+
+             snprintf(buf, sizeof(buf), "edje/images/%i", img->id);
+             VERBOSE(EINA_LOG_INFO("Trying to read <%s>\n", img->entry));
+             data = eet_read(edf->ef, buf, &size);
+             if (size)
+               {  /* Advance image ID and register this in imagelist */
+                  current_img_id++;
+                  Edje_Pick_Data *image = malloc(sizeof(*image));
+
+                  image->filename = eina_stringshare_add(img->entry);
+                  image->data = data;
+                  image->size = size;
+                  image->entry = (void *) img;  /* for output file image dir */
+                  image->id.old_id = img->id;
+                  img->id = image->id.new_id = current_img_id;
+                  image->id.used = EINA_TRUE;
+
+                  VERBOSE(EINA_LOG_INFO("Read image <%s> data <%p> size <%d>, new_id : %d\n",
+                                        buf, image->data, image->size, image->id.new_id));
+
+                  context.current_file->imagelist = eina_list_append(
+                    context.current_file->imagelist, image);
+               }
+             else
+               {
+                  if (img->entry)
+                    {
+                       EINA_LOG_ERR("Image <%s> was not found in <%s> file.\n",
+                                    img->entry , context.current_file->name);
+                    }
+                  else
+                    {
+                       EINA_LOG_ERR("Image entry <%s> was not found in <%s> file.\n", buf , context.current_file->name);
+                    }
+                  /* Should that really be freed? Or is some other handling needed? */
+                  free(data);
+               }
+          }
+     }
+
+   return current_img_id;
+}
+
+static int
+_edje_pick_image_set_add(int id, Edje_File *edf, Edje_File *o)
+{
+   static int current_set_id = -1;
+
+   int new_id = _edje_pick_image_new_id_get(context.current_file->imagesetlist, id);
+   if (new_id >= 0) return new_id;
+
+   if (edf->image_dir)
+     {
+        if (!o->image_dir)  /* First time only */
+          o->image_dir = calloc(1, sizeof(*(o->image_dir)));
+
+        if (edf->image_dir->sets)
+          {  /* Fix IDs in sets to new assigned IDs of entries */
+             current_set_id++;
+             Edje_Pick_Data *set = calloc(1, sizeof(*set));
+             set->id.old_id = edf->image_dir->sets[id].id;
+             set->id.new_id = current_set_id;
+             set->id.used = EINA_TRUE;
+
+             /* Save IDs in set-list, used in Desc update later */
+             context.current_file->imagesetlist = eina_list_append(
+               context.current_file->imagesetlist, set);
+          }
+     }
+
+   return current_set_id;
+}
 
 static void
-_edje_pick_images_desc_update(Edje_Part_Description_Image *desc)
+_edje_pick_images_desc_update(Edje_Part_Description_Image *desc, Edje_File *edf, Edje_File *o)
 {
    /* Update all IDs of images in descs */
    if (desc)
      {
         unsigned int k;
         int new_id = (desc->image.set) ?
-           _edje_pick_new_id_get(context.current_file->imagesetlist,
-                 desc->image.id,
-                 EINA_TRUE) :
-           _edje_pick_new_id_get(context.current_file->imagelist,
-                 desc->image.id,
-                 EINA_TRUE);
+           _edje_pick_image_set_add(desc->image.id, edf, o) :
+           _edje_pick_image_entry_add(desc->image.id, edf, o);
 
         desc->image.id = new_id;
 
         for (k = 0; k < desc->image.tweens_count; k++)
           {
              new_id = (desc->image.set) ?
-                _edje_pick_new_id_get(context.current_file->imagesetlist,
-                      desc->image.tweens[k]->id ,
-                      EINA_TRUE) :
-                _edje_pick_new_id_get(context.current_file->imagelist,
-                      desc->image.tweens[k]->id ,
-                      EINA_TRUE);
+                _edje_pick_image_set_add(desc->image.tweens[k]->id, edf, o) :
+                _edje_pick_image_entry_add(desc->image.tweens[k]->id, edf, o);
 
              desc->image.tweens[k]->id = new_id;
           }
@@ -1104,7 +1178,7 @@ _edje_pick_images_desc_update(Edje_Part_Description_Image *desc)
 }
 
 static void
-_edje_pick_images_process(Edje_Part_Collection *edc)
+_edje_pick_images_process(Edje_Part_Collection *edc, Edje_File *edf, Edje_File *o)
 {
    /* Find what images are used, update IDs, mark as USED */
    unsigned int i;
@@ -1119,10 +1193,10 @@ _edje_pick_images_process(Edje_Part_Collection *edc)
              /* Update IDs of all images in ALL descs of this part */
              unsigned int k;
 
-             _edje_pick_images_desc_update((Edje_Part_Description_Image *) part->default_desc);
+             _edje_pick_images_desc_update((Edje_Part_Description_Image *) part->default_desc, edf, o);
 
              for (k = 0; k < part->other.desc_count; k++)
-               _edje_pick_images_desc_update((Edje_Part_Description_Image *) part->other.desc[k]);
+               _edje_pick_images_desc_update((Edje_Part_Description_Image *) part->other.desc[k], edf, o);
           }
      }
 }
@@ -1205,14 +1279,14 @@ _edje_pick_programs_process(Edje_Part_Collection *edc)
 }
 
 static int
-_edje_pick_collection_process(Edje_Part_Collection *edc)
+_edje_pick_collection_process(Edje_Part_Collection *edc, Edje_File *edf, Edje_File *o)
 {
    /* Update all IDs, NAMES in current collection */
    static int current_collection_id = 0;
 
    edc->id = current_collection_id;
    current_collection_id++;
-   _edje_pick_images_process(edc);
+   _edje_pick_images_process(edc, edf, o);
    _edje_pick_programs_process(edc);
 
    return EDJE_PICK_NO_ERROR;
@@ -1347,8 +1421,7 @@ main(int argc, char **argv)
              return _edje_pick_cleanup(inp_files, out_file, k);
           }
 
-        /* Build lists of all images, samples and fonts of input files    */
-        _edje_pick_images_add(edf, out_file);  /* Add Images to imagelist */
+        /* Build lists of all samples and fonts of input files    */
         _edje_pick_sounds_add(edf);  /* Add Sounds to samplelist          */
         _edje_pick_vibrations_add(edf);  /* Add Vibrations to samplelist  */
         _Edje_Pick_Fonts_add(edf);   /* Add fonts from file to fonts list */
@@ -1385,7 +1458,7 @@ main(int argc, char **argv)
                }
 
              /* Update IDs */
-             _edje_pick_collection_process(edc);
+             _edje_pick_collection_process(edc, edf, out_file);
 
              /* Build lists of all scripts with new IDs */
              _edje_pick_scripts_add(edf, ce->id, edc->id);
@@ -1406,6 +1479,8 @@ main(int argc, char **argv)
              edje_cache_emp_free(ce);
              eet_close(ef);
           }
+
+        _edje_pick_images_copy(edf, out_file);  /* Add Images to imagelist */
 
         /* We SKIP writing source, just can't compose it */
         /* FIXME: use Edje_Edit code to generate source */
