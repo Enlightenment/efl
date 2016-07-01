@@ -67,6 +67,15 @@ database_enum_add(Eolian_Typedecl *tp)
    database_decl_add(tp->full_name, EOLIAN_DECL_ENUM, tp->base.file, tp);
 }
 
+static void
+_buf_add_suffix(Eina_Strbuf *buf, const char *suffix)
+{
+   if (!suffix) return;
+   if (eina_strbuf_string_get(buf)[eina_strbuf_length_get(buf) - 1] != '*')
+     eina_strbuf_append_char(buf, ' ');
+   eina_strbuf_append(buf, suffix);
+}
+
 void
 database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
 {
@@ -102,27 +111,15 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
    else
      {
         /* handles arrays and pointers as they all serialize to pointers */
-        Eolian_Type *btp = tp->base_type;
         database_type_to_str(tp->base_type, buf, NULL);
-        if (eina_strbuf_string_get(buf)[eina_strbuf_length_get(buf) - 1] != '*')
-           eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append_char(buf, '*');
+        _buf_add_suffix(buf, "*");
         if (tp->is_const) eina_strbuf_append(buf, " const");
      }
    if (tp->type == EOLIAN_TYPE_COMPLEX || tp->type == EOLIAN_TYPE_CLASS)
-     eina_strbuf_append(buf, " *");
+     _buf_add_suffix(buf, "*");
    if (tp->is_ref)
-     {
-        if (eina_strbuf_string_get(buf)[eina_strbuf_length_get(buf) - 1] != '*')
-          eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append_char(buf, '*');
-     }
-   if (name)
-     {
-        if (eina_strbuf_string_get(buf)[eina_strbuf_length_get(buf) - 1] != '*')
-          eina_strbuf_append_char(buf, ' ');
-        eina_strbuf_append(buf, name);
-     }
+     _buf_add_suffix(buf, "*");
+   _buf_add_suffix(buf, name);
 }
 
 static void
