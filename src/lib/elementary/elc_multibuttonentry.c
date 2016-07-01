@@ -80,7 +80,7 @@ _format_count(int count, void *data EINA_UNUSED)
    return strdup(buf);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data *sd)
 {
    const char *str;
@@ -89,9 +89,9 @@ _elm_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data 
    Elm_Object_Item *eo_item;
    double pad_scale;
 
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    str = elm_layout_data_get(obj, "horizontal_pad");
    if (str) hpad = atoi(str);
@@ -122,7 +122,7 @@ _elm_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data 
 
    elm_layout_sizing_eval(obj);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 static void

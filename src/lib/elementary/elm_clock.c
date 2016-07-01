@@ -560,17 +560,17 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
      sd->cur.ampm = -1;
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_clock_elm_widget_theme_apply(Eo *obj, Elm_Clock_Data *sd EINA_UNUSED)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _time_update(obj, EINA_TRUE);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 static Eina_Bool

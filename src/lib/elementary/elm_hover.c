@@ -290,12 +290,12 @@ _hov_show_do(Evas_Object *obj)
    }
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_hover_elm_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    if (sd->smt_sub) _elm_hover_smt_sub_re_eval(obj);
 
@@ -303,7 +303,7 @@ _elm_hover_elm_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 
    if (evas_object_visible_get(obj)) _hov_show_do(obj);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 EOLIAN static void

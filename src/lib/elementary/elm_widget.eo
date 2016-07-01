@@ -17,6 +17,13 @@ enum Elm.Activate
    back,
 }
 
+enum Elm.Theme.Apply
+{
+   failed = 0,
+   default = 1,
+   success = 3
+}
+
 struct Elm.Tooltip;
 struct Elm.Cursor;
 struct @extern Elm.Theme;
@@ -133,7 +140,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       @property style {
          set {
-            return: bool;
+            return: Elm.Theme.Apply;
          }
          get {
          }
@@ -258,7 +265,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       @property theme_object {
          set {
-            return: bool;
+            return: Elm.Theme.Apply;
          }
          values {
             edj: Efl.Canvas.Object;
@@ -749,7 +756,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       theme_apply {
          [['Virtual' function on the widget being re-themed.]]
-         return: bool;
+         return: Elm.Theme.Apply;
       }
       focus_direction_get @const {
          return: bool;

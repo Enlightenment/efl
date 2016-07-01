@@ -213,16 +213,16 @@ _update_list(Elm_Segment_Control_Data *sd)
      }
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_segment_control_elm_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    Eina_List *l;
    Eina_Bool rtl;
    Elm_Object_Item *eo_item;
 
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    rtl = elm_widget_mirrored_get(obj);
 
@@ -239,7 +239,7 @@ _elm_segment_control_elm_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *s
 
    _update_list(sd);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 EOLIAN static Eina_Bool

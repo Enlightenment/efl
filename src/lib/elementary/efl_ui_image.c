@@ -728,20 +728,20 @@ _efl_ui_image_efl_canvas_group_group_clip_unset(Eo *obj, Efl_Ui_Image_Data *sd)
    if (sd->prev_img) evas_object_clip_unset(sd->prev_img);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _efl_ui_image_elm_widget_theme_apply(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
    if (sd->stdicon)
      _elm_theme_object_icon_set(obj, sd->stdicon, elm_widget_style_get(obj));
 
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _efl_ui_image_sizing_eval(obj);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 static Eina_Bool

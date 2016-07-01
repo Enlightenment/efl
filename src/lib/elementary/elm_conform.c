@@ -571,19 +571,19 @@ _on_rotation_changed(void *data, const Eo_Event *event EINA_UNUSED)
      }
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_conformant_elm_widget_theme_apply(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _conformant_parts_swallow(obj);
 
    elm_layout_sizing_eval(obj);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 // unused now - but meant to be for making sure the focused widget is always

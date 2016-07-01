@@ -102,17 +102,17 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    evas_object_grid_mirrored_set(wd->resize_obj, rtl);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_grid_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 EOLIAN static void

@@ -163,13 +163,13 @@ _icon_signal_emit(Evas_Object *obj)
    edje_object_message_signal_process(wd->resize_obj);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_radio_elm_widget_theme_apply(Eo *obj, Elm_Radio_Data *sd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   Eina_Bool int_ret = EINA_FALSE;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, ELM_CHECK_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
    else elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
@@ -185,7 +185,7 @@ _elm_radio_elm_widget_theme_apply(Eo *obj, Elm_Radio_Data *sd)
 
    elm_obj_layout_sizing_eval(obj);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 static void

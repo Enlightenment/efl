@@ -368,7 +368,7 @@ _item_title_enabled_update(Elm_Naviframe_Item_Data *nit, Eina_Bool transition)
      }
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_naviframe_elm_widget_theme_apply(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item_Data *it;
@@ -386,7 +386,7 @@ _elm_naviframe_elm_widget_theme_apply(Eo *obj, Elm_Naviframe_Data *sd)
      }
 
    elm_layout_sizing_eval(obj);
-   return EINA_TRUE;
+   return ELM_THEME_APPLY_SUCCESS;
 }
 
 static char *

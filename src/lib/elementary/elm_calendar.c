@@ -850,18 +850,18 @@ _spinner_buttons_add(Evas_Object *obj, Elm_Calendar_Data *sd)
      }
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_calendar_elm_widget_theme_apply(Eo *obj, Elm_Calendar_Data *sd)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _spinner_buttons_add(obj, sd);
 
    evas_object_smart_changed(obj);
-   return EINA_TRUE;
+   return int_ret;
 }
 
 /* Set correct tm_wday and tm_yday after other fields changes*/

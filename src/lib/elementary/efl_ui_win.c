@@ -332,7 +332,7 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
                                           void *event_info);
 static void
 _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj);
-static Eina_Bool _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
+static Elm_Theme_Apply _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
 static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style);
 static void _elm_win_frame_del(Efl_Ui_Win_Data *sd);
 
@@ -5562,15 +5562,16 @@ _efl_ui_win_focus_highlight_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd
    return sd->focus_highlight.enabled;
 }
 
-static Eina_Bool
+static Elm_Theme_Apply
 _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 {
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    Eina_Bool ret = EINA_FALSE;
    const char *s;
 
-   if (!_elm_theme_object_set(obj, sd->edje, "win", "base",
-                               elm_widget_style_get(obj)))
-     return EINA_FALSE;
+   int_ret = _elm_theme_object_set(obj, sd->edje, "win", "base",
+                                   elm_widget_style_get(obj));
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    edje_object_mirrored_set(sd->edje, elm_widget_mirrored_get(obj));
    edje_object_scale_set(sd->edje,
@@ -5578,6 +5579,8 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 
    eo_event_callback_call(obj, EFL_UI_WIN_EVENT_THEME_CHANGED, NULL);
    ret = elm_obj_widget_disable(obj);
+
+   if (!ret) int_ret = ELM_THEME_APPLY_FAILED;
 
    if (!sd->theme_alpha && !sd->application_alpha)
      {
@@ -5593,22 +5596,23 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
           }
      }
 
-   return ret;
+   return int_ret;
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _efl_ui_win_elm_widget_theme_apply(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    sd->focus_highlight.theme_changed = EINA_TRUE;
-   if (!_elm_win_theme_internal(obj, sd))
-     return EINA_FALSE;
+
+   int_ret = _elm_win_theme_internal(obj, sd) & int_ret;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 EOLIAN static void

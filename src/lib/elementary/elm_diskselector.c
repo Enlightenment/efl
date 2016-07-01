@@ -810,18 +810,18 @@ _theme_data_get(Evas_Object *obj)
    else sd->minh = -1;
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_diskselector_elm_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
 {
    Eina_List *l;
    Elm_Diskselector_Item_Data *it;
    Evas_Object *blank;
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    Evas *evas;
    const char *style = elm_widget_style_get(obj);
 
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    evas = evas_object_evas_get(obj);
    evas_event_freeze(evas);
@@ -867,7 +867,7 @@ _elm_diskselector_elm_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
    evas_event_thaw(evas);
    evas_event_thaw_eval(evas);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 EOLIAN static Eina_Bool

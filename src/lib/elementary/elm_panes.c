@@ -43,13 +43,13 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_panes_elm_widget_theme_apply(Eo *obj, Elm_Panes_Data *sd)
 {
    double size;
    Evas_Coord minw = 0, minh = 0;
 
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    ELM_LAYOUT_DATA_GET(obj, ld);
 
    if (sd->orientation == EFL_ORIENT_HORIZONTAL)
@@ -62,7 +62,7 @@ _elm_panes_elm_widget_theme_apply(Eo *obj, Elm_Panes_Data *sd)
    evas_object_size_hint_min_set(sd->event, minw, minh);
 
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    size = elm_panes_content_left_size_get(obj);
 
@@ -79,7 +79,7 @@ _elm_panes_elm_widget_theme_apply(Eo *obj, Elm_Panes_Data *sd)
 
    elm_panes_content_left_size_set(obj, size);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 EOLIAN static Eina_Bool

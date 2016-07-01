@@ -509,21 +509,21 @@ _elm_datetime_elm_layout_sizing_eval(Eo *obj, Elm_Datetime_Data *sd)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_datetime_elm_widget_theme_apply(Eo *obj, Elm_Datetime_Data *sd)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
    Datetime_Field *field;
    char buf[BUFFER_SIZE];
    unsigned int idx;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
 
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
-   if ((!dt_mod) || (!dt_mod->field_value_display)) return EINA_TRUE;
+   if ((!dt_mod) || (!dt_mod->field_value_display)) return int_ret;
 
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
@@ -551,7 +551,7 @@ _elm_datetime_elm_widget_theme_apply(Eo *obj, Elm_Datetime_Data *sd)
    edje_object_message_signal_process(wd->resize_obj);
    elm_layout_sizing_eval(obj);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 static int

@@ -199,12 +199,12 @@ _update_theme_slider(Evas_Object *obj, Evas_Object *sl, const char *name, const 
    elm_object_disabled_set(sl, elm_widget_disabled_get(obj));
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Elm_Theme_Apply
 _elm_player_elm_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    _update_theme_button(obj, sd->forward, "forward");
    _update_theme_button(obj, sd->info, "info");
@@ -222,7 +222,7 @@ _elm_player_elm_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
    _update_theme_slider(obj, sd->vslider,  "volume", "volumeslider");
    elm_layout_sizing_eval(obj);
 
-   return EINA_TRUE;
+   return int_ret;
 }
 
 EOLIAN static void
