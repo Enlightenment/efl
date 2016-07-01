@@ -497,7 +497,6 @@ includesub_HEADERS = \
 	elm_helper.h \
 	efl_ui_box_private.h \
 	efl_ui_grid_private.h \
-	efl_ui_text.h \
 	efl_ui_text.eo.h \
 	$(NULL)
 
