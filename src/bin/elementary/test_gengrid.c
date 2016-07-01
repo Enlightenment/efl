@@ -2235,3 +2235,75 @@ test_gengrid_update(void *data EINA_UNUSED,
    evas_object_resize(win, 600, 600);
    evas_object_show(win);
 }
+
+void
+test_gengrid_disabled_item_focus(void *data EINA_UNUSED,
+                                 Evas_Object *obj EINA_UNUSED,
+                                 void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *obx, *grid, *ck;
+   Elm_Gengrid_Item_Class *ic;
+   Item_Data *id;
+   int i, n;
+   char buf[PATH_MAX];
+
+   win = elm_win_util_standard_add("gengrid_disabled_focus", "Gengrid Disabled Focus");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   grid = elm_gengrid_add(win);
+
+   elm_gengrid_item_size_set(grid, ELM_SCALE_SIZE(150), ELM_SCALE_SIZE(150));
+   elm_gengrid_multi_select_set(grid, EINA_FALSE);
+   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_min_set(grid, 600, 550);
+   elm_box_pack_end(bx, grid);
+   evas_object_show(grid);
+   evas_object_smart_callback_add(grid, "item,focused", _gengrid_focus_item_cb, "item,focused");
+   evas_object_smart_callback_add(grid, "item,unfocused", _gengrid_focus_item_cb, "item,unfocused");
+   evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
+
+   obx = elm_box_add(win);
+   evas_object_size_hint_weight_set(obx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_horizontal_set(obx, EINA_TRUE);
+   elm_box_pack_end(bx, obx);
+   evas_object_show(obx);
+
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "Item select on focus disable");
+   elm_check_state_set(ck, elm_config_item_select_on_focus_disabled_get());
+   evas_object_smart_callback_add(ck, "changed",
+                                  _gg_focus_item_select_on_focus_disable_changed_cb,
+                                  NULL);
+   elm_box_pack_end(obx, ck);
+   evas_object_show(ck);
+
+   ic = elm_gengrid_item_class_new();
+   ic->item_style = "default";
+   ic->func.text_get = grid_text_get;
+   ic->func.content_get = grid_content_get;
+   ic->func.state_get = NULL;
+   ic->func.del = grid_del;
+
+   n = 0;
+   for (i = 0; i < 23; i++)
+     {
+        id = calloc(1, sizeof(Item_Data));
+        snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[n]);
+        n = (n + 1) % 9;
+        id->mode = i;
+        id->path = eina_stringshare_add(buf);
+        id->item = elm_gengrid_item_append(grid, ic, id, NULL, NULL);
+        if (i == 4 || i == 8 || i == 11 || i == 22)
+          elm_object_item_disabled_set(id->item, EINA_TRUE);
+     }
+
+   elm_gengrid_item_class_free(ic);
+
+   evas_object_resize(win, 600, 600);
+   evas_object_show(win);
+}

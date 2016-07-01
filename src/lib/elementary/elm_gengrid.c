@@ -2075,26 +2075,31 @@ _item_focus_up(Elm_Gengrid_Data *sd)
    if (!sd->focused_item)
      {
         prev = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
-        while ((prev) && (prev->generation < sd->generation))
+        while (((prev) && (prev->generation < sd->generation))
+               || elm_object_item_disabled_get(EO_OBJ(prev)))
           prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
-        elm_object_item_focus_set(EO_OBJ(prev), EINA_TRUE);
-        return EINA_TRUE;
      }
    else
      {
         Elm_Object_Item *eo_prev = elm_gengrid_item_prev_get(sd->focused_item);
         if (!eo_prev) return EINA_FALSE;
-        prev = eo_data_scope_get(eo_prev, ELM_GENGRID_ITEM_CLASS);
         if (eo_prev == sd->focused_item) return EINA_FALSE;
+
+        eo_prev = sd->focused_item;
+        while (eo_prev)
+          {
+             for (i = 0; i < sd->nmax; i++)
+               {
+                  eo_prev = elm_gengrid_item_prev_get(eo_prev);
+                  if (!eo_prev) return EINA_FALSE;
+               }
+             if (!elm_object_item_disabled_get(eo_prev)) break;
+          }
+
+        prev = eo_data_scope_get(eo_prev, ELM_GENGRID_ITEM_CLASS);
      }
 
-   for (i = 1; i < sd->nmax; i++)
-     {
-        Elm_Object_Item *eo_tmp =
-          elm_gengrid_item_prev_get(EO_OBJ(prev));
-        if (!eo_tmp) return EINA_FALSE;
-        prev = eo_data_scope_get(eo_tmp, ELM_GENGRID_ITEM_CLASS);
-     }
+   if (!prev) return EINA_FALSE;
 
    elm_object_item_focus_set(EO_OBJ(prev), EINA_TRUE);
 
@@ -2106,12 +2111,13 @@ _item_focus_down(Elm_Gengrid_Data *sd)
 {
    unsigned int i, idx;
    Elm_Gen_Item *next = NULL;
-   Elm_Object_Item *eo_tmp = NULL;
+   Elm_Object_Item *eo_next = NULL;
 
    if (!sd->focused_item)
      {
         next = ELM_GEN_ITEM_FROM_INLIST(sd->items);
-        while ((next) && (next->generation < sd->generation))
+        while (((next) && (next->generation < sd->generation))
+               || elm_object_item_disabled_get(EO_OBJ(next)))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
    else
@@ -2125,20 +2131,27 @@ _item_focus_down(Elm_Gengrid_Data *sd)
           return EINA_FALSE;
         if (idx > sd->item_count - sd->nmax)
           {
-             eo_tmp = elm_gengrid_last_item_get(sd->obj);
-             next = eo_data_scope_get(eo_tmp, ELM_GENGRID_ITEM_CLASS);
+             eo_next = elm_gengrid_last_item_get(sd->obj);
+             if (elm_object_item_disabled_get(eo_next)) return EINA_FALSE;
           }
         else
           {
-             next = eo_data_scope_get(sd->focused_item, ELM_GENGRID_ITEM_CLASS);
-             for (i = 0; i < sd->nmax; i++)
+             eo_next = sd->focused_item;
+             while (eo_next)
                {
-                  eo_tmp = elm_gengrid_item_next_get(EO_OBJ(next));
-                  if (!eo_tmp) return EINA_FALSE;
-                  next = eo_data_scope_get(eo_tmp, ELM_GENGRID_ITEM_CLASS);
+                  for (i = 0; i < sd->nmax; i++)
+                    {
+                       eo_next = elm_gengrid_item_next_get(eo_next);
+                       if (!eo_next) return EINA_FALSE;
+                    }
+                  if (!elm_object_item_disabled_get(eo_next)) break;
                }
           }
+
+	  next = eo_data_scope_get(eo_next, ELM_GENGRID_ITEM_CLASS);
      }
+
+   if (!next) return EINA_FALSE;
 
    elm_object_item_focus_set(EO_OBJ(next), EINA_TRUE);
 
@@ -2153,16 +2166,26 @@ _item_focus_left(Elm_Gengrid_Data *sd)
    if (!sd->focused_item)
      {
         prev = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
-        while ((prev) && (prev->generation < sd->generation))
+        while (((prev) && (prev->generation < sd->generation))
+               || elm_object_item_disabled_get(EO_OBJ(prev)))
           prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
      }
    else
      {
         Elm_Object_Item *eo_prev = elm_gengrid_item_prev_get(sd->focused_item);
         if (!eo_prev) return EINA_FALSE;
-        prev = eo_data_scope_get(eo_prev, ELM_GENGRID_ITEM_CLASS);
         if (eo_prev == sd->focused_item) return EINA_FALSE;
+
+        while (eo_prev)
+          {
+             if (!elm_object_item_disabled_get(eo_prev)) break;
+             eo_prev = elm_gengrid_item_prev_get(eo_prev);
+          }
+
+        prev = eo_data_scope_get(eo_prev, ELM_GENGRID_ITEM_CLASS);
      }
+
+   if (!prev) return EINA_FALSE;
 
    elm_object_item_focus_set(EO_OBJ(prev), EINA_TRUE);
 
@@ -2177,16 +2200,26 @@ _item_focus_right(Elm_Gengrid_Data *sd)
    if (!sd->focused_item)
      {
         next = ELM_GEN_ITEM_FROM_INLIST(sd->items);
-        while ((next) && (next->generation < sd->generation))
+        while (((next) && (next->generation < sd->generation))
+               || elm_object_item_disabled_get(EO_OBJ(next)))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
    else
      {
         Elm_Object_Item *eo_next = elm_gengrid_item_next_get(sd->focused_item);
         if (!eo_next) return EINA_FALSE;
-        next = eo_data_scope_get(eo_next, ELM_GENGRID_ITEM_CLASS);
         if (eo_next == sd->focused_item) return EINA_FALSE;
+
+        while (eo_next)
+          {
+            if (!elm_object_item_disabled_get(eo_next)) break;
+             eo_next = elm_gengrid_item_next_get(eo_next);
+          }
+
+        next = eo_data_scope_get(eo_next, ELM_GENGRID_ITEM_CLASS);
      }
+
+   if (!next) return EINA_FALSE;
 
    elm_object_item_focus_set(EO_OBJ(next), EINA_TRUE);
 
