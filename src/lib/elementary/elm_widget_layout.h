@@ -53,6 +53,8 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_List            *subs; /**< List of Elm_Layout_Sub_Object_Data structs, to hold the actual sub objects such as text, content and the children of box and table. */
    Eina_List            *edje_signals; /**< The list of edje signal callbacks. */
    Eina_List            *parts_cursors; /**< The list of cursor names of layout parts. This is a list of Elm_Layout_Sub_Object_Cursor struct. */
+   Eina_Hash            *prop_connect; /**< The list of properties connected to layout parts. */
+   Efl_Model            *model; /**< The model */
    const char           *klass; /**< 1st identifier of an edje object group which is used in theme_set. klass and group are used together. */
    const char           *group; /**< 2nd identifier of an edje object group which is used in theme_set. klass and group are used together. */
    int                   frozen; /**< Layout freeze counter */
@@ -63,6 +65,7 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */
    Eina_Bool             destructed_is : 1; /**< This flag indicates if Elm_Layout destructor was called. This is needed to avoid unnecessary calculation of subobject deletion during layout object's deletion. */
    Eina_Bool             file_set : 1; /**< This flag indicates if Elm_Layout source is set from a file*/
+   Eina_Bool             view_updated : 1; /**< This flag indicates to Elm_Layout don't update model in text_set */
 } Elm_Layout_Smart_Data;
 
 /**

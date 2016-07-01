@@ -114,6 +114,9 @@ EAPI extern const Eo_Event_Description _EFL_GFX_PATH_CHANGED;
 
 #include "interfaces/efl_canvas.eo.h"
 
+#include "interfaces/efl_ui_view.eo.h"
+#include "interfaces/efl_ui_model_connect.eo.h"
+
 /* Packing & containers */
 #include "interfaces/efl_container.eo.h"
 #include "interfaces/efl_pack.eo.h"

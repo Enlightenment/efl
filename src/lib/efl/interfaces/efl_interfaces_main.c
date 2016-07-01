@@ -53,6 +53,8 @@ EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
 #include "interfaces/efl_flipable.eo.c"
 #include "interfaces/efl_ui_spin.eo.c"
 #include "interfaces/efl_ui_progress.eo.c"
+#include "interfaces/efl_ui_view.eo.c"
+#include "interfaces/efl_ui_model_connect.eo.c"
 
 #include "interfaces/efl_event.eo.c"
 #include "interfaces/efl_input_state.eo.c"

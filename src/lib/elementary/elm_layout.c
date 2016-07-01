@@ -19,6 +19,7 @@
 #define MY_CLASS_NAME_LEGACY "elm_layout"
 
 Eo *_elm_layout_pack_proxy_get(Elm_Layout *obj, Evas_Object *pack, const char *part);
+static void _efl_model_properties_changed_cb(void *, const Eo_Event *);
 
 static const char SIG_THEME_CHANGED[] = "theme,changed";
 const char SIG_LAYOUT_FOCUSED[] = "focused";
@@ -105,6 +106,13 @@ struct _Elm_Layout_Sub_Object_Cursor
    const char  *style;
 
    Eina_Bool    engine_only : 1;
+};
+
+typedef struct _Elm_Layout_Sub_Property_Promise Elm_Layout_Sub_Property_Promise;
+struct _Elm_Layout_Sub_Property_Promise
+{
+   Elm_Layout_Smart_Data *pd;
+   Eina_Stringshare      *name;
 };
 
 static void
@@ -818,6 +826,15 @@ _elm_layout_efl_canvas_group_group_del(Eo *obj, Elm_Layout_Smart_Data *sd)
         free(esd);
      }
 
+   if(sd->model)
+     {
+         eo_event_callback_del(sd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, sd);
+         eo_unref(sd->model);
+         sd->model = NULL;
+     }
+   eina_hash_free(sd->prop_connect);
+   sd->prop_connect = NULL;
+
    eina_stringshare_del(sd->klass);
    eina_stringshare_del(sd->group);
 
@@ -1331,6 +1348,30 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
        sd->can_access && !(sub_d->obj))
      sub_d->obj = _elm_access_edje_object_part_object_register
          (obj, elm_layout_edje_get(obj), part);
+
+
+   if (sd->model && !sd->view_updated)
+     {
+        Eina_Hash_Tuple *tuple;
+        Eina_Iterator *it = eina_hash_iterator_tuple_new(sd->prop_connect);
+
+        while (eina_iterator_next(it, (void **)&tuple))
+          {
+             if (tuple->data == sub_d->part)
+               {
+                  Eina_Value v;
+                  eina_value_setup(&v, EINA_VALUE_TYPE_STRING);
+                  eina_value_set(&v, text);
+                  efl_model_property_set(sd->model, tuple->key, &v, NULL);
+                  eina_value_flush(&v);
+                  break;
+               }
+          }
+
+        eina_iterator_free(it);
+     }
+
+   sd->view_updated = EINA_FALSE;
 
    return EINA_TRUE;
 }
@@ -1906,6 +1947,150 @@ _elm_layout_eo_base_dbg_info_get(Eo *eo_obj, Elm_Layout_Smart_Data *_pd EINA_UNU
              EO_DBG_INFO_APPEND(group, "Error", EINA_VALUE_TYPE_STRING,
                                 edje_load_error_str(error));
           }
+     }
+}
+
+static void
+_prop_promise_error_cb(void* data, Eina_Error err EINA_UNUSED)
+{
+   Elm_Layout_Sub_Property_Promise *sub_pp = data;
+
+   eina_stringshare_del(sub_pp->name);
+   free(sub_pp);
+}
+
+static void
+_prop_promise_then_cb(void* data, void* v)
+{
+   Elm_Layout_Sub_Property_Promise *sub_pp = data;
+   Elm_Layout_Smart_Data *pd = sub_pp->pd;
+   Eina_Value *value = v;
+   char *text;
+
+   const Eina_Value_Type *vtype = eina_value_type_get(value);
+
+   pd->view_updated = EINA_TRUE;
+   if (vtype == EINA_VALUE_TYPE_STRING || vtype == EINA_VALUE_TYPE_STRINGSHARE)
+     {
+         eina_value_get(value, &text);
+         elm_layout_text_set(pd->obj, sub_pp->name, text);
+     }
+   else
+     {
+         text = eina_value_to_string(value);
+         elm_layout_text_set(pd->obj, sub_pp->name, text);
+         free(text);
+     }
+
+   eina_stringshare_del(sub_pp->name);
+   free(sub_pp);
+}
+
+static void
+_efl_model_properties_changed_cb(void *data, const Eo_Event *event)
+{
+   Elm_Layout_Smart_Data *pd = data;
+   Efl_Model_Property_Event *evt = event->info;
+   Elm_Layout_Sub_Property_Promise *sub_pp;
+   Eina_Stringshare *name;
+   Eina_Array_Iterator it;
+   Eina_Promise *promise;
+   const char *prop;
+   unsigned int i;
+
+   if (!evt->changed_properties)
+     return;
+
+   EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
+     {
+        name = eina_hash_find(pd->prop_connect, prop);
+        if (name)
+          {
+              sub_pp = ELM_NEW(Elm_Layout_Sub_Property_Promise);
+              sub_pp->pd = pd;
+              sub_pp->name = name;
+              eina_stringshare_ref(sub_pp->name);
+              promise = efl_model_property_get(pd->model, prop);
+              eina_promise_then(promise, &_prop_promise_then_cb,
+                                &_prop_promise_error_cb, sub_pp);
+          }
+     }
+}
+
+static Eina_Bool
+_elm_layout_view_update_fn(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata)
+{
+   Elm_Layout_Smart_Data *pd = fdata;
+   Eina_Stringshare *prop = key;
+   Eina_Stringshare *name = data;
+
+   if (name)
+     {
+        Elm_Layout_Sub_Property_Promise *sub_pp = ELM_NEW(Elm_Layout_Sub_Property_Promise);
+        Eina_Promise *promise = efl_model_property_get(pd->model, prop);
+        sub_pp->pd = pd;
+        sub_pp->name = eina_stringshare_ref(name);
+        eina_promise_then(promise, &_prop_promise_then_cb,
+                          &_prop_promise_error_cb, sub_pp);
+     }
+   return EINA_TRUE;
+}
+
+EOLIAN static void
+_elm_layout_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *pd, Efl_Model *model)
+{
+   if (pd->model)
+     {
+         eo_event_callback_del(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, pd);
+         eo_unref(pd->model);
+         pd->model = NULL;
+     }
+
+   if (model)
+     {
+         pd->model = model;
+         eo_ref(pd->model);
+         eo_event_callback_add(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, pd);
+     }
+
+   if (pd->prop_connect) eina_hash_foreach(pd->prop_connect, _elm_layout_view_update_fn, pd);
+}
+
+EOLIAN static Efl_Model *
+_elm_layout_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *pd)
+{
+   return pd->model;
+}
+
+EOLIAN static void
+_elm_layout_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *pd, const char *name, const char *property)
+{
+   EINA_SAFETY_ON_NULL_RETURN(name);
+   Eina_Stringshare *ss_name, *ss_prop;
+
+   if (!_elm_layout_part_aliasing_eval(obj, pd, &name, EINA_TRUE))
+     return;
+
+   ss_name = eina_stringshare_add(name);
+   ss_prop = eina_stringshare_add(property);
+   if (!pd->prop_connect)
+     {
+         pd->prop_connect = eina_hash_stringshared_new(EINA_FREE_CB(eina_stringshare_del));
+     }
+
+   eina_stringshare_del(eina_hash_set(pd->prop_connect, ss_prop, ss_name));
+
+   if (pd->model)
+     {
+         Eina_Promise *promise;
+         Elm_Layout_Sub_Property_Promise *sub_pp = ELM_NEW(Elm_Layout_Sub_Property_Promise);
+
+         sub_pp->pd = pd;
+         sub_pp->name = eina_stringshare_ref(ss_name);
+
+         promise = efl_model_property_get(pd->model, ss_prop);
+         eina_promise_then(promise, &_prop_promise_then_cb,
+                           &_prop_promise_error_cb, sub_pp);
      }
 }
 
