@@ -116,6 +116,7 @@ layout_example.edc \
 layout_example_01.c \
 layout_example_02.c \
 layout_example_03.c \
+layout_model_connect.c \
 list_example_01.c \
 list_example_02.c \
 list_example_03.c \
@@ -313,6 +314,7 @@ label_example_01 \
 layout_example_01 \
 layout_example_02 \
 layout_example_03 \
+layout_model_connect \
 list_example_01 \
 list_example_02 \
 list_example_03 \
