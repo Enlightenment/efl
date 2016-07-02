@@ -223,7 +223,7 @@ _selection_data_ready_cb_free(void *data EINA_UNUSED, void *event)
 static Eina_Bool
 _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
 {
-   int len, fd;
+   int len = 0, fd;
    char buffer[PATH_MAX];
    Ecore_Wl2_Dnd_Source *source = data;
    Ecore_Wl2_Event_Selection_Data_Ready *event;
