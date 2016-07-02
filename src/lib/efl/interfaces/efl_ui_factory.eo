@@ -1,0 +1,12 @@
+interface Efl.Ui.Factory (Efl.Ui.Model.Connect)
+{
+   methods {
+      create {
+         [[Create a UI object from the necessary properties in the specified model.]]
+         params {
+            model: Efl.Model;
+         }
+         return: Efl.Canvas;
+      }
+   }
+}

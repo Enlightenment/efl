@@ -1,0 +1,9 @@
+class Efl.Ui.Image.Factory (Eo.Base, Efl.Ui.Factory)
+{
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Efl.Ui.Factory.create;
+      Efl.Ui.Model.Connect.connect;
+   }
+}
