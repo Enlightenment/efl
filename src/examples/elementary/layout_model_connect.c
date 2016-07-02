@@ -21,6 +21,7 @@ struct _Layout_Model_Data
    Eo *model;
    Evas_Object *label;
    Evas_Object *entry;
+   Evas_Object *img;
 };
 typedef struct _Layout_Model_Data Layout_Model_Data;
 
@@ -41,6 +42,7 @@ _list_selected_cb(void *data EINA_UNUSED, const Eo_Event *event)
    printf("LIST selected model\n");
    efl_ui_view_model_set(priv->label, child);
    efl_ui_view_model_set(priv->entry, child);
+   efl_ui_view_model_set(priv->img, child);
 }
 
 
@@ -80,6 +82,7 @@ elm_main(int argc, char **argv)
 {
    Layout_Model_Data *priv;
    Evas_Object *win, *panes, *bxr, *genlist, *bt;
+   Eo *img_factory;
    char *dirname;
 
    priv = alloca(sizeof(Layout_Model_Data));
@@ -133,6 +136,16 @@ elm_main(int argc, char **argv)
    elm_object_text_set(bt, "update model");
    evas_object_smart_callback_add(bt, "clicked", _update_cb, priv);
    evas_object_show(bt);
+
+   /* Image widget */
+   img_factory = eo_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
+   efl_ui_model_connect(img_factory, "", "path"); //connect to "path" property
+
+   priv->img = efl_ui_factory_create(img_factory, NULL);
+   elm_box_pack_end(bxr, priv->img);
+   evas_object_size_hint_weight_set(priv->img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(priv->img, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(priv->img);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, priv);
    //showall
