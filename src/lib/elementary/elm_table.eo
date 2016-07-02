@@ -71,8 +71,8 @@ class Elm.Table (Elm.Widget)
             @in subobj: Efl.Canvas.Object; [[The subobject to be modified in the table.]]
             @in column: int; [[Column number.]]
             @in row: int; [[Row number.]]
-            @in colspan: int;
-            @in rowspan: int;
+            @in colspan: int; [[Columns span.]]
+            @in rowspan: int; [[Rows span.]]
          }
          legacy: null;
       }
@@ -82,8 +82,8 @@ class Elm.Table (Elm.Widget)
             @in subobj: Efl.Canvas.Object; [[The subobject to be modified in the table.]]
             @out column: int; [[Column number.]]
             @out row: int; [[Row number.]]
-            @out colspan: int;
-            @out rowspan: int;
+            @out colspan: int; [[Columns span.]]
+            @out rowspan: int; [[Rows span.]]
          }
          legacy: null;
       }
@@ -111,8 +111,8 @@ class Elm.Table (Elm.Widget)
             @in subobj: Efl.Canvas.Object; [[The subobject to be added to the table.]]
             @in column: int; [[Column number.]]
             @in row: int; [[Row number.]]
-            @in colspan: int;
-            @in rowspan: int;
+            @in colspan: int; [[Columns span.]]
+            @in rowspan: int; [[Rows span.]]
          }
       }
    }
