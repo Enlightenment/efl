@@ -2313,7 +2313,7 @@ _entry_changed_handle(void *data,
                                        _delay_write, data);
 
    _return_key_enabled_check(data);
-   text = edje_object_part_text_get(sd->entry_edje, "elm.text");
+   text = efl_text_get(data);
    if (text)
      {
         if (text[0])
@@ -2327,15 +2327,6 @@ _entry_changed_handle(void *data,
     * entry... thus... any access to sd after this could be
     * invalid */
    eo_event_callback_call(data, event, NULL);
-}
-
-static void
-_entry_changed_signal_cb(void *data,
-                         Evas_Object *obj EINA_UNUSED,
-                         const char *emission EINA_UNUSED,
-                         const char *source EINA_UNUSED)
-{
-   _entry_changed_handle(data, EFL_UI_TEXT_EVENT_CHANGED);
 }
 
 static void
@@ -3820,9 +3811,6 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
    /* this code can't go in smart_resize. sizing gets wrong */
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
 
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,changed", "elm.text",
-     _entry_changed_signal_cb, obj);
    edje_object_signal_callback_add
      (priv->entry_edje, "entry,changed,user", "elm.text",
      _entry_changed_user_signal_cb, obj);
@@ -5997,6 +5985,7 @@ static void
 _efl_ui_text_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _decoration_defer_all(data);
+   _entry_changed_handle(data, EFL_UI_TEXT_EVENT_CHANGED);
 }
 
 static void
