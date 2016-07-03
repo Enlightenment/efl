@@ -8284,20 +8284,26 @@ found:
    _evas_textblock_changed(o, eo_obj);
 }
 
-EOLIAN static void
-_efl_canvas_text_cursor_paragraph_first(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+static void
+_canvas_text_cursor_paragraph_first(Efl_Canvas_Text_Cursor_Data *cur)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    Efl_Canvas_Text_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
    cur->node = o->text_nodes;
    cur->pos = 0;
-
-   eo_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_paragraph_last(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_paragraph_first(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+{
+   _canvas_text_cursor_paragraph_first(cur);
+   eo_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+}
+
+
+static void
+_canvas_text_cursor_paragraph_last(Efl_Canvas_Text_Cursor_Data *cur)
 {
    Evas_Object_Textblock_Node_Text *node;
 
@@ -8310,14 +8316,19 @@ _efl_canvas_text_cursor_paragraph_last(Evas_Textblock_Cursor *cur_obj, Efl_Canva
         node = _NODE_TEXT(EINA_INLIST_GET(node)->last);
         cur->node = node;
         cur->pos = 0;
-        evas_textblock_cursor_paragraph_char_last(cur_obj);
+        _evas_textblock_cursor_paragraph_char_last(cur);
      }
    else
      {
         cur->node = NULL;
         cur->pos = 0;
      }
+}
 
+EOLIAN static void
+_efl_canvas_text_cursor_paragraph_last(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+{
+   _canvas_text_cursor_paragraph_last(cur);
    eo_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
@@ -13599,63 +13610,33 @@ _efl_canvas_text_efl_text_text_set(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUS
    efl_canvas_text_cursor_text_insert(o->cursor, text);
 }
 
+static char *
+_canvas_text_get_all(Eo *eo_obj, Efl_Canvas_Text_Data *o)
+{
+   Efl_Canvas_Text_Cursor_Data start, end;
+
+   _evas_textblock_cursor_init(&start, eo_obj);
+   _evas_textblock_cursor_init(&end, eo_obj);
+
+   _canvas_text_cursor_paragraph_first(&start);
+   _canvas_text_cursor_paragraph_last(&end);
+
+   return _evas_textblock_cursor_range_text_get(&start, &end, EVAS_TEXTBLOCK_TEXT_PLAIN);
+}
+
 EOLIAN static const char *
-_efl_canvas_text_efl_text_text_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
+_efl_canvas_text_efl_text_text_get(Eo *eo_obj, Efl_Canvas_Text_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
 
-   Evas_Object_Textblock_Node_Text *node;
-   char *utf8, *off;
-
-   struct
-     {
-        char *utf8;
-        int len;
-     } *en;
-   Eina_List *lst_utf8 = NULL;
-   Eina_List *i;
-
-   int len = 0;
-
-   //XXX: not efficient atm. This value will be cached properly so in the
-   // meantime the utf8 field will be cleared each call.
    if (o->utf8)
      {
         free(o->utf8);
         o->utf8 = NULL;
      }
 
-   // XXX: won't use cursor_paragraph_text_get as it's inefficient
-   // for this function (gets ranges, uses strbuf).
-
-   // gets utf8s and calc length
-   EINA_INLIST_FOREACH(o->text_nodes, node)
-     {
-        en = malloc(sizeof(*en));
-        en->utf8 = eina_unicode_unicode_to_utf8(eina_ustrbuf_string_get(node->unicode), &en->len);
-        lst_utf8 = eina_list_append(lst_utf8, en);
-        len += en->len;
-     }
-
-   utf8 = malloc(len + 1); // with terminating '/0'
-   if (!utf8) goto end;
-
-   off = utf8;
-   EINA_LIST_FOREACH(lst_utf8, i, en)
-     {
-        memcpy(off, en->utf8, en->len);
-        off += en->len;
-     }
-   utf8[len] = '\0';
-   o->utf8 = utf8;
-
-end:
-   EINA_LIST_FREE(lst_utf8, en)
-     {
-        free(en);
-     }
-
+   o->utf8 = _canvas_text_get_all(eo_obj, o);
    return o->utf8;
 }
 
