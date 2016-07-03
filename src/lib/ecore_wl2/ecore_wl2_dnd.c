@@ -232,6 +232,8 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
    fd = ecore_main_fd_handler_fd_get(fdh);
    if (fd >= 0)
      len = read(fd, buffer, sizeof buffer);
+   else
+     return ECORE_CALLBACK_RENEW;
 
    event = calloc(1, sizeof(Ecore_Wl2_Event_Selection_Data_Ready));
    if (!event) return ECORE_CALLBACK_CANCEL;
