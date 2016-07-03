@@ -316,7 +316,8 @@ _edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
         if (sig == gp->matches->matches[i].signal &&
             src == gp->matches->matches[i].source &&
             func == gp->matches->matches[i].func &&
-            gp->custom_data[i] == data)
+            gp->custom_data[i] == data &&
+            !gp->flags[i].delete_me)
           {
              gp->flags[i].delete_me = EINA_TRUE;
              return gp->custom_data[i];
@@ -329,7 +330,8 @@ _edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
           {
              if (sig == gp->matches->matches[i].signal &&
                  src == gp->matches->matches[i].source &&
-                 func == gp->matches->matches[i].func)
+                 func == gp->matches->matches[i].func &&
+                 !gp->flags[i].delete_me)
                {
                   gp->flags[i].delete_me = EINA_TRUE;
                   return gp->custom_data[i];
