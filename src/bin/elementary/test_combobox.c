@@ -204,6 +204,8 @@ test_combobox(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    evas_object_resize(win, 320, 500);
    evas_object_show(win);
+
+   elm_genlist_item_class_free(itc);
 }
 
 static void
@@ -275,4 +277,6 @@ test_combobox2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    evas_object_resize(win, 640, 600);
    evas_object_show(win);
+
+   elm_genlist_item_class_free(itc);
 }
