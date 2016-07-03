@@ -965,8 +965,11 @@ evas_cache_image_drop(Image_Entry *im)
              _evas_cache_image_entry_delete(cache, im);
              return;
           }
-        _evas_cache_image_lru_add(im);
-        if (cache) evas_cache_image_flush(cache);
+        if (cache)
+          {
+             _evas_cache_image_lru_add(im);
+             evas_cache_image_flush(cache);
+          }
      }
 }
 

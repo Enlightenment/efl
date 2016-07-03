@@ -2771,10 +2771,10 @@ evas_render_updates_internal(Evas *eo_e,
                {
                   ru = malloc(sizeof(*ru));
                   ru->surface = surface;
+                  //XXX: need a way of reffing output surfaces
                   NEW_RECT(ru->area, ux, uy, uw, uh);
                   eina_spinlock_take(&(e->render.lock));
                   e->render.updates = eina_list_append(e->render.updates, ru);
-                  evas_cache_image_ref(surface);
                   eina_spinlock_release(&(e->render.lock));
                }
 
@@ -2952,7 +2952,7 @@ evas_render_updates_internal(Evas *eo_e,
         EINA_LIST_FOREACH(e->render.updates, l, ru)
           {
              post.updated_area = eina_list_append(post.updated_area, ru->area);
-             evas_cache_image_drop(ru->surface);
+             //XXX: need a way of unreffing output surfaces
              ru->surface = NULL;
           }
         eina_spinlock_take(&(e->render.lock));
@@ -3073,7 +3073,7 @@ evas_render_pipe_wakeup(void *data)
            ru->area->x, ru->area->y, ru->area->w, ru->area->h,
            EVAS_RENDER_MODE_ASYNC_END);
         eina_evlog("-render_push", e->evas, 0.0, NULL);
-        evas_cache_image_drop(ru->surface);
+        //XXX: need a way to unref render output surfaces
         ru->surface = NULL;
      }
    eina_evlog("+render_output_flush", e->evas, 0.0, NULL);
