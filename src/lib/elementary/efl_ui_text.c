@@ -1192,6 +1192,15 @@ _deferred_recalc_job(void *data)
    _update_decorations(data);
 }
 
+static inline void
+_recalc_defer(Eo *obj)
+{
+   EFL_UI_TEXT_DATA_GET(obj, sd);
+   ecore_job_del(sd->deferred_recalc_job);
+   sd->deferred_recalc_job =
+      ecore_job_add(_deferred_recalc_job, obj);
+}
+
 EOLIAN static void
 _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
 {
@@ -1268,9 +1277,7 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
           }
         else
           {
-             ecore_job_del(sd->deferred_recalc_job);
-             sd->deferred_recalc_job =
-               ecore_job_add(_deferred_recalc_job, obj);
+             _recalc_defer(obj);
           }
 
         evas_event_thaw(evas_object_evas_get(obj));
