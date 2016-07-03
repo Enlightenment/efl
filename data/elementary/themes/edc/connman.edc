@@ -657,7 +657,6 @@ group { name: "e/modules/connman/end";
       part { name: "base"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "glow_lock_locked.png";
-            max: 16 16;
             aspect: 1.0 1.0; aspect_preference: BOTH;
             visible: 0;
          }
@@ -697,6 +696,16 @@ group { name: "e/modules/connman/end";
       program {
          signal: "e,security,psk"; source: "e";
          action: STATE_SET "psk" 0.0;
+         target: "base";
+      }
+      program {
+         signal: "e,security,ieee8021x"; source: "e";
+         action: STATE_SET "psk" 0.0;
+         target: "base";
+      }
+      program {
+         signal: "e,security,wps"; source: "e";
+         action: STATE_SET "wep" 0.0;
          target: "base";
       }
    }
