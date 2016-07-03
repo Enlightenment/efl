@@ -2075,8 +2075,9 @@ _item_focus_up(Elm_Gengrid_Data *sd)
    if (!sd->focused_item)
      {
         prev = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
-        while (((prev) && (prev->generation < sd->generation))
-               || elm_object_item_disabled_get(EO_OBJ(prev)))
+        while (prev &&
+               (prev->generation < sd->generation ||
+                elm_object_item_disabled_get(EO_OBJ(prev))))
           prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
      }
    else
@@ -2116,8 +2117,9 @@ _item_focus_down(Elm_Gengrid_Data *sd)
    if (!sd->focused_item)
      {
         next = ELM_GEN_ITEM_FROM_INLIST(sd->items);
-        while (((next) && (next->generation < sd->generation))
-               || elm_object_item_disabled_get(EO_OBJ(next)))
+        while (next &&
+               (next->generation < sd->generation
+                || elm_object_item_disabled_get(EO_OBJ(next))))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
    else
