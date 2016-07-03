@@ -1309,6 +1309,8 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
         return;
      }
 
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+
    if (!strcmp(ev->key, "Up"))
      _elm_code_widget_cursor_move_up(widget);
    else if (!strcmp(ev->key, "Down"))
