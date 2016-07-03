@@ -9682,6 +9682,31 @@ _evas_textblock_cursors_set_node(Efl_Canvas_Text_Data *o,
      }
 }
 
+static inline void
+_cursor_update_offset(Efl_Canvas_Text_Cursor_Data *cur, Efl_Canvas_Text_Data *o,
+      const Evas_Object_Textblock_Node_Text *n, size_t start, int offset)
+{
+   if ((n == cur->node) &&
+         (cur->pos > start))
+     {
+        if ((offset < 0) && (cur->pos <= (size_t) (-1 * offset)))
+          {
+             cur->pos = 0;
+          }
+        else
+          {
+             cur->pos += offset;
+          }
+        cur->changed = EINA_TRUE;
+     }
+   else if (!cur->node)
+     {
+        cur->node = o->text_nodes;
+        cur->pos = 0;
+        cur->changed = EINA_TRUE;
+     }
+}
+
 /**
  * @internal
  * Update the offset of all the cursors after cur.
@@ -9697,50 +9722,22 @@ _evas_textblock_cursors_update_offset(const Efl_Canvas_Text_Cursor_Data *cur,
       size_t start, int offset)
 {
    Eina_List *l;
-   Efl_Canvas_Text_Cursor *data_obj;
+   Efl_Canvas_Text_Cursor *ocur_obj;
+   Efl_Canvas_Text_Cursor_Data *ocur;
    Efl_Canvas_Text_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
-   Efl_Canvas_Text_Cursor_Data *ocur = eo_data_scope_get(o->cursor, EFL_CANVAS_TEXT_CURSOR_CLASS);
+   ocur = eo_data_scope_get(o->cursor, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (cur != ocur)
      {
-        if ((n == cur->node) &&
-              (cur->pos > start))
-          {
-             if ((offset < 0) && (cur->pos <= (size_t) (-1 * offset)))
-               {
-                  ocur->pos = 0;
-               }
-             else
-               {
-                  ocur->pos += offset;
-               }
-             ocur->changed = EINA_TRUE;
-          }
+        _cursor_update_offset(ocur, o, n, start, offset);
      }
-   EINA_LIST_FOREACH(o->cursors, l, data_obj)
+
+   EINA_LIST_FOREACH(o->cursors, l, ocur_obj)
      {
-        Efl_Canvas_Text_Cursor_Data *data = eo_data_scope_get(data_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-        if (data != cur)
+        ocur = eo_data_scope_get(ocur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
+        if (ocur != cur)
           {
-             if ((n == data->node) &&
-                   (data->pos > start))
-               {
-                  if ((offset < 0) && (data->pos <= (size_t) (-1 * offset)))
-                    {
-                       data->pos = 0;
-                    }
-                  else
-                    {
-                       data->pos += offset;
-                    }
-                  data->changed = EINA_TRUE;
-               }
-             else if (!data->node)
-               {
-                  data->node = o->text_nodes;
-                  data->pos = 0;
-                  data->changed = EINA_TRUE;
-               }
+             _cursor_update_offset(ocur, o, n, start, offset);
           }
      }
 }

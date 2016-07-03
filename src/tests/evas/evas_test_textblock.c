@@ -943,6 +943,35 @@ START_TEST(evas_textblock_cursor)
         ck_assert_int_eq(pos, 44);
      }
 
+     {
+        /* Test multiple cursors:
+         * Deleting characters should "pull" all the cursors positioned *after*
+         * the deleted position, and "push" on insertion.
+         * Testing with one additional cursor will suffice. */
+        int j, pos;
+        Evas_Textblock_Cursor *cur2;
+
+        cur2 = evas_object_textblock_cursor_new(tb);
+        evas_object_textblock_text_markup_set(tb, "Hello world");
+        evas_textblock_cursor_pos_set(cur2, 0);
+        evas_textblock_cursor_pos_set(cur, 5);
+        for (j = 5; j >= 0; j--)
+          {
+             pos = evas_textblock_cursor_pos_get(cur);
+             ck_assert_int_eq(pos, j);
+             evas_textblock_cursor_char_delete(cur2);
+          }
+        evas_object_textblock_text_markup_set(tb, "Hello world");
+        evas_textblock_cursor_pos_set(cur2, 0);
+        evas_textblock_cursor_pos_set(cur, 5);
+        for (j = 5; j <= 10; j++)
+          {
+             pos = evas_textblock_cursor_pos_get(cur);
+             ck_assert_int_eq(pos, j);
+             evas_textblock_cursor_text_append(cur2, "a");
+          }
+        evas_textblock_cursor_free(cur2);
+     }
    END_TB_TEST();
 }
 END_TEST
