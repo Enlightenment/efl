@@ -1177,4 +1177,40 @@ embryo script and from C code.";
 
       }
    }
+
+   group { name: "external/combobox";
+      parts {
+         COMMON_EXTERNAL_UNDER
+         part { name: "combobox"; type: EXTERNAL;
+            source: "elm/combobox";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel2.relative: 1.0 0.0;
+               align: 0.5 0.0;
+               params {
+                  string: "guide" "Widgets";
+               }
+            }
+         }
+         part { name: "info"; type: TEXT;
+            clip_to: "clip";
+            description { state: "default" 0.;
+               rel1 {
+                  to: "combobox";
+                  relative: 0.0 1.0;
+               }
+               text {
+                  text: "";
+                  font: "Sans";
+                  size: 24;
+                  align: 0.5 1.0;
+               }
+            }
+         }
+         COMMON_EXTERNAL_OVER
+      }
+      programs {
+         COMMON_EXTERNAL_PROGRAM
+      }
+   }
 }

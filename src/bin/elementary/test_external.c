@@ -202,3 +202,78 @@ test_external_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_resize(win, 320, 400);
    evas_object_show(win);
 }
+
+static char *
+text_get_cb(void        *data,
+            Evas_Object *obj  EINA_UNUSED,
+            const char  *part EINA_UNUSED)
+{
+   return strdup(data);
+}
+
+static void
+action_cb(void        *data,
+          Evas_Object *obj  EINA_UNUSED,
+          void        *info)
+{
+   Evas_Object *const lay = data;
+   Elm_Object_Item *const item = info;
+
+   elm_layout_text_set(lay, "info", elm_object_item_data_get(item));
+}
+
+static void
+_cb_pressed_cb(void        *data EINA_UNUSED,
+               Evas_Object *obj,
+               void        *info)
+{
+   const char *txt;
+
+   txt = elm_object_item_text_get(info);
+   elm_object_text_set(obj, txt);
+   elm_combobox_hover_end(obj);
+   elm_entry_cursor_end_set(obj);
+}
+
+void
+test_external_combobox(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *ly, *cb, *edj;
+   char buf[PATH_MAX];
+   Elm_Genlist_Item_Class *itc;
+   const char *info[] = {
+      "Label", "Button", "Combobox", "Icon", "Scroller", "Layout",
+      "Naviframe", "Bubble"
+   };
+   const unsigned int size = EINA_C_ARRAY_LENGTH(info);
+   unsigned int i;
+
+   win = elm_win_util_standard_add("ext_combobox", "Edje External Combobox");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   ly = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/test_external.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "external/combobox");
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, ly);
+   evas_object_show(ly);
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = text_get_cb;
+
+   edj = elm_layout_edje_get(ly);
+   cb = edje_object_part_external_object_get(edj, "combobox");
+   evas_object_smart_callback_add(cb, "item,pressed", _cb_pressed_cb, NULL);
+
+   for (i = 0; i < size; i++)
+     {
+        elm_genlist_item_append(cb, itc, info[i], NULL,
+                                ELM_GENLIST_ITEM_NONE, action_cb, ly);
+     }
+
+   elm_genlist_item_class_free(itc);
+
+   evas_object_resize(win, 320, 400);
+   evas_object_show(win);
+}
