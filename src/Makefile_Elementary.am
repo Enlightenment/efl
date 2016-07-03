@@ -1207,6 +1207,7 @@ edje_external_elementary_module_la_SOURCES = \
 	edje_external/elementary/elm_calendar.c \
 	edje_external/elementary/elm_check.c \
 	edje_external/elementary/elm_clock.c \
+	edje_external/elementary/elm_combobox.c \
 	edje_external/elementary/elm_entry.c \
 	edje_external/elementary/elm_fileselector.c \
 	edje_external/elementary/elm_fileselector_button.c \
