@@ -13611,7 +13611,7 @@ _efl_canvas_text_efl_text_text_set(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUS
 }
 
 static char *
-_canvas_text_get_all(Eo *eo_obj, Efl_Canvas_Text_Data *o)
+_canvas_text_get_all(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED)
 {
    Efl_Canvas_Text_Cursor_Data start, end;
 
