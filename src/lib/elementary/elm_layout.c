@@ -938,6 +938,8 @@ _elm_layout_edje_object_signal_callback_add(Eo *obj, Elm_Layout_Smart_Data *sd, 
    esd = ELM_NEW(Edje_Signal_Data);
    if (!esd) return;
 
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
    esd->obj = obj;
    esd->func = func_cb;
    esd->emission = eina_stringshare_add(emission);
@@ -946,7 +948,7 @@ _elm_layout_edje_object_signal_callback_add(Eo *obj, Elm_Layout_Smart_Data *sd, 
    sd->edje_signals = eina_list_append(sd->edje_signals, esd);
 
    edje_object_signal_callback_add
-     (eo_super(obj, MY_CLASS), emission, source, _edje_signal_callback, esd);
+     (wd->resize_obj, emission, source, _edje_signal_callback, esd);
 }
 
 EAPI void *
@@ -964,6 +966,8 @@ _elm_layout_edje_object_signal_callback_del(Eo *obj, Elm_Layout_Smart_Data *sd, 
    Eina_List *l;
    void *data_ptr;
 
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+
    EINA_LIST_FOREACH(sd->edje_signals, l, esd)
      {
         if ((esd->func == func_cb) && (!strcmp(esd->emission, emission)) &&
@@ -975,7 +979,7 @@ _elm_layout_edje_object_signal_callback_del(Eo *obj, Elm_Layout_Smart_Data *sd, 
              data_ptr = esd->data;
 
              edje_obj_signal_callback_del
-               (obj, emission, source, _edje_signal_callback, esd);
+               (wd->resize_obj, emission, source, _edje_signal_callback, esd);
              free(esd);
 
              return data_ptr; /* stop at 1st match */
