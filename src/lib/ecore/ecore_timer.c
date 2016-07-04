@@ -168,6 +168,8 @@ _ecore_timer_legacy_tick(void *data, const Eo_Event *event)
    if (!_ecore_call_task_cb(legacy->func, (void*)legacy->data) ||
        legacy->delete_me)
      eo_del(event->object);
+   else
+     legacy->inside_call = 0;
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(legacy_timer,
