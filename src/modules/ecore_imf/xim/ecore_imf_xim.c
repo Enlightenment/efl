@@ -767,7 +767,6 @@ _ecore_imf_xim_init(void)
    if (_ecore_imf_xim_log_dom < 0)
      {
         EINA_LOG_ERR("Could not register log domain: ecore_imf_xim");
-        return EINA_FALSE;
      }
 
    DBG(" ");

@@ -439,13 +439,14 @@ ecore_shutdown(void)
      eina_prefix_free(_ecore_pfx);
      _ecore_pfx = NULL;
 
+     eo_unref(_ecore_parent);
+     eo_shutdown();
+
      eina_shutdown();
 #ifdef HAVE_EVIL
      evil_shutdown();
 #endif
 
-     eo_unref(_ecore_parent);
-     eo_shutdown();
  end:
      return _ecore_init_count;
 }

@@ -406,6 +406,13 @@ evas_module_unregister(const Evas_Module_Api *module, Evas_Module_Type type)
      eina_array_data_set(evas_engines, em->id_engine - 1, NULL);
 
    eina_hash_del(evas_modules[type], module->name, em);
+
+   if (em->loaded)
+     {
+        em->definition->func.close(em);
+        em->loaded = 0;
+     }
+
    LKD(em->lock);
    free(em);
 
@@ -431,7 +438,11 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
    if ((unsigned int)type > 3) return NULL;
 
    em = eina_hash_find(evas_modules[type], name);
-   if (em) return em;
+   if (em)
+     {
+        evas_module_load(em);
+        return em;
+     }
 
    run_in_tree = !!getenv("EFL_RUN_IN_TREE");
 
@@ -607,6 +618,18 @@ evas_module_clean(void)
 
 static Eina_Prefix *pfx = NULL;
 
+static Eina_Bool
+_cb_mod_close(const Eina_Hash *hash EINA_UNUSED,
+              const void *key EINA_UNUSED,
+              void *data, void *fdata EINA_UNUSED)
+{
+   Evas_Module *em = data;
+
+   em->definition->func.close(em);
+   em->loaded = 0;
+   return EINA_TRUE;
+}
+
 /* will dlclose all the modules loaded and free all the structs */
 void
 evas_module_shutdown(void)
@@ -628,6 +651,11 @@ evas_module_shutdown(void)
 // running, so ignore this one
 //        eina_module_free(en);
      }
+
+   eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_ENGINE], _cb_mod_close, NULL);
+   eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_IMAGE_LOADER], _cb_mod_close, NULL);
+   eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_IMAGE_SAVER], _cb_mod_close, NULL);
+   eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_OBJECT], _cb_mod_close, NULL);
 
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_ENGINE]);
    evas_modules[EVAS_MODULE_TYPE_ENGINE] = NULL;

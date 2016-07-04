@@ -37,9 +37,6 @@ _evas_canvas3d_eet_file_get()
 void
 _evas_canvas3d_eet_file_init()
 {
-   eina_init();
-   eet_init();
-
 /* initialization of bonding between structure units in eet file */
    Eet_Data_Descriptor_Class eddc;
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Evas_Canvas3D_Vec2_Eet);

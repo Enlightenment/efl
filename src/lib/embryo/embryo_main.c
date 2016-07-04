@@ -64,6 +64,7 @@ embryo_shutdown(void)
 
    eina_log_domain_unregister(_embryo_default_log_dom);
    _embryo_default_log_dom = -1;
+   eina_shutdown();
 
    return _embryo_init_count;
 }

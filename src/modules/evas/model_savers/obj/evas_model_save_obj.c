@@ -94,7 +94,6 @@ _write_obj_vertex_data(FILE *file,
    Eina_Stringshare *str, *cur_str, *cur_index;
    unsigned short cur_hu;
 
-   eina_init();
    Eina_Hash *vb;
 #define WRITE_OBJ_VERTEX_DATA(name, num, format)                      \
    if (header.existence_of_##name)                                    \
@@ -126,7 +125,6 @@ _write_obj_vertex_data(FILE *file,
    WRITE_OBJ_VERTEX_DATA(tex_coords, 2, "vt")
    WRITE_OBJ_VERTEX_DATA(normals, 3, "vn")
 #undef WRITE_OBJ_VERTEX_DATA
-   eina_shutdown();
 }
 
 static inline void

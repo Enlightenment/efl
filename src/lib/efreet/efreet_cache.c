@@ -360,6 +360,9 @@ efreet_cache_shutdown(void)
    if (hnd_add) ecore_event_handler_del(hnd_add);
    if (hnd_del) ecore_event_handler_del(hnd_del);
    if (hnd_data) ecore_event_handler_del(hnd_data);
+
+   ecore_ipc_shutdown();
+
    ipc = NULL;
    pfx = NULL;
    hnd_add = NULL;
