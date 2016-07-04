@@ -5279,7 +5279,7 @@ _decoration_create(Efl_Ui_Text_Data *sd, const char *file,
      {
         evas_object_stack_below(ret, text_obj);
      }
-   evas_object_clip_set(ret, evas_object_clip_get(sd->entry_edje));
+   evas_object_clip_set(ret, evas_object_clip_get(text_obj));
    evas_object_pass_events_set(ret, EINA_TRUE);
    return ret;
 }
@@ -5662,7 +5662,8 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
    if (sd->anchors_updated) return;
 
    smart = evas_object_smart_parent_get(o);
-   clip = evas_object_clip_get(o);
+   clip = evas_object_clip_get(
+         edje_object_part_swallow_get(sd->entry_edje, "elm.text"));
    _decoration_calc_offset(sd, &x, &y);
    EINA_LIST_FOREACH(sd->anchors, l, an)
      {
