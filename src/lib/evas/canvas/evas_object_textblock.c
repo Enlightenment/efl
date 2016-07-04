@@ -12686,7 +12686,7 @@ evas_object_textblock_free(Evas_Object *eo_obj)
        _dicts_hyphen_detach(eo_obj);
     }
 #endif
-  if (o->utf8) free(o->utf8);
+  free(o->utf8);
 }
 
 static void
@@ -13630,12 +13630,7 @@ _efl_canvas_text_efl_text_text_get(Eo *eo_obj, Efl_Canvas_Text_Data *o)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
 
-   if (o->utf8)
-     {
-        free(o->utf8);
-        o->utf8 = NULL;
-     }
-
+   free(o->utf8);
    o->utf8 = _canvas_text_get_all(eo_obj, o);
    return o->utf8;
 }
