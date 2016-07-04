@@ -750,6 +750,56 @@ _evgl_glDisable(GLenum cap)
    glDisable(cap);
 }
 
+void
+_evgl_glFramebufferParameteri(GLenum target, GLenum pname, GLint param)
+{
+    EVGL_Resource *rsc;
+    EVGL_Context *ctx;
+
+    EINA_SAFETY_ON_NULL_RETURN(_gles3_api.glFramebufferParameteri);
+
+    if (!(rsc=_evgl_tls_resource_get()))
+      {
+         ERR("Unable to execute GL command. Error retrieving tls");
+         return;
+      }
+
+    if (!rsc->current_eng)
+      {
+         ERR("Unable to retrive Current Engine");
+         return;
+      }
+
+    ctx = rsc->current_ctx;
+    if (!ctx)
+      {
+         ERR("Unable to retrive Current Context");
+         return;
+      }
+
+    if (!_evgl_direct_enabled())
+      {
+         if (target == GL_DRAW_FRAMEBUFFER || target == GL_FRAMEBUFFER)
+           {
+              if (ctx->current_draw_fbo == 0)
+                {
+                   SET_GL_ERROR(GL_INVALID_OPERATION);
+                   return;
+                }
+           }
+         else if (target == GL_READ_FRAMEBUFFER)
+           {
+              if (ctx->current_read_fbo == 0)
+                {
+                   SET_GL_ERROR(GL_INVALID_OPERATION);
+                   return;
+                }
+           }
+      }
+
+   _gles3_api.glFramebufferParameteri(target, pname, param);
+}
+
 static void
 _evgl_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 {
@@ -1070,6 +1120,55 @@ _evgl_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GL
    glGetFramebufferAttachmentParameteriv(target, attachment, pname, params);
 }
 
+void
+_evgl_glGetFramebufferParameteriv(GLenum target, GLenum pname, GLint* params)
+{
+    EVGL_Resource *rsc;
+    EVGL_Context *ctx;
+
+    EINA_SAFETY_ON_NULL_RETURN(_gles3_api.glGetFramebufferParameteriv);
+
+    if (!(rsc=_evgl_tls_resource_get()))
+      {
+         ERR("Unable to execute GL command. Error retrieving tls");
+         return;
+      }
+
+    if (!rsc->current_eng)
+      {
+         ERR("Unable to retrive Current Engine");
+         return;
+      }
+
+    ctx = rsc->current_ctx;
+    if (!ctx)
+      {
+         ERR("Unable to retrive Current Context");
+         return;
+      }
+
+    if (!_evgl_direct_enabled())
+      {
+         if (target == GL_DRAW_FRAMEBUFFER || target == GL_FRAMEBUFFER)
+           {
+              if (ctx->current_draw_fbo == 0)
+                {
+                   SET_GL_ERROR(GL_INVALID_OPERATION);
+                   return;
+                }
+           }
+         else if (target == GL_READ_FRAMEBUFFER)
+           {
+              if (ctx->current_read_fbo == 0)
+                {
+                   SET_GL_ERROR(GL_INVALID_OPERATION);
+                   return;
+                }
+           }
+      }
+
+   _gles3_api.glGetFramebufferParameteriv(target, pname, params);
+}
 void
 _evgl_glGetIntegerv(GLenum pname, GLint* params)
 {
@@ -2472,7 +2571,7 @@ _evgl_api_gles2_get(Evas_GL_API *funcs, Eina_Bool debug)
 }
 
 static void
-_normal_gles3_api_get(Evas_GL_API *funcs)
+_normal_gles3_api_get(Evas_GL_API *funcs, int minor_version)
 {
    if (!funcs) return;
    funcs->version = EVAS_GL_API_VERSION;
@@ -2731,11 +2830,84 @@ _normal_gles3_api_get(Evas_GL_API *funcs)
    ORD(glVertexAttribIPointer);
    ORD(glWaitSync);
 
+   if (minor_version > 0)
+     {
+        //GLES 3.1
+        ORD(glDispatchCompute);
+        ORD(glDispatchComputeIndirect);
+        ORD(glDrawArraysIndirect);
+        ORD(glDrawElementsIndirect);
+        ORD(glFramebufferParameteri);
+        ORD(glGetFramebufferParameteriv);
+        ORD(glGetProgramInterfaceiv);
+        ORD(glGetProgramResourceIndex);
+        ORD(glGetProgramResourceName);
+        ORD(glGetProgramResourceiv);
+        ORD(glGetProgramResourceLocation);
+        ORD(glUseProgramStages);
+        ORD(glActiveShaderProgram);
+        ORD(glCreateShaderProgramv);
+        ORD(glBindProgramPipeline);
+        ORD(glDeleteProgramPipelines);
+        ORD(glGenProgramPipelines);
+        ORD(glIsProgramPipeline);
+        ORD(glGetProgramPipelineiv);
+        ORD(glProgramUniform1i);
+        ORD(glProgramUniform2i);
+        ORD(glProgramUniform3i);
+        ORD(glProgramUniform4i);
+        ORD(glProgramUniform1ui);
+        ORD(glProgramUniform2ui);
+        ORD(glProgramUniform3ui);
+        ORD(glProgramUniform4ui);
+        ORD(glProgramUniform1f);
+        ORD(glProgramUniform2f);
+        ORD(glProgramUniform3f);
+        ORD(glProgramUniform4f);
+        ORD(glProgramUniform1iv);
+        ORD(glProgramUniform2iv);
+        ORD(glProgramUniform3iv);
+        ORD(glProgramUniform4iv);
+        ORD(glProgramUniform1uiv);
+        ORD(glProgramUniform2uiv);
+        ORD(glProgramUniform3uiv);
+        ORD(glProgramUniform4uiv);
+        ORD(glProgramUniform1fv);
+        ORD(glProgramUniform2fv);
+        ORD(glProgramUniform3fv);
+        ORD(glProgramUniform4fv);
+        ORD(glProgramUniformMatrix2fv);
+        ORD(glProgramUniformMatrix3fv);
+        ORD(glProgramUniformMatrix4fv);
+        ORD(glProgramUniformMatrix2x3fv);
+        ORD(glProgramUniformMatrix3x2fv);
+        ORD(glProgramUniformMatrix2x4fv);
+        ORD(glProgramUniformMatrix4x2fv);
+        ORD(glProgramUniformMatrix3x4fv);
+        ORD(glProgramUniformMatrix4x3fv);
+        ORD(glValidateProgramPipeline);
+        ORD(glGetProgramPipelineInfoLog);
+        ORD(glBindImageTexture);
+        ORD(glGetBooleani_v);
+        ORD(glMemoryBarrier);
+        ORD(glMemoryBarrierByRegion);
+        ORD(glTexStorage2DMultisample);
+        ORD(glGetMultisamplefv);
+        ORD(glSampleMaski);
+        ORD(glGetTexLevelParameteriv);
+        ORD(glGetTexLevelParameterfv);
+        ORD(glBindVertexBuffer);
+        ORD(glVertexAttribFormat);
+        ORD(glVertexAttribIFormat);
+        ORD(glVertexAttribBinding);
+        ORD(glVertexBindingDivisor);
+     }
+
 #undef ORD
 }
 
 static void
-_debug_gles3_api_get(Evas_GL_API *funcs)
+_debug_gles3_api_get(Evas_GL_API *funcs, int minor_version)
 {
    if (!funcs) return;
    funcs->version = EVAS_GL_API_VERSION;
@@ -2991,12 +3163,86 @@ _debug_gles3_api_get(Evas_GL_API *funcs)
    ORD(glVertexAttribI4uiv);
    ORD(glVertexAttribIPointer);
    ORD(glWaitSync);
+
+   if (minor_version > 0)
+     {
+        //GLES 3.1
+        ORD(glDispatchCompute);
+        ORD(glDispatchComputeIndirect);
+        ORD(glDrawArraysIndirect);
+        ORD(glDrawElementsIndirect);
+        ORD(glFramebufferParameteri);
+        ORD(glGetFramebufferParameteriv);
+        ORD(glGetProgramInterfaceiv);
+        ORD(glGetProgramResourceIndex);
+        ORD(glGetProgramResourceName);
+        ORD(glGetProgramResourceiv);
+        ORD(glGetProgramResourceLocation);
+        ORD(glUseProgramStages);
+        ORD(glActiveShaderProgram);
+        ORD(glCreateShaderProgramv);
+        ORD(glBindProgramPipeline);
+        ORD(glDeleteProgramPipelines);
+        ORD(glGenProgramPipelines);
+        ORD(glIsProgramPipeline);
+        ORD(glGetProgramPipelineiv);
+        ORD(glProgramUniform1i);
+        ORD(glProgramUniform2i);
+        ORD(glProgramUniform3i);
+        ORD(glProgramUniform4i);
+        ORD(glProgramUniform1ui);
+        ORD(glProgramUniform2ui);
+        ORD(glProgramUniform3ui);
+        ORD(glProgramUniform4ui);
+        ORD(glProgramUniform1f);
+        ORD(glProgramUniform2f);
+        ORD(glProgramUniform3f);
+        ORD(glProgramUniform4f);
+        ORD(glProgramUniform1iv);
+        ORD(glProgramUniform2iv);
+        ORD(glProgramUniform3iv);
+        ORD(glProgramUniform4iv);
+        ORD(glProgramUniform1uiv);
+        ORD(glProgramUniform2uiv);
+        ORD(glProgramUniform3uiv);
+        ORD(glProgramUniform4uiv);
+        ORD(glProgramUniform1fv);
+        ORD(glProgramUniform2fv);
+        ORD(glProgramUniform3fv);
+        ORD(glProgramUniform4fv);
+        ORD(glProgramUniformMatrix2fv);
+        ORD(glProgramUniformMatrix3fv);
+        ORD(glProgramUniformMatrix4fv);
+        ORD(glProgramUniformMatrix2x3fv);
+        ORD(glProgramUniformMatrix3x2fv);
+        ORD(glProgramUniformMatrix2x4fv);
+        ORD(glProgramUniformMatrix4x2fv);
+        ORD(glProgramUniformMatrix3x4fv);
+        ORD(glProgramUniformMatrix4x3fv);
+        ORD(glValidateProgramPipeline);
+        ORD(glGetProgramPipelineInfoLog);
+        ORD(glBindImageTexture);
+        ORD(glGetBooleani_v);
+        ORD(glMemoryBarrier);
+        ORD(glMemoryBarrierByRegion);
+        ORD(glTexStorage2DMultisample);
+        ORD(glGetMultisamplefv);
+        ORD(glSampleMaski);
+        ORD(glGetTexLevelParameteriv);
+        ORD(glGetTexLevelParameterfv);
+        ORD(glBindVertexBuffer);
+        ORD(glVertexAttribFormat);
+        ORD(glVertexAttribIFormat);
+        ORD(glVertexAttribBinding);
+        ORD(glVertexBindingDivisor);
+     }
+
 #undef ORD
 }
 
 
 static Eina_Bool
-_evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs)
+_evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs, int minor_version)
 {
    if (!dl_handle) return EINA_FALSE;
 
@@ -3116,6 +3362,80 @@ _evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs)
    ORD(glVertexAttribI4uiv);
    ORD(glVertexAttribIPointer);
    ORD(glWaitSync);
+
+   if (minor_version > 0)
+     {
+        //GLES 3.1
+        ORD(glDispatchCompute);
+        ORD(glDispatchComputeIndirect);
+        ORD(glDrawArraysIndirect);
+        ORD(glDrawElementsIndirect);
+        ORD(glFramebufferParameteri);
+        ORD(glGetFramebufferParameteriv);
+        ORD(glGetProgramInterfaceiv);
+        ORD(glGetProgramResourceIndex);
+        ORD(glGetProgramResourceName);
+        ORD(glGetProgramResourceiv);
+        ORD(glGetProgramResourceLocation);
+        ORD(glUseProgramStages);
+        ORD(glActiveShaderProgram);
+        ORD(glCreateShaderProgramv);
+        ORD(glBindProgramPipeline);
+        ORD(glDeleteProgramPipelines);
+        ORD(glGenProgramPipelines);
+        ORD(glIsProgramPipeline);
+        ORD(glGetProgramPipelineiv);
+        ORD(glProgramUniform1i);
+        ORD(glProgramUniform2i);
+        ORD(glProgramUniform3i);
+        ORD(glProgramUniform4i);
+        ORD(glProgramUniform1ui);
+        ORD(glProgramUniform2ui);
+        ORD(glProgramUniform3ui);
+        ORD(glProgramUniform4ui);
+        ORD(glProgramUniform1f);
+        ORD(glProgramUniform2f);
+        ORD(glProgramUniform3f);
+        ORD(glProgramUniform4f);
+        ORD(glProgramUniform1iv);
+        ORD(glProgramUniform2iv);
+        ORD(glProgramUniform3iv);
+        ORD(glProgramUniform4iv);
+        ORD(glProgramUniform1uiv);
+        ORD(glProgramUniform2uiv);
+        ORD(glProgramUniform3uiv);
+        ORD(glProgramUniform4uiv);
+        ORD(glProgramUniform1fv);
+        ORD(glProgramUniform2fv);
+        ORD(glProgramUniform3fv);
+        ORD(glProgramUniform4fv);
+        ORD(glProgramUniformMatrix2fv);
+        ORD(glProgramUniformMatrix3fv);
+        ORD(glProgramUniformMatrix4fv);
+        ORD(glProgramUniformMatrix2x3fv);
+        ORD(glProgramUniformMatrix3x2fv);
+        ORD(glProgramUniformMatrix2x4fv);
+        ORD(glProgramUniformMatrix4x2fv);
+        ORD(glProgramUniformMatrix3x4fv);
+        ORD(glProgramUniformMatrix4x3fv);
+        ORD(glValidateProgramPipeline);
+        ORD(glGetProgramPipelineInfoLog);
+        ORD(glBindImageTexture);
+        ORD(glGetBooleani_v);
+        ORD(glMemoryBarrier);
+        ORD(glMemoryBarrierByRegion);
+        ORD(glTexStorage2DMultisample);
+        ORD(glGetMultisamplefv);
+        ORD(glSampleMaski);
+        ORD(glGetTexLevelParameteriv);
+        ORD(glGetTexLevelParameterfv);
+        ORD(glBindVertexBuffer);
+        ORD(glVertexAttribFormat);
+        ORD(glVertexAttribIFormat);
+        ORD(glVertexAttribBinding);
+        ORD(glVertexBindingDivisor);
+     }
+
 #undef ORD
    return EINA_TRUE;
 }
@@ -3123,7 +3443,7 @@ _evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs)
 
 
 static Eina_Bool
-_evgl_gles3_api_init(void)
+_evgl_gles3_api_init(int minor_version)
 {
    static Eina_Bool _initialized = EINA_FALSE;
    if (_initialized) return EINA_TRUE;
@@ -3155,7 +3475,7 @@ _evgl_gles3_api_init(void)
         return EINA_FALSE;
      }
 
-   if (!_evgl_load_gles3_apis(_gles3_handle, &_gles3_api))
+   if (!_evgl_load_gles3_apis(_gles3_handle, &_gles3_api, minor_version))
      {
         return EINA_FALSE;
      }
@@ -3168,13 +3488,22 @@ _evgl_gles3_api_init(void)
 void
 _evgl_api_gles3_get(Evas_GL_API *funcs, Eina_Bool debug)
 {
-   if (!_evgl_gles3_api_init())
+   const char *ret = (const char *) glGetString(GL_VERSION);
+   int minor_version =  ret[12] - '0';
+
+   if (minor_version > 9 || minor_version < 0)
+     {
+        ERR("OpenGL ES version is invalid.");
+        return;
+     }
+
+   if (!_evgl_gles3_api_init(minor_version))
       return;
 
    if (debug)
-     _debug_gles3_api_get(funcs);
+     _debug_gles3_api_get(funcs, minor_version);
    else
-     _normal_gles3_api_get(funcs);
+     _normal_gles3_api_get(funcs, minor_version);
 
    if (evgl_engine->direct_scissor_off)
      _direct_scissor_off_api_get(funcs);
