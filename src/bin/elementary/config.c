@@ -4080,7 +4080,7 @@ _status_config_caches(Evas_Object *win,
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
-   elm_slider_unit_format_set(sl, "%1.1f MB");
+   elm_slider_unit_format_set(sl, "%1.1f MiB");
    elm_slider_indicator_format_set(sl, "%1.1f");
    elm_slider_min_max_set(sl, 0.0, 4.0);
    elm_slider_value_set(sl, (double)elm_config_cache_font_cache_size_get() / 1024.0);
@@ -4104,7 +4104,7 @@ _status_config_caches(Evas_Object *win,
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
-   elm_slider_unit_format_set(sl, "%1.0f MB");
+   elm_slider_unit_format_set(sl, "%1.0f MiB");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 0, 32);
    elm_slider_value_set(sl, (double)elm_config_cache_image_cache_size_get() / 1024.0);
