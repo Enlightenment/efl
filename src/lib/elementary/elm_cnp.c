@@ -3345,8 +3345,13 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
 
    /* set the drag data used when a drop occurs */
    free(wl_cnp_selection.selbuf);
-   wl_cnp_selection.selbuf = strdup((char*)data);
-   wl_cnp_selection.buflen = strlen(wl_cnp_selection.selbuf);
+   wl_cnp_selection.buflen = 0;
+   wl_cnp_selection.selbuf = eina_strdup(data);
+
+   if (data)
+     {
+        wl_cnp_selection.buflen = strlen(wl_cnp_selection.selbuf);
+     }
 
    /* setup callback to notify if this object gets deleted */
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
