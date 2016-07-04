@@ -858,6 +858,7 @@ _inc_dec_button_pressed_cb(void *data, const Eo_Event *event)
                             _val_inc_dec_start, data);
 
    if (sd->entry_visible) _entry_value_apply(data);
+   if (sd->entry_reactivate) sd->entry_reactivate = EINA_FALSE;
 }
 
 static void
@@ -920,7 +921,18 @@ _elm_spinner_elm_widget_on_focus(Eo *obj, Elm_Spinner_Data *sd, Elm_Object_Item 
         ELM_SAFE_FREE(sd->delay_change_timer, ecore_timer_del);
         ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
 
+        if (sd->entry_visible) sd->entry_reactivate = EINA_TRUE;
+
         _entry_value_apply(obj);
+     }
+   else
+     {
+        if (sd->entry_reactivate)
+          {
+             _toggle_entry(obj);
+
+             sd->entry_reactivate = EINA_FALSE;
+          }
      }
 
    return EINA_TRUE;
@@ -1377,7 +1389,11 @@ _elm_spinner_elm_widget_focus_next(Eo *obj, Elm_Spinner_Data *_pd, Elm_Focus_Dir
         if (_pd->entry_visible)
           items = eina_list_append(items, _pd->ent);
         else
-          items = eina_list_append(items, _pd->text_button);
+          {
+             if (_pd->entry_reactivate) _pd->entry_reactivate = EINA_FALSE;
+
+             items = eina_list_append(items, _pd->text_button);
+          }
 
      }
    return elm_widget_focus_list_next_get
