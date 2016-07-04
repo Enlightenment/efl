@@ -1388,6 +1388,13 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                        RD(level, "}\n");
                        return clean_them;
                     }
+                  else if (proxy_render_data && (surface != obj->proxy->surface) &&
+                           obj->proxy->src_invisible)
+                    {
+                       RD(level, "  src_invisible + not proxy surface (recursive proxies)\n");
+                       RD(level, "}\n");
+                       return clean_them;
+                    }
                }
           }
         else if (!evas_object_is_proxy_visible(eo_obj, obj) ||
