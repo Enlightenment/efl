@@ -12,4 +12,10 @@
        return __VA_ARGS__; \
     }
 
+void
+_elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path);
+
+const char *
+_elm_fileselector_button_path_get_internal(const Evas_Object *obj);
+
 #endif

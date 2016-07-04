@@ -401,7 +401,7 @@ elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
    ELM_FILESELECTOR_ENTRY_DATA_GET_OR_RETURN(obj, sd);
-   elm_fileselector_path_set(sd->button, path);
+   _elm_fileselector_button_path_set_internal(sd->button, path);
 }
 
 EOLIAN static void
@@ -419,7 +419,7 @@ elm_fileselector_entry_selected_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
    ELM_FILESELECTOR_ENTRY_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
-   return elm_fileselector_path_get(sd->button);
+   return _elm_fileselector_button_path_get_internal(sd->button);
 }
 
 EOLIAN static Efl_Model *
@@ -475,7 +475,7 @@ elm_fileselector_entry_path_set(Evas_Object *obj,
         free(s);
      }
 
-   elm_fileselector_path_set(sd->button, path);
+   _elm_fileselector_button_path_set_internal(sd->button, path);
 }
 
 static void
