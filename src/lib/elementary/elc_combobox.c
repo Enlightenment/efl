@@ -79,13 +79,18 @@ _elm_combobox_elm_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
    mirrored = elm_widget_mirrored_get(obj);
 
    if (sd->hover)
-     elm_widget_mirrored_set(sd->hover, mirrored);
+     {
+        elm_widget_mirrored_set(sd->hover, mirrored);
+        elm_widget_style_set(sd->hover, buf);
+     }
 
    elm_widget_mirrored_set(sd->genlist, mirrored);
    elm_widget_mirrored_set(sd->entry, mirrored);
-   eina_stringshare_del(style);
 
-   elm_combobox_hover_end(obj);
+   elm_widget_style_set(sd->genlist, buf);
+   elm_widget_style_set(sd->entry, buf);
+
+   eina_stringshare_del(style);
 
    return int_ret;
 }
