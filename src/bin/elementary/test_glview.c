@@ -640,6 +640,7 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
                 efl_ui_win_name_set(eo_self, "glview"),
                 efl_text_set(eo_self, "GLView"),
                 efl_ui_win_accel_preference_set(eo_self, "gl:depth"));
+   elm_win_autodel_set(win, EINA_TRUE);
 #endif
 
    bx = elm_box_add(win);
