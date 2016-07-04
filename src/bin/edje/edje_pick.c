@@ -774,7 +774,6 @@ _edje_pick_images_copy(Edje_File *edf, Edje_File *o)
                {
                   if (set->id.used)
                     {
-                       Eina_List *l;
                        Edje_Image_Directory_Set_Entry *e;
 
                        o->image_dir->sets_count += 1;
