@@ -69,6 +69,7 @@ struct _Translation_Desc
 };
 
 static Translate_Func _translate = NULL;
+static Eina_Bool color = EINA_TRUE;
 
 static void
 path_split(const char *path, char **dir, char **file)
@@ -290,7 +291,7 @@ _translation_function_detect(const Translation_Desc *desc)
 }
 
 int
-main(void)
+main(int argc, char **argv)
 {
    Eina_List *btl = NULL, *l;
    char buf[4096];
@@ -318,6 +319,18 @@ main(void)
    };
 
    eina_init();
+
+   for (i = 1; i < argc; i++)
+     {
+        if (!strcmp(argv[i], "-h"))
+          {
+             printf("Usage: eina_btlog [-n]\n"
+                    "  -n   Do not use color escape codes\n");
+             eina_shutdown();
+             return 0;
+          }
+        else if (!strcmp(argv[i], "-n")) color = EINA_FALSE;
+     }
 
    if (!_translation_function_detect(desc))
      {
@@ -353,15 +366,23 @@ main(void)
      {
         len = strlen(bt->bin_dir);
         for (i = 0; i < (cols[0] - len); i++) printf(" ");
-        printf("\033[34m%s\033[01m\033[36m/\033[37m%s\033[0m",
-               bt->bin_dir, bt->bin_name);
+        if (color)
+          printf("\033[34m%s\033[01m\033[36m/\033[37m%s\033[0m",
+                 bt->bin_dir, bt->bin_name);
+        else
+          printf("%s/%s",
+                 bt->bin_dir, bt->bin_name);
         len = strlen(bt->bin_name);
         for (i = 0; i < (cols[1] - len); i++) printf(" ");
         printf(" | ");
         len = strlen(bt->file_dir);
         for (i = 0; i < (cols[2] - len); i++) printf(" ");
-        printf("\033[34m%s\033[01m\033[36m/\033[37m%s\033[0m",
-               bt->file_dir, bt->file_name);
+        if (color)
+          printf("\033[34m%s\033[01m\033[36m/\033[37m%s\033[0m",
+                 bt->file_dir, bt->file_name);
+        else
+          printf("%s/%s",
+                 bt->file_dir, bt->file_name);
         len = strlen(bt->file_name);
         for (i = 0; i < (cols[3] - len); i++) printf(" ");
 
@@ -369,8 +390,16 @@ main(void)
         snprintf(buf, sizeof(buf), "%i", bt->line);
         len = strlen(buf);
         for (i = 0; i < (cols[4] - len); i++) printf(" ");
-        printf("\033[01m\033[33m%s\033[0m @ \033[32m%s\033[36m()", buf, bt->func_name);
-        printf("\033[0m\n");
+        if (color)
+          {
+             printf("\033[01m\033[33m%s\033[0m @ \033[32m%s\033[36m()", buf, bt->func_name);
+             printf("\033[0m\n");
+          }
+        else
+          {
+             printf("%s @ %s()", buf, bt->func_name);
+             printf("\n");
+         }
      }
    return 0;
 }
