@@ -32,12 +32,7 @@ PLATFORMS
 EFL is primarily developerd on Linux (GNU/Linux) and should work on
 most distributions as long as dependencies are provided. It has been
 compiled and run also on Windows (using MINGW32 - please see
-http://www.winbuilds.org ), Mac OS X, FreeBSD and NetBSD. Due to
-serious bugs in OpenBSD, EFL cannot be compiled or used there. Please
-see:
-
-https://www.mail-archive.com/search?l=misc@openbsd.org&q=subject:%22SIGCHLD+and+libpthread.so%22&o=newest&f=1
-
+http://www.winbuilds.org ), Mac OS X, FreeBSD and NetBSD.
 
 COMPONENTS
 ----------

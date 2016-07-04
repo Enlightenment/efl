@@ -5,6 +5,7 @@
 #include <Eina.h>
 #include <Evas.h>
 #include <Ecore.h>
+#include <signal.h>
 
 #include "emotion_modules.h"
 #include "emotion_xine.h"
@@ -322,6 +323,7 @@ em_add(const Emotion_Engine *api EINA_UNUSED,
 {
    Emotion_Xine_Video *ev;
    int fds[2];
+   sigset_t oldset, newset;
 
    ev = calloc(1, sizeof(Emotion_Xine_Video));
    EINA_SAFETY_ON_NULL_RETURN_VAL(ev, NULL);
@@ -366,9 +368,24 @@ em_add(const Emotion_Engine *api EINA_UNUSED,
    
    pthread_cond_init(&(ev->get_pos_len_cond), NULL);
    pthread_mutex_init(&(ev->get_pos_len_mutex), NULL);
+   sigemptyset(&newset);
+   sigaddset(&newset, SIGPIPE);
+   sigaddset(&newset, SIGALRM);
+   sigaddset(&newset, SIGCHLD);
+   sigaddset(&newset, SIGUSR1);
+   sigaddset(&newset, SIGUSR2);
+   sigaddset(&newset, SIGHUP);
+   sigaddset(&newset, SIGQUIT);
+   sigaddset(&newset, SIGINT);
+   sigaddset(&newset, SIGTERM);
+#ifdef SIGPWR
+   sigaddset(&newset, SIGPWR);
+#endif
+   sigprocmask(SIG_BLOCK, &newset, &oldset);
    pthread_create(&ev->get_pos_len_th, NULL, _em_get_pos_len_th, ev);
-
    pthread_create(&ev->slave_th, NULL, _em_slave, ev);
+   sigprocmask(SIG_SETMASK, &oldset, NULL);
+
    pthread_detach(ev->slave_th);
    _em_slave_event(ev, 1, NULL);
 

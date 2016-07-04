@@ -20,6 +20,7 @@
 #include "eina_types.h"
 #include "eina_evlog.h"
 #include "eina_util.h"
+#include <signal.h>
 
 #ifdef EINA_HAVE_DEBUG
 
@@ -355,11 +356,27 @@ void
 _eina_debug_monitor_thread_start(void)
 {
    int err;
+   sigset_t oldset, newset;
 
    // if it's already running - we're good.
    if (_monitor_thread_runs) return;
    // create debug monitor thread
+   sigemptyset(&newset);
+   sigaddset(&newset, SIGPIPE);
+   sigaddset(&newset, SIGALRM);
+   sigaddset(&newset, SIGCHLD);
+   sigaddset(&newset, SIGUSR1);
+   sigaddset(&newset, SIGUSR2);
+   sigaddset(&newset, SIGHUP);
+   sigaddset(&newset, SIGQUIT);
+   sigaddset(&newset, SIGINT);
+   sigaddset(&newset, SIGTERM);
+#ifdef SIGPWR
+   sigaddset(&newset, SIGPWR);
+#endif
+   sigprocmask(SIG_BLOCK, &newset, &oldset);
    err = pthread_create(&_monitor_thread, NULL, _eina_debug_monitor, NULL);
+   sigprocmask(SIG_SETMASK, &oldset, NULL);
    if (err != 0)
      {
         fprintf(stderr, "EINA DEBUG ERROR: Can't create debug thread!\n");
