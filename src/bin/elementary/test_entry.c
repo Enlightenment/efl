@@ -685,11 +685,17 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 }
 
 static void
+my_pop_dismissed(void *data EINA_UNUSED, const Eo_Event *ev)
+{
+   eo_del(ev->object);
+}
+
+static void
 my_pop_close_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
   Evas_Object *pop, *en;
   pop = data;
-  en = elm_object_parent_widget_get(pop);
+  en = eo_parent_get(pop);
   elm_object_text_set(en, "This is very long text,"
                       " it is longer than width of this page."
                       " So if scroller is moved to next page,"
@@ -697,18 +703,19 @@ my_pop_close_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
                       " and then click this entry text");
   elm_entry_cursor_end_set(en);
 
-  evas_object_del(pop);
+  eo_event_callback_add(pop, ELM_POPUP_EVENT_DISMISSED, my_pop_dismissed, NULL);
+  elm_popup_dismiss(pop);
 }
 
 static void
 my_pop_bt_clr(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *pop, *btn, *en;
-   en = data;
+   Evas_Object *pop, *btn, *en = data;
    elm_object_text_set(en, "");
    elm_entry_cursor_end_set(en);
 
-   pop = elm_popup_add(en);
+   pop = elm_popup_add(eo_key_data_get(en, "win"));
+   eo_parent_set(pop, en);
    elm_object_text_set(pop, "If you click confirm, "
                        "set long text to entry "
                        "and delete popup obj");
@@ -768,6 +775,7 @@ test_entry_on_page_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    elm_object_part_content_set(ly, "element1", en);
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_single_line_set(en, EINA_TRUE);
+   eo_key_data_set(en, "win", win); // no ref
    evas_object_show(en);
 
    btn = elm_button_add(ly);
