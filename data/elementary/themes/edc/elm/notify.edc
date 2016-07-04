@@ -1,13 +1,38 @@
 group { name: "elm/notify/block_events/default";
+   data.item: "hide_finished_signal" "on";
    parts {
       part { name: "block_events"; type: RECT;
-         description { state: "default" 0.0;
-            color: 0 0 0 64;
+         desc { state: "default";
+            color: 0 0 0 0;
+         }
+         desc { "visible";
+            color: 0 0 0 64; /* FIXME: color_class */
          }
       }
       program {
          signal: "mouse,clicked,1"; source: "block_events";
          action: SIGNAL_EMIT "elm,action,click" "elm";
+      }
+      program {
+         signal: "show"; source: "*";
+         action: STATE_SET "visible";
+         targets: "block_events";
+         transition: DECELERATE 0.3;
+      }
+      program {
+         signal: "hide"; source: "";
+         action: STATE_SET "default" 0.0;
+         target: "block_events";
+      }
+      program {
+         signal: "elm,state,hide"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "block_events";
+         transition: DECELERATE 0.3;
+         after: "hide_finish";
+      }
+      program { name: "hide_finish";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "elm";
       }
    }
 }
