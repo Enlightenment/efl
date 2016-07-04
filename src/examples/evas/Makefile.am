@@ -194,7 +194,7 @@ evas_map_aa_SOURCES = evas-map-aa.c
 evas_map_aa_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_map_aa_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-EXTRA_PROGRAMS += evas_map_utils-eo
+EXTRA_PROGRAMS += evas_map_utils_eo
 evas_map_utils_eo_SOURCES = evas-map-utils-eo.c
 evas_map_utils_eo_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_map_utils_eo_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
