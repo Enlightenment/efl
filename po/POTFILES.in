@@ -122,7 +122,7 @@ src/lib/elementary/elm_factory.c
 src/lib/elementary/efl_ui_flip.c
 src/lib/elementary/elm_flipselector.c
 src/lib/elementary/elm_font.c
-src/lib/elementary/elm_frame.c
+src/lib/elementary/efl_ui_frame.c
 src/lib/elementary/elm_gengrid.c
 src/lib/elementary/elm_genlist.c
 src/lib/elementary/elm_gesture_layer.c
