@@ -7,12 +7,12 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_frame.h"
+#include "efl_ui_widget_frame.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_FRAME_CLASS
+#define MY_CLASS EFL_UI_FRAME_CLASS
 
-#define MY_CLASS_NAME "Elm_Frame"
+#define MY_CLASS_NAME "Efl_Ui_Frame"
 #define MY_CLASS_NAME_LEGACY "elm_frame"
 
 static const char SIG_CLICKED[] = "clicked";
@@ -38,14 +38,14 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 
 static void
 _sizing_eval(Evas_Object *obj,
-             Elm_Frame_Data *sd EINA_UNUSED)
+             Efl_Ui_Frame_Data *sd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord cminw = -1, cminh = -1;
 
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
-   efl_gfx_size_hint_combined_min_get(obj, &cminw, &cminh);
+   evas_object_size_hint_min_get(obj, &cminw, &cminh);
    if ((minw == cminw) && (minh == cminh)) return;
 
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -53,13 +53,13 @@ _sizing_eval(Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_elm_frame_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Frame_Data *_pd EINA_UNUSED)
+_efl_ui_frame_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_elm_frame_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Frame_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+_efl_ui_frame_elm_widget_focus_next(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Evas_Object *content;
 
@@ -75,13 +75,13 @@ _elm_frame_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Frame_Data *_pd EINA_U
 }
 
 EOLIAN static Eina_Bool
-_elm_frame_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Frame_Data *_pd EINA_UNUSED)
+_efl_ui_frame_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_elm_frame_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Frame_Data *_pd EINA_UNUSED, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
+_efl_ui_frame_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
 {
    Evas_Object *content;
 
@@ -109,7 +109,7 @@ _on_recalc_done(void *data,
                 const char *sig EINA_UNUSED,
                 const char *src EINA_UNUSED)
 {
-   ELM_FRAME_DATA_GET(data, sd);
+   EFL_UI_FRAME_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
    eo_event_callback_del
@@ -125,7 +125,7 @@ _on_frame_clicked(void *data,
                   const char *sig EINA_UNUSED,
                   const char *src EINA_UNUSED)
 {
-   ELM_FRAME_DATA_GET(data, sd);
+   EFL_UI_FRAME_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
    if (sd->anim) return;
@@ -143,7 +143,7 @@ _on_frame_clicked(void *data,
 
 /* using deferred sizing evaluation, just like the parent */
 EOLIAN static void
-_elm_frame_efl_canvas_group_group_calculate(Eo *obj, Elm_Frame_Data *sd)
+_efl_ui_frame_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Frame_Data *sd)
 {
    ELM_LAYOUT_DATA_GET(obj, ld);
 
@@ -156,7 +156,7 @@ _elm_frame_efl_canvas_group_group_calculate(Eo *obj, Elm_Frame_Data *sd)
 }
 
 EOLIAN static void
-_elm_frame_efl_canvas_group_group_add(Eo *obj, Elm_Frame_Data *_pd EINA_UNUSED)
+_efl_ui_frame_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -179,13 +179,13 @@ _elm_frame_efl_canvas_group_group_add(Eo *obj, Elm_Frame_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_frame_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Frame_Data *_pd EINA_UNUSED)
+_efl_ui_frame_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
 {
    return _content_aliases;
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_frame_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Frame_Data *_pd EINA_UNUSED)
+_efl_ui_frame_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
 {
    return _text_aliases;
 }
@@ -199,7 +199,7 @@ elm_frame_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_frame_eo_base_constructor(Eo *obj, Elm_Frame_Data *_pd EINA_UNUSED)
+_efl_ui_frame_eo_base_constructor(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
 {
    obj = eo_constructor(eo_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -210,20 +210,20 @@ _elm_frame_eo_base_constructor(Eo *obj, Elm_Frame_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_frame_autocollapse_set(Eo *obj EINA_UNUSED, Elm_Frame_Data *sd, Eina_Bool autocollapse)
+_efl_ui_frame_autocollapse_set(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd, Eina_Bool autocollapse)
 {
 
    sd->collapsible = !!autocollapse;
 }
 
 EOLIAN static Eina_Bool
-_elm_frame_autocollapse_get(Eo *obj EINA_UNUSED, Elm_Frame_Data *sd)
+_efl_ui_frame_autocollapse_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd)
 {
    return sd->collapsible;
 }
 
 EOLIAN static void
-_elm_frame_collapse_set(Eo *obj, Elm_Frame_Data *sd, Eina_Bool collapse)
+_efl_ui_frame_collapse_set(Eo *obj, Efl_Ui_Frame_Data *sd, Eina_Bool collapse)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -239,7 +239,7 @@ _elm_frame_collapse_set(Eo *obj, Elm_Frame_Data *sd, Eina_Bool collapse)
 }
 
 EOLIAN static void
-_elm_frame_collapse_go(Eo *obj, Elm_Frame_Data *sd, Eina_Bool collapse)
+_efl_ui_frame_collapse_go(Eo *obj, Efl_Ui_Frame_Data *sd, Eina_Bool collapse)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -254,15 +254,15 @@ _elm_frame_collapse_go(Eo *obj, Elm_Frame_Data *sd, Eina_Bool collapse)
 }
 
 EOLIAN static Eina_Bool
-_elm_frame_collapse_get(Eo *obj EINA_UNUSED, Elm_Frame_Data *sd)
+_efl_ui_frame_collapse_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd)
 {
    return sd->collapsed;
 }
 
 EOLIAN static void
-_elm_frame_class_constructor(Eo_Class *klass)
+_efl_ui_frame_class_constructor(Eo_Class *klass)
 {
       evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-#include "elm_frame.eo.c"
+#include "efl_ui_frame.eo.c"

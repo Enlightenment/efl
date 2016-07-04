@@ -30,7 +30,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_flip.eo \
 	lib/elementary/efl_ui_flip_internal_part.eo \
 	lib/elementary/elm_flipselector.eo \
-	lib/elementary/elm_frame.eo \
+	lib/elementary/efl_ui_frame.eo \
 	lib/elementary/elm_gengrid.eo \
 	lib/elementary/elm_gengrid_pan.eo \
 	lib/elementary/elm_genlist.eo \
@@ -228,7 +228,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_fileselector_entry.h \
 	lib/elementary/efl_ui_widget_flip.h \
 	lib/elementary/elm_widget_flipselector.h \
-	lib/elementary/elm_widget_frame.h \
+	lib/elementary/efl_ui_widget_frame.h \
 	lib/elementary/elm_widget_gengrid.h \
 	lib/elementary/elm_widget_genlist.h \
 	lib/elementary/elm_widget_glview.h \
@@ -395,8 +395,8 @@ includesub_HEADERS = \
 	lib/elementary/elm_focus_item.h \
 	lib/elementary/elm_font.h \
 	lib/elementary/elm_frame.h \
-	lib/elementary/elm_frame_eo.h \
-	lib/elementary/elm_frame_legacy.h \
+	lib/elementary/efl_ui_frame.eo.h \
+	lib/elementary/efl_ui_frame_legacy.h \
 	lib/elementary/elm_gen.h \
 	lib/elementary/elm_general.h \
 	lib/elementary/elm_gengrid.h \
@@ -612,7 +612,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_internal_text_interactive.c \
 	lib/elementary/elm_flipselector.c \
 	lib/elementary/elm_font.c \
-	lib/elementary/elm_frame.c \
+	lib/elementary/efl_ui_frame.c \
 	lib/elementary/elm_gengrid.c \
 	lib/elementary/elm_genlist.c \
 	lib/elementary/elm_gesture_layer.c \

@@ -1,8 +1,12 @@
-class Elm.Frame (Elm.Layout, Efl.Ui.Clickable)
+class Efl.Ui.Frame (Elm.Layout, Efl.Ui.Clickable)
 {
+   [[Frame widget
+
+   The Frame widget allows for collapsing and expanding the content widget
+   by clicking on the frame label.
+   the label and content can be set using text_set and content_set api.
+   ]]
    legacy_prefix: elm_frame;
-   eo_prefix: elm_obj_frame;
-   event_prefix: elm_frame;
    methods {
       @property collapse {
          set {

@@ -1,5 +1,5 @@
-#ifndef ELM_WIDGET_FRAME_H
-#define ELM_WIDGET_FRAME_H
+#ifndef EFL_UI_WIDGET_FRAME_H
+#define EFL_UI_WIDGET_FRAME_H
 
 #include "Elementary.h"
 
@@ -23,8 +23,8 @@
 /**
  * Base layout smart data extended with frame instance data.
  */
-typedef struct _Elm_Frame_Data Elm_Frame_Data;
-struct _Elm_Frame_Data
+typedef struct _Efl_Ui_Frame_Data Efl_Ui_Frame_Data;
+struct _Efl_Ui_Frame_Data
 {
    Eina_Bool             collapsed : 1;
    Eina_Bool             collapsible : 1;
@@ -35,11 +35,11 @@ struct _Elm_Frame_Data
  * @}
  */
 
-#define ELM_FRAME_DATA_GET(o, sd) \
-  Elm_Frame_Data * sd = eo_data_scope_get(o, ELM_FRAME_CLASS)
+#define EFL_UI_FRAME_DATA_GET(o, sd) \
+  Efl_Ui_Frame_Data * sd = eo_data_scope_get(o, EFL_UI_FRAME_CLASS)
 
-#define ELM_FRAME_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_FRAME_DATA_GET(o, ptr);                        \
+#define EFL_UI_FRAME_DATA_GET_OR_RETURN(o, ptr)         \
+  EFL_UI_FRAME_DATA_GET(o, ptr);                        \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        CRI("No widget data for object %p (%s)",      \
@@ -47,8 +47,8 @@ struct _Elm_Frame_Data
        return;                                       \
     }
 
-#define ELM_FRAME_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_FRAME_DATA_GET(o, ptr);                         \
+#define EFL_UI_FRAME_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  EFL_UI_FRAME_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
        CRI("No widget data for object %p (%s)",       \
@@ -56,8 +56,8 @@ struct _Elm_Frame_Data
        return val;                                    \
     }
 
-#define ELM_FRAME_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!eo_isa((obj), ELM_FRAME_CLASS))) \
+#define EFL_UI_FRAME_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), EFL_UI_FRAME_CLASS))) \
     return
 
 #endif

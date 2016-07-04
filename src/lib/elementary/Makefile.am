@@ -34,7 +34,7 @@ elm_eolian_files = \
 	efl_ui_flip.eo \
 	efl_ui_flip_internal_part.eo \
 	elm_flipselector.eo \
-	elm_frame.eo \
+	efl_ui_frame.eo \
 	elm_gengrid.eo \
 	elm_gengrid_pan.eo \
 	elm_genlist.eo \
@@ -185,7 +185,7 @@ includesunstable_HEADERS = \
 	elm_widget_fileselector_entry.h \
 	efl_ui_widget_flip.h \
 	elm_widget_flipselector.h \
-	elm_widget_frame.h \
+	efl_ui_widget_frame.h \
 	elm_widget_gengrid.h \
 	elm_widget_genlist.h \
 	elm_widget_glview.h \
@@ -340,8 +340,8 @@ includesub_HEADERS = \
 	elm_focus_item.h \
 	elm_font.h \
 	elm_frame.h \
-	elm_frame_eo.h \
-	elm_frame_legacy.h \
+	efl_ui_frame.eo.h \
+	efl_ui_frame_legacy.h \
 	elm_gen.h \
 	elm_general.h \
 	elm_gengrid.h \
@@ -548,7 +548,7 @@ libelementary_la_SOURCES = \
 	efl_ui_flip.c \
 	elm_flipselector.c \
 	elm_font.c \
-	elm_frame.c \
+	efl_ui_frame.c \
 	elm_gengrid.c \
 	elm_genlist.c \
 	elm_gesture_layer.c \

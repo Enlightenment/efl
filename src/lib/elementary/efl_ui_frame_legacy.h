@@ -8,4 +8,4 @@
  */
 EAPI Evas_Object                 *elm_frame_add(Evas_Object *parent);
 
-#include "elm_frame.eo.legacy.h"
+#include "efl_ui_frame.eo.legacy.h"

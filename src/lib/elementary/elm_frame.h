@@ -49,10 +49,10 @@
  */
 
 #ifdef EFL_EO_API_SUPPORT
-#include "elm_frame_eo.h"
+#include "efl_ui_frame.eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_frame_legacy.h"
+#include "efl_ui_frame_legacy.h"
 #endif
 /**
  * @}
