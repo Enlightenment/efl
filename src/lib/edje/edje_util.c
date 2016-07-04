@@ -290,7 +290,7 @@ edje_freeze(void)
 static void
 _edje_util_thaw_edje(Edje *ed)
 {
-   unsigned int i;
+   unsigned short i;
 
    for (i = 0; i < ed->table_parts_size; i++)
      {
@@ -308,7 +308,7 @@ _edje_util_thaw_edje(Edje *ed)
              if (ed2) _edje_util_thaw_edje(ed2);
           }
      }
-   if ((ed->recalc) && (ed->freeze <= 0)) _edje_recalc_do(ed);
+   if ((ed->recalc) && (ed->freeze == 0)) _edje_recalc_do(ed);
 }
 
 #endif
@@ -316,9 +316,9 @@ _edje_util_thaw_edje(Edje *ed)
 void
 _edje_language_signal_emit(Edje *ed, Evas_Object *obj, char *signal)
 {
-   int i;
+   unsigned short i;
 
-   for (i = 0; i < (int)ed->table_parts_size; i++)
+   for (i = 0; i < ed->table_parts_size; i++)
      {
         Edje_Real_Part *rp = ed->table_parts[i];
 
@@ -491,7 +491,7 @@ _edje_object_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
    Edje *ged;
    Evas_Object *o;
    Eina_List *l;
-   unsigned int i;
+   unsigned short i;
 
    if (ed->scale == scale) return EINA_TRUE;
    ed->scale = FROM_DOUBLE(scale);
@@ -545,7 +545,7 @@ _edje_object_orientation_inform(Evas_Object *obj)
 EOLIAN void
 _edje_object_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
 {
-   unsigned int i;
+   unsigned short i;
 
    if (ed->is_rtl == rtl) return;
 
@@ -584,7 +584,7 @@ _edje_object_data_get(Eo *obj EINA_UNUSED, Edje *ed, const char *key)
 EOLIAN int
 _edje_object_freeze(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   unsigned int i;
+   unsigned short i;
 
    for (i = 0; i < ed->table_parts_size; i++)
      {
@@ -602,7 +602,7 @@ _edje_object_freeze(Eo *obj EINA_UNUSED, Edje *ed)
 EOLIAN int
 _edje_object_thaw(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   unsigned int i;
+   unsigned short i;
 
    for (i = 0; i < ed->table_parts_size; i++)
      {
@@ -1012,7 +1012,7 @@ _edje_object_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_cl
    if ((int_ret) && (need_update))
      {
         Edje_Real_Part *rp;
-        unsigned int i;
+        unsigned short i;
 
         ed->dirty = EINA_TRUE;
         ed->recalc_call = EINA_TRUE;
@@ -1073,7 +1073,7 @@ EOLIAN void
 _edje_object_color_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
 {
    Edje_Color_Class *cc = NULL;
-   unsigned int i;
+   unsigned short i;
 
    if (!color_class) return;
 
@@ -1107,7 +1107,7 @@ _edje_object_color_class_clear(const Eo *obj EINA_UNUSED, Edje *ed)
    Edje_Color_Class *cc = NULL;
    Eina_List *l;
    char *color_class;
-   unsigned int i;
+   unsigned short i;
    Eina_Bool int_ret = EINA_TRUE;
 
    if (!ed) return EINA_FALSE;
@@ -1439,7 +1439,7 @@ EOLIAN Eina_Bool
 _edje_object_text_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char *font, Evas_Font_Size size)
 {
    Edje_Text_Class *tc = NULL;
-   unsigned int i;
+   unsigned short i;
 
    if ((!ed) || (!text_class)) return EINA_FALSE;
 
@@ -1530,7 +1530,7 @@ EOLIAN void
 _edje_object_text_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class)
 {
    Edje_Text_Class *tc = NULL;
-   unsigned int i;
+   unsigned short i;
 
    if (!text_class) return;
 
@@ -1854,7 +1854,7 @@ EOLIAN Eina_Bool
 _edje_object_size_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh)
 {
    Edje_Size_Class *sc = NULL;
-   unsigned int i;
+   unsigned short i;
 
    if ((!ed) || (!size_class)) return EINA_FALSE;
 
@@ -1945,7 +1945,7 @@ EOLIAN void
 _edje_object_size_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class)
 {
    Edje_Size_Class *sc = NULL;
-   unsigned int i;
+   unsigned short i;
 
    if (!size_class) return;
 
@@ -2118,7 +2118,7 @@ _edje_object_item_provider_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Item_Provider
 EOLIAN void
 _edje_object_text_change_cb_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Text_Change_Cb func, void *data)
 {
-   unsigned int i;
+   unsigned short i;
 
    ed->text_change.func = func;
    ed->text_change.data = data;
@@ -4063,7 +4063,7 @@ _edje_object_parts_extends_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *x, Ev
 {
    Evas_Coord xx1 = INT_MAX, yy1 = INT_MAX;
    Evas_Coord xx2 = 0, yy2 = 0;
-   unsigned int i;
+   unsigned short i;
 
    if (!ed)
      {
@@ -4145,7 +4145,7 @@ again:
 
    do
      {
-        unsigned int i;
+        unsigned short i;
 
         calc_count++;
 
@@ -5617,8 +5617,8 @@ _edje_object_perspective_get(Eo *obj EINA_UNUSED, Edje *ed)
 EOLIAN Eina_Bool
 _edje_object_preload(Eo *obj, Edje *ed, Eina_Bool cancel)
 {
-   int count;
-   unsigned int i;
+   unsigned short count;
+   unsigned short i;
 
    if (!ed) return EINA_FALSE;
 
@@ -6014,7 +6014,7 @@ _edje_real_part_recursive_get_helper(Edje **ed, char **path)
 Edje_Real_Part *
 _edje_real_part_get(const Edje *ed, const char *part)
 {
-   unsigned int i;
+   unsigned short i;
 
    if (!part) return NULL;
 
@@ -6313,12 +6313,8 @@ _edje_util_freeze(Edje *ed)
 int
 _edje_util_thaw(Edje *ed)
 {
+   if (ed->freeze == 0) return 0;
    ed->freeze--;
-   if (ed->freeze < 0)
-     {
-        //	printf("-------------########### OVER THAW\n");
-        ed->freeze = 0;
-     }
    if ((ed->freeze == 0) && (ed->recalc))
      {
         //	printf("thaw recalc\n");

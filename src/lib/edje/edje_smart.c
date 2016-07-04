@@ -172,7 +172,7 @@ _edje_object_efl_canvas_group_group_del(Eo *obj, Edje *ed)
 EOLIAN static void
 _edje_object_efl_canvas_group_group_move(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord x, Evas_Coord y)
 {
-   unsigned int i;
+   unsigned short i;
 
    if ((ed->x == x) && (ed->y == y)) return;
    ed->x = x;

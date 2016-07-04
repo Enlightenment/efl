@@ -793,7 +793,7 @@ _edje_fix_parts_id(Edje *ed)
     */
    unsigned int i;
    int correct_id;
-   unsigned int count;
+   unsigned short count;
 
    //printf("FIXING PARTS ID \n");
 
@@ -816,7 +816,7 @@ _edje_fix_parts_id(Edje *ed)
      }
 
    /* If we have removed some parts realloc table_parts */
-   count = ed->collection->parts_count;
+   count = (unsigned short)ed->collection->parts_count;
    if (count != ed->table_parts_size)
      {
         ed->table_parts = realloc(ed->table_parts, sizeof(Edje_Real_Part *) * count);
@@ -3002,7 +3002,7 @@ EAPI Eina_List *
 edje_edit_parts_list_get(Evas_Object *obj)
 {
    Eina_List *parts = NULL;
-   unsigned int i;
+   unsigned short i;
 
    GET_ED_OR_RETURN(NULL);
 
@@ -3069,6 +3069,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
+   if (ed->table_parts_size == 0xffff) return EINA_FALSE;
    //printf("ADD PART: %s [type: %d]\n", name, type);
 
    /* Check if part already exists */
@@ -3273,7 +3274,7 @@ edje_edit_part_del(Evas_Object *obj, const char *part)
    Edje_Part *ep;
    unsigned int k;
    unsigned int id;
-   unsigned int i;
+   unsigned short i;
 
    GET_EED_OR_RETURN(EINA_FALSE);
    GET_RP_OR_RETURN(EINA_FALSE);
@@ -3484,7 +3485,7 @@ edje_edit_part_above_get(Evas_Object *obj, const char *part)
 
    GET_RP_OR_RETURN(0);
 
-   if ((unsigned int)rp->part->id >= ed->table_parts_size - 1) return 0;
+   if ((unsigned short)rp->part->id >= ed->table_parts_size - 1) return 0;
 
    next = ed->table_parts[(rp->part->id + 1) % ed->table_parts_size];
 
@@ -3575,7 +3576,7 @@ edje_edit_part_restack_above(Evas_Object *obj, const char *part)
 
    //printf("RESTACK PART: %s ABOVE\n", part);
 
-   if ((unsigned int)rp->part->id >= ed->table_parts_size - 1) return EINA_FALSE;
+   if ((unsigned short)rp->part->id >= ed->table_parts_size - 1) return EINA_FALSE;
 
    group = ed->collection;
 
@@ -8284,7 +8285,7 @@ edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, 
 {
    Edje_Part_Description_Text *txt;
    Edje_Real_Part *real;
-   unsigned int i;
+   unsigned short i;
 
    if (!text)
      return EINA_FALSE;
@@ -12398,7 +12399,8 @@ edje_edit_source_generate(Evas_Object *obj)
    Edje_Part_Description_Common *part_desc;
    Edje_Part_Description_Image *part_desc_image;
    Edje_Part_Description_Text *part_desc_text;
-   unsigned int i, j;
+   unsigned short i;
+   unsigned int j;
    const char *entry;
    const char *str;
    Eina_Strbuf *buf = NULL;

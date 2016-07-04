@@ -560,6 +560,12 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
    if (ed->collection)
      {
+        if (ed->collection->parts_count > 0xffff)
+          {
+             ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;
+             _edje_file_del(ed);
+             return 0;
+          }
         eina_array_step_set(&parts, sizeof (Eina_Array), 8);
 
         if (ed->collection->prop.orientation != EDJE_ORIENTATION_AUTO)
@@ -1428,10 +1434,11 @@ _edje_file_add(Edje *ed, const Eina_File *f)
      }
    else
      {
-        ed->file = _edje_cache_file_coll_open(f, ed->group,
-                                              &(ed->load_error),
-                                              &(ed->collection),
-                                              ed);
+        int err = 0;
+
+        ed->file = _edje_cache_file_coll_open(f, ed->group, &(err),
+                                              &(ed->collection), ed);
+        ed->load_error = (unsigned short)err;
      }
 
    if (!ed->collection)

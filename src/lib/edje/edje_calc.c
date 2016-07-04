@@ -868,7 +868,7 @@ _edje_recalc(Edje *ed)
 void
 _edje_recalc_do(Edje *ed)
 {
-   unsigned int i;
+   unsigned short i;
    Eina_Bool need_calc;
 
 // XXX: dont need this with current smart calc infra. remove me later

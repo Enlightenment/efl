@@ -316,7 +316,7 @@ _edje_object_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
    double t;
    Eina_List *l;
    Edje_Running_Program *runp;
-   unsigned int i;
+   unsigned short i;
 
    if (!ed) return;
    if (ed->delete_me) return;
@@ -362,7 +362,7 @@ EOLIAN void
 _edje_object_animation_set(Eo *obj, Edje *ed, Eina_Bool on)
 {
    Eina_List *l;
-   unsigned int i;
+   unsigned short i;
 
    if (!ed) return;
    if (ed->delete_me) return;
