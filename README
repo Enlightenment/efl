@@ -26,6 +26,14 @@ For more doumentation please see:
 
 http://www.enlightenment.org/p.php?p=docs
 
+PLATFORMS
+---------
+
+EFL is primarily developerd on Linux (GNU/Linux) and should work on
+most distributions as long as dependencies are provided. It has been
+compiled and run also on Windows (using MINGW32 - please see
+http://www.winbuilds.org ), Mac OS X, FreeBSD and NetBSD.
+
 
 COMPONENTS
 ----------

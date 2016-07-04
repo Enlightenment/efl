@@ -507,6 +507,7 @@ cserve2_slave_thread_run(Slave_Thread_Cb thread_cb, void *thread_data, Slave_Rea
    pthread_t tid;
    int child[2], parent[2];
    int flags;
+   sigset_t oldset, newset;
 
    s = calloc(1, sizeof(Slave_Thread));
    if (!s)
@@ -550,8 +551,23 @@ cserve2_slave_thread_run(Slave_Thread_Cb thread_cb, void *thread_data, Slave_Rea
    sd->cb = thread_cb;
    sd->cb_data = thread_data;
 
+   sigemptyset(&newset);
+   sigaddset(&newset, SIGPIPE);
+   sigaddset(&newset, SIGALRM);
+   sigaddset(&newset, SIGCHLD);
+   sigaddset(&newset, SIGUSR1);
+   sigaddset(&newset, SIGUSR2);
+   sigaddset(&newset, SIGHUP);
+   sigaddset(&newset, SIGQUIT);
+   sigaddset(&newset, SIGINT);
+   sigaddset(&newset, SIGTERM);
+#ifdef SIGPWR
+   sigaddset(&newset, SIGPWR);
+#endif
+   sigprocmask(SIG_BLOCK, &newset, &oldset);
    if (pthread_create(&tid, &slave_thread_attr, _slave_thread_cb, sd))
      {
+        sigprocmask(SIG_SETMASK, &oldset, NULL);
         ERR("Could not start slave thread.");
         free(s);
         free(sd);
@@ -561,6 +577,7 @@ cserve2_slave_thread_run(Slave_Thread_Cb thread_cb, void *thread_data, Slave_Rea
         close(parent[1]);
         return NULL;
      }
+   sigprocmask(SIG_SETMASK, &oldset, NULL);
 
    s->tid = tid;
    s->tdata = sd;
