@@ -32,6 +32,15 @@ _evas_event_havemap_adjust(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protecte
      }
 }
 
+#if 0
+# define DDD_DO 1
+# define DDD(...) do { for (i = 0; i < spaces; i++) printf(" "); printf(__VA_ARGS__); } while (0)
+# define D(...) do { printf(__VA_ARGS__); } while (0)
+#else
+# define DDD(...) do { } while (0)
+# define D(...) do { } while (0)
+#endif
+
 static Eina_List *
 _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                                    const Eina_Inlist *list, Evas_Object *stop,
@@ -41,7 +50,15 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
    Evas_Object_Protected_Data *obj = NULL;
    int inside;
 
+#ifdef DDD_DO
+   static int spaces = 0;
+   int i;
+#endif
+
    if (!list) return in;
+#ifdef DDD_DO
+   spaces++;
+#endif
    for (obj = _EINA_INLIST_CONTAINER(obj, eina_inlist_last(list));
         obj;
         obj = _EINA_INLIST_CONTAINER(obj, EINA_INLIST_GET(obj)->prev))
@@ -50,16 +67,39 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
         if (eo_obj == stop)
           {
              *no_rep = 1;
+#ifdef DDD_DO
+             spaces--;
+#endif
+             DDD("***** NO REP - STOP *****\n");
              return in;
           }
 
         evas_object_clip_recalc(obj);
         if ((!RECTS_INTERSECT(x, y, 1, 1,
-                             obj->cur->cache.clip.x,
-                             obj->cur->cache.clip.y,
-                             obj->cur->cache.clip.w,
-                             obj->cur->cache.clip.h)))
-          continue;
+                              obj->cur->cache.clip.x,
+                              obj->cur->cache.clip.y,
+                              obj->cur->cache.clip.w,
+                              obj->cur->cache.clip.h)))
+          {
+             DDD("___  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] %s\n",
+                 obj->object,
+                 obj->cur->geometry.x, obj->cur->geometry.y,
+                 obj->cur->geometry.w, obj->cur->geometry.h,
+                 obj->cur->cache.clip.x, obj->cur->cache.clip.y,
+                 obj->cur->cache.clip.w, obj->cur->cache.clip.h,
+                 obj->type);
+             continue;
+          }
+        else
+          {
+             DDD("OBJ  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] %s\n",
+                 obj->object,
+                 obj->cur->geometry.x, obj->cur->geometry.y,
+                 obj->cur->geometry.w, obj->cur->geometry.h,
+                 obj->cur->cache.clip.x, obj->cur->cache.clip.y,
+                 obj->cur->cache.clip.w, obj->cur->cache.clip.h,
+                 obj->type);
+          }
 
         if (!source)
           {
@@ -72,6 +112,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
           {
              if (obj->is_smart)
                {
+                  DDD("CHILDREN ->\n");
                   Evas_Object_Protected_Data *clip = obj->cur->clipper;
                   int norep = 0;
 
@@ -130,6 +171,10 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                        if (!obj->repeat_events)
                          {
                             *no_rep = 1;
+#ifdef DDD_DO
+                            spaces--;
+#endif
+                            DDD("***** NO REP1 *****\n");
                             return in;
                          }
                     }
@@ -159,10 +204,17 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                                  (evas_object_is_inside(eo_obj, obj, x, y))))
                     {
                        if (!evas_event_freezes_through(eo_obj, obj))
-                         in = eina_list_append(in, eo_obj);
+                         {
+                            DDD("----------------> ADD obj %p\n", obj->object);
+                            in = eina_list_append(in, eo_obj);
+                         }
                        if (!obj->repeat_events)
                          {
                             *no_rep = 1;
+#ifdef DDD_DO
+                            spaces--;
+#endif
+                            DDD("***** NO REP2 *****\n");
                             return in;
                          }
                     }
@@ -170,6 +222,9 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
           }
      }
    *no_rep = 0;
+#ifdef DDD_DO
+   spaces--;
+#endif
    return in;
 }
 
@@ -884,9 +939,11 @@ _evas_event_objects_event_list_no_frozen_check(Evas *eo_e, Evas_Object *stop, in
 
    if (!e->layers) return NULL;
 
+   D("@@@@@ layer count = %i\n", eina_inlist_count(EINA_INLIST_GET(e->layers)));
    EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
      {
         int no_rep = 0;
+        D("############################# check layer %i\n", lay->layer);
         in = _evas_event_object_list_in_get(eo_e, in,
                                             EINA_INLIST_GET(lay->objects),
                                             stop, x, y, &no_rep, EINA_FALSE);
@@ -907,6 +964,7 @@ evas_event_objects_event_list(Evas *eo_e, Evas_Object *stop, int x, int y)
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    if ((!e->layers) || (e->is_frozen)) return NULL;
+   D("------------------------------GET EVETNS AT ............... %i %i\n", x, y); 
    return _evas_event_objects_event_list_no_frozen_check(eo_e, stop, x, y);
 }
 
