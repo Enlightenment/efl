@@ -25,9 +25,10 @@ struct converting_argument_generator
      attributes::qualifier_def qualifier = param.type.original_type.visit(attributes::get_qualifier_visitor{});
      return as_generator
        (
-        attribute_reorder<1, -1, 2>
+        attribute_reorder<-1, -1, 2>
         (
-         " ::efl::eolian::convert_to_c<" << c_type << ", " << parameter_type
+         " ::efl::eolian::convert_to_c<" << c_type
+         << ", " << parameter_type
          << (qualifier & qualifier_info::is_own
              ? ", true" : "")
          << ">(" << string << ")"

@@ -19,6 +19,8 @@ struct c_type_visitor
                 , std::make_tuple(name.namespaces, name.eolian_name
                                   , std::string{name.base_qualifier & qualifier_info::is_const ? " const" : ""})
                 , context_null {});
+    if(name.base_qualifier & qualifier_info::is_ref)
+      n += '*';
     return n;
   }
   template <typename T>

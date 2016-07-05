@@ -304,15 +304,15 @@ struct _eina_value_traits<T[], typename eina::enable_if<eina::is_pod<T>::value>:
   }
 };
 
-class value;
+class value_view;
 
 template <typename T>
-T get(value const& v);
+T get(value_view const& v);
 
 /**
  * Store generic value
  */
-class value
+class value_view
 {
   /**
    * @brief Initialize the <tt>eina::value</tt> with the given argument.
@@ -329,8 +329,8 @@ public:
   /**
    * @brief Default constructor. Create an empty generic value storage.
    */
-  value()
-    : _raw(_eina_value_traits<char>::create())
+  value_view()
+    : _raw(nullptr)
   {
   }
 
@@ -339,7 +339,7 @@ public:
    * @param v Value to be stored.
    */
   template <typename T>
-  value(T v, typename std::enable_if<_eina_value_traits<T>::is_specialized::value>::type* = 0)
+  value_view(T v, typename std::enable_if<_eina_value_traits<T>::is_specialized::value>::type* = 0)
   {
     primitive_init(v);
   }
@@ -348,7 +348,7 @@ public:
    * @brief Create an generic value storage holding a @c char value.
    * @param v @c char value to be stored.
    */
-  value(char v)
+  value_view(char v)
   {
     primitive_init(v);
   }
@@ -357,7 +357,7 @@ public:
    * @brief Create an generic value storage holding a @c short value.
    * @param v @c short value to be stored.
    */
-  value(short v)
+  value_view(short v)
   {
     primitive_init(v);
   }
@@ -366,7 +366,7 @@ public:
    * @brief Create an generic value storage holding a @c int value.
    * @param v @c int value to be stored.
    */
-  value(int v)
+  value_view(int v)
   {
     primitive_init(v);
   }
@@ -375,7 +375,7 @@ public:
    * @brief Create an generic value storage holding a @c long value.
    * @param v @c long value to be stored.
    */
-  value(long v)
+  value_view(long v)
   {
     primitive_init(v);
   }
@@ -384,7 +384,7 @@ public:
    * @brief Create an generic value storage holding a <tt>unsigned char</tt> value.
    * @param v <tt>unsigned char</tt> value to be stored.
    */
-  value(unsigned char v)
+  value_view(unsigned char v)
   {
     primitive_init(v);
   }
@@ -393,7 +393,7 @@ public:
    * @brief Create an generic value storage holding a <tt>unsigned short</tt> value.
    * @param v <tt>unsigned short</tt> value to be stored.
    */
-  value(unsigned short v)
+  value_view(unsigned short v)
   {
     primitive_init(v);
   }
@@ -402,7 +402,7 @@ public:
    * @brief Create an generic value storage holding a <tt>unsigned int</tt> value.
    * @param v <tt>unsigned int</tt> value to be stored.
    */
-  value(unsigned int v)
+  value_view(unsigned int v)
   {
     primitive_init(v);
   }
@@ -411,7 +411,7 @@ public:
    * @brief Create an generic value storage holding a <tt>unsigned long</tt> value.
    * @param v <tt>unsigned long</tt> value to be stored.
    */
-  value(unsigned long v)
+  value_view(unsigned long v)
   {
     primitive_init(v);
   }
@@ -420,7 +420,7 @@ public:
    * @brief Create an generic value storage holding a @c float value.
    * @param v @c float value to be stored.
    */
-  value(float v)
+  value_view(float v)
   {
     primitive_init(v);
   }
@@ -429,54 +429,19 @@ public:
    * @brief Create an generic value storage holding a @c double value.
    * @param v @c double value to be stored.
    */
-  value(double v)
+  value_view(double v)
   {
     primitive_init(v);
   }
 
-  /**
-   * @brief Deallocate stored value.
-   */
-  ~value()
-  {
-    eina_value_free(_raw);
-  }
-
-  value(Eina_Value* raw)
+  value_view(Eina_Value* raw)
     : _raw(raw) {}
-
-  /**
-   * @brief Copy Constructor. Create an generic value storage holding the same value of @p other.
-   * @param other Another <tt>eina::value</tt> object.
-   */
-  value(value const& other)
-    : _raw(_eina_value_traits<char>::create())
-  {
-    if(!eina_value_copy(const_cast<Eina_Value const*>(other._raw), _raw))
-      {
-         EFL_CXX_THROW(eina::system_error(eina::get_error_code()));
-      }
-  }
-
-  /**
-   * @brief Assignment operator. Replace the current stored value by the value in @p other.
-   * @param other Another <tt>eina::value</tt> object.
-   */
-  value& operator=(value const& other)
-  {
-    eina_value_flush(_raw);
-    if(!eina_value_copy(const_cast<Eina_Value const*>(other._raw), _raw))
-      {
-         EFL_CXX_THROW(eina::system_error(eina::get_error_code()));
-      }
-    return *this;
-  }
 
   /**
    * @brief Swap stored values with the given <tt>eina::value</tt> object.
    * @param other Another <tt>eina::value</tt> object.
    */
-  void swap(value& other)
+  void swap(value_view& other)
   {
     std::swap(_raw, other._raw);
   }
@@ -511,7 +476,7 @@ public:
   {
     return ::eina_value_type_get(_raw);
   }
-private:
+protected:
   ::Eina_Value* _raw;
 
   /**
@@ -530,7 +495,7 @@ private:
    * match the current stored value type.
    */
   template <typename T>
-  friend T get(value const& v)
+  friend T get(value_view const& v)
   {
     return _eina_value_traits<T>::get(v._raw);
   }
@@ -541,7 +506,7 @@ private:
  * @param lhs First <tt>eina::value</tt> object.
  * @param rhs Second <tt>eina::value</tt> object.
  */
-inline void swap(value& lhs, value& rhs)
+inline void swap(value_view& lhs, value_view& rhs)
 {
   lhs.swap(rhs);
 }
@@ -553,7 +518,7 @@ inline void swap(value& lhs, value& rhs)
  * @return @c true if the stored values are of the same type and equals
  *         in content, @c false otherwise.
  */
-inline bool operator==(value const& lhs, value const& rhs)
+inline bool operator==(value_view const& lhs, value_view const& rhs)
 {
   return lhs.type_info() == rhs.type_info()
     && eina_value_compare(lhs.native_handle(), rhs.native_handle()) == 0;
@@ -569,7 +534,7 @@ inline bool operator==(value const& lhs, value const& rhs)
  *         type identifier of @p lhs comes before the type indentifier
  *         of @p rhs. Returns @c false in all other cases.
  */
-inline bool operator<(value const& lhs, value const& rhs)
+inline bool operator<(value_view const& lhs, value_view const& rhs)
 {
   return std::less<Eina_Value_Type const*>()(lhs.type_info(), rhs.type_info())
     || (lhs.type_info() == rhs.type_info()
@@ -577,16 +542,16 @@ inline bool operator<(value const& lhs, value const& rhs)
 }
 
 /**
- * @brief More than comparison between two <tt>eina::value</tt> objects.
- * @param lhs <tt>eina::value</tt> object at the left side of the expression.
- * @param rhs <tt>eina::value</tt> object at the right side of the expression.
+ * @brief More than comparison between two <tt>eina::value_view</tt> objects.
+ * @param lhs <tt>eina::value_view</tt> object at the left side of the expression.
+ * @param rhs <tt>eina::value_view</tt> object at the right side of the expression.
  * @return For objects holding values of the same type, returns @c true
  *         if @p lhs value is more than @p rhs value. For objects
  *         holding values of different types, returns @c true if the
  *         type identifier of @p lhs comes after the type indentifier
  *         of @p rhs. Returns @c false in all other cases.
  */
-inline bool operator>(value const& lhs, value const& rhs)
+inline bool operator>(value_view const& lhs, value_view const& rhs)
 {
   return std::less<Eina_Value_Type const*>()(rhs.type_info(), lhs.type_info())
     || (rhs.type_info() == lhs.type_info()
@@ -594,16 +559,16 @@ inline bool operator>(value const& lhs, value const& rhs)
 }
 
 /**
- * @brief Less than or equal comparison between two <tt>eina::value</tt> objects.
- * @param lhs <tt>eina::value</tt> object at the left side of the expression.
- * @param rhs <tt>eina::value</tt> object at the right side of the expression.
+ * @brief Less than or equal comparison between two <tt>eina::value_view</tt> objects.
+ * @param lhs <tt>eina::value_view</tt> object at the left side of the expression.
+ * @param rhs <tt>eina::value_view</tt> object at the right side of the expression.
  * @return For objects holding values of the same type, returns @c true
  *         if @p lhs value is less than or equal to @p rhs value. For
  *         objects holding values of different types, returns @c true if
  *         the type identifier of @p lhs comes before the type
  *         indentifier of @p rhs. Returns @c false in all other cases.
  */
-inline bool operator<=(value const& lhs, value const& rhs)
+inline bool operator<=(value_view const& lhs, value_view const& rhs)
 {
   return !(lhs > rhs);
 }
@@ -618,7 +583,7 @@ inline bool operator<=(value const& lhs, value const& rhs)
  *         the type identifier of @p lhs comes after the type
  *         indentifier of @p rhs. Returns @c false in all other cases.
  */
-inline bool operator>=(value const& lhs, value const& rhs)
+inline bool operator>=(value_view const& lhs, value_view const& rhs)
 {
   return !(lhs < rhs);
 }
@@ -631,11 +596,174 @@ inline bool operator>=(value const& lhs, value const& rhs)
  *         @p lhs is different from the value of @rhs, @c false
  *         otherwise.
  */
-inline bool operator!=(value const& lhs, value const& rhs)
+inline bool operator!=(value_view const& lhs, value_view const& rhs)
 {
   return !(lhs == rhs);
 }
 
+/**
+ * Store generic value
+ */
+struct value :  value_view
+{
+   using value_view::value_view;
+
+   value(std::nullptr_t) {}
+   value() : value_view(_eina_value_traits<char>::create()) {}
+   explicit value(Eina_Value* raw)
+     : value_view(raw) {}
+
+   value(Eina_Value const* raw)
+     : value_view(_eina_value_traits<char>::create())
+   {
+     if(!eina_value_copy(raw, _raw))
+       {
+          eina_value_free(_raw);
+          EFL_CXX_THROW(eina::system_error(eina::get_error_code()));
+       }
+   }
+  
+   /**
+    * @brief Deallocate stored value.
+    */
+   ~value()
+   {
+      if(_raw)
+        eina_value_free(_raw);
+   }
+
+   /**
+    * @brief Copy Constructor. Create an generic value storage holding the same value of @p other.
+    * @param other Another <tt>eina::value</tt> object.
+    */
+   value(value_view const& other)
+     : value_view(_eina_value_traits<char>::create())
+   {
+     if(!eina_value_copy(other.native_handle(), _raw))
+       {
+          eina_value_free(_raw);
+          EFL_CXX_THROW(eina::system_error(eina::get_error_code()));
+       }
+   }
+
+   /**
+    * @brief Assignment operator. Replace the current stored value by the value in @p other.
+    * @param other Another <tt>eina::value</tt> object.
+    */
+   value& operator=(value other)
+   {
+     other.swap(*this);
+     return *this;
+   }
+
+   void swap(value& other)
+   {
+     _base_get(other).swap(*this);
+   }
+private:
+   static value_view& _base_get(value& v) { return v; }
+   static value_view const& _base_get(value const& v) { return v; }
+   /**
+    * @brief Swap the stored values between the given <tt>eina::value</tt> objects.
+    * @param lhs First <tt>eina::value</tt> object.
+    * @param rhs Second <tt>eina::value</tt> object.
+    */
+   friend inline void swap(value& lhs, value& rhs)
+   {
+     lhs.swap(rhs);
+   }
+
+   /**
+    * @brief Compare if the stored values are equal.
+    * @param lhs <tt>eina::value</tt> object at the left side of the expression.
+    * @param rhs <tt>eina::value</tt> object at the right side of the expression.
+    * @return @c true if the stored values are of the same type and equals
+    *         in content, @c false otherwise.
+    */
+   friend inline bool operator==(value const& lhs, value const& rhs)
+   {
+      return _base_get(lhs) == _base_get(rhs);
+   }
+
+   /**
+    * @brief Less than comparison between two <tt>eina::value</tt> objects.
+    * @param lhs <tt>eina::value</tt> object at the left side of the expression.
+    * @param rhs <tt>eina::value</tt> object at the right side of the expression.
+    * @return For objects holding values of the same type, returns @c true
+    *         if @p lhs value is less than @p rhs value. For objects
+    *         holding values of different types, returns @c true if the
+    *         type identifier of @p lhs comes before the type indentifier
+    *         of @p rhs. Returns @c false in all other cases.
+    */
+   friend inline bool operator<(value const& lhs, value const& rhs)
+   {
+      return _base_get(lhs) < _base_get(rhs);
+   }
+
+   /**
+    * @brief More than comparison between two <tt>eina::value</tt> objects.
+    * @param lhs <tt>eina::value</tt> object at the left side of the expression.
+    * @param rhs <tt>eina::value</tt> object at the right side of the expression.
+    * @return For objects holding values of the same type, returns @c true
+    *         if @p lhs value is more than @p rhs value. For objects
+    *         holding values of different types, returns @c true if the
+    *         type identifier of @p lhs comes after the type indentifier
+    *         of @p rhs. Returns @c false in all other cases.
+    */
+   friend inline bool operator>(value const& lhs, value const& rhs)
+   {
+      return _base_get(lhs) > _base_get(rhs);
+   }
+
+   /**
+    * @brief Less than or equal comparison between two <tt>eina::value</tt> objects.
+    * @param lhs <tt>eina::value</tt> object at the left side of the expression.
+    * @param rhs <tt>eina::value</tt> object at the right side of the expression.
+    * @return For objects holding values of the same type, returns @c true
+    *         if @p lhs value is less than or equal to @p rhs value. For
+    *         objects holding values of different types, returns @c true if
+    *         the type identifier of @p lhs comes before the type
+    *         indentifier of @p rhs. Returns @c false in all other cases.
+    */
+   friend inline bool operator<=(value const& lhs, value const& rhs)
+   {
+     return _base_get(lhs) <= _base_get(rhs);
+   }
+
+   /**
+    * @brief More than or equal comparison between two <tt>eina::value</tt> objects.
+    * @param lhs <tt>eina::value</tt> object at the left side of the expression.
+    * @param rhs <tt>eina::value</tt> object at the right side of the expression.
+    * @return For objects holding values of the same type, returns @c true
+    *         if @p lhs value is more than or equal to @p rhs value. For
+    *         objects holding values of different types, returns @c true if
+    *         the type identifier of @p lhs comes after the type
+    *         indentifier of @p rhs. Returns @c false in all other cases.
+    */
+   friend inline bool operator>=(value const& lhs, value const& rhs)
+   {
+      return _base_get(lhs) >= _base_get(rhs);
+   }
+
+   /**
+    * @brief Compare if the stored values are different.
+    * @param lhs <tt>eina::value</tt> object at the left side of the expression.
+    * @param rhs <tt>eina::value</tt> object at the right side of the expression.
+    * @return @c true if the value types are different or if the value of
+    *         @p lhs is different from the value of @rhs, @c false
+    *         otherwise.
+    */
+   friend inline bool operator!=(value const& lhs, value const& rhs)
+   {
+      return _base_get(lhs) != _base_get(rhs);
+   }
+};
+
+static_assert(std::is_standard_layout<value>::value, "");
+static_assert(std::is_standard_layout<value_view>::value, "");
+static_assert(sizeof(value) == sizeof(Eina_Value*), "");
+static_assert(sizeof(value_view) == sizeof(Eina_Value*), "");
+    
 /**
  * @}
  */

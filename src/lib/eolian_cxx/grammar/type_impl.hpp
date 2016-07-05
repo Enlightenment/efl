@@ -102,8 +102,11 @@ struct visitor_generate
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 return replace_base_type(r, " ::efl::eina::stringshare");
               }}
-           , {"generic_value", nullptr, [&]
+           , {"generic_value", true, [&]
               { return regular_type_def{" ::efl::eina::value", regular.base_qualifier, {}};
+              }}
+           , {"generic_value", false, [&]
+              { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier, {}};
               }}
         };
       if(regular.base_type == "void_ptr")
@@ -207,11 +210,11 @@ struct visitor_generate
    }
    bool operator()(attributes::klass_name klass) const
    {
-     if(as_generator(" " << *("::" << lower_case[string]) << "::" << string)
-        .generate(sink, std::make_tuple(attributes::cpp_namespaces(klass.namespaces), klass.eolian_name), *context))
-       return true;
-     else
-       return false;
+     return
+       as_generator(" " << *("::" << lower_case[string]) << "::" << string)
+       .generate(sink, std::make_tuple(attributes::cpp_namespaces(klass.namespaces), klass.eolian_name), *context)
+       && (!(klass.base_qualifier & qualifier_info::is_ref)
+           || as_generator("&").generate(sink, attributes::unused, *context));
    }
    bool operator()(attributes::complex_type_def const& complex) const
    {

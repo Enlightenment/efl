@@ -200,7 +200,7 @@ abstract Eo.Base ()
            being freed.
          ]]
          params {
-            @out wref: Eo.Base;
+            @in wref: ref(Eo.Base);
          }
       }
       wref_del {

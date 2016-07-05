@@ -64,6 +64,13 @@ struct inout_traits<void> { typedef void* type; };
 template <typename T>
 struct inout_traits<efl::eina::future<T>> { typedef efl::eina::future<T>& type; };
 
+template <typename T>
+struct return_traits { typedef T type; };
+template <>
+struct return_traits<eina::value_view&> { typedef eina::value_view type; };
+template <>
+struct return_traits<eina::value_view const&> { typedef eina::value_view type; };
+
 template <typename To, typename From, bool Own = false, typename Lhs, typename Rhs>
 void assign_out(Lhs& lhs, Rhs& rhs);
   
@@ -151,7 +158,17 @@ void assign_out_impl(efl::eina::optional<T>& lhs, Rhs& rhs, tag<efl::eina::optio
     assign_out<U&, O, true>(*lhs, rhs);
 }
 template <typename Tag>
-void assign_out_impl(eina::value& lhs, Eina_Value const& rhs, Tag)
+void assign_out_impl(eina::value& lhs, Eina_Value& rhs, Tag)
+{
+  Eina_Value* v = eina_value_new(EINA_VALUE_TYPE_CHAR);
+  eina_value_flush(v);
+  eina_value_copy(&rhs, v);
+  lhs = {v};
+  eina_value_flush(&rhs);
+}
+// This is a invalid use-case that is used in EFL. This leaks
+template <typename Tag>
+void assign_out_impl(eina::value_view& lhs, Eina_Value& rhs, Tag)
 {
   Eina_Value* v = eina_value_new(EINA_VALUE_TYPE_CHAR);
   eina_value_flush(v);
@@ -324,6 +341,12 @@ Eo const* convert_to_c_impl(T v, tag<Eo const*, T>
 {
   return const_cast<Eo const*>(v._eo_ptr());
 }
+template <typename T>
+Eo** convert_to_c_impl(T& v, tag<Eo**, T&>
+                       , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
+{
+  return reinterpret_cast<Eo**>(static_cast<void*>(&v));
+}
 inline const char* convert_to_c_impl( ::efl::eina::string_view v, tag<const char*, ::efl::eina::string_view>)
 {
   return v.c_str();
@@ -355,11 +378,23 @@ inline Eina_Value* convert_to_c_impl( ::efl::eina::value v, tag<Eina_Value*, in_
   eina_value_copy(v.native_handle(), nv);
   return nv;
 }
-inline Eina_Value const* convert_to_c_impl( ::efl::eina::value v, tag<Eina_Value const*, in_traits<eina::value>::type>)
+inline Eina_Value const* convert_to_c_impl( ::efl::eina::value& v, tag<Eina_Value const*, in_traits<eina::value>::type>)
 {
   Eina_Value* nv = eina_value_new(v.type_info());
   eina_value_copy(v.native_handle(), nv);
   return nv;
+}
+inline Eina_Value const* convert_to_c_impl( ::efl::eina::value_view const& v, tag<Eina_Value const*, in_traits<eina::value_view const&>::type>)
+{
+  return v.native_handle();
+}
+inline Eina_Value* convert_to_c_impl( ::efl::eina::value_view& v, tag<Eina_Value*, in_traits<eina::value_view&>::type>)
+{
+  return v.native_handle();
+}
+inline Eina_Value* convert_to_c_impl( ::efl::eina::value_view const& v, tag<Eina_Value*, in_traits<eina::value_view const&>::type>)
+{
+  return const_cast<Eina_Value*>(v.native_handle());
 }
 inline Eina_Bool convert_to_c_impl( bool b, tag<Eina_Bool, bool>)
 {
@@ -631,6 +666,10 @@ T convert_to_return(Eina_Promise* /*value*/, tag<Eina_Promise*, T>, typename std
 inline efl::eina::value convert_to_return(Eina_Value* value, tag<Eina_Value*, efl::eina::value>)
 {
   return efl::eina::value{value};
+}
+inline efl::eina::value_view convert_to_return(Eina_Value* value, tag<Eina_Value*, efl::eina::value_view>)
+{
+  return efl::eina::value_view{value};
 }
 template <typename T, typename U>
 T convert_to_return(U* value, tag<T, U*>, typename std::enable_if<is_range<T>::value || is_container<T>::value>::type* = 0)
