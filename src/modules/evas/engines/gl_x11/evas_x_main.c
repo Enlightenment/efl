@@ -676,6 +676,8 @@ eng_window_use(Outbuf *gw)
    xwin = _tls_outbuf_get();
 
    glsym_evas_gl_preload_render_lock(eng_window_make_current, gw);
+   if ((gw) && (!gw->gl_context)) return;
+
 #ifdef GL_GLES
    if (xwin)
      {

@@ -233,6 +233,7 @@ eng_window_use(Outbuf *gw)
    Eina_Bool force = EINA_FALSE;
 
    glsym_evas_gl_preload_render_lock(eng_preload_make_current, gw);
+   if ((gw) && (!gw->gl_context)) return;
 
    if (_evas_gl_wl_window)
      {
