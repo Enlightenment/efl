@@ -28,7 +28,7 @@ v8::Local<v8::String> to_v8_string(v8::Isolate *isolate, const char *fmt,
 }
 
 static global_ref<v8::Value> js_eina_log_print_cb_data;
-static std::map<int, std::string> js_eina_log_color_map;
+static std::map<int, const char *> js_eina_log_color_map;
 
 static void js_eina_log_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level,
                                  const char *file, const char *fnc, int line,
@@ -118,9 +118,9 @@ void register_log_domain_register(v8::Isolate *isolate,
 
         // We duplicate the color string as eina takes a const char* but does take care of 
         // its lifetime, assuming a ever lasting string.
-        std::string color = *String::Utf8Value(args[1]);
+        const char *color = strdup(*String::Utf8Value(args[1]));
         int d = eina_log_domain_register(*String::Utf8Value(args[0]),
-                                         color.c_str());
+                                         color);
         js_eina_log_color_map[d] = color;
 
         auto isolate = args.GetIsolate();
@@ -146,6 +146,7 @@ void register_log_domain_unregister(v8::Isolate *isolate,
 
         int domain = args[0]->NumberValue();
         eina_log_domain_unregister(domain);
+        free((void*)js_eina_log_color_map[domain]);
         js_eina_log_color_map.erase(domain);
         return compatibility_return();
     };
