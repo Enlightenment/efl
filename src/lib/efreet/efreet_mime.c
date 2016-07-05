@@ -711,10 +711,13 @@ efreet_mime_special_check(const char *file)
                parent[PATH_MAX - 1] = '\0';
 
                /* Kill any trailing slash */
-               parent[--path_len] = '\0';
+               if (parent[path_len - 1] == '/')
+                 parent[--path_len] = '\0';
 
                /* Truncate to last slash */
-               while (parent[--path_len] != '/') parent[path_len] = '\0';
+               while ((path_len > 0) &&
+                      (parent[--path_len] != '/'))
+                 parent[path_len] = '\0';
 
 #ifdef _WIN32
                if (!stat(file, &s2))

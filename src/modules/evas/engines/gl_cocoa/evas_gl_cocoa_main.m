@@ -119,6 +119,7 @@ eng_window_free(Evas_GL_Cocoa_Window *gw)
 void
 eng_window_use(Evas_GL_Cocoa_Window *gw)
 {
+   if ((gw) && (!gw->gl_context)) return;
    if (_evas_gl_cocoa_window != gw)
      {
         [[(NSOpenGLView*)gw->view openGLContext] makeCurrentContext];
