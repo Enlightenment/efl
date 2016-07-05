@@ -73,7 +73,9 @@ bindings/js/efl_js/eolian_js_bindings.cc: $(GENERATED_JS_BINDINGS)
 	@echo @ECHO_E@ "#include <Emotion.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
 	@echo @ECHO_E@ "#define ELM_INTERNAL_API_ARGESFSDFEFC" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
 	@echo @ECHO_E@ "#include <Elementary.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <elm_widget.h>\n" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "extern \"C\" {" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "#include <elm_widget.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+	@echo @ECHO_E@ "}\n" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
 	@for i in $(GENERATED_JS_BINDINGS); do echo "#include <$$i>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc; done
 
 CLEANFILES += bindings/js/efl_js/eolian_js_bindings.cc
