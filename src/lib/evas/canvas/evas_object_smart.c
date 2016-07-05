@@ -1398,6 +1398,8 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
 
    if (!os->update_boundingbox_needed) return;
    os->update_boundingbox_needed = EINA_FALSE;
+   evas_object_clip_dirty(eo_obj, obj);
+   if (obj->cur->clipper) evas_object_clip_recalc(obj->cur->clipper);
 
    minx = obj->layer->evas->output.w;
    miny = obj->layer->evas->output.h;
