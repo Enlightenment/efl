@@ -144,7 +144,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
    int inside;
 
    if (!list) return in;
-   for (obj = _EINA_INLIST_CONTAINER(obj, list);
+   for (obj = _EINA_INLIST_CONTAINER(obj, eina_inlist_last(list));
         obj;
         obj = _EINA_INLIST_CONTAINER(obj, EINA_INLIST_GET(obj)->prev))
      {
@@ -154,6 +154,15 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
              *no_rep = 1;
              return in;
           }
+
+        evas_object_clip_recalc(obj);
+        if ((!RECTS_INTERSECT(x, y, 1, 1,
+                             obj->cur->cache.clip.x,
+                             obj->cur->cache.clip.y,
+                             obj->cur->cache.clip.w,
+                             obj->cur->cache.clip.h)))
+          continue;
+
         if (!source)
           {
              if (evas_event_passes_through(eo_obj, obj)) continue;
@@ -989,7 +998,6 @@ _evas_event_object_list_in_get(Evas *eo_e, Eina_List *in,
                                const Eina_Inlist *list, Evas_Object *stop,
                                int x, int y, int *no_rep, Eina_Bool source)
 {
-   if (!list) return NULL;
    return _evas_event_object_list_raw_in_get(eo_e, in, list->last, stop, x, y,
                                              no_rep, source);
 }
