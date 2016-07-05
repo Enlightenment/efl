@@ -22,6 +22,7 @@ static void _looped_cb(void *data EINA_UNUSED, const Eo_Event *event)
 }
 
 #ifdef HAVE_PULSE
+#if 0
 static void _failed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
   Eina_Bool *pulse_context_failed = data;
@@ -81,6 +82,7 @@ START_TEST(ecore_test_ecore_audio_obj_pulse)
    eo_del(in);
 }
 END_TEST
+#endif
 #endif
 
 static Eina_Bool _quit(void *data EINA_UNUSED)
@@ -633,7 +635,7 @@ ecore_test_ecore_audio(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_audio_cleanup);
 #endif
 #ifdef HAVE_PULSE
-   tcase_add_test(tc, ecore_test_ecore_audio_obj_pulse);
+   //tcase_add_test(tc, ecore_test_ecore_audio_obj_pulse);
 #endif
 }
 
