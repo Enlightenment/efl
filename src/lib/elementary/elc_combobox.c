@@ -186,6 +186,8 @@ _activate(Evas_Object *obj)
 
    sd->expanded = EINA_TRUE;
 
+   count_items_genlist(obj);
+
    if (sd->count <= 0) return;
 
    _table_resize(obj);
