@@ -41,10 +41,10 @@ class Constructor_Method_Class (Eo.Base)
       }
       classoutmethod1 {
          params { @in one: int; @in two: double; }
-         return: free(own(Constructor_Method_Class *), eo_unref) @warn_unused;
+         return: free(own(Constructor_Method_Class), eo_unref) @warn_unused;
       }
       classoutmethod2 {
-         params { @in one: int; @in two: double; @out out_class: own(Constructor_Method_Class *); }
+         params { @in one: int; @in two: double; @out out_class: own(Constructor_Method_Class); }
       }
    }
    implements {

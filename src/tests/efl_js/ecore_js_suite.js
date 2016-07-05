@@ -293,8 +293,8 @@ start_test("ecore idle", function () {
     efl.Ecore.Mainloop.begin();
 
     assert(captured[0] === 4, "Ecore.Idle.add test");
-    assert(captured[1] === 2, "Ecore.Idle.addEnterer test");
-    assert(captured[2] === 3, "Ecore.Idle.addEnterer test two");
+    assert(captured[1] === 3, "Ecore.Idle.addEnterer test");
+    assert(captured[2] === 2, "Ecore.Idle.addEnterer test two");
     assert(captured[3] === 1, "Ecore.Idle.addEntererBefore test");
     assert(captured[4] === 5, "Ecore.Idle.addExiter test");
 });
