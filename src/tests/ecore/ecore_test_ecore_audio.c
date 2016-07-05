@@ -635,11 +635,5 @@ ecore_test_ecore_audio(TCase *tc)
 #ifdef HAVE_PULSE
    tcase_add_test(tc, ecore_test_ecore_audio_obj_pulse);
 #endif
-
-/*
-   tcase_add_test(tc, ecore_test_ecore_audio_default);
-   tcase_add_test(tc, ecore_test_ecore_audio_sndfile_vio);
-   tcase_add_test(tc, ecore_test_ecore_audio_custom);
-*/
 }
 
