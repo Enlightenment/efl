@@ -117,7 +117,7 @@ _EVASGL_FUNCTION_BEGIN_VOID( glGetProgramInterfaceiv, (GLuint program, GLenum pr
 _EVASGL_FUNCTION_BEGIN(GLuint, glGetProgramResourceIndex, (GLuint program, GLenum programInterface, const GLchar *name), (program, programInterface, name))
 _EVASGL_FUNCTION_BEGIN_VOID( glGetProgramResourceName, (GLuint program, GLenum programInterface, GLuint index, GLsizei bufSize, GLsizei *length, GLchar *name), (program, programInterface, index, bufSize, length, name))
 _EVASGL_FUNCTION_BEGIN_VOID( glGetProgramResourceiv, (GLuint program, GLenum programInterface, GLuint index, GLsizei propCount, const GLenum *props, GLsizei bufSize, GLsizei *length, GLint *params), (program, programInterface, index, propCount, props, bufSize, length, params))
-_EVASGL_FUNCTION_BEGIN(GLuint, glGetProgramResourceLocation, (GLuint program, GLenum programInterface, const GLchar *name), (program, programInterface, name))
+_EVASGL_FUNCTION_BEGIN(GLint, glGetProgramResourceLocation, (GLuint program, GLenum programInterface, const GLchar *name), (program, programInterface, name))
 _EVASGL_FUNCTION_BEGIN_VOID( glUseProgramStages, (GLuint pipeline, GLbitfield stages, GLuint program), (pipeline, stages, program))
 _EVASGL_FUNCTION_BEGIN_VOID( glActiveShaderProgram, (GLuint pipeline, GLuint program), (pipeline, program))
 _EVASGL_FUNCTION_BEGIN(GLuint, glCreateShaderProgramv, (GLenum type, GLsizei count, const GLchar *const*strings), (type, count, strings))
