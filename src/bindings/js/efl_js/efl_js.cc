@@ -42,7 +42,6 @@ EAPI void eina_value_register(v8::Handle<v8::Object>, v8::Isolate* isolate);
 EAPI void register_ecore_mainloop(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 
 namespace ecore {
-EAPI void register_animator(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_exe(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_idler(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_ecore(v8::Isolate* isolate, v8::Handle<v8::Object> exports);
@@ -73,18 +72,35 @@ EAPI void register_ecore_audio_out_pulse(v8::Handle<v8::Object> global, v8::Isol
 EAPI void register_ecore_audio_out_sndfile(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 
 namespace efl {
+EAPI void register_animator(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_control(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_file(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_image(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_orientation(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_player(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_text(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_text_properties(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }
 
+namespace efl { namespace ui {
+EAPI void register_video(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_flip(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_frame(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_box(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+}}
+
+namespace efl { namespace ui { namespace win {
+EAPI void register_standard(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+}}}
+
 namespace eo {
 EAPI void register_abstract_class(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_base(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }
+
+namespace efl { namespace canvas {
+EAPI void register_rectangle(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+}}
 
 namespace evas {
 EAPI void register_box(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -98,7 +114,6 @@ EAPI void register_line(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_object(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_object_smart(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_out(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_rectangle(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_scrollable_interface(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_selectable_interface(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_signal_interface(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -176,7 +191,6 @@ EAPI void register_fileselector_button(v8::Handle<v8::Object> global, v8::Isolat
 EAPI void register_fileselector_entry(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_flip(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_flipselector(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_frame(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_gengrid(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_gengrid_pan(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_genlist(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -187,7 +201,6 @@ EAPI void register_grid(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_hover(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_hoversel(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_icon(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_image(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_index(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_inwin(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_label(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -221,7 +234,6 @@ EAPI void register_systray(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_table(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_thumb(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_toolbar(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_video(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_web(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_widget(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_win(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -244,11 +256,6 @@ EAPI void register_toolbar_item(v8::Handle<v8::Object> global, v8::Isolate* isol
 EAPI void register_diskselector_item(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_popup_item(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 
-namespace win {
-
-EAPI void register_standard(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-
-}
 }
 
 #ifdef HAVE_NODEJS
@@ -276,7 +283,6 @@ EAPI void init(v8::Handle<v8::Object> exports)
         efl::eio::js::register_eio(v8::Isolate::GetCurrent(), exports);
         efl::eldbus::js::register_eldbus(v8::Isolate::GetCurrent(), exports);
         efl::ethumb::js::register_ethumb(v8::Isolate::GetCurrent(), exports);
-        ecore::register_animator(exports, v8::Isolate::GetCurrent());
         ecore::register_exe(exports, v8::Isolate::GetCurrent());
         // ecore::register_idler(exports, v8::Isolate::GetCurrent());
         // ecore::idle::register_enterer(exports, v8::Isolate::GetCurrent());
@@ -302,9 +308,11 @@ EAPI void init(v8::Handle<v8::Object> exports)
         // Manual ecore binding initialized last to allow extension of namespace
         // created by eolian.
         efl::ecore::js::register_ecore(v8::Isolate::GetCurrent(), exports);
+        efl::register_animator(exports, v8::Isolate::GetCurrent());
         efl::register_control(exports, v8::Isolate::GetCurrent());
         efl::register_file(exports, v8::Isolate::GetCurrent());
         efl::register_image(exports, v8::Isolate::GetCurrent());
+        efl::register_orientation(exports, v8::Isolate::GetCurrent());
         efl::register_player(exports, v8::Isolate::GetCurrent());
         efl::register_text(exports, v8::Isolate::GetCurrent());
         // efl::register_text_properties(exports, v8::Isolate::GetCurrent());
@@ -322,7 +330,7 @@ EAPI void init(v8::Handle<v8::Object> exports)
         // evas::register_object(exports, v8::Isolate::GetCurrent());
         // evas::register_object_smart(exports, v8::Isolate::GetCurrent());
         // evas::register_out(exports, v8::Isolate::GetCurrent());
-        // evas::register_rectangle(exports, v8::Isolate::GetCurrent());
+        efl::canvas::register_rectangle(exports, v8::Isolate::GetCurrent());
         // evas::register_scrollable_interface(exports, v8::Isolate::GetCurrent());
         // evas::register_selectable_interface(exports, v8::Isolate::GetCurrent());
         // evas::register_signal_interface(exports, v8::Isolate::GetCurrent());
@@ -395,9 +403,9 @@ EAPI void init(v8::Handle<v8::Object> exports)
 
       elm::register_fileselector_entry(exports, v8::Isolate::GetCurrent());
 
-      elm::register_flip(exports, v8::Isolate::GetCurrent());
       elm::register_flipselector(exports, v8::Isolate::GetCurrent());
-      elm::register_frame(exports, v8::Isolate::GetCurrent());
+      efl::ui::register_frame(exports, v8::Isolate::GetCurrent());
+      efl::ui::register_box(exports, v8::Isolate::GetCurrent());
 
       // crash
       // elm::register_gengrid(exports, v8::Isolate::GetCurrent());
@@ -423,7 +431,6 @@ EAPI void init(v8::Handle<v8::Object> exports)
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
       elm::register_icon(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
-      elm::register_image(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
       elm::register_index(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
@@ -515,19 +522,19 @@ EAPI void init(v8::Handle<v8::Object> exports)
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
       elm::register_toolbar(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
-
+      efl::ui::register_flip(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
-      elm::register_video(exports, v8::Isolate::GetCurrent());
+      efl::ui::register_video(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
       elm::register_web(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
-      // elm::register_widget(exports, v8::Isolate::GetCurrent());
-      // fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
+      elm::register_widget(exports, v8::Isolate::GetCurrent());
+      fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
 
       // crash
       // elm::register_win(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
-      elm::win::register_standard(exports, v8::Isolate::GetCurrent());
+      efl::ui::win::register_standard(exports, v8::Isolate::GetCurrent());
 
       // fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
       // elm::register_widget_item(exports, v8::Isolate::GetCurrent());
