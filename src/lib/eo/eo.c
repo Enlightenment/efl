@@ -1727,7 +1727,7 @@ EAPI Eina_Bool
 eo_shutdown(void)
 {
    size_t i;
-   _Eo_Class **cls_itr = _eo_classes;
+   _Eo_Class **cls_itr = _eo_classes + _eo_classes_last_id - 1;
 
    if (--_eo_init_count > 0)
      return EINA_TRUE;
@@ -1738,7 +1738,7 @@ eo_shutdown(void)
 
    _eo_add_fallback_shutdown();
 
-   for (i = 0 ; i < _eo_classes_last_id ; i++, cls_itr++)
+   for (i = 0 ; i < _eo_classes_last_id ; i++, cls_itr--)
      {
         if (*cls_itr)
           eo_class_free(*cls_itr);
