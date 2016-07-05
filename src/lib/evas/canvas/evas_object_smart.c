@@ -1124,13 +1124,13 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         /* Update left limit */
         if (noclip && x < smart_parent->cur.bounding_box.x)
           {
-	     smart_parent->cur.bounding_box.w += smart_parent->cur.bounding_box.x - x;
-	     smart_parent->cur.bounding_box.x = x;
+             smart_parent->cur.bounding_box.w += smart_parent->cur.bounding_box.x - x;
+             smart_parent->cur.bounding_box.x = x;
 
              propagate = EINA_TRUE;
           }
         else if ((px == smart_parent->prev.bounding_box.x &&
-		  x > smart_parent->cur.bounding_box.x)
+                  x > smart_parent->cur.bounding_box.x)
                  || (!noclip && x == smart_parent->cur.bounding_box.x))
           {
              computeminmax = EINA_TRUE;
@@ -1145,7 +1145,7 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
              propagate = EINA_TRUE;
           }
         else if ((py == smart_parent->prev.bounding_box.y &&
-		  y  > smart_parent->cur.bounding_box.y)
+                  y  > smart_parent->cur.bounding_box.y)
                  || (!noclip && y == smart_parent->cur.bounding_box.y))
           {
              computeminmax = EINA_TRUE;
@@ -1154,8 +1154,7 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         /* Update right limit */
         if (noclip && x + w > smart_parent->cur.bounding_box.x + smart_parent->cur.bounding_box.w)
           {
-	     smart_parent->cur.bounding_box.w = x + w - smart_parent->cur.bounding_box.x;
-             
+             smart_parent->cur.bounding_box.w = x + w - smart_parent->cur.bounding_box.x;
              propagate = EINA_TRUE;
           }
         else if ((px + pw == smart_parent->prev.bounding_box.x + smart_parent->prev.bounding_box.w &&
@@ -1168,7 +1167,7 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         /* Update bottom limit */
         if (noclip && y + h > smart_parent->cur.bounding_box.y + smart_parent->cur.bounding_box.h)
           {
-	     smart_parent->cur.bounding_box.h = y + h - smart_parent->cur.bounding_box.y;
+             smart_parent->cur.bounding_box.h = y + h - smart_parent->cur.bounding_box.y;
 
              propagate = EINA_TRUE;
           }
@@ -1179,7 +1178,7 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
              computeminmax = EINA_TRUE;
           }
 
-	if (computeminmax)
+        if (computeminmax)
           {
              evas_object_smart_need_bounding_box_update(obj->smart.parent);
           }
@@ -1188,14 +1187,14 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
      {
         if (noclip)
           {
-	     smart_parent->cur.bounding_box.x = x;
-	     smart_parent->cur.bounding_box.y = y;
-	     smart_parent->cur.bounding_box.w = w;
-	     smart_parent->cur.bounding_box.h = h;
+             smart_parent->cur.bounding_box.x = x;
+             smart_parent->cur.bounding_box.y = y;
+             smart_parent->cur.bounding_box.w = w;
+             smart_parent->cur.bounding_box.h = h;
 
-	     EINA_COW_STATE_WRITE_BEGIN(smart_obj, smart_write, cur)
-	       smart_write->valid_bounding_box = EINA_TRUE;
-	     EINA_COW_STATE_WRITE_END(smart_obj, smart_write, cur);
+             EINA_COW_STATE_WRITE_BEGIN(smart_obj, smart_write, cur)
+               smart_write->valid_bounding_box = EINA_TRUE;
+             EINA_COW_STATE_WRITE_END(smart_obj, smart_write, cur);
 
              propagate = EINA_TRUE;
           }
@@ -1207,17 +1206,17 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
 void
 evas_object_smart_bounding_box_get(Evas_Object *eo_obj,
-				   Evas_Coord_Rectangle *cur_bounding_box,
-				   Evas_Coord_Rectangle *prev_bounding_box)
+                                   Evas_Coord_Rectangle *cur_bounding_box,
+                                   Evas_Coord_Rectangle *prev_bounding_box)
 {
    Evas_Smart_Data *s = eo_data_scope_get(eo_obj, MY_CLASS);
 
    if (cur_bounding_box) memcpy(cur_bounding_box,
-				&s->cur.bounding_box,
-				sizeof (*cur_bounding_box));
+                                &s->cur.bounding_box,
+                                sizeof (*cur_bounding_box));
    if (prev_bounding_box) memcpy(prev_bounding_box,
-				 &s->prev.bounding_box,
-				 sizeof (*prev_bounding_box));
+                                 &s->prev.bounding_box,
+                                 sizeof (*prev_bounding_box));
 }
 
 void
@@ -1378,24 +1377,25 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
 
         if (o == obj) continue ;
         if (o->clip.clipees || o->is_static_clip) continue ;
+        if (!o->cur->visible) continue;
 
-	if (o->is_smart)
+        if (o->is_smart)
           {
-	     Evas_Smart_Data *s = eo_data_scope_get(o->object, MY_CLASS);
+             Evas_Smart_Data *s = eo_data_scope_get(o->object, MY_CLASS);
 
              evas_object_smart_bounding_box_update(o->object, o);
 
              tx = s->cur.bounding_box.x;
              ty = s->cur.bounding_box.y;
-             tw = s->cur.bounding_box.x + s->cur.bounding_box.w;
-             th = s->cur.bounding_box.y + s->cur.bounding_box.h;
+             tw = tx + s->cur.bounding_box.w;
+             th = ty + s->cur.bounding_box.h;
           }
         else
           {
              tx = o->cur->geometry.x;
              ty = o->cur->geometry.y;
-             tw = o->cur->geometry.x + o->cur->geometry.w;
-             th = o->cur->geometry.y + o->cur->geometry.h;
+             tw = tx + o->cur->geometry.w;
+             th = ty + o->cur->geometry.h;
           }
 
         if (tx < minx) minx = tx;
@@ -1407,13 +1407,13 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
    if (minx != os->cur.bounding_box.x)
      {
         os->cur.bounding_box.w += os->cur.bounding_box.x - minx;
-	os->cur.bounding_box.x = minx;
+        os->cur.bounding_box.x = minx;
      }
 
    if (miny != os->cur.bounding_box.y)
      {
         os->cur.bounding_box.h += os->cur.bounding_box.y - miny;
-	os->cur.bounding_box.y = miny;
+        os->cur.bounding_box.y = miny;
      }
 
    if (maxw != os->cur.bounding_box.x + os->cur.bounding_box.w)
