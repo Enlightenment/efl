@@ -8463,7 +8463,15 @@ edje_edit_state_text_style_set(Evas_Object *obj, const char *part, const char *s
      return EINA_FALSE;
 
    txt = (Edje_Part_Description_Text *)pd;
-   _edje_if_string_replace(ed, &txt->text.style.str, style);
+   if (style == NULL )
+     {
+        _edje_if_string_free(ed, &txt->text.style.str);
+        txt->text.style.str = NULL;
+     }
+   else
+     {
+        _edje_if_string_replace(ed, &txt->text.style.str, style);
+     }
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
