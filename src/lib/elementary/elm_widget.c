@@ -255,7 +255,7 @@ _on_sub_obj_hide(void *data EINA_UNUSED, const Eo_Event *event)
 static void
 _on_sub_obj_del(void *data, const Eo_Event *event)
 {
-   ELM_WIDGET_DATA_GET(data, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, sd);
 
    if (_elm_widget_is(event->object))
      {
