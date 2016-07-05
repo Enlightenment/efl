@@ -5822,7 +5822,8 @@ EAPI const char * edje_edit_state_text_style_get(Evas_Object *obj, const char *p
  * @param part Part to set the style of.
  * @param state State in which the style is set.
  * @param value Value of the state.
- * @param style The style name to use.
+ * @param style The style name to use. In case when NULL style will removed from textblock part description.
+ *
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  */
