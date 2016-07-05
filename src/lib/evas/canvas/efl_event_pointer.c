@@ -74,6 +74,7 @@ EOLIAN static void
 _efl_event_pointer_class_destructor(Eo_Class *klass EINA_UNUSED)
 {
    // this is a strange situation...
+   eo_del_intercept_set(s_cached_event, NULL);
    eo_del(s_cached_event);
    s_cached_event = NULL;
 }
