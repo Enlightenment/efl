@@ -118,7 +118,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
          get {
             [[Get the icon name of image set by icon standard names.
 
-              If the image was set using elm_image_file_set() instead of
+              If the image was set using efl_file_set() instead of
               @.icon.set, then this function will return null.
             ]]
          }
