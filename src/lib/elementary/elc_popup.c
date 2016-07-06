@@ -1181,7 +1181,6 @@ _action_button_set(Evas_Object *obj,
           }
      }
 
-   snprintf(buf, sizeof(buf), "buttons%i", sd->last_button_number);
    if (!sd->action_area)
      {
         sd->action_area = elm_layout_add(sd->main_layout);
@@ -1193,6 +1192,7 @@ _action_button_set(Evas_Object *obj,
         _visuals_set(obj);
      }
 
+   snprintf(buf, sizeof(buf), "buttons%i", sd->last_button_number);
    snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
    if (!elm_layout_theme_set(sd->action_area, "popup", buf, style))
      CRI("Failed to set layout!");
