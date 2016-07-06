@@ -1027,17 +1027,25 @@ efl_main(void *data EINA_UNUSED,
    Eina_Bool test_win_only = EINA_FALSE;
    char *autorun = NULL;
 
-   _log_domain = eina_log_domain_register("elementary_test", NULL);
+   if (arge->initialization)
+     {
+        _log_domain = eina_log_domain_register("elementary_test", NULL);
 
-   eo_event_callback_add(ev->object, EO_EVENT_DEL, _main_loop_death, NULL);
+        eo_event_callback_add(ev->object, EO_EVENT_DEL, _main_loop_death, NULL);
 
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+        elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   /* tell elm about our app so it can figure out where to get files */
-   elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
-   elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
-   elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
-   elm_app_info_set(efl_main, "elementary", "images/logo.png");
+        /* tell elm about our app so it can figure out where to get files */
+        elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
+        elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
+        elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
+        elm_app_info_set(efl_main, "elementary", "images/logo.png");
+
+        elm_color_class_translate_cb_set(colorclass_tl_cb);
+        elm_color_class_list_cb_set(colorclass_list_cb);
+
+        /* put here any init specific to this app like parsing args etc. */
+     }
 
    /* if called with a single argument try to autorun a test with
     * the same name as the given param
@@ -1069,9 +1077,6 @@ efl_main(void *data EINA_UNUSED,
           }
      }
 
-   elm_color_class_translate_cb_set(colorclass_tl_cb);
-   elm_color_class_list_cb_set(colorclass_list_cb);
-   /* put here any init specific to this app like parsing args etc. */
    my_win_main(autorun, test_win_only); /* create main window */
 
    /* FIXME: Hum, no exit code anywhere anymore ? */
