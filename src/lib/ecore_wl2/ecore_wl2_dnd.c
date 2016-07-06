@@ -595,9 +595,6 @@ ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input)
         wl_array_init(&input->data.types);
      }
 
-   if (input->data.source) wl_data_source_destroy(input->data.source);
-   input->data.source = NULL;
-
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Dnd_End));
    if (!ev) return;
 
