@@ -2,6 +2,8 @@
  * theme, FDO paths, or both?
  *
  * @ingroup Elm_Icon
+ *
+ * @deprecated Prefer using elm_config "icon_theme" instead.
  */
 typedef enum
 {
@@ -49,7 +51,7 @@ EAPI void elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *gro
  * @ingroup Elm_Icon
  */
 
-EAPI void elm_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED, Elm_Icon_Lookup_Order order EINA_UNUSED);
+EAPI void elm_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED, Elm_Icon_Lookup_Order order EINA_UNUSED) EINA_DEPRECATED;
 
 /**
  * @brief Get the icon lookup order.
@@ -61,7 +63,7 @@ EAPI void elm_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED, Elm_Icon_Looku
  *
  * @ingroup Elm_Icon
  */
-EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED);
+EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED) EINA_DEPRECATED;
 
 /**
  * @brief Set the icon by icon standards names.
