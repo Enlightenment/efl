@@ -105,7 +105,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
 
               If name is not found in any of the expected locations and it is
               the absolute path of an image file, this image will be used.
-              Lookup order used by @icon.set can be set using "icon_theme" in config.
+              Lookup order used by @.icon.set can be set using "icon_theme" in config.
 
               Note: The image set by this function can be changed by
               @Efl.File.file.set.
