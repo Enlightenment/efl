@@ -246,6 +246,7 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
              if (source->input->display->wl.data_device_manager_version >=
                  WL_DATA_OFFER_FINISH_SINCE_VERSION)
                wl_data_offer_finish(source->offer);
+               wl_data_offer_destroy(source->offer);
           }
 
         fd = ecore_main_fd_handler_fd_get(source->fdh);
@@ -282,6 +283,8 @@ static void
 _selection_data_receive(Ecore_Wl2_Dnd_Source *source, const char *type)
 {
    int p[2];
+
+   source->active_read = EINA_TRUE;
 
    if (pipe2(p, O_CLOEXEC) == -1)
      return;
@@ -360,6 +363,23 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
    ecore_event_add(ECORE_WL2_EVENT_DND_ENTER, ev, NULL, NULL);
 }
 
+static void
+_delay_offer_destroy(void *user_data, void *event)
+{
+   Ecore_Wl2_Dnd_Source *source;
+
+   source = user_data;
+
+   if (source && source->offer
+       && !source->active_read)
+     {
+        wl_data_offer_destroy(source->offer);
+        source->offer = NULL;
+     }
+
+   free(event);
+}
+
 void
 _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
 {
@@ -377,7 +397,7 @@ _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
 
    if (!ev->win) ev->win = ev->source;
 
-   ecore_event_add(ECORE_WL2_EVENT_DND_LEAVE, ev, NULL, NULL);
+   ecore_event_add(ECORE_WL2_EVENT_DND_LEAVE, ev, _delay_offer_destroy, input->drag.source);
 }
 
 void
@@ -430,7 +450,7 @@ _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input)
    ev->x = input->pointer.sx;
    ev->y = input->pointer.sy;
 
-   ecore_event_add(ECORE_WL2_EVENT_DND_DROP, ev, NULL, NULL);
+   ecore_event_add(ECORE_WL2_EVENT_DND_DROP, ev, _delay_offer_destroy, input->drag.source);
 }
 
 void
