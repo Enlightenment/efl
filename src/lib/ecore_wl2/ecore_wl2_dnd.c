@@ -246,6 +246,7 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
                  WL_DATA_OFFER_FINISH_SINCE_VERSION)
                wl_data_offer_finish(source->offer);
                wl_data_offer_destroy(source->offer);
+               source->offer = NULL;
           }
 
         fd = ecore_main_fd_handler_fd_get(source->fdh);
@@ -487,7 +488,11 @@ _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source)
           close(ecore_main_fd_handler_fd_get(source->fdh));
         ecore_main_fd_handler_del(source->fdh);
      }
-   wl_data_offer_destroy(source->offer);
+   if (source->offer)
+     {
+        wl_data_offer_destroy(source->offer);
+        source->offer = NULL;
+     }
    wl_array_release(&source->types);
    free(source);
 }
