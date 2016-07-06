@@ -37,4 +37,3 @@ _setup_evas()
 }
 
 #endif
-

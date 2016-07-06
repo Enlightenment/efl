@@ -10,7 +10,7 @@
 #define COMPONENT_OF_DEFAULT_GREY_COLOR 0.3
 #define TRANSPARENCY_OF_DEFAULT_GREY_COLOR 0.5
 
-void
+static void
 _set_geometry_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Data *mesh,
                                     Evas_Canvas3D_Mesh_Eet *eet_mesh,
                                     Evas_Canvas3D_Header_Eet *eet_header,
@@ -64,7 +64,7 @@ _set_geometry_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Data *mesh,
    eet_header->geometries = geometries;
 }
 
-void
+static void
 _set_material_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Eet *eet_mesh,
                                     Evas_Canvas3D_Header_Eet *eet_header,
                                     Evas_Canvas3D_Mesh_Frame *f)
@@ -125,7 +125,7 @@ _set_material_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Eet *eet_mesh,
    eet_header->materials = materials;
 }
 
-void
+static void
 _set_frame_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Eet *eet_mesh)
 {
    eet_mesh->frames = malloc(sizeof(Evas_Canvas3D_Frame_Eet));
@@ -147,11 +147,15 @@ evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh,
                          Evas_Canvas3D_Mesh_Frame *f)
 {
    Evas_Canvas3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
-   Eet_File *ef = eet_open(file, EET_FILE_MODE_WRITE);
+   Eet_File *ef;
    Evas_Canvas3D_Mesh_Eet* eet_mesh = malloc(sizeof(Evas_Canvas3D_Mesh_Eet));
    Evas_Canvas3D_Header_Eet* eet_header = malloc(sizeof(Evas_Canvas3D_Header_Eet));
    Eet_Data_Descriptor *_file_descriptor;
    Evas_Canvas3D_File_Eet *eet_file;
+
+   eet_init();
+
+   ef = eet_open(file, EET_FILE_MODE_WRITE);
 
    _file_descriptor = _evas_canvas3d_eet_file_get();
 
@@ -174,8 +178,8 @@ evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh,
         ERR("Opening of file is failed.");
         free(eet_mesh);
         free(eet_header);
-        _evas_canvas3d_eet_file_free(eet_file);
-        return;
+
+        goto on_error;
      }
 
    eet_file->mesh = eet_mesh;
@@ -188,5 +192,8 @@ evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh,
                   EINA_TRUE);
    eet_close(ef);
 
+ on_error:
    _evas_canvas3d_eet_file_free(eet_file);
+
+   eet_shutdown();
 }

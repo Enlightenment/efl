@@ -8,7 +8,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-void
+static void
 _set_geometry_to_mesh_from_eet_file(Evas_Canvas3D_Mesh *mesh,
                                     Evas_Canvas3D_Mesh_Eet *eet_mesh)
 {
@@ -59,7 +59,7 @@ _set_geometry_to_mesh_from_eet_file(Evas_Canvas3D_Mesh *mesh,
    evas_canvas3d_mesh_frame_vertex_data_unmap(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD);
 }
 
-void
+static void
 _set_material_to_mesh_from_eet_file(Evas_Canvas3D_Mesh *mesh,
                                     Evas_Canvas3D_Mesh_Eet *eet_mesh)
 {
@@ -86,6 +86,7 @@ evas_model_load_file_eet(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
    Evas_Canvas3D_File_Eet* eet_file;
    Eet_Data_Descriptor *_file_descriptor;
 
+   eet_init();
 
    _file_descriptor = _evas_canvas3d_eet_file_get();
    ef = eet_mmap(file);
@@ -98,12 +99,13 @@ evas_model_load_file_eet(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
    if (!eet_file || !eet_file->mesh || !eet_file->header)
      {
         ERR("Failed to read model file");
-        _evas_canvas3d_eet_file_free(eet_file);
-        return;
+        goto on_error;
      }
 
    _set_geometry_to_mesh_from_eet_file(mesh, eet_file->mesh);
    _set_material_to_mesh_from_eet_file(mesh, eet_file->mesh);
 
+ on_error:
    _evas_canvas3d_eet_file_free(eet_file);
+   eet_shutdown();
 }

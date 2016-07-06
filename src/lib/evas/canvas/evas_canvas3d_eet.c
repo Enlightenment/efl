@@ -208,6 +208,4 @@ _evas_canvas3d_eet_file_free(Evas_Canvas3D_File_Eet* eet_file)
      }
 
    _evas_canvas3d_eet_descriptor_shutdown();
-   eet_shutdown();
-   eina_shutdown();
 }
