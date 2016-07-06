@@ -192,12 +192,13 @@ EAPI extern int ECORE_WL2_EVENT_DND_LEAVE; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_DND_MOTION; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_DND_DROP; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_DND_END; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_DND_DATA_READY;
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_END; /** @since 1.18 */
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_DROP; /** @since 1.18 */
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_ACTION; /** @since 1.18 */
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_TARGET; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_SEND; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_SELECTION_DATA_READY; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_CNP_DATA_READY; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE; /** @since 1.17 */
 EAPI extern int ECORE_WL2_EVENT_SYNC_DONE; /** @since 1.17 */
 

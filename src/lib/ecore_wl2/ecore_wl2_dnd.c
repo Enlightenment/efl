@@ -255,8 +255,12 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
 
         event->data = source->read_data;
         event->len = source->len;
-        ecore_event_add(ECORE_WL2_EVENT_SELECTION_DATA_READY, event,
-                        _selection_data_ready_cb_free, NULL);
+        if (source->input->drag.source)
+          ecore_event_add(ECORE_WL2_EVENT_DND_DATA_READY, event,
+                          _selection_data_ready_cb_free, NULL);
+        else
+          ecore_event_add(ECORE_WL2_EVENT_CNP_DATA_READY, event,
+                          _selection_data_ready_cb_free, NULL);
 
         return ECORE_CALLBACK_CANCEL;
      }

@@ -3204,7 +3204,7 @@ _wl_elm_cnp_init(void)
 
    ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_SEND,
                            _wl_selection_send, &wl_cnp_selection);
-   ecore_event_handler_add(ECORE_WL2_EVENT_SELECTION_DATA_READY,
+   ecore_event_handler_add(ECORE_WL2_EVENT_CNP_DATA_READY,
                            _wl_selection_receive, &wl_cnp_selection);
 
    return EINA_TRUE;
@@ -3221,7 +3221,7 @@ _wl_elm_dnd_init(void)
    text_uri = eina_stringshare_add("text/uri-list");
 
    _wl_elm_cnp_init();
-   ecore_event_handler_add(ECORE_WL2_EVENT_SELECTION_DATA_READY,
+   ecore_event_handler_add(ECORE_WL2_EVENT_DND_DATA_READY,
                            _wl_dnd_receive, &wl_cnp_selection);
 
    ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_END,
