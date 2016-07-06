@@ -1269,6 +1269,29 @@ _find_child_by_id(Svg_Node *node, char *id)
    return NULL;
 }
 
+static Eina_List *
+_clone_grad_stops(Eina_List *from)
+{
+   Efl_Gfx_Gradient_Stop *stop;
+   Eina_List *l;
+   Eina_List *res = NULL;
+
+   EINA_LIST_FOREACH(from, l, stop)
+     {
+        Efl_Gfx_Gradient_Stop *new_stop;
+
+        new_stop = calloc(1, sizeof(Efl_Gfx_Gradient_Stop));
+        new_stop->r = stop->r;
+        new_stop->g = stop->g;
+        new_stop->b = stop->b;
+        new_stop->a = stop->a;
+
+        res = eina_list_append(res, new_stop);
+     }
+
+   return res;
+}
+
 static Svg_Style_Gradient *
 _clone_gradient(Svg_Style_Gradient *from)
 {
@@ -1279,8 +1302,9 @@ _clone_gradient(Svg_Style_Gradient *from)
    grad= calloc(1, sizeof(Svg_Style_Gradient));
    grad->type = from->type;
    grad->id = _copy_id(from->id);
+   grad->ref = _copy_id(from->ref);
    grad->spread = from->spread;
-   grad->stops = eina_list_clone(from->stops);
+   grad->stops = _clone_grad_stops(from->stops);
    if (grad->type == SVG_LINEAR_GRADIENT)
      {
         grad->linear = calloc(1, sizeof(Svg_Linear_Gradient));
@@ -1313,9 +1337,6 @@ _copy_attribute(Svg_Node *to, Svg_Node *from)
      }
    // copy style attribute;
    memcpy(to->style, from->style, sizeof(Svg_Style_Property));
-   // copy gradient
-   to->style->fill.gradient = _clone_gradient(from->style->fill.gradient);
-   to->style->stroke.gradient = _clone_gradient(from->style->stroke.gradient);
 
    // copy node attribute
    switch (from->type)
@@ -1448,6 +1469,23 @@ static const struct {
 FIND_FACTORY(group, group_tags);
 FIND_FACTORY(graphics, graphics_tags);
 
+Efl_Gfx_Gradient_Spread
+_parse_spread_value(const char *value)
+{
+   Efl_Gfx_Gradient_Spread spread = EFL_GFX_GRADIENT_SPREAD_PAD;
+
+   if (!strcmp(value, "reflect"))
+     {
+        spread = EFL_GFX_GRADIENT_SPREAD_REFLECT;
+     }
+   else if (!strcmp(value, "repeat"))
+     {
+        spread = EFL_GFX_GRADIENT_SPREAD_REPEAT;
+     }
+
+   return spread;
+}
+
 static void
 _handle_radial_cx_attr(Svg_Radial_Gradient* radial, const char *value)
 {
@@ -1512,7 +1550,17 @@ _attr_parse_radial_gradient_node(void *data, const char *key, const char *value)
        }
 
    if (!strcmp(key, "id"))
-     grad->id = _copy_id(value);
+     {
+        grad->id = _copy_id(value);
+     }
+   else if (!strcmp(key, "spreadMethod"))
+     {
+        grad->spread = _parse_spread_value(value);
+     }
+   else if (!strcmp(key, "xlink:href"))
+     {
+        grad->ref = _id_from_href(value);
+     }
 
    return EINA_TRUE;
 }
@@ -1547,6 +1595,12 @@ _attr_parse_stops(void *data, const char *key, const char *value)
      {
         _to_color(value, &stop->r, &stop->g, &stop->b, NULL);
      }
+   else if (!strcmp(key, "style"))
+     {
+        eina_simple_xml_attribute_w3c_parse(value,
+                                            _attr_parse_stops, data);
+     }
+
    return EINA_TRUE;
 }
 
@@ -1599,7 +1653,7 @@ _attr_parse_linear_gradient_node(void *data, const char *key, const char *value)
    unsigned int i;
    int sz = strlen(key);
 
-   for (i = 0; i < sizeof (radial_tags) / sizeof(linear_tags[0]); i++)
+   for (i = 0; i < sizeof (linear_tags) / sizeof(linear_tags[0]); i++)
      if (linear_tags[i].sz - 1 == sz && !strncmp(linear_tags[i].tag, key, sz))
        {
           linear_tags[i].tag_handler(linear, value);
@@ -1609,6 +1663,14 @@ _attr_parse_linear_gradient_node(void *data, const char *key, const char *value)
    if (!strcmp(key, "id"))
      {
         grad->id = _copy_id(value);
+     }
+   else if (!strcmp(key, "spreadMethod"))
+     {
+        grad->spread = _parse_spread_value(value);
+     }
+   else if (!strcmp(key, "xlink:href"))
+     {
+        grad->ref = _id_from_href(value);
      }
 
    return EINA_TRUE;
@@ -1763,11 +1825,6 @@ _evas_svg_loader_xml_close_parser(Evas_SVG_Loader *loader,
           break ;
        }
 
-   if (!strncmp(content, "linearGradient", 13))
-     {
-        //TODO
-     }
-
    loader->level--;
 }
 
@@ -1870,6 +1927,67 @@ _update_style(Svg_Node *node, Svg_Style_Property *parent_style)
      }
 }
 
+static Svg_Style_Gradient*
+_dup_gradient(Eina_List *grad_list, const char *id)
+{
+   Svg_Style_Gradient *grad;
+   Svg_Style_Gradient *result = NULL;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(grad_list, l, grad)
+     {
+        if (!strcmp(grad->id, id))
+          {
+             result = _clone_gradient(grad);
+             break;
+          }
+     }
+
+   if (result && result->ref)
+     {
+        EINA_LIST_FOREACH(grad_list, l, grad)
+          {
+             if (!strcmp(grad->id, result->ref))
+               {
+                  if (!result->stops)
+                    {
+                       result->stops = _clone_grad_stops(grad->stops);
+                    }
+                  //TODO properly inherit other property
+                  break;
+               }
+         }
+     }
+
+   return result;
+}
+
+void
+_update_gradient(Svg_Node *node, Eina_List *grad_list)
+{
+   Eina_List *l;
+   Svg_Node *child;
+
+   if (node->child)
+     {
+        EINA_LIST_FOREACH(node->child, l, child)
+          {
+             _update_gradient(child, grad_list);
+          }
+     }
+   else
+     {
+        if (node->style->fill.paint.url)
+          {
+             node->style->fill.paint.gradient = _dup_gradient(grad_list, node->style->fill.paint.url);
+          }
+        else if (node->style->stroke.paint.url)
+          {
+             node->style->stroke.paint.gradient = _dup_gradient(grad_list, node->style->stroke.paint.url);
+          }
+     }
+}
+
 EAPI Svg_Node *
 _svg_load(Eina_File *f, const char *key EINA_UNUSED)
 {
@@ -1878,6 +1996,7 @@ _svg_load(Eina_File *f, const char *key EINA_UNUSED)
    };
    const char *content;
    unsigned int length;
+   Svg_Node *defs;
 
    if (!f) return NULL;
 
@@ -1894,7 +2013,12 @@ _svg_load(Eina_File *f, const char *key EINA_UNUSED)
      }
 
    if (loader.doc)
-     _update_style(loader.doc, NULL);
+     {
+        _update_style(loader.doc, NULL);
+        defs = loader.doc->node.doc.defs;
+        if (defs)
+          _update_gradient(loader.doc, defs->node.defs.gradients);
+     }
 
    return loader.doc;
 }

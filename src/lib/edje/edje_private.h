@@ -3158,6 +3158,7 @@ struct _Svg_Style_Gradient
 {
    Svg_Gradient_Type type;
    char              *id;
+   char              *ref;
    Efl_Gfx_Gradient_Spread spread;
    Eina_List   *stops; // Efl_Gfx_Gradient_Stop
    Svg_Radial_Gradient *radial;
@@ -3171,6 +3172,7 @@ struct _Svg_Paint
    int        b;
    Eina_Bool  none;
    Eina_Bool  cur_color;
+   Svg_Style_Gradient  *gradient;
    char      *url;
 };
 
@@ -3199,7 +3201,6 @@ struct _Svg_Style_Fill
    Svg_Fill_Flags       flags;
    Svg_Paint            paint;
    int                  opacity;
-   Svg_Style_Gradient  *gradient;
    Efl_Gfx_Fill_Rule    fill_rule;
 };
 
@@ -3208,7 +3209,6 @@ struct _Svg_Style_Stroke
    Svg_Stroke_Flags     flags;
    Svg_Paint            paint;
    int                  opacity;
-   Svg_Style_Gradient  *gradient;
    double               scale;
    double               width;
    double               centered;

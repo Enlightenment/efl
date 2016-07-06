@@ -2318,22 +2318,22 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
 }
 
 static Efl_VG *
-_apply_gradient_property(Efl_VG *parent, Svg_Style_Gradient *g)
+_apply_gradient_property(Svg_Style_Gradient *g)
 {
    Efl_VG *grad_obj = NULL;
    Efl_Gfx_Gradient_Stop *stops, *stop;
-   int stop_count = 0;
+   int stop_count = 0, i = 0;
    Eina_List *l;
 
    if (g->type == SVG_LINEAR_GRADIENT)
      {
-        grad_obj = eo_add(EFL_VG_GRADIENT_LINEAR_CLASS, parent);
+        grad_obj = eo_add(EFL_VG_GRADIENT_LINEAR_CLASS, NULL);
         evas_vg_gradient_linear_start_set(grad_obj, g->linear->x1, g->linear->y1);
         evas_vg_gradient_linear_end_set(grad_obj, g->linear->x2, g->linear->y2);
      }
    else if (g->type == SVG_RADIAL_GRADIENT)
      {
-        grad_obj = eo_add(EFL_VG_GRADIENT_RADIAL_CLASS, parent);
+        grad_obj = eo_add(EFL_VG_GRADIENT_RADIAL_CLASS, NULL);
         evas_vg_gradient_radial_center_set(grad_obj, g->radial->cx, g->radial->cy);
         evas_vg_gradient_radial_radius_set(grad_obj, g->radial->r);
         evas_vg_gradient_radial_focal_set(grad_obj, g->radial->fx, g->radial->fy);
@@ -2350,13 +2350,15 @@ _apply_gradient_property(Efl_VG *parent, Svg_Style_Gradient *g)
    if (stop_count)
      {
         stops = calloc(stop_count, sizeof(Efl_Gfx_Gradient_Stop));
+        i = 0;
         EINA_LIST_FOREACH(g->stops, l, stop)
           {
-             stops->r = stop->r;
-             stops->g = stop->g;
-             stops->b = stop->b;
-             stops->a = stop->a;
-             stops->offset = stop->offset;
+             stops[i].r = stop->r;
+             stops[i].g = stop->g;
+             stops[i].b = stop->b;
+             stops[i].a = stop->a;
+             stops[i].offset = stop->offset;
+             i++;
           }
         evas_vg_gradient_stop_set(grad_obj, stops, stop_count);
         free(stops);
@@ -2387,15 +2389,10 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg)
      {
         //do nothing
      }
-   else if (style->fill.gradient)
+   else if (style->fill.paint.gradient)
      {
         // if the fill has gradient then apply.
-        evas_vg_shape_fill_set(vg, _apply_gradient_property(vg, style->fill.gradient));
-     }
-   else if (style->fill.paint.url)
-     {
-        // apply the color pointed by url
-        // TODO
+        evas_vg_shape_fill_set(vg, _apply_gradient_property(style->fill.paint.gradient));
      }
    else if (style->fill.paint.cur_color)
      {
@@ -2420,10 +2417,10 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg)
      {
         //do nothing
      }
-   else if (style->stroke.gradient)
+   else if (style->stroke.paint.gradient)
      {
         // if the fill has gradient then apply.
-        evas_vg_shape_stroke_fill_set(vg, _apply_gradient_property(vg, style->stroke.gradient));
+        evas_vg_shape_stroke_fill_set(vg, _apply_gradient_property(style->stroke.paint.gradient));
      }
    else if (style->stroke.paint.url)
      {
