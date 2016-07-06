@@ -351,5 +351,5 @@ endif
 
 if HAVE_CXX11
 edje_eolian_cxx_hh = $(edje_eolian_files:%.eo=%.eo.hh)
-edje_eolian_cxx_impl = $(edje_eolian_files:%.eo=%.eo.impl.hh)
+edje_eolian_cxx_impl_hh = $(edje_eolian_files:%.eo=%.eo.impl.hh)
 endif
