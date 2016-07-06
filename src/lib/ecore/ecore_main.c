@@ -2862,10 +2862,13 @@ _efl_loop_arguments_cleanup(Eina_Array *arga)
 static void
 _efl_loop_arguments_send(void *data, void *value EINA_UNUSED)
 {
+   static Eina_Bool initialization = EINA_TRUE;
    Efl_Loop_Arguments arge;
    Eina_Array *arga = data;
 
    arge.argv = arga;
+   arge.initialization = initialization;
+   initialization = EINA_FALSE;
 
    eo_event_callback_call(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, &arge);
 
