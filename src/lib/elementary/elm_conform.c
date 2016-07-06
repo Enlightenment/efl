@@ -342,7 +342,7 @@ _land_indicator_connect_cb(void *data)
      }
    if (strchr(indicator_serv_name, '/'))
      {
-        sd->port_indi_timer = NULL;
+        sd->land_indi_timer = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
    if (elm_plug_connect(sd->landscape_indicator, indicator_serv_name, 0, EINA_FALSE))
