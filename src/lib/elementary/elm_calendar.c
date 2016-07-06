@@ -717,7 +717,7 @@ _set_headers(Evas_Object *obj)
                     }
                }
              part[3] = i + '0';
-             elm_layout_text_set(obj, part, sd->weekdays[i]);
+             elm_layout_text_set(obj, part, sd->weekdays[(i + sd->first_week_day) % ELM_DAY_LAST]);
              weekday += 86400; /* Advance by a day */
           }
     }
