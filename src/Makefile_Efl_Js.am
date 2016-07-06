@@ -162,7 +162,7 @@ bindings/js/ethumb_js/ethumb_js_client.cc
 nodist_lib_efl_js_libefl_js_la_SOURCES = \
 bindings/js/efl_js/eolian_js_bindings.cc
 
-bindings/js/efl_js/efl_js.cc $(lib_efl_js_libefl_js_la_SOURCES): $(generated_ecore_cxx_all) $(generated_eo_cxx_bindings) $(generated_efl_cxx_all)
+bindings/js/efl_js/efl_js.cc $(lib_efl_js_libefl_js_la_SOURCES): $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl_hh) $(eo_eolian_cxx_hh) $(eo_eolian_cxx_impl_hh) $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh) lib/ecore/Ecore.eo.hh
 
 lib_efl_js_libefl_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/efl \
