@@ -12,7 +12,7 @@ enum Efl.Input.Device.Class
    mouse,    [[A mouse, trackball or touchpad relative motion device.]]
    touch,    [[A touchscreen with fingers or stylus.]]
    pen,      [[A special pen device.]]
-   pointer,  [[A laser pointer, wii-style or "minority report" pointing device.]]
+   wand,     [[A laser pointer, wii-style or "minority report" pointing device.]]
    gamepad,  [[A gamepad controller or joystick.]]
 }
 

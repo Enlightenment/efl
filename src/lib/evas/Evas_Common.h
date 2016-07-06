@@ -327,7 +327,8 @@ typedef Efl_Input_Device_Class             Evas_Device_Class;
 #define EVAS_DEVICE_CLASS_MOUSE            EFL_INPUT_DEVICE_CLASS_MOUSE /**< A mouse, trackball or touchpad relative motion device @since 1.8 */
 #define EVAS_DEVICE_CLASS_TOUCH            EFL_INPUT_DEVICE_CLASS_TOUCH /**< A touchscreen with fingers or stylus @since 1.8 */
 #define EVAS_DEVICE_CLASS_PEN              EFL_INPUT_DEVICE_CLASS_PEN /**< A special pen device @since 1.8 */
-#define EVAS_DEVICE_CLASS_POINTER          EFL_INPUT_DEVICE_CLASS_POINTER /**< A laser pointer, wii-style or "minority report" pointing device @since 1.8 */
+#define EVAS_DEVICE_CLASS_POINTER          EFL_INPUT_DEVICE_CLASS_WAND /**< A laser pointer, wii-style or "minority report" pointing device @since 1.8 */
+#define EVAS_DEVICE_CLASS_WAND             EFL_INPUT_DEVICE_CLASS_WAND /**< A synonym for EVAS_DEVICE_CLASS_POINTER @since 1.18 */
 #define EVAS_DEVICE_CLASS_GAMEPAD          EFL_INPUT_DEVICE_CLASS_GAMEPAD /**<  A gamepad controller or joystick @since 1.8 */
 
 typedef Efl_Input_Device_Sub_Class         Evas_Device_Subclass;
