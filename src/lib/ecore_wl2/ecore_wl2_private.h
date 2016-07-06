@@ -195,6 +195,8 @@ typedef struct _Ecore_Wl2_Dnd_Source
    uint32_t source_actions;
    Ecore_Wl2_Selection_Type sel_type;
    Eina_Bool active_read;
+   void *read_data;
+   unsigned int len;
 } Ecore_Wl2_Dnd_Source;
 
 

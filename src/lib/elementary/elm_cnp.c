@@ -3121,74 +3121,68 @@ _wl_selection_receive(void *udata, int type EINA_UNUSED, void *event)
 
    if (sel->requestwidget)
      {
-        if (!ev->done)
+        if (sel->seltype == ELM_SEL_TYPE_XDND)
           {
-             if (sel->seltype == ELM_SEL_TYPE_XDND)
+             Elm_Selection_Data sdata;
+             Eina_List *l;
+             Dropable *dropable;
+
+             EINA_LIST_FOREACH(drops, l, dropable)
                {
-                  Elm_Selection_Data sdata;
-                  Eina_List *l;
-                  Dropable *dropable;
-
-                  EINA_LIST_FOREACH(drops, l, dropable)
-                    {
-                       if (dropable->obj == sel->requestwidget) break;
-                       dropable = NULL;
-                    }
-
-                  if (dropable)
-                    {
-                       Dropable_Cbs *cbs;
-
-                       sdata.x = savedtypes.x;
-                       sdata.y = savedtypes.y;
-                       sdata.format = ELM_SEL_FORMAT_TEXT;
-                       sdata.data = ev->data;
-                       sdata.len = ev->len;
-                       sdata.action = sel->action;
-
-                       EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
-                         if (cbs->dropcb)
-                           cbs->dropcb(cbs->dropdata, dropable->obj, &sdata);
-
-                       goto end;
-                    }
+                  if (dropable->obj == sel->requestwidget) break;
+                  dropable = NULL;
                }
 
-             if (sel->datacb)
+             if (dropable)
                {
-                  Elm_Selection_Data sdata;
+                  Dropable_Cbs *cbs;
 
-                  sdata.x = sdata.y = 0;
+                  sdata.x = savedtypes.x;
+                  sdata.y = savedtypes.y;
                   sdata.format = ELM_SEL_FORMAT_TEXT;
                   sdata.data = ev->data;
                   sdata.len = ev->len;
                   sdata.action = sel->action;
-                  sel->datacb(sel->udata,
-                              sel->requestwidget,
-                              &sdata);
-               }
-             else
-               {
-                  char *stripstr, *mkupstr;
 
-                  stripstr = malloc(ev->len + 1);
-                  if (!stripstr) goto end;
-                  strncpy(stripstr, (char *)ev->data, ev->len);
-                  stripstr[ev->len] = '\0';
-                  mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
-                  /* TODO BUG: should never NEVER assume it's an elm_entry! */
-                  _elm_entry_entry_paste(sel->requestwidget, mkupstr);
-                  free(stripstr);
-                  free(mkupstr);
+                  EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+                    if (cbs->dropcb)
+                      cbs->dropcb(cbs->dropdata, dropable->obj, &sdata);
+
+                  goto end;
                }
+          }
+
+        if (sel->datacb)
+          {
+             Elm_Selection_Data sdata;
+
+             sdata.x = sdata.y = 0;
+             sdata.format = ELM_SEL_FORMAT_TEXT;
+             sdata.data = ev->data;
+             sdata.len = ev->len;
+             sdata.action = sel->action;
+             sel->datacb(sel->udata,
+                          sel->requestwidget,
+                          &sdata);
           }
         else
           {
-             evas_object_event_callback_del_full(sel->requestwidget,
-                                                 EVAS_CALLBACK_DEL,
-                                                 _wl_sel_obj_del2, sel);
-             sel->requestwidget = NULL;
+             char *stripstr, *mkupstr;
+
+             stripstr = malloc(ev->len + 1);
+             if (!stripstr) goto end;
+             strncpy(stripstr, (char *)ev->data, ev->len);
+             stripstr[ev->len] = '\0';
+             mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
+             /* TODO BUG: should never NEVER assume it's an elm_entry! */
+             _elm_entry_entry_paste(sel->requestwidget, mkupstr);
+             free(stripstr);
+             free(mkupstr);
           }
+        evas_object_event_callback_del_full(sel->requestwidget,
+                                            EVAS_CALLBACK_DEL,
+                                            _wl_sel_obj_del2, sel);
+        sel->requestwidget = NULL;
      }
 
 end:
@@ -3689,17 +3683,12 @@ _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
 
    if (sel->requestwidget)
      {
-        if (!ev->done)
-          {
-             _wl_dropable_data_handle(sel, ev);
-          }
-        else
-          {
-             evas_object_event_callback_del_full(sel->requestwidget,
-                                                 EVAS_CALLBACK_DEL,
-                                                 _wl_sel_obj_del2, sel);
-             sel->requestwidget = NULL;
-          }
+           _wl_dropable_data_handle(sel, ev);
+           evas_object_event_callback_del_full(sel->requestwidget,
+                                               EVAS_CALLBACK_DEL,
+                                               _wl_sel_obj_del2, sel);
+           sel->requestwidget = NULL;
+
      }
 
    return ECORE_CALLBACK_PASS_ON;

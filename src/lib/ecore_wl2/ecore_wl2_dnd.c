@@ -227,7 +227,6 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
    char buffer[PATH_MAX];
    Ecore_Wl2_Dnd_Source *source = data;
    Ecore_Wl2_Event_Selection_Data_Ready *event;
-   Eina_Bool ret;
 
    fd = ecore_main_fd_handler_fd_get(fdh);
    if (fd >= 0)
@@ -254,29 +253,31 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
         ecore_main_fd_handler_del(source->fdh);
         source->fdh = NULL;
 
-        event->done = EINA_TRUE;
-        event->data = NULL;
-        event->len = 0;
-        ret = ECORE_CALLBACK_CANCEL;
+        event->data = source->read_data;
+        event->len = source->len;
+        ecore_event_add(ECORE_WL2_EVENT_SELECTION_DATA_READY, event,
+                        _selection_data_ready_cb_free, NULL);
+
+        return ECORE_CALLBACK_CANCEL;
      }
    else
      {
-        event->data = malloc(len);
-        if (!event->data)
+        int old_len = source->len;
+
+        if (!source->read_data)
           {
-             free(event);
-             return ECORE_CALLBACK_CANCEL;
+             source->read_data = malloc(len);
+             source->len = len;
           }
-        memcpy(event->data, buffer, len);
-        event->len = len;
-        event->done = EINA_FALSE;
-        ret = ECORE_CALLBACK_RENEW;
+        else
+          {
+             source->len += len;
+               source->read_data = realloc(source->read_data, source->len);
+            }
+
+        memcpy(((char*)source->read_data) + old_len, buffer, len);
+        return ECORE_CALLBACK_RENEW;
      }
-
-   ecore_event_add(ECORE_WL2_EVENT_SELECTION_DATA_READY, event,
-                   _selection_data_ready_cb_free, NULL);
-
-   return ret;
 }
 
 static void

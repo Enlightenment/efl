@@ -146,7 +146,6 @@ typedef struct _Ecore_Wl2_Event_Selection_Data_Ready
 {
    char *data;
    int len;
-   Eina_Bool done;
    Ecore_Wl2_Selection_Type sel_type;
 } Ecore_Wl2_Event_Selection_Data_Ready;
 
