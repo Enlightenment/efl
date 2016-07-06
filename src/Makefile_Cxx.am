@@ -125,6 +125,7 @@ installed_ecorecxxheadersdir = $(includedir)/ecore-cxx-@VMAJ@
 dist_installed_ecorecxxheaders_DATA = \
 bindings/cxx/ecore_cxx/Ecore.hh \
 bindings/cxx/ecore_cxx/Ecore_Manual.hh
+
 nodist_installed_ecorecxxheaders_DATA = $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl_hh) \
 lib/ecore/Ecore.eo.hh
 
