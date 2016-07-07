@@ -401,6 +401,18 @@ EAPI void elput_input_keyboard_cached_context_set(Elput_Manager *manager, void *
  */
 EAPI void elput_input_keyboard_cached_keymap_set(Elput_Manager *manager, void *keymap);
 
+/**
+ * Return the output name associated with a given device
+ *
+ * @param device
+ *
+ * @return An Eina_Stringshare of the output name for this device, or NULL on error
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.18
+ */
+EAPI Eina_Stringshare *elput_input_device_output_name_get(Elput_Device *device);
+
 # endif
 
 # undef EAPI
