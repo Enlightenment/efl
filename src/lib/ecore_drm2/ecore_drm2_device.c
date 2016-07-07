@@ -41,12 +41,33 @@ _cb_device_change(void *data, int type EINA_UNUSED, void *event)
 
    if (ev->type == ELPUT_DEVICE_ADDED)
      {
+        Eina_List *l;
         Ecore_Drm2_Output *output;
+        Eina_Stringshare *name;
 
-        /* FIXME: not sure which output to use to calibrate */
-        output = eina_list_data_get(device->outputs);
-        if (output)
-          ecore_drm2_device_calibrate(device, output->w, output->h);
+        name = elput_input_device_output_name_get(ev->device);
+        if (!name)
+          {
+             output = eina_list_data_get(device->outputs);
+             if (output)
+               ecore_drm2_device_calibrate(device,
+                                           output->w, output->h);
+          }
+        else
+          {
+             EINA_LIST_FOREACH(device->outputs, l, output)
+               {
+                  if ((output->name) &&
+                      (!strcmp(output->name, name)))
+                    {
+                       ecore_drm2_device_calibrate(device,
+                                                   output->w, output->h);
+                       break;
+                    }
+               }
+
+             eina_stringshare_del(name);
+          }
      }
 
    return ECORE_CALLBACK_RENEW;
