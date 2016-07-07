@@ -111,37 +111,23 @@ _type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool use_legacy)
       case EOLIAN_TYPEDECL_ENUM:
            {
               const Eolian_Enum_Type_Field *member;
-              char *name;
               if (!full)
                 break;
-              name = _concat_name(tp);
-              char *pre = NULL;
+              char *name = _concat_name(tp);
               eina_strbuf_append_printf(buf, "typedef enum\n{\n");
-              if (eolian_typedecl_enum_legacy_prefix_get(tp))
-                pre = strdup(eolian_typedecl_enum_legacy_prefix_get(tp));
-              else
-                pre = strdup(name);
-              eina_str_toupper(&pre);
               Eina_Iterator *members = eolian_typedecl_enum_fields_get(tp);
               Eina_Bool next = eina_iterator_next(members, (void**)&member);
-              Eina_Strbuf *membuf = eina_strbuf_new();
               while (next)
                 {
                    const Eolian_Expression *value = eolian_typedecl_enum_field_value_get(member, EINA_FALSE);
-                   char *memb_u = strdup(eolian_typedecl_enum_field_name_get(member));
-                   eina_str_toupper(&memb_u);
-                   eina_strbuf_reset(membuf);
-                   eina_strbuf_append(membuf, pre);
-                   eina_strbuf_append_char(membuf, '_');
-                   eina_strbuf_append(membuf, memb_u);
-                   free(memb_u);
+                   Eina_Stringshare *membn = eolian_typedecl_enum_field_c_name_get(member);
                    if (!value)
-                     eina_strbuf_append_printf(buf, "  %s", eina_strbuf_string_get(membuf));
+                     eina_strbuf_append_printf(buf, "  %s", membn);
                    else
                      {
                         Eolian_Value val = eolian_expression_eval(value, EOLIAN_MASK_INT);
                         const char *lit = eolian_expression_value_to_literal(&val);
-                        eina_strbuf_append_printf(buf, "  %s = %s", eina_strbuf_string_get(membuf), lit);
+                        eina_strbuf_append_printf(buf, "  %s = %s", membn, lit);
                         const char *exp = eolian_expression_serialize(value);
                         if (exp && strcmp(lit, exp))
                           {
@@ -150,6 +136,7 @@ _type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool use_legacy)
                           }
                         eina_stringshare_del(lit);
                      }
+                   eina_stringshare_del(membn);
                    const Eolian_Documentation *fdoc
                        = eolian_typedecl_enum_field_documentation_get(member);
                    next = eina_iterator_next(members, (void**)&member);
@@ -170,9 +157,7 @@ _type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool use_legacy)
                    eina_strbuf_append(buf, "\n");
                 }
               eina_strbuf_append_printf(buf, "} %s", name);
-              eina_strbuf_free(membuf);
               free(name);
-              free(pre);
               eina_iterator_free(members);
               break;
            }
