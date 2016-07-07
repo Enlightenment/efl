@@ -967,6 +967,10 @@ ffi.metatype("Eolian_Event", {
 
         is_hot = function(self)
             return eolian_event_is_hot(self) ~= 0
+        end,
+
+        is_restart = function(self)
+            return eolian_event_is_restart(self) ~= 0
         end
     }
 })
