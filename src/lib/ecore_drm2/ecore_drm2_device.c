@@ -33,6 +33,25 @@ _cb_session_active(void *data, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_cb_device_change(void *data, int type EINA_UNUSED, void *event)
+{
+   Elput_Event_Device_Change *ev = event;
+   Ecore_Drm2_Device *device = data;
+
+   if (ev->type == ELPUT_DEVICE_ADDED)
+     {
+        Ecore_Drm2_Output *output;
+
+        /* FIXME: not sure which output to use to calibrate */
+        output = eina_list_data_get(device->outputs);
+        if (output)
+          ecore_drm2_device_calibrate(device, output->w, output->h);
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 static const char *
 _drm2_device_find(const char *seat)
 {
@@ -155,6 +174,10 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
      ecore_event_handler_add(ELPUT_EVENT_SESSION_ACTIVE,
                              _cb_session_active, device);
 
+   device->device_change_hdlr =
+     ecore_event_handler_add(ELPUT_EVENT_DEVICE_CHANGE,
+                             _cb_device_change, device);
+
    /* NB: Not going to enable planes if we don't support atomic */
    /* if (drmSetClientCap(device->fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0) */
    /*   ERR("Could not set Universal Plane support: %m"); */
@@ -182,9 +205,8 @@ ecore_drm2_device_free(Ecore_Drm2_Device *device)
 {
    EINA_SAFETY_ON_NULL_RETURN(device);
 
-   if (device->active_hdlr) ecore_event_handler_del(device->active_hdlr);
-   device->active_hdlr = NULL;
-
+   ecore_event_handler_del(device->active_hdlr);
+   ecore_event_handler_del(device->device_change_hdlr);
    eina_stringshare_del(device->path);
    free(device);
 }
