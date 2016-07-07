@@ -3122,7 +3122,7 @@ struct _Svg_Rect_Node
 
 struct _Svg_Path_Node
 {
-   char *path;
+   Eina_Stringshare *path;
 };
 
 struct _Svg_Polygon_Node
@@ -3157,8 +3157,8 @@ struct _Svg_Radial_Gradient
 struct _Svg_Style_Gradient
 {
    Svg_Gradient_Type type;
-   char              *id;
-   char              *ref;
+   Eina_Stringshare  *id;
+   Eina_Stringshare  *ref;
    Efl_Gfx_Gradient_Spread spread;
    Eina_List   *stops; // Efl_Gfx_Gradient_Stop
    Svg_Radial_Gradient *radial;
@@ -3173,7 +3173,7 @@ struct _Svg_Paint
    Eina_Bool  none;
    Eina_Bool  cur_color;
    Svg_Style_Gradient  *gradient;
-   char      *url;
+   Eina_Stringshare    *url;
 };
 
 enum _Svg_Fill_Flags
@@ -3234,7 +3234,7 @@ struct _Svg_Node
    Svg_Node_Type        type;
    Svg_Node            *parent;
    Eina_List           *child;
-   char                *id;
+   Eina_Stringshare    *id;
    Svg_Style_Property  *style;
    Eina_Matrix3        *transform;
    union

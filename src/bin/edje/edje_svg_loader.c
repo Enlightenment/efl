@@ -57,12 +57,12 @@ _skip_space(const char *str, const char *end)
    return (char *)str;
 }
 
-static inline char *
+static inline Eina_Stringshare *
 _copy_id(const char* str)
 {
    if (str == NULL) return NULL;
 
-   return strdup(str);
+   return eina_stringshare_add(str);
 }
 
 static const char *
@@ -210,7 +210,7 @@ _parse_dash_array(const char *str, Efl_Gfx_Dash** dash, int *length)
 }
 #endif
 
-static char *
+static Eina_Stringshare *
  _id_from_url(const char *url)
 {
    char tmp[50];
@@ -230,7 +230,7 @@ static char *
      }
    tmp[i] = '\0';
 
-   return strdup(tmp);
+   return eina_stringshare_add(tmp);
 }
 
 static unsigned char
@@ -407,7 +407,7 @@ static const struct {
 };
 
 static inline void
-_to_color(const char *str, int *r, int *g, int *b, char** ref)
+_to_color(const char *str, int *r, int *g, int *b, Eina_Stringshare** ref)
 {
    unsigned int i, len = strlen(str);
    char *red, *green, *blue;
@@ -953,7 +953,7 @@ _attr_parse_path_node(void *data, const char *key, const char *value)
 
    if (!strcmp(key, "d"))
      {
-        path->path = strdup(value);
+        path->path = eina_stringshare_add(value);
      }
    else if (!strcmp(key, "style"))
      {
@@ -1240,13 +1240,13 @@ _create_rect_node(Svg_Node *parent, const char *buf, unsigned buflen)
    return node;
 }
 
-static char *
+static Eina_Stringshare *
 _id_from_href(const char *href)
 {
    href = _skip_space(href, NULL);
    if ((*href) == '#')
      href++;
-   return strdup(href);
+   return eina_stringshare_add(href);
 }
 
 static Svg_Node*
@@ -1266,7 +1266,7 @@ _get_defs_node(Svg_Node *node)
 }
 
 static Svg_Node*
-_find_child_by_id(Svg_Node *node, char *id)
+_find_child_by_id(Svg_Node *node, const char *id)
 {
    Eina_List *l;
    Svg_Node *child;
@@ -1362,7 +1362,7 @@ _copy_attribute(Svg_Node *to, Svg_Node *from)
            to->node.rect.ry = from->node.rect.ry;
            break;
         case SVG_NODE_PATH:
-           to->node.path.path = strdup(from->node.path.path);
+           to->node.path.path = eina_stringshare_add(from->node.path.path);
            break;
         case SVG_NODE_POLYGON:
            to->node.polygon.points_count = from->node.polygon.points_count;
@@ -1397,7 +1397,7 @@ static Eina_Bool
 _attr_parse_use_node(void *data, const char *key, const char *value)
 {
    Svg_Node *defs, *node_from, *node = data;
-   char *id;
+   Eina_Stringshare *id;
 
    if (!strcmp(key, "xlink:href"))
      {
@@ -1405,7 +1405,7 @@ _attr_parse_use_node(void *data, const char *key, const char *value)
         defs = _get_defs_node(node);
         node_from = _find_child_by_id(defs, id);
         _clone_node(node_from, node);
-        free(id);
+        eina_stringshare_del(id);
      }
    else
      {
