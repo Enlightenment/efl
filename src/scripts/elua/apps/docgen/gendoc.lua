@@ -762,6 +762,9 @@ local wrap_type_attrs = function(tp, str)
     if ffunc then
         str = "free(" .. str .. ", " .. ffunc .. ")"
     end
+    if tp:is_ref() then
+        str = "ref(" .. str .. ")"
+    end
     return str
 end
 
@@ -793,6 +796,13 @@ get_type_str = function(tp)
             suffix = "*"
         end
         return wrap_type_attrs(tp, get_type_str(btp) .. suffix)
+    elseif tpt == tps.STATIC_ARRAY then
+        return wrap_type_attrs(tp, "static_array<"
+            .. get_type_str(tp:base_type_get()) .. ", "
+            .. tp:array_size_get() .. ">")
+    elseif tpt == tps.TERMINATED_ARRAY then
+        return wrap_type_attrs(tp, "terminated_array<"
+            .. get_type_str(tp:base_type_get()) .. ">")
     end
     error("unhandled type type: " .. tpt)
 end
