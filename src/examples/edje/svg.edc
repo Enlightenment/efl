@@ -61,27 +61,40 @@ collections {
       vector: "scion.svg";
       vector: "eee.svg";
       vector: "google.svg";
-
+      vector: "tiger.svg";
+      vector: "venus.svg";
+      vector: "lineargrad1.svg";
+      vector: "radialgrad1.svg";
+      vector: "yadis.svg";
    }
    group {
       name: "svg-test";
       parts {
-         SVG_PART("bg1", "vg1", 0.0, 0.0, .25, .25,"dst.svg")
-         SVG_PART("bg2", "vg2", 0.25, 0.0, .5, .25,"atom.svg")
-         SVG_PART("bg3", "vg3", 0.5, 0.0, .75, .25,"bojo.svg")
-         SVG_PART("bg4", "vg4", 0.75, 0.0, 1.0, .25,"bzrfeed.svg")
-         SVG_PART("bg5", "vg5", 0.0, 0.25, .25, .5,"yinyang.svg")
-         SVG_PART("bg6", "vg6", 0.25, 0.25, .5, .5,"ubuntu.svg")
-         SVG_PART("bg7", "vg7", 0.5, 0.25, .75, .5,"duke.svg")
-         SVG_PART("bg8", "vg8", 0.75, 0.25, 1.0, .5,"cartman.svg")
-         SVG_PART("bg9", "vg9", 0.0, 0.5, .25, .75,"ibm.svg")
-         SVG_PART("bg10", "vg10", 0.25, 0.5, .5, .75,"hg0.svg")
-         SVG_PART("bg11", "vg11", 0.5, 0.5, .75, .75,"fsm.svg")
-         SVG_PART("bg12", "vg12", 0.75, 0.5, 1.0, .75,"osa.svg")
-         SVG_PART("bg13", "vg13", 0.0, 0.75, .25, 1.0,"wikimedia.svg")
-         SVG_PART("bg14", "vg14", 0.25, 0.75, .5, 1.0,"scion.svg")
-         SVG_PART("bg15", "vg15", 0.5, 0.75, .75, 1.0,"eee.svg")
-         SVG_PART("bg16", "vg16", 0.75, 0.75, 1.0, 1.0,"google.svg")
+         SVG_PART("bg1", "vg1", 0.0, 0.0, .2, .2,"dst.svg")
+         SVG_PART("bg2", "vg2", 0.2, 0.0, .4, .2,"atom.svg")
+         SVG_PART("bg3", "vg3", 0.4, 0.0, .6, .2,"bojo.svg")
+         SVG_PART("bg4", "vg4", 0.6, 0.0, 0.8, .2,"bzrfeed.svg")
+         SVG_PART("bg5", "vg5", 0.8, 0.0, 1.0, .2,"yinyang.svg")
+
+         SVG_PART("bg6", "vg6", 0.0, 0.2, .2, .4,"ibm.svg")
+         SVG_PART("bg7", "vg7", 0.2, 0.2, .4, .4,"ubuntu.svg")
+         SVG_PART("bg8", "vg8", 0.4, 0.2, .6, .4,"hg0.svg")
+         SVG_PART("bg9", "vg9", 0.6, 0.2, .8, .4,"duke.svg")
+         SVG_PART("bg10", "vg10", 0.8, 0.2, 1.0, .4,"cartman.svg")
+
+         SVG_PART("bg11", "vg11", 0.0, 0.4, .2, .6,"fsm.svg")
+         SVG_PART("bg12", "vg12", 0.2, 0.4, .4, .6,"osa.svg")
+         SVG_PART("bg13", "vg13", 0.4, 0.4, .6, .6,"wikimedia.svg")
+         SVG_PART("bg14", "vg14", 0.6, 0.4, .8, .6,"eee.svg")
+         SVG_PART("bg15", "vg15", 0.8, 0.4, 1.0, .6,"google.svg")
+
+         SVG_PART("bg16", "vg16", 0.0, 0.6, .2, 0.8,"scion.svg")
+         SVG_PART("bg17", "vg17", 0.2, 0.6, .4, 0.8,"tiger.svg")
+         SVG_PART("bg18", "vg18", 0.4, 0.6, .6, 0.8,"venus.svg")
+         SVG_PART("bg19", "vg19", 0.6, 0.6, .8, 0.8,"lineargrad1.svg")
+         SVG_PART("bg20", "vg20", 0.8, 0.6, 1.0, 0.8,"radialgrad1.svg")
+
+         SVG_PART("bg21", "vg21", 0.0, 0.8, .2, 1.0,"yadis.svg")
       }
       programs {
          SVG_PROGRAM("bg1", "vg1")
@@ -100,6 +113,11 @@ collections {
          SVG_PROGRAM("bg14", "vg14")
          SVG_PROGRAM("bg15", "vg15")
          SVG_PROGRAM("bg16", "vg16")
+         SVG_PROGRAM("bg17", "vg17")
+         SVG_PROGRAM("bg18", "vg18")
+         SVG_PROGRAM("bg19", "vg19")
+         SVG_PROGRAM("bg20", "vg20")
+         SVG_PROGRAM("bg21", "vg21")
       }
    }
 }
