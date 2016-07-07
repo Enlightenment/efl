@@ -395,7 +395,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_focus_item.h \
 	lib/elementary/elm_font.h \
 	lib/elementary/elm_frame.h \
-	lib/elementary/efl_ui_frame.eo.h \
+	lib/elementary/efl_ui_frame_eo.h \
 	lib/elementary/efl_ui_frame_legacy.h \
 	lib/elementary/elm_gen.h \
 	lib/elementary/elm_general.h \

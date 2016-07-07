@@ -340,7 +340,7 @@ includesub_HEADERS = \
 	elm_focus_item.h \
 	elm_font.h \
 	elm_frame.h \
-	efl_ui_frame.eo.h \
+	efl_ui_frame_eo.h \
 	efl_ui_frame_legacy.h \
 	elm_gen.h \
 	elm_general.h \
