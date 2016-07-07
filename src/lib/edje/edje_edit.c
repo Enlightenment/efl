@@ -15914,6 +15914,17 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only, Eina_Bool generate_
 
         INF("** Writing all collections");
 
+        EINA_LIST_FOREACH(ef->collection_cache, l, edc)
+          {
+             INF("** Writing cache Edje_Part_Collection* ed->collection "
+                 "[id: %d]", edc->id);
+             if (!_edje_edit_collection_save(eetf, edc))
+               {
+                  eet_close(eetf);
+                  return EINA_FALSE;
+               }
+          }
+
         it = eina_hash_iterator_data_new(ef->collection);
         while (eina_iterator_next(it, (void **)&ce))
           {
@@ -15929,17 +15940,6 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only, Eina_Bool generate_
                }
           }
         eina_iterator_free(it);
-
-        EINA_LIST_FOREACH(ef->collection_cache, l, edc)
-          {
-             INF("** Writing cache Edje_Part_Collection* ed->collection "
-                 "[id: %d]", edc->id);
-             if (!_edje_edit_collection_save(eetf, edc))
-               {
-                  eet_close(eetf);
-                  return EINA_FALSE;
-               }
-          }
      }
 
    if ((eed->bytecode_dirty || eed->script_need_recompile) && ed->collection)
