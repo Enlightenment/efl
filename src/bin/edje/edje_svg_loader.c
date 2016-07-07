@@ -659,27 +659,39 @@ parse_length(const char *str, Svg_Length_Type *type)
    return value;
 }
 
+static Eina_Bool _parse_style_attr(void *data, const char *key, const char *value);
+static Eina_Bool _attr_style_node(void *data, const char *str);
+
 static Eina_Bool
 _attr_parse_svg_node(void *data, const char *key, const char *value)
 {
-   Svg_Doc_Node *node = data;
+   Svg_Node *node = data;
+   Svg_Doc_Node *doc = &(node->node.doc);
    Svg_Length_Type type;
 
    // @TODO handle lenght unit.
    if (!strcmp(key, "width"))
      {
-        node->width = parse_length(value, &type);
+        doc->width = parse_length(value, &type);
      }
    else if (!strcmp(key, "height"))
      {
-        node->height = parse_length(value, &type);
+        doc->height = parse_length(value, &type);
      }
    else if (!strcmp(key, "viewBox"))
      {
-        if (_parse_number(&value, &node->vx))
-          if (_parse_number(&value, &node->vy))
-            if (_parse_number(&value, &node->vw))
-              _parse_number(&value, &node->vh);
+        if (_parse_number(&value, &doc->vx))
+          if (_parse_number(&value, &doc->vy))
+            if (_parse_number(&value, &doc->vw))
+              _parse_number(&value, &doc->vh);
+     }
+   else if (!strcmp(key, "style"))
+     {
+        _attr_style_node(node, value);
+     }
+   else
+     {
+        _parse_style_attr(node, key, value);
      }
    return EINA_TRUE;
 }
@@ -923,7 +935,7 @@ _create_svg_node(Svg_Node *parent, const char *buf, unsigned buflen)
    Svg_Node *node = _create_node(parent, SVG_NODE_DOC);
 
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_svg_node, &node->node.doc);
+                                    _attr_parse_svg_node, node);
    return node;
 }
 
