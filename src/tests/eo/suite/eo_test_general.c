@@ -698,9 +698,12 @@ START_TEST(eo_generic_data)
    Eina_Value *value;
    Eina_Value *value2;
 
+
+
    eo_key_data_set(obj, "test1", (void *) 1);
    data = eo_key_data_get(obj, "test1");
    fail_if(1 != (intptr_t) data);
+
    eo_key_data_set(obj, "test1", NULL);
    data = eo_key_data_get(obj, "test1");
    fail_if(data);
@@ -709,17 +712,20 @@ START_TEST(eo_generic_data)
    eo_key_data_set(obj, "test2", (void *) 2);
    data = eo_key_data_get(obj, "test1");
    fail_if(1 != (intptr_t) data);
+
    data = eo_key_data_get(obj, "test2");
    fail_if(2 != (intptr_t) data);
 
    data = eo_key_data_get(obj, "test2");
    fail_if(2 != (intptr_t) data);
+
    eo_key_data_set(obj, "test2", NULL);
    data = eo_key_data_get(obj, "test2");
    fail_if(data);
 
    data = eo_key_data_get(obj, "test1");
    fail_if(1 != (intptr_t) data);
+
    eo_key_data_set(obj, "test1", NULL);
    data = eo_key_data_get(obj, "test1");
    fail_if(data);
@@ -729,28 +735,107 @@ START_TEST(eo_generic_data)
    eo_key_obj_set(obj, "test1", obj2);
    objtmp = eo_key_obj_get(obj, "test1");
    fail_if(obj2 != objtmp);
+
    eo_key_obj_set(obj, "test1", NULL);
    objtmp = eo_key_obj_get(obj, "test1");
    fail_if(objtmp);
 
    eo_key_obj_set(obj, "test1", obj2);
+   fail_if(eo_ref_get(obj2) != 2);
+
    eo_key_obj_set(obj, "test2", obj3);
+   fail_if(eo_ref_get(obj3) != 2);
+
    objtmp = eo_key_obj_get(obj, "test1");
    fail_if(obj2 != objtmp);
+
    objtmp = eo_key_obj_get(obj, "test2");
    fail_if(obj3 != objtmp);
 
    data = eo_key_obj_get(obj, "test2");
    fail_if(obj3 != objtmp);
+
    eo_key_obj_set(obj, "test2", NULL);
+   fail_if(eo_ref_get(obj3) != 1);
+
    objtmp = eo_key_obj_get(obj, "test2");
    fail_if(objtmp);
 
    objtmp = eo_key_obj_get(obj, "test1");
    fail_if(obj2 != objtmp);
+
    eo_key_obj_set(obj, "test1", NULL);
+   fail_if(eo_ref_get(obj2) != 1);
+
    objtmp = eo_key_obj_get(obj, "test1");
    fail_if(objtmp);
+
+   eo_key_obj_set(obj, "test1", obj2);
+   eo_key_obj_set(obj, "test2", obj3);
+   eo_del(obj2);
+   eo_del(obj2);
+   eo_del(obj3);
+   eo_del(obj3);
+   objtmp = eo_key_obj_get(obj, "test1");
+   fail_if(objtmp);
+
+   objtmp = eo_key_obj_get(obj, "test2");
+   fail_if(objtmp);
+
+
+
+   obj2 = eo_add(SIMPLE_CLASS, NULL);
+   obj3 = eo_add(SIMPLE_CLASS, NULL);
+
+   eo_key_obj_weak_set(obj, "test1", obj2);
+   objtmp = eo_key_obj_weak_get(obj, "test1");
+   fail_if(obj2 != objtmp);
+
+   eo_key_obj_weak_set(obj, "test1", NULL);
+   objtmp = eo_key_obj_weak_get(obj, "test1");
+   fail_if(objtmp);
+
+   eo_key_obj_weak_set(obj, "test1", obj2);
+   fail_if(eo_ref_get(obj2) != 1);
+
+   eo_key_obj_weak_set(obj, "test2", obj3);
+   fail_if(eo_ref_get(obj3) != 1);
+
+   objtmp = eo_key_obj_weak_get(obj, "test1");
+   fail_if(obj2 != objtmp);
+
+   objtmp = eo_key_obj_weak_get(obj, "test2");
+   fail_if(obj3 != objtmp);
+
+   data = eo_key_obj_weak_get(obj, "test2");
+   fail_if(obj3 != objtmp);
+
+   eo_key_obj_weak_set(obj, "test2", NULL);
+   fail_if(eo_ref_get(obj3) != 1);
+
+   objtmp = eo_key_obj_weak_get(obj, "test2");
+   fail_if(objtmp);
+
+   objtmp = eo_key_obj_weak_get(obj, "test1");
+   fail_if(obj2 != objtmp);
+
+   eo_key_obj_weak_set(obj, "test1", NULL);
+   fail_if(eo_ref_get(obj2) != 1);
+
+   objtmp = eo_key_obj_weak_get(obj, "test1");
+   fail_if(objtmp);
+
+   eo_key_obj_weak_set(obj, "test1", obj2);
+   eo_key_obj_weak_set(obj, "test2", obj3);
+   eo_del(obj2);
+   eo_del(obj3);
+   objtmp = eo_key_obj_weak_get(obj, "test1");
+   fail_if(objtmp);
+
+   objtmp = eo_key_obj_weak_get(obj, "test2");
+   fail_if(objtmp);
+
+
 
    value = eina_value_new(EINA_VALUE_TYPE_INT);
    eina_value_set(value, 1234);
@@ -764,6 +849,7 @@ START_TEST(eo_generic_data)
    eo_key_value_set(obj, "value1", NULL);
    value2 = eo_key_value_get(obj, "value1");
    fail_if(value2 != NULL);
+
    eo_key_value_set(obj, "value1", NULL);
 
    eo_unref(obj);

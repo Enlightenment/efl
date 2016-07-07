@@ -253,6 +253,29 @@ abstract Eo.Base ()
             }
          }
       }
+      @property key_obj_weak {
+         [[Generic weak object reference with string key to object.
+
+           The object key will be removed if the object is removed, but
+           will not take or removed references like key_obj.
+
+           This is the same key store used by key_data and key_value so keys
+           are shared and can store only one thing
+         ]]
+         keys {
+            key: string; [[the key associated with the object ref]]
+         }
+         set {
+            values {
+               objdata: const(Eo.Base); [[the object to set]]
+            }
+         }
+         get {
+            values {
+               objdata: Eo.Base; [[the object to set]]
+            }
+         }
+      }
       @property key_value {
          [[Value on with string key on the object.
 

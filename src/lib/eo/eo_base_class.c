@@ -41,17 +41,19 @@ typedef struct
 typedef enum {
      DATA_PTR,
      DATA_OBJ,
+     DATA_OBJ_WEAK,
      DATA_VAL
 } Eo_Generic_Data_Node_Type;
 
 typedef struct
 {
    EINA_INLIST;
+   const Eo                  *obj;
    Eina_Stringshare          *key;
    union {
-        Eina_Value *val;
-        Eo *obj;
-        void *ptr;
+        Eina_Value           *val;
+        Eo                   *obj;
+        void                 *ptr;
    } d;
    Eo_Generic_Data_Node_Type  d_type;
 } Eo_Generic_Data_Node;
@@ -86,22 +88,25 @@ _eo_base_extension_noneed(Eo_Base_Data *pd)
    pd->ext = NULL;
 }
 
-
-
+static void _key_generic_cb_del(void *data, const Eo_Event *event);
 
 static void
 _eo_generic_data_node_free(Eo_Generic_Data_Node *node)
 {
    switch (node->d_type)
      {
-      case DATA_OBJ:
-         eo_unref(node->d.obj);
-         break;
-      case DATA_VAL:
-         eina_value_free(node->d.val);
-         break;
       case DATA_PTR:
-         break;
+        break;
+      case DATA_OBJ:
+        eo_event_callback_del(node->d.obj, EO_EVENT_DEL, _key_generic_cb_del, node);
+        eo_unref(node->d.obj);
+        break;
+      case DATA_OBJ_WEAK:
+        eo_event_callback_del(node->d.obj, EO_EVENT_DEL, _key_generic_cb_del, node);
+        break;
+      case DATA_VAL:
+        eina_value_free(node->d.val);
+        break;
      }
    eina_stringshare_del(node->key);
    free(node);
@@ -126,7 +131,17 @@ _eo_generic_data_del_all(Eo *obj EINA_UNUSED, Eo_Base_Data *pd)
 }
 
 static void
-_eo_key_generic_del(const Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
+_eo_key_generic_direct_del(Eo_Base_Data *pd, Eo_Generic_Data_Node *node, Eina_Bool call_free)
+{
+   Eo_Base_Extension *ext = pd->ext;
+
+   ext->generic_data = eina_inlist_remove
+     (ext->generic_data, EINA_INLIST_GET(node));
+   if (call_free) _eo_generic_data_node_free(node);
+}
+
+static void
+_eo_key_generic_del(const Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, Eina_Bool call_free)
 {
    Eo_Generic_Data_Node *node;
    Eo_Base_Extension *ext = pd->ext;
@@ -137,26 +152,26 @@ _eo_key_generic_del(const Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key
           {
              ext->generic_data = eina_inlist_remove
                (ext->generic_data, EINA_INLIST_GET(node));
-             _eo_generic_data_node_free(node);
+             if (call_free) _eo_generic_data_node_free(node);
              return;
           }
      }
 }
 
 /* Return TRUE if the object was newly added. */
-static Eina_Bool
-_key_generic_set(const Eo *obj, Eo_Base_Data *pd, const char *key, const void *data, Eo_Generic_Data_Node_Type d_type)
+static Eo_Generic_Data_Node *
+_key_generic_set(const Eo *obj, Eo_Base_Data *pd, const char *key, const void *data, Eo_Generic_Data_Node_Type d_type, Eina_Bool call_free)
 {
    Eo_Generic_Data_Node *node;
    Eo_Base_Extension *ext = pd->ext;
 
-   if (!key) return EINA_FALSE;
+   if (!key) return NULL;
    if (ext)
      {
         if (!data)
           {
-             _eo_key_generic_del(obj, pd, key);
-             return EINA_TRUE;
+             _eo_key_generic_del(obj, pd, key, call_free);
+             return NULL;
           }
         EINA_INLIST_FOREACH(ext->generic_data, node)
           {
@@ -178,15 +193,16 @@ _key_generic_set(const Eo *obj, Eo_Base_Data *pd, const char *key, const void *d
      {
         node = calloc(1, sizeof(Eo_Generic_Data_Node));
         if (!node) return EINA_FALSE;
+        node->obj = obj;
         node->key = eina_stringshare_add(key);
         node->d.ptr = (void *) data;
         node->d_type = d_type;
         ext->generic_data = eina_inlist_prepend
           (ext->generic_data, EINA_INLIST_GET(node));
-        return EINA_TRUE;
+        return node;
      }
 
-   return EINA_FALSE;
+   return NULL;
 }
 
 static void *
@@ -218,10 +234,18 @@ _key_generic_get(const Eo *obj, Eo_Base_Data *pd, const char *key, Eo_Generic_Da
    return NULL;
 }
 
+static void
+_key_generic_cb_del(void *data, const Eo_Event *event EINA_UNUSED)
+{
+   Eo_Generic_Data_Node *node = data;
+   Eo_Base_Data *pd = eo_data_scope_get(node->obj, EO_BASE_CLASS);
+   _eo_key_generic_direct_del(pd, node, EINA_FALSE);
+}
+
 EOLIAN static void
 _eo_base_key_data_set(Eo *obj, Eo_Base_Data *pd, const char *key, const void *data)
 {
-   _key_generic_set(obj, pd, key, data, DATA_PTR);
+   _key_generic_set(obj, pd, key, data, DATA_PTR, EINA_TRUE);
 }
 
 EOLIAN static void *
@@ -233,8 +257,14 @@ _eo_base_key_data_get(Eo *obj, Eo_Base_Data *pd, const char *key)
 EOLIAN static void
 _eo_base_key_obj_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, const Eo *objdata)
 {
-   if (_key_generic_set(obj, pd, key, objdata, DATA_OBJ))
-      eo_ref(objdata);
+   Eo_Generic_Data_Node *node;
+
+   node = _key_generic_set(obj, pd, key, objdata, DATA_OBJ, EINA_TRUE);
+   if (node)
+     {
+        eo_ref(objdata);
+        eo_event_callback_add((Eo *)objdata, EO_EVENT_DEL, _key_generic_cb_del, node);
+     }
 }
 
 EOLIAN static Eo *
@@ -244,9 +274,27 @@ _eo_base_key_obj_get(Eo *obj, Eo_Base_Data *pd, const char *key)
 }
 
 EOLIAN static void
+_eo_base_key_obj_weak_set(Eo *obj, Eo_Base_Data *pd, const char * key, const Eo_Base *objdata)
+{
+   Eo_Generic_Data_Node *node;
+
+   node = _key_generic_set(obj, pd, key, objdata, DATA_OBJ_WEAK, EINA_TRUE);
+   if (node)
+     {
+        eo_event_callback_add((Eo *)objdata, EO_EVENT_DEL, _key_generic_cb_del, node);
+     }
+}
+
+EOLIAN static Eo *
+_eo_base_key_obj_weak_get(Eo *obj, Eo_Base_Data *pd, const char * key)
+{
+   return _key_generic_get(obj, pd, key, DATA_OBJ_WEAK);
+}
+
+EOLIAN static void
 _eo_base_key_value_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, Eina_Value *value)
 {
-   _key_generic_set(obj, pd, key, value, DATA_VAL);
+   _key_generic_set(obj, pd, key, value, DATA_VAL, EINA_TRUE);
 }
 
 EOLIAN static Eina_Value *
