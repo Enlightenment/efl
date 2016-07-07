@@ -1811,45 +1811,10 @@ test_entry4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(win);
 }
 
-static void
-_entry_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
-                    void *event_info EINA_UNUSED)
-{
-   printf("entry is changed\n");
-}
-
-#define ELM_ENTRY_CHUNK_SIZE 10000
-static void
-my_ent_set_chunk(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Evas_Object *en = data;
-   char *buf = calloc((ELM_ENTRY_CHUNK_SIZE + 1), sizeof(char));
-   int i;
-   for (i = 0; i < ELM_ENTRY_CHUNK_SIZE; i++)
-     buf[i] = '1';
-
-   printf("set %d length of text\n", ELM_ENTRY_CHUNK_SIZE);
-   elm_entry_entry_set(en, buf);
-}
-
-static void
-my_ent_set_long(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Evas_Object *en = data;
-   char *buf = calloc((ELM_ENTRY_CHUNK_SIZE + 2), sizeof(char));
-   int i;
-   for (i = 0; i < (ELM_ENTRY_CHUNK_SIZE + 1); i++)
-     buf[i] = '1';
-
-   printf("set %d length of text\n", ELM_ENTRY_CHUNK_SIZE + 1);
-   elm_entry_entry_set(en, buf);
-}
-
 void
 test_entry5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx2, *bt, *en;
-   char buf[10];
 
    win = elm_win_util_standard_add("entry5", "Entry 5");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -1875,7 +1840,6 @@ test_entry5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
                        "good testing to see if entry widgets work as advertised."
                       );
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
-   evas_object_smart_callback_add(en, "changed", _entry_changed_cb, NULL);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
 
@@ -2100,34 +2064,6 @@ test_entry5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Pas");
    evas_object_smart_callback_add(bt, "clicked", my_ent_bt_pas, en);
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx2, bt);
-   elm_object_focus_allow_set(bt, EINA_FALSE);
-   evas_object_show(bt);
-
-   elm_box_pack_end(bx, bx2);
-   evas_object_show(bx2);
-
-   bx2 = elm_box_add(win);
-   elm_box_horizontal_set(bx2, EINA_TRUE);
-   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   bt = elm_button_add(win);
-   snprintf(buf, 10, "set %d", ELM_ENTRY_CHUNK_SIZE);
-   elm_object_text_set(bt, buf);
-   evas_object_smart_callback_add(bt, "clicked", my_ent_set_chunk, en);
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx2, bt);
-   elm_object_focus_allow_set(bt, EINA_FALSE);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   snprintf(buf, 10, "set %d", ELM_ENTRY_CHUNK_SIZE + 1);
-   elm_object_text_set(bt, buf);
-   evas_object_smart_callback_add(bt, "clicked", my_ent_set_long, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
