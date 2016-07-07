@@ -32,14 +32,9 @@
 
 #include "eina_debug.h"
 
-<<<<<<< HEAD
-# include <pthread.h>
-# include <errno.h>
-=======
 #include <pthread.h>
 #include <errno.h>
 #include <signal.h>
->>>>>>> aeeda1f... efl - threads and signals - make efl work on "insane" os's with signals
 
 #ifdef EINA_HAVE_PTHREAD_AFFINITY
 #ifndef __linux__
