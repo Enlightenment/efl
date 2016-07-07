@@ -1281,11 +1281,7 @@ _clone_grad_stops(Eina_List *from)
         Efl_Gfx_Gradient_Stop *new_stop;
 
         new_stop = calloc(1, sizeof(Efl_Gfx_Gradient_Stop));
-        new_stop->r = stop->r;
-        new_stop->g = stop->g;
-        new_stop->b = stop->b;
-        new_stop->a = stop->a;
-
+        memcpy(new_stop, stop, sizeof(Efl_Gfx_Gradient_Stop));
         res = eina_list_append(res, new_stop);
      }
 
@@ -1308,19 +1304,12 @@ _clone_gradient(Svg_Style_Gradient *from)
    if (grad->type == SVG_LINEAR_GRADIENT)
      {
         grad->linear = calloc(1, sizeof(Svg_Linear_Gradient));
-        grad->linear->x1 = from->linear->x1;
-        grad->linear->y1 = from->linear->y1;
-        grad->linear->x2 = from->linear->x2;
-        grad->linear->y1 = from->linear->y2;
+        memcpy(grad->linear, from->linear, sizeof(Svg_Linear_Gradient));
      }
    else if (grad->type == SVG_RADIAL_GRADIENT)
      {
         grad->radial = calloc(1, sizeof(Svg_Radial_Gradient));
-        grad->radial->cx = from->radial->cx;
-        grad->radial->cy = from->radial->cy;
-        grad->radial->fx = from->radial->fx;
-        grad->radial->fy = from->radial->fy;
-        grad->radial->r = from->radial->r;
+        memcpy(grad->radial, from->radial, sizeof(Svg_Radial_Gradient));
      }
 
    return grad;
