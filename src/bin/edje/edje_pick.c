@@ -745,7 +745,7 @@ _edje_pick_images_copy(Edje_File *edf, Edje_File *o)
                        o->image_dir->entries_count += 1;
 
                        /* alloc mem first time  or  re-allocate again (bigger array) */
-                       entries = realloc(entries,
+                       entries = realloc(o->image_dir->entries,
                                          o->image_dir->entries_count *
                                          sizeof(Edje_Image_Directory_Entry));
                        if (!entries)
