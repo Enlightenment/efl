@@ -885,6 +885,79 @@ local get_typedecl_str = function(tp)
     error("unhandled typedecl type: " .. tpt)
 end
 
+local get_suffixed_ctype = function(tp, suffix, isstr)
+    local ct = isstr and tp or tp:c_type_get()
+    if ct:sub(#ct) == "*" then
+        return ct .. suffix
+    else
+        return ct .. " " .. suffix
+    end
+end
+
+local get_typedecl_cstr = function(tp)
+    local tps = eolian.typedecl_type
+    local tpt = tp:type_get()
+    if tpt == tps.UNKNOWN then
+        error("unknown typedecl: " .. tp:full_name_get())
+    elseif tpt == tps.STRUCT or tpt == tps.STRUCT_OPAQUE then
+        local buf = { "typedef struct " }
+        local fulln = tp:full_name_get():gsub("%.", "_");
+        buf[#buf + 1] = "_" .. fulln;
+        if tpt == tps.STRUCT_OPAQUE then
+            buf[#buf + 1] = " " .. fulln .. ";"
+            return table.concat(buf)
+        end
+        local fields = tp:struct_fields_get():to_array()
+        if #fields == 0 then
+            buf[#buf + 1] = " {} " .. fulln .. ";"
+            return table.concat(buf)
+        end
+        buf[#buf + 1] = " {\n"
+        for i, fld in ipairs(fields) do
+            buf[#buf + 1] = "    "
+            buf[#buf + 1] = get_suffixed_ctype(fld:type_get(), fld:name_get())
+            buf[#buf + 1] = ";\n"
+        end
+        buf[#buf + 1] = "} " .. fulln .. ";"
+        return table.concat(buf)
+    elseif tpt == tps.ENUM then
+        local buf = { "typedef enum" }
+        local fulln = tp:full_name_get():gsub("%.", "_");
+        local fields = tp:enum_fields_get():to_array()
+        if #fields == 0 then
+            buf[#buf + 1] = " {} " .. fulln .. ";"
+            return table.concat(buf)
+        end
+        buf[#buf + 1] = " {\n"
+        for i, fld in ipairs(fields) do
+            buf[#buf + 1] = "    "
+            buf[#buf + 1] = fld:c_name_get()
+            local val = fld:value_get()
+            if val then
+                buf[#buf + 1] = " = "
+                local ev = val:eval(eolian.expression_mask.INT)
+                local lit = ev:to_literal()
+                buf[#buf + 1] = lit
+                local ser = val:serialize()
+                if ser and ser ~= lit then
+                    buf[#buf + 1] = " /* " .. ser .. " */"
+                end
+            end
+            if i == #fields then
+                buf[#buf + 1] = "\n"
+            else
+                buf[#buf + 1] = ",\n"
+            end
+        end
+        buf[#buf + 1] = "} " .. fulln .. ";"
+        return table.concat(buf)
+    elseif tpt == tps.ALIAS then
+        return "typedef " .. get_suffixed_ctype(tp:base_type_get(),
+            tp:full_name_get()) .. ";"
+    end
+    error("unhandled typedecl type: " .. tpt)
+end
+
 local gen_doc_refd = function(str)
     if not str then
         return nil
@@ -967,30 +1040,19 @@ end
 
 local gen_cparam = function(par, out)
     local part = par:type_get()
-    local tstr
     out = out or (par:direction_get() == eolian.parameter_dir.OUT)
-    if part:type_get() == eolian.type_type.POINTER then
-        tstr = part:c_type_get()
-        if out then
-            tstr = tstr .. "*"
-        end
-    elseif out then
-        tstr = part:c_type_get() .. " *"
-    else
-        tstr = part:c_type_get() .. " "
+    local tstr = part:c_type_get()
+    if out then
+        tstr = get_suffixed_ctype(tstr, "*", true)
     end
-    return tstr .. par:name_get()
+    return get_suffixed_ctype(tstr, par:name_get(), true)
 end
 
 local get_func_csig_part = function(cn, tp)
     if not tp then
         return "void " .. cn
     end
-    local ctp = tp:c_type_get()
-    if ctp:sub(#ctp) == "*" then
-        return ctp .. cn
-    end
-    return ctp .. " " .. cn
+    return get_suffixed_ctype(tp, cn)
 end
 
 local gen_func_csig = function(f, ftype)
@@ -1525,7 +1587,7 @@ local write_tsigs = function(f, tp)
     f:write_nl()
 
     f:write_h("C signature", 3)
-    f:write_code(tp:c_type_get() .. ";")
+    f:write_code(get_typedecl_cstr(tp), "c")
     f:write_nl()
 end
 
