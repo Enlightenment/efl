@@ -2566,6 +2566,7 @@ _edje_ref_vector_data(Edje *ed, int svg_id)
      }
    vector->vg = root;
    ed->vector_cache = eina_list_append(ed->vector_cache, vector);
+   _edje_svg_node_free(node);
    return vector;
 }
 
@@ -2659,3 +2660,75 @@ edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene)
 
    return EINA_TRUE;
 }
+
+static void
+_svg_style_gradient_free(Svg_Style_Gradient *grad)
+{
+   Efl_Gfx_Gradient_Stop *stop;
+
+   if (!grad) return;
+
+   eina_stringshare_del(grad->id);
+   eina_stringshare_del(grad->ref);
+   free(grad->radial);
+   free(grad->linear);
+
+   EINA_LIST_FREE(grad->stops, stop)
+     {
+        free(stop);
+     }
+   free(grad);
+}
+
+static void
+_node_style_free(Svg_Style_Property *style)
+{
+   if (!style) return;
+
+   _svg_style_gradient_free(style->fill.paint.gradient);
+   eina_stringshare_del(style->fill.paint.url);
+   _svg_style_gradient_free(style->stroke.paint.gradient);
+   eina_stringshare_del(style->stroke.paint.url);
+   free(style);
+}
+
+EAPI void
+_edje_svg_node_free(Svg_Node *node)
+{
+   Svg_Node *child;
+   Svg_Style_Gradient *grad;
+
+   if (!node) return;
+
+   EINA_LIST_FREE(node->child, child)
+     {
+        _edje_svg_node_free(child);
+     }
+
+   eina_stringshare_del(node->id);
+   free(node->transform);
+   _node_style_free(node->style);
+   switch (node->type)
+     {
+        case SVG_NODE_PATH:
+           eina_stringshare_del(node->node.path.path);
+           break;
+        case SVG_NODE_POLYGON:
+        case SVG_NODE_POLYLINE:
+           free(node->node.polygon.points);
+           break;
+        case SVG_NODE_DOC:
+           _edje_svg_node_free(node->node.doc.defs);
+           break;
+        case SVG_NODE_DEFS:
+           EINA_LIST_FREE(node->node.defs.gradients, grad)
+             {
+                _svg_style_gradient_free(grad);
+             }
+           break;
+        default:
+           break;
+     }
+  free(node);
+}
+

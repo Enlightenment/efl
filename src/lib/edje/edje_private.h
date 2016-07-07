@@ -3273,6 +3273,7 @@ void _edje_dupe_vector_data(Edje *ed, int svg_id, double width, double height,
 
 Edje_Vector_Data * _edje_ref_vector_data(Edje *ed, int svg_id);
 
+EAPI void _edje_svg_node_free(Svg_Node *node);
 
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>

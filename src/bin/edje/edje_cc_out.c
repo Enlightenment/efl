@@ -1271,6 +1271,7 @@ data_write_vectors(Eet_File *ef, int *vector_num)
              *vector_num += 1;
              eina_file_close(f);
              found = EINA_TRUE;
+             _edje_svg_node_free(root);
              break;
           }
         if (!found)
