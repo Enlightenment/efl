@@ -1339,6 +1339,11 @@ evas_object_smart_need_bounding_box_update(Evas_Object *eo_obj)
    evas_object_async_block(obj);
    if (o->update_boundingbox_needed) return;
    o->update_boundingbox_needed = EINA_TRUE;
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     {
+        state_write->cache.clip.dirty = EINA_TRUE;
+     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
    if (obj->smart.parent) evas_object_smart_need_bounding_box_update(obj->smart.parent);
 }
@@ -1349,10 +1354,12 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
    Evas_Smart_Data *os;
    Eina_Inlist *list;
    Evas_Object_Protected_Data *o;
-   Evas_Coord minx;
-   Evas_Coord miny;
-   Evas_Coord maxw = 0;
-   Evas_Coord maxh = 0;
+   Evas_Coord minx = 0x7fffffff;
+   Evas_Coord miny = 0x7fffffff;
+   Evas_Coord maxx = 0x80000000;
+   Evas_Coord maxy = 0x80000000;
+   Evas_Coord tx1, ty1, tx2, ty2;
+   Eina_Bool none = EINA_TRUE;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -1363,23 +1370,15 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
 
    if (!os->update_boundingbox_needed) return;
    os->update_boundingbox_needed = EINA_FALSE;
-   evas_object_clip_dirty(eo_obj, obj);
-   if (obj->cur->clipper) evas_object_clip_recalc(obj->cur->clipper);
-
-   minx = obj->layer->evas->output.w;
-   miny = obj->layer->evas->output.h;
 
    list = os->contained;
    EINA_INLIST_FOREACH(list, o)
      {
-        Evas_Coord tx;
-        Evas_Coord ty;
-        Evas_Coord tw;
-        Evas_Coord th;
-
         if (o == obj) continue ;
         if (o->clip.clipees || o->is_static_clip) continue ;
         if (!o->cur->visible) continue;
+
+        none = EINA_FALSE;
 
         if (o->is_smart)
           {
@@ -1387,46 +1386,44 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
 
              evas_object_smart_bounding_box_update(o->object, o);
 
-             tx = s->cur.bounding_box.x;
-             ty = s->cur.bounding_box.y;
-             tw = tx + s->cur.bounding_box.w;
-             th = ty + s->cur.bounding_box.h;
+             tx1 = s->cur.bounding_box.x;
+             ty1 = s->cur.bounding_box.y;
+             tx2 = tx1 + s->cur.bounding_box.w;
+             ty2 = ty1 + s->cur.bounding_box.h;
           }
         else
           {
-             tx = o->cur->geometry.x;
-             ty = o->cur->geometry.y;
-             tw = tx + o->cur->geometry.w;
-             th = ty + o->cur->geometry.h;
+             tx1 = o->cur->geometry.x;
+             ty1 = o->cur->geometry.y;
+             tx2 = tx1 + o->cur->geometry.w;
+             ty2 = ty1 + o->cur->geometry.h;
           }
 
-        if (tx < minx) minx = tx;
-        if (ty < miny) miny = ty;
-        if (tw > maxw) maxw = tw;
-        if (th > maxh) maxh = th;
+        if (tx1 < minx) minx = tx1;
+        if (ty1 < miny) miny = ty1;
+        if (tx2 > maxx) maxx = tx2;
+        if (ty2 > maxy) maxy = ty2;
+     }
+   if (none)
+     {
+        minx = obj->cur->geometry.x;
+        miny = obj->cur->geometry.y;
+        maxx = obj->cur->geometry.x + obj->cur->geometry.w;
+        maxy = obj->cur->geometry.y + obj->cur->geometry.h;
      }
 
-   if (minx != os->cur.bounding_box.x)
-     {
-        os->cur.bounding_box.w += os->cur.bounding_box.x - minx;
-        os->cur.bounding_box.x = minx;
-     }
+   os->cur.bounding_box.x = minx;
+   os->cur.bounding_box.y = miny;
+   os->cur.bounding_box.w = maxx - minx;
+   os->cur.bounding_box.h = maxy - miny;
 
-   if (miny != os->cur.bounding_box.y)
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
-        os->cur.bounding_box.h += os->cur.bounding_box.y - miny;
-        os->cur.bounding_box.y = miny;
+        state_write->cache.clip.dirty = EINA_TRUE;
      }
-
-   if (maxw != os->cur.bounding_box.x + os->cur.bounding_box.w)
-     {
-        os->cur.bounding_box.w = maxw - os->cur.bounding_box.x;
-     }
-
-   if (maxh != os->cur.bounding_box.y + os->cur.bounding_box.h)
-     {
-        os->cur.bounding_box.h = maxh - os->cur.bounding_box.y;
-     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+   evas_object_clip_recalc(obj);
+   if (obj->cur->clipper) evas_object_clip_recalc(obj->cur->clipper);
 }
 
 /* all nice and private */

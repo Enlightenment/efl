@@ -307,8 +307,7 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
    if (clipper)
      {
         // this causes problems... hmmm ?????
-        if (clipper->cur->cache.clip.dirty)
-          evas_object_clip_recalc(clipper);
+        evas_object_clip_recalc(clipper);
 
         // I don't know why this test was here in the first place. As I have
         // no issue showing up due to this, I keep it and move color out of it.
