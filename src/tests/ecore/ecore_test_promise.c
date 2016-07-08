@@ -376,6 +376,618 @@ START_TEST(ecore_test_promise_progress_promise)
 }
 END_TEST
 
+typedef struct _Future_Ok Future_Ok;
+struct _Future_Ok
+{
+   Eina_Bool then : 1;
+   Eina_Bool cancel : 1;
+   Eina_Bool progress : 1;
+};
+
+static void
+_then(void *data, const Eo_Event *ev)
+{
+   Efl_Future_Event_Success *s = ev->info;
+   int *value = s->value;
+   Future_Ok *fo = data;
+
+   fail_if(*value != 42);
+   fo->then = EINA_TRUE;
+}
+
+static void
+_cancel(void *data, const Eo_Event *ev)
+{
+   Efl_Future_Event_Failure *f = ev->info;
+   Future_Ok *fo = data;
+
+   fail_if(f->error != EINA_ERROR_FUTURE_CANCEL);
+   fo->cancel = EINA_TRUE;
+}
+
+static void
+_progress(void *data, const Eo_Event *ev)
+{
+   Efl_Future_Event_Progress *p = ev->info;
+   int *value = p->progress;
+   Future_Ok *fo = data;
+
+   fail_if(*value != 7);
+   fo->progress = EINA_TRUE;
+}
+
+static void
+_death(void *data, const Eo_Event *ev EINA_UNUSED)
+{
+   Eina_Bool *death = data;
+
+   *death = EINA_TRUE;
+}
+
+// Test value set after then
+START_TEST(efl_test_promise_future_success)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   f = efl_promise_future_get(p);
+   fail_if(!f);
+
+   eo_event_callback_add(f, EO_EVENT_DEL, _death, &deadf);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo));
+
+   fail_if(deadp || deadf);
+
+   efl_promise_progress_set(p, &progress);
+   efl_promise_value_set(p, &value, NULL);
+
+   fail_if(!fo.then || fo.cancel || !fo.progress);
+   fail_if(!deadf || deadp);
+
+   eo_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(efl_test_promise_future_cancel)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   efl_future_use(&f, efl_promise_future_get(p));
+   fail_if(!f);
+
+   eo_event_callback_add(f, EO_EVENT_DEL, _death, &deadf);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+   eo_event_callback_add(p, EFL_PROMISE_EVENT_FUTURE_NONE, _death, &none);
+
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo));
+
+   fail_if(deadp || deadf);
+
+   efl_promise_progress_set(p, &progress);
+   efl_future_cancel(f);
+
+   efl_promise_value_set(p, &value, NULL);
+
+   fail_if(fo.then || !fo.cancel || !fo.progress);
+   fail_if(!deadf || deadp);
+   fail_if(!none);
+
+   eo_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+// Test value set before then
+START_TEST(efl_test_promise_before_future_success)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   f = efl_promise_future_get(p);
+   fail_if(!f);
+
+   eo_event_callback_add(f, EO_EVENT_DEL, _death, &deadf);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+
+   efl_promise_progress_set(p, &progress);
+   efl_promise_value_set(p, &value, NULL);
+
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo));
+
+   fail_if(deadp || !deadf);
+   fail_if(!fo.then || fo.cancel || fo.progress);
+
+   eo_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(efl_test_promise_before_future_cancel)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   efl_future_use(&f, efl_promise_future_get(p));
+   fail_if(!f);
+
+   eo_event_callback_add(f, EO_EVENT_DEL, _death, &deadf);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+   eo_event_callback_add(p, EFL_PROMISE_EVENT_FUTURE_NONE, _death, &none);
+
+   efl_promise_progress_set(p, &progress);
+   efl_future_cancel(f);
+
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo));
+
+   fail_if(deadp || !deadf);
+
+   efl_promise_value_set(p, &value, NULL);
+
+   fail_if(fo.then || !fo.cancel || fo.progress);
+   fail_if(!none);
+
+   eo_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+static void
+_chain_then(void *data, const Eo_Event *ev)
+{
+   Efl_Future_Event_Success *s = ev->info;
+   int *v = s->value;
+   Future_Ok *fo = data;
+
+   fo->then = EINA_TRUE;
+
+   fail_if(*v != 42);
+
+   efl_promise_value_set(s->next, v, NULL);
+}
+
+static void
+_chain_fail(void *data, const Eo_Event *ev)
+{
+   Efl_Future_Event_Failure *f = ev->info;
+   Future_Ok *fo = data;
+
+   fo->cancel = EINA_TRUE;
+
+   efl_promise_failed(f->next, f->error);
+}
+
+static void
+_chain_progress(void *data, const Eo_Event *ev)
+{
+   Efl_Future_Event_Progress *p = ev->info;
+   Future_Ok *fo = data;
+
+   fo->progress = EINA_TRUE;
+
+   efl_promise_progress_set(p->next, p->progress);
+}
+
+// Test chained then
+START_TEST(efl_test_promise_future_chain_success)
+{
+   Efl_Promise *p;
+   Efl_Future *f1, *f2;
+   Future_Ok fo1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok fo2 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf1 = EINA_FALSE, deadf2 = EINA_FALSE, deadp = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   f1 = efl_promise_future_get(p);
+   fail_if(!f1);
+
+   eo_event_callback_add(f1, EO_EVENT_DEL, _death, &deadf1);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+
+   f2 = efl_future_then(f1, _chain_then, _chain_fail, _chain_progress, &fo1);
+   fail_if(!f2);
+
+   eo_event_callback_add(f2, EO_EVENT_DEL, _death, &deadf2);
+
+   fail_if(!efl_future_then(f2, _then, _cancel, _progress, &fo2));
+
+   fail_if(deadp || deadf1 || deadf2);
+
+   efl_promise_progress_set(p, &progress);
+   efl_promise_value_set(p, &value, NULL);
+
+   fail_if(!fo1.then || fo1.cancel || !fo1.progress);
+   fail_if(!fo2.then || fo2.cancel || !fo2.progress);
+   fail_if(!deadf1 || !deadf2 || deadp);
+
+   eo_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(efl_test_promise_future_chain_cancel)
+{
+   Efl_Promise *p;
+   Efl_Future *f1, *f2;
+   Future_Ok fo1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok fo2 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf1 = EINA_FALSE, deadf2 = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   efl_future_use(&f1, efl_promise_future_get(p));
+   fail_if(!f1);
+
+   eo_event_callback_add(f1, EO_EVENT_DEL, _death, &deadf1);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+   eo_event_callback_add(p, EFL_PROMISE_EVENT_FUTURE_NONE, _death, &none);
+
+   f2 = efl_future_then(f1, _chain_then, _chain_fail, _chain_progress, &fo1);
+   fail_if(!f2);
+
+   eo_event_callback_add(f2, EO_EVENT_DEL, _death, &deadf2);
+
+   fail_if(!efl_future_then(f2, _then, _cancel, _progress, &fo2));
+
+   fail_if(deadp || deadf1 || deadf2);
+
+   efl_promise_progress_set(p, &progress);
+   efl_future_cancel(f1);
+
+   efl_promise_value_set(p, &value, NULL);
+
+   fail_if(fo1.then || !fo1.cancel || !fo1.progress);
+   fail_if(fo2.then || !fo2.cancel || !fo2.progress);
+   fail_if(!deadf1 || !deadf2 || deadp);
+   fail_if(!none);
+
+   eo_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+// Test value set after multi then
+START_TEST(efl_test_promise_future_multi_success)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok fo2 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   f = efl_promise_future_get(p);
+   fail_if(!f);
+
+   eo_event_callback_add(f, EO_EVENT_DEL, _death, &deadf);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+
+   eo_ref(f);
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo1));
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo2));
+   eo_unref(f);
+
+   fail_if(deadp || deadf);
+
+   efl_promise_progress_set(p, &progress);
+   efl_promise_value_set(p, &value, NULL);
+
+   fail_if(!fo1.then || fo1.cancel || !fo1.progress);
+   fail_if(!fo2.then || fo2.cancel || !fo2.progress);
+   fail_if(!deadf || deadp);
+
+   eo_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(efl_test_promise_future_multi_cancel)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok fo2 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   efl_future_use(&f, efl_promise_future_get(p));
+   fail_if(!f);
+
+   eo_event_callback_add(f, EO_EVENT_DEL, _death, &deadf);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+   eo_event_callback_add(p, EFL_PROMISE_EVENT_FUTURE_NONE, _death, &none);
+
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo1));
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo2));
+
+   fail_if(deadp || deadf);
+
+   efl_promise_progress_set(p, &progress);
+   efl_future_cancel(f);
+
+   efl_promise_value_set(p, &value, NULL);
+
+   fail_if(fo1.then || !fo1.cancel || !fo1.progress);
+   fail_if(fo2.then || !fo2.cancel || !fo2.progress);
+   fail_if(!deadf || deadp);
+   fail_if(!none);
+
+   eo_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+// Test value set before multi then
+START_TEST(efl_test_promise_before_future_multi_success)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok fo2 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   f = efl_promise_future_get(p);
+   fail_if(!f);
+
+   eo_event_callback_add(f, EO_EVENT_DEL, _death, &deadf);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+
+   efl_promise_progress_set(p, &progress);
+   efl_promise_value_set(p, &value, NULL);
+
+   eo_ref(f);
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo1));
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo2));
+   eo_unref(f);
+
+   fail_if(deadp || !deadf);
+   fail_if(!fo1.then || fo1.cancel || fo1.progress);
+   fail_if(!fo2.then || fo2.cancel || fo2.progress);
+
+   eo_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(efl_test_promise_before_future_multi_cancel)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Future_Ok fo1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok fo2 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok fo3 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   efl_future_use(&f, efl_promise_future_get(p));
+   fail_if(!f);
+
+   eo_event_callback_add(f, EO_EVENT_DEL, _death, &deadf);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+   eo_event_callback_add(p, EFL_PROMISE_EVENT_FUTURE_NONE, _death, &none);
+
+   efl_promise_progress_set(p, &progress);
+   efl_future_cancel(f);
+
+   eo_ref(f);
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo1));
+   fail_if(!efl_future_then(f, _then, _cancel, _progress, &fo2));
+   eo_unref(f);
+
+   fail_if(efl_future_then(f, _then, _cancel, _progress, &fo3));
+
+   fail_if(deadp || !deadf);
+
+   efl_promise_value_set(p, &value, NULL);
+
+   fail_if(fo1.then || !fo1.cancel || fo1.progress);
+   fail_if(fo2.then || !fo2.cancel || fo2.progress);
+   fail_if(fo3.then || fo3.cancel || fo3.progress);
+   fail_if(!none);
+
+   eo_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
+static Eina_Bool cleanup = EINA_FALSE;
+
+static void
+_cleanup_called(void *s EINA_UNUSED)
+{
+   cleanup = EINA_TRUE;
+}
+
+// Test optional value set without then
+START_TEST(efl_test_promise_future_optional_success)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   cleanup = EINA_FALSE;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   f = efl_promise_future_get(p);
+   fail_if(!f);
+
+   eo_event_callback_add(f, EO_EVENT_DEL, _death, &deadf);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+
+   fail_if(deadp || deadf);
+
+   efl_promise_progress_set(p, &progress);
+   efl_promise_value_set(p, &value, _cleanup_called);
+
+   fail_if(deadf || deadp);
+
+   ecore_main_loop_iterate();
+
+   fail_if(!deadf);
+
+   eo_del(p);
+
+   fail_if(!deadp || !cleanup);
+
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(efl_test_promise_future_optional_cancel)
+{
+   Efl_Promise *p;
+   Efl_Future *f;
+   Eina_Bool deadf = EINA_FALSE, deadp = EINA_FALSE, none = EINA_FALSE;
+   int progress = 7;
+   int value = 42;
+
+   cleanup = EINA_FALSE;
+
+   ecore_init();
+
+   p = eo_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p);
+
+   efl_future_use(&f, efl_promise_future_get(p));
+   fail_if(!f);
+
+   eo_event_callback_add(f, EO_EVENT_DEL, _death, &deadf);
+   eo_event_callback_add(p, EO_EVENT_DEL, _death, &deadp);
+   eo_event_callback_add(p, EFL_PROMISE_EVENT_FUTURE_NONE, _death, &none);
+
+   fail_if(deadp || deadf);
+
+   efl_promise_progress_set(p, &progress);
+   efl_future_cancel(f);
+
+   efl_promise_value_set(p, &value, _cleanup_called);
+
+   fail_if(deadf || deadp);
+   fail_if(!none);
+
+   ecore_main_loop_iterate();
+
+   fail_if(!deadf || deadp);
+
+   eo_del(p);
+
+   fail_if(!deadp);
+
+   ecore_shutdown();
+}
+END_TEST
+
 void ecore_test_ecore_promise(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_promise);
@@ -390,4 +1002,17 @@ void ecore_test_ecore_promise(TCase *tc)
    tcase_add_test(tc, ecore_test_promise_immediate_set_lifetime_all);
    tcase_add_test(tc, ecore_test_promise_cancel_promise);
    tcase_add_test(tc, ecore_test_promise_progress_promise);
+
+   tcase_add_test(tc, efl_test_promise_future_success);
+   tcase_add_test(tc, efl_test_promise_future_cancel);
+   tcase_add_test(tc, efl_test_promise_future_chain_success);
+   tcase_add_test(tc, efl_test_promise_future_chain_cancel);
+   tcase_add_test(tc, efl_test_promise_before_future_success);
+   tcase_add_test(tc, efl_test_promise_before_future_cancel);
+   tcase_add_test(tc, efl_test_promise_future_multi_success);
+   tcase_add_test(tc, efl_test_promise_future_multi_cancel);
+   tcase_add_test(tc, efl_test_promise_before_future_multi_success);
+   tcase_add_test(tc, efl_test_promise_before_future_multi_cancel);
+   tcase_add_test(tc, efl_test_promise_future_optional_success);
+   tcase_add_test(tc, efl_test_promise_future_optional_cancel);
 }
