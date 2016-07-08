@@ -2789,11 +2789,16 @@ _xml_route_dump_cb(void *data,
          if (!buf) return EINA_FALSE;
 
          snprintf(buf, length, "%s", value);
-         if (dump->id == ROUTE_XML_DISTANCE) dump->distance = _elm_atof(buf);
+         if (dump->id == ROUTE_XML_DISTANCE)
+           {
+              dump->distance = _elm_atof(buf);
+              free(buf);
+           }
          else if (!(dump->description) && (dump->id == ROUTE_XML_DESCRIPTION))
            dump->description = buf;
          else if (dump->id == ROUTE_XML_COORDINATES)
            dump->coordinates = buf;
+         else free(buf);
       }
       break;
 
