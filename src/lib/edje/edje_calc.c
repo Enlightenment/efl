@@ -5037,7 +5037,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 #endif
                             evas_object_map_enable_set(mo, EINA_FALSE);
                             evas_object_map_set(mo, NULL);
+#ifdef HAVE_EPHYSICS
                          }
+#endif
                     }
                }
           }
