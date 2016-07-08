@@ -733,13 +733,13 @@ New_Object_Handler object_handlers[] =
 int
 object_handler_num(void)
 {
-   return sizeof(object_handlers) / sizeof (New_Object_Handler);
+   return (sizeof(object_handlers) / sizeof (New_Object_Handler));
 }
 
 int
 statement_handler_num(void)
 {
-   return sizeof(statement_handlers) / sizeof (New_Statement_Handler);
+   return (sizeof(statement_handlers) / sizeof (New_Statement_Handler));
 }
 
 static void
