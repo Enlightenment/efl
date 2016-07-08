@@ -2848,6 +2848,7 @@ _xml_name_dump_cb(void *data,
          if (!buf) return EINA_FALSE;
          snprintf(buf, length + 1, "%s", value);
          if (dump->id == NAME_XML_NAME) dump->address = buf;
+         else free(buf);
       }
       break;
 
