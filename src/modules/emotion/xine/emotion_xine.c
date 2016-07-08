@@ -1171,7 +1171,6 @@ _em_fd_active(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
 	  }
      }
    return EINA_TRUE;
-   data = NULL;
 }
 
 static void
