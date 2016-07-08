@@ -1449,7 +1449,7 @@ libvlc_new_env_args(void)
      goto fallback;
 
    /* alloc argv */
-   argv = malloc(argc * sizeof(char *));
+   argv = calloc(1, argc * sizeof(char *));
    if (!argv)
      goto fallback;
 
@@ -1465,6 +1465,7 @@ libvlc_new_env_args(void)
         argv[i++] = token;
         token = strtok_r(NULL, " ", &saveptr);
      }
+   argc = i;
 
    for (i = 0; i < argc; ++i)
      INF("libvlc_argv[%d]: %s", i, argv[i]);
