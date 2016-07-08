@@ -371,6 +371,9 @@ extern Efl_Version _app_efl_version;
 #define ECORE_PARENT_CLASS ecore_parent_class_get()
 EAPI const Eo_Class *ecore_parent_class_get(void) EINA_CONST;
 
+void ecore_loop_future_register(Efl_Loop *l EINA_UNUSED, Efl_Future *f);
+void ecore_loop_future_unregister(Efl_Loop *l EINA_UNUSED, Efl_Future *f);
+
 // access to direct input cb
 #define ECORE_EVAS_INTERNAL
 

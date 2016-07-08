@@ -6,8 +6,6 @@
 
 #include "ecore_private.h"
 
-// FIXME: handle self destruction when back in the main loop
-
 typedef struct _Efl_Promise_Data Efl_Promise_Data;
 typedef struct _Efl_Promise_Msg Efl_Promise_Msg;
 
@@ -77,6 +75,7 @@ struct _Efl_Loop_Future_Data
    Eina_Bool fulfilled : 1;
    Eina_Bool death : 1;
    Eina_Bool delayed : 1;
+   Eina_Bool optional : 1;
 };
 
 static void
@@ -177,6 +176,12 @@ static void
 _efl_loop_future_prepare_events(Efl_Loop_Future_Data *pd, Eina_Bool progress)
 {
    if (!pd->promise) return ;
+
+   if (pd->optional)
+     {
+        pd->optional = EINA_FALSE;
+        ecore_loop_future_unregister(eo_provider_find(pd->self, EFL_LOOP_CLASS), pd->self);
+     }
 
    pd->promise->set.future = EINA_TRUE;
    if (progress)
@@ -288,6 +293,9 @@ _efl_loop_future_eo_base_constructor(Eo *obj, Efl_Loop_Future_Data *pd)
    obj = eo_constructor(eo_super(obj, EFL_LOOP_FUTURE_CLASS));
 
    pd->self = obj;
+   pd->optional = EINA_TRUE;
+
+   ecore_loop_future_register(eo_provider_find(obj, EFL_LOOP_CLASS), obj);
 
    eo_del_intercept_set(obj, _efl_loop_future_intercept);
 
@@ -316,6 +324,13 @@ _efl_loop_future_eo_base_destructor(Eo *obj, Efl_Loop_Future_Data *pd)
         EINA_REFCOUNT_UNREF(pd->message)
           _efl_promise_msg_free(pd->message);
         pd->message = NULL;
+     }
+
+   // Stop the main loop handler that would destroy this optional future
+   if (pd->optional)
+     {
+        pd->optional = EINA_FALSE;
+        ecore_loop_future_unregister(eo_provider_find(pd->self, EFL_LOOP_CLASS), pd->self);
      }
 
    eo_destructor(eo_super(obj, EFL_LOOP_FUTURE_CLASS));
