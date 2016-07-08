@@ -2820,7 +2820,12 @@ static void
 _wl_sel_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Wl_Cnp_Selection *sel = data;
-   if (sel->widget == obj) sel->widget = NULL;
+   if (sel->widget == obj)
+     {
+        sel->loss_cb = NULL;
+        sel->loss_data = NULL;
+        sel->widget = NULL;
+     }
    if (dragwidget == obj) dragwidget = NULL;
 }
 
