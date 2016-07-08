@@ -1678,8 +1678,7 @@ _ecore_main_select(double timeout)
    fd_set rfds, wfds, exfds;
    Ecore_Fd_Handler *fdh;
    Eina_List *l;
-   int max_fd;
-   int ret;
+   int max_fd, ret, err_no;
 
    t = NULL;
    if ((!ECORE_FINITE(timeout)) || (timeout == 0.0)) /* finite() tests for NaN, too big, too small, and infinity.  */
@@ -1767,14 +1766,15 @@ _ecore_main_select(double timeout)
 
    eina_evlog("!SLEEP", NULL, 0.0, t ? "timeout" : "forever");
    ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
+   err_no = err_no;
    eina_evlog("!WAKE", NULL, 0.0, NULL);
 
    _ecore_time_loop_time = ecore_time_get();
    if (ret < 0)
      {
 #ifndef _WIN32
-        if (errno == EINTR) return -1;
-        else if (errno == EBADF)
+        if (err_no == EINTR) return -1;
+        else if (err_no == EBADF)
           _ecore_main_fd_handlers_bads_rem();
 #endif
      }
