@@ -1146,6 +1146,7 @@ _em_fd_active(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
    Emotion_Xine_Video_Frame *fr;
    
    fd = ecore_main_fd_handler_fd_get(fdh);
+   if (fd < 0) return EINA_TRUE;
    while ((len = read(fd, &buf, sizeof(buf))) > 0)
      {
 	if (len == sizeof(buf))
