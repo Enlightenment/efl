@@ -279,7 +279,11 @@ _ector_gl_surface_shader_get(Eo *obj EINA_UNUSED, Ector_GL_Surface_Data *pd EINA
    if (shd) return shd->prg;
 
    shd = _ector_gl_shader_load(flags);
-   if (shd) return shd->prg;
+   if (shd)
+     {
+        eina_hash_direct_add(shader_cache, &shd->flags, shd);
+        return shd->prg;
+     }
 
    prg = ector_gl_shader_compile(flags);
    if (prg <= 0) return -1;
