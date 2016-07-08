@@ -819,18 +819,40 @@ _edje_reload(void *data EINA_UNUSED, Evas_Object *obj, const char *emission EINA
 static Eina_Bool
 _edje_load_or_show_error(Evas_Object *edje, const char *file, const char *group)
 {
+   Eina_File *f = NULL;
    const char *errmsg;
    int err;
+   Evas_Canvas3D_Scene *scene = NULL;
+   Evas_Canvas3D_Node *root_node = NULL;
 
-   if (edje_object_file_set(edje, file, group))
+   f = eina_file_open(file, EINA_FALSE);
+   if (!(edje_mmap_3d_has(f, group)))
      {
-        edje_object_signal_callback_add(edje, "edje,change,file", "edje", _edje_reload, NULL);
-        evas_object_focus_set(edje, EINA_TRUE);
-        return EINA_TRUE;
+        if (edje_object_file_set(edje, file, group))
+          {
+             edje_object_signal_callback_add(edje, "edje,change,file", "edje", _edje_reload, NULL);
+             evas_object_focus_set(edje, EINA_TRUE);
+             eina_file_close(f);
+             return EINA_TRUE;
+          }
+     }
+   else
+     {
+        if (edje_object_file_set(edje, file, group))
+          {
+             if (edje_3d_object_add(edje, &root_node, scene))
+               {
+                  edje_object_signal_callback_add(edje, "edje,change,file", "edje", _edje_reload, NULL);
+                  evas_object_focus_set(edje, EINA_TRUE);
+                  eina_file_close(f);
+                  return EINA_TRUE;
+               }
+          }
      }
 
    err = edje_object_load_error_get(edje);
    errmsg = edje_load_error_str(err);
+   eina_file_close(f);
    fprintf(stderr, "ERROR: could not load edje file '%s', group '%s': %s\n",
            file, group, errmsg);
    return EINA_FALSE;
@@ -982,6 +1004,9 @@ main(int argc, char **argv)
    struct opts opts;
    Eina_Bool quit_option = EINA_FALSE;
    int args;
+   Eina_List *groups;
+   Eina_File *f = NULL;
+   const char *group;
    Ecore_Getopt_Value values[] = {
       ECORE_GETOPT_VALUE_STR(opts.group),
       ECORE_GETOPT_VALUE_BOOL(opts.list_groups),
@@ -1042,17 +1067,43 @@ main(int argc, char **argv)
      }
 
    opts.file = argv[args];
+   groups = edje_file_collection_list(opts.file);
    if (opts.list_groups)
      {
-        Eina_List *groups, *n;
-        const char *group;
-        groups = edje_file_collection_list(opts.file);
+        Eina_List *n;
         printf("%d groups in file '%s':\n", eina_list_count(groups), opts.file);
         EINA_LIST_FOREACH(groups, n, group)
           printf("\t'%s'\n", group);
         edje_file_collection_list_free(groups);
         goto end;
      }
+
+   group = eina_list_data_get(eina_list_last(groups));
+
+   f = eina_file_open(opts.file, EINA_FALSE);
+   if (edje_mmap_3d_has(f, group))
+     {
+        Eina_List* engine_list, *n;
+        Eina_Bool opengl_x11_has = EINA_FALSE, wayland_egl_has = EINA_FALSE;
+        const char* engine;
+        engine_list = ecore_evas_engines_get();
+        EINA_LIST_FOREACH(engine_list, n, engine)
+          {
+             if (!strcmp(engine, "wayland_egl"))
+               {
+                  wayland_egl_has = EINA_TRUE;
+                  break;
+               }
+             else if (!strcmp(engine, "opengl_x11"))
+               opengl_x11_has = EINA_TRUE;
+          }
+        if (wayland_egl_has)
+          opts.engine = "wayland_egl";
+        else if (opengl_x11_has)
+          opts.engine = "opengl_x11";
+     }
+   eina_file_close(f);
+   edje_file_collection_list_free(groups);
 
    if (opts.size.w <= 0) opts.size.w = 320;
    if (opts.size.h <= 0) opts.size.h = 240;

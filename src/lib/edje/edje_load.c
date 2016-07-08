@@ -339,6 +339,26 @@ edje_mmap_group_exists(Eina_File *f, const char *glob)
    return succeed;
 }
 
+EAPI Eina_Bool
+edje_mmap_3d_has(Eina_File *f, const char *group)
+{
+   Edje_Part_Collection *edc = NULL;
+   Edje_File *edf;
+   int err_ret = 0;
+   Eina_Bool r = EINA_FALSE;
+
+   edf = _edje_cache_file_coll_open(f, group, &err_ret, &edc, NULL);
+   if (!edf || !edc) return EINA_FALSE;
+
+   if (edc->scene_size.width >0 && edc->scene_size.height > 0)
+     r = EINA_TRUE;
+
+   _edje_cache_coll_unref(edf, edc);
+   _edje_cache_file_unref(edf);
+
+   return r;
+}
+
 typedef struct _Edje_File_Iterator Edje_File_Iterator;
 struct _Edje_File_Iterator
 {

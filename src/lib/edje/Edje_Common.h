@@ -1801,6 +1801,15 @@ EAPI void              edje_mmap_collection_list_free(Eina_List *lst);
 EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
 
 /**
+ * Determine whether a group have 3D Scene.
+ * @param f The mapped file
+ * @param glob The group name
+ *
+ * @return 1 if a Scene is found is found, 0 otherwise
+ */
+EAPI Eina_Bool         edje_mmap_3d_has(Eina_File *f, const char *group);
+
+/**
  * @brief Iterate over all the opened Edje file.
  *
  * @return an iterator of Eina_File currently opened Edje file.
