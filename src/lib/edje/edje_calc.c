@@ -5002,52 +5002,42 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              mo = ep->typedata.swallow->swallowed_object;
           }
         else mo = ep->object;
-        if (chosen_desc->map.on && ep->part->type != EDJE_PART_TYPE_SPACER)
+        if (ep->part->type != EDJE_PART_TYPE_SPACER)
           {
-             static Evas_Map *map = NULL;
-
-             ed->have_mapped_part = EINA_TRUE;
-             // create map and populate with part geometry
-             if (!map) map = evas_map_new(4);
-
-             _edje_map_prop_set(map, pf, chosen_desc, ep, mo);
-
              Evas_Object *map_obj;
 
              /* Apply map to smart obj holding nested parts */
              if (ep->nested_smart) map_obj = ep->nested_smart;
              else map_obj = mo;
-             if (map_obj)
+
+             if (chosen_desc->map.on)
                {
-                  evas_object_map_set(map_obj, map);
-                  evas_object_map_enable_set(map_obj, EINA_TRUE);
-               }
-          }
-        else
-          {
-             if ((ep->param1.p.mapped) ||
-                 ((ep->param2) && (ep->param2->p.mapped)) ||
-                 ((ep->custom) && (ep->custom->p.mapped)))
-               {
-                  if (ep->nested_smart) /* Cancel map of smart obj holding nested parts */
+                  static Evas_Map *map = NULL;
+
+                  ed->have_mapped_part = EINA_TRUE;
+                  // create map and populate with part geometry
+                  if (!map) map = evas_map_new(4);
+
+                  _edje_map_prop_set(map, pf, chosen_desc, ep, mo);
+
+                  if (map_obj)
                     {
-                       evas_object_map_enable_set(ep->nested_smart, EINA_FALSE);
-                       evas_object_map_set(ep->nested_smart, NULL);
+                       evas_object_map_set(map_obj, map);
+                       evas_object_map_enable_set(map_obj, EINA_TRUE);
                     }
-                  else
+               }
+             else
+               {
+                  //Disable map only if map were enabled.
+                  if (map_obj && evas_object_map_enable_get(map_obj))
                     {
 #ifdef HAVE_EPHYSICS
-                       if (!ep->body)
+                       if (!ep->nested_smart && !ep->body)
                          {
 #endif
-                            if (mo)
-                              {
-                                 evas_object_map_enable_set(mo, 0);
-                                 evas_object_map_set(mo, NULL);
-                              }
-#ifdef HAVE_EPHYSICS
+                            evas_object_map_enable_set(mo, EINA_FALSE);
+                            evas_object_map_set(mo, NULL);
                          }
-#endif
                     }
                }
           }
