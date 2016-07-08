@@ -1656,7 +1656,7 @@ data_write_mo(Eet_File *ef, int *mo_num)
 
         for (i = 0; i < (int)edje_file->mo_dir->mo_entries_count; i++)
           {
-             Mo_Write *mw;
+             Mo_Write *mw, *mw2;
              mw = calloc(1, sizeof(Mo_Write));
              if (!mw) continue;
              mw->ef = ef;
@@ -1677,17 +1677,23 @@ data_write_mo(Eet_File *ef, int *mo_num)
                        if (ecore_file_exists(po_path))
                          {
                             snprintf(buf, sizeof(buf), "msgfmt -o %s %s", mo_path, po_path);
-                            mw->mo_path = strdup(mo_path);
-                            mw->exe = ecore_exe_run(buf, mw);
-                            ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                                       _exe_del_cb, mw);
+                            mw2 = malloc(sizeof(Mo_Write));
+                            if (mw2)
+                              {
+                                 memcpy(mw2, mw, sizeof(Mo_Write));
+                                 mw2->mo_path = strdup(mo_path);
+                                 mw2->exe = ecore_exe_run(buf, mw2);
+                                 ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+                                                         _exe_del_cb, mw2);
+                              }
                          }
                        else
                          error_and_abort(mw->ef, "Invalid .po file.");
                     }
+                  free(mw);
                }
              else
-               { 
+               {
                   if (threads)
                     ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw);
                   else
