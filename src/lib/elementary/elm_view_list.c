@@ -122,15 +122,16 @@ _item_get_value(View_List_ItemData *idata, const char *part)
      {
          if (vitem->part == NULL)
            {
-              free(vitem);
               unsigned i = eina_list_count(idata->values);
               if (i == 1)
                 {
                    idata->values = eina_list_remove(idata->values, vitem);
                    idata->values = NULL;
+                   free(vitem);
                    break;
                 }
               idata->values = eina_list_remove_list(idata->values, l);
+              free(vitem);
               continue;
            }
 
