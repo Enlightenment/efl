@@ -855,6 +855,19 @@ group { name: "elm/entry/base-single/default";
 group { name: "elm/entry/base-single/spinner/default";
    alias: "elm/entry/base-single/spinner/vertical";
    inherit: "elm/entry/base-single/default";
+   styles {
+      style { name: "entry_single_spinner_style";
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 align=center wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
+   parts {
+      part { name: "elm.text";
+         description { state: "default" 0.0;
+            text.style: "entry_single_spinner_style";
+         }
+      }
+   }
 }
 
 group { name: "elm/entry/base-single-noedit/default";
