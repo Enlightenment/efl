@@ -6,10 +6,10 @@ EDJE_CODEGEN = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/edje/edje_codegen
 EDJE_CODEGEN_FLAGS = --prefix=codegen_example
 
 if ENABLE_MULTISENSE
-SND_DIR = -sd $(srcdir)
+SND_DIR = -sd $(top_srcdir)/src/examples/edje/
 endif
 
-MO_DIR = -md $(srcdir)
+MO_DIR = -md $(top_builddir)/src/examples/edje/
 
 #put here all EDCs one needs to the examples
 EDCS = \
@@ -79,6 +79,14 @@ EDJE_CC_FLAGS += -beta
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $(MO_DIR) $< $(builddir)/$(@F)
 
+text.edj: text.edc
+	@cp -ua $(top_srcdir)/src/examples/edje/en_IN/ $(top_builddir)/src/examples/edje/
+	@cp -ua $(top_srcdir)/src/examples/edje/hi_IN/ $(top_builddir)/src/examples/edje/
+	@cp -ua $(top_srcdir)/src/examples/edje/ta_IN/ $(top_builddir)/src/examples/edje/
+	@chmod -R +w $(top_builddir)/src/examples/edje/en_IN/
+	@chmod -R +w $(top_builddir)/src/examples/edje/hi_IN/
+	@chmod -R +w $(top_builddir)/src/examples/edje/ta_IN/
+	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $(MO_DIR) $(top_srcdir)/src/examples/edje/text.edc $(top_builddir)/src/examples/edje/text.edj
 
 EDJS = $(EDCS:%.edc=%.edj)
 
@@ -237,6 +245,9 @@ examples: $(EXTRA_PROGRAMS) $(EDJS)
 
 clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(EDJS) $(CODEGEN_GENERATED)
+	rm -f hi_IN/domain_name.po
+	rm -f ta_IN/domain_name.mo
+	rm -f en_IN/domain_name.po
 
 install-examples: $(EDJS)
 	$(MKDIR_P) $(DESTDIR)$(datadir)/edje/examples
