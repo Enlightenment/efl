@@ -108,8 +108,10 @@ _shm_pool_make(struct wl_shm *shm, int size, void **data)
 
    strcat(name, tmp);
 
+   fd = eina_file_mkstemp(name, NULL);
+   if (fd < 0)
    /* try to create tmp file */
-   if ((fd = mkstemp(name)) < 0)
+   /* if ((fd = mkstemp(name)) < 0) */
      {
         ERR("Could not create temporary file: %m");
         free(name);
