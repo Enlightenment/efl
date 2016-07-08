@@ -34,7 +34,9 @@
 
 #include <pthread.h>
 #include <errno.h>
-#include <signal.h>
+#ifndef _WIN32
+# include <signal.h>
+#endif
 
 #if defined(EINA_HAVE_PTHREAD_AFFINITY) || defined(EINA_HAVE_PTHREAD_SETNAME)
 #ifndef __linux__
@@ -58,8 +60,10 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 {
    int err;
    pthread_attr_t attr;
+#ifndef _WIN32
    sigset_t oldset, newset;
-
+#endif
+   
    pthread_attr_init(&attr);
    if (affinity >= 0)
      {
@@ -76,6 +80,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
      }
 
    /* setup initial locks */
+#ifndef _WIN32
    sigemptyset(&newset);
    sigaddset(&newset, SIGPIPE);
    sigaddset(&newset, SIGALRM);
@@ -86,12 +91,15 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
    sigaddset(&newset, SIGQUIT);
    sigaddset(&newset, SIGINT);
    sigaddset(&newset, SIGTERM);
-#ifdef SIGPWR
+# ifdef SIGPWR
    sigaddset(&newset, SIGPWR);
-#endif
+# endif
    sigprocmask(SIG_BLOCK, &newset, &oldset);
+#endif
    err = pthread_create((pthread_t *)t, &attr, func, data);
+#ifndef _WIN32
    sigprocmask(SIG_SETMASK, &oldset, NULL);
+#endif
    pthread_attr_destroy(&attr);
 
    if (err == 0) return EINA_TRUE;
