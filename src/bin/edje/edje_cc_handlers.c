@@ -1311,6 +1311,7 @@ st_collections_group_parts_part_description_params_smart(void)
 
    if (!found)
      ed->external_params = eina_list_append(ed->external_params, param);
+   free(name);
 }
 
 #define PROGRAM_OBJECTS(PREFIX) \
