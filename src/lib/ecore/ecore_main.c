@@ -275,6 +275,7 @@ static void _ecore_main_win32_handlers_cleanup(void);
 
 int in_main_loop = 0;
 
+static Eina_List *_pending_futures = NULL;
 static unsigned char _ecore_exit_code = 0;
 static int do_quit = 0;
 static Ecore_Fd_Handler *fd_handlers = NULL;
@@ -2226,8 +2227,14 @@ static void
 _ecore_main_loop_iterate_internal(int once_only)
 {
    double next_time = -1.0;
+   Eo *f;
 
    in_main_loop++;
+
+   /* destroy all optional futures */
+   EINA_LIST_FREE(_pending_futures, f)
+     efl_del(f);
+
    /* expire any timers */
    _efl_loop_timer_expired_timers_call(_ecore_time_loop_time);
 
@@ -2904,6 +2911,20 @@ ecore_loop_arguments_send(int argc, const char **argv)
 
 static void _efl_loop_timeout_force_cancel_cb(void *data, const Efl_Event *event EINA_UNUSED);
 static void _efl_loop_timeout_cb(void *data, const Efl_Event *event EINA_UNUSED);
+
+// Only one main loop handle for now
+void
+ecore_loop_future_register(Efl_Loop *l EINA_UNUSED, Efl_Future *f)
+{
+   _pending_futures = eina_list_append(_pending_futures, f);
+}
+
+void
+ecore_loop_future_unregister(Efl_Loop *l EINA_UNUSED, Efl_Future *f)
+{
+   _pending_futures = eina_list_remove(_pending_futures, f);
+}
+
 
 EFL_CALLBACKS_ARRAY_DEFINE(timeout,
                           { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
