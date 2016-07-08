@@ -935,10 +935,10 @@ _elm_layout_edje_object_signal_callback_add(Eo *obj, Elm_Layout_Smart_Data *sd, 
 {
    Edje_Signal_Data *esd;
 
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
    esd = ELM_NEW(Edje_Signal_Data);
    if (!esd) return;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    esd->obj = obj;
    esd->func = func_cb;
