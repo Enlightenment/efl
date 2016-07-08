@@ -711,7 +711,8 @@ em_fps_get(void *video)
    int num = 0, den = 0;
 
    em_fps_num_den_get(video, &num, &den);
-   return num / (double)den;
+   if (den > 0) return num / (double)den;
+   return 0.0;
 }
 
 static void
