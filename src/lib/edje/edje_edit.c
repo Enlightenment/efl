@@ -9677,6 +9677,7 @@ edje_edit_image_replace(Evas_Object *obj, const char *name, const char *new_name
    if (!eetf)
      {
         ERR("Unable to open \"%s\" for writing output", ed->path);
+        eina_iterator_free(it);
         return EINA_FALSE;
      }
 
@@ -9706,6 +9707,7 @@ edje_edit_image_replace(Evas_Object *obj, const char *name, const char *new_name
              if (!_edje_edit_collection_save(eetf, pce->ref))
                {
                   eet_close(eetf);
+                  eina_iterator_free(it);
                   return EINA_FALSE;
                }
           }
