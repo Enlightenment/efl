@@ -446,6 +446,7 @@ evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
    return inside;
 }
 
+#if 0
 static Eina_Bool
 _evas_object_map_parent_check(Evas_Object *eo_parent)
 {
@@ -463,6 +464,7 @@ _evas_object_map_parent_check(Evas_Object *eo_parent)
    _evas_object_map_parent_check(parent->smart.parent);
    return EINA_TRUE;
 }
+#endif
 
 static void
 _map_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
