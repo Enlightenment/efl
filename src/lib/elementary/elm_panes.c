@@ -425,11 +425,13 @@ _elm_panes_efl_orientation_orientation_set(Eo *obj, Elm_Panes_Data *sd, Efl_Orie
    if ((dir != EFL_ORIENT_HORIZONTAL) && (dir != EFL_ORIENT_VERTICAL))
      return;
 
+   double size = elm_panes_content_left_size_get(obj);
+
    sd->orientation = dir;
    elm_obj_widget_theme_apply(obj);
    _update_fixed_sides(obj);
 
-   elm_panes_content_left_size_set(obj, 0.5);
+   elm_panes_content_left_size_set(obj, size);
 }
 
 EOLIAN static Efl_Orient
