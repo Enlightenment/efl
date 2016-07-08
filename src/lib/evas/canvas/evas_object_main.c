@@ -1428,6 +1428,7 @@ _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
                }
           }
      }
+   evas_object_update_bounding_box(eo_obj, obj, NULL);
    evas_object_inform_call_show(eo_obj);
 }
 
@@ -1550,6 +1551,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         obj->mouse_in = 0;
  */
      }
+   evas_object_update_bounding_box(eo_obj, obj, NULL);
    evas_object_inform_call_hide(eo_obj);
 }
 

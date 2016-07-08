@@ -526,11 +526,11 @@ _map_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
              if (!parents) break;
              parents->child_has_map = EINA_TRUE;
           }
+        evas_object_update_bounding_box(eo_obj, obj, NULL);
      }
    else
      {
-        if (_evas_object_map_parent_check(obj->smart.parent))
-          evas_object_update_bounding_box(eo_obj, obj, NULL);
+        evas_object_update_bounding_box(eo_obj, obj, NULL);
      }
 }
 
@@ -605,6 +605,7 @@ evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
 
              if (!obj->map->prev.map)
                {
+                  evas_object_update_bounding_box(eo_obj, obj, NULL);
                   evas_object_mapped_clip_across_mark(eo_obj, obj);
                   return;
                }
@@ -614,6 +615,7 @@ evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
              if (obj->map->cur.usemap)
                evas_object_mapped_clip_across_mark(eo_obj, obj);
           }
+        evas_object_update_bounding_box(eo_obj, obj, NULL);
         return;
      }
 
@@ -648,6 +650,7 @@ evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
           evas_object_mapped_clip_across_mark(eo_obj, obj);
      }
 
+   evas_object_update_bounding_box(eo_obj, obj, NULL);
    _evas_map_calc_map_geometry(eo_obj);
 }
 

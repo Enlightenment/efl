@@ -377,6 +377,7 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
 
    evas_object_change(eo_clip, clip);
    evas_object_change(eo_obj, obj);
+   evas_object_update_bounding_box(eo_obj, obj, NULL);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_recalc_clippees(obj);
    if ((!obj->is_smart) &&
@@ -459,6 +460,7 @@ _efl_canvas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
           eo_event_callback_del(old_clip->object, EO_EVENT_DEL, _clipper_del_cb, eo_obj);
      }
 
+   evas_object_update_bounding_box(eo_obj, obj, NULL);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_recalc_clippees(obj);
