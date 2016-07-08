@@ -79,7 +79,8 @@ _keyboard_fd_get(off_t size)
    else
      return -1;
 
-   if ((fd = mkstemp(tmp)) < 0) return -1;
+   fd = eina_file_mkstemp(tmp, NULL);
+   if (fd < 0) return -1;
 
    flags = fcntl(fd, F_GETFD);
    if (flags < 0)
