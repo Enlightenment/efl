@@ -440,8 +440,8 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
    em = eina_hash_find(evas_modules[type], name);
    if (em)
      {
-        evas_module_load(em);
-        return em;
+        if (evas_module_load(em)) return em;
+        return NULL;
      }
 
    run_in_tree = !!getenv("EFL_RUN_IN_TREE");
