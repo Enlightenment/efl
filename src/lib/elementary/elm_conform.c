@@ -848,6 +848,7 @@ _on_prop_change(void *data,
                         evas_object_del(sd->landscape_indicator);
                         sd->landscape_indicator = NULL;
 
+                        free(state);
                         return ECORE_CALLBACK_DONE;
                      }
                 }
