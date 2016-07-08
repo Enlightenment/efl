@@ -114,6 +114,7 @@ handle_run(int fd, unsigned long bytes)
         return;
      }
    close(fd);
+   if (bytes > 0) buf[bytes - 1] = 0;
 
    argc = ((unsigned long *)(buf))[0];
    envnum = ((unsigned long *)(buf))[1];
