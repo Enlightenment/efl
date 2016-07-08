@@ -739,7 +739,7 @@ object_handler_num(void)
 int
 statement_handler_num(void)
 {
-   return sizeof(statement_handlers) / sizeof (New_Object_Handler);
+   return sizeof(statement_handlers) / sizeof (New_Statement_Handler);
 }
 
 static void
