@@ -634,7 +634,7 @@ EAPI Eina_Stringshare *
 elput_input_device_output_name_get(Elput_Device *device)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(device->output_name, NULL):
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device->output_name, NULL);
 
    return eina_stringshare_ref(device->output_name);
 }
