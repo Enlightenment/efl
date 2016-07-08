@@ -178,7 +178,7 @@ _key_generic_set(const Eo *obj, Eo_Base_Data *pd, const char *key, const void *d
              if (!strcmp(node->key, key))
                {
                   if ((node->d_type == d_type) && (node->d.ptr == data))
-                     return EINA_FALSE;
+                     return NULL;
                   ext->generic_data = eina_inlist_remove
                     (ext->generic_data, EINA_INLIST_GET(node));
                   _eo_generic_data_node_free(node);
@@ -192,7 +192,7 @@ _key_generic_set(const Eo *obj, Eo_Base_Data *pd, const char *key, const void *d
    if (ext)
      {
         node = calloc(1, sizeof(Eo_Generic_Data_Node));
-        if (!node) return EINA_FALSE;
+        if (!node) return NULL;
         node->obj = obj;
         node->key = eina_stringshare_add(key);
         node->d.ptr = (void *) data;
