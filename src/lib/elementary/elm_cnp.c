@@ -2648,6 +2648,11 @@ _wl_selection_parser(void *_data, int size, char ***ret_data, int *ret_count)
                             files = t2;
                             files[num_files - 1] = strdup(tmp);
                          }
+                       else
+                         {
+                            num_files--;
+                            goto freetmp;
+                         }
                        tmp[0] = 0;
                        i = 0;
                     }
@@ -2663,13 +2668,25 @@ _wl_selection_parser(void *_data, int size, char ***ret_data, int *ret_count)
                   files = t2;
                   files[num_files - 1] = strdup(tmp);
                }
+             else
+               {
+                  num_files--;
+                  goto freetmp;
+               }
           }
-
+freetmp:
         free(tmp);
-        free(data);
      }
 done:
+   free(data);
    if (ret_data) *ret_data = files;
+   else
+     {
+        int i;
+
+        for (i = 0; i < num_files; i++) free(files[i]);
+        free(files);
+     }
    if (ret_count) *ret_count = num_files;
 }
 
@@ -2707,12 +2724,12 @@ _wl_data_preparer_uri(Wl_Cnp_Selection *sel, Elm_Selection_Data *ddata, Ecore_Wl
         Eina_Strbuf *strbuf;
         int i;
 
+        strbuf = eina_strbuf_new();
+        if (!strbuf) return EINA_FALSE;
+
         _wl_selection_parser(ev->data, ev->len, &files, &num_files);
         cnp_debug("got a files list\n");
 
-        strbuf = eina_strbuf_new();
-        if (!strbuf)
-          return EINA_FALSE;
         for (i = 0; i < num_files; i++)
           {
              uri = efreet_uri_decode(files[i]);
@@ -2727,7 +2744,9 @@ _wl_data_preparer_uri(Wl_Cnp_Selection *sel, Elm_Selection_Data *ddata, Ecore_Wl
                }
              if (i < (num_files - 1))
                eina_strbuf_append(strbuf, "\n");
+             free(files[i]);
           }
+        free(files);
         stripstr = eina_strbuf_string_steal(strbuf);
         eina_strbuf_free(strbuf);
      }
