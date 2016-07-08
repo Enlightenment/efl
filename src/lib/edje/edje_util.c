@@ -6028,6 +6028,53 @@ _edje_real_part_get(const Edje *ed, const char *part)
    return NULL;
 }
 
+void *
+_edje_hash_find_helper(const Eina_Hash *hash, const char *key)
+{
+   void *data;
+   int i, j;
+   char **tokens;
+   unsigned int tokens_count = 0;
+   Eina_Strbuf *buf = NULL;
+
+   data = eina_hash_find(hash, key);
+   if (data)
+     return data;
+
+   tokens = eina_str_split_full(key, "/", 0, &tokens_count);
+
+   if ((tokens) && (tokens_count > 1))
+     {
+        buf = eina_strbuf_new();
+
+        for (i = tokens_count - 2; i >= 0; i--)
+          {
+             for (j = 0; j < i; j++)
+               {
+                  eina_strbuf_append(buf, tokens[j]);
+                  eina_strbuf_append(buf, "/");
+               }
+             eina_strbuf_append(buf, tokens[tokens_count - 1]);
+
+             data = eina_hash_find(hash, eina_strbuf_string_get(buf));
+             if (data) break;
+
+             eina_strbuf_reset(buf);
+          }
+     }
+
+   if (buf)
+     {
+        eina_strbuf_free(buf);
+     }
+   if (tokens)
+     {
+        free(tokens[0]);
+        free(tokens);
+     }
+   return data;
+}
+
 Edje_Color_Class *
 _edje_color_class_find(const Edje *ed, const char *color_class)
 {
@@ -6057,7 +6104,7 @@ _edje_color_class_recursive_find_helper(const Edje *ed, Eina_Hash *hash, const c
    Edje_Color_Tree_Node *ctn = NULL;
    const char *parent;
 
-   cc = eina_hash_find(hash, color_class);
+   cc = _edje_hash_find_helper(hash, color_class);
    if (cc) return cc;
    else
      {
