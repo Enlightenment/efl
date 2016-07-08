@@ -2764,7 +2764,7 @@ eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
         mul_use = gl_context->dc->mul.use;
 
         ector_buffer_pixels_set(ector, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        eng_image_data_put(data, buffer->gl, buffer->software);
+        data = eng_image_data_put(data, buffer->gl, buffer->software);
 
         if (!mul_use)
           {
