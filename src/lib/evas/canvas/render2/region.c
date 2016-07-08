@@ -784,15 +784,19 @@ region_intersect(Region *dest, Region *source)
        !OVERLAP(&dest->bound, &source->bound))
      {
         // Covers about 20% of all cases
-        FREE_DATA(dest);
         dest->bound.x2 = dest->bound.x1;
         dest->bound.y2 = dest->bound.y1;
         if (PIXREGION_NAR(dest) || PIXREGION_NAR(source))
           {
+             FREE_DATA(dest);
              dest->data = (Region_Data *)&_region_brokendata;
              return EINA_FALSE;
           }
-        else dest->data = (Region_Data *)&_region_emptydata;
+        else
+          {
+             FREE_DATA(dest);
+             dest->data = (Region_Data *)&_region_emptydata;
+          }
      }
    else if (!dest->data && !source->data)
      {
