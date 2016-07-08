@@ -1130,18 +1130,18 @@ _action_actions_get(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
    Eina_List *actions;
    Eldbus_Message *ret;
-   Eldbus_Message_Iter *iter, *iter_array;
+   Eldbus_Message_Iter *iter, *iter_array = NULL;
 
    ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACTION_MIXIN, msg);
 
    ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+   if (!ret) goto error;
 
    iter = eldbus_message_iter_get(ret);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
+   if (!iter) goto error;
 
    iter_array = eldbus_message_iter_container_new(iter, 'a', "sss");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iter_array, NULL);
+   if (!iter_array) goto error;
 
    actions = elm_interface_atspi_action_actions_get(obj);
 
@@ -1157,10 +1157,13 @@ _action_actions_get(const Eldbus_Service_Interface *iface, const Eldbus_Message 
         if (key) free(key);
         id++;
      }
-
-  eldbus_message_iter_container_close(iter, iter_array);
-
+   eldbus_message_iter_container_close(iter, iter_array);
    return ret;
+
+error:
+   if (iter_array) eldbus_message_iter_container_close(iter, iter_array);
+   if (ret) eldbus_message_unref(ret);
+   return NULL;
 }
 
 static Eldbus_Message *
