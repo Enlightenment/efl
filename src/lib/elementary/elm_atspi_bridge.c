@@ -595,9 +595,9 @@ _accessible_get_application(const Eldbus_Service_Interface *iface, const Eldbus_
 static Eldbus_Message *
 _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
-   Eina_List *attrs, *l;
+   Eina_List *attrs = NULL, *l;
    Elm_Atspi_Attribute *attr;
-   Eldbus_Message_Iter *iter, *iter_dict, *iter_entry;
+   Eldbus_Message_Iter *iter, *iter_dict = NULL, *iter_entry;
    Eldbus_Message *ret;
 
    const char *obj_path = eldbus_message_path_get(msg);
@@ -607,13 +607,16 @@ _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
 
    ret = eldbus_message_method_return_new(msg);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+   if (!ret) goto error;
 
    attrs = elm_interface_atspi_accessible_attributes_get(obj);
 
    iter = eldbus_message_iter_get(ret);
+   if (!iter) goto error;
+
    iter_dict = eldbus_message_iter_container_new(iter, 'a', "{ss}");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iter_dict, NULL);
+   if (!iter_dict) goto error;
+
 
    EINA_LIST_FOREACH(attrs, l, attr)
      {
@@ -625,8 +628,13 @@ _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_M
 
    eldbus_message_iter_container_close(iter, iter_dict);
    elm_atspi_attributes_list_free(attrs);
-
    return ret;
+
+error:
+   if (iter_dict) eldbus_message_iter_container_close(iter, iter_dict);
+   if (ret) eldbus_message_unref(ret);
+   elm_atspi_attributes_list_free(attrs);
+   return NULL;
 }
 
 static Eldbus_Message *
