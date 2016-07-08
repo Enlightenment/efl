@@ -352,7 +352,8 @@ em_add(const Emotion_Engine *api EINA_UNUSED,
      {
 	ev->fd_slave_read = fds[0];
 	ev->fd_slave_write = fds[1];
-	fcntl(ev->fd_slave_write, F_SETFL, O_NONBLOCK);
+	if (fcntl(ev->fd_slave_write, F_SETFL, O_NONBLOCK) != 0)
+          ERR("Can't fcntl() slave write fd");
      }
    ev->volume = 0.8;
    ev->delete_me = 0;
