@@ -60,24 +60,15 @@ _keyboard_modifiers_update(Elput_Keyboard *kbd, Elput_Seat *seat)
 static int
 _keyboard_fd_get(off_t size)
 {
-   int fd = 0, blen = 0, len = 0;
+   int fd = 0;
    const char *path;
    char tmp[PATH_MAX];
    long flags;
 
-   blen = sizeof(tmp) - 1;
-
    if (!(path = getenv("XDG_RUNTIME_DIR")))
      return -1;
 
-   len = strlen(path);
-   if (len < blen)
-     {
-        strcpy(tmp, path);
-        strcat(tmp, "/elput-keymap-XXXXXX");
-     }
-   else
-     return -1;
+   snprintf(tmp, sizeof(tmp), "%s/elput-keymap-XXXXXX", path);
 
    fd = eina_file_mkstemp(tmp, NULL);
    if (fd < 0) return -1;
