@@ -9109,7 +9109,7 @@ FUNC_IMAGE_SET_API_SIZE(min);
 FUNC_IMAGE_SET_API_SIZE(max);
 
 EAPI Eina_Bool
-edje_edit_image_set_image_border_get(Evas_Object *obj, const char *set_name, unsigned int place, int *l, int *r, int *b, int *t)
+edje_edit_image_set_image_border_get(Evas_Object *obj, const char *set_name, unsigned int place, int *l, int *r, int *t, int *b)
 {
    Edje_Image_Directory_Set *de = NULL;
    Edje_Image_Directory_Set_Entry *dim = NULL;
@@ -9133,14 +9133,14 @@ edje_edit_image_set_image_border_get(Evas_Object *obj, const char *set_name, uns
 
    if (l) *l = dim->border.l;
    if (r) *r = dim->border.r;
-   if (b) *b = dim->border.b;
    if (t) *t = dim->border.t;
+   if (b) *b = dim->border.b;
 
    return EINA_TRUE;
 }
 
 EAPI Eina_Bool
-edje_edit_image_set_image_border_set(Evas_Object *obj, const char *set_name, unsigned int place, int l, int r, int b, int t)
+edje_edit_image_set_image_border_set(Evas_Object *obj, const char *set_name, unsigned int place, int l, int r, int t, int b)
 {
    Edje_Image_Directory_Set *de = NULL;
    Edje_Image_Directory_Set_Entry *dim = NULL;
@@ -9164,8 +9164,8 @@ edje_edit_image_set_image_border_set(Evas_Object *obj, const char *set_name, uns
 
    if (l >= 0) dim->border.l = l;
    if (r >= 0) dim->border.r = r;
-   if (b >= 0) dim->border.b = b;
    if (t >= 0) dim->border.t = t;
+   if (b >= 0) dim->border.b = b;
 
    return EINA_TRUE;
 }
