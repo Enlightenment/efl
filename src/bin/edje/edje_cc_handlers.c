@@ -1285,8 +1285,6 @@ st_collections_group_parts_part_description_params_smart(void)
    param->d = 0;
    param->s = NULL;
 
-   free(token);
-
    switch (param->type)
      {
       case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
@@ -1313,6 +1311,7 @@ st_collections_group_parts_part_description_params_smart(void)
 
    if (!found)
      ed->external_params = eina_list_append(ed->external_params, param);
+   free(token);
    free(name);
 }
 
