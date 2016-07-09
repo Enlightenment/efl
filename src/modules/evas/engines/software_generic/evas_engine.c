@@ -1577,6 +1577,11 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
           }
 
         map = calloc(1, sizeof(*map));
+        if (!map)
+          {
+             free(data);
+             return NULL;
+          }
         map->allocated = EINA_TRUE;
         map->cspace = cspace;
         map->rx = rx;
@@ -1597,6 +1602,8 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
              // no copy
              int end_offset = _evas_common_rgba_image_data_offset(x + w, y + h, 0, 0, 0, im) - src_stride;
              map = calloc(1, sizeof(*map));
+             if (!map) return NULL;
+
              map->baseptr = im->image.data8;
              map->ptr = im->image.data8 + src_offset;
              map->size = end_offset - src_offset;
@@ -1607,10 +1614,14 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
              int size = _evas_common_rgba_image_data_offset(w, h, 0, 0, 0, im);
              data = malloc(size);
              if (!data) return NULL;
-
+             map = calloc(1, sizeof(*map));
+             if (!map)
+               {
+                  free(data);
+                  return NULL;
+               }
              memcpy(data, im->image.data8 + src_offset, size);
 
-             map = calloc(1, sizeof(*map));
              map->allocated = EINA_TRUE;
              map->baseptr = data;
              map->ptr = data;
@@ -1624,16 +1635,11 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
         map->stride = src_stride;
      }
 
-   if (map)
-     {
-        im->maps = (RGBA_Image_Data_Map *)
-              eina_inlist_prepend(EINA_INLIST_GET(im->maps), EINA_INLIST_GET(map));
-        if (length) *length = map->size;
-        if (stride) *stride = map->stride;
-        return map->ptr;
-     }
-
-   return NULL;
+   im->maps = (RGBA_Image_Data_Map *)
+     eina_inlist_prepend(EINA_INLIST_GET(im->maps), EINA_INLIST_GET(map));
+   if (length) *length = map->size;
+   if (stride) *stride = map->stride;
+   return map->ptr;
 }
 
 static void
