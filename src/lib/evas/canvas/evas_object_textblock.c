@@ -9329,12 +9329,11 @@ _evas_textblock_cursor_pos_set(Efl_Canvas_Text_Cursor_Data *cur, int _pos)
 {
    Evas_Object_Textblock_Node_Text *n;
    size_t pos;
-
+   if (!cur) return;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    Efl_Canvas_Text_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
-   if (!cur) return;
 
    if (_pos < 0)
      {
