@@ -630,7 +630,6 @@ ecore_animator_del(Ecore_Animator *animator)
    if (!animator) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
-   if (!animator) return NULL;
    if (animator->delete_me)
      {
         data = animator->data;
