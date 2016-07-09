@@ -621,7 +621,7 @@ _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    EINA_LIST_FOREACH(attrs, l, attr)
      {
         iter_entry = eldbus_message_iter_container_new(iter_dict, 'e', NULL);
-        EINA_SAFETY_ON_NULL_RETURN_VAL(iter_entry, NULL);
+        if (!iter_entry) goto error;
         eldbus_message_iter_arguments_append(iter_entry, "ss", attr->key, attr->value);
         eldbus_message_iter_container_close(iter_dict, iter_entry);
      }
