@@ -229,7 +229,14 @@ int main(int argc, char **argv)
              else
                {
                   printf("data\n");
-                  fwrite(data, (unsigned int)(width * height) * sizeof(DATA32), 1, stdout);
+                  if (fwrite(data,
+                             (unsigned int)(width * height) * sizeof(DATA32),
+                             1, stdout) != 1)
+                    {
+                       shm_free();
+                       _raw_shutdown();
+                       return -1;
+                    }
                }
              shm_free();
           }
