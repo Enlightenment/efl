@@ -1005,8 +1005,12 @@ _touch_event_send(Elput_Device *dev, struct libinput_event_touch *event, int typ
    ev->multi.root.y = ev->y;
 
    btn = ((btn & 0x00F) + 1);
-   if (btn == 3) btn = 2;
-   else if (btn == 2) btn = 3;
+// XXX: this code is useless. above btn is set to 0 at declaration time, then
+// no code changes it until the above like effectively makes it 1. it can
+// only ever be 1 so the below lines are pointless. this is probably a bug
+// lurking...
+//   if (btn == 3) btn = 2;
+//   else if (btn == 2) btn = 3;
    ev->buttons = btn;
 
    ecore_event_add(type, ev, NULL, NULL);
