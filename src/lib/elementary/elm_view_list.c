@@ -145,7 +145,7 @@ _item_get_value(View_List_ItemData *idata, const char *part)
    if (value == NULL)
      {
          Eina_Promise *promise;
-         vitem = calloc(1, sizeof(View_List_ItemData));
+         vitem = calloc(1, sizeof(View_List_ValueItem));
          const char *prop = eina_hash_find(idata->priv->prop_con, part);
 
          if (prop == NULL) prop = part;
