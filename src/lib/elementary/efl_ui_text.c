@@ -4455,51 +4455,30 @@ _efl_ui_text_class_constructor(Eo_Class *klass)
 EOLIAN static Eina_Unicode
 _efl_ui_text_elm_interface_atspi_text_character_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int offset)
 {
-#if 0
-   char *txt;
+   const char *txt;
    int idx = 0;
    Eina_Unicode ret = 0;
    if (offset < 0) return ret;
 
-   txt = _elm_util_mkup_to_text(efl_ui_text_entry_get(obj));
+   if (_pd->password) return ENTRY_PASSWORD_MASK_CHARACTER;
+
+   txt = efl_text_get(obj);
    if (!txt) return ret;
 
    ret = eina_unicode_utf8_next_get(txt, &idx);
    while (offset--) ret = eina_unicode_utf8_next_get(txt, &idx);
 
-   free(txt);
-
-   if (_pd->password)
-     ret = ENTRY_PASSWORD_MASK_CHARACTER;
-
    return ret;
-#else
-   (void) obj;
-   (void) _pd;
-   (void) offset;
-   return 0;
-#endif
 }
 
 EOLIAN static int
 _efl_ui_text_elm_interface_atspi_text_character_count_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
 {
-#if 0
-   char *txt;
-   int ret = -1;
+   const char *txt;
 
-   txt = _elm_util_mkup_to_text(efl_ui_text_entry_get(obj));
-   if (!txt) return ret;
-
-   ret = eina_unicode_utf8_get_len(txt);
-   free(txt);
-
-   return ret;
-#else
-   (void) obj;
-   (void) _pd;
-   return 0;
-#endif
+   txt = efl_text_get(obj);
+   if (!txt) return -1;
+   return eina_unicode_utf8_get_len(txt);
 }
 
 EOLIAN static char*
@@ -4948,15 +4927,8 @@ _efl_ui_text_elm_interface_atspi_text_default_attributes_get(Eo *obj EINA_UNUSED
 EOLIAN static Eina_Bool
 _efl_ui_text_elm_interface_atspi_text_editable_content_set(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, const char *content)
 {
-#if 0
-   efl_ui_text_entry_set(obj, content);
+   efl_text_set(obj, content);
    return EINA_TRUE;
-#else
-   (void) obj;
-   (void) _pd;
-   (void) content;
-   return EINA_TRUE;
-#endif
 }
 
 EOLIAN static Eina_Bool
