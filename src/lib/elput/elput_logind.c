@@ -420,9 +420,13 @@ _logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty)
    em->seat = eina_stringshare_add(seat);
 
    ret = sd_pid_get_session(getpid(), &em->sid);
+
    if (ret < 0)
      {
-        ERR("Could not get systemd session");
+        if (ret == -ENODATA || ret == -ENXIO)
+          ERR("Could not get systemd session, the pid is outside a session, check that you are running inside a logind-session.");
+        else
+          ERR("Could not get systemd session");
         goto session_err;
      }
 
