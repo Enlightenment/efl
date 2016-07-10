@@ -253,7 +253,7 @@ struct _Mod_Api
    void (*obj_longpress)(Evas_Object *obj);
 };
 
-static void _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd);
+static void _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd, const char *file);
 static void _magnifier_move(void *data);
 static void _update_decorations(Eo *obj);
 static void _create_text_cursors(Efl_Ui_Text_Data *sd);
@@ -267,6 +267,7 @@ static void _efl_ui_text_anchor_hover_parent_set(Eo *obj, Efl_Ui_Text_Data *sd, 
 static const char* _efl_ui_text_selection_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd);
 static void _edje_signal_emit(Efl_Ui_Text_Data *obj, const char *sig, const char *src);
 static void _decoration_defer_all(Eo *obj);
+static inline Eo * _decoration_create(Efl_Ui_Text_Data *sd, const char *file, const char *source, Eina_Bool above);
 
 static Mod_Api *
 _module_find(Evas_Object *obj EINA_UNUSED)
@@ -541,55 +542,45 @@ _viewport_region_get(Evas_Object *obj)
 }
 
 static void
-_update_selection_handler(Evas_Object *obj)
+_update_selection_handler(Eo *obj)
 {
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    Evas_Coord sx, sy, sh;
-   Evas_Coord ent_x, ent_y;
    Evas_Coord ex, ey, eh;
-   int start_pos, end_pos, last_pos;
+   Evas_Coord ent_x, ent_y;
+   int start_pos, end_pos;
 
    if (!sd->sel_handler_disabled)
      {
         Eina_Rectangle *rect;
         Evas_Coord hx, hy;
         Eina_Bool hidden = EINA_FALSE;
+        Efl_Canvas_Text_Cursor *sel_start, *sel_end;
+
+        efl_ui_text_interactive_selection_cursors_get(obj, &sel_start, &sel_end);
 
         if (!sd->start_handler)
-          _create_selection_handlers(obj, sd);
+          {
+             const char *file;
+             efl_file_get(sd->entry_edje, &file, NULL);
+             _create_selection_handlers(obj, sd, file);
+          }
 
         rect = _viewport_region_get(obj);
-        start_pos = edje_object_part_text_cursor_pos_get
-           (sd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_BEGIN);
-        end_pos = edje_object_part_text_cursor_pos_get
-           (sd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_END);
+        start_pos = efl_canvas_text_cursor_position_get(sel_start);
+        end_pos = efl_canvas_text_cursor_position_get(sel_end);
 
         evas_object_geometry_get(sd->entry_edje, &ent_x, &ent_y, NULL, NULL);
-        last_pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
-                                                        EDJE_CURSOR_MAIN);
-        edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
-                                             EDJE_CURSOR_MAIN, start_pos);
-        edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
-                                                  &sx, &sy, NULL, &sh);
-        edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
-                                             EDJE_CURSOR_MAIN, end_pos);
-        edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
-                                                  &ex, &ey, NULL, &eh);
-        edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
-                                             EDJE_CURSOR_MAIN, last_pos);
-        if (start_pos < end_pos)
-          {
-             hx = ent_x + sx;
-             hy = ent_y + sy + sh;
-             evas_object_move(sd->start_handler, hx, hy);
-          }
-        else
-          {
-             hx = ent_x + ex;
-             hy = ent_y + ey + eh;
-             evas_object_move(sd->start_handler, hx, hy);
-          }
+
+        efl_canvas_text_cursor_geometry_get(sel_start,
+              EFL_CANVAS_TEXT_CURSOR_TYPE_BEFORE,
+              &sx, &sy, NULL, &sh,
+              NULL, NULL, NULL, NULL);
+        hx = ent_x + sx;
+        hy = ent_y + sy + sh;
+        evas_object_move(sd->start_handler, hx, hy);
+
         if (!eina_rectangle_xcoord_inside(rect, hx) ||
             !eina_rectangle_ycoord_inside(rect, hy))
           {
@@ -608,19 +599,14 @@ _update_selection_handler(Evas_Object *obj)
              sd->start_handler_shown = EINA_FALSE;
           }
 
-        hidden = EINA_FALSE;
-        if (start_pos < end_pos)
-          {
-             hx = ent_x + ex;
-             hy = ent_y + ey + eh;
-             evas_object_move(sd->end_handler, hx, hy);
-          }
-        else
-          {
-             hx = ent_x + sx;
-             hy = ent_y + sy + sh;
-             evas_object_move(sd->end_handler, hx, hy);
-          }
+        efl_canvas_text_cursor_geometry_get(sel_end,
+              EFL_CANVAS_TEXT_CURSOR_TYPE_BEFORE,
+              &ex, &ey, NULL, &eh,
+              NULL, NULL, NULL, NULL);
+        hx = ent_x + ex;
+        hy = ent_y + ey + eh;
+        evas_object_move(sd->end_handler, hx, hy);
+
         if (!eina_rectangle_xcoord_inside(rect, hx) ||
             !eina_rectangle_ycoord_inside(rect, hy))
           {
@@ -3017,8 +3003,11 @@ _selection_handlers_offset_calc(Evas_Object *obj, Evas_Object *handler, Evas_Coo
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
-   edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
-                                                           &cx, &cy, &cw, &ch);
+   efl_canvas_text_cursor_geometry_get(
+         efl_canvas_text_cursor_get(obj),
+         EFL_CANVAS_TEXT_CURSOR_TYPE_BEFORE,
+         &cx, &cy, &cw, &ch,
+         NULL, NULL, NULL, NULL);
    edje_object_size_min_calc(handler, NULL, &hh);
 
    sd->ox = canvasx - (ex + cx + (cw / 2));
@@ -3105,11 +3094,7 @@ _start_handler_mouse_move_cb(void *data,
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ex, ey;
    Evas_Coord cx, cy;
-   Efl_Canvas_Text_Cursor *main_cur;
    int pos;
-
-   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
-   main_cur = efl_canvas_text_cursor_get(text_obj);
 
    evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
    cx = ev->cur.canvas.x - sd->ox - ex;
@@ -3120,7 +3105,7 @@ _start_handler_mouse_move_cb(void *data,
    pos = efl_canvas_text_cursor_position_get(sd->sel_handler_cursor);
 
    /* Set the main cursor. */
-   efl_canvas_text_cursor_position_set(main_cur, pos);
+   efl_canvas_text_cursor_position_set(efl_canvas_text_cursor_get(data), pos);
 
    ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
    sd->long_pressed = EINA_FALSE;
@@ -3154,12 +3139,12 @@ _end_handler_mouse_down_cb(void *data,
    if (start_pos < end_pos)
      {
         pos = end_pos;
-        sd->sel_handler_cursor = sel_start;
+        sd->sel_handler_cursor = sel_end;
      }
    else
      {
         pos = start_pos;
-        sd->sel_handler_cursor = sel_end;
+        sd->sel_handler_cursor = sel_start;
      }
 
    efl_canvas_text_cursor_position_set(main_cur, pos);
@@ -3206,9 +3191,7 @@ _end_handler_mouse_move_cb(void *data,
    efl_canvas_text_cursor_coord_set(sd->sel_handler_cursor, cx, cy);
    pos = efl_canvas_text_cursor_position_get(sd->sel_handler_cursor);
    /* Set the main cursor. */
-   efl_canvas_text_cursor_position_set(
-         edje_object_part_swallow_get(sd->entry_edje, "elm.text"),
-         pos);
+   efl_canvas_text_cursor_position_set(efl_canvas_text_cursor_get(data), pos);
    ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
    sd->long_pressed = EINA_FALSE;
    if (_elm_config->magnifier_enable)
@@ -3398,14 +3381,14 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
 }
 
 static void
-_create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd)
+_create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd,
+      const char *file)
 {
    Evas_Object *handle;
-   const char *style = elm_widget_style_get(obj);
 
-   handle = edje_object_add(evas_object_evas_get(obj));
+   handle = _decoration_create(sd, file, "elm/entry/handler/start", EINA_TRUE);
+   evas_object_pass_events_set(handle, EINA_FALSE);
    sd->start_handler = handle;
-   _elm_theme_object_set(obj, handle, "entry", "handler/start", style);
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_DOWN,
                                   _start_handler_mouse_down_cb, obj);
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_MOVE,
@@ -3414,9 +3397,9 @@ _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd)
                                   _start_handler_mouse_up_cb, obj);
    evas_object_show(handle);
 
-   handle = edje_object_add(evas_object_evas_get(obj));
+   handle = _decoration_create(sd, file, "elm/entry/handler/end", EINA_TRUE);
+   evas_object_pass_events_set(handle, EINA_FALSE);
    sd->end_handler = handle;
-   _elm_theme_object_set(obj, handle, "entry", "handler/end", style);
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_DOWN,
                                   _end_handler_mouse_down_cb, obj);
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_MOVE,
@@ -3520,8 +3503,7 @@ _efl_ui_text_efl_canvas_group_group_move(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coo
 
    if (sd->hoversel) _hoversel_position(obj);
 
-   if (edje_object_part_text_selection_get(sd->entry_edje, "elm.text"))
-     _update_selection_handler(obj);
+   _update_selection_handler(obj);
 }
 
 EOLIAN static void
@@ -3530,17 +3512,15 @@ _efl_ui_text_efl_canvas_group_group_resize(Eo *obj, Efl_Ui_Text_Data *sd, Evas_C
    efl_canvas_group_resize(eo_super(obj, MY_CLASS), w, h);
 
    evas_object_resize(sd->hit_rect, w, h);
-   if (sd->have_selection)
-     _update_selection_handler(obj);
+   _update_selection_handler(obj);
 }
 
 EOLIAN static void
-_efl_ui_text_efl_canvas_group_group_show(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_efl_canvas_group_group_show(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED)
 {
    efl_canvas_group_show(eo_super(obj, MY_CLASS));
 
-   if (sd->have_selection)
-     _update_selection_handler(obj);
+   _update_selection_handler(obj);
 }
 
 EOLIAN static void
@@ -5075,6 +5055,9 @@ _update_text_selection(Eo *obj, Eo *text_obj)
         sd->rects = eina_list_remove_list(sd->rects, l);
         l = temp;
      }
+
+   /* Update selection handlers */
+   _update_selection_handler(obj);
 }
 
 static void

@@ -2968,6 +2968,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_canvas_text_cursor_position_set(cur, 2);
    efl_canvas_text_cursor_object_item_insert(cur, "size=32x32 href=emoticon");
    efl_ui_text_interactive_editable_set(en, EINA_TRUE);
+   efl_ui_text_selection_handler_disabled_set(en, EINA_FALSE);
    efl_ui_text_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
