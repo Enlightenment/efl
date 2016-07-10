@@ -4017,14 +4017,6 @@ _efl_ui_text_item_provider_remove(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm
      }
 }
 
-#if 0
-static const char *
-_text_get(const Evas_Object *obj)
-{
-   return elm_object_text_get(obj);
-}
-#endif
-
 EOLIAN static Eina_Bool
 _efl_ui_text_efl_file_file_set(Eo *obj, Efl_Ui_Text_Data *sd, const char *file, const char *group EINA_UNUSED)
 {
