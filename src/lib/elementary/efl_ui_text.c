@@ -266,6 +266,7 @@ static void _efl_ui_text_anchor_hover_end(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data 
 static void _efl_ui_text_anchor_hover_parent_set(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *parent);
 static const char* _efl_ui_text_selection_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd);
 static void _edje_signal_emit(Efl_Ui_Text_Data *obj, const char *sig, const char *src);
+static void _decoration_defer_all(Eo *obj);
 
 static Mod_Api *
 _module_find(Evas_Object *obj EINA_UNUSED)
@@ -1096,242 +1097,54 @@ _cursor_geometry_recalc(Evas_Object *obj)
 
    eo_event_callback_call(obj, EFL_UI_TEXT_EVENT_CURSOR_CHANGED, NULL);
 
-   if (!sd->deferred_recalc_job)
-     {
-        Evas_Coord cx, cy, cw, ch;
+   Evas_Coord x, y, w, h;
+   Evas_Coord x2, y2, w2, h2;
+   Evas_Coord cx, cy, cw, ch;
 
-        edje_object_part_text_cursor_geometry_get
-          (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
-        if (sd->cur_changed)
-          {
-             sd->cur_changed = EINA_FALSE;
-             elm_widget_show_region_set(obj, cx, cy, cw, ch, EINA_FALSE);
-          }
-     }
-   else
-     sd->deferred_cur = EINA_TRUE;
-}
+   Efl_Canvas_Text_Cursor *main_cur =
+      efl_canvas_text_cursor_get(obj);
 
-static void
-_deferred_recalc_job(void *data)
-{
-   Evas_Coord minh = -1, resw = -1, resh = -1, minw = -1, fw = 0, fh = 0;
-   Eo *sw;
-
-   EFL_UI_TEXT_DATA_GET(data, sd);
-
-   sd->deferred_recalc_job = NULL;
-
-   sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
-   evas_object_geometry_get(sd->entry_edje, NULL, NULL, &resw, &resh);
-   //FIXME: will not work with complex themes.
-   evas_object_resize(sw, resw, resh);
-   efl_canvas_text_size_formatted_get(sw, &minw, &minh);
-   evas_object_size_hint_min_set(sw, minw, minh);
-   edje_object_size_min_restricted_calc(sd->entry_edje, &minw, &minh, resw, 0);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-
-   /* This is a hack to workaround the way min size hints are treated.
-    * If the minimum width is smaller than the restricted width, it
-    * means the minimum doesn't matter. */
-   if (minw <= resw)
-     {
-        Evas_Coord ominw = -1;
-
-        evas_object_size_hint_min_get(data, &ominw, NULL);
-        minw = ominw;
-     }
-
-   sd->ent_mw = minw;
-   sd->ent_mh = minh;
-
-   elm_coords_finger_size_adjust(1, &fw, 1, &fh);
-   if (sd->scroll)
-     {
-        Evas_Coord vmw = 0, vmh = 0;
-
-        edje_object_size_min_calc(sd->scr_edje, &vmw, &vmh);
-        if (sd->single_line)
-          {
-             evas_object_size_hint_min_set(data, vmw, minh + vmh);
-             evas_object_size_hint_max_set(data, -1, minh + vmh);
-          }
-        else
-          {
-             evas_object_size_hint_min_set(data, vmw, vmh);
-             evas_object_size_hint_max_set(data, -1, -1);
-          }
-     }
-   else
-     {
-        if (sd->single_line)
-          {
-             evas_object_size_hint_min_set(data, minw, minh);
-             evas_object_size_hint_max_set(data, -1, minh);
-          }
-        else
-          {
-             evas_object_size_hint_min_set(data, fw, minh);
-             evas_object_size_hint_max_set(data, -1, -1);
-          }
-     }
-
-   if (sd->deferred_cur)
-     {
-        Evas_Coord cx, cy, cw, ch;
-
-        edje_object_part_text_cursor_geometry_get
-          (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
-        if (sd->cur_changed)
-          {
-             sd->cur_changed = EINA_FALSE;
-             elm_widget_show_region_set(data, cx, cy, cw, ch, EINA_FALSE);
-          }
-     }
-   _update_decorations(data);
-}
-
-static inline void
-_recalc_defer(Eo *obj)
-{
-   EFL_UI_TEXT_DATA_GET(obj, sd);
-   ecore_job_del(sd->deferred_recalc_job);
-   sd->deferred_recalc_job =
-      ecore_job_add(_deferred_recalc_job, obj);
+   efl_canvas_text_cursor_geometry_get(main_cur,
+         EFL_CANVAS_TEXT_CURSOR_TYPE_BEFORE,
+         &cx, &cy, &cw, &ch, NULL, NULL, NULL, NULL);
+   edje_object_size_min_restricted_calc(sd->cursor, &cw, NULL, cw, 0);
+   if (cw < 1) cw = 1;
+   if (ch < 1) ch = 1;
+   edje_object_size_min_restricted_calc(sd->cursor, &cw, NULL, cw, 0);
+   evas_object_geometry_get(sd->entry_edje, &x, &y, &w, &h);
+   evas_object_geometry_get(
+         edje_object_part_swallow_get(sd->entry_edje, "elm.text"),
+         &x2, &y2, &w2, &h2);
+   cx = cx + x - x2;
+   cy = cy + y - y2;
+   elm_widget_show_region_set(obj, cx, cy, cw, ch, EINA_FALSE);
 }
 
 EOLIAN static void
 _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
 {
-   Evas_Coord minw = -1, minh = -1;
-   Evas_Coord resw, resh;
+   Evas_Coord vw = 0, vh = 0;
+   Evas_Coord minw, minh;
+   Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
 
-   evas_object_geometry_get(obj, NULL, NULL, &resw, &resh);
-
-   if (sd->line_wrap)
+   evas_event_freeze(evas_object_evas_get(obj));
+   /* Only implement single-line */
+   if (sd->scr_edje)
      {
-        if ((resw == sd->last_w) && (!sd->changed))
-          {
-             if (sd->scroll)
-               {
-                  Evas_Coord vw = 0, vh = 0, w = 0, h = 0;
+        elm_interface_scrollable_content_viewport_geometry_get
+              (obj, NULL, NULL, &vw, &vh);
+        //evas_object_geometry_get(sd->scr_edje, NULL, NULL, &resw, &resh);
+        //evas_object_resize(sd->entry_edje, resw, resh);
+        evas_object_resize(sw, vw, vh);
+        efl_canvas_text_size_formatted_get(sw, &minw, &minh);
+        evas_object_size_hint_min_set(sw, minw, vh);
+        edje_object_size_min_restricted_calc(sd->entry_edje, &minw, &minh, vw, 0);
 
-                  elm_interface_scrollable_content_viewport_geometry_get
-                        (obj, NULL, NULL, &vw, &vh);
-
-                  w = sd->ent_mw;
-                  h = sd->ent_mh;
-                  if (vw > sd->ent_mw) w = vw;
-                  if (vh > sd->ent_mh) h = vh;
-                  evas_object_resize(sd->entry_edje, w, h);
-
-                  return;
-               }
-
-             return;
-          }
-
-        evas_event_freeze(evas_object_evas_get(obj));
-        sd->changed = EINA_FALSE;
-        sd->last_w = resw;
-        if (sd->scroll)
-          {
-             Evas_Coord vw = 0, vh = 0, vmw = 0, vmh = 0, w = -1, h = -1;
-
-             evas_object_resize(sd->scr_edje, resw, resh);
-             edje_object_size_min_calc(sd->scr_edje, &vmw, &vmh);
-             elm_interface_scrollable_content_viewport_geometry_get
-                   (obj, NULL, NULL, &vw, &vh);
-             edje_object_size_min_restricted_calc
-               (sd->entry_edje, &minw, &minh, vw, 0);
-             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-
-             /* This is a hack to workaround the way min size hints
-              * are treated.  If the minimum width is smaller than the
-              * restricted width, it means the minimum doesn't
-              * matter. */
-             if (minw <= vw)
-               {
-                  Evas_Coord ominw = -1;
-
-                  evas_object_size_hint_min_get(sd->entry_edje, &ominw, NULL);
-                  minw = ominw;
-               }
-             sd->ent_mw = minw;
-             sd->ent_mh = minh;
-
-             if ((minw > 0) && (vw < minw)) vw = minw;
-             if (minh > vh) vh = minh;
-
-             if (sd->single_line) h = vmh + minh;
-             else h = vmh;
-
-             evas_object_resize(sd->entry_edje, vw, vh);
-             evas_object_size_hint_min_set(obj, w, h);
-
-             if (sd->single_line)
-               evas_object_size_hint_max_set(obj, -1, h);
-             else
-               evas_object_size_hint_max_set(obj, -1, -1);
-          }
-        else
-          {
-             _recalc_defer(obj);
-          }
-
-        evas_event_thaw(evas_object_evas_get(obj));
-        evas_event_thaw_eval(evas_object_evas_get(obj));
+        evas_object_resize(sd->entry_edje, minw, minh);
      }
-   else
-     {
-        if (!sd->changed) return;
-        evas_event_freeze(evas_object_evas_get(obj));
-        sd->changed = EINA_FALSE;
-        sd->last_w = resw;
-        if (sd->scroll)
-          {
-             Evas_Coord vw = 0, vh = 0, vmw = 0, vmh = 0, w = -1, h = -1;
-
-             edje_object_size_min_calc(sd->entry_edje, &minw, &minh);
-             sd->ent_mw = minw;
-             sd->ent_mh = minh;
-             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-
-             elm_interface_scrollable_content_viewport_geometry_get
-                   (obj, NULL, NULL, &vw, &vh);
-
-             if (minw > vw) vw = minw;
-             if (minh > vh) vh = minh;
-
-             evas_object_resize(sd->entry_edje, vw, vh);
-             edje_object_size_min_calc(sd->scr_edje, &vmw, &vmh);
-             if (sd->single_line) h = vmh + minh;
-             else h = vmh;
-
-             evas_object_size_hint_min_set(obj, w, h);
-             if (sd->single_line)
-               evas_object_size_hint_max_set(obj, -1, h);
-             else
-               evas_object_size_hint_max_set(obj, -1, -1);
-          }
-        else
-          {
-             edje_object_size_min_calc(sd->entry_edje, &minw, &minh);
-             sd->ent_mw = minw;
-             sd->ent_mh = minh;
-             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-             evas_object_size_hint_min_set(obj, minw, minh);
-
-             if (sd->single_line)
-               evas_object_size_hint_max_set(obj, -1, minh);
-             else
-               evas_object_size_hint_max_set(obj, -1, -1);
-          }
-        evas_event_thaw(evas_object_evas_get(obj));
-        evas_event_thaw_eval(evas_object_evas_get(obj));
-     }
-
    _cursor_geometry_recalc(obj);
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static void
@@ -1363,13 +1176,9 @@ _efl_ui_text_elm_widget_on_focus(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item 
 
    if (elm_widget_focus_get(obj))
      {
-#if 0
-        evas_object_focus_set(sd->entry_edje, EINA_TRUE);
-#else
         Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
         evas_object_focus_set(sw, EINA_TRUE);
 
-#endif
         _edje_signal_emit(sd, "elm,action,focus", "elm");
         if (sd->scroll)
           edje_object_signal_emit(sd->scr_edje, "elm,action,focus", "elm");
@@ -1385,15 +1194,13 @@ _efl_ui_text_elm_widget_on_focus(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item 
      }
    else
      {
+        Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+
         _edje_signal_emit(sd, "elm,action,unfocus", "elm");
         if (sd->scroll)
           edje_object_signal_emit(sd->scr_edje, "elm,action,unfocus", "elm");
-#if 0
-        evas_object_focus_set(sd->entry_edje, EINA_FALSE);
-#else
-        Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
         evas_object_focus_set(sw, EINA_FALSE);
-#endif
+
         if (top && top_is_win && sd->input_panel_enable &&
             !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
@@ -1447,9 +1254,7 @@ _show_region_hook(void *data EINA_UNUSED,
                   Evas_Object *obj)
 {
    Evas_Coord x, y, w, h;
-
    elm_widget_show_region_get(obj, &x, &y, &w, &h);
-
    elm_interface_scrollable_content_region_show(obj, x, y, w, h);
 }
 
@@ -3566,7 +3371,12 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
 
    text_obj = eo_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
    eo_composite_attach(obj, text_obj);
+
    edje_object_part_swallow(priv->entry_edje, "elm.text", text_obj);
+   evas_object_size_hint_weight_set
+      (priv->entry_edje, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set
+      (priv->entry_edje, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_canvas_text_style_set(text_obj, NULL, "DEFAULT='font=Sans font_size=14 color=#fff wrap=word'");
    eo_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
          _efl_ui_text_changed_cb, obj);
@@ -5772,7 +5582,9 @@ static void
 _efl_ui_text_cursor_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
+   sd->cur_changed = EINA_TRUE;
    sd->deferred_decoration_cursor = EINA_TRUE;
+   _cursor_geometry_recalc(data);
    _decoration_defer(data);
 }
 
