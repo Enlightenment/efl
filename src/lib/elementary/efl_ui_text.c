@@ -3346,6 +3346,12 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   /* XXX: needs to be before efl_canvas_group_add, since the latter will
+    * trigger a layout_sizing_eval call and requires the canvas text object to
+    * be instantiated. */
+   text_obj = eo_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
+   eo_composite_attach(obj, text_obj);
+
    efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
@@ -3368,9 +3374,6 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
 
    if (!elm_layout_theme_set(obj, "efl_ui_text", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
-
-   text_obj = eo_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
-   eo_composite_attach(obj, text_obj);
 
    edje_object_part_swallow(priv->entry_edje, "elm.text", text_obj);
    evas_object_size_hint_weight_set
