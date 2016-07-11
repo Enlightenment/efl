@@ -50,6 +50,7 @@ struct _Entry
    Eina_Bool              input_panel_enable : 1;
    Eina_Bool              prediction_allow : 1;
    Eina_Bool              anchors_updated : 1;
+   Eina_Bool              have_link_pressed : 1;
 
 #ifdef HAVE_ECORE_IMF
    Eina_Bool              have_preedit : 1;
@@ -761,6 +762,28 @@ _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entr
      }
 }
 
+static Eina_Bool
+_edje_entry_style_tag_check(Edje_Real_Part *rp, const char *tag)
+{
+    const Evas_Textblock_Style *ts = NULL;
+
+    ts = evas_object_textblock_style_user_peek(rp->object);
+    if (ts)
+      {
+         if (strstr(evas_textblock_style_get(ts), tag)) return EINA_TRUE;
+      }
+    else
+      {
+         ts = evas_object_textblock_style_get(rp->object);
+         if (ts)
+           {
+              if (strstr(evas_textblock_style_get(ts), tag)) return EINA_TRUE;
+           }
+      }
+
+   return EINA_FALSE;
+}
+
 static void
 _edje_anchor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
@@ -794,6 +817,14 @@ _edje_anchor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
         else
           snprintf(buf, len, "anchor,mouse,down,%i,%s", ev->button, n);
         _edje_emit(ed, buf, rp->part->name);
+
+        /* Link Pressed effect */
+        if (_edje_entry_style_tag_check(rp, "link_pressed="))
+          {
+             an->en->have_link_pressed = EINA_TRUE;
+             evas_textblock_cursor_format_append(an->start, "<link_pressed>");
+             evas_textblock_cursor_format_prepend(an->end, "</>");
+          }
      }
    ev->event_flags |= rp->part->mask_flags;
 }
@@ -826,8 +857,29 @@ _edje_anchor_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
           {
              snprintf(buf, len, "anchor,mouse,up,%i,%s", ev->button, n);
              _edje_emit(ed, buf, rp->part->name);
+             /* Link Pressed effect */
+             if (an->en->have_link_pressed)
+               {
+                  const Evas_Object_Textblock_Node_Format *node;
+                  node = evas_textblock_node_format_first_get(rp->object);
+                  for (; node; node = evas_textblock_node_format_next_get(node))
+                    {
+                        const char *text = evas_textblock_node_format_text_get(node);
+
+                        if (text)
+                          {
+                             if (!strcmp(text, "+ link_pressed"))
+                               {
+                                  evas_textblock_node_format_remove_pair(rp->object,
+                                           (Evas_Object_Textblock_Node_Format *)node);
+                                  break;
+                               }
+                          }
+                    }
+               }
           }
      }
+
    if ((rp->still_in) && (rp->clicked_button == ev->button) && (!ignored))
      {
         snprintf(buf, len, "anchor,mouse,clicked,%i,%s", ev->button, n);
