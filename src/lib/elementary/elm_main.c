@@ -444,7 +444,7 @@ elm_app_prefix_dir_get(void)
 {
    if (app_prefix_dir) return app_prefix_dir;
    _prefix_check();
-  if (!app_pfx) return "";
+   if (!app_pfx) return "";
    app_prefix_dir = eina_prefix_get(app_pfx);
    return app_prefix_dir;
 }
