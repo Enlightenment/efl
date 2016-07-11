@@ -364,7 +364,10 @@ _edje_object_language_set(Eo *obj, Edje *ed, const char *locale)
    eina_stringshare_replace_length(&ed->language, locale, length);
 
    signal = alloca(length + 15);
-   snprintf(signal, length + 15, "edje,language,%s", ed->language);
+   if (ed->language)
+     snprintf(signal, length + 15, "edje,language,%s", ed->language);
+   else
+     snprintf(signal, length + 15, "edje,language,%s", "none");
 
    _edje_language_signal_emit(ed, obj, signal);
 }
@@ -397,7 +400,10 @@ edje_language_set(const char *locale)
    eina_stringshare_replace(&_edje_language, loc);
 
    signal = alloca(length + 15);
-   snprintf(signal, length + 15, "edje,language,%s", loc);
+   if (loc)
+     snprintf(signal, length + 15, "edje,language,%s", loc);
+   else
+     snprintf(signal, length + 15, "edje,language,%s", "none");
 
    EINA_LIST_FOREACH(_edje_edjes, l, obj)
      {

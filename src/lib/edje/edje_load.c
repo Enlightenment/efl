@@ -1370,8 +1370,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        _edje_user_definition_remove(eud, eud->u.box.child);
                     }
                }
-
-             snprintf(lang, sizeof(lang), "edje,language,%s", _edje_language);
+             if (_edje_language)
+               snprintf(lang, sizeof(lang), "edje,language,%s", _edje_language);
+             else
+             snprintf(lang, sizeof(lang), "edje,language,%s", "none");
              edje_object_signal_emit(obj, lang, "edje");
 
              if (edje_object_mirrored_get(obj))
