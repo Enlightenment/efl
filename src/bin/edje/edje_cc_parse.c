@@ -216,7 +216,8 @@ new_object(void)
                   char buf[512] = { 0, };
                   char *end;
 
-                  strcpy(buf, id);
+                  strncpy(buf, id, sizeof(buf) - 1);
+                  buf[sizeof(buf) - 1] = 0;
                   end = strrchr(buf, '.');
                   if (end) end++;
                   else end = buf;
@@ -256,7 +257,8 @@ new_statement(void)
         char buf[512] = { 0, };
         char *end;
 
-        strcpy(buf, id);
+        strncpy(buf, id, sizeof(buf) - 1);
+        buf[sizeof(buf) - 1] = 0;
         end = strrchr(buf, '.');
         if (end) end++;
         else end = buf;
