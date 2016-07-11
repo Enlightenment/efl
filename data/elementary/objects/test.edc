@@ -833,4 +833,31 @@ group { name: "page_layout";
          }
       }
    }
+   group { name: "font_overlay_layout";
+      styles {
+         style { name: "test_class_style";
+            base: "font=Sans font_size=20 color=#fff text_class=font_overlay_test wrap=mixed";
+         }
+      }
+      parts {
+         part { name: "bg";
+            type: RECT;
+            scale: 1;
+            description { state: "default" 0.0;
+               min: 400 300;
+               color: 0 0 0 0;
+            }
+         }
+         part { name: "elm.text";
+            type: TEXTBLOCK;
+            scale: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               text {
+                  style: "test_class_style";
+               }
+            }
+         }
+      }
+   }
 }

@@ -532,3 +532,122 @@ test_config(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    evas_object_resize(win, 400, 500);
    evas_object_show(win);
 }
+
+static void
+_font_overlay_page_next(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *layout;
+   Evas_Object *nf = (Evas_Object *)data;
+   char buf[255];
+
+   layout = elm_layout_add(nf);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(layout, buf, "font_overlay_layout");
+   elm_layout_text_set(layout, "elm.text", "TEXTBLOCK part of test_class");
+   evas_object_show(layout);
+
+   elm_naviframe_item_push(nf, "Font Overlay", NULL, NULL, layout, NULL);
+}
+
+static void
+_apply_font_overlay_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *nf = (Evas_Object *)data;
+   Evas_Object *entry;
+   const char *font;
+   const char *font_size_temp;
+   int font_size;
+
+   entry = (Evas_Object *)evas_object_data_get(nf, "font_entry");
+   font = elm_entry_entry_get(entry);
+   entry = (Evas_Object *)evas_object_data_get(nf, "font_size_entry");
+   font_size_temp = elm_entry_entry_get(entry);
+   font_size = atoi(font_size_temp);
+
+   printf("Font overlay set: Font [%s], FontSize [%d]\n", font, font_size);
+   elm_config_font_overlay_set("font_overlay_test", font, font_size);
+   elm_config_font_overlay_apply();
+}
+
+void
+test_config_font_overlay(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *nf, *box, *horizon_box, *label, *btn, *entry;
+   Elm_Object_Item *it;
+
+   win = elm_win_util_standard_add("naviframe", "Naviframe");
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   nf = elm_naviframe_add(win);
+   evas_object_size_hint_weight_set(nf, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, nf);
+   evas_object_show(nf);
+
+   box = elm_box_add(nf);
+   evas_object_show(box);
+
+   horizon_box = elm_box_add(box);
+   elm_box_horizontal_set(horizon_box, EINA_TRUE);
+   evas_object_size_hint_align_set(horizon_box, EVAS_HINT_FILL, -1);
+   evas_object_size_hint_weight_set(horizon_box, EVAS_HINT_EXPAND, -1);
+   elm_box_pack_end(box, horizon_box);
+   evas_object_show(horizon_box);
+
+   label = elm_label_add(horizon_box);
+   elm_object_text_set(label, "Font:");
+   elm_box_pack_end(horizon_box, label);
+   evas_object_show(label);
+
+   entry = elm_entry_add(horizon_box);
+   elm_entry_single_line_set(entry, EINA_TRUE);
+   elm_entry_scrollable_set(entry, EINA_TRUE);
+   evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, -1);
+   evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, -1);
+   elm_object_part_text_set(entry, "elm.guide", "Input Font");
+   elm_box_pack_end(horizon_box, entry);
+   evas_object_show(entry);
+   evas_object_data_set(nf, "font_entry", entry);
+
+   horizon_box = elm_box_add(box);
+   elm_box_horizontal_set(horizon_box, EINA_TRUE);
+   evas_object_size_hint_align_set(horizon_box, EVAS_HINT_FILL, -1);
+   evas_object_size_hint_weight_set(horizon_box, EVAS_HINT_EXPAND, -1);
+   elm_box_pack_end(box, horizon_box);
+   evas_object_show(horizon_box);
+
+   label = elm_label_add(horizon_box);
+   elm_object_text_set(label, "Size:");
+   elm_box_pack_end(horizon_box, label);
+   evas_object_show(label);
+
+   entry = elm_entry_add(horizon_box);
+   elm_entry_single_line_set(entry, EINA_TRUE);
+   elm_entry_scrollable_set(entry, EINA_TRUE);
+   evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, -1);
+   evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, -1);
+   elm_object_part_text_set(entry, "elm.guide", "Input Font Size");
+   elm_box_pack_end(horizon_box, entry);
+   evas_object_show(entry);
+   evas_object_data_set(nf, "font_size_entry", entry);
+
+   btn = elm_button_add(box);
+   elm_object_text_set(btn, "Apply Font Overlay");
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, -1);
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, -1);
+   evas_object_smart_callback_add(btn, "clicked", _apply_font_overlay_btn_clicked_cb, nf);
+   elm_box_pack_end(box, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(nf);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(btn, "clicked", _font_overlay_page_next, nf);
+   elm_object_text_set(btn, "Next");
+   evas_object_show(btn);
+
+   it = elm_naviframe_item_push(nf, "Font Overlay", NULL, btn, box, NULL);
+   evas_object_data_set(nf, "page1", it);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
+}

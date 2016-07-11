@@ -266,6 +266,7 @@ void test_external_video(void *data, Evas_Object *obj, void *event_info);
 void test_external_icon(void *data, Evas_Object *obj, void *event_info);
 void test_external_combobox(void *data, Evas_Object *obj, void *event_info);
 void test_config(void *data, Evas_Object *obj, void *event_info);
+void test_config_font_overlay(void *data, Evas_Object *obj, void *event_info);
 void test_video(void *data, Evas_Object *obj, void *event_info);
 void test_eio(void *data, Evas_Object *obj, void *event_info);
 void test_web(void *data, Evas_Object *obj, void *event_info);
@@ -916,6 +917,7 @@ add_tests:
    ADD_TEST(NULL, "Miscellaneous", "Accessibility", test_access);
    ADD_TEST(NULL, "Miscellaneous", "Accessibility2", test_access2);
    ADD_TEST(NULL, "Miscellaneous", "Accessibility3", test_access3);
+   ADD_TEST(NULL, "Miscellaneous", "Font overlay", test_config_font_overlay);
 
    //------------------------------//
    ADD_TEST(NULL, "Application client/server", "Task switcher", test_task_switcher);
