@@ -473,7 +473,7 @@ evas_cache_engine_image_dirty(Engine_Image_Entry *eim, unsigned int x, unsigned 
    return eim_dirty;
 
   on_error:
-   if (eim) evas_cache_engine_image_drop(eim);
+   evas_cache_engine_image_drop(eim);
    if (eim_dirty && eim_dirty != eim)
      evas_cache_engine_image_drop(eim_dirty);
    else
