@@ -2098,6 +2098,7 @@ funcstub(int native)
 	     error(10);		/* illegal function or declaration */
 	     return;
 	  }			/* if */
+        assert(("strcpy: source str size is more than available at destination", sizeof(str) <= sNAMEMAX));
 	strcpy(symbolname, str);
      }				/* if */
    needtoken('(');		/* only functions may be native/forward */
