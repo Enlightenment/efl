@@ -582,7 +582,7 @@ eng_image_free(void *data, void *image)
    re = (Render_Engine *)data;
    if (!image) return;
    eng_window_use(re->win);
-   evas_gl_common_image_free(image);
+   evas_gl_common_image_unref(image);
 }
 
 static void
