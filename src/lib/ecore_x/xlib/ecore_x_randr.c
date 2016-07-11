@@ -655,14 +655,14 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_m
         if (h <= 0) h = ch;
         if (w_mm <= 0)
           {
-             if ((double)cw > 0.0)
+             if (cw > 0)
                w_mm = (int)(((double)(cwmm / (double)cw)) * (double)w);
              else
                w_mm = (int)(((double)(cwmm)) * (double)w);
           }
         if (h_mm <= 0)
           {
-             if ((double)ch > 0.0)
+             if (ch > 0)
                h_mm = (int)(((double)(chmm / (double)ch)) * (double)h);
              else
                h_mm = (int)(((double)(chmm)) * (double)h);
