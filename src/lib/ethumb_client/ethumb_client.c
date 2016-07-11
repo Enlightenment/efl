@@ -544,6 +544,17 @@ ethumb_client_shutdown(void)
    return _initcount;
 }
 
+static void
+_name_start(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+   const char *name, *text;
+   if (eldbus_message_error_get(msg, &name, &text))
+     {
+        ERR("Starting ethumb failed %s %s", name, text);
+        return;
+     }
+}
+
 /**
  * Connects to Ethumb server and return the client instance.
  *
@@ -615,7 +626,12 @@ ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Ein
         goto connection_err;
      }
 
-   eldbus_name_start(eclient->conn, _ethumb_dbus_bus_name, 0, NULL, NULL);
+   if (!eldbus_name_start(eclient->conn, _ethumb_dbus_bus_name, 0, _name_start, NULL))
+     {
+        ERR("Failed to start ethumb bus");
+        goto connection_err;
+     }
+
    eldbus_name_owner_changed_callback_add(eclient->conn, _ethumb_dbus_bus_name,
                                          _ethumb_client_name_owner_changed,
                                          eclient, EINA_TRUE);
