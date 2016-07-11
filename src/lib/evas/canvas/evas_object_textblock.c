@@ -11706,7 +11706,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
            _ITEM_TEXT(it)->text_props.text_len
            : 1;
         if ((!cur1 || (cur1->pos < it->text_pos + item_len)) &&
-              (!cur2 || (cur2->pos >= it->text_pos)))
+              (!cur2 || (cur2->pos > it->text_pos)))
           {
              if (!it1)
                {

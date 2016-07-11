@@ -2839,6 +2839,15 @@ START_TEST(evas_textblock_geometries)
 
    eina_iterator_free(it);
 
+   /* Check trivial case with format items */
+   evas_object_textblock_text_markup_set(tb, "abc<item size=32x32>efg");
+   evas_textblock_cursor_pos_set(cur, 3);
+   evas_textblock_cursor_pos_set(main_cur, 3);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   rects = eina_iterator_container_get(it);
+   ck_assert(!rects);
+   eina_iterator_free(it);
+
    END_TB_TEST();
 }
 END_TEST
