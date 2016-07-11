@@ -932,7 +932,7 @@ evas_cache2_image_scale_load(Image_Entry *im,
    error = evas_cache2_image_load_data(ret);
    if (error != EVAS_LOAD_ERROR_NONE)
      {
-        _evas_cache2_image_entry_delete(im->cache2, ret);
+        if (ret) _evas_cache2_image_entry_delete(im->cache2, ret);
         goto parent_out;
      }
 
