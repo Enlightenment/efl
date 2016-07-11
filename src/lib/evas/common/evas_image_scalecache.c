@@ -802,7 +802,10 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
                   ct = evas_common_draw_context_new();
                   evas_common_draw_context_set_render_op(ct, _EVAS_RENDER_COPY);
                }
+             SLKU(cache_lock);
              SLKU(im->cache.lock);
+
+             SLKL(cache_lock);
              if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
                {
 #ifdef EVAS_CSERVE2
@@ -812,7 +815,10 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
 #endif
                     evas_cache_image_load_data(&im->cache_entry);
                }
+             SLKU(cache_lock);
+
              SLKL(im->cache.lock);
+             SLKL(cache_lock);
              evas_common_image_colorspace_normalize(im);
              if (im->image.data)
                {
