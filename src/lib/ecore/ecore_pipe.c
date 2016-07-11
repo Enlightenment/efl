@@ -389,6 +389,9 @@ _ecore_pipe_del(Ecore_Pipe *p)
    if (p->fd_handler) _ecore_main_fd_handler_del(p->fd_handler);
    if (p->fd_read != PIPE_FD_INVALID) pipe_close(p->fd_read);
    if (p->fd_write != PIPE_FD_INVALID) pipe_close(p->fd_write);
+   p->fd_handler = NULL;
+   p->fd_read = PIPE_FD_INVALID;
+   p->fd_write = PIPE_FD_INVALID;
    data = (void *)p->data;
    ecore_pipe_mp_free(p);
    return data;
