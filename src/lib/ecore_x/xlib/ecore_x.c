@@ -2124,7 +2124,8 @@ ecore_x_client_message8_send(Ecore_X_Window win,
    if (len > 20)
      len = 20;
 
-   memcpy(xev.xclient.data.b, data, len);
+   if (data && len > 0)
+     memcpy(xev.xclient.data.b, data, len);
    if (len < 20)
      memset(xev.xclient.data.b + len, 0, 20 - len);
 

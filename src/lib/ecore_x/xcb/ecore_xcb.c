@@ -504,9 +504,12 @@ ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type,
    ev.format = 8;
    ev.window = win;
    ev.type = type;
-   if (len > 20) len = 20;
-   memcpy(ev.data.data8, data, len);
-   memset(ev.data.data8 + len, 0, 20 - len);
+   if (len > 20)
+     len = 20;
+   if (data && len > 0)
+     memcpy(ev.data.data8, data, len);
+   if (len < 20)
+     memset(ev.data.data8 + len, 0, 20 - len);
 
    cookie = xcb_send_event(_ecore_xcb_conn, 0, win,
                            XCB_EVENT_MASK_NO_EVENT, (const char *)&ev);
