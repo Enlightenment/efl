@@ -244,9 +244,11 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
           {
              if (source->input->display->wl.data_device_manager_version >=
                  WL_DATA_OFFER_FINISH_SINCE_VERSION)
-               wl_data_offer_finish(source->offer);
-               wl_data_offer_destroy(source->offer);
-               source->offer = NULL;
+               {
+                  wl_data_offer_finish(source->offer);
+               }
+             wl_data_offer_destroy(source->offer);
+             source->offer = NULL;
           }
 
         fd = ecore_main_fd_handler_fd_get(source->fdh);
