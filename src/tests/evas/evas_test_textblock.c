@@ -3205,6 +3205,7 @@ START_TEST(evas_textblock_formats)
    START_TB_TEST();
    const char *buf = "Th<b>i<font_size=15 wrap=none>s i</font_size=13>s</> a <br/> te<ps/>st<item></>.";
    const Evas_Object_Textblock_Node_Format *fnode;
+   Evas_Coord w, h, nw, nh;
    evas_object_textblock_text_markup_set(tb, buf);
 
    /* Walk from the start */
@@ -3341,7 +3342,6 @@ START_TEST(evas_textblock_formats)
 
    /* Format text nodes invalidation */
      {
-        Evas_Coord w, h, nw, nh;
         evas_object_textblock_text_markup_set(tb, "Test");
         evas_object_textblock_size_formatted_get(tb, &w, &h);
         evas_textblock_cursor_paragraph_first(cur);
@@ -3455,9 +3455,33 @@ START_TEST(evas_textblock_formats)
    evas_object_textblock_text_markup_set(tb, "f<color=#f00>i</color>f");
    evas_object_textblock_size_formatted_get(tb, NULL, NULL);
 
+   /* Scaling Line size */
+   evas_object_scale_set(tb, 1.0);
+   evas_object_textblock_text_markup_set(tb, "<linesize=100>Line size 100</linesize>");
+   evas_object_resize(tb, 400, 400);
+   evas_object_textblock_size_formatted_get(tb, NULL, &h);
+   ck_assert_int_ge(h, 100);
+
+   evas_object_scale_set(tb, 2.0);
+   evas_object_textblock_size_formatted_get(tb, NULL, &h);
+   ck_assert_int_ge(h, 200);
+
+   /* Scaling Line gap */
+   evas_object_scale_set(tb, 1.0);
+   evas_object_textblock_text_markup_set(tb, "<linegap=100>Line gap 100</linegap>");
+   evas_object_resize(tb, 50, 400);
+   evas_object_textblock_size_formatted_get(tb, NULL, &h);
+   ck_assert_int_ge(h, 100);
+
+   evas_object_scale_set(tb, 2.0);
+   evas_object_textblock_size_formatted_get(tb, NULL, &h);
+   ck_assert_int_ge(h, 200);
+
+   /* Restore scale */
+   evas_object_scale_set(tb, 1.0);
+
    /* Line gap and multi language */
    {
-      Evas_Coord h;
       Evas_Textblock_Style *newst;
       buf = "This is a test suite for line gap - ഈ ലൈൻ "
                   "വിടവ് ടെസ്റ്റ് ടെസ്റ്റ് ടെസ്റ്റ് ടെസ്റ്റ് ഒരു പരീക്ഷണ വെയര് ";
