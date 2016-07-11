@@ -3822,6 +3822,7 @@ _edje_entry_cursor_begin(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   int old_cur_pos;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -3831,7 +3832,12 @@ _edje_entry_cursor_begin(Edje_Real_Part *rp, Edje_Cursor cur)
 
    _edje_entry_imf_context_reset(rp);
 
+   old_cur_pos = evas_textblock_cursor_pos_get(c);
    evas_textblock_cursor_paragraph_first(c);
+
+   if (old_cur_pos == evas_textblock_cursor_pos_get(c))
+     return;
+
    _sel_update(en->ed, c, rp->object, rp->typedata.text->entry_data);
 
    _edje_entry_imf_cursor_info_set(en);
@@ -3844,6 +3850,7 @@ _edje_entry_cursor_end(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   int old_cur_pos;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -3853,7 +3860,12 @@ _edje_entry_cursor_end(Edje_Real_Part *rp, Edje_Cursor cur)
 
    _edje_entry_imf_context_reset(rp);
 
+   old_cur_pos = evas_textblock_cursor_pos_get(c);
    _curs_end(c, rp->object, rp->typedata.text->entry_data);
+
+   if (old_cur_pos == evas_textblock_cursor_pos_get(c))
+     return;
+
    _sel_update(en->ed, c, rp->object, rp->typedata.text->entry_data);
 
    _edje_entry_imf_cursor_info_set(en);
@@ -3891,6 +3903,7 @@ _edje_entry_cursor_line_begin(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   int old_cur_pos;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -3899,7 +3912,12 @@ _edje_entry_cursor_line_begin(Edje_Real_Part *rp, Edje_Cursor cur)
    if (!c) return;
    _edje_entry_imf_context_reset(rp);
 
+   old_cur_pos = evas_textblock_cursor_pos_get(c);
    evas_textblock_cursor_line_char_first(c);
+
+   if (old_cur_pos == evas_textblock_cursor_pos_get(c))
+     return;
+
    _sel_update(en->ed, c, rp->object, rp->typedata.text->entry_data);
 
    _edje_entry_imf_cursor_info_set(en);
@@ -3913,6 +3931,7 @@ _edje_entry_cursor_line_end(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    Entry *en;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   int old_cur_pos;
 
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -3920,7 +3939,13 @@ _edje_entry_cursor_line_end(Edje_Real_Part *rp, Edje_Cursor cur)
    if (!en) return;
    if (!c) return;
    _edje_entry_imf_context_reset(rp);
+
+   old_cur_pos = evas_textblock_cursor_pos_get(c);
    evas_textblock_cursor_line_char_last(c);
+
+   if (old_cur_pos == evas_textblock_cursor_pos_get(c))
+     return;
+
    _sel_update(en->ed, c, rp->object, rp->typedata.text->entry_data);
 
    _edje_entry_imf_cursor_info_set(en);
