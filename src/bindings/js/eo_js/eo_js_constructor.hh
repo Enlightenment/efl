@@ -68,10 +68,7 @@ struct constructor_caller
         }
       else
         {
-          eina::js::compatibility_throw
-            (v8::Exception::TypeError
-             (eina::js::compatibility_new<v8::String>(args->GetIsolate(), "Expected more arguments for this call")));
-          throw std::logic_error("");
+          throw std::logic_error("Expected more arguments for this call");
         }
     }
 
@@ -114,7 +111,8 @@ struct constructor_caller
                , parent
                , eina::_mpl::for_each(constructors, call{eo_self, &current_index, &args})
                );
-            assert(eo != 0);
+            if (!eo)
+              throw std::logic_error("Failed to create object.");
             v8::Local<v8::Object> self = args.This();
             self->SetInternalField(0, eina::js::compatibility_new<v8::External>(args.GetIsolate(), eo));
             efl::eina::js::make_weak(args.GetIsolate(), self
@@ -123,7 +121,12 @@ struct constructor_caller
                                        eo_unref(eo);
                                      });
           }
-        catch(std::logic_error const&) {}
+        catch(std::logic_error const& error)
+          {
+             eina::js::compatibility_throw
+               (v8::Exception::TypeError
+                (eina::js::compatibility_new<v8::String>(args.GetIsolate(), error.what())));
+          }
       }
     else
       {
