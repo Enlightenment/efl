@@ -12176,7 +12176,7 @@ _evas_textblock_cursor_format_item_geometry_get(const Efl_Canvas_Text_Cursor_Dat
    Evas_Object_Textblock_Item *it = NULL;
    Evas_Coord x, y, w, h;
 
-   if (!cur || !_evas_textblock_cursor_format_is_visible_get(cur)) return EINA_FALSE;
+   if (!cur) return EINA_FALSE;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    Efl_Canvas_Text_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
@@ -13705,9 +13705,8 @@ _textblock_cursor_pos_at_fnode_set(Eo *eo_obj EINA_UNUSED,
       Efl_Canvas_Text_Cursor_Data *cur,
       Evas_Object_Textblock_Node_Format *fnode)
 {
-   /* Get the relative offset to cur's text node */
-   size_t off = _evas_textblock_node_format_pos_get(fnode);
-   _evas_textblock_cursor_pos_set(cur, off);
+   cur->node = fnode->text_node;
+   cur->pos = _evas_textblock_node_format_pos_get(fnode);
 }
 
 static Eina_Bool
