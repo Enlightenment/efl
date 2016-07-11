@@ -3242,6 +3242,8 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
    efl_canvas_text_style_set(text_obj, NULL, "DEFAULT='font=Sans font_size=14 color=#fff wrap=word'");
    eo_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
          _efl_ui_text_changed_cb, obj);
+   eo_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
+         _efl_ui_text_changed_cb, obj);
    eo_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
          _efl_ui_text_selection_changed_cb, obj);
    eo_event_callback_add(efl_canvas_text_cursor_get(text_obj), EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED,
@@ -3483,6 +3485,8 @@ _efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
 
    text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
    eo_event_callback_del(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
+         _efl_ui_text_changed_cb, obj);
+   eo_event_callback_del(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
    eo_event_callback_del(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
          _efl_ui_text_selection_changed_cb, obj);
