@@ -1215,9 +1215,7 @@ dist_installed_evasmainheaders_DATA += modules/evas/engines/wayland_egl/Evas_Eng
 WAYLAND_EGL_SOURCES = \
 modules/evas/engines/wayland_egl/evas_engine.c \
 modules/evas/engines/wayland_egl/evas_wl_main.c \
-modules/evas/engines/wayland_egl/evas_engine.h \
-modules/evas/engines/wayland_egl/www.c \
-modules/evas/engines/wayland_egl/www.h
+modules/evas/engines/wayland_egl/evas_engine.h
 if EVAS_STATIC_BUILD_WAYLAND_EGL
 lib_evas_libevas_la_SOURCES += $(WAYLAND_EGL_SOURCES)
 lib_evas_libevas_la_CPPFLAGS += @evas_engine_wayland_egl_cflags@

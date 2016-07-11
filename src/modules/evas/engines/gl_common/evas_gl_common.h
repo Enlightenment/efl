@@ -60,7 +60,6 @@
 typedef struct _Evas_GL_Program               Evas_GL_Program;
 typedef struct _Evas_GL_Shared                Evas_GL_Shared;
 typedef struct _Evas_Engine_GL_Context        Evas_Engine_GL_Context;
-typedef struct _Evas_GL_Redirect              Evas_GL_Redirect;
 typedef struct _Evas_GL_Texture_Pool          Evas_GL_Texture_Pool;
 typedef struct _Evas_GL_Texture_Alloca        Evas_GL_Texture_Alloca;
 typedef struct _Evas_GL_Texture               Evas_GL_Texture;
@@ -343,17 +342,6 @@ struct _Evas_Engine_GL_Context
    int gles_version;
 
    RGBA_Image *font_surface;
-
-   GLuint current_fb;
-};
-
-struct _Evas_GL_Redirect
-{
-      Evas_Engine_GL_Context *gc;
-      GLuint fb;
-      GLuint texture;
-      GLuint depth_buffer;
-      Eina_Bool active : 1;
 };
 
 struct _Evas_GL_Texture_Pool
@@ -539,13 +527,6 @@ typedef int (*Evas_GL_Common_Buffer_Dump_Call)(Evas_Engine_GL_Context *gc,const 
 typedef void (*Evas_Gl_Symbols)(void *(*GetProcAddress)(const char *sym));
 
 EAPI void __evas_gl_err(int err, const char *file, const char *func, int line, const char *op);
-
-EAPI Evas_GL_Redirect *evas_gl_common_context_redirect(Evas_Engine_GL_Context *gc);
-EAPI void              evas_gl_common_context_unredirect(Evas_GL_Redirect *re);
-EAPI GLuint            evas_gl_common_context_redirect_texture_get(Evas_GL_Redirect *re);
-EAPI void              evas_gl_common_context_redirect_bind(Evas_GL_Redirect *re);
-EAPI void              evas_gl_common_context_redirect_unbind(Evas_GL_Redirect *re);
-
 
 void              evas_gl_common_tiling_start(Evas_Engine_GL_Context *gc,
                                               int rot, int gw, int gh,
