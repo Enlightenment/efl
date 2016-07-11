@@ -1293,7 +1293,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_unset(Evas_Object *obj);
  *
  * @code
  * struct tm t = { 0, 0, 12, 6, 0, 0, 6, 6, -1 };
- * elm_calendar_mark_add(obj, "sat", &t, ELM_CALENDAR_WEEKLY);
+ * elm_calendar_mark_add(obj, "weekend/day1", &t, ELM_CALENDAR_WEEKLY);
  * @endcode
  *
  * @see elm_calendar_mark_add()
@@ -1313,7 +1313,7 @@ EINA_DEPRECATED EAPI void elm_calendar_text_saturday_color_set(Evas_Object *obj,
  *
  * @code
  * struct tm t = { 0, 0, 12, 7, 0, 0, 0, 0, -1 };
- * elm_calendar_mark_add(obj, "sat", &t, ELM_CALENDAR_WEEKLY);
+ * elm_calendar_mark_add(obj, "weekend/day2", &t, ELM_CALENDAR_WEEKLY);
  * @endcode
  *
  * @see elm_calendar_mark_add()

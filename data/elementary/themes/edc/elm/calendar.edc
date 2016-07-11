@@ -11,6 +11,12 @@
       style { name: "calendar_date_disabled_style";\
          base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffffc0 align=center text_class=calendar_day_text_disabled text_class=calendar_day_text_disabled";\
       }\
+      style { name: "calendar_date_weekend1_style";\
+         base: "font="FN" font_size=10 color=#2020C0 style=shadow,bottom shadow_color=#ffffffc0 align=center text_class=calendar_day_text_weekend1 color_class=calendar_day_text_weekend1";\
+      }\
+      style { name: "calendar_date_weekend2_style";\
+         base: "font="FN" font_size=10 color=#C02020 style=shadow,bottom shadow_color=#ffffffc0 align=center text_class=calendar_day_text_weekend2 color_class=calendar_day_text_weekend2";\
+      }\
 
 #define CAL_SPIN(_sufix, _text, _relative)\
       part { name: "left_bt"#_sufix; type: SPACER;\
@@ -215,6 +221,14 @@
          inherit: "default" 0.0; \
          text.style: "calendar_date_disabled_style"; \
       } \
+      description { state: "weekend/day1" 0.0; \
+         inherit: "default" 0.0; \
+         text.style: "calendar_date_weekend1_style"; \
+      } \
+      description { state: "weekend/day2" 0.0; \
+         inherit: "default" 0.0; \
+         text.style: "calendar_date_weekend2_style"; \
+      } \
    } \
    part { name: "cit_"#_pos".check"; mouse_events: 0; \
       scale: 1; \
@@ -324,7 +338,18 @@
          source:  "elm"; \
          action:  STATE_SET "default" 0.0; \
          target:  "cit_"#_pos".check"; \
+         after:   "cit_"#_pos".weekends_clear"; \
          after:   "cit_"#_pos".holiday_clear"; \
+      } \
+      program { \
+         name:    "cit_"#_pos".weekends_clear"; \
+         script { \
+            new st[31]; \
+            new Float:vl; \
+            get_state(PART:"cit_"#_pos".text", st, 30, vl); \
+            if (!strcmp(st, "weekend/day1") || !strcmp(st, "weekend/day2")) \
+              set_state(PART:"cit_"#_pos".text", "default", 0.0); \
+         } \
       } \
       program { \
          name:    "cit_"#_pos".holiday_clear"; \
@@ -353,6 +378,30 @@
             get_state(PART:"cit_"#_pos".text", st, 30, vl); \
             if (strcmp(st, "today")) \
               set_state(PART:"cit_"#_pos".text", "holiday", 0.0); \
+         } \
+      } \
+      program { \
+         name:    "cit_"#_pos".weekend/day1"; \
+         signal:  "cit_"#_pos",weekend/day1"; \
+         source:  "elm"; \
+         script { \
+            new st[31]; \
+            new Float:vl; \
+            get_state(PART:"cit_"#_pos".text", st, 30, vl); \
+            if ((strcmp(st, "today")) && (strcmp(st, "holiday")) )\
+              set_state(PART:"cit_"#_pos".text", "weekend/day1", 0.0); \
+         } \
+      } \
+      program { \
+         name:    "cit_"#_pos".weekend/day2"; \
+         signal:  "cit_"#_pos",weekend/day2"; \
+         source:  "elm"; \
+         script { \
+            new st[31]; \
+            new Float:vl; \
+            get_state(PART:"cit_"#_pos".text", st, 30, vl); \
+            if ((strcmp(st, "today")) && (strcmp(st, "holiday")) )\
+              set_state(PART:"cit_"#_pos".text", "weekend/day2", 0.0); \
          } \
       } \
    }

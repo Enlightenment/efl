@@ -170,6 +170,16 @@ color_classes {
       color3: 255 255 255 192;
       desc: "Disabled Day Text";
    }
+   color_class { name: "calendar_day_text_weekend1";
+      color: 128 128 128 255;
+      color3: 0 0 0 128;
+      desc: "Weekend Day1 Text";
+   }
+   color_class { name: "calendar_day_text_weekend2";
+      color: 128 128 128 255;
+      color3: 0 0 0 128;
+      desc: "Weekend Day2 Text";
+   }
    color_class { name: "check_text";
       color: FN_COL_DEFAULT;
       desc: "Text of a checkbox's label";
