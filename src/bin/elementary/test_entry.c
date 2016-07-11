@@ -2938,6 +2938,29 @@ test_entry_password(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 }
 
 static void
+my_efl_ui_text_bt_3(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eo *sel_start, *sel_end;
+
+   efl_ui_text_interactive_selection_cursors_get(data, &sel_start, &sel_end);
+   const char *s = efl_canvas_text_range_text_get(data, sel_start, sel_end);
+
+   printf("SELECTION REGION: %d - %d\n",
+         efl_canvas_text_cursor_position_get(sel_start),
+         efl_canvas_text_cursor_position_get(sel_end));
+   printf("SELECTION:\n");
+   if (s) printf("%s\n", s);
+}
+
+static void
+my_efl_ui_text_bt_4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+   efl_canvas_text_cursor_object_item_insert(efl_canvas_text_cursor_get(en),
+         "size=32x32 href=emoticon");
+}
+
+static void
 my_efl_ui_text_bt_5(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
@@ -2967,6 +2990,8 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    cur = efl_ui_text_cursor_new(en);
    efl_canvas_text_cursor_position_set(cur, 2);
    efl_canvas_text_cursor_object_item_insert(cur, "size=32x32 href=emoticon");
+   efl_canvas_text_cursor_position_set(cur, 10);
+   efl_canvas_text_cursor_object_item_insert(cur, "size=32x32 href=emoticon");
    efl_ui_text_interactive_editable_set(en, EINA_TRUE);
    efl_ui_text_selection_handler_disabled_set(en, EINA_FALSE);
    efl_ui_text_scrollable_set(en, EINA_TRUE);
@@ -2982,15 +3007,6 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "Clr");
-   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_1, en);
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx2, bt);
-   elm_object_focus_allow_set(bt, EINA_FALSE);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
    elm_object_text_set(bt, "Prnt");
    evas_object_smart_callback_add(bt, "clicked", my_entry_bt_2, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -3001,7 +3017,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Sel");
-   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_3, en);
+   evas_object_smart_callback_add(bt, "clicked", my_efl_ui_text_bt_3, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
@@ -3010,7 +3026,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Ins");
-   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_4, en);
+   evas_object_smart_callback_add(bt, "clicked", my_efl_ui_text_bt_4, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
