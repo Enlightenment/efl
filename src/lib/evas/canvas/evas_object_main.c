@@ -267,9 +267,12 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
           mask->w = mask->h = 0;
           if (mask->surface)
             {
-               obj->layer->evas->engine.func->image_free
-                     (obj->layer->evas->engine.data.output, mask->surface);
-               mask->surface = NULL;
+               if (obj->layer)
+                 {
+                    obj->layer->evas->engine.func->image_free
+                      (obj->layer->evas->engine.data.output, mask->surface);
+                    mask->surface = NULL;
+                 }
             }
         EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mask);
      }
