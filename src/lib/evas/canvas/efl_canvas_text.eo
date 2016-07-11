@@ -303,4 +303,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text)
       Efl.Text.text.set;
       Efl.Text.text.get;
    }
+   events {
+      changed; [[The content (text or annotations) have changed.]]
+   }
 }

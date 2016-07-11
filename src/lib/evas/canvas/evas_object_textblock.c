@@ -13963,13 +13963,13 @@ _efl_canvas_text_range_annotations_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_D
 }
 
 EOLIAN static Efl_Canvas_Text_Annotation *
-_efl_canvas_text_cursor_object_item_insert(Eo *cur_obj,
+_efl_canvas_text_cursor_object_item_insert(Eo *cur_obj EINA_UNUSED,
          Efl_Canvas_Text_Cursor_Data *cur, const char *format)
 {
    Efl_Canvas_Text_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
    Efl_Canvas_Text_Annotation *ret =
       _textblock_annotation_insert(cur->obj, o, cur, cur, format, EINA_TRUE);
-   eo_event_callback_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   eo_event_callback_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
    return ret;
 }
 
