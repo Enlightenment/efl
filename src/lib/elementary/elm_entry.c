@@ -2196,7 +2196,27 @@ _entry_preedit_changed_signal_cb(void *data,
                                  const char *emission EINA_UNUSED,
                                  const char *source EINA_UNUSED)
 {
+   char *text = NULL;
+   Edje_Entry_Change_Info *edje_info = (Edje_Entry_Change_Info *)
+                                  edje_object_signal_callback_extra_data_get();
    _entry_changed_handle(data, ELM_ENTRY_EVENT_PREEDIT_CHANGED);
+
+   if (_elm_config->atspi_mode)
+     {
+        Elm_Atspi_Text_Change_Info atspi_info;
+        if (edje_info && edje_info->insert)
+          {
+             text = elm_entry_markup_to_utf8(edje_info->change.insert.content);
+             atspi_info.content = text;
+             atspi_info.pos = edje_info->change.insert.pos;
+             atspi_info.len = edje_info->change.insert.plain_length;
+             elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN,
+                                                       data,
+                                                       ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_INSERTED,
+                                                       &atspi_info);
+             free(text);
+          }
+     }
 }
 
 static void

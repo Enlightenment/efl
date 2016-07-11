@@ -18,6 +18,7 @@ static void _edje_entry_imf_cursor_location_set(Entry *en);
 static void _edje_entry_imf_cursor_info_set(Entry *en);
 static void _range_del_emit(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED, Entry *en);
 static void _text_filter_format_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c, const char *text);
+static void _free_entry_change_info(void *_info);
 
 struct _Entry
 {
@@ -4279,6 +4280,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
    Edje *ed = data;
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en = NULL;
+   Edje_Entry_Change_Info *info = NULL;
    int cursor_pos;
    int preedit_start_pos, preedit_end_pos;
    char *preedit_string;
@@ -4368,8 +4370,6 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
         if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
             _edje_password_show_last)
           {
-             Edje_Entry_Change_Info *info;
-
              _edje_entry_hide_visible_password(ed, en->rp);
              info = _text_filter_markup_prepend(ed, en, en->cursor,
                                               eina_strbuf_string_get(buf),
@@ -4387,14 +4387,13 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
                     en->pw_timer = ecore_timer_add
                         (_edje_password_show_last_timeout,
                         _password_timer_cb, en);
-                  free(info);
                }
           }
         else
-          _text_filter_markup_prepend(ed, en, en->cursor,
+          info = _text_filter_markup_prepend(ed, en, en->cursor,
                                       eina_strbuf_string_get(buf),
                                       NULL, NULL,
-                                      EINA_TRUE, EINA_FALSE);
+                                      EINA_TRUE, EINA_TRUE);
         eina_strbuf_free(buf);
      }
 
@@ -4425,7 +4424,8 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
 
    _edje_entry_imf_cursor_info_set(en);
    _anchors_get(en->cursor, rp->object, en);
-   _edje_emit(ed, "preedit,changed", rp->part->name);
+   _edje_emit_full(ed, "preedit,changed", rp->part->name, info,
+                   _free_entry_change_info);
    _edje_emit(ed, "cursor,changed", rp->part->name);
 
    /* delete attribute list */
