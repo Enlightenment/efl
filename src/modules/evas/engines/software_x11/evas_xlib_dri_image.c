@@ -193,6 +193,11 @@ _drm_init(Display *disp, int scr)
         if (exim_debug) ERR("DRI2 connect failed on screen %i", scr);
         goto err;
       }
+   if (!dev_name)
+     {
+        if (exim_debug) ERR("DRI2 connect - cannot find dev name");
+        goto err;
+     }
    drm_fd = open(dev_name, O_RDWR);
    if (drm_fd < 0)
       {
