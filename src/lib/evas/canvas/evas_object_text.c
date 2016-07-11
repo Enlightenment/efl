@@ -696,6 +696,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
 #ifdef BIDI_SUPPORT
    int par_len = len;
    int *segment_idxs = NULL;
+   Eina_Bool is_bidi = EINA_FALSE;
 #endif
 
    if (o->items &&
@@ -746,6 +747,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
           }
 
         o->bidi_par_props = evas_bidi_paragraph_props_get(text, len, segment_idxs, bidi_par_type);
+        is_bidi = !!o->bidi_par_props;
      }
 
    if (o->bidi_par_props)
@@ -759,6 +761,9 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
    if (text)
      {
         const Evas_Object_Text_Item *last_it = NULL;
+#ifdef BIDI_SUPPORT
+        size_t max_vpos = 0;
+#endif
 
         while (len > 0)
           {
@@ -799,7 +804,22 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
                   len -= run_len;
 
                   if (it->w > 0)
-                    last_it = it;
+                    {
+#ifdef BIDI_SUPPORT
+                       if (is_bidi)
+                         {
+                            if (!last_it || (visual_pos >= max_vpos))
+                              {
+                                 last_it = it;
+                                 max_vpos = visual_pos;
+                              }
+                         }
+                       else
+#endif
+                         {
+                            last_it = it;
+                         }
+                    }
                }
           }
 
