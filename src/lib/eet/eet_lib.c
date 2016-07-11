@@ -1757,7 +1757,9 @@ _base64_dec(const char *file, int *size_ret)
           }
         end = p;
         // go from line start to (but not including) first invalid char
-        if (((end - buf) > 0) && (((end - buf) % 4) == 0))
+        if (((end - buf) > 0) &&
+            ((end - buf) < 0x1fffffff) && // not too long
+            (((end - buf) % 4) == 0))
           {
              unsigned char *tmp = malloc((end - buf + 4) * 2);
 
