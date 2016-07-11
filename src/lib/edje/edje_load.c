@@ -1041,21 +1041,31 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                             Edje_Part_Description_Text *text;
 
                             text = (Edje_Part_Description_Text *)rp->param1.description;
-
-                            if (ed->file->feature_ver < 1)
+                            if (text)
                               {
-                                 text->text.id_source = -1;
-                                 text->text.id_text_source = -1;
+                                 if (ed->file->feature_ver < 1)
+                                   {
+                                      text->text.id_source = -1;
+                                      text->text.id_text_source = -1;
+                                   }
+
+                                 if ((rp->type == EDJE_RP_TYPE_TEXT) &&
+                                     (rp->typedata.text))
+                                   {
+                                      if (text->text.id_source >= 0)
+                                        {
+                                           rp->typedata.text->source =
+                                             ed->table_parts[text->text.id_source % ed->table_parts_size];
+                                        }
+
+                                      if (text->text.id_text_source >= 0)
+                                        {
+                                           rp->typedata.text->text_source =
+                                             ed->table_parts[text->text.id_text_source % ed->table_parts_size];
+                                        }
+                                   }
                               }
 
-                            if ((rp->type == EDJE_RP_TYPE_TEXT) &&
-                                (rp->typedata.text))
-                              {
-                                 if (text->text.id_source >= 0)
-                                   rp->typedata.text->source = ed->table_parts[text->text.id_source % ed->table_parts_size];
-                                 if (text->text.id_text_source >= 0)
-                                   rp->typedata.text->text_source = ed->table_parts[text->text.id_text_source % ed->table_parts_size];
-                              }
                             if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                               {
                                  _edje_entry_real_part_init(ed, rp);
