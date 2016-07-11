@@ -1597,6 +1597,10 @@ local build_alias = function(tp)
 
     write_tsigs(f, tp)
 
+    f:write_h("Description", 3)
+    write_full_doc(f, tp:documentation_get())
+    f:write_nl(2)
+
     f:finish()
 end
 
@@ -1606,6 +1610,22 @@ local build_struct = function(tp)
 
     write_tsigs(f, tp)
 
+    f:write_h("Description", 3)
+    write_full_doc(f, tp:documentation_get())
+    f:write_nl(2)
+
+    f:write_h("Fields", 3)
+
+    local arr = {}
+    for fl in tp:struct_fields_get() do
+        local buf = Buffer()
+        buf:write_b(fl:name_get())
+        buf:write_raw(" - ", get_full_doc(fl:documentation_get()))
+        arr[#arr + 1] = buf:finish()
+    end
+    f:write_list(arr)
+    f:write_nl()
+
     f:finish()
 end
 
@@ -1614,6 +1634,22 @@ local build_enum = function(tp)
     check_enum(tp)
 
     write_tsigs(f, tp)
+
+    f:write_h("Description", 3)
+    write_full_doc(f, tp:documentation_get())
+    f:write_nl(2)
+
+    f:write_h("Fields", 3)
+
+    local arr = {}
+    for fl in tp:enum_fields_get() do
+        local buf = Buffer()
+        buf:write_b(fl:name_get())
+        buf:write_raw(" - ", get_full_doc(fl:documentation_get()))
+        arr[#arr + 1] = buf:finish()
+    end
+    f:write_list(arr)
+    f:write_nl()
 
     f:finish()
 end
