@@ -2609,6 +2609,7 @@ _elm_config_key_binding_call(Evas_Object *obj,
    int i = 0;
 
    namelower = alloca(strlen(name) + 1);
+   strcpy(namelower, name);
    eina_str_tolower(&namelower);
 
    binding_list = eina_hash_find(_elm_key_bindings, namelower);
