@@ -261,6 +261,7 @@ ffi.cdef [[
     Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
     Eina_Bool eolian_event_is_beta(const Eolian_Event *event);
     Eina_Bool eolian_event_is_hot(const Eolian_Event *event);
+    Eina_Bool eolian_event_is_restart(const Eolian_Event *event);
     const char *eolian_event_c_name_get(const Eolian_Event *event);
     Eina_Bool eolian_class_ctor_enable_get(const Eolian_Class *klass);
     Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
@@ -962,15 +963,15 @@ ffi.metatype("Eolian_Event", {
         end,
 
         is_beta = function(self)
-            return eolian_event_is_beta(self) ~= 0
+            return eolian.eolian_event_is_beta(self) ~= 0
         end,
 
         is_hot = function(self)
-            return eolian_event_is_hot(self) ~= 0
+            return eolian.eolian_event_is_hot(self) ~= 0
         end,
 
         is_restart = function(self)
-            return eolian_event_is_restart(self) ~= 0
+            return eolian.eolian_event_is_restart(self) ~= 0
         end
     }
 })
