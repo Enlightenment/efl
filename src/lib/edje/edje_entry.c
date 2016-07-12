@@ -1024,7 +1024,6 @@ _item_obj_get(Anchor *an, Evas_Object *o, Evas_Object *smart, Evas_Object *clip)
    evas_object_stack_above(obj, o);
    evas_object_clip_set(obj, clip);
    evas_object_pass_events_set(obj, EINA_TRUE);
-   evas_object_show(obj);
 
    io->an = an;
    io->name = strdup(an->name);
@@ -1059,11 +1058,25 @@ _unused_item_objs_free(Entry *en)
      }
 }
 
+static Eina_Bool
+_is_anchors_outside_viewport(Evas_Coord oxy, Evas_Coord axy, Evas_Coord awh,
+                                                 Evas_Coord vxy, Evas_Coord vwh)
+{
+   if (((oxy + axy + awh) < vxy) || ((oxy + axy) > vwh))
+     {
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 static void
 _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
 {
    Eina_List *l, *ll, *range = NULL;
    Evas_Coord x, y, w, h;
+   Evas_Coord vx, vy, vw, vh;
+   Evas_Coord tvh, tvw;
    Evas_Object *smart, *clip;
    Sel *sel;
    Anchor *an;
@@ -1076,15 +1089,38 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
    clip = evas_object_clip_get(o);
    x = y = w = h = -1;
    evas_object_geometry_get(o, &x, &y, &w, &h);
+   evas_output_viewport_get(en->ed->base->evas, &vx, &vy, &vw, &vh);
+   tvw = vx + vw;
+   tvh = vy + vh;
+
    EINA_LIST_FOREACH(en->anchors, l, an)
      {
         // for item anchors
         if (an->item)
           {
-             Evas_Object *ob;
+             Evas_Coord cx, cy, cw, ch;
+
+             if (!evas_textblock_cursor_format_item_geometry_get
+                                                (an->start, &cx, &cy, &cw, &ch))
+               {
+                  continue;
+               }
+
+             if (_is_anchors_outside_viewport(y, cy, ch, vy, tvh) ||
+                           _is_anchors_outside_viewport(x, cx, cw, vx, tvw))
+               {
+                  if (an->sel)
+                    {
+                       sel = an->sel->data;
+                       evas_object_hide(sel->obj);
+                    }
+                  continue;
+               }
 
              if (!an->sel)
                {
+                  Evas_Object *ob;
+
                   sel = calloc(1, sizeof(Sel));
                   an->sel = eina_list_append(an->sel, sel);
 
@@ -1094,6 +1130,11 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                        sel->obj = ob;
                     }
                }
+               /* We have only one sel per item */
+               sel = an->sel->data;
+               evas_object_move(sel->obj, x + cx, y + cy);
+               evas_object_resize(sel->obj, cw, ch);
+               evas_object_show(sel->obj);
           }
         // for link anchors
         else
@@ -1111,6 +1152,32 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                        free(sel);
                        an->sel = eina_list_remove_list(an->sel, an->sel);
                     }
+                  Evas_Textblock_Rectangle *r, *r_last;
+
+                  r = range->data;
+                  r_last = eina_list_last_data_get(range);
+                  if (r->y != r_last->y)
+                    {
+                       /* For multiple range */
+                       r->h = r->y + r_last->y + r_last->h;
+                    }
+                  /* For vertically layout entry */
+                  if (_is_anchors_outside_viewport(y, r->y, r->h, vy, tvh))
+                    {
+                       EINA_LIST_FREE(range, r)
+                         free(r);
+                       continue;
+                    }
+                  else
+                    {
+                       /* XXX: Should consider for horizontal entry but has
+                        * very minimal usage. Probably we should get the min x
+                        * and max w for range and then decide whether it is in
+                        * the viewport or not. Unnecessary calculation for this
+                        * minimal usage. Please test with large number of anchors
+                        * after implementing it, if its needed to be.
+                        */
+                    }
                   for (ll = range; ll; ll = eina_list_next(ll))
                     {
                        Evas_Object *ob;
@@ -1125,7 +1192,6 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                             evas_object_stack_below(ob, o);
                             evas_object_clip_set(ob, clip);
                             evas_object_pass_events_set(ob, EINA_TRUE);
-                            evas_object_show(ob);
                             sel->obj_bg = ob;
                             _edje_subobj_register(ed, sel->obj_bg);
                          }
@@ -1138,7 +1204,6 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                             evas_object_stack_above(ob, o);
                             evas_object_clip_set(ob, clip);
                             evas_object_pass_events_set(ob, EINA_TRUE);
-                            evas_object_show(ob);
                             sel->obj_fg = ob;
                             _edje_subobj_register(ed, sel->obj_fg);
                          }
@@ -1154,43 +1219,44 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                        evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_MOVE, _edje_anchor_mouse_move_cb, an);
                        evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_IN, _edje_anchor_mouse_in_cb, an);
                        evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_OUT, _edje_anchor_mouse_out_cb, an);
-                       evas_object_show(ob);
                        sel->obj = ob;
                     }
                }
-          }
-        EINA_LIST_FOREACH(an->sel, ll, sel)
-          {
-             if (an->item)
-               {
-                  Evas_Coord cx, cy, cw, ch;
 
-                  if (!evas_textblock_cursor_format_item_geometry_get
-                        (an->start, &cx, &cy, &cw, &ch))
-                    continue;
-                  evas_object_move(sel->obj, x + cx, y + cy);
-                  evas_object_resize(sel->obj, cw, ch);
-               }
-             else
+             EINA_LIST_FOREACH(an->sel, ll, sel)
                {
                   Evas_Textblock_Rectangle *r;
 
                   r = range->data;
                   *(&(sel->rect)) = *r;
+                  if (_is_anchors_outside_viewport(y, r->y, r->h, vy, tvh) ||
+                      _is_anchors_outside_viewport(x, r->x, r->w, vx, tvw))
+                    {
+                       range = eina_list_remove_list(range, range);
+                       free(r);
+                       evas_object_hide(sel->obj_bg);
+                       evas_object_hide(sel->obj_fg);
+                       evas_object_hide(sel->obj);
+                       continue;
+                    }
+
                   if (sel->obj_bg)
                     {
                        evas_object_move(sel->obj_bg, x + r->x, y + r->y);
                        evas_object_resize(sel->obj_bg, r->w, r->h);
+                       evas_object_show(sel->obj_bg);
                     }
                   if (sel->obj_fg)
                     {
                        evas_object_move(sel->obj_fg, x + r->x, y + r->y);
                        evas_object_resize(sel->obj_fg, r->w, r->h);
+                       evas_object_show(sel->obj_fg);
                     }
                   if (sel->obj)
                     {
                        evas_object_move(sel->obj, x + r->x, y + r->y);
                        evas_object_resize(sel->obj, r->w, r->h);
+                       evas_object_show(sel->obj);
                     }
                   range = eina_list_remove_list(range, range);
                   free(r);
@@ -2610,6 +2676,23 @@ _edje_part_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 }
 
 static void
+_canvas_viewport_resize_cb(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Edje_Real_Part *rp = data;
+   Entry *en;
+   if ((!rp)) return;
+
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return;
+   en = rp->typedata.text->entry_data;
+   if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
+                       (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
+     return;
+
+   _anchors_need_update(rp);
+}
+
+static void
 _evas_focus_in_cb(void *data, Evas *e, EINA_UNUSED void *event_info)
 {
    Edje *ed = (Edje *)data;
@@ -2692,6 +2775,7 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_DOWN, _edje_part_mouse_down_cb, rp);
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_UP, _edje_part_mouse_up_cb, rp);
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_MOVE, _edje_part_mouse_move_cb, rp);
+   evas_event_callback_add(ed->base->evas, EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, _canvas_viewport_resize_cb, rp);
 
    if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_DEFAULT)
      en->select_allow = EINA_TRUE;
@@ -2844,6 +2928,8 @@ _edje_entry_real_part_shutdown(Edje *ed, Edje_Real_Part *rp)
         ecore_timer_del(en->pw_timer);
         en->pw_timer = NULL;
      }
+
+   evas_event_callback_del(ed->base->evas, EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, _canvas_viewport_resize_cb);
 
 #ifdef HAVE_ECORE_IMF
    if (rp->part->entry_mode >= EDJE_ENTRY_EDIT_MODE_EDITABLE)
