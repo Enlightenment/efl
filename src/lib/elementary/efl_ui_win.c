@@ -96,7 +96,6 @@ struct _Efl_Ui_Win_Data
    Evas                 *evas;
    Evas_Object          *parent; /* parent *window* object*/
    Evas_Object          *img_obj, *frame_obj;
-   Evas_Object          *client_obj; /* rect representing the client */
    Eo                   *edje; /**< edje object for a window layout */
    Eo                   *box;
    Evas_Object          *obj; /* The object itself */
@@ -1351,7 +1350,7 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
      }
 
    evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
-   evas_object_geometry_get(sd->client_obj, &ox, &oy, &ow, &oh);
+   evas_object_geometry_get(sd->edje, &ox, &oy, &ow, &oh);
 
    evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy), (fw - ow), (fh - oh));
 }
@@ -3372,7 +3371,7 @@ _elm_win_frame_obj_move(void *data,
    Efl_Ui_Win_Data *sd;
 
    if (!(sd = data)) return;
-   if (!sd->client_obj) return;
+   if (!sd->edje) return;
 
    _elm_win_frame_obj_update(sd);
 }
@@ -3386,7 +3385,7 @@ _elm_win_frame_obj_resize(void *data,
    Efl_Ui_Win_Data *sd;
 
    if (!(sd = data)) return;
-   if (!sd->client_obj) return;
+   if (!sd->edje) return;
 
    _elm_win_frame_obj_update(sd);
 }
@@ -3589,12 +3588,12 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
 {
    Evas_Object *obj = sd->obj;
    int w, h, mw, mh;
-   short layer;
+   /* short layer; */
 
    if (sd->frame_obj) return;
    sd->frame_obj = edje_object_add(sd->evas);
-   layer = evas_object_layer_get(obj);
-   evas_object_layer_set(sd->frame_obj, layer + 1);
+   /* layer = evas_object_layer_get(obj); */
+   /* evas_object_layer_set(sd->frame_obj, layer + 1); */
    if (!elm_widget_theme_object_set
        (sd->obj, sd->frame_obj, "border", "base", style))
      {
@@ -3602,12 +3601,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
         return;
      }
 
-   sd->client_obj = evas_object_rectangle_add(sd->evas);
-   evas_object_color_set(sd->client_obj, 0, 0, 0, 0);
-   /* NB: Tried pass_events here, but that fails to send events */
-   evas_object_repeat_events_set(sd->client_obj, EINA_TRUE);
-   edje_object_part_swallow(sd->frame_obj, "elm.swallow.client",
-                            sd->client_obj);
+   edje_object_part_swallow(sd->frame_obj, "elm.swallow.client", sd->edje);
 
    evas_object_is_frame_object_set(sd->frame_obj, EINA_TRUE);
 
@@ -3692,8 +3686,6 @@ static void
 _elm_win_frame_del(Efl_Ui_Win_Data *sd)
 {
    int w, h;
-
-   ELM_SAFE_FREE(sd->client_obj, evas_object_del);
 
    if (sd->frame_obj)
      {
@@ -4449,28 +4441,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
      evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _elm_win_frame_pre_render, sd);
 #endif
 
-   /* do not append to list; all windows render as black rects */
-   if (type != ELM_WIN_FAKE)
-     {
-        _elm_win_list = eina_list_append(_elm_win_list, obj);
-        _elm_win_count++;
-
-        if ((engine) && ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))
-          {
-             TRAP(sd, fullscreen_set, 1);
-          }
-        else if ((type != ELM_WIN_INLINED_IMAGE) &&
-                 ((engine) &&
-                  ((!strcmp(engine, ELM_WAYLAND_SHM) ||
-                   (!strcmp(engine, ELM_WAYLAND_EGL))))))
-          _elm_win_frame_add(sd, "default");
-
-        if (_elm_config->focus_highlight_enable)
-          elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);
-        if (_elm_config->focus_highlight_animate)
-          elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
-     }
-
    //Prohibiting auto-rendering, until elm_win is shown.
    if (_elm_config->auto_norender_withdrawn)
      {
@@ -4535,6 +4505,29 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         edje_object_update_hints_set(sd->edje, EINA_TRUE);
         evas_object_event_callback_add(sd->edje, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _elm_win_on_resize_obj_changed_size_hints, obj);
+     }
+
+   /* do not append to list; all windows render as black rects */
+   if (type != ELM_WIN_FAKE)
+     {
+        _elm_win_list = eina_list_append(_elm_win_list, obj);
+        _elm_win_count++;
+
+        if ((engine) &&
+            ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))
+          {
+             TRAP(sd, fullscreen_set, 1);
+          }
+        else if ((type != ELM_WIN_INLINED_IMAGE) &&
+                 ((engine) &&
+                  ((!strcmp(engine, ELM_WAYLAND_SHM) ||
+                   (!strcmp(engine, ELM_WAYLAND_EGL))))))
+          _elm_win_frame_add(sd, "default");
+
+        if (_elm_config->focus_highlight_enable)
+          elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);
+        if (_elm_config->focus_highlight_animate)
+          elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
      }
 
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_WINDOW);
