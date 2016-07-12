@@ -749,14 +749,14 @@ inline void do_eo_add(Eo*& object, efl::eo::concrete const& parent
                       , Eo_Class const* klass)
 {
   object = ::_eo_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
-  object = ::_eo_add_end(object, EINA_FALSE);
+  object = ::_eo_add_end(object, EINA_FALSE, EINA_FALSE);
 }
 template <typename F>
 void do_eo_add(Eo*& object, efl::eo::concrete const& parent, Eo_Class const* klass, F f)
 {
   object = ::_eo_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
   f();
-  object = ::_eo_add_end(object, EINA_FALSE);
+  object = ::_eo_add_end(object, EINA_FALSE, EINA_FALSE);
 }
 
 template <typename D, typename T>
