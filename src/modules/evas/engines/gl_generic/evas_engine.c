@@ -594,6 +594,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
      {
         im->w = w;
         im->h = h;
+        evas_gl_common_image_native_enable(im);
         return image;
      }
    re->window_use(re->software.ob);
