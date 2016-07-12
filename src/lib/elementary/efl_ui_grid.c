@@ -4,6 +4,7 @@
 
 #define MY_CLASS EFL_UI_GRID_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Grid"
+#define MY_CLASS_NAME_LEGACY "elm_grid"
 
 typedef struct _Custom_Table_Data Custom_Table_Data;
 

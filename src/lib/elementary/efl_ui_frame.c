@@ -11,8 +11,7 @@
 #include "elm_widget_layout.h"
 
 #define MY_CLASS EFL_UI_FRAME_CLASS
-
-#define MY_CLASS_NAME "Efl_Ui_Frame"
+#define MY_CLASS_NAME "Efl.Ui.Frame"
 #define MY_CLASS_NAME_LEGACY "elm_frame"
 
 static const char SIG_CLICKED[] = "clicked";

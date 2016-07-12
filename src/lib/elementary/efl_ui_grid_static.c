@@ -2,6 +2,7 @@
 
 #define MY_CLASS EFL_UI_GRID_STATIC_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Grid.Static"
+#define MY_CLASS_NAME_LEGACY "elm_grid"
 
 EOLIAN static Eo *
 _efl_ui_grid_static_eo_base_constructor(Eo *obj, void *pd EINA_UNUSED)

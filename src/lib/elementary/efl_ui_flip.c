@@ -13,8 +13,7 @@
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_FLIP_CLASS
-
-#define MY_CLASS_NAME "Efl_Ui_Flip"
+#define MY_CLASS_NAME "Efl.Ui.Flip"
 #define MY_CLASS_NAME_LEGACY "elm_flip"
 
 static const char SIG_ANIMATE_BEGIN[] = "animate,begin";

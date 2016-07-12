@@ -17,8 +17,7 @@
  * progress in the theme when needed */
 
 #define MY_CLASS EFL_UI_VIDEO_CLASS
-
-#define MY_CLASS_NAME "Efl_Ui_Video"
+#define MY_CLASS_NAME "Efl.Ui.Video"
 #define MY_CLASS_NAME_LEGACY "elm_video"
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -117,7 +116,7 @@ _efl_ui_video_elm_widget_event(Eo *obj, Efl_Ui_Video_Data *_pd EINA_UNUSED, Evas
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
+   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME_LEGACY, ev, key_actions))
      {
         INF("keyname: '%s' not handled", ev->key);
         return EINA_FALSE;

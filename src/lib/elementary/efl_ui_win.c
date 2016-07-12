@@ -21,8 +21,7 @@
 #include "interfaces/efl_common_internal.h"
 
 #define MY_CLASS EFL_UI_WIN_CLASS
-
-#define MY_CLASS_NAME "Efl_Ui_Win"
+#define MY_CLASS_NAME "Efl.Ui.Win"
 #define MY_CLASS_NAME_LEGACY "elm_win"
 
 static const Elm_Win_Trap *trap = NULL;
@@ -1653,7 +1652,7 @@ _efl_ui_win_elm_widget_event(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Evas_Obj
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
 
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
+   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME_LEGACY, ev, key_actions))
      return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;

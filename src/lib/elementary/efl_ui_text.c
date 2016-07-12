@@ -178,9 +178,8 @@ struct _Efl_Ui_Text_Rectangle
 };
 
 #define MY_CLASS EFL_UI_TEXT_CLASS
-
-#define MY_CLASS_NAME "Efl_Ui_Text"
-#define MY_CLASS_NAME_LEGACY "efl ui text"
+#define MY_CLASS_NAME "Efl.Ui.Text"
+#define MY_CLASS_NAME_LEGACY "elm_entry"
 
 #include "efl_ui_internal_text_interactive.h"
 
