@@ -649,7 +649,7 @@ EAPI Eina_Bool _eo_call_resolve(Eo *obj, const char *func_name, Eo_Op_Call_Data 
 EAPI void _eo_call_end(Eo_Op_Call_Data *call);
 
 // end of the eo_add. Calls finalize among others
-EAPI Eo * _eo_add_end(Eo *obj, Eina_Bool is_fallback);
+EAPI Eo * _eo_add_end(Eo *obj, Eina_Bool is_ref, Eina_Bool is_fallback);
 
 EAPI Eo *eo_super(const Eo *obj, const Eo_Class *cur_klass);
 
@@ -675,7 +675,7 @@ EAPI Eo *_eo_self_get(void);
    ({ \
      Eo * const __eo_self = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref, EINA_FALSE); \
      (void) ((void)0, ##__VA_ARGS__);                                   \
-     (Eo *) _eo_add_end(eo_self, EINA_FALSE); \
+     (Eo *) _eo_add_end(eo_self, is_ref, EINA_FALSE); \
     })
 
 #else
@@ -686,7 +686,7 @@ EAPI Eo *_eo_self_get(void);
    ( \
      _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref, EINA_TRUE), \
      ##__VA_ARGS__, \
-     (Eo *) _eo_add_end(eo_self, EINA_TRUE) \
+     (Eo *) _eo_add_end(eo_self, is_ref, EINA_TRUE) \
    )
 
 #endif

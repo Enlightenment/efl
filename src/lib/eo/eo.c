@@ -649,7 +649,7 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Eo_Ops *ops, const _Eo_Class *hiera
 }
 
 EAPI Eo *
-_eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback)
+_eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id, Eina_Bool ref EINA_UNUSED, Eina_Bool is_fallback)
 {
    _Eo_Object *obj;
    Eo_Stack_Frame *fptr = NULL;
@@ -724,11 +724,6 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
         _eo_ref(new_obj);
      }
 
-   if (ref && eo_parent_get(eo_id))
-     {
-        eo_ref(eo_id);
-     }
-
    if (is_fallback)
      {
         fptr->obj = eo_id;
@@ -780,10 +775,15 @@ cleanup:
 }
 
 EAPI Eo *
-_eo_add_end(Eo *eo_id, Eina_Bool is_fallback)
+_eo_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
 {
    Eo *ret = eo_finalize(eo_id);
    ret = _eo_add_internal_end(eo_id, ret);
+
+   if (is_ref && eo_parent_get(eo_id))
+     {
+        eo_ref(eo_id);
+     }
 
    if (is_fallback)
      {
