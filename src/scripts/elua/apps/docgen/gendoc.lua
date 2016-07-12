@@ -1528,6 +1528,12 @@ local build_igraph = function(cl)
     return graph
 end
 
+local scope_to_str = {
+    [eolian.object_scope.PUBLIC] = "public",
+    [eolian.object_scope.PRIVATE] = "private",
+    [eolian.object_scope.PROTECTED] = "protected"
+}
+
 local build_class = function(cl)
     local f = Writer(gen_nsp_class(cl))
     check_class(cl)
@@ -1561,6 +1567,26 @@ local build_class = function(cl)
                 f:write_nl(2)
             end
             f:write_h(ev:name_get(), 4)
+            f:write_i("**Scope:** ", scope_to_str[ev:scope_get()])
+            local tagstrs = {}
+            if ev:is_beta() then tagstrs[#tagstrs + 1] = "@beta" end
+            if ev:is_hot() then tagstrs[#tagstrs + 1] = "@hot" end
+            if ev:is_restart() then tagstrs[#tagstrs + 1] = "@restart" end
+            f:write_br(true)
+            if #tagstrs > 0 then
+                f:write_i("**Tags:** ", unpack(tagstrs))
+                f:write_br(true)
+            end
+            local tp = ev:type_get()
+            if tp then
+                f:write_i("**Type:** ")
+                f:write_m(get_type_str(tp))
+                f:write_br(true)
+                f:write_i("**Type:** ")
+                f:write_m(tp:c_type_get())
+                f:write_br(true)
+            end
+            f:write_nl()
             write_full_doc(f, ev:documentation_get())
             first = false
         end
