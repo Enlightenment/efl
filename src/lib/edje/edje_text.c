@@ -135,7 +135,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 
    if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
-   evas_obj_text_ellipsis_set(ep->object, (chosen_desc->text.min_x || chosen_desc->text.fit_x) ? -1 : params->type.text.ellipsis);
+   evas_obj_text_ellipsis_set(ep->object, params->type.text.ellipsis);
    efl_text_properties_font_set(ep->object, font, size);
    efl_text_set(ep->object, text);
    efl_gfx_size_set(ep->object, sw, sh);
@@ -462,28 +462,11 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                                 text, font, size,
                                 sw, sh, &free_text);
      }
-   /* when evas ellipsis support was added in efl 1.8 and used to replace
-    * previous support, SOMEONE, who I shall call "cedric", borked ellipsis
-    * defaults. as a result, edje_cc continued using 0.0 (left-most) as its default value
-    * for ellipsis while evas used -1.0 (no ellipsizing).
-    * this was moderately okay for a time because nobody was using it or GROUP parts
-    * with text in them very frequently, and so nobody noticed that the mismatch was breaking
-    * sizing in some cases when the edje ellipsis value failed to be applied,
-    * which occurred any time text.min_x was set; in this case, ellipsis would NEVER be
-    * correctly applied, and instead the text object would only ever get the first
-    * ellipsis_set(0), permanently breaking the part.
-    * the only way to fix this while preserving previous behavior was to bump
-    * the edje file minor version and then check it here to ignore "unset" ellipsis
-    * values from old file versions.
-    * the downside is that this will break old files which have text.min_x set to 0...maybe.
-    *
-    * -zmike
-    * 22 April 2014
-    */
-   else if (((ed->file->version >= 3) && (ed->file->minor >= 6)) ||
-            params->type.text.ellipsis)
-     evas_object_text_ellipsis_set(ep->object,
-                                   chosen_desc->text.min_x ? -1 : params->type.text.ellipsis);
+   else if ((ed->file->version >= 3) && (ed->file->minor >= 6))
+     {
+        evas_object_text_ellipsis_set(ep->object,
+                                      params->type.text.ellipsis);
+     }
 
    eina_stringshare_replace(&ep->typedata.text->cache.out_str, text);
    ep->typedata.text->cache.in_w = sw;

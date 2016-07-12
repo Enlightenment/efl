@@ -1700,20 +1700,26 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
 
    if (chosen_desc->text.max_x)
      {
-        if ((*maxw < 0) || (mw < *maxw)) *maxw = mw;
+        if ((*maxw < 0) || (mw > *maxw)) *maxw = mw;
      }
    if (chosen_desc->text.max_y)
      {
-        if ((*maxh < 0) || (mh < *maxh)) *maxh = mh;
+        if ((*maxh < 0) || (mh > *maxh)) *maxh = mh;
      }
    if (chosen_desc->text.min_x)
      {
         if (mw > *minw) *minw = mw;
+        if ((*maxw > -1) && (*minw > *maxw)) *minw = *maxw;
      }
    if (chosen_desc->text.min_y)
      {
         if (mh > *minh) *minh = mh;
+        if ((*maxh > -1) && (*minh > *maxh)) *minh = *maxh;
      }
+   if ((*maxw > -1) && (mw > *maxw)) mw = *maxw;
+   if ((*maxh > -1) && (mh > *maxh)) mh = *maxh;
+
+   evas_object_resize(ep->object, mw, mh);
 }
 
 #else
