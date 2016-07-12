@@ -2575,10 +2575,9 @@ _elm_config_key_binding_hash(void)
         if (wb->name)
           {
              char *namelower = alloca(strlen(wb->name) + 1);
-             char *p;
 
              strcpy(namelower, wb->name);
-             for (p = namelower; *p; p++) *p = tolower(*p);
+             eina_str_tolower(&namelower);
              eina_hash_add(_elm_key_bindings, namelower, wb->key_bindings);
           }
      }
@@ -2606,12 +2605,11 @@ _elm_config_key_binding_call(Evas_Object *obj,
 {
    Elm_Config_Binding_Key *binding;
    Eina_List *binding_list, *l;
-   char *namelower, *p;
+   char *namelower;
    int i = 0;
 
    namelower = alloca(strlen(name) + 1);
-   strcpy(namelower, name);
-   for (p = namelower; *p; p++) *p = tolower(*p);
+   eina_str_tolower(&namelower);
 
    binding_list = eina_hash_find(_elm_key_bindings, namelower);
 
