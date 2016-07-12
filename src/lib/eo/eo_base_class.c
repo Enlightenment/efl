@@ -552,7 +552,7 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
          * the process of deleting the object.*/
         if (!parent_id && !eo_obj->del_triggered)
           {
-             _eo_unref(eo_obj);
+             eo_unref(obj);
           }
      }
 

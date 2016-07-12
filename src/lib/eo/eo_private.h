@@ -110,6 +110,7 @@ struct _Eo_Object
      Eo_Del_Intercept del_intercept;
 
      short refcount;
+     short user_refcount;
 #ifdef EO_DEBUG
      short datarefcount;
 #endif
@@ -322,8 +323,9 @@ _eo_unref(_Eo_Object *obj)
 
         if (obj->del_intercept)
           {
-             (obj->refcount)++;
-             obj->del_intercept(_eo_obj_id_get(obj));
+             Eo *obj_id = _eo_obj_id_get(obj);
+             eo_ref(obj_id);
+             obj->del_intercept(obj_id);
              return;
           }
 

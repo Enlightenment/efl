@@ -697,18 +697,10 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 
    _eo_condtor_reset(obj);
 
-   _eo_ref(obj);
+   eo_ref(eo_id);
 
+   /* Reference for the parent if is_ref is done in _eo_add_end */
    eo_parent_set(eo_id, parent_id);
-
-   /* If there's a parent. Ref. Eo_add should return an object with either a
-    * parent ref, or with the lack of, just a ref. */
-     {
-        if (ref && eo_parent_get(eo_id))
-          {
-             _eo_ref(obj);
-          }
-     }
 
    /* eo_id can change here. Freeing is done on the resolved object. */
    eo_id = eo_constructor(eo_id);
@@ -724,10 +716,16 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
      }
    else if (eo_id != _eo_obj_id_get(obj))
      {
+        EO_OBJ_POINTER_RETURN_VAL(eo_id, new_obj, NULL);
         /* We have two refs at this point. */
         _eo_unref(obj);
-        _eo_unref(obj);
+        eo_del((Eo *) obj->header.id);
 
+        _eo_ref(new_obj);
+     }
+
+   if (ref && eo_parent_get(eo_id))
+     {
         eo_ref(eo_id);
      }
 
@@ -1374,11 +1372,11 @@ eo_isa(const Eo *eo_id, const Eo_Class *klass_id)
 EAPI Eo *
 eo_xref_internal(const char *file, int line, Eo *obj_id, const Eo *ref_obj_id)
 {
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, obj_id);
-
-   _eo_ref(obj);
+   eo_ref(obj_id);
 
 #ifdef EO_DEBUG
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, obj_id);
+
    Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
    xref->ref_obj = ref_obj_id;
    xref->file = file;
@@ -1419,7 +1417,7 @@ eo_xunref(Eo *obj_id, const Eo *ref_obj_id)
 #else
    (void) ref_obj_id;
 #endif
-   _eo_unref(obj);
+   eo_unref(obj_id);
 }
 
 EAPI Eo *
@@ -1427,7 +1425,11 @@ eo_ref(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, (Eo *)obj_id);
 
-   _eo_ref(obj);
+   ++(obj->user_refcount);
+   if (EINA_UNLIKELY(obj->user_refcount == 1))
+     {
+        _eo_ref(obj);
+     }
    return (Eo *)obj_id;
 }
 
@@ -1436,7 +1438,17 @@ eo_unref(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
 
-   _eo_unref(obj);
+   --(obj->user_refcount);
+   if (EINA_UNLIKELY(obj->user_refcount <= 0))
+     {
+        if (obj->user_refcount < 0)
+          {
+             ERR("Obj:%p. User refcount (%d) < 0. Too many unrefs.", obj, obj->user_refcount);
+             return;
+          }
+
+        _eo_unref(obj);
+     }
 }
 
 EAPI int
@@ -1444,7 +1456,7 @@ eo_ref_get(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
 
-   return obj->refcount;
+   return obj->user_refcount;
 }
 
 EAPI void
