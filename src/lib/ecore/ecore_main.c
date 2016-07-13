@@ -2603,9 +2603,8 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
 
    if (timeout == 0)
      {
-        free(objects);
-        free(sockets);
-        return 0;
+        res = 0;
+        goto err;
      }
 
    result = _ecore_main_win32_objects_wait(objects_nbr,
@@ -2701,6 +2700,7 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
         res = -1;
      }
 
+err :
    /* Remove event objects again */
    for (i = 0; i < events_nbr; i++) WSACloseEvent(objects[i]);
 
