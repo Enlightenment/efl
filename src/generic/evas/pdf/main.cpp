@@ -154,7 +154,21 @@ void poppler_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
 
    if (out.format() == image::format_mono)
      {
-        //FIXME no idea what this format is like
+        // Looks like this is 1 bit per pixel, padded to a single byte.
+        // The problem is testing. I have no sample (and no doc).
+
+        uint8_t *src;
+        for (y = 0; y < crop_height; y++)
+          {
+             src = (uint8_t *) out.data() + y * crop_width;
+             for (x = 0; x < crop_width; x++)
+               {
+                  int bit = x & 0x7;
+                  int c = (*src & (1 << bit)) ? 0xFF : 0x00;
+                  *dst++ = ARGB_JOIN(0xFF, c, c, c);
+                  if (x & 0x7 == 0x7) src++;
+               }
+          }
      }
    if (out.format() == image::format_rgb24)
      {
@@ -172,11 +186,7 @@ void poppler_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
 
          src = (DATA32*) out.data();
          IMAGE_PIXEL_ITERATOR
-           {
-              int pos = x+y*crop_width;
-
-              dst[pos] = src[pos];
-           }
+           *dst++ = *src++;
       }
 
  end:
