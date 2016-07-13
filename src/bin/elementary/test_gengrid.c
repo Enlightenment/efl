@@ -526,7 +526,7 @@ static void
 _btn_bring_in_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    api_data *api = data;
-   if (!api && !api->grid) return;
+   if (!api || !api->grid) return;
 
    Elm_Object_Item *it = elm_gengrid_selected_item_get(api->grid);
    if (!it) return;
@@ -537,7 +537,7 @@ static void
 _btn_show_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    api_data *api = data;
-   if (!api && !api->grid) return;
+   if (!api || !api->grid) return;
 
    Elm_Object_Item *it = elm_gengrid_selected_item_get(api->grid);
    if (!it) return;
