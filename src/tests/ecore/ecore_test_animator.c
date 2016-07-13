@@ -97,8 +97,70 @@ START_TEST(ecore_test_pos_map)
 }
 END_TEST
 
+static void _animator_called_cb(void *data)
+{
+   Eina_Bool *called = data;
+
+   *called = EINA_TRUE;
+}
+
+static Eina_Bool _animator_cb(void *data)
+{
+   Eina_Bool *called = data;
+
+   *called = EINA_TRUE;
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool _switch_cb(void* data EINA_UNUSED)
+{
+   ecore_animator_custom_tick();
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool _quit_cb(void* data EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+   return ECORE_CALLBACK_CANCEL;
+}
+
+START_TEST(ecore_test_begin_end_tick)
+{
+   Ecore_Timer *timer1, *timer2;
+   Ecore_Animator *animator;
+   Eina_Bool is_animator_cb_called = EINA_FALSE;
+   Eina_Bool is_begin_cb_called = EINA_FALSE;
+   Eina_Bool is_end_cb_called = EINA_FALSE;
+
+   ecore_init();
+
+   ecore_animator_custom_source_tick_begin_callback_set(_animator_called_cb, &is_begin_cb_called);
+   ecore_animator_custom_source_tick_end_callback_set(_animator_called_cb, &is_end_cb_called);
+
+   animator = ecore_animator_add(_animator_cb, &is_animator_cb_called);
+   fail_if(!animator);
+
+   timer1 = ecore_timer_add(0.01, _switch_cb, NULL);
+   fail_if(!timer1);
+
+   timer2 = ecore_timer_add(0.03, _quit_cb, NULL);
+   fail_if(!timer2);
+
+   ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
+   ecore_main_loop_begin();
+   ecore_animator_del(animator);
+
+   fail_if(!is_begin_cb_called);
+   fail_if(!is_end_cb_called);
+   fail_if(!is_animator_cb_called);
+
+   ecore_shutdown();
+}
+END_TEST
+
 void ecore_test_animator(TCase *tc)
 {
   tcase_add_test(tc, ecore_test_animators);
   tcase_add_test(tc, ecore_test_pos_map);
+  tcase_add_test(tc, ecore_test_begin_end_tick);
 }
