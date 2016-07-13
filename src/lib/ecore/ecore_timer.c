@@ -184,6 +184,7 @@ ecore_timer_add(double        in,
    Ecore_Timer_Legacy *legacy;
    Eo *timer;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    legacy = calloc(1, sizeof (Ecore_Timer_Legacy));
    if (!legacy) return NULL;
 
@@ -205,6 +206,7 @@ ecore_timer_loop_add(double        in,
    Ecore_Timer_Legacy *legacy;
    Eo *timer;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    legacy = calloc(1, sizeof (Ecore_Timer_Legacy));
    if (!legacy) return NULL;
 
@@ -342,6 +344,7 @@ _efl_loop_timer_pending_get(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 EAPI void
 ecore_timer_freeze(Ecore_Timer *timer)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    ECORE_TIMER_CHECK(timer);
    eo_event_freeze(timer);
 }
@@ -373,6 +376,7 @@ ecore_timer_freeze_get(Ecore_Timer *timer)
 {
    int r = 0;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
    r = eo_event_freeze_count_get(timer);
    return !!r;
 }
@@ -388,6 +392,7 @@ _efl_loop_timer_eo_base_event_freeze_count_get(Eo *obj EINA_UNUSED, Efl_Loop_Tim
 EAPI void
 ecore_timer_thaw(Ecore_Timer *timer)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    ECORE_TIMER_CHECK(timer);
    eo_event_thaw(timer);
 }

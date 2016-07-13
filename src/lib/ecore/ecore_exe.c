@@ -67,6 +67,7 @@ ecore_exe_pipe_run(const char     *exe_cmd,
                    Ecore_Exe_Flags flags,
                    const void     *data)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    Ecore_Exe *ret = eo_add(MY_CLASS, NULL, ecore_obj_exe_command_set(eo_self, exe_cmd, flags));
    if (ret)
      {
