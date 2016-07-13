@@ -228,7 +228,7 @@ abstract Eo.Base ()
             }
          }
       }
-      @property key_obj {
+      @property key_ref {
          [[Generic object reference with string key to object.
 
            The object will be automatically ref'd when set and unref'd
@@ -253,7 +253,7 @@ abstract Eo.Base ()
             }
          }
       }
-      @property key_obj_weak {
+      @property key_wref {
          [[Generic weak object reference with string key to object.
 
            The object key will be removed if the object is removed, but

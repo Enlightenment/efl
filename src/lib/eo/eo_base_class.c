@@ -255,7 +255,7 @@ _eo_base_key_data_get(Eo *obj, Eo_Base_Data *pd, const char *key)
 }
 
 EOLIAN static void
-_eo_base_key_obj_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, const Eo *objdata)
+_eo_base_key_ref_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, const Eo *objdata)
 {
    Eo_Generic_Data_Node *node;
 
@@ -268,13 +268,13 @@ _eo_base_key_obj_set(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key, con
 }
 
 EOLIAN static Eo *
-_eo_base_key_obj_get(Eo *obj, Eo_Base_Data *pd, const char *key)
+_eo_base_key_ref_get(Eo *obj, Eo_Base_Data *pd, const char *key)
 {
    return _key_generic_get(obj, pd, key, DATA_OBJ);
 }
 
 EOLIAN static void
-_eo_base_key_obj_weak_set(Eo *obj, Eo_Base_Data *pd, const char * key, const Eo_Base *objdata)
+_eo_base_key_wref_set(Eo *obj, Eo_Base_Data *pd, const char * key, const Eo_Base *objdata)
 {
    Eo_Generic_Data_Node *node;
 
@@ -286,7 +286,7 @@ _eo_base_key_obj_weak_set(Eo *obj, Eo_Base_Data *pd, const char * key, const Eo_
 }
 
 EOLIAN static Eo *
-_eo_base_key_obj_weak_get(Eo *obj, Eo_Base_Data *pd, const char * key)
+_eo_base_key_wref_get(Eo *obj, Eo_Base_Data *pd, const char * key)
 {
    return _key_generic_get(obj, pd, key, DATA_OBJ_WEAK);
 }
