@@ -230,7 +230,7 @@ _shm_data_create_from_pool(Shm_Pool *pool, int w, int h, Eina_Bool alpha)
 {
    Shm_Data *data;
    int len, offset;
-   uint32_t wl_format = WL_SHM_FORMAT_XRGB8888;
+   uint32_t wl_format = WL_SHM_FORMAT_ARGB8888;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
