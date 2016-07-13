@@ -47,6 +47,7 @@
    typedef unsigned int    ucell;
    typedef int     cell;
 #endif
+#define CELL_MAX INT_MAX        /* assume cell is always int */
 
    struct tagAMX;
    typedef             cell(*AMX_NATIVE) (struct tagAMX * amx,

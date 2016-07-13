@@ -1071,7 +1071,7 @@ declglb(char *firstname, int firsttag, int fpublic, int fstatic,
 		error(52);	/* only last dimension may be variable length */
 	     size = needsub(&idxtag[numdim]);	/* get size; size==0 for
 						 * "var[]" */
-#if INT_MAX < LONG_MAX
+#if INT_MAX < CELL_MAX
 	     if (size > INT_MAX)
 		error(105);	/* overflow, exceeding capacity */
 #endif
@@ -1212,7 +1212,7 @@ declloc(int fstatic)
 	     if (numdim > 0 && dim[numdim - 1] == 0)
 		error(52);	/* only last dimension may be variable length */
 	     size = needsub(&idxtag[numdim]);	/* get size; size==0 for "var[]" */
-#if INT_MAX < LONG_MAX
+#if INT_MAX < CELL_MAX
 	     if (size > INT_MAX)
 		error(105);	/* overflow, exceeding capacity */
 #endif
@@ -2668,7 +2668,7 @@ doarg(char *name, int ident, int offset, int tags[], int numtags,
 	      */
 	     size = needsub(&idxtag[arg->numdim]);	/* may be zero here,
 							 *it is a pointer anyway */
-#if INT_MAX < LONG_MAX
+#if INT_MAX < CELL_MAX
 	     if (size > INT_MAX)
 		error(105);	/* overflow, exceeding capacity */
 #endif
