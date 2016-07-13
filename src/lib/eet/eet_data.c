@@ -2223,9 +2223,8 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
     */
    if ((group_type > EET_G_UNKNOWN)
        && (group_type < EET_G_LAST)
-       && (((type > EET_T_UNKNOW) && (type < EET_T_STRING))
-           || ((type > EET_T_NULL) && (type < EET_T_VALUE))
-           || ((type > EET_T_VALUE) && (type < EET_T_LAST)))
+       && (((type >= EET_T_CHAR) && (type <= EET_T_ULONG_LONG))
+           || ((type >= EET_T_F32P32) && (type <= EET_T_F8P24)))
        && (!subtype))
      {
         subtype = calloc(1, sizeof (Eet_Data_Descriptor));
