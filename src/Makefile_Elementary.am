@@ -689,7 +689,6 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/els_cursor.c \
 	lib/elementary/els_tooltip.c \
 	lib/elementary/elu_ews_wm.c \
-	lib/elementary/efl_ui_box.c \
 	lib/elementary/efl_ui_box_flow.c \
 	lib/elementary/efl_ui_box_layout.c \
 	lib/elementary/efl_ui_box_private.h \
@@ -701,12 +700,8 @@ lib_elementary_libelementary_la_SOURCES = \
 
 
 lib_elementary_libelementary_la_CFLAGS = @ELEMENTARY_CFLAGS@
-lib_elementary_libelementary_la_LIBADD = \
-@ELEMENTARY_LIBS@ \
-@LTLIBINTL@
 lib_elementary_libelementary_la_DEPENDENCIES = @ELEMENTARY_INTERNAL_LIBS@
 lib_elementary_libelementary_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
-
 lib_elementary_libelementary_la_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \
 -DMODULES_PATH=\"$(pkglibdir)/modules\" \
@@ -725,6 +720,23 @@ lib_elementary_libelementary_la_CPPFLAGS = \
 -DELM_TOP_BUILD_DIR=\"$(top_builddir)\" \
 -DELEMENTARY_BUILD \
 @ELEMENTARY_CFLAGS@
+
+# FIXME: I have no idea how to create a helper here
+LAMBDAPP_CFLAGS = $(lib_elementary_libelementary_la_CFLAGS)
+LAMBDAPP_CPPFLAGS = $(lib_elementary_libelementary_la_CPPFLAGS)
+
+%.lambdapp.lo: %.c
+	@echo "  LAMBDACC" $@;
+	@$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) -E $(CPPFLAGS) $(LAMBDAPP_CPPFLAGS) '$<' -o $(@:.lambdapp.lo=.tmp.i)
+	@lambda-pp -x $(@:.lambdapp.lo=.tmp.i) | $(LTCOMPILE) -x cpp-output -c -o $@ -MT $@ $(LAMBDAPP_CFLAGS) $(LAMBDAPP_CPPFLAGS) -
+
+elm_lambdapp_files = lib/elementary/efl_ui_box.c
+elm_lambdapp_ltobjects = $(elm_lambdapp_files:%.c=%.lambdapp.lo)
+EXTRA_lib_elementary_libelementary_la_DEPENDENCIES = $(elm_lambdapp_ltobjects) $(elm_lambdapp_files)
+
+lib_elementary_libelementary_la_LIBADD = $(elm_lambdapp_ltobjects) \
+@ELEMENTARY_LIBS@ \
+@LTLIBINTL@
 
 if HAVE_WINDOWS
 lib_elementary_libelementary_la_CPPFLAGS += \

@@ -24,15 +24,6 @@ _efl_ui_box_list_data_get(const Eina_List *list)
 }
 
 static void
-_child_added_cb_proxy(void *data, const Eo_Event *event)
-{
-   Evas_Object *box = data;
-   Evas_Object_Box_Option *opt = event->info;
-
-   eo_event_callback_call(box, EFL_CONTAINER_EVENT_CONTENT_ADDED, opt->obj);
-}
-
-static void
 _child_removed_cb_proxy(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
@@ -211,7 +202,11 @@ _efl_ui_box_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED
    efl_canvas_group_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   eo_event_callback_add(wd->resize_obj, EVAS_BOX_EVENT_CHILD_ADDED, _child_added_cb_proxy, obj);
+#define EO_EV_LAMBDA lambda void(void *data EINA_UNUSED, const Eo_Event *ev EINA_UNUSED)
+
+   eo_event_callback_add(wd->resize_obj, EVAS_BOX_EVENT_CHILD_ADDED, EO_EV_LAMBDA {
+                            eo_event_callback_call(data, EFL_CONTAINER_EVENT_CONTENT_ADDED, ((Evas_Object_Box_Option *) ev->info)->obj);
+                         } , obj);
    eo_event_callback_add(wd->resize_obj, EVAS_BOX_EVENT_CHILD_REMOVED, _child_removed_cb_proxy, obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
