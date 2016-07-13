@@ -185,6 +185,8 @@ source_fetch_file(const char *fil, const char *filname)
 		  else
 		    p++;
 	       }
+
+	     got_hash = 0;
 	  }
 	if ((file) && (fname))
           source_fetch_file(file, fname);
