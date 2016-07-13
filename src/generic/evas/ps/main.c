@@ -280,7 +280,7 @@ main(int argc, char **argv)
                {
                   // nothing much to do, the receiver will simply ignore the
                   // data as it's too short
-                  D("fwrite failed (%d bytes): %m\n", width * height * sizeof(DATA32));
+                  D("fwrite failed (%lu bytes): %m\n", width * height * sizeof(DATA32));
                }
           }
         shm_free();
