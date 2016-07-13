@@ -94,11 +94,11 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 # ifdef SIGPWR
    sigaddset(&newset, SIGPWR);
 # endif
-   sigprocmask(SIG_BLOCK, &newset, &oldset);
+   pthread_sigmask(SIG_BLOCK, &newset, &oldset);
 #endif
    err = pthread_create((pthread_t *)t, &attr, func, data);
 #ifndef _WIN32
-   sigprocmask(SIG_SETMASK, &oldset, NULL);
+   pthread_sigmask(SIG_SETMASK, &oldset, NULL);
 #endif
    pthread_attr_destroy(&attr);
 
