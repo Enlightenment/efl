@@ -158,6 +158,8 @@ _custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
    // Note: This is a TERRIBLE layout. Just an example of the API, not showing
    // how to write a proper layout function.
 
+   if (!count) return;
+
    efl_gfx_geometry_get(pack, &px, &py, &pw, &ph);
    EINA_ITERATOR_FOREACH(it, sobj)
      {
