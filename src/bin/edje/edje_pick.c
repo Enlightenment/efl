@@ -1474,12 +1474,12 @@ main(int argc, char **argv)
              }
 
              free(edc);
-             _edje_cache_file_unref(edf);
              edje_cache_emp_free(ce);
              eet_close(ef);
           }
 
         _edje_pick_images_copy(edf, out_file);  /* Add Images to imagelist */
+        _edje_cache_file_unref(edf);
 
         /* We SKIP writing source, just can't compose it */
         /* FIXME: use Edje_Edit code to generate source */
