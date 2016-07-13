@@ -248,6 +248,7 @@ void       _ecore_exe_event_del_free(void *data,
 void _ecore_animator_shutdown(void);
 void _ecore_animator_run_reset(void);
 Eina_Bool _ecore_animator_run_get(void);
+Eina_Bool _ecore_animator_flush(void);
 
 void _ecore_poller_shutdown(void);
 
@@ -336,6 +337,7 @@ extern int _ecore_fps_debug;
 extern double _ecore_time_loop_time;
 extern Eina_Bool _ecore_glib_always_integrate;
 extern Ecore_Select_Function main_loop_select;
+extern int in_main_loop;
 
 Eina_Bool ecore_mempool_init(void);
 void ecore_mempool_shutdown(void);
