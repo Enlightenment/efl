@@ -1340,7 +1340,7 @@ _text_activated_free_fs_data(Elm_Fileselector *fs)
    Eina_Stringshare *str = eo_key_data_get(fs, _text_activated_path_key);
    eina_stringshare_del(str);
    eo_key_data_set(fs, _text_activated_path_key, NULL);
-   eo_key_obj_set(fs, _text_activated_model_key, NULL);
+   eo_key_ref_set(fs, _text_activated_model_key, NULL);
    eo_unref(fs);
 }
 
@@ -1351,7 +1351,7 @@ _text_activated_is_dir_then(void *data, void *value)
    Eina_Bool is_dir = EINA_FALSE;
    ELM_FILESELECTOR_DATA_GET(fs, sd);
 
-   Efl_Model *model = eo_key_obj_get(fs, _text_activated_model_key);
+   Efl_Model *model = eo_key_ref_get(fs, _text_activated_model_key);
    Eina_Stringshare *str = eo_key_data_get(fs, _text_activated_path_key);
 
    eina_value_get(value, &is_dir);
@@ -1458,7 +1458,7 @@ _on_text_activated(void *data, const Eo_Event *event)
    _model_str_property_set(model, "path", path, &promise);
 
    eo_key_data_set(fs, _text_activated_path_key, eina_stringshare_add(path));
-   eo_key_obj_set(fs, _text_activated_model_key, model);
+   eo_key_ref_set(fs, _text_activated_model_key, model);
    eo_ref(fs);
    eina_promise_then(promise,
                      _on_text_activated_set_path_then,
@@ -2429,7 +2429,7 @@ clean_up:
 static void
 _selected_model_set_free_fs_data(Elm_Fileselector *fs)
 {
-   eo_key_obj_set(fs, _selected_model_set_model_key, NULL);
+   eo_key_ref_set(fs, _selected_model_set_model_key, NULL);
    eo_key_data_set(fs, _selected_model_set_promise_owner_key, NULL);
    eo_unref(fs);
 }
@@ -2448,7 +2448,7 @@ _selected_model_set_is_dir_then(void *data, void *value)
 {
    Elm_Fileselector *fs = data;
    Eina_Bool is_dir = EINA_FALSE;
-   Efl_Model *model = eo_key_obj_get(fs, _selected_model_set_model_key);
+   Efl_Model *model = eo_key_ref_get(fs, _selected_model_set_model_key);
    Eina_Promise_Owner *promise_owner = eo_key_data_get(fs, _selected_model_set_promise_owner_key);
    ELM_FILESELECTOR_DATA_GET(fs, sd);
 
@@ -2496,7 +2496,7 @@ _elm_fileselector_elm_interface_fileselector_selected_model_set(Eo *obj, Elm_Fil
      }
    promise = efl_model_property_get(model, "is_dir");
 
-   eo_key_obj_set(obj, _selected_model_set_model_key, model);
+   eo_key_ref_set(obj, _selected_model_set_model_key, model);
    if (promise_owner)
      eo_key_data_set(obj, _selected_model_set_promise_owner_key, promise_owner);
 
