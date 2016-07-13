@@ -986,6 +986,8 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
    if (!extn) return ECORE_CALLBACK_PASS_ON;
    if (e->major != MAJOR)
      return ECORE_CALLBACK_PASS_ON;
+   if (ee != ecore_ipc_server_data_get(extn->ipc.server))
+     return ECORE_CALLBACK_PASS_ON;
    switch (e->minor)
      {
       case OP_UPDATE:
