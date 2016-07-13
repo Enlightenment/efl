@@ -67,7 +67,7 @@ Eina_Bool poppler_init(const char *file, int page_nbr, int size_w, int size_h)
 
    /* load the page */
 
-   doc_page = doc->create_page(page_nbr + 1);
+   doc_page = doc->create_page(page_nbr);
    if (!doc_page)
      goto del_pdfdoc;
 
@@ -149,6 +149,9 @@ void poppler_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
    for (y = 0; y < crop_height; y++) \
      for (x = 0; x < crop_width; x++)
 
+#define ARGB_JOIN(a,r,g,b) \
+        (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
+
    if (out.format() == image::format_mono)
      {
         //FIXME no idea what this format is like
@@ -159,12 +162,8 @@ void poppler_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
         src = (RGB24*) out.data();
         IMAGE_PIXEL_ITERATOR
           {
-             DATA32 d = 0xFF000000;
              int pos = x+y*crop_width;
-             d |= src[pos][0] >> 8;
-             d |= src[pos][1] >> 16;
-             d |= src[pos][2] >> 24;
-             dst[pos] =  d;
+             dst[pos] = ARGB_JOIN(0xFF, src[pos][0], src[pos][1], src[pos][2]);
           }
       }
     else if (out.format() == image::format_argb32)
