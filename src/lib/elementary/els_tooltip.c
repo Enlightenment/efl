@@ -358,7 +358,8 @@ _elm_tooltip_reconfigure_orient(Elm_Tooltip *tt,
 static void
 _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 {
-   Evas_Coord ox, oy, ow, oh, px = 0, py = 0, tx, ty, tw, th, cw = 0, ch = 0;
+   Evas_Coord ox, oy, ow, oh, px = 0, py = 0, tx, ty, tw, th;
+   Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0;
    Evas_Coord eminw, eminh, ominw, ominh;
    double rel_x, rel_y;
    Eina_Bool inside_eventarea;
@@ -487,17 +488,17 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 
    if (tt->tt_win)
      {
-#ifdef HAVE_ELEMENTARY_X
-        Evas_Object *win = elm_widget_top_get(tt->owner);
-        Ecore_X_Window xwin = elm_win_xwindow_get(win);
-        if (xwin)
-          ecore_x_window_size_get(ecore_x_window_root_get(xwin), &cw, &ch);
-#endif
-        if (!cw)
-          elm_win_screen_size_get(elm_widget_top_get(tt->owner), NULL, NULL, &cw, &ch);
+        elm_win_screen_size_get(elm_widget_top_get(tt->owner),
+                                NULL, NULL, &cw, &ch);
+        elm_win_screen_position_get(elm_widget_top_get(tt->owner),
+                                    &cx, &cy);
+        evas_canvas_pointer_canvas_xy_get(tt->evas, &px, &py);
      }
-   if (!cw)
-     evas_output_size_get(tt->tt_evas ? tt->tt_evas : tt->evas, &cw, &ch);
+   else
+     {
+        evas_output_size_get(tt->evas, &cw, &ch);
+        evas_canvas_pointer_canvas_xy_get(tt->evas, &px, &py);
+     }
    TTDBG("SCREEN:  cw=%d,ch=%d\n", cw, ch);
 
    evas_object_geometry_get(tt->eventarea, &ox, &oy, &ow, &oh);
@@ -508,161 +509,57 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      ox = oy = 0;
    TTDBG("EVENTAREA:  ox=%d,oy=%d,ow=%d,oh=%d\n", ox, oy, ow, oh);
 
-   if (tt->tt_win)
-     {
-        int x, y;
-        Evas_Object *win = elm_widget_top_get(tt->owner);
-#ifdef HAVE_ELEMENTARY_X
-        Ecore_X_Window xwin = elm_win_xwindow_get(win);
-        if (xwin)
-          ecore_x_pointer_xy_get(xwin, &px, &py);
-#endif
-        elm_win_screen_position_get(win, &x, &y);
-        ox += x;
-        if (px) px += x;
-        oy += y;
-        if (py) py += y;
-     }
-   else
-     evas_pointer_canvas_xy_get(tt->evas, &px, &py);
-   TTDBG("POINTER:  px=%d,py=%d\n", px, py);
    inside_eventarea = ((px >= ox) && (py >= oy) &&
-                       (px <= ox + ow) && (py <= oy + oh));
+                       (px <= (ox + ow)) && (py <= (oy + oh)));
    if (inside_eventarea)
      {
         /* try to position bottom right corner at pointer */
-        tx = px - tw;
-        ty = py - th;
-        TTDBG("INIT (EVENTAREA)\n");
+        tx = cx + px - tw;
+        ty = cy + py - th;
+        if (tx < 0) tx = 0;
+        if (ty < 0) ty = 0;
+        if (tx > cw) tx = cw - tw;
+        if (ty > ch) ty = ch - th;
+
+        if (ow > 1) rel_x = (double)((ox + (ow / 2)) - ((tx - cx) + (tw / 2))) / (double)(ow / 2);
+        else rel_x = 0;
+        if (oh > 1) rel_y = (double)((oy + (oh / 2)) - ((ty - cy) + (th / 2))) / (double)(oh / 2);
+        else rel_y = 0;
      }
    else
      {
         /* try centered on middle of eventarea */
         tx = ox + (ow / 2) - (tw / 2);
-        if (0 > (th - oy - oh)) ty = oy + th;
-        else ty = oy - oh;
-        TTDBG("INIT (INTERPRETED)\n");
-     }
-   TTDBG("ADJUST (POINTER):  tx=%d,ty=%d\n", tx, ty);
-   if ((tx < 0) || (tx + tw > cw))
-     {
-        if (tx < 0)
+        if (py < oy)
           {
-             /* if we're offscreen to the left, try to flip over the Y axis */
-             if (abs((tx + 2 * tw) - cw) < abs(tx))
-               tx += tw;
-             else
-               tx = 0;
+             ty = oy - th;
+             if (ty < 0) ty = oy + oh;
+             if ((ty + th) > ch) ty = ch - th;
           }
-        else if (tx + tw > cw)
+        else
           {
-             int test_x = tx - tw;
+             ty = oy + oh;
+             if (ty < 0) ty = 0;
+             if ((ty + th) > ch) ty = oy - th;
+          }
+        if (tx < 0) tx = 0;
+        if ((tx + th) > cw) tx = cw - tw;
 
-             /* if we're offscreen to the right, try to flip over the Y axis */
-             if ((test_x >= 0) || (tx + tw - cw > abs(test_x)))
-               tx -= tw;
-             else
-               tx = cw - tw;
-          }
-     }
-   else if ((tx > px) && (px > tw))
-     {
-        if (tx + tw < cw)
-          tx += tw;
-     }
-   if ((ty < 0) || (ty + th > ch))
-     {
-        if (ty < 0)
-          {
-             /* if we're offscreen to the top, try to flip over the X axis */
-             if (abs((ty + 2 * th) - ch) < abs(ty))
-               ty += th;
-             else
-               ty = 0;
-          }
-        else if (ty + th > ch)
-          {
-             int test_y = ty - th;
+        if (ow > 1) rel_x = (double)((ox + (ow / 2)) - (tx + (tw / 2))) / (double)(ow / 2);
+        else rel_x = 0;
+        if (oh > 1) rel_y = (double)((oy + (oh / 2)) - (ty + (th / 2))) / (double)(oh / 2);
+        else rel_y = 0;
 
-             /* if we're offscreen to the bottom, try to flip over the X axis */
-             if ((test_y >= 0) || (ty + th - ch > abs(test_y)))
-               ty -= th;
-             else
-               ty = ch - th;
-          }
+        tx += cx;
+        ty += cy;
      }
-   else if ((ty > py) && (py > th))
-     {
-        if (ty + th < ch)
-          ty += th;
-     }
-   TTDBG("ADJUST (FLIP):  tx=%d,ty=%d\n", tx, ty);
-   if (inside_eventarea)
-     {
-        if ((tx == px) && ((tx + tw + tt->pad.x < cw) || (tx + tw > cw))) tx += tt->pad.x;
-        else if ((tx - tt->pad.x > 0) || (tx < 0)) tx -= tt->pad.x;
-        if ((ty == py) && ((ty + th + tt->pad.y < ch) || (ty + th > ch))) ty += tt->pad.y;
-        else if ((ty - tt->pad.y > 0) || (ty < 0)) ty -= tt->pad.y;
-     }
-   TTDBG("PAD:  tx=%d,ty=%d\n", tx, ty);
-   if (tt->pad.bx * 2 + tw < cw)
-     {
-        if (tx < tt->pad.bx) tx = tt->pad.bx;
-        else if ((tx >= tw) && (tx + tt->pad.bx <= cw)) tx += tt->pad.bx;
-        else if (tx - tt->pad.bx >= 0) tx -= tt->pad.bx;
-     }
-   else if (tx < 0) tx -= tt->pad.bx;
-   else if (tx > cw) tx += tt->pad.bx;
-   if (tt->pad.by * 2 + th < ch)
-     {
-        if (ty < tt->pad.by) ty = tt->pad.by;
-        else if ((ty >= th) && (ty + tt->pad.by <= ch)) ty += tt->pad.by;
-        else if (ty - tt->pad.by >= 0) ty -= tt->pad.by;
-     }
-   else if (ty < 0) ty -= tt->pad.by;
-   else if (ty > ch) ty += tt->pad.by;
-   TTDBG("PAD (BORDER):  tx=%d,ty=%d\n", tx, ty);
-   if (tt->tt_win)
-     {
-#define INSIDE(x, y, xx, yy, ww, hh) \
-  (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && ((x) >= (xx)) && ((y) >= (yy)))
-        /* attempt to ensure no overlap with pointer */
-        if (INSIDE(px, py, tx, ty, tw, th))
-          {
-             int ax, ay;
-
-             ax = tt->pad.x ? tt->pad.x : 1;
-             ay = tt->pad.y ? tt->pad.y : 1;
-             if (!INSIDE(px, py, tx, ty + (py - ty) + ay, tw, th))
-               ty += py - ty + ay;
-             else if (!INSIDE(px, py, tx + (px - tx) + ax, ty, tw, th))
-               tx += px - tx + ax;
-             else if (!INSIDE(px, py, tx + (px - tx) + ax, ty + (py - ty) + ay, tw, th))
-               tx += px - tx + ax, ty += py - ty + ay;
-          }
-#undef INSIDE
-     }
-   if (((tx < 0) && (tw < cw)) || ((ty < 0) && (th < ch)))
-     {
-        TTDBG("POSITIONING FAILED! THIS IS A BUG SOMEWHERE!\n");
-        abort();
-        return;
-     }
+   // XXX: if this is a window for toolkit this relies on abs positioning
+   // and this is not portable to wayland so we need relative positioning
+   // implemented lower down for this
    evas_object_move(tt->tt_win ? : tt->tooltip, tx, ty);
    evas_object_resize(tt->tt_win ? : tt->tooltip, tw, th);
    TTDBG("FINAL: tx=%d,ty=%d,tw=%d,th=%d\n", tx, ty, tw, th);
    evas_object_show(tt->tooltip);
-
-   if (inside_eventarea)
-     {
-        rel_x = (px - tx) / (double)tw;
-        rel_y = (py - ty) / (double)th;
-     }
-   else
-     {
-        rel_x = (ox + (ow / 2) - tx) / (double)tw;
-        rel_y = (oy + (oh / 2) - ty) / (double)th;
-     }
 
 #define FDIF(a, b) (fabs((a) - (b)) > 0.0001)
    if ((FDIF(rel_x, tt->rel_pos.x)) || (FDIF(rel_y, tt->rel_pos.y)))
@@ -675,7 +572,9 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         tt->rel_pos.x = rel_x;
         tt->rel_pos.y = rel_y;
 
-        _elm_tooltip_reconfigure_orient(tt, ox, oy, ow, oh, tw, th, cw, ch);
+        _elm_tooltip_reconfigure_orient(tt,
+                                        cx + ox, cy + oy, ow, oh,
+                                        tw, th, cw, ch);
 
         msg->val[0] = tt->rel_pos.x;
         msg->val[1] = tt->rel_pos.y;
@@ -869,6 +768,8 @@ EAPI void
 elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient orient)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
+
+   printf("----- SET O %i\n", orient);
 
    if ((orient > ELM_TOOLTIP_ORIENT_NONE) && (orient < ELM_TOOLTIP_ORIENT_LAST))
      tt->orient = orient;
