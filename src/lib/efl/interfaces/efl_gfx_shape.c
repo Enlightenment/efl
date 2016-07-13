@@ -318,7 +318,7 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    Efl_Gfx_Path_Command *cmds;
    Efl_Gfx_Property property_from, property_to;
    Efl_Gfx_Dash *dash = NULL;
-   double *pts, *from_pts, *to_pts;
+   double *pts;
    unsigned int i, j;
 
    from_pd = eo_data_scope_get(from, EFL_GFX_SHAPE_MIXIN);
@@ -351,18 +351,21 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
         memcpy(cmds, from_pd->commands,
                sizeof (Efl_Gfx_Path_Command) * from_pd->commands_count);
 
-        to_pts = to_pd->points;
-        from_pts = from_pd->points;
+        if (pts)
+          {
+             double *to_pts = to_pd->points;
+             double *from_pts = from_pd->points;
 
-        for (i = 0; cmds[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
-          for (j = 0; j < _efl_gfx_path_command_length(cmds[i]); j++)
-            {
-               *pts = interpolate(*from_pts, *to_pts, pos_map);
+             for (i = 0; cmds[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
+               for (j = 0; j < _efl_gfx_path_command_length(cmds[i]); j++)
+                 {
+                    *pts = interpolate(*from_pts, *to_pts, pos_map);
 
-               pts++;
-               from_pts++;
-               to_pts++;
-            }
+                    pts++;
+                    from_pts++;
+                    to_pts++;
+                 }
+          }
      }
 
    pd->points_count = from_pd->points_count;
