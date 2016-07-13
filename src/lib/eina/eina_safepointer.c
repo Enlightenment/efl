@@ -239,6 +239,7 @@ eina_safepointer_register(const void *target)
    Eina_Memory_Table *table;
    Eina_Memory_Entry *entry = NULL;
    Eina_Sp_Id id = 0;
+   unsigned int gen;
 
    // We silently handle NULL
    if (!target) return NULL;
@@ -254,9 +255,8 @@ eina_safepointer_register(const void *target)
 
    entry->ptr = (void*) target;
    entry->active = 1;
-   entry->generation++;
-   if (entry->generation == EINA_MAX_GENERATIONS)
-     entry->generation = 1;
+   gen = entry->generation + 1;
+   entry->generation = (gen == EINA_MAX_GENERATIONS) ? 1 : gen;
 
    id = SP_COMPOSE_FINAL_ID(table->partial_id,
                             (entry - table->entries),
