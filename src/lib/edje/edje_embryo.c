@@ -2732,6 +2732,8 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
          box = (Edje_Part_Description_Box *)rp->custom->description;
          box->box.layout = s;
+
+         break;
       }
 
       case EDJE_STATE_PARAM_BOX_FALLBACK_LAYOUT:
@@ -2745,6 +2747,8 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 
          box = (Edje_Part_Description_Box *)rp->custom->description;
          box->box.alt_layout = s;
+
+         break;
       }
 
       case EDJE_STATE_PARAM_BOX_ALIGN:
@@ -2756,6 +2760,8 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
          box = (Edje_Part_Description_Box *)rp->custom->description;
          GETFLOAT_T(box->box.align.x, params[3]);
          GETFLOAT_T(box->box.align.y, params[4]);
+
+         break;
       }
 
       case EDJE_STATE_PARAM_BOX_PADDING:
@@ -2767,6 +2773,8 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
          box = (Edje_Part_Description_Box *)rp->custom->description;
          GETINT(box->box.padding.x, params[3]);
          GETINT(box->box.padding.y, params[4]);
+
+         break;
       }
 
       case EDJE_STATE_PARAM_BOX_MIN:
@@ -2778,6 +2786,8 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
          box = (Edje_Part_Description_Box *)rp->custom->description;
          GETINT(box->box.min.h, params[3]);
          GETINT(box->box.min.v, params[4]);
+
+         break;
       }
 
 #ifdef HAVE_EPHYSICS
