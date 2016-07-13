@@ -166,7 +166,7 @@ void poppler_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
                   int bit = x & 0x7;
                   int c = (*src & (1 << bit)) ? 0xFF : 0x00;
                   *dst++ = ARGB_JOIN(0xFF, c, c, c);
-                  if (x & 0x7 == 0x7) src++;
+                  if ((x & 0x7) == 0x7) src++;
                }
           }
      }
