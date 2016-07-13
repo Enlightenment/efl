@@ -321,7 +321,12 @@ main(int argc, char **argv)
              // could also to "tmpfile %s\n" like shmfile but just
              // a mmaped tmp file on the system
              printf("data\n");
-             fwrite(data, crop_width * crop_height * sizeof(DATA32), 1, stdout);
+             if (fwrite(data, crop_width * crop_height * sizeof(DATA32), 1, stdout) != 1)
+               {
+                  // nothing much to do, the receiver will simply ignore the
+                  // data as it's too short
+                  D("fwrite failed (%d bytes): %m\n", crop_width * crop_height * sizeof(DATA32));
+               }
           }
         shm_free();
      }
