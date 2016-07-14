@@ -2991,14 +2991,14 @@ _wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Se
             (format & ELM_SEL_FORMAT_TEXT))
           {
              types[++i] = "application/x-elementary-markup";
-             types[++i] = "text/plain";
              types[++i] = "text/plain;charset=utf-8";
+             types[++i] = "text/plain";
           }
 
         if (format & ELM_SEL_FORMAT_HTML)
           {
-             types[++i] = "text/html";
              types[++i] = "text/html;charset=utf-8";
+             types[++i] = "text/html";
           }
 
         if (i < 0) return EINA_FALSE;
