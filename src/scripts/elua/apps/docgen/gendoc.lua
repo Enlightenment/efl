@@ -222,10 +222,14 @@ end
 local fcol = 30
 local ncol = 0
 
-local print_stat = function(printname, statname, sub)
+local get_percent = function(sv, svu)
+    return (sv == 0) and 100 or math.floor(((sv - svu) / sv) * 100 + 0.5)
+end
+
+local print_stat = function(printname, statname)
     local sv = stats[statname] or 0
     local svu = stats[statname .. "_undoc"] or 0
-    local percent = (sv == 0) and 100 or math.floor(((sv - svu) / sv) * 100 + 0.5)
+    local percent = get_percent(sv, svu)
     local tb = (" "):rep(math.max(0, fcol - #printname - 1) + ncol - stats_pd(sv))
     local dtb = (" "):rep(ncol - stats_pd(sv - svu))
     local ptb = (" "):rep(3 - stats_pd(percent))
@@ -233,18 +237,31 @@ local print_stat = function(printname, statname, sub)
         :format(printname, tb, sv, dtb, sv - svu, ptb, percent))
 end
 
+local get_secstats = function(...)
+    local sv, svu = 0, 0
+    for i, v in ipairs({ ... }) do
+        sv = sv + (stats[v] or 0)
+        svu = svu + (stats[v .. "_undoc"] or 0)
+    end
+    return sv - svu, sv, get_percent(sv, svu)
+end
+
 local print_stats = function()
     for k, v in pairs(stats) do
         ncol = math.max(ncol, stats_pd(v))
     end
 
-    print("=== CLASS SECTION ===\n")
+    print(("=== CLASS SECTION: %d out of %d (%d%%) ===\n")
+        :format(get_secstats("class", "interface", "mixin", "event")))
     print_stat("Classes", "class")
     print_stat("Interfaces", "interface")
     print_stat("Mixins", "mixin")
     print_stat("Events", "event")
 
-    print("\n=== FUNCTION SECTION ===\n")
+    print(("\n=== FUNCTION SECTION: %d out of %d (%d%%) ===\n")
+        :format(get_secstats("method", "param", "mret",
+                             "getter", "gret", "gkey", "gvalue",
+                             "setter", "sret", "skey", "svalue")))
     print_stat("Methods", "method")
     print_stat("  Method params", "param")
     print_stat("  Method returns", "mret")
@@ -257,16 +274,29 @@ local print_stats = function()
     print_stat("  Setter keys", "skey")
     print_stat("  Setter values", "svalue")
 
-    print("\n=== TYPE SECTION ===\n")
+    print(("\n=== TYPE SECTION: %d out of %d (%d%%) ===\n")
+        :format(get_secstats("alias", "struct", "sfield", "enum", "efield")))
     print_stat("Aliases", "alias")
     print_stat("Structs", "struct")
     print_stat("Struct fields", "sfield")
     print_stat("Enums", "enum")
     print_stat("Enum fields", "efield")
 
-    print("\n=== VARIABLE SECTION ===\n")
+    print(("\n=== VARIABLE SECTION: %d out of %d (%d%%) ===\n")
+        :format(get_secstats("constant", "global")))
     print_stat("Constants", "constant")
     print_stat("Globals", "global")
+
+    local sv, svu = 0, 0
+    for k, v in pairs(stats) do
+        if k:match(".*_undoc$") then
+            svu = svu + v
+        else
+            sv = sv + v
+        end
+    end
+    print(("\n=== TOTAL: %d out of %d (%d%%) ===")
+        :format(sv - svu, sv, get_percent(sv, svu)))
 end
 
 local stat_incr = function(name, missing)
