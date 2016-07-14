@@ -124,6 +124,16 @@ local gen_nsp_func = function(fn, cl, root)
     return tbl
 end
 
+local gen_nsp_ev = function(ev, cl, root)
+    local tbl = gen_nsp_class(cl)
+    tbl[#tbl + 1] = "event"
+    tbl[#tbl + 1] = ev:name_get():lower():gsub(",", "_")
+    if root then
+        tbl[#tbl + 1] = true
+    end
+    return tbl
+end
+
 local gen_nsp_ref
 gen_nsp_ref = function(str, root)
     local decl = eolian.declaration_get_by_name(str)
@@ -885,8 +895,9 @@ local get_typedecl_str = function(tp)
     error("unhandled typedecl type: " .. tpt)
 end
 
-local get_suffixed_ctype = function(tp, suffix, isstr)
-    local ct = isstr and tp or tp:c_type_get()
+local get_suffixed_ctype = function(tp, suffix)
+    if not tp then tp = "void" end
+    local ct = (type(tp) == "string") and tp or tp:c_type_get()
     if ct:sub(#ct) == "*" then
         return ct .. suffix
     else
@@ -1043,9 +1054,9 @@ local gen_cparam = function(par, out)
     out = out or (par:direction_get() == eolian.parameter_dir.OUT)
     local tstr = part:c_type_get()
     if out then
-        tstr = get_suffixed_ctype(tstr, "*", true)
+        tstr = get_suffixed_ctype(tstr, "*")
     end
-    return get_suffixed_ctype(tstr, par:name_get(), true)
+    return get_suffixed_ctype(tstr, par:name_get())
 end
 
 local get_func_csig_part = function(cn, tp)
@@ -1326,7 +1337,7 @@ end
 
 -- builders
 
-local build_method, build_property
+local build_method, build_property, build_event
 
 local build_reftable = function(f, title, ctitle, ctype, t)
     if not t or #t == 0 then
@@ -1365,9 +1376,9 @@ local build_functable = function(f, title, ctitle, cl, tp)
             lbuf:finish(), get_brief_fdoc(v)
         }
         if funct_to_str[v:type_get()] == "property" then
-            build_property(v, cl, linkt)
+            build_property(v, cl)
         else
-            build_method(v, cl, linkt)
+            build_method(v, cl)
         end
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
@@ -1561,35 +1572,17 @@ local build_class = function(cl)
     if #evs == 0 then
         f:write_raw("This class does not define any events.\n")
     else
-        local first = true
+        local nt = {}
         for i, ev in ipairs(evs) do
-            if not first then
-                f:write_nl(2)
-            end
-            f:write_h(ev:name_get(), 4)
-            f:write_i("**Scope:** ", scope_to_str[ev:scope_get()])
-            local tagstrs = {}
-            if ev:is_beta() then tagstrs[#tagstrs + 1] = "@beta" end
-            if ev:is_hot() then tagstrs[#tagstrs + 1] = "@hot" end
-            if ev:is_restart() then tagstrs[#tagstrs + 1] = "@restart" end
-            f:write_br(true)
-            if #tagstrs > 0 then
-                f:write_i("**Tags:** ", unpack(tagstrs))
-                f:write_br(true)
-            end
-            local tp = ev:type_get()
-            if tp then
-                f:write_i("**Type:** ")
-                f:write_m(get_type_str(tp))
-                f:write_br(true)
-                f:write_i("**Type:** ")
-                f:write_m(tp:c_type_get())
-                f:write_br(true)
-            end
-            f:write_nl()
-            write_full_doc(f, ev:documentation_get())
-            first = false
+            local lbuf = Buffer()
+            lbuf:write_link(gen_nsp_ev(ev, cl, true), ev:name_get())
+            nt[#nt + 1] = {
+                lbuf:finish(), get_brief_doc(ev:documentation_get())
+            }
+            build_event(ev, cl)
         end
+        table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
+        f:write_table({ "Event name", "Brief description" }, nt)
     end
 
     f:finish()
@@ -1864,6 +1857,51 @@ build_property = function(fn, cl)
     end
 
     f:write_nl()
+    f:finish()
+end
+
+build_event = function(ev, cl)
+    local f = Writer(gen_nsp_ev(ev, cl))
+
+    f:write_h(cl:full_name_get() .. ": " .. ev:name_get(), 2)
+
+    f:write_h("Signature", 3)
+    local buf = { ev:name_get() }
+
+    if ev:scope_get() == eolian.object_scope.PRIVATE then
+        buf[#buf + 1] = " @private"
+    elseif ev:scope_get() == eolian.object_scope.PROTECTED then
+        buf[#buf + 1] = " @protected"
+    end
+
+    if ev:is_beta() then
+        buf[#buf + 1] = " @beta"
+    end
+    if ev:is_hot() then
+        buf[#buf + 1] = " @hot"
+    end
+    if ev:is_restart() then
+        buf[#buf + 1] = " @restart"
+    end
+
+    local etp = ev:type_get()
+    if etp then
+        buf[#buf + 1] = ": "
+        buf[#buf + 1] = get_type_str(etp)
+    end
+
+    buf[#buf + 1] = ";"
+    f:write_code(table.concat(buf))
+    f:write_nl()
+
+    f:write_h("C signature", 3)
+    f:write_code(get_suffixed_ctype(etp, ev:c_name_get()) .. ";", "c")
+    f:write_nl()
+
+    f:write_h("Description", 3)
+    write_full_doc(f, ev:documentation_get())
+    f:write_nl()
+
     f:finish()
 end
 
