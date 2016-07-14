@@ -20,6 +20,7 @@ typedef struct
    Eo                        *composite_parent;
    Eina_Inlist               *generic_data;
    Eo                      ***wrefs;
+   Eina_List                 *futures;
 } Efl_Object_Extension;
 
 typedef struct
@@ -73,19 +74,24 @@ _efl_object_extension_free(Efl_Object_Extension *ext)
    free(ext);
 }
 
-static inline void
+static inline Efl_Object_Extension *
 _efl_object_extension_need(Efl_Object_Data *pd)
 {
-   if (pd->ext) return;
-   pd->ext = calloc(1, sizeof(Efl_Object_Extension));
+   if (!pd->ext) pd->ext = calloc(1, sizeof(Efl_Object_Extension));
+   return pd->ext;
 }
 
 static inline void
 _efl_object_extension_noneed(Efl_Object_Data *pd)
 {
    Efl_Object_Extension *ext = pd->ext;
-   if ((!ext) || (ext->name) || (ext->comment) || (ext->generic_data) ||
-       (ext->wrefs) || (ext->composite_parent)) return;
+   if ((!ext) ||
+       (ext->name) ||
+       (ext->comment) ||
+       (ext->generic_data) ||
+       (ext->wrefs) ||
+       (ext->composite_parent) ||
+       (ext->futures)) return;
    _efl_object_extension_free(pd->ext);
    pd->ext = NULL;
 }
@@ -189,8 +195,7 @@ _key_generic_set(const Eo *obj, Efl_Object_Data *pd, const char *key, const void
           }
      }
 
-   _efl_object_extension_need(pd);
-   ext = pd->ext;
+   ext = _efl_object_extension_need(pd);
    if (ext)
      {
         node = calloc(1, sizeof(Eo_Generic_Data_Node));
@@ -735,8 +740,7 @@ _efl_object_wref_add(Eo *obj, Efl_Object_Data *pd, Eo **wref)
    count = _wref_count(pd);
    count += 1; /* New wref. */
 
-   _efl_object_extension_need(pd);
-   ext = pd->ext;
+   ext = _efl_object_extension_need(pd);
    if (!ext) return;
 
    tmp = realloc(ext->wrefs, sizeof(*ext->wrefs) * (count + 1));
@@ -1655,8 +1659,10 @@ _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
         ext->name = NULL;
         eina_stringshare_del(ext->comment);
         ext->comment = NULL;
-        _efl_object_extension_free(ext);
-        pd->ext = NULL;
+        while (pd->ext && ext->futures)
+          efl_future_cancel(eina_list_data_get(ext->futures));
+
+        _efl_object_extension_noneed(pd);
      }
 
    _eo_condtor_done(obj);
@@ -1679,6 +1685,27 @@ EOLIAN static void
 _efl_object_class_destructor(Efl_Class *klass EINA_UNUSED)
 {
    eina_hash_free(_legacy_events_hash);
+}
+
+static void
+_efl_object_future_link_tracking_end(void *data, const Efl_Event *ev)
+{
+   Efl_Future *link = ev->object;
+   Eo *obj = data;
+   Efl_Object_Data *pd = efl_data_scope_get(obj, EFL_OBJECT_CLASS);
+   Efl_Object_Extension *ext = _efl_object_extension_need(pd);
+
+   ext->futures = eina_list_remove(ext->futures, link);
+   _efl_object_extension_noneed(pd);
+}
+
+EOLIAN static Eina_Bool
+_efl_object_future_link(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, Efl_Future *link)
+{
+   Efl_Object_Extension *ext = _efl_object_extension_need(pd);
+
+   ext->futures = eina_list_append(ext->futures, link);
+   return !!efl_future_then(link, _efl_object_future_link_tracking_end, _efl_object_future_link_tracking_end, NULL, obj);
 }
 
 #include "efl_object.eo.c"
