@@ -90,8 +90,7 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
    if (next)
      {
         ecore_drm2_output_next_fb_set(ob->priv.output, NULL);
-        if (ecore_drm2_fb_flip(next, ob->priv.output, ob) < 0)
-          _outbuf_tick_source_set(NULL);
+        ecore_drm2_fb_flip(next, ob->priv.output, ob);
      }
 }
 
@@ -122,14 +121,7 @@ _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    if (!ofb) return;
 
    ecore_drm2_fb_dirty(ofb->fb, rects, count);
-   if (ecore_drm2_fb_flip(ofb->fb, ob->priv.output, ob) < 0)
-     {
-        _outbuf_tick_source_set(NULL);
-        ofb->busy = EINA_FALSE;
-        ofb->drawn = EINA_FALSE;
-        ofb->age = 0;
-        return;
-     }
+   ecore_drm2_fb_flip(ofb->fb, ob->priv.output, ob);
 
    ofb->busy = EINA_TRUE;
    ofb->drawn = EINA_TRUE;
