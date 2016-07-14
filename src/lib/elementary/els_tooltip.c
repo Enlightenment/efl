@@ -769,8 +769,6 @@ elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient orient)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
 
-   printf("----- SET O %i\n", orient);
-
    if ((orient > ELM_TOOLTIP_ORIENT_NONE) && (orient < ELM_TOOLTIP_ORIENT_LAST))
      tt->orient = orient;
    else
