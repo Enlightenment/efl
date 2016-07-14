@@ -333,22 +333,48 @@ evas_common_font_query_size(RGBA_Font *fn, const Evas_Text_Props *text_props, in
 
    if (text_props->len > 0)
      {
-        const Evas_Font_Glyph_Info *glyph = text_props->info->glyph +
+        size_t off = text_props->start + text_props->len - 1;
+        const Evas_Font_Glyph_Info *first_glyph = text_props->info->glyph +
            text_props->start;
-        const Evas_Font_Glyph_Info *last_glyph = glyph;
+        const Evas_Font_Glyph_Info *last_glyph = text_props->info->glyph + off;;
 
-        if (text_props->len > 1)
-          {
-             last_glyph += text_props->len - 1;
-             ret_w = last_glyph[-1].pen_after;
-             if (text_props->start > 0)
-                ret_w -= glyph[-1].pen_after;
-          }
+        const Evas_Font_Glyph_Info *glyph = last_glyph;
+        size_t cluster = 0;
+        size_t cur_cluster = 0;
+
 #ifdef OT_SUPPORT
-        ret_w += EVAS_FONT_ROUND_26_6_TO_INT(EVAS_FONT_OT_X_OFF_GET(
-              text_props->info->ot[text_props->start + text_props->len - 1]));
+        Evas_Font_OT_Info *ot = text_props->info->ot + off;
+        cluster = ot->source_cluster;
+        cur_cluster = ot->source_cluster;
 #endif
-        ret_w += last_glyph->width + last_glyph->x_bear;
+
+        do
+          {
+             Evas_Coord cur_w = 0;
+             if (text_props->len > 1)
+               {
+                  cur_w = last_glyph[-1].pen_after;
+                  if (text_props->start > 0)
+                     cur_w -= first_glyph[-1].pen_after;
+               }
+             cur_w += last_glyph->width + last_glyph->x_bear;
+#ifdef OT_SUPPORT
+             cur_w += EVAS_FONT_ROUND_26_6_TO_INT(EVAS_FONT_OT_X_OFF_GET(
+                      text_props->info->ot[text_props->start + text_props->len - 1]));
+
+             cur_cluster = ot->source_cluster;
+             ot--;
+#else
+             cur_cluster = cluster + 1; /* Change cluster manually for no OT */
+#endif
+             glyph--;
+
+             if (cur_w > ret_w)
+               {
+                  ret_w = cur_w;
+               }
+          }
+        while ((glyph > first_glyph) && (cur_cluster == cluster));
      }
 
    if (w) *w = ret_w;
