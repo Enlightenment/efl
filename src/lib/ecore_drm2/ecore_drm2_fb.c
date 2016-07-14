@@ -108,7 +108,9 @@ err:
 EAPI Ecore_Drm2_Fb *
 ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride)
 {
+   struct drm_mode_map_dumb marg;
    Ecore_Drm2_Fb *fb;
+   int ret;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL((fd < 0), NULL);
 
@@ -141,6 +143,15 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
           }
      }
 
+   /* mmap it if we can so screenshots are easy */
+   memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
+   marg.handle = fb->hdl;
+   ret = drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
+   if (!ret)
+     {
+        fb->mmap = mmap(NULL, fb->size, PROT_WRITE, MAP_SHARED, fd, marg.offset);
+        if (fb->mmap == MAP_FAILED) fb->mmap = NULL;
+     }
    return fb;
 
 err:
@@ -153,13 +164,13 @@ ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN(fb);
 
+   if (fb->mmap) munmap(fb->mmap, fb->size);
+
    if (fb->id) drmModeRmFB(fb->fd, fb->id);
 
    if (!fb->gbm)
      {
         struct drm_mode_destroy_dumb darg;
-
-        if (fb->mmap) munmap(fb->mmap, fb->size);
 
         memset(&darg, 0, sizeof(struct drm_mode_destroy_dumb));
         darg.handle = fb->hdl;
