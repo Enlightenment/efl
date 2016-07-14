@@ -5222,16 +5222,6 @@ EAPI void evas_object_smart_data_set(Evas_Object *obj, void *data);
 EAPI void *evas_object_smart_data_get(const Evas_Object *obj);
 
 /**
- * @brief Get the clipper object for the given clipped smart object.
- *
- * Use this function if you want to change any of this clipper's properties,
- * like colors.
- *
- * @ingroup Evas_Object
- */
-EAPI Evas_Object *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
-
-/**
  * @brief Retrieves the list of the member objects of a given Evas smart
  * object.
  *
@@ -5355,24 +5345,6 @@ EAPI void evas_object_smart_changed(Evas_Object *obj);
  */
 EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy);
 
-/**
- * This gets the internal counter that counts the number of smart calculations
- *
- * @param e The canvas to get the calculate counter from
- *
- * Whenever evas performs smart object calculations on the whole canvas
- * it increments a counter by 1. This is the smart object calculate counter
- * that this function returns the value of. It starts at the value of 0 and
- * will increase (and eventually wrap around to negative values and so on) by
- * 1 every time objects are calculated. You can use this counter to ensure
- * you don't re-do calculations withint the same calculation generation/run
- * if the calculations maybe cause self-feeding effects.
- *
- * @ingroup Evas_Smart_Object_Group
- * @since 1.1
- */
-EAPI int          evas_smart_objects_calculate_count_get(const Evas *e);
-
 #include "canvas/efl_canvas_group.eo.legacy.h"
 
 /**
@@ -5384,20 +5356,6 @@ EAPI int          evas_smart_objects_calculate_count_get(const Evas *e);
  *
  * @{
  */
-/**
- * Get the clipper object for the given clipped smart object.
- *
- * @param obj the clipped smart object to retrieve associated clipper
- * from.
- * @return the clipper object.
- *
- * Use this function if you want to change any of this clipper's
- * properties, like colors.
- *
- * @see evas_object_smart_clipped_smart_add()
- */
-EAPI Evas_Object            *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
-
 #include "canvas/efl_canvas_group_clipped.eo.legacy.h"
 
 /**
@@ -5551,13 +5509,6 @@ EAPI Eina_List                 *evas_object_box_children_get(const Evas_Object *
  * @param evas Canvas in which table will be added.
  */
 EAPI Evas_Object                       *evas_object_table_add(Evas *evas) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-
-/**
- * Get the child of the table at the given coordinates
- *
- * @note This does not take into account col/row spanning
- */
-EAPI Evas_Object                       *evas_object_table_child_get(const Evas_Object *o, unsigned short col, unsigned short row) EINA_ARG_NONNULL(1);
 
 #include "canvas/evas_table.eo.legacy.h"
 
