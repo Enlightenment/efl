@@ -59,7 +59,7 @@ struct _Outbuf
    struct
      {
         int num;
-        Outbuf_Fb ofb[4], *current;
+        Outbuf_Fb ofb[4], *draw, *display;
         Ecore_Drm2_Output *output;
         Eina_List *pending;
      } priv;

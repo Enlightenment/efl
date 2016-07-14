@@ -70,6 +70,17 @@ _cb_vblank(int fd, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED,
    if (ticking) _outbuf_tick_schedule(fd, data);
 }
 
+Outbuf_Fb *
+_outbuf_fb_find(Outbuf *ob, Ecore_Drm2_Fb *key)
+{
+   int i;
+
+   for (i = 0; i < ob->priv.num; i++)
+     if (key == ob->priv.ofb[i].fb) return &ob->priv.ofb[i];
+
+   return NULL;
+}
+
 static void
 _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
@@ -79,12 +90,8 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
 
    ob = data;
 
-   ofb = ob->priv.current;
-   if (ofb)
-     {
-        ofb->busy = EINA_FALSE;
-        ofb->age = 0;
-     }
+   ofb = ob->priv.display;
+   if (ofb) ofb->busy = EINA_FALSE;
 
    next = ecore_drm2_output_next_fb_get(ob->priv.output);
    if (next)
@@ -115,13 +122,26 @@ static void
 _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 {
    /* Ecore_Drm2_Plane *plane; */
-   Outbuf_Fb *ofb;
+   Outbuf_Fb *ofb, *next_ofb;
+   Ecore_Drm2_Fb *next;
 
-   ofb = ob->priv.current;
+   ofb = ob->priv.draw;
    if (!ofb) return;
 
+   /* If there's a next buffer set, we just dump it back into
+    * the available buffers and it becomes a dropped frame
+    */
+   next = ecore_drm2_output_next_fb_get(ob->priv.output);
+   if (next)
+     {
+        next_ofb = _outbuf_fb_find(ob, next);
+        next_ofb->busy = EINA_FALSE;
+        ecore_drm2_output_next_fb_set(ob->priv.output, NULL);
+     }
+
    ecore_drm2_fb_dirty(ofb->fb, rects, count);
-   ecore_drm2_fb_flip(ofb->fb, ob->priv.output, ob);
+   if (ecore_drm2_fb_flip(ofb->fb, ob->priv.output, ob) == 0)
+     ob->priv.display = ofb;
 
    ofb->busy = EINA_TRUE;
    ofb->drawn = EINA_TRUE;
@@ -349,7 +369,7 @@ _outbuf_fb_wait(Outbuf *ob)
      {
         for (i = 0; i < ob->priv.num; i++)
           {
-             if (&ob->priv.ofb[i] == ob->priv.current) continue;
+             if (&ob->priv.ofb[i] == ob->priv.display) continue;
              if (ob->priv.ofb[i].busy) continue;
              if (ob->priv.ofb[i].valid) return &(ob->priv.ofb[i]);
           }
@@ -365,9 +385,9 @@ _outbuf_fb_assign(Outbuf *ob)
 {
    int i;
 
-   ob->priv.current = _outbuf_fb_wait(ob);
+   ob->priv.draw = _outbuf_fb_wait(ob);
 
-   if (!ob->priv.current)
+   if (!ob->priv.draw)
      {
         WRN("No Free Buffers. Dropping a frame");
         for (i = 0; i < ob->priv.num; i++)
@@ -406,7 +426,7 @@ _outbuf_state_get(Outbuf *ob)
 
    if (!_outbuf_fb_assign(ob)) return MODE_FULL;
 
-   age = ob->priv.current->age;
+   age = ob->priv.draw->age;
    if (age > ob->priv.num) return MODE_FULL;
    else if (age == 1) return MODE_COPY;
    else if (age == 2) return MODE_DOUBLE;
@@ -491,8 +511,8 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
    if (!(src = update->image.data)) return;
 
    /* check for valid desination data */
-   if (!ob->priv.current) return;
-   buff = ob->priv.current->fb;
+   if (!ob->priv.draw) return;
+   buff = ob->priv.draw->fb;
 
    dst = ecore_drm2_fb_data_get(buff);
    if (!dst) return;
