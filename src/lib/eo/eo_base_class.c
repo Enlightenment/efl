@@ -20,6 +20,7 @@ typedef struct
    Eo                        *composite_parent;
    Eina_Inlist               *generic_data;
    Eo                      ***wrefs;
+   Eina_List                 *futures;
 } Eo_Base_Extension;
 
 typedef struct
@@ -71,19 +72,24 @@ _eo_base_extension_free(Eo_Base_Extension *ext)
    free(ext);
 }
 
-static inline void
+static inline Eo_Base_Extension *
 _eo_base_extension_need(Eo_Base_Data *pd)
 {
-   if (pd->ext) return;
-   pd->ext = calloc(1, sizeof(Eo_Base_Extension));
+   if (!pd->ext) pd->ext = calloc(1, sizeof(Eo_Base_Extension));
+   return pd->ext;
 }
 
 static inline void
 _eo_base_extension_noneed(Eo_Base_Data *pd)
 {
    Eo_Base_Extension *ext = pd->ext;
-   if ((!ext) || (ext->name) || (ext->comment) || (ext->generic_data) ||
-       (ext->wrefs) || (ext->composite_parent)) return;
+   if ((!ext) ||
+       (ext->name) ||
+       (ext->comment) ||
+       (ext->generic_data) ||
+       (ext->wrefs) ||
+       (ext->composite_parent) ||
+       (ext->futures)) return;
    _eo_base_extension_free(pd->ext);
    pd->ext = NULL;
 }
@@ -187,8 +193,7 @@ _key_generic_set(const Eo *obj, Eo_Base_Data *pd, const char *key, const void *d
           }
      }
 
-   _eo_base_extension_need(pd);
-   ext = pd->ext;
+   ext = _eo_base_extension_need(pd);
    if (ext)
      {
         node = calloc(1, sizeof(Eo_Generic_Data_Node));
@@ -727,8 +732,7 @@ _eo_base_wref_add(Eo *obj, Eo_Base_Data *pd, Eo **wref)
    count = _wref_count(pd);
    count += 1; /* New wref. */
 
-   _eo_base_extension_need(pd);
-   ext = pd->ext;
+   ext = _eo_base_extension_need(pd);
    if (!ext) return;
 
    tmp = realloc(ext->wrefs, sizeof(*ext->wrefs) * (count + 1));
@@ -1517,8 +1521,11 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
         ext->name = NULL;
         eina_stringshare_del(ext->comment);
         ext->comment = NULL;
-        _eo_base_extension_free(ext);
-        pd->ext = NULL;
+
+        while (pd->ext && ext->futures)
+          efl_future_cancel(eina_list_data_get(ext->futures));
+
+        _eo_base_extension_noneed(pd);
      }
 
    _eo_condtor_done(obj);
@@ -1541,6 +1548,27 @@ EOLIAN static void
 _eo_base_class_destructor(Eo_Class *klass EINA_UNUSED)
 {
    eina_hash_free(_legacy_events_hash);
+}
+
+static void
+_eo_future_link_tracking_end(void *data, const Eo_Event *ev)
+{
+   Efl_Future *link = ev->object;
+   Eo *obj = data;
+   Eo_Base_Data *pd = eo_data_scope_get(obj, EO_BASE_CLASS);
+   Eo_Base_Extension *ext = _eo_base_extension_need(pd);
+
+   ext->futures = eina_list_remove(ext->futures, link);
+   _eo_base_extension_noneed(pd);
+}
+
+EOLIAN static Eina_Bool
+_eo_base_future_link(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, Efl_Future *link)
+{
+   Eo_Base_Extension *ext = _eo_base_extension_need(pd);
+
+   ext->futures = eina_list_append(ext->futures, link);
+   return !!efl_future_then(link, _eo_future_link_tracking_end, _eo_future_link_tracking_end, NULL, obj);
 }
 
 #include "eo_base.eo.c"
