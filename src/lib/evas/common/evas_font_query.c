@@ -314,81 +314,6 @@ evas_common_font_ascent_descent_get(RGBA_Font *fn, const Evas_Text_Props *text_p
    if (descent) *descent = (desc < max_desc) ? desc : max_desc;
 }
 
-#ifdef OT_SUPPORT
-static inline Evas_Coord
-_evas_common_font_query_width_ot(const Evas_Text_Props *text_props)
-{
-   Evas_Coord ret_w = 0;
-
-   if (text_props->len > 0)
-     {
-        size_t off = text_props->start + text_props->len - 1;
-        const Evas_Font_Glyph_Info *glyph = text_props->info->glyph + off;
-        Evas_Font_OT_Info *ot = text_props->info->ot + off;
-        size_t cluster = ot->source_cluster;
-
-        do
-          {
-             Evas_Coord pen_x = (off > 0) ? glyph[-1].pen_after : 0;
-             Evas_Coord w = pen_x + glyph->x_bear + glyph->width +
-                EVAS_FONT_ROUND_26_6_TO_INT(EVAS_FONT_OT_X_OFF_GET(*ot));
-             if (w > ret_w)
-               {
-                  ret_w = w;
-               }
-
-             glyph--;
-             ot--;
-          } while((off-- > text_props->start) && (ot->source_cluster == cluster));
-
-        if (text_props->start > 0)
-          {
-             ret_w -= text_props->info->glyph[text_props->start - 1].pen_after;
-          }
-     }
-
-   return ret_w;
-}
-#else
-static inline Evas_Coord
-_evas_common_font_query_width_regular(const Evas_Text_Props *text_props)
-{
-   Evas_Coord ret_w = 0;
-
-   if (text_props->len > 0)
-     {
-        const Evas_Font_Glyph_Info *last_glyph = text_props->info->glyph +
-           text_props->start + text_props->len - 1;
-
-        if (text_props->len > 1)
-          {
-             const Evas_Font_Glyph_Info *glyph = text_props->info->glyph +
-                text_props->start;
-
-             ret_w = last_glyph[-1].pen_after;
-             if (text_props->start > 0)
-                ret_w -= glyph[-1].pen_after;
-          }
-
-        ret_w += last_glyph->width + last_glyph->x_bear;
-     }
-
-   return ret_w;
-}
-#endif
-
-static inline Evas_Coord
-_evas_common_font_query_width(const Evas_Text_Props *text_props)
-{
-   Evas_Coord ret_w;
-#ifdef OT_SUPPORT
-   ret_w = _evas_common_font_query_width_ot(text_props);
-#else
-   ret_w = _evas_common_font_query_width_regular(text_props);
-#endif
-   return ret_w;
-}
-
 /**
  * @internal
  * Calculate the size of the string (width and height).
@@ -408,8 +333,24 @@ evas_common_font_query_size(RGBA_Font *fn, const Evas_Text_Props *text_props, in
 
    if (text_props->len > 0)
      {
-        ret_w = _evas_common_font_query_width(text_props);
+        const Evas_Font_Glyph_Info *glyph = text_props->info->glyph +
+           text_props->start;
+        const Evas_Font_Glyph_Info *last_glyph = glyph;
+
+        if (text_props->len > 1)
+          {
+             last_glyph += text_props->len - 1;
+             ret_w = last_glyph[-1].pen_after;
+             if (text_props->start > 0)
+                ret_w -= glyph[-1].pen_after;
+          }
+#ifdef OT_SUPPORT
+        ret_w += EVAS_FONT_ROUND_26_6_TO_INT(EVAS_FONT_OT_X_OFF_GET(
+              text_props->info->ot[text_props->start + text_props->len - 1]));
+#endif
+        ret_w += last_glyph->width + last_glyph->x_bear;
      }
+
    if (w) *w = ret_w;
    if (h) *h = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
 }
