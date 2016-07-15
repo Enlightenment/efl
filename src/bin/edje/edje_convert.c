@@ -364,6 +364,7 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
 	replacement->select_mode = part->select_mode;
 	replacement->multiline = part->multiline;
 	replacement->api = part->api;
+	replacement->required = part->required;
 
 	edc->parts[k++] = replacement;
 

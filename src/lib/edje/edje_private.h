@@ -1194,6 +1194,7 @@ struct _Edje_Part
    unsigned char          access; /* it will be used accessibility feature */
    unsigned char          nested_children_count;
    unsigned char          no_render; /* for proxy sources and masks, since 1.15 */
+   unsigned char          required; /* required part, since 1.18 */
 };
 
 struct _Edje_Part_Image_Id

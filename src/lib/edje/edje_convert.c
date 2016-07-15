@@ -405,6 +405,7 @@ case EDJE_PART_TYPE_##Tp: \
         replacement->select_mode = part->select_mode;
         replacement->multiline = part->multiline;
         replacement->api = part->api;
+        replacement->required = part->required;
 
         edc->parts[k++] = replacement;
 

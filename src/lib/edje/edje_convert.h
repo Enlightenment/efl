@@ -138,6 +138,7 @@ struct _Old_Edje_Part
    unsigned char          select_mode; /**< entry selection mode */
    unsigned char          multiline; /**< multiline enabled */
    Edje_Part_Api          api; /**< part API */
+   unsigned char          required; /**< required */
 };
 
 /**

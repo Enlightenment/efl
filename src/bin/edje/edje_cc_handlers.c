@@ -294,6 +294,8 @@ static void st_collections_group_parts_part_use_alternate_font_metrics(void);
 static void st_collections_group_parts_part_clip_to_id(void);
 static void st_collections_group_parts_part_render(void);
 static void st_collections_group_parts_part_no_render(void);
+static void st_collections_group_parts_part_required(void);
+static void st_collections_group_parts_part_norequired(void);
 static void st_collections_group_parts_part_source(void);
 static void st_collections_group_parts_part_source2(void);
 static void st_collections_group_parts_part_source3(void);
@@ -768,6 +770,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.use_alternate_font_metrics", st_collections_group_parts_part_use_alternate_font_metrics},
      {"collections.group.parts.part.clip_to", st_collections_group_parts_part_clip_to_id},
      {"collections.group.parts.part.no_render", st_collections_group_parts_part_no_render},
+     {"collections.group.parts.part.required", st_collections_group_parts_part_required},
      {"collections.group.parts.part.source", st_collections_group_parts_part_source},
      {"collections.group.parts.part.source2", st_collections_group_parts_part_source2},
      {"collections.group.parts.part.source3", st_collections_group_parts_part_source3},
@@ -1119,6 +1122,8 @@ New_Statement_Handler statement_handlers_short[] =
              noprecise; -> precise_is_inside: 0;
              render; -> no_render: 0;
              norender; -> no_render: 1;
+             required; -> required: 1;
+             norequired; -> norequired: 0;
              scale; -> scale: 1;
              noscale; -> scale: 0;
              desc {
@@ -1147,6 +1152,8 @@ New_Statement_Handler statement_handlers_short_single[] =
      {"collections.group.parts.part.noscale", st_collections_group_parts_part_noscale},
      {"collections.group.parts.part.render", st_collections_group_parts_part_render},
      {"collections.group.parts.part.norender", st_collections_group_parts_part_no_render},
+     {"collections.group.parts.part.required", st_collections_group_parts_part_required},
+     {"collections.group.parts.part.norequired", st_collections_group_parts_part_norequired},
      {"collections.group.parts.part.description.vis", st_collections_group_parts_part_description_vis},
      {"collections.group.parts.part.description.hid", st_collections_group_parts_part_description_hid},
      {"collections.group.mouse", st_collections_group_mouse},
@@ -4395,6 +4402,7 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
    ep->multiline = ep2->multiline;
    ep->access = ep2->access;
    ep->no_render = ep2->no_render;
+   ep->required = ep2->required;
    ep->dragable.x = ep2->dragable.x;
    ep->dragable.step_x = ep2->dragable.step_x;
    ep->dragable.count_x = ep2->dragable.count_x;
@@ -5746,6 +5754,7 @@ edje_cc_handlers_part_make(int id)
    ep->access = 0;
    ep->clip_to_id = -1;
    ep->no_render = 0;
+   ep->required = 0;
    ep->dragable.confine_id = -1;
    ep->dragable.threshold_id = -1;
    ep->dragable.event_id = -1;
@@ -6797,6 +6806,33 @@ static void
 st_collections_group_parts_part_render(void)
 {
    current_part->no_render = EINA_FALSE;
+}
+
+/**
+    @page edcref
+    @property
+        required
+    @parameters
+        [1 or 0]
+    @effect
+        If the required flag is set, this part will be considered
+        stable and it is safe to use by any application."
+    @since 1.18
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_required(void)
+{
+   if (check_range_arg_count(0, 1) == 1)
+     current_part->required = parse_bool(0);
+   else /* lazEDC form */
+     current_part->required = EINA_TRUE;
+}
+
+static void
+st_collections_group_parts_part_norequired(void)
+{
+   current_part->required = EINA_FALSE;
 }
 
 /**

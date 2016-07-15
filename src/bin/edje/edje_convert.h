@@ -113,6 +113,7 @@ struct _Old_Edje_Part
    unsigned char          select_mode;
    unsigned char          multiline;
    Edje_Part_Api	  api;
+   unsigned char          required;
 };
 
 struct _Old_Edje_Part_Description_Spec_Image
