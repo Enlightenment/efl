@@ -3700,6 +3700,8 @@ _elm_win_frame_del(Efl_Ui_Win_Data *sd)
 
    if (sd->frame_obj)
      {
+        edje_object_part_unswallow(sd->frame_obj, sd->edje);
+
         evas_object_event_callback_del_full
           (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
         evas_object_event_callback_del_full
@@ -3737,6 +3739,56 @@ _elm_win_frame_del(Efl_Ui_Win_Data *sd)
    evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
    ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
    ecore_evas_resize(sd->ee, w, h);
+}
+
+static void
+_elm_win_frame_hide(Efl_Ui_Win_Data *sd)
+{
+   Eina_Bool alpha;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+   int x, y, w, h;
+   int ox, oy, ow, oh;
+
+   if (!sd->frame_obj) return;
+
+   edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
+                                 &ox, &oy, &ow, &oh);
+   edje_object_part_geometry_get(sd->frame_obj, "elm.swallow.client",
+                                 &x, &y, &w, &h);
+
+   edje_object_part_unswallow(sd->frame_obj, sd->edje);
+   evas_object_hide(sd->frame_obj);
+
+   /* evas_output_framespace_set(sd->evas, 0, 0, 0, 0); */
+
+   wdata = sd->ee->engine.data;
+   wdata->content.x = x;
+   wdata->content.y = y;
+   wdata->content.w = w;
+   wdata->content.h = h;
+
+   alpha = ecore_evas_alpha_get(sd->ee);
+   if (!alpha)
+     ecore_wl2_window_opaque_region_set(sd->wl.win, x, y, w, h);
+   else
+     ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, 0, 0);
+
+   ecore_wl2_window_geometry_set(sd->wl.win, x, y, w, h);
+   ecore_wl2_window_input_region_set(sd->wl.win, x, y, w, h);
+}
+
+static void
+_elm_win_frame_show(Efl_Ui_Win_Data *sd)
+{
+   if (!sd->frame_obj) return;
+   edje_object_part_swallow(sd->frame_obj, "elm.swallow.client",
+                            sd->edje);
+   evas_object_show(sd->frame_obj);
+
+#ifdef HAVE_ELEMENTARY_WL2
+   _elm_win_opaque_update(sd);
+   _elm_win_frame_obj_update(sd);
+#endif
 }
 
 #ifdef ELM_DEBUG
@@ -4920,16 +4972,11 @@ _efl_ui_win_borderless_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool b
 
    if (borderless)
      {
-        if (need_frame)
-          _elm_win_frame_del(sd);
+        if (need_frame) _elm_win_frame_hide(sd);
      }
    else
      {
-        if (need_frame)
-          _elm_win_frame_add(sd, "default");
-
-        if (sd->frame_obj)
-          evas_object_show(sd->frame_obj);
+        if (need_frame) _elm_win_frame_show(sd);
      }
 
    TRAP(sd, borderless_set, borderless);
