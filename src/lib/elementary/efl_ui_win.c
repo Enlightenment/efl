@@ -5635,7 +5635,7 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 
    if (!ret) int_ret = ELM_THEME_APPLY_FAILED;
 
-   if (!sd->theme_alpha && !sd->application_alpha)
+   if (!sd->theme_alpha)
      {
         s = edje_object_data_get(sd->edje, "alpha");
         if (s)
@@ -5643,7 +5643,7 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
              if (!strcmp(s, "1") ||
                  !strcmp(s, "true"))
                {
-                  sd->application_alpha = 1;
+                  sd->theme_alpha = 1;
                   _elm_win_apply_alpha(obj, sd);
                }
           }
