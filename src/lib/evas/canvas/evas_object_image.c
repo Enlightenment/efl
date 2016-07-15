@@ -4632,22 +4632,27 @@ evas_object_image_get_opaque_rect(Evas_Object *eo_obj EINA_UNUSED,
 {
    Evas_Image_Data *o = type_private_data;
 
-   if (o->cur->border.scale == 1.0)
+   if (!o->cur->has_alpha)
      {
-        *x = obj->cur->geometry.x + o->cur->border.l;
-        *y = obj->cur->geometry.y + o->cur->border.t;
-        *w = obj->cur->geometry.w - (o->cur->border.l + o->cur->border.r);
-        if (*w < 0) *w = 0;
-        *h = obj->cur->geometry.h - (o->cur->border.t + o->cur->border.b);
-        if (*h < 0) *h = 0;
+        *x = obj->cur->geometry.x;
+        *y = obj->cur->geometry.y;
+        *w = obj->cur->geometry.w;
+        *h = obj->cur->geometry.h;
+     }
+   else if (o->cur->border.fill != EVAS_BORDER_FILL_SOLID)
+     {
+        *w = 0;
+        *h = 0;
      }
    else
      {
         *x = obj->cur->geometry.x + (o->cur->border.l * o->cur->border.scale);
         *y = obj->cur->geometry.y + (o->cur->border.t * o->cur->border.scale);
-        *w = obj->cur->geometry.w - ((o->cur->border.l * o->cur->border.scale) + (o->cur->border.r * o->cur->border.scale));
+        *w = obj->cur->geometry.w - ((o->cur->border.l * o->cur->border.scale)
+                                     + (o->cur->border.r * o->cur->border.scale));
         if (*w < 0) *w = 0;
-        *h = obj->cur->geometry.h - ((o->cur->border.t * o->cur->border.scale) + (o->cur->border.b * o->cur->border.scale));
+        *h = obj->cur->geometry.h - ((o->cur->border.t * o->cur->border.scale)
+                                     + (o->cur->border.b * o->cur->border.scale));
         if (*h < 0) *h = 0;
      }
    return 1;
