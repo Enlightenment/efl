@@ -669,6 +669,24 @@ next:
                }
           }
      }
+
+   connected = (dev->alloc.conn & connected);
+   if (connected)
+     {
+        Ecore_Drm2_Output *output;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(dev->outputs, l, output)
+          {
+             if (connected & (1 << output->conn_id))
+               {
+                  connected &= ~(1 << output->conn_id);
+                  output->connected = EINA_TRUE;
+                  output->enabled = EINA_TRUE;
+                  _output_event_send(output);
+               }
+          }
+     }
 }
 
 static void
