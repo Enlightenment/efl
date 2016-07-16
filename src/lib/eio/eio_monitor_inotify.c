@@ -141,6 +141,9 @@ _eio_inotify_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
         if ((event_size + i) > size) break ;
         i += event_size;
 
+        // No need to waste time looking up for just destroyed handler
+        if ((event->mask & IN_IGNORED)) continue ;
+
         backend = eina_hash_find(_inotify_monitors, &event->wd);
         if (!backend) continue ;
         if (!backend->parent) continue ;
@@ -267,6 +270,8 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
    backend = monitor->backend;
    monitor->backend = NULL;
    if (!backend) return;
+
+   backend->parent = NULL;
 
    eina_hash_del(_inotify_monitors, &backend->hwnd, backend);
 }
