@@ -310,6 +310,7 @@ eio_file_error(Eio_File *common)
 {
    if (common->error_cb)
      common->error_cb((void*) common->data, common, common->error);
+   common->thread = NULL;
 }
 
 void

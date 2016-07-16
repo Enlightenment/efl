@@ -260,6 +260,7 @@ void
 eio_file_unregister(Eio_File *common)
 {
    tracked_thread = eina_list_remove(tracked_thread, common);
+   common->thread = NULL;
 }
 
 /**
