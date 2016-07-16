@@ -374,6 +374,14 @@ eio_monitor_stringshared_add(const char *path)
    else
      eio_monitor_backend_add(monitor);
 
+   if (!monitor->backend)
+     {
+        WRN("Impossible to create a monitor for '%s'.", monitor->path);
+        eina_stringshare_del(monitor->path);
+        free(monitor);
+        return NULL;
+     }
+
    eina_hash_direct_add(_eio_monitors, path, monitor);
    INF("New monitor on '%s'.", path);
 

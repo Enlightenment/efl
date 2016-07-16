@@ -248,9 +248,11 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
 
    backend->parent = monitor;
    backend->hwnd = inotify_add_watch(ecore_main_fd_handler_fd_get(_inotify_fdh), monitor->path, mask);
-   if (!backend->hwnd)
+   if (backend->hwnd < 0)
      {
-        eio_monitor_fallback_add(monitor);
+        if (errno != EACCES)
+          eio_monitor_fallback_add(monitor);
+
         free(backend);
         return;
      }
