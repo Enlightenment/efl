@@ -3744,8 +3744,10 @@ _elm_win_frame_del(Efl_Ui_Win_Data *sd)
 static void
 _elm_win_frame_hide(Efl_Ui_Win_Data *sd)
 {
+#ifdef HAVE_ELEMENTARY_WL2
    Eina_Bool alpha;
    Ecore_Evas_Engine_Wl_Data *wdata;
+#endif
    int x, y, w, h;
    int ox, oy, ow, oh;
 
@@ -3761,6 +3763,8 @@ _elm_win_frame_hide(Efl_Ui_Win_Data *sd)
 
    /* evas_output_framespace_set(sd->evas, 0, 0, 0, 0); */
 
+#ifdef HAVE_ELEMENTARY_WL2
+
    wdata = sd->ee->engine.data;
    wdata->content.x = x;
    wdata->content.y = y;
@@ -3775,6 +3779,7 @@ _elm_win_frame_hide(Efl_Ui_Win_Data *sd)
 
    ecore_wl2_window_geometry_set(sd->wl.win, x, y, w, h);
    ecore_wl2_window_input_region_set(sd->wl.win, x, y, w, h);
+#endif
 }
 
 static void
