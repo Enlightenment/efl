@@ -369,8 +369,11 @@ eio_monitor_stringshared_add(const char *path)
 
    EINA_REFCOUNT_INIT(monitor);
 
-   eio_monitor_backend_add(monitor);
-   
+   if (getenv("EIO_MONITOR_POLL"))
+     eio_monitor_fallback_add(monitor);
+   else
+     eio_monitor_backend_add(monitor);
+
    eina_hash_direct_add(_eio_monitors, path, monitor);
    INF("New monitor on '%s'.", path);
 
