@@ -1343,9 +1343,23 @@ eo_override(Eo *eo_id, Eo_Ops ops)
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
    EO_CLASS_POINTER_RETURN_VAL(EO_OVERRIDE_CLASS, klass, EINA_FALSE);
    Eo_Vtable *previous = obj->vtable;
-   obj->vtable = calloc(1, sizeof(*obj->vtable));
-   _vtable_init(obj->vtable, previous->size);
-   _vtable_copy_all(obj->vtable, previous);
+
+   if (!ops.descs)
+     {
+        if (obj->vtable != &obj->klass->vtable)
+          {
+             free(obj->vtable);
+             obj->vtable = (Eo_Vtable *) &obj->klass->vtable;
+          }
+        return EINA_TRUE;
+     }
+
+   if (obj->vtable == &obj->klass->vtable)
+     {
+        obj->vtable = calloc(1, sizeof(*obj->vtable));
+        _vtable_init(obj->vtable, previous->size);
+        _vtable_copy_all(obj->vtable, previous);
+     }
 
    if (!_eo_class_funcs_set(obj->vtable, &ops, obj->klass, klass, EINA_TRUE))
      {
