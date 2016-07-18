@@ -5635,9 +5635,9 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 
    if (!ret) int_ret = ELM_THEME_APPLY_FAILED;
 
+   s = edje_object_data_get(sd->edje, "alpha");
    if (!sd->theme_alpha)
      {
-        s = edje_object_data_get(sd->edje, "alpha");
         if (s)
           {
              if (!strcmp(s, "1") ||
@@ -5646,6 +5646,14 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
                   sd->theme_alpha = 1;
                   _elm_win_apply_alpha(obj, sd);
                }
+          }
+     }
+   else
+     {
+        if (!s || ((strcmp(s, "1") != 0) && (strcmp(s, "false") != 0)))
+          {
+             sd->theme_alpha = 0;
+             _elm_win_apply_alpha(obj, sd);
           }
      }
 
