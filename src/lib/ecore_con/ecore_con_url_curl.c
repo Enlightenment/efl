@@ -55,6 +55,19 @@ _c_init(void)
    LOAD("libcurl.4.dylib"); // try 1
    LOAD("libcurl.so.5"); // if fail try 2
    LOAD("libcurl.so.4"); // if fail try 2
+#elif defined(__OpenBSD__)
+   {
+      char buf[64];
+      int min;
+      int maj = 25;
+
+      for (min = 0; min < 10; min++)
+        {
+           snprintf(buf, sizeof (buf), "libcurl.so.%d.%d", maj, min);
+           LOAD(buf);
+           if (_c->mod) break;
+        }
+   }
 #else
    LOAD("libcurl.so.5"); // try only
    LOAD("libcurl.so.4"); // try only
