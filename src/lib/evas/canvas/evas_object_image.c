@@ -4075,6 +4075,8 @@ evas_object_image_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
           return o->cur->opaque;
         if (!o->engine_data)
           return o->cur->opaque;
+        if (o->has_filter)
+          return o->cur->opaque;
 
         // FIXME: use proxy
         if (o->cur->source)

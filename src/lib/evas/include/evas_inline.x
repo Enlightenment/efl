@@ -79,9 +79,6 @@ evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         if ((obj->cur->clipper && obj->cur->clipper->mask->is_mask) ||
             (obj->clip.mask))
           return 0;
-        /* Non masked snapshot are supposed to be opaque */
-        if (obj->cur->snapshot)
-          return 1;
         if (obj->func->is_opaque)
           return obj->func->is_opaque(eo_obj, obj, obj->private_data);
         return 1;
