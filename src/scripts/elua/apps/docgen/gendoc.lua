@@ -789,6 +789,33 @@ local Buffer = Writer:clone {
     end
 }
 
+-- keyword reference
+
+local key_refs = {}
+
+local add_ref = function(key, lang)
+    local rfs = key_refs[lang]
+    if not rfs then
+        key_refs[lang] = {}
+        rfs = key_refs[lang]
+    end
+    rfs[key] = true
+end
+
+local build_reflist = function()
+    for lang, rfs in pairs(key_refs) do
+        local f = Writer({ "ref", lang, "keyword-list" })
+        local arr = {}
+        for refn, v in pairs(rfs) do
+            arr[#arr + 1] = refn
+        end
+        table.sort(arr)
+        f:write_raw(table.concat(arr, "\n"))
+        f:write_nl()
+        f:finish()
+    end
+end
+
 -- eolian to various doc elements conversions
 
 local wrap_type_attrs = function(tp, str)
@@ -943,6 +970,7 @@ local get_typedecl_cstr = function(tp)
     elseif tpt == tps.STRUCT or tpt == tps.STRUCT_OPAQUE then
         local buf = { "typedef struct " }
         local fulln = tp:full_name_get():gsub("%.", "_");
+        add_ref(fulln, "c")
         buf[#buf + 1] = "_" .. fulln;
         if tpt == tps.STRUCT_OPAQUE then
             buf[#buf + 1] = " " .. fulln .. ";"
@@ -964,6 +992,7 @@ local get_typedecl_cstr = function(tp)
     elseif tpt == tps.ENUM then
         local buf = { "typedef enum" }
         local fulln = tp:full_name_get():gsub("%.", "_");
+        add_ref(fulln, "c")
         local fields = tp:enum_fields_get():to_array()
         if #fields == 0 then
             buf[#buf + 1] = " {} " .. fulln .. ";"
@@ -972,7 +1001,9 @@ local get_typedecl_cstr = function(tp)
         buf[#buf + 1] = " {\n"
         for i, fld in ipairs(fields) do
             buf[#buf + 1] = "    "
-            buf[#buf + 1] = fld:c_name_get()
+            local cn = fld:c_name_get()
+            buf[#buf + 1] = cn
+            add_ref(cn, "c")
             local val = fld:value_get()
             if val then
                 buf[#buf + 1] = " = "
@@ -993,8 +1024,9 @@ local get_typedecl_cstr = function(tp)
         buf[#buf + 1] = "} " .. fulln .. ";"
         return table.concat(buf)
     elseif tpt == tps.ALIAS then
-        return "typedef " .. get_suffixed_ctype(tp:base_type_get(),
-            tp:full_name_get()) .. ";"
+        local fulln = tp:full_name_get():gsub("%.", "_");
+        add_ref(fulln, "c")
+        return "typedef " .. get_suffixed_ctype(tp:base_type_get(), fulln) .. ";"
     end
     error("unhandled typedecl type: " .. tpt)
 end
@@ -1101,6 +1133,7 @@ local gen_func_csig = function(f, ftype)
     assert(ftype ~= eolian.function_type.PROPERTY)
 
     local cn = f:full_c_name_get(ftype)
+    add_ref(cn, "c")
     local rtype = f:return_type_get(ftype)
 
     local fparam = "Eo *obj"
@@ -1580,6 +1613,7 @@ local build_class = function(cl)
     check_class(cl)
 
     f:write_h(cl:full_name_get(), 2)
+    add_ref(cl:full_name_get():gsub("%.", "_"), "c")
 
     f:write_h("Inheritance hierarchy", 3)
     f:write_list(build_inherits(cl))
@@ -1925,7 +1959,9 @@ build_event = function(ev, cl)
     f:write_nl()
 
     f:write_h("C signature", 3)
-    f:write_code(get_suffixed_ctype(etp, ev:c_name_get()) .. ";", "c")
+    local cn = ev:c_name_get()
+    add_ref(cn, "c")
+    f:write_code(get_suffixed_ctype(etp, cn) .. ";", "c")
     f:write_nl()
 
     f:write_h("Description", 3)
@@ -1991,6 +2027,7 @@ getopt.parse {
         build_classes()
         build_typedecls()
         build_variables()
+        build_reflist()
         print_stats()
     end
 }
