@@ -362,7 +362,7 @@ evas_object_rectangle_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
 	return 1;
    if (obj->cur->render_op != EVAS_RENDER_BLEND)
 	return 0;
-   return 1;
+   return (obj->cur->cache.clip.a == 255) ? 1 : 0;
 }
 
 static int
