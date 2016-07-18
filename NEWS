@@ -1,6 +1,1117 @@
 ==========
-EFL 1.17.0
+EFL 1.18.0
 ==========
+
+Changes since 1.17.0:
+---------------------
+
+Features:
+
+   * popup: implemented widget item focus feauture.
+   * list: implemented widget item focus feature.
+   * list: Added descriptions for the newly introduced item,focused/item,unfocused smart callbacks.
+   * popup: Added descriptions for the newly introduced item,focused/item,unfocused smart callbacks.
+   * hoversel: Added "item,focused" and "item,unfocused" smart events for widget items.
+   * win - add accel preference option to elm windows
+   * focus: Added focus highlight clip disable feature. (T1056)
+   * focus: Added optional focus feature - focus movement by mouse_in.
+   * toolbar: implemented widget item focus feature.
+   * elementary: Add support to elementary for creating applications which run in drm.
+   * list: Added focus movement on widget items by mouse in.
+   * genlist: Added focus movement on widget items by mouse in.
+   * gengrid: Added focus movement on widget items by mouse in.
+   * toolbar: Added focus movement on widget items by mouse in.
+   * gengrid: Added feature to move focus out of gengrid if focus is on edge items.
+   * focus: Added optional focus feature - item focus on selection.
+   * Adjust code to use the slightly different Eo2 API.
+   * win - add ELM_ACCEL env var to set acel method that is preferred
+   * theme - improve efm icons provided by ApB (T575)
+   * atspi: Atspi_Action interface implementation @feature
+   * gengrid: item moving feature with keys.
+   * config: Added two APIs to enable/disable focus auto scroll bring in feature.
+   * genlist: Implemented item_select_on_focus feature.
+   * gengrid: Implemented item_select_on_focus feature.
+   * gengrid: Added elm_gengrid_wheel_disabled_set/get() APIs.
+   * focus: Change new API names related to focus auto scrolling.
+   * elm_map: Add new elm_map_region_zoom_bring_in() API
+   * Gengrid: Added horizontal item loop feature.
+   * atspi: add AtspiText and AtspiEditableText interface support.
+   * fileselector: Adding search entry for realtime filename search
+   * panel: add scrollable feature
+   * panel: add scrollable feature
+   * gengrid: Added normal reorder type
+   * toolbar: added selected and unselected smartcallbacks to toolbar.
+   * elm win noblank property added - to disable screen blanking/saving
+   * theme - improve efm icons provided by ApB (T575)
+   * elm process state - add events and state get function
+   * Introduce current_name_{set|get} (T1664)
+   * GLView: Add more configuration flags for the surface
+   * GLView: Add support for client-side rotation
+   * GLView: Add constructor for GLES 1.1 context glview
+   * config font hinting api added
+   * Scroller: Add step size set API
+   * theme/e/shelf: Add a translucent style.
+   * elm config: add key bindings for elm_actionslider
+   * List: Focus highlight when loop is enable
+   * win: Support elm_win style change and runtime theme change.
+   * win: Support runtime alpha window switch on theme change.
+   * Transit: Support BEZIER CURVE
+   * Genlist: added the clicked,right event on items
+   * genlist: add "scroll" smart call
+   * Gengrid: new signal: clicked,right with proper test
+   * List: new signal: clicked,right with simple test
+   * Icon theme: added standard freedesktop names.
+   * Added the elm_win_util_dialog_add() API function
+   * elm_image now inherits edje signal emit
+   * fileselector: added a search icon
+   * +elm_win_fake(), ELM_WIN_FAKE type
+   * elm scroller - add adnimated and accelerated wheel scroll
+   * elm_transit: Add elm_transit_go_in() API
+   * DnD/Wl: add cancel support
+   * DnD/Wl: support multi-layer Drag and Drop
+   * genlist: Implemented genlist expand mode and content_min_limit function
+   * elm - focus feature - add config option to automatically show/hide focus
+   * elm_slider: Added elm_slider_indicator_visible_mode_set/get.
+   * config: Reinitialize font config using evas_font_reinit() API.
+   * scroller: add loop feature.
+   * multibuttonentry: Add item long pressed callback.
+   * Elm helper: add the posix regex validator.
+   * add colorclass editor
+   * elementary: Create new widget for image masking
+   * ctxpopup: Added item_focus_set/item_focus_get.
+   * hoversel: Added item_focus_set/item_focus_get.
+   * elm_focus: added new focus move policy and elm_object_focus_move_policy_set/get
+   * Elm: Add context,open signal in elm_entry.
+   * theme: migrate all e users of darken_rounded_square to new darken_square image
+   * elm_scroller: add wheel_disable_set API
+   * calendar: show days of prev/next month.
+   * gengrid: add item cache in gengrid for efficient realize/unrealize operation.
+   * elm_config: Add feature to control transition scale for edje
+   * win: Add autohide and ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN
+   * EFL Model List View for MVC design
+   * EFL Model Form View for MVC design
+   * multibuttonentry: add horizontal, vertical padding between items.
+   * index: add index item priority APIs for support multilingual
+   * elm_config: Add flag to control pushing naviframe prev button automatically.
+   * focus: add the focus region show mode
+   * focus: item focus moves by geometry.
+   * popup: make scroller optional in popup (T2651)
+   * elm theme - add a blank focus style if you want invisible focus
+   * Label: add support for all the fancy tags already provided for entry
+   * elm - thumbscroll finger scrolling - make it far smoother
+   * focus: add the APIs to set the focus next about item.
+   * Elm_genlist: Add Item filtering support
+   * spinner: delete longpress timer when scroller enabled.
+   * focus: add the focus_direction feature about item.
+   * focus: change the focus don't stay to scroller.
+   * elc_multibuttonentry: add item disable support
+   * atspi: add translation domain for name and description.
+   * atspi: support org.a11y.atspi.Collection interface
+   * atspi: add new relationship append/remove/clear API
+   * elm run - be explicit about elm run not nesting in docs
+   * gengrid : add all_contents_unset API in gengrid for reusing contents.
+   * toolbar: add item_signal_emit.
+   * spinner: add entry filter for accepted only digits and "."
+   * hoversel: add item disabling support.
+   * Elm entry: Keep cursor at inserted position after dnd.
+   * atspi: support key modifers in bridge.
+   * atspi: add type of accessibility object
+   * elementary: Port elementary to use Ecore_Wl2 library
+   * cnp: add Copy & Paste support for Windows
+   * cursor: add cursor support on Windows.
+   * popup: add popup default align config for other profiles.
+   * Entry: Context Menu is now configurable
+   * genlist: supporting homogeneous mode about each item class.
+   * calendar: Apply elm_button widgets instead of manually implemented spinner buttons.
+   * efl-js: JavaScript Eolian binding
+   * popup: add popup dismiss function for hide effect
+   * box: implement aspected item layout
+   * toolbar: Send a signal when shrink mode is changed.
+   * genlist: new SCROLLTO_BOTTOM alignment
+   * calendar: add color classes and text classes.
+   * datetime: add color classes and text classes.
+   * index: add color classes and text classes.
+   * spinner: add color classes and text classes.
+   * multibuttonentry: add color classes and text classes.
+   * elm config - allow the ability to save out to another hidden profile
+   * elm config - add function to check if profile exists
+   * elm config - add the ability to have derived configurations from others
+   * ctxpopup: add geometry,update smart callback. (T2042)
+   * Evas Text/Textblock: Use locale for lang as default.
+   * Evas textblock: Use a common thickness and position at a underline.
+   * eolian: add parsing and generation of hot events
+   * Evas textgrid: Use default language according to locale
+   * Eo: add support for initialising eo after it has been shut down.
+   * ecore-drm: Add API function to get supported rotations from an output
+   * ecore-drm: Add API function to set rotation on an output
+   * ecore-drm: Add opaque type for Plane support
+   * ecore-drm: Add API functions for rotation support
+   * evas: add native surface with TBM Surface for wayland_shm engine
+   * transit: add possibility to revert an ongoing transition during play (T3019)
+   * eolian: allow silencing of type errors in validation
+   * eeze: add case for Graphics subsystems in eeze_udev_find_by_type
+   * entry: add elm_entry_select_region_get() API
+   * genlist: add reusable_content_get item class function for support automatical content reusing in genlist. (T2813)
+   * spinner: add min, max filter
+   * gengrid: add all contents unset API for content unset and reusing
+   * Evas font: allow ":fallbacks" keyword when Evas parses font keyword
+   * spinner: add invalid input validity filter
+   * scrolling: add option to disable scroll animations
+   * config: add option to modify scroll acceleration factor
+   * embryo: add tzdate function
+   * panes: add the style to fold by clicking
+   * Eo events: Change event callback signature.
+   * spinner: add label format validator
+   * Eo: Migrate to the new syntax (Eo 4).
+   * eolian: new type system API
+   * eo del interceptor: add the ability to intercept deletions of eo objects
+   * combobox: add Multiple selection feature
+   * label: add themes for left and right aligned text
+   * focus: add focus_move_policy_automatic_set/get function
+   * Slider: Theme - Add support for range in edc
+   * slider: Add range support
+   * edje: add edje_object_box_part_insert_after()
+   * Eo: Mark all Eo APIs as weak
+   * efl: vpath subsystem
+   * efl ecore - init vpath on ecore init so we have a base object working
+   * elm - add vpath paths for application resources
+   * elm_nstate: introduce nstate widget and inherit check from it
+   * eo - add object sotrage in generic values with ref/unref
+   * Elementary Toolbar: Send order signals when a item is added/removed
+   * eo - add object names/ids esp useful for erigo as it wants object names
+   * eo - add object comments - esp useful for erigo and gui builders
+   * eo base - add value keys in addition to object and void ptr data keys
+   * Efl: Add skeletton for new containers "Pack" API
+   * Efl.Ui.Box: Add implementation of a simple box
+   * Efl.Ui.Grid: Add implementation of a grid/table
+   * Efl: Add Efl.Pack interfaces and Efl.Ui Box and Grid
+   * eo base: names - add finding functions to fund by name
+   * eo base - add loop_get for base class
+   * ecore-wl2: update wl dnd/clipboard support to v3 of protocol (T3455)
+   * ecore-wl2: Port session recovery protocol to work with Ecore_Wl2
+   * Efl: Introduce Efl.Container and unify APIs
+   * Edje: Replace edje part_table with a fake eo proxy
+   * Edje: Return text defined in EDC in part_text_get
+   * elput: Add API function to get pointer position on a given seat
+   * elput: Add API function to set pointer position on a given seat
+   * wayland: implement session recovery
+   * elput: Support sending of session activate/deactivate event
+   * elput: Add API function to switch to a given vt
+   * elput: Add code to handle keybindings for vt switching
+   * elput: Add API function to return a list of seats
+   * elput: Add API function to return a list of Elput_Devices on a given seat
+   * elput: Add API function to set max allowed pointer position
+   * entry: add elm_entry_select_allow_set/get APIs
+   * docs: add an experimental elua based documentation generator
+   * popup: add popup default scrollable flag config for other profiles.
+   * eolian: add event_prefix and have classes follow that or eo_prefix by default
+   * ecore_imf: Add multiline hint in input hint
+   * Eo: Implement eo_override() to enable overriding functions of objects.
+   * elm_win: implement v2 of teamwork api using window-based display protocol
+   * eolian: remove pointers from complex and class types
+   * Efl: Add Efl.Part and switch to it
+   * elput: Add API function to set left-handed device
+   * elput: Add API function to calibrate input devices
+   * elput: Add APIs to support keyboard key remapping
+   * elput: Add API function to support caching of an xkb_context
+   * elput: Add API function to support caching of existing keymap
+   * Merge in elm code widget (T2044)
+   * ecore-drm2: Add start of Ecore_Drm2 library
+   * ecore-drm2: Add API function to set left-handed mouse mode
+   * ecore-drm2: Add API functions to support cacheing of context & keymap
+   * Merge branch 'devs/devilhorns/ecore_drm2'
+   * elm fileselector - make ok/cancel in selector configurable per os
+   * elm_win: Forward events between window and evas
+   * eolian: add a new references system to help replace pointers
+   * Efl: Introduce app-side min size hint
+   * eolian: support @protected for accessors (get/set)
+   * win: Add new API win_name_get (EO and legacy)
+   * Canvas text: introduce new text object
+   * Canvas text cursor: introduce this new object
+   * Canvas Text: continue porting api and fixup bugs
+   * Ui text interactive: introduce this new object (rebase squash)
+   * Ui text: introduce this new text widget
+   * eolian: implement a stringshare builtin
+   * win: Add property accel_preference
+   * efl: Introduce general Efl.Config API
+   * Ui text: add cursor_new method
+   * efl: Add Efl.Version struct and APIs
+   * eolian: add support for static and terminated arrays
+   * eo base - add weak object refs as per jpeg needs
+   * elput: Add API function to return output name associated with input device
+   * Eo refcount: Split the refcount to private and public (user).
+
+Fixes:
+
+   * hover: Made hover itself unfocusable.
+   * elm_list/focus: @bugfix crashes with empty lists and unfocused elements.
+   * @fix homogeneous genlist recalc on theme change (T1023)
+   * @fix slider popup creation with custom themes
+   * @fix broken slider popup hide logic
+   * diskselector: Fix segmentation fault (T988)
+   * object_item: Check null in elm_object_item_del.
+   * naviframe: Emit visible signal to edc theme when first item is pushed
+   * fix ctxpopup getting min size from content immediately on set
+   * Fix bug of moving cursor handler
+   * entry - fix menu to not popup after every time mobile sel handles are clicked
+   * elm: Add Drm Detection
+   * Avoid Month wrapping by ignoring summer time correction.
+   * elm_widget: @fix use of uninitialized values.
+   * naviframe: Fix smart_show function to show only top item view
+   * license: update FSF address. (T1042)
+   * entry - send selection,cleared signal if a selection is dismissed.
+   * @fix slider overlay parenting
+   * actionslider: Fixed mouse movement issue.
+   * elm_win: Unbreak the ABI break of window type.
+   * Remove silencing of errors when called on non elm widgets.
+   * theme overlays - fix to prepend on overlay to be semantically consistent
+   * entry - fixed calc issue of the wrap none mode.
+   * segment_control, toolbar: Fixed broken scale of widget item.
+   * entry - entry did word wrapping even the mode was ELM_WRAP_NONE.
+   * Focus: fix segfault due to bad call to Eo function.
+   * list/genlist: Fixed Home and End key event handling routine.
+   * Accessibility: unref the object only if it exists.
+   * [Elm_Dnd] Fix type matching of drag and drop target objects in X11.
+   * [Elm_Entry] Update selection handlers position and its visibility when scrolling
+   * diskselector: Compare correct variables. (CID1193236)
+   * atspi_object: Added missing comma. (CID1193238)
+   * index: Set variable to NULL after free. (CID1193250)
+   * access: Fixed memory leak. (CID1193244)
+   * fix scrollbar to be clickable even if vieport is tiny compared to content
+   * naviframe : Fixed the overlap issue during multiple push.
+   * genlist needs to iterate exactly once over a fixed list when deselcting all items
+   * list: Fixed item multi/single selection routine to skip disabled item correctly.
+   * genlist: Fixed item multi/single selection routine to skip disabled item correctly.
+   * panel: check _elm_config_key_binding_call return value
+   * datetime: clip sub components into global clipper
+   * prefs: Add EVIL_LIBS to build to avoid problems with missing regex.h under mingw
+   * elm win - fix tracking of current position to properly store it in win obj
+   * spinner: crash issue on deletion fix
+   * elm win - fix wrong resizing of focus highlight obj.
+   * fix left over soft cursors in elm (T893)
+   * [Elm_Dnd] Correct drag position when rotation
+   * [Elm_Dnd] Fix segmentation fault when deleting object with same registered drop callbacks
+   * elm_map: Fixed a leak when ecore_file_download_full fails
+   * gengrid: Fixed the focus animation in horizontal mode
+   * map: remove memory leak
+   * list/genlist/gengrid/toolbar: Fix - _nearest_visible_item_get() should always return an item.
+   * plug: fix SEGV of elementary_test during reconnecting
+   * list: Fixed _elm_list_item_content_focus_set in case the first content is focused.
+   * dnd: Skip drag window when drag starts
+   * widget: Initialized internal variables. (CID1199625)
+   * scroller: Initialized some internal variables. (CID1199657)
+   * spinner: fixed odd behavior of the spinner
+   * ctxpopup: sd->box null check and event_flag set for previous and next focus move.
+   * entry: wrong viewport value calculation issue fix
+   * elm_interface_scrollable: fix resize after drag bug.
+   * dnd: Correct drag window positon in drag start
+   * tooltips position more accurately in X in xinerama
+   * entry no longer completely breaks focus by focusing itself on selection signal
+   * toolbar: Fixed wrong edje api usage for elm objects.
+   * genlist: Removed unnecessary item show call on multi select.
+   * ctxpopup bg theme should block all mouse events, not just left button
+   * ctxpopup should not blindly show arrows when they are not wanted by the theme
+   * gengrid: frame variable should be used for position changes.
+   * widgets - propagate current parent orientation to sub object.
+   * elm_map: Fix to support customized style for elm_map
+   * entry: Fix a test case for editable, non-editable entry.
+   * layout: remove sizing_eval call when layout is already destructed. @fix
+   * elm_map: Fix to show and bring in a correct region after zooming
+   * gengrid : Fix the issue to skip disable item in item select
+   * entry: Enable context menu with mosue down even if the entry is not editable in some case.
+   * hoversel: item-loop should happen on UP/DOWN Key in case of vertical hoversel and on LEFT/RIGHT Key in case of horizontal hoversel.
+   * fix visiblity of entry cursor when selections exist (T1229)
+   * elm_map: Fix to calculate map size not to be smaller than viewport size
+   * [Fileselector] Fix double-call of callback function on clicking "Enter" key.
+   * fix 0 size focus region (T1205)
+   * Correctly emit the scroll signal when scrolling an entry @fix T1274.
+   * entry: update selection handlers' visibility when entry is hidden or shown (T1175)
+   * genlist: fixed wrong item focus set on item_focus_set API call.
+   * scroller - emits the missed signals
+   * elm win - if no ELM_DISPLAY is set, try more engines before giving up (T1294)
+   * Add autogen.sh to EXTRA_DIST.
+   * Remove autogen.sh from the dist tarball.
+   * Remove autogen.sh from the dist tarball.
+   * config: always create a themes directory for user.
+   * po: Set all initial values for Language and Language-Team
+   * win: fix borderless_set behavior
+   * dnd: rotate dragwin if main window is rotated when draging
+   * fix theme to not self-feed emit signals in a loop
+   * fix check colorclasses for disabled text
+   * elm object item: fix the comparison of eo class name in case of edje object.
+   * fileselector: Make selected_set actually select the file
+   * tooltip: corrected the typo in documentation of elm_object_tooltip_show
+   * elm theme - fix wayland borders to be sized and colored correctly
+   * transit - fix to adopt the tween_mode factor.
+   * elementary: Don't segfault if we are not using an X11-compatible engine
+   * list: call "selected" callback after set focus to the selected item
+   * gengrid: corrected the reorder start and end evas smart callback call.
+   * fix notification theme to not clip text
+   * map: Add missing legacy API into legacy header
+   * elc_naviframe: Fix warning caused by elm_obj_layout_signal_emit override function in naviframe
+   * fix gst video loader in generic to have key actually work
+   * ctxpopup: fix arrow geometry set.
+   * ctxpopup: Fix wrong popup size.
+   * elementary: Handle case where ELM_ENGINE environment variable is misspelled.
+   * photocam should reset its preload when a new file is loaded
+   * Gengrid: fix position calculation
+   * Genlist: do not segv if the user clear the list on item double-click
+   * gengrid once again selects items using keyboard when no item was previously selected
+   * entry: fix clearing selection region problem while it's already selected.
+   * NEWS: Manually add fix for T1530
+   * elm_notify: fixing style applying
+   * genlist: Fixed item select logic when item select mode is ALWAYS.
+   * gengrid, genlist, list, toolbar: Fixed DISPLAY_ONLY select mode for an object.
+   * gengrid: Fixed _item_unselect to check select value not highlight value.
+   * genlist: Fixed ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
+   * gengrid: Fixed ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
+   * list: Fixed ELM_OBJECT_SELECT_MODE_NONE codes and added more DISPLAY_ONLY check.
+   * gengrid/popup: Fix wrong return type of _item_del_pre_hook.
+   * gengrid: Fixed item select logic when item select mode is ALWAYS.
+   * label: Fix size calculation for wrapped label
+   * panel: resize scrollable content in content_size_set API
+   * elm examples - missing -lm link - fix
+   * elm_map: the widget use efreet cache home to save image files to, so efreet should be initialized.
+   * module: detect extention just based on if its windows or not.
+   * conform, inwin, progressbar, radio: Fixed wrong part_alias_description implementations and documentations.
+   * genlist: Fixed a crash bug in case of calling a genlist_clear in a select callback function.
+   * elm_win should not check ELM_ACCEL variable if application has overridden it
+   * remove accel_override from elm_config
+   * bg: fix the _elm_bg_elm_layout_sizing_eval bug.
+   * win: fix segfaults (wrong checking)
+   * widget: fix seg fault when ts is NULL.
+   * fileselector: Do not call _populate directly in APIs (T1663)
+   * entry/test: make scrollable entries visible
+   * elm win - start wins in withdrawn state
+   * Elm_Panel: forbid changing of content of "elm.swallow.event" part
+   * elm_widget: fix segfaults for _elm_widget_item_style_set/get
+   * xcf: Make sure complete calculation is unsigned (CID63748, CID63749)
+   * raw: Make sure to keep the correct sign (CID63746, CID63747)
+   * genlist: Remove unnecessary callbacks when item loop is disabled.
+   * widget: fix the typo. Use win object instead.
+   * elm_box_align_set API fix
+   * label: Reset sd->lastw as '-1' in some elm_label APIs for ensure the sizing_eval.
+   * elm_box: inappropriate size_hint_align value usage fix
+   * transit: free the map resource.
+   * DBUS Menu: fixing SIGSEV and SIGBUS when trying to use dbus.
+   * datetime: Fix edc sizing issue by putting fixed: 1 1.
+   * win: set config engine on higher priority than DISPLAY env var
+   * genlist: Fix genlist crash issue when clearing genlist on item focus callback.
+   * test_external.edc: pulse value have to be true for put in pulsing mode.
+   * win: Fix wrong return value of window theme apply.
+   * elm_label: Add "slide,end" signal emission
+   * elm_widget: Pass Elm_Object_Item *item as *event_info in item->del_func.
+   * modules: Make sure we have all linker flags setup for our modules. (T1920)
+   * elm/image: Fix an unclipped issue about image bigger than object size
+   * elm_colorselector: fix not intended duplication
+   * elm_colorselector: Fix layout broken in ELM_COLORSELECTOR_ALL mode
+   * add clipper for gadget popup shine
+   * genlist should ignore no-select items when moving with the keyboard
+   * elm_toolbar: fix memory leak in _elm_toolbar_nearest_visible_item_get
+   * elm_genlist: add missing callback call
+   * gengrid: Add missing "moved" callback call on item reorder by key.
+   * gengrid, genlist, list, toolbar: Fix memory leak and enhance performance.
+   * elm_colorselector: Fixed to get proper min size with picker only mode
+   * test_gengrid.c: Fixed Item_Data array size for prevent buffer overflow.
+   * box layout should not silently fail when size is less than min size hint
+   * Elm_Entry: Fix dropped text data insertion
+   * genlist: unselect item if the select mode is display only or none.
+   * genilst: unselect items if the genlist select mode is display only or none.
+   * elementary: Fix DnD to work again in wayland
+   * elementary: Fix return values to use Eina_Bool
+   * elementary: Fix issue with event data causing an invalid free
+   * elm_diskselector.c: idle enterer add condition changed.
+   * elm_segment_control: Fix elm_object_item_text_set bug.
+   * colorselector: memory leak fix  in _color_bars_add
+   * genlist: cancel multi selected items.
+   * elm progressbar - fix invalid access to freed units string
+   * elm filesel - fix eio access of widget data after de in eio threads
+   * theme: fix misprint in popup style alias name
+   * elm_image: Fixed to have exact size using elm_image_fill_outside_set()
+   * elm_widget: elm_object_disabled_set API fix
+   * elm - elm image orientation api fix - major bug in implementation
+   * DnD: fix callbacks deletion for inline windows.
+   * elementary: Fix dereference of null return value (CID1261370)
+   * elm image - fix image rotation in non-common cases
+   * elm_transit: Fix to support zoom rate zero.
+   * elm_transit: Fix crash issue caused by multiple transit effects.
+   * Elm_Entry: set handler style according to current widget style
+   * Icon: use size_hint_min instead of image_size to know the wanted size
+   * panes: Fix elm_panes_fixed_set.
+   * Correctly lookup icon paths - @fix T2044.
+   * multibuttonentry: Delete duplicate running code.
+   * elm_image: fix elm_image_memfile_set API fail when elm_image widget is not visible.
+   * Gengrid : Fix memory leak in elm_gengrid_realized_items_update
+   * elm_label: Fixed to prevent slide's autostart before calling elm_label_slide_go()
+   * [tooltip] use proper object to set tooltip layer
+   * elm_label: Fixed label disappearing after theme changed
+   * win: fix an issue that profile is erased and set to NULL.
+   * widgets: Apply default return value according to description in .eo or add description too.
+   * elm list - fix access of deleted items in list when recursing
+   * elm config - font selector - avoid accessing invalid data on deld items
+   * elm - list - fix invalid item data scope get
+   * panel: Remove error message from elm_panel_add API and _theme_apply func.
+   * popup: passing right parameter to elm_layout_sizing_eval
+   * elm engine - restore explicit use of ELM_ENGNE env var
+   * genlist: select the focused item on enter key input
+   * gengrid: select the focused item on enter key input
+   * genlist: Fix elm_genlist_item_index_get.
+   * popup: removed button style setting code in theme_apply
+   * multibuttonentry: Item selected callback called twice redundantly.
+   * entry: Don't unlink empty files when saving @fix T2122.
+   * genlist/gengrid : Add upadating 'focus' state in item realized function.
+   * datetime: Fix elm_datetime_field_limit_set.
+   * elementary_test: fix build on windows
+   * elementary: Restart default cursor for wayland windows
+   * elementary: Fix issue of cursor getting unset on DRM engine
+   * layout: apply widget's states when elm_layout_file_set is called
+   * gengrid/genlist/list: focus first item if first_item_focus_on_first_focus_in is on whether focus highlight is enabled or not
+   * config: fix config name
+   * elm_win framespace toggling on fullscreen change: activate!
+   * hoversel: Enabled default mirroring in hoversel.
+   * Genlist: make reordered item selected
+   * pdf: Add support for changes with poppler >= 0.31 (T2184)
+   * popup: correct popup position.
+   * layout: here default content alias can be acceptable.
+   * Genlist/Gengrid : Modified to handle the focus highlight on unrealized items
+   * genlist: Send param item type instead of eo item type.
+   * widget: fix the abi break.
+   * GLView: Return false if the surface could not be created
+   * conform: Use eo_isa() to check object types.
+   * elm_win fullscreen setting on FAKE wins should just toggle the flag
+   * elm_widget: fix wrong parmeter.
+   * elm_entry: fix focus on text selection
+   * [elm_datetime] Fix to parse the POSIX locale format properly.
+   * [elm_datetime] Fix to consider second field while comparing datetime values.
+   * elm_datetime: compatibility for Windows.
+   * elm_prefs: compatibility for Windows.
+   * elm_slideshow: looking for right data directory in prefix.
+   * elm_prefs: looking for right lib directory in prefix.
+   * elm_panel: display directory from HOME on Windows.
+   * elm_fileselector: display directory from HOME on Windows.
+   * elm_diskselector: check if sd variable is null.
+   * task_switcher: add variable verification.
+   * elm_genlist: use of elm_app_data_dir_get() instead of PACKAGE_DATA_DIR.
+   * elm_naviframe: use of elm_app_data_dir_get() instead of PACKAGE_DATA_DIR.
+   * elm_naviframe: use of elm_app_data_dir_get() instead of PACKAGE_DATA_DIR.
+   * elm_map: use of elm_app_data_dir_get() instead of PACKAGE_DATA_DIR
+   * Elm_Win: Fix _elm_win_focus_prev_target_del callback added repeatly without callback del.
+   * elm image - stop repeating events by default - wrong
+   * elm_genlist: pass eo_it to eo_do_ret func, not VIEW(it)
+   * [elm_panel] Fix mirroring issue.
+   * test_naviframe: Fix content image file names.
+   * elm_image: return EINA_FALSE if the data source is NULL in elm_image_memfile_set
+   * spinner: fix entry style in non 'button_layout' mode
+   * elm_gengrid: mark cursor_engine_only in data and update state when realized
+   * atspi: add missing signals array sentiel.
+   * elementary: Fix elm_win_window_id_get for wayland
+   * elm_slider: fix theme apply
+   * elm_clock: fix theme apply
+   * elm: add safety check
+   * elm_segment_control: mark default return value in eolian API
+   * elm_photocam: Fixed T2337, zoom in/out rotated photocam image
+   * Genlist: Fix for memory leak
+   * elm_photocam: Limiting image reload in zoom in/out
+   * elm_multibuttonentry: change theme_set API to provide full widget theming
+   * elm_multibuttonentry: fix label position and size defects
+   * elm_toolbar: fix memory leaks
+   * Genlist: fix multiselect for ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY select_mode
+   * Genlist: rectification in _item_focused_next()
+   * map: fix scale calculation error
+   * Fix slideshow smart events event_info
+   * elementary: Remove unused variable
+   * genlist: fix to return item style correctly.
+   * theme: return false if elm_object_style_set() failed to set requested style.
+   * label: Fix memory leak.
+   * SlideShow: Fix double invocation of ItemClass delete function (T2394)
+   * elm_object_item: fix the issue that del_cb doens't get item data as its parameter
+   * widget: more fix wrt item data.
+   * tooltip: set the correct style of label.
+   * slider: use theme of object for popup.
+   * entry: update selection handlers when entry is resized
+   * elm_win: Set initial withdrawn state from win's ecore_evas property.
+   * Immediatly change the cursor if changed from inside the widget
+   * elm_genlist: fix implementation of genlist tooltip functions
+   * fileselector button: correct window parent finding
+   * elm config - init wl if env vars indicate we should
+   * Genlist: support of ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY mode of genlist item for ELM_ITEM_SELECT_ON_FOCUS_DISABLE config variable.
+   * elm - fix profile handling if ELM_PROFILE is set - dont listen to x msg
+   * Gengrid: fix mirroring bug in gengrid widget.
+   * gengrid/genlist: decrement item counter before triggering item del callback
+   * glview: preserved changed state when altering render mode
+   * tooltip: fix positioning when tooltip is affixed to a window object
+   * interface scrollerable: modify the loop_v condition in _elm_scroll_momentum_animator() function
+   * tooltip: fix tooltip multi line text issue (T2034)
+   * fix list item mode change on elm list
+   * cnp: Add safety check for NULL pointer from _elm_util_text_to_mkup().
+   * cnp: Add safety check for NULL pointer from calloc() for anim_icon.
+   * cnp: Add safety check for NULL pointer from strdup().
+   * Dnd/X11: add dnd support for image, uri types
+   * Cnp/X11: move entry-only code in elm_cnp to entry
+   * Cnp/X11: correct object parameter in datacb
+   * entry: add dnd image handling
+   * cnp: Add safety check for NULL pointer from malloc().
+   * clock: Add safety check for NULL pointer from localtime() func.
+   * entry: emit changed,user signal when text is pasted or dropped
+   * win: only trigger del trap if win type is not FAKE
+   * win: do not use deferred ecore evas deletion for FAKE wins
+   * dayselector : add safety check for NULL pointer from _item_find()
+   * colorselector: add safety check for NULL pointer from ecore_x_image_new().
+   * genlist: fix resize of items when added after elm_genlist_clear(). (T2367)
+   * elm_colorselector: fix horiz/vertical padding to be affected by base_scale in edc
+   * elm_genlist: reset timer to NULL on cancel only.
+   * DnD: remove text/uri handling
+   * config: fix the flush file path.
+   * X11/CnP: remove X11 invocations from elm_entry (T2183)
+   * config: read flush.cfg when elm_config_all_flush is called.
+   * elm_colorselector: pixel-picker accuracy fix
+   * elm_gengrid: fix the bug that gengrid item index(position) is updated wrong value in item_update
+   * elm_interface_scrollable: fix wrong mirrored calculation
+   * elementary: Add rudimentary support for Elm Wayland apps to set border icon (T2453)
+   * Revert "theme: return false if elm_object_style_set() failed to set requested style."
+   * Genlist: use correct variable during realize
+   * elm_datetime: Fix datetime ctxpopup resize issue
+   * Elm_Interface_Scrollable: Improvement in looping behavior
+   * layout: Fix eo API error while running "Genlist 7" in elementary_test. (T2534)
+   * Entry: Add chunked append in case of _elm_entry_entry_append
+   * naviframe: Fix to work clicked callback of auto pushed button.
+   * cnp: change drag win type to ELM_WIN_DND
+   * elm_conform: remember window pointer.
+   * elm_conform: remove smart_callback when it is removed.
+   * elm - scroller - set hold flag on wheel events if used for that dir
+   * image: fix a crash, 0 divide problem.
+   * slider: compare slider values elaborately.
+   * Entry: Fix behaviour of markup filters when setting entry text. (T2561)
+   * elementary: Tweak elm wayland border focus to Fix T2575 (T2575)
+   * elementary: Update elementary wayland border theme to match E's
+   * elementary: Fix elementary wayland border opaque region calculations (T2575)
+   * elementary: Fix program signal for enable/disable of shadows
+   * elementary: Properly fix wayland opaque region setting (T2575)
+   * popup: fix title icon to show up. (T2581)
+   * Scroller: Improvement in _key_action_move() calculations.
+   * genlist : fix genlist dangling pointer crash in item select (T2553)
+   * elementary: Adjust shadow spacer on maximize (T2578)
+   * elementary: Fix T2573: Extra blank line in Genlist Dnd Test (T2573)
+   * Elm_Config: add getpwent support, fix compilation on Windows
+   * Elm_Config: fix compilation when getuid() or geteuid() are not available
+   * elementary: Fix compiler warning disgarding const qualifier
+   * elementary: Fix external variable declaration to match const char
+   * elm_gengrid: Fix condition error.
+   * Elm_Prefs: use Evil API
+   * elm_gengrid: fix missing variable initialization.
+   * multibuttonentry: delete clicked signal preventing code when mbe shrinked.
+   * entry: few times the hit_rect is not clipped properly during genlist scrolling, with entry as content.
+   * multibuttonentry: fix bug with uneditable MBE use case.
+   * multibuttonentry: update end text(item count) even mbe shrinked.
+   * Colorselector: fix wrong object for callback call function
+   * multibuttonentry: internal label object status, box pack, unpack logic clean up.
+   * interface_scrollable: don't use integer abs on floating point
+   * interface_scrollable: convert to int before using abs first
+   * elm: simulate the clicked event over the object only.
+   * hoversel: use elm_object_focus_set to set focus on subobjects.
+   * colorselector: fixed up the selected process
+   * popup: fix resize issue when action area and title area is absent. (T2623)
+   * spinner: entry text makes to registered special value instead of number.
+   * multibuttonentry: item object scale set is not need when theme applied.
+   * mbe: remove unnecessary keypad hide call from multibuttonentry.
+   * popup: fix resize issue in case of custom part text set
+   * focus: add del callback always.
+   * focus/list/genlist/gengrid: fix focus highlight issues on list widgets when auto focus enable is on. (T2555)
+   * Tooltip: reset content delete callback directly after invocation
+   * elm_toolbar: fix icon_size to consider edje base scale
+   * spinner: Add to support spinner value %d format.
+   * scroller: fix the focus move bug in scroller.
+   * generic loaders - fix load if process esits before stdout produced
+   * gengrid: extends D2418 to horizontal mode.
+   * gengird: change focus move mechanism in gengrid.
+   * elementary: Fix Copy and Paste test to actually paste clipboard text
+   * elm theme - conformant - fix to have proper min size of conformant
+   * cnp: init wayland dnd handlers upon creating the first drop target
+   * cnp: initialize Elm_Selection_Data.action for wayland drops
+   * cnp: fix wayland drop format selection
+   * cnp: pass wayland drop event size to handler, do not nul terminate drop data
+   * cnp: end wayland drag on allocation failure
+   * cnp: only nul terminate wayland drops for text type drops
+   * cnp: redo wayland drop to nul terminate for text_uri drops and free on every drop
+   * Gengrid: Set focus after item looping
+   * list: fix crash while setting nearest item in viewport (T2662)
+   * Entry: fix cursor repositioning on theme_apply (T2646)
+   * scroller: fix the misstake. change && -> ||
+   * scroller: fix memory leak on keys traversal
+   * theme: fix theme file path parsing issue on windows.
+   * elm_win: Initilize the variable 'preferred_rot' as a -1 before invoking _elm_win_xwin_update() in _elm_win_finalize_internal().
+   * gengrid: fix item focus movement in case of horizontal mode
+   * gengrid: no need to loop in case of reorder mode is enabled
+   * toolbar: fix issue of focus not coming to item on mouse click (T2697)
+   * config: revert first_item_focus_on_first_focus_in to 0 (T2662)
+   * Genlist: reset item tree expanded state when putting item in cache
+   * elm win - fix to ensure smart calc is done before show
+   * Gengrid: Fix wrong focus movement in _item_single_select_down
+   * multibuttonentry: Use elm focus for items instead of evas focus.
+   * Revert "Elm_Interface_Scrollable: Improvement in looping behavior"
+   * Elc_Naviframe: When push is in progress, block pop until push is complete.
+   * multibuttonentry: Fix mbe  clicked signal is not work.
+   * Elc_Multibuttonentry: Item resize issue on text set
+   * Genlist: Dont select first item if its DISPLAY_ONLY
+   * naviframe: fix a focus issue when deleting the first item
+   * gengrid: fix crash issue.
+   * FileSelector: fix behaviour when the file is chosen
+   * elm map - fix module load craziness loading all elm modules
+   * elm map - fix crash on badly handled zoom timeout callback
+   * FileSelector Entry: fix behaviour for events
+   * elm_image: fix image preload issue
+   * elm theme - make sure key sounds are on input channel for muting config
+   * calendar: fix signal process timing issue when view update.
+   * elm autofocus show - fix cases where focus is inside containers
+   * elm - when focus goes back in to a window dont have scrollers jump
+   * elm toolbar 0 size items fix if icon not found (T2710)
+   * multibuttonentry: Fix box item append rtl when mirror enabled.
+   * elc_multibuttonentry: Input panel should be controlled only if multibuttonentry is editable
+   * focus: remove checking the focus origin in highlight job.
+   * dnd/x11: correct coordinates in pos callback
+   * test_dnd: transfer text without markup when drag label
+   * [spinner] Notify when value is edited directly
+   * elm - fix focus set on focus in on window due to previous focus fix
+   * elm_conformant: display mode set fix
+   * gengrid: fix duplicate edje signal (elm,state,focused) to item on focus
+   * calendar: weekday update when first day of week changed.
+   * spinner: Fix internal logic about special value show instead of number.
+   * multibuttonentry: fix MBE item clear, item delete logic error.
+   * Revert "index: fix index object got a wrong min value."
+   * spinner: fix extra callback calls
+   * multibuttonentry: Fix padding to be affected by base_scale in edc.
+   * multibuttonentry: Fix MBE item box min size calc error.
+   * elc_naviframe: fix crash in strcmp, if text_set is NULL issue
+   * elm_hover: delay hover dismiss while handling edje signal
+   * elm cursors - if min size is too small then force it to be sane
+   * elm cursor - fix hotspot tracking to actually work right
+   * toolbar: Fix crash on more_item when shrink mode is set with no item.
+   * elementary: Fix calling ecore_evas_wayland_move with improper values
+   * elm_hoversel: fix to show dismiss animation
+   * toolbar: do not change align for "noicon" toolbar items (T2782)
+   * elementary: Remove unused static variable
+   * elementary: Remove unused static variable
+   * elementary: Fix passing wrong parameter
+   * elementary: Fix passing wrong parameter
+   * elementary: Remove unused variable
+   * elementary: Remove unused static varible
+   * elementary: Remove unused function
+   * elementary: Remove unused variables
+   * elementary: Remove unused static variable
+   * elementary: Remove unused static variable
+   * elementary: Fix genlist example to not free data until After it has been removed from the list (CID1327342)
+   * deskmirror: unset proxy.source_clip for urgency effects
+   * border: bring sparklebear theme up-to-date with current efl rendering
+   * elc_file_selector_button: free allocated path name
+   * elm_win: fix wrong comment.
+   * elm_cnp: DnD/X11: correct drag window position in rotation
+   * dayselector: fix warning related to argument type
+   * multibuttonentry: fix label packed many times in internal box.
+   * win: reemit atspi "focused" event on bridge connection
+   * multibuttonentry: when item is clicked/selected, select function not called issue fix.
+   * widget: update child_can_focus flag on focusability change
+   * colorselector: picker spinner UI not proper issue fix. (T2401)
+   * autoscroll focus: pass the object region position relative to the scroller. (T1686)
+   * elm_segment_control: fix invalid parameter
+   * atspi: add missing SELECTED changed signals
+   * win : Prohibiting auto-rendering, until elm_win is shown.
+   * calendar: weekdays do not get translated when language is dynamically changed issue fix
+   * index: internal item's edje object handling logic changed to improve performance.
+   * naviframe: subtitle,show signal not sent
+   * segment_control: fix variable affectation
+   * Genlist: Fixed a possible crash in filter iterator and a typo.
+   * Clouseau: handle case when the library is not installed
+   * win: only perform maximize frame state updating during ecore-evas callback
+   * gengrid: Prevent duplicated selected function calls when item is unselected in the function.
+   * atspi: unprotect subset of methods
+   * notify: fix broken timeout feature in elm_notify (T2853)
+   * notify: fix hide animation
+   * multibuttonentry: change default format count.
+   * multibuttonentry: internal entry cnp mode set as "ELM_CNP_MODE_PLAINTEXT".
+   * datetime: fix field arrange code for dynamically field sequence change case.
+   * comp base: allow mouse events to propagate through comp base -> wallpaper
+   * Entry: add markup cnp handlers
+   * elementary: Fix test_colorclass function
+   * elm: set language to edje when elm_language_set is called.
+   * spinner: prevent scrolling when longpress timer enabled.
+   * elementary: Don't call ecore_wl2_shutdown unless we have a display
+   * elm border: change shadow toggle program signal source e -> elm
+   * elementary: Update ecore wayland window geometry (T2919)
+   * spinner: add possibility to enter negative value. (T2915)
+   * gengrid: fix Logic in _item_single_select_left and _item_single_select_right.
+   * Elm entry: fix null item in item provider.
+   * Fileselector entry: fix a case when file was not selected
+   * genlist : fix size hash issue when genlist layout sizing evaluated
+   * genlist: remove unnecessary data creation
+   * elm_photocam: add NULL check
+   * atspi: return previous name in overloaded getters
+   * Elm config: use a name instead of elm_widget_type_get (T2891)
+   * Entry: Add newline filter for single line entry (T2660)
+   * [config] fix static analysis issue
+   * Elm entry: Fix to hide magnifier when menu is disabled.
+   * elm - cursor - fix job handling to not leave rogue jobs
+   * genlist : add size_calc forcely about content when elm_layout.
+   * elm wl cnp - fix paste to not crash anymore
+   * elm config - monitor JUST the correct files for profile and cfg change
+   * elementary: Fix elementary not compiling
+   * sys_notify: fix shutdown of elm_sys_notify
+   * segment_control: check item disable (T2883)
+   * elementary_test: remove wrong usage of EINA_UNUSED.
+   * layout: do not unset max size hint during sizing eval
+   * hide indicator after mouse wheel activation. (T2348)
+   * combobox: fix recalc and hover's best_location error
+   * js: fix examples functions
+   * elm entry: check for null return from eina_rectangle_new
+   * [Hover] Fixed the delaying of hover dismiss on continuous mouse clicks (T3006)
+   * box: enforce size recalc during unpack_all()
+   * config: try to properly update config for popup new align value. (T3008)
+   * config: Correct defaults in upgrade of popup conf (T3008)
+   * Gengrid: improve item_region_show code
+   * elementary: Fix elm_win_window_id_get function (T3058)
+   * Adjust "context_menu_disabled" configuration.
+   * genlist : fix tree item floating issue when homoegeneous mode is enabled (T2708)
+   * combobox: move responsibility to define filter and content to the user of a combobox
+   * combobox: "return" key handled correctly and removed unreachable code. (T3075)
+   * Genlist: do not select the item two times in case of a double click.
+   * Elm Image: fix usage of animated gif on the same image object more than one time
+   * combobox: fix disabled state (T3075)
+   * combobox: fix continuous clicks on hover
+   * [toolbar] don't leak icons into the UI
+   * [toolbar] Adjust icon size along with text etc.
+   * genlist/gengrid: Fix focus hilight error (T3122)
+   * edje: Reduce duplicated item obj creations and deletions.
+   * Elm entry: Fix selection using handlers.
+   * multibuttonentry: Add item unfocused callback.
+   * evas/canvas: fix an incorrect sizing of smart object bounding box.
+   * Eo base: Make object del event @hot.
+   * calendar.edc: fix typo in text style
+   * Eo: fix eo_shutdown()'s return value to be FALSE on shutdown.
+   * edje: fix edje_file_data_get() when no collections are present
+   * Evas: Use proper language for harfbuzz shaping
+   * genlist: update all realized items in a single job
+   * Elm_Entry: Magnifier Not working properly on corner areas issue fix.
+   * multibuttonentry: fix Segfault on pressing Delete Key
+   * combobox: prevent empty swallow to be shown on hover_dismiss animation (T3124)
+   * genlist: fix for a bug in tree expansion, T3132 (T3132)
+   * win: fix a possible crash in elm_win_add
+   * button: remove unnecessary action in program
+   * Ecore con: Close server socket fd on failure.
+   * eina: invalidate last add/del rects when the opposite operation occurs
+   * evas: include Eet.h where it's needed.
+   * Evas font: Use proper enum value for extrabold
+   * ecore-x: Add EINA_SAFETY checks for missing display
+   * ecore-x: Fix compiler warnings about return values
+   * ecore-x: Add EINA_SAFETY checks for missing display
+   * ecore-x: Add EINA_SAFETY checks for missing display
+   * ecore-x: Add EINA_SAFETY checks for missing display
+   * spinner: fix vertical drag style and logic
+   * edje: fix typo affecting our 32bits signal matching code. (T3125)
+   * tooltip: set pass events on the tooltip, not the content
+   * eina: accept NULL in eina_array_free() without erroring
+   * Evas text: set NULL free'd pointers in evas_object_text_free()
+   * ecore-drm: Make ecore_drm_output_rotation_set fail properly
+   * Evas Text: Update text layout when ellipsis is changed without resize
+   * ecore-x: Add safety checks for NULL _ecore_x_disp in dnd functions
+   * ecore-x: Add safety checks for NULL display in dpms functions
+   * ecore-wl2: do not send double mouse up events during input ungrab
+   * ctxpopup: completely disable focus-setting on show (T3088)
+   * cursor: do not unconditionally unset cursor before setting an engine cursor
+   * elm_widget: do not set NULL as parent for object
+   * elm win: fix excess resize callbacks on windows when not really resizing
+   * elm win: fix window redraw if norender is enabled on withdrawn windows
+   * config: add more frames for scrolling options
+   * gl-drm: revise page flip logic
+   * edje: clear pending programs upon calling stop_programs_on()
+   * elm win: use actual window size not requested to resize child objects
+   * ecore evas: fix configure request queue count to only count changes
+   * [editor] Fix crash when deleting selections
+   * ecore-drm: Don't reset event modifiers on touch motion
+   * ecore-x: add safety checks for _ecore_x_disp in some functions
+   * edje_cc_handlers: font field in new text_class should be NULL at the begining
+   * fix the wrong operation of mirrored set
+   * ecore-x: add safety checks for _ecore_x_disp in some functions
+   * edje: unset animator pointer after free in _edje_file_del()
+   * hoversel: set hover layer to layer of hover_parent (T3203)
+   * list: do not constantly reset scr_min flags
+   * list: always apply new size hints for subobjects
+   * Evas textblock: Fix markup cache, was completely broken.
+   * Edje textblock: Assume textblock knows to deal with setting the same markup.
+   * view list: free style in base destructor.
+   * list: do not change scr_min flags when setting an unenforced list mode
+   * list: set update hints on item edje objects
+   * Evas textblock: fix cached markup's stringshare refs
+   * edje epp - fix gcc warning about possible unused var usage
+   * efl - fix threadqueue spinlock destruction on openbsd - doesn't like it
+   * combobox: store eo_constructor() return value into obj
+   * Genlist: fix for an item width calculation issue on item show / scrolling (T2603)
+   * genlist: fix item sizing error
+   * ecore-drm: Update copyright notice (T3286)
+   * ecore-drm: Don't re-include config.h
+   * ecore-drm: Disable default DBG log level
+   * elm - genlist item - index get start from 0 - unbreak api break
+   * edje: Don't leak array source if we are going to exit function (CID1350291)
+   * evas-gl: Fix dereference after null check (CID1339785)
+   * ecore-wl2: set fd handler active flags correctly for connect/create
+   * ecore_wl2: Don't treat EINVAL as a recoverable condition
+   * eolian generator: check fwrite return value currectly (CID1327247)
+   * ecore_drm: Update device copy of framebuffer after page flip completes
+   * gl_common: call evas_gl_common_texture_free() before dropping image cache
+   * ecore_drm: Disable custom tick if we can't wait for vblank
+   * interface_scrollable: fix the getting scroll view port size
+   * evas: Fix incorrect expression in efl_canvas_surface_wayland (CID1353365)
+   * evas: Fix incorrect expression in efl_canvas_surface_tbm (CID1353365)
+   * evas: Fix incorrect expression in efl_canvas_surface_x11 (CID1353363)
+   * docs: bring back docs from eo files by switching to the new group name (T3109)
+   * docs: bring back docs from eo files by switching to the new group name (T3109)
+   * docs: bring back docs from eo files by switching to the new group name (T3109)
+   * edje: do not emit selection,start twice when running select all
+   * entry: do not set selection on selection,start signal
+   * evas-wayland-egl: Override image_native init and shutdown functions
+   * evas-wayland-shm: Override image_native init and shutdown functions
+   * evas.canvas3d: fix wrong output in evas-3d-pick example
+   * Genlist: fix wrong use of Eo item
+   * Genlist: fix test ending
+   * evas-wayland-shm: Fix rotation for wayland shm engine
+   * label: whenever text is changed, sliding related things should be checked
+   * Evas font: fix width calc in last_up_to_pos
+   * Evas textblock: fix null-derefernce in _style_match_tag()
+   * elm_win: force resize during show if job is pending
+   * elm_win: monitor wl CONFIGURE events and unset resizing flag accordingly
+   * elm: fix window resize self-trigger
+   * evas sw render: cutout rects may be used in multiple threads (T3348)
+   * efl - evas - sw engine - donmt free spinlock because cache always needed
+   * edje_cc: fix parsing error when some keywords are used as part name
+   * elm_fileselector: fix progressbar mode
+   * textblock: support escaped &apos; tag
+   * wayland: ignore resize from no-op surface configure events, send events always
+   * ecore: add ecore_main_fd_handler_file_add() handlers to file handler list
+   * evas render: fix updates sometimes are list of rects sometimes updates (T3226)
+   * evas sw render: fix previous thread fix to be portable
+   * evas - fix leak because cutouts_fre .. doesnt free - it just resets to 0
+   * evas-software-generic: remove native.func.data variable and data argument of native calblacks.
+   * ecore-wl2: Enable releasing keyboard, pointer, and touch if supported
+   * ecore-drm: do not attempt to destroy sprite outputs which have never repainted
+   * evas: gif loader - fix out of bounds access on cmap of invalid pixels
+   * elm win - null  out freed data on smart del
+   * evas - gif loader - handle missing colormap
+   * ecore-xcb: Fix wrong initialization
+   * ecore-xcb: Implement missing keyrouter and keygrab functions for xcb (T3377)
+   * elm_win: unset opaque region when alpha is set
+   * elm_win: update opaque region while fullscreened
+   * elm_win: conditionally emit focus and maximize signals in frame creation
+   * popup : fix create scroller bug when list item add.
+   * evas-wayland-shm: Update copyright notice (T3421)
+   * ecore-xcb: Add missing ecore_x_randr_output_crtc_set API function
+   * ecore-xcb: Add missing API function ecore_x_randr_edid_info_has_valid_checksum
+   * ecore-xcb: Add missing API function ecore_x_randr_edid_manufacturer_name_get
+   * ecore-xcb: Add implementation for missing API function
+   * ecore-xcb: Add implementation for missing Ecore_X API
+   * ecore-xcb: Add implementation for missing API function
+   * ecore-xcb: Add implementation for missing API function
+   * ecore-xcb: Add implementation for missing API function
+   * ecore-xcb: Add implementation for missing API function
+   * ecore-xcb: Add implementation for missing API function
+   * ecore-xcb: Add implementation for missing API function
+   * ecore-xcb: Add implementation for missing API function
+   * ecore-xcb: Add implementation for missing API function
+   * ecore-xcb: Add implementation for missing API function
+   * ecore-xcb: Add implementation for missing API function
+   * elm_win: update wayland opaque region during pre-flush...always
+   * ecore_x: fix emission of ECORE_X_EVENT_XKB_NEWKBD_NOTIFY
+   * elm_win: move frame obj creation/deletion for fullscreen property to state change cb
+   * elm_win: handle icon object lifetimes more accurately, use icon_name in csd icon
+   * ecore-wl2: redo Ecore_Wl2_Event_Window_Configure entirely
+   * eina tmp get - support other tmp dir env vars and dont use xdg runtime
+   * efreet: fix tmp file/dir/log handling to not leave a mess and work
+   * efreetd - fix more cache path handling to live in the cache dir
+   * Evas: Add API to reinit the language and use it in elementary.
+   * Evas langauge: Prevent potential buffer overflow and clean code.
+   * elm_win: force opaque update on maximize state change
+   * evas gl - fix leak with font glyph textures
+   * ecore - system modules - fix eldbus interdependency and complaints
+   * ecas gl: ensure make current/window/outpbut enabled before flushing
+   * edje - delete obj - null out freed items in structs/data
+   * ecore-drm: Don't leak object properties
+   * elput: Add missing optional feature check for systemd
+   * datetime_input_ctxpopup: delete previously created ctxpopup if theme is broken
+   * edje_cc: delete anonymous lookup during program removal
+   * elm_win: remove duplicated focused/unfocused event call
+   * elm_focus: keep all focused states to be consistent when win loses and gets focus
+   * eina mempool: don't allow 0 sized mempools
+   * edje_cc: Fix filters inheritance (T3467)
+   * genlist: recalc item size after item content field updated
+   * eina value test - gix blob check to check only relevant fields
+   * genlist: call update_job after smart_calculation done
+   * Edje edit: fix get list of program tagrets.
+   * Edje edit: fix aspect_preference value into generate code function.
+   * elm_cnp: attempt to get all applicable mime types when getting selection
+   * elm_cnp: accept appropriate text types in wl drop handlers
+   * genlist : arrange focus set in mouse up
+   * evas - legacy evas_object_del - always hide obj regardless of refs
+   * edje: fix the source string for table item
+   * Elementary toolbar: Fix flickering issue from resizing the box multiple times
+   * efl: Add uuid as a dependency for Ecore_Wl2 (T3505)
+   * elm_genlist: fix the sorted insert after expanded tree item
+   * evas: Fix improper extra library linkage for various engines
+   * ecore-drm: Add missing initializer for fb2 command
+   * elementary interface/scrollable: remove duplicated function calls for bars
+   * elementary: fix genlist tree filters
+   * edje_entry: fix crash issue in case of no selection text
+   * edje_text: don't apply ellipsis if fit is setted (T3519)
+   * elm_genlist: when appending items to the parent, prepend to the parent
+   * ecore-evas-wayland: Remove include for old Ecore_Wayland library
+   * ecore-audio: Fix issue of improper deleting of ecore_job
+   * efl: Make building Ecore_Wayland optional
+   * ecore_file: fix memory leak
+   * ecore_drm: Fix off by 1000 in output rate calculation (T3587)
+   * elput: Remove useless dbus argument fetching
+   * ecore-drm: Fix potential segfault when setting output mode
+   * ecore-wl2: Remove need for including <sys/param.h>
+   * elput: Fix issue of NULL seat named being passed during input init
+   * elm win: change to use legacy api for cocoa engine
+   * edje_callbacks: fix click signal emitting even though mouse event was cancelled
+   * ecore-evas: call application-set focus functions if no engine functions exist
+   * Elementary toolbar: Don't call "clicked" callback when item is just selected
+   * elput: Don't multiply pointer axis value
+   * ecore-wl2: Add environment variable to optionally disable wobbly windows
+   * elementary: Fix build issue when x11 is disabled
+   * elementary: Don't define handlers if we are not going to use them
+   * elementary: Conditionally define functions based on x11/wayland
+   * elementary: Cleanup compiler warnings when not using X11
+   * eina test suite vector - make correctness range 2x as big
+   * elm_list: perform a null check before accessing its member
+   * ecore-evas: Fix Makefile to not include Ecore_Wayland
+   * efl: Define if systemd version >= 209
+   * evas-vg: Don't fetch parent if we are not going to use it
+   * fix warnings about double/float comparisons in eina vector (T3245)
+   * evas 3d - fix mesh savers/loaders to not leave memory unset
+   * ecore-con - simplify down to a single libc resolver (T3668)
+   * ecore-con tests - remove WRONG connect check
+   * eldbus: divide dbus call timeouts by 1000 to convert from milliseconds
+   * evas - use actual smart bounding box not obj geometry for render incl
+   * slider: theme - fix warnings
+   * eina hash - fix stringshare key comparison function (T3638)
+   * efl - fix many bounds over/underflow where we use int for ptr cmp (T3638)
+   * Elm entry: fix returning wrong focus region
+   * elput: Fix issue where double/triple click was not working
+   * elput: Remove badly named API
+   * efl - ecore c+ ecore-imf - fix odd case input when faking a real event (T3703)
+   * ecore-evas-drm: Fix issue of mouse pointer not centering on startup
+   * widget: set the parent-child relation again, when the widget is unset
+   * ecore-evas-drm: Register direct input callback for gl_drm also
+   * ecore-evas-drm: Disable direct input callback
+   * elm_win: force wl cursor set on every mouse-in
+   * elput: Use Eeze function to get the udev to create context with (T3712)
+   * edje_edit: fix map API (light, perspective, rotation)
+   * elput: Fix crash whem sd_session_get_seat fails (T3785)
+   * ecore-xcb: Fix XCB to be usable again
+   * evas: fix order binding attributes to gl.
+   * elementary/colorselector: colornames updated with spaces.
+   * elementary/colorselector: use layout instead of edje object for components.
+   * elm ctxpopup: fix auto_hide mode to work correctly
+   * elementary: Remove unused variable
+   * elput: Missing pointer initialization. (T3785)
+   * edje_edit: fix copy&paste type for map functions which should return int
+   * edje_edit: text style should be able to set into NULL
+   * ecore-wl2: Support wl_seat_listener version 4
+   * elementary: Remove set but unused variable
+   * edje_edit: add missed part and description initializations
+   * elementary: add implementation for elm_multibuttonentry_item_selected_get API
+   * evas: fix possible memory leaks in e3d_drawable_texture_rendered_pixels_get
+   * evas-wayland-egl: Make sure surface pointer is valid before using it
+   * eolian: fix incorrect doxygen param generation
+   * edje_cc - limit embryo_cc instances in bg to something sensible (T3874)
+   * edje_calc: fix interpolate calculation of map colors
+   * eolian: fix error cursor positioning
+   * ecore-evas-drm: Re-enable direct input callback
+   * elput: Fix issue of VT-Switching not working
+   * configure - remove gnu make hack as it seems to not be needed anymore (T3767)
+   * edje_edit: save referenced groups when image id's are changed
+   * eolian: move deferred eo file parsing to the very end
+   * eolian: enable inheritance checks and fix EFL to build with them
+   * elput: Trap for null physical seat name
+   * elementary: Fix fileselector directory monitoring events
+   * Edje, Elementary: Remove <password=off> tag when password mode is disabled
+   * eolian: implement a stringshare builtin
+   * examples: evas3d: fix out of range array
+   * elc_combobox.c: apply style to inner parts of combobox like entry and genlist
+   * elm_entry: fix duplicate text set
+   * edje_text: fix the fit calculation for different text size (T3569)
+   * evas: avoid calculation bounding for camera and light objects
+   * edje_external: fix external icon handling
+   * elm_entry: restrict focus region to inside of entry object area
+   * evas: Fix bad clipping with proxy
+   * ecore_wl2: Fix dnd breakage when focus leaves window
+   * evas: add pattern "style" when evas query fonts via fontconfig
+   * ecore-wl2: Prevent duplicated mouse up events
+   * elementary: Fix bug in wl dnd where all subsequent mimetypes would be accepted
+   * elementary: Fix over-zealous optimization attempt
+   * elementary: Fix erroneous usage of EINA_UNUSED
+   * ecore-input: Check return fo ecore_main_fd_handler_fd_get (CID1356632, CID1356624)
+   * ecore-evas: Fix error handling issues in wayland_shm engine (CID1357142, CID1357141)
+   * elput: Check return of read function call (CID1357143)
+   * evas-wayland-shm: Remove logically dead code (CID1357144)
+   * elementary: Fix explicit null dereference (CID1357147)
+   * ecore-wl2: Fix derefence after null check (CID1357148)
+   * ecore-evas-wayland: Fix issue of passing wrong values to resize (CID1357150)
+   * ecore-wl2: Check the return value of ecore_main_fd_handler_fd_get (CID1357152)
+   * ecore-wl2: Fix issue of passing negative number to close() and read() (CID1357152, CID1357153)
+   * ecore-drm2: Don't leak return from _output_name_get function (CID1357161)
+   * ecore-wl2: Fix issue where hash would not get destroyed on error (CID1357171)
+   * elc_hoversel: just little fix of expand/noitem behavior
+   * edje_pick: load just used images.
+   * theme: return enum from elm_widget_style_set instead of bool
+   * ecore-wl2: Fix uninitialized variable (CID1357214)
+   * edje signal cb - dont delete already deleted signals
+   * elm layout - add and delete signal cbs from the same consistent obj
+   * evas update buf - dont ref and unref outbug as an evas image - it's not
+   * elementary: Update connman theme for all security
+   * ecore-wl2: Fix error handling for bad fd (CID1357213)
+   * Elementary: cnp - check on NULL data in elm_drag_start
+   * evas: Fix rare issue with recursive proxy src invisible (T4006)
+   * efl - threads and signals - make efl work on "insane" os's with signals
+   * elc_combobox: fix theme and style set for combobox
+   * evas event handling - fix incorrect object reporting (T3718)
+   * efreet - fix mime file path messing with short paths like / (T4015)
+   * elc_combobox: add/remove item doesn't resize container with genlist
+   * evas event handling2 - fix incorrect object reporting (T4017)
+   * elm widget - stop segv during shutdown when objects become deleted
+   * elementary: clear callbacks before destroying object to avoid crash. (T3188)
+   * elm_entry: remove unnecessary text clearing in text_set
+   * elm_calendar: fix first week is not changed
+   * elc_popup: move the code making buttons buffer for readability
+   * evas event handling3 - fix yet more corner cases for clipped objects
+   * edje_pick: realloc bug fix
+   * edje_edit: on save_all firstly save all cached group, then all other
+   * evas event handling4- fix more corner cases where bounding is bad (T4017)
+   * elm conform - fix leak on jproperty change (CID1353606)
+   * gl generic ector leak - fix not using return value of eng_image_data_put (CID1339963)
+   * ecore-drm2: Perform input device calibration based on output name
+   * edje: fix the map state issue.
+   * evas-wayland-shm: Fix Insecure temporary file (CID1357164)
+   * elput: Fix insecure temporary file (CID1357165)
+   * edje: update a style when a style is added as class's member
+   * Edje entry: Skip codes for updating cursor when cursor position is not changed
+   * Evas textblock: Apply scale factor to <linesize>, <linegap> formats
+   * Canvas text: fix corner case in range geometry calc
+   * edje: Fix issue of null pointer dereference (CID1267490)
+   * ecore-wl2: Fix issue of misleading 'if' statement
+   * Edje calc: Fix Evas Text width calculation with ellipsis
+   * Eo add ref: Fix a bug causing leaks and wrong refcount in some cases.
+   * elementary: Clip window swallow clients
+   * elementary: Properly swallow wayland clients
+   * elm tooltips - fix positioning and more to be sane and have less bugs (T3980)
+   * elementary: Fix issue of minimum resizing in wayland
+   * evas-generic: Fix gcc warning of incorrect format
+   * evas-generic: Fix gcc wanring
+   * elput: Cleanup erroneous errors when trying to get output name
+   * evas-wayland-shm: Create buffers with ARGB by default
+   * elementary: Make wl frame borders above content
+   * eina thread create - use pthread_sigmask as this can be called from thread
+   * Evas font: fix width query for OT (T4068)
+   * elementary: Fix issue of toggling border state causing visual jumps (T4092)
+   * elocation: properly generate pkgconfig file. (T4120)
+   * ecore_con: fix lookup of libcurl on OpenBSD. (T4130)
 
 Changes since 1.16.0:
 ---------------------
