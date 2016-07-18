@@ -4187,6 +4187,8 @@ evas_object_image_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
           return o->prev->opaque; /* FIXME: Should go poke at the object */
         if (o->prev->has_alpha)
           return o->prev->opaque;
+        if (o->has_filter)
+          return o->cur->opaque;
 
         EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, o->prev, Evas_Object_Image_State, state_write)
           {
