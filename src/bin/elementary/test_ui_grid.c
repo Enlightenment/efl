@@ -72,6 +72,8 @@ weights_cb(void *data, const Eo_Event *event)
         efl_gfx_size_hint_weight_set(objects[6], 1, 1);
         break;
       case CUSTOM:
+        // See also test_ui_box.c for another solution for custom layouts
+        // using eo_override.
         efl_pack_layout_engine_set(grid, CUSTOM_ENGINE_CLASS, NULL);
         break;
      }

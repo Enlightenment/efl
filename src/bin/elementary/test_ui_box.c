@@ -147,8 +147,7 @@ left_check_cb(void *data, const Eo_Event *event)
 }
 
 static void
-_custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
-                         Efl_Pack *pack, const void *data EINA_UNUSED)
+_custom_layout_update(Eo *pack, const void *data EINA_UNUSED)
 {
    Eina_Iterator *it = efl_content_iterate(pack);
    int count = efl_content_count(pack), i = 0;
@@ -177,21 +176,25 @@ _custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
 
 /* Common Eo Class boilerplate. */
 static const Eo_Op_Description custom_engine_op_desc[] = {
-   EO_OP_CLASS_FUNC_OVERRIDE(efl_pack_layout_do, _custom_engine_layout_do),
+   EO_OP_FUNC_OVERRIDE(efl_pack_layout_update, _custom_layout_update),
 };
-
-static const Eo_Class_Description custom_engine_class_desc = {
-   EO_VERSION, "Custom Layout Engine", EO_CLASS_TYPE_INTERFACE,
-   EO_CLASS_DESCRIPTION_OPS(custom_engine_op_desc), NULL, 0, NULL, NULL
-};
-
-EO_DEFINE_CLASS(_test_ui_box_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_LAYOUT_INTERFACE, NULL)
 
 static void
 custom_check_cb(void *data, const Eo_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
-   efl_pack_layout_engine_set(data, chk ? _test_ui_box_custom_engine_class_get() : NULL, NULL);
+   Eo *obj = data;
+
+   // Overriding just the one function we need
+   eo_override(obj, chk ? EO_OVERRIDE_OPS(custom_engine_op_desc)
+                        : ((Eo_Ops) { NULL, 0 }));
+
+   // Layout request is required as the pack object doesn't know the layout
+   // function was just overridden.
+   efl_pack_layout_request(obj);
+
+   // See also test_ui_grid.c for another method for custom layouts (create
+   // a custom layout engine).
 }
 
 void
