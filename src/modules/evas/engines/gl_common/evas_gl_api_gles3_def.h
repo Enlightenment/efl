@@ -17,7 +17,7 @@ _EVASGL_FUNCTION_BEGIN_VOID( glClearBufferfi, (GLenum buffer, GLint drawBuffer, 
 _EVASGL_FUNCTION_BEGIN_VOID( glClearBufferfv, (GLenum buffer, GLint drawBuffer, const GLfloat * value), (buffer, drawBuffer, value))
 _EVASGL_FUNCTION_BEGIN_VOID( glClearBufferiv, (GLenum buffer, GLint drawBuffer, const GLint * value), (buffer, drawBuffer, value))
 _EVASGL_FUNCTION_BEGIN_VOID( glClearBufferuiv, (GLenum buffer, GLint drawBuffer, const GLuint * value), (buffer, drawBuffer, value))
-_EVASGL_FUNCTION_BEGIN(GLenum, glClientWaitSync, (GLsync sync, GLbitfield flags, EvasGLuint64 timeout), (sync, flags, timeout))
+_EVASGL_FUNCTION_BEGIN(GLenum, glClientWaitSync, (GLsync sync, GLbitfield flags, uint64_t timeout), (sync, flags, timeout))
 _EVASGL_FUNCTION_BEGIN_VOID( glCompressedTexImage3D, (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid * data), (target, level, internalformat, width, height, depth, border, imageSize, data))
 _EVASGL_FUNCTION_BEGIN_VOID( glCompressedTexSubImage3D, (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const GLvoid * data), (target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data))
 _EVASGL_FUNCTION_BEGIN_VOID( glCopyBufferSubData, (GLenum readtarget, GLenum writetarget, GLintptr readoffset, GLintptr writeoffset, GLsizeiptr size), (readtarget, writetarget, readoffset, writeoffset, size))
@@ -42,11 +42,11 @@ _EVASGL_FUNCTION_BEGIN_VOID( glGenVertexArrays, (GLsizei n, GLuint *arrays), (n,
 _EVASGL_FUNCTION_BEGIN_VOID( glGetActiveUniformBlockiv, (GLuint program, GLuint uniformBlockIndex, GLenum pname, GLint *params), (program, uniformBlockIndex, pname, params))
 _EVASGL_FUNCTION_BEGIN_VOID( glGetActiveUniformBlockName, (GLuint program, GLuint uniformBlockIndex, GLsizei bufSize, GLsizei *length, GLchar *uniformBlockName), (program, uniformBlockIndex, bufSize, length, uniformBlockName))
 _EVASGL_FUNCTION_BEGIN_VOID( glGetActiveUniformsiv, (GLuint program, GLsizei uniformCount, const GLuint *uniformIndices, GLenum pname, GLint *params), (program, uniformCount, uniformIndices, pname, params))
-_EVASGL_FUNCTION_BEGIN_VOID( glGetBufferParameteri64v, (GLenum target, GLenum value, EvasGLint64 * data), (target, value, data))
+_EVASGL_FUNCTION_BEGIN_VOID( glGetBufferParameteri64v, (GLenum target, GLenum value, int64_t * data), (target, value, data))
 _EVASGL_FUNCTION_BEGIN_VOID( glGetBufferPointerv, (GLenum target, GLenum pname, GLvoid ** params), (target, pname, params))
 _EVASGL_FUNCTION_BEGIN(GLint, glGetFragDataLocation, (GLuint program, const char * name), (program,  name))
-_EVASGL_FUNCTION_BEGIN_VOID( glGetInteger64i_v, (GLenum target, GLuint index, EvasGLint64 * data), (target, index, data))
-_EVASGL_FUNCTION_BEGIN_VOID( glGetInteger64v, (GLenum pname, EvasGLint64 * data), (pname, data))
+_EVASGL_FUNCTION_BEGIN_VOID( glGetInteger64i_v, (GLenum target, GLuint index, int64_t * data), (target, index, data))
+_EVASGL_FUNCTION_BEGIN_VOID( glGetInteger64v, (GLenum pname, int64_t * data), (pname, data))
 _EVASGL_FUNCTION_BEGIN_VOID( glGetIntegeri_v, (GLenum target, GLuint index, GLint * data), (target, index, data))
 _EVASGL_FUNCTION_BEGIN_VOID( glGetInternalformativ, (GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint *params), (target, internalformat, pname, bufSize, params))
 _EVASGL_FUNCTION_BEGIN_VOID( glGetProgramBinary, (GLuint program, GLsizei bufsize, GLsizei *length, GLenum *binaryFormat, void *binary), (program, bufsize, length, binaryFormat, binary))
@@ -105,7 +105,7 @@ _EVASGL_FUNCTION_BEGIN_VOID( glVertexAttribI4iv, (GLuint index, const GLint *v),
 _EVASGL_FUNCTION_BEGIN_VOID( glVertexAttribI4ui, (GLuint index, GLuint v0, GLuint v1, GLuint v2, GLuint v3), (index, v0, v1, v2, v3))
 _EVASGL_FUNCTION_BEGIN_VOID( glVertexAttribI4uiv, (GLuint index, const GLuint *v), (index, v))
 _EVASGL_FUNCTION_BEGIN_VOID( glVertexAttribIPointer, (GLuint index, GLint size, GLenum type, GLsizei stride, const GLvoid *pointer), (index, size, type, stride, pointer))
-_EVASGL_FUNCTION_BEGIN_VOID( glWaitSync, (GLsync sync, GLbitfield flags, EvasGLuint64 timeout), (sync, flags, timeout))
+_EVASGL_FUNCTION_BEGIN_VOID( glWaitSync, (GLsync sync, GLbitfield flags, uint64_t timeout), (sync, flags, timeout))
 
 
 //GLES 3.1

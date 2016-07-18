@@ -758,14 +758,6 @@ extern Ector_GL_API GL;
 
 #include <stddef.h>
 
-#ifndef KHRONOS_SUPPORT_INT64
-typedef unsigned long long khronos_uint64_t;
-typedef signed long long   khronos_int64_t;
-#endif
-
-typedef khronos_int64_t    EvasGLint64;
-typedef khronos_uint64_t   EvasGLuint64;
-
 typedef ptrdiff_t GLintptr;     // Changed khronos_intptr_t
 typedef ptrdiff_t GLsizeiptr;   // Changed khronos_ssize_t
 
