@@ -895,7 +895,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
                           rp->object = evas_object_image_filled_add(ed->base->evas);
 
-                          Eo* viewport = evas_object_image_filled_add(ed->base->evas);
+                          Eo* viewport = eo_add(EFL_CANVAS_SCENE3D_CLASS, ed->base->evas);
                           evas_object_image_source_set(rp->object, viewport);
                           evas_object_show(viewport);
                           evas_object_event_callback_add(rp->object, EVAS_CALLBACK_DEL, _evas_object_viewport_del, viewport);
