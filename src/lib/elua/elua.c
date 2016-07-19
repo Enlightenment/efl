@@ -499,7 +499,7 @@ _elua_module_system_init(lua_State *L)
    const char       *modpath  = es->moddir;
    const char       *appspath = es->appsdir;
    Eina_Stringshare *data     = NULL;
-   int n = 3;
+   int n = 4;
    if (!corepath || !modpath || !appspath)
      return 0;
    lua_pushvalue(L, 1);
@@ -515,6 +515,7 @@ _elua_module_system_init(lua_State *L)
      }
    lua_pushfstring(L, "%s/?.eo.lua;", modpath);
    lua_pushfstring(L, "%s/?.lua;", modpath);
+   lua_pushfstring(L, "%s/?.lua;", appspath);
    lua_pushvalue(L, 3);
    lua_concat(L, n + 1);
    lua_pushfstring(L, "%s/?.lua;", appspath);

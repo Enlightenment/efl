@@ -17,7 +17,7 @@ M.preload = preload
 
 for k, v in pairs(package.loaded) do loaded[k] = v end
 
-M.path  = "./?.lua;/?/init.lua"
+M.path  = "./?.lua;./?/init.lua"
 M.cpath = ""
 M.apath = "./?.lua"
 
