@@ -106,14 +106,18 @@ static int _compare_meshes(Evas_Canvas3D_Mesh *mesh1, Evas_Canvas3D_Mesh *mesh2)
    if ((pd1->vertex_count) != (pd2->vertex_count))
       return 1;
 
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wtautological-compare"
+#endif
 
    COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION)
    COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL)
    COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD)
 
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif
 
    return 0;
 }
