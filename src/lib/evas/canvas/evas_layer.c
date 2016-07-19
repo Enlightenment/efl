@@ -33,19 +33,25 @@ void
 evas_object_release(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, int clean_layer)
 {
    if (!obj->in_layer) return;
-   obj->layer->objects = (Evas_Object_Protected_Data *)eina_inlist_remove(EINA_INLIST_GET(obj->layer->objects), EINA_INLIST_GET(obj));
+   if (!obj->layer->walking_objects)
+     obj->layer->objects = (Evas_Object_Protected_Data *)eina_inlist_remove(EINA_INLIST_GET(obj->layer->objects), EINA_INLIST_GET(obj));
    eo_data_unref(eo_obj, obj);
-   obj->layer->usage--;
-   if (clean_layer)
+   if (!obj->layer->walking_objects)
      {
-        if (obj->layer->usage <= 0)
+        obj->layer->usage--;
+        if (clean_layer)
           {
-             evas_layer_del(obj->layer);
-             _evas_layer_free(obj->layer);
+             if (obj->layer->usage <= 0)
+               {
+                  evas_layer_del(obj->layer);
+                  _evas_layer_free(obj->layer);
+               }
           }
+        obj->layer = NULL;
+        obj->in_layer = 0;
      }
-   obj->layer = NULL;
-   obj->in_layer = 0;
+   else
+     obj->layer->removes = eina_list_append(obj->layer->removes, obj);
 }
 
 Evas_Layer *
@@ -67,15 +73,41 @@ _evas_layer_free(Evas_Layer *lay)
 }
 
 void
+_evas_layer_flush_removes(Evas_Layer *lay)
+{
+   if (lay->walking_objects) return;
+   while (lay->removes)
+     {
+        Evas_Object_Protected_Data *obj = lay->removes->data;
+
+        lay->objects = (Evas_Object_Protected_Data *)
+          eina_inlist_remove(EINA_INLIST_GET(lay->objects),
+                             EINA_INLIST_GET(obj));
+        lay->removes = eina_list_remove_list(lay->removes, lay->removes);
+        obj->layer = NULL;
+        obj->in_layer = 0;
+        lay->usage--;
+     }
+   if (lay->usage <= 0)
+     {
+        evas_layer_del(lay);
+        _evas_layer_free(lay);
+     }
+}
+
+void
 evas_layer_pre_free(Evas_Layer *lay)
 {
    Evas_Object_Protected_Data *obj;
 
+   lay->walking_objects++;
    EINA_INLIST_FOREACH(lay->objects, obj)
      {
         if ((!obj->smart.parent) && (!obj->delete_me))
           evas_object_del(obj->object);
      }
+   lay->walking_objects--;
+   _evas_layer_flush_removes(lay);
 }
 
 void

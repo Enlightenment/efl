@@ -924,7 +924,9 @@ struct _Evas_Layer
    Evas_Public_Data *evas;
 
    void             *engine_data;
+   Eina_List        *removes;
    int               usage;
+   int               walking_objects;
    unsigned char     delete_me : 1;
 };
 
@@ -1532,6 +1534,7 @@ void evas_rects_return_difference_rects(Eina_Array *rects, int x, int y, int w, 
 void evas_object_clip_dirty(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_recalc_clippees(Evas_Object_Protected_Data *pd);
 Evas_Layer *evas_layer_new(Evas *e);
+void _evas_layer_flush_removes(Evas_Layer *lay);
 void evas_layer_pre_free(Evas_Layer *lay);
 void evas_layer_free_objects(Evas_Layer *lay);
 void evas_layer_clean(Evas *e);

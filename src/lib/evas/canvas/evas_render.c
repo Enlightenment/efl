@@ -3300,6 +3300,7 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
           {
              Evas_Object_Protected_Data *obj;
 
+             lay->walking_objects++;
              EINA_INLIST_FOREACH(lay->objects, obj)
                {
                   if (obj->proxy->surface)
@@ -3324,6 +3325,8 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
                     evas_object_inform_call_image_unloaded(obj->object);
                   _evas_render_dump_map_surfaces(obj->object);
                }
+             lay->walking_objects--;
+             _evas_layer_flush_removes(lay);
           }
         if ((e->engine.func) && (e->engine.func->output_dump) &&
             (e->engine.data.output))
