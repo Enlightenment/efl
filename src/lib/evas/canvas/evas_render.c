@@ -1848,7 +1848,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
    w = source->cur->geometry.w;
    h = source->cur->geometry.h;
 
-   RD(level, "  proxy_subrender(source: %p, proxy: %p)\n", source, proxy_obj);
+   RD(level, "  proxy_subrender(source: %p, proxy: %p, %dx%d)\n", source, proxy_obj, w, h);
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy,
                         Evas_Object_Proxy_Data, proxy_write)
@@ -1868,6 +1868,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         /* FIXME (cont): Should see if the object has alpha */
         if (!proxy_write->surface)
           {
+             if ((w < 1) || (h < 1)) goto end;
              proxy_write->surface = ENFN->image_map_surface_new(ENDT, w, h, 1);
              RD(level, "  created surface: %p %dx%d\n", proxy_write->surface, w, h);
              if (!proxy_write->surface) goto end;
