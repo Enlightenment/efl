@@ -131,12 +131,8 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
 
    if (!_fb2_create(fb))
      {
-        int ret;
-
-        ret =
-          drmModeAddFB(fd, width, height, depth, bpp,
-                       fb->stride, fb->hdl, &fb->id);
-        if (ret)
+        if (drmModeAddFB(fd, width, height, depth, bpp,
+                         fb->stride, fb->hdl, &fb->id))
           {
              ERR("Could not add framebuffer: %m");
              goto err;
