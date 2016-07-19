@@ -285,6 +285,7 @@ _selection_data_read(void *data, Ecore_Fd_Handler *fdh)
             }
 
         memcpy(((char*)source->read_data) + old_len, buffer, len);
+        free(event);
         return ECORE_CALLBACK_RENEW;
      }
 }
