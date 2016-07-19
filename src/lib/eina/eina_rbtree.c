@@ -119,7 +119,16 @@ _eina_rbtree_iterator_free(Eina_Iterator_Rbtree *it)
    if (eina_array_count(&iterator_trash) >= 7)
      {
         _eina_rbtree_iterator_forced_free(it);
-	return ;
+        return;
+     }
+   if (eina_array_count(it->stack) > 0)
+     {
+        unsigned int i;
+        Eina_Array_Iterator et;
+        Eina_Iterator_Rbtree_List *item;
+
+        EINA_ARRAY_ITER_NEXT(it->stack, i, item, et)
+          free(item);
      }
 
    eina_array_flush(it->stack);
