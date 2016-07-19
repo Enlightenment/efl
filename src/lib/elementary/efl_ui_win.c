@@ -1480,10 +1480,7 @@ _elm_win_state_change(Ecore_Evas *ee)
           {
 #ifdef HAVE_ELEMENTARY_WL2
              if (need_frame)
-               {
-                  _elm_win_opaque_update(sd);
-                  sd->wl.opaque_dirty = 1;
-               }
+               sd->wl.opaque_dirty = 1;
 #endif
              eo_event_callback_call
                (obj, EFL_UI_WIN_EVENT_FULLSCREEN, NULL);
