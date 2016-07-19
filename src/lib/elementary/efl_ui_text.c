@@ -548,7 +548,6 @@ _update_selection_handler(Eo *obj)
    Evas_Coord sx, sy, sh;
    Evas_Coord ex, ey, eh;
    Evas_Coord ent_x, ent_y;
-   int start_pos, end_pos;
 
    if (!sd->sel_handler_disabled)
      {
@@ -567,8 +566,6 @@ _update_selection_handler(Eo *obj)
           }
 
         rect = _viewport_region_get(obj);
-        start_pos = efl_canvas_text_cursor_position_get(sel_start);
-        end_pos = efl_canvas_text_cursor_position_get(sel_end);
 
         evas_object_geometry_get(sd->entry_edje, &ent_x, &ent_y, NULL, NULL);
 
