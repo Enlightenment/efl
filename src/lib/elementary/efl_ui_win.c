@@ -3531,6 +3531,28 @@ _elm_win_frame_cb_maximize(void *data,
 }
 
 static void
+_elm_win_frame_cb_menu(void *data,
+                        Evas_Object *obj EINA_UNUSED,
+                        const char *sig EINA_UNUSED,
+                        const char *source EINA_UNUSED)
+{
+   ELM_WIN_DATA_GET(data, sd);
+#ifdef HAVE_ELEMENTARY_WL2
+   int x, y, wx, wy;
+
+   if ((!sd->wl.win) || (!sd->wl.win->xdg_surface)) return;
+   evas_canvas_pointer_canvas_xy_get(sd->evas, &x, &y);
+   ecore_wl2_window_geometry_get(sd->wl.win, &wx, &wy, NULL, NULL);
+   if (x < 0) x += wx;
+   if (y < 0) y += wy;
+   xdg_surface_show_window_menu(sd->wl.win->xdg_surface,
+     ecore_wl2_input_seat_get(ecore_wl2_window_input_get(sd->wl.win)), 0,
+     x, y);
+#else
+   (void)sd;
+#endif
+}
+static void
 _elm_win_frame_cb_close(void *data,
                         Evas_Object *obj EINA_UNUSED,
                         const char *sig EINA_UNUSED,
@@ -3675,6 +3697,8 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
      _elm_win_frame_cb_maximize, obj);
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,close", "elm", _elm_win_frame_cb_close, obj);
+   edje_object_signal_callback_add
+     (sd->frame_obj, "elm,action,menu", "elm", _elm_win_frame_cb_menu, obj);
 
    if (sd->title)
      {
