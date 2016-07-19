@@ -3737,6 +3737,9 @@ _elm_win_frame_del(Efl_Ui_Win_Data *sd)
    evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
    ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
    ecore_evas_resize(sd->ee, w, h);
+#ifdef HAVE_ELEMENTARY_WL2
+   _elm_win_opaque_update(sd);
+#endif
 }
 
 #ifdef ELM_DEBUG
