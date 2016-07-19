@@ -449,10 +449,29 @@ EAPI const Eo_Class *eo_class_new(const Eo_Class_Description *desc, const Eo_Cla
  *
  * You are only allowed to override functions that are defined in the
  * class or any of its interfaces (that is, eo_isa returning true).
+ *
+ * If @p ops is #NULL, this will revert the @p obj to its original class
+ * without any function overrides.
  */
-EAPI Eina_Bool eo_override(Eo *obj, Eo_Ops ops);
+EAPI Eina_Bool eo_override(Eo *obj, const Eo_Ops *ops);
 
-#define EO_OVERRIDE_OPS(op_descs) ((Eo_Ops) { op_descs, EINA_C_ARRAY_LENGTH(op_descs) })
+/**
+ * @brief Define an array of override functions for @ref eo_override
+ * @param ops A name for the Eo_Ops local variable to define
+ * @param ... A comma separated list of Eo_Op overrides, using
+ *            #EO_OP_FUNC_OVERRIDE or #EO_OP_CLASS_FUNC_OVERRIDE
+ *
+ * This can be used as follows:
+ * @code
+ * EO_OVERRIDE_OPS_DEFINE(ops, EO_OP_FUNC_OVERRIDE(public_func, _my_func));
+ * eo_override(obj, &ops);
+ * @endcode
+ *
+ * @see eo_override
+ */
+#define EO_OVERRIDE_OPS_DEFINE(ops, ...) \
+   const Eo_Op_Description _##ops##_descs[] = { __VA_ARGS__ }; \
+   const Eo_Ops ops = { _##ops##_descs, EINA_C_ARRAY_LENGTH(_##ops##_descs) }
 
 /**
  * @brief Check if an object "is a" klass.

@@ -66,10 +66,6 @@ START_TEST(eo_override_tests)
 {
    eo_init();
 
-   Eo_Op_Description override_descs[] = {
-        EO_OP_FUNC_OVERRIDE(simple_a_get, _simple_obj_override_a_get),
-   };
-
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj);
 
@@ -77,7 +73,10 @@ START_TEST(eo_override_tests)
     * make sure we don't cache. */
    ck_assert_int_eq(simple_a_get(obj), 0);
 
-   fail_if(!eo_override(obj, EO_OVERRIDE_OPS(override_descs)));
+   EO_OVERRIDE_OPS_DEFINE(
+            overrides,
+            EO_OP_FUNC_OVERRIDE(simple_a_get, _simple_obj_override_a_get));
+   fail_if(!eo_override(obj, &overrides));
 
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A);
 
@@ -85,24 +84,20 @@ START_TEST(eo_override_tests)
    simple_a_set(obj, OVERRIDE_A_SIMPLE);
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A + OVERRIDE_A_SIMPLE);
 
-
    /* Override again. */
-   Eo_Op_Description override_descs2[] = {
-        EO_OP_FUNC_OVERRIDE(simple_a_set, _simple_obj_override_a_double_set),
-   };
-
-   fail_if(!eo_override(obj, EO_OVERRIDE_OPS(override_descs2)));
+   EO_OVERRIDE_OPS_DEFINE(
+            overrides2,
+            EO_OP_FUNC_OVERRIDE(simple_a_set, _simple_obj_override_a_double_set));
+   fail_if(!eo_override(obj, &overrides2));
 
    simple_a_set(obj, OVERRIDE_A_SIMPLE);
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A + (OVERRIDE_A_SIMPLE * 2));
 
-
    /* Try introducing a new function */
-   Eo_Op_Description override_descs3[] = {
-        EO_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set),
-   };
-
-   fail_if(eo_override(obj, EO_OVERRIDE_OPS(override_descs3)));
+   EO_OVERRIDE_OPS_DEFINE(
+            overrides3,
+            EO_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set));
+   fail_if(eo_override(obj, &overrides3));
 
    eo_unref(obj);
 

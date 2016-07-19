@@ -174,20 +174,17 @@ _custom_layout_update(Eo *pack, const void *data EINA_UNUSED)
    eina_iterator_free(it);
 }
 
-/* Common Eo Class boilerplate. */
-static const Eo_Op_Description custom_engine_op_desc[] = {
-   EO_OP_FUNC_OVERRIDE(efl_pack_layout_update, _custom_layout_update),
-};
-
 static void
 custom_check_cb(void *data, const Eo_Event *event)
 {
+   EO_OVERRIDE_OPS_DEFINE(custom_layout_ops,
+                          EO_OP_FUNC_OVERRIDE(efl_pack_layout_update, _custom_layout_update));
+
    Eina_Bool chk = elm_check_selected_get(event->object);
    Eo *obj = data;
 
    // Overriding just the one function we need
-   eo_override(obj, chk ? EO_OVERRIDE_OPS(custom_engine_op_desc)
-                        : ((Eo_Ops) { NULL, 0 }));
+   eo_override(obj, chk ? &custom_layout_ops : NULL);
 
    // Layout request is required as the pack object doesn't know the layout
    // function was just overridden.

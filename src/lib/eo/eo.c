@@ -1338,13 +1338,13 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 }
 
 EAPI Eina_Bool
-eo_override(Eo *eo_id, Eo_Ops ops)
+eo_override(Eo *eo_id, const Eo_Ops *ops)
 {
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
    EO_CLASS_POINTER_RETURN_VAL(EO_OVERRIDE_CLASS, klass, EINA_FALSE);
    Eo_Vtable *previous = obj->vtable;
 
-   if (!ops.descs)
+   if (!ops)
      {
         if (obj->vtable != &obj->klass->vtable)
           {
@@ -1361,7 +1361,7 @@ eo_override(Eo *eo_id, Eo_Ops ops)
         _vtable_copy_all(obj->vtable, previous);
      }
 
-   if (!_eo_class_funcs_set(obj->vtable, &ops, obj->klass, klass, EINA_TRUE))
+   if (!_eo_class_funcs_set(obj->vtable, ops, obj->klass, klass, EINA_TRUE))
      {
         ERR("Failed to override functions for %p", eo_id);
         return EINA_FALSE;
