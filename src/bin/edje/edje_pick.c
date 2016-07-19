@@ -562,6 +562,64 @@ _edje_pick_output_prepare(Edje_File *o, Edje_File *edf, char *name)
    return o;
 }
 
+static Eina_List *
+_edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Edje_Part_Collection_Directory_Entry *ce, int *current_id)
+{
+   char buf[1024];
+   Edje_Part_Collection *edc;
+   Edje_Part *part;
+   Edje_Part_Collection_Directory_Entry *ce_cor, *ce_out;
+   unsigned int i, j;
+   Edje_Pack_Element *item;
+   Eina_List *dep_list = NULL;
+
+   edje_cache_emp_alloc(ce);
+
+   snprintf(buf, sizeof(buf), "edje/collections/%i", ce->id);
+   EINA_LOG_INFO("Trying to read group <%s>\n", buf);
+   edc = eet_data_read(edf->ef, _edje_edd_edje_part_collection, buf);
+   if (!edc)
+     {
+        EINA_LOG_ERR("Failed to read group <%s> id <%d>\n", ce->entry, ce->id);
+        return dep_list;
+     }
+#define GROUP_CHECK_AND_ADD(NAME) \
+   if (NAME) \
+     { \
+        ce_cor = eina_hash_find(edf->collection, NAME); \
+        if ((ce_cor) && (!eina_hash_find(out_file->collection, NAME))) \
+          { \
+             ce_out = malloc(sizeof(*ce_out)); \
+             memcpy(ce_out, ce_cor, sizeof(*ce_out)); \
+             ce_out->id = *current_id; \
+             EINA_LOG_INFO("Changing ID of group <%d> to <%d>\n", ce->id, ce_out->id); \
+             eina_hash_direct_add(out_file->collection, ce_out->entry, ce_out); \
+             (*current_id)++; \
+             dep_list = eina_list_append(dep_list, eina_stringshare_add(ce_out->entry)); \
+          } \
+     }
+
+   for (i = 0; i < edc->parts_count; i++)
+     {
+        part = edc->parts[i];
+        GROUP_CHECK_AND_ADD(part->source);
+        GROUP_CHECK_AND_ADD(part->source2);
+        GROUP_CHECK_AND_ADD(part->source3);
+        GROUP_CHECK_AND_ADD(part->source4);
+        GROUP_CHECK_AND_ADD(part->source5);
+        GROUP_CHECK_AND_ADD(part->source6);
+        for (j = 0; j < part->items_count; j++)
+          {
+             item = part->items[j];
+             GROUP_CHECK_AND_ADD(item->source);
+          }
+     }
+
+   edje_cache_emp_free(ce);
+   return dep_list;
+#undef GROUP_CHECK_AND_ADD
+}
+
 static int
 _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
 {
@@ -570,6 +628,7 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
    Eina_Bool status = EDJE_PICK_NO_ERROR;
    Eina_List *l, *alist = NULL;
    char *name1 = NULL;
+   Eina_List *deps = NULL, *dep_list = NULL;
 
    /* Build file header */
    if (context.current_file->append)
@@ -653,8 +712,13 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
 
                   eina_hash_direct_add(out_file->collection,ce_out->entry,
                         ce_out);
+                  dep_list = _edje_pick_header_dependencies_check(out_file, edf, ce, &current_group_id);
+                  if (!deps) deps = dep_list;
+                  else deps = eina_list_merge(deps, dep_list);
                }
           }
+        EINA_LIST_FREE(deps, name1)
+           context.current_file->groups = eina_list_append(context.current_file->groups, name1);
      }
 
    return status;
