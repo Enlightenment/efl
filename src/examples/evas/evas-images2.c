@@ -42,7 +42,7 @@ struct test_data
 {
    Ecore_Evas  *ee;
    Evas        *evas;
-   Evas_Object *logo, *noise_img, *proxy_img, *bg;
+   Evas_Object *logo, *noise_img, *proxy_img, *text_obj, *bg;
 };
 
 static struct test_data d = {0};
@@ -182,6 +182,7 @@ _on_keydown(void        *data EINA_UNUSED,
         Evas_Object *source = evas_object_image_source_get(d.proxy_img);
 
         if (source == d.logo) source = d.noise_img;
+        else if (source == d.noise_img) source = d.text_obj;
         else source = d.logo;
 
         evas_object_image_source_set(d.proxy_img, source);
@@ -224,6 +225,7 @@ main(void)
 {
    unsigned int i;
    unsigned int pixels[(WIDTH / 4) * (HEIGHT / 4)];
+   Evas_Textblock_Style *st;
 
    srand(time(NULL));
 
@@ -281,15 +283,24 @@ main(void)
    evas_object_image_size_set(d.noise_img, WIDTH / 4, HEIGHT / 4);
    evas_object_image_data_set(d.noise_img, pixels);
    evas_object_image_filled_set(d.noise_img, EINA_TRUE);
-   evas_object_move(d.noise_img, (WIDTH * 3) / 4, 0);
+   evas_object_move(d.noise_img, (WIDTH * 5) / 8, HEIGHT / 8);
    evas_object_resize(d.noise_img, WIDTH / 4, HEIGHT / 4);
    evas_object_show(d.noise_img);
    fprintf(stdout, "Creating noise image with size %d, %d\n",
            WIDTH / 4, HEIGHT / 4);
 
+   d.text_obj = evas_object_textblock_add(d.evas);
+   evas_object_textblock_text_markup_set(d.text_obj, "Hello world! :)");
+   st = evas_textblock_style_new();
+   evas_textblock_style_set(st, "DEFAULT='font=Sans font_size=16 color=#114 wrap=word'");
+   evas_object_textblock_style_set(d.text_obj, st);
+   evas_object_move(d.text_obj, WIDTH / 16, HEIGHT * 9 / 16);
+   evas_object_resize(d.text_obj, WIDTH / 4, 0);
+   evas_object_show(d.text_obj);
+
    d.proxy_img = evas_object_image_filled_add(d.evas);
    evas_object_image_source_set(d.proxy_img, d.logo);
-   evas_object_move(d.proxy_img, WIDTH / 4, HEIGHT / 2);
+   evas_object_move(d.proxy_img, WIDTH / 2, HEIGHT / 2);
    evas_object_resize(d.proxy_img, WIDTH / 2, HEIGHT / 2);
    evas_object_show(d.proxy_img);
 
