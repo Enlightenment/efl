@@ -8,13 +8,6 @@ class Efl.Event.Hold (Eo.Base, Efl.Event.Input)
             val: bool;
          }
       }
-      @property device {
-         [[Input device that is now on hold or resumed.]]
-         values {
-            dev: Efl.Input.Device;
-         }
-      }
-      /* FIXME: does not expose event_flags - is it necessary? */
    }
    implements {
       Eo.Base.constructor;
@@ -23,5 +16,10 @@ class Efl.Event.Hold (Eo.Base, Efl.Event.Input)
       Efl.Event.dup;
       Efl.Event.timestamp.get;
       Efl.Event.timestamp.set;
+      //Efl.Event.Input.fake.get;
+      Efl.Event.Input.event_flags.set;
+      Efl.Event.Input.event_flags.get;
+      Efl.Event.Input.device.set;
+      Efl.Event.Input.device.get;
    }
 }

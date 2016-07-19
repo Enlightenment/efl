@@ -24,13 +24,13 @@ _efl_event_hold_hold_get(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd)
 }
 
 EOLIAN static void
-_efl_event_hold_device_set(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd, Efl_Input_Device *dev)
+_efl_event_hold_efl_event_input_device_set(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd, Efl_Input_Device *dev)
 {
    pd->device = dev;
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_event_hold_device_get(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd)
+_efl_event_hold_efl_event_input_device_get(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd)
 {
    return pd->device;
 }
@@ -45,6 +45,19 @@ EOLIAN static void
 _efl_event_hold_efl_event_timestamp_set(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd, double ms)
 {
    pd->timestamp = ms;
+}
+
+EOLIAN static void
+_efl_event_hold_efl_event_input_event_flags_set(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd EINA_UNUSED, Efl_Event_Flags flags EINA_UNUSED)
+{
+   // ignore
+}
+
+EOLIAN static Efl_Event_Flags
+_efl_event_hold_efl_event_input_event_flags_get(Eo *obj EINA_UNUSED, Efl_Event_Hold_Data *pd EINA_UNUSED)
+{
+   // ignore
+   return 0;
 }
 
 EOLIAN static Eo *

@@ -1,16 +1,17 @@
 import efl_event_types;
 
-interface Efl.Event.Input (Efl.Event)
+mixin Efl.Event.Input (Efl.Event)
 {
    eo_prefix: efl_event;
+   data: null;
    methods {
-      @property device {
+      @property device @virtual_pure {
          [[Input device that originated this event.]]
          values {
             dev: Efl.Input.Device;
          }
       }
-      @property event_flags {
+      @property event_flags @virtual_pure {
          [[Extra flags for this event, may be changed by the user.]]
          values {
             flags: Efl.Event.Flags;

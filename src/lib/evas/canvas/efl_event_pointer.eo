@@ -137,10 +137,6 @@ class Efl.Event.Pointer (Eo.Base, Efl.Event, Efl.Input.State, Efl.Event.Input)
       Efl.Event.Input.fake.get;
       Efl.Event.Input.event_flags.set;
       Efl.Event.Input.event_flags.get;
-      Efl.Event.Input.processed.set;
-      Efl.Event.Input.processed.get;
-      Efl.Event.Input.scrolling.set;
-      Efl.Event.Input.scrolling.get;
       Efl.Event.Input.device.set;
       Efl.Event.Input.device.get;
       Efl.Input.State.modifier_enabled.get;

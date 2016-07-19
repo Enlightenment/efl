@@ -208,36 +208,6 @@ _efl_event_key_efl_event_input_event_flags_get(Eo *obj EINA_UNUSED, Efl_Event_Ke
 }
 
 EOLIAN static void
-_efl_event_key_efl_event_input_processed_set(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd, Eina_Bool val)
-{
-   if (val)
-     pd->event_flags |= EFL_EVENT_FLAGS_PROCESSED;
-   else
-     pd->event_flags &= ~EFL_EVENT_FLAGS_PROCESSED;
-}
-
-EOLIAN static Eina_Bool
-_efl_event_key_efl_event_input_processed_get(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd)
-{
-   return !!(pd->event_flags & EFL_EVENT_FLAGS_PROCESSED);
-}
-
-EOLIAN static void
-_efl_event_key_efl_event_input_scrolling_set(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd, Eina_Bool val)
-{
-   if (val)
-     pd->event_flags |= EFL_EVENT_FLAGS_SCROLLING;
-   else
-     pd->event_flags &= ~EFL_EVENT_FLAGS_SCROLLING;
-}
-
-EOLIAN static Eina_Bool
-_efl_event_key_efl_event_input_scrolling_get(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd)
-{
-   return !!(pd->event_flags & EFL_EVENT_FLAGS_SCROLLING);
-}
-
-EOLIAN static void
 _efl_event_key_efl_event_input_device_set(Eo *obj EINA_UNUSED, Efl_Event_Key_Data *pd, Efl_Input_Device *dev)
 {
    pd->device = dev;
