@@ -8094,6 +8094,7 @@ _efl_canvas_text_cursor_text_object_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Cur
 EAPI Efl_Canvas_Text_Cursor *
 evas_object_textblock_cursor_new(const Eo *eo_obj)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, NULL);
    // XXX; Discarding const here
    return eo_add(EFL_CANVAS_TEXT_CURSOR_CLASS, (Eo *) eo_obj,
          efl_canvas_text_cursor_text_object_set(eo_self, eo_obj));
