@@ -4349,7 +4349,7 @@ eng_ector_end(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *
      }
    else
      {
-        ector_renderer_surface_set(ector, NULL);
+        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE, 0, 0, 0, 0);
         evas_common_cpu_end_opt();
      }
 }
