@@ -400,10 +400,7 @@ edje_language_set(const char *locale)
    eina_stringshare_replace(&_edje_language, loc);
 
    signal = alloca(length + 15);
-   if (loc)
-     snprintf(signal, length + 15, "edje,language,%s", loc);
-   else
-     snprintf(signal, length + 15, "edje,language,%s", "none");
+   snprintf(signal, length + 15, "edje,language,%s", loc);
 
    EINA_LIST_FOREACH(_edje_edjes, l, obj)
      {
