@@ -18,6 +18,9 @@ class Efl.Event.Hold (Eo.Base, Efl.Event.Input)
    }
    implements {
       Eo.Base.constructor;
+      Efl.Event.instance_get;
+      Efl.Event.reset;
+      Efl.Event.dup;
       Efl.Event.timestamp.get;
       Efl.Event.timestamp.set;
    }

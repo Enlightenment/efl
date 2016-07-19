@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#define EFL_EVENT_PROTECTED
+
 #include <Evas.h>
 
 #define EFL_INTERNAL_UNSTABLE
@@ -51,6 +53,37 @@ _efl_event_hold_eo_base_constructor(Eo *obj, Efl_Event_Hold_Data *pd)
    obj = eo_constructor(eo_super(obj, MY_CLASS));
    pd->eo = obj;
    return obj;
+}
+
+EOLIAN static Efl_Event *
+_efl_event_hold_efl_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_UNUSED,
+                                       Eo_Base *owner, void **priv)
+{
+   // TODO: Implement a cache. Depends only on how many hold events we trigger.
+   Efl_Event *evt = eo_add(MY_CLASS, owner);
+   if (priv) *priv = eo_data_scope_get(evt, MY_CLASS);
+   return evt;
+}
+
+EOLIAN static void
+_efl_event_hold_efl_event_reset(Eo *obj, Efl_Event_Hold_Data *pd)
+{
+   memset(pd, 0, sizeof(*pd));
+   pd->eo = obj;
+}
+
+EOLIAN static Efl_Event *
+_efl_event_hold_efl_event_dup(Eo *obj, Efl_Event_Hold_Data *pd)
+{
+   Efl_Event_Hold_Data *ev;
+   Efl_Event *evt = eo_add(EFL_EVENT_HOLD_CLASS, eo_parent_get(obj));
+   ev = eo_data_scope_get(evt, MY_CLASS);
+   if (ev)
+     {
+        memcpy(ev, pd, sizeof(*ev));
+        ev->eo = evt;
+     }
+   return evt;
 }
 
 #include "efl_event_hold.eo.c"
