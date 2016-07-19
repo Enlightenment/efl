@@ -39,7 +39,7 @@ _efl_ui_image_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Image_Fa
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    Efl_Canvas *ui_view = eo_add(EFL_UI_IMAGE_CLASS, parent);
    efl_ui_view_model_set(ui_view, model);
-   efl_ui_model_connect(ui_view, NULL, pd->property);
+   efl_ui_model_connect(ui_view, "filename", pd->property);
 
    return ui_view;
 }

@@ -80,6 +80,7 @@ struct _Efl_Ui_Image_Data
 
    Efl_Model            *model;
    Eina_Stringshare     *prop_con;
+   Eina_Promise         *ppromise;
 
    struct {
       int       requested_size;
@@ -100,6 +101,7 @@ struct _Efl_Ui_Image_Data
    Eina_Bool             async_failed : 1;
    Eina_Bool             scale_up : 1;
    Eina_Bool             scale_down : 1;
+   Eina_Bool             con_icon : 1;
 };
 
 /**

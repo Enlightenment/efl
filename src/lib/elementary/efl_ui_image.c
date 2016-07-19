@@ -637,6 +637,12 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
         sd->async.th = NULL;
      }
 
+   if (sd->ppromise)
+     {
+        eina_promise_cancel(sd->ppromise);
+        sd->ppromise = NULL;
+     }
+
    if (sd->model)
      {
          eo_event_callback_del(sd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
@@ -1698,9 +1704,11 @@ _efl_ui_image_icon_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 }
 
 static void
-_prop_promise_error_cb(void* data EINA_UNUSED, Eina_Error err EINA_UNUSED)
+_prop_promise_error_cb(void* data, Eina_Error err EINA_UNUSED)
 {
-
+   Eo *obj = data;
+   EFL_UI_IMAGE_DATA_GET(obj, pd);
+   pd->ppromise = NULL;
 }
 
 static void
@@ -1709,18 +1717,22 @@ _prop_promise_then_cb(void* data, void* v)
    Eo *obj = data;
    Eina_Value *value = v;
    char *text;
+   EFL_UI_IMAGE_DATA_GET(obj, pd);
+   pd->ppromise = NULL;
 
    const Eina_Value_Type *vtype = eina_value_type_get(value);
 
    if (vtype == EINA_VALUE_TYPE_STRING || vtype == EINA_VALUE_TYPE_STRINGSHARE)
      {
          eina_value_get(value, &text);
-         elm_image_file_set(obj, text, NULL);
+         if (pd->con_icon) efl_ui_image_icon_set(obj, text);
+         else elm_image_file_set(obj, text, NULL);
      }
    else
      {
          text = eina_value_to_string(value);
-         elm_image_file_set(obj, text, NULL);
+         if (pd->con_icon) efl_ui_image_icon_set(obj, text);
+         else elm_image_file_set(obj, text, NULL);
          free(text);
      }
 }
@@ -1736,7 +1748,6 @@ _efl_ui_image_model_properties_changed_cb(void *data, const Eo_Event *event)
 
    if (pd->model && pd->prop_con)
      {
-         Eina_Promise *promise;
          Eina_Array_Iterator it;
          const char *prop;
          unsigned int i;
@@ -1745,8 +1756,10 @@ _efl_ui_image_model_properties_changed_cb(void *data, const Eo_Event *event)
            {
                if (!strcmp(pd->prop_con, prop))
                  {
-                     promise = efl_model_property_get(pd->model, pd->prop_con);
-                     eina_promise_then(promise, &_prop_promise_then_cb, &_prop_promise_error_cb, data);
+                     if (pd->ppromise) eina_promise_cancel(pd->ppromise);
+
+                     pd->ppromise = efl_model_property_get(pd->model, pd->prop_con);
+                     eina_promise_then(pd->ppromise, &_prop_promise_then_cb, &_prop_promise_error_cb, data);
                      return;
                  }
            }
@@ -1774,9 +1787,11 @@ _efl_ui_image_efl_ui_view_model_set(Eo *obj, Efl_Ui_Image_Data *pd, Efl_Model *m
 
    if (pd->prop_con && pd->model)
      {
-         Eina_Promise *promise = efl_model_property_get(pd->model, pd->prop_con);
-         eina_promise_then(promise, &_prop_promise_then_cb,
-                           &_prop_promise_error_cb, obj);
+         if (pd->ppromise) eina_promise_cancel(pd->ppromise);
+
+         pd->ppromise = efl_model_property_get(pd->model, pd->prop_con);
+         eina_promise_then(pd->ppromise, &_prop_promise_then_cb,
+                         &_prop_promise_error_cb, obj);
      }
 }
 
@@ -1787,14 +1802,24 @@ _efl_ui_image_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_image_efl_ui_model_connect_connect(Eo *obj, Efl_Ui_Image_Data *pd, const char *name EINA_UNUSED, const char *property)
+_efl_ui_image_efl_ui_model_connect_connect(Eo *obj, Efl_Ui_Image_Data *pd, const char *name, const char *property)
 {
+   pd->con_icon = EINA_FALSE;
+   if (strcmp(name, "filename") != 0)
+     {
+        if (strcmp(name, "icon") != 0) return;
+
+        pd->con_icon = EINA_TRUE;
+     }
+
    eina_stringshare_replace(&pd->prop_con, property);
 
    if (pd->model && pd->prop_con)
      {
-         Eina_Promise *promise = efl_model_property_get(pd->model, pd->prop_con);
-         eina_promise_then(promise, &_prop_promise_then_cb,
+         if (pd->ppromise) eina_promise_cancel(pd->ppromise);
+
+         pd->ppromise = efl_model_property_get(pd->model, pd->prop_con);
+         eina_promise_then(pd->ppromise, &_prop_promise_then_cb,
                            &_prop_promise_error_cb, obj);
      }
 }
