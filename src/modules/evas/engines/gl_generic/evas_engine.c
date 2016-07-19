@@ -59,6 +59,8 @@ static Eina_Bool eng_gl_surface_read_pixels(void *data, void *surface, int x, in
 
 Eina_Bool _need_context_restore = EINA_FALSE;
 
+static Evas_Func func, pfunc;
+
 void
 _context_restore(void)
 {
@@ -1648,17 +1650,17 @@ eng_gl_proc_address_get(void *data, const char *name)
 {
    Render_Engine_GL_Generic *re = data;
    EVGLINIT(re, NULL);
-   void *func = NULL;
+   void *fun = NULL;
 
-   if (!evgl_safe_extension_get(name, &func))
+   if (!evgl_safe_extension_get(name, &fun))
      {
         DBG("The extension '%s' is not safe to use with Evas GL or is not "
             "supported on this platform.", name);
         return NULL;
      }
 
-   if (func)
-     return func;
+   if (fun)
+     return fun;
 
    if (re->evgl_funcs && re->evgl_funcs->proc_address_get)
      return re->evgl_funcs->proc_address_get(name);
@@ -2792,7 +2794,112 @@ eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
      }
 }
 
-static Evas_Func func, pfunc;
+static void *
+eng_image_data_map(void *engdata EINA_UNUSED, void **image,
+                   int *length, int *stride,
+                   int x, int y, int w, int h,
+                   Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode)
+{
+   Eina_Bool cow = EINA_FALSE, to_write = EINA_FALSE;
+   Evas_GL_Image_Data_Map *map = NULL;
+   Evas_GL_Image *im;
+   void *ret;
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(image && *image, NULL);
+   im = *image;
+
+   if (mode & EFL_GFX_BUFFER_ACCESS_MODE_COW)
+     cow = EINA_TRUE;
+
+   if (mode & EFL_GFX_BUFFER_ACCESS_MODE_WRITE)
+     to_write = EINA_TRUE;
+
+   if (im->im)
+     {
+        int len = 0, strid = 0;
+
+        // Call sw generic implementation. Should work for simple cases.
+        ret = pfunc.image_data_map(NULL, (void **) &im->im, &len, &strid,
+                                   x, y, w, h, cspace, mode);
+        if (ret)
+          {
+             map = calloc(1, sizeof(*map));
+             map->cspace = cspace;
+             map->rx = x;
+             map->ry = y;
+             map->rw = w;
+             map->rh = h;
+             map->mode = mode;
+             map->size = len;
+             map->stride = strid;
+             map->im = im->im; // ref?
+             map->ptr = ret;
+             im->maps = eina_inlist_prepend(im->maps, EINA_INLIST_GET(map));
+          }
+        if (length) *length = len;
+        if (stride) *stride = strid;
+        return ret;
+     }
+
+   // TODO: glReadPixels from FBO if possible
+
+   return NULL;
+}
+
+static Eina_Bool
+eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int length)
+{
+   Evas_GL_Image_Data_Map *map;
+   Evas_GL_Image *im = image;
+   Eina_Bool found = EINA_FALSE;
+
+   if (!im || !memory)
+     return EINA_FALSE;
+
+   EINA_INLIST_FOREACH(im->maps, map)
+     {
+        if ((map->ptr == memory) && (map->size == length))
+          {
+             found = EINA_TRUE;
+             if (map->im)
+               found = pfunc.image_data_unmap(NULL, map->im, memory, length);
+             if (found)
+               {
+                  if (im->im && im->tex &&
+                      (map->mode & EFL_GFX_BUFFER_ACCESS_MODE_WRITE))
+                    evas_gl_common_texture_update(im->tex, im->im);
+                  im->maps = eina_inlist_remove(im->maps, EINA_INLIST_GET(map));
+                  free(map);
+               }
+             return found;
+          }
+     }
+
+   ERR("failed to unmap region %p (%u bytes)", memory, length);
+   return EINA_FALSE;
+}
+
+static int
+eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, void **maps, int *lengths)
+{
+   Evas_GL_Image_Data_Map *map;
+   const Evas_GL_Image *im = image;
+   int k = 0;
+
+   if (!im) return -1;
+
+   if (!maps || !lengths)
+     return eina_inlist_count(im->maps);
+
+   EINA_INLIST_FOREACH(im->maps, map)
+     {
+        maps[k] = map->ptr;
+        lengths[k] = map->size;
+        k++;
+     }
+
+   return k;
+}
 
 static int
 module_open(Evas_Module *em)
@@ -2808,11 +2915,6 @@ module_open(Evas_Module *em)
         EINA_LOG_ERR("Can not create a module log domain.");
         return 0;
      }
-
-   /* disable map/unmap for now as it's not implemented */
-   pfunc.image_data_map = NULL;
-   pfunc.image_data_unmap = NULL;
-   pfunc.image_data_maps_get = NULL;
 
    ector_init();
    ector_glsym_set(dlsym, RTLD_DEFAULT);
@@ -2878,6 +2980,10 @@ module_open(Evas_Module *em)
    ORD(image_cache_flush);
    ORD(image_cache_set);
    ORD(image_cache_get);
+
+   ORD(image_data_map);
+   ORD(image_data_unmap);
+   ORD(image_data_maps_get);
 
    ORD(font_cache_flush);
    ORD(font_cache_set);

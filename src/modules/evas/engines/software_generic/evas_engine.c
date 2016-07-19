@@ -1461,12 +1461,14 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image,
 {
    Eina_Bool cow = EINA_FALSE, to_write = EINA_FALSE;
    RGBA_Image_Data_Map *map;
-   RGBA_Image *im = *image;
-   Image_Entry *ie = &im->cache_entry;
+   RGBA_Image *im;
+   Image_Entry *ie;
    int src_stride, src_offset;
    void *data;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(image && *image, NULL);
+   im = *image;
+   ie = &im->cache_entry;
 
    // FIXME: implement planes support (YUV, RGB565, ETC1+Alpha)
    // FIXME: implement YUV support (im->cs.data)
@@ -1711,18 +1713,16 @@ eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, void *memory, int l
              im->maps = (RGBA_Image_Data_Map *)
                    eina_inlist_remove(EINA_INLIST_GET(im->maps), EINA_INLIST_GET(map));
              free(map);
-             break;
+             return EINA_TRUE;
           }
      }
 
-   if (!found)
-     ERR("failed to unmap region %p (%u bytes)", memory, length);
-
-   return found;
+   ERR("failed to unmap region %p (%u bytes)", memory, length);
+   return EINA_FALSE;
 }
 
 static int
-eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, void **maps, int *lenghts)
+eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, void **maps, int *lengths)
 {
    RGBA_Image_Data_Map *map;
    const RGBA_Image *im = image;
@@ -1730,13 +1730,13 @@ eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, void **map
 
    if (!im) return -1;
 
-   if (!maps || !lenghts)
+   if (!maps || !lengths)
      return eina_inlist_count(EINA_INLIST_GET(im->maps));
 
    EINA_INLIST_FOREACH(EINA_INLIST_GET(im->maps), map)
      {
         maps[k] = map->ptr;
-        lenghts[k] = map->size;
+        lengths[k] = map->size;
         k++;
      }
 

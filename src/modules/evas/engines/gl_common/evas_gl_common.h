@@ -68,6 +68,7 @@ typedef struct _Evas_GL_Font_Texture          Evas_GL_Font_Texture;
 typedef struct _Evas_GL_Polygon               Evas_GL_Polygon;
 typedef struct _Evas_GL_Polygon_Point         Evas_GL_Polygon_Point;
 typedef struct _Evas_GL_Texture_Async_Preload Evas_GL_Texture_Async_Preload;
+typedef struct _Evas_GL_Image_Data_Map        Evas_GL_Image_Data_Map;
 
 typedef Eina_Bool (*evas_gl_make_current_cb)(void *engine_data, void *doit);
 
@@ -449,6 +450,8 @@ struct _Evas_GL_Image
    Eina_List         *targets;
    Evas_Image_Orient orient;
 
+   Eina_Inlist     *maps; /* Evas_GL_Image_Data_Map */
+
    unsigned char    dirty : 1;
    unsigned char    cached : 1;
    unsigned char    alpha : 1;
@@ -481,6 +484,18 @@ struct _Evas_GL_Texture_Async_Preload
    RGBA_Image *im;
 
    Eina_Bool unpack_row_length;
+};
+
+struct _Evas_GL_Image_Data_Map
+{
+   EINA_INLIST;
+   Evas_GL_Texture *tex; // one or the other
+   RGBA_Image      *im; // one or the other
+   unsigned char   *ptr;
+   int              size, stride; // in bytes
+   int              rx, ry, rw, rh; // actual map region
+   Evas_Colorspace  cspace;
+   Efl_Gfx_Buffer_Access_Mode mode;
 };
 
 /* GL_Common function that are used by gl_generic inherited module */
