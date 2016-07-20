@@ -3618,12 +3618,12 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
 {
    Evas_Object *obj = sd->obj;
    int w, h, mw, mh;
-   short layer;
+   /* short layer; */
 
    if (sd->frame_obj) return;
    sd->frame_obj = edje_object_add(sd->evas);
-   layer = evas_object_layer_get(obj);
-   evas_object_layer_set(sd->frame_obj, layer + 1);
+   /* layer = evas_object_layer_get(obj); */
+   /* evas_object_layer_set(sd->frame_obj, layer + 1); */
    if (!elm_widget_theme_object_set
        (sd->obj, sd->frame_obj, "border", "base", style))
      {
