@@ -4,6 +4,9 @@ local cutil = require("cutil")
 local util = require("util")
 local ffi = require("ffi")
 
+local eomap = require("docgen.mappings")
+local stats = require("docgen.stats")
+
 local global_opts = {}
 
 -- utils
@@ -56,419 +59,6 @@ local str_split = function(str, delim)
         end
     end
     return t
-end
-
--- translation tables and funcs
-
-local classt_to_str = {
-    [eolian.class_type.REGULAR] = "class",
-    [eolian.class_type.ABSTRACT] = "class",
-    [eolian.class_type.MIXIN] = "mixin",
-    [eolian.class_type.INTERFACE] = "interface"
-}
-
-local funct_to_str = {
-    [eolian.function_type.PROPERTY] = "property",
-    [eolian.function_type.PROP_GET] = "property",
-    [eolian.function_type.PROP_SET] = "property",
-    [eolian.function_type.METHOD] = "method"
-}
-
-local decl_to_nspace = function(decl)
-    local dt = eolian.declaration_type
-    local decltypes = {
-        [dt.ALIAS] = "alias",
-        [dt.STRUCT] = "struct",
-        [dt.ENUM] = "enum",
-        [dt.VAR] = "var"
-    }
-    local ns = decltypes[decl:type_get()]
-    if ns then
-        return ns
-    elseif decl:type_get() == dt.CLASS then
-        local ret = classt_to_str[decl:class_get():type_get()]
-        if not ret then
-            error("unknown class type for class '" .. decl:name_get() .. "'")
-        end
-        return ret
-    else
-        error("unknown declaration type for declaration '"
-            .. decl:name_get() .. "'")
-    end
-end
-
-local gen_nsp_eo = function(eobj, subn, root)
-    local tbl = eobj:namespaces_get():to_array()
-    for i = 1, #tbl do
-        tbl[i] = tbl[i]:lower()
-    end
-    table.insert(tbl, 1, subn)
-    tbl[#tbl + 1] = eobj:name_get():lower()
-    if root then
-        tbl[#tbl + 1] = true
-    end
-    return tbl
-end
-
-local gen_nsp_class = function(cl, root)
-    return gen_nsp_eo(cl, classt_to_str[cl:type_get()], root)
-end
-
-local gen_nsp_func = function(fn, cl, root)
-    local tbl = gen_nsp_class(cl)
-    tbl[#tbl + 1] = funct_to_str[fn:type_get()]
-    tbl[#tbl + 1] = fn:name_get():lower()
-    if root then
-        tbl[#tbl + 1] = true
-    end
-    return tbl
-end
-
-local gen_nsp_ev = function(ev, cl, root)
-    local tbl = gen_nsp_class(cl)
-    tbl[#tbl + 1] = "event"
-    tbl[#tbl + 1] = ev:name_get():lower():gsub(",", "_")
-    if root then
-        tbl[#tbl + 1] = true
-    end
-    return tbl
-end
-
-local gen_nsp_ref
-gen_nsp_ref = function(str, root)
-    local decl = eolian.declaration_get_by_name(str)
-    if decl then
-        local t = { decl_to_nspace(decl) }
-        for tok in str:gmatch("[^%.]+") do
-            t[#t + 1] = tok:lower()
-        end
-        if root then t[#t + 1] = true end
-        return t
-    end
-
-    -- field or func
-    local bstr = str:match("(.+)%.[^.]+")
-    if not bstr then
-        error("invalid reference '" .. str .. "'")
-    end
-
-    local sfx = str:sub(#bstr + 1)
-
-    decl = eolian.declaration_get_by_name(bstr)
-    if decl then
-        local dt = eolian.declaration_type
-        local tp = decl:type_get()
-        if tp == dt.STRUCT or tp == dt.ENUM then
-            -- TODO: point to the actual item
-            return gen_nsp_ref(bstr, root)
-        end
-    end
-
-    local ftp = eolian.function_type
-
-    local cl = eolian.class_get_by_name(bstr)
-    local fn
-    local ftype = ftp.UNRESOLVED
-    if not cl then
-        if sfx == ".get" then
-            ftype = ftp.PROP_GET
-        elseif sfx == ".set" then
-            ftype = ftp.PROP_SET
-        end
-        local mname
-        if ftype ~= ftp.UNRESOLVED then
-            mname = bstr:match(".+%.([^.]+)")
-            if not mname then
-                error("invalid reference '" .. str .. "'")
-            end
-            bstr = bstr:match("(.+)%.[^.]+")
-            cl = eolian.class_get_by_name(bstr)
-            if cl then
-                fn = cl:function_get_by_name(mname, ftype)
-            end
-        end
-    else
-        fn = cl:function_get_by_name(sfx:sub(2), ftype)
-        if fn then ftype = fn:type_get() end
-    end
-
-    if not fn or not funct_to_str[ftype] then
-        error("invalid reference '" .. str .. "'")
-    end
-
-    local ret = gen_nsp_ref(bstr)
-    ret[#ret + 1] = funct_to_str[ftype]
-    ret[#ret + 1] = fn:name_get():lower()
-    if root then ret[#ret + 1] = true end
-    return ret
-end
-
--- statistics
-
-local stats = {}
-
-local stats_pd = function(n)
-    local ret = 0
-    if n == 0 then
-        return 1
-    end
-    while (n ~= 0) do
-        n = math.floor(n / 10)
-        ret = ret + 1
-    end
-    return ret
-end
-
-local fcol = 30
-local ncol = 0
-
-local get_percent = function(sv, svu)
-    return (sv == 0) and 100 or math.floor(((sv - svu) / sv) * 100 + 0.5)
-end
-
-local print_stat = function(printname, statname)
-    local sv = stats[statname] or 0
-    local svu = stats[statname .. "_undoc"] or 0
-    local percent = get_percent(sv, svu)
-    local tb = (" "):rep(math.max(0, fcol - #printname - 1) + ncol - stats_pd(sv))
-    local dtb = (" "):rep(ncol - stats_pd(sv - svu))
-    local ptb = (" "):rep(3 - stats_pd(percent))
-    print(("%s:%s%d (documented: %s%d or %s%d%%)")
-        :format(printname, tb, sv, dtb, sv - svu, ptb, percent))
-end
-
-local get_secstats = function(...)
-    local sv, svu = 0, 0
-    for i, v in ipairs({ ... }) do
-        sv = sv + (stats[v] or 0)
-        svu = svu + (stats[v .. "_undoc"] or 0)
-    end
-    return sv - svu, sv, get_percent(sv, svu)
-end
-
-local print_stats = function()
-    for k, v in pairs(stats) do
-        ncol = math.max(ncol, stats_pd(v))
-    end
-
-    print(("=== CLASS SECTION: %d out of %d (%d%%) ===\n")
-        :format(get_secstats("class", "interface", "mixin", "event")))
-    print_stat("Classes", "class")
-    print_stat("Interfaces", "interface")
-    print_stat("Mixins", "mixin")
-    print_stat("Events", "event")
-
-    print(("\n=== FUNCTION SECTION: %d out of %d (%d%%) ===\n")
-        :format(get_secstats("method", "param", "mret",
-                             "getter", "gret", "gkey", "gvalue",
-                             "setter", "sret", "skey", "svalue")))
-    print_stat("Methods", "method")
-    print_stat("  Method params", "param")
-    print_stat("  Method returns", "mret")
-    print_stat("Getters", "getter")
-    print_stat("  Getter returns", "gret")
-    print_stat("  Getter keys", "gkey")
-    print_stat("  Getter values", "gvalue")
-    print_stat("Setters", "setter")
-    print_stat("  Setter returns", "sret")
-    print_stat("  Setter keys", "skey")
-    print_stat("  Setter values", "svalue")
-
-    print(("\n=== TYPE SECTION: %d out of %d (%d%%) ===\n")
-        :format(get_secstats("alias", "struct", "sfield", "enum", "efield")))
-    print_stat("Aliases", "alias")
-    print_stat("Structs", "struct")
-    print_stat("Struct fields", "sfield")
-    print_stat("Enums", "enum")
-    print_stat("Enum fields", "efield")
-
-    print(("\n=== VARIABLE SECTION: %d out of %d (%d%%) ===\n")
-        :format(get_secstats("constant", "global")))
-    print_stat("Constants", "constant")
-    print_stat("Globals", "global")
-
-    local sv, svu = 0, 0
-    for k, v in pairs(stats) do
-        if k:match(".*_undoc$") then
-            svu = svu + v
-        else
-            sv = sv + v
-        end
-    end
-    print(("\n=== TOTAL: %d out of %d (%d%%) ===")
-        :format(sv - svu, sv, get_percent(sv, svu)))
-end
-
-local stat_incr = function(name, missing)
-    if not stats[name] then
-        stats[name], stats[name .. "_undoc"] = 0, 0
-    end
-    stats[name] = stats[name] + 1
-    if missing then
-        stats[name .. "_undoc"] = stats[name .. "_undoc"] + 1
-    end
-end
-
-local print_missing = function(name, tp)
-    if not global_opts.verbose then
-        return
-    end
-    print(tp .. " '" .. name .. "'" .. " missing documentation")
-end
-
-local check_class = function(cl)
-    local ct = classt_to_str[cl:type_get()]
-    if not ct then
-        return
-    end
-    if not cl:documentation_get() then
-        print_missing(cl:full_name_get(), ct)
-        stat_incr(ct, true)
-    else
-        stat_incr(ct, false)
-    end
-
-    for ev in cl:events_get() do
-        if not ev:documentation_get() then
-            print_missing(cl:full_name_get() .. "." .. ev:name_get(), "event")
-            stat_incr("event", true)
-        else
-            stat_incr("event", false)
-        end
-    end
-end
-
-local check_method = function(fn, cl)
-    local fts = eolian.function_type
-    local fulln = cl:full_name_get() .. "." .. fn:name_get()
-    if fn:return_type_get(fts.METHOD) then
-        if not fn:return_documentation_get(fts.METHOD) then
-            print_missing(fulln, "method return")
-            stat_incr("mret", true)
-        else
-            stat_incr("mret", false)
-        end
-    end
-    if not fn:documentation_get(fts.METHOD) then
-        print_missing(fulln, "method")
-        stat_incr("method", true)
-    else
-        stat_incr("method", false)
-    end
-    for p in fn:parameters_get() do
-        if not p:documentation_get() then
-            print_missing(fulln .. "." .. p:name_get(), "method parameter")
-            stat_incr("param", true)
-        else
-            stat_incr("param", false)
-        end
-    end
-end
-
-local check_property = function(fn, cl, ft)
-    local fts = eolian.function_type
-
-    local pfxs = {
-        [fts.PROP_GET] = "g",
-        [fts.PROP_SET] = "s",
-    }
-    local pfx = pfxs[ft]
-
-    local fulln = cl:full_name_get() .. "." .. fn:name_get()
-    if fn:return_type_get(ft) then
-        if not fn:return_documentation_get(ft) then
-            print_missing(fulln, pfx .. "etter return")
-            stat_incr(pfx .. "ret", true)
-        else
-            stat_incr(pfx .. "ret", false)
-        end
-    end
-
-    if not fn:documentation_get(fts.PROPERTY) and not fn:documentation_get(ft) then
-        print_missing(fulln, pfx .. "etter")
-        stat_incr(pfx .. "etter", true)
-    else
-        stat_incr(pfx .. "etter", false)
-    end
-
-    for p in fn:property_keys_get(ft) do
-        if not p:documentation_get() then
-            print_missing(fulln .. "." .. p:name_get(), pfx .. "etter key")
-            stat_incr(pfx .. "key", true)
-        else
-            stat_incr(pfx .. "key", false)
-        end
-    end
-
-    for p in fn:property_values_get(ft) do
-        if not p:documentation_get() then
-            print_missing(fulln .. "." .. p:name_get(), pfx .. "etter value")
-            stat_incr(pfx .. "value", true)
-        else
-            stat_incr(pfx .. "value", false)
-        end
-    end
-end
-
-local check_alias = function(v)
-    if not v:documentation_get() then
-        print_missing(v:full_name_get(), "alias")
-        stat_incr("alias", true)
-    else
-        stat_incr("alias", false)
-    end
-end
-
-local check_struct = function(v)
-    if not v:documentation_get() then
-        print_missing(v:full_name_get(), "struct")
-        stat_incr("struct", true)
-    else
-        stat_incr("struct", false)
-    end
-    for fl in v:struct_fields_get() do
-        if not fl:documentation_get() then
-            print_missing(v:full_name_get() .. "." .. fl:name_get(), "struct field")
-            stat_incr("sfield", true)
-        else
-            stat_incr("sfield", false)
-        end
-    end
-end
-
-local check_enum = function(v)
-    if not v:documentation_get() then
-        print_missing(v:full_name_get(), "enum")
-        stat_incr("enum", true)
-    else
-        stat_incr("enum", false)
-    end
-    for fl in v:enum_fields_get() do
-        if not fl:documentation_get() then
-            print_missing(v:full_name_get() .. "." .. fl:name_get(), "enum field")
-            stat_incr("efield", true)
-        else
-            stat_incr("efield", false)
-        end
-    end
-end
-
-local check_constant = function(v)
-    if not v:documentation_get() then
-        print_missing(v:full_name_get(), "constant")
-        stat_incr("constant", true)
-    else
-        stat_incr("constant", false)
-    end
-end
-
-local check_global = function(v)
-    if not v:documentation_get() then
-        print_missing(v:full_name_get(), "global")
-        stat_incr("global", true)
-    else
-        stat_incr("global", false)
-    end
 end
 
 -- generator
@@ -715,7 +305,7 @@ local Writer = util.Object:clone {
                     end
                     local title = table.concat(rbuf)
                     self:write_raw("%%")
-                    self:write_link(gen_nsp_ref(title, true), title)
+                    self:write_link(eomap.gen_nsp_ref(title, true), title)
                     self:write_raw("%%")
                     if ldot then
                         self:write_raw(".")
@@ -1410,7 +1000,7 @@ local build_reftable = function(f, title, ctitle, ctype, t)
     local nt = {}
     for i, v in ipairs(t) do
         nt[#nt + 1] = {
-            Buffer():write_link(gen_nsp_eo(v, ctype, true),
+            Buffer():write_link(eomap.gen_nsp_eo(v, ctype, true),
                                 v:full_name_get()):finish(),
             get_brief_doc(v:documentation_get())
         }
@@ -1429,7 +1019,7 @@ local build_functable = function(f, title, ctitle, cl, tp)
     local nt = {}
     for i, v in ipairs(t) do
         local lbuf = Buffer()
-        lbuf:write_link(gen_nsp_func(v, cl, true), v:name_get())
+        lbuf:write_link(eomap.gen_nsp_func(v, cl, true), v:name_get())
         local pt = propt_to_type[v:type_get()]
         if pt then
             lbuf:write_raw(" ")
@@ -1438,7 +1028,7 @@ local build_functable = function(f, title, ctitle, cl, tp)
         nt[#nt + 1] = {
             lbuf:finish(), get_brief_fdoc(v)
         }
-        if funct_to_str[v:type_get()] == "property" then
+        if eomap.funct_to_str[v:type_get()] == "property" then
             build_property(v, cl)
         else
             build_method(v, cl)
@@ -1519,9 +1109,9 @@ build_inherits = function(cl, t, lvl)
     t = t or {}
     lvl = lvl or 0
     local lbuf = Buffer()
-    lbuf:write_link(gen_nsp_class(cl, true), cl:full_name_get())
+    lbuf:write_link(eomap.gen_nsp_class(cl, true), cl:full_name_get())
     lbuf:write_raw(" ")
-    lbuf:write_i("(" .. classt_to_str[cl:type_get()] .. ")")
+    lbuf:write_i("(" .. eomap.classt_to_str[cl:type_get()] .. ")")
     if lvl == 0 then
         lbuf:write_b(lbuf:finish())
     end
@@ -1561,7 +1151,7 @@ local class_to_node = function(cl, main)
     -- FIXME: need a dokuwiki graphviz plugin with proper URL support
     -- the existing one only supports raw URLs (no dokuwikí namespaces)
     --ret.URL = ":" .. global_opts.root_nspace .. ":"
-    --              .. table.concat(gen_nsp_class(cl), ":")
+    --              .. table.concat(eomap.gen_nsp_class(cl), ":")
 
     return ret
 end
@@ -1602,15 +1192,9 @@ local build_igraph = function(cl)
     return graph
 end
 
-local scope_to_str = {
-    [eolian.object_scope.PUBLIC] = "public",
-    [eolian.object_scope.PRIVATE] = "private",
-    [eolian.object_scope.PROTECTED] = "protected"
-}
-
 local build_class = function(cl)
-    local f = Writer(gen_nsp_class(cl))
-    check_class(cl)
+    local f = Writer(eomap.gen_nsp_class(cl))
+    stats.check_class(cl)
 
     f:write_h(cl:full_name_get(), 2)
     add_ref(cl:full_name_get():gsub("%.", "_"), "c")
@@ -1639,7 +1223,7 @@ local build_class = function(cl)
         local nt = {}
         for i, ev in ipairs(evs) do
             local lbuf = Buffer()
-            lbuf:write_link(gen_nsp_ev(ev, cl, true), ev:name_get())
+            lbuf:write_link(eomap.gen_nsp_ev(ev, cl, true), ev:name_get())
             nt[#nt + 1] = {
                 lbuf:finish(), get_brief_doc(ev:documentation_get())
             }
@@ -1655,7 +1239,7 @@ end
 local build_classes = function()
     for cl in eolian.all_classes_get() do
         local ct = cl:type_get()
-        if not classt_to_str[ct] then
+        if not eomap.classt_to_str[ct] then
             error("unknown class: " .. cl:full_name_get())
         end
         build_class(cl)
@@ -1675,8 +1259,8 @@ local write_tsigs = function(f, tp)
 end
 
 local build_alias = function(tp)
-    local f = Writer(gen_nsp_eo(tp, "alias"))
-    check_alias(tp)
+    local f = Writer(eomap.gen_nsp_eo(tp, "alias"))
+    stats.check_alias(tp)
 
     write_tsigs(f, tp)
 
@@ -1688,8 +1272,8 @@ local build_alias = function(tp)
 end
 
 local build_struct = function(tp)
-    local f = Writer(gen_nsp_eo(tp, "struct"))
-    check_struct(tp)
+    local f = Writer(eomap.gen_nsp_eo(tp, "struct"))
+    stats.check_struct(tp)
 
     write_tsigs(f, tp)
 
@@ -1713,8 +1297,8 @@ local build_struct = function(tp)
 end
 
 local build_enum = function(tp)
-    local f = Writer(gen_nsp_eo(tp, "enum"))
-    check_enum(tp)
+    local f = Writer(eomap.gen_nsp_eo(tp, "enum"))
+    stats.check_enum(tp)
 
     write_tsigs(f, tp)
 
@@ -1738,11 +1322,11 @@ local build_enum = function(tp)
 end
 
 local build_variable = function(v, constant)
-    local f = Writer(gen_nsp_eo(v, constant and "constant" or "global"))
+    local f = Writer(eomap.gen_nsp_eo(v, constant and "constant" or "global"))
     if constant then
-        check_constant(v)
+        stats.check_constant(v)
     else
-        check_global(v)
+        stats.check_global(v)
     end
 
     f:finish()
@@ -1772,12 +1356,6 @@ local build_variables = function()
     end
 end
 
-local pdir_to_str = {
-    [eolian.parameter_dir.IN] = "(in)",
-    [eolian.parameter_dir.OUT] = "(out)",
-    [eolian.parameter_dir.INOUT] = "(inout)"
-}
-
 local build_parlist = function(f, pl, nodir)
     local params = {}
     for i, p in ipairs(pl) do
@@ -1785,7 +1363,7 @@ local build_parlist = function(f, pl, nodir)
         buf:write_b(p:name_get())
         if not nodir then
             buf:write_raw(" ")
-            buf:write_i(pdir_to_str[p:direction_get()])
+            buf:write_i(eomap.pdir_to_str[p:direction_get()])
         end
         buf:write_raw(" - ", get_full_doc(p:documentation_get()))
         params[#params + 1] = buf:finish()
@@ -1822,8 +1400,8 @@ local build_vallist = function(f, pg, ps, title)
 end
 
 build_method = function(fn, cl)
-    local f = Writer(gen_nsp_func(fn, cl))
-    check_method(fn, cl)
+    local f = Writer(eomap.gen_nsp_func(fn, cl))
+    stats.check_method(fn, cl)
 
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
 
@@ -1850,15 +1428,15 @@ build_method = function(fn, cl)
 end
 
 build_property = function(fn, cl)
-    local f = Writer(gen_nsp_func(fn, cl))
+    local f = Writer(eomap.gen_nsp_func(fn, cl))
 
     local fts = eolian.function_type
     local ft = fn:type_get()
     local isget = (ft == fts.PROP_GET or ft == fts.PROPERTY)
     local isset = (ft == fts.PROP_SET or ft == fts.PROPERTY)
 
-    if isget then check_property(fn, cl, fts.PROP_GET) end
-    if isset then check_property(fn, cl, fts.PROP_SET) end
+    if isget then stats.check_property(fn, cl, fts.PROP_GET) end
+    if isset then stats.check_property(fn, cl, fts.PROP_SET) end
 
     local doc = fn:documentation_get(fts.PROPERTY)
     local gdoc = fn:documentation_get(fts.PROP_GET)
@@ -1925,7 +1503,7 @@ build_property = function(fn, cl)
 end
 
 build_event = function(ev, cl)
-    local f = Writer(gen_nsp_ev(ev, cl))
+    local f = Writer(eomap.gen_nsp_ev(ev, cl))
 
     f:write_h(cl:full_name_get() .. ": " .. ev:name_get(), 2)
 
@@ -2021,6 +1599,7 @@ getopt.parse {
         if not eolian.all_eo_files_parse() then
             error("failed parsing eo files")
         end
+        stats.init(global_opts.verbose)
         cutil.file_rmrf(path_join(global_opts.doc_root))
         mkdir_r(nil)
         build_ref()
@@ -2028,7 +1607,7 @@ getopt.parse {
         build_typedecls()
         build_variables()
         build_reflist()
-        print_stats()
+        stats.print()
     end
 }
 
