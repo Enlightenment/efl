@@ -2365,19 +2365,57 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                }
              else
                {
-                  Eina_Rectangle *r;
-
-                  EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+                  if ((o->cur->image.w > 0) &&
+                      (o->cur->image.h > 0) &&
+                      (o->cur->image.w == obj->cur->geometry.w) &&
+                      (o->cur->image.h == obj->cur->geometry.h) &&
+                      (o->cur->fill.x == 0) &&
+                      (o->cur->fill.y == 0) &&
+                      (o->cur->fill.w == o->cur->image.w) &&
+                      (o->cur->fill.h == o->cur->image.h) &&
+                      (!((obj->map->cur.map) && (obj->map->cur.usemap))))
                     {
-                       EINA_LIST_FREE(pixi_write->pixel_updates, r)
-                         eina_rectangle_free(r);
-                    }
-                  EINA_COW_PIXEL_WRITE_END(o, pixi_write);
-                  e->engine.func->image_dirty_region(e->engine.data.output, o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
+                       Eina_Rectangle *rr;
 
-                  evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj,
-                                                      obj);
-                  goto done;
+                       EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+                         {
+                            EINA_LIST_FREE(pixi_write->pixel_updates, rr)
+                              {
+                                 Eina_Rectangle r;
+
+                                 e->engine.func->image_dirty_region(e->engine.data.output, o->engine_data, rr->x, rr->y, rr->w, rr->h);
+                                 r.x = rr->x;
+                                 r.y = rr->y;
+                                 r.w = rr->w;
+                                 r.h = rr->h;
+                                 r.x += obj->cur->geometry.x;
+                                 r.y += obj->cur->geometry.y;
+                                 RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h,
+                                                    obj->cur->cache.clip.x, obj->cur->cache.clip.y,
+                                                    obj->cur->cache.clip.w, obj->cur->cache.clip.h);
+                                 evas_add_rect(&e->clip_changes, r.x, r.y, r.w, r.h);
+                                 eina_rectangle_free(rr);
+                              }
+                         }
+                       EINA_COW_PIXEL_WRITE_END(o, pixi_write);
+                       goto done;
+                    }
+                  else
+                    {
+                       Eina_Rectangle *r;
+
+                       EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+                         {
+                            EINA_LIST_FREE(pixi_write->pixel_updates, r)
+                              eina_rectangle_free(r);
+                         }
+                       EINA_COW_PIXEL_WRITE_END(o, pixi_write);
+                       e->engine.func->image_dirty_region(e->engine.data.output, o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
+
+                       evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj,
+                                                           obj);
+                       goto done;
+                    }
                }
           }
      }
