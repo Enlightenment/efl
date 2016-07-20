@@ -1254,7 +1254,15 @@ modules/evas/engines/wayland_shm/evas_engine.h \
 modules/evas/engines/wayland_shm/evas_shm.c \
 modules/evas/engines/wayland_shm/evas_dmabuf.c \
 lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c \
-modules/evas/engines/wayland_shm/evas_outbuf.c
+modules/evas/engines/wayland_shm/evas_outbuf.c \
+static_libs/libdrm/drm_fourcc.h \
+static_libs/libdrm/drm.h \
+static_libs/libdrm/drm_mode.h \
+static_libs/libdrm/exynos_drm.h \
+static_libs/libdrm/exynos_drmif.h \
+static_libs/libdrm/i915_drm.h \
+static_libs/libdrm/intel_bufmgr.h \
+static_libs/libdrm/LICENSE
 if EVAS_STATIC_BUILD_WAYLAND_SHM
 lib_evas_libevas_la_SOURCES += $(WAYLAND_SHM_SOURCES)
 lib_evas_libevas_la_CPPFLAGS += @evas_engine_wayland_shm_cflags@ \
