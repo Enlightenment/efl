@@ -3063,12 +3063,7 @@ evas_object_image_get_opaque_rect(Evas_Object *eo_obj EINA_UNUSED,
         *w = obj->cur->geometry.w;
         *h = obj->cur->geometry.h;
      }
-   else if (o->cur->border.fill != EVAS_BORDER_FILL_SOLID)
-     {
-        *w = 0;
-        *h = 0;
-     }
-   else
+   else if (o->cur->border.fill == EVAS_BORDER_FILL_SOLID)
      {
         *x = obj->cur->geometry.x + (o->cur->border.l * o->cur->border.scale);
         *y = obj->cur->geometry.y + (o->cur->border.t * o->cur->border.scale);
@@ -3078,6 +3073,11 @@ evas_object_image_get_opaque_rect(Evas_Object *eo_obj EINA_UNUSED,
         *h = obj->cur->geometry.h - ((o->cur->border.t * o->cur->border.scale)
                                      + (o->cur->border.b * o->cur->border.scale));
         if (*h < 0) *h = 0;
+     }
+   else
+     {
+        *w = 0;
+        *h = 0;
      }
    return 1;
 }
