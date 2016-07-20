@@ -182,6 +182,7 @@ _efl_ui_flip_elm_widget_sub_object_add(Eo *obj, Efl_Ui_Flip_Data *_pd EINA_UNUSE
    evas_object_smart_member_add(sobj, obj);
    evas_object_event_callback_add
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints_cb, obj);
+   evas_object_lower(sobj);
 
    return EINA_TRUE;
 }
@@ -2007,12 +2008,21 @@ _efl_ui_flip_interaction_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
    return sd->intmode;
 }
 
+static int
+_orient_dir_xlate(Efl_Orient dir)
+{
+   if      (dir == EFL_ORIENT_UP)    return ELM_FLIP_DIRECTION_UP;
+   else if (dir == EFL_ORIENT_DOWN)  return ELM_FLIP_DIRECTION_DOWN;
+   else if (dir == EFL_ORIENT_LEFT)  return ELM_FLIP_DIRECTION_LEFT;
+   else if (dir == EFL_ORIENT_RIGHT) return ELM_FLIP_DIRECTION_RIGHT;
+   return 0;
+}
+
 EOLIAN static void
 _efl_ui_flip_interaction_direction_enabled_set(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Orient dir, Eina_Bool enabled)
 {
-   int i = (int) dir;
+   int i = _orient_dir_xlate(dir);;
    int area;
-
 
    enabled = !!enabled;
    if (sd->dir_enabled[i] == enabled) return;
@@ -2033,13 +2043,13 @@ _efl_ui_flip_interaction_direction_enabled_set(Eo *obj, Efl_Ui_Flip_Data *sd, Ef
 EOLIAN static Eina_Bool
 _efl_ui_flip_interaction_direction_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, Efl_Orient dir)
 {
-   return sd->dir_enabled[(int) dir];
+   return sd->dir_enabled[_orient_dir_xlate(dir)];
 }
 
 EOLIAN static void
 _efl_ui_flip_interaction_direction_hitsize_set(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Orient dir, double hitsize)
 {
-   int i = (int) dir;
+   int i = _orient_dir_xlate(dir);
 
 
    if (hitsize < 0.0)
@@ -2137,7 +2147,7 @@ _content_removed(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *content)
 EOLIAN static double
 _efl_ui_flip_interaction_direction_hitsize_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, Efl_Orient dir)
 {
-   int i = (int) dir;
+   int i = _orient_dir_xlate(dir);
 
    return sd->dir_hitsize[i];
 }
