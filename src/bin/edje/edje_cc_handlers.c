@@ -11166,10 +11166,10 @@ st_collections_group_parts_part_description_properties_ambient(void)
 
            ed = (Edje_Part_Description_Light*) current_desc;
 
-           ed->light.properties.specular.r = parse_int_range(0, 0, 255);
-           ed->light.properties.specular.g = parse_int_range(1, 0, 255);
-           ed->light.properties.specular.b = parse_int_range(2, 0, 255);
-           ed->light.properties.specular.a = parse_int_range(3, 0, 255);
+           ed->light.properties.ambient.r = parse_int_range(0, 0, 255);
+           ed->light.properties.ambient.g = parse_int_range(1, 0, 255);
+           ed->light.properties.ambient.b = parse_int_range(2, 0, 255);
+           ed->light.properties.ambient.a = parse_int_range(3, 0, 255);
            break;
         }
       case EDJE_PART_TYPE_MESH_NODE:
@@ -11178,10 +11178,10 @@ st_collections_group_parts_part_description_properties_ambient(void)
 
            ed = (Edje_Part_Description_Mesh_Node*) current_desc;
 
-           ed->mesh_node.properties.specular.r = parse_int_range(0, 0, 255);
-           ed->mesh_node.properties.specular.g = parse_int_range(1, 0, 255);
-           ed->mesh_node.properties.specular.b = parse_int_range(2, 0, 255);
-           ed->mesh_node.properties.specular.a = parse_int_range(3, 0, 255);
+           ed->mesh_node.properties.ambient.r = parse_int_range(0, 0, 255);
+           ed->mesh_node.properties.ambient.g = parse_int_range(1, 0, 255);
+           ed->mesh_node.properties.ambient.b = parse_int_range(2, 0, 255);
+           ed->mesh_node.properties.ambient.a = parse_int_range(3, 0, 255);
            break;
         }
       default:
