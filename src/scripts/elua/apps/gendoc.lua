@@ -1,383 +1,12 @@
 local eolian = require("eolian")
 local getopt = require("getopt")
-local cutil = require("cutil")
-local util = require("util")
-local ffi = require("ffi")
 
 local eomap = require("docgen.mappings")
 local stats = require("docgen.stats")
+local dutil = require("docgen.util")
+local writer = require("docgen.writer")
 
-local global_opts = {}
-
--- utils
-
-local path_sep, rep_sep = "/", "\\"
-if ffi.os == "Windows" then
-    path_sep, rep_sep = rep_sep, path_sep
-end
-
-local path_join = function(...)
-    return table.concat({ ... }, path_sep):gsub(rep_sep, path_sep)
-end
-
-local path_to_nspace = function(p)
-    return p:gsub(rep_sep, ":"):gsub(path_sep, ":"):lower()
-end
-
-local nspace_to_path = function(ns)
-    return ns:gsub(":", path_sep):gsub(rep_sep, path_sep):lower()
-end
-
-local make_page = function(path)
-    return path_join(global_opts.doc_root, path .. ".txt")
-end
-
-local mkdir_r = function(dirn)
-    local dr = global_opts.doc_root
-    assert(cutil.file_mkpath(dirn and path_join(dr, dirn) or dr))
-end
-
-local mkdir_p = function(path)
-    mkdir_r(path:match("(.+)" .. path_sep .. "([^" .. path_sep .. "]+)"))
-end
-
-local str_split = function(str, delim)
-    if not str then
-        return nil
-    end
-    local s, e = str:find(delim, 1, true)
-    if not s then
-        return { str }
-    end
-    local t = {}
-    while s do
-        t[#t + 1] = str:sub(1, s - 1)
-        str = str:sub(e + 1)
-        s, e = str:find(delim, 1, true)
-        if not s then
-            t[#t + 1] = str
-        end
-    end
-    return t
-end
-
--- generator
-
-local Writer = util.Object:clone {
-    __ctor = function(self, path)
-        local subs
-        if type(path) == "table" then
-            subs = path_join(unpack(path))
-        else
-            subs = nspace_to_path(path)
-        end
-        mkdir_p(subs)
-        self.file = assert(io.open(make_page(subs), "w"))
-    end,
-
-    write_raw = function(self, ...)
-        self.file:write(...)
-        return self
-    end,
-
-    write_nl = function(self, n)
-        self:write_raw(("\n"):rep(n or 1))
-        return self
-    end,
-
-    write_h = function(self, heading, level, nonl)
-        local s = ("="):rep(7 - level)
-        self:write_raw(s, " ", heading, " ", s, "\n")
-        if not nonl then
-            self:write_nl()
-        end
-        return self
-    end,
-
-    write_fmt = function(self, fmt1, fmt2, ...)
-        self:write_raw(fmt1, ...)
-        self:write_raw(fmt2)
-        return self
-    end,
-
-    write_b = function(self, ...)
-        self:write_fmt("**", "**", ...)
-        return self
-    end,
-
-    write_i = function(self, ...)
-        self:write_fmt("//", "//", ...)
-        return self
-    end,
-
-    write_u = function(self, ...)
-        self:write_fmt("__", "__", ...)
-        return self
-    end,
-
-    write_s = function(self, ...)
-        self:write_fmt("<del>", "</del>", ...)
-        return self
-    end,
-
-    write_m = function(self, ...)
-        self:write_fmt("''", "''", ...)
-        return self
-    end,
-
-    write_sub = function(self, ...)
-        self:write_fmt("<sub>", "</sub>", ...)
-        return self
-    end,
-
-    write_sup = function(self, ...)
-        self:write_fmt("<sup>", "</sup>", ...)
-        return self
-    end,
-
-    write_br = function(self, nl)
-        self:write_raw("\\\\", nl and "\n" or " ")
-        return self
-    end,
-
-    write_pre_inline = function(self, ...)
-        self:write_fmt("%%", "%%", ...)
-        return self
-    end,
-
-    write_pre = function(self, ...)
-        self:write_fmt("<nowiki>\n", "\n</nowiki>", ...)
-        return self
-    end,
-
-    write_code = function(self, str, lang)
-        lang = lang and (" " .. lang) or ""
-        self:write_raw("<code" .. lang .. ">\n", str, "\n</code>\n")
-    end,
-
-    write_link = function(self, target, title)
-        if type(target) == "table" then
-            if target[#target] == true then
-                target[#target] = nil
-                target = ":" .. global_opts.root_nspace .. ":"
-                             .. table.concat(target, ":")
-            else
-                target = table.concat(target, ":")
-            end
-        end
-        if not title then
-            self:write_raw("[[", target:lower(), "|", target, "]]")
-            return
-        end
-        target = target:lower()
-        if type(title) == "string" then
-            self:write_raw("[[", target, "|", title, "]]")
-            return self
-        end
-        self:write_raw("[[", target, "|")
-        title(self)
-        self:write_raw("]]")
-        return self
-    end,
-
-    write_graph = function(self, tbl)
-        self:write_raw("<graphviz>\n")
-        self:write_raw("digraph ", tbl.type, " {\n")
-
-        for k, v in pairs(tbl.attrs or {}) do
-            self:write_raw("    ", k, " = \"", v, "\"\n")
-        end
-
-        local write_node = function(nname, attrs)
-            self:write_raw("    ", nname, " [")
-            local first = true
-            for k, v in pairs(attrs) do
-                if not first then
-                    self:write_raw(", ")
-                end
-                self:write_raw(k, " = \"", v, "\"")
-                first = false
-            end
-            self:write_raw("]\n")
-        end
-
-        if tbl.node then
-            self:write_nl()
-            write_node("node", tbl.node)
-        end
-        if tbl.edge then
-            if not tbl.node then self:write_nl() end
-            write_node("edge", tbl.edge)
-        end
-
-        self:write_nl()
-        for i, v in ipairs(tbl.nodes) do
-            local nname = v.name
-            v.name = nil
-            write_node(nname, v)
-        end
-
-        self:write_nl()
-        for i, v in ipairs(tbl.connections) do
-            local from, to, sep = v[1], v[2], (v[3] or "->")
-            if type(from) == "table" then
-                self:write_raw("    {", table.concat(from, ", "), "}")
-            else
-                self:write_raw("    ", from)
-            end
-            self:write_raw(" ", sep, " ")
-            if type(to) == "table" then
-                self:write_raw("{", table.concat(to, ", "), "}")
-            else
-                self:write_raw(to)
-            end
-            self:write_nl()
-        end
-
-        self:write_raw("}\n</graphviz>")
-    end,
-
-    write_table = function(self, titles, tbl)
-        self:write_raw("^ ", table.concat(titles, " ^ "), " ^\n")
-        for i, v in ipairs(tbl) do
-            self:write_raw("| ", table.concat(v,  " | "), " |\n")
-        end
-        return self
-    end,
-
-    write_list = function(self, tbl, ord)
-        local prec = ord and "-" or "*"
-        for i, v in ipairs(tbl) do
-            local lvl, str = 1, v
-            if type(v) == "table" then
-                lvl, str = v[1] + 1, v[2]
-            end
-            local pbeg, pend = str:match("([^\n]+)\n(.+)")
-            if not pbeg then
-                pbeg = str
-            end
-            self:write_raw(("  "):rep(lvl), prec, " ", str, "\n")
-            if pend then
-                self:write_raw(pend, "\n")
-            end
-        end
-        return self
-    end,
-
-    write_par_markup = function(self, str)
-        self:write_raw("%%")
-        local f = str:gmatch(".")
-        local c = f()
-        while c do
-            if c == "\\" then
-                c = f()
-                if c ~= "@" and c ~= "$" then
-                    self:write_raw("\\")
-                end
-                self:write_raw(c)
-                c = f()
-            elseif c == "$" then
-                c = f()
-                if c and c:match("[a-zA-Z_]") then
-                    local wbuf = { c }
-                    c = f()
-                    while c and c:match("[a-zA-Z0-9_]") do
-                        wbuf[#wbuf + 1] = c
-                        c = f()
-                    end
-                    self:write_raw("%%''" .. table.concat(wbuf) .. "''%%")
-                else
-                    self:write_raw("$")
-                end
-            elseif c == "@" then
-                c = f()
-                if c and c:match("[a-zA-Z_]") then
-                    local rbuf = { c }
-                    c = f()
-                    while c and c:match("[a-zA-Z0-9_.]") do
-                        rbuf[#rbuf + 1] = c
-                        c = f()
-                    end
-                    local ldot = false
-                    if rbuf[#rbuf] == "." then
-                        ldot = true
-                        rbuf[#rbuf] = nil
-                    end
-                    local title = table.concat(rbuf)
-                    self:write_raw("%%")
-                    self:write_link(eomap.gen_nsp_ref(title, true), title)
-                    self:write_raw("%%")
-                    if ldot then
-                        self:write_raw(".")
-                    end
-                else
-                    self:write_raw("@")
-                end
-            elseif c == "%" then
-                c = f()
-                if c == "%" then
-                    c = f()
-                    self:write_raw("%%<nowiki>%%</nowiki>%%")
-                else
-                    self:write_raw("%")
-                end
-            else
-                self:write_raw(c)
-                c = f()
-            end
-        end
-        self:write_raw("%%")
-        return self
-    end,
-
-    write_par = function(self, str)
-        local notetypes = global_opts.use_notes and {
-            ["Note: "] = "<note>\n",
-            ["Warning: "] = "<note warning>\n",
-            ["Remark: "] = "<note tip>\n",
-            ["TODO: "] = "<note>\n**TODO:** "
-        } or {}
-        local tag
-        for k, v in pairs(notetypes) do
-            if str:match("^" .. k) then
-                tag = v
-                str = str:sub(#k + 1)
-                break
-            end
-        end
-        if tag then
-            self:write_raw(tag)
-            self:write_par_markup(str)
-            self:write_raw("\n</note>")
-        else
-            self:write_par_markup(str)
-        end
-        return self
-    end,
-
-    finish = function(self)
-        self.file:close()
-    end
-}
-
-local Buffer = Writer:clone {
-    __ctor = function(self)
-        self.buf = {}
-    end,
-
-    write_raw = function(self, ...)
-        for i, v in ipairs({ ... }) do
-            self.buf[#self.buf + 1] = v
-        end
-        return self
-    end,
-
-    finish = function(self)
-        self.result = table.concat(self.buf)
-        self.buf = {}
-        return self.result
-    end
-}
+local use_dot
 
 -- keyword reference
 
@@ -394,7 +23,7 @@ end
 
 local build_reflist = function()
     for lang, rfs in pairs(key_refs) do
-        local f = Writer({ "ref", lang, "keyword-list" })
+        local f = writer.Writer({ "ref", lang, "keyword-list" })
         local arr = {}
         for refn, v in pairs(rfs) do
             arr[#arr + 1] = refn
@@ -625,9 +254,9 @@ local gen_doc_refd = function(str)
     if not str then
         return nil
     end
-    local pars = str_split(str, "\n\n")
+    local pars = dutil.str_split(str, "\n\n")
     for i = 1, #pars do
-        pars[i] = Buffer():write_par(pars[i]):finish()
+        pars[i] = writer.Buffer():write_par(pars[i]):finish()
     end
     return table.concat(pars, "\n\n")
 end
@@ -1000,7 +629,7 @@ local build_reftable = function(f, title, ctitle, ctype, t)
     local nt = {}
     for i, v in ipairs(t) do
         nt[#nt + 1] = {
-            Buffer():write_link(eomap.gen_nsp_eo(v, ctype, true),
+            writer.Buffer():write_link(eomap.gen_nsp_eo(v, ctype, true),
                                 v:full_name_get()):finish(),
             get_brief_doc(v:documentation_get())
         }
@@ -1018,7 +647,7 @@ local build_functable = function(f, title, ctitle, cl, tp)
     f:write_h(title, 3)
     local nt = {}
     for i, v in ipairs(t) do
-        local lbuf = Buffer()
+        local lbuf = writer.Buffer()
         lbuf:write_link(eomap.gen_nsp_func(v, cl, true), v:name_get())
         local pt = propt_to_type[v:type_get()]
         if pt then
@@ -1040,7 +669,7 @@ local build_functable = function(f, title, ctitle, cl, tp)
 end
 
 local build_ref = function()
-    local f = Writer("reference")
+    local f = writer.Writer("reference")
     f:write_h("EFL Reference", 2)
 
     local classes = {}
@@ -1108,7 +737,7 @@ local build_inherits
 build_inherits = function(cl, t, lvl)
     t = t or {}
     lvl = lvl or 0
-    local lbuf = Buffer()
+    local lbuf = writer.Buffer()
     lbuf:write_link(eomap.gen_nsp_class(cl, true), cl:full_name_get())
     lbuf:write_raw(" ")
     lbuf:write_i("(" .. eomap.classt_to_str[cl:type_get()] .. ")")
@@ -1193,7 +822,7 @@ local build_igraph = function(cl)
 end
 
 local build_class = function(cl)
-    local f = Writer(eomap.gen_nsp_class(cl))
+    local f = writer.Writer(eomap.gen_nsp_class(cl))
     stats.check_class(cl)
 
     f:write_h(cl:full_name_get(), 2)
@@ -1202,7 +831,7 @@ local build_class = function(cl)
     f:write_h("Inheritance hierarchy", 3)
     f:write_list(build_inherits(cl))
     f:write_nl()
-    if global_opts.use_dot then
+    if use_dot then
         f:write_graph(build_igraph(cl))
         f:write_nl(2)
     end
@@ -1222,7 +851,7 @@ local build_class = function(cl)
     else
         local nt = {}
         for i, ev in ipairs(evs) do
-            local lbuf = Buffer()
+            local lbuf = writer.Buffer()
             lbuf:write_link(eomap.gen_nsp_ev(ev, cl, true), ev:name_get())
             nt[#nt + 1] = {
                 lbuf:finish(), get_brief_doc(ev:documentation_get())
@@ -1259,7 +888,7 @@ local write_tsigs = function(f, tp)
 end
 
 local build_alias = function(tp)
-    local f = Writer(eomap.gen_nsp_eo(tp, "alias"))
+    local f = writer.Writer(eomap.gen_nsp_eo(tp, "alias"))
     stats.check_alias(tp)
 
     write_tsigs(f, tp)
@@ -1272,7 +901,7 @@ local build_alias = function(tp)
 end
 
 local build_struct = function(tp)
-    local f = Writer(eomap.gen_nsp_eo(tp, "struct"))
+    local f = writer.Writer(eomap.gen_nsp_eo(tp, "struct"))
     stats.check_struct(tp)
 
     write_tsigs(f, tp)
@@ -1285,7 +914,7 @@ local build_struct = function(tp)
 
     local arr = {}
     for fl in tp:struct_fields_get() do
-        local buf = Buffer()
+        local buf = writer.Buffer()
         buf:write_b(fl:name_get())
         buf:write_raw(" - ", get_full_doc(fl:documentation_get()))
         arr[#arr + 1] = buf:finish()
@@ -1297,7 +926,7 @@ local build_struct = function(tp)
 end
 
 local build_enum = function(tp)
-    local f = Writer(eomap.gen_nsp_eo(tp, "enum"))
+    local f = writer.Writer(eomap.gen_nsp_eo(tp, "enum"))
     stats.check_enum(tp)
 
     write_tsigs(f, tp)
@@ -1310,7 +939,7 @@ local build_enum = function(tp)
 
     local arr = {}
     for fl in tp:enum_fields_get() do
-        local buf = Buffer()
+        local buf = writer.Buffer()
         buf:write_b(fl:name_get())
         buf:write_raw(" - ", get_full_doc(fl:documentation_get()))
         arr[#arr + 1] = buf:finish()
@@ -1322,7 +951,7 @@ local build_enum = function(tp)
 end
 
 local build_variable = function(v, constant)
-    local f = Writer(eomap.gen_nsp_eo(v, constant and "constant" or "global"))
+    local f = writer.Writer(eomap.gen_nsp_eo(v, constant and "constant" or "global"))
     if constant then
         stats.check_constant(v)
     else
@@ -1359,7 +988,7 @@ end
 local build_parlist = function(f, pl, nodir)
     local params = {}
     for i, p in ipairs(pl) do
-        local buf = Buffer()
+        local buf = writer.Buffer()
         buf:write_b(p:name_get())
         if not nodir then
             buf:write_raw(" ")
@@ -1400,7 +1029,7 @@ local build_vallist = function(f, pg, ps, title)
 end
 
 build_method = function(fn, cl)
-    local f = Writer(eomap.gen_nsp_func(fn, cl))
+    local f = writer.Writer(eomap.gen_nsp_func(fn, cl))
     stats.check_method(fn, cl)
 
     f:write_h(cl:full_name_get() .. "." .. fn:name_get(), 2)
@@ -1428,7 +1057,7 @@ build_method = function(fn, cl)
 end
 
 build_property = function(fn, cl)
-    local f = Writer(eomap.gen_nsp_func(fn, cl))
+    local f = writer.Writer(eomap.gen_nsp_func(fn, cl))
 
     local fts = eolian.function_type
     local ft = fn:type_get()
@@ -1503,7 +1132,7 @@ build_property = function(fn, cl)
 end
 
 build_event = function(ev, cl)
-    local f = Writer(eomap.gen_nsp_ev(ev, cl))
+    local f = writer.Writer(eomap.gen_nsp_ev(ev, cl))
 
     f:write_h(cl:full_name_get() .. ": " .. ev:name_get(), 2)
 
@@ -1572,16 +1201,17 @@ getopt.parse {
         if opts["h"] then
             return
         end
-        global_opts.verbose = not not opts["v"]
-        global_opts.use_dot = not opts["disable-graphviz"]
-        global_opts.use_notes = not opts["disable-notes"]
-        global_opts.root_nspace = (not opts["n"] or opts["n"] == "")
+        use_dot = not opts["disable-graphviz"]
+        local rootns = (not opts["n"] or opts["n"] == "")
             and "efl" or opts["n"]
+        local dr
         if not opts["r"] or opts["r"] == "" then
-            opts["r"] = "dokuwiki/data/pages"
+            dr = "dokuwiki/data/pages"
+        else
+            dr = opts["r"]
         end
-        global_opts.doc_root = path_join(opts["r"],
-            nspace_to_path(global_opts.root_nspace))
+        dr = dutil.path_join(dr, dutil.nspace_to_path(rootns))
+        dutil.init(dr)
         if #args == 0 then
             if not eolian.system_directory_scan() then
                 error("failed scanning system directory")
@@ -1599,9 +1229,10 @@ getopt.parse {
         if not eolian.all_eo_files_parse() then
             error("failed parsing eo files")
         end
-        stats.init(global_opts.verbose)
-        cutil.file_rmrf(path_join(global_opts.doc_root))
-        mkdir_r(nil)
+        stats.init(not not opts["v"])
+        writer.init(rootns, not opts["disable-notes"])
+        dutil.rm_root()
+        dutil.mkdir_r(nil)
         build_ref()
         build_classes()
         build_typedecls()
