@@ -3752,6 +3752,7 @@ _elm_win_frame_del(Efl_Ui_Win_Data *sd)
               _elm_win_frame_cb_close);
 
         ELM_SAFE_FREE(sd->frame_obj, evas_object_del);
+        evas_object_move(sd->edje, 0, 0);
      }
    if (sd->icon) evas_object_hide(sd->icon);
 
