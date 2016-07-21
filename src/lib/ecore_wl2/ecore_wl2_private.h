@@ -388,6 +388,7 @@ struct _Ecore_Wl2_Input
      {
         struct xkb_keymap *keymap;
         struct xkb_state *state;
+        struct xkb_state *maskless_state;
         xkb_mod_mask_t control_mask;
         xkb_mod_mask_t alt_mask;
         xkb_mod_mask_t shift_mask;
@@ -405,7 +406,7 @@ struct _Ecore_Wl2_Input
    struct
      {
         Ecore_Timer *timer;
-        unsigned int sym, key, time;
+        unsigned int sym, sym_name, key, time;
         double rate, delay;
         Eina_Bool enabled : 1;
         Eina_Bool repeating : 1;

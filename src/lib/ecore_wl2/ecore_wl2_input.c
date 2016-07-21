@@ -414,33 +414,35 @@ _ecore_wl2_input_key_translate(xkb_keysym_t keysym, unsigned int modifiers, char
 }
 
 static void
-_ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_keysym_t sym, unsigned int code, unsigned int state, unsigned int timestamp)
+_ecore_wl2_input_symbol_rep_find(xkb_keysym_t keysym, char *buffer, int size, unsigned int code)
+{
+    int n = 0;
+
+    n = xkb_keysym_to_utf8(keysym, buffer, size);
+
+    /* check if we are a control code */
+    if (n > 0 && !(buffer[0] > 0x0 && buffer[0] < 0x20))
+      return;
+
+    if (xkb_keysym_get_name(keysym, buffer, size) != 0)
+      return;
+
+    snprintf(buffer, size, "Keycode-%u", code);
+}
+
+static void
+_ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_keysym_t sym, xkb_keysym_t sym_name, unsigned int code, unsigned int state, unsigned int timestamp)
 {
    Ecore_Event_Key *ev;
    char key[256], keyname[256], compose[256];
 
    memset(key, 0, sizeof(key));
    memset(keyname, 0, sizeof(keyname));
+   memset(compose, 0, sizeof(compose));
 
    /*try to get a name or utf char of the given symbol */
-   xkb_keysym_to_utf8(sym, keyname, sizeof(keyname));
-   xkb_keysym_get_name(sym, key, sizeof(key));
-
-   if (keyname[0] == '\0' && key[0] != '\0')
-     {
-        memcpy(keyname, key, sizeof(key));
-     }
-   else if (keyname[0] != '\0' && key[0] == '\0')
-     {
-        memcpy(key, keyname, sizeof(keyname));
-     }
-   else if (keyname[0] == '\0' && key[0] == '\0')
-     {
-        snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
-        memcpy(key, keyname, sizeof(keyname));
-     }
-
-   memset(compose, 0, sizeof(compose));
+   _ecore_wl2_input_symbol_rep_find(sym, key, sizeof(key), code);
+   _ecore_wl2_input_symbol_rep_find(sym_name, keyname, sizeof(keyname), code);
    _ecore_wl2_input_key_translate(sym, input->keyboard.modifiers,
                                   compose, sizeof(compose));
 
@@ -462,6 +464,8 @@ _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_
    ev->timestamp = timestamp;
    ev->modifiers = input->keyboard.modifiers;
    ev->keycode = code;
+
+   DBG("Emitting Key event (%s,%s,%s,%s)\n", ev->keyname, ev->key, ev->compose, ev->string);
 
    if (state)
      ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
@@ -709,6 +713,7 @@ _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsign
    /* free any existing keymap and state */
    if (input->xkb.keymap) xkb_map_unref(input->xkb.keymap);
    if (input->xkb.state) xkb_state_unref(input->xkb.state);
+   if (input->xkb.maskless_state) xkb_state_unref(input->xkb.maskless_state);
 
    input->xkb.keymap =
      xkb_map_new_from_string(input->display->xkb_context, map,
@@ -724,7 +729,9 @@ _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsign
      }
 
    input->xkb.state = xkb_state_new(input->xkb.keymap);
-   if (!input->xkb.state)
+   input->xkb.maskless_state = xkb_state_new(input->xkb.keymap);
+
+   if (!input->xkb.state || !input->xkb.maskless_state)
      {
         ERR("Failed to create keymap state");
         xkb_map_unref(input->xkb.keymap);
@@ -817,7 +824,7 @@ _keyboard_cb_repeat(void *data)
    window = input->focus.keyboard;
    if (!window) goto out;
 
-   _ecore_wl2_input_key_send(input, input->focus.keyboard, input->repeat.sym, input->repeat.key + 8, WL_KEYBOARD_KEY_STATE_PRESSED,  input->repeat.time);
+   _ecore_wl2_input_key_send(input, input->focus.keyboard, input->repeat.sym, input->repeat.sym_name, input->repeat.key + 8, WL_KEYBOARD_KEY_STATE_PRESSED,  input->repeat.time);
 
    if (!input->repeat.repeating)
      {
@@ -838,9 +845,8 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
 {
    Ecore_Wl2_Input *input;
    Ecore_Wl2_Window *window;
-   unsigned int code, nsyms;
-   const xkb_keysym_t *syms;
-   xkb_keysym_t sym = XKB_KEY_NoSymbol;
+   unsigned int code;
+   xkb_keysym_t sym = XKB_KEY_NoSymbol, sym_name = XKB_KEY_NoSymbol;
 
    input = data;
    if (!input) return;
@@ -854,10 +860,10 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
    /* xkb rules reflect X broken keycodes, so offset by 8 */
    code = keycode + 8;
 
-   nsyms = xkb_state_key_get_syms(input->xkb.state, code, &syms);
-   if (nsyms == 1) sym = syms[0];
+   sym = xkb_state_key_get_one_sym(input->xkb.state, code);
+   sym_name = xkb_state_key_get_one_sym(input->xkb.maskless_state, code);
 
-   _ecore_wl2_input_key_send(input, window, sym, code, state, timestamp);
+   _ecore_wl2_input_key_send(input, window, sym, sym_name, code, state, timestamp);
 
    if (!xkb_keymap_key_repeats(input->xkb.keymap, code)) return;
 
@@ -876,6 +882,7 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
         if (!input->repeat.enabled) return;
 
         input->repeat.sym = sym;
+        input->repeat.sym_name = sym;
         input->repeat.key = keycode;
         input->repeat.time = timestamp;
 
@@ -1369,6 +1376,7 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
    if (input->data.device) wl_data_device_destroy(input->data.device);
 
    if (input->xkb.state) xkb_state_unref(input->xkb.state);
+   if (input->xkb.maskless_state) xkb_state_unref(input->xkb.maskless_state);
    if (input->xkb.keymap) xkb_map_unref(input->xkb.keymap);
 
    if (input->wl.seat) wl_seat_destroy(input->wl.seat);
