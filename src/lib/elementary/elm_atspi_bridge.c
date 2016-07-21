@@ -1158,6 +1158,7 @@ _action_actions_get(const Eldbus_Service_Interface *iface, const Eldbus_Message 
      {
         const char *descr;
         char *key;
+
         key = elm_interface_atspi_action_keybinding_get(obj, id);
         descr = elm_interface_atspi_action_description_get(obj, id);
         descr = descr ? descr : "";
@@ -1169,7 +1170,6 @@ _action_actions_get(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    return ret;
 
 error:
-   if (iter_array) eldbus_message_iter_container_close(iter, iter_array);
    if (ret) eldbus_message_unref(ret);
    return NULL;
 }
