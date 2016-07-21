@@ -3923,18 +3923,22 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         Eina_List *l = NULL;
         char *part_name;
         char depends_path[PATH_MAX] = "";
-        _circular_dependency_find(ed, ep, NULL, &clist);
-        strncat(depends_path, ep->part->name,
-                sizeof(depends_path) - strlen(depends_path) - 1);
-        EINA_LIST_FOREACH(clist, l, part_name)
+
+        if (_circular_dependency_find(ed, ep, NULL, &clist))
           {
-             strncat(depends_path, " -> ",
+             strncat(depends_path, ep->part->name,
                      sizeof(depends_path) - strlen(depends_path) - 1);
-             strncat(depends_path, part_name,
-                     sizeof(depends_path) - strlen(depends_path) - 1);
+             EINA_LIST_FOREACH(clist, l, part_name)
+               {
+                  strncat(depends_path, " -> ",
+                          sizeof(depends_path) - strlen(depends_path) - 1);
+                  strncat(depends_path, part_name,
+                          sizeof(depends_path) - strlen(depends_path) - 1);
+               }
+             ERR("Circular dependency in the group '%s' : %s",
+                 ed->group, depends_path);
+             eina_list_free(clist);
           }
-        ERR("Circular dependency in the group '%s' : %s", ed->group, depends_path);
-        eina_list_free(clist);
 #endif
         return;
      }
