@@ -1360,6 +1360,12 @@ eo_override(Eo *eo_id, const Eo_Ops *ops)
         _vtable_init(obj->vtable, previous->size);
         _vtable_copy_all(obj->vtable, previous);
      }
+   else
+     {
+        ERR("Function table already overridden, not allowed to override again. "
+            "Call with NULL to reset the function table first.");
+        return EINA_FALSE;
+     }
 
    if (!_eo_class_funcs_set(obj->vtable, ops, obj->klass, klass, EINA_TRUE))
      {

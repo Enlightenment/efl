@@ -452,6 +452,10 @@ EAPI const Eo_Class *eo_class_new(const Eo_Class_Description *desc, const Eo_Cla
  *
  * If @p ops is #NULL, this will revert the @p obj to its original class
  * without any function overrides.
+ *
+ * It is not possible to override a function table of an object when it's
+ * already been overridden. Call eo_override(obj, NULL) first if you really
+ * need to do that.
  */
 EAPI Eina_Bool eo_override(Eo *obj, const Eo_Ops *ops);
 
