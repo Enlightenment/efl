@@ -98,9 +98,13 @@ static Eina_Array const *
 _eldbus_model_proxy_efl_model_properties_get(Eo *obj EINA_UNUSED,
                                                Eldbus_Model_Proxy_Data *pd)
 {
+   Eina_Bool ret;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
 
-   _eldbus_model_proxy_load(pd);
+   ret = _eldbus_model_proxy_load(pd);
+   if (!ret) return NULL;
+
    return pd->properties_array;
 }
 
