@@ -61,7 +61,7 @@ static int
 _keyboard_fd_get(off_t size)
 {
    int fd = 0;
-   const char *path;
+   char *path;
    char tmp[PATH_MAX];
    long flags;
 
