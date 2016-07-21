@@ -601,6 +601,8 @@ eina_promise_all(Eina_Iterator* it)
    eina_iterator_free(it);
 
    promise = eina_safepointer_get((Eina_Safepointer*)(safe_promise = eina_promise_add()));
+   if (!promise) return NULL;
+
    internal_it = promise->pointer_value = malloc(sizeof(_Eina_Promise_Iterator) +
                                                  sizeof(_Eina_Promise_Default_Owner*) * eina_array_count_get(promises));
 
