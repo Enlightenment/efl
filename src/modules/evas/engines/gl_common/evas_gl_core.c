@@ -170,27 +170,44 @@ _internal_resource_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context 
    if (!surface)
      {
         // Set the surface to evas surface if it's there
-        if (rsc->id == evgl_engine->main_tid)
+        // But this reusing mechanism is only available at the single thread model like direct rendering.
+        // So avoid it when evasgl thread rendering is used.
+        if (rsc->id == evgl_engine->main_tid && !evas_gl_thread_enabled())
            rsc->direct.surface = evgl_engine->funcs->evas_surface_get(eng_data);
 
         if (rsc->direct.surface)
            surface = (void*)rsc->direct.surface;
         else
           {
-             if (!rsc->window)
-               {
-                  // Create resource surface
-                  rsc->window = evgl_engine->funcs->native_window_create(eng_data);
-                  if (!rsc->window)
-                    {
-                       ERR("Error creating native window");
-                       return 0;
-                    }
-               }
-
              if (!rsc->surface)
                {
-                  rsc->surface = evgl_engine->funcs->surface_create(eng_data, rsc->window);
+                  // Only need a 'dummy' surface to make current with the evasgl context.
+                  if (evgl_engine->funcs->pbuffer_surface_create)
+                    {
+                       // Now recommended a smallest (1x1) pbuffer surface instead of a window surface.
+                       // But in the future, EGL_KHR_SURFACELESS_CONTEXT can be used.
+                       EVGL_Surface sfc_attrib;
+                       memset(&sfc_attrib, 0x00, sizeof(EVGL_Surface));
+                       sfc_attrib.w = 1;
+                       sfc_attrib.h = 1;
+                       rsc->surface = evgl_engine->funcs->pbuffer_surface_create(eng_data, &sfc_attrib, NULL);
+                    }
+                  else
+                    {
+                       // If the engine doesn't support pbuffer, create a dummy window surface.
+                       if (!rsc->window)
+                         {
+                            // Create resource surface
+                            rsc->window = evgl_engine->funcs->native_window_create(eng_data);
+                            if (!rsc->window)
+                              {
+                                 ERR("Error creating native window");
+                                 return 0;
+                              }
+                         }
+                       rsc->surface = evgl_engine->funcs->surface_create(eng_data, rsc->window);
+                    }
+
                   if (!rsc->surface)
                     {
                        ERR("Error creating native surface");
