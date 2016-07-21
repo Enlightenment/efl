@@ -592,6 +592,7 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Edje_P
              ce_out = malloc(sizeof(*ce_out)); \
              memcpy(ce_out, ce_cor, sizeof(*ce_out)); \
              ce_out->id = *current_id; \
+             ce_out->group_alias = EINA_FALSE; \
              EINA_LOG_INFO("Changing ID of group <%d> to <%d>\n", ce->id, ce_out->id); \
              eina_hash_direct_add(out_file->collection, ce_out->entry, ce_out); \
              (*current_id)++; \
@@ -704,6 +705,8 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
                   ce_out = malloc(sizeof(*ce_out));
 
                   memcpy(ce_out, ce, sizeof(*ce_out));
+                  /* reset flag alias */
+                  ce_out->group_alias = EINA_FALSE;
 
                   ce_out->id = current_group_id;
                   EINA_LOG_INFO("Changing ID of group <%d> to <%d>\n",
