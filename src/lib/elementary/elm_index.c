@@ -1544,8 +1544,7 @@ _elm_index_item_sorted_insert(Eo *obj, Elm_Index_Data *sd, const char *letter, E
         elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, eo_item);
      }
 
-   if (!eo_item) return NULL;
-   else return eo_item;
+   return eo_item;
 }
 
 EOLIAN static Elm_Object_Item*
