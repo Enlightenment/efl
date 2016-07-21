@@ -4944,13 +4944,12 @@ _efl_ui_win_borderless_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool b
 
    if (borderless)
      {
-        if (need_frame)
+        if (need_frame && sd->frame_obj)
           _elm_win_frame_del(sd);
      }
-   else
+   else if (need_frame && (!sd->frame_obj))
      {
-        if (need_frame)
-          _elm_win_frame_add(sd, "default");
+        _elm_win_frame_add(sd, "default");
 
         if (sd->frame_obj)
           evas_object_show(sd->frame_obj);
