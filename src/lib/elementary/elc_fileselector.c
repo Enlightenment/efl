@@ -102,7 +102,7 @@ _elm_fileselector_replace_model(Elm_Fileselector *fs, Elm_Fileselector_Data *sd,
 
    if (model && path)
      {
-        sd->model = model ? eo_ref(model) : NULL;
+        sd->model = eo_ref(model);
         eina_stringshare_replace(&sd->path, path);
         _monitoring_start(fs, sd, sd->model);
         /* TODO: sub directory should be monitored for expand mode */
