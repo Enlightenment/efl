@@ -4572,7 +4572,8 @@ st_collections_group_target_group(void)
 static void
 st_collections_group_inherit(void)
 {
-   Edje_Part_Collection *pc, *pc2;
+   Edje_Part_Collection_Directory_Entry *alias;
+   Edje_Part_Collection *pc, *pc2 = NULL;
    Edje_Part_Collection_Parser *pcp, *pcp2;
    Edje_Part *ep, *ep2;
    Edje_List_Foreach_Data fdata;
@@ -4586,17 +4587,34 @@ st_collections_group_inherit(void)
 
    parent_name = parse_str(0);
 
-   EINA_LIST_FOREACH(edje_collections, l, pc2)
+   EINA_LIST_FOREACH(aliases, l, alias)
      {
-        if (!strcmp(parent_name, pc2->part))
-          break;
+        if (alias->group_alias &&
+            !strcmp(alias->entry, parent_name))
+          {
+             free(parent_name);
+             pc2 = eina_list_nth(edje_collections, alias->id);
+             parent_name = strdup(pc2->part);
+             break;
+          }
      }
+
+   if (!pc2)
+     {
+        EINA_LIST_FOREACH(edje_collections, l, pc2)
+          {
+             if (!strcmp(parent_name, pc2->part))
+               break;
+          }
+     }
+
    if (!pc2)
      {
         ERR("parse error %s:%i. There isn't a group with the name %s",
             file_in, line - 1, parent_name);
         exit(-1);
      }
+
    if (pc2 == pc)
      {
         ERR("parse error %s:%i. You are trying to inherit '%s' from itself. That's not possible."
