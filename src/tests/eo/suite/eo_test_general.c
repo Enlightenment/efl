@@ -88,16 +88,27 @@ START_TEST(eo_override_tests)
    EO_OVERRIDE_OPS_DEFINE(
             overrides2,
             EO_OP_FUNC_OVERRIDE(simple_a_set, _simple_obj_override_a_double_set));
+   fail_if(!eo_override(obj, NULL));
    fail_if(!eo_override(obj, &overrides2));
 
    simple_a_set(obj, OVERRIDE_A_SIMPLE);
-   ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A + (OVERRIDE_A_SIMPLE * 2));
+   ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A_SIMPLE * 2);
+
+   /* Try overriding again - not allowed by policy */
+   fail_if(eo_override(obj, &overrides));
+   ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A_SIMPLE * 2);
 
    /* Try introducing a new function */
    EO_OVERRIDE_OPS_DEFINE(
             overrides3,
             EO_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set));
+   fail_if(!eo_override(obj, NULL));
    fail_if(eo_override(obj, &overrides3));
+
+   /* Test override reset */
+   fail_if(!eo_override(obj, NULL));
+   simple_a_set(obj, 42 * OVERRIDE_A_SIMPLE);
+   ck_assert_int_eq(simple_a_get(obj), 42 * OVERRIDE_A_SIMPLE);
 
    eo_unref(obj);
 
