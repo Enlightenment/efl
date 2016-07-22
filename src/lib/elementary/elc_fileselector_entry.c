@@ -467,6 +467,12 @@ elm_fileselector_entry_path_set(Evas_Object *obj,
                                 const char *path)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
+   _elm_fileselector_entry_path_set_internal(obj, path);
+}
+
+void
+_elm_fileselector_entry_path_set_internal(Evas_Object *obj, const char *path)
+{
    ELM_FILESELECTOR_ENTRY_DATA_GET_OR_RETURN(obj, sd);
    char *s = elm_entry_utf8_to_markup(path);
    if (s)
@@ -511,6 +517,12 @@ EINA_DEPRECATED EAPI const char *
 elm_fileselector_entry_path_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
+   return _elm_fileselector_entry_path_get_internal(obj);
+}
+
+const char *
+_elm_fileselector_entry_path_get_internal(const Evas_Object *obj)
+{
    ELM_FILESELECTOR_ENTRY_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
    free(sd->path);
    sd->path = elm_entry_markup_to_utf8(elm_object_text_get(sd->entry));

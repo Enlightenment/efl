@@ -2176,6 +2176,20 @@ elm_fileselector_path_set(Evas_Object *obj,
                           const char *_path)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
+   const Eo_Class *cls = eo_class_get(obj);
+   if (cls == ELM_FILESELECTOR_CLASS)
+     _elm_fileselector_path_set_internal(obj, _path);
+   else if (cls == ELM_FILESELECTOR_ENTRY_CLASS)
+     _elm_fileselector_entry_path_set_internal(obj, _path);
+   else if (cls == ELM_FILESELECTOR_BUTTON_CLASS)
+     _elm_fileselector_button_path_set_internal(obj, _path);
+   else
+     ERR("Unknown Elm.Fileselector class");
+}
+
+void
+_elm_fileselector_path_set_internal(Evas_Object *obj, const char *_path)
+{
    Eio_Model *model = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, _path));
    if (!model)
      {
@@ -2196,6 +2210,23 @@ EAPI const char *
 elm_fileselector_path_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
+   const Eo_Class *cls = eo_class_get(obj);
+   if (cls == ELM_FILESELECTOR_CLASS)
+     return _elm_fileselector_path_get_internal(obj);
+   else if (cls == ELM_FILESELECTOR_ENTRY_CLASS)
+     return _elm_fileselector_entry_path_get_internal(obj);
+   else if (cls == ELM_FILESELECTOR_BUTTON_CLASS)
+     return _elm_fileselector_button_path_get_internal(obj);
+   else
+     {
+        ERR("Unknown Elm.Fileselector class");
+        return NULL;
+     }
+}
+
+const char *
+_elm_fileselector_path_get_internal(const Evas_Object *obj)
+{
    ELM_FILESELECTOR_DATA_GET(obj, sd);
    return sd->path;
 }

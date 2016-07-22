@@ -323,7 +323,6 @@ elm_fileselector_button_window_size_get(const Eo *obj, Evas_Coord *width, Evas_C
 void
 _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path)
 {
-   ELM_FILESELECTOR_INTERFACE_CHECK(obj);
    ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(obj, sd);
 
    Efl_Model *model = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eo_self, path));
@@ -345,6 +344,7 @@ _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path)
 EINA_DEPRECATED EAPI void
 elm_fileselector_button_path_set(Evas_Object *obj, const char *path)
 {
+   ELM_FILESELECTOR_INTERFACE_CHECK(obj);
    _elm_fileselector_button_path_set_internal(obj, path);
 }
 
@@ -373,7 +373,6 @@ _elm_fileselector_button_elm_interface_fileselector_model_set(Eo *obj EINA_UNUSE
 const char *
 _elm_fileselector_button_path_get_internal(const Evas_Object *obj)
 {
-   ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
    ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
    return sd->fsd.path;
 }
@@ -381,6 +380,7 @@ _elm_fileselector_button_path_get_internal(const Evas_Object *obj)
 EINA_DEPRECATED EAPI const char *
 elm_fileselector_button_path_get(const Evas_Object *obj)
 {
+   ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
    return _elm_fileselector_button_path_get_internal(obj);
 }
 

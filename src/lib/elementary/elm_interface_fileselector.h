@@ -13,6 +13,18 @@
     }
 
 void
+_elm_fileselector_path_set_internal(Evas_Object *obj, const char *path);
+
+const char *
+_elm_fileselector_path_get_internal(const Evas_Object *obj);
+
+void
+_elm_fileselector_entry_path_set_internal(Evas_Object *obj, const char *path);
+
+const char *
+_elm_fileselector_entry_path_get_internal(const Evas_Object *obj);
+
+void
 _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path);
 
 const char *
