@@ -5,250 +5,12 @@ local eomap = require("docgen.mappings")
 local stats = require("docgen.stats")
 local dutil = require("docgen.util")
 local writer = require("docgen.writer")
+local keyref = require("docgen.keyref")
+local ser = require("docgen.serializers")
 
 local use_dot
 
--- keyword reference
-
-local key_refs = {}
-
-local add_ref = function(key, lang)
-    local rfs = key_refs[lang]
-    if not rfs then
-        key_refs[lang] = {}
-        rfs = key_refs[lang]
-    end
-    rfs[key] = true
-end
-
-local build_reflist = function()
-    for lang, rfs in pairs(key_refs) do
-        local f = writer.Writer({ "ref", lang, "keyword-list" })
-        local arr = {}
-        for refn, v in pairs(rfs) do
-            arr[#arr + 1] = refn
-        end
-        table.sort(arr)
-        f:write_raw(table.concat(arr, "\n"))
-        f:write_nl()
-        f:finish()
-    end
-end
-
 -- eolian to various doc elements conversions
-
-local wrap_type_attrs = function(tp, str)
-    if tp:is_const() then
-        str = "const(" .. str .. ")"
-    end
-    if tp:is_own() then
-        str = "own(" .. str .. ")"
-    end
-    local ffunc = tp:free_func_get()
-    if ffunc then
-        str = "free(" .. str .. ", " .. ffunc .. ")"
-    end
-    if tp:is_ref() then
-        str = "ref(" .. str .. ")"
-    end
-    return str
-end
-
-local get_type_str
-get_type_str = function(tp)
-    local tps = eolian.type_type
-    local tpt = tp:type_get()
-    if tpt == tps.UNKNOWN then
-        error("unknown type: " .. tp:full_name_get())
-    elseif tpt == tps.VOID then
-        return wrap_type_attrs(tp, "void")
-    elseif tpt == tps.UNDEFINED then
-        return wrap_type_attrs(tp, "__undefined_type")
-    elseif tpt == tps.REGULAR or tpt == tps.CLASS then
-        return wrap_type_attrs(tp, tp:full_name_get())
-    elseif tpt == tps.COMPLEX then
-        local stypes = {}
-        local stp = tp:base_type_get()
-        while stp do
-            stypes[#stypes + 1] = get_type_str(stp)
-            stp = stp:next_type_get()
-        end
-        return wrap_type_attrs(tp, tp:full_name_get() .. "<"
-            .. table.concat(stypes, ", ") .. ">")
-    elseif tpt == tps.POINTER then
-        local btp = tp:base_type_get()
-        local suffix = " *"
-        if btp:type_get() == tps.POINTER then
-            suffix = "*"
-        end
-        return wrap_type_attrs(tp, get_type_str(btp) .. suffix)
-    elseif tpt == tps.STATIC_ARRAY then
-        return wrap_type_attrs(tp, "static_array<"
-            .. get_type_str(tp:base_type_get()) .. ", "
-            .. tp:array_size_get() .. ">")
-    elseif tpt == tps.TERMINATED_ARRAY then
-        return wrap_type_attrs(tp, "terminated_array<"
-            .. get_type_str(tp:base_type_get()) .. ">")
-    end
-    error("unhandled type type: " .. tpt)
-end
-
-local add_typedecl_attrs = function(tp, buf)
-    if tp:is_extern() then
-        buf[#buf + 1] = "@extern "
-    end
-    local ffunc = tp:free_func_get()
-    if ffunc then
-        buf[#buf + 1] = "@free("
-        buf[#buf + 1] = ffunc
-        buf[#buf + 1] = ") "
-    end
-end
-
-local get_typedecl_str = function(tp)
-    local tps = eolian.typedecl_type
-    local tpt = tp:type_get()
-    if tpt == tps.UNKNOWN then
-        error("unknown typedecl: " .. tp:full_name_get())
-    elseif tpt == tps.STRUCT or tpt == tps.STRUCT_OPAQUE then
-        local buf = { "struct " }
-        add_typedecl_attrs(tp, buf)
-        buf[#buf + 1] = tp:full_name_get()
-        if tpt == tps.STRUCT_OPAQUE then
-            buf[#buf + 1] = ";"
-            return table.concat(buf)
-        end
-        local fields = tp:struct_fields_get():to_array()
-        if #fields == 0 then
-            buf[#buf + 1] = " {}"
-            return table.concat(buf)
-        end
-        buf[#buf + 1] = " {\n"
-        for i, fld in ipairs(fields) do
-            buf[#buf + 1] = "    "
-            buf[#buf + 1] = fld:name_get()
-            buf[#buf + 1] = ": "
-            buf[#buf + 1] = get_type_str(fld:type_get())
-            buf[#buf + 1] = ";\n"
-        end
-        buf[#buf + 1] = "}"
-        return table.concat(buf)
-    elseif tpt == tps.ENUM then
-        local buf = { "enum " }
-        add_typedecl_attrs(tp, buf)
-        buf[#buf + 1] = tp:full_name_get()
-        local fields = tp:enum_fields_get():to_array()
-        if #fields == 0 then
-            buf[#buf + 1] = " {}"
-            return table.concat(buf)
-        end
-        buf[#buf + 1] = " {\n"
-        for i, fld in ipairs(fields) do
-            buf[#buf + 1] = "    "
-            buf[#buf + 1] = fld:name_get()
-            local val = fld:value_get()
-            if val then
-                buf[#buf + 1] = ": "
-                buf[#buf + 1] = val:serialize()
-            end
-            if i == #fields then
-                buf[#buf + 1] = "\n"
-            else
-                buf[#buf + 1] = ",\n"
-            end
-        end
-        buf[#buf + 1] = "}"
-        return table.concat(buf)
-    elseif tpt == tps.ALIAS then
-        local buf = { "type " }
-        add_typedecl_attrs(tp, buf)
-        buf[#buf + 1] = tp:full_name_get()
-        buf[#buf + 1] = ": "
-        buf[#buf + 1] = get_type_str(tp:base_type_get())
-        buf[#buf + 1] = ";"
-        return table.concat(buf)
-    end
-    error("unhandled typedecl type: " .. tpt)
-end
-
-local get_suffixed_ctype = function(tp, suffix)
-    if not tp then tp = "void" end
-    local ct = (type(tp) == "string") and tp or tp:c_type_get()
-    if ct:sub(#ct) == "*" then
-        return ct .. suffix
-    else
-        return ct .. " " .. suffix
-    end
-end
-
-local get_typedecl_cstr = function(tp)
-    local tps = eolian.typedecl_type
-    local tpt = tp:type_get()
-    if tpt == tps.UNKNOWN then
-        error("unknown typedecl: " .. tp:full_name_get())
-    elseif tpt == tps.STRUCT or tpt == tps.STRUCT_OPAQUE then
-        local buf = { "typedef struct " }
-        local fulln = tp:full_name_get():gsub("%.", "_");
-        add_ref(fulln, "c")
-        buf[#buf + 1] = "_" .. fulln;
-        if tpt == tps.STRUCT_OPAQUE then
-            buf[#buf + 1] = " " .. fulln .. ";"
-            return table.concat(buf)
-        end
-        local fields = tp:struct_fields_get():to_array()
-        if #fields == 0 then
-            buf[#buf + 1] = " {} " .. fulln .. ";"
-            return table.concat(buf)
-        end
-        buf[#buf + 1] = " {\n"
-        for i, fld in ipairs(fields) do
-            buf[#buf + 1] = "    "
-            buf[#buf + 1] = get_suffixed_ctype(fld:type_get(), fld:name_get())
-            buf[#buf + 1] = ";\n"
-        end
-        buf[#buf + 1] = "} " .. fulln .. ";"
-        return table.concat(buf)
-    elseif tpt == tps.ENUM then
-        local buf = { "typedef enum" }
-        local fulln = tp:full_name_get():gsub("%.", "_");
-        add_ref(fulln, "c")
-        local fields = tp:enum_fields_get():to_array()
-        if #fields == 0 then
-            buf[#buf + 1] = " {} " .. fulln .. ";"
-            return table.concat(buf)
-        end
-        buf[#buf + 1] = " {\n"
-        for i, fld in ipairs(fields) do
-            buf[#buf + 1] = "    "
-            local cn = fld:c_name_get()
-            buf[#buf + 1] = cn
-            add_ref(cn, "c")
-            local val = fld:value_get()
-            if val then
-                buf[#buf + 1] = " = "
-                local ev = val:eval(eolian.expression_mask.INT)
-                local lit = ev:to_literal()
-                buf[#buf + 1] = lit
-                local ser = val:serialize()
-                if ser and ser ~= lit then
-                    buf[#buf + 1] = " /* " .. ser .. " */"
-                end
-            end
-            if i == #fields then
-                buf[#buf + 1] = "\n"
-            else
-                buf[#buf + 1] = ",\n"
-            end
-        end
-        buf[#buf + 1] = "} " .. fulln .. ";"
-        return table.concat(buf)
-    elseif tpt == tps.ALIAS then
-        local fulln = tp:full_name_get():gsub("%.", "_");
-        add_ref(fulln, "c")
-        return "typedef " .. get_suffixed_ctype(tp:base_type_get(), fulln) .. ";"
-    end
-    error("unhandled typedecl type: " .. tpt)
-end
 
 local gen_doc_refd = function(str)
     if not str then
@@ -335,16 +97,16 @@ local gen_cparam = function(par, out)
     out = out or (par:direction_get() == eolian.parameter_dir.OUT)
     local tstr = part:c_type_get()
     if out then
-        tstr = get_suffixed_ctype(tstr, "*")
+        tstr = ser.get_ctype_str(tstr, "*")
     end
-    return get_suffixed_ctype(tstr, par:name_get())
+    return ser.get_ctype_str(tstr, par:name_get())
 end
 
 local get_func_csig_part = function(cn, tp)
     if not tp then
         return "void " .. cn
     end
-    return get_suffixed_ctype(tp, cn)
+    return ser.get_ctype_str(tp, cn)
 end
 
 local gen_func_csig = function(f, ftype)
@@ -352,7 +114,7 @@ local gen_func_csig = function(f, ftype)
     assert(ftype ~= eolian.function_type.PROPERTY)
 
     local cn = f:full_c_name_get(ftype)
-    add_ref(cn, "c")
+    keyref.add(cn, "c")
     local rtype = f:return_type_get(ftype)
 
     local fparam = "Eo *obj"
@@ -451,7 +213,7 @@ local gen_func_param = function(fp, buf, nodir)
     if not nodir then buf[#buf + 1] = dirs[fp:direction_get()] end
     buf[#buf + 1] = fp:name_get()
     buf[#buf + 1] = ": "
-    buf[#buf + 1] = get_type_str(fp:type_get())
+    buf[#buf + 1] = ser.get_type_str(fp:type_get())
     local dval = fp:default_value_get()
     if dval then
         buf[#buf + 1] = " ("
@@ -477,7 +239,7 @@ local gen_func_return = function(fp, ftype, buf, indent)
     end
     buf[#buf + 1] = indent and ("    "):rep(indent) or "    "
     buf[#buf + 1] = "return: "
-    buf[#buf + 1] = get_type_str(rett)
+    buf[#buf + 1] = ser.get_type_str(rett)
     local dval = fp:return_default_value_get(ftype)
     if dval then
         buf[#buf + 1] = " ("
@@ -826,7 +588,7 @@ local build_class = function(cl)
     stats.check_class(cl)
 
     f:write_h(cl:full_name_get(), 2)
-    add_ref(cl:full_name_get():gsub("%.", "_"), "c")
+    keyref.add(cl:full_name_get():gsub("%.", "_"), "c")
 
     f:write_h("Inheritance hierarchy", 3)
     f:write_list(build_inherits(cl))
@@ -879,11 +641,11 @@ local write_tsigs = function(f, tp)
     f:write_h(tp:full_name_get(), 2)
 
     f:write_h("Signature", 3)
-    f:write_code(get_typedecl_str(tp))
+    f:write_code(ser.get_typedecl_str(tp))
     f:write_nl()
 
     f:write_h("C signature", 3)
-    f:write_code(get_typedecl_cstr(tp), "c")
+    f:write_code(ser.get_typedecl_cstr(tp), "c")
     f:write_nl()
 end
 
@@ -1158,7 +920,7 @@ build_event = function(ev, cl)
     local etp = ev:type_get()
     if etp then
         buf[#buf + 1] = ": "
-        buf[#buf + 1] = get_type_str(etp)
+        buf[#buf + 1] = ser.get_type_str(etp)
     end
 
     buf[#buf + 1] = ";"
@@ -1167,8 +929,8 @@ build_event = function(ev, cl)
 
     f:write_h("C signature", 3)
     local cn = ev:c_name_get()
-    add_ref(cn, "c")
-    f:write_code(get_suffixed_ctype(etp, cn) .. ";", "c")
+    keyref.add(cn, "c")
+    f:write_code(ser.get_ctype_str(etp, cn) .. ";", "c")
     f:write_nl()
 
     f:write_h("Description", 3)
@@ -1237,7 +999,7 @@ getopt.parse {
         build_classes()
         build_typedecls()
         build_variables()
-        build_reflist()
+        keyref.build()
         stats.print()
     end
 }
