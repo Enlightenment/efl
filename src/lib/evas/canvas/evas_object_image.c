@@ -2313,6 +2313,27 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                {
                   Eina_Rectangle *rr;
 
+                  if (evas_object_is_opaque(eo_obj, obj))
+                    {
+                       Evas_Coord x, y, w, h;
+
+                       x = obj->cur->cache.clip.x;
+                       y = obj->cur->cache.clip.y;
+                       w = obj->cur->cache.clip.w;
+                       h = obj->cur->cache.clip.h;
+                       if (obj->cur->clipper)
+                         {
+                            RECTS_CLIP_TO_RECT(x, y, w, h,
+                                               obj->cur->clipper->cur->cache.clip.x,
+                                               obj->cur->clipper->cur->cache.clip.y,
+                                               obj->cur->clipper->cur->cache.clip.w,
+                                               obj->cur->clipper->cur->cache.clip.h);
+                         }
+                       e->engine.func->output_redraws_rect_del(e->engine.data.output,
+                                                               x + e->framespace.x,
+                                                               y + e->framespace.y,
+                                                               w, h);
+                    }
                   EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
                     {
                        EINA_LIST_FREE(pixi_write->pixel_updates, rr)
@@ -2361,7 +2382,6 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                          }
                     }
                   EINA_COW_PIXEL_WRITE_END(o, pixi_write);
-                  goto done;
                }
              else
                {
@@ -2377,6 +2397,48 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                     {
                        Eina_Rectangle *rr;
 
+                       if (evas_object_is_opaque(eo_obj, obj))
+                         {
+                            Evas_Coord x, y, w, h;
+
+                            x = obj->cur->cache.clip.x;
+                            y = obj->cur->cache.clip.y;
+                            w = obj->cur->cache.clip.w;
+                            h = obj->cur->cache.clip.h;
+                            if (obj->cur->clipper)
+                              {
+                                 RECTS_CLIP_TO_RECT(x, y, w, h,
+                                                    obj->cur->clipper->cur->cache.clip.x,
+                                                    obj->cur->clipper->cur->cache.clip.y,
+                                                    obj->cur->clipper->cur->cache.clip.w,
+                                                    obj->cur->clipper->cur->cache.clip.h);
+                              }
+                            e->engine.func->output_redraws_rect_del(e->engine.data.output,
+                                                                    x + e->framespace.x,
+                                                                    y + e->framespace.y,
+                                                                    w, h);
+                         }
+                       else if (o->cur->border.fill == EVAS_BORDER_FILL_SOLID)
+                         {
+                            Evas_Coord x, y, w, h;
+
+                            x = obj->cur->geometry.x + o->cur->border.l;
+                            y = obj->cur->geometry.y + o->cur->border.t;
+                            w = obj->cur->geometry.w - o->cur->border.l - o->cur->border.r;
+                            h = obj->cur->geometry.h - o->cur->border.t - o->cur->border.b;
+                            if (obj->cur->clipper)
+                              {
+                                 RECTS_CLIP_TO_RECT(x, y, w, h,
+                                                    obj->cur->clipper->cur->cache.clip.x,
+                                                    obj->cur->clipper->cur->cache.clip.y,
+                                                    obj->cur->clipper->cur->cache.clip.w,
+                                                    obj->cur->clipper->cur->cache.clip.h);
+                              }
+                            e->engine.func->output_redraws_rect_del(e->engine.data.output,
+                                                                    x + e->framespace.x,
+                                                                    y + e->framespace.y,
+                                                                    w, h);
+                         }
                        EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
                          {
                             EINA_LIST_FREE(pixi_write->pixel_updates, rr)
@@ -2398,7 +2460,6 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                               }
                          }
                        EINA_COW_PIXEL_WRITE_END(o, pixi_write);
-                       goto done;
                     }
                   else
                     {
@@ -2414,16 +2475,15 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
 
                        evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj,
                                                            obj);
-                       goto done;
                     }
                }
+             goto done;
           }
      }
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* aren't fully opaque and we are visible */
-   if (evas_object_is_visible(eo_obj, obj) &&
-       evas_object_is_opaque(eo_obj, obj))
+   if (evas_object_is_opaque(eo_obj, obj))
      {
         Evas_Coord x, y, w, h;
 
