@@ -87,8 +87,8 @@ static Dmabuf_Buffer *_evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h);
 static void _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b);
 
 drm_intel_bufmgr *(*sym_drm_intel_bufmgr_gem_init)(int fd, int batch_size) = NULL;
-int (*sym_drm_intel_gem_bo_unmap_gtt)(drm_intel_bo *bo) = NULL;
-int (*sym_drm_intel_gem_bo_map_gtt)(drm_intel_bo *bo) = NULL;
+int (*sym_drm_intel_bo_unmap)(drm_intel_bo *bo) = NULL;
+int (*sym_drm_intel_bo_map)(drm_intel_bo *bo) = NULL;
 drm_intel_bo *(*sym_drm_intel_bo_alloc_tiled)(drm_intel_bufmgr *mgr, const char *name, int x, int y, int cpp, uint32_t *tile, unsigned long *pitch, unsigned long flags) = NULL;
 void (*sym_drm_intel_bo_unreference)(drm_intel_bo *bo) = NULL;
 int (*sym_drmPrimeHandleToFD)(int fd, uint32_t handle, uint32_t flags, int *prime_fd) = NULL;
@@ -136,7 +136,7 @@ _intel_map(Dmabuf_Buffer *buf)
    drm_intel_bo *bo;
 
    bo = (drm_intel_bo *)buf->bh;
-   if (sym_drm_intel_gem_bo_map_gtt(bo) != 0) return NULL;
+   if (sym_drm_intel_bo_map(bo) != 0) return NULL;
    return bo->virtual;
 }
 
@@ -146,7 +146,7 @@ _intel_unmap(Dmabuf_Buffer *buf)
    drm_intel_bo *bo;
 
    bo = (drm_intel_bo *)buf->bh;
-   sym_drm_intel_gem_bo_unmap_gtt(bo);
+   sym_drm_intel_bo_unmap(bo);
 }
 
 static void
@@ -174,8 +174,8 @@ _intel_buffer_manager_setup(int fd)
    if (!drm_intel_lib) return EINA_FALSE;
 
    SYM(drm_intel_lib, drm_intel_bufmgr_gem_init);
-   SYM(drm_intel_lib, drm_intel_gem_bo_unmap_gtt);
-   SYM(drm_intel_lib, drm_intel_gem_bo_map_gtt);
+   SYM(drm_intel_lib, drm_intel_bo_unmap);
+   SYM(drm_intel_lib, drm_intel_bo_map);
    SYM(drm_intel_lib, drm_intel_bo_alloc_tiled);
    SYM(drm_intel_lib, drm_intel_bo_unreference);
    SYM(drm_intel_lib, drm_intel_bufmgr_destroy);
