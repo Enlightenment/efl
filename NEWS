@@ -1112,6 +1112,18 @@ Fixes:
    * elementary: Fix issue of toggling border state causing visual jumps (T4092)
    * elocation: properly generate pkgconfig file. (T4120)
    * ecore_con: fix lookup of libcurl on OpenBSD. (T4130)
+   * eina rbtree iterator - fix leak found while debugging other problems
+   * evas - on shutdown avoid potential invalid memory access (T4103)
+   * edje_pick: copy dependent group
+   * elm flip - make it not crash and interactive mode work again
+   * edje_pick: reset alias flag for copied group
+   * evas: Fix missing breaks in switch (CID1347414, CID1347413)
+   * edje: Fix unchecked return value (CID1349867)
+   * eldbus: Check return value and error out if necessary (CID1355233)
+   * elementary: Remove logically dead code (CID1355585)
+   * elementary: Remove logically dead code (CID1356617)
+   * eina: Fix null pointer derefernce (CID1356625)
+   * elementary: Remove logically dead code (CID1357392)
 
 Changes since 1.16.0:
 ---------------------
