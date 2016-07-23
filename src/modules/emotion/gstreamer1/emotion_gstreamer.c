@@ -895,7 +895,7 @@ em_spu_channel_set(void *video, int channel)
 
    if (channel < 0) channel = -1;
 
-   g_object_set (ev->pipeline, "current-text", channel, NULL);
+   g_object_set(ev->pipeline, "current-text", channel, NULL);
 }
 
 static int
@@ -918,14 +918,34 @@ em_spu_channel_name_get(void *video EINA_UNUSED, int channel EINA_UNUSED)
 }
 
 static void
-em_spu_channel_mute_set(void *video EINA_UNUSED, int mute EINA_UNUSED)
+em_spu_channel_mute_set(void *video, int mute)
 {
+   Emotion_Gstreamer *ev = video;
+   gint flags;
+
+   if (!ev->pipeline) return;
+
+   g_object_get(ev->pipeline, "flags", &flags, NULL);
+
+   if (mute)
+     flags &= ~GST_PLAY_FLAG_TEXT;
+   else
+     flags |= GST_PLAY_FLAG_TEXT;
+
+   g_object_set(ev->pipeline, "flags", flags, NULL);
 }
 
 static int
-em_spu_channel_mute_get(void *video EINA_UNUSED)
+em_spu_channel_mute_get(void *video)
 {
-   return 0;
+   Emotion_Gstreamer *ev = video;
+   gint flags;
+
+   if (!ev->pipeline) return 0;
+
+   g_object_get(ev->pipeline, "flags", &flags, NULL);
+
+   return (flags & GST_PLAY_FLAG_TEXT) ? 0 : 1;
 }
 
 static int
