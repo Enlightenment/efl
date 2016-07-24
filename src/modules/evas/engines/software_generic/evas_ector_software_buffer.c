@@ -42,7 +42,6 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
    pd->evas = eo_xref(evas, obj);
    evas_cache_image_ref(&im->cache_entry);
    pd->image = im;
-   if (!pd->image) return;
 
    ector_buffer_pixels_set(obj, im->image.data, im->cache_entry.w, im->cache_entry.h, 0, (Efl_Gfx_Colorspace) im->cache_entry.space, EINA_TRUE, 0, 0, 0, 0);
 }
