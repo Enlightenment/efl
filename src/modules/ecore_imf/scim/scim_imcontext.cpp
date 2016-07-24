@@ -1413,8 +1413,8 @@ panel_slot_process_helper_event(int context, const String &target_uuid, const St
    EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " target=" << target_uuid
-      << " helper=" << helper_uuid << " ic=" << ic << " ic->impl=" << (ic ? ic->impl : 0) << " ic-uuid="
-      << ((ic && ic->impl) ? ic->impl->si->get_factory_uuid() : "" ) << "\n";
+      << " helper=" << helper_uuid << " ic=" << ic << " ic->impl=" << ic->impl << " ic-uuid="
+      << (ic->impl ? ic->impl->si->get_factory_uuid() : "" ) << "\n";
 
    if (ic->impl->si->get_factory_uuid() == target_uuid)
      {
