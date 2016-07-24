@@ -920,7 +920,7 @@ evas_cache2_image_scale_load(Image_Entry *im,
 
    ret = _evas_cache2_image_entry_new(im->cache2, hkey, NULL, im->file, im->key,
                                      &lo, &error);
-   if (error != EVAS_LOAD_ERROR_NONE)
+   if ((!ret) || (error != EVAS_LOAD_ERROR_NONE))
      {
         ERR("Failed to create scale image entry with error code %d.", error);
 
