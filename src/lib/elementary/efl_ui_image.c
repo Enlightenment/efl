@@ -257,10 +257,13 @@ _efl_ui_image_async_open_do(void *data, Ecore_Thread *thread EINA_UNUSED)
    done = sd->async.done;
    sd->async.todo = NULL;
    sd->async.done = NULL;
-   eina_spinlock_release(&sd->async.lck);
 
    if (done) _async_open_data_free(done);
-   if (!todo) return;
+   if (!todo)
+     {
+        eina_spinlock_release(&sd->async.lck);
+        return;
+     }
 
 begin:
    if (todo->f_set)
@@ -272,7 +275,6 @@ begin:
         if (!f)
           {
              todo->failed = EINA_TRUE;
-             eina_spinlock_take(&sd->async.lck);
              sd->async.done = todo;
              eina_spinlock_release(&sd->async.lck);
              return;
@@ -281,6 +283,7 @@ begin:
    else
      {
         CRI("Async open has no input file!");
+        eina_spinlock_release(&sd->async.lck);
         return;
      }
 
@@ -288,6 +291,7 @@ begin:
      {
         if (!todo->f_set) eina_file_close(f);
         _async_open_data_free(todo);
+        eina_spinlock_release(&sd->async.lck);
         return;
      }
 
@@ -301,6 +305,7 @@ begin:
         if (map) eina_file_map_free(f, map);
         if (!todo->f_set) eina_file_close(f);
         _async_open_data_free(todo);
+        eina_spinlock_release(&sd->async.lck);
         return;
      }
 
@@ -312,11 +317,9 @@ begin:
    done->f_open = f;
    done->map = map;
 
-   eina_spinlock_take(&sd->async.lck);
    todo = sd->async.todo;
    sd->async.todo = NULL;
    if (!todo) sd->async.done = done;
-   eina_spinlock_release(&sd->async.lck);
 
    if (todo)
      {
@@ -324,6 +327,7 @@ begin:
         _async_open_data_free(done);
         goto begin;
      }
+   eina_spinlock_release(&sd->async.lck);
 }
 
 static void
