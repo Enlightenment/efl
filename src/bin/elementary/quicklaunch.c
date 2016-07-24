@@ -104,6 +104,11 @@ handle_run(int fd, unsigned long bytes)
    int argc, envnum;
    unsigned long off;
 
+   if (bytes < 1)
+     {
+        CRI("no bytes to quicklaunch");
+        return;
+     }
    _elm_startup_time = ecore_time_unix_get();
 
    buf = alloca(bytes);
@@ -114,7 +119,7 @@ handle_run(int fd, unsigned long bytes)
         return;
      }
    close(fd);
-   if (bytes > 0) buf[bytes - 1] = 0;
+   buf[bytes - 1] = 0;
 
    argc = ((unsigned long *)(buf))[0];
    envnum = ((unsigned long *)(buf))[1];
