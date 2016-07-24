@@ -1122,19 +1122,25 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                   Evas_Object *ob;
 
                   sel = calloc(1, sizeof(Sel));
-                  an->sel = eina_list_append(an->sel, sel);
-
-                  if (ed->item_provider.func)
+                  if (sel)
                     {
-                       ob = _item_obj_get(an, o, smart, clip);
-                       sel->obj = ob;
+                       an->sel = eina_list_append(an->sel, sel);
+
+                       if (ed->item_provider.func)
+                         {
+                            ob = _item_obj_get(an, o, smart, clip);
+                            sel->obj = ob;
+                         }
                     }
                }
-               /* We have only one sel per item */
-               sel = an->sel->data;
-               evas_object_move(sel->obj, x + cx, y + cy);
-               evas_object_resize(sel->obj, cw, ch);
-               evas_object_show(sel->obj);
+             if (sel)
+               {
+                  /* We have only one sel per item */
+                  sel = an->sel->data;
+                  evas_object_move(sel->obj, x + cx, y + cy);
+                  evas_object_resize(sel->obj, cw, ch);
+                  evas_object_show(sel->obj);
+               }
           }
         // for link anchors
         else
