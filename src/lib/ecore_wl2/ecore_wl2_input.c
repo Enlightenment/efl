@@ -421,7 +421,9 @@ _ecore_wl2_input_symbol_rep_find(xkb_keysym_t keysym, char *buffer, int size, un
     n = xkb_keysym_to_utf8(keysym, buffer, size);
 
     /* check if we are a control code */
-    if (n > 0 && !(buffer[0] > 0x0 && buffer[0] < 0x20))
+    if (n > 0 && !(
+        (buffer[0] > 0x0 && buffer[0] < 0x20) || /* others 0x0 to 0x1F control codes */
+        buffer[0] == 0x7F)) /*delete control code */
       return;
 
     if (xkb_keysym_get_name(keysym, buffer, size) != 0)
