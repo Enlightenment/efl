@@ -25,7 +25,7 @@ _evas_object_event_new(void)
 static inline int
 evas_object_was_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if ((obj->prev->visible) &&
+   if ((obj->prev->visible) && (!obj->no_render) &&
        ((obj->prev->cache.clip.visible) || obj->is_smart) &&
        ((obj->prev->cache.clip.a > 0 && obj->prev->render_op == EVAS_RENDER_BLEND)
        || obj->prev->render_op != EVAS_RENDER_BLEND))
