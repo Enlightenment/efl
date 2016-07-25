@@ -64,7 +64,7 @@ class Elm.Bg (Elm.Layout, Efl.File)
             r: int; [[The red color component's value]]
             g: int; [[The green color component's value]]
             b: int; [[The blue color component's value]]
-            a: int; [[The blue color component's value]]
+            a: int; [[The alpha color component's value]]
          }
       }
       @property load_size {
