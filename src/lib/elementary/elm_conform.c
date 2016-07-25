@@ -409,7 +409,7 @@ _create_portrait_indicator(Evas_Object *obj)
 
    elm_widget_sub_object_add(obj, port_indicator);
    eo_event_callback_add
-     (port_indicator, ELM_PLUG_EVENT_IMAGE_DELETED, _port_indicator_disconnected, NULL);
+     (port_indicator, ELM_PLUG_EVENT_IMAGE_DELETED, _port_indicator_disconnected, obj);
    evas_object_size_hint_min_set(port_indicator, -1, 0);
    evas_object_size_hint_max_set(port_indicator, -1, 0);
 
@@ -451,7 +451,7 @@ _create_landscape_indicator(Evas_Object *obj)
 
    elm_widget_sub_object_add(obj, land_indicator);
    eo_event_callback_add
-     (land_indicator, ELM_PLUG_EVENT_IMAGE_DELETED, _land_indicator_disconnected, NULL);
+     (land_indicator, ELM_PLUG_EVENT_IMAGE_DELETED, _land_indicator_disconnected, obj);
    evas_object_size_hint_min_set(land_indicator, -1, 0);
    evas_object_size_hint_max_set(land_indicator, -1, 0);
    return land_indicator;
