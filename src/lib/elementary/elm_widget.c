@@ -3696,6 +3696,14 @@ _elm_widget_focus_reconfigure(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
    _elm_widget_focus_move_policy_reload(obj);
 }
 
+EOLIAN static Evas_Object*
+_elm_widget_part_access_object_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const char *part)
+{
+   WRN("The %s widget does not implement the \"part_access_object_get\" functions.",
+       eo_class_name_get(eo_class_get(obj)));
+   return NULL;
+}
+
 EAPI void
 elm_widget_content_part_set(Evas_Object *obj,
                             const char *part,

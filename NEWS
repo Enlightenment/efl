@@ -240,6 +240,7 @@ Features:
    * eo base - add weak object refs as per jpeg needs
    * elput: Add API function to return output name associated with input device
    * Eo refcount: Split the refcount to private and public (user).
+   * access: Add API to get access object of given widget's part.
 
 Fixes:
 

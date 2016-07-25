@@ -1482,6 +1482,12 @@ _elm_popup_elm_widget_event(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, Evas_Objec
    return EINA_TRUE;
 }
 
+EOLIAN static Evas_Object*
+_elm_popup_elm_widget_part_access_object_get(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, const char *part)
+{
+   return _access_object_get(obj, part);
+}
+
 EOLIAN static void
 _elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
 {

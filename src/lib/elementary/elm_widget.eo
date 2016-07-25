@@ -837,6 +837,15 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
 	  focus_reconfigure {
       }
+      part_access_object_get {
+         [[Get the access object of given part of the widget.
+
+           @since 1.18]]
+         return: Efl.Canvas.Object;
+         params {
+            @in part: string; [[The object's part name to get access object]]
+         }
+      }
    }
    implements {
       class.constructor;
