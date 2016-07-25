@@ -508,14 +508,3 @@ EAPI void        elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina
  */
 EAPI Eina_Bool   elm_object_orientation_mode_disabled_get(const Evas_Object *obj);
 
-/**
- * Get the access object which is registered to part
- *
- * @param obj The Elementary widget 
- * @param part The widget's part name to get access object
- *
- * @since 1.18
- *
- * @ingroup General
- */
-EAPI Evas_Object *elm_object_part_access_object_get(const Evas_Object *obj, const char *part);

@@ -180,7 +180,6 @@ class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action, Edje.Object)
       Elm.Widget.translate;
       Elm.Widget.sub_object_del;
       Elm.Widget.event;
-      Elm.Widget.part_access_object_get;
       Elm.Layout.text.set;
       Elm.Layout.text.get;
       Elm.Layout.sizing_eval;

@@ -1924,10 +1924,3 @@ elm_object_focus_region_show_mode_get(const Evas_Object *obj)
 {
    return elm_widget_focus_region_show_mode_get(obj);
 }
-
-EAPI Evas_Object *
-elm_object_part_access_object_get(const Evas_Object *obj, const char *part)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_part_access_object_get(obj, part);
-}
