@@ -249,6 +249,11 @@ examples: $(EXTRA_PROGRAMS) $(EDJS)
 
 clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(EDJS) $(CODEGEN_GENERATED)
+	if [ $(top_builddir)/ != $(top_srcdir)/  ]; then \
+		rm -f $(top_builddir)/src/examples/edje/hi_IN/domain_name.po; \
+		rm -f $(top_builddir)/src/examples/edje/ta_IN/domain_name.mo; \
+		rm -f $(top_builddir)/src/examples/edje/en_IN/domain_name.po; \
+	fi
 
 install-examples: $(EDJS)
 	$(MKDIR_P) $(DESTDIR)$(datadir)/edje/examples
