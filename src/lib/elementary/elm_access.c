@@ -1485,7 +1485,7 @@ _elm_access_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSE
           { "highlight", NULL, "highlight", _access_atspi_action_do},
           { "unhighlight", NULL, "unhighlight", _access_atspi_action_do},
           { "highlight,next", NULL, "highlight,next", _access_atspi_action_do},
-          { "highlight,next", NULL, "highlight,prev", _access_atspi_action_do},
+          { "highlight,prev", NULL, "highlight,prev", _access_atspi_action_do},
           { "activate", NULL, "activate", _access_atspi_action_do},
           { "value,up", NULL, "value,up", _access_atspi_action_do},
           { "value,down", NULL, "value,down", _access_atspi_action_do},
