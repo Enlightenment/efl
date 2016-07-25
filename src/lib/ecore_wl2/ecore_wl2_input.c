@@ -467,7 +467,7 @@ _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_
    ev->modifiers = input->keyboard.modifiers;
    ev->keycode = code;
 
-   DBG("Emitting Key event (%s,%s,%s,%s)\n", ev->keyname, ev->key, ev->compose, ev->string);
+   /* DBG("Emitting Key event (%s,%s,%s,%s)\n", ev->keyname, ev->key, ev->compose, ev->string); */
 
    if (state)
      ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
