@@ -484,6 +484,7 @@ _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
         b->surface = NULL;
         return;
      }
+   if (b->fd != -1) close(b->fd);
    /* The buffer manager may have been destroyed already if we're
     * doing fallback */
    if (buffer_manager) buffer_manager->discard(b);
@@ -644,6 +645,7 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    out = calloc(1, sizeof(Dmabuf_Buffer));
    if (!out) return NULL;
 
+   out->fd = -1;
    out->surface = s;
    out->bh = bm->alloc(bm, "name", w, h, &out->stride, &out->fd);
    if (!out->bh)
