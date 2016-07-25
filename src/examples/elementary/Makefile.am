@@ -243,6 +243,7 @@ CLEANFILES = \
 
 clean-local:
 	rm -f *.epb *.cfg *.cfg.bkp
+	rm -f prefs_example_03.edj
 
 ELEMENTARY_CODEGEN_FLAGS = --prefix=codegen_example
 
@@ -620,7 +621,7 @@ screenshots: examples
 		convert $(HTML_SS_DIR)/$${SS_FILE} $(LATEX_SS_DIR)/$${SS_FILE/.png/.eps} ; \
 	done
 
-EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc evas3d_map_example.edc twitter_example_01.edc performance/layout.edc performance/background.png performance/target_texture.png sphere_hunter/sphere_hunter.edc sphere_hunter/score.jpg sphere_hunter/EFL_victory.png sphere_hunter/EFL_defeat.png codegen_example_generated.c codegen_example_generated.h codegen_example.edj
+EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc evas3d_map_example.edc twitter_example_01.edc performance/layout.edc performance/background.png performance/target_texture.png sphere_hunter/sphere_hunter.edc sphere_hunter/score.jpg sphere_hunter/EFL_victory.png sphere_hunter/EFL_defeat.png codegen_example_generated.c codegen_example_generated.h codegen_example.edj prefs_example_01.epc prefs_example_02.epc prefs_example_03.epc prefs_example_03.edc
 
 
 examples: $(examples_PROGRAMS)
