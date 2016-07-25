@@ -1729,7 +1729,10 @@ fi
 if test "${want_gstreamer}" = "yes"; then
   PKG_CHECK_MODULES([GSTREAMER], [gstreamer-0.10])
 fi
-AM_CONDITIONAL([HAVE_GSTREAMER], [test "${want_gstreamer}" = "yes" -o "${want_gstreamer1}" = "yes"])
+
+AM_CONDITIONAL([HAVE_GSTREAMER], [test "x${want_gstreamer}" = "xyes" -o "x${want_gstreamer1}" = "xyes"])
+AM_CONDITIONAL([HAVE_GSTREAMER0], [test "x${want_gstreamer}" = "xyes"])
+AM_CONDITIONAL([HAVE_GSTREAMER1], [test "x${want_gstreamer1}" = "xyes"])
 
 EFL_EVAL_PKGS([ECORE])
 
