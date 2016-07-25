@@ -212,10 +212,8 @@ _keyboard_init(Elput_Seat *seat, struct xkb_keymap *keymap)
      {
         seat->count.kbd += 1;
         if (seat->count.kbd == 1)
-          {
-             _seat_caps_update(seat);
-             return EINA_TRUE;
-          }
+          _seat_caps_update(seat);
+        return EINA_TRUE;
      }
 
    kbd = _keyboard_create(seat);
@@ -548,10 +546,8 @@ _pointer_init(Elput_Seat *seat)
      {
         seat->count.ptr += 1;
         if (seat->count.ptr == 1)
-          {
-             _seat_caps_update(seat);
-             return EINA_TRUE;
-          }
+          _seat_caps_update(seat);
+        return EINA_TRUE;
      }
 
    ptr = _pointer_create(seat);
@@ -598,10 +594,8 @@ _touch_init(Elput_Seat *seat)
      {
         seat->count.touch += 1;
         if (seat->count.touch == 1)
-          {
-             _seat_caps_update(seat);
-             return EINA_TRUE;
-          }
+          _seat_caps_update(seat);
+        return EINA_TRUE;
      }
 
    touch = _touch_create(seat);
