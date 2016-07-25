@@ -425,4 +425,6 @@ evas_filter_blur_cpu_func_get(Evas_Filter_Command *cmd)
         CRI("Unsupported blur type %d", cmd->blur.type);
         return NULL;
      }
+
+   return NULL;
 }
