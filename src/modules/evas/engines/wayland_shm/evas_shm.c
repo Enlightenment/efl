@@ -86,6 +86,7 @@ _shm_pool_make(struct wl_shm *shm, int size, void **data)
    const char *path;
    char *name;
    int fd = 0;
+   Eina_Tmpstr *fullname;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -108,7 +109,7 @@ _shm_pool_make(struct wl_shm *shm, int size, void **data)
 
    strcat(name, tmp);
 
-   fd = eina_file_mkstemp(name, NULL);
+   fd = eina_file_mkstemp(name, &fullname);
    if (fd < 0)
    /* try to create tmp file */
    /* if ((fd = mkstemp(name)) < 0) */
@@ -118,8 +119,9 @@ _shm_pool_make(struct wl_shm *shm, int size, void **data)
         return NULL;
      }
 
-   unlink(name);
+   unlink(fullname);
    free(name);
+   eina_tmpstr_del(fullname);
 
    /* try to truncate file to size */
    if (ftruncate(fd, size) < 0)
