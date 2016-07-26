@@ -551,8 +551,7 @@ EAPI Eina_Bool
 edje_object_part_box_prepend(Edje_Object *obj, const char *part, Evas_Object *child)
 {
    Eo *box = PART_BOX_GET(obj, part, EINA_FALSE);
-   efl_pack_begin(box, child);
-   return EINA_TRUE;
+   return efl_pack_begin(box, child);
 }
 
 EAPI Eina_Bool
