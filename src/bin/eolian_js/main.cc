@@ -997,6 +997,9 @@ int main(int argc, char** argv)
          }
      }
 
+   functions_ss << "\n  prototype->Set(::efl::eina::js::compatibility_new<v8::String>(isolate, \"cast\"),\n"
+                   "      ::efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, &efl::eina::js::cast_function)->GetFunction());\n\n";
+
    // generate all events
    std::stringstream events_ss;
    auto generate_events = [&] (Eolian_Class const* klass)

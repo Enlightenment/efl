@@ -1,72 +1,72 @@
 
 efl = require('efl');
-elm = require('elm');
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Slider Example");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText("Slider Example");
 win.setAutohide(true);
 
-bx = new elm.Elm.Box(win);
-//bx.setHorizontal(true);
-bx.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(bx);
+bx = new efl.Efl.Ui.Box(win);
+bx.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
+bx.setHintWeight(1.0, 1.0);
+win.pack(bx);
 bx.setVisible(true);
 
-sl = new elm.Elm.Slider(win);
-sl.setSizeHintAlign(-1.0, 0.5);
-sl.setSizeHintWeight(1.0, 1.0);
+sl = new efl.Elm.Slider(win);
+sl.setHintAlign(-1.0, 0.5);
+sl.setHintWeight(1.0, 1.0);
 bx.packEnd(sl);
 sl.setVisible(true);
 
 /* with icon, end and label */
-sl = new elm.Elm.Slider(win);
+sl = new efl.Elm.Slider(win);
 sl.setText("elm.text", "Counter");
 
-ic = new elm.Elm.Icon(win);
-ic.setStandard("home");
-ic.setResizable(false, false);
-sl.contentSet("icon", ic);
+ic = new efl.Elm.Icon(win);
+ic.setIcon("home");
+// ic.setResizable(false, false);
+sl.part("icon").cast("Efl.Container").setContent(ic);
 
-ic = new elm.Elm.Icon(win);
-ic.setStandard("folder");
-ic.setResizable(false, false);
-sl.contentSet("end", ic);
+ic = new efl.Elm.Icon(win);
+ic.setIcon("folder");
+// ic.setResizable(false, false);
+sl.part("end").cast("Efl.Container").setContent(ic);
 
-sl.setSizeHintAlign(-1.0, 0.5);
-sl.setSizeHintWeight(1.0, 1.0);
+sl.setHintAlign(-1.0, 0.5);
+sl.setHintWeight(1.0, 1.0);
 bx.packEnd(sl);
 sl.setVisible(true);
 
 /* value set and span size */
-sl = new elm.Elm.Slider(win);
-sl.setValue(1);
+sl = new efl.Elm.Slider(win);
+sl.setProgressValue(1);
 sl.setSpanSize(200);
-sl.setSizeHintAlign(-1.0, 0.5);
-sl.setSizeHintWeight(1.0, 1.0);
+sl.setHintAlign(-1.0, 0.5);
+sl.setHintWeight(1.0, 1.0);
 bx.packEnd(sl);
 sl.setVisible(true);
 
 /* with unit label and min - max */
-sl = new elm.Elm.Slider(win);
+sl = new efl.Elm.Slider(win);
 sl.setUnitFormat("%1.0f units");
 sl.setMinMax(0, 100);
-sl.setSizeHintAlign(-1.0, 0.5);
-sl.setSizeHintWeight(1.0, 1.0);
+sl.setHintAlign(-1.0, 0.5);
+sl.setHintWeight(1.0, 1.0);
 bx.packEnd(sl);
 sl.setVisible(true);
 
 /* with indicator label and inverted */
-sl = new elm.Elm.Slider(win);
+sl = new efl.Elm.Slider(win);
 sl.setIndicatorFormat("%1.2f");
-sl.setInverted(true);
-sl.setSizeHintAlign(-1.0, 0.5);
-sl.setSizeHintWeight(1.0, 1.0);
+// legacy function, not supported.
+// sl.setInverted(true);
+sl.setHintAlign(-1.0, 0.5);
+sl.setHintWeight(1.0, 1.0);
 bx.packEnd(sl);
 sl.setVisible(true);
 
 /* vertical with indicator format func */
-sl = new elm.Elm.Slider(win);
-sl.setHorizontal(false);
+sl = new efl.Elm.Slider(win);
+sl.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.VERTICAL);
 //indicator_format = function()
 //                  {
 //                      indicator = new char[32];
@@ -76,28 +76,28 @@ sl.setHorizontal(false);
 //indicator_free = function() {console.log("free")}
 //sl.indicator_format_function_set(indicator_format, indicator_free);
 
-sl.setSizeHintAlign(0.5, -1.0);
-sl.setSizeHintWeight(0.0, 1.0);
+sl.setHintAlign(0.5, -1.0);
+sl.setHintWeight(0.0, 1.0);
 bx.packEnd(sl);
 sl.setVisible(true);
 
 /* callbacks */
-sl = new elm.Elm.Slider(win);
+sl = new efl.Elm.Slider(win);
 sl.setUnitFormat("%1.3f units");
-sl.setSizeHintAlign(-1.0, 0.5);
-sl.setSizeHintWeight(1.0, 1.0);
+sl.setHintAlign(-1.0, 0.5);
+sl.setHintWeight(1.0, 1.0);
 bx.packEnd(sl);
 sl.setVisible(true);
 
 sl.on('changed', function(obj)
                   {
-                     val = obj.getValue();
+                     val = obj.getProgressValue();
                      console.log("Changed to " + val);
                   });
 
 sl.on('delay_changed', function(obj)
                  {
-                     val = obj.getValue();
+                     val = obj.getProgressValue();
                      console.log("Delay changed to " + val);
                  });
 

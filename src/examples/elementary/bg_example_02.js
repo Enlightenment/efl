@@ -1,18 +1,18 @@
 
-elm = require('elm');
+var efl = require('efl');
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Bg Image");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText("Bg Plain");
 win.setAutohide(true);
 
-bg = new elm.Elm.Bg(win);
+bg = new efl.Elm.Bg(win);
 bg.setLoadSize(20,20);
-bg.setOption(elm.Elm.Bg.Option.CENTER);
+bg.setOption(efl.Elm.Bg.Option.CENTER);
 
 //TODO: elm_app_data_dir_get
-bg.setFile('../../data/images/plant_01.jpg', null);
-bg.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(bg);
+bg.setFile(__dirname + '/../../../data/elementary/images/plant_01.jpg', null);
+bg.setHintWeight(1.0, 1.0);
+win.pack(bg);
 bg.setVisible(true);
 
 win.setSize(320, 320);

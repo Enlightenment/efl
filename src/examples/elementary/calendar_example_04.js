@@ -1,27 +1,26 @@
 
-elm = require('efl');
-elm = require('elm');
+efl = require('efl');
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Calendar Day Selection Example");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText("Calendar Day Selection Example");
 win.setAutohide(true);
 
-box = new elm.Elm.Box(win);
-box.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(box);
+box = new efl.Efl.Ui.Box(win);
+box.setHintWeight(1.0, 1.0);
+win.pack(box);
 box.setVisible(true);
 
-cal = new elm.Elm.Calendar(win);
-cal.setSizeHintWeight(1.0, 1.0);
-cal.setSizeHintAlign(-1.0, -1.0);
-cal.setSelectMode(elm.Elm.Calendar.Select.Mode.NONE);
-win.resizeObjectAdd(cal);
+cal = new efl.Elm.Calendar(win);
+cal.setHintWeight(1.0, 1.0);
+cal.setHintAlign(-1.0, -1.0);
+cal.setSelectMode(efl.Elm.Calendar.Select.Mode.NONE);
+win.pack(cal);
 cal.setVisible(true);
 box.packEnd(cal);
 
-cal2 = new elm.Elm.Calendar(win);
-cal2.setSizeHintWeight(1.0, 1.0);
-cal2.setSizeHintAlign(-1.0, -1.0);
+cal2 = new efl.Elm.Calendar(win);
+cal2.setHintWeight(1.0, 1.0);
+cal2.setHintAlign(-1.0, -1.0);
 // selected_time_set uses tm* struct
 //dateCurrent = new Date();
 //dateSelected = dateCurrent.getSeconds() + 2 * 3600 * 24;
@@ -29,4 +28,5 @@ cal2.setSizeHintAlign(-1.0, -1.0);
 cal2.setVisible(true);
 box.packEnd(cal2);
 
+win.setSize(240, 480);
 win.setVisible(true);

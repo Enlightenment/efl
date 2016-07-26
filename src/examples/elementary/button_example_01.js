@@ -1,5 +1,9 @@
 efl = require('efl');
-elm = require('elm');
+
+function setIcon(widget, icon) {
+    container = widget.part("icon").cast("Efl.Container");
+    container.setContent(icon);
+}
 
 _btn_options_cb = function(_btn) {
      var text = _btn.getText("elm.text");
@@ -31,13 +35,13 @@ _btn_cursors_move = function(_btn) {
    console.log ("cursor move: ", size[0], size[1]);
 
    if (!icon_still) {
-       var icon = new elm.Elm.Icon(mid);
+       var icon = new efl.Elm.Icon(mid);
        var icon_still_p = mid.contentUnset("icon");
        if (icon_still_p) {
            icon_still_p.setVisible(false);
         }
-      icon.setStandard("chat");
-      mid.contentSet("icon", icon);
+      icon.setIcon("chat");
+      setIcon(mid, icon);
    }
 
    if (_btn.getPosition()[1] == up.getPosition()[1]) {
@@ -56,78 +60,78 @@ _btn_cursors_move = function(_btn) {
         ax += 0.05;
         if (ax > 1.0) ax = 1.0;
    }
-   mid.setSizeHintAlign(ax, ay);
+   mid.setHintAlign(ax, ay);
 }
 
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Button example");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText("Button example");
 win.setAutohide(true);
 
-icon_still = new elm.Elm.Icon(win);
-mid = new elm.Elm.Button(win);
-up = new elm.Elm.Button(win);
-down = new elm.Elm.Button(win);
-left = new elm.Elm.Button(win);
-right = new elm.Elm.Button(win);
+icon_still = new efl.Elm.Icon(win);
+mid = new efl.Elm.Button(win);
+up = new efl.Elm.Button(win);
+down = new efl.Elm.Button(win);
+left = new efl.Elm.Button(win);
+right = new efl.Elm.Button(win);
 
 _btn_cursors_release = function() {
     if (icon_still)
     {
-       mid.contentSet("icon", icon_still);
+       setIcon(mid, icon_still);
        icon_still = null;
     }
 }
 
-box = new elm.Elm.Box(win);
-box.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(box);
+box = new efl.Efl.Ui.Box(win);
+box.setHintWeight(1.0, 1.0);
+win.pack(box);
 box.setVisible(true);
 
-box_initial = new elm.Elm.Box(win);
-box_initial.setHorizontal(true);
-box_initial.setSizeHintWeight(1.0, 0.0);
+box_initial = new efl.Efl.Ui.Box(win);
+box_initial.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
+box_initial.setHintWeight(1.0, 0.0);
 box.packEnd(box_initial);
 box_initial.setVisible(true);
 
-btn = new elm.Elm.Button(win);
+btn = new efl.Elm.Button(win);
 btn.setText("elm.text", "Initial: 0.0");
 box_initial.packEnd(btn);
 btn.setVisible(true);
 
 btn.on('clicked', _btn_options_cb);
 
-btn2 = new elm.Elm.Button(win);
+btn2 = new efl.Elm.Button(win);
 btn2.setText("elm.text", "Initial: 1.0");
 box_initial.packEnd(btn2);
 btn2.setVisible(true);
 btn2.on('clicked', _btn_options_cb);
 
-btn3 = new elm.Elm.Button(win);
+btn3 = new efl.Elm.Button(win);
 btn3.setText("elm.text", "Initial: 5.0");
 box_initial.packEnd(btn3);
 btn3.setVisible(true);
 btn3.on('clicked', _btn_options_cb);
 
-box_gap = new elm.Elm.Box(win);
-box_gap.setHorizontal(true);
-box_gap.setSizeHintWeight(1.0, 0.0);
+box_gap = new efl.Efl.Ui.Box(win);
+box_gap.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
+box_gap.setHintWeight(1.0, 0.0);
 box.packEnd(box_gap);
 box_gap.setVisible(true);
 
-btn4 = new elm.Elm.Button(win);
+btn4 = new efl.Elm.Button(win);
 btn4.setText("elm.text", "Gap: 0.1");
 box_gap.packEnd(btn4);
 btn4.setVisible(true);
 btn4.on('clicked', _btn_options_cb);
 
-btn5 = new elm.Elm.Button(win);
+btn5 = new efl.Elm.Button(win);
 btn5.setText("elm.text", "Gap: 0.5");
 box_gap.packEnd(btn5);
 btn5.setVisible(true);
 btn5.on('clicked', _btn_options_cb);
 
-btn6 = new elm.Elm.Button(win);
+btn6 = new efl.Elm.Button(win);
 btn6.setText("elm.text", "Gap: 1.0");
 box_gap.packEnd(btn6);
 btn6.setVisible(true);
@@ -136,72 +140,72 @@ btn6.on('clicked', _btn_options_cb);
 up.setAutorepeat(true);
 up.setAutorepeatInitialTimeout(1.0);
 up.setAutorepeatGapTimeout(0.5);
-up.setSizeHintWeight(1.0, 0.0);
-up.setSizeHintAlign(-1.0, 0.0);
+up.setHintWeight(1.0, 0.0);
+up.setHintAlign(-1.0, 0.0);
 box.packEnd(up);
 up.setVisible(true);
 up.on('repeated', _btn_cursors_move)
 up.on('unpressed', _btn_cursors_release);
-icon_up = new elm.Elm.Icon(win);
-icon_up.setStandard("arrow_up");
-up.contentSet("icon", icon_up);
+icon_up = new efl.Elm.Icon(win);
+icon_up.setIcon("arrow_up");
+setIcon(up, icon_up);
 
-box_inferior = new elm.Elm.Box(win);
-box_inferior.setHorizontal(true);
-box_inferior.setSizeHintWeight(1.0, 1.0);
-box_inferior.setSizeHintAlign(-1.0, -1.0);
+box_inferior = new efl.Efl.Ui.Box(win);
+box_inferior.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
+box_inferior.setHintWeight(1.0, 1.0);
+box_inferior.setHintAlign(-1.0, -1.0);
 box.packEnd(box_inferior);
 box_inferior.setVisible(true);
 
 left.setAutorepeat(true);
 left.setAutorepeatInitialTimeout(1.0);
 left.setAutorepeatGapTimeout(0.5);
-left.setSizeHintWeight(0.0, 1.0);
-left.setSizeHintAlign(0.0, -1.0);
+left.setHintWeight(0.0, 1.0);
+left.setHintAlign(0.0, -1.0);
 box_inferior.packEnd(left);
 left.setVisible(true);
 left.on('repeated', _btn_cursors_move)
 left.on('unpressed', _btn_cursors_release);
 
-icon_left = new elm.Elm.Icon(win);
-icon_left.setStandard("arrow_left");
-left.contentSet("icon", icon_left);
+icon_left = new efl.Elm.Icon(win);
+icon_left.setIcon("arrow_left");
+setIcon(left, icon_left);
 
-mid.setSizeHintWeight(1.0, 1.0);
+mid.setHintWeight(1.0, 1.0);
 box_inferior.packEnd(mid);
 mid.setVisible(true);
 
-icon_mid = new elm.Elm.Icon(win);
-icon_mid.setStandard("close");
-mid.contentSet("icon", icon_mid);
+icon_mid = new efl.Elm.Icon(win);
+icon_mid.setIcon("close");
+setIcon(mid, icon_mid);
 
 right.setAutorepeat(true);
 right.setAutorepeatInitialTimeout(1.0);
 right.setAutorepeatGapTimeout(0.5);
-right.setSizeHintWeight(0.0, 1.0);
-right.setSizeHintAlign(0.0, -1.0);
+right.setHintWeight(0.0, 1.0);
+right.setHintAlign(0.0, -1.0);
 box_inferior.packEnd(right);
 right.setVisible(true);
 right.on('repeated', _btn_cursors_move);
 right.on('unpressed', _btn_cursors_release);
 
-icon_right = new elm.Elm.Icon(win);
-icon_right.setStandard("arrow_right");
-right.contentSet("icon", icon_right);
+icon_right = new efl.Elm.Icon(win);
+icon_right.setIcon("arrow_right");
+setIcon(right, icon_right);
 
 down.setAutorepeat(true);
 down.setAutorepeatInitialTimeout(1.0);
 down.setAutorepeatGapTimeout(0.5);
-down.setSizeHintWeight(1.0, 0.0);
-down.setSizeHintAlign(-1.0, 0.0);
+down.setHintWeight(1.0, 0.0);
+down.setHintAlign(-1.0, 0.0);
 box.packEnd(down);
 down.setVisible(true);
 down.on('repeated', _btn_cursors_move);
 down.on('unpressed', _btn_cursors_release);
 
-icon_down = new elm.Elm.Icon(win);
-icon_down.setStandard("arrow_down");
-down.contentSet("icon", icon_down);
+icon_down = new efl.Elm.Icon(win);
+icon_down.setIcon("arrow_down");
+setIcon(down, icon_down);
 
 win.setSize(300, 320);
 win.setVisible(true);

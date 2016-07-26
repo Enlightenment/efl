@@ -1,13 +1,12 @@
 efl = require('efl');
-elm = require('elm');
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Menu");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText("Menu");
 win.setAutohide(true);
 
-rect = new efl.Evas.Rectangle(win);
-win.resizeObjectAdd(rect);
-rect.setSizeHintMin( 0, 0);
+rect = new efl.Efl.Canvas.Rectangle(win);
+win.pack(rect);
+rect.setHintMin( 0, 0);
 rect.setColor( 0, 0, 0, 0);
 rect.setVisible(true);
 

@@ -73,6 +73,7 @@ EAPI void register_ecore_audio_out_sndfile(v8::Handle<v8::Object> global, v8::Is
 
 namespace efl {
 EAPI void register_animator(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_container(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_control(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_file(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_image(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -87,6 +88,7 @@ EAPI void register_video(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_flip(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_frame(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_box(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_image(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }}
 
 namespace efl { namespace ui { namespace win {
@@ -380,7 +382,7 @@ EAPI void init(v8::Handle<v8::Object> exports)
       // elm::register_combobox(exports, v8::Isolate::GetCurrent());
 
       // doesn't exist
-      // elm::register_container(exports, v8::Isolate::GetCurrent());
+      efl::register_container(exports, v8::Isolate::GetCurrent());
       
       elm::register_ctxpopup(exports, v8::Isolate::GetCurrent());
       elm::register_datetime(exports, v8::Isolate::GetCurrent());
@@ -398,6 +400,7 @@ EAPI void init(v8::Handle<v8::Object> exports)
       elm::register_flipselector(exports, v8::Isolate::GetCurrent());
       efl::ui::register_frame(exports, v8::Isolate::GetCurrent());
       efl::ui::register_box(exports, v8::Isolate::GetCurrent());
+      efl::ui::register_image(exports, v8::Isolate::GetCurrent());
 
       // crash
       // elm::register_gengrid(exports, v8::Isolate::GetCurrent());

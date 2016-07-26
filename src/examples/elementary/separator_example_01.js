@@ -1,40 +1,40 @@
 
 efl = require('efl');
-elm = require('elm');
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Separator");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText("Separator");
 win.setAutohide(true);
 
-bg = new elm.Elm.Bg(win);
-bg.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(bg);
+bg = new efl.Elm.Bg(win);
+bg.setHintWeight(1.0, 1.0);
+win.setSize(640, 480);
+win.pack(bg);
 bg.setVisible(true);
 
-bx = new elm.Elm.Box(win);
-bx.setHorizontal(true);
-bx.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(bx);
+bx = new efl.Efl.Ui.Box(win);
+bx.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
+bx.setHintWeight(1.0, 1.0);
+win.pack(bx);
 bx.setVisible(true);
 
-rect = new efl.Evas.Rectangle(win);
+rect = new efl.Efl.Canvas.Rectangle(win);
 rect.setColor( 0, 255, 0, 255)
-rect.setSizeHintMin( 90, 200);
-rect.setSizeHintWeight(1.0, 1.0);
-rect.setSizeHintAlign(-1.0, -1.0);
+rect.setHintMin( 90, 200);
+rect.setHintWeight(1.0, 1.0);
+rect.setHintAlign(-1.0, -1.0);
 rect.setVisible(true);
 bx.packEnd(rect);
 
-separator = new elm.Elm.Separator(win);
-separator.setHorizontal(true);
+separator = new efl.Elm.Separator(win);
+separator.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
 separator.setVisible(true);
 bx.packEnd(separator);
 
-rect2 = new efl.Evas.Rectangle(win);
+rect2 = new efl.Efl.Canvas.Rectangle(win);
 rect2.setColor( 0, 0, 255, 255);
-rect2.setSizeHintMin( 90, 200);
-rect2.setSizeHintWeight(1.0, 1.0);
-rect2.setSizeHintAlign(-1.0, -1.0);
+rect2.setHintMin( 90, 200);
+rect2.setHintWeight(1.0, 1.0);
+rect2.setHintAlign(-1.0, -1.0);
 rect2.setVisible(true);
 bx.packEnd(rect2);
 
