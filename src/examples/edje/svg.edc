@@ -1,4 +1,4 @@
-#define SVG_PART(bg, vg, rel1x, rel1y, rel2x, rel2y,svg_id)\
+#define SVG_PART_INTERPOLATE(bg, vg, rel1x, rel1y, rel2x, rel2y,id1, id2)\
          rect { bg; \
             description { state: "default" 0.0; \
                color: 255 255 255 255; \
@@ -7,38 +7,40 @@
                rel1.offset: 1 1; \
                rel2.offset: -1 -1; \
             } \
-            description { state: "clicked" 0.0; \
-               inherit: "default" 0.0; \
-               rel1.relative: 0.0 0.0; \
-               rel2.relative: 1.0 1.0; \
-            } \
          }\
          vector { vg;\
             description { state: "default" 0.0; \
                color: 255 255 255 255; \
                rel1.to: bg; \
                rel2.to: bg; \
-               image.normal: svg_id; \
+               min: 130 130; \
+               max: 130 130; \
+               image.normal: id1; \
             } \
             description { state: "clicked" 0.0; \
                inherit: "default" 0.0; \
+               image.normal: id2; \
+               min: 150 150; \
+               max: 150 150; \
             } \
          }
+#define SVG_PART(bg, vg, rel1x, rel1y, rel2x, rel2y,id1)\
+         SVG_PART_INTERPOLATE(bg, vg, rel1x, rel1y, rel2x, rel2y,id1, id1)
 
  #define SVG_PROGRAM(bg, vg) \
          program { bg; \
             signal: "mouse,down,1"; \
             source: vg; \
             action: STATE_SET "clicked"; \
-            transition: LINEAR 0.5; \
-            target: bg; \
+            transition: LINEAR .2; \
+            target: vg; \
          }\
          program { vg; \
             signal: "mouse,up,1"; \
             source: vg; \
             action: STATE_SET "default"; \
-            transition: LINEAR 0.5; \
-            target: bg; \
+            transition: LINEAR .2; \
+            target: vg; \
          }
 
 collections {
@@ -66,6 +68,10 @@ collections {
       vector: "lineargrad1.svg";
       vector: "radialgrad1.svg";
       vector: "yadis.svg";
+      vector: "favorite_on.svg";
+      vector: "favorite_off.svg";
+      vector: "batman1.svg";
+      vector: "batman2.svg";
    }
    group {
       name: "svg-test";
@@ -95,6 +101,9 @@ collections {
          SVG_PART("bg20", "vg20", 0.8, 0.6, 1.0, 0.8,"radialgrad1.svg")
 
          SVG_PART("bg21", "vg21", 0.0, 0.8, .2, 1.0,"yadis.svg")
+         SVG_PART("bg22", "vg22", 0.2, 0.8, .4, 1.0,"favorite_on.svg")
+         SVG_PART("bg23", "vg23", 0.4, 0.8, .6, 1.0,"favorite_off.svg")
+         SVG_PART_INTERPOLATE("bg24", "vg24", 0.6, 0.8, .8, 1.0,"batman1.svg", "batman2.svg")
       }
       programs {
          SVG_PROGRAM("bg1", "vg1")
@@ -118,6 +127,9 @@ collections {
          SVG_PROGRAM("bg19", "vg19")
          SVG_PROGRAM("bg20", "vg20")
          SVG_PROGRAM("bg21", "vg21")
+         SVG_PROGRAM("bg22", "vg22")
+         SVG_PROGRAM("bg23", "vg23")
+         SVG_PROGRAM("bg24", "vg24")
       }
    }
 }

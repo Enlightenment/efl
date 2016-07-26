@@ -118,6 +118,10 @@ venus.svg \
 lineargrad1.svg \
 radialgrad1.svg \
 yadis.svg \
+favorite_on.svg \
+favorite_off.svg \
+batman1.svg \
+batman2.svg \
 en_IN/domain_name.po \
 hi_IN/domain_name.po \
 ta_IN/domain_name.mo \
