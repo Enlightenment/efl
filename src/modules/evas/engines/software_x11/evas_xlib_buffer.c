@@ -288,7 +288,7 @@ evas_software_xlib_x_output_buffer_new(Display *d, Visual *v, int depth, int w, 
 		  xob->shm_info->shmid = shmget(IPC_PRIVATE,
 						xob->xim->bytes_per_line *
 						xob->xim->height,
-						IPC_CREAT | 0777);
+						IPC_CREAT | 0600);
 		  if (xob->shm_info->shmid >= 0)
 		    {
 		       xob->shm_info->readOnly = False;

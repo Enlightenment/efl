@@ -59,7 +59,7 @@ _buf_new(X_Swapper *swp, Buffer *buf)
         buf->bpl = buf->xim->bytes_per_line;
 
         buf->shm_info.shmid = shmget(IPC_PRIVATE, buf->bpl * buf->h,
-                                     IPC_CREAT | 0777);
+                                     IPC_CREAT | 0600);
         if (buf->shm_info.shmid >= 0)
           {
              buf->shm_info.readOnly = False;
