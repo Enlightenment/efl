@@ -59,6 +59,20 @@ extern "C" {
 /* We ue the factory pattern here, so you shouldn't call eo_add directly. */
 EAPI Eo *ecore_main_loop_get(void);
 
+typedef struct _Efl_Future_Composite_Progress Efl_Future_All_Progress;
+
+struct _Efl_Future_Composite_Progress
+{
+   Efl_Future *inprogress;
+   void *progress;
+
+   unsigned int index;
+};
+
+EAPI Efl_Future *efl_future_all_internal(Efl_Future *f1, ...);
+
+#define efl_future_all(...) efl_future_all_internal(__VA_ARGS__, NULL)
+
 /**
  * @}
  */
