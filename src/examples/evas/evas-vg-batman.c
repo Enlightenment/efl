@@ -79,9 +79,9 @@ _animator(void *data EINA_UNUSED, double pos)
 {
    int next = (animation_position + 1) % (sizeof (batmans_path) / sizeof (batmans_path[0]));
 
-   evas_vg_shape_shape_interpolate(batman,
-                                   batmans_vg[next],    
+   evas_vg_shape_shape_interpolate(batman,   
                                    batmans_vg[animation_position],
+                                   batmans_vg[next],
                                    ecore_animator_pos_map(pos, ECORE_POS_MAP_SINUSOIDAL, 0.0, 0.0));
 
    if (pos == 1.0)
