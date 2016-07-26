@@ -2,6 +2,7 @@
 efl = require('efl');
 
 util = require('util');
+path = require('path');
 fs = require('fs');
 
 user_acount = 'EnlightenmentKo'
@@ -16,20 +17,23 @@ var twit = new Twitter({
   access_token_secret: 'l7ccNKXTVv6cymfSD1gQH61tmfixkdna2QmOjPtpVxSHD'
 });
 
-win = new efl.ui.WinStandard(null);
+win = new efl.Efl.Ui.Win.Standard(null);
 win.title = "Twitter App";
 win.autohide = true;
 
-box = new efl.ui.Box(win);
-box.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(box);
+box = new efl.Efl.Ui.Box(win);
+box.setHintWeight(1.0, 1.0);
+win.pack(box);
 box.setVisible(true);
 
-list = new efl.List(win);
-list.setSizeHintWeight(1.0, 1.0);
-list.setSizeHintAlign(-1.0, -1.0);
-box.packEnd(list);
-list.setVisible(true);
+tweet_box = new efl.Efl.Ui.Box(win);
+tweet_box.setHintWeight(1.0, 1.0);
+tweet_box.setHintAlign(-1.0, -1.0);
+tweet_box.setPackPadding(0.0, 30.0, true);
+box.packEnd(tweet_box);
+tweet_box_orient = tweet_box.cast("Efl.Orientation");
+tweet_box_orient.setOrientation(efl.Efl.Orient.VERTICAL);
+
 
 icon_array = new Array();
 
@@ -40,7 +44,7 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
             console.log("finished");
             for (i=0; i < icon_array.length; i++) {
                 console.log(i);
-                icon_array[i].file = "/tmp/twitter_pic.jpg";
+                icon_array[i].setFile("/tmp/twitter_pic.jpg", null);
             }
         });
         if (tweets.length > 0) {
@@ -48,8 +52,9 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
         }
 
         for(i=0; i < tweets.length; i++){
-            var layout = new efl.ui.Layout(win);
-            layout.file["tweet"] = "twitter_example_01.edj";
+            var layout = new efl.Elm.Layout(win);
+            var filename = path.join(__dirname, 'twitter_example_01.edj');
+            layout.setFile(filename, "tweet");
 
             var user_name = tweets[i].user.name;
             var screen_name = tweets[i].user.screen_name;
@@ -58,24 +63,27 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
 
             layout.setText("user_name", screen_name);
             layout.setText("screen_name", " - @"+screen_name);
-            var entry = new efl.ui.Entry(win);
-            entry.text["elm.text"] = text;
+            var entry = new efl.Elm.Entry(win);
+            entry.setText("elm.text", text);
             console.log(text);
-            layout.content["tweet_text"] = entry;
+            part = layout.part("tweet_text").cast("Efl.Container");
+            part.setContent(entry);
 
-            layout.sizeHintMin = {127, 96};
-            layout.sizeHintWeight = {1.0, 1.0};
-            layout.sizeHintAlign = {-1.0, -1.0};
+            layout.setHintMin(127, 96);
+            layout.setHintWeight(1.0, 1.0);
+            layout.setHintAlign(-1.0, -1.0);
 
-            var icon = new efl.ui.Image(win);
+            var icon = new efl.Efl.Ui.Image(win);
             icon.fillInside = true;
             icon_array.push(icon);
-            layout.content["user_icon"] = icon;
-            item = list.itemAppend("", layout, null, null, null);
+            user_icon = layout.part("user_icon").cast("Efl.Container");
+            user_icon.setContent(icon);
+            item = tweet_box.packEnd(layout);
+            layout.setVisible(true);
         }
-        list.go();
+        tweet_box.setVisible(true);
     }
 });
 
-win.size = {380,400};
-win.visible = {true};
+win.setSize(380, 400);
+win.setVisible(true);

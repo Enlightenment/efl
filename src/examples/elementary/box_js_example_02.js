@@ -1,16 +1,15 @@
 
 var efl = require('efl')
-var elm = require('elm')
 
 _add_cb = function(){
-    var btn = new elm.Elm.Button(win);
+    var btn = new efl.Elm.Button(win);
     btn.setText("elm.text", "I do nothing");
     bx.packEnd(btn);
     btn.setVisible(true);
 }
 
 _clear_cb = function(){
-    bx.clear();
+    bx.clearPack();
 }
 
 _unpack_cb = function(btn){
@@ -18,61 +17,63 @@ _unpack_cb = function(btn){
     btn.setColor(128, 64, 0, 128)
 }
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Box example");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText("Box example");
 win.setAutohide(true);
 
-bg = new elm.Elm.Bg(win);
-bg.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(bg);
+bg = new efl.Elm.Bg(win);
+bg.setHintWeight(1.0, 1.0);
+win.pack(bg);
 bg.setVisible(true);
 
-bigbox = new elm.Elm.Box(win)
-bigbox.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(bigbox);
+bigbox = new efl.Efl.Ui.Box(win)
+bigbox.setHintWeight(1.0, 1.0);
+win.pack(bigbox);
 
-bx = new elm.Elm.Box(win)
-bx.setSizeHintWeight(1.0, 1.0);
-bx.setHorizontal(true);
+bx = new efl.Efl.Ui.Box(win);
+bx.setHintWeight(1.0, 1.0);
+bx_orient = bx.cast("Efl.Orientation");
+bx_orient.setOrientation(efl.Efl.Orient.VERTICAL);
 bigbox.packEnd(bx);
 bx.setVisible(true);
 
-bt = new elm.Elm.Button(win);
+bt = new efl.Elm.Button(win);
 bt.setText("elm.text", "Add");
 bx.packEnd(bt);
 bt.setVisible(true);
 bt.on('clicked', _add_cb);
 
-bt = new elm.Elm.Button(win);
+bt = new efl.Elm.Button(win);
 bt.setText("elm.text", "Clear");
 bx.packEnd(bt);
 bt.setVisible(true);
 bt.on('clicked', _clear_cb);
 
-bx = new elm.Elm.Box(win)
-bx.setSizeHintWeight(1.0, 1.0);
-bx.setSizeHintAlign(-1.0, -1.0);
-bx.setHorizontal(true);
+bx = new efl.Efl.Ui.Box(win)
+bx.setHintWeight(1.0, 1.0);
+bx.setHintAlign(-1.0, -1.0);
+bx_orient = bx.cast("Efl.Orientation");
+bx_orient.setOrientation(efl.Efl.Orient.HORIZONTAL);
 bigbox.packEnd(bx);
 bx.setVisible(true);
 
-bt = new elm.Elm.Button(win);
+bt = new efl.Elm.Button(win);
 bt.setText("elm.text", "Button 1");
 bx.packEnd(bt);
-bt.setSizeHintWeight(1.0, 1.0);
-bt.setSizeHintAlign(-1.0, -1.0);
+bt.setHintWeight(1.0, 1.0);
+bt.setHintAlign(-1.0, -1.0);
 bt.setVisible(true);
 bt.on('clicked', _unpack_cb);
 
-bt = new elm.Elm.Button(win);
+bt = new efl.Elm.Button(win);
 bt.setText("elm.text", "Button 2");
 bx.packEnd(bt);
-bt.setSizeHintWeight(1.0, 0.0);
-bt.setSizeHintAlign(1.0, 0.5);
+bt.setHintWeight(1.0, 0.0);
+bt.setHintAlign(1.0, 0.5);
 bt.setVisible(true);
 bt.on('clicked', _unpack_cb);
 
-bt = new elm.Elm.Button(win);
+bt = new efl.Elm.Button(win);
 bt.setText("elm.text", "Button 3");
 bx.packEnd(bt);
 bt.setVisible(true);

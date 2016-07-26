@@ -1,12 +1,11 @@
 
 efl = require('efl');
-elm = require('elm');
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Icon Plain");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText("Icon Plain");
 win.setAutohide(true);
 
-icon = new elm.Elm.Icon(win);
+icon = new efl.Elm.Icon(win);
 //icon.order_lookup_set(ELM_ICON_LOOKUP_THEME_FDO); Ja eh o default
 icon.setStandard("home");
 
@@ -25,8 +24,8 @@ icon.setResizable(false, true);
 icon.setSmooth(false);
 icon.setFillOutside(true);
 
-icon.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(icon);
+icon.setHintWeight(1.0, 1.0);
+win.pack(icon);
 icon.setVisible(true);
 
 win.setSize(320, 320);

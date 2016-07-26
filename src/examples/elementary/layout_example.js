@@ -1,15 +1,15 @@
-
-Elm = require('elm').Elm;
+path = require('path');
 efl = require('efl');
 Evas = efl.Evas;
+Elm = efl.Elm;
 
-win = new Elm.WinStandard(null);
-win.setTitle("Layout");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText('Layout');
 win.setAutohide(true);
 
-box = new Elm.Box(win);
-box.setSizeHintWeight(1.0, 1.0);
-win.addResizeObject(box);
+box = new efl.Efl.Ui.Box(win);
+box.setHintWeight(1.0, 1.0);
+win.pack(box);
 box.setVisible(true);
 
 ly = new Elm.Layout(box);
@@ -20,28 +20,31 @@ if (!ly.setTheme("layout", "application", "titlebar"))
 }
 
 ly.setPartText('elm.text', 'Some title');
-ly.setSizeHintWeight(1.0, 1.0);
-ly.setSizeHintAlign(1.0, 1.0);
+ly.setHintWeight(1.0, 1.0);
+ly.setHintAlign(1.0, 1.0);
 box.packEnd(ly);
 ly.setVisible(true);
 
 bt = new Elm.Icon(ly);
-bt.setStandard('chat');
-bt.setSizeHintMin(20, 20);
+bt.setIcon('chat');
+bt.setHintMin(20, 20);
 // elm_layout_icon_set(ly, bt);
-ly.setContent('elm.swallow.icon', bt);
+icon_container = ly.part('elm.swallow.icon').cast('Efl.Container');
+icon_container.setContent(bt);
 ly.emitSignal('elm,state,icon,visible', 'elm');
 
 bt = new Elm.Icon(ly);
-bt.setStandard('close');
-bt.setSizeHintMin(20, 20);
+bt.setIcon('close');
+bt.setHintMin(20, 20);
 // elm_layout_end_set(ly, bt);
-ly.setContent('elm.swallow.end', bt);
+end_container = ly.part('elm.swallow.end').cast('Efl.Container');
+end_container.setContent(bt);
 ly.emitSignal('elm,state,end,visible', 'elm');
 
 ly = new Elm.Layout(box);
-ly.setFile('/home/felipe/dev/samsung/upstream/elementary/build/data/objects/test.edj', "layout");
-ly.setSizeHintWeight(1.0, 1.0);
+filename = path.join(__dirname, 'layout_example.edj');
+ly.setFile(filename, 'example/mylayout');
+ly.setHintWeight(1.0, 1.0);
 box.packEnd(ly);
 ly.setVisible(true);
 
@@ -52,11 +55,14 @@ ly.setVisible(true);
 
 bt = new Elm.Button(ly);
 bt.setPartText(null, "Button 1");
-ly.setContent("element1", bt);
+console.log("Will get part");
+element_container = ly.part('example/custom').cast('Efl.Container');
+console.log("Will setcontent on part");
+element_container.setContent(bt);
 
 bt.on("clicked", function() { console.log('button clicked'); });
 
-ly.setPartCursor("text", 'watch');
+ly.setPartCursor("example/title", 'watch');
 ly.on('mouse,down', function() { console.log('layout mouse down') });
 ly.on('mouse,up', function() { console.log('layout mouse up') });
 
