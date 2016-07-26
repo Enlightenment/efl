@@ -39,7 +39,7 @@ struct _Part_Item_Iterator
 };
 
 #define PROXY_REF(obj, pd) do { if (!(pd->temp++)) eo_ref(obj); } while(0)
-#define PROXY_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) eo_unref(obj); } } while(0)
+#define PROXY_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) eo_del(obj); } } while(0)
 #define RETURN_VAL(a) do { typeof(a) _ret = a; PROXY_UNREF(obj, pd); return _ret; } while(0)
 #define RETURN_VOID do { PROXY_UNREF(obj, pd); return; } while(0)
 #define PROXY_CALL(a) ({ PROXY_REF(obj, pd); a; })
@@ -50,7 +50,7 @@ struct _Part_Item_Iterator
    do { if (_ ## type ## _proxy) \
      { \
         eo_del_intercept_set(_ ## type ## _proxy, NULL); \
-        eo_unref(_ ## type ## _proxy); \
+        eo_del(_ ## type ## _proxy); \
         _ ## type ## _proxy = NULL; \
      } } while (0)
 
@@ -61,7 +61,7 @@ type ## _del_cb(Eo *proxy) \
    if (_ ## type ## _proxy) \
      { \
         eo_del_intercept_set(proxy, NULL); \
-        eo_unref(proxy); \
+        eo_del(proxy); \
         return; \
      } \
    if (eo_parent_get(proxy)) \
