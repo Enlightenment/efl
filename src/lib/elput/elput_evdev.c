@@ -64,13 +64,14 @@ _keyboard_fd_get(off_t size)
    char *path;
    char tmp[PATH_MAX];
    long flags;
+   Eina_Tmpstr *fullname;
 
    if (!(path = getenv("XDG_RUNTIME_DIR")))
      return -1;
 
    snprintf(tmp, sizeof(tmp), "%s/elput-keymap-XXXXXX", path);
 
-   fd = eina_file_mkstemp(tmp, NULL);
+   fd = eina_file_mkstemp(tmp, &fullname);
    if (fd < 0) return -1;
 
    flags = fcntl(fd, F_GETFD);
@@ -92,7 +93,8 @@ _keyboard_fd_get(off_t size)
         return -1;
      }
 
-   unlink(tmp);
+   unlink(fullname);
+   eina_tmpstr_del(fullname);
    return fd;
 }
 
