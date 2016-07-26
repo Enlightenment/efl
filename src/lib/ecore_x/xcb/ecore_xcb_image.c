@@ -621,7 +621,7 @@ _ecore_xcb_image_shm_check(void)
        }
 
      shminfo.shmid =
-       shmget(IPC_PRIVATE, img->stride * img->height, (IPC_CREAT | 0666));
+       shmget(IPC_PRIVATE, img->stride * img->height, (IPC_CREAT | 0600));
      if (shminfo.shmid == (uint32_t)-1)
        {
           xcb_image_destroy(img);
@@ -675,7 +675,7 @@ _ecore_xcb_image_shm_create(Ecore_X_Image *im)
                                     im->depth, NULL, ~0, NULL);
    if (!im->xim) return;
 
-   im->shminfo.shmid = shmget(IPC_PRIVATE, im->xim->size, (IPC_CREAT | 0666));
+   im->shminfo.shmid = shmget(IPC_PRIVATE, im->xim->size, (IPC_CREAT | 0600));
    if (im->shminfo.shmid == (uint32_t)-1)
      {
         xcb_image_destroy(im->xim);

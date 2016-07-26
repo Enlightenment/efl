@@ -46,6 +46,7 @@ evas_software_xcb_outbuf_init(void)
 void 
 evas_software_xcb_outbuf_free(Outbuf *buf) 
 {
+   eina_spinlock_take(&(buf->priv.lock));
    while (buf->priv.pending_writes) 
      {
         RGBA_Image *im = NULL;
@@ -67,6 +68,7 @@ evas_software_xcb_outbuf_free(Outbuf *buf)
         if (obr->mask) _unfind_xcbob(obr->mask, EINA_FALSE);
         free(obr);
      }
+   eina_spinlock_release(&(buf->priv.lock));
 
    evas_software_xcb_outbuf_idle_flush(buf);
    evas_software_xcb_outbuf_flush(buf, NULL, MODE_FULL);
@@ -82,10 +84,9 @@ evas_software_xcb_outbuf_free(Outbuf *buf)
                                         buf->priv.pal);
 
    eina_array_flush(&buf->priv.onebuf_regions);
-
+   eina_spinlock_free(&(buf->priv.lock));
    free(buf);
-   _clear_xcbob(EINA_FALSE);
-   eina_spinlock_free(&shmpool_lock);
+   _clear_xcbob(EINA_TRUE);
 }
 
 Outbuf *
@@ -260,6 +261,7 @@ evas_software_xcb_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, xcb_co
 
    evas_software_xcb_outbuf_drawable_set(buf, draw);
    evas_software_xcb_outbuf_mask_set(buf, mask);
+   eina_spinlock_new(&(buf->priv.lock));
 
    return buf;
 }
@@ -273,6 +275,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
    Eina_Bool alpha = EINA_FALSE;
    int bpl = 0;
 
+   eina_spinlock_take(&(buf->priv.lock));
    if ((buf->onebuf) && (buf->priv.x11.xcb.shm)) 
      {
         Eina_Rectangle *rect;
@@ -280,11 +283,15 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
         RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, buf->w, buf->h);
 
         if (!(obr = calloc(1, sizeof(Outbuf_Region))))
-          return NULL;
+          {
+             eina_spinlock_release(&(buf->priv.lock));
+             return NULL;
+          }
 
         if (!(rect = eina_rectangle_new(x, y, w, h))) 
           {
              free(obr);
+             eina_spinlock_release(&(buf->priv.lock));
              return NULL;
           }
 
@@ -301,6 +308,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
                   buf->priv.synced = EINA_TRUE;
                }
              free(obr);
+             eina_spinlock_release(&(buf->priv.lock));
              return buf->priv.onebuf;
           }
         obr->x = 0;
@@ -330,6 +338,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
              if (!obr->xcbob) 
                {
                   free(obr);
+                  eina_spinlock_release(&(buf->priv.lock));
                   return NULL;
                }
 #ifdef EVAS_CSERVE2
@@ -355,6 +364,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
                {
                   evas_software_xcb_output_buffer_free(obr->xcbob, EINA_FALSE);
                   free(obr);
+                  eina_spinlock_release(&(buf->priv.lock));
                   return NULL;
                }
              im->extended_info = obr;
@@ -387,6 +397,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
              if (!im) 
                {
                   free(obr);
+                  eina_spinlock_release(&(buf->priv.lock));
                   return NULL;
                }
              im->cache_entry.flags.alpha |= (alpha ? 1 : 0);
@@ -423,6 +434,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
                     evas_cache_image_drop(&im->cache_entry);
 
                   free(obr);
+                  eina_spinlock_release(&(buf->priv.lock));
                   return NULL;
                }
              if (buf->priv.x11.xcb.mask) 
@@ -441,11 +453,15 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
 //             memset(im->image.data, 0, (w * h * sizeof(DATA32)));
           }
         buf->priv.onebuf = im;
+        eina_spinlock_release(&(buf->priv.lock));
         return im;
      }
 
    if (!(obr = calloc(1, sizeof(Outbuf_Region))))
-     return NULL;
+     {
+        eina_spinlock_release(&(buf->priv.lock));
+        return NULL;
+     }
 
    obr->x = x;
    obr->y = y;
@@ -470,6 +486,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
         if (!obr->xcbob) 
           {
              free(obr);
+             eina_spinlock_release(&(buf->priv.lock));
              return NULL;
           }
 #ifdef EVAS_CSERVE2
@@ -495,6 +512,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
           {
              _unfind_xcbob(obr->xcbob, EINA_FALSE);
              free(obr);
+             eina_spinlock_release(&(buf->priv.lock));
              return NULL;
           }
         im->extended_info = obr;
@@ -525,6 +543,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
         if (!im) 
           {
              free(obr);
+             eina_spinlock_release(&(buf->priv.lock));
              return NULL;
           }
         im->cache_entry.flags.alpha |= (alpha ? 1 : 0);
@@ -558,6 +577,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
 #endif
                evas_cache_image_drop(&im->cache_entry);
              free(obr);
+             eina_spinlock_release(&(buf->priv.lock));
              return NULL;
           }
         if (buf->priv.x11.xcb.mask) 
@@ -577,6 +597,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
 
    buf->priv.pending_writes = eina_list_append(buf->priv.pending_writes, im);
 
+   eina_spinlock_release(&(buf->priv.lock));
    return im;
 }
 
@@ -587,14 +608,13 @@ evas_software_xcb_outbuf_free_region_for_update(Outbuf *buf EINA_UNUSED, RGBA_Im
 }
 
 void 
-evas_software_xcb_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
+evas_software_xcb_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode EINA_UNUSED)
 {
    Eina_List *l = NULL;
    RGBA_Image *im = NULL;
    Outbuf_Region *obr = NULL;
 
-   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
-
+   eina_spinlock_take(&(buf->priv.lock));
    if ((buf->priv.onebuf) && (eina_array_count(&buf->priv.onebuf_regions)))
      {
         Eina_Array_Iterator it;
@@ -743,12 +763,14 @@ evas_software_xcb_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Eva
           }
 #endif
      }
+   eina_spinlock_release(&(buf->priv.lock));
    evas_common_cpu_end_opt();
 }
 
 void 
 evas_software_xcb_outbuf_idle_flush(Outbuf *buf) 
 {
+   eina_spinlock_release(&(buf->priv.lock));
    if (buf->priv.onebuf) 
      {
         RGBA_Image *im;
@@ -795,6 +817,7 @@ evas_software_xcb_outbuf_idle_flush(Outbuf *buf)
           }
         _clear_xcbob(EINA_FALSE);
      }
+   eina_spinlock_release(&(buf->priv.lock));
 }
 
 void 
@@ -807,8 +830,13 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, in
    int bpl = 0, yy = 0;
    int bw = 0, bh = 0;
 
+   eina_spinlock_release(&(buf->priv.lock));
    obr = update->extended_info;
-   if (!obr->xcbob) return;
+   if (!obr->xcbob)
+     {
+        eina_spinlock_release(&(buf->priv.lock));
+        return;
+     }
 
    if ((buf->rot == 0) || (buf->rot == 180)) 
      {
@@ -834,11 +862,22 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, in
                                        buf->priv.mask.g, buf->priv.mask.b, 
                                        PAL_MODE_NONE, buf->rot);
      }
-   if (!func_conv) return;
+   if (!func_conv)
+     {
+        eina_spinlock_release(&(buf->priv.lock));
+        return;
+     }
 
    if (!(data = evas_software_xcb_output_buffer_data(obr->xcbob, &bpl)))
-     return;
-   if (!(src_data = update->image.data)) return;
+     {
+        eina_spinlock_release(&(buf->priv.lock));
+        return;
+     }
+   if (!(src_data = update->image.data))
+     {
+        eina_spinlock_release(&(buf->priv.lock));
+        return;
+     }
    if (buf->rot == 0) 
      {
         obr->x = x;
@@ -965,6 +1004,7 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, in
 #else
    xcb_flush(buf->priv.x11.xcb.conn);
 #endif
+   eina_spinlock_release(&(buf->priv.lock));
 }
 
 void 

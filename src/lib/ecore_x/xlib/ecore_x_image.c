@@ -120,7 +120,7 @@ _ecore_x_image_shm_check(void)
      }
 
    shminfo.shmid = shmget(IPC_PRIVATE, xim->bytes_per_line * xim->height,
-                          IPC_CREAT | 0666);
+                          IPC_CREAT | 0600);
    if (shminfo.shmid == -1)
      {
         ERR("%s", strerror(errno));
@@ -246,7 +246,7 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
 
    im->shminfo.shmid = shmget(IPC_PRIVATE,
                               im->xim->bytes_per_line * im->xim->height,
-                              IPC_CREAT | 0666);
+                              IPC_CREAT | 0600);
    if (im->shminfo.shmid == -1)
      {
         ERR("shmget failed: %s", strerror(errno));

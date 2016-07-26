@@ -282,7 +282,7 @@ evas_software_xcb_output_buffer_new(xcb_connection_t *conn, xcb_visualtype_t *vi
                   xcbob->shm_info->shmid = 
                     shmget(IPC_PRIVATE, 
                            xcbob->xim->stride * xcbob->xim->height, 
-                           (IPC_CREAT | 0777));
+                           (IPC_CREAT | 0600));
                   if (xcbob->shm_info->shmid == (uint32_t)-1) 
                     {
                        xcb_image_destroy(xcbob->xim);
