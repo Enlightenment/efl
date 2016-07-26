@@ -3906,7 +3906,7 @@ _edje_object_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Ob
      if ((eud->type == EDJE_USER_SWALLOW) && (eud->u.swallow.child == obj_swallow))
        {
           _edje_user_definition_free(eud);
-          return EINA_FALSE;
+          return EINA_TRUE;
        }
 
    _edje_real_part_swallow_clear(ed, rp);
@@ -3970,9 +3970,6 @@ _edje_object_efl_part_part(Eo *obj, Edje *ed, const char *part)
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return NULL;
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return NULL;
