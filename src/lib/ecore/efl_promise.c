@@ -97,6 +97,13 @@ _efl_loop_future_success(Eo_Event *ev, Efl_Loop_Future_Data *pd, void *value)
 
              cb->success((void*) cb->data, ev);
           }
+        else
+          {
+             chain_success.next = NULL;
+             chain_success.value = pd->message;
+             cb->success((void*) cb->data, ev);
+             chain_success.value = value;
+          }
 
         pd->callbacks = eina_inlist_remove(pd->callbacks, pd->callbacks);
         free(cb);
@@ -116,12 +123,9 @@ _efl_loop_future_failure(Eo_Event *ev, Efl_Loop_Future_Data *pd, Eina_Error erro
 
    EINA_INLIST_FREE(pd->callbacks, cb)
      {
-        if (cb->next)
-          {
-             chain_fail.next = cb->next;
+        chain_fail.next = cb->next;
 
-             cb->failure((void*) cb->data, ev);
-          }
+        cb->failure((void*) cb->data, ev);
 
         pd->callbacks = eina_inlist_remove(pd->callbacks, pd->callbacks);
         free(cb);
@@ -173,7 +177,7 @@ _efl_loop_future_fulfilling(Eo *obj, Efl_Loop_Future_Data *pd)
 }
 
 static void
-_efl_loop_future_prepare_events(Efl_Loop_Future_Data *pd, Eina_Bool progress)
+_efl_loop_future_prepare_events(Efl_Loop_Future_Data *pd, Eina_Bool progress, Eina_Bool optional)
 {
    if (!pd->promise) return ;
 
@@ -183,9 +187,30 @@ _efl_loop_future_prepare_events(Efl_Loop_Future_Data *pd, Eina_Bool progress)
         ecore_loop_future_unregister(eo_provider_find(pd->self, EFL_LOOP_CLASS), pd->self);
      }
 
-   pd->promise->set.future = EINA_TRUE;
-   if (progress)
-     pd->promise->set.progress = EINA_TRUE;
+   if (!optional)
+     {
+        pd->promise->set.future = EINA_TRUE;
+        if (progress)
+          pd->promise->set.progress = EINA_TRUE;
+     }
+}
+
+static Efl_Loop_Future_Callback *
+_efl_loop_future_then_internal(Efl_Loop_Future_Data *pd,
+                               Eo_Event_Cb success, Eo_Event_Cb failure, Eo_Event_Cb progress, const void *data)
+{
+   Efl_Loop_Future_Callback *cb;
+
+   cb = calloc(1, sizeof (Efl_Loop_Future_Callback));
+   if (!cb) return NULL;
+
+   cb->success = success;
+   cb->failure = failure;
+   cb->progress = progress;
+   cb->data = data;
+   pd->callbacks = eina_inlist_append(pd->callbacks, EINA_INLIST_GET(cb));
+
+   return cb;
 }
 
 static Efl_Future *
@@ -195,23 +220,32 @@ _efl_loop_future_then(Eo *obj, Efl_Loop_Future_Data *pd,
    Efl_Loop_Future_Callback *cb;
    Efl_Future *f;
 
-   cb = calloc(1, sizeof (Efl_Loop_Future_Callback));
+   cb = _efl_loop_future_then_internal(pd, success, failure, progress, data);
    if (!cb) return NULL;
 
-   cb->success = success;
-   cb->failure = failure;
-   cb->progress = progress;
-   cb->data = data;
    cb->next = eo_add(EFL_PROMISE_CLASS, obj);
-
    f = efl_promise_future_get(cb->next);
 
-   pd->callbacks = eina_inlist_append(pd->callbacks, EINA_INLIST_GET(cb));
-
-   _efl_loop_future_prepare_events(pd, !!progress);
+   _efl_loop_future_prepare_events(pd, !!progress, EINA_FALSE);
    _efl_loop_future_fulfilling(obj, pd);
 
    return f;
+}
+
+static Eina_Bool
+_efl_loop_future_internal_then(Efl_Future *f,
+                               Eo_Event_Cb success, Eo_Event_Cb failure, Eo_Event_Cb progress, const void *data)
+{
+   Efl_Loop_Future_Data *pd = eo_data_scope_get(f, EFL_LOOP_FUTURE_CLASS);
+   Efl_Loop_Future_Callback *cb;
+
+   cb = _efl_loop_future_then_internal(pd, success, failure, progress, data);
+   if (!cb) return EINA_FALSE;
+
+   _efl_loop_future_prepare_events(pd, !!progress, EINA_TRUE);
+   _efl_loop_future_fulfilling(f, pd);
+
+   return EINA_FALSE;
 }
 
 static void
@@ -551,6 +585,324 @@ _efl_promise_eo_base_destructor(Eo *obj, Efl_Promise_Data *pd)
      }
 
    eo_destructor(eo_super(obj, EFL_PROMISE_CLASS));
+}
+
+typedef struct _Efl_Promise_All Efl_Promise_All;
+typedef struct _Efl_Future_All Efl_Future_All;
+typedef struct _Efl_Accessor_All Efl_Accessor_All;
+
+struct _Efl_Accessor_All
+{
+   Eina_Accessor accessor;
+
+   Efl_Promise_All *all;
+   Efl_Promise *promise;
+};
+
+struct _Efl_Future_All
+{
+   Efl_Future *f;
+
+   Efl_Promise_Msg *d;
+};
+
+struct _Efl_Promise_All
+{
+   Eina_Array members;
+
+   Efl_Promise *promise;
+
+   Eina_Bool failed : 1;
+   Eina_Bool progress_triggered : 1;
+   Eina_Bool future_triggered : 1;
+};
+
+static void
+_efl_promise_all_free(Efl_Promise_All *all)
+{
+   eo_del(all->promise);
+   all->promise = NULL;
+}
+
+static void
+_efl_promise_all_die(void *data, const Eo_Event *ev EINA_UNUSED)
+{
+   Efl_Promise_All *all = data;
+   Efl_Future_All *fa;
+
+   while ((fa = eina_array_pop(&all->members)))
+     {
+        EINA_REFCOUNT_UNREF(fa->d)
+          _efl_promise_msg_free(fa->d);
+        assert(fa->f == NULL);
+        free(fa);
+     }
+   eina_array_flush(&all->members);
+   free(all);
+}
+
+static void
+_efl_all_future_set(void *data, const Eo_Event *ev EINA_UNUSED)
+{
+   Efl_Promise_All *all = data;
+   Efl_Future_All *fa;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   if (all->future_triggered) return ;
+   all->future_triggered = EINA_TRUE;
+
+   // Propagate set on demand
+   EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
+     {
+        if (fa->f)
+          {
+             Efl_Loop_Future_Data *pd = eo_data_scope_get(fa->f, EFL_LOOP_FUTURE_CLASS);
+
+             if (!pd->promise->set.future && !pd->promise->set.future_triggered)
+               {
+                  eo_event_callback_call(pd->promise->promise, EFL_PROMISE_EVENT_FUTURE_SET, fa->f);
+                  pd->promise->set.future_triggered = EINA_TRUE;
+                  pd->promise->set.future = EINA_TRUE;
+               }
+          }
+     }
+}
+
+static void
+_efl_all_future_progress_set(void *data, const Eo_Event *ev EINA_UNUSED)
+{
+   Efl_Promise_All *all = data;
+   Efl_Future_All *fa;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   if (all->progress_triggered) return ;
+   all->progress_triggered = 1;
+
+   // Propagate progress set
+   EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
+     {
+        if (fa->f)
+          {
+             Efl_Loop_Future_Data *pd = eo_data_scope_get(fa->f, EFL_LOOP_FUTURE_CLASS);
+
+             if (!pd->promise->set.progress && !pd->promise->set.progress_triggered)
+               {
+                  eo_event_callback_call(pd->promise->promise, EFL_PROMISE_EVENT_FUTURE_PROGRESS_SET, fa->f);
+                  pd->promise->set.progress_triggered = EINA_TRUE;
+                  pd->promise->set.progress = EINA_TRUE;
+               }
+          }
+     }
+}
+
+static void
+_efl_all_future_none(void *data, const Eo_Event *ev EINA_UNUSED)
+{
+   Efl_Promise_All *all = data;
+   Efl_Future_All *fa;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   if (all->failed) return ;
+   all->failed = EINA_TRUE;
+
+   // Trigger cancel on all future
+   EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
+     {
+        if (!fa->d) efl_future_cancel(fa->f);
+     }
+
+   // No one is listening to this promise anyway
+   _efl_promise_all_free(all);
+}
+
+static Eina_Bool
+_efl_accessor_all_get_at(Efl_Accessor_All *ac, unsigned int pos, void **data)
+{
+   Efl_Future_All *fa;
+
+   fa = eina_array_data_get(&ac->all->members, pos);
+   if (!fa) return EINA_FALSE;
+
+   *data = fa->d->value;
+   return EINA_TRUE;
+}
+
+static Efl_Promise *
+_efl_accessor_all_get_container(Efl_Accessor_All *ac)
+{
+   return ac->all->promise;
+}
+
+static void
+_efl_accessor_all_free(Efl_Accessor_All *ac)
+{
+   _efl_promise_all_free(ac->all);
+   eo_unref(ac->promise);
+   free(ac);
+}
+
+static void
+_then_all(void *data, const Eo_Event *ev)
+{
+   Efl_Future_Event_Success *success = ev->info;
+   Efl_Promise_All *all = data;
+   Efl_Future_All *fa;
+   // This is a trick due to the fact we are using internal function call to register this functions
+   Efl_Promise_Msg *d = success->value;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+   Eina_Bool done = EINA_TRUE;
+
+   // Only when all value are received can we propagate the success
+   EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
+     {
+        if (fa->f == ev->object)
+          {
+             fa->d = d;
+             EINA_REFCOUNT_REF(fa->d);
+          }
+        done &= !!fa->d;
+     }
+
+   if (done)
+     {
+        Efl_Accessor_All *ac;
+
+        ac = calloc(1, sizeof (Efl_Accessor_All));
+        if (!ac) return ; // We do now the promise and all here
+
+        EINA_MAGIC_SET(&ac->accessor, EINA_MAGIC_ACCESSOR);
+
+        ac->accessor.version = EINA_ACCESSOR_VERSION;
+        ac->accessor.get_at = FUNC_ACCESSOR_GET_AT(_efl_accessor_all_get_at);
+        ac->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(_efl_accessor_all_get_container);
+        ac->accessor.free = FUNC_ACCESSOR_FREE(_efl_accessor_all_free);
+        ac->all = all;
+        ac->promise = eo_ref(all->promise);
+
+        efl_promise_value_set(all->promise, &ac->accessor, EINA_FREE_CB(eina_accessor_free));
+     }
+}
+
+static void
+_fail_all(void *data, const Eo_Event *ev)
+{
+   Efl_Future_Event_Failure *fail = ev->info;
+   Efl_Promise_All *all = data;
+   Efl_Future_All *fa;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   if (all->failed) return ;
+   all->failed = EINA_TRUE;
+
+   eo_ref(all->promise);
+
+   // In case of one fail, the entire promise will fail and
+   // all remaining future will be cancelled
+   EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
+     {
+        if (fa->d)
+          {
+             EINA_REFCOUNT_UNREF(fa->d)
+               _efl_promise_msg_free(fa->d);
+             fa->d = NULL;
+          }
+        else
+          {
+             efl_future_cancel(fa->f);
+          }
+     }
+
+   efl_promise_failed(all->promise, fail->error);
+   _efl_promise_all_free(all);
+   eo_unref(all->promise);
+}
+
+static void
+_progress_all(void *data, const Eo_Event *ev)
+{
+   Efl_Promise_All *all = data;
+   Efl_Future_Event_Progress *p = ev->info;
+   Efl_Future_All *fa;
+   Efl_Future_All_Progress a;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   a.inprogress = ev->object;
+   a.progress = p->progress;
+   a.index = 0;
+
+   EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
+     {
+        if (fa->f == a.inprogress)
+          {
+             break ;
+          }
+        a.index++;
+     }
+   efl_promise_progress_set(all->promise, &a);
+}
+
+EO_CALLBACKS_ARRAY_DEFINE(efl_all_callbacks,
+                          { EFL_PROMISE_EVENT_FUTURE_SET, _efl_all_future_set },
+                          { EFL_PROMISE_EVENT_FUTURE_PROGRESS_SET, _efl_all_future_progress_set },
+                          { EFL_PROMISE_EVENT_FUTURE_NONE, _efl_all_future_none },
+                          { EO_EVENT_DEL, _efl_promise_all_die });
+
+EAPI Efl_Future *
+efl_future_all_internal(Efl_Future *f1, ...)
+{
+   Efl_Promise_All *all;
+   Efl_Future_All *fa;
+   Efl_Future *fn;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+   va_list args;
+
+   if (!f1) return NULL;
+
+   all = calloc(1, sizeof (Efl_Promise_All));
+   if (!all) return NULL;
+
+   eina_array_step_set(&all->members, sizeof (Eina_Array), 8);
+   all->promise = eo_add(EFL_PROMISE_CLASS, NULL);
+   if (!all->promise) goto on_error;
+
+   fa = calloc(1, sizeof (Efl_Future_All));
+   if (!fa) goto on_error;
+   efl_future_use(&fa->f, f1);
+   eina_array_push(&all->members, fa);
+
+   va_start(args, f1);
+
+   while ((fn = va_arg(args, Efl_Future *)))
+     {
+        fa = calloc(1, sizeof (Efl_Future_All));
+        if (!fa)
+          {
+             va_end(args);
+             goto on_error;
+          }
+        eina_array_push(&all->members, fa);
+        efl_future_use(&fa->f, fn);
+     }
+
+   va_end(args);
+
+   EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
+     _efl_loop_future_internal_then(fa->f, _then_all, _fail_all, _progress_all, all);
+
+   eo_event_callback_array_add(all->promise, efl_all_callbacks(), all);
+
+   return efl_promise_future_get(all->promise);
+
+ on_error:
+   _efl_promise_all_die(all, NULL);
+   return NULL;
 }
 
 #include "efl_promise.eo.c"
