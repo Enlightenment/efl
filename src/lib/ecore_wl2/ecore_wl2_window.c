@@ -632,6 +632,8 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
 
    if ((window->transparent) || (window->alpha)) return;
 
+   EINA_SAFETY_ON_NULL_RETURN(window->display->wl.compositor);
+
    region = wl_compositor_create_region(window->display->wl.compositor);
    if (!region)
      {
