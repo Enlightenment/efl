@@ -4557,7 +4557,6 @@ _win32_text_n_to_rn(char *intext)
 static char *
 _win32_text_rn_to_n(char *intext)
 {
-   size_t size = 0, newlines = 0;
    char *outtext = NULL, *p, *o;
 
    if (!intext) return NULL;
