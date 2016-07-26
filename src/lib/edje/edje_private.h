@@ -3271,6 +3271,8 @@ void _edje_svg_node_destroy_eet(void);
 
 void _edje_dupe_vector_data(Edje *ed, int svg_id, double width, double height,
                             Edje_Vector_Data *data);
+void _apply_transformation(Efl_VG *root, double w, double h,
+                           Edje_Vector_Data *vg_data);
 
 Edje_Vector_Data * _edje_ref_vector_data(Edje *ed, int svg_id);
 

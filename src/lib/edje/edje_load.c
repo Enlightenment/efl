@@ -2440,7 +2440,8 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg)
      }
 
    // apply the stroke style property
-   evas_vg_shape_stroke_width_set(vg, style->stroke.width);
+   //@TODO HACK, fix the below api to take the stroke width as pixels
+   evas_vg_shape_stroke_width_set(vg, style->stroke.width/2.0);
    evas_vg_shape_stroke_cap_set(vg, style->stroke.cap);
    evas_vg_shape_stroke_join_set(vg, style->stroke.join);
    evas_vg_shape_stroke_scale_set(vg, style->stroke.scale);
@@ -2602,6 +2603,45 @@ _edje_ref_vector_data(Edje *ed, int svg_id)
    return vector;
 }
 
+static void
+_apply_stroke_scale(Efl_VG *node, double scale)
+{
+   Efl_VG *child;
+   Eina_Iterator *itr;
+
+   if (eo_isa(node, EFL_VG_CONTAINER_CLASS))
+     {
+        itr = efl_vg_container_children_get(node);
+        EINA_ITERATOR_FOREACH(itr, child)
+          _apply_stroke_scale(child, scale);
+        eina_iterator_free(itr);
+     }
+   else
+     {
+         evas_vg_shape_stroke_scale_set(node, scale);
+     }
+}
+
+void
+_apply_transformation(Efl_VG *root, double w, double h, Edje_Vector_Data *vg_data)
+{
+   double sx, sy, scale;
+   Eina_Matrix3 m;
+
+   sx = w/vg_data->w;
+   sy = h/vg_data->h;
+   scale = sx < sy ? sx: sy;
+   eina_matrix3_identity(&m);
+   // allign hcenter and vcenter
+   //@TODO take care of the preserveaspectratio attribute
+   eina_matrix3_translate(&m, (w - vg_data->w * scale)/2.0, (h - vg_data->h * scale)/2.0);
+   eina_matrix3_scale(&m, scale, scale);
+   eina_matrix3_translate(&m, -vg_data->x, -vg_data->y);
+   evas_vg_node_transformation_set(root, &m);
+   _apply_stroke_scale(root, scale);
+}
+
+
 void
 _edje_dupe_vector_data(Edje *ed, int svg_id, double width, double height,
                        Edje_Vector_Data *data)
@@ -2623,12 +2663,7 @@ _edje_dupe_vector_data(Edje *ed, int svg_id, double width, double height,
 
    if (vector->w && vector->h)
      {
-        sx = width/vector->w;
-        sy = height/vector->h;
-        eina_matrix3_identity(&matrix);
-        eina_matrix3_scale(&matrix, sx, sy);
-        eina_matrix3_translate(&matrix, -vector->x, -vector->y);
-        evas_vg_node_transformation_set(root, &matrix);
+        _apply_transformation(root, width, height, vector);
      }
 
    data->vg = root;
