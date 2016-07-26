@@ -245,9 +245,6 @@ examples: $(EXTRA_PROGRAMS) $(EDJS)
 
 clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(EDJS) $(CODEGEN_GENERATED)
-	rm -f hi_IN/domain_name.po
-	rm -f ta_IN/domain_name.mo
-	rm -f en_IN/domain_name.po
 
 install-examples: $(EDJS)
 	$(MKDIR_P) $(DESTDIR)$(datadir)/edje/examples
