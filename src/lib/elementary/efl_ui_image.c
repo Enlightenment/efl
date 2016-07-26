@@ -1158,7 +1158,6 @@ EOLIAN static void
 _efl_ui_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
 {
    int tw, th;
-   int cw = 0, ch = 0;
 
    if (w) *w = 0;
    if (h) *h = 0;
@@ -1167,14 +1166,6 @@ _efl_ui_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data 
      edje_object_size_min_get(sd->img, &tw, &th);
    else
      evas_object_image_size_get(sd->img, &tw, &th);
-
-   if ((sd->scale_up) || (sd->scale_down))
-     evas_object_geometry_get(sd->img, NULL, NULL, &cw, &ch);
-
-   tw = tw > cw ? tw : cw;
-   th = th > ch ? th : ch;
-   tw = ((double)tw) * sd->scale;
-   th = ((double)th) * sd->scale;
    if (w) *w = tw;
    if (h) *h = th;
 }
