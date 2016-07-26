@@ -80,12 +80,12 @@ EDJE_CC_FLAGS += -beta
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $(MO_DIR) $< $(builddir)/$(@F)
 
 text.edj: text.edc
-	@cp -ua $(top_srcdir)/src/examples/edje/en_IN/ $(top_builddir)/src/examples/edje/
-	@cp -ua $(top_srcdir)/src/examples/edje/hi_IN/ $(top_builddir)/src/examples/edje/
-	@cp -ua $(top_srcdir)/src/examples/edje/ta_IN/ $(top_builddir)/src/examples/edje/
-	@chmod -R +w $(top_builddir)/src/examples/edje/en_IN/
-	@chmod -R +w $(top_builddir)/src/examples/edje/hi_IN/
-	@chmod -R +w $(top_builddir)/src/examples/edje/ta_IN/
+	@cp -ua $(top_srcdir)/src/examples/edje/en_IN/ $(top_builddir)/src/examples/edje/ || true
+	@cp -ua $(top_srcdir)/src/examples/edje/hi_IN/ $(top_builddir)/src/examples/edje/ || true
+	@cp -ua $(top_srcdir)/src/examples/edje/ta_IN/ $(top_builddir)/src/examples/edje/ || true
+	@chmod -R +w $(top_builddir)/src/examples/edje/en_IN/ || true
+	@chmod -R +w $(top_builddir)/src/examples/edje/hi_IN/ || true
+	@chmod -R +w $(top_builddir)/src/examples/edje/ta_IN/ || true
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $(MO_DIR) $(top_srcdir)/src/examples/edje/text.edc $(top_builddir)/src/examples/edje/text.edj
 
 EDJS = $(EDCS:%.edc=%.edj)
