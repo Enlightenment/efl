@@ -530,6 +530,7 @@ _edje_pick_output_prepare(Edje_File *o, Edje_File *edf, char *name)
         o->minor = edf->minor;
         o->feature_ver = edf->feature_ver;
         o->collection = eina_hash_string_small_new(NULL);
+        o->data = eina_hash_string_small_new(NULL);
 
         /* Open output file */
         o->ef = eet_open(name, EET_FILE_MODE_WRITE);
@@ -619,6 +620,24 @@ _edje_pick_header_dependencies_check(Edje_File *out_file, Edje_File *edf, Edje_P
    edje_cache_emp_free(ce);
    return dep_list;
 #undef GROUP_CHECK_AND_ADD
+}
+
+static int
+_edje_pick_data_update(Edje_File *out_file , Edje_File *edf)
+{
+   Eina_Bool status = EDJE_PICK_NO_ERROR;
+   Eina_Iterator *i;
+   Eina_Stringshare *key, *value;
+
+   i = eina_hash_iterator_key_new(edf->data);
+   EINA_ITERATOR_FOREACH(i, key)
+     {
+        if (eina_hash_find(out_file->data, key)) continue;
+        value = eina_hash_find(edf->data, key);
+        eina_hash_direct_add(out_file->data, key, value);
+     }
+
+   return status;
 }
 
 static int
@@ -1493,6 +1512,7 @@ main(int argc, char **argv)
         _Edje_Pick_Fonts_add(edf);   /* Add fonts from file to fonts list */
 
         /* Copy styles, color class */
+        _edje_pick_data_update(out_file, edf);
         _edje_pick_styles_update(out_file, edf);
         _edje_pick_color_class_update(out_file, edf);
 
