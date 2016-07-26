@@ -1,27 +1,27 @@
 
-var elm = require('elm')
+var efl = require('efl');
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle('title');
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText('title');
 win.setAutohide(true);
 
-bg = new elm.Elm.Bg(win);
-bg.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(bg);
+bg = new efl.Elm.Bg(win);
+bg.setHintWeight(1.0, 1.0);
+win.pack(bg);
 bg.setVisible(true);
 
-bx = new elm.Elm.Box(win);
-bx.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(bx);
+bx = new efl.Efl.Ui.Box(win);
+bx.setHintWeight(1.0, 1.0);
+win.pack(bx);
 
-entry = new elm.Elm.Label(win);
+entry = new efl.Elm.Label(win);
 entry.setSize(100, 100);
 entry.setText(null, "Texto");
 
 console.log('Texto: ', entry.getText(null));
 
-entry.setSizeHintWeight(1.0, 1.0);
-entry.setSizeHintAlign(-1.0, -1.0);
+entry.setHintWeight(1.0, 1.0);
+entry.setHintAlign(-1.0, -1.0);
 entry.setWrapWidth(50);
 bx.packEnd(entry);
 entry.setVisible(true);

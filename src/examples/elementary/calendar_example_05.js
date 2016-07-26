@@ -1,5 +1,5 @@
 
-elm = require('elm');
+efl = require('efl');
 
 _print_cal_info_cb = function ()
 {
@@ -7,7 +7,7 @@ _print_cal_info_cb = function ()
 
    var interval = cal.getInterval();
    var mm_yr = cal.getMinMaxYear();
-   var sel_enable = cal.getSelectMode() != elm.Elm.Calendar.Select.Mode.NONE;
+   var sel_enable = cal.getSelectMode() != efl.Elm.Calendar.Select.Mode.NONE;
    var wds = cal.getWeekdaysNames();
 
    console.log("weekdays= " + wds + ", interval= " + interval +
@@ -15,13 +15,14 @@ _print_cal_info_cb = function ()
 }
 
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Calendar Getters Example");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText("Calendar Getters Example");
 win.setAutohide(true);
 
-cal = new elm.Elm.Calendar(win);
-cal.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(cal);
+cal = new efl.Elm.Calendar(win);
+cal.setHintWeight(1.0, 1.0);
+win.pack(cal);
+win.setSize(240, 240);
 
 cal.on('changed', _print_cal_info_cb);
 
