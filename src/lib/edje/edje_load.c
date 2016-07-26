@@ -2646,10 +2646,8 @@ void
 _edje_dupe_vector_data(Edje *ed, int svg_id, double width, double height,
                        Edje_Vector_Data *data)
 {
-   double sx=1.0, sy=1.0;
    Edje_Vector_Data *vector;
    Efl_VG *root;
-   Eina_Matrix3 matrix;
 
    vector = _edje_ref_vector_data(ed, svg_id);
    if (!vector->vg)

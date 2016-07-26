@@ -3271,7 +3271,6 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
    int w, h;
    int new_svg = 0;
    Efl_VG *root_vg;
-   double sx, sy;
    Eina_Matrix3 matrix;
    Edje_Vector_Data *start, *end;
 
