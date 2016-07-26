@@ -1,13 +1,14 @@
 
-var elm = require('elm')
+var efl = require('efl');
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Bg Plain");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText("Bg Plain");
 win.setAutohide(true);
 
-bg = new elm.Elm.Bg(win);
-bg.setSizeHintWeight(1.0, 1.0);
-win.resizeObjectAdd(bg);
+bg = new efl.Elm.Bg(win);
+bg.setColor(255, 0,0,255)
+bg.setHintWeight(1.0, 1.0);
+win.pack(bg);
 bg.setVisible(true);
 
 win.setSize(320,320);

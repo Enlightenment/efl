@@ -1,14 +1,13 @@
 efl = require('efl');
-elm = require('elm');
 
-win = new elm.Elm.WinStandard(null);
-win.setTitle("Popup");
+win = new efl.Efl.Ui.Win.Standard(null);
+win.setText("Popup");
 win.setAutohide(true);
 
-content = new elm.Elm.Label(win);
+content = new efl.Elm.Label(win);
 content.setText("elm.text", "<align=center>Content</align>");
 
-popup = new elm.Elm.Popup(win);
+popup = new efl.Elm.Popup(win);
 popup.setTimeout(3);
 
 popup.on('timeout', function()
@@ -17,7 +16,8 @@ popup.on('timeout', function()
 			       popup.setVisible(false);
 			   });
 
-popup.contentSet("elm.swallow.content", content);
+content_container = popup.part("elm.swallow.content").cast("Efl.Container");
+content_container.setContent(content);
 
 popup.setText("title,text", "Title");
 popup.setVisible(true);
