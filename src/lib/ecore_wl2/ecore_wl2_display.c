@@ -418,11 +418,7 @@ _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync)
 
    /* try to connect to wayland display with this name */
    ewd->wl.display = wl_display_connect(ewd->name);
-   if (!ewd->wl.display)
-     {
-        ERR("Could not connect to display %s", ewd->name);
-        return EINA_FALSE;
-     }
+   if (!ewd->wl.display) return EINA_FALSE;
 
    ewd->wl.registry = wl_display_get_registry(ewd->wl.display);
    wl_registry_add_listener(ewd->wl.registry, &_registry_listener, ewd);
