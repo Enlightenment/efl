@@ -4526,6 +4526,56 @@ static Win32_Cnp_Selection _win32_selections[ELM_SEL_TYPE_CLIPBOARD + 1] =
    }
 };
 
+static char *
+_win32_text_n_to_rn(char *intext)
+{
+   size_t size = 0, newlines = 0;
+   char *outtext = NULL, *p, *o;
+
+   if (!intext) return NULL;
+   for (p = intext; *p; p++)
+     {
+        if (*p == '\n') newlines++;
+        size++;
+     }
+   outtext = malloc(size + newlines + 1);
+   if (!outtext) return intext;
+   for (p = intext, o = outtext; *p; p++, o++)
+     {
+        if (*p == '\n')
+          {
+             o++;
+             *p = '\r';
+          }
+        *o = *p;
+     }
+   *o = '\0';
+   free(intext);
+   return outtext;
+}
+
+static char *
+_win32_text_rn_to_n(char *intext)
+{
+   size_t size = 0, newlines = 0;
+   char *outtext = NULL, *p, *o;
+
+   if (!intext) return NULL;
+   outtext = malloc(strlen(intext) + 1);
+   if (!outtext) return intext;
+   for (p = intext, o = outtext; *p; p++, o++)
+     {
+        if ((*p == '\r') && (p[1] == '\n'))
+          {
+             p++;
+             *p = '\n';
+          }
+        else *o = *p;
+     }
+   *o = '\0';
+   free(intext);
+   return outtext;
+}
 
 static void
 _win32_sel_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -4741,7 +4791,7 @@ _win32_elm_cnp_selection_get(Ecore_Win32_Window *win,
           {
              memcpy(str, data, size);
              str[size] = '\0';
-             data = _elm_util_mkup_to_text(str);
+             data = _win32_text_n_to_rn(_elm_util_mkup_to_text(str));
              free(str);
              if (data)
                size = strlen(data);
