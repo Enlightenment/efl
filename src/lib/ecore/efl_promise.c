@@ -587,9 +587,11 @@ _efl_promise_eo_base_destructor(Eo *obj, Efl_Promise_Data *pd)
    eo_destructor(eo_super(obj, EFL_PROMISE_CLASS));
 }
 
-typedef struct _Efl_Promise_All Efl_Promise_All;
+typedef struct _Efl_Promise_Composite Efl_Promise_All;
 typedef struct _Efl_Future_All Efl_Future_All;
 typedef struct _Efl_Accessor_All Efl_Accessor_All;
+
+typedef struct _Efl_Promise_Composite Efl_Promise_Race;
 
 struct _Efl_Accessor_All
 {
@@ -606,16 +608,33 @@ struct _Efl_Future_All
    Efl_Promise_Msg *d;
 };
 
-struct _Efl_Promise_All
+struct _Efl_Promise_Composite
 {
    Eina_Array members;
 
    Efl_Promise *promise;
 
+   Efl_Future *(*future_get)(void *item);
+
    Eina_Bool failed : 1;
    Eina_Bool progress_triggered : 1;
    Eina_Bool future_triggered : 1;
+   Eina_Bool done : 1;
 };
+
+static Efl_Future *
+_efl_promise_all_future_get(void *item)
+{
+   Efl_Future_All *fa = item;
+
+   return fa->f;
+}
+
+static Efl_Future *
+_efl_promise_race_future_get(void *item)
+{
+   return item;
+}
 
 static void
 _efl_promise_all_free(Efl_Promise_All *all)
@@ -642,10 +661,19 @@ _efl_promise_all_die(void *data, const Eo_Event *ev EINA_UNUSED)
 }
 
 static void
-_efl_all_future_set(void *data, const Eo_Event *ev EINA_UNUSED)
+_efl_promise_race_die(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    Efl_Promise_All *all = data;
-   Efl_Future_All *fa;
+
+   eina_array_flush(&all->members);
+   free(all);
+}
+
+static void
+_efl_future_set(void *data, const Eo_Event *ev EINA_UNUSED)
+{
+   Efl_Promise_All *all = data;
+   void *item;
    Eina_Array_Iterator iterator;
    unsigned int i;
 
@@ -653,15 +681,17 @@ _efl_all_future_set(void *data, const Eo_Event *ev EINA_UNUSED)
    all->future_triggered = EINA_TRUE;
 
    // Propagate set on demand
-   EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
+   EINA_ARRAY_ITER_NEXT(&all->members, i, item, iterator)
      {
-        if (fa->f)
+        Efl_Future *f = all->future_get(item);
+
+        if (f)
           {
-             Efl_Loop_Future_Data *pd = eo_data_scope_get(fa->f, EFL_LOOP_FUTURE_CLASS);
+             Efl_Loop_Future_Data *pd = eo_data_scope_get(f, EFL_LOOP_FUTURE_CLASS);
 
              if (!pd->promise->set.future && !pd->promise->set.future_triggered)
                {
-                  eo_event_callback_call(pd->promise->promise, EFL_PROMISE_EVENT_FUTURE_SET, fa->f);
+                  eo_event_callback_call(pd->promise->promise, EFL_PROMISE_EVENT_FUTURE_SET, f);
                   pd->promise->set.future_triggered = EINA_TRUE;
                   pd->promise->set.future = EINA_TRUE;
                }
@@ -670,10 +700,10 @@ _efl_all_future_set(void *data, const Eo_Event *ev EINA_UNUSED)
 }
 
 static void
-_efl_all_future_progress_set(void *data, const Eo_Event *ev EINA_UNUSED)
+_efl_future_progress_set(void *data, const Eo_Event *ev EINA_UNUSED)
 {
    Efl_Promise_All *all = data;
-   Efl_Future_All *fa;
+   void *item;
    Eina_Array_Iterator iterator;
    unsigned int i;
 
@@ -681,15 +711,17 @@ _efl_all_future_progress_set(void *data, const Eo_Event *ev EINA_UNUSED)
    all->progress_triggered = 1;
 
    // Propagate progress set
-   EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
+   EINA_ARRAY_ITER_NEXT(&all->members, i, item, iterator)
      {
-        if (fa->f)
+        Efl_Future *f = all->future_get(item);
+
+        if (f)
           {
-             Efl_Loop_Future_Data *pd = eo_data_scope_get(fa->f, EFL_LOOP_FUTURE_CLASS);
+             Efl_Loop_Future_Data *pd = eo_data_scope_get(f, EFL_LOOP_FUTURE_CLASS);
 
              if (!pd->promise->set.progress && !pd->promise->set.progress_triggered)
                {
-                  eo_event_callback_call(pd->promise->promise, EFL_PROMISE_EVENT_FUTURE_PROGRESS_SET, fa->f);
+                  eo_event_callback_call(pd->promise->promise, EFL_PROMISE_EVENT_FUTURE_PROGRESS_SET, f);
                   pd->promise->set.progress_triggered = EINA_TRUE;
                   pd->promise->set.progress = EINA_TRUE;
                }
@@ -711,7 +743,28 @@ _efl_all_future_none(void *data, const Eo_Event *ev EINA_UNUSED)
    // Trigger cancel on all future
    EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
      {
-        if (!fa->d) efl_future_cancel(fa->f);
+        if (!fa->d && fa->f) efl_future_cancel(fa->f);
+     }
+
+   // No one is listening to this promise anyway
+   _efl_promise_all_free(all);
+}
+
+static void
+_efl_race_future_none(void *data, const Eo_Event *ev EINA_UNUSED)
+{
+   Efl_Promise_Race *all = data;
+   Efl_Future *f;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   if (all->failed) return ;
+   all->failed = EINA_TRUE;
+
+   // Trigger cancel on all future
+   EINA_ARRAY_ITER_NEXT(&all->members, i, f, iterator)
+     {
+        if (!f) efl_future_cancel(f);
      }
 
    // No one is listening to this promise anyway
@@ -823,33 +876,32 @@ _fail_all(void *data, const Eo_Event *ev)
 }
 
 static void
-_progress_all(void *data, const Eo_Event *ev)
+_progress(void *data, const Eo_Event *ev)
 {
    Efl_Promise_All *all = data;
    Efl_Future_Event_Progress *p = ev->info;
-   Efl_Future_All *fa;
+   void *item;
    Efl_Future_All_Progress a;
    Eina_Array_Iterator iterator;
    unsigned int i;
 
    a.inprogress = ev->object;
    a.progress = p->progress;
-   a.index = 0;
 
-   EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
+   EINA_ARRAY_ITER_NEXT(&all->members, i, item, iterator)
      {
-        if (fa->f == a.inprogress)
-          {
-             break ;
-          }
-        a.index++;
+        Efl_Future *f = all->future_get(item);
+
+        if (f == a.inprogress) break ;
      }
+   a.index = i;
+
    efl_promise_progress_set(all->promise, &a);
 }
 
 EO_CALLBACKS_ARRAY_DEFINE(efl_all_callbacks,
-                          { EFL_PROMISE_EVENT_FUTURE_SET, _efl_all_future_set },
-                          { EFL_PROMISE_EVENT_FUTURE_PROGRESS_SET, _efl_all_future_progress_set },
+                          { EFL_PROMISE_EVENT_FUTURE_SET, _efl_future_set },
+                          { EFL_PROMISE_EVENT_FUTURE_PROGRESS_SET, _efl_future_progress_set },
                           { EFL_PROMISE_EVENT_FUTURE_NONE, _efl_all_future_none },
                           { EO_EVENT_DEL, _efl_promise_all_die });
 
@@ -869,6 +921,7 @@ efl_future_all_internal(Efl_Future *f1, ...)
    if (!all) return NULL;
 
    eina_array_step_set(&all->members, sizeof (Eina_Array), 8);
+   all->future_get = _efl_promise_all_future_get;
    all->promise = eo_add(EFL_PROMISE_CLASS, NULL);
    if (!all->promise) goto on_error;
 
@@ -894,7 +947,7 @@ efl_future_all_internal(Efl_Future *f1, ...)
    va_end(args);
 
    EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
-     _efl_loop_future_internal_then(fa->f, _then_all, _fail_all, _progress_all, all);
+     _efl_loop_future_internal_then(fa->f, _then_all, _fail_all, _progress, all);
 
    eo_event_callback_array_add(all->promise, efl_all_callbacks(), all);
 
@@ -903,6 +956,124 @@ efl_future_all_internal(Efl_Future *f1, ...)
  on_error:
    _efl_promise_all_die(all, NULL);
    return NULL;
+}
+
+static void
+_then_race(void *data, const Eo_Event *ev)
+{
+   Efl_Future_Event_Success *success = ev->info;
+   Efl_Promise_Race *race = data;
+   // This is a trick due to the fact we are using internal function call to register this functions
+   Efl_Promise_Msg *d = success->value;
+   Efl_Future *f;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   if (race->done) return ;
+   race->done = EINA_TRUE;
+
+   eo_ref(race->promise);
+
+   EINA_ARRAY_ITER_NEXT(&race->members, i, f, iterator)
+     {
+        // To avoid double cancel/success
+        eina_array_data_set(&race->members, i, NULL);
+
+        if (f == ev->object)
+          {
+             Efl_Future_Race_Success *success = calloc(1, sizeof (Efl_Future_Race_Success));
+
+             if (!success) continue ;
+             success->winner = f;
+             success->value = d->value;
+             success->index = i;
+
+             efl_promise_value_set(race->promise, success, free);
+          }
+        else
+          {
+             efl_future_cancel(f);
+          }
+     }
+
+   _efl_promise_all_free(race);
+   eo_unref(race->promise);
+}
+
+static void
+_fail_race(void *data, const Eo_Event *ev)
+{
+   Efl_Future_Event_Failure *fail = ev->info;
+   Efl_Promise_Race *race = data;
+   Efl_Future *f;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   if (race->done) return ;
+   race->done = EINA_TRUE;
+
+   eo_ref(race->promise);
+
+   EINA_ARRAY_ITER_NEXT(&race->members, i, f, iterator)
+     {
+        // To avoid double cancel/success
+        eina_array_data_set(&race->members, i, NULL);
+
+        if (f != ev->object)
+          {
+             efl_future_cancel(f);
+          }
+     }
+
+   efl_promise_failed(race->promise, fail->error);
+   _efl_promise_all_free(race);
+   eo_unref(race->promise);
+}
+
+EO_CALLBACKS_ARRAY_DEFINE(efl_race_callbacks,
+                          { EFL_PROMISE_EVENT_FUTURE_SET, _efl_future_set },
+                          { EFL_PROMISE_EVENT_FUTURE_PROGRESS_SET, _efl_future_progress_set },
+                          { EFL_PROMISE_EVENT_FUTURE_NONE, _efl_race_future_none },
+                          { EO_EVENT_DEL, _efl_promise_race_die });
+
+EAPI Efl_Future *
+efl_future_race_internal(Efl_Future *f1, ...)
+{
+   Efl_Promise_Race *race;
+   Efl_Future *fn;
+   va_list args;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   if (!f1) return NULL;
+
+   race = calloc(1, sizeof (Efl_Promise_Race));
+   if (!race) return NULL;
+
+   eina_array_step_set(&race->members, sizeof (Eina_Array), 8);
+   race->future_get = _efl_promise_race_future_get;
+   race->promise = eo_add(EFL_PROMISE_CLASS, NULL);
+   if (!race->promise)
+     {
+        free(race);
+        return NULL;
+     }
+
+   eina_array_push(&race->members, f1);
+
+   va_start(args, f1);
+
+   while ((fn = va_arg(args, Efl_Future *)))
+     {
+        eina_array_push(&race->members, fn);
+     }
+
+   EINA_ARRAY_ITER_NEXT(&race->members, i, fn, iterator)
+     _efl_loop_future_internal_then(fn, _then_race, _fail_race, _progress, race);
+
+   eo_event_callback_array_add(race->promise, efl_race_callbacks(), race);
+
+   return efl_promise_future_get(race->promise);
 }
 
 #include "efl_promise.eo.c"

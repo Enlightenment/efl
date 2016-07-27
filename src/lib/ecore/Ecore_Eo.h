@@ -73,6 +73,21 @@ EAPI Efl_Future *efl_future_all_internal(Efl_Future *f1, ...);
 
 #define efl_future_all(...) efl_future_all_internal(__VA_ARGS__, NULL)
 
+typedef struct _Efl_Future_Race_Success Efl_Future_Race_Success;
+typedef struct _Efl_Future_Composite_Progress Efl_Future_Race_Progress;
+
+struct _Efl_Future_Race_Success
+{
+   Efl_Future *winner;
+   void *value;
+
+   unsigned int index;
+};
+
+EAPI Efl_Future *efl_future_race_internal(Efl_Future *f1, ...);
+
+#define efl_future_race(...) efl_future_race_internal(__VA_ARGS__, NULL)
+
 /**
  * @}
  */
