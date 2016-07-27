@@ -245,7 +245,6 @@ ecore_x_image_is_argb32_get(Ecore_X_Image *im)
    CHECK_XCB_CONN;
 
    vis = (xcb_visualtype_t *)im->vis;
-   if (!im->xim) _ecore_xcb_image_shm_create(im);
 
    if (((vis->_class == XCB_VISUAL_CLASS_TRUE_COLOR) ||
         (vis->_class == XCB_VISUAL_CLASS_DIRECT_COLOR)) &&
@@ -254,10 +253,13 @@ ecore_x_image_is_argb32_get(Ecore_X_Image *im)
        (vis->green_mask == 0x00ff00) && 
        (vis->blue_mask == 0x0000ff))
      {
+        const xcb_setup_t *setup = xcb_get_setup(_ecore_xcb_conn);
+
+        if (!setup) return EINA_FALSE;
 #ifdef WORDS_BIGENDIAN
-        if (im->xim->byte_order == XCB_IMAGE_ORDER_MSB_FIRST) return EINA_TRUE;
+        if (setup->image_byte_order == XCB_IMAGE_ORDER_MSB_FIRST) return EINA_TRUE;
 #else
-        if (im->xim->byte_order == XCB_IMAGE_ORDER_LSB_FIRST) return EINA_TRUE;
+        if (setup->image_byte_order == XCB_IMAGE_ORDER_LSB_FIRST) return EINA_TRUE;
 #endif
      }
 

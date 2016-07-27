@@ -305,15 +305,13 @@ ecore_x_image_get(Ecore_X_Image *im,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (im->shm)
      {
-        
-        if (!im->xim)
-          _ecore_x_image_shm_create(im);
+        if (!im->xim) _ecore_x_image_shm_create(im);
 
         if (!im->xim)
           return EINA_FALSE;
 
         _ecore_x_image_err = 0;
-        
+
         ecore_x_sync();
         // optimised path
         ph = XSetErrorHandler((XErrorHandler)_ecore_x_image_error_handler);
@@ -449,12 +447,6 @@ EAPI Eina_Bool
 ecore_x_image_is_argb32_get(Ecore_X_Image *im)
 {
    Visual *vis = im->vis;
-   if (!im->xim)
-     {
-        if (im->shm) _ecore_x_image_shm_create(im);
-        else _ecore_x_image_create(im);
-        if (!im->xim) return EINA_FALSE;
-     }
    if (((vis->class == TrueColor) ||
         (vis->class == DirectColor)) &&
        (im->bpp == 4) &&
@@ -463,9 +455,9 @@ ecore_x_image_is_argb32_get(Ecore_X_Image *im)
        (vis->blue_mask == 0x0000ff))
      {
 #ifdef WORDS_BIGENDIAN
-        if (im->xim->bitmap_bit_order == MSBFirst) return EINA_TRUE;
+        if (BitmapBitOrder(_ecore_x_disp) == MSBFirst) return EINA_TRUE;
 #else
-        if (im->xim->bitmap_bit_order == LSBFirst) return EINA_TRUE;
+        if (BitmapBitOrder(_ecore_x_disp) == LSBFirst) return EINA_TRUE;
 #endif
      }
    return EINA_FALSE;
