@@ -20,6 +20,11 @@ _cb_session_active(void *data, int type EINA_UNUSED, void *event)
    ev = event;
    device = data;
 
+   if (!ev->active)
+     elput_input_devices_suspend(device->em);
+   else
+     elput_input_devices_resume(device->em);
+
    EINA_LIST_FOREACH(device->outputs, l, output)
      ecore_drm2_output_enabled_set(output, ev->active);
 
