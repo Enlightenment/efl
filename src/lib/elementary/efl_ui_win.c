@@ -1308,6 +1308,8 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd)
         ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
         if (!alpha)
           ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
+        else
+          ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, 0, 0);
         wdata->content.x = wdata->content.y = 0;
         wdata->content.w = ow;
         wdata->content.h = oh;
