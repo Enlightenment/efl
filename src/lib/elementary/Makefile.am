@@ -496,8 +496,7 @@ includesub_HEADERS = \
 	elm_win_standard.h \
 	elm_helper.h \
 	efl_ui_box_private.h \
-	efl_ui_grid_private.h \
-	efl_ui_text.eo.h \
+	efl_ui_grid_private.h
 	$(NULL)
 
 includesubdir = $(includedir)/elementary-@VMAJ@/
