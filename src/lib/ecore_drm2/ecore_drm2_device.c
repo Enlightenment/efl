@@ -363,3 +363,11 @@ ecore_drm2_device_calibrate(Ecore_Drm2_Device *device, int w, int h)
 
    elput_input_devices_calibrate(device->em, w, h);
 }
+
+EAPI Eina_Bool
+ecore_drm2_device_vt_set(Ecore_Drm2_Device *device, int vt)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
+
+   return elput_manager_vt_set(device->em, vt);
+}

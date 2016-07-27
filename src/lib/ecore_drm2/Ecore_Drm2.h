@@ -303,6 +303,19 @@ EAPI void ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *device, int
 EAPI void ecore_drm2_device_calibrate(Ecore_Drm2_Device *device, int w, int h);
 
 /**
+ * Try to switch to a given virtual terminal
+ *
+ * @param device
+ * @param vt
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.18
+ */
+EAPI Eina_Bool ecore_drm2_device_vt_set(Ecore_Drm2_Device *device, int vt);
+
+/**
  * @defgroup Ecore_Drm2_Output_Group Drm output functions
  *
  * Functions that deal with setup of outputs
