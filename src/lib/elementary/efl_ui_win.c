@@ -2979,9 +2979,9 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
 
    if (sd->frame_obj)
      {
-        int fx, fy, fw, fh;
+        int fw, fh;
 
-        evas_output_framespace_get(sd->evas, &fx, &fy, &fw, &fh);
+        evas_output_framespace_get(sd->evas, NULL, NULL, &fw, &fh);
         minw += fw;
         minh += fh;
         maxw += fw;
