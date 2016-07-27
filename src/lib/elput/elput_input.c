@@ -546,6 +546,29 @@ elput_input_devices_calibrate(Elput_Manager *manager, int w, int h)
      }
 }
 
+EAPI void
+elput_input_devices_suspend(Elput_Manager *manager)
+{
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+
+   if (manager->input.suspended) return;
+
+   libinput_suspend(manager->input.lib);
+   manager->input.suspended = EINA_TRUE;
+   _process_events(&manager->input);
+}
+
+EAPI void
+elput_input_devices_resume(Elput_Manager *manager)
+{
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+
+   if (!manager->input.suspended) return;
+   libinput_resume(manager->input.lib);
+   manager->input.suspended = EINA_FALSE;
+   _process_events(&manager->input);
+}
+
 EAPI Eina_Bool
 elput_input_key_remap_enable(Elput_Manager *manager, Eina_Bool enable)
 {

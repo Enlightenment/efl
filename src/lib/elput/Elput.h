@@ -413,6 +413,10 @@ EAPI void elput_input_keyboard_cached_keymap_set(Elput_Manager *manager, void *k
  */
 EAPI Eina_Stringshare *elput_input_device_output_name_get(Elput_Device *device);
 
+EAPI void elput_input_devices_suspend(Elput_Manager *manager);
+
+EAPI void elput_input_devices_resume(Elput_Manager *manager);
+
 # endif
 
 # undef EAPI
