@@ -13191,13 +13191,9 @@ _edje_source_with_double_values_append(const char *param_name, char val_num, dou
    string = eina_strbuf_new();
    if (param_name)
      eina_strbuf_append_printf(string, "%s:", param_name);
-   eina_strbuf_append_printf(string,
-                             (val1 == (int)val1) ? " %.1f" : " %g",
-                             val1);
+   eina_strbuf_append_printf(string, " %.2f", val1);
    if (val_num == 2)
-     eina_strbuf_append_printf(string,
-                               (val2 == (int)val2) ? " %.1f" : " %g",
-                               val2);
+     eina_strbuf_append_printf(string, " %.2f", val2);
    eina_strbuf_append(string, ";\n");
    BUF_APPEND(eina_strbuf_string_get(string));
 
