@@ -1303,8 +1303,6 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd)
 
    wdata = sd->ee->engine.data;
    alpha = ecore_evas_alpha_get(sd->ee);
-   if (alpha)
-     ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, 0, 0);
    if (sd->fullscreen || (!sd->frame_obj))
      {
         ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
@@ -1325,6 +1323,9 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd)
                                  &wdata->content.w, &wdata->content.h);
    if (!alpha)
      ecore_wl2_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);
+   else
+     ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, 0, 0);
+
    ecore_wl2_window_geometry_set(sd->wl.win, ox, oy, ow, oh);
    ecore_wl2_window_input_region_set(sd->wl.win, ox, oy, ow, oh);
 }
