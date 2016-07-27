@@ -2984,12 +2984,13 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
         evas_output_framespace_get(sd->evas, &fx, &fy, &fw, &fh);
         minw += fw;
         minh += fh;
-        maxw -= fw;
-        maxh -= fh;
+        maxw += fw;
+        maxh += fh;
      }
 
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
+
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    if (w < minw) w = minw;
    if (h < minh) h = minh;
