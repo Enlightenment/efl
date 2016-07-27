@@ -12,7 +12,6 @@ class Efl.Ui.Layout_Internal.Box (Eo.Base, Efl.Pack.Linear,
          set {}
          values {
             layout: Eo.Base;
-            pack: Eo.Base;
             part: string;
          }
       }

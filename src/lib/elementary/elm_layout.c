@@ -13,12 +13,15 @@
 #include "elm_layout_internal_part.eo.h"
 #include "elm_part_helper.h"
 
+#define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT
+#include <Edje_Edit.h>
+
 #define MY_CLASS ELM_LAYOUT_CLASS
 
 #define MY_CLASS_NAME "Elm_Layout"
 #define MY_CLASS_NAME_LEGACY "elm_layout"
 
-Eo *_elm_layout_pack_proxy_get(Elm_Layout *obj, Evas_Object *pack, const char *part);
+Eo *_elm_layout_pack_proxy_get(Elm_Layout *obj, Edje_Part_Type type, const char *part);
 
 static const char SIG_THEME_CHANGED[] = "theme,changed";
 const char SIG_LAYOUT_FOCUSED[] = "focused";
@@ -2020,7 +2023,7 @@ static EOLIAN Eo_Base *
 _elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd,
                           const char *part)
 {
-   const Evas_Object *subobj;
+   Edje_Part_Type type;
    Elm_Part_Data *pd;
    Eo *proxy;
 
@@ -2029,14 +2032,11 @@ _elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd,
 
    ELM_WIDGET_DATA_GET_OR_RETURN((Eo *) obj, wd, NULL);
 
-   // Ask edje for existing parts
-   subobj = edje_object_part_object_get(wd->resize_obj, part);
-   if (subobj)
-     {
-        // Support BOX & TABLE
-        proxy = _elm_layout_pack_proxy_get((Eo *) obj, (Eo *) subobj, part);
-        if (proxy) return proxy;
-     }
+   // Check part type with edje_edit, as edje_object_part_object_get()
+   // has side effects (it calls recalc, which may be really bad).
+   type = edje_edit_part_type_get(wd->resize_obj, part);
+   if ((type == EDJE_PART_TYPE_BOX) || (type == EDJE_PART_TYPE_TABLE))
+     return _elm_layout_pack_proxy_get((Eo *) obj, type, part);
 
    // Generic parts (text, anything, ...)
    proxy = eo_add(ELM_LAYOUT_INTERNAL_PART_CLASS, (Eo *) obj);
