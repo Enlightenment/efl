@@ -1048,6 +1048,55 @@ START_TEST(efl_test_promise_all)
 }
 END_TEST
 
+static void
+_then_race(void *data, const Efl_Event *ev)
+{
+   Future_Ok *fo = data;
+   Efl_Future_Event_Success *s = ev->info;
+   Efl_Future_Race_Success *rs = s->value;
+
+   fail_if(rs->index != 1);
+   fail_if(rs->value != &value[0]);
+
+   fo->then = EINA_TRUE;
+}
+
+START_TEST(efl_test_promise_race)
+{
+   Efl_Promise *p1, *p2, *p3;
+   Efl_Future *race = NULL, *f1;
+   Future_Ok donea = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+   Future_Ok donep1 = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+
+   ecore_init();
+
+   p1 = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   p2 = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   p3 = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   fail_if(!p1 || !p2 || !p3);
+
+   f1 = efl_ref(efl_promise_future_get(p1));
+   fail_if(!efl_future_then(f1, _then, _cancel, _progress, &donep1));
+   efl_future_use(&race, efl_future_race(f1, efl_promise_future_get(p2), efl_promise_future_get(p3)));
+   efl_unref(f1);
+
+   fail_if(!efl_future_then(race, _then_race, _cancel, _progress, &donea));
+   fail_if(!race);
+
+   efl_promise_value_set(p2, &value[0], NULL);
+   fail_if(donep1.then || !donep1.cancel || donep1.progress);
+   fail_if(!donea.then || donea.cancel || donea.progress);
+
+   fail_if(race);
+
+   efl_del(p1);
+   efl_del(p2);
+   efl_del(p3);
+
+   ecore_shutdown();
+}
+END_TEST
+
 void ecore_test_ecore_promise(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_promise);
@@ -1076,4 +1125,5 @@ void ecore_test_ecore_promise(TCase *tc)
    tcase_add_test(tc, efl_test_promise_future_optional_success);
    tcase_add_test(tc, efl_test_promise_future_optional_cancel);
    tcase_add_test(tc, efl_test_promise_all);
+   tcase_add_test(tc, efl_test_promise_race);
 }
