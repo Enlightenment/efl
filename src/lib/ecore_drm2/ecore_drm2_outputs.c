@@ -993,15 +993,15 @@ ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled)
 
    if (output->enabled)
      {
-        Ecore_Drm2_Fb *fb;
+        Ecore_Drm2_Fb *fb = NULL;
 
         if (output->current) fb = output->current;
         else if (output->next) fb = output->next;
 
-        drmModeSetCrtc(output->fd, output->crtc_id, fb->id,
-                       output->x, output->y,
-                       &output->conn_id, 1,
-                       &output->current_mode->info);
+        if (fb) drmModeSetCrtc(output->fd, output->crtc_id, fb->id,
+                               output->x, output->y,
+                               &output->conn_id, 1,
+                               &output->current_mode->info);
 
         ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_ON);
      }
