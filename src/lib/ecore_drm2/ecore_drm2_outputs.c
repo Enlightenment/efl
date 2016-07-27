@@ -83,6 +83,8 @@ _output_event_send(Ecore_Drm2_Output *output)
 {
    Ecore_Drm2_Event_Output_Changed *ev;
 
+   if ((!output->enabled) && (!output->connected)) return;
+
    ev = calloc(1, sizeof(Ecore_Drm2_Event_Output_Changed));
    if (!ev) return;
 
@@ -594,6 +596,12 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    if (!eina_list_count(dev->outputs))
      output->primary = EINA_TRUE;
+   else
+     {
+        /* temporarily disable other outputs which are not primary */
+        output->connected = EINA_FALSE;
+        output->enabled = EINA_FALSE;
+     }
 
    dev->alloc.crtc |= (1 << output->crtc_id);
    dev->alloc.conn |= (1 << output->conn_id);
@@ -979,16 +987,29 @@ ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled)
 {
    EINA_SAFETY_ON_NULL_RETURN(output);
 
+   if (!output->connected) return;
    if (output->enabled == enabled) return;
    output->enabled = enabled;
 
    if (output->enabled)
-     ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_ON);
+     {
+        Ecore_Drm2_Fb *fb;
+
+        if (output->current) fb = output->current;
+        else if (output->next) fb = output->next;
+
+        drmModeSetCrtc(output->fd, output->crtc_id, fb->id,
+                       output->x, output->y,
+                       &output->conn_id, 1,
+                       &output->current_mode->info);
+
+        ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_ON);
+     }
    else
      {
         ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_OFF);
         output->current = NULL;
-        output->next = NULL;
+        /* output->next = NULL; */
      }
 
    _output_event_send(output);
