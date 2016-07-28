@@ -1712,6 +1712,38 @@ _prop_promise_error_cb(void* data, Eina_Error err EINA_UNUSED)
 }
 
 static void
+_prop_key_promise_then_cb(void* data, void* v)
+{
+   Eo *obj = data;
+   Eina_Iterator *it = v;
+   Eina_Value *value;
+   char *filename, *key;
+
+   EFL_UI_IMAGE_DATA_GET(obj, pd);
+   pd->ppromise = NULL;
+
+   if (eina_iterator_next(it, (void **)&value) && value)
+     {
+        filename = eina_value_to_string(value);
+     }
+   else return;
+
+   if (eina_iterator_next(it, (void **)&value) && value)
+     {
+        key = eina_value_to_string(value);
+     }
+   else
+     {
+        free(filename);
+        return;
+     }
+
+   elm_image_file_set(obj, filename, key);
+   free(filename);
+   free(key);
+}
+
+static void
 _prop_promise_then_cb(void* data, void* v)
 {
    Eo *obj = data;
@@ -1737,11 +1769,49 @@ _prop_promise_then_cb(void* data, void* v)
      }
 }
 
+void
+_update_viewmodel(Eo *obj, Efl_Ui_Image_Data *pd)
+{
+   if (pd->model && pd->prop_con)
+     {
+         if (pd->ppromise) eina_promise_cancel(pd->ppromise);
+
+         pd->ppromise = efl_model_property_get(pd->model, pd->prop_con);
+
+         if (pd->prop_key)
+           {
+               const Eina_Array *properties;
+               Eina_Array_Iterator it;
+               char *property;
+               unsigned int i = 0;
+
+               properties = efl_model_properties_get(pd->model);
+               EINA_ARRAY_ITER_NEXT(properties, i, property, it)
+                 {
+                     if (strcmp(property, pd->prop_key) == 0)
+                       {
+                           Eina_Promise *promises[3] = {NULL,};
+                           promises[0] = pd->ppromise;
+                           promises[1] = efl_model_property_get(pd->model, pd->prop_key);
+                           pd->ppromise = eina_promise_all(eina_carray_iterator_new((void**)promises));
+                           eina_promise_then(pd->ppromise, &_prop_key_promise_then_cb,
+                                                                &_prop_promise_error_cb, obj);
+                           return;
+                       }
+                 }
+           }
+
+         eina_promise_then(pd->ppromise, &_prop_promise_then_cb,
+                           &_prop_promise_error_cb, obj);
+     }
+}
+
 static void
 _efl_ui_image_model_properties_changed_cb(void *data, const Eo_Event *event)
 {
    Efl_Model_Property_Event *evt = event->info;
-   EFL_UI_IMAGE_DATA_GET(data, pd);
+   Eo *obj = data;
+   EFL_UI_IMAGE_DATA_GET(obj, pd);
 
    if (!evt->changed_properties)
      return;
@@ -1754,12 +1824,9 @@ _efl_ui_image_model_properties_changed_cb(void *data, const Eo_Event *event)
 
          EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
            {
-               if (!strcmp(pd->prop_con, prop))
+               if (!strcmp(pd->prop_con, prop) || (pd->prop_key && !strcmp(pd->prop_key, prop)))
                  {
-                     if (pd->ppromise) eina_promise_cancel(pd->ppromise);
-
-                     pd->ppromise = efl_model_property_get(pd->model, pd->prop_con);
-                     eina_promise_then(pd->ppromise, &_prop_promise_then_cb, &_prop_promise_error_cb, data);
+                     _update_viewmodel(obj, pd);
                      return;
                  }
            }
@@ -1785,14 +1852,7 @@ _efl_ui_image_efl_ui_view_model_set(Eo *obj, Efl_Ui_Image_Data *pd, Efl_Model *m
                          _efl_ui_image_model_properties_changed_cb, obj);
      }
 
-   if (pd->prop_con && pd->model)
-     {
-         if (pd->ppromise) eina_promise_cancel(pd->ppromise);
-
-         pd->ppromise = efl_model_property_get(pd->model, pd->prop_con);
-         eina_promise_then(pd->ppromise, &_prop_promise_then_cb,
-                         &_prop_promise_error_cb, obj);
-     }
+   _update_viewmodel(obj, pd);
 }
 
 EOLIAN static Efl_Model *
@@ -1804,24 +1864,24 @@ _efl_ui_image_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
 EOLIAN static void
 _efl_ui_image_efl_ui_model_connect_connect(Eo *obj, Efl_Ui_Image_Data *pd, const char *name, const char *property)
 {
-   pd->con_icon = EINA_FALSE;
-   if (strcmp(name, "filename") != 0)
+   if (strcmp(name, "filename") == 0)
      {
-        if (strcmp(name, "icon") != 0) return;
-
+        pd->con_icon = EINA_FALSE;
+        eina_stringshare_replace(&pd->prop_con, property);
+     }
+   else if (strcmp(name, "icon") == 0)
+     {
         pd->con_icon = EINA_TRUE;
+        eina_stringshare_replace(&pd->prop_con, property);
+        eina_stringshare_replace(&pd->prop_key, NULL);
      }
-
-   eina_stringshare_replace(&pd->prop_con, property);
-
-   if (pd->model && pd->prop_con)
+   else if (strcmp(name, "key") == 0)
      {
-         if (pd->ppromise) eina_promise_cancel(pd->ppromise);
-
-         pd->ppromise = efl_model_property_get(pd->model, pd->prop_con);
-         eina_promise_then(pd->ppromise, &_prop_promise_then_cb,
-                           &_prop_promise_error_cb, obj);
+        eina_stringshare_replace(&pd->prop_key, property);
      }
+   else return;
+
+   _update_viewmodel(obj, pd);
 }
 
 EAPI void

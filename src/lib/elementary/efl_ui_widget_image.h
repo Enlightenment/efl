@@ -80,6 +80,7 @@ struct _Efl_Ui_Image_Data
 
    Efl_Model            *model;
    Eina_Stringshare     *prop_con;
+   Eina_Stringshare     *prop_key;
    Eina_Promise         *ppromise;
 
    struct {
