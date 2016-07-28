@@ -1350,6 +1350,7 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
         return;
      }
 
+   if (!sd->frame_obj) return;
    evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
    evas_object_geometry_get(sd->edje, &ox, &oy, &ow, &oh);
 
