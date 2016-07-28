@@ -249,7 +249,11 @@ _text_filter_markup_prepend_internal(Edje *ed, Entry *en, Evas_Textblock_Cursor 
         if (changeinfo)
           {
              info = calloc(1, sizeof(*info));
-             if (info)
+             if (!info)
+               {
+                  ERR("Running very low on memory");
+               }
+             else
                {
                   info->insert = EINA_TRUE;
                   info->change.insert.content = eina_stringshare_add(text);
@@ -684,7 +688,7 @@ _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entr
      {
         Eina_Iterator *range = NULL;
         Eina_List *l;
-        Sel *sel;
+        Sel *sel = NULL;
         Evas_Textblock_Rectangle *r;
 
         range = evas_textblock_cursor_range_simple_geometry_get(en->sel_start,
@@ -698,6 +702,11 @@ _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entr
                   Evas_Object *ob;
 
                   sel = calloc(1, sizeof(Sel));
+                  if (!sel)
+                    {
+                       ERR("Running very low on memory");
+                       break;
+                    }
                   en->sel = eina_list_append(en->sel, sel);
                   if (en->rp->part->source)
                     {
@@ -1015,6 +1024,11 @@ _item_obj_get(Anchor *an, Evas_Object *o, Evas_Object *smart, Evas_Object *clip)
      }
 
    io = calloc(1, sizeof(Item_Obj));
+   if (!io)
+     {
+        ERR("Running very low on memory");
+        return NULL;
+     }
 
    obj = ed->item_provider.func
       (ed->item_provider.data, smart,
@@ -1078,7 +1092,7 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
    Evas_Coord vx, vy, vw, vh;
    Evas_Coord tvh, tvw;
    Evas_Object *smart, *clip;
-   Sel *sel;
+   Sel *sel = NULL;
    Anchor *an;
    Edje *ed = en->ed;
 
@@ -1122,25 +1136,24 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                   Evas_Object *ob;
 
                   sel = calloc(1, sizeof(Sel));
-                  if (sel)
+                  if (!sel)
                     {
-                       an->sel = eina_list_append(an->sel, sel);
+                       ERR("Running very low on memory");
+                       break;
+                    }
+                  an->sel = eina_list_append(an->sel, sel);
 
-                       if (ed->item_provider.func)
-                         {
-                            ob = _item_obj_get(an, o, smart, clip);
-                            sel->obj = ob;
-                         }
+                  if (ed->item_provider.func)
+                    {
+                       ob = _item_obj_get(an, o, smart, clip);
+                       sel->obj = ob;
                     }
                }
-             if (sel)
-               {
-                  /* We have only one sel per item */
-                  sel = an->sel->data;
-                  evas_object_move(sel->obj, x + cx, y + cy);
-                  evas_object_resize(sel->obj, cw, ch);
-                  evas_object_show(sel->obj);
-               }
+             /* We have only one sel per item */
+             sel = an->sel->data;
+             evas_object_move(sel->obj, x + cx, y + cy);
+             evas_object_resize(sel->obj, cw, ch);
+             evas_object_show(sel->obj);
           }
         // for link anchors
         else
@@ -1189,6 +1202,11 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                        Evas_Object *ob;
 
                        sel = calloc(1, sizeof(Sel));
+                       if (!sel)
+                         {
+                            ERR("Running very low on memory");
+                            break;
+                         }
                        an->sel = eina_list_append(an->sel, sel);
                        if (en->rp->part->source5)
                          {
@@ -1387,6 +1405,11 @@ _anchor_format_parse(const char *item)
    else len = strlen(start);
 
    tmp = malloc(len + 1);
+   if (!tmp)
+     {
+        ERR("Running out of memory when allocating %lu byte string", (unsigned long)len + 1);
+        return NULL;
+     }
    strncpy(tmp, start, len);
    tmp[len] = '\0';
 
@@ -1413,7 +1436,10 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
              char *p;
              an = calloc(1, sizeof(Anchor));
              if (!an)
-               break;
+               {
+                  ERR("Running very low on memory");
+                  break;
+               }
 
              an->en = en;
              p = strstr(s, "href=");
@@ -1463,7 +1489,10 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
              char *p;
              an = calloc(1, sizeof(Anchor));
              if (!an)
-               break;
+               {
+                  ERR("Running very low on memory");
+                  break;
+               }
 
              an->en = en;
              an->item = 1;
@@ -1511,6 +1540,11 @@ _range_del_emit(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o E
      goto noop;
 
    info = calloc(1, sizeof(*info));
+   if (!info)
+     {
+        ERR("Running very low on memory");
+        goto noop;
+     }
    info->insert = EINA_FALSE;
    info->change.del.start = start;
    info->change.del.end = end;
@@ -1544,6 +1578,11 @@ _delete_emit(Edje *ed, Evas_Textblock_Cursor *c, Entry *en, size_t pos,
    evas_textblock_cursor_char_prev(c);
 
    Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
+   if (!info)
+     {
+        ERR("Running very low on memory");
+        return;
+     }
    char *tmp = evas_textblock_cursor_content_get(c);
 
    info->insert = EINA_FALSE;
@@ -2021,22 +2060,29 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              else
                {
                   Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
-                  info->insert = EINA_TRUE;
-                  info->change.insert.plain_length = 1;
-
-                  if (en->have_selection)
+                  if (!info)
                     {
-                       _range_del_emit(ed, en->cursor, rp->object, en);
-                       info->merge = EINA_TRUE;
+                       ERR("Running very low on memory");
                     }
-                  info->change.insert.pos =
-                    evas_textblock_cursor_pos_get(en->cursor);
-                  info->change.insert.content = eina_stringshare_add("<tab/>");
-                  _text_filter_format_prepend(ed, en, en->cursor, "tab");
-                  _anchors_get(en->cursor, rp->object, en);
-                  _edje_emit(ed, "entry,changed", rp->part->name);
-                  _edje_emit_full(ed, "entry,changed,user", rp->part->name,
-                                  info, _free_entry_change_info);
+                  else
+                    {
+                       info->insert = EINA_TRUE;
+                       info->change.insert.plain_length = 1;
+
+                       if (en->have_selection)
+                         {
+                            _range_del_emit(ed, en->cursor, rp->object, en);
+                            info->merge = EINA_TRUE;
+                         }
+                       info->change.insert.pos =
+                         evas_textblock_cursor_pos_get(en->cursor);
+                       info->change.insert.content = eina_stringshare_add("<tab/>");
+                       _text_filter_format_prepend(ed, en, en->cursor, "tab");
+                       _anchors_get(en->cursor, rp->object, en);
+                       _edje_emit(ed, "entry,changed", rp->part->name);
+                       _edje_emit_full(ed, "entry,changed,user", rp->part->name,
+                                       info, _free_entry_change_info);
+                    }
                }
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
           }
@@ -2101,33 +2147,40 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         if (multiline)
           {
              Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
-             info->insert = EINA_TRUE;
-             info->change.insert.plain_length = 1;
-             if (en->have_selection)
+             if (!info)
                {
-                  _range_del_emit(ed, en->cursor, rp->object, en);
-                  info->merge = EINA_TRUE;
-               }
-
-             info->change.insert.pos =
-               evas_textblock_cursor_pos_get(en->cursor);
-             if (shift ||
-                 evas_object_textblock_legacy_newline_get(rp->object))
-               {
-                  _text_filter_format_prepend(ed, en, en->cursor, "br");
-                  info->change.insert.content = eina_stringshare_add("<br/>");
+                  ERR("Running very low on memory");
                }
              else
                {
-                  _text_filter_format_prepend(ed, en, en->cursor, "ps");
-                  info->change.insert.content = eina_stringshare_add("<ps/>");
+                  info->insert = EINA_TRUE;
+                  info->change.insert.plain_length = 1;
+                  if (en->have_selection)
+                    {
+                       _range_del_emit(ed, en->cursor, rp->object, en);
+                       info->merge = EINA_TRUE;
+                    }
+
+                  info->change.insert.pos =
+                    evas_textblock_cursor_pos_get(en->cursor);
+                  if (shift ||
+                      evas_object_textblock_legacy_newline_get(rp->object))
+                    {
+                       _text_filter_format_prepend(ed, en, en->cursor, "br");
+                       info->change.insert.content = eina_stringshare_add("<br/>");
+                    }
+                  else
+                    {
+                       _text_filter_format_prepend(ed, en, en->cursor, "ps");
+                       info->change.insert.content = eina_stringshare_add("<ps/>");
+                    }
+                  _anchors_get(en->cursor, rp->object, en);
+                  _edje_emit(ed, "entry,changed", rp->part->name);
+                  _edje_emit_full(ed, "entry,changed,user", rp->part->name,
+                                  info, _free_entry_change_info);
+                  _edje_emit(ed, "cursor,changed", rp->part->name);
+                  cursor_changed = EINA_TRUE;
                }
-             _anchors_get(en->cursor, rp->object, en);
-             _edje_emit(ed, "entry,changed", rp->part->name);
-             _edje_emit_full(ed, "entry,changed,user", rp->part->name,
-                             info, _free_entry_change_info);
-             _edje_emit(ed, "cursor,changed", rp->part->name);
-             cursor_changed = EINA_TRUE;
           }
         _edje_emit(ed, "entry,key,enter", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -2771,7 +2824,11 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = calloc(1, sizeof(Entry));
-   if (!en) return;
+   if (!en)
+     {
+        ERR("Running very low on memory");
+        return;
+     }
    rp->typedata.text->entry_data = en;
    en->rp = rp;
    en->ed = ed;
@@ -4644,6 +4701,11 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx E
    _anchors_get(en->cursor, rp->object, en);
    _anchors_update_check(ed, rp);
    info = calloc(1, sizeof(*info));
+   if  (!info)
+     {
+        ERR("Running very low on memory");
+        return;
+     }
    info->insert = EINA_FALSE;
    info->change.del.start = start;
    info->change.del.end = end;
