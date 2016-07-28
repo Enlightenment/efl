@@ -272,14 +272,18 @@ main(int argc, char **argv)
      {
         if (shm_fd >= 0)
           {
-            printf("shmfile %s\n", shmfile);
+             printf("shmfile %s\n", shmfile);
           }
         else
           {
              // could also to "tmpfile %s\n" like shmfile but just
              // a mmaped tmp file on the system
              printf("data\n");
-             fwrite(data, width * height * sizeof(DATA32), 1, stdout);
+             if (fwrite(data, width * height * sizeof(DATA32), 1, stdout) != 1)
+               {
+                  shm_free();
+                  return -1;
+               }
           }
         shm_free();
      }
