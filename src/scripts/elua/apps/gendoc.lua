@@ -551,6 +551,9 @@ local default_theme = {
     node = {
         shape = "box"
     },
+    edge = {
+        color = "black"
+    },
     bg_color = "transparent"
 }
 
@@ -604,7 +607,8 @@ local build_igraph = function(cl)
             size = "6",
             bgcolor = default_theme.bg_color
         },
-        node = default_theme.node
+        node = default_theme.node,
+        edge = default_theme.edge
     }
 
     local nbuf = {}

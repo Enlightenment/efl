@@ -132,8 +132,11 @@ M.Writer = util.Object:clone {
             self:write_raw("    ", k, " = \"", v, "\"\n")
         end
 
-        local write_node = function(nname, attrs)
-            self:write_raw("    ", nname, " [")
+        local write_attrs = function(attrs)
+            if not v then
+                return
+            end
+            self:write_raw(" [")
             local first = true
             for k, v in pairs(attrs) do
                 if not first then
@@ -142,28 +145,34 @@ M.Writer = util.Object:clone {
                 self:write_raw(k, " = \"", v, "\"")
                 first = false
             end
-            self:write_raw("]\n")
+            self:write_raw("]")
         end
 
         if tbl.node then
             self:write_nl()
-            write_node("node", tbl.node)
+            self:write_raw("    node")
+            write_attrs(tbl.node)
+            self:write_nl()
         end
         if tbl.edge then
             if not tbl.node then self:write_nl() end
-            write_node("edge", tbl.edge)
+            self:write_raw("    edge")
+            write_attrs(tbl.edge)
+            self:write_nl()
         end
 
         self:write_nl()
         for i, v in ipairs(tbl.nodes) do
             local nname = v.name
             v.name = nil
-            write_node(nname, v)
+            self:write_raw("    ", nname)
+            write_attrs(v)
+            self:write_nl()
         end
 
         self:write_nl()
         for i, v in ipairs(tbl.connections) do
-            local from, to, sep = v[1], v[2], (v[3] or "->")
+            local from, to, sep, attrs = v[1], v[2], (v[3] or "->")
             if type(from) == "table" then
                 self:write_raw("    {", table.concat(from, ", "), "}")
             else
@@ -175,6 +184,7 @@ M.Writer = util.Object:clone {
             else
                 self:write_raw(to)
             end
+            write_attrs(v[4])
             self:write_nl()
         end
 
