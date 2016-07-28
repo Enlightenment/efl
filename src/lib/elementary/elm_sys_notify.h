@@ -3,10 +3,14 @@
 
 typedef void (*Elm_Sys_Notify_Send_Cb)(void *data, unsigned int id);
 
+#ifdef EFL_EO_API_SUPPORT
 #include "elm_sys_notify_interface.eo.h"
-#include "elm_sys_notify_interface.eo.legacy.h"
 #include "elm_sys_notify.eo.h"
+#endif
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "elm_sys_notify_interface.eo.legacy.h"
 #include "elm_sys_notify.eo.legacy.h"
+#endif
 
 /**
  * Emitted when the signal NotificationClosed is received.
